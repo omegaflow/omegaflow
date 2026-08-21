@@ -2,7 +2,8 @@
   title: Das Blatt — die Richtung der Lithosphäre-Atmosphäre-Ionosphäre-Kopplung (Nadel IV)
   class: survey
   date: 2026-08-21
-  sha256: d08970e75e8c125a08b1f839842cc22ba3b1124733b0f978123c178c498d1edc
+  version: 2
+  sha256: f9b9594e58dcbd5a6b325c9494cd3a1fbf049d77a7f5ac39bf982b12f6c36c59
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
 -->
@@ -77,18 +78,78 @@ der gemeinsame Treiber trägt auf diesem Raster keinen Pfeil.
   der Sache selbst wurde nicht gemessen, aber auch kein Sonnen-Pfeil
   fabriziert. Stille ist die Antwort.
 
+## Das definitive Blatt — volle Ära + Sensitivitätsmatrix
+
+Ernte/Analyse-Architektur (v2): `laic_probe --harvest` legt je Fenster
+die Rohserien auf Platte (`phi/pipeline/laic_harvest/`, 4.1 GB, 1726
+Ereignis-Fenster der vollen Ära 2014-01-01 … 2026-08-21, 60
+Null-Fenster, Swarm A+B+C für je 60/30 Fenster) — `--analyze` rechnet
+offline, derselbe Bestand trägt jede Parameter-Zelle, der Lauf ist
+resumierbar.
+
+```
+TE(Lithosphäre → Ionosphäre) = −7.63e-2 nats   (Stapel-Mittel der Maximalexzesse, n = 1369, volle Ära)
+TE(Ionosphäre → Lithosphäre) = −1.26e-2 nats   (n = 1369)
+Kontrolle TE(Solar Bz → Ionosphäre) = +4.06e-2 nats   (n = 1400)
+Lag                          = 0 h   (größter mittlerer Exzess; alle Lag-Mittel negativ)
+n (Ereignisse), Schwelle     = 1369 Fenster, Null-Ensemble 60 Zufallsfenster, Schwelle μ + 2σ
+Verdikt                      = Stille in beiden Richtungen — der Pfeil bleibt still
+```
+
+Schwellen: L→I −2.54e-2, I→L +1.86e-2, Kontrolle +1.33e-1. Der
+Ereignis-Stapel liegt in beiden Richtungen unter der Schwelle — für
+L→I tief darunter (die 72 h vor M≥6 tragen weniger Transfer als
+zufällige Fenster, über die ganze Ära). Die Sonnen-Kontrolle ist still.
+
+Sensitivitätsmatrix (jede Zelle still; r/c/k-Zellen auf den 250
+jüngsten Ereignissen, Haupt-Zelle volle Ära):
+
+| Zelle | n | L→I Stapel | L→I Schwelle | I→L Stapel | I→L Schwelle |
+|---|---|---|---|---|---|
+| Radius 500 km, 30 min | 140 | −8.23e-2 | −2.44e-2 | −1.48e-2 | +1.80e-2 |
+| Radius 1000 km, 30 min | 165 | −8.40e-2 | −3.38e-2 | −1.26e-2 | +1.87e-2 |
+| Radius 2000 km, 30 min (Haupt) | 1369 | −7.63e-2 | −2.54e-2 | −1.26e-2 | +1.86e-2 |
+| Radius 2000 km, 15 min | 176 | −5.40e-2 | −1.92e-2 | −5.61e-3 | +7.77e-3 |
+| Radius 2000 km, 60 min | 170 | −9.81e-2 | −4.61e-2 | −1.01e-2 | +3.98e-2 |
+| KDE-Skalierung 0.5 und 2.0 | 176 | −7.97e-2 | −2.54e-2 | −1.08e-2 | +1.86e-2 |
+
+- Kontrolle (Solar Bz → F): still in jeder Zelle (+4.06e-2 … +4.35e-2
+  gegen Schwelle +1.33e-1).
+- FAC-Stapel: definitiv unterbestimmt — Swarm A+B+C decken je Fenster
+  8–26 von 144 Zellen; 12/60 Ereignis-Fenster erreichen m ≥ 30
+  (30-min-Zellen) → no statement. Gemessen, nicht pending: der
+  FAC-Kanal trägt mit diesem Instrument kein Urteil.
+- KDE-h: die Serien-Skalierung ist keine h-Sensitivität — Silverman
+  adaptiert, TE(k·x, k·y) = TE(x, y); die Probe bestätigt es
+  (identische Stapel bei k = 0.5 und 2.0). Die echte h-Sensitivität
+  bleibt offen, solange `transfer_entropy_lag` unberührt bleibt.
+- Wiederholbarkeit: die 250er-Analyse reproduziert den Erstlauf
+  (identischer Stapel −7.9662e-2).
+
+Der Pfeil trägt nun: auf jedem lebenden Kanal und in jeder
+Parameter-Zelle ist der Informationsfluss im 72-h-Fenster vor M≥6
+still — in beide Richtungen, und die Sonnen-Kontrolle bleibt ebenfalls
+still. Damit ist die Richtungsfrage auf dem vorhandenen Bestand
+abschließend gemessen: der Pfeil schlägt nicht aus. Ein zukünftiges
+Instrument (TEC-GIM-Retro via CDDIS-OAuth, CSES, MiniSEED-Envelopen)
+kann die Frage auf einem dichteren Kanal neu stellen — das ist ein
+Kanal-Offenposten, kein Loch in dieser Messung.
+
 ## Was das Blatt nicht trägt (Register)
 
-- Instrument A — Ereignisrate: ungebaut.
-- Faden B — TEC-Port (swpc tec_global.json) und CSES: erst nach diesem
-  Blatt, offen.
-- Volle Ära: 1726 Ereignisse — der Lauf trug die 250 jüngsten (~1 Jahr);
-  der volle Lauf ist ein Registerposten mit benannten Laufzeitkosten.
+- Instrument A — Ereignisrate: benannt, ungebaut.
+- Kanal-Offenposten: TEC-GIM-Retro (CDDIS-OAuth, der swpc-Kanal ist tot
+  gemessen — 404), CSES, MiniSEED-Waveform-Envelopen (Decoder
+  ausstehend).
+- Echte KDE-h-Sensitivität: offen, solange der skalare TE-Pfad
+  unberührt bleibt (Silverman-Adaptivität macht die Skalierungs-Probe
+  invariant).
 - F ist die Intensität des nächsten Boden-Observatoriums (bis 3000 km) —
   die ionosphärische Signatur am Überflugspunkt ist eine andere Messung
-  (FAC/TEC).
-- Sensitivitäten: Radius (2000 km), Kadenz (30 min), KDE-Bandbreite
-  (h×2), M-Schwelle der Zählserie (2.0) — offen.
+  (FAC/TEC); der FAC-Stapel ist gemessen unterbestimmt.
+- Der FDSN-Katalog trägt in dieser Welt nur dünn kleine Ereignisse
+  (Region 2000 km/72 h ≈ 0–5, M ≥ 2) — die Zähl-Serie misst, was der
+  Katalog trägt; die Surrogat-Null urteilt ehrlich.
 
 ## Lauf
 

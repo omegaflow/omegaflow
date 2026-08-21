@@ -2,9 +2,9 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 3091167fb3b6b593dc24cb453c03e6e28910d5fe08c22f61daccc61d348aaac3
+  sha256: 75b0deba04f93d2e99b695efb03380f23f521462772a6f921d77edc010e6ce8e
   status: live
-  see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/handover/handover-2026-08-21-laic-pfeilrichtung.md
+  see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md
 -->
 # Das Blatt Papier (BLATT_PAPIER_RESULTAT)
 
@@ -151,5 +151,5 @@ Jedes Rätsel hat seine Session — die Handovers sind die Pläne:
   Bojen-Paare (Wind/SST) sind live, die TE-Maschine läuft.
 - `docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md` — Blatt 2:
   RTSW/GOES/Kp sind live; INTERMAGNET-Kuration als zweite Schicht.
-- `docs/handover/handover-2026-08-21-laic-pfeilrichtung.md` — Blatt 3,
+- `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md` — Blatt 3,
   Nadel IV: Ereignis-Stapelung gegen das Null-Ensemble.

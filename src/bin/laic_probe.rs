@@ -5,15 +5,12 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 const ERA_START_S: f64 = 1388534400.0;
 const WINDOW_S: f64 = 259200.0;
-const CELL_S: f64 = 1800.0;
-const N_CELLS: usize = 144;
-const CELLS_PER_LAG: usize = 2;
 const MAX_LAG_H: usize = 72;
 const MIN_M: usize = 30;
 const MIN_N_WINDOWS: usize = 30;
 const M_MIN_EVENT: f64 = 6.0;
 const M_MIN_REGION: f64 = 2.0;
-const RADIUS_KM: f64 = 2000.0;
+const HARVEST_RADIUS_KM: f64 = 2000.0;
 const STATION_MAX_KM: f64 = 3000.0;
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const FILL_BGS_F: f64 = 99999.0;
@@ -27,7 +24,12 @@ const BGS_HAPI_TEMPLATE: &str = "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id
 const OMNI_HAPI_TEMPLATE: &str = "https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={start}Z&time.max={stop}Z&parameters=BZ_GSM1800&format=json";
 const FDSN_CATALOG_TEMPLATE: &str = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={start}&endtime={stop}&minmagnitude={mag}&orderby=time&limit={limit}";
 const FDSN_REGION_TEMPLATE: &str = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={start}&endtime={stop}&latitude={lat}&longitude={lon}&maxradiuskm={radius}&minmagnitude={mag}&orderby=time&limit={limit}";
-const SWARM_HAPI_TEMPLATE: &str = "https://vires.services/hapi/data?id=SW_OPER_FACATMS_2F&start={start}Z&stop={stop}Z&parameters=Latitude,Longitude,FAC&format=json";
+const SWARM_SATS: [&str; 3] = [
+    "SW_OPER_FACATMS_2F",
+    "SW_OPER_FACBTMS_2F",
+    "SW_OPER_FACCTMS_2F",
+];
+const SWARM_HAPI_TEMPLATE: &str = "https://vires.services/hapi/data?id={sat}&start={start}Z&stop={stop}Z&parameters=Latitude,Longitude,FAC&format=json";
 
 const A_A0: f64 = -3.969683028665376e+01;
 const A_A1: f64 = 2.209460984245205e+02;
@@ -66,8 +68,21 @@ struct Event {
     lon: f64,
 }
 
-struct WindowStat {
+#[derive(Clone)]
+struct WindowData {
+    kind: String,
+    t0: f64,
+    mag: f64,
+    lat: f64,
+    lon: f64,
     station: String,
+    f: Vec<(f64, f64)>,
+    bz: Vec<(f64, f64)>,
+    region: Vec<(f64, f64, f64, f64)>,
+    swarm: Vec<(f64, f64, f64, f64)>,
+}
+
+struct WindowStat {
     n_cells: usize,
     n_rate_events: usize,
     excess: [Option<f64>; 2],
@@ -77,6 +92,7 @@ struct WindowStat {
     f_gap_cells: usize,
     swarm_samples: Option<usize>,
     swarm_cells: Option<usize>,
+    fac_excess: [Option<f64>; 2],
 }
 
 struct StackStat {
@@ -332,7 +348,13 @@ fn catalog_events(body: &str, mag_min: f64) -> Vec<Event> {
     out
 }
 
-fn region_epochs(body: &str, clat: f64, clon: f64, radius_km: f64, t0: f64) -> Vec<f64> {
+fn region_records(
+    body: &str,
+    clat: f64,
+    clon: f64,
+    radius_km: f64,
+    t0: f64,
+) -> Vec<(f64, f64, f64, f64)> {
     let j = match parse_json(body) {
         Some(v) => v,
         None => return Vec::new(),
@@ -348,6 +370,12 @@ fn region_epochs(body: &str, clat: f64, clon: f64, radius_km: f64, t0: f64) -> V
         let JsonVal::Obj(fm) = f else { continue };
         let Some(t_ms) = (match fm.get("properties") {
             Some(JsonVal::Obj(pm)) => pm.get("time").and_then(scalar_of),
+            _ => None,
+        }) else {
+            continue;
+        };
+        let Some(mag) = (match fm.get("properties") {
+            Some(JsonVal::Obj(pm)) => pm.get("mag").and_then(scalar_of),
             _ => None,
         }) else {
             continue;
@@ -368,9 +396,9 @@ fn region_epochs(body: &str, clat: f64, clon: f64, radius_km: f64, t0: f64) -> V
         if epoch >= t0 || haversine_km(clat, clon, lat, lon) > radius_km {
             continue;
         }
-        out.push(epoch);
+        out.push((epoch, lat, lon, mag));
     }
-    out.sort_by(|a, b| a.total_cmp(b));
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
     out
 }
 
@@ -409,6 +437,44 @@ fn bin_count(epochs: &[f64], t_start: f64, cell_s: f64, n: usize) -> Vec<Option<
     counts.into_iter().map(|c| Some(c as f32)).collect()
 }
 
+fn bin_fac(
+    swarm: &[(f64, f64, f64, f64)],
+    clat: f64,
+    clon: f64,
+    radius_km: f64,
+    t_start: f64,
+    cell_s: f64,
+    n: usize,
+) -> (Vec<Option<f32>>, usize, usize) {
+    let mut sums = vec![0.0f64; n];
+    let mut counts = vec![0u32; n];
+    let mut samples = 0usize;
+    for &(t, lat, lon, fac) in swarm {
+        if haversine_km(clat, clon, lat, lon) > radius_km {
+            continue;
+        }
+        samples += 1;
+        let idx = ((t - t_start) / cell_s).floor();
+        if idx < 0.0 || idx >= n as f64 {
+            continue;
+        }
+        let i = idx as usize;
+        sums[i] += fac;
+        counts[i] += 1;
+    }
+    let cells = (0..n)
+        .map(|i| {
+            if counts[i] > 0 {
+                Some((sums[i] / counts[i] as f64) as f32)
+            } else {
+                None
+            }
+        })
+        .collect();
+    let covered = counts.iter().filter(|&&c| c > 0).count();
+    (cells, samples, covered)
+}
+
 fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     let mut xs = Vec::new();
     let mut ys = Vec::new();
@@ -426,8 +492,11 @@ fn sweep_excess(
     ys: &[f32],
     lag_h_max: usize,
     cells_per_lag: usize,
+    kde_scale: f32,
 ) -> (Vec<Option<f64>>, Option<f64>, usize) {
     let n = xs.len();
+    let xs: Vec<f32> = xs.iter().map(|v| v * kde_scale).collect();
+    let ys: Vec<f32> = ys.iter().map(|v| v * kde_scale).collect();
     let mut curve = vec![None; lag_h_max + 1];
     let mut best: Option<f64> = None;
     let mut computed = 0usize;
@@ -437,11 +506,11 @@ fn sweep_excess(
             continue;
         }
         let seed = SURROGATE_SEED ^ (lag_h as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let te = match transfer_entropy_lag(xs, ys, cell_lag) {
+        let te = match transfer_entropy_lag(&xs, &ys, cell_lag) {
             Some(t) => t,
             None => continue,
         };
-        let thr = match surrogate_stats_phase(xs, ys, cell_lag, seed) {
+        let thr = match surrogate_stats_phase(&xs, &ys, cell_lag, seed) {
             Some((_, _, t)) => t,
             None => continue,
         };
@@ -470,16 +539,10 @@ fn norm_quantile(p: f64) -> f64 {
     }
 }
 
-fn window_stat(
-    clat: f64,
-    clon: f64,
-    t0: f64,
-    stations: &[Station],
-    do_swarm: bool,
-    radius_km: f64,
-) -> WindowStat {
+fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -> WindowStat {
+    let n_cells = (WINDOW_S / cell_s) as usize;
+    let t_start = data.t0 - WINDOW_S;
     let mut stat = WindowStat {
-        station: String::new(),
         n_cells: 0,
         n_rate_events: 0,
         excess: [None, None],
@@ -489,88 +552,56 @@ fn window_stat(
         f_gap_cells: 0,
         swarm_samples: None,
         swarm_cells: None,
+        fac_excess: [None, None],
     };
-    let Some(station) = nearest_station(clat, clon, stations) else {
-        return stat;
-    };
-    stat.station = station.id.clone();
-    let t_start = t0 - WINDOW_S;
-    let start_iso = unix_to_iso(t_start);
-    let stop_iso = unix_to_iso(t0);
-
-    let bgs_url = BGS_HAPI_TEMPLATE
-        .replace("{station}", &station.id)
-        .replace("{start}", &start_iso)
-        .replace("{stop}", &stop_iso);
-    let f_series = match fetch_text(&bgs_url) {
-        Some(body) => hapi_series(&body, None, |v| {
-            v == FILL_BGS_F || v <= 0.0 || v >= F_MAX_NT
-        }),
-        None => return stat,
-    };
-
-    let region_url = FDSN_REGION_TEMPLATE
-        .replace("{start}", &start_iso)
-        .replace("{stop}", &stop_iso)
-        .replace("{lat}", &format!("{clat:.4}"))
-        .replace("{lon}", &format!("{clon:.4}"))
-        .replace("{radius}", &format!("{radius_km:.0}"))
-        .replace("{mag}", &format!("{M_MIN_REGION:.1}"))
-        .replace("{limit}", &FDSN_LIMIT.to_string());
-    let rate_epochs = match fetch_text(&region_url) {
-        Some(body) => region_epochs(&body, clat, clon, radius_km, t0),
-        None => Vec::new(),
-    };
+    let rate_epochs: Vec<f64> = data
+        .region
+        .iter()
+        .filter(|&&(_, lat, lon, _)| haversine_km(data.lat, data.lon, lat, lon) <= radius_km)
+        .map(|&(t, _, _, _)| t)
+        .collect();
     stat.n_rate_events = rate_epochs.len();
 
-    let omni_url = OMNI_HAPI_TEMPLATE
-        .replace("{start}", &start_iso)
-        .replace("{stop}", &stop_iso);
-    let bz_series = match fetch_text(&omni_url) {
-        Some(body) => hapi_series(&body, Some("BZ_GSM1800"), |v| v == FILL_OMNI_BZ),
-        None => Vec::new(),
-    };
-
-    if do_swarm {
-        let swarm_url = SWARM_HAPI_TEMPLATE
-            .replace("{start}", &start_iso)
-            .replace("{stop}", &stop_iso);
-        if let Some(body) = fetch_text(&swarm_url) {
-            let samples = swarm_pass_samples(&body);
-            let in_radius: Vec<f64> = samples
-                .iter()
-                .filter(|&&(_, lat, lon, _)| haversine_km(clat, clon, lat, lon) <= radius_km)
-                .map(|&(t, _, _, _)| t)
-                .collect();
-            let mut cells = vec![false; N_CELLS];
-            for &t in &in_radius {
-                let idx = ((t - t_start) / CELL_S).floor();
-                if idx >= 0.0 && idx < N_CELLS as f64 {
-                    cells[idx as usize] = true;
-                }
-            }
-            stat.swarm_samples = Some(in_radius.len());
-            stat.swarm_cells = Some(cells.iter().filter(|&&c| c).count());
-        }
-    }
-
-    let f_cells = bin_mean(&f_series, t_start, CELL_S, N_CELLS);
-    let rate_cells = bin_count(&rate_epochs, t_start, CELL_S, N_CELLS);
+    let f_cells = bin_mean(&data.f, t_start, cell_s, n_cells);
+    let rate_cells = bin_count(&rate_epochs, t_start, cell_s, n_cells);
     stat.f_gap_cells = f_cells.iter().filter(|c| c.is_none()).count();
     let (fs, rs) = pair_cells(&f_cells, &rate_cells);
     stat.n_cells = fs.len();
 
-    let (curve_li, best_li, _) = sweep_excess(&fs, &rs, MAX_LAG_H, CELLS_PER_LAG);
-    let (curve_il, best_il, _) = sweep_excess(&rs, &fs, MAX_LAG_H, CELLS_PER_LAG);
+    let cells_per_lag = (3600.0 / cell_s).max(1.0) as usize;
+    let (curve_li, best_li, _) = sweep_excess(&fs, &rs, MAX_LAG_H, cells_per_lag, kde_scale);
+    let (curve_il, best_il, _) = sweep_excess(&rs, &fs, MAX_LAG_H, cells_per_lag, kde_scale);
     stat.curve = [curve_li, curve_il];
     stat.excess = [best_li, best_il];
 
-    let f_h = bin_mean(&f_series, t_start, CELL_S * 2.0, N_CELLS / 2);
-    let bz_h = bin_mean(&bz_series, t_start, CELL_S * 2.0, N_CELLS / 2);
+    let f_h = bin_mean(&data.f, t_start, 3600.0, (WINDOW_S / 3600.0) as usize);
+    let bz_h = bin_mean(&data.bz, t_start, 3600.0, (WINDOW_S / 3600.0) as usize);
     let (fh, bh) = pair_cells(&f_h, &bz_h);
-    let (control_curve, control_best, _) = sweep_excess(&fh, &bh, 48, 1);
+    let (control_curve, control_best, _) = sweep_excess(&fh, &bh, 48, 1, kde_scale);
     stat.control_curve = control_curve;
     stat.control_excess = control_best;
+
+    if !data.swarm.is_empty() {
+        let (fac_cells, samples, covered) = bin_fac(
+            &data.swarm,
+            data.lat,
+            data.lon,
+            radius_km,
+            t_start,
+            cell_s,
+            n_cells,
+        );
+        stat.swarm_samples = Some(samples);
+        stat.swarm_cells = Some(covered);
+        let (fac_fs, fac_rs) = pair_cells(&fac_cells, &rate_cells);
+        if fac_fs.len() >= MIN_M {
+            let (_, best_fac_li, _) =
+                sweep_excess(&fac_fs, &fac_rs, MAX_LAG_H, cells_per_lag, kde_scale);
+            let (_, best_fac_il, _) =
+                sweep_excess(&fac_rs, &fac_fs, MAX_LAG_H, cells_per_lag, kde_scale);
+            stat.fac_excess = [best_fac_li, best_fac_il];
+        }
+    }
     stat
 }
 
@@ -620,36 +651,258 @@ fn verdict_line(label: &str, ev: &StackStat, nu: &StackStat, z: f64) {
     }
 }
 
+fn series_json(pairs: &[(f64, f64)]) -> String {
+    let mut s = String::from("[");
+    for (i, &(t, v)) in pairs.iter().enumerate() {
+        if i > 0 {
+            s.push(',');
+        }
+        s.push('[');
+        s.push_str(&t.to_string());
+        s.push(',');
+        s.push_str(&v.to_string());
+        s.push(']');
+    }
+    s.push(']');
+    s
+}
+
+fn quad_json(quads: &[(f64, f64, f64, f64)]) -> String {
+    let mut s = String::from("[");
+    for (i, &(t, lat, lon, v)) in quads.iter().enumerate() {
+        if i > 0 {
+            s.push(',');
+        }
+        s.push('[');
+        s.push_str(&t.to_string());
+        s.push(',');
+        s.push_str(&lat.to_string());
+        s.push(',');
+        s.push_str(&lon.to_string());
+        s.push(',');
+        s.push_str(&v.to_string());
+        s.push(']');
+    }
+    s.push(']');
+    s
+}
+
+fn window_json(data: &WindowData) -> String {
+    let mut s = String::from("{");
+    s.push_str(&format!("\"kind\":\"{}\",", data.kind));
+    s.push_str(&format!("\"t0\":{},", data.t0));
+    s.push_str(&format!("\"mag\":{},", data.mag));
+    s.push_str(&format!("\"lat\":{},", data.lat));
+    s.push_str(&format!("\"lon\":{},", data.lon));
+    s.push_str(&format!("\"station\":\"{}\",", data.station));
+    s.push_str("\"f\":");
+    s.push_str(&series_json(&data.f));
+    s.push_str(",\"bz\":");
+    s.push_str(&series_json(&data.bz));
+    s.push_str(",\"region\":");
+    s.push_str(&quad_json(&data.region));
+    s.push_str(",\"swarm\":");
+    s.push_str(&quad_json(&data.swarm));
+    s.push('}');
+    s
+}
+
+fn parse_window_file(body: &str) -> Option<WindowData> {
+    let j = parse_json(body)?;
+    let JsonVal::Obj(root) = j else { return None };
+    let get_num = |key: &str| -> Option<f64> {
+        match root.get(key) {
+            Some(v) => scalar_of(v),
+            None => None,
+        }
+    };
+    let get_str = |key: &str| -> Option<String> {
+        match root.get(key) {
+            Some(JsonVal::Str(s)) => Some(s.clone()),
+            _ => None,
+        }
+    };
+    let mut data = WindowData {
+        kind: get_str("kind")?,
+        t0: get_num("t0")?,
+        mag: get_num("mag")?,
+        lat: get_num("lat")?,
+        lon: get_num("lon")?,
+        station: get_str("station").unwrap_or_default(),
+        f: Vec::new(),
+        bz: Vec::new(),
+        region: Vec::new(),
+        swarm: Vec::new(),
+    };
+    if let Some(JsonVal::Arr(rows)) = root.get("f") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t), Some(v)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                ) {
+                    data.f.push((t, v));
+                }
+            }
+        }
+    }
+    if let Some(JsonVal::Arr(rows)) = root.get("bz") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t), Some(v)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                ) {
+                    data.bz.push((t, v));
+                }
+            }
+        }
+    }
+    if let Some(JsonVal::Arr(rows)) = root.get("region") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t), Some(lat), Some(lon), Some(v)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                    cells.get(2).and_then(scalar_of),
+                    cells.get(3).and_then(scalar_of),
+                ) {
+                    data.region.push((t, lat, lon, v));
+                }
+            }
+        }
+    }
+    if let Some(JsonVal::Arr(rows)) = root.get("swarm") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t), Some(lat), Some(lon), Some(v)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                    cells.get(2).and_then(scalar_of),
+                    cells.get(3).and_then(scalar_of),
+                ) {
+                    data.swarm.push((t, lat, lon, v));
+                }
+            }
+        }
+    }
+    Some(data)
+}
+
+fn harvest_window(
+    kind: &str,
+    t0: f64,
+    mag: f64,
+    lat: f64,
+    lon: f64,
+    stations: &[Station],
+    do_swarm: bool,
+    swarm_sats: &[&str],
+) -> WindowData {
+    let mut data = WindowData {
+        kind: kind.to_string(),
+        t0,
+        mag,
+        lat,
+        lon,
+        station: String::new(),
+        f: Vec::new(),
+        bz: Vec::new(),
+        region: Vec::new(),
+        swarm: Vec::new(),
+    };
+    let t_start = t0 - WINDOW_S;
+    let start_iso = unix_to_iso(t_start);
+    let stop_iso = unix_to_iso(t0);
+    if let Some(station) = nearest_station(lat, lon, stations) {
+        data.station = station.id.clone();
+        let bgs_url = BGS_HAPI_TEMPLATE
+            .replace("{station}", &station.id)
+            .replace("{start}", &start_iso)
+            .replace("{stop}", &stop_iso);
+        if let Some(body) = fetch_text(&bgs_url) {
+            data.f = hapi_series(&body, None, |v| {
+                v == FILL_BGS_F || v <= 0.0 || v >= F_MAX_NT
+            });
+        }
+    }
+    let region_url = FDSN_REGION_TEMPLATE
+        .replace("{start}", &start_iso)
+        .replace("{stop}", &stop_iso)
+        .replace("{lat}", &format!("{lat:.4}"))
+        .replace("{lon}", &format!("{lon:.4}"))
+        .replace("{radius}", &format!("{HARVEST_RADIUS_KM:.0}"))
+        .replace("{mag}", &format!("{M_MIN_REGION:.1}"))
+        .replace("{limit}", &FDSN_LIMIT.to_string());
+    if let Some(body) = fetch_text(&region_url) {
+        data.region = region_records(&body, lat, lon, HARVEST_RADIUS_KM, t0);
+    }
+    let omni_url = OMNI_HAPI_TEMPLATE
+        .replace("{start}", &start_iso)
+        .replace("{stop}", &stop_iso);
+    if let Some(body) = fetch_text(&omni_url) {
+        data.bz = hapi_series(&body, Some("BZ_GSM1800"), |v| v == FILL_OMNI_BZ);
+    }
+    if do_swarm {
+        for sat in swarm_sats {
+            let swarm_url = SWARM_HAPI_TEMPLATE
+                .replace("{sat}", sat)
+                .replace("{start}", &start_iso)
+                .replace("{stop}", &stop_iso);
+            if let Some(body) = fetch_text(&swarm_url) {
+                data.swarm.extend(swarm_pass_samples(&body));
+            }
+        }
+    }
+    data
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let max_events = arg_value(&args, "--max-events")
+    if arg_value(&args, "--analyze").is_some() {
+        analyze_main(&args);
+        return;
+    }
+    harvest_main(&args);
+}
+
+fn harvest_main(args: &[String]) {
+    let dir = match arg_value(args, "--harvest") {
+        Some(d) => d,
+        None => {
+            println!("usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M]");
+            println!("       laic_probe --analyze DIR [--radius KM] [--cell-min MIN] [--kde-scale K] [--max-events N] [--null N]");
+            return;
+        }
+    };
+    let max_events = arg_value(args, "--max-events")
         .and_then(|v| v.parse::<usize>().ok())
         .unwrap_or(0);
-    let n_null = arg_value(&args, "--null")
+    let n_null = arg_value(args, "--null")
         .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(40);
-    let swarm_limit = arg_value(&args, "--swarm-limit")
+        .unwrap_or(60);
+    let swarm_limit = arg_value(args, "--swarm-limit")
         .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let mag_min = arg_value(&args, "--mag")
+        .unwrap_or(60);
+    let swarm_null = arg_value(args, "--swarm-null")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(30);
+    let mag_min = arg_value(args, "--mag")
         .and_then(|v| v.parse::<f64>().ok())
         .unwrap_or(M_MIN_EVENT);
-    let radius_km = arg_value(&args, "--radius")
-        .and_then(|v| v.parse::<f64>().ok())
-        .unwrap_or(RADIUS_KM);
-
     let now_s = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs_f64())
         .unwrap_or(ERA_START_S + 4.0e8);
 
-    println!("=== Nadel-IV probe: the LAIC direction, event-centered 72-h windows against the random-window null ensemble ===");
-    println!("Instrument B — Fensterstapelung: per M ≥ {mag_min} event the 72-h window before t0; litho series = count of catalog events (M ≥ {M_MIN_REGION}) per 30-min cell within {radius_km:.0} km of the epicenter; iono series = INTERMAGNET total field F of the nearest BGS station (1-min means per cell);");
-    println!("TE per window on the scalar path (transfer_entropy_lag), threshold per lag = mean + 2σ of ten phase-randomized surrogates per series (surrogate_stats_phase); lag sweep 0…{MAX_LAG_H} h in 1-h steps, lags with m < {MIN_M} cells underdetermined;");
-    println!("window statistic per direction = max excess over the sweep; stack = mean over event windows; null ensemble = {n_null} random windows (uniform t0 in the era, center = random catalog epicenter, same pipeline);");
-    println!("arrow ⇔ event stack > null mean + 2σ; the multiple-comparison correction is structural (null windows carry the same max-over-lag statistic) and a Bonferroni-adjusted threshold is printed per lag;");
-    println!("control: TE(Solar Bz → F) on 1-h cells, sweep 0…48 h (m ≥ {MIN_M} → ≤ 42 h computable); the LAIC arrow must carry while the control stays silent;");
-    println!("registered alternative A — Ereignisrate (one global rate series × one ionosphere series over the whole era) — goes to the register, not built here.");
+    println!("=== Nadel-IV harvest: window series to disk (no TE — analysis runs offline) ===");
+    println!(
+        "events M ≥ {mag_min} since {}, window 72 h before t0, harvest radius {HARVEST_RADIUS_KM:.0} km, swarm sats A+B+C ({}), null windows {}, swarm null {}, dir {dir}",
+        unix_to_iso(ERA_START_S),
+        SWARM_SATS.len(),
+        n_null,
+        swarm_null
+    );
 
     let stations = match fetch_text(BGS_STATIONS_URL) {
         Some(body) => parse_stations_xml(&body),
@@ -659,7 +912,6 @@ fn main() {
         }
     };
     println!("station list: {} INTERMAGNET observatories", stations.len());
-
     let catalog_url = FDSN_CATALOG_TEMPLATE
         .replace("{start}", &unix_to_iso(ERA_START_S))
         .replace("{stop}", &unix_to_iso(now_s))
@@ -670,95 +922,281 @@ fn main() {
         None => Vec::new(),
     };
     events.sort_by(|a, b| b.t0.total_cmp(&a.t0));
-    println!(
-        "catalog: {} events M ≥ {mag_min} since {}",
-        events.len(),
-        unix_to_iso(ERA_START_S)
-    );
+    println!("catalog: {} events M ≥ {mag_min}", events.len());
     if max_events > 0 && events.len() > max_events {
         events.truncate(max_events);
         println!("capped: the most recent {max_events} events");
     }
     if events.is_empty() {
-        println!("catalog void — nothing to stack (0 honored)");
+        println!("catalog void — nothing to harvest (0 honored)");
         return;
     }
+    std::fs::create_dir_all(&dir).expect("harvest dir");
 
-    let mut event_stats: Vec<(Event, WindowStat)> = Vec::new();
-    let mut bgs_void = 0usize;
-    let mut region_void = 0usize;
-    println!();
-    println!("=== event windows (rate = litho 30-min counts, F = nearest station, excess = TE − surrogate threshold, max over the lag sweep) ===");
-    for (i, ev) in events.iter().enumerate() {
-        let do_swarm = i < swarm_limit;
-        let stat = window_stat(ev.lat, ev.lon, ev.t0, &stations, do_swarm, radius_km);
-        if stat.station.is_empty() {
-            bgs_void += 1;
-            println!(
-                "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | no station within {} km — window missing",
-                unix_to_iso(ev.t0),
-                ev.mag,
-                ev.lat,
-                ev.lon,
-                STATION_MAX_KM
-            );
-            event_stats.push((ev.clone(), stat));
-            continue;
-        }
-        if stat.n_rate_events == 0 {
-            region_void += 1;
-        }
-        println!(
-            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | swarm {}/{}",
-            unix_to_iso(ev.t0),
-            ev.mag,
-            ev.lat,
-            ev.lon,
-            stat.station,
-            stat.n_cells,
-            stat.n_rate_events,
-            stat.f_gap_cells,
-            stat.excess[0].map_or(f64::NAN, |v| v),
-            stat.excess[1].map_or(f64::NAN, |v| v),
-            stat.control_excess.map_or(f64::NAN, |v| v),
-            stat
-                .swarm_samples
-                .map_or("-".to_string(), |v| v.to_string()),
-            stat.swarm_cells.map_or("-".to_string(), |v| v.to_string())
-        );
-        event_stats.push((ev.clone(), stat));
-    }
-
-    println!();
-    println!("=== null ensemble: {n_null} random windows ===");
-    let mut null_stats: Vec<WindowStat> = Vec::new();
+    let mut null_windows: Vec<(f64, f64, f64)> = Vec::new();
     let mut rng = SURROGATE_SEED ^ 0xA5A5_A5A5_A5A5_A5A5;
-    for i in 0..n_null {
+    for _ in 0..n_null {
         rng = rng
             .wrapping_mul(6364136223846793005)
             .wrapping_add(1442695040888963407);
         let frac = ((rng >> 33) as f64) / (u32::MAX as f64);
         let t0 = ERA_START_S + frac * (now_s - ERA_START_S - WINDOW_S - 86400.0);
         let center = &events[(rng % events.len() as u64) as usize];
-        let stat = window_stat(center.lat, center.lon, t0, &stations, false, radius_km);
+        null_windows.push((t0, center.lat, center.lon));
+    }
+
+    let mut manifest = String::from("{\"events\":[");
+    for (i, ev) in events.iter().enumerate() {
+        let path = format!("{dir}/e{i:04}.json");
+        if std::path::Path::new(&path).exists() {
+            println!(
+                "{i:>4} | {:<19} | M {:.1} | already harvested",
+                unix_to_iso(ev.t0),
+                ev.mag
+            );
+        } else {
+            let data = harvest_window(
+                "event",
+                ev.t0,
+                ev.mag,
+                ev.lat,
+                ev.lon,
+                &stations,
+                i < swarm_limit,
+                &SWARM_SATS,
+            );
+            println!(
+                "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | f {} bz {} region {} swarm {}",
+                unix_to_iso(ev.t0),
+                ev.mag,
+                ev.lat,
+                ev.lon,
+                data.station,
+                data.f.len(),
+                data.bz.len(),
+                data.region.len(),
+                data.swarm.len()
+            );
+            std::fs::write(&path, window_json(&data)).expect("window file");
+        }
+        if i > 0 {
+            manifest.push(',');
+        }
+        manifest.push_str(&format!("[{},{},{},{}]", ev.t0, ev.mag, ev.lat, ev.lon));
+    }
+    manifest.push_str("],\"null\":[");
+    for (i, &(t0, lat, lon)) in null_windows.iter().enumerate() {
+        let path = format!("{dir}/n{i:04}.json");
+        if std::path::Path::new(&path).exists() {
+            println!("null {i:>4} | {:<19} | already harvested", unix_to_iso(t0));
+        } else {
+            let data = harvest_window(
+                "null",
+                t0,
+                0.0,
+                lat,
+                lon,
+                &stations,
+                i < swarm_null,
+                &SWARM_SATS,
+            );
+            println!(
+                "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | f {} bz {} region {} swarm {}",
+                unix_to_iso(t0),
+                lat,
+                lon,
+                data.station,
+                data.f.len(),
+                data.bz.len(),
+                data.region.len(),
+                data.swarm.len()
+            );
+            std::fs::write(&path, window_json(&data)).expect("window file");
+        }
+        if i > 0 {
+            manifest.push(',');
+        }
+        manifest.push_str(&format!("[{},{},{}]", t0, lat, lon));
+    }
+    manifest.push_str("]}");
+    std::fs::write(format!("{dir}/manifest.json"), manifest).expect("manifest");
+    println!("harvest complete. Exit 0.");
+}
+
+fn analyze_main(args: &[String]) {
+    let dir = match arg_value(args, "--analyze") {
+        Some(d) => d,
+        None => return,
+    };
+    let radius_km = arg_value(args, "--radius")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(HARVEST_RADIUS_KM);
+    let cell_min = arg_value(args, "--cell-min")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(30.0);
+    let kde_scale = arg_value(args, "--kde-scale")
+        .and_then(|v| v.parse::<f32>().ok())
+        .unwrap_or(1.0);
+    let max_events = arg_value(args, "--max-events")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0);
+    let max_null = arg_value(args, "--null")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0);
+    let cell_s = cell_min * 60.0;
+    let n_cells = (WINDOW_S / cell_s) as usize;
+    let cells_per_lag = (3600.0 / cell_s).max(1.0) as usize;
+
+    println!("=== Nadel-IV analysis: the LAIC direction, event-centered 72-h windows against the random-window null ensemble ===");
+    println!(
+        "harvest {dir}; analysis knobs: radius {radius_km:.0} km, cells {cell_min:.0} min (n = {n_cells}), kde scale {kde_scale} (both series scaled → both Silverman bandwidths scaled);"
+    );
+    println!(
+        "TE per window on the scalar path (transfer_entropy_lag), threshold per lag = mean + 2σ of ten phase-randomized surrogates per series; lag sweep 0…{MAX_LAG_H} h in 1-h steps, lags with m < {MIN_M} cells underdetermined;"
+    );
+    println!(
+        "window statistic per direction = max excess over the sweep; stack = mean over event windows; arrow ⇔ stack > null mean + 2σ; the null windows carry the same max-over-lag statistic (structural multiple-comparison correction), a Bonferroni-adjusted threshold is printed per lag;"
+    );
+    println!("control: TE(Solar Bz → F) on 1-h cells, sweep 0…48 h; the LAIC arrow must carry while the control stays silent;");
+    println!("registered alternative A — Ereignisrate — remains unbuilt (register).");
+
+    let manifest_body = match std::fs::read_to_string(format!("{dir}/manifest.json")) {
+        Ok(b) => b,
+        Err(_) => {
+            println!("manifest void — the harvest directory carries no manifest (0 honored)");
+            return;
+        }
+    };
+    let j = match parse_json(&manifest_body) {
+        Some(v) => v,
+        None => {
+            println!("manifest unparsed — the harvest directory carries no readable manifest");
+            return;
+        }
+    };
+    let JsonVal::Obj(root) = j else { return };
+    let mut events: Vec<(f64, f64, f64, f64)> = Vec::new();
+    if let Some(JsonVal::Arr(rows)) = root.get("events") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t0), Some(mag), Some(lat), Some(lon)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                    cells.get(2).and_then(scalar_of),
+                    cells.get(3).and_then(scalar_of),
+                ) {
+                    events.push((t0, mag, lat, lon));
+                }
+            }
+        }
+    }
+    let mut null_windows: Vec<(f64, f64, f64)> = Vec::new();
+    if let Some(JsonVal::Arr(rows)) = root.get("null") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t0), Some(lat), Some(lon)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                    cells.get(2).and_then(scalar_of),
+                ) {
+                    null_windows.push((t0, lat, lon));
+                }
+            }
+        }
+    }
+    if max_events > 0 && events.len() > max_events {
+        events.truncate(max_events);
+        println!("analysis subset: the most recent {max_events} events");
+    }
+    if max_null > 0 && null_windows.len() > max_null {
+        null_windows.truncate(max_null);
+        println!("analysis subset: {max_null} null windows");
+    }
+    println!(
+        "catalog: {} events, {} null windows",
+        events.len(),
+        null_windows.len()
+    );
+
+    let load = |prefix: &str, i: usize| -> Option<WindowData> {
+        let body = std::fs::read_to_string(format!("{dir}/{prefix}{i:04}.json")).ok()?;
+        parse_window_file(&body)
+    };
+
+    let mut event_stats: Vec<(usize, WindowStat)> = Vec::new();
+    let mut bgs_void = 0usize;
+    let mut region_void = 0usize;
+    let mut zero_rate = 0usize;
+    println!();
+    println!("=== event windows (excess = TE − surrogate threshold, max over the lag sweep) ===");
+    for (i, &(t0, mag, lat, lon)) in events.iter().enumerate() {
+        let Some(data) = load("e", i) else {
+            println!("{i:>4} | {:<19} | window file void", unix_to_iso(t0));
+            continue;
+        };
+        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        if data.station.is_empty() || data.f.is_empty() {
+            bgs_void += 1;
+        }
+        if stat.n_rate_events == 0 {
+            zero_rate += 1;
+        }
+        if stat.excess[0].is_none() && stat.excess[1].is_none() && stat.n_rate_events == 0 {
+            region_void += 1;
+        }
         println!(
-            "{i:>4} | {:<19} | center {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e}",
+            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e} | swarm {}/{}",
             unix_to_iso(t0),
-            center.lat,
-            center.lon,
-            stat.station,
+            mag,
+            lat,
+            lon,
+            data.station,
+            stat.n_cells,
+            stat.n_rate_events,
+            stat.f_gap_cells,
+            stat.excess[0].map_or(f64::NAN, |v| v),
+            stat.excess[1].map_or(f64::NAN, |v| v),
+            stat.control_excess.map_or(f64::NAN, |v| v),
+            stat.fac_excess[0].map_or(f64::NAN, |v| v),
+            stat.fac_excess[1].map_or(f64::NAN, |v| v),
+            stat.swarm_samples.map_or("-".to_string(), |v| v.to_string()),
+            stat.swarm_cells.map_or("-".to_string(), |v| v.to_string())
+        );
+        event_stats.push((i, stat));
+    }
+
+    println!();
+    println!(
+        "=== null ensemble: {} random windows ===",
+        null_windows.len()
+    );
+    let mut null_stats: Vec<WindowStat> = Vec::new();
+    for (i, &(t0, lat, lon)) in null_windows.iter().enumerate() {
+        let Some(data) = load("n", i) else {
+            println!("null {i:>4} | {:<19} | window file void", unix_to_iso(t0));
+            continue;
+        };
+        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        println!(
+            "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e}",
+            unix_to_iso(t0),
+            lat,
+            lon,
+            data.station,
             stat.n_cells,
             stat.n_rate_events,
             stat.excess[0].map_or(f64::NAN, |v| v),
             stat.excess[1].map_or(f64::NAN, |v| v),
-            stat.control_excess.map_or(f64::NAN, |v| v)
+            stat.control_excess.map_or(f64::NAN, |v| v),
+            stat.fac_excess[0].map_or(f64::NAN, |v| v),
+            stat.fac_excess[1].map_or(f64::NAN, |v| v)
         );
         null_stats.push(stat);
     }
 
-    let n_lags_main = ((N_CELLS.saturating_sub(MIN_M)) / CELLS_PER_LAG).min(MAX_LAG_H) + 1;
+    let n_lags_main = ((n_cells.saturating_sub(MIN_M)) / cells_per_lag).min(MAX_LAG_H) + 1;
     let z_main = norm_quantile(1.0 - 0.05 / (2.0 * n_lags_main as f64));
-    let n_lags_ctrl = (N_CELLS / 2).saturating_sub(MIN_M) + 1;
+    let n_lags_ctrl = (WINDOW_S / 3600.0) as usize - MIN_M + 1;
     let z_ctrl = norm_quantile(1.0 - 0.05 / n_lags_ctrl as f64);
 
     let ev_li: Vec<f64> = event_stats
@@ -773,9 +1211,19 @@ fn main() {
         .iter()
         .filter_map(|(_, s)| s.control_excess)
         .collect();
+    let ev_fac_li: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.fac_excess[0])
+        .collect();
+    let ev_fac_il: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.fac_excess[1])
+        .collect();
     let nu_li: Vec<f64> = null_stats.iter().filter_map(|s| s.excess[0]).collect();
     let nu_il: Vec<f64> = null_stats.iter().filter_map(|s| s.excess[1]).collect();
     let nu_ctrl: Vec<f64> = null_stats.iter().filter_map(|s| s.control_excess).collect();
+    let nu_fac_li: Vec<f64> = null_stats.iter().filter_map(|s| s.fac_excess[0]).collect();
+    let nu_fac_il: Vec<f64> = null_stats.iter().filter_map(|s| s.fac_excess[1]).collect();
 
     let s_li = stack_stat(&ev_li);
     let n_li = stack_stat(&nu_li);
@@ -783,16 +1231,23 @@ fn main() {
     let n_il = stack_stat(&nu_il);
     let s_ctrl = stack_stat(&ev_ctrl);
     let n_ctrl = stack_stat(&nu_ctrl);
+    let s_fac_li = stack_stat(&ev_fac_li);
+    let n_fac_li = stack_stat(&nu_fac_li);
+    let s_fac_il = stack_stat(&ev_fac_il);
+    let n_fac_il = stack_stat(&nu_fac_il);
 
     println!();
     println!("=== stack verdict ===");
     verdict_line("TE(Lithosphere → Ionosphere)", &s_li, &n_li, z_main);
     verdict_line("TE(Ionosphere → Lithosphere)", &s_il, &n_il, z_main);
     verdict_line("TE(Solar Bz → Ionosphere)", &s_ctrl, &n_ctrl, z_ctrl);
+    verdict_line("TE(Lithosphere → FAC)", &s_fac_li, &n_fac_li, z_main);
+    verdict_line("TE(FAC → Lithosphere)", &s_fac_il, &n_fac_il, z_main);
     println!(
-        "voids: {} windows without station, {} windows with zero rate events",
-        bgs_void, region_void
+        "voids: {} windows without station or F, {} windows with zero rate events",
+        bgs_void, zero_rate
     );
+    let _ = region_void;
 
     let curve_table = |label: &str,
                        curve: &[Vec<Option<f64>>],
@@ -914,16 +1369,13 @@ fn main() {
     );
     println!(
         "Lag                          = {} (largest mean excess, Litho → Iono; {} for the reverse direction) — sweep 0…{MAX_LAG_H} h in 1-h steps, m ≥ {MIN_M} cells",
-        lag_li
-            .0
-            .map_or("pending".to_string(), |l| format!("{l} h")),
-        lag_il
-            .0
-            .map_or("pending".to_string(), |l| format!("{l} h"))
+        lag_li.0.map_or("pending".to_string(), |l| format!("{l} h")),
+        lag_il.0.map_or("pending".to_string(), |l| format!("{l} h"))
     );
     println!(
-        "n (events), threshold        = {}, null ensemble mean + 2σ over {n_null} random windows",
-        s_li.n
+        "n (events), threshold        = {}, null ensemble mean + 2σ over {} random windows",
+        s_li.n,
+        null_windows.len()
     );
     if s_li.n < MIN_N_WINDOWS {
         println!(
@@ -944,10 +1396,14 @@ fn main() {
         );
     }
     println!(
-        "swarm coverage (subset {swarm_limit}): {} windows with FAC samples in the radius",
+        "swarm FAC coverage: {} event windows with FAC samples in the radius, {} null windows",
         event_stats
             .iter()
             .filter(|(_, s)| s.swarm_samples.is_some_and(|v| v > 0))
+            .count(),
+        null_stats
+            .iter()
+            .filter(|s| s.swarm_samples.is_some_and(|v| v > 0))
             .count()
     );
     println!("Silent lines are findings. Exit 0.");

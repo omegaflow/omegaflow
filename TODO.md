@@ -20,12 +20,15 @@ Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
   INTERMAGNET-Bodenfeld — Session-Plan `docs/handover/handover-2026-
   08-21-bz-paradoxon.md`. INTERMAGNET-Komponenten-Port erledigt
   (2026-08-21); die Blatt-Probe ist die offene Einheit.
-- LAIC-Blatt (Nadel IV): Blatt 1 steht (2026-08-21) — Instrument B
-  (Fensterstapelung gegen Null-Ensemble): Stille in beiden Richtungen,
-  Solar-Kontrolle still, n = 176 — Befund
-  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Offen:
-  Instrument A (Ereignisrate) ungebaut, TEC-Port/CSES (Faden B), volle
-  Ära (1726 Ereignisse), FAC-Stapel unterbestimmt.
+- LAIC-Blatt (Nadel IV): das Blatt steht definitiv (2026-08-21) — volle
+  Ära 1369 Fenster + Sensitivitätsmatrix (Radius 500/1000/2000, Kadenz
+  15/30/60): Stille in beiden Richtungen, Solar-Kontrolle still,
+  FAC-Stapel gemessen unterbestimmt — Befund
+  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Offen
+  (Kanal-Offenposten, keine Löcher der Messung): TEC-GIM-Retro
+  (CDDIS-OAuth, swpc-Kanal tot gemessen), CSES, MiniSEED-Envelopen;
+  Instrument A (Ereignisrate) benannt, ungebaut; echte KDE-h-
+  Sensitivität (te.rs unberührt).
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
@@ -729,21 +732,25 @@ Maschine misst.
   Offen: der fam-signifikante Minuten-Pfeil über Stürme braucht den
   1-h-Ensemble (OMNI2-Recompile --decimate-min 60 × stündliches
   INTERMAGNET).
-- **LAIC-Pfeilrichtung** (Blatt 1,
+- **LAIC-Pfeilrichtung** (das Blatt steht definitiv,
   `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`):
-  Nadel Ⅳ verengt auf die Richtung — Instrument B gebaut
-  (`src/bin/laic_probe.rs`): TE(Lithosphäre→Ionosphäre) gegen die
-  Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Zählrate M≥2 im
-  2000-km-Radius × INTERMAGNET-F des nächsten Observatoriums, 10
-  phasenrandomisierte Surrogate je Serie, Lag-Sweep 0…72 h (m ≥ 30),
-  Solar-Kontrolle Bz→F, Null-Ensemble 40 Zufallsfenster, 250 jüngste
-  Ereignisse. Befund: Stille in beiden Richtungen, Kontrolle still
-  (n = 176) — 0 honored. Der FDSN-Katalog ist ein Punktprozess — die
-  Zähl-Serie ist die benannte Konstruktion (MiniSEED-Envelopen: Decoder
-  ausstehend). Instrument A (Ereignisrate) benannt, ungebaut →
-  Register. Offen: TEC-Port/CSES (Faden B), volle Ära (1726
-  Ereignisse), FAC-Stapel unterbestimmt (8–25/144 Zellen), Radius-/
-  Kadenz-/KDE-h-Sensitivität.
+  Nadel Ⅳ verengt auf die Richtung — Instrument B (`src/bin/laic_probe.rs`,
+  Ernte/Analyse-Architektur, `phi/pipeline/laic_harvest/`):
+  TE(Lithosphäre→Ionosphäre) gegen die Gegenrichtung im 72-h-Fenster vor
+  M ≥ 6.0, Zählrate M≥2 im 2000-km-Radius × INTERMAGNET-F des nächsten
+  Observatoriums, 10 phasenrandomisierte Surrogate je Serie, Lag-Sweep
+  0…72 h (m ≥ 30), Solar-Kontrolle Bz→F, Null-Ensemble 60 Zufallsfenster.
+  Volle Ära (1726 Ereignisse, n = 1369): Stille in beiden Richtungen,
+  Kontrolle still (L→I −7.63e-2 gegen Schwelle −2.54e-2) — 0 honored.
+  Sensitivitätsmatrix (Radius 500/1000/2000, Kadenz 15/30/60): jede
+  Zelle still. FAC-Stapel (Swarm A+B+C): gemessen unterbestimmt (12/60
+  Fenster m ≥ 30) — no statement. KDE-h: Serien-Skalierung invariant
+  (Silverman adaptiert) — echte h-Sensitivität offen, solange
+  `transfer_entropy_lag` unberührt. Der FDSN-Katalog ist ein
+  Punktprozess — die Zähl-Serie ist die benannte Konstruktion
+  (MiniSEED-Envelopen: Decoder ausstehend). Instrument A (Ereignisrate)
+  benannt, ungebaut → Register. Kanal-Offenposten: TEC-GIM-Retro
+  (CDDIS-OAuth), CSES.
 
 ## Die Nadeln I, II, V — Blätter (Handovers 2026-08-21)
 
@@ -1880,14 +1887,14 @@ wird erst auf das Wort des Operators; bis dahin pending (0 honored).
   Pflichten geerbt: Mehrfachvergleichskorrektur, Lag-Sweep,
   KDE-Sensitivität, Kadenz-Angleich (1-min/3-h). GIC (electric) hat
   keinen keyless Feed — späterer Kanal, keine Fabrication.
-- Blatt III — LAIC (Nadel IV): Blatt 1 steht (2026-08-21) — Stille in
-  beiden Richtungen, Solar-Kontrolle still (n = 176) — Befund:
-  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Instrument B
-  (`src/bin/laic_probe.rs`): 72-h-Fensterstapelung gegen das
-  Null-Ensemble (Zählrate M≥2 im 2000-km-Radius × INTERMAGNET-F,
-  USGS-FDSN, 10 phasenrandomisierte Surrogate je Serie); Instrument A
-  (Ereignisrate) ungebaut. Offen: TEC-Port/CSES, volle Ära,
-  FAC-Stapel unterbestimmt.
+- Blatt III — LAIC (Nadel IV): das Blatt steht definitiv (2026-08-21) —
+  volle Ära 1369 Fenster + Sensitivitätsmatrix: Stille in beiden
+  Richtungen, Solar-Kontrolle still, FAC-Stapel gemessen unterbestimmt —
+  Befund: `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`.
+  Instrument B (`src/bin/laic_probe.rs`, Ernte/Analyse-Architektur,
+  `phi/pipeline/laic_harvest/`); Instrument A (Ereignisrate) ungebaut.
+  Kanal-Offenposten: TEC-GIM-Retro (CDDIS-OAuth), CSES,
+  MiniSEED-Envelopen.
 
 ## Doku-Drift
 
@@ -1904,6 +1911,12 @@ und Handover-Varianten je Rätsel (`*enso-kausalpfeil*`, `*bz-*`,
 die illustrativen Zahlen (0.8/0.1, „Lag exakt X"), alle
 „Erwartung"-Zeilen und die „Form, nicht Messung"-Passagen sind aus dem
 gesamten Satz entfernt — die Blätter tragen `pending`, bis die Maschine
-misst; sha256 aller berührten Dateien neu gerechnet. Offen bleibt, welche
-Konzept- und Handover-Dateien kanonisch sind und welche archiviert
-werden.
+misst; sha256 aller berührten Dateien neu gerechnet. LAIC-Baum geklärt
+(2026-08-21, das Blatt steht definitiv): die drei LAIC-Handover sind
+archiviert (`laic-pfeilrichtung`, `laic-kausalpfeil`,
+`blatt-laic-pfeilrichtung`), alle LAIC-Referenzen der fünf Konzept-
+Dateien zeigen auf `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`
+(sha256 aller berührten Dateien neu gerechnet). Offen bleibt, welche
+ENSO/Bz-Konzept- und Handover-Dateien kanonisch sind und welche
+archiviert werden — deren see-also-Zeilen tragen noch tote
+Handover-Referenzen.

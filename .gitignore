@@ -60,3 +60,4 @@ rave_dr5.json
 *.bin
 phi/pipeline/katalog/ncei_ssi/
 phi/pipeline/katalog/ncei_goes_xrs/
+phi/pipeline/laic_harvest/
