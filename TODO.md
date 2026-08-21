@@ -27,6 +27,11 @@ Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
+Das Blatt (Session-Plan, bias-frei):
+`docs/handover/handover-2026-08-21-corona-heizung.md` — die kausale DAG
+der solaren Kanäle auf ein Blatt; Zellen pending bis zum korrigierten
+Lauf (Mehrfachvergleichskorrektur, Lag-Sweep, KDE-Sensitivität).
+
 Plan: `docs/surveys/handover-nadel3-plan.md` (selbsttragend, 2026-08-19).
 Atom 1 (Extraktion) ERLEDIGT (2026-08-19): Archivar-Kern nach lib
 (`omegaflow::archivar` — Grammatik, Fetch, Extrakt-Maschine, SI, Typen,
@@ -124,7 +129,18 @@ WAV1-Records mit dem Orbit (freq/bin_width auf der Spektralachse);
 Load-Gate-Test trägt orbit_bin. CI: kernel_flatten sun-Job
 --window-start 1994-08-07 --window-end 2026-08-21 --jobs 8,
 Asset-Guard auf wind_orbit.bin — offen bleibt der erste
-kernel_flatten-Lauf (beide Assets fehlen, fehlt nicht null).
+kernel_flatten-Lauf (beide Assets fehlen, fehlt nicht null). Erster
+kernel_flatten-Lauf 2026-08-21 (Run 32496846847) ausgewertet: beide
+Ernten grün (wind_waves 9914 Tage/5.990.624 Records, wind_orbit
+11703 Tage/1.658.725 Records, Roundtrip ✓) — der Upload schlug fehl,
+`gh release upload` legt ein fehlendes Netloc-Release nicht an
+("release not found"); das Release spdf.gsfc.nasa.gov ist inzwischen
+angelegt, der nächste Lauf trägt die Assets. Dabei benannt (offen):
+~90 frühe Tage (1994/1996/1997) tragen CDF release 4 (pre-2.5) —
+`release 4 is pre-2.5 — the VDR layout is a parser gap`, das
+VDR-Layout ist um +128 Byte verschoben (192-Zeichen-Name, cdflib
+toadd=128); plus 4 echte Listungs-Lücken (2023/2025). Eigener
+Folge-Atom: cdf25.rs um das Release-4-Layout erweitern.
 Befunde selbsttragend: phi/pipeline/research/agent_output/
 wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +
@@ -518,6 +534,26 @@ Maschine misst.
   wählt und benennt die Session, keine erfundene Kontinuität. CSES
   (electric) unkuratiert; Swarm als bestandene Alternative; IONEX-GIM
   bleibt WARTEND (CDDIS-OAuth).
+
+## Die Nadeln I, II, V — Blätter (Handovers 2026-08-21)
+
+Drei weitere Blätter nach demselben Muster — ein Session-Plan je Nadel,
+bias-frei: die Zellen tragen pending, bis die Maschine misst.
+
+- **Nadel I — Dunkle Materie** (`handover-2026-08-21-dunkle-materie.md`):
+  das Jeans-Residuum R(V) = ρ_dyn − ρ_vis je 50-pc-Voxel,
+  TE(σ → ρ_vis) als Grenzflächen-Signatur. Voxel-Maschine auf
+  dr3_stars.bin + alfalfa_hi_flux; Gaia DR4 (2.12.2026) bleibt WARTEND.
+- **Nadel II — Flyby-Anomalie** (`handover-2026-08-21-flyby-anomalie.md`):
+  das Perigäums-Residuum gegen die Sonnenwind-Phase im 4D-Schlauch.
+  Prüftermine: JUICE (Sep 2026), Europa Clipper (Dez 2026) — die
+  Missions-Ephemeriden-Ernte ist der erste Faden, die Serie muss vor dem
+  Ereignis stehen.
+- **Nadel V — Technosignaturen** (`handover-2026-08-21-technosignaturen.md`):
+  die achromatische Opazitäts-Anomalie × IR-Exzess mit vollständigem
+  Ausschluss-Filter. Vorbedingungen benannt: Pfeiler-Registraturen Farbe
+  + Frequenzachse (TODO.md), ZTF-Decoder AUSSTEHEND, epoch-0.0-Ring-
+  Messung.
 
 ## Archivar — Architektur
 
