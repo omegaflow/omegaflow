@@ -10,7 +10,7 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (321022 files, 7092042302065 B)
+## Family inventory (321022 files, 7095995907697 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
 | bpc | 5234 | 779673811 | 1786640820
@@ -25,14 +25,15 @@ by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 | mk | 11460 | 484609627 | 1786700400
 | pck-text | 1021 | 220731651 | 1786335480
 | sclk | 3961 | 128360111 | 1786520520
-| spk | 12445 | 342260732631 | 1786688700
-| spk-planets | 83 | 2241091584 | 1784078700
+| spk | 12445 | 342906459863 | 1786688700
+| spk-planets | 83 | 5548969984 | 1784078700
 | spk-satellites | 349 | 33475935703 | 1783940280
 
 ## System resolution (flattener selection)
 | System | SPK | PCK |
 |---|---|---|
 | planets | de721_full.bsp | pck00011.tpc |
+| asteroids | de441.bsp | — |
 | jupiter | jup365.bsp | pck.jup365.tpc |
 | saturn | sat441.bsp | pck.sat441.tpc |
 | mars | mar099s.bsp | pck.mar099.tpc |
@@ -71,5 +72,8 @@ gm_Horizons.pck (km³/s², parser scales ×1e9).
 | electric | — | SWPC/OmniWeb/Swarm (curation) |
 
 ## Flatten policy
-K01: planets + moons (SPK/PCK) + probes (Horizons compiler). Small bodies are
-registered in the index (family `spk`), the flatten pass lives on the K03 branch (DASTCOM+Kepler).
+K01: planets + moons (SPK/PCK) + probes (Horizons compiler) + the asteroid
+longbow (`asteroids` = sb441-n16.bsp + de441.bsp for the sun's SSB state,
+256-day raster, heliocentric segment + SSB chain). The remaining small
+bodies stay on the Horizons 12-month windows; DASTCOM (K03) carries their
+mass/radius.

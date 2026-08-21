@@ -200,16 +200,18 @@ Feld (lum, Transferentropie), sie leuchten nicht. `hsl_to_rgb` ist tot;
 der Objekt-Bias, der den Schirm gelb färbte, fällt.
 
 Asteroiden-Langbogen (2026-08-21, Handover
-handover-2026-08-21-asteroid-langbogen.md): vermessen — die 13 named
-Asteroiden + kleine Monde (ceres, vesta, eris, haumea, makemake, apophis,
-bennu, encke, himalia, janus, epimetheus, atlas, prometheus, pandora)
-tragen nur 13 Granulen = 2026,6–2027,6 (~1 Jahr) aus horizons_compiler
-(12 Monate voraus + 30 Tage zurück), NICHT den de441/de442-Langbogen
-(13201 v. Chr.–17191 n. Chr.), der im sources_index.φ liegt. Planeten/
-Mond tragen 1400–3156 Jahre (vermessen: sun/earth 1599,7–4755,4 ≈ 3156 J,
-uranus ≈ 2601 J, saturn ≈ 1900 J). Der Langbogen muss als CI-Job
-kompiliert und auf den CDN gehoben werden — Auftrag + CI-Auftrag im
-Handover.
+handover-2026-08-21-asteroid-langbogen.md): ceres + vesta tragen den
+sb441-n16-Langbogen (8000 v. Chr.–9000 n. Chr., 256-Tage-Raster, Grad
+17, 24.253 Granulen je Körper, Roundtrip ≤ 9,4 m über 4000
+Zufallsepochen; GM aus gm_Horizons.pck; de441.bsp ist der
+Sonnenträger — de442.bsp trägt nur 460 Jahre, gemessen). Offen:
+sb441-n373.bsp (14 GB — der DAF-Reader lädt ganze Dateien in RAM, CI
+7 GB; Streaming-Reader nötig, erst dann sind apophis/bennu-Kandidaten
+prüfbar); die 14 weiteren n16-Körper (pallas, juno, iris, hygiea,
+eunomia, psyche, euphrosyne, europa, cybele, sylvia, thisbe, camilla,
+davida, interamnia) ohne sources.φ-Block; die 12 Körper ohne
+SPK-Segment tragen die 12-Monats-Fenster weiter (fehlt, nicht null);
+NAIF-IDs der 6-stelligen Körper unverifiziert.
 
 HDF5-Erntekarte (2026-08-21, Handover
 handover-2026-08-21-hdf5-fits-ernte.md): recherchiert — HDF5 gehört fast
