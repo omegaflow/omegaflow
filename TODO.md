@@ -640,10 +640,13 @@ Maschine misst.
    46204/64045 ein Tag) — nicht benannt, kein Platzhalter. Historische
    Tiefe (2026-08-21): stdmet-Jahresdateien
    (view_text_file.php?filename={id}h{jahr}.txt.gz — die Antwort kommt
-   als Klartext, der Kanal-Code nimmt beides, gz-Magic-gated) je Boje
-   für das laufende + Vorjahr beim Boot; Festplatten-Cache
-   /tmp/omegaflow_enso_cache (7-Tage-Gate, ~350 MB Erstboot, Folge-Boots
-   0) → 1024 Sechs-Stunden-Bins ≈ 8½ Monate je Ring. Der geteilte
+   als Klartext, der Kanal-Code nimmt beides, gz-Magic-gated) — EINE
+   Jahresdatei je Boje (das Vorjahr; die laufende Jahresdatei existiert
+   noch nicht — die 2026-Ernten 404ten, gemessen 2026-08-21, und sind
+   entfernt), Festplatten-Cache /tmp/omegaflow_enso_cache (die
+   abgeschlossene Jahresdatei ist unveränderlich — Cache ohne TTL),
+   kalt ≈ 60 MB im 2⁵-s-Takt über ~20 min verteilt, damit die
+   Anker-Ephemeriden des CDN zuerst laden; warme Boots 0 → 1024 Sechs-Stunden-Bins ≈ 8½ Monate je Ring. Der geteilte
    WGSL-Ring wuchs 256→1024 (TE_SERIES_STRIDE — Presence/Solar speisen
    ≤ 256, byte-identisch, der GPU-Crosscheck pinnt). Der Kernel ist
    O(m² × Surrogate) und hängt die HD 520 ab m ≈ 1024 (Mesa-Reset,

@@ -16383,7 +16383,6 @@ pub struct SolarCell {
 pub const ENSO_GRID: u32 = 21600;
 const ENSO_RING_MAX: usize = 1024;
 const ENSO_FETCH_TTL: u64 = 3600;
-const ENSO_BACKFILL_TTL: u64 = 604800;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EnsoStation {
@@ -17093,38 +17092,24 @@ fn enso_backfill(
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs())
         .unwrap_or(0);
-    let year = 1970 + (now / 31556952) as i64;
-    for y in [year, year - 1] {
-        if y < 1970 {
-            continue;
-        }
-        let url = format!(
-            "https://www.ndbc.noaa.gov/view_text_file.php?filename={}h{}.txt.gz&dir=data/historical/stdmet/",
-            station.id(),
-            y
-        );
-        let cache = format!("/tmp/omegaflow_enso_cache/{}_{}.txt", station.id(), y);
-        let body = match std::fs::metadata(&cache) {
-            Ok(md) => {
-                let mtime = md
-                    .modified()
-                    .ok()
-                    .and_then(|m| m.duration_since(std::time::UNIX_EPOCH).ok())
-                    .map(|d| d.as_secs())
-                    .unwrap_or(0);
-                if now.saturating_sub(mtime) < ENSO_BACKFILL_TTL {
-                    std::fs::read_to_string(&cache).ok()
-                } else {
-                    enso_cache_fetch(&url, &cache)
-                }
-            }
-            Err(_) => enso_cache_fetch(&url, &cache),
-        };
-        if let Some(body) = body {
-            if let Some(series) = enso_ndbc_parse(&body, lsk) {
-                for (kind, values) in &series {
-                    enso_send_bins(values, station, *kind, last_sent, tx);
-                }
+    let year = 1970 + (now / 31556952) as i64 - 1;
+    if year < 1970 {
+        return;
+    }
+    let url = format!(
+        "https://www.ndbc.noaa.gov/view_text_file.php?filename={}h{}.txt.gz&dir=data/historical/stdmet/",
+        station.id(),
+        year
+    );
+    let cache = format!("/tmp/omegaflow_enso_cache/{}_{}.txt", station.id(), year);
+    let body = match std::fs::read_to_string(&cache) {
+        Ok(cached) => Some(cached),
+        Err(_) => enso_cache_fetch(&url, &cache),
+    };
+    if let Some(body) = body {
+        if let Some(series) = enso_ndbc_parse(&body, lsk) {
+            for (kind, values) in &series {
+                enso_send_bins(values, station, *kind, last_sent, tx);
             }
         }
     }
@@ -17139,6 +17124,7 @@ fn enso_cache_fetch(url: &str, cache: &str) -> Option<String> {
     };
     let _ = std::fs::create_dir_all("/tmp/omegaflow_enso_cache");
     let _ = std::fs::write(cache, &text);
+    thread::sleep(std::time::Duration::from_secs(32));
     Some(text)
 }
 
