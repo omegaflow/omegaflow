@@ -235,15 +235,20 @@ Tages-Zellen über das gemeinsame Fenster (TDB-Konstante und
 Mittag-/Mitternachts-Konvention liegen unter der Zellen-Weite), TE
 beide Richtungen F10.7 × XRSA/XRSB, lag 0..7 d, phasenrandomisierte +
 naive Schwelle (broken-null-control-Rekord), n < 30 → no statement.
-Vor den CDN-Manifesten (goes_xrs.bin + f107_penticton.bin tragen am
-2026-08-21 beide 404): benannte Verweigerung, 0 honored; der Lauf auf
-den echten Serien steht aus, sobald die CI-Läufe des sources-Repos
-beide Assets manifestieren. Die skalaren TE-Pfade (src/te.rs) blieben
-unberührt; die Übergabe
+Die skalaren TE-Pfade (src/te.rs) blieben unberührt; die Übergabe
 docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
 ist mit beiden Einheiten verbraucht (Archivierung im selben Zug;
 Quellen vermessen in
 docs/surveys/survey-2026-08-21-sonnen-abdeckung.md).
+CI-Verdrahtung (2026-08-21, kernel_flatten.yml): die 404-Manifeste
+sind jetzt Schritte des Workflows — `sun` trägt f107_compiler +
+omni2_compiler, der neue Job `solar_xrs` trägt goes_xrs_compiler
+(1995–2020, --decimate-min 60), der neue Job `long_window_probe`
+(needs: [sun, solar_xrs]) lädt beide Assets und fährt den Probe auf
+den echten Serien; sein Log ist das Nadel-Ⅲ-Befund-Register. Bis der
+nächste kernel-flatten-Lauf manifestiert, tragen die Blöcke
+goes_xrs/omni2_serie und der Probe die benannte Verweigerung (0
+honored).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
