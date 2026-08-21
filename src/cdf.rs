@@ -669,4 +669,45 @@ mod tests {
             Err(CdfNote::NotCdf { .. })
         ));
     }
+
+    #[test]
+    fn parses_wind_wav_h1_2021_when_present() {
+        let path = "/tmp/opencode/wav_h1_20210101.cdf";
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => return,
+        };
+        let file = CdfFile::parse(&bytes).unwrap();
+        assert_eq!(file.little_endian, false);
+        assert!(file.vars.iter().any(|v| v.name == "E_VOLTAGE_RAD2"));
+        let epoch = file.var("Epoch").unwrap();
+        let epoch_records = file.var_records(&bytes, epoch).unwrap();
+        assert_eq!(epoch_records.len(), 1440);
+        let first_unix = epoch_records[0].1[0];
+        assert!(first_unix > 1.6e9 && first_unix < 1.7e9);
+        let rad2 = file.var("E_VOLTAGE_RAD2").unwrap();
+        let records = file.var_records(&bytes, rad2).unwrap();
+        assert_eq!(records.len(), 1440);
+        for (_, vals) in &records {
+            assert_eq!(vals.len(), 256);
+        }
+    }
+
+    #[test]
+    fn parses_wind_wav_h1_1994_when_present() {
+        let path = "/tmp/opencode/wav_h1_19941110.cdf";
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => return,
+        };
+        let file = CdfFile::parse(&bytes).unwrap();
+        assert_eq!(file.version.0, 3);
+        assert_eq!(file.little_endian, false);
+        let rad1 = file.var("E_VOLTAGE_RAD1").unwrap();
+        let records = file.var_records(&bytes, rad1).unwrap();
+        assert_eq!(records.len(), 1440);
+        for (_, vals) in &records {
+            assert_eq!(vals.len(), 256);
+        }
+    }
 }

@@ -66,12 +66,15 @@ selbst (0 honored — einzeln nie gemessen); der CDAWeb-Live-Block
 (SOLO_L2_RPW-TDS-SURV-STAT, SN_RMS_E V/m, 16-s-Kadenz) — der
 Publikations-Lag (~5 Monate, stopDate 2026-03-25) lässt das
 {hour_ago}-Fenster heute leer (0 honored), sobald die NASA
-erweitert, fließt der Kanal. Pending: Berkeley-VSC-Feld
-(Baum-Forschung: kein VSC-Produkt auf research.ssl.berkeley.edu/
-data/psp/data/sci/fields/l2|l3, kein HAPI-Dataset mehr —
-PSP_FLD_L2_VSC 1406; AEB@0/@1 = HK), Wind/WAVES wav_h1
-E_VOLTAGE_RAD2 (1994–2021, Tages-CDFs — der Parser steht, die
-Ernte ist ein eigenes Atom), GONG L 31..200 (CI --lmax 200) +
+erweitert, fließt der Kanal. Berkeley-VSC GESCHLOSSEN
+(2026-08-21, Zweitprüfung live-Baum: l2|l3 tragen kein VSC-Produkt,
+CDAWeb-HAPI PSP_FLD_L2_VSC → 1406, SPDF spiegelt — Verdikt „vom
+live-Baum verschwunden/unveröffentlicht", benannt geschlossen).
+Wind/WAVES wav_h1 E_VOLTAGE_RAD2/RAD1/TNR (normierte Antennen-
+Spannung V, Force-Gate em): Ernte-Prototyp steht (wind_waves_compiler,
+Bin magic WAV1, 2021-01 → 18848 Records, Roundtrip ✓) — volle Ernte
+1994–2021 + Frame at wind (kein SPK NAIF -485) = Folge-Atom.
+GONG L 31..200 (CI --lmax 200) +
 mparam-Eigenfrequenzen für freq/bin_width, GOLF (Medoc 000),
 PSP-DFB = em-Spektralkanal (Force-Gate-Urteil, kein
 electric-Katalysator), TRACERS-SPK (das SOC publiziert noch keine
@@ -878,9 +881,11 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (cdf_reader-Atom: LIRA-Ernte 2022-11-25→2025-12-31, 200544
   Records, 347692 total, CDN hochgeladen — der Befund „AMDA ≠ LIRA
   ~50 %, CDAWeb == LIRA" ist registriert, Naht 2022-11-24T23:55 |
-  11-25T00:05 benannt). Pending: Berkeley-VSC (Baum-Forschung: kein
-  VSC-Produkt auf dem live-Baum, HAPI-Dataset 1406), Wind/WAVES
-  wav_h1 E_VOLTAGE_RAD2 (Parser steht — Ernte als eigenes Atom),
+  11-25T00:05 benannt). Berkeley-VSC GESCHLOSSEN (Zweitprüfung
+  live-Baum: kein VSC-Produkt, HAPI-Dataset 1406 — Verdikt „vom
+  live-Baum verschwunden/unveröffentlicht"). Wind/WAVES wav_h1:
+  Ernte-Prototyp steht (wind_waves_compiler, Bin magic WAV1, 2021-01
+  18848 Records) — volle Ernte 1994–2021 + Frame at wind = Folge-Atom.
   GONG L 31..200 + mparam (Eigenfrequenz/Linienbreite →
   freq/bin_width); GOLF-Zeitreihen (Medoc curl 000); der
   kernel_flatten sun job trägt gong/rpw-CI

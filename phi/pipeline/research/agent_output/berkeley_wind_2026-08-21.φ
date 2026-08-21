@@ -1,0 +1,52 @@
+Berkeley-VSC-Schluss + Wind/WAVES wav_h1 — Befunde 2026-08-21, selbsttragend
+
+A. Berkeley-PSP-VSC (Schluss)
+
+Zweitprüfung des live-Baums (2026-08-21, Jina-Kaskade; research.ssl.berkeley.edu
+lokal DNS-tot). l2/ = aeb, dfb_ac_bpf|spec|xspec, dfb_dbm_{dvac,dvdc,scm,vac,vdc},
+dfb_dc_bpf|spec|xspec, dfb_wf_{dvdc,scm,vdc}, f2_100bps, mag_RTN|SC|VSO (+1min,
++4_Sa_per_Cyc), rfs_burst|hfr|lfr, sc_pse, tds_wf. l3/ = dust, merged_scam_wf,
+rfs_hfr, rfs_lfr, rfs_lfr_qtn, sqtn_rfs_V1V2|V3V4. KEIN vsc-Verzeichnis, kein
+„vector spectral"-Produkt. Die Kandidaten der Session-Frage A1: aeb = Housekeeping
+(Temperaturen/Bias, kein Feld), tds_wf = Time-Domain-Wellenformen (rohe
+Spannungen), dfb_wf_* = Wellenformen, dfb_*_spec = Spektral-Power (V²/Hz) — keines
+trägt das kalibrierte mV/m-Vektorfeld. CDAWeb-HAPI: PSP_FLD_L2_VSC → 1406 (Dataset
+absent); SPDF spiegelt dieselbe l2/l3-Menge.
+
+Verdikt (A2): die Behauptung „kalibriertes mV/m-VSC-Feld existiert nur als
+Berkeley-CDF" ist gegen den live-Baum NICHT verifizierbar — das VSC-Produkt ist
+dort nicht publiziert (vom live-Baum verschwunden/unveröffentlicht). Die
+pending-Registrierung ist benannt geschlossen, nicht verschwiegen. Nachfolger
+TS1/TS2-EFI_EAC bleibt eigenes Atom (nicht vermischt).
+
+B. Wind/WAVES wav_h1 (E_VOLTAGE_RAD2)
+
+B1 Layout (1994 + 2021 geladen, spdf.gsfc.nasa.gov direkt 200):
+- BEIDE CDF 3.x (1994: 3.6.3, 2021: 3.8.0), encoding 1 (big-endian), majority 2 —
+  KEIN CDF 2.6, src/cdf.rs braucht keine Version-2-Erweiterung.
+- 11 zVariables: Epoch (CDF_EPOCH), E_VOLTAGE_RAD1/RAD2 (REAL4 f32[256]),
+  E_VOLTAGE_TNR (REAL4 f32[96]), Minimum_voltage_*, Frequency_RAD1/RAD2 (INT2[256]
+  kHz), Frequency_TNR (REAL4[96] kHz), Epoch2.
+- Kadenz 1440 Records/Tag = 1 min; erste Probe 00:00:30 (Epoch unix 1609459230 =
+  2021-01-01T00:00:30). Keine Kompression (VVR kind 7), ~3,58 MB/Tag.
+- Frequenzachsen: RAD1 20–1040 kHz (256 Bins, 4 kHz), RAD2 1075–13825 kHz (256
+  Bins, 50 kHz), TNR 4–245 kHz (96 Bins, log).
+- E_VOLTAGE = „Normalized receiver average voltage" (CATDESC), field
+  „electric_field> volts", Wertebereich [0, ~14] (RAD2), positiv, 0 beyond-1e30-Fill.
+B2 Force-Gate: die Antennen-Spannung ist der Messwert selbst — die Radio-Welle (em)
+  am Empfänger, V (normierte Spannung), NICHT V/m (kein L_eff-Umrechnen). Verdict:
+  force em, unit V. (electric = quasistatisches mV/m-Feld wie RPW EDC_SRF — nicht
+  dieser Kanal.)
+B3 Ernte-Prototyp (wind_waves_compiler): ein Monat 2021-01 (31 Tage, 0 void),
+  Tages-Median je Frequenzbin → 608 Bins/Tag (RAD2 256 + RAD1 256 + TNR 96) =
+  18848 Records, eigenes Bin (magic WAV1, Record [t_tdb f64, freq_hz f64,
+  bin_width_hz f64, val_v f64, receiver u32], Voronoi-bin_width mit gespiegelten
+  Rändern), Roundtrip ✓. freq/bin_width speisen die Spektral-Oszillator-Achse.
+  Frame at wind: BODY_REGISTRY kennt wind nicht — kein SPK (NAIF -485) in der
+  ephemeris_compiler-Liste, keine Horizons-Bahn (L1-Raumsonde) → pending eigenes
+  Atom. Volle Ernte 1994–2021 (~9855 Tage × 608 Bins ≈ 6 M Records, ~200 MB) =
+  Folge-Atom.
+
+Gates: cargo check 0/0 für die neuen Dateien; der lib-test-Build bricht an fremder,
+uncommiteter Arbeit (ephemeris/fits/hdf5-Refactor im Baum — archivar.rs/
+mathematikerin.rs, nicht diese Einheit); Ernte kopf-los (kein Fenster), Roundtrip ✓.

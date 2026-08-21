@@ -27,3 +27,4 @@ pub mod rpw;
 pub mod sexagesimal;
 pub mod spectral;
 pub mod te;
+pub mod wind;
