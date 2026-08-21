@@ -259,6 +259,18 @@ phasenrandomisiert (mean+2σ, 10 Surrogate) + Familien-Schwelle fam =
 stärkste Surrogat-TE der Runde (Mehrfachvergleichskorrektur). Offen
 bleibt: die CI-Verdrahtung (kernel_flatten-Job `euvs` + CDN-Upload
 goes_euvs.bin) und der KDE-Sensitivitäts-Sweep (h, h/2, 2h).
+Blatt-Befund (2026-08-21, solar_dag_probe auf den echten Serien,
+gemeinsames Fenster 2009-09 → 2020-03, 3837 Tages-Zellen, 30 Paare ×
+lag 0..7 d): **kein fam-gereinigter Pfeil** — fam = 2,108e-1 (stärkste
+Surrogat-TE der Runde), alle 30 TE darunter. Sieben Paare tragen
+family bound (über der eigenen phasenrandomisierten Schwelle, unter
+fam): Lya1216→XRSB 1,66e-1 (lag 7 d), Lya1216→XRSA 5,58e-2 (lag 5 d),
+Bz→F10.7 8,50e-2 (lag 7 d), Bz→Lya1216 7,98e-2 (lag 7 d), Bz→Dichte
+1,60e-1 (lag 0 d); die stärksten Hinweise liegen auf der Achse
+Chromosphäre (Lyman-α) → Korona (XRSB, 7 Tage) und Bz↔Dichte (lag 0) —
+benannt, nicht behauptet (unter fam). Die Tages-Skala bleibt still;
+die Pfeile der nobel probe leben auf der Minute-Skala (EUV→X-Ray,
+Bz→X-Ray, lag 0/1, 7-Tage-Fenster). 0 honored: Stille ist der Befund.
 A=A-Reparatur (2026-08-21): der solar-radio-flux-Block ist aus dem
 Register entfernt — path 0.details.0.flux war eine Chimäre (je Fetch
 eine andere Station/Frequenz, Frame on earth 0 0 0 fabriziert) →
