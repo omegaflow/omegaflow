@@ -611,6 +611,18 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie.bin
+format omni2_serie
+at sun
+ttl 3600
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 86400 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 86400 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600

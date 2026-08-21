@@ -8,11 +8,13 @@ use std::process::Command;
 use std::sync::{Arc, OnceLock};
 
 pub mod goes;
+pub mod omni2;
 
 fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     match format {
         "rpw_efield" => crate::rpw::parse_bin(bytes),
         "goes_xrs" => goes::parse_bin(bytes),
+        "omni2_serie" => omni2::parse_bin(bytes),
         _ => None,
     }
 }
@@ -27,6 +29,16 @@ fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "goes_xrs" => match comp {
             goes::COMP_XRSA => Some("goes_xrs_xrsa"),
             goes::COMP_XRSB => Some("goes_xrs_xrsb"),
+            _ => None,
+        },
+        "omni2_serie" => match comp {
+            omni2::COMP_V1800 => Some("omni_solarwind_flow_speed_kms"),
+            omni2::COMP_N1800 => Some("omni_solarwind_density_percc"),
+            omni2::COMP_T1800 => Some("omni_solarwind_temp_k"),
+            omni2::COMP_BX => Some("omni_imf_bx_gse_nt"),
+            omni2::COMP_BY => Some("omni_imf_by_gsm_nt"),
+            omni2::COMP_BZ => Some("omni_imf_bz_gsm_nt"),
+            omni2::COMP_PRESSURE => Some("omni_solarwind_pressure_npa"),
             _ => None,
         },
         _ => None,
@@ -17074,7 +17086,7 @@ pub fn main_flow() {
             }
             if matches!(
                 archive.sources[i].format.as_str(),
-                "rpw_efield" | "goes_xrs"
+                "rpw_efield" | "goes_xrs" | "omni2_serie"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

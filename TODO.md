@@ -201,15 +201,36 @@ GOES-Dateien ließen zuvor die ganze Datei verwerfen (Tests
 parses_goes_xrs_science_file + real_filters_* gegen die Fixtures).
 Atom 5, F10.7-Teil: ERLEDIGT in der Parallel-Session (siehe oben,
 f107_penticton.bin); Mg II/SSN abgelehnt (Force-Gate: dimensionslose
-Indizes ohne Litmus, docs/concepts/sunspots.md). Offen bleibt: Atom 4
-(OMNI2-Full-Serie 1963–heute, HAPI-Window-Ernte analog rpw; ~550 k
-Stunden × 7 Felder → Auflösung gegen das Sample-Budget wählen) und der
-Lang-Fenster-Probe F10.7-Historie × GOES-XRS-Historie (nun entblockt);
-Quellen vermessen in
-docs/surveys/survey-2026-08-21-sonnen-abdeckung.md; der offene Rest
-trägt die Übergabe
+Indizes ohne Litmus, docs/concepts/sunspots.md).
+Atom 4 (2026-08-21): ERLEDIGT — die OMNI2-Full-Serie. `omni2_compiler`
+erntet CDAWeb-HAPI `OMNI2_H0_MRG1HR` in Jahres-Fenstern (1963-01-01 →
+2026-08-06, HAPI-CSV ohne Header, 8 Spalten in der Parameter-Ordnung
+der URL) → `omni2_serie.bin` (Magie "OMN1", 20-B-Records wie rpw,
+comp-Codes 1..7 = V,N,T,BX,BY,BZ,Pressure in der Live-Block-Ordnung).
+Auflösung: Daily-Bucket-Mediane (Default 1440 min; ~550 k Stunden →
+139 215 Records — die Stunden-Auflösung überstiege MAX_SAMPLES, der
+`--decimate-min`-Knopf bleibt). Epoche = UTC-unix ohne LSK (f107-Doktrin:
+prä-1972 liest die Schaltsekundentabelle void, und TDB−UTC ~69 s liegt
+unter der Tages-Bucket-Weite — im Bin benannt, keine Fabrikation).
+Fill-Skips je Parameter (B/N 999.9, T 9999999.0, V 9999.0, P 99.99) +
+Plausibilitäts-Bereiche: |B| ≤ 1000 nT (Bz = 0 ist eine Messung),
+T ≤ 1e8 K, N ≤ 1000 cm⁻³, V ≤ 5000 km/s, P ≤ 1000 nPa — alle
+positiv definit außer den B-Komponenten; unplausibel → Skip, nie 0.0.
+Überlappung mit dem Live-Fenster: die Serie endet am dataset-stop
+(2026-08-06); der Reprozessierungs-Lag (~2–4 Wochen) hält Serie und
+7-Tage-Live-Fenster disjunkt; wächst das Dataset nach, überschreibt
+der nächste CI-Lauf das CDN-Asset (die Serie gewinnt — keine
+(t,comp)-Deduplikation im Bin). Block `format omni2_serie at sun`
+(τ=86400, die 7 Felder des Live-Blocks); der Loader trägt den Zweig
+(series_parse_bin/series_component_name). CI (sources-Repo):
+`omni2_compiler --window-start 1963-01-01 --window-end 2026-08-06
+--decimate-min 1440 --jobs 8 --ci-mode` — bis der Lauf manifestiert,
+trägt der Block die benannte Verweigerung (fetch void, 0 honored).
+Offen bleibt: der Lang-Fenster-Probe F10.7-Historie ×
+GOES-XRS-Historie über Jahre (die Übergabe
 docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
-(die sonnen-abdeckung-Übergabe ist archiviert).
+trägt ihn; Quellen vermessen in
+docs/surveys/survey-2026-08-21-sonnen-abdeckung.md).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
@@ -1393,8 +1414,19 @@ presence_gate 9-Tupel; Relay-Parser liest 4 f64 mehr nach
 delta_t_cache; JS-Wire packt vx,vy,vz,t_thrust nach cache_interval;
 Browser-Presence ruht v=[0,0,0]/t_thrust=0.0). Die
 AGENTS-Klarstellung „presence rests vs. thrust" trägt der Bau.
-Offen: Atome 3–5 (Ruhe-Gate + Relativ-Kinematik mit
-Φ·Median-Schwelle, temporaler Fetch, Sprung-Fetch).
+Atom 3 (Ruhe-Gate & Kinematische Dilatation) ERLEDIGT (2026-08-21): der
+Fenster-Range-Term fliegt aus dem Fetch-Gate (range bleibt Render-Sache);
+presence_gate rechnet Ruhe `dist ≤ signal_reach + kernel_extent`
+(dispatch_reach + dispatch_extent, body_props über frame_body_name) und
+Schub `v_rel = v_presence − v_anchor`, Fetch wenn
+`(dist − reach − extent)/closing < Φ × Median-Fetchdauer` — v_anchor über
+body_barycenter_velocity (chebyshev_evaluate_deriv, 1/(dt_jd·86400)-Skala;
+Surface/Barycenter → Körpergeschwindigkeit, Manifest/frameless → None →
+nur Ruhe-Gate), closing = v_rel·r̂ (r̂ presence→Anker), closing ≤ 0 →
+keine Antizipation; Median-Fetchdauer als Ring 2⁴ in settle_fetch
+(record_fetch_duration/median_fetch_duration, ohne Median keine
+Antizipation — 0 honored).
+Offen: Atome 4–5 (temporaler Fetch, Sprung-Fetch).
 
 Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
 Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine
