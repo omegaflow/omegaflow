@@ -778,7 +778,9 @@ use winit::application::ApplicationHandler;
 use winit::event::{ElementState, MouseButton, MouseScrollDelta, TouchPhase, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoopBuilder};
 use winit::keyboard::{Key, KeyCode, NamedKey, PhysicalKey};
+#[cfg(target_os = "linux")]
 use winit::platform::wayland::EventLoopBuilderExtWayland;
+#[cfg(target_os = "linux")]
 use winit::platform::x11::EventLoopBuilderExtX11;
 use winit::window::{Fullscreen, Window, WindowAttributes, WindowId};
 
@@ -3921,7 +3923,9 @@ fn run_window(
     solar_rx: mpsc::Receiver<SolarCell>,
 ) {
     let mut builder = EventLoopBuilder::<()>::default();
+    #[cfg(target_os = "linux")]
     EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
+    #[cfg(target_os = "linux")]
     EventLoopBuilderExtWayland::with_any_thread(&mut builder, true);
     let event_loop = match builder.build() {
         Ok(el) => el,

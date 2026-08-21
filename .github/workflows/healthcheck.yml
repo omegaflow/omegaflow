@@ -36,10 +36,10 @@ jobs:
         key: archivar-cache-${{ github.run_id }}
     - if: failure()
       run: |
-        gh issue create --repo omegaflow/omegaflow \
-          --title "health: verify returned void" \
-          --body "Verify job failed. Last commit: ${{ github.sha }}" \
-          --label health
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: verify returned void" \
+          "Verify job failed. Last commit: ${{ github.sha }}" \
+          health
 
   reverify:
     runs-on: ubuntu-latest
@@ -57,10 +57,10 @@ jobs:
     - if: always()
       run: |
         if grep -qE " (drift-void|kaputt) " reverify.txt; then
-          gh issue create --repo omegaflow/omegaflow \
-            --title "health: recheck-live trägt drift/kaputt-Befunde" \
-            --body "Der Re-Verifikations-Sweep meldet drift-void/kaputt-Befunde. Artifact: reverify (reverify.txt + recheck_live.φ)." \
-            --label health
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "health: recheck-live trägt drift/kaputt-Befunde" \
+            "Der Re-Verifikations-Sweep meldet drift-void/kaputt-Befunde. Artifact: reverify (reverify.txt + recheck_live.φ)." \
+            health
         fi
 
   pages-verify:
@@ -75,10 +75,10 @@ jobs:
         echo "pages ok: $STATUS"
     - if: failure()
       run: |
-        gh issue create --repo omegaflow/omegaflow \
-          --title "health: pages returned void" \
-          --body "Pages health check failed. https://omegaflow.space/ may be down." \
-          --label health
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: pages returned void" \
+          "Pages health check failed. https://omegaflow.space/ may be down." \
+          health
 
   probe-smoke:
     runs-on: ubuntu-latest
