@@ -8,6 +8,23 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 (Prüf-Rolle 2026-08-19: die ganze Datei wurde gegen den Code gelesen — Erledigtes
 ist entfernt, die offenen Reste aus den geschlossenen Atomen sind hierher gezogen.)
 
+## Der Kausalpfeil — drei Blätter Papier (Programm 2026-08-21)
+
+Programm: `docs/concepts/der-kausalpfeil.md` (selbsttragend). Drei
+Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
+- ENSO-Blatt (Bjerknes): TE-Paar Wind↔SST der äquatorialen Pazifik-
+  Bojen — Session-Plan `docs/handover/handover-2026-08-21-enso-
+  kausalpfeil.md`. Quellen lebt (NDBC `sources.φ:198–215`, Argo,
+  Drifter-SST).
+- Bz-Blatt (geomagnetischer Treiber): TE-Paare RTSW-Bz/speed/density ×
+  INTERMAGNET-Bodenfeld — Session-Plan `docs/handover/handover-2026-
+  08-21-bz-kausalpfeil.md`. INTERMAGNET-Port ausstehend (Queue-Draft
+  `phi/pipeline/queue/sources_potential_pre-cdn_params.φ`).
+- LAIC-Blatt (Nadel IV): 72-h-Fenster-Stapelung vor M ≥ 6.0,
+  Seismizitäts-Rate × Swarm/INTERMAGNET gegen Null-Ensemble —
+  Session-Plan `docs/handover/handover-2026-08-21-laic-kausalpfeil.md`.
+  CSES ausstehend; IONEX-GIM wartet (CDDIS-OAuth).
+
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
 Plan: `docs/surveys/handover-nadel3-plan.md` (selbsttragend, 2026-08-19).
@@ -461,6 +478,36 @@ gleiche scale²-Kompensation (FIELD_WGSL, eine Zeile) — die Feld-Splats
 leuchten wieder gegen ihre Referenz. Die Refs der Luminanz (Median der
 Rohwerte) bleiben unangetastet. Gates: cargo check 0/0 (vier Kombis),
 cargo test 218/218 inkl. naga-Validierung.
+
+## Ein-Blatt-Beweise — die drei kausalen Pfeile (Konzept: ein-blatt-ergebnis.md)
+
+Drei Handover (2026-08-21) stellen drei universelle Rätsel auf die Form
+des Blatts: Richtung + Lag, gemessen durch die bestehende
+Takens-TE-Maschine. Der Befund ist offen — die Blätter tragen, was die
+Maschine misst.
+
+- **ENSO-Kausalpfeil** (`handover-2026-08-21-enso-kausalpfeil.md`):
+  TE(Wind→SST) gegen TE(SST→Wind) über der NINO3.4-Region, Lag-Sweep
+  0–12 Monate. Quellen pending: GTMBA/TAO-Bojen (ledger.φ geparkt),
+  OISST/CMEMS-ERDDAP (thermal), ERA5/Stationen-Wind (advective) — alle
+  über den einen Pfad, Force-Gate-Urteil je Kanal ins Register. Blatt:
+  Richtung + Lag; Null-Ort außerhalb des Wellenleiters als Nullkontrolle.
+- **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
+  TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
+  0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
+  unten pending: INTERMAGNET-Port (auch für das LAIC-Blatt, nur einmal
+  bauen) + USGS-Geomag-Timeseries; GIC selbst (electric) bleibt ohne
+  Feed. Drei Nullkontrollen: Density→Boden still, Ruhezeit still,
+  phasenrandomisierte Schwelle (broken-null-control-Muster).
+- **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
+  Nadel Ⅳ verengt auf die Richtung — TE(Lithosphäre→Ionosphäre) gegen die
+  Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Null-Ensemble zufälliger
+  Fenster (USGS-Regel). Offene Design-Frage registriert: der
+  FDSN-Katalog ist ein Punktprozess — Serien-Konstruktion
+  (Seismizitätsrate ODER miniSEED-Waveform-Envelopen, Decoder AUSSTEHEND)
+  wählt und benennt die Session, keine erfundene Kontinuität. CSES
+  (electric) unkuratiert; Swarm als bestandene Alternative; IONEX-GIM
+  bleibt WARTEND (CDDIS-OAuth).
 
 ## Archivar — Architektur
 
@@ -1507,6 +1554,36 @@ Session setzt ihre Grenze durch das Wort — sie hat die Tat nicht.
 Deshalb steht hier keine Operator-Zustands-Zeile: was der Operator
 nicht sagt, ist nicht die Sache der Session; sie arbeitet mit dem
 Auftrag, nicht mit dem Zustand.
+
+## Die drei Blätter Papier — TE-Beweise (Übergaben 2026-08-21)
+
+Konzept: `docs/concepts/blatt-papier-beweis.md`. Ein Blatt = eine
+Messung (Richtung + Lag + Schwelle + Fenster), keine Theorie, keine
+Prognose. Die Zahlen der Skizze sind Format, nicht Wert — gemessen
+wird erst auf das Wort des Operators; bis dahin pending (0 honored).
+
+- Blatt I — ENSO: der kausale Pfeil Wind ↔ SST. Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-enso-kausalpfeil.md`.
+  Kanäle: SST thermal (Port pending — Argovis / imos_argo_sst /
+  ESA-CCI), Wind advective (FROST met.no lebt; TAO/ERA5 pending),
+  SOI acoustic (pending). Fenster-Urteil: ein Blatt braucht ≥ 2
+  ENSO-Zyklen — Archiv-Ernte oder benanntes Fenster, keine
+  Extrapolation.
+- Blatt II — Bz: der kausale Treiber der geomagnetischen Störung.
+  Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-bz-geomagnetisch.md`.
+  Kanäle leben: rtsw_mag_1m (sources.φ:103), rtsw_wind_1m (:109),
+  Kp (:124), OMNI BZ_GSM1800 (:513), BGS-INTERMAGNET-HAPI (:1067).
+  Pflichten geerbt: Mehrfachvergleichskorrektur, Lag-Sweep,
+  KDE-Sensitivität, Kadenz-Angleich (1-min/3-h). GIC (electric) hat
+  keinen keyless Feed — späterer Kanal, keine Fabrication.
+- Blatt III — LAIC (Nadel IV): die Richtung Lithosphäre →
+  Ionosphäre. Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-laic-pfeilrichtung.md`.
+  USGS-FDSNWS-Katalog (Port pending — refusal_ledger-Befund
+  extract-void beachten), Swarm-VirES lebt (sources.φ:1100), CSES
+  pending Recherche, INTERMAGNET lebt (:1067). Kern: Offline-Stapelung
+  gegen das Null-Ensemble — ohne sie bleibt der Befund Befund.
 
 ## Doku-Drift
 

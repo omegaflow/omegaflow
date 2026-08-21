@@ -678,6 +678,9 @@ pub fn body_barycenter_position(
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<[f64; 3]> {
     let e = eph.get(name)?;
+    if let Some(orbit) = &e.orbit {
+        return crate::wind_orbit::position_at(orbit, tdb).map(|(p, _)| p);
+    }
     let jd = tdb / 86400.0 + J2000_EPOCH;
     let idx = e.granules.partition_point(|g| g.t0_jd < jd);
     for i in [idx.saturating_sub(1), idx] {
@@ -2470,6 +2473,7 @@ pub struct BodyEphemeris {
     pub granules: Vec<ChebyshevGranule>,
     pub rotation_matrices: Vec<(f64, [f64; 9])>,
     pub props: Option<BodyProperties>,
+    pub orbit: Option<std::sync::Arc<crate::wind_orbit::OrbitRec>>,
 }
 
 pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
@@ -2710,6 +2714,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             granules,
             rotation_matrices,
             props,
+            orbit: None,
         })
     }
 }
@@ -3654,6 +3659,26 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         if let Some(eph) = parse_ephemeris_binary(&buf) {
             return ExtractResult::WithEphemeris(vec![], eph);
+        }
+        return ExtractResult::Measurements(vec![]);
+    }
+    if src.format == "orbit_bin" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        if let Some(records) = crate::wind_orbit::parse_bin(&buf) {
+            let rec = std::sync::Arc::new(crate::wind_orbit::orbit_rec(&records));
+            return ExtractResult::WithEphemeris(
+                vec![],
+                BodyEphemeris {
+                    granules: Vec::new(),
+                    rotation_matrices: Vec::new(),
+                    props: None,
+                    orbit: Some(rec),
+                },
+            );
         }
         return ExtractResult::Measurements(vec![]);
     }
@@ -7598,6 +7623,7 @@ field temp temp_c\n";
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            orbit: None,
         };
         let mut map = HashMap::new();
         map.insert("mars".to_string(), eph);
@@ -7678,6 +7704,7 @@ field temp temp_c\n";
             granules: vec![granule],
             rotation_matrices: vec![(jd, m)],
             props: Some(props),
+            orbit: None,
         };
         let mut map = HashMap::new();
         map.insert("mars".to_string(), eph);
@@ -7758,11 +7785,13 @@ field temp temp_c\n";
             granules: vec![granule.clone()],
             rotation_matrices: vec![(jd, m)],
             props: Some(props.clone()),
+            orbit: None,
         };
         let eph_test = super::BodyEphemeris {
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            orbit: None,
         };
         let mut map_matrix = HashMap::new();
         map_matrix.insert("mars".to_string(), eph_matrix);
@@ -7824,6 +7853,7 @@ field temp temp_c\n";
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            orbit: None,
         };
         let mut map = HashMap::new();
         map.insert("mars".to_string(), eph);
@@ -7968,6 +7998,7 @@ field temp temp_c\n";
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            orbit: None,
         };
         let mut eph = HashMap::new();
         eph.insert("mars".to_string(), mars_eph);
@@ -8105,6 +8136,7 @@ field temp temp_c\n";
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            orbit: None,
         };
         let mut eph = HashMap::new();
         eph.insert("mars".to_string(), mars_eph);
@@ -8655,7 +8687,7 @@ field temp temp_c\n";
         let uses = super::anchor_uses(&sources);
         let eph_bodies: std::collections::HashSet<String> = sources
             .iter()
-            .filter(|s| s.format == "ephemeris_binary")
+            .filter(|s| s.format == "ephemeris_binary" || s.format == "orbit_bin")
             .filter_map(|s| s.body.clone())
             .collect();
         let missing: Vec<&String> = uses.keys().filter(|b| !eph_bodies.contains(*b)).collect();
@@ -8698,6 +8730,7 @@ field temp temp_c\n";
             granules: Vec::new(),
             rotation_matrices: Vec::new(),
             props: Some(props),
+            orbit: None,
         };
         for i in -1..=1 {
             let t0 = jd_now + i as f64 * 16.0;
@@ -8791,6 +8824,47 @@ field temp temp_c\n";
             !recs_ssb.is_empty(),
             "the earth surface sample within the boot window must reach the SSB presence"
         );
+    }
+
+    #[test]
+    fn test_wind_orbit_bin_positions_when_present() {
+        let path = "/tmp/opencode/wind_orbit_test.bin";
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => return,
+        };
+        let records = match crate::wind_orbit::parse_bin(&bytes) {
+            Some(r) => r,
+            None => return,
+        };
+        assert!(records.len() >= 144);
+        let rec = std::sync::Arc::new(crate::wind_orbit::orbit_rec(&records));
+        let eph = super::BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props: None,
+            orbit: Some(rec),
+        };
+        let mut map = std::collections::HashMap::new();
+        map.insert("wind".to_string(), eph);
+        let first_t = records[0].0;
+        let p = super::body_barycenter_position("wind", first_t, &map).unwrap();
+        assert!((p[0] - records[0].1[0]).abs() < 1.0e-3);
+        assert!((p[1] - records[0].1[1]).abs() < 1.0e-3);
+        assert!((p[2] - records[0].1[2]).abs() < 1.0e-3);
+        let mid_t = (records[0].0 + records[1].0) * 0.5;
+        let mid = super::body_barycenter_position("wind", mid_t, &map).unwrap();
+        for k in 0..3 {
+            let expected = (records[0].1[k] + records[1].1[k]) * 0.5;
+            assert!((mid[k] - expected).abs() < 1.0e-3);
+        }
+        assert!(super::body_barycenter_position(
+            "wind",
+            records[records.len() - 1].0 + 1.0e8,
+            &map
+        )
+        .is_none());
+        assert!(super::body_barycenter_position("wind", records[0].0 - 1.0e8, &map).is_none());
     }
 
     #[test]
@@ -11148,6 +11222,7 @@ fn live_sweep(
         if matches!(
             s.format.as_str(),
             "ephemeris_binary"
+                | "orbit_bin"
                 | "catalog_dastcom"
                 | "netcdf"
                 | "finals"
@@ -11158,6 +11233,7 @@ fn live_sweep(
                 | "lightcurve"
                 | "rpw_efield"
                 | "goes_xrs"
+                | "wind_waves"
                 | "gong_modes"
         ) {
             continue;
@@ -11516,7 +11592,7 @@ fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
 fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String, usize> {
     let mut uses = std::collections::HashMap::new();
     for s in sources {
-        if s.format == "ephemeris_binary" || s.format == "kernel_text" {
+        if s.format == "ephemeris_binary" || s.format == "kernel_text" || s.format == "orbit_bin" {
             continue;
         }
         match &s.frame {
@@ -11540,7 +11616,7 @@ fn spawn_ephemeris_bootstrap(
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     for (i, s) in sources.iter().enumerate() {
-        if s.format != "ephemeris_binary" {
+        if s.format != "ephemeris_binary" && s.format != "orbit_bin" {
             continue;
         }
         let Some(body) = &s.body else {
@@ -11587,9 +11663,14 @@ fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         .map(|(_, _, p)| format!("{}.part", p))
         .collect();
     let mut pending: Vec<(usize, String, String)> = Vec::new();
-    for (i, (_, _, tmp_path)) in items.iter().enumerate() {
+    for (i, (_, s, tmp_path)) in items.iter().enumerate() {
         if let Ok(data) = std::fs::read(&parts[i]) {
-            if parse_ephemeris_binary(&data).is_some() {
+            let valid = if s.format == "orbit_bin" {
+                crate::wind_orbit::parse_bin(&data).is_some()
+            } else {
+                parse_ephemeris_binary(&data).is_some()
+            };
+            if valid {
                 let _ = std::fs::rename(&parts[i], tmp_path);
                 continue;
             }
@@ -16295,7 +16376,7 @@ pub fn main_flow() {
         if tick & 63 == 0 {
             let mut missing_ttl: Option<f64> = None;
             for s in &archive.sources {
-                if s.format != "ephemeris_binary" {
+                if s.format != "ephemeris_binary" && s.format != "orbit_bin" {
                     continue;
                 }
                 let Some(body) = &s.body else {
@@ -16306,8 +16387,8 @@ pub fn main_flow() {
                     || archive
                         .body_ephemerides
                         .get(body)
-                        .and_then(|e| e.props.as_ref())
-                        .is_some()
+                        .map(|e| e.props.is_some() || e.orbit.is_some())
+                        .unwrap_or(false)
                 {
                     continue;
                 }
@@ -16508,7 +16589,9 @@ pub fn main_flow() {
             if archive.origins.values().filter(|o| o.in_flight).count() >= FETCH_BUDGET {
                 break;
             }
-            if archive.sources[i].format == "ephemeris_binary" {
+            if archive.sources[i].format == "ephemeris_binary"
+                || archive.sources[i].format == "orbit_bin"
+            {
                 let src_idx = i;
                 let src_clone = archive.sources[i].clone();
                 let tmp_path = match &src_clone.body {
@@ -17175,6 +17258,115 @@ pub fn main_flow() {
                                 z: 0.0,
                                 freq: 0.0,
                                 bin_width: 0.0,
+                                epoch: t,
+                                position: Position::Source,
+                                name: fc.name.clone(),
+                                value: val,
+                            },
+                            fc.clone(),
+                        ));
+                    }
+                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "wind_waves" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("wind_waves").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_series_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let records = match crate::wind::parse_bin(&bytes) {
+                        Some(r) => r,
+                        None => {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no WAV1 contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    if fields.is_empty() {
+                        eprintln!(
+                            "{} {}: field undeclared — the block carries no field line",
+                            fmt, url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let mut channels = Vec::with_capacity(records.len());
+                    for (t, freq, binw, val, recv) in records {
+                        let name = format!(
+                            "wind_waves_{}",
+                            crate::wind::receiver_name(recv).to_lowercase()
+                        );
+                        let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                            continue;
+                        };
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq,
+                                bin_width: binw,
                                 epoch: t,
                                 position: Position::Source,
                                 name: fc.name.clone(),
