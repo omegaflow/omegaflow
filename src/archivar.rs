@@ -3,7 +3,7 @@ use crate::force::{force_id_of, kernel_id_for_force};
 use crate::inflate::unzip;
 pub use crate::json::{jnum, jpath, jpath_val, json_num, jstr, parse_json, scalar_of, JsonVal};
 pub use crate::lsk::LeapSeconds;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::process::Command;
 use std::sync::{Arc, OnceLock};
 
@@ -559,6 +559,7 @@ pub struct SourceConfig {
     pub stations_lat: String,
     pub stations_lon: String,
     pub stations_id: String,
+    pub hapi_fill: HashMap<String, f64>,
     pub flux_from_mag: Option<String>,
     pub abs_mag_from: Option<String>,
     pub catalog_epoch: Option<f64>,
@@ -1339,6 +1340,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_stations_lat = String::from("lat");
     let mut cur_stations_lon = String::from("lng");
     let mut cur_stations_id = String::from("id");
+    let mut cur_hapi_fill: HashMap<String, f64> = HashMap::new();
     let mut cur_flux_from_mag: Option<String> = None;
     let mut cur_abs_mag_from: Option<String> = None;
     let mut cur_catalog_epoch: Option<f64> = None;
@@ -1381,6 +1383,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             stations_lat: std::mem::take(&mut cur_stations_lat),
                             stations_lon: std::mem::take(&mut cur_stations_lon),
                             stations_id: std::mem::take(&mut cur_stations_id),
+                            hapi_fill: std::mem::take(&mut cur_hapi_fill),
                             flux_from_mag: cur_flux_from_mag.clone(),
                             abs_mag_from: cur_abs_mag_from.clone(),
                             catalog_epoch: cur_catalog_epoch,
@@ -1425,6 +1428,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_stations_lat = String::from("lat");
                 cur_stations_lon = String::from("lng");
                 cur_stations_id = String::from("id");
+                cur_hapi_fill.clear();
                 cur_flux_from_mag = None;
                 cur_abs_mag_from = None;
                 cur_catalog_epoch = None;
@@ -1865,6 +1869,15 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 }
                 cur_extracts.push(Extract::Hapi(params));
+            }
+            "hapi_fill" if parts.len() >= 2 => {
+                for s in &parts[1..] {
+                    if let Some((k, v)) = s.split_once('=') {
+                        if let Ok(fv) = v.parse::<f64>() {
+                            cur_hapi_fill.insert(k.to_string(), fv);
+                        }
+                    }
+                }
             }
             "alerce" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Alerce(parts[1].to_string()));
@@ -2792,10 +2805,15 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     };
     let mut tp = t.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
-    let mm: u32 = tp.next()?.parse().ok()?;
+    let mm: u32 = match tp.next() {
+        Some(s) => s,
+        None => "0",
+    }
+    .parse()
+    .ok()?;
     let ss: u32 = match tp.next() {
         Some(s) => s,
-        None => return None,
+        None => "0",
     }
     .parse()
     .ok()?;
@@ -5048,17 +5066,30 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     }
                                 }
                             }
+                            for (k, v) in &src.hapi_fill {
+                                fill_of.entry(k.clone()).or_insert(*v);
+                            }
                             if !has_params {
-                                if pairs.len() == 1 {
+                                if pairs.len() == 1 && !pairs[0].0.contains('.') {
                                     if let Some(JsonVal::Arr(row)) = data.last() {
                                         if let Some(val) = row.last().and_then(scalar_of) {
-                                            extracted.insert(pairs[0].1.clone(), val);
+                                            if fill_of
+                                                .get(pairs[0].0.as_str())
+                                                .map_or(true, |&f| val != f)
+                                            {
+                                                extracted.insert(pairs[0].1.clone(), val);
+                                            }
                                         }
                                     }
                                     continue;
                                 }
-                                for (i, (param, _)) in pairs.iter().enumerate() {
-                                    col.insert(param.clone(), i + 1);
+                                let mut next_col = 0usize;
+                                for (param, _) in pairs.iter() {
+                                    let base = param.split('.').next().unwrap_or(param);
+                                    if !col.contains_key(base) {
+                                        next_col += 1;
+                                        col.insert(base.to_string(), next_col);
+                                    }
                                 }
                             }
                             if let Some(last_row) = data.last() {
@@ -5361,9 +5392,17 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
                         }
                     }
                 }
+                for (k, v) in &src.hapi_fill {
+                    fill_of.entry(k.clone()).or_insert(*v);
+                }
                 if col.is_empty() {
-                    for (i, (param, _)) in pairs.iter().enumerate() {
-                        col.insert(param.clone(), i + 1);
+                    let mut next_col = 0usize;
+                    for (param, _) in pairs.iter() {
+                        let base = param.split('.').next().unwrap_or(param);
+                        if !col.contains_key(base) {
+                            next_col += 1;
+                            col.insert(base.to_string(), next_col);
+                        }
                     }
                 }
                 for row in data {
@@ -5471,6 +5510,7 @@ mod tests {
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         }
     }
 
@@ -5784,6 +5824,47 @@ mod tests {
             _ => panic!("expected measurements"),
         }
     }
+
+    #[test]
+    fn test_hapi_without_parameters_array_vector_and_declared_fill() {
+        let json = r#"{
+            "status": {"code": 1200},
+            "data": [
+                ["2026-08-20T00:00Z", [99999.0, 99999.0, 99999.0], 53558.8],
+                ["2026-08-20T00:01Z", [10864.4, 2071.9, 52404.9], 53546.8]
+            ]
+        }"#;
+        let mut src = source_fixture(
+            "json",
+            vec![
+                Extract::Field(field_fixture("x", 3600.0)),
+                Extract::Field(field_fixture("y", 3600.0)),
+                Extract::Field(field_fixture("z", 3600.0)),
+                Extract::Field(field_fixture("f", 3600.0)),
+                Extract::Hapi(vec![
+                    ("Field_Vector.0".into(), "x".into()),
+                    ("Field_Vector.1".into(), "y".into()),
+                    ("Field_Vector.2".into(), "z".into()),
+                    ("Field_Magnitude".into(), "f".into()),
+                ]),
+            ],
+        );
+        src.hapi_fill.insert("Field_Vector".into(), 99999.0);
+        src.hapi_fill.insert("Field_Magnitude".into(), 99999.0);
+        match extract(&src, json, 8.0e8, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                let vals: Vec<(&str, f64)> = channels
+                    .iter()
+                    .map(|(c, fc)| (fc.name.as_str(), c.value))
+                    .collect();
+                assert!(vals.contains(&("x", 10864.4)));
+                assert!(vals.contains(&("y", 2071.9)));
+                assert!(vals.contains(&("z", 52404.9)));
+                assert!(vals.contains(&("f", 53546.8)));
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
     use std::collections::HashMap;
 
     fn full_fixture_lsk() -> super::LeapSeconds {
@@ -5869,6 +5950,7 @@ mod tests {
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -6120,6 +6202,7 @@ mod tests {
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -6222,6 +6305,7 @@ mod tests {
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6310,6 +6394,7 @@ mod tests {
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6419,6 +6504,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6500,6 +6586,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6611,6 +6698,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6681,6 +6769,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -6753,6 +6842,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -7098,6 +7188,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let stations = parse_station_entries(&j, &src);
         assert_eq!(stations.len(), 3);
@@ -7145,6 +7236,7 @@ field temp temp_c\n";
             stations_flatten: "sensors".into(),
             stations_filter: Some(("parameter.name".into(), "pm25".into())),
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let stations = parse_station_entries(&j, &src);
         assert_eq!(stations.len(), 2);
@@ -7691,6 +7783,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let fixture_lsk = super::LeapSeconds {
@@ -8179,6 +8272,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let channel = super::Channel {
             z: 0.0,
@@ -8318,6 +8412,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let channel = super::Channel {
             z: 0.0,
@@ -9412,6 +9507,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let empty_geojson =
             r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
@@ -9517,6 +9613,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
         let now = 8.4e8;
@@ -9605,6 +9702,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"data":[
                 {"lat":10.0,"lon":20.0,"alt":0.0,"spd":72.0,"hdg":90.0,"vr":3.6,"row_tau":60.0,"v":5.0},
@@ -9829,6 +9927,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"data":[
                 {"lat":1.0,"lon":2.0,"alt":0.0,"nh":420.0,"sh":410.0},
@@ -9935,6 +10034,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let au = 1.495978707e11;
         let expect_v = (1.32712440018e20_f64 / au).sqrt();
@@ -10037,6 +10137,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"rows":[
                 {"t":1000000.0,"pts":[[[10.0,20.0,5.0],[11.0,21.0,6.0]],[[12.0,22.0,7.0]]],"v":3.5},
@@ -10123,6 +10224,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0,"plx":10.0}]"#;
         let now = 8.0e8;
@@ -10202,6 +10304,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"data":[["2026-08-01 17:43:48","2.9","0.1","19.5","S","176.2","E","45.0",null],["2026-07-21 01:14:45","3.2","0.11","9.4","N","57.4","W","31.5",null]]}"#;
         let fixture_lsk = super::LeapSeconds {
@@ -10303,6 +10406,7 @@ field temp temp_c\n";
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
+            hapi_fill: HashMap::new(),
         };
         let body = r#"{"data":[
                 {"lat":1.0,"lon":2.0,"alt":0.0,"magType":"mww","mag":5.5},
@@ -16231,6 +16335,79 @@ pub struct SolarCell {
     pub value: f32,
 }
 
+pub const ENSO_GRID: u32 = 21600;
+const ENSO_RING_MAX: usize = 256;
+const ENSO_FETCH_TTL: u64 = 3600;
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum EnsoStation {
+    St51000,
+    St51001,
+    St41001,
+    St41002,
+    St41043,
+}
+
+impl EnsoStation {
+    pub const ALL: [EnsoStation; 5] = [
+        EnsoStation::St51000,
+        EnsoStation::St51001,
+        EnsoStation::St41001,
+        EnsoStation::St41002,
+        EnsoStation::St41043,
+    ];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            EnsoStation::St51000 => "51000",
+            EnsoStation::St51001 => "51001",
+            EnsoStation::St41001 => "41001",
+            EnsoStation::St41002 => "41002",
+            EnsoStation::St41043 => "41043",
+        }
+    }
+
+    pub fn idx(self) -> usize {
+        match self {
+            EnsoStation::St51000 => 0,
+            EnsoStation::St51001 => 1,
+            EnsoStation::St41001 => 2,
+            EnsoStation::St41002 => 3,
+            EnsoStation::St41043 => 4,
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum EnsoSeries {
+    Wind,
+    Sst,
+}
+
+impl EnsoSeries {
+    pub fn idx(self) -> usize {
+        match self {
+            EnsoSeries::Wind => 0,
+            EnsoSeries::Sst => 1,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            EnsoSeries::Wind => "wind",
+            EnsoSeries::Sst => "sst",
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct EnsoCell {
+    pub station: EnsoStation,
+    pub series: EnsoSeries,
+    pub bin: u64,
+    pub value: f32,
+}
+
 fn solar_find_block<'a>(sources: &'a [SourceConfig], field_name: &str) -> Option<&'a SourceConfig> {
     sources.iter().find(|s| {
         s.extracts.iter().any(|e| match e {
@@ -16443,6 +16620,161 @@ fn solar_harvest(
         }
         drop(lock);
         thread::sleep(std::time::Duration::from_secs(SOLAR_FAST_GRID as u64));
+    }
+}
+
+fn enso_realtime2_parse(
+    body: &str,
+    lsk: &LeapSeconds,
+) -> Option<(Vec<(f64, f64)>, Vec<(f64, f64)>)> {
+    let header = body.lines().find(|l| l.starts_with('#'))?;
+    let cols: Vec<&str> = header.split_whitespace().collect();
+    let wspd = cols.iter().position(|&c| c == "WSPD")?;
+    let wtmp = cols.iter().position(|&c| c == "WTMP")?;
+    let mut wind = Vec::new();
+    let mut sst = Vec::new();
+    for line in body
+        .lines()
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+    {
+        let p: Vec<&str> = line.split_whitespace().collect();
+        if p.len() <= wtmp.max(wspd) {
+            continue;
+        }
+        let Ok(year) = p[0].parse::<i64>() else {
+            continue;
+        };
+        let Ok(month) = p[1].parse::<i64>() else {
+            continue;
+        };
+        let Ok(day) = p[2].parse::<i64>() else {
+            continue;
+        };
+        let Ok(hour) = p[3].parse::<i64>() else {
+            continue;
+        };
+        let Ok(minute) = p[4].parse::<i64>() else {
+            continue;
+        };
+        let days = crate::lsk::days_from_civil(year, month, day)?;
+        let unix = days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0;
+        let Some(t) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        if let Ok(w) = p[wspd].parse::<f64>() {
+            if w.is_finite() {
+                wind.push((t, w));
+            }
+        }
+        if let Ok(s) = p[wtmp].parse::<f64>() {
+            if s.is_finite() {
+                sst.push((t, s));
+            }
+        }
+    }
+    if wind.is_empty() && sst.is_empty() {
+        None
+    } else {
+        Some((wind, sst))
+    }
+}
+
+fn enso_send_bins(
+    series: &[(f64, f64)],
+    station: EnsoStation,
+    kind: EnsoSeries,
+    last_sent: &mut HashMap<(EnsoStation, EnsoSeries), u64>,
+    tx: &mpsc::Sender<EnsoCell>,
+) {
+    let dt = ENSO_GRID as f64;
+    let mut sorted: Vec<&(f64, f64)> = series
+        .iter()
+        .filter(|&&(t, _)| t.is_finite() && t > 0.0)
+        .collect();
+    sorted.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let gate = last_sent.get(&(station, kind)).copied().unwrap_or(0);
+    let mut cells: Vec<EnsoCell> = Vec::new();
+    let mut cur_bin: i64 = i64::MIN;
+    let mut sum: f64 = 0.0;
+    let mut cnt: u32 = 0;
+    for &&(t, v) in &sorted {
+        let bin = (t / dt).floor() as i64;
+        if bin != cur_bin {
+            if cur_bin != i64::MIN && cnt > 0 {
+                let b = cur_bin as u64;
+                if b > gate {
+                    cells.push(EnsoCell {
+                        station,
+                        series: kind,
+                        bin: b,
+                        value: (sum / cnt as f64) as f32,
+                    });
+                }
+            }
+            cur_bin = bin;
+            sum = 0.0;
+            cnt = 0;
+        }
+        sum += v;
+        cnt += 1;
+    }
+    if cur_bin != i64::MIN && cnt > 0 {
+        let b = cur_bin as u64;
+        if b > gate {
+            cells.push(EnsoCell {
+                station,
+                series: kind,
+                bin: b,
+                value: (sum / cnt as f64) as f32,
+            });
+        }
+    }
+    if gate == 0 && cells.len() > ENSO_RING_MAX {
+        let drop = cells.len() - ENSO_RING_MAX;
+        cells.drain(..drop);
+    }
+    for cell in &cells {
+        let _ = tx.send(*cell);
+    }
+    if let Some(last) = cells.last() {
+        last_sent.insert((station, kind), last.bin);
+    }
+}
+
+fn enso_harvest(tx: mpsc::Sender<EnsoCell>, time: Arc<Mutex<Option<LeapSeconds>>>) {
+    let mut last_sent: HashMap<(EnsoStation, EnsoSeries), u64> = HashMap::new();
+    let mut said: HashSet<String> = HashSet::new();
+    loop {
+        let lock = match time.lock() {
+            Ok(l) => l,
+            Err(_) => break,
+        };
+        let Some(lsk) = lock.as_ref() else {
+            drop(lock);
+            thread::sleep(std::time::Duration::from_secs(ENSO_FETCH_TTL));
+            continue;
+        };
+        for station in EnsoStation::ALL {
+            let url = format!(
+                "https://www.ndbc.noaa.gov/data/realtime2/{}.txt",
+                station.id()
+            );
+            if let Some(body) = fetch_raw(&url, None, &[], ENSO_FETCH_TTL) {
+                match enso_realtime2_parse(&body, lsk) {
+                    Some((wind, sst)) => {
+                        enso_send_bins(&wind, station, EnsoSeries::Wind, &mut last_sent, &tx);
+                        enso_send_bins(&sst, station, EnsoSeries::Sst, &mut last_sent, &tx);
+                    }
+                    None => {
+                        if said.insert(format!("{} column absent", station.id())) {
+                            eprintln!("enso pair {} column absent", station.id());
+                        }
+                    }
+                }
+            }
+        }
+        drop(lock);
+        thread::sleep(std::time::Duration::from_secs(ENSO_FETCH_TTL));
     }
 }
 
@@ -16661,6 +16993,9 @@ pub fn main_flow() {
     let solar_sources = loaded.clone();
     let solar_time = time.clone();
     thread::spawn(move || solar_harvest(solar_tx, solar_sources, solar_time));
+    let (enso_tx, enso_rx) = mpsc::channel::<EnsoCell>();
+    let enso_time = time.clone();
+    thread::spawn(move || enso_harvest(enso_tx, enso_time));
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
@@ -16747,6 +17082,7 @@ pub fn main_flow() {
             acoustic_tx,
             seismic_tx,
             solar_rx,
+            enso_rx,
         );
         let em_shutdown = em.shutdown_flag();
         radiators.push(Box::new(em));

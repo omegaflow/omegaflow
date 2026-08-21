@@ -230,10 +230,6 @@ verifiziert
 kandidat https://environment.data.gov.uk
 note Readings-Struktur bestätigt — bereits in sources.φ live
 
-verifiziert
-kandidat https://imag-data.bgs.ac.uk/GIN_V1/observation
-note observation 404; hapi-Sibling trägt die Zeitreihe — bereits in sources.φ live
-
 geparkt
 kandidat https://www.supermag.org
 note DNS absent; live via supermag.jhuapl.edu mit Session-Auth statt Key-Header (gap)

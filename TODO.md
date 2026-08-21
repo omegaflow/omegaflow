@@ -8,6 +8,23 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 (Prüf-Rolle 2026-08-19: die ganze Datei wurde gegen den Code gelesen — Erledigtes
 ist entfernt, die offenen Reste aus den geschlossenen Atomen sind hierher gezogen.)
 
+## Der Kausalpfeil — drei Blätter Papier (Programm 2026-08-21)
+
+Programm: `docs/concepts/der-kausalpfeil.md` (selbsttragend). Drei
+Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
+- ENSO-Blatt (Bjerknes): TE-Paar Wind↔SST der äquatorialen Pazifik-
+  Bojen — Session-Plan `docs/handover/handover-2026-08-21-enso-
+  kausalpfeil.md`. Quellen lebt (NDBC `sources.φ:198–215`, Argo,
+  Drifter-SST).
+- Bz-Blatt (geomagnetischer Treiber): TE-Paare RTSW-Bz/speed/density ×
+  INTERMAGNET-Bodenfeld — Session-Plan `docs/handover/handover-2026-
+  08-21-bz-paradoxon.md`. INTERMAGNET-Komponenten-Port erledigt
+  (2026-08-21); die Blatt-Probe ist die offene Einheit.
+- LAIC-Blatt (Nadel IV): 72-h-Fenster-Stapelung vor M ≥ 6.0,
+  Seismizitäts-Rate × Swarm/INTERMAGNET gegen Null-Ensemble —
+  Session-Plan `docs/handover/handover-2026-08-21-laic-kausalpfeil.md`.
+  CSES ausstehend; IONEX-GIM wartet (CDDIS-OAuth).
+
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
 Plan: `docs/surveys/handover-nadel3-plan.md` (selbsttragend, 2026-08-19).
@@ -462,14 +479,12 @@ leuchten wieder gegen ihre Referenz. Die Refs der Luminanz (Median der
 Rohwerte) bleiben unangetastet. Gates: cargo check 0/0 (vier Kombis),
 cargo test 218/218 inkl. naga-Validierung.
 
-## Ein-Blatt-Beweise — die drei kausalen Pfeile
+## Ein-Blatt-Beweise — die drei kausalen Pfeile (Konzept: ein-blatt-ergebnis.md)
 
 Drei Handover (2026-08-21) stellen drei universelle Rätsel auf die Form
 des Blatts: Richtung + Lag, gemessen durch die bestehende
 Takens-TE-Maschine. Der Befund ist offen — die Blätter tragen, was die
-Maschine misst. Operator-Wort 2026-08-21: kanonisch sind genau diese
-drei Handovers, eins je Rätsel — die Konzept- und Varianten-Dateien
-liegen unter `/home/johannes/projects/archive/einblatt-duplikate-2026-08-21/`.
+Maschine misst.
 
 - **ENSO-Kausalpfeil** (`handover-2026-08-21-enso-kausalpfeil.md`):
   TE(Wind→SST) gegen TE(SST→Wind) über der NINO3.4-Region, Lag-Sweep
@@ -480,10 +495,15 @@ liegen unter `/home/johannes/projects/archive/einblatt-duplikate-2026-08-21/`.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
-  unten pending: INTERMAGNET-Port (auch für das LAIC-Blatt, nur einmal
-  bauen) + USGS-Geomag-Timeseries; GIC selbst (electric) bleibt ohne
-  Feed. Drei Nullkontrollen: Density→Boden still, Ruhezeit still,
-  phasenrandomisierte Schwelle (broken-null-control-Muster).
+  unten: INTERMAGNET-Komponenten-Port ERLEDIGT (2026-08-21) — BGS-GIN
+  HAPI XYZF 1-min, Fanout 40 Stationen + ABK-Auroral-Block
+  (`intermagnet_xyz_x/y/z_nt`, `hapi_fill`-Gate 99999.0, der
+  HAPI-Fallback trägt Vektor-Spalten — gebaut auch für das LAIC-Blatt);
+  USGS-Geomag bleibt geparkt (ledger.φ, Parser-Gap); GIC selbst
+  (electric) ohne Feed. Drei Nullkontrollen: Density→Boden still,
+  Ruhezeit still, phasenrandomisierte Schwelle
+  (broken-null-control-Muster). Die Blatt-Probe (Live-Fenster 1-min)
+  ist die nächste Einheit.
 - **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — TE(Lithosphäre→Ionosphäre) gegen die
   Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Null-Ensemble zufälliger
@@ -1407,30 +1427,6 @@ Offen (Detail in phi/pipeline/ledger.φ):
   WHERE-Quoting (tap_compiler.rs) sind behoben — die Fixe tragen Git.
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
 
-## Verteilung
-
-Die Binaries liegen in GitHub Releases (omegaflow/omegaflow) — Tag =
-Identität, `SHA256SUMS.txt` je Release, Rollback = älterer Tag. Pages
-(omegaflow.space) ist nur noch die Frage-Fläche (Landing + Probe +
-CNAME), die Binaries verlinkt auf `releases/latest/download/<asset>`.
-Atom 1 (Release-Kanal: release.yml + entschlacktes pages.yml) steht.
-
-- Φ-Paket (Atom 2): `omegaflow_sources.tar.gz` ist heute ein 404-Link
-  (der 0-Byte-Platzhalter ist tot — ein Null als Lüge, entfernt). Das
-  echte Paket muss aus dem VOLLSTÄNDIGEN CDN-Asset-Satz gebaut werden:
-  healthcheck.yml sources-package lädt nur `ssd.jpl.nasa.gov` → Teil-
-  wahrheit. Alle Netloc-Releases von omegaflow/sources + sources.φ +
-  sources_live.φ ins Tar, als Release-Asset; healthcheck-sources-package
-  ersetzen.
-- Plattform-Wahrheit (Atom 3): die UA-Erkennung glaubt dem Selbstbericht
-  — Apple Silicon meldet „Intel Mac OS X", der Operator bekommt das
-  falsche Binary. `navigator.userAgentData.platform/architecture` nutzen,
-  sonst beide macOS-Varianten anbieten statt eine zu raten. Termux-
-  Bootstrap ERSETZT (verrottende Bootstrap-URL; das arm64-Binary ist das
-  gültige Asset) — der Landing-Link raus. Unsigned-Status auf der Landing
-  benennen: Gatekeeper/SmartScreen fragen — das ist die Zustimmung des
-  Operators, keine zu verschweigende Hürde.
-
 ## VERSIONIERT / AUSSTEHEND
 
 - Temporal Topology (TDA, Takens, Transfer Entropy, Surrogates) —
@@ -1453,12 +1449,6 @@ Atom 1 (Release-Kanal: release.yml + entschlacktes pages.yml) steht.
   Silizium (gegenstandslos solange die Rampe fix ist) — AUSSTEHEND
 - Future: Aggregation of Presence, Retro-Manifestation, Total Coherence
   Integration, Nostr-Stationsweb — AUSSTEHEND, future-concepts.md
-- Binary-Signing (Apple Developer + MS-Zertifikate) — AUSSTEHEND, braucht
-  Konten
-- musl-static Linux-Build (kein glibc-Zwang) — AUSSTEHEND
-- Installer (.deb/.rpm/AppImage/.dmg/.msi) — AUSSTEHEND
-- crates.io (`cargo install omegaflow`) — AUSSTEHEND; mit PolyForm-
-  Noncommercial als source-available markiert, nicht Open Source
 
 ## Rejected
 
@@ -1589,12 +1579,43 @@ Deshalb steht hier keine Operator-Zustands-Zeile: was der Operator
 nicht sagt, ist nicht die Sache der Session; sie arbeitet mit dem
 Auftrag, nicht mit dem Zustand.
 
+## Die drei Blätter Papier — TE-Beweise (Übergaben 2026-08-21)
+
+Konzept: `docs/concepts/blatt-papier-beweis.md`. Ein Blatt = eine
+Messung (Richtung + Lag + Schwelle + Fenster), keine Theorie, keine
+Prognose. Die Zahlen der Skizze sind Format, nicht Wert — gemessen
+wird erst auf das Wort des Operators; bis dahin pending (0 honored).
+
+- Blatt I — ENSO: der kausale Pfeil Wind ↔ SST. Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-enso-kausalpfeil.md`.
+  Kanäle: SST thermal (Port pending — Argovis / imos_argo_sst /
+  ESA-CCI), Wind advective (FROST met.no lebt; TAO/ERA5 pending),
+  SOI acoustic (pending). Fenster-Urteil: ein Blatt braucht ≥ 2
+  ENSO-Zyklen — Archiv-Ernte oder benanntes Fenster, keine
+  Extrapolation.
+- Blatt II — Bz: der kausale Treiber der geomagnetischen Störung.
+  Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-bz-geomagnetisch.md`.
+  Kanäle leben: rtsw_mag_1m (sources.φ:103), rtsw_wind_1m (:109),
+  Kp (:124), OMNI BZ_GSM1800 (:513), BGS-INTERMAGNET-HAPI (:1067).
+  Pflichten geerbt: Mehrfachvergleichskorrektur, Lag-Sweep,
+  KDE-Sensitivität, Kadenz-Angleich (1-min/3-h). GIC (electric) hat
+  keinen keyless Feed — späterer Kanal, keine Fabrication.
+- Blatt III — LAIC (Nadel IV): die Richtung Lithosphäre →
+  Ionosphäre. Auftrag:
+  `docs/handover/handover-2026-08-21-blatt-laic-pfeilrichtung.md`.
+  USGS-FDSNWS-Katalog (Port pending — refusal_ledger-Befund
+  extract-void beachten), Swarm-VirES lebt (sources.φ:1100), CSES
+  pending Recherche, INTERMAGNET lebt (:1067). Kern: Offline-Stapelung
+  gegen das Null-Ensemble — ohne sie bleibt der Befund Befund.
+
 ## Doku-Drift
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
-Doku-Drift (2026-08-21, entschieden — Operator-Wort): die Ein-Blatt-Dokumentation lag in mehreren parallelen
+Doku-Drift (2026-08-21, offen — Konsolidierung ist ein Wort des
+Operators): die Ein-Blatt-Dokumentation liegt in mehreren parallelen
 Bäumen — Konzepte `ein-blatt-ergebnis.md`, `ein-blatt-papier.md`,
 `blatt-papier-beweis.md`, `blatt-papier-resultat.md`, `der-kausalpfeil.md`
 und Handover-Varianten je Rätsel (`*enso-kausalpfeil*`, `*bz-*`,
@@ -1603,9 +1624,6 @@ und Handover-Varianten je Rätsel (`*enso-kausalpfeil*`, `*bz-*`,
 die illustrativen Zahlen (0.8/0.1, „Lag exakt X"), alle
 „Erwartung"-Zeilen und die „Form, nicht Messung"-Passagen sind aus dem
 gesamten Satz entfernt — die Blätter tragen `pending`, bis die Maschine
-misst; sha256 aller berührten Dateien neu gerechnet. Kanonisch sind
-genau drei Handovers — `handover-2026-08-21-enso-kausalpfeil.md`,
-`handover-2026-08-21-bz-paradoxon.md`,
-`handover-2026-08-21-laic-pfeilrichtung.md`; die übrigen 12 Dateien
-(Konzepte + Handover-Varianten) liegen unter
-`/home/johannes/projects/archive/einblatt-duplikate-2026-08-21/`.
+misst; sha256 aller berührten Dateien neu gerechnet. Offen bleibt, welche
+Konzept- und Handover-Dateien kanonisch sind und welche archiviert
+werden.
