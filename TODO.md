@@ -199,19 +199,19 @@ Nicht-em-Farbtod (2026-08-21): die Membran ist keine Kamera — nur em
 Feld (lum, Transferentropie), sie leuchten nicht. `hsl_to_rgb` ist tot;
 der Objekt-Bias, der den Schirm gelb färbte, fällt.
 
-Asteroiden-Langbogen (2026-08-21, Handover
-handover-2026-08-21-asteroid-langbogen.md): ceres + vesta tragen den
-sb441-n16-Langbogen (8000 v. Chr.–9000 n. Chr., 256-Tage-Raster, Grad
-17, 24.253 Granulen je Körper, Roundtrip ≤ 9,4 m über 4000
-Zufallsepochen; GM aus gm_Horizons.pck; de441.bsp ist der
-Sonnenträger — de442.bsp trägt nur 460 Jahre, gemessen). Offen:
-sb441-n373.bsp (14 GB — der DAF-Reader lädt ganze Dateien in RAM, CI
-7 GB; Streaming-Reader nötig, erst dann sind apophis/bennu-Kandidaten
-prüfbar); die 14 weiteren n16-Körper (pallas, juno, iris, hygiea,
-eunomia, psyche, euphrosyne, europa, cybele, sylvia, thisbe, camilla,
-davida, interamnia) ohne sources.φ-Block; die 12 Körper ohne
-SPK-Segment tragen die 12-Monats-Fenster weiter (fehlt, nicht null);
-NAIF-IDs der 6-stelligen Körper unverifiziert.
+Asteroiden-Langbogen (2026-08-21): ceres + vesta tragen den
+sb441-n16-Langbogen (8001 v. Chr.–9000 n. Chr., JD −1200525,5–5008242,5,
+256-Tage-Raster, Grad 17, 24.253 Granulen je Körper, Roundtrip ≤ 9,4 m;
+GM aus gm_Horizons.pck; de441.bsp ist der Sonnenträger — de442.bsp trägt
+nur ~1100 Jahre, gemessen). Offen: sb441-n373 (14,13 GiB) — der
+Split-Weg (spk_split, Stream, nie full-load; Handover
+handover-2026-08-21-n373-split-langbogen.md, Schritt 0 vermessen:
+373 = 343 + 30 KBO laut IOM-Tabelle 1, Eris 2136199/Haumea 2136108/
+Makemake 2136472 bestätigt drin, Apophis/Bennu/Encke bestätigt nicht
+drin, n373s = Kurzfenster 1550–2650 n. Chr., GM aus IOM-Tabelle 1 —
+gm_Horizons trägt abweichende TNO-Nummern); die 14 weiteren n16-Körper
+ohne sources.φ-Block; die 12 Körper ohne SPK-Segment tragen die
+12-Monats-Fenster weiter (fehlt, nicht null).
 
 HDF5-Erntekarte (2026-08-21, Handover
 handover-2026-08-21-hdf5-fits-ernte.md): recherchiert — HDF5 gehört fast
