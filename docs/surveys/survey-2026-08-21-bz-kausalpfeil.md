@@ -2,7 +2,7 @@
   title: Der kausale Treiber des geomagnetisch induzierten Stroms — das Bz-Blatt
   class: survey
   date: 2026-08-21
-  sha256: 9eb1417b0a3a2334768d3078c83808bfb250466d95f76ae5a4930cf32d91cf9b
+  sha256: a6459444f0ff6ac0738d6c40f2d9e87a6cc2ab80f9bca0d2b074f52df332b2bc
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-bz-paradoxon.md
 -->
@@ -16,13 +16,18 @@ TODO.md unter „Bz-Paradoxon".
 
 ```
 Titel:   Der kausale Treiber des geomagnetisch induzierten Stroms.
-TE(Bz → dB/dt)    = 2.0139e-1 | Schwelle 1.8456e-1 (mean 1.590e-1, σ 1.279e-2) | Lag 60 min | n 1263 | Pfeil
-TE(Speed → dB/dt) = 1.9006e-1 | Schwelle 3.7063e-1 (mean 2.651e-1, σ 5.278e-2) | Lag 120 min | n 1123 | still
+TE(Bz → dB/dt)    = 2.1797e-1 | Schwelle 2.0834e-1 (mean 1.698e-1, σ 1.925e-2) | Lag 60 min | n 1261 | Pfeil
+TE(Speed → dB/dt) = 2.1102e-1 | Schwelle 3.8294e-1 (mean 2.736e-1, σ 5.467e-2) | Lag 90 min | n 1094 | still
+fam               = 3.7436e-1 (max Surrogat-TE der Runde) → alle sechs Paare family bound
 ```
 
 Der Lag 60 min liegt in der physikalischen L1→Erde-Laufzeit (31–87 min bei
-300–800 km/s — der erwartete Kanal); der Sweep-Spitzenwert von Speed liegt
-am Sweep-Rand (120 min) und bleibt unter der Schwelle.
+300–800 km/s — der erwartete Kanal); Speed und die Nullkanäle bleiben unter
+ihrer jeweiligen Schwelle. **Der Pfeil hält die Surrogat-Schwelle, aber nicht
+die Familien-Schwelle** (fam 3.74e-1): im 22-h-Fenster ist er gerichtet
+(Bz→dB/dt, 60 min), nicht fam-signifikant. Das ist derselbe Kollaps, den der
+Broken-Null-Record beschreibt (naive Pfeile → still unter phasenrandomisierter
++ strenger Schwelle) — ein Befund, keine Fabrikation.
 
 ## Die Bedingungen
 
@@ -63,16 +68,20 @@ kurz; der Retro-Weg trägt die Ring-Länge).
 
 ## Der Satz für den Netzbetreiber
 
-Bz trägt den Pfeil — TE(Bz→dB/dt) schlägt bei 60 Minuten über der
-Surrogat-Schwelle aus; Speed und Density bleiben still. Auf den Wert
-schauen, der das Bodenfeld tatsächlich treibt: das südwärts gerichtete
-interplanetare Feld, eine Stunde bevor das Magnetometer ausschlägt.
+Bz ist der gerichtete Treiber — TE(Bz→dB/dt) schlägt bei 60 Minuten über der
+Surrogat-Schwelle aus, Speed und Density bleiben still; aber im 22-h-Fenster
+reicht der Pfeil nicht über die Familien-Schwelle (fam 3.74e-1). Der
+Tages-Ensemble über 60 Jahre (bz_retro_probe) ist die Entscheidung — der
+Minuten-Lag (60 min) steht als gerichteter Befund, das fam-signifikante
+Sturm-Ensemble steht noch aus.
 
 ## Offen (im Register)
 
-- Mehrfachvergleichskorrektur über die Paar-Matrix (25 Lags × 6 Paare) —
-  die Roh-Werte stehen oben, die Korrektur ist registriert offen.
-- Retro-Zeile (Jahre, 1-h, OMNI2 × INTERMAGNET) als zweites Raster.
+- Sturm-Ensemble (bz_retro_probe, omni2-Tagesmittel × INTERMAGNET daily-max
+  |dB/dt|, 1994→2026, Familien-Schwelle) — gebaut, der Messlauf wartet auf
+  den freien Lib-Build (parallele Session, mathematikerin.rs).
+- Mehrfachvergleichskorrektur: die Familien-Schwelle (fam) lebt jetzt in
+  bz_blatt_probe — die Matrix-Werte oben tragen beide Schwelle (per-Lag + fam).
 - GIC selbst (electric): kein Feed; das Blatt misst dB/dt, den
   induktiven Treiber.
 - Sturm-Gegenwart: das Fenster ist ruhig bis mäßig (Kp ≤ 3.33); die

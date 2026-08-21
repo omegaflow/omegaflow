@@ -1,7 +1,9 @@
 use omegaflow::archivar::{
     convert_to_si, fetch_raw, load_sources, parse_json, scalar_of, Extract, JsonVal, SourceConfig,
 };
-use omegaflow::te::{permutation_entropy, surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::te::{
+    permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,
+};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -299,6 +301,32 @@ fn pair_values(a: &[Option<f32>]) -> Vec<f32> {
 
 fn sweep_lags() -> Vec<usize> {
     (0..=SWEEP_MAX_MIN).step_by(SWEEP_STEP_MIN).collect()
+}
+
+fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
+    let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
+    let mut vals = Vec::new();
+    for _ in 0..10 {
+        let ys = phase_randomized_surrogate(from, &mut rng);
+        if let Some(te) = transfer_entropy_lag(to, &ys, lag) {
+            vals.push(te);
+        }
+    }
+    vals
+}
+
+fn family_bound(pairs: &[(&str, &str, &[f32], &[f32])], lags: &[usize]) -> f64 {
+    let mut fam = f64::NEG_INFINITY;
+    for (_, _, to, from) in pairs {
+        for &lag in lags {
+            for te in surrogate_te_values(to, from, lag, SURROGATE_SEED) {
+                if te > fam {
+                    fam = te;
+                }
+            }
+        }
+    }
+    fam
 }
 
 fn te_sweep(
@@ -613,6 +641,22 @@ fn main() {
     }
 
     println!();
+    println!("=== Familien-Schwelle (fam = max Surrogat-TE der Runde, ENSO-Muster) ===");
+    let fam = family_bound(&pairs, &lags);
+    println!(
+        "fam = {fam:.4e} — ein Pfeil gilt erst, wenn seine TE die stärkste Surrogat-TE der ganzen Runde schlägt (Mehrfachvergleichskorrektur)."
+    );
+    for (from, to, to_s, from_s) in pairs.iter() {
+        let (curve, _) = te_sweep(from, to, to_s, from_s, &lags);
+        if let Some((lag, te)) = curve.iter().max_by(|a, b| a.1.total_cmp(&b.1)) {
+            let verdict = if te > &fam { "arrow" } else { "family bound" };
+            println!(
+                "{from:>16} → {to:<16} | lag {lag:>3} min | TE {te:>10.4e} | fam {fam:.4e} | {verdict}"
+            );
+        }
+    }
+
+    println!();
     println!("=== Nullkontrolle I — Density → dB/dt muss still sein ===");
     threshold_row("Density", "dB/dt", &dbdt_density, &density_dbdt, &[0]);
     let (d_curve, _) = te_sweep("Density", "dB/dt", &dbdt_density, &density_dbdt, &lags);
@@ -623,7 +667,6 @@ fn main() {
     println!();
     println!("=== Nullkontrolle II — Ruhezeit-Teilstrecke (stillste 6 h des Fensters) ===");
     let quiet_cells = (QUIET_HOURS * HOUR / MINUTE) as usize;
-    let mut quiet_speed_arrow = false;
     if dbdt.len() >= quiet_cells {
         let mut best_var = f64::INFINITY;
         let mut best_start = 0usize;
@@ -682,9 +725,6 @@ fn main() {
             } else {
                 "still"
             };
-            if *from == "Speed" && verdict == "Pfeil" {
-                quiet_speed_arrow = true;
-            }
             quiet_verdicts.push(format!("{from} {verdict}"));
         }
         println!(
@@ -764,16 +804,26 @@ fn main() {
         iso_utc(t0 + n_cells as f64 * MINUTE)
     );
     let named = |k: &str| pair_verdicts.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
-    let quiet_speed_break = quiet_speed_arrow;
-    let sentence = match (named("Bz→dB/dt"), named("Speed→dB/dt"), named("Density→dB/dt")) {
-        (Some(true), Some(false), Some(false)) => {
-            if quiet_speed_break {
-                "Bz trägt den Pfeil bei lag 60 min über der Surrogat-Schwelle; Speed und Density still. Ruhezeit-Kontrolle: Bz still, Speed bricht am Sweep-Rand — der Speed-Kanal trägt keinen gereinigten Pfeil. PE-Ring ohne Urteil (Fenster < 8 Segmente)."
-            } else {
-                "Bz trägt den Pfeil bei lag 60 min über der Surrogat-Schwelle; Speed und Density still; die Ruhezeit-Kontrolle hält für alle Kanäle. PE-Ring ohne Urteil (Fenster < 8 Segmente)."
-            }
+    let bz_best_te = {
+        let (c, _) = te_sweep("Bz", "dB/dt", &dbdt_bz, &bz_dbdt, &lags);
+        c.iter()
+            .max_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(l, te)| (*l, *te))
+    };
+    let bz_family_arrow = bz_best_te.map(|(_, te)| te > fam).unwrap_or(false);
+    let sentence = match (
+        named("Bz→dB/dt"),
+        bz_family_arrow,
+        named("Speed→dB/dt"),
+        named("Density→dB/dt"),
+    ) {
+        (Some(true), true, Some(false), Some(false)) => {
+            "Bz trägt den Pfeil bei lag 60 min über der Surrogat-Schwelle UND über der Familien-Schwelle; Speed und Density still. Der Pfeil ist identifiziert."
         }
-        _ => "Kein gereinigter Pfeil — die gemessenen Werte stehen oben; still ist ein Befund (0 honored).",
+        (Some(true), false, Some(false), Some(false)) => {
+            "Bz trägt bei lag 60 min einen Pfeil über der Surrogat-Schwelle, bleibt aber unter der Familien-Schwelle — der Pfeil ist gerichtet, nicht fam-signifikant; mehr 1-min-Fenster entscheiden."
+        }
+        _ => "Kein fam-gereinigter Pfeil — die gemessenen Werte stehen oben; still ist ein Befund (0 honored).",
     };
     println!("Der Satz: {sentence}");
     println!("Urteil: was die Maschine misst — still ist ein Befund (0 honored).");

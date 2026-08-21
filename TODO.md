@@ -580,20 +580,22 @@ Maschine misst.
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
   unten: INTERMAGNET-Komponenten-Port ERLEDIGT (2026-08-21) — BGS-GIN
-  HAPI XYZF 1-min, Fanout 40 Stationen + ABK-Auroral-Block
-  (`intermagnet_xyz_x/y/z_nt`, `hapi_fill`-Gate 99999.0, der
-  HAPI-Fallback trägt Vektor-Spalten — gebaut auch für das LAIC-Blatt);
-  USGS-Geomag bleibt geparkt (ledger.φ, Parser-Gap); GIC selbst
+  HAPI XYZF 1-min, Fanout 154 (Auroral-Ring eingeschlossen) +
+  ABK-Auroral-Block (`intermagnet_xyz_x/y/z_nt`, `hapi_fill`-Gate
+  99999.0, HAPI-Fallback trägt Vektor-Spalten — gebaut auch für das
+  LAIC-Blatt); USGS-Geomag geparkt (ledger.φ, Parser-Gap); GIC selbst
   (electric) ohne Feed. Die Blatt-Probe (`src/bin/bz_blatt_probe.rs`)
-  lebt und hat gemessen (2026-08-21, 22-h-Live-Fenster 1-min): Bz trägt
-  den Pfeil bei lag 60 min (TE 2.01e-1 über Schwelle 1.85e-1, n 1263);
-  Speed still; Density still (Nullkontrolle I hält); Ruhezeit: Bz und
-  Density still, Speed bricht am Sweep-Rand (lag 120) — der Speed-Kanal
-  trägt keinen gereinigten Pfeil; PE-Ring < 8 Segmente (kein Urteil).
-  Das Blatt: `docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`.
-  Offen: Mehrfachvergleichskorrektur über die Paar-Matrix, das
-  Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile (Status-Matrix +
-  P366D-Schleife benannt, s. INTERMAGNET-Fanout-Zeile).
+  trägt jetzt die Familien-Schwelle (fam = max Surrogat-TE der Runde,
+  ENSO-Muster) und hat gemessen (2026-08-21, 22-h-Live-Fenster 1-min):
+  Bz→dB/dt gerichtet bei lag 60 min (TE 2.18e-1 über Schwelle 2.08e-1),
+  aber fam 3.74e-1 hält alle sechs Paare — der Pfeil ist gerichtet,
+  nicht fam-signifikant (Broken-Null-Muster-Kollaps). Das Blatt:
+  `docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`. Der Sturm-Ensemble
+  (`src/bin/bz_retro_probe.rs`, omni2-Tagesmittel × INTERMAGNET
+  daily-max |dB/dt|, 1994→2026, monatliche HAPI-Chunks — die Jahres-
+  Requests wurden vom Server zurückgesetzt) ist gebaut; der Messlauf
+  wartet auf den freien Lib-Build (parallele Session,
+  mathematikerin.rs E0308).
 - **LAIC-Pfeilrichtung** (Blatt 1,
   `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — Instrument B gebaut
