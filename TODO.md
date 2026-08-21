@@ -152,6 +152,10 @@ ICRF, 10-min, KM-S; tracking-rekonstruiert, Quervergleich pre_or
 Zeitverschiebung, nach Zeitangleich sub-km — gleiche Genauigkeit).
 --fill-horizons füllt nur „listing carries no file"-Tage, nicht
 fetch-voids; Stichprobe 2023-07-17: 144 Records, Roundtrip ✓.
+CDN-Durchgang 2026-08-21 (Lauf 32511047936): wind_waves.bin und
+wind_orbit.bin sind live — wind_orbit.bin trägt WOB1 mit
+1.669.315 Records, der Horizons-Fill in 2023-07-17 ist im Asset
+verifiziert (143 Records um Mitternacht). Der Wind-Frame ist durch.
 Befunde selbsttragend: phi/pipeline/research/agent_output/
 wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +
