@@ -168,6 +168,11 @@ SeismicOscillator werden nicht gestartet (kein PCM auf stdout, keine
 Serial-Vibration) und der Relay-Radiator nicht gebaut (src/archivar.rs).
 Der Operator wird nie ungefragt penetriert — visuell, akustisch, taktil,
 relay — nicht; der ω-Loop läuft dabei exakt wie produktiv, nur still.
+Der Render-Pfad ist geteilt (src/mathematikerin.rs render): der
+Probe-Compute-Pass läuft immer, Surface/Render-Pass/present nur sichtbar —
+so füllt sich der Probe-Ring auch headless mit ~1 Hz, und die
+Maschinenzeile `φ window:` (stderr, 1 Hz) trägt te/thr/tau/pe/state/focus/keys
+als lesbaren Zwilling des HUD.
 
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.

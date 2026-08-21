@@ -2333,6 +2333,23 @@ impl NativeApp {
             }
             self.hud_dirty = false;
         }
+        let mut probe_enc =
+            device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = probe_enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            let sel = self.buf_sel;
+            if let (Some(pipe), Some(bind)) =
+                (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
+            {
+                pass.set_pipeline(pipe);
+                pass.set_bind_group(0, bind, &[]);
+                pass.dispatch_workgroups(1, 1, 1);
+            }
+        }
+        queue.submit(std::iter::once(probe_enc.finish()));
+        if self.silent {
+            return;
+        }
         let Some(surface) = self.surface.as_ref() else {
             return;
         };
@@ -2344,17 +2361,6 @@ impl NativeApp {
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        {
-            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
-            let sel = self.buf_sel;
-            if let (Some(pipe), Some(bind)) =
-                (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
-            {
-                pass.set_pipeline(pipe);
-                pass.set_bind_group(0, bind, &[]);
-                pass.dispatch_workgroups(1, 1, 1);
-            }
-        }
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: None,
@@ -3266,8 +3272,22 @@ impl ApplicationHandler for NativeApp {
             if !self.hud_dark {
                 self.hud_raster(&force_tokens, te_opt, &te_word);
             }
+            let (te_s, thr_s) = match te_opt {
+                Some((t, h)) => (format!("{:.3}", t), format!("{:.3}", h)),
+                None => ("-".to_string(), "-".to_string()),
+            };
+            let (tau_s, pe_s) = match self.hud_topology {
+                Some((tx, ty, px, py)) => {
+                    let pe = match (px, py) {
+                        (Some(a), Some(b)) => format!("{:.2}:{:.2}", a, b),
+                        _ => "-".to_string(),
+                    };
+                    (format!("{}:{}", tx, ty), pe)
+                }
+                None => ("-".to_string(), "-".to_string()),
+            };
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {} | focus {} | keys {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -3289,6 +3309,22 @@ impl ApplicationHandler for NativeApp {
                 self.field_permeability,
                 self.expose_offset,
                 self.field_dark,
+                self.force_ref[0],
+                self.force_ref[1],
+                self.force_ref[2],
+                self.force_ref[3],
+                self.force_ref[4],
+                self.force_ref[5],
+                self.force_ref[6],
+                self.force_ref[7],
+                self.force_ref[8],
+                te_s,
+                thr_s,
+                tau_s,
+                pe_s,
+                te_word,
+                self.focused,
+                self.keys_seen,
             );
         }
         event_loop.set_control_flow(ControlFlow::WaitUntil(
