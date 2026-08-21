@@ -1134,23 +1134,20 @@ Offen (Detail in phi/pipeline/ledger.φ):
   CDN-Weg
 - EA-Fanout: Runtime-Fanout-Lauf offen (Test überspringt Fanout
   designbedingt)
-- Register-Datenqualität (2026-08-21, gemessen — in Arbeit): der
-  USGS-fdsnws-Block (`geojson mag …`, sources.φ:45) lebt wieder —
-  `extract_fields` trägt `GeojsonEvents` (zwei Force-Felder, kernel 0 /
-  seismic-body, die Spiegel des Extracts) und `dispatch_reach` sieht
-  sie; der Hidden-Lauf trägt keine „no field lines"-Zeile mehr. Der
-  Live-Test ist Instrument: echte Systemzeit (civil_date aus der
-  Systemuhr), vier void-Klassen (key-void / drift-void / ruhig-void /
-  kaputt), `--reverify` schreibt den Sweep nach
-  phi/pipeline/stage/recheck_live.φ (erste Messung: 63 ok / 25 void),
-  healthcheck.yml trägt den Job (3-h-Cron, Artifact + Drift-Issue).
-  Das Refusal-Ledger lebt: phi/pipeline/refusal_ledger.φ sammelt die
-  Laufzeit-Refusals (gate-no-field-lines / gate-no-propagation /
-  url-render-void / fetch-void / extract-void — je Quelle+Klasse ein
-  Eintrag, Dedup über Boots; erster Satz: extract-void geonet/fdsnws/
-  nwis/arcgis, fetch-void purpleair). Offen: Handover-Archivierung.
-  →
-  handover-2026-08-21-register-datenqualitaet.md
+- Register-Datenqualität (2026-08-21, abgeschlossen): Gate-Konsistenz
+  wiederhergestellt — `extract_fields` trägt `GeojsonEvents` (zwei
+  Force-Felder kernel 0 / seismic-body, die Spiegel des Extracts),
+  der Hidden-Lauf trägt keine „no field lines"-Zeile mehr, der
+  fdsnws-Block fetched wieder (leeres Fenster am Golf von Guinea =
+  Wahrheit). Der Live-Test ist Instrument: echte Systemzeit, vier
+  void-Klassen (key/drift/ruhig/kaputt), `--reverify` schreibt
+  phi/pipeline/stage/recheck_live.φ, healthcheck.yml trägt den
+  3-h-Cron-Job (Artifact + Drift-Issue). phi/pipeline/refusal_ledger.φ
+  sammelt die Laufzeit-Refusals (je Quelle+Klasse ein Eintrag).
+  Hinweis: die Code-Einheiten A–C gingen mit d9d2c72 (Fetch-Sturm-
+  Reparatur der Parallel-Session, die das ganze archivar.rs
+  übernahm) in Git — die Register-Commits 62dae65/e97844c tragen
+  healthcheck/recheck_live/refusal_ledger/TODO. Handover archiviert.
 
 ## CI Pipeline
 
