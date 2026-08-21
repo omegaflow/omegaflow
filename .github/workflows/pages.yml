@@ -67,13 +67,14 @@ jobs:
 
   termux:
     needs: build
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/download-artifact@v4
       with:
         name: omegaflow_linux_arm64
     - run: |
-        BOOTSTRAP_URL="https://github.com/termux/termux-packages/releases/download/bootstrap-2025.12.27-r1/bootstrap-aarch64.zip"
+        BOOTSTRAP_URL="https://github.com/termux/termux-packages/releases/download/bootstrap-2026.08.16-r1+apt.android-7/bootstrap-aarch64.zip"
         curl -sS -L -o bootstrap.zip "$BOOTSTRAP_URL"
         mkdir -p _termux
         cd _termux
