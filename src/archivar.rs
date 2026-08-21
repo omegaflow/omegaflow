@@ -8523,34 +8523,6 @@ field temp temp_c\n";
     }
 
     #[test]
-    fn test_refusal_ledger_dedup_and_reload() {
-        let path =
-            std::env::temp_dir().join(format!("omegaflow_refusal_ledger_{}.φ", std::process::id()));
-        let _ = std::fs::remove_file(&path);
-        {
-            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
-            ledger.register("https://a.example/q", "extract-void");
-            ledger.register("https://a.example/q", "extract-void");
-            ledger.register("https://b.example/q", "fetch-void");
-        }
-        let content = std::fs::read_to_string(&path).unwrap();
-        assert_eq!(content.lines().count(), 2, "one entry per class+url");
-        assert!(content.contains("extract-void https://a.example/q"));
-        assert!(content.contains("fetch-void https://b.example/q"));
-        {
-            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
-            ledger.register("https://a.example/q", "extract-void");
-        }
-        let reloaded = std::fs::read_to_string(&path).unwrap();
-        assert_eq!(
-            reloaded.lines().count(),
-            2,
-            "a reloaded ledger never repeats an entry"
-        );
-        let _ = std::fs::remove_file(&path);
-    }
-
-    #[test]
     fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         let fc = FieldConfig {
             key: "wind".into(),
@@ -8934,6 +8906,34 @@ field temp temp_c\n";
         let d_html = super::diagnose_no_samples(&base, html);
         eprintln!("html -> {}", d_html);
         assert!(d_html.contains("non-JSON"), "got: {}", d_html);
+    }
+
+    #[test]
+    fn test_refusal_ledger_dedup_and_reload() {
+        let path =
+            std::env::temp_dir().join(format!("omegaflow_refusal_ledger_{}.φ", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        {
+            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
+            ledger.register("https://a.example/q", "extract-void");
+            ledger.register("https://a.example/q", "extract-void");
+            ledger.register("https://b.example/q", "fetch-void");
+        }
+        let content = std::fs::read_to_string(&path).unwrap();
+        assert_eq!(content.lines().count(), 2, "one entry per class+url");
+        assert!(content.contains("extract-void https://a.example/q"));
+        assert!(content.contains("fetch-void https://b.example/q"));
+        {
+            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
+            ledger.register("https://a.example/q", "extract-void");
+        }
+        let reloaded = std::fs::read_to_string(&path).unwrap();
+        assert_eq!(
+            reloaded.lines().count(),
+            2,
+            "a reloaded ledger never repeats an entry"
+        );
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]

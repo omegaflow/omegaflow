@@ -1,0 +1,5 @@
+refused 1787310051 extract-void https://api.geonet.org.nz/quake?MMI=4
+refused 1787310054 extract-void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+refused 1787310069 extract-void https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+refused 1787310125 fetch-void https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+refused 1787310431 extract-void https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000

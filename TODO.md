@@ -1144,8 +1144,12 @@ Offen (Detail in phi/pipeline/ledger.φ):
   kaputt), `--reverify` schreibt den Sweep nach
   phi/pipeline/stage/recheck_live.φ (erste Messung: 63 ok / 25 void),
   healthcheck.yml trägt den Job (3-h-Cron, Artifact + Drift-Issue).
-  Offen: das Refusal-Ledger (Laufzeit-Refusals versickern noch auf
-  stderr) und die Handover-Archivierung. →
+  Das Refusal-Ledger lebt: phi/pipeline/refusal_ledger.φ sammelt die
+  Laufzeit-Refusals (gate-no-field-lines / gate-no-propagation /
+  url-render-void / fetch-void / extract-void — je Quelle+Klasse ein
+  Eintrag, Dedup über Boots; erster Satz: extract-void geonet/fdsnws/
+  nwis/arcgis, fetch-void purpleair). Offen: Handover-Archivierung.
+  →
   handover-2026-08-21-register-datenqualitaet.md
 
 ## CI Pipeline
