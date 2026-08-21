@@ -789,9 +789,9 @@ jobs:
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
             --pattern goes_xrs.bin --clobber 2>/dev/null || \
-            cargo run --release --bin goes_xrs_compiler -- \
-              --lsk kernels/naif0012.tls --out goes_xrs.bin --ci-mode \
-              --window-start 1995-01-01 --window-end 2020-12-31 --decimate-min 60 --jobs 8
+          cargo run --release --bin goes_xrs_compiler -- \
+            --lsk kernels/naif0012.tls --out goes_xrs.bin --ci-mode \
+            --window-start 1995-01-01 --window-end 2020-12-31 --decimate-min 60 --jobs 24
 
   long_window_probe:
     needs: [sun, solar_xrs]
