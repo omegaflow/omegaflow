@@ -106,6 +106,24 @@ fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f
     vals
 }
 
+fn surrogate_te_values_bw(
+    to: &[f32],
+    from: &[f32],
+    lag: usize,
+    seed: u64,
+    factor: f64,
+) -> Vec<f64> {
+    let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    let mut vals = Vec::new();
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(from, &mut rng);
+        if let Some(te) = te_bandwidth(to, &ys, lag, factor) {
+            vals.push(te);
+        }
+    }
+    vals
+}
+
 fn mean_plus_2sigma(vals: &[f64]) -> Option<f64> {
     if vals.is_empty() {
         return None;
@@ -224,6 +242,89 @@ struct PairVerdict {
     thr: f64,
     arrow: bool,
     family_bound: bool,
+}
+
+fn verdict_word(v: &PairVerdict) -> &'static str {
+    if v.arrow {
+        "PFEIL"
+    } else if v.family_bound {
+        "family bound"
+    } else if v.te.is_nan() {
+        "no statement"
+    } else {
+        "still"
+    }
+}
+
+fn run_bandwidth(
+    cells: &[Vec<Option<f32>>],
+    pairs: &[(&'static str, &'static str, usize, usize)],
+    factor: f64,
+) -> (f64, Vec<PairVerdict>) {
+    let mut fam = f64::NEG_INFINITY;
+    let mut verdicts: Vec<PairVerdict> = Vec::new();
+    for &(from, to, fi, ti) in pairs {
+        let (xs, ys) = pair_cells(&cells[ti], &cells[fi]);
+        if xs.len() < MIN_N {
+            verdicts.push(PairVerdict {
+                from,
+                to,
+                n: xs.len(),
+                best_lag: 0,
+                te: f64::NAN,
+                thr: f64::NAN,
+                arrow: false,
+                family_bound: false,
+            });
+            continue;
+        }
+        let mut best: Option<(usize, f64)> = None;
+        let mut best_thr = f64::NAN;
+        for &lag in LAGS.iter() {
+            let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let surr = surrogate_te_values_bw(&xs, &ys, lag, seed, factor);
+            for &v in &surr {
+                if v > fam {
+                    fam = v;
+                }
+            }
+            if let Some(te) = te_bandwidth(&xs, &ys, lag, factor) {
+                if best.map_or(true, |(_, b)| te > b) {
+                    best = Some((lag, te));
+                    best_thr = mean_plus_2sigma(&surr).unwrap_or(f64::NAN);
+                }
+            }
+        }
+        let (best_lag, te) = match best {
+            Some(b) => b,
+            None => {
+                verdicts.push(PairVerdict {
+                    from,
+                    to,
+                    n: xs.len(),
+                    best_lag: 0,
+                    te: f64::NAN,
+                    thr: f64::NAN,
+                    arrow: false,
+                    family_bound: false,
+                });
+                continue;
+            }
+        };
+        let arrow = te > fam;
+        let family_bound = !arrow && te > best_thr;
+        verdicts.push(PairVerdict {
+            from,
+            to,
+            n: xs.len(),
+            best_lag,
+            te,
+            thr: best_thr,
+            arrow,
+            family_bound,
+        });
+    }
+    (fam, verdicts)
 }
 
 fn main() {
@@ -382,6 +483,58 @@ fn main() {
                 pairs.push((series[i].0, series[j].0, i, j));
             }
         }
+    }
+
+    if args.iter().any(|a| a == "--h-full") {
+        let mut sheets: Vec<(f64, f64, Vec<PairVerdict>)> = Vec::new();
+        for factor in [0.5, 1.0, 2.0] {
+            eprintln!("bandwidth factor {:.1} running", factor);
+            let (fam_f, verdicts_f) = run_bandwidth(&cells, &pairs, factor);
+            sheets.push((factor, fam_f, verdicts_f));
+        }
+        println!();
+        println!("=== Der volle KDE-Sensitivitäts-Test — drei Blätter (h/2, h, 2h) ===");
+        for (factor, fam_f, verdicts_f) in &sheets {
+            println!();
+            println!("--- Bandbreite h × {:.1} | fam = {:.4e} ---", factor, fam_f);
+            for v in verdicts_f {
+                println!(
+                    "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10.4e} | thr {:>10.4e} | {}",
+                    v.from,
+                    v.to,
+                    v.n,
+                    v.best_lag,
+                    v.te,
+                    v.thr,
+                    verdict_word(v)
+                );
+            }
+        }
+        println!();
+        println!("=== Stabilität über die drei Bandbreiten ===");
+        for i in 0..pairs.len() {
+            let words: Vec<&str> = sheets.iter().map(|(_, _, v)| verdict_word(&v[i])).collect();
+            if words[0] != words[1] || words[1] != words[2] {
+                println!(
+                    "{:>6} → {:<6} | h/2: {} | h: {} | 2h: {}",
+                    pairs[i].0, pairs[i].1, words[0], words[1], words[2]
+                );
+            }
+        }
+        let arrows_any: usize = sheets
+            .iter()
+            .map(|(_, _, v)| v.iter().filter(|p| p.arrow).count())
+            .sum();
+        println!(
+            "Pfeile gesamt über alle drei Bandbreiten: {} — {}",
+            arrows_any,
+            if arrows_any == 0 {
+                "kein Paar trägt unter irgendeiner Bandbreite einen fam-gereinigten Pfeil — der DAG ist bandbreiten-stabil in der Stille (0 honored)."
+            } else {
+                "Pfeile erscheinen unter einzelnen Bandbreiten — die Liste oben benennt sie."
+            }
+        );
+        return;
     }
 
     println!();
