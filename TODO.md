@@ -160,6 +160,16 @@ WGSL-FFT der Surrogate (f32-Null) als benannte Alternative; der
 f32-EPS-Floor der MI-Entropie weicht vom f64-Wert ab (die
 Surrogat-Schwelle absorbiert).
 
+OMEGAFLOW_HIDDEN (andere Session, pending — Handover aus dem Rat):
+der Schalter versteckt bisher nur das Fenster — hidden muss ALLE
+Radiatoren schweigen lassen: die ω-Loop-Sends an acoustic/seismic
+(src/mathematikerin.rs ~3221) getorbt bzw. die Oszillatoren gar nicht
+gestartet, kein PCM auf stdout (AcousticOscillator, src/archivar.rs
+~15402), keine Serial-Vibration (SeismicOscillator), Relay-Push
+eingeschlossen. Hidden = fensterlos, klanglos, regungslos. Der
+Operator wird nie ungefragt penetriert — visuell, akustisch, taktil,
+relay — nicht.
+
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
 Gate-Reparatur: der Fetch-Dispatch rechnet die physische Reichweite
@@ -946,14 +956,15 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (mpcorb_extended.json.gz); TAP-Indexe — MAST, CADC, ESASky, NOIRLab
   Data Lab, NED; Terrestrisch — EarthScope-FDSN, EPOS, SeaDataNet,
   Smithsonian GVP, Natural Earth.
-  Exakte Tabellen-IDs + Spalten + Mechanismus: docs/surveys/
-  fischplan-kataloge-2026-08-20.md + chunk-plan-2026-08-20.md.
+  Exakte Tabellen-IDs + Spalten + Mechanismus:
+  /home/johannes/projects/archive/handover/handover-2026-08-20-fischplan-kataloge.md
+  + handover-2026-08-20-chunk-kataloge.md (archiviert).
   RAVE (III/279/rave_dr5): 472845 Zeilen kompiliert (24 RA-Slices à
   15°, rv-Gate HRV), Asset + sources.φ-Block leben — der --async+JOIN-
   Weg hing auf VizieR PENDING (gemessen: >600 s in 2 CI-Läufen,
   >3600 s lokal). GLADE+ ist pending: Spalten live verifiziert, aber
   drei gemessene Blocker — Schrittboden-Kappung des --mag-bands-
-  Banders, 2-GB-Release-Limit, MAX_SAMPLES 4.19 M (chunk-plan).
+  Banders, 2-GB-Release-Limit, MAX_SAMPLES 4.19 M (chunk-plan, archiviert).
 - VizieR-async-Befund: --async + gaiadr3-JOIN hängt PENDING — UWS-Jobs
   sind IP-gebunden: stirbt der Runner, verwaist der Job. RA-Slices
   sind der Weg für Crossmatch-Kompilate.
@@ -1064,7 +1075,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Python). Zwei Dispatch-Läufe wurden extern abgebrochen; die
   Kompilate wurden lokal nachgeholt — alle fünf Assets liegen valide
   auf dem CDN, sources.φ- und ledger-Einträge leben (Commit 2,
-  docs/surveys/chunk-plan-2026-08-20.md). Offen: ein voller grüner
+  chunk-plan, archiviert). Offen: ein voller grüner
   Lauf (Verifikation des Slice-Schritts) + die MAX_SAMPLES-
   Budget-Messung. GLADE+ bleibt draußen (drei gemessene Blocker,
   s. Katalog-Lücken). Der JSON-mag-bands-Bracket-Bug und das

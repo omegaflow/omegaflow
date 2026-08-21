@@ -4285,15 +4285,15 @@ note ANTARES verlangt Token (siehe Eintrag oben). Verdikt 2026-08-17: decline no
 
 decline redistribution
 url https://api.electricitymap.org/v3/carbon-intensity/latest
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (Daten proprietär) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (Daten proprietär) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://api.europeana.eu/record/v2/search.json?query=*&qf=place
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Kultur-Metadaten — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Kultur-Metadaten — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
 decline redistribution
 url https://api.maptiler.com/maps/basic-v2-dark/style.json
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerzielle Tiles — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerzielle Tiles — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://api.networkrail.co.uk/v1/gtfs-rt/feeds
@@ -4301,15 +4301,15 @@ note Recheck 2026-08-17: kein separater API-Key — Zugang ist das Portal-Login 
 
 decline redistribution
 url https://api.protectedplanet.net/v3/protected_areas?with_geometry=true&latitude=
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://api.resourcewatch.org/v1/geostore?lat=
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: WRI — ToS/Redistribution unklar — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: WRI — ToS/Redistribution unklar — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
-note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Bibliographie — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Bibliographie — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://api.si.edu/openaccess/api/v1.0/content/search?q=
@@ -4317,19 +4317,19 @@ note Sammlungs-Metadaten, kein Messwert — decline no-physical-force (403 real,
 
 decline redistribution
 url https://api.sncf.com/v1/coverage/sncf/stop_areas/
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (ToS) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (ToS) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://api.z.ai/api/coding/paas/v4
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://api.z.ai/api/coding/paas/v4`
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://bgp.tools/table.json
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline model-forecast
 url https://climateknowledgeportal.worldbank.org/api/
@@ -4341,7 +4341,7 @@ note Klima-Projektions-/Indikator-Portal (GCM-Modelle), kein Live-Messwert — d
 
 decline no-physical-force
 url https://crates.io/api/v1/crates?per_page=1
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
 decline derived-product
 url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year
@@ -4349,19 +4349,19 @@ note Waldverlust-Analysen aus Satellitenbildern (Flächen, ha) — abgeleitetes 
 
 decline redistribution
 url https://data.blitzortung.org/Data/Protected/strikes.json
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://data.lsst.cloud/api/tap
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://dev.meteostat.net/api/stations/nearby.html
-note Meteostat-Dev-Docs — API verlangt Key. Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note Meteostat-Dev-Docs — API verlangt Key. Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redistribution
 url https://docs.sentinel-hub.com/api/latest/
-note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline presence-catalog
 url https://ebird.org/api/key
@@ -4373,7 +4373,7 @@ note Vogelbeobachtungs-Register (Presence), keine Messung am Punkt — decline p
 
 decline redistribution
 url https://gateway.api.globalfishingwatch.org/v3/
-note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline redundant
 url https://irsa.ipac.caltech.edu/ibe/
@@ -4393,7 +4393,7 @@ note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst
 
 decline redistribution
 url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
-note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://my-api.plantnet.org/v2/identify/all?api-key=
@@ -4441,15 +4441,15 @@ note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Zooniverse-Klass
 
 decline redistribution
 url https://www.dxpredictor.com/api/v1/ionosonde/fof2
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline no-physical-force
 url https://www.peeringdb.com/api/ix
-note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Netz-Infrastruktur — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Netz-Infrastruktur — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
 decline redistribution
 url https://www.reddit.com/dev/api/
-note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline catalog
 url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
@@ -4469,7 +4469,7 @@ note CelesTrak TLE ISS/Tiangong — TLE-Bahnelemente = Bahnvorhersage (Orbit-Fit
 
 decline redistribution
 url https://api.sofarocean.com/api/devices
-note Sofar Spotter („largest privately-owned ocean sensor network") — Spotter-Konto-Token; Daten sind Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note Sofar Spotter („largest privately-owned ocean sensor network") — Spotter-Konto-Token; Daten sind Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
 
 decline redistribution
 url https://www.ctbto.org
@@ -4477,11 +4477,11 @@ note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrieru
 
 decline redistribution
 url https://api.airplanes.live/v2/point/{lat}/{lon}/{radius}
-note Airplanes.live ADS-B — Cloudflare-Kontakt-Registrierung seit 2026 (vor 2024 anonym offen); kommerzieller Feed (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note Airplanes.live ADS-B — Cloudflare-Kontakt-Registrierung seit 2026 (vor 2024 anonym offen); kommerzieller Feed (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
 
 decline redistribution
 url https://pro.weatherxm.com/docs
-note WeatherXM (DePIN, 9500+ Stationen, Expansion) — Free-Tier-API-Key; Daten-Endpunkte ohne Key 404. Kommerziell — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note WeatherXM (DePIN, 9500+ Stationen, Expansion) — Free-Tier-API-Key; Daten-Endpunkte ohne Key 404. Kommerziell — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
 
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json

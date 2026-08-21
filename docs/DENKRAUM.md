@@ -55,7 +55,7 @@ If the Council can touch every layer of the implementation in this session, it m
 
 ## The Archaeology Directive
 
-Git is the war record. The surveys and the archive carry the lineage — `docs/surveys/entwicklungslinie.md` names the epochs, `/home/johannes/projects/archive/` holds the artifacts. Every `unwrap_or` that was eliminated, every `_ => 0` that became a gate, every `catch {}` that became silence — the archaeology preserves the lineage.
+Git is the war record. The surveys and the archive carry the lineage — `survey-entwicklungslinie.md` names the epochs, `/home/johannes/projects/archive/` holds the artifacts. Every `unwrap_or` that was eliminated, every `_ => 0` that became a gate, every `catch {}` that became silence — the archaeology preserves the lineage.
 
 The archaeology is NOT the system. It is the proof that the system was won. The current code is the artifact. The archaeology is the documentation of how it was made.
 

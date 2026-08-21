@@ -189,7 +189,7 @@ Gates: cargo check 0/0 (alle Features), cargo test 211/211 lib
 stype-7-Ω_g-Parse), Smoke-Lauf: OMNI-Block parst mit 7 Feldern,
 rpw/gong-Blöcke 404en honest, keine Refusals der neuen Formate.
 
-cdf_reader-Atom (2026-08-20, docs/plans/cdf_reader_atom.md — GESCHLOSSEN):
+cdf_reader-Atom (2026-08-20, /home/johannes/projects/archive/handover/handover-2026-08-20-cdf-reader.md — GESCHLOSSEN):
 
 Session-Frage 1 (Kompression + EDC_SRF-Layout, am ersten echten File
 notiert): solo_L3_rpw-bia-efield-10-seconds_*.cdf = CDF 3.9.0,

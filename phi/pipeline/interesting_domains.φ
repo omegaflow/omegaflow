@@ -424,7 +424,7 @@ key fehlt www3.mbari.org
 # Stand 2026-08-17 — Grundsatz: Alle Messwerte werden auf das CDN (GitHub Releases)
 # manifestiert und öffentlich redistribuiert. Nur Lizenzen mit Redistribution
 # (Public Domain, CC0, CC-BY, OGL/NLOD) sind akzeptiert. Kommerzielle/proprietäre
-# APIs und Nicht-Messwerte sind ausgeschlossen — siehe docs/plans/AUTH_APIS.md §E.
+# APIs und Nicht-Messwerte sind ausgeschlossen — siehe docs/plans/ref-auth-apis.md §E.
 
 ### decline redistribution (kommerziell / proprietär / Redistribution verboten)
 verdict api.electricitymap.org — kommerziell (Daten proprietär) — CDN-Ausschluss.

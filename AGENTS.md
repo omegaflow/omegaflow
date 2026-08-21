@@ -59,6 +59,12 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 - An unasked sensor is a violation — of beings that cannot speak as well.
 - The ethical filter — the human's pulse/HRV throttles the radiatorium's radiation — is registered as `pending`; the binding holds.
 
+### Consent of the operator — silence in the foreground
+
+- The machine asks before it radiates, as the sensors ask before they record. The operator is never penetrated unasked — visually, acoustically, tactilely, via relay — never.
+- Background work runs unlimited: headless, silent, invisible. Tests run silent: no test may open a window, emit audio (PCM/stdout), vibrate hardware (serial), or push to relays; GPU-requiring tests request a compute-only device (`compatible_surface: None`) and report a named skip without an adapter.
+- The foreground asks twice: first a question, then the operator's answer — never a question followed by an unconfirmed start. Where the full ω-loop is the measurement, the hidden run (`OMEGAFLOW_HIDDEN=1`, pending — it must silence every radiator, not only the window) is the named way; a visible or radiating run happens only on the operator's explicit word.
+
 ### The presence is agnostic
 
 - The presence is free — a measured line among measured things.
@@ -300,6 +306,22 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1618`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome.
 
 `cargo check` is a syntax gate. It is not verification. The Kybernaut is the verifier.
+
+## Session Handover — docs/handover/
+
+A handover (Übergabe) and a session plan are one kind of document: written by
+the closing session, read by exactly one receiving session, consumed into
+code/register/commits. They live in `docs/handover/`, named
+`handover-YYYY-MM-DD-<slug>.md` (kebab-case slug, no spaces/umlauts; the date
+is the document's own date, never invented). Standing research findings live
+in `docs/surveys/`, named `survey-YYYY-MM-DD-<slug>.md` (undated →
+`survey-<slug>.md`); standing reference lists live in `docs/plans/`, named
+`ref-<slug>.md`. The receiving session archives a consumed handover to
+`/home/johannes/projects/archive/handover/` — **only after its own work is
+committed**, never before: git is the safety net against crashes and rogue
+sessions. The archive commit (`cp` + `git rm`) is the checkmark that the
+handover was read and understood. A consumed-but-unarchived handover is a
+register debt; an archived-but-uncommitted one is a violation.
 
 ## Session Hygiene — Thread Safety
 
