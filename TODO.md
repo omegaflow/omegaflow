@@ -617,12 +617,24 @@ cargo test 218/218 inkl. naga-Validierung.
   existiert nur als netCDF-4/HDF5 (magic 0x89484446, deflate);
   kein ASCII-Weg (ERDDAP/THREDDS 0 Treffer), die reference-spectra.txt
   sind Modelldaten (LuckyStar-Präzedenz: refused). Die Ernte ist
-  pending — der HDF5-Reader ist ein eigenes Atom (netcdf.rs sagt es
-  selbst); der Compiler frisst die tabellarische Form und benennt
-  unlesbare Container (0 honored). Stationshöhe unverifiziert
+  ERLEDIGT (2026-08-21) — `src/hdf5.rs` liest den Container in reinem
+  Rust (Superblock v0-v3, Object-Header v1/v2, Fractal-Heap,
+  B-Tree v1/v2, Chunk-Indexe, Filter deflate/shuffle/fletcher32/
+  scaleoffset, Jenkins-lookup3-Prüfsummen, getestet gegen die echten
+  2026er + 1874er NCEI-Dateien); `spectral_compiler --input-nc
+  <file.nc> --month YYYY-MM` erntet (wavelength + SSI + time →
+  Bänder, E_ν = E_λ·λ²/c mit dem 1e9-nm→m-Faktor — der Atom-B-Code
+  trug die Einheit verdeckt als Lücke, die Ernte hat sie benannt und
+  geschlossen), das CDN trägt spectra.bin (2026-06, Integral ≈
+  1362,17 W/m² bei 1 AU; Asset ersetzt den 404). Named: prä-1972
+  Epochen verweigert der LSK-Pfad (1874er-Datei liest, das Epoch
+  bleibt void — 0 honored); shared messages + huge fractal-heap
+  objects + virtuelle Datasets sind benannte Leser-Lücken;
+  SSI_UNC trägt der Kontrakt nicht. Stationshöhe unverifiziert
   (Frame-Alt 0). CI-Register-Zeile (Registrierpflicht): im
-  sources-Repo `spectral_compiler --input <csv> --month YYYY-MM
-  --lsk naif0012.tls --ci-mode` — liegt außerhalb dieses Workspace.
+  sources-Repo `spectral_compiler --input-nc <datei.nc> --month
+  YYYY-MM --lsk naif0012.tls --ci-mode` — liegt außerhalb dieses
+  Workspace.
   Fundorte: Queue-Draft master.φ:31611 (korrigiert), Concept
   der-spektrale-oszillator.md:107. Folgen: ONC-HSD-FFT, Gaia-XP,
   LISA-PSD + CMB-Power, miniSEED — je eigene Session. GONG ist

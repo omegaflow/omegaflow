@@ -2,9 +2,9 @@
 // then count × [freq, bin_width, val] f64 LE (24 B per bin).
 // freq = band center in Hz, bin_width = bandwidth in Hz from the native
 // λ grid, val = spectral density in SI. Epoch = month middle of the measurement.
-// The harvest step (NCEI-SSI netCDF-4/HDF5) is pending — the tabular
-// form of the measurement (λ_nm, E_λ, flag) is the compiler's input; unreadable
-// containers are named, never replaced (0 honored).
+// The harvest (NCEI-SSI netCDF-4/HDF5) reads via src/hdf5.rs — the tabular
+// form of the measurement (λ_nm, E_λ W/m²/nm, flag) is the compiler's input;
+// unreadable containers are named, never replaced (0 honored).
 
 pub const SPECTRAL_MAGIC: [u8; 2] = [0xCF, 0x86];
 pub const SPECTRAL_VERSION: u8 = 0x01;
@@ -24,7 +24,7 @@ pub fn bins_from_lambda_rows(rows: &[(f64, f64, u8)]) -> Vec<(f64, f64, f64)> {
         }
         let lam_m = lam_nm * 1e-9;
         let freq = C_LIGHT / lam_m;
-        let e_nu = e_lam * lam_m * lam_m / C_LIGHT;
+        let e_nu = e_lam * 1e9 * lam_m * lam_m / C_LIGHT;
         let prev_nu = rows[..i]
             .iter()
             .rev()
@@ -117,6 +117,20 @@ pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
         days += days_in_month(year, m) as u64;
     }
     Some(days as f64 * 86400.0 + days_in_month(year, month) as f64 * 43200.0)
+}
+
+pub fn civil_from_days(days: i64) -> Option<(u32, u32, u32)> {
+    let z = days + 719468;
+    let era = if z >= 0 { z } else { z - 146096 } / 146097;
+    let doe = z - era * 146097;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = (doy - (153 * mp + 2) / 5 + 1) as u32;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 } as u32;
+    let y = if m <= 2 { y + 1 } else { y };
+    Some((y as u32, m, d))
 }
 
 pub const COLOR_LUT_LEN: usize = 256;
@@ -224,7 +238,7 @@ mod tests {
         let (f, w, v) = bins[1];
         let lam_m = 200e-9;
         assert!((f - C_LIGHT / lam_m).abs() / f < 1e-12);
-        assert!((v - 2.0 * lam_m * lam_m / C_LIGHT).abs() < 1e-30);
+        assert!((v - 2.0 * 1e9 * lam_m * lam_m / C_LIGHT).abs() / v < 1e-12);
         let nu_prev = C_LIGHT / 100e-9;
         let nu_next = C_LIGHT / 400e-9;
         let w_mid = (nu_prev - nu_next) * 0.5;

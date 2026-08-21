@@ -77,8 +77,9 @@ magic/version, non-finite epoch, stride mismatch. The Archivar's `format spectra
 (`SpectralHash`, ICRS point + bins) expands each bin to an oscillator record at the same point;
 freq/bin_width flow through the v8 wire record as usual. Point sources stay freq = 0.0.
 
-The harvest step (NCEI-SSI netCDF-4/HDF5) is pending — the compiler consumes the tabular form
-of the measurement; unreadable containers are named, never replaced.
+The harvest step (NCEI-SSI netCDF-4/HDF5) is deployed since 2026-08-21 — `src/hdf5.rs`
+reads the container, `spectral_compiler --input-nc` builds the bins; unreadable
+containers are named, never replaced.
 
 ## WebSocket Query Frame (browser → server)
 

@@ -1,4 +1,5 @@
-// CDF-5 stays pending, netCDF-4/HDF5 is its own atom. No HDF5.
+// CDF-5 stays pending, netCDF-4/HDF5 is read by src/hdf5.rs (its own
+// module since 2026-08-21). This file carries classic netCDF only.
 //
 // Format per the classic spec (Unidata, Appendix B):
 //   magic CDF\x01 (u32 offsets) | CDF\x02 (u64 offsets),

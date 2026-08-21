@@ -1,4 +1,4 @@
-// CDF-5 stays pending, netCDF-4/HDF5 is not read.
+// CDF-5 stays pending, netCDF-4/HDF5 is read by hdf5_reader (src/hdf5.rs).
 
 use omegaflow::inflate::gunzip;
 use omegaflow::netcdf::{NetcdfFile, NetcdfNote, NetcdfType};
