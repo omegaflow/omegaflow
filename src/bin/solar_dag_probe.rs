@@ -17,7 +17,7 @@ use omegaflow::archivar::f107;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800};
-use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow::te::{gaussian, phase_randomized_surrogate, silverman, transfer_entropy_lag};
 
 const GOES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin";
@@ -113,6 +113,106 @@ fn mean_plus_2sigma(vals: &[f64]) -> Option<f64> {
     let m = vals.iter().sum::<f64>() / vals.len() as f64;
     let var = vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
     Some(m + 2.0 * var.sqrt())
+}
+
+fn te_bandwidth(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<f64> {
+    if lag == 0 {
+        let n = x.len();
+        if n < 8 {
+            return None;
+        }
+        let hx = silverman(x)? * factor;
+        let hy = silverman(y)? * factor;
+        let m = n - 1;
+        let mut te = 0.0;
+        for t in 0..m {
+            let xt = x[t] as f64;
+            let xt1 = x[t + 1] as f64;
+            let yt = y[t] as f64;
+            let mut k3 = 0.0;
+            for s in 0..m {
+                k3 += gaussian(xt1 - x[s + 1] as f64, hx)
+                    * gaussian(xt - x[s] as f64, hx)
+                    * gaussian(yt - y[s] as f64, hy);
+            }
+            let p3 = k3 / m as f64;
+            let mut k1 = 0.0;
+            for s in 0..n {
+                k1 += gaussian(xt - x[s] as f64, hx);
+            }
+            let p1 = k1 / n as f64;
+            let mut k2xy = 0.0;
+            for s in 0..n {
+                k2xy += gaussian(xt - x[s] as f64, hx) * gaussian(yt - y[s] as f64, hy);
+            }
+            let p2xy = k2xy / n as f64;
+            let mut k2x = 0.0;
+            for s in 0..m {
+                k2x += gaussian(xt1 - x[s + 1] as f64, hx) * gaussian(xt - x[s] as f64, hx);
+            }
+            let p2x = k2x / m as f64;
+            te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+        }
+        return Some(te / m as f64);
+    }
+    let n = x.len();
+    if n < 8 {
+        return None;
+    }
+    let m = n - lag;
+    if m < 8 {
+        return None;
+    }
+    let hx = silverman(x)? * factor;
+    let hy = silverman(y)? * factor;
+    let mut te = 0.0;
+    for t in 0..m {
+        let xt = x[t] as f64;
+        let xt1 = x[t + lag] as f64;
+        let yt = y[t] as f64;
+        let mut k3 = 0.0;
+        for s in 0..m {
+            k3 += gaussian(xt1 - x[s + lag] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy);
+        }
+        let p3 = k3 / m as f64;
+        let mut k1 = 0.0;
+        for s in 0..n {
+            k1 += gaussian(xt - x[s] as f64, hx);
+        }
+        let p1 = k1 / n as f64;
+        let mut k2xy = 0.0;
+        for s in 0..n {
+            k2xy += gaussian(xt - x[s] as f64, hx) * gaussian(yt - y[s] as f64, hy);
+        }
+        let p2xy = k2xy / n as f64;
+        let mut k2x = 0.0;
+        for s in 0..m {
+            k2x += gaussian(xt1 - x[s + lag] as f64, hx) * gaussian(xt - x[s] as f64, hx);
+        }
+        let p2x = k2x / m as f64;
+        te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
+fn surrogate_thr_bandwidth(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+    factor: f64,
+) -> Option<f64> {
+    let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    let mut vals = Vec::new();
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(te) = te_bandwidth(x, &ys, lag, factor) {
+            vals.push(te);
+        }
+    }
+    mean_plus_2sigma(&vals)
 }
 
 struct PairVerdict {
@@ -381,6 +481,54 @@ fn main() {
             "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10.4e} | thr {:>10.4e} | fam {:>10.4e} | {}",
             v.from, v.to, v.n, v.best_lag, v.te, v.thr, fam, word
         );
+    }
+
+    if args.iter().any(|a| a == "--h-sweep") {
+        println!();
+        println!(
+            "=== KDE-Sensitivität (h, h/2, 2h) — die entscheidenden Paare bei ihrem besten Lag ==="
+        );
+        println!("Verdikt je Faktor gegen die je Faktor gerechnete Surrogat-Schwelle; fam selbst wird nicht neu gerechnet (fam(h/2)/fam(2h) wäre je eine eigene volle Runde).");
+        for v in &verdicts {
+            if !(v.family_bound || v.te > 0.6 * fam) {
+                continue;
+            }
+            let Some(fi) = series.iter().position(|(n, _)| *n == v.from) else {
+                continue;
+            };
+            let Some(ti) = series.iter().position(|(n, _)| *n == v.to) else {
+                continue;
+            };
+            let (xs, ys) = pair_cells(&cells[ti], &cells[fi]);
+            if xs.len() < MIN_N {
+                continue;
+            }
+            let seed = SURROGATE_SEED ^ (v.best_lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let half_te = te_bandwidth(&xs, &ys, v.best_lag, 0.5);
+            let half_thr = surrogate_thr_bandwidth(&xs, &ys, v.best_lag, seed, 0.5);
+            let two_te = te_bandwidth(&xs, &ys, v.best_lag, 2.0);
+            let two_thr = surrogate_thr_bandwidth(&xs, &ys, v.best_lag, seed, 2.0);
+            let word = |t: Option<f64>, h: Option<f64>| match (t, h) {
+                (Some(t), Some(h)) if t > h => "arrow",
+                (Some(_), Some(_)) => "still",
+                _ => "void",
+            };
+            println!(
+                "{:>6} → {:<6} | lag {} d | h/2: TE {:>9.4e} thr {:>9.4e} ({}) | h: TE {:>9.4e} thr {:>9.4e} ({}) | 2h: TE {:>9.4e} thr {:>9.4e} ({})",
+                v.from,
+                v.to,
+                v.best_lag,
+                half_te.unwrap_or(f64::NAN),
+                half_thr.unwrap_or(f64::NAN),
+                word(half_te, half_thr),
+                v.te,
+                v.thr,
+                word(Some(v.te), Some(v.thr)),
+                two_te.unwrap_or(f64::NAN),
+                two_thr.unwrap_or(f64::NAN),
+                word(two_te, two_thr),
+            );
+        }
     }
 
     println!();

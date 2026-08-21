@@ -256,9 +256,17 @@ gefiltert) → `goes_euvs.bin` (GEUV, 3777 Records 2009-09 → 2020-03).
 Kanäle (F10.7, XRSA, XRSB, Lya1216, Bz, Dichte) × 30 gerichtete
 Paare × lag 0..7 d, TE über die gemeinsame Tages-Zelle, Schwelle
 phasenrandomisiert (mean+2σ, 10 Surrogate) + Familien-Schwelle fam =
-stärkste Surrogat-TE der Runde (Mehrfachvergleichskorrektur). Offen
-bleibt: die CI-Verdrahtung (kernel_flatten-Job `euvs` + CDN-Upload
-goes_euvs.bin) und der KDE-Sensitivitäts-Sweep (h, h/2, 2h).
+stärkste Surrogat-TE der Runde (Mehrfachvergleichskorrektur). CI
+(2026-08-21): ERLEDIGT — kernel_flatten.yml trägt den Job `euvs`
+(goes_euvs.bin → CDN) und den Job `solar_dag` (needs sun, solar_xrs,
+euvs; 420-min-Limit, der Lauf braucht ~2,5 h — sein Log ist das
+Nadel-Ⅲ-Blatt-Register). Das Blatt-Dokument
+`docs/concepts/ein-blatt-korona-heizung.md` trägt den DAG auf beiden
+Skalen. Der KDE-Sensitivitäts-Sweep (h, h/2, 2h) rechnet
+(`solar_dag_probe --h-sweep`, entscheidende Paare je Faktor gegen die
+je Faktor gerechnete Schwelle, dieselben Seeds) — der Befund wandert
+ins Dokument, sobald der Lauf gelandet ist; die volle
+fam(h/2)/fam(2h)-Neuberechnung bleibt benannt offen.
 Blatt-Befund (2026-08-21, solar_dag_probe auf den echten Serien,
 gemeinsames Fenster 2009-09 → 2020-03, 3837 Tages-Zellen, 30 Paare ×
 lag 0..7 d): **kein fam-gereinigter Pfeil** — fam = 2,108e-1 (stärkste
