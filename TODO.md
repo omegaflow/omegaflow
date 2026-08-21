@@ -104,6 +104,13 @@ test_live_sources_extract führt alle fünf Solar-Blöcke ohne void,
 nobel probe unverändert (X-Ray n=10078). Offen: der Fluss der
 Kanäle in den probe_ring der GPU (src/mathematikerin.rs:1410) —
 der kausale Pfeil F10.7 ↔ X-Ray wartet auf diese Einheit.
+A=A-Reparatur (2026-08-21): der solar-radio-flux-Block ist aus dem
+Register entfernt — path 0.details.0.flux war eine Chimäre (je Fetch
+eine andere Station/Frequenz, Frame on earth 0 0 0 fabriziert) →
+blocked_sources.φ parser-def nested-filter (where filtert nur die
+oberste Array-Ebene, kein Filter auf details[].frequency). Die
+2695-MHz-Reihe erntet der nobel probe weiter (harvest_radio); F10.7
+trägt f107_cm_flux.json.
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien

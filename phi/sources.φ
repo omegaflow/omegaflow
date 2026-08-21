@@ -113,11 +113,6 @@ first proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 40000
 first proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 6.0 0.0 0.0
 first proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
 
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
-ttl 60
-on earth 0 0 0
-path 0.details.0.flux solar_radio_flux_sfu inverse-square em sfu 6.0 0.0 0.0
-
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 at earth

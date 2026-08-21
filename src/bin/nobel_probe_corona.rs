@@ -429,7 +429,7 @@ fn main() {
     println!(
         "{:<14} | Block {} | {} | details entries frequency == 2695 | Sync t_sun = t − {:.3} s",
         "Radio-2695",
-        block_of("solar_radio_flux_sfu"),
+        "parser-def nested-filter (phi/blocked_sources.φ) — series via harvest_radio",
         radio_url,
         GOES_SYNC_S
     );
@@ -523,7 +523,7 @@ fn main() {
     println!("OMNI ↔ GOES: intersection empty — the OMNI ingest ends on 06.08. (stopDate), the GOES series begin on 12.08. (7-day window).");
     println!("30 d @ 1 min is not served by the APIs: xrays-30-day.json carries 404.");
     println!("GOES-30d candidate NGDC netCDF: 404 on four samples (18./12./05.08., 25.07.) — no block entered.");
-    println!("Radio cadence irregular (~4–8 samples/day); the block path (details.0.flux) carries only the first entry — the series harvests all details entries.");
+    println!("Radio cadence irregular (~4–8 samples/day); the block left sources.φ on 2026-08-21 (path 0.details.0.flux picked a station/frequency chimera — parser-def nested-filter in blocked_sources.φ); the series harvests all details entries at 2695 MHz.");
     println!("EUV lines 256/1175/1216/1335/1405 + mgii_index stay unharvested (not declared).");
     println!("LSK file missing locally — the series run in Unix seconds; the HAPI times pass through the identity-LSK (delta_t_a = J2000 offset, 0-s pad): Unix in, Unix out — no leap offset, TE is shift-invariant.");
     println!("Seconds matrix: lag 0 (canonical) and lag 1 coincide — on the 1-min grid the 1-step estimator is the 60-s lag.");
