@@ -337,11 +337,13 @@ Ceres/Vesta) und hebt sie via --clobber auf den CDN (CI-Schritt nach dem
 Asteroiden-Schritt, vor horizons_compiler, der die drei seit demselben
 Commit nicht mehr trägt). Verifiziert: n16-Capture bit-genau gegen die
 Originaldatei (compare-input 0 m), Roundtrip auf echten n373-Bytes
-6,2–6,6 m über 400 Epochen. Offen: der erste kernel_flatten-Lauf — bis
-dahin trägt der CDN die 12-Monats-Bins der drei weiter (fehlt nicht,
-null nicht); die 14 weiteren n16-Körper ohne sources.φ-Block; die 12
-Körper ohne SPK-Segment tragen die 12-Monats-Fenster weiter (fehlt,
-nicht null).
+6,2–6,6 m über 400 Epochen. Erster kernel_flatten-Lauf (Run 32491617648,
+2026-08-21): bodies-Job grün in 13m4s — der Split streamte die 15,17 GB
+(373 Ziele, 1504 Segmente, alle drei verarbeitet), Roundtrip im CI
+6,20/6,31/6,59 m, die drei Langbogen-Bins (je 10.865.544 B) tragen den
+CDN (--clobber ersetzte die 12-Monats-Bins). Offen: die 14 weiteren
+n16-Körper ohne sources.φ-Block; die 12 Körper ohne SPK-Segment tragen
+die 12-Monats-Fenster weiter (fehlt, nicht null).
 
 HDF5-Erntekarte (2026-08-21, Handover
 handover-2026-08-21-hdf5-fits-ernte.md): recherchiert — HDF5 gehört fast
