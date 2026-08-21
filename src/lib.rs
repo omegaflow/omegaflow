@@ -5,6 +5,7 @@ pub mod bsp_reader;
 pub mod cdf;
 pub mod cdn;
 pub mod dastcom;
+pub mod ephemeris;
 pub mod fit;
 pub mod fits;
 pub mod fk;
