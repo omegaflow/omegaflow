@@ -8817,8 +8817,8 @@ field temp temp_c\n";
         };
         let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
         assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(&presences, (0.0, 0.0, 0.0), reach, 0.0, None, None),
             "the em source at the presence anchor must be fetched"
@@ -8827,8 +8827,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_dispatch_gate_window_range_does_not_fetch() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             !super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0, 0.0, None, None),
             "the window range is not a fetch radius — an anchor 50 m out stays refused"
@@ -8854,8 +8854,8 @@ field temp temp_c\n";
         };
         let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
         assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(&presences, (10.0, 0.0, 0.0), reach, 0.0, None, None),
             "the thermal front over the sample lifetime reaches 10 m"
@@ -8868,8 +8868,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_gate_rest_rejects_out_of_reach_anchor() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 0.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 0.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             !super::presence_gate(&presences, (50.0, 0.0, 0.0), 10.0, 5.0, None, None),
             "a resting presence fetches only within reach + extent"
@@ -8878,8 +8878,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_gate_thrust_anticipates_within_median_window() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(
                 &presences,
@@ -8906,8 +8906,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_gate_thrust_without_anchor_velocity_rests() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             !super::presence_gate(&presences, (1000.0, 0.0, 0.0), 0.0, 0.0, None, Some(20.0)),
             "a frameless anchor carries no velocity — only the rest gate applies"
@@ -8916,8 +8916,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_gate_thrust_without_median_rests() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             !super::presence_gate(
                 &presences,
@@ -8933,8 +8933,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_gate_thrust_receding_rests() {
-        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, -100.0, 0.0, 0.0, 0.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, -100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             !super::presence_gate(
                 &presences,
@@ -8945,6 +8945,35 @@ field temp temp_c\n";
                 Some(20.0)
             ),
             "a presence receding from the anchor never anticipates"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_snap_radius_scales_with_grid_step() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 1.0e8)];
+        let snap = super::Φ * 1.0e8;
+        assert!(
+            super::presence_gate(&presences, (snap - 1.0, 0.0, 0.0), 0.0, 0.0, None, None),
+            "the snap radius reaches one golden grid step beyond a bodyless anchor"
+        );
+        assert!(
+            !super::presence_gate(&presences, (snap + 1.0, 0.0, 0.0), 0.0, 0.0, None, None),
+            "beyond the golden grid step the rest gate refuses"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_snap_radius_respects_body_radius() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 1.0)];
+        assert!(
+            super::presence_gate(&presences, (6.0e6, 0.0, 0.0), 0.0, 6.0e6, None, None),
+            "the body radius dominates a tiny grid step — the surface is in reach"
+        );
+        assert!(
+            !super::presence_gate(&presences, (6.0e6 + 1.0, 0.0, 0.0), 0.0, 6.0e6, None, None),
+            "one metre beyond the body radius stays refused"
         );
     }
 
@@ -9133,13 +9162,33 @@ field temp temp_c\n";
         let mut origins = std::collections::HashMap::new();
         origins.insert(0u32, origin_fixture(0, true));
         assert!(
-            !super::origin_stale(&origins, 0, 60, 1.0e9),
+            !super::origin_stale(&origins, 0, 60, 1.0e9, None),
             "a running fetch blocks the re-dispatch, however stale the origin"
         );
         origins.insert(0u32, origin_fixture(0, false));
         assert!(
-            super::origin_stale(&origins, 0, 60, 1.0e9),
+            super::origin_stale(&origins, 0, 60, 1.0e9, None),
             "a settled stale origin dispatches again"
+        );
+    }
+
+    #[test]
+    fn test_origin_stale_jump_epoch_forces_redispatch() {
+        let mut origins = std::collections::HashMap::new();
+        let mut settled = origin_fixture(0, false);
+        settled.fetched = 1.0e9;
+        origins.insert(0u32, settled);
+        assert!(
+            !super::origin_stale(&origins, 0, 60, 1.0e9 + 1.0, None),
+            "without a jump the origin stays held inside the backoff"
+        );
+        assert!(
+            super::origin_stale(&origins, 0, 60, 1.0e9 + 1.0, Some(1.0e9 + 0.5)),
+            "a jump after the last settle reopens the origin"
+        );
+        assert!(
+            !super::origin_stale(&origins, 0, 60, 1.0e9 + 1.0, Some(1.0e9 - 0.5)),
+            "a jump before the last settle leaves the origin held"
         );
     }
 
@@ -9151,12 +9200,12 @@ field temp temp_c\n";
             let factor = 2f64.powi(failures.min(super::FETCH_VOID_CAP) as i32);
             let backoff = 60.0 / super::Φ * factor;
             assert!(
-                !super::origin_stale(&origins, 0, 60, backoff - 0.5),
+                !super::origin_stale(&origins, 0, 60, backoff - 0.5, None),
                 "failures {}: fresh inside the backoff stays held",
                 failures
             );
             assert!(
-                super::origin_stale(&origins, 0, 60, backoff + 0.5),
+                super::origin_stale(&origins, 0, 60, backoff + 0.5, None),
                 "failures {}: the backoff ttl/Φ·2ⁿ expires",
                 failures
             );
@@ -11426,11 +11475,16 @@ fn origin_stale(
     origin: Origin,
     ttl: u64,
     now: f64,
+    jump_epoch: Option<f64>,
 ) -> bool {
     match origins.get(&origin) {
         Some(o) => {
             let backoff = (ttl as f64 / Φ) * (2f64).powi(o.failures.min(FETCH_VOID_CAP) as i32);
-            !o.in_flight && now - o.fetched >= backoff
+            let jumped = match jump_epoch {
+                Some(j) => o.fetched < j,
+                None => false,
+            };
+            !o.in_flight && (now - o.fetched >= backoff || jumped)
         }
         None => true,
     }
@@ -11488,17 +11542,17 @@ fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> Optio
 }
 
 fn presence_gate(
-    presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64)],
+    presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)],
     pos: (f64, f64, f64),
     reach: f64,
-    extent: f64,
+    body_radius: f64,
     v_anchor: Option<[f64; 3]>,
     median_fetch: Option<f64>,
 ) -> bool {
-    let limit = reach + extent;
     presences
         .iter()
-        .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust)| {
+        .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust, grid_step)| {
+            let limit = reach + body_radius.max(Φ * grid_step);
             let dx = pos.0 - px;
             let dy = pos.1 - py;
             let dz = pos.2 - pz;
@@ -11941,17 +11995,6 @@ fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     reach
 }
 
-fn dispatch_extent(fields: &[FieldConfig], body_props: Option<&BodyProperties>) -> f64 {
-    let mut extent = 0.0_f64;
-    for fc in fields {
-        let e = kernel_extent(fc.force, fc.kernel, body_props, fc.tau);
-        if e.is_finite() {
-            extent = extent.max(e);
-        }
-    }
-    extent
-}
-
 fn anchor_velocity(
     frame: &Frame,
     now: f64,
@@ -12140,7 +12183,8 @@ struct Archive {
     sources: Vec<SourceConfig>,
     body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
     field: Arc<Buffer>,
-    presence: HashMap<String, (f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    presence: HashMap<String, (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    jump_epoch: Option<f64>,
     declared_body: Option<DeclaredBody>,
     origins: HashMap<Origin, OriginState>,
     pck_bodies: HashMap<i32, PckBody>,
@@ -16970,7 +17014,7 @@ pub fn main_flow() {
     #[cfg(not(feature = "browser_relay"))]
     let sample_rx = mpsc::channel::<Vec<Sample>>().1;
     let (presence_tx, presence_rx) =
-        mpsc::channel::<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>();
+        mpsc::channel::<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>();
     let body_ephemerides = Arc::new(HashMap::new());
     #[cfg(feature = "browser_relay")]
     let index_html = match std::fs::read(resolve_asset("static/index.html")) {
@@ -17007,6 +17051,7 @@ pub fn main_flow() {
             Vec::new(),
         )),
         presence: HashMap::new(),
+        jump_epoch: None,
         declared_body,
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
@@ -17068,6 +17113,7 @@ pub fn main_flow() {
             0.0,
             0.0,
             0.0,
+            crate::mathematikerin::GRID_INIT,
         ));
     }
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
@@ -17126,10 +17172,23 @@ pub fn main_flow() {
             eprintln!("the window closed — the ω-loop ends");
             break;
         }
-        while let Ok((name, pt, px, py, pz, pr, vx, vy, vz, tt)) = presence_rx.try_recv() {
+        while let Ok((name, pt, px, py, pz, pr, vx, vy, vz, tt, gs)) = presence_rx.try_recv() {
+            if name == "native" {
+                if let Some(&(_, opx, opy, opz, ..)) = archive.presence.get("native") {
+                    let dx = px - opx;
+                    let dy = py - opy;
+                    let dz = pz - opz;
+                    let dp = (dx * dx + dy * dy + dz * dz).sqrt();
+                    if dp >= 4.0 * crate::mathematikerin::JUMP_GRID
+                        && vx * vx + vy * vy + vz * vz == 0.0
+                    {
+                        archive.jump_epoch = Some(pt);
+                    }
+                }
+            }
             archive
                 .presence
-                .insert(name, (pt, px, py, pz, pr, vx, vy, vz, tt));
+                .insert(name, (pt, px, py, pz, pr, vx, vy, vz, tt, gs));
         }
         let now = match archive.presence.get("native").map(|p| p.0) {
             Some(t) if t.is_finite() => t,
@@ -17417,7 +17476,13 @@ pub fn main_flow() {
             median_fetch_duration(&archive.fetch_durations, archive.fetch_duration_len);
         for i in 0..archive.sources.len() {
             let origin = i as u32;
-            if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
+            if !origin_stale(
+                &archive.origins,
+                origin,
+                archive.sources[i].ttl,
+                now,
+                archive.jump_epoch,
+            ) {
                 continue;
             }
             if archive.sources[i].format == "kernel_text" {
@@ -18474,17 +18539,20 @@ pub fn main_flow() {
                 }
                 Frame::Manifest => continue,
             };
-            let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
                 archive.presence.values().cloned().collect();
             let anchor_body = frame_body_name(&archive.sources[i].frame);
             let body_props = archive
                 .body_ephemerides
                 .get(anchor_body.as_str())
                 .and_then(|e| e.props.as_ref());
-            let extent = dispatch_extent(&fields, body_props);
+            let body_radius = match body_props {
+                Some(p) => p.radius_m,
+                None => 0.0,
+            };
             let v_anchor =
                 anchor_velocity(&archive.sources[i].frame, now, &archive.body_ephemerides);
-            if !presence_gate(&presences, pos, r, extent, v_anchor, median_fetch) {
+            if !presence_gate(&presences, pos, r, body_radius, v_anchor, median_fetch) {
                 continue;
             }
             begin_fetch(&mut archive.origins, i as u32, now);

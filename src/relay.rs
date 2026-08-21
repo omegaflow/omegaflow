@@ -13,7 +13,7 @@ struct WsConfig {
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
     sample_tx: mpsc::Sender<Vec<Sample>>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     consent: Arc<AtomicBool>,
 }
@@ -31,7 +31,7 @@ impl TcpRadiator {
         index_html: Vec<u8>,
         constants_js: Vec<u8>,
         sample_tx: mpsc::Sender<Vec<Sample>>,
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
     ) -> Self {
@@ -503,6 +503,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                         vy,
                                         vz,
                                         tt,
+                                        0.0,
                                     ));
                                 }
                             }

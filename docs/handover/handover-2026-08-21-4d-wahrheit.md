@@ -2,7 +2,7 @@
   title: Übergabe: 4D-Wahrheit & Kinematische Dilatation (das antizipierende Fetch-Gate)
   class: handover
   date: 2026-08-21
-  sha256: 0427ce990a1fb66b972b50461472d66d892e27be0b56d118ab9556fd7dd93e3b
+  sha256: 2e604095a32e6453f8dc063dec83b246615886a5ea0bb69b9e45d7b3da12beb9
   status: live
   see-also: docs/handover/handover-2026-08-21-offene-atome.md
 -->
@@ -145,7 +145,7 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
   Gegenwart φ-t 840596983, Scroll #x,0,0,0,-4.0e7 φ-t −4.0e7,
   Stempel in Beobachter-Zeit, null 2026-Render im gescrollten Lauf.
 
-### Atom 5 — Sprung-Fetch (Snap-to-Truth)
+### Atom 5 — Sprung-Fetch (Snap-to-Truth) — ERLEDIGT (2026-08-21)
 
 - Radius: `signal_reach + max(body_radius, Φ·JUMP_GRID·2ⁿ)`,
   body_radius aus BodyProperties (live data), n = log₂(grid_step/JUMP_GRID),

@@ -787,7 +787,7 @@ use winit::window::{Fullscreen, Window, WindowAttributes, WindowId};
 const Φ: f64 = 1.618033988749895;
 const C: f64 = 299792458.0;
 pub const GRID_INIT: f64 = 2147483648.0;
-const JUMP_GRID: f64 = 268435456.0;
+pub const JUMP_GRID: f64 = 268435456.0;
 const SSAA_MAX: f32 = 8.0;
 const BUDGET_RELAX: f64 = 0.1;
 const PERM_GROUND: f32 = f32::EPSILON;
@@ -1093,7 +1093,7 @@ struct SenseReq {
 
 impl EMOscillator {
     pub fn new(
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -1382,7 +1382,7 @@ struct NativeApp {
     rx: mpsc::Receiver<Arc<Buffer>>,
     req_tx: mpsc::SyncSender<SenseReq>,
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     body_names: Arc<Vec<String>>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
@@ -1514,7 +1514,7 @@ impl NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<SenseReq>,
         res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -2255,6 +2255,7 @@ impl NativeApp {
             self.v[1],
             self.v[2],
             self.t_thrust,
+            self.grid_step,
         ));
         self.sense();
     }
@@ -3910,7 +3911,7 @@ impl ApplicationHandler for NativeApp {
 
 fn run_window(
     rx: mpsc::Receiver<Arc<Buffer>>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
     req_tx: mpsc::SyncSender<SenseReq>,
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
