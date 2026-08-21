@@ -140,43 +140,43 @@ jobs:
             --table J/A+A/495/691/bzcat4 \
             --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z' \
             --out kernels/blazars_z.json \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: blazars_z returned void" \
-                 --body "blazars_z compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: blazars_z returned void" \
+                 "blazars_z compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/A+A/612/A1/snrcat \
             --columns 'name:Source;ra:@8;dec:@9;dist:Dist' \
             --out kernels/snr_dist.json \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: snr_dist returned void" \
-                 --body "snr_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: snr_dist returned void" \
+                 "snr_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table B/psr/psr \
             --columns 'name:Name;ra:RA2000;dec:DE2000;dist:Dist' \
             --out kernels/pulsar_dist.json \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: pulsar_dist returned void" \
-                 --body "pulsar_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: pulsar_dist returned void" \
+                 "pulsar_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
           cargo run --release --bin sexagesimal_compiler -- \
             --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: magnetar_flat returned void" \
-                 --body "magnetar_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: magnetar_flat returned void" \
+                 "magnetar_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
           cargo run --release --bin sexagesimal_compiler -- \
             --source tevcat --input kernels/tevcat2.json \
             --join-z kernels/blazars_z.json --join-dist kernels/snr_dist.json \
             --join-dist2 kernels/pulsar_dist.json 0.0083 \
             --out tevcat_flat.json --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: tevcat_flat returned void" \
-                 --body "tevcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: tevcat_flat returned void" \
+                 "tevcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile MPC cometels catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -186,10 +186,10 @@ jobs:
             --input kernels/cometels.json.gz \
             --out cometels_flat.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: cometels_flat returned void" \
-                 --body "cometels_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: cometels_flat returned void" \
+                 "cometels_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile DASTCOM5 comet apparition catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -199,10 +199,10 @@ jobs:
             --input kernels/dcom5_le.dat \
             --out dcom5_comets.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: dcom5_comets returned void" \
-                 --body "dcom5_comets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: dcom5_comets returned void" \
+                 "dcom5_comets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile exoplanet catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -214,10 +214,10 @@ jobs:
             --skip-null dist \
             --out exoplanets.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: exoplanets returned void" \
-                 --body "exoplanets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: exoplanets returned void" \
+                 "exoplanets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile TESS light curves and upload to CDN
         continue-on-error: true
         env:
@@ -225,11 +225,12 @@ jobs:
         run: |
           cargo run --release --bin tess_compiler -- \
             --out tess_lightcurves.bin \
+            --limit 16 \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: tess_lightcurves returned void" \
-                 --body "tess_lightcurves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: tess_lightcurves returned void" \
+                 "tess_lightcurves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile AVO radio catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -240,10 +241,10 @@ jobs:
             --skip-null z \
             --out avo_rad.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: avo_rad returned void" \
-                 --body "avo_rad compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: avo_rad returned void" \
+                 "avo_rad compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile BZCAT5 blazar catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -254,10 +255,10 @@ jobs:
             --skip-null z \
             --out bzcat5.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: bzcat5 returned void" \
-                 --body "bzcat5 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: bzcat5 returned void" \
+                 "bzcat5 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile Swift GRB catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -270,10 +271,10 @@ jobs:
             --skip-null z \
             --out swiftgrb.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: swiftgrb returned void" \
-                 --body "swiftgrb compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: swiftgrb returned void" \
+                 "swiftgrb compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile GCVS variable-star catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -286,10 +287,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out gcvs_cat.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: gcvs_cat returned void" \
-                 --body "gcvs_cat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: gcvs_cat returned void" \
+                 "gcvs_cat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile ATNF pulsar catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -302,10 +303,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out psr.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: psr returned void" \
-                 --body "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: psr returned void" \
+                 "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile Asiago supernova catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -316,10 +317,10 @@ jobs:
             --skip-null z \
             --out sncat.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: sncat returned void" \
-                 --body "sncat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: sncat returned void" \
+                 "sncat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile white-dwarf catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -330,10 +331,10 @@ jobs:
             --skip-null mag \
             --out wd.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: wd returned void" \
-                 --body "wd compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: wd returned void" \
+                 "wd compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile VSX variable-star index and upload to CDN
         continue-on-error: true
         run: |
@@ -346,10 +347,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out vsx.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: vsx returned void" \
-                 --body "vsx compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: vsx returned void" \
+                 "vsx compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile SB9 spectroscopic-binary catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -362,10 +363,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out sb9.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: sb9 returned void" \
-                 --body "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: sb9 returned void" \
+                 "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile cataclysmic-binary catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -378,10 +379,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out cbdata.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: cbdata returned void" \
-                 --body "cbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: cbdata returned void" \
+                 "cbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile LMXB catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -394,10 +395,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out lmxbdata.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: lmxbdata returned void" \
-                 --body "lmxbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: lmxbdata returned void" \
+                 "lmxbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile CoRoT bright-star catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -410,10 +411,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out corot.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: corot returned void" \
-                 --body "corot compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: corot returned void" \
+                 "corot compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile polarimetry catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -426,10 +427,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out polarbase.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: polarbase returned void" \
-                 --body "polarbase compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: polarbase returned void" \
+                 "polarbase compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile MERLIN radio-interferometry catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -442,10 +443,10 @@ jobs:
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out merlin.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: merlin returned void" \
-                 --body "merlin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: merlin returned void" \
+                 "merlin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile Chandra CSC 2.1 X-ray catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -457,10 +458,10 @@ jobs:
             --async 600 --limit 500000 \
             --out chandra_csc.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: chandra_csc returned void" \
-                 --body "chandra_csc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: chandra_csc returned void" \
+                 "chandra_csc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile NVSS 1.4 GHz radio catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -472,10 +473,10 @@ jobs:
             --async 600 --limit 2000000 \
             --out nvss.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: nvss returned void" \
-                 --body "nvss compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: nvss returned void" \
+                 "nvss compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile FIRST 1.4 GHz radio catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -487,10 +488,10 @@ jobs:
             --async 600 --limit 1100000 \
             --out first14.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: first14 returned void" \
-                 --body "first14 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: first14 returned void" \
+                 "first14 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile PANGAEA sediment core 758961 and upload to CDN
         continue-on-error: true
         run: |
@@ -498,10 +499,10 @@ jobs:
             --id PANGAEA.758961 \
             --out pangaea_758961.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: pangaea_758961 returned void" \
-                 --body "pangaea_758961 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: pangaea_758961 returned void" \
+                 "pangaea_758961 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -519,10 +520,10 @@ jobs:
             --union-bright kernels/bright_stars.json \
             --out dr3_stars.bin \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: dr3_stars returned void" \
-                 --body "dr3_stars compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: dr3_stars returned void" \
+                 "dr3_stars compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile FRBCAT via TAPVizieR and upload to CDN
         continue-on-error: true
         run: |
@@ -532,10 +533,10 @@ jobs:
             --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:zHost;dm:DM;speak:Speak' \
             --out frbcat_flat.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: frbcat_flat returned void" \
-                 --body "frbcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: frbcat_flat returned void" \
+                 "frbcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Compile FRB A279 via TAPVizieR and upload to CDN
         continue-on-error: true
         run: |
@@ -545,10 +546,10 @@ jobs:
             --columns 'name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc' \
             --out frb_a279.json \
             --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: frb_a279 returned void" \
-                 --body "frb_a279 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: frb_a279 returned void" \
+                 "frb_a279 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Report catalogs void
         if: failure()
         run: |
@@ -592,10 +593,10 @@ jobs:
           done
           jq -s 'add' kernels/rave_c*.json > rave_dr5.json
           gh release upload ssd.jpl.nasa.gov rave_dr5.json --clobber --repo omegaflow/sources \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: rave_dr5 returned void" \
-                 --body "rave_dr5 chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: rave_dr5 returned void" \
+                 "rave_dr5 chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Chunk-compile pastel (8 RA-slices) and upload to CDN
         continue-on-error: true
         run: |
@@ -620,10 +621,10 @@ jobs:
           done
           jq -s 'add' kernels/pastel_c*.json > kernels/pastel.json
           gh release upload ssd.jpl.nasa.gov kernels/pastel.json --clobber --repo omegaflow/sources \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: pastel returned void" \
-                 --body "pastel chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: pastel returned void" \
+                 "pastel chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Chunk-compile wds (8 RA-slices) and upload to CDN
         continue-on-error: true
         run: |
@@ -648,10 +649,10 @@ jobs:
           done
           jq -s 'add' kernels/wds_c*.json > kernels/wds.json
           gh release upload ssd.jpl.nasa.gov kernels/wds.json --clobber --repo omegaflow/sources \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: wds returned void" \
-                 --body "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: wds returned void" \
+                 "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Chunk-compile mktypes (80 RA-slices) and upload to CDN
         continue-on-error: true
         run: |
@@ -676,10 +677,10 @@ jobs:
           done
           jq -s 'add' kernels/mktypes_c*.json > kernels/mktypes.json
           gh release upload ssd.jpl.nasa.gov kernels/mktypes.json --clobber --repo omegaflow/sources \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: mktypes returned void" \
-                 --body "mktypes chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: mktypes returned void" \
+                 "mktypes chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
       - name: Chunk-compile denis (16 RA-slices) and upload to CDN
         continue-on-error: true
         run: |
@@ -704,10 +705,10 @@ jobs:
           done
           jq -s 'add' kernels/denis_c*.json > kernels/denis.json
           gh release upload ssd.jpl.nasa.gov kernels/denis.json --clobber --repo omegaflow/sources \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: denis returned void" \
-                 --body "denis chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: denis returned void" \
+                 "denis chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
 
   sun:
     runs-on: ubuntu-latest

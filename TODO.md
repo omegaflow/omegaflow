@@ -742,16 +742,35 @@ ICRS-4D-Rahmen teilt:
 - Empfohlene Reihenfolge: Hill/Abplattung → LCDB/DAMIT.
 - H-Schätzung vs. NEOWISE für die Körper, wo DASTCOM einen abgeleiteten
   (nicht gemessenen) Radius trägt — registriert, nicht entschieden.
-- Sternbin-rv-Ernte (pending): die Compiler schreiben 44-B-Records
-  (8+8+7×4: ra, dec, pm_ra, pm_de, plx, mag, flux, farbe, rv in m/s);
-  `parse_star_record` verlangt exakt 44 Byte, kein rv=0.0-Ersatzwert
-  (0 honored).
-  **Offen**: Rekompilation von `dr3_stars.bin` + `bright_stars.json` +
-  CDN-Remanifestation (CI, kernel_flatten-catalogs) — die
-  Legacy-40-B-Bins manifestieren nicht, die Sterne bleiben dunkel, bis
-  die 44-B-Binaries gebaut sind (pending, keine Fabrikation); erst
-  danach trägt der Katalog die geerntete Radialgeschwindigkeit. Bis
-  dahin fließt rv nur aus den JSON-cmap-Quellen (denis `radvel rv`).
+- Sternbin-rv-Ernte (erledigt, 2026-08-21 gemessen): die Compiler
+  schreiben 44-B-Records (8+8+7×4: ra, dec, pm_ra, pm_de, plx, mag,
+  flux, farbe, rv in m/s); `parse_star_record` verlangt exakt 44 Byte,
+  kein rv=0.0-Ersatzwert (0 honored). Das CDN trägt
+  `dr3_stars.bin` = 75.001.828 B = exakt 1.704.587 × 44 (Stichprobe
+  200/200 mit rv ≠ 0) — die Rekompilation ist gelaufen, die Sterne
+  manifestieren. `bright_stars.json` (45 Records, V<1.94) trägt kein
+  rv — gemessen: die 45 hellsten sind oberhalb der Gaia-Bright-Limit
+  (Kegel-Test: Altair fehlt in gaiadr3.gaia_source_lite) — das Fehlen
+  ist die Messung, nicht die Lücke (0 honored).
+- TESS-Ernte (2026-08-21 repariert, CI-Schritt steht): das
+  tess_lightcurves.bin-Asset war void (8 B, 0 Kurven) — vier gemessene
+  Befunde: (1) der MAST-Download-Endpoint `/api/v0/Download/file`
+  antwortet 404, `/api/v0.1/Download/file` liefert die FITS (gemessen
+  am SPOC-Produkt von HD 221416); (2) der Exoplanet-Archive-TAP liefert
+  FORMAT=json als nacktes Array, der Reader erwartete `{"data":[…]}` —
+  tap_targets liest jetzt beide; (3) die obs_id-Suffix-Filter `-0120-s`
+  verfehlte die Namensdrift (s0036-Merges, -0121-s, TESS-SPOC-vs-SPOC-
+  Provenance) — der Compiler wählt client-seitig timeseries +
+  SPOC/TESS-SPOC ohne a_fast/_cal; (4) FITS-BINTABLE ist big-endian,
+  die Zell-Reader lasen LE, TFORM/TTYPE-Innen-Padding brach den Parse —
+  src/fits.rs liest jetzt BE + getrimmt (fits-Tests auf BE-Zeilen
+  umgestellt, 14 grün; GONG-Bilder waren nie betroffen). Target-Set:
+  disc_facility = TESS (782 Sterne) statt Kepler/K2-Leerlauf. Lokale
+  Ernte verifiziert: HD 221416, 7 Sektoren, 47.838 Samples, t0
+  2018-08-23, PDCSAP-Fluss 183–185k e⁻/s, Roundtrip exakt. Der
+  CI-Schritt (kernel_flatten catalogs) trägt `--limit 16` (2⁴) — der
+  volle 782-Sterne-Satz überschreitet Fenster (≈3 min/Stern gemessen)
+  und Sample-Budget; die Endzahl entscheidet das Sample-Budget-Atom.
 - CDN-Rekompilat ephemeris v3: die ephemeris_{body}.bin-Assets sind noch
   v2 — der nächste kernel_flatten-Lauf schreibt v3 (0x02 + u16-Präsenz-
   Maske). Bis dahin liest der v2-Arm (CI-Reihenfolge eingehalten: Code

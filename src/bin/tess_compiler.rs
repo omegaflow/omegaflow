@@ -98,7 +98,7 @@ struct CurveStar {
 }
 
 fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
-    let adql = "SELECT pl_name,hostname,tic_id,ra,dec,sy_dist FROM pscomppars WHERE pl_tranmid IS NOT NULL AND tic_id IS NOT NULL";
+    let adql = "SELECT pl_name,hostname,tic_id,ra,dec,sy_dist FROM pscomppars WHERE pl_tranmid IS NOT NULL AND tic_id IS NOT NULL AND disc_facility = 'Transiting Exoplanet Survey Satellite (TESS)'";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
         &[
@@ -116,36 +116,44 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
         eprintln!("tap targets: json absent");
         return Vec::new();
     };
+    let rows: &[JsonVal] = match jpath_val(&root, "data") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => match &root {
+            JsonVal::Arr(a) => a,
+            _ => {
+                eprintln!("tap targets: data array absent");
+                return Vec::new();
+            }
+        },
+    };
     let mut seen = std::collections::HashSet::new();
     let mut targets = Vec::new();
-    if let Some(JsonVal::Arr(rows)) = jpath_val(&root, "data") {
-        for row in rows {
-            if targets.len() >= limit {
-                break;
-            }
-            let Some(tic) = jstr(row, "tic_id") else {
-                continue;
-            };
-            let Some(ra) = jnum(row, "ra") else {
-                continue;
-            };
-            let Some(dec) = jnum(row, "dec") else {
-                continue;
-            };
-            if !seen.insert(tic.clone()) {
-                continue;
-            }
-            let plx = match jnum(row, "sy_dist") {
-                Some(d) if d > 0.0 => 1000.0 / d,
-                _ => 0.0,
-            };
-            targets.push(Target {
-                tic_id: tic,
-                ra_deg: ra,
-                dec_deg: dec,
-                plx_mas: plx,
-            });
+    for row in rows {
+        if targets.len() >= limit {
+            break;
         }
+        let Some(tic) = jstr(row, "tic_id") else {
+            continue;
+        };
+        let Some(ra) = jnum(row, "ra") else {
+            continue;
+        };
+        let Some(dec) = jnum(row, "dec") else {
+            continue;
+        };
+        if !seen.insert(tic.clone()) {
+            continue;
+        }
+        let plx = match jnum(row, "sy_dist") {
+            Some(d) if d > 0.0 => 1000.0 / d,
+            _ => 0.0,
+        };
+        targets.push(Target {
+            tic_id: tic,
+            ra_deg: ra,
+            dec_deg: dec,
+            plx_mas: plx,
+        });
     }
     targets
 }
@@ -172,9 +180,17 @@ fn mast_lc_obs_ids(target: &Target, token: &str) -> Vec<String> {
             let Some(obs_id) = jstr(row, "obs_id") else {
                 continue;
             };
-            if obs_id.ends_with("-0120-s") {
-                ids.push(obs_id);
+            if jstr(row, "dataproduct_type").as_deref() != Some("timeseries") {
+                continue;
             }
+            match jstr(row, "provenance_name").as_deref() {
+                Some("SPOC") | Some("TESS-SPOC") => {}
+                _ => continue,
+            }
+            if obs_id.contains("a_fast") || obs_id.contains("_cal") {
+                continue;
+            }
+            ids.push(obs_id);
         }
     }
     ids
@@ -376,7 +392,7 @@ fn main() {
         for obs_id in &ids {
             let tmp = format!("/tmp/opencode/tess_lc_{}.fits", obs_id);
             if !curl_bytes(
-                "https://mast.stsci.edu/api/v0/Download/file",
+                "https://mast.stsci.edu/api/v0.1/Download/file",
                 &[("uri", format!("mast:TESS/product/{}_lc.fits", obs_id))],
                 &token,
                 &tmp,

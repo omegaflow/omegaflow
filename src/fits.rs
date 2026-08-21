@@ -136,12 +136,15 @@ impl FitsTable {
         for i in 1..=tfields {
             let name = header
                 .str_unescaped(&format!("TTYPE{}", i))
-                .unwrap_or_default();
+                .unwrap_or_default()
+                .trim()
+                .to_string();
             let tform = header
                 .value(&format!("TFORM{}", i))?
-                .trim_start_matches('\'');
-            let tform = tform.trim_end_matches('\'');
-            let (code, repeat) = parse_tform(tform)?;
+                .trim_matches('\'')
+                .trim()
+                .to_string();
+            let (code, repeat) = parse_tform(&tform)?;
             let width = code_width(code)? * repeat;
             let tbcol = match header.int(&format!("TBCOL{}", i)) {
                 Some(t) if t > 0 => t as usize,
@@ -204,11 +207,11 @@ impl FitsTable {
         let end = off + col.width;
         let raw = buf.get(off..end)?;
         let v = match col.code {
-            'D' => f64::from_le_bytes(raw.try_into().ok()?),
-            'E' => f32::from_le_bytes(raw[..4].try_into().ok()?) as f64,
-            'J' => i32::from_le_bytes(raw[..4].try_into().ok()?) as f64,
-            'I' => i16::from_le_bytes(raw[..2].try_into().ok()?) as f64,
-            'K' => i64::from_le_bytes(raw.try_into().ok()?) as f64,
+            'D' => f64::from_be_bytes(raw.try_into().ok()?),
+            'E' => f32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+            'J' => i32::from_be_bytes(raw[..4].try_into().ok()?) as f64,
+            'I' => i16::from_be_bytes(raw[..2].try_into().ok()?) as f64,
+            'K' => i64::from_be_bytes(raw.try_into().ok()?) as f64,
             'B' => raw[0] as f64,
             _ => return None,
         };
@@ -220,9 +223,9 @@ impl FitsTable {
         let end = off + col.width;
         let raw = buf.get(off..end)?;
         match col.code {
-            'J' => Some(i32::from_le_bytes(raw[..4].try_into().ok()?) as i64),
-            'I' => Some(i16::from_le_bytes(raw[..2].try_into().ok()?) as i64),
-            'K' => Some(i64::from_le_bytes(raw.try_into().ok()?)),
+            'J' => Some(i32::from_be_bytes(raw[..4].try_into().ok()?) as i64),
+            'I' => Some(i16::from_be_bytes(raw[..2].try_into().ok()?) as i64),
+            'K' => Some(i64::from_be_bytes(raw.try_into().ok()?)),
             'B' => Some(raw[0] as i64),
             _ => None,
         }
@@ -435,9 +438,9 @@ mod tests {
         buf.extend_from_slice(&ext);
 
         let rows: [[u8; 12]; 3] = [
-            [1u8, 2, 3, 4, 0, 0, 0, 0, 0, 0, 240, 63],
-            [5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 64],
-            [9, 10, 11, 12, 0, 0, 0, 0, 0, 0, 8, 64],
+            [4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0],
+            [8, 7, 6, 5, 64, 0, 0, 0, 0, 0, 0, 0],
+            [12, 11, 10, 9, 64, 8, 0, 0, 0, 0, 0, 0],
         ];
         for row in rows {
             buf.extend_from_slice(&row);
@@ -488,8 +491,8 @@ mod tests {
         buf.extend_from_slice(&ext);
 
         let rows: [[u8; 12]; 2] = [
-            [1u8, 2, 3, 4, 0, 0, 0, 0, 0, 0, 240, 63],
-            [5, 6, 7, 8, 0, 0, 0, 0, 0, 0, 0, 64],
+            [4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0],
+            [8, 7, 6, 5, 64, 0, 0, 0, 0, 0, 0, 0],
         ];
         for row in rows {
             buf.extend_from_slice(&row);
@@ -791,7 +794,7 @@ mod tests {
 
     #[test]
     fn table_tscal_tzero_scales_integer() {
-        let buf = table_with(&[("TSCAL1", "2.0"), ("TZERO1", "10.0")], &[[5, 0, 0, 0]]);
+        let buf = table_with(&[("TSCAL1", "2.0"), ("TZERO1", "10.0")], &[[0, 0, 0, 5]]);
         let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
         let flux = t.column("FLUX").unwrap();
         assert_eq!(t.cell_i64(&buf, 0, flux).unwrap(), 5);
@@ -800,7 +803,7 @@ mod tests {
 
     #[test]
     fn table_unscaled_defaults_are_identity() {
-        let buf = table_with(&[], &[[5, 0, 0, 0]]);
+        let buf = table_with(&[], &[[0, 0, 0, 5]]);
         let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
         let flux = t.column("FLUX").unwrap();
         assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 5.0);
