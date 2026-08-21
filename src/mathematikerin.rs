@@ -325,7 +325,7 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
             omega[f] += c.x;
             let ratio = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f))
                 * scale * scale;
-            let lum = clamp((ratio + vp.expose_ex.x) / 22.0, 0.0, 1.0);
+            let lum = clamp(log2(1.0 + ratio) / 22.0, 0.0, 1.0);
             if (f == 0u) {
                 rgb += color_lut_rgb(c.z) * lum;
             }
