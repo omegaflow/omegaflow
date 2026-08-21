@@ -85,6 +85,18 @@ O(n²) × Surrogate-Kosten gegenrechnen.
 GOES-30d-Archiv-Block bleibt pending (kein lebender Kandidat);
 bis dahin trennt der OMNI-Ingest-Verzug (stopDate 06.08.) OMNI↔GOES —
 Schnittmenge leer, im Protokoll fehlt.
+Lang-Fenster-Probe (2026-08-21, `long_window_probe`): der Lauf auf den
+echten Serien steht — F10.7-Penticton (28337 Tageswerte) ×
+GOES-XRS-Historie (goes_xrs.bin, 1995–2020) über das gemeinsame Fenster
+(n ≈ 9088/9092 Tages-Zellen, lag 0..7 d). Befund: **alle vier Paare
+still unter der phasenrandomisierten Schwelle — kein kausaler Pfeil
+F10.7 ↔ X-Ray auf der Tages-Skala** (der 7-Tage-Befund „n<30, no
+statement“ kippt nicht in einen Pfeil, sondern bleibt still bei
+ausreichendem n). Die Nullkontrolle hält: XRSB→F10.7 bricht nur die
+naive Shuffle-Schwelle, nicht die phasenrandomisierte — die naive war
+das Artefakt (wie im nobel-Probe). 0 honored: Stille ist die Antwort.
+Te-Detail: F10.7→XRSA 6,6e-3 (thr 1,7e-2), XRSA→F10.7 2,9e-2
+(3,8e-2), F10.7→XRSB 1,1e-2 (1,8e-2), XRSB→F10.7 5,4e-2 (7,5e-2).
 Solar-Akteure — pending (2026-08-20): der g-Moden-Oszillator
 selbst (0 honored — einzeln nie gemessen); der CDAWeb-Live-Block
 (SOLO_L2_RPW-TDS-SURV-STAT, SN_RMS_E V/m, 16-s-Kadenz) — der
@@ -311,9 +323,11 @@ Throttle: fetch() las .nc als UTF-8 (stiller void), der Flag-Name
 wechselt zwischen v1-0-0 („xrsa_flags“) und v2-x-x („xrsa_flag“), und
 die Epoche wechselt zwischen „seconds since 1970“ und „… since 2000“
 (fest addiertes EPOCH_UNIX schob 1995 auf 2025). Alle drei behoben
-(0e079ac), verifiziert gegen beide Fixtures; die lokale Ernte
-1995–2020 lädt goes_xrs.bin, danach fährt der Probe. Bis das Asset
-liegt, trägt der goes_xrs-Block die benannte Verweigerung (0 honored).
+(0e079ac); die lokale Ernte 1995–2020 lud goes_xrs.bin auf das CDN —
+alle drei 404 sind geschlossen, der Block trägt kein Void mehr. Der
+Lang-Fenster-Probe lief auf den echten Serien: still, kein kausaler
+Pfeil F10.7 ↔ X-Ray auf der Tages-Skala (n ≈ 9090, alle vier Paare
+unter der phasenrandomisierten Schwelle; Befund im Nadel-Ⅲ-Abschnitt).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
