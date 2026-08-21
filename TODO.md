@@ -238,6 +238,27 @@ GOES-XRS-Historie (Atom 3) über Jahre paart — wartet auf Atom 3; Mg II
 und SSN bleiben offen (SSN ist ein Index, keine Messung — siehe
 docs/concepts/sunspots.md; Mg II ist ein dimensionsloser Index, der
 Force-Gate-Litmus fehlt noch).
+EUV-Historie (2026-08-21): ERLEDIGT für das, was existiert — die
+NCEI-EUVS-Ernte `euvs_compiler` liest die zwei `geuv-l2-avg1d`-Dateien
+(je Satellit EINE Datei für das ganze Jahrzehnt, ~100 KB — kein
+Monats-Crawl): goes14 s20090901 + goes15 s20100325, beide e20200304,
+v5-0-0. Befund der Prüfung (5 avg1m-Proben + beide avg1d voll):
+**irr_304_1nm ist über das ganze Jahrzehnt tot (NaN, 0/3633 valide),
+284 existiert im Produkt gar nicht** (Wellenlängen-Achse [30,4; 121,6]
+nm) — die 304/284-Historie gibt es nicht, die Kanäle bleiben live-only
+(euvs-7-day.json, 7 Tage, Minute-Skala — dort leben sie und tragen in
+der nobel probe EUV→X-Ray und Bz→X-Ray, lag 0/1). Das lebende
+EUV-Äquivalent ist **Lyman-α 121,6 nm** (irr_1216_1nm, W/m², ×au_factor
+→ 1 AU, flag==0; das avg1d trägt kein geocorona_flag — die
+Geokorona-Kontamination der Lyman-α-Tagesmittel ist benannt, nicht
+gefiltert) → `goes_euvs.bin` (GEUV, 3777 Records 2009-09 → 2020-03).
+`src/bin/solar_dag_probe.rs` ist das Blatt der Korona-Heizung: 6
+Kanäle (F10.7, XRSA, XRSB, Lya1216, Bz, Dichte) × 30 gerichtete
+Paare × lag 0..7 d, TE über die gemeinsame Tages-Zelle, Schwelle
+phasenrandomisiert (mean+2σ, 10 Surrogate) + Familien-Schwelle fam =
+stärkste Surrogat-TE der Runde (Mehrfachvergleichskorrektur). Offen
+bleibt: die CI-Verdrahtung (kernel_flatten-Job `euvs` + CDN-Upload
+goes_euvs.bin) und der KDE-Sensitivitäts-Sweep (h, h/2, 2h).
 A=A-Reparatur (2026-08-21): der solar-radio-flux-Block ist aus dem
 Register entfernt — path 0.details.0.flux war eine Chimäre (je Fetch
 eine andere Station/Frequenz, Frame on earth 0 0 0 fabriziert) →
@@ -564,11 +585,17 @@ Maschine misst.
   Mehrfachvergleichs-Punkt ist FÜR DIESES BLATT geschlossen (die
   Nadel-III-Registratur bleibt unberührt). Kostenrechnung: 12 Reihen
   × O(m²) ≈ 690k exp je Zelle (~1 ms GPU), 366 Zellen/Runde ≈
-  12 min Wand, fünf Stationen ≈ 60 min je volle Runde. Erste Messung
-  (Hidden-Lauf 2026-08-21): 51000 — lag 22d, te(ws) 0.335 thr 0.313,
-  te(sw) 0.377 thr 0.289, fam 0.669, p̂ 0.007, M 122, h 1/3 →
-  family bound: kein Befund, die Stille ist die Antwort (0 honored);
-  das Blatt trägt die Runde (blatt-papier-resultat.md).
+   12 min Wand, fünf Stationen ≈ 60 min je volle Runde. Erste Messung
+   (Hidden-Lauf 2026-08-21): 51000 — lag 22d, te(ws) 0.335 thr 0.313,
+   te(sw) 0.377 thr 0.289, fam 0.669, p̂ 0.007, M 122, h 1/3 →
+   family bound: kein Befund, die Stille ist die Antwort (0 honored);
+   das Blatt trägt die Runde (blatt-papier-resultat.md).
+   Erste Runde der neuen Geometrie (n=512, derselbe Tag): 51000 —
+   lag 16d, te(ws) 0.219 thr 0.203, te(sw) −1.108 thr 0.520 (der
+   Platten-Schätzer kann endlich-sample negativ werden — die Messung
+   bleibt ungerundet, liegt unter der Schwelle, treibt kein Verdikt),
+   fam 0.655, p̂ 0.018, M 108, h 1/3 → family bound: kein Befund
+   (0 honored); das Blatt trägt diese Runde.
    Fehlt-Registratur: die NINO3.4-TAO-Stationen (51007…51311) tragen
    keine realtime2-Dateien (404, gemessen 2026-08-21) — die
    äquatoriale Region bleibt quellenlos, die Maschine misst die 37

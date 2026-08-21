@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 4e18a7267b5ad4866a7417746e69176177aac9e407fd9255c3eb00d5d61738a8
+  sha256: a738a9b36edefa7b59e6b401998529ccb8665dc489ca9215a9039472fadf0804
   status: live
   see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/handover/handover-2026-08-21-laic-pfeilrichtung.md
 -->
@@ -61,20 +61,26 @@ Bz → 304 und 304 → 284 sind still; der DAG schrumpfte auf EUV-304 → X-Ray
 ### Blatt 1 — Der kausale Pfeil des ENSO
 
 Erste gemessene Runde (2026-08-21, Hidden-Lauf): Boje 51000
-(23.5 N, 153.8 W) — 183 Sechs-Stunden-Bins aus ~46 Tagen realtime2,
-Sweep −30 … +30 Tage in Tagesschritten, drei Bandbreiten (h, h/2,
-2h), M = 122 gültige Zellen.
+(23.5 N, 153.8 W) — 1024 Sechs-Stunden-Bins (~8½ Monate stdmet),
+Zelle = die neuesten 512 Bins, Sweep −30 … +30 Tage in Tagesschritten,
+drei Bandbreiten (h, h/2, 2h), M = 108 gültige Zellen.
 
 ```
-TE(Wind → SST) = 0.335   (Schwelle 0.313, n = 95)
-TE(SST → Wind) = 0.377   (Schwelle 0.289, n = 95)
-Lag = 22 d   (Gewinner-Shift des Sweeps; n = 183 Ring-Bins − 88 Shift-Bins)
-fam = 0.669  (Maximum der Surrogat-TEs über die Runde)
-p̂   = 0.007  (empirischer Anteil der Surrogat-Zellen über der eigenen Schwelle)
+TE(Wind → SST) =  0.219   (Schwelle 0.203, n = 512)
+TE(SST → Wind) = -1.108   (Schwelle 0.520, n = 512)
+Lag = 16 d   (Gewinner-Shift des Sweeps)
+fam = 0.655  (Maximum der Surrogat-TEs über die Runde)
+p̂   = 0.018  (empirischer Anteil der Surrogat-Zellen über der eigenen Schwelle)
 h   = 1/3    (der Gewinner hält nur bei h — nicht bei h/2 und 2h)
 Verdikt: kein Befund — der Pfeil überlebt die Familien-Schwelle nicht
-(fam 0.669 > TE 0.377) und die Bandbreiten-Sensitivität nicht (1/3).
+(fam 0.655 > TE 0.219) und die Bandbreiten-Sensitivität nicht (1/3).
 ```
+
+Der negative TE(SST → Wind) ist die Messung selbst: der
+Platten-Schätzer kann bei endlichem n negativ werden (KL-Divergenz-
+Bias). Er liegt unter seiner Schwelle, treibt kein Verdikt und wird
+nicht gerundet — die Zustandsleiter behandelt ihn als nicht-Pfeil.
+
 
 Stille ist die Antwort (0 honored). Das benannte Set wuchs am selben
 Tag auf 37 Bojen-Paare (Auswahlregel: jede realtime2-Datei, die WSPD
