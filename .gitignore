@@ -57,3 +57,4 @@ rave_dr5.json
 
 # Compiler-Binaries (gehen zum CDN, nicht ins Repo)
 *.bin
+phi/pipeline/katalog/ncei_ssi/

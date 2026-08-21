@@ -10,6 +10,7 @@ pub mod fits;
 pub mod fk;
 pub mod force;
 pub mod gong;
+pub mod hdf5;
 pub mod inflate;
 pub mod json;
 pub mod kepler;
@@ -17,6 +18,7 @@ pub mod lsk;
 pub mod mat;
 pub mod mathematikerin;
 pub mod media;
+pub mod nc4;
 pub mod netcdf;
 pub mod pck;
 #[cfg(feature = "browser_relay")]
