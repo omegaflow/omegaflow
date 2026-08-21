@@ -1,3 +1,8 @@
+<!--
+  title: VOLLSTÄNDIGER AUSFÜHRUNGSPLAN
+  class: concept
+  sha256: d043a42a936a9bd7ee73d6d25d44e15e85405b1d0664e67045a1e28f7bb1c1c3
+-->
 # VOLLSTÄNDIGER AUSFÜHRUNGSPLAN
 
 Kein "siehe oben", kein `...`, kein `else if` ohne Körper, kein `Option` ohne Match.

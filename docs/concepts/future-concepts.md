@@ -1,3 +1,8 @@
+<!--
+  title: FUTURE CONCEPTS: Coherence Manifestation & Stigmergic Field
+  class: concept
+  sha256: 9d8b6da6d0dfc6676a9c79312f8a3f4ad6b85116c30a337ff1b17c2ef361a959
+-->
 STATUS: PLANNED
 
 # FUTURE CONCEPTS: Coherence Manifestation & Stigmergic Field

@@ -1,6 +1,6 @@
 # Force System
 
-`src/main.rs` (`force_id_of`, `kernel_extent`, `body_channels`), `docs/concepts/SOURCES_V2_SPEC.md` (registry source), `static/index.html` (`field_spatial`).
+`src/main.rs` (`force_id_of`, `kernel_extent`, `body_channels`), `docs/concepts/sources-v2-spec.md` (registry source), `static/index.html` (`field_spatial`).
 
 ## Force Identity (9 channels, ID 0–8)
 

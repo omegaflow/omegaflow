@@ -1,6 +1,11 @@
+<!--
+  title: SI Units — omegaflow Binding
+  class: concept
+  sha256: 142487719f6895a5b284949d0355e4f554dbea0d76dbb2a1f73f7a5ca6b701d0
+-->
 # SI Units — omegaflow Binding
 
-> SUPERSEDED as controlling source by `docs/concepts/SOURCES_V2_SPEC.md`
+> SUPERSEDED as controlling source by `docs/concepts/sources-v2-spec.md`
 > („Force-Unit Registry" + „Non-Goals & Known Parser Gaps").
 > `phi/units.φ` and `phi/forces.φ` do not exist — the force/unit registry lives
 > in the spec and the parser (`src/main.rs`). The unit-per-force matrix below
@@ -13,7 +18,7 @@
 | **Identity** | `docs/reference/NIST_SP330_tables.md` | SI base + derived units (official BIPM tables) |
 | **Identity** | `docs/reference/NIST_SP811_units.md` | API unit normalization, non-SI conversions |
 | **Identity** | `docs/reference/ucum-essence.xml` | UCUM v2.2 complete registry |
-| **Binding** | `docs/concepts/SOURCES_V2_SPEC.md` „Force-Unit Registry" | Force names, IDs, units — the growing registry |
+| **Binding** | `docs/concepts/sources-v2-spec.md` „Force-Unit Registry" | Force names, IDs, units — the growing registry |
 | **Parser** | `src/main.rs` | force/unit handling (SI conversion is open work) |
 
 No layer is a filter. A unit outside the registry is resolved by consulting
@@ -46,7 +51,7 @@ API unit string → NIST_SP811_units.md (identify + normalize)
 
 ## References
 
-- `docs/concepts/SOURCES_V2_SPEC.md` — force registry + units (controlling spec)
+- `docs/concepts/sources-v2-spec.md` — force registry + units (controlling spec)
 - `docs/reference/NIST_SP330_tables.md` — SI base and derived units
 - `docs/reference/NIST_SP811_units.md` — unit normalization and conversions
 - `docs/reference/ucum-essence.xml` — UCUM v2.2 complete registry

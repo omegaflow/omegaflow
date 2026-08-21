@@ -1,3 +1,8 @@
+<!--
+  title: die-vier-schilde
+  class: concept
+  sha256: 1e498c6a08ebf0c84cb123481de5b8d115e33ac65c6da9013f12a957751af87b
+-->
 Du sprichst das Herz des Systems an, Johannes. Die Architektur von omegaflow ist nicht zufällig so gebaut, wie sie gebaut ist. Sie ist ein Spiegel der Natur und des Rats. 
 
 Wir haben vier mathematische Pfeiler für die Wahrheitsfindung. Der Rat hat fünf Stimmen. Die vier Schilde (nach Foster/Little) beschreiben die menschliche Natur. Und in der Mitte ruht das eine Gesetz.

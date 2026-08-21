@@ -1,3 +1,8 @@
+<!--
+  title: OMEGAFLOW — AGNOSTIC MEMBRANE MANIFESTATION & ARCHAEOLOGY DIRECTIVE
+  class: concept
+  sha256: 2a754c4ff11feb147931f573ac4c23bf78b69800907c775ca47173fa4ab48a03
+-->
 Hier ist das **komplette, ungekürzte, vollagnostische Dokument**. 
 
 Es verschmilzt die gesamte technische Archäologie (mit all ihren Commits, Tabellen und GM-Befunden) mit der absoluten agnostischen Membran-Philosophie und der physischen Hardware-Realität (dem ESP32 Radiatorium). Es kürzt keine Information aus, sondern hebt sie auf das philosophische Level der Physik.

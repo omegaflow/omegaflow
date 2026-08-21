@@ -1,3 +1,8 @@
+<!--
+  title: sources.φ — Canonical Format Specification
+  class: concept
+  sha256: d7c179026becd51fe8d038175de7469dadd7916630ef091cb9f91b804ab90cbf
+-->
 # sources.φ — Canonical Format Specification
 
 Verified against the living parser (`load_sources` in `src/main.rs`). Every

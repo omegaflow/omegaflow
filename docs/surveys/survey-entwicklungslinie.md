@@ -1,3 +1,8 @@
+<!--
+  title: Entwicklungslinie — omegaflow von Anbeginn
+  class: survey
+  sha256: 4fd7c8efe87495ef060a3299892a92b3c474d3e70394bbea2f3065d04d3a59d4
+-->
 # Entwicklungslinie — omegaflow von Anbeginn
 
 Archäologie 2026-08-17. Die Linie des Systems vom ersten Commit bis heute:

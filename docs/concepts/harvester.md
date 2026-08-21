@@ -1,3 +1,8 @@
+<!--
+  title: Adapter-Familie: Harvester vs. Compiler
+  class: concept
+  sha256: 8f34e957b9a70dc84d2f5515ce7e20fef32ac53528a55cb1676ddcfb35c863cc
+-->
 # Adapter-Familie: Harvester vs. Compiler
 
 Die Werkzeuge, die externe Datenkataloge in das φ-System ziehen, haben zwei

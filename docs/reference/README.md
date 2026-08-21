@@ -24,5 +24,5 @@ Code-verified reference for omegaflow internals.
 
 | File | Content | Source |
 |------|---------|--------|
-| `../concepts/SI_UNITS.md` | Unit system overview (superseded by SOURCES_V2_SPEC „Force-Unit Registry") | |
-| `../concepts/SOURCES_V2_SPEC.md` | Controlling spec for sources.φ syntax — force names, IDs, units registry | `src/main.rs` parser |
+| `../concepts/si-units.md` | Unit system overview (superseded by SOURCES_V2_SPEC „Force-Unit Registry") | |
+| `../concepts/sources-v2-spec.md` | Controlling spec for sources.φ syntax — force names, IDs, units registry | `src/main.rs` parser |

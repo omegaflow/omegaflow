@@ -63,7 +63,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 
 - The machine asks before it radiates, as the sensors ask before they record. The operator is never penetrated unasked — visually, acoustically, tactilely, via relay — never.
 - Background work runs unlimited: headless, silent, invisible. Tests run silent: no test may open a window, emit audio (PCM/stdout), vibrate hardware (serial), or push to relays; GPU-requiring tests request a compute-only device (`compatible_surface: None`) and report a named skip without an adapter.
-- The foreground asks twice: first a question, then the operator's answer — never a question followed by an unconfirmed start. Where the full ω-loop is the measurement, the hidden run (`OMEGAFLOW_HIDDEN=1`, pending — it must silence every radiator, not only the window) is the named way; a visible or radiating run happens only on the operator's explicit word.
+- The foreground asks twice: first a question, then the operator's answer — never a question followed by an unconfirmed start. Where the full ω-loop is the measurement, the hidden run (`OMEGAFLOW_HIDDEN=1` — windowless, soundless, still: it silences every radiator, not only the window) is the named way; a visible or radiating run happens only on the operator's explicit word.
 
 ### The presence is agnostic
 
@@ -116,7 +116,7 @@ The Archivar is a pure Rust application using only the standard library. It fetc
 - **The Time Base:** `src/kernels/naif0012.tls` is the embedded leap-second table (include_str!, parsed by `lsk::parse`) — the time base is program identity, not a network contingency. The time Arc is initialized with the embedded table at construction; the boot never waits for a fetch, the silent LSK gate is dead (only a poisoned mutex triggers the loud named refusal). The runtime naif0012 kernel fetch (sources.φ) refreshes the table in memory when a newer kernel lands — the update street, never the carrier. Duty: a newly announced leap second (IERS, ~1 year's notice) must update the embedded file in the same commit; the field must never hang on the network.
 - **Lookup:** Enclosure. Dilate search radius by `rmax + anchor_vmax·Δt + ½·anchor_amax·Δt² + window extent`, propagate survivors to common epoch, exact filter. The signal-cone gate runs before the exact motion evaluation: `age = |t2 − epoch|`; the sample is refused when `age > ttl·2⁶` (signal decayed) or when the anchor distance exceeds the physical reach of its measurement channel — `signal_reach = v_force·age` (em/gravity/electric: c, acoustic 343 m/s, seismic-body 6000, seismic-surface 3000, advective: its advection, else 1.0) or `√(2·D·age)` (thermal D = 0.3, diffusion D = 0.05), plus extent, anchor drift and pad; an unknown force has no propagation law — refused, no default (0 honored). Samples without position properties are not spatially discoverable (0 honored).
 - **Live APIs:** `sources.φ` defines live API sources. Frames: `on <body> <lat> <lon> [alt]` (fixed geodetic point on any body), `at <body> <scale>` (barycentric frame of that body). No body is privileged — the body name is data, not identity. Each field declares 5 tokens: `field <key> <name> <kernel> <force> <unit>` with optional `tau`. 7 kernel shapes (inverse-square, gaussian-inverse-square, gaussian-inverse, erfc, exponential-decay, patch-levy, inverse-linear). 9 force media (em, gravity, acoustic, seismic-body, seismic-surface, thermal, diffusion, advective, electric). **Force Gate Principle:** `force` declares the physical propagation mechanism of the measured quantity itself — not the transmission medium of the API. `force em` means the measurement IS electromagnetic radiation. A stock price delivered over HTTP has no physical force. Forceless sources are refused at load. **Litmus test**: could a non-human organism evolve a sensory organ for this measurement? **τ-Gate**: fields without a declared `tau` produce no samples (0 honored). Celestial rows: `cmap <arr_path>` + `ra_key`/`dec_key` (ICRS deg) + distance via `plx_key` (mas) / `dist_key <key> <scale→m>` / `z_key` (Hubble flow, H0). Frameless and forceless sources are refused at load.
-- **Response:** One flat array per request: `[x, y, z, val, epoch, ttl, tau, extent, kernel_id, force_type, absorption, advection, vx, vy, vz, pole_x, pole_y, pole_z, j2, j4, r_eq, color_index, freq, bin_width]` (192 bytes, 24 × f64, protocol v8) per active sample, framed as `0xCF 0x86 0x08 [response_epoch:f64] [id:u32] [count:u32] [records…]`. The point cloud stays intact. Retention ttl×2⁶; certainty `e^(−max(0, |Δt| − d/v_force) / ttl)` folded in the sensor window, samples decay exponentially. Absent properties are 0.0 — the neutral constant of the fixed-stride record. For em sources (force_type 0) the `pole_x` slot carries the redshift z (always 0 for gravity bodies) — packed into the free props slot and applied as Tolman dimming `(1+z)⁻⁴`. The 22nd f64 `color_index` is the unified BP−RP color (absent = 0.0 → white, 0 honored): the star bin (`dr3_stars.bin`, 44-byte records = 40 B + f32 rv) carries bpmag−rpmag and radial_velocity (gaiadr3.gaia_source_lite, km/s → m/s) from `tap_compiler`; `tycho2_compiler` harvests B−V from hip_main (BP−RP via the Gaia DR3 documentation polynomial, 5th order, Table 5.9) and rv via the gaiadr3.hipparcos2_best_neighbour crossmatch. The loader accepts exactly 44-byte records — legacy 40-byte bins stay dark, pending recompilation (no rv = 0.0 fabrication). The 23rd/24th f64 `freq`/`bin_width` are the band center/width in linear Hz (0.0 = point source, 0 honored) — the spectral oscillator axis (Atome A+B deployed: `src/spectral.rs`, `spectral_compiler`, `format spectral`; Atom C band-selektives Rendering offen; Ernte NCEI-SSI netCDF-4/HDF5 pending — `docs/concepts/DER_SPEKTRALE_OSZILLATOR.md`); WGSL `color_lut_rgb` samples the color LUT texture (Bindings 9+12, Rgba32Float, Nearest) that `omegaflow::spectral::color_lut_rgba` bakes once in f64 — BP−RP → Teff (Pecaut & Mamajek 2013 EEM dwarf locus, linear interpolation) → RGB (Helland polynomials), 256 bins, edge bins = exact locus clamps, ci==0 → white (0 honored) — one source in the Archivar, no duplicate. Since Atom 8 the fragment shader iterates the field list linearly — every sample is one oscillator, one kernel, one law; stars are ordinary point-source samples in the `unbounded` list, admitted by the diode threshold of the membrane query (val-gate + transverse gate, `t² = d² − sd²` is the shader's own transverse distance).
+- **Response:** One flat array per request: `[x, y, z, val, epoch, ttl, tau, extent, kernel_id, force_type, absorption, advection, vx, vy, vz, pole_x, pole_y, pole_z, j2, j4, r_eq, color_index, freq, bin_width]` (192 bytes, 24 × f64, protocol v8) per active sample, framed as `0xCF 0x86 0x08 [response_epoch:f64] [id:u32] [count:u32] [records…]`. The point cloud stays intact. Retention ttl×2⁶; certainty `e^(−max(0, |Δt| − d/v_force) / ttl)` folded in the sensor window, samples decay exponentially. Absent properties are 0.0 — the neutral constant of the fixed-stride record. For em sources (force_type 0) the `pole_x` slot carries the redshift z (always 0 for gravity bodies) — packed into the free props slot and applied as Tolman dimming `(1+z)⁻⁴`. The 22nd f64 `color_index` is the unified BP−RP color (absent = 0.0 → white, 0 honored): the star bin (`dr3_stars.bin`, 44-byte records = 40 B + f32 rv) carries bpmag−rpmag and radial_velocity (gaiadr3.gaia_source_lite, km/s → m/s) from `tap_compiler`; `tycho2_compiler` harvests B−V from hip_main (BP−RP via the Gaia DR3 documentation polynomial, 5th order, Table 5.9) and rv via the gaiadr3.hipparcos2_best_neighbour crossmatch. The loader accepts exactly 44-byte records — legacy 40-byte bins stay dark, pending recompilation (no rv = 0.0 fabrication). The 23rd/24th f64 `freq`/`bin_width` are the band center/width in linear Hz (0.0 = point source, 0 honored) — the spectral oscillator axis (Atome A+B deployed: `src/spectral.rs`, `spectral_compiler`, `format spectral`; Atom C band-selektives Rendering offen; Ernte NCEI-SSI netCDF-4/HDF5 pending — `docs/concepts/der-spektrale-oszillator.md`); WGSL `color_lut_rgb` samples the color LUT texture (Bindings 9+12, Rgba32Float, Nearest) that `omegaflow::spectral::color_lut_rgba` bakes once in f64 — BP−RP → Teff (Pecaut & Mamajek 2013 EEM dwarf locus, linear interpolation) → RGB (Helland polynomials), 256 bins, edge bins = exact locus clamps, ci==0 → white (0 honored) — one source in the Archivar, no duplicate. Since Atom 8 the fragment shader iterates the field list linearly — every sample is one oscillator, one kernel, one law; stars are ordinary point-source samples in the `unbounded` list, admitted by the diode threshold of the membrane query (val-gate + transverse gate, `t² = d² − sd²` is the shader's own transverse distance).
 - **Browser Sensor:** The browser is a sensor carrier — its local sensors (lat, lon, mic, etc.) push raw oscillators via WebSocket to the Archivar as ordinary sources, one among equals (no first-class oscillator). The operator declares the carrier body via `#body=<body_name>,<lat>,<lon>,<alt>` (startup) or `body:<body_name>`-oscillator (runtime), id resolved from BODY_REGISTRY. Sensor motion: `lat`/`lon`/`alt`/`acc` → `Surface`; with `spd`/`hdg` → `surface_motion` (ISS co-orbits at orbital velocity, surface-relative). The declaration is configuration, not a field value — the declared body anchors the sensor positions but radiates nothing.
 - **CDN-First Fetch with Graceful Live Degradation:** The CDN (GitHub Releases on `omegaflow/sources`, release tag = API netloc) is an acceleration layer, never a dependency. When the Archivar fetches a source, it constructs the CDN URL from the naming convention (`{netloc}/{name}.json` — one asset per source, overwritten by the CI manifestator) and checks the asset's age against the source's TTL. If younger than TTL → use CDN. If older, missing, or unreachable → fall back to the live API URL. If the CI Archivar is down, the local system degrades gracefully to live API. The binary code is written for both channels (CDN-write, `--verify` flag, and since K01 the ephemeris compilers' `--ci-mode` upload path). The only difference between the channels is the IO channel. The CI Archivar runs every 5 minutes; it fetches only when `origin_stale` triggers (source TTL expired). The naming convention is the resolver. The kernel flattener (`kernel_flatten.yml`, monthly + dispatch) crawls the full SSD/NAIF trees via `ephemeris_compiler --index` into `phi/sources_index.φ`, compiles planets + moons via `--fetch-from --ci-mode` and probes via `horizons_compiler --ci-mode`, and overwrites the CDN assets `{netloc}/ephemeris_{body}.bin` (v3, meters — stype-1 carries a u16 presence mask, one bit per slot: the absent slot stays 0.0 pad, the bit is what the loader reads, never the pad; the loader accepts v2 and v3 until the CDN recompile). The only Python left in CI is the sources-repo catalog mirror (I02).
 - **The Archivar is the Manifestator of the CDN:** The Archivar manifests data into its own infrastructure. CI mode writes to the CDN (GitHub Releases). Local mode reads from the CDN. The naming convention is `{api_netloc}/{name}.json` — one asset per source, the CI manifestator overwrites it. `name` = flattened path+query (`source_name_from_url`); the query belongs to the identity: another query is another measurement. The flattening is not injective (`/`→`-` collides with literal `-`) — rare name collisions are resolved deterministically from the register itself (`cdn_manifest_map` computes `{name}-2`-style overrides from `phi/sources.φ`, identical on both write and read sides, no external registry). GitHub's own sha256/size/timestamp per asset remain the release-page truth. The CDN is the Archivar's memory — no external catalog, no separate pipeline.
@@ -303,25 +303,55 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Verify edge cases** — zero-length arrays, missing fields in source rows, boundary conditions on ephemeris granules, TTL expiration, absorption at 0.0 and 1.0.
 - **Re-read survey files** — if the session modified something that was surveyed early (low context-position), re-read that file to confirm the change is coherent with its surroundings.
 - **Read the WGSL shader** — if the Rust side changed any field meaning, read the WGSL vertex and compute shaders to confirm the field access pattern still matches.
-- **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1618`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome.
+- **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1618`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome. Headless, the machine reads the `φ window:` stderr line — the HUD's machine-readable twin (`te thr tau pe state focus keys perm flow gen`); `OMEGAFLOW_HIDDEN=1 cargo run` drives the full ω-loop with every radiator silent, and a run is verified by reading the line, not by looking at pixels.
 
 `cargo check` is a syntax gate. It is not verification. The Kybernaut is the verifier.
 
-## Session Handover — docs/handover/
+## Docs — Benennung & Versionierung (docs/)
 
-A handover (Übergabe) and a session plan are one kind of document: written by
-the closing session, read by exactly one receiving session, consumed into
-code/register/commits. They live in `docs/handover/`, named
-`handover-YYYY-MM-DD-<slug>.md` (kebab-case slug, no spaces/umlauts; the date
-is the document's own date, never invented). Standing research findings live
-in `docs/surveys/`, named `survey-YYYY-MM-DD-<slug>.md` (undated →
-`survey-<slug>.md`); standing reference lists live in `docs/plans/`, named
-`ref-<slug>.md`. The receiving session archives a consumed handover to
+Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
+
+- `docs/handover/handover-YYYY-MM-DD-<slug>.md` — a handover (Übergabe) and a
+  session plan are one kind of document: written by the closing session, read
+  by exactly one receiving session, consumed into code/register/commits.
+  Immutable. The date is the document's own date, never invented.
+- `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
+  `survey-<slug>.md` — a standing survey (evolving, no date in the name).
+- `docs/plans/ref-<slug>.md` — a standing reference list.
+- `docs/concepts/<kebab>.md` — concept docs. The filename is kebab-case; the
+  concept's proper name in prose stays UPPER_SNAKE (e.g. file
+  `sources-v2-spec.md`, prose `SOURCES_V2_SPEC §1` — like `rfc-2616.md` ↔
+  `RFC 2616`).
+- `docs/reference/` — reference material in its native format (no header).
+
+Versioning is git-only: no `vN`, `_ancestral`, or hash in the name — the
+commit SHA addresses every state; a milestone is marked via `version:` in the
+header. True historical snapshots that must coexist move to
+`/home/johannes/projects/archive/`, never version-suffixed in place.
+
+Every prose doc (handover/survey/ref/concept) opens with a header block; the
+`sha256` covers the body **without** the header (`sed '/^<!--/,/^-->/d' <f> |
+sha256sum`), so two local copies are compared in one command:
+
+    <!--
+      title: …
+      class: handover | survey | ref | concept
+      date: YYYY-MM-DD
+      version: <n>          (milestone only)
+      sha256: <hex>
+      status: live | consumed | archived
+      see-also: …
+    -->
+
+The receiving session archives a consumed handover to
 `/home/johannes/projects/archive/handover/` — **only after its own work is
 committed**, never before: git is the safety net against crashes and rogue
 sessions. The archive commit (`cp` + `git rm`) is the checkmark that the
 handover was read and understood. A consumed-but-unarchived handover is a
-register debt; an archived-but-uncommitted one is a violation.
+register debt; an archived-but-uncommitted one is a violation. Raw
+consultation transcripts (arena/foreign-model chats) are archived to
+`/home/johannes/projects/archive/arena/` — their distilled findings live in
+the standing concept docs.
 
 ## Session Hygiene — Thread Safety
 

@@ -1,8 +1,13 @@
+<!--
+  title: Der Paradigmenwechsel — die Recherche vom 18.8.2026
+  class: concept
+  sha256: 937ea78d942832d88454f73f76852c28cf2d718165d2207e78abac15b3553836
+-->
 # Der Paradigmenwechsel — die Recherche vom 18.8.2026
 
 Selbsttragend. Dieses Dokument verbindet die zeitgemäße Recherche
 (Stand 18.8.2026) mit den beiden Kreuzungs-Protokollen der kybernetischen
-Astrophysik (KYBERNETISCHE_ASTROPHYSIK.md, THE_SEVEN_SPHERES.md). Es
+Astrophysik (kybernetische-astrophysik.md, the-seven-spheres.md). Es
 beantwortet eine Frage: was ist seit den beiden Konzepten geschehen —
 und was bedeutet das für die eine Pipeline, die eine Physik?
 

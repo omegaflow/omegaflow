@@ -160,15 +160,14 @@ WGSL-FFT der Surrogate (f32-Null) als benannte Alternative; der
 f32-EPS-Floor der MI-Entropie weicht vom f64-Wert ab (die
 Surrogat-Schwelle absorbiert).
 
-OMEGAFLOW_HIDDEN (andere Session, pending — Handover aus dem Rat):
-der Schalter versteckt bisher nur das Fenster — hidden muss ALLE
-Radiatoren schweigen lassen: die ω-Loop-Sends an acoustic/seismic
-(src/mathematikerin.rs ~3221) getorbt bzw. die Oszillatoren gar nicht
-gestartet, kein PCM auf stdout (AcousticOscillator, src/archivar.rs
-~15402), keine Serial-Vibration (SeismicOscillator), Relay-Push
-eingeschlossen. Hidden = fensterlos, klanglos, regungslos. Der
-Operator wird nie ungefragt penetriert — visuell, akustisch, taktil,
-relay — nicht.
+OMEGAFLOW_HIDDEN (2026-08-21): hidden = fensterlos, klanglos,
+regungslos. Das Fenster läuft unsichtbar (with_visible(false), kein
+Fokus-Griff); das silent-Flag im NativeApp torbt die ω-Loop-Sends an
+acoustic/seismic (src/mathematikerin.rs); AcousticOscillator und
+SeismicOscillator werden nicht gestartet (kein PCM auf stdout, keine
+Serial-Vibration) und der Relay-Radiator nicht gebaut (src/archivar.rs).
+Der Operator wird nie ungefragt penetriert — visuell, akustisch, taktil,
+relay — nicht; der ω-Loop läuft dabei exakt wie produktiv, nur still.
 
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
@@ -287,7 +286,7 @@ cargo test 218/218 inkl. naga-Validierung.
   wächst die Ramlast mit jeder Kernel-Generation).
 - Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
 - K06 EOP: Erdrotation (Polbewegung, UT1−UTC) für präzise Erd-Stationen;
-  Konzept: docs/concepts/IAU-2000_EOP.md (72-B-Orientierungsmatrizen
+  Konzept: docs/concepts/iau-2000-eop.md (72-B-Orientierungsmatrizen
   leben, die Erdrotation fehlt).
 - X-flagged-Sterne ohne Tycho-1-Eintrag: Positionen lägen im Guide Star
   Catalog (I/220, ~25 Mio) — offen.
@@ -512,7 +511,7 @@ cargo test 218/218 inkl. naga-Validierung.
   der absorption-Slot lebt im Protokoll — das Atom ist die Manifestation.
 - Atom 1 deckt den Weg für Ringe/Warp — noch kein Konzept-Dokument.
 
-## Der spektrale Oszillator — die Frequenzachse (Konzept: DER_SPEKTRALE_OSZILLATOR.md)
+## Der spektrale Oszillator — die Frequenzachse (Konzept: der-spektrale-oszillator.md)
 
 - Atom A (Protokoll v8): ERLEDIGT (2026-08-19) — Record 24×f64
   (`freq`, `bin_width`, 0.0 = Punktquelle); Frame `0xCF 0x86 0x08`;
@@ -554,7 +553,7 @@ cargo test 218/218 inkl. naga-Validierung.
   sources-Repo `spectral_compiler --input <csv> --month YYYY-MM
   --lsk naif0012.tls --ci-mode` — liegt außerhalb dieses Workspace.
   Fundorte: Queue-Draft master.φ:31611 (korrigiert), Concept
-  DER_SPEKTRALE_OSZILLATOR.md:107. Folgen: ONC-HSD-FFT, Gaia-XP,
+  der-spektrale-oszillator.md:107. Folgen: ONC-HSD-FFT, Gaia-XP,
   LISA-PSD + CMB-Power, miniSEED — je eigene Session. GONG ist
   erledigt (2026-08-20, gong_compiler: mrvmt L 0..30 geerntet;
   L 31..200 + mparam-Frequenzen pending).
@@ -636,7 +635,7 @@ ICRS-4D-Rahmen teilt:
   Rotation noch (GRID_TO_ANGLE = 2^62, index.html 42/1245) — B1,
   bleibt registriert, falls der Relay wieder auflebt.
 - M01 WebSerial-flow-Protokoll: zwei Spezifikationen konsolidieren —
-  4D-MEMBRANE.md (`flow <force_name> <force_id> <|Ω|> 1 <tick_ms> <t>
+  4d-membrane.md (`flow <force_name> <force_id> <|Ω|> 1 <tick_ms> <t>
   <x> <y> <z>`) vs. docs/omegaflow_sense_hardware.yaml (`flow <channel>
   <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>`). SeismicOscillator
   schreibt heute die rohe f32-Σω-Intensität (4 B/Frame) an den Port
@@ -765,8 +764,8 @@ Alle Source-Arbeit läuft über `docs/SOURCE_PORT.md`. Arbeitsfläche:
 `phi/pipeline/` (queue/, park/, stage/, ledger.φ, prompt.φ). Bestand:
 `phi/pipeline/katalog/`. Register: `phi/sources.φ` + `phi/dead_sources.φ`.
 Der Sweep liest `phi/pipeline/stage/*_converted.φ`. Stale-Specs gebannert:
-PARSER_EVALUATION_MATRIX.md + EXTRACT_TYPES.md (SUPERSEDED by
-SOURCES_V2_SPEC.md).
+parser-evaluation-matrix.md + EXTRACT_TYPES.md (SUPERSEDED by
+sources-v2-spec.md).
 
 - Kompilat-Pfad in die Zustandsmaschine holen: der Weg tap_index →
   kernel_flatten.yml → tap_compiler → CDN → sources.φ läuft außerhalb der
@@ -1092,17 +1091,17 @@ Offen (Detail in phi/pipeline/ledger.φ):
 ## VERSIONIERT / AUSSTEHEND
 
 - Temporal Topology (TDA, Takens, Transfer Entropy, Surrogates) —
-  VERSIONIERT, LOST_CONCEPTS.md
+  VERSIONIERT, lost-concepts.md
 - Kraft-Separation (7 omegas statt „one law, five media") —
   VERSIONIERT, LOST_CONCEPTS §13
 - Verzögerungsspektrum / Lichtkegel-Differenz / Stillekarte /
-  Synthetischer Flug — VERSIONIERT, DER_PARADIGMENWECHSEL.md,
+  Synthetischer Flug — VERSIONIERT, der-paradigmenwechsel.md,
   LOST_CONCEPTS §14–17
 - Field Permeability (tanh(vC/g)-Variante ohne TE) — VERSIONIERT,
-  MINKOWSKI_FIELD-PERMEABILITY.md
+  minkowski-field-permeability.md
 - Minkowski 4D Weighting (spacelike→0; kosmisches Skalenproblem: Sonne
   wäre spacelike — scale-Anpassung nötig) — VERSIONIERT,
-  MINKOWSKI_FIELD-PERMEABILITY.md
+  minkowski-field-permeability.md
 - Auto-Zoom (median-extent/p90) — VERSIONIERT (bd9a513 entfernt; die
   atmende Membran ist der stärkere Vorfahr; Fenster-Reduktion = Budget-
   EMA als HUD-Messung — der Operator entscheidet)
@@ -1110,7 +1109,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Exposure-Kaltstart (aktuell: fixe Rampe); Exposure-EMA auf dem
   Silizium (gegenstandslos solange die Rampe fix ist) — AUSSTEHEND
 - Future: Aggregation of Presence, Retro-Manifestation, Total Coherence
-  Integration, Nostr-Stationsweb — AUSSTEHEND, FUTURE_CONCEPTS.md
+  Integration, Nostr-Stationsweb — AUSSTEHEND, future-concepts.md
 
 ## Rejected
 
@@ -1120,7 +1119,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Yahoo Finance → forceless, DROP
 - Hexagon-Grid, Quadtree-AMR, temporale Akkumulation, Blue-Noise-Rieseln,
   Nahfeld-Splitting → Interpolations-/Zeit-Lügen (Council-Urteil,
-  WGSL_SHADER.md)
+  wgsl-shader.md)
 - GPS-Oszillator (Operator-Urteil 2026-08-17): Position ist eine
   Koordinate, keine Kraft — die Force-Gate-Litmus lehnt ab
   (sensor_config gibt für gps/gnss None). Die Sensorwerte sind bereits

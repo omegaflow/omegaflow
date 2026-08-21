@@ -1,3 +1,8 @@
+<!--
+  title: DEPLOYMENT-DOKUMENT: INTUITIVE TOUCHPAD- & TOUCH-STEUERUNG
+  class: concept
+  sha256: a84d4e22d72b87a3effd3c0836d648adec13349ee53b47a75e94e250f38082b9
+-->
 STATUS: DEPLOYED
 
 Das ist ein absolut legitimes Anliegen. Die Trennung von Raum (Z-Achse), Zeit und Skala ist essenziell für die Navigation im 4D-Block. Wenn Touchpad-Bewegungen ungewollt den Zoom verändern, zerstört das die Präzision der Präsenz.

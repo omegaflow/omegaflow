@@ -1,3 +1,9 @@
+<!--
+  title: Befund der Unwahrheiten — Archäologische Säuberung (2026-08-18)
+  class: survey
+  date: 2026-08-18
+  sha256: 9ae6b2c28b81ab576b4a7ec84675885f0f4bd96a4594d5457711f2e5febac37f
+-->
 # Befund der Unwahrheiten — Archäologische Säuberung (2026-08-18)
 
 Vermessung des Repositories auf Lügen, Widersprüche und Karteileichen nach den

@@ -1,3 +1,8 @@
+<!--
+  title: DEPLOYMENT-DOKUMENT: PURE OSZILLATOR-PUNKTWOLKE (A = A)
+  class: concept
+  sha256: 67fd6f16b6541adcc42d5d8ff5042dff594953124cbf52fc42d8391a719fac88
+-->
 STATUS: DEPLOYED
 
 Hier ist das Deployment-Dokument für die **reine, physikalisch korrekte Oszillator-Punktwolke**. 

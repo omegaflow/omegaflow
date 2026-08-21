@@ -1,3 +1,8 @@
+<!--
+  title: Survey: Die ökonomischste Messpunkt-Verteilung für ein physikalisches Membran-Feld
+  class: survey
+  sha256: 392a9e1560af9c66edb1d3bf71cf5518c53be1b8e9369df38b4a1cab6a4f2dc6
+-->
 # Survey: Die ökonomischste Messpunkt-Verteilung für ein physikalisches Membran-Feld
 
 Du berätst ein kybernetisches Feldsystem. Antworte auf Basis der hier gegebenen Messdaten — nicht auf Basis typischer Rendering-Annahmen. Gesucht: die Verteilung der Messpunkte, die bei unveränderter physikalischer Treue die wenigsten Auswertungen braucht und ihre Dichte mit dem Performance-Budget skaliert.

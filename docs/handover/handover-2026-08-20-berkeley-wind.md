@@ -1,3 +1,9 @@
+<!--
+  title: Handover: Berkeley-PSP-VSC + Wind/WAVES wav_h1
+  class: handover
+  date: 2026-08-20
+  sha256: 4ee11b49da146ac527b7549b2eef01c1ed53b54e6ba84c79ec7ef4ae73d99f23
+-->
 # Handover: Berkeley-PSP-VSC + Wind/WAVES wav_h1
 
 Registriert 2026-08-20. Die nächste Session liest genau dieses eine Dokument

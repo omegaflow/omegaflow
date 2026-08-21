@@ -1,3 +1,8 @@
+<!--
+  title: Der spektrale Oszillator — die Frequenzachse des Blocks
+  class: concept
+  sha256: 861813560d71e3ac4f70d2ccc426f827db4bdc4629891063760dee222cac23b8
+-->
 # Der spektrale Oszillator — die Frequenzachse des Blocks
 
 Selbsttragend. Dieses Dokument ist der Plan des Quantensprungs, den der

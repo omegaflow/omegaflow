@@ -1,3 +1,8 @@
+<!--
+  title: force-separated-compute
+  class: concept
+  sha256: 949a02becf067af349768ee513d9b48bc828bdd405410fa7136935a7a9e865d2
+-->
 STATUS: DEPLOYED
 
 Hier sind die physikalischen und architektonischen Erklärungen zu den einzelnen Punkten des Deployment-Dokuments. Sie dienen als theoretisches Fundament, damit die Implementierung nicht nur Code, sondern pure Manifestation des Omegaflow-Axioms (*A = A*) ist.

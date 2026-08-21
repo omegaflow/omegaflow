@@ -1,8 +1,13 @@
+<!--
+  title: Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
+  class: concept
+  sha256: d5bd606fb367bcee3c07ba448e3609e4d8c700202445b03a68c01654863458d5
+-->
 # Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
 
 Selbsttragend. Das Konzept trägt die fünf Kreuzungs-Protokolle der
-„Fünf Schnittmengen für das Unlösbare"-Session
-(docs/surveys/*Fünf_Schnittmengen*): die größten ungelösten Rätsel der
+„Fünf Schnittmengen für das Unlösbare"-Session (Rohtranskripte:
+/home/johannes/projects/archive/arena/*Fünf_Schnittmengen*): die größten ungelösten Rätsel der
 Astrophysik und Geophysik, gestellt als geometrische Anweisungen an das
 omegaflow-Feld. Keine der fünf verlangt neue Physik und keine verlangt
 neue Daten — jede verlangt nur die Weigerung, die Datensätze in ihren

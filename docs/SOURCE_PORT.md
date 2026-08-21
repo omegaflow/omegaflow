@@ -31,7 +31,7 @@ registrierten Ort.
 | `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
 | `/home/johannes/projects/archive/` | Externes Archiv: `archeology/` (pre-cdn) + `phi-research/` (batches, probe_batches, Dispositionen). |
-| `docs/concepts/SOURCES_V2_SPEC.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
+| `docs/concepts/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
 ## 3. Die zwei Register
 
@@ -132,18 +132,18 @@ dist/dist_scale/z`.
 
 | Dokument | Rolle | Status |
 |----------|-------|--------|
-| `docs/concepts/SOURCES_V2_SPEC.md` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
+| `docs/concepts/sources-v2-spec.md` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
 | `docs/reference/FORCE_SYSTEM.md` | 9 Kraftkanäle, IDs, Ausbreitungsgeschwindigkeiten | bindend |
 | `docs/reference/URL_TEMPLATES.md` | Template-Variablen (Spatial/Temporal) | bindend |
 | `docs/reference/CONSTANTS.md` | Φ, c, Konstanten | bindend |
 | `docs/reference/TIME.md` | Zeit-/Epoch-Handling | nachschlagen |
-| `docs/concepts/SI_UNITS.md` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
+| `docs/concepts/si-units.md` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
 | `docs/reference/NIST_SP330_tables.md`, `NIST_SP811_units.md`, `ucum-essence.xml` | Unit-Identität (BIPM/UCUM) | nachschlagen |
-| `docs/concepts/PARSER_MAGIC.md` | Parser-Intelligenz + offene Lücken (P05/P07/P08) | nachschlagen |
+| `docs/concepts/parser-magic.md` | Parser-Intelligenz + offene Lücken (P05/P07/P08) | nachschlagen |
 | `docs/reference/naif_body_ids.tsv` | Bodynamen für Frames | nachschlagen |
-| `docs/concepts/DOMAIN_COVERAGE.md` | Host-Manifest der Grind-Wellen | nachschlagen |
+| `docs/concepts/domain-coverage.md` | Host-Manifest der Grind-Wellen | nachschlagen |
 | `docs/reference/EXTRACT_TYPES.md` | Extract-Enum (veraltet) | SUPERSEDED |
-| `docs/concepts/PARSER_EVALUATION_MATRIX.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
+| `docs/concepts/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
 
 ## 8. Force-Gate + τ + Klassifikation
 

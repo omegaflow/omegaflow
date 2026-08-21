@@ -120,6 +120,6 @@ props[j*4+2]  = vec4f(j4, r_eq, color_index, freq)
 props[j*4+3]  = vec4f(bin_width, 0, 0, 0)
 ```
 
-`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, `z` as `mt.w` (Tolman dimming), pole/j2/j4/r_eq from `mp`/`mg` (zonal harmonic term in `osc_field`), `freq` as `mg.w`, `bin_width` as `props[j*4+3].x`. The freq/bin_width slots are carried by the record and the pack since v8; band-selective rendering consumes them in the spectral oscillator atoms (see `docs/concepts/DER_SPEKTRALE_OSZILLATOR.md`).
+`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, `z` as `mt.w` (Tolman dimming), pole/j2/j4/r_eq from `mp`/`mg` (zonal harmonic term in `osc_field`), `freq` as `mg.w`, `bin_width` as `props[j*4+3].x`. The freq/bin_width slots are carried by the record and the pack since v8; band-selective rendering consumes them in the spectral oscillator atoms (see `docs/concepts/der-spektrale-oszillator.md`).
 
 Slot identity is verified by `golden_pack_slots_against_wgsl_access` (mathematikerin tests) — the pack layout test against the WGSL access pattern. The WGSL sources validate offline via naga (`membrane_wgsl_validates_offline`).

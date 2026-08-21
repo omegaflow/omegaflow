@@ -1,3 +1,8 @@
+<!--
+  title: Architektur-Konzept: „Agnostische Membran“ – Kontinuierliches 4D-Feld auf 2D-Membran
+  class: concept
+  sha256: 84fa745adab54beb270df21f31e3ef75c3c2a94b453784c6f6a0605e6977950d
+-->
 Deepseek Chat v4
 # Architektur-Konzept: „Agnostische Membran“ – Kontinuierliches 4D-Feld auf 2D-Membran
 

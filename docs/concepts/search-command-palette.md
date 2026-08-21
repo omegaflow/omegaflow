@@ -1,3 +1,8 @@
+<!--
+  title: Command Palette Terminal
+  class: concept
+  sha256: 7cf83aecbd69dd39fe782ecb181d70803bb29acf825145b988544745920153f0
+-->
 STATUS: PLANNED
 
 # Command Palette Terminal

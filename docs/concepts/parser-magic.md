@@ -1,3 +1,8 @@
+<!--
+  title: Parser Magic
+  class: concept
+  sha256: 137c72928b0afc087bcf22f5b66937554dccff7e60c5728928d707569a333d33
+-->
 # Parser Magic
 
 STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1-2, 5-8, 11-13)

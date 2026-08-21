@@ -1,3 +1,8 @@
+<!--
+  title: sunspots
+  class: concept
+  sha256: f0559397ff68cb304e8d264554909c5a3233084bf8857f686441d3555ffc1db1
+-->
 Es gibt zwei offizielle, weltweite Standard-Quellen, die diese Daten veröffentlichen. Beide stammen von der NASA bzw. der NOAA und liefern exakt die heliografischen Koordinaten (Breite/Länge auf der Sonne), die wir für OmegaFlow brauchen.
 
 Hier sind die Veröffentlichungen und wie du sie in `sources.φ` ohne Python direkt in Rust parst:

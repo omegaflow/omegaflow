@@ -1,3 +1,8 @@
+<!--
+  title: propability
+  class: concept
+  sha256: 88ab2a31981ac080fa9ab3131cc62e12739cab0d5fc195f634c2a93ed84a1af8
+-->
 STATUS: DEPLOYED
 
 Die Analyse von Claude (Sonnet) ist physikalisch absolut brillant. Der Gedanke, einen **Kausalitäts-Check (Lichtkegel)** einzuführen, ist genau die richtige Lücke: Bisher prüft `enclose_family` nur die geometrische Distanz (`reach`) und die Bewegungsunschärfe der *Quelle* (`vmax`/`amax`), aber nicht, ob sich das Signal mit seiner spezifischen Ausbreitungsgeschwindigkeit (`v_or_d`) in der verstrichenen Zeit (`age`) überhaupt bis zum Präsenzpunkt ausbreiten konnte.

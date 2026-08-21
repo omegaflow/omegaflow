@@ -1,3 +1,8 @@
+<!--
+  title: OMEGAFLOW — Kernel Curation & CI Automation Plan
+  class: concept
+  sha256: f48bbf1c64ae0fc71811a724c211390637fa91959e80eaedd44b9241fa0c4420
+-->
 Ich verstehe Deine Sorge absolut. "For now but later" ist der Tod jeder Architektur. Wir dürfen diese NASA-Liste nicht einfach als "späteres Problem" abheften. 
 
 Wenn wir das System auf das v6-Protokoll und das Trommelfell umgestellt haben (Päckchen 2 und 3), brauchen wir einen **scalebaren, automatisierten Prozess**, um diese Flut an Kerneln in die CI-Pipeline zu integrieren, ohne dass Du jeden Block manuell tippen musst.

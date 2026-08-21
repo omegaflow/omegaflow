@@ -1,3 +1,8 @@
+<!--
+  title: domain-coverage
+  class: concept
+  sha256: 923b31a6c3df4b81c31afd28ee78ffd513486abe7922762535a096dbca71390f
+-->
   # HOST                                   SRC ANBIETER-GESAMTDATEN                                 UNSERE NUTZUNG                           FORCES          
 ================================================================================================================================================================
   1 github.com                             232 515 Release-Assets (v1.0 + live-data)               1025 Felder                              diffusion,em,g

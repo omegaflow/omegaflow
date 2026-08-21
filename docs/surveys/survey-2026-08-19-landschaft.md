@@ -1,3 +1,9 @@
+<!--
+  title: Landschafts-Vermessung 2026-08-19
+  class: survey
+  date: 2026-08-19
+  sha256: 7f1b32358c8402a7164aca48c63fd0bffdf7cd5e802c158242c1f8d109eda894
+-->
 # Landschafts-Vermessung 2026-08-19
 
 Das Repo wurde gegen den Code und gegen Git vermessen: Leichen, Redundanzen,

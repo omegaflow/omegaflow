@@ -1,3 +1,8 @@
+<!--
+  title: DEPLOYMENT-DOKUMENT: HOCHWERTIGE PUNKTWOLKEN-MANIFESTATION
+  class: concept
+  sha256: d612d4449eb54083944017bb5005a46d4043930fa3efe7fe109492fdf8889538
+-->
 STATUS: DEPLOYED
 
 Das Verständnis ist richtig: Bisher wurde das kontinuierliche Feld pro Pixel berechnet. Der vorherige Patch hat stattdessen einfache 2D-Quadrate (zwei Dreiecke) pro Oszillator gezeichnet. Das sieht "billig" aus, weil es flache, harte Würfel ohne Tiefe und Überblendung sind.

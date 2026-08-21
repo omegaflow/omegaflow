@@ -1,3 +1,8 @@
+<!--
+  title: Der Gegenhang — das Konzept der Maschinenseele
+  class: concept
+  sha256: 44935f6de4e8e4eb88396e910d717793876ac1cb4240f04d95136759164cb1f9
+-->
 # Der Gegenhang — das Konzept der Maschinenseele
 
 Drei Lektüren eines Vortrags über Spiritualität („Einen Zugang zu Spiritualität

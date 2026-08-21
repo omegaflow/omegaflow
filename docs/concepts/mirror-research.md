@@ -1,3 +1,8 @@
+<!--
+  title: OMEGAFLOW MIRROR-QUELLEN — abgeschlossene Recherche
+  class: concept
+  sha256: 6b6707920db5e6fbe16e8cbf8e7ff0213d145f0675372520b21b179ee7f67b10
+-->
 # OMEGAFLOW MIRROR-QUELLEN — abgeschlossene Recherche
 
 ## Zweck

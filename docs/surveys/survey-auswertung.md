@@ -1,3 +1,8 @@
+<!--
+  title: Survey-Auswertung: Messpunkt-Verteilung & Generations-Architektur
+  class: survey
+  sha256: cb1e84c783ec28b58974f13c669c15a0e2e9940502f68e6031d69a604af973e6
+-->
 # Survey-Auswertung: Messpunkt-Verteilung & Generations-Architektur
 
 Selbsttragendes Ergebnis der Modell-Umfrage (Rohrunden:

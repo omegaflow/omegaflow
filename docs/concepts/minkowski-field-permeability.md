@@ -1,3 +1,8 @@
+<!--
+  title: ARCHIVE: Minkowski Weighting & Field Permeability
+  class: concept
+  sha256: 8e532cc046bcc48d98a50e43acea9d89e22dc823c371024801d4d2bdc04f62fc
+-->
 STATUS: ARCHIVED
 
 # ARCHIVE: Minkowski Weighting & Field Permeability

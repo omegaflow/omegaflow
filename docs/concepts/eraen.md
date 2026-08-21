@@ -1,8 +1,13 @@
+<!--
+  title: Die Ären von Omegaflow — Grabungs-Protokoll
+  class: concept
+  sha256: 4e84912f37ecff6763a33632c99874512c0ee3c62f0bf1998b791f4126ca3bde
+-->
 # Die Ären von Omegaflow — Grabungs-Protokoll
 
 Gegraben aus dem Git (1555 Commits), konsolidiert 2026-08-19. Dieses
 Dokument ist die Zeitachse mit den **wahren Urhebern**. Es korrigiert
-`4D-MEMBRANE.md`, Zeile 28: dort steht „Fable = Aberration, Doppler,
+`4d-membrane.md`, Zeile 28: dort steht „Fable = Aberration, Doppler,
 dopp⁴-Beaming" — das ist eine Konflation. Fable war die TT/km/CDP-Session;
 die Relativität war nur ein Beifahrer im selben Commit.
 

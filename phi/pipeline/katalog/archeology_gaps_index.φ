@@ -24,7 +24,7 @@
 # gap TODO.md:193 kraft-abdeckung electric — open-end: EFI-TCT produkte, GLM-blitz (netcdf auf noaa-s3, reader fehlt), GIC-netze (nicht öffentlich)
 # gap TODO.md:719 — advective per-quelle: wind in tm.w (kanal verdrahtet, messquelle fehlt)
 # gap archeology/arena — CHIME/FRB live-api gesperrt (vizier-tap-workaround); celestrak 5-stellige NORAD erschöpft (6-stellig ab 100000)
-# gap docs/concepts/SUNSPOTS.md — heliografische koordinaten: NASA DONKI + NOAA (in SWPC-live teilweise gedeckt)
+# gap docs/concepts/sunspots.md — heliografische koordinaten: NASA DONKI + NOAA (in SWPC-live teilweise gedeckt)
 
 # ── neue-kandidaten (nicht in sources/dead) ──
 candidate https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
@@ -260,23 +260,23 @@ candidate https://www.icos-cp.eu/
 # force-einschaetzung: diffusion
 
 # ── konzepte ──
-# docs/concepts/MASTER.md — LIVE-manifest, nicht in TODO.md registriert (verwaist als eintrag)
-# docs/concepts/MIRROR_RESEARCH.md — abgeschlossene recherche, nicht in TODO.md
-# docs/concepts/REMOVE_BIAS.md — ausführungsplan, nicht in TODO.md (status unklar)
-# docs/concepts/DOMAIN_COVERAGE.md — 259-host-inventar, nicht als arbeitseintrag in TODO.md
-# docs/concepts/CAUSALITY_PREFILTER.md — DEPLOYED, nicht in TODO.md (historisch)
-# docs/concepts/TAU-FORCE-RENDERING.md — DEPLOYED, nicht in TODO.md (historisch)
-# docs/concepts/FORCE_SEPARATED_COMPUTE.md — DEPLOYED, nicht in TODO.md (historisch)
-# docs/concepts/PROPABILITY.md — DEPLOYED (lichtkegel-check), nicht in TODO.md (historisch)
-# docs/concepts/POINTCLOUD-RENDERING.md — DEPLOYED, nicht in TODO.md (historisch)
-# docs/concepts/SI_UNITS.md — SUPERSEDED durch SOURCES_V2_SPEC
+# docs/concepts/master.md — LIVE-manifest, nicht in TODO.md registriert (verwaist als eintrag)
+# docs/concepts/mirror-research.md — abgeschlossene recherche, nicht in TODO.md
+# docs/concepts/remove-bias.md — ausführungsplan, nicht in TODO.md (status unklar)
+# docs/concepts/domain-coverage.md — 259-host-inventar, nicht als arbeitseintrag in TODO.md
+# docs/concepts/causality-prefilter.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/tau-force-rendering.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/force-separated-compute.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/propability.md — DEPLOYED (lichtkegel-check), nicht in TODO.md (historisch)
+# docs/concepts/pointcloud-rendering.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/si-units.md — SUPERSEDED durch SOURCES_V2_SPEC
 # docs/reference/naif_body_ids.tsv — vorhanden (74 zeilen), via KERNEL_INDEX registriert
 # docs/reference/GPU_WATCHDOG_AND_DEVICE_LOSS.md — referenziert in TODO.md:678
-# docs/concepts/4D-MEMBRANE.md — referenziert TODO.md:377
-# docs/concepts/MINKOWSKI_FIELD-PERMEABILITY.md — referenziert TODO.md:724
-# docs/concepts/RADIATOREN.md — referenziert TODO.md:402
-# docs/concepts/WETTERSTATION.md — referenziert TODO.md:409
-# docs/concepts/SEARCH_COMMAND-PALETTE.md — referenziert TODO.md:415
-# docs/concepts/SUNSPOTS.md — referenziert TODO.md:285
-# docs/concepts/PARSER_MAGIC.md — referenziert TODO.md:272
-# docs/concepts/SOURCES_V2_SPEC.md — referenziert TODO.md:272
+# docs/concepts/4d-membrane.md — referenziert TODO.md:377
+# docs/concepts/minkowski-field-permeability.md — referenziert TODO.md:724
+# docs/concepts/radiatoren.md — referenziert TODO.md:402
+# docs/concepts/wetterstation.md — referenziert TODO.md:409
+# docs/concepts/search-command-palette.md — referenziert TODO.md:415
+# docs/concepts/sunspots.md — referenziert TODO.md:285
+# docs/concepts/parser-magic.md — referenziert TODO.md:272
+# docs/concepts/sources-v2-spec.md — referenziert TODO.md:272

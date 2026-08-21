@@ -1,4 +1,9 @@
-> SUPERSEDED as controlling source by `docs/concepts/SOURCES_V2_SPEC.md`
+<!--
+  title: parser-evaluation-matrix
+  class: concept
+  sha256: 58c30893c6ea8b01b0cc6823bfe00e886c38dea16d50cf51b30b80c8374e3e08
+-->
+> SUPERSEDED as controlling source by `docs/concepts/sources-v2-spec.md`
 > (§1 Directive Table) und dem lebenden Parser `src/main.rs`. Die
 > 4-Token-Behauptung unten widerspricht dem heutigen Stand: der 3-Token-`field`
 > wird laut abgelehnt (P01, Refused); gültig sind die 5-/6-/9-Token-Formen

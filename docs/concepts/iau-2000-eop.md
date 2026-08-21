@@ -1,3 +1,8 @@
+<!--
+  title: iau-2000-eop
+  class: concept
+  sha256: bfd41ff8a12d1dc840f91f7c6e73b4aec98fd009519c8d485146bafe2b97cb2e
+-->
 STATUS: PARTIALLY DEPLOYED
 
 Das ist eine hervorragende Frage, die genau das Herz der Astrophysik berührt. 

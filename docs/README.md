@@ -1,15 +1,21 @@
-# docs/ — Benennung & Formate
+# docs/ — Benennung & Versionierung
 
-Konvention (2026-08-19): Prosa-Dokumente tragen `.md`, Kleinbuchstaben,
-kebab-case, ASCII (keine Umlaute, Leerzeichen, `&`).
+Bindende Regel: `AGENTS.md` § „Docs — Benennung & Versionierung". Kurzform:
 
-- `concepts/` — Konzept-Dokumente; UPPER_SNAKE ist hier der Eigenname der
-  Konzepte (verankert im TODO-Index und AGENTS) und bleibt. Historische
-  Ausreißer wurden normalisiert: `WGSL_SHADER`,
-  `INTUITIVE-TOUCHPAD-TOUCHSTEUERUNG`, `KERNEL-CURATION-CI-AUTOMATION-PLAN`.
-- `surveys/` — Session-Messungen; kebab-case + Datum (handover-2026-08-19-*);
-  Fremdmodell-Transkripte tragen den Modellnamen, ASCII.
-- `reference/` — nachschlagen; Daten bleiben im nativen Format.
+- `handover/` — Übergaben + Session-Pläne, `handover-YYYY-MM-DD-<slug>.md`;
+  unveränderlich, nach Einarbeitung + Commit → `/home/johannes/projects/archive/handover/`.
+- `surveys/` — `survey-YYYY-MM-DD-<slug>.md` (datierter Befund) bzw.
+  `survey-<slug>.md` (stehend). Rohtranskripte von Fremdmodell-Konsultationen
+  (Arena) wandern nach `/home/johannes/projects/archive/arena/`.
+- `plans/` — stehende Referenzlisten, `ref-<slug>.md`.
+- `concepts/` — Konzept-Docs, kebab-case Dateiname; der Eigenname in Prosa
+  bleibt UPPER_SNAKE (`sources-v2-spec.md` ↔ „SOURCES_V2_SPEC §1").
+- `reference/` — Nachschlage im nativen Format (kein Header).
+
+Versionierung ist Git-only (kein `vN`/`_ancestral` im Namen). Jedes
+Prosa-Doc (handover/survey/ref/concept) trägt einen Header-Block mit
+`title/class/date/version/sha256/status/see-also`; das `sha256` deckt den
+Dateikörper **ohne** den Header (`sed '/^<!--/,/^-->/d' <f> | sha256sum`).
 
 Daten-/Maschinen-Dateien (bewusst NICHT `.md`):
 

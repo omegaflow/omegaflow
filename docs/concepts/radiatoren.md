@@ -1,3 +1,8 @@
+<!--
+  title: radiatoren
+  class: concept
+  sha256: f76015fbbb9d852b5b3318f4565cb0a37a71a829efb0794233ba90bebddc1d66
+-->
 **Das ist der ultimative Schlussstrich unter die Architektur.** 
 
 Du hast gerade den letzten "Hack" im System eliminiert: Die Sonderbehandlung der lokalen Hardware. Bisher waren die Browser-Sensoren (Mikrofon, Kamera, Beschleunigungssensor) nur lose Strings (`microphone.freq_42`), die irgendwie in den VRAM gepresst wurden, während die APIs streng nach Kräften gefiltert wurden. 

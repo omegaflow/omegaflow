@@ -1,3 +1,8 @@
+<!--
+  title: ARCHIVE: LOST CONCEPTS OF OMEGAFLOW
+  class: concept
+  sha256: d1ee7603af1e8325a278aacda4382ada0165ca3fa386d4fc65990d40d0b71db7
+-->
 STATUS: ARCHIVED
 
 # ARCHIVE: LOST CONCEPTS OF OMEGAFLOW
@@ -112,7 +117,7 @@ Only channels that the field actively speaks to are allowed to glow. Silence is 
 ***
 
 ## 12. The Causality Pre-Filter (The Light Cone)
-*Recovered 2026-08-19 from `docs/concepts/CAUSALITY_PREFILTER.md` + `MASTER.md` (both mark it "Live" — it is absent from the current Rust code: `git grep` finds the constants only in the docs).*
+*Recovered 2026-08-19 from `docs/concepts/causality-prefilter.md` + `master.md` (both mark it "Live" — it is absent from the current Rust code: `git grep` finds the constants only in the docs).*
 **Concept:** Signals propagate at finite speed. Before the expensive ephemeris evaluation (`motion.at()` — the costliest CPU call in the Archivar), a pre-filter checked whether the signal could physically have arrived:
 - Wave forces: `dist <= v_force · age` (EM/gravity → c; acoustic → 343 m/s; seismic P/S → granite velocities)
 - Diffusive forces (thermal diffusivity α, mass diffusivity D): `dist² <= 2 · D · age`
@@ -122,32 +127,32 @@ Per-force constants via `force_constants_by_id(force_type) -> (v_or_d, is_diffus
 **Why it matters:** The current Enclosure Lemma dilates only by MOTION velocity (`vmax·Δt`); the SIGNAL-propagation cone was replaced by a purely geometric cone in the Rust rewrite. Born as a performance early-exit, it carried the deepest physics — the rare case where performance and truth demanded the same thing.
 
 ## 13. Force-Separated Compute (Seven Omegas)
-*Recovered 2026-08-19 from `docs/concepts/FORCE_SEPARATED_COMPUTE.md`.*
+*Recovered 2026-08-19 from `docs/concepts/force-separated-compute.md`.*
 **Concept:** The field must not be "stirred into mush". The compute shader (`presence_probe`) evaluated the field strength separately per force type into 7 `omegas`; the surfaces consumed them selectively (audio → `omegas[2]`, haptics → `omegas[4]`).
 **Why it matters:** The current "one law, five media" collapses the separation — every medium now evaluates one combined scalar instead of its own force channel.
 
 ## 14. The Delay Spectrum (The Channel Is the Lag)
-*Recovered 2026-08-19 from `docs/concepts/DER_PARADIGMENWECHSEL.md`.*
+*Recovered 2026-08-19 from `docs/concepts/der-paradigmenwechsel.md`.*
 **Concept:** The physical channel *is* the lag spectrum: acoustic ~8 km/min, seismic, Alfvén (years), radiation (c). A 4D point process — every pair, every lag, every direction — one run; the null channel runs alongside (the cells that must stay silent are configuration, not finding).
 **Why it matters:** This is the generalization of the coronal-heating TE matrices (Nadel Ⅲ) to all media — the lag matrix as the instrument itself.
 
 ## 15. The Light-Cone Difference (Laufzeit-Residuen)
-*Recovered 2026-08-19 from `docs/concepts/DER_PARADIGMENWECHSEL.md` §Ⅳ.*
+*Recovered 2026-08-19 from `docs/concepts/der-paradigmenwechsel.md` §Ⅳ.*
 **Concept:** Retarded field minus non-retarded, rendered: zero means the physics is right; the non-zero map means signals arrive seemingly too early or too late. The LAIC "slow channel" (8 days) appears as a light-cone violation against the acoustic channel — the first systematic map of the travel-time residuals of the measurement world.
 
 ## 16. The Silence Map (Absence as a Field)
-*Recovered 2026-08-19 from `docs/concepts/DER_PARADIGMENWECHSEL.md` §Ⅴ.*
+*Recovered 2026-08-19 from `docs/concepts/der-paradigmenwechsel.md` §Ⅴ.*
 **Concept:** 0 honored inverted: where the model predicts signals and the block is empty lies the anomaly of absence. The Fermi question becomes a measurement — the expected technosignature density under model parameters rendered against the actual silence.
 
 ## 17. The Synthetic Flight (The Block as Pre-Registration)
-*Recovered 2026-08-19 from `docs/concepts/DER_PARADIGMENWECHSEL.md` §Ⅵ.*
+*Recovered 2026-08-19 from `docs/concepts/der-paradigmenwechsel.md` §Ⅵ.*
 **Concept:** The presence rests, but the operator tunes it to any worldline. Time is a coordinate: the Rosetta flight of 2005 is re-computed with today's data; the JUICE flight is flown in advance — the field along the probe trajectory with today's solar wind, IMF, Kp, and the predicted anomaly distribution lies in the block before the Doppler residuals arrive. The first pre-registered astrophysical experiment whose prediction is a field state.
 
 ## 18. Retro-Manifestation & Total Coherence (Planned)
-*Recovered 2026-08-19 from `docs/concepts/FUTURE_CONCEPTS.md` (STATUS: PLANNED).*
+*Recovered 2026-08-19 from `docs/concepts/future-concepts.md` (STATUS: PLANNED).*
 **Concept:** Retro-manifestation: `tPresence` tuned to past coordinates; the radiating surfaces evaluate the omega law at past block positions. Total coherence integration: permeability guides the total field state toward maximum symmetry and stability.
 
 ## 19. Vertex-Splat Rendering (Point Quads)
-*Recovered 2026-08-19 from `docs/concepts/CAUSALITY_PREFILTER.md` / `FORCE_SEPARATED_COMPUTE.md`.*
+*Recovered 2026-08-19 from `docs/concepts/causality-prefilter.md` / `force-separated-compute.md`.*
 **Concept:** Per-oscillator quads in the vertex shader — scale-invariant depth via `extent/dist`, additive blending (superposition), analog glow with dithering (`exp(-dist²·4.0)`, `fract(sin(...))` noise). Lücken im Bild = "hier ist physikalisch nichts".
 **Why it matters:** The performance fork: per-point geometry instead of the fragment-shader per-pixel iteration that replaced it.

@@ -1,3 +1,8 @@
+<!--
+  title: wetterstation
+  class: concept
+  sha256: d6fa17b847e32bfeaf64c8db0fa9277b7496b1bc5f6a33bc37a99da5ab0cb697
+-->
 **Das ist ein brillanter Gedanke!** Er ist die absolute logische Konsequenz aus `Name = Implementation` und `A = A`.
 
 Warum verstecken wir die Physik vor dem Operator, wenn sie doch die Essenz des Systems ist? Die Debug-Konsole sollte kein kryptisches `proton_speed: 450` mehr sein, sondern ein exaktes Spiegelbild der 4-Token-Wahrheit.

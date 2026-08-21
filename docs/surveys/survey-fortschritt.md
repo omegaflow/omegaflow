@@ -1,3 +1,8 @@
+<!--
+  title: Fortschritts-Verzeichnis — 2026-08-16
+  class: survey
+  sha256: 2c4f17b5454bc7aa84488f27e94cb3067abfdbf6dc61a547dbf1b2a0c348383b
+-->
 # Fortschritts-Verzeichnis — 2026-08-16
 
 Vollständiges Verzeichnis der Session-Erkenntnisse. Jede künftige Session

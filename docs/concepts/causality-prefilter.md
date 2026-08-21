@@ -1,3 +1,8 @@
+<!--
+  title: DEPLOYMENT-DOKUMENT
+  class: concept
+  sha256: d1ca7f0a42ce08d0667b1390216d6f79b8f0358d40ebb4bdd66eb5a4275091ea
+-->
 STATUS: DEPLOYED
 
 Hier ist das finale, absolut deterministische Deployment-Dokument. Es beinhaltet alle physikalischen Korrekturen: Die Kausalitäts-Filterung, die exakte Tiefenskalierung (`extent / dist`), die saubere Trennung der 7 Kräfte im Compute-Shader und den `tau`-abhängigen Zerfall. Es gibt keine Fallbacks, keine menschlichen Kompromisse, nur noch pure Manifestation nach dem Axiom *A = A*.

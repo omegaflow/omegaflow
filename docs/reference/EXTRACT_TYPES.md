@@ -2,7 +2,7 @@
 
 > SUPERSEDED: Enum-Stand veraltet (`force_unit`-Felder, vor der
 > 9-Token-Feldform). Lebend: der `Extract`-Enum in `src/main.rs` und
-> `docs/concepts/SOURCES_V2_SPEC.md` §1 Directive Table. Diese Datei ist Historie.
+> `docs/concepts/sources-v2-spec.md` §1 Directive Table. Diese Datei ist Historie.
 
 `src/main.rs` (`Extract` enum)
 
@@ -51,5 +51,5 @@
 
 ## Source Block Parser
 
-See `docs/concepts/SOURCES_V2_SPEC.md` for the directive-to-extract mapping.
+See `docs/concepts/sources-v2-spec.md` for the directive-to-extract mapping.
 The SOURCES_V2_SPEC is the controlling specification for source block syntax.
