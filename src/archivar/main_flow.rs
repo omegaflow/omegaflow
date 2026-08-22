@@ -5,7 +5,6 @@ pub struct StderrRadiator {
     pub interactive: bool,
 }
 
-
 impl Radiator for StderrRadiator {
     fn accept(&mut self, field: Arc<Buffer>) {
         let mut body_samples = 0usize;
@@ -53,7 +52,6 @@ impl Radiator for StderrRadiator {
     }
 }
 
-
 pub struct Archive {
     pub sources: Vec<SourceConfig>,
     pub body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
@@ -74,7 +72,6 @@ pub struct Archive {
     pub fetch_duration_idx: usize,
 }
 
-
 pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String, usize> {
     let mut uses = std::collections::HashMap::new();
     for s in sources {
@@ -91,15 +88,25 @@ pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String
     uses
 }
 
-
 pub fn spawn_ephemeris_bootstrap(
     sources: &[SourceConfig],
     guard: &std::sync::Arc<std::sync::atomic::AtomicBool>,
+    fetch_tx: mpsc::Sender<FetchResult>,
+    time: std::sync::Arc<std::sync::Mutex<Option<LeapSeconds>>>,
 ) {
     if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
         return;
     }
     let anchor_uses = anchor_uses(sources);
+    let anchor_order = |s: &SourceConfig| {
+        std::cmp::Reverse(
+            anchor_uses
+                .get(s.body.as_deref().unwrap_or(""))
+                .copied()
+                .unwrap_or(0),
+        )
+    };
+    let mut fresh_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     for (i, s) in sources.iter().enumerate() {
@@ -111,35 +118,63 @@ pub fn spawn_ephemeris_bootstrap(
         };
         let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
         if cache_fresh(&tmp_path, s.ttl) {
-            continue;
-        }
-        if anchor_uses.contains_key(body) {
+            fresh_items.push((i, s.clone(), tmp_path));
+        } else if anchor_uses.contains_key(body) {
             anchor_items.push((i, s.clone(), tmp_path));
         } else {
             rest_items.push((i, s.clone(), tmp_path));
         }
     }
-    anchor_items.sort_by_key(|(_, s, _)| {
-        std::cmp::Reverse(
-            anchor_uses
-                .get(s.body.as_deref().unwrap_or(""))
-                .copied()
-                .unwrap_or(0),
-        )
-    });
-    if !anchor_items.is_empty() || !rest_items.is_empty() {
-        let guard = guard.clone();
-        thread::spawn(move || {
-            let mut items = anchor_items;
-            items.extend(rest_items);
-            download_ephemeris_batch(&items);
-            guard.store(false, std::sync::atomic::Ordering::SeqCst);
-        });
-    } else {
+    fresh_items.sort_by_key(|(_, s, _)| anchor_order(s));
+    anchor_items.sort_by_key(|(_, s, _)| anchor_order(s));
+    if fresh_items.is_empty() && anchor_items.is_empty() && rest_items.is_empty() {
         guard.store(false, std::sync::atomic::Ordering::SeqCst);
+        return;
     }
+    let guard = guard.clone();
+    thread::spawn(move || {
+        let lsk = match leap_seconds(&time) {
+            Some(l) => l,
+            None => {
+                guard.store(false, std::sync::atomic::Ordering::SeqCst);
+                return;
+            }
+        };
+        let now = lsk.system_now_tdb().unwrap_or(0.0);
+        for (i, s, p) in fresh_items {
+            load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
+        }
+        let mut stale = anchor_items;
+        stale.extend(rest_items);
+        download_ephemeris_batch(&stale);
+        for (i, s, p) in stale {
+            load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
+        }
+        guard.store(false, std::sync::atomic::Ordering::SeqCst);
+    });
 }
 
+fn load_ephemeris_cache(
+    fetch_tx: &mpsc::Sender<FetchResult>,
+    source_idx: usize,
+    src: &SourceConfig,
+    tmp_path: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+) {
+    if let ExtractResult::WithEphemeris(_, eph) = extract(src, tmp_path, now, lsk) {
+        let _ = fetch_tx.send(FetchResult {
+            source_idx,
+            channels: Vec::new(),
+            eph_update: src.body.clone().map(|b| (b, eph)),
+            asteroid_samples: Vec::new(),
+            star_samples: Vec::new(),
+            curves: None,
+            spectral: None,
+            fetch_ok: true,
+        });
+    }
+}
 
 pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     if items.is_empty() {
@@ -202,12 +237,10 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     }
 }
 
-
 pub struct RefusalLedger {
     pub path: std::path::PathBuf,
     pub seen: std::collections::HashSet<String>,
 }
-
 
 impl RefusalLedger {
     pub fn new(path: &str) -> RefusalLedger {
@@ -251,7 +284,6 @@ impl RefusalLedger {
         }
     }
 }
-
 
 pub fn main_flow() {
     let env = Arc::new(load_env());
@@ -546,7 +578,12 @@ pub fn main_flow() {
     let mut pck_text: Option<String> = None;
     let bootstrap_running: std::sync::Arc<std::sync::atomic::AtomicBool> =
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
-    spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
+    spawn_ephemeris_bootstrap(
+        &archive.sources,
+        &bootstrap_running,
+        fetch_tx.clone(),
+        archive.time.clone(),
+    );
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
     loop {
@@ -665,7 +702,12 @@ pub fn main_flow() {
             if let Some(ttl) = missing_ttl {
                 if now - last_bootstrap >= ttl / (Φ * Φ) {
                     last_bootstrap = now;
-                    spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
+                    spawn_ephemeris_bootstrap(
+                        &archive.sources,
+                        &bootstrap_running,
+                        fetch_tx.clone(),
+                        archive.time.clone(),
+                    );
                 }
             }
         }

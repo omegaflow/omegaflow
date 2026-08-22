@@ -910,6 +910,18 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   (jlast/jfirst/row_matches) bleiben Hände der Extraktions-Maschine.
   Mit-Remap: TODO:325 (→ extract.rs), blocked_sources.φ
   (archivar.rs:3330 → extract.rs:1025, tap_to_json).
+- Bootstrap lädt frische Ephemeriden-Caches — WAHR (2026-08-22, fremder
+  Fund der KBO-Session, adoptiert): spawn_ephemeris_bootstrap bekam
+  fetch_tx + time; frische Caches (cache_fresh) werden nicht mehr
+  übersprungen, sondern über load_ephemeris_cache → WithEphemeris →
+  FetchResult::eph_update in den Fetch-Strom geladen (frische Anker
+  zuerst, nach Nutzung sortiert) — das Muster des Haupt-Loops
+  (main_flow.rs:935), beide Rufstellen aktualisiert. Trifft den
+  Kaltstart-Offenposten (per-Anker-Extraktion). Gates: cargo check 0/0.
+- Formatpflege — WAHR (2026-08-22, fremder Fund, adoptiert): eine
+  Leerzeile zwischen Items in channels/fetch/ingress/membrane/motion/
+  parse/spatial/types/units + Zeilenumbrüche in tests.rs — keine
+  Verhaltensänderung.
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
