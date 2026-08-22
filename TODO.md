@@ -934,11 +934,11 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   build_frame_registry/learn_frames/CELESTIAL_NETLOCS — trägt
   phi/pipeline/frame_learned.φ) → archivar/frames.rs; die Modes
   bleiben die Eingänge des Ports.
-- CDN-Namensgeber — pending (2026-08-22, Ratsbeschluss): fetch.rs
-  trägt unter dem Namen „fetch" die Namens-Konvention
-  (source_name_from_url/route_key/cdn_manifest_map) — eine dritte
-  Etage; benannt, nicht geschnitten (Über-Schneiden wäre der
-  Modetrieb).
+- CDN-Namensgeber — WAHR (2026-08-22, auf Operator-Wort ausgeführt —
+  das pending des Ratsbeschlusses ist erledigt): fetch.rs trug unter
+  dem Namen „fetch" die Namens-Konvention (extract_netloc/
+  route_segments/route_key/route_prefix_keys/source_name_from_url/
+  cdn_manifest_for/cdn_manifest_map) → archivar/naming.rs.
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
