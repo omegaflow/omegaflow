@@ -819,6 +819,11 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   (im Vorschlag benannt). Cargo.toml unberührt. Bestand: sense_membrane heißt
   weiter sense_membrane (Funktionsname, außerhalb der Rename-Reichweite) und
   ein eprintln trägt „membrane window" — benannt, nicht verschluckt.
+- Umbenennung pangaea_compiler → pangaea_harvester — WAHR (2026-08-22): der
+  Bin erntet (curlt den PANGAEA-Export und lädt aufs CDN — ein Spiegel), er
+  kompiliert kein Format — der Name trägt jetzt die Art. Mitgezogen:
+  kernel_flatten.yml (Job-Zeile) + harvester.md (Zeile wanderte aus der
+  Compiler- in die Harvester-Tabelle, sha256 neu).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein

@@ -1,7 +1,7 @@
 <!--
   title: Adapter-Familie: Harvester vs. Compiler
   class: concept
-  sha256: 8f34e957b9a70dc84d2f5515ce7e20fef32ac53528a55cb1676ddcfb35c863cc
+  sha256: 3e54dc90c3bca47dd2a2fec67d64e999b89695658aeb1f511e973d057381f0ec
 -->
 # Adapter-Familie: Harvester vs. Compiler
 
@@ -22,6 +22,7 @@ Bestand (DOI/ID + Titel). Die Messwerte liegen tiefer; die holt der Compiler.
 | `dataverse_harvester` | Dataverse REST | INRAE, Harvard, Borealis … |
 | `solr_harvester` | Solr JSON (`--fields`) | WDCC/CERA, DataONE |
 | `deims_harvester` | DEIMS REST | LTER Sites + Sensoren |
+| `pangaea_harvester` | Collection→Member→.tab (Spiegel) | PANGAEA-Kerne |
 
 ## Compiler — kompiliert statische Messwerte → Flat-json + Block
 
@@ -33,7 +34,6 @@ Oszillator-tragende Daten, kein Inventar.
 | Compiler | Zugriff | Kataloge |
 |---|---|---|
 | `tap_compiler` | TAP/ADQL | VizieR, IRSA, GAVO, ARI, ExoArchive |
-| `pangaea_compiler` | Collection→Member→.tab | PANGAEA-Kerne |
 
 ## Katalog — das Ergebnis, nicht das Werkzeug
 

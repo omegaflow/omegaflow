@@ -495,7 +495,7 @@ jobs:
       - name: Compile PANGAEA sediment core 758961 and upload to CDN
         continue-on-error: true
         run: |
-          cargo run --release --bin pangaea_compiler -- \
+          cargo run --release --bin pangaea_harvester -- \
             --id PANGAEA.758961 \
             --out pangaea_758961.json \
             --ci-mode \
