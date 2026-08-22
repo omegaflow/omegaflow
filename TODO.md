@@ -1287,7 +1287,11 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Band; Stillekarte band-selektiv, Lichtkegel-Differenz dispersiv,
   chromatischer Dip als SED-Messung.
 - Atom D (Phase): terminiert nach C — Beats/Interferenz brauchen die
-  komplexe FFT; PSD-Bins tragen sie nicht (0 honored).
+  komplexe FFT; PSD-Bins tragen sie nicht (0 honored). Der
+  Ausführungsplan des Quanten-Tracks (C → D → komplexe TE →
+  crystal_compiler → Kuprat-Blatt, inkl. Datenlagen-Recherche und
+  vier offener Entscheidungen) steht in
+  docs/handover/handover-2026-08-22-quanten-cluedo-plan.md.
 - Regeln: kein Namens-Trick (Frequenz lebt als Token, nie im String),
   kein Skalar-Schallpegel aus Spektren errechnet, jedes Atom ein
   vollständiges Session-Artefakt.
