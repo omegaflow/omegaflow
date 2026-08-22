@@ -3,7 +3,7 @@
   class: survey
   date: 2026-08-21
   version: 3
-  sha256: 435a229ef03f9f2fcfd784e7b9d1c0c8aae472056dfd4194a7f560a349ec65e6
+  sha256: ad6069d3caeee40dd3eb62bfc1cd52488a5c76ff9f8aea64a2df13ba4a9aa09d
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
 -->
@@ -182,7 +182,9 @@ die Frage neu stellen.
 ## Was das Blatt nicht trägt (Register)
 
 - Instrument A — Ereignisrate: benannt, ungebaut.
-- Kanal-Offenposten: CSES (Portal von hier unerreichbar gemessen — 000),
+- Kanal-Offenposten: CSES (Portal leos.ac.cn von hier 000, über den
+  Jina-Reader 200 gemessen — SPA ohne Inhalt, der Daten-Service ist
+  login-gated; die Probe-Maschinerie lief auf dem Kandidaten noch nicht),
   TEC-GIM retro pre-2024 (codg*.Z, LZW-Dekompressor fehlt im Bestand),
   MiniSEED-Waveform-Envelopen (Decoder ausstehend). CDDIS lebt über das
   EDL-Token aus `.secrets.local` (verifiziert) — eine Nach-Ernte mit
