@@ -837,8 +837,19 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   41 Bins trägt die Art im Namen: Compiler 22, Harvester 9 (pangaea
   korrigiert), Probe 6 (die Physik-Messung: nobel/bz_blatt/bz_retro/
   solar_dag/laic/long_window), Leser 3 (hdf5/netcdf/zip_range), Scanner 1
-  (source_scanner, eigene Art). Gates grün: cargo check 0/0 (default +
+  (  source_scanner, eigene Art). Gates grün: cargo check 0/0 (default +
   browser_relay + gamepad, all-targets).
+- Mathematikerin-Schnitt — WAHR (2026-08-22): src/mathematikerin.rs
+  (4 147 Zeilen) → shaders (FIELD_WGSL + TE_WGSL + HUD-Glyphen, Daten
+  ohne Rust), actuators (PackedWindow/PresenceFrame/KineticRadiator +
+  die drei Oszillatoren), window (Rat-Name „kern" korrigiert:
+  NativeApp/Event-Loop/run_window/Quaternionen), tests. lib.rs
+  unberührt; die Oberfläche (Record/PackedWindow/PresenceFrame/
+  KineticRadiator/AcousticOscillator/SeismicOscillator/pack_window/
+  force_ref_medians/EMOscillator/GRID_INIT/JUMP_GRID) fließt über die
+  pub-use-Globs. Gates grün: cargo check 0/0 (default + browser_relay +
+  gamepad, all-targets). Das Wort „Probe" meint fortan nur die
+  Physik-Messung; die Quellen-Kuration heißt Port.
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
