@@ -448,9 +448,7 @@ fn test_parse_json_skips_jina_header() {
         other => panic!("root is {:?}", other),
     };
     assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
-    assert!(
-        matches!(obj.get("id"), Some(super::JsonVal::Num(n)) if (n - 25544.0).abs() < 1e-9)
-    );
+    assert!(matches!(obj.get("id"), Some(super::JsonVal::Num(n)) if (n - 25544.0).abs() < 1e-9));
 }
 
 #[test]
@@ -715,11 +713,19 @@ fn test_post_body_rendering() {
     let src = SourceConfig {
         ttl: 100,
         url: "https://earth-search.aws.element84.com/v0/search".into(),
-        frame: super::Frame::Surface { body_name: "body_test".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
+        frame: super::Frame::Surface {
+            body_name: "body_test".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        },
         format: "json".into(),
         extracts: vec![],
         headers: vec![("Content-Type".into(), "application/stac+json".into())],
-        post_body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+        post_body: Some(
+            "{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}"
+                .into(),
+        ),
         target: None,
         catalog: None,
         max_freq: None,
@@ -1535,8 +1541,7 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     let speed = (v_fd[0] * v_fd[0] + v_fd[1] * v_fd[1] + v_fd[2] * v_fd[2]).sqrt();
     let v_circ = (gm_sun / au_m).sqrt();
     assert!((speed - v_circ).abs() / v_circ < 1e-3);
-    let (vmax, amax, p_anchor) =
-        law_bounds(&motion, 0.0, 0.0, &eph).expect("kepler law bounds");
+    let (vmax, amax, p_anchor) = law_bounds(&motion, 0.0, 0.0, &eph).expect("kepler law bounds");
     assert!((p_anchor[0] - au_m).abs() / au_m < 1e-12);
     assert!((vmax / Φ - v_circ).abs() / v_circ < 1e-4);
     assert!(amax > 0.0 && amax.is_finite());
@@ -2021,8 +2026,8 @@ fn test_port_convert_celestial_and_post() {
     let post = "source stac\nttl 86400\nforce em\nurl https://example.org/search\nmethod post\nbody {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
     let conv = super::port_block(post);
     assert!(conv.contains(
-            "post_body {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\n"
-        ));
+        "post_body {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\n"
+    ));
     let srcs = super::parse_sources(&conv);
     assert!(
         srcs.is_empty()
@@ -2053,7 +2058,8 @@ fn test_port_convert_celestial_and_post() {
                 _ => true,
             }))
     );
-    let no_method = "source kt\nttl 86400\nforce em\nurl https://example.org/x\nformat kernel_text\nbody 399\n";
+    let no_method =
+        "source kt\nttl 86400\nforce em\nurl https://example.org/x\nformat kernel_text\nbody 399\n";
     let conv = super::port_block(no_method);
     assert!(conv.contains("body 399\n"));
     let srcs = super::parse_sources(&conv);
@@ -2067,8 +2073,7 @@ fn test_port_convert_celestial_and_post() {
 }
 #[test]
 fn test_walk_celestial_cmap() {
-    let j =
-        super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
+    let j = super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
     let mut fields = String::new();
     let mut coords = String::new();
     let mut map_path: Option<String> = None;
@@ -2167,8 +2172,7 @@ fn test_backlog_batches_verify() {
         ok_text = existing;
     }
     let mut void_text = String::new();
-    if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_void_ledger.txt")
-    {
+    if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_void_ledger.txt") {
         for l in existing.lines() {
             if let Some(u) = l.strip_prefix("void ") {
                 if let Some(end) = u.find(' ') {
@@ -2219,10 +2223,8 @@ fn test_backlog_batches_verify() {
                         Some(b) => b,
                         None => {
                             empty += 1;
-                            void_text.push_str(&format!(
-                                "void {} {}\n",
-                                s.url, "fetch returned empty"
-                            ));
+                            void_text
+                                .push_str(&format!("void {} {}\n", s.url, "fetch returned empty"));
                             break;
                         }
                     };
@@ -2497,6 +2499,7 @@ fn test_wgccre_roundtrip() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2523,8 +2526,7 @@ fn test_rotation_matrix_roundtrip() {
     let tc = (jd - super::J2000_EPOCH) / 36525.0;
     let a = (317.68143f64 - 0.1061 * tc).to_radians();
     let d = (52.88650f64 - 0.0609 * tc).to_radians();
-    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
-        - (317.68143f64 - 0.1061 * tc))
+    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH) - (317.68143f64 - 0.1061 * tc))
         .to_radians();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
@@ -2578,6 +2580,7 @@ fn test_rotation_matrix_roundtrip() {
         rotation_matrices: vec![(jd, m)],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2604,8 +2607,7 @@ fn test_matrix_vs_wgccre_agreement() {
     let tc = (jd - super::J2000_EPOCH) / 36525.0;
     let a = (317.68143f64 - 0.1061 * tc).to_radians();
     let d = (52.88650f64 - 0.0609 * tc).to_radians();
-    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
-        - (317.68143f64 - 0.1061 * tc))
+    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH) - (317.68143f64 - 0.1061 * tc))
         .to_radians();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
@@ -2659,12 +2661,14 @@ fn test_matrix_vs_wgccre_agreement() {
         rotation_matrices: vec![(jd, m)],
         props: Some(props.clone()),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let eph_test = super::BodyEphemeris {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map_matrix = HashMap::new();
     map_matrix.insert("mars".to_string(), eph_matrix);
@@ -2727,6 +2731,7 @@ fn test_rotation_matrix_empty_props() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2736,10 +2741,9 @@ fn test_rotation_matrix_empty_props() {
 
 #[test]
 fn test_restored_extract_variants() {
-    let j = super::parse_json(
-        r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#,
-    )
-    .unwrap();
+    let j =
+        super::parse_json(r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#)
+            .unwrap();
     assert_eq!(super::jfirst(&j, "data.a"), Some(1.0));
     assert_eq!(super::jlast(&j, "data.a"), Some(3.0));
     assert_eq!(super::jdeep_find_num(&j, "b"), Some(9.0));
@@ -2873,6 +2877,7 @@ fn test_anchor_body_agnostic() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut eph = HashMap::new();
     eph.insert("mars".to_string(), mars_eph);
@@ -3013,6 +3018,7 @@ fn test_anchor_applies_declared_unit() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut eph = HashMap::new();
     eph.insert("mars".to_string(), mars_eph);
@@ -3526,8 +3532,7 @@ fn test_fetch_duration_ring_median_and_wrap() {
         super::record_fetch_duration(&mut ring, &mut len, &mut idx, d);
     }
     assert_eq!(len, 4);
-    let median =
-        super::median_fetch_duration(&ring, len).expect("four durations carry a median");
+    let median = super::median_fetch_duration(&ring, len).expect("four durations carry a median");
     assert_eq!(median, 5.0, "the median of [4, 2, 8, 6] is 5");
     for d in 0..20 {
         super::record_fetch_duration(&mut ring, &mut len, &mut idx, 10.0 + d as f64);
@@ -3564,6 +3569,7 @@ fn test_body_barycenter_velocity_linear_granule() {
         rotation_matrices: Vec::new(),
         props: None,
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     for i in -1..=1 {
         let t0 = jd_now + i as f64 * 16.0;
@@ -3674,8 +3680,7 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         unit: String::new(),
         fold: None,
     };
-    let reach =
-        super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
+    let reach = super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
     assert_eq!(reach, 400000.0 * 60.0 * 64.0);
 }
 
@@ -3817,6 +3822,7 @@ fn test_query_admits_surface_sample_within_window() {
         rotation_matrices: Vec::new(),
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     for i in -1..=1 {
         let t0 = jd_now + i as f64 * 16.0;
@@ -3930,6 +3936,7 @@ fn test_wind_orbit_bin_positions_when_present() {
         rotation_matrices: Vec::new(),
         props: None,
         orbit: Some(rec),
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = std::collections::HashMap::new();
     map.insert("wind".to_string(), eph);
@@ -3944,12 +3951,10 @@ fn test_wind_orbit_bin_positions_when_present() {
         let expected = (records[0].1[k] + records[1].1[k]) * 0.5;
         assert!((mid[k] - expected).abs() < 1.0e-3);
     }
-    assert!(super::body_barycenter_position(
-        "wind",
-        records[records.len() - 1].0 + 1.0e8,
-        &map
-    )
-    .is_none());
+    assert!(
+        super::body_barycenter_position("wind", records[records.len() - 1].0 + 1.0e8, &map)
+            .is_none()
+    );
     assert!(super::body_barycenter_position("wind", records[0].0 - 1.0e8, &map).is_none());
 }
 
@@ -5042,8 +5047,7 @@ fn test_route_key_normalizes_template() {
 
 #[test]
 fn test_route_prefix_keys_most_specific_first() {
-    let keys =
-        route_prefix_keys("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson");
+    let keys = route_prefix_keys("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson");
     assert_eq!(
         keys,
         vec![
@@ -5067,8 +5071,7 @@ fn test_frame_registry_distinguishes_routes_on_one_host() {
         "api.example.com/asteroids".to_string(),
         "at sun".to_string(),
     );
-    let (weather, _) =
-        draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
+    let (weather, _) = draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
     let (asteroids, _) = draft_frame_guess("https://api.example.com/asteroids/433", "", &reg);
     assert_eq!(weather, "on earth\n");
     assert_eq!(asteroids, "at sun\n");
@@ -5192,9 +5195,7 @@ fn test_finals_channels_last_occupied_line() {
 fn test_ionex_channels_two_lat_five_lon() {
     let mut text = String::new();
     text.push_str("     1            CODEX                       IONEX VERSION / TYPE\n");
-    text.push_str(
-        "    -1                                                              EXPONENT\n",
-    );
+    text.push_str("    -1                                                              EXPONENT\n");
     text.push_str("     4 START OF TEC MAP\n");
     text.push_str(
         "  2026     8    18    12     0     0                        EPOCH OF CURRENT MAP\n",

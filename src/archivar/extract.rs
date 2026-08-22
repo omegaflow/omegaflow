@@ -9,8 +9,6 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
     }
 }
 
-
-
 pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "rpw_efield" => match comp {
@@ -36,8 +34,6 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         _ => None,
     }
 }
-
-
 
 pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     if let Some((target_path, final_key)) = key.rsplit_once('.') {
@@ -73,8 +69,6 @@ pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
-
-
 pub fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
     if let Some((prefix, final_key)) = key.rsplit_once('.') {
         let parent = if prefix.is_empty() {
@@ -106,8 +100,6 @@ pub fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
-
-
 pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
     let JsonVal::Obj(map) = el else {
         return false;
@@ -119,16 +111,12 @@ pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
     }
 }
 
-
-
 pub fn row_value(el: &JsonVal, key: &str) -> Option<f64> {
     match el {
         JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
         other => scalar_of(other),
     }
 }
-
-
 
 pub fn jfirst_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
     let Some((fk, fv)) = filter else {
@@ -155,8 +143,6 @@ pub fn jfirst_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>
         .find(|v| row_matches(v, fk, fv))
         .and_then(|v| row_value(v, key))
 }
-
-
 
 pub fn jlast_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
     let Some((fk, fv)) = filter else {
@@ -186,8 +172,6 @@ pub fn jlast_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>)
         .and_then(|v| row_value(v, key))
 }
 
-
-
 pub fn kernel_id_of(name: &str) -> Option<u8> {
     match name {
         "inverse-square" => Some(0),
@@ -200,8 +184,6 @@ pub fn kernel_id_of(name: &str) -> Option<u8> {
         _ => None,
     }
 }
-
-
 
 pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
     match ext {
@@ -261,8 +243,6 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
     }
 }
 
-
-
 pub fn extract_header(s: &str, n: &str) -> Option<String> {
     for l in s.lines() {
         if let Some(c) = l.find(':') {
@@ -273,8 +253,6 @@ pub fn extract_header(s: &str, n: &str) -> Option<String> {
     }
     None
 }
-
-
 
 pub fn split_csv_line(line: &str) -> Vec<String> {
     let mut fields = Vec::new();
@@ -305,8 +283,6 @@ pub fn split_csv_line(line: &str) -> Vec<String> {
     fields
 }
 
-
-
 pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     let mut lines = text
         .lines()
@@ -333,8 +309,6 @@ pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     }
     Some(JsonVal::Arr(rows))
 }
-
-
 
 pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
     let arr = match jpath_val(j, "data").and_then(|v| {
@@ -492,8 +466,6 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
     }
 }
 
-
-
 pub fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
     if path == "." || path.is_empty() {
         if let JsonVal::Arr(arr) = json {
@@ -519,8 +491,6 @@ pub fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
         _ => None,
     }
 }
-
-
 
 pub fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
     match json {
@@ -549,8 +519,6 @@ pub fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
-
-
 pub fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
     if let JsonVal::Arr(arr) = json {
         if arr.len() < 2 {
@@ -571,8 +539,6 @@ pub fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
     }
     None
 }
-
-
 
 pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
     let mut header_idx: Option<usize> = None;
@@ -617,8 +583,6 @@ pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
     }
     None
 }
-
-
 
 pub fn is_drop_key(key: &str) -> bool {
     let kl = key.to_lowercase();
@@ -720,8 +684,6 @@ pub fn is_drop_key(key: &str) -> bool {
         || kl.ends_with("_size")
 }
 
-
-
 pub fn text_to_json(text: &str) -> Option<JsonVal> {
     let header = text.lines().find_map(|line| {
         let t = line.trim();
@@ -771,8 +733,6 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
     }
 }
 
-
-
 pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     let obj = match val {
         JsonVal::Obj(m) => m,
@@ -814,13 +774,9 @@ pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     }
 }
 
-
-
 pub fn tdb_to_jd(tdb_secs: f64) -> f64 {
     tdb_secs / 86400.0 + J2000_EPOCH
 }
-
-
 
 pub fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     if let Some(JsonVal::Num(_)) = val.first() {
@@ -844,8 +800,6 @@ pub fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     }
     result
 }
-
-
 
 pub fn split_data_line(line: &str) -> Vec<&str> {
     if line.contains('|') && line.split('|').count() > 2 {
@@ -873,14 +827,10 @@ pub fn split_data_line(line: &str) -> Vec<&str> {
     }
 }
 
-
-
 pub enum ExtractResult {
     Measurements(Vec<(Channel, FieldConfig)>),
     WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
 }
-
-
 
 pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary" {
@@ -909,6 +859,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     rotation_matrices: Vec::new(),
                     props: None,
                     orbit: Some(rec),
+                    granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
                 },
             );
         }
@@ -2364,8 +2315,6 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     ExtractResult::Measurements(channels)
 }
 
-
-
 pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
     match el {
         JsonVal::Obj(map) => {
@@ -2401,8 +2350,6 @@ pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
     }
 }
 
-
-
 pub fn is_time_key(k: &str) -> bool {
     let kl = k.to_lowercase();
     kl == "time"
@@ -2414,8 +2361,6 @@ pub fn is_time_key(k: &str) -> bool {
         || kl.contains("time")
         || kl.contains("date")
 }
-
-
 
 pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<(f64, f64)> {
     let parsed = parse_json(body);
