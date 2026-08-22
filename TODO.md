@@ -462,12 +462,12 @@ Surrogat-Schwelle absorbiert).
 OMEGAFLOW_HIDDEN (2026-08-21): hidden = fensterlos, klanglos,
 regungslos. Das Fenster läuft unsichtbar (with_visible(false), kein
 Fokus-Griff); das silent-Flag im NativeApp torbt die ω-Loop-Sends an
-acoustic/seismic (src/mathematikerin.rs); AcousticOscillator und
+acoustic/seismic (src/mathematikerin/actuators.rs); AcousticOscillator und
 SeismicOscillator werden nicht gestartet (kein PCM auf stdout, keine
-Serial-Vibration) und der Relay-Radiator nicht gebaut (src/archivar.rs).
+Serial-Vibration) und der Relay-Radiator nicht gebaut (src/archivar/main_flow.rs).
 Der Operator wird nie ungefragt penetriert — visuell, akustisch, taktil,
 relay — nicht; der ω-Loop läuft dabei exakt wie produktiv, nur still.
-Der Render-Pfad ist geteilt (src/mathematikerin.rs render): der
+Der Render-Pfad ist geteilt (src/mathematikerin/window.rs render): der
 Probe-Compute-Pass läuft immer, Surface/Render-Pass/present nur sichtbar —
 so füllt sich der Probe-Ring auch headless mit ~1 Hz, und die
 Maschinenzeile `φ window:` (stderr, 1 Hz) trägt te/thr/tau/pe/state/focus/keys
@@ -731,7 +731,8 @@ Maschine misst.
   und Mathematikerin). Atom 1 ERLEDIGT (2026-08-22, a665fdb): die
   Solar- + ENSO-Ernte (solar_harvest, enso_harvest, enso_backfill,
   enso_ndbc_parse, SolarChannel/SolarCell, EnsoStation/EnsoSeries/
-  EnsoCell, enso_parser_tests) lebt in `src/machines.rs` (957 Zeilen
+  EnsoCell, enso_parser_tests) lebt in `src/machines/` (enso/solar/
+  verdict; 957 Zeilen
   aus archivar.rs), main_flow ruft `crate::machines::solar_harvest/
   enso_harvest`, der mpsc-Kanal (SolarCell/EnsoCell) bleibt das
    Protokoll zur Mathematikerin. Gates: cargo check 0/0 vier
@@ -742,11 +743,12 @@ Maschine misst.
    NativeApp-Felder enso_*/solar_*, solar_tick + enso_say/fold/collect/
    probe/dispatch/sheet/matrix/tick und die enso_te_*/solar_te_*-
    Puffer-Kreation leben jetzt als `SolarMachine`/`EnsoMachine` in
-   src/machines.rs (die Maschinen halten Device/Queue/te_pipe/te_bind
+   src/machines/ (die Maschinen halten Device/Queue/te_pipe/te_bind
    + eigenen rng, tick(ring_gen) hält die Surrogat-Seeds byte-identisch);
    NativeApp hält `solar:`/`enso:` und ruft `tick(self.ring_gen)`. Die
    gemeinsamen TE-GPU-Helfer (le_bytes_f32, te_read_verdict,
-   te_absence_word, TE_SERIES_STRIDE/BYTES) wohnen in machines.rs, der
+   te_absence_word, TE_SERIES_STRIDE/BYTES) wohnen in
+   src/machines/verdict.rs, der
    Präsenz-TE-Pfad importiert sie. Gates: cargo check 0/0 vier
    Feature-Kombis, cargo test --lib 307/307. Offen — Atom 3: die Ernte
   presence-getrieben statt eager (Boje = Körper in BODY_REGISTRY +
@@ -1088,8 +1090,8 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   (siehe Atom 8). Gates: cargo check
   0/0 (vier Feature-Kombinationen), cargo test 165/165 lib + alle
   Bins, naga-Validierung grün. Der Schnitt landete in zwei Commits:
-  die Rust-Hälfte (archivar.rs: query_hash, gravity_manifest,
-  body_channels) trug der vorangegangene Commit (benannt „Atom 6",
+  die Rust-Hälfte (spatial.rs: query_hash, gravity_manifest;
+  channels.rs: body_channels) trug der vorangegangene Commit (benannt „Atom 6",
   8f57a25) — der WGSL-/Register-Schluss folgt separat.
 
 - Atom 8 (2026-08-20, nach Atom 7) — „Die Vereinheitlichung des
@@ -1178,7 +1180,7 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   zurück, wenn Atom 10 (Takens/MI) die Maschine neu gebaut hat — ein
   Trommelfell wird nicht an ein Stethoskop angeschlossen, das gleich
   zerlegt wird (Operator-Entscheidung). Der `AcousticOscillator` zog
-  von archivar.rs in die Mathematikerin — alle drei Oszillatoren
+  von dem damaligen archivar.rs in die Mathematikerin — alle drei Oszillatoren
   wohnen bei der, die das Feld rechnet. Gates: cargo check 0/0
   (vier Feature-Kombinationen), cargo test 160/160 lib + alle Bins
   (2 gefallen gegenüber Atom 8), naga-Validierung, Live-Boot.
@@ -1286,7 +1288,7 @@ ICRS-4D-Rahmen teilt:
 
 - Hill-Sphäre je Asteroid: r = a·(1−e)·(m/3M☉)^⅓ — Formel repariert;
   `hill_radius_m` ist heute nur Gate (is_none im Hash,
-  src/archivar.rs:9134/9268), der Wert fließt nirgends — Manifestation (Hill-Radius als
+  src/archivar/spatial.rs:175), der Wert fließt nirgends — Manifestation (Hill-Radius als
   räumliche Reichweite) bleibt offen.
 - Hydrostatische Abplattung aus Rotation: Rotationsperiode (LCDB) +
   Radius (NEOWISE) + Dichte (Masse) → Oblatheit im Gleichgewicht (drei
@@ -1358,7 +1360,7 @@ ICRS-4D-Rahmen teilt:
 
 - refused-else ohne body-Deklaration (Relay-Rest): SurfaceFlow für
   spd/hdg lebt (index.html 236-249, frame_motion in
-  src/archivar.rs:10114) — der
+  src/archivar/membrane.rs:166) — der
   offene Rest ist nur noch refused-else ohne body-Deklaration.
 - Der eingefrorene index.html/fieldShader-Snapshot trägt die tote
   Rotation noch (GRID_TO_ANGLE = 2^62, index.html 42/1245) — B1,
@@ -1368,7 +1370,7 @@ ICRS-4D-Rahmen teilt:
   <x> <y> <z>`) vs. docs/omegaflow_sense_hardware.yaml (`flow <channel>
   <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>`). SeismicOscillator
   schreibt heute die rohe f32-Σω-Intensität (4 B/Frame) an den Port
-  (src/mathematikerin.rs, SeismicOscillator).
+  (src/mathematikerin/actuators.rs, SeismicOscillator).
 
 ## Membran & Wahrnehmung
 
@@ -1958,7 +1960,7 @@ faltet der Client auf null (schwarz, 0 honored); die Antwort-Epoche
 bleibt Ernte-Epoche. Befund dieses Atoms: das ω-Loop-Gate verweigerte
 t ≤ 0 — TDB ist J2000-relativ, jede Epoche vor 2000 ist negativ — und
 fiel still auf Maschinen-now zurück; der Rest-Now-Bias ist getötet
-(is_finite-Gate, archivar.rs; die LSK-Domäne 1972+ gated das Rendern
+(is_finite-Gate, src/archivar/main_flow.rs:614; die LSK-Domäne 1972+ gated das Rendern
 ehrlich: prä-1972 render void, benannt — keine Fabrikation).
 Hidden-Verifikation in zwei Zuständen: Gegenwart φ-t 840596983 und
 Scroll #x,0,0,0,-4.0e7 φ-t −4.0e7; Stempel in Beobachter-Zeit
@@ -2065,20 +2067,20 @@ wird erst auf das Wort des Operators; bis dahin pending (0 honored).
 
 ## Doku-Drift
 
-Doku-Drift (2026-08-22, nach den Monolith-Schnitten): TODO.md trägt
-tote Anker auf die alten Monolithen — remappt im selben Zug: 325
-(→ extract.rs), 932 (→ window.rs:2388), 1662/1664 (MAX_SAMPLES →
-membrane.rs:32, der Rebuild-Wurf → main_flow.rs:2166 — gemessen gegen
-die Lesung spatial/membrane, der Wurf liegt in main_flow),
-blocked_sources.φ:6 (→ extract.rs:1025). Offen (Registrierpflicht für
-die Session, die diese Zeilen berührt — kein eigener Auftrag): 447/452
-(→ actuators.rs/window.rs), 449 (→ main_flow.rs), 716–731 (machines:
-957-Zeilen-Stand → enso/solar/verdict, 1 939 vor Schnitt), 1025
-(query_hash → spatial.rs), 1115 + 1755 (historisch — beschreiben den
-Zustand vor dem Schnitt), 1223/1295 (9134/9268/10114 → tests.rs),
-1305 (→ actuators.rs), 1895 (is_finite-Gate → bei Berührung vermessen,
-Kandidat units.rs). Handover/Surveys bleiben unverändert (Doktrin: ihr
-Anker ist die Wahrheit ihres Datums).
+Doku-Drift (2026-08-22, behoben — auf Operator-Wort erledigt): alle
+toten Anker der Monolith-Schnitte zeigen auf die wahren Orte — 325
+(→ extract.rs), 932 (→ window.rs:2388), MAX_SAMPLES (→ membrane.rs:32),
+der Rebuild-Wurf (→ main_flow.rs:2166), blocked_sources.φ:6
+(→ extract.rs:1025), Acoustic/Seismic-Oszillatoren + Relay-Radiator
+(→ actuators.rs/main_flow.rs), Render-Pfad (→ window.rs), die
+Maschinen-Einträge (→ enso/solar/verdict.rs), query_hash/
+gravity_manifest/body_channels (→ spatial.rs/channels.rs),
+hill_radius_m-Gate (→ spatial.rs:175), frame_motion (→ membrane.rs:166),
+SeismicOscillator (→ actuators.rs), is_finite-Gate
+(→ main_flow.rs:614). Historische Sätze bleiben Ereignis-Beschreibungen
+(„aus dem damaligen archivar.rs", die Parallel-Session-Reparatur).
+Handover/Surveys bleiben unverändert (Doktrin: ihr Anker ist die
+Wahrheit ihres Datums).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
