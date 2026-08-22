@@ -17,6 +17,7 @@ pub mod inflate;
 pub mod json;
 pub mod kepler;
 pub mod lsk;
+pub mod machines;
 pub mod mat;
 pub mod mathematikerin;
 pub mod media;

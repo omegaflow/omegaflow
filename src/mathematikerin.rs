@@ -1,7 +1,9 @@
 use crate::archivar::{
-    body_barycenter_position, sense_membrane, system_now, Buffer, CurveSet, EnsoCell, EnsoSeries,
-    EnsoStation, LeapSeconds, Radiator, SampleRecord, SolarCell, SolarChannel, PARSEC_M,
-    SOLAR_COARSE_GRID, SOLAR_FAST_GRID,
+    body_barycenter_position, sense_membrane, system_now, Buffer, CurveSet, LeapSeconds, Radiator,
+    SampleRecord, PARSEC_M,
+};
+use crate::machines::{
+    EnsoCell, EnsoSeries, EnsoStation, SolarCell, SolarChannel, SOLAR_COARSE_GRID, SOLAR_FAST_GRID,
 };
 const FIELD_WGSL: &str = r#"
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
