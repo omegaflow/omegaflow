@@ -922,6 +922,11 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Leerzeile zwischen Items in channels/fetch/ingress/membrane/motion/
   parse/spatial/types/units + Zeilenumbrüche in tests.rs — keine
   Verhaltensänderung.
+- Renderer — WAHR (2026-08-22, Ratsbeschluss): port.rs trug die
+  URL/Quell-Synthese (ci_probe_render/render_headers/render_url/
+  render_source_url/render_source_body — Schablonen-Ersetzung, kein
+  Portieren) → archivar/render.rs; angular_distance_deg bleibt
+  Sondier-Werkzeug.
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein

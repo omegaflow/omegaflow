@@ -23,6 +23,7 @@ pub mod spatial;
 pub mod membrane;
 pub mod channels;
 pub mod port;
+pub mod render;
 pub mod ingress;
 pub mod main_flow;
 #[cfg(test)]
@@ -39,6 +40,7 @@ pub use spatial::*;
 pub use membrane::*;
 pub use channels::*;
 pub use port::*;
+pub use render::*;
 pub use ingress::*;
 pub use main_flow::*;
 
