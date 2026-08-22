@@ -818,7 +818,9 @@ Maschine misst.
   gegen −3.25e-2) — der Pfeil schlägt auch mit dem Detektor im Raum
   nicht aus. Kanal-Offenposten: CSES (Portal leos.ac.cn von hier
   unerreichbar gemessen — 000), TEC retro pre-2024 (codg*.Z, LZW-
-  Dekompressor fehlt), CDDIS-OAuth bleibt WARTEND.
+  Dekompressor fehlt). CDDIS lebt über das EDL-Token aus `.secrets.local`
+  (gegen CDDIS verifiziert — ohne Token 302, mit Token volles Listing;
+  „Account ausstehend" aus ledger.φ ist überholt, Nachtrag dort).
 
 ## Die Nadeln I, II, V — Blätter (Handovers 2026-08-21)
 

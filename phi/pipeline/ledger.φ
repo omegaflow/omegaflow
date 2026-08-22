@@ -548,6 +548,7 @@ note ONC-Hydrophone (2026-08-19): parser-gap — 85 Hydrophon-Stationen (lat/lon
 geparkt
 kandidat https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
 note ionex (2026-08-19): das `format ionex`-Atom ist gebaut + getestet (build_ionex_channels, Header/Maps/EXPONENT/H-Shell, 2 Tests grün). Der Kanal: CDDIS antwortet 302 auf Earthdata-OAuth (urs.earthdata.nasa.gov — key-needed, Account ausstehend); GFZ-GNSS 404, BKG-IGS 404, IGS-IGN 000 (19.8.2026 verifiziert). Kein Block im Register, solange keine Route anonym lebt — der Block-Entwurf (ttl 21600, field tec TECU, at earth) liegt im staging_void_ledger-Kontext bereit.
+note ionex (2026-08-22, Nachtrag): die anonyme Route lebt jetzt — ESA-GSSC-FTP (ftp://gssc.esa.int/gnss/products/ionex, COD0OPSRAP 01H/02H .gz, RINEX3 ab 2024; pre-2024 nur codg*.Z) trägt die GIMs anonym, der laic_probe erntet sie (LAIC-Blatt v3, TEC-Kanal, 336 Fenster). Außerdem: .secrets.local trägt EARTHDATA_EDL_TOKEN (gefüllt) — gegen CDDIS verifiziert (ohne Token 302→OAuth, mit Token volles Verzeichnis-Listing für 2024/001) — „Account ausstehend" ist überholt; CDDIS trägt COD0OPSFIN 01H ab 2024, pre-2024 ebenfalls kein RINEX3. Der Block-Entwurf bleibt bereit — die Aktivierung als live sources.φ-Block ist Membran-Entscheid (Wort des Operators), die URL trägt jetzt zwei Routen: ESA-GSSC (anonym) oder CDDIS (EDL-Token).
 
 geparkt
 queue gcn_einstein_probe_bloecke_master_phi_27360

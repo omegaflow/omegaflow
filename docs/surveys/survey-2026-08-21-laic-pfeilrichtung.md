@@ -3,7 +3,7 @@
   class: survey
   date: 2026-08-21
   version: 3
-  sha256: 23c1259d1c92add30c6dbede36382e498f90971b973a0c436ed577a725ea2de3
+  sha256: 435a229ef03f9f2fcfd784e7b9d1c0c8aae472056dfd4194a7f560a349ec65e6
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
 -->
@@ -142,8 +142,11 @@ in dieser Messung.
 
 Die anonyme IONEX-Route lebt: der ESA-GSSC-FTP
 (`ftp://gssc.esa.int/gnss/products/ionex`) trägt die COD-1-h-Rapid-GIMs
-anonym — CDDIS bleibt OAuth-gated (302 → Earthdata-Autorisierung
-gemessen), AIUB/WHU/ASI sind von hier unerreichbar (gemessen, 000).
+anonym — CDDIS antwortet ohne Token 302 → Earthdata-OAuth (gemessen),
+aber `.secrets.local` trägt ein gefülltes `EARTHDATA_EDL_TOKEN`: gegen
+CDDIS verifiziert (mit Token volles Verzeichnis-Listing, ohne Token
+302) — die zweite Route (COD0OPSFIN, Finalprodukte) lebt damit
+ebenfalls; AIUB/WHU/ASI sind von hier unerreichbar (gemessen, 000).
 `laic_probe` v2.1 erntet je Fenster die GIM-Tagesdateien (gzip →
 `omegaflow::inflate::gunzip`), liest das TEC-Grid (eigener IONEX-Leser
 im Binary, Bilinear am Epizentrum, 71×73, Exponent −1 — der
@@ -181,8 +184,10 @@ die Frage neu stellen.
 - Instrument A — Ereignisrate: benannt, ungebaut.
 - Kanal-Offenposten: CSES (Portal von hier unerreichbar gemessen — 000),
   TEC-GIM retro pre-2024 (codg*.Z, LZW-Dekompressor fehlt im Bestand),
-  MiniSEED-Waveform-Envelopen (Decoder ausstehend); CDDIS-OAuth bleibt
-  WARTEND — die ESA-GSSC-Route ersetzt ihn für COD-GIMs.
+  MiniSEED-Waveform-Envelopen (Decoder ausstehend). CDDIS lebt über das
+  EDL-Token aus `.secrets.local` (verifiziert) — eine Nach-Ernte mit
+  COD0OPSFIN (Final statt Rapid) wäre eine Qualitäts-Option, kein
+  neuer Kanal.
 - Echte KDE-h-Sensitivität: offen, solange der skalare TE-Pfad
   unberührt bleibt (Silverman-Adaptivität macht die Skalierungs-Probe
   invariant).
