@@ -133,6 +133,44 @@ fn json_string(s: &str) -> String {
     o
 }
 
+pub fn rec_from_row(row: &crate::json::JsonVal) -> Option<KboRec> {
+    let name = crate::json::jstr(row, "full_name")?;
+    let a = crate::json::jnum(row, "a")?;
+    let e = crate::json::jnum(row, "e")?;
+    let incl = crate::json::jnum(row, "i")?;
+    let node = crate::json::jnum(row, "om")?;
+    let peri = crate::json::jnum(row, "w")?;
+    let ma = crate::json::jnum(row, "ma")?;
+    let epoch = crate::json::jnum(row, "epoch")?;
+    let h = crate::json::jnum(row, "H")?;
+    if !a.is_finite() || a <= 0.0 || !e.is_finite() || e < 0.0 || e >= 1.0 || !epoch.is_finite() {
+        return None;
+    }
+    let mut nm = [0u8; NAME_BYTES];
+    let bytes = name.as_bytes();
+    if bytes.len() > NAME_BYTES {
+        return None;
+    }
+    nm[..bytes.len()].copy_from_slice(bytes);
+    let family = family_of(a, e);
+    let mpc_flag = crate::json::jnum(row, "mpc_flag")
+        .map(|v| v as u8)
+        .unwrap_or(MPC_ABSENT);
+    Some(KboRec {
+        name: nm,
+        a_au: a,
+        e,
+        incl_deg: incl,
+        node_deg: node,
+        peri_deg: peri,
+        ma_deg: ma,
+        epoch_jd: epoch,
+        h_mag: h,
+        family,
+        mpc_flag,
+    })
+}
+
 pub fn state_at(rec: &KboRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
     crate::kepler::elements_to_icrs_state(
         rec.a_au,
@@ -247,6 +285,19 @@ mod tests {
             crate::json::jnum(&rows[1], "family").unwrap() as u8,
             FAM_ETNO
         );
+    }
+
+    #[test]
+    fn rec_from_row_reads_asset() {
+        let row = crate::json::parse_json(
+            r#"{"full_name":"90377 Sedna","a":543.7195,"e":0.85988,"i":11.925,"om":144.506,"w":311.099,"ma":358.596,"epoch":2461200.5,"H":1.5,"class":"TNO","family":9,"mpc_flag":1}"#,
+        )
+        .unwrap();
+        let r = rec_from_row(&row).unwrap();
+        assert_eq!(name_of(&r), "90377 Sedna");
+        assert_eq!(r.family, FAM_ETNO);
+        assert_eq!(r.mpc_flag, 1);
+        assert!((r.a_au - 543.7195).abs() < 1e-12);
     }
 
     #[test]

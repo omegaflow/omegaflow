@@ -835,10 +835,18 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   --etno = vollständige Ernte); der sources.φ-Block steht nach Standard
   (keplermap data a e i — der Archivar rechnet die Elemente selbst zu
   ICRS; die Zulassung der 7180 Samples hängt an der
-  epoch-0.0-Ring-Messung, TODO Sample-Budget). Offen: der
-  Residuum-Port (N-Körper-Leapfrog Sun+8 Planeten × Kepler-Referenz,
-  TE(Residuum → Bahn) je Familie mit drei Nullkontrollen), das Blatt +
-  Verdikt; der eigene Queue-Block für a>200 bleibt offen (das Asset
+  epoch-0.0-Ring-Messung, TODO Sample-Budget).
+- **Nadel VI — das Blatt steht** (`docs/surveys/survey-2026-08-22-kbo-residuum.md`,
+  2026-08-22): der Residuum-Port `kbo_residue_probe` misst
+  R(t) = |Kepler − N-Körper(Sun+8, Leapfrog ±400 yr, 256 Samples)| je
+  7116 Objekte (64 Lücken gezählt), TE je Familie gegen phasenrandomisierte
+  Schwelle + fam (7.2822e-1). **Verdikt: kein fam-tragender Pfeil** —
+  die stärksten sub-fam-Werte tragen die Resonanz-Familien (3:2 6.07e-1,
+  5:2 6.13e-1, der Neptun-Kick), die kalte Nullkontrolle ist still, der
+  Sun-only-Selbstlauf 9.5e-4 AU; der ETNO-Wert liegt am Sweep-Rand und
+  unter fam. Das Blatt misst das Residuum, kein Urteil vorab; die
+  Bias-Analysen (Shankman 2017, Bernardinelli 2020, Napier 2021) stehen
+  daneben. Offen bleibt: der eigene Queue-Block für a>200 (das Asset
   trägt die ETNO schon mit).
 
 ## Archivar — Architektur
