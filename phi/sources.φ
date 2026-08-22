@@ -680,6 +680,17 @@ format catalog_dastcom
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
+ttl 604800
+format json
+at sun
+keplermap data a e i
+om om
+w w
+ma ma
+epoch epoch
+field H kbo_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
 format ephemeris_binary
 at adrastea

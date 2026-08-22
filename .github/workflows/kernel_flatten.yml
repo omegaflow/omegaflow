@@ -104,7 +104,7 @@ jobs:
       - name: Compile KBO elements and upload to CDN
         run: |
           cargo run --release --bin kbo_compiler -- \
-            --out kbo_elements.bin \
+            --out kbo_elements.json \
             --etno \
             --ci-mode
       - name: Commit body manifest

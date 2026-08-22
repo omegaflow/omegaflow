@@ -1,6 +1,6 @@
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::kbo::{
-    family_name, family_of, name_of, packed_epoch_to_jd, write_bin, KboRec, MPC_ABSENT, MPC_AGREE,
+    family_name, family_of, name_of, packed_epoch_to_jd, write_json, KboRec, MPC_ABSENT, MPC_AGREE,
     MPC_DISAGREE, NAME_BYTES,
 };
 use std::collections::HashMap;
@@ -415,7 +415,7 @@ fn main() {
             }
             _ => {
                 eprintln!(
-                    "usage: kbo_compiler --out <kbo_elements.bin> [--ci-mode] [--etno] [--offline <dir>] [--probe <name> <jd>]"
+                    "usage: kbo_compiler --out <kbo_elements.json> [--ci-mode] [--etno] [--offline <dir>] [--probe <name> <jd>]"
                 );
                 return;
             }
@@ -423,7 +423,7 @@ fn main() {
         i += 1;
     }
     if out.is_empty() {
-        eprintln!("usage: kbo_compiler --out <kbo_elements.bin> [--ci-mode] [--etno] [--offline <dir>] [--probe <name> <jd>]");
+        eprintln!("usage: kbo_compiler --out <kbo_elements.json> [--ci-mode] [--etno] [--offline <dir>] [--probe <name> <jd>]");
         return;
     }
 
@@ -501,7 +501,7 @@ fn main() {
         }
     }
 
-    let bytes = write_bin(&recs);
+    let bytes = write_json(&recs);
     std::fs::write(&out, &bytes).expect("write bin");
     eprintln!("out {out}: {} records ({} bytes)", recs.len(), bytes.len());
     eprintln!(

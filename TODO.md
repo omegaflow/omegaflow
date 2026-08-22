@@ -828,16 +828,18 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Messung.
 - **Nadel VI — Planet 9** (`handover-2026-08-22-planet-neun.md`): die
   KBO-Ernte lebt — `kbo_compiler` (SBDB-Pages + MPC-Distant-Kreuzcheck
-  → `kbo_elements.bin`, Familien aus a-Fenstern; die zwei kaputten
-  Queue-URLs sind im selben Atom repariert, sb-class=TNO + full-prec,
-  Pagination limit-from). Der CI-Schritt (kernel_flatten.yml) lädt
-  `kbo_elements.bin` als flaches CDN-Asset auf den
-  ssd.jpl.nasa.gov-Release — `--ci-mode` + `--etno`, die vollständige
-  Ernte, kein JSON, keine Datenbank. Offen: der Residuum-Port
-  (N-Körper-Leapfrog Sun+8 Planeten × Kepler-Referenz, TE(Residuum →
-  Bahn) je Familie mit drei Nullkontrollen), das Blatt + Verdikt; der
-  eigene Queue-Block für a>200 bleibt offen (das Asset trägt die ETNO
-  schon mit).
+  → `kbo_elements.json`, flaches Katalog-JSON mit Familien-Fenster und
+  mpc_flag; die zwei kaputten Queue-URLs sind im selben Atom repariert,
+  sb-class=TNO + full-prec, Pagination limit-from). Der CI-Schritt
+  (kernel_flatten.yml) lädt das JSON als CDN-Asset (ssd.jpl.nasa.gov,
+  --etno = vollständige Ernte); der sources.φ-Block steht nach Standard
+  (keplermap data a e i — der Archivar rechnet die Elemente selbst zu
+  ICRS; die Zulassung der 7180 Samples hängt an der
+  epoch-0.0-Ring-Messung, TODO Sample-Budget). Offen: der
+  Residuum-Port (N-Körper-Leapfrog Sun+8 Planeten × Kepler-Referenz,
+  TE(Residuum → Bahn) je Familie mit drei Nullkontrollen), das Blatt +
+  Verdikt; der eigene Queue-Block für a>200 bleibt offen (das Asset
+  trägt die ETNO schon mit).
 
 ## Archivar — Architektur
 

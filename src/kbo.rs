@@ -1,5 +1,3 @@
-pub const MAGIC: [u8; 4] = *b"KBO1";
-pub const RECORD_STRIDE: usize = 128;
 pub const NAME_BYTES: usize = 48;
 
 pub const FAM_REST: u8 = 0;
@@ -94,61 +92,45 @@ pub fn name_of(rec: &KboRec) -> &str {
     std::str::from_utf8(&rec.name[..end]).unwrap_or("")
 }
 
-pub fn write_bin(recs: &[KboRec]) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(8 + recs.len() * RECORD_STRIDE);
-    buf.extend_from_slice(&MAGIC);
-    buf.extend_from_slice(&(recs.len() as u32).to_le_bytes());
-    for r in recs {
-        buf.extend_from_slice(&r.name);
-        for v in [
-            r.a_au, r.e, r.incl_deg, r.node_deg, r.peri_deg, r.ma_deg, r.epoch_jd, r.h_mag,
-        ] {
-            buf.extend_from_slice(&v.to_le_bytes());
+pub fn write_json(recs: &[KboRec]) -> Vec<u8> {
+    let mut out = String::with_capacity(recs.len() * 200);
+    out.push_str("{\"data\":[");
+    for (i, r) in recs.iter().enumerate() {
+        if i > 0 {
+            out.push(',');
         }
-        buf.push(r.family);
-        buf.push(r.mpc_flag);
-        buf.resize(buf.len() + (RECORD_STRIDE - (NAME_BYTES + 64 + 2)), 0);
+        out.push_str(&format!(
+            "{{\"full_name\":{},\"a\":{},\"e\":{},\"i\":{},\"om\":{},\"w\":{},\"ma\":{},\"epoch\":{},\"H\":{},\"class\":\"TNO\",\"family\":{},\"mpc_flag\":{}}}",
+            json_string(name_of(r)),
+            r.a_au,
+            r.e,
+            r.incl_deg,
+            r.node_deg,
+            r.peri_deg,
+            r.ma_deg,
+            r.epoch_jd,
+            r.h_mag,
+            r.family,
+            r.mpc_flag
+        ));
     }
-    buf
+    out.push_str("]}");
+    out.into_bytes()
 }
 
-pub fn parse_bin(bytes: &[u8]) -> Option<Vec<KboRec>> {
-    if bytes.len() < 8 || bytes[0..4] != MAGIC {
-        return None;
-    }
-    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if n > (bytes.len() - 8) / RECORD_STRIDE {
-        return None;
-    }
-    let mut out = Vec::with_capacity(n);
-    let mut off = 8usize;
-    for _ in 0..n {
-        let rec = bytes.get(off..off + RECORD_STRIDE)?;
-        let mut name = [0u8; NAME_BYTES];
-        name.copy_from_slice(&rec[..NAME_BYTES]);
-        let mut f = [0u8; 8];
-        let mut vals = [0f64; 8];
-        for (k, v) in vals.iter_mut().enumerate() {
-            let s = NAME_BYTES + k * 8;
-            f.copy_from_slice(&rec[s..s + 8]);
-            *v = f64::from_le_bytes(f);
+fn json_string(s: &str) -> String {
+    let mut o = String::with_capacity(s.len() + 2);
+    o.push('"');
+    for c in s.chars() {
+        match c {
+            '"' => o.push_str("\\\""),
+            '\\' => o.push_str("\\\\"),
+            c if (c as u32) < 0x20 => o.push(' '),
+            c => o.push(c),
         }
-        out.push(KboRec {
-            name,
-            a_au: vals[0],
-            e: vals[1],
-            incl_deg: vals[2],
-            node_deg: vals[3],
-            peri_deg: vals[4],
-            ma_deg: vals[5],
-            epoch_jd: vals[6],
-            h_mag: vals[7],
-            family: rec[NAME_BYTES + 64],
-            mpc_flag: rec[NAME_BYTES + 65],
-        });
-        off += RECORD_STRIDE;
     }
-    Some(out)
+    o.push('"');
+    o
 }
 
 pub fn state_at(rec: &KboRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
@@ -203,6 +185,7 @@ fn pack_char(c: u8) -> Option<i64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::json::JsonVal;
 
     fn rec(name: &str, a: f64, e: f64) -> KboRec {
         let mut nm = [0u8; NAME_BYTES];
@@ -237,7 +220,7 @@ mod tests {
     }
 
     #[test]
-    fn roundtrip() {
+    fn json_catalog_shape() {
         let recs = vec![
             rec(
                 "15760 Albion (1992 QB1)",
@@ -246,18 +229,24 @@ mod tests {
             ),
             rec("90377 Sedna", 543.7195, 0.85988),
         ];
-        let bytes = write_bin(&recs);
-        let parsed = parse_bin(&bytes).unwrap();
-        assert_eq!(parsed.len(), 2);
-        assert_eq!(name_of(&parsed[0]), "15760 Albion (1992 QB1)");
-        assert!((parsed[0].a_au - 44.13128015101105).abs() < 1e-12);
-        assert_eq!(parsed[1].family, FAM_ETNO);
-    }
-
-    #[test]
-    fn rejects_foreign_bytes() {
-        assert!(parse_bin(b"X").is_none());
-        assert!(parse_bin(b"KBO1abc").is_none());
+        let bytes = write_json(&recs);
+        let root = crate::json::parse_json(std::str::from_utf8(&bytes).unwrap()).unwrap();
+        let JsonVal::Obj(m) = &root else {
+            panic!("expected object");
+        };
+        let JsonVal::Arr(rows) = m.get("data").unwrap() else {
+            panic!("expected data array");
+        };
+        assert_eq!(rows.len(), 2);
+        assert_eq!(
+            crate::json::jstr(&rows[0], "full_name").unwrap(),
+            "15760 Albion (1992 QB1)"
+        );
+        assert!((crate::json::jnum(&rows[0], "a").unwrap() - 44.13128015101105).abs() < 1e-12);
+        assert_eq!(
+            crate::json::jnum(&rows[1], "family").unwrap() as u8,
+            FAM_ETNO
+        );
     }
 
     #[test]
