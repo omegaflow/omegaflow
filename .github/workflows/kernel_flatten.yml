@@ -90,6 +90,9 @@ jobs:
       - name: Compile Horizons bodies and upload to CDN
         run: |
           cargo run --release --bin horizons_compiler -- --ci-mode
+      - name: Compile Horizons long-window probe arcs and upload to CDN
+        run: |
+          cargo run --release --bin horizons_compiler -- --long --ci-mode
       - name: Compile DASTCOM asteroid catalog and upload to CDN
         run: |
           mkdir -p kernels

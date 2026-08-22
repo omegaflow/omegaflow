@@ -156,16 +156,17 @@ fn write_binary(
     }
 }
 
-fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64) -> Option<String> {
+fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64, step_d: f64) -> Option<String> {
     let cmd_safe = command.replace(';', "%3B");
     let url = format!(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
          &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
-         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='1+d'\
+         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='{step_d}+d'\
          &QUANTITIES='1,2,4'",
         cmd = cmd_safe,
         t_start = t_start_jd,
         t_stop = t_stop_jd,
+        step_d = step_d,
     );
     let output = Command::new("curl")
         .args([
@@ -342,7 +343,46 @@ fn generate_from_horizons(
     let jd_now = current_jd();
     let t_start = jd_now - lookback;
     let t_stop = jd_now + months * 30.44;
-    let text = match horizons_request(command, t_start, t_stop) {
+    let text = match horizons_request(command, t_start, t_stop, 1.0) {
+        Some(t) => t,
+        None => {
+            eprintln!(
+                "  {}: Horizons request returned void (curl or API issue)",
+                body_name
+            );
+            return (Vec::new(), None);
+        }
+    };
+    let (vectors, gm_m3_s2) = extract_vectors(&text);
+    if vectors.len() < 10 {
+        eprintln!(
+            "  SKIP {}: {} vectors (min 10), lead: {:?}",
+            body_name,
+            vectors.len(),
+            text.get(..200)
+        );
+        return (Vec::new(), gm_m3_s2);
+    }
+    let mut granules = Vec::new();
+    let n = ((t_stop - t_start) / GRANULE_DAYS).ceil() as usize;
+    for i in 0..n {
+        let mid_jd = t_start + (i as f64 + 0.5) * GRANULE_DAYS;
+        let half_jd = GRANULE_DAYS / 2.0;
+        if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+            granules.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+    (granules, gm_m3_s2)
+}
+
+fn generate_long(
+    command: &str,
+    body_name: &str,
+    t_start: f64,
+    t_stop: f64,
+    step_d: f64,
+) -> (Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>, Option<f64>) {
+    let text = match horizons_request(command, t_start, t_stop, step_d) {
         Some(t) => t,
         None => {
             eprintln!(
@@ -399,6 +439,28 @@ fn main() {
     ];
     let bodies_retry: &[(&str, &str)] = &[];
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");
+    if std::env::args().any(|a| a == "--long") {
+        let end_jd = 2451545.0 + 31.0 * 365.25;
+        let bodies_long: &[(&str, &str, f64, f64)] = &[
+            ("-31", "voyager1_long", 2444606.5, end_jd),
+            ("-32", "voyager2_long", 2447801.5, end_jd),
+            ("-98", "new_horizons_long", 2457236.5, end_jd),
+        ];
+        for (cmd, name, start_jd, stop_jd) in bodies_long {
+            eprintln!("  {name} (Horizons long window, 32-d raster)");
+            let (granules, gm_m3_s2) = generate_long(cmd, name, *start_jd, *stop_jd, 32.0);
+            if granules.is_empty() {
+                continue;
+            }
+            let path = format!("ephemeris_{}.bin", name);
+            write_binary(&path, name, &granules, &[], gm_m3_s2);
+            if ci_mode && !omegaflow::cdn::upload_asset(&path) {
+                eprintln!("upload: {} did not reach the CDN", path);
+                std::process::exit(1);
+            }
+        }
+        return;
+    }
     let run_body = |command: &str, body_name: &str, months: f64, lookback: f64| {
         let (granules, gm_m3_s2) = generate_from_horizons(command, body_name, months, lookback);
         if granules.is_empty() {

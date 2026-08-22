@@ -857,10 +857,24 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   die stärksten sub-fam-Werte tragen die Resonanz-Familien (3:2 6.07e-1,
   5:2 6.13e-1, der Neptun-Kick), die kalte Nullkontrolle ist still, der
   Sun-only-Selbstlauf 9.5e-4 AU; der ETNO-Wert liegt am Sweep-Rand und
-  unter fam. Das Blatt misst das Residuum, kein Urteil vorab; die
-  Bias-Analysen (Shankman 2017, Bernardinelli 2020, Napier 2021) stehen
-  daneben. Offen bleibt: der eigene Queue-Block für a>200 (das Asset
-  trägt die ETNO schon mit).
+  unter fam. Der zweite Tracer misst mit: voyager1/2 + new_horizons als
+  Horizons-Langfenster-Bins (horizons_compiler --long, CI-Schritt,
+  CDN-Assets — Cruise ab 1981/1989/2015, die Flybys trägt Nadel II);
+  auch die Sonden tragen keinen fam-Pfeil (Rand-Lags 62–64, max R ~1 AU
+  über 50 yr im Maßstab der Pioneer-artigen Anomalie). Der Lag trägt die
+  c-Laufzeit-Rückrechnung (signal_reach-Gesetz). Der direkte
+  Wissenschafts-Test steht daneben (`--cluster-only`): Rayleigh-R der
+  ϖ-Häufung je Familie gegen den Gleichverteilungs-Null (Permutation
+  taugt hier nicht, R ist reihenfolge-invariant) — die P9-Auswahl
+  (a ≥ 250, q ≥ 30, n = 44) ist still (R 0.058 unter dem Null-Mittel
+  0.135), die Anti-Ausrichtung zur Planeten-ϖ̄ beträgt 9.3° statt ~180°;
+  die Sechser-Häufung ist in der vollständigen Ernte nicht sichtbar, im
+  Einklang mit den Bias-Analysen. Das Blatt misst das Residuum, kein
+  Urteil vorab; die Bias-Analysen (Shankman 2017, Bernardinelli 2020,
+  Napier 2021) stehen daneben. Offen bleibt: der eigene Queue-Block für
+  a>200 (das Asset trägt die ETNO schon mit), der SPK-Typ-1-Leser
+  (Modified Difference Arrays, Memorandum 163 — der merged-Voyager-
+  Kernel wartet), die Bias-Korrektur des Cluster-Tests. Die Doppler-Sekunden-Front der Sonden trägt ihr eigenes Handover (folgende Zeile).
 - **Nadel VI — die Sonden-Front** (2026-08-22): die KBO-Front trägt ein
   Standbild (Jahrhundert-Bahnen, kein fam-Pfeil); die Sonden tragen die
   dynamische Zeitreihe — Doppler-Tracking auf die Sekunde, Ruck =

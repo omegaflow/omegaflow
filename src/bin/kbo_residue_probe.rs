@@ -1,7 +1,9 @@
 use omegaflow::archivar::{
     body_barycenter_position, body_barycenter_velocity, download_ephemeris_batch, fetch_raw,
-    load_sources, parse_ephemeris_binary, BodyEphemeris, SourceConfig, C_LIGHT, J2000_EPOCH,
+    fetch_raw_bytes, load_sources, parse_ephemeris_binary, BodyEphemeris, SourceConfig, C_LIGHT,
+    J2000_EPOCH,
 };
+use omegaflow::cdn::CDN_BASE;
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::kbo::{family_name, rec_from_row, state_at, KboRec, FAM_CLASSICAL};
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
@@ -224,10 +226,11 @@ fn probe_series(
     let r0 = body_barycenter_position(name, tdb_lo, eph)?;
     let v0 = body_barycenter_velocity(name, tdb_lo, eph)?;
     let steps = (window_days / dt_d) as usize;
-    if steps < 2 * samples {
+    if steps < 64 {
         return None;
     }
-    let stride = steps / samples;
+    let s_eff = samples.min(steps / 2);
+    let stride = steps / s_eff;
     let dt = dt_d * 86400.0;
     let mut r = r0;
     let mut v = v0;
@@ -237,15 +240,15 @@ fn probe_series(
         v[1] + 0.5 * dt * a0[1],
         v[2] + 0.5 * dt * a0[2],
     ];
-    let mut rs = Vec::with_capacity(samples);
-    let mut ws = Vec::with_capacity(samples);
+    let mut rs = Vec::with_capacity(s_eff);
+    let mut ws = Vec::with_capacity(s_eff);
     let mut prev_w = 0.0;
     for k in 1..=steps {
         let tdb = tdb_lo + k as f64 * dt;
         r = [r[0] + dt * v[0], r[1] + dt * v[1], r[2] + dt * v[2]];
         let a = acc(r, tdb, planets, eph)?;
         v = [v[0] + dt * a[0], v[1] + dt * a[1], v[2] + dt * a[2]];
-        if k % stride == 0 && rs.len() < samples {
+        if k % stride == 0 && rs.len() < s_eff {
             let t_jd = lo + k as f64 * dt_d;
             let tdb = (t_jd - J2000_EPOCH) * 86400.0;
             let geerntet = body_barycenter_position(name, tdb, eph)?;
@@ -301,6 +304,43 @@ fn sweep_te(rs: &[f32], ws: &[f32], lag_max: usize) -> (f64, usize, &'static str
 
 fn lag_distance_au(lag: usize, sample_days: f64) -> f64 {
     lag as f64 * sample_days * 86400.0 * C_LIGHT / AU_M
+}
+
+fn rayleigh_r(vars: &[f64]) -> (f64, f64) {
+    if vars.is_empty() {
+        return (0.0, 0.0);
+    }
+    let n = vars.len() as f64;
+    let (mut sx, mut sy) = (0.0f64, 0.0f64);
+    for &v in vars {
+        sx += v.cos();
+        sy += v.sin();
+    }
+    let r = (sx * sx + sy * sy).sqrt() / n;
+    (r, sy.atan2(sx).to_degrees().rem_euclid(360.0))
+}
+
+fn uniform_null_r(n: usize, seed: u64, n_rep: usize) -> (f64, f64) {
+    let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    let mut vals = Vec::with_capacity(n_rep);
+    for _ in 0..n_rep {
+        let mut sx = 0.0f64;
+        let mut sy = 0.0f64;
+        for _ in 0..n {
+            rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            let u = (rng >> 11) as f64 / (1u64 << 53) as f64;
+            let ang = u * std::f64::consts::TAU;
+            sx += ang.cos();
+            sy += ang.sin();
+        }
+        vals.push((sx * sx + sy * sy).sqrt() / n as f64);
+    }
+    let m = vals.len() as f64;
+    let mean = vals.iter().sum::<f64>() / m;
+    let var = vals.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / m;
+    (mean, mean + 2.0 * var.sqrt())
 }
 
 fn family_verdict(
@@ -367,6 +407,7 @@ fn main() {
     let mut dt_d = DT_DAYS;
     let mut check_only = false;
     let mut offline = false;
+    let mut cluster_only = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -395,6 +436,7 @@ fn main() {
                 dt_d = args.get(i).and_then(|s| s.parse().ok()).unwrap_or(dt_d);
             }
             "--offline" => offline = true,
+            "--cluster-only" => cluster_only = true,
             "--check-bins" => check_only = true,
             _ => {
                 eprintln!(
@@ -478,12 +520,77 @@ fn main() {
         return;
     }
 
+    if cluster_only {
+        println!("=== Der direkte Test: ϖ-Haeufung der geernteten Bahnen (Rayleigh) ===");
+        println!(
+            "Null: Rayleigh-Null aus gleichverteilten Winkeln (1000 Realisierungen, mean+2σ — die Permutation taugt hier nicht, R ist reihenfolge-invariant). Das ist der Wissenschafts-Test (Batygin & Brown 2016) an den geernteten Bahnen — ohne Bias-Korrektur (die tragen Shankman/Bernardinelli/Napier)."
+        );
+        for f in 0u8..=9 {
+            let vars: Vec<f64> = sel
+                .iter()
+                .filter(|r| r.family == f)
+                .map(|r| (r.node_deg + r.peri_deg).to_radians())
+                .collect();
+            let n = vars.len();
+            if n < 30 {
+                println!("{:<10} n {n:<6} keine Aussage (n < 30)", family_name(f));
+                continue;
+            }
+            let (r, mean) = rayleigh_r(&vars);
+            let (null_mean, thr) = uniform_null_r(n, SEED, 1000);
+            let word = if r > thr { "clustered" } else { "still" };
+            println!(
+                "{:<10} n {n:<6} R {r:.4} ϖ̄ {mean:6.1}° null {null_mean:.4} thr {thr:.4} | {word}",
+                family_name(f)
+            );
+        }
+        let etno: Vec<f64> = sel
+            .iter()
+            .filter(|r| r.a_au >= 250.0 && r.a_au * (1.0 - r.e) >= 30.0)
+            .map(|r| (r.node_deg + r.peri_deg).to_radians())
+            .collect();
+        let etno_n = etno.len();
+        let (etno_r, etno_mean) = rayleigh_r(&etno);
+        if etno_n < 30 {
+            println!("{:<10} n {etno_n:<6} keine Aussage (n < 30)", "etno q>30");
+        } else {
+            let (null_mean, thr) = uniform_null_r(etno_n, SEED, 1000);
+            let word = if etno_r > thr { "clustered" } else { "still" };
+            println!(
+                "{:<10} n {etno_n:<6} R {etno_r:.4} ϖ̄ {etno_mean:6.1}° null {null_mean:.4} thr {thr:.4} | {word}",
+                "etno q>30"
+            );
+        }
+        let tdb_now = (2461200.5 - J2000_EPOCH) * 86400.0;
+        let mut planet_vars: Vec<f64> = Vec::new();
+        for p in &planets {
+            if let (Some(pos), Some(vel)) = (
+                body_barycenter_position(&p.name, tdb_now, &eph),
+                body_barycenter_velocity(&p.name, tdb_now, &eph),
+            ) {
+                let (_, _, w) = elements_from_state(pos, vel);
+                planet_vars.push(w);
+            }
+        }
+        let (pr, pmean) = rayleigh_r(&planet_vars);
+        println!(
+            "planeten  n {:<6} R {pr:.4} ϖ̄ {pmean:6.1}°",
+            planet_vars.len()
+        );
+        if etno_n >= 30 {
+            let diff = (etno_mean - pmean).rem_euclid(360.0);
+            let ang = if diff > 180.0 { 360.0 - diff } else { diff };
+            println!("anti-ausrichtung: |ϖ̄_etno − ϖ̄_planeten| = {ang:.1}° (P9 erwartet ~180°)");
+        }
+        return;
+    }
+
     println!("=== Nadel VI: TE(Residuum -> Bahn) je Familie + Sonden ===");
     println!(
         "Konstruktion: R(t) = |Kepler(Bahn_geerntet) - N-Koerper(Sun+8, Leapfrog dt {dt_d} d)| in AU; Bahn = ϖ(t) aus dem N-Koerper-Lauf; {samples} Samples je Objekt, Fenster ±{W_YR} yr (Deckungs-Bound der ephemeris-Bins); Mittel-Reihe je Familie."
     );
     println!(
-        "Sonden: Bahn_geerntet = der Bin selbst (die gemessene Bahn), Modell = Sun+8 ab Fensterstart; R = |gemessen - Modell|. Lag -> Ort ueber die c-Laufzeit (signal_reach-Gesetz des Archivars: d = lag × Sample-Tage × c)."
+        "Sonden: Bahn_geerntet = das Horizons-Langfenster (Tracking-Rekonstruktion, 32-d-Raster, Cruise ab 1981/1989/2007 — die Flybys bleiben draussen, Nadel II); Modell = Sun+8 ab Fensterstart; R = |gemessen - Modell|. Lag -> Ort ueber die c-Laufzeit (signal_reach-Gesetz des Archivars: d = lag × Sample-Tage × c)."
     );
     println!(
         "Nullkontrollen: I Sun-only-Selbstlauf (R muss ≈ 0), II kalte Klassische (e<0.15, i<5 Grad), III phasenrandomisierte Surrogat-Schwelle (mean+2σ, f64 FFT); fam = max Surrogat-Schwelle der Runde."
@@ -526,12 +633,41 @@ fn main() {
     }
 
     let mut probes_out: Vec<(String, Vec<f32>, Vec<f32>, f64, f64)> = Vec::new();
-    for name in PROBES {
-        match probe_series(name, &planets, &eph, dt_d, samples) {
-            Some((rs, ws, max_r, window_days)) => {
-                probes_out.push((name.to_string(), rs, ws, max_r, window_days))
+    for name in ["voyager1", "voyager2", "new_horizons"] {
+        let long = format!("{name}_long");
+        let path = format!("kernels/ephemeris_{long}.bin");
+        if !std::path::Path::new(&path).exists() {
+            std::fs::create_dir_all("kernels").ok();
+            let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{long}.bin", CDN_BASE);
+            match fetch_raw_bytes(&url, 604800) {
+                Some(bytes) => {
+                    if std::fs::write(&path, &bytes).is_err() {
+                        println!("sonde {name:<12} long-bin write void");
+                        continue;
+                    }
+                }
+                None => {
+                    println!("sonde {name:<12} long-bin fetch void (CDN)");
+                    continue;
+                }
             }
-            None => println!("sonde {name:<12} serie void — Deckung oder Fenster zu kurz"),
+        }
+        match std::fs::read(&path)
+            .ok()
+            .and_then(|d| parse_ephemeris_binary(&d))
+        {
+            Some(e) => {
+                let (lo, hi) = coverage(&e);
+                eprintln!("{long:<18} span {lo:.2}..{hi:.2}");
+                eph.insert(long.clone(), e);
+                match probe_series(&long, &planets, &eph, dt_d, samples) {
+                    Some((rs, ws, max_r, window_days)) => {
+                        probes_out.push((name.to_string(), rs, ws, max_r, window_days))
+                    }
+                    None => println!("sonde {name:<12} serie void — Deckung oder Fenster zu kurz"),
+                }
+            }
+            None => println!("sonde {name:<12} long-bin parse void"),
         }
     }
 
@@ -606,7 +742,7 @@ fn main() {
         } else {
             "still"
         };
-        let sample_days = window_days / samples as f64;
+        let sample_days = window_days / rs.len() as f64;
         println!(
             "sonde {name:<12} te {te:.4e} ({dir}, lag {lag}) thr {thr:.4e} fam {fam:.4e} | {word}"
         );
