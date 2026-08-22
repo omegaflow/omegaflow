@@ -58,6 +58,8 @@ rave_dr5.json
 
 # Compiler-Binaries (gehen zum CDN, nicht ins Repo)
 *.bin
+# Ernte-Cache (regenerierbar — bz_retro_probe schreibt ihn bei leerem Cache neu)
+abk_dbdt_daily.tsv
 phi/pipeline/katalog/ncei_ssi/
 phi/pipeline/katalog/ncei_goes_xrs/
 phi/pipeline/laic_harvest/

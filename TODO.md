@@ -762,6 +762,11 @@ Maschine misst.
   Offen: der fam-signifikante Minuten-Pfeil über Stürme braucht den
   1-h-Ensemble (OMNI2-Recompile --decimate-min 60 × stündliches
   INTERMAGNET).
+- Ernte-Cache abk_dbdt_daily.tsv — WAHR (2026-08-22): aus dem Baum
+  genommen — der Cache ist ein regenerierbares Datenartefakt
+  (bz_retro_probe schreibt ihn bei leerem Cache neu, --force-harvest
+  erzwingt); die Selbstübergabe (2026-08-22) nannte ihn „untracked wie
+  omni2_serie.bin" — jetzt ist er es (.gitignore trägt ihn).
 - **LAIC-Pfeilrichtung** (das Blatt steht definitiv,
   `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — Instrument B (`src/bin/laic_probe.rs`,
