@@ -322,7 +322,7 @@ Instrumente; Default --decimate-min 60 → hourly, ~456k Records — die
 1-min-Vollauflösung (~25 M) überstiege MAX_SAMPLES, der Default folgt
 der offenen Sample-Budget-Messung). Block format goes_xrs at sun
 (wm2_1au-Konvention, τ=3600); der Loader teilt den rpw-Serien-Pfad
-(series_parse_bin/series_component_name in src/archivar.rs).
+(series_parse_bin/series_component_name in src/archivar/extract.rs).
 hdf5.rs-Reparatur: BTIN (v2-B-tree internal: Records ab Byte 6, danach
 nrec+1 Zeiger-Tripel; Knoten serialisieren dicht, die Prüfsumme deckt
 die dichte Präfixregion — die Feldgrößen der Zeiger-Tripel wählt das
@@ -903,6 +903,13 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   kein GPU) zogen unversehrt in mathematikerin/orientation.rs;
   storage_entry bleibt beim Fenster (wgpu). Mit-Remap: der
   Deep-Link-Anker (mathematikerin.rs:3859 → window.rs:2388).
+- Muster-Läufer — WAHR (2026-08-22, Ratsbeschluss): extract.rs trug
+  einen Regex-Interpretierer (extract_regex_val mit match_re, 267
+  Zeilen — eine Muster-Sprache, keine Extraktion) → archivar/pattern.rs;
+  die Format-Hände (csv/tap/text_to_json) und Pfad-Primitive
+  (jlast/jfirst/row_matches) bleiben Hände der Extraktions-Maschine.
+  Mit-Remap: TODO:325 (→ extract.rs), blocked_sources.φ
+  (archivar.rs:3330 → extract.rs:1025, tap_to_json).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein

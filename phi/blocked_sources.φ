@@ -3,7 +3,7 @@
 #   blocked key         — API-Key/Ticket (Registrierung nötig → reg-Zeile)
 #   blocked account     — Konto/Login (Registrierung nötig → reg-Zeile)
 #   blocked ip-blocked  — Bot-/IP-Sperre (403, Datacenter; Kaskade §13: curl → r.jina.ai anonym → corsproxy.io → Wayback → Websuche)
-#   parser-def votable  — TAP-Dienste liefern VOTable-XML; der VOTable-Row-Extract fehlt im Live-Pfad (tap_to_json erwartet JSON-TAP metadata/data, archivar.rs:3330; csv_to_json existiert, csv ist keine Hürde)
+#   parser-def votable  — TAP-Dienste liefern VOTable-XML; der VOTable-Row-Extract fehlt im Live-Pfad (tap_to_json erwartet JSON-TAP metadata/data, src/archivar/extract.rs:1025; csv_to_json existiert, csv ist keine Hürde)
 #   parser-def html     — Formulare/SPAs/CGI ohne Daten-JSON; der HTML-/Formular-Parser fehlt im Live-Pfad
 #   parser-def xml      — generischer XML-Parser fehlt (parse_stations_xml ist auf Stations-Einträge spezialisiert)
 #   parser-def bild     — die Messung steckt im Bild/Tile (PNG); kein numerischer Wert-Kanal

@@ -10,6 +10,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
 }
 
 
+
 pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "rpw_efield" => match comp {
@@ -35,6 +36,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         _ => None,
     }
 }
+
 
 
 pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
@@ -72,6 +74,7 @@ pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
 }
 
 
+
 pub fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
     if let Some((prefix, final_key)) = key.rsplit_once('.') {
         let parent = if prefix.is_empty() {
@@ -104,6 +107,7 @@ pub fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
 }
 
 
+
 pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
     let JsonVal::Obj(map) = el else {
         return false;
@@ -116,12 +120,14 @@ pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
 }
 
 
+
 pub fn row_value(el: &JsonVal, key: &str) -> Option<f64> {
     match el {
         JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
         other => scalar_of(other),
     }
 }
+
 
 
 pub fn jfirst_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
@@ -149,6 +155,7 @@ pub fn jfirst_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>
         .find(|v| row_matches(v, fk, fv))
         .and_then(|v| row_value(v, key))
 }
+
 
 
 pub fn jlast_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
@@ -180,6 +187,7 @@ pub fn jlast_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>)
 }
 
 
+
 pub fn kernel_id_of(name: &str) -> Option<u8> {
     match name {
         "inverse-square" => Some(0),
@@ -192,6 +200,7 @@ pub fn kernel_id_of(name: &str) -> Option<u8> {
         _ => None,
     }
 }
+
 
 
 pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
@@ -253,6 +262,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
 }
 
 
+
 pub fn extract_header(s: &str, n: &str) -> Option<String> {
     for l in s.lines() {
         if let Some(c) = l.find(':') {
@@ -263,6 +273,7 @@ pub fn extract_header(s: &str, n: &str) -> Option<String> {
     }
     None
 }
+
 
 
 pub fn split_csv_line(line: &str) -> Vec<String> {
@@ -295,6 +306,7 @@ pub fn split_csv_line(line: &str) -> Vec<String> {
 }
 
 
+
 pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     let mut lines = text
         .lines()
@@ -321,6 +333,7 @@ pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     }
     Some(JsonVal::Arr(rows))
 }
+
 
 
 pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
@@ -480,6 +493,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
 }
 
 
+
 pub fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
     if path == "." || path.is_empty() {
         if let JsonVal::Arr(arr) = json {
@@ -505,6 +519,7 @@ pub fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
         _ => None,
     }
 }
+
 
 
 pub fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
@@ -535,6 +550,7 @@ pub fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
 }
 
 
+
 pub fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
     if let JsonVal::Arr(arr) = json {
         if arr.len() < 2 {
@@ -555,6 +571,7 @@ pub fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
     }
     None
 }
+
 
 
 pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
@@ -601,274 +618,6 @@ pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
     None
 }
 
-
-pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
-    let pat_bytes = pat.as_bytes();
-    let body_bytes = body.as_bytes();
-
-    let first = pat.find('(')?;
-    let last = pat.rfind(')')?;
-    if first >= last {
-        return None;
-    }
-    let inner = &pat[first + 1..last];
-
-    if inner.contains("...") {
-        let (prefix, suffix) = inner.split_once("...")?;
-        let p = body.find(prefix)?;
-        let r = &body[p + prefix.len()..];
-        let e = if suffix.is_empty() {
-            match r.find(|c: char| c.is_whitespace() || c == '<' || c == '"') {
-                Some(pos) => pos,
-                None => r.len(),
-            }
-        } else {
-            match r.find(suffix) {
-                Some(pos) => pos,
-                None => r.len(),
-            }
-        };
-        return r[..e].trim().parse::<f64>().ok();
-    }
-
-    fn match_re(
-        mut pi: usize,
-        p: &[u8],
-        mut bi: usize,
-        b: &[u8],
-        cap: &mut Option<f64>,
-    ) -> Option<usize> {
-        while pi < p.len() {
-            let bc = || b.get(bi).copied();
-            match p[pi] {
-                b'\\' => {
-                    pi += 1;
-                    let esc = p.get(pi).copied()?;
-                    pi += 1;
-                    let check = |c: u8| -> bool {
-                        match esc {
-                            b'd' => c.is_ascii_digit(),
-                            b's' => c.is_ascii_whitespace(),
-                            b'w' => c.is_ascii_alphanumeric() || c == b'_',
-                            b'D' => !c.is_ascii_digit(),
-                            b'S' => !c.is_ascii_whitespace(),
-                            b'W' => !(c.is_ascii_alphanumeric() || c == b'_'),
-                            _ => c == esc,
-                        }
-                    };
-                    let void_matches = matches!(esc, b'D' | b'S' | b'W');
-                    let (min, max) = if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                (1, usize::MAX)
-                            }
-                            b'*' => {
-                                pi += 1;
-                                (0, usize::MAX)
-                            }
-                            b'?' => {
-                                pi += 1;
-                                (0, 1)
-                            }
-                            _ => (1, 1),
-                        }
-                    } else {
-                        (1, 1)
-                    };
-                    if min > 0 {
-                        let ok = match bc() {
-                            Some(c) => check(c),
-                            None => void_matches,
-                        };
-                        if !ok {
-                            return None;
-                        }
-                        bi += 1;
-                    }
-                    if max == usize::MAX {
-                        while b.get(bi).map_or(false, |&c| check(c)) {
-                            bi += 1;
-                        }
-                    } else if min == 0 && max == 1 {
-                        if b.get(bi).map_or(false, |&c| check(c)) {
-                            bi += 1;
-                        }
-                    }
-                }
-                b'.' => {
-                    pi += 1;
-                    if bc().is_none() || bc() == Some(b'\n') {
-                        return None;
-                    }
-                    let (min, max, greedy) = if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                (1, usize::MAX, true)
-                            }
-                            b'*' => {
-                                pi += 1;
-                                (0, usize::MAX, true)
-                            }
-                            b'?' => {
-                                pi += 1;
-                                (0, 1, true)
-                            }
-                            _ => (1, 1, true),
-                        }
-                    } else {
-                        (1, 1, true)
-                    };
-
-                    if greedy {
-                        let mut best: Option<usize> = None;
-                        for len in (min..=max).rev() {
-                            let end = bi + len;
-                            if end > b.len() {
-                                continue;
-                            }
-                            if b[bi..end].iter().any(|&c| c == b'\n') {
-                                continue;
-                            }
-                            if let Some(res) = match_re(pi, p, end, b, cap) {
-                                best = Some(res);
-                                break;
-                            }
-                        }
-                        if let Some(res) = best {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
-                    } else {
-                        if let Some(res) = match_re(pi, p, bi + 1, b, cap) {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
-                    }
-                }
-                b'(' => {
-                    let mut depth = 1;
-                    let mut end = pi + 1;
-                    while end < p.len() && depth > 0 {
-                        if p[end] == b'\\' {
-                            end += 2;
-                            continue;
-                        }
-                        if p[end] == b'(' {
-                            depth += 1;
-                        }
-                        if p[end] == b')' {
-                            depth -= 1;
-                            if depth == 0 {
-                                break;
-                            }
-                        }
-                        end += 1;
-                    }
-                    if depth != 0 {
-                        return None;
-                    }
-                    let save = bi;
-                    if let Some(new_bi) = match_re(0, &p[pi + 1..end], bi, b, cap) {
-                        if cap.is_none() {
-                            if let Ok(s) = std::str::from_utf8(&b[save..new_bi]) {
-                                if let Ok(v) = s.parse::<f64>() {
-                                    *cap = Some(v);
-                                }
-                            }
-                        }
-                        bi = new_bi;
-                        pi = end + 1;
-                    } else {
-                        return None;
-                    }
-                }
-                b'[' => {
-                    pi += 1;
-                    let neg = pi < p.len() && p[pi] == b'^';
-                    if neg {
-                        pi += 1;
-                    }
-                    let mut cls = Vec::new();
-                    while pi < p.len() && p[pi] != b']' {
-                        if p[pi] == b'\\' {
-                            cls.push(p[pi + 1]);
-                            pi += 2;
-                        } else if p.get(pi + 1).map_or(false, |&c| c == b'-')
-                            && p.get(pi + 2).is_some()
-                        {
-                            let lo = p[pi];
-                            let hi = p[pi + 2];
-                            for c in lo..=hi {
-                                cls.push(c);
-                            }
-                            pi += 3;
-                        } else {
-                            cls.push(p[pi]);
-                            pi += 1;
-                        }
-                    }
-                    pi += 1;
-                    let (min, max) = if pi < p.len() {
-                        match p[pi] {
-                            b'+' => {
-                                pi += 1;
-                                (1, usize::MAX)
-                            }
-                            b'*' => {
-                                pi += 1;
-                                (0, usize::MAX)
-                            }
-                            b'?' => {
-                                pi += 1;
-                                (0, 1)
-                            }
-                            _ => (1, 1),
-                        }
-                    } else {
-                        (1, 1)
-                    };
-                    if min > 0 {
-                        let in_cls = bc().map_or(false, |c| cls.contains(&c));
-                        if neg == in_cls {
-                            return None;
-                        }
-                        bi += 1;
-                    }
-                    if max == usize::MAX {
-                        while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
-                            bi += 1;
-                        }
-                    } else if min == 0 && max == 1 {
-                        if b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
-                            bi += 1;
-                        }
-                    }
-                }
-                c => {
-                    if bc().map_or(false, |bc| bc == c) {
-                        bi += 1;
-                        pi += 1;
-                    } else {
-                        return None;
-                    }
-                }
-            }
-        }
-        Some(bi)
-    }
-
-    for start in 0..=body_bytes.len() {
-        let mut cap: Option<f64> = None;
-        if match_re(0, pat_bytes, start, body_bytes, &mut cap).is_some() {
-            return cap;
-        }
-    }
-    None
-}
 
 
 pub fn is_drop_key(key: &str) -> bool {
@@ -972,6 +721,7 @@ pub fn is_drop_key(key: &str) -> bool {
 }
 
 
+
 pub fn text_to_json(text: &str) -> Option<JsonVal> {
     let header = text.lines().find_map(|line| {
         let t = line.trim();
@@ -1022,6 +772,7 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
 }
 
 
+
 pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     let obj = match val {
         JsonVal::Obj(m) => m,
@@ -1064,9 +815,11 @@ pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
 }
 
 
+
 pub fn tdb_to_jd(tdb_secs: f64) -> f64 {
     tdb_secs / 86400.0 + J2000_EPOCH
 }
+
 
 
 pub fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
@@ -1091,6 +844,7 @@ pub fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     }
     result
 }
+
 
 
 pub fn split_data_line(line: &str) -> Vec<&str> {
@@ -1120,10 +874,12 @@ pub fn split_data_line(line: &str) -> Vec<&str> {
 }
 
 
+
 pub enum ExtractResult {
     Measurements(Vec<(Channel, FieldConfig)>),
     WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
 }
+
 
 
 pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
@@ -2609,6 +2365,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
 }
 
 
+
 pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
     match el {
         JsonVal::Obj(map) => {
@@ -2645,6 +2402,7 @@ pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
 }
 
 
+
 pub fn is_time_key(k: &str) -> bool {
     let kl = k.to_lowercase();
     kl == "time"
@@ -2656,6 +2414,7 @@ pub fn is_time_key(k: &str) -> bool {
         || kl.contains("time")
         || kl.contains("date")
 }
+
 
 
 pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<(f64, f64)> {
