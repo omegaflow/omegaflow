@@ -680,7 +680,7 @@ Maschine misst.
    messen weder Sicht noch Tide; PTDY trägt nur realtime2), RAIN fehlt
    an den 37 Stationen — fehlt, kein Platzhalter. Offen (registriert):
    der GLOBAL-AKTEUR-ATOM (Übergabe
-   handover-2026-08-21-global-akteure.md — der Kausalmaschinen-
+   handover-2026-08-21-blatt-enso-global-akteure.md — der Kausalmaschinen-
    Playground): die Architektur-Wende — KEIN Katalog: die Akteure
    einer Station sind die Kräfte, die der Archivar an ihrem Punkt
    misst (Quellblock-Deklarationen + Cache-Kraft-Typen +

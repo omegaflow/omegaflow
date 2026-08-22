@@ -1,13 +1,15 @@
 <!--
-  title: Global-Akteure — der Kausalmaschinen-Playground
+  title: Blatt I (ENSO) — die Global-Akteure der Matrix, die eine Maschine, der Kausalmaschinen-Playground
   class: handover
   date: 2026-08-21
-  sha256: 2ea3b769d0340a55129d91d7a623c97d27351d6c6a5dd4609b91ae90d538cf9e
+  sha256: f096d817902181fd57e9ac814ea2bafff3dade784e2faba729de0adbf1e44299
   status: live
-  see-also: handover-2026-08-21-enso-kausalpfeil.md (archiviert, consumed), docs/concepts/blatt-papier-resultat.md, TODO.md
+  see-also: docs/handover/handover-2026-08-21-blatt-enso-kausalpfeil.md
+    docs/concepts/blatt-papier-resultat.md
+    /home/johannes/projects/archive/handover/handover-2026-08-21-enso-kausalpfeil.md
 -->
 
-# Übergabe — Die Global-Akteure der Matrix (Kausalmaschinen-Playground)
+# Übergabe — Blatt I (ENSO): die Global-Akteure der Matrix (Kausalmaschinen-Playground)
 
 Registriert 2026-08-21. Selbsttragend — interpretierbar mit null
 Vorkontext. Der Auftrag ist nicht die Ausführung; ausgeführt wird erst
