@@ -8,12 +8,14 @@ pub(crate) use crate::machines::{
 };
 
 pub mod actuators;
+pub mod orientation;
 pub mod shaders;
 #[cfg(test)]
 mod tests;
 pub mod window;
 
 pub use actuators::*;
+pub use orientation::*;
 pub use shaders::*;
 pub use window::*;
 

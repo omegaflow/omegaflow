@@ -887,6 +887,12 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   pub(crate) wie im Monolithen), tests (die zwei verschachtelten
   Testkörper, use crate::machines::*). Gates grün: cargo check 0/0
   (default + browser_relay + gamepad, all-targets).
+- Blick-Orientierung — WAHR (2026-08-22, Ratsbeschluss): window.rs trug
+  zwei Naturen — q_mul/q_norm/q_rotate/q_axis_angle + window_state_load/
+  window_state_save + WINDOW_STATE_PATH (reine Mathematik + Persistenz,
+  kein GPU) zogen unversehrt in mathematikerin/orientation.rs;
+  storage_entry bleibt beim Fenster (wgpu). Mit-Remap: der
+  Deep-Link-Anker (mathematikerin.rs:3859 → window.rs:2388).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
@@ -945,7 +951,7 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   vor/zurück; das native implementiert heute Pan+Zoom+Roll ohne
   Zeit-Achse.
 - Deep-Link-Geschwindigkeit: `#x,<x>,<y>,<z>,<t>` existiert
-  (src/mathematikerin.rs:3859, [f64; 4]) — die Geschwindigkeit `[,vx,vy,vz]`
+  (src/mathematikerin/window.rs:2388, [f64; 4]) — die Geschwindigkeit `[,vx,vy,vz]`
   fehlt.
 - Audio-Ausgabe nativ = rohe Samples nach stdout (Pipeline-Ausgang;
   im Log erscheint Datenmüll) — bewusst oder ein eigener Ausgang.
