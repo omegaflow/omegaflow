@@ -20,15 +20,17 @@ Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
   INTERMAGNET-Bodenfeld — Session-Plan `docs/handover/handover-2026-
   08-21-bz-paradoxon.md`. INTERMAGNET-Komponenten-Port erledigt
   (2026-08-21); die Blatt-Probe ist die offene Einheit.
-- LAIC-Blatt (Nadel IV): das Blatt steht definitiv (2026-08-21) — volle
-  Ära 1369 Fenster + Sensitivitätsmatrix (Radius 500/1000/2000, Kadenz
-  15/30/60): Stille in beiden Richtungen, Solar-Kontrolle still,
-  FAC-Stapel gemessen unterbestimmt — Befund
+- LAIC-Blatt (Nadel IV): das Blatt steht definitiv (2026-08-21/22) —
+  volle Ära 1369 Fenster + Sensitivitätsmatrix (Radius 500/1000/2000,
+  Kadenz 15/30/60): Stille in beiden Richtungen, Solar-Kontrolle still,
+  FAC-Stapel gemessen unterbestimmt; v3 (2026-08-22): TEC-GIM — der
+  echte ionosphärische Kanal (ESA-GSSC anonyme Route, 336 Ereignisse,
+  1-h-GIMs) — Stille in beiden Richtungen, Kontrolle still — Befund
   `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Offen
-  (Kanal-Offenposten, keine Löcher der Messung): TEC-GIM-Retro
-  (CDDIS-OAuth, swpc-Kanal tot gemessen), CSES, MiniSEED-Envelopen;
-  Instrument A (Ereignisrate) benannt, ungebaut; echte KDE-h-
-  Sensitivität (te.rs unberührt).
+  (Kanal-Offenposten, keine Löcher der Messung): CSES (Portal von hier
+  unerreichbar), TEC retro pre-2024 (LZW-Dekompressor), MiniSEED-
+  Envelopen; Instrument A (Ereignisrate) benannt, ungebaut; echte
+  KDE-h-Sensitivität (te.rs unberührt).
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
@@ -808,8 +810,15 @@ Maschine misst.
   `transfer_entropy_lag` unberührt. Der FDSN-Katalog ist ein
   Punktprozess — die Zähl-Serie ist die benannte Konstruktion
   (MiniSEED-Envelopen: Decoder ausstehend). Instrument A (Ereignisrate)
-  benannt, ungebaut → Register. Kanal-Offenposten: TEC-GIM-Retro
-  (CDDIS-OAuth), CSES.
+  benannt, ungebaut → Register. TEC-GIM (v3, 2026-08-22): der echte
+  ionosphärische Kanal steht — anonyme ESA-GSSC-FTP-Route
+  (COD-1-h-Rapid-GIMs, eigener IONEX-Leser im Binary, Bilinear am
+  Epizentrum, TEC-Ära 2024-01-01…, 336 Ereignisse, 60 TEC-Null-Fenster):
+  Stille in beiden Richtungen, Solar-Kontrolle still (L→TEC −6.31e-2
+  gegen −3.25e-2) — der Pfeil schlägt auch mit dem Detektor im Raum
+  nicht aus. Kanal-Offenposten: CSES (Portal leos.ac.cn von hier
+  unerreichbar gemessen — 000), TEC retro pre-2024 (codg*.Z, LZW-
+  Dekompressor fehlt), CDDIS-OAuth bleibt WARTEND.
 
 ## Die Nadeln I, II, V — Blätter (Handovers 2026-08-21)
 
@@ -860,23 +869,27 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Ernte-Pfad lebt teilweise: `horizons_compiler` trägt Voyager 1/2,
   New Horizons, Parker; Pioneer 10/11 (−23/−24) fehlen. Die Front
   teilt die Maschine mit dem Dunkle-Materie-Blatt Front Ⅱ
-  (`handover-2026-08-22-sonden-dunkle-materie.md`).
+  (`handover-2026-08-22-sonden-dunkle-materie.md`). Handover:
+  `handover-2026-08-22-planet-neun-sonden-front.md`.
 - **Nadel VII — Wurmloch** (2026-08-22 registriert, kybernetische-
   astrophysik §Ⅶ): der Bruch des d/c-Gesetzes — TE-Lag τ < d/c über
   ICRS-Distanzen (die zwei Münder), die Lichtkegel-Differenz
   (Operation Ⅳ), der Trichter ohne Singularität. Keine neue Physik,
   kein Phasen-Bit; die Maschine misst den Verrat an c und erklärt
-  nichts. Handover ausstehend; ausgeführt erst auf das Wort des
-  Operators.
+  nichts. Handover: `handover-2026-08-22-wurmloch-signalkegel-audit.md`;
+  ausgeführt erst auf das Wort des Operators.
 - **Nadel VIII — Dunkler Fluss** (2026-08-22 registriert, §Ⅷ): der
   Pfeil am Blockrand — Haufen-Kinematik × CMB × tiefste z (z_key →
   ICRS); Planck fand keinen Fluss, der Messartefakt-Verdächtige ist
   real, Stille ist der erwartbare Befund. Die Kanal-Lage
   (Haufen-Kataloge, CMB-Karten) ist zu benennen — pending, keine
-  Ernte vor der Quellenprüfung.
+  Ernte vor der Quellenprüfung. Handover:
+  `handover-2026-08-22-kosmologische-front-cmb.md` (teilt die
+  CMB-Ernte mit Ⅻ).
 - **Nadel IX — FRB** (2026-08-22 registriert, §Ⅸ): die Streu-Spur —
   Burst-em × Dispersion (freq/bin_width) × c-Lag je Band; Impuls
   gegen Strahl. FRB-Kataloge (CHIME/ASKAP) sind zu benennen — pending.
+  Handover: `handover-2026-08-22-frb-streu-spur.md`.
 - **Nadel X — Kugelblitz** (2026-08-22 registriert, §Ⅹ): der
   Mikro-Block — em × electric × thermal × acoustic am selben Punkt;
   keine archivierte Multi-Force-Serie (pending, kein Fabrikat);
@@ -889,7 +902,8 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   B-Moden-Obergrenzen; die Singularität (t = 0) trägt keine Samples
   und wird verweigert (0 honored); die Reihen-Paarung (Winkelserie ×
   z-Reihe) ist eine offene Form-Entscheidung. Kanal-Lage zu benennen
-  — pending.
+  — pending. Handover: `handover-2026-08-22-kosmologische-front-cmb.md`
+  (teilt die CMB-Ernte mit Ⅷ).
 - **Die Myth-Falle** (2026-08-22, kybernetische-astrophysik „Der
   verweigerte Tatort"): Telepathie deklariert keine Kraft — das
   Force-Gate verweigert beim Laden; Präkognition wäre ein negativer

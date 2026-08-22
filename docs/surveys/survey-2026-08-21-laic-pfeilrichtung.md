@@ -2,8 +2,8 @@
   title: Das Blatt — die Richtung der Lithosphäre-Atmosphäre-Ionosphäre-Kopplung (Nadel IV)
   class: survey
   date: 2026-08-21
-  version: 2
-  sha256: 5b0fef19cc9c61b8ce637e0c4794dd09c08c08f4fdd2af3c096e17b5707bc1b2
+  version: 3
+  sha256: 23c1259d1c92add30c6dbede36382e498f90971b973a0c436ed577a725ea2de3
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
 -->
@@ -138,18 +138,57 @@ via CDDIS-OAuth, CSES, MiniSEED-Envelopen) kann die Frage auf einem
 dichteren Kanal neu stellen — das ist ein Kanal-Offenposten, kein Loch
 in dieser Messung.
 
+## Der echte ionosphärische Kanal — TEC-GIM (v3, 2026-08-22)
+
+Die anonyme IONEX-Route lebt: der ESA-GSSC-FTP
+(`ftp://gssc.esa.int/gnss/products/ionex`) trägt die COD-1-h-Rapid-GIMs
+anonym — CDDIS bleibt OAuth-gated (302 → Earthdata-Autorisierung
+gemessen), AIUB/WHU/ASI sind von hier unerreichbar (gemessen, 000).
+`laic_probe` v2.1 erntet je Fenster die GIM-Tagesdateien (gzip →
+`omegaflow::inflate::gunzip`), liest das TEC-Grid (eigener IONEX-Leser
+im Binary, Bilinear am Epizentrum, 71×73, Exponent −1 — der
+Archivar-IONEX-Parser bleibt unberührt) und legt die 1-h-Serie als
+Sidecar ab. TEC-Ära: 2024-01-01 … 2026-08 — RINEX3-GIMs existieren erst
+ab 2024; pre-2024 trägt der Bestand nur `codg*.Z` (compress/LZW,
+Dekompressor-Offenposten).
+
+```
+TE(Lithosphäre → TEC-GIM)        = −6.31e-2 nats   (n = 336 Ereignisse der TEC-Ära, Schwelle −3.25e-2)
+TE(TEC-GIM → Lithosphäre)        = −1.47e-2 nats   (Schwelle +2.22e-2)
+Kontrolle TE(Solar Bz → TEC-GIM) = +3.22e-2 nats   (Schwelle +1.28e-1)
+Lag                              = 0 h   (alle Lag-Mittel negativ)
+Verdikt                          = Stille in beiden Richtungen — auch auf dem echten Kanal
+```
+
+Mit dem echten ionosphärischen Elektronengehalt (TEC am Epizentrum,
+1-h-Kadenz, 72-h-Fenster, 60 TEC-Null-Fenster aus derselben Ära) bleibt
+der Pfeil still — in beide Richtungen, und die Sonnen-Kontrolle bleibt
+ebenfalls still: der gemeinsame Treiber trägt auf diesem Raster keinen
+Pfeil. Die Boden-F-Referenz auf derselben Teilmenge (−7.90e-2 gegen
+−2.54e-2) reproduziert den Voll-Ära-Befund.
+
+Damit ist der Plan des Operators gelaufen: anonyme Route gefunden (ESA
+GSSC), CSES gemessen unerreichbar (Portal `leos.ac.cn` von hier 000 —
+Kanal-offen), Probe v2.1 gebaut, erneut Stille gemessen. Der Pfeil
+schlägt auf dem vorhandenen Bestand nicht aus — jetzt mit dem Detektor
+im Raum, nicht durch die Tür. Die LAIC-Hypothese ist auf den lebenden
+Kanälen (INTERMAGNET-F, Swarm-FAC A+B+C, TEC-GIM) gemessen still; ein
+zukünftiger dichterer Kanal (CSES, retro-TEC, MiniSEED-Envelopen) kann
+die Frage neu stellen.
+
 ## Was das Blatt nicht trägt (Register)
 
 - Instrument A — Ereignisrate: benannt, ungebaut.
-- Kanal-Offenposten: TEC-GIM-Retro (CDDIS-OAuth, der swpc-Kanal ist tot
-  gemessen — 404), CSES, MiniSEED-Waveform-Envelopen (Decoder
-  ausstehend).
+- Kanal-Offenposten: CSES (Portal von hier unerreichbar gemessen — 000),
+  TEC-GIM retro pre-2024 (codg*.Z, LZW-Dekompressor fehlt im Bestand),
+  MiniSEED-Waveform-Envelopen (Decoder ausstehend); CDDIS-OAuth bleibt
+  WARTEND — die ESA-GSSC-Route ersetzt ihn für COD-GIMs.
 - Echte KDE-h-Sensitivität: offen, solange der skalare TE-Pfad
   unberührt bleibt (Silverman-Adaptivität macht die Skalierungs-Probe
   invariant).
 - F ist die Intensität des nächsten Boden-Observatoriums (bis 3000 km) —
-  die ionosphärische Signatur am Überflugspunkt ist eine andere Messung
-  (FAC/TEC); der FAC-Stapel ist gemessen unterbestimmt.
+  seit v3 steht daneben der echte ionosphärische Elektronengehalt (TEC);
+  der FAC-Stapel ist gemessen unterbestimmt.
 - Der FDSN-Katalog trägt in dieser Welt nur dünn kleine Ereignisse
   (Region 2000 km/72 h ≈ 0–5, M ≥ 2) — die Zähl-Serie misst, was der
   Katalog trägt; die Surrogat-Null urteilt ehrlich.

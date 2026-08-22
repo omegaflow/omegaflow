@@ -1054,11 +1054,61 @@ fn harvest_window(
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(dir) = arg_value(&args, "--rebuild-manifest") {
+        rebuild_manifest(&dir);
+        return;
+    }
     if arg_value(&args, "--analyze").is_some() {
         analyze_main(&args);
         return;
     }
     harvest_main(&args);
+}
+
+fn rebuild_manifest(dir: &str) {
+    let mut events: Vec<(f64, f64, f64, f64)> = Vec::new();
+    for i in 0..10000 {
+        let body = match std::fs::read_to_string(format!("{dir}/e{i:04}.json")) {
+            Ok(b) => b,
+            Err(_) => break,
+        };
+        let Some(d) = parse_window_file(&body) else {
+            break;
+        };
+        events.push((d.t0, d.mag, d.lat, d.lon));
+    }
+    let mut nulls: Vec<(f64, f64, f64)> = Vec::new();
+    for i in 0..10000 {
+        let body = match std::fs::read_to_string(format!("{dir}/n{i:04}.json")) {
+            Ok(b) => b,
+            Err(_) => break,
+        };
+        let Some(d) = parse_window_file(&body) else {
+            break;
+        };
+        nulls.push((d.t0, d.lat, d.lon));
+    }
+    let mut manifest = String::from("{\"events\":[");
+    for (i, &(t0, mag, lat, lon)) in events.iter().enumerate() {
+        if i > 0 {
+            manifest.push(',');
+        }
+        manifest.push_str(&format!("[{t0},{mag},{lat},{lon}]"));
+    }
+    manifest.push_str("],\"null\":[");
+    for (i, &(t0, lat, lon)) in nulls.iter().enumerate() {
+        if i > 0 {
+            manifest.push(',');
+        }
+        manifest.push_str(&format!("[{t0},{lat},{lon}]"));
+    }
+    manifest.push_str("]}");
+    std::fs::write(format!("{dir}/manifest.json"), manifest).expect("manifest");
+    println!(
+        "manifest rebuilt: {} events, {} null windows",
+        events.len(),
+        nulls.len()
+    );
 }
 
 fn harvest_main(args: &[String]) {
@@ -1263,7 +1313,7 @@ fn harvest_main(args: &[String]) {
         }
     }
     let mut tec_null_windows: Vec<(f64, f64, f64)> = Vec::new();
-    let tec_n_null = tec_null.min(null_windows.len());
+    let tec_n_null = tec_null;
     if tec_n_null > 0 {
         let mut rng = SURROGATE_SEED ^ 0x7EC7_EC7E_C7EC_7EC7;
         for _ in 0..tec_n_null {
