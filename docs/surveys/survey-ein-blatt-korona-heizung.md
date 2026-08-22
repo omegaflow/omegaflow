@@ -1,8 +1,8 @@
 <!--
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
-  class: concept
+  class: survey
   date: 2026-08-21
-  sha256: 6af4a9ab8edbc7ceea4ce3c812d5629ebd7eeefc8c1262c5e77986d64a8aa22d
+  sha256: e7cb12e046e2c105e95cb25c8a014b98d1d9cdb93a7704e17700c593965a029d
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/concepts/kybernetische-astrophysik.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-corona-heizung.md
 -->
@@ -12,7 +12,7 @@ Selbsttragend. Dieses Blatt trägt den gemessenen kausalen DAG der
 Korona-Heizung: die Transferentropie über alle Paare der solaren Kanäle
 mit historischer Serie, beide Richtungen, mit Lag, Schwelle und n — auf
 zwei Skalen. Die Tages-Skala (11 Jahre) trägt Stille; die Minute-Skala
-(7 Tage) trägt die Pfeile. Beides sind Befunde (0 honored).
+(7 Tage) trägt gerichtete TE ohne fam. Beides sind Befunde (0 honored).
 
 ## Das Rätsel
 
@@ -108,15 +108,20 @@ Die stärksten Hinweise liegen auf der Achse **Chromosphäre → Korona**
 unter fam) und auf **Bz ↔ Dichte** (lag 0 d, beide Richtungen knapp
 unter der eigenen Schwelle). Benannt, nicht behauptet.
 
-## Die Pfeile — Minute-Skala (nobel probe, 7-Tage-Fenster)
+## Die Minute-Skala (nobel probe, 7-Tage-Fenster) — benannte Grenzen
 
 `nobel_probe_corona` misst die Live-Kanäle (1-min, n ≈ 10000 Zellen):
-unter der phasenrandomisierten Schwelle tragen **EUV-304 → X-Ray** und
-**Bz → X-Ray** Pfeile bei lag 0/1. Die Alfvén-Laufzeit (~100 s) lebt auf
-dieser Skala — die Tages-Skala ist zu grob, um sie aufzulösen. Die
-Tages-Skala still zu messen und die Minute-Skala Pfeile tragen zu
-sehen ist ein konsistenter Befund: die Korona-Heizung koppelt auf
-Minuten, nicht auf Tagen.
+EUV-304 → X-Ray und Bz → X-Ray tragen surrogat-signifikante TE bei
+lag 0/1 (phasenrandomisierte Schwelle, mean + 2σ je Paar). Zwei Grenzen
+sind benannt und dürfen nicht als Pfeil gelesen werden: (a) die
+Minuten-Runde trägt **keine fam-Schwelle** — die Mehrfachvergleichs-
+korrektur der Tages-Runde (fam = 2,108e-1) deckt eine andere Skala und
+gilt hier nicht; die Minuten-fam ist ein Kanal-Offenposten. (b) lag 0/1
+bei 1-min-Zellen löst die Alfvén-Laufzeit (~100 s) nicht auf — die
+Zellen sind gröber als der gesuchte Effekt. Gemessen ist eine gerichtete
+TE, die ihre eigene Surrogat-Schwelle schlägt; NICHT gemessen ist,
+welcher Mechanismus (Alfvén-Wellen vs. Nanoflares) sie trägt, und ob sie
+die Familien-Schwelle übersteht.
 
 ## Der Lang-Fenster-Befund (F10.7 ↔ X-Ray, 1995–2020)
 
@@ -125,14 +130,27 @@ Minuten, nicht auf Tagen.
 die Nullkontrolle hält (XRSB→F10.7 bricht nur die naive Shuffle-
 Schwelle, nicht die phasenrandomisierte — die naive war das Artefakt).
 
-## Die KDE-Sensitivität (h, h/2, 2h)
+## Die KDE-Sensitivität (h, h/2, 2h) — der volle Test
 
-Der Sweep über die entscheidenden Paare (family bound oder
-TE > 0,6·fam) bei ihrem besten Lag rechnet: TE und Schwelle je Faktor
-gerechnet, dieselben Surrogat-Seeds wie der Hauptlauf. Der Befund
-wandert in diese Sektion, sobald der Lauf gelandet ist (pending, keine
-vorweggenommene Stabilitätsaussage). Die volle fam-Neuberechnung unter
-h/2 und 2h wäre je eine eigene Runde — benannt, offen.
+`solar_dag_probe --h-full` hat drei komplette Blätter gerechnet — je
+Bandbreite die volle 30-Paar-Matrix, fam je Bandbreite neu aus der
+stärksten Surrogat-TE der Runde. Bei Faktor 1,0 ist der Pfad
+byte-identisch zum kanonischen `transfer_entropy_lag` (Crosscheck
+bestanden: fam = 2,108e-1 identisch).
+
+| Bandbreite | fam | Pfeile |
+|---|---|---|
+| h × 0,5 | 6,738e-1 | keine |
+| h × 1,0 | 2,108e-1 | keine |
+| h × 2,0 | 7,962e-2 | **Lya1216 → XRSB** (lag 7 d, TE 1,18e-1) |
+
+**Befund:** Der DAG ist über die Bandbreiten stabil in der Stille — bis
+auf EINEN Rand-Kandidaten: **Lya1216 → XRSB** trägt bei h/2 und h nur
+„family bound" und wird erst bei h × 2,0 zum fam-gereinigten Pfeil. Der
+Kandidat ist bandbreiten-empfindlich — er sitzt an der Kante der
+Schwelle, kein robuster Pfeil. Fünf Paare kippen über die Bandbreiten
+(F10.7→Dichte, XRSB→XRSA, Lya1216→XRSB, Bz→Dichte, Dichte→Bz), alle
+übrigen bleiben still.
 
 ## Das 90-Tage-Archiv (Auftrag 4)
 
@@ -147,15 +165,21 @@ nicht dieses.
 
 ## Verdikt
 
-Die kausale DAG der Korona-Heizung steht auf zwei Skalen:
+Die Messung trägt auf zwei Skalen — mit klarer Trennung zwischen
+gemessen und geschlossen:
 
-- **Minuten:** EUV-304 → X-Ray, Bz → X-Ray (lag 0/1) — die Pfeile der
-  Korona-Heizung.
-- **Tage:** Stille über 11 Jahre, fam-gereinigt — mit benannten
-  Hinweisen auf der Achse Chromosphäre → Korona (Lya1216 → XRSB,
-  7 Tage) und Bz ↔ Dichte (lag 0).
+- **Minuten:** EUV-304 → X-Ray und Bz → X-Ray tragen surrogat-
+  signifikante TE bei lag 0/1 — eine gemessene Informations-Richtung,
+  keine Mechanismus-Entscheidung (die Minuten-fam fehlt, und die Zellen
+  lösen ~100 s nicht auf).
+- **Tage:** Stille über 11 Jahre, fam-gereinigt (fam = 2,108e-1) — mit
+  dem bandbreiten-empfindlichen Rand-Kandidaten Lya1216 → XRSB (7 d,
+  nur bei h × 2,0 fam-signifikant) und Bz ↔ Dichte (lag 0) als
+  benannten Hinweisen.
 
-0 honored: die Stille der Tages-Skala ist der Befund, kein Fehler —
-der Energietransport der Korona trägt keine Tages-Trägheit. Offene
-Pflichten: die Multi-Force-TE (nobel_probe_corona v2, alle Kräfte im
-Phasenraum) und die fam(h/2)/fam(2h)-Neuberechnung.
+0 honored: die Stille der Tages-Skala ist der Befund, kein Fehler. Was
+das Rätsel löst (Alfvén-Wellen vs. Nanoflares) ist damit NICHT
+entschieden — dafür fehlen die Minuten-fam und die sub-minütige
+Auflösung. Offene Pflichten: die Minuten-fam, die Multi-Force-TE
+(nobel_probe_corona v2) und die externe Referenz-Validierung
+(Schreiber 2000).
