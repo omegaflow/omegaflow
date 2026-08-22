@@ -52,7 +52,6 @@ pub fn fetch_raw(
     }
 }
 
-
 pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
     let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
     let max_t = ((ttl as f64) / (Φ * Φ)).ceil() as u64;
@@ -79,7 +78,6 @@ pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
     cmd
 }
 
-
 pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     let mut cmd = curl_base(ttl, 0);
     cmd.arg(url);
@@ -97,7 +95,6 @@ pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
         None
     }
 }
-
 
 pub fn fetch_raw_probe(
     url: &str,
@@ -138,7 +135,6 @@ pub fn fetch_raw_probe(
         None
     }
 }
-
 
 pub fn fetch_raw_bytes_post(
     url: &str,
@@ -189,9 +185,7 @@ pub fn fetch_raw_bytes_post(
     }
 }
 
-
 pub type Origin = u32;
-
 
 #[derive(Clone)]
 pub struct OriginState {
@@ -205,7 +199,6 @@ pub struct OriginState {
     pub failures: u32,
     pub in_flight: bool,
 }
-
 
 pub fn origin_stale(
     origins: &HashMap<Origin, OriginState>,
@@ -227,7 +220,6 @@ pub fn origin_stale(
     }
 }
 
-
 pub fn begin_fetch(origins: &mut HashMap<Origin, OriginState>, origin: Origin, now: f64) {
     let st = origins.entry(origin).or_insert(OriginState {
         fetched: now,
@@ -244,7 +236,6 @@ pub fn begin_fetch(origins: &mut HashMap<Origin, OriginState>, origin: Origin, n
     st.in_flight = true;
 }
 
-
 pub fn settle_fetch(st: &mut OriginState, ok: bool, now: f64) {
     st.fetched = now;
     st.in_flight = false;
@@ -254,7 +245,6 @@ pub fn settle_fetch(st: &mut OriginState, ok: bool, now: f64) {
         st.failures = (st.failures + 1).min(FETCH_VOID_CAP);
     }
 }
-
 
 pub fn record_fetch_duration(
     ring: &mut [f64; FETCH_DURATION_RING],
@@ -266,7 +256,6 @@ pub fn record_fetch_duration(
     *idx = (*idx + 1) % FETCH_DURATION_RING;
     *len = (*len + 1).min(FETCH_DURATION_RING);
 }
-
 
 pub fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> Option<f64> {
     if len == 0 {
@@ -281,7 +270,6 @@ pub fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> O
         Some((vals[mid - 1] + vals[mid]) / 2.0)
     }
 }
-
 
 pub fn presence_gate(
     presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)],
@@ -322,7 +310,6 @@ pub fn presence_gate(
         })
 }
 
-
 pub fn json_has_content(v: &JsonVal) -> bool {
     match v {
         JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),
@@ -330,7 +317,6 @@ pub fn json_has_content(v: &JsonVal) -> bool {
         JsonVal::Null | JsonVal::Bool(_) | JsonVal::Str(_) | JsonVal::Num(_) => false,
     }
 }
-
 
 pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
     let parsed = parse_json(body);
@@ -455,7 +441,6 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
     }
 }
 
-
 #[derive(Clone, Copy, PartialEq)]
 pub enum VoidClass {
     Key,
@@ -463,7 +448,6 @@ pub enum VoidClass {
     Quiet,
     Kaputt,
 }
-
 
 impl VoidClass {
     pub fn as_str(&self) -> &'static str {
@@ -476,13 +460,11 @@ impl VoidClass {
     }
 }
 
-
 pub struct VoidFinding {
     pub url: String,
     pub class: VoidClass,
     pub detail: String,
 }
-
 
 pub fn civil_date(unix: u64) -> (i64, u32, u32) {
     let days = (unix / 86400) as i64;
@@ -498,12 +480,10 @@ pub fn civil_date(unix: u64) -> (i64, u32, u32) {
     (if m <= 2 { y + 1 } else { y }, m, d)
 }
 
-
 pub fn date_str(unix: u64) -> String {
     let (y, m, d) = civil_date(unix);
     format!("{:04}-{:02}-{:02}", y, m, d)
 }
-
 
 pub fn hour_str(unix: u64) -> String {
     format!(
@@ -514,7 +494,6 @@ pub fn hour_str(unix: u64) -> String {
         unix % 60
     )
 }
-
 
 pub fn live_markers() -> Vec<(String, String)> {
     let unix = SystemTime::now()
@@ -551,7 +530,6 @@ pub fn live_markers() -> Vec<(String, String)> {
     ]
 }
 
-
 pub fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<String> {
     let mut rest = template;
     while let Some(start) = rest.find('{') {
@@ -569,7 +547,6 @@ pub fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<S
     }
     None
 }
-
 
 pub fn live_sweep(
     env: &HashMap<String, String>,
@@ -677,7 +654,6 @@ pub fn live_sweep(
     (ok, findings)
 }
 
-
 pub struct FetchResult {
     pub source_idx: usize,
     pub channels: Vec<(Channel, FieldConfig)>,
@@ -688,7 +664,6 @@ pub struct FetchResult {
     pub spectral: Option<SpectralHash>,
     pub fetch_ok: bool,
 }
-
 
 pub fn rfc1123_to_unix(s: &str) -> Option<u64> {
     let parts: Vec<&str> = s.split_whitespace().collect();
@@ -719,7 +694,6 @@ pub fn rfc1123_to_unix(s: &str) -> Option<u64> {
     let days = ymd_to_days(year, month, day)?;
     Some(days * 86400 + hh * 3600 + mm * 60 + ss)
 }
-
 
 pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
     const CI_REFRESH_S: u64 = 300;
@@ -753,7 +727,6 @@ pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
     };
     now.saturating_sub(asset_ts) < ttl.max(CI_REFRESH_S)
 }
-
 
 pub fn fetch_one(
     url: &str,
@@ -826,7 +799,6 @@ pub fn fetch_one(
     live
 }
 
-
 pub fn cache_fresh(path: &str, ttl: u64) -> bool {
     let meta = match std::fs::metadata(path) {
         Ok(m) => m,
@@ -842,7 +814,6 @@ pub fn cache_fresh(path: &str, ttl: u64) -> bool {
     }
 }
 
-
 pub fn cache_fresh_at(path: &str, ttl: u64, t_presence: f64) -> bool {
     match read_epoch_stamp(path) {
         Some(epoch) => (t_presence - epoch).abs() < ttl as f64,
@@ -850,14 +821,12 @@ pub fn cache_fresh_at(path: &str, ttl: u64, t_presence: f64) -> bool {
     }
 }
 
-
 pub fn read_epoch_stamp(path: &str) -> Option<f64> {
     let stamp_path = format!("{}.epoch", path);
     std::fs::read_to_string(stamp_path)
         .ok()
         .and_then(|t| t.trim().parse::<f64>().ok())
 }
-
 
 pub fn write_epoch_stamp(path: &str, epoch: f64) {
     let stamp_path = format!("{}.epoch", path);
@@ -869,16 +838,13 @@ pub fn write_epoch_stamp(path: &str, epoch: f64) {
     }
 }
 
-
 pub fn machine_now_tdb() -> Option<f64> {
     embedded_lsk().and_then(|l| l.system_now_tdb())
 }
 
-
 pub fn is_leap(y: u32) -> bool {
     (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
 }
-
 
 pub fn load_env() -> HashMap<String, String> {
     let mut env: HashMap<String, String> = std::env::vars().collect();
@@ -902,7 +868,6 @@ pub fn load_env() -> HashMap<String, String> {
     env
 }
 
-
 pub fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
     let mut result = String::with_capacity(url.len());
     let mut rest = url;
@@ -925,7 +890,6 @@ pub fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
     result
 }
 
-
 pub fn secret_resolves_void(template: &str, env: &HashMap<String, String>) -> bool {
     let mut rest = template;
     while let Some(start) = rest.find('{') {
@@ -944,7 +908,6 @@ pub fn secret_resolves_void(template: &str, env: &HashMap<String, String>) -> bo
     false
 }
 
-
 pub fn url_has_template(url: &str) -> bool {
     let mut rest = url;
     while let Some(start) = rest.find('{') {
@@ -960,11 +923,9 @@ pub fn url_has_template(url: &str) -> bool {
     false
 }
 
-
 pub fn url_is_fanout(url: &str) -> bool {
     url.contains("{station}") || url.contains("{nearest_station}")
 }
-
 
 pub fn frame_anchor(frame: &Frame) -> (f64, f64) {
     match frame {
@@ -972,7 +933,6 @@ pub fn frame_anchor(frame: &Frame) -> (f64, f64) {
         _ => (0.0, 0.0),
     }
 }
-
 
 pub fn extract_netloc(url: &str) -> Option<&str> {
     let after = url
@@ -985,7 +945,6 @@ pub fn extract_netloc(url: &str) -> Option<&str> {
         netloc
     })
 }
-
 
 pub fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
     let after = url
@@ -1012,7 +971,6 @@ pub fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
     Some((host.to_string(), segs))
 }
 
-
 pub fn route_key(url: &str) -> Option<String> {
     let (host, segs) = route_segments(url)?;
     if segs.is_empty() {
@@ -1021,7 +979,6 @@ pub fn route_key(url: &str) -> Option<String> {
         Some(format!("{}/{}", host, segs.join("/")))
     }
 }
-
 
 pub fn route_prefix_keys(url: &str) -> Vec<String> {
     let Some((host, segs)) = route_segments(url) else {
@@ -1037,7 +994,6 @@ pub fn route_prefix_keys(url: &str) -> Vec<String> {
     keys.reverse();
     keys
 }
-
 
 pub fn source_name_from_url(url: &str) -> String {
     let s1 = match url.strip_prefix("https://") {
@@ -1080,7 +1036,6 @@ pub fn source_name_from_url(url: &str) -> String {
     }
 }
 
-
 pub fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, String> {
     let mut map = HashMap::new();
     let mut seen: HashMap<String, u32> = HashMap::new();
@@ -1104,7 +1059,6 @@ pub fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, S
     map
 }
 
-
 pub fn cdn_manifest_map() -> &'static HashMap<String, String> {
     static MANIFEST: OnceLock<HashMap<String, String>> = OnceLock::new();
     MANIFEST.get_or_init(|| {
@@ -1116,7 +1070,6 @@ pub fn cdn_manifest_map() -> &'static HashMap<String, String> {
         }
     })
 }
-
 
 pub fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
     match val {

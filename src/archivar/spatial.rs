@@ -2,7 +2,6 @@ use super::*;
 
 pub type CellKey = (i64, i64, i64);
 
-
 pub struct SpatialHash {
     pub cell_size: f64,
     pub anchor_vmax: f64,
@@ -13,7 +12,6 @@ pub struct SpatialHash {
     pub cells: HashMap<CellKey, Vec<Sample>>,
     pub unbounded: Vec<Sample>,
 }
-
 
 #[derive(Clone)]
 pub struct SpectralHash {
@@ -28,7 +26,6 @@ pub struct SpectralHash {
     pub advection: f64,
     pub bins: Vec<(f64, f64, f64)>,
 }
-
 
 pub struct Buffer {
     pub cache: SpatialHash,
@@ -63,7 +60,6 @@ pub struct CurveSet {
     pub stars: Vec<CurveStar>,
 }
 
-
 pub fn cell_of(p: [f64; 3], s: f64) -> CellKey {
     (
         (p[0] / s).floor() as i64,
@@ -71,7 +67,6 @@ pub fn cell_of(p: [f64; 3], s: f64) -> CellKey {
         (p[2] / s).floor() as i64,
     )
 }
-
 
 pub fn law_bounds(
     motion: &Motion,
@@ -89,7 +84,6 @@ pub fn law_bounds(
     .sqrt();
     Some((Φ * (v + resid_ema), Φ * a, p0))
 }
-
 
 pub fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
     let mut bounded = Vec::new();
@@ -152,7 +146,6 @@ pub fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
     }
 }
 
-
 pub fn build_buffer(
     samples: Vec<Sample>,
     cadence: f64,
@@ -167,7 +160,6 @@ pub fn build_buffer(
         spectral,
     }
 }
-
 
 pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -241,9 +233,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     samples
 }
 
-
 pub const STAR_RECORD_BYTES: usize = 44;
-
 
 pub fn star_stride(bytes: &[u8]) -> Option<usize> {
     if bytes.len() > 0 && bytes.len() % STAR_RECORD_BYTES == 0 {
@@ -252,7 +242,6 @@ pub fn star_stride(bytes: &[u8]) -> Option<usize> {
         None
     }
 }
-
 
 pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
     if b.len() != STAR_RECORD_BYTES {
@@ -284,7 +273,6 @@ pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
     })
 }
 
-
 pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
     let dt_yr = t2 / (86400.0 * 365.25);
     let dec_rad = rec.dec_deg.to_radians();
@@ -307,7 +295,6 @@ pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
     ];
     (p, vel)
 }
-
 
 pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -358,7 +345,6 @@ pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
     }
     samples
 }
-
 
 pub fn query_hash(
     hash: &SpatialHash,
@@ -594,13 +580,11 @@ pub fn query_hash(
     }
 }
 
-
 pub fn take_u32(bytes: &[u8], off: &mut usize) -> Option<u32> {
     let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
     *off += 4;
     Some(u32::from_le_bytes(raw))
 }
-
 
 pub fn take_f64(bytes: &[u8], off: &mut usize) -> Option<f64> {
     let raw: [u8; 8] = bytes.get(*off..*off + 8)?.try_into().ok()?;
@@ -608,13 +592,11 @@ pub fn take_f64(bytes: &[u8], off: &mut usize) -> Option<f64> {
     Some(f64::from_le_bytes(raw))
 }
 
-
 pub fn take_f32(bytes: &[u8], off: &mut usize) -> Option<f32> {
     let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
     *off += 4;
     Some(f32::from_le_bytes(raw))
 }
-
 
 pub fn build_curve_set(bytes: &[u8]) -> CurveSet {
     let mut stars = Vec::new();

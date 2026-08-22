@@ -30,14 +30,12 @@ pub enum Motion {
     },
 }
 
-
 #[derive(Clone)]
 pub enum SampleSource {
     Source(u32),
     Sensor,
     Ephemeris,
 }
-
 
 #[derive(Clone)]
 pub struct Sample {
@@ -61,7 +59,6 @@ pub struct Sample {
     pub bin_width: f64,
     pub color_index: f64,
 }
-
 
 #[derive(Clone, Debug)]
 pub enum Position {
@@ -88,7 +85,6 @@ pub enum Position {
     },
 }
 
-
 #[derive(Clone)]
 pub struct DeclaredBody {
     pub body_name: String,
@@ -96,7 +92,6 @@ pub struct DeclaredBody {
     pub lon: f64,
     pub alt: Option<f64>,
 }
-
 
 #[derive(Clone)]
 pub struct Channel {
@@ -108,7 +103,6 @@ pub struct Channel {
     pub freq: f64,
     pub bin_width: f64,
 }
-
 
 #[derive(Clone)]
 pub enum Extract {
@@ -220,7 +214,6 @@ pub enum Extract {
     XmlCount(String, String),
 }
 
-
 #[derive(Clone)]
 pub struct FieldConfig {
     pub key: String,
@@ -234,14 +227,12 @@ pub struct FieldConfig {
     pub fold: Option<(u8, String)>,
 }
 
-
 pub struct BrowserSensor {
     pub key: String,
     pub force: u8,
     pub kernel: u8,
     pub ttl: f64,
 }
-
 
 #[derive(Clone)]
 pub enum Frame {
@@ -257,7 +248,6 @@ pub enum Frame {
     },
     Manifest,
 }
-
 
 #[derive(Clone)]
 pub struct SourceConfig {
@@ -289,7 +279,6 @@ pub struct SourceConfig {
     pub fanout_delay: u64,
 }
 
-
 pub const J2000_EPOCH: f64 = 2451545.0;
 
 pub const PARSEC_M: f64 = 3.085677581e16;
@@ -301,7 +290,6 @@ pub const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
 pub const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
 
 pub const GAUSS_K: f64 = 0.01720209895;
-
 
 pub type SampleRecord = (
     f64,
@@ -329,7 +317,6 @@ pub type SampleRecord = (
     f64,
     f64,
 );
-
 
 pub fn frame_body_name(frame: &Frame) -> String {
     match frame {

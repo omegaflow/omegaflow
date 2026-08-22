@@ -6,7 +6,6 @@ pub struct StationEntry {
     pub lon: f64,
 }
 
-
 pub fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
     let arr = match jpath_val(j, &src.stations_path) {
         Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
@@ -61,7 +60,6 @@ pub fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntr
     stations
 }
 
-
 pub fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
     let mut out = Vec::new();
     for obs in body.split("<Observatory>").skip(1) {
@@ -87,7 +85,6 @@ pub fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
     }
     out
 }
-
 
 pub fn fanout_fetch(
     src: &SourceConfig,
@@ -196,7 +193,6 @@ pub fn fanout_fetch(
     }
     channels
 }
-
 
 pub fn build_netcdf_channels(
     src: &SourceConfig,
@@ -334,7 +330,6 @@ pub fn build_netcdf_channels(
     channels
 }
 
-
 pub fn build_finals_channels(
     src: &SourceConfig,
     text: &str,
@@ -391,7 +386,6 @@ pub fn build_finals_channels(
     }
     channels
 }
-
 
 pub fn build_ionex_channels(
     src: &SourceConfig,
@@ -527,7 +521,6 @@ pub fn build_ionex_channels(
     channels
 }
 
-
 pub fn alerce_objects(json: &JsonVal) -> Vec<(String, f64, f64)> {
     let mut out = Vec::new();
     let JsonVal::Obj(root) = json else {
@@ -552,7 +545,6 @@ pub fn alerce_objects(json: &JsonVal) -> Vec<(String, f64, f64)> {
     out
 }
 
-
 pub fn alerce_detection_rows(json: &JsonVal) -> Vec<(f64, f64, f64, f64, f64)> {
     let mut out = Vec::new();
     let JsonVal::Arr(rows) = json else {
@@ -575,7 +567,6 @@ pub fn alerce_detection_rows(json: &JsonVal) -> Vec<(f64, f64, f64, f64, f64)> {
     }
     out
 }
-
 
 pub fn build_alerce_channels(
     src: &SourceConfig,
@@ -619,7 +610,6 @@ pub fn build_alerce_channels(
     }
     channels
 }
-
 
 pub fn anchor(
     channel: &Channel,
@@ -785,7 +775,6 @@ pub fn anchor(
         color_index: 0.0,
     })
 }
-
 
 pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
     let mut out = Vec::new();

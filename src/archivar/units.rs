@@ -65,7 +65,6 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
     }
 }
 
-
 pub fn register_unconverted_unit(unit: &str, name: &str) {
     static REPORTED: std::sync::Mutex<Option<std::collections::HashSet<String>>> =
         std::sync::Mutex::new(None);
@@ -82,7 +81,6 @@ pub fn register_unconverted_unit(unit: &str, name: &str) {
     }
 }
 
-
 pub fn fold_value(a: Option<f64>, b: Option<f64>, op: u8) -> Option<f64> {
     let (a, b) = (a?, b?);
     Some(match op {
@@ -92,14 +90,12 @@ pub fn fold_value(a: Option<f64>, b: Option<f64>, op: u8) -> Option<f64> {
     })
 }
 
-
 pub fn is_moment_magnitude(t: &str) -> bool {
     matches!(
         t.trim().to_ascii_lowercase().as_str(),
         "mw" | "mww" | "mwc" | "mwb" | "mwr" | "mwp" | "mwpd" | "mi"
     )
 }
-
 
 #[derive(Clone)]
 pub struct Anomaly {
@@ -108,14 +104,11 @@ pub struct Anomaly {
     pub details: String,
 }
 
-
 pub static ANOMALIES: std::sync::Mutex<Vec<Anomaly>> = std::sync::Mutex::new(Vec::new());
-
 
 thread_local! {
     pub static ANOMALY_COLLECT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
-
 
 pub fn report_anomaly(category: &'static str, url: &str, details: &str) {
     if !ANOMALY_COLLECT.with(|c| c.get()) {
@@ -130,14 +123,12 @@ pub fn report_anomaly(category: &'static str, url: &str, details: &str) {
     }
 }
 
-
 pub fn take_anomalies() -> Vec<Anomaly> {
     match ANOMALIES.lock() {
         Ok(mut v) => std::mem::take(&mut *v),
         Err(_) => Vec::new(),
     }
 }
-
 
 pub fn anomaly_issue_body(anomalies: &[Anomaly]) -> String {
     let mut body = String::from("| Category | URL | Details |\n|---|---|---|\n");
@@ -147,7 +138,6 @@ pub fn anomaly_issue_body(anomalies: &[Anomaly]) -> String {
     body
 }
 
-
 pub fn normalize_unit(unit: &str) -> String {
     unit.trim()
         .to_lowercase()
@@ -156,7 +146,6 @@ pub fn normalize_unit(unit: &str) -> String {
         .replace('\u{b5}', "u")
         .replace('\u{3bc}', "u")
 }
-
 
 pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
@@ -186,7 +175,6 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     }
 }
 
-
 pub fn report_physics_mismatch(force: u8, unit: &str, key: &str, url: &str) {
     if !allowed_units_for_force(force).contains(&normalize_unit(unit).as_str()) {
         report_anomaly(
@@ -196,7 +184,6 @@ pub fn report_physics_mismatch(force: u8, unit: &str, key: &str, url: &str) {
         );
     }
 }
-
 
 pub fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
     let (y, m) = if month <= 2 {
@@ -216,7 +203,6 @@ pub fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
         Some(days as u64)
     }
 }
-
 
 pub fn is_unit_name(name: &str) -> bool {
     let kl = name.to_lowercase();
@@ -242,7 +228,6 @@ pub fn is_unit_name(name: &str) -> bool {
         || kl == "m/sec"
         || kl == "deg"
 }
-
 
 pub fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
     let mut d = total_days as u32;

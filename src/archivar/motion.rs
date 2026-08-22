@@ -2,7 +2,6 @@ use super::*;
 
 pub const CHEBYSHEV_N: usize = 18;
 
-
 pub fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
     let mut b0 = 0.0;
     let mut b1 = 0.0;
@@ -14,7 +13,6 @@ pub fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
     b0 - tau * b1
 }
 
-
 pub fn chebyshev_eval_slice(coeffs: &[f64], tau: f64) -> f64 {
     let mut b0 = 0.0;
     let mut b1 = 0.0;
@@ -25,7 +23,6 @@ pub fn chebyshev_eval_slice(coeffs: &[f64], tau: f64) -> f64 {
     }
     b0 - tau * b1
 }
-
 
 pub fn chebyshev_evaluate_deriv(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
     let mut dc = [0.0_f64; CHEBYSHEV_N];
@@ -44,7 +41,6 @@ pub fn chebyshev_evaluate_deriv(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
     chebyshev_evaluate(&dc, tau)
 }
 
-
 pub fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
     let records = props.nutation.as_ref()?;
     let rec = records
@@ -58,14 +54,12 @@ pub fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, 
     ))
 }
 
-
 pub fn nutation_sum(terms: &[[f64; 3]], t: f64) -> f64 {
     terms
         .iter()
         .map(|&[amplitude, frequency, phase]| amplitude * (frequency * t + phase).sin())
         .sum()
 }
-
 
 pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
     let tc = (jd - J2000_EPOCH) / 36525.0;
@@ -95,7 +89,6 @@ pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
     (ra, dec, pm)
 }
 
-
 pub fn body_barycenter_position(
     name: &str,
     tdb: f64,
@@ -124,7 +117,6 @@ pub fn body_barycenter_position(
     None
 }
 
-
 pub fn body_barycenter_velocity(
     name: &str,
     tdb: f64,
@@ -150,7 +142,6 @@ pub fn body_barycenter_velocity(
     }
     None
 }
-
 
 pub fn body_fixed_to_icrs(
     name: &str,
@@ -219,7 +210,6 @@ pub fn body_fixed_to_icrs(
     Some([xi + bx, yi + by, zi + bz])
 }
 
-
 pub fn icrs_to_body_surface(
     x: f64,
     y: f64,
@@ -278,7 +268,6 @@ pub fn icrs_to_body_surface(
     Some((lat.to_degrees(), lon.to_degrees()))
 }
 
-
 pub fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {
     if p[0].is_finite() && p[1].is_finite() && p[2].is_finite() {
         Some(p)
@@ -286,7 +275,6 @@ pub fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {
         None
     }
 }
-
 
 impl Motion {
     pub fn at(&self, t: f64, epoch: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<[f64; 3]> {
@@ -324,7 +312,6 @@ impl Motion {
     }
 }
 
-
 #[derive(Clone)]
 pub struct BodyProperties {
     pub α0_deg: f64,
@@ -351,7 +338,6 @@ pub struct BodyProperties {
     pub omega_g: Option<(f64, f64)>,
 }
 
-
 #[derive(Clone)]
 pub struct NutationRecord {
     pub mid_jd: f64,
@@ -360,7 +346,6 @@ pub struct NutationRecord {
     pub dec: Vec<f64>,
     pub pm: Vec<f64>,
 }
-
 
 #[derive(Clone)]
 pub struct ChebyshevGranule {
@@ -371,7 +356,6 @@ pub struct ChebyshevGranule {
     pub cz: [f64; CHEBYSHEV_N],
 }
 
-
 #[derive(Clone)]
 pub struct BodyEphemeris {
     pub granules: Vec<ChebyshevGranule>,
@@ -379,7 +363,6 @@ pub struct BodyEphemeris {
     pub props: Option<BodyProperties>,
     pub orbit: Option<std::sync::Arc<crate::wind_orbit::OrbitRec>>,
 }
-
 
 pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || (data[2] != 0x01 && data[2] != 0x02)

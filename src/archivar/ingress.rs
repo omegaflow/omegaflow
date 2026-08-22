@@ -14,7 +14,6 @@ pub fn serial_ports() -> Vec<String> {
     out
 }
 
-
 pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
     loop {
         for name in serial_ports() {
@@ -58,7 +57,6 @@ pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
         thread::sleep(std::time::Duration::from_secs(5));
     }
 }
-
 
 pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
     loop {

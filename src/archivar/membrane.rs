@@ -4,11 +4,9 @@ pub const NAIF_LSK_TTL_SECS: u64 = 86400;
 
 pub const NAIF_LSK_EMBEDDED: &str = include_str!("../kernels/naif0012.tls");
 
-
 pub fn embedded_lsk() -> Option<LeapSeconds> {
     crate::lsk::parse(NAIF_LSK_EMBEDDED)
 }
-
 
 pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
     let cwd_candidate = std::path::PathBuf::from(rel);
@@ -29,11 +27,9 @@ pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
     cwd_candidate
 }
 
-
 pub const SURFACE_MOTION_DT: f64 = 0.01;
 
 pub const MAX_SAMPLES: usize = 1 << 22;
-
 
 pub fn sense_membrane(
     buf: &Buffer,
@@ -106,7 +102,6 @@ pub fn sense_membrane(
     }
 }
 
-
 pub fn surface_motion(
     body_name: &str,
     lat: f64,
@@ -160,7 +155,6 @@ pub fn surface_motion(
     })
 }
 
-
 #[cfg(feature = "browser_relay")]
 pub fn body_id_to_name(bodies: &[String], id: u32) -> Option<String> {
     if id == 0 {
@@ -168,7 +162,6 @@ pub fn body_id_to_name(bodies: &[String], id: u32) -> Option<String> {
     }
     bodies.get((id - 1) as usize).cloned()
 }
-
 
 pub fn frame_motion(
     frame: &Frame,
@@ -217,7 +210,6 @@ pub fn frame_motion(
     }
 }
 
-
 pub fn leap_seconds(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<LeapSeconds> {
     match time.lock() {
         Ok(guard) => guard.clone(),
@@ -225,14 +217,12 @@ pub fn leap_seconds(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<LeapSecond
     }
 }
 
-
 pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
     match leap_seconds(time) {
         Some(lsk) => lsk.system_now_tdb(),
         None => None,
     }
 }
-
 
 pub fn kernel_extent(
     force_type: u8,
@@ -269,7 +259,6 @@ pub fn kernel_extent(
     0.0
 }
 
-
 pub const AUDIO_SPEED_AIR: f64 = 343.0;
 
 pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
@@ -281,7 +270,6 @@ pub const ADVECTIVE_BASE_SPEED: f64 = 1.0;
 pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
 
 pub const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
-
 
 pub fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
     match force_type as u8 {
@@ -302,7 +290,6 @@ pub fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
     }
 }
 
-
 pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {
@@ -312,7 +299,6 @@ pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     }
     reach
 }
-
 
 pub fn anchor_velocity(
     frame: &Frame,
@@ -326,7 +312,6 @@ pub fn anchor_velocity(
         Frame::Manifest => None,
     }
 }
-
 
 pub fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
@@ -347,7 +332,6 @@ pub fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     }
 }
 
-
 pub fn wire_extent(extent: f64) -> f64 {
     if extent.is_finite() {
         extent
@@ -355,7 +339,6 @@ pub fn wire_extent(extent: f64) -> f64 {
         0.0
     }
 }
-
 
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();

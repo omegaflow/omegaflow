@@ -8,7 +8,6 @@ pub fn load_sources() -> Vec<SourceConfig> {
     parse_sources(&content)
 }
 
-
 pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut sources = Vec::new();
 
@@ -1157,7 +1156,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     sources
 }
 
-
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
@@ -1170,7 +1168,6 @@ pub fn parse_path(s: &str) -> String {
         "/".to_string()
     }
 }
-
 
 pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     let s = s.trim();
@@ -1211,7 +1208,6 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix as f64)
 }
 
-
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     let kernel = match kernel_id_of(parts[3]) {
         Some(k) => k,
@@ -1236,7 +1232,6 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     Some((kernel, force, tau, absorption, advection))
 }
 
-
 pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, ()> {
     if parts.len() < 10 || parts[9] != "where" {
         return Ok(None);
@@ -1251,11 +1246,9 @@ pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, ()> {
     Ok(Some((parts[10].to_string(), parts[11].to_string())))
 }
 
-
 pub fn load_sources_from(content: &str) -> Vec<SourceConfig> {
     parse_sources(content)
 }
-
 
 pub fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
     let mut sources = Vec::new();
