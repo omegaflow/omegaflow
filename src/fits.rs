@@ -107,6 +107,7 @@ fn code_width(code: char) -> Option<usize> {
         'K' => Some(8),
         'B' => Some(1),
         'L' => Some(1),
+        'A' => Some(1),
         _ => None,
     }
 }
