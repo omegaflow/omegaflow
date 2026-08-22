@@ -4,7 +4,7 @@
   date: 2026-08-22
   sha256: 14e29b08cfaf0d5d1bc5dca2ce281e1fe131d0aff3ee38bbc96a0ed64cda9bcd
   status: live
-  see-also: docs/handover/handover-2026-08-22-planet-neun.md
+  see-also: archive/handover/handover-2026-08-22-planet-neun.md
 -->
 
 # Das Blatt des unsichtbaren Begleiters — das Gravitations-Residuum der KBO-Bahnen (Nadel VI)

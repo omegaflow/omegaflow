@@ -826,7 +826,7 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Ausschluss-Filter. Vorbedingungen benannt: Pfeiler-Registraturen Farbe
   + Frequenzachse (TODO.md), ZTF-Decoder AUSSTEHEND, epoch-0.0-Ring-
   Messung.
-- **Nadel VI — Planet 9** (`handover-2026-08-22-planet-neun.md`): die
+- **Nadel VI — Planet 9** (`archive/handover/handover-2026-08-22-planet-neun.md`): die
   KBO-Ernte lebt — `kbo_compiler` (SBDB-Pages + MPC-Distant-Kreuzcheck
   → `kbo_elements.json`, flaches Katalog-JSON mit Familien-Fenster und
   mpc_flag; die zwei kaputten Queue-URLs sind im selben Atom repariert,
