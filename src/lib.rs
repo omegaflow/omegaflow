@@ -15,6 +15,7 @@ pub mod gong;
 pub mod hdf5;
 pub mod inflate;
 pub mod json;
+pub mod kbo;
 pub mod kepler;
 pub mod lsk;
 pub mod machines;

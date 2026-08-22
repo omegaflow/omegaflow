@@ -29614,10 +29614,10 @@ url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=65803&full_prec=1&format=json&phy
   field phys_par.2.value diameter_km
 
 source jpl_sbdb_distant_objects_tno
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22e%7CLT%7C1%22%5D%7D&sb-kind=a&limit=500&sb-class=TNO,SDO,CEN&full_prec=Y
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22e%7CLT%7C1%22%5D%7D&sb-kind=a&limit=500&sb-class=TNO,CEN&full-prec=true
   ttl 86400
   force gravity
-  url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22e%7CLT%7C1%22%5D%7D&sb-kind=a&limit=500&sb-class=TNO,SDO,CEN&full_prec=Y
+  url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22e%7CLT%7C1%22%5D%7D&sb-kind=a&limit=500&sb-class=TNO,CEN&full-prec=true
   map data
   lat 0.0
   lon 0.0
@@ -29630,10 +29630,10 @@ url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,e
   field diameter diameter_km
 
 source jpl_sbdb_kbo_extended_sample
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22a%7CLT%7C200%22%2C%22e%7CLT%7C0.9%22%5D%7D&sb-kind=a&limit=1000&sb-class=KBO,SDO,RES&full_prec=Y&format=json
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22a%7CLT%7C200%22%2C%22e%7CLT%7C0.9%22%5D%7D&sb-kind=a&limit=1000&sb-class=TNO&full-prec=true
   ttl 86400
   force gravity
-  url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22a%7CLT%7C200%22%2C%22e%7CLT%7C0.9%22%5D%7D&sb-kind=a&limit=1000&sb-class=KBO,SDO,RES&full_prec=Y&format=json
+  url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22a%7CLT%7C200%22%2C%22e%7CLT%7C0.9%22%5D%7D&sb-kind=a&limit=1000&sb-class=TNO&full-prec=true
   map data
   lat 0.0
   lon 0.0
