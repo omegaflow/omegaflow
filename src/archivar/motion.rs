@@ -1,4 +1,5 @@
 use super::*;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub const CHEBYSHEV_N: usize = 18;
 
@@ -88,6 +89,21 @@ pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
     let pm = bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH) + d_pm;
     (ra, dec, pm)
 }
+pub fn granule_lo(e: &BodyEphemeris, jd: f64) -> Option<usize> {
+    let n = e.granules.len();
+    if n == 0 {
+        return None;
+    }
+    let mut idx = e.granule_hint.load(Ordering::Relaxed).min(n - 1);
+    while idx + 1 < n && e.granules[idx + 1].t0_jd < jd {
+        idx += 1;
+    }
+    while idx > 0 && e.granules[idx].t0_jd >= jd {
+        idx -= 1;
+    }
+    e.granule_hint.store(idx, Ordering::Relaxed);
+    Some(idx)
+}
 
 pub fn body_barycenter_position(
     name: &str,
@@ -99,8 +115,8 @@ pub fn body_barycenter_position(
         return crate::wind_orbit::position_at(orbit, tdb).map(|(p, _)| p);
     }
     let jd = tdb / 86400.0 + J2000_EPOCH;
-    let idx = e.granules.partition_point(|g| g.t0_jd < jd);
-    for i in [idx.saturating_sub(1), idx] {
+    let idx = granule_lo(e, jd)?;
+    for i in [idx, idx + 1] {
         if i >= e.granules.len() {
             continue;
         }
@@ -124,8 +140,8 @@ pub fn body_barycenter_velocity(
 ) -> Option<[f64; 3]> {
     let e = eph.get(name)?;
     let jd = tdb / 86400.0 + J2000_EPOCH;
-    let idx = e.granules.partition_point(|g| g.t0_jd < jd);
-    for i in [idx.saturating_sub(1), idx] {
+    let idx = granule_lo(e, jd)?;
+    for i in [idx, idx + 1] {
         if i >= e.granules.len() {
             continue;
         }
@@ -362,6 +378,7 @@ pub struct BodyEphemeris {
     pub rotation_matrices: Vec<(f64, [f64; 9])>,
     pub props: Option<BodyProperties>,
     pub orbit: Option<std::sync::Arc<crate::wind_orbit::OrbitRec>>,
+    pub granule_hint: std::sync::Arc<AtomicUsize>,
 }
 
 pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
@@ -603,6 +620,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             rotation_matrices,
             props,
             orbit: None,
+            granule_hint: std::sync::Arc::new(AtomicUsize::new(0)),
         })
     }
 }

@@ -627,7 +627,7 @@ field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie.bin
 format omni2_serie
 at sun
-ttl 3600
+ttl 86400
 field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 86400 0.0 0.0
 field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
 field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 86400 0.0 0.0

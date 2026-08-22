@@ -7,6 +7,7 @@ pub struct OrbitRec {
     pub pos: Vec<[f64; 3]>,
     pub vel: Vec<[f64; 3]>,
     pub median_stride: f64,
+    pub hint: std::sync::Arc<std::sync::atomic::AtomicUsize>,
 }
 
 pub fn write_bin(records: &[(f64, [f64; 3], [f64; 3])]) -> Vec<u8> {
@@ -76,20 +77,36 @@ pub fn orbit_rec(records: &[(f64, [f64; 3], [f64; 3])]) -> OrbitRec {
         pos,
         vel,
         median_stride,
+        hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     }
 }
 
 pub fn position_at(rec: &OrbitRec, t: f64) -> Option<([f64; 3], [f64; 3])> {
-    if rec.times.is_empty() {
+    let n = rec.times.len();
+    if n == 0 {
         return None;
     }
-    let idx = rec.times.partition_point(|&x| x < t);
-    if idx == 0 || idx >= rec.times.len() {
-        if idx == 0 && (rec.times[0] - t).abs() < 1.0e-6 {
+    let mut idx = rec
+        .hint
+        .load(std::sync::atomic::Ordering::Relaxed)
+        .min(n - 1);
+    while idx < n && rec.times[idx] < t {
+        idx += 1;
+    }
+    while idx > 0 && rec.times[idx - 1] >= t {
+        idx -= 1;
+    }
+    rec.hint
+        .store(idx.min(n - 1), std::sync::atomic::Ordering::Relaxed);
+    if idx == 0 {
+        if (rec.times[0] - t).abs() < 1.0e-6 {
             return Some((rec.pos[0], rec.vel[0]));
         }
-        if idx == rec.times.len() && (rec.times[idx - 1] - t).abs() < 1.0e-6 {
-            return Some((rec.pos[idx - 1], rec.vel[idx - 1]));
+        return None;
+    }
+    if idx >= n {
+        if (rec.times[n - 1] - t).abs() < 1.0e-6 {
+            return Some((rec.pos[n - 1], rec.vel[n - 1]));
         }
         return None;
     }

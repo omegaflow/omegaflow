@@ -3,7 +3,7 @@ use omegaflow::archivar::omni2::{
     COMP_V1800,
 };
 use omegaflow::cdn::upload_asset;
-use omegaflow::lsk::days_from_civil;
+use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::process::Command;
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::{Arc, Mutex};
@@ -226,6 +226,20 @@ fn main() {
     };
     let (sy, _, _) = civil_from_days(start_day);
     let (ey, _, _) = civil_from_days(end_day);
+    let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
+        Some(t) => t,
+        None => {
+            eprintln!("--lsk absent — the TDB conversion stays void (no fabricated epoch)");
+            std::process::exit(1);
+        }
+    };
+    let lsk = match parse_lsk(&lsk_text) {
+        Some(l) => l,
+        None => {
+            eprintln!("--lsk parses void — the leap-second table stays unread");
+            std::process::exit(1);
+        }
+    };
     let buckets: Arc<Mutex<std::collections::HashMap<(u32, i64), Vec<f64>>>> =
         Arc::new(Mutex::new(std::collections::HashMap::new()));
     let year_rows: Arc<Mutex<usize>> = Arc::new(Mutex::new(0));
@@ -280,11 +294,16 @@ fn main() {
         .and_then(|m| m.into_inner().ok())
         .unwrap_or_default();
     let mut raw: Vec<(f64, f64, u32)> = Vec::new();
+    let mut pre_lsk_skip = 0usize;
     for ((comp, bucket), mut vals) in buckets_guard {
         if vals.is_empty() {
             continue;
         }
-        let t = (bucket as f64 + 0.5) * decimate_s;
+        let t_unix = (bucket as f64 + 0.5) * decimate_s;
+        let Some(t) = lsk.unix_to_tdb(t_unix) else {
+            pre_lsk_skip += 1;
+            continue;
+        };
         raw.push((t, median(&mut vals), comp));
     }
     raw.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
@@ -296,13 +315,14 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!(
-        "{}: {} years, {} rows, {} fill-skipped rows, {} records ({} min buckets), epoch UTC-unix — no LSK (pre-1972 the leap-second table reads void, TDB−UTC sits below the bucket width)",
+        "{}: {} years, {} rows, {} fill-skipped rows, {} records ({} min buckets), {} buckets pre-1972 stay unharvested (leap table void, 0 honored) — epoch TDB via LSK",
         DATASET,
         ey - sy + 1,
         rows,
         fills,
         raw.len(),
-        decimate_min
+        decimate_min,
+        pre_lsk_skip
     );
     let bytes = write_bin(&raw);
     if std::fs::write(&out, &bytes).is_err() {

@@ -2499,6 +2499,7 @@ fn test_wgccre_roundtrip() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2579,6 +2580,7 @@ fn test_rotation_matrix_roundtrip() {
         rotation_matrices: vec![(jd, m)],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2659,12 +2661,14 @@ fn test_matrix_vs_wgccre_agreement() {
         rotation_matrices: vec![(jd, m)],
         props: Some(props.clone()),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let eph_test = super::BodyEphemeris {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map_matrix = HashMap::new();
     map_matrix.insert("mars".to_string(), eph_matrix);
@@ -2727,6 +2731,7 @@ fn test_rotation_matrix_empty_props() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = HashMap::new();
     map.insert("mars".to_string(), eph);
@@ -2872,6 +2877,7 @@ fn test_anchor_body_agnostic() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut eph = HashMap::new();
     eph.insert("mars".to_string(), mars_eph);
@@ -3012,6 +3018,7 @@ fn test_anchor_applies_declared_unit() {
         rotation_matrices: vec![],
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut eph = HashMap::new();
     eph.insert("mars".to_string(), mars_eph);
@@ -3562,6 +3569,7 @@ fn test_body_barycenter_velocity_linear_granule() {
         rotation_matrices: Vec::new(),
         props: None,
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     for i in -1..=1 {
         let t0 = jd_now + i as f64 * 16.0;
@@ -3814,6 +3822,7 @@ fn test_query_admits_surface_sample_within_window() {
         rotation_matrices: Vec::new(),
         props: Some(props),
         orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     for i in -1..=1 {
         let t0 = jd_now + i as f64 * 16.0;
@@ -3927,6 +3936,7 @@ fn test_wind_orbit_bin_positions_when_present() {
         rotation_matrices: Vec::new(),
         props: None,
         orbit: Some(rec),
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
     let mut map = std::collections::HashMap::new();
     map.insert("wind".to_string(), eph);
