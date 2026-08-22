@@ -24,6 +24,7 @@ pub mod membrane;
 pub mod channels;
 pub mod port;
 pub mod render;
+pub mod frames;
 pub mod ingress;
 pub mod main_flow;
 #[cfg(test)]
@@ -41,6 +42,7 @@ pub use membrane::*;
 pub use channels::*;
 pub use port::*;
 pub use render::*;
+pub use frames::*;
 pub use ingress::*;
 pub use main_flow::*;
 

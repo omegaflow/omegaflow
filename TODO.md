@@ -927,6 +927,16 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   render_source_url/render_source_body — Schablonen-Ersetzung, kein
   Portieren) → archivar/render.rs; angular_distance_deg bleibt
   Sondier-Werkzeug.
+- Rahmen-Lerner — WAHR (2026-08-22, Ratsbeschluss): port.rs trug ein
+  selbstlernendes Register (derive_frame/draft_frame_guess/
+  build_frame_registry/learn_frames/CELESTIAL_NETLOCS — trägt
+  phi/pipeline/frame_learned.φ) → archivar/frames.rs; die Modes
+  bleiben die Eingänge des Ports.
+- CDN-Namensgeber — pending (2026-08-22, Ratsbeschluss): fetch.rs
+  trägt unter dem Namen „fetch" die Namens-Konvention
+  (source_name_from_url/route_key/cdn_manifest_map) — eine dritte
+  Etage; benannt, nicht geschnitten (Über-Schneiden wäre der
+  Modetrieb).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
@@ -1715,9 +1725,9 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Sample-Budget des Feldes (kritisch, eigenes Atom): die Summe aller
   Katalog-Blöcke (Sterne 1.19 M + Asteroiden 1.56 M + NVSS 1.8 M +
   FIRST 1.1 M + Chandra 0.4 M + vier Chunks 1.4 M + …) liegt über
-  MAX_SAMPLES (1<<22, src/archivar.rs:9038) — der Rebuild hält die
+  MAX_SAMPLES (1<<22, src/archivar/membrane.rs:32) — der Rebuild hält die
   jüngsten Samples und wirft die ältesten (epoch 0.0 = Sterne +
-  Kataloge, archivar.rs:15543). Welcher Anteil der epoch-0.0-Samples
+  Kataloge, src/archivar/main_flow.rs:2166). Welcher Anteil der epoch-0.0-Samples
   überlebt, ist ungemessen — die Messung ist die Vorbedingung für jeden
   weiteren Katalog-Block (Commit 2 des chunk-plans).
 - Pfeiler-Registratur Nadel V (Farbe, kritisch): die JSON-Kataloge
@@ -2054,6 +2064,21 @@ wird erst auf das Wort des Operators; bis dahin pending (0 honored).
   MiniSEED-Envelopen.
 
 ## Doku-Drift
+
+Doku-Drift (2026-08-22, nach den Monolith-Schnitten): TODO.md trägt
+tote Anker auf die alten Monolithen — remappt im selben Zug: 325
+(→ extract.rs), 932 (→ window.rs:2388), 1662/1664 (MAX_SAMPLES →
+membrane.rs:32, der Rebuild-Wurf → main_flow.rs:2166 — gemessen gegen
+die Lesung spatial/membrane, der Wurf liegt in main_flow),
+blocked_sources.φ:6 (→ extract.rs:1025). Offen (Registrierpflicht für
+die Session, die diese Zeilen berührt — kein eigener Auftrag): 447/452
+(→ actuators.rs/window.rs), 449 (→ main_flow.rs), 716–731 (machines:
+957-Zeilen-Stand → enso/solar/verdict, 1 939 vor Schnitt), 1025
+(query_hash → spatial.rs), 1115 + 1755 (historisch — beschreiben den
+Zustand vor dem Schnitt), 1223/1295 (9134/9268/10114 → tests.rs),
+1305 (→ actuators.rs), 1895 (is_finite-Gate → bei Berührung vermessen,
+Kandidat units.rs). Handover/Surveys bleiben unverändert (Doktrin: ihr
+Anker ist die Wahrheit ihres Datums).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.

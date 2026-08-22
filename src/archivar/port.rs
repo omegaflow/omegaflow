@@ -10,6 +10,7 @@ pub fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
 
 
 
+
 pub fn port_field_synth(
     directive: &str,
     force: &str,
@@ -24,6 +25,7 @@ pub fn port_field_synth(
         directive, key, name, kernel, f, tau
     ))
 }
+
 
 
 
@@ -240,6 +242,7 @@ pub fn port_block(block: &str) -> String {
 
 
 
+
 pub fn flush_port_block(block: &str, converted: &mut String, total: &mut usize, parsed: &mut usize) {
     *total += 1;
     let conv = port_block(block);
@@ -249,6 +252,7 @@ pub fn flush_port_block(block: &str, converted: &mut String, total: &mut usize, 
         converted.push('\n');
     }
 }
+
 
 
 
@@ -303,6 +307,7 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
     );
     0
 }
+
 
 
 
@@ -428,6 +433,7 @@ pub fn probe_one(
 
 
 
+
 pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
     let Some(lsk) = embedded_lsk() else {
         eprintln!("reverify: the time base is absent — no sweep without a clock");
@@ -481,6 +487,7 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
         }
     }
 }
+
 
 
 
@@ -606,6 +613,7 @@ pub fn probe_mode(
 
 
 
+
 pub fn extract_all_template_values(
     substituted_url: &str,
     template_url: &str,
@@ -673,6 +681,7 @@ pub fn extract_all_template_values(
 
 
 
+
 pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64) -> String {
     let spatial: &[&str] = &["{lat}", "{lon}", "{x}", "{y}", "{z}"];
     let has_spatial = spatial.iter().any(|v| template_url.contains(v));
@@ -711,6 +720,7 @@ pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64)
 
 
 
+
 pub fn probe_ttl(body: &str) -> Option<u64> {
     let val = parse_json(body)?;
     match val {
@@ -738,6 +748,7 @@ pub fn probe_ttl(body: &str) -> Option<u64> {
 
 
 
+
 pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
     if let JsonVal::Obj(map) = val {
         for (k, v) in map {
@@ -750,6 +761,7 @@ pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
     }
     None
 }
+
 
 
 
@@ -773,6 +785,7 @@ pub fn is_coord_key(key: &str) -> bool {
 
 
 
+
 pub fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<String> {
     let fid = force_id_of(force)?;
     let kid = kernel_id_for_force(fid)?;
@@ -781,6 +794,7 @@ pub fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<
         key, key, kid, force, unit, tau
     ))
 }
+
 
 
 
@@ -830,6 +844,7 @@ pub fn probe_csv(raw: &str) -> Option<String> {
         Some(out)
     }
 }
+
 
 
 
@@ -906,6 +921,7 @@ pub fn probe_classify(key: &str) -> (&str, &str, f64) {
         ("UNCERTAIN", "", 0.0)
     }
 }
+
 
 
 
@@ -1115,6 +1131,7 @@ pub fn walk_json_probe(
 
 
 
+
 pub fn coord_unit(key: &str) -> &'static str {
     let kl = key.to_lowercase();
     if kl == "altitude" || kl == "alt" || kl.contains("depth") {
@@ -1123,6 +1140,7 @@ pub fn coord_unit(key: &str) -> &'static str {
         "deg"
     }
 }
+
 
 
 
@@ -1143,6 +1161,7 @@ pub fn coord_directive(key: &str) -> &'static str {
 
 
 
+
 pub fn coord_precision(a: f64, b: f64) -> usize {
     let diff = (a - b).abs();
     if diff == 0.0 {
@@ -1156,6 +1175,7 @@ pub fn coord_precision(a: f64, b: f64) -> usize {
     }
     p
 }
+
 
 
 
@@ -1198,6 +1218,7 @@ pub fn measure_precision(val: &JsonVal) -> String {
         _ => String::new(),
     }
 }
+
 
 
 
@@ -1259,6 +1280,7 @@ pub fn find_coord_precisions(a: &JsonVal, b: &JsonVal, prefix: &str, out: &mut S
 }
 
 
+
 pub fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
     if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
         if channels.is_empty() {
@@ -1266,6 +1288,7 @@ pub fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSecon
         }
     }
 }
+
 
 
 
@@ -1488,6 +1511,7 @@ pub fn ci_mode(dir: &str) -> i32 {
 
 
 
+
 pub fn mirror_stations(
     src: &SourceConfig,
     headers: &[(String, String)],
@@ -1533,6 +1557,7 @@ pub fn mirror_stations(
         }
     }
 }
+
 
 
 
@@ -1616,6 +1641,7 @@ pub fn probe_fanout(
 
 
 
+
 pub fn probe_template(
     src: &SourceConfig,
     headers: &[(String, String)],
@@ -1667,22 +1693,6 @@ pub fn probe_template(
     }
 }
 
-
-
-pub fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
-    if coords.contains("lat ") || coords.contains("lon ") {
-        (
-            "on earth 0 0\n".to_string(),
-            "geographic coords".to_string(),
-        )
-    } else if coords.contains("ra ") || coords.contains("dec ") {
-        ("at sun\n".to_string(), "celestial coords".to_string())
-    } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
-        ("at sun\n".to_string(), "celestial ra/dec".to_string())
-    } else {
-        ("".to_string(), "frame pending".to_string())
-    }
-}
 
 
 
@@ -1811,166 +1821,6 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
 
 
 
-pub const CELESTIAL_NETLOCS: &[&str] = &[
-    "tapvizier.cds.unistra.fr",
-    "vizier.cds.unistra.fr",
-    "cds.unistra.fr",
-    "irsa.ipac.caltech.edu",
-    "dc.g-vo.org",
-    "gaia.ari.uni-heidelberg.de",
-    "exoplanetarchive.ipac.caltech.edu",
-    "heasarc.gsfc.nasa.gov",
-    "simbad.u-strasbg.fr",
-    "gea.esac.esa.int",
-    "wis-tns.org",
-    "ssd.jpl.nasa.gov",
-    "ssd-api.jpl.nasa.gov",
-    "naif.jpl.nasa.gov",
-    "archive.stsci.edu",
-    "mast.stsci.edu",
-    "archive.gemini.edu",
-    "archive.nrao.edu",
-    "skyserver.sdss.org",
-    "atnf.csiro.au",
-    "noirlab.edu",
-    "eso.org",
-    "astrocats.space",
-];
-
-
-
-pub fn draft_frame_guess(
-    url: &str,
-    context: &str,
-    registry: &HashMap<String, String>,
-) -> (String, String) {
-    let netloc = extract_netloc(url).unwrap_or_default();
-    for key in route_prefix_keys(url) {
-        if let Some(f) = registry.get(&key) {
-            return (format!("{}\n", f), format!("route-registry: {}", f));
-        }
-    }
-    for n in CELESTIAL_NETLOCS {
-        if netloc == *n || netloc.ends_with(n) {
-            return ("at sun\n".to_string(), "celestial netloc".to_string());
-        }
-    }
-    let lower = context.to_lowercase();
-    for w in [
-        "station",
-        "buoy",
-        "quake",
-        "earthquake",
-        "weather",
-        "wind",
-        "temperature",
-        "water",
-        "tide",
-        "sea ",
-        "ocean",
-        "snow",
-        "rain",
-        "seismic",
-        "metar",
-        "airport",
-        "pegel",
-        "air quality",
-        "hurricane",
-    ] {
-        if lower.contains(w) {
-            return (
-                "on earth 0 0\n".to_string(),
-                format!("terrestrial vocab: {}", w.trim()),
-            );
-        }
-    }
-    ("".to_string(), "frame pending".to_string())
-}
-
-
-
-pub fn build_frame_registry() -> HashMap<String, String> {
-    let mut map: HashMap<String, String> = HashMap::new();
-    for path in [
-        "phi/sources.φ",
-        "phi/dead_sources.φ",
-        "phi/blocked_sources.φ",
-    ] {
-        let Ok(content) = std::fs::read_to_string(path) else {
-            continue;
-        };
-        let mut cur_url: Option<String> = None;
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                cur_url = Some(rest.trim().to_string());
-            } else if let Some(url) = &cur_url {
-                if t.starts_with("on ") {
-                    if let Some(rk) = route_key(url) {
-                        map.entry(rk).or_insert_with(|| "on earth".to_string());
-                    }
-                } else if let Some(rest) = t.strip_prefix("at ") {
-                    let body = rest.split_whitespace().next().unwrap_or("sun");
-                    if let Some(rk) = route_key(url) {
-                        map.entry(rk).or_insert_with(|| format!("at {}", body));
-                    }
-                }
-            }
-        }
-    }
-    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if t.is_empty() || t.starts_with('#') {
-                continue;
-            }
-            if let Some((nl, frame)) = t.split_once('|') {
-                let nl = nl.trim();
-                let frame = frame.trim();
-                if !nl.is_empty() && !frame.is_empty() {
-                    map.entry(nl.to_string())
-                        .or_insert_with(|| frame.to_string());
-                }
-            }
-        }
-    }
-    map
-}
-
-
-
-pub fn learn_frames(new: &HashMap<String, String>) {
-    let mut map: HashMap<String, String> = HashMap::new();
-    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if t.is_empty() || t.starts_with('#') {
-                continue;
-            }
-            if let Some((nl, frame)) = t.split_once('|') {
-                map.insert(nl.trim().to_string(), frame.trim().to_string());
-            }
-        }
-    }
-    for (nl, frame) in new {
-        map.entry(nl.to_string())
-            .or_insert_with(|| frame.to_string());
-    }
-    let mut out = String::from(
-            "# frame-learned — route (host/path, query stripped) → frame, self-learning from probe responses (--draft)\n",
-        );
-    let mut keys: Vec<(&String, &String)> = map.iter().collect();
-    keys.sort();
-    for (nl, frame) in keys {
-        out.push_str(&format!("{} | {}\n", nl, frame));
-    }
-    std::fs::create_dir_all("phi/pipeline").ok();
-    if std::fs::write("phi/pipeline/frame_learned.φ", out).is_err() {
-        eprintln!("write phi/pipeline/frame_learned.φ: the register does not remember");
-    }
-}
-
-
 
 pub fn draft_context_mode(path: &str) -> i32 {
     let drafts = match std::fs::read_to_string(path) {
@@ -2091,6 +1941,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
 
 
 
+
 pub fn gate_learn_mode() -> i32 {
     let mut delta: Vec<(i32, String, String)> = Vec::new();
     let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
@@ -2183,6 +2034,7 @@ pub fn gate_learn_mode() -> i32 {
         );
     0
 }
+
 
 
 
