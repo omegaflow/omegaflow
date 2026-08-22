@@ -2,7 +2,7 @@
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: survey
   date: 2026-08-21
-  sha256: 8cab868ca8304f1b0e7243d6a71a9fde7ad2df177d6471a802723a6bf9ce7439
+  sha256: cda42380c54b5bd6e689721f1083ff57713f02369a2eb35d7ed6982daaf91c2b
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/concepts/kybernetische-astrophysik.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-corona-heizung.md
 -->
@@ -179,11 +179,23 @@ gemessen und geschlossen:
 
 0 honored: die Stille der Tages-Skala ist der Befund, kein Fehler. Was
 das Rätsel löst (Alfvén-Wellen vs. Nanoflares) ist damit NICHT
-entschieden — dafür fehlen die Minuten-fam und die sub-minütige
-Auflösung. Die Maschine hinter diesem Blatt ist goldstandard-validiert:
+entschieden — drei getrennte Lücken halten das zurück, jede für sich
+eine andere Art:
+
+1. **Sub-minütige Auflösung** (Datenlücke): der Alfvén-Lag ~100 s liegt
+   an der Grenze der 60-s-Zellen — die Live-Kanäle tragen keine
+   sub-minütige Kadenz, also keine Zelle, die den Effekt auflöst.
+2. **Minuten-fam** (Statistiklücke): die zwei Minuten-Befunde (EUV→X-Ray,
+   Bz→X-Ray) tragen nur die per-Paar-Schwelle, keine Familien-Schwelle
+   über die ganze Minuten-Matrix — die Daten liegen, die Korrektur
+   fehlt.
+3. **Multi-Force-TE** (Methodenlücke): die paarweise TE konditioniert nur
+   auf die eigene Vergangenheit des Ziels; die bedingte TE über den
+   Phasenraum aller Kräfte (nobel_probe_corona v2) steht aus.
+
+Die Maschine hinter diesem Blatt ist goldstandard-validiert:
 `src/bin/te_ground_truth.rs` rekonstruiert die Schreiber-2000-Referenz
 (unidirektional gekoppelte Hénon-Maps) — TE(X→Y) = 2,46e-1,
 Asymmetrie 6,75× zur Gegenrichtung, nur die Familien-Schwelle stellt
 den Gegenrichtungs-Rest still (fam = 4,55e-2), die c=0-Kontrolle bleibt
-still. Offene Pflichten bleiben: die Minuten-fam und die Multi-Force-TE
-(nobel_probe_corona v2).
+still.
