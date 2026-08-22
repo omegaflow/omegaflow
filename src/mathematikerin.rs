@@ -3,7 +3,8 @@ use crate::archivar::{
     SampleRecord, PARSEC_M,
 };
 use crate::machines::{
-    EnsoCell, EnsoSeries, EnsoStation, SolarCell, SolarChannel, SOLAR_COARSE_GRID, SOLAR_FAST_GRID,
+    le_bytes_f32, te_absence_word, te_read_verdict, EnsoCell, EnsoMachine, SolarCell, SolarMachine,
+    TE_SERIES_BYTES, TE_SERIES_STRIDE,
 };
 const FIELD_WGSL: &str = r#"
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
@@ -816,157 +817,6 @@ const THRUST_STEP: f64 = 64.0;
 const JUMP_BODIES: [&str; 9] = [
     "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
-const SOLAR_RING_MAX: usize = 256;
-const SOLAR_N_GATE: usize = 30;
-const SOLAR_FAST_PAIRS: [(SolarChannel, SolarChannel); 20] = [
-    (SolarChannel::Xray, SolarChannel::Euv304),
-    (SolarChannel::Xray, SolarChannel::Euv284),
-    (SolarChannel::Xray, SolarChannel::BzGsm),
-    (SolarChannel::Xray, SolarChannel::Density),
-    (SolarChannel::Euv304, SolarChannel::Xray),
-    (SolarChannel::Euv304, SolarChannel::Euv284),
-    (SolarChannel::Euv304, SolarChannel::BzGsm),
-    (SolarChannel::Euv304, SolarChannel::Density),
-    (SolarChannel::Euv284, SolarChannel::Xray),
-    (SolarChannel::Euv284, SolarChannel::Euv304),
-    (SolarChannel::Euv284, SolarChannel::BzGsm),
-    (SolarChannel::Euv284, SolarChannel::Density),
-    (SolarChannel::BzGsm, SolarChannel::Xray),
-    (SolarChannel::BzGsm, SolarChannel::Euv304),
-    (SolarChannel::BzGsm, SolarChannel::Euv284),
-    (SolarChannel::BzGsm, SolarChannel::Density),
-    (SolarChannel::Density, SolarChannel::Xray),
-    (SolarChannel::Density, SolarChannel::Euv304),
-    (SolarChannel::Density, SolarChannel::Euv284),
-    (SolarChannel::Density, SolarChannel::BzGsm),
-];
-const SOLAR_COARSE_PAIRS: [(SolarChannel, SolarChannel); 6] = [
-    (SolarChannel::F107, SolarChannel::Xray),
-    (SolarChannel::F107, SolarChannel::Euv304),
-    (SolarChannel::F107, SolarChannel::Euv284),
-    (SolarChannel::Xray, SolarChannel::F107),
-    (SolarChannel::Euv304, SolarChannel::F107),
-    (SolarChannel::Euv284, SolarChannel::F107),
-];
-
-const ENSO_STATION_COUNT: usize = EnsoStation::ALL.len();
-const ENSO_SERIES_COUNT: usize = EnsoSeries::ALL.len();
-const ENSO_PAIR_COUNT: usize = ENSO_SERIES_COUNT * (ENSO_SERIES_COUNT - 1) / 2;
-const ENSO_RING_MAX: usize = 1024;
-const ENSO_PROBE_MAX: usize = 512;
-const TE_SERIES_STRIDE: usize = 1024;
-const TE_SERIES_BYTES: u64 = (12 * TE_SERIES_STRIDE * 4) as u64;
-const ENSO_N_GATE: usize = 30;
-const ENSO_SCALES: [f32; 3] = [1.0, 0.5, 2.0];
-const ENSO_SCALE_NAMES: [&str; 3] = ["h", "h/2", "2h"];
-const ENSO_SHIFT_STEP_BINS: i64 = 4;
-const ENSO_SHIFT_MAX_DAYS: i64 = 30;
-const ENSO_SHIFT_COUNT: usize = (ENSO_SHIFT_MAX_DAYS * 2 + 1) as usize;
-const ENSO_CELLS_PER_SCALE: usize = ENSO_SHIFT_COUNT * 2;
-const ENSO_CELLS_PER_ROUND: usize = ENSO_CELLS_PER_SCALE * ENSO_SCALES.len();
-
-fn enso_pair(pair_idx: usize) -> (EnsoSeries, EnsoSeries) {
-    let mut k = 0usize;
-    for i in 0..ENSO_SERIES_COUNT {
-        for j in (i + 1)..ENSO_SERIES_COUNT {
-            if k == pair_idx {
-                return (EnsoSeries::ALL[i], EnsoSeries::ALL[j]);
-            }
-            k += 1;
-        }
-    }
-    unreachable!()
-}
-
-fn enso_cell_desc(cell_idx: usize) -> (u8, u8, i64) {
-    let scale_idx = (cell_idx / ENSO_CELLS_PER_SCALE) as u8;
-    let rest = cell_idx % ENSO_CELLS_PER_SCALE;
-    let dir = (rest / ENSO_SHIFT_COUNT) as u8;
-    let shift_days = rest as i64 % ENSO_SHIFT_COUNT as i64 - ENSO_SHIFT_MAX_DAYS;
-    (scale_idx, dir, shift_days)
-}
-
-fn enso_shift_pair(
-    driver: &[(u64, f32)],
-    target: &[(u64, f32)],
-    shift_bins: i64,
-) -> (Vec<f32>, Vec<f32>) {
-    let mut ys = Vec::new();
-    let mut xs = Vec::new();
-    for &(tb, tv) in target {
-        let Some(db) = tb.checked_sub_signed(shift_bins) else {
-            continue;
-        };
-        let Ok(i) = driver.binary_search_by_key(&db, |&(b, _)| b) else {
-            continue;
-        };
-        ys.push(driver[i].1);
-        xs.push(tv);
-    }
-    if ys.len() > ENSO_RING_MAX {
-        let drop = ys.len() - ENSO_RING_MAX;
-        ys.drain(..drop);
-        xs.drain(..drop);
-    }
-    (ys, xs)
-}
-
-struct EnsoCellVerdict {
-    dir: u8,
-    shift: i64,
-    n: usize,
-    te: f64,
-    thr: f64,
-}
-
-struct EnsoAccum {
-    m: usize,
-    fam: f64,
-    fam_any: bool,
-    surr_over: usize,
-    surr_total: usize,
-    cells1: Vec<EnsoCellVerdict>,
-    small: Vec<EnsoCellVerdict>,
-}
-
-impl EnsoAccum {
-    fn fresh() -> EnsoAccum {
-        EnsoAccum {
-            m: 0,
-            fam: 0.0,
-            fam_any: false,
-            surr_over: 0,
-            surr_total: 0,
-            cells1: Vec::new(),
-            small: Vec::new(),
-        }
-    }
-}
-
-struct EnsoMatrixAccum {
-    pairs: usize,
-    arrows: usize,
-    family: usize,
-    h_bound: usize,
-    silent: usize,
-    absent: usize,
-    expected: f64,
-}
-
-impl EnsoMatrixAccum {
-    fn fresh() -> EnsoMatrixAccum {
-        EnsoMatrixAccum {
-            pairs: 0,
-            arrows: 0,
-            family: 0,
-            h_bound: 0,
-            silent: 0,
-            absent: 0,
-            expected: 0.0,
-        }
-    }
-}
-
 pub type Record = SampleRecord;
 
 pub struct PackedWindow {
@@ -1423,14 +1273,6 @@ fn window_state_save(path: &str, grid_step: f64, p: [f64; 3], q: [f64; 4]) {
     let _ = std::fs::write(path, text);
 }
 
-fn le_bytes_f32(v: &[f32]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(v.len() * 4);
-    for x in v {
-        out.extend_from_slice(&x.to_le_bytes());
-    }
-    out
-}
-
 fn storage_entry(read_only: bool, visibility: wgpu::ShaderStages) -> wgpu::BindGroupLayoutEntry {
     wgpu::BindGroupLayoutEntry {
         binding: 0,
@@ -1572,41 +1414,8 @@ struct NativeApp {
     ring_filled: usize,
     ring_gen: u64,
     pe_ring: Vec<f64>,
-    solar_rx: mpsc::Receiver<SolarCell>,
-    solar_rings: [[Vec<(u64, f32)>; 6]; 2],
-    solar_fast_rotor: usize,
-    solar_coarse_rotor: usize,
-    solar_fast_last_bin: u64,
-    solar_coarse_last_bin: u64,
-    solar_fast_due: bool,
-    solar_coarse_due: bool,
-    solar_te_bind: Option<wgpu::BindGroup>,
-    solar_te_series_buf: Option<wgpu::Buffer>,
-    solar_te_param_buf: Option<wgpu::Buffer>,
-    solar_te_out_buf: Option<wgpu::Buffer>,
-    solar_te_read_buf: Option<wgpu::Buffer>,
-    solar_te_map: Option<Arc<AtomicBool>>,
-    solar_pending: Option<(String, usize)>,
-    solar_te_named: String,
-    enso_rx: mpsc::Receiver<EnsoCell>,
-    enso_rings: [[Vec<(u64, f32)>; ENSO_SERIES_COUNT]; ENSO_STATION_COUNT],
-    enso_rotor: usize,
-    enso_due: [bool; ENSO_STATION_COUNT],
-    enso_max_bin: [u64; ENSO_STATION_COUNT],
-    enso_last_round_bin: [u64; ENSO_STATION_COUNT],
-    enso_pair: [usize; ENSO_STATION_COUNT],
-    enso_cell: [usize; ENSO_STATION_COUNT],
-    enso_accum: [EnsoAccum; ENSO_STATION_COUNT],
-    enso_matrix: [EnsoMatrixAccum; ENSO_STATION_COUNT],
-    enso_te_bind: Option<wgpu::BindGroup>,
-    enso_te_series_buf: Option<wgpu::Buffer>,
-    enso_te_param_buf: Option<wgpu::Buffer>,
-    enso_te_out_buf: Option<wgpu::Buffer>,
-    enso_te_read_buf: Option<wgpu::Buffer>,
-    enso_te_map: Option<Arc<AtomicBool>>,
-    enso_pending: Option<(usize, usize, usize)>,
-    enso_pending_n: usize,
-    enso_te_named: String,
+    solar: SolarMachine,
+    enso: EnsoMachine,
     hud_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
     frame_ms_ema: f64,
     field_permeability: f32,
@@ -1680,7 +1489,6 @@ impl NativeApp {
             consent,
             acoustic_tx,
             seismic_tx,
-            solar_rx,
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
             window: None,
             surface: None,
@@ -1735,40 +1543,8 @@ impl NativeApp {
             ring_filled: 0,
             ring_gen: 0,
             pe_ring: Vec::with_capacity(16),
-            solar_rings: std::array::from_fn(|_| std::array::from_fn(|_| Vec::new())),
-            solar_fast_rotor: 0,
-            solar_coarse_rotor: 0,
-            solar_fast_last_bin: 0,
-            solar_coarse_last_bin: 0,
-            solar_fast_due: false,
-            solar_coarse_due: false,
-            solar_te_bind: None,
-            solar_te_series_buf: None,
-            solar_te_param_buf: None,
-            solar_te_out_buf: None,
-            solar_te_read_buf: None,
-            solar_te_map: None,
-            solar_pending: None,
-            solar_te_named: String::new(),
-            enso_rx,
-            enso_rings: std::array::from_fn(|_| std::array::from_fn(|_| Vec::new())),
-            enso_rotor: 0,
-            enso_due: [false; ENSO_STATION_COUNT],
-            enso_max_bin: [0; ENSO_STATION_COUNT],
-            enso_last_round_bin: [0; ENSO_STATION_COUNT],
-            enso_pair: [0; ENSO_STATION_COUNT],
-            enso_cell: [0; ENSO_STATION_COUNT],
-            enso_accum: std::array::from_fn(|_| EnsoAccum::fresh()),
-            enso_matrix: std::array::from_fn(|_| EnsoMatrixAccum::fresh()),
-            enso_te_bind: None,
-            enso_te_series_buf: None,
-            enso_te_param_buf: None,
-            enso_te_out_buf: None,
-            enso_te_read_buf: None,
-            enso_te_map: None,
-            enso_pending: None,
-            enso_pending_n: 0,
-            enso_te_named: String::new(),
+            solar: SolarMachine::new(solar_rx),
+            enso: EnsoMachine::new(enso_rx),
             hud_topology: None,
             frame_ms_ema: 0.0,
             field_permeability: 0.0,
@@ -1875,27 +1651,6 @@ impl NativeApp {
         }
     }
 
-    fn te_read_verdict(read_buf: &wgpu::Buffer) -> [f32; 72] {
-        let data = read_buf.slice(..).get_mapped_range();
-        let mut verdict = [0f32; 72];
-        for k in 0..72 {
-            let mut b = [0u8; 4];
-            b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-            verdict[k] = f32::from_le_bytes(b);
-        }
-        drop(data);
-        read_buf.unmap();
-        verdict
-    }
-
-    fn te_absence_word(verdict: &[f32; 72]) -> &'static str {
-        if verdict[10] != 1.0 {
-            "real series invalid"
-        } else {
-            "fewer than two surrogates"
-        }
-    }
-
     fn te_probe(
         &mut self,
         xs: &[f32],
@@ -1907,7 +1662,7 @@ impl NativeApp {
         if let Some(prev) = self.te_map.take() {
             if prev.load(Ordering::SeqCst) {
                 let read_buf = self.te_read_buf.as_ref()?;
-                let verdict = Self::te_read_verdict(read_buf);
+                let verdict = te_read_verdict(read_buf);
                 carry = crate::te::topological_verdict_from_gpu(&verdict);
             } else {
                 self.te_map = Some(prev);
@@ -1967,586 +1722,15 @@ impl NativeApp {
             }
             return carry;
         }
-        let verdict = Self::te_read_verdict(read_buf);
+        let verdict = te_read_verdict(read_buf);
         let v = crate::te::topological_verdict_from_gpu(&verdict);
         let final_v = v.or(carry);
         if final_v.is_some() {
             self.te_say("verdict present");
         } else {
-            self.te_say(Self::te_absence_word(&verdict));
+            self.te_say(te_absence_word(&verdict));
         }
         final_v
-    }
-
-    fn solar_say(
-        &mut self,
-        label: &str,
-        n: usize,
-        verdict: Option<&crate::te::TopologicalVerdict>,
-        state: &str,
-    ) {
-        let line = match verdict {
-            Some(v) => format!(
-                "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
-                label,
-                n,
-                v.te,
-                v.threshold,
-                v.tau_x,
-                v.tau_y,
-                v.pe_x
-                    .map(|p| format!("{:.2}", p))
-                    .unwrap_or_else(|| "-".to_string()),
-                v.pe_y
-                    .map(|p| format!("{:.2}", p))
-                    .unwrap_or_else(|| "-".to_string()),
-                state
-            ),
-            None => format!("solar te {} n {} state {}", label, n, state),
-        };
-        if self.solar_te_named != line {
-            eprintln!("{}", line);
-            self.solar_te_named = line;
-        }
-    }
-
-    fn solar_pair(
-        &self,
-        grid: usize,
-        from: SolarChannel,
-        to: SolarChannel,
-    ) -> (Vec<f32>, Vec<f32>) {
-        let ra = &self.solar_rings[grid][from.idx()];
-        let rb = &self.solar_rings[grid][to.idx()];
-        let mut xs = Vec::new();
-        let mut ys = Vec::new();
-        let (mut i, mut j) = (0usize, 0usize);
-        while i < ra.len() && j < rb.len() {
-            match ra[i].0.cmp(&rb[j].0) {
-                std::cmp::Ordering::Less => i += 1,
-                std::cmp::Ordering::Greater => j += 1,
-                std::cmp::Ordering::Equal => {
-                    ys.push(ra[i].1);
-                    xs.push(rb[j].1);
-                    i += 1;
-                    j += 1;
-                }
-            }
-        }
-        if xs.len() > SOLAR_RING_MAX {
-            let drop = xs.len() - SOLAR_RING_MAX;
-            xs.drain(..drop);
-            ys.drain(..drop);
-        }
-        (xs, ys)
-    }
-
-    fn solar_collect(&mut self) {
-        let Some(prev) = self.solar_te_map.take() else {
-            return;
-        };
-        if !prev.load(Ordering::SeqCst) {
-            self.solar_te_map = Some(prev);
-            return;
-        }
-        let Some(read_buf) = self.solar_te_read_buf.as_ref() else {
-            return;
-        };
-        let verdict = Self::te_read_verdict(read_buf);
-        let v = crate::te::topological_verdict_from_gpu(&verdict);
-        if let Some((l, n)) = self.solar_pending.take() {
-            match v {
-                Some(vv) => {
-                    let state = if vv.te > vv.threshold {
-                        "arrow"
-                    } else {
-                        "silent"
-                    };
-                    self.solar_say(&l, n, Some(&vv), state);
-                }
-                None => self.solar_say(&l, n, None, Self::te_absence_word(&verdict)),
-            }
-        }
-    }
-
-    fn solar_te_probe(&mut self, label: &str, xs: &[f32], ys: &[f32], m: usize) {
-        let Some(device) = self.device.clone() else {
-            return;
-        };
-        let Some(queue) = self.queue.clone() else {
-            return;
-        };
-        let Some(pipe) = self.te_pipe.as_ref() else {
-            return;
-        };
-        let Some(bind) = self.solar_te_bind.as_ref() else {
-            return;
-        };
-        let Some(series_buf) = self.solar_te_series_buf.as_ref() else {
-            return;
-        };
-        let Some(param_buf) = self.solar_te_param_buf.as_ref() else {
-            return;
-        };
-        let Some(out_buf) = self.solar_te_out_buf.as_ref() else {
-            return;
-        };
-        let Some(read_buf) = self.solar_te_read_buf.as_ref() else {
-            return;
-        };
-        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
-        data[0..m].copy_from_slice(&xs);
-        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
-        let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..10 {
-            let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
-            let off = (2 + s) * TE_SERIES_STRIDE;
-            data[off..off + m].copy_from_slice(&surr);
-        }
-        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
-        let max_lag = (m as f64 / Φ) as u32;
-        let param = [m as u32, max_lag, 1.0f32.to_bits(), 0];
-        let mut pb = [0u8; 16];
-        for (i, x) in param.iter().enumerate() {
-            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
-        }
-        queue.write_buffer(param_buf, 0, &pb);
-        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        {
-            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
-            pass.set_pipeline(pipe);
-            pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
-        }
-        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
-        queue.submit(std::iter::once(enc.finish()));
-        let mapped = Arc::new(AtomicBool::new(false));
-        let m2 = mapped.clone();
-        let slice = read_buf.slice(..);
-        slice.map_async(wgpu::MapMode::Read, move |r| {
-            m2.store(r.is_ok(), Ordering::SeqCst);
-        });
-        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
-        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
-            device.poll(wgpu::Maintain::Poll);
-        }
-        if !mapped.load(Ordering::SeqCst) {
-            self.solar_te_map = Some(mapped);
-            self.solar_pending = Some((label.to_string(), m));
-            self.solar_say(label, m, None, "readback pending");
-            return;
-        }
-        let verdict = Self::te_read_verdict(read_buf);
-        match crate::te::topological_verdict_from_gpu(&verdict) {
-            Some(v) => {
-                let state = if v.te > v.threshold {
-                    "arrow"
-                } else {
-                    "silent"
-                };
-                self.solar_say(label, m, Some(&v), state);
-            }
-            None => self.solar_say(label, m, None, Self::te_absence_word(&verdict)),
-        }
-    }
-
-    fn solar_dispatch(&mut self, grid: usize, from: SolarChannel, to: SolarChannel) {
-        let label = format!("{}→{}", from.name(), to.name());
-        let (xs, ys) = self.solar_pair(grid, from, to);
-        if xs.len() < SOLAR_N_GATE {
-            self.solar_say(&label, xs.len(), None, "no statement");
-            return;
-        }
-        self.solar_te_probe(&label, &xs, &ys, xs.len());
-    }
-
-    fn solar_tick(&mut self) {
-        let mut max_fast_bin = self.solar_fast_last_bin;
-        let mut max_coarse_bin = self.solar_coarse_last_bin;
-        while let Ok(cell) = self.solar_rx.try_recv() {
-            let grid = match cell.grid {
-                SOLAR_FAST_GRID => 0,
-                SOLAR_COARSE_GRID => 1,
-                _ => continue,
-            };
-            let ring = &mut self.solar_rings[grid][cell.channel.idx()];
-            match ring.binary_search_by_key(&cell.bin, |&(b, _)| b) {
-                Ok(i) => ring[i] = (cell.bin, cell.value),
-                Err(i) => ring.insert(i, (cell.bin, cell.value)),
-            }
-            while ring.len() > SOLAR_RING_MAX {
-                ring.remove(0);
-            }
-            if grid == 0 {
-                max_fast_bin = max_fast_bin.max(cell.bin);
-            } else {
-                max_coarse_bin = max_coarse_bin.max(cell.bin);
-            }
-        }
-        if max_fast_bin > self.solar_fast_last_bin {
-            self.solar_fast_last_bin = max_fast_bin;
-            self.solar_fast_due = true;
-        }
-        if max_coarse_bin > self.solar_coarse_last_bin {
-            self.solar_coarse_last_bin = max_coarse_bin;
-            self.solar_coarse_due = true;
-        }
-        if self.solar_te_map.is_some() {
-            self.solar_collect();
-        }
-        if self.solar_fast_due && self.solar_te_map.is_none() {
-            self.solar_fast_due = false;
-            let (from, to) = SOLAR_FAST_PAIRS[self.solar_fast_rotor % SOLAR_FAST_PAIRS.len()];
-            self.solar_fast_rotor += 1;
-            self.solar_dispatch(0, from, to);
-        }
-        if self.solar_coarse_due && self.solar_te_map.is_none() {
-            self.solar_coarse_due = false;
-            let (from, to) = SOLAR_COARSE_PAIRS[self.solar_coarse_rotor % SOLAR_COARSE_PAIRS.len()];
-            self.solar_coarse_rotor += 1;
-            self.solar_dispatch(1, from, to);
-        }
-    }
-
-    fn enso_say(&mut self, line: String) {
-        if self.enso_te_named != line {
-            eprintln!("{}", line);
-            self.enso_te_named = line;
-        }
-    }
-
-    fn enso_cell_label(station: EnsoStation, pair_idx: usize, cell_idx: usize) -> String {
-        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
-        let (a, b) = enso_pair(pair_idx);
-        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
-        format!(
-            "enso te {} {}→{} {} {}d",
-            station.id(),
-            driver.name(),
-            target.name(),
-            ENSO_SCALE_NAMES[scale_idx as usize],
-            shift_days
-        )
-    }
-
-    fn enso_fold(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize, n: usize) {
-        let Some(read_buf) = self.enso_te_read_buf.as_ref() else {
-            return;
-        };
-        let verdict = Self::te_read_verdict(read_buf);
-        let station = EnsoStation::ALL[station_idx];
-        let label = Self::enso_cell_label(station, pair_idx, cell_idx);
-        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
-        let Some(v) = crate::te::topological_verdict_from_gpu(&verdict) else {
-            self.enso_say(format!(
-                "{} n {} state {}",
-                label,
-                n,
-                Self::te_absence_word(&verdict)
-            ));
-            return;
-        };
-        let excess = v.te - v.threshold;
-        let acc = &mut self.enso_accum[station_idx];
-        if scale_idx == 0 {
-            acc.m += 1;
-            for s in 2..12 {
-                if verdict[s * 6 + 4] == 1.0 {
-                    let st = verdict[s * 6 + 1] as f64;
-                    if !acc.fam_any || st > acc.fam {
-                        acc.fam = st;
-                        acc.fam_any = true;
-                    }
-                    if st > v.threshold {
-                        acc.surr_over += 1;
-                    }
-                    acc.surr_total += 1;
-                }
-            }
-            acc.cells1.push(EnsoCellVerdict {
-                dir,
-                shift: shift_days,
-                n,
-                te: v.te,
-                thr: v.threshold,
-            });
-        } else {
-            acc.small.push(EnsoCellVerdict {
-                dir,
-                shift: shift_days,
-                n,
-                te: v.te,
-                thr: v.threshold,
-            });
-        }
-        if excess > 0.0 {
-            self.enso_say(format!(
-                "{} n {} te {:.3} thr {:.3} state arrow",
-                label, n, v.te, v.threshold
-            ));
-        }
-    }
-
-    fn enso_collect(&mut self) {
-        let Some(prev) = self.enso_te_map.take() else {
-            return;
-        };
-        if !prev.load(Ordering::SeqCst) {
-            self.enso_te_map = Some(prev);
-            return;
-        }
-        if let Some((si, pair, cell)) = self.enso_pending.take() {
-            let n = self.enso_pending_n;
-            self.enso_fold(si, pair, cell, n);
-        }
-    }
-
-    fn enso_probe(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize) {
-        let station = EnsoStation::ALL[station_idx];
-        let label = Self::enso_cell_label(station, pair_idx, cell_idx);
-        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
-        let shift_bins = shift_days * ENSO_SHIFT_STEP_BINS;
-        let h_scale = ENSO_SCALES[scale_idx as usize];
-        let (a, b) = enso_pair(pair_idx);
-        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
-        let driver_ring = &self.enso_rings[station_idx][driver.idx()];
-        let target_ring = &self.enso_rings[station_idx][target.idx()];
-        let (mut ys, mut xs) = enso_shift_pair(driver_ring, target_ring, shift_bins);
-        if xs.len() > ENSO_PROBE_MAX {
-            let drop = xs.len() - ENSO_PROBE_MAX;
-            ys.drain(..drop);
-            xs.drain(..drop);
-        }
-        if xs.len() < ENSO_N_GATE {
-            self.enso_say(format!("{} n {} state no statement", label, xs.len()));
-            return;
-        }
-        let Some(device) = self.device.clone() else {
-            return;
-        };
-        let Some(queue) = self.queue.clone() else {
-            return;
-        };
-        let Some(pipe) = self.te_pipe.as_ref() else {
-            return;
-        };
-        let Some(bind) = self.enso_te_bind.as_ref() else {
-            return;
-        };
-        let Some(series_buf) = self.enso_te_series_buf.as_ref() else {
-            return;
-        };
-        let Some(param_buf) = self.enso_te_param_buf.as_ref() else {
-            return;
-        };
-        let Some(out_buf) = self.enso_te_out_buf.as_ref() else {
-            return;
-        };
-        let Some(read_buf) = self.enso_te_read_buf.as_ref() else {
-            return;
-        };
-        let m = xs.len();
-        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
-        data[0..m].copy_from_slice(&xs);
-        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
-        let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..10 {
-            let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
-            let off = (2 + s) * TE_SERIES_STRIDE;
-            data[off..off + m].copy_from_slice(&surr);
-        }
-        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
-        let max_lag = (m as f64 / Φ) as u32;
-        let param = [m as u32, max_lag, h_scale.to_bits(), 0];
-        let mut pb = [0u8; 16];
-        for (i, x) in param.iter().enumerate() {
-            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
-        }
-        queue.write_buffer(param_buf, 0, &pb);
-        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        {
-            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
-            pass.set_pipeline(pipe);
-            pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
-        }
-        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
-        queue.submit(std::iter::once(enc.finish()));
-        let mapped = Arc::new(AtomicBool::new(false));
-        let m2 = mapped.clone();
-        let slice = read_buf.slice(..);
-        slice.map_async(wgpu::MapMode::Read, move |r| {
-            m2.store(r.is_ok(), Ordering::SeqCst);
-        });
-        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
-        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
-            device.poll(wgpu::Maintain::Poll);
-        }
-        if !mapped.load(Ordering::SeqCst) {
-            self.enso_te_map = Some(mapped);
-            self.enso_pending = Some((station_idx, pair_idx, cell_idx));
-            self.enso_pending_n = m;
-            self.enso_say(format!("{} state readback pending", label));
-            return;
-        }
-        self.enso_fold(station_idx, pair_idx, cell_idx, m);
-    }
-
-    fn enso_sheet(&mut self, station: EnsoStation, pair_idx: usize) {
-        let si = station.idx();
-        let (a, b) = enso_pair(pair_idx);
-        let (state, sheet_parts, p_hat, m_count) = {
-            let acc = &self.enso_accum[si];
-            let mut best: Option<(u8, i64, usize, f64, f64, f64)> = None;
-            for c in &acc.cells1 {
-                let e = c.te - c.thr;
-                if best.map_or(true, |(_, _, _, be, _, _)| e > be) {
-                    best = Some((c.dir, c.shift, c.n, e, c.te, c.thr));
-                }
-            }
-            let p_hat = if acc.surr_total > 0 {
-                acc.surr_over as f64 / acc.surr_total as f64
-            } else {
-                0.0
-            };
-            if let Some((dir, d_star, n_star, excess, te, thr)) = best {
-                let robust = 1 + acc
-                    .small
-                    .iter()
-                    .filter(|c| c.dir == dir && c.shift == d_star && c.te > c.thr)
-                    .count();
-                let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
-                let state = if excess <= 0.0 {
-                    "silent"
-                } else if acc.fam_any && te <= acc.fam {
-                    "family bound"
-                } else if robust < 3 {
-                    "h bound"
-                } else {
-                    "arrow"
-                };
-                let parts = format!(
-                    "enso sheet {} {}→{} lag {}d n {} te {:.3} thr {:.3} fam {:.3} p {:.3} M {} h {}/3 state {}",
-                    station.id(),
-                    driver.name(),
-                    target.name(),
-                    d_star,
-                    n_star,
-                    te,
-                    thr,
-                    acc.fam,
-                    p_hat,
-                    acc.m,
-                    robust,
-                    state
-                );
-                (state, parts, p_hat, acc.m)
-            } else {
-                let parts = format!(
-                    "enso sheet {} {}→{} state no statement",
-                    station.id(),
-                    a.name(),
-                    b.name()
-                );
-                ("no statement", parts, p_hat, acc.m)
-            }
-        };
-        self.enso_say(sheet_parts);
-        let m = &mut self.enso_matrix[si];
-        m.pairs += 1;
-        m.expected += p_hat * m_count as f64;
-        match state {
-            "arrow" => m.arrows += 1,
-            "family bound" => m.family += 1,
-            "h bound" => m.h_bound += 1,
-            "silent" => m.silent += 1,
-            _ => m.absent += 1,
-        }
-    }
-
-    fn enso_matrix(&mut self, station: EnsoStation) {
-        let m = &self.enso_matrix[station.idx()];
-        self.enso_say(format!(
-            "enso matrix {} pairs {} arrows {} family {} hbound {} silent {} absent {} expected {:.2} state measured",
-            station.id(),
-            m.pairs,
-            m.arrows,
-            m.family,
-            m.h_bound,
-            m.silent,
-            m.absent,
-            m.expected
-        ));
-    }
-
-    fn enso_tick(&mut self) {
-        let mut grew = [false; ENSO_STATION_COUNT];
-        let mut first = [false; ENSO_STATION_COUNT];
-        while let Ok(cell) = self.enso_rx.try_recv() {
-            let si = cell.station.idx();
-            let ring = &mut self.enso_rings[si][cell.series.idx()];
-            if ring.is_empty() {
-                first[si] = true;
-            }
-            match ring.binary_search_by_key(&cell.bin, |&(b, _)| b) {
-                Ok(i) => ring[i] = (cell.bin, cell.value),
-                Err(i) => ring.insert(i, (cell.bin, cell.value)),
-            }
-            while ring.len() > ENSO_RING_MAX {
-                ring.remove(0);
-            }
-            if cell.bin > self.enso_max_bin[si] {
-                self.enso_max_bin[si] = cell.bin;
-                grew[si] = true;
-            }
-        }
-        for si in 0..ENSO_STATION_COUNT {
-            if first[si] && !self.enso_due[si] {
-                let counts: Vec<String> = EnsoSeries::ALL
-                    .iter()
-                    .map(|s| format!("{} {}", s.name(), self.enso_rings[si][s.idx()].len()))
-                    .collect();
-                self.enso_say(format!(
-                    "enso ring {} {}",
-                    EnsoStation::ALL[si].id(),
-                    counts.join(" ")
-                ));
-            }
-            if grew[si] && self.enso_max_bin[si] > self.enso_last_round_bin[si] {
-                self.enso_due[si] = true;
-            }
-        }
-        if self.enso_te_map.is_some() {
-            self.enso_collect();
-        }
-        if self.enso_te_map.is_none() {
-            for offset in 0..ENSO_STATION_COUNT {
-                let si = (self.enso_rotor + offset) % ENSO_STATION_COUNT;
-                if !self.enso_due[si] {
-                    continue;
-                }
-                if self.enso_cell[si] < ENSO_CELLS_PER_ROUND {
-                    let cell = self.enso_cell[si];
-                    self.enso_cell[si] += 1;
-                    self.enso_probe(si, self.enso_pair[si], cell);
-                } else {
-                    self.enso_cell[si] = 0;
-                    let pair = self.enso_pair[si];
-                    self.enso_pair[si] += 1;
-                    self.enso_sheet(EnsoStation::ALL[si], pair);
-                    self.enso_accum[si] = EnsoAccum::fresh();
-                    if self.enso_pair[si] >= ENSO_PAIR_COUNT {
-                        self.enso_pair[si] = 0;
-                        self.enso_last_round_bin[si] = self.enso_max_bin[si];
-                        self.enso_due[si] = false;
-                        self.enso_rotor = (si + 1) % ENSO_STATION_COUNT;
-                        self.enso_matrix(EnsoStation::ALL[si]);
-                        self.enso_matrix[si] = EnsoMatrixAccum::fresh();
-                    }
-                }
-                break;
-            }
-        }
     }
 
     fn hud_blit(bmp: &mut [u8], stride: usize, w: u32, x: i32, y: i32, ch: char, rgb: [u8; 3]) {
@@ -3672,106 +2856,15 @@ impl NativeApp {
                 },
             ],
         });
-        self.te_pipe = Some(te_pipe);
+        self.te_pipe = Some(te_pipe.clone());
         self.te_bind = Some(te_bind);
         self.te_series_buf = Some(te_series_buf);
         self.te_param_buf = Some(te_param_buf);
         self.te_out_buf = Some(te_out_buf);
         self.te_read_buf = Some(te_read_buf);
-        let solar_te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: TE_SERIES_BYTES,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let solar_te_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 16,
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let solar_te_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 288,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-            mapped_at_creation: false,
-        });
-        let solar_te_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 288,
-            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let solar_te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: None,
-            layout: &te_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: solar_te_series_buf.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: solar_te_param_buf.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: solar_te_out_buf.as_entire_binding(),
-                },
-            ],
-        });
-        self.solar_te_bind = Some(solar_te_bind);
-        self.solar_te_series_buf = Some(solar_te_series_buf);
-        self.solar_te_param_buf = Some(solar_te_param_buf);
-        self.solar_te_out_buf = Some(solar_te_out_buf);
-        self.solar_te_read_buf = Some(solar_te_read_buf);
-        let enso_te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: TE_SERIES_BYTES,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let enso_te_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 16,
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let enso_te_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 288,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
-            mapped_at_creation: false,
-        });
-        let enso_te_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 288,
-            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        let enso_te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: None,
-            layout: &te_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: enso_te_series_buf.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: enso_te_param_buf.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: enso_te_out_buf.as_entire_binding(),
-                },
-            ],
-        });
-        self.enso_te_bind = Some(enso_te_bind);
-        self.enso_te_series_buf = Some(enso_te_series_buf);
-        self.enso_te_param_buf = Some(enso_te_param_buf);
-        self.enso_te_out_buf = Some(enso_te_out_buf);
-        self.enso_te_read_buf = Some(enso_te_read_buf);
+        self.solar
+            .bind_gpu(&device, &queue, te_pipe.clone(), &te_layout);
+        self.enso.bind_gpu(&device, &queue, te_pipe, &te_layout);
         self.window = Some(window);
         self.surface = Some(surface);
         self.config = Some(config);
@@ -4089,8 +3182,8 @@ impl ApplicationHandler for NativeApp {
                     }
                 }
             }
-            self.solar_tick();
-            self.enso_tick();
+            self.solar.tick(self.ring_gen);
+            self.enso.tick(self.ring_gen);
             if let Some((in_te, threshold)) = te_opt {
                 let delta_te = in_te - self.prev_in_te;
                 self.prev_in_te = in_te;
@@ -4589,42 +3682,6 @@ mod tests {
         assert_eq!(p, [0.0, 0.0, 0.0]);
         assert_eq!(q, [1.0, 0.0, 0.0, 0.0]);
         let _ = std::fs::remove_file(path);
-    }
-
-    #[test]
-    fn enso_shift_pair_pairs_driver_bins_with_target_offset() {
-        let driver = vec![(10u64, 3.0f32), (14, 5.0), (18, 7.0)];
-        let target = vec![(14u64, 1.0f32), (18, 2.0), (22, 4.0)];
-        let (ys, xs) = enso_shift_pair(&driver, &target, 4);
-        assert_eq!(ys, vec![3.0, 5.0, 7.0]);
-        assert_eq!(xs, vec![1.0, 2.0, 4.0]);
-    }
-
-    #[test]
-    fn enso_shift_pair_negative_shift_extends_backward() {
-        let driver = vec![(10u64, 3.0f32), (14, 5.0)];
-        let target = vec![(10u64, 1.0f32), (14, 2.0)];
-        let (ys, xs) = enso_shift_pair(&driver, &target, -4);
-        assert_eq!(ys, vec![5.0]);
-        assert_eq!(xs, vec![1.0]);
-    }
-
-    #[test]
-    fn enso_shift_pair_skips_bins_without_driver_match() {
-        let driver = vec![(14u64, 5.0f32)];
-        let target = vec![(10u64, 1.0f32), (14, 2.0), (18, 4.0)];
-        let (ys, xs) = enso_shift_pair(&driver, &target, 0);
-        assert_eq!(ys, vec![5.0]);
-        assert_eq!(xs, vec![2.0]);
-    }
-
-    #[test]
-    fn enso_cell_desc_covers_scales_dirs_shifts() {
-        assert_eq!(enso_cell_desc(0), (0, 0, -30));
-        assert_eq!(enso_cell_desc(60), (0, 0, 30));
-        assert_eq!(enso_cell_desc(61), (0, 1, -30));
-        assert_eq!(enso_cell_desc(122), (1, 0, -30));
-        assert_eq!(enso_cell_desc(ENSO_CELLS_PER_ROUND - 1), (2, 1, 30));
     }
 
     #[test]

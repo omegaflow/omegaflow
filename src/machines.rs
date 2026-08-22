@@ -3,12 +3,13 @@
 //! mpsc-Kanal an die Mathematikerin — ein Kanal je Maschine, kein
 //! Sonderpfad im Kern.
 use std::collections::{HashMap, HashSet};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
 use crate::archivar::{
-    extract_series, fetch_raw, fetch_raw_bytes, Extract, LeapSeconds, SourceConfig,
+    extract_series, fetch_raw, fetch_raw_bytes, Extract, LeapSeconds, SourceConfig, Φ,
 };
 pub const SOLAR_FAST_GRID: u32 = 60;
 pub const SOLAR_COARSE_GRID: u32 = 43200;
@@ -917,5 +918,1022 @@ mod enso_parser_tests {
         let lsk = embedded_lsk().expect("embedded lsk");
         let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n2026 08 21 15 10  MM   MM   MM    MM    MM    MM  MM    MM    MM    MM    MM   MM   MM    MM\n";
         assert!(enso_ndbc_parse(body, &lsk).is_none());
+    }
+}
+
+// ---- Verbraucher-Seite: die Maschinen (Rückbau Atom 2) ----
+// Solar und ENSO halten je ihren Ring, ihren Rotor, ihre TE-Puffer und
+// ihre eigene GPU-Pipeline. NativeApp hält `solar:`/`enso:` und ruft
+// `tick(ring_gen)` — der ring_gen-Parameter hält die Surrogat-Seeds
+// byte-identisch zur alten Inline-Fassung.
+
+const SOLAR_N_GATE: usize = 30;
+const SOLAR_FAST_PAIRS: [(SolarChannel, SolarChannel); 20] = [
+    (SolarChannel::Xray, SolarChannel::Euv304),
+    (SolarChannel::Xray, SolarChannel::Euv284),
+    (SolarChannel::Xray, SolarChannel::BzGsm),
+    (SolarChannel::Xray, SolarChannel::Density),
+    (SolarChannel::Euv304, SolarChannel::Xray),
+    (SolarChannel::Euv304, SolarChannel::Euv284),
+    (SolarChannel::Euv304, SolarChannel::BzGsm),
+    (SolarChannel::Euv304, SolarChannel::Density),
+    (SolarChannel::Euv284, SolarChannel::Xray),
+    (SolarChannel::Euv284, SolarChannel::Euv304),
+    (SolarChannel::Euv284, SolarChannel::BzGsm),
+    (SolarChannel::Euv284, SolarChannel::Density),
+    (SolarChannel::BzGsm, SolarChannel::Xray),
+    (SolarChannel::BzGsm, SolarChannel::Euv304),
+    (SolarChannel::BzGsm, SolarChannel::Euv284),
+    (SolarChannel::BzGsm, SolarChannel::Density),
+    (SolarChannel::Density, SolarChannel::Xray),
+    (SolarChannel::Density, SolarChannel::Euv304),
+    (SolarChannel::Density, SolarChannel::Euv284),
+    (SolarChannel::Density, SolarChannel::BzGsm),
+];
+const SOLAR_COARSE_PAIRS: [(SolarChannel, SolarChannel); 6] = [
+    (SolarChannel::F107, SolarChannel::Xray),
+    (SolarChannel::F107, SolarChannel::Euv304),
+    (SolarChannel::F107, SolarChannel::Euv284),
+    (SolarChannel::Xray, SolarChannel::F107),
+    (SolarChannel::Euv304, SolarChannel::F107),
+    (SolarChannel::Euv284, SolarChannel::F107),
+];
+
+const ENSO_STATION_COUNT: usize = EnsoStation::ALL.len();
+const ENSO_SERIES_COUNT: usize = EnsoSeries::ALL.len();
+const ENSO_PAIR_COUNT: usize = ENSO_SERIES_COUNT * (ENSO_SERIES_COUNT - 1) / 2;
+const ENSO_PROBE_MAX: usize = 512;
+pub(crate) const TE_SERIES_STRIDE: usize = 1024;
+pub(crate) const TE_SERIES_BYTES: u64 = (12 * TE_SERIES_STRIDE * 4) as u64;
+const ENSO_N_GATE: usize = 30;
+const ENSO_SCALES: [f32; 3] = [1.0, 0.5, 2.0];
+const ENSO_SCALE_NAMES: [&str; 3] = ["h", "h/2", "2h"];
+const ENSO_SHIFT_STEP_BINS: i64 = 4;
+const ENSO_SHIFT_MAX_DAYS: i64 = 30;
+const ENSO_SHIFT_COUNT: usize = (ENSO_SHIFT_MAX_DAYS * 2 + 1) as usize;
+const ENSO_CELLS_PER_SCALE: usize = ENSO_SHIFT_COUNT * 2;
+const ENSO_CELLS_PER_ROUND: usize = ENSO_CELLS_PER_SCALE * ENSO_SCALES.len();
+
+pub(crate) fn le_bytes_f32(v: &[f32]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(v.len() * 4);
+    for x in v {
+        out.extend_from_slice(&x.to_le_bytes());
+    }
+    out
+}
+
+pub(crate) fn te_read_verdict(read_buf: &wgpu::Buffer) -> [f32; 72] {
+    let data = read_buf.slice(..).get_mapped_range();
+    let mut verdict = [0f32; 72];
+    for k in 0..72 {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+        verdict[k] = f32::from_le_bytes(b);
+    }
+    drop(data);
+    read_buf.unmap();
+    verdict
+}
+
+pub(crate) fn te_absence_word(verdict: &[f32; 72]) -> &'static str {
+    if verdict[10] != 1.0 {
+        "real series invalid"
+    } else {
+        "fewer than two surrogates"
+    }
+}
+
+fn enso_pair(pair_idx: usize) -> (EnsoSeries, EnsoSeries) {
+    let mut k = 0usize;
+    for i in 0..ENSO_SERIES_COUNT {
+        for j in (i + 1)..ENSO_SERIES_COUNT {
+            if k == pair_idx {
+                return (EnsoSeries::ALL[i], EnsoSeries::ALL[j]);
+            }
+            k += 1;
+        }
+    }
+    unreachable!()
+}
+
+fn enso_cell_desc(cell_idx: usize) -> (u8, u8, i64) {
+    let scale_idx = (cell_idx / ENSO_CELLS_PER_SCALE) as u8;
+    let rest = cell_idx % ENSO_CELLS_PER_SCALE;
+    let dir = (rest / ENSO_SHIFT_COUNT) as u8;
+    let shift_days = rest as i64 % ENSO_SHIFT_COUNT as i64 - ENSO_SHIFT_MAX_DAYS;
+    (scale_idx, dir, shift_days)
+}
+
+fn enso_shift_pair(
+    driver: &[(u64, f32)],
+    target: &[(u64, f32)],
+    shift_bins: i64,
+) -> (Vec<f32>, Vec<f32>) {
+    let mut ys = Vec::new();
+    let mut xs = Vec::new();
+    for &(tb, tv) in target {
+        let Some(db) = tb.checked_sub_signed(shift_bins) else {
+            continue;
+        };
+        let Ok(i) = driver.binary_search_by_key(&db, |&(b, _)| b) else {
+            continue;
+        };
+        ys.push(driver[i].1);
+        xs.push(tv);
+    }
+    if ys.len() > ENSO_RING_MAX {
+        let drop = ys.len() - ENSO_RING_MAX;
+        ys.drain(..drop);
+        xs.drain(..drop);
+    }
+    (ys, xs)
+}
+
+struct EnsoCellVerdict {
+    dir: u8,
+    shift: i64,
+    n: usize,
+    te: f64,
+    thr: f64,
+}
+
+struct EnsoAccum {
+    m: usize,
+    fam: f64,
+    fam_any: bool,
+    surr_over: usize,
+    surr_total: usize,
+    cells1: Vec<EnsoCellVerdict>,
+    small: Vec<EnsoCellVerdict>,
+}
+
+impl EnsoAccum {
+    fn fresh() -> EnsoAccum {
+        EnsoAccum {
+            m: 0,
+            fam: 0.0,
+            fam_any: false,
+            surr_over: 0,
+            surr_total: 0,
+            cells1: Vec::new(),
+            small: Vec::new(),
+        }
+    }
+}
+
+struct EnsoMatrixAccum {
+    pairs: usize,
+    arrows: usize,
+    family: usize,
+    h_bound: usize,
+    silent: usize,
+    absent: usize,
+    expected: f64,
+}
+
+impl EnsoMatrixAccum {
+    fn fresh() -> EnsoMatrixAccum {
+        EnsoMatrixAccum {
+            pairs: 0,
+            arrows: 0,
+            family: 0,
+            h_bound: 0,
+            silent: 0,
+            absent: 0,
+            expected: 0.0,
+        }
+    }
+}
+
+pub struct SolarMachine {
+    rx: mpsc::Receiver<SolarCell>,
+    rings: [[Vec<(u64, f32)>; 6]; 2],
+    fast_rotor: usize,
+    coarse_rotor: usize,
+    fast_last_bin: u64,
+    coarse_last_bin: u64,
+    fast_due: bool,
+    coarse_due: bool,
+    device: Option<wgpu::Device>,
+    queue: Option<wgpu::Queue>,
+    te_pipe: Option<wgpu::ComputePipeline>,
+    te_bind: Option<wgpu::BindGroup>,
+    te_series_buf: Option<wgpu::Buffer>,
+    te_param_buf: Option<wgpu::Buffer>,
+    te_out_buf: Option<wgpu::Buffer>,
+    te_read_buf: Option<wgpu::Buffer>,
+    te_map: Option<Arc<AtomicBool>>,
+    pending: Option<(String, usize)>,
+    named: String,
+    rng: u64,
+}
+
+impl SolarMachine {
+    pub fn new(rx: mpsc::Receiver<SolarCell>) -> Self {
+        SolarMachine {
+            rx,
+            rings: std::array::from_fn(|_| std::array::from_fn(|_| Vec::new())),
+            fast_rotor: 0,
+            coarse_rotor: 0,
+            fast_last_bin: 0,
+            coarse_last_bin: 0,
+            fast_due: false,
+            coarse_due: false,
+            device: None,
+            queue: None,
+            te_pipe: None,
+            te_bind: None,
+            te_series_buf: None,
+            te_param_buf: None,
+            te_out_buf: None,
+            te_read_buf: None,
+            te_map: None,
+            pending: None,
+            named: String::new(),
+            rng: 0,
+        }
+    }
+
+    pub fn bind_gpu(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        te_pipe: wgpu::ComputePipeline,
+        te_layout: &wgpu::BindGroupLayout,
+    ) {
+        let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: TE_SERIES_BYTES,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.device = Some(device.clone());
+        self.queue = Some(queue.clone());
+        self.te_pipe = Some(te_pipe);
+        self.te_bind = Some(bind);
+        self.te_series_buf = Some(series_buf);
+        self.te_param_buf = Some(param_buf);
+        self.te_out_buf = Some(out_buf);
+        self.te_read_buf = Some(read_buf);
+    }
+
+    fn say(
+        &mut self,
+        label: &str,
+        n: usize,
+        verdict: Option<&crate::te::TopologicalVerdict>,
+        state: &str,
+    ) {
+        let line = match verdict {
+            Some(v) => format!(
+                "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
+                label,
+                n,
+                v.te,
+                v.threshold,
+                v.tau_x,
+                v.tau_y,
+                v.pe_x
+                    .map(|p| format!("{:.2}", p))
+                    .unwrap_or_else(|| "-".to_string()),
+                v.pe_y
+                    .map(|p| format!("{:.2}", p))
+                    .unwrap_or_else(|| "-".to_string()),
+                state
+            ),
+            None => format!("solar te {} n {} state {}", label, n, state),
+        };
+        if self.named != line {
+            eprintln!("{}", line);
+            self.named = line;
+        }
+    }
+
+    fn pair(&self, grid: usize, from: SolarChannel, to: SolarChannel) -> (Vec<f32>, Vec<f32>) {
+        let ra = &self.rings[grid][from.idx()];
+        let rb = &self.rings[grid][to.idx()];
+        let mut xs = Vec::new();
+        let mut ys = Vec::new();
+        let (mut i, mut j) = (0usize, 0usize);
+        while i < ra.len() && j < rb.len() {
+            match ra[i].0.cmp(&rb[j].0) {
+                std::cmp::Ordering::Less => i += 1,
+                std::cmp::Ordering::Greater => j += 1,
+                std::cmp::Ordering::Equal => {
+                    ys.push(ra[i].1);
+                    xs.push(rb[j].1);
+                    i += 1;
+                    j += 1;
+                }
+            }
+        }
+        if xs.len() > SOLAR_RING_MAX {
+            let drop = xs.len() - SOLAR_RING_MAX;
+            xs.drain(..drop);
+            ys.drain(..drop);
+        }
+        (xs, ys)
+    }
+
+    fn collect(&mut self) {
+        let Some(prev) = self.te_map.take() else {
+            return;
+        };
+        if !prev.load(Ordering::SeqCst) {
+            self.te_map = Some(prev);
+            return;
+        }
+        let Some(read_buf) = self.te_read_buf.as_ref() else {
+            return;
+        };
+        let verdict = te_read_verdict(read_buf);
+        let v = crate::te::topological_verdict_from_gpu(&verdict);
+        if let Some((l, n)) = self.pending.take() {
+            match v {
+                Some(vv) => {
+                    let state = if vv.te > vv.threshold {
+                        "arrow"
+                    } else {
+                        "silent"
+                    };
+                    self.say(&l, n, Some(&vv), state);
+                }
+                None => self.say(&l, n, None, te_absence_word(&verdict)),
+            }
+        }
+    }
+
+    fn te_probe(&mut self, label: &str, xs: &[f32], ys: &[f32], m: usize) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(pipe) = self.te_pipe.as_ref() else {
+            return;
+        };
+        let Some(bind) = self.te_bind.as_ref() else {
+            return;
+        };
+        let Some(series_buf) = self.te_series_buf.as_ref() else {
+            return;
+        };
+        let Some(param_buf) = self.te_param_buf.as_ref() else {
+            return;
+        };
+        let Some(out_buf) = self.te_out_buf.as_ref() else {
+            return;
+        };
+        let Some(read_buf) = self.te_read_buf.as_ref() else {
+            return;
+        };
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
+        data[0..m].copy_from_slice(xs);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
+        let mut rng = self.rng.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..10 {
+            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
+            let off = (2 + s) * TE_SERIES_STRIDE;
+            data[off..off + m].copy_from_slice(&surr);
+        }
+        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (m as f64 / Φ) as u32;
+        let param = [m as u32, max_lag, 1.0f32.to_bits(), 0];
+        let mut pb = [0u8; 16];
+        for (i, x) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.te_map = Some(mapped);
+            self.pending = Some((label.to_string(), m));
+            self.say(label, m, None, "readback pending");
+            return;
+        }
+        let verdict = te_read_verdict(read_buf);
+        match crate::te::topological_verdict_from_gpu(&verdict) {
+            Some(v) => {
+                let state = if v.te > v.threshold {
+                    "arrow"
+                } else {
+                    "silent"
+                };
+                self.say(label, m, Some(&v), state);
+            }
+            None => self.say(label, m, None, te_absence_word(&verdict)),
+        }
+    }
+
+    fn dispatch(&mut self, grid: usize, from: SolarChannel, to: SolarChannel) {
+        let label = format!("{}→{}", from.name(), to.name());
+        let (xs, ys) = self.pair(grid, from, to);
+        if xs.len() < SOLAR_N_GATE {
+            self.say(&label, xs.len(), None, "no statement");
+            return;
+        }
+        self.te_probe(&label, &xs, &ys, xs.len());
+    }
+
+    pub fn tick(&mut self, ring_gen: u64) {
+        self.rng = ring_gen;
+        let mut max_fast_bin = self.fast_last_bin;
+        let mut max_coarse_bin = self.coarse_last_bin;
+        while let Ok(cell) = self.rx.try_recv() {
+            let grid = match cell.grid {
+                SOLAR_FAST_GRID => 0,
+                SOLAR_COARSE_GRID => 1,
+                _ => continue,
+            };
+            let ring = &mut self.rings[grid][cell.channel.idx()];
+            match ring.binary_search_by_key(&cell.bin, |&(b, _)| b) {
+                Ok(i) => ring[i] = (cell.bin, cell.value),
+                Err(i) => ring.insert(i, (cell.bin, cell.value)),
+            }
+            while ring.len() > SOLAR_RING_MAX {
+                ring.remove(0);
+            }
+            if grid == 0 {
+                max_fast_bin = max_fast_bin.max(cell.bin);
+            } else {
+                max_coarse_bin = max_coarse_bin.max(cell.bin);
+            }
+        }
+        if max_fast_bin > self.fast_last_bin {
+            self.fast_last_bin = max_fast_bin;
+            self.fast_due = true;
+        }
+        if max_coarse_bin > self.coarse_last_bin {
+            self.coarse_last_bin = max_coarse_bin;
+            self.coarse_due = true;
+        }
+        if self.te_map.is_some() {
+            self.collect();
+        }
+        if self.fast_due && self.te_map.is_none() {
+            self.fast_due = false;
+            let (from, to) = SOLAR_FAST_PAIRS[self.fast_rotor % SOLAR_FAST_PAIRS.len()];
+            self.fast_rotor += 1;
+            self.dispatch(0, from, to);
+        }
+        if self.coarse_due && self.te_map.is_none() {
+            self.coarse_due = false;
+            let (from, to) = SOLAR_COARSE_PAIRS[self.coarse_rotor % SOLAR_COARSE_PAIRS.len()];
+            self.coarse_rotor += 1;
+            self.dispatch(1, from, to);
+        }
+    }
+}
+
+pub struct EnsoMachine {
+    rx: mpsc::Receiver<EnsoCell>,
+    rings: [[Vec<(u64, f32)>; ENSO_SERIES_COUNT]; ENSO_STATION_COUNT],
+    rotor: usize,
+    due: [bool; ENSO_STATION_COUNT],
+    max_bin: [u64; ENSO_STATION_COUNT],
+    last_round_bin: [u64; ENSO_STATION_COUNT],
+    pair: [usize; ENSO_STATION_COUNT],
+    cell: [usize; ENSO_STATION_COUNT],
+    accum: [EnsoAccum; ENSO_STATION_COUNT],
+    matrix: [EnsoMatrixAccum; ENSO_STATION_COUNT],
+    device: Option<wgpu::Device>,
+    queue: Option<wgpu::Queue>,
+    te_pipe: Option<wgpu::ComputePipeline>,
+    te_bind: Option<wgpu::BindGroup>,
+    te_series_buf: Option<wgpu::Buffer>,
+    te_param_buf: Option<wgpu::Buffer>,
+    te_out_buf: Option<wgpu::Buffer>,
+    te_read_buf: Option<wgpu::Buffer>,
+    te_map: Option<Arc<AtomicBool>>,
+    pending: Option<(usize, usize, usize)>,
+    pending_n: usize,
+    named: String,
+    rng: u64,
+}
+
+impl EnsoMachine {
+    pub fn new(rx: mpsc::Receiver<EnsoCell>) -> Self {
+        EnsoMachine {
+            rx,
+            rings: std::array::from_fn(|_| std::array::from_fn(|_| Vec::new())),
+            rotor: 0,
+            due: [false; ENSO_STATION_COUNT],
+            max_bin: [0; ENSO_STATION_COUNT],
+            last_round_bin: [0; ENSO_STATION_COUNT],
+            pair: [0; ENSO_STATION_COUNT],
+            cell: [0; ENSO_STATION_COUNT],
+            accum: std::array::from_fn(|_| EnsoAccum::fresh()),
+            matrix: std::array::from_fn(|_| EnsoMatrixAccum::fresh()),
+            device: None,
+            queue: None,
+            te_pipe: None,
+            te_bind: None,
+            te_series_buf: None,
+            te_param_buf: None,
+            te_out_buf: None,
+            te_read_buf: None,
+            te_map: None,
+            pending: None,
+            pending_n: 0,
+            named: String::new(),
+            rng: 0,
+        }
+    }
+
+    pub fn bind_gpu(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        te_pipe: wgpu::ComputePipeline,
+        te_layout: &wgpu::BindGroupLayout,
+    ) {
+        let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: TE_SERIES_BYTES,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.device = Some(device.clone());
+        self.queue = Some(queue.clone());
+        self.te_pipe = Some(te_pipe);
+        self.te_bind = Some(bind);
+        self.te_series_buf = Some(series_buf);
+        self.te_param_buf = Some(param_buf);
+        self.te_out_buf = Some(out_buf);
+        self.te_read_buf = Some(read_buf);
+    }
+
+    fn say(&mut self, line: String) {
+        if self.named != line {
+            eprintln!("{}", line);
+            self.named = line;
+        }
+    }
+
+    fn cell_label(station: EnsoStation, pair_idx: usize, cell_idx: usize) -> String {
+        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
+        let (a, b) = enso_pair(pair_idx);
+        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
+        format!(
+            "enso te {} {}→{} {} {}d",
+            station.id(),
+            driver.name(),
+            target.name(),
+            ENSO_SCALE_NAMES[scale_idx as usize],
+            shift_days
+        )
+    }
+
+    fn fold(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize, n: usize) {
+        let Some(read_buf) = self.te_read_buf.as_ref() else {
+            return;
+        };
+        let verdict = te_read_verdict(read_buf);
+        let station = EnsoStation::ALL[station_idx];
+        let label = Self::cell_label(station, pair_idx, cell_idx);
+        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
+        let Some(v) = crate::te::topological_verdict_from_gpu(&verdict) else {
+            self.say(format!(
+                "{} n {} state {}",
+                label,
+                n,
+                te_absence_word(&verdict)
+            ));
+            return;
+        };
+        let excess = v.te - v.threshold;
+        let acc = &mut self.accum[station_idx];
+        if scale_idx == 0 {
+            acc.m += 1;
+            for s in 2..12 {
+                if verdict[s * 6 + 4] == 1.0 {
+                    let st = verdict[s * 6 + 1] as f64;
+                    if !acc.fam_any || st > acc.fam {
+                        acc.fam = st;
+                        acc.fam_any = true;
+                    }
+                    if st > v.threshold {
+                        acc.surr_over += 1;
+                    }
+                    acc.surr_total += 1;
+                }
+            }
+            acc.cells1.push(EnsoCellVerdict {
+                dir,
+                shift: shift_days,
+                n,
+                te: v.te,
+                thr: v.threshold,
+            });
+        } else {
+            acc.small.push(EnsoCellVerdict {
+                dir,
+                shift: shift_days,
+                n,
+                te: v.te,
+                thr: v.threshold,
+            });
+        }
+        if excess > 0.0 {
+            self.say(format!(
+                "{} n {} te {:.3} thr {:.3} state arrow",
+                label, n, v.te, v.threshold
+            ));
+        }
+    }
+
+    fn collect(&mut self) {
+        let Some(prev) = self.te_map.take() else {
+            return;
+        };
+        if !prev.load(Ordering::SeqCst) {
+            self.te_map = Some(prev);
+            return;
+        }
+        if let Some((si, pair, cell)) = self.pending.take() {
+            let n = self.pending_n;
+            self.fold(si, pair, cell, n);
+        }
+    }
+
+    fn probe(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize) {
+        let station = EnsoStation::ALL[station_idx];
+        let label = Self::cell_label(station, pair_idx, cell_idx);
+        let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
+        let shift_bins = shift_days * ENSO_SHIFT_STEP_BINS;
+        let h_scale = ENSO_SCALES[scale_idx as usize];
+        let (a, b) = enso_pair(pair_idx);
+        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
+        let driver_ring = &self.rings[station_idx][driver.idx()];
+        let target_ring = &self.rings[station_idx][target.idx()];
+        let (mut ys, mut xs) = enso_shift_pair(driver_ring, target_ring, shift_bins);
+        if xs.len() > ENSO_PROBE_MAX {
+            let drop = xs.len() - ENSO_PROBE_MAX;
+            ys.drain(..drop);
+            xs.drain(..drop);
+        }
+        if xs.len() < ENSO_N_GATE {
+            self.say(format!("{} n {} state no statement", label, xs.len()));
+            return;
+        }
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(pipe) = self.te_pipe.as_ref() else {
+            return;
+        };
+        let Some(bind) = self.te_bind.as_ref() else {
+            return;
+        };
+        let Some(series_buf) = self.te_series_buf.as_ref() else {
+            return;
+        };
+        let Some(param_buf) = self.te_param_buf.as_ref() else {
+            return;
+        };
+        let Some(out_buf) = self.te_out_buf.as_ref() else {
+            return;
+        };
+        let Some(read_buf) = self.te_read_buf.as_ref() else {
+            return;
+        };
+        let m = xs.len();
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
+        data[0..m].copy_from_slice(&xs);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
+        let mut rng = self.rng.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..10 {
+            let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
+            let off = (2 + s) * TE_SERIES_STRIDE;
+            data[off..off + m].copy_from_slice(&surr);
+        }
+        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (m as f64 / Φ) as u32;
+        let param = [m as u32, max_lag, h_scale.to_bits(), 0];
+        let mut pb = [0u8; 16];
+        for (i, x) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.te_map = Some(mapped);
+            self.pending = Some((station_idx, pair_idx, cell_idx));
+            self.pending_n = m;
+            self.say(format!("{} state readback pending", label));
+            return;
+        }
+        self.fold(station_idx, pair_idx, cell_idx, m);
+    }
+
+    fn sheet(&mut self, station: EnsoStation, pair_idx: usize) {
+        let si = station.idx();
+        let (a, b) = enso_pair(pair_idx);
+        let (state, sheet_parts, p_hat, m_count) = {
+            let acc = &self.accum[si];
+            let mut best: Option<(u8, i64, usize, f64, f64, f64)> = None;
+            for c in &acc.cells1 {
+                let e = c.te - c.thr;
+                if best.map_or(true, |(_, _, _, be, _, _)| e > be) {
+                    best = Some((c.dir, c.shift, c.n, e, c.te, c.thr));
+                }
+            }
+            let p_hat = if acc.surr_total > 0 {
+                acc.surr_over as f64 / acc.surr_total as f64
+            } else {
+                0.0
+            };
+            if let Some((dir, d_star, n_star, excess, te, thr)) = best {
+                let robust = 1 + acc
+                    .small
+                    .iter()
+                    .filter(|c| c.dir == dir && c.shift == d_star && c.te > c.thr)
+                    .count();
+                let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
+                let state = if excess <= 0.0 {
+                    "silent"
+                } else if acc.fam_any && te <= acc.fam {
+                    "family bound"
+                } else if robust < 3 {
+                    "h bound"
+                } else {
+                    "arrow"
+                };
+                let parts = format!(
+                    "enso sheet {} {}→{} lag {}d n {} te {:.3} thr {:.3} fam {:.3} p {:.3} M {} h {}/3 state {}",
+                    station.id(),
+                    driver.name(),
+                    target.name(),
+                    d_star,
+                    n_star,
+                    te,
+                    thr,
+                    acc.fam,
+                    p_hat,
+                    acc.m,
+                    robust,
+                    state
+                );
+                (state, parts, p_hat, acc.m)
+            } else {
+                let parts = format!(
+                    "enso sheet {} {}→{} state no statement",
+                    station.id(),
+                    a.name(),
+                    b.name()
+                );
+                ("no statement", parts, p_hat, acc.m)
+            }
+        };
+        self.say(sheet_parts);
+        let m = &mut self.matrix[si];
+        m.pairs += 1;
+        m.expected += p_hat * m_count as f64;
+        match state {
+            "arrow" => m.arrows += 1,
+            "family bound" => m.family += 1,
+            "h bound" => m.h_bound += 1,
+            "silent" => m.silent += 1,
+            _ => m.absent += 1,
+        }
+    }
+
+    fn matrix(&mut self, station: EnsoStation) {
+        let m = &self.matrix[station.idx()];
+        self.say(format!(
+            "enso matrix {} pairs {} arrows {} family {} hbound {} silent {} absent {} expected {:.2} state measured",
+            station.id(),
+            m.pairs,
+            m.arrows,
+            m.family,
+            m.h_bound,
+            m.silent,
+            m.absent,
+            m.expected
+        ));
+    }
+
+    pub fn tick(&mut self, ring_gen: u64) {
+        self.rng = ring_gen;
+        let mut grew = [false; ENSO_STATION_COUNT];
+        let mut first = [false; ENSO_STATION_COUNT];
+        while let Ok(cell) = self.rx.try_recv() {
+            let si = cell.station.idx();
+            let ring = &mut self.rings[si][cell.series.idx()];
+            if ring.is_empty() {
+                first[si] = true;
+            }
+            match ring.binary_search_by_key(&cell.bin, |&(b, _)| b) {
+                Ok(i) => ring[i] = (cell.bin, cell.value),
+                Err(i) => ring.insert(i, (cell.bin, cell.value)),
+            }
+            while ring.len() > ENSO_RING_MAX {
+                ring.remove(0);
+            }
+            if cell.bin > self.max_bin[si] {
+                self.max_bin[si] = cell.bin;
+                grew[si] = true;
+            }
+        }
+        for si in 0..ENSO_STATION_COUNT {
+            if first[si] && !self.due[si] {
+                let counts: Vec<String> = EnsoSeries::ALL
+                    .iter()
+                    .map(|s| format!("{} {}", s.name(), self.rings[si][s.idx()].len()))
+                    .collect();
+                self.say(format!(
+                    "enso ring {} {}",
+                    EnsoStation::ALL[si].id(),
+                    counts.join(" ")
+                ));
+            }
+            if grew[si] && self.max_bin[si] > self.last_round_bin[si] {
+                self.due[si] = true;
+            }
+        }
+        if self.te_map.is_some() {
+            self.collect();
+        }
+        if self.te_map.is_none() {
+            for offset in 0..ENSO_STATION_COUNT {
+                let si = (self.rotor + offset) % ENSO_STATION_COUNT;
+                if !self.due[si] {
+                    continue;
+                }
+                if self.cell[si] < ENSO_CELLS_PER_ROUND {
+                    let cell = self.cell[si];
+                    self.cell[si] += 1;
+                    self.probe(si, self.pair[si], cell);
+                } else {
+                    self.cell[si] = 0;
+                    let pair = self.pair[si];
+                    self.pair[si] += 1;
+                    self.sheet(EnsoStation::ALL[si], pair);
+                    self.accum[si] = EnsoAccum::fresh();
+                    if self.pair[si] >= ENSO_PAIR_COUNT {
+                        self.pair[si] = 0;
+                        self.last_round_bin[si] = self.max_bin[si];
+                        self.due[si] = false;
+                        self.rotor = (si + 1) % ENSO_STATION_COUNT;
+                        self.matrix(EnsoStation::ALL[si]);
+                        self.matrix[si] = EnsoMatrixAccum::fresh();
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod machine_tests {
+    use super::*;
+
+    #[test]
+    fn enso_shift_pair_pairs_driver_bins_with_target_offset() {
+        let driver = vec![(10u64, 3.0f32), (14, 5.0), (18, 7.0)];
+        let target = vec![(14u64, 1.0f32), (18, 2.0), (22, 4.0)];
+        let (ys, xs) = enso_shift_pair(&driver, &target, 4);
+        assert_eq!(ys, vec![3.0, 5.0, 7.0]);
+        assert_eq!(xs, vec![1.0, 2.0, 4.0]);
+    }
+
+    #[test]
+    fn enso_shift_pair_negative_shift_extends_backward() {
+        let driver = vec![(10u64, 3.0f32), (14, 5.0)];
+        let target = vec![(10u64, 1.0f32), (14, 2.0)];
+        let (ys, xs) = enso_shift_pair(&driver, &target, -4);
+        assert_eq!(ys, vec![5.0]);
+        assert_eq!(xs, vec![1.0]);
+    }
+
+    #[test]
+    fn enso_shift_pair_skips_bins_without_driver_match() {
+        let driver = vec![(14u64, 5.0f32)];
+        let target = vec![(10u64, 1.0f32), (14, 2.0), (18, 4.0)];
+        let (ys, xs) = enso_shift_pair(&driver, &target, 0);
+        assert_eq!(ys, vec![5.0]);
+        assert_eq!(xs, vec![2.0]);
+    }
+
+    #[test]
+    fn enso_cell_desc_covers_scales_dirs_shifts() {
+        assert_eq!(enso_cell_desc(0), (0, 0, -30));
+        assert_eq!(enso_cell_desc(60), (0, 0, 30));
+        assert_eq!(enso_cell_desc(61), (0, 1, -30));
+        assert_eq!(enso_cell_desc(122), (1, 0, -30));
+        assert_eq!(enso_cell_desc(ENSO_CELLS_PER_ROUND - 1), (2, 1, 30));
     }
 }

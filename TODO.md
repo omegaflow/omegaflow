@@ -716,17 +716,21 @@ Maschine misst.
   EnsoCell, enso_parser_tests) lebt in `src/machines.rs` (957 Zeilen
   aus archivar.rs), main_flow ruft `crate::machines::solar_harvest/
   enso_harvest`, der mpsc-Kanal (SolarCell/EnsoCell) bleibt das
-  Protokoll zur Mathematikerin. Gates: cargo check 0/0 vier
-  Feature-Kombis, cargo test --lib 307/307. Offen — Atom 2: die
-  Maschinen-Seite aus der Mathematikerin (mathematikerin.rs:819-1050
-  die ENSO/Solar-Konstanten + enso_pair/enso_cell_desc/enso_shift_pair/
-  EnsoCellVerdict/EnsoAccum/EnsoMatrixAccum, die NativeApp-Felder
-  enso_*/solar_* (1586-1610), solar_tick (2163) + enso_say/fold/
-  collect/probe/dispatch/tick (2211-2500) + die enso_te_*/solar_te_*-
-  Puffer-Kreation in init_gpu (3723-3770)) als `EnsoMachine`/
-  `SolarMachine`-Structs nach src/machines.rs — die Maschinen halten
-  Arc<Device>/Arc<Queue>/te_layout/Pipeline + eigenen rng, NativeApp
-  hält `enso:`/`solar:` und ruft `tick()`. Offen — Atom 3: die Ernte
+   Protokoll zur Mathematikerin. Gates: cargo check 0/0 vier
+   Feature-Kombis, cargo test --lib 307/307. Atom 2 ERLEDIGT
+   (2026-08-22): die Maschinen-Seite zog aus der Mathematikerin — die
+   ENSO/Solar-Verbraucher-Konstanten + enso_pair/enso_cell_desc/
+   enso_shift_pair/EnsoCellVerdict/EnsoAccum/EnsoMatrixAccum, die
+   NativeApp-Felder enso_*/solar_*, solar_tick + enso_say/fold/collect/
+   probe/dispatch/sheet/matrix/tick und die enso_te_*/solar_te_*-
+   Puffer-Kreation leben jetzt als `SolarMachine`/`EnsoMachine` in
+   src/machines.rs (die Maschinen halten Device/Queue/te_pipe/te_bind
+   + eigenen rng, tick(ring_gen) hält die Surrogat-Seeds byte-identisch);
+   NativeApp hält `solar:`/`enso:` und ruft `tick(self.ring_gen)`. Die
+   gemeinsamen TE-GPU-Helfer (le_bytes_f32, te_read_verdict,
+   te_absence_word, TE_SERIES_STRIDE/BYTES) wohnen in machines.rs, der
+   Präsenz-TE-Pfad importiert sie. Gates: cargo check 0/0 vier
+   Feature-Kombis, cargo test --lib 307/307. Offen — Atom 3: die Ernte
   presence-getrieben statt eager (Boje = Körper in BODY_REGISTRY +
   `on <boje> <lat> <lon>`, Kanäle als Serien-Quellblöcke; Presence
   springt (Atom 5) + schiebt t (Atom 4), die eine Presence-TE-Maschine
