@@ -31,15 +31,15 @@ const MAGIC: [u8; 4] = *b"EVL1";
 const LINES: [(u32, &str); 11] = [
     (0, "Fe XVIII 94A"),
     (1, "Fe VIII 131A"),
-    (5, "Fe IX 171A"),
+    (3, "Fe IX 171A"),
     (6, "Fe XII 195A"),
     (8, "Fe XIV 211A"),
-    (11, "Fe XV 284A"),
-    (12, "He II 304A"),
-    (13, "Fe XVI 335A"),
-    (24, "He I 584A"),
-    (37, "C III 977A"),
-    (39, "O VI 1032A"),
+    (10, "Fe XV 284A"),
+    (11, "He II 304A"),
+    (12, "Fe XVI 335A"),
+    (23, "He I 584A"),
+    (36, "C III 977A"),
+    (38, "O VI 1032A"),
 ];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
