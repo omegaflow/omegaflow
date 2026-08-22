@@ -3,7 +3,7 @@
   class: survey
   date: 2026-08-21
   version: 2
-  sha256: f9b9594e58dcbd5a6b325c9494cd3a1fbf049d77a7f5ac39bf982b12f6c36c59
+  sha256: 5b0fef19cc9c61b8ce637e0c4794dd09c08c08f4fdd2af3c096e17b5707bc1b2
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
 -->
@@ -78,7 +78,7 @@ der gemeinsame Treiber trägt auf diesem Raster keinen Pfeil.
   der Sache selbst wurde nicht gemessen, aber auch kein Sonnen-Pfeil
   fabriziert. Stille ist die Antwort.
 
-## Das definitive Blatt — volle Ära + Sensitivitätsmatrix
+## Das Blatt — volle Ära + Sensitivitätsmatrix
 
 Ernte/Analyse-Architektur (v2): `laic_probe --harvest` legt je Fenster
 die Rohserien auf Platte (`phi/pipeline/laic_harvest/`, 4.1 GB, 1726
@@ -115,7 +115,7 @@ jüngsten Ereignissen, Haupt-Zelle volle Ära):
 
 - Kontrolle (Solar Bz → F): still in jeder Zelle (+4.06e-2 … +4.35e-2
   gegen Schwelle +1.33e-1).
-- FAC-Stapel: definitiv unterbestimmt — Swarm A+B+C decken je Fenster
+- FAC-Stapel: unterbestimmt — Swarm A+B+C decken je Fenster
   8–26 von 144 Zellen; 12/60 Ereignis-Fenster erreichen m ≥ 30
   (30-min-Zellen) → no statement. Gemessen, nicht pending: der
   FAC-Kanal trägt mit diesem Instrument kein Urteil.
@@ -130,10 +130,13 @@ Der Pfeil trägt nun: auf jedem lebenden Kanal und in jeder
 Parameter-Zelle ist der Informationsfluss im 72-h-Fenster vor M≥6
 still — in beide Richtungen, und die Sonnen-Kontrolle bleibt ebenfalls
 still. Damit ist die Richtungsfrage auf dem vorhandenen Bestand
-abschließend gemessen: der Pfeil schlägt nicht aus. Ein zukünftiges
-Instrument (TEC-GIM-Retro via CDDIS-OAuth, CSES, MiniSEED-Envelopen)
-kann die Frage auf einem dichteren Kanal neu stellen — das ist ein
-Kanal-Offenposten, kein Loch in dieser Messung.
+abgeschlossen: der Pfeil schlägt nicht aus. Die LAIC-Hypothese selbst
+(elektromagnetische oder plasmaphysikalische Vorläufer in der
+Ionosphäre) bleibt Kanal-offen — die Boden-F-Signatur ist ein Proxy,
+kein Ionosphären-Instrument. Ein zukünftiges Instrument (TEC-GIM-Retro
+via CDDIS-OAuth, CSES, MiniSEED-Envelopen) kann die Frage auf einem
+dichteren Kanal neu stellen — das ist ein Kanal-Offenposten, kein Loch
+in dieser Messung.
 
 ## Was das Blatt nicht trägt (Register)
 
