@@ -1,6 +1,6 @@
 use omegaflow::archivar::{
-    body_barycenter_position, download_ephemeris_batch, fetch_raw, load_sources,
-    parse_ephemeris_binary, BodyEphemeris, SourceConfig, J2000_EPOCH,
+    body_barycenter_position, body_barycenter_velocity, download_ephemeris_batch, fetch_raw,
+    load_sources, parse_ephemeris_binary, BodyEphemeris, SourceConfig, C_LIGHT, J2000_EPOCH,
 };
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::kbo::{family_name, rec_from_row, state_at, KboRec, FAM_CLASSICAL};
@@ -10,6 +10,7 @@ use std::collections::HashMap;
 const PLANETS: [&str; 8] = [
     "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
+const PROBES: [&str; 3] = ["voyager1", "voyager2", "new_horizons"];
 const GM_SUN: f64 = omegaflow::kepler::GM_SUN_M3_S2;
 const AU_M: f64 = omegaflow::kepler::AU_M;
 const DT_DAYS: f64 = 30.0;
@@ -203,6 +204,105 @@ fn load_kbo_asset(bin: &str) -> Vec<KboRec> {
     recs
 }
 
+fn probe_series(
+    name: &str,
+    planets: &[Planet],
+    eph: &HashMap<String, BodyEphemeris>,
+    dt_d: f64,
+    samples: usize,
+) -> Option<(Vec<f32>, Vec<f32>, f64, f64)> {
+    let probe_eph = eph.get(name)?;
+    let (lo, hi) = coverage(probe_eph);
+    let window_days = hi - lo;
+    for p in planets {
+        let (plo, phi) = coverage(eph.get(&p.name)?);
+        if lo < plo || hi > phi {
+            return None;
+        }
+    }
+    let tdb_lo = (lo - J2000_EPOCH) * 86400.0;
+    let r0 = body_barycenter_position(name, tdb_lo, eph)?;
+    let v0 = body_barycenter_velocity(name, tdb_lo, eph)?;
+    let steps = (window_days / dt_d) as usize;
+    if steps < 2 * samples {
+        return None;
+    }
+    let stride = steps / samples;
+    let dt = dt_d * 86400.0;
+    let mut r = r0;
+    let mut v = v0;
+    let a0 = acc(r, tdb_lo, planets, eph)?;
+    v = [
+        v[0] + 0.5 * dt * a0[0],
+        v[1] + 0.5 * dt * a0[1],
+        v[2] + 0.5 * dt * a0[2],
+    ];
+    let mut rs = Vec::with_capacity(samples);
+    let mut ws = Vec::with_capacity(samples);
+    let mut prev_w = 0.0;
+    for k in 1..=steps {
+        let tdb = tdb_lo + k as f64 * dt;
+        r = [r[0] + dt * v[0], r[1] + dt * v[1], r[2] + dt * v[2]];
+        let a = acc(r, tdb, planets, eph)?;
+        v = [v[0] + dt * a[0], v[1] + dt * a[1], v[2] + dt * a[2]];
+        if k % stride == 0 && rs.len() < samples {
+            let t_jd = lo + k as f64 * dt_d;
+            let tdb = (t_jd - J2000_EPOCH) * 86400.0;
+            let geerntet = body_barycenter_position(name, tdb, eph)?;
+            let dx = (r[0] - geerntet[0]) / AU_M;
+            let dy = (r[1] - geerntet[1]) / AU_M;
+            let dz = (r[2] - geerntet[2]) / AU_M;
+            let (_, _, mut w) = elements_from_state(r, v);
+            let mut d = w - prev_w;
+            while d > std::f64::consts::PI {
+                w -= std::f64::consts::TAU;
+                d -= std::f64::consts::TAU;
+            }
+            while d < -std::f64::consts::PI {
+                w += std::f64::consts::TAU;
+                d += std::f64::consts::TAU;
+            }
+            prev_w = w;
+            rs.push((dx * dx + dy * dy + dz * dz).sqrt() as f32);
+            ws.push(w as f32);
+        }
+    }
+    let max_r = rs.iter().copied().fold(0.0f32, f32::max);
+    Some((rs, ws, max_r as f64, window_days))
+}
+
+fn sweep_te(rs: &[f32], ws: &[f32], lag_max: usize) -> (f64, usize, &'static str) {
+    let mut best_te = 0.0f64;
+    let mut best_lag = 0usize;
+    for lag in 0..=lag_max {
+        if let Some(te) = transfer_entropy_lag(rs, ws, lag) {
+            if te > best_te {
+                best_te = te;
+                best_lag = lag;
+            }
+        }
+    }
+    let mut rev_te = 0.0f64;
+    let mut rev_lag = 0usize;
+    for lag in 0..=lag_max {
+        if let Some(te) = transfer_entropy_lag(ws, rs, lag) {
+            if te > rev_te {
+                rev_te = te;
+                rev_lag = lag;
+            }
+        }
+    }
+    if best_te >= rev_te {
+        (best_te, best_lag, "R->ϖ")
+    } else {
+        (rev_te, rev_lag, "ϖ->R")
+    }
+}
+
+fn lag_distance_au(lag: usize, sample_days: f64) -> f64 {
+    lag as f64 * sample_days * 86400.0 * C_LIGHT / AU_M
+}
+
 fn family_verdict(
     label: &str,
     n: usize,
@@ -311,7 +411,9 @@ fn main() {
         .iter()
         .enumerate()
         .filter(|(_, s)| {
-            s.format == "ephemeris_binary" && PLANETS.contains(&s.body.as_deref().unwrap_or(""))
+            s.format == "ephemeris_binary"
+                && (PLANETS.contains(&s.body.as_deref().unwrap_or(""))
+                    || PROBES.contains(&s.body.as_deref().unwrap_or("")))
         })
         .map(|(idx, s)| {
             (
@@ -322,7 +424,7 @@ fn main() {
         })
         .collect();
     if offline {
-        eprintln!("offline: {} planeten-bins aus dem cache", items.len());
+        eprintln!("offline: {} bins aus dem cache", items.len());
     } else {
         download_ephemeris_batch(&items);
     }
@@ -338,15 +440,14 @@ fn main() {
                 let gm = e.props.as_ref().and_then(|p| p.gm);
                 let (lo, hi) = coverage(&e);
                 eprintln!("{name:<9} gm {gm:?} span {lo:.2}..{hi:.2}");
-                match gm {
-                    Some(gm) if gm.is_finite() && gm > 0.0 => {
-                        planets.push(Planet {
-                            name: name.clone(),
-                            gm,
-                        });
-                        eph.insert(name, e);
+                eph.insert(name.clone(), e);
+                if PLANETS.contains(&name.as_str()) {
+                    match gm {
+                        Some(gm) if gm.is_finite() && gm > 0.0 => {
+                            planets.push(Planet { name, gm });
+                        }
+                        _ => eprintln!("{name}: gm fehlt — der Koerper traegt die Masse nicht"),
                     }
-                    _ => eprintln!("{name}: gm fehlt — der Koerper traegt die Masse nicht"),
                 }
             }
             None => eprintln!("{name}: bin parse void"),
@@ -377,9 +478,12 @@ fn main() {
         return;
     }
 
-    println!("=== Nadel VI: TE(Residuum -> Bahn) je Familie ===");
+    println!("=== Nadel VI: TE(Residuum -> Bahn) je Familie + Sonden ===");
     println!(
         "Konstruktion: R(t) = |Kepler(Bahn_geerntet) - N-Koerper(Sun+8, Leapfrog dt {dt_d} d)| in AU; Bahn = ϖ(t) aus dem N-Koerper-Lauf; {samples} Samples je Objekt, Fenster ±{W_YR} yr (Deckungs-Bound der ephemeris-Bins); Mittel-Reihe je Familie."
+    );
+    println!(
+        "Sonden: Bahn_geerntet = der Bin selbst (die gemessene Bahn), Modell = Sun+8 ab Fensterstart; R = |gemessen - Modell|. Lag -> Ort ueber die c-Laufzeit (signal_reach-Gesetz des Archivars: d = lag × Sample-Tage × c)."
     );
     println!(
         "Nullkontrollen: I Sun-only-Selbstlauf (R muss ≈ 0), II kalte Klassische (e<0.15, i<5 Grad), III phasenrandomisierte Surrogat-Schwelle (mean+2σ, f64 FFT); fam = max Surrogat-Schwelle der Runde."
@@ -421,20 +525,54 @@ fn main() {
         }
     }
 
+    let mut probes_out: Vec<(String, Vec<f32>, Vec<f32>, f64, f64)> = Vec::new();
+    for name in PROBES {
+        match probe_series(name, &planets, &eph, dt_d, samples) {
+            Some((rs, ws, max_r, window_days)) => {
+                probes_out.push((name.to_string(), rs, ws, max_r, window_days))
+            }
+            None => println!("sonde {name:<12} serie void — Deckung oder Fenster zu kurz"),
+        }
+    }
+
     let mut fams: Vec<u8> = fam_n.keys().copied().collect();
     fams.sort();
+    let family_sample_days = (2.0 * W_YR * 365.25) / samples as f64;
     let mut fam = 0.0f64;
-    for f in &fams {
-        let n = fam_n[f];
-        let f_rs: Vec<f32> = fam_rs[f].iter().map(|&v| (v / n as f64) as f32).collect();
-        let f_ws: Vec<f32> = fam_ws[f].iter().map(|&v| (v / n as f64) as f32).collect();
+    let mut fam_update = |rs: &[f32], ws: &[f32]| {
         for lag in 0..=lag_max {
-            for (x, y) in [(&f_rs, &f_ws), (&f_ws, &f_rs)] {
+            for (x, y) in [(rs, ws), (ws, rs)] {
                 if let Some((_, _, thr)) = surrogate_stats_phase(x, y, lag, SEED) {
                     fam = fam.max(thr);
                 }
             }
         }
+    };
+    for f in &fams {
+        let n = fam_n[f];
+        let f_rs: Vec<f32> = fam_rs[f].iter().map(|&v| (v / n as f64) as f32).collect();
+        let f_ws: Vec<f32> = fam_ws[f].iter().map(|&v| (v / n as f64) as f32).collect();
+        fam_update(&f_rs, &f_ws);
+    }
+    for (_, rs, ws, _, _) in &probes_out {
+        fam_update(rs, ws);
+    }
+    let (cold_rs_f, cold_ws_f): (Vec<f32>, Vec<f32>) = if cold_n >= 30 {
+        (
+            cold_rs
+                .iter()
+                .map(|&v| (v / cold_n as f64) as f32)
+                .collect(),
+            cold_ws
+                .iter()
+                .map(|&v| (v / cold_n as f64) as f32)
+                .collect(),
+        )
+    } else {
+        (Vec::new(), Vec::new())
+    };
+    if cold_n >= 30 {
+        fam_update(&cold_rs_f, &cold_ws_f);
     }
 
     for f in &fams {
@@ -450,25 +588,34 @@ fn main() {
         let (te, lag, _) =
             family_verdict(&family_name(*f).to_string(), n, &f_rs, &f_ws, lag_max, fam);
         println!(
-            "  residuum |R| mittel {mean_r:.4e} AU, max je Objekt {:.4e} AU, te {te:.4e} @ lag {lag}",
-            st.1
+            "  residuum |R| mittel {mean_r:.4e} AU, max je Objekt {:.4e} AU, te {te:.4e} @ lag {lag}, ort bei c-Laufzeit {:.1} AU",
+            st.1,
+            lag_distance_au(lag, family_sample_days)
         );
     }
 
-    let (cold_rs_f, cold_ws_f): (Vec<f32>, Vec<f32>) = if cold_n >= 30 {
-        (
-            cold_rs
-                .iter()
-                .map(|&v| (v / cold_n as f64) as f32)
-                .collect(),
-            cold_ws
-                .iter()
-                .map(|&v| (v / cold_n as f64) as f32)
-                .collect(),
-        )
-    } else {
-        (Vec::new(), Vec::new())
-    };
+    for (name, rs, ws, max_r, window_days) in &probes_out {
+        let (te, lag, dir) = sweep_te(rs, ws, lag_max);
+        let thr = surrogate_stats_phase(rs, ws, lag, SEED)
+            .map(|(_, _, t)| t)
+            .unwrap_or(0.0);
+        let word = if te > fam {
+            "fam-tragend"
+        } else if te > thr {
+            "Pfeil ueber eigener Schwelle, unter Familien-Schwelle"
+        } else {
+            "still"
+        };
+        let sample_days = window_days / samples as f64;
+        println!(
+            "sonde {name:<12} te {te:.4e} ({dir}, lag {lag}) thr {thr:.4e} fam {fam:.4e} | {word}"
+        );
+        println!(
+            "  fenster {window_days:.0} d ({sample_days:.1} d/Sample), max R {max_r:.4e} AU, ort bei c-Laufzeit {:.1} AU",
+            lag_distance_au(lag, sample_days)
+        );
+    }
+
     if cold_n >= 30 {
         family_verdict(
             "Nullkontrolle II kalt",
