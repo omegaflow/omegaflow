@@ -264,12 +264,20 @@ stärkste Surrogat-TE der Runde (Mehrfachvergleichskorrektur). CI
 (goes_euvs.bin → CDN) und den Job `solar_dag` (needs sun, solar_xrs,
 euvs; 420-min-Limit, der Lauf braucht ~2,5 h — sein Log ist das
 Nadel-Ⅲ-Blatt-Register). Das Blatt-Dokument
-`docs/concepts/ein-blatt-korona-heizung.md` trägt den DAG auf beiden
-Skalen. Der KDE-Sensitivitäts-Sweep (h, h/2, 2h) rechnet
-(`solar_dag_probe --h-sweep`, entscheidende Paare je Faktor gegen die
-je Faktor gerechnete Schwelle, dieselben Seeds) — der Befund wandert
-ins Dokument, sobald der Lauf gelandet ist; die volle
-fam(h/2)/fam(2h)-Neuberechnung bleibt benannt offen.
+`docs/surveys/survey-ein-blatt-korona-heizung.md` trägt den DAG auf
+beiden Skalen. Der KDE-Volltest (`solar_dag_probe --h-full`, drei
+Blätter, fam je Bandbreite neu) ist ERLEDIGT: fam 6,738e-1 (h/2) /
+2,108e-1 (h) / 7,962e-2 (2h) — stabil still bis auf den
+bandbreiten-empfindlichen Rand-Kandidaten Lya1216 → XRSB (nur bei
+h × 2,0 fam-signifikant).
+Kritik-Außenlesung (2026-08-22, `survey-2026-08-22-kritik-aussenlesung.md`):
+die externe Kritik ist Punkt für Punkt geprüft (Verdikt-Tabelle). Schritt 1
+(Prüfung), 2 (Korona-Wortlaut + Minuten-fam-Lücke benannt + KDE-Volltest
+eingetragen) und 3 (LAIC-Wording) sind ERLEDIGT (5dda567, b019fb9). Offen:
+Schritt 4 (externe TE-Referenz-Validierung, Schreiber 2000 — über die
+öffentliche API, `src/te.rs` unberührt; die synthetischen Ground-Truth-Tests
+causal_positive u. a. existieren bereits) und Schritt 5 (Literatur-
+Kalibrierung via Subagent).
 Blatt-Befund (2026-08-21, solar_dag_probe auf den echten Serien,
 gemeinsames Fenster 2009-09 → 2020-03, 3837 Tages-Zellen, 30 Paare ×
 lag 0..7 d): **kein fam-gereinigter Pfeil** — fam = 2,108e-1 (stärkste
@@ -806,6 +814,14 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Ausschluss-Filter. Vorbedingungen benannt: Pfeiler-Registraturen Farbe
   + Frequenzachse (TODO.md), ZTF-Decoder AUSSTEHEND, epoch-0.0-Ring-
   Messung.
+- **Nadel VI — Planet 9** (`handover-2026-08-22-planet-neun.md`): die
+  KBO-Ernte lebt — `kbo_compiler` (SBDB-Pages + MPC-Distant-Kreuzcheck
+  → `kbo_elements.bin`, Familien aus a-Fenstern; die zwei kaputten
+  Queue-URLs sind im selben Atom repariert, sb-class=TNO + full-prec,
+  Pagination limit-from). Offen: der Residuum-Port (N-Körper-Leapfrog
+  Sun+8 Planeten × Kepler-Referenz, TE(Residuum → Bahn) je Familie mit
+  drei Nullkontrollen), das Blatt + Verdikt; die a>200-ETNO-Seite ist
+  als `--etno`-Flag geerntet, der eigene Queue-Block bleibt offen.
 
 ## Archivar — Architektur
 
