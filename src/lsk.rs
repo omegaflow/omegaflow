@@ -161,4 +161,29 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         assert!(parse("DELTET/DELTA_T_A = ( 32.184 )\n").is_none());
         assert!(parse("DELTA_AT = ( 37, @2017-JAN-1 )\n").is_none());
     }
+
+    #[test]
+    fn unix_to_tdb_carries_the_j2000_domain() {
+        let text = "KPL/LSK\n\
+[2]       DELTA_AT  =  TAI - UTC\n\
+[3]       DELTA_ET  =  ET - (TAI - DELTA_AT)\n\
+\\begindata\n\n\
+DELTET/DELTA_T_A       =   32.184\n\
+DELTET/K               =    1.657D-3\n\
+DELTET/M               = (  6.239996D0   1.99096871D-7 )\n\n\
+DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
+        let lsk = parse(text).unwrap();
+        let unix_2026 = 1_785_000_000.0;
+        let tdb = lsk
+            .unix_to_tdb(unix_2026)
+            .expect("post-1972 unix carries a tdb");
+        assert!(
+            (tdb - 838_272_069.184).abs() < 1.0,
+            "a 2026 unix epoch maps near J2000-relative tdb, was {tdb}"
+        );
+        assert!(
+            lsk.unix_to_tdb(-40_000_000.0).is_none(),
+            "pre-1972 the leap table reads void — no fabricated epoch"
+        );
+    }
 }

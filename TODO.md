@@ -341,9 +341,12 @@ der URL) → `omni2_serie.bin` (Magie "OMN1", 20-B-Records wie rpw,
 comp-Codes 1..7 = V,N,T,BX,BY,BZ,Pressure in der Live-Block-Ordnung).
 Auflösung: Daily-Bucket-Mediane (Default 1440 min; ~550 k Stunden →
 139 215 Records — die Stunden-Auflösung überstiege MAX_SAMPLES, der
-`--decimate-min`-Knopf bleibt). Epoche = UTC-unix ohne LSK (f107-Doktrin:
-prä-1972 liest die Schaltsekundentabelle void, und TDB−UTC ~69 s liegt
-unter der Tages-Bucket-Weite — im Bin benannt, keine Fabrikation).
+`--decimate-min`-Knopf bleibt). Epoche = TDB via LSK (`lsk.unix_to_tdb`,
+der ~30-Jahre-J2000-Offset; prä-1972 liest die Schaltsekundentabelle
+void → diese Buckets bleiben ungeerntet, 0 honored). Die frühere
+„UTC-unix ohne LSK"-Doktrin war ein Fehlschluss: sie verwechselte
+TDB−UTC ~69 s mit UNIX→TDB ~30 a — die rohe UNIX-Epoche ließ jede
+Oszillatorin im Anchor verwerfen (Granul-Lookup Jahr ~50750).
 Fill-Skips je Parameter (B/N 999.9, T 9999999.0, V 9999.0, P 99.99) +
 Plausibilitäts-Bereiche: |B| ≤ 1000 nT (Bz = 0 ist eine Messung),
 T ≤ 1e8 K, N ≤ 1000 cm⁻³, V ≤ 5000 km/s, P ≤ 1000 nPa — alle
@@ -356,7 +359,8 @@ der nächste CI-Lauf das CDN-Asset (die Serie gewinnt — keine
 (τ=86400, die 7 Felder des Live-Blocks); der Loader trägt den Zweig
 (series_parse_bin/series_component_name). CI (sources-Repo):
 `omni2_compiler --window-start 1963-01-01 --window-end 2026-08-06
---decimate-min 1440 --jobs 8 --ci-mode` — bis der Lauf manifestiert,
+--decimate-min 1440 --jobs 8 --lsk naif0012.tls --ci-mode` — bis der
+Lauf manifestiert,
 trägt der Block die benannte Verweigerung (fetch void, 0 honored).
 Offen bleibt: der Lang-Fenster-Probe F10.7-Historie ×
 GOES-XRS-Historie über Jahre — GEBAUT (2026-08-21, Einheit 2 der
