@@ -855,6 +855,13 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   pub-use-Globs. Gates grün: cargo check 0/0 (default + browser_relay +
   gamepad, all-targets). Das Wort „Probe" meint fortan nur die
   Physik-Messung; die Quellen-Kuration heißt Port.
+- Rat-Körper — WAHR (2026-08-22): docs/council_voices.yaml trägt zwölf
+  neue Literatur-Quellen (Gebser, Wilber, Schleiermacher/Gadamer,
+  Lorenz, Takens, Gauß, Tschebyschow, Poincaré, Uexküll, Spinoza,
+  Whitehead, Flusser) — die Inspired-by-Zeilen der fünf Stimmen
+  verlängert (mountain: Spinoza/Gauß/Tschebyschow; river:
+  Whitehead/Gadamer/Lorenz/Takens; mycelium: Poincaré; sensory:
+  Uexküll/Flusser; future: Gebser/Wilber).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
