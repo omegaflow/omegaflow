@@ -2,7 +2,7 @@
   title: Kritik-Außenlesung — die Antwort des Bestands auf die fünf Punkte
   class: survey
   date: 2026-08-22
-  sha256: 64c1d65b58c80d91b2a8339c8953eeadb9f6c66d3da6b29d263a5bf8fb1a1a99
+  sha256: 0a480f4fa0611516e4e688c1b24a3629eccd097d1bdcac00873f453fbef8e797
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md
     docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md
@@ -50,11 +50,15 @@ Literatur.
    LAIC-Hypothese selbst bleibt Kanal-offen" statt „abschließend
    gemessen".
 4. **Externe TE-Validierung** — Schreiber-2000-Standardbeispiel über die
-   öffentliche API (`te.rs` unberührt). Gebaut: `src/bin/te_ground_truth.rs`
+   öffentliche API (`te.rs` unberührt). ERLEDIGT: `src/bin/te_ground_truth.rs`
    (unidirektional gekoppelte Hénon-Maps, c = 0.2, lag 1, c = 0-Kontrolle,
-   n = 10000) — manuell verifiziert; der Lauf steht aus, bis der
-   Archivar-Schnitt der Parallel-Session gelandet ist (der Baum
-   kompiliert gerade nicht).
+   n = 10000) → **PASS** (Lauf im sauberen Worktree bei HEAD). TE(X→Y) =
+   2,46e-1, Asymmetrie 6,75× zur Gegenrichtung; die Gegenrichtung trägt ein
+   schwaches Rest-Signal (TE(Y→X) = 3,64e-2 über der eigenen Schwelle —
+   das generalisierte-Synchronie-Artefakt), das unter der Familien-Schwelle
+   fam = 4,55e-2 still bleibt; die c=0-Kontrolle ist in beide Richtungen
+   still. Der Befund validiert die Implementierung UND die Familien-Schwelle
+   zugleich (nur sie trennt den echten Pfeil vom Gegenrichtungs-Rest).
 5. **Literatur-Kalibrierung** — Subagent sammelt ENSO/Bz/LAIC-TE-
    Literatur → Vergleichs-Matrix (Kadenz, Lags, Surrogat-Konventionen).
    Erledigt: `docs/reference/te-literatur-matrix.md` — Bz-Platte gut

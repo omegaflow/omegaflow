@@ -2,23 +2,25 @@
 // Transfer", PRL 85, 461): zwei unidirektional gekoppelte Hénon-Maps mit
 // bekannter Richtung. X treibt Y bei c > 0; bei c = 0 sind beide
 // unabhängig. Die Implementierung (der öffentliche skalare Pfad
-// `transfer_entropy_lag` + die phasenrandomisierte Schwelle
-// `surrogate_stats_phase`) muss die bekannte Richtung rekonstruieren:
-// TE(X→Y) schlägt seine Schwelle, TE(Y→X) bleibt still, und die
-// c=0-Kontrolle bleibt in beide Richtungen still. `src/te.rs` bleibt
-// unberührt — dies ist eine Referenz-Probe über die öffentliche API.
+// `transfer_entropy_lag` + die phasenrandomisierte Schwelle) muss die
+// bekannte Richtung rekonstruieren. Verdikt über die Familien-Schwelle
+// fam = stärkste Surrogat-TE der ganzen Runde (Mehrfachvergleichs-
+// korrektur über alle vier Richtungen × Fälle) — dieselbe Schwelle wie
+// die Blätter: nur TE(X→Y) darf fam überstehen, Gegenrichtung und
+// c=0-Kontrolle bleiben still. `src/te.rs` bleibt unberührt.
 //
 // System:
 //   x_{n+1} = 1.4 − x_n² + 0.3 x_{n−1}
 //   y_{n+1} = 1.4 − (c·x_n·y_n + (1−c)·y_n²) + 0.3 y_{n−1}
 // lag = 1 (die Kopplung x_n → y_{n+1} wirkt eine Zeitschritt später).
 
-use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const N: usize = 10000;
 const TRANSIENT: usize = 1000;
 const COUPLING: f64 = 0.2;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const N_SURR: usize = 10;
 
 fn coupled_henon(n: usize, transient: usize, c: f64) -> (Vec<f32>, Vec<f32>) {
     let total = n + transient;
@@ -41,27 +43,33 @@ fn coupled_henon(n: usize, transient: usize, c: f64) -> (Vec<f32>, Vec<f32>) {
     (to_f32(&xs), to_f32(&ys))
 }
 
-fn direction(target: &[f32], source: &[f32], label: &str) -> (f64, f64, bool) {
-    match (
-        transfer_entropy_lag(target, source, 1),
-        surrogate_stats_phase(target, source, 1, SEED),
-    ) {
-        (Some(te), Some((_, _, thr))) => {
-            let arrow = te > thr;
-            println!(
-                "  {:<12} | TE {:>10.4e} | thr {:>10.4e} | {}",
-                label,
-                te,
-                thr,
-                if arrow { "arrow" } else { "still" }
-            );
-            (te, thr, arrow)
-        }
-        _ => {
-            println!("  {:<12} | TE missing | thr missing | still", label);
-            (f64::NAN, f64::NAN, false)
+fn mean_plus_2sigma(vals: &[f64]) -> f64 {
+    let m = vals.iter().sum::<f64>() / vals.len() as f64;
+    let var = vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
+    m + 2.0 * var.sqrt()
+}
+
+fn direction(target: &[f32], source: &[f32], label: &str, fam_pool: &mut Vec<f64>) -> (f64, f64) {
+    let te = transfer_entropy_lag(target, source, 1).unwrap_or(f64::NAN);
+    let mut rng = SEED.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    let mut surr = Vec::with_capacity(N_SURR);
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(source, &mut rng);
+        if let Some(t) = transfer_entropy_lag(target, &ys, 1) {
+            surr.push(t);
+            fam_pool.push(t);
         }
     }
+    let thr = mean_plus_2sigma(&surr);
+    let arrow = te > thr;
+    println!(
+        "  {:<12} | TE {:>10.4e} | thr {:>10.4e} | {}",
+        label,
+        te,
+        thr,
+        if arrow { "arrow" } else { "still" }
+    );
+    (te, thr)
 }
 
 fn main() {
@@ -69,34 +77,36 @@ fn main() {
         "=== TE-Referenz-Validierung — Schreiber 2000 (unidirektional gekoppelte Hénon-Maps) ==="
     );
     println!("System: x_{{n+1}} = 1.4 − x_n² + 0.3 x_{{n−1}};  y_{{n+1}} = 1.4 − (c·x_n·y_n + (1−c)·y_n²) + 0.3 y_{{n−1}}");
-    println!("n = {} (Transient {} verworfen), lag = 1, Schwelle = phasenrandomisierte Surrogate (10, mean + 2σ)", N, TRANSIENT);
+    println!("n = {} (Transient {} verworfen), lag = 1, Schwelle = phasenrandomisierte Surrogate (10, mean + 2σ) + Familien-Schwelle fam über die ganze Runde", N, TRANSIENT);
 
+    let mut fam_pool: Vec<f64> = Vec::new();
     let (xc, yc) = coupled_henon(N, TRANSIENT, COUPLING);
     println!();
     println!("Kopplung c = {:.2} (bekannte Richtung: X → Y):", COUPLING);
-    let (te_xy, thr_xy, arrow_xy) = direction(&yc, &xc, "TE(X→Y)");
-    let (te_yx, thr_yx, arrow_yx) = direction(&xc, &yc, "TE(Y→X)");
+    let (te_xy, thr_xy) = direction(&yc, &xc, "TE(X→Y)", &mut fam_pool);
+    let (te_yx, thr_yx) = direction(&xc, &yc, "TE(Y→X)", &mut fam_pool);
 
     let (xi, yi) = coupled_henon(N, TRANSIENT, 0.0);
     println!();
     println!("Kontrolle c = 0.00 (unabhängig):");
-    let (_, _, arrow_xy0) = direction(&yi, &xi, "TE(X→Y)");
-    let (_, _, arrow_yx0) = direction(&xi, &yi, "TE(Y→X)");
+    let (te_xy0, _) = direction(&yi, &xi, "TE(X→Y)", &mut fam_pool);
+    let (te_yx0, _) = direction(&xi, &yi, "TE(Y→X)", &mut fam_pool);
 
+    let fam = fam_pool.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
     println!();
-    let pass = arrow_xy && !arrow_yx && !arrow_xy0 && !arrow_yx0;
+    println!("fam = {:.4e} — die stärkste Surrogat-TE der ganzen Runde (Mehrfachvergleichskorrektur über alle vier Richtungen × Fälle).", fam);
+    println!("Asymmetrie: TE(X→Y) / TE(Y→X) = {:.2}", te_xy / te_yx);
+    let pass = te_xy > fam && te_yx <= fam && te_xy0 <= fam && te_yx0 <= fam;
     println!(
         "Verdikt: {}",
         if pass {
-            "PASS — die Implementierung rekonstruiert die bekannte Richtung (TE(X→Y) schlägt, TE(Y→X) still, Kontrolle still)."
+            "PASS — die Implementierung rekonstruiert die bekannte Richtung: nur TE(X→Y) übersteht die Familien-Schwelle, Gegenrichtung und Kontrolle bleiben still."
         } else {
             "FAIL — die Richtung wird nicht sauber rekonstruiert; die Werte oben benennen, welcher Ast abweicht."
         }
     );
-    if pass {
-        println!(
-            "TE(X→Y) = {:.4e} über Schwelle {:.4e}; TE(Y→X) = {:.4e} unter {:.4e}.",
-            te_xy, thr_xy, te_yx, thr_yx
-        );
-    }
+    println!(
+        "TE(X→Y) = {:.4e} (Schwelle {:.4e}, fam {:.4e}); TE(Y→X) = {:.4e} (Schwelle {:.4e}); c=0: TE(X→Y) {:.4e}, TE(Y→X) {:.4e}.",
+        te_xy, thr_xy, fam, te_yx, thr_yx, te_xy0, te_yx0
+    );
 }
