@@ -1,4 +1,7 @@
-use omegaflow::archivar::{fetch_raw, parse_json, scalar_of, ymd_to_days, JsonVal};
+use omegaflow::archivar::{
+    fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days, JsonVal,
+};
+use omegaflow::inflate::gunzip;
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -30,6 +33,10 @@ const SWARM_SATS: [&str; 3] = [
     "SW_OPER_FACCTMS_2F",
 ];
 const SWARM_HAPI_TEMPLATE: &str = "https://vires.services/hapi/data?id={sat}&start={start}Z&stop={stop}Z&parameters=Latitude,Longitude,FAC&format=json";
+const GIM_TEMPLATE: &str = "ftp://gssc.esa.int/gnss/products/ionex/{year}/{doy}/COD0OPSRAP_{year}{doy}0000_01D_01H_GIM.INX.gz";
+const GIM_EXPONENT: f64 = -1.0;
+const TEC_CELL_S: f64 = 3600.0;
+const TEC_N_CELLS: usize = 72;
 
 const A_A0: f64 = -3.969683028665376e+01;
 const A_A1: f64 = 2.209460984245205e+02;
@@ -80,6 +87,7 @@ struct WindowData {
     bz: Vec<(f64, f64)>,
     region: Vec<(f64, f64, f64, f64)>,
     swarm: Vec<(f64, f64, f64, f64)>,
+    tec: Vec<(f64, f64)>,
 }
 
 struct WindowStat {
@@ -93,6 +101,9 @@ struct WindowStat {
     swarm_samples: Option<usize>,
     swarm_cells: Option<usize>,
     fac_excess: [Option<f64>; 2],
+    tec_excess: [Option<f64>; 2],
+    tec_control_excess: Option<f64>,
+    tec_n_cells: usize,
 }
 
 struct StackStat {
@@ -298,6 +309,146 @@ fn swarm_pass_samples(body: &str) -> Vec<(f64, f64, f64, f64)> {
         }
         out.push((t, lat, lon, fac));
     }
+    out
+}
+
+fn day_of_year(t: f64) -> (i64, u32) {
+    let days = t.div_euclid(86400.0) as i64;
+    let (y, _, _) = days_to_ymd(days);
+    let y0 = ymd_to_days(y, 1, 1).unwrap_or(0) as i64;
+    let doy = days - y0 + 1;
+    (y, doy as u32)
+}
+
+fn gim_tec_series(body: &str, lat: f64, lon: f64) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    let lines: Vec<&str> = body.lines().collect();
+    let mut i = 0usize;
+    while i < lines.len() {
+        if !lines[i].contains("START OF TEC MAP") {
+            i += 1;
+            continue;
+        }
+        i += 1;
+        if i >= lines.len() || lines[i].len() < 38 {
+            continue;
+        }
+        let epoch_line = lines[i];
+        let f = |s: &str| s.trim().parse::<i64>().ok();
+        let (Some(year), Some(month), Some(day), Some(hour), Some(minute), Some(sec)) = (
+            f(&epoch_line[2..8]),
+            f(&epoch_line[8..14]),
+            f(&epoch_line[14..20]),
+            f(&epoch_line[20..26]),
+            f(&epoch_line[26..32]),
+            f(&epoch_line[32..38]),
+        ) else {
+            continue;
+        };
+        let Some(days) = ymd_to_days(year, month as u32, day as u32) else {
+            continue;
+        };
+        let t = days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + sec as f64;
+        i += 1;
+        let mut grid: Vec<Vec<f64>> = Vec::new();
+        for band in 0..71 {
+            if i >= lines.len()
+                || lines[i].len() < 8
+                || lines[i].contains("START OF TEC MAP")
+                || lines[i].contains("END OF TEC MAP")
+                || lines[i].contains("EPOCH")
+            {
+                break;
+            }
+            let lat_band: f64 = match lines[i][2..8].trim().parse() {
+                Ok(v) => v,
+                Err(_) => break,
+            };
+            i += 1;
+            let mut row = Vec::new();
+            for line_in_band in 0..5 {
+                let n = if line_in_band < 4 { 16 } else { 9 };
+                if i >= lines.len() || lines[i].len() < 5 * n {
+                    break;
+                }
+                let vline = lines[i];
+                for k in 0..n {
+                    let chunk = &vline[5 * k..5 * k + 5];
+                    if let Ok(v) = chunk.trim().parse::<f64>() {
+                        row.push(v * 10f64.powf(GIM_EXPONENT));
+                    }
+                }
+                i += 1;
+            }
+            if row.len() == 73 {
+                grid.push(row);
+            }
+            if band == 70 {
+                break;
+            }
+            if lat_band < -87.0 {
+                break;
+            }
+            let _ = band;
+        }
+        if grid.len() >= 2 {
+            let flat = ((87.5 - lat) / 2.5).clamp(0.0, 70.0);
+            let flon = ((lon + 180.0) / 5.0).clamp(0.0, 72.0);
+            let b0 = flat.floor() as usize;
+            let b1 = (b0 + 1).min(grid.len() - 1);
+            let c0 = flon.floor() as usize;
+            let c1 = (c0 + 1).min(72);
+            let fb = flat - b0 as f64;
+            let fc = flon - c0 as f64;
+            let v00 = grid[b0][c0];
+            let v01 = grid[b0][c1];
+            let v10 = grid[b1][c0];
+            let v11 = grid[b1][c1];
+            let v = v00 * (1.0 - fb) * (1.0 - fc)
+                + v01 * (1.0 - fb) * fc
+                + v10 * fb * (1.0 - fc)
+                + v11 * fb * fc;
+            out.push((t, v));
+        }
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
+fn harvest_tec(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64)> {
+    let t_start = t0 - WINDOW_S;
+    let cache_dir = format!("{dir}/gim");
+    let _ = std::fs::create_dir_all(&cache_dir);
+    let mut out = Vec::new();
+    let mut day = t_start.div_euclid(86400.0) as i64;
+    let end_day = t0.div_euclid(86400.0) as i64;
+    while day <= end_day {
+        let (y, doy) = day_of_year(day as f64 * 86400.0);
+        let stamp = format!("{y:04}{doy:03}");
+        let path = format!("{cache_dir}/{stamp}.gz");
+        let mut bytes: Option<Vec<u8>> = std::fs::read(&path).ok();
+        if bytes.is_none() {
+            let url = GIM_TEMPLATE
+                .replace("{year}", &format!("{y:04}"))
+                .replace("{doy}", &format!("{doy:03}"));
+            bytes = fetch_raw_bytes(&url, 86400);
+            if let Some(b) = &bytes {
+                let _ = std::fs::write(&path, b);
+            }
+        }
+        if let Some(b) = bytes {
+            if let Some(text) = gunzip(&b) {
+                let text = String::from_utf8_lossy(&text).to_string();
+                for &(t, v) in &gim_tec_series(&text, lat, lon) {
+                    if t >= t_start && t <= t0 {
+                        out.push((t, v));
+                    }
+                }
+            }
+        }
+        day += 1;
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
     out
 }
 
@@ -553,6 +704,9 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         swarm_samples: None,
         swarm_cells: None,
         fac_excess: [None, None],
+        tec_excess: [None, None],
+        tec_control_excess: None,
+        tec_n_cells: 0,
     };
     let rate_epochs: Vec<f64> = data
         .region
@@ -600,6 +754,22 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             let (_, best_fac_il, _) =
                 sweep_excess(&fac_rs, &fac_fs, MAX_LAG_H, cells_per_lag, kde_scale);
             stat.fac_excess = [best_fac_li, best_fac_il];
+        }
+    }
+    if !data.tec.is_empty() {
+        let tec_cells = bin_mean(&data.tec, t_start, TEC_CELL_S, TEC_N_CELLS);
+        let rate_cells_h = bin_count(&rate_epochs, t_start, TEC_CELL_S, TEC_N_CELLS);
+        let (tec_fs, tec_rs) = pair_cells(&tec_cells, &rate_cells_h);
+        stat.tec_n_cells = tec_fs.len();
+        if tec_fs.len() >= MIN_M {
+            let (_, best_tl, _) = sweep_excess(&tec_fs, &tec_rs, MAX_LAG_H, 1, kde_scale);
+            let (_, best_lt, _) = sweep_excess(&tec_rs, &tec_fs, MAX_LAG_H, 1, kde_scale);
+            stat.tec_excess = [best_tl, best_lt];
+        }
+        let (tec_fh, bz_th) = pair_cells(&tec_cells, &bz_h);
+        if tec_fh.len() >= MIN_M {
+            let (_, best_ctrl, _) = sweep_excess(&tec_fh, &bz_th, 48, 1, kde_scale);
+            stat.tec_control_excess = best_ctrl;
         }
     }
     stat
@@ -733,6 +903,7 @@ fn parse_window_file(body: &str) -> Option<WindowData> {
         bz: Vec::new(),
         region: Vec::new(),
         swarm: Vec::new(),
+        tec: Vec::new(),
     };
     if let Some(JsonVal::Arr(rows)) = root.get("f") {
         for row in rows {
@@ -786,7 +957,30 @@ fn parse_window_file(body: &str) -> Option<WindowData> {
             }
         }
     }
+    if let Some(JsonVal::Arr(rows)) = root.get("tec") {
+        for row in rows {
+            if let JsonVal::Arr(cells) = row {
+                if let (Some(t), Some(v)) = (
+                    cells.first().and_then(scalar_of),
+                    cells.get(1).and_then(scalar_of),
+                ) {
+                    data.tec.push((t, v));
+                }
+            }
+        }
+    }
     Some(data)
+}
+
+fn load_tec_sidecar(dir: &str, prefix: &str, i: usize) -> Vec<(f64, f64)> {
+    let body = match std::fs::read_to_string(format!("{dir}/tec_{prefix}{i:04}.json")) {
+        Ok(b) => b,
+        Err(_) => return Vec::new(),
+    };
+    match parse_window_file(&body) {
+        Some(d) => d.tec,
+        None => Vec::new(),
+    }
 }
 
 fn harvest_window(
@@ -810,6 +1004,7 @@ fn harvest_window(
         bz: Vec::new(),
         region: Vec::new(),
         swarm: Vec::new(),
+        tec: Vec::new(),
     };
     let t_start = t0 - WINDOW_S;
     let start_iso = unix_to_iso(t_start);
@@ -870,7 +1065,7 @@ fn harvest_main(args: &[String]) {
     let dir = match arg_value(args, "--harvest") {
         Some(d) => d,
         None => {
-            println!("usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M]");
+            println!("usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M] [--tec-events N] [--tec-null N] [--tec-era YYYY-MM-DD]");
             println!("       laic_probe --analyze DIR [--radius KM] [--cell-min MIN] [--kde-scale K] [--max-events N] [--null N]");
             return;
         }
@@ -890,6 +1085,12 @@ fn harvest_main(args: &[String]) {
     let mag_min = arg_value(args, "--mag")
         .and_then(|v| v.parse::<f64>().ok())
         .unwrap_or(M_MIN_EVENT);
+    let tec_events = arg_value(args, "--tec-events")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0);
+    let tec_null = arg_value(args, "--tec-null")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0);
     let now_s = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs_f64())
@@ -1020,6 +1221,97 @@ fn harvest_main(args: &[String]) {
     }
     manifest.push_str("]}");
     std::fs::write(format!("{dir}/manifest.json"), manifest).expect("manifest");
+
+    let tec_era = arg_value(args, "--tec-era")
+        .and_then(|v| iso_to_unix(&format!("{v}T00:00:00")))
+        .unwrap_or(1704067200.0);
+    let tec_n_events = tec_events.min(events.len());
+    if tec_n_events > 0 {
+        println!();
+        println!(
+            "=== TEC-GIM harvest (COD 1-h rapid, ESA GSSC FTP, bilinear at the epicenter, era {}) ===",
+            unix_to_iso(tec_era)
+        );
+        for i in 0..tec_n_events {
+            let ev = &events[i];
+            if ev.t0 < tec_era {
+                break;
+            }
+            let path = format!("{dir}/tec_e{i:04}.json");
+            if std::path::Path::new(&path).exists() {
+                println!("tec e{i:>4} | already harvested");
+                continue;
+            }
+            let series = harvest_tec(&dir, ev.t0, ev.lat, ev.lon);
+            println!(
+                "tec e{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | cells {}",
+                unix_to_iso(ev.t0),
+                ev.mag,
+                ev.lat,
+                ev.lon,
+                series.len()
+            );
+            let body = format!(
+                "{{\"kind\":\"event\",\"t0\":{},\"mag\":{},\"lat\":{},\"lon\":{},\"station\":\"\",\"f\":[],\"bz\":[],\"region\":[],\"swarm\":[],\"tec\":{}}}",
+                ev.t0,
+                ev.mag,
+                ev.lat,
+                ev.lon,
+                series_json(&series)
+            );
+            std::fs::write(&path, body).expect("tec sidecar");
+        }
+    }
+    let mut tec_null_windows: Vec<(f64, f64, f64)> = Vec::new();
+    let tec_n_null = tec_null.min(null_windows.len());
+    if tec_n_null > 0 {
+        let mut rng = SURROGATE_SEED ^ 0x7EC7_EC7E_C7EC_7EC7;
+        for _ in 0..tec_n_null {
+            rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            let frac = ((rng >> 33) as f64) / (u32::MAX as f64);
+            let t0 = tec_era + frac * (now_s - tec_era - WINDOW_S - 86400.0).max(0.0);
+            let center = &events[(rng % events.len() as u64) as usize];
+            tec_null_windows.push((t0, center.lat, center.lon));
+        }
+    }
+    let tec_n_null = tec_null_windows.len();
+    if tec_n_null > 0 {
+        println!();
+        println!("=== TEC null ensemble: {tec_n_null} windows drawn from the TEC era ===");
+        for i in 0..tec_n_null {
+            let (t0, lat, lon) = tec_null_windows[i];
+            let wpath = format!("{dir}/tcn{i:04}.json");
+            let tpath = format!("{dir}/tec_tcn{i:04}.json");
+            if std::path::Path::new(&wpath).exists() && std::path::Path::new(&tpath).exists() {
+                println!("tec null {i:>4} | already harvested");
+                continue;
+            }
+            let data = harvest_window("null", t0, 0.0, lat, lon, &stations, false, &SWARM_SATS);
+            let series = harvest_tec(&dir, t0, lat, lon);
+            println!(
+                "tec null {i:>4} | {:<19} | {:>7.2} {:>8.2} | f {} region {} tec {}",
+                unix_to_iso(t0),
+                lat,
+                lon,
+                data.f.len(),
+                data.region.len(),
+                series.len()
+            );
+            if !std::path::Path::new(&wpath).exists() {
+                std::fs::write(&wpath, window_json(&data)).expect("tec null window");
+            }
+            let body = format!(
+                "{{\"kind\":\"null\",\"t0\":{},\"mag\":0.0,\"lat\":{},\"lon\":{},\"station\":\"\",\"f\":[],\"bz\":[],\"region\":[],\"swarm\":[],\"tec\":{}}}",
+                t0,
+                lat,
+                lon,
+                series_json(&series)
+            );
+            std::fs::write(&tpath, body).expect("tec sidecar");
+        }
+    }
     println!("harvest complete. Exit 0.");
 }
 
@@ -1058,6 +1350,7 @@ fn analyze_main(args: &[String]) {
         "window statistic per direction = max excess over the sweep; stack = mean over event windows; arrow ⇔ stack > null mean + 2σ; the null windows carry the same max-over-lag statistic (structural multiple-comparison correction), a Bonferroni-adjusted threshold is printed per lag;"
     );
     println!("control: TE(Solar Bz → F) on 1-h cells, sweep 0…48 h; the LAIC arrow must carry while the control stays silent;");
+    println!("TEC channel (where sidecars exist): COD 1-h rapid GIMs (ESA GSSC FTP, bilinear at the epicenter), TEC pair on 1-h cells, sweep 0…{MAX_LAG_H} h (m ≥ {MIN_M}), control TE(Solar Bz → TEC);");
     println!("registered alternative A — Ereignisrate — remains unbuilt (register).");
 
     let manifest_body = match std::fs::read_to_string(format!("{dir}/manifest.json")) {
@@ -1130,10 +1423,14 @@ fn analyze_main(args: &[String]) {
     println!();
     println!("=== event windows (excess = TE − surrogate threshold, max over the lag sweep) ===");
     for (i, &(t0, mag, lat, lon)) in events.iter().enumerate() {
-        let Some(data) = load("e", i) else {
-            println!("{i:>4} | {:<19} | window file void", unix_to_iso(t0));
-            continue;
+        let mut data = match load("e", i) {
+            Some(d) => d,
+            None => {
+                println!("{i:>4} | {:<19} | window file void", unix_to_iso(t0));
+                continue;
+            }
         };
+        data.tec = load_tec_sidecar(&dir, "e", i);
         let stat = window_stat(&data, radius_km, cell_s, kde_scale);
         if data.station.is_empty() || data.f.is_empty() {
             bgs_void += 1;
@@ -1145,7 +1442,7 @@ fn analyze_main(args: &[String]) {
             region_void += 1;
         }
         println!(
-            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e} | swarm {}/{}",
+            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e} | tec {} {}/{} {}",
             unix_to_iso(t0),
             mag,
             lat,
@@ -1159,8 +1456,12 @@ fn analyze_main(args: &[String]) {
             stat.control_excess.map_or(f64::NAN, |v| v),
             stat.fac_excess[0].map_or(f64::NAN, |v| v),
             stat.fac_excess[1].map_or(f64::NAN, |v| v),
-            stat.swarm_samples.map_or("-".to_string(), |v| v.to_string()),
-            stat.swarm_cells.map_or("-".to_string(), |v| v.to_string())
+            stat.tec_n_cells,
+            stat.tec_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.tec_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat
+                .tec_control_excess
+                .map_or("-".to_string(), |v| format!("{:+.3e}", v))
         );
         event_stats.push((i, stat));
     }
@@ -1172,13 +1473,17 @@ fn analyze_main(args: &[String]) {
     );
     let mut null_stats: Vec<WindowStat> = Vec::new();
     for (i, &(t0, lat, lon)) in null_windows.iter().enumerate() {
-        let Some(data) = load("n", i) else {
-            println!("null {i:>4} | {:<19} | window file void", unix_to_iso(t0));
-            continue;
+        let mut data = match load("n", i) {
+            Some(d) => d,
+            None => {
+                println!("null {i:>4} | {:<19} | window file void", unix_to_iso(t0));
+                continue;
+            }
         };
+        data.tec = load_tec_sidecar(&dir, "n", i);
         let stat = window_stat(&data, radius_km, cell_s, kde_scale);
         println!(
-            "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e}",
+            "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | tec {} {}/{} {}",
             unix_to_iso(t0),
             lat,
             lon,
@@ -1188,12 +1493,38 @@ fn analyze_main(args: &[String]) {
             stat.excess[0].map_or(f64::NAN, |v| v),
             stat.excess[1].map_or(f64::NAN, |v| v),
             stat.control_excess.map_or(f64::NAN, |v| v),
-            stat.fac_excess[0].map_or(f64::NAN, |v| v),
-            stat.fac_excess[1].map_or(f64::NAN, |v| v)
+            stat.tec_n_cells,
+            stat.tec_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.tec_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat
+                .tec_control_excess
+                .map_or("-".to_string(), |v| format!("{:+.3e}", v))
         );
         null_stats.push(stat);
     }
 
+    let mut null_stats_tec: Vec<WindowStat> = Vec::new();
+    for i in 0..1000 {
+        let mut data = match load("tcn", i) {
+            Some(d) => d,
+            None => break,
+        };
+        data.tec = load_tec_sidecar(&dir, "tcn", i);
+        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        println!(
+            "tec null {i:>4} | {:<19} | {:>7.2} {:>8.2} | rate {} | tec {} {}/{} {}",
+            unix_to_iso(data.t0),
+            data.lat,
+            data.lon,
+            stat.n_rate_events,
+            stat.tec_n_cells,
+            stat.tec_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.tec_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.tec_control_excess
+                .map_or("-".to_string(), |v| format!("{:+.3e}", v))
+        );
+        null_stats_tec.push(stat);
+    }
     let n_lags_main = ((n_cells.saturating_sub(MIN_M)) / cells_per_lag).min(MAX_LAG_H) + 1;
     let z_main = norm_quantile(1.0 - 0.05 / (2.0 * n_lags_main as f64));
     let n_lags_ctrl = (WINDOW_S / 3600.0) as usize - MIN_M + 1;
@@ -1224,6 +1555,30 @@ fn analyze_main(args: &[String]) {
     let nu_ctrl: Vec<f64> = null_stats.iter().filter_map(|s| s.control_excess).collect();
     let nu_fac_li: Vec<f64> = null_stats.iter().filter_map(|s| s.fac_excess[0]).collect();
     let nu_fac_il: Vec<f64> = null_stats.iter().filter_map(|s| s.fac_excess[1]).collect();
+    let ev_tec_li: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.tec_excess[0])
+        .collect();
+    let ev_tec_il: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.tec_excess[1])
+        .collect();
+    let ev_tec_ctrl: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.tec_control_excess)
+        .collect();
+    let nu_tec_li: Vec<f64> = null_stats_tec
+        .iter()
+        .filter_map(|s| s.tec_excess[0])
+        .collect();
+    let nu_tec_il: Vec<f64> = null_stats_tec
+        .iter()
+        .filter_map(|s| s.tec_excess[1])
+        .collect();
+    let nu_tec_ctrl: Vec<f64> = null_stats_tec
+        .iter()
+        .filter_map(|s| s.tec_control_excess)
+        .collect();
 
     let s_li = stack_stat(&ev_li);
     let n_li = stack_stat(&nu_li);
@@ -1235,6 +1590,14 @@ fn analyze_main(args: &[String]) {
     let n_fac_li = stack_stat(&nu_fac_li);
     let s_fac_il = stack_stat(&ev_fac_il);
     let n_fac_il = stack_stat(&nu_fac_il);
+    let s_tec_li = stack_stat(&ev_tec_li);
+    let n_tec_li = stack_stat(&nu_tec_li);
+    let s_tec_il = stack_stat(&ev_tec_il);
+    let n_tec_il = stack_stat(&nu_tec_il);
+    let s_tec_ctrl = stack_stat(&ev_tec_ctrl);
+    let n_tec_ctrl = stack_stat(&nu_tec_ctrl);
+    let n_lags_tec = (TEC_N_CELLS.saturating_sub(MIN_M)).min(MAX_LAG_H) + 1;
+    let z_tec = norm_quantile(1.0 - 0.05 / (2.0 * n_lags_tec as f64));
 
     println!();
     println!("=== stack verdict ===");
@@ -1243,6 +1606,9 @@ fn analyze_main(args: &[String]) {
     verdict_line("TE(Solar Bz → Ionosphere)", &s_ctrl, &n_ctrl, z_ctrl);
     verdict_line("TE(Lithosphere → FAC)", &s_fac_li, &n_fac_li, z_main);
     verdict_line("TE(FAC → Lithosphere)", &s_fac_il, &n_fac_il, z_main);
+    verdict_line("TE(Lithosphere → TEC-GIM)", &s_tec_li, &n_tec_li, z_tec);
+    verdict_line("TE(TEC-GIM → Lithosphere)", &s_tec_il, &n_tec_il, z_tec);
+    verdict_line("TE(Solar Bz → TEC-GIM)", &s_tec_ctrl, &n_tec_ctrl, z_ctrl);
     println!(
         "voids: {} windows without station or F, {} windows with zero rate events",
         bgs_void, zero_rate
@@ -1368,6 +1734,22 @@ fn analyze_main(args: &[String]) {
         s_ctrl.mean, s_ctrl.n, n_ctrl.mean + 2.0 * n_ctrl.sd
     );
     println!(
+        "TE(Lithosphere → TEC-GIM) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
+        s_tec_li.mean,
+        s_tec_li.n,
+        n_tec_li.mean + 2.0 * n_tec_li.sd
+    );
+    println!(
+        "TE(TEC-GIM → Lithosphere) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
+        s_tec_il.mean,
+        s_tec_il.n,
+        n_tec_il.mean + 2.0 * n_tec_il.sd
+    );
+    println!(
+        "control TE(Solar Bz → TEC-GIM) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
+        s_tec_ctrl.mean, s_tec_ctrl.n, n_tec_ctrl.mean + 2.0 * n_tec_ctrl.sd
+    );
+    println!(
         "Lag                          = {} (largest mean excess, Litho → Iono; {} for the reverse direction) — sweep 0…{MAX_LAG_H} h in 1-h steps, m ≥ {MIN_M} cells",
         lag_li.0.map_or("pending".to_string(), |l| format!("{l} h")),
         lag_il.0.map_or("pending".to_string(), |l| format!("{l} h"))
@@ -1407,4 +1789,65 @@ fn analyze_main(args: &[String]) {
             .count()
     );
     println!("Silent lines are findings. Exit 0.");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gim_parser_reads_synthetic_tec_map() {
+        let mut body = String::new();
+        for map in 1..=2 {
+            body.push_str(&format!(
+                "     {map}                                                      START OF TEC MAP\n  2024     1     1     {map}     0     0                        EPOCH OF CURRENT MAP\n"
+            ));
+            for b in 0..71 {
+                let lat = 87.5 - 2.5 * b as f64;
+                body.push_str(&format!(
+                    "  {lat:>6.1}-180.0 180.0   5.0 450.0                            LAT/LON1/LON2/DLON/H\n"
+                ));
+                let v = 10 * map;
+                for line_in_band in 0..5 {
+                    let n = if line_in_band < 4 { 16 } else { 9 };
+                    for k in 0..n {
+                        body.push_str(&format!("{:>5}", v));
+                    }
+                    body.push('\n');
+                }
+            }
+        }
+        let series = gim_tec_series(&body, 0.0, 0.0);
+        assert_eq!(series.len(), 2);
+        assert!((series[0].1 - 1.0).abs() < 1e-9);
+        assert!((series[1].1 - 2.0).abs() < 1e-9);
+        assert_eq!(series[0].0, 1704067200.0 + 3600.0);
+    }
+
+    #[test]
+    fn gim_parser_reads_real_day_file_when_present() {
+        let bytes = match std::fs::read("/tmp/opencode/gim229.gz") {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("gim real-file test skipped: /tmp/opencode/gim229.gz absent");
+                return;
+            }
+        };
+        let Some(text) = gunzip(&bytes) else {
+            eprintln!("gim real-file test skipped: gunzip void");
+            return;
+        };
+        let text = String::from_utf8_lossy(&text).to_string();
+        let series = gim_tec_series(&text, -14.64, -73.52);
+        assert!(
+            !series.is_empty(),
+            "gim_tec_series on the real COD file must yield maps"
+        );
+        let v = series[0].1;
+        assert!(
+            v > 0.0 && v < 300.0,
+            "TECU value out of plausible range: {}",
+            v
+        );
+    }
 }
