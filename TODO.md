@@ -848,6 +848,53 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   Bias-Analysen (Shankman 2017, Bernardinelli 2020, Napier 2021) stehen
   daneben. Offen bleibt: der eigene Queue-Block für a>200 (das Asset
   trägt die ETNO schon mit).
+- **Nadel VI — die Sonden-Front** (2026-08-22): die KBO-Front trägt ein
+  Standbild (Jahrhundert-Bahnen, kein fam-Pfeil); die Sonden tragen die
+  dynamische Zeitreihe — Doppler-Tracking auf die Sekunde, Ruck =
+  a_obs − a_bekannt je Zeitschritt, c-Lag-Pfeil (signal_reach = c·age)
+  rechnet die Laufzeit zur Quelle zurück — die Blue Note. Der
+  Ernte-Pfad lebt teilweise: `horizons_compiler` trägt Voyager 1/2,
+  New Horizons, Parker; Pioneer 10/11 (−23/−24) fehlen. Die Front
+  teilt die Maschine mit dem Dunkle-Materie-Blatt Front Ⅱ
+  (`handover-2026-08-22-sonden-dunkle-materie.md`).
+- **Nadel VII — Wurmloch** (2026-08-22 registriert, kybernetische-
+  astrophysik §Ⅶ): der Bruch des d/c-Gesetzes — TE-Lag τ < d/c über
+  ICRS-Distanzen (die zwei Münder), die Lichtkegel-Differenz
+  (Operation Ⅳ), der Trichter ohne Singularität. Keine neue Physik,
+  kein Phasen-Bit; die Maschine misst den Verrat an c und erklärt
+  nichts. Handover ausstehend; ausgeführt erst auf das Wort des
+  Operators.
+- **Nadel VIII — Dunkler Fluss** (2026-08-22 registriert, §Ⅷ): der
+  Pfeil am Blockrand — Haufen-Kinematik × CMB × tiefste z (z_key →
+  ICRS); Planck fand keinen Fluss, der Messartefakt-Verdächtige ist
+  real, Stille ist der erwartbare Befund. Die Kanal-Lage
+  (Haufen-Kataloge, CMB-Karten) ist zu benennen — pending, keine
+  Ernte vor der Quellenprüfung.
+- **Nadel IX — FRB** (2026-08-22 registriert, §Ⅸ): die Streu-Spur —
+  Burst-em × Dispersion (freq/bin_width) × c-Lag je Band; Impuls
+  gegen Strahl. FRB-Kataloge (CHIME/ASKAP) sind zu benennen — pending.
+- **Nadel X — Kugelblitz** (2026-08-22 registriert, §Ⅹ): der
+  Mikro-Block — em × electric × thermal × acoustic am selben Punkt;
+  keine archivierte Multi-Force-Serie (pending, kein Fabrikat);
+  Sensor-Erlaubnis gilt.
+- **Nadel XI — Placebo** (2026-08-22 registriert, §Ⅺ): der Pfeil des
+  Ereignisses — Gabe → Nervenreihe → Marker; Patientendaten nur mit
+  Einwilligung; die Datenlage ist zu benennen (pending).
+- **Nadel XII — Urknall** (2026-08-22 registriert, §Ⅻ): die kausale
+  DAG der Schöpfung — CMB × Haufen-Kinematik × PTA-GW-Hintergrund ×
+  B-Moden-Obergrenzen; die Singularität (t = 0) trägt keine Samples
+  und wird verweigert (0 honored); die Reihen-Paarung (Winkelserie ×
+  z-Reihe) ist eine offene Form-Entscheidung. Kanal-Lage zu benennen
+  — pending.
+- **Die Myth-Falle** (2026-08-22, kybernetische-astrophysik „Der
+  verweigerte Tatort"): Telepathie deklariert keine Kraft — das
+  Force-Gate verweigert beim Laden; Präkognition wäre ein negativer
+  Lag — die rückwärts gespiegelte TE-Bedingung verweigert. Messbar
+  bleibt das Paar-EEG (electric) mit fam-Schwelle und Nullkontrolle;
+  die Leiter der Eliminierung braucht die bedingte TE (TE(A→B |
+  Umwelt-Kanäle)) — Instrument pending, kein Ausschluss ohne
+  gemessenen Kanal (0 honored); die Datenlage (Paar-EEG-Archive) ist
+  zu benennen — pending, kein Fabrikat.
 
 ## Archivar — Architektur
 
