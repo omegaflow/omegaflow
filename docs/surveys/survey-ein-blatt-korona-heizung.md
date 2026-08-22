@@ -2,7 +2,7 @@
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: survey
   date: 2026-08-21
-  sha256: e7cb12e046e2c105e95cb25c8a014b98d1d9cdb93a7704e17700c593965a029d
+  sha256: 8cab868ca8304f1b0e7243d6a71a9fde7ad2df177d6471a802723a6bf9ce7439
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/concepts/kybernetische-astrophysik.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-corona-heizung.md
 -->
@@ -180,6 +180,10 @@ gemessen und geschlossen:
 0 honored: die Stille der Tages-Skala ist der Befund, kein Fehler. Was
 das Rätsel löst (Alfvén-Wellen vs. Nanoflares) ist damit NICHT
 entschieden — dafür fehlen die Minuten-fam und die sub-minütige
-Auflösung. Offene Pflichten: die Minuten-fam, die Multi-Force-TE
-(nobel_probe_corona v2) und die externe Referenz-Validierung
-(Schreiber 2000).
+Auflösung. Die Maschine hinter diesem Blatt ist goldstandard-validiert:
+`src/bin/te_ground_truth.rs` rekonstruiert die Schreiber-2000-Referenz
+(unidirektional gekoppelte Hénon-Maps) — TE(X→Y) = 2,46e-1,
+Asymmetrie 6,75× zur Gegenrichtung, nur die Familien-Schwelle stellt
+den Gegenrichtungs-Rest still (fam = 4,55e-2), die c=0-Kontrolle bleibt
+still. Offene Pflichten bleiben: die Minuten-fam und die Multi-Force-TE
+(nobel_probe_corona v2).

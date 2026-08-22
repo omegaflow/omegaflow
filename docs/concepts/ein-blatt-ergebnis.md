@@ -2,7 +2,7 @@
   title: DAS EIN-BLATT-ERGEBNIS — die drei kausalen Pfeile
   class: concept
   date: 2026-08-21
-  sha256: cdb0ce52900580b8ab19c851fd65d80b6307422b97a7f4e8a242f0d4cfce1d8e
+  sha256: e9cb490c8d22fa6c72641c47e6152e7890cef2436d12c4a733a59fc0b5fb5f7e
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-paradoxon.md docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md
 -->
@@ -49,6 +49,13 @@ breathes with the echo):
 - Der Null-Kontroll-Record (`docs/reference/broken-null-control.md`) ist
   das Vorbild jeder Messung: ein Kanalpaar, das still sein muss, läuft mit
   — bricht die Nullkontrolle, trägt die Matrix keine Aussage.
+- Die Goldstandard-Validierung (`src/bin/te_ground_truth.rs`) ist der
+  positive Gegenpol: die Schreiber-2000-Referenz (unidirektional gekoppelte
+  Hénon-Maps, bekannte Richtung) läuft durch denselben skalaren Pfad —
+  die Implementierung rekonstruiert die Richtung (TE(X→Y) = 2,46e-1,
+  Asymmetrie 6,75×), und nur die Familien-Schwelle stellt den
+  Gegenrichtungs-Rest still (fam = 4,55e-2). Null und Goldstandard halten
+  gemeinsam die Schwelle ehrlich.
 
 Die Ein-Blatt-Befunde sind keine neue Maschine. Sie sind neue Zeitreihen,
 die durch die bestehende Maschine laufen.
