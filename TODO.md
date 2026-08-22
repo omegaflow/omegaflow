@@ -862,6 +862,15 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   verlängert (mountain: Spinoza/Gauß/Tschebyschow; river:
   Whitehead/Gadamer/Lorenz/Takens; mycelium: Poincaré; sensory:
   Uexküll/Flusser; future: Gebser/Wilber).
+- Maschinen-Schnitt — WAHR (2026-08-22, Operator-Befund: „ich mag es
+  nicht, wenn sich Funktionen verstecken"): src/machines.rs (1 939
+  Zeilen) → enso (EnsoStation/EnsoSeries/EnsoCell/enso_harvest/
+  EnsoMachine + die Matrix-Maschinerie), solar (SolarChannel/SolarCell/
+  solar_harvest/SolarMachine), verdict (le_bytes_f32/te_read_verdict/
+  te_absence_word/TE_SERIES_* — die Brücke zur Mathematikerin, bleibt
+  pub(crate) wie im Monolithen), tests (die zwei verschachtelten
+  Testkörper, use crate::machines::*). Gates grün: cargo check 0/0
+  (default + browser_relay + gamepad, all-targets).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
