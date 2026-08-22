@@ -706,8 +706,34 @@ Maschine misst.
    Matrix-Zeile) — der empfangende Atom konsolidiert, BEVOR er die
    Global-Akteure anschließt (Solar-Ingest-Abstimmung mit der
    Parallel-Session). Die sichtbare Membran stottert während der
-   Proben (~1 s Render-Stall je Zelle) — der Hidden-Lauf ist die
-   Messweise.
+    Proben (~1 s Render-Stall je Zelle) — der Hidden-Lauf ist die
+    Messweise.
+- **Rückbau: die zwei Maschinen raus aus dem Kern** (Befund 2026-08-22,
+  Wort des Operators: Testläufe gehören in Module, nicht in Archivar
+  und Mathematikerin). Atom 1 ERLEDIGT (2026-08-22, a665fdb): die
+  Solar- + ENSO-Ernte (solar_harvest, enso_harvest, enso_backfill,
+  enso_ndbc_parse, SolarChannel/SolarCell, EnsoStation/EnsoSeries/
+  EnsoCell, enso_parser_tests) lebt in `src/machines.rs` (957 Zeilen
+  aus archivar.rs), main_flow ruft `crate::machines::solar_harvest/
+  enso_harvest`, der mpsc-Kanal (SolarCell/EnsoCell) bleibt das
+  Protokoll zur Mathematikerin. Gates: cargo check 0/0 vier
+  Feature-Kombis, cargo test --lib 307/307. Offen — Atom 2: die
+  Maschinen-Seite aus der Mathematikerin (mathematikerin.rs:819-1050
+  die ENSO/Solar-Konstanten + enso_pair/enso_cell_desc/enso_shift_pair/
+  EnsoCellVerdict/EnsoAccum/EnsoMatrixAccum, die NativeApp-Felder
+  enso_*/solar_* (1586-1610), solar_tick (2163) + enso_say/fold/
+  collect/probe/dispatch/tick (2211-2500) + die enso_te_*/solar_te_*-
+  Puffer-Kreation in init_gpu (3723-3770)) als `EnsoMachine`/
+  `SolarMachine`-Structs nach src/machines.rs — die Maschinen halten
+  Arc<Device>/Arc<Queue>/te_layout/Pipeline + eigenen rng, NativeApp
+  hält `enso:`/`solar:` und ruft `tick()`. Offen — Atom 3: die Ernte
+  presence-getrieben statt eager (Boje = Körper in BODY_REGISTRY +
+  `on <boje> <lat> <lon>`, Kanäle als Serien-Quellblöcke; Presence
+  springt (Atom 5) + schiebt t (Atom 4), die eine Presence-TE-Maschine
+  isst die Serie) — dann sterben Backfill, der 32-s-Takt und die
+  dritte TE-Instanz von selbst, und der geteilte WGSL-Ring darf
+  zurück auf 256.
+
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
