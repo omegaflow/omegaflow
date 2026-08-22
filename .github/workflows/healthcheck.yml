@@ -112,22 +112,3 @@ jobs:
       with:
         name: probe-full-results
         path: probe-results/
-
-  sources-package:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-    steps:
-    - uses: actions/checkout@v4
-    - run: |
-        mkdir -p _out
-        gh release download ssd.jpl.nasa.gov --repo omegaflow/sources --dir _out/assets/ 2>/dev/null || echo "no assets"
-        cp phi/sources.φ _out/
-        cp phi/sources_live.φ _out/ 2>/dev/null || true
-        tar czf omegaflow_sources.tar.gz -C _out .
-        ls -lh omegaflow_sources.tar.gz
-    - uses: actions/upload-artifact@v4
-      with:
-        name: sources-package
-        path: omegaflow_sources.tar.gz

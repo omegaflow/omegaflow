@@ -83,6 +83,8 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 .platforms { font-size: 0.6rem; color: #3a3630; margin-top: 1.5rem; }
 .platforms a { color: #5a5550; text-decoration: none; }
 .platforms a:hover { color: #8a8270; }
+
+.note { font-size: 0.55rem; color: #4a453f; margin-top: 0.4rem; }
 </style>
 </head>
 <body>
@@ -101,6 +103,7 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 </div>
 
 <div class="platforms" id="platforms"></div>
+<div class="note">unsigned — macOS Gatekeeper and Windows SmartScreen will ask before running</div>
 
 <script>
 const φ = document.getElementById('btn-φ');
@@ -114,34 +117,41 @@ const isAndroid = /Android/i.test(ua);
 const isMac = /Mac/i.test(ua) || /iPhone|iPad|iPod/i.test(ua);
 const isWin = /Win/i.test(ua);
 const isLinux = /Linux/i.test(ua) && !/Android/i.test(ua);
-const isArm = /arm|aarch/i.test(ua) || /Apple.*ARM|Mac.*ARM/i.test(ua);
 
-let binary = 'omegaflow_linux';
-if (isMac) binary = isArm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
-else if (isWin) binary = 'omegaflow_windows.exe';
-else if (isLinux) binary = isArm ? 'omegaflow_linux_arm64' : 'omegaflow_linux';
+const base = 'https://github.com/omegaflow/omegaflow/releases/latest/download/';
+
+function pick(arm) {
+    if (isMac) return arm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
+    if (isWin) return 'omegaflow_windows.exe';
+    if (isLinux) return arm ? 'omegaflow_linux_arm64' : 'omegaflow_linux';
+    return 'omegaflow_linux';
+}
 
 if (isMobile) {
-    φ.href = isAndroid ? 'omegaflow_termux_bootstrap.zip' : 'https://github.com/omegaflow/omegaflow';
-    Φ.href = isAndroid ? 'omegaflow_termux_bootstrap.zip' : 'https://github.com/omegaflow/omegaflow';
+    φ.href = isAndroid ? base + 'omegaflow_linux_arm64' : 'https://github.com/omegaflow/omegaflow';
+    Φ.href = 'https://github.com/omegaflow/omegaflow';
     info.innerHTML = isAndroid
-        ? 'install Termux, download this bootstrap, then <code style="color:#8a8270">localhost:1618</code> in Chrome'
+        ? 'Android: install Termux, then run the Linux ARM64 binary'
         : 'Ω needs a Linux host. Desktop or Android/Termux.';
     Φ.classList.remove('pulse');
 } else {
-    φ.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/' + binary;
-    Φ.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_sources.tar.gz';
-    info.textContent = 'detecting…';
+    Φ.href = base + 'omegaflow_sources.tar.gz';
+    const uaArm = /arm|aarch/i.test(ua);
+    if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+        navigator.userAgentData.getHighEntropyValues(['architecture']).then(v => {
+            φ.href = base + pick(/arm|aarch/i.test(v.architecture || ''));
+        }).catch(() => { φ.href = base + pick(uaArm); });
+    } else {
+        φ.href = base + pick(uaArm);
+    }
 }
 
-const base = 'https://github.com/omegaflow/omegaflow/releases/latest/download/';
 const allLinks = [
     ['Linux (x64)', base + 'omegaflow_linux'],
     ['Linux (ARM64)', base + 'omegaflow_linux_arm64'],
     ['macOS (Apple Silicon)', base + 'omegaflow_macos_arm64'],
     ['macOS (Intel)', base + 'omegaflow_macos_intel'],
     ['Windows (x64)', base + 'omegaflow_windows.exe'],
-    ['Android (Termux)', base + 'omegaflow_termux_bootstrap.zip'],
 ];
 platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
 

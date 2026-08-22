@@ -1728,6 +1728,19 @@ Offen (Detail in phi/pipeline/ledger.φ):
   WHERE-Quoting (tap_compiler.rs) sind behoben — die Fixe tragen Git.
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
 
+## Verteilung
+
+Die Binaries liegen in GitHub Releases (omegaflow/omegaflow) — Tag =
+Identität, `SHA256SUMS.txt` je Release, Rollback = älterer Tag. Pages
+(omegaflow.space) trägt nur die Landing (Landing + Probe + CNAME); die
+Binaries verlinkt auf `releases/latest/download/<asset>`. Atom 1
+(Release-Kanal: release.yml + entschlacktes pages.yml), Atom 2
+(Φ-Paket aus allen CDN-Netlocs statt 0-Byte-Lüge, healthcheck-
+sources-package ersetzt) und Atom 3 (Plattform-Wahrheit: userAgentData
+statt UA-Selbstbericht, Termux-Bootstrap ersetzt, Unsigned-Status
+benannt) sind gebaut — die Verifikation trägt der nächste
+Release-Lauf.
+
 ## VERSIONIERT / AUSSTEHEND
 
 - Temporal Topology (TDA, Takens, Transfer Entropy, Surrogates) —
@@ -1750,6 +1763,12 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Silizium (gegenstandslos solange die Rampe fix ist) — AUSSTEHEND
 - Future: Aggregation of Presence, Retro-Manifestation, Total Coherence
   Integration, Nostr-Stationsweb — AUSSTEHEND, future-concepts.md
+- Binary-Signing (Apple Developer + MS-Zertifikate) — AUSSTEHEND, braucht
+  Konten
+- musl-static Linux-Build (kein glibc-Zwang) — AUSSTEHEND
+- Installer (.deb/.rpm/AppImage/.dmg/.msi) — AUSSTEHEND
+- crates.io (`cargo install omegaflow`) — AUSSTEHEND; mit PolyForm-
+  Noncommercial als source-available markiert, nicht Open Source
 
 ## Rejected
 

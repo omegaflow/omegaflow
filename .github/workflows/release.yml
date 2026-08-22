@@ -47,8 +47,28 @@ jobs:
         name: ${{ matrix.artifact }}
         path: ${{ matrix.artifact }}
 
+  sources-package:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        mkdir -p _out/assets
+        for tag in $(gh release list --repo omegaflow/sources --limit 1000 --json tagName --jq '.[].tagName'); do
+          gh release download "$tag" --repo omegaflow/sources --dir "_out/assets/$tag" 2>/dev/null || echo "no assets for $tag"
+        done
+        cp phi/sources.φ _out/
+        cp phi/sources_live.φ _out/ 2>/dev/null || true
+        tar czf omegaflow_sources.tar.gz -C _out .
+        ls -lh omegaflow_sources.tar.gz
+    - uses: actions/upload-artifact@v4
+      with:
+        name: sources-package
+        path: omegaflow_sources.tar.gz
+
   release:
-    needs: build
+    needs: [build, sources-package]
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
@@ -66,7 +86,7 @@ jobs:
         fi
     - run: |
         cd dist
-        sha256sum omegaflow_linux omegaflow_linux_arm64 omegaflow_macos_intel omegaflow_macos_arm64 omegaflow_windows.exe > SHA256SUMS.txt
+        sha256sum omegaflow_linux omegaflow_linux_arm64 omegaflow_macos_intel omegaflow_macos_arm64 omegaflow_windows.exe omegaflow_sources.tar.gz > SHA256SUMS.txt
     - run: |
         gh release create "$TAG" \
           dist/omegaflow_linux \
@@ -74,6 +94,7 @@ jobs:
           dist/omegaflow_macos_intel \
           dist/omegaflow_macos_arm64 \
           dist/omegaflow_windows.exe \
+          dist/omegaflow_sources.tar.gz \
           dist/SHA256SUMS.txt \
           --title "$TAG" \
           --generate-notes \
