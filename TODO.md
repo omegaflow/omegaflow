@@ -824,6 +824,21 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   kompiliert kein Format — der Name trägt jetzt die Art. Mitgezogen:
   kernel_flatten.yml (Job-Zeile) + harvester.md (Zeile wanderte aus der
   Compiler- in die Harvester-Tabelle, sha256 neu).
+- Archivar-Schnitt — WAHR (2026-08-22, Befund: ein Wort „Probe", zwei
+  Naturen): src/archivar.rs (18 352 Zeilen) → src/archivar/ — types, units,
+  motion, fetch, parse, extract, spatial, membrane (Rat-Name „radiate"
+  korrigiert — der Kern ist sense_membrane), channels, port (Rat-Name
+  „probe" korrigiert — befreit das Wort für die Physik-Messung), ingress,
+  main_flow, tests. Kein solar-Modul gebaut: die Solar/ENSO-Ernte liegt
+  atomar in src/machines.rs (0 honored — kein Gegenstand, kein Modul).
+  lib.rs unberührt; omegaflow::archivar::-Oberfläche identisch
+  (pub-use-Globs — der Re-Export liegt im Monolithen); der
+  NAIF-LSK-include_str-Pfad zeigt auf ../kernels; die Bin-Taxonomie der
+  41 Bins trägt die Art im Namen: Compiler 22, Harvester 9 (pangaea
+  korrigiert), Probe 6 (die Physik-Messung: nobel/bz_blatt/bz_retro/
+  solar_dag/laic/long_window), Leser 3 (hdf5/netcdf/zip_range), Scanner 1
+  (source_scanner, eigene Art). Gates grün: cargo check 0/0 (default +
+  browser_relay + gamepad, all-targets).
 - wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
   omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
   Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
