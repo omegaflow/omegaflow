@@ -273,11 +273,21 @@ h × 2,0 fam-signifikant).
 Kritik-Außenlesung (2026-08-22, `survey-2026-08-22-kritik-aussenlesung.md`):
 die externe Kritik ist Punkt für Punkt geprüft (Verdikt-Tabelle). Schritt 1
 (Prüfung), 2 (Korona-Wortlaut + Minuten-fam-Lücke benannt + KDE-Volltest
-eingetragen) und 3 (LAIC-Wording) sind ERLEDIGT (5dda567, b019fb9). Offen:
-Schritt 4 (externe TE-Referenz-Validierung, Schreiber 2000 — über die
-öffentliche API, `src/te.rs` unberührt; die synthetischen Ground-Truth-Tests
-causal_positive u. a. existieren bereits) und Schritt 5 (Literatur-
-Kalibrierung via Subagent).
+eingetragen) und 3 (LAIC-Wording) sind ERLEDIGT (5dda567, b019fb9).
+Schritt 5 (Literatur-Kalibrierung) ERLEDIGT (2026-08-22): die
+TE-Literatur-Matrix steht in `docs/reference/te-literatur-matrix.md` —
+ENSO: Runge 2014/2015/2019 (grafische Modelle, wöchentlich–monatlich);
+Bz: Johnson/Wing, Stumpo 2020/2022, Manshour 2021, Runge 2018
+(Bz als stärkster Träger, 10 min–3 h Lags) — das omegaflow-Protokoll ist
+bei Surrogat-Zahl und Familien-Schwelle expliziter/strikter als der
+Literaturstand; LAIC: kein publizierter TE/Granger-Eintrag verifiziert —
+die LAIC-Platte ist als eigenständiger Beitrag zu lesen (Befund im
+Dokument). Schritt 4 (Schreiber-2000-Referenz,
+`src/bin/te_ground_truth.rs`): geschrieben + manuell verifiziert
+(Hénon-Kopplung c=0.2, lag 1, c=0-Kontrolle, nur öffentliche API); der
+Lauf steht aus, bis der Archivar-Schnitt der Parallel-Session gelandet
+ist (der Baum kompiliert gerade nicht — Archivar/Mathematikerin bleiben
+unberührt).
 Blatt-Befund (2026-08-21, solar_dag_probe auf den echten Serien,
 gemeinsames Fenster 2009-09 → 2020-03, 3837 Tages-Zellen, 30 Paare ×
 lag 0..7 d): **kein fam-gereinigter Pfeil** — fam = 2,108e-1 (stärkste

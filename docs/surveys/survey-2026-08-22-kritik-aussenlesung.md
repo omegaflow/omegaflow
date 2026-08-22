@@ -2,7 +2,7 @@
   title: Kritik-Außenlesung — die Antwort des Bestands auf die fünf Punkte
   class: survey
   date: 2026-08-22
-  sha256: 4f29221490d3a75c692dcd887f99131b164440ded9fd387ddb6d2f38ea6530d7
+  sha256: 64c1d65b58c80d91b2a8339c8953eeadb9f6c66d3da6b29d263a5bf8fb1a1a99
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md
     docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md
@@ -50,9 +50,17 @@ Literatur.
    LAIC-Hypothese selbst bleibt Kanal-offen" statt „abschließend
    gemessen".
 4. **Externe TE-Validierung** — Schreiber-2000-Standardbeispiel über die
-   öffentliche API (`te.rs` unberührt).
+   öffentliche API (`te.rs` unberührt). Gebaut: `src/bin/te_ground_truth.rs`
+   (unidirektional gekoppelte Hénon-Maps, c = 0.2, lag 1, c = 0-Kontrolle,
+   n = 10000) — manuell verifiziert; der Lauf steht aus, bis der
+   Archivar-Schnitt der Parallel-Session gelandet ist (der Baum
+   kompiliert gerade nicht).
 5. **Literatur-Kalibrierung** — Subagent sammelt ENSO/Bz/LAIC-TE-
    Literatur → Vergleichs-Matrix (Kadenz, Lags, Surrogat-Konventionen).
+   Erledigt: `docs/reference/te-literatur-matrix.md` — Bz-Platte gut
+   kalibriert (Bz stärkster Träger, 10 min–3 h); ENSO auf grafischen
+   Modellen; LAIC ohne publizierten TE/Granger-Eintrag (die Platte ist
+   als eigenständiger Beitrag zu lesen).
 
 Gegenfrage der Leserin, welches Blatt zuerst zurückgeht — Empfehlung:
 **Korona** (größter Abstand Behauptung↔Messung); LAIC trägt am
