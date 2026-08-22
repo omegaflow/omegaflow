@@ -830,10 +830,14 @@ bias-frei: die Zellen tragen pending, bis die Maschine misst.
   KBO-Ernte lebt — `kbo_compiler` (SBDB-Pages + MPC-Distant-Kreuzcheck
   → `kbo_elements.bin`, Familien aus a-Fenstern; die zwei kaputten
   Queue-URLs sind im selben Atom repariert, sb-class=TNO + full-prec,
-  Pagination limit-from). Offen: der Residuum-Port (N-Körper-Leapfrog
-  Sun+8 Planeten × Kepler-Referenz, TE(Residuum → Bahn) je Familie mit
-  drei Nullkontrollen), das Blatt + Verdikt; die a>200-ETNO-Seite ist
-  als `--etno`-Flag geerntet, der eigene Queue-Block bleibt offen.
+  Pagination limit-from). Der CI-Schritt (kernel_flatten.yml) lädt
+  `kbo_elements.bin` als flaches CDN-Asset auf den
+  ssd.jpl.nasa.gov-Release — `--ci-mode` + `--etno`, die vollständige
+  Ernte, kein JSON, keine Datenbank. Offen: der Residuum-Port
+  (N-Körper-Leapfrog Sun+8 Planeten × Kepler-Referenz, TE(Residuum →
+  Bahn) je Familie mit drei Nullkontrollen), das Blatt + Verdikt; der
+  eigene Queue-Block für a>200 bleibt offen (das Asset trägt die ETNO
+  schon mit).
 
 ## Archivar — Architektur
 

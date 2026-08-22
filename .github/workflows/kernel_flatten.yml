@@ -101,6 +101,12 @@ jobs:
             --gm phi/pipeline/katalog/asteroid_gm_inpop25c.φ \
             --diameters phi/pipeline/katalog/asteroid_diameters_neowise.φ,phi/pipeline/katalog/asteroid_diameters_akari.φ \
             --ci-mode
+      - name: Compile KBO elements and upload to CDN
+        run: |
+          cargo run --release --bin kbo_compiler -- \
+            --out kbo_elements.bin \
+            --etno \
+            --ci-mode
       - name: Commit body manifest
         run: |
           git config user.name "omegaflow-bot"
