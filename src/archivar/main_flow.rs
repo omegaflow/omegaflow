@@ -33,7 +33,7 @@ impl Radiator for StderrRadiator {
             }
         }
         let line = format!(
-            "omegaflow v{} | φ v7 | body: {} sources, {} samples | api: {} sources, {} samples | sensor: {} samples",
+            "omegaflow v{} | φ v8 | body: {} sources, {} samples | api: {} sources, {} samples | sensor: {} samples",
             env!("CARGO_PKG_VERSION"),
             body_src.len(),
             body_samples,
