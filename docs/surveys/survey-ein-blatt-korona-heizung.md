@@ -2,7 +2,7 @@
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: concept
   date: 2026-08-21
-  sha256: 9587b136394004d805894fc781266bd70f24fd1b231bb3355358f9734c63b550
+  sha256: 6af4a9ab8edbc7ceea4ce3c812d5629ebd7eeefc8c1262c5e77986d64a8aa22d
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/concepts/kybernetische-astrophysik.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-corona-heizung.md
 -->
@@ -128,18 +128,11 @@ Schwelle, nicht die phasenrandomisierte — die naive war das Artefakt).
 ## Die KDE-Sensitivität (h, h/2, 2h)
 
 Der Sweep über die entscheidenden Paare (family bound oder
-TE > 0,6·fam) bei ihrem besten Lag: TE und Schwelle je Faktor
-gerechnet, dieselben Surrogat-Seeds wie der Hauptlauf.
-
-**Stand (2026-08-21, Lauf läuft):** `solar_dag_probe --h-sweep` rechnet
-zuerst das volle Blatt erneut (Reproduktion) und danach den Sweep. Die
-Reproduktion hält bis hierher: die Familien-Schwelle steht bei
-fam-so-far = 2,108e-1 — identisch zum ersten Lauf — und die ersten
-Paare tragen dieselben TE-Werte (F10.7→XRSB 6,86e-2, F10.7→Lya1216
-1,36e-1, F10.7→Bz 1,86e-1). Die Sweep-Zellen selbst tragen pending bis
-der Lauf gelandet ist; keine vorweggenommene Stabilitätsaussage. Die
-volle fam-Neuberechnung unter h/2 und 2h wäre je eine eigene Runde —
-benannt, offen.
+TE > 0,6·fam) bei ihrem besten Lag rechnet: TE und Schwelle je Faktor
+gerechnet, dieselben Surrogat-Seeds wie der Hauptlauf. Der Befund
+wandert in diese Sektion, sobald der Lauf gelandet ist (pending, keine
+vorweggenommene Stabilitätsaussage). Die volle fam-Neuberechnung unter
+h/2 und 2h wäre je eine eigene Runde — benannt, offen.
 
 ## Das 90-Tage-Archiv (Auftrag 4)
 
