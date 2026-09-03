@@ -235,7 +235,12 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   Superconducting Materials Database, public domain, HTTP 200) trägt
   die Eigenschaft **Penetration Depth** (Literaturwerte, reduziert —
   gemessen, nicht roh) als Web-Abfrage — der offene, sofort erntbare
-  Pfad. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
+  Pfad. Gebaut (2026-09-03): `srd62_compiler --out <dir> [--ci-mode]`
+  (Probe HTTP 200, 25 Citations, Penetration-Depth-Tabelle parsebar) +
+  `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin` auf dem
+  ssd.jpl.nasa.gov-Compiler-Netloc (258 Punkte, λ 1300–72000 Å,
+  Version 5, 0 honored kein Nullpunkt); der CDN-Upload steht bis CI
+  läuft. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
   Kagome/Nickelat). Die λ→ρ_s-Konversion (λ⁻² ∝ ρ_s) ist der benannte
   Folge-Schritt zum Feldwert electric.
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
