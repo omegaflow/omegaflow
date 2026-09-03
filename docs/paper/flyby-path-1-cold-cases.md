@@ -2,7 +2,7 @@
   title: The flyby proof, Path 1 — the seven cold cases
   class: paper
   date: 2026-08-22
-  sha256: 3df767248b3287384497257c2ba79df143f8f309efba28533d53d43c44f4eaa9
+  sha256: 7a5dc8aa312fef0701794473628d72ac362276327962fc2c05a76fbac4ea1f98
   fam-round-machine: pre-fix (verdict fam-governed, value unprinted)
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-paradigmenwechsel.md docs/TODO.md
@@ -61,7 +61,9 @@ floor line is named, not concealed:
   harvests this side as the next thread.
 - The ~4-hour tracking gap stays a gap (fehlt, not null).
 
-The flyby anomaly itself (2–14 mm/s) lies under this floor line.
+The flyby anomaly itself — a signed residual, magnitudes ≈ 1.8–13.5 mm/s
+with Galileo-II an energy loss (≈ −4.6 mm/s) and Messenger null (Turyshev &
+Toth 2011; Acedo & Bel 2016) — lies under this floor line.
 Path 1 therefore asks only: does the wind phase carry the jerk? The answer
 is no — on the floor line measured here.
 
