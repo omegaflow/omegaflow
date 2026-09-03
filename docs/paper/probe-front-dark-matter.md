@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-03
-  version: 4
-  sha256: b2a805eae4d465945876b84388baf5648d7c650388445e1f94945e5f36026387
+  version: 5
+  sha256: ec6372b5e5e0524c6afffdbc86ca5e7c8ec7aa3545c7471b7b596acfece1555c
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -481,6 +481,22 @@ aftermath of the outlier day 1983-06-16 (−4548 Hz, RMS 36.7 kHz), not a
 symmetric transit ramp. The sub-kHz daily medians are the finer basis for the
 continuous-drift question; the transit sweep over them stays silent (0 honored).
 
+**The continuous drift on the sub-kHz basis.** The secular drift of the quiet
+(≤p95) days is sunward, at ~10⁻⁴ of the anomaly's magnitude (P10 −1.1×10⁻⁴,
+P11 −8.1×10⁻⁵ of the anomaly, sign convention negative sunward); the anomaly
+(~1 Hz over the mission) sits 150–340× below the quiet-day floor (160–340 Hz
+day-median scatter). The form test (linear vs ∝t² constant-force vs Pu-238
+thermal decay, τ = 87.7 y / e-fold 126.5 y) resolves neither signature: no model
+improves on linear by > 2 %, and both hypotheses' signals lie in the 1–3 Hz
+range against a two-orders-higher floor. The test becomes discriminating only on
+sub-Hz aggregation. The sub-kHz basis improved anomaly measurability ~100× over
+the kHz chain (from 2×10⁴ to 150–340× under the floor); the remaining bottleneck
+is per-sample scatter surviving the day-median, not reduction systematics (the
+kHz chain's systematic errors — station offsets, dumps, jumps — were removed;
+that was the 100× gain). The path to the anomaly runs through regression over the
+full quiet series or week/month binned medians (√N over time), not through further
+masking. Limit, not failure; the floor is the statement (0 honored).
+
 ## 6. Reproducibility
 
 Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
@@ -507,7 +523,9 @@ Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
   pioneer_navio_ruck_form` (form census over all flags; `--date <Y-m-d>` measures one day
   flag-independent), `cargo run --bin pioneer_navio_negative_fuzzy` (Deduction 40:
   quadratic per-pass detrend + station-cell median → sub-kHz daily medians,
-  `data/{name}_navio_subkhz_daily.bin` PNDM).
+  `data/{name}_navio_subkhz_daily.bin` PNDM), `cargo run --bin pioneer_navio_drift`
+  (Deduction 41: continuous-drift form test — linear/∝t²/RTG-exp over the quiet
+  ≤p95 sub-kHz daily medians, per probe).
 
 ## 7. Conclusion
 
@@ -528,9 +546,15 @@ from the event distribution. No transit is refuted — a smooth transit below th
 threshold was never a candidate — and the floor, not the absence, remains the
 statement. The sub-kHz daily medians of the NAVIO chain, entered via the
 negative-fuzzy extraction (Deduction 40), carry 92–97 % of days below 1 kHz; a
-Ruck scan over that 1000× finer basis still finds no transit ramp. The terrain is
-measured to its sub-kHz floor; the continuous-drift question now has a finer basis
-(0 honored).
+Ruck scan over that 1000× finer basis still finds no transit ramp. The continuous
+drift on that basis is sunward at ~10⁻⁴ of the anomaly, but the anomaly sits
+150–340× below the quiet-day floor and the ∝t²-vs-thermal form test resolves
+neither signature — both hypotheses' signals lie in the 1–3 Hz range against a
+two-orders-higher floor. The measurable, named limit is the day-median scatter
+itself, not a reduction systematic; the path to the anomaly runs through
+regression over the full quiet series, not further masking. The terrain is
+measured to its floor, and the measurability of the anomaly was improved ~100×
+along the way. Limit, not failure (0 honored).
 
 ## References
 
