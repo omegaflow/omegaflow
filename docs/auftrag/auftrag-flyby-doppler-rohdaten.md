@@ -154,6 +154,21 @@ ist** — die einzige plausible Heimat des Earth-Passes ist damit das interne
 JPL-NAV-Archiv, nicht öffentlich erreichbar. Eine Fortführung wäre eine
 formelle DSN-Datenanfrage an JPL-NAV (wie die im TEP-EFA-Repo beantragten).
 
+**Bestätigung + Modell-Seiten-Anker (2026-09-03):** Die Flyby-Lücke ist
+archivseitig **hart belegt**, nicht nur vermutet — frühester öffentlicher
+Juno-ODF = `GRV_OCRU_2013284_1527XMMMC005V01` (DOY 284 = 2013-10-11, ~2 Tage
+nach C/A); TNF-Verzeichnis beginnt erst 2015 (Ka-Band-Ära). Kein ±7-Tage-Bogen
+um C/A im PDS-Baum. Für die (noch unmögliche) Re-Derivations-Modell-Seite
+nützlich: (a) NAIF `misc/sff/` — Small-Forces/Manöver-Historie (Residuen-
+Modell); (b) OPAG-Präsentation `juno_efb_plans.pdf` — belegt das Daten-Backbone
+(7 Tage kontinuierliches DSN-Tracking um Periapsis, Lücke C/A−2,25 h bis
+C/A+1,5 h durch ESA-Stationen geschlossen, IMU aktiv); (c) JPL-OD-Lösung
+„Reconstruction of Earth flyby by the Juno spacecraft" (AAS 14-435 /
+ResearchGate 290573685) — Trajektorien-/Kraft-Seite, kein Roh-Range-Rate.
+Roh-Doppler (DOY 275–289) bleibt ausschließlich über eine DSN-Datenanfrage
+(tda.jpl.nasa.gov / JPL-Data-Request) oder die Paper-Autoren erhältlich —
+kein öffentlicher Direkt-Download.
+
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
 benannten Orten — kein Haken.
