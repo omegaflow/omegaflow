@@ -24,7 +24,21 @@ pub const MATRIX_CELLS_PER_ROUND: usize = MATRIX_CELLS_PER_SCALE * MATRIX_SCALES
 
 pub const MATRIX_PAD_M: f64 = 2000.0;
 
-pub const MATRIX_STATE_PATH: &str = "/tmp/omegaflow_matrix_state.bin";
+pub const MATRIX_STATE_FILE: &str = "omegaflow_matrix_state.bin";
+
+pub fn matrix_state_path() -> String {
+    let base = if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+        std::path::PathBuf::from(dir)
+    } else if let Ok(home) = std::env::var("HOME") {
+        std::path::PathBuf::from(home)
+            .join(".local")
+            .join("state")
+            .join("omegaflow")
+    } else {
+        std::path::PathBuf::from(".")
+    };
+    base.join(MATRIX_STATE_FILE).to_string_lossy().into_owned()
+}
 
 fn rd_u16(b: &[u8], p: &mut usize) -> Option<u16> {
     let v = u16::from_le_bytes(b.get(*p..*p + 2)?.try_into().ok()?);
@@ -214,7 +228,7 @@ impl MatrixMachine {
             last_field: None,
             last_rebuild: None,
             last_state_save: None,
-            state_path: MATRIX_STATE_PATH.to_string(),
+            state_path: matrix_state_path(),
             due: false,
             device: None,
             queue: None,
@@ -318,6 +332,9 @@ impl MatrixMachine {
             buf.extend_from_slice(&(v as u64).to_le_bytes());
         }
         buf.extend_from_slice(&l.expected.to_le_bytes());
+        if let Some(parent) = std::path::Path::new(path).parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
         let _ = std::fs::write(path, &buf);
     }
 
@@ -403,7 +420,7 @@ impl MatrixMachine {
                 last_field: None,
                 last_rebuild: None,
                 last_state_save: None,
-                state_path: MATRIX_STATE_PATH.to_string(),
+                state_path: matrix_state_path(),
                 due: false,
                 device: None,
                 queue: None,
@@ -476,7 +493,7 @@ impl MatrixMachine {
             last_field: None,
             last_rebuild: None,
             last_state_save: None,
-            state_path: MATRIX_STATE_PATH.to_string(),
+            state_path: matrix_state_path(),
             due,
             device: None,
             queue: None,
