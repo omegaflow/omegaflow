@@ -109,6 +109,22 @@ fn dupe_list(dups: &BTreeMap<String, Vec<String>>) -> String {
     format!("[{}]", objs.join(", "))
 }
 
+fn dup_map_sorted(dups: &BTreeMap<String, Vec<String>>) -> String {
+    let objs: Vec<String> = dups
+        .iter()
+        .map(|(class, items)| {
+            format!(
+                "{{{}: {}, {}: {}}}",
+                esc("class"),
+                esc(class),
+                esc("netlocs"),
+                str_list(items)
+            )
+        })
+        .collect();
+    format!("[{}]", objs.join(", "))
+}
+
 fn group_list(groups: &[Vec<String>]) -> String {
     let objs: Vec<String> = groups
         .iter()
@@ -190,11 +206,44 @@ fn main() {
     let source_netlocs: BTreeSet<String> = netloc_of_source.keys().cloned().collect();
     let release_netlocs: BTreeSet<String> = tag_netloc.values().cloned().collect();
 
+    let dataset_hosts: BTreeSet<String> = [
+        "ssd.jpl.nasa.gov",
+        "spdf.gsfc.nasa.gov",
+        "physionet.org",
+        "sentinel1euwest.blob.core.windows.net",
+        "archive-api.open-meteo.com",
+        "irsa.ipac.caltech.edu",
+        "data.pmel.noaa.gov",
+        "fermi.gsfc.nasa.gov",
+        "service.iris.edu",
+    ]
+    .iter()
+    .map(|s| s.to_string())
+    .collect();
+
+    let classify = |nl: &str| -> &'static str {
+        if dataset_hosts.contains(nl) {
+            "dataset_host"
+        } else if nl.starts_with("github.com")
+            || nl.starts_with("raw.githubusercontent.com")
+            || nl.starts_with("github.com-")
+        {
+            "repo_tag"
+        } else {
+            "stale_pending"
+        }
+    };
+
     let mut orphan_releases: Vec<String> = Vec::new();
+    let mut orphan_by_class: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut duplicate_netloc_tags: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (tag, nl) in &tag_netloc {
         if !source_netlocs.contains(nl) {
             orphan_releases.push(tag.clone());
+            orphan_by_class
+                .entry(classify(nl).to_string())
+                .or_default()
+                .push(tag.clone());
         } else {
             duplicate_netloc_tags
                 .entry(nl.clone())
@@ -203,6 +252,9 @@ fn main() {
         }
     }
     orphan_releases.sort();
+    for v in orphan_by_class.values_mut() {
+        v.sort();
+    }
     duplicate_netloc_tags.retain(|_, v| v.len() > 1);
 
     let mut unmanifested_sources: Vec<String> = Vec::new();
@@ -267,6 +319,10 @@ fn main() {
     report.push(("source_netlocs".into(), source_netlocs.len().to_string()));
     report.push(("release_netlocs".into(), release_netlocs.len().to_string()));
     report.push(("orphan_releases".into(), str_list(&orphan_releases)));
+    report.push((
+        "orphan_releases_by_class".into(),
+        dup_map_sorted(&orphan_by_class),
+    ));
     report.push((
         "unmanifested_source_netlocs".into(),
         str_list(&unmanifested_sources),
