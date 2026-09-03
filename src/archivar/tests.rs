@@ -2129,6 +2129,7 @@ fn test_parse_stations_xml() {
 }
 
 #[test]
+#[ignore = "local source-port backlog verifier — reads and writes phi/pipeline/stage/ working data"]
 fn test_backlog_batches_verify() {
     fn substitute_test_templates(url: &str) -> String {
         let mut u = url.to_string();
