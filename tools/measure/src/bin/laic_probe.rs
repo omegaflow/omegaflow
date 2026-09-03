@@ -1,7 +1,7 @@
 use omegaflow::archivar::{
-    JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days,
+    fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days, JsonVal,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_RELEASE, upload_asset};
+use omegaflow::cdn::{upload_asset, CDN_BASE, CDN_RELEASE};
 use omegaflow::inflate::{gunzip, unzip};
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
 use std::collections::HashMap;
@@ -2096,7 +2096,7 @@ fn main() {
 }
 
 const BIN_MAGIC: u32 = 0x4C41_4943;
-const BIN_VERSION: u32 = 1;
+const BIN_VERSION: u32 = 2;
 
 fn w_u8(v: &mut Vec<u8>, x: u8) {
     v.push(x);
@@ -2172,7 +2172,7 @@ impl<'a> Cursor<'a> {
     }
 }
 
-fn r_window(c: &mut Cursor) -> Option<(u8, WindowData)> {
+fn r_window(c: &mut Cursor, has_env: bool) -> Option<(u8, WindowData)> {
     let group = c.u8()?;
     let t0 = c.f64()?;
     let mag = c.f64()?;
@@ -2234,11 +2234,13 @@ fn r_window(c: &mut Cursor) -> Option<(u8, WindowData)> {
         let x = c.f64()?;
         d.champ.push((t, a, b, x));
     }
-    let n = c.u32()? as usize;
-    for _ in 0..n {
-        let t = c.f64()?;
-        let x = c.f64()?;
-        d.env.push((t, x));
+    if has_env {
+        let n = c.u32()? as usize;
+        for _ in 0..n {
+            let t = c.f64()?;
+            let x = c.f64()?;
+            d.env.push((t, x));
+        }
     }
     Some((group, d))
 }
@@ -2256,13 +2258,17 @@ fn pack_bin(windows: &[(u8, WindowData)]) -> Vec<u8> {
 
 fn unpack_bin(b: &[u8]) -> Option<Vec<(u8, WindowData)>> {
     let mut c = Cursor { b, p: 0 };
-    if c.u32()? != BIN_MAGIC || c.u32()? != BIN_VERSION {
+    if c.u32()? != BIN_MAGIC {
+        return None;
+    }
+    let ver = c.u32()?;
+    if ver != 1 && ver != 2 {
         return None;
     }
     let n = c.u32()? as usize;
     let mut out = Vec::with_capacity(n.min(100000));
     for _ in 0..n {
-        out.push(r_window(&mut c)?);
+        out.push(r_window(&mut c, ver >= 2)?);
     }
     Some(out)
 }
