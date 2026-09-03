@@ -61,7 +61,8 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
 - `auftrag-flyby2-addendum.md` — flyby-2-Metrik-Addendum vor dem 28.09.
   (Nadel Ⅱ).
-- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette.
+- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette. **Gemessen (2026-09-03):** Form-Test-Verdikt steht (keine getragene ∝t²-/RTG-Form über kHz-Floor 19,0/8,4 kHz; sub-kHz-Residuum = Blocker). Offen: Ruck-Transit-Sweep als benannter Bau-Auftrag über dem sub-kHz-Residuum (DSN-Station + Orbit).
+- `auftrag-dunkle-materie-front-c.md` — Front C: **in Fahrt** (Operator-Verdikt). Messungen: NAVIO-ASCII erstmals kompiliert (p10 908309/p11 967272) + Horizons-Netz frisch 0/1008. `pioneer_doppler`-CI-Job manifestiert die Vollmissions-Bins aufs spdf-CD-Release.
 - `auftrag-glm-uebernahme.md` — GLM-Verifikation registrieren + Paper auf
   main führen.
 
@@ -230,9 +231,20 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   bleibt Zenodo 15179114. `charge_oscillators` hält e > 0 wie
   spin_oscillators/harvest_eels (negative Frequenz ist keine). Die
   val-Physik (relativ, a.u.) ist die ehrliche Messung — kein
-  fabrizierter Querschnitt. Feld-Bürgerschaft pending: force electric
-  (8), Lab-Anker offen (Proben-Labor des Bi-2223 unbekannt, `pending`),
-  τ pending bis Linienbreite gemessen.
+  fabrizierter Querschnitt. Rat-Urteil (2026-09-03): **kein Feld-Kanal.**
+  Das Streu-Photon ist ein sendendes em-Signal (ehrlicher Lab-Anker;
+  Beamline unverifiziert → `pending`), aber `val` ist relative
+  Streu-Intensität (a.u.) auf der Energie-**Verlust**-Achse — ein
+  Material-S(q,ω), keine freie Feldgröße; Magnon/Plasmon sind im
+  Kristall gebundene Anregungen, keine Ausbreitung ins Feld. Die
+  Verweigerung ist 0 honored, kein Gap — und sie unterscheidet sich
+  von SRD62 (das an Force/τ/Position scheiterte): RIXS scheitert am
+  Feldgrößen-Gate. Force-Korrektur (A = A): der sendende Träger ist
+  für Spin UND Charge **em** (das „electric"-Label benennt die
+  Anregung, Plasmon = Ladungsschwingung, nicht den Träger; force 8
+  trägt ohnehin keinen a.u.-Marker). Die Proben bleiben
+  `measure`-Bürger; Kalibrierung (absoluter Querschnitt) + Beamline-
+  Koordinate + Linienbreite-τ sind `pending`.
 - Kuprat-Blatt (rixs_cuprate_probe): geerntet ist der Spin-Kanal (19
   Spektren, 456 Oszillatoren aus Zenodo 7286412 — Bi₂Sr₂CaCu₂O₈₊δ,
   azimuthal_analysis/sw_spin.txt, Dotierungsklassen UD/OD1/OD2 je
