@@ -5580,7 +5580,6 @@ fn test_fanout_host_void_lock_skips_fetch() {
 
     let mut reachable = 0usize;
     let mut dead = 0usize;
-    let mut mirrored = 0u32;
     let mut pending = 0usize;
     probe_fanout(
         &src,
@@ -5588,7 +5587,6 @@ fn test_fanout_host_void_lock_skips_fetch() {
         &env,
         &mut reachable,
         &mut dead,
-        &mut mirrored,
         &mut pending,
         &mut host_void,
     );
