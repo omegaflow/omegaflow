@@ -33,6 +33,56 @@ Kontrollrichtung des gemeinsamen Treibers, bedingte Multi-Force-TE
 (pending-Instrument). Kein Blatt ohne diese vier — eine halbe Messung
 ist kein Befund.
 
+## Auftrags-Programm — offene Ordnungen (docs/auftrag/)
+
+Die versionierten Forschungs-/Recherche-Ordnungen (`class: auftrag`) sind
+die Gate-Ausgabe für neue Linien. Das Hauptregister navigiert hierher; jede
+Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
+
+### Welt-Zugang — Adoption & Papiere
+
+- `auftrag-adoption.md` — Repo public, Welt-Fassung-Branch, der Drei-Mail-
+  Block (Toth/Turyshev/Markwardt) als Ein-Zug; zweite Welle GIC/Korona;
+  Mail-Ledger-Zeile je Mail.
+- `auftrag-bande-split.md` — 20-s-Bande: two-/three-way-Split + die drei
+  offenen Registerzeilen (f*, 1-s-Zählung, Amplitude) vor Mail 1.
+- `auftrag-gic-p-wert.md` — GIC: p-Wert nachlegen, dann Mail an
+  Wing/Viljanen.
+- `auftrag-korona-aia-fam.md` — Korona: AIA-fam-Zahl, dann Woods.
+- `auftrag-papier-kleinpass.md` — Papier-Kleinpass nach dem Merge (Zahlen je
+  Blatt).
+- `auftrag-maschinen-audits.md` — Nummern-Audit, Provenienz-Notiz,
+  Kalibrationsscore vor jedem Rewrite.
+
+### Forschungs-Nadeln & Missionen
+
+- `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
+  4D-Feld (Nadel Ⅰ).
+- `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
+- `auftrag-flyby2-addendum.md` — flyby-2-Metrik-Addendum vor dem 28.09.
+  (Nadel Ⅱ).
+- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette.
+- `auftrag-glm-uebernahme.md` — GLM-Verifikation registrieren + Paper auf
+  main führen.
+
+### Katastrophen-Recherche (eigene Linie)
+
+- `auftrag-abfluss-trishuli.md` — Abfluss-/Wasserstands-Reihe Trishuli
+  (Flut 2026-08-26).
+- `auftrag-cog-quelle.md` — COG-Bandquelle für Sentinel-2 NDWI (Seen
+  Langjie Cuo / Tuomito).
+- `auftrag-seen-kollabgebiet.md` — echte Gewässer & See-Baseline im
+  Lirung-Kollabgebiet.
+- `auftrag-satellitenbilder-post.md` — offenes Satellitenbild nach dem
+  26.08.2026 (Flut-/Narben-Footprint).
+
+### Pflege & Struktur
+
+- `auftrag-docs-reference-verteilung.md` — docs/reference + docs/plans
+  verteilen (main-Reinigung).
+- `auftrag-sicherung-risiko-heime.md` — Sicherung der
+  einzigen-Kopie-Risiko-Heime.
+
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
 Messreihe archiviert: `archive/messreihe-nadel3-corona.md`. Befund lebt
