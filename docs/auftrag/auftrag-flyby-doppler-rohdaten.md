@@ -169,6 +169,18 @@ Roh-Doppler (DOY 275–289) bleibt ausschließlich über eine DSN-Datenanfrage
 (tda.jpl.nasa.gov / JPL-Data-Request) oder die Paper-Autoren erhältlich —
 kein öffentlicher Direkt-Download.
 
+**Schutz-Notiz (Falschmeldung abgewehrt, 2026-09-03):** Ein paralleler
+„Fundbericht" behauptete „Kritische Korrektur: Die Daten existieren!" und
+nannte `GRV_OCRU_2013284_1527XMMMC005V01.ODF` (DOY 284 = 2013-10-11) als
+„die kritische Datei für den Earth Flyby". Das ist **falsch**: der Earth-Flyby
+war DOY 282 (2013-10-09); eine DOY-284-Datei beginnt ~46 h nach dem Perigäum
+und ist der post-EFB-Bogen (Quelldatei `juno_merged_odf_2013_postefb.dat`),
+nicht der Flyby-Pass. Derselbe Bericht nennt die Datei „TRK-2-18"; gemessen ist
+sie TRK-2-34 (odf_census_probe: 631 327 Records, scid 61). Der gemessene Befund
+steht: der Earth-Flyby-Pass (DOY 282) ist in keinem erreichbaren öffentlichen
+Archiv. Die korrekte zusätzliche Metadaten-Referenz: DOI 10.17189/1518938
+(JUNO-J-RSS-1-OCRU-V1.0), AAREADME.TXT am Volume-Root; TNF beginnt erst 2015.
+
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
 benannten Orten — kein Haken.
