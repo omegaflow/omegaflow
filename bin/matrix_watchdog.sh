@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Der Wächter der Matrix: hält den Hidden-Lauf am Leben.
 # Stirbt die Maschine (Absturz, SIGKILL, Neustart), startet der Wächter sie neu;
-# das Gedächtnis /tmp/omegaflow_matrix_state.bin trägt den Stand, der warme
-# Boot misst in Minuten weiter. Läuft die Maschine, wacht er nur.
+# das Gedächtnis unter OMEGAFLOW_STATE (sonst ~/.local/state/omegaflow)
+# trägt den Stand, der warme Boot misst in Minuten weiter. Läuft die Maschine, wacht er nur.
 # Start (überlebt opencode-Abstürze): setsid ./bin/matrix_watchdog.sh &
 set -u
 cd "$(dirname "$0")/.." || exit 1
