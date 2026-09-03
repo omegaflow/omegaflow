@@ -2312,19 +2312,31 @@ pub fn main_flow() {
             }
             all.extend(archive.asteroid_samples.iter().cloned());
             all.extend(archive.star_samples.iter().cloned());
-            if all.len() > MAX_SAMPLES {
-                let ring = epoch_zero_ring(&mut all, MAX_SAMPLES);
+            let (static_catalog, mut temporal): (Vec<Sample>, Vec<Sample>) =
+                all.into_iter().partition(|s| is_static(s));
+            if static_catalog.len() > MAX_SAMPLES {
                 eprintln!(
-                    "epoch0 ring: total in {}, epoch0 in {}, epoch0 kept {}, epoch0 dropped {} (cap {})",
-                    ring.total_in,
-                    ring.epoch0_in,
-                    ring.epoch0_kept,
-                    ring.epoch0_dropped,
+                    "static field in {} exceeds the wire budget (cap {}) — the static admission gate is a register duty, the sky is never silently trimmed",
+                    static_catalog.len(),
                     MAX_SAMPLES
                 );
             }
+            let temporal_cap = MAX_SAMPLES.saturating_sub(static_catalog.len());
+            let ring = temporal_ring(&static_catalog, &mut temporal, temporal_cap);
+            if ring.temporal_dropped > 0 {
+                eprintln!(
+                    "temporal ring: static in {}, temporal in {}, kept {}, dropped {} (cap {})",
+                    ring.static_in,
+                    ring.temporal_in,
+                    ring.temporal_kept,
+                    ring.temporal_dropped,
+                    temporal_cap
+                );
+            }
+            let mut field_samples = static_catalog;
+            field_samples.append(&mut temporal);
             archive.field = Arc::new(build_buffer(
-                all,
+                field_samples,
                 cadence,
                 archive.body_ephemerides.clone(),
                 archive.curves.clone(),

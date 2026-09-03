@@ -118,9 +118,9 @@ ein Paper, das eine benannte Differenz trägt, bricht den Lauf.
    (Titel/Abstract), `DIFF` (Zahlen) oder `sha`-Mismatch trägt; `reference_verify`
    verlässt mit Code 1 bei `absent`/`pending`. Der `--check`-Schalter prüft nur
    und schreibt nichts.
-2. **CI (`paper-gate.yml`).** Bei jedem Push/PR auf `docs/paper/**` (und die
+2. **CI (`paper-check.yml`).** Bei jedem Push/PR auf `docs/paper/**` (und die
    Gate-Werkzeuge) laufen Export-Stufe + Beleg-Erkennung; eine benannte Differenz
-   macht den Job rot und öffnet ein `paper-gate`-Issue.
+   macht den Job rot und öffnet ein `paper-check`-Issue.
 3. **Beim Erstellen (`paper_new`).** `cargo run -p omegaflow-tools --bin paper_new
    -- <slug> [--title "…"] [--date YYYY-MM-DD]` erzeugt ein Paper, das **geboren
    konform** ist: korrekter Header (inkl. `sha256`), leerer `## Abstract`

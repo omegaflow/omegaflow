@@ -661,13 +661,19 @@ Offen (Detail in phi/pipeline/ledger.φ):
   sättigt. Budget-Messungen brauchen einen begrenzten/drosselbaren Lauf
   statt des vollen Membran-Churns — der Sturm selbst ist ein eigener
   Reparatur-Gegenstand (Retry-Exponent, Pausen pro Quelle).
-- Sample-Budget des Feldes (kritisch, eigenes Atom): die Summe aller
+- Sample-Budget des Feldes (2026-09-03, verengt): die statische/
+  temporale Vermengung ist geschlossen — der Ring trennt seither die
+  Domänen nach SampleSource (temporal_ring in membrane.rs: nur der
+  temporale Fluss wird epoch-absteigend auf den Rest der Kappe getrimmt;
+  der statische Katalog — Sterne/Asteroiden/Anker — ist dem temporalen
+  Überlauf strukturell entzogen, eine statische Über-Kappe meldet eine
+  Register-Pflicht, nie ein stilles Abschneiden). Offen bleibt die
+  statische Zulassungs-Pforte für den vollen api-Stand: die Summe der
   Katalog-Blöcke (Sterne 1.19 M + Asteroiden 1.56 M + NVSS 1.8 M +
   FIRST 1.1 M + Chandra 0.4 M + vier Chunks 1.4 M + …) liegt über
-  MAX_SAMPLES (1<<22, src/archivar/membrane.rs:32) — der Rebuild hält die
-  jüngsten Samples und wirft die ältesten. Der volle api-Stand bleibt
-  aus (die Maschinenzeile trägt den Aufschluss, sobald ein Lauf den
-  vollen api-Stand erreicht).
+  MAX_SAMPLES (1<<22) — heute unerreicht (Katalog-Kompilation
+  unvollständig), die Maschinenzeile trägt den Aufschluss, sobald ein Lauf
+  den vollen api-Stand erreicht.
 - Chandra-Drift benannt: der Block trägt erg/cm2, CSC-Fluxb ist
   physikalisch erg/cm²/s — gehört zum Unit-Arm, Block-Label prüfen.
 - Katalog-Lücken Welle II: Diffusion/Chemorezeption unbesetzt — TCCON
@@ -734,7 +740,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - I02-Rest: das Python refresh.yml im sources-Repo bleibt auf Python —
   Abschaltung nach Verifikation der Rust-Katalog-Kompilate im
   kernel_flatten-catalogs-Job (ein Produzent pro Asset). In diesem Repo
-  trägt healthcheck.yml die Rolle (cargo run -- --verify phi, 3-h-Cron,
+  trägt health-check.yml die Rolle (cargo run -- --verify phi, 3-h-Cron,
   Anomalie-Issues).
 - Token-Rotation: der git-Remote-Token (keine releases/actions-Rechte)
   gehört rotiert und auf credential-helper/SSH umgestellt.
