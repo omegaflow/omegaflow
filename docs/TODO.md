@@ -61,8 +61,8 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
 - `auftrag-flyby2-addendum.md` — flyby-2-Metrik-Addendum vor dem 28.09.
   (Nadel Ⅱ).
-- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette. **Gemessen (2026-09-03):** Form-Test-Verdikt steht (keine getragene ∝t²-/RTG-Form über kHz-Floor 19,0/8,4 kHz); sub-kHz-Tür geöffnet (PNAV + pioneer_navio_residuum, Floor 2,8–19 kHz, PNVR/PNDM serialisiert). Offen (Atom 3): korrupte-Tage-Masken (Deduktion 0/10) vor dem Ruck-Transit-Sweep, dann Transit-Sprünge statt Segment-Rauschens.
-- `auftrag-dunkle-materie-front-c.md` — Front C: **in Fahrt** (Operator-Verdikt). Messungen: NAVIO-ASCII erstmals kompiliert (p10 908309/p11 967272) + Horizons-Netz frisch 0/1008 + sub-kHz-Tür geöffnet (PNAV/PNVR/PNDM, Commit 0c2a280). `pioneer_doppler`-CI-Job manifestiert PDPL+PNAV aufs spdf-CD-Release.
+- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette. **Gemessen (2026-09-03):** Form-Test-Verdikt steht (keine getragene ∝t²-/RTG-Form über kHz-Floor 19,0/8,4 kHz); sub-kHz-Tür geöffnet (PNAV + pioneer_navio_residuum, Floor 2,8–19 kHz, PNVR/PNDM serialisiert); Atom 3 (50625aa) Deduktion-10-Tagesmask. Offen: Ruck-Scan-Flaggen von Segment-Rauschen trennen (sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden, 0 honored).
+- `auftrag-dunkle-materie-front-c.md` — Front C: **in Fahrt** (Operator-Verdikt). Messungen: NAVIO-ASCII erstmals kompiliert (p10 908309/p11 967272) + Horizons-Netz frisch 0/1008 + sub-kHz-Tür geöffnet (PNAV/PNVR/PNDM 0c2a280, Atom 3 50625aa). `pioneer_doppler`-CI-Job manifestiert PDPL+PNAV aufs spdf-CD-Release.
 - `auftrag-glm-uebernahme.md` — GLM-Verifikation registrieren + Paper auf
   main führen.
 
