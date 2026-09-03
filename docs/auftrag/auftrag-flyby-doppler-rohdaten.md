@@ -115,18 +115,23 @@ re-deriviert. Es folgt der Auffindbarkeits-Befund je Flyby mit Ort.
 - **Messenger** — keine Fundstelle (weder NSSDC-ID noch PDS-RS-Knoten-Eintrag).
 - **Juno** — PSPA-00605 (Outer Cruise, `JUNO-J-RSS-1-OCRU-V1.0`) geladen und
   gemessen: enthält den Earth-Pass **nicht** (2013-ODF beginnt 2013-10-11T15:27,
-  Quelldatei `juno_merged_odf_2013_postefb.dat`, post-EFB). Korrigierter Lead:
-  das separate **Earth-Encounter**-RSS-EDR `JNO-E/J-RSS-1-EDR-V1.0` (PDS
-  Geosciences Juno GRAV) — noch nicht geladen/verifiziert.
+  Quelldatei `juno_merged_odf_2013_postefb.dat`, post-EFB). Earth-Encounter-EDR
+  `JNO-E/J-RSS-1-EDR-V1.0` **existiert nicht** in der PDS-Registry (dsid löst zu
+  keiner Datensatz-Seite auf); nur `JUNO-J-RSS-1-OCRU`/`JUGR` sind registriert.
+  Der Earth-Pass (2013-10-09, DOY 282) ist in **keinem** erreichbaren PDS-
+  Juno-Archiv — gemessen über PDS-Registry, Volume-Census (nur DOY 284-ODF) und
+  lokalen TRK-2-34-Parser (631 327 Records, scid 61, Span 2013-10-11→12-31).
+  → `open`, Ort: ein Juno-Earth-Flyby-Gravity-ODF existiert ggf. außerhalb PDS
+  (DSN/NAIF-Tracking-Archive), dort ungesucht.
 
 ### Nächster Schritt (Juno, konkret)
 
-Download des Juno **Earth-Encounter**-RSS-EDR `JNO-E/J-RSS-1-EDR-V1.0` (PDS
-Geosciences, Juno GRAV) — das Outer-Cruise-Archiv PSPA-00605/OCRU ist gemessen
-post-EFB (beginn 2013-10-11). Extraktion des Perigäum-Fensters
-(2013-10-09T19:24) → ODF-Parser (`odf_census_probe`, TRK-2-34) → N-Körper-Fit →
-vorzeichenbehafteter Residuum gegen den publizierten ΔV∞. Nur falls das EDR den
-Pass nicht trägt, ist er `open` mit Ort.
+Der Earth-Pass (2013-10-09, DOY 282) ist in den PDS-Juno-Archiven gemessen
+**abwesend** (kein Earth-Encounter-EDR registriert; nur post-EFB Outer-Cruise-
+ODF ab DOY 284). Verbleibende Spur: ein Juno-Earth-Flyby-Gravity-ODF könnte
+außerhalb PDS in den DSN/NAIF-Tracking-Archiven liegen — dort ungesucht.
+Erst wenn dieser Fundort geprüft ist, ist die Juno-Nicht-Auffindbarkeit mit Ort
+vollständig gemessen.
 
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
