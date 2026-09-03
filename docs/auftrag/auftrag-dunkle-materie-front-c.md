@@ -155,12 +155,23 @@ von −61,8 kHz auf +95,0 kHz an einem Tag), 1-Sample-Tage (1981-02-10,
 1996-10-19), Vorzeichenkipp zwischen Tagen. Ein DM-Transit wäre ein kleiner,
 anhaltender, kohärenter Versatz; das hier ist grobe Einzelstations-Tracking-
 Struktur, die der per-Station-Fit nicht absorbiert (der ±500k/1000-Hz-Zähl-
-korrektur-Rest). **P11-1981-02-09** (auch geflaggt) ist dagegen **multi-Station**
-(12/42/63, 889 Samples) mit kohärentem ~3,3-kHz-Schritt am selben Datum —
-interessanter (kohärent, keine Sparsity), aber kHz-Skala, nicht sub-kHz. Befund:
-die Ruck-Flaggen sind Stations-/Era-Struktur, kein sub-kHz-Transit. Das
-sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden; der Transit-Sweep kann ehrlich
-keinen DM-Klumpen über diesem Boden melden (0 honored).
+korrektur-Rest). Befund: die Ruck-Flaggen sind Stations-/Era-Struktur, kein
+sub-kHz-Transit. (Korrektur: eine frühere Fassung nannte P11-1981-02-09
+„multi-Station-kohärent/spannender" — das war eine Überzeichnung aus der
+flag_era-Ausgabe, die alle Tage eines Jahres druckt, nicht nur Ruck-Flaggen;
+P11-1981-02-09 ist **kein** Ruck-Flag, es unterschreitet P11s eigene Schwelle.)
+
+**Kreuz-Sonden-Zeugen-Test (2026-09-03):** P10 (12 Ruck-Flag-Tage) und P11
+(11 Ruck-Flag-Tage) teilen **null** gemeinsame Flag-Daten (gemessen, comm -12).
+Ein gemeinsames physikalisches Ereignis (DM-Klumpen oder Boden-Artefakt) ließe
+beide Sonden am selben Datum springen; sie springen nie gemeinsam. Jede Flagge
+ist sondenspezifisch (P10 = Station-63-Struktur, P11 = eigene Flyby-/Era-Tage).
+Ein gleichzeitiger, beide Sonden treffender DM-Transit ist damit ausgeschlossen.
+Offen (0 honored): ein DM-Klumpen passierte eine Sonde und eine zweite **versetzt**
+(Wochen/Monate, geometrieabhängig), nicht gleichzeitig — der richtige Zeugen-Test
+ist versetzte, geometrisch konsistente Flaggen zwischen Sonden, nicht gleicher
+Tag. Das sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden; der Transit-Sweep kann
+ehrlich keinen DM-Klumpen über diesem Boden melden.
 
 **Source-Pflicht (CDN-Manifestation):** das neue Dataset ist der PNAV-Bin;
 `pioneer_doppler`-CI-Job (kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL +
