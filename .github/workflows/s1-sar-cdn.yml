@@ -1,0 +1,25 @@
+name: s1-sar-cdn
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  s1-sar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile S1 GRD Post-vs-Vor SAR difference and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download sentinel1euwest.blob.core.windows.net --repo omegaflow/sources \
+            --pattern s1_sar_diff.bin --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin s1_sar_compiler -- \
+            --out s1_sar_diff.bin --ci-mode

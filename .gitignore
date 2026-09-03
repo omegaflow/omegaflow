@@ -1,0 +1,58 @@
+debug/
+.env
+*.log
+omegaflow.wasm
+.opencode/*
+!.opencode/agent/
+.opencode/agent/*
+!.opencode/agent/council.md
+!.opencode/command/
+.opencode/command/*
+!.opencode/command/council.md
+*.pdb
+phi/health.json
+phi/kernels/
+kernels/
+!src/kernels/
+!src/kernels/naif0012.tls
+*.py
+/reference/
+scripts/__pycache__/
+.secrets.local
+.continue/
+server.log
+/target
+/tmp/
+/out/
+/data/
+archeology/
+
+# Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
+rave_dr5.json
+
+# Compiler-Binaries (gehen zum CDN, nicht ins Repo)
+*.bin
+# Ernte-Cache (regenerierbar — bz_retro_probe schreibt ihn bei leerem Cache neu)
+abk_dbdt_daily.tsv
+abk_dbdt_1h_SOD_2024.tsv
+fam_state_SOD_2024.txt
+
+# A=A: phi/ in main haelt nur den gesaeuberten Kernel (sources.φ)
+# Abgeleitete Zustaende (sources_index.φ, models.φ, blocked/dead,
+# KERNEL_INDEX.md, pipeline/) liegen in OMEGAFLOW_STATE (~/.local/state/omegaflow/phi).
+phi/*
+!phi/sources.φ
+
+# Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
+.omegaflow-strand
+
+# Cloudflare-Worker-Werkzeuge (nicht ins Repo)
+cloudflare/node_modules/
+cloudflare/package.json
+cloudflare/package-lock.json
+cloudflare/.wrangler/
+
+# Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
+gate/
+mail/
+reports/

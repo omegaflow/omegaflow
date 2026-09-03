@@ -1,0 +1,56 @@
+name: laic-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 2 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  laic-harvest-compile-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            phi/pipeline/laic_harvest
+            phi/pipeline/laic_champ_harvest
+          key: laic-harvest-${{ runner.os }}-${{ hashFiles('tools/measure/src/bin/laic_probe.rs') }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build laic_probe
+        run: cargo build -p omegaflow-measure --release --bin laic_probe
+
+      - name: Harvest main era (F/BZ/region + TEC-GIM) into the window store
+        run: |
+          ./target/release/laic_probe --harvest phi/pipeline/laic_harvest \
+            --max-events 0 --null 60 --swarm-limit 0 --swarm-null 0 \
+            --tec-events 2000 --tec-null 60
+
+      - name: Harvest MiniSEED envelope (continuous seismic wave) into the window store
+        run: |
+          ./target/release/laic_probe --harvest phi/pipeline/laic_harvest \
+            --max-events 0 --null 0 --swarm-limit 0 --swarm-null 0 \
+            --tec-events 0 --tec-null 0 --champ-events 0 --champ-null 0 \
+            --mseed-events 2000 --mseed-null 60
+
+      - name: Harvest CHAMP era (electron density) into the window store
+        run: |
+          ./target/release/laic_probe --harvest phi/pipeline/laic_champ_harvest \
+            --max-events 0 --null 60 --swarm-limit 0 --swarm-null 0 \
+            --era-start 2002-01-01 --era-end 2010-12-31 \
+            --champ-events 2000 --champ-null 60
+
+      - name: Compile main window store and upload to CDN
+        run: ./target/release/laic_probe --compile phi/pipeline/laic_harvest --asset laic --ci-mode
+
+      - name: Compile CHAMP window store and upload to CDN
+        run: ./target/release/laic_probe --compile phi/pipeline/laic_champ_harvest --asset laic_champ --ci-mode

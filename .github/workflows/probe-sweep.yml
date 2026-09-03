@@ -1,0 +1,60 @@
+name: probe-sweep
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * 1'
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+  JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: lens
+      run: |
+        for f in phi/pipeline/katalog/b2find_catalogs_index.φ phi/pipeline/katalog/grind_eogateway_index.φ phi/pipeline/katalog/archeology_gaps_index.φ phi/pipeline/katalog/terrapulse_catalog.φ phi/pipeline/katalog/gaia_swpc_vokabular.φ phi/pipeline/katalog/inaturalist_vokabular.φ phi/pipeline/katalog/nasa_cmr_tags.φ phi/pipeline/katalog/gbif_tags.φ phi/pipeline/katalog/tap_index_eso.φ phi/pipeline/katalog/tap_index_cadc.φ phi/pipeline/katalog/tap_index_mast.φ phi/pipeline/katalog/tap_index_chandra.φ phi/pipeline/katalog/erddap_bcodmo_catalog.φ phi/pipeline/katalog/erddap_noaa_pmel_catalog.φ; do
+          cargo run -p omegaflow-utils --quiet --bin source_scanner -- phi/pipeline/library.φ "$f" || true
+        done
+    - name: urls
+      run: cargo run -- --urls phi/pipeline/probe_url_candidates.txt --jina
+    - name: draft
+      run: cargo run -- --draft phi/pipeline/probe_live.txt
+    - name: draft-context
+      run: cargo run -- --draft-context phi/pipeline/probe_drafts.φ
+    - name: probe
+      run: |
+        awk 'BEGIN{RS=""} !/frame: frame ausstehend/{print $0 "\n"}' phi/pipeline/probe_drafts_enriched.φ > /tmp/probe_wave.φ
+        cargo run -- --probe /tmp/probe_wave.φ
+        mv phi/pipeline/probe_survivors.φ phi/pipeline/probe_all_survivors.φ
+        mv phi/pipeline/probe_void.txt phi/pipeline/probe_all_void.txt
+        echo "survivors: $(grep -c '^url ' phi/pipeline/probe_all_survivors.φ || true)"
+        echo "voids: $(grep -c '^url ' phi/pipeline/probe_all_void.txt || true)"
+    - name: upload
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: probe-results
+        path: |
+          phi/pipeline/probe_all_survivors.φ
+          phi/pipeline/probe_all_void.txt
+          phi/pipeline/probe_live.txt
+          phi/pipeline/probe_url_void.txt
+          phi/pipeline/probe_jina.txt
+          phi/pipeline/probe_drafts.φ
+          phi/pipeline/probe_drafts_enriched.φ
+          phi/pipeline/weights_*.txt
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}

@@ -1,0 +1,38 @@
+name: ci
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'phi/**'
+      - 'Cargo.toml'
+permissions:
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo check
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo check returned void" \
+          "Build job failed on ${{ github.sha }}" \
+          health
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo test
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo test returned void" \
+          "Test job failed on ${{ github.sha }}" \
+          health
