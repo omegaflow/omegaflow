@@ -1,9 +1,9 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
-use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
+use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
 use omegaflow::jwst::{
-    JwstSpectrum, bins_from_jwst_rows, finalize_workdir, ledger_append, ledger_done, mjd_to_unix,
-    parse_jwst_bin, write_sidecar,
+    bins_from_jwst_rows, finalize_workdir, ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin,
+    write_sidecar, JwstSpectrum,
 };
 use omegaflow::lsk::parse as parse_lsk;
 use std::io::Write;
@@ -214,6 +214,10 @@ fn caom_jwst_timeseries(token: &str) -> Vec<CaomRow> {
                 || instrument.starts_with("NIRSPEC")
                 || instrument.starts_with("MIRI"))
             {
+                continue;
+            }
+            let rights = jstr(row, "dataRights").unwrap_or_default();
+            if rights == "EXCLUSIVE_ACCESS" || rights == "PROPRIETARY" {
                 continue;
             }
             rows.push(CaomRow {
