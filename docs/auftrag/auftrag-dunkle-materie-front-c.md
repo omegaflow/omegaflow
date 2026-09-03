@@ -173,6 +173,20 @@ ist versetzte, geometrisch konsistente Flaggen zwischen Sonden, nicht gleicher
 Tag. Das sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden; der Transit-Sweep kann
 ehrlich keinen DM-Klumpen über diesem Boden melden.
 
+**Versetzter Sonden-Zeugen-Test (2026-09-03, Commit ff5ebf8,
+`pioneer_navio_witness_geometry`): gemessen, geometrie-geschlossen.** P10s
+Ruck-Flaggen liegen bei 22–66 AU heliozentrisch (1980–82 ~22–28 AU, 1996 ~65 AU,
+auswärts rezedierend); P11s Flaggen bei 5–14 AU (1974 ~5 AU Jupiter-Encounter,
+1981–83 ~10–14 AU). Die P10–P11-Separation beträgt an **jeder** Kreuz-Epoche
+24–110 AU — die einzige Ausnahme ist der 1974-P11-Jupiter-Cluster (1,8 AU), der
+bereits als bekannter Encounter benannt ist. P10s 1996-Flaggen (~66 AU) liegen
+sechs Jahre nach dem Ende der P11-Daten (P11-arc endet ~1990). **Kein einzelner
+durchziehender DM-Klumpen kann beide Sonden zeitversetzt treffen**: die Geometrie
+(24–110 AU Trennung, divergierende Flugrichtungen, fehlende zeitliche Überlappung
+der 1996-P10- mit irgendeiner P11-Epoche) schließt einen gemeinsamen Transiter
+aus. Jede Ruck-Flagge ist sondenspezifisch (P10 Station-63, P11 Flyby-/Era-Tage).
+Der versetzte Zeugen-Test liefert Stille als Verdikt (0 honored).
+
 **Source-Pflicht (CDN-Manifestation):** das neue Dataset ist der PNAV-Bin;
 `pioneer_doppler`-CI-Job (kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL +
 PNAV aufs `spdf.gsfc.nasa.gov`-Release. Die PNVR/PNDM-Serialisierung ist
