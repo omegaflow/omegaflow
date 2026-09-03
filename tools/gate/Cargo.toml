@@ -1,0 +1,17 @@
+[package]
+name = "omegaflow-gate"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "the real-time A=A gate"
+
+[dependencies]
+omegaflow = { path = "../..", features = ["llm_gate"] }
+
+geotiff-reader = { version = "0.8", default-features = false, features = ["local"] }
+miniz_oxide = "0.8"
+utm = "0.1"
+
+[dev-dependencies]
+geotiff-writer = "0.8"
+ndarray = "0.17"
