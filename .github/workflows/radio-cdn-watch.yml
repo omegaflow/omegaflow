@@ -1,4 +1,4 @@
-name: radio-cdn-watchdog
+name: radio-cdn-watch
 on:
   workflow_dispatch:
   schedule:
