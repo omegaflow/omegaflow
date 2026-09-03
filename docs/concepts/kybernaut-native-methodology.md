@@ -1,8 +1,8 @@
 <!--
   title: Kybernaut-Native Methodology
   class: concept
-  date: 2026-08-26
-  sha256: 3dbf6638524f00dec755cb0e3d9883a369beae235f877d52c444acb9344be73f
+  date: 2026-09-03
+  sha256: 9fa33a2e90d9ba76b6e26aaa7fb0e224fd6f26c29263fd6e832ed82c7f63afe2
   status: live
   see-also: AGENTS.md, docs/concepts/system-directive.md
 -->
@@ -77,6 +77,18 @@ Rule: Sub-agents are useful for independent tasks. For interdependent work, the 
 Token generation cost is linear with response length. Council deliberation costs 5× but reduces correction cycles. The cost function is tokens-per-correct-outcome.
 
 Rule: Invest tokens in deliberation, not correction. One Council deliberation that produces a correct implementation in one pass is cheaper than five rounds of direct action that each require correction.
+
+#### Fixing is cheaper than registering
+
+An open task that the current session can close is not `pending` — it is work. Registering it costs a TODO line, a handover paragraph, a future session's archaeological re-read, and the tokens of every session that re-loads the debt. That ledger is not cheaper than the fix; the fix is done once, the debt is paid every time it is named.
+
+Rule: When a session names an open item, the first question is *can this be done now?* If the task is within reach — the source is read, the layer is in context, the fix is mechanical — close it in the same session instead of writing it down. `pending` is the name of work that genuinely cannot be done here (missing data, inaccessible layer, an operator decision), never the badge of a task deferred because registering felt lighter. A register line that says nothing more than "this was found and left" is a confession of the wrong choice, not a duty fulfilled.
+
+Rule: The TODO is written the moment the work is *done or genuinely blocked*, not as a substitute for doing it. A session that ends with more register lines than closed items has spent its tokens on the ledger, not on the machine.
+
+#### Verification: What `cargo check` Cannot Catch
+
+The verification discipline — the three-layer data contract, what `cargo check` cannot detect, and the manual verification protocol — lives in `docs/concepts/archivar-mathematikerin.md`. Its standing rule: `cargo check` is a syntax gate, not verification; the Kybernaut is the verifier.
 
 #### Artifact Self-Containment
 
