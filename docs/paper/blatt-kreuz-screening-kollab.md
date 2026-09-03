@@ -1,7 +1,8 @@
 <!--
-  title: BLATT PAPIER — Kreuz-Screening der Serien im Kollab-Fenster (Trishuli 2026-08-26)
+  title: BLATT PAPIER — Kreuz-Screening im Kollab-Fenster (Trishuli 2026-08-26)
   class: sheet
   date: 2026-08-30
+  sha256: be3226063bd4fe8b3e23e3bb9e7ab1781aff68389ad3a5b7df219c9c25e31584
   status: pending
   see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/causal-arrow-preregistration.md
 -->
