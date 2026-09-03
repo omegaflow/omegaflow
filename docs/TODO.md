@@ -89,6 +89,16 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   CASE 5 (Archiv-Absolutpfade: strikte Sperre oder dokumentierte Ausnahme)
   + CASE 6 (Fließtext-Drift in lebenden Dokumenten jagen oder als Grenze
   festschreiben) — je Kalibrationslauf, je Commit, getrennt entschieden.
+- `auftrag-saubere-datenbank.md` — eine Datenbank über sources.φ / CI / CDN.
+  Steps 1-2 committet (cd_reconcile, CDN_ZIEL_SCHEMA). Step 3 (Registry
+  zuerst): Verdikt-Ledger `docs/specs/cdn_orphan_verdicts.json` steht (156
+  Orphans klassifiziert; 70 stale_pending sind in dead_sources.φ dokumentiert
+  tot, 65 undocumented mit gemessener Erreichbarkeit). **Offen:** Force-Gate
+  Re-Registrierungs-Grind der 65 lebenden/undokumentierten Netlocs
+  (je: lebend → sources.φ-Block nach SOURCE_PORT.md; tot → dead_sources.φ);
+  `repo_tag`-Releases (§1 keine Registry-Heimat) → Step-5-Verdikt. Step 4
+  (CI-Dedupe) gegen gemessene 4/18-Jobs neu fassen, nicht gegen die stale
+  20/24-Vermutung. Step 5 destruktiv nur mit Nachbau-Quelle je Asset.
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
 
