@@ -251,7 +251,15 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   misst //ab 0,14–0,37 µm und //c 1,04–2,10 µm getrennt je Dotierung).
   Tabellen ohne Temperatur-Achse (Film-Dicke/Sample/Magnetfeld-Scans)
   sind keine ρ_s(T)-Quelle, entfallen ehrlich (0 honored). Ernte v7:
-  232 Punkte, 65 Serien. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz
+  232 Punkte, 65 Serien. Form-Befund (2026-09-03,
+  `suprastrom_form_probe`): die Zwei-Flüssigkeiten-Form
+  ρ_s ∝ 1−(T/Tc)⁴ wird von mehreren unabhängigen Serien getragen
+  (RMS/ρ₀ ≈ 3%: U00037 Tc 89,1 K über 22 Punkte bis 88 K —
+  Übergangsregion beprobt; A00261, A00316, A00395 ähnlich); Auswahl
+  nur Serien, deren Daten die Übergangskante erreichen (Tc nicht
+  extrapoliert). Ein-Material-Zahl < MIN_N → noch keine
+  material-übergreifende Aussage; Einzel-Material-Form als Befund
+  registriert. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz
   (nur Kagome/Nickelat). Die λ→ρ_s-Konversion
   (λ⁻² ∝ ρ_s) ist zum Feldwert electric der gebaute Weg.
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
