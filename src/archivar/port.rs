@@ -1326,21 +1326,13 @@ pub fn ci_mode(dir: &str) -> i32 {
                 &env,
                 &mut reachable,
                 &mut dead,
-                &mut mirrored,
                 &mut pending,
                 &mut host_void,
             );
             continue;
         }
         if url_has_template(&src.url) {
-            probe_template(
-                src,
-                &headers,
-                &env,
-                &mut reachable,
-                &mut dead,
-                &mut mirrored,
-            );
+            probe_template(src, &headers, &env, &mut reachable, &mut dead);
             continue;
         }
         if secret_resolves_void(&src.url, &env) {
@@ -1563,7 +1555,6 @@ pub fn probe_fanout(
     env: &HashMap<String, String>,
     reachable: &mut usize,
     dead: &mut usize,
-    mirrored: &mut u32,
     pending: &mut usize,
     host_void: &mut HashSet<String>,
 ) {
@@ -1613,29 +1604,11 @@ pub fn probe_fanout(
     };
     let probe_url = resolve_secret(&src.url.replace("{station}", &first.id), env)
         .replace("{nearest_station}", &first.id);
-    let Some(netloc) = extract_netloc(&src.url) else {
-        return;
-    };
-    let tag = format!("{}-template", netloc);
-    let name = source_name_from_url(&src.url);
-    let cache_path = cache_path_for(&tag, &name);
-    if cache_fresh(&cache_path, src.ttl) {
-        *reachable += 1;
-        return;
-    }
     match fetch_raw(&probe_url, None, headers, src.ttl) {
         Some(body) => {
             if parse_json(&body).is_some() {
                 *reachable += 1;
                 eprintln!("ci-mode: fanout probe {} JSON ok", probe_url);
-                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
-                    let _ = std::fs::create_dir_all(parent);
-                }
-                if std::fs::write(&cache_path, &body).is_ok()
-                    && crate::cdn::upload_release(&tag, &cache_path)
-                {
-                    *mirrored += 1;
-                }
             } else {
                 eprintln!("ci-mode: fanout probe {} JSON parse void", probe_url);
                 *dead += 1;
@@ -1654,7 +1627,6 @@ pub fn probe_template(
     env: &HashMap<String, String>,
     reachable: &mut usize,
     dead: &mut usize,
-    mirrored: &mut u32,
 ) {
     let anchor = frame_anchor(&src.frame);
     let probe_url = match ci_probe_render(&src.url, anchor, env) {
@@ -1664,29 +1636,11 @@ pub fn probe_template(
     if secret_resolves_void(&probe_url, env) {
         return;
     }
-    let Some(netloc) = extract_netloc(&src.url) else {
-        return;
-    };
-    let tag = format!("{}-template", netloc);
-    let name = source_name_from_url(&src.url);
-    let cache_path = cache_path_for(&tag, &name);
-    if cache_fresh(&cache_path, src.ttl) {
-        *reachable += 1;
-        return;
-    }
     match fetch_raw(&probe_url, None, headers, src.ttl) {
         Some(body) => {
             if parse_json(&body).is_some() {
                 *reachable += 1;
                 eprintln!("ci-mode: template probe {} JSON ok", probe_url);
-                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
-                    let _ = std::fs::create_dir_all(parent);
-                }
-                if std::fs::write(&cache_path, &body).is_ok()
-                    && crate::cdn::upload_release(&tag, &cache_path)
-                {
-                    *mirrored += 1;
-                }
             } else {
                 eprintln!("ci-mode: template probe {} JSON parse void", probe_url);
                 *dead += 1;
