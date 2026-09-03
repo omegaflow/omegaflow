@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 2
-  sha256: c4eaebe9f981f99e2af723e172f45a874d496699dad7fce3a7f7aaa4d74dec13
+  sha256: 559fbe628851dc2cdf58819d82c2153f33028e90a924d127d76adae055d02d61
   fam-machine: pre-fix
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -237,8 +237,10 @@ disagreement (the direction of the hottest rung) are reported side by side.
 ## 5. Discussion
 
 **The energy enters from below, fast.** The sole fam-significant flow is
-1032→131 Å, at zero lag — the transition-region→corona boundary, where the
-temperature ladder is steepest (5.47 → 5.57 in log T). The 977→1032 entry
+1032→131 Å, at zero lag — the transition-region→corona boundary (log T
+5.47 → 5.57, O VI → Fe VIII). The adjacent log-T rung gap at this boundary
+(Δ 0.10) is not the ladder's steepest: the largest gap lies at 977→1032 Å
+(Δ 0.63 in log T). The 977→1032 entry
 (peak 3.91e-2) and the hottest rungs' downward D are all below fam, so they
 are reported as silent, not as negative findings. The ~100 s coronal
 crossing is not resolved in these sun-as-a-star lines; the AIA imaging
