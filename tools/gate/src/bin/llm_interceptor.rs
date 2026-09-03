@@ -702,14 +702,15 @@ fn handle_chat(
         }
         drop(gate);
         let mut mutated = with_include_usage(parsed.clone(), streaming);
-        axioms::inject(&mut mutated, &root);
         {
             let mut st = shared.state.lock().unwrap();
+            if st.turns == 0 {
+                axioms::inject(&mut mutated, &root);
+            }
             st.turns += 1;
             if !model.is_empty() {
                 st.model = model.clone();
             }
-            state::inject_after_axioms(&mut mutated, &st);
         }
         {
             let perm = shared.perm.lock().unwrap();
@@ -1122,7 +1123,7 @@ fn message_texts(parsed: &JsonVal) -> Vec<String> {
     for m in msgs {
         let JsonVal::Obj(m) = m else { continue };
         let is_scanned = match m.get("role") {
-            Some(JsonVal::Str(r)) => r == "user" || r == "tool",
+            Some(JsonVal::Str(r)) => r == "user",
             _ => false,
         };
         if !is_scanned {
