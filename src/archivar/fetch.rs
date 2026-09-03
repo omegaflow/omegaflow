@@ -756,7 +756,7 @@ pub fn fetch_one(
         if let Some(netloc) = extract_netloc(url) {
             let name = asset_name(url);
             if !name.is_empty() {
-                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                let cache_path = cache_path_for(netloc, &name);
                 if now.map_or(false, |n| cache_fresh_at(&cache_path, ttl, n)) {
                     if let Some(cached) = std::fs::read_to_string(&cache_path).ok() {
                         return Some(cached);
@@ -789,7 +789,7 @@ pub fn fetch_one(
         if let Some(netloc) = extract_netloc(url) {
             let name = asset_name(url);
             if !name.is_empty() {
-                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                let cache_path = cache_path_for(netloc, &name);
                 if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                     let _ = std::fs::create_dir_all(parent);
                 }
@@ -807,6 +807,36 @@ pub fn fetch_one(
         }
     }
     live
+}
+
+pub fn cache_root() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+        return std::path::PathBuf::from(dir).join("archivar_cache");
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        return std::path::PathBuf::from(home)
+            .join(".local")
+            .join("state")
+            .join("omegaflow")
+            .join("archivar_cache");
+    }
+    std::path::PathBuf::from("archivar_cache")
+}
+
+pub fn cache_path_for(netloc: &str, name: &str) -> String {
+    cache_root()
+        .join(netloc)
+        .join(format!("{name}.json"))
+        .to_string_lossy()
+        .into_owned()
+}
+
+pub fn content_cache(name: &str) -> String {
+    let root = cache_root();
+    if let Some(parent) = root.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    root.join(name).to_string_lossy().into_owned()
 }
 
 pub fn cache_fresh(path: &str, ttl: u64) -> bool {
@@ -952,5 +982,71 @@ pub fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
         }
         JsonVal::Arr(arr) => arr.iter().any(|v| json_has_key_ci(v, target)),
         _ => false,
+    }
+}
+
+#[cfg(test)]
+mod cache_root_tests {
+    use super::*;
+
+    #[test]
+    fn cache_root_resolves_and_serves() {
+        let state = "/tmp/opencode/omegaflow_cache_root_state";
+        let state_root = std::path::PathBuf::from(state).join("archivar_cache");
+
+        unsafe {
+            std::env::set_var("OMEGAFLOW_STATE", state);
+        }
+        assert_eq!(
+            cache_root(),
+            state_root,
+            "the cache root honors OMEGAFLOW_STATE"
+        );
+
+        unsafe {
+            std::env::remove_var("OMEGAFLOW_STATE");
+            std::env::set_var("HOME", "/home/probe");
+        }
+        assert_eq!(
+            cache_root(),
+            std::path::PathBuf::from("/home/probe")
+                .join(".local")
+                .join("state")
+                .join("omegaflow")
+                .join("archivar_cache"),
+            "without OMEGAFLOW_STATE the cache root lives in the documented home"
+        );
+
+        unsafe {
+            std::env::set_var("OMEGAFLOW_STATE", state);
+        }
+        let path = cache_path_for("example.com", "sample_source");
+        assert_eq!(
+            path,
+            state_root
+                .join("example.com/sample_source.json")
+                .to_string_lossy(),
+            "the path joins netloc and name under the state root"
+        );
+        let parent = std::path::Path::new(&path).parent().unwrap().to_path_buf();
+        std::fs::create_dir_all(&parent).unwrap();
+        let body = "{\"measured\":true}";
+        std::fs::write(&path, body).unwrap();
+        let stamp_path = format!("{path}.epoch");
+        std::fs::write(&stamp_path, "8.0e8").unwrap();
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            body,
+            "the written cache reads back intact"
+        );
+        assert!(
+            cache_fresh_at(&path, 3600, 8.0e8 + 100.0),
+            "the freshly written cache serves within its ttl"
+        );
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(&stamp_path);
+        unsafe {
+            std::env::remove_var("OMEGAFLOW_STATE");
+        }
     }
 }
