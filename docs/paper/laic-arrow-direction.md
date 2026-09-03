@@ -3,7 +3,7 @@
   class: paper
   date: 2026-08-21
   version: 4
-  sha256: 34ed26058f4f6916e82f1a13733a1990eda6c7d9e8c8593c44a3d128ceaa1783
+  sha256: 03f77dd871b1b9cd8feeeb5d1904f67ab7f6691bc1023dd73ed73f249feafc07
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md
 -->
@@ -11,15 +11,15 @@
 
 ## Abstract
 
-Instrument B (window stacking) measures transfer entropy between the lithosphere and the ionosphere. TE(Lithosphere → Ionosphere) = −7.97e-2 nats and TE(Ionosphere → Lithosphere) = −1.08e-2 nats (stack mean, n = 176 windows; null = 40 random windows, threshold μ + 2σ); the solar control TE(Solar Bz → Ionosphere) = +4.35e-2 nats (n = 171). The event stack lies under the threshold in both directions — the 72 h before M ≥ 6 earthquakes carry less transfer than random windows. The verdict is silence in both directions; the finding is fully valid (0 honored).
+Instrument B (window stacking) measures transfer entropy between the lithosphere and the ionosphere. TE(Lithosphere → Ionosphere) = −7.97e-2 nats and TE(Ionosphere → Lithosphere) = −1.08e-2 nats (stack mean, n = 176 windows; null = 40 random windows, threshold μ + 2σ); the solar control TE(Solar Bz → Ionosphere) = +4.35e-2 nats (n = 171). These are stack means of the per-window maximum-over-lag TE *excess* (measured TE minus that window's own surrogate floor), not of TE itself; a negative sign means the measured coupling sits below its surrogate noise floor, and that floor is itself negative under random windows (null mean ≈ −0.1), so the negative sign is the estimator's bias floor, not measured negative flow. No lag in either direction reaches its surrogate threshold, and the one-sided arrow rule is upper-only — it does not establish that the event windows lie significantly below the random-window null. The verdict is silence in both directions; the finding is fully valid (0 honored). The solar common driver is not a hidden positive confound here: the measured Bz→ionosphere control is itself below its null threshold — silent.
 
 
 ## The Blatt
 
 ```
-TE(Lithosphere → Ionosphere) = −7.97e-2 nats   (stack mean of the window maximum excesses, n = 176)
-TE(Ionosphere → Lithosphere) = −1.08e-2 nats   (n = 176)
-Control TE(Solar Bz → Ionosphere) = +4.35e-2 nats   (n = 171)
+TE(Lithosphere → Ionosphere) = −7.97e-2   (stack-mean TE excess, not TE; n = 176)
+TE(Ionosphere → Lithosphere) = −1.08e-2   (stack-mean TE excess; n = 176)
+Control TE(Solar Bz → Ionosphere) = +4.35e-2   (stack-mean TE excess; n = 171)
 Lag                          = 0 h   (largest mean excess of both directions; all lag means negative)
 n (events), threshold       = 176 windows, null ensemble = 40 random windows, threshold μ + 2σ
 Verdict                      = silence in both directions — a fully valid finding
@@ -28,8 +28,10 @@ Verdict                      = silence in both directions — a fully valid find
 Thresholds of the null ensemble (μ + 2σ over 40 random windows):
 Litho→Iono −1.60e-2, Iono→Litho +4.90e-2, control +1.28e-1. The
 event stack lies under the threshold in both directions — for
-Litho→Iono deep below (the 72 h before M≥6 carry on this instrument
-less transfer than random windows). The solar control is silent:
+Litho→Iono deep below it. The negative excess is not evidence of a
+suppression: random windows carry a similar negative floor (null mean
+≈ −0.1 for Litho→Iono), and the one-sided arrow test is upper-only, so
+no significant deficit is claimed. The solar control is silent:
 the common driver carries no arrow on this grid.
 
 ## Protocol (Instrument B — window stacking)
@@ -89,9 +91,9 @@ offline, the same holding carries every parameter cell, the run is
 resumable.
 
 ```
-TE(Lithosphere → Ionosphere) = −7.63e-2 nats   (stack mean of the maximum excesses, n = 1369, full era)
-TE(Ionosphere → Lithosphere) = −1.26e-2 nats   (n = 1369)
-Control TE(Solar Bz → Ionosphere) = +4.06e-2 nats   (n = 1400)
+TE(Lithosphere → Ionosphere) = −7.63e-2   (stack-mean TE excess, not TE; n = 1369, full era)
+TE(Ionosphere → Lithosphere) = −1.26e-2   (stack-mean TE excess; n = 1369)
+Control TE(Solar Bz → Ionosphere) = +4.06e-2   (stack-mean TE excess; n = 1400)
 Lag                          = 0 h   (largest mean excess; all lag means negative)
 n (events), threshold       = 1369 windows, null ensemble 60 random windows, threshold μ + 2σ
 Verdict                      = silence in both directions — the arrow stays silent
@@ -99,8 +101,9 @@ Verdict                      = silence in both directions — the arrow stays si
 
 Thresholds: L→I −2.54e-2, I→L +1.86e-2, control +1.33e-1. The
 event stack lies under the threshold in both directions — for
-L→I deep below (the 72 h before M≥6 carry less transfer than
-random windows, across the whole era). The solar control is silent.
+L→I deep below it, across the whole era. The negative excess is the
+estimator's surrogate-floor bias (random windows carry a similar
+negative mean), not a measured deficit. The solar control is silent.
 
 Sensitivity matrix (every cell silent; r/c/k cells on the 250
 most recent events, main cell full era):
@@ -157,9 +160,9 @@ from 2024; pre-2024 the holding carries only `codg*.Z` (compress/LZW,
 decompressor open item).
 
 ```
-TE(Lithosphere → TEC-GIM)        = −6.31e-2 nats   (n = 336 events of the TEC era, threshold −3.25e-2)
-TE(TEC-GIM → Lithosphere)        = −1.47e-2 nats   (threshold +2.22e-2)
-Control TE(Solar Bz → TEC-GIM) = +3.22e-2 nats   (threshold +1.28e-1)
+TE(Lithosphere → TEC-GIM)        = −6.31e-2   (stack-mean TE excess; n = 336 events of the TEC era, threshold −3.25e-2)
+TE(TEC-GIM → Lithosphere)        = −1.47e-2   (stack-mean TE excess; threshold +2.22e-2)
+Control TE(Solar Bz → TEC-GIM) = +3.22e-2   (stack-mean TE excess; threshold +1.28e-1)
 Lag                              = 0 h   (all lag means negative)
 Verdict                          = silence in both directions — also on the true channel
 ```
@@ -191,16 +194,16 @@ cell coverage of a LEO pass is thin: at 2000 km/30 min only
 60-min cells 229 windows become computable.
 
 ```
-TE(Lithosphere → CHAMP density)   = −1.24e-1 nats   (n = 229, threshold +3.29e-2)
-TE(CHAMP density → Lithosphere)   = −2.81e-2 nats   (n = 229, threshold +7.72e-2)
+TE(Lithosphere → CHAMP density)   = −1.24e-1   (stack-mean TE excess; n = 229, threshold +3.29e-2)
+TE(CHAMP density → Lithosphere)   = −2.81e-2   (stack-mean TE excess; n = 229, threshold +7.72e-2)
 Lag                              = 1 h (Litho → density); 0 h (reverse direction)
 Verdict                          = silence in both directions
 ```
 
 The fourth channel — true in-situ electron density in the ionosphere —
 also carries no arrow: the event stack lies deep under the
-null threshold (the 72 h before M≥6 carry less transfer than random
-windows, the same sign as on F and TEC). The ground-F reference of the
+null threshold, the same sign as on F and TEC. The negative excess is
+the surrogate-floor bias, not a measured deficit. The ground-F reference of the
 same era (n = 656/659, BGS reaches to 2002) stays silent, the
 solar control (Bz→F, +3.97e-2 against +1.18e-1) likewise. With that,
 the direction question carries four channels: INTERMAGNET-F (full era),
