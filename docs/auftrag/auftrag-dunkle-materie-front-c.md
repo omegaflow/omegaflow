@@ -2,7 +2,7 @@
   title: Auftrag — Dunkle-Materie Front C: entscheiden und fahren (frische Session)
   class: auftrag
   date: 2026-09-03
-  status: pending
+  status: geschlossen
   see-also: docs/TODO.md docs/auftrag/auftrag-vollmission-redution.md docs/paper/probe-front-dark-matter.md docs/concepts/der-paradigmenwechsel.md
 -->
 
@@ -238,3 +238,41 @@ Klassifikatoren erfasst — er war nie Kandidat, weil er nie flaggte; instrument
 Nicht-Sichtbarkeit ≠ physische Negation.
 
 Diese Datei bleibt der Ledger bis Front C gefahren und entschieden ist.
+
+## Abschluss (2026-09-03) — Front C geschlossen bei vollständig charakterisierter Stille
+
+Front C ist entschieden und geschlossen. Die Kette: Horizons-Netz frisch 0/1008
+(leeres Netz), NAVIO-ASCII-Vollmission erstmals kompiliert + Form-Test (Floor
+19,0/8,4 kHz, keine getragene Form), sub-kHz-Tür geöffnet (PNAV/PNVR/PNDM),
+Ruck-Volkszählung 234/234 Form-gemessen, Kreuz-Sonden-Zeugen (gleichzeitig 0
+gemeinsame Tage, versetzt geometrie-geschlossen), Station-/Era-Befund (P10 =
+Station-63-Artefakt), letzte offene Zelle P11-1981-02-09 beerdigt (Zittern ±46 kHz
+dominiert −156-Hz-Schritt = Ein-Tages-Zittern, keine Rampe).
+
+**Granit-Sätze:** *Die Stille hat eine Gestalt: „Kein Transit" heißt — die
+gesuchte Ereignis-Form ist in der Ereignis-Verteilung strukturell abwesend,
+gemessen.* *Kohärenz ohne Form ist keine Evidenz: Ein Tag Übereinstimmung ist
+Zittern, kein Ereignis.*
+
+**Grenze (0 honored):** kein Transit widerlegt — die Form ist abwesend; ein
+glatter Transit unter der Flag-Schwelle war nie Kandidat (instrumentelle
+Nicht-Sichtbarkeit ≠ physische Negation). DM-Klumpen-Nachweis über die
+Ruck-Kette: Stille als Verdikt.
+
+## Deduktion 40 — die sub-kHz-Tür betreten (2026-09-03, Commit 3de05a3, d67bc82)
+
+Das Rats-Ziel (die sub-kHz-Tagesmediane) ist erreicht, nicht nur markiert.
+`pioneer_navio_negative_fuzzy` (Deduktion 40, negativ-fuzzy-Index): quadratische
+Pass-Detrendung + Stationszellen-Median auf den PNVR-Residuen. Gemessen:
+**P10 92,5 % (1041/1126) + P11 97,5 % (2027/2079) Tagesmediane unter 1 kHz;**
+Median |daily-med| 89 Hz (P10) / 35 Hz (P11); |daily-med|-Percentile
+p50/p90/p95/p99 = 89/774/1474/3861 (P10), 35/387/593/2070 (P11) — die sub-kHz-
+Residency ist median-getrieben, der ~2-kHz-RMS ist der Zitter-Tag-Schwanz.
+Ruck-Form-Scan auf der sub-kHz-Basis (1000× feinere Schwelle, 7/2,8 mHz/s statt
+Hz/s): P10 48 + P11 173 Flaggen, alle Form-gemessen; Top-Sprünge 1–5 kHz statt
+±142 kHz (Dump-Offsets reduziert); **0/15 (P10) + 0/142 (P11) fein kehren zurück
+— weiterhin keine Transit-Rampe.** Die top-saubere P11-1983-06-18-Flagge ist die
+Nachwirkung des Ausreißer-Tags 1983-06-16 (−4548 Hz, RMS 36,7 kHz), keine
+symmetrische Transit-Rampe. Die sub-kHz-Tagesmediane sind die neue, feinere Basis
+für den kontinuierlichen Drift (Folge-Frage, s.u.). Der Transit-Sweep über der
+sub-kHz-Basis: weiterhin Stille (0 honored).
