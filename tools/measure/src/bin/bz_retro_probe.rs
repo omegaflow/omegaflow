@@ -1,5 +1,5 @@
-use omegaflow::archivar::omni2::{COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
-use omegaflow::archivar::{JsonVal, fetch_raw, parse_json, scalar_of};
+use omegaflow::archivar::omni2::{parse_bin, COMP_BZ, COMP_N1800, COMP_V1800};
+use omegaflow::archivar::{fetch_raw, parse_json, scalar_of, JsonVal};
 use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -91,6 +91,13 @@ fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
 }
 
 const CACHE_BASE: &str = "abk_dbdt_daily";
+
+fn disk_cache(name: &str) -> String {
+    omegaflow::archivar::cache_root()
+        .join(name)
+        .to_string_lossy()
+        .into_owned()
+}
 
 fn load_cache(path: &str) -> Option<Vec<(f64, f64)>> {
     let body = std::fs::read_to_string(path).ok()?;
@@ -364,7 +371,7 @@ fn run_hourly(
         .get(..4)
         .and_then(|v| v.parse().ok())
         .unwrap_or(2026);
-    let cache_1h = format!("abk_dbdt_1h_{station}_{sy}.tsv");
+    let cache_1h = disk_cache(&format!("abk_dbdt_1h_{station}_{sy}.tsv"));
     let omni2_1h = "omni2_serie_1h.bin".to_string();
     let h_start = iso_to_unix(&format!("{hour_start}T00:00:00Z")).unwrap_or(0.0);
     let h_end = iso_to_unix(&format!("{hour_end}T00:00:00Z")).unwrap_or(now - 2.0 * HOUR);
@@ -601,7 +608,7 @@ fn main() {
     );
 
     let mut dbdt_daily: Vec<(f64, f64)> = if !force_harvest {
-        match load_cache(&format!("{CACHE_BASE}_{station}.tsv")) {
+        match load_cache(&disk_cache(&format!("{CACHE_BASE}_{station}.tsv"))) {
             Some(c) if !c.is_empty() => {
                 eprintln!(
                     "cache {CACHE_BASE}_{station}: {} days loaded — the harvest is skipped",
@@ -626,7 +633,10 @@ fn main() {
             dbdt_daily.append(&mut days);
         }
         dbdt_daily.sort_by(|a, b| a.0.total_cmp(&b.0));
-        write_cache(&format!("{CACHE_BASE}_{station}.tsv"), &dbdt_daily);
+        write_cache(
+            &disk_cache(&format!("{CACHE_BASE}_{station}.tsv")),
+            &dbdt_daily,
+        );
         eprintln!(
             "cache {CACHE_BASE}_{station}: {} days written",
             dbdt_daily.len()
