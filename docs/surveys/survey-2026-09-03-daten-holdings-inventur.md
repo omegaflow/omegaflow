@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 211bfad3eb7b405109af00f61d10d7817f7b07d977de6cfdc36cfbee0b6f52a6
+  sha256: 69e033aec27ee27319bb0ce5758683f47861971ec76db224b93fb04904ce933b
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/plans/ref-* 
 -->
@@ -71,7 +71,7 @@ messenger, near, rosetta.
   - Ephemeriden-Duplikate in `backups/omegaflow/data`, die identisch zu
     `knowledge/data` waren (~1,5 G; 2 dort verbleibende sind nicht-identisch → behalten).
 
-## Offen (Schritt-für-Schritt, je Freigabe)
+## Offen / Befunde (Schritt-für-Schritt, je Freigabe)
 
-1. Bewegung nach `projects/archive` nur nach Inventur je Holding.
-2. Lokalisierung der noch nicht gefundenen Serien (`abk_dbdt_1h_*`, kegel, GIC/corona).
+1. `omegaflow-legacy` (ohne `target/`) nach `projects/archive/omegaflow-legacy` verschoben (Code in Git-Historie). `knowledge/` und `backups/` bleiben als **Sicherungs-Archive in situ** — nichts im Repo referenziert sie; eine Umlagerung dieser ~50 G irreplacebarer Sicherungsdaten bedarf einer eigenen, definierten Ziel-Layout-Entscheidung, kein Blindwurf.
+2. **Lokalisierung der Serien `abk_dbdt_1h_*`, kegel-Log, GIC/corona: FEHLGESCHLAGEN** — als Datei nirgends unter allen Holdings vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`). Sie sind lokal `pending` (0 honored), nicht versteckt; dauerhafte Heimat wäre das CDN, sofern dort vorhanden.
