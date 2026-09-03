@@ -1,3 +1,4 @@
+use omegaflow::cdn::upload_asset;
 use std::process::Command;
 
 const MAGIC: [u8; 2] = [0xCF, 0x86];
@@ -150,12 +151,23 @@ fn parse_penetration(html: &str) -> Vec<(f64, f64, f64)> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let out_path = args
-        .iter()
-        .position(|a| a == "--out")
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "srd62_suprastrom.bin".to_string());
+    let mut ci_mode = false;
+    let mut out_dir = String::from(".");
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--ci-mode" => ci_mode = true,
+            "--out" => {
+                if let Some(d) = args.get(i + 1) {
+                    out_dir = d.clone();
+                    i += 1;
+                }
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+    let out_path = format!("{}/srd62_suprastrom.bin", out_dir);
 
     let search_url = "https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44";
     let Some(search_html) = fetch(search_url) else {
@@ -204,4 +216,8 @@ fn main() {
         out_path,
         points.len()
     );
+    if ci_mode && !upload_asset(&out_path) {
+        eprintln!("srd62_compiler: {} did not reach the CDN", out_path);
+        std::process::exit(1);
+    }
 }
