@@ -30,7 +30,7 @@ registrierten Ort.
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
 | `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
-| `/home/johannes/projects/archive/` | Externes Archiv: `archeology/` (pre-cdn) + `phi-research/` (batches, probe_batches, Dispositionen). |
+| `archive-root/` | Externes Archiv: `archeology/` (pre-cdn) + `phi-research/` (batches, probe_batches, Dispositionen). |
 | `docs/concepts/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
 ## 3. Die zwei Register
