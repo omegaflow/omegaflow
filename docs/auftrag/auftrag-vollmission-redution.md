@@ -115,3 +115,14 @@ sondenspezifisch. Versetzter Zeugen-Test (ff5ebf8): Geometrie schließt einen
 gemeinsamen Transiter aus — P10 22–66 AU vs P11 5–14 AU, Separation 24–110 AU
 an allen Kreuz-Epochen (außer 1974-P11-Jupiter 1,8 AU). Kein sub-kHz-Transit
 über dem Streuungsboden; Stille als Verdikt (0 honored).
+
+## Form-Klassifikation aller Rucks (2026-09-03, Commit 3be1aca)
+
+`pioneer_navio_ruck_form`: einreihiger Form-Deskriptor (Rat-Verdikt: kein TE).
+P10 99/99 + P11 71/71 aller Ruck-Flaggen Form-gemessen; returns zur Vorbasis =
+0/66 (P10) und 0/60 (P11); Zitter 20–147 dominiert lange Segmente. Kalibrier-
+Gate gegen die Positiv-Kontrolle: der bekannte P11-1979-Saturn-Encounter trägt
+dieselbe Form wie die Artefakte (holds + 147 Zitter) — am kHz-Floor trennt der
+Form-Klassifikator ein echtes Gravitations-Ereignis nicht von einem Artefakt.
+Keine saubere sub-kHz-Transit-Signatur; der Grund ist der Streuungsboden, nicht
+bewiesene Artefakt-Natur jedes Rucks (0 honored).
