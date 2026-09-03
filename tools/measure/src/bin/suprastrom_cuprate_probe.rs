@@ -23,68 +23,77 @@ fn main() {
         }
     };
 
-    let n_cit = bin.citations.len();
-    let n_points: usize = bin.citations.iter().map(|c| c.points.len()).sum();
-    let with_series = bin.citations.iter().filter(|c| c.points.len() >= 2).count();
+    let n_series = bin.series.len();
+    let n_points: usize = bin.series.iter().map(|s| s.points.len()).sum();
+    let n_sources: usize = {
+        let mut seen = std::collections::BTreeSet::new();
+        for s in &bin.series {
+            seen.insert(s.id.clone());
+        }
+        seen.len()
+    };
+    let with_series = bin.series.iter().filter(|s| s.points.len() >= 2).count();
 
     println!("suprastrom_cuprate_probe — the Kuprat electric channel (NIST SRD 62)");
     println!(
-        "  Supercurrent (electric): {} citations, {} penetration-depth points",
-        n_cit, n_points
+        "  Supercurrent (electric): {} sources, {} series, {} penetration-depth points",
+        n_sources, n_series, n_points
     );
     println!(
-        "  series (>=2 T-points per source): {} — {}",
+        "  temperature series (>=2 points per source+condition): {} — {}",
         with_series,
         if with_series == 0 {
-            "no statement — every source carries a single point"
+            "no statement — no series carries two points"
         } else {
             "per-source λ(T) series present"
         }
     );
 
-    let mut widest: Option<(String, usize)> = None;
-    for c in &bin.citations {
-        let rho: Vec<f64> = c
+    let mut widest: Option<(String, String, usize)> = None;
+    for s in &bin.series {
+        let rho: Vec<f64> = s
             .points
             .iter()
             .filter_map(|p| lambda_inv2_m2(p.lambda_m))
             .collect();
         if rho.is_empty() {
             println!(
-                "    {}: {} points, all non-physical λ (0 honored)",
-                c.id,
-                c.points.len()
+                "    {} [{}]: {} points, all non-physical λ (0 honored)",
+                s.id,
+                s.label,
+                s.points.len()
             );
             continue;
         }
         let rho_max = rho.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
         let rho_min = rho.iter().cloned().fold(f64::INFINITY, f64::min);
         println!(
-            "    {}: {} points, ρ_s ∝ λ⁻² range [{:.3e}, {:.3e}] m⁻²",
-            c.id,
-            c.points.len(),
+            "    {} [{}]: {} points, ρ_s ∝ λ⁻² range [{:.3e}, {:.3e}] m⁻²",
+            s.id,
+            s.label,
+            s.points.len(),
             rho_min,
             rho_max
         );
-        if let Some((_, wid_n)) = &widest {
-            if c.points.len() > *wid_n {
-                widest = Some((c.id.clone(), c.points.len()));
+        if let Some((_, _, wid_n)) = &widest {
+            if s.points.len() > *wid_n {
+                widest = Some((s.id.clone(), s.label.clone(), s.points.len()));
             }
         } else {
-            widest = Some((c.id.clone(), c.points.len()));
+            widest = Some((s.id.clone(), s.label.clone(), s.points.len()));
         }
     }
 
-    let verdict = if n_cit == 0 {
+    let verdict = if n_series == 0 {
         "no statement — the electric channel carries no harvest".to_string()
     } else if with_series == 0 {
-        "no statement — no source carries a temperature series; single points only, no ρ_s(T) curve"
+        "no statement — no series carries a temperature curve; single points only, no ρ_s(T)"
             .to_string()
     } else {
         match &widest {
-            Some((id, n)) => format!(
-                "the electric channel is measured — {} sources, {} as the longest λ(T) series ({} points); ρ_s ∝ λ⁻² per source",
-                n_cit, id, n
+            Some((id, label, n)) => format!(
+                "the electric channel is measured — {} sources; {} [{}] as the longest λ(T) series ({} points); ρ_s ∝ λ⁻² per series",
+                n_sources, id, label, n
             ),
             None => "no statement".to_string(),
         }
