@@ -82,6 +82,13 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   verteilen (main-Reinigung).
 - `auftrag-sicherung-risiko-heime.md` — Sicherung der
   einzigen-Kopie-Risiko-Heime.
+- `auftrag-matrixmachine-register.md` — MatrixMachine ins main-Register
+  führen: Urkunden-Zustandszeile nachziehen (Code ist committet, `52eca21`),
+  Maschinen-Heimat + Statuszeile; erster Konsument 0 als `pending`.
+- `auftrag-verify-references-regelrunde.md` — verify-references Regel-Runde:
+  CASE 5 (Archiv-Absolutpfade: strikte Sperre oder dokumentierte Ausnahme)
+  + CASE 6 (Fließtext-Drift in lebenden Dokumenten jagen oder als Grenze
+  festschreiben) — je Kalibrationslauf, je Commit, getrennt entschieden.
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
 
