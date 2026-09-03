@@ -10,11 +10,14 @@
 
 ## Zweck
 
-Front C (der NAVIO-Vollmissions-Transit-Sweep über den Gravitationssensor
-`dark_matter_probe`) wird in einer **eigenen, frischen Session** als erstes Atom
-dieses Auftrags bearbeitet — nicht im Restkontext der Kleinpass-Session. Das
-Register ist die Wahrheit; dieser Auftrag benennt nur die Einstiegs-Atome und
-die zu messenden offenen Fragen. Keine Front-Entscheidung wird hier vorweggenommen.
+Front C (der NAVIO-Vollmissions-Transit-Sweep) wird in einer **eigenen,
+frischen Session** als erstes Atom dieses Auftrags bearbeitet — nicht im
+Restkontext der Kleinpass-Session. Das Register ist die Wahrheit; dieser
+Auftrag benennt nur die Einstiegs-Atome und die zu messenden offenen Fragen.
+Keine Front-Entscheidung wird hier vorweggenommen. (Der frühere Satz „über den
+Gravitationssensor `dark_matter_probe`" war A ≠ A und ist in der Register-
+Entscheidung unten korrigiert: `dark_matter_probe` = Horizons-Netz = römisch Ⅱ,
+nicht Front C.)
 
 ## Die ersten Register-Atome (in dieser Reihenfolge lesen)
 
@@ -43,8 +46,65 @@ Keine Zahl ohne Messung. Ein fehlendes Datum ist `pending`/`open` mit Ort, nie
 ein erfundener Wert. Eine Front-Empfehlung erst nach vollständigem Lesen des
 Registers.
 
-## Register
+## Register — in Arbeit (2026-09-03, Operator-Verdikt nach Rats-Entscheidung)
 
-Diese Datei ist der Ledger des Auftrags: jeder Fortschritt (gelesene Stelle,
-Laufbarkeits-Urteil, Sweep-Ergebnis) wird hier und im TODO geführt, bis Front C
-entschieden und (falls lauffähig) gefahren oder als Bau-Auftrag benannt ist.
+Die Rats-Entscheidung (Front C fährt nicht als DM-Nachweis, das leere Netz ist
+der DM-Befund) steht als **Messung des DM-Limits** weiter. Der Operator hat
+jedoch (2026-09-03) die Auftrags-Schließung **zurückgerollt**: Front C wird
+gefahren, nicht beerdigt — der eigentliche offene Faden ist der Form-Test
+(∝t² vs RTG-Abklingkurve) an die Vollmissions-Daten, die ∝t²-Frage, die das
+System nie mit eigenen Mitteln gestellt hat. Laufbarkeits-Messung korrigiert:
+die NAVIO-Vollmissions-ASCII ist **live erreichbar** (SPDF, 200), nur nicht
+lokal als Bin — keine Daten-Lücke, nur ein Hol-Schritt. Die Instrument-Lücke
+(kein Ruck-Sweep) wird durch Bau geschlossen.
+
+**Front-Zuordnung (gemessen):** römisch Front Ⅱ = Gravitationssensor/
+Horizons-leeres-Netz (`dark_matter_probe`, Befund bei Ⅵ); Buchstabe Front C =
+NAVIO-Doppler-Transit-Sweep (eigenes Instrument). Zwei Instrumente, nie eins.
+Front B = Iapetus/Halo; Front A = redundantes Doppler-Limit.
+
+## Messergebnisse der Fahrt (2026-09-03, alle gemessen)
+
+1. **NAVIO-ASCII geholt + kompiliert** (Daten live vom SPDF, kein CDN-Pfad
+   vorher): `pioneer10_doppler.bin` 908309 Records (1973-10-05..2002-03-03,
+   DTYPE [12,13,31,36,37,38], 298003 ku-korrigiert), `pioneer11_doppler.bin`
+   967272 Records (1973-04-10..1993-07-15, DTYPE [12,13,31,36,37], 497405
+   ku-korrigiert). Dies ist die erste Kompilierung der Vollmissions-ASCII über
+   die eigene Reduktion. `pioneer_navio_clean`: p10 908309→908028 (281 Spikes,
+   335 FREQCY), p11 967272→967043 (229 Spikes, 407 FREQCY); die benannten
+   Korrektur-Klassen (±500k ≈8,3 kHz, 1000-Hz, verschobene Counts) werden
+   erkannt, nicht blind korrigiert (0 honored).
+2. **Form-Test (Deduktion-1-Frage) an der Vollmission — gemessen:** der
+   Barycentric-Rohlauf trägt die Serie nicht (resid 1,2e6 Hz p10 / 9,3e6 Hz
+   p11). Der Vollmodell-Lauf `pioneer_doppler_moyer_navio` (DTYPE-12, 206/85
+   Epochen, K=(240/221)/c) trägt den Rest: **Residuum-Floor 19,0 kHz (p10) /
+   8,4 kHz (p11)** — K gemessen 3,584e-9 / 3,633e-9 s/m gegen (240/221)/c =
+   3,622e-9. Selbsttest: der Floor liegt ~2e4×/8e3× über dem ~1-Hz-Signal der
+   Pioneer-Anomalie; die Rest-Drift → Beschleunigung ist **Modell-Artefakt,
+   nicht die Anomalie** (0 honored). Die ∝t²-vs-RTG-Frage ist an die
+   Vollmissions-Daten damit ehrlich beantwortet: **keine getragene Form über
+   einem kHz-strukturierten Floor; das sub-kHz-Residuum (DSN-Station + Orbit)
+   ist der von der Reduktion selbst benannte Blocker.**
+3. **Horizons-Netz frisch gemessen** (`dark_matter_probe`, release, auf den
+   gecachten/CDN-Planeten-Bins + 5 Probe-Daily-Arcs): Baselines reproduzieren
+   das Blatt (p10 median 2,24e-8, p11 3,93e-8, v1 1,67e-8, v2 2,54e-8, nh
+   8,56e-8 m/s²); Positiv-Kontrolle trägt die weggelassenen Planetenmassen;
+   **Flaggen 0/1008, Punkte bei ≥2 Sonden: 0** — das leere Netz ist der
+   DM-Befund, frisch bestätigt.
+4. **Ruck-Transit-Sweep:** nicht über einen Modell-Artefakt-Floor fabriziert.
+   Ein Sweep auf einem als Artefakt gemessenen kHz-Residuum würde das Artefakt
+   messen, nie einen Transit (A = A). Der ehrliche Sweep braucht das
+   **sub-kHz-Residuum** (DSN-Station + Orbit, von der Reduktion benannt) — als
+   benannter Bau-Auftrag registriert, nicht als erfundener Lauf.
+
+**Source-Pflicht (CDN-Manifestation):** die NAVIO-ASCII-Doppler sind ein neu
+kompiliertes Dataset, das nur lokal lag. Nach der Quelle-Doktrin sind sie in
+die CI-Manifestation aufgenommen: `pioneer_doppler`-Job in
+`.github/workflows/kernel-flatten.yml` (läuft `pioneer_doppler_compiler
+--ci-mode`, lädt beide Bins auf das `spdf.gsfc.nasa.gov`-Release). Spiegel des
+bewährten Telemetrie-Jobs. Nicht in `phi/sources.φ` — die Bins sind
+Werkzeug-Mess-Artefakte (Konsum via `parse_bin`), keine Live-ω-Oszillatoren;
+der Telemetrie-Peer trägt denselben Behandlungsweg. `data/` ist gitignored —
+der CI holt und lädt, ein lokaler Lauf speist nie das geteilte Gedächtnis.
+
+Diese Datei bleibt der Ledger bis Front C gefahren und entschieden ist.

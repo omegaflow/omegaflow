@@ -1170,3 +1170,14 @@ jobs:
             --pattern pioneer10_telemetry.bin --clobber 2>/dev/null || \
             cargo run -p omegaflow-harvest --release --bin pioneer_telemetry_compiler -- \
               --lsk kernels/naif0012.tls --out pioneer10_telemetry.bin --ci-mode
+
+  pioneer_doppler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the NAVIO full-mission ASCII doppler (p10 SC_23, p11 SC_24) once and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run -p omegaflow-harvest --release --bin pioneer_doppler_compiler -- --ci-mode
