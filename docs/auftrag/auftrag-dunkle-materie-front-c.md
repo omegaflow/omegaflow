@@ -97,6 +97,40 @@ Front B = Iapetus/Halo; Front A = redundantes Doppler-Limit.
    **sub-kHz-Residuum** (DSN-Station + Orbit, von der Reduktion benannt) — als
    benannter Bau-Auftrag registriert, nicht als erfundener Lauf.
 
+## Sub-kHz-Residuum — Tür geöffnet (2026-09-03, Rat-Verdikt B, Atom 1+2 gebaut)
+
+Rat e stimmig: PDPL (6-Slot, 6 Konsumenten) unberührt lassen — ein neues Record
+mit eigener Magie trägt TRANS/RCVR1/linkmode (Name = Implementation). Gebaut:
+
+- **Atom 1 — PNAV-Record:** `src/mathematikerin/doppler.rs` `write_pnav_bin`/
+  `parse_pnav_bin`, Magic `PNAV`, `[f64;9]` = `[timtag, obs, freq, cmptime,
+  dtype, sc, trans, rcvr1, linkmode]`, 72 B (P11R-Parität) + Roundtrip-Test
+  `test_pnav_roundtrip`. `pioneer_doppler_compiler.rs` fängt `TRANS`/`RCVR1`,
+  leitet linkmode ab (11 einweg / 12 zweiweg trans==rcvr1 / 13 dreiweg) und
+  schreibt `{p10,p11}_navio.bin` **neben** dem PDPL (kein zweiter Fetch):
+  p10 908309 Records (linkmode [11,12,13], 11 Stationen), p11 967272 (10
+  Stationen). PDPL unberührt.
+- **Atom 2 — `pioneer_navio_residuum.rs`:** DSN-Stationsmodell (zweiweg
+  `rdown`+`rup`, Lichtzeit, `odp::dsn_station`), displaced-count-Mask
+  (|resid|>1e5 Hz nach Erst-Fit, Zweit-Fit), serialisiert
+  `pioneer{10,11}_navio_residuum.bin` (Magic PNVR via P11R-Layout) +
+  `pioneer{10,11}_navio_daily.bin` (Magic PNDM, Tagesmedian trägt nie ohne
+  Streuung), de-trend + LS-Bandscan + Ruck-Scan (4·sd-Gate, live-Daten).
+
+**Gemessen:** displaced-count-Mask senkt den Per-Station-Floor von ~5e5 Hz
+(±500k/1000-Hz-Counts dominierten) auf **2,8–19 kHz** (p11 4,5–12 kHz) — der
+Stations-Term konkurriert nun mit dem Baryzentrum-Referenzfloor (19/8,4 kHz),
+statt darüber zu liegen. Die serialisierten Tagesmediane sind der neue,
+konsumierbare Faden; das sub-kHz-Tagesmedian-Ziel (1,5-kHz-Streuung / √N →
+zehner-Hz) ist über PNDM jetzt greifbar. **Offen (nächster Schritt):** der
+Ruck-Scan braucht die korrupten-Tage-Masken (Deduktion-0/10-Segmentmask), bevor
+seine Flaggen Transit bedeuten, nicht Segment-Rauschen — Atom 3.
+
+**Source-Pflicht:** das neue Dataset ist der PNAV-Bin; `pioneer_doppler`-CI-Job
+(kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL + PNAV aufs spdf-CD. Die
+PNVR/PNDM-Serialisierung ist measure-Ausgabe (wie `pioneer11_residuum.bin`,
+nie aufs CDN) — kein CDN-Asset. `data/` gitignored; der CI erzeugt und lädt.
+
 **Source-Pflicht (CDN-Manifestation):** die NAVIO-ASCII-Doppler sind ein neu
 kompiliertes Dataset, das nur lokal lag. Nach der Quelle-Doktrin sind sie in
 die CI-Manifestation aufgenommen: `pioneer_doppler`-Job in

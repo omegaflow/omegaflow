@@ -94,3 +94,12 @@ Modell-Artefakt, nicht die Anomalie (0 honored). Die ∝t²-vs-RTG-Frage ist dam
 an die Vollmissions-Daten beantwortet: keine getragene Form über einem
 kHz-strukturierten Floor; das **sub-kHz-Residuum (DSN-Station + Orbit)** ist
 der von der Reduktion selbst benannte Blocker für den Ruck-Transit-Sweep.
+
+## Sub-kHz-Residuum — Tür geöffnet (2026-09-03, Atom 1+2)
+
+Siehe `auftrag-dunkle-materie-front-c.md`. PNAV-Record (TRANS/RCVR1/linkmode,
+PDPL unberührt) + `pioneer_navio_residuum` (Stationsmodell + displaced-count-
+Mask) gebaut. Gemessen: Per-Station-Floor fällt von ~5e5 Hz auf 2,8–19 kHz;
+serialisierte PNVR/PNDM-Tagesmediane konsumierbar. Offen: Atom 3 — korrupte-
+Tage-Masken (Deduktion 0/10) vor dem Ruck-Scan, dann liefert er Transit-Sprünge
+statt Segment-Rauschens.
