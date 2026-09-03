@@ -829,6 +829,19 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Kurationsfrage: dead_sources.φ:3090 deklariert Horizons als
   Compiler-Eingang, keine Live-Quelle.
 - mpcobs / mpcorb_extended.json.gz: offener Live-Block (Sonnensystem).
+- reverify-Quellen-Drift kurieren (gemessen 2026-09-03, Issue #1 health):
+  die CI-`reverify`-Befunde sind groesstenteils Datacenter-IP-/Key-
+  Fehlalarme (Classifier trennt seit 14a12ba `refused` von `broken`).
+  Echte, echte-Drift-Faelle:
+  (a) NDBC-historical: die ~40 Quellen nutzen die URL-Form
+      `view_text_file.php?filename=<st>h{prev_year}...` (403/404), der
+      direkte Pfad `ndbc.noaa.gov/data/historical/stdmet/<st>h<jahr>.txt.gz`
+      ist fuer die meisten Stationen 200 — URL-Form-Migration, je Station
+      curl-verifiziert (15006/46005/46012 ohne 2025-Datei).
+  (b) kp.gfz-potsdam.de gewandert (301 -> kp.gfz.de, das 500 liefert).
+  (c) nmdb.eu `qtipart.php` 404. (d) argovis-api.colorado.edu von echter
+      IP unerreichbar. Nach SOURCE_PORT §9/§13-Kaskade kurieren, erst dann
+      `dead` mit Recherche-Note. Eine frische Session fuehrt die Kuration.
 
 ## Validation
 
