@@ -829,19 +829,20 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Kurationsfrage: dead_sources.φ:3090 deklariert Horizons als
   Compiler-Eingang, keine Live-Quelle.
 - mpcobs / mpcorb_extended.json.gz: offener Live-Block (Sonnensystem).
-- reverify-Quellen-Drift kurieren (gemessen 2026-09-03, Issue #1 health):
-  die CI-`reverify`-Befunde sind groesstenteils Datacenter-IP-/Key-
-  Fehlalarme (Classifier trennt seit 14a12ba `refused` von `broken`).
-  Echte, echte-Drift-Faelle:
-  (a) NDBC-historical: die ~40 Quellen nutzen die URL-Form
-      `view_text_file.php?filename=<st>h{prev_year}...` (403/404), der
-      direkte Pfad `ndbc.noaa.gov/data/historical/stdmet/<st>h<jahr>.txt.gz`
-      ist fuer die meisten Stationen 200 — URL-Form-Migration, je Station
-      curl-verifiziert (15006/46005/46012 ohne 2025-Datei).
-  (b) kp.gfz-potsdam.de gewandert (301 -> kp.gfz.de, das 500 liefert).
-  (c) nmdb.eu `qtipart.php` 404. (d) argovis-api.colorado.edu von echter
-      IP unerreichbar. Nach SOURCE_PORT §9/§13-Kaskade kurieren, erst dann
-      `dead` mit Recherche-Note. Eine frische Session fuehrt die Kuration.
+- reverify-Quellen-Drift kuriert (2026-09-03, a3a2595+a): (a) NDBC-hist
+  auf Direktpfad `ndbc.noaa.gov/data/historical/stdmet/<st>h{prev_year}.txt.gz`
+  migriert (34 Blöcke, curl-verifiziert; 46005/46012 fest auf letztes Jahr
+  h2024/h2023 weil das Archiv nachhinkt, 15006-Block entfernt — kein
+  historisches stdmet-Archiv, lebt nur als realtime2). (b) kp.gfz auf
+  `kp.gfz.de` + nur `index=Kp` migriert (der 500 kam vom Multi-Index
+  `Kp,ap,Cp`, nicht vom Server; der Block liest ohnehin nur `last Kp`).
+  (c) nmdb `qtipart.php` echt 404 → Block auf `r.jina.ai/…/nest/draw_graph.php`
+  mit `dtype=uncorrected` (Rohzählrate) umgezogen, Format text/rows wie
+  Schwester-Block 969. (d) argovis-api.colorado.edu gemessen LIVE (200) —
+  die "unerreichbar"-Behauptung war ein Datacenter-/Query-Fehlalarm, kein
+  Drift; Block unverändert. Register-Pflicht Rest: sobald NDBC das
+  h2025(46005)/h2024+(46012)-Jahresfile nachliefert, die festen Jahre wieder
+  auf `{prev_year}` heben.
 
 ## Validation
 
