@@ -239,8 +239,9 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   (Probe HTTP 200, 25 Citations, Penetration-Depth-Tabelle parsebar) +
   `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin` auf dem
   ssd.jpl.nasa.gov-Compiler-Netloc (258 Punkte, λ 1300–72000 Å,
-  Version 5, 0 honored kein Nullpunkt); der CDN-Upload steht bis CI
-  läuft. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
+  Version 5, 0 honored kein Nullpunkt). Ernte gelaufen (2026-09-03,
+  CI-Run 33781750255) — Asset `srd62_suprastrom.bin` (6199 B) auf der
+  Release verifiziert. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
   Kagome/Nickelat). Die λ→ρ_s-Konversion (λ⁻² ∝ ρ_s) ist der benannte
   Folge-Schritt zum Feldwert electric.
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
