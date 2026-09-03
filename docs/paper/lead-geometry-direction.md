@@ -4,7 +4,7 @@
   date: 2026-08-24
   sha256: d4e87b955da7bc79b5912a8b09e1c04393195a79477fec988932441e8a31cbbb
   status: live
-  see-also: TODO.md docs/surveys/survey-2026-08-23-medizinische-te-front-landkarte.md
+  see-also: docs/TODO.md
 -->
 # The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
 

@@ -7,7 +7,7 @@ see-also: AGENTS.md
 
 Stehende Referenzliste der `phi/`-Dateien: was der Code liest (Compiler/
 Archivar) und was er schreibt, plus die Arbeitsfläche des Source-Ports.
-Heimat des Source-Port-Protokolls: `docs/concepts/source-port.md`.
+Heimat des Source-Port-Protokolls: `docs/SOURCE_PORT.md`.
 
 ## Code-gelesen (Archivar/Compiler lesen sie direkt)
 

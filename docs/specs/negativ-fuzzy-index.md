@@ -4,7 +4,7 @@
   date: 2026-08-24
   sha256: 89bef103d386c776d06bdedca1aa96ff55e8f2bcf5fbf85a76f31f766ec4f4a3
   status: live
-  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/handover/handover-2026-08-24-pioneer-negativ-fuzzy-auftrag.md, TODO.md (Pioneer-Front)
+  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/TODO.md (Pioneer-Front)
 -->
 
 # DER NEGATIVE FUZZY-INDEX — das Unvorhersagbare ist die Wahrheit
