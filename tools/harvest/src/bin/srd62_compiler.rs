@@ -1,8 +1,7 @@
 use omegaflow::cdn::upload_asset;
+use omegaflow::suprastrom::{SuprastromBin, SuprastromCitation, SuprastromPoint};
 use std::process::Command;
 
-const MAGIC: [u8; 2] = [0xCF, 0x86];
-const SRD62_VERSION: u8 = 0x05;
 const ANGSTROM_M: f64 = 1.0e-10;
 const LAMBDA_MIN_ANGSTROM: f64 = 50.0;
 const LAMBDA_MAX_ANGSTROM: f64 = 500000.0;
@@ -99,7 +98,7 @@ fn table_rows(table: &str) -> Vec<Vec<String>> {
     rows
 }
 
-fn parse_penetration(html: &str) -> Vec<(f64, f64, f64)> {
+fn parse_penetration(html: &str) -> Vec<(f64, f64)> {
     let mut points = Vec::new();
     let mut rest = html;
     while let Some(ts) = rest.find("<table") {
@@ -133,13 +132,16 @@ fn parse_penetration(html: &str) -> Vec<(f64, f64, f64)> {
             if let Some(cell) = r.get(ci) {
                 if let Ok(v) = cell.parse::<f64>() {
                     if v.is_finite() && v >= LAMBDA_MIN_ANGSTROM && v <= LAMBDA_MAX_ANGSTROM {
-                        let indep = r
+                        let t = r
                             .iter()
                             .enumerate()
                             .filter(|(i, _)| *i != ci)
                             .find_map(|(_, c)| c.parse::<f64>().ok())
-                            .unwrap_or(0.0);
-                        points.push((indep, v, 0.0));
+                            .filter(|t| t.is_finite());
+                        let Some(t_k) = t else {
+                            continue;
+                        };
+                        points.push((t_k, v));
                     }
                 }
             }
@@ -180,42 +182,45 @@ fn main() {
         ids.len()
     );
 
-    let mut points: Vec<(f64, f64, f64)> = Vec::new();
+    let mut citations: Vec<SuprastromCitation> = Vec::new();
     for id in &ids {
         let url = format!("https://srdata.nist.gov/CeramicDataPortal/Hts/{}", id);
         let Some(html) = fetch(&url) else {
             continue;
         };
         let ps = parse_penetration(&html);
-        if !ps.is_empty() {
-            eprintln!("  {} -> {} points", id, ps.len());
-            points.extend(ps);
+        if ps.is_empty() {
+            continue;
+        }
+        eprintln!("  {} -> {} points", id, ps.len());
+        let points: Vec<SuprastromPoint> = ps
+            .into_iter()
+            .filter(|(_, l)| *l > 0.0 && l.is_finite())
+            .map(|(t_k, l)| SuprastromPoint {
+                t_k,
+                lambda_m: l * ANGSTROM_M,
+            })
+            .collect();
+        if !points.is_empty() {
+            citations.push(SuprastromCitation {
+                id: id.clone(),
+                points,
+            });
         }
     }
-    points.retain(|(_, l, _)| *l > 0.0 && l.is_finite());
+    let n_points: usize = citations.iter().map(|c| c.points.len()).sum();
     eprintln!(
-        "srd62_compiler: {} penetration-depth points total",
-        points.len()
+        "srd62_compiler: {} penetration-depth points across {} citations",
+        n_points,
+        citations.len()
     );
 
-    let mut out = Vec::new();
-    out.extend_from_slice(&MAGIC);
-    out.push(SRD62_VERSION);
-    out.extend_from_slice(&(points.len() as u32).to_le_bytes());
-    for (t, l, s) in &points {
-        out.extend_from_slice(&t.to_le_bytes());
-        out.extend_from_slice(&(l * ANGSTROM_M).to_le_bytes());
-        out.extend_from_slice(&(s * ANGSTROM_M).to_le_bytes());
-    }
+    let out = omegaflow::suprastrom::encode_suprastrom_bin(&SuprastromBin { citations });
     if let Err(e) = std::fs::write(&out_path, &out) {
         eprintln!("srd62_compiler: write {} returned {}", out_path, e);
         std::process::exit(1);
     }
-    eprintln!(
-        "srd62_compiler: wrote {} ({} points)",
-        out_path,
-        points.len()
-    );
+    eprintln!("srd62_compiler: wrote {} ({} points)", out_path, n_points);
     if ci_mode && !upload_asset(&out_path) {
         eprintln!("srd62_compiler: {} did not reach the CDN", out_path);
         std::process::exit(1);
