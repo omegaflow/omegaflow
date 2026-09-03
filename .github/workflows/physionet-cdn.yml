@@ -1,0 +1,97 @@
+name: physionet-cdn
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  mitdb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile MIT-BIH Arrhythmia (electric) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern mitdb_arrhythmia.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin mitdb_compiler -- \
+              --out mitdb_arrhythmia.bin --ci-mode --jobs 8
+
+  mitdb-rr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile MIT-BIH RR intervals (annotation channel) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern mitdb_rr.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin mitdb_rr_compiler -- \
+              --out mitdb_rr.bin --ci-mode --jobs 8
+
+  circor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile CirCor DigiScope PCG (acoustic) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern circor_pcg.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin phonocardiogram_compiler -- \
+              --out circor_pcg.bin --ci-mode --jobs 8
+
+  ltmm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - chunk: 0
+            offset: 0
+          - chunk: 1
+            offset: 36
+          - chunk: 2
+            offset: 72
+          - chunk: 3
+            offset: 108
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile LTMM movement chunk (advective) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "ltmm_movement_${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
+            --out "ltmm_movement_${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
+            --offset ${{ matrix.offset }} --limit 36
+
+  ltmm-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: ltmm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Merge the four LTMM chunks into ltmm_movement.bin and upload
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "ltmm_movement_[0-3].bin" --clobber 2>/dev/null || true
+          cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
+            --merge ltmm_movement_0.bin ltmm_movement_1.bin \
+              ltmm_movement_2.bin ltmm_movement_3.bin \
+            --out ltmm_movement.bin --ci-mode

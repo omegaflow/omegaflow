@@ -1,0 +1,10 @@
+[package]
+name = "omegaflow-harvest"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "source compilers and harvesters"
+
+[dependencies]
+omegaflow = { path = "../.." }
+zstd = "0.13"

@@ -1,0 +1,34 @@
+[package]
+name = "omegaflow"
+version = "1.0.0"
+authors = ["omegaflow"]
+edition = "2024"
+license-file = "LICENSE"
+description = "φ(x,y,z,t)"
+repository = "https://github.com/omegaflow/omegaflow"
+homepage = "https://omegaflow.space"
+default-run = "omegaflow"
+
+[workspace]
+members = [
+    "tools/gate",
+    "tools/harvest",
+    "tools/measure",
+    "tools/register",
+    "tools/science",
+    "tools/service",
+    "tools/utils",
+]
+default-members = ["."]
+
+[features]
+browser_relay = []
+llm_gate = []
+
+[dependencies]
+wgpu = "24"
+pollster = "0.4"
+serialport = { version = "4", default-features = false }
+
+[dev-dependencies]
+naga = "24"

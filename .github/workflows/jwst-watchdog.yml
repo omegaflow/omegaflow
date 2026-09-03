@@ -1,0 +1,41 @@
+name: jwst-watchdog
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 5 2 * *'
+permissions:
+  contents: read
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore harvest workdir
+        uses: actions/cache@v4
+        with:
+          path: phi/jwst_harvest
+          key: jwst-harvest-v1
+      - name: Watch the harvest
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" \
+            https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin)
+          if [ -f phi/jwst_harvest/ledger.tsv ]; then
+            n=$(wc -l < phi/jwst_harvest/ledger.tsv)
+          else
+            n=-1
+          fi
+          echo "jwst_spectra.bin: $status | ledger obs: $n"
+          if [ "$status" = "200" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "front2: jwst_spectra.bin liegt auf dem CDN — Aufträge 3–5 entblockt" \
+              "Die JWST-Voll-Ernte ist vollständig: jwst_spectra.bin liegt auf dem CDN. Nadel V Front Ⅱ Aufträge 3–5 (Modell, Scanner, Blatt) sind entblockt — handover-2026-08-23-jwst-front-2-modell-scanner-blatt.md." \
+              health
+          elif [ "$n" = "0" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "front2: die JWST-Ernte trägt void" \
+              "Der Watchdog findet weder jwst_spectra.bin auf dem CDN noch einen Ledger-Eintrag — die Ernte hat seit dem letzten kernel-flatten-Lauf keinen obs_id abgeschlossen. MAST_TOKEN/Netz/Build prüfen. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+          fi

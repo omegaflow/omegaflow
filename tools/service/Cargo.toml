@@ -1,0 +1,9 @@
+[package]
+name = "omegaflow-service"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "live services and watchdogs"
+
+[dependencies]
+omegaflow = { path = "../.." }
