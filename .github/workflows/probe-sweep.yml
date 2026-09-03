@@ -8,6 +8,7 @@ permissions:
 env:
   RUSTFLAGS: -D warnings
   JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+  OMEGAFLOW_STATE: /home/runner/.local/state/omegaflow
 jobs:
   sweep:
     runs-on: ubuntu-latest
@@ -15,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
       with:
-        path: /tmp/archivar_cache
+        path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
         key: archivar-cache-${{ github.run_id }}
         restore-keys: |
           archivar-cache-
@@ -56,5 +57,5 @@ jobs:
     - uses: actions/cache@v4
       if: always()
       with:
-        path: /tmp/archivar_cache
+        path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
         key: archivar-cache-${{ github.run_id }}

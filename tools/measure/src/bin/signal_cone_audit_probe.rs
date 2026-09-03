@@ -4,8 +4,8 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800, COMP_V1800};
 use omegaflow::archivar::{
-    BodyEphemeris, C_LIGHT, DIFFUSIVITY_MOLECULAR, body_barycenter_position,
-    parse_ephemeris_binary, signal_reach,
+    body_barycenter_position, parse_ephemeris_binary, signal_reach, BodyEphemeris, C_LIGHT,
+    DIFFUSIVITY_MOLECULAR,
 };
 use omegaflow::te::{permutation_entropy, phase_randomized_surrogate, transfer_entropy_lag};
 use omegaflow::wind::{self, RECEIVER_RAD1, RECEIVER_RAD2, RECEIVER_TNR};
@@ -83,12 +83,18 @@ fn load_bytes(kind: &str, url: &str, cache_name: &str, path: Option<String>) -> 
             }
         }
     }
-    let cache_path = format!("/tmp/omegaflow_series_{cache_name}");
+    let cache_path = omegaflow::archivar::cache_root()
+        .join(format!("omegaflow_series_{cache_name}"))
+        .to_string_lossy()
+        .into_owned();
     if let Ok(bytes) = std::fs::read(&cache_path) {
         return Some(bytes);
     }
     match fetch_raw_bytes(url, 3600) {
         Some(bytes) => {
+            if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
             if std::fs::write(&cache_path, &bytes).is_err() {
                 eprintln!("{kind}: cache write void ({cache_path}) — the bytes stay in memory");
             }
