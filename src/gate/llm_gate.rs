@@ -621,6 +621,26 @@ impl Gate {
                 quote: clip(&path, 90),
             });
         }
+        let lower_content = content.to_lowercase();
+        for word in [
+            "strand",
+            "strang",
+            "worktree",
+            "gate-tragen",
+            "leitstelle",
+            "branch-marker",
+            "omegaflow-strand",
+            "zweig-modell",
+        ] {
+            if lower_content.contains(word) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "single-path".to_string(),
+                    feedback: "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth".to_string(),
+                    quote: clip(&content, 90),
+                });
+            }
+        }
         for line in content.lines() {
             let t = line.trim_start();
             if t.starts_with("///") || t.starts_with("//!") {
@@ -1488,6 +1508,31 @@ mod tests {
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
             r###"{"filePath":"src/handover_template.md","newString":"## title"}"###,
+        ] {
+            assert!(g.check_tool_call("edit", ok).is_none(), "should pass: {ok}");
+        }
+    }
+
+    #[test]
+    fn fp_tool_branch_model_named_is_blocked() {
+        let mut g = test_gate();
+        for bad in [
+            r###"{"filePath":"docs/concepts/x.md","newString":"die Arbeit laeuft auf einem Strang"}"###,
+            r###"{"filePath":"src/x.rs","newString":"let wt = git_worktree(&name);"}"###,
+            r###"{"filePath":"docs/handover/x.md","newString":"die Leitstelle uebergibt"}"###,
+        ] {
+            let v = g.check_tool_call("edit", bad).unwrap();
+            assert_eq!(v.rule, "single-path");
+            assert_eq!(v.severity, Severity::Hard);
+        }
+    }
+
+    #[test]
+    fn fn_tool_plain_code_passes_single_path() {
+        let mut g = test_gate();
+        for ok in [
+            r###"{"filePath":"src/x.rs","newString":"if cond { a } else { b }"}"###,
+            r###"{"filePath":"docs/concepts/x.md","newString":"ein Pfad, eine Wahrheit"}"###,
         ] {
             assert!(g.check_tool_call("edit", ok).is_none(), "should pass: {ok}");
         }
