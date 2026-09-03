@@ -1,5 +1,6 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::suprastrom::{SuprastromBin, SuprastromCitation, SuprastromPoint};
+use omegaflow::suprastrom::{SuprastromBin, SuprastromPoint, SuprastromSeries};
+use std::collections::BTreeMap;
 use std::process::Command;
 
 const ANGSTROM_M: f64 = 1.0e-10;
@@ -98,8 +99,8 @@ fn table_rows(table: &str) -> Vec<Vec<String>> {
     rows
 }
 
-fn parse_penetration(html: &str) -> Vec<(f64, f64)> {
-    let mut points = Vec::new();
+fn parse_penetration(html: &str, source_id: &str) -> Vec<SuprastromSeries> {
+    let mut series_map: BTreeMap<String, Vec<SuprastromPoint>> = BTreeMap::new();
     let mut rest = html;
     while let Some(ts) = rest.find("<table") {
         let Some(te_rel) = rest[ts..].find("</table>") else {
@@ -112,43 +113,88 @@ fn parse_penetration(html: &str) -> Vec<(f64, f64)> {
             continue;
         }
         let rows = table_rows(table);
-        let mut col = None;
-        for r in &rows {
-            for (i, c) in r.iter().enumerate() {
-                if c.to_lowercase().contains("penetration") {
-                    col = Some(i);
-                    break;
-                }
-            }
-            if col.is_some() {
-                break;
-            }
+        let header = rows.first().map(|r| r.clone()).unwrap_or_default();
+        if header.is_empty() {
+            rest = &rest[te..];
+            continue;
         }
-        let Some(ci) = col else {
+        let lower_hdr: Vec<String> = header.iter().map(|c| c.to_lowercase()).collect();
+        let Some(pen_idx) = lower_hdr.iter().position(|c| c.contains("penetration")) else {
             rest = &rest[te..];
             continue;
         };
-        for r in &rows {
-            if let Some(cell) = r.get(ci) {
-                if let Ok(v) = cell.parse::<f64>() {
-                    if v.is_finite() && v >= LAMBDA_MIN_ANGSTROM && v <= LAMBDA_MAX_ANGSTROM {
-                        let t = r
-                            .iter()
-                            .enumerate()
-                            .filter(|(i, _)| *i != ci)
-                            .find_map(|(_, c)| c.parse::<f64>().ok())
-                            .filter(|t| t.is_finite());
-                        let Some(t_k) = t else {
-                            continue;
-                        };
-                        points.push((t_k, v));
-                    }
-                }
+        let temp_idx = lower_hdr.iter().position(|c| c.contains("temperature"));
+        if temp_idx.is_none() {
+            eprintln!(
+                "  {}: penetration table carries no temperature axis — not a rho_s(T) series (0 honored)",
+                source_id
+            );
+            rest = &rest[te..];
+            continue;
+        }
+        let Some(ti) = temp_idx else {
+            rest = &rest[te..];
+            continue;
+        };
+        let condition_idx: Vec<usize> = (0..header.len())
+            .filter(|i| *i != pen_idx && *i != ti)
+            .collect();
+        for row in rows.iter().skip(1) {
+            let lambda_cell = match row.get(pen_idx) {
+                Some(c) => c,
+                None => continue,
+            };
+            let Ok(lambda_a) = lambda_cell.trim().parse::<f64>() else {
+                continue;
+            };
+            if !lambda_a.is_finite()
+                || lambda_a < LAMBDA_MIN_ANGSTROM
+                || lambda_a > LAMBDA_MAX_ANGSTROM
+            {
+                continue;
             }
+            let temp_cell = match row.get(ti) {
+                Some(c) => c,
+                None => continue,
+            };
+            let Ok(t_k) = temp_cell.trim().parse::<f64>() else {
+                continue;
+            };
+            if !t_k.is_finite() {
+                continue;
+            }
+            let label = condition_idx
+                .iter()
+                .filter_map(|i| row.get(*i))
+                .map(|c| c.trim().to_string())
+                .filter(|c| !c.is_empty() && c != "---" && c != "--")
+                .collect::<Vec<_>>()
+                .join(" | ");
+            series_map.entry(label).or_default().push(SuprastromPoint {
+                t_k,
+                lambda_m: lambda_a * ANGSTROM_M,
+            });
         }
         rest = &rest[te..];
     }
-    points
+    let mut series: Vec<SuprastromSeries> = series_map
+        .into_iter()
+        .map(|(label, mut points)| {
+            points.sort_by(|a, b| {
+                a.t_k
+                    .partial_cmp(&b.t_k)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
+            points.dedup_by(|a, b| (a.t_k - b.t_k).abs() < 1e-6);
+            SuprastromSeries {
+                id: source_id.to_string(),
+                label,
+                points,
+            }
+        })
+        .collect();
+    series.retain(|s| !s.points.is_empty());
+    series
 }
 
 fn main() {
@@ -182,40 +228,26 @@ fn main() {
         ids.len()
     );
 
-    let mut citations: Vec<SuprastromCitation> = Vec::new();
+    let mut all_series: Vec<SuprastromSeries> = Vec::new();
     for id in &ids {
         let url = format!("https://srdata.nist.gov/CeramicDataPortal/Hts/{}", id);
         let Some(html) = fetch(&url) else {
             continue;
         };
-        let ps = parse_penetration(&html);
-        if ps.is_empty() {
-            continue;
+        let series = parse_penetration(&html, id);
+        for s in &series {
+            eprintln!("  {} [{}] -> {} points", id, s.label, s.points.len());
         }
-        eprintln!("  {} -> {} points", id, ps.len());
-        let points: Vec<SuprastromPoint> = ps
-            .into_iter()
-            .filter(|(_, l)| *l > 0.0 && l.is_finite())
-            .map(|(t_k, l)| SuprastromPoint {
-                t_k,
-                lambda_m: l * ANGSTROM_M,
-            })
-            .collect();
-        if !points.is_empty() {
-            citations.push(SuprastromCitation {
-                id: id.clone(),
-                points,
-            });
-        }
+        all_series.extend(series);
     }
-    let n_points: usize = citations.iter().map(|c| c.points.len()).sum();
+    let n_points: usize = all_series.iter().map(|s| s.points.len()).sum();
     eprintln!(
-        "srd62_compiler: {} penetration-depth points across {} citations",
+        "srd62_compiler: {} penetration-depth points across {} series",
         n_points,
-        citations.len()
+        all_series.len()
     );
 
-    let out = omegaflow::suprastrom::encode_suprastrom_bin(&SuprastromBin { citations });
+    let out = omegaflow::suprastrom::encode_suprastrom_bin(&SuprastromBin { series: all_series });
     if let Err(e) = std::fs::write(&out_path, &out) {
         eprintln!("srd62_compiler: write {} returned {}", out_path, e);
         std::process::exit(1);
