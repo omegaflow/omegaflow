@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 7ec165b04c57828e6e03232e127dc04218c7adad5bf9741a6ae33bf3e79fd969
+  sha256: 57ceab4ab048271ab194b553d7c795b1773d681a8a8dd0cdd15865018a596bcc
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/plans/ref-* 
 -->
@@ -60,10 +60,14 @@ messenger, near, rosetta.
 ## Erledigt (2026-09-03)
 
 - `omegaflow-legacy/target` + `omegaflow/target` entfernt (~17 G freigegeben, regenerierbar).
+- Staging in den Cache-Root (`~/.local/state/omegaflow/archivar_cache/`), als Kopien, Backups bleiben:
+  `omni2_serie.bin`, `omni2_serie_1h.bin` (aus bz-messen), `abk_dbdt_daily.tsv`,
+  `cmb_planck_smica_n64.json`, `cosmicflows_cf4.json`, und die 12 aktiven
+  Ephemeriden als `omegaflow_eph_{body}.bin` (earth/juno/jupiter/mars/mercury/
+  neptune/new_horizons/saturn/uranus/venus/voyager1/voyager2).
 
 ## Offen (Schritt-für-Schritt, je Freigabe)
 
-1. Staging der aktiven Datensätze aus Backups in den Cache-Root (Kopie, Backups bleiben).
-2. Dedup `backups/*` + `knowledge/data` + `archive/data` gegen CDN/Repo.
-3. Bewegung nach `projects/archive` nur nach Inventur je Holding.
-4. Lokalisierung der noch nicht gefundenen Serien (`abk_dbdt_1h_*`, kegel, GIC/corona).
+1. Dedup `backups/*` + `knowledge/data` + `archive/data` gegen CDN/Repo (mehrfache Kopien derselben Datensätze sind nun im Live-Cache bestätigt).
+2. Bewegung nach `projects/archive` nur nach Inventur je Holding.
+3. Lokalisierung der noch nicht gefundenen Serien (`abk_dbdt_1h_*`, kegel, GIC/corona).
