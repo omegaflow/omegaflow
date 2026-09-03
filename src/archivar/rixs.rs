@@ -224,6 +224,7 @@ pub fn charge_oscillators(spec: &ChargeSpectrum) -> Vec<SpinOscillator> {
     spec.energy_mev
         .iter()
         .zip(spec.intensity.iter())
+        .filter(|&(e, _)| *e > 0.0)
         .map(|(&e, &i)| SpinOscillator {
             freq_hz: e * MEV_TO_HZ,
             bin_width_hz: bin_width,
@@ -372,6 +373,24 @@ mod tests {
         let spec = parse_rixs_mev(text).unwrap();
         assert_eq!(spec.axis, 1);
         assert!((spec.momentum + 2.5).abs() < 1e-9);
+    }
+
+    #[test]
+    fn charge_oscillators_take_loss_side_only() {
+        let text = "\
+# H = -0.1 (H scan)
+# Energy (meV) Intensity (arb. units)
+-3.2e2 0.8
+0.0e0 87.1
+1.0e2 3.0
+2.0e2 5.5
+";
+        let spec = parse_rixs_mev(text).unwrap();
+        let osc = charge_oscillators(&spec);
+        assert_eq!(osc.len(), 2, "gain and elastic rows carry no oscillator");
+        assert!((osc[0].freq_hz - 1.0e2 * MEV_TO_HZ).abs() < 1e-3);
+        assert!((osc[1].freq_hz - 2.0e2 * MEV_TO_HZ).abs() < 1e-3);
+        assert!(osc.iter().all(|o| o.freq_hz > 0.0));
     }
 
     #[test]
