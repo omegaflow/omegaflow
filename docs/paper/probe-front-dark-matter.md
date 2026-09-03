@@ -1,8 +1,9 @@
 <!--
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
-  date: 2026-08-22
-  sha256: be549c041247b2f05dbd588bbf8bf3ff116031004b3eca85797a9ef2268cffa1
+  date: 2026-09-03
+  version: 2
+  sha256: 3af4e8904ea46d3fb31685387ed79ea6968cd46434f4a29f04a80b83ea624654
   fam-machine: pre-fix
   status: live
   see-also: docs/handover/handover-2026-08-22-sonden-dunkle-materie.md docs/handover/handover-2026-08-22-sonden-front-ausfuehrung.md docs/handover/handover-2026-08-22-ruck-datenquellen.md docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -350,6 +351,76 @@ the global peak. The lines are per-station coherent slowly drifting
 receiver-chain signatures; the DSN hardware documentation (810-005, the
 MDA-resolver frequency) is the named next search; the origin stays open
 (0 honored).
+
+**The numbered deduction map (complete).** The §5.4 narrative above steps through the deduction chain only partially by number (0/0b and 7–10, 16–20, 22–24, 26, 27, 29–31 individually); this map enumerates every Deduktion head that the historical `link_deduction_probe` tool-comment documents (0, 0b, and 1–40), in numerical order, as the complete chain per that tool's own documentation. The numbers 11–15, 21, 25, and 28 carry no head in the tool comment and are not narrated individually in this paper; they are not fabricated here (0 honored). Deduction 16 is not a head in the tool comment but is narrated individually in §5.4 above; it is repeated here, marked, from this paper's own narration. Each line states what that step measures or excludes.
+
+Deduction 0 — Slipped-cycle mask: ATDF field 76 names the samples whose counter slipped during integration — the count is corrupt, the sample is discarded, not averaged (0 honored).
+
+Deduction 0b — Strength gate: field 78 is in units of 0.1 dBm, so real strengths are negative (≈ −174 dBm); samples without a measured strength (≥ 0) are discarded (0 honored).
+
+Deduction 1 — Multi-station common mode: overlapping windows of two DSN stations carry the spacecraft motion in common and the Earth noise differentially — the difference isolates the station, the pair mean carries the signal.
+
+Deduction 2 — TEC (ionosphere): the phase path length shifts the sky frequency by +(40.3/c)·dTEC/dt/f; the map pair supplies the rate at the station site; without a map pair the sample is discarded, not averaged (0 honored).
+
+Deduction 3 — Solar plasma: the electron column along the light path (OMNI2-N1800, 1/r² profile) supplies dTEC_solar/dt; occultation (b < R_Sun) refuses the column (0 honored).
+
+Deduction 4 — Spacecraft dynamics: radiation pressure (advective; TSI + area/mass/reflectivity) and RTG recoil (advective; Pu-238 half-life) as accelerations at the spacecraft position, the trajectory propagated from the Horizons initial state, plus the a_P scan. Self-test: the Pioneer anomaly (8.74 × 10⁻¹⁰ m/s² sunward) must appear as a carried drift — or its absence is a finding (0 honored).
+
+Deduction 5 — Ramp: the residuum slope against the ramp term ramp_rate·(t − segment midpoint) measures the empirical coupling k (the unit of field 112 stays uninterpreted — the measurement carries it) and subtracts it.
+
+Deduction 6 — Witness: the cleaned NAVIO-OBSVBL series (PDPL-clean) is a second, independent reduction of the same radio event — on common days the probe compares the daily medians of the two residua: the profile correlation names whether the residua share structure (common unmodeled event) or carry separate histories.
+
+Deduction 7 — Daily-curve cut: the slope per segment is measured on the residuum itself and subtracted — the decomposition into a daily profile and a per-sample scatter names whether the 60-s excess is a Moyer daily-curve residual or per-sample noise; gap-adjacent segments are counted, not masked in advance.
+
+Deduction 8 — Telemetry-recoil cut: the harvested power channels (PRTG/Pshunt/Pbus) carry the sunward recoil a = η·P(t)/(m·c) — η scanned empirically, the direction the named Turyshev symmetry.
+
+Deduction 9 — NAVIO chain: the cleaned second reduction becomes the carrier itself — Earth center instead of the station site (the record carries no station, named), the same cuts (epoch offsets, plasma, daily slope, dynamics scans) — and the ATDF becomes the witness. The OBSVBL semantics carry the 2010s research: OBSVBL = received cycles − reference (FREQCY) per count interval in Hz, the DSN convention (Δν)_DSN = ν0 − ν (positive = receding); obs = OBSVBL + FREQCY reconstructs the received sky frequency; A ≈ 15.3 Hz/(m/s) ≈ 2ν/c is the two-way scale. The beat-plausibility gate (|OBSVBL| ≤ 2·f0·v_max/c ≈ 5 × 10⁵ Hz) discards the readme's named error classes — discarded, not averaged.
+
+Deduction 10 — Segment mask: segments (≥ 20 samples) whose RMS exceeds 4× the p90 of the segment RMS are individual corrupt days — discarded, not averaged; the gate derives from the live data (p90) × 2².
+
+Deduction 16 — (no head in the historical tool comment; per this paper's own narration in §5.4) the spectral analysis of the pass scale found a red 1/f spectrum in the 60-s segments (peaks at 0.5–0.7 mHz, 4.6–5.6× the floor) and an unexplained line near 51 mHz in the sub-10-s set (9.3× the floor, 73 249 samples; the strict 1-s class is 70 602); the true spin (4.72 RPM = 78.6 mHz, measured from the telemetry) is absent from the residual.
+
+Deduction 17 — Locate the line: the LS peak near ~51.5 mHz (period ~19.4 s, Deduction 16) is rastered on a fine grid (step ≤ 0.1 mHz) and broken out per file/year/station/sampler class — does the line sit in one dump or everywhere, does the frequency wander, does it carry both stations?
+
+Deduction 18 — The witness test: the same LS search on the NAVIO-clean series (60-s) and on Pioneer 11 — the alias of the line in the 60-s raster is measured, not guessed. If the line carries only the ATDF 1-s data it is a reduction artifact of the ATDF chain; if it carries NAVIO/P11 as well, it is a DSN/spacecraft systematic.
+
+Deduction 19 — The candidates: the measured frequency held against the named machines — the sampler raster (1 s vs 10 s; the classes measured), the MDA-resolver/256-divider relation, and the antenna mechanics (signal-strength modulation at the peak) — each test measured, no fabrication.
+
+Deduction 20 — The three ground gates: before the ground hypothesis (the DSN sites wobble / the instrument) justifies a harvest, the gates measure locally — (a) the line amplitude in Hz against the microseismic reference (amplitude gate), (b) the era × station cross-table (does the frequency wander at a fixed station, or is it station-fixed?), (c) the peak width (sharp = machine, broad = nature).
+
+Deduction 22 — The count structure: TRK-2-25 carries 0.001-cycle resolution — a 1/256 resolver would leave only ~256 of 1000 occupied 0.001 bins in the fraction of the raw doppler_cnt (grid round(m·1000/256)). The test reads the PASF series itself, no model in between.
+
+Deduction 23 — The reference chain: does the ref_hz slot itself carry the line? The slot (TRK-2-25: Hz × 10) carries the station reference chain; if the line lives in the chain it appears in the ref series or in its step pattern — an overlap test with the same LS scans, per station and global, against the measured residuum lines.
+
+Deduction 24 — The signal-strength scaling: PLL loop noise grows at weak SNR (line amplitude ∝ 1/√SNR), while a fixed spur (reference leak) would stay constant — per station the strong/medium/weak groups are split and the line amplitude (absolute and relative to the group RMS) is measured.
+
+Deduction 26 — Spacecraft coherence: if the station chain carries the line (a continuous ~20-s station oscillation), P10 and P11 carry THE SAME phase at 0.714 mHz, referenced to TDB t = 0 — the phase difference must be STABLE across two halves of the common window. Null: circularly shifted series (same spectrum, random phase) — 200 surrogates.
+
+Deduction 27 — The two-/three-way split: in three-way (Ground Mode 3) the receiving station counts the transmitting station's signal. If the receive chain carries the line, f(Mode 2) and f(Mode 3) agree per station; if the transmit/uplink chain does, the three-way shows the transmitting station's frequency. Local block de-trending of the sky frequency, LS 44–56 mHz.
+
+Deduction 29 — The frequency path over the era: does the station line wander continuously or jump (receiver generation Block IV → Block V / Advanced Receiver at the start of the 1990s — the survey finding)? Sliding windows over the residuum per station.
+
+Deduction 30 — The channel coherence: if ONE thing (the antenna in the wind) moves both channels — residuum (phase/Doppler) and strength (gain) — then the two series are PHASE-COHERENT at the complex frequencies. Null: independently rotated half-series (circular surrogates).
+
+Deduction 31 — The third witness: does the NOCC's own doppler_resid field (TRK-2-25 item 101, Hz × 1000, PASF slot 8) carry the 44–56-mHz complex? Yes → the complex lives upstream (count path / station reduction); No → it arises downstream (our reconstruction).
+
+Deduction 32 — Day resolution: within the 1-s bursts the stations carry daily median residua — the common-driver question (TE/n floor of the monthly medians) is tested with daily points plus Pearson over common days.
+
+Deduction 33 — Band structure: does the peak sequence of the sliding windows carry an ORDER (does member A reliably follow member B — self-TE lag-1 over the permutation null), and which transitions repeat above expectation?
+
+Deduction 34 — Spacecraft coupling: do P10 and P11 carry a DELAYED mutual influence at the 0.71-mHz member (TE lag-1 on the envelopes of both spacecraft, both directions, permutation null)? Deduction 26 only excluded the lag-0 co-phasality.
+
+Deduction 35 — Position correlation: do band amplitude and member frequency correlate with the spacecraft's spatial position (heliocentric distance, Earth distance, elongation, ecliptic latitude)? The known forces are excluded from the model — the test holds the band itself against the position.
+
+Deduction 36 — Calibration accompaniment: does the band envelope pulse with the reference staircase (the step density of the 0.1-Hz quantization)?
+
+Deduction 37 — The drift law and the state fine-measurement: does the 63 line tick uniformly (counter rate) or in steps, and do the members carry a hidden discrete state ladder (PWM alphabet)?
+
+Deduction 38 — The wave self-similarity: the autocorrelation of the band region per station over all phase shifts — which patterns recur, how many distinct ones there are, and what the pattern cross-correlations between the stations carry.
+
+Deduction 39 — The naked wave: the LS projection of the residuum onto 44–56 mHz (band-pass), then the phase correlation and the pattern count on the isolated wave.
+
+Deduction 40 — The full extraction (P10): the quadratic per-pass de-trending, then the witnesses (station cell, strength, reference, time) → the negative-fuzzy residuum; the residual scan decides: survivor or silence above the floor.
 
 **5.5 Named, not subtracted.** The link probe models the spacecraft radiative
 forces as advective accelerations — solar radiation pressure

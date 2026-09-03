@@ -109,6 +109,26 @@ Register-Pflichten, keine stillen Schwebestände:
   ihr Messgehalt ist als Kleinpass-/Auftrags-Pflicht registriert, kein
   Verbindungs-Kopie. `auftrag-merge-fix-welle` ist abgeschlossen (eigenes
   Ergebnis-Audit: die drei Punkte stehen bereits auf main) — konsumiert.
+- **Verlorene Deduktion-/Method-Dokumentation im Code** (Provenienz-Audit
+  2026-09-03): der deutsche Deduktion-Kommentarblock der historischen
+  `link_deduction_probe` (heute `pioneer_link_correction_probe`, Zeilen 1–153,
+  ~33 Deduktionen + 0/0b) ist im heutigen Code verloren — die Schritte
+  überleben nur als englische Laufzeit-Labels „Deduction N" (1:1 in der
+  Zählung). Ebenso verloren: deutscher Kopf von `pioneer_text_korrelation`
+  sowie die englischen Method-Köpfe von corona ×4, solar-cycle ×6 und
+  `signal-cone-audit-probe`. Die Paper tragen nur eine Teilmenge der
+  nummerierten Karte (Deduktionen 1–6 und 32–40 stehen im Code, nicht
+  einzeln im Paper; `ground-sources-20s-band` nur zusammengefasst). Offene
+  Pflicht: die vollständige Deduktion-Karte aus der Backup-Fassung in
+  `probe-front-dark-matter.md` als Register-Heimat nachziehen (Sprache:
+  Deutsch gehört ins Register, nicht in den Code). pending.
+- **GIC-Stationsname ABK vs SOD (Bezeichnungs-Diskrepanz, nur registriert):
+  der geomagnetische Messkanal läuft über die INTERMAGNET-Abisko-Station (ABK,
+  via BGS GIN HAPI); die erzeugenden Proben (`bz_blatt_probe` / `bz_retro_probe`)
+  messen nur Abisko. Ein separates Stations-Label „SOD“ (Sodankylä) erscheint im
+  Paper-/Auftragstext (z. B. `docs/paper/gic-causal-driver.md` §4.5,
+  `docs/auftrag/auftrag-gic-p-wert.md`). Abgleich offen — nicht aufgelöst,
+  keine Messzahl geändert. pending.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
@@ -636,7 +656,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   GWOSC/GraceDB (Position nur via Skymap), DSN (statische
   Dish-Positionen), USGS-Geomag (Komponenten-Timeseries).
 - Enrichment offen: Name-basierter Ersatz-Join.
-- Vorräte (Pfade unter /home/johannes/projects/archive/archeology/):
+- Vorräte (Pfade unter archive-root/archeology/):
   sources/sources_gold_pre-cdn_27k (2572 Blöcke) +
   sources_recovery_pre-cdn_25k (1924) — Migration nach Protokoll
   (docs/SOURCE_PORT.md); sources_new_untested_14k (873) +
@@ -691,7 +711,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   ESASky, NOIRLab Data Lab, NED; Terrestrisch — EarthScope-FDSN, EPOS,
   SeaDataNet, Smithsonian GVP, Natural Earth. Exakte Tabellen-IDs +
   Spalten + Mechanismus:
-  /home/johannes/projects/archive/handover/handover-2026-08-20-fischplan-kataloge.md
+  archive-root/handover/handover-2026-08-20-fischplan-kataloge.md
   + handover-2026-08-20-chunk-kataloge.md (archiviert).
   GLADE+ ist pending: Spalten live verifiziert, drei gemessene Blocker —
   Schrittboden-Kappung des --mag-bands-Banders, 2-GB-Release-Limit,
