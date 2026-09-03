@@ -2,7 +2,7 @@
   title: The causal driver of geomagnetically induced currents
   class: paper
   date: 2026-08-22
-  sha256: 0735c91fb589a15e31a4b6de0562e6cb8f8aee7328975a6d9012cb161855f060
+  sha256: 63d739479266f4c8cf40f03aead11dc113d0a1acd00f1c0fe23fc0eff65474d1
   fam-machine: pre-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -213,9 +213,12 @@ round-significance at SOD does not.
 | dB/dt → Bz | 0 d | 1.214e-1 | 1.876e-1 | — | silent |
 
 All six directed pairs are silent over 32 years and every storm of the era.
-The daily mean of Bz carries no information about the daily maximum of
-dB/dt — the southward excursions that drive storms average out at this
-grain.
+The table tabulates the three forward drivers (Bz/Speed/Density → dB/dt) and
+the dB/dt → Bz reverse; the two remaining reverse directions (dB/dt → Speed,
+dB/dt → Density) were measured silent like the hourly grains and are not
+separately tabulated. The daily mean of Bz carries no information about the
+daily maximum of dB/dt — the southward excursions that drive storms average
+out at this grain.
 
 ## 5. Discussion
 
