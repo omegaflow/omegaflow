@@ -175,6 +175,24 @@ fn run(name: &str) {
         pct(0.95),
         pct(0.99)
     );
+
+    let out = format!("data/{name}_navio_subkhz_daily.bin");
+    let mut db = Vec::with_capacity(8 + daily_med.len() * 32);
+    db.extend_from_slice(b"PNDM");
+    db.extend_from_slice(&(daily_med.len() as u32).to_le_bytes());
+    for (day, med, r, nv) in &daily_med {
+        for v in [*day as f64 * day_s, *med, *r, *nv as f64] {
+            db.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    if std::fs::write(&out, &db).is_err() {
+        eprintln!("{name}: write {out} void");
+    } else {
+        eprintln!(
+            "{name}: {out} — {} negative-fuzzy daily medians serialized (PNDM, sub-kHz basis for the Ruck scan)",
+            daily_med.len()
+        );
+    }
 }
 
 fn main() {
