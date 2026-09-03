@@ -3,7 +3,7 @@
   class: handover
   date: {date}
   status: live
-  see-also: TODO.md
+  see-also: docs/TODO.md
 -->
 
 # Übergabe — Drift gemessen

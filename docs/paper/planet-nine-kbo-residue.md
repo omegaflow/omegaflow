@@ -5,7 +5,6 @@
   sha256: c8f16a7797de118756112c782bf7e9777924103ef6ec2bb15a9157ac3e28df7f
   fam-machine: pre-fix
   status: live
-  see-also: docs/surveys/survey-2026-08-22-kbo-residuum.md archive/handover/handover-2026-08-22-planet-neun.md
 -->
 
 # No Arrow Beyond the Family Bound: Planet Nine limits in the Kuiper Belt

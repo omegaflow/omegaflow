@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-30
   status: pending
-  see-also: docs/handover/handover-2026-08-30-zwanzig-sekunden-herkunft.md docs/paper/twenty-second-band-ground-chain.md docs/auftrag/auftrag-merge-fix-welle.md docs/auftrag/auftrag-bande-split.md
+  see-also: docs/paper/twenty-second-band-ground-chain.md docs/auftrag/auftrag-bande-split.md
 -->
 
 # Auftrag: die Adoption — Repo, Welt-Fassung, drei Mails als ein Block

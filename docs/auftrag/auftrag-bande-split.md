@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-30
   status: pending
-  see-also: docs/paper/twenty-second-band-ground-chain.md docs/paper/ground-sources-20s-band.md docs/handover/handover-2026-08-30-zwanzig-sekunden-herkunft.md
+  see-also: docs/paper/twenty-second-band-ground-chain.md docs/paper/ground-sources-20s-band.md
 -->
 
 # Auftrag: der two-/three-way-Split und die offenen Registerzeilen der 20-s-Bande

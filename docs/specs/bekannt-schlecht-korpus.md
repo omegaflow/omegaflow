@@ -3,7 +3,7 @@
   class: korpus
   date: 2026-08-30
   status: live
-  see-also: docs/audit/glm-verifikation-2026-08-28.md docs/auftrag-maschinen-audits.md
+  see-also: docs/auftrag/auftrag-maschinen-audits.md
 -->
 
 # Bekannt-Schlecht-Korpus

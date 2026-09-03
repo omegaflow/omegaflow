@@ -5,7 +5,7 @@
   sha256: 8a6e9360232064b9045b9c643281ee94e4f6ec117c5676af2f0e6d4c09a9d594
   fam-machine: pre-fix
   status: live
-  see-also: docs/surveys/survey-2026-08-21-bz-kausalpfeil.md docs/concepts/broken-null-control.md
+  see-also: docs/specs/broken-null-control.md
 -->
 
 # The causal driver of geomagnetically induced currents

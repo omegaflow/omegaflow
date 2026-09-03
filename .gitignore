@@ -49,6 +49,8 @@ cloudflare/node_modules/
 cloudflare/package.json
 cloudflare/package-lock.json
 cloudflare/.wrangler/
+# Lokale Tunnel-Config (absoluter Credential-Pfad — Deployment, kein Repo-Gegenstand)
+cloudflare/cloudflared-config.yml
 
 # Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
 /gate/

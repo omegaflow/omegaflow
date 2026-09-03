@@ -4,7 +4,7 @@
   date: 2026-08-21
   sha256: cbda9b11710ca5a87cb9b7fbf1fde5e473735f28ba20110335f792e8a16947ab
   status: live
-  see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-kausalpfeil.md docs/paper/laic-arrow-direction.md docs/concepts/minkowski-field-permeability.md TODO.md phi/sources.φ
+  see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/TODO.md phi/sources.φ
 -->
 # DER_KAUSALPFEIL — drei Rätsel, drei Blätter Papier
 

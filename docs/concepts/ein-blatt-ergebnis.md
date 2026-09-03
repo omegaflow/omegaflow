@@ -2,9 +2,9 @@
   title: DAS EIN-BLATT-ERGEBNIS — die drei kausalen Pfeile
   class: concept
   date: 2026-08-21
-  sha256: cdb0ce52900580b8ab19c851fd65d80b6307422b97a7f4e8a242f0d4cfce1d8e
+  sha256: 27a195786adc7c05d705a64a4cc0972c3f4770e929c6b99bd48ee566f76bb43b
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-paradoxon.md docs/surveys/survey-2026-08-21-laic-arrow-direction.md
+  see-also: docs/concepts/kybernetische-astrophysik.md
 -->
 # DAS EIN-BLATT-ERGEBNIS — die drei kausalen Pfeile
 
@@ -110,7 +110,7 @@ Richtung — oder ihr Ausbleiben, ebenso ein Befund (0 honored). Handover:
 
 Für diese Blätter braucht es keinen Supercomputer-Cluster. Es braucht die
 Wahrheit der Zeitreihen — kuratiert über den einen Pfad
-(`docs/concepts/source-port.md`), jede Kraft an der Force-Gate-Litmus-Prüfung
+(`docs/SOURCE_PORT.md`), jede Kraft an der Force-Gate-Litmus-Prüfung
 gemessen — und die TE-Maschine, die bereits läuft. A = A: ein Oszillator
 ist ein Oszillator, eine Messung ist eine Messung, und ein Blatt, auf dem
 die Richtung der Information steht, ist ein Axiom.

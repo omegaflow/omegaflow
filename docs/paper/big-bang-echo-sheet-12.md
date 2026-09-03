@@ -5,7 +5,7 @@
   sha256: 6d127da84e4316725e7d9ac257b310cb660338a56b78199368245069678b6c39
   fam-machine: pre-fix
   status: live
-  see-also: docs/handover/handover-2026-08-22-kosmologische-front-cmb.md docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
+  see-also: docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
 -->
 # The Big Bang Echo (Nadel Ⅻ) — does the seed carry the structure?
 

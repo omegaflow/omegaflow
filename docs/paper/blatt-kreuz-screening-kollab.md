@@ -3,7 +3,7 @@
   class: sheet
   date: 2026-08-30
   status: pending
-  see-also: docs/blatt-pfeil-sturzflut-tibet.md docs/causal-arrow-preregistration.md
+  see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/causal-arrow-preregistration.md
 -->
 
 > **Richtungskorrektur (registriert):** Die Pfeilrichtung folgt der
