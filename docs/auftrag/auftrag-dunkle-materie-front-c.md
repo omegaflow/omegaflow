@@ -122,23 +122,23 @@ mit eigener Magie trägt TRANS/RCVR1/linkmode (Name = Implementation). Gebaut:
 Stations-Term konkurriert nun mit dem Baryzentrum-Referenzfloor (19/8,4 kHz),
 statt darüber zu liegen. Die serialisierten Tagesmediane sind der neue,
 konsumierbare Faden; das sub-kHz-Tagesmedian-Ziel (1,5-kHz-Streuung / √N →
-zehner-Hz) ist über PNDM jetzt greifbar. **Offen (nächster Schritt):** der
-Ruck-Scan braucht die korrupten-Tage-Masken (Deduktion-0/10-Segmentmask), bevor
-seine Flaggen Transit bedeuten, nicht Segment-Rauschen — Atom 3.
+zehner-Hz) ist über PNDM jetzt greifbar.
 
-**Source-Pflicht:** das neue Dataset ist der PNAV-Bin; `pioneer_doppler`-CI-Job
-(kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL + PNAV aufs spdf-CD. Die
-PNVR/PNDM-Serialisierung ist measure-Ausgabe (wie `pioneer11_residuum.bin`,
-nie aufs CDN) — kein CDN-Asset. `data/` gitignored; der CI erzeugt und lädt.
+**Atom 3 (2026-09-03, Commit 50625aa):** Deduktion-10-Tagesmask in
+`pioneer_navio_residuum` portiert (Gate 4×p90 des Tages-RMS; korrupte-Tage-
+Cluster verworfen, nicht gemittelt). Gemessen: p10 5, p11 15 corrupt-day
+Cluster verworfen; der Ruck-Scan läuft über gemaskte Tagesmediane. Verbleibende
+Flaggen werden als Kandidaten gegen den lokalen Floor gehalten — kein
+Detektions-Anspruch; die Flaggen stehen, wo ein Transit-Sprung vom
+Segment-Rauschen nicht sauber getrennt ist (das sub-kHz-Ziel bleibt am
+~1,5-kHz-Streuungsboden, 0 honored).
 
-**Source-Pflicht (CDN-Manifestation):** die NAVIO-ASCII-Doppler sind ein neu
-kompiliertes Dataset, das nur lokal lag. Nach der Quelle-Doktrin sind sie in
-die CI-Manifestation aufgenommen: `pioneer_doppler`-Job in
-`.github/workflows/kernel-flatten.yml` (läuft `pioneer_doppler_compiler
---ci-mode`, lädt beide Bins auf das `spdf.gsfc.nasa.gov`-Release). Spiegel des
-bewährten Telemetrie-Jobs. Nicht in `phi/sources.φ` — die Bins sind
-Werkzeug-Mess-Artefakte (Konsum via `parse_bin`), keine Live-ω-Oszillatoren;
-der Telemetrie-Peer trägt denselben Behandlungsweg. `data/` ist gitignored —
-der CI holt und lädt, ein lokaler Lauf speist nie das geteilte Gedächtnis.
+**Source-Pflicht (CDN-Manifestation):** das neue Dataset ist der PNAV-Bin;
+`pioneer_doppler`-CI-Job (kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL +
+PNAV aufs `spdf.gsfc.nasa.gov`-Release. Die PNVR/PNDM-Serialisierung ist
+measure-Ausgabe (wie `pioneer11_residuum.bin`, nie aufs CDN) — kein CDN-Asset.
+Nicht in `phi/sources.φ` — die Bins sind Werkzeug-Mess-Artefakte (Konsum via
+`parse_bin`/`parse_pnav_bin`), keine Live-ω-Oszillatoren; der Telemetrie-Peer
+trägt denselben Behandlungsweg. `data/` gitignored; der CI erzeugt und lädt.
 
 Diese Datei bleibt der Ledger bis Front C gefahren und entschieden ist.
