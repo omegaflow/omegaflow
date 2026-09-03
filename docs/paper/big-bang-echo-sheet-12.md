@@ -2,7 +2,7 @@
   title: The Big Bang Echo (Nadel Ⅻ) — does the seed carry the structure?
   class: paper
   date: 2026-08-23
-  sha256: 6d127da84e4316725e7d9ac257b310cb660338a56b78199368245069678b6c39
+  sha256: 3d314e18c7cd4bef217068fef1f1dd7c525aeb407a7562369bf3d2401128da1c
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
@@ -57,7 +57,7 @@ strike here.
   verified (2026-08-23) — `data.nanograv.org` (12.5-yr,
   `NANOGrav_12yv4.tar.gz`, residuals `resid/res_full_white/*.res`, 27
   pulsars, MJD × residual µs) and Zenodo `records/8067506` (15-yr);
-  the B-modes carry the BK18 upper limit r < 0,03 — silent (no
+  the B-modes carry the BK18 upper limit r < 0,036 — silent (no
   detection). Honest finding: between the PTA residuals (temporal, per
   pulsar) and the CMB (spatial) no channel carries — a TE pairing would
   be a fabrication (0 honored). The second channel is a constraint, not
