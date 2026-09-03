@@ -276,3 +276,19 @@ Nachwirkung des Ausreißer-Tags 1983-06-16 (−4548 Hz, RMS 36,7 kHz), keine
 symmetrische Transit-Rampe. Die sub-kHz-Tagesmediane sind die neue, feinere Basis
 für den kontinuierlichen Drift (Folge-Frage, s.u.). Der Transit-Sweep über der
 sub-kHz-Basis: weiterhin Stille (0 honored).
+
+## Drift-Befund — operative Registerzeile (2026-09-03, 82ffcc2 + dddd138)
+
+Drift nicht aufgelöst: Anomalie sunward, ~10⁻⁴ der Anomalie, 150–340× unter dem
+Tagesmedian-Floor der ruhigen Tage (160–340 Hz). Formtest Deduktion 41
+(linear/∝t²/RTG-exp τ=126,5 a) unaufgelöst — beide Hypothesen-Signaturen liegen
+im 1–3-Hz-Bereich unter einem zwei Größenordnungen höheren Floor; der Test
+trennt erst auf sub-Hz-Aggregation. Messbarkeit ~100× verbessert (kHz→sub-kHz:
+2×10⁴ → 150–340× unter Floor). **Flaschenhals: per-Sample-Streuung im
+Tagesmedian, nicht Reduktions-Systematik** (die kHz-Kette tötete die Systematik
+= der 100×-Gewinn). **Nächster Hebel: Regression über die volle ruhige Serie
+oder Wochen-/Monatsmediane (√N über die Zeit), nicht weitere Masken.** Die
+Telemetrie-Amplitude (Stufe 2) bleibt unbenutzt — sie füttern nur bei
+signifikantem Formergebnis, sonst füttert sie die zu prüfende Hypothese (Zirkel).
+Die Kette Front C ist vollständig: 234/234 Form + Deduktion 40 (sub-kHz) +
+Deduktion 41 (Drift). Alle drei: Stille als Verdikt, Grenze quantitativ benannt.
