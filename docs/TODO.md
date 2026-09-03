@@ -216,12 +216,20 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
 
 ## Materie-Physik — Kuprat, Phononen, Suprastrom
 
-- RIXS-Spin-Ernte (em): erledigt; offen bleiben Phononen (acoustic) und
-  Suprastrom (electric) als eigene Ernten, NSE-I(q,t) pending
-  (login-gated), Zenodo 15179114 (Bi-2223-Plasmonen, 107 Spektren,
-  181350 Oszillatoren, electric) ungeerntet für den Ladungs-Charakter.
-  Die val-Physik (relativ, a.u.) ist die ehrliche Messung — kein
-  fabrizierter Querschnitt.
+- RIXS-Spin-Ernte (em): erledigt. Ladungs-/Plasmon-Kanal (electric,
+  Bi-2223, Zenodo 15179114, 107 Spektren): geerntet 2026-09-03 zu
+  `rixs_charge.bin` (charge v3) auf dem ssd.jpl.nasa.gov-Netloc —
+  158727 Oszillatoren nach Loss-only-Reduktion (Rat-Urteil): die
+  181350 Roh-Zeilen trugen 22516 Anti-Stokes-Gain-Zeilen (negative
+  Energie, thermische Population/Bose-Faktor — echte Messung, aber
+  Absorption, kein sendender Ladungs-Oszillator) + die elastische Linie
+  (f = 0, kein Energieübertrag); beide benannt ausgeschlossen, Roh-Heimat
+  bleibt Zenodo 15179114. `charge_oscillators` hält e > 0 wie
+  spin_oscillators/harvest_eels (negative Frequenz ist keine). Die
+  val-Physik (relativ, a.u.) ist die ehrliche Messung — kein
+  fabrizierter Querschnitt. Feld-Bürgerschaft pending: force electric
+  (8), Lab-Anker offen (Proben-Labor des Bi-2223 unbekannt, `pending`),
+  τ pending bis Linienbreite gemessen.
 - Kuprat-Blatt (rixs_cuprate_probe): geerntet ist der Spin-Kanal (19
   Spektren, 456 Oszillatoren — das RIXS-Streu-Photon ist ein sendendes
   em-Signal, daher ehrlicher Lab-Anker); die SRD62-Suprastrom-Ernte ist
