@@ -23,7 +23,7 @@ Gruppiert nach Daten-Mehrwert für die 8-Kräfte-Punktwolke. Basis: Archiv (Schr
 Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben nur in:
 
 1. **Lokal**: `.secrets.local` (gitignored) — Platzhalter für alle unten gelisteten Secrets
-2. **GitHub Actions**: `Settings → Secrets and variables → Actions` (Workflow `healthcheck.yml`)
+2. **GitHub Actions**: `Settings → Secrets and variables → Actions` (Workflow `health-check.yml`)
 
 ### ✅ Bereits besorgt (im Workflow aktiv, legal redistributable)
  
@@ -240,5 +240,5 @@ Das Urteil ist im Register vollzogen: die 19 Hosts stehen in
    - PurpleAir (`diffusion`, globale PM-Sensoren, `X-API-Key`-Header) — verifiziert + live
    - GBIF (`em`, 3,9 Mrd. Vorkommen, Basic-Auth) — decline (Presence-Katalog)
    - Transit511 — decline (stops/operators = Registry; VehicleMonitoring = 401 Premium; gzip)
-4. Workflow `healthcheck.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
+4. Workflow `health-check.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
 5. Auth-Header/Query-Param im Fetch-System unterstützen (PurpleAir braucht `X-API-Key`-Header, GBIF Basic-Auth)
