@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 68fb2d9693347df0f68f235b1494c68fadb649487b1593175d2ec1670e2b3af8
+  sha256: aa0c8ffce2ae95a04cf6e2f957b70ab336cfca139995152a33728a52c7b1200d
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
