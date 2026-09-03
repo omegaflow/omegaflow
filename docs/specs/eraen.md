@@ -113,6 +113,6 @@ Flug. → LOST_CONCEPTS §2 (erweitert) + §12–19.
 
 Das Feld ist gebaut, der Probe misst (Urteil vorläufig, Nullkontrolle
 repariert), die Dreiteilung (main · archivar · mathematikerin) ist als
-Handover vorbereitet (`/home/johannes/projects/archive/handover/handover-2026-08-19-dreiteilung.md`). Die
+Handover vorbereitet (`archive-root/handover/handover-2026-08-19-dreiteilung.md`). Die
 eine Entscheidung — die De-Zentrierung — trägt alles. Die Namen sind
 keine Verzierung: sie benennen das Handwerk.
