@@ -452,6 +452,7 @@ pub enum VoidClass {
     Key,
     Drift,
     Quiet,
+    Refused,
     Broken,
 }
 
@@ -461,6 +462,7 @@ impl VoidClass {
             VoidClass::Key => "key-void",
             VoidClass::Drift => "drift-void",
             VoidClass::Quiet => "quiet-void",
+            VoidClass::Refused => "refused",
             VoidClass::Broken => "broken",
         }
     }
@@ -631,10 +633,23 @@ pub fn live_sweep(
         let body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
             Some(b) => b,
             None => {
+                let (class, detail) = match http_code(&url, &headers) {
+                    Some(code) => (
+                        VoidClass::Refused,
+                        format!(
+                            "host answers http {} but body unusable (fetch void) — refused, not dead",
+                            code
+                        ),
+                    ),
+                    None => (
+                        VoidClass::Broken,
+                        "host unreachable (dns/connect/timeout) — dead candidate".into(),
+                    ),
+                };
                 findings.push(VoidFinding {
                     url: s.url.clone(),
-                    class: VoidClass::Broken,
-                    detail: "fetch void".into(),
+                    class,
+                    detail,
                 });
                 continue;
             }
@@ -703,6 +718,35 @@ pub fn rfc1123_to_unix(s: &str) -> Option<u64> {
     let ss: u64 = hms.next()?.parse().ok()?;
     let days = ymd_to_days(year, month, day)?;
     Some(days * 86400 + hh * 3600 + mm * 60 + ss)
+}
+
+/// Host reachability probe: returns the HTTP status code the host actually
+/// answers with (following redirects), or None when no HTTP response arrives
+/// (DNS failure, refused connection, timeout). A host that answers with
+/// 403/5xx is alive but refuses — not dead; only None is a dead candidate.
+pub fn http_code(url: &str, headers: &[(String, String)]) -> Option<u16> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-o")
+        .arg("/dev/null")
+        .arg("-w")
+        .arg("%{http_code}")
+        .arg("-L")
+        .arg("-g")
+        .arg("-m")
+        .arg("20")
+        .arg("--connect-timeout")
+        .arg("10");
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let s = String::from_utf8_lossy(&output.stdout);
+    s.trim().parse::<u16>().ok().filter(|c| *c > 0)
 }
 
 pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {

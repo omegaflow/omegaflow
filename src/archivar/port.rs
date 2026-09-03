@@ -467,7 +467,7 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
                     .unwrap_or(0)
             )
         ),
-        "# Classes: key-void (key marker without .secrets.local) | drift-void (API drift — curation duty) | quiet-void (empty = truth) | broken (fetch void)".into(),
+        "# Classes: key-void (key marker without .secrets.local) | drift-void (API drift — curation duty) | quiet-void (empty = truth) | refused (host answers but refuses body — alive, not dead) | broken (fetch void — host unreachable, dead candidate)".into(),
     ];
     for f in findings.iter() {
         let line = format!("recheck {} {} — {}", f.url, f.class.as_str(), f.detail);
