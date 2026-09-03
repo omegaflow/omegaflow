@@ -123,11 +123,25 @@ fn measure_form(daily: &[(f64, f64)], k: usize) -> Option<Form> {
 }
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio_daily.bin");
+    let path = format!("data/{name}_navio_subkhz_daily.bin");
+    if !std::path::Path::new(&path).exists() {
+        let path = format!("data/{name}_navio_daily.bin");
+        let Some(daily) = read_daily(&path) else {
+            eprintln!("{name}: daily bin void/parse void ({path})");
+            return;
+        };
+        scan(name, &daily);
+        return;
+    }
     let Some(daily) = read_daily(&path) else {
         eprintln!("{name}: daily bin void/parse void ({path})");
         return;
     };
+    eprintln!("{name}: scanning the sub-kHz negative-fuzzy daily-median basis ({path})");
+    scan(name, &daily);
+}
+
+fn scan(name: &str, daily: &[(f64, f64)]) {
     let ts: Vec<f64> = daily.iter().map(|x| x.0).collect();
     let vs: Vec<f64> = daily.iter().map(|x| x.1).collect();
 
