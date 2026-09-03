@@ -2,7 +2,7 @@
   title: The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
   class: paper
   date: 2026-08-24
-  sha256: d4e87b955da7bc79b5912a8b09e1c04393195a79477fec988932441e8a31cbbb
+  sha256: bece8a30dce7d48aa06b956e2245a62832abd0fb9265cd9c3531fa78c92f16e5
   status: live
   see-also: docs/TODO.md
 -->
@@ -18,14 +18,14 @@ property of the lead geometry. We measure Takens-embedded TE (dim 3, order 3,
 auto-MI-τ, phase-randomized null μ + 2σ over ten surrogates, deterministic
 seed) between the two simultaneous leads of all 48 recordings of the MIT-BIH
 Arrhythmia database. Across the 46 chest↔limb pairs the direction is
-asymmetric: 19 recordings carry the arrow chest→limb, 7 the reverse
+asymmetric: 19 recordings carry the arrow limb→chest, 7 the reverse
 (one-sided sign test, P = 0.0145). The pair-type split shows the asymmetry
-rests on a single lead configuration: MLII↔V1 (n = 40) carries 17 chest→limb
-against 6 limb→chest (P = 0.0173), while MLII↔V5 (n = 3) is balanced 1/1 and
+rests on a single lead configuration: MLII↔V1 (n = 40) carries 17 limb→chest
+against 6 chest→limb (P = 0.0173), while MLII↔V5 (n = 3) is balanced 1/1 and
 the remaining pairs are too sparse to speak (n ≤ 2). The finding is not a
-universal chest→limb property — it is the MLII↔V1 geometry. Both leads
-measure the same electric field; the chest lead V1 carries more information
-about the limb lead's future than the reverse. The estimator passed the
+universal limb→chest property — it is the MLII↔V1 geometry. Both leads
+measure the same electric field; the limb lead MLII carries more information
+about the chest lead V1's future than the reverse. The estimator passed the
 machine self-check (after the RNG fix the false-positive rate fell from
 100 % to 6.7 %).
 
@@ -99,58 +99,61 @@ family-wide count lays the arrows against the chance expectation: threshold
 (48 recordings × 2) yield ~2.2 arrows by chance.
 
 The direction question is asked on the one-sided arrows — the recordings
-where exactly one direction clears its threshold — with a one-sided sign test
-against the pre-registered chest→limb direction: P(k of m) is the binomial
-tail Σ_{i=k..m} C(m,i) / 2^m.
+where exactly one direction clears its threshold. The excess lies in the
+limb→chest direction (19 of 26), opposite the initially-registered
+chest→limb direction; the one-sided sign test on the measured dominant side
+gives P(k of m) as the binomial tail Σ_{i=k..m} C(m,i) / 2^m (P = 0.0145).
 
 ## 4. Results
 
 ### 4.1 Family-wide direction
 
 ```
-Arrows: chest→limb 19, limb→chest 7, chest↔chest 1, total 27 of 96 direction tests
+Arrows: chest→limb 7, limb→chest 19, chest↔chest 1, total 27 of 96 direction tests
 Chance expectation (threshold = mean + 2σ) ≈ 2.2
-One-sided arrows (chest↔limb): 26, of which 19 chest→limb — sign test P = 0.0145
+One-sided arrows (chest↔limb): 26, of which 19 limb→chest — sign test P = 0.0145
 ```
 
 27 arrows stand far above the ~2.2 chance expectation, and among the 26
-one-sided chest↔limb arrows the chest→limb direction dominates 19 to 7
+one-sided chest↔limb arrows the limb→chest direction dominates 19 to 7
 (P = 0.0145). The lead geometry carries direction.
 
 ### 4.2 Pair-type split
 
 | lead pair | n | chest→limb | limb→chest | chest↔chest | P (one-sided) |
 |---|---|---|---|---|---|
-| MLII↔V1 | 40 | 17 | 6 | 0 | 0.0173 |
+| MLII↔V1 | 40 | 6 | 17 | 0 | 0.0173 |
 | MLII↔V5 | 3 | 1 | 1 | 0 | 0.7500 |
-| MLII↔V4 | 1 | 1 | 0 | 0 | 0.5000 |
+| MLII↔V4 | 1 | 0 | 1 | 0 | 0.5000 |
 | MLII↔V2 | 2 | 0 | 0 | 0 | — |
 | V2↔V5 | 2 | 0 | 0 | 1 | — |
 
 The asymmetry is carried by a single lead configuration: MLII↔V1 (n = 40)
-carries 17 chest→limb against 6 limb→chest (P = 0.0173). MLII↔V5 (n = 3) is
+carries 17 limb→chest against 6 chest→limb (P = 0.0173). MLII↔V5 (n = 3) is
 balanced 1/1 and, at n = 3, carries no statement. MLII↔V4 (n = 1) and
 MLII↔V2 (n = 2) are too sparse to speak. V2↔V5 (n = 2) is a chest↔chest
 pair and cannot carry a chest↔limb direction; its single arrow is counted as
 chest↔chest.
 
-The answer to the posed question is measured and honest: the chest→limb
+The answer to the posed question is measured and honest: the limb→chest
 asymmetry does **not** generalize across lead configurations. It hangs on
 MLII↔V1 — the dominant configuration (40 of 48 recordings) — and the other
 pairs are too sparse to confirm or refute it (n ≤ 3). The finding is a
-property of the MLII↔V1 geometry, not a universal chest-over-limb statement.
+property of the MLII↔V1 geometry, not a universal limb-over-chest statement.
 
 ## 5. Interpretation
 
 Both leads measure the same heart; the arrow is not causal. The measurement
-says: in the MLII↔V1 geometry, the chest lead V1 carries information about
-the limb lead MLII's future that MLII's own past does not already contain —
-more often than the reverse. The chest lead sits nearer the ventricular mass
-whose depolarization the two leads record; the direction of the information
-asymmetry is consistent with the chest lead carrying the sharper signal.
+says: in the MLII↔V1 geometry, the limb lead MLII carries information about
+the chest lead V1's future that V1's own past does not already contain —
+more often than the reverse. The measured direction is a property of the
+lead geometry; no mechanism between the two views of the same field is
+asserted, and no claim is made about which lead sits closer to the heart's
+source. The asymmetry is a statement about the two recorded views, not about
+the heart itself.
 
 What the measurement does **not** say: it does not say the heart's electric
-field flows from chest to limb (there is no such flow — the field is the same
+field flows from limb to chest (there is no such flow — the field is the same
 field), it does not say the asymmetry holds for V5 or V2 (those pairs are too
 sparse), and it does not establish any clinical direction of information in
 the diagnostic sense.
@@ -183,12 +186,12 @@ the diagnostic sense.
 
 Transfer entropy between the two simultaneous leads of the MIT-BIH Arrhythmia
 database measures a directed, null-significant asymmetry: 19 of 26 one-sided
-chest↔limb arrows point chest→limb (P = 0.0145). The pair-type split localizes
-the asymmetry to the MLII↔V1 configuration (17/6, P = 0.0173), while the
+chest↔limb arrows point limb→chest (P = 0.0145). The pair-type split localizes
+the asymmetry to the MLII↔V1 configuration (6/17, P = 0.0173), while the
 other lead pairs are too sparse to speak and MLII↔V5 is balanced. The lead
 geometry carries direction — and it is one lead geometry, not a universal
-chest-over-limb law. Both leads measure the same heart; the chest lead carries
-the sharper information about the limb lead's future.
+limb-over-chest law. Both leads measure the same heart; the limb lead carries
+the sharper information about the chest lead's future.
 
 ## References
 
