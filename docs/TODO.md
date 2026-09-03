@@ -216,9 +216,12 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
 
 ## Materie-Physik — Kuprat, Phononen, Suprastrom
 
-- RIXS-Spin-Ernte (em): erledigt. Ladungs-/Plasmon-Kanal (electric,
-  Bi-2223, Zenodo 15179114, 107 Spektren): geerntet 2026-09-03 zu
-  `rixs_charge.bin` (charge v3) auf dem ssd.jpl.nasa.gov-Netloc —
+- RIXS-Spin-Ernte (em): erledigt — Spin aus Zenodo 7286412 (siehe
+  Kuprat-Blatt). Ladungs-/Plasmon-Kanal (electric, Bi-2223, Zenodo
+  15179114, 107 Spektren): geerntet 2026-09-03 zu
+  `rixs_charge.bin` (charge v3) auf dem ssd.jpl.nasa.gov-Netloc via
+  `cuprate-cdn`-Workflow (Zenodo 15179114 → `--plasmon`, `--ci-mode`;
+  Spin aus 7286412 → `--rixs`, `--ci-mode`) —
   158727 Oszillatoren nach Loss-only-Reduktion (Rat-Urteil): die
   181350 Roh-Zeilen trugen 22516 Anti-Stokes-Gain-Zeilen (negative
   Energie, thermische Population/Bose-Faktor — echte Messung, aber
@@ -231,12 +234,14 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   (8), Lab-Anker offen (Proben-Labor des Bi-2223 unbekannt, `pending`),
   τ pending bis Linienbreite gemessen.
 - Kuprat-Blatt (rixs_cuprate_probe): geerntet ist der Spin-Kanal (19
-  Spektren, 456 Oszillatoren — das RIXS-Streu-Photon ist ein sendendes
-  em-Signal, daher ehrlicher Lab-Anker); die SRD62-Suprastrom-Ernte ist
-  eine Material-Property-Messung (ρ_s, s.u.), kein Feld-Kanal; Gitter
-  bleibt ungeerntet, und die Dotierungs-Achse trägt 3 Klassen < MIN_N 30
-  — das Blatt trägt „keine Aussage" (Stille ist der Befund). Die
-  restliche Kanal-Ernte (Phononen = acoustic) und NSE-I(q,t) bleiben die
+  Spektren, 456 Oszillatoren aus Zenodo 7286412 — Bi₂Sr₂CaCu₂O₈₊δ,
+  azimuthal_analysis/sw_spin.txt, Dotierungsklassen UD/OD1/OD2 je
+  (q_h,q_l); das RIXS-Streu-Photon ist ein sendendes em-Signal, daher
+  ehrlicher Lab-Anker); die SRD62-Suprastrom-Ernte ist eine
+  Material-Property-Messung (ρ_s, s.u.), kein Feld-Kanal; Gitter bleibt
+  ungeerntet, und die Dotierungs-Achse trägt 3 Klassen < MIN_N 30 — das
+  Blatt trägt „keine Aussage" (Stille ist der Befund). Die restliche
+  Kanal-Ernte (Phononen = acoustic) und NSE-I(q,t) bleiben die
   Voraussetzung für eine nicht-degenerierte Matrix.
 - Suprastrom-Material-Property (ρ_s ∝ λ⁻², aus Penetration Depth): zwei
   benannte Zugänge — (a) ISIS `10.5286/isis.e.rb2410595` (Hussey et al.,
