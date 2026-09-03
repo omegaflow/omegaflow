@@ -246,6 +246,36 @@ fn daily_medians(times: &[f64], vals: &[f64]) -> Vec<(f64, f64, f64, usize)> {
     out
 }
 
+fn day_mask(daily: &[(f64, f64, f64, usize)]) -> (Vec<(f64, f64, f64, usize)>, usize) {
+    if daily.len() < 10 {
+        return (daily.to_vec(), 0);
+    }
+    let mut r: Vec<f64> = daily.iter().map(|d| d.2).collect();
+    r.sort_by(f64::total_cmp);
+    let p90 = r[r.len() * 9 / 10];
+    let gate = 4.0 * p90;
+    let mut keep = Vec::new();
+    let mut n_mask = 0usize;
+    for &d in daily {
+        if d.2 > gate {
+            n_mask += 1;
+        } else {
+            keep.push(d);
+        }
+    }
+    if n_mask == 0 || n_mask == daily.len() {
+        eprintln!(
+            "  daily segment mask (Deduction 10): gate 4×p90 = {gate:.3e} Hz — 0 or all days above it (0 honored), no mask"
+        );
+        return (daily.to_vec(), 0);
+    }
+    eprintln!(
+        "  daily segment mask (Deduction 10): gate 4×p90 = {gate:.3e} Hz (p90 {p90:.3e}) — {n_mask} corrupt-day clusters discarded (not averaged), {} days remain",
+        keep.len()
+    );
+    (keep, n_mask)
+}
+
 fn ruck_scan(times: &[f64], vals: &[f64]) {
     if times.len() < 3 {
         eprintln!("  daily series too short for the Ruck scan");
@@ -571,8 +601,9 @@ fn run(name: &str, sc_body: &str) {
         ratio = if fmed > 0.0 { pp / fmed } else { f64::NAN }
     );
 
-    let med_t: Vec<f64> = med.iter().map(|m| m.0).collect();
-    let med_v: Vec<f64> = med.iter().map(|m| m.1).collect();
+    let (med_clean, _n_mask) = day_mask(&med);
+    let med_t: Vec<f64> = med_clean.iter().map(|m| m.0).collect();
+    let med_v: Vec<f64> = med_clean.iter().map(|m| m.1).collect();
     ruck_scan(&med_t, &med_v);
 }
 
