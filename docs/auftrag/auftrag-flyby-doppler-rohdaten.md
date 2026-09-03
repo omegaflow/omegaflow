@@ -128,10 +128,14 @@ re-deriviert. Es folgt der Auffindbarkeits-Befund je Flyby mit Ort.
 
 Der Earth-Pass (2013-10-09, DOY 282) ist in den PDS-Juno-Archiven gemessen
 **abwesend** (kein Earth-Encounter-EDR registriert; nur post-EFB Outer-Cruise-
-ODF ab DOY 284). Verbleibende Spur: ein Juno-Earth-Flyby-Gravity-ODF könnte
-außerhalb PDS in den DSN/NAIF-Tracking-Archiven liegen — dort ungesucht.
-Erst wenn dieser Fundort geprüft ist, ist die Juno-Nicht-Auffindbarkeit mit Ort
-vollständig gemessen.
+ODF ab DOY 284). Auch **außerhalb PDS** (DSN/open-data, NAIF/SPICE, NTRS,
+arXiv, Zenodo, figshare) ist kein Roh-Doppler-Datenset erhältlich — gemessen.
+Der Pass wurde dicht verfolgt (DSN + 2 ESA-Stationen; JPL AAS 14-435), die
+Rekonstruktion fand kein anomales ΔV am Perigäum, aber die Roh-Tracking-Reihe
+ist weder archiviert noch an die Analysen angehängt. Einzig erreichbar:
+NAIF-SPICE-Trajektorien-Rekonstruktion `spk_rec_131005_131014_131101.bsp`
+(1,66 MB, OD006) — Trajektorie, kein Doppler → nur die Modell-Seite, keine
+Messreihe zum Treiben. Juno damit vollständig gemessen `open` mit Ort.
 
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
