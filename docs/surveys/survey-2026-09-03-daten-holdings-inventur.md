@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 57ceab4ab048271ab194b553d7c795b1773d681a8a8dd0cdd15865018a596bcc
+  sha256: 211bfad3eb7b405109af00f61d10d7817f7b07d977de6cfdc36cfbee0b6f52a6
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/plans/ref-* 
 -->
@@ -65,9 +65,13 @@ messenger, near, rosetta.
   `cmb_planck_smica_n64.json`, `cosmicflows_cf4.json`, und die 12 aktiven
   Ephemeriden als `omegaflow_eph_{body}.bin` (earth/juno/jupiter/mars/mercury/
   neptune/new_horizons/saturn/uranus/venus/voyager1/voyager2).
+- Dedup (byte-identische Duplikate entfernt; je Datensatz bleibt Live-Cache +
+  mindestens eine Sicherung + CDN):
+  - regenerierbarer Build-Schrott in Backups (`gate-tragen/target`, `tools-betten/target`, ~1,8 G);
+  - Ephemeriden-Duplikate in `backups/omegaflow/data`, die identisch zu
+    `knowledge/data` waren (~1,5 G; 2 dort verbleibende sind nicht-identisch → behalten).
 
 ## Offen (Schritt-für-Schritt, je Freigabe)
 
-1. Dedup `backups/*` + `knowledge/data` + `archive/data` gegen CDN/Repo (mehrfache Kopien derselben Datensätze sind nun im Live-Cache bestätigt).
-2. Bewegung nach `projects/archive` nur nach Inventur je Holding.
-3. Lokalisierung der noch nicht gefundenen Serien (`abk_dbdt_1h_*`, kegel, GIC/corona).
+1. Bewegung nach `projects/archive` nur nach Inventur je Holding.
+2. Lokalisierung der noch nicht gefundenen Serien (`abk_dbdt_1h_*`, kegel, GIC/corona).
