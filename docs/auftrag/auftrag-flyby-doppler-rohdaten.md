@@ -91,7 +91,7 @@ re-deriviert. Es folgt der Auffindbarkeits-Befund je Flyby mit Ort.
 | Cassini | RSS-Infrastruktur ja, Earth-ODF nein | nein | `open` |
 | Rosetta | nur RPC-ICA (Plasma), kein RSI | nein | `open` |
 | Messenger | keine Fundstelle | nein | `open` |
-| Juno | PSPA-00605 (ODF, deckt Okt. 2013 Earth-Flyby ab) | nein | `found`, Laden aussteht |
+| Juno | PSPA-00605/OCRU post-EFB (ab DOY 284); Earth-EDR nicht registriert | nein | `open` (nur intern JPL-NAV) |
 
 ### Je Flyby, gemessen
 
@@ -121,8 +121,8 @@ re-deriviert. Es folgt der Auffindbarkeits-Befund je Flyby mit Ort.
   Der Earth-Pass (2013-10-09, DOY 282) ist in **keinem** erreichbaren PDS-
   Juno-Archiv — gemessen über PDS-Registry, Volume-Census (nur DOY 284-ODF) und
   lokalen TRK-2-34-Parser (631 327 Records, scid 61, Span 2013-10-11→12-31).
-  → `open`, Ort: ein Juno-Earth-Flyby-Gravity-ODF existiert ggf. außerhalb PDS
-  (DSN/NAIF-Tracking-Archive), dort ungesucht.
+  Auch außerhalb PDS (Vektoren 1–3, unten) ist er nicht erhältlich.
+  → `open`, Ort: internes JPL-NAV-Archiv (pre-EFB-Merged-ODF, nicht öffentlich).
 
 ### Nächster Schritt (Juno, konkret)
 
@@ -136,6 +136,23 @@ ist weder archiviert noch an die Analysen angehängt. Einzig erreichbar:
 NAIF-SPICE-Trajektorien-Rekonstruktion `spk_rec_131005_131014_131101.bsp`
 (1,66 MB, OD006) — Trajektorie, kein Doppler → nur die Modell-Seite, keine
 Messreihe zum Treiben. Juno damit vollständig gemessen `open` mit Ort.
+
+**Vektoren 1–3 (gemessen, 2026-09-03):** (1) NAIF-JUNO-Baum = nur kernels/ +
+misc/ — kein odf/tracking; misc = CK-Rekonstruktion, kein Roh-Tracking;
+`/pub/jpl-missions-support` = 404. (2) NSSDC/SCID-61/2011-040A = NMC retired,
+SPDF nur Heliophysik, data.nasa.gov nur PDS-Science-Mirrors — keine SCID-61-
+Sammlung für 2013-10. (3) Die „Beweis"-Behauptung eines 2026-Repository
+kollabiert: `matthewsmawfield/TEP-EFA` hostet in
+`data/raw/dsn_tracking/Juno_2013/` nur **Request-Formulare** (DSN-Anfragen
+2026-05-17, Level-1-Doppler ±48 h) + `DOWNLOAD_INSTRUCTIONS.txt` auf das
+PDS-OCRU-Mirror; sein eigener Text erwartet beim Ingest einen `RuntimeError`
+(kein Overlap mit dem Flyby-Fenster). Kein öffentliches Repository trägt rohe
+Juno-2013-Tracking-Daten. Kern-Erkenntnis: der Label-Name
+`juno_merged_odf_2013_postefb.dat` impliziert eine intern beim JPL-NAV-
+Conditioning gehaltene **pre-EFB-Merged-ODF, die nicht öffentlich archiviert
+ist** — die einzige plausible Heimat des Earth-Passes ist damit das interne
+JPL-NAV-Archiv, nicht öffentlich erreichbar. Eine Fortführung wäre eine
+formelle DSN-Datenanfrage an JPL-NAV (wie die im TEP-EFA-Repo beantragten).
 
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
