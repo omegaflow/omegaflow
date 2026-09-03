@@ -1,0 +1,34 @@
+name: lead-geometry-cdn
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  mitdb-lead-geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile MIT-BIH Arrhythmia (electric) provenance asset to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern mitdb_arrhythmia.bin --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin mitdb_compiler -- \
+            --out mitdb_arrhythmia.bin --ci-mode --jobs 8
+      - name: Re-derive the lead-geometry verdict under the canonical estimator and persist to CDN
+        continue-on-error: true
+        run: |
+          cargo run -p omegaflow-measure --release --bin mitdb_sweep_probe -- --jobs 8 \
+            > lead_geometry_verdict.txt 2> lead_geometry_sweep.log
+          echo "--- sweep diagnostics (stderr) ---"
+          cat lead_geometry_sweep.log
+          gh release upload physionet.org --repo omegaflow/sources \
+            lead_geometry_verdict.txt --clobber
