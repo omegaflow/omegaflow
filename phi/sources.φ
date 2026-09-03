@@ -145,6 +145,16 @@ lon longitude
 epoch captured_at
 field value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
 
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
+ttl 86400
+format csv
+on earth 38.9925 -76.839833 87
+rows
+field AOD_500nm aeronet_aod_500nm inverse-square em 1 86400.0 0.0 0.0
+field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
+field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
+field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
+
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 ttl 300
 on earth 0 0 0
