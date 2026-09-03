@@ -111,5 +111,7 @@ Encounter — nicht durch bekannte Flybys erklärt. Station-/Era-Check (Commit
 e32d7f9) gemessen: P10-Flaggen = Station-63-Artefakt (±5,7–90 kHz
 Einzelstations-Sprünge, 1-Sample-Tage). Kreuz-Sonden-Zeugen-Test: P10 (12) und
 P11 (11) teilen null Ruck-Flag-Tage — kein gemeinsames Ereignis; jede Flagge
-sondenspezifisch. Kein sub-kHz-Transit über dem Streuungsboden (0 honored);
-versetzter (nicht gleichzeitiger) Sonden-Zeugen-Test offen.
+sondenspezifisch. Versetzter Zeugen-Test (ff5ebf8): Geometrie schließt einen
+gemeinsamen Transiter aus — P10 22–66 AU vs P11 5–14 AU, Separation 24–110 AU
+an allen Kreuz-Epochen (außer 1974-P11-Jupiter 1,8 AU). Kein sub-kHz-Transit
+über dem Streuungsboden; Stille als Verdikt (0 honored).
