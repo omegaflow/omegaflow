@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: 071fb3ceaab592cae28d77ed1ad8bda6606eeae0c6d717b75a0cc5ca75b60c8f
+  sha256: f1bf8536eaccb809b876427f097088c1260288ddf4b2925ae068bd627524dc77
   status: live
   see-also: docs/auftrag/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -52,6 +52,15 @@ des SOURCE_PORT-Grinds). Sie ist nur der grobe Lebend-/Totfilter.
   sind erreichbar und von bekannten Daten-Diensten (bom.gov.au, api.met.no,
   ncei/ngdc/cpc/modis/omniweb.gsfc, ds.iris.edu, isc.ac.uk, sidc.be,
   simbad.u-strasbg.fr, cmr.earthdata.nasa.gov, globalcmt.org, …).
+
+  Diese 65 sind **keine verlorenen Quellen** — sie liegen fast vollständig
+  schon im dokumentierten Grind-Bestand (SOURCE_PORT): 64/65 in
+  `queue/master.φ`, 62 in `master_urls.txt`/`probe_url_candidates.txt`, 59
+  kanonisch konvertiert in `stage/master_converted.φ`. Nur 9/65 sind im
+  `ledger.φ` als offener Posten vermerkt. Die Lücke ist also keine
+  Entdeckungs-, sondern eine **Dispositions-Schuld**: die Aufnahme der
+  Kandidaten in `sources.φ` / `dead_sources.φ` wurde nie festgehalten, und die
+  meisten tragen keinen `ledger.φ`-Posten.
 - **15 `repo_tag`** (github.com-…, raw.githubusercontent.com): per
   CDN_ZIEL_SCHEMA §1 keine Registry-Heimat (ein Repo ist nie eine
   Release-Identität). 14 undocumented, 1 (raw.githubusercontent.com) in
@@ -65,10 +74,15 @@ des SOURCE_PORT-Grinds). Sie ist nur der grobe Lebend-/Totfilter.
 
 - **70 dead_documented `stale_pending`** → kein Registry-Urteil offen; Release
   ist Rest, Verbleib entscheidet Step 5 (mit Nachweis, nie die letzte Kopie).
-- **65 undocumented `stale_pending`** → `pending`, je einzeln im Force-Gate-
-  Grind (SOURCE_PORT.md): gehört der Netloc als lebende Quelle zu sources.φ
-  (Granit 7 — dann voller Block: tau/force/map/fields) oder ist er tot
-  (→ dead_sources.φ)? Die Erreichbarkeitstabelle ist der Vorfilter. Nicht
+- **65 undocumented `stale_pending`** → dokumentierte Kurations-Disposition
+  nach SOURCE_PORT.md §5 (Review: Force-Gate → Disposition), keine neue
+  Verfahrensart. Die Kandidaten stehen schon im Bestand (master.φ/
+  master_urls.txt/master_converted.φ); je einzeln: gehört die Quelle lebend in
+  `sources.φ` (Granit 7 — voller Block) oder ist sie tot
+  (→ `dead_sources.φ`)? Die Erreichbarkeitstabelle ist der Vorfilter. Was in
+  `sources.φ`/`dead_sources.φ`/`blocked_sources.φ` eingeht, wird als
+  `disponiert` aus dem `ledger.φ` entfernt; die 56 ohne Ledger-Posten sind
+  zuerst als `ausstehend`-Kandidaten im `ledger.φ` zu registrieren. Nicht
   entschieden → bleibt `pending` (0 honored), nie am CDN geraten.
 - **15 `repo_tag`** → §1 kein Registry-Heim; das Verdikt ist CDN-seitig
   (Step 5, nach Sicherung), kein sources.φ-Urteil.
@@ -86,5 +100,7 @@ dead_sources.φ — per-URL-Lesart bleibt bei unklaren Einzelfällen offen.
 
 Der Registry-Grind der 65 undocumented Netlocs ist eine offene Pflicht in
 `docs/TODO.md` (Auftrags-Programm, Pflege & Struktur →
-`auftrag-saubere-datenbank.md`). Step 4 (CI-Dedupe) ist gegen die gemessene
-Job-Zahl (health-check 4, kernel-flatten 18) neu zu fassen.
+`auftrag-saubere-datenbank.md`): die dokumentierte SOURCE_PORT-Disposition
+der im Bestand liegenden Kandidaten, zuerst als `ausstehend` im `ledger.φ`
+vermerkt. Step 4 (CI-Dedupe) ist gegen die gemessene Job-Zahl (health-check
+4, kernel-flatten 18) neu zu fassen.
