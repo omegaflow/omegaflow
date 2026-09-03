@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-03
-  version: 5
-  sha256: ec6372b5e5e0524c6afffdbc86ca5e7c8ec7aa3545c7471b7b596acfece1555c
+  version: 6
+  sha256: 8103d94a02067d7f7f9ac8e14a08b5ff4dcf3bb1663283899887aa119393a05b
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -486,16 +486,30 @@ continuous-drift question; the transit sweep over them stays silent (0 honored).
 P11 −8.1×10⁻⁵ of the anomaly, sign convention negative sunward); the anomaly
 (~1 Hz over the mission) sits 150–340× below the quiet-day floor (160–340 Hz
 day-median scatter). The form test (linear vs ∝t² constant-force vs Pu-238
-thermal decay, τ = 87.7 y / e-fold 126.5 y) resolves neither signature: no model
-improves on linear by > 2 %, and both hypotheses' signals lie in the 1–3 Hz
-range against a two-orders-higher floor. The test becomes discriminating only on
-sub-Hz aggregation. The sub-kHz basis improved anomaly measurability ~100× over
-the kHz chain (from 2×10⁴ to 150–340× under the floor); the remaining bottleneck
-is per-sample scatter surviving the day-median, not reduction systematics (the
-kHz chain's systematic errors — station offsets, dumps, jumps — were removed;
-that was the 100× gain). The path to the anomaly runs through regression over the
-full quiet series or week/month binned medians (√N over time), not through further
-masking. Limit, not failure; the floor is the statement (0 honored).
+thermal decay, e-fold τ = 126.5 y = T½/ln 2 with T½ = 87.7 y) resolves neither
+signature: no model improves on linear by > 2 %, and both hypotheses' signals lie
+in the 1–3 Hz range against a two-orders-higher floor. The test becomes
+discriminating only on sub-Hz aggregation. The sub-kHz basis improved anomaly
+measurability ~100× over the kHz chain (from 2×10⁴ to 150–340× under the floor);
+the remaining bottleneck is per-sample scatter surviving the day-median, not
+reduction systematics (the kHz chain's systematic errors — station offsets,
+dumps, jumps — were removed; that was the 100× gain). The path to the anomaly
+runs through regression over the full quiet series or week/month binned medians
+(√N over time), not through further masking. Limit, not failure; the floor is the
+statement (0 honored).
+
+**5.7 Why the form test cannot decide on this span.** The degeneracy is not the
+noise alone. Over the 27.4-y P10 span the Pu-238 thermal curve falls only 19.5 %
+— nearly a straight line; ∝t² over the same span separates from linear by
+tenths of a Hz against a ~1 Hz total anomaly amplitude. The three models are
+inherently near-degenerate on this mission length: no depth of the daily-median
+floor would have separated them while the total amplitude is ~1 Hz. The limit is
+double — the floor (200–300×) and the hypothesis degeneracy over the span. A
+distinguishing measurement requires a broader basis (the combined P10+P11 era, or
+a fit over the merged time line) or an anomaly larger than measured, not a lower
+floor alone. The telemetry amplitude (Stage 2) was deliberately not used: it would
+feed a non-discriminating test with the very hypothesis under examination
+(circular). Stage 2 remains — only after a significant form result (0 honored).
 
 ## 6. Reproducibility
 
@@ -537,7 +551,7 @@ orbit products. The floor, not the absence, is the statement. The raw Doppler th
 would lower the floor is present at SPDF for the Pioneer pair and is named for the
 next harvest.
 
-The NAVIO-ASCII Vollmission, pulled through the own reduction (§5.6), closes the
+The NAVIO-ASCII Vollmission, pulled through the own reduction (§5.6–5.7), closes the
 transit-sweep front at fully characterised silence: all 234 Ruck flags carry a
 measured form profile, none returns to its pre-baseline, jitter dominates the long
 segments, and the one apparently three-station-coherent candidate (P11 1981-02-09)
@@ -549,12 +563,14 @@ negative-fuzzy extraction (Deduction 40), carry 92–97 % of days below 1 kHz; a
 Ruck scan over that 1000× finer basis still finds no transit ramp. The continuous
 drift on that basis is sunward at ~10⁻⁴ of the anomaly, but the anomaly sits
 150–340× below the quiet-day floor and the ∝t²-vs-thermal form test resolves
-neither signature — both hypotheses' signals lie in the 1–3 Hz range against a
-two-orders-higher floor. The measurable, named limit is the day-median scatter
-itself, not a reduction systematic; the path to the anomaly runs through
-regression over the full quiet series, not further masking. The terrain is
-measured to its floor, and the measurability of the anomaly was improved ~100×
-along the way. Limit, not failure (0 honored).
+neither signature (§5.7): the limit is double — the day-median floor and the
+near-degeneracy of the hypotheses over the P10 span (thermal decay only 19.5 %,
+form differences of tenths of a Hz against a ~1 Hz amplitude). No depth of the
+floor would have separated the models on this mission length while the total
+amplitude is ~1 Hz. A distinguishing measurement needs a broader basis (combined
+P10+P11 era), not a lower floor alone. The terrain is measured to its floor, and
+the measurability of the anomaly was improved ~100× along the way. Limit, not
+failure (0 honored).
 
 ## References
 
