@@ -163,7 +163,10 @@ workflow procedure, reference map and path map. Work surface: `phi/pipeline/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
 `phi/dead_sources.φ`. The pre-CDN history and the finished corpora live
-under `/home/johannes/projects/archive/` (archeology + phi-research). A
+under the external archive root `archive-root` (a sibling of this repo,
+e.g. `../archive/`; physisch heute `archive-root/` —
+archeology + phi-research). The one physical address lives here only; every
+other document refers to `archive-root`. A
 new session reads exactly that one document.
 
 ## Stack
@@ -330,7 +333,7 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
 Versioning is git-only: no `vN`, `_ancestral`, or hash in the name — the
 commit SHA addresses every state; a milestone is marked via `version:` in the
 header. True historical snapshots that must coexist move to
-`/home/johannes/projects/archive/`, never version-suffixed in place.
+`archive-root/`, never version-suffixed in place.
 
 Every prose doc (handover/survey/ref/concept/paper/auftrag/blatt) opens with a header block; the
 `sha256` covers the body **without** the header (`sed '/^<!--/,/^-->/d' <f> |
@@ -347,13 +350,13 @@ sha256sum`), so two local copies are compared in one command:
     -->
 
 The receiving session archives a consumed handover to
-`/home/johannes/projects/archive/handover/` — **only after its own work is
+`archive-root/handover/` — **only after its own work is
 committed**, never before: git is the safety net against crashes and rogue
 sessions. The archive commit (`cp` + `git rm`) is the checkmark that the
 handover was read and understood. A consumed-but-unarchived handover is a
 register debt; an archived-but-uncommitted one is a violation. Raw
 consultation transcripts (arena/foreign-model chats) are archived to
-`/home/johannes/projects/archive/arena/` — their distilled findings live in
+`archive-root/arena/` — their distilled findings live in
 the standing concept docs.
 
 ## Session Hygiene — Thread Safety

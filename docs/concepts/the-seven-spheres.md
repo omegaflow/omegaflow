@@ -7,7 +7,7 @@
 
 Selbsttragend. Das Konzept sammelt die besten Kreuzungs-Ideen der
 „Sphären des Unsichtbaren"-Session (Rohtranskripte:
-/home/johannes/projects/archive/arena/*Sphaeren*). Keine der
+archive-root/arena/*Sphaeren*). Keine der
 sieben ist eine Hypothese im klassischen Sinn — jede ist eine
 **Messvorschrift**: eine geometrische Anweisung, die nur existiert, weil
 alle Domänen im selben ICRS×TDB-Block ausgewertet werden. Kein einzelner
