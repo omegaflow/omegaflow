@@ -1,0 +1,44 @@
+name: laic-verdict-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 8 2 * *"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  laic-verdict-persist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build laic_probe
+        run: cargo build -p omegaflow-measure --release --bin laic_probe
+
+      - name: Pull the compiled window store from the CDN
+        run: |
+          mkdir -p /tmp/laic
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern laic.bin --clobber --dir /tmp/laic \
+            || { echo "laic.bin CDN download void — the verdict stays unmeasured (0 honored)"; }
+
+      - name: Re-derive the LAIC direction verdict and persist the full log
+        continue-on-error: true
+        run: |
+          ./target/release/laic_probe --analyze /tmp/laic \
+            --bin /tmp/laic/laic.bin > laic_arrow_verdict.log 2>&1 || true
+          tail -n 25 laic_arrow_verdict.log
+
+      - name: Persist the verdict log to the CDN (ssd.jpl.nasa.gov)
+        if: always()
+        continue-on-error: true
+        run: |
+          gh release upload ssd.jpl.nasa.gov laic_arrow_verdict.log --clobber --repo omegaflow/sources \
+            || { echo "log upload void — the local log is the artifact"; exit 0; }
