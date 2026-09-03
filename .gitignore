@@ -53,6 +53,6 @@ cloudflare/package-lock.json
 cloudflare/.wrangler/
 
 # Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
-gate/
-mail/
-reports/
+/gate/
+/mail/
+/reports/
