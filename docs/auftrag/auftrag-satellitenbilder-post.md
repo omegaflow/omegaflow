@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-28
   status: pending
-  see-also: docs/blatt-pfeil-sturzflut-tibet.md docs/auftrag-seen-kollabgebiet.md docs/auftrag-cog-quelle.md
+  see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/auftrag/auftrag-seen-kollabgebiet.md docs/auftrag/auftrag-cog-quelle.md
 -->
 
 # Rechercheauftrag: ein freies Satellitenbild nach der Trishuli-Flut

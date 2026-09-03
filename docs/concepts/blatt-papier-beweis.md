@@ -2,8 +2,8 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: dfb35ffc9d6aa985c50a70f80645f3f9b20e80a9578df0fad69bc1d7c93dcade
-  see-also: docs/handover/handover-2026-08-21-blatt-enso-kausalpfeil.md docs/handover/handover-2026-08-21-blatt-bz-geomagnetisch.md docs/paper/laic-arrow-direction.md docs/concepts/broken-null-control.md
+  sha256: 88b46257a1309529b69b0152588be7c4d868e36059f098e3e33a6de0daac800f
+  see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
 
@@ -91,7 +91,7 @@ Null-Ensemble. Der Operator setzt die Zuschnitte (Betriebsverfassung).
 
 ## 5. Der Weg
 
-Jeder Kanal, der nicht lebt, läuft über `docs/concepts/source-port.md` — der
+Jeder Kanal, der nicht lebt, läuft über `docs/SOURCE_PORT.md` — der
 eine Pfad (queue/master.φ, ledger.φ, Force-Gate-Urteil,
 τ-Deklaration). Erst die Kanäle, dann der Probe, dann das Blatt, dann
 das Register (TODO.md-Zeile schließen, Commit, Archiv).
