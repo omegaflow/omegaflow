@@ -3092,12 +3092,16 @@ fn test_embedded_lsk_parses_and_covers_now() {
 }
 
 #[test]
-fn test_epoch_zero_ring_keeps_newest_and_counts_epoch0() {
-    let mk = |epoch: f64| super::Sample {
-        source: super::SampleSource::Source(0),
+fn test_temporal_ring_never_trims_static_under_overflow() {
+    let mk = |epoch: f64, static_sample: bool| super::Sample {
+        source: if static_sample {
+            super::SampleSource::Ephemeris
+        } else {
+            super::SampleSource::Source(0)
+        },
         epoch,
         ttl: 1e10,
-        extent: 0.0,
+        extent: if static_sample { f64::INFINITY } else { 0.0 },
         tau: 1e10,
         kernel_id: 0.0,
         force_type: 0.0,
@@ -3111,65 +3115,76 @@ fn test_epoch_zero_ring_keeps_newest_and_counts_epoch0() {
             v: [0.0, 0.0, 0.0],
         },
         val: 1.0,
-        name: "epoch0_test".into(),
+        name: "temporal_ring_test".into(),
         z: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
         phase: None,
     };
-    let mut all: Vec<super::Sample> = Vec::new();
-    for _ in 0..4 {
-        all.push(mk(0.0));
-    }
+    let static_catalog: Vec<super::Sample> = vec![mk(0.0, true), mk(0.0, true), mk(0.0, true)];
+    let mut temporal: Vec<super::Sample> = Vec::new();
     for _ in 0..2 {
-        all.push(mk(1.0e9));
+        temporal.push(mk(1.0e9, false));
     }
-    let ring = super::epoch_zero_ring(&mut all, 3);
-    assert_eq!(ring.total_in, 6);
-    assert_eq!(ring.epoch0_in, 4);
-    assert_eq!(ring.total_kept, 3);
-    assert_eq!(ring.epoch0_kept, 1);
-    assert_eq!(ring.epoch0_dropped, 3);
-    let fresh_kept = all.iter().filter(|s| s.epoch > 0.0).count();
-    assert_eq!(fresh_kept, 2, "the newest survive the cap");
+    for _ in 0..4 {
+        temporal.push(mk(0.0, false));
+    }
+    let cap = 2;
+    let ring = super::temporal_ring(&static_catalog, &mut temporal, cap);
+    assert_eq!(ring.static_in, 3, "all static samples are counted");
+    assert_eq!(ring.temporal_in, 6);
+    assert_eq!(ring.temporal_kept, 2, "only the newest temporal survive");
+    assert_eq!(ring.temporal_dropped, 4);
+    let fresh_kept = temporal.iter().filter(|s| s.epoch > 0.0).count();
+    assert_eq!(fresh_kept, 2, "the newest temporal samples survive");
+    assert_eq!(
+        static_catalog.len(),
+        3,
+        "the static domain is never trimmed"
+    );
 }
 
 #[test]
-fn test_epoch_zero_ring_under_cap_keeps_all() {
-    let mut all: Vec<super::Sample> = (0..5)
-        .map(|_| super::Sample {
-            source: super::SampleSource::Source(0),
-            epoch: 0.0,
-            ttl: 1e10,
-            extent: 0.0,
-            tau: 1e10,
-            kernel_id: 0.0,
-            force_type: 0.0,
-            absorption: 0.0,
-            advection: 0.0,
-            anchor_vmax: 0.0,
-            anchor_amax: 0.0,
-            anchor_p0: [0.0, 0.0, 0.0],
-            motion: super::Motion::Linear {
-                p: [0.0, 0.0, 0.0],
-                v: [0.0, 0.0, 0.0],
-            },
-            val: 1.0,
-            name: "epoch0_test".into(),
-            z: 0.0,
-            freq: 0.0,
-            bin_width: 0.0,
-            color_index: 0.0,
-            phase: None,
-        })
-        .collect();
-    let ring = super::epoch_zero_ring(&mut all, 10);
-    assert_eq!(ring.total_in, 5);
-    assert_eq!(ring.epoch0_in, 5);
-    assert_eq!(ring.epoch0_kept, 5);
-    assert_eq!(ring.epoch0_dropped, 0);
-    assert_eq!(all.len(), 5, "no sample drops under the cap");
+fn test_temporal_ring_under_cap_keeps_everything() {
+    let mk = |epoch: f64, static_sample: bool| super::Sample {
+        source: if static_sample {
+            super::SampleSource::Ephemeris
+        } else {
+            super::SampleSource::Source(0)
+        },
+        epoch,
+        ttl: 1e10,
+        extent: if static_sample { f64::INFINITY } else { 0.0 },
+        tau: 1e10,
+        kernel_id: 0.0,
+        force_type: 0.0,
+        absorption: 0.0,
+        advection: 0.0,
+        anchor_vmax: 0.0,
+        anchor_amax: 0.0,
+        anchor_p0: [0.0, 0.0, 0.0],
+        motion: super::Motion::Linear {
+            p: [0.0, 0.0, 0.0],
+            v: [0.0, 0.0, 0.0],
+        },
+        val: 1.0,
+        name: "temporal_ring_test".into(),
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        color_index: 0.0,
+        phase: None,
+    };
+    let static_catalog: Vec<super::Sample> = vec![mk(0.0, true), mk(0.0, true)];
+    let mut temporal: Vec<super::Sample> = (0..5).map(|_| mk(1.0e9, false)).collect();
+    let cap = 10;
+    let ring = super::temporal_ring(&static_catalog, &mut temporal, cap);
+    assert_eq!(ring.static_in, 2);
+    assert_eq!(ring.temporal_in, 5);
+    assert_eq!(ring.temporal_kept, 5);
+    assert_eq!(ring.temporal_dropped, 0);
+    assert_eq!(temporal.len(), 5, "no sample drops under the cap");
 }
 
 #[test]

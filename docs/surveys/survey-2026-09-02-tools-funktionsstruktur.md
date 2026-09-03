@@ -117,7 +117,7 @@ spk_split zip_range_extract
 
 - 86 Referenzen auf `omegaflow-work`/`omegaflow-live` (Skripte, CI, docs).
 - 49 eindeutige `--bin <name>`-Namen in 8 CI-Workflows
-  (physionet-cdn, kernel-flatten, meteo-cdn, paper-gate, s1-sar-cdn,
+  (physionet-cdn, kernel-flatten, meteo-cdn, paper-check, s1-sar-cdn,
   probe-sweep, laic-cdn, demeter-cdn).
 - AGENTS.md + README erwähnen `tools/live`/`tools/work` und die
   `cargo run -p`-Aufrufe.

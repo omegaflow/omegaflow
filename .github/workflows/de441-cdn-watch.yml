@@ -1,4 +1,4 @@
-name: de441-cdn-watchdog
+name: de441-cdn-watch
 on:
   workflow_dispatch:
   schedule:
