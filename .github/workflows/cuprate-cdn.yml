@@ -1,0 +1,37 @@
+name: cuprate-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '11 4 * * 4'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  rxs-harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest cuprate RIXS spin (Zenodo 7286412) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/spin728.zip \
+            "https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content"
+          unzip -q -o kernels/spin728.zip -d kernels/spin728
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --rixs kernels/spin728/exp_data/azimuthal_analysis \
+            --out kernels \
+            --ci-mode
+      - name: Harvest cuprate RIXS charge/plasmon (Zenodo 15179114) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/charge151.zip \
+            "https://zenodo.org/api/records/15179114/files/data.zip/content"
+          unzip -q -o kernels/charge151.zip -d kernels/charge151
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --plasmon kernels/charge151/data \
+            --out kernels \
+            --ci-mode
