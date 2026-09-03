@@ -41,7 +41,7 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 
 ### Welt-Zugang — Adoption & Papiere
 
-- `auftrag-adoption.md` — Repo public, Welt-Fassung-Branch, der Drei-Mail-
+- `auftrag-adoption.md` — Repo public, Welt-Fassung, der Drei-Mail-
   Block (Toth/Turyshev/Markwardt) als Ein-Zug; zweite Welle GIC/Korona;
   Mail-Ledger-Zeile je Mail.
 - `auftrag-bande-split.md` — 20-s-Bande: two-/three-way-Split + die drei
@@ -82,6 +82,33 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   verteilen (main-Reinigung).
 - `auftrag-sicherung-risiko-heime.md` — Sicherung der
   einzigen-Kopie-Risiko-Heime.
+
+### Register-Lücken des Papier-Korpus (2026-09-03)
+
+Drei Reste aus der Blätter-Übergabe (`~/Schreibtisch/paper`) sind in keinem
+Auftrag erfasst; die tauben Anker des Auftrags-Programms sind offene
+Register-Pflichten, keine stillen Schwebestände:
+
+- **Leitfrage A — RNG-Umfang corpusweit** (die teuerste offene Unbekannte):
+  gilt die Surrogat-/RNG-Korrektur nur dem Takens-Pfad oder der geteilten
+  Surrogat-Maschinerie? Antwort aus te.rs / Commit-Historie; entscheidet
+  den solar-cycle-Re-Run gegen die Markierung. pending.
+- **Versions-/date-Disziplin mit sha-Link je Edit**: fünf Edits bisher ohne
+  verlinkten ersetzten sha — der ersetzte sha gehört ins Register, bevor
+  weitere Rewrites laufen. pending.
+- **text-as-data-pioneer**: p_emp = 0,08 am Raster bei minimalem p = 0,04
+  (24 Shuffles) — 200 Shuffles kosten nichts. pending.
+- **Referenzierte, hier fehlende Dokumente** — Verbleib geklärt (2026-09-03):
+  die Herkunft der 20-s-These (`handover-2026-08-30-zwanzig-sekunden-herkunft`)
+  ist als Provenienz-Abschnitt (§5, Stopp-Punkt = Deduktion 11, 8767 =
+  Turyshev-&-Toth-Zählung, Provenienz-Datenbank nicht mehr vorhanden) in
+  `docs/concepts/das-eine-instrument.md` eingearbeitet — konsumiert. Die
+  übrigen per see-also zitierten legacy-Dokumente (`docs/audit/*`,
+  `survey-2026-08-30-provenienz-karte`) sind nicht einstellbar: sie tragen
+  Alt-Ordnungs-/Hash-/Alt-Paper-Namen und tote Anker, die hier nicht bestehen;
+  ihr Messgehalt ist als Kleinpass-/Auftrags-Pflicht registriert, kein
+  Verbindungs-Kopie. `auftrag-merge-fix-welle` ist abgeschlossen (eigenes
+  Ergebnis-Audit: die drei Punkte stehen bereits auf main) — konsumiert.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
