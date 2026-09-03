@@ -173,6 +173,19 @@ archeology + phi-research). The one physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.
 
+### CDN-Manifestation — eine Session-Duty (Sitzung nicht mehr nur lokal)
+
+The CI manifestator (`kernel-flatten.yml`, `--ci-mode`) is the only writer of
+the canonical CDN assets. A session that harvests a **new or changed dataset**
+does not close that work while the dataset exists only on the local machine:
+it is a register duty to add/update the source in `phi/sources.φ` so the CI
+manifestator brings the asset to the shared CDN (the durable home every later
+session reads). A finished-but-unmanifested harvest is a register debt, not a
+checkmark. Consequence of the code as built: every compiler gates the CDN
+upload behind an explicit `--ci-mode` — a local run alone never feeds the
+shared memory. The session closes the harvest only when the asset is
+registered for manifestation (or the operator names the pending explicitly).
+
 ## Stack
 
 Rust `std`-only + `curl`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files.
