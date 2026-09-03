@@ -100,6 +100,8 @@ der von der Reduktion selbst benannte Blocker für den Ruck-Transit-Sweep.
 Siehe `auftrag-dunkle-materie-front-c.md`. PNAV-Record (TRANS/RCVR1/linkmode,
 PDPL unberührt) + `pioneer_navio_residuum` (Stationsmodell + displaced-count-
 Mask) gebaut. Gemessen: Per-Station-Floor fällt von ~5e5 Hz auf 2,8–19 kHz;
-serialisierte PNVR/PNDM-Tagesmediane konsumierbar. Offen: Atom 3 — korrupte-
-Tage-Masken (Deduktion 0/10) vor dem Ruck-Scan, dann liefert er Transit-Sprünge
-statt Segment-Rauschens.
+serialisierte PNVR/PNDM-Tagesmediane konsumierbar. Atom 3 (Commit 50625aa):
+Deduktion-10-Tagesmask (4×p90), p10 5 / p11 15 corrupt-day Cluster verworfen;
+Ruck-Scan über gemaskte Tagesmediane läuft, Flaggen als Kandidaten gegen den
+lokalen Floor — kein Detektions-Anspruch; sub-kHz-Ziel bleibt am
+~1,5-kHz-Streuungsboden (0 honored).
