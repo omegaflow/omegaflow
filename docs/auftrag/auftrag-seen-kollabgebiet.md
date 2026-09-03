@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-27
   status: pending
-  see-also: docs/blatt-pfeil-sturzflut-tibet.md docs/auftrag/auftrag-cog-quelle.md docs/auftrag/auftrag-abfluss-trishuli.md docs/specs/livefeed-gate.md
+  see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/auftrag/auftrag-cog-quelle.md docs/auftrag/auftrag-abfluss-trishuli.md docs/specs/livefeed-gate.md
 -->
 
 # Rechercheauftrag: die echten Gewässer im Lirung-Kollabgebiet

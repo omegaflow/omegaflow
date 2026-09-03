@@ -20,17 +20,15 @@ fn tracked_files(root: &Path) -> Vec<PathBuf> {
         .collect()
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let root = args.get(1).cloned().unwrap_or_else(|| ".".to_string());
-    let files = tracked_files(Path::new(&root));
+fn scan(root: &Path) -> (usize, usize) {
+    let files = tracked_files(root);
 
     let mut missing = 0usize;
     let mut absolute = 0usize;
     for f in &files {
         let rel = f.to_string_lossy().to_string();
         if rel.contains("path_reference_scan.rs")
-            || rel.contains("/docs/reference/")
+            || rel.contains("docs/reference/")
             || rel.starts_with("gate/")
             || rel.starts_with("mail/")
             || rel.starts_with("reports/")
@@ -40,7 +38,7 @@ fn main() {
         let full = if Path::new(&rel).is_absolute() {
             f.clone()
         } else {
-            Path::new(&root).join(f)
+            root.join(f)
         };
         let is_markdown = f.extension().map(|e| e == "md").unwrap_or(false);
         let content = match fs::read_to_string(&full) {
@@ -73,7 +71,7 @@ fn main() {
                 if cleaned.is_empty() {
                     continue;
                 }
-                let resolved = resolve(&root, &full, &cleaned);
+                let resolved = resolve(root, &full, &cleaned);
                 if !resolved.exists() {
                     missing += 1;
                     println!("MISS {}:{}  {}  ->  {}", rel, n, label, cleaned);
@@ -87,6 +85,13 @@ fn main() {
         missing,
         absolute
     );
+    (missing, absolute)
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let root = args.get(1).cloned().unwrap_or_else(|| ".".to_string());
+    let (missing, absolute) = scan(Path::new(&root));
     if missing > 0 || absolute > 0 {
         std::process::exit(1);
     }
@@ -150,10 +155,10 @@ fn absolute_paths(line: &str) -> Vec<&str> {
     out
 }
 
-fn resolve(root: &str, file: &Path, target: &str) -> PathBuf {
+fn resolve(root: &Path, file: &Path, target: &str) -> PathBuf {
     let t = target.trim();
     if t.starts_with('/') {
-        return PathBuf::from(root).join(t.trim_start_matches('/'));
+        return root.join(t.trim_start_matches('/'));
     }
     if let Some(dir) = file.parent() {
         let candidate = dir.join(t);
@@ -161,5 +166,30 @@ fn resolve(root: &str, file: &Path, target: &str) -> PathBuf {
             return candidate;
         }
     }
-    PathBuf::from(root).join(t)
+    root.join(t)
+}
+
+#[cfg(test)]
+fn repo_root() -> PathBuf {
+    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
+    manifest.parent().unwrap().parent().unwrap().to_path_buf()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn committed_tree_has_no_broken_references_and_no_absolute_paths() {
+        let root = repo_root();
+        let (missing, absolute) = scan(&root);
+        assert_eq!(missing, 0, "every committed reference resolves in-repo");
+        assert_eq!(absolute, 0, "no absolute path may enter the committed tree");
+    }
+
+    #[test]
+    fn absolute_path_detection_names_leading_home() {
+        let found = absolute_paths("wohnt in /home/johannes/projects/omegaflow/ dir");
+        assert_eq!(found, vec!["/home/johannes/projects/omegaflow/"]);
+    }
 }

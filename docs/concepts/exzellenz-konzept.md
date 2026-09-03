@@ -5,7 +5,7 @@
   version: 1
   sha256: d9dcb8c0ca7c9506fad0430c37debca16c9ae7d0020028edf683576561df8c39
   status: live
-  see-also: docs/paper/ docs/surveys/survey-2026-08-27-axiom-gate-papers.md granit.md
+  see-also: docs/paper/ docs/granit.md
 -->
 
 # OMEGAFLOW EXZELLENZ-KONZEPT

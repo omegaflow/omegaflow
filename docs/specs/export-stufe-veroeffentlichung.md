@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   status: live
-  see-also: docs/concepts/exzellenz-konzept.md docs/surveys/survey-2026-08-27-axiom-gate-papers-external.md tools/src/bin/export_latex.rs
+  see-also: docs/concepts/exzellenz-konzept.md tools/science/src/bin/export_latex.rs
 -->
 
 # Export-Stufe: von omegaflow zur Welt
@@ -50,7 +50,7 @@ Die arXiv-Verbindung hat zwei Seiten:
 
 ## Das Werkzeug
 
-`tools/src/bin/export_latex.rs` (Rust std-only, keine externen Crates) liest
+`tools/science/src/bin/export_latex.rs` (Rust std-only, keine externen Crates) liest
 einen Paper-Body, verwirft den HTML-Header und überführt den Rest 1:1 nach LaTeX.
 
 ```bash
