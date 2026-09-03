@@ -1,4 +1,4 @@
-name: healthcheck
+name: health-check
 on:
   workflow_dispatch:
   schedule:
