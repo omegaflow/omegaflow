@@ -1,0 +1,11 @@
+{
+  "id": "japan-tsunami-2026",
+  "source": "open-meteo archive-api",
+  "cdn": "archive-api.open-meteo.com",
+  "window": ["2026-06-01", "2026-07-31"],
+  "stations": [
+    {"id": "fukushima", "lat": 37.7509, "lon": 140.4677},
+    {"id": "sendai", "lat": 38.2682, "lon": 140.8694},
+    {"id": "iwaki", "lat": 37.0505, "lon": 140.8877}
+  ]
+}

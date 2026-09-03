@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# session-protokoll: niemand pusht auf main — das Doppel-Wort ist Sache der Leitstelle.
+set -euo pipefail
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  branch="${remote_ref#refs/heads/}"
+  if [ "$branch" = "main" ]; then
+    echo "session-protokoll: push auf main ist gesperrt — main trägt nur das Doppel-Wort (Leitstelle + Operator)."
+    echo "Pushen nur deinen eigenen Branch; das Merge auf main macht die Leitstelle."
+    exit 1
+  fi
+done
+
+exit 0

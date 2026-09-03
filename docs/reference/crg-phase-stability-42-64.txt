@@ -1,0 +1,415 @@
+Coherent Reference Generator Phase Stability
+V. N. Karwar
+Communications Systems Research Section
+
+The extent of phase noise introduced by the coherent reference generator (CRG) unit
+in the DSN's Frequency and Timing Subsystem (FTS) has not so far been measured or
+analyzed. This report calculates approximate phase stability estimates for the CRG. The
+method used involves estimating the phase noise introduced by CRG components based
+upon measurements made in the past on similar components in other parts of the FTS
+and obtaining the CRG phase noise from the component phase noises.
+Three estimates of phase stability are calculated - the fractional frequency change for
+a 5°C step in temperature. the phase noise spectral density and the Allan standard
+deviation. It is found from these estimates that the CRG phase stability is better than that
+of the H-maser physics unit + receiver, which has been measured in the past. Thus, the
+first step in improving FTS phase stability would be to make improvements in the
+H-maser physics unit + receiver. These results are corroborated by indirect clock stability
+estimates calculated from Doppler data by R. W. Hellings.
+
+I. Introduction
+The DSN's Frequency and Timing Subsystem (FTS) may be
+divided into three separate subsystems - the primary frequency unit called the physics unit (such as H-maser or Cs
+standard), the receiver, and the coherent reference generator
+(CRG). The first two of these together, i.e., the physics unit +
+receiver, will be referred to as the H-maser system or the Cs
+system as appropriate. All three subsystems taken together will
+be referred to as the H or the Cs clock. The receiver that goes
+with the H-maser system is different from the one that goes
+with the Cs system. However, the same CRG is used in the
+DSN, no matter whether the H-maser or the Cs system is used.
+222
+
+So far, measurements of phase noise have been made on the
+Cs system and on the H-maser system, but none on the CRG
+(or on the receiver portion alone for either the H-maser or the
+Cs system). In order to improve the frequency stability of the
+FTS, it is necessary to identify the prime sources of phase/
+frequency instability in the FTS. To do this, the first step is to
+estimate the phase errors of the three subsystems separately,
+so that improvement can first be made in the poorest of the
+three subsystems.
+This report describes an attempt to estimate the phase
+instability introduced by the CRG alone and identifies areas
+needing further work. While the CRG phase noise estimates
+
+given here are very approximate, they do provide a starting
+point for better estimates.
+
+II. eRG D(escription
+The CRG consists of the circuitry needed to synthesize and
+distribute signals of frequencies 0.1, 1, 5, 10, 10.1, 45, 50,
+55 MHz. The eRG inputs are signals offrequencies 0.1, 5 and
+10 MHz, derived from the primary frequency unit + receiver.
+A block diagram of the CRG is given in Fig. 1 (Fig. 2.1 of
+Ref. 1).
+
+Since temperature-induced phase drifts are not independent, the overall 1).1/1 introduced in a cascade of identical
+components is just the sum of the individual D.fJfvalues. If the
+components are of different types, the 1).1/f's may actually
+tend to cancel each other; however, they are assumed to be
+additive in making the estimates here. The S'" (10 Hz) values
+are also summed, since they represent noise powers that are
+uncorrelated. The a y (1 s) values are proportional to (S",
+(10 Hz))1/2, so that the overall a y (1 s) is obtained as the
+root-sum-square (rss) value of the individual a y (1 s) values.
+
+IV. Sources of Phase Noise
+III. Phase Noise Measures
+Three measures of phase noise have been calculated here
+(wherever possible). They are:
+
+(1) D.I/f, the fractional frequency variation for a 5°C temperature step. The box in which the CRG is located is
+assumed to have a response time of T = 2000 s. Phase
+drifts (1).4» with temperature are often measured or
+specified. From these, 1).1/1 can be calculated as
+
+1).1 = 2 X 1).4> X _I_
+I
+
+3
+
+T
+
+21r/o'
+
+(1)
+
+where 1).4> is in radians, 10 is the nominal frequency,
+and T ::: 2000 s.
+(2) S'" (10 Hz), the one-sided spectral density of phase
+noise S",(/) evaluated at I = 10 Hz. In all cases considered here, the noise is assumed to be flicker of phase;
+i.e.,
+(2)
+so that specifying S'" (10 Hz) is sufficient to specify the
+whole ,~¢(f) curve. This asumption is justified by measurement for multipliers (Ref. 2) and distribution
+amplifiers (Ref. 3).
+(3) a/I s), the Allan standard deviation a/r) evaluated
+for r =: 1 s. This is calculated from S",(f) , by using the
+expression given in Ref. 4 and corrected in Ref. 5.
+After expressing the constant in Sil) in terms of S'"
+(10 Hz), this gives
+
+There are several components in the coherent reference
+generator (CRG), each potentially a noise source. Unless otherwise stated, "noise" will mean "phase noise" throughout.
+There are no frequency or phase control loops involving voltage controlled oscillators (YCOs) in the CRG, so that one of
+the largest of the usual sources of noise is not present in the
+CRG, as it is in the receiver. However, there are various
+components, each of which introduces small amounts of noise.
+In roughly descending order of phase noise introduced, they
+are: tuned amplifiers and crystal filters, distribution amplifiers,
+power splitters, mixers and multipliers.
+YCOs are noisy because they convert voltage noise, from
+whatever source present at their inputs, into phase noise. The
+other components do not have such an I/O property and hence
+are less noisy.
+Tuned amplifiers and crystal filters mainly introduce phase
+drifts with temperature changes. This is because their transfer
+functions (both amplitude and phase) are narrowband around
+a center frequency that changes with temperature as the (L, C)
+component values defining this center frequency change with
+temperature. This is especially true with crystal filters.
+Distribution amplifiers (DA) usually introduce noise
+because of the driver amplifiers preceding and/or following the
+power divider/splitter present in the DA. All driver amplifiers
+now used in the coherent reference generator (CRG) are
+Class A amplifiers operating in the linear region of their characteristics, which are much less noisy than Class C amplifiers.
+Power splitting is usually accomplished by transformers
+with the proper turns ratios - these usually introduce negligible phase noise.
+
+a (r) = 2.42 (S (10 HZ))1/2 (1 + 0.13 In r)I/2 (3)
+y
+
+101'
+
+'"
+
+where 10 is the nominal frequency, and r is the observation interval for calculating Allan standard deviation.
+
+V. Direct Method for Estimating Phase Noise
+The amounts of phase noise introduced by various components in the CRG are difficult to estimate correctly, because
+223
+
+phase noise measurements on most of these components have
+not been made, nor is any analysis available. Inquiries with the
+manufacturers of several of the components (crystals, crystal
+filters, multipliers) also did not produce any results, except in
+the case of one multiplier.
+The calculations of CRG phase noise described here are
+obtained by including noise estimates for only those of the
+components that have some sort of estimate/measurement
+available, and assuming that all others are zero, so that an
+estimate of lower bound on the CRG phase noise can be
+obtained. Even these lower bounds should not be taken as
+rigid, because the phase noise for many of the components has
+not been measured for the specific models used. in the CRG,
+but extrapolated from measurements on similar components in
+other subsystems (such as in the maser receiver).
+
+with one or two stages; so ARI is probably a little worse than
+AR2. On the other hand, ARI has feedback that would reduce
+the noise to some extent, so that on the whole, ARI may be
+assumed to be about as noisy as AR2.
+Then the coherent reference generator (CRG) distribution
+amplifier noise is estimated as the noise introduced by two
+driver amplifiers like AR2 cascaded together, according to the
+rules for cascading given in Section III.
+3. Frequency multipliers. There are two (frequency)multipliers used in the CRG. The first is a X2 multiplier, which is a
+harmonic generator, followed by a tuned amplifier. However,
+as can be seen in Fig. 1, this X2 multiplier is used only as a
+backup in generating a lO-MHz signal from a 5-MHz input.
+What is primarily used is an independent lO-MHz input. For
+this reason the effects of this multiplier and tuned amplifier
+(on which no data are available) are not important.
+
+A. The Components
+1. Tuned amplifiers and crystal filters. Unfortunately,
+there are no data available on these components, not even with
+the manufacturers. These are important sources of phase drift
+with temperature, but if the temperature is controlled, the
+phase noise they introduce may be small. However, the coherent reference generator (CRG) is not typically operated in a
+temperature-controlled environment.
+Tuned amplifiers/crystal filters are used only in generating
+the 10. I-MHz, 45-MHz and 55-MHz outputs, but not the other
+outputs. Thus the phase noise for these outputs will be higher
+than the numerical estimates given here, which don't take the
+tuned amplifiers and crystal filters into account.
+2. Distribution amplifiers. Phase noise estimates for the
+CRG distribution amplifiers (DAs) are calculated from phase
+drift and Sq, (10-Hz) measurements made for DAs used in the
+H-maser reciever. The DAs in the H-maser receiver consist of
+an noway (usually 12-way) power splitter, where each of the n
+output ports is followed by a driver amplifier (labeled AR2
+through AR(n + I». The distribution amplifiers in the CRG,
+on the other hand (see Fig. 2), consist of an input driver
+amplifier (ARI) followed by the power splitter and driver
+amplifiers structure used in the receiver DAs.
+The input driver amplifier ARI is different in design from
+the output driver amplifiers typified by AR2. It is assumed
+here that the measured distribution amplifier noise in the
+receiver (Refs. 3, 6) comes entirely from the output driver
+amplifiers such as AR2; this neglects the power splitter noise,
+which is reasonable as stated in Section 4. It is then assumed
+that ARI has the same noise as AR2. This may not be
+accurate, since ARI is an OP AMP (operational amplifier) with
+many stages of amplification, while AR2 is a hybrid amplifier
+224
+
+The second multiplier used is a X 10 multiplier from Zeta
+Laboratories. This is a chain-type multiplier; i.e., it uses a
+chain of harmonic generators, filters and mixers to get the
+desired multiplication. The !::J.f/f for a 5°C step in temperature
+for this multiplier was estimated from Eq. (1) by using !::J.¢
+data supplied by Zeta Laboratories. The Sq, (10 Hz) and the a y
+(1 s) for the multiplier were estimated based on measured Sq,
+(10 Hz) data (Refs. 2, 7) for a JPL-built multiplier which had a
+somewhat similar design (Le., it was a chain-type multiplier, as
+opposed to a step-recovery diode or phase-locked loop type).
+The JPL multiplier was a X14 multiplier, and appropriately
+scaled-down values were used to estimate the noise on the X10
+multiplier used here.
+
+B. Phase Noises for Coherent Reference
+Generator (CRG) Outputs
+Using the phase noise data for individual components
+described in Section V-A, the phase noises for the various CRG
+outputs can be estimated as follows:
+
+1. The 0.1, 1, 5, 10 MHz outputs. For these outputs, the
+only significant contributions to phase noise are from an input
+driver (Dj) and a distribution amplifier (DA) - there are no
+mixers or multipliers or filters used in generating these outputs. As an example, consider the O.I-MHz output. In the
+block diagram (Fig. 1), the input driver D j is labeled
+9455393-1. The distribution amplifier (DA) is A4A2 or A4A3.
+Detailed block diagrams of A4A2 and A4A3 show a DA like
+the one in Fig. 2. Thus the phase noise for this group of CRG
+outputs is given in Table 1. For uniformity, all data given are
+referenced to a 100-MHz output; Le., the phase noise spectral
+density is what would be present if the outputs were multiplied in frequency, by a perfect multiplier, to 100 MHz.
+
+2. Other outputs. All the other CRG outputs have a minimum phase noise given by Table 1, because they all include a
+DA and an input driver. However, the 10.1-, 45- and 55-MHz
+outputs will have a larger noise because they all include crystal
+filters - this is because the 1O.I-MHz signal is obtained by
+mixing the 10- and O.I-MHz inputs, while the 45- and 55-MHz
+signals are obtained by mixing 50-MHz and 5-MHz inputs, and
+the mixed outputs are filtered by a crystal in the 1O.1-MHz
+case and a crystal filter in the 45-MHz and 55-MHz cases. No
+estimates are available for the extent of noise introduced by
+the filtering.
+The 45-, 50- and 55-MHz signals will have, in addition to
+the noise in Table 1, a component due to the X 10 multiplier
+used in generating the 50-MHz signal from a 5-MHz input. The
+phase estimates for this multiplier are given in Table 2. Thus,
+we get Table 3 for the 10.1-, 45-, 50-, and 55-MHz CRG
+outputs.
+
+VI. Indirect Estimates of Coherent Reference
+Generator (CI=lG) Noise
+A. Very LOlng Baseline Interferometer
+(VLBI) Experiments
+
+Some groups performing VLBI experiments have noticed
+that on days when the ICs clock is used by the DSN, the phase
+data taken in the VLBI measurements are worse than when the
+H-maser clock is used. This would indicate that, since the same
+CRG is used in both cases, (with only the Cs phYSics unit +
+receiver being replaced by the H-maser physics unit + receiver),
+then the CRG stability is at least about as good as the worst of
+the two - the Cs system and the H-maser system. These results
+from the VLBI experiments are not very quantitative or very
+reliable, since the purpose of the experiments was not to
+estimate the noise on the primary standard and, in fact, the
+experimenters were not always aware of what frequency standard was in use on a particular day. Controlled VLBI experiments, with the same (celestial) source being observed on two
+successive days, with the Cs clock used on one day and the
+H-maser clock on the other day, could perhaps be useful. Such
+experiments would help in getting an indirect estimate of CRG
+stability.
+B. Doppler Tracking Calculations
+
+R. W. Hellings (Ref. 8) made calculations with Doppler
+tracking data from Voyager (1979) and Viking (1977) that
+enable estimation of the primary standard phase noise. In
+1977, the Cs clock was used, while in 1979, the H-maser clock
+was used. Hellings was able to infer the phase on the clock by
+the following method:
+
+In two-way tracking of spacecraft, the ground clock (frequency standard) controls the transmitter frequency v as well
+as providing the reference for measuring the Doppler shift Av
+on the return signal. In normal DSN operation, the received
+signal is tracked in a phase-locked loop, the clock being used
+to beat the received frequency down to the Doppler tone. If
+there is a fluctuation 8v =q(t) in the frequency produced by
+the clock, then since the fluctuation is also present on the
+return signal a round-trip light time (RTLT) later, the Doppler
+record has a noise term given by
+
+yet) • -q(t) + q It - (
+
+~o )
+
+I
+
+where r 0 is the distance between the transmitter and the
+spacecraft.
+It can be seen that auto correlating the Doppler tone (after
+subtracting the predicted Doppler) will give rise to a negative
+peak in the autocorrelation function (acf) at t =2r ole having
+half the magnitude of the peak occurring at t = O.
+
+Other noises like white phase system noise will not produce
+this second peak, because this noise is present only on the
+return signal. Other noises like plasma and tropospheric noise
+have a spectrum that is quite different from the flicker of
+phase or frequency that is characteristic of clock noise, and
+hence the autocorrelation function is quite different. Details
+of spectra are given in Ref. 11. Thus, the clock noise can be
+identified and measured.
+In obtaining both the 1977 and the 1979 data, the DSN
+64-m-diameter antennas and S-band transmission frequencies
+were used. The S-band frequency for the 64-m subnetwork is
+derived from the 50-MHz CRG output by a multiplication by
+48 in a Dana synthesizer. There have been no major changes in
+the multiplier or the wherent reference generator (CRG)
+between 1977 and 1979. Thus the difference between the
+clock noise results of Hellings in 1977 and 1979 shows the
+difference between the 50-MHz output obtained from the Cs
+standard + CRG system and the H-maser + CRG system. From
+the 1977 data, the clock phase noise as measured by its
+standard deviation was determined to be 10- 13 ; from the
+1979 data, the clock phase noise was determined to be below
+the instrument sensitivity, i.e., < 3 X 10- 14 • This order-ofmagnitude difference is about the same as the ratio of phase
+stability of the H-maser + receiver to the phase stability of the
+Cs standard + receiver, as determined by previous measurements. This supports the idea that the CRG phase stability is
+at least about as good as the stability of the Cs standard +
+receiver.
+225
+
+VII. Conclusions
+
+VIII. Suggested Areas of Investigation
+
+The CRG phase noise has been estimated based on data
+about components similar to the CRG components. The phase
+noise calculations given here, taken together with the measured data (Refs. 9, 10) for the H-maser + receiver, of
+
+A. Direct Measurements
+
+iJ.f !
+f soc step'
+
+5 X 10- 13 ,S</> (10 Hz) = -98 dB,
+
+a (1 s) = 3 X 10- 13
+y
+
+show that the coherent reference generator (CRG) phase stability, at least for the 0.1-, 1-, 5-, 10-, 50-MHz outputs, is
+better than that of the H-maser + receiver system.
+The phase noise on the other CRG outputs (10.1, 45,
+55 MHz) is expected to be higher, but by an unknown
+amount, because of crystal filter instabilities that are
+unknown.
+The calculated results for the 50-MHz output corroborate
+the results that have been obtained indirectly by Hellings from
+Doppler data.
+However, all the estimates here are tentative, because they
+are based on measurements not made directly on CRG components. The inferences of CRG noise from Hellings' calculations
+may also be incorrect, because the data were taken in 1977 for
+the Cs-based clock and in 1979 for the H-maser based clock,
+and many FTS components may have been changed during the
+period between the two measurements, although this does not
+appear to be the case.
+
+226
+
+No measurements have been made either on the CRG as a
+whole or on most of its components. The best way to find the
+CRG stability would be to make direct measurements on it.
+The equipment needed to make this kind of measurement is
+not yet available but is soon expected to be.
+Alternately, the phase noises of individual CRG components can be measured, as has been done for some of the
+H-maser receiver components. In particular, the crystals and
+crystal filters used in the CRG should be measured for phase
+stability, since no estimates for these are available, and they
+are expected to be important noise sources in the CRG. The
+overall CRG stability can be calculated once the individual
+component stabilities are correctly known.
+B. Indirect Measurements
+It would be worthwhile to set up a VLBI experiment
+specifically for the purpose of measuring the relative stability
+of the Cs and H-based clocks. This would be useful if a direct
+estimate of CRG noise cannot be made.
+
+This kind of experiment would require using the two standards separately for observing the same celestial source. The
+two sets of measurements would have to be made within a
+short period of each other, so as to minimize errors due to
+different paths to the source. Intermediate phase data, not
+normally preserved in VLBI experiments, may need to be kept
+in order to compare clock stabilities.
+The direct method of CRG stability estimation would be
+preferable because there are too many variables, especially
+atmospheric effects on phase, that cannot be correctly
+accounted for in VLBI experiments.
+
+Acknowledgments
+The author would like to thank Roger Meyer for his many helpful discussions and
+suggestions throughout; the discussions with Paul Kuhnle, Ronald Hellings and George
+Madrid are also gratefully acknowledged.
+
+References
+1. Coherent Reference Generator Technical Manual, TM 509236, Jet Propulsion Laboratory, Pasadena, Calif., February 1976. (an internal document).
+2. Lutes, G., et al. "Hydrogen Maser: Low Phase Noise, L-Band Frequency Multiplier,"
+TR 32-1526, Vol. VII, pp. 81-83, Jet Propulsion Laboratory, Pasadena, Calif.,
+February 1972.
+3. Meyer, R., and Sward, A., "Frequency Generation and Control: The Measurement of
+Phase Jitter," DSN Space Programs Summary 37-64, Vol. II, pp. 55-64, Jet Propulsion Laboratory, Pasadena, Calif., August 1970.
+4. Barnes, J. A., et aI., "Characteristics of Frequency Stability," NBS Technical Note

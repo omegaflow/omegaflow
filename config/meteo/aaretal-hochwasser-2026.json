@@ -1,0 +1,11 @@
+{
+  "id": "aaretal-hochwasser-2026",
+  "source": "open-meteo archive-api",
+  "cdn": "archive-api.open-meteo.com",
+  "window": ["2026-07-01", "2026-07-31"],
+  "stations": [
+    {"id": "bern", "lat": 46.9481, "lon": 7.4474},
+    {"id": "interlaken", "lat": 46.6863, "lon": 7.8632},
+    {"id": "meiringen", "lat": 46.7276, "lon": 8.1866}
+  ]
+}

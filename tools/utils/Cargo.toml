@@ -1,0 +1,9 @@
+[package]
+name = "omegaflow-utils"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "readers and generic utilities"
+
+[dependencies]
+omegaflow = { path = "../.." }

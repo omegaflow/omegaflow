@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# session-protokoll: die sieben Fragen, git-beobachtbar, vor jedem Commit.
+set -euo pipefail
+
+branch="$(git branch --show-current)"
+
+if [ "$branch" = "main" ]; then
+  echo "session-protokoll: main fasst nur das Doppel-Wort an (Session + Operator)."
+  echo "Committen auf deinem Branch; ein main-Commit mit Wort: git commit --no-verify."
+  exit 1
+fi
+
+if ! echo "$branch" | grep -Eq '^[a-z]+-[a-z]+$'; then
+  echo "session-protokoll: Zweigname »$branch« ist kein Strand (substantiv-verb, zwei Wörter)."
+  exit 1
+fi
+
+url="$(git remote get-url origin 2>/dev/null || true)"
+if [ -z "$url" ] || ! echo "$url" | grep -q 'omegaflow/omegaflow'; then
+  echo "session-protokoll: origin fehlt oder zeigt nicht auf omegaflow/omegaflow."
+  exit 1
+fi
+
+marker=""
+if [ -f .omegaflow-strand ]; then
+  marker="$(tr -d '[:space:]' < .omegaflow-strand)"
+fi
+if [ -n "$marker" ] && [ "$marker" != "$branch" ]; then
+  echo "session-protokoll: dein Strang ist »$marker«, aber du committest auf »$branch«."
+  echo "Das ist nicht dein Branch — geh zurück in deinen eigenen Worktree."
+  exit 1
+fi
+if [ -z "$marker" ]; then
+  echo "session-protokoll: kein Strang-Marker (.omegaflow-strand) — dein Strang ist nicht erklärt."
+fi
+
+partial="$(LC_ALL=C comm -12 <(git diff --cached --name-only | LC_ALL=C sort) <(git diff --name-only | LC_ALL=C sort))"
+if [ -n "$partial" ]; then
+  echo "session-protokoll: diese Dateien sind teils gestaged, teils nicht — fremde Arbeit?"
+  echo "$partial"
+fi
+
+exit 0

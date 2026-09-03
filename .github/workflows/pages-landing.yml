@@ -1,0 +1,35 @@
+name: pages-landing
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'static/**'
+      - 'CNAME'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        mkdir -p _site
+        cp static/landing.html _site/index.html
+        cp CNAME _site/CNAME 2>/dev/null || true
+        dd if=/dev/urandom of=_site/probe_64k.bin bs=1024 count=64
+        ls -lh _site
+    - uses: actions/configure-pages@v4
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
+    - uses: actions/deploy-pages@v4
+      id: deployment
