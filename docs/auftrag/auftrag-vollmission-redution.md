@@ -125,4 +125,9 @@ Gate gegen die Positiv-Kontrolle: der bekannte P11-1979-Saturn-Encounter trägt
 dieselbe Form wie die Artefakte (holds + 147 Zitter) — am kHz-Floor trennt der
 Form-Klassifikator ein echtes Gravitations-Ereignis nicht von einem Artefakt.
 Keine saubere sub-kHz-Transit-Signatur; der Grund ist der Streuungsboden, nicht
-bewiesene Artefakt-Natur jedes Rucks (0 honored).
+bewiesene Artefakt-Natur jedes Rucks (0 honored). Letzte offene Zelle
+P11-1981-02-09 (Commit 2fa8215) Form-gemessen: Zittern ±46 kHz dominiert den
+−156-Hz-Schritt → Artefakt, keine Rampe; der Drei-Stationen-„Schritt" war ein
+Ein-Tages-Tagesmedian. 234/234-Formfeld geschlossen. Granit-Satz: die Stille hat
+eine Gestalt — die Transit-Form ist in der Ereignis-Verteilung strukturell
+abwesend, gemessen nicht behauptet (0 honored).
