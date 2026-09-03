@@ -1,6 +1,6 @@
-use omegaflow::archivar::goes::{COMP_XRSA, COMP_XRSB, parse_bin, write_bin};
+use omegaflow::archivar::goes::{parse_bin, write_bin, COMP_XRSA, COMP_XRSB};
 use omegaflow::cdn::upload_asset;
-use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
+use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::collections::HashMap;
 use std::process::Command;
@@ -194,8 +194,12 @@ fn main() {
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
-    let cache_dir = arg_value(&args, "--cache-dir")
-        .unwrap_or_else(|| "/tmp/omegaflow_goes_r_cache".to_string());
+    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omegaflow_goes_r_cache")
+            .to_string_lossy()
+            .into_owned()
+    });
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{cache_dir}: cache dir stays uncreatable");
         std::process::exit(1);
@@ -247,16 +251,14 @@ fn main() {
         let total_rows = Arc::clone(&total_rows);
         let total_kept = Arc::clone(&total_kept);
         let cache_dir = cache_dir.clone();
-        workers.push(std::thread::spawn(move || {
-            loop {
-                let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
-                let Some((sat, y, m, d)) = units.get(idx).copied() else {
-                    break;
-                };
-                let (rows, kept) = harvest_day(sat, y, m, d, &cache_dir, &buckets);
-                total_rows.fetch_add(rows as i64, Ordering::SeqCst);
-                total_kept.fetch_add(kept as i64, Ordering::SeqCst);
-            }
+        workers.push(std::thread::spawn(move || loop {
+            let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
+            let Some((sat, y, m, d)) = units.get(idx).copied() else {
+                break;
+            };
+            let (rows, kept) = harvest_day(sat, y, m, d, &cache_dir, &buckets);
+            total_rows.fetch_add(rows as i64, Ordering::SeqCst);
+            total_kept.fetch_add(kept as i64, Ordering::SeqCst);
         }));
     }
     for w in workers {

@@ -1,7 +1,7 @@
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::archivar::euvs::{COMP_LYA1216, parse_bin, write_bin};
+use omegaflow::archivar::euvs::{parse_bin, write_bin, COMP_LYA1216};
 use omegaflow::cdn::upload_asset;
-use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
+use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
 use std::process::Command;
 
 const BASE: &str =
@@ -102,8 +102,12 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = arg_value(&args, "--out").unwrap_or_else(|| "goes_euvs.bin".to_string());
-    let cache_dir = arg_value(&args, "--cache-dir")
-        .unwrap_or_else(|| "/tmp/omegaflow_goes_euvs_cache".to_string());
+    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omegaflow_goes_euvs_cache")
+            .to_string_lossy()
+            .into_owned()
+    });
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{}: cache dir stays uncreatable", cache_dir);
         std::process::exit(1);
