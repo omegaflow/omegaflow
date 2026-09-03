@@ -981,6 +981,15 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
 - crates.io (`cargo install omegaflow`) — AUSSTEHEND; mit PolyForm-
   Noncommercial als source-available markiert, nicht Open Source.
 
+- JWST-Biosignatur-Kette (jeweils 0 honored bis zur vollständigen Ernte):
+  jwst_spectra.bin manifestiert die CI (kernel-flatten.yml jwst-Job,
+  --ci-mode); jwst_equilibrium.bin (Gleichgewichts-Chemie, thermochem) ist
+  ungeerntet/ungebaut — Compiler jwst_equilibrium_compiler lebt; der
+  Scanner jwst_biosignature_scanner (Auftrag 4) wartet auf beide. Seit
+  2026-09-03 überspringt jwst_spectra_compiler proprietäre (EXCLUSIVE_
+  ACCESS/PROPRIETARY) MAST-Beobachtungen; CDN-Asset jwst_spectra.bin war
+  404 (Registereintrag, nie manifestiert).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
