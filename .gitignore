@@ -35,11 +35,15 @@ abk_dbdt_daily.tsv
 abk_dbdt_1h_SOD_2024.tsv
 fam_state_SOD_2024.txt
 
-# A=A: phi/ in main haelt nur den gesaeuberten Kernel (sources.φ)
-# Abgeleitete Zustaende (sources_index.φ, models.φ, blocked/dead,
-# KERNEL_INDEX.md, pipeline/) liegen in OMEGAFLOW_STATE (~/.local/state/omegaflow/phi).
+# A=A: phi/ in main haelt den gesaeuberten Kernel (sources.φ) plus die
+# zwei Dispositions-Register (dead_sources.φ, blocked_sources.φ) — die
+# Registrierungs-Urteile werden versioniert. Abgeleitete Zustaende
+# (sources_index.φ, models.φ, KERNEL_INDEX.md, pipeline/) und Runtime-Ledger
+# (llm_*) bleiben gitignored / in OMEGAFLOW_STATE.
 phi/*
 !phi/sources.φ
+!phi/dead_sources.φ
+!phi/blocked_sources.φ
 
 # Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
 .omegaflow-strand
