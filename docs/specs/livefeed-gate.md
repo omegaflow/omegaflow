@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   status: live
-  see-also: granit.md tools/gate/src/bin/livefeed_gate.rs
+  see-also: docs/granit.md tools/gate/src/bin/livefeed_gate.rs
 -->
 
 # Das Livefeed-Korrelations-Gate

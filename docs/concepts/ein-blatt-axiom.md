@@ -2,9 +2,9 @@
   title: DAS EIN-BLATT-AXIOM — die drei kausalen Pfeile
   class: concept
   date: 2026-08-21
-  sha256: a25849ffe3bafc6a1ba663ed00d9c57d5814cc38a33a404988e794fe3b4d1cef
+  sha256: a0d654a66b7b658c2befeb2e2913ac9b2a0d6c94548e2226c5ea5c7ff4437118
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-paradoxon.md docs/paper/laic-arrow-direction.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/paper/laic-arrow-direction.md
 -->
 # DAS EIN-BLATT-AXIOM — die drei kausalen Pfeile
 
@@ -46,7 +46,7 @@ breathes with the echo):
   Richtungsentscheidung in nicht-stationären Fenstern.
 - `src/te.rs` bleibt der kanonische CPU-Referenzpfad; der skalare
   `transfer_entropy_lag` bleibt die Probe.
-- Der Null-Kontroll-Record (`docs/concepts/broken-null-control.md`) ist
+- Der Null-Kontroll-Record (`docs/specs/broken-null-control.md`) ist
   das Vorbild jeder Messung: ein Kanalpaar, das still sein muss, läuft mit
   — bricht die Nullkontrolle, trägt die Matrix keine Aussage.
 - Die Goldstandard-Validierung (`tools/work/src/bin/te_ground_truth.rs`) ist der
@@ -117,7 +117,7 @@ Richtung — oder ihr Ausbleiben, ebenso ein Befund (0 honored). Handover:
 
 Für diese Blätter braucht es keinen Supercomputer-Cluster. Es braucht die
 Wahrheit der Zeitreihen — kuratiert über den einen Pfad
-(`docs/concepts/source-port.md`), jede Kraft an der Force-Gate-Litmus-Prüfung
+(`docs/SOURCE_PORT.md`), jede Kraft an der Force-Gate-Litmus-Prüfung
 gemessen — und die TE-Maschine, die bereits läuft. A = A: ein Oszillator
 ist ein Oszillator, eine Messung ist eine Messung, und ein Blatt, auf dem
 die Richtung der Information steht, ist ein Axiom.

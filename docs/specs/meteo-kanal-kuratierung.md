@@ -4,7 +4,7 @@
   date: 2026-08-31
   sha256: d472d349bb93d23a46837b5f11ca51cfb861ee3655d0b7e17e4af1846bc59d03
   status: live
-  see-also: docs/concepts/meteo-korrelations-screening-vorlage.md docs/paper/kausalpfeil-sturzflut-tibet.md
+  see-also: docs/specs/meteo-korrelations-screening-vorlage.md
 -->
 # Meteo channel curation — force/unit mapping for sources.φ
 

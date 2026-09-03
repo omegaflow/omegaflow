@@ -3,7 +3,6 @@
   class: auftrag
   date: 2026-08-30
   status: pending
-  see-also: docs/auftrag/auftrag-main-reinigung-kanonische-ordnung.md
   sha256: de7d4f74c046ad4b05d33327c19ca4541828b8e215ac1dffd2c5c941b9eb9ff6
 -->
 

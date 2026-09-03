@@ -4,7 +4,7 @@
   date: 2026-08-23
   sha256: 3a46b3a38ce8f4719f3ce5af96f537e995b9a162f1afe71a7bbbaee92186cfb8
   status: live
-  see-also: docs/paper/solar-cycle-dynamo.md docs/paper/ein-blatt-axiom.md
+  see-also: docs/paper/solar-cycle-dynamo.md docs/concepts/ein-blatt-axiom.md
 -->
 # Geometric ground truth — the spatial chain against JPL Horizons
 

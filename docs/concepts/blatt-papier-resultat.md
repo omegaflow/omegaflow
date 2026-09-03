@@ -4,7 +4,7 @@
   date: 2026-08-21
   sha256: 74daac3f21eeab5b6b5bc35047f51f76a35cbfba0d2745e6e05dab984fc85f54
   status: live
-  see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/paper/laic-arrow-direction.md
+  see-also: docs/paper/laic-arrow-direction.md
 -->
 # Das Blatt Papier (BLATT_PAPIER_RESULTAT)
 

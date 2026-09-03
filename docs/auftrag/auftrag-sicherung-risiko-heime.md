@@ -4,7 +4,7 @@
   date: 2026-09-02
   sha256: a2967138ae46498af68b1929dfe8d3cb2ffa637941a9a54de95f39bf4b60f10b
   status: pending
-  see-also: AGENTS.md docs/handover/handover-2026-08-30-provenienz-und-lehren.md
+  see-also: AGENTS.md
 -->
 
 # Auftrag: Die Heime ohne zweite Kopie werden gesichert, nicht nur benannt

@@ -4,7 +4,7 @@
   date: 2026-08-21
   sha256: 78166b5b93188e4cd1418e6bf215545d3616262da6e19b6d066642e0a9078d12
   status: live
-  see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-geomagnetischer-ausloeser.md docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/concepts/source-port.md
+  see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
 # Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
 
