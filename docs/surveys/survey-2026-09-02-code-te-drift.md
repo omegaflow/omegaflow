@@ -2,9 +2,9 @@
   title: TE-Audit über Code, Ordner und Dateinamen
   class: survey
   date: 2026-09-02
-  sha256: d73503eb4fb6f1f36f19d628430caf3683926bacde14b1a28bab10311541b50b
+  sha256: 5015c53251d77882cffe68ad7a57eb8f53d40d02c969a51f9625aa1cb7ca665b
   status: live
-  see-also: src/mathematikerin/te.rs tools/work/src/bin/code_drift_te.rs
+  see-also: src/mathematikerin/te.rs tools/measure/src/bin/code_drift_te.rs
 -->
 
 # TE-Audit über Code, Ordner und Dateinamen
@@ -16,7 +16,7 @@ miteinander koppeln — die Reibung, die ein reines grep nur zählt.
 
 ## Werkzeug
 
-`tools/work/src/bin/code_drift_te.rs` — ein `omegaflow-work`-Bin, das die
+`tools/measure/src/bin/code_drift_te.rs` — ein `omegaflow-work`-Bin, das die
 echte Schätzung `omegaflow::te::transfer_entropy_lag` nutzt. Zwei Ebenen:
 
 - **Zeilen-Ebene** (Lese-Reihenfolge): Einheit = jede `.rs`-Zeile in

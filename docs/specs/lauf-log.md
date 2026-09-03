@@ -3,13 +3,13 @@
   class: register
   date: 2026-08-31
   status: live
-  see-also: docs/audit/bekannt-schlecht-korpus.md docs/auftrag-maschinen-audits.md
+  see-also: docs/specs/bekannt-schlecht-korpus.md docs/auftrag/auftrag-maschinen-audits.md
 -->
 
 # Maschinen-Audit-Lauf-Log
 
 Messungen der Audit-Werkzeuge gegen den Bekannt-Schlecht-Korpus
-(`docs/audit/bekannt-schlecht-korpus.md`). Jede Zeile ist ein abgenommener
+(`docs/specs/bekannt-schlecht-korpus.md`). Jede Zeile ist ein abgenommener
 Lauf mit **gefunden / verpasst / erfunden** — der Kalibrationsscore (§3 des
 Auftrags). Ein Werkzeug wächst nur mit Messung: eine Relations-Klasse, eine
 Toleranzregel, ein Korpus-Lauf, dann die Zahlen.

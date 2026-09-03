@@ -5,7 +5,7 @@
   version: 4
   sha256: 34ed26058f4f6916e82f1a13733a1990eda6c7d9e8c8593c44a3d128ceaa1783
   status: live
-  see-also: docs/concepts/blatt-papier-resultat.md docs/surveys/survey-2026-08-21-bz-kausalpfeil.md
+  see-also: docs/concepts/blatt-papier-resultat.md
 -->
 # The Blatt: the direction of lithosphere-atmosphere-ionosphere coupling
 
