@@ -181,6 +181,44 @@ steht: der Earth-Flyby-Pass (DOY 282) ist in keinem erreichbaren öffentlichen
 Archiv. Die korrekte zusätzliche Metadaten-Referenz: DOI 10.17189/1518938
 (JUNO-J-RSS-1-OCRU-V1.0), AAREADME.TXT am Volume-Root; TNF beginnt erst 2015.
 
+## DSN/ESA-Datenanfrage — Vorlage (2026-09-03, einreichbar durch einen Menschen)
+
+Paper-Referenz der Anfrage: Thompson, Abrahamson, Ardalan & Bordi, "Reconstruction
+of Earth flyby by the Juno spacecraft", AAS 14-435, 24th AAS/AIAA Space Flight
+Mechanics Meeting, Santa Fe, Jan. 2014, Adv. Astronautical Sciences Vol. 152
+(NTRS 20160008163 / hdl 2014/45519). Gesamtfit-Residuen ~±1 mm/s; kein
+Anomalie-Signal (Effekt beim Abschalten des Drag-Modells ~0,1 mm/s, in der
+Unsicherheit) — konsistent mit „no anomaly". Format-Ära 2013 = TRK-2-34/TNF
+(Reader: NASA-PDS PyTrk234; SIS 820-013 bei pds-geosciences.wustl.edu/
+radiosciencedocs). ESA-Stationen Cebreros DSA-2 / Malargüe DSA-3 schlossen die
+Perigäums-Lücke (C/A−2,25 h bis C/A+1,5 h).
+
+> **Subject: Data request — Juno Earth-flyby two-way Doppler range-rate (2013-10), SCID 61, TRK-2-34/TNF**
+>
+> Dear DSN/Interplanetary Network Directorate (JPL Navigation, Section 312/396),
+>
+> We request the raw DSN two-way X-band Doppler range-rate tracking for the
+> Juno spacecraft Earth gravity-assist flyby, for independent re-derivation of
+> the flyby residual against an N-body model.
+>
+> Mission: Juno (NSSDC 2011-040A; DSN SCID 61). Window: 2013-10-02 → 2013-10-16
+> (±7 days centered on closest approach 2013-10-09T19:24 UTC, per the OPAG
+> Earth-flyby tracking plan). Product: TRK-2-34 Orbit Data Files and/or TNF,
+> two-way closed-loop X-band Doppler range-rate, per-station (DSS) time series,
+> ~1 s to ~60 s sample, with the station, transmit/receive frequency and
+> media-calibration context. Coverage: continuous DSN around periapsis; the
+> DSN gap C/A −2.25 h to +1.5 h was filled by ESA stations (Cebreros DSA-2,
+> Malargüe DSA-3) — ESA/Estrack data requested in parallel.
+>
+> Reference: Thompson, Abrahamson, Ardalan & Bordi, AAS 14-435 ("Reconstruction
+> of Earth flyby by the Juno spacecraft"), whose OD solution we use as the
+> comparison trajectory. Use: academic, independent flyby-residual re-derivation
+> (A=A, no fabricated value; publication will credit the data source).
+>
+> Contacts (three parallel): (a) JPL NAV / AAS-14-435 authors; (b) DSN
+> Commitments Office / Interplanetary Network Directorate, deepspace.jpl.nasa.gov;
+> (c) ESA Estrack operations (esa.int/Estrack) for the perigee-gap passes.
+
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
 benannten Orten — kein Haken.
