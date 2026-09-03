@@ -109,6 +109,7 @@ bekannte Encounter (1974 Jupiter, 1979 Saturn) = Granulat-Überschuss; P10s
 stärkste Flaggen (1996, 1981, 1982) liegen nach P10s einzigem planetaren
 Encounter — nicht durch bekannte Flybys erklärt. Station-/Era-Check (Commit
 e32d7f9) gemessen: P10-Flaggen = Station-63-Artefakt (±5,7–90 kHz
-Einzelstations-Sprünge, 1-Sample-Tage), kein kohärentes DM-Signal; P11-1981-02-09
-multi-Station-kohärent (12/42/63) aber kHz-Skala. Ruck-Flaggen = Stations-/Era-
-Struktur, kein sub-kHz-Transit; sub-kHz-Ziel bleibt am Streuungsboden (0 honored).
+Einzelstations-Sprünge, 1-Sample-Tage). Kreuz-Sonden-Zeugen-Test: P10 (12) und
+P11 (11) teilen null Ruck-Flag-Tage — kein gemeinsames Ereignis; jede Flagge
+sondenspezifisch. Kein sub-kHz-Transit über dem Streuungsboden (0 honored);
+versetzter (nicht gleichzeitiger) Sonden-Zeugen-Test offen.
