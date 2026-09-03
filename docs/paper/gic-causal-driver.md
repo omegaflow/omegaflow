@@ -2,7 +2,7 @@
   title: The causal driver of geomagnetically induced currents
   class: paper
   date: 2026-08-22
-  sha256: 8a6e9360232064b9045b9c643281ee94e4f6ec117c5676af2f0e6d4c09a9d594
+  sha256: 0735c91fb589a15e31a4b6de0562e6cb8f8aee7328975a6d9012cb161855f060
   fam-machine: pre-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -184,7 +184,7 @@ own threshold — with a *higher* TE than 2024 (1.3309e-1) — but 2025's family
 bound is higher (1.4256e-1), so the year's Bz arrow is family bound. The
 density control and the reverse direction stay silent in both years.
 
-### 4.5 Second station — Sodankylä (SOD, 67.37° N), hourly 2024
+### 4.4 Second station — Sodankylä (SOD, 67.37° N), hourly 2024
 
 | pair | lag | TE | own threshold | fam = 1.2844e-1 | verdict |
 |---|---|---|---|---|---|
@@ -203,7 +203,7 @@ density control stay silent. SOD's Bz TE (1.1654e-1) and its family bound
 station's arrow family bound — the direction replicates, the
 round-significance at SOD does not.
 
-### 4.4 Daily grain — 1994–2026 (stride 3, n paired ≈ 3900)
+### 4.5 Daily grain — 1994–2026 (stride 3, n paired ≈ 3900)
 
 | pair | lag | TE | own threshold | fam = 1.895e-1 | verdict |
 |---|---|---|---|---|---|
@@ -283,7 +283,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 - **Two stations, one zone.** The direction replicates at ABK and SOD
   (both auroral zone); a mid-latitude network generalization is not
   measured here. Round-significance at the second station is not crossed
-  (family bound, §4.5).
+  (family bound, §4.4).
 - **dB/dt is the induction driver, not the network current.** No GIC feed
   (electric force channel) exists in the system; the paper measures the
   excitation, not the damage.
