@@ -222,33 +222,33 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   181350 Oszillatoren, electric) ungeerntet für den Ladungs-Charakter.
   Die val-Physik (relativ, a.u.) ist die ehrliche Messung — kein
   fabrizierter Querschnitt.
-- Kuprat-Blatt (rixs_cuprate_probe): geerntet sind Spin (19 Spektren,
-  456 Oszillatoren) und Suprastrom (electric, SRD62 v6 — 16 Quellen,
-  ρ_s ∝ λ⁻² je Quelle, `suprastrom_cuprate_probe`); Gitter bleibt
-  ungeerntet, und die Dotierungs-Achse trägt 3 Klassen < MIN_N 30 — das
-  Blatt trägt „keine Aussage" (Stille ist der Befund). Die restliche
-  Kanal-Ernte (Phononen = acoustic) und NSE-I(q,t) bleiben die
+- Kuprat-Blatt (rixs_cuprate_probe): geerntet ist der Spin-Kanal (19
+  Spektren, 456 Oszillatoren — das RIXS-Streu-Photon ist ein sendendes
+  em-Signal, daher ehrlicher Lab-Anker); die SRD62-Suprastrom-Ernte ist
+  eine Material-Property-Messung (ρ_s, s.u.), kein Feld-Kanal; Gitter
+  bleibt ungeerntet, und die Dotierungs-Achse trägt 3 Klassen < MIN_N 30
+  — das Blatt trägt „keine Aussage" (Stille ist der Befund). Die
+  restliche Kanal-Ernte (Phononen = acoustic) und NSE-I(q,t) bleiben die
   Voraussetzung für eine nicht-degenerierte Matrix.
-- Suprastrom (electric, µSR-Superfluiddichte): zwei benannte Zugänge —
-  (a) ISIS `10.5286/isis.e.rb2410595` (Hussey et al., µSR-Eindringtiefe
-  von Bi-2201, MUSR) ist embargoed bis **2027-08-10**, dann roh
-  (NeXus/RAW) frei; (b) NIST SRD 62 `10.18434/t4kp8j` (High-Tc
+- Suprastrom-Material-Property (ρ_s ∝ λ⁻², aus Penetration Depth): zwei
+  benannte Zugänge — (a) ISIS `10.5286/isis.e.rb2410595` (Hussey et al.,
+  µSR-Eindringtiefe von Bi-2201, MUSR) ist embargoed bis **2027-08-10**,
+  dann roh (NeXus/RAW) frei; (b) NIST SRD 62 `10.18434/t4kp8j` (High-Tc
   Superconducting Materials Database, public domain, HTTP 200) trägt
   die Eigenschaft **Penetration Depth** (Literaturwerte, reduziert —
-  gemessen, nicht roh) als Web-Abfrage — der offene, sofort erntbare
-  Pfad. Gebaut (2026-09-03): `srd62_compiler --out <dir> [--ci-mode]`
-  (Probe HTTP 200, 25 Citations, Penetration-Depth-Tabelle parsebar) +
-  `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin` auf dem
-  ssd.jpl.nasa.gov-Compiler-Netloc. Draht v7 (2026-09-03): Serienmodell
-  `id` (Quelle) + `label` (Feldrichtung/Dotierung/Bedingung, je Zeile
-  eigene Serie), Reader + λ⁻²-Konversion im Modul `suprastrom`
-  (parse/encode + Tests), Probe `suprastrom_cuprate_probe` (electric-
-  Kanal, ρ_s ∝ λ⁻² je Serie). Parser-Korrektur v6→v7: die Spalten werden
-  am Kopf erkannt (Penetration = Wert, Temperature = Achse, übrige
-  Spalten = Serien-Schlüssel) statt „erste andere Zahl" — die naive
-  Achse hatte Feldrichtung und Dotierung konflatiert (A00316 schien
-  eine 50-Punkte-„Serie" mit λ-Sprüngen 0,2↔1,2 µm; die echte Tabelle
-  misst //ab 0,14–0,37 µm und //c 1,04–2,10 µm getrennt je Dotierung).
+  gemessen, nicht roh) als Web-Abfrage. Gebaut (2026-09-03):
+  `srd62_compiler --out <dir> [--ci-mode]` (Probe HTTP 200, 25
+  Citations) + `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin`
+  auf dem ssd.jpl.nasa.gov-Compiler-Netloc. Draht v7: Serienmodell `id`
+  (Quelle) + `label` (Feldrichtung/Dotierung/Bedingung, je Zeile eigene
+  Serie), Reader + λ⁻²-Konversion im Modul `suprastrom` (parse/encode +
+  Tests), Proben `suprastrom_cuprate_probe` + `suprastrom_form_probe`
+  (ρ_s ∝ λ⁻² je Serie). Parser-Korrektur v6→v7: Spalten am Kopf erkannt
+  (Penetration = Wert, Temperature = Achse, übrige Spalten =
+  Serien-Schlüssel) statt „erste andere Zahl" — die naive Achse hatte
+  Feldrichtung und Dotierung konflatiert (A00316 schien eine
+  50-Punkte-„Serie" mit λ-Sprüngen 0,2↔1,2 µm; die echte Tabelle misst
+  //ab 0,14–0,37 µm und //c 1,04–2,10 µm getrennt je Dotierung).
   Tabellen ohne Temperatur-Achse (Film-Dicke/Sample/Magnetfeld-Scans)
   sind keine ρ_s(T)-Quelle, entfallen ehrlich (0 honored). Ernte v7:
   232 Punkte, 65 Serien. Form-Befund (2026-09-03,
@@ -259,9 +259,20 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   nur Serien, deren Daten die Übergangskante erreichen (Tc nicht
   extrapoliert). Ein-Material-Zahl < MIN_N → noch keine
   material-übergreifende Aussage; Einzel-Material-Form als Befund
-  registriert. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz
-  (nur Kagome/Nickelat). Die λ→ρ_s-Konversion
-  (λ⁻² ∝ ρ_s) ist zum Feldwert electric der gebaute Weg.
+  registriert. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
+  Kagome/Nickelat). Rat-Urteil (2026-09-03): **kein Feld-Kanal.** ρ_s
+  (m⁻²) ist eine abgeleitete Material-Eigenschaft — Temperatur-Achse,
+  Material-/Dotierungs-Identität, kein ICRS-Ort, keine Ausbreitung; sie
+  scheitert korrekt an allen drei Archivar-Gates (Force/τ/Position) und
+  wird nicht in `phi/sources.φ` registriert (die Verweigerung ist 0
+  honored, kein Gap). Die Proben sind `measure`-Bürger, korrekt benannt
+  als Proben, nicht als Feldquellen. Der electric-**Feld**kanal bleibt
+  `pending`; er wird erst Feld-Bürger über eine Messung, deren Sache
+  selbst ein sendendes electric/em-Signal ist (Streu-Photon /
+  THz-Feld mit freq/bin_width, ICRS-Lab-Anker, force em/electric, tau)
+  — dieselbe Form, die `rixs_spin.bin` schon trägt. Der Feldkanal wird
+  heute schon von echten sendenden Quellen gespeist (solo_rpw_e_rms_vm,
+  swarm_*).
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
   belegt, vier Runden: ILL/ISIS/NIST/ORNL/PSI/J-PARC/TRIUMF +
   Zenodo/Figshare/Dataverse/OSF/NOMAD/Materials-Cloud tragen nur
