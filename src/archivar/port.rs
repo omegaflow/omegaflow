@@ -1373,9 +1373,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             .cloned()
             .unwrap_or_else(|| source_name_from_url(&src.url));
         let cache_path = match (&netloc, &name) {
-            (Some(nl), nm) if !nm.is_empty() => {
-                Some(format!("/tmp/archivar_cache/{}/{}.json", nl, nm))
-            }
+            (Some(nl), nm) if !nm.is_empty() => Some(cache_path_for(nl, nm)),
             _ => None,
         };
         if let Some(cp) = &cache_path {
@@ -1411,7 +1409,7 @@ pub fn ci_mode(dir: &str) -> i32 {
                         .get(&src.url)
                         .cloned()
                         .unwrap_or_else(|| source_name_from_url(&src.url));
-                    let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                    let tmp_path = cache_path_for(netloc, &name);
                     if std::fs::write(&tmp_path, &raw).is_ok()
                         && crate::cdn::upload_release(netloc, &tmp_path)
                     {
@@ -1529,7 +1527,7 @@ pub fn mirror_stations(
         return;
     }
     let name = source_name_from_url(stations_url);
-    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+    let cache_path = cache_path_for(netloc, &name);
     if cache_fresh(&cache_path, src.ttl) {
         return;
     }
@@ -1620,7 +1618,7 @@ pub fn probe_fanout(
     };
     let tag = format!("{}-template", netloc);
     let name = source_name_from_url(&src.url);
-    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+    let cache_path = cache_path_for(&tag, &name);
     if cache_fresh(&cache_path, src.ttl) {
         *reachable += 1;
         return;
@@ -1671,7 +1669,7 @@ pub fn probe_template(
     };
     let tag = format!("{}-template", netloc);
     let name = source_name_from_url(&src.url);
-    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+    let cache_path = cache_path_for(&tag, &name);
     if cache_fresh(&cache_path, src.ttl) {
         *reachable += 1;
         return;
