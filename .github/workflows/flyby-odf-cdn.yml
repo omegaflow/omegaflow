@@ -1,0 +1,27 @@
+name: flyby-odf-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * 1'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  odf-persist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Persist the odf07155 ODF fixture to the spdf CDN namespace
+        run: |
+          gh release upload spdf.gsfc.nasa.gov --repo omegaflow/sources \
+            src/archivar/kernels/odf07155.dat --clobber
+      - name: Record the odf07155 measured census verdict as a CDN asset
+        run: |
+          cargo run -p omegaflow-measure --release --bin odf_census_probe \
+            > odf07155_census.txt 2>/dev/null || true
+          gh release upload spdf.gsfc.nasa.gov --repo omegaflow/sources \
+            odf07155_census.txt --clobber
