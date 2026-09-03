@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-03
-  version: 2
-  sha256: 3af4e8904ea46d3fb31685387ed79ea6968cd46434f4a29f04a80b83ea624654
+  version: 3
+  sha256: 27680f68837469c971555dd40a56f9bee3eb950e44abb1bb3aa627c7f7056150
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -460,7 +460,8 @@ Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
   (Sun + sunward-anomaly orbit solution), `cargo run --release --bin
   pioneer_residuum_diagnose` (beat/phase/DSN-residual audit), `cargo run --release
   --bin link_deduction_probe` (link deductions: multi-station common mode, TEC via
-  `--ionex-dir`, solar plasma via `data/omni2_serie.bin` or `--omni2`, spacecraft
+  `--ionex-dir`, solar plasma via the `omni2_serie.bin` in the OMEGAFLOW_STATE cache
+  (default `~/.local/state/omegaflow`, produced by `omni2_compiler`) or `--omni2`, spacecraft
   dynamics).
 
 ## 7. Conclusion
