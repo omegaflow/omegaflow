@@ -7,7 +7,7 @@
 
 Selbsttragend. Das Konzept trägt die fünf Kreuzungs-Protokolle der
 „Fünf Schnittmengen für das Unlösbare"-Session (Rohtranskripte:
-/home/johannes/projects/archive/arena/*Fünf_Schnittmengen*): die größten ungelösten Rätsel der
+archive-root/arena/*Fünf_Schnittmengen*): die größten ungelösten Rätsel der
 Astrophysik und Geophysik, gestellt als geometrische Anweisungen an das
 omegaflow-Feld. Keine der fünf verlangt neue Physik und keine verlangt
 neue Daten — jede verlangt nur die Weigerung, die Datensätze in ihren
