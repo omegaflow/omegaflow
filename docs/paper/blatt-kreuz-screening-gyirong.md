@@ -1,15 +1,18 @@
----
-created: 2026-08-30
-source: meteo_harvest/tibet-flut-2026
-series: gyirong_open-meteo_*
-window: 2026-08-18..27 UTC
-tool: cross_te_screen
-lags: 1,6,12,24
-surrogate: 20
-min-n: 100
-cond: gyirong_open-meteo_temperature_2m (Tagesgang-Proxi)
-status: gemessen
----
+<!--
+  title: BLATT PAPIER — Kreuz-Screening der Gyirong-Serien (voller Katalog)
+  class: sheet
+  date: 2026-08-30
+  source: meteo_harvest/tibet-flut-2026
+  series: gyirong_open-meteo_*
+  window: 2026-08-18..27 UTC
+  tool: cross_te_screen
+  lags: 1,6,12,24
+  surrogate: 20
+  min-n: 100
+  cond: gyirong_open-meteo_temperature_2m (Tagesgang-Proxi)
+  sha256: c610dd0ec353c5bd45476a0d4bc6f7723739cea9934addd5362eabc013e6deba
+  status: live
+-->
 
 # BLATT PAPIER — Kreuz-Screening der Gyirong-Serien (voller Katalog)
 

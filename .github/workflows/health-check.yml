@@ -69,6 +69,7 @@ jobs:
   pages-verify:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - run: |
         STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://omegaflow.space/ 2>/dev/null || echo "void")
         if [ "$STATUS" != "200" ]; then
