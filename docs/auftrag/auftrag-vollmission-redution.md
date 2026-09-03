@@ -104,4 +104,8 @@ serialisierte PNVR/PNDM-Tagesmediane konsumierbar. Atom 3 (Commit 50625aa):
 Deduktion-10-Tagesmask (4×p90), p10 5 / p11 15 corrupt-day Cluster verworfen;
 Ruck-Scan über gemaskte Tagesmediane läuft, Flaggen als Kandidaten gegen den
 lokalen Floor — kein Detektions-Anspruch; sub-kHz-Ziel bleibt am
-~1,5-kHz-Streuungsboden (0 honored).
+~1,5-kHz-Streuungsboden (0 honored). Nachfolge-Befund: P11-Flaggen fallen auf
+bekannte Encounter (1974 Jupiter, 1979 Saturn) = Granulat-Überschuss; P10s
+stärkste Flaggen (1996, 1981, 1982) liegen nach P10s einzigem planetaren
+Encounter — nicht durch bekannte Flybys erklärt, offen (Station-/Era-Check
+folgt), 0 honored.
