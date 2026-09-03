@@ -372,7 +372,7 @@ fn run_hourly(
         .and_then(|v| v.parse().ok())
         .unwrap_or(2026);
     let cache_1h = disk_cache(&format!("abk_dbdt_1h_{station}_{sy}.tsv"));
-    let omni2_1h = "omni2_serie_1h.bin".to_string();
+    let omni2_1h = disk_cache("omni2_serie_1h.bin").to_string();
     let h_start = iso_to_unix(&format!("{hour_start}T00:00:00Z")).unwrap_or(0.0);
     let h_end = iso_to_unix(&format!("{hour_end}T00:00:00Z")).unwrap_or(now - 2.0 * HOUR);
 
@@ -584,7 +584,7 @@ fn main() {
         return;
     }
 
-    let omni = load_omni2(OMNI2_BIN);
+    let omni = load_omni2(&disk_cache(OMNI2_BIN));
     let omni_bz: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_BZ)
