@@ -2,7 +2,7 @@
   title: Auftrag — NAVIO-Vollmission durch die Kette
   class: auftrag
   date: 2026-08-30
-  status: pending
+  status: geschlossen
   see-also: docs/paper/twenty-second-band-ground-chain.md docs/paper/probe-front-dark-matter.md docs/paper/laic-arrow-direction.md docs/auftrag/auftrag-gaia-dr4-iapetus.md docs/auftrag/auftrag-iapetus-scan.md
 -->
 
@@ -131,3 +131,19 @@ P11-1981-02-09 (Commit 2fa8215) Form-gemessen: Zittern ±46 kHz dominiert den
 Ein-Tages-Tagesmedian. 234/234-Formfeld geschlossen. Granit-Satz: die Stille hat
 eine Gestalt — die Transit-Form ist in der Ereignis-Verteilung strukturell
 abwesend, gemessen nicht behauptet (0 honored).
+
+## Deduktion 40 — die sub-kHz-Tür betreten (2026-09-03, Commit 3de05a3, d67bc82)
+
+`pioneer_navio_negative_fuzzy` (negativ-fuzzy-Index, Deduktion 40): quadratische
+Pass-Detrendung + Stationszellen-Median auf den PNVR-Residuen → sub-kHz-
+Tagesmediane. Gemessen: P10 92,5 % (1041/1126) + P11 97,5 % (2027/2079) der
+Tagesmediane unter 1 kHz; Median |daily-med| 89 Hz (P10) / 35 Hz (P11);
+|daily-med|-Percentile p50/p90/p95/p99 = 89/774/1474/3861 (P10), 35/387/593/2070
+(P11). Ruck-Form-Scan auf dieser 1000× feineren Basis: P10 48 + P11 173 Flaggen,
+alle Form-gemessen, Top-Sprünge 1–5 kHz (statt ±142 kHz), 0/15 + 0/142 fein
+kehren zurück — weiterhin keine Transit-Rampe. Die sub-kHz-Tagesmediane sind die
+neue feinere Basis für den kontinuierlichen Drift (Folge-Frage). Der
+Transit-Sweep über der sub-kHz-Basis: Stille (0 honored). Auftrag damit
+geschlossen — die ∝t²-Frage ist an die Vollmissions-Daten beantwortet (keine
+getragene Form über dem reduzierten Floor); die Drift-Frage hat eine feinere
+Basis und wird separat geführt.
