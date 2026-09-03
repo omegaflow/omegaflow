@@ -1,0 +1,11 @@
+{
+  "id": "bordeaux-waldbrand-2026",
+  "source": "open-meteo archive-api",
+  "cdn": "archive-api.open-meteo.com",
+  "window": ["2026-07-01", "2026-09-30"],
+  "stations": [
+    {"id": "bordeaux", "lat": 44.8378, "lon": -0.5792},
+    {"id": "landiras", "lat": 44.5717, "lon": -0.4406},
+    {"id": "hostens", "lat": 44.4931, "lon": -0.6394}
+  ]
+}

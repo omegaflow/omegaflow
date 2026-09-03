@@ -1,0 +1,581 @@
+Global PositioningSystemTimingReceiversin the DSN
+P.A.Clements
+Communications
+
+Systems Research Section
+
+The Global Positioning System (GPS) is a worldwide navigation system using a constellation of earth satellites with onboard clocks. The GPS is also usableto transfer time
+and frequency. JPL has provided part of thefunding to the National Bureau of Standards
+{NBS) to build GPS timing receivers.Preliminary tests with the breadboardreceiver at
+NBS has produced remarkable precision in time and frequency transfer between the
+United States Naval Observatory (USNO) and NBS. JPL plans to install receivers in the
+DSN to demonstrate their ability to transfer time and frequency within the DSN and
+between the DSN and outside agencies.
+
+I, Introduction
+JPL is procuring two GlobalPositioning System(GPS) satellite timing receivers from the National Bureau of Standards
+(NBS). JPL has funded a large part of the development of the
+receiver designat NBS. The GPS timingreceiversare to be evaluated for use in the DSN as a method of time and frequency
+transfer among the stations of the DSN, and between the DSN
+and world time and frequency standards.
+
+space vehicle (SV) is information on its position with respect
+to art Earth-based rectilinear coordinate system. If this time
+and position data were transmitted to an Earth-based station
+with its own dock, then the difference in time, neglecting
+relativistic effects, would be the propagation delay of the
+signal. Hence the observer can determine his position as being
+somewhere on a sphere which has its center at the spacecraft.
+By viewing three SVs and by having a reasonably good dock,
+an observer can determine his position exactly. By viewing
+
+JPL plans to demonstrate the use of a GPS timing receiver
+system as a method of significantlyreducing the cost of meeting
+the functional requirements for time and frequency transfer.
+
+four
+clock.SVs, the observer can determine his position using a poor
+
+II. The Global Positioning System
+
+The SVs are distributed in three orbital planes inclined 63°
+with respect to the Earth's equatorial plane, and offset from
+each other by 120° longitude. Each SV is in 12-hour prograde
+orbit. This distribution is meant to maximize the number of
+SVsvisible to an observer anywhere on the earth at any time.
+
+The GPS is a Department of Defense worldwide navigation
+system that uses a constellation of orbiting Earth satellites,
+each of which carries an onboard clock (Ref. 1). Stored on each
+90
+
+The GPS satellite configuration calls for 24 SVs.This number has been reduced to 18 due to budgetary considerations.
+
+The GPS SV signal is at two frequencies: link 1 at 1575.42
+MHz and link 2 at 1227.6 MHz. These frequencies are multipies of 10.23 MHz,namely:
+
+replicated code is shifted (delayed) until a correlation is
+found. With correlation, the receiver locks to the code with
+the delay lock loop and to the signal with a phase lock loop.
+
+link 1 = 1575.42 MHz = 10.23 MHz X 154
+link 2 = 1227.6MHz = 10.23MHz × 120.
+This is a particularly good frequency region for a couple of
+reasons. First, there is little use at these frequencies, so it is
+relatively easy to obtain an allocation. Second, the effects of
+the ionosphere on the propagation delay are smaller than at
+lower frequencies,
+The GPS SV transmits two PN codes on link 1; they are
+named the P code and the C/A code. The GPS timing receiver
+uses only the C/A code. The C/A code is 1023 bits long and
+is transmitted at a 1023-Mbpsrate; hence its duration is 1 ms.
+Each SV's code is unique so that all the SVs can use the same
+RF carrier frequency and yet a receiver can pick out a particular SV's signal. The data are transmitted at a 50-bps rate, so
+there are 20 C/A code sequences for each data bit. The data
+consist of 4 blocks. Data Block 1 contains the clock corrections for the SV clock with respect to GPS time. Data Block 2
+contains ephemeris information for that particular SV. There
+is a message block that contains any messagesthat might be
+needed. Finally Data Block 3 contains an almanac of the locations of all of the SVs in the GPS constellation. The complete
+message takes 6 seconds to transmit,
+
+iV.
+
+Timingand FrequencyTransfer
+
+A. Synchronization
+One fundamental aspect of time is that of simultaneity. 1 A
+definition given by NBS for simultaneity is: "Two events are
+simultaneous if equivalent signals,propagating in agivenmedia,
+arrive coincidentally at a common point in space which is
+geometrically an equal distance from the source of each
+event. In practice a much broader definition is often used for
+clock synchronization; i.e., two docks have the same reading
+in a specificreference frame" (Ref. 2).
+If two clocks are beating simultaneously, in a specific reference frame, they are said to be synchronized. All of us have
+synchronized one clock to another by setting our wristwatch
+to the mantel dock. We make the time reading (date) of one
+clock agreewith the date of another dock.
+If docks are located some distance from one another, the
+problems of accurate synchronization become difficult. Of
+course we use radios and telephones to get the date, but these
+methods are not usable to transfer the date with an accuracy
+of microseconds or nanoseconds.
+Early in the 17th century Galileo deviseda method of date
+
+III. Description of the Receiver
+The NBS GPS timing receiver system consists of three
+chassis which are rack-mountable and a separate low-noise
+amplifier and down-converter which are mounted at the
+antenna. The rack-mountable chassis take a combined vertical
+rack space of about 18 inches, a keyboard which takes about
+4 inches more and a printer which takes about 6 inches.
+A 100-MHzlocal oscillator frequency is sent to the antennamounted down-converter. This signal is subsequently multiplied (X15) and mixed with a 1.57542 GHz out of the wide
+band front end amplifier to produce a 75.42 MHzIF frequency,
+The balance of the receiveris what is known as a Tau Dither
+Delay Lock Receiver (Ref. 1). The receiverhas two loops. The
+inner loop is a delay lock loop. Its function is to lock to the
+incoming PN code, thereby producing a signal the outer phase
+lock loop can lock to.
+The receiver must perform a cross correlation operation to
+extract a signal from a particular SV. To do this, the PN code
+of the particular SV is replicated in the receiver. Then the
+
+transfer using observations of the moons of Jupiter. TheJovian
+satellite system is a clock that is observablefrom any place on
+the Earth. All one needed was an ephemeris table and a reasonable telescope and he could synchronize any clock on Earth.
+This is an application of the first defmition of simultaneity.
+Note that every place on Earth is approximately the same distance to Jupiter. This technique was used extensively for over
+100 years for map-making;however, it was not usable on ships
+at sea because of the difficulty of looking through a telescope
+from a pitching deck.
+With good portable cesium docks the defmition of syrtchronization of widely separated clocks is a "clock trip" from
+one clock to the other, then back to the first dock. This is
+called a clock closure. This method invokesthe second def'mition of synchronization. The most careful clock trips take into
+account the path of the travelingclock to correct for relativistic
+effects and refer the docks to the same reference frame
+
+lThere are threeaspectsof time:timeinterval,date (theclockreading),
+and simultaneity.
+
+91
+
+(Ref. 3). This is one of the methods presently used in the
+DSN.2
+Over the last several years people have been getting back to
+Galileo's method of using satellites for time transfer. For
+example NBS has been using the GOES weather satellites for
+time transfer. The DSN has used a technique of bouncing
+timing pulses off the Moon. Now both NBS and the United
+States Naval Observatory (USNO) are using the GPS satellites
+for time transfer,
+The GPS can be used in several Waysto accurately transfer
+time between two or more known locations on the Earth. I
+shall describe two methods which are planned during the JPL/
+NBS demonstration.
+The first of these two methods is a simultaneous common
+
+The second method is to make successiveobservations of
+the same SV clock (sequential view). The first observer synchronizeshis clock with the SV clock when the SV is at a good
+viewing angle. A second observer then synchronizes his clock
+to the same SV at some time which is less than 12 hours later
+than the first observation, and when the SV is at a good viewing angle for him. If the SV that is observedhas a cesiumdock,
+then the date uncertainty will be about 5 ns over a 12-hour
+period. The ephemeris errors will tend to cancel because the
+same SV is used.
+As in the case of portable clock trips, the relativisitic effect
+needs to be taken into account for a precision time transfer
+(Ref. 3).
+B. Syntonization
+
+view (mutual view) of a single GPS satellite. With this technique the common mode ephemeris errors cancel,and the satellite clock error contributes nothing. If the two or more docks
+are within 3000 km of each other so that the observation angles
+are high, one can expect a measurement accuracy of 10 nanoseconds time difference between the observers' clocks. If the
+propagation and ephemeris errors can be reduced, the accuracy
+can be reduced to 1 nanosecond,
+
+Closely related to synchronization is the concept ofsyntonization. Syntonization is the act of putting two oscillators on
+the same frequency (tone). It is a musical term and is found in
+some dictionaries so defined. The term syntonization accuracy
+refers to a number (f- fo)]fo = A.f/f, which is a measure of
+how close the frequency of one oscillator is to that of another,
+where fo is the frequency of the reference oscillator and f is
+the frequency of the measured oscillator.
+
+The specific procedure for a mutual view observation is
+quite simple. The observersagree to observea givensatellite at
+a given time. Alernatively, if an observer knows another's
+observation schedule, he only has to make his schedule agree
+with the other's. The data of a complete observation of a satellite would include the date of the observation to the second
+and the time offset from the observer's clock to the GPS
+dock. At some time later the observers can exchange data.
+
+As presently conceived, the operation of the GPS receiver
+would be used to take a reading of time offset once a day
+between two docks. If clock A's oscillator is running fast
+with respect to clock B's oscillator, then clock A's value of
+date will advance with respect to clock B's value of date.
+Therefore, by taking daily clock offset readings one can determine the difference in rates between the two docks oscillators,
+givenAf/f.
+
+Ideally an observatory's daily observation schedule would
+be on sidereal time.3 This would mean that the SV would
+appear in the same position in the sky every day at observation time. The advantage of this method is the elimination of
+variables associated with direction. As the two docks are separated, the angles of mutual viewof the satellites become more
+shallow. As this happens, the ephemeris and propagation errors
+become larger, so the measuring accuracy is decreased,
+
+2In addition to clock closures, VLBI methods are now being used
+between the DSN stations. In Spain the Loran-C navigation system is
+used
+in Australia television synchronization signals are used to
+transferandtime.
+3Sidereal time is the time used by astronomers. It uses observations on
+the fixed stars rather than the Sun. A sidereal day is about 4 minutes
+shorter than a mean solarday;hencethe timeof observationwould
+
+advanceabout4 minutesperdaymeansolartime.
+92
+
+V. Present
+
+Performance
+
+of the Receivers
+
+At present NBS and USNO are conducting daily mutual
+view observations of SVs, This means that NBS acquires and
+receives data from the same SV at the same time USNO is
+doing so. NBS is using a breadboard version of a receiver of
+NBS design. USNOis using a receiverpurchased from Stanford
+Telecommunications Incorporated (STI).
+USNO observes five SVs daily. The offsets between GPS
+time and USNO Master Clock (MC) are published
+USNO Bulletin (Fig. 1). In addition, the data
+
+weekly in a
+
+are available
+daily by telephone using a MODEM and a terminal. The data
+consist of the offset in nanoseconds between GPS time calculated by each satellite and the time of the MC. Also the data
+includes the date to the second that the data were taken.
+
+The USNO measures the offset between GPS time and MC.
+The MC is the physical realization of UTC (USNO)4 and is
+designated UTC (USNO, MC). Because of the present method
+of steering the MC, the time scale UTC (USNO, MC) differs
+from UTC (USNO) by some small amount (several nanosecends). This offset is availableon the telephone on a daily basis
+in the same way as the GPS data.
+NBS observes four SVs daily, scheduled so that it has a
+mutual view of USNO. The SVs are SV-5 and SV-9, which
+have cesium clocks on board, and SV-6 and SV-8 which have
+rubidium clocks. NBS measures the offset between GPS time
+by each SV and NBSclock 9 [(UTC(NBS, CL9))].
+In the same way, UTC (USNO, MC) has some offset from
+UTC (USNO), UTC (NBS, C19) as some small offset from
+UTC (NBS). These data are not published but are available
+from NBS.
+There is a bit of a scheduling problem in the mutual view
+exercise between NBS and USNO. The NBS receiver corrects
+its viewing time 4 minutes a day to make up the difference
+between mean solar time and siderealtime. The USNOreceiver
+on the other hand is corrected 28 minutes once a week. This
+means there is a slight departure from sidereal time as the
+week wears on. I understand that USNOwill eventually operate
+the receiver on sidereal time. At the present NBShas to change
+the schedule every day.
+The big advantage of viewing the SV on a sidereal schedule
+is that it will appear in the same position in the sky every day.
+This is important if there are any multipath problems and with
+respect to syntonization. To measure frequency offset, the
+important thing is change in time. If we look at the SV in the
+same place in the sky every day, a lot of variables cancel.
+Present measurements between USNOand NBShave shown
+that the short-term characteristics of the GPSsignal have white
+noise phase modulation (white PM) as a limiting noise process,
+The method of determining this was a new technique called
+the Modified Allan Variance (mod a2y(r)). Mod o2y(r) as its
+name implies is a modification of the traditional method of
+characterizing frequency stability, the Allan Variance. Using
+mod tr2(r), one can easily distinguish between white PM and
+flicker phase noise (Flicker PM). Flicker PM is a type of power
+spectral density which is inverselyproportional to the spectral
+frequency _o/2rr.If Flicker PM noise is present then there is a
+
+logarithmic divergenceof the standard deviationwhichincreases
+with the number of samples taken (Ref. 4). So it is important
+to determine if this noise process is present.
+Knowing the limiting noise process to be white PM, one can
+safely proceed using the statistics of the normal distribution.
+The results of this analysis have shown that one can measure
+time differences to less than one nanosecond for averaging
+times of 4 minutes (Ref. 5). The data from the two receivers
+are being analyzed by both NBS and JPL. Results have been
+published by NBS(Ref. 7). Figure2 is a graph of UTC(USNO) UTC (NBS) versus days. The graph coversabout a four-month
+period. During this period several clock trips were made
+between USNO and NBS. The agreement is shown on the
+graph,s
+The syntonization between the rates of UTC (USNO) and
+UTC (NBS) can be measured using the GPS timing receivers.
+If a set of time difference measurements are made using a
+single SV, then a slope can be found of time difference versus
+time, by finding a least square linear fit to the data. This
+assumes that the noise causing the variations in readings is
+white. This procedure is repeated for several SVs which produces a set of slopes (Fig. 3a,b,c,d). The slopes are a measure
+in the difference in rates of the two docks as measured by
+using different SVs.
+A second assumption is now made; that is, the measures of
+these slopes are independent. Next, the mean and standard
+deviation and the standard deviation of the mean are found
+for the set of slopes.
+For the period 5 Sept 81 to 16 Sept 816 the slopes of
+[UTC(USNO)] - [UTC(NBS)] by the severalSVs are:
+by SV 5 -11.32 nanosec/day
+by SV 9 -11.35 nanosec/day
+by SV 6 -10.73 nanosec/day
+by SV 8 -11.87 nanosec/day
+The mean is
+
+-11.07 nsec/day
+
+The standard deviation is
+
+-0.67 nsec/day
+
+The standard deviation of the mean is -0.33 nsec/day
+
+SThe measurement of the time offset via GPS has an offset of +445
+nanosec with respect to the clock closure. The reason is unknown at
+4UTC universal coordinated time. The new UTC was adopted by the
+International Radio Consultive Committee (CCIR) in 1971 and put
+into effect 1 Jan. 1972. In this system all clocks run at the same rate,
+based on an atomic cesium clock,
+
+this time; it is probably due to design differences in the USNO and
+NBS receivers. The offset was removed from the GPS data.
+6These dates are arbitrarily taken. The period happens to be a set of
+continuous data. Other sets have produced better results.
+
+93
+
+The standard deviation of the mean is found by
+SD -0.67
+
+_
+
+Goldstone-NBS experiment. The two receivers should give
+-0.33 nsec/day
+
+where SD is the standard deviation and N is the number of
+degrees of freedom. Since it was assumed that the measurements via the different SVs were independent, this number
+is 4, the number of SVs.
+The value of 0.33 nanosecond per day corresponds to
+
+0.33 × 10 -9 sec/day = -3.82 × 10-_5 A__£f
+86,400 sec/day
+f
+
+which is a measure of syntonization.
+
+Vl. The GPS Timing Receivers in the DSN
+The GPS timing receivers will be deployed in the DSN in
+several steps. The first step will be to establish time and irequency transfer between NBS and the Time Standard Ensemble
+located at Goldstone. The final step will be to establish time
+and frequency transfer throughout the DSN.
+The first step of the demonstration will be to install the
+two GPS receivers at the Goldstone clock ensemble at Goldstone. The receivers will be scheduled to perform mutual view
+observationswith NBS and USNO.
+This configuration and procedure will repeat the demonstration that is presently being performed between NBS and
+USNO. There will be a receiver at each of these two clock
+ensembles.The ensembles are located some distance from each
+other but not so great a distance that the mutual viewing
+angles are shallow. Finally there is a regular traveling clock trip
+between these clock ensembles. This demonstration will not
+only confirm the NBS-USNOexperiment, but it will establish
+a time and frequency transfer between the DSN and NBS. The
+immediate results of this configuration and procedure will be
+to reduce the necessity of clock trips between the Goldstone
+clock ensemble and NBS from every 120 days to once a year
+or even less often. It is planned to permanently have one of
+the receivers at the Goldstone clock ensemble. Therefore this
+savingcan be continually realized.
+Another saving will be realized when the Goldstone clock
+ensemble is moved to DSS 14. This move is planned for sometime in 1983. The presence of a GPS receiver will greatly
+help maintain time and frequency during the move.
+94
+
+The reason for placing two GPS receiversat the same place
+is to check the receiversthemselves and act as a control for the
+identical this
+results
+theirusantennas
+in thethe
+same
+location. In
+addition
+willifgive
+a chanceare
+to check
+receiverbefore
+it is sent to another station in the DSN.
+
+I plan to repeat the procedures that are now being done
+between NBS and USNO. The difference is time and frequency
+transfer from NBS to the Goldstone clockensemble rather than
+USNO. In addition time comparisons will be made between
+the two GPS receivers which are located next to one another
+at the Goldstone clock ensemble. These measurements should
+be identical except for any errors in the receiversthemselves.
+Beyond repeating the NBS to USNOdemonstration and the
+establishment of time and frequency transfer from NBS to the
+Goldstone clock ensemble, an even more informative measurement will be available. If the NBS, USNO and the Goldstone
+clock ensemble GPS receivers are all on the same schedule, for
+mutual view, then a three-station measurement closure will be
+available. This will be somewhat akin to the three baseline
+VLBI closuresreported in Ref. 8 except that all of the stations
+will be located in the continental U.S.
+This will allow a simultaneous measurement of the time
+offset [UTC (USNO)- UTC (DSN)], [UTC (USNO)- UTC
+(NBS)] and [UTC (USNO) - UTC (DSN)]. There will be two
+checks of the accuracy of time transfer using the GPSreceivers.
+First the offsets [UTC (USNO) - UTC (NBS)] and [UTC
+(NBS) - UTC (DSN)] are well-known and kept with traveling
+clocks.7 Second, by the closure measurement it should be possible to get a measure of the absolute accuracy of the GPS
+receiver system independent of clock trips.
+The second step will be to move one of the GPS timing
+receivers to DSS 63 in Spain. Spain was chosen as the second
+installation because it is closer to Goldstone GTS than DSS 43
+in Australia. The great circle distance between GTS andMadrid
+is approximately 85° whereas the great circle distance between
+Goldstone and Canberra is approximately 110°.
+It is also possible to complete a closure of measurements
+which includes DSS 63. USNO is approximately 55° great
+
+"/All timeshavebeen subtractedfromUTC(USNO).Thiscorresponds
+to using USNO as the Standard. This is done for convenience. JPL
+
+traditionallyuses NBSas the Standardfor the DSNbecauseof its
+proximity.
+
+circle distance from Madrid. There will be mutual view measurements (once per day, it is hoped) among the four locations
+USNO, NBS, Goldstone and DSS 63. This daily mutual view
+might involve some low viewing angles from DSS 63 because
+of nonconformance to USNO's schedule. Daily mutual or
+sequential view between Goldstone and DSS63, which is
+independent of outside agencies,is being planned,
+There are plans by NBS to install a receiver in Paris, France,
+at the Bureau International de l'Heure (BIH), sometime in
+1982. Paris is only 10° great circle distance from Madrid;
+therefore one could expect the same performance as between
+USNO and NBS. This assumes a daily high angle observation
+from BIH.
+The third step will be to install a receiver at DSS 43. This
+is the most difficult step because of the distance. The great
+circle distance from GTS to DSS43 is approximately 110° and
+from DSS 43 to DSS 63 approximately 160°. Mutual viewsat
+these distances are right above the horizon;therefore aschedule
+of sequential viewswill probably be the more useful. Because
+JPL will have only two receiverswe are planningto use one of
+NBS's receiversfor the DSS 43 demonstration.
+An exciting experiment will be a three-station closure of
+DSS 43, DSS 63 and GTS. The results of this will be compared to the VLBI three station closure in 1979 (Ref. 7).
+The DSN receivers will be scheduled to make a three-station
+closure every day if possible. Certainly we will make an offset measurement, [UTC (DSN) - UTC (DSS 43)] and [UTC
+(DSN) - UTC(DSS 63)], every day.
+
+VII, Conclusion
+It is no mean task to determine the accuracy of time transfer over intercontinental distances using the GPS receivers.
+Suppose a sequential view of a SV is taken by two receivers
+anyplaceon the Earth. Furthermore,supposetheSVisequipped
+with a cesium clock. Then time transfer accuracies of 10 nsec
+to 50 nsec are anticipated (Ref. 8). This means for a threestation closure the expected error is x/3-times the individual
+experiment error or, 17 - 86 nsec. By using multireceiver
+closures, and repeating the short distance (<4000 km), transfers which were demonstrated in the continental U.S., the
+accuracies can certainly be confirmed.
+The obvious way to determine the accuracy of GPSreceiver
+time transfer is to make an independent measurement using
+established methods. Data on the regular clock closures give
+errors of 300 nsec, which is too large to measure GPSreceiver
+performance. A careful clock closure could yield an error of
+35 nsec for a trip of<40 hours each way, with three such trips
+2 months apart. Frequency could be measured with an error of
+I X 10 -14 A.f/.f.
+The other method of time transfer used in the DSNis VLBI.
+Present VLB1 errors are approximately 100 nsec from DSS 14
+to DSS63, and 200 nsec from DSS 14 to DSS 43. The DSS 43
+to DSS 63 baseline measurement is not done often but the
+accuracy of that baseline is approximately 300 nsec. Within
+the next few months, there are plans to implement new techniques that are expected to decrease the errors from one to
+two orders of magnitude (Refs. 9, 10). This would mean that
+VLB1 could be used as an independent measurement of the
+time offsets between the clocks in the DSN.
+
+95
+
+Acknowledgement
+Appreciation is expressed for the technical assistance anddata provided by Mr.DavidW.
+Allan and Mr. Dick D. Davisof the National Bureau of Standards.
+
+References
+I. Spilker, J. J., Digital Communication by Satellite, Thomas Kailath, editor, PrenticeHall Inc., Chapter 17, 18.
+2. "Time and Frequency Theory and Fundamentals," NBS Monograph 140, National
+Bureau of Standards, U.S. Department of Commerce, Byron E. Blair, editor, page
+208.
+3. Ashby, N., and Allan, D., "Practical Implication of Relativity for a Global Coordinate Time Scale,"Radio Science, Vol. 14, pp. 649-669, July-August 1979.
+4. Allan, D. W., "Statistics of Atomic Frequency Standards," Proe. IEEE, Feb. 1966,
+pp. 221-230.
+5. Allan, D.W., and Barnes, J., "A Modified Allan Variance With Increased Oscillator
+Decharacterization Ability," 35th Proceedings of the Annual Symposium on Frequency Control, 1981.
+6. Davis, D.D., et al., "Construction and Performance Characteristics of a Prototype
+NBS/GPS Receiver," Proceedings of the 35th Annual Symposium on Frequency
+Control, 1981.
+7. Allan, D.W., and Weiss, M.A., "Accuracy Time and Frequency Transfer During
+Common View of a GPS Satellite," Proceedings of the 34th Annual Frequency Control Symposium, 1980.
+8. Cheetham, C. M., et al., "Demonstration of Remote Clock Monitoring by VLBI, With
+Three Baseline Closures," in DSN ProgressReport 42-53, July-August 1979, Jet Propulsion Laboratory, Pasadena, Calif., Oct. 15, 1979.
+9. Wilcher, J.H., "Block I Phase 1 Very Long Baseline Interferometry Implementation," in The Deep Space Network ProgressReport 42-58, Jet Propulsion Laboratory, Pasadena, Calif.,Aug. 15, 1980.
+10. Wilcher, J. H., "Block 1 Phase 2 Very Long Baseline Interferometry Implementation," in The Tracking and Data Acquisition ProgressReport 42-66, Jet Propulsion
+Laboratory, Pasadena, Calif., Dec. 15, 1981.
+
+96
+
+GLOBAL POSITIONING SYSTEM(GPS)
+VALUESPRESENTED
+BELOWFORNAVSTARGPSSATELLITES
+ARETHE RESULTOF A LINEAR FITTHROUGH
+APPROXIMATELY100DATA POINTS, REFERRED
+TO THE BEGINNING OF THETRACKING PERIOD(TIME
+OF MEASUREMENT). SATELLITES
+ARETRACKEDFORAPPROXIMATELYTEN MINUTES.
+
+MJD
+NOV.
+
+NAVSTAR1
+SV! 4
+
+NAVSTAR3
+SV# 6
+
+NAVSTAR4
+SV# 8
+
+NAVSTAR5
+SV# 5
+
+NAVSTAR6
+SV! 9
+
+MC-GPS UT
+
+MC-GPS UT
+
+MC-GPS UT
+
+MC-GPS UT
+
+MC-GPS UT
+
+9 44917*
+
+,0449,B
+4
+980180 4
+B9B1753301
+-498 174224
+4919153049190
+301
+11 44919
+-49.697(180430) -49.805(175330) -49.811(174230) -49.798(191548)
+-49.792(190430)
+12 44920
+13 44921
+
+-49.705(180442)
+-49.621(180448)
+
+-49.743(175354)
+-49.677(175330)
+
+-49.755(174230)
+-49.688(174230)
+

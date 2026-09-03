@@ -1,0 +1,175 @@
+Standards Syntonization in
+the Deep Space Network
+SeWard
+Operations Sustaining Engineering Section
+
+The NASA-JPL Frequency and TIming System (FTS) of the Deep Space Network
+(DSN) consists of a collectIOn of three sets of clocks (located In Australia, Calzfornla,
+USA, and Spain) dnven by Independent atomic OSCillators It IS the synchromzatzon of
+the output frequencies (syntonzzatzon) of these OSCillators (reference frequency
+standards) that IS reported here Pnor to 1980 there was no DSN direct specificatIOn of
+syntonzzatzon. However, there was an Implied specificatIOn of a ±5 5 X 1()l2 related to
+the DSN time synchromzatzon specIfIcatIOn of a ±100 mIcroseconds Both the syntonzzatzon wlthzn the three sets and the syntomzatzon of the sets to the znternatzonal
+standard f InternatIOnal A tomlc TIme (TAl, UTC (BIH)] are considered
+
+I. Establishing Syntonization
+The ongmal calibratlOn was established dunng the thud
+quarter of calendar 1980 by syntomzmg a speCially prepared
+transportable ceSIUm atomic clock (Ref 1) to the standard
+frequency as mamtamed by the National Bureau of Standards
+at Boulder, Colorado ThiS "calibrated transfer standard" was
+then transported to each of the three sets of atomic frequency
+standards, where It was used to measure their frequency offset
+With respect to the NBS standard (deSignated as UTC-NBS)
+In thiS manner each of the reference frequency standards were
+syntomzed to UTC-NBS and, to a lesser degree, syntomzed to
+each other
+Each atomic reference frequency standard set consists of a
+Smlthsoman InstitutlOn AstrophYSical Observatory (SAO)
+model VLG-IOB hydrogen maser (H2M) and two HewlettPackard model S061-A optlOn 004 ceSIUm beam frequency
+standards The offset of each H2M's output frequency from
+the hydrogen hyperfine spectral lme was established With re118
+
+spect to the transported transfer standard By means of phase
+comparators, the H2M calIbratlOn IS transferred to the two
+ceSIUm beam standards Thus, the syntomzatlOn between the
+three sets and between any set and UTC was established (Ref
+2) wlthm less than ±3 X 10- 13
+
+II. Maintaining Syntonization
+To make effective use of syntomzatlon It must be mamtamed on a contmual baSIS, e g , the tumng of an orchestra to
+A above middle C IS a syntomzatlOn mamtenance application
+The DSN makes use of four resource techmques for mamtammg syntomzatlon They are LORAN-C, travelmg clocks, televIsion vertical sync pulse, Very Long Baselme Interferometry
+(VLBI/ ~DOR I) Figure 1 Illustrates how the DSN IS conIA techmque eqUivalent m accuracy to VLBI that makes use of an
+extragalactic radiO source along With a spacecraft to gather data
+from which time sync mformatlOn can be denved
+
+figured to utilIze these resources, makmg use of a combmatlon
+of (1) Mediterranean cham LORAN, travehng clocks and
+VLBI/ .!lDOR m Spam, (2) televlSlon, microwave links, travelmg clocks and VLBI/ .!lDOR m Australia, (3) microwave links,
+West Coast cham LORAN, traveling clocks2 and VLBI/.!lDOR
+m Califorma
+Table 1 lists the comparative ments of the resources used
+for mamtammg syntomzatlon For all compansons, It has been
+assumed that the resource has been m use for gathenng data
+for penods longer than one year and that at least two out of
+three reference frequency standards m a set have been m contmual operation over that penod
+
+III. Syntonization to UTe
+Figure 2, a plot of M/F vs time, presents a two-year hiStory of the syntomzatlon of the DSS 633 reference frequency
+standards With respect to UTC-USNO The "SPEC wrt UTC
+(NBS)" annotated dotted lines m the vlclmty of UTC (USNO)
+plus and mmus lOE-12 refers to System FunctlOnal Requuements Document 821-14 III B 2 The data were collected
+through the use of LORAN-C and have been adjusted through
+the use of USNO Bulletm 4 correctlOns With the exceptlOn of
+routme frequency standard mamtenance (H2M tumng) penods, 98% of the data presented applies to H2M, SAO VLGlOB senal #07 The data mdlcate that the reference frequency
+standards were syntomzed to UTC-USNO wlthm less than 1
+fractlOnal part in 1012 over the entue two-year penod.
+Figure 3, a plot of .!If/F vs time, presents a two-year hiStory of the syntomzatlOn of the DSS 434 reference frequency
+standards With respect to UTC-AUSs The "SPEC wrt UTC
+(NBS)" annotated dotted lines in the vlclmty of UTC(USNO)
+plus and mmus lOE-12 refers to System FunctlOnal Requuements Document 821-14 III B 24 The data were collected
+through the daily use of the TV simultaneous view techmque.
+The reference to which syntomzatlOn IS made IS the Department of NatlOnal Mappmg (NATMAP) clock ensemble (four
+clocks) in the local area custodian of UTC-AUS It IS eqUivalent to and serves the same functlOn for DSS 43 as the Deep
+Space Network Master Clock ensemble (NMC) does for DSS
+2 At Goldstone, Cailforma, traveilng clocks serve a double role (1) to
+synchromze the Network Master Clock (NMC) ensemble of seven
+ceSIUm clocks to UTC-NBS, and (2) to synchromze the DSS 14
+clocks to the NMC ensemble on each VLBI tIme sync operatIon.
+3Deep Space Trackmg StatIon 63 (DSS 63) IS located m the MadrId
+area of Spam (FIg 1)
+4DSS 43 IS located m the Austrailan CapItol Terntory (A C T) near
+Canberra
+13
+sUTC-AUS IS traceable to UTC-USNO wlthm ±5X 10- through the use
+of semIannual traveilng clock trIPS between Canberra, A.C T , and
+WashIngton, D C
+
+14 at Goldstone, Califorma, USA The data have been adJusted per pubhshed NATMAP Bulletm E correctlOns With the
+exceptlOn of the routme frequency standard mamtenance
+(H2M tumng) penods, 83% of the data applies to H2M, SAO
+VLG-lOB senal #06 The data mdlcate that the reference
+frequency standards were syntomzed to UTC-USNO wlthm a
+part in 1012 over the entire two-year penod
+Figure 4 presents a two-year history of the syntomzatlon of
+the DDS 14 reference frequency standards With respect to
+UTC-NMC6 The data were adjusted per weekly NMC clock
+closure reports Over thiS two-year report penod there were
+occaSlOns when UTC-MC and/or UTC-DSN were not available 7 ContinUity of the syntomzatlon history of H2M SAO
+VLG-lOB senal #05 was mamtamed at those times through
+the use of output frequency dnft data from the hydrogen
+hyperfine lme obtamed dunng tumng mamtenance Greater
+than 98% of the data presented applies to H2M SAO VLG-1 OB
+senal #OS, and It mdlcates that the syntomzatlOn of the DSS
+14 reference frequency standards was mamtamed wlthm a part
+m 1012 of UTC(NBS) over the entue penod Performance was
+borderlme dunng Apnl and May 1982
+
+IV. Syntonization Within the DSN
+Figure 5 presents a plot of .!If/F vs time for a two-year hiStory of the syntomzatlOn of the DSS 14 reference frequency
+standard With respect to the DSS 63 reference frequency standard The data were collected through the use of VLBI and
+.!lDOR time synchromzatlOn operatlOns (Ref 3) These
+syntomzatlOn data were denved from sets of blunder-free
+time offset data pomts, where a set consists of a mmlmum of
+three "good" pomts 8 Further, where there was a lack of
+"good" VLBI data, .!lDOR data sets were used The data
+indicate that the DSS 63 reference frequency standards remained syntomzed to the DSN master at DSS 14 Within
+±3 X 10- 13 over the two-year report penod
+Figure 6 presents a plot of .!If/F vs time for a two-year hiStory of the syntomzatlOn of the DSS 14 reference frequency
+6UTC-NMC IS syntomzed to UTC·NBS, and to lesser degree to UTCUSNO, WIthIn a part In 1013 through the use of traveilng clocks and
+West Coast LORAN-C UrC-NMC IS syntomzed to UTC-DSN WIthIn
+less than a part m 1013 through the use of weekly travelIng clock
+triPS and mIcrowave ilnks Thus UTC-DSN IS syntomzed to UTCNBS WIthIn a part In 1012
+7Extended power outages and aJICOndltlOmng failures m the buIldmg
+hOUSIng the NMC ensemble and extenSIve repall work on the DSS14
+antenna caused the loss of UTC-DSN and UTC-NMC.
+8A pomt IS defmed as "good" If It IS wlthm less than 3(1 of the average
+rate computatIon (l:J.f/f) , where the number od data pomts used IS
+greater than 2
+
+119
+
+standard wIth respect to the DSS 43 reference frequency
+standard The data were collected through the use of VLBI
+and .:lDOR tIme synchronIzatIon operatIons (Refs 3, 4)
+These syntOnIZatIOn data were derIved from sets of blunderfree tIme offset data POInts, where a set consIsts of a mInImUm
+
+of three "good" POInts Further, where there was a lack of
+"good" VLBI data, .:lDOR data sets were used The data IndIcate that the DSS 43 reference frequency standards remaIned syntomzed to the DSN master of DSS 14 wIthIn
+±3 X 10""13 over the two-year report perIod
+
+References
+Ward, S, "The OperatIonal Performance of Hydrogen Masers In the DSN," TDA
+Progress Report 42-63, PP 203-218, Jet PropulsIon Laboratory, Pasadena, CalIf,
+June 15, 1981
+2 Ward, S , "The OperatIonal Performance of Hydrogen Masers In the DSN," ProceedIngs of the Twelfth Annual PreclSlon TIme and TIme Interval (PTT!) ApplIcatIOns and
+PlannIng MeetIng, pp 616-617, December 2-4, 1980, Goddard SpaceflIght Center,
+Greenbelt, Md
+3 Roth, M G, "InternatIOnal Clock SynchrOnIZatIOn WIth the Block I VLBI System,"
+ProceedIngs of the ThIrteenth Annual PreCIse TIme and TIme Interval (PTT!) ApplIcatIons and PlannIng MeetIng, pp 489-500, December 1-3, 1981, Goddard SpaceflIght
+Center, Greenbelt, Md
+
+120
+
+Table 1 Comparative accuracy of syntonlzatlon maintenance resources
+
+Osc to osc
+(DSS to DSS)a
+
+Osc to llsted
+Ref a
+
+Osc to UTCUSNOa
+
+Osc to UTCNBSa
+
+LORAN-C (daily meas )
+
+1 IE -12
+
+±SE -13 LORAN
+
+±7E-13
+
+±7E -13

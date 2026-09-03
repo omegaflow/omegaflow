@@ -1,0 +1,720 @@
+DSN Frequency and Timing System, Mark IV-85
+B. W. Falin
+TDA
+
+Engineering
+
+Section
+
+As part of the DSN Mark lira Implementation
+Program, tht DSN Frequency and
+T_ming System
+is currently undergoing changes. With the implementation
+of Signal
+Processing
+Centers (SIC) at each Deep Space Communications
+Complex (DSCC), major
+changes to the frequency and timing distribution equipment
+were necessary. This article
+provides a functional description of the Mark IVA Frequency and Timing System (FTS)
+as it exists today and planned capabilities through 1988.
+
+I.
+
+System
+
+Definition
+
+A.
+
+Background
+
+The necessity to upgrade the Mark I11-77 FTS was driven
+by two factors. First, the consolidation of the DSN stations at
+a central complex required an increased distribution capability
+for time and reference frequencies. It also required centralized
+control and monitor of the frequency and timing equipment.
+Since a complex would be supporting concurrent operational
+activities, a need for the generation and distribution of simulated time was necessary. The second factor was the growing
+need to replace aging equipment
+that had been in service for
+twenty years.
+B.
+
+Functional
+
+Definition
+
+The DSN Frequency
+and Timing System provides precision frequency and timing data required at the Deep Space
+Stations throughout the DSN.
+The DSN Frequency
+and Timing System performs
+two
+main functions,
+providing frequency
+and timing data and
+validation. Frequency
+and timing data consists of sinusoidal
+
+reference
+frequencies,
+timing pulses, and epoch time codes.
+Frequency
+and timing validation
+assures that the primary
+frequency
+standards throughout
+the entire DSN are maintained within prescribed
+tolerances
+relative to the National
+Standard-United
+States Naval Observatory/National
+Bureau of
+Standards (USNO/NBS).
+
+C.
+
+Functional
+
+Description
+
+The Frequency and Timing
+tualized as follows:
+
+System
+
+functions
+
+are concep-
+
+(1)
+
+Generation
+of precision frequency
+signals to provide
+references
+for the generators of sinusoidal
+signals,
+timing pulses, and time codes within DSCC's.
+
+(2)
+
+Generation
+and distribution
+of sinusoidal
+reference
+frequency
+signals, timing pulses, time codes, and provision for time displays within DSCC's.
+
+(3)
+
+Control
+and monitoring
+of configuration
+operating mode of the FTS at DSCC's.
+
+(4)
+
+Network-wide
+synchronization
+of all Frequency
+and
+Timing System signals to NBS, validation of frequency
+
+status
+
+and
+
+113
+
+standard calibration, and traceability
+sal Time, Coordinated (UTC).
+Figure 1 depicts
+tem configuration.
+D.
+
+of time to Univer-
+
+the Mark IVA Frequency
+
+and Timing Sys-
+
+These standards,
+which are located in an environmentally
+controlled
+area, are provided with an uninterruptible
+power
+source for emergencies.
+Any of the four standards can be
+selected
+by the complex
+operator
+as the prime standard.
+However, if the prime standard fails, another
+standard is
+automatically
+selected.
+
+Key Characteristics
+
+The key characteristics
+tem are:
+
+of the Frequency
+
+and Timing
+
+Sys-
+
+Knowledge
+of time synchronization
+frequency offset (-+3 parts in 10-13)
+
+(to -+10 /as) and
+between DSCC's
+
+Knowledge of time synchronization
+the DSN and the National Standard
+
+(to -+5 gs) between
+(USNO/NBS)
+
+Knowledge
+frequency
+DSCC
+
+of time synchronization
+(to -+10 /as) and
+offset (to -+I part in i0 -11) within each
+
+Performance
+validation
+of frequency
+and timing
+functions
+for each Front End Area (FEA) and SPC
+at a DSCC
+Maintenance
+of a permanent
+record
+of frequency
+and time parameters
+including
+configuration
+and
+synchronization
+Simulation
+time sdectable
+from
+and Control Subsystem (DMC).
+
+the
+
+DSCC
+
+Monitor
+
+The frequency synthesis and distribution
+subset consists of
+a Coherent
+Reference Generator
+(CRG), which includes discrete synthesis, distribution
+amplifiers, and an interface panel.
+The CRG receives 0.1 MHz, 1 MHz, 5 MHz, and 100 MHz from
+the on-time
+frequency
+standard.
+It generates
+10.1
+45 MHz, 50 MHz, and 55 MHz and provides distribution
+for user subsystems.
+
+Sinusoidal reference
+signals are also distributed
+to users at
+the antenna areas. This is accomplished
+by the use of active
+stabilized cables that compensate
+for small phase changes in
+the distribution
+path. These actively stabilized cables are used
+for VLBI to provide the same stability as that of the Hydrogen
+Maser reference
+frequency
+standard. The stability requirements for the standard
+reference
+frequency
+are defined in
+Table 1.
+The time and timing subset consists of a triple redundant
+master clock, simulation time generator,
+time insertion and
+distribution,
+and time code translators.
+The master clock
+equipment
+DSN:
+
+II. System
+A.
+
+Elements
+
+Functional
+
+Elements
+
+The major elements of the Frequency
+and Timing System
+consist of a Frequency
+and Timing Subsystem located at each
+DSCC and a Network
+FTS Data Base subsystem located at
+DSN Network Operations Control Center. The Frequency and
+Timing Subsystem consists of six major subsets of equipment.
+(The
+relationships
+between
+the
+subsets are depicted in
+Fig. 2.)
+Frequency
+
+reference
+
+standards
+
+Frequency
+
+synthesis
+
+and distribution
+
+Reference
+
+frequency
+
+cable stabilization
+
+Time and timing
+
+generation
+
+and distribution
+
+Time synchronization
+Monitor
+B.
+
+DSS Frequency
+
+The master
+Masers backed
+
+114
+
+and control.
+and Timing
+
+Subsystem
+
+frequency
+standard consists of two Hydrogen
+by two Cesium Beam Frequency
+Standards.
+
+MI-h,
+ports
+
+provides
+
+the
+
+following
+
+,Year End-Automatic
+
+reset
+
+Leap Year-Automatic
+
+extra day addition
+
+Leap Second-Automatic
+leap second
+Resetability-Simple
+
+new capabilities
+
+subtraction
+
+or
+
+for the
+
+addition
+
+of
+
+clock adjustments
+
+Time codes and timing pulses are provided to each user
+via a time code translator. Two types of translators are provided for user application,
+and the time code is available in
+binary milliseconds
+or binary-coded
+decimal (BCD) seconds.
+Time codes are also distributed
+to users at the antenna areas
+via fiber optic cables.
+Time synchronization of the three complexes to the National
+Bureau of Standards
+is accomplished
+via the Global Positioning Satellite (GPS) System by utilizing a GPS receiver at
+each complex.
+Also, other sources for time synchronization
+include: WWV, LORAN C, "IV line 10, and traveling clocks.
+Time.sync data are also available from the VLBI system.
+The functional
+capabilities of the Frequency and Timing
+Subsystem can be controlled locally at the equipment level or
+
+.remotely
+from the complex operator position. The complex
+operator is provided with various displays that contain both
+status and performance parameters. Such parameters will be
+forwarded to NOCC for application
+in the Network FTS
+Data Base.
+C.
+
+NOCC
+
+Subsystem
+
+The Network FTS Data-Base Subsystem, to be implemented
+in 1988 at NOCC, will receive configuration data, status data,
+and performance data from the FTS subsystem at each DSCC.
+Also it will receive GPS time-sync data from the Tracking
+System and VLBI time-sync data from the VLBI System.
+The data will be analyzed as to time and frequency offsets
+between
+complexes,
+clock behavior, and Hydrogen Maser
+performance. The results will be available to complexes and to
+Network Operations.
+Presently, the analysis function is being performed by the
+Network Operations
+and Analysis Section (NOA) as a DSN
+supporting element. NOA is responsible for generating reports,
+
+monitoring
+the FTS system, and coordinating
+changes to complex time and frequency standards,
+as weU as generating
+monthly reports containing both time and frequency measurement data.
+
+III. FTS System
+
+Schedule
+
+The fotlowing additional
+the Mark IVA FTS:
+
+implementations
+
+will complete
+
+In support of the X-hand uplink implementation,
+stabilized
+cables
+and distribution
+equipment
+are
+required for distributing
+100-MHz reference signals
+on the antennas at DSS 45,65, and 15.
+Time analyzer
+assemblies and frequency
+standard
+monitor
+equipment
+will be implemented
+as part of
+the FTS monitor and control in FY 86.
+FTS Data.Base
+Subsystem
+at Network
+Operations
+Control Center will be implemented in FY 88.
+
+115
+
+Table
+
+1.
+
+_
+
+Frequency
+
+Allen
+
+Variance
+
+Stability
+
+0")
+
+T
+Signal
+
+116
+
+Processing
+Center
+
+VLBI
+
+Antenna-Mounted
+Equipment
+
+1 _c
+
+i x 10 -12
+
+I x 10 --12
+
+10 4 sec
+
+I x 10 -14
+
+1 x 10 -14
+
+12 hours
+
+I x 10 -14
+
+1 x 10 -14
+
+10 days
+
+1 x 10 -13
+
+1 x
+
+10 -13
+
+1
+
+._
+._ _
+
+I
+I
+I r.-.m
+
+I
+I
+
+I
+""
+
+I""
+
+%.I ,_
+
+i_
+
+[_.,
+
+t_J
+
+I
+
+I
+I
+
+;'i (3
+
+_7 a.
+
+.L.
+
+F
+
+I
+
+I
+o2
+I o
+z
+
+o
+
+Ell
+
+__.1
+
+.!_
+
+oz\xx
+
+_
+
+_ _----_-
+
+3--
+
+zO
+
+I °"
+o
+
+o_Ld
+
+z
+
+4..I
+
+"="-0
+_0
+
+i
+
+4
+
+i
+
+i
+
+c_J
+i
+
+I,..,
+..,,,
+_
+o
+
+.,,.._{
+
+1
+L
+
+_
+8
+
+I
+I
+I
+
+J
+
+1.
+
+SINE WAVES
+
+a.
+
+REFERENCE STANDARDS
+
+b.
+
+STABLE FREQUENCIES
+
+c.
+
+CONSTANT
+
+PHASE
+
+d.
+
+ISOLATION
+
+AND
+
+e.
+
+ADJUSTABLE FREQUENCIES
+
+_
+
+FREQUENCIES
+REFERENCE
+
+_
+
+TIMING
+DI n CEzc
+
+j_
+
+,
+
+DISTRIBUTION
+
+OFF_T
+
+2.
+
+OFFSET
+v
+
+TIMING
+
+a.
+
+ISOLATION AND
+
+b.
+
+CONSTANT
+WAVES
+
+c.
+
+PULSES
+
+DISTRIBUTION
+
+PHA3E W!TH S!NE
+
+vbe_
+
+ADJUSTABLE PHASE
+
+3.
+
+EPOCH TIME
+
+REFERENCE FREQUENCY
+
+4.
+
+CALIBRATION
+EXTERNAL
+SIGNALS
+
+CO NFIGURATIO N_L_J
+%
+COMMAND, AND L_J
+CALIBRATION DATA
+
+OPERATION
+STATION
+POWER
+
+iSOLATION
+
+b.
+
+DISPLAYS
+
+AND DISTRIBUTION
+
+c.
+
+LOCATES A TIME REFERENCE
+IN DSS/DSCC
