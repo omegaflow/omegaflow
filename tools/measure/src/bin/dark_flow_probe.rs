@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::healpix::{ang2pix_nest, icrs_to_galactic};
-use omegaflow::json::{JsonVal, jnum, parse_json};
+use omegaflow::json::{jnum, parse_json, JsonVal};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const NSIDE_CELL: i64 = 8;
@@ -13,9 +13,11 @@ const LAG_MAX: usize = 3;
 const SURROGATES: usize = 10;
 
 fn fetch_cached(name: &str, release: &str) -> Option<Vec<u8>> {
-    let path = format!("data/{name}");
-    if !std::path::Path::new(&path).exists() {
-        std::fs::create_dir_all("data").ok();
+    let path = omegaflow::archivar::cache_root().join(name);
+    if !path.exists() {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).ok();
+        }
         let url = format!("{CDN_BASE}/{release}/{name}");
         let bytes = fetch_raw_bytes(&url, 604800)?;
         if std::fs::write(&path, &bytes).is_err() {
