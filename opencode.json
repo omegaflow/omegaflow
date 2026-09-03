@@ -3,10 +3,9 @@
   "instructions": [
     "AGENTS.md"
   ],
-  "model": "omegaflow/deepseek-v4-flash",
-  "small_model": "omegaflow/deepseek-v4-flash",
+  "model": "deepseek/deepseek-v4-flash",
+  "small_model": "deepseek/deepseek-v4-flash",
   "default_agent": "build",
-  "subagent_depth": 2,
   "permission": {
     "edit": "allow",
     "bash": {
