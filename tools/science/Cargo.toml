@@ -1,0 +1,9 @@
+[package]
+name = "omegaflow-science"
+version = "1.0.0"
+edition = "2024"
+license-file = "../../LICENSE"
+description = "paper and publication tooling"
+
+[dependencies]
+omegaflow = { path = "../.." }

@@ -1,0 +1,105 @@
+name: healthcheck
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'
+permissions:
+  contents: write
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  PURPLEAIR_KEY: ${{ secrets.PURPLEAIR_KEY }}
+  FROST_BASIC_AUTH: ${{ secrets.FROST_BASIC_AUTH }}
+  TNS_UA: ${{ secrets.TNS_UA }}
+  OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+  NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+  LASAIR_TOKEN: ${{ secrets.LASAIR_TOKEN }}
+  OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
+  NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+  FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -- --verify phi
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: verify returned void" \
+          "Verify job failed. Last commit: ${{ github.sha }}" \
+          health
+
+  reverify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -- --reverify | tee reverify.txt
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: reverify
+        path: |
+          reverify.txt
+          phi/pipeline/stage/recheck_live.φ
+    - if: always()
+      run: |
+        if grep -qE " (drift-void|kaputt) " reverify.txt; then
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "health: recheck-live trägt drift/kaputt-Befunde" \
+            "Der Re-Verifikations-Sweep meldet drift-void/kaputt-Befunde. Artifact: reverify (reverify.txt + recheck_live.φ)." \
+            health
+        fi
+
+  pages-verify:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://omegaflow.space/ 2>/dev/null || echo "void")
+        if [ "$STATUS" != "200" ]; then
+          echo "pages returned $STATUS"
+          exit 1
+        fi
+        echo "pages ok: $STATUS"
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: pages returned void" \
+          "Pages health check failed. https://omegaflow.space/ may be down." \
+          health
+
+  probe-full:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: |
+        mkdir -p probe-results
+        for f in phi/pipeline/stage/*_converted.φ; do
+          [ -f "$f" ] || continue
+          echo "=== probing $(basename $f) ==="
+          timeout 120 cargo run --release -- --probe "$f" 2>&1 | tail -3
+          fields=$(grep -c '^#.*= ' probe_output.φ 2>/dev/null || echo 0)
+          out="probe-results/$(basename $f .φ)_out.φ"
+          mv probe_output.φ "$out" 2>/dev/null
+          echo "  $fields fields"
+        done
+    - uses: actions/upload-artifact@v4
+      with:
+        name: probe-full-results
+        path: probe-results/
