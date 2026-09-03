@@ -60,8 +60,8 @@ geprüft ist; ein Fund ist bestanden, wenn das Binary die Diskrepanz findet.
 
 ## Umfang
 
-28 verifizierte Zeilen (Klasse A 13, Z 4, D 3, K 1, N 3, V 4). Klasse A/Z/D/K
+29 verifizierte Zeilen (Klasse A 14, Z 3, D 3, K 1, N 3, V 5). Klasse A/Z/D/K
 sind die Nummern-Funde, die das Binary finden **muss** (21); Klasse N sind
-die unverankerten Zahlen (3); Klasse V (4) sind Struktur-Überdeklarationen,
+die unverankerten Zahlen (3); Klasse V (5) sind Struktur-Überdeklarationen,
 die das Nummern-Binary erwartungsgemäß **nicht** findet — sie zählen als
 „verpasst" in der Kalibration und markieren die Grenze des Werkzeugs.
