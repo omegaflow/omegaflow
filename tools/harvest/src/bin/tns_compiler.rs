@@ -1,4 +1,4 @@
-use omegaflow::archivar::tns::{NAME_LEN, TnsObject, write_bin};
+use omegaflow::archivar::tns::{write_bin, TnsObject, NAME_LEN};
 use omegaflow::cdn::upload_asset;
 use std::process::Command;
 
@@ -12,10 +12,7 @@ fn secret(name: &str) -> Option<String> {
             return Some(v);
         }
     }
-    for path in [
-        ".secrets.local",
-        "/home/johannes/projects/omegaflow/.secrets.local",
-    ] {
+    for path in [".secrets.local"] {
         if let Ok(body) = std::fs::read_to_string(path) {
             for line in body.lines() {
                 if let Some((k, v)) = line.split_once('=') {
