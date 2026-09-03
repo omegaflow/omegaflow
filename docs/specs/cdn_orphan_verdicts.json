@@ -1,10 +1,16 @@
 {
  "generated": "2026-09-03",
- "basis": "docs/specs/cdn_reconciliation.json (Step 1) + phi/dead_sources.phi cross-ref + live root reachability probe",
+ "basis": "docs/specs/cdn_reconciliation.json (Step 1) + reliable host crossref vs phi/sources.phi/phi/dead_sources.phi (2026-09-03, awk url-line hosts)",
  "counts": {
-  "dataset_host": 6,
-  "repo_tag": 15,
-  "stale_pending": 135
+  "documentation_recomputed": "host crossref of phi/sources.phi + phi/dead_sources.phi (awk)",
+  "per_class_doc": {
+   "dataset_host/dead_documented": 3,
+   "dataset_host/undocumented": 3,
+   "repo_tag/dead_documented": 1,
+   "repo_tag/undocumented": 14,
+   "stale_pending/dead_documented": 80,
+   "stale_pending/undocumented": 55
+  }
  },
  "verdicts": [
   {
@@ -12,15 +18,15 @@
    "class": "dataset_host",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (compiler netloc)"
   },
   {
    "netloc": "physionet.org",
    "class": "dataset_host",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (compiler dataset lease; never delete)",
+   "registry_verdict": "compiler dataset lease; never delete",
    "cdn_verdict": "keep (compiler netloc)"
   },
   {
@@ -28,7 +34,7 @@
    "class": "dataset_host",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (compiler dataset lease; never delete)",
+   "registry_verdict": "compiler dataset lease; never delete",
    "cdn_verdict": "keep (compiler netloc)"
   },
   {
@@ -36,15 +42,15 @@
    "class": "dataset_host",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (compiler netloc)"
   },
   {
    "netloc": "spdf.gsfc.nasa.gov",
    "class": "dataset_host",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (compiler dataset lease; never delete)",
+   "registry_verdict": "compiler dataset lease; never delete",
    "cdn_verdict": "keep (compiler netloc)"
   },
   {
@@ -52,1208 +58,1208 @@
    "class": "dataset_host",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (compiler netloc)"
   },
   {
    "netloc": "github.com-Bowserinator-Periodic-Table-JSON",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-FreeCodeCamp-ProjectReferenceData",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-GEMScienceTools-gem-global-active-faults",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-arijguest-3D-meteorite-viewer",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-cossatot-gem-global-active-faults",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-cristianst85-GeoNuclearData",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-davidmegginson-ourairports-data",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-fraxen-tectonicplates",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-jbrooksuk-JSON-Airports",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-nvkelso-natural-earth-vector",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-ofrohn-d3-celestial",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-rfordatascience-tidytuesday",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-scikit-hep-particle",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "github.com-wri-global-power-plant-database",
    "class": "repo_tag",
    "documentation": "undocumented",
    "reachability": null,
-   "registry_verdict": "none (not a release identity per CDN_ZIEL_SCHEMA sec1)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "not a release identity per CDN_ZIEL_SCHEMA sec1",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "raw.githubusercontent.com",
    "class": "repo_tag",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "aa.usno.navy.mil",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "aeronet.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "amsmeteors.org",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.astrocats.space",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.blitzortung.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.carbonintensity.org.uk",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "400 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.coral.tsr.lol",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "404 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.drand.sh",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "403 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.energy-charts.info",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "405 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.exchangerate-api.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.gbif.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.github.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.inaturalist.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.irail.be",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.irishrail.ie",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.met.no",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.neotomadb.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.obis.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.openalex.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.rainviewer.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "403 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.stackexchange.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.sunrise-sunset.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.waqi.info",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "timeout",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.weather.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "api.wheretheiss.at",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "archive.gemini.edu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "archive.nrao.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "beacon.nist.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "bodc.ac.uk",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "bom.gov.au",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "403 (root, BigIP)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "cddis.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "cdms.astro.uni-koeln.de",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ceic.ac.cn",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "celestrak.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "chime-frb.ca",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "conn-refused",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "climate-api.open-meteo.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "cmr.earthdata.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "coastwatch.noaa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "coastwatch.pfeg.noaa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "cpc.ncep.noaa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "dap.oceannetworks.ca",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "dasch.rc.fas.harvard.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "tls-err (expired cert)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data-gis.unep-wcmc.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data.blitzortung.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data.cosmic.ucar.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data.gdeltproject.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data.giss.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "data.neracoos.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "datacenter.iers.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "datalab.noirlab.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "dataserver-coids.inpe.br",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "db.satnogs.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ds.iris.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "earth-search.aws.element84.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "earthquake.tmd.go.th",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ensemble-api.open-meteo.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "eonet.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "epic.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "epqs.nationalmap.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "erddap.emodnet-physics.eu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "erddap.marine.ie",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "esgf-node.llnl.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "esgf.ceda.ac.uk",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "eyes.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "fireball.fripon.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "flood-api.open-meteo.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "g6goyz4w56.execute-api.us-west-2.amazonaws.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "403",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gcn.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gdacs.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gea.esac.esa.int",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "geofon.gfz-potsdam.de",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "geomag.usgs.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "301-empty",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gis.ngdc.noaa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gis1.servirglobal.net",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "globalcmt.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "globalfloods.eu",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "gong2.nso.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "hamqsl.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "heasarc.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "hpiers.obspm.fr",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "hydro1.gesdisc.eosdis.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ies-ows.jrc.ec.europa.eu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "imis.bfs.de",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "404 (root)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "impc.dlr.de",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "inex.ie",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ionosonde.iap-kborn.de",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "dns-fail",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "isc.ac.uk",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "landsatlook.usgs.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "lasp.colorado.edu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "macrostrat.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "marinespecies.org",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "mast.stsci.edu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "meta.icos-cp.eu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "metoffice.gov.uk",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "minorplanetcenter.net",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "modis.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "my.cmems-du.eu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ncei.noaa.gov",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "network.igs.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "network.satnogs.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "newton.spacedys.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ngdc.noaa.gov",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "noaadata.apps.nsidc.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "nohrsc.noaa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "nrt.cmems-du.eu",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "nwis.waterdata.usgs.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "oceanwatch.pifsc.noaa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "oderest.rsl.wustl.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "ogimet.com",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "omniweb.gsfc.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "opendap.nccs.nasa.gov",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "opendata.dwd.de",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "openlittermap.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "opensky-network.org",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "orfeus-eu.org",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "pegelonline.wsv.de",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "physics.mcgill.ca",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "dns-fail",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "planetarycomputer.microsoft.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "power.larc.nasa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "psl.noaa.gov",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "qrng.anu.edu.au",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "rapid.ac.uk",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "records-ws.nbnatlas.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "rest.isric.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "405 (root, data routes answer)",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "sciencebase.gov",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "seismic-api.science.unimelb.edu.au",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "service.earthscope.org",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "service.scedc.caltech.edu",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "services.terrascope.be",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "services3.arcgis.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "services6.arcgis.com",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "sidc.be",
    "class": "stale_pending",
-   "documentation": "undocumented",
+   "documentation": "dead_documented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "simbad.cds.unistra.fr",
    "class": "stale_pending",
    "documentation": "dead_documented",
    "reachability": null,
-   "registry_verdict": "none (documented dead/declined in dead_sources.phi; release is leftover)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "documented dead/declined in dead_sources.phi; release is leftover",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "simbad.u-strasbg.fr",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   },
   {
    "netloc": "wienerlinien.at",
    "class": "stale_pending",
    "documentation": "undocumented",
    "reachability": "200",
-   "registry_verdict": "pending (re-registration needs Force-Gate verdict; see TODO)",
-   "cdn_verdict": "keep (no rebuild source; Step 5 only with content disposition)"
+   "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
   }
  ]
 }
