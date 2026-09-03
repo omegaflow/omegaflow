@@ -1,6 +1,6 @@
 use omegaflow::archivar::omni2::{
-    COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_PRESSURE, COMP_T1800, COMP_V1800, parse_bin,
-    write_bin,
+    parse_bin, write_bin, COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_PRESSURE, COMP_T1800,
+    COMP_V1800,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -189,7 +189,12 @@ fn harvest_window(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "omni2_serie.bin".to_string());
+    let out = arg_value(&args, "--out").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omni2_serie.bin")
+            .to_string_lossy()
+            .into_owned()
+    });
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(1440.0);
@@ -251,33 +256,31 @@ fn main() {
         let year_rows = Arc::clone(&year_rows);
         let year_fills = Arc::clone(&year_fills);
         let next = Arc::clone(&next);
-        workers.push(std::thread::spawn(move || {
-            loop {
-                let year = next.fetch_add(1, Ordering::SeqCst);
-                if year > ey {
-                    break;
-                }
-                let w_start = match days_from_civil(year, 1, 1) {
-                    Some(d) => d,
-                    None => continue,
-                };
-                let w_end_raw = match days_from_civil(year, 12, 31) {
-                    Some(d) => d,
-                    None => continue,
-                };
-                let w_end = w_end_raw.min(end_day);
-                if w_start > end_day {
-                    continue;
-                }
-                harvest_window(
-                    w_start,
-                    w_end,
-                    decimate_s,
-                    &buckets,
-                    &year_rows,
-                    &year_fills,
-                );
+        workers.push(std::thread::spawn(move || loop {
+            let year = next.fetch_add(1, Ordering::SeqCst);
+            if year > ey {
+                break;
             }
+            let w_start = match days_from_civil(year, 1, 1) {
+                Some(d) => d,
+                None => continue,
+            };
+            let w_end_raw = match days_from_civil(year, 12, 31) {
+                Some(d) => d,
+                None => continue,
+            };
+            let w_end = w_end_raw.min(end_day);
+            if w_start > end_day {
+                continue;
+            }
+            harvest_window(
+                w_start,
+                w_end,
+                decimate_s,
+                &buckets,
+                &year_rows,
+                &year_fills,
+            );
         }));
     }
     for w in workers {
@@ -327,6 +330,9 @@ fn main() {
         pre_lsk_skip
     );
     let bytes = write_bin(&raw);
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {} returned void", out);
         std::process::exit(1);
