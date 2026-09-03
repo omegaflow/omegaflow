@@ -195,4 +195,25 @@ Nicht in `phi/sources.φ` — die Bins sind Werkzeug-Mess-Artefakte (Konsum via
 `parse_bin`/`parse_pnav_bin`), keine Live-ω-Oszillatoren; der Telemetrie-Peer
 trägt denselben Behandlungsweg. `data/` gitignored; der CI erzeugt und lädt.
 
+**Form-Klassifikation aller Rucks (2026-09-03, Commit 3be1aca,
+`pioneer_navio_ruck_form`): Rat-Verdikt — kein TE (Paar-Größe, n-Floor, Null
+falsch gesetzt für transient-selektierte Fenster), ein einreihiger Form-
+Deskriptor.** Form je Flag aus dem PNDM-Tagesmedian-Profil: jump (pre→post-
+Baseline-Differenz), rise_days, returns (kehrt zur Vorbasis zurück, ≥10 d
+Segment), sign-flips (Vorzeichenwechsel = Zitter), seg_len. Gemessen:
+**P10 99/99 + P11 71/71 aller Ruck-Flaggen Form-gemessen** (0 unter 3-Tage-
+Fenster). Gemessene Form-Verteilung: **returns zur Vorbasis = 0/66 (P10) und
+0/60 (P11)** — kein Ruck kehrt zurück; Zitter 20–147 dominiert die langen
+Segmente (P11 1979-Saturn-Encounter: 242-d Segment, 147 sign-flips, "holds").
+**Kalibrier-Gate gegen die Positiv-Kontrolle:** der bekannte P11-1979-Saturn-
+Encounter (ein echtes Gravitations-Ereignis) trägt im selben Deskriptor dieselbe
+Form wie die Artefakte (holds + 147 Zitter + Sprung). **Am kHz-Floor trennt der
+Form-Klassifikator ein echtes Gravitations-Ereignis nicht von einem Artefakt —
+die Form ist floor-dominiert, nicht ereignisbestimmt.** (Die Commit-Message von
+3be1aca „alle Artefakt-förmig" überzeichnet: gemessen ist die Form aller Rucks,
+aber sie trennt nicht Signal von Artefakt, weil die Positiv-Kontrolle dieselbe
+Form trägt.) Keine Ruck-Form trägt eine saubere sub-kHz-Transit-Signatur, aber
+der Grund ist der ~1,5-kHz-Streuungsboden, nicht eine bewiesene Artefakt-Natur
+jedes einzelnen Rucks (0 honored).
+
 Diese Datei bleibt der Ledger bis Front C gefahren und entschieden ist.
