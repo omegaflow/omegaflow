@@ -239,14 +239,20 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   Pfad. Gebaut (2026-09-03): `srd62_compiler --out <dir> [--ci-mode]`
   (Probe HTTP 200, 25 Citations, Penetration-Depth-Tabelle parsebar) +
   `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin` auf dem
-  ssd.jpl.nasa.gov-Compiler-Netloc. Ernte v6 (2026-09-03): Draht trägt
-  die Citation-Provenienz je Punkt (16 Citations, 252 Punkte; die
-  fabrizierte 0.0-σ und der 0.0-indep-Fallback sind getilgt — Zeilen
-  ohne parsebare Temperatur entfallen ehrlich), Reader + λ⁻²-Konversion
-  im Modul `suprastrom` (parse/encode + Tests), Probe
-  `suprastrom_cuprate_probe` (electric-Kanal, ρ_s ∝ λ⁻² je Quelle,
-  Version 6, 0 honored kein Nullpunkt). PSI hat keinen offenen
-  Kuprat-ρ_s(T)-Datensatz (nur Kagome/Nickelat). Die λ→ρ_s-Konversion
+  ssd.jpl.nasa.gov-Compiler-Netloc. Draht v7 (2026-09-03): Serienmodell
+  `id` (Quelle) + `label` (Feldrichtung/Dotierung/Bedingung, je Zeile
+  eigene Serie), Reader + λ⁻²-Konversion im Modul `suprastrom`
+  (parse/encode + Tests), Probe `suprastrom_cuprate_probe` (electric-
+  Kanal, ρ_s ∝ λ⁻² je Serie). Parser-Korrektur v6→v7: die Spalten werden
+  am Kopf erkannt (Penetration = Wert, Temperature = Achse, übrige
+  Spalten = Serien-Schlüssel) statt „erste andere Zahl" — die naive
+  Achse hatte Feldrichtung und Dotierung konflatiert (A00316 schien
+  eine 50-Punkte-„Serie" mit λ-Sprüngen 0,2↔1,2 µm; die echte Tabelle
+  misst //ab 0,14–0,37 µm und //c 1,04–2,10 µm getrennt je Dotierung).
+  Tabellen ohne Temperatur-Achse (Film-Dicke/Sample/Magnetfeld-Scans)
+  sind keine ρ_s(T)-Quelle, entfallen ehrlich (0 honored). Ernte v7:
+  232 Punkte, 65 Serien. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz
+  (nur Kagome/Nickelat). Die λ→ρ_s-Konversion
   (λ⁻² ∝ ρ_s) ist zum Feldwert electric der gebaute Weg.
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
   belegt, vier Runden: ILL/ISIS/NIST/ORNL/PSI/J-PARC/TRIUMF +
