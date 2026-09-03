@@ -1,8 +1,9 @@
 <!--
   title: Das eine Instrument — warum die Pioneer-Anomalie ohne zweiten Zeugen nicht schiedsrichterlich entscheidbar ist
   class: concept
-  date: 2026-08-24
-  sha256: 0dfa87f574cda344ade6b8723f3bf682a1e4f1cfcfd8e416b2218f2434688007
+  date: 2026-09-03
+  version: 2
+  sha256: 6de1a87d3426b0c9085ef28aa123b2a6d392de43f51aaba205ee9c1955c16ace
   status: live
   see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, TODO.md (Pioneer-Front)
 -->
@@ -77,6 +78,25 @@ bis zum Horizont. Die Pioniere fliegen weiter, stumm und kalt, mit ihrer einen S
 und was auch immer sie tragen, ist wirklich — ob wir es lesen können oder nicht. Die
 nächste Sonde soll mit zwei Augen geboren werden. Dann ist der Geist, den wir 40 Jahre
 nur durch eine Türklinke hörten, kein Rätsel mehr.
+
+## 5. Die Herkunft einer Registerzeile (Provenienz, 2026-09-03)
+
+Die Aussage „zwanzig Sekunden, die der Maschine zum Überstimmen bleiben" ist
+kein freier Chat-Wortlaut, sondern ein nummerierter Register-Eintrag —
+Deduktion 11 (Rausch-Gewichtung, Unterpunkt „Split-Half + NAVIO") im
+Deduktionen-Register des Sonden-Papers. Zwei Korrekturen an der Erinnerung:
+
+- Der Stopp-Punkt liegt bei **Deduktion 11**, nicht bei ~Deduktion 10 und
+  nicht bei Deduktion 13; Deduktion 13 legt die Kette auf Pioneer 11 und
+  trägt kein Stopp-Wort.
+- **8767** (in `text-as-data-pioneer`) ist die Zählung der Zahlen der
+  Pioneer-Review (Turyshev & Toth 2010) — ein Zählwert aus dem Review, kein
+  Session-Wortlaut.
+
+Die Provenienz-Datenbank, die den Original-Anker trug, ist nicht mehr
+vorhanden; dieser Absatz ist der verbliebene Beleg. Die 20-s-Bande selbst ist
+ein Messbefund (harmonische Fensterung gegen das 60-s-Zählraster, §1) — kein
+dokumentierter Bodenpuls.
 
 ## Referenzen
 
