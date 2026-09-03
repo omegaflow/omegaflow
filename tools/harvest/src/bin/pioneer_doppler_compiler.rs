@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
-use omegaflow::doppler::{parse_bin, write_bin};
+use omegaflow::doppler::{parse_bin, parse_pnav_bin, write_bin, write_pnav_bin};
 use omegaflow::inflate::gunzip;
 use omegaflow::spectral::civil_from_days;
 
@@ -9,6 +9,16 @@ const SOURCES: &[(&str, &str)] = &[("pioneer10", "SC_23"), ("pioneer11", "SC_24"
 const KU_HZ: f64 = 1.0e10;
 const J2000_EPOCH: f64 = 2451545.0;
 const JD_UNIX_EPOCH: f64 = 2440587.5;
+
+fn linkmode(trans: f64, rcvr1: f64) -> f64 {
+    if !trans.is_finite() || !rcvr1.is_finite() || trans <= 0.0 {
+        11.0
+    } else if trans == rcvr1 {
+        12.0
+    } else {
+        13.0
+    }
+}
 
 fn fields(line: &str) -> Vec<(String, String)> {
     let toks: Vec<&str> = line.split_whitespace().collect();
@@ -68,8 +78,11 @@ fn main() {
         };
         let text = String::from_utf8_lossy(&text_bytes);
         let mut records: Vec<[f64; 6]> = Vec::new();
+        let mut pnav_records: Vec<[f64; 9]> = Vec::new();
         let mut dtype = f64::NAN;
         let mut sc_num = f64::NAN;
+        let mut trans = f64::NAN;
+        let mut rcvr1 = f64::NAN;
         let mut ku_corrected = 0usize;
         for line in text.lines() {
             let f = fields(line);
@@ -78,6 +91,12 @@ fn main() {
             }
             if let Some(s) = num(&f, "SC") {
                 sc_num = s;
+            }
+            if let Some(t) = num(&f, "TRANS") {
+                trans = t;
+            }
+            if let Some(r) = num(&f, "RCVR1") {
+                rcvr1 = r;
             }
             let (Some(timtag), Some(obs), Some(freq), Some(cmptime)) = (
                 num(&f, "TIMTAG"),
@@ -94,6 +113,10 @@ fn main() {
                 freq
             };
             records.push([timtag, obs, freq, cmptime, dtype, sc_num]);
+            let mode = linkmode(trans, rcvr1);
+            pnav_records.push([
+                timtag, obs, freq, cmptime, dtype, sc_num, trans, rcvr1, mode,
+            ]);
         }
         if records.is_empty() {
             eprintln!("{name}: no records — the series stays unwritten (0 honored)");
@@ -136,6 +159,41 @@ fn main() {
             }
         }
         if ci_mode && !upload_release("spdf.gsfc.nasa.gov", &out) {
+            std::process::exit(1);
+        }
+
+        let out_nav = format!("data/{name}_navio.bin");
+        let bin_nav = write_pnav_bin(&pnav_records);
+        if std::fs::write(&out_nav, &bin_nav).is_err() {
+            eprintln!("{name}: write {out_nav} void");
+            continue;
+        }
+        match parse_pnav_bin(&bin_nav) {
+            Some(parsed) => {
+                let mut modes: Vec<i64> = parsed.iter().map(|r| r[8] as i64).collect();
+                modes.sort_unstable();
+                modes.dedup();
+                let mut st: Vec<i64> = parsed
+                    .iter()
+                    .map(|r| r[6] as i64)
+                    .filter(|&s| s > 0)
+                    .collect();
+                st.sort_unstable();
+                st.dedup();
+                eprintln!(
+                    "{out_nav}: {} records, linkmode {:?}, stations {:?}, {} B — roundtrip parses",
+                    parsed.len(),
+                    modes,
+                    st,
+                    bin_nav.len()
+                );
+            }
+            None => {
+                eprintln!("{out_nav}: roundtrip parse void — the station record stays unverified");
+                continue;
+            }
+        }
+        if ci_mode && !upload_release("spdf.gsfc.nasa.gov", &out_nav) {
             std::process::exit(1);
         }
     }
