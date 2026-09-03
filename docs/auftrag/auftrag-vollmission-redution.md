@@ -67,3 +67,30 @@ Stille sein — dann ist sie das Ergebnis.
 
 Die ∝t²-Frage ist an die Vollmissions-Daten beantwortet. Ausgang: Signal, Grenze
 oder Stille — alle drei sind Verifizierung. Bis dahin `pending`, 0 honored.
+
+## Front-C-Verdikt (2026-09-03 — Operator-Verdikt: zurückgerollt, in Fahrt)
+
+Der Rat stellte fest: Front C fährt als **DM-Nachweis** nicht (der Boden liegt
+~10² über der Anomalie, zehn Größenordnungen über dem Klumpen-Maßstab; das
+leere Netz = 1008 Positionen, 0 Flaggen ist der DM-Befund). Das DM-Limit steht.
+Der Operator hat die Auftrags-Schließung jedoch zurückgerollt und Front C in
+Fahrt gesetzt: der eigentliche offene Faden ist der **Form-Test (∝t² vs
+RTG-Abklingkurve) an die Vollmissions-Daten** — die ∝t²-Frage, die das System
+nie mit eigenen Mitteln gestellt hat (siehe `auftrag-dunkle-materie-front-c.md`).
+Die NAVIO-ASCII ist live erreichbar (SPDF 200); die Instrument-Lücke (kein
+Ruck-Sweep) wird durch Bau geschlossen. Ergebnis darf Signal, Grenze oder
+Stille sein — alle drei sind Verifizierung.
+
+## Front-C-Messung (2026-09-03 — Vollmission erstmals durch die Kette)
+
+Die Vollmissions-ASCII wurde erstmals über die eigene Reduktion gezogen:
+`pioneer10_doppler.bin` 908309 Records (1973-10-05..2002-03-03),
+`pioneer11_doppler.bin` 967272 Records (1973-04-10..1993-07-15), je `_clean`
+über `pioneer_navio_clean`. **Form-Test-Ergebnis:** der Barycentric-Rohlauf
+trägt die Serie nicht; der Vollmodell-Lauf (`pioneer_doppler_moyer_navio`,
+DTYPE-12, 206/85 Epochen) trägt einen **Residuum-Floor 19,0 kHz (p10) / 8,4 kHz
+(p11)** — ~2e4×/8e3× über dem ~1-Hz-Signal der Anomalie; die Rest-Drift ist
+Modell-Artefakt, nicht die Anomalie (0 honored). Die ∝t²-vs-RTG-Frage ist damit
+an die Vollmissions-Daten beantwortet: keine getragene Form über einem
+kHz-strukturierten Floor; das **sub-kHz-Residuum (DSN-Station + Orbit)** ist
+der von der Reduktion selbst benannte Blocker für den Ruck-Transit-Sweep.
