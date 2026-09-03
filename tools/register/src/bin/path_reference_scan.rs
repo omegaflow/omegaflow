@@ -1,47 +1,49 @@
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
-fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
-    if let Ok(rd) = fs::read_dir(dir) {
-        for e in rd.flatten() {
-            let p = e.path();
-            if p.is_dir() {
-                let name = p.file_name().map(|s| s.to_string_lossy().to_string());
-                if name == Some("target".into())
-                    || name == Some(".git".into())
-                    || name == Some("node_modules".into())
-                {
-                    continue;
-                }
-                walk(&p, out);
-            } else {
-                out.push(p);
-            }
-        }
-    }
+fn tracked_files(root: &Path) -> Vec<PathBuf> {
+    let out = Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(["ls-files", "-z"])
+        .output();
+    let out = match out {
+        Ok(o) if o.status.success() => o.stdout,
+        _ => return Vec::new(),
+    };
+    out.split(|&b| b == 0)
+        .filter(|s| !s.is_empty())
+        .map(|s| String::from_utf8_lossy(s).to_string())
+        .map(PathBuf::from)
+        .collect()
 }
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let root = args.get(1).cloned().unwrap_or_else(|| ".".to_string());
-    let mut files = Vec::new();
-    walk(Path::new(&root), &mut files);
+    let files = tracked_files(Path::new(&root));
 
     let mut missing = 0usize;
     let mut absolute = 0usize;
     for f in &files {
         let rel = f.to_string_lossy().to_string();
-        if rel.contains("/docs/reference/")
-            || rel.starts_with("./gate/")
-            || rel.starts_with("./mail/")
-            || rel.starts_with("./reports/")
-            || rel.contains("/node_modules/")
+        if rel.contains("path_reference_scan.rs")
+            || rel.contains("/docs/reference/")
+            || rel.starts_with("gate/")
+            || rel.starts_with("mail/")
+            || rel.starts_with("reports/")
         {
             continue;
         }
+        let full = if Path::new(&rel).is_absolute() {
+            f.clone()
+        } else {
+            Path::new(&root).join(f)
+        };
         let is_markdown = f.extension().map(|e| e == "md").unwrap_or(false);
-        let content = match fs::read_to_string(f) {
+        let content = match fs::read_to_string(&full) {
             Ok(c) => c,
             Err(_) => continue,
         };
@@ -71,7 +73,7 @@ fn main() {
                 if cleaned.is_empty() {
                     continue;
                 }
-                let resolved = resolve(&root, f, &cleaned);
+                let resolved = resolve(&root, &full, &cleaned);
                 if !resolved.exists() {
                     missing += 1;
                     println!("MISS {}:{}  {}  ->  {}", rel, n, label, cleaned);
@@ -124,25 +126,26 @@ fn file_refs(line: &str) -> Vec<(&str, String)> {
 
 fn absolute_paths(line: &str) -> Vec<&str> {
     let mut out = Vec::new();
-    let mut rest = line;
-    while let Some(start) = rest.find("/home/") {
-        let mut end = start;
-        let bytes = rest.as_bytes();
-        while end < bytes.len()
-            && !bytes[end].is_ascii_whitespace()
-            && bytes[end] != b'"'
-            && bytes[end] != b'`'
-            && bytes[end] != b')'
-        {
-            end += 1;
-        }
-        let seg = &rest[start..end];
-        if seg.starts_with("/home/johannes/projects/omegaflow") && seg.ends_with(".rs")
-            || seg.contains("/omegaflow-worktrees/")
-        {
+    let markers = ["/home/", "/Users/", "/root/", "/srv/", "/mnt/"];
+    for m in markers {
+        let mut rest = line;
+        while let Some(start) = rest.find(m) {
+            let bytes = rest.as_bytes();
+            let mut end = start;
+            while end < bytes.len()
+                && !bytes[end].is_ascii_whitespace()
+                && bytes[end] != b'"'
+                && bytes[end] != b'`'
+                && bytes[end] != b')'
+                && bytes[end] != b','
+                && bytes[end] != b';'
+            {
+                end += 1;
+            }
+            let seg = &rest[start..end];
             out.push(seg);
+            rest = &rest[end..];
         }
-        rest = &rest[end..];
     }
     out
 }
