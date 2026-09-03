@@ -133,6 +133,21 @@ Detektions-Anspruch; die Flaggen stehen, wo ein Transit-Sprung vom
 Segment-Rauschen nicht sauber getrennt ist (das sub-kHz-Ziel bleibt am
 ~1,5-kHz-Streuungsboden, 0 honored).
 
+**Nachfolge-Messung (2026-09-03) — Kandidaten gegen bekannte Encounter:**
+die überlebenden starken Ruck-Flaggen gegen die bekannten planetaren
+Encounter-Epochen abgeglichen (aus `probe-front-dark-matter.md` Table 1,
+gemessen): P10 nur Jupiter 1973-12; P11 Jupiter 1974-12 + Saturn 1979-09. Befund:
+P11s Top-Flaggen (1974-12-03 @100σ Jupiter, 1979-08-31 Saturn) fallen exakt auf
+dokumentierte Vorbeiflüge = benannte Granulat-Überschuss-Klasse. **P10s stärkste
+Flaggen (1996-05-28 @73σ, 1996-11-22, 1996-10-15, 1981-02-09, 1982-03-12) liegen
+nach P10s einzigem planetaren Encounter (1973) — nicht durch bekannte Flybys
+erklärt.** Eine Persistenz-Heuristik (Niveauversatz hält über ±Tage an) wurde
+gebaut, aber verworfen: sie klassifizierte P10s Jupiter-Flyby persistent und
+P11s Jupiter-Flyby isoliert — dieselbe Ereignisart, zwei Urteile (unverlässlich,
+nicht committet). Der ehrliche nächste Schritt ist die Station-/Era-Überprüfung
+der P10-1981/1982/1996-Flaggen (Teilen sie einen Stations-/Era-Mix?), nicht eine
+ungeprüfte Heuristik. Offen, 0 honored.
+
 **Source-Pflicht (CDN-Manifestation):** das neue Dataset ist der PNAV-Bin;
 `pioneer_doppler`-CI-Job (kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL +
 PNAV aufs `spdf.gsfc.nasa.gov`-Release. Die PNVR/PNDM-Serialisierung ist
