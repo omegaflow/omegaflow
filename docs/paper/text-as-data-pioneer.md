@@ -1,10 +1,11 @@
 <!--
   title: The text as data — the Pioneer review's numbers against the Doppler series
   class: paper
-  date: 2026-08-24
-  sha256: 01b1b4d10119d5c1a377146962691fdaa75e24fb4ff696887dc47c3218bb7323
+  date: 2026-09-03
+  version: 2
+  sha256: 77bde1e63b3fe7d95190085013f9b0a4f3e0f3761f6841547fb71dd49c244212
   status: live
-  see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, TODO.md (Pioneer-Front), tools/work/src/bin/pioneer_text_korrelation.rs
+  see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
 
 # The text as data — the Pioneer review's numbers against the Doppler series
@@ -16,10 +17,13 @@ We hold the 8 767 numbers of the Pioneer review (Turyshev & Toth 2010) as a data
 
 ## 1. The measurement series
 
-The probe (`tools/work/src/bin/pioneer_text_korrelation.rs`, branch
-`pioneer-text-korrelation`) holds the article text as data against the measurement data:
+The probe (`tools/measure/src/bin/pioneer_text_correlation.rs`) holds the article
+text as data against the measurement data:
 number tokens with ×10⁻ⁿ merging from 592 866 characters → 8 767 tokens, 1 576
-distinct values. Measurement series: the cleaned NAVIO 60-s Doppler
+distinct values. Provenance of the count: **8 767** is a token count of the
+review text (592 866 characters, ×10⁻ⁿ merging), not a raw file size; the
+figure „999 000" is a memory number and stands nowhere in the corpus.
+Measurement series: the cleaned NAVIO 60-s Doppler
 P10 (908 028 records, Doppler −4.2 MHz..+541 MHz, carrier 2.018..2.316 GHz) and
 P11 (967 043 records, −3.1 MHz..+541 MHz, 2.002..2.349 GHz).
 
@@ -81,6 +85,6 @@ next step, not a finding.
 
 1. Turyshev S. G., Toth V. T., 2010, Living Rev. Relativity 13, 4 — text:
    docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt.
-2. The probe: tools/work/src/bin/pioneer_text_korrelation.rs (branch pioneer-text-korrelation).
+2. The probe: tools/measure/src/bin/pioneer_text_correlation.rs.
 3. Data: data/pioneer10_doppler_clean.bin, data/pioneer11_doppler_clean.bin
    (NAVIO 60-s, cleaned — see TODO.md, Pioneer-Front).
