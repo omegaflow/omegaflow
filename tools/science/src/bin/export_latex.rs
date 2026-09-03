@@ -727,10 +727,21 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
             continue;
         }
         if first.trim_start().starts_with('>') {
-            let t = first.trim_start();
+            let mut quote = String::new();
+            for l in &block {
+                let t = l.trim_start();
+                if let Some(rest) = t.strip_prefix('>') {
+                    let rest = rest.strip_prefix(' ').unwrap_or(rest);
+                    quote.push(' ');
+                    quote.push_str(rest.trim());
+                } else {
+                    quote.push(' ');
+                    quote.push_str(t.trim());
+                }
+            }
             latex_body.push_str(&format!(
                 "\\begin{{quote}}{}\n\\end{{quote}}\n\n",
-                render_inline(t[1..].trim())
+                render_inline(quote.trim())
             ));
             continue;
         }
