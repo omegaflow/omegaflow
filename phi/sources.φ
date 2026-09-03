@@ -1,0 +1,5207 @@
+url https://api.wolfx.jp/jma_eew.json
+ttl 5
+at earth
+map .
+lat Latitude
+lon Longitude
+field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
+
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+ttl 10
+on earth 52.5 13.4 0
+map ac
+lat lat
+lon lon
+field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
+field track adsb_track_deg inverse-square em deg 1 0.0 0.0
+
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+ttl 30
+at earth
+map .
+lat earthquake.hypocenter.latitude
+lon earthquake.hypocenter.longitude
+field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://api.vedur.is/quakes/events
+ttl 30
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.depth vedur_quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://api.geonet.org.nz/quake?MMI=4
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+ttl 60
+on earth 0 0 0
+map features
+mag_type_key properties.magType
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+ttl 60
+on earth 0 0 0
+geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
+mag_type_key magType
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_integral inverse-square em pfu 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
+last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
+last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+ttl 60
+at sun
+last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
+last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+at sun
+first bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
+first bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+at sun
+first proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0
+first proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 6.0 0.0 0.0
+first proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+ttl 60
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 180
+at earth
+last Kp magnetosphere_kp_index inverse-square em 1 18.0 0.0 0.0
+last a_running magnetosphere_kp_a_running inverse-square em 1 18.0 0.0 0.0
+
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
+on earth 0 0 0
+map observations.data
+lat lat
+lon lon
+field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
+ttl 300
+on earth 0 0 0
+map current
+field temperature_2m open_meteo_air_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
+field relative_humidity_2m open_meteo_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field dew_point_2m open_meteo_dewpoint_c gaussian-inverse-square thermal C 30.0 0.0 0.0
+field surface_pressure open_meteo_pressure_hpa gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field wind_speed_10m open_meteo_wind_speed_kmh gaussian-inverse-square advective km/h 30.0 0.0 0.0
+
+url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
+ttl 300
+at earth
+map .
+lat latitude
+lon longitude
+epoch captured_at
+field value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
+
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+ttl 300
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_metar_temp_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
+field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+
+url https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
+ttl 300
+on earth 0 0 0
+map .
+lat location.latitude
+lon location.longitude
+field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
+field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_apparent_temperature.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_high.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_low.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_mid.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_dew_point_2m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_diffuse_radiation.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_direct_normal_irradiance.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_direct_radiation.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_freezing_level_height.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_global_tilted_irradiance.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_leaf_wetness_probability.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_precipitation_probability.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_pressure_msl.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_relative_humidity_2m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_shortwave_radiation.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_snow_depth.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_0cm.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_18cm.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_54cm.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_6cm.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_surface_pressure.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_surface_temperature.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_temperature_2m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wet_bulb_temperature_2m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_gusts_10m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_10m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_120m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_180m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_80m.json
+on earth 28.8559 85.295 0
+ttl 300
+last points.v meteo_gyirong_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_apparent_temperature.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_high.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_low.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_mid.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_dew_point_2m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_diffuse_radiation.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_direct_normal_irradiance.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_direct_radiation.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_freezing_level_height.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_global_tilted_irradiance.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_leaf_wetness_probability.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_precipitation_probability.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_pressure_msl.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_relative_humidity_2m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_shortwave_radiation.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_snow_depth.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_0cm.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_18cm.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_54cm.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_6cm.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_surface_pressure.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_surface_temperature.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_temperature_2m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wet_bulb_temperature_2m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_gusts_10m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_10m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_120m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_180m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_80m.json
+on earth 28.271 85.515 0
+ttl 300
+last points.v meteo_kollab_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_apparent_temperature.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_high.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_low.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_mid.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_dew_point_2m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_diffuse_radiation.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_direct_normal_irradiance.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_direct_radiation.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_freezing_level_height.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_global_tilted_irradiance.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_leaf_wetness_probability.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_precipitation_probability.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_pressure_msl.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_relative_humidity_2m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_shortwave_radiation.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_snow_depth.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_0cm.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_18cm.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_54cm.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_6cm.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_surface_pressure.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_surface_temperature.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_temperature_2m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wet_bulb_temperature_2m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_gusts_10m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_10m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_120m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_180m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_80m.json
+on earth 28.25 85.1 0
+ttl 300
+last points.v meteo_rasuwa_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
+url https://gracedb.ligo.org/api/superevents/?limit=10
+ttl 300
+at earth
+last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
+
+url https://resonanceone.app/api/now
+ttl 300
+at earth
+field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
+
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.WDIR hydrosphere_ndbc_buoy_wind_dir gaussian-inverse-square advective deg 30.0 0.0 0.0
+field properties.WSPD hydrosphere_ndbc_buoy_wind_speed gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.GST hydrosphere_ndbc_buoy_gust gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.WVHT hydrosphere_ndbc_buoy_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+field properties.DPD hydrosphere_ndbc_buoy_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.APD hydrosphere_ndbc_buoy_avg_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.MWD hydrosphere_ndbc_buoy_mean_wave_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+field properties.PRES hydrosphere_ndbc_buoy_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.PTDY hydrosphere_ndbc_buoy_pressure_tendency gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.ATMP hydrosphere_ndbc_buoy_air_temp erfc thermal C 30.0 0.0 0.0
+field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0.0
+field properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square gravity m 30.0 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+ttl 300
+on earth 0 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
+
+url https://www.nhc.noaa.gov/CurrentStorms.json
+ttl 300
+at earth
+map activeStorms
+lat latitudeNumeric
+lon longitudeNumeric
+field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.0 0.0
+field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
+
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+ttl 600
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_pirep_temp_c gaussian-inverse-square thermal C 600.0 0.0 0.0
+field wspd atmosphere_pirep_wind_speed_kt gaussian-inverse-square advective kt 600.0 0.0 0.0
+field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective deg 600.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 600
+at sun
+first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 0.0 0.0 where frequency 2800
+
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
+ttl 600
+at sun
+last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
+last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
+
+url https://www.jma.go.jp/bosai/quake/data/list.json
+ttl 600
+on earth 35.68 139.69 0
+last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
+
+url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+ttl 900
+on earth 0 0 0
+stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+stations_path items
+stations_id notation
+stations_lat lat
+stations_lon long
+fanout 40
+last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_conductivity_sm gaussian-inverse-square electric S/m 1800 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_salinity_psu erfc diffusion psu 1800 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
+
+url https://api.alerce.online/alerts/v1/objects/?page=1&page_size=1000&order_by=firstmjd&order_mode=DESC
+format alerce
+ttl 3600
+at sun
+alerce https://api.alerce.online/alerts/v1/objects/{oid}/detections
+fanout 200
+fanout_delay 2
+field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0 0.0
+field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
+
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+ttl 3600
+at sun
+map .
+lat cmeAnalyses.0.latitude
+lon cmeAnalyses.0.longitude
+field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square em km/s 3600 0.0 0.0
+
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
+ttl 3600
+at sun
+regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
+
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+ttl 3600
+on earth 0 0 0
+header X-API-Key {PURPLEAIR_KEY}
+map data
+lat 0
+lon 1
+field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 3600
+on earth 0 0 0
+stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
+stations_path stations
+stations_id id
+stations_lat lat
+stations_lon lng
+fanout 40
+fanout_delay 10
+last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
+ttl 3600
+at sun
+hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt Pressure1800=omni_solarwind_pressure_npa
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+ttl 3600
+at parker_solar_probe
+hapi BR=psp_imf_br_rtn_nt BT=psp_imf_bt_rtn_nt BN=psp_imf_bn_rtn_nt B=psp_imf_bmag_nt ProtonSpeed=psp_solarwind_flow_speed_kms protonDensity=psp_solarwind_density_percc protonTemp=psp_solarwind_temp_k
+field psp_imf_bmag_nt psp_imf_bmag_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_br_rtn_nt psp_imf_br_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bt_rtn_nt psp_imf_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bn_rtn_nt psp_imf_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_solarwind_flow_speed_kms psp_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field psp_solarwind_density_percc psp_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_solarwind_temp_k psp_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=psp_fld_l2_mag_RTN&format=json
+ttl 3600
+at parker_solar_probe
+hapi psp_fld_l2_mag_RTN.0=psp_fld_br_rtn_nt psp_fld_l2_mag_RTN.1=psp_fld_bt_rtn_nt psp_fld_l2_mag_RTN.2=psp_fld_bn_rtn_nt
+field psp_fld_br_rtn_nt psp_fld_br_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_fld_bt_rtn_nt psp_fld_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_fld_bn_rtn_nt psp_fld_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
+ttl 3600
+at parker_solar_probe
+hapi np_moment_gd=psp_proton_density_percc wp_moment_gd=psp_proton_thermal_speed_kms
+field psp_proton_density_percc psp_proton_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_proton_thermal_speed_kms psp_proton_thermal_speed_kms exponential-decay thermal km/s 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=SN_RMS_E&format=json
+ttl 3600
+at solar_orbiter
+hapi SN_RMS_E=solo_rpw_e_rms_vm
+field solo_rpw_e_rms_vm solo_rpw_e_rms_vm gaussian-inverse-square electric V/m 3600 0.0 0.0
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
+field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_modis_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_modis_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_noaa20_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_noaa20_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
+header Authorization {FROST_BASIC_AUTH}
+ttl 3600
+on earth 0 0 0
+stations https://frost.met.no/sources/v0.jsonld?types=SensorSystem&elements=air_temperature&fields=id,geometry
+stations_path data
+stations_id id
+stations_lat geometry.coordinates.1
+stations_lon geometry.coordinates.0
+fanout 40
+first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
+
+url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
+header Authorization {FROST_BASIC_AUTH}
+ttl 3600
+on earth 0 0 0
+stations https://frost.met.no/sources/v0.jsonld?types=SensorSystem&elements=wind_speed&fields=id,geometry
+stations_path data
+stations_id id
+stations_lat geometry.coordinates.1
+stations_lon geometry.coordinates.0
+fanout 40
+first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
+ttl 3600
+format text
+on earth 0.0 -120.0 0
+rows .
+epoch 0
+gate iso_6 0.0 500.0
+field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
+format goes_xrs
+at sun
+ttl 3600
+field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
+field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
+format rpw_efield
+at solar_orbiter
+ttl 3600
+field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
+field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.cpc.ncep.noaa.gov/qbo_30hpa.csv
+ttl 3600
+format text
+on earth 1.35 103.99 0
+rows .
+epoch year month day 0 0
+gate qbo_30hpa_ms -300.0 300.0
+field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 3600
+format text
+on earth 19.5 -155.6 0
+rows .
+epoch year month day 0 0
+gate average 300.0 600.0
+field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
+
+url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+ttl 3600
+at sun
+flux_from_mag gmag
+cmap .
+ra ramean
+dec decmean
+field gmag lasair_ztf_transient_gmag gaussian-inverse-square em mag 3600 0.0 0.0
+
+url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 65.06 25.47 0
+rows .
+epoch 0
+field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
+
+url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.value usgs_stream_temp_c erfc thermal C 3600 0.0 0.0
+
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.detected_latitude
+lon properties.detected_detected_longitude
+epoch properties.detected_start_time
+epoch_scale 0.001
+tau_key properties.detected_duration
+field properties.detected_energy glm_bolide_radiant_energy_j inverse-square em J 3600 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth 0.99
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at earth 0.99
+field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+at earth
+map .
+epoch time_tag
+field dst magnetosphere_dst_nt inverse-square em 1 3600.0 0.0 0.0
+
+url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
+
+url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.dec_lat_va
+lon properties.dec_long_va
+field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
+field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
+
+url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Particulate_Matter___PM2_5_atm_ chpl_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
+
+url https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude__degrees_
+lon properties.Longitude__degrees_
+field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.0
+field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
+
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
+ttl 3600
+at earth
+map data
+lat 3
+lat_sign 4
+lon 5
+lon_sign 6
+alt 7 km
+epoch 0
+field 1 geosphere_fireball_radiated_energy_e10j inverse-square em e10j 3600 0.0 0.0
+field 2 geosphere_fireball_impact_energy_kt inverse-square em kt_tnt 3600 0.0 0.0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+at earth
+map features
+mag_type_key properties.magType
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 360.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
+
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+ttl 3600
+on earth 0 0 0
+map .
+lat Lat
+lon Lon
+field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
+
+url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
+header token {NOAA_CDO_TOKEN}
+ttl 3600
+on earth 52.5 13.4 0
+stations https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&extent={lat_min},{lon_min},{lat_max},{lon_max}&limit=100
+stations_path results
+stations_id id
+stations_lat latitude
+stations_lon longitude
+fanout 50
+last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
+
+url https://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600
+ttl 3600
+on earth 65.05 25.47 0
+path data.OULU.1h.0.1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600 0.0 0.0
+
+url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
+format csv_zip
+header user-agent {TNS_UA}
+ttl 3600
+at sun
+abs_mag_from tns_transient_flux
+cmap .
+ra ra
+dec declination
+z redshift
+field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
+
+url https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,ap,Cp&status=def,nowcast&format=JSON
+ttl 10800
+on earth 52.07 12.68 0
+last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
+
+url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
+header X-API-Key {OPENAQ_API_KEY}
+ttl 21600
+on earth 0 0 0
+stations https://api.openaq.org/v3/locations?limit=1000
+stations_path results
+stations_flatten sensors
+stations_filter parameter.name pm25
+stations_id id
+stations_lat coordinates.latitude
+stations_lon coordinates.longitude
+fanout 25
+fanout_delay 20
+last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.daily_columno3 woudc_total_ozone_column_du gaussian-inverse-square diffusion DU 86400.0 0.0 0.0
+
+url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
+ttl 86400
+on earth 0 0 0
+profile .
+lat geolocation.coordinates.1
+lon geolocation.coordinates.0
+epoch timestamp
+pressure pressure
+field temperature argo_temperature_c erfc thermal C 86400 0.0 0.0
+field salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+format csv
+on earth 46.05 -125.0 0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
+format bidsleep
+on earth 42.6334 -71.3162 0
+ttl 86400
+field bidsleep_ihr_bpm bidsleep_ihr_bpm gaussian-inverse-square electric bpm 86400 0.0 0.0
+field bidsleep_mx_ms2 bidsleep_mx_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
+field bidsleep_my_ms2 bidsleep_my_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
+field bidsleep_mz_ms2 bidsleep_mz_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_orbit.bin
+format orbit_bin
+at wind
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
+format wind_waves
+at wind
+ttl 86400
+field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square em V 86400 0.0 0.0
+field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square em V 86400 0.0 0.0
+field wind_waves_tnr wind_waves_tnr gaussian-inverse-square em V 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dastcom_asteroids.bin
+format catalog_dastcom
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
+format ephemeris_binary
+at adrastea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_amalthea.bin
+format ephemeris_binary
+at amalthea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_apophis.bin
+format ephemeris_binary
+at apophis
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ariel.bin
+format ephemeris_binary
+at ariel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas.bin
+format ephemeris_binary
+at atlas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas_3i.bin
+format ephemeris_binary
+at atlas_3i
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_bennu.bin
+format ephemeris_binary
+at bennu
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_callisto.bin
+format ephemeris_binary
+at callisto
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ceres.bin
+format ephemeris_binary
+at ceres
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_charon.bin
+format ephemeris_binary
+at charon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_deimos.bin
+format ephemeris_binary
+at deimos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_despina.bin
+format ephemeris_binary
+at despina
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_dione.bin
+format ephemeris_binary
+at dione
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
+format ephemeris_binary
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_enceladus.bin
+format ephemeris_binary
+at enceladus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_encke.bin
+format ephemeris_binary
+at encke
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_epimetheus.bin
+format ephemeris_binary
+at epimetheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_eris.bin
+format ephemeris_binary
+at eris
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
+format ephemeris_binary
+at europa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_galatea.bin
+format ephemeris_binary
+at galatea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ganymede.bin
+format ephemeris_binary
+at ganymede
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_haumea.bin
+format ephemeris_binary
+at haumea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_helene.bin
+format ephemeris_binary
+at helene
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_himalia.bin
+format ephemeris_binary
+at himalia
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hydra.bin
+format ephemeris_binary
+at hydra
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hyperion.bin
+format ephemeris_binary
+at hyperion
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iapetus.bin
+format ephemeris_binary
+at iapetus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
+format ephemeris_binary
+at io
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iss.bin
+format ephemeris_binary
+at iss
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_janus.bin
+format ephemeris_binary
+at janus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juno.bin
+format ephemeris_binary
+at juno
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
+format ephemeris_binary
+at jupiter
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jwst.bin
+format ephemeris_binary
+at jwst
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_kerberos.bin
+format ephemeris_binary
+at kerberos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_larissa.bin
+format ephemeris_binary
+at larissa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_makemake.bin
+format ephemeris_binary
+at makemake
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
+format ephemeris_binary
+at mars
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mercury.bin
+format ephemeris_binary
+at mercury
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_metis.bin
+format ephemeris_binary
+at metis
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mimas.bin
+format ephemeris_binary
+at mimas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_miranda.bin
+format ephemeris_binary
+at miranda
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
+format ephemeris_binary
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_naiad.bin
+format ephemeris_binary
+at naiad
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin
+format ephemeris_binary
+at neptune
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
+format ephemeris_binary
+at nereid
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_new_horizons.bin
+format ephemeris_binary
+at new_horizons
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nix.bin
+format ephemeris_binary
+at nix
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_oberon.bin
+format ephemeris_binary
+at oberon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pandora.bin
+format ephemeris_binary
+at pandora
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_parker_solar_probe.bin
+format ephemeris_binary
+at parker_solar_probe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phobos.bin
+format ephemeris_binary
+at phobos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phoebe.bin
+format ephemeris_binary
+at phoebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
+format ephemeris_binary
+at pluto
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_prometheus.bin
+format ephemeris_binary
+at prometheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_proteus.bin
+format ephemeris_binary
+at proteus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_rhea.bin
+format ephemeris_binary
+at rhea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_saturn.bin
+format ephemeris_binary
+at saturn
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_solar_orbiter.bin
+format ephemeris_binary
+at solar_orbiter
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_styx.bin
+format ephemeris_binary
+at styx
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
+format ephemeris_binary
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_tethys.bin
+format ephemeris_binary
+at tethys
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thalassa.bin
+format ephemeris_binary
+at thalassa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thebe.bin
+format ephemeris_binary
+at thebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titan.bin
+format ephemeris_binary
+at titan
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titania.bin
+format ephemeris_binary
+at titania
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_triton.bin
+format ephemeris_binary
+at triton
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_umbriel.bin
+format ephemeris_binary
+at umbriel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus.bin
+format ephemeris_binary
+at uranus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
+format ephemeris_binary
+at venus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_vesta.bin
+format ephemeris_binary
+at vesta
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager1.bin
+format ephemeris_binary
+at voyager1
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager2.bin
+format ephemeris_binary
+at voyager2
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie.bin
+format omni2_serie
+at sun
+ttl 86400
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 86400 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 86400 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
+format spectral
+on earth 19.82 -155.47 4142.6
+ttl 86400
+field irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+rows
+field 9 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_ch4_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 380
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.5 13.4 0
+stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
+fanout 154
+fanout_delay 15
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://maia.usno.navy.mil/ser7/finals.all
+format finals
+ttl 86400
+at earth
+field ut1_utc eop_iers_ut1_utc_s inverse-square em s 86400 0.0 0.0
+field pmx eop_iers_polar_motion_x_arcsec inverse-square em arcsec 86400 0.0 0.0
+field pmy eop_iers_polar_motion_y_arcsec inverse-square em arcsec 86400 0.0 0.0
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+ttl 86400
+on mars 18.445 77.45 0
+field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+on mars -4.5895 137.4417 0
+field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
+format tap
+ttl 86400
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field z ned_redshift_z gaussian-inverse-square em 1 86400 0.0 0.0
+
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0 0
+map features
+lat attributes.Latitude
+lon attributes.Longitude
+field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-inverse-square advective km/h 3600.0 0.0 0.0
+field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
+
+url https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.ATMP ndbc_archive_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP ndbc_archive_water_temp_c erfc thermal C 86400 0.0 0.0
+
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
+
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_degc wqp_water_temp_c erfc thermal C 86400 0.0 0.0
+
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+on earth 0 0 0
+map features
+lat properties.latitude
+lon properties.longitude
+alt properties.depth
+field properties.avg_tempt ocean_average_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
+field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion PSU 86400.0 0.0 0.0
+
+url https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0 0
+map features
+lat attributes.latitude
+lon attributes.longitude
+field attributes.depth worldwide_quake_depth_km gaussian-inverse-square seismic-body km 3600.0 0.0 0.0
+
+url https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0 0
+map features
+lat attributes.Latitude
+lon attributes.Longitude
+field attributes.Depth romplus_quake_depth_km gaussian-inverse-square seismic-body km 3600.0 0.0 0.0
+field attributes.Mw romplus_quake_mw gaussian-inverse-square seismic-surface Mw 3600.0 0.0 0.0
+
+url https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
+field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+dist Dist
+dist_scale 3.085677581e19
+field S1400 atnf_pulsar_flux_1400mhz_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Speak cornish_peak_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+field Sint cornish_integrated_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Fpeak first_radio_peak_flux_mjy inverse-square em mJy 86400 0.0 0.0
+field Fint first_radio_integrated_flux_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+dist D
+dist_scale 3.085677581e22
+field HRV hecate_radial_velocity_kms gaussian-inverse-square advective km/s 86400 0.0 0.0
+field W1mag hecate_w1_3_4um_mag gaussian-inverse-square em mag 86400 0.0 0.0
+field W2mag hecate_w2_4_6um_mag gaussian-inverse-square em mag 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,VarType,magMax,Min1+FROM+"B/gcvs/gcvs_cat"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field magMax gcvs_max_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
+field Min1 gcvs_min1_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+at sun
+cmap .
+ra _RA
+dec _DE
+dist Dist
+dist_scale 3.085677581e16
+field Ksmag carmenes_ks_mag inverse-square em mag 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
+field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
+field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_magnetic_field_intensity_nt
+field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
+ttl 86400
+on earth -6 -10 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_15006
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+ttl 86400
+on earth 34.7 -72.4 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
+ttl 86400
+on earth 31.743 -74.955 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/41010.txt
+ttl 86400
+on earth 28.86 -78.478 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41010
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/41043.txt
+ttl 86400
+on earth 21.09 -64.864 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41043
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/41049.txt
+ttl 86400
+on earth 27.505 -62.271 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41049
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 86400
+on earth 25.90 -89.67 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+ttl 86400
+on earth 25.16 -94.42 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+ttl 86400
+on earth 28.50 -84.52 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42036
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+ttl 86400
+on earth 22.14 -91.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42055
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+ttl 86400
+on earth 38.46 -74.70 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44009
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+ttl 86400
+on earth 42.35 -70.69 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44013
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
+ttl 86400
+on earth 48.061 -87.793 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/45161.txt
+ttl 86400
+on earth 43.185 -86.354 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45161
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/45178.txt
+ttl 86400
+on earth 44.603 -73.394 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45178
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/45186.txt
+ttl 86400
+on earth 42.368 -87.795 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45186
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/45207.txt
+ttl 86400
+on earth 41.731 -81.367 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45207
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+ttl 86400
+on earth 56.30 -148.17 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+ttl 86400
+on earth 42.67 -124.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+ttl 86400
+on earth 46.06 -124.96 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46005
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+ttl 86400
+on earth 37.36 -122.88 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46012
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+ttl 86400
+on earth 40.74 -124.54 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46022
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+ttl 86400
+on earth 33.75 -119.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46025
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+ttl 86400
+on earth 37.75 -122.84 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46026
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+ttl 86400
+on earth 46.12 -124.51 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46029
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46035.txt
+ttl 86400
+on earth 57.034 -177.468 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46035
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+ttl 86400
+on earth 32.42 -119.53 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46047
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+ttl 86400
+on earth 34.26 -119.86 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46053
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+ttl 86400
+on earth 34.27 -120.68 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46054
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+ttl 86400
+on earth 38.07 -124.03 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46059
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+ttl 86400
+on earth 33.66 -120.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46069
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46071.txt
+ttl 86400
+on earth 51.035 179.808 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46071
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46075.txt
+ttl 86400
+on earth 53.93 -160.763 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46075
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+ttl 86400
+on earth 32.49 -118.02 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46086
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+ttl 86400
+on earth 23.52 -153.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51000
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+ttl 86400
+on earth 24.44 -162.00 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+ttl 86400
+on earth 17.56 -152.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51004
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+ttl 604800
+on earth 19.48 -155.6 0
+path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
+<<<<<<< HEAD
+=======
+
+url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+ttl 604800
+on earth 0 0 0
+format netcdf
+profile .
+lat LATITUDE
+lon LONGITUDE
+epoch JULD
+alt PRES decibar
+field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
+field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
+
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 0.0 0.0
+field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+plx parallax
+radvel rv
+field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+ttl 604800
+format csv
+at sun
+cmap .
+ra RAdeg_HI
+dec Decdeg_HI
+dist Dist
+dist_scale 3.085677581e22
+field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist sy_dist
+dist_scale 3.085677581e16
+field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field T cmb_planck_smica_T gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves.bin
+format lightcurve
+ttl 604800
+at sun
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bzcat5.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbdata.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag1
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
+field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/chandra_csc.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag H
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/corot.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg corot_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cosmicflows_cf4.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_mpc
+dist_scale 3.085677581e22
+field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag H
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/denis.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag jmag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
+format catalog_tycho
+at sun
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e16
+field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
+field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
+field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
+field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gcvs_cat.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
+field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gong_modes.bin
+format gong_modes
+at sun
+ttl 604800
+field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin
+format jwst_spectra
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
+ttl 604800
+format json
+at sun
+keplermap data a e i
+om om
+w w
+ma ma
+epoch epoch
+field H kbo_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/lmxbdata.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag1
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
+field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+z z
+field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/merlin.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
+field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mktypes.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ned.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field z ned_gitter_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pangaea_758961.json
+ttl 604800
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field sr_mg_kg pangaea_sr_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0.0 0.0
+field nd_mg_kg pangaea_nd_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0.0 0.0
+field carb_detr pangaea_carb_detr_pct gaussian-inverse-square diffusion pct 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pastel.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/polarbase.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/psr.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rave_dr5.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag gmag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sb9.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag1
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sncat.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+z z
+field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/swiftgrb.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tess_lightcurves.bin
+format lightcurve
+ttl 604800
+at sun
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+z z
+field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vsx.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag max
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field period vsx_period_d gaussian-inverse-square em d 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wd.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+plx plx
+field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wds.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag1
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field a msxc6_flux_band_a_jy inverse-square em Jy 604800 0.0 0.0
+field c msxc6_flux_band_c_jy inverse-square em Jy 604800 0.0 0.0
+field d msxc6_flux_band_d_jy inverse-square em Jy 604800 0.0 0.0
+field e msxc6_flux_band_e_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+objname,ra,dec,flux65,flux90,flux140,flux160+FROM+akari_fis+WHERE+flux90+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux65 akari_fis_flux_65um_jy inverse-square em Jy 604800 0.0 0.0
+field flux90 akari_fis_flux_90um_jy inverse-square em Jy 604800 0.0 0.0
+field flux140 akari_fis_flux_140um_jy inverse-square em Jy 604800 0.0 0.0
+field flux160 akari_fis_flux_160um_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field fnu_12 iras_fsc_flux_12um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_25 iras_fsc_flux_25um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_60 iras_fsc_flux_60um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_100 iras_fsc_flux_100um_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+format kernel_text
+body naif0012
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
+format kernel_text
+body geophysical
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
+format kernel_text
+body gm_de440
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+format kernel_text
+body pck00010
+ttl 604800
+
+url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 604800
+at earth
+map features
+lat properties.lat
+lon properties.long
+field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
+field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=15006h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth -6 -10 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_15006
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=41001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 34.7 -72.4 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=41002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 31.743 -74.955 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=41010h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 28.86 -78.478 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41010
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=41043h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 21.09 -64.864 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41043
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=41049h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 27.505 -62.271 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41049
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 25.90 -89.67 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=42002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 25.16 -94.42 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=42036h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 28.50 -84.52 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42036
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=42055h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 22.14 -91.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42055
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=44009h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 38.46 -74.70 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44009
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=44013h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 42.35 -70.69 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44013
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=45001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 48.061 -87.793 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=45161h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 43.185 -86.354 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45161
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=45178h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 44.603 -73.394 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45178
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=45186h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 42.368 -87.795 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45186
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=45207h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 41.731 -81.367 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45207
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 56.30 -148.17 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 42.67 -124.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46005h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 46.06 -124.96 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46005
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46012h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 37.36 -122.88 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46012
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46022h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 40.74 -124.54 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46022
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46025h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 33.75 -119.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46025
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46026h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 37.75 -122.84 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46026
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46029h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 46.12 -124.51 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46029
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46035h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 57.034 -177.468 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46035
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46047h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 32.42 -119.53 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46047
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46053h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 34.26 -119.86 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46053
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46054h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 34.27 -120.68 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46054
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46059h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 38.07 -124.03 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46059
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46069h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 33.66 -120.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46069
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46071h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 51.035 179.808 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46071
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46075h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 53.93 -160.763 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46075
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=46086h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 32.49 -118.02 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46086
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=51000h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 23.52 -153.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51000
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=51001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 24.44 -162.00 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/view_text_file.php?filename=51004h{prev_year}.txt.gz&dir=data/historical/stdmet/
+ttl 31536000
+on earth 17.56 -152.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51004
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
