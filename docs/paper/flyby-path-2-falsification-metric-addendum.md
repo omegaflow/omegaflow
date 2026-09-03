@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-08-28
-  sha256: 9ad59892a85f208e835d485e6e2bfab9d90cc6c8c2d7a468731b47aa16d71960
+  sha256: 64fd8759b59a645a6e7d7e3c747744f9d0f6c5165acc5abd9c50066f82e6eada
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -16,6 +16,40 @@ This addendum seals the falsification metric for the Path-2 pre-registration, re
 ## Scope
 
 This Blatt is an addendum to the Path-2 pre-registration, sealed 2026-08-28 — before the JUICE Earth flyby. It does not modify the sealed pre-registration; it only names the missing falsification metric, so the verdict after the flyby is not post-hoc. The original pre-registration (header sha256 6f24f98a01decc82025652ec0302afd75a06e53bc14743fec79d5ca0ef44b2d0) stays untouched.
+
+## The prediction chain (Trishuli-muster)
+
+This addendum also carries the prediction chain that links the pre-registration
+to the in-situ measurement, in the timestamped form of the Trishuli Blatt
+(`docs/paper/blatt-pfeil-sturzflut-tibet.md` §3.2): a chain of anchors with
+their own time, not a narrative. For Path 2 the chain is the transit-time
+corrected link from each upstream living channel to the JUICE perigee tube,
+per channel — the object the σ-Metric (§"The metric") then weighs. Every cell
+that is not yet measurable stays `pending`, never 0.0.
+
+| anchor (per channel) | time | state |
+|---|---|---|
+| plasma-pressure gradient | upstream (RTSW/L1) reading | `pending` (fills when measured, transit-time corrected) |
+| IMF-Bz | upstream (RTSW/L1) reading | `pending` (fills when measured, transit-time corrected) |
+| Kp | 3-h cadence, the interval whose transit reaches the tube | `pending` (fills when measured) |
+| Swarm magnetic field | at the site | `pending` (fills when measured) |
+| JUICE in-situ field | at the perigee tube | `pending` (fills after the flyby, 28./29.09.) |
+
+The chain runs in one direction only: the upstream channel state at its own
+earlier time (carried by its own transit time to the tube) is the pre-registered
+prediction of the field; the JUICE in-situ field at the tube is the thing itself
+measured on an independent path. A = A: the prediction of the thing is tested
+against the thing. No field value is filled before its measurement exists; an
+unfilled link is `pending`, never 0.0. The σ-Metric is the measure of the chain's
+agreement — agreement = no channel residual above fam (silence is a full finding).
+
+## The operator seal (pending)
+
+The seal line is set by the operator, over the verified prediction chain, before
+the 28.09.2026 deadline. It is not set by the machine and not set before the
+chain is measured and checked. Until the operator's word falls, the seal is:
+
+`Seal line: pending — to be set by the operator, after review of the prediction chain, before 28.09.2026.`
 
 ## The two trajectory seals (unchanged)
 
