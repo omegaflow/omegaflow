@@ -1,8 +1,8 @@
-use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
-use omegaflow::json::{JsonVal, jnum, parse_json};
+use omegaflow::json::{jnum, parse_json, JsonVal};
 use omegaflow::lsk::days_from_civil;
 
 const JSOC_FETCH: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch";
@@ -348,8 +348,12 @@ fn verify_mode(args: &[String], lsk: &LeapSeconds) {
 fn harvest_mode(args: &[String], lsk: &LeapSeconds) {
     let bands = parse_bands(args);
     let out = arg_value(args, "--out").unwrap_or_else(|| "aia_lines.bin".to_string());
-    let cache_dir =
-        arg_value(args, "--cache-dir").unwrap_or_else(|| "/tmp/omegaflow_aia_cache".to_string());
+    let cache_dir = arg_value(args, "--cache-dir").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omegaflow_aia_cache")
+            .to_string_lossy()
+            .into_owned()
+    });
     let start = arg_value(args, "--start").unwrap_or_else(|| "2014.03.01".to_string());
     let end = arg_value(args, "--end").unwrap_or_else(|| "2014.05.30".to_string());
     let (sy, sm, sd) = parse_civil_date(&start);
