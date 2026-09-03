@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-27
   status: pending
-  see-also: docs/blatt-pfeil-sturzflut-tibet.md docs/causal-arrow-preregistration.md docs/concepts/livefeed-gate.md
+  see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/causal-arrow-preregistration.md docs/specs/livefeed-gate.md
 -->
 
 # Untersuchungsauftrag: die Abfluss-Reihe der Trishuli (Flut 2026-08-26)

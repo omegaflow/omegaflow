@@ -5,7 +5,7 @@
   version: 2
   sha256: 77bde1e63b3fe7d95190085013f9b0a4f3e0f3761f6841547fb71dd49c244212
   status: live
-  see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
+  see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, docs/TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
 
 # The text as data — the Pioneer review's numbers against the Doppler series

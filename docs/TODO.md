@@ -891,15 +891,6 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
 - crates.io (`cargo install omegaflow`) — AUSSTEHEND; mit PolyForm-
   Noncommercial als source-available markiert, nicht Open Source.
 
-## Doku-Drift — offene Korrekturen
-
-- Stale-Links in den sonne-Belegen (2026-08-27, offen — main-eigene
-  Dateien): `docs/paper/corona-heating-ladder.md` Z.7 →
-  `docs/reference/broken-null-control.md` (lebt unter `docs/concepts/`);
-  `docs/surveys/survey-ein-blatt-korona-heizung.md` Z.7+Z.30 →
-  `docs/paper/ein-blatt-axiom.md` (lebt unter `docs/concepts/`);
-  `docs/paper/solar-cycle-dynamo.md` Z.7 → archiviertes Handover. Die
-  Pfad-Korrektur gehört auf main (One-Source).
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,

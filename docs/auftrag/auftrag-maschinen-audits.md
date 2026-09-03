@@ -3,7 +3,6 @@
   class: auftrag
   date: 2026-08-30
   status: pending
-  see-also: docs/handover/handover-2026-08-30-zwanzig-sekunden-herkunft.md docs/surveys/survey-2026-08-30-provenienz-karte.md
 -->
 
 # Auftrag: die Maschinen-Audits

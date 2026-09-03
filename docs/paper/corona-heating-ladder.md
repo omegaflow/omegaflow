@@ -6,7 +6,7 @@
   sha256: c4eaebe9f981f99e2af723e172f45a874d496699dad7fce3a7f7aaa4d74dec13
   fam-machine: pre-fix
   status: live
-  see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/concepts/broken-null-control.md
+  see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
 -->
 
 # The energy ladder of the corona: transfer entropy across eleven lines
