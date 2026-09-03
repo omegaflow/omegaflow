@@ -281,14 +281,20 @@ sub-kHz-Basis: weiterhin Stille (0 honored).
 
 Drift nicht aufgelöst: Anomalie sunward, ~10⁻⁴ der Anomalie, 150–340× unter dem
 Tagesmedian-Floor der ruhigen Tage (160–340 Hz). Formtest Deduktion 41
-(linear/∝t²/RTG-exp τ=126,5 a) unaufgelöst — beide Hypothesen-Signaturen liegen
-im 1–3-Hz-Bereich unter einem zwei Größenordnungen höheren Floor; der Test
-trennt erst auf sub-Hz-Aggregation. Messbarkeit ~100× verbessert (kHz→sub-kHz:
-2×10⁴ → 150–340× unter Floor). **Flaschenhals: per-Sample-Streuung im
-Tagesmedian, nicht Reduktions-Systematik** (die kHz-Kette tötete die Systematik
-= der 100×-Gewinn). **Nächster Hebel: Regression über die volle ruhige Serie
-oder Wochen-/Monatsmediane (√N über die Zeit), nicht weitere Masken.** Die
-Telemetrie-Amplitude (Stufe 2) bleibt unbenutzt — sie füttern nur bei
-signifikantem Formergebnis, sonst füttert sie die zu prüfende Hypothese (Zirkel).
-Die Kette Front C ist vollständig: 234/234 Form + Deduktion 40 (sub-kHz) +
-Deduktion 41 (Drift). Alle drei: Stille als Verdikt, Grenze quantitativ benannt.
+(linear/∝t²/exp-Abklingen τ = 126,5 a = T½(Pu-238)/ln 2, T½ = 87,7 a) auf den
+sauberen Tagen, P10/P11 getrennt, telemetriefrei (Radiophysik, kein Zirkel):
+keine Form verbessert linear um > 2 %. **Grenze doppelt benannt:** (1) Floor —
+die Anomalie (~1 Hz) liegt 200–300× unter dem ruhigen Residuum-Floor
+(160–340 Hz); (2) Hypothesen-Degeneration über die Spanne — über 27,4 a P10
+fällt die thermale Kurve nur 19,5 % (fast eine Gerade), t² trennt sich von linear
+um Zehntel-Hz gegen eine ~1-Hz-Amplitude; die drei Modelle sind auf dieser
+Missionslänge inhärent fast degeneriert, kein tieferer Tagesmedian-Floor hätte
+sie getrennt, solange die Gesamtamplitude ~1 Hz ist. Messbarkeit ~100× verbessert
+(kHz→sub-kHz: 2×10⁴ → 150–340× unter Floor). **Nächster Hebel: breitere Basis
+(kombinierte P10+P11-Ära / Regression über die volle ruhige Serie /
+Wochen-Monatsmediane √N über die Zeit), nicht tiefere Floor-Masken allein.**
+Telemetrie-Amplitude (Stufe 2) bewusst unbenutzt — nur sinnvoll bei signifikantem
+Formergebnis, sonst füttert sie die zu prüfende Hypothese (Zirkel). Die Kette
+Front C ist vollständig: 234/234 Form + Deduktion 40 (sub-kHz) + Deduktion 41
+(Drift). Alle drei: Stille als Verdikt, Grenze quantitativ benannt — die
+präziseste Charakterisierung dessen, was diese Daten nicht können.
