@@ -46,28 +46,32 @@ pub const SURFACE_MOTION_DT: f64 = 0.01;
 
 pub const MAX_SAMPLES: usize = 1 << 22;
 
-pub struct EpochZeroRing {
-    pub epoch0_in: usize,
-    pub epoch0_kept: usize,
-    pub epoch0_dropped: usize,
-    pub total_in: usize,
-    pub total_kept: usize,
+pub struct TemporalRing {
+    pub static_in: usize,
+    pub temporal_in: usize,
+    pub temporal_kept: usize,
+    pub temporal_dropped: usize,
 }
 
-pub fn epoch_zero_ring(all: &mut Vec<Sample>, cap: usize) -> EpochZeroRing {
-    let total_in = all.len();
-    let epoch0_in = all.iter().filter(|s| s.epoch == 0.0).count();
-    if all.len() > cap {
-        all.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
-        all.truncate(cap);
+pub fn is_static(sample: &Sample) -> bool {
+    matches!(sample.source, SampleSource::Ephemeris)
+}
+
+pub fn temporal_ring(
+    static_catalog: &[Sample],
+    temporal: &mut Vec<Sample>,
+    cap: usize,
+) -> TemporalRing {
+    let temporal_in = temporal.len();
+    if temporal.len() > cap {
+        temporal.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
+        temporal.truncate(cap);
     }
-    let epoch0_kept = all.iter().filter(|s| s.epoch == 0.0).count();
-    EpochZeroRing {
-        epoch0_in,
-        epoch0_kept,
-        epoch0_dropped: epoch0_in - epoch0_kept,
-        total_in,
-        total_kept: all.len(),
+    TemporalRing {
+        static_in: static_catalog.len(),
+        temporal_in,
+        temporal_kept: temporal.len(),
+        temporal_dropped: temporal_in.saturating_sub(temporal.len()),
     }
 }
 
