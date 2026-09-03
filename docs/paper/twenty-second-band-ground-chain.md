@@ -1,8 +1,9 @@
 <!--
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
-  date: 2026-08-24
-  sha256: 7fd47c13f44225c452feb17d4107525f2e8d9f3a236b52481a7906735c595c14
+  date: 2026-09-03
+  version: 2
+  sha256: 531f5afbc5055f193d884b9a8a839f8a5c52209abb77420f914dbf238f5f2e02
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, TODO.md (Pioneer-Front), docs/reference/
 -->
@@ -12,6 +13,10 @@
 ## Abstract
 
 In the Pioneer-10 Doppler data (ATDF, 1988–1993, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band 44–56 mHz carries a dense complex of coherent traces whose frequencies are set by the receiving station: Goldstone 14 carries 45,75 mHz, Canberra 43 carries 51,55 mHz, Madrid 63 carries 47,35 mHz — a signal from space would arrive at all three stations with the same frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium. Peak 50,73 mHz (T* = 19,71 s, 9,5× the floor; the 0,05-mHz grid reads 50,714 mHz), a global complex that resolves into station-fixed lines at 45,75 / 51,55 / 47,35 mHz, slowly drifting (~0,4 mHz in four years).
+
+**Method.** Exhaustive subtraction of known effects: the band survives the
+named, measured exclusions (§3); its identity remains open — the remnant is
+an unknown instrument contaminant of the chain, not claimed physics.
 
 
 ## 1. The measurement series

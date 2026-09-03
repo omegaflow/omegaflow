@@ -1,8 +1,9 @@
 <!--
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
-  date: 2026-08-22
-  sha256: 140cd2977ac2d371bbe5c7af835d59c09e0f2de283f6eff126723f5cf8cf7b4a
+  date: 2026-09-03
+  version: 2
+  sha256: c4eaebe9f981f99e2af723e172f45a874d496699dad7fce3a7f7aaa4d74dec13
   fam-machine: pre-fix
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/concepts/broken-null-control.md
@@ -144,6 +145,43 @@ daily-scale sheet over 11 years (30 directed pairs, 2009–2020, family bound
 X-ray two bands + 10 s Lyman-α, 200 flares, 2014) with no null-significant
 lag. The present paper is the first sub-minute run on the full temperature
 ladder.
+
+### 3.5 The measuring probes (method notes preserved from the code)
+
+The four probe tools of this measurement each carry a one-line method note in
+their leading code comment; that documentation is recorded here so it survives
+in the paper rather than in code.
+
+- **corona_ladder_probe** — The temperature-ladder probe, the Alfvén question
+  on the full ladder: reads the EVE lines ordered by formation temperature
+  (LOGT), recognizes flare events via the hottest line (94 Å, Fe XVIII), and
+  measures per adjacent (cool, hot) pair the directed TE over a lag sweep,
+  event-stacked against the phase null; a consistently positive D at lag ≈ 10
+  cells (≈ 100 s) means energy flow UP the ladder (Alfvén-consistent); D
+  without lag and without direction is the shared nanoflare heating.
+- **aia_ladder_probe** — The AIA ladder probe, the Alfvén question on the full
+  AIA band ladder: reads the full-disk DATAMEAN/EXPTIME per band (DN/s, the AEC
+  normalization), lays the bands on 24-s cells (the four camera-2 bands are
+  phase-shifted by ~3 s; 24 s carries all bands in one cell), orders by
+  formation temperature (cool → hot), recognizes flare events via the GOES-b
+  flux (b_flux > 1e-6 W/m², C1.0) or, without a goes directory, via the 304-Å
+  full disk itself (median × factor), and measures per adjacent pair the
+  directed TE over a lag sweep against the phase null; a consistently positive
+  D at lag ≈ 4 cells (≈ 96 s) means energy flow UP the ladder.
+- **corona_event_probe** — The 90-day event probe, the stacked sub-minute
+  multi-force TE of the corona heating: reads 2-s X-ray (gxrs: a_flux hot,
+  b_flux cool) and 10-s Lyman-α (geuv-ir10s), lays each day on a 10-s grid,
+  finds flare events in the cool band (b_flux > 1e-6 W/m², C1.0), lays a ±20-min
+  window around each event, and computes the conditional TE there in both
+  directions; a consistently positive D at lag ≈ 10 cells (≈ 100 s) over many
+  events is Alfvén-consistent; if D vanishes under the phase-randomized null,
+  the lead was no real information flow.
+- **corona_lag_probe** — The sub-minute corona lag probe, the measurement that
+  attacks the riddle: reads two NCEI files of a flare day (2-s X-ray and 10-s
+  Lyman-α) onto a common 10-s grid, then TE in both directions over a lag
+  sweep; the Alfvén prediction is that the chromosphere (Lyman-α) leads the
+  corona (X-ray) by the travel time (~100 s ≈ 10 cells); nanoflares carry no
+  consistent lag.
 
 ## 4. Results
 
