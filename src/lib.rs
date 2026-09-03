@@ -48,6 +48,7 @@ pub use archivar::rixs;
 pub use archivar::rpw;
 pub use archivar::sexagesimal;
 pub use archivar::spectral;
+pub use archivar::suprastrom;
 pub use archivar::thermochem;
 pub use archivar::twomass;
 pub use archivar::wind;
