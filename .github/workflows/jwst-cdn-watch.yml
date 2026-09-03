@@ -1,4 +1,4 @@
-name: jwst-watchdog
+name: jwst-cdn-watch
 on:
   workflow_dispatch:
   schedule:
