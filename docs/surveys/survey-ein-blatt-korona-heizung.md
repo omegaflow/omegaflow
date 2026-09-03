@@ -4,7 +4,7 @@
   date: 2026-08-21
   sha256: 8ebf4945cc72f067fbfbde6abc8b504ced34661390a4f15db30ab6efce140b60
   status: live
-  see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md docs/concepts/broken-null-control.md docs/handover/handover-2026-08-21-corona-heizung.md
+  see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md docs/specs/broken-null-control.md
 -->
 # DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
 

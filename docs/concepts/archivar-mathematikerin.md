@@ -4,7 +4,7 @@
   date: 2026-08-26
   sha256: dfafa2e4b16ded33d8eeae99c84ebcef9a749ca687c9243bbf1c10cfe2343210
   status: live
-  see-also: AGENTS.md, docs/concepts/binary-protocol.md, docs/concepts/wgsl-shader.md
+  see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
 ## Architecture: Archivar & Mathematikerin
 

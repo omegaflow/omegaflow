@@ -4,7 +4,7 @@
   date: 2026-08-31
   sha256: 13629f57eedef5d75893012e37f36b3c872a045865cb0371727ac6db341e12ef
   status: live
-  see-also: docs/concepts/meteo-kanal-kuratierung.md docs/paper/kausalpfeil-sturzflut-tibet.md
+  see-also: docs/specs/meteo-kanal-kuratierung.md
 -->
 # Blatt: Vorlage — meteorologisches Korrelations-Screening
 
