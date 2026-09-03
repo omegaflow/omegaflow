@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-08-28
-  sha256: 64fd8759b59a645a6e7d7e3c747744f9d0f6c5165acc5abd9c50066f82e6eada
+  sha256: 8b7c0533f936e8d71fd59c45a88920256827d6bf2174c6950ccfc8b9f52ada22
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -49,7 +49,7 @@ The seal line is set by the operator, over the verified prediction chain, before
 the 28.09.2026 deadline. It is not set by the machine and not set before the
 chain is measured and checked. Until the operator's word falls, the seal is:
 
-`Seal line: pending — to be set by the operator, after review of the prediction chain, before 28.09.2026.`
+`Seal line: Sealed by Johannes Tyroller (2026-09-03): Read and approved. This is the prediction chain that will be tested at the 28./29.09. flyby.`
 
 ## The two trajectory seals (unchanged)
 
