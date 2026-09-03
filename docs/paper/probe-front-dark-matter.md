@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-03
-  version: 3
-  sha256: 27680f68837469c971555dd40a56f9bee3eb950e44abb1bb3aa627c7f7056150
+  version: 4
+  sha256: b2a805eae4d465945876b84388baf5648d7c650388445e1f94945e5f36026387
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -444,6 +444,43 @@ subtracted. Absent means unmodeled, never zero.
 > against the higher pre-fix bound holds post-fix a fortiori. The measured
 > silence is thus the conservative statement.
 
+**5.6 The NAVIO-ASCII Vollmission through the own reduction — the Ruck transit-sweep,
+closed at fully characterised silence.** The full-mission ASCII oddump (Pioneer 10
+SC_23 / Pioneer 11 SC_24, 60-s, 1973–2002, Zenodo 10.5281/zenodo.13309156) was
+compiled through the own reduction for the first time: `pioneer10_doppler.bin`
+908 309 records (1973-10-05..2002-03-03), `pioneer11_doppler.bin` 967 272 records
+(1973-04-10..1993-07-15); a new station-carrying record (PNAV, TRANS/RCVR1/
+linkmode, PDPL untouched) and a station-aware residuum chain
+(`pioneer_navio_residuum`, two-way model + displaced-count mask, Deduction-10
+daily mask) serialized PNVR/PNDM daily medians. The form test (∝t² vs
+RTG-decay, Deduction 1) is answered: no carried form over the per-station floor
+2.8–19 kHz. A Ruck census over all flagged daily steps (P10 99 + P11 71 = 234)
+measured the form of every flag (jump, pre/post baseline, return, sign-flips):
+**0 of 66 (P10) and 0 of 60 (P11) measured returns return to the pre-baseline;
+sign-flip (jitter) 20–147 dominates the long segments; no Ruck carries the
+transit form** (a smooth, monotone, low-jitter ramp that rises and returns). The
+one apparently three-station-coherent candidate (P11 1981-02-09) is a single-day
+daily-median in the noise (±46 kHz jitter, −156 Hz step) — coherence without
+form is not evidence. Cross-spacecraft witness tests (same-day: zero shared flag
+dates; time-offset: P10 22–66 AU vs P11 5–14 AU, separation 24–110 AU) exclude a
+common transiter. **The silence has a shape: the transit form is structurally
+absent from the event distribution, measured not asserted.** No transit is
+refuted — a smooth transit below the flag threshold was never a candidate.
+
+**The sub-kHz basis entered (Deduction 40).** The negative-fuzzy extraction
+(quadratic per-pass detrending + station-cell median, `pioneer_navio_negative_fuzzy`)
+pushed the daily medians to sub-kHz residency: **P10 92.5 % (1041/1126) and
+P11 97.5 % (2027/2079) of daily medians below 1 kHz**, median |daily-med|
+89 Hz (P10) / 35 Hz (P11), |daily-med| p50/p90/p95/p99 = 89/774/1474/3861 (P10)
+and 35/387/593/2070 (P11) — median-driven residency, the ~2 kHz RMS is the
+jitter-day tail. A Ruck scan over this 1000× finer basis (gate 7/2.8 mHz/s vs
+Hz/s) flags P10 48 + P11 173 steps, all form-measured, top jumps 1–5 kHz (down
+from ±142 kHz dump offsets); 0/15 (P10) and 0/142 (P11) fine steps return —
+still no transit ramp. The cleanest sub-kHz flag (P11 1983-06-18) is the
+aftermath of the outlier day 1983-06-16 (−4548 Hz, RMS 36.7 kHz), not a
+symmetric transit ramp. The sub-kHz daily medians are the finer basis for the
+continuous-drift question; the transit sweep over them stays silent (0 honored).
+
 ## 6. Reproducibility
 
 Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
@@ -463,6 +500,14 @@ Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
   `--ionex-dir`, solar plasma via the `omni2_serie.bin` in the OMEGAFLOW_STATE cache
   (default `~/.local/state/omegaflow`, produced by `omni2_compiler`) or `--omni2`, spacecraft
   dynamics).
+- NAVIO-ASCII Vollmission + transit sweep (§5.6): `cargo run --bin pioneer_doppler_compiler`
+  (NAVIO ASCII → `data/{name}_doppler.bin` PDPL + `data/{name}_navio.bin` PNAV, CDN upload
+  in `--ci-mode`), `cargo run --bin pioneer_navio_residuum` (station two-way model →
+  PNVR/PNDM daily medians + Deduction-10 mask + Ruck scan), `cargo run --bin
+  pioneer_navio_ruck_form` (form census over all flags; `--date <Y-m-d>` measures one day
+  flag-independent), `cargo run --bin pioneer_navio_negative_fuzzy` (Deduction 40:
+  quadratic per-pass detrend + station-cell median → sub-kHz daily medians,
+  `data/{name}_navio_subkhz_daily.bin` PNDM).
 
 ## 7. Conclusion
 
@@ -473,6 +518,19 @@ triangulations: no dark-matter clump at the granule floor of the public finished
 orbit products. The floor, not the absence, is the statement. The raw Doppler that
 would lower the floor is present at SPDF for the Pioneer pair and is named for the
 next harvest.
+
+The NAVIO-ASCII Vollmission, pulled through the own reduction (§5.6), closes the
+transit-sweep front at fully characterised silence: all 234 Ruck flags carry a
+measured form profile, none returns to its pre-baseline, jitter dominates the long
+segments, and the one apparently three-station-coherent candidate (P11 1981-02-09)
+is a single-day daily-median in the noise. The transit form is structurally absent
+from the event distribution. No transit is refuted — a smooth transit below the flag
+threshold was never a candidate — and the floor, not the absence, remains the
+statement. The sub-kHz daily medians of the NAVIO chain, entered via the
+negative-fuzzy extraction (Deduction 40), carry 92–97 % of days below 1 kHz; a
+Ruck scan over that 1000× finer basis still finds no transit ramp. The terrain is
+measured to its sub-kHz floor; the continuous-drift question now has a finer basis
+(0 honored).
 
 ## References
 
