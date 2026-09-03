@@ -1100,10 +1100,13 @@ stations_lon longitude
 fanout 50
 last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
-url https://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600
+url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
 ttl 3600
+format text
 on earth 65.05 25.47 0
-path data.OULU.1h.0.1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600 0.0 0.0
+rows .
+epoch 0
+field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
 format csv_zip
@@ -1117,7 +1120,7 @@ dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
 
-url https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,ap,Cp&status=def,nowcast&format=JSON
+url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 ttl 10800
 on earth 52.07 12.68 0
 last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
