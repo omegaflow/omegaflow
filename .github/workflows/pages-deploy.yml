@@ -1,4 +1,4 @@
-name: pages-landing
+name: pages-deploy
 on:
   push:
     branches: [main]

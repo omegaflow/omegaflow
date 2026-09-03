@@ -1,4 +1,4 @@
-name: paper-gate
+name: paper-check
 on:
   push:
     paths:
@@ -6,14 +6,14 @@ on:
       - 'tools/science/src/bin/export_latex.rs'
       - 'tools/register/src/bin/reference_verify.rs'
       - 'tools/science/src/bin/paper_new.rs'
-      - '.github/workflows/paper-gate.yml'
+      - '.github/workflows/paper-check.yml'
   pull_request:
     paths:
       - 'docs/paper/**'
       - 'tools/science/src/bin/export_latex.rs'
       - 'tools/register/src/bin/reference_verify.rs'
       - 'tools/science/src/bin/paper_new.rs'
-      - '.github/workflows/paper-gate.yml'
+      - '.github/workflows/paper-check.yml'
   workflow_dispatch:
 permissions:
   issues: write
@@ -35,4 +35,4 @@ jobs:
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
           "paper gate: a paper carries a named difference" \
           "Paper Gate failed on ${{ github.sha }} — a paper carries a title >75, an abstract >200, a number DIFF, a sha mismatch, or an absent/pending reference." \
-          paper-gate
+          paper-check
