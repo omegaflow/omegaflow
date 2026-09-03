@@ -1,0 +1,110 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "model": "omegaflow/deepseek-v4-flash",
+  "small_model": "omegaflow/deepseek-v4-flash",
+  "default_agent": "build",
+  "subagent_depth": 2,
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "cargo *": "allow",
+      "git *": "allow",
+      "omega_sh *": "allow",
+      "sgrep *": "allow",
+      "sfetch *": "allow",
+      "smail *": "allow",
+      "./target/release/*": "allow",
+      "*": "ask"
+    },
+    "webfetch": "allow",
+    "websearch": "allow"
+  },
+  "formatter": {
+    "rust": {
+      "command": [
+        "rustfmt"
+      ],
+      "extensions": [
+        ".rs"
+      ]
+    }
+  },
+  "lsp": true,
+  "compaction": {
+    "auto": true
+  },
+  "tool_output": {
+    "max_lines": 80,
+    "max_bytes": 4096
+  },
+  "watcher": {
+    "ignore": [
+      "target/**",
+      "*.φ",
+      ".continue/**",
+      "docs/**"
+    ]
+  },
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "model": "omegaflow/deepseek-v4-pro",
+      "permission": {
+        "edit": "allow"
+      }
+    },
+    "plan": {
+      "mode": "primary",
+      "model": "omegaflow/deepseek-v4-pro",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    },
+    "general": {
+      "mode": "subagent",
+      "model": "omegaflow/deepseek-v4-flash",
+      "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
+      "permission": {
+        "edit": "deny"
+      }
+    },
+    "explore": {
+      "mode": "subagent",
+      "model": "omegaflow/deepseek-v4-flash",
+      "permission": {
+        "edit": "deny"
+      }
+    },
+    "council": {
+      "mode": "subagent",
+      "model": "omegaflow/deepseek-v4-pro",
+      "prompt": "Read docs/council_voices.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
+      "permission": {
+        "edit": "deny"
+      }
+    },
+    "grind-flash": {
+      "mode": "subagent",
+      "model": "omegaflow/deepseek-v4-flash",
+      "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
+      "permission": {
+        "edit": "allow"
+      }
+    },
+    "grind-pro": {
+      "mode": "subagent",
+      "model": "omegaflow/deepseek-v4-pro",
+      "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
+      "permission": {
+        "edit": "allow"
+      }
+    }
+  },
+  "experimental": {
+    "batch_tool": false
+  }
+}

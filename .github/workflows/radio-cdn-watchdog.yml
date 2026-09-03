@@ -1,0 +1,40 @@
+name: radio-cdn-watchdog
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '13 6 * * *'
+permissions:
+  contents: read
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Watch the radio catalog assets
+        run: |
+          base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov
+          loaded=""
+          missing=""
+          for a in nvss first14 chandra_csc; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$base/$a.json")
+            echo "$a.json: $code"
+            if [ "$code" = "200" ]; then
+              loaded="$loaded $a"
+            else
+              missing="$missing $a"
+            fi
+          done
+          if [ -z "$missing" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "radio-cdn: die drei Radio-Kataloge liegen auf dem CDN — Ernte entblockt" \
+              "nvss.json, first14.json und chandra_csc.json tragen 200 auf dem CDN (ssd.jpl.nasa.gov). Fortsetzung: den TODO-Posten „Katalog-CDN-Ernte NVSS/FIRST/Chandra“ abtragen und handover-2026-08-23-katalog-cdn-ernte.md nach archive/handover/ verschieben." \
+              health
+          elif [ -n "$loaded" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "radio-cdn: Teilladung der Radio-Kataloge" \
+              "Teilladung auf dem CDN (ssd.jpl.nasa.gov): geladen$loaded; fehlt noch$missing. Der nächste kernel-flatten-Lauf versucht die fehlenden Assets erneut (continue-on-error)." \
+              health
+          fi
