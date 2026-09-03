@@ -1,5 +1,5 @@
-use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::inflate::gunzip;
@@ -135,8 +135,12 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = arg_value(&args, "--out").unwrap_or_else(|| "eve_lines.bin".to_string());
-    let cache_dir =
-        arg_value(&args, "--cache-dir").unwrap_or_else(|| "/tmp/omegaflow_eve_cache".to_string());
+    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omegaflow_eve_cache")
+            .to_string_lossy()
+            .into_owned()
+    });
     let start_doy: i64 = arg_value(&args, "--start-doy")
         .and_then(|v| v.parse().ok())
         .unwrap_or(60);

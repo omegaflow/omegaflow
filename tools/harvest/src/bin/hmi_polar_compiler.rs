@@ -2,7 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
 use omegaflow::hmi_polar::{parse_bin, write_bin};
-use omegaflow::json::{JsonVal, jnum, parse_json};
+use omegaflow::json::{jnum, parse_json, JsonVal};
 use omegaflow::lsk::days_from_civil;
 
 const JSOC_INFO: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info";
@@ -109,7 +109,11 @@ fn list_rotations() -> Option<Vec<(i64, String)>> {
         };
         out.push((car_rot, ts.clone()));
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 fn record_car_rot(rec: &str) -> Option<i64> {
@@ -282,8 +286,12 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = arg_value(&args, "--out").unwrap_or_else(|| "hmi_polar.bin".to_string());
-    let cache_dir =
-        arg_value(&args, "--cache-dir").unwrap_or_else(|| "/tmp/omegaflow_hmi_cache".to_string());
+    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
+        omegaflow::archivar::cache_root()
+            .join("omegaflow_hmi_cache")
+            .to_string_lossy()
+            .into_owned()
+    });
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(8);
