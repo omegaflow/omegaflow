@@ -4,7 +4,7 @@
   date: 2026-08-24
   sha256: f56092d73a1878c13caee91700425735c9aac03adedecdaf73ee66ff9a482cf3
   status: live
-  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/probe-front-dark-matter.md, TODO.md (Pioneer-Front)
+  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/probe-front-dark-matter.md, docs/TODO.md (Pioneer-Front)
 -->
 
 # The 20-s band — the evidence (sources, not interpretation)

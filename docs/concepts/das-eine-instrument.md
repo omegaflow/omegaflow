@@ -5,7 +5,7 @@
   version: 2
   sha256: 6de1a87d3426b0c9085ef28aa123b2a6d392de43f51aaba205ee9c1955c16ace
   status: live
-  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, TODO.md (Pioneer-Front)
+  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, docs/TODO.md (Pioneer-Front)
 -->
 
 # Das eine Instrument — warum die Pioneer-Anomalie ohne zweiten Zeugen nicht schiedsrichterlich entscheidbar ist

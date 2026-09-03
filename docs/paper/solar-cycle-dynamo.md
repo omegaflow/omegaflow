@@ -5,7 +5,7 @@
   sha256: 56e480ca75845ddc27bcaf5dd2bf79863d4e3fd64241d74ea5d87d879c013f0d
   fam-machine: post-fix
   status: live
-  see-also: docs/handover/handover-2026-08-22-sonnenzyklus-ernte.md docs/paper/corona-heating-ladder.md
+  see-also: docs/paper/corona-heating-ladder.md
 -->
 
 # The solar-cycle dynamo: transfer entropy to the activity index

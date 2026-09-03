@@ -1,13 +1,14 @@
 <!--
   title: Survey-Auswertung: Messpunkt-Verteilung & Generations-Architektur
   class: survey
-  sha256: cb1e84c783ec28b58974f13c669c15a0e2e9940502f68e6031d69a604af973e6
+  sha256: 043ef60a6e421e5f4dd85e384f0020782f68884b79f7b887ee235dbd57695f08
 -->
 # Survey-Auswertung: Messpunkt-Verteilung & Generations-Architektur
 
-Selbsttragendes Ergebnis der Modell-Umfrage (Rohrunden:
-`/home/johannes/Schreibtisch/survey/` — 6 Experten-Modelle × Chat/Council/
-Extension/Shared-Memory). Dieses Dokument ist ohne die Rohdateien interpretierbar.
+Selbsttragendes Ergebnis der Modell-Umfrage (Rohrunden — 6 Experten-Modelle
+× Chat/Council/Extension/Shared-Memory; die rohen Runden sind Sitzungs-Ephemera
+und auf diesem Rechner nicht mehr vorhanden). Dieses Dokument ist ohne die
+Rohdateien interpretierbar.
 
 ## 1. Die f32-Grundwahrheit (drei unabhängige Herleitungen)
 

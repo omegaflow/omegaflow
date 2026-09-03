@@ -6,7 +6,7 @@
   sha256: 3af4e8904ea46d3fb31685387ed79ea6968cd46434f4a29f04a80b83ea624654
   fam-machine: pre-fix
   status: live
-  see-also: docs/handover/handover-2026-08-22-sonden-dunkle-materie.md docs/handover/handover-2026-08-22-sonden-front-ausfuehrung.md docs/handover/handover-2026-08-22-ruck-datenquellen.md docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
+  see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
 -->
 
 # Zero Flags on the Net: no dark-matter clump in the outer solar system

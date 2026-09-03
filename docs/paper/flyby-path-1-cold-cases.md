@@ -5,7 +5,7 @@
   sha256: 3df767248b3287384497257c2ba79df143f8f309efba28533d53d43c44f4eaa9
   fam-round-machine: pre-fix (verdict fam-governed, value unprinted)
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-paradigmenwechsel.md TODO.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-paradigmenwechsel.md docs/TODO.md
 -->
 # The flyby proof, Path 1 — the seven cold cases
 
