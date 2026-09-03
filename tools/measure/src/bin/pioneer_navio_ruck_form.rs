@@ -234,8 +234,132 @@ fn run(name: &str) {
     }
 }
 
+fn parse_date(s: &str) -> Option<(i32, u32, u32)> {
+    let p: Vec<&str> = s.split('-').collect();
+    if p.len() != 3 {
+        return None;
+    }
+    let y: i32 = p[0].parse().ok()?;
+    let m: u32 = p[1].parse().ok()?;
+    let d: u32 = p[2].parse().ok()?;
+    Some((y, m, d))
+}
+
+fn date_tdb(y: i32, m: u32, d: u32) -> Option<f64> {
+    let days = omegaflow::archivar::lsk::days_from_civil(y as i64, m as i64, d as i64)?;
+    Some((days as f64 + 2440587.5 - 2451545.0) * DAY_S)
+}
+
+fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
+    let lo = center.saturating_sub(15);
+    let hi = (center + 15).min(daily.len());
+    if hi - lo < 10 {
+        eprintln!("  too few days in the ±15 window for a form reading");
+        return;
+    }
+    let win: Vec<f64> = daily[lo..hi].iter().map(|x| x.1).collect();
+    let mut flips = 0usize;
+    let mut prev: Option<f64> = None;
+    for i in 1..win.len() {
+        let dd = win[i] - win[i - 1];
+        if dd == 0.0 {
+            continue;
+        }
+        if let Some(p) = prev {
+            if dd * p < 0.0 {
+                flips += 1;
+            }
+        }
+        prev = Some(dd);
+    }
+    let min = win.iter().cloned().fold(f64::INFINITY, f64::min);
+    let max = win.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    let p2p = max - min;
+    let pre = &win[..9.min(win.len())];
+    let post = &win[10.min(win.len())..];
+    let pm = median(pre);
+    let qm = median(post);
+    let step = qm - pm;
+    eprintln!(
+        "  form: {}-day window mean {:.0} Hz, peak-to-peak {:.0} Hz, sign-flips {flips}, pre→post median step {step:.0} Hz",
+        win.len(),
+        win.iter().sum::<f64>() / win.len() as f64,
+        p2p
+    );
+    if step.abs() > 0.5 * p2p && flips <= 3 {
+        eprintln!("  verdict: step dominates zitter -> RAMP/STEP form (transit-shaped candidate)");
+    } else {
+        eprintln!("  verdict: zitter ({flips} flips, p2p {p2p:.0}) dominates the step ({step:.0} Hz) -> ARTIFACT form (noise), not a ramp");
+    }
+}
+
+fn measure_date(name: &str, date_str: &str) {
+    let path = format!("data/{name}_navio_daily.bin");
+    let Some(daily) = read_daily(&path) else {
+        eprintln!("{name}: daily bin void/parse void ({path})");
+        return;
+    };
+    let Some((y, m, d)) = parse_date(date_str) else {
+        eprintln!("{name}: bad date {date_str}");
+        return;
+    };
+    let Some(target) = date_tdb(y, m, d) else {
+        eprintln!("{name}: date out of range");
+        return;
+    };
+    let mut best = 0usize;
+    let mut bd = f64::INFINITY;
+    for (i, (t, _)) in daily.iter().enumerate() {
+        let dd = (t - target).abs();
+        if dd < bd {
+            bd = dd;
+            best = i;
+        }
+    }
+    eprintln!(
+        "{name}: nearest daily point to {date_str} is {date} (offset {off:.1} d) — form measurement (flag-independent):",
+        date = jd_date(daily[best].0),
+        off = bd / DAY_S
+    );
+    if let Some(f) = measure_form(&daily, best) {
+        eprintln!(
+            "  descriptor: jump {:.3e} Hz, pre {:.3e} .. post {:.3e} Hz, rise {}d over {}-day seg, {} sign-flips, returns {}",
+            f.jump,
+            f.pre,
+            f.post,
+            f.rise_days,
+            f.seg_len,
+            f.sign_flips,
+            if f.returns_measured {
+                if f.returns { "yes" } else { "no (holds)" }
+            } else {
+                "n/a"
+            }
+        );
+    } else {
+        eprintln!("  descriptor: not measurable at the flag position (edge of a segment)");
+    }
+    zitter_vs_step(&daily, best);
+}
+
 fn main() {
-    for name in ["pioneer10", "pioneer11"] {
-        run(name);
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut target: Option<(&str, String)> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--date" && i + 1 < args.len() {
+            target = Some(("pioneer11", args[i + 1].clone()));
+            i += 2;
+        } else {
+            i += 1;
+        }
+    }
+    match target {
+        Some((name, date)) => measure_date(name, &date),
+        None => {
+            for name in ["pioneer10", "pioneer11"] {
+                run(name);
+            }
+        }
     }
 }
