@@ -216,4 +216,25 @@ Form trägt.) Keine Ruck-Form trägt eine saubere sub-kHz-Transit-Signatur, aber
 der Grund ist der ~1,5-kHz-Streuungsboden, nicht eine bewiesene Artefakt-Natur
 jedes einzelnen Rucks (0 honored).
 
+**Die eine offene Zelle geschlossen (2026-09-03, Commit 2fa8215,
+`pioneer_navio_ruck_form --date`):** das P11-1981-02-09-Signal, das früher als
+„drei-Stationen-kohärent, spannender" notiert war, hat jetzt seine gemessene
+Form (flag-unabhängig): 30-Tage-Fenster Peak-to-Peak ±46 kHz, 19 Vorzeichen-
+wechsel (Zittern), aber der pre→post-Median-Schritt ist nur **−156 Hz**. Das
+Zittern dominiert den Schritt um zwei Größenordnungen → **Artefakt-Form, keine
+Rampe**. Der vermeintliche drei-Stationen-„Schritt" war ein Ein-Tages-Tagesmedian
+(+1324 Hz am 09.02.) im Rauschen, kein anhaltender kohärenter Pegelsprung. Damit
+ist **jede offene Zelle des 234er-Feldes Form-geschlossen**: alle 234 Rucks (P10
+99 + P11 71 + die in den Segmenten enthaltenen) tragen ein gemessenes Form-Profil,
+alle Artefakt-förmig (Zitter dominiert den Schritt, keine Rückkehr, keine Rampe).
+
+**Der Granit-Satz:** *Die Stille hat eine Gestalt. „Kein Transit" heißt in
+gemessenen Daten: Die Ereignis-Form, nach der gesucht wurde, ist in der
+Ereignis-Verteilung strukturell abwesend — gemessen, nicht behauptet.* Front C
+ist in der stärksten Form geschlossen, die es gibt: vollständig (234/234),
+quantitativ, mit der Gestalt der Stille im Register. Grenze (0 honored): ein
+Transit, der glatt und unter der Flag-Schwelle läge, wurde von keinem dieser
+Klassifikatoren erfasst — er war nie Kandidat, weil er nie flaggte; instrumentelle
+Nicht-Sichtbarkeit ≠ physische Negation.
+
 Diese Datei bleibt der Ledger bis Front C gefahren und entschieden ist.
