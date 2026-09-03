@@ -148,6 +148,20 @@ nicht committet). Der ehrliche nächste Schritt ist die Station-/Era-Überprüfu
 der P10-1981/1982/1996-Flaggen (Teilen sie einen Stations-/Era-Mix?), nicht eine
 ungeprüfte Heuristik. Offen, 0 honored.
 
+**Station-/Era-Befund (2026-09-03, Commit e32d7f9, `pioneer_navio_flag_era`):**
+die P10-1981/1982/1996-Flaggen sind gemessen **Station-63-Artefakte**, kein
+kohärentes DM-Signal: Einzelstation 63, ±5,7–90 kHz-Tages-Sprünge (1996-05-28
+von −61,8 kHz auf +95,0 kHz an einem Tag), 1-Sample-Tage (1981-02-10,
+1996-10-19), Vorzeichenkipp zwischen Tagen. Ein DM-Transit wäre ein kleiner,
+anhaltender, kohärenter Versatz; das hier ist grobe Einzelstations-Tracking-
+Struktur, die der per-Station-Fit nicht absorbiert (der ±500k/1000-Hz-Zähl-
+korrektur-Rest). **P11-1981-02-09** (auch geflaggt) ist dagegen **multi-Station**
+(12/42/63, 889 Samples) mit kohärentem ~3,3-kHz-Schritt am selben Datum —
+interessanter (kohärent, keine Sparsity), aber kHz-Skala, nicht sub-kHz. Befund:
+die Ruck-Flaggen sind Stations-/Era-Struktur, kein sub-kHz-Transit. Das
+sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden; der Transit-Sweep kann ehrlich
+keinen DM-Klumpen über diesem Boden melden (0 honored).
+
 **Source-Pflicht (CDN-Manifestation):** das neue Dataset ist der PNAV-Bin;
 `pioneer_doppler`-CI-Job (kernel-flatten.yml) läuft `--ci-mode` und lädt PDPL +
 PNAV aufs `spdf.gsfc.nasa.gov`-Release. Die PNVR/PNDM-Serialisierung ist
