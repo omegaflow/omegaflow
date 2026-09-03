@@ -1,0 +1,45 @@
+name: demeter-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  demeter-harvest-compile-upload:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      CDPP_USER: ${{ secrets.CDPP_USER }}
+      CDPP_PASS: ${{ secrets.CDPP_PASS }}
+      DEMETER_URNS: phi/pipeline/demeter_urns.txt
+      RUST_LOG: warn
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            phi/pipeline/demeter_work
+            phi/pipeline/demeter_ledger.txt
+            phi/pipeline/demeter_urns.txt
+          key: demeter-harvest-${{ runner.os }}
+          restore-keys: demeter-harvest-${{ runner.os }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build demeter tools
+        run: |
+          cargo build --release --bin demeter_compiler
+          cargo build -p omegaflow-tools --release --bin demeter_harvest
+
+      - name: Harvest DEMETER ISL (resumable, 5h budget, CDN upload)
+        run: |
+          target/release/demeter_harvest \
+            --workdir phi/pipeline/demeter_work \
+            --ledger phi/pipeline/demeter_ledger.txt \
+            --budget 17000 \
+            --ci-mode

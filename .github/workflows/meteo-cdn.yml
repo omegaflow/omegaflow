@@ -1,0 +1,39 @@
+name: meteo-cdn
+
+on:
+  workflow_dispatch:
+    inputs:
+      event:
+        description: Event config (config/meteo/*.json)
+        required: true
+        default: tibet-flut-2026.json
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  meteo-harvest-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            phi/pipeline/meteo_harvest
+          key: meteo-harvest-${{ runner.os }}-${{ github.event.inputs.event }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build meteo_harvest
+        run: cargo build -p omegaflow-tools --release --bin meteo_harvest
+
+      - name: Harvest and upload to CDN
+        run: |
+          ./target/release/meteo_harvest \
+            --event config/meteo/${{ github.event.inputs.event }} \
+            --out phi/pipeline/meteo_harvest --ci-mode
