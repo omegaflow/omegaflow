@@ -3800,45 +3800,7 @@ z z
 field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
 field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=15006h{prev_year}.txt.gz&dir=data/historical/stdmet/
-ttl 31536000
-on earth -6 -10 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_15006
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=41001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 ttl 31536000
 on earth 34.7 -72.4 0
 rows
@@ -3876,7 +3838,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=41002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
 ttl 31536000
 on earth 31.743 -74.955 0
 rows
@@ -3914,7 +3876,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=41010h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
 ttl 31536000
 on earth 28.86 -78.478 0
 rows
@@ -3952,7 +3914,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=41043h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
 ttl 31536000
 on earth 21.09 -64.864 0
 rows
@@ -3990,7 +3952,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=41049h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
 ttl 31536000
 on earth 27.505 -62.271 0
 rows
@@ -4028,7 +3990,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
 ttl 31536000
 on earth 25.90 -89.67 0
 rows
@@ -4066,7 +4028,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=42002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
 ttl 31536000
 on earth 25.16 -94.42 0
 rows
@@ -4104,7 +4066,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=42036h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
 ttl 31536000
 on earth 28.50 -84.52 0
 rows
@@ -4142,7 +4104,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=42055h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
 ttl 31536000
 on earth 22.14 -91.39 0
 rows
@@ -4180,7 +4142,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=44009h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
 ttl 31536000
 on earth 38.46 -74.70 0
 rows
@@ -4218,7 +4180,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=44013h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
 ttl 31536000
 on earth 42.35 -70.69 0
 rows
@@ -4256,7 +4218,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=45001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
 ttl 31536000
 on earth 48.061 -87.793 0
 rows
@@ -4294,7 +4256,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=45161h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
 ttl 31536000
 on earth 43.185 -86.354 0
 rows
@@ -4332,7 +4294,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=45178h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
 ttl 31536000
 on earth 44.603 -73.394 0
 rows
@@ -4370,7 +4332,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=45186h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
 ttl 31536000
 on earth 42.368 -87.795 0
 rows
@@ -4408,7 +4370,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=45207h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
 ttl 31536000
 on earth 41.731 -81.367 0
 rows
@@ -4446,7 +4408,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
 ttl 31536000
 on earth 56.30 -148.17 0
 rows
@@ -4484,7 +4446,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46002h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
 ttl 31536000
 on earth 42.67 -124.82 0
 rows
@@ -4522,7 +4484,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46005h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
 ttl 31536000
 on earth 46.06 -124.96 0
 rows
@@ -4560,7 +4522,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46012h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
 ttl 31536000
 on earth 37.36 -122.88 0
 rows
@@ -4598,7 +4560,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46022h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
 ttl 31536000
 on earth 40.74 -124.54 0
 rows
@@ -4636,7 +4598,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46025h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
 ttl 31536000
 on earth 33.75 -119.20 0
 rows
@@ -4674,7 +4636,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46026h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
 ttl 31536000
 on earth 37.75 -122.84 0
 rows
@@ -4712,7 +4674,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46029h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
 ttl 31536000
 on earth 46.12 -124.51 0
 rows
@@ -4750,7 +4712,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46035h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
 ttl 31536000
 on earth 57.034 -177.468 0
 rows
@@ -4788,7 +4750,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46047h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
 ttl 31536000
 on earth 32.42 -119.53 0
 rows
@@ -4826,7 +4788,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46053h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
 ttl 31536000
 on earth 34.26 -119.86 0
 rows
@@ -4864,7 +4826,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46054h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
 ttl 31536000
 on earth 34.27 -120.68 0
 rows
@@ -4902,7 +4864,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46059h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
 ttl 31536000
 on earth 38.07 -124.03 0
 rows
@@ -4940,7 +4902,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46069h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
 ttl 31536000
 on earth 33.66 -120.20 0
 rows
@@ -4978,7 +4940,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46071h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
 ttl 31536000
 on earth 51.035 179.808 0
 rows
@@ -5016,7 +4978,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46075h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
 ttl 31536000
 on earth 53.93 -160.763 0
 rows
@@ -5054,7 +5016,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=46086h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
 ttl 31536000
 on earth 32.49 -118.02 0
 rows
@@ -5092,7 +5054,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=51000h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
 ttl 31536000
 on earth 23.52 -153.82 0
 rows
@@ -5130,7 +5092,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=51001h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
 ttl 31536000
 on earth 24.44 -162.00 0
 rows
@@ -5168,7 +5130,7 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
-url https://www.ndbc.noaa.gov/view_text_file.php?filename=51004h{prev_year}.txt.gz&dir=data/historical/stdmet/
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
 ttl 31536000
 on earth 17.56 -152.39 0
 rows
