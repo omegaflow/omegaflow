@@ -1,0 +1,68 @@
+name: signal-cone-audit-cdn
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 1 * *"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  OMEGAFLOW_STATE: /home/runner/.local/state/omegaflow
+
+jobs:
+  signal-cone-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
+          key: archivar-cache-${{ github.run_id }}
+          restore-keys: |
+            archivar-cache-
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build signal_cone_audit_probe
+        run: cargo build -p omegaflow-measure --release --bin signal_cone_audit_probe
+
+      - name: Refresh the persisted inputs from the CDN into the audit cache
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          CACHE="$OMEGAFLOW_STATE/archivar_cache"
+          mkdir -p "$CACHE"
+          mkdir -p /tmp/sac
+          for a in omni2_serie.bin goes_xrs.bin goes_euvs.bin f107_penticton.bin ephemeris_sun.bin ephemeris_earth.bin; do
+            gh release download ssd.jpl.nasa.gov --repo omegaflow/sources --pattern "$a" --clobber --dir /tmp/sac 2>/dev/null \
+              && mv "/tmp/sac/$a" "$CACHE/omegaflow_series_$a" \
+              || echo "$a: CDN download void — the probe fetches it from the CDN itself (omegaflow_series_$a)"
+          done
+          for a in wind_waves.bin wind_orbit.bin; do
+            gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources --pattern "$a" --clobber --dir /tmp/sac 2>/dev/null \
+              && mv "/tmp/sac/$a" "$CACHE/omegaflow_series_$a" \
+              || echo "$a: CDN download void — the probe fetches it from the CDN itself (omegaflow_series_$a)"
+          done
+
+      - name: Run the signal-cone audit and persist the full verdict log
+        continue-on-error: true
+        run: |
+          ./target/release/signal_cone_audit_probe 2>&1 | tee signal_cone_audit_verdict.log
+
+      - name: Persist the audit log to the CDN (ssd.jpl.nasa.gov)
+        if: always()
+        continue-on-error: true
+        run: |
+          gh release upload ssd.jpl.nasa.gov signal_cone_audit_verdict.log --clobber --repo omegaflow/sources \
+            || { echo "log upload void — the local log is the artifact"; exit 0; }
+
+      - uses: actions/cache@v4
+        if: always()
+        with:
+          path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
+          key: archivar-cache-${{ github.run_id }}
