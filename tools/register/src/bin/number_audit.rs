@@ -208,14 +208,19 @@ fn section_of(line: &str, current: &str) -> (bool, String) {
 }
 
 fn parse_file(path: &str) -> FileReport {
-    let mut rep = FileReport::default();
     let Ok(text) = fs::read_to_string(path) else {
+        let mut rep = FileReport::default();
         rep.findings.push(format!(
             "{}: not readable — the sheet does not measure",
             path
         ));
         return rep;
     };
+    analyze_text(path, &text)
+}
+
+fn analyze_text(path: &str, text: &str) -> FileReport {
+    let mut rep = FileReport::default();
     let mut current_section = String::from("(kopf)");
     let mut prose_nums: Vec<Num> = Vec::new();
     let mut table_nums: Vec<Num> = Vec::new();
@@ -544,13 +549,128 @@ fn main() {
     );
     println!();
     println!(
-        "The three numbers found / missed / invented per rule against the known-bad corpus: the corpus mapping stands in docs/audit/bekannt-schlecht-korpus.md — the run measures the tool (0 honored)."
+        "The three numbers found / missed / invented per rule against the known-bad corpus: the corpus mapping stands in docs/specs/bekannt-schlecht-korpus.md — the run measures the tool (0 honored)."
     );
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeMap;
+    use std::path::PathBuf;
+
+    fn repo_root() -> PathBuf {
+        let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
+        manifest.parent().unwrap().parent().unwrap().to_path_buf()
+    }
+
+    fn corpus_distribution() -> (BTreeMap<String, usize>, usize) {
+        let text = fs::read_to_string(repo_root().join("docs/specs/bekannt-schlecht-korpus.md"))
+            .expect("the known-bad corpus must live at docs/specs/bekannt-schlecht-korpus.md");
+        let mut dist: BTreeMap<String, usize> = BTreeMap::new();
+        for line in text.lines() {
+            let t = line.trim();
+            if !t.starts_with('|') || !t.contains('|') {
+                continue;
+            }
+            let cells: Vec<&str> = t.split('|').map(|c| c.trim()).collect();
+            if cells.len() < 3 {
+                continue;
+            }
+            if cells[2].is_empty() || cells[2].starts_with("Klasse") {
+                continue;
+            }
+            let separator = cells
+                .iter()
+                .skip(1)
+                .all(|c| c.is_empty() || c.chars().all(|ch| ch == '-' || ch == ':' || ch == ' '));
+            if separator {
+                continue;
+            }
+            let letter = cells[2].split_whitespace().next().unwrap_or("");
+            if letter.len() == 1 {
+                *dist.entry(letter.to_string()).or_default() += 1;
+            }
+        }
+        let total = dist.values().sum();
+        (dist, total)
+    }
+
+    #[test]
+    fn known_bad_corpus_rows_are_reconciled_with_its_umfang() {
+        let (dist, total) = corpus_distribution();
+        let expect: BTreeMap<String, usize> = [
+            ("A".to_string(), 14),
+            ("Z".to_string(), 3),
+            ("D".to_string(), 3),
+            ("K".to_string(), 1),
+            ("N".to_string(), 3),
+            ("V".to_string(), 5),
+        ]
+        .into_iter()
+        .collect();
+        assert_eq!(dist, expect, "corpus table rows and Umfang line must agree");
+        assert_eq!(total, 29, "29 verified findings, one per row");
+        let must_find = ["A", "Z", "D", "K"]
+            .iter()
+            .map(|k| dist.get(*k).copied().unwrap_or(0))
+            .sum::<usize>();
+        assert_eq!(
+            must_find, 21,
+            "number findings the audit must find = A+Z+D+K"
+        );
+    }
+
+    #[test]
+    fn r1_abstract_number_without_table_mark_is_found() {
+        let text = "# Probe\n## Abstract\nsteepest step 5.47 to 5.57\n## Tables\n| step | slope |\n| one | 3.75 |\n";
+        let rep = analyze_text("r1_fixture", text);
+        assert!(
+            rep.found[1] >= 1,
+            "R1 must fire on an Abstract number with no table mark"
+        );
+    }
+
+    #[test]
+    fn r3_double_count_is_found() {
+        let text = "# Probe\n## T1\n| records | 1663 |\n## T3\n| records | 1666 |\n";
+        let rep = analyze_text("r3_fixture", text);
+        assert!(
+            rep.found[3] >= 1,
+            "R3 must fire on the same label with two values"
+        );
+    }
+
+    #[test]
+    fn r4_comma_locale_mix_is_found() {
+        let text = "# Probe\n## Result\nthe delay measured 492,0 s\n## Table\n| station | delay |\n| sod | 487,7 |\n";
+        let rep = analyze_text("r4_fixture", text);
+        assert!(
+            rep.found[4] >= 1,
+            "R4 must fire when prose and table disagree on the comma"
+        );
+    }
+
+    #[test]
+    fn r5_unanchored_count_is_found() {
+        let text = "# Probe\n## Body\nthe 862 records were measured\n";
+        let rep = analyze_text("r5_fixture", text);
+        assert!(
+            rep.found[5] >= 1,
+            "R5 must fire on an unanchored count claim"
+        );
+    }
+
+    #[test]
+    fn verbal_overdeclaration_stays_silent() {
+        let text = "# Probe\n## Result\nthe hypothesis holds for the steepest step measured\n";
+        let rep = analyze_text("v_fixture", text);
+        let total: usize = rep.found.iter().sum();
+        assert_eq!(
+            total, 0,
+            "a verbal claim (Klasse V) carries no number the audit may find"
+        );
+    }
 
     #[test]
     fn parses_scientific() {
