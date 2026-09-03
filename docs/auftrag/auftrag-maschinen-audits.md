@@ -31,6 +31,18 @@ std-only Binary, das jedes Blatt maschinell prüft:
 Regressionstest mit dem Bekannt-Schlecht-Korpus (~25 bestätigte Funde).
 Ersatz für die Klasse-C-Arbeit von Hand.
 
+Gemessener Stand (2026-09-03): das Binary existiert
+(`tools/register/src/bin/number_audit.rs`, R1/R3/R4/R5 hart, R6 Ausgabefeld).
+Der Korpus (`docs/specs/bekannt-schlecht-korpus.md`) ist auf seine gemessene
+Tabelle (29 Zeilen: A 14, Z 3, D 3, K 1, N 3, V 5; Pflicht-Funde A+Z+D+K = 21)
+rekonziliert; die Regression testet Korpus-Integrität und die R1/R3/R4/R5-
+Detektion gegen Fixtures. R2 (§2-Zählung = Tabellen-n) ist als Regel
+unimplementiert (`found[2]` wird nie gesetzt) — `pending`; R4 meldet nur, wenn
+Prosa und Tabelle im selben Blatt die Kommata uneins führen (die K-Locale-Funde
+der Korpus-Zeilen sind Einzelsprachblätter) — `pending`; ebenso die
+found/missed/invented-Kalibration je Regel.
+
+
 ## 2. Blatt-Schluss = Provenienz-Notiz (Granit-Zeile)
 
 Zehn Zeilen je Blatt: Frage-Ursprung, Operator-Überstimmungen, benannte
