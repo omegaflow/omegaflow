@@ -1,0 +1,38 @@
+name: paper-gate
+on:
+  push:
+    paths:
+      - 'docs/paper/**'
+      - 'tools/science/src/bin/export_latex.rs'
+      - 'tools/register/src/bin/reference_verify.rs'
+      - 'tools/science/src/bin/paper_new.rs'
+      - '.github/workflows/paper-gate.yml'
+  pull_request:
+    paths:
+      - 'docs/paper/**'
+      - 'tools/science/src/bin/export_latex.rs'
+      - 'tools/register/src/bin/reference_verify.rs'
+      - 'tools/science/src/bin/paper_new.rs'
+      - '.github/workflows/paper-gate.yml'
+  workflow_dispatch:
+permissions:
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Export gate (title, abstract, numbers, sha)
+      run: cargo run -q -p omegaflow-science --bin export_latex -- --check
+    - name: Reference gate (arXiv, DOI)
+      run: cargo run -q -p omegaflow-register --bin reference_verify
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "paper gate: a paper carries a named difference" \
+          "Paper Gate failed on ${{ github.sha }} — a paper carries a title >75, an abstract >200, a number DIFF, a sha mismatch, or an absent/pending reference." \
+          paper-gate
