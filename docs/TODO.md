@@ -222,11 +222,12 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   181350 Oszillatoren, electric) ungeerntet für den Ladungs-Charakter.
   Die val-Physik (relativ, a.u.) ist die ehrliche Messung — kein
   fabrizierter Querschnitt.
-- Kuprat-Blatt (rixs_cuprate_probe): geerntet ist nur der Spin-Kanal
-  (19 Spektren, 456 Oszillatoren); Gitter und Suprastrom sind
+- Kuprat-Blatt (rixs_cuprate_probe): geerntet sind Spin (19 Spektren,
+  456 Oszillatoren) und Suprastrom (electric, SRD62 v6 — 16 Quellen,
+  ρ_s ∝ λ⁻² je Quelle, `suprastrom_cuprate_probe`); Gitter bleibt
   ungeerntet, und die Dotierungs-Achse trägt 3 Klassen < MIN_N 30 — das
-  Blatt trägt „keine Aussage" (Stille ist der Befund). Die Kanal-Ernten
-  (Phononen = acoustic, Suprastrom = electric) und NSE-I(q,t) bleiben die
+  Blatt trägt „keine Aussage" (Stille ist der Befund). Die restliche
+  Kanal-Ernte (Phononen = acoustic) und NSE-I(q,t) bleiben die
   Voraussetzung für eine nicht-degenerierte Matrix.
 - Suprastrom (electric, µSR-Superfluiddichte): zwei benannte Zugänge —
   (a) ISIS `10.5286/isis.e.rb2410595` (Hussey et al., µSR-Eindringtiefe
@@ -238,12 +239,15 @@ Messreihe archiviert: `archive/messreihe-sonnenzyklus.md`. Befund lebt in
   Pfad. Gebaut (2026-09-03): `srd62_compiler --out <dir> [--ci-mode]`
   (Probe HTTP 200, 25 Citations, Penetration-Depth-Tabelle parsebar) +
   `srd62-cdn`-Workflow manifestiert `srd62_suprastrom.bin` auf dem
-  ssd.jpl.nasa.gov-Compiler-Netloc (258 Punkte, λ 1300–72000 Å,
-  Version 5, 0 honored kein Nullpunkt). Ernte gelaufen (2026-09-03,
-  CI-Run 33781750255) — Asset `srd62_suprastrom.bin` (6199 B) auf der
-  Release verifiziert. PSI hat keinen offenen Kuprat-ρ_s(T)-Datensatz (nur
-  Kagome/Nickelat). Die λ→ρ_s-Konversion (λ⁻² ∝ ρ_s) ist der benannte
-  Folge-Schritt zum Feldwert electric.
+  ssd.jpl.nasa.gov-Compiler-Netloc. Ernte v6 (2026-09-03): Draht trägt
+  die Citation-Provenienz je Punkt (16 Citations, 252 Punkte; die
+  fabrizierte 0.0-σ und der 0.0-indep-Fallback sind getilgt — Zeilen
+  ohne parsebare Temperatur entfallen ehrlich), Reader + λ⁻²-Konversion
+  im Modul `suprastrom` (parse/encode + Tests), Probe
+  `suprastrom_cuprate_probe` (electric-Kanal, ρ_s ∝ λ⁻² je Quelle,
+  Version 6, 0 honored kein Nullpunkt). PSI hat keinen offenen
+  Kuprat-ρ_s(T)-Datensatz (nur Kagome/Nickelat). Die λ→ρ_s-Konversion
+  (λ⁻² ∝ ρ_s) ist zum Feldwert electric der gebaute Weg.
 - NSE-I(q,t): KEIN offener/embargo-datierter Datensatz (erschöpfend
   belegt, vier Runden: ILL/ISIS/NIST/ORNL/PSI/J-PARC/TRIUMF +
   Zenodo/Figshare/Dataverse/OSF/NOMAD/Materials-Cloud tragen nur

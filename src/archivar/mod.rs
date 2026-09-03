@@ -57,6 +57,7 @@ pub mod radio;
 pub mod rixs;
 pub mod rpw;
 pub mod sexagesimal;
+pub mod suprastrom;
 pub mod thermochem;
 pub mod tns;
 pub mod twomass;
