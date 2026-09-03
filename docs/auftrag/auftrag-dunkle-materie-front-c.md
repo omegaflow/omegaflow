@@ -298,3 +298,24 @@ Formergebnis, sonst füttert sie die zu prüfende Hypothese (Zirkel). Die Kette
 Front C ist vollständig: 234/234 Form + Deduktion 40 (sub-kHz) + Deduktion 41
 (Drift). Alle drei: Stille als Verdikt, Grenze quantitativ benannt — die
 präziseste Charakterisierung dessen, was diese Daten nicht können.
+
+## Deduktion 42 (geometrischer Vektortest) — pending, nicht baubar (Rat-Verdikt 2026-09-03)
+
+Der Operator-Einwand (die Anomalie ist ein Vektor im Raum, nicht ein Skalar auf
+einer Bahn; zwei gegenläufige Sonden als natürliches Interferometer) ist
+physikalisch richtig im Rahmen, aber der Rat stellte einstimmig fest: **auf den
+vorhandenen Daten nicht baubar.** Drei gemessene Wände: (1) Zeugen-Boden — der
+volle 3D-Richtungsvektor (sunward vs. feste Raumrichtung) braucht Winkel; Pioneer
+trägt nur Doppler-Typen 0/10/12/13, kein Winkel-Record, das eine Instrument hört
+nur die Sichtlinie. (2) Floor-Boden — der 3D-Zweit-Differenz-Vektor aus dem
+geglätteten Horizons-Raster trägt Granulat-kohärenten Interpolationsfloor ~26×
+(P10) / ~45× (P11) über a_P = 8,74e-10; √N über Tage dämpft Granulat-Kohärenz
+nicht (benachbarte Tage im selben Granulat sind nicht unabhängig); ein gemittelter
+Richtungsvektor wäre ein fabrizierter Punkt (A ≠ A). (3) Der Fix-Quellen-Ast ist
+als `run_grid`-Stille (0/1008, 0 bei ≥2 Sonden) + differentielles Null (0,06σ)
+schon gemessen. Zudem kollabieren beide Hypothesen (thermal + Sonnenkraft) auf
+sunward — der Test trennt sie nicht, er wiederholt die floor-limitierte
+Ein-Aussage von Deduktion 41. Die Anomalie lebt im rohen Range-Rate-Doppler
+(Sichtlinie), nicht in der 3D-Rekonstruktion. **Der echte Vektortest gehört der
+nächsten Sonde mit VLBI+Doppler (zweitem Auge), nicht den fertigen
+Pioneer-Bahnen. pending, 0 honored.**
