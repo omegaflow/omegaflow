@@ -116,7 +116,7 @@ pub fn spawn_ephemeris_bootstrap(
         let Some(body) = &s.body else {
             continue;
         };
-        let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
+        let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
         if cache_fresh(&tmp_path, s.ttl) {
             fresh_items.push((i, s.clone(), tmp_path));
         } else if anchor_uses.contains_key(body) {
@@ -650,7 +650,7 @@ pub fn main_flow() {
             };
             let url = archive.sources[i].url.clone();
             let ttl = archive.sources[i].ttl;
-            let cache_path = format!("/tmp/omegaflow_kernel_{}.txt", kernel_body);
+            let cache_path = content_cache(&format!("omegaflow_kernel_{kernel_body}.txt"));
             if !cache_fresh(&cache_path, ttl) {
                 let Some(text) = fetch_one(&url, None, &[], ttl, Some(now)) else {
                     continue;
@@ -707,7 +707,7 @@ pub fn main_flow() {
                 let Some(body) = &s.body else {
                     continue;
                 };
-                let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
+                let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
                 if cache_fresh(&tmp_path, s.ttl)
                     || archive
                         .body_ephemerides
@@ -945,7 +945,7 @@ pub fn main_flow() {
                 let src_idx = i;
                 let src_clone = archive.sources[i].clone();
                 let tmp_path = match &src_clone.body {
-                    Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
+                    Some(b) => content_cache(&format!("omegaflow_eph_{b}.bin")),
                     None => continue,
                 };
                 if cache_fresh(&tmp_path, src_clone.ttl) {
@@ -998,7 +998,7 @@ pub fn main_flow() {
                 let src_ttl = src_clone.ttl;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     let mut fetched = true;
                     if !cache_fresh(&tmp_path, src_ttl) {
                         fetched = match fetch_raw_bytes(&url, src_ttl) {
@@ -1112,7 +1112,7 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_netcdf_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_netcdf_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1256,7 +1256,7 @@ pub fn main_flow() {
                 let src_ttl = src_clone.ttl;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("stars").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1341,7 +1341,7 @@ pub fn main_flow() {
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_spectral_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_spectral_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1463,7 +1463,7 @@ pub fn main_flow() {
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("jwst_spectra").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_jwst_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_jwst_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1578,7 +1578,7 @@ pub fn main_flow() {
                 let src_ttl = archive.sources[i].ttl;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("curves").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1667,7 +1667,7 @@ pub fn main_flow() {
                         fetch_ok,
                     };
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_series_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1776,7 +1776,7 @@ pub fn main_flow() {
                         fetch_ok,
                     };
                     let name = url.rsplit('/').next().unwrap_or("wind_waves").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_series_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1884,7 +1884,7 @@ pub fn main_flow() {
                         fetch_ok,
                     };
                     let name = url.rsplit('/').next().unwrap_or("gong").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_gong_{}", name);
+                    let tmp_path = content_cache(&format!("omegaflow_gong_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
@@ -1993,7 +1993,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let tmp_path = format!("/tmp/omegaflow_csv_{}.zip", src_idx);
+                    let tmp_path = content_cache(&format!("omegaflow_csv_{src_idx}.zip"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
                         let bytes = match fetch_raw_bytes_post(&url, None, &headers, src_clone.ttl)
