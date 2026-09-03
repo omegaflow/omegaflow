@@ -4,18 +4,17 @@ const TE_SEED: u64 = 0x5031_3037;
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
-    embedded_lsk,
-    omni2::{COMP_N1800, parse_bin as parse_omni2},
-    parse_ephemeris_binary,
+    body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth, embedded_lsk,
+    omni2::{parse_bin as parse_omni2, COMP_N1800},
+    parse_ephemeris_binary, BodyEphemeris,
 };
 use omegaflow::atdf::parse_bin;
 use omegaflow::doppler::parse_bin as parse_pdpl;
 use omegaflow::inflate::gunzip;
-use omegaflow::ionex::{TecGrid, parse_gim, tec_at};
+use omegaflow::ionex::{parse_gim, tec_at, TecGrid};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::odp::{
-    C, EARTH, downlink_rate_core, dsn_station, interp, propagate_accel, station_velocity, sun_accel,
+    downlink_rate_core, dsn_station, interp, propagate_accel, station_velocity, sun_accel, C, EARTH,
 };
 
 const SC_BODY: &str = "pioneer10_daily";
@@ -74,7 +73,11 @@ fn rms_w(resid: &[f64], w: &[f64]) -> f64 {
         sq += w[i] * resid[i] * resid[i];
         sw += w[i];
     }
-    if sw > 0.0 { (sq / sw).sqrt() } else { f64::NAN }
+    if sw > 0.0 {
+        (sq / sw).sqrt()
+    } else {
+        f64::NAN
+    }
 }
 
 fn lin_fit(xs: &[f64], ys: &[f64]) -> (f64, f64) {
@@ -1023,10 +1026,14 @@ fn main() {
         .cloned()
     {
         Some(p) => Some(p),
-        None => ["data/omni2_serie.bin", "data/omni2_serie_1h.bin"]
-            .iter()
-            .map(|p| p.to_string())
-            .find(|p| std::path::Path::new(p).exists()),
+        None => {
+            let root = omegaflow::archivar::cache_root();
+            ["omni2_serie.bin", "omni2_serie_1h.bin"]
+                .iter()
+                .map(|p| root.join(p))
+                .map(|p| p.to_string_lossy().into_owned())
+                .find(|p| std::path::Path::new(p).exists())
+        }
     };
     let sky = "data/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(sky) else {
@@ -1096,7 +1103,9 @@ fn main() {
     if n_series.is_empty() {
         let hint = match &omni2_path {
             Some(p) => format!("{p} carries no N1800 —"),
-            None => "no omni2 bin local (data/omni2_serie.bin or --omni2) —".to_string(),
+            None => {
+                "no omni2 bin in OMEGAFLOW_STATE cache (omni2_serie.bin or --omni2) —".to_string()
+            }
         };
         eprintln!("pioneer10 link: {hint} the plasma deduction stays empty (0 honored)");
     } else {
