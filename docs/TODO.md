@@ -13,7 +13,7 @@ benannt — ein halbes Blatt ist ein Register-Eintrag, kein Ergebnis.
 
 | Nadel | Rätsel | Status | Offener Punkt |
 |---|---|---|---|
-| Ⅰ | Dunkle Materie — Jeans-Residuum R(V) = ρ_dyn − ρ_vis je 50-pc-Voxel | WARTET AUF DICH | Gaia DR4 (2.12.2026) macht das Residuum zum 4D-Feld; Front Ⅱ = Gravitationssensor (dark_matter_probe lebt, Befund bei Ⅵ) |
+| Ⅰ | Dunkle Materie — Jeans-Residuum R(V) = ρ_dyn − ρ_vis je 50-pc-Voxel | WARTET AUF DICH | Gaia DR4 (2.12.2026) macht das Residuum zum 4D-Feld; Front Ⅱ = Gravitationssensor (dark_matter_probe, Netz 0/1008, GESCHLOSSEN) + Front C (NAVIO-Ruck-Sweep, 234/234 Form-gemessen + Deduktion-40 sub-kHz-Basis betreten, GESCHLOSSEN bei vollständig charakterisierter Stille 2026-09-03, Blatt v4). Folge-Frage offen: kontinuierlicher Drift auf der sub-kHz-Basis (92–97 % Tagesmediane <1 kHz, Median 35–89 Hz) |
 | Ⅱ | Flyby-Anomalie — Perigäums-Residuum gegen die Sonnenwind-Phase | WARTET AUF DICH | Prüftermine JUICE (28./29.9.2026) + Europa Clipper (3.12.2026); Weg 1 (kalt) + Weg 2 (preregistriert) |
 | Ⅲ | Koronaheizung — kausale DAG der solaren Kanäle | GELAUFEN | Zahl gemessen 2026; Richtung TIAW vs Nanoflares als Ableitung offen; Zellen pending bis Mehrfachvergleich + Lag-Sweep + KDE-h |
 | Ⅳ | LAIC — Lithosphäre → Ionosphäre? | GELAUFEN | Blatt `laic-arrow-direction.md` steht (Stille beide Richtungen); offen: CSES, TEC retro pre-2024, Instrument A ungebaut, KDE-h |
@@ -61,8 +61,6 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
 - `auftrag-flyby2-addendum.md` — flyby-2-Metrik-Addendum vor dem 28.09.
   (Nadel Ⅱ).
-- `auftrag-vollmission-redution.md` — NAVIO-Vollmission durch die Kette. **Gemessen (2026-09-03):** Form-Test-Verdikt steht (keine getragene ∝t²-/RTG-Form über kHz-Floor 19,0/8,4 kHz); sub-kHz-Tür geöffnet (PNAV + pioneer_navio_residuum, Floor 2,8–19 kHz, PNVR/PNDM serialisiert); Atom 3 (50625aa) Deduktion-10-Tagesmask. Offen: Ruck-Scan-Flaggen von Segment-Rauschen trennen (sub-kHz-Ziel bleibt am ~1,5-kHz-Streuungsboden); Nachfolge-Befund: P11-Flaggen = bekannte Encounter, P10-1996/1981/1982-Flaggen nicht durch Flybys erklärt — Station-/Era-Check (e32d7f9) gemessen: P10 = Station-63-Artefakt (±5,7-90 kHz Einzelstations-Sprünge, 1-Sample-Tage). Kreuz-Sonden-Zeugen-Test: P10 (12) + P11 (11) teilen 0 Ruck-Flag-Tage. Versetzter Zeugen-Test (ff5ebf8) geometrie-geschlossen: P10 22-66 AU vs P11 5-14 AU, Separation 24-110 AU an allen Kreuz-Epochen (außer 1974-P11-Jupiter 1,8 AU = bekannter Encounter) — kein gemeinsamer Transiter, Stille als Verdikt (0 honored). Form-Klassifikation aller Rucks (3be1aca): P10 99/99 + P11 71/71 gemessen, returns 0/66 + 0/60, Zitter dominiert; aber Positiv-Kontrolle (1979-Saturn-Encounter) traegt dieselbe Form — am kHz-Floor trennt der Form-Deskriptor echtes Gravitations-Ereignis nicht von Artefakt (0 honored). Letzte offene Zelle P11-1981-02-09 (2fa8215): Zittern +-46 kHz dominiert -156-Hz-Schritt = Artefakt, keine Rampe. 234/234-Formfeld geschlossen; die Stille hat eine Gestalt (0 honored).
-- `auftrag-dunkle-materie-front-c.md` — Front C: **in Fahrt** (Operator-Verdikt). Messungen: NAVIO-ASCII erstmals kompiliert (p10 908309/p11 967272) + Horizons-Netz frisch 0/1008 + sub-kHz-Tür geöffnet (PNAV/PNVR/PNDM 0c2a280, Atom 3 50625aa). `pioneer_doppler`-CI-Job manifestiert PDPL+PNAV aufs spdf-CD-Release.
 - `auftrag-glm-uebernahme.md` — GLM-Verifikation registrieren + Paper auf
   main führen.
 
