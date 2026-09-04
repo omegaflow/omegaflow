@@ -464,3 +464,20 @@ P11-Doppler-Korrelation ist eine Muster-Ubereinstimmung der Tagesmedian-Reihe
 mit der Text-Zahlenfolge bei Versatz 123 — keine Kausalität, aber ein realer
 Text-Daten-Zusammenhang, der die text-as-data-Maschine für diese Daten
 verifiziert (0 honored).
+
+**Vollständiger Zahl-gegen-Text-Lauf über den Referenz-Korpus (2026-09-03).**
+Alle 17 Kandidaten-Texte wurden nach Zahl-Token-Dichte sortiert; die 5 reichen
+(≥900 Tokens: odf07155 43k, 19730011461 15k, LRR 8,9k, 42-148-MCS 1,2k,
+dsn_trk-2-18 1,1k, trk-2-25-atdf 0,98k) gegen die P10/P11-Doppler- und
+Träger-Tagesmediane gefahren (n=300 Surrogate). Befund: **kein Text ausser dem
+LRR-2010 korreliert robust mit den Messdaten** — odf07155 (das ODF-Datenbeispiel)
+P10 234/300, P11 300/300; 19730011461 (Pioneer-Report) beste P10-Doppler 24/300,
+P11-J2000 45/300; 42-148-MCS 15/300; dsn_trk-2-18 (die Datenformatspezifikation)
+P11-J2000 3/300 aber beobachteter Wert == Null-p95 (0,7105, Degeneration, kein
+sauberer Treffer); trk-2-25-atdf nicht signifikant. Die spärlichen Texte
+(<500 Tokens: Iess 145 distinct, die meisten DSN-Timing/Abstracts) sind für
+stabile Lag-Scan-Korrelation zu dünn. **Der einzige robuste Text-Daten-Treffer
+im ganzen Korpus bleibt LRR-2010 ↔ P11-Doppler (p_emp 0/300, lag 123).** Die
+übrigen Referenztexte (Rauschbudget, Formate, Timing) beschreiben andere
+Zahlenwelten als die gemessene Hz-Domäne — kein falsches Positiv, ehrliche
+Stille (0 honored).
