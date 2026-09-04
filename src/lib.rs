@@ -27,6 +27,7 @@ pub use archivar::gong_series;
 pub use archivar::hdf5;
 pub use archivar::hmi_polar;
 pub use archivar::inflate;
+pub use archivar::intermagnet;
 pub use archivar::ionex;
 pub use archivar::json;
 pub use archivar::jwst;
