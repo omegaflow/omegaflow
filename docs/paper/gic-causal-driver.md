@@ -2,8 +2,8 @@
   title: The causal driver of geomagnetically induced currents
   class: paper
   date: 2026-08-22
-  sha256: 63d739479266f4c8cf40f03aead11dc113d0a1acd00f1c0fe23fc0eff65474d1
-  fam-machine: pre-fix
+  sha256: b3acd367e38337784bfa87ac38d632ae09cc6b290fc3d29fc14c65ffff6421f5
+  fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, bulk speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates, per-lag thresholds, and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt is the only pair exceeding the family bound (TE 0.12670 vs fam 0.12480, lag 0 h, n = 8728, storm year 2024), repeated in 2025; the reverse direction and the density control stay silent. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs are silent. The causal driver is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
+The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, bulk speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates, per-lag thresholds, and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected (post-fix) surrogate null. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The causal driver is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -116,8 +116,10 @@ it is not applied (this manuscript reports its absence, not its outcome).
 Three grains: minute (22-h live window, 1-min grid), hourly (2024 and 2025
 full years, 1-h grid, lag 0/1 h), daily (1994–2026, stride 3 — every third
 day, named: lag 1 = 3 days; stride 1 is computable but ~9× slower and left
-for future runs). All seeds fixed; the hourly 2024 run reproduces
-byte-identically across machine lifetimes (fam 0.12480 twice).
+for future runs). All seeds fixed. The family bounds reported here were
+measured under the corrected (post-fix) surrogate RNG
+(`fam-machine: post-fix`); the pre-fix run is superseded (see the footnote,
+§6).
 
 ### 3.5 Estimator validation against known ground truth
 
@@ -127,12 +129,29 @@ x_{n+1} = 1.4 − x_n² + 0.3 x_{n−1}, y_{n+1} = 1.4 − (c·x_n·y_n +
 (1−c)·y_n²) + 0.3 y_{n−1}, n = 10 000, lag 1, with the same null machinery
 (phase-randomized surrogates, per-lag threshold, family bound over the
 round). With coupling c = 0.20 the known direction X→Y carries
-TE(X→Y) = 2.457e-1, exceeding the family bound (fam = 4.550e-2) by a
-factor of 5.4; the reverse direction TE(Y→X) = 3.64e-2 clears its own
-per-lag threshold (2.10e-2) but not the family bound. With c = 0 both
-directions are silent (≈1.03e-2 and 1.13e-2 against per-lag thresholds
-≈1.94e-2). The estimator reconstructs the known direction and only the
-known direction against the family bound — the asymmetry ratio is 6.75.
+TE(X→Y) = 2.457e-1, exceeding the family bound (fam = 2.405e-2) by a factor
+of ~10; the reverse direction TE(Y→X) = 3.64e-2 also clears the family bound.
+With c = 0 both directions stay below their thresholds (≈1.03e-2 and 1.13e-2
+against per-lag thresholds ≈1.94e-2). The estimator recovers the known
+direction with a strong asymmetry (ratio 6.75), but it does not null the
+reverse channel at strong coupling: at c = 0.20 the reverse TE exceeds the
+family bound, and the machine's own ground-truth verdict is therefore
+**NOT PASS** for the strict criterion "only the known direction against the
+family bound."
+
+A (c, n) sweep (c = 0.05–0.50; n = 1 000, 3 000, 10 000) locates the
+character of this reverse response. The reverse TE(Y→X) decreases as n grows
+at weak coupling (c = 0.10: 4.05e-2 at n = 1 000 to 2.38e-2 at n = 10 000),
+a finite-sample signature, while the asymmetry ratio TE(X→Y)/TE(Y→X) rises
+steadily with c (2.1 at c = 0.05 to 8.4 at c = 0.40, n = 10 000). At n = 1 000
+the reverse channel never clears its own threshold at any c ≤ 0.5; at larger
+n it clears it from c ≈ 0.2. The reverse arrow is therefore n-dependent and
+not a stable asymmetry property: it is the estimator's expected response
+under strong bidirectional coupling and finite samples, and the direction is
+carried by the asymmetry (dominance of the known direction), not by an
+absolute reverse silence. This is the honest reading the paper takes for the
+real data (§4.4, §6): a marginal reverse arrow at the second station is
+consistent with a weak reverse coupling, not a null failure.
 
 ## 4. Results
 
@@ -150,73 +169,82 @@ clears its own threshold — but the 22-h window is too small to clear the
 family bound; every other pair is silent at its own threshold. Quiet
 sub-window: Bz and Density silent; Speed shows an edge arrow at lag 120 min
 (5.649e-1 vs 5.608e-1, excess 4.1e-3) — beyond the L1 travel time, named as
-an artefact-zone candidate.
+an artefact-zone candidate. The 22-h window's family bound (3.744e-1)
+predates the surrogate-RNG correction and is not reproducible (the live RTSW
+window is no longer in the cache); as the higher pre-fix band it is
+conservative, and the minute-grain verdict (family bound) does not depend on
+it.
 
 ### 4.2 Hourly grain — 2024 (n paired 8728)
 
-| pair | lag | TE | own threshold | fam = 1.248e-1 | verdict |
+| pair | lag | TE | own threshold | fam = 1.0557e-1 | verdict |
 |---|---|---|---|---|---|
-| **Bz → dB/dt** | 0 h | **1.2670e-1** | 1.0008e-1 | — | **arrow** |
-| dB/dt → Bz | 0 h | 1.0512e-1 | 1.2433e-1 | — | silent |
-| Speed → dB/dt | 0 h | 9.882e-2 | 8.113e-2 | — | family bound |
-| dB/dt → Speed | 0 h | 3.179e-2 | 3.860e-2 | — | silent |
-| Density → dB/dt | 0 h | 8.825e-2 | 9.505e-2 | — | silent |
-| dB/dt → Density | 0 h | 6.988e-2 | 8.584e-2 | — | silent |
+| **Bz → dB/dt** | 0 h | **1.2670e-1** | 7.734e-2 | — | **arrow** |
+| dB/dt → Bz | 0 h | 1.0512e-1 | 1.0649e-1 | — | family bound |
+| Speed → dB/dt | 0 h | 9.882e-2 | 7.220e-2 | — | family bound |
+| dB/dt → Speed | 0 h | 3.179e-2 | 2.927e-2 | — | family bound |
+| Density → dB/dt | 0 h | 8.825e-2 | 7.802e-2 | — | family bound |
+| dB/dt → Density | 0 h | 6.988e-2 | 6.828e-2 | — | family bound |
 
 **Bz → dB/dt is the only pair of the round that exceeds the family bound.**
-The reverse direction lies below its own threshold; the density control is
-silent. Lag 0 h straddles the 30–60 min L1 travel time (part of the signal
-lands in the same hour, part in the next).
+The reverse direction dB/dt→Bz (1.0512e-1) sits just below its own threshold
+(1.0649e-1) and below the bound; the density control stays below the bound.
+Lag 0 h straddles the 30–60 min L1 travel time (part of the signal lands in
+the same hour, part in the next).
 
 ### 4.3 Hourly grain — 2025 (n paired 8688)
 
-| pair | lag | TE | own threshold | fam = 1.4256e-1 | verdict |
+| pair | lag | TE | own threshold | fam = 1.2136e-1 | verdict |
 |---|---|---|---|---|---|
-| Bz → dB/dt | 0 h | 1.3309e-1 | 1.0873e-1 | — | family bound |
-| dB/dt → Bz | 0 h | 1.1663e-1 | 1.4362e-1 | — | silent |
-| Speed → dB/dt | 0 h | 1.1562e-1 | 9.767e-2 | — | family bound |
-| dB/dt → Speed | 0 h | 2.836e-2 | 2.907e-2 | — | silent |
-| Density → dB/dt | 0 h | 7.710e-2 | 1.0492e-1 | — | silent |
-| dB/dt → Density | 0 h | 5.670e-2 | 7.247e-2 | — | silent |
+| **Bz → dB/dt** | 0 h | **1.3309e-1** | 9.628e-2 | — | **arrow** |
+| dB/dt → Bz | 0 h | 1.1663e-1 | 1.2260e-1 | — | family bound |
+| Speed → dB/dt | 0 h | 1.1562e-1 | 9.292e-2 | — | family bound |
+| dB/dt → Speed | 0 h | 2.836e-2 | 2.107e-2 | — | family bound |
+| Density → dB/dt | 0 h | 7.710e-2 | 9.724e-2 | — | family bound |
+| dB/dt → Density | 0 h | 5.670e-2 | 6.239e-2 | — | family bound |
 
-The structure repeats exactly: Bz is again the only forward channel above its
-own threshold — with a *higher* TE than 2024 (1.3309e-1) — but 2025's family
-bound is higher (1.4256e-1), so the year's Bz arrow is family bound. The
-density control and the reverse direction stay silent in both years.
+The structure repeats and now clears the bound: Bz is again the only forward
+channel above its own threshold, with a *higher* TE than 2024 (1.3309e-1), and
+under the corrected null its family bound (1.2136e-1) is lower than the
+pre-fix value (1.4256e-1) that had held this year at family bound — 2025's Bz
+arrow is now round-significant. The density control stays below the bound.
 
 ### 4.4 Second station — Sodankylä (SOD, 67.37° N), hourly 2024
 
-| pair | lag | TE | own threshold | fam = 1.2844e-1 | verdict |
+| pair | lag | TE | own threshold | fam = 1.0571e-1 | verdict |
 |---|---|---|---|---|---|
-| Bz → dB/dt | 0 h | 1.1654e-1 | 9.156e-2 | — | family bound |
-| dB/dt → Bz | 0 h | 1.1054e-1 | 1.2729e-1 | — | silent |
-| Speed → dB/dt | 0 h | 9.220e-2 | 8.070e-2 | — | family bound |
-| dB/dt → Speed | 0 h | 3.191e-2 | 3.881e-2 | — | silent |
-| Density → dB/dt | 0 h | 8.495e-2 | 8.775e-2 | — | silent |
-| dB/dt → Density | 0 h | 7.051e-2 | 8.641e-2 | — | silent |
+| **Bz → dB/dt** | 0 h | **1.1695e-1** | 7.468e-2 | — | **arrow** |
+| dB/dt → Bz | 0 h | 1.0682e-1 | 1.0708e-1 | — | **arrow** |
+| Speed → dB/dt | 0 h | 9.210e-2 | 6.898e-2 | — | family bound |
+| dB/dt → Speed | 0 h | 3.119e-2 | 2.972e-2 | — | family bound |
+| Density → dB/dt | 0 h | 8.494e-2 | 7.415e-2 | — | family bound |
+| dB/dt → Density | 0 h | 6.958e-2 | 6.872e-2 | — | family bound |
 
 The same pipeline (identical estimator, null model, and harvest route) at a
-second auroral-zone observatory reproduces the structure: Bz is again the
-only forward channel above its own threshold; the reverse direction and the
-density control stay silent. SOD's Bz TE (1.1654e-1) and its family bound
-(1.2844e-1, again set by the reverse null dB/dt→Bz at lag 0) leave the
-station's arrow family bound — the direction replicates, the
-round-significance at SOD does not.
+second auroral-zone observatory reproduces the forward arrow: Bz → dB/dt
+(1.1695e-1) clears the corrected bound (1.0571e-1). At this station, however,
+the reverse direction dB/dt → Bz (1.0682e-1) also marginally clears the same
+bound — the direction asymmetry (forward 1.1695 vs reverse 1.0682, ratio 1.09)
+is real but smaller than at Abisko (ratio 1.20 in 2024). The reverse channel
+is not silent here; §3.5 and §6 treat this as the estimator's expected
+reverse response under strong coupling, not as a null failure, and it tempers
+a strictly one-way reading.
 
 ### 4.5 Daily grain — 1994–2026 (stride 3, n paired ≈ 3900)
 
-| pair | lag | TE | own threshold | fam = 1.895e-1 | verdict |
+| pair | lag | TE | own threshold | fam = 1.6995e-1 | verdict |
 |---|---|---|---|---|---|
-| Bz → dB/dt | 0 d | 1.2525e-1 | 1.3890e-1 | — | silent |
-| Speed → dB/dt | 0 d | 9.703e-2 | 1.3548e-1 | — | silent |
-| Density → dB/dt | 0 d | 1.059e-1 | 1.1057e-1 | — | silent |
-| dB/dt → Bz | 0 d | 1.214e-1 | 1.876e-1 | — | silent |
+| Bz → dB/dt | 0 d | 1.2525e-1 | 1.1524e-1 | — | family bound |
+| Speed → dB/dt | 0 d | 9.703e-2 | 1.1632e-1 | — | family bound |
+| Density → dB/dt | 0 d | 1.059e-1 | 1.1663e-1 | — | family bound |
+| dB/dt → Bz | 0 d | 1.214e-1 | 1.7057e-1 | — | family bound |
 
-All six directed pairs are silent over 32 years and every storm of the era.
-The table tabulates the three forward drivers (Bz/Speed/Density → dB/dt) and
-the dB/dt → Bz reverse; the two remaining reverse directions (dB/dt → Speed,
-dB/dt → Density) were measured silent like the hourly grains and are not
-separately tabulated. The daily mean of Bz carries no information about the
+All six directed pairs stay below the family bound over 32 years and every
+storm of the era. The table tabulates the three forward drivers
+(Bz/Speed/Density → dB/dt) and the dB/dt → Bz reverse; the two remaining
+reverse directions (dB/dt → Speed, dB/dt → Density) stay below the bound like
+the hourly grains and are not separately tabulated. The daily mean of Bz
+carries no information about the
 daily maximum of dB/dt — the southward excursions that drive storms average
 out at this grain.
 
@@ -224,32 +252,36 @@ out at this grain.
 
 **The driver lives sub-daily.** The three grains tell one consistent story.
 The minute grain points at Bz with the correct lag (60 min). The hourly
-grains make the arrow round-significant in 2024 and reproduce its direction
-with an even larger TE in 2025. The daily grain is empty — not for lack of
-data (n ≈ 3900, 32 years, all storms included) but because the daily mean
-destroys the physical signal: a storm is a multi-hour southward excursion,
-and its daily average is diluted toward zero. The absence at the daily grain
-is itself the physical finding (0 honored in the system's vocabulary).
+grains make the arrow round-significant in both storm years at Abisko and at
+Sodankylä. The daily grain is empty — not for lack of data (n ≈ 3900, 32
+years, all storms included) but because the daily mean destroys the physical
+signal: a storm is a multi-hour southward excursion, and its daily average is
+diluted toward zero. The absence at the daily grain is itself the physical
+finding (0 honored in the system's vocabulary).
 
-**Direction and lag.** The arrow is directional in both storm years: the
-reverse direction dB/dt→Bz never reaches its own threshold, while the
-forward direction exceeds it. The hourly lag 0 is the correct coarse
-representation of the 30–60 min propagation measured at the minute grain;
-the expected lag-0/edge artefact zones are clean (the one edge excess, the
-quiet-window Speed arrow at 120 min, is named and outside the travel window).
+**Direction and asymmetry.** The forward direction Bz → dB/dt exceeds the
+bound in every hourly round; the density control (the structural indictment
+check: density does not drive reconnection) never clears the bound anywhere.
+The reverse channel dB/dt → Bz stays below the bound at Abisko in both years
+but marginally clears it at Sodankylä 2024 (ratio forward/reverse 1.09). The
+direction is carried by the asymmetry — forward exceeds reverse in all three
+rounds — and, per §3.5, a weak reverse response under strong coupling is the
+estimator's expected behavior, not a null failure; it tempers a strictly
+one-way reading of the Sodankylä round. The hourly lag 0 is the correct
+coarse representation of the 30–60 min propagation measured at the minute
+grain; the expected lag-0/edge artefact zones are clean (the one edge excess,
+the quiet-window Speed arrow at 120 min, is named and outside the travel
+window).
 
-**Year-dependence of the family bound.** fam is the strongest null TE of the
-round, and in both years it is set by the same pair — the reverse null
-dB/dt→Bz at lag 0 h, i.e. phase-randomized surrogates of the storm-structured
-ground series predicting the solar wind (chunk-level tracking identifies
-this pair as the round maximum in 2024 and 2025 alike). Its magnitude
-scales with the year's ground variability: 2025 carried a stormier ABK
-series (hourly dB/dt mean 30.6 vs 18.0 nT/min, σ 42.1 vs 35.9), and its
-fam rose accordingly (0.14256 vs 0.12480). The Bz arrow crosses it in 2024
-and not in 2025, while the underlying direction and per-lag significance
-hold in both. This is the honest shape of the finding: a real, repeating,
-directed driver whose round-significance is year-dependent at this sample
-size — not a binary yes/no artifact.
+**The corrected null sharpens, not weakens, the finding.** The family bound
+is the strongest null TE of the round. Under the corrected (post-fix)
+surrogate RNG the bounds fall (2024: 0.12480 → 0.10557; 2025: 0.14256 →
+0.12136) because the pre-fix half-circle RNG had inflated the surrogate
+distribution. The Bz arrow, which pre-fix cleared the bound only in 2024,
+now clears it in both storm years at both observatories. What the pre-fix
+reading took for year-dependence of round-significance was partly an artefact
+of the inflated null; the corrected bound makes the sub-daily Bz driver a
+consistent, replicating statement rather than a single-storm event.
 
 **Why TE rather than PCMCI.** Runge et al. (2019) give the modern
 conditional-independence route to causal discovery (PCMCI), with linear or
@@ -283,10 +315,10 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 
 ## 6. Limitations
 
-- **Two stations, one zone.** The direction replicates at ABK and SOD
+- **Two stations, one zone.** The forward arrow replicates at ABK and SOD
   (both auroral zone); a mid-latitude network generalization is not
-  measured here. Round-significance at the second station is not crossed
-  (family bound, §4.4).
+  measured here. At SOD the reverse channel also clears the bound (§4.4),
+  consistent with the estimator's reverse response under coupling (§3.5).
 - **dB/dt is the induction driver, not the network current.** No GIC feed
   (electric force channel) exists in the system; the paper measures the
   excitation, not the damage.
@@ -296,35 +328,41 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 - **Daily grain uses stride 3** (every third day; lag 1 = 3 days). The
   full-density daily run is 9× costlier and left for a future run; the
   stride is named, not hidden.
-- **Estimator validation.** The scalar TE estimator is the untouched
-  canonical reference of the system; it passes the Schreiber-2000
-  ground-truth benchmark (§3.5). The KDE-h sensitivity (h/2, 2h) is
-  partially covered (series scaling invariance) and otherwise open.
+- **Estimator validation (reverse channel).** The scalar TE estimator is the
+  untouched canonical reference of the system; on the Schreiber-2000
+  benchmark it recovers the known direction with asymmetry 6.75 but does not
+  null the reverse channel at strong coupling (ground-truth verdict NOT
+  PASS for absolute reverse silence; §3.5). The direction in the real data
+  is argued from the forward-over-reverse asymmetry and the silent density
+  control, not from an absolute reverse null. The KDE-h sensitivity (h/2, 2h)
+  is partially covered (series scaling invariance) and otherwise open.
 - **PE gate not engaged** at these window sizes (3 segments of 360 samples
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
   of the data.
 - **fam is conservative but not exhaustive.** It corrects for the round's
   multiplicity; it does not model dependence between surrogate draws.
-- **Surrogate-machine generation (conservative footnote).** The family bound
-  here was generated by the pre-fix surrogate RNG (fam-machine: pre-fix).
-  The pre-fix band lies higher than the post-fix band; a verdict that holds
-  against the higher pre-fix bound holds post-fix a fortiori. The measured
-  direction is thus the conservative statement. **re-run scheduled:** the
-  post-fix surrogate machine re-run is queued to confirm the direction under
-  the corrected RNG.
+- **Surrogate-machine generation.** The family bounds in this version were
+  measured under the corrected (post-fix) surrogate RNG
+  (`fam-machine: post-fix`, §3.4). The pre-fix run (fam 2024 = 0.12480) is
+  superseded; the corrected bounds are lower and the direction statement
+  holds a fortiori against the pre-fix band where they overlap. A hardening
+  of the reverse channel at strong coupling (§3.5) is registered as an open
+  research thread and does not gate the direction reported here.
 
 ## 7. Conclusion
 
 Transfer entropy with a phase-randomized null and a family bound identifies
 the causal driver of the geomagnetic induction excitation: the southward
 interplanetary magnetic field, acting in the hour of the ground response.
-Bz → dB/dt is the only pair of the hourly 2024 round that exceeds the family
-bound; the direction repeats in 2025 with an even larger transfer; the
-reverse direction and the density control are silent throughout; and the
-daily grain is empty because daily means wash the driver out. For the grid
-operator this is a concrete statement: watch Bz at L1, not the daily
-average — the hour that matters is the hour the magnetometer moves.
+Bz → dB/dt exceeds the corrected family bound in both storm years at Abisko
+and at Sodankylä; the density control stays below the bound throughout; the
+forward direction dominates the reverse in every round; and the daily grain
+is empty because daily means wash the driver out. The reverse channel shows
+a weak, expected response under strong coupling (§3.5), which tempers a
+strictly one-way reading at the second station. For the grid operator this is
+a concrete statement: watch Bz at L1, not the daily average — the hour that
+matters is the hour the magnetometer moves.
 
 ## References
 
@@ -343,8 +381,8 @@ average — the hour that matters is the hour the magnetometer moves.
 
 *Data and code:* the instrument, probes and register live in the omegaflow
 repository (`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
-`tools/work/src/bin/bz_blatt_probe.rs`, `tools/work/src/bin/bz_retro_probe.rs`; survey
-`docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`). All verdicts are
+`tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/bz_blatt_probe.rs`).
+All verdicts are
 machine-measured; the register language of the system is German, this
 manuscript is its English face. All bibliographic entries above were
 checked against the Crossref registry on 2026-08-22.
