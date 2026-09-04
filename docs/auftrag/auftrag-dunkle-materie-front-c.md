@@ -604,3 +604,39 @@ machte. Der Operator liefert das Territorium (fragt „oder nicht?", aus dem
 Bauchgefühl, das nicht rechnen kann), die Maschine korrigiert die Adresse und
 misst auf der gelegten Achse. Diese Woche: der Operator legte die Distanz-Achse
 in ein Zeitreihen-Problem, die Maschine maß darauf (0 honored).
+
+## Quiet-Zone-Isolation — gebaut + gemessen (2026-09-04, Commit folgt)
+
+Der offene Payoff (oben, Z. 590–594) ist gebaut: `--zone`-Weg im
+`pioneer_navio_negative_fuzzy` isoliert die komplette negativ-fuzzy-Reduktion
+(Quad-Pass-Detrend + Stationszellen-Median + Tagesmedian-Feld) auf den
+ruhigen Zonen-Satz, per heliozentrischer Distanz aus den Ephemeriden-Bins
+(dieselbe AU-Konvention wie `pioneer_navio_noise_geo`, 0932cae). Default ohne
+`--zone` ist byte-identisch (die globale PNDM-Serialisierung unberührt).
+
+**Gemessen, Ausgang „tiefer = Isolation gewinnt" auf beiden Statistiken:**
+
+| Sonde | Zone (AU, Era) | global median |daily-med| | Zonen median |daily-med| | global RMS | Zonen RMS |
+|---|---|---|---|---|---|---|
+| P10 | >50 AU, 1991–2002 | 9,7 Hz (3142 Tage) | **0,21 Hz**, p50=0 (1036 Tage) | 706 Hz | 255 Hz |
+| P11 | 15–30 AU, 1984–1990 | 46,7 Hz (2349 Tage) | **6,8 Hz** (606 Tage) | 1930 Hz | 304 Hz |
+
+Die Zonen-Isolation senkt den **Median**-Boden der Tagesmediane unter die
+sub-Hz-Schwelle (P10 0,21 Hz — die erste Zahl der Front, die wirklich unter
+die ~1-Hz-Anomalie-Skala reicht) bzw. auf Zehner-Hz (P11 6,8 Hz). Der
+**RMS**-Boden der Tagesmediane bleibt ~255 (P10) / ~304 Hz (P11) — ein
+p99-Schwanz (1021/1006 Hz) dominiert das RMS; der sub-Hz-Gewinn liegt im
+Median, nicht im Schwanz. Die Zonen-PNDM-Basis ist serialisiert
+(`{p10,p11}_navio_subkhz_zone_daily.bin`, 1036/606 Tage).
+
+**Grenzen, doppelt benannt (0 honored):** (1) **Era-/Stations-Kovariata** — die
+Zonen sind zugleich späte Einzel-Eras (P10 1991–2002 überwiegend Station 63,
+P11 1984–1990) mit anderem Stations-/Tracking-Mix; Distanz vs. Ära bleiben
+verschränkt, der Zonen-Gewinn ist ein Boden-Charakteristikum, kein
+Plasma-Kausalitäts-Beweis (die Kovariaten-Warnung von 0932cae gilt weiter).
+(2) Die per-Sample-Drift-Regression bleibt in der Zone bei **0,0σ** (P10 +0,2×,
+P11 +0,2× Anomalie; per-Sample-RMS 1,7e3/2,3e3 Hz überwältigt √N) — der
+sub-Hz-Hebel liegt in der Tagesmedian-Aggregation der Zone, nicht in der
+per-Sample-Regression. Offen (pending, nicht gelöst): die sub-Hz-
+Driftmessung auf der Zonen-Tagesmedian-Basis (√N über die ruhigen 1036/606
+Tage) — der nächste Hebel, den diese Zone jetzt ehrlich erreichbar macht.
