@@ -56,6 +56,10 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 
 ### Forschungs-Nadeln & Missionen
 
+- `auftrag-subhz-drift-quiet-zone.md` — Sub-Hz-Drift auf der Quiet-Zone-Basis
+  (P10 >50 AU, 1991–2002): die erste Messung der Front mit der Anomalie über
+  dem Median-Boden (0,21 Hz). Eigene frische Session; fünf Bausteine
+  (Verdikt-Bindung, Maskierung, Surrogat-Null, Regression, Registrierung).
 - `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
   4D-Feld (Nadel Ⅰ).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
