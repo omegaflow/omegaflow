@@ -222,3 +222,22 @@ Perigäums-Lücke (C/A−2,25 h bis C/A+1,5 h).
 Kein Residuum wurde re-deriviert, keine mm/s-Zahl in `flyby-path-1` verändert.
 Für die übrigen sechs Flybys bleibt der Auftrag `open`/`pending` mit den oben
 benannten Orten — kein Haken.
+
+**Gegencheck `jnogrv_0001` + AAS-Paper (2026-09-03, direkt verifiziert):** Der
+Operator-Fund (DOI 10.17189/mkat-jh51 löst auf dsid=juno-j-rss-1-ocru-v1.0 =
+`jnogrv_0001`; Abstract „outer cruise between the October 2013 Earth Flyby and
+JOI") wurde gegen die tatsächliche Set-Struktur geprüft. **Der offizielle PDS-
+Abstract bestätigt die Grenze statt sie zu widerlegen**: „between ... Earth
+Flyby and JOI" heißt — das Set beginnt nach dem Flyby. Die ODF-Verzeichnisliste
+(pds-atmospheres.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/, direkt zugänglich,
+robots.txt blockiert diesen Pfad nicht) zeigt das **früheste ODF =
+`GRV_OCRU_2013284_1527XMMMC005V01` = DOY 284 = 2013-10-11**, ~46 h nach C/A
+(DOY 282, 2013-10-09). **Kein ODF mit Datum ≤ 2013-10-09 existiert im Set.**
+Der Earth-Flyby-Pass ist damit unabhängig gegen den Direkt-Zugang bestätigt
+abwesend — nicht nur über die post-EFB-Quelldatei (juno_merged_odf_2013_postefb.dat),
+sondern über die vollständige ODF-Liste. AAS 14-435 („Reconstruction of Earth
+flyby by the Juno spacecraft", NTRS 20160008163) ist bestätigt — die Modell-/
+Trajektorien-Seite (kein anomaler ΔV, ESA-ergänzte Lücke C/A−2,25 h bis +1,5 h),
+keine Roh-Range-Rate. Roh-Doppler (DOY 275–289) bleibt ausschließlich über die
+formelle DSN-/ESA-Datenanfrage (Vorlage oben) — kein öffentlicher Download,
+0 honored.
