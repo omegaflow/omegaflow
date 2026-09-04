@@ -2,7 +2,7 @@
   title: Docs — Benennung & Versionierung
   class: concept
   date: 2026-09-03
-  sha256: 549ba1fdfdc1adca3b36405844bb58586c3c8aa714b8f1b35b2e594b6825d418
+  sha256: 0e1c6638ea4af486f898930a1ba15fe742321ba15d46e8d49e077365f9297034
   status: live
   see-also: AGENTS.md
 -->
@@ -24,6 +24,10 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   `docs/auftrag-*.md` is drift. The repo-root `AUFTRAG.md` is the
   transient, unwritten-form order; the versioned `docs/auftrag/` copy is the
   canonical one. One order per file, dated by its own date.
+- `docs/befund/befund-<slug>.md` — a Befund (`class: befund`): the
+  self-carried verdict that answers one auftrag. It points at its order via
+  `antwortet-auf: docs/auftrag/auftrag-<slug>.md`; the slug mirrors the
+  auftrag it answers. One Befund per completed order, `status: done`.
 - `docs/blatt/blatt-<slug>.md` — an Ein-Blatt sheet (`class: sheet`): a
   single-sheet causal-arrow pre-registration or screening verdict (the
   `blatt-papier` discipline). Sheets are not papers (a sheet is a
@@ -43,17 +47,17 @@ commit SHA addresses every state; a milestone is marked via `version:` in the
 header. True historical snapshots that must coexist move to
 `archive-root/`, never version-suffixed in place.
 
-Every prose doc (handover/survey/ref/concept/paper/auftrag/blatt) opens with a header block; the
+Every prose doc (handover/survey/ref/concept/paper/auftrag/befund/blatt) opens with a header block; the
 `sha256` covers the body **without** the header (`sed '/^<!--/,/^-->/d' <f> |
 sha256sum`), so two local copies are compared in one command:
 
     <!--
       title: …
-      class: handover | survey | ref | concept | paper | auftrag | sheet
+      class: handover | survey | ref | concept | paper | auftrag | befund | sheet
       date: YYYY-MM-DD
       version: <n>          (milestone only)
       sha256: <hex>
-      status: live | consumed | archived
+      status: live | consumed | archived | done
       see-also: …
     -->
 
