@@ -535,3 +535,21 @@ WVR physisch nicht freigeben (Reduktion, nicht Physik — siehe
 Deduktion-43-Befund). **Messbar: „unsere Magie plus OD" erreicht die ~1-Hz-Tiefe
 von Turyshev nicht — die Differenz ist Daten-Tiefe (Medien-Kompensation), nicht
 Reduktions-Import (0 honored).**
+
+**Die drei Turyshev-Komponenten — bekommbar oder nicht (2026-09-03, finale
+Klärung aus dem Iess-Text).** (1) **Multifrequenz-Plasma-Kompensation: NICHT
+bekommbar** — Pioneer 10/11 sendeten nur S-Band (kein zweites Frequenzpaar),
+und die Plasma-Szintillation ist dispersiv ∝λ² (bei S-Band ~200× stärker als
+Ka-Band), nur per Multilink isolierbar — nicht nachrüstbar. (2) **Präzise
+Stations-/Erdrotations-Korrekturen: bekommbar** (Modell-Arbeit), adressieren aber
+NICHT die dominante Rauschquelle. (3) **Missions-OD mit Millionen Punkten:
+bekommbar** (`pioneer_odp`), aber der a_P-Scan-Selbsttest zeigt <0,1 %-Änderung,
+weil das jährliche Residuum von der Erd-/Modell-Seite kommt. **Kern aus dem
+Iess-Budget ([26]): die dominante S-Band-Rauschquelle ist die interplanetare +
+troposphärische Szintillation (Figure 2, Kolmogorov, dispersiv) — unterdrückbar
+nur per Multilink-Plasma-Kompensation oder Troposphären-Kalibrierung (WVR),
+beides hatte die Pioneer-Ära physikalisch nicht.** Nur #2/#3 sind bekommbar,
+aber beide adressieren nicht die Medien-Szintillation, die den 133-Hz-Floor
+trägt. **Die Daten-Tiefe, die Turyshev zu ~1 Hz führte, kam aus der
+Medien-Kompensation, die wir nicht nachbauen können — die Wand ist physisch,
+nicht rechnerisch (0 honored).**
