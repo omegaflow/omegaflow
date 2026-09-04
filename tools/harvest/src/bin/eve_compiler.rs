@@ -1,9 +1,11 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::LeapSeconds;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::inflate::gunzip;
 use omegaflow::lsk::days_from_civil;
+
+const CDN_TAG: &str = "lasp.colorado.edu";
 
 const BASE: &str = "https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2";
 const MAGIC: [u8; 4] = *b"EVL1";
@@ -231,7 +233,7 @@ fn main() {
         t0,
         t1
     );
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release(CDN_TAG, &out) {
         std::process::exit(1);
     }
 }
