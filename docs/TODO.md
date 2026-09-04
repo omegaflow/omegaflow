@@ -71,6 +71,22 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   aufgelöst; Q2 (Vorzeichen je Ära) nicht auflösbar (Deduktion-44-σ), Q3 (Koinzidenz)
   leer (P11 hat 0 Ereignisse). Der erste ~1-Hz-empfindliche Ereignis-Scan dieser
   Daten endet in Stille (0 honored).
+- `auftrag-quiet-zone-uebertragung.md` — pending (2026-09-04): Quiet-Zone als
+  Rezept, nicht Pioneer-Ergebnis — Rauschen verorten, Zone isolieren, Boden
+  messen. Türen: Voyager 1/2 (160/130 AU), New Horizons (60 AU), Mariner/
+  Galileo/Cassini (retroaktiv, S-Band). Schärfung Tür 1 (2026-09-04): Co-Quiet-
+  Kreuztest P10+V1 — Interferenz-Design (ersetzt die Epochen-Ambiguität der
+  Deduktion-44-Vorzeichen durch ein gemeinsames Fenster ~1998–2002). Zwei-Wege-
+  Bindung vorab: Ausgang A gemeinsames Vorzeichen = erster Zwei-Sonden-Hinweis;
+  Ausgang B widersprüchliche = sauberste Beerdigung (sonnen-individuell, nie
+  gemeinsame Kraft). Atome: (1) V1-SPDF-Doppler-Verfügbarkeit, (2) Fenster-n
+  messen (gemeinsame stille Tage, n ins Protokoll vor der Regression).
+  Literatur-Scan (agent) durchgeführt:
+  Verdikt (a) bestätigt — kein Zonen-Floor im Turyshev/Toth-Korpus 2002–2012;
+  Korrektur: „laute Zone als Instrument" ist belegt (Woo & Armstrong 1979,
+  mit Pioneer), kein eigener Fund; Anderson 2002 gelesen (Arcs = Zeit-Intervalle,
+  bestätigt), vier Volltexte pending (Armstrong 1998, Bertotti 2003, Tortora
+  2004 — born-digital/Lizenz; Woo 1979 — Scan-Kandidat, kein Vision-LLM nötig).
 - `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
   4D-Feld (Nadel Ⅰ).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
