@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-03
-  version: 6
-  sha256: 8103d94a02067d7f7f9ac8e14a08b5ff4dcf3bb1663283899887aa119393a05b
+  version: 7
+  sha256: 270ee7cda86490913fbca7e8f2e1b0814b599890aadf65ec4d647829953d7b33
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -354,6 +354,13 @@ MDA-resolver frequency) is the named next search; the origin stays open
 
 **The numbered deduction map (complete).** The §5.4 narrative above steps through the deduction chain only partially by number (0/0b and 7–10, 16–20, 22–24, 26, 27, 29–31 individually); this map enumerates every Deduktion head that the historical `link_deduction_probe` tool-comment documents (0, 0b, and 1–40), in numerical order, as the complete chain per that tool's own documentation. The numbers 11–15, 21, 25, and 28 carry no head in the tool comment and are not narrated individually in this paper; they are not fabricated here (0 honored). Deduction 16 is not a head in the tool comment but is narrated individually in §5.4 above; it is repeated here, marked, from this paper's own narration. Each line states what that step measures or excludes.
 
+Beyond the tool-comment chain the paper's own post-Front-C reductions continue the
+numbering gaplessly: Deduction 41 = the continuous-drift form test (§5.6,
+`pioneer_navio_drift`); Deduction 42 = the geometric vector test, pending (not
+buildable on these data — Rat verdict); Deduction 43 = the Iess external S-band
+radio-noise calibration (the floor is reduction, not physics); Deduction 44 = the
+quiet-zone drift (§5.6, `pioneer_navio_zone_drift`).
+
 Deduction 0 — Slipped-cycle mask: ATDF field 76 names the samples whose counter slipped during integration — the count is corrupt, the sample is discarded, not averaged (0 honored).
 
 Deduction 0b — Strength gate: field 78 is in units of 0.1 dBm, so real strengths are negative (≈ −174 dBm); samples without a measured strength (≥ 0) are discarded (0 honored).
@@ -498,6 +505,36 @@ runs through regression over the full quiet series or week/month binned medians
 (√N over time), not through further masking. Limit, not failure; the floor is the
 statement (0 honored).
 
+**The quiet-zone drift — the median floor did not carry the drift (Deduction 44).**
+The quiet-zone isolation (`pioneer_navio_negative_fuzzy --zone`) serialized a
+zone-only daily-median basis (`{p10,p11}_navio_subkhz_zone_daily.bin`, 1036/606
+days) whose P10 median |daily-med| reaches 0.21 Hz — the first number of the
+front genuinely on the sub-Hz anomaly scale. The drift was then asked on that
+basis with a pre-registered protocol (`pioneer_navio_zone_drift`): Deduction-10
+masking (corrupt-day clusters and jitter-tail days, 4×p90 gates) before
+regression, a block-bootstrap null (block 16 d, 500 surrogates, fixed seed) that
+preserves the weak daily autocorrelation (lag-1 0.083 P10 / 0.043 P11), and the
+three-form test (linear / ∝t² / RTG-exp τ = 126.5 y) with thresholds fixed from
+the null before any model value fell. Masking removed 39/1036 (P10) and 15/606
+(P11) tail days and dropped the daily-median RMS from 257 to 57.7 Hz (P10) and
+306 to 105 Hz (P11) — the 3.8 % tail days carry the RMS, exactly as the
+distance-binned noise geography (0932cae) implied. The drift is still not
+resolved: P10 −1.95× the anomaly (sunward) at 0.45σ, P11 +6.98× (outward) at
+0.54σ — both ~6×/5× below the null slope threshold, and the two probes do not
+agree in sign. The form stays degenerate: the RTG decay is linear to < 8 % over
+the 11-y span against τ = 126.5 y, and the ∝t² "improvement" (0.18 %) sits barely
+above its null p95 (0.07 %) — a negligible overfitting excess, not a force
+signature, and it accompanies no resolved drift. **The sub-Hz zone gain lives in
+the median, not in the drift:** the drift regression fights the daily-median RMS
+scatter, not the median, and after the tail is masked the surviving per-day
+scatter (57.7 Hz) still buries the ~5 Hz mission-long drift. The zone isolation
+lowers the median floor below the anomaly scale (0.21 Hz) for the first time; it
+does not thin the drift scatter. The two drift estimates (−1.95× sunward,
++6.98× outward) bracket the anomaly on both sides while staying 5–6× under the
+surrogate threshold with contradictory signs: the limit is now measured with the
+signal inside the uncertainty, not buried under the floor. Limit, not failure
+(0 honored).
+
 **5.7 Why the form test cannot decide on this span.** The degeneracy is not the
 noise alone. Over the 27.4-y P10 span the Pu-238 thermal curve falls only 19.5 %
 — nearly a straight line; ∝t² over the same span separates from linear by
@@ -539,7 +576,11 @@ Artifacts on the ssd.jpl.nasa.gov CDN release; commands:
   quadratic per-pass detrend + station-cell median → sub-kHz daily medians,
   `data/{name}_navio_subkhz_daily.bin` PNDM), `cargo run --bin pioneer_navio_drift`
   (Deduction 41: continuous-drift form test — linear/∝t²/RTG-exp over the quiet
-  ≤p95 sub-kHz daily medians, per probe).
+  ≤p95 sub-kHz daily medians, per probe). Quiet-zone drift (§5.6, Deduction 44):
+  `cargo run --bin pioneer_navio_negative_fuzzy -- --zone` (zone-only daily medians,
+  `data/{name}_navio_subkhz_zone_daily.bin` PNDM), `cargo run --bin
+  pioneer_navio_zone_drift` (pre-registered zone form test — Deduction-10 masking +
+  block-bootstrap null + linear/∝t²/RTG-exp, per probe).
 
 ## 7. Conclusion
 
@@ -568,7 +609,13 @@ near-degeneracy of the hypotheses over the P10 span (thermal decay only 19.5 %,
 form differences of tenths of a Hz against a ~1 Hz amplitude). No depth of the
 floor would have separated the models on this mission length while the total
 amplitude is ~1 Hz. A distinguishing measurement needs a broader basis (combined
-P10+P11 era), not a lower floor alone. The terrain is measured to its floor, and
+P10+P11 era), not a lower floor alone. The quiet-zone isolation (Deduction 44)
+pushed the P10 median |daily-med| to 0.21 Hz — genuinely sub-Hz — but the drift
+on that basis is still not resolved: masking the 3.8 % tail days drops the
+daily-median RMS from 257 to 57.7 Hz, and the drift stays at 0.45σ/0.54σ with
+the two probes disagreeing in sign. The sub-Hz gain lives in the median, not in
+the drift; the drift regression fights the RMS scatter, which survives the mask.
+The terrain is measured to its floor, and
 the measurability of the anomaly was improved ~100× along the way. Limit, not
 failure (0 honored).
 
