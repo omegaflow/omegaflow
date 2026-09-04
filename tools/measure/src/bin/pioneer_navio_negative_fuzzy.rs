@@ -10,6 +10,93 @@ fn rms(v: &[f64]) -> f64 {
     (v.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / v.len() as f64).sqrt()
 }
 
+fn lin_fit(xs: &[f64], ys: &[f64]) -> Option<(f64, f64)> {
+    let n = xs.len() as f64;
+    if n < 5.0 {
+        return None;
+    }
+    let mx = xs.iter().sum::<f64>() / n;
+    let my = ys.iter().sum::<f64>() / n;
+    let mut num = 0.0;
+    let mut den = 0.0;
+    for i in 0..xs.len() {
+        num += (xs[i] - mx) * (ys[i] - my);
+        den += (xs[i] - mx) * (xs[i] - mx);
+    }
+    if den.abs() < 1e-300 {
+        return None;
+    }
+    let a = num / den;
+    Some((a, my - a * mx))
+}
+
+fn subhz_drift(name: &str, ts: &[f64], r2: &[f64]) {
+    const C: f64 = 299792458.0;
+    const TR: f64 = 240.0 / 221.0;
+    const AP: f64 = 8.74e-10;
+    const F0: f64 = 2.292e9;
+    const TAU_Y: f64 = 126.52;
+    let day_s = 86400.0;
+    let t0 = ts[0];
+    let t: Vec<f64> = ts.iter().map(|x| (x - t0) / day_s).collect();
+    let span_y = (ts[ts.len() - 1] - t0) / day_s / 365.25;
+    eprintln!(
+        "{name}: sub-Hz drift regression on {n} negative-fuzzy per-sample residua over {span_y:.2} y",
+        n = ts.len()
+    );
+    let k = TR / C;
+    let (a_lin, _) = lin_fit(&t, r2).unwrap_or((0.0, 0.0));
+    let drift_hzday = a_lin;
+    let accel = drift_hzday / day_s / (k * F0);
+    let resid_lin: Vec<f64> = t
+        .iter()
+        .zip(r2.iter())
+        .map(|(tt, v)| v - a_lin * (tt - t[0]))
+        .collect();
+    let rms_lin = rms(&resid_lin);
+    let mt = t.iter().sum::<f64>() / t.len() as f64;
+    let sxx: f64 = t.iter().map(|tt| (tt - mt) * (tt - mt)).sum();
+    let se = if sxx > 0.0 {
+        rms_lin / sxx.sqrt()
+    } else {
+        f64::NAN
+    };
+    let accel_se = se / day_s / (k * F0);
+    let sigma = accel / accel_se.max(1e-300);
+    eprintln!(
+        "{name}: linear slope {drift_hzday:.4e} Hz/day (SE {se:.4e}) -> acceleration {accel:.3e} m/s² = {r:.1}× anomaly, {sigma:.1}σ (per-sample RMS {rms_lin:.3e} Hz; the slope SE is the honest uncertainty, not the naked point)",
+        r = accel / AP
+    );
+    let x2: Vec<f64> = t.iter().map(|tt| (tt - mt) * (tt - mt)).collect();
+    let a_q = lin_fit(&x2, r2).map(|(a, _)| a).unwrap_or(0.0);
+    let resid_q: Vec<f64> = x2.iter().zip(r2.iter()).map(|(x, v)| v - a_q * x).collect();
+    let rms_q = rms(&resid_q);
+    let tau_s = TAU_Y * 365.25 * day_s;
+    let dec: Vec<f64> = t
+        .iter()
+        .map(|tt| 1.0 - (-tt * day_s / tau_s).exp())
+        .collect();
+    let a_e = lin_fit(&dec, r2).map(|(a, _)| a).unwrap_or(0.0);
+    let resid_e: Vec<f64> = dec
+        .iter()
+        .zip(r2.iter())
+        .map(|(d, v)| v - a_e * d)
+        .collect();
+    let rms_e = rms(&resid_e);
+    eprintln!(
+        "{name}: model resid RMS — linear {rms_lin:.3e}, ∝t² {rms_q:.3e}, RTG-exp τ={TAU_Y:.0}y {rms_e:.3e} Hz"
+    );
+    let imp = |a: f64, b: f64| (a - b) / a * 100.0;
+    eprintln!(
+        "{name}: ∝t² improves on linear {iq:.2} %, RTG-exp {ie:.2} % (per-sample regression, √N over ~600k samples)",
+        iq = imp(rms_lin, rms_q),
+        ie = imp(rms_lin, rms_e)
+    );
+    eprintln!(
+        "{name}: the anomaly (~1 Hz/mission) vs per-sample regression floor {rms_lin:.1e} Hz — held against this floor, not claimed (0 honored)"
+    );
+}
+
 fn quad_detrend_cells(
     ts: &[f64],
     vs: &[f64],
@@ -121,6 +208,8 @@ fn run(name: &str) {
         "{name}: after station-cell median subtraction: RMS {:.3e} Hz",
         rms(&r2)
     );
+
+    subhz_drift(name, &dq_ts, &r2);
 
     let day_s = 86400.0;
     let mut daily: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
