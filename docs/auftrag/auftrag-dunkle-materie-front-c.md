@@ -367,3 +367,16 @@ ist die per-Sample-Streuung selbst; keine Aggregations-Kadenz (Tag, Woche, Sampl
 hebt die Anomalie über die Signifikanzschwelle.** Der Weg bleibt: mehr
 Tracking-Abdeckung oder eine Sonde mit besserem Instrument — breitere Basis, 0
 honored.
+
+**Mehr Tracking-Abdeckung in den vorhandenen Daten gefunden (2026-09-03) —
+DTYPE-13 wird verworfen.** Die „breitere Basis" liegt nicht nur in neuen Daten:
+die Residuum-Kette (`pioneer_navio_residuum`, Z. 374/381) gated auf **DTYPE-12 /
+linkmode 12 (two-way)** und verwirft DTYPE-13 vollständig. Gemessen: **P10 hat
+DTYPE-13 = 705.591 von 908.028 Samples = 78 %** (nur 22 % two-way wurden zu
+Residuen); P11 DTYPE-13 = 213.954 von 967.043 = 22 %. Roh-Tracking-Tage: P10 4489,
+davon 2331 mit ≥100 Samples — genutzt nur 1126; die negativ-fuzzy-sub-kHz-Basis
+nutzt einen Bruchteil der vorhandenen Tracking-Abdeckung. DTYPE-13 (three-way,
+rx≠tx, linkmode 13) ist im PNAV als Stationen-Paar erfasst und braucht ein
+rx×tx+uplink-Modell — das Muster existiert in `pioneer11_odf_residuum`
+(mode 13/14). Rückgewinnung würde die P10-Residuum-Basis ~5× heben (√N ≈ 2,2×).
+Rat-Verdikt zur Machbarkeit + Bau-Umfang steht aus (0 honored).
