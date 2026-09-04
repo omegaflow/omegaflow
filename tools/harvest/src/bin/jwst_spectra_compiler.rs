@@ -171,6 +171,57 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
     targets
 }
 
+fn tap_curated_targets(token: &str) -> Vec<Target> {
+    let adql = "SELECT DISTINCT p.hostname, p.ra, p.dec FROM spectra s, ps p WHERE s.pl_name = p.pl_name AND p.default_flag = 1 AND p.ra IS NOT NULL AND p.dec IS NOT NULL AND s.facility LIKE '%James Webb Space Telescope%' AND s.spec_type = 'Transmission' AND (s.instrument LIKE '%NIRSpec%' OR s.instrument LIKE '%NIRISS%' OR s.instrument LIKE '%MIRI%')";
+    let body = match curl_json(
+        "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+        &[
+            ("REQUEST", "doQuery".to_string()),
+            ("LANG", "ADQL".to_string()),
+            ("FORMAT", "json".to_string()),
+            ("QUERY", adql.to_string()),
+        ],
+        token,
+    ) {
+        Some(b) => b,
+        None => return Vec::new(),
+    };
+    let Some(root) = parse_json(&body) else {
+        eprintln!("tap curated: json absent");
+        return Vec::new();
+    };
+    let rows: &[JsonVal] = match jpath_val(&root, "data") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => match &root {
+            JsonVal::Arr(a) => a,
+            _ => {
+                eprintln!("tap curated: data array absent");
+                return Vec::new();
+            }
+        },
+    };
+    let mut seen = std::collections::HashSet::new();
+    let mut targets = Vec::new();
+    for row in rows {
+        let Some(host) = jstr(row, "hostname") else {
+            continue;
+        };
+        if !seen.insert(host.clone()) {
+            continue;
+        }
+        let (Some(ra), Some(dec)) = (jnum(row, "ra"), jnum(row, "dec")) else {
+            continue;
+        };
+        targets.push(Target {
+            host,
+            ra_deg: ra,
+            dec_deg: dec,
+            plx_mas: 0.0,
+        });
+    }
+    targets
+}
+
 struct CaomRow {
     obs_id: String,
     s_ra: f64,
@@ -482,6 +533,7 @@ fn main() {
     let mut hosts_filter: Option<String> = None;
     let mut workdir = std::path::PathBuf::from("phi/jwst_harvest");
     let mut budget: Option<u64> = None;
+    let mut curated = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -490,6 +542,7 @@ fn main() {
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
+            "--curated" => curated = true,
             "--limit" => {
                 limit = args
                     .get(i + 1)
@@ -552,14 +605,18 @@ fn main() {
         eprintln!("MAST_TOKEN absent (.secrets.local or env)");
         return;
     }
-    let targets = tap_targets(
-        &token,
-        if hosts_filter.is_some() {
-            usize::MAX
-        } else {
-            limit
-        },
-    );
+    let targets = if curated {
+        tap_curated_targets(&token)
+    } else {
+        tap_targets(
+            &token,
+            if hosts_filter.is_some() {
+                usize::MAX
+            } else {
+                limit
+            },
+        )
+    };
     let host_set: Option<std::collections::HashSet<String>> =
         hosts_filter.map(|s| s.split(',').map(|t| t.trim().to_string()).collect());
     let targets: Vec<Target> = match &host_set {
@@ -735,9 +792,8 @@ fn main() {
     );
     if budget_stopped {
         eprintln!(
-            "budget reached — partial harvest, the bin stays unwritten; resume continues from the ledger"
+            "budget reached — partial harvest; the partial bin is still written and uploaded; resume continues from the ledger"
         );
-        return;
     }
     let Some(bytes) = finalize_workdir(&workdir) else {
         eprintln!("finalize void — no sidecars, the bin stays unwritten (0 honored)");
