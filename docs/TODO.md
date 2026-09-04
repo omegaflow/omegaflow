@@ -1126,6 +1126,15 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   über die Daten — Assets, die Registerzeilen tragen, werden versioniert, nie
   überschrieben. Downstream (Scanner) zeigt auf das kuratierte Asset.
 
+- WURZEL des CI-0-Spektren-Bugs (2026-09-04, Diagnose-Workflow mast-diag):
+  der Compiler lud die FITS hartkodiert nach `/tmp/opencode/jwst_….fits` —
+  das Verzeichnis existiert lokal (angelegt), aber NICHT im CI-Runner →
+  `curl -o` schlug fehl → jede Ernte "no readable spectrum product", 0
+  Sidecars in allen CI-Läufen. mast-diag isolierte: Token ok (set), CAOM 200,
+  Download 200 (319 MB WASP-15 in 6 s) — Netzwerk+Token gesund. Fix:
+  Downloads gehen in `workdir/tmp` (per create_dir_all angelegt). Diagnose-
+  Workflow nach Bestätigung entfernt.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
