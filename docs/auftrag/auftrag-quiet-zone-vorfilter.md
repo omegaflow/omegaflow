@@ -2,7 +2,7 @@
   title: Auftrag — Vorfilter Tür 2 + Tür 4: Stabilisierung + Rauschgeometrie je Sonde
   class: auftrag
   date: 2026-09-04
-  sha256: 3425ebb382ee988ab748e129acaa92681491128c3ac92e88c1c15db132801534
+  sha256: a63b442194b693cb0c2f1489535662e4c09c5328d90e4d0144e6a8f807076d7c
   status: geschlossen
   see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/TODO.md
 -->
@@ -69,7 +69,7 @@ trägt den nächsten Harvest.
 | Sonde | Stabilisierung | Rauschquelle | Datenbestand | Vorfilter |
 |---|---|---|---|---|
 | New Horizons (~60 AU) | kombiniert: Cruise/Hibernation **spinstabilisiert** (passiv, keine Reaktionsräder, ~100 d/a ohne Lage-Manöver), Encounter dreiachsen | selbst-getrieben **episodisch**, nicht kontinuierlich — Voyager-Regel greift nicht; Größe vs a_P nicht publiziert (`pending`) | REX `open` (Okkultation + TNF, kein Empfangs-Doppler, kein NAVIO-Analogon); SPDF 404; Nav-Doppler `request-only` | **besteht** (Schranke), Harvest nicht offen |
-| Galileo | **Dual-Spin** (Spun-Section 3 rpm, passiv) | kein kontinuierlicher 3-Achsen-Betrieb; Größe `pending` | **`open`**: PDS4 `gll.rss` (`data_trk225_atdf` = TRK-2-25 Closed-Loop, `data_trk234_trknav` = TRK-2-34, `data_trk223_ionocal`) + GWE `GO-X-RSS-1-ODR-V1.0` | **bestehen** — offener Roh-Doppler + passive Stabilisierung |
+| Galileo | **Dual-Spin** (Spun-Section 3 rpm, passiv) | kein kontinuierlicher 3-Achsen-Betrieb; Größe `pending` | **`open`** (PDS3 PPI): `GO-…-RSS-…-V1.0` (TRK-2-25 TDF + TRK-2-18 ODF, TRK-2-34 absent) + GWE `GO-X-RSS-1-ODR-V1.0` (open-loop ODR) — kein PDS4 `gll.rss` (korrigiert 2026-09-05, `befund-galileo-gwe-bestand.md`) | **bestehen** — passive Stabilisierung, medium-getriebenes S-Band-Rauschen; aber ≤5 AU (keine Quiet-Zone) |
 | Cassini | dreiachsen (Mariner-Mark-II-Bus) | Voyager-artige Selbst-Rauschen-Klasse | `open`: PDS4 `cassini-rss-raw-*` (gwe/sce/sagr/sroc/ssa/Titan, je DOI) | **fallen** als Hauptkandidat (3-Achsen → Voyager-Urteil); bleibt Kontrast (Ka ohnehin sauber) |
 | Mariner (10 gemessen) | M10 dreiachsen; 4/5/6/7/9 einzeln `pending` | — | kein PDS-RSS-Bestand, `unavailable` | **fallen** — kein Distanz-Muster (Ziele alle ≤1,7 AU) |
 
@@ -84,8 +84,10 @@ fallen als Harvest-Türen.
 
 **`pending`-Reste:** NH-Selbst-Rauschen-Größe vs a_P nicht publiziert;
 NH-JPL/DSN-Doppler-Anfrage benannt, nicht ausgeführt; NH-REX-Tiefenprüfung
-(geschlossene Doppler-Spur in raw/tnf?) offen; Galileo-`gll.rss`-
-Zeitabdeckung (nur RSS-Events oder Cruise 1989–1995?) offen;
+(geschlossene Doppler-Spur in raw/tnf?) offen; Galileo-Bestandsaufnahme +
+Vorfilter der eigenen Rausch-Kurve gemessen 2026-09-05
+(`befund-galileo-gwe-bestand.md` — `gll.rss` existiert nicht, real =
+PDS3 `GO-…-RSS-…-V1.0`); Galileo-empirische-Rausch-Kurve offen;
 Mariner-Einzelschemata tür-irrelevant.
 
 ## Register-Satz
@@ -100,3 +102,8 @@ verortet — die Diagnose geht dem Harvest voraus, nicht nach.*
 (Schranke + >50-AU-Muster), Harvest-Weg = `request-only`-Doppler-Anfrage;
 Galileo-GWE = offene Reserve; Cassini + Mariner `fallen`. Drei
 `pending`-Reste (oben benannt) sind nächste Schritte, keine Vermutungen.
+**Nachtrag (2026-09-05):** die Galileo-Zelle trug eine falsche Adresse — ein
+PDS4-Bündel `gll.rss` existiert nicht; der reale Bestand (PDS3
+`GO-…-RSS-…-V1.0`, TRK-2-25/2-18, GWE open-loop ODR) und der Vorfilter der
+eigenen Rausch-Kurve sind in `docs/befund/befund-galileo-gwe-bestand.md`
+gemessen (Tabelle oben korrigiert).
