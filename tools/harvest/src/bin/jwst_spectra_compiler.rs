@@ -222,6 +222,65 @@ fn tap_curated_targets(token: &str) -> Vec<Target> {
     targets
 }
 
+struct CuratedSpectrum {
+    pl_name: String,
+    host: String,
+    bibcode: String,
+    wl_min: Option<f64>,
+    wl_max: Option<f64>,
+    instrument: String,
+}
+
+fn tap_curated_spectra(token: &str) -> Vec<CuratedSpectrum> {
+    let adql = "SELECT p.hostname, s.pl_name, s.bibcode, s.minwavelng, s.maxwavelng, s.instrument FROM spectra s, ps p WHERE s.pl_name = p.pl_name AND p.default_flag = 1 AND p.ra IS NOT NULL AND p.dec IS NOT NULL AND s.facility LIKE '%James Webb Space Telescope%' AND s.spec_type = 'Transmission' AND (s.instrument LIKE '%NIRSpec%' OR s.instrument LIKE '%NIRISS%' OR s.instrument LIKE '%MIRI%')";
+    let body = match curl_json(
+        "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+        &[
+            ("REQUEST", "doQuery".to_string()),
+            ("LANG", "ADQL".to_string()),
+            ("FORMAT", "json".to_string()),
+            ("QUERY", adql.to_string()),
+        ],
+        token,
+    ) {
+        Some(b) => b,
+        None => return Vec::new(),
+    };
+    let Some(root) = parse_json(&body) else {
+        eprintln!("tap spectra: json absent");
+        return Vec::new();
+    };
+    let rows: &[JsonVal] = match jpath_val(&root, "data") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => match &root {
+            JsonVal::Arr(a) => a,
+            _ => {
+                eprintln!("tap spectra: data array absent");
+                return Vec::new();
+            }
+        },
+    };
+    let mut out = Vec::with_capacity(rows.len());
+    for row in rows {
+        let (Some(host), Some(pl_name)) = (jstr(row, "hostname"), jstr(row, "pl_name")) else {
+            continue;
+        };
+        let bibcode = jstr(row, "bibcode").unwrap_or_default();
+        let wl_min = jnum(row, "minwavelng").filter(|v| v.is_finite());
+        let wl_max = jnum(row, "maxwavelng").filter(|v| v.is_finite());
+        let instrument = jstr(row, "instrument").unwrap_or_default();
+        out.push(CuratedSpectrum {
+            pl_name,
+            host,
+            bibcode,
+            wl_min,
+            wl_max,
+            instrument,
+        });
+    }
+    out
+}
+
 struct CaomRow {
     obs_id: String,
     s_ra: f64,
@@ -534,6 +593,7 @@ fn main() {
     let mut workdir = std::path::PathBuf::from("phi/jwst_harvest");
     let mut budget: Option<u64> = None;
     let mut curated = false;
+    let mut spectra_list = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -543,6 +603,7 @@ fn main() {
             }
             "--ci-mode" => ci_mode = true,
             "--curated" => curated = true,
+            "--spectra-list" => spectra_list = true,
             "--limit" => {
                 limit = args
                     .get(i + 1)
@@ -572,7 +633,7 @@ fn main() {
             }
             _ => {
                 eprintln!(
-                    "usage: jwst_spectra_compiler --out <jwst_spectra.bin> [--ci-mode] [--limit N] [--hosts <host,...>] [--workdir <dir>] [--budget <minutes>] --lsk <naif0012.tls> [--probe <x1d.fits>]"
+                    "usage: jwst_spectra_compiler --out <jwst_spectra.bin> [--ci-mode] [--limit N] [--hosts <host,...>] [--workdir <dir>] [--budget <minutes>] --lsk <naif0012.tls> [--probe <x1d.fits>] [--curated] [--spectra-list]"
                 );
                 return;
             }
@@ -581,6 +642,28 @@ fn main() {
     }
     if let Some(p) = probe {
         probe_fits(&p);
+        return;
+    }
+    let token = mast_token().unwrap_or_default();
+    if spectra_list {
+        let rows = tap_curated_spectra(&token);
+        eprintln!("curated jwst transmission spectra rows: {}", rows.len());
+        let mut hosts: Vec<&String> = rows.iter().map(|r| &r.host).collect();
+        hosts.sort();
+        hosts.dedup();
+        eprintln!("distinct hosts: {}", hosts.len());
+        for r in rows.iter().take(10) {
+            let wl = match (r.wl_min, r.wl_max) {
+                (Some(a), Some(b)) => format!("{}-{}", a, b),
+                (Some(a), None) => format!("{}-", a),
+                (None, Some(b)) => format!("-{}", b),
+                (None, None) => "void".to_string(),
+            };
+            println!(
+                "{} {} {} {} {}",
+                r.bibcode, r.pl_name, r.host, wl, r.instrument
+            );
+        }
         return;
     }
     let Some(out_path) = out else {
