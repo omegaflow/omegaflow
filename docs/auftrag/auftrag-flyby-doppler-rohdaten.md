@@ -241,3 +241,20 @@ Trajektorien-Seite (kein anomaler ΔV, ESA-ergänzte Lücke C/A−2,25 h bis +1,
 keine Roh-Range-Rate. Roh-Doppler (DOY 275–289) bleibt ausschließlich über die
 formelle DSN-/ESA-Datenanfrage (Vorlage oben) — kein öffentlicher Download,
 0 honored.
+
+**Literatur-Fund (verifiziert vs. unverifiziert, 2026-09-03):** Verifiziert —
+AAS 14-435 („Reconstruction of Earth flyby by the Juno spacecraft", Thompson/
+Abrahamson/Ardalan/Bordi, NTRS 20160008163) existiert; NTRS listet „no
+available downloads" (Konferenz-Proceedings, kein freier Volltext) — konsistent
+mit der Modell-Seiten-Rolle. **Benannt, aber nicht gegen die Quelle verifiziert**
+(A = A, kein Fakt ohne Lese-Ort): ein AGU-Fall-Meeting-2013-Abstract unter
+Beteiligung von J. D. Anderson (Entdecker der Flyby-Anomalie) mit dem Titel
+„Juno Earth Flyby as a Sensitive Detector of Anomalous Orbital-Energy Changes"
+soll einen erwarteten Anomalie-Betrag ~7 mm/s (nach Anderson-et-al.-Formel) und
+einen Mess-SE ~0,01 mm/s nennen, mit „no anomaly observed" — ein menschlicher
+Prüfer sollte dies gegen die AGU-Quelle (Control-ID 1799584, Pfad unbestätigt)
+belegen, bevor es als Zitat trägt. Die "breite-Basis"-Behauptungen anderer
+Flyby-Sonden (Galileo-ATDF bis 10 Records/s, NEAR-RS öffentlich bei sbnarchive,
+Rosetta-IFMS 1-s bei ESA-PSA) wurden mit geratenen Pfaden **nicht bestätigt**
+(404) — sie bleiben unverifizierte Kandidaten, kein Register-Fakt. Diese Zeile
+ist die ehrliche Grenze zwischen gemessen und behauptet (0 honored).
