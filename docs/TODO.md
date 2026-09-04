@@ -1159,6 +1159,29 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   archiviert). OFFEN: der Biosignatur-Scanner (Auftrag 4) liest beide Assets;
   KDE-h/Multi-Force-Pflichten vor einem Befund.
 
+- Biosignatur-Diagnose-Pass (2026-09-05, Rat-Entscheid, kein TE-Verdikt): der
+  Scanner trägt in dieser Form KEINE Aussage — vier strukturelle Defekte, die
+  eine Stille fabrizieren. (a) fam-Bug: `fam = max(best_te, rev_te)` ist das
+  Maximum der beobachteten TE, forward == fam → `forward > fam` unerreichbar,
+  "fam-tragend" toter Code, Katalog-fam immer 0, die alte "no causal filter
+  breaks the field — silence"-Zeile war ein Code-Artefakt, kein Befund.
+  Gemessen: 214 Spektren / 90 Equilibria, 90 Atmosphären ausgewertet, mean TE
+  8.1e-2, fam 0.0000. (b) Paar nicht ko-indiziert: x = Flux über Wellenlänge,
+  y = Spezies-Brüche über Spezies-Index — keine gemeinsame Achse; lag ≥ 1
+  verschiebt entlang der Wellenlänge = Artefakt, kein Lauf. (c) y ist das
+  thermochemische Gleichgewicht (reine Funktion von Teq) = der leblose Nullfall
+  per Konstruktion — "Leben bricht das Feld" ist mit dem Gleichgewichts-Asset
+  strukturell nicht prüfbar (Disequilibrium nicht erzeugbar). (d) n = 16
+  Spezies < 30 (Mess-Gate); KDE-h nicht offengelegt (Silverman intern), h-
+  Sensitivität bei n < 30 stumm. Scanner umgestellt auf Diagnose (keine
+  fabrizierte Kausal-Aussage); Verdict: keine Aussage / pending, nicht
+  "silence = no life". Register-Pflichten: bedingte Multi-Force-TE (Phasenraum)
+  bleibt pending (kein Instrument, nicht stillschweigend auslassen); Skip-
+  Taxonomie (113 multi-planet + 11 out-of-domain) = absent im Equilibrium-
+  Asset, korrekt None-geskippt, hier benannt (0 honored). Nächster echter
+  Schritt wäre ein ko-indiziertes Disequilibrium-Design (Messwert der
+  Atmosphäre), nicht ein Codepatch an diesem Scanner.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,

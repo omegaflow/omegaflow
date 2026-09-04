@@ -154,18 +154,16 @@ fn run(spectra_path: &str, equilibrium_path: &str, out_path: &str) -> Result<(),
         out.push_str(l);
         out.push('\n');
     }
-    out.push_str(&format!(
-        "fam over the catalog: {} ({:.2}% of atmospheres above the family threshold) — {}\n",
-        n_fam,
-        fam * 100.0,
-        if n_te == 0 {
-            "absent"
-        } else if fam == 0.0 {
-            "no causal filter breaks the field — silence"
-        } else {
-            "life = causal filter that breaks the field"
-        }
-    ));
+    out.push_str("fam over the catalog: 0 unhonored — the family bound is structurally broken\n");
+    out.push_str(
+        "  (fam = max of the observed TE, not a surrogate family bound; forward == fam, so\n",
+    );
+    out.push_str(
+        "   'above the family threshold' is unreachable — the silence is code, not measurement).\n",
+    );
+    out.push_str("  The pair is not co-indexed (spectrum flux over wavelength vs species fractions over the\n");
+    out.push_str("  species index), y is the thermochemical equilibrium model (the dead case by construction),\n");
+    out.push_str("  n = 16 species < 30. No causal verdict is carried — the biosignature claim stays pending.\n");
     std::fs::write(out_path, &out).map_err(|e| format!("{out_path}: {e}"))?;
     println!("{out}");
     Ok(())
