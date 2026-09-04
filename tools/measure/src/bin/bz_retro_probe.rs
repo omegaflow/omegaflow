@@ -1,5 +1,5 @@
 use omegaflow::archivar::omni2::{parse_bin, COMP_BZ, COMP_N1800, COMP_V1800};
-use omegaflow::archivar::{fetch_raw, parse_json, scalar_of, JsonVal};
+use omegaflow::archivar::{fetch_raw, fetch_raw_bytes, parse_json, scalar_of, JsonVal};
 use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -97,6 +97,26 @@ fn disk_cache(name: &str) -> String {
         .join(name)
         .to_string_lossy()
         .into_owned()
+}
+
+const IMAG_CDN_BASE: &str =
+    "https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk";
+
+fn load_cdn_station_dbdt(station: &str) -> Option<Vec<(f64, f64)>> {
+    let asset = format!("{}_dbdt_1h.bin", station.to_lowercase());
+    let local = disk_cache(&asset);
+    let bytes = std::fs::read(&local).ok().or_else(|| {
+        let url = format!("{IMAG_CDN_BASE}/{asset}");
+        match fetch_raw_bytes(&url, 3600) {
+            Some(b) => {
+                let _ = std::fs::write(&local, &b);
+                Some(b)
+            }
+            None => None,
+        }
+    })?;
+    let recs = omegaflow::intermagnet::parse_bin(&bytes)?;
+    Some(recs.into_iter().map(|(t, v, _)| (t, v)).collect())
 }
 
 fn load_cache(path: &str) -> Option<Vec<(f64, f64)>> {
@@ -399,20 +419,31 @@ fn run_hourly(
         omni_density.len()
     );
 
-    let mut dbdt_1h: Vec<(f64, f64)> = if !force_harvest {
-        match load_cache(&cache_1h) {
-            Some(c) if !c.is_empty() => {
+    let mut dbdt_1h: Vec<(f64, f64)> = Vec::new();
+    if !force_harvest {
+        if let Some(recs) = load_cdn_station_dbdt(station) {
+            if !recs.is_empty() {
                 eprintln!(
-                    "cache {cache_1h}: {} hours loaded — the harvest is skipped",
-                    c.len()
+                    "CDN {}_dbdt_1h.bin: {} hours (flat series, imag-data.bgs.ac.uk)",
+                    station.to_lowercase(),
+                    recs.len()
                 );
-                c
+                dbdt_1h = recs;
             }
-            _ => Vec::new(),
         }
-    } else {
-        Vec::new()
-    };
+        if dbdt_1h.is_empty() {
+            match load_cache(&cache_1h) {
+                Some(c) if !c.is_empty() => {
+                    eprintln!(
+                        "cache {cache_1h}: {} hours loaded — the CDN asset is not local",
+                        c.len()
+                    );
+                    dbdt_1h = c;
+                }
+                _ => {}
+            };
+        }
+    }
     if dbdt_1h.is_empty() {
         for y in sy..=ey {
             let mut hours = harvest_station_year_buckets(station, y, HOUR);
