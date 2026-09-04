@@ -1,6 +1,10 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
+use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
 use omegaflow::odf::parse_p11r_bin;
+
+const DAY_S: f64 = 86400.0;
+const AU: f64 = 1.495978707e11;
 
 fn rms(v: &[f64]) -> f64 {
     if v.is_empty() {
@@ -8,6 +12,10 @@ fn rms(v: &[f64]) -> f64 {
     }
     let m = v.iter().sum::<f64>() / v.len() as f64;
     (v.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / v.len() as f64).sqrt()
+}
+
+fn norm(v: [f64; 3]) -> f64 {
+    (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
 }
 
 fn lin_fit(xs: &[f64], ys: &[f64]) -> Option<(f64, f64)> {
@@ -154,46 +162,9 @@ fn quad_detrend_cells(
     (dts, dvs, drx)
 }
 
-fn run(name: &str) {
-    let path = format!("data/{name}_navio_residuum.bin");
-    let Some(bytes) = std::fs::read(&path).ok() else {
-        eprintln!("{name}: residuum bin void ({path}) — 0 honored");
-        return;
-    };
-    let Some(recs) = parse_p11r_bin(&bytes) else {
-        eprintln!("{name}: residuum parse void");
-        return;
-    };
-    let n = recs.len();
-    let mut ts = vec![0.0f64; n];
-    let mut resid = vec![0.0f64; n];
-    let mut rx = vec![0i64; n];
-    for (i, r) in recs.iter().enumerate() {
-        ts[i] = r[0];
-        resid[i] = r[1];
-        rx[i] = r[5] as i64;
-    }
-    eprintln!(
-        "{name}: Deduktion-40 negative-fuzzy — {n} two-way residual samples, RMS {rms0:.3e} Hz",
-        rms0 = rms(&resid)
-    );
-
-    let gap_pass = 900.0;
-    let (dq_ts, dq_vs, dq_rx) = quad_detrend_cells(&ts, &resid, &rx, gap_pass, 8);
-    eprintln!(
-        "{name}: quadratic per-pass detrend (gap {gap_pass:.0} s, min 8): {n} → {} samples, RMS {rms0:.3e} → {rms1:.3e} Hz",
-        dq_ts.len(),
-        rms0 = rms(&resid),
-        rms1 = rms(&dq_vs)
-    );
-    if dq_ts.len() < 500 {
-        eprintln!("{name}: too few detrended samples — stays silent (0 honored)");
-        return;
-    }
-
-    let mut r2 = dq_vs.clone();
+fn station_cell_median(r2: &mut Vec<f64>, rx: &[i64]) {
     let mut by_rx: BTreeMap<i64, Vec<usize>> = BTreeMap::new();
-    for (k, &st) in dq_rx.iter().enumerate() {
+    for (k, &st) in rx.iter().enumerate() {
         by_rx.entry(st).or_default().push(k);
     }
     for idx in by_rx.values() {
@@ -204,6 +175,25 @@ fn run(name: &str) {
             r2[k] -= med;
         }
     }
+}
+
+fn report(name: &str, ts: &[f64], resid: &[f64], rx: &[i64], out_path: Option<&str>) {
+    let n_in = ts.len();
+    let gap_pass = 900.0;
+    let (dq_ts, dq_vs, dq_rx) = quad_detrend_cells(ts, resid, rx, gap_pass, 8);
+    eprintln!(
+        "{name}: quadratic per-pass detrend (gap {gap_pass:.0} s, min 8): {n_in} → {} samples, RMS {rms0:.3e} → {rms1:.3e} Hz",
+        dq_ts.len(),
+        rms0 = rms(resid),
+        rms1 = rms(&dq_vs)
+    );
+    if dq_ts.len() < 500 {
+        eprintln!("{name}: too few detrended samples — stays silent (0 honored)");
+        return;
+    }
+
+    let mut r2 = dq_vs.clone();
+    station_cell_median(&mut r2, &dq_rx);
     eprintln!(
         "{name}: after station-cell median subtraction: RMS {:.3e} Hz",
         rms(&r2)
@@ -211,10 +201,9 @@ fn run(name: &str) {
 
     subhz_drift(name, &dq_ts, &r2);
 
-    let day_s = 86400.0;
     let mut daily: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
     for (k, &t) in dq_ts.iter().enumerate() {
-        let day = (t / day_s).floor() as i64;
+        let day = (t / DAY_S).floor() as i64;
         daily.entry(day).or_default().push(r2[k]);
     }
     let mut daily_med: Vec<(i64, f64, f64, usize)> = Vec::new();
@@ -265,27 +254,168 @@ fn run(name: &str) {
         pct(0.99)
     );
 
-    let out = format!("data/{name}_navio_subkhz_daily.bin");
-    let mut db = Vec::with_capacity(8 + daily_med.len() * 32);
-    db.extend_from_slice(b"PNDM");
-    db.extend_from_slice(&(daily_med.len() as u32).to_le_bytes());
-    for (day, med, r, nv) in &daily_med {
-        for v in [*day as f64 * day_s, *med, *r, *nv as f64] {
-            db.extend_from_slice(&v.to_le_bytes());
+    if let Some(path) = out_path {
+        let mut db = Vec::with_capacity(8 + daily_med.len() * 32);
+        db.extend_from_slice(b"PNDM");
+        db.extend_from_slice(&(daily_med.len() as u32).to_le_bytes());
+        for (day, med, r, nv) in &daily_med {
+            for v in [*day as f64 * DAY_S, *med, *r, *nv as f64] {
+                db.extend_from_slice(&v.to_le_bytes());
+            }
         }
-    }
-    if std::fs::write(&out, &db).is_err() {
-        eprintln!("{name}: write {out} void");
-    } else {
-        eprintln!(
-            "{name}: {out} — {} negative-fuzzy daily medians serialized (PNDM, sub-kHz basis for the Ruck scan)",
-            daily_med.len()
-        );
+        if std::fs::write(path, &db).is_err() {
+            eprintln!("{name}: write {path} void");
+        } else {
+            eprintln!(
+                "{name}: {path} — {} negative-fuzzy daily medians serialized (PNDM, sub-kHz basis for the Ruck scan)",
+                daily_med.len()
+            );
+        }
     }
 }
 
+fn load_ephemeris(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
+    let p = format!("data/ephemeris_{name}.bin");
+    std::fs::read(&p)
+        .ok()
+        .and_then(|d| parse_ephemeris_binary(&d))
+        .map(|e| {
+            eph.insert(name.to_string(), e);
+        })
+        .is_some()
+}
+
+fn zone_predicate(probe: &str) -> Option<(f64, f64)> {
+    match probe {
+        // quiet-zone ranges from pioneer_navio_noise_geo (0932cae): the distance
+        // band whose per-day resid-RMS fell to the floor is the drift-only zone.
+        "pioneer10" => Some((50.0, f64::INFINITY)),
+        "pioneer11" => Some((15.0, 30.0)),
+        _ => None,
+    }
+}
+
+fn run(probe: &str, sc_body: &str, zone: bool) {
+    let path = format!("data/{probe}_navio_residuum.bin");
+    let Some(bytes) = std::fs::read(&path).ok() else {
+        eprintln!("{probe}: residuum bin void ({path}) — 0 honored");
+        return;
+    };
+    let Some(recs) = parse_p11r_bin(&bytes) else {
+        eprintln!("{probe}: residuum parse void");
+        return;
+    };
+    let n = recs.len();
+    let mut ts = vec![0.0f64; n];
+    let mut resid = vec![0.0f64; n];
+    let mut rx = vec![0i64; n];
+    for (i, r) in recs.iter().enumerate() {
+        ts[i] = r[0];
+        resid[i] = r[1];
+        rx[i] = r[5] as i64;
+    }
+    eprintln!(
+        "{probe}: Deduktion-40 negative-fuzzy — {n} two-way residual samples, RMS {rms0:.3e} Hz",
+        rms0 = rms(&resid)
+    );
+
+    // The global floor (existing path), always — byte-identical serialization.
+    report(
+        probe,
+        &ts,
+        &resid,
+        &rx,
+        Some(&format!("data/{probe}_navio_subkhz_daily.bin")),
+    );
+
+    if !zone {
+        return;
+    }
+    let (au_lo, au_hi) = match zone_predicate(probe) {
+        Some(z) => z,
+        None => {
+            eprintln!("{probe}: no quiet-zone range — 0 honored");
+            return;
+        }
+    };
+    let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    if !load_ephemeris(sc_body, &mut eph) {
+        eprintln!("{probe}: {sc_body} ephemeris bin void — zone isolation void (0 honored)");
+        return;
+    }
+    // Per-day heliocentric distance (barycentric ≈ heliocentric for an outbound
+    // probe; same AU convention as pioneer_navio_noise_geo 0932cae).
+    let mut day_au: BTreeMap<i64, f64> = BTreeMap::new();
+    for &t in ts.iter() {
+        let day = (t / DAY_S).floor() as i64;
+        if day_au.contains_key(&day) {
+            continue;
+        }
+        if let Some(p) = body_barycenter_position(sc_body, t, &eph) {
+            day_au.insert(day, norm(p) / AU);
+        }
+    }
+    if day_au.is_empty() {
+        eprintln!("{probe}: no ephemeris position resolved for any day — 0 honored");
+        return;
+    }
+    let zone_name = if au_hi.is_finite() {
+        format!("{probe}[zone {au_lo:.0}–{au_hi:.0} AU]")
+    } else {
+        format!("{probe}[zone >{au_lo:.0} AU]")
+    };
+    let mut zts: Vec<f64> = Vec::new();
+    let mut zres: Vec<f64> = Vec::new();
+    let mut zrx: Vec<i64> = Vec::new();
+    let mut first_day = i64::MAX;
+    let mut last_day = i64::MIN;
+    let mut zdays: BTreeMap<i64, bool> = BTreeMap::new();
+    for i in 0..n {
+        let day = (ts[i] / DAY_S).floor() as i64;
+        let au = match day_au.get(&day) {
+            Some(a) => *a,
+            None => continue,
+        };
+        if au > au_lo && au <= au_hi {
+            zts.push(ts[i]);
+            zres.push(resid[i]);
+            zrx.push(rx[i]);
+            zdays.insert(day, true);
+            first_day = first_day.min(day);
+            last_day = last_day.max(day);
+        }
+    }
+    // timtag is TDB seconds since J2000 (the residuum compiler derives jd via
+    // jd = tdb/DAY_S + 2451545.0), so the era year counts from 2000.
+    let era_y0 = 2000.0 + first_day as f64 / 365.25;
+    let era_y1 = 2000.0 + last_day as f64 / 365.25;
+    eprintln!(
+        "{probe}: quiet-zone isolation ({au_lo:.0}–{au_hi:.0} AU, era {era_y0:.0}–{era_y1:.0}) — {nz} of {n} samples across {nd} distinct days",
+        nz = zts.len(),
+        nd = zdays.len()
+    );
+    if zts.len() < 500 {
+        eprintln!("{probe}: quiet zone too thin — stays silent (0 honored)");
+        return;
+    }
+    report(
+        &zone_name,
+        &zts,
+        &zres,
+        &zrx,
+        Some(&format!("data/{probe}_navio_subkhz_zone_daily.bin")),
+    );
+    eprintln!(
+        "{probe}: quiet-zone reduction above — compare its |daily-med| floor against the global floor of the non-zone run"
+    );
+}
+
 fn main() {
-    for name in ["pioneer10", "pioneer11"] {
-        run(name);
+    let zone = std::env::args().any(|a| a == "--zone");
+    for (probe, sc) in [
+        ("pioneer10", "pioneer10_daily"),
+        ("pioneer11", "pioneer11_daily"),
+    ] {
+        run(probe, sc, zone);
     }
 }
