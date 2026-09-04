@@ -103,6 +103,16 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   — denselben Stationen wie die 20-s-Bande, open-loop 1994/95 (überlappend
   mit Pioneer 1987–93) → potenziell stärkste externe Banden-Validierung
   (Klasse 2, `auftrag-bande-split.md`).
+  Galileo-Bau (2026-09-05): `galileo_atdf_compiler` (TRK-2-25 → GASR-Residuum-
+  Serie, Stationen 14/43/63, Modes 1/2/3 getrennt; `reduce_skyfreq` in die
+  Lib, eine Quelle). TRK-2-18-Layout ≠ TRK-2-34-Layout — `parse_odf` gilt nur
+  für 2-34; Galileo-ODF braucht Layout-Verifikation vor jedem Wiederaufbau
+  (Compiler entfernt, zurückgestellt). Nächster Schritt: Horizons-Ephemeride
+  Galileo 1990–97 + Measure-Probe (Rauschen vs Distanz/SEP/Mode/Station);
+  vorab gebunden: n_je_Mode_je_Distanzband zuerst, dann Kurve; Lock-Übergänge
+  als eigene Ausreißerklasse mit mitgeführtem n_lock je Segment (nicht nur
+  Schwelle); Mode 2/3 = Plasma-Test, Mode 1 = Oszillator-Fund, Station =
+  Banden-Brücke.
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
