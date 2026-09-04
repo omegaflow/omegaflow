@@ -74,31 +74,49 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 - `auftrag-quiet-zone-uebertragung.md` — pending (2026-09-04): Quiet-Zone als
   Rezept, nicht Pioneer-Ergebnis — Rauschen verorten, Zone isolieren, Boden
   messen. Türen: Voyager 1/2 (160/130 AU), New Horizons (60 AU), Mariner/
-  Galileo/Cassini (retroaktiv, S-Band). Schärfung Tür 1 (2026-09-04): Co-Quiet-
-  Kreuztest P10+V1 — Interferenz-Design (ersetzt die Epochen-Ambiguität der
-  Deduktion-44-Vorzeichen durch ein gemeinsames Fenster ~1998–2002). Zwei-Wege-
-  Bindung vorab: Ausgang A gemeinsames Vorzeichen = erster Zwei-Sonden-Hinweis;
-  Ausgang B widersprüchliche = sauberste Beerdigung (sonnen-individuell, nie
-  gemeinsame Kraft).   Atome: (1) SPDF-Doppler-Verfügbarkeit — verifiziert
-  negativ (kein NAVIO-Doppler; `merged/` = Stunden-HGI-Position ohne
-  Range-Rate, `radio_science_rss/` = Okkultation); (1b) PDS/JPL —
-  verifiziert negativ (PDS RMS = Encounter-Okkultation 1979/1986, kein
-  Cruise-Doppler; JPL ODF/TDF des Fensters ~1998–2002 = request-only).
-  (2) Fenster-n messen — hängt am Roh-Doppler-Zugang, nicht am SPDF/PDS.
-  Literatur-Scan (agent) durchgeführt:
+  Galileo/Cassini (retroaktiv, S-Band). Tür 1 (Co-Quiet-Kreuztest P10+V1)
+  GESCHLOSSEN (2026-09-04): kein offener Cruise-Doppler (SPDF/PDS/JPL
+  verifiziert negativ, Befund `docs/befund/befund-voyager-roh-doppler-zugang.md`),
+  kausale Grenze = dreiachsen-stabilisiertes Selbst-Rauschen (~10⁻⁶ cm/s²,
+  ~10× über a_P).   Lehre als Vorfilter eingebaut: Rauschen muss
+  Distanz-Geometrie haben (spinstabilisiert/medium-getrieben), sonst fällt
+  die Tür ohne Harvest. Vorfilter ausgeführt (2026-09-04): New Horizons
+  `besteht` (Spin-Cruise, kein Reaktionsrad, >50 AU bewohnt) = nächster
+  Harvest-Kandidat, aber `request-only` (JPL/DSN-ODF-Anfrage); Galileo-GWE
+  `open` = Reserve; Cassini/Mariner `fallen`. Literatur-Scan:
   Verdikt (a) bestätigt — kein Zonen-Floor im Turyshev/Toth-Korpus 2002–2012;
   Korrektur: „laute Zone als Instrument" ist belegt (Woo & Armstrong 1979,
   mit Pioneer), kein eigener Fund; Anderson 2002 gelesen (Arcs = Zeit-Intervalle,
   bestätigt), vier Volltexte pending (Armstrong 1998, Bertotti 2003, Tortora
   2004 — born-digital/Lizenz; Woo 1979 — Scan-Kandidat, kein Vision-LLM nötig).
-- `auftrag-voyager-roh-doppler-zugang.md` — pending (2026-09-04): eigenhändige
+- `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
+  (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
+  Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
+  Reaktionsräder, ~100 d/a ohne Lage-Manöver; >50 AU bewohnt) — aber kein
+  offener Harvest (REX = Okkultation/TNF, SPDF 404, Nav-Doppler
+  `request-only`); Galileo `bestehen` als Reserve (PDS4 `gll.rss`
+  `open`: ATDF TRK-2-25/TRK-2-34 + GWE `GO-X-RSS-1-ODR-V1.0`, Dual-Spin,
+  aber ≤5 AU); Cassini `fallen` (3-Achsen); Mariner `fallen` (kein
+  Distanz-Muster). Entscheidung: NH-Doppler-Anfrage (request-only) =
+  nächster Harvest-Weg; Galileo-GWE = offene Reserve. pending-Reste:
+  NH-Selbst-Rauschen-Größe, NH-JPL/DSN-Anfrage (nicht ausgeführt),
+  NH-REX-Tiefenprüfung, Galileo-gll.rss-Zeitabdeckung.
+- `auftrag-voyager-roh-doppler-zugang.md` — GESCHLOSSEN (2026-09-04): eigenhändige
   Gegenprüfung des PDS/JPL-Zugangs für den V1-Roh-Doppler (Co-Quiet-Tür 1).
-  Vorbefund zweier Agenten (Atom 1 SPDF + Atom 1b PDS/JPL): kein offener
-  Cruise-Doppler — SPDF = Okkultation + Stunden-Position ohne Range-Rate,
-  PDS RMS = Encounter-Okkultation 1979/1986, JPL ODF/TDF = request-only.
-  Sechs Prüfschritte (PDS durchklicken, PDS-weit, NSSDCA, NAIF, JPL/DSN-
-  Anfrageweg, Depot-Suche) mit eigenem HTTP-Status + Verdikt je Quelle;
-  Kernfrage: deckt eine offene Quelle das Fenster ~1998–2002 in Doppler ab.
+  Befund (`docs/befund/befund-voyager-roh-doppler-zugang.md`, `status: done`):
+  keine offene Quelle deckt das Fenster ~1998–2002 in Doppler ab — PDS-RMS
+  trägt fünf Bündel, alle Encounter (1979/1980/1981/1986) open-loop; NAIF =
+  rekonstruierte Bahn; JPL/DSN ODF/TDF `request-only`. Neue Erkenntnis:
+  Voyager ist dreiachsenstabilisiert, sein Lageregelungsrauschen (~10⁻⁶ cm/s²)
+  liegt ~10× über der gesuchten Effektgröße — nie ein Bergungsanreiz wie bei
+  Pioneer. Nachtrag (2026-09-04): IPNPR (endet Uranus-Ära 1986) + VLBI-
+  Kampagnen (1988 Medicina; PRIDE ab 2013 andere Ziele) geprüft — keine
+  Fenster-Quelle; Turyshev/Nieto/Anderson 2005 (arXiv:physics/0502123)
+  als Fremdbeleg: das JPL-Team hat Voyager-Navigationsdaten intern
+  geprüft und für die Anomalie-Frage explizit verworfen — Zugang
+  existiert(e) JPL-intern, nie öffentlich archiviert. Drei Restlücken
+  `pending`: JPL/DSN-Anfrage (benannt, nicht ausgefüllt),
+  PDS-Wide-Search-Formular, ADS-Volltext.
 - `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
   4D-Feld (Nadel Ⅰ).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
