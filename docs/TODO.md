@@ -119,6 +119,16 @@ Register-Pflichten, keine stillen Schwebestände:
   weitere Rewrites laufen. pending.
 - **text-as-data-pioneer**: p_emp = 0,08 am Raster bei minimalem p = 0,04
   (24 Shuffles) — 200 Shuffles kosten nichts. pending.
+- **te_directionality_sweep** (Werkzeug): committet — Benchmark-(c × n)-
+  Diagnose der TE-Richtungs-Wiederherstellung, kompiliert, Session-Fenster-
+  Fähigkeit verifiziert (5 Zellen laufen, der Voll-Lauf nicht). Voll-Sweep
+  (24 Zellen, 8 c × 3 n) pending/teuer (~2 Sessions): misst den Kreuzungs-
+  punkt Reverse×fam als Funktion von (c, n) — n-unabhängig ⇒ Asymmetrie-
+  Hypothese bestätigt (Härtungs-Basis), n-wandernd ⇒ Bias-Hypothese (dann
+  ETE-Erwägung als eigener Auftrag). Zweck: Validierung der entschiedenen
+  TE-RNG-Härtung, billig falls je angefragt. Die (c × n)-Ebene ist sonst
+  nirgends im Benchmark (der Schreiber-Test läuft bei fixem c, fixem n).
+  pending.
 - **Referenzierte, hier fehlende Dokumente** — Verbleib geklärt (2026-09-03):
   die Herkunft der 20-s-These (`handover-2026-08-30-zwanzig-sekunden-herkunft`)
   ist als Provenienz-Abschnitt (§5, Stopp-Punkt = Deduktion 11, 8767 =
