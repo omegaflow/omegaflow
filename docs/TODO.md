@@ -83,7 +83,10 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   die Tür ohne Harvest. Vorfilter ausgeführt (2026-09-04): New Horizons
   `besteht` (Spin-Cruise, kein Reaktionsrad, >50 AU bewohnt) = nächster
   Harvest-Kandidat, aber `request-only` (JPL/DSN-ODF-Anfrage); Galileo-GWE
-  `open` = Reserve; Cassini/Mariner `fallen`. Literatur-Scan:
+  `open` = Reserve; Cassini/Mariner `fallen`. NH-Daten-Anfrage registriert
+  (2026-09-04, an PDS Radio Science Subnode/Geosciences Node, Iess-DOI
+  als Referenz, Pilot-Epochen-Frage; Versand menschlicher Akt + Antwort
+  `pending`). Literatur-Scan:
   Verdikt (a) bestätigt — kein Zonen-Floor im Turyshev/Toth-Korpus 2002–2012;
   Korrektur: „laute Zone als Instrument" ist belegt (Woo & Armstrong 1979,
   mit Pioneer), kein eigener Fund; Anderson 2002 gelesen (Arcs = Zeit-Intervalle,
