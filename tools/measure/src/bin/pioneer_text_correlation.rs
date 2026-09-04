@@ -189,11 +189,11 @@ fn corr_report(name: &str, tokens: &[f64], series: &[f64], rng: &mut u64) {
 }
 
 fn main() {
-    let Some(text) =
-        std::fs::read_to_string("docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt")
-            .ok()
-    else {
-        eprintln!("Text absent — empty (0 honored)");
+    let text_path = std::env::var("TE_TEXT").unwrap_or_else(|_| {
+        "docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt".to_string()
+    });
+    let Some(text) = std::fs::read_to_string(&text_path).ok() else {
+        eprintln!("Text absent ({text_path}) — empty (0 honored)");
         return;
     };
     let tokens = tokenize(&text);
