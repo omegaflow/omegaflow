@@ -1182,6 +1182,26 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Schritt wäre ein ko-indiziertes Disequilibrium-Design (Messwert der
   Atmosphäre), nicht ein Codepatch an diesem Scanner.
 
+- JWST-Detektions-Register (ausstehend — die Ernte, nicht das Instrument): das
+  ko-indizierte Disequilibrium-Signal braucht die publizierten Detektions-
+  Fakten der 48 Ziele (Spezies, Abundanz, S/N, bibcode) — die liegen in den
+  Retrieval-Papieren, nicht in einer TAP-Tabelle. jwst_spectra_compiler wählt
+  aus der NExScI-`spectra`-Tabelle heute nur hostname/ra/dec; bibcode +
+  wl_min/wl_max werden fallen gelassen. Erster Schritt: Compiler um bibcode +
+  Wellenlängen-Abdeckung erweitern, dann je Papier die Detektions-Tabelle
+  ernten (Saat: Madhusudhan 2019, ARA&A 57:617). Verdict bleibt pending bis
+  das Register steht.
+- jwst_detection_registry_compiler (Bauwerk): erzeugt jwst_detection_registry.json
+  aus bibcode-Liste + kuratierter Saat; --ci-mode manifestiert das Register
+  aufs CDN. Der Biosignatur-Befund ist kein TE-Verdikt; der gebrochene
+  fam-Bug bleibt Diagnose.
+- disequilibrium_register_probe (ausstehend — wartet auf das Register): liest
+  {host, Spezies, Abundanz, S/N, bibcode}, rechnet je Planet die
+  Gleichgewichts-Menge bei Teq (thermochem::equilibrium_composition), Urteil
+  je Planet: detektiert-ungleichgewichtig / gleichgewichts-präsent / absent.
+  Null: Permutations-Familie über den Katalog (Trefferzahl gegen mean+2σ der
+  Shuffle-Verteilung) — die ehrliche Fassung der gebrochenen fam-Schranke.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
