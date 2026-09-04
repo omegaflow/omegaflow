@@ -2,8 +2,8 @@
   title: The text as data — the Pioneer review's numbers against the Doppler series
   class: paper
   date: 2026-09-03
-  version: 2
-  sha256: 77bde1e63b3fe7d95190085013f9b0a4f3e0f3761f6841547fb71dd49c244212
+  version: 3
+  sha256: cbcb7308ff2b0a9dc78414052e4c2924e25ecf4dc6054d9ec76f2762443ff4e0
   status: live
   see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, docs/TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
@@ -12,7 +12,7 @@
 
 ## Abstract
 
-We hold the 8 767 numbers of the Pioneer review (Turyshev & Toth 2010) as a data sequence against the Doppler series of both probes. The reading series of the text carries no correlation that exceeds its own permutation null — the arrangement of the numbers contains nothing about the measurement series. The only measured relation is the mantissa: the band numbers (211.052 MHz, 2 150 MHz, 2 091 MHz, 2.18 GHz) hit the carriers of the data digit-exactly (ΔMant ≈ 10⁻⁹ to 10⁻⁶) — text and data talk about the same machine on different scales (GHz against Hz). The correlation does not carry.
+We hold the 8 767 numbers of the Pioneer review (Turyshev & Toth 2010) as a data sequence against the Doppler series of both probes. The reading series of the text carries no correlation that exceeds its own permutation null — the arrangement of the numbers contains nothing about the measurement series. The only digit-exact relation is the mantissa: the band numbers (211.052 MHz, 2 150 MHz, 2 091 MHz, 2.18 GHz) hit the carriers of the data digit-exactly (ΔMant ≈ 10⁻⁹ to 10⁻⁶). This proximity is expected by construction: the review cites the system's nominal carrier frequencies, which the DSN data carry as well — both describe the same specification on different scales (GHz against Hz). The mantissa measures that the review cites the DSN specification correctly; it does not carry an independent relation.
 
 
 ## 1. The measurement series
@@ -40,7 +40,12 @@ digit-exact. P10: 211.052 ↔ 2 110 520 000 Hz (ΔMant 2.6×10⁻⁹), 2 150 MHz
 (1.4×10⁻⁶), 2 024 MHz (4.6×10⁻⁶). P11: 211.052 ↔ 2 110 520 000 Hz
 (4.6×10⁻⁹), 2 091 MHz (4.8×10⁻⁷), 2.18 GHz (7.8×10⁻⁶). The article carries the
 bands; the data carry the same bands — the same digits, a different
-power of ten.
+power of ten. The proximity is expected by construction: these are the
+nominal carrier frequencies of the tracking system (uplink 2 110 MHz,
+downlink 2 292 MHz, transponder ratio 240/221; Anderson et al. 2002), which
+a review of the anomaly cites and the DSN data both carry. The mantissa
+therefore confirms that the review quotes the DSN specification correctly;
+it is not an independent coincidence that requires an explanation.
 
 **The correlation does not carry.** Cross-correlation of the text reading series against
 both measurement series (lag 0..1000), verdict from the permutation null (24 shuffles,
@@ -61,8 +66,10 @@ Two measures carry the verdict: the **permutation null** (answers whether the
 arrangement of the text numbers carries more than their own rearrangement) and the
 **mantissa distance** (answers whether a text number and a data value
 carry the same digits, independent of the power of ten). The raw relation
-is scale-blind and therefore alone no measurement; the mantissa is the honest
-bridge between the GHz prose of the article and the Hz data of the DSN.
+is scale-blind and therefore alone no measurement; the mantissa is the
+check that the article's GHz prose and the DSN Hz data name the same
+nominal carriers — a consistency test of the citation, not a discovery of a
+relation.
 
 ## 3. What is excluded (measured, no fabrication)
 
@@ -88,3 +95,6 @@ next step, not a finding.
 2. The probe: tools/measure/src/bin/pioneer_text_correlation.rs.
 3. Data: data/pioneer10_doppler_clean.bin, data/pioneer11_doppler_clean.bin
    (NAVIO 60-s, cleaned — see TODO.md, Pioneer-Front).
+4. Anderson J. D., Laing P. A., Lau E. L., Liu A. S., Nieto M. M.,
+   Turyshev S. G., 2002, Study of the anomalous acceleration of Pioneer
+   10 and 11, Phys. Rev. D 65, 082004.
