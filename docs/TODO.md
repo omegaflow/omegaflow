@@ -79,14 +79,26 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Deduktion-44-Vorzeichen durch ein gemeinsames Fenster ~1998–2002). Zwei-Wege-
   Bindung vorab: Ausgang A gemeinsames Vorzeichen = erster Zwei-Sonden-Hinweis;
   Ausgang B widersprüchliche = sauberste Beerdigung (sonnen-individuell, nie
-  gemeinsame Kraft). Atome: (1) V1-SPDF-Doppler-Verfügbarkeit, (2) Fenster-n
-  messen (gemeinsame stille Tage, n ins Protokoll vor der Regression).
+  gemeinsame Kraft).   Atome: (1) SPDF-Doppler-Verfügbarkeit — verifiziert
+  negativ (kein NAVIO-Doppler; `merged/` = Stunden-HGI-Position ohne
+  Range-Rate, `radio_science_rss/` = Okkultation); (1b) PDS/JPL —
+  verifiziert negativ (PDS RMS = Encounter-Okkultation 1979/1986, kein
+  Cruise-Doppler; JPL ODF/TDF des Fensters ~1998–2002 = request-only).
+  (2) Fenster-n messen — hängt am Roh-Doppler-Zugang, nicht am SPDF/PDS.
   Literatur-Scan (agent) durchgeführt:
   Verdikt (a) bestätigt — kein Zonen-Floor im Turyshev/Toth-Korpus 2002–2012;
   Korrektur: „laute Zone als Instrument" ist belegt (Woo & Armstrong 1979,
   mit Pioneer), kein eigener Fund; Anderson 2002 gelesen (Arcs = Zeit-Intervalle,
   bestätigt), vier Volltexte pending (Armstrong 1998, Bertotti 2003, Tortora
   2004 — born-digital/Lizenz; Woo 1979 — Scan-Kandidat, kein Vision-LLM nötig).
+- `auftrag-voyager-roh-doppler-zugang.md` — pending (2026-09-04): eigenhändige
+  Gegenprüfung des PDS/JPL-Zugangs für den V1-Roh-Doppler (Co-Quiet-Tür 1).
+  Vorbefund zweier Agenten (Atom 1 SPDF + Atom 1b PDS/JPL): kein offener
+  Cruise-Doppler — SPDF = Okkultation + Stunden-Position ohne Range-Rate,
+  PDS RMS = Encounter-Okkultation 1979/1986, JPL ODF/TDF = request-only.
+  Sechs Prüfschritte (PDS durchklicken, PDS-weit, NSSDCA, NAIF, JPL/DSN-
+  Anfrageweg, Depot-Suche) mit eigenem HTTP-Status + Verdikt je Quelle;
+  Kernfrage: deckt eine offene Quelle das Fenster ~1998–2002 in Doppler ab.
 - `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
   4D-Feld (Nadel Ⅰ).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
@@ -112,6 +124,18 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 
 ### Pflege & Struktur
 
+- PhysioNet-CDN-Manifestation (2026-09-04): die einzige registrierte
+  aber unmanifestierte Quelle war `physionet.org/bidsleep_mehrnacht.bin`
+  (sources.φ-Referenz auf den gemergten Asset; auf dem CDN lag nur der
+  Vorbestands-Chunk `bidsleep_mehrnacht_0.bin`, 2026-08-27, mit unbekannter
+  Chunk-Grenze). `physionet-cdn.yml` trug keinen bidsleep-Job. Reparatur:
+  bidsleep-Chunk-Matrix (253 Nächte, offsets 0..252 Schritt 36, frische
+  Namen `bidsleep_mehrnacht_r0..r7.bin`, da der Merge nicht dedupliziert
+  und der Vorbestands-Chunk nicht verifizierbar partitioniert ist) +
+  bidsleep-merge → `bidsleep_mehrnacht.bin`. ltmm-Nebenfund: `ltmm_movement_
+  0/1.bin` fehlten, `ltmm_movement.bin` (Merge) nie hochgeladen; die
+  ltmm-Matrix erntet 0/1 nach und merge-t. Maß ~25 GB Rohdownloads über CI.
+  Verifikation: CDN-Asset-HEAD (HTTP 200) + Asset-Zählung je Release.
 - `auftrag-docs-reference-verteilung.md` — docs/reference + docs/plans
   verteilen (main-Reinigung).
 - `auftrag-sicherung-risiko-heime.md` — Sicherung der
