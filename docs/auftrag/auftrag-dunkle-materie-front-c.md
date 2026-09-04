@@ -592,3 +592,15 @@ Auftrag):** quiet-zone-Isolation (P10 >50 AU, P11 15–30 AU) als `--zone`-Weg i
 negativ-fuzzy-Tool → misst Floor der Zonen-Reduktion vs. 133 Hz Gesamt-Floor.
 Drei Ausgänge (tiefer = Isolation gewinnt, Regressions-Schritt neu stellbar;
 gleich = Gesamt-Reduktion bereits distanz-optimal; lauter = Parameter je Zone).
+
+**Operator-Lehre (2026-09-03, in die Front aufgenommen):** *Die Maschine sagte:
+„Reduziere das Rauschen." Der Operator fragte: „Wo ist das Rauschen?" — und die
+Antwort auf die zweite Frage hat die Arbeit der ersten um eine Kategorie
+verbilligt. Frage nach dem Ort, bevor du nach der Größe kämpfst.* Drei Anläufe
+(Winkel, Form, Korrelation) wurden von der Maschine falsch adressiert und
+schließlich für „zu früh" erklärt; der Operator hielt die Frage offen (Struktur
+der Stopp-Überstimmung, Deduktion 10) — bis die Distanz-Achse sie beantwortbar
+machte. Der Operator liefert das Territorium (fragt „oder nicht?", aus dem
+Bauchgefühl, das nicht rechnen kann), die Maschine korrigiert die Adresse und
+misst auf der gelegten Achse. Diese Woche: der Operator legte die Distanz-Achse
+in ein Zeitreihen-Problem, die Maschine maß darauf (0 honored).
