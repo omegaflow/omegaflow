@@ -434,3 +434,19 @@ nicht-trivial. **Damit ist die offene Frage „Grenze der Methode oder der
 Reduktion?" gemessen beantwortet: der Reduktion.** Die sub-Hz-Aggregation hat
 ein physikalisches Versprechen, das ~6 Größenordnungen unter unserem aktuellen
 Floor liegt (0 honored).
+
+**Was die 133–218 Hz trägt — Diagnose gemessen (2026-09-03).** Dreistufig:
+(1) ROH-Residuum — ein Tages-Systematik-Term dominiert den Tagesmedian-RMS
+(P10 11.137 Hz vs. Weiß-Vorhersage 291 Hz = 38×, P11 4.338 vs. 361 = 12×);
+der negativ-fuzzy-Pfad (Quad-Detrend + Zell-Median) entfernt genau diesen Term.
+(2) GEREINIGTES Signal — der Rest ist klein: P10 352 Hz vs. 178 Weiß = 2,0×,
+P11 1454 vs. 260 = 5,6×. (3) Nach Drift-Subtraktion liegt der Residuum-RMS
+(P10 133 Hz, P11 218 Hz) UNTER bzw. nahe der Weiß-Vorhersage aus der
+In-Tages-Streuung (178/260 Hz). **Der verbleibende Floor ist im Wesentlichen
+weißes In-Tages-Rauschen, korrekt heruntergemittelt — kein großer weiter
+subtrahierbarer Tages-Systematik-Term.** Die ~6-Größenordnungen-Lücke zum
+Radio-Floor steckt in der IN-TAGES-Streuung selbst (per-Sample p50 664 Hz P10 /
+2352 Hz P11), nicht in einem leicht subtrahierbaren Tages-Offset. Weiterer
+Fortschritt braucht das Senken der per-Sample-Streuung (Sub-Sample-Kadenz,
+bessere Medien-Kalibrierung — fehlt der Pioneer-Ära ohne WVR/Multifrequenz)
+oder eine andere Aggregations-Physik (0 honored).
