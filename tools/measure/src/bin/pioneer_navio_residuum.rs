@@ -367,43 +367,47 @@ fn run(name: &str, sc_body: &str) {
     let mut rates = Vec::new();
     let mut mode_of = Vec::new();
     let mut rx_of = Vec::new();
-    let mut tx_of = Vec::new();
     let mut no_station = 0usize;
-    let mut not_two_way = 0usize;
+    let mut not_two_three_way = 0usize;
     for r in &records {
-        if r[4] as i64 != 12 {
-            not_two_way += 1;
+        let dt = r[4] as i64;
+        if !(12..=13).contains(&dt) {
+            not_two_three_way += 1;
             continue;
         }
         let mode = r[8] as i64;
-        let rx = r[6] as i64;
-        let tx = r[7] as i64;
-        if mode != 12 {
-            not_two_way += 1;
+        if !(12..=13).contains(&mode) {
+            not_two_three_way += 1;
             continue;
         }
-        let Some((rx_lat, rx_lon, rx_alt)) = dsn_station(rx) else {
+        let trans = r[6] as i64;
+        let rcvr1 = r[7] as i64;
+        if trans <= 0 || rcvr1 <= 0 {
+            no_station += 1;
+            continue;
+        }
+        let Some((rcv_lat, rcv_lon, rcv_alt)) = dsn_station(rcvr1) else {
+            no_station += 1;
+            continue;
+        };
+        let Some((tx_lat, tx_lon, tx_alt)) = dsn_station(trans) else {
             no_station += 1;
             continue;
         };
         let t3 = r[0];
-        let (Some(r_rx), Some(v_rx)) = (
-            body_fixed_to_icrs_smooth(EARTH, rx_lat, rx_lon, rx_alt, t3, &eph),
-            station_velocity(t3, rx_lat, rx_lon, rx_alt, &eph),
+        let (Some(r_rcv), Some(v_rcv)) = (
+            body_fixed_to_icrs_smooth(EARTH, rcv_lat, rcv_lon, rcv_alt, t3, &eph),
+            station_velocity(t3, rcv_lat, rcv_lon, rcv_alt, &eph),
         ) else {
             continue;
         };
-        let Some(rdown) = downlink_rate_core(t3, r_rx, v_rx, &sc) else {
+        let Some(rdown) = downlink_rate_core(t3, r_rcv, v_rcv, &sc) else {
             continue;
         };
         if !rdown.is_finite() {
             continue;
         }
-        let mut rate = rdown;
-        let Some((tx_lat, tx_lon, tx_alt)) = dsn_station(tx) else {
-            continue;
-        };
-        let Some((t2, r_sc2)) = light_time_sc_pos(t3, r_rx, &sc) else {
+        let Some((t2, r_sc2)) = light_time_sc_pos(t3, r_rcv, &sc) else {
             continue;
         };
         let Some((_, v_sc2)) = sc(t2) else {
@@ -415,16 +419,15 @@ fn run(name: &str, sc_body: &str) {
         if !rup.is_finite() {
             continue;
         }
-        rate += rup;
+        let rate = rdown + rup;
         times.push(t3);
         obs.push(r[1]);
         rates.push(rate);
         mode_of.push(mode as f64);
-        rx_of.push(rx as f64);
-        tx_of.push(tx as f64);
+        rx_of.push(rcvr1 as f64);
     }
     eprintln!(
-        "{name}: {} records (DTYPE-12 two-way gate; {not_two_way} non-two-way excluded, {no_station} without station)",
+        "{name}: {} records (DTYPE/linkmode 12 two-way + 13 three-way gate; {not_two_three_way} excluded, {no_station} without station)",
         records.len()
     );
     if times.len() < 100 {
@@ -442,60 +445,65 @@ fn run(name: &str, sc_body: &str) {
     let mut resid_rx: Vec<f64> = Vec::new();
     let mut resid_mode: Vec<f64> = Vec::new();
     for &st in &rx_unique {
-        let mut st_times = Vec::new();
-        let mut st_obs = Vec::new();
-        let mut st_rates = Vec::new();
-        for i in 0..times.len() {
-            if rx_of[i] as i64 == st {
-                st_times.push(times[i]);
-                st_obs.push(obs[i]);
-                st_rates.push(rates[i]);
+        for &md in &[12.0, 13.0] {
+            let mut st_times = Vec::new();
+            let mut st_obs = Vec::new();
+            let mut st_rates = Vec::new();
+            for i in 0..times.len() {
+                if rx_of[i] as i64 == st && mode_of[i] == md {
+                    st_times.push(times[i]);
+                    st_obs.push(obs[i]);
+                    st_rates.push(rates[i]);
+                }
             }
-        }
-        if st_times.len() < MIN_CELL {
-            continue;
-        }
-        let Some((a0, resid0, _, _)) = fixed_effects_1(&st_rates, &st_obs, &st_times) else {
-            eprintln!("{name}: station {st} basis fit void");
-            continue;
-        };
-        let mut active = vec![true; st_times.len()];
-        let mut displaced = 0usize;
-        for (k, r) in resid0.iter().enumerate() {
-            if r.abs() > DISPLACED_HZ {
-                active[k] = false;
-                displaced += 1;
+            if st_times.len() < MIN_CELL {
+                continue;
             }
-        }
-        let mut f_rates = Vec::new();
-        let mut f_obs = Vec::new();
-        let mut f_times = Vec::new();
-        for k in 0..st_times.len() {
-            if active[k] {
-                f_rates.push(st_rates[k]);
-                f_obs.push(st_obs[k]);
-                f_times.push(st_times[k]);
+            let Some((a0, resid0, _, _)) = fixed_effects_1(&st_rates, &st_obs, &st_times) else {
+                eprintln!("{name}: station {st} mode {md} basis fit void");
+                continue;
+            };
+            let mut active = vec![true; st_times.len()];
+            let mut displaced = 0usize;
+            for (k, r) in resid0.iter().enumerate() {
+                if r.abs() > DISPLACED_HZ {
+                    active[k] = false;
+                    displaced += 1;
+                }
             }
-        }
-        if f_times.len() < MIN_CELL {
-            eprintln!("{name}: station {st} too few clean samples after displaced-count mask ({displaced} discarded)");
-            continue;
-        }
-        let Some((a, resid, _, _)) = fixed_effects_1(&f_rates, &f_obs, &f_times) else {
-            eprintln!("{name}: station {st} refit void");
-            continue;
-        };
-        let rms = (resid.iter().map(|v| v * v).sum::<f64>() / resid.len() as f64).sqrt();
-        eprintln!(
-            "{name}: station {st} — {} two-way samples ({displaced} displaced-count discarded, A {a0:.4e}→{a:.4e} Hz/(m/s)), residual RMS {rms:.3e} Hz",
-            f_times.len()
-        );
-        for k in 0..f_times.len() {
-            resid_all.push(resid[k]);
-            resid_times.push(f_times[k]);
-            resid_obs.push(f_obs[k]);
-            resid_rx.push(st as f64);
-            resid_mode.push(12.0);
+            let mut f_rates = Vec::new();
+            let mut f_obs = Vec::new();
+            let mut f_times = Vec::new();
+            for k in 0..st_times.len() {
+                if active[k] {
+                    f_rates.push(st_rates[k]);
+                    f_obs.push(st_obs[k]);
+                    f_times.push(st_times[k]);
+                }
+            }
+            if f_times.len() < MIN_CELL {
+                eprintln!(
+                    "{name}: station {st} mode {md} too few clean samples after displaced-count mask ({displaced} discarded)"
+                );
+                continue;
+            }
+            let Some((a, resid, _, _)) = fixed_effects_1(&f_rates, &f_obs, &f_times) else {
+                eprintln!("{name}: station {st} mode {md} refit void");
+                continue;
+            };
+            let rms = (resid.iter().map(|v| v * v).sum::<f64>() / resid.len() as f64).sqrt();
+            let mname = if md == 12.0 { "two-way" } else { "three-way" };
+            eprintln!(
+                "{name}: station {st} {mname} (mode {md}) — {} samples ({displaced} displaced-count discarded, A {a0:.4e}→{a:.4e} Hz/(m/s)), residual RMS {rms:.3e} Hz",
+                f_times.len()
+            );
+            for k in 0..f_times.len() {
+                resid_all.push(resid[k]);
+                resid_times.push(f_times[k]);
+                resid_obs.push(f_obs[k]);
+                resid_rx.push(st as f64);
+                resid_mode.push(md);
+            }
         }
     }
     if resid_all.len() < MIN_CELL {
@@ -533,7 +541,7 @@ fn run(name: &str, sc_body: &str) {
     match omegaflow::odf::parse_p11r_bin(&bin) {
         Some(parsed) if parsed.len() == out_all.len() => {
             eprintln!(
-                "{name}: {resid_bin} — {} two-way residual samples, {}..{}, {:.0} B — roundtrip parses",
+                "{name}: {resid_bin} — {} two-way+three-way residual samples, {}..{}, {:.0} B — roundtrip parses",
                 parsed.len(),
                 jd_date(parsed[0][0]),
                 jd_date(parsed[parsed.len() - 1][0]),
