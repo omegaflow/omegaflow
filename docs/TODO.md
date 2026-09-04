@@ -13,7 +13,7 @@ benannt — ein halbes Blatt ist ein Register-Eintrag, kein Ergebnis.
 
 | Nadel | Rätsel | Status | Offener Punkt |
 |---|---|---|---|
-| Ⅰ | Dunkle Materie — Jeans-Residuum R(V) = ρ_dyn − ρ_vis je 50-pc-Voxel | WARTET AUF DICH | Gaia DR4 (2.12.2026) macht das Residuum zum 4D-Feld; Front Ⅱ = Gravitationssensor (dark_matter_probe, Netz 0/1008, GESCHLOSSEN) + Front C (NAVIO-Ruck-Sweep, 234/234 Form + Deduktion-40 sub-kHz + Deduktion-41 Drift, GESCHLOSSEN 2026-09-03, Blatt v6). Drift-Befund (82ffcc2, dddd138): Anomalie nicht aufgelöst — sunward ~10⁻⁴ der Anomalie, 150–340× unter Tagesmedian-Floor. Formtest (linear/∝t²/exp τ=126,5 a = T½(Pu-238)/ln 2) unaufgelöst, Grenze doppelt: (1) Floor 160–340 Hz (Anomalie ~1 Hz, 200–300× darunter); (2) Hypothesen-Degeneration über die P10-Spanne (thermaler Abfall nur 19,5 %, t²-trennt-von-linear um Zehntel-Hz bei ~1-Hz-Amplitude) — kein tieferer Floor trennte die Modelle bei ~1-Hz-Amplitude. Nächster Hebel: breitere Basis (kombinierte P10+P11-Ära / volle-Serien-Regression / Wochen-Monats-Bins), nicht Floor-Masken. Deduktion 42 (geometrischer Vektortest, Operator-Interferometer-Einwand) = pending, nicht auf Horizons-Residuen baubar (Rat-Verdikt): Vektor braucht zweiten Zeugen (Winkel/VLBI — Pioneer trägt kein Winkel-Record), 3D-Zweit-Differenz trägt Granulat-kohärenten Floor ~26-45× über a_P, Fix-Quellen-Ast als run_grid-Stille 0/1008 schon gemessen; gehört der nächsten Sonde mit VLBI+Doppler. Frage vollständig kartiert (4 Formen, alle gemessen): Paar-Korrelation (e5a2387) r = -0,002 vs Null 0,0802 — nichts gemeinsam über Boden. Geparkt am sub-Hz-Schritt: Rotationstest (sonnensymmetrische Kraft → nach Voll-Normalisierung kein Differenzdrift; raumfeste Kraft → Differenzdrift) als erste Formulierung von „wo sitzt die Kraft", sobald der Bahn-Schlauch dünn wird. Jeans bleibt bis DR4. Sub-Hz-Aggregation gemessen (nicht ungemacht): volle-Serien-Regression = Deduktion 41 bereits ausgeschöpft (Residuum-RMS 154-336 Hz, Anomalie ~200-300x darunter); Binning scheitert an duenner Basis (P10 nur 1126 Tagesmediane, braeuchte ~8000 Tage/sub-Hz-Punkt; Tracking-Luecken = Engpass). 60-s-Rohdaten zugreifbar aber heben Boden nicht (4d921bd): per-Sample-Regression P11 -2,7x Anomalie nur -0,2σ (per-Sample-RMS 6-7 kHz > Tagesmedian 154 Hz, √N-Gewinn verpufft); kein Kadenz-Gewinn. Weg: mehr Tracking-Abdeckung / besseres Instrument (breitere Basis / naechste Sonde). |
+| Ⅰ | Dunkle Materie — Jeans-Residuum R(V) = ρ_dyn − ρ_vis je 50-pc-Voxel | WARTET AUF DICH | Gaia DR4 (2.12.2026) macht das Residuum zum 4D-Feld; Front Ⅱ = Gravitationssensor (dark_matter_probe, Netz 0/1008, GESCHLOSSEN) + Front C (NAVIO-Ruck-Sweep, 234/234 Form + Deduktion-40 sub-kHz + Deduktion-41 Drift, GESCHLOSSEN 2026-09-03, Blatt v6). Drift-Befund (82ffcc2, dddd138): Anomalie nicht aufgelöst — sunward ~10⁻⁴ der Anomalie, 150–340× unter Tagesmedian-Floor. Formtest (linear/∝t²/exp τ=126,5 a = T½(Pu-238)/ln 2) unaufgelöst, Grenze doppelt: (1) Floor 160–340 Hz (Anomalie ~1 Hz, 200–300× darunter); (2) Hypothesen-Degeneration über die P10-Spanne (thermaler Abfall nur 19,5 %, t²-trennt-von-linear um Zehntel-Hz bei ~1-Hz-Amplitude) — kein tieferer Floor trennte die Modelle bei ~1-Hz-Amplitude. Nächster Hebel: breitere Basis (kombinierte P10+P11-Ära / volle-Serien-Regression / Wochen-Monats-Bins), nicht Floor-Masken. Deduktion 42 (geometrischer Vektortest, Operator-Interferometer-Einwand) = pending, nicht auf Horizons-Residuen baubar (Rat-Verdikt): Vektor braucht zweiten Zeugen (Winkel/VLBI — Pioneer trägt kein Winkel-Record), 3D-Zweit-Differenz trägt Granulat-kohärenten Floor ~26-45× über a_P, Fix-Quellen-Ast als run_grid-Stille 0/1008 schon gemessen; gehört der nächsten Sonde mit VLBI+Doppler. Frage vollständig kartiert (4 Formen, alle gemessen): Paar-Korrelation (e5a2387) r = -0,002 vs Null 0,0802 — nichts gemeinsam über Boden. Geparkt am sub-Hz-Schritt: Rotationstest (sonnensymmetrische Kraft → nach Voll-Normalisierung kein Differenzdrift; raumfeste Kraft → Differenzdrift) als erste Formulierung von „wo sitzt die Kraft", sobald der Bahn-Schlauch dünn wird. Jeans bleibt bis DR4. Sub-Hz-Aggregation gemessen (nicht ungemacht): volle-Serien-Regression = Deduktion 41 bereits ausgeschöpft (Residuum-RMS 154-336 Hz, Anomalie ~200-300x darunter); Binning scheitert an duenner Basis (P10 nur 1126 Tagesmediane, braeuchte ~8000 Tage/sub-Hz-Punkt; Tracking-Luecken = Engpass). 60-s-Rohdaten zugreifbar aber heben Boden nicht (4d921bd): per-Sample-Regression P11 -2,7x Anomalie nur -0,2σ (per-Sample-RMS 6-7 kHz > Tagesmedian 154 Hz, √N-Gewinn verpufft); kein Kadenz-Gewinn. Weg: mehr Tracking-Abdeckung / besseres Instrument (breitere Basis / naechste Sonde). Quiet-Zone-Drift (Deduktion 44, `pioneer_navio_zone_drift`, 2026-09-04, Blatt v7): Zonen-Basis (P10 >50 AU 1036 Tage, P11 15–30 AU 606 Tage) — P10-Median |daily-med| 0,21 Hz erreicht sub-Hz, ABER der Drift ist nicht aufgelöst: Maskierung (Deduktion-10 + Schwanz, 39/1036 bzw. 15/606 Tage verworfen) senkt RMS 257→57,7 Hz (P10) / 306→105 Hz (P11); Drift P10 −1,95× Anomalie (sunward) bei 0,45σ, P11 +6,98× (outward) bei 0,54σ — 6×/5× unter der Block-Bootstrap-Nullschwelle, Vorzeichen widersprechen sich; Formtest degeneriert (exp ≈ linear über 11 a vs τ=126,5 a, ∝t²-Vorteil 0,18 % = Rauschen). Verdikt: keine Präferenz (Grenze) — der sub-Hz-Gewinn liegt im Median, nicht im Drift (die Drift-Regression kämpft gegen die RMS-Streuung, nicht gegen den Median). |
 | Ⅱ | Flyby-Anomalie — Perigäums-Residuum gegen die Sonnenwind-Phase | WARTET AUF DICH | Prüftermine JUICE (28./29.9.2026) + Europa Clipper (3.12.2026); Weg 1 (kalt) + Weg 2 (preregistriert). Roh-Doppler-Beschaffung: `auftrag-flyby-doppler-rohdaten.md` (Juno-Erdflyby 2013 `open`/request-only, Gegencheck jnogrv_0001 + AAS 14-435 verifiziert). Offen (menschlicher Prüfer): AGU-Fall-Meeting-2013-Abstract verifizieren — Anderson et al. „Juno Earth Flyby as a Sensitive Detector of Anomalous Orbital-Energy Changes" (Control-ID 1799584, Pfad unbestätigt): ~7 mm/s erwartet, SE ~0,01 mm/s, kein Signal — belegen gegen die AGU-Quelle, bevor es als Zitat trägt (0 honored). |
 | Ⅲ | Koronaheizung — kausale DAG der solaren Kanäle | GELAUFEN | Zahl gemessen 2026; Richtung TIAW vs Nanoflares als Ableitung offen; Zellen pending bis Mehrfachvergleich + Lag-Sweep + KDE-h |
 | Ⅳ | LAIC — Lithosphäre → Ionosphäre? | GELAUFEN | Blatt `laic-arrow-direction.md` steht (Stille beide Richtungen); offen: CSES, TEC retro pre-2024, Instrument A ungebaut, KDE-h |
@@ -56,10 +56,11 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
 
 ### Forschungs-Nadeln & Missionen
 
-- `auftrag-subhz-drift-quiet-zone.md` — Sub-Hz-Drift auf der Quiet-Zone-Basis
-  (P10 >50 AU, 1991–2002): die erste Messung der Front mit der Anomalie über
-  dem Median-Boden (0,21 Hz). Eigene frische Session; fünf Bausteine
+- `auftrag-subhz-drift-quiet-zone.md` — GESCHLOSSEN (2026-09-04): Sub-Hz-Drift
+  auf der Quiet-Zone-Basis (P10 >50 AU, 1991–2002). Fünf Bausteine gebaut
   (Verdikt-Bindung, Maskierung, Surrogat-Null, Regression, Registrierung).
+  Befund: Median 0,21 Hz sub-Hz, aber Drift nicht aufgelöst (keine Präferenz,
+  Grenze) — der Drift kämpft gegen die RMS-Streuung, nicht den Median.
 - `auftrag-gaia-dr4-iapetus.md` — Gaia DR4 (2.12.2026): Jeans-Residuum als
   4D-Feld (Nadel Ⅰ).
 - `auftrag-iapetus-scan.md` — Iapetus/Halo: Literatur-Scan jetzt.
@@ -163,7 +164,26 @@ Register-Pflichten, keine stillen Schwebestände:
   messen nur Abisko. Ein separates Stations-Label „SOD“ (Sodankylä) erscheint im
   Paper-/Auftragstext (z. B. `docs/paper/gic-causal-driver.md` §4.5,
   `docs/auftrag/auftrag-gic-p-wert.md`). Abgleich offen — nicht aufgelöst,
-  keine Messzahl geändert. pending.
+  keine Messzahl geändert. pending. (Messbefund 2026-09-04: der
+  `bz_retro_probe --station SOD`-Lauf holt eine von ABK getrennte Serie —
+  md5 der Caches verschieden; die „nur Abisko"-Notiz gilt nur für
+  `bz_blatt_probe` (ABK-hardcodiert), nicht für `bz_retro_probe`.)
+
+- **Stations-dB/dt als CDN-Source — Rat-Entscheidung (2026-09-04):** das
+  Gremium entschied einstimmig: Boden-dB/dt gehört als **flache Messreihe (b)**
+  ins System, **kein Feld-Kanal** (kein position/force/τ, kein ω()-Konsument;
+  dB/dt ist die abgeleitete Echo-Reihe des xyz-B-Messkanals, der bei ABK
+  bereits Feld-Kanal ist — A = A: ein Sensor, ein Oszillator). Daraus:
+  eigener `intermagnet_dbdt`-Bin (eigene Magic, eigener Loader in
+  `src/archivar`), Station = Datum im Record (nicht im Dateinamen, Auflösung
+  der ABK/SOD-Diskrepanz durch Benennung ist abgelehnt), kein Wiedereinbau
+  in die omni2-Sonnenwind-Comp-Taxonomie. Bau-Auftrag offen: Compiler
+  `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs` (BGS-GIN-HAPI-Jahresschleife
+  deterministisch, Bucket-Maximum wie `bz_retro_probe`), sources.φ-Eintrag
+  (`format intermagnet_dbdt` + `on earth` + ttl, ohne field-Tokens),
+  Workflow-Job mit Idempotenz-Guard, Probe um CDN-Lesepfad erweitern,
+  Manifestation nur über CI (`--ci-mode`). Bestehende Schuld: auch
+  `omni2_serie_1h.bin` ist unmanifestiert. pending.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
