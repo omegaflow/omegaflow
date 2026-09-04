@@ -1,0 +1,574 @@
+IPN Progress Report 42-158
+
+August 15, 2004
+
+Measurements and Calibration of Tropospheric Delay
+at Goldstone from the Cassini Media
+Calibration System
+S. J. Keihm,1 A. Tanner,1 and H. Rosenberger2
+
+One and one-half years of near-continuous measurements of the troposphereinduced path delay at Goldstone have been analyzed in order to (1) characterize the
+troposphere-delay ﬂuctuations in a statistical sense and (2) evaluate the path-delay
+calibration performance of the Media Calibration System (MCS) at DSS 25. Both
+the wet and dry components of delay are considered. Statistics based on 5-minuteinterval MCS data indicate wet-delay temporal structure function (the expectation
+value of delay diﬀerences versus the time interval) values of 1 mm at 5 minutes,
+5 mm at 1 hour, and 2 cm at 1 day, increasing to an asymptotic level of 3 to
+4 cm for time scales greater than 2 days. At time scales of 1000 to 10,000 seconds,
+Allan standard deviation (ASD) computations of the wet-delay variations indicate
+slightly higher ﬂuctuation levels than shown in a previous study. The diﬀerences
+are attributable to the inclusion of cloudy conditions in the present study. The
+dry-delay ﬂuctuation levels are approximately one-third the wet-delay levels at all
+time scales from minutes to weeks.
+The ability of the MCS to accurately calibrate the delay ﬂuctuations was assessed
+by comparing side-by-side results from the two redundant instrumentation sets that
+comprise the MCS. Based on data during the ﬁrst three Cassini radio science experiments, the MCS surpasses the requirement of the Cassini Gravitational Wave
+Experiment (residual ASD < 1.1 × 10−15 s/s) at all time scales >1000 seconds. For
+time scales extending out to weeks, the MCS has demonstrated a precision better
+than 0.06 cm for monitoring zenith-equivalent delay variations during spacecrafttracking operations.
+
+1 Microwave Experiment Systems and Technology Section.
+2 Interferometry Systems and Large Optical Systems Section.
+
+The research described in this publication was carried out by the Jet Propulsion Laboratory, California Institute of
+Technology, under a contract with the National Aeronautics and Space Administration.
+
+1
+
+I. Introduction
+Precision spacecraft radio science and radio astronomy experiments have been used in many geophysical, planetary, and astronomical investigations. The time scales of interest vary widely depending on the
+phenomena being studied, e.g., [1–4]. In particular, some planetary occultations, planetary and satellite
+gravity-determination ﬂybys, and relativity experiments have observations where the duration of the signal is >104 seconds [5,6]. To analyze the data and evaluate the ultimate sensitivity of these observations
+requires an understanding of the statistics of the competing noises on these time scales. Instrumental
+noises often can be made extraordinarily small, leaving propagation noise—e.g., phase scintillation in the
+Earth’s troposphere—as an important remaining noise source for experiments having time scales from 102
+to 106 seconds and longer. Utilizing data from the newly deployed Media Calibration System (MCS), this
+article addresses the statistics of wet and dry tropospheric phase scintillation at Goldstone, California,
+on time scales of minutes to multiple days, and evaluates the MCS performance in measuring variations
+in the line-of-sight ﬂuctuations during the ﬁrst three Cassini radio science experiments.
+During the summer of 2001, the MCS was deployed at Goldstone’s DSS 25 for the primary purpose
+of providing state-of-the-art measurements of the wet troposphere path delay in support of the 2001
+to 2004 Cassini radio science experiments. The primary instruments of the redundant MCS are two
+Advanced Water Vapor Radiometers (AWVRs) deployed 35 m apart at DSS 25 (Fig. 1). The AWVRs
+measure sky brightness temperatures at three frequencies near the 22-GHz water vapor line and were
+designed at JPL to provide order-of-magnitude improvement in stability and precision relative to standard
+WVRs [7]. Their operating characteristics are summarized in Table 1. The MCS also includes two
+Microwave Temperature Proﬁle (MTP) radiometers operating in the 50- to 60-GHz oxygen band and two
+surface meteorology packages consisting of temperature, pressure, humidity, and wind-speed sensors. The
+data sets are processed as redundant systems, designated system 1 and system 2, each consisting of the
+combined measurements from one of the two AWVRs, MTPs, and surface meteorology sensors. Details
+describing the basis for instrument selection and retrieval algorithm development can be found in [8].
+Since September 1, 2001, the MCS has provided a near-continuous archive of radiometer and surface
+meteorology data. During the Cassini radio science experiments, the AWVRs track the Cassini spacecraft
+
+Fig. 1. One of the two Advanced Water Vapor Radiometers at DSS 25.
+
+2
+
+Table 1. Characteristics of the Advanced Water Vapor Radiometer.
+
+Characteristic
+
+Value
+
+Operating frequencies
+
+22.2, 23.8, 31.4 GHz
+
+Bandwidths
+
+500 MHz (all channels)
+
+Beam sizes (half-power beam width)
+
+1.0 deg (22.2- and 23.8-GHz channels);
+1.2 deg (31.4-GHz channel)
+
+Elevation-pointing accuracy
+
+±0.1 deg absolute (all sky)
+
+Elevation-pointing precision
+
+±0.01-deg stability over 1000 s
+
+in order to provide the DSS-25 Doppler tracking data analysis with line-of-sight calibration of the tropospheric wet delay at time scales of seconds to hours. During the remaining 80 percent of the time, the
+AWVRs operate in a “tipping curve” mode in which a spiraling sequence of elevation/azimuth directions
+are sampled, with observations within one degree of zenith occurring approximately every 5 minutes. For
+purposes unrelated to Cassini radio science support, AWVR zenith brightness temperatures (TBs) at 5minute intervals have been routinely extracted from the AWVR data archives, providing near-continuous
+TB time series since September 2001. When operating in the Cassini tracking mode, zenith brightness
+temperatures were obtained by a simple air-mass conversion dependent on the 5-minute-interval elevation
+position of the AWVRs.
+The tropospheric-delay statistics presented in this article are derived from the MCS data archive of
+September 2001 to March 2003. Most of the wet-delay statistics are computed from the 5-minute-interval
+zenith TBs provided by the AWVRs. The dry-delay statistics are computed primarily from an archive of
+5-minute-interval surface pressure measurements using a single sensor. The 19-month interval includes
+three Cassini radio science experiments: the Gravitational Wave Experiments (GWEI and GWEII ) from
+November 26, 2001, to January 4, 2002, and from December 6, 2002, to January 14, 2003; and the
+Solar Conjunction Experiment (SCEI ) from June 6, 2002, to July 5, 2002. During these experiments,
+comparisons of the redundant instrument measurements provide an estimate of the MCS performance
+for calibrating both wet and dry tropospheric delay variations over time scales of 30 seconds to multiple
+days.
+In Section II of this article, the path-delay statistics of the 19-month archive are assessed using a
+variety of measures, including temporal structure functions, Allan standard deviation (ASD) [9], and
+spectral analysis. In Section III, comparisons are made between the 19-month archive and the statistics
+derived from each of the Cassini radio science experiments. MCS performance also is evaluated, using
+comparisons between the redundant components of the system. In Section IV, results are summarized
+with recommendations for future work.
+
+II. Nineteen-Month Path-Delay Statistics
+A. Wet- and Dry-Delay Time Series
+The MCS data utilized to compute zenith path-delay time series over the September 2001 to March
+2003 interval were the three-channel AWVR brightness temperatures (for the wet component) and surface
+pressure (for the dry component). The wet-delay algorithm consisted of an all-weather statistical retrieval
+based on radiosonde-derived linear correlations between the wet-delay and AWVR zenith brightness
+temperatures:
+P Dwet = −0.849 − 0.1364 ∗ T B22.2 + 0.6899 ∗ T B23.8 − 0.3062 ∗ T B31.4
+3
+
+(1)
+
+with P Dwet deﬁned as the zenith delay in centimeters due to water vapor, and the three-channel AWVR
+brightness temperatures (TBs) are in kelvins. A 1980 to 1988 radiosonde data archive from Desert
+Rock, Nevada, was used to generate the Eq. (1) coeﬃcients by regression. Desert Rock was chosen
+for its elevation and climatological similarity to Goldstone. This algorithm is not as precise as the more
+sophisticated algorithms used during Cassini radio science experiments, but is completely adequate for the
+purpose of generating path-delay statistics. The zenith dry-delay algorithm is based on the assumption
+of hydrostatic equilibrium [10] and is speciﬁc to the latitude and elevation of DSS 25 at Goldstone:
+P Ddry = 0.22789 ∗ Ps
+
+(2)
+
+with P Ddry deﬁned as the zenith dry delay in centimeters, and Ps is the measured surface pressure in
+millibars.
+The 19-month P Dwet archive was derived primarily from the system-1 AWVR data, with system-2
+data used to ﬁll in gaps when the system-1 AWVR was oﬀ line. The completeness of the combined data set
+was such that only four gaps greater than 2 hours remained in the P Dwet time series. Linear interpolation
+was used to complete the ﬁnal 5-minute-interval archive. For the P Ddry archive, the uninterrupted 5minute January 2002 to March 2003 interval Ps data from a single surface meteorology package were
+used in the Eq. (2) conversion. A total of three surface meteorology packages were employed during the
+19-month interval. The single longest consecutive running Ps measurement was used to generate the
+P Ddry statistics in order to avoid intercalibration issues.
+Figures 2 and 3 show the ﬁnal time series of DSS-25 zenith wet and dry delays obtained from the MCS
+data using Eqs. (1) and (2). Note that the variability of the much larger dry-delay component is only
+∼1/3 that of the wet delay. This result is consistent in all considered metrics of the wet- and dry-delay
+variations. An annual variation is seen in both the wet- and dry-delay time series, but this component has
+little impact on the time scales of interest to radio science experiments. Figures 4 (wet) and 5 (dry) show
+compressed versions of the time series over 10-day intervals of summer and winter, illustrating shorter
+time scale eﬀects. A diurnal component is seen, most clearly in the dry-delay time series, and most
+persistently during summer months. The summertime dry-delay component also shows a semi-diurnal
+feature. The dry-delay diurnal variations are most likely related to daily wind-speed patterns.
+B. Path-Delay Temporal Structure Functions
+From the 19- and 15-month data sets of wet- and dry-delay time series, the expected levels of pathdelay ﬂuctuations can be computed for all time scales important for radio science experiments. We deﬁne
+the temporal structure function (TSF) for zenith path delay as
+
+T SF (∆t) =
+
+
+2 1/2
+P D(t + ∆t) − P D(t)
+
+(3)
+
+where the < > brackets denote an expectation value for sampling time ∆t.
+Application of Eq. (3) to the time series shown in Figs. 2 and 3 yields the wet and dry temporal
+structure functions shown in Fig. 6. The expected variations increase rapidly with the time interval out
+to approximately 50 hours, beyond which the variability remains nearly constant, with the wet component
+three times more variable than the dry. Month-to-month ﬂuctuations in the 12- to 96-hour time scale
+wet-delay structure functions are shown in Fig. 7, illustrating the TSF variability at Goldstone. Note
+that, at time scales <24 hours, the seasonal variations in the wet TSF appear to be small.
+4
+
+Fig. 2. Nineteen-month time series of zenith wet-delay measurements
+at DSS 25 from AWVR data.
+
+Fig. 3. Fifteen-month time series of zenith dry-delay measurements
+at DSS 25 from surface pressure data.
+
+5
+
+(a)
+
+(b)
+
+Fig. 4. Compressed-scale time series of DSS-25 zenith wet delay
+over 10-day (a) summer and (b) winter intervals.
+
+C. Allan Standard Deviation Statistics
+At time scales relevant to sidereal tracking, the Allan standard deviation (ASD) of delay is frequently
+used as a measure of the non-linear ﬂuctuation levels of the tropospheric delay:
+
+2 1/2
+τ (t) − 2τ (t + ∆t) + τ (t + 2∆t)
+√
+
+ASD(∆t) =
+2 · ∆t
+
+(4)
+
+where τ (t) is the delay in seconds at time t and ∆t is a time interval increment. Equation (4) deﬁnes a
+statistical quantity which is proportional to the second-order variability of the delay over time interval
+∆t. The time delay τ is obtained from the P D measurements simply by dividing by the speed of light.
+As an example, the MCS performance requirement for the Cassini Gravitational Wave Experiment [11]
+is that the ASD of the residual troposphere-induced delay (after calibration) be less than 1.1 × 10−15 s/s
+over time intervals of 1000 to 10,000 seconds. As an indicator of MCS performance requirements, the
+uncalibrated ASD spectra, computed from the 19- and 15-month time series of wet and dry zenith delays
+at DSS 25, are shown in Fig. 8 over time intervals from 5 minutes to 10 hours. The dry-delay ASD
+spectrum reveals that expected ﬂuctuation levels fall below (meet) the GWE requirement at the 1000- to
+10,000-s time scales. However, the ASD of the tropospheric wet delay can be expected to exceed (fail)
+the GWE requirement by a factor of three to seven at zenith, increasing rapidly at lower elevation angles
+in proportion to air mass. Comparison of the expected levels of tropospheric-delay ﬂuctuations with the
+GWE requirements indicates that the MCS system must remove (calibrate) approximately 90 percent or
+more of the wet-delay ASD near 1000-s time scales.
+6
+
+(a)
+
+(b)
+
+Fig. 5. Compressed-scale time series of DSS-25 zenith dry delay over
+10-day (a) summer and (b) winter intervals.
+
+Fig. 6. Wet- (and dry)-delay temporal structure functions as measured
+at DSS 25 over 19- (and 14)-month intervals.
+
+7
+
+∆t = 12 h
+
+∆t = 24 h
+
+∆t = 48 h
+
+∆t = 96 h
+
+Fig. 7. Monthly variation of wet-delay temporal structure function at
+selected time intervals.
+
+Fig. 8. Wet- (and dry)-delay Allan standard deviation as measured at
+DSS 25 over 19- (and 14)-month intervals.
+
+8
+
+Figure 9 shows the month-to-month variations in the wet-delay ASD statistic, featuring some seasonal
+dependence, most evident at the 1000-s time scale. Comparison of these results with an earlier study
+[12] reveals 20 to 50 percent higher ASD levels than measured during the October 1993 to September
+1994 interval at DSS 13. The diﬀerence is primarily due to the inclusion of cloudy conditions in the more
+recent archive. The analysis of the 1993 to 1994 data included only 24-hour intervals of cloud-free data.
+Day/night stratiﬁcation of the complete September 2001 to March 2003 data set has not been examined.
+However, separate analysis (Section III) of the 30- to 40-day intervals of the SCE (summer day) and
+GWE (winter night) MCS data reveal seasonal as well as day/night contrasts.
+D. Spectral Analysis
+Figures 10 and 11 show the two-sided wet- and dry-delay power spectra computed from the time series
+shown in Figs. 2 and 3. In the spectral analysis, the data were pre-whitened with a ﬁrst-diﬀerence ﬁlter
+(which has zero response at DC, giving zero mean) and post-darkened after Fourier transforming. The
+wet spectrum is roughly power law at high frequencies, less steep than for the Kolmogorov value (blue
+line, ∼f −2.67 ), and shows no signiﬁcant diurnal or higher-frequency harmonics. As seen in the temporal
+structure function analysis, the spectral level of the dry delay is below that of the wet. However, the
+dry spectrum does contain a clear diurnal component plus higher harmonics, as suggested previously in
+the compressed (10-day) plots of the dry delay (Fig. 5). The diurnal-scale dry-delay (surface pressure)
+harmonics may be caused by repeating daily wind patterns at Goldstone.
+
+III. MCS Statistics and Performance During Cassini Radio Science Experiments
+During the Cassini gravitational wave and solar conjunction radio science experiments, the AWVRs
+of the MCS track the Cassini spacecraft in order to provide the best possible corrections of the line-ofsight delay ﬂuctuations for the DSS-25 Doppler delay measurements. After ﬁnal processing, the MCS
+data product consists of 24- to 30-second-interval time series of zenith-equivalent wet delay and surfacepressure-derived dry delay. The daily time series typically are 10 to 12 hours in duration (the Cassini
+
+∆t = 1000 s
+
+∆t = 3000 s
+
+∆t = 10,000 s
+
+Fig. 9. Monthly variation of wet-delay Allan standard deviation at
+selected time intervals.
+
+9
+
+log10 (spectral density of zenith wet delay, cm2 Hz−1)
+
+AMC at DSS 25, approx. 1.5 years starting 9/1/2001
+Pre-whitened/Post-darkened
+Red line = Smoothed spectrum
+
+6
+
+4
+
+2
+
+0
+
+−2
+
+−7
+
+−6
+
+−5
+
+−4
+
+−3
+
+−2
+
+log10 (frequency, Hz)
+Fig. 10. Spectral density of zenith wet delay from 19-month
+DSS-25 measurements.
+
+Dry tropo at DSS 25, approx. 1.5 years starting 9/1/2001
+
+log10 (spectral density of zenith wet delay, cm2 Hz−1)
+
+6
+
+Pre-whitened/Post-darkened
+Red line = Smoothed spectrum
+
+4
+
+2
+
+0
+
+−2
+
+−7
+
+−6
+
+−5
+
+−4
+
+−3
+
+log10 (frequency, Hz)
+Fig. 11. Spectral density of zenith dry delay from 14-month
+DSS-25 measurements.
+
+10
+
+−2
+
+track), over nighttime hours for the 40 consecutive winter tracks of the GWEs and over daytime hours
+during the 30 consecutive summer tracks of the SCE. Note that the wet-delay algorithms employed during the Cassini radio science experiments are much more complex than the simple AWVR brightness
+temperature conversion used for the 19-month archive. The addition of MTP and surface meteorology
+observables is intended to maximize the precision of the path-delay-ﬂuctuation measurements [8]. However, the use of oﬀ-nadir AWVR measurements and a more precise algorithm will have no signiﬁcant
+eﬀect on the zenith path-delay-ﬂuctuation statistics that derive from the MCS data.
+Because the Goldstone MCS consists of two identical sets of instruments, comparisons of the two systems’ path-delay measurements during Cassini tracking provide an estimate of the precision and stability
+of the MCS. Primary error sources, including instrument calibration stability, AWVR elevation-pointing
+uncertainties, and sampled air-mass separation, are expected to be uncorrelated between the redundant
+systems so that the diﬀerences in the path-delay measurements provide a lower-bound error estimate
+for the system. Potential correlated errors, such as the absorption-model uncertainties in the wet pathdelay retrieval algorithm, may be a factor for the absolute accuracy of the measurements, but are not
+expected to be signiﬁcant for issues of precision in the measurements of the path-delay variations. The
+most important test of the MCS performance will result from a comparison of the MCS-derived delay
+ﬂuctuations with the residual phase ﬂuctuations (data not yet available) derived from the GWE and SCE
+Doppler tracking measurements. However, such comparisons also will require a quantitative evaluation
+of the uncertainties in the Doppler-derived phase variations before an assessment of the MCS accuracy
+can be made.
+A. Temporal Structure Function Statistics and MCS Calibration Performance
+Figures 12 and 13 show the wet and dry path-delay temporal structure function spectra computed for
+the ﬁrst SCE (SCEI ) and the ﬁrst and second GWEs (GWEI and GWEII ). The solid lines indicate the
+uncalibrated spectra as measured by system 1. The dashed lines indicate the diﬀerence spectra (system 2
+minus system 1), our estimate of tropospheric calibration performance by the MCS. (Note that in Figs. 12
+and 13 and later in Figs. 15 and 16 the dashed spectra referred to as “calibrated” actually represent the
+residual variations of the system-diﬀerenced measurements. As discussed above, these diﬀerence spectra
+represent our current best estimate of the uncertainties in the MCS calibration of the tropospheric-delay
+ﬂuctuations.) Because the Cassini radio science experiments are discontinuous (sidereal tracking of the
+spacecraft) over 30 to 40 consecutive days, the expectation spectra shown in Figs. 12 and 13 required
+some modiﬁcations beyond the calculation of Eq. (3). For time intervals less than 10 hours, Eq. (3) was
+applied to each day’s MCS tracking data, and the daily results were averaged over the 30- to 40-day
+duration of the experiment. For time scales of 1, 2, 4, 8, and 16 days, Eq. (3) was applied to paired days
+of the MCS tracking data, and the results were averaged over the lifetime of each experiment.
+Note ﬁrst that for all three Cassini radio science experiments the measured uncalibrated wet- and
+dry-delay ﬂuctuations shown in Figs. 12 and 13 are consistent with the statistics from the 19-month data
+set shown in Fig. 6. Small diﬀerences seen in the wet structure function statistics are consistent with a
+model [12] of higher ﬂuctuation levels during summer daytime (SCEI ) relative to winter nighttime (GWEI
+and GWEII ).
+The most noteworthy aspects of the results shown in Figs. 12 and 13 are the dashed spectra of systemdiﬀerenced ﬂuctuation measurements obtained during Cassini spacecraft tracking. These spectra reﬂect
+the MCS performance for measuring changes in the tropospheric delay over time scales of 30 seconds to
+16 days. For the zenith wet delay (Fig. 12), the MCS provides better than 0.06-cm calibration precision
+over all computed time intervals (up to 16 days). The wet-delay calibration performance is largely
+independent of the magnitude of the uncalibrated path-delay variations.
+The dry ﬂuctuation component (Fig. 13) is removable to a precision better than 0.01 cm for all time
+scales up to 16 days. The variability of the dry-delay performance is driven primarily by wind conditions.
+
+11
+
+Fig. 12. Wet path-delay fluctuation spectra at DSS 25 during three Cassini radio
+science experiments. Solid curves indicate temporal structure function statistics
+of the wet troposphere before MCS calibration. Dashed curves indicate residual
+structure function statistics of the redundant system-differenced wet-delay
+measurements.
+
+Fig. 13. Dry path-delay fluctuation spectra at DSS 25 during three Cassini radio
+science experiments. Solid curves indicate temporal structure function statistics
+of the dry troposphere before MCS calibration. Dashed curves indicate residual
+structure function statistics of the redundant system-differenced dry-delay
+measurements.
+
+12
+
+For surface wind speeds greater than 16.09 km/h (10 miles/h), small high-frequency ﬂuctuations occur
+in the surface pressure measurements, which convert to a higher “noise” level in the system-diﬀerenced
+dry-delay component. A typical example of the correlation between the surface pressure ﬂuctuation
+level and measured wind speed is shown in Fig. 14. Measurements are shown from both system-1 and
+system-2 surface meteorology packages during an SCE Cassini track in 2002. Note that the “worst”
+dry-delay calibration performance occurred for the daytime/summer SCE when higher wind conditions
+were most common.
+B. Allan Standard Deviation Statistics and MCS Calibration Performance
+Figures 15 and 16 show the wet and dry ASD spectra computed for the three Cassini radio science
+experiments to date. As shown previously for the temporal structure function spectra, the solid lines
+indicate the uncalibrated spectra as measured by system 1. The dashed lines indicate the diﬀerence
+spectra (system 2 minus system 1), our estimate of tropospheric calibration performance by the MCS.
+The computed time intervals extend from 30 to 10,000 seconds, covering the time scales of primary
+interest for the Cassini GWE. The computed values shown are actually 30- to 40-day averages of the
+values computed for each Cassini track.
+Note ﬁrst that the uncalibrated ASD spectra derived from MCS Cassini tracking are consistent with
+the 19-month spectra derived from AWVR zenith TB measurements shown in Fig. 8. Factor-of-two variations due to seasonal or day/night eﬀects are not unexpected. For example, note the diﬀerence between
+the wet-delay ASD levels of the summer/daytime (SCEI ) and winter/nighttime (GWEI and GWEII ) MCS
+data (solid curves of Fig. 15). In contrast, the calibrated wet ASD spectra, estimated by the system-2
+
+(a)
+
+(b)
+
+Fig. 14. Measurements of (a) wind speed and (b) surface pressure provided by the redundant MCS instruments during the June 20, 2002, Cassini tracking experiment. System-1
+data in black; system-2 data in red. Note the correlation of higher wind speeds, >16.09
+km/h (>10 miles/h), with increased levels of pressure measurement fluctuations.
+
+13
+
+Fig. 15. Wet path-delay Allan standard deviation spectra at DSS 25 during three
+Cassini radio science experiments. Solid curves indicate ASD statistics of the
+wet troposphere before MCS calibration. Dashed curves indicate residual ASD
+statistics of the redundant system-differenced wet-delay measurements.
+
+Fig. 16. Dry path-delay Allan standard deviation spectra at DSS 25 during three
+Cassini radio science experiments. Solid curves indicate ASD statistics of the
+dry troposphere before MCS calibration. Dashed curves indicate residual ASD
+statistics of the redundant system-differenced dry-delay measurements.
+
+14
+
+minus system-1 measured path-delay diﬀerences (dashed lines of Fig. 15), are nearly identical, indicating
+MCS performance that is insensitive to the actual ﬂuctuation level in the troposphere. The calibrated
+(system-diﬀerenced) dashed spectra of Fig. 15 are to be compared with the GWE requirement that the
+residual (post-calibration) ASD for 1000- to 10,000-s time scales be less than 1.1 × 10−15 s/s. The results
+shown in Fig. 15 indicate that the MCS has surpassed that requirement.
+The ASD spectra due to uncalibrated dry-delay ﬂuctuations are generally 5 to 10 times smaller than
+the wet component (solid lines, Fig. 16), below the level of the GWE requirement for 1000- to 10000-s
+time scales. After calibration, as estimated by the system-diﬀerenced ASD (dashed lines), the residual
+dry ﬂuctuation levels are approximately 1 to 2 orders of magnitude below the GWE requirement.
+
+IV. Summary
+Statistical properties of both wet and dry path-delay ﬂuctuations at Goldstone have been measured
+over the September 2001 to March 2003 interval using instrumentation of the Media Calibration System
+deployed at DSS 25 in the summer of 2001. Variations have been characterized using path-delay structure
+functions and Allan standard deviation in the time domain and Fourier spectra in the frequency domain.
+For the period examined, the wet-delay ﬂuctuation levels are 20 to 50 percent higher than computed
+from an earlier one-year data set, a result attributable to the exclusion of cloudy conditions in the earlier
+archive.
+Measured dry-delay ﬂuctuation levels are approximately one-third those of the wet component at hour
+and longer time scales. In the frequency domain, the dry-delay power spectrum contains signiﬁcant diurnal
+harmonics, indicative of the eﬀects of repeating daily wind patterns on the surface pressure measurements.
+Fluctuation statistics obtained during periods of the Cassini spacecraft sidereal tracking are consistent
+with the results obtained using the complete 19-month archive. Factor-of-two variations are seen in
+the summer/daytime versus winter/nighttime wet-delay statistics, consistent with previous analysis of
+an earlier Goldstone WVR data archive. At a 1000-second time scale, the uncalibrated zenith wetdelay ﬂuctuations are seen to be typically a factor of ﬁfteen higher than the GWE speciﬁcation. At
+10,000 seconds, the naturally occurring wet troposphere ASD exceeds the GWE speciﬁcation by a factor
+of two at zenith, scaling to a factor of six at 20-degree elevation. The naturally occurring dry-delay
+ﬂuctuations (in the ASD domain) are typically below the Cassini GWE requirement for all time scales
+from 1000 to 10,000 seconds.
+Comparisons of the path-delay measurements provided by the redundant systems of the MCS provide
+an estimate of the system’s precision for calibrating line-of-sight tropospheric-delay variations during the
+Cassini radio science experiments. System-diﬀerenced path-delay measurements reﬂect error components
+due to limitations of instrument calibration and stability, AWVR pointing, and beam separation. In the
+ASD domain, the criterion used for Cassini radio science experiments, the mean residual errors produced
+by the system-diﬀerenced measurements fall well below (within range of) the Cassini GWE requirement
+at all time scales >1000 seconds. The MCS performance does not depend on the absolute or ﬂuctuation
+level of the tropospheric wet delay, but does diminish for moderate to heavy cloud conditions.
+The indicated MCS performance is clearly superior to the results of earlier validation tests in which
+the system was used to calibrate site-diﬀerenced, line-of-sight delays measured with a radio interferometer
+over a 21-km baseline at Goldstone [13–15]. The consensus from the earlier experiments was that the
+comparison tests were limited by unknown errors in the radio interferometry measurements. The current
+results, in which MCS precision is evaluated by the redundant system comparisons, represent the upper
+bound of performance (lower-bound error) in that common mode errors (modeling and algorithm) are
+cancelled by the system-diﬀerenced calculation. However, an earlier design study [8] demonstrated that
+these errors likely will be small relative to the system errors (calibration stability, pointing accuracy),
+15
+
+suggesting that the current optimized performance described in this article is a fair evaluation of the
+MCS capability.
+The extraordinary stability and elevation-pointing precision of the MCS AWVRs clearly are demonstrated in the measurements of path-delay variations over multi-hour to multi-day time scales. The
+system-diﬀerenced measurements indicate that the 1- to 5-cm zenith wet-delay variations typical at Goldstone over time scales of days to weeks can be corrected by the MCS to precisions better than 0.06 cm.
+The surface pressure sensors of the MCS have demonstrated stability suﬃcient to produce better than
+0.01-cm precision in the calibration of dry-delay variations over time scales of weeks. These results suggest
+that the Goldstone MCS provides a correction for greater than 95 percent of the troposphere-induced,
+line-of-sight propagation “noise” over minute to multi-week time scales, enabling a wide range of radio
+science and radio astronomy experiments.
+
+Acknowledgments
+We thank Elias Barbinis for his careful handling of the MCS data post-processing
+following the Cassini radio science experiments and J. W. Armstrong for his interest
+in the long-term delay statistics and for contributing Figs. 10 and 11. We also are
+grateful to the operations crew at Goldstone for all of their invaluable assistance
+in the deployment and maintenance of the MCS system at DSS 25. We also thank
+Charles Naudet for many useful comments and suggestions in his review of the
+manuscript.
+
+References
+[1] H. T. Howard, V. R. Eshleman, D. P. Hinson, A. J. Kliore, G. F. Lindal, R. Woo,
+M. K. Bird, H. Volland, P. Edenhofer, M. Patzold, and H. Porsche, “Galileo Radio
+Science Investigations,” Space Sci. Rev., vol. 60, pp. 565–590, 1992.
+[2] G. L. Tyler, G. Balmino, D. P. Hinson, W. L. Sjogren, D. E. Smith, R. Woo,
+S. W. Asmar, M. J. Connally, C. L. Hamilton, and R. A. Simpson, “Radio Science
+Investigations with Mars Observer,” JGR, vol. 97, pp. 7759–7779, 1992.
+[3] S. W. Asmar and N. Renzetti, The Deep Space Network as an Instrument for
+Radio Science Research, JPL Publication 80-93 (Rev. 1), Jet Propulsion Laboratory, Pasadena, California, 1993.
+[4] A. Kliore, J. D. Anderson, J. W. Armstrong, S. W. Asmar, C. L. Hamilton,
+N. J. Rappaport, H. D. Wahlquist, R. Ambrosini, B. Bertotti, F. M. Flasar,
+R. G. French, L. Iess, E. A. Marouf, and A. F. Nagy, “Cassini Radio Science
+Investigations,” Space Sci. Rev. (in press), 2004.
+[5] J. W. Armstrong, L. Iess, B. Bertotti, and P. Tortora, “Gravitational Wave
+Background: Upper Limits in the 10−6 to 10−3 Hz Band,” ApJ, vol. 599, pp. 806–
+813, 2003.
+[6] B. Bertotti, L. Iess, and P. Tortora, “A Test of General Relativity Using Radio
+Links with the Cassini Spacecraft,” Nature, vol. 425, no. 6956, pp. 374–376, 2003.
+16
+
+[7] A. B. Tanner, “Development of a High-Stability Water Vapor Radiometer,” Radio Science, vol. 33, pp. 449–462, 1998.
+[8] S. J. Keihm and K. A. Marsh, “Advanced Algorithm and System Development for
+Cassini Radio Science Tropospheric Calibration,” The Telecommunications and
+Data Acquisition Progress Report 42-127, July–September 1996, Jet Propulsion
+Laboratory, Pasadena, California, pp. 1–20, November 15, 1996.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-127/127A.pdf
+[9] D. W. Allan, “Statistics of Atomic Frequency Standards,” Proc. IEEE, vol. 54,
+no. 2, pp. 221–230, February 1966.
+[10] G. Elgered, “Tropospheric Radio Path Delay from Ground-Based Microwave
+Radiometry,” in Atmospheric Remote Sensing by Microwave Radiometry, M. A.
+Janssen, Ed., New York: Wiley, 1993.
+[11] M. Tinto and J. W. Armstrong, “Spacecraft Doppler Tracking as a NarrowBand Detector of Gravitational Radiation,” Phys. Rev. D, vol. 58, no. 042002,
+pp. 042002-1–042002-8, 1998.
+[12] S. J. Keihm, “Water Vapor Radiometer Measurements of the Tropospheric Delay
+Fluctuations at Goldstone Over a Full Year,” The Telecommunications and Data
+Acquisition Progress Report 42-122, April–June 1995, Jet Propulsion Laboratory,
+Pasadena, California, pp. 1–11, August 15, 1995.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-122/122J.pdf
+[13] C. Naudet, C. Jacobs, S. Keihm, G. Lanyi, R. Linﬁeld, G. Resch, L. Riley,
+H. Rosenberger, and A. Tanner, “The Media Calibration System for Cassini Radio Science: Part I,” The Telecommunications and Mission Operations Progress
+Report 42-143, July–September 2000, Jet Propulsion Laboratory, Pasadena, California, pp. 1–8, November 15, 2000.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-143/143I.pdf
+[14] G. M. Resch, J. E. Clark, S. J. Keihm, G. E. Lanyi, C. J. Naudet, A. L. Riley, H. W. Rosenberger, and A. B. Tanner, “The Media Calibration System for
+Cassini Radio Science: Part II,” The Telecommunications and Mission Operations Progress Report 42-145, January–March 2001, Jet Propulsion Laboratory,
+Pasadena, California, pp. 1–20, May 15, 2001.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-145/145J.pdf
+[15] G. M. Resch, S. J. Keihm, G. E. Lanyi, R. P. Linﬁeld, C. J. Naudet, A. L. Riley, H. W. Rosenberger, and A. B. Tanner, “The Media Calibration System for
+Cassini Radio Science: Part III,” The Interplanetary Network Progress Report
+42-148, October–December 2001, Jet Propulsion Laboratory, Pasadena, California, pp. 1–12, February 15, 2002.
+http://ipnpr.jpl.nasa.gov/tmo/progress report/42-148/148H.pdf
+
+17
+
+
