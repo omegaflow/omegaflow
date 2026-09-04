@@ -1000,6 +1000,17 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Strategie-Umbau offen: kuratierte AST-Liste der Transmissions-Spektren
   statt aller 3760 Transit-Hosts.
 
+- JWST-Spektren-Strategie-Umbau (2026-09-04): der Compiler erntet jetzt
+  per `--curated` die NExScI-`spectra`-Tabelle (JWST-Transmission,
+  NIRSpec/NIRISS/MIRI, Komma-Join an ps) = 48 Ziele statt aller 3760
+  Transit-Hosts (WASP-15 erntet nachweislich 9834 Bins). Bei Budget-Abbruch
+  finalisiert/uploadet er nun den Teilstand statt ihn zu verwerfen (jede
+  CI-Ernte bringt den wachsenden Bin aufs CDN). Verifiziert: NExScI-Oracle-
+  TAP verweigert `JOIN…AS…ON` (ORA-00933) — Komma-Join nötig. Restrisiko:
+  Budget wird nur zwischen Beobachtungen geprüft; ein einzelner grosser
+  Download kann ein Budget-Fenster überziehen. Offen: Voll-Ernte der 48 aufs
+  CDN, dann jwst_equilibrium + Biosignatur-Scan (Auftrag 4).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
