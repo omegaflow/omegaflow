@@ -553,3 +553,21 @@ aber beide adressieren nicht die Medien-Szintillation, die den 133-Hz-Floor
 trägt. **Die Daten-Tiefe, die Turyshev zu ~1 Hz führte, kam aus der
 Medien-Kompensation, die wir nicht nachbauen können — die Wand ist physisch,
 nicht rechnerisch (0 honored).**
+
+**Nachtvision-Ausarbeitung — die Struktur des Floors, gemessen statt behauptet
+(2026-09-03).** Die frühere „weiß"-Aussage war ein Fehler, korrigiert: (1) Die
+60-s-Residuen sind NICHT weiß — **lag-1-Autokorrelation 0,96 (P10) bis 1,00
+(über lange Pass-Strecken wörtlich konstant)**; effektive unabhängige Samples nur
+~19k (P10) / ~68k (P11) von 856k/768k. (2) Die per-Sample-"Streuung" ist zu
+großem Teil eine **glatte, subtrahierbare Pass-Drift** (P10 10.735 → 2.785 Hz nach
+linearer, 2.785 nach quadr. Pass-Detrending = −74 %, P11 10.305 → 5.246 = −49 %).
+Das ist die „Form, die sich anders als die Anomalie verhält" — eine boden-/medien-
+nahe langsame Drift, kein säkularer Anomalie-Term. (3) **Aber:** die bestehende
+negativ-fuzzy-Reduktion (133 Hz) hat diese Struktur bereits weitgehend entfernt;
+die pro-Station-Quad-Variante (237 Hz) ist ihr unterlegen. (4) Nach der besten
+Reduktion sind die **Tagesmediane weiß** (Tag-zu-Tag-Autokorrelation lag-1
+0,057 P10 / −0,027 P11, unkorreliert) — keine weitere abziehbare Form auf
+Tagesebene. **Befund: die Nachtvision findet echte Struktur (die Pass-Drift),
+aber die bestmögliche Reduktion nutzt sie bereits — 133 Hz ist das Maximum, das
+diese Daten hergeben, weil der Rest (Tagesstreuung) unkorreliert und nicht
+abziehbar ist (0 honored).**
