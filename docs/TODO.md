@@ -988,7 +988,11 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Scanner jwst_biosignature_scanner (Auftrag 4) wartet auf beide. Seit
   2026-09-03 überspringt jwst_spectra_compiler proprietäre (EXCLUSIVE_
   ACCESS/PROPRIETARY) MAST-Beobachtungen; CDN-Asset jwst_spectra.bin war
-  404 (Registereintrag, nie manifestiert).
+  404 (Registereintrag, nie manifestiert). CI-Pfad korrigiert: der
+  jwst-spectra-Job lud `src/kernels/naif0012.tls` (existiert nicht,
+  LSK liegt in src/archivar/kernels) — der Compiler brach sofort ab
+  (Rückgabe 0, Job fälschlich success); jetzt lädt der Job das LSK von
+  NAIF nach kernels/naif0012.tls.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
