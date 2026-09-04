@@ -515,3 +515,23 @@ unsere Reduktion findet sie nicht, weil der Floor (Reduktion, nicht Physik —
 siehe oben) die Anomalie begräbt. Einziger aufschlussreicher Aspekt: das
 P11-Vorzeichen-Widerspruch (outward vs sunward) ist ein messbares Zeichen, dass
 unsere Reduktion die sunward-Signatur nicht trägt (0 honored).
+
+**Warum Turyshev die Kurve hatte und wir nicht — gemessen (2026-09-03).** Die
+Turyshev-&-Toth-Reduktion senkte die Roh-Doppler auf ein **~1-Hz-Residuum**;
+unsere Reduktion steht bei **~133 Hz (NAVIO) / ~40 kHz (ATDF)** — die Anomalie
+liegt also ~130× (NAVIO) bis ~4e4× (ATDF) unter unserem Floor. Der Unterschied
+ist NICHT fehlende „Magie": `pioneer_odp` (das die Turyshev-Methode bereits
+implementiert — eigener RK4-Sonnen-Orbit + a_P-Scan ±8×10⁻⁶) zeigt im Selbsttest,
+dass der a_P-Scan das Residuum-RMS um **<0,1 %** ändert (Kurve bleibt flach, weil
+das jährliche Residuum von der Erd-/Modell-Seite kommt, nicht von der Sondenbahn)
+und sagt wörtlich: **„The anomaly is NOT carried (0 honored): it needs a residual
+under ~1 Hz, not ~4e4 Hz."** Turyshev erreichte ~1 Hz durch die volle Kette, die
+die 1980er-Daten ausreizt — Multifrequenz-Plasma-Kompensation (Pioneer war
+S-Band-only, keine), präzise Stations-/Erdrotations-Korrekturen, Missions-OD mit
+Millionen gewichteter Punkte. Unsere drei-way-Rückgewinn (336→133 Hz) war die
+Ausbeute dieser Daten; weitere Reduktion-Magie + Orbit-Bestimmung senkt den Floor
+nicht, weil die verbleibende per-Sample-Streuung die Daten ohne Multifrequenz/
+WVR physisch nicht freigeben (Reduktion, nicht Physik — siehe
+Deduktion-43-Befund). **Messbar: „unsere Magie plus OD" erreicht die ~1-Hz-Tiefe
+von Turyshev nicht — die Differenz ist Daten-Tiefe (Medien-Kompensation), nicht
+Reduktions-Import (0 honored).**
