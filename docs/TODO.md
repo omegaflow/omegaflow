@@ -1150,6 +1150,15 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Downloads gehen in `workdir/tmp` (per create_dir_all angelegt). Diagnose-
   Workflow nach Bestätigung entfernt.
 
+- Gleichgewichts-Ernte (2026-09-05): jwst_equilibrium.bin aus den kuratierten
+  Spektren (curated48_spectra.bin, 214 spectra) kompiliert — 90 Records,
+  21020 B, Roundtrip ok (113 Multi-Planeten-Hosts übersprungen, 11 out of
+  domain) — auf dem CDN manifestiert (HTTP 200, ssd.jpl.nasa.gov/
+  jwst_equilibrium.bin). sources.φ: jwst_spectra-URL zeigt jetzt auf das
+  aktive kuratierte Asset curated48_spectra.bin (GJ-806 als Fehlmatch-Beleg
+  archiviert). OFFEN: der Biosignatur-Scanner (Auftrag 4) liest beide Assets;
+  KDE-h/Multi-Force-Pflichten vor einem Befund.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
