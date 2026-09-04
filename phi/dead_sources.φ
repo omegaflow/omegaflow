@@ -2068,7 +2068,7 @@ note HTTP 404 — Endpoint weg.
 
 dead timeout
 url https://jsoc.stanford.edu/
-note curl (000) timeout auf allen Pfaden (/, /ajax/, /export/, /cgi-bin/ajax/jsoc_info.cgi?ds=hmi.V_avg120), mit UA, 20 s — 2026-09-03 Live-Probe. JSOC (HMI, Sonne) aus ref-auth-apis.md §B nachgemessen.
+note Korrektur (2026-09-05): die https-URL ist per TLS-Timeout tot (000) — aber nur die TLS-Schicht. http://jsoc.stanford.edu ist erreichbar (200) und der AIA-Erntepfad (aia_compiler, http, aia.lev1_euv_12s rs_list) funktioniert; die 2026-09-03-https-Probe traf nur die defekte TLS-Schicht, nicht den Host. JSOC ist kein voller Todesfall; dieser Eintrag dokumentiert die https-Scheme-Einschränkung, der http-Pfad lebt.
 
 dead 404
 url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
