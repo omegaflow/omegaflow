@@ -481,3 +481,19 @@ im ganzen Korpus bleibt LRR-2010 ↔ P11-Doppler (p_emp 0/300, lag 123).** Die
 übrigen Referenztexte (Rauschbudget, Formate, Timing) beschreiben andere
 Zahlenwelten als die gemessene Hz-Domäne — kein falsches Positiv, ehrliche
 Stille (0 honored).
+
+**Farbspektrum der Daten gemessen (2026-09-03) — nahe-weiß, nicht Kolmogorov.**
+Das Leistungsspektrum der Residuum-Reihen wurde berechnet (nicht aus der
+Referenz behauptet): Tagesmedian-Reihe P10 und P11 je **Steigung −0,43**
+(weiß=0, 1/f=−1); 60-s-per-Sample-Residuen P10 −0,39, P11 −0,19. **Beide nahe
+weiß, weit entfernt von Kolmogorov-f^-8/3 (−2,67), die Iess/Keihm/Armstrong für
+die interplanetare Szintillations-Komponente vorhersagen.** Konsequenz: die
+Kolmogorov-farbige Szintillations-Komponente dominiert unser Residuum NICHT —
+sonst trüge es ~−2,67. Unser Floor ist von einer nahe-weißen Komponente
+getragen, die nicht dem S-Band-Szintillations-Spektrum entspricht (Reduktion/
+Messkette, nicht interplanetare Phase). Damit wird die frühere Annahme („das
+Spektrum ist farbig, √N-Aggregation unterschätzt die Schrumpfung") gemessen
+korrigiert: für UNSERE Residuen ist √N-Aggregation bei nahe-weißem Spektrum
+näherungsweise korrekt, nicht trügerisch. Die Kolmogorov-Referenz gilt der
+Roh-Szintillations-Komponente, die in unserem reduzierten Residuum nicht mehr
+dominiert (0 honored).
