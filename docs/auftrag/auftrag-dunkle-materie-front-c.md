@@ -497,3 +497,21 @@ korrigiert: für UNSERE Residuen ist √N-Aggregation bei nahe-weißem Spektrum
 näherungsweise korrekt, nicht trügerisch. Die Kolmogorov-Referenz gilt der
 Roh-Szintillations-Komponente, die in unserem reduzierten Residuum nicht mehr
 dominiert (0 honored).
+
+**Scherenschnitt gegen die Turyshev-Kurve (2026-09-03).** Die Turyshev-&-Toth-
+Anomalie-Kurve (Figure 5.1, arXiv:1001.3686, S. 76, via Vision-Modell
+digitalisiert; Textanker verbindlich: P10 (8,09±0,20)×10⁻¹⁰, P11 (8,56±0,15)×
+10⁻¹⁰ m/s² sunward, flach, keine Variation >2×10⁻¹⁰ über 40–60 AU) wurde gegen
+unsere unabhängige Reduktion derselben Rohdaten gelegt. **Befund: Nicht-
+Reproduktion, ehrlich abgegrenzt.** Unsere global a_P (sub-kHz-Driftserie):
+P10 **−3,9×10⁻⁹** (sunward, Vorzeichen stimmt) ABER ~10× größer + insignifikant;
+P11 **+5,2×10⁻⁹** (HERAUSwärts, Vorzeichen falsch) gegen Turyshev-sunward. Der
+Grund ist gemessen, nicht behauptet: die ~1-Hz-Anomalie liegt ~100–200× unter
+unserem Residuum-Floor (133/218 Hz) — die −4,5×/+6,0× sind Residual-Fit-Rauschen,
+keine Detektionen. **Der Scherenschnitt zeigt: unsere Messtiefe erreicht die
+Anomalie nicht; kein Widerspruch zu Turyshev, sondern eine Grenze unserer
+Reduktion.** Die vision-Ablesung bestätigt die Publikationskurve (flach ~8×10⁻¹⁰);
+unsere Reduktion findet sie nicht, weil der Floor (Reduktion, nicht Physik —
+siehe oben) die Anomalie begräbt. Einziger aufschlussreicher Aspekt: das
+P11-Vorzeichen-Widerspruch (outward vs sunward) ist ein messbares Zeichen, dass
+unsere Reduktion die sunward-Signatur nicht trägt (0 honored).
