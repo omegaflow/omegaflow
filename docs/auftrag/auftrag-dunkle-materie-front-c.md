@@ -339,3 +339,16 @@ Sobald der Schlauch dünn wird: der erste Griff ist die Dreh-Symmetrie, nicht di
 Amplitude. Granit: eine geometrische Frage ist eine Behauptung, solange die
 Rekonstruktion sie nicht trägt — die Linie ist ein Schlauch, und der
 Schlauchdurchmesser entscheidet, welche Fragen man stellen darf (0 honored).
+
+**Sub-Hz-Aggregation — gemessen, nicht ungemacht (2026-09-03).** Der als
+„nächster Hebel" markierte Schritt ist bereits in Deduktion 41 ausgeschöpft: die
+volle-Serien-Regression (alle ruhigen Tage gleichzeitig, 1070 P10 / 1976 P11)
+ist die sub-Hz-Aggregation in ihrer stärksten Form; sie lässt Residuum-RMS
+154–336 Hz, die Anomalie ~200–300× darunter. **Binning kann sie nicht weiter
+treiben — die Datenbasis ist zu dünn:** ein sub-Hz-Punkt (<1 Hz) bräuchte ~8000
+unabhängige Tage/Bin (P10), die ganze Mission hat nur 1126 Tagesmediane
+(Tracking-Lücken = Engpass, nicht Statistik); Monats-Bins erreichen nur 6–17 Hz,
+nicht <1 Hz. √N über die Zeit scheitert an N. Der Weg darunter: feinere Rohdaten
+(die 60-s-Doppler-Samples direkt statt der Tagesmediane, sub-Hz-Kadenz-
+Aggregation) oder Daten mit mehr Tracking-Abdeckung — die „breitere Basis /
+nächste Sonde" des Registers (0 honored).
