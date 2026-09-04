@@ -92,18 +92,33 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   mit Pioneer), kein eigener Fund; Anderson 2002 gelesen (Arcs = Zeit-Intervalle,
   bestätigt), vier Volltexte pending (Armstrong 1998, Bertotti 2003, Tortora
   2004 — born-digital/Lizenz; Woo 1979 — Scan-Kandidat, kein Vision-LLM nötig).
+  Galileo-GWE-Ernte geprüft (2026-09-05, `befund-galileo-gwe-bestand.md`):
+  `gll.rss` existiert nicht — real = PDS3 `GO-…-RSS-…-V1.0` (TRK-2-25/2-18,
+  GWE open-loop ODR); Galileo bleibt Reserve mit eigener relativ-ruhiger
+  ≤5-AU-Achse, kein Quiet-Zone-Nachbau.
+  Lehre (quer, verbindlich): Register-Behauptungen über externe Archive sind
+  Adressen, keine Orte — `lookup vor harvest`; jede `open`-Aussage ist
+  `pending` bis zum Registry-Lookup (NH-Anfrage zitiert verifizierte IDs).
+  GWE-ODR-Banden-Test (Nebenfund): `GO-X-RSS-1-ODR-V1.0` lief auf DSS 14/43/63
+  — denselben Stationen wie die 20-s-Bande, open-loop 1994/95 (überlappend
+  mit Pioneer 1987–93) → potenziell stärkste externe Banden-Validierung
+  (Klasse 2, `auftrag-bande-split.md`).
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
   Reaktionsräder, ~100 d/a ohne Lage-Manöver; >50 AU bewohnt) — aber kein
   offener Harvest (REX = Okkultation/TNF, SPDF 404, Nav-Doppler
-  `request-only`); Galileo `bestehen` als Reserve (PDS4 `gll.rss`
-  `open`: ATDF TRK-2-25/TRK-2-34 + GWE `GO-X-RSS-1-ODR-V1.0`, Dual-Spin,
-  aber ≤5 AU); Cassini `fallen` (3-Achsen); Mariner `fallen` (kein
+  `request-only`); Galileo `bestehen` als Reserve (Dual-Spin, S-Band
+  medium-getrieben, aber ≤5 AU — keine Quiet-Zone; Bestand gemessen
+  2026-09-05, `befund-galileo-gwe-bestand.md`: kein PDS4 `gll.rss`, real =
+  PDS3 `GO-…-RSS-…-V1.0` — TRK-2-25 TDF 6,3 GB + TRK-2-18 ODF 0,16 GB,
+  TRK-2-34 absent, GWE open-loop ODR 4,5 GB); Cassini `fallen` (3-Achsen);
+  Mariner `fallen` (kein
   Distanz-Muster). Entscheidung: NH-Doppler-Anfrage (request-only) =
-  nächster Harvest-Weg; Galileo-GWE = offene Reserve. pending-Reste:
+  nächster Harvest-Weg; Galileo-GWE = offene Reserve (eigene
+  relativ-ruhige ≤5-AU-Achse, kein Quiet-Zone-Nachbau). pending-Reste:
   NH-Selbst-Rauschen-Größe, NH-JPL/DSN-Anfrage (nicht ausgeführt),
-  NH-REX-Tiefenprüfung, Galileo-gll.rss-Zeitabdeckung.
+  NH-REX-Tiefenprüfung, Galileo-empirische-Rausch-Kurve (eigene Ernte-Session).
 - `auftrag-voyager-roh-doppler-zugang.md` — GESCHLOSSEN (2026-09-04): eigenhändige
   Gegenprüfung des PDS/JPL-Zugangs für den V1-Roh-Doppler (Co-Quiet-Tür 1).
   Befund (`docs/befund/befund-voyager-roh-doppler-zugang.md`, `status: done`):
