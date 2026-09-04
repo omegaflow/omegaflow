@@ -4,6 +4,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
     match format {
         "rpw_efield" => crate::rpw::parse_bin(bytes),
         "goes_xrs" => goes::parse_bin(bytes),
+        "intermagnet_dbdt" => intermagnet::parse_bin(bytes),
         "omni2_serie" => omni2::parse_bin(bytes),
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
@@ -22,6 +23,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "goes_xrs" => match comp {
             goes::COMP_XRSA => Some("goes_xrs_xrsa"),
             goes::COMP_XRSB => Some("goes_xrs_xrsb"),
+            _ => None,
+        },
+        "intermagnet_dbdt" => match comp {
+            intermagnet::COMP_DBDT => Some("intermagnet_dbdt"),
             _ => None,
         },
         "omni2_serie" => match comp {
