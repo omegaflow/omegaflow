@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-04
   status: pending
-  sha256: a477878113ffb9e8a164814154fc562f8bfb73ca6ba5ba23b87891105ac4fe93
+  sha256: 95e3b7d683b179cc4132a5336c07a40c37dbea17ba5e676583fb7e8504f2ab14
   see-also: docs/auftrag/auftrag-subhz-drift-quiet-zone.md docs/paper/probe-front-dark-matter.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
 -->
 
@@ -32,7 +32,7 @@ Ort hat. Die Anwendungsfläche ist die, die alle anderen aufgegeben haben.
 |---|---|---|---|---|
 | 1 | Voyager 1/2 | 160/130 AU | **GESCHLOSSEN** (2026-09-04): dreiachsen-Selbst-Rauschen, kein offener Cruise-Doppler | — (Befund `docs/befund/befund-voyager-roh-doppler-zugang.md`) |
 | 2 | New Horizons | 60 AU | **besteht** (2026-09-04): Spin-Cruise, kein Reaktionsrad, >50 AU bewohnt | Harvest nicht offen — `request-only`-Doppler-Anfrage (JPL/DSN-ODF), REX = nur Okkultation/TNF |
-| 4 | Mariner/Galileo/Cassini | — | Galileo **bestehen** (open ATDF/TRK-2-34, Dual-Spin, ≤5 AU — Reserve); Cassini **fallen** (3-Achsen); Mariner **fallen** (kein Distanz-Muster) | Galileo-GWE als offene Reserve (andere Geometrie, kein Quiet-Zone-Nachbau); Cassini bleibt Kontrast (Ka sauber) |
+| 4 | Mariner/Galileo/Cassini | — | Galileo **bestehen** (Dual-Spin, S-Band medium-getrieben, ≤5 AU — Reserve; Bestand gemessen 2026-09-05: PDS3 `GO-…-RSS-…-V1.0`, TRK-2-25/2-18, kein TRK-2-34, GWE open-loop ODR — `befund-galileo-gwe-bestand.md`); Cassini **fallen** (3-Achsen); Mariner **fallen** (kein Distanz-Muster) | Galileo-GWE als offene Reserve (eigene relativ-ruhige ≤5-AU-Achse, kein Quiet-Zone-Nachbau); Cassini bleibt Kontrast (Ka sauber) |
 
 Tür 3 (die laute Zone als Plasma-Instrument) ist **nicht als Novum** in der
 Landkarte — der Literatur-Scan hat sie widerlegt (siehe unten).
@@ -243,6 +243,27 @@ Pässe 2016–2024).
 - **Status:** `pending` — Versand ist ein menschlicher Akt (Datum +
   Adresse beim Versand eintragen), Antwort `pending`, nie 0.0.
 
+## Lehre aus Schritt 3 (Galileo-Bestandsaufnahme, 2026-09-05)
+
+Der Vorbefund trug eine falsche Adresse (`gll.rss` existiert nicht; real =
+PDS3 `GO-…-RSS-…-V1.0` am PPI-Knoten — Befund
+`docs/befund/befund-galileo-gwe-bestand.md`). Lehre, bindend für alle noch
+offenen Türen: **Register-Behauptungen über externe Archive sind Adressen,
+keine Orte — `lookup vor harvest`.** Jede künftige `open`-Aussage über einen
+Datenbestand ist `pending` bis zum Registry-Lookup. Für die NH-Anfrage heißt
+das: verifizierte Bestandsbezeichnungen zitieren, nicht die erfundene
+Bundle-ID (eine Anfrage mit falscher ID kommt bei JPL nicht an). Für Tür 1
+(V1) ist die Frage nicht mehr „gibt es die Daten?", sondern „verifiziere die
+Adresse, bevor du an die Tür gehst".
+
+**Nebenfund mit eigenem Wert — der GWE-ODR-Banden-Test:** `GO-X-RSS-1-ODR-V1.0`
+(open-loop, 1994/95) lief auf **DSS 14/43/63 — denselben drei Stationen wie
+die 20-s-Bande.** Open-loop ohne Sonden-Doppler-Verwirrung, Ära überlappend
+mit Pioneer (1987–93). Wenn die 20-s-Bande ein DSN-Ketten-Erbe ist, müsste
+sie im GWE-ODR-Material auftauchen — potenziell die stärkste externe
+Validierung der Banden-Hypothese (Klasse-2-Item des `auftrag-bande-split.md`,
+jetzt mit einer konkreten, offenen Quelle).
+
 ## Register-Satz
 
 *Die Quiet-Zone ist kein Pioneer-Ergebnis — sie ist ein Rezept: Rauschen
@@ -262,4 +283,7 @@ Vision-LLM öffnet sie). Vorfilter ausgeführt (2026-09-04,
 `auftrag-quiet-zone-vorfilter.md`): New Horizons `besteht` und trägt den
 nächsten Harvest — aber `request-only` (JPL/DSN-ODF-Anfrage); Galileo-GWE
 steht als offene Reserve; Cassini/Mariner `fallen`. Nächste Hebel:
-NH-Doppler-Anfrage formulieren oder Galileo-GWE-Ernte prüfen.
+NH-Doppler-Anfrage formulieren (Galileo-GWE-Ernte geprüft 2026-09-05 —
+`docs/befund/befund-galileo-gwe-bestand.md`: `gll.rss` existiert nicht,
+real = PDS3 `GO-…-RSS-…-V1.0`, eigene relativ-ruhige ≤5-AU-Achse statt
+Quiet-Zone-Nachbau).
