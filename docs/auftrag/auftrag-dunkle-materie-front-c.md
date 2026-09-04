@@ -352,3 +352,18 @@ nicht <1 Hz. √N über die Zeit scheitert an N. Der Weg darunter: feinere Rohda
 (die 60-s-Doppler-Samples direkt statt der Tagesmediane, sub-Hz-Kadenz-
 Aggregation) oder Daten mit mehr Tracking-Abdeckung — die „breitere Basis /
 nächste Sonde" des Registers (0 honored).
+
+**Daten-Zugänglichkeit gemessen (2026-09-03, Commit 4d921bd) — die 60-s-Daten
+heben den Boden nicht.** Die 60-s-Samples liegen auf der Platte (P10 908.028
+Roh-Doppler + 173.030 Stations-Residuen; P11 967.043 + 616.014). P11 hat ~283.000
+effektiv unabhängige Samples (60-s-Autokorrelation 0,316) — der scheinbare
+sub-Hz-Hebel. Die per-Sample-Regression (negativ-fuzzy-gereinigte Residua direkt,
+statt Tagesmediane) wurde gebaut: **P11 −2,7× Anomalie (sunward) ABER nur −0,2σ**
+(SE ±8,5×10⁻³ Hz/day); P10 +0,1× bei 0,0σ. Keine Signatur signifikant. Grund: der
+per-Sample-RMS (6,2–7,0 kHz) ist dem Tagesmedian-RMS (154 Hz) so überlegen, dass
+der √N-Gewinn über 283k Samples verpufft — der Tagesmedian mittelt die
+per-Sample-Streuung besser aus. **Die Rohdaten sind zugreifbar, aber der Boden
+ist die per-Sample-Streuung selbst; keine Aggregations-Kadenz (Tag, Woche, Sample)
+hebt die Anomalie über die Signifikanzschwelle.** Der Weg bleibt: mehr
+Tracking-Abdeckung oder eine Sonde mit besserem Instrument — breitere Basis, 0
+honored.
