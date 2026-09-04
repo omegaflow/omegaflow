@@ -697,16 +697,21 @@ fn main() {
                 }
             };
             let mut spec_rows: Option<Vec<(f64, f64)>> = None;
+            let tmp_dir = workdir.join("tmp");
+            let _ = std::fs::create_dir_all(&tmp_dir);
             for suffix in ["_x1d.fits", "_x1dints.fits"] {
-                let tmp = format!(
-                    "/tmp/opencode/jwst_{}_{}.fits",
-                    row.obs_id,
-                    if suffix.starts_with("_x1dints") {
-                        "ints"
-                    } else {
-                        "x1d"
-                    }
-                );
+                let tmp = tmp_dir
+                    .join(format!(
+                        "{}_{}.fits",
+                        row.obs_id,
+                        if suffix.starts_with("_x1dints") {
+                            "ints"
+                        } else {
+                            "x1d"
+                        }
+                    ))
+                    .to_string_lossy()
+                    .into_owned();
                 let uri = format!("mast:JWST/product/{}{}", row.obs_id, suffix);
                 if !curl_bytes(
                     "https://mast.stsci.edu/api/v0.1/Download/file",
