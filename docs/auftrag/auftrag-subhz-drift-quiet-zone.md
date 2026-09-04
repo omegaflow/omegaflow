@@ -2,8 +2,8 @@
   title: Auftrag — Sub-Hz-Drift auf der Quiet-Zone-Basis (P10 >50 AU)
   class: auftrag
   date: 2026-09-04
-  status: pending
-  sha256: 2ef716828b995a449736d4c7400c2e800c4afd572d4f12ea7fa6b08b002acbf9
+  status: geschlossen
+  sha256: 37d63953ce26840f6ff90fbc39292b0f59a3385b0d3f095296521f8785a58c30
   see-also: docs/auftrag/auftrag-dunkle-materie-front-c.md docs/auftrag/auftrag-vollmission-redution.md docs/paper/probe-front-dark-matter.md
 -->
 
@@ -65,6 +65,43 @@ isolierte Räume = isolierte Ontologie.
 5. **Registrierung** — Ergebnis + n + Schwellen + Ausgang ins Register; Paper
    v4-Edit (Quiet-Zone-Absatz mit Drift-Verdikt, `probe-front-dark-matter.md`)
    danach, eigener Commit.
+
+## Befund (2026-09-04, gemessen — `pioneer_navio_zone_drift`, Deduktion 44)
+
+Alle fünf Bausteine in einer frischen Session gebaut und gefahren. Der
+sub-Hz-Median-Boden der Zone ist erreicht — aber er trägt den Drift nicht.
+
+| Sonde | Zone (Tage) | median \|daily-med\| | RMS gesamt | Maskierung | RMS gemaskt | Drift (Steigung) | σ | Null-Schwelle |
+|---|---|---|---|---|---|---|---|---|
+| P10 | >50 AU (1036) | 0,21 Hz | 256,8 Hz | 39/1036 verworfen | 57,7 Hz | −1,225e-3 Hz/d = −1,95× Anomalie (sunward) | 0,45σ | 7,38e-3 Hz/d (6× darüber) |
+| P11 | 15–30 AU (606) | 6,77 Hz | 306,2 Hz | 15/606 verworfen | 104,6 Hz | +4,375e-3 Hz/d = +6,98× Anomalie (outward) | 0,54σ | 2,19e-2 Hz/d (5× darüber) |
+
+Verdikt: **keine Präferenz (Grenze)** auf beiden Sonden.
+
+1. **Verdikt-Bindung** — drei Ausgänge vorregistriert; Schwellen aus der Null
+   (Baustein 3) festgeschrieben, bevor irgendein Modellwert fiel. Ausgang (c)
+   getroffen.
+2. **Maskierung** — Deduktion-10-Disziplin: korrupte Cluster (Tages-RMS
+   > 4×p90) und Schwanz-Tage (|med| > 4×p90) verworfen, nicht gemittelt —
+   39/1036 (P10) bzw. 15/606 (P11). Die 3,8 % Schwanz-Tage tragen das RMS:
+   257 → 57,7 Hz (4,4× Senkung, P10).
+3. **Surrogat-Null** — Block-Bootstrap (Block 16 d = 2⁴, 500 Surrogate,
+   fixer Seed) auf der gemaskten Reihe; lag-1-Autokorrelation 0,083 (P10) /
+   0,043 (P11), nahe-weiß, der Block deckt sie ab.
+4. **Regression** — linear/∝t²/τ=126,5 a gegen die gemaskte Reihe: Drift P10
+   sunward bei 0,45σ, P11 outward bei 0,54σ, beide 6×/5× unter der
+   Null-Schwelle, Vorzeichen widersprechen sich. Formtest degeneriert
+   (exp ≈ linear über 11/6 a gegen τ=126,5 a; ∝t²-Vorteil 0,18 % gegen
+   Null-p95 0,07 % = vernachlässigbare Überanpassung, darunter liegt kein
+   aufgelöster Drift).
+5. **Registrierung** — TODO Nadel Ⅰ + dieses Blatt; Papier v7 im eigenen
+   Commit.
+
+**Der Granit-Satz:** *Der sub-Hz-Gewinn der Zone liegt im Median, nicht im
+Drift. Die Drift-Regression kämpft gegen die RMS-Streuung der Tagesmediane,
+nicht gegen den Median — und die überlebt die Maskierung (57,7 Hz gegen
+~5 Hz Missionsdrift). Die Zone senkt den Median-Boden; sie verdünnt nicht die
+Drift-Streuung. Limit, nicht Versagen (0 honored).*
 
 ## Grenzen
 
