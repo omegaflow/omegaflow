@@ -1,0 +1,749 @@
+TDA Progress Report 42-122
+
+August 15, 1995
+
+Water Vapor Radiometer Measurements of the
+Tropospheric Delay Fluctuations at
+Goldstone Over a Full Year
+S. J. Keihm
+Microwave, Lidar, and Interferometer Technology Section
+
+One year of near-continuous water vapor radiometer (WVR) measurements at
+DSS 13 has provided a database for characterizing the Goldstone tropospheric delay
+properties in a statistical sense. The results have been expressed in terms of the
+Allan standard deviation of delay and compared to a previous model for Goldstone
+fluctuations and the specifications of the Cassini Gravitational Wave Experiment
+(GWE). The new WVR data indicate that average fluctuation levels at hour time
+scales or less are ≈30-percent lower than the earlier Goldstone model predictions. At
+>1-h time scales, the WVR indicated fluctuation levels are in closer agreement with
+the model, although noise floor limitations may be artificially raising the average
+WVR-derived atmospheric fluctuation levels at the longer time scales. When scaled
+to two-way Doppler tracking at 20-deg elevation, as will occur for the GWE, these
+results indicate that Goldstone winter tropospheric delay fluctuations will typically
+be a factor of 10 larger than the GWE requirements at 1000 s and a factor of 4
+larger at 10,000 s.
+
+I. Introduction
+Variations in the atmospheric path delay due to fluctuations in water vapor density are a major, if
+not the dominant, error source in dual-frequency or high single-frequency [e.g., Ka-band (32 GHz)] radio
+metric measurements such as very long baseline interferometry (VLBI) and Doppler spacecraft tracking.
+The current model for the spatial and temporal fluctuations of vapor density at Goldstone [1] indicates
+that the error budget requirements for the Cassini Gravitational Wave Experiment (GWE) cannot be met
+for any time scales from 100 to 10,000 s without an independent calibration of the vapor-induced delay
+fluctuations along the signal link line of sight. The fluctuation model is based on relatively small water
+vapor radiometer (WVR), VLBI, and radiosonde data sets from the three DSN sites and does not include
+sufficient sampling to characterize diurnal and seasonal variations. For the purpose of Cassini GWE
+planning, it is clearly desirable to assess the accuracy and variability of the current Goldstone fluctuation
+model. An improved, more detailed model will facilitate evaluation of the GWE tropospheric calibration
+error budget, since demands on a number of components of the calibration system scale linearly with the
+level of fluctuations.
+Since October 5, 1993, the JPL R6 WVR has been operating almost continuously at Deep Space Station
+(DSS) 13, obtaining sky brightness temperature measurements at frequencies of 20.7 and 31.4 GHz. Data
+1
+
+processing through September 1994 has been completed, providing a rich data set for characterizing
+vapor-induced path delay fluctuations on all time scales >200 s and determining variations with time
+of day and season. The WVR does not measure dry air delay variations. However, because the vaporinduced fluctuations are much larger than the dry fluctuations at all time scales, the WVR measurements
+essentially characterize the total effect of atmospheric refractivity fluctuations. This article describes
+the WVR results primarily in terms of zenith path delay variability, using the Allan standard deviation
+(ASD) parameter [2]. In Section II, brief instrument and operation descriptions for the R6 WVR will be
+presented. Pertinent details of the WVR processing are presented in the Appendix. Results are presented
+in Section III. After displaying the daily and monthly averaged path delay time series for the year’s data,
+emphasis is placed on the ASD of the measured delays over time intervals relevant to the Cassini GWE,
+200 to 12,800 s. Seasonal and day/night contrasts are illustrated. Section IV discusses implications for
+the Cassini GWE tropospheric calibration effort, and Section V summarizes the results.
+
+II. R6 WVR Instrument Description and Operation
+The R6 water vapor radiometer (Fig. 1) is a two-channel instrument that measures sky brightness
+temperatures at 20.7 and 31.4 GHz. Design specifications are described in detail in [3]. For each channel,
+the IF bandwidth is 100 MHz (double side band) and the antenna beamwidth is 7 deg with beam efficiency
+equal to 99.9 percent for ±15 deg around beam center. The mechanical mount allows elevation scanning
+from horizon to horizon and azimuth scanning over ≈85 percent of the full circle. Both the elevation and
+azimuth slewing rates are ≈3 deg/s. Estimated elevation position accuracy is 0.5 deg. Estimated absolute
+antenna temperature accuracy is 0.5 K, based on tip curve calibration and correlations of gain variations
+with measured instrument temperatures (see Appendix). The measured 1-s antenna temperature noise is
+≈0.06 K, and this value is characteristic of the precision of 1-s measurements over time scales of minutes
+or less. At longer time scales, instrument temperature variations cause gain changes that cannot be
+perfectly monitored in the processing, leading to a reduction in precision. Based on previous experiments
+with side-by-side WVRs,1 antenna temperature precision of 0.1 K has been estimated over time scales of
+hours. A more detailed discussion of the WVR calibration processing is given in the Appendix.
+At the DSS-13 site, the R6 WVR is deployed on the northeast corner of the control building, approximately 400 m from the 34-m DSN antenna. It has operated since October 5, 1993, in a continuous
+tipping-curve mode that provides calibration monitoring in clear weather and sky brightness temperature
+measurements for all nonraining conditions at elevation positions of 30, 42, 90 (zenith), 138, and 150 deg.
+If alternating azimuths are specified in the operating program, then four azimuth positions are sampled
+for each of the nonzenith elevation positions (since the 138- and 150-deg positions are equivalent to the
+30- and 42-deg elevations but at opposite azimuth). The complete tip curve elevation sequence is 30,
+42, 90, 138, 150, 138, 90, 42, and 30 deg, requiring ≈4 min to complete. Most of the time is spent in
+the changing of elevation positions, during which time no sky measurements are obtained. At each fixed
+elevation position, 1 s of sky integrations are obtained for each channel with the receiver switched to the
+feedhorn, followed by 1 s of base count measurements (each channel) obtained with the receiver switched
+to an internal ambient reference load. This sequence of measurements provides absolute gain calibration
+by effectively using the known cosmic background brightness temperature as a cold target and the internal
+reference load as an ambient target. Details of the tip curve calibration formulation are included in the
+Appendix.
+Using derived gain functions, updated every 3 days, zenith brightness temperature time series were
+computed by averaging the two 90-deg elevation sky and base counts of each tip curve and applying the
+radiometer calibration equation (Appendix). Thus, each brightness temperature comprised 2 s of sky
+integration over a ≈4-min interval with effective ∆T noise of ≈0.04 K.
+1 S. J. Keihm, Water Vapor Radiometer Intercomparison Experiment: Platteville, Colorado, March 1–14, 1991, JPL D-8898
+
+(internal document), Jet Propulsion Laboratory, Pasadena, California, 1991.
+
+2
+
+Fig. 1. R6 water vapor radiometer deployed at
+Goldstone DSS 13.
+
+III. Results
+A. Path Delay Time Series
+The WVR-measured 20.7- and 31.4-GHz zenith brightness temperatures from October 1993 through
+September 1994 were converted to a Goldstone zenith path delay (PD) time series using the retrieval
+algorithm described in the Appendix. A 1-month segment of the 4-min sampled PD time series is shown
+in Fig. 2. The September 1994 interval was chosen because it exhibits the full range of Goldstone
+conditions and some of the most rapid large-scale variations seen in the data. (The missing data through
+September 6 are due to an operational failure that commenced on August 26.) Path delay variations
+of 5 to 10 cm are seen to occur over time scales of hours on the 8th, 10th, 17th, 24th, and 27th of the
+month. There is also a week-long interval of extremely dry conditions (PD ≈5 cm) followed by a week
+of much more humid conditions (PD ≈11 cm). The September data illustrate the potential variability
+of Goldstone summer conditions. Winter conditions are generally drier and more stable, as illustrated
+in the January results (Fig. 3). Typical winter path delays are in the 3- to 5-cm range, with occasional
+fluctuations to the ≈10-cm level.
+Daily-averaged path delays for the entire 1-year data set are shown in Fig. 4. Both clear and cloudy
+conditions are included in the averaging over 24-h intervals. Seasonal variations are apparent. Large
+fluctuations occur throughout the year, although their durations appear much shorter during the winter
+months. The measured path delay annual mean for Goldstone is 6.4 cm. The average 24-h standard
+variation is 0.9 cm.
+B. Path Delay Fluctuation Statistics
+The Allan standard deviation is useful for distinguishing the relative contributions of true path delay fluctuations from WVR instrument effects. It is also the parameter used to define the requirements and
+
+3
+
+20
+18
+
+ZENITH PD, cm
+
+16
+14
+12
+10
+8
+6
+4
+2
+0
+
+5
+
+10
+
+15
+
+20
+
+25
+
+30
+
+35
+
+DAYS SINCE BEGINNING OF MONTH, UT
+Fig. 2. WVR-derived zenith wet path delay at DSS 13,
+September 1994.
+
+16
+14
+
+ZENITH PD, cm
+
+12
+10
+8
+6
+4
+2
+0
+0
+
+10
+
+5
+
+15
+
+20
+
+25
+
+30
+
+35
+
+DAYS SINCE BEGINNING OF MONTH, UT
+Fig. 3. WVR-derived zenith wet path delay at DSS 13,
+January 1994.
+
+goals for tropospheric delay calibration for the Cassini GWE. For a time interval ∆t, the ASD for vaporinduced delay, δ, is defined as
+
+ASD(∆t) =
+
+E 1/2
+D
+ [δ(t + 2∆t) − 2δ(t + ∆t) + δ(t)]2 
+
+
+2(∆t)2
+
+
+
+(1)
+
+in s/s where <> denotes ensemble averaging, δ = P D/c is the delay in s, and c equals the speed of light.
+Equation (1) essentially characterizes the nonlinear variability of the delay or, equivalently, the variability
+after any linear trend is removed.
+The ASD of delay may be calculated from the WVR measurements by the application of Eq. (1)
+after the brightness temperature measurements have been converted to the delay variable. The results
+to be presented are based on ≈24-h intervals of continuous clear weather data only. Clouds do not add
+a significant component to the delay or delay fluctuations. However, they do contribute significantly to
+
+4
+
+MEAN ZENITH PD AND STANDARD DEVIATION, cm
+
+20
+
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+18
+
+ANNUAL AVERAGES:
+= 6.36 cm
+PD MEAN
+SIGMA MEAN = 0.92 cm
+
+16
+14
+
+DAILY AVERAGE PD
+SIGMA = 24-h STANDARD DEVIATION
+
+12
+10
+8
+6
+4
+2
+0
+0
+
+50
+
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+DAYS SINCE OCTOBER 1, 1993
+Fig. 4. WVR-derived daily and standard deviation of zenith path delay at
+DSS 13, October 1993 through September 1994.
+
+the brightness temperature measurements of both WVR channels. Because clouds have spatial structure
+comparable to and smaller than the WVR beams, path delay retrievals under cloudy conditions are
+inherently “noisy,” and it is difficult to differentiate between the true variability that would be seen by a
+DSN antenna and the WVR-measured variability that is contaminated by the beam-smearing effects.
+When only clear weather data are included, the path delay variability can be calculated using only the
+20.7-GHz brightness temperature measurements. ASD values have been computed for ∆t values of 200,
+400, 800, 1600, 3200, 6400, and 12,800 s using ≈24-h WVR data intervals from October 1993 through
+September 1994. The continuous clear weather TB20.7 data sets were first interpolated at 200-s intervals
+to facilitate the computations of Eq. (1). The results are shown in Figs. 5(a) through 5(d) for four of
+the time scales that nearly span the intervals of interest (100 to 10,000 s) for the Cassini GWE. The
+∆t = 200-s data include a +22-percent correction that accounts for the suppression of the ASD due to
+each sample being the average of two zenith measurements ≈100 s apart.2 At longer time scales, the
+effect is negligible. Also shown in the plots are the previous model for the Goldstone mean fluctuations
+and the WVR ASD measurement noise floor that would be produced by the estimated precision (varying
+with ∆t due to gain fluctuations) of the individual TB20.7 measurements.
+The “Goldstone model” refers to the Kolmogorov turbulence model for atmospheric refractivity variations [1] and the derived annual mean structure constant parameter for Goldstone [4]. The basic assumptions are that the magnitude of vapor-induced spatial variations in refractivity vary with the 1/3 power
+of distance, and that temporal variations are caused by spatial variations that are translated over a site
+by the wind. The constant of proportionality between the fluctuations’ magnitude and the 1/3 power of
+distance is called the structure constant, CN , and its value, for a given level of delay variability, depends
+on the assumptions of effective troposphere height and wind speed. Based primarily on VLBI measurements, and assuming effective tropospheric height and wind speed of 2 km and 8 m/s, the Goldstone
+model is characterized by a structure constant of CN = 7 · 10−8 m−1/3 and has been used to calculate
+the “Goldstone Model” fluctuation levels referred to in Figs. 5 through 7.
+The first clear impression from the Fig. 5 results is that the WVR-measured average Goldstone fluctuations are significantly lower than previously modeled, especially at the shorter time scales. The WVR
+2 R. Linfield, Jet Propulsion Laboratory, Pasadena, California, provided the calculations for assessing the effect of two-
+
+sample averaging on the 200-s time scale ASD measurements.
+
+5
+
+18
+
+30
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+25 (a)
+
+∆t = 200 s
+GOLDSTONE MODEL
+
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+(b)
+
+14
+12
+
+20
+ALLAN STANDARD DEVIATION × 1015 s/s
+
+16
+
+∆t = 800 s
+
+GOLDSTONE MODEL
+
+10
+
+15
+
+8
+10
+
+6
+4
+
+5
+
+0.04-K MEASUREMENT FLOOR
+
+2
+
+0.06-K MEASUREMENT FLOOR
+
+0
+
+0
+10
+9
+
+8
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+7
+
+7
+
+∆t =12,800 s
+6 GOLDSTONE MODEL
+
+6
+
+5
+
+5 GOLDSTONE MODEL
+4
+
+4
+
+8
+
+(c)
+
+∆t = 3200 s
+
+(d)
+
+0.1-K MEASUREMENT FLOOR
+
+3
+
+3
+2
+
+2
+1
+
+0.09-K MEASUREMENT FLOOR
+
+0
+
+1
+0
+
+0
+
+50
+
+100 150 200
+250
+300
+DAYS SINCE OCTOBER 1, 1993
+
+350 400
+
+0
+
+50
+
+100
+150 200
+250
+300
+DAYS SINCE OCTOBER 1, 1993
+
+350 400
+
+Fig. 5. WVR-derived Allan standard deviation of one-way zenith path delay at DSS 13, October 1993 through
+September 1994. Each data point represents the ASD calculated from ≈24 hours of continuous cloud-free
+measurements: (a) ∆t = 200 s, (b) ∆t = 800 s, (c) ∆t = 3200 s, and (d) ∆t = 12,800 s.
+
+data indicate that the October 1993 through September 1994 mean fluctuation levels were ≈30- to 35percent lower than the previous Goldstone model at time scales <1 h. At the longer time scales, the
+current WVR results approach the Goldstone model in terms of all-season average.
+In examining the results shown in Figs. 5(a) through 5(d), it is important to keep in mind that the
+WVR measurement “noise” floor determines a lower bound of measurable tropospheric fluctuations. For
+the ASD measurements, contributions from the instrument and troposphere add in quadrature, so that
+data close to the true measurement noise floor only place an upper bound on the true tropospheric
+component. The measurement noise floors shown in Figs. 5(a) through 5(d) are estimates based on the
+inherent instrument noise temperature, integration time, and gain stability. At all time scales, a significant
+fraction of the data is dominated by instrument variations, and the true atmospheric fluctuation levels lie
+below the indicated noise floors. Thus, “average” conditions as determined by the WVR measurements
+will always be biased high, dependent on the true instrument noise floor.
+The second conclusion inferred from the WVR ASD results is that there are large seasonal variations
+in the average fluctuation levels and large scatter throughout the year. To derive an updated Goldstone
+model with seasonal dependence, the data of Fig. 5 have been averaged by month, as shown in Fig. 6.
+Also shown in Fig. 6 are monthly averaged ASD results for subsets of the original 24-h intervals, including
+only the 9 p.m. through 5 a.m. local nighttime measurements. As expected, the night-only fluctuations
+show a general reduction in fluctuation levels relative to the 24-h data, with the effect most pronounced
+at the shortest time scales. However, the day/night contrast is strongly seasonally dependent, with the
+largest differences during the summer months and almost no difference during the November through
+February time frame, when overall fluctuation levels are lowest.
+6
+
+25
+
+14
+
+∆t = 200 s
+
+(a)
+
+(b)
+GOLDSTONE MODEL
+
+∆t = 800 s
+
+12
+
+20
+
+GOLDSTONE MODEL
+10
+24-h DATA
+
+ALLAN STANDARD DEVIATION × 1015 s/s
+
+15
+
+8
+24-h DATA
+
+10
+
+6
+
+NIGHT
+
+NIGHT
+4
+
+5
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+2
+
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+0
+
+0
+6
+(c)
+
+3.0
+
+∆t = 3200 s
+
+(d)
+
+5
+
+∆t =12,800 s
+
+2.5
+GOLDSTONE MODEL
+
+24-h DATA
+2.0
+
+4
+24-h DATA
+
+3
+
+GOLDSTONE MODEL
+NIGHT
+
+1.5
+NIGHT
+
+2
+
+1.0
+0.5
+
+1
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+0
+
+OCT NOV DEC JAN FEB MAR APR MAY JUN JUL AUG SEP
+
+0.0
+0
+
+2
+4
+6
+8
+10
+MONTHS SINCE SEPTEMBER 1993
+
+12
+
+0
+
+2
+4
+6
+8
+10
+MONTHS SINCE SEPTEMBER 1993
+
+12
+
+Fig. 6. Monthly averaged Allan standard deviation of one-way zenith path delay at DSS 13. The "night" data
+refer to calculations that used only 9 p.m. through 5 a.m. local time WVR measurements: (a) ∆t = 200 s,
+(b) ∆t = 800 s, (c) ∆t = 3200 s, and (d) ∆t = 12,800 s.
+
+IV. Implications for Cassini GWE
+The WVR-derived results for Goldstone path delay fluctuations, with seasonal and day/night dependencies, provide a means for assessing the troposphere’s expected impact on radio metric measurements.
+For the Cassini Gravitational Wave Experiment, planned for Goldstone during winter months, the detection threshold will be limited by uncalibrated troposphere delay fluctuations. The importance of
+the effect is illustrated by comparing the measured average fluctuations for Goldstone with the Cassini
+specifications3 of tolerable uncalibrated fluctuation levels, as shown in Fig. 7. The WVR-derived fluctuation levels have been recomputed to account for the two-way Doppler tracking mode of the GWE at
+20-deg elevation, the lowest elevation angle to be used in the experiment. For time scales ≥200 s, the
+tropospheric fluctuations scale approximately linearly with air mass, resulting in a factor of 3 increase for
+20-deg elevation relative to zenith.
+For ∆t intervals ≤≈ tRT /2, where tRT is the GWE round-trip travel
+√
+time, the two-way ASD is ≈ 2 times the one-way ASD. For ∆t ≈ tRD , the one-way and two-way ASD
+values are equal. For ∆t >> tRT , the two-way/one-way ASD ratio approaches a value of 2. The net
+effect of converting the modeled and measured one-way zenith ASD values shown in Fig. 6 to two-way
+20-deg elevation fluctuation levels, shown in Fig. 7, is an increase by a factor of ≈4, with the results not
+significantly sensitive to the signal round-trip travel time. The selected value of tRT = 6400 s is near the
+average for the planned GWE measurements.
+For time scales from 200 to 1000 s, average winter conditions at Goldstone will require a calibration
+correction of a factor of ≈10 to meet the GWE requirements at 20-deg elevation. At 10,000 s, the average
+3 Cassini
+
+Radio Science Ground System D-Level and Cost Review (internal document), Jet Propulsion Laboratory,
+Pasadena, California, February 27, 1995.
+
+7
+
+ALLAN STANDARD DEVIATION × 1015 s/s
+
+100.0
+
+PREVIOUS GOLDSTONE MODEL
+FULL DAY SUMMER
+NIGHT SUMMER
+WINTER
+
+10.0
+
+CASSINI REQUIREMENT
+
+1.0
+
+CASSINI GOAL
+
+ROUND TRIP
+t = 6400 s
+
+0.1
+100
+
+1000
+
+10,000
+
+100,000
+
+∆t, s
+Fig. 7.
+Comparison of modeled and WVR-measured
+two-way Allan standard deviation for Goldstone at 20-deg
+elevation with Cassini Gravitational Wave Experiment
+requirements and goals.
+
+winter fluctuation levels exceed the GWE requirements by a factor of 4. To meet the GWE goals, the
+tropospheric calibration requirements will be 4 times more stringent at all time scales. Expressed equivalently, at the 200- to 1000-s time scales, the GWE requirement/goal at 20-deg elevation will necessitate
+an independent tropospheric calibration system that removes 90/98 percent of the expected level of fluctuations. At the longest GWE time scales, the demands on the calibration system will be less severe
+but still require measurements with significantly greater stability than now obtainable from the current
+generation of water vapor radiometers.
+
+V. Summary
+One year of near-continuous WVR measurements at DSS 13 has provided a database for characterizing
+the Goldstone tropospheric delay properties in a statistical sense. For the period from October 5, 1993,
+through September 30, 1994, the mean zenith wet path delay was 6.4 cm with an average standard
+deviation of 0.9 cm over 24-h intervals. The path-delay time series data revealed expected seasonal
+dependencies with frequent large day-to-day variations, especially in the summer months.
+Calculations based on ≈24-h intervals of clear data produced wet delay fluctuation levels over 1 full
+year, expressed as the Allan standard deviation of zenith delay. Compared to the previous Goldstone
+model, the annually averaged WVR results are 30- to 35-percent lower for all time scales from 200 s
+to 30 min. For time scales of ≈1 to 4 h, the WVR–Goldstone model differences decrease from ≈25 to
+0 percent. The apparent convergence between the WVR results and the previous Goldstone model at the
+longest time scales may be partially attributed to the noise floor of the WVR measurements.
+Seasonal variations of ±30 to 40 percent from the annual mean ASD occur at all time scales, with
+the November through March period lowest and the June through September period highest. Day/night
+contrasts are apparent during the summer months, for which 9 p.m. through 5 a.m. fluctuation levels are
+20- to 30-percent lower than the 24-h averages. No significant day/night contrasts were revealed in the
+November through March time frame. For clear conditions, it is not expected that the annual or seasonally
+averaged Goldstone fluctuation levels will vary significantly from year to year. Based on the annual
+repeatability of clear weather 31-GHz atmospheric noise measurements from the Madrid DSN station,4
+4 S. J. Keihm, B. L. Gary, and S. J. Walter, Spain 31 GHz Observations of Sky Brightness Temperatures: June 1990–June
+
+1992, JPL D-10710 (internal document), Jet Propulsion Laboratory, Pasadena, California, October 1, 1992.
+
+8
+
+an upper limit of ≈15 percent is estimated for year-to-year variations in the average Goldstone fluctuation
+levels. Since almost a second full year of Goldstone WVR data is now available, the representativeness
+of the new Goldstone model can be tested.
+Comparisons of measured fluctuation levels with the Cassini GWE error budget reveal that an advanced
+calibration system must be implemented to meet the GWE requirements and approach the GWE goals
+at all time scales. For expected winter conditions, the calibration system must remove up to 98 percent of
+the tropospheric signal, dependent on time scale and elevation angle, to approach the GWE goals. This
+will require a nearly order-of-magnitude improvement relative to current WVR instrument stability.
+
+Acknowledgments
+R. Denning and R. Swindlehurst of the Microwave, Lidar, and Interferometer
+Technology Section refurbished the R6 WVR and operating software prior to Goldstone deployment. In almost 2 years of near-continuous operation, no major failures
+have occurred. C. Goodson, G. Bury, and the entire operations personnel at DSS 13
+provided the daily monitoring of the R6 WVR operations that has produced 90percent efficient data acquisition since the instrument deployment in October of
+1993. R. Linfield, S. Walter, L. Teitelbaum, and M. Mahoney provided incisive
+comments and very useful recommendations in their reviews of preliminary drafts
+of this article.
+
+References
+[1] R. N. Treuhaft and G. E. Lanyi, “The Effect of Dynamic Wet Troposphere on
+Radio Interferometric Measurements,” Radio Sci., vol. 22, no. 22, pp. 251–265,
+1987.
+[2] D. W. Allan, “Statistics of Atomic Frequency Standards,” Proc. IEEE, vol. 54,
+no. 2, pp. 221–230, 1966.
+[3] G. M. Resch, M. C. Chavez, and N. I. Yamane, “Description and Overview
+of an Instrument Designed to Measure Line-Of-Sight Delay Due to Water Vapor,” The Telecommunications and Data Acquisition Progress Report 42-72,
+October–December 1982, Jet Propulsion Laboratory, Pasadena, California, pp. 1–
+19, February 15, 1983.
+[4] R. P. Linfield and J. Z. Wilcox, “Radio Metric Errors Due to Mismatch and
+Offset Between a DSN Antenna Beam and the Beam of a Troposphere Calibration Instrument,” The Telecommunications and Data Acquisition Progress
+Report 42-114, April–June 1993, Jet Propulsion Laboratory, Pasadena, California, pp. 1–13, August 15, 1993.
+
+9
+
+Appendix
+WVR Data Processing
+Conversion of radiometer detector counts to sky brightness temperatures requires the determination
+of a system gain and offset and the monitoring of any variation of these parameters with time. Offset is
+provided by the detector response to an internal reference load of known temperature. Gain is provided
+by extrapolating the tip curve data to determine the detector response to the known cosmic background
+flux:
+G=
+
+CTbase − CTcos
+Tbase − Tcos
+
+(A-1)
+
+where CTbase are the base load (reference) counts for base temperature Tbase , and CTcos are the extrapolated antenna counts for a target temperature of Tcos . In the actual calibration processing, both gain
+and atmospheric opacity are determined together by requiring the brightness temperature (TB) values
+obtained from the antenna counts versus elevation data to fit the air mass dependence predicted by the
+simplified form of the radiative transfer equation, assuming a horizontally stratified atmosphere:
+T B(M ) = Tbase −
+
+¡
+¢
+CTbase − CTsky (M )
+= Tef f · 1 − e−M τ + Tcos · e−M τ
+G
+
+(A-2)
+
+where M = 1/ sin(el) is air mass, τ is the zenith opacity, Tef f is the effective radiating temperature of
+the atmosphere, and CTsky (M ) are the elevation-dependent detector counts when the switch is set to the
+antenna position. Given the sky counts for M = 1.0, 1.5, and 2.0, Eq. (A-2) can be solved iteratively
+for both τ and G. Gain results are insensitive to uncertainties in Tef f . For all of the Goldstone R6
+processing, a value of Tef f =285 K was used.
+Departures from horizontal stratification, primarily in the atmospheric distribution of water vapor,
+contribute scatter to the clear weather tip-curve gain determinations. Variations of instrument component losses with ambient temperature cause significant gain variations on longer time scales. These
+effects are smoothed and monitored by correlating tip-derived gains with each channel’s mixer temperature. The estimated resultant gain precision is ≈0.03 percent (≈0.1 K in TB) over time scales of hours.
+Absolute accuracies for both channels are estimated at the 0.5-K level, with the major uncertainties due
+to uncorrected detector nonlinearities and beam-smearing effects on the tip gain determinations. For the
+Goldstone R6 data, gain function fits were performed for three-day tip data sets. The three-day intervals
+were chosen as a compromise between the considerations of processing labor and the time variability of
+gain fit parameters.
+Brightness temperatures computed from the first equality of Eq. (A-2) are converted to path delay
+using a statistical algorithm based on radiosonde data from Desert Rock, Nevada, a site with comparable
+climatology and nearly the same surface elevation as Goldstone. Using the zenith brightness temperature
+results from both the 20.7- and 31.4-GHz channels, both integrated cloud liquid (Lz ) and vapor-induced
+path delay (P D) are computed:
+Lz (µm) = −146 − 8.81 · T B20.7 + 22.99 · T B31.4
+P D (cm) = −4.95 + 0.374 · T B20.7 + 0.358 · T B31.4
+
+10
+
+for Lz < 100
+
+(A-3)
+(A-4)
+
+P D (cm) = −1.24 + 0.695 · T B20.7 − 0.333 · T B31.4
+
+for Lz > 100
+
+(A-5)
+
+For clear conditions, path delays can also be computed from the single-channel (20.7-GHz) brightness
+temperatures:
+P D (cm) = −2.83 + 0.524 · T B20.7
+
+(A-6)
+
+Estimated errors in derived path delay values are ±0.5 cm (absolute) for clear conditions and ±0.8 cm
+for cloudy (Lz > 100) conditions. The precision of path delay variations is estimated to be ≈0.05 cm
+over hour time scales and is not sensitive to the retrieval algorithm uncertainties.
+
+11
+
+
