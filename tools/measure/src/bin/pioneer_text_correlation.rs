@@ -82,7 +82,11 @@ fn corr(a: &[f64], b: &[f64], lag: usize) -> f64 {
         db += y * y;
     }
     let den = (da * db).sqrt();
-    if den == 0.0 { 0.0 } else { num / den }
+    if den == 0.0 {
+        0.0
+    } else {
+        num / den
+    }
 }
 
 fn i1000_series(vals: &[f64]) -> Vec<f64> {
@@ -144,14 +148,20 @@ fn xorshift(rng: &mut u64) -> u64 {
 
 fn corr_report(name: &str, tokens: &[f64], series: &[f64], rng: &mut u64) {
     let mut best = 0.0f64;
+    let mut best_lag = 0usize;
     for lag in 0..=1000 {
         let r = corr(tokens, series, lag).abs();
         if r > best {
             best = r;
+            best_lag = lag;
         }
     }
+    let n_surr = std::env::var("TE_SURR")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(24);
     let mut null: Vec<f64> = Vec::new();
-    for _ in 0..24 {
+    for _ in 0..n_surr {
         let mut p = tokens.to_vec();
         for k in (1..p.len()).rev() {
             let j = ((xorshift(rng) >> 33) as usize) % (k + 1);
@@ -167,8 +177,15 @@ fn corr_report(name: &str, tokens: &[f64], series: &[f64], rng: &mut u64) {
         null.push(nb);
     }
     let null_max = null.iter().copied().fold(0.0, f64::max);
+    let null_p95 = {
+        let mut s = null.clone();
+        s.sort_by(f64::total_cmp);
+        s[((s.len() as f64 * 0.95) as usize).min(s.len() - 1)]
+    };
     let exceed = null.iter().filter(|&&x| x >= best).count();
-    eprintln!("    {name}: max |r| = {best:.4} vs Null max {null_max:.4} — p_emp = {exceed}/24",);
+    eprintln!(
+        "    {name}: max |r| = {best:.4} @lag {best_lag} vs Null max {null_max:.4} (p95 {null_p95:.4}, n={n_surr}) — p_emp = {exceed}/{n_surr}",
+    );
 }
 
 fn main() {
