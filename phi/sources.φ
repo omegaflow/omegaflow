@@ -3486,7 +3486,7 @@ at sun
 ttl 604800
 field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
 format jwst_spectra
 at sun
 ttl 604800
