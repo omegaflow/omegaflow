@@ -906,6 +906,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin jwst_spectra_compiler -- \
             --out jwst_spectra.bin \
             --lsk kernels/naif0012.tls \
+            --curated \
             --workdir phi/jwst_harvest \
             --budget 340 \
             --ci-mode
