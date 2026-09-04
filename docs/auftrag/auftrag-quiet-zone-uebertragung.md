@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-04
   status: pending
-  sha256: 155923817cf522979d80613be6c2870886f7bb4eb9ef23ef74655e6ed02ded52
+  sha256: a477878113ffb9e8a164814154fc562f8bfb73ca6ba5ba23b87891105ac4fe93
   see-also: docs/auftrag/auftrag-subhz-drift-quiet-zone.md docs/paper/probe-front-dark-matter.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
 -->
 
@@ -220,6 +220,28 @@ Befund: `docs/befund/befund-voyager-roh-doppler-zugang.md`.
 Tür 2 (New Horizons) und Tür 4 (Mariner/Galileo/Cassini) tragen den
 Vorfilter offen — Recherche-Auftrag:
 `docs/auftrag/auftrag-quiet-zone-vorfilter.md`.
+
+## NH-Daten-Anfrage (registriert 2026-09-04)
+
+Daten-Anfrage an ein Archiv (Bestandsabfrage, kein Kontaktversuch zu
+Befunden): New-Horizons-Nav-Doppler (ODF/TRK-2-34) für die
+Tracking-Rausch-Charakterisierung >50 AU (stille Cruise-/Hibernations-
+Pässe 2016–2024).
+
+- **An:** PDS Radio Science Subnode (Deep-Space-Tracking-Archive) bzw.
+  PDS Geosciences Node — Adressen befund-dokumentiert
+  (`docs/befund/befund-voyager-roh-doppler-zugang.md`, Prüfschritt 5:
+  `radiosci@att.net` / `geosci@wunder.wustl.edu`); **Erreichbarkeit beim
+  Versand zu prüfen** (Adressen von 2026-09-04, `pending`).
+- **Anliegen:** (1) sind NH-Nav-Doppler via PDS verfügbar oder nur per
+  Anfrage; (2) falls Anfrage — Prozedere und Format; (3) gibt es eine
+  Pilot-Epoche, die sofort verfügbar wäre.
+- **Referenz (Autorität des Feldes):** Iess et al., Radio Science 2004,
+  DOI 10.1029/2004RS003101 (Plasma-Kontamination in S/X-Band-Tracking).
+- **Mail-Text:** formuliert (siehe Session; zehn Zeilen + Iess-DOI +
+  Pilot-Epochen-Frage, Signatur „independent researcher").
+- **Status:** `pending` — Versand ist ein menschlicher Akt (Datum +
+  Adresse beim Versand eintragen), Antwort `pending`, nie 0.0.
 
 ## Register-Satz
 
