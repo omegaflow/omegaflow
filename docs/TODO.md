@@ -1011,6 +1011,16 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Download kann ein Budget-Fenster überziehen. Offen: Voll-Ernte der 48 aufs
   CDN, dann jwst_equilibrium + Biosignatur-Scan (Auftrag 4).
 
+- Register (Operator-Entscheid 2026-09-04, Versionierung statt Ersatz):
+  (1) Cl-Ernte kuratiert (48 Objekte), dispatched als `curated48_spectra.bin` —
+  aktive Biosignatur-Quelle. (2) GJ-806-Asset (`jwst_spectra.bin`) bleibt
+  unangetastet als Fehlmatch-Beleg des automatischen Matchers (NExScI-spectra-
+  Tabelle: 0 Zeilen für GJ 806 → kein Transmissions-Spektrum); negatives
+  Kalibrationsbeispiel für künftige Matches; superseded als Quelle, nie
+  ge-clobbered. (3) Lehre: ein Fehlmatch ist ein Befund über den Matcher, nicht
+  über die Daten — Assets, die Registerzeilen tragen, werden versioniert, nie
+  überschrieben. Downstream (Scanner) zeigt auf das kuratierte Asset.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
