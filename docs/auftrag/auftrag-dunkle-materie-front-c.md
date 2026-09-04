@@ -571,3 +571,24 @@ Tagesebene. **Befund: die Nachtvision findet echte Struktur (die Pass-Drift),
 aber die bestmögliche Reduktion nutzt sie bereits — 133 Hz ist das Maximum, das
 diese Daten hergeben, weil der Rest (Tagesstreuung) unkorreliert und nicht
 abziehbar ist (0 honored).**
+
+**Rausch-Räumliche Verortung — Distanz als Treiber (2026-09-03, Commit 0932cae,
+`pioneer_navio_noise_geo`).** Das Tag-Rauschen wurde gegen die heliozentrische
+Distanz + SEP aus den Horizons-Ephemeriden gelegt. **Befund: das Rauschen fällt
+MONOTON mit der Distanz** — P10 7412 Hz (25 AU) → 651–805 Hz (60–65 AU, 10×);
+P11 5820 Hz (5–10 AU) → 993–1181 Hz (15–30 AU). SEP-Korrelation schwach —
+**Distanz, nicht Winkel, ist der Treiber.** Das ist die Sonnenwind-Plasma-
+Szintillation (Iess-Budget dominant), jetzt in den eigenen Residuen räumlich
+identifiziert — dritte externe Validierung der Woche (RNG-Prezedenz →
+Iess-Konsistenz → räumliche Signatur). Aufregende Zahl: P10 ruhige Zone
+(>50 AU) Median |med| 20 Hz, Day-RMS 205 Hz — die erste Zahl, die an die
+Anomalie-Skala (~1 Hz) heranreicht. **Kovariaten-Warnung (nicht als „Plasma
+bewiesen"):** der Distanz-Trend kovariiert mit der Missionszeit/Ära (P10 spät
+weit draußen, Empfängergenerationen, 1988-Cluster) — Distanz vs. Ära müssen
+entzerrt werden, bevor „Plasma" verankert wird; P11s Phasenversatz (ruhig bei
+15–30 AU = Missionsmitte, nicht Ende) spricht für Distanz als Treiber, aber das
+ist Argument, nicht Beweis (0 honored). **Offener Payoff (eigener frische-Session-
+Auftrag):** quiet-zone-Isolation (P10 >50 AU, P11 15–30 AU) als `--zone`-Weg im
+negativ-fuzzy-Tool → misst Floor der Zonen-Reduktion vs. 133 Hz Gesamt-Floor.
+Drei Ausgänge (tiefer = Isolation gewinnt, Regressions-Schritt neu stellbar;
+gleich = Gesamt-Reduktion bereits distanz-optimal; lauter = Parameter je Zone).
