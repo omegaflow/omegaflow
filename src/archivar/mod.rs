@@ -33,6 +33,7 @@ pub mod gong_series;
 pub mod hdf5;
 pub mod hmi_polar;
 pub mod inflate;
+pub mod intermagnet;
 pub mod ionex;
 pub mod ir;
 pub mod json;
