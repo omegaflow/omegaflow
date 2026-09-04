@@ -1,0 +1,470 @@
+197 9ApJ. . .230. .57 OA
+
+The Astrophysical Journal, 230: 570-574, 1979 June 1
+© 1979. The American Astronomical Society. All rights reserved. Printed in U.S.A.
+
+INTERPLANETARY PHASE SCINTILLATION AND THE SEARCH FOR VERY
+LOW FREQUENCY GRAVITATIONAL RADIATION
+J. W. Armstrong, Richard Woo, and F. B. Estabrook
+Jet Propulsion Laboratory, California Institute of Technology
+Received 1978 August 21; accepted 1978 December 13
+ABSTRACT
+We report here observations of radio wave phase scintillation, using the Viking spacecraft
+having an Earth-spacecraft link very similar to that which will be used in very low frequency
+(VLF) gravitational wave searches. The phase power spectrum level varies by seven orders of
+magnitude as the Sun-Earth-spacecraft (elongation) angle changes from Io to 175°. It is noteworthy that a broad minimum in the S band (2.3 GHz) phase fluctuation occurs in the antisolar
+direction; the corresponding fractional frequency stability (square root Allan variance) is ~3 x
+10"14 for 1000 s integration times. A simultaneous two-frequency, two-station observation indicates that the contribution to the phase fluctuation from the ionosphere is significant but
+dominated by the contribution from the interplanetary medium. Nondispersive tropospheric scintillation was not detected (upper limit to fractional frequency stability ~5 x 10"14). Evidently
+even observations in the antisolar direction will require higher radio frequencies, phase scintillation calibration, and correlation techniques in the data processing, for detection of gravitational
+bursts at the anticipated strain amplitude levels < 10"15.
+Subject headings: gravitation — interplanetary medium
+I. INTRODUCTION
+
+is incident on the solar system, even if that radiation
+were random and isotropic.
+Estabrook and Wahlquist (1975) have derived the
+general effect on the Doppler frequency record of
+gravitational radiation propagating through the solar
+system; it can be regarded as having contributions
+from both (1) displacement of the Earth and spacecraft; and (2) redshift of the frequency standard used
+for the tracking. These indeed combine to introduce
+characteristic signatures in the Doppler time series
+(and its spectral energy distribution). For example a
+single burst, short compared with the round triplight-propagation time, is seen recurring as three
+pulses with relative amplitudes and spacings dependent on the tracking geometry; the amplitude of
+fractional frequency shift y = Av/v0 of each is proportional to the amplitude of the propagating gravitational strain, A///. Gravitational wave searches have
+been proposed for deep-space missions where the
+round trip-light-time is large, and this characteristic
+signature can be resolved for a reasonable range of
+possible gravitational wave periods (Estabrook and
+Wahlquist 1975; Thorne and Braginsky 1976; Estabrook and Wahlquist 1978; Douglass and Braginsky
+1979).
+Tentative estimates of the amplitudes, A///, expected
+from possible astrophysical sources are ~10~15 or
+smaller (Thorne and Braginsky 1976). Hydrogen maser
+timekeeping has already reached this level of stability
+and is expected to continue to be improved. So of
+more immediate concern is the careful evaluation and
+control of all other physical sources of phase noise.
+Wahlquist et al (1977) and Anderson and Estabrook
+(1979) summarize the most important of these noise
+
+Precision Doppler tracking of distant spacecraft is
+being investigated as a technique for the detection of
+bursts or trains of gravitational radiation having
+characteristic time scales ~ 30-3000 s. The method
+proposed is to transmit from the Earth a radio signal
+having a very precise frequency (the uplink). This
+signal is coherently transponded by the spacecraft, and
+received again at the Earth (the downlink). What is
+observable at the Earth is the time series of the difference between the transmitted and received frequencies.
+There have been over the years a number of suggestions that some kind of interferometry with
+separated free masses might become possible at radio
+frequencies, and thus enable observation of low
+frequency gravitational radiation. Braginsky and
+Gertsenshtein (1967) discussed the detection of periodic
+relative motion of bodies at solar-system-scale separations, caused by gravitational wave trains from double
+stars such as i Boo. R. W. Davies (1973) first derived
+the effect of a plane gravitational wave on the Doppler
+tracking record of a single spacecraft, when the Earthspacecraft line (both uplink and downlink) lies in the
+plane of the wave fronts. He carefully discussed the
+precision of Doppler measurement, as distinguished
+from ranging, and how it was improving due to the
+hydrogen maser timekeeping then becoming operational. Anderson (1974, 1977) raised the question of
+interpreting spectral density distributions of frequency
+residuals from precision Doppler tracking of distant
+spacecraft. He suggested that such spectra should
+show characteristic features if gravitational radiation
+570
+
+© American Astronomical Society • Provided by the NASA Astrophysics Data System
+
+197 9ApJ. . .230. .57 OA
+
+INTERPLANETARY PHASE SCINTILLATION
+sources and, using the data of Woo et al. (1976), show
+that plasma phase scintillation associated with refractive index fluctuations in the solar wind will
+strongly dominate observations made within 90° of
+the Sun.
+In the present paper, measurements of plasma phase
+scintillation are reported for an Earth-spacecraft link
+with a fairly small round trip-light-time, but otherwise
+very similar to that proposed for the gravitational
+wave search. Using the Viking spacecraft orbiting
+Mars, observations were taken during 1976.3-1978.3
+covering solar elongation angles between Io and 175°.
+A simultaneous two-frequency, two-station observation on an intercontinental baseline was also
+performed to separate “local” ionospheric phase scintillation from “global” interplanetary scintillation. In
+the following the results of our analysis of the singleand dual-station data are summarized, and the implication for future tracking strategies of gravitational wave
+searches discussed. The conclusion is drawn that such
+searches must be conducted while spacecraft are in a
+roughly antisolar direction, and that higher radiofrequency Doppler links are very desirable.
+II. OBSERVATIONS AND METHOD OF ANALYSIS
+The two Viking orbiters encountered Mars in mid1976. Each orbiter is instrumented with an S band
+(~2.3 GHz) receiver and with both S and X band
+(~ 8.4 GHz) transmitters. The S and X band transmitter frequencies are coherently related to the
+received S band frequency, the integral ratios being
+240/221 and 880/221, respectively. Thus the two frequencies transmitted by the spacecraft are themselves
+coherent and have the integral ratio fslfx = 240/880 =
+3/11. Schematically, an observation is as follows. A
+Deep Space Network (DSN) tracking station transmits an S band signal to the spacecraft (the “uplink”)
+which is transponded—received and retransmitted—
+by the spacecraft as coherently related S and X band
+signals (the “downlinks”). The phase of the wave is
+distorted as it propagates through irregularities in the
+solar wind plasma. Cycles of received S and X band
+phase are counted and recorded as functions of time
+using the same ground timekeeping system that drives
+the uplink. These S and X band phase measurements
+form the data set for this investigation.
+Our basic method of analysis isolates downlink
+interplanetary and ionospheric phase scintillation
+from other phase noise sources. The method is
+described by Levy (1977) and Woo et al. (1976); it
+consists of differencing the received S band phase <£s
+and 3/11 of the received X band phase
+Phase
+fluctuations that are common to the two signals and
+proportional to frequency cancel. These common
+signals are phase shifts caused by Earth-spacecraft
+motion, spacecraft buffeting, (nondispersive) tropospheric scintillation, clock jitter, and any propagation
+fluctuations on the common uplink. This differential
+phase, <£a(0 = <f>s — (3/11)^, retains scintillation
+contributions from the turbulent plasma on the downlink, since only plasma refractive index fluctuations
+
+571
+
+are frequency-dependent, viz. oc(wavelength)2. Power
+spectra of <f>A then characterize [1 — (3/11)2]2 æ 0.857
+of the plasma scintillation spectrum that would have
+been observed at the downlink S band frequency on a
+one-way path from a stationary spacecraft to the
+Earth and with perfect clocks.
+In an alternative method of analysis one simply
+estimates the spacecraft orbit and removes the orbital
+contribution to the phase observed at a single frequency. The resulting phase time series, say at S band
+Mt), contains contributions from uplink scintillation
+and clock noise (multiplied by the S band transponding ratio 240/221), phase noise introduced by the
+transponder and spacecraft buffeting (in fact, these
+are apparently not seen in our data), downlink scintillation, clock noise on reception, and errors in the
+assumed orbit. From our viewpoint the main advantage of this analysis scheme is that it includes phase
+scintillation from the troposphere.
+The data were all taken with the 64 m tracking
+antennas of the DSN (Goldstone, California; Madrid,
+Spain; Tidbinbilla, Australia). Data records of 1.5-12
+hours duration were analyzed. Power spectra were
+computed by prewhitening the phase time series,
+Fourier transforming and squaring, postdarkening,
+and smoothing over adjacent spectral estimates (see
+Woo et al. 1976 for an example of a phase time series
+and a more complete discussion of the data processing). The spectrum is “two-sided”; that is, the
+variance is the integral over both positive and negative
+fluctuation frequencies.
+In gravitational wave astronomy the emphasis is on
+clock stability as the ultimate criterion of achievable
+sensitivity. Hence it is useful to convert from the phase
+spectra to a measure of equivalent fractional frequency stability. A widely used figure of merit for
+frequency standards is the square root of the Allan
+variance (Barnes et al. 1971). The Allan variance,
+(jy2(r)9 is the structure function of successive locally
+time-averaged fractional frequency fluctuations:
+^2(r) = K[K0 - J(L+r)]2>,
+
+(1)
+
+where y is the instantaneous fractional frequency
+deviation Av/v0 and
+XO = t_1 ft+X y(Odt'.
+For discussing system sensitivity to pulses or bursts of
+gravitational radiation, the square root Allan variance
+of various physical sources of phase fluctuation gives
+a conservative measure of sensitivity—for continuous
+wave trans or other signals of specific frequency
+content it is unduly conservative (Douglass 1979).
+From the definitions above, the two-sided phase
+power spectrum, S^f), and the Allan variance are
+related by
+ay\r) = JV“ SM)P^ SÍ^t^ df.
+
+© American Astronomical Society • Provided by the NASA Astrophysics Data System
+
+(2)
+
+197 9ApJ. . .230. .57 OA
+
+572
+
+ARMSTRONG, WOO, AND ESTABROOK
+
+Vol. 230
+
+interplanetary phase scintillation on elongation. From
+Woo (1975), the phase spectrum resulting from
+irregularities much larger than a Fresnel zone size is
+given by
+O ^ ~ ink
+0,22 fBarth dx
+J Ir dq
+J 0.033cn2(x)
+SJJ)
+J source
+J0
+" v*v
+4i+[^]r’
+
+Fig. 1.—Phase power spectra in the VLF gravitational
+astronomy band. Upper curve, data at 1977 October 16
+(elongation 88°); lower curve, data of 1978 January 20 (elongation2 175°).
+Instrumental noise level is white with magnitude ä
+10" rad2 Hz-1.
+If the phase spectrum is of the form S^if) = Af~a,
+equation (2) becomes
+ay2(T) = A7T~2v0~2Ta~3 Í z~a sin4 (7rz)dz
+Jo
+for 2 < a < 4.
+
+(3)
+
+III. RESULTS AND DISCUSSION
+Figure 1 shows typical power spectra of <^A, for
+elongations near 90° and 180°. In the frequency range
+of interest to VLF gravitational wave astronomy, the
+phase spectra are well characterized by a simple power
+law. Woo and Armstrong (1979) have analyzed these
+and other data in detail and show that the observations are consistent with Kolmogorov turbulence in
+the solar wind. Hence we adopt the spectral index
+a = 8/3 for computational purposes below.
+Figure 2 is a plot of the spectral level
+evaluated
+at 10 " 3 Hz, as a function of elongation. (In terms of the
+above equation, the quantity plotted is approximately
+A x 108 if / is measured in Hz.) The 488 points in
+Figure 2 are derived from 2702 hours of dual-frequency tracking of the Viking orbiters (see Woo and
+Armstrong 1979). The right-hand axis of the figure is
+labeled with <7y(1000 s), using equation (3) {a = 8/3).
+The large variations in spectral level at fixed elongation mostly reflect real time variation of the plasma
+turbulence rather than estimation error. As expected,
+the phase fluctuations minimize in the antisolar
+direction.
+The observations in Figure 2 can be compared with
+model calculations for the expected dependence of
+
+«>
+
+where cn(x) is the structure constant of refractive
+index along the line of sight, p is the spectral index of
+the three-dimensional spectrum (a = p — 1), V(x) is
+the component of the solar wind velocity normal to the
+line of sight, / is the fluctuation frequency, and k is
+the free space wavenumber. The structure constant is
+a measure of the level of turbulence, and many
+observers, e.g., Bourgois (1969), Readhead (1971),
+and Armstrong and Coles (1978), have concluded that
+cn varies roughly as Æ“2, where R is the distance from
+the Sun.
+The curve in Figure 2 was obtained by numerically
+integrating equation (4) for the Earth-Mars geometry
+assuming cncc R~2 and a constant, radially directed,
+solar wind velocity; the curve is normalized to agree
+with the data at small elongations. Aberration due to
+Earth and Mars orbital velocities has been ignored.
+The minimum in the antisolar direction is due to
+reduction of turbulence level along the line of sight
+(cn oc R-2) and to the less efficient spatial wavenumber-temporal frequency transformation (the line
+of sight and radial wind velocity are almost parallel).
+This second effect causes the phase fluctuation power
+to be shifted toward zero frequency and out of the
+band of interest. The model clearly reproduces the
+general variation of the observed results, but the large
+variations in the data and the occasional systematic
+differences between the data and the model indicate
+that this simple model cannot be complete.
+The spatial statistics of the phase scintillation are
+also of interest. On one day, 1978 March 13, we obtained 1.6 hours of simultaneous </>A(t) data at Deep
+Space Stations 14 (California) and 63 (Spain). The
+solar elongation was 121° and at the time of observation it was late afternoon in California and near local
+midnight in Spain. The phase autospectra
+observed at the two stations were similar and had spectral levels at 10"3 Hz of 35 rad2 Hz"1 (California) and
+25 rad2 Hz"1 (Spain). The two
+records were
+digitally high-pass filtered (/3dB £ 10"3 Hz) to remove
+secular trends and ensure statistical stationarity, then
+cross-correlated following procedures recommended
+by Jenkins and Watts (1978). The cross-correlation
+function (ccf) is shown in Figure 3. The offset of the
+ccf from zero time lag has the correct sense and magnitude for a pattern of phase irregularities moving
+outward from the Sun with solar wind speeds. (In
+fact, two-station phase scintillations can in principle
+be used to remotely sense solar wind speeds; see Woo
+1977.) The correlation at zero time lag is about 0.7,
+so that most of the phase fluctuation power is corre-
+
+© American Astronomical Society • Provided by the NASA Astrophysics Data System
+
+197 9ApJ. . .230. .57 OA
+
+No. 2, 1979
+
+INTERPLANETARY PHASE SCINTILLATION
+
+573
+10 -10
+
+10 -11
+
+10'fl2
+c/>
+
+-10 -13
+
+10 -14
+Fig. 2.—Spectral level at 10 3 Hz, S*A (10 3 Hz), versus elongation. Right-hand scale is square root Allan variance at r = 1000 s,
+evaluated from eq. (3) with a = 8/3. Model curve through data evaluated using eq. (4).
+lated over our ~ 10,000 km baseline. We conclude that
+any ionospheric contribution is secondary to that from
+the interplanetary medium.
+For a few of the tracking passes near opposition
+when hydrogen maser frequency standards are employed, we have analyzed the round trip S band
+phase, <£s, separately from the one-way differential
+
+phase, <f>£. As explained above, the main contributions
+to (f>s are from both up- and downlink scintillation
+(plasma and troposphere) and errors in the fitted orbit.
+By comparing spectra of <f>s and <f>& taken at the same
+time we can estimate the contribution to <f>s from the
+plasma and hence isolate the sum of the nondispersive
+contributions (principally tropospheric scintillation
+
+-512
+
+0
++512
+TIME LAG (seconds)
+Fig. 3.—Cross-correlation function of phase data taken simultaneously at DSS 14 (California) and DSS 63 (Spain) on 1978
+March 13. Solar elongation is 121°. Offset from zero time lag has correct sense and magnitude for pattern of phase irregularities
+convected outward from Sun with solar wind speeds.
+
+© American Astronomical Society • Provided by the NASA Astrophysics Data System
+
+197 9ApJ. . .230. .57 OA
+
+574
+
+ARMSTRONG, WOO, AND ESTABROOK
+
+and orbit errors). If plasma scintillation were the
+only source of phase fluctuations one would expect
+to be about 2.79 times larger than S^. This factor
+arises because there are scintillations on the uplink,
+the uplink fluctuations are multiplied by the transponder ratio 240/221, and there are downlink scintillations. If the plasma turbulence is uncorrelated on the
+up- and downlink then the phase variances add.
+Since plasma phase fluctuations are proportional to
+wavelength, we obtain the factor [1 + (240/221)4]/
+[1 — (3/11)2]2 £ 2.79. Alternatively, the more realistic
+assumption of partial correlation of the turbulence
+encountered on the up- and downlinks would have
+given a slightly larger factor.
+By subtracting 2.79 times
+from St, for four
+Goldstone tracks made in early 1978 (elongations
+> 150°) and attributing the difference entirely to the
+neutral atmosphere, we obtain values for tropospheric
+otjXIOOO s) in the range 0 to 9 x 10"14. We thus have
+no reliable detection of tropospheric scintillation in
+the present observations and adopt cry (1000 s) ä 5 x
+10"14 as a limit for nighttime desert observations in
+the winter. This limit can be compared with actual
+measurements of tropospheric scintillation on long
+horizontal paths over the Pacific Ocean (Thompson
+et al. 1975). The results of Thompson et al. need to be
+scaled to account for the differences in observing
+geometry. This scaling clearly depends on assumptions
+about the effective thickness of the troposphere and
+the distribution of turbulence with altitude, but we
+calculate (jy (1000 s) ~ 5 x 10"14 (see also Callahan
+1978).
+Although the emphasis in this paper has been on
+the effects of interplanetary phase scintillations on the
+search for VLF gravitation radiation, the data shown
+in Figure 2 are also useful for assessing the effects on
+
+gravitation and relativity experiments (e.g., J2) being
+considered for a close solar probe mission (Anderson
+and Lau 1978).
+IV. CONCLUSIONS
+We conclude that proposed VLF gravitational wave
+observations using coherent Doppler tracking of
+distant spacecraft in the antisolar direction will have
+S band plasma scintillation noise at the level cry
+(1000 s) ~ 3 x 10"14. The plasma scintillation is
+highly correlated on an international baseline and
+hence the solar wind contribution dominates the
+ionospheric contribution. By using an X band radio
+link, the plasma noise can be reduced to ay (1000 s) ~
+3 x 10"15 but tropospheric scintillation may then
+dominate. Evidently some combination of higher radio
+frequencies, phase scintillation calibration and correlation techniques in the data processing will be needed
+for detection of VLF bursts with strain amplitudes
+smaller than 10"15.
+It is a pleasure to thank the Viking Project and the
+Viking Radio Science Team for their support and for
+permission to conduct these observations. We are
+particularly indebted to J. D. Anderson, J. Brenkle,
+C. W. Snyder, C. T. Stelzried, K. S. Thorne, and
+H. D. Wahlquist for support and valuable discussions.
+We also acknowledge the Deep Space Network (DSN)
+for providing the very precise Doppler data used in
+this investigation, and H. Hsu for assistance with the
+data processing. This paper presents the results of one
+phase of research carried out at the Jet Propulsion
+Laboratory, California Institute of Technology, under
+contract NAS 7-100, sponsored by the National
+Aeronautics and Space Administration.
+
+REFERENCES
+Anderson, A. J. 1974, JPL Engineering Memo No. 391-560.
+Estabrook, F. B., and Wahlquist, H. D. 1975, Gen. Rel. Grav.,
+. 1977, in Atti dei Convengni Lined, 34, 235.
+6, 439.
+Anderson, J. D., and Estabrook, F. B. 1979, J. Spacecraft
+. 1978, Acta Astr. 5, 5.
+and Rockets, in press.
+Jenkins, G. M., and Watts, D. G. 1968, Spectral Analysis and
+Anderson, J. D., and Lau, E. L. 1978, in A Close-up of the
+Its Applications (San Francisco: Holden-Day).
+Sun, ed. M. Neugebauer and R. W. Davies (JPL Pub.
+Levy, G. S. 1977, JPL Pub. 77-17.
+78-70), p. 42.
+Readhead, A. C. S. 1971, M.N.R.A.S., 155, 185.
+Armstrong, J. W., and Coles, W. A. 1978, Ap. J., 220, 346.
+Thompson, M. C., Wood, L. E., Janes, H. B., and Smith,
+Barnes, J. A., et al. 1971, IEEE Trans., IM-20, 105.
+D. 1975, IEEE Trans., AP-23, 792.
+Bourgois, G. 1969, Astr. Ap., 2, 209.
+Thorne, K. S., and Braginsky, V. B. 1976, Ap. J. {Letters),
+Braginsky, V. B., and Gertsenshtein, M. E. 1967, Soviet Phys.
+204, LI.
+Letters, 5, 348 (transi, in JETP Letters, 5, 287).
+Wahlquist, H. D., Anderson, J. D., Estabrook, F. B., and
+Callahan, P. S. 1978, in A Close-up of the Sun, ed. M. NeugeThorne, K. S. 1977, Atti dei Convengni Lined, 34, 335.
+bauer and R. W. Davies (JPL Pub. 78-70), p. 450.
+Woo, R. 1975, Ap. J., 201, 238.
+Davies, R. W. 1973, in Colloques Internationaux CNRS, No.
+. 1977, Nature, 266, 514.
+220, p. 33.
+Woo, R., and Armstrong, J. W. 1979, J. Geophys. Res.,
+Douglass, D. H. 1979, in preparation.
+submitted.
+Douglass, D. H., and Braginsky, V. B. 1979, in Gravitational
+Woo, R., Yang, F.-C., Yip, K. W., and Kendall, W. B. 1976,
+Theories since Einstein, ed. S. W. Hawking and W. Israel
+Ap. J., 210, 568.
+(Cambridge: Cambridge University Press).
+J. W. Armstrong and Richard Woo: Jet Propulsion Laboratory, Mail Station 238-737, 4800 Oak Grove Drive,
+Pasadena, CA 91103
+F. B. Estabrook: Jet Propulsion Laboratory, Mail Station 183-601,4800 Oak Grove Drive, Pasadena, CA 91103
+
+© American Astronomical Society • Provided by the NASA Astrophysics Data System
+
+

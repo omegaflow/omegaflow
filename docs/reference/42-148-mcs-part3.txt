@@ -1,0 +1,1889 @@
+IPN Progress Report 42-148
+
+February 15, 2002
+
+The Media Calibration System for Cassini
+Radio Science: Part III
+G. M. Resch,1 S. J. Keihm,2 G. E. Lanyi,1 R. P. Linfield,2 C. J. Naudet,1
+A. L. Riley,2 H. W. Rosenberger,2 and A. B. Tanner2
+
+A new media calibration system has been implemented at DSS 25. It is designed
+to calibrate the delay of radio signals imposed by the neutral atmosphere. The
+system provides periodic measurements, with intervals greater than 2 s, of both the
+static dry and fluctuating wet components of this delay. In particular, a water vapor
+radiometer calibrates the fluctuations in path delay due to atmospheric water vapor
+that we believe will dominate the error budget for several radio science and radio
+astronomy experiments. Previous articles described the instrumentation, observing
+strategy, data analysis procedures, and weather conditions for 24 interferometric
+experiments that started in August 1999 and ended in May 2000. In this article, we
+include an additional nine experiments that were carried out after an instrumental
+improvement and summarize our results. The evaluation of our data indicates that
+the new media calibration system likely meets the two-way Allan standard deviation specification of 1.5 × 10−15 on time scales of 2000 to 10,000 s, a requirement
+of the Cassini Gravitational Wave Experiment for two-way Doppler tracking. This
+conclusion was based on 11 of our experiments. In the rest of the reported experiments, the performance evaluation of the water vapor radiometer appears to be
+limited by a systematic error in the interferometer that is under investigation.
+
+I. Introduction
+The line-of-sight delay fluctuations due to water vapor are expected to be a major error source for the
+Gravitational Wave Experiment (GWE) with the Cassini spacecraft, scheduled to start in December 2001
+and repeat in 2002 and 2003 during the spacecraft cruise to Saturn. The experimental technique has been
+described by Armstrong [1]. In effect, the two-way communication link between a radio antenna on the
+Earth and the spacecraft acts as an “antenna” for gravitational waves. The phase or Doppler frequency
+of the received signal on the Earth is compared to the phase or Doppler of the transmitted signal after
+correcting for the round-trip travel time. Any gravitational waves that cross the path of this signal will
+perturb the phase and Doppler with a unique, but miniscule, signature. The GWE experiment then
+consists of a search for this perturbation in the presence of many other perturbations, which typically
+have complex temporal characteristics.
+1 Tracking Systems and Applications Section.
+2 Microwave and Lidar Technology Section.
+
+The research described in this publication was carried out by the Jet Propulsion Laboratory, California Institute of
+Technology, under a contract with the National Aeronautics and Space Administration.
+
+1
+
+In order to reduce the effects of random phase delay and/or Doppler fluctuations caused by atmospheric
+water vapor, two identical media calibration systems (MCSs) were designed and constructed and are now
+installed at DSS 25, the primary DSN station for Cassini radio science experiments. However, before their
+GWE application, it was essential to confirm the projected performance and investigate as many elements
+of the error budget as possible. To do this, the new MCS was used to calibrate a radio interferometer
+comprised of two antennas at Goldstone, DSS 13 and DSS 15, in a long series of comparison experiments
+that began in August 1999.
+The preliminary analysis of the initial experiments was reported in the first article of this series by
+Naudet et al. [2]. Details of the instrumentation, the conditions under which the experiments were
+performed, and the preliminary data analysis procedures were reported in the second article of this series
+by Resch et al. [3]. In this article, we will review the requirements for the MCS that were established
+prior to the Cassini spacecraft launch and discuss the error budget upon which these requirements were
+based. We also describe some improvements in instrumentation and additional experiments that were
+not described in our prior articles. The results of all experiments are summarized, and the error budget
+for the radio interferometer is compared to that for the GWE.
+
+II. Requirements Review
+The experiment requiring the most stringent technological support is the GWE; the performance for
+atmospheric calibration is stated in terms of two-way tracking Allan standard deviation (ASD) [4]. This
+requirement is 1.5 × 10−15 for time intervals of 1000 to 10,000 s and changes as the inverse square root
+of time between 100 s and 1000 s (4.7 × 10−15 at 100 s). These requirements are to be averages, over a
+full sidereal track, with elevation angles greater than 20 deg.
+These requirements apply only during “favorable” weather conditions; however, the term “favorable”
+was never precisely defined. We have interpreted favorable to mean clear sky and low-wind conditions.
+In fact, the most favorable condition for the GWE would be a static atmosphere with no water vapor,
+in which case the data from the MCS would be superfluous. This condition is approached on some cold
+winter nights when the vertical temperature profile is stable, the low temperatures inhibit the air from
+retaining water vapor, and the wind speed, both at the surface and at altitude, is low. The GWE data
+will be taken during the nights of December and January, and we have concentrated on testing the new
+MCS under similar conditions.
+For the performance evaluation of the water vapor radiometers (WVRs) [5] with the connected-element
+interferometer (CEI) [6], we need to translate the GWE single-antenna two-way tracking requirements
+into a one-way differential requirement between two antennas. For the time scales
+√ and round-trip light
+times under consideration, the two-way-to-one-way conversion factor is nearly 1/ 2.
+The experiments described in this article span elevation angles θ between 10 and 85 deg; the mean
+elevation angle is approximately 40 deg. Both WVR and CEI line-of-sight delay values were mapped
+to equivalent zenith values by the factor sin θ. The ASD is proportional to the square root of a sum of
+quadratic expressions in delay residuals. Consequently, the ASD requirement must be adjusted for the
+elevation-angle mapping of the WVR and CEI delays. This process depends on the type and composition
+of the components in the residual ASD. These WVR-calibrated CEI residual delays contain instrumental
+contributions from both the WVR and CEI in addition to uncalibrated atmospheric delays. If we assume
+that the calibrated (residual) ASD is purely instrumental, it is elevation-angle independent, and the
+correction factor f will be approximately the root-mean-square value of sin θ over the elevation-angle
+range of the experiment. Since independent instrumental
+fluctuations of two receivers are combined into
+p
+√
+√
+one value, f also includes the factor 2: f = < sin2 θ > 2. The complete factor also involves the
+two-way-to-one-way conversion mentioned above; taking the mean of the root-mean-square averages over
+the elevation range of each experiment gives
+2
+
+f=
+
+Dp
+E
+< sin2 θ > ≈ 0.75
+
+(1)
+
+We need to multiply the two-way ASD requirement by f to derive equivalent values for our interferometric observations. If we assume that the calibrated zenith-mapped ASD contains only uncalibrated
+atmospheric fluctuations, the complete correction factor is slightly less. We first map the requirement
+value from the elevation angle of the spacecraft to zenith and then take the mean value over the elevationangle range of the Cassini spacecraft as viewed from Goldstone at approximately +23-deg declination:
+20 to 90 deg. With the 21-km CEI baseline length and the 1000- to 10,000-s time scales used in our experiments, the water-vapor-fluctuation delay maps approximately by sin θ, and the fluctuations between the
+sites are not independent. For the two-station correction, in the absence
+¡√ of ¢a detailed numeric estimate,
+we use the average of none and full correlation: f =< sin θ > (1/2) 2 + 1 . After two-way-to-one-way
+conversion,
+f =< sin θ >
+
+´
+1³
+1 + 2−1/2 ≈ 0.76 × 0.85 = 0.65
+2
+
+(2)
+
+Thus, the complete mean correction factor may vary between 0.65 and 0.75. The origin of the calibrated
+ASD error is still undetermined. If we assume equal contributions from instrumental and atmospheric
+effects, then the correction factor f is approximately 0.7. This correction factor was not included in our
+previous articles; the long-time-scale two-way ASD requirement of 1.5 × 10−15 transforms into 1.1 × 10−15
+for the ASD of the WVR-calibrated CEI residual delays.
+
+III. The Experiments
+The connected-element interferometer (CEI) consisted of the two antennas, DSS 13 and DSS 15,
+located at the Goldstone complex and separated by approximately 21 km. Located at a distance of
+∼50 m from the base of each antenna was an MCS, consisting of an advanced water vapor radiometer
+(AWVR) of a new design (i.e., the A-series), a microwave temperature profiler (MTP), and a group of
+instruments that sense surface meteorology (SurfMet). The details of the instrumentation, sensitivities,
+and observing strategy are described in [2] and will not be repeated here.
+Experiments began in August 1999 and continued for 29 sessions until May 2000. Several experiments
+were dedicated to an improved determination of the vector baseline between the two CEI antennas, as
+this was recognized as a potential error source in any comparison over long time scales. Preliminary data
+analysis suggested that the CEI data from this first set of experiments suffered from instability in the
+reference frequency at one of the antennas, most probably DSS 13.
+To improve instrumentation, during the summer and fall of 2000, members of the Frequency and
+Timing Group performed an inspection of all aspects of the methods by which we distributed a reference
+signal from the primary standard (a hydrogen maser) at Signal Processing Center 10 (SPC 10) to our
+electronics at both DSS 15 and DSS 13. They made a number of recommendations, all of which were
+implemented, and also installed a new frequency distribution system between the primary standard and
+the DSS-13 control room. This new system is actively stabilized by sending the reference frequency via a
+fiber-optic cable to DSS 13 and then returning it to the point of origin, where the phase of the returned
+signal is compared to the phase of the transmitted signal. A spool of cable is heated or cooled in order to
+maintain a constant phase difference. This new system is referred to as a stabilized fiber-optic distribution
+assembly (SFODA) [7].
+The performance of the new SFODA in the laboratory and after installation is shown in Fig. 1. Here
+we plot the ASD versus time for fluctuations of phase in the control loop and compare them to the
+one-way tracking requirements for the GWE. The relative stability of these two stations used in the CEI
+
+3
+
+ALLAN STANDARD DEVIATION
+
+1
+
+10−14
+
+1
+
+10−15
+
+1
+
+10−16
+
+1
+
+10−17
+
+1
+
+10−18
+
+DSS 13
+LAB TEST
+REQUIREMENTS
+100
+
+1000
+
+10,000
+
+100,000
+
+TIME INTERVAL, s
+Fig. 1. ASD data for the SFODA that was
+installed between the H-maser at SPC 10 and
+DSS 13. Also shown are the SFODA performance data taken in the laboratory and the
+Cassini GWE requirements. (The requirements
+curve (red) should be reduced by a factor of 1.4.)
+
+experiments is comfortably below the requirements and, therefore, should not be a source of error in
+our comparisons with the MCS. However, the frequency distribution system between the DSS-13 control
+room and the antenna is not stabilized and could still contribute to the error budget (see the discussion
+in Section V).
+During the time the SFODA was being installed, the two MCS units were returned to JPL for refurbishment and recalibration. A second SurfMet package was completed and added to the second MCS. The
+MCSs were re-installed at DSS 13 and DSS 15 in late November 2000. In mid-December 2000, another
+series of 9 experiments was initiated, 2 of which were dedicated to baseline determination, 1 to examining
+instrumental effects, and 6 to long tracks on a single radio source in order to investigate the ASD on time
+scales up to 10,000 s. As in our first series of experiments, we obtained observing time almost exclusively
+during late evening or night, thus mimicking conditions we expect during the GWE.
+Table 1 summarizes the 9 experiments completed in late 2000 and early 2001. We list the start date,
+the actual start time of data acquisition in Universal time (UT), stop time, and duration, and we illustrate
+schematically the distribution of the observations during day/night hours. Total observing time for these
+experiments amounted to 52 hours.
+Table 2 lists the surface wind data taken from the SurfMet package during each experiment and the
+zenith path delay (ZPD) at each antenna. The data were filtered to cover only the actual times of CEI
+observation. The average value of each parameter is listed along with the standard deviation about the
+average. The zenith path delay variability is a useful indicator of turbulence.
+
+IV. The Observables
+As a radio source is tracked by the interferometer, the difference in time of arrival at the two elements
+of the interferometer changes continuously due to Earth rotation. The CEI observable is phase delay,
+which is inherently a differential data type sensitive to the difference in path length between the elements
+of the interferometer. The difference in time of arrival at, or observed delay to, the two antennas of a
+CEI is simply
+
+τo = δτatm +
+4
+
+~ · ŝ
+B
+c
+
+(3)
+
+Table 1. List of the 9 additional comparison experiments that started in December 2000 and extended
+through February 2001. The shaded area indicates nighttime conditions.
+
+Start
+UT
+
+Stop
+UT
+
+Duration,
+h
+
+12-13-00
+12-18-00
+
+2.3
+4.1
+
+8.0
+9.5
+
+5.7
+5.4
+
+12-28-00
+01-03-01
+
+8.5
+5.7
+
+15.6
+9.2
+
+7.1
+3.5
+
+01-18-01
+01-26-01
+
+6.2
+5.4
+
+9.1
+8.8
+
+2.9
+3.4
+
+02-09-01
+02-14-01
+
+3.2
+3.2
+
+8.6
+8.0
+
+5.4
+4.8
+
+02-21-01
+
+3.6
+
+7.5
+
+3.8
+
+Date
+
+Universal time, h
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10
+
+11
+
+12
+
+13
+
+14
+
+15
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+* * * * * *
+* * * * * *
+* *
+* * *
+* * *
+* * * *
+* * * * * *
+* * * * *
+* * * *
+
+16
+
+Table 2. Tabulation of the surface meteorological conditions during the 9 additional experiments. Wind direction
+and its standard deviation are taken from DSS 13. The AWVR denoted as A1 was located at DSS 13, and A2 was
+located at DSS 15.
+
+Date
+
+Start
+UT
+
+Stop
+UT
+
+Duration,
+h
+
+Wind
+direction,
+deg
+
+σ
+wind
+direction,
+deg
+
+Wind
+speed,
+m/s
+
+σ
+wind
+speed,
+m/s
+
+Average
+ZPD-A1,
+cm
+
+σ
+average
+ZPD-A1,
+cm
+
+Average
+ZPD-A2,
+cm
+
+σ
+average
+APD-A2,
+cm
+
+12-13-00
+
+2.3
+
+8.0
+
+5.7
+
+263.3
+
+27.0
+
+3.1
+
+1.1
+
+3.43
+
+0.30
+
+3.81
+
+0.27
+
+12-18-00
+
+4.1
+
+9.5
+
+5.4
+
+4.7
+
+19.5
+
+3.8
+
+1.9
+
+1.74
+
+0.26
+
+1.93
+
+0.34
+
+12-28-00
+
+8.5
+
+15.6
+
+7.1
+
+276.2
+
+45.0
+
+1.6
+
+0.6
+
+2.38
+
+0.14
+
+2.18
+
+0.10
+
+01-03-01
+
+5.7
+
+9.2
+
+3.5
+
+5.0
+
+26.0
+
+2.0
+
+0.8
+
+1.72
+
+0.09
+
+1.61
+
+0.08
+
+01-18-01
+
+6.2
+
+9.1
+
+2.9
+
+247.1
+
+46.7
+
+2.9
+
+0.9
+
+2.51
+
+0.13
+
+2.54
+
+0.21
+
+01-26-01
+
+5.4
+
+8.8
+
+3.4
+
+232.5
+
+22.8
+
+2.9
+
+1.2
+
+4.97
+
+0.14
+
+5.48
+
+0.27
+
+02-09-01
+
+3.2
+
+8.6
+
+5.4
+
+80.3
+
+10.9
+
+2.2
+
+0.3
+
+2.45
+
+0.41
+
+2.65
+
+0.43
+
+02-14-01
+
+3.2
+
+8.0
+
+4.8
+
+254.4
+
+7.5
+
+4.9
+
+0.8
+
+3.02
+
+0.29
+
+3.12
+
+0.15
+
+02-21-01
+
+3.6
+
+7.5
+
+3.8
+
+276.0
+
+49.3
+
+3.9
+
+1.3
+
+5.21
+
+0.53
+
+5.32
+
+0.55
+
+~ is the vector baseline between the two antennas, ŝ the unit vector in the direction of the source
+where B
+being observed, c the speed of light, and δτatm the delay due to the difference in atmospheric path. The
+delay due to atmospheric path differences can be decomposed into two terms, one (designated as “wet”)
+due to the water vapor in the atmosphere, δτW (t), and the other due to the “dry” component of the
+atmosphere, δτD .
+The data from each antenna are directed to a correlator that constructs a mathematical model of
+~ · ŝ term) using a priori values of B
+~ and ŝ and also including models of dry troposphere
+geometry (i.e., the B
+and Universal time corrections. The correlator uses this model to compensate the delay as a function of
+time from one of the antennas, and then computes the cross-correlation for several delay values around
+the nominal value. The correlator does this for each channel of data, 14 in all, and outputs the results
+along with the model values to an analysis program called FIT. FIT then estimates and subtracts the
+best phase and phase rate for each integration interval (typically 2 s). FIT writes these estimates to a
+file, which we then use to construct the time series of CEI data.3
+3 After fitting and subtracting a time-linear global model, see [8] for additional details.
+
+5
+
+The resulting time series of CEI data, which we will denote as SI , is then approximately the difference in
+atmospheric delay between the two antennas, plus the instrumental effects and noise of the interferometer,
+and the error in the geometric delay:
+
+SI = δτW + ∆δτD + δτI inst + NI +
+
+~ · ŝ
+∆B
+c
+
+(4)
+
+~ denotes the error in the baseline (the source position is known with a sufficiently high
+where the ∆B
+accuracy), δτinst is the difference in instrumental delay, and NI is the noise of the interferometric measurement. The quantity ∆δτD denotes the error in the dry tropospheric model.
+While the interferometer automatically differences the line-of-sight delay to each antenna, the MCS
+provides each line-of-sight atmospheric delay separately. The data from each MCS are a time series
+consisting of brightness temperatures from atmospheric water vapor, and instrumental noise. After the
+brightness temperatures are converted to delay, we can write the time series of path delay for each MCS
+as
+SW 1 = τW 1 + ∆τW 1 + τW 1inst + NW 1
+SW 2 = τW 2 + ∆τW 1 + τW 2inst + NW 2
+
+
+
+
+(5)
+
+
+
+
+where τW 1 and τW 2 denote the delays due to water vapor, and ∆τW 1 and ∆τW 2 are their corresponding
+WVR algorithm error. The symbols τW 1 inst and τW 2inst denote WVR instrumental errors, and NW 1
+and NW 2 represent the noise of WVR measurement.
+The differenced delays provide an estimate of the differential phase delay between the two stations,
+with the result expressed as4
+δSW = δτW + ∆δτW + δτW inst + δNW
+
+(6)
+
+To remove the delays due to water vapor, we difference the interferometric and MCS measured delay,
+SI − δSW :
+RC = NI − δNW − ∆δτW + ∆δτD + δτinst +
+
+~ · ŝ
+∆B
+c
+
+(7)
+
+where RC is the corrected time series. The statistical mean of the noise terms is zero. The other terms
+are modified by the subtraction of time-wise-linear fits to the CEI and WVR data. In the statistical
+evaluation of the time series, in an attempt to remove elevation-angle dependence, both the CEI and
+WVR series were mapped to zenith by sin θ before subtraction. The variance of this series is then
+2
+2
+2
+2
+2
+i = hNI2 i + hδNW
+i + h∆δτW
+i + h∆δτD
+i + hδτinst
+i + c−2
+hRC
+
+D¡
+¢ E
+~ · ŝ 2
+∆B
+
+(8)
+
+Examples of these time series for two experiments are shown in Figs. 2 and 3 and illustrate the extremes of best and worst comparison. Figure 2(a) shows the time series of CEI delay residuals versus
+
+4 An equivalence of the CEI procedure is carried out: a fit and subtraction of a time-linear global delay model.
+
+6
+
+1.5
+DELAY, cm
+
+1.0
+
+RESIDUAL CEI σ = 0.43 cm
+
+(a)
+
+DIFFERENCED AWVR σ = 0.40 cm
+
+(b)
+
+0.5
+0.0
+−0.5
+−1.0
+1.5
+
+DELAY, cm
+
+1.0
+0.5
+0.0
+−0.5
+−1.0
+1.5
+DELAY, cm
+
+1.0
+
+(c)
+
+CALIBRATED CEI σ = 0.07 cm
+
+0.5
+0.0
+−0.5
+−1.0
+22.5
+
+23.0
+
+23.5
+
+24.0
+
+24.5
+
+25.0
+
+25.5
+
+26.0
+
+26.5
+
+27.0
+
+27.5
+
+UNIVERSAL TIME, h
+Fig. 2. Plots of the data residuals for DOY 138.2000: (a) the CEI
+residuals versus time, (b) the differenced AWVR data, and (c) the
+result of using the differenced AWVR data to calibrate the CEI data.
+
+time, Fig. 2(b) the differenced data from the two MCS units, and Fig. 2(c) the resulting CEI residuals
+after the MCS data are subtracted from it, i.e. calibrated CEI data. Data points represent 2-s integration
+times. In Fig. 2 the data were acquired on May 17, 2000, and the standard deviation of the CEI data is
+reduced from 0.433 cm before calibration to 0.069 cm after calibration. This represents a reduction by a
+factor of 6.3 and is the most significant improvement we observed.
+Figure 3 illustrates the same pattern of time series for a different experiment, this time for February 8,
+2000. In this case, the standard deviation of the CEI data actually increased from 0.136 cm to 0.215 cm
+after calibration. The origin of this anomaly is still under investigation.
+In the geometric model of the CEI delay, the last term of Eq. (3), we used an a priori measured value
+~ appears in the last terms of Eqs. (7) and (8). There is
+for the baseline. The error of the baseline ∆B
+no corresponding term for source positions, because the errors for the positions of radio sources are sufficiently below our requirements. For example, an error of 1 cm in the horizontal component of the baseline
+would translate into ∼30 ps of sinusoidal delay error with a 24-hour sidereal period.5 Although the position of DSS 15 is well established, with a sub-cm accuracy due to over 20 years of VLBI experiments,
+DSS 13 is the DSN’s new beam-waveguide antenna, and its position is not as well-known. We devoted
+approximately nine experiments (93 hours of observing time) to re-determining this baseline, often using
+5 R. Linfield, “Effect of Baseline, UT1-UTC, and Polar Motion Errors on CEI/WVR Comparison,” JPL Interoffice Memo-
+
+randum (internal document), Jet Propulsion Laboratory, Pasadena, California, October 20, 2000.
+
+7
+
+0.6
+
+DELAY, cm
+
+(a)
+
+RESIDUAL CEI σ = 0.136 cm
+
+0.4
+0.2
+0.0
+−0.2
+−0.4
+−0.6
+0.6
+
+(b)
+
+DELAY, cm
+
+0.4
+0.2
+0.0
+−0.2
+−0.4
+
+DIFFERENCED AWVR σ = 0.164 cm
+
+−0.6
+0.6
+
+DELAY, cm
+
+(c)
+
+CALIBRATED CEI σ = 0.215 cm
+
+0.4
+0.2
+0.0
+−0.2
+−0.4
+−0.6
+8.5
+
+9.0
+
+9.5
+
+10.0
+
+10.5
+
+11.0
+
+UNIVERSAL TIME, h
+Fig. 3. Plots of the data residuals for DOY 035.2000: (a) the CEI
+residuals versus time, (b) the differenced AWVR data, and (c) the
+result of using the differenced AWVR data to calibrate the CEI data.
+
+other experiments that were intended to measure Earth rotation or catalog radio source positions. These
+experiments are typically of 24-hour duration, designed to be optimal for baseline estimation. They
+typically are composed of over 400 different sources spread over the entire sky extending down to 6 deg
+in elevation.
+Unfortunately, the first six experiments (DOYs 229, 283, 289, 298, 299, and 308, all of year 2000) had
+data that were of low quality,6 and they were not included in this estimate of the baseline. The experiment of DOY 44 of 2001 is currently still under analysis and is not be included in this article. Table 3 lists
+
+6 Experiments on DOYs 229, 283, and 289 consisted of many scans that had large WVR–CEI beam mismatch.
+
+The data
+from experiments on DOYs 298 and 299 were totally lost due to correlator software and hardware errors. The experiment
+on DOY 308 was of short duration, and over half the scans were lost due to poor detection signal-to-noise ratio (SNR).
+All these experiments were conducted before the Frequency and Timing Subsystem (FTS) Team installed the new DSS-13
+SFODA, which greatly improved the clock stability of the experiments.
+
+8
+
+Table 3. Baseline experiments: The delay residuals and delay rate residuals are given along
+with RB, the percentage of improvement in the delay residuals when using the AWVR estimates
+of the tropospheric delay in the estimation processes. The last three columns give the estimated positional offsets in the east, E, north, N, and vertical, V, with respect to the reference
+coordinates.
+
+Experiment
+DOY
+
+Delay
+residuals,
+ps
+
+Delay
+rate,
+fs/s
+
+RB ,
+percent
+
+E, mm
+
+N , mm
+
+V , mm
+
+348
+
+11.9
+
+41
+
+20.3
+
+3.5 ± 0.9
+
+−5.3 ± 1.0
+
+−13.9 ± 5.5
+
+363
+
+10.5
+
+22
+
+13.9
+
+1.0 ± 0.8
+
+−3.8 ± 0.9
+
+−9.9 ± 5.0
+
+the experiments that were conducted after the DSS-13 SFODA upgrades were finished, along with the
+estimated position offsets of DSS 13 with respect to the reference coordinates.7
+Listed in Table 3 is the percentage of decrease (RB percent) in the delay residuals when using the
+AWVR estimates of the tropospheric delay in the estimation process. Notice that, in both experiments,
+significant improvement (a reduced delay residual) is obtained when the best estimate from the AWVR
+is used rather than a tropospheric delay estimate solely from surface meteorological data. Finally, the
+average offsets in the east and north coordinates are approximately 2.3 mm and −4.5 mm, respectively.
+The largest offset is in the vertical dimension and is roughly 11.9 mm. Although this ∼1-cm vertical offset
+is large to first order, the vertical offsets do not impact the WVR–CEI comparisons; only the horizontal
+offsets are of concern. The post-fit analysis then uses the weighted average of both experiments in the
+baseline offset correction, applied to all the data from the full set of observations.
+
+V. Analysis of Experiments with Long Durations
+Table 4 lists all of the experiments that contained long (>1 hour) observations of a single source.
+The calendar date is listed in column 1, then the start and stop times (Universal time), the duration of
+the observation (hours), and the average liquid content of the atmosphere (in micrometers of columnar
+liquid). Next is the standard deviation of the CEI data, the standard deviation of the differenced WVR
+data, and the standard deviation of the residual CEI data after calibration by the WVR data, all in units
+of cm.
+Column 9 lists the estimate of the thermal noise from both the CEI data and the WVR data, added
+quadratically. The noise of the CEI data was estimated directly from the data during the fringe fitting
+process. Since we used only strong radio sources, our typical SNR for 2-s integration times varied
+between 20 and 100. By comparing differences on several time scales (i.e., 0.4 s, 2 s, and 6 s) and using the
+statistical retrieval algorithm, the thermal noise for 2-s AWVR data was estimated to be approximately
+0.021 cm for the delay noise of site-differenced data. AWVR noise dominates on this 2-s time scale.
+Column 10 contains the improvement factor, R, i.e., the ratio of the CEI standard deviation before
+calibration to the standard deviation after calibration. This is a first-order indicator of whether or not
+the MCS data provided any improvement to the CEI data. Next we list the radio source name that
+was tracked during the observation, and in the last column we list the ratio between the CEI standard
+deviation (S1) and the WVR standard deviation (S2). If the CEI residuals are dominated by atmospheric
+fluctuations and if the MCS is detecting the fluctuations, then the ratio S1/S2 should be close to unity.
+7 These 1993 centered x–y–z coordinates of DSS 13 and DSS 15 are, in km, (−2351.1124916, −4655.5306922, 3660.9127764)
+
+and (−2353.5387771, −4641.6494818, 3676.6700220), respectively, as supplied by C. Jacobs, personal communication, Jet
+Propulsion Laboratory, Pasadena, California, January 2, 2001.
+
+9
+
+Table 4. A list of all the experiments with single-source observations lasting more than 1 hour.
+
+Date
+
+Start
+UT
+
+Stop
+UT
+
+Duration,
+h
+
+Liquid,
+µm
+
+σ
+CEI,
+cm
+
+σ
+WVR,
+cm
+
+σ
+residual,
+cm
+
+Thermal
+noise,
+cm
+
+R
+
+Source
+
+01-17-00
+
+10.4
+
+12.9
+
+2.5
+
+22.3
+
+0.242
+
+0.192
+
+0.072
+
+0.025
+
+3.4
+
+B1308+32
+
+1.26
+
+01-18-00
+
+11.5
+
+14.9
+
+3.4
+
+13.0
+
+0.222
+
+0.171
+
+0.081
+
+0.021
+
+2.7
+
+DW1335-12
+
+1.30
+
+01-19-00
+
+3.0
+
+7.2
+
+4.3
+
+12.0
+
+0.590
+
+0.389
+
+0.240
+
+0.022
+
+2.5
+
+DA193
+
+1.52
+
+01-19-00
+
+9.6
+
+12.9
+
+3.2
+
+4.9
+
+0.338
+
+0.345
+
+0.082
+
+0.025
+
+4.1
+
+B1308+32
+
+0.98
+
+01-22-00
+
+4.4
+
+9.8
+
+5.4
+
+0.0
+
+0.231
+
+0.182
+
+0.210
+
+0.021
+
+1.1
+
+DA193
+
+1.27
+
+01-22-00
+
+10.6
+
+14.6
+
+4.1
+
+0.0
+
+0.159
+
+0.135
+
+0.063
+
+0.021
+
+2.5
+
+DW1335-12
+
+1.18
+
+01-23-00
+
+8.8
+
+10.0
+
+1.2
+
+0.0
+
+0.083
+
+0.061
+
+0.069
+
+0.021
+
+1.2
+
+3C273
+
+1.36
+
+01-24-00
+
+10.5
+
+12.6
+
+2.1
+
+4.2
+
+0.235
+
+0.147
+
+0.104
+
+0.025
+
+2.3
+
+B1308+32
+
+1.60
+
+01-24-00
+
+14.4
+
+15.5
+
+1.0
+
+3.6
+
+0.216
+
+0.084
+
+0.136
+
+0.021
+
+1.6
+
+VRO42
+
+2.58
+
+01-28-00
+
+10.3
+
+12.4
+
+2.1
+
+0.0
+
+0.173
+
+0.060
+
+0.187
+
+0.026
+
+0.9
+
+B1308+32
+
+2.88
+
+02-03-00
+
+8.2
+
+9.7
+
+1.5
+
+0.0
+
+0.083
+
+0.055
+
+0.042
+
+0.021
+
+2.0
+
+DA193
+
+1.51
+
+02-03-00
+
+12.5
+
+14.2
+
+1.6
+
+0.0
+
+0.081
+
+0.047
+
+0.069
+
+0.025
+
+1.2
+
+B1308+32
+
+1.73
+
+02-04-00
+
+1.8
+
+7.1
+
+5.3
+
+0.0
+
+0.363
+
+0.143
+
+0.415
+
+0.021
+
+0.9
+
+DA193
+
+2.54
+
+02-04-00
+
+7.2
+
+11.1
+
+3.9
+
+0.0
+
+0.194
+
+0.167
+
+0.064
+
+0.024
+
+3.0
+
+B1308+32
+
+1.16
+
+02-08-00
+
+8.6
+
+11.0
+
+2.4
+
+1.5
+
+0.136
+
+0.164
+
+0.215
+
+0.024
+
+0.6
+
+P0735+17
+
+0.83
+
+02-08-00
+
+11.0
+
+15.8
+
+4.7
+
+8.9
+
+0.152
+
+0.178
+
+0.107
+
+0.021
+
+1.4
+
+DW1335-12
+
+0.85
+
+02-11-00
+
+4.1
+
+9.3
+
+5.2
+
+9.0
+
+0.430
+
+0.429
+
+0.160
+
+0.021
+
+2.7
+
+DA193
+
+1.00
+
+02-17-00
+
+7.6
+
+10.5
+
+2.9
+
+10.4
+
+0.281
+
+0.322
+
+0.151
+
+0.021
+
+1.9
+
+DW1335-12
+
+0.87
+
+04-03-00
+
+25.4
+
+29.8
+
+4.4
+
+0.0
+
+0.260
+
+0.173
+
+0.121
+
+0.021
+
+2.2
+
+DA193
+
+1.51
+
+04-14-00
+
+6.3
+
+8.0
+
+1.7
+
+1.2
+
+0.417
+
+0.318
+
+0.141
+
+0.021
+
+3.0
+
+DW1335-12
+
+1.31
+
+S1/S2
+
+04-19-00
+
+4.5
+
+9.1
+
+4.6
+
+1.5
+
+0.141
+
+0.140
+
+0.106
+
+0.021
+
+1.3
+
+DW1335-12
+
+1.01
+
+04-25-00
+
+24.4
+
+26.8
+
+2.3
+
+0.0
+
+0.128
+
+0.132
+
+0.059
+
+0.021
+
+2.2
+
+DA193
+
+0.97
+
+05-16-00
+
+24.3
+
+27.1
+
+2.8
+
+0.0
+
+0.269
+
+0.236
+
+0.096
+
+0.021
+
+2.8
+
+DA193
+
+1.14
+
+05-17-00
+
+22.8
+
+27.1
+
+4.3
+
+0.0
+
+0.433
+
+0.404
+
+0.069
+
+0.021
+
+6.3
+
+DA193
+
+1.07
+
+12-18-00
+
+4.1
+
+9.5
+
+5.4
+
+0.0
+
+0.320
+
+0.192
+
+0.256
+
+0.022
+
+1.3
+
+DA193
+
+1.67
+
+01-03-01
+
+5.7
+
+9.2
+
+3.5
+
+0.0
+
+0.226
+
+0.072
+
+0.239
+
+0.022
+
+0.9
+
+DA193
+
+3.13
+
+01-26-01
+
+5.4
+
+8.8
+
+3.4
+
+3.6
+
+0.223
+
+0.144
+
+0.109
+
+0.022
+
+2.0
+
+DA193
+
+1.55
+
+02-09-01
+
+3.2
+
+8.6
+
+5.4
+
+0.0
+
+0.196
+
+0.058
+
+0.171
+
+0.022
+
+1.1
+
+DA193
+
+3.40
+
+02-14-01
+
+3.2
+
+8.0
+
+4.8
+
+2.2
+
+0.313
+
+0.337
+
+0.175
+
+0.021
+
+1.8
+
+DA193
+
+0.93
+
+02-21-01
+
+3.6
+
+7.5
+
+3.8
+
+1.8
+
+0.253
+
+0.179
+
+0.117
+
+0.022
+
+2.2
+
+DA193
+
+1.41
+
+Clearly, there is a wide variation in the improvement of the CEI residuals after calibration by the MCS
+data. The histogram of the improvement factor, R, is shown in Fig. 4. On average, the improvement is
+a factor of 2.1 with a median value of 2.8. However, four scans show an improvement factor less than
+unity, implying the residuals are made worse by calibration.
+Improvement factor R shows weak correlation with surface meteorological conditions. The more significant correlations are between the various residuals listed in Table 4 (30 observations); the correlation
+matrix for these quantities is shown in Table 5.8 Thus, the high correlation between the CEI sigma
+and the MCS sigma indicates that most of the noise in the CEI data is due to whatever the MCS is
+
+8 Note that for 30 observations the probability that a measured correlation coefficient value ρ represents data with no
+
+correlation, Pρ , is given as Pρ = 0.05 for ρ = 0.36, Pρ = 0.01 for ρ = 0.47, and Pρ = 0.001 for ρ = 0.58.
+10
+
+12
+10
+
+COUNT
+
+8
+6
+4
+2
+0
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+R
+Fig. 4. Histogram of R, the improvement of
+the CEI residuals after AWVR calibration.
+
+Table 5. The correlation matrix for several of the
+tabulated quantities in Table 3.
+
+CEI σ
+MCS σ
+
+CEI σ
+
+MCS σ
+
+Residual σ
+
+R
+
+S 1/S 2
+
+1.00
+
+0.83
+1.00
+
+0.42
+0.07
+
+−0.48
+0.62
+
+−0.07
+−0.54
+
+1.00
+
+−0.48
+
+0.44
+
+1.00
+
+−0.41
+
+Residual σ
+R
+S 1/S 2
+
+1.00
+
+detecting. The fact that the sigma of the calibrated residuals correlates with the raw CEI sigma but not
+with the raw MCS sigma tells us that the “extra noise” in the intercomparison is due to something in the
+CEI data and not the MCS data. We also see there is a significant correlation between the improvement
+factor and the MCS sigma, which we would expect. As water-vapor fluctuations increase, they are easier
+to detect with the MCS. Note there is negative correlation, significant at about the 1 percent level,
+between the improvement factor and the raw CEI residuals as well as the calibrated residuals, again
+suggesting that there is a source of noise in the CEI data that is not related to the atmospheric signal
+detected by the MCS.
+The large size of improvement factor R does not guarantee the absence of systematic errors. On the
+other hand, the smallness of the residual-delay scatter is a measure of low systematic errors. Examination
+of data shows that most of the large delay residual scatters are due to a systematic error in the CEI data
+corresponding to experiments with very high elevation angles. This phenomenon is currently under study.
+For the evaluation of the MCS performance, we retained 11 experiments without this problematic feature.
+Using these 11 experiments, we have averaged the ASD residual values calculated in the sampling interval
+range from 2000 to 10,000 s. We obtained the median of this mean ASD distribution as 1.4 × 10−15 , with
+a nominal one-sigma width of 1.3 × 10−15 . This compares well with the GWE requirement of 1.1 × 10−15 .
+
+VI. Conclusion
+The reported experiments were performed to evaluate performance of the media calibration system by
+comparing the results to those obtained by a connected-element interferometer. After exclusion of CEI
+11
+
+experiments with known instrumental problems and three WVR experiments with high liquid contents,
+we retained 11 experiments. The median of the distribution of the mean Allan standard deviation for
+WVR-calibrated CEI delay residuals is 1.4 × 10−15 with a nominal one-sigma width of 1.3 × 10−15 for
+sampling intervals between 2000 and 10,000 s. This value is in reasonable agreement with the GWE
+requirement of 1.1 × 10−15 . Note that the measured ASD value is an upper bound on the performance of
+the WVR, and the analysis of the data is not finalized.
+
+Acknowledgments
+We are very grateful to Lyle Skjerve, Leroy Tanida, John Clark, the staff at
+DSS 13, and the operations crews at the Goldstone Signal Processing Center for
+the invaluable assistance they provided during these experiments and to C. S. Jacobs
+for discussions regarding the baseline determination.
+
+References
+[1] J. W. Armstrong, “Radio Wave Phase Scintillation and Precision Doppler Tracking of Spacecraft,” Radio Science, vol. 33, pp. 1727–1738, November 1998.
+[2] C. Naudet, C. Jacobs, S. Keihm, G. Lanyi, R. Linfield, G. Resch, L. Riley,
+H. Rosenberger, and A. Tanner, “The Media Calibration System for Cassini Radio Science: Part I,” The Telecommunications and Mission Operations Progress
+Report 42-143, July–September 2000, Jet Propulsion Laboratory, Pasadena, California, pp. 1–8, November 15, 2000.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-143/143I.pdf
+[3] G. M. Resch, J. E. Clark, S. J. Keihm, G. E. Lanyi, C. J. Naudet, A. L. Riley, H. W. Rosenberger, and A. B. Tanner, “The Media Calibration System for
+Cassini Radio Science: Part II,” The Telecommunications and Mission Operations Progress Report 42-145, January–March 2001, Jet Propulsion Laboratory,
+Pasadena, California, pp. 1–20, May 15, 2001.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-145/145J.pdf
+[4] D. W. Allan, “Statistics of Atomic Frequency Standards,” Proc. IEEE, vol. 54,
+no. 2, pp. 221–230, February 1966.
+[5] A. B. Tanner, “Development of a High-Stability Water Vapor Radiometer,” Radio Science, vol. 33, pp. 449–462, March 1998.
+[6] C. Edwards, Jr., D. Rogstad, D. Fort, L. White, and B. Iijima, “The Goldstone Real-Time Connected Element Interferometer,” The Telecommunications
+and Data Acquisition Progress Report 42-110, April–June 1992, Jet Propulsion
+Laboratory, Pasadena, California, pp. 52–62, August 15, 1992.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-110/110D.PDF
+[7] G. Lutes and A. Kirk, “Reference Frequency Transmission Over Optical Fiber,”
+The Telecommunications and Data Acquisition Progress Report 42-87, July–
+September 1986, Jet Propulsion Laboratory, Pasadena, California, pp. 1–9,
+November 15, 1986.
+http://tmo.jpl.nasa.gov/tmo/progress report/42-87/87A.PDF
+[8] S. Lowe, Theory of Post-Block II VLBI Observable Extraction, JPL Publication
+92-7, Jet Propulsion Laboratory, Pasadena, California, July 15, 1992.
+12
+
+
