@@ -397,3 +397,20 @@ Floor. Die three-way-Rückgewinn war die wirksame Verdichtung (5× → 336→133
 weitere rohe Tages-Densifikation hilft nicht — der Floor ist per-Sample-Streuung
 nach Detrend, Rat-Physik bestätigt. ~133 Hz (P10) ist nahe dem erreichbaren
 Minimum dieser Daten (0 honored).
+
+**Rückwirkende Reichweiten-Klarstellung (2026-09-03):** Die 78 % zuvor
+verworfenen P10-Samples (three-way/DTYPE-13) waren **modell-verweigert, nicht
+qualitativ verworfen** — der frühere Code las TRANS (r[6]) als Empfänger, was bei
+three-way falsch war (Senden/Empfangen an verschiedenen Stationen). Die bisherige
+Kette (Form-Volkszählung 234/234, Deduktionen 40/41, Drift, Korrelation r =
+−0,002) stand damit auf dem **Zwei-Wege-Satz allein** — einer Verengung durch das
+Modell, nicht einer Auswahl. Das macht die früheren Stille-Urteile nicht falsch
+(Stille auf einer Teilmenge ist Stille), aber es begrenzt ihre Reichweite auf den
+Zwei-Wege-Satz. **Verifikation auf der größeren Basis (gemessen, 2026-09-03):**
+nach three-way-Rückgewinn (P10 3142 Tagesmediane, P11 2349) lief die Form-
+Volkszählung neu — P10 452/452 Form-gemessen, 0/276 fein kehren zurück; P11
+158/158, 0/140 fein. **Die Stille hält auf der 5×-Basis — sie war kein Artefakt
+der verengten Basis.** (Projektionen des Review — „Anomalie-Distanz könnte auf
+30–70× fallen" — sind NICHT gemessen: P10 steht bei ~100×, P11 ~200× unter dem
+Floor, Formtest weiter unaufgelöst; nur der gemessene Zustand wird registriert,
+0 honored.)
