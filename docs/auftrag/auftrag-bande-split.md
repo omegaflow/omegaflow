@@ -66,7 +66,11 @@ getrackt — möglich, dass lokal keine existieren.
 
 - **Klasse 2 (Verstärkung, nach Mail 1):** Epochen-Persistenz, Cross-Mission-
   Scan (Galileo/Cassini/Ulysses), Kontaminations-Quantisierung. Als Folgeblatt
-  registriert, nicht vor Mail 1 ausführen (Single-Blatt-Regel).
+  registriert, nicht vor Mail 1 ausführen (Single-Blatt-Regel). Der
+  Galileo-Cross-Scan hat jetzt eine konkrete, offene Quelle: das GWE-ODR-Set
+  `GO-X-RSS-1-ODR-V1.0` (open-loop, 1994/95) lief auf **DSS 14/43/63** —
+  denselben drei Stationen wie die 20-s-Bande (Befund
+  `docs/befund/befund-galileo-gwe-bestand.md`).
 - **Klasse 3 (neue Fronten):** benannt bleiben, ungebaut bleiben.
 
 ## Lieferung
