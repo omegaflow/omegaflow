@@ -1,0 +1,50 @@
+name: eve-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: year (e.g. 2011)
+        required: true
+        type: string
+        default: "2011"
+      start_doy:
+        description: start day of year
+        required: false
+        type: string
+        default: "40"
+      end_doy:
+        description: end day of year
+        required: false
+        type: string
+        default: "130"
+      asset:
+        description: output asset name on the CDN (netloc lasp.colorado.edu)
+        required: true
+        type: string
+        default: eve2011_lines.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  eve-lines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view lasp.colorado.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile and manifest the EVE line series to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin eve_compiler -- \
+            --year "${{ inputs.year }}" --start-doy "${{ inputs.start_doy }}" \
+            --end-doy "${{ inputs.end_doy }}" \
+            --out "${{ inputs.asset }}" --ci-mode
