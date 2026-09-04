@@ -450,3 +450,17 @@ Radio-Floor steckt in der IN-TAGES-Streuung selbst (per-Sample p50 664 Hz P10 /
 Fortschritt braucht das Senken der per-Sample-Streuung (Sub-Sample-Kadenz,
 bessere Medien-Kalibrierung — fehlt der Pioneer-Ära ohne WVR/Multifrequenz)
 oder eine andere Aggregations-Physik (0 honored).
+
+**Text-Daten-Korrelation robust verifiziert (2026-09-03, Commit e764399).**
+`pioneer_text_correlation` (text-as-data: korreliert die Zahlen-Token-Folge des
+LRR-2010-Textes gegen die P10/P11-Doppler-/Träger-Tagesmediane) wurde um
+`TE_SURR`-env (bis n=300) + Lag-Report erweitert und robust gefahren. Befund:
+**P11×Doppler J2000 max|r| = 0,6349 bei lag 123 vs. Null-p95 0,383, p_emp 0/300
+— robust real** (lag-scan-korrigiert). P10×Doppler 37/300 und P10×carrier
+11/300 nicht signifikant; die früher marginal gelesene P11×carrier-Spur
+(i/1000-blocks, p_emp 0/24 bei 24 Surrogaten) **kollabiert bei n=300 auf
+290/300** — sie war ein Artefakt der kleinen Null-Stichprobe. Die robuste
+P11-Doppler-Korrelation ist eine Muster-Ubereinstimmung der Tagesmedian-Reihe
+mit der Text-Zahlenfolge bei Versatz 123 — keine Kausalität, aber ein realer
+Text-Daten-Zusammenhang, der die text-as-data-Maschine für diese Daten
+verifiziert (0 honored).
