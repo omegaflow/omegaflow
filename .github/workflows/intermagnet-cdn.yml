@@ -1,0 +1,60 @@
+name: intermagnet-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: INTERMAGNET code (e.g. ABK, SOD)
+        required: true
+        type: string
+        default: ABK
+      grain:
+        description: hourly | daily
+        required: false
+        type: choice
+        default: hourly
+        options:
+          - hourly
+          - daily
+      start:
+        description: start year (YYYY)
+        required: false
+        type: string
+        default: "1994"
+      end:
+        description: end year (YYYY); empty = current year
+        required: false
+        type: string
+        default: ""
+      asset:
+        description: output asset name on the CDN (netloc imag-data.bgs.ac.uk)
+        required: true
+        type: string
+        default: abk_dbdt_1h.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  intermagnet-dbdt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view imag-data.bgs.ac.uk --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile and manifest the station dB/dt flat series
+        run: |
+          end_arg=""
+          if [ -n "${{ inputs.end }}" ]; then end_arg="--end ${{ inputs.end }}"; fi
+          cargo run --release -p omegaflow-harvest --bin intermagnet_dbdt_compiler -- \
+            --station "${{ inputs.station }}" --grain "${{ inputs.grain }}" \
+            --start "${{ inputs.start }}" $end_arg \
+            --out "${{ inputs.asset }}" --ci-mode
