@@ -52,6 +52,60 @@ jobs:
             cargo run -p omegaflow-harvest --release --bin phonocardiogram_compiler -- \
               --out circor_pcg.bin --ci-mode --jobs 8
 
+  bidsleep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - chunk: 0
+            offset: 0
+          - chunk: 1
+            offset: 36
+          - chunk: 2
+            offset: 72
+          - chunk: 3
+            offset: 108
+          - chunk: 4
+            offset: 144
+          - chunk: 5
+            offset: 180
+          - chunk: 6
+            offset: 216
+          - chunk: 7
+            offset: 252
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile BIDS Mehrnacht chunk (electric + advective) and upload to CDN
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "bidsleep_mehrnacht_r${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin bidsleep_compiler -- \
+            --out "bidsleep_mehrnacht_r${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
+            --offset ${{ matrix.offset }} --limit 36
+
+  bidsleep-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: bidsleep
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Merge the eight BIDS Mehrnacht chunks into bidsleep_mehrnacht.bin and upload
+        continue-on-error: true
+        run: |
+          gh release download physionet.org --repo omegaflow/sources \
+            --pattern "bidsleep_mehrnacht_r[0-7].bin" --clobber 2>/dev/null || true
+          cargo run -p omegaflow-harvest --release --bin bidsleep_compiler -- \
+            --merge bidsleep_mehrnacht_r0.bin bidsleep_mehrnacht_r1.bin \
+              bidsleep_mehrnacht_r2.bin bidsleep_mehrnacht_r3.bin \
+              bidsleep_mehrnacht_r4.bin bidsleep_mehrnacht_r5.bin \
+              bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin \
+            --out bidsleep_mehrnacht.bin --ci-mode
+
   ltmm:
     runs-on: ubuntu-latest
     timeout-minutes: 360
