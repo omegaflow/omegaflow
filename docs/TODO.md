@@ -985,18 +985,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
 - crates.io (`cargo install omegaflow`) — AUSSTEHEND; mit PolyForm-
   Noncommercial als source-available markiert, nicht Open Source.
 
-- JWST-Biosignatur-Kette (jeweils 0 honored bis zur vollständigen Ernte):
-  jwst_spectra.bin manifestiert die CI (kernel-flatten.yml jwst-Job,
-  --ci-mode); jwst_equilibrium.bin (Gleichgewichts-Chemie, thermochem) ist
-  ungeerntet/ungebaut — Compiler jwst_equilibrium_compiler lebt; der
-  Scanner jwst_biosignature_scanner (Auftrag 4) wartet auf beide. Seit
+- JWST-Biosignatur-Kette: jwst_spectra.bin ist SEIT 2026-09-04 auf dem CDN
+  manifestiert (HTTP 200, 165824 B, 6 GJ-806-Spektren, 3×1915 +
+  375/378/379 Bins — erster wahrhafter Stand; zuvor war das Register-
+  Asset 404, nie manifestiert). RESTLICH AUSSTEHEND: (a) jwst_equilibrium.bin
+  (Gleichgewichts-Chemie, thermochem) — Compiler jwst_equilibrium_compiler
+  lebt; (b) der Scanner jwst_biosignature_scanner (Auftrag 4) wartet auf
+  beide; (c) die VOLLE Spektren-Ernte konvergiert nicht — der jwst-Job
+  (kernel-flatten.yml) erntete in 5,7 h CI 0 Spektren (0 new, 1502 named
+  skips, Budget-Abbruch, kein Finalize; nur Index ~292/3760). Seit
   2026-09-03 überspringt jwst_spectra_compiler proprietäre (EXCLUSIVE_
-  ACCESS/PROPRIETARY) MAST-Beobachtungen; CDN-Asset jwst_spectra.bin war
-  404 (Registereintrag, nie manifestiert). CI-Pfad korrigiert: der
-  jwst-spectra-Job lud `src/kernels/naif0012.tls` (existiert nicht,
-  LSK liegt in src/archivar/kernels) — der Compiler brach sofort ab
-  (Rückgabe 0, Job fälschlich success); jetzt lädt der Job das LSK von
-  NAIF nach kernels/naif0012.tls.
+  ACCESS/PROPRIETARY) MAST-Beobachtungen; CI-Pfad korrigiert (LSK von NAIF
+  nach kernels/naif0012.tls statt des nicht existenten src/kernels/…).
+  Strategie-Umbau offen: kuratierte AST-Liste der Transmissions-Spektren
+  statt aller 3760 Transit-Hosts.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
