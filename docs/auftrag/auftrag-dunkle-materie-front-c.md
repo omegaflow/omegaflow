@@ -414,3 +414,23 @@ der verengten Basis.** (Projektionen des Review — „Anomalie-Distanz könnte 
 30–70× fallen" — sind NICHT gemessen: P10 steht bei ~100×, P11 ~200× unter dem
 Floor, Formtest weiter unaufgelöst; nur der gemessene Zustand wird registriert,
 0 honored.)
+
+**Deduktion-43-Externkalibrierung — gemessen (2026-09-03): unser Floor ist
+Reduktion, nicht Physik.** Gegen das etablierte S-Band-Doppler-Rauschbudget
+(Iess/Asmar 2005 doi:10.1029/2004RS003101; Armstrong/Woo/Estabrook 1979
+ApJ 230 570; Keihm 1995/2004; MCS-CEI) ist die f₀-Umrechnung gemessen:
+S-Band 2,292 GHz × fraktionaler Floor → **physikalische Radio-Rauschgrenze
+~7×10⁻⁵ Hz (69 µHz)** (interplanetare Szintillation ~3×10⁻¹⁴; Troposphäre
+3–30×10⁻¹⁵; MCS-CEI 1,1×10⁻¹⁵). **Unsere gemessene Tagesmedian-Streuung
+(133 Hz P10 / 218 Hz P11) liegt ~2–3 MILLIONEN× über diesem physikalischen
+Radio-Floor.** Die Anomalie (~1 Hz/Mission) liegt ~14.000× ÜBER dem Radio-Floor.
+Konsequenz: unser 133–218-Hz-Floor ist NICHT die Grenze der S-Band-Methode,
+sondern die Grenze UNSERER REDUKTION — es bleibt ~6 Größenordnungen Spielraum
+zwischen unserem Floor und der physikalischen Radio-Grenze. Der Flaschenhals ist
+die Reduction-Systematik (Stations-Offsets, Dumps, Modell-Residuen), nicht die
+Physik. Das Spektrum ist farbig (Kolmogorov f^-8/3), nicht weiß — die
+Tagesmedian-√N-Aggregation unterschätzt die Schrumpfung farbiger Komponenten
+nicht-trivial. **Damit ist die offene Frage „Grenze der Methode oder der
+Reduktion?" gemessen beantwortet: der Reduktion.** Die sub-Hz-Aggregation hat
+ein physikalisches Versprechen, das ~6 Größenordnungen unter unserem aktuellen
+Floor liegt (0 honored).
