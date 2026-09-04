@@ -1637,6 +1637,16 @@ field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0
 field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
 field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
+format intermagnet_dbdt
+on earth 68.358 18.823 380
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
+format intermagnet_dbdt
+at earth
+ttl 86400
+
 url https://maia.usno.navy.mil/ser7/finals.all
 format finals
 ttl 86400
