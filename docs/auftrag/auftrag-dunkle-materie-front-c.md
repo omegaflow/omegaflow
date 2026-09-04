@@ -379,4 +379,21 @@ nutzt einen Bruchteil der vorhandenen Tracking-Abdeckung. DTYPE-13 (three-way,
 rx≠tx, linkmode 13) ist im PNAV als Stationen-Paar erfasst und braucht ein
 rx×tx+uplink-Modell — das Muster existiert in `pioneer11_odf_residuum`
 (mode 13/14). Rückgewinnung würde die P10-Residuum-Basis ~5× heben (√N ≈ 2,2×).
-Rat-Verdikt zur Machbarkeit + Bau-Umfang steht aus (0 honored).
+Rat-Verdikt zur Machbarkeit + Bau-Umfang steht aus (0 honored). [three-way-Rückgewinn
+gebaut + gemessen, siehe oben — P10-Residuum 5×, sub-kHz-Basis 1126→3142 Tage,
+Median 89→10 Hz, Floor 336→133 Hz.]
+
+**Weitere Verdichtung gemessen — der Floor ist nahe dem Minimum (2026-09-03).**
+Nach der three-way-Rückgewinn (P10 3142 sub-kHz-Tage, RMS 133 Hz) wurde geprüft,
+ob die noch fehlenden tracking-reichen Tage den Floor weiter senken: P10 hat 2189
+tracking-reiche Residuum-Tage (≥100 Samples), 528 davon nicht in der sub-kHz-Basis
+— aber ihre rohen Residuum-RMS sind NIEDRIGER (p50 1273 Hz) als die enthaltenen
+(1953 Hz). Die definitive Messung: nutzt man ALLE Residuum-Tage (3722 P10) als
+Tagesmedian-Basis, steigt der RMS auf 10.781 Hz mit nur 46 % sub-kHz — der
+rohe `r[1]`-Wert trägt die un-detrendeten Stations-Offsets. **Der Gewinn kommt
+nicht aus mehr Tagen, sondern aus der negativ-fuzzy-Detrendung + Zell-Median** (die
+den Median 89→10 Hz brachte); die Detrend-Qualität, nicht die Tageszahl, setzt den
+Floor. Die three-way-Rückgewinn war die wirksame Verdichtung (5× → 336→133 Hz);
+weitere rohe Tages-Densifikation hilft nicht — der Floor ist per-Sample-Streuung
+nach Detrend, Rat-Physik bestätigt. ~133 Hz (P10) ist nahe dem erreichbaren
+Minimum dieser Daten (0 honored).
