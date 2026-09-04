@@ -319,3 +319,23 @@ Ein-Aussage von Deduktion 41. Die Anomalie lebt im rohen Range-Rate-Doppler
 (Sichtlinie), nicht in der 3D-Rekonstruktion. **Der echte Vektortest gehört der
 nächsten Sonde mit VLBI+Doppler (zweitem Auge), nicht den fertigen
 Pioneer-Bahnen. pending, 0 honored.**
+
+**Nachfolge-Klärung (2026-09-03) — die Frage kartiert, der Rotationstest geparkt.**
+Die Operator-Frage hat vier Gestalten durchlaufen; jede wurde gemessen oder an
+ihrer Wand dokumentiert: (1) Winkel — kein Instrument; (2) Form — nicht
+unterscheidbar über die Spanne (Deduktion 41); (3) Paar-Korrelation — r = −0,002
+gegen Surrogat-Null 0,0802, nichts gemeinsam über dem Boden (`pioneer_navio_pair_corr`,
+Commit e5a2387); (4) Geometrie/Überlagerung — das ist in Algebra das
+**Triangulationsnetz** `run_grid` (0/1008, 0 bei ≥2 Sonden, bereits gelaufen). Vier
+Formulierungen, vier Messungen, eine Antwort: unter dem Boden. Die Linie ist ein
+Schlauch (Rekonstruktionsfehler der Bahnen, ~150–340× breiter als die gesuchte
+Biegung ~40.000 km über 10 a); nur die sub-Hz-Aggregation über die volle ruhige
+Serie verdünnt ihn. **Geparktes Design (fertig, am sub-Hz-Schritt): der
+Rotationstest** — sonnensymmetrische Kraft (Anomalie, Wärme) erzeugt nach
+Voll-Normalisierung (Ursprung anknoten, drehen, Geschwindigkeit angleichen)
+**keinen** Differenzdrift; eine raumfeste Kraft (Klumpen, galaktischer Zug)
+bricht die Dreh-Symmetrie und erzeugt **differentielles** Auseinanderlaufen.
+Sobald der Schlauch dünn wird: der erste Griff ist die Dreh-Symmetrie, nicht die
+Amplitude. Granit: eine geometrische Frage ist eine Behauptung, solange die
+Rekonstruktion sie nicht trägt — die Linie ist ein Schlauch, und der
+Schlauchdurchmesser entscheidet, welche Fragen man stellen darf (0 honored).
