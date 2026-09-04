@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-03
-  version: 2
-  sha256: 531f5afbc5055f193d884b9a8a839f8a5c52209abb77420f914dbf238f5f2e02
+  version: 3
+  sha256: a24b5754244375ed461470d9c33636d84af5d57023a0243aaeb8b844f68ebc66
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/TODO.md (Pioneer-Front), docs/reference/
 -->
@@ -115,6 +115,22 @@ downlink (receive) chain — and the named machine of the NOCC reduction.
 The handover `docs/handover/handover-2026-08-24-pioneer-p11-modell-subtraktion.md`
 carries the path.
 
+## 5. Position against the literature
+
+Station-dependent periodic residuals are a documented artifact class in
+Pioneer Doppler. Levy et al. (2009, Adv. Space Res.) resolve periodic terms
+at the sidereal day and its harmonic and attribute them to station-condition-
+dependent media-model errors; Anderson et al. (2002) report the diurnal and
+seasonal variation; Bertotti & Giampieri (1998) treat solar-coronal plasma as
+dispersive Doppler noise. The ~20-s complex (44–56 mHz) with station-fixed
+frequencies reported here does not appear in these treatments or the review
+literature (Turyshev & Toth 2010), whose periodicities sit at day and year
+scales. The reported band is therefore a new instance of an established
+artifact class, not a new class. Whether a 20-s-scale line lives in the
+JPL-internal TDA/IPN report record (the class of documents cited in
+§1) is beyond the open record — a limit of this search, not a proof of
+novelty.
+
 ## References
 
 1. TRK-2-25, DSN 820-13 Rev. A (1988-10-15), Orbit-Daten-Format ATDF —
@@ -127,3 +143,11 @@ carries the path.
 5. Falin B. W., 1985, DSN Frequency and Timing System Mark IV-85,
    TDA PR 42-82, 113.
 6. Turyshev S. G., Toth V. T., 2010, Living Rev. Relativity 13, 4.
+7. Levy A., Christophe B., Bério P., Métris G., Courty J.-M., Reynaud S.,
+   2009, Pioneer 10 Doppler data analysis: disentangling periodic and secular
+   anomalies, Adv. Space Res. 43, 1538.
+8. Anderson J. D., Laing P. A., Lau E. L., Liu A. S., Nieto M. M.,
+   Turyshev S. G., 2002, Study of the anomalous acceleration of Pioneer
+   10 and 11, Phys. Rev. D 65, 082004.
+9. Bertotti B., Giampieri G., 1998, Solar coronal plasma in Doppler
+   measurements, Solar Phys. 178, 85.
