@@ -2,7 +2,7 @@
   title: Befund — Pioneer-Rauschen auf der ε-Achse: Front-C-Urteil „Distanz, nicht Winkel" — Distanz reproduziert, Winkel-Aussage auf ε präzisiert (P11-Konjunktions-Spitze, P10 anti-Plasma)
   class: befund
   date: 2026-09-05
-  sha256: b35a607039b4bc09436936193825cc1fd6bdee1806bbb86569f327201a113172
+  sha256: 89fcab3381869ec44c92dd696b269539e09bb5e4ea235480a065c20d6d33563f
   status: done
   antwortet-auf: docs/auftrag/auftrag-dunkle-materie-front-c.md (Commit 0932cae, Rausch-Räumliche Verortung) docs/TODO.md (ε-Achsen-Pflicht der Pioneer-Quiet-Zone-Rezept-Blätter)
   see-also: docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/befund/befund-galileo-rausch-kurve.md
@@ -185,3 +185,9 @@ die P11-Konjunktions-Spitze von einer Ära-Kovariate.
 gemessen: Distanz reproduziert, Winkel-Aussage auf ε präzisiert. Offen bleibt die
 ε×Distanz×Ära-2D-Entzerrung der P11-Konjunktions-Spitze (ε 0–10°, 8013 Hz, n=43)
 — `pending`.
+
+Folge-Befund (`befund-front-c-epsilon-2d`, done): die 2D-Entzerrung ist gemessen —
+die P11-ε0–10°-Spitze ist ein **Ären-Zellen-Artefakt**, kein Konjunktions-Effekt
+(alle 43 Tage in einer Ära×Distanz-Zelle 1978–80; unter 2D-Kontrolle trennt ε
+nichts, beide Achsen erben die Ära-Zelle). Der Treiber der lauten 1978–82-Ära
+(Solarzyklus-21 vs. Saturn-Encounter) bleibt offen (omni2/f107-Test möglich).
