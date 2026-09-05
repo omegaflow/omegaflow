@@ -325,14 +325,17 @@ Messreihe archiviert: `archive/messreihe-nadel3-corona.md`. Befund lebt
 in `docs/paper/corona-heating-ladder.md`. OFFENE PFLICHTEN vor einer
 physikalischen Aussage — kein Blatt ohne diese:
 
-- **AIA-fam-Tool nachgelegt (2026-09-05)**: `aia_ladder_probe` rechnet jetzt
-  den Full-Round-Family-Bound wie `corona_ladder_probe` (6 Paare × 13 Lags × 10
-  Surrogate) und markiert * nur darüber — die methodische Luecke „AIA ohne fam /
-  EVE mit fam" (bekannt-schlecht) ist im Werkzeug geschlossen. Die fam-ZAHL ueber
-  dem 194-Flare-AIA-2014-Korpus steht noch aus: das manifestierte aia2014_lines.bin
-  deckt nur einen Tag (~7194 Samples/Band), der Ladder-Lauf findet 0 Ereignisse —
-  das Paper-Korpus (194 Flares) ist nicht als CDN-Asset manifestiert. pending
-  (Korpus-Harvest zuerst).
+- **AIA-fam-Tool + Zahl (2026-09-05)**: `aia_ladder_probe` rechnet den
+  Full-Round-Family-Bound wie `corona_ladder_probe` (6 Paare × 13 Lags × 10
+  Surrogate). Das manifestierte aia2014_lines.bin war nur ein 1-Tag-Stub; das
+  volle 2014-03-01–05-30-Korpus (3 Monate × 7 Bänder, 4.522.425 Records,
+  1-Tage-JSOC-Chunks) ist geerntet (lokal, /tmp), GOES-13+15-Trigger besorgt.
+  Gemessen (fam-getestet): GOES-15 194 Ereignisse fam = 1.89e-1, 335→94-Spitze
+  +1.42e-1 < fam → stumm; GOES-13 208 Ereignisse fam = 1.80e-1, +1.40e-1 < fam
+  → stumm. Kein Instrument belegt die Heiß-Rung-Richtung auf fam-Niveau; der
+  „EVE ab/AIA auf"-Zwiespalt löst sich auf (bekannt-schlecht geschlossen).
+  Paper v3 + Blatt-Survey aktualisiert. Offen: Korpus-Manifestation aufs CDN
+  (CI, ersetzt den 1-Tag-Stub). pending (Manifest).
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
