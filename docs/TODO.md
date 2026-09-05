@@ -1717,6 +1717,19 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Rust-Weg. Naechster Schritt: /api/v1/fp in die Maschine verdrahten + erster
   dichter-FP-achromatischer Scan.
 
+
+- Nadel XIII PHOTOCHEMIE-AUSSCHLUSS (2026-09-06, die benannte offene Bio-Frage):
+  die 16 Disequilibrium-Hits sind VOR dem natuerlichen Ausschluss (Bio-Analogon zu
+  den 2 Techno-Kandidaten, die beide als natuerlich ausgeschieden wurden). Der
+  natuerliche Re-Erklaerer ist die Photochemie (Stern-UV stoesst die Chemie an —
+  Tsai 2023 erklaert WASP-39 b SO2 so). Aktivitaets-Indikator getestet (Hits auf
+  ruhigeren Sternen, log R'HK r=-0.609, L_X r=+0.066 — populations-seitig nicht
+  durch aktive Wirte erklaert). OFFEN: ein echtes Photochemie-Modell ueber die 16
+  Hits fahren, um zu scheiden, welche disequilibrium NATUERLICH (photochemisch,
+  z.B. WASP-39/WASP-107 SO2 — fallen raus) und welche UNERKLAERT bleiben (= die
+  echten Bio-Kandidaten). Nicht abgeschlossen: 16 lebende Kandidaten, keiner
+  sicher als natuerlich ausgeschlossen.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
