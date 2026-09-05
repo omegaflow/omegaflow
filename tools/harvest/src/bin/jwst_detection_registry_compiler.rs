@@ -118,6 +118,7 @@ fn tap_curated_spectrum_rows(token: &str) -> Vec<SpectrumRow> {
 
 struct Detection {
     host: String,
+    pl_name: String,
     species: String,
     bibcode: String,
     abundance: Option<f64>,
@@ -159,10 +160,12 @@ fn parse_seed(path: &str) -> Option<(Vec<Detection>, usize)> {
             continue;
         }
         let bibcode = jstr(row, "bibcode").unwrap_or_default();
+        let pl_name = jstr(row, "pl_name").unwrap_or_default();
         let abundance = jnum(row, "abundance").filter(|v| v.is_finite());
         let snr = jnum(row, "snr").filter(|v| v.is_finite());
         out.push(Detection {
             host,
+            pl_name,
             species,
             bibcode,
             abundance,
@@ -192,6 +195,9 @@ fn spectrum_obj(r: &SpectrumRow) -> String {
 
 fn detection_obj(d: &Detection) -> String {
     let mut fields = vec![format!("\"species\":\"{}\"", json_escape(&d.species))];
+    if !d.pl_name.is_empty() {
+        fields.push(format!("\"pl_name\":\"{}\"", json_escape(&d.pl_name)));
+    }
     if !d.bibcode.is_empty() {
         fields.push(format!("\"bibcode\":\"{}\"", json_escape(&d.bibcode)));
     }
@@ -206,7 +212,9 @@ fn detection_obj(d: &Detection) -> String {
 
 fn detection_key(d: &Detection) -> String {
     format!(
-        "{}\u{1f}{}\u{1f}{}\u{1f}{}",
+        "{}\u{1f}{}\u{1f}{}\u{1f}{}\u{1f}{}\u{1f}{}",
+        d.host,
+        d.pl_name,
         d.species,
         d.bibcode,
         d.abundance.map(|v| v.to_string()).unwrap_or_default(),
