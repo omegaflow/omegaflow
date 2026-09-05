@@ -1,5 +1,5 @@
 use omegaflow::bl_narrowband::{parse_bin, write_bin, BlNarrowbandEvent};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::process::Command;
 
@@ -274,7 +274,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("blpd0.ssl.berkeley.edu", &out) {
         eprintln!("{}: CDN upload returned void", out);
         std::process::exit(1);
     }
