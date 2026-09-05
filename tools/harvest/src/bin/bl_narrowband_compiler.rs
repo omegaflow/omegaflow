@@ -1,6 +1,8 @@
 use omegaflow::bl_narrowband::{parse_bin, write_bin, BlNarrowbandEvent};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
+use std::fs::File;
+use std::io::{BufRead, BufReader, Cursor};
 use std::process::Command;
 
 const MJD_UNIX_OFFSET: f64 = 40587.0;
@@ -96,9 +98,9 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let text = if let Some(p) = &input {
-        match std::fs::read_to_string(p) {
-            Ok(t) => t,
+    let mut reader: Box<dyn BufRead> = if let Some(p) = &input {
+        match File::open(p) {
+            Ok(f) => Box::new(BufReader::new(f)),
             Err(_) => {
                 eprintln!("read {} returned void", p);
                 std::process::exit(1);
@@ -106,7 +108,7 @@ fn main() {
         }
     } else if let Some(u) = &url {
         match fetch_text(u) {
-            Some(t) => t,
+            Some(t) => Box::new(Cursor::new(t)),
             None => {
                 eprintln!("curl {} returned void", u);
                 std::process::exit(1);
@@ -117,14 +119,14 @@ fn main() {
         std::process::exit(1);
     };
 
-    let mut lines = text.lines();
-    let header_line = match lines.next() {
-        Some(h) => h,
-        None => {
+    let mut header_line = String::new();
+    match reader.read_line(&mut header_line) {
+        Ok(n) if n > 0 => {}
+        _ => {
             eprintln!("the CSV carries no header row — nothing compiled");
             std::process::exit(1);
         }
-    };
+    }
     let header: Vec<String> = header_line
         .split(',')
         .map(|s| s.trim().to_string())
@@ -158,11 +160,20 @@ fn main() {
     }
 
     let mut events: Vec<BlNarrowbandEvent> = Vec::new();
+    let mut rows = 0usize;
     let mut malformed = 0usize;
     let mut pending_width = 0usize;
-    for line in lines {
+    for line in reader.lines() {
+        let Ok(line) = line else {
+            malformed += 1;
+            continue;
+        };
         if line.trim().is_empty() || line.starts_with('#') {
             continue;
+        }
+        rows += 1;
+        if rows % 1_000_000 == 0 {
+            eprintln!("{}: {} rows read, {} hits compiled", input.as_deref().unwrap_or("CSV"), rows, events.len());
         }
         let cols: Vec<&str> = line.split(',').map(|s| s.trim()).collect();
         let at = |i: usize| -> Option<&str> { cols.get(i).copied().filter(|s| !s.is_empty()) };
@@ -256,6 +267,7 @@ fn main() {
             std::process::exit(1);
         }
     };
+    drop(events);
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {} returned void", out);
         std::process::exit(1);
