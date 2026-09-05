@@ -25,6 +25,9 @@ const N_EXACT_MIN: usize = 200;
 
 const WANG_A_GBP: f64 = 2.429;
 const WANG_A_G: f64 = 1.890;
+const VALID_B_MIN_DEG: f64 = 20.0;
+const FF_SLICE_LO_DEFAULT: f64 = 3.0;
+const FF_SLICE_HI_DEFAULT: f64 = 4.0;
 
 struct DustMap {
     av: Vec<f64>,
@@ -738,6 +741,193 @@ fn collect_cone(
     }
 }
 
+struct FieldClean {
+    total: usize,
+    valid_region: usize,
+    no_pixel: usize,
+    in_front: usize,
+    av_refused: usize,
+    color_refused: usize,
+    members: Vec<Member>,
+}
+
+fn collect_full_field(dust: &DustMap, stars: &[Star]) -> FieldClean {
+    let mut valid_region = 0usize;
+    let mut no_pixel = 0usize;
+    let mut in_front = 0usize;
+    let mut av_refused = 0usize;
+    let mut color_refused = 0usize;
+    let mut members = Vec::new();
+    for s in stars {
+        let (_, b) = gal_of(s.ra_deg, s.dec_deg);
+        if b.abs() < VALID_B_MIN_DEG {
+            continue;
+        }
+        valid_region += 1;
+        let Some((av, screen_pc)) = pixel_of(dust, s.ra_deg, s.dec_deg) else {
+            no_pixel += 1;
+            continue;
+        };
+        if s.d_pc <= screen_pc {
+            in_front += 1;
+            continue;
+        }
+        if !(av.is_finite() && av >= 0.0) {
+            av_refused += 1;
+            continue;
+        }
+        if !(s.color >= COLOR_MIN && s.color <= COLOR_MAX) {
+            color_refused += 1;
+            continue;
+        }
+        members.push(Member {
+            av,
+            g: s.g,
+            color: s.color,
+            m_abs: s.m_abs,
+        });
+    }
+    FieldClean {
+        total: stars.len(),
+        valid_region,
+        no_pixel,
+        in_front,
+        av_refused,
+        color_refused,
+        members,
+    }
+}
+
+fn run_full_field(dust: &DustMap, stars: &[Star], slice_lo: f64, slice_hi: f64) {
+    let fc = collect_full_field(dust, stars);
+    let outside = fc.total - fc.valid_region;
+    println!("\n=== full-field dust cleaning — the screen over the whole DR3 field ===");
+    println!(
+        "model validity gate: only |b| >= {VALID_B_MIN_DEG} deg lies behind the 200 pc screen; at lower latitude the DL07 column sits beyond the screen and beyond the nearer stars, so the earlier scan measured slope ~ 0 there and no correction is fabricated"
+    );
+    println!(
+        "stars: {} total | {} in the valid region (|b| >= {VALID_B_MIN_DEG}) | {} outside it (|b| < {VALID_B_MIN_DEG})",
+        fc.total, fc.valid_region, outside
+    );
+    println!(
+        "valid-region stars: {} behind the screen and corrected | {} without a dust pixel | {} in front of the screen (plx-distance <= screen) | {} refused A_V (non-finite or negative) | {} refused color (outside [{COLOR_MIN}, {COLOR_MAX}])",
+        fc.members.len(),
+        fc.no_pixel,
+        fc.in_front,
+        fc.av_refused,
+        fc.color_refused
+    );
+    if fc.members.is_empty() {
+        eprintln!("no behind-screen star carries a plausible A_V and color in the valid region — the full-field correction stays unmeasured (0 honored)");
+        std::process::exit(1);
+    }
+
+    let slice_members: Vec<&Member> = fc
+        .members
+        .iter()
+        .filter(|m| m.m_abs >= slice_lo && m.m_abs <= slice_hi && m.g <= MAG_CLEAN_MAX)
+        .collect();
+    if slice_members.is_empty() {
+        eprintln!("no behind-screen star in the abs-G slice — the global slope stays unmeasured (0 honored)");
+        std::process::exit(1);
+    }
+    let sx: Vec<f64> = slice_members.iter().map(|m| m.av).collect();
+    let sy: Vec<f64> = slice_members.iter().map(|m| m.color).collect();
+    let Some(reg) = ols(&sx, &sy) else {
+        eprintln!("the global color regression carries no A_V variance — the slope stays unmeasured (0 honored)");
+        std::process::exit(1);
+    };
+    println!("\n=== measured global reddening slope (step 4) ===");
+    println!(
+        "d(BP-RP)/dA_V over {} behind-screen stars in the narrow abs-G slice [{slice_lo}, {slice_hi}] with apparent G <= {MAG_CLEAN_MAX}:",
+        reg.n
+    );
+    println!(
+        "slope = {:.4} mag/mag | residual scatter rms = {:.4} mag | Pearson r = {:.4} | A_V mean {:.4}, sd {:.4} (the sd is the regression leverage)",
+        reg.slope, reg.rms, reg.pearson, reg.x_mean, reg.x_sd
+    );
+    let se_slope = slope_se(&reg);
+    println!(
+        "slope standard error = {se_slope:.4} mag/mag ({:.1} se above zero)",
+        reg.slope / se_slope
+    );
+    if reg.slope <= 0.0 {
+        eprintln!(
+            "the measured slope {:.4} is not a reddening relation — the screen correction is not applied (0 honored)",
+            reg.slope
+        );
+        std::process::exit(1);
+    }
+
+    let k_wc = WANG_A_G * reg.slope;
+    println!("\n=== applied correction (step 5) ===");
+    println!(
+        "corrected BP-RP = BP-RP - {:.4}*A_V | corrected G = G - {k_wc:.4}*A_V",
+        reg.slope
+    );
+    println!(
+        "the G factor is the cited relation — Wang & Chen 2019, ApJ 877, 116: \"A_G = (1.890 +/- 0.015) E(GBP-GRP)\", so A_G = {:.4} * d(BP-RP)/dA_V * A_V = {k_wc:.4}*A_V",
+        1.0 * reg.slope
+    );
+
+    println!("\n=== color-magnitude outcome (step 6) — the corrected population ===");
+    let n_behind = fc.members.len();
+    println!("corrected population (n = {n_behind}, behind-screen in the valid region):");
+    let bbp: Vec<f64> = fc.members.iter().map(|m| m.color).collect();
+    let abp: Vec<f64> = fc
+        .members
+        .iter()
+        .map(|m| m.color - reg.slope * m.av)
+        .collect();
+    let bmg: Vec<f64> = fc.members.iter().map(|m| m.m_abs).collect();
+    let amg: Vec<f64> = fc.members.iter().map(|m| m.m_abs - k_wc * m.av).collect();
+    let (bbp_m, bbp_s) = mean_sd(&bbp);
+    let (abp_m, abp_s) = mean_sd(&abp);
+    let (bmg_m, bmg_s) = mean_sd(&bmg);
+    let (amg_m, amg_s) = mean_sd(&amg);
+    println!(
+        "  BP-RP  before: mean {bbp_m:.4}  sd {bbp_s:.4} | after: mean {abp_m:.4}  sd {abp_s:.4}"
+    );
+    println!(
+        "  abs-G  before: mean {bmg_m:.4}  sd {bmg_s:.4} | after: mean {amg_m:.4}  sd {amg_s:.4}"
+    );
+
+    let n_s = slice_members.len();
+    let sbp: Vec<f64> = slice_members.iter().map(|m| m.color).collect();
+    let sap: Vec<f64> = slice_members
+        .iter()
+        .map(|m| m.color - reg.slope * m.av)
+        .collect();
+    let smg: Vec<f64> = slice_members.iter().map(|m| m.m_abs).collect();
+    let sam: Vec<f64> = slice_members
+        .iter()
+        .map(|m| m.m_abs - k_wc * m.av)
+        .collect();
+    let (sbp_m, sbp_s) = mean_sd(&sbp);
+    let (sap_m, sap_s) = mean_sd(&sap);
+    let (smg_m, smg_s) = mean_sd(&smg);
+    let (sam_m, sam_s) = mean_sd(&sam);
+    println!(
+        "abs-G slice population (n = {n_s}, the regression set; apparent G <= {MAG_CLEAN_MAX}):"
+    );
+    println!(
+        "  BP-RP  before: mean {sbp_m:.4}  sd {sbp_s:.4} | after: mean {sap_m:.4}  sd {sap_s:.4}"
+    );
+    println!(
+        "  abs-G  before: mean {smg_m:.4}  sd {smg_s:.4} | after: mean {sam_m:.4}  sd {sam_s:.4}"
+    );
+
+    let avs: Vec<f64> = fc.members.iter().map(|m| m.av).collect();
+    let (av_mean, av_sd) = mean_sd(&avs);
+    println!(
+        "corrected-population A_V: mean {av_mean:.4}, sd {av_sd:.4} mag (the extinction actually subtracted)"
+    );
+    println!(
+        "\ncorrection summary: global slope {:.4} mag/mag (measured, n = {}), G factor {k_wc:.4} = 1.890 * slope, applied to {n_behind} stars in |b| >= {VALID_B_MIN_DEG} deg",
+        reg.slope, reg.n
+    );
+}
+
 fn ols(x: &[f64], y: &[f64]) -> Option<Reg> {
     let n = x.len();
     if n < 3 {
@@ -811,20 +1001,30 @@ fn median(v: &[f64]) -> Option<f64> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(dust_path) = arg_value(&args, "--dust") else {
-        eprintln!("usage: dust_cleaning_probe --dust <planck_dust_av_rq_n512.json> --stars <dr3_stars.bin> [--cone <ra> <dec> | --cone-gal <l> <b>] [--radius <deg>] [--slice <m_lo> <m_hi>]");
+        eprintln!("usage: dust_cleaning_probe --dust <planck_dust_av_rq_n512.json> --stars <dr3_stars.bin> (--full-field | --cone <ra> <dec> | --cone-gal <l> <b>) [--radius <deg>] [--slice <m_lo> <m_hi>]");
         std::process::exit(1);
     };
     let Some(stars_path) = arg_value(&args, "--stars") else {
         eprintln!("--stars <dr3_stars.bin>: the star sample is never silent");
         std::process::exit(1);
     };
-    let radius_deg = match f64_of(&args, "--radius") {
-        Some(r) if r.is_finite() && r > 0.0 => r,
-        Some(_) => {
-            eprintln!("--radius carries no plausible degree count");
-            std::process::exit(1);
+    let full_field = args.iter().any(|a| a == "--full-field");
+    let cone_requested = args.iter().any(|a| a == "--cone" || a == "--cone-gal");
+    if full_field && (cone_requested || args.iter().any(|a| a == "--radius")) {
+        eprintln!("--full-field processes the whole sky; it does not combine with --cone, --cone-gal, or --radius");
+        std::process::exit(1);
+    }
+    let radius_deg = if full_field {
+        RADIUS_DEFAULT_DEG
+    } else {
+        match f64_of(&args, "--radius") {
+            Some(r) if r.is_finite() && r > 0.0 => r,
+            Some(_) => {
+                eprintln!("--radius carries no plausible degree count");
+                std::process::exit(1);
+            }
+            None => RADIUS_DEFAULT_DEG,
         }
-        None => RADIUS_DEFAULT_DEG,
     };
     let (slice_lo, slice_hi) = match pair_of(&args, "--slice") {
         Some((lo, hi)) if hi > lo => (lo, hi),
@@ -832,13 +1032,21 @@ fn main() {
             eprintln!("--slice <m_lo> <m_hi> carries no plausible magnitude window");
             std::process::exit(1);
         }
+        None if full_field => (FF_SLICE_LO_DEFAULT, FF_SLICE_HI_DEFAULT),
         None => (SLICE_LO_DEFAULT, SLICE_HI_DEFAULT),
     };
 
-    println!("=== dust_cleaning_probe — Planck DL07 AV_RQ screen subtraction of Gaia DR3 ===");
-    println!(
-        "dust map {dust_path} | stars {stars_path} | cone radius {radius_deg} deg | abs-G slice [{slice_lo}, {slice_hi}]"
-    );
+    if full_field {
+        println!("=== dust_cleaning_probe --full-field — Planck DL07 AV_RQ screen subtraction over the whole Gaia DR3 field ===");
+        println!(
+            "dust map {dust_path} | stars {stars_path} | abs-G regression slice [{slice_lo}, {slice_hi}]"
+        );
+    } else {
+        println!("=== dust_cleaning_probe — Planck DL07 AV_RQ screen subtraction of Gaia DR3 ===");
+        println!(
+            "dust map {dust_path} | stars {stars_path} | cone radius {radius_deg} deg | abs-G slice [{slice_lo}, {slice_hi}]"
+        );
+    }
 
     let dust_bytes = read_bytes(&dust_path, "dust map");
     let (dust, rows, rows_unread, aliases, absent, screen_lo, screen_hi) = load_dust(&dust_bytes);
@@ -851,6 +1059,11 @@ fn main() {
 
     let star_bytes = read_bytes(&stars_path, "dr3 stars");
     let stars = load_stars(&star_bytes);
+
+    if full_field {
+        run_full_field(&dust, &stars, slice_lo, slice_hi);
+        return;
+    }
 
     let (sra, sdec, _) = match pair_of(&args, "--cone") {
         Some((ra, dec)) => (ra, dec, true),
