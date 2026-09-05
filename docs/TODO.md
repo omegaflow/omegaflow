@@ -1271,6 +1271,33 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   out-of-model, nicht als Hit/Nicht-Hit klassifiziert. Floor (--floor, default
   1e-6) ist ein benannter Judgment-Wert (Seed traegt keinen Instrument-Floor);
   Sensitivitaet: 1e-7 -> 3 Hit-Hosts, 1e-6/1e-5/1e-4 -> 10.
+- Disequilibrium-Register-Urteil II (2026-09-05, sulfur-aware + Planet-Attribution):
+  thermochem traegt jetzt einen separaten S-Pfad (equilibrium_composition_sulfur,
+  24 Slots: 16 archivierte H/C/N/O-Slots unveraendert + S,S2,SH,H2S,SO,SO2,CS,OCS;
+  Daten NIST-JANAF Chase 1998 Shomate-Fits, S(g) nur ab 882 K Fit-Domäne,
+  S/H 1.62e-5 Anders-Grevesse 1989; 16-Slot-Vertrag jwst_equilibrium.bin bleibt
+  unangetastet — erweiterter Pfad, nicht mutierter Bestand). Saat traegt jetzt
+  pl_name je Zeile: alle 11 Multi-Transit-Detektionen dem im Primaer-Paper
+  benannten Planeten zugeordnet (GJ 9827 d, HIP 67522 b, L 98-59 b, LP 791-18 c,
+  LTT 3780 c = TOI-732 c, TOI-1130 b, TOI-199 b, TOI-270 d, TOI-421 b,
+  V1298 Tau b, GJ 3090 b). Gemessen: 14 disequilibrium-hit, 10
+  equilibrium-present, 1 ohne-Modell-Daten-only (GJ 3090 b, He), 5 pending —
+  alle Domäne (K2-18 b 283 K, LP 791-18 c 354 K, LTT 3780 c 363 K, TOI-199 b
+  352 K, TOI-270 d 388 K unter der 500-K-Modellgrenze: benannter Modell-Domänen-
+  limit, kein Signal; CH4/CO2 auf K2-18 damit nicht als Gleichgewichts-Urteil
+  wertbar). Schwefel-Kanal: SO2 auf WASP-39 b (Teq 1166 K, Gleichgewichts-Anteil
+  1.6e-16), WASP-107 b (4.9e-22), HAT-P-26 b, TOI-1130 b, WASP-15 b, V1298 Tau b,
+  L 98-59 b und OCS auf V1298 Tau b sind disequilibrium-hit (Detektion um >10
+  Groessenordnungen ueber dem solaren 1-bar-Gleichgewicht); H2S auf TOI-5205 b
+  ist equilibrium-present (Gleichgewichts-Anteil 3.24e-5 = der S-Reservoir bei
+  736 K). Katalog-Permutations-Null: beobachtet 14 | Null mean 15.75 | sigma 1.68
+  | mean+2sigma 19.10 | P(T>=14)=0.911 — kein Disequilibrium-Signal ueber den
+  Zufall hinaus; Sensitivitaet floor: 1e-7 -> 9, 1e-6/1e-5 -> 14, 1e-4 -> 15.
+  L 98-59 b-Praemisse benannt: vulkanische SO2-Atmosphaere einer Sub-Erde, kein
+  solares H2-dominiertes Nullgas. OFFEN: jwst_detection_registry_compiler wirft
+  pl_name in der Registry fallen (Saat traegt ihn, Compiler-Kopie nicht);
+  DMS/DMDS-K2-18 nicht in der Saat (degeneriert). cargo check 0 Warnungen
+  (omegaflow-measure + omegaflow-harvest), keine CDN-Manifestation.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
