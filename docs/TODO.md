@@ -1331,6 +1331,13 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   host+pl_name). Das Mess-Urteil (16 Hits, P=0.9424) ist registriert; ein
   Blaetter-Ein-Blatt steht noch aus (ein-blatt-papier.md-Form).
 
+
+- Drei neue Auftraege (2026-09-05, docs/auftrag/): (1) auftrag-techno-narrowband-
+  scan — Radio/Laser-Narrowband-Kanal der Technosignatur; (2) auftrag-techno-
+  atmosphaeren-gase — Atmosphären-Technosignatur CFC/NO2/SF6; (3) auftrag-
+  negativ-fuzzy-techno — der negative Fuzzy-Index formal auf Bio/Techno-Ausschluss.
+  Alle status pending.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
