@@ -1649,3 +1649,16 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   sind und welche archiviert werden — deren see-also-Zeilen tragen noch
   tote Handover-Referenzen (docs/paper/-Ordner-Klasse + Concepts-Zweite-
   Achse: 2026-08-22/24 geregelt, die ENSO/Bz-Auswahl bleibt).
+
+- Richtungs-Transient ohne Distanz — das Feld-Atom (Council 2026-09-05,
+  offen): ZTF-Transienten-Quellen (Lasair-cmap, ALeRCE `build_alerce_channels`,
+  ANTARES-REST) liefern ra/dec + em-Magnitude, aber KEINE Distanz. Die
+  CelestialMap-Distanz-Gate (extract.rs ~2121, `no_distance_skipped` assertiert
+  0) verwirft jedes richtung-only-Element — keine erfundene Distanz (0 honored).
+  Der ehrliche Träger fehlt: eine Richtung auf der Einheitskugel (RA/Dec ohne
+  Radius), Winkel-Kernel ohne radialen Abfall. Neues Atom, zwei Seiten:
+  Archivar (Position/Motion-Richtungs-Variante, p_hat + Winkelableitung ohne
+  d-Faktor) + Mathematikerin (neuer WGSL-force-Zweig) + Kugel-Index statt
+  3D-Euklid-Enclosure. ANTARES in blocked_sources.φ als `parser-def json`
+  registriert (pending, kein live-cmap); Lasair (sources.φ) und ALeRCE tragen
+  dieselbe pending-Klasse benannt ("dark until a distance channel exists").
