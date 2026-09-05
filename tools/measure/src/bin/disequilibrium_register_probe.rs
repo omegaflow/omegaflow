@@ -1,6 +1,9 @@
 use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
 use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
-use omegaflow::thermochem::{equilibrium_composition_sulfur, sulfur_gas_names, P0_PA};
+use omegaflow::thermochem::{
+    equilibrium_composition_condensed, equilibrium_composition_sulfur, sulfur_gas_names,
+    COOL_T_MIN, P0_PA, WATER_LIQ_T_MIN, WATER_P_TRIPLE_PA,
+};
 use std::collections::HashMap;
 
 const RNG_MULT: u64 = 6364136223846793005;
@@ -9,7 +12,7 @@ const FULL_CIRCLE: f64 = (u32::MAX >> 1) as f64;
 const RNG_SEED: u64 = 0x5EED_0D15_EA5E_2026;
 const DEFAULT_TRIALS: usize = 10_000;
 const DEFAULT_FLOOR: f64 = 1.0e-6;
-const MODEL_T_MIN: f64 = 500.0;
+const SULFUR_T_MIN: f64 = 500.0;
 const MODEL_T_MAX: f64 = 3000.0;
 
 fn rng_unit(rng: &mut u64) -> f64 {
@@ -159,10 +162,21 @@ fn main() {
 }
 
 #[derive(Clone)]
+enum HostModel {
+    Sulfur,
+    Cool {
+        condensed_h2o_moles: f64,
+        vapor_pa: f64,
+        sat_pa: Option<f64>,
+    },
+}
+
+#[derive(Clone)]
 struct HostPlan {
     pl_name: String,
     teq_k: f64,
     frac: Vec<f64>,
+    model: HostModel,
 }
 
 fn run(
@@ -193,11 +207,22 @@ fn run(
         planet_rows.len()
     ));
     out.push_str(&format!(
-        "modell: thermochem::equilibrium_composition_sulfur bei {:.0} bar, solare Haeufigkeit H,C,O,N,S (S/H 1.62e-5, Anders-Grevesse 1989) | Domäne {}..{} K\n",
-        P0_PA / 101325.0, MODEL_T_MIN, MODEL_T_MAX
+        "modell: Gleichgewicht bei {:.0} bar, solare Haeufigkeit H,C,O,N,S (S/H 1.62e-5, Anders-Grevesse 1989)\n",
+        P0_PA / 101325.0
+    ));
+    out.push_str(&format!(
+        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_sulfur (einphasiges Gas, 24 Slots)\n",
+        SULFUR_T_MIN, MODEL_T_MAX
+    ));
+    out.push_str(&format!(
+        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_condensed (kondensations-bewusst; dieselben 24 Gas-Slots)\n",
+        COOL_T_MIN, SULFUR_T_MIN
     ));
     out.push_str(
-        "sulfur-Daten: NIST-JANAF (Chase 1998) Shomate-Fits, atomares S(g) nur ab 882 K Fit-Domäne; S2,SH,H2S,SO,SO2,CS,OCS tragen Fits bis 6000 K\n",
+        "sulfur-Daten: NIST-JANAF (Chase 1998) Shomate-Fits, atomares S(g) nur ab 882 K Fit-Domäne\n",
+    );
+    out.push_str(
+        "kondensat-Daten: H2O(l) NIST-JANAF-Shomate 298.15..500 K (dHf298 -285.830 kJ/mol, S298 69.95 J/mol/K, WebBook 2026-09-05); NH3/CO2/CH4/H2S-kondensiert pending (WebBook traegt keine kondensierten Shomate-Fits; 0 honored); unter 298.15 K traegt die Dreipunkt-Sättigung 610 Pa den Einphasen-Befund bei 1-bar-solarer Häufigkeit\n",
     );
     out.push_str(&format!(
         "detektions-schwelle floor = {:.1e} (Mischungsverhältnis); Herkunft: Urteilswert, benannt —\n",
@@ -312,26 +337,53 @@ fn run(
             n_pending_domain += 1;
             continue;
         };
-        if !(MODEL_T_MIN..=MODEL_T_MAX).contains(&t_eq) {
-            pending_reason[id] = Some(format!(
-                "Teq {:.0} K ausserhalb der Modell-Domäne {}..{} K",
-                t_eq, MODEL_T_MIN, MODEL_T_MAX
-            ));
-            n_pending_domain += 1;
-            continue;
-        }
-        let Some(frac) = equilibrium_composition_sulfur(t_eq, P0_PA) else {
-            pending_reason[id] = Some(format!(
-                "Gleichgewichts-Loeser konvergiert bei {:.0} K nicht",
-                t_eq
-            ));
-            n_pending_solver += 1;
-            continue;
+        let (frac, model) = if t_eq >= SULFUR_T_MIN {
+            if !(SULFUR_T_MIN..=MODEL_T_MAX).contains(&t_eq) {
+                pending_reason[id] = Some(format!(
+                    "Teq {:.0} K ausserhalb der Modell-Domäne {}..{} K",
+                    t_eq, SULFUR_T_MIN, MODEL_T_MAX
+                ));
+                n_pending_domain += 1;
+                continue;
+            }
+            let Some(frac) = equilibrium_composition_sulfur(t_eq, P0_PA) else {
+                pending_reason[id] = Some(format!(
+                    "Gleichgewichts-Loeser konvergiert bei {:.0} K nicht",
+                    t_eq
+                ));
+                n_pending_solver += 1;
+                continue;
+            };
+            (frac, HostModel::Sulfur)
+        } else {
+            if t_eq < COOL_T_MIN {
+                pending_reason[id] = Some(format!(
+                    "Teq {:.0} K unter der Daten-Domäne {:.0}..{:.0} K (kondensiertes NH3/CO2/CH4/H2S pending)",
+                    t_eq, COOL_T_MIN, SULFUR_T_MIN
+                ));
+                n_pending_domain += 1;
+                continue;
+            }
+            let Some(eq) = equilibrium_composition_condensed(t_eq, P0_PA) else {
+                pending_reason[id] = Some(format!(
+                    "kondensations-bewusster Loeser konvergiert bei {:.0} K nicht (oder Kondensation unter 298.15 K nicht beurteilbar)",
+                    t_eq
+                ));
+                n_pending_solver += 1;
+                continue;
+            };
+            let model = HostModel::Cool {
+                condensed_h2o_moles: eq.h2o_condensed_moles,
+                vapor_pa: eq.h2o_vapor_pa,
+                sat_pa: eq.h2o_sat_pa,
+            };
+            (eq.frac, model)
         };
         plan[id] = Some(HostPlan {
             pl_name: p.pl_name.clone(),
             teq_k: t_eq,
             frac,
+            model,
         });
     }
 
@@ -397,6 +449,29 @@ fn run(
         }
         for s in &present_species {
             block.push_str(&format!("      equilibrium    {s}\n"));
+        }
+        if let HostModel::Cool {
+            condensed_h2o_moles,
+            vapor_pa,
+            sat_pa,
+        } = &hp.model
+        {
+            if *condensed_h2o_moles > 0.0 {
+                block.push_str(&format!(
+                    "      kondensat: H2O(l) praesent ({:.3e} mol je H-Atom); Gas-H2O bei Sättigung {:.3e} Pa\n",
+                    condensed_h2o_moles, vapor_pa
+                ));
+            } else if let Some(p_sat) = sat_pa {
+                block.push_str(&format!(
+                    "      kondensat: einphasiges Gas — H2O(l) untersättigt (p_H2O {:.3e} Pa < p_sat {:.3e} Pa)\n",
+                    vapor_pa, p_sat
+                ));
+            } else {
+                block.push_str(&format!(
+                    "      kondensat: einphasiges Gas — H2O(l)-Sättigung unter {:.0} K nicht im NIST-Fit; p_H2O {:.3e} Pa < Dreipunkt-Bindung {:.0} Pa\n",
+                    WATER_LIQ_T_MIN, vapor_pa, WATER_P_TRIPLE_PA
+                ));
+            }
         }
         lines.push(block);
     }
