@@ -1694,6 +1694,16 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   frischen Harvest durch die Nadel-V-Achromatizitaets-Logik (lsst_anomaly_probe
   --ztf / ztf_anomaly_probe) laufen lassen.
 
+
+- Nadel-V Forced-Photometrie-Front (2026-09-06, die benannte Grenze): der
+  achromatische Test braucht die dichte Forced-Photometrie-Mehrband-Oberflaeche
+  (jedes Objekt mit voller g/r/i-Historie) — die fehlt im anonymen Tier aller
+  Broker (LSST-Fruehphase einband, ZTF naechtlich alternierend, anonyme RESTs
+  ohne Forced-Photometrie). Front: welcher Broker bietet anonymen/barrierearmen
+  Forced-Photometrie-Zugang. Antaeres: Key+Secret per E-Mail antares@noirlab.edu
+  (Kafka); Fink: fink-broker.org/joining/ (Wochen-Alert-Strom). Account-Anfragen
+  = Operator-Aktion, vorbereitet.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
