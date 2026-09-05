@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 1a6629542c79ca84f63bdbaafedde4db2b6f230331dd0131cff352775212e271
+  sha256: 3b74388f029f94d0c6f56c6a83ada66e15b5d290fa5dea182ced2de6da2bfc1f
   status: live
   see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/concepts/der-kausalpfeil.md
 -->
@@ -74,6 +74,21 @@ n = 129). Result: **TE(Niederschlag → Pegel) = 0.265 > Schwelle 0.218 at
 Lag 24 h ⇒ arrow Niederschlag → Pegel** — the rain drives the river stage
 ~24 h later. Partial signal also reversed (Pegel→Niederschlag at lag 1/6,
 both at 12/48) reflecting the small sample and the slow stage dynamics.
+
+> **Named correction (2026-09-05, not a silent edit):** the value
+> 0.265 at Lag 24 recorded as `TE(Niederschlag → Pegel)` is actually
+> **Pegel → Regen** — the probe's printed `TE(A→B)` column measures
+> `B→A` (`te_pair_probe` labels `transfer_entropy_lag(a,b)`, whose
+> second argument is the source, as "a→b"; `te.rs:92`).
+> The genuine Niederschlag→Pegel at Lag 24 is **TE 0.223 below its
+> threshold** and falls under conditioning on the shared synoptic driver
+> (`docs/befund/befund-grat-trishuli-konditionierung.md`). The
+> pre-registered direction hypothesis (Niederschlag → Abfluss) stands as
+> sealed; the verdict cell is corrected to: **no forward Niederschlag→Pegel
+> arrow at Lag 24 — the arrow falls to silence.** The short-lag forward
+> coupling (1–6 h) is unconditionally significant but not isolable under
+> conditioning. The Path-1 spatial finding (Rasuwa → Gyirong) above is a
+> different arrow and is not touched by this reversal.
 
 Ehrliche Einordnung: measured is **Pegel (stage, m)**, not **Abfluss
 (discharge, m³/s)**, on the **pre-flood window** (the open series stops at
