@@ -589,6 +589,7 @@ pub fn live_sweep(
                 | "catalog_tycho"
                 | "spectral"
                 | "jwst_spectra"
+                | "bl_narrowband"
                 | "lightcurve"
                 | "rpw_efield"
                 | "goes_xrs"

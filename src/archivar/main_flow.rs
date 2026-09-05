@@ -1644,6 +1644,112 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "bl_narrowband" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let name = url
+                        .rsplit('/')
+                        .next()
+                        .unwrap_or("bl_narrowband")
+                        .to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_bl_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let events = match crate::bl_narrowband::parse_bin(&bytes) {
+                        Some(e) => e,
+                        None => {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no BLN1 contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let field = match src.extracts.first() {
+                        Some(Extract::Field(fc)) => fc.clone(),
+                        _ => {
+                            eprintln!(
+                                "{} {}: field undeclared — the block carries no field line",
+                                fmt, url
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let mut channels = Vec::with_capacity(events.len());
+                    for ev in events {
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq: ev.freq_hz,
+                                bin_width: ev.bin_width_hz,
+                                epoch: ev.epoch_tdb,
+                                position: Position::Source,
+                                name: field.name.clone(),
+                                value: ev.val,
+                            },
+                            field.clone(),
+                        ));
+                    }
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} line oscillators",
+                        fmt,
+                        url,
+                        channels.len()
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                    });
+                });
+                continue;
+            }
             if matches!(
                 archive.sources[i].format.as_str(),
                 "rpw_efield" | "goes_xrs" | "omni2_serie" | "mitdb" | "circor" | "ltmm"
