@@ -1,9 +1,9 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, embedded_lsk, fetch_raw_bytes,
-    parse_ephemeris_binary, BodyEphemeris, LeapSeconds,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root,
+    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use std::collections::HashMap;
@@ -25,6 +25,19 @@ const FINK_NDIA: &str = "r:nDiaSources";
 const FINK_CLASS: &str = "f:main_label_classifier";
 const FINK_SIMBAD: &str = "f:xm_simbad_otype";
 const UA: &str = "omegaflow-nadel-v-lsst-scan/1.0";
+
+// Lasair-LSST (the operator's registered broker; LASAIR_LSST_TOKEN in
+// .secrets.local). The API host and the cone/object endpoints are measured
+// from the Lasair-LSST REST documentation
+// (lasair-lsst.readthedocs.io/en/main/core_functions/rest-api.html) and the
+// lsst-uk/lasair-examples notebooks (cone.ipynb, object.ipynb,
+// examine_object.ipynb) 2026-09-05: cone returns rows of {object,
+// separation}; the object record carries the lightcurve as diaSourcesList
+// rows with band, midpointMjdTai (MJD/TAI) and psfFlux — the same time layer
+// the Fink path already folds to TDB.
+const LAS_CONE: &str = "https://api.lasair.lsst.ac.uk/api/cone/";
+const LAS_OBJECT: &str = "https://api.lasair.lsst.ac.uk/api/object/";
+const LAS_OBJECT_PAUSE_MS: u64 = 1500;
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
     ("u", 380.0),
@@ -634,6 +647,160 @@ fn curl_post_rate_aware(url: &str, json_body: &str) -> Option<(String, Vec<u8>)>
     None
 }
 
+fn lasair_token() -> Option<String> {
+    if let Ok(t) = std::env::var("LASAIR_LSST_TOKEN") {
+        if !t.is_empty() {
+            return Some(t);
+        }
+    }
+    let mut state_root = cache_root();
+    state_root.pop();
+    let body = std::fs::read_to_string(state_root.join(".secrets.local")).ok()?;
+    for line in body.lines() {
+        if let Some((k, v)) = line.split_once('=') {
+            if k.trim() == "LASAIR_LSST_TOKEN" && !v.trim().is_empty() {
+                return Some(v.trim().to_string());
+            }
+        }
+    }
+    None
+}
+
+fn curl_form_post(url: &str, form: &str, token: &str) -> Option<(String, Vec<u8>)> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-m")
+        .arg("60")
+        .arg("-A")
+        .arg(UA)
+        .arg("-H")
+        .arg(format!("Authorization: Token {token}"))
+        .arg("-X")
+        .arg("POST")
+        .arg("-d")
+        .arg(form)
+        .arg("-o")
+        .arg("-")
+        .arg("-w")
+        .arg("\n%{http_code}");
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    let stdout = out.stdout;
+    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
+    let code = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
+    Some((code, stdout[..idx].to_vec()))
+}
+
+fn curl_form_post_rate_aware(url: &str, form: &str, token: &str) -> Option<(String, Vec<u8>)> {
+    for attempt in 0..HTTP_RETRY {
+        let Some(resp) = curl_form_post(url, form, token) else {
+            return None;
+        };
+        if resp.0 == "429" {
+            let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
+            println!(
+                "Lasair-LSST: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
+                attempt + 1
+            );
+            sleep_ms(backoff);
+            continue;
+        }
+        return Some(resp);
+    }
+    println!(
+        "Lasair-LSST: HTTP 429 held across {HTTP_RETRY} backed-off tries — the rate limit stands, the query stays pending"
+    );
+    None
+}
+
+struct LasairConeRow {
+    id: String,
+    separation: f64,
+}
+
+fn parse_lasair_cone(body: &[u8]) -> Option<Vec<LasairConeRow>> {
+    let text = std::str::from_utf8(body).ok()?;
+    let root = parse_json(text)?;
+    let rows: Vec<&JsonVal> = match &root {
+        JsonVal::Arr(a) => a.iter().collect(),
+        JsonVal::Obj(map) => match map.get("objects") {
+            Some(JsonVal::Arr(a)) => a.iter().collect(),
+            _ => return None,
+        },
+        _ => return None,
+    };
+    let mut out: Vec<LasairConeRow> = Vec::new();
+    for r in rows {
+        let JsonVal::Obj(m) = r else {
+            continue;
+        };
+        let (Some(JsonVal::Str(id)), Some(sep)) = (m.get("object"), m.get("separation")) else {
+            continue;
+        };
+        let JsonVal::Num(sep) = sep else {
+            continue;
+        };
+        if !sep.is_finite() {
+            continue;
+        }
+        out.push(LasairConeRow {
+            id: id.clone(),
+            separation: *sep,
+        });
+    }
+    out.sort_by(|a, b| {
+        a.separation
+            .partial_cmp(&b.separation)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    Some(out)
+}
+
+// The lightcurve rows of a Lasair-LSST object: the official example notebook
+// (examine_object.ipynb) reads each diaSourcesList row's band, midpointMjdTai
+// and psfFlux — MJD/TAI, the same time layer the Fink path folds to TDB. The
+// parser stays honest to the measured keys; a real authenticated sample is
+// saved before it is read, and an unmapped shape stays pending (never a
+// fabricated row).
+fn parse_lasair_lightcurve(body: &[u8]) -> (Option<(f64, f64)>, Vec<(String, f64, f64)>) {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return (None, Vec::new());
+    };
+    let Some(JsonVal::Obj(map)) = parse_json(text) else {
+        return (None, Vec::new());
+    };
+    let mut coord: Option<(f64, f64)> = None;
+    if let Some(JsonVal::Obj(dobj)) = map.get("diaObject") {
+        if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+            (dobj.get("ra"), dobj.get("decl"))
+        {
+            if ra.is_finite() && dec.is_finite() {
+                coord = Some((*ra, *dec));
+            }
+        }
+    }
+    let mut rows: Vec<(String, f64, f64)> = Vec::new();
+    let Some(JsonVal::Arr(list)) = map.get("diaSourcesList") else {
+        return (coord, rows);
+    };
+    for r in list {
+        let JsonVal::Obj(m) = r else {
+            continue;
+        };
+        let (Some(JsonVal::Str(band)), Some(JsonVal::Num(mjd)), Some(JsonVal::Num(flux))) =
+            (m.get("band"), m.get("midpointMjdTai"), m.get("psfFlux"))
+        else {
+            continue;
+        };
+        if band.len() == 1 && mjd.is_finite() && flux.is_finite() && *flux > 0.0 {
+            rows.push((band.clone(), *mjd, *flux));
+        }
+    }
+    (coord, rows)
+}
+
 fn top_level_shape(body: &[u8]) -> Vec<(String, usize)> {
     let Ok(text) = std::str::from_utf8(body) else {
         return Vec::new();
@@ -758,13 +925,23 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
+// The periodogram power in the standard normalization (variance-normalized,
+// both quadrature terms, the τ shift that makes the cosine/sine basis
+// orthogonal). The statistic is amplitude-invariant: a uniform rescale of the
+// series moves the data and the variance together, so the FAP measures the
+// significance of the periodicity, not the photometric scale. The form it
+// replaces carried x² inside the denominator, making the power scale ~ n/σ² —
+// quiet fractional photometry (σ ~ 0.02) read FAP 0 on every row and the
+// aperiodic gate never opened (measured, committed a4b1dcc).
 fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let n = t.len();
     if n < 8 {
         return (0.0, 1.0);
     }
-    let (mean, sd) = mean_sd(&r.iter().map(|&x| x as f64).collect::<Vec<f64>>());
-    if sd <= 0.0 {
+    let x: Vec<f64> = r.iter().map(|&v| v as f64).collect();
+    let mean = x.iter().sum::<f64>() / n as f64;
+    let var = x.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n as f64;
+    if var <= 0.0 {
         return (0.0, 1.0);
     }
     let tmin = t[0];
@@ -777,23 +954,27 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let mut f = fmin;
     while f <= fmax {
         let w = 2.0 * std::f64::consts::PI * f;
-        let mut c = 0.0f64;
-        let mut s = 0.0f64;
+        let mut c2 = 0.0f64;
+        let mut s2 = 0.0f64;
         for &ti in t {
-            c += (w * ti).cos();
-            s += (w * ti).sin();
+            c2 += (2.0 * w * ti).cos();
+            s2 += (2.0 * w * ti).sin();
         }
-        let tau = 0.5 * (2.0 * s / c).atan();
-        let mut num = 0.0f64;
-        let mut den = 0.0f64;
+        let tau = 0.5 * s2.atan2(c2) / w;
+        let mut num_c = 0.0f64;
+        let mut num_s = 0.0f64;
+        let mut den_c = 0.0f64;
+        let mut den_s = 0.0f64;
         for (i, &ti) in t.iter().enumerate() {
-            let x = r[i] as f64 - mean;
+            let xv = x[i] - mean;
             let ph = w * (ti - tau);
-            num += x * ph.cos();
-            den += x * x * ph.sin() * ph.sin();
+            num_c += xv * ph.cos();
+            num_s += xv * ph.sin();
+            den_c += ph.cos() * ph.cos();
+            den_s += ph.sin() * ph.sin();
         }
-        if den > 0.0 {
-            let z = 0.5 * n as f64 * num * num / (sd * sd * den);
+        if den_c > 1e-12 && den_s > 1e-12 {
+            let z = 0.5 * (num_c * num_c / den_c + num_s * num_s / den_s) / var;
             if z > best_z {
                 best_z = z;
             }
@@ -866,11 +1047,15 @@ fn fink_cone_list(
         "{{\"ra\": {ra}, \"dec\": {dec}, \"radius\": {radius_arcsec}, \"columns\": \"r:diaObjectId,r:ra,r:dec,r:nDiaSources,f:main_label_classifier,f:xm_simbad_otype\"}}"
     );
     let Some((code, body)) = curl_post_rate_aware(FINK_CONE, &payload) else {
-        println!("Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone query did not answer (measured stall) — pending");
+        println!(
+            "Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone query did not answer (measured stall) — pending"
+        );
         return Vec::new();
     };
     if code != "200" {
-        println!("Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone answered HTTP {code} — pending");
+        println!(
+            "Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone answered HTTP {code} — pending"
+        );
         return Vec::new();
     }
     if let Some(p) = save {
@@ -1237,6 +1422,217 @@ fn cone_scan(
     }
 }
 
+// The Lasair-LSST cone flow (the operator's registered broker, LASAIR_LSST_TOKEN).
+// Without the token the authenticated queries stay pending — the reachability is
+// measured, never a fabricated query. With the token the flow is: /api/cone/
+// (requestType all) for the object ids, then /api/object/ per id for the
+// multi-band lightcurve rows (band, midpointMjdTai, psfFlux — measured from the
+// official example notebook) onto the same TDB fold layer and LSS1 dip cut the
+// Fink path uses.
+fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
+    println!(
+        "\n=== Nadel V (LSST round): Lasair-LSST cone ({ra}, {dec}, {radius_arcsec} arcsec, up to {max_objects} object light curves) ==="
+    );
+    let anon_cone = http_code(LAS_CONE, None);
+    let anon_obj = http_code(LAS_OBJECT, None);
+    println!(
+        "Lasair-LSST /api/cone/ (anonymous): HTTP {} — token-gated (measured)",
+        anon_cone
+            .as_deref()
+            .unwrap_or("no response (connection stalled)")
+    );
+    println!(
+        "Lasair-LSST /api/object/ (anonymous): HTTP {} — token-gated (measured)",
+        anon_obj
+            .as_deref()
+            .unwrap_or("no response (connection stalled)")
+    );
+    let Some(token) = lasair_token() else {
+        println!(
+            "Verdict: pending — LASAIR_LSST_TOKEN absent (env or the .secrets.local key). The token lands in {} under LASAIR_LSST_TOKEN; until then the authenticated cone/object queries cannot run and stay pending — the endpoints above are measured alive, the scan itself is not fabricated.",
+            {
+                let mut p = cache_root();
+                p.pop();
+                p.join(".secrets.local").display().to_string()
+            }
+        );
+        return;
+    };
+    println!(
+        "Lasair-LSST: LASAIR_LSST_TOKEN present — the authenticated cone runs (rate: 100 calls/h for a user token)"
+    );
+    let cone_form = format!("ra={ra}&dec={dec}&radius={radius_arcsec}&requestType=all");
+    let Some((code, body)) = curl_form_post_rate_aware(LAS_CONE, &cone_form, &token) else {
+        println!("Verdict: pending — the cone query did not answer (measured stall)");
+        return;
+    };
+    if code != "200" {
+        println!("Verdict: pending — the cone answered HTTP {code}");
+        return;
+    }
+    let cone_path =
+        format!("/tmp/opencode/lasair_lsst_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
+    if std::fs::write(&cone_path, &body).is_err() {
+        println!("Verdict: pending — the cone sample was not saved ({cone_path})");
+        return;
+    }
+    println!(
+        "Lasair-LSST cone: HTTP {code}, {} bytes, sample saved {cone_path}",
+        body.len()
+    );
+    let Some(rows) = parse_lasair_cone(&body) else {
+        println!(
+            "Lasair-LSST cone: the body is not a row array of {{object, separation}} (schema measured, parser pending on a real sample):"
+        );
+        let shape = top_level_shape(&body);
+        for (k, len) in &shape {
+            println!("  {k}: {len}");
+        }
+        println!("Verdict: pending");
+        return;
+    };
+    if rows.is_empty() {
+        println!(
+            "Verdict: the cone ({ra}, {dec}, {radius_arcsec} arcsec) holds no object — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let chosen = rows.len().min(max_objects);
+    println!(
+        "Lasair-LSST cone: {} object row(s) within the cone; {} chosen for the light-curve fetch (ascending separation)",
+        rows.len(),
+        chosen
+    );
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Verdict: pending — the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return;
+    };
+    let eph = load_ephemeris_map();
+    if eph.is_none() {
+        println!(
+            "Nadel V (LSST round): the solar-system ephemeris for the light-travel (Rømer) term is not reachable — the fold axis stays clock-scale TDB (the seasonal ±8 min Rømer term is pending, named)"
+        );
+    }
+    let mut curves_all: Vec<LsstCurve> = Vec::new();
+    let mut map_lines: Vec<String> = Vec::new();
+    map_lines.push("diaObjectId,ra,dec,separation".to_string());
+    let mut fetched = 0usize;
+    let mut total_rows = 0usize;
+    for row in rows.iter().take(chosen) {
+        let obj_form = format!("objectId={}", row.id);
+        let Some((code, body)) = curl_form_post_rate_aware(LAS_OBJECT, &obj_form, &token) else {
+            println!(
+                "Lasair-LSST {}: the light curve query did not answer (measured stall) — pending",
+                row.id
+            );
+            sleep_ms(LAS_OBJECT_PAUSE_MS);
+            continue;
+        };
+        if code != "200" {
+            println!(
+                "Lasair-LSST {}: the light curve answered HTTP {code} — pending",
+                row.id
+            );
+            sleep_ms(LAS_OBJECT_PAUSE_MS);
+            continue;
+        }
+        let obj_path = format!("/tmp/opencode/lasair_lsst_object_{}.json", row.id);
+        if std::fs::write(&obj_path, &body).is_err() {
+            println!(
+                "Lasair-LSST {}: the object sample was not saved ({obj_path})",
+                row.id
+            );
+        }
+        let (coord, rows) = parse_lasair_lightcurve(&body);
+        if rows.is_empty() {
+            println!(
+                "Lasair-LSST {}: no diaSourcesList row carries the band/midpointMjdTai/psfFlux triple — the parser stays pending on the real schema (sample saved {obj_path})",
+                row.id
+            );
+            sleep_ms(LAS_OBJECT_PAUSE_MS);
+            continue;
+        }
+        let (o_ra, o_dec) = match coord {
+            Some(c) => c,
+            None => (ra, dec),
+        };
+        let rows_fold: Vec<(String, f64, f64)> = match &eph {
+            Some(e) => {
+                let fo = rows_to_tdb_roemer(&lsk, e, o_ra, o_dec, &rows);
+                fo.rows
+            }
+            None => rows_to_tdb(&lsk, &rows).0,
+        };
+        if rows_fold.is_empty() {
+            println!(
+                "Lasair-LSST {}: no sample row maps onto the TDB time layer (absent)",
+                row.id
+            );
+            sleep_ms(LAS_OBJECT_PAUSE_MS);
+            continue;
+        }
+        let mut per_band: HashMap<String, usize> = HashMap::new();
+        for (band, _, _) in &rows {
+            *per_band.entry(band.clone()).or_insert(0) += 1;
+        }
+        let mut band_counts: Vec<(&str, usize)> =
+            per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
+        band_counts.sort();
+        let counts: Vec<String> = band_counts
+            .iter()
+            .map(|(b, n)| format!("{b} {n}"))
+            .collect();
+        let curves = build_band_curves(o_ra, o_dec, &rows_fold);
+        println!(
+            "Lasair-LSST {}: {} rows over {} → {} band curve(s) at ra {o_ra:.4} dec {o_dec:.4}",
+            row.id,
+            rows.len(),
+            counts.join(", "),
+            curves.len()
+        );
+        if curves.is_empty() {
+            sleep_ms(LAS_OBJECT_PAUSE_MS);
+            continue;
+        }
+        curves_all.extend(curves);
+        map_lines.push(format!(
+            "{},{:.8},{:.8},{:.4}",
+            row.id, o_ra, o_dec, row.separation
+        ));
+        fetched += 1;
+        total_rows += rows.len();
+        sleep_ms(LAS_OBJECT_PAUSE_MS);
+    }
+    println!(
+        "Nadel V (LSST round): {fetched} Lasair-LSST object light curve(s) fetched, {total_rows} measurement row(s) total"
+    );
+    if curves_all.is_empty() {
+        println!(
+            "Verdict: no Lasair-LSST object carries a light curve — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let bin_path = format!(
+        "/tmp/opencode/lsst_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
+    );
+    if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
+        println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
+        return;
+    }
+    let map_path =
+        format!("/tmp/opencode/lasair_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
+        println!("Nadel V (LSST round): the object map was not written ({map_path})");
+    }
+    println!("Nadel V (LSST round): LSS1 asset written {bin_path}, object map {map_path}");
+    scan_lss1(&bin_path, false);
+    println!(
+        "Verdict: the Lasair-LSST cone scan above is a full measurement through the TDB fold layer and the achromatic non-periodic dip cut (scale-invariant FAP gate)"
+    );
+}
+
 fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
     println!(
         "\n=== Nadel V (LSST round): anonymous cone grid, time layer MJD/TAI → TDB (embedded naif0012.tls), {} cone(s) ===",
@@ -1389,6 +1785,8 @@ fn usage() {
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
          Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
+         Lasair-LSST cone with the operator's account token (LASAIR_LSST_TOKEN in the .secrets.local key or env):\n\
+         \x20 lsst_anomaly_probe --lasair-ra <deg> --lasair-dec <deg> --lasair-radius <arcsec> [--lasair-max <objects=6>]\n\
          scan_lss1 of a real LSS1 light-curve asset:\n\
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
          negative control of the achromatic dip cut (synthetic achromatic dip into a real LSS1 asset):\n\
@@ -1427,7 +1825,9 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
                 return;
             };
             if code != "200" {
-                println!("Verdict: pending — the query answered HTTP {code} (expect a 401 without a valid token)");
+                println!(
+                    "Verdict: pending — the query answered HTTP {code} (expect a 401 without a valid token)"
+                );
                 return;
             }
             let text = String::from_utf8_lossy(&body);
@@ -1436,7 +1836,9 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
                     Some(JsonVal::Obj(m)) => match m.get("diaObjectId") {
                         Some(JsonVal::Str(id)) => id.clone(),
                         _ => {
-                            println!("Verdict: pending — the first row carries no diaObjectId string (schema measured, parser pending on a real sample)");
+                            println!(
+                                "Verdict: pending — the first row carries no diaObjectId string (schema measured, parser pending on a real sample)"
+                            );
                             return;
                         }
                     },
@@ -1446,7 +1848,9 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
                     }
                 },
                 _ => {
-                    println!("Verdict: pending — the query body is not a JSON array (schema measured, parser pending on a real sample)");
+                    println!(
+                        "Verdict: pending — the query body is not a JSON array (schema measured, parser pending on a real sample)"
+                    );
                     return;
                 }
             }
@@ -1635,7 +2039,9 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
             },
         );
     }
-    println!("\nVerdict: {kandidaten} candidate dip(s) of {scanned} scanned multiband objects; {single_band} single-band objects without an achromatic cell (absent)");
+    println!(
+        "\nVerdict: {kandidaten} candidate dip(s) of {scanned} scanned multiband objects; {single_band} single-band objects without an achromatic cell (absent)"
+    );
     for (cra, cdec) in &cand_coords {
         println!("  candidate pre-exclusion at ra {cra:.4} dec {cdec:.4}");
     }
@@ -1660,6 +2066,10 @@ fn main() {
     let mut cone_dec: Option<f64> = None;
     let mut cone_radius: Option<f64> = None;
     let mut cone_min: usize = 24;
+    let mut lasair_ra: Option<f64> = None;
+    let mut lasair_dec: Option<f64> = None;
+    let mut lasair_radius: Option<f64> = None;
+    let mut lasair_max: usize = 6;
     let mut cones: Vec<(f64, f64, f64, usize)> = Vec::new();
     let mut neg_control_base: Option<String> = None;
     let mut neg_control_depth: f64 = 8.0;
@@ -1718,6 +2128,22 @@ fn main() {
                 cone_min = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(24);
                 i += 1;
             }
+            "--lasair-ra" => {
+                lasair_ra = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--lasair-dec" => {
+                lasair_dec = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--lasair-radius" => {
+                lasair_radius = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--lasair-max" => {
+                lasair_max = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(6);
+                i += 1;
+            }
             "--negative-control" => {
                 neg_control_base = args.get(i + 1).cloned();
                 if let Some(d) = args.get(i + 2).and_then(|v| v.parse::<f64>().ok()) {
@@ -1757,6 +2183,18 @@ fn main() {
         match (cone_dec, cone_radius) {
             (Some(dec), Some(radius)) => {
                 cone_scan(ra, dec, radius, cone_min, save.as_deref(), false);
+            }
+            _ => {
+                usage();
+                return;
+            }
+        }
+        return;
+    }
+    if let Some(ra) = lasair_ra {
+        match (lasair_dec, lasair_radius) {
+            (Some(dec), Some(radius)) => {
+                lasair_cone_scan(ra, dec, radius, lasair_max);
             }
             _ => {
                 usage();
@@ -1930,6 +2368,96 @@ mod tests {
         vec![make("g"), make("r")]
     }
 
+    fn synthetic_two_band_periodic(seed: u64, n: usize, period_s: f64) -> Vec<LsstCurve> {
+        let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let mut make = |band: &str| -> LsstCurve {
+            let freq = lsst_freq_of_band(band).expect("band frequency");
+            let mut samples = Vec::with_capacity(n);
+            let w = 2.0 * std::f64::consts::PI / period_s;
+            for i in 0..n {
+                let t = 1000.0 + i as f64 * 900.0;
+                let phase = w * (t - 1000.0);
+                let flux = 100.0 * (1.0 + 0.10 * phase.sin() + 0.01 * next_noise(&mut rng));
+                samples.push((t, flux as f32));
+            }
+            LsstCurve {
+                ra_deg: 12.34,
+                dec_deg: -5.67,
+                freq,
+                samples,
+            }
+        };
+        vec![make("g"), make("r")]
+    }
+
+    #[test]
+    fn periodic_natural_variable_with_achromatic_dip_stays_excluded_by_the_fap_gate() {
+        // A genuinely periodic natural variable (the sinusoid) that carries a
+        // synthetic achromatic dip must NOT surface as a candidate: its series
+        // reads periodic on the variance-normalized periodogram, so the FAP
+        // gate (aperiodicity test) holds it out. This is the counterpart of
+        // the aperiodic injection control: the dip/achromatic gate alone is
+        // not sufficient — the FAP gate must still exclude the periodic
+        // naturals.
+        let curves = synthetic_two_band_periodic(0xA1, 48, 7200.0);
+        let base_path = "/tmp/opencode/lsst_periodic_gate_test_base.bin";
+        let inj_path = "/tmp/opencode/lsst_periodic_gate_test_injected.bin";
+        std::fs::write(base_path, serialize_lss1(&curves)).expect("base asset written");
+        let base_bytes = std::fs::read(base_path).expect("base asset read");
+        let inj =
+            inject_achromatic_dip(&base_bytes, 8.0).expect("injection finds a two-band object");
+        std::fs::write(inj_path, &inj.bytes).expect("injected asset written");
+        let curves_inj = parse_lss1(&inj.bytes).expect("injected asset parses");
+        let groups = lss1_groups(curves_inj);
+        let g = groups
+            .iter()
+            .find(|g| (g.ra - inj.group.0).abs() < 1e-3 && (g.dec - inj.group.1).abs() < 1e-3)
+            .expect("injected object present");
+        let mut bands: Vec<(&str, &LsstCurve)> = g
+            .curves
+            .iter()
+            .filter_map(|c| lsst_band_of(c.freq).map(|b| (b, c)))
+            .collect();
+        bands.sort_by(|a, b| {
+            b.1.samples
+                .len()
+                .cmp(&a.1.samples.len())
+                .then_with(|| a.0.cmp(b.0))
+        });
+        let (ba, ca) = bands[0];
+        let (bb, cb) = bands[1];
+        let a_res = residual_series_lsst(ca).expect("band a residual");
+        let b_res = residual_series_lsst(cb).expect("band b residual");
+        let (dip_a, sig_a) = deepest_dip(&a_res);
+        let (dip_b, sig_b) = deepest_dip(&b_res);
+        let ratio = if dip_b.abs() > 1e-9 {
+            dip_a.abs() / dip_b.abs()
+        } else {
+            f64::INFINITY
+        };
+        let joint = join_series(&a_res, &b_res);
+        let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
+        let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
+        let (_, fap) = lomb_scargle_fap(&tj, &a_j);
+        let (post_cands, _) = scan_lss1(inj_path, true);
+        println!(
+            "periodic control gates (8σ achromatic dip on a 2 h sinusoid): dip {ba} {dip_a:.3} ({sig_a:.1}σ) {bb} {dip_b:.3} ({sig_b:.1}σ) ratio {ratio:.2} achromatic | FAP {fap:.2e} | full-scan candidates {}",
+            post_cands.len()
+        );
+        assert!(
+            sig_a.abs() >= DIP_SIG && sig_b.abs() >= DIP_SIG && dip_a < 0.0 && dip_b < 0.0,
+            "the dip/achromatic gate must trigger on the injected dip (the premise that the FAP gate is what holds the periodic natural out)"
+        );
+        assert!(
+            fap < FAP_GATE,
+            "a genuinely periodic natural variable must read periodic (FAP {fap:.2e} < {FAP_GATE})"
+        );
+        assert!(
+            post_cands.is_empty(),
+            "the periodic natural with an achromatic dip stays excluded by the FAP gate — the full candidate is not carried (FAP {fap:.2e} < {FAP_GATE})"
+        );
+    }
+
     #[test]
     fn negative_control_achromatic_injection_reaches_the_dip_gate() {
         // The negative control: a synthetic achromatic dip (12σ per band) is
@@ -1995,22 +2523,25 @@ mod tests {
             "the injected dip must read achromatic"
         );
         assert!(
-            post_cands.is_empty(),
-            "measured gap: the full candidate is NOT carried — the aperiodic FAP gate reads the injected transient as periodic (FAP {fap:.2e} < {FAP_GATE}); the dip/achromatic gate IS sensitive, the FAP gate blocks it — a gate limit, named, not a silent zero"
+            post_cands.len() == 1,
+            "the full candidate gate must carry the injected achromatic dip — dip/achromatic gate open (measured above) AND the aperiodic FAP gate open (FAP {fap:.2e} >= {FAP_GATE}); the scanner reads the series as aperiodic"
+        );
+        assert!(
+            fap >= FAP_GATE,
+            "the injected transient must read aperiodic on the variance-normalized periodogram (FAP {fap:.2e} >= {FAP_GATE})"
         );
     }
 
     #[test]
-    fn fap_gate_scale_dependence_is_measured() {
-        // The Lomb-Scargle FAP as built is not scale-invariant: its test
-        // statistic scales ~ n/σ² with σ the absolute residual scale. Quiet
-        // fractional photometry (σ ~ 0.02) therefore reads FAP ~ 0 (the gate
-        // classes the series as periodic); even an absurd absolute residual
-        // scale of σ = 3 stays below the aperiodic gate. Only a residual scale
-        // far above any photometric value opens the gate. This is the measured
-        // mechanism behind the negative-control gap: the dip/achromatic gate
-        // is sensitive, the aperiodic FAP gate is closed across the
-        // photometric range.
+    fn fap_gate_is_scale_invariant_and_white_noise_reads_aperiodic() {
+        // The Lomb-Scargle FAP in the standard normalization is
+        // amplitude-invariant: a uniform rescale of the residual series moves
+        // data and variance together and leaves the power (hence the FAP)
+        // unchanged. The form it replaces scaled ~ n/σ² and read quiet
+        // fractional photometry (σ ~ 0.02) as periodic (FAP 0) on every row.
+        // The gate it serves is the aperiodicity test: white noise of any
+        // photometric scale must read aperiodic (FAP above the gate), and the
+        // FAP must not move with the amplitude.
         let n = 40usize;
         let t: Vec<f64> = (0..n).map(|i| 1000.0 + i as f64 * 900.0).collect();
         let mut rng = 0x51u64.wrapping_mul(0x9E37_79B9_7F4A_7C15);
@@ -2030,15 +2561,56 @@ mod tests {
         let (_, fap_mid) = lomb_scargle_fap(&t, &scale(3.0));
         let (_, fap_loud) = lomb_scargle_fap(&t, &scale(30.0));
         println!(
-            "Lomb-Scargle FAP gate scale dependence: white noise sd 0.02 → FAP {fap_quiet:.2e} (closed), sd 3.0 → FAP {fap_mid:.2e} (still closed), sd 30.0 → FAP {fap_loud:.2e} (open only at a non-photometric scale) — the aperiodic gate is scale-bound, not photometric"
+            "Lomb-Scargle FAP gate scale invariance: white noise sd 0.02 → FAP {fap_quiet:.2e}, sd 3.0 → FAP {fap_mid:.2e}, sd 30.0 → FAP {fap_loud:.2e} — the FAP does not move with the photometric scale, and every scale reads aperiodic (FAP >= {FAP_GATE})"
         );
         assert!(
-            fap_quiet < FAP_GATE && fap_mid < FAP_GATE,
-            "the gate is closed across the photometric range, measured {fap_quiet:.2e} and {fap_mid:.2e}"
+            fap_quiet >= FAP_GATE && fap_mid >= FAP_GATE && fap_loud >= FAP_GATE,
+            "white noise of any amplitude must read aperiodic, measured {fap_quiet:.2e}, {fap_mid:.2e}, {fap_loud:.2e}"
         );
+        let spread = (fap_quiet - fap_mid)
+            .abs()
+            .max((fap_quiet - fap_loud).abs());
         assert!(
-            fap_loud > FAP_GATE,
-            "only a non-photometric residual scale opens the gate, measured {fap_loud:.2e}"
+            spread < 1e-6,
+            "a uniform rescale leaves the standard-normalized power identical — the FAP spread across three decades of amplitude is {spread:.2e}"
         );
+    }
+
+    #[test]
+    fn lasair_cone_parser_reads_the_documented_row_shape() {
+        // The Lasair-LSST REST docs show the cone return as rows of
+        // {object, separation}; the parser must map exactly that.
+        let body = br#"[{"object":"12345678901234","separation":2.393511865261539},{"object":"98765432109876","separation":0.5}]"#;
+        let rows = parse_lasair_cone(body).expect("the documented row array parses");
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].id, "98765432109876");
+        assert!((rows[0].separation - 0.5).abs() < 1e-12);
+        assert_eq!(rows[1].id, "12345678901234");
+        assert!((rows[1].separation - 2.393511865261539).abs() < 1e-12);
+        assert!(parse_lasair_cone(b"{}").is_none());
+        assert!(parse_lasair_cone(b"not json").is_none());
+    }
+
+    #[test]
+    fn lasair_lightcurve_parser_reads_the_measured_diasource_columns() {
+        // The official lsst-uk example notebook (examine_object.ipynb) reads
+        // each diaSourcesList row's band, midpointMjdTai and psfFlux — the
+        // parser maps exactly those column names, keeps positive finite flux
+        // and never fabricates a row from an unmapped shape.
+        let body = br#"{"diaObject":{"ra":148.87,"decl":2.52,"firstDiaSourceMjdTai":61024.0,"lastDiaSourceMjdTai":61205.0},"diaSourcesList":[{"band":"g","midpointMjdTai":61024.2459327064,"psfFlux":1.2e-3,"psfFluxErr":1.0e-5},{"band":"r","midpointMjdTai":61025.1,"psfFlux":0.0},{"band":"i","midpointMjdTai":61026.2,"psfFlux":-3.0e-4},{"band":"z","midpointMjdTai":61027.3,"psfFlux":4.5e-4}]}"#;
+        let (coord, rows) = parse_lasair_lightcurve(body);
+        let (ra, dec) = coord.expect("the diaObject ra/decl map");
+        assert!((ra - 148.87).abs() < 1e-9 && (dec - 2.52).abs() < 1e-9);
+        assert_eq!(
+            rows.len(),
+            2,
+            "the zero and negative psfFlux rows stay absent (never fabricated)"
+        );
+        assert_eq!(rows[0].0, "g");
+        assert!((rows[0].1 - 61024.2459327064).abs() < 1e-9);
+        assert!((rows[0].2 - 1.2e-3).abs() < 1e-12);
+        assert_eq!(rows[1].0, "z");
+        let (_, empty) = parse_lasair_lightcurve(br#"{"diaObject":{}}"#);
+        assert!(empty.is_empty());
     }
 }
