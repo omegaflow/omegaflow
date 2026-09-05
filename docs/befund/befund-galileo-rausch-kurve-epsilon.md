@@ -2,7 +2,7 @@
   title: Befund — Galileo-Rausch-Kurve auf der ε-Achse: kohärenter Fall invers zur Plasma-Erwartung, Plasma-Deutung getötet
   class: befund
   date: 2026-09-05
-  sha256: 2a5678da3bb32ef5a6af5f68b140412f1cc74d19ee173528c361e7b0633b6bc3
+  sha256: 5f63cbcdff1dc5377293eb09c94eeb5ddd066f95d8e8a55c7d50f18fab8ffe8c
   status: done
   antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
   see-also: docs/befund/befund-galileo-rausch-kurve.md docs/befund/befund-galileo-mode1-fingerabdruck.md
@@ -120,3 +120,9 @@ Plasma-Erwartung, die Plasma-Deutung getötet. Der Mode-2-Station-Tag-Split ist
 nachgemessen (`befund-galileo-mode2-station-split`): der 1,5-Hz-Wert ist fragil
 (0,65 Hz über 75 Nicht-Lock-Tage ohne zwei All-Lock-Tage; Station-Tag-Konjunktion
 0,28–0,58 Hz); ein einzelner Boden nicht getragen.
+
+Folge-Befund (`befund-galileo-alpha-zeit-sonnenzyklus`, done): die Magnitude des
+kohärenten Falls (28×/16×) ist gemessen Ära/Sonnenzyklus/Distanz-konfundiert —
+unter Ära-Kontrolle (1996, beide Regime 5–6 AU) kollabiert sie auf 1,9×/2,4×
+(daten-dünn, ein 5-Tage-Fenster). Die Plasma-Todes-Richtung (kein laut-bei-
+kleinem-ε) überlebt die Ära-Kontrolle; nur die Fall-Magnitude kollabiert.

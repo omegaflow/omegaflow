@@ -248,9 +248,17 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Boden↔Rauschen-Kovarianz bei Pass-Identität — verfeinert das T1b-Tages-Null für
   die statische Assoziation; Richtung bleibt offen —, an 14 Epochen-Kollokation),
   Same-Day-Spec-Niveau (`befund-galileo-sameday-spec-assoziation`: null).
-  Offen (pending): α–Zeit–Sonnenzyklus-Verwebung, In-Pass-Richtungstest (Pfeil),
-  Geometrie-innerhalb-Pass (Elevation), Same-Day-Floor-vs-Strong-Tag-Paarung (F1),
-  detrendete Pass-Metrik, Mode-3-three-way-Fenster, S1-Isolat-Replikation.
+  Alle letzten pendings gemessen (2026-09-05): In-Pass-Richtung
+  (`befund-galileo-inpass-richtung`: simultane Kovarianz, kein anhaltender
+  Floor→Rauschen-Pfeil), detrendete Pass-Metrik (`befund-galileo-pass-detrend-
+  metrik`: Boden ist Streuung, kein Drift), Same-Day-Floor-vs-Strong-Tag-Paarung
+  (`befund-galileo-sameday-floor-strong-paarung`: echt bei fixem Tag, +2,62 Hz
+  19/3), α–Zeit–Sonnenzyklus (`befund-galileo-alpha-zeit-sonnenzyklus`:
+  Fall-Magnitude Ära-konfundiert, kollabiert auf ~2×), Mode-3
+  (`befund-galileo-mode3-und-s1-replikation`: Daten-Dünn-Grenze, 17 isolierte
+  Tage), S1-Isolat (repliziert nicht). Offen (pending): Geometrie-innerhalb-Pass
+  (Elevation, G1 — gemessen daten-begrenzt wenn nötig), late-conjunction
+  Station-Split (G4), Mode-2/3-Ära-Halte-Kontrast jenseits 1996 (G4, daten-dünn).
   Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.

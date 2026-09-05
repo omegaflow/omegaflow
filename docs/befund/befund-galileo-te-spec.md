@@ -3,7 +3,7 @@
   class: befund
   date: 2026-09-05
   status: done
-  sha256: 8a9905cb621184896bb9770847fd38b8ca2128dae42f6ab2a12b9bf1a138218c
+  sha256: c2d5a405db0e51d1f4059dfaa29549d026980e5912f5a800ca91431e94696b8b
 -->
 
 # Befund — ist das Galileo-resid spec-getrieben? (gerichtete TE, ref_hz / mode / Kadenz)
@@ -234,4 +234,7 @@ Bash-Scratch (Parsing-Erkundung) in /tmp/opencode/. Keine Repo-Datei
 
 Folge-Befund: die Same-Day-Niveau-Assoziation ist geschlossen
 (`befund-galileo-sameday-spec-assoziation`, done — null, within-day-Paarung
-kollabiert); S1-Isolat-Replikation und Mode-3-Fenster bleiben `pending`.
+kollabiert); die S1-Isolat-Zelle ist gemessen nicht-replizierend
+(`befund-galileo-mode3-und-s1-replikation`, done — 6/10 Seeds, unter der
+600-Surrogat-Null, verschwindet über verschobene Fenster); Mode-3-Fenster sind
+gemessen eine Daten-Dünn-Grenze (0 Fenster ≥10 Tage, 17 isolierte Einzeltage).

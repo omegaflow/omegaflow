@@ -3,7 +3,7 @@
   class: befund
   date: 2026-09-05
   version: 2
-  sha256: 7488b3a652150478707b75b97c7fb66627103c6fc8408576f2343c072ef7d404
+  sha256: b3b91c16c14bc74e9e36862d863fa86deb4cba99467da58bf9009aa1a3fcbfc4
   status: done
   antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
   see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
@@ -156,5 +156,7 @@ er war ein Distanz-/Ära-Confound auf einer falsch benannten Achse.
 Folge-Befund (`befund-galileo-rausch-kurve-epsilon`, done): die Mode-2/3-Kurve
 ist auf der ε-Achse neu gezogen — der kohärente Fall ist invers zur
 Plasma-Erwartung (leise an Konjunktion, laut an Opposition); die
-Plasma-Deutung ist dort auf `getötet` gestuft. Der Mode-2-Station-Tag-Split
-bleibt `pending`.
+Plasma-Deutung ist dort auf `getötet` gestuft. Der Distanz-/Ära-Confound ist
+zerlegt (`befund-galileo-alpha-zeit-sonnenzyklus`, done): die Fall-Magnitude ist
+Ära/Sonnenzyklus-konfundiert (kollabiert unter Ära-Kontrolle auf ~2×), die
+Richtung (kein laut-bei-kleinem-ε) hält.
