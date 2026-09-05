@@ -1,11 +1,11 @@
 #![allow(mixed_script_confusables)]
 pub mod archivar;
-#[cfg(feature = "llm_gate")]
+#[cfg(feature = "commit_gate")]
 pub mod gate;
 pub mod mathematikerin;
 
-#[cfg(feature = "llm_gate")]
-pub use gate::{axioms, friction, handover, llm_gate, state, tool_perm};
+#[cfg(feature = "commit_gate")]
+pub use gate::{axioms, commit_gate, friction, handover, state, tool_perm};
 
 pub use archivar::atdf;
 pub use archivar::bison_basu;
