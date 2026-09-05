@@ -227,8 +227,12 @@ Register-Pflichten, keine stillen Schwebestände:
   (24 Shuffles) — 200 Shuffles kosten nichts. pending.
 - **te_directionality_sweep** (Werkzeug): committet — Benchmark-(c × n)-
   Diagnose der TE-Richtungs-Wiederherstellung, kompiliert, Session-Fenster-
-  Fähigkeit verifiziert (5 Zellen laufen, der Voll-Lauf nicht). Voll-Sweep
-  (24 Zellen, 8 c × 3 n) pending/teuer (~2 Sessions): misst den Kreuzungs-
+  Fähigkeit verifiziert (5 Zellen laufen, der Voll-Lauf nicht). Gehaertet
+  (2026-09-05): der RNG-Seed-Bug ist behoben (`c as u64` kollabierte alle
+  c<1 auf Seed 0, jede Zelle teilte einen Seed — jetzt ein per-Zellen-Zaehler),
+  und die c=0-Kontrolle ist ergaenzt (ankert das n-Skalieren der Reverse-Fehl-
+  pfeile; ein Reverse-Pfeil bei c=0 ist ein Bias, kein Signal). Voll-Sweep
+  (jetzt 27 Zellen, 9 c × 3 n) pending/teuer (~2 Sessions): misst den Kreuzungs-
   punkt Reverse×fam als Funktion von (c, n) — n-unabhängig ⇒ Asymmetrie-
   Hypothese bestätigt (Härtungs-Basis), n-wandernd ⇒ Bias-Hypothese (dann
   ETE-Erwägung als eigener Auftrag). Zweck: Validierung der entschiedenen
