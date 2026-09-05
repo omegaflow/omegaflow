@@ -1807,6 +1807,23 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   G395H), aber die gebinnte Spektrum-Tabelle/Posterior-Samples in keinem maschinenlesbaren
   Archiv (Zenodo nur Corner-PDFs) — exakt benannte pending-Quelle, kein Spektrum fabriziert.
   Test offen: Posterior-Korrelation rho(log OCS, log CO2/CO/H2O).
+  T-P-ARBITER GEMESSEN-ENTSCHIEDEN (2026-09-06, Barat 2025 arXiv:2507.08837 Volltext):
+  die Gleichgewichts-Schliessung ist widerlegt, die Schliessung ist photochemisch.
+  Gemessen am Paper: (1) das favorisierte tiefe T_int ~500 K (Frei-Retrieval + selbst-
+  konsistente PICASO-Grids) liegt unter der ~1000-1080-K-Grenze, die die Probe fuer
+  Gleichgewichts-OCS ~1e-8 braucht (Band 1e-9..1e-7 spannt 1020-2600 K bei logZ +0.6;
+  best freeze-in 10^-8.19 bei 1740 K) — Quench-Gleichgewicht allein schliesst die
+  OCS-Detektion NICHT. (2) "Mukherjee et al. 2024a predict the onset of OCS at
+  temperatures lower than 500 K"; die 3.5-sigma-Detektion (~1e-8 VMR) ist laut Paper
+  "consistent with predictions from the PICASO grid" — OCS entsteht natuerlich
+  photochemisch in der kuehlen Schicht (die die Probe als Gleichgewicht kalt/1e-22
+  rechnet). (3) der CH4/CO-Quench-Punkt liegt am T-P mit T_int=500 K; T_int 200-400 K
+  laege 1-10 bar tief und braeuchte unrealistisch hohes Kzz, das CO2 zerstoert.
+  Fazit: die ~500-K-Tiefe ist gemessen (nicht nur angenommen) unter der
+  Gleichgewichts-Grenze; die natuerliche OCS-Schliessung laeuft ueber die photochemische
+  Route, nicht ueber Gleichgewicht. Bio 16->0 haelt. Ehrlich offen (nicht geschlossen):
+  nur 3.5 sigma; keine Posterior-Degeneranz rho(log OCS, log CO2/CO/H2O) (Samples nicht
+  maschinenlesbar); die Kinetik-Grenze (T_q aus tau_chem=Kzz/H_p^2) braucht Raten+g+P-T.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
