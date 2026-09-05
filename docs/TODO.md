@@ -163,10 +163,14 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   (`befund-galileo-te-staerke-floor`, done): auf Tages-Achse kein gerichteter
   Stärke→Rauschen-Pfeil — TE überlebt die Monats-/Stations-Konditionierung nicht
   (62/64 unter cThr), der −2560-Boden ist Epochen-/Stations-kollokiert, kein
-  SNR-getriebener PLL-Term. Offen (pending): α–Zeit–Sonnenzyklus-
+  SNR-getriebener PLL-Term. Spec-TE gemessen (`befund-galileo-te-spec`, done):
+  Spec-Träger ref_hz/mode/Kadenz → resid-Noise **entkoppelt/era-koinzident**
+  (kein gerichteter Pfad über die Epoche; Kadenz-Achse im Feld degeneriert,
+  1-s realisiert statt 60-s). Offen (pending): α–Zeit–Sonnenzyklus-
   Verwebung, Mode-2-Stärke-Split, Stärke-Zustand je Unter-Arc, In-Pass-Stärke-
   Rampe bei Pass-Identität, detrendete Pass-Metrik,
-  1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2). Nebenfund:
+  1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2), Same-Day-Spec-Niveau-
+  Assoziation, Mode-3-Fenster (three-way). Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
