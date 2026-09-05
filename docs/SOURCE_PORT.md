@@ -214,6 +214,17 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   Content`) bereits (Test `test_parse_json_skips_jina_header`). `dead
   dns-unresolved/timeout/unreachable/ssl`-Einträge über das `r.jina.ai/`-
   Präfix erneut prüfen, bevor sie endgültig bleiben.
+- **Proton-VPN ist die Netz-Ebene der Eskalation**: wenn der Archivar eine
+  Probe-Quelle direkt (curl, Roh-/Protokoll-Asset) holen muss und der
+  Jina-Reader sie nicht transportiert (Reader liefert Markdown, kein
+  Roh-Asset), re-routet der Tunnel `proton0` (UP, 10.2.0.2) die eigene
+  Exit-IP gegen Geo-/ip-Block. Reihenfolge: direkte Route → Tunnel-Exit-IP
+  (`proton0`) → Jina-Reader → WebArchive → Websuche. Gemessen 2026-09-05
+  (Tunnel oben): Lasair `lasair.lsst.ac.uk` 200, API 401 = Token-gate
+  (`LASAIR_TOKEN` in `.secrets.local`), `data.lsst.cloud` 200 —
+  erreichbar; `rubinobservatory.org` scheitert am TLS-Handshake
+  (SSL_ERROR_SYSCALL) auch mit Tunnel oben — VPN öffnet nicht jede Tür,
+  der Eintrag bleibt bis ein Verdikt steht.
 - **Toter Endpoint → Recherche-Rezept**: (1) Status-/Docs-Seite des Anbieters
   prüfen (Umzug, API-Version), (2) Sibling-Endpoints desselben Netloc,
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
