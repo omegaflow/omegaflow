@@ -206,8 +206,16 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   (die eine offene Disposition). **Offen:** SOURCE_PORT-Disposition der 55
   (je Netloc Force-Gate → `sources.φ`-Block oder `dead_sources.φ`-Eintrag);
   14 undocumented `repo_tag` (§1 keine Registry-Heimat) + 3 undocumented
-  `dataset_host` (Compiler-Lease) → Step-5-Verdikt. Step 4 (CI-Dedupe) gegen
-  gemessene 4/18-Jobs neu fassen, nicht gegen die stale 20/24-Vermutung.
+  `dataset_host` (Compiler-Lease) → Step-5-Verdikt. Step 4 (CI-Dedupe)
+  ausgeführt (2026-09-05): kernel-flatten von 24 auf 5 Jobs zerlegt (index,
+  bodies, jwst-spectra, eve, aia) — 36 Katalog-, 10 Solar-, 3 Radio-,
+  cmb/goes/euvs als pro-Quelle-Workflows; eve/aia bleiben (Netloc-Umzug =
+  Step 5). Katalog-JOIN-Befund (Schema gemessen): Green-SNRCAT
+  (`J/A+A/612/A1/snrcat`) trägt nur Name+Position+Distanz+Typ, kein Flussfeld
+  → Force-Gate-decline (position-only), kein sources.φ-Eintrag; `B/psr/psr`
+  (tevcat-JOIN) vs `J/ApJS/208/17/psrcat` (Registry, trägt Dist+S1400) =
+  alternative Ref derselben ATNF-Pulsar-Familie — Ref-Abgleich als
+  Folge-Posten, keine Abdeckungslücke.
   Step 5 destruktiv nur mit Nachbau-Quelle je Asset.
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
