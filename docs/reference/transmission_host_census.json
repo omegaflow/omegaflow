@@ -198,7 +198,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2016ApJ...820...99T",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "AU Mic",
@@ -207,7 +208,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2026arXiv260631281W",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "CoRoT-1",
@@ -217,7 +219,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014ApJ...785..148R",
-  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "GJ 3470",
@@ -227,7 +230,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014A&A...570A..89E",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "GJ 436",
@@ -237,7 +241,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014Natur.505...66K",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "HAT-P-1",
@@ -247,7 +252,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2013MNRAS.435.3481W",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "Na I"
+  ]
  },
  {
   "hostname": "HAT-P-11",
@@ -257,7 +266,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014Natur.513..526F",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "HAT-P-2",
@@ -266,7 +279,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023ApJS..269...31E",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "HAT-P-32",
@@ -276,7 +290,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2017AJ....154...39D",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "HAT-P-41",
@@ -286,7 +304,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....159..204W",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "HAT-P-7",
@@ -295,7 +314,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022ApJS..260....3C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "HD 106315",
@@ -304,7 +324,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2021AJ....161...19G",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "HD 189733",
@@ -316,7 +340,12 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2008NATUR.452..329S",
-  "note": "HST transmission, instruments: Advanced Camera for Surveys, Near Infrared Camera and Multi-Object Spectrometer, Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Advanced Camera for Surveys, Near Infrared Camera and Multi-Object Spectrometer, Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O",
+   "Na I"
+  ]
  },
  {
   "hostname": "HD 209458",
@@ -326,7 +355,12 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2013ApJ...774...95D",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "Na I",
+   "H I Ly-a"
+  ]
  },
  {
   "hostname": "HD 219666",
@@ -335,7 +369,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023ApJS..269...31E",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "HD 3167",
@@ -344,7 +382,12 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2021AJ....161...18M",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O",
+   "CO2"
+  ]
  },
  {
   "hostname": "HD 86226",
@@ -353,7 +396,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2025A&A...701A.184K",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "HD 97658",
@@ -363,7 +407,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014ApJ...794..155K",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "HIP 41378",
@@ -372,7 +417,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022ApJ...927L...5A",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "K2-24",
@@ -381,7 +427,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023ApJS..269...31E",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "K2-33",
@@ -390,7 +437,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023AJ....165...23T",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "KELT-1",
@@ -399,7 +447,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022ApJS..260....3C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "KELT-11",
@@ -408,7 +457,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....160..260C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "KELT-20",
@@ -417,7 +470,12 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2025AJ....170..234C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "Fe II",
+   "SiO"
+  ]
  },
  {
   "hostname": "Kepler-79",
@@ -426,7 +484,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....160..201C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "Kepler-9",
@@ -435,7 +494,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023ApJS..269...31E",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "LTT 1445 A",
@@ -444,7 +504,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2025AJ....169..111B",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "TOI-674",
@@ -453,7 +514,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2023ApJS..269...31E",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "TrES-2",
@@ -463,7 +528,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2014ApJ...785..148R",
-  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "WASP-101",
@@ -473,7 +539,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2017ApJ...835L..12W",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "WASP-103",
@@ -482,7 +549,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022ApJS..260....3C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "WASP-117",
@@ -491,7 +559,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....160..233A",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "WASP-12",
@@ -501,7 +573,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2013ApJ...779..128M",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "WASP-178",
@@ -511,7 +584,12 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022Natur.604...49L",
-  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "Fe II",
+   "SiO"
+  ]
  },
  {
   "hostname": "WASP-18",
@@ -520,7 +598,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022ApJS..260....3C",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "WASP-19",
@@ -530,7 +609,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2013ApJ...779..128M",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "WASP-29",
@@ -540,7 +620,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022AJ....164...30W",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "WASP-31",
@@ -550,7 +631,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2015MNRAS.446.2428S",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "WASP-6",
@@ -560,7 +642,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020MNRAS.494.5449C",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "featureless"
  },
  {
   "hostname": "WASP-62",
@@ -570,7 +653,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....160..109S",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "WASP-63",
@@ -579,7 +666,11 @@
    "WFC3"
   ],
   "primary_bibcode": "2018AJ....156..103K",
-  "note": "HST transmission, instruments: WFC3"
+  "note": "HST transmission, instruments: WFC3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "WASP-74",
@@ -588,7 +679,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2019MNRAS.485.5168M",
-  "note": "HST transmission, instruments: Wide Field Camera 3"
+  "note": "HST transmission, instruments: Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "WASP-76",
@@ -598,7 +690,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020A&A...637A..76V",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "WASP-79",
@@ -608,7 +704,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2020AJ....159....5S",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "detected",
+  "species": [
+   "H2O"
+  ]
  },
  {
   "hostname": "WASP-80",
@@ -618,7 +718,8 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2022AJ....164...30W",
-  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3",
+  "detection": "pending"
  },
  {
   "hostname": "XO-1",
@@ -628,7 +729,11 @@
    "Wide Field Camera 3"
   ],
   "primary_bibcode": "2012ApJ...761....7C",
-  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer, Wide Field Camera 3"
+  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer, Wide Field Camera 3",
+  "detection": "featureless",
+  "species": [
+   "H2O upper-limit"
+  ]
  },
  {
   "hostname": "XO-2 N",
@@ -637,6 +742,10 @@
    "Near Infrared Camera and Multi-Object Spectrometer"
   ],
   "primary_bibcode": "2012ApJ...761....7C",
-  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer"
+  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer",
+  "detection": "featureless",
+  "species": [
+   "H2O upper-limit"
+  ]
  }
 ]
