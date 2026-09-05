@@ -44,6 +44,8 @@ phi/*
 !phi/sources.φ
 !phi/dead_sources.φ
 !phi/blocked_sources.φ
+# Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
+!phi/bindings/
 
 # Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
 .omegaflow-strand
