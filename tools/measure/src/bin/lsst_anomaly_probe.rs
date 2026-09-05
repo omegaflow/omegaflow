@@ -961,22 +961,32 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
-fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
+fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> Option<(f64, f64)> {
     let n = t.len();
     if n < 8 {
-        return (0.0, 1.0);
+        return None;
     }
     let x: Vec<f64> = r.iter().map(|&v| v as f64).collect();
     let mean = x.iter().sum::<f64>() / n as f64;
     let var = x.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n as f64;
     if var <= 0.0 {
-        return (0.0, 1.0);
+        return None;
     }
     let tmin = t[0];
     let tmax = t[n - 1];
-    let span = (tmax - tmin).max(1.0);
+    let span = tmax - tmin;
+    if span <= 0.0 {
+        return None;
+    }
+    let sample = span / n as f64;
+    if sample <= 0.0 {
+        return None;
+    }
     let fmin = 1.0 / span;
-    let fmax = 1.0 / (2.0 * (span / n as f64).max(1.0));
+    let fmax = 1.0 / (2.0 * sample);
+    if fmax < fmin {
+        return None;
+    }
     let mut best_z = 0.0f64;
     let mut nf = 0u32;
     let mut f = fmin;
@@ -1010,9 +1020,12 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
         nf += 1;
         f *= 1.05;
     }
-    let n_indep = nf.max(1) as f64;
+    if nf == 0 {
+        return None;
+    }
+    let n_indep = nf as f64;
     let fap = 1.0 - (1.0 - (-best_z).exp()).powf(n_indep);
-    (best_z, fap)
+    Some((best_z, fap))
 }
 
 fn deepest_dip_at(res: &[(f64, f32)]) -> (f64, f64, f64) {
@@ -1027,6 +1040,14 @@ fn deepest_dip_at(res: &[(f64, f32)]) -> (f64, f64, f64) {
         }
     }
     (min, min / sd.max(1e-300), t_min)
+}
+
+fn dip_depth_ratio(dip_a: f64, dip_b: f64) -> Option<f64> {
+    if dip_b.abs() > 1e-9 {
+        Some(dip_a.abs() / dip_b.abs())
+    } else {
+        None
+    }
 }
 
 struct ConeObject {
@@ -1249,8 +1270,11 @@ fn parse_fink_fp_rows(
 }
 
 fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
-    let mut t_min = f64::INFINITY;
-    for (_, tdb, _) in rows {
+    let Some((_, t0, _)) = rows.first() else {
+        return Vec::new();
+    };
+    let mut t_min = *t0;
+    for (_, tdb, _) in &rows[1..] {
         if *tdb < t_min {
             t_min = *tdb;
         }
@@ -1886,8 +1910,11 @@ fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
 }
 
 fn build_ztf_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
-    let mut t_min = f64::INFINITY;
-    for (_, tdb, _) in rows {
+    let Some((_, t0, _)) = rows.first() else {
+        return Vec::new();
+    };
+    let mut t_min = *t0;
+    for (_, tdb, _) in &rows[1..] {
         if *tdb < t_min {
             t_min = *tdb;
         }
@@ -2103,18 +2130,27 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
             None => (ra, dec),
         };
         let mut per_band: HashMap<String, usize> = HashMap::new();
-        let mut t_first = f64::INFINITY;
-        let mut t_last = f64::NEG_INFINITY;
+        let mut t_first: Option<f64> = None;
+        let mut t_last: Option<f64> = None;
         for (band, tdb, _) in &phot.rows {
             *per_band.entry(band.clone()).or_insert(0) += 1;
-            if *tdb < t_first {
-                t_first = *tdb;
-            }
-            if *tdb > t_last {
-                t_last = *tdb;
-            }
+            t_first = Some(match t_first {
+                Some(f) if f <= *tdb => f,
+                _ => *tdb,
+            });
+            t_last = Some(match t_last {
+                Some(l) if l >= *tdb => l,
+                _ => *tdb,
+            });
         }
-        let span_days = (t_last - t_first) / DAY_S;
+        let span_days = match (t_first, t_last) {
+            (Some(f), Some(l)) => Some((l - f) / DAY_S),
+            _ => None,
+        };
+        let span_word = match span_days {
+            Some(d) => format!("{d:.0} d"),
+            None => "span absent".to_string(),
+        };
         let mut band_counts: Vec<(&str, usize)> =
             per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
         band_counts.sort();
@@ -2129,10 +2165,11 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
             "HTTP"
         };
         println!(
-            "Lasair-ZTF {}: {} epoch(s) over {} spanning {span_days:.0} d via {origin} at ra {o_ra:.4} dec {o_dec:.4}; {} non-detection row(s) stayed absent, {} duplicate epoch(s) removed",
+            "Lasair-ZTF {}: {} epoch(s) over {} spanning {} via {origin} at ra {o_ra:.4} dec {o_dec:.4}; {} non-detection row(s) stayed absent, {} duplicate epoch(s) removed",
             row.id,
             phot.rows.len(),
             counts.join(", "),
+            span_word,
             phot.upper_limits + phot.forced_excluded,
             phot.duplicates
         );
@@ -2399,10 +2436,16 @@ fn antares_scan(max_loci: usize) {
     println!(
         "ANTARES: time layer — ztf_jd (JD/UTC) → UTC unix → TDB seconds-since-J2000 (naif0012.tls ΔT 32.184 s + leap), the same one path the ZTF1 compiler uses"
     );
-    let pages = max_loci.max(1);
-    let stride = (9900usize / pages).max(10);
-    let mut t_min = f64::INFINITY;
-    let mut t_max = f64::NEG_INFINITY;
+    if max_loci == 0 {
+        println!(
+            "Verdict: --antares-max 0 requests no locus — the anonymous scan stays void (0 honored)"
+        );
+        return;
+    }
+    let pages = max_loci.min(9900 / 10);
+    let stride = 9900usize / pages;
+    let mut win_min: Option<f64> = None;
+    let mut win_max: Option<f64> = None;
     let mut listed = 0usize;
     let mut listed_multi_mag = 0usize;
     let mut loci_sample: Vec<AntaresLocus> = Vec::new();
@@ -2450,12 +2493,14 @@ fn antares_scan(max_loci: usize) {
                 listed_multi_mag += 1;
             }
             if let Some(mjd) = r.newest_obs_mjd {
-                if mjd < t_min {
-                    t_min = mjd;
-                }
-                if mjd > t_max {
-                    t_max = mjd;
-                }
+                win_min = Some(match win_min {
+                    Some(m) if m <= mjd => m,
+                    _ => mjd,
+                });
+                win_max = Some(match win_max {
+                    Some(m) if m >= mjd => m,
+                    _ => mjd,
+                });
             }
             match densest {
                 Some(d) if d.num_alerts >= r.num_alerts => {}
@@ -2474,16 +2519,19 @@ fn antares_scan(max_loci: usize) {
         }
         sleep_ms(ANTA_LIST_PAUSE_MS);
     }
+    let window_word = match (win_min, win_max) {
+        (Some(mn), Some(mx)) => format!("{mn:.2} … {mx:.2}"),
+        _ => "no locus carries a newest-observation MJD (absent)".to_string(),
+    };
     println!(
-        "ANTARES loci corpus: {} loci listed across the sampled pages (meta count on the first page: {}), {} with ≥ 2 magnitude values; observed newest-observation window of the listing MJD {:.2} … {:.2}",
+        "ANTARES loci corpus: {} loci listed across the sampled pages (meta count on the first page: {}), {} with ≥ 2 magnitude values; observed newest-observation window of the listing MJD {}",
         listed,
         match corpus_count {
             Some(c) => c.to_string(),
             None => "absent".to_string(),
         },
         listed_multi_mag,
-        t_min,
-        t_max
+        window_word
     );
     println!(
         "ANTARES locus sample: {} loci chosen (the densest of each sampled page); {} real sample(s) saved under /tmp/opencode/antares_loci_off*.json",
@@ -3207,15 +3255,17 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
         let (dip_a, sig_a, t_a) = deepest_dip_at(&a_res);
         let (dip_b, sig_b, t_b) = deepest_dip_at(&b_res);
-        let ratio = if dip_b.abs() > 1e-9 {
-            dip_a.abs() / dip_b.abs()
-        } else {
-            f64::INFINITY
-        };
+        let ratio = dip_depth_ratio(dip_a, dip_b);
         let sig_gate = sig_a.min(sig_b).abs() >= DIP_SIG && dip_a < 0.0 && dip_b < 0.0;
-        let achromatisch = sig_gate && (1.0 / ACHROMATIC_RATIO..=ACHROMATIC_RATIO).contains(&ratio);
-        let (_, fap) = lomb_scargle_fap(&tj, &a_j);
-        let nicht_periodisch = fap >= FAP_GATE;
+        let achromatisch = match ratio {
+            Some(r) => sig_gate && (1.0 / ACHROMATIC_RATIO..=ACHROMATIC_RATIO).contains(&r),
+            None => false,
+        };
+        let fap = lomb_scargle_fap(&tj, &a_j);
+        let nicht_periodisch = match fap {
+            Some((_, f)) => f >= FAP_GATE,
+            None => false,
+        };
         let rho = spearman(&a_j, &b_j);
         let dt_dip_s = (t_a - t_b).abs();
         scanned += 1;
@@ -3228,15 +3278,26 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         } else {
             "still"
         };
+        let ratio_word = match ratio {
+            Some(r) => format!("{r:.2}"),
+            None => "absent".to_string(),
+        };
+        let fap_word = match fap {
+            Some((_, f)) => format!("{f:.2e}"),
+            None => "FAP not computable — absent".to_string(),
+        };
+        let dip_kind = match ratio {
+            Some(_) if achromatisch => "achromatic",
+            Some(_) => "chromatic",
+            None => "achromaticity not measurable — ratio absent",
+        };
         println!(
-            "  ra {:9.4} dec {:9.4} {ba}/{bb} {word} | dip {ba} {dip_a:.3} ({sig_a:.1}σ) at t {t_a:.0} s {bb} {dip_b:.3} ({sig_b:.1}σ) at t {t_b:.0} s (|Δt| {dt_dip_s:.0} s) ratio {ratio:.2} {} | FAP {fap:.2e} {}",
+            "  ra {:9.4} dec {:9.4} {ba}/{bb} {word} | dip {ba} {dip_a:.3} ({sig_a:.1}σ) at t {t_a:.0} s {bb} {dip_b:.3} ({sig_b:.1}σ) at t {t_b:.0} s (|Δt| {dt_dip_s:.0} s) ratio {} {} | FAP {} {}",
             g.ra,
             g.dec,
-            if achromatisch {
-                "achromatic"
-            } else {
-                "chromatic"
-            },
+            ratio_word,
+            dip_kind,
+            fap_word,
             match rho {
                 Some(r) => format!("rho {r:.2}"),
                 None => "rho absent".to_string(),
@@ -3481,13 +3542,13 @@ mod tests {
     use super::*;
 
     fn lsk() -> LeapSeconds {
-        embedded_lsk().expect("the embedded naif0012 table parses")
+        embedded_lsk().unwrap()
     }
 
     #[test]
     fn fink_tai_mjd_maps_to_an_absolute_tdb() {
         let mjd_tai = 61024.2459327064;
-        let tdb = fink_mjd_tai_to_tdb(mjd_tai, &lsk()).expect("2026 epoch maps");
+        let tdb = fink_mjd_tai_to_tdb(mjd_tai, &lsk()).unwrap();
         let as_utc = mjd_to_unix(mjd_tai);
         let expected = as_utc + 32.184 - 946_728_000.0;
         assert!(
@@ -3515,7 +3576,7 @@ mod tests {
         let r_curve = curves
             .iter()
             .find(|c| lsst_band_of(c.freq) == Some("r"))
-            .expect("the r band curve exists");
+            .unwrap();
         assert_eq!(r_curve.samples.len(), 2);
         let expect = (61024.2469322589 - 61024.2459327064) * 86400.0;
         assert!(
@@ -3614,7 +3675,7 @@ mod tests {
     fn synthetic_two_band_noise(seed: u64, n: usize) -> Vec<LsstCurve> {
         let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
         let mut make = |band: &str| -> LsstCurve {
-            let freq = lsst_freq_of_band(band).expect("band frequency");
+            let freq = lsst_freq_of_band(band).unwrap();
             let mut samples = Vec::with_capacity(n);
             for i in 0..n {
                 let t = 1000.0 + i as f64 * 900.0;
@@ -3634,7 +3695,7 @@ mod tests {
     fn synthetic_two_band_periodic(seed: u64, n: usize, period_s: f64) -> Vec<LsstCurve> {
         let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
         let mut make = |band: &str| -> LsstCurve {
-            let freq = lsst_freq_of_band(band).expect("band frequency");
+            let freq = lsst_freq_of_band(band).unwrap();
             let mut samples = Vec::with_capacity(n);
             let w = 2.0 * std::f64::consts::PI / period_s;
             for i in 0..n {
@@ -3658,17 +3719,16 @@ mod tests {
         let curves = synthetic_two_band_periodic(0xA1, 48, 7200.0);
         let base_path = "/tmp/opencode/lsst_periodic_gate_test_base.bin";
         let inj_path = "/tmp/opencode/lsst_periodic_gate_test_injected.bin";
-        std::fs::write(base_path, serialize_lss1(&curves)).expect("base asset written");
-        let base_bytes = std::fs::read(base_path).expect("base asset read");
-        let inj =
-            inject_achromatic_dip(&base_bytes, 8.0).expect("injection finds a two-band object");
-        std::fs::write(inj_path, &inj.bytes).expect("injected asset written");
-        let curves_inj = parse_lss1(&inj.bytes).expect("injected asset parses");
+        std::fs::write(base_path, serialize_lss1(&curves)).unwrap();
+        let base_bytes = std::fs::read(base_path).unwrap();
+        let inj = inject_achromatic_dip(&base_bytes, 8.0).unwrap();
+        std::fs::write(inj_path, &inj.bytes).unwrap();
+        let curves_inj = parse_lss1(&inj.bytes).unwrap();
         let groups = lss1_groups(curves_inj);
         let g = groups
             .iter()
             .find(|g| (g.ra - inj.group.0).abs() < 1e-3 && (g.dec - inj.group.1).abs() < 1e-3)
-            .expect("injected object present");
+            .unwrap();
         let mut bands: Vec<(&str, &LsstCurve)> = g
             .curves
             .iter()
@@ -3682,19 +3742,20 @@ mod tests {
         });
         let (ba, ca) = bands[0];
         let (bb, cb) = bands[1];
-        let a_res = residual_series_lsst(ca).expect("band a residual");
-        let b_res = residual_series_lsst(cb).expect("band b residual");
+        let a_res = residual_series_lsst(ca).unwrap();
+        let b_res = residual_series_lsst(cb).unwrap();
         let (dip_a, sig_a, _) = deepest_dip_at(&a_res);
         let (dip_b, sig_b, _) = deepest_dip_at(&b_res);
-        let ratio = if dip_b.abs() > 1e-9 {
-            dip_a.abs() / dip_b.abs()
-        } else {
-            f64::INFINITY
-        };
+        let ratio = dip_depth_ratio(dip_a, dip_b);
+        assert!(
+            ratio.is_some(),
+            "the injected dip reads in both bands — the achromatic depth ratio resolves"
+        );
+        let ratio = ratio.unwrap();
         let joint = join_series(&a_res, &b_res);
         let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
         let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
-        let (_, fap) = lomb_scargle_fap(&tj, &a_j);
+        let (_, fap) = lomb_scargle_fap(&tj, &a_j).unwrap();
         let (post_cands, _) = scan_lss1(inj_path, true);
         println!(
             "periodic control gates (8σ achromatic dip on a 2 h sinusoid): dip {ba} {dip_a:.3} ({sig_a:.1}σ) {bb} {dip_b:.3} ({sig_b:.1}σ) ratio {ratio:.2} achromatic | FAP {fap:.2e} | full-scan candidates {}",
@@ -3719,24 +3780,23 @@ mod tests {
         let curves = synthetic_two_band_noise(0x51, 40);
         let base_path = "/tmp/opencode/lsst_negative_control_test_base.bin";
         let inj_path = "/tmp/opencode/lsst_negative_control_test_injected.bin";
-        std::fs::write(base_path, serialize_lss1(&curves)).expect("base asset written");
+        std::fs::write(base_path, serialize_lss1(&curves)).unwrap();
         let (base_cands, _) = scan_lss1(base_path, true);
         assert_eq!(
             base_cands.len(),
             0,
             "the pure-noise base must carry no achromatic dip candidate (the control premise)"
         );
-        let base_bytes = std::fs::read(base_path).expect("base asset read");
-        let inj =
-            inject_achromatic_dip(&base_bytes, 12.0).expect("injection finds a two-band object");
-        std::fs::write(inj_path, &inj.bytes).expect("injected asset written");
+        let base_bytes = std::fs::read(base_path).unwrap();
+        let inj = inject_achromatic_dip(&base_bytes, 12.0).unwrap();
+        std::fs::write(inj_path, &inj.bytes).unwrap();
         let (post_cands, _) = scan_lss1(inj_path, true);
-        let curves_inj = parse_lss1(&inj.bytes).expect("injected asset parses");
+        let curves_inj = parse_lss1(&inj.bytes).unwrap();
         let groups = lss1_groups(curves_inj);
         let g = groups
             .iter()
             .find(|g| (g.ra - inj.group.0).abs() < 1e-3 && (g.dec - inj.group.1).abs() < 1e-3)
-            .expect("injected object present");
+            .unwrap();
         let mut bands: Vec<(&str, &LsstCurve)> = g
             .curves
             .iter()
@@ -3750,19 +3810,20 @@ mod tests {
         });
         let (ba, ca) = bands[0];
         let (bb, cb) = bands[1];
-        let a_res = residual_series_lsst(ca).expect("band a residual");
-        let b_res = residual_series_lsst(cb).expect("band b residual");
+        let a_res = residual_series_lsst(ca).unwrap();
+        let b_res = residual_series_lsst(cb).unwrap();
         let (dip_a, sig_a, _) = deepest_dip_at(&a_res);
         let (dip_b, sig_b, _) = deepest_dip_at(&b_res);
-        let ratio = if dip_b.abs() > 1e-9 {
-            dip_a.abs() / dip_b.abs()
-        } else {
-            f64::INFINITY
-        };
+        let ratio = dip_depth_ratio(dip_a, dip_b);
+        assert!(
+            ratio.is_some(),
+            "the injected dip reads in both bands — the achromatic depth ratio resolves"
+        );
+        let ratio = ratio.unwrap();
         let joint = join_series(&a_res, &b_res);
         let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
         let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
-        let (_, fap) = lomb_scargle_fap(&tj, &a_j);
+        let (_, fap) = lomb_scargle_fap(&tj, &a_j).unwrap();
         println!(
             "negative control gates (12σ achromatic injection): dip {ba} {dip_a:.3} ({sig_a:.1}σ) {bb} {dip_b:.3} ({sig_b:.1}σ) ratio {ratio:.2} | FAP {fap:.2e} | full-scan candidates {}",
             post_cands.len()
@@ -3802,9 +3863,9 @@ mod tests {
                 .map(|&x| ((x as f64) * s / cur) as f32)
                 .collect()
         };
-        let (_, fap_quiet) = lomb_scargle_fap(&t, &scale(0.02));
-        let (_, fap_mid) = lomb_scargle_fap(&t, &scale(3.0));
-        let (_, fap_loud) = lomb_scargle_fap(&t, &scale(30.0));
+        let (_, fap_quiet) = lomb_scargle_fap(&t, &scale(0.02)).unwrap();
+        let (_, fap_mid) = lomb_scargle_fap(&t, &scale(3.0)).unwrap();
+        let (_, fap_loud) = lomb_scargle_fap(&t, &scale(30.0)).unwrap();
         println!(
             "Lomb-Scargle FAP gate scale invariance: white noise sd 0.02 → FAP {fap_quiet:.2e}, sd 3.0 → FAP {fap_mid:.2e}, sd 30.0 → FAP {fap_loud:.2e} — the FAP does not move with the photometric scale, and every scale reads aperiodic (FAP >= {FAP_GATE})"
         );
@@ -3824,7 +3885,7 @@ mod tests {
     #[test]
     fn lasair_cone_parser_reads_the_documented_row_shape() {
         let body = br#"[{"object":"12345678901234","separation":2.393511865261539},{"object":"98765432109876","separation":0.5}]"#;
-        let rows = parse_lasair_cone(body).expect("the documented row array parses");
+        let rows = parse_lasair_cone(body).unwrap();
         assert_eq!(rows.len(), 2);
         assert_eq!(rows[0].id, "98765432109876");
         assert!((rows[0].separation - 0.5).abs() < 1e-12);
@@ -3838,7 +3899,7 @@ mod tests {
     fn lasair_lightcurve_parser_reads_the_measured_diasource_columns() {
         let body = br#"{"diaObject":{"ra":148.87,"decl":2.52,"firstDiaSourceMjdTai":61024.0,"lastDiaSourceMjdTai":61205.0},"diaSourcesList":[{"band":"g","midpointMjdTai":61024.2459327064,"psfFlux":1.2e-3,"psfFluxErr":1.0e-5},{"band":"r","midpointMjdTai":61025.1,"psfFlux":0.0},{"band":"i","midpointMjdTai":61026.2,"psfFlux":-3.0e-4},{"band":"z","midpointMjdTai":61027.3,"psfFlux":4.5e-4}]}"#;
         let (coord, rows) = parse_lasair_lightcurve(body);
-        let (ra, dec) = coord.expect("the diaObject ra/decl map");
+        let (ra, dec) = coord.unwrap();
         assert!((ra - 148.87).abs() < 1e-9 && (dec - 2.52).abs() < 1e-9);
         assert_eq!(
             rows.len(),
@@ -3860,9 +3921,9 @@ mod tests {
         assert_eq!(ztf_band_of_fid(3.0), Some("i"));
         assert_eq!(ztf_band_of_fid(0.0), None);
         assert_eq!(ztf_band_of_fid(4.0), None);
-        let g = ztf_band_freq("g").expect("g maps");
+        let g = ztf_band_freq("g").unwrap();
         assert!((g - C_LIGHT / (ZTF_G_LAMBDA_NM * 1e-9)).abs() / g < 1e-12);
-        let i = ztf_band_freq("i").expect("i maps");
+        let i = ztf_band_freq("i").unwrap();
         assert!((i - C_LIGHT / (ZTF_I_LAMBDA_NM * 1e-9)).abs() / i < 1e-12);
         assert!(ztf_band_freq("z").is_none());
     }
@@ -3870,8 +3931,8 @@ mod tests {
     #[test]
     fn ztf_phot_parser_reads_the_measured_object_schema() {
         let body = br#"{"objectId":"ZTF20test","candidates":[{"candid":2277225591215015002,"jd":2460031.7255903,"ra":148.8745407,"dec":2.5209382,"fid":1,"nid":2277,"magpsf":20.829599380493164,"sigmapsf":0.3,"magnr":20.2,"sigmagnr":0.03,"magzpsci":26.319599151611328,"isdiffpos":"t","ssdistnr":null,"ssnamenr":null,"drb":null},{"jd":2460016.7284028,"fid":2,"diffmaglim":20.54050064086914},{"candid":2,"jd":2460031.7255903,"ra":148.8745,"dec":2.5209,"fid":1,"magpsf":20.8,"magzpsci":26.3}],"forcedphot":[{"objectid":"ZTF20test","jd":2460646.9634838,"ranr":148.8745587,"decnr":2.5208508,"fid":2,"forcediffimflux":140.17,"forcediffimfluxunc":26.4,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460647.0,"ranr":148.8745,"decnr":2.5209,"fid":1,"forcediffimflux":10.0,"forcediffimfluxunc":10.0,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460648.0,"ranr":148.8745,"decnr":2.5209,"fid":2,"forcediffimflux":-5.0,"forcediffimfluxunc":3.0,"magzpsci":26.2}]}"#;
-        let phot = parse_ztf_phot(body, &lsk()).expect("the measured schema parses");
-        let (ra, dec) = phot.coord.expect("the first candidate ra/dec maps");
+        let phot = parse_ztf_phot(body, &lsk()).unwrap();
+        let (ra, dec) = phot.coord.unwrap();
         assert!((ra - 148.8745407).abs() < 1e-9 && (dec - 2.5209382).abs() < 1e-9);
         assert_eq!(
             phot.rows.len(),
@@ -3904,9 +3965,9 @@ mod tests {
     fn ztf_jd_to_tdb_is_the_compiler_one_axis() {
         let lsk = lsk();
         let jd = 2460031.7255903;
-        let tdb = ztf_jd_to_tdb(jd, &lsk).expect("a 2023 jd maps");
+        let tdb = ztf_jd_to_tdb(jd, &lsk).unwrap();
         let unix = (jd - 2440587.5) * 86400.0;
-        let expect = unix + 32.184 + lsk.leap_at(unix).expect("the leap reads") - 946_728_000.0;
+        let expect = unix + 32.184 + lsk.leap_at(unix).unwrap() - 946_728_000.0;
         assert!((tdb - expect).abs() < 1e-6);
         assert!(tdb > 0.0, "a post-J2000 epoch is positive");
     }
@@ -3914,7 +3975,7 @@ mod tests {
     #[test]
     fn antares_loci_parser_reads_the_measured_locus_listing() {
         let body = br#"{"data":[{"type":"locus_listing","id":"ANT2021y65ce","attributes":{"dec":9.258595,"properties":{"ztf_object_id":"ZTF21abxxjrh","num_mag_values":1,"num_alerts":14,"newest_alert_observation_time":59461.47165510012},"ra":37.284397}},{"type":"locus_listing","id":"ANT2021y665q","attributes":{"dec":3.6,"properties":{"num_mag_values":1,"num_alerts":27},"ra":38.7}}],"meta":{"count":10000}}}"#;
-        let rows = parse_antares_loci(body).expect("the measured locus listing parses");
+        let rows = parse_antares_loci(body).unwrap();
         assert_eq!(rows.len(), 2);
         assert_eq!(rows[0].id, "ANT2021y65ce");
         assert!((rows[0].ra_deg - 37.284397).abs() < 1e-12);
@@ -3931,7 +3992,7 @@ mod tests {
     #[test]
     fn antares_alert_parser_folds_detections_and_keeps_upper_limits_absent() {
         let body = br#"{"data":[{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650515","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.45389747619629,"ztf_magzpsci":26.320898056030273,"ant_passband":"R"}}},{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650516","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.4540,"ztf_magzpsci":26.3209}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780515","attributes":{"properties":{"ztf_jd":2459435.9347801,"ztf_fid":1,"ztf_diffmaglim":20.5221004486084,"ztf_magzpsci":26.23870086669922,"ant_passband":"g"}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780516","attributes":{"properties":{"ztf_jd":2459435.935,"ztf_fid":9,"ztf_diffmaglim":20.5}}}]}"#;
-        let phot = parse_antares_alerts(body, &lsk()).expect("the measured alert bundle parses");
+        let phot = parse_antares_alerts(body, &lsk()).unwrap();
         assert_eq!(
             phot.rows.len(),
             1,
@@ -3967,8 +4028,7 @@ mod tests {
     #[test]
     fn fink_fp_parser_reads_the_real_forced_photometry_rows() {
         let body = include_str!("lsst_fp_313998569858662581_6rows.json");
-        let (rows, coord, census) =
-            parse_fink_fp_rows(body.as_bytes()).expect("the real FP rows parse");
+        let (rows, coord, census) = parse_fink_fp_rows(body.as_bytes()).unwrap();
         assert_eq!(census.total, 6);
         assert_eq!(rows.len(), 6, "every real row reads a positive scienceFlux");
         assert_eq!(census.science_absent, 0);
@@ -3978,7 +4038,7 @@ mod tests {
         assert_eq!(census_count(&census.per_band_science, "u"), 3);
         assert_eq!(census_count(&census.per_band_psf, "r"), 0);
         assert_eq!(census_count(&census.per_band_psf, "g"), 0);
-        let (ra, dec) = coord.expect("the FP rows carry ra/dec");
+        let (ra, dec) = coord.unwrap();
         assert!((ra - 148.8745712297).abs() < 1e-9);
         assert!((dec - 2.5208047616).abs() < 1e-9);
         assert!((rows[0].1 - 61205.9837394019).abs() < 1e-9);
@@ -3997,7 +4057,7 @@ mod tests {
     #[test]
     fn fink_fp_negative_science_flux_stays_absent_and_psf_counts_separately() {
         let body = br#"[{"r:band":"g","r:dec":2.5208047696,"r:diaForcedSourceId":1,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61204.9817515752,"r:psfFlux":3180.5,"r:psfFluxErr":314.0,"r:ra":148.8745712188,"r:scienceFlux":-320.1,"r:scienceFluxErr":314.9,"r:visit":1},{"r:band":"r","r:dec":2.5208047616,"r:diaForcedSourceId":2,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61205.9837394019,"r:psfFlux":-1.0,"r:ra":148.8745712297,"r:scienceFlux":0.0,"r:visit":2},{"r:band":"i","r:dec":2.5208,"r:diaForcedSourceId":3,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61206.0,"r:psfFlux":99.0,"r:ra":148.8746,"r:scienceFlux":5100.0,"r:visit":3},{"r:detector":7,"r:visit":4}]"#;
-        let (rows, _, census) = parse_fink_fp_rows(body).expect("the schema-identical rows parse");
+        let (rows, _, census) = parse_fink_fp_rows(body).unwrap();
         assert_eq!(
             census.total, 3,
             "the row without band/time stays outside the census"
