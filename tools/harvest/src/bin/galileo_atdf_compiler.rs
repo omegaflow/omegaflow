@@ -1,3 +1,5 @@
+use std::collections::BTreeSet;
+
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::atdf::{parse_resid_bin, reduce_resid, write_resid_bin};
 use omegaflow::cdn::upload_release;
@@ -11,29 +13,28 @@ const VOLUMES: &[&str] = &[
     "GO-SUN-RSS-1-TDF-V1.0",
 ];
 
-fn files_of(volume: &str, ext: &str) -> Vec<String> {
-    let url = format!("{BASE}{volume}/INDEX/INDEX.TAB");
+fn files_of(volume: &str) -> Vec<String> {
+    let url = format!("{BASE}{volume}/TDF/");
     let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
-        eprintln!("{volume}: index fetch void ({url})");
+        eprintln!("{volume}: dir listing fetch void ({url})");
         return Vec::new();
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
-        eprintln!("{volume}: index not utf8");
+        eprintln!("{volume}: dir listing not utf8");
         return Vec::new();
     };
-    let mut out = Vec::new();
-    for line in text.lines() {
-        let Some(lbl) = line
-            .split(',')
-            .find(|f| f.trim_matches('"').ends_with(".LBL"))
-        else {
+    let mut out: Vec<String> = Vec::new();
+    for token in text.split("href=\"") {
+        let Some(end) = token.find('"') else {
             continue;
         };
-        let lbl = lbl.trim_matches('"');
-        if let Some(stem) = lbl.strip_suffix(".LBL") {
-            out.push(format!("{stem}.{ext}"));
+        let name = &token[..end];
+        if name.ends_with(".TDF") {
+            out.push(format!("TDF/{name}"));
         }
     }
+    out.sort();
+    out.dedup();
     out
 }
 
@@ -60,8 +61,14 @@ fn main() {
     };
     let mut merged: Vec<[f64; 8]> = Vec::new();
     let mut fetched = 0usize;
+    let mut seen: BTreeSet<String> = BTreeSet::new();
     'outer: for volume in VOLUMES {
-        for rel in files_of(volume, "TDF") {
+        let rels = files_of(volume);
+        eprintln!("{volume}: {} TDF files", rels.len());
+        for rel in rels {
+            if !seen.insert(rel.clone()) {
+                continue;
+            }
             if let Some(l) = limit {
                 if fetched >= l {
                     break 'outer;
