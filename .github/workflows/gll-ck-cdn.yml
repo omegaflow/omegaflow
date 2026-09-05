@@ -44,3 +44,73 @@ jobs:
         run: |
           gh release upload naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc \
             --clobber --repo omegaflow/sources
+
+  gll-1990-rtr-ck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    needs: gll-1990-ck
+    steps:
+      - uses: actions/checkout@v4
+      - name: Idempotence — skip if all 8 rotor CKs already rest on the CDN
+        run: |
+          present=0
+          for f in ck90341a_rtr.bc ck90341b_rtr.bc ck90342a_rtr.bc ck90342b_rtr.bc \
+                   ck90343a_rtr.bc ck90343b_rtr.bc ck90344a_rtr.bc ck90344b_rtr.bc; do
+            if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$f"; then
+              present=$((present + 1))
+            fi
+          done
+          echo "rotor CKs already present: $present/8"
+          if [ "$present" -eq 8 ]; then
+            echo "all 8 rotor CKs already present — manifest skipped"
+          else
+            echo "rotor CKs missing — mirroring"
+          fi
+      - name: Fetch the 8 Galileo -77000 rotor CKs from NAIF and verify each sha256 (the hash is the gate)
+        run: |
+          rotors="ck90341a_rtr.bc ck90341b_rtr.bc ck90342a_rtr.bc ck90342b_rtr.bc \
+                  ck90343a_rtr.bc ck90343b_rtr.bc ck90344a_rtr.bc ck90344b_rtr.bc"
+          for f in $rotors; do
+            if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$f"; then
+              echo "$f already on the CDN — fetch skipped"
+              continue
+            fi
+            curl -sSfL --retry 3 --max-time 3000 -o "$f" \
+              "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/$f"
+            got=$(sha256sum "$f" | cut -d' ' -f1)
+            case "$f" in
+              ck90341a_rtr.bc) want=2bf5551a477c7daa7b14b10303af7a5ec4b2075e4e288db073d12d14f6a84170 ;;
+              ck90341b_rtr.bc) want=3e114bb29450edbf25026136fb24f7d047a397ab852a4883a8c0e6f3cee682ab ;;
+              ck90342a_rtr.bc) want=144932da96feb982cf9b632ded86eb274558e22b38f06fcb8a6d1f1f6757d091 ;;
+              ck90342b_rtr.bc) want=1b2104481179e1832dca19a4567b6f194b0d87fc2b91008de26b596310738f97 ;;
+              ck90343a_rtr.bc) want=c668cd394e0fcdf612170d7ad83172bfc43e07a6aa42a96637ed4a49bd485073 ;;
+              ck90343b_rtr.bc) want=08df296410bd1d10932b372b6d2d9426b83b8de3bdc4d6d356c57019a1089922 ;;
+              ck90344a_rtr.bc) want=a1c5ebfb213a720cd8967a1e66b8c70c6664ee54168c25acdddc403a63a88f0c ;;
+              ck90344b_rtr.bc) want=2ebd138a58a4456f9ff04fc0d10779d4de3c025fb34a3edb6d9304d68ba64a27 ;;
+            esac
+            echo "sha256 $f $got"
+            if [ "$got" != "$want" ]; then
+              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                "gll-ck-cdn: sha256 der frischen Rotor-CK weicht ab" \
+                "Die Rotor-CK $f lieferte $got statt $want — kein Upload (0 honored, der Hash ist das Tor). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                health
+              exit 1
+            fi
+          done
+      - name: Ensure the naif.jpl.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view naif.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create naif.jpl.nasa.gov --repo omegaflow/sources \
+              --title "naif.jpl.nasa.gov" \
+              --notes "raw NAIF SPICE reference kernels mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the fetched rotor CKs to the CDN (the CI manifestator is the only writer)
+        run: |
+          for f in ck90341a_rtr.bc ck90341b_rtr.bc ck90342a_rtr.bc ck90342b_rtr.bc \
+                   ck90343a_rtr.bc ck90343b_rtr.bc ck90344a_rtr.bc ck90344b_rtr.bc; do
+            if [ -f "$f" ]; then
+              gh release upload naif.jpl.nasa.gov "$f" --clobber --repo omegaflow/sources
+            fi
+          done
