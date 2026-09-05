@@ -1,0 +1,28 @@
+name: swiftgrb-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  swiftgrb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile Swift GRB catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync \
+            --table swiftgrb \
+            --text \
+            --cols-unquoted \
+            --columns 'name:name;ra:ra;dec:dec;z:redshift;fluence:bat_fluence;t90:bat_t90' \
+            --skip-null z \
+            --out swiftgrb.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: swiftgrb returned void" \
+                 "swiftgrb compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

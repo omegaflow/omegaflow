@@ -1,0 +1,41 @@
+name: pastel-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pastel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Chunk-compile pastel (8 RA-slices) and upload to CDN
+        run: |
+          mkdir -p kernels
+          for lo in $(seq 0 45 315); do
+            hi=$(awk "BEGIN{print $lo+45}")
+            out="kernels/pastel_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/pastel/pastel" \
+                --columns 'ra:RAdeg;dec:DEdeg;teff:Teff;logg:logg;mag:Vmag' \
+                --skip-null teff \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAdeg\" >= ${lo} AND t.\"RAdeg\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/pastel_c*.json > kernels/pastel.json
+          gh release upload ssd.jpl.nasa.gov kernels/pastel.json --clobber --repo omegaflow/sources \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: pastel returned void" \
+                 "pastel chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

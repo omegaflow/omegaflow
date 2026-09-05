@@ -1,0 +1,28 @@
+name: sb9-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  sb9:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile SB9 spectroscopic-binary catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/sb9/main" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2' \
+            --skip-null mag1 \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+            --out sb9.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: sb9 returned void" \
+                 "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

@@ -1,0 +1,90 @@
+name: ned-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ned:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Prepare kernels dir
+        run: |
+          mkdir -p kernels/ned_state
+      - name: Restore NED harvest state
+        uses: actions/cache@v4
+        with:
+          path: kernels/ned_state
+          key: ned-chunks-v2
+      - name: NED objdir walk (objid continuation, Himmelsgitter, budget gate)
+        run: |
+          mkdir -p kernels/ned_state
+          BUDGET=4194304
+          STATE=kernels/ned_state/ned_cells.srt
+          cursor=0
+          [ -s kernels/ned_state/cursor.txt ] && cursor=$(cat kernels/ned_state/cursor.txt)
+          cargo build -p omegaflow-harvest --release --bin tap_compiler
+          while true; do
+            part="kernels/ned_part.json"
+            rm -f "$part"
+            ok=0
+            for attempt in 1 2 3; do
+              ./target/release/tap_compiler \
+                --root https://ned.ipac.caltech.edu/tap/sync \
+                --table NEDTAP.objdir \
+                --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
+                --limit 90001 \
+                --lattice 1024 \
+                --where "objid > ${cursor}" \
+                --out "$part" && ok=1 && break
+              sleep 60
+            done
+            [ "$ok" = "1" ] || { echo "ned walk query returned void at objid ${cursor}"; exit 1; }
+            raw=$(jq 'length' "$part")
+            cursor=$(jq '[.[].objid] | max' "$part")
+            jq -r '.[] | select(.z > 0) | [(.cell|tostring), (.rank|tostring), (.objid|tostring), ({ra, dec, z, name, type, n_spectra}|tojson)] | join(" ")' "$part" \
+              | sort -k1,1n -k2,2n -k3,3n > kernels/ned_part.srt
+            if [ -s "$STATE" ]; then
+              sort -m -k1,1n -k2,2n -k3,3n kernels/ned_part.srt "$STATE" \
+                | awk -F' ' '{
+                    cell=$1
+                    if (cell != cur) { cur=cell; n=0; delete seen }
+                    if (n >= 4) next
+                    oid=$3
+                    if (seen[oid]) next
+                    seen[oid]=1; n++
+                    print
+                  }' > kernels/ned_state/ned_cells.new
+            else
+              awk -F' ' '{
+                    cell=$1
+                    if (cell != cur) { cur=cell; n=0; delete seen }
+                    if (n >= 4) next
+                    oid=$3
+                    if (seen[oid]) next
+                    seen[oid]=1; n++
+                    print
+                  }' kernels/ned_part.srt > kernels/ned_state/ned_cells.new
+            fi
+            mv kernels/ned_state/ned_cells.new "$STATE"
+            echo "$cursor" > kernels/ned_state/cursor.txt
+            cells=$(wc -l < "$STATE")
+            echo "ned walk: cursor ${cursor}, part ${raw} raw rows, lattice state ${cells} rows"
+            if [ "$cells" -gt "$BUDGET" ]; then
+              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                "ned lattice budget exceeded: ${cells} rows" \
+                "Das Himmelsgitter trägt ${cells} Zeilen — über MAX_SAMPLES (${BUDGET}); kein Upload (0 honored). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                health
+              exit 1
+            fi
+            [ "$raw" -lt 90001 ] && break
+          done
+          awk -F' ' '{sub(/^[^ ]* [^ ]* [^ ]* /, ""); print}' "$STATE" | jq -s '.' > ned.json
+          gh release upload ssd.jpl.nasa.gov ned.json --clobber --repo omegaflow/sources \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: ned.json returned void" \
+                 "ned chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
