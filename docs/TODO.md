@@ -1730,6 +1730,18 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   echten Bio-Kandidaten). Nicht abgeschlossen: 16 lebende Kandidaten, keiner
   sicher als natuerlich ausgeschlossen.
 
+
+- Nadel XIII PHOTOCHEMIE-AUSSCHLUSS ERGEBNIS (2026-09-05, ADS-verifiziert): die 16
+  Hits -> 25 Disequilibrium-Spezies. Ausgeschieden als natuerlich: SO2 alle
+  (kanonische Photochemie: WASP-39b Tsai 2023, WASP-107b Dyrek 2024, HAT-P-26b
+  DREAMS 2025), CO2 alle (Photochemie Moses 2011 + supersolares Gleichgewicht
+  10-60x solar + Innenleben-Puffer), CO beide (Quench aus heissem Inneren Sing
+  2024). UEBERLEBT: 1 schwacher Kandidat V1298 Tau b OCS (3.5sigma, eq 7.7e-17,
+  kein wirtsspezifischer photochemischer Weg, metallarm) — marginal, jung, kein
+  Bio-Anspruch (0 honored). Register-Pflichten pending: dedizierte V1298-Tau-b-S-
+  Chemie, OCS-Routen in reduzierten Atmosphaeren, Atmos-Metallizitaeten der CO2-nur-
+  Wirte. Ehrlich: Bio '16 -> 1 schwach' (Techno analog '2 -> 0').
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
