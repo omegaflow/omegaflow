@@ -305,15 +305,10 @@ pub fn kernel_extent(
     0.0
 }
 
-// propagation speeds of the force media (the signal-cone gate's physical reach)
 pub const AUDIO_SPEED_AIR: f64 = 343.0;
-// seismic P-wave through the body (Earth's mantle), m/s
 pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
-// seismic surface wave, m/s
 pub const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
-// advective medium carried at its own advection; unit base when none measured
 pub const ADVECTIVE_BASE_SPEED: f64 = 1.0;
-// thermal diffusivity of the medium, m²/s
 pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
 
 pub const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
