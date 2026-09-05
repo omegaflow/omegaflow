@@ -118,14 +118,15 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   über das Verzeichnis-Listing (Bodengrund), nicht den INDEX; GO-SS ⊆ GO-SUN
   (globaler Dedup). Realer Bestand ~138 TDF-Dateien, nicht 192. Der
   Befund-`192`-Wert war der stale INDEX, keine Platten-Wahrheit.
-  Rausch-Kurve gezeichnet (2026-09-05, `befund-galileo-rausch-kurve.md`):
-  Mode-Split gemessen — Mode 2/3 SEP-steil (28×/12×, Plasma), Mode 1 flach
-  (keine Geometrie; Oszillator vs. PLL-Schwachsignal offen, Stärke-Split);
-  SEP erstmals von der Distanz getrennt (Pioneer-verwoben); Distanz-Achse
-  n-leer (nur 5–6 AU beprobt); ruhiges Fenster = Mode 2, SEP 150–180°,
-  1,5 Hz. Nebenfund: Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-
-  Erwartungsliste. `galileo_daily`-Ephemeride manifestiert
-  (ssd.jpl.nasa.gov, 2026-09-05).
+  Rausch-Kurve gezeichnet (2026-09-05, `befund-galileo-rausch-kurve.md`,
+  Rat-Verdikt eingearbeitet): Mode-Split als Negativ-Kontrolle — Mode 2 28×,
+  Mode 3 12× (getrennte Daten) SEP-steil, Mode 1 flach (keine Geometrie;
+  Oszillator vs. PLL offen, Stärke-Split); Achse = Stoßparameter b=r·sin(SEP);
+  Distanz/SEP-Trennung nur teilweise (Nah-Sonne verwoben); Distanz-Achse
+  n-leer (nur 5–6 AU); ruhiges Fenster = Mode 2, SEP 150–180°, 1,5 Hz.
+  Offen: Einweg-Nah-Sonne-Arm (8,2 Hz vs. ~20–30 Hz erwartet),
+  SEP–Zeit–Sonnenzyklus. Nebenfund: Stationen 12/15/24/34/42/45/61 (34m) →
+  GWE-Banden-Test-Erwartungsliste. `galileo_daily`-Ephemeride manifestiert.
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
