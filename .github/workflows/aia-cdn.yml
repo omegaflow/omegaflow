@@ -1,0 +1,50 @@
+name: aia-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: start TAI date (YYYY.MM.DD)
+        required: true
+        type: string
+        default: "2014.03.01"
+      end:
+        description: end TAI date (YYYY.MM.DD)
+        required: true
+        type: string
+        default: "2014.05.30"
+      bands:
+        description: comma-separated wavelengths (Angstrom)
+        required: false
+        type: string
+        default: "94,131,171,193,211,304,335"
+      asset:
+        description: output asset name on the CDN (netloc jsoc.stanford.edu)
+        required: true
+        type: string
+        default: aia2014_lines.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  aia-lines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view jsoc.stanford.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile and manifest the AIA line series to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --harvest --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
+            --bands "${{ inputs.bands }}" \
+            --out "${{ inputs.asset }}" --ci-mode
