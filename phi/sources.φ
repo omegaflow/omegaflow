@@ -967,15 +967,6 @@ epoch year month day 0 0
 gate average 300.0 600.0
 field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
 
-url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
-ttl 3600
-at sun
-flux_from_mag gmag
-cmap .
-ra ramean
-dec decmean
-field gmag lasair_ztf_transient_gmag gaussian-inverse-square em mag 3600 0.0 0.0
-
 url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
 ttl 3600
 format text
