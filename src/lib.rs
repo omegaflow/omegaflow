@@ -11,6 +11,7 @@ pub use archivar::atdf;
 pub use archivar::bison_basu;
 pub use archivar::bison_shift;
 pub use archivar::bison_velocity;
+pub use archivar::bl_narrowband;
 pub use archivar::bpc;
 pub use archivar::bsp_reader;
 pub use archivar::cdf;
