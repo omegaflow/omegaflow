@@ -7,6 +7,10 @@ use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use omegaflow::ztf::{ZTF_G_LAMBDA_NM, ZTF_I_LAMBDA_NM, ZTF_R_LAMBDA_NM};
+use omegaflow_measure::deredden::{
+    build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
+    BACKGROUND_PC_MIN,
+};
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 use std::thread::sleep;
@@ -37,6 +41,12 @@ const ZTF_CONE: &str = "https://lasair-ztf.lsst.ac.uk/api/cone/";
 const ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";
 const ZTF_OBJECT_PAUSE_MS: u64 = 2000;
 const ZTF_FORCED_SIGMA: f64 = 3.0;
+
+const IRSA_TAP: &str = "https://irsa.ipac.caltech.edu/TAP/sync";
+const ALLWISE_TABLE: &str = "allsky_4band_p3as_psd";
+const WISE_RADIUS_ARCSEC: f64 = 6.0;
+const AGN_WEDGE_W1_W2: f64 = 0.8;
+const WISE_AGN_CITE: &str = "Stern et al. 2012, ApJ 753, 30";
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
     ("u", 380.0),
@@ -1162,6 +1172,193 @@ fn fink_cone_list(
     objs
 }
 
+struct WiseMatch {
+    designation: Option<String>,
+    sep_arcsec: f64,
+    w1: Option<f64>,
+    w2: Option<f64>,
+    w3: Option<f64>,
+    w4: Option<f64>,
+    w1_sig: Option<f64>,
+}
+
+fn fmt_mag(v: Option<f64>) -> String {
+    match v {
+        Some(x) => format!("{x:.3}"),
+        None => "absent".to_string(),
+    }
+}
+
+fn csv_num(f: &[&str], k: usize) -> Option<f64> {
+    let cell = f.get(k)?.trim();
+    if cell.is_empty() {
+        return None;
+    }
+    let v: f64 = cell.parse().ok()?;
+    if v.is_finite() {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn sep_arcsec(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+    let r1 = ra1.to_radians();
+    let d1 = dec1.to_radians();
+    let r2 = ra2.to_radians();
+    let d2 = dec2.to_radians();
+    let a = ((d2 - d1) / 2.0).sin().powi(2) + d1.cos() * d2.cos() * ((r2 - r1) / 2.0).sin().powi(2);
+    2.0 * a.sqrt().asin().to_degrees() * 3600.0
+}
+
+fn parse_wise_csv(body: &[u8], ra: f64, dec: f64) -> Vec<WiseMatch> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return Vec::new();
+    };
+    let mut out: Vec<WiseMatch> = Vec::new();
+    let mut lines = text.lines();
+    let header = match lines.next() {
+        Some(h) => h,
+        None => return out,
+    };
+    let cols: Vec<&str> = header.split(',').map(|c| c.trim()).collect();
+    let index_of = |name: &str| cols.iter().position(|c| *c == name);
+    let (Some(ides), Some(ira), Some(idec), Some(iw1), Some(iw2), Some(iw1s)) = (
+        index_of("designation"),
+        index_of("ra"),
+        index_of("dec"),
+        index_of("w1mpro"),
+        index_of("w2mpro"),
+        index_of("w1sigmpro"),
+    ) else {
+        return out;
+    };
+    let iw3 = index_of("w3mpro");
+    let iw4 = index_of("w4mpro");
+    for line in lines {
+        if line.trim().is_empty() {
+            continue;
+        }
+        let f: Vec<&str> = line.split(',').collect();
+        let (Some(sra), Some(sdec)) = (csv_num(&f, ira), csv_num(&f, idec)) else {
+            continue;
+        };
+        let des = match f.get(ides).map(|c| c.trim()) {
+            Some(d) if !d.is_empty() => Some(d.to_string()),
+            _ => None,
+        };
+        out.push(WiseMatch {
+            designation: des,
+            sep_arcsec: sep_arcsec(ra, dec, sra, sdec),
+            w1: csv_num(&f, iw1),
+            w2: csv_num(&f, iw2),
+            w3: iw3.and_then(|k| csv_num(&f, k)),
+            w4: iw4.and_then(|k| csv_num(&f, k)),
+            w1_sig: csv_num(&f, iw1s),
+        });
+    }
+    out
+}
+
+fn irsa_tap_sync(adql: &str) -> Option<(String, Vec<u8>)> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-m")
+        .arg("60")
+        .arg("-A")
+        .arg(UA)
+        .arg("-G")
+        .arg(IRSA_TAP)
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={adql}"))
+        .arg("--data-urlencode")
+        .arg("FORMAT=csv")
+        .arg("--data-urlencode")
+        .arg("MAXREC=10")
+        .arg("-o")
+        .arg("-")
+        .arg("-w")
+        .arg("\n%{http_code}");
+    let out = cmd.output().ok()?;
+    let stdout = out.stdout;
+    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
+    let code = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
+    Some((code, stdout[..idx].to_vec()))
+}
+
+fn allwise_cone(ra: f64, dec: f64) -> Option<Vec<WiseMatch>> {
+    let r_deg = WISE_RADIUS_ARCSEC / 3600.0;
+    let adql = format!(
+        "SELECT designation, ra, dec, w1mpro, w2mpro, w3mpro, w4mpro, w1sigmpro FROM {ALLWISE_TABLE} WHERE CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', {ra:.6}, {dec:.6}, {r_deg})) = 1"
+    );
+    let Some((code, body)) = irsa_tap_sync(&adql) else {
+        println!(
+            "Nadel V (AllWISE round): ra {ra:.4} dec {dec:.4} — the IRSA TAP query did not answer (measured stall), the mid-IR witness stays pending"
+        );
+        return None;
+    };
+    if code != "200" {
+        println!(
+            "Nadel V (AllWISE round): ra {ra:.4} dec {dec:.4} — IRSA TAP answered HTTP {code}, the mid-IR witness stays pending"
+        );
+        return None;
+    }
+    let mut matches = parse_wise_csv(&body, ra, dec);
+    matches.sort_by(|a, b| a.sep_arcsec.total_cmp(&b.sep_arcsec));
+    Some(matches)
+}
+
+enum WiseOutcome {
+    Agn,
+    Field,
+    Pending,
+}
+
+fn allwise_witness(dia: &str, ra: f64, dec: f64) -> WiseOutcome {
+    let Some(matches) = allwise_cone(ra, dec) else {
+        return WiseOutcome::Pending;
+    };
+    let Some(m) = matches.first() else {
+        println!(
+            "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} — no AllWISE source within {WISE_RADIUS_ARCSEC} arcsec (0 honored) — the candidate remains pending the natural-class crossmatch"
+        );
+        return WiseOutcome::Field;
+    };
+    let des = match m.designation.as_deref() {
+        Some(d) => d,
+        None => "AllWISE",
+    };
+    let sep = m.sep_arcsec;
+    match (m.w1, m.w2, m.w1_sig) {
+        (Some(w1), Some(w2), Some(sig)) if sig > 0.0 => {
+            let color = w1 - w2;
+            let w3 = fmt_mag(m.w3);
+            let w4 = fmt_mag(m.w4);
+            if color >= AGN_WEDGE_W1_W2 {
+                println!(
+                    "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1:.3} W2 {w2:.3} (W1 sig {sig:.3}) W3 {w3} W4 {w4} | W1-W2 {color:.3} >= {AGN_WEDGE_W1_W2} — the mid-IR AGN wedge ({WISE_AGN_CITE}) — a natural AGN, excluded"
+                );
+                WiseOutcome::Agn
+            } else {
+                println!(
+                    "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1:.3} W2 {w2:.3} (W1 sig {sig:.3}) W3 {w3} W4 {w4} | W1-W2 {color:.3} below the {AGN_WEDGE_W1_W2} wedge — the mid-IR reads a field source, the candidate remains"
+                );
+                WiseOutcome::Field
+            }
+        }
+        _ => {
+            let w1 = fmt_mag(m.w1);
+            let w2 = fmt_mag(m.w2);
+            println!(
+                "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1} W2 {w2} — no two-band W1/W2 detection, no wedge color (0 honored) — the candidate remains"
+            );
+            WiseOutcome::Field
+        }
+    }
+}
+
 fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Option<(f64, f64)>)> {
     let Ok(text) = std::str::from_utf8(body) else {
         return None;
@@ -1307,11 +1504,102 @@ fn natural_excluded(class: i64, simbad: &str) -> bool {
     !(class == -1 && simbad == "Fail")
 }
 
+struct DustField {
+    stars: StarIndex,
+    map: DustMap,
+    radius_as: f64,
+}
+
+fn load_dust_field(map_path: &str, stars_path: &str, radius_as: f64) -> Option<DustField> {
+    let star_bytes = std::fs::read(stars_path).ok()?;
+    let stars = build_star_index(&star_bytes);
+    if stars.stars.is_empty() {
+        println!(
+            "Nadel V (dust round): {stars_path} carries no Gaia DR3 star record — the dereddening stays pending (0 honored), the observed color keeps the type call"
+        );
+        return None;
+    }
+    let map = match DustMap::open(map_path) {
+        Ok(m) => m,
+        Err(e) => {
+            println!(
+                "Nadel V (dust round): {e} — the dereddening stays pending, the observed color keeps the type call"
+            );
+            return None;
+        }
+    };
+    Some(DustField {
+        stars,
+        map,
+        radius_as,
+    })
+}
+
+fn type_word(bp_rp: f64) -> (String, f64) {
+    match dwarf_color_type(bp_rp) {
+        Some((num, mg)) => (type_label(num), mg),
+        None => ("out-of-sequence".to_string(), f64::NAN),
+    }
+}
+
+fn report_intrinsic_counterpart(field: &mut DustField, ra_deg: f64, dec_deg: f64, who: &str) {
+    let r_deg = field.radius_as / 3600.0;
+    for (k, sep) in field.stars.within(ra_deg, dec_deg, r_deg) {
+        let s = &field.stars.stars[k];
+        let d_pc = 1000.0 / s.plx_mas;
+        if !(d_pc > BACKGROUND_PC_MIN) {
+            continue;
+        }
+        let (obs_word, _) = type_word(s.color_index);
+        let Some(hit) = field.map.at(s.ra_deg, s.dec_deg, d_pc) else {
+            println!(
+                "  Nadel V (dust round): {who} — Gaia DR3 counterpart dr3[{k}] {sep:.2} arcsec, d {d_pc:.0} pc | A_V at that distance unmeasured (no map leaf or outside the model grid) — the dereddening stays pending, the observed type {obs_word} keeps the type call"
+            );
+            return;
+        };
+        if !(hit.av.is_finite() && hit.av > 0.0) {
+            println!(
+                "  Nadel V (dust round): {who} — Gaia DR3 counterpart dr3[{k}] {sep:.2} arcsec, d {d_pc:.0} pc | A_V at that distance {:.3} mag (the star sits in front of the column) — the observed type {obs_word} keeps the type call",
+                hit.av
+            );
+            return;
+        }
+        let Some(itr) = intrinsic_of(s, hit.av) else {
+            return;
+        };
+        let (intr_word, mg0) = type_word(itr.bp_rp0);
+        println!(
+            "  Nadel V (dust round): {who} — Gaia DR3 counterpart dr3[{k}] {sep:.2} arcsec, d {d_pc:.0} pc | A_V(truncated) {:.3} mag | OBSERVED reddened G {:.3} BP-RP {:.3} -> dwarf-seq {} | DEREDDENED G0 {:.3} BP-RP0 {:.3} -> dwarf-seq {}",
+            hit.av,
+            s.mag,
+            s.color_index,
+            obs_word,
+            itr.g0,
+            itr.bp_rp0,
+            intr_word
+        );
+        println!(
+            "     intrinsic reading (M_G0 {:.2} vs the {:.2} dwarf expectation at that color): {}",
+            itr.m_g0,
+            mg0,
+            if itr.m_g0 - mg0 < -3.0 {
+                "an evolved background object behind the dust column — the reddened observed color mis-frames the counterpart as a dwarf; the intrinsic class carries the inclusion call"
+            } else if itr.m_g0 - mg0 > 3.0 {
+                "fainter than a dwarf of its intrinsic color (an unreliable parallax or a subdwarf/blend)"
+            } else {
+                "consistent with a dwarf of its intrinsic color — the dwarf class holds"
+            }
+        );
+        return;
+    }
+}
+
 struct ConeVerdict {
     fetched: usize,
     multiband_scanned: usize,
     candidates_pre: usize,
     excluded_natural: usize,
+    excluded_midir_agn: usize,
     unclassified: usize,
 }
 
@@ -1322,6 +1610,7 @@ impl ConeVerdict {
             multiband_scanned: 0,
             candidates_pre: 0,
             excluded_natural: 0,
+            excluded_midir_agn: 0,
             unclassified: 0,
         }
     }
@@ -1334,6 +1623,8 @@ fn cone_scan(
     min_sources: usize,
     save: Option<&str>,
     brief: bool,
+    mut dust: Option<&mut DustField>,
+    wise: bool,
 ) -> ConeVerdict {
     let Some(lsk) = embedded_lsk() else {
         println!(
@@ -1513,9 +1804,18 @@ fn cone_scan(
         }
     }
     println!("Nadel V (LSST round): LSS1 asset written {bin_path}, object map {map_path}");
+    if let Some(field) = dust.as_deref() {
+        if !brief {
+            println!(
+                "Nadel V (LSST round): the dust layer is live (Bayestar19 3D + Gaia DR3, crossmatch radius {:.0} arcsec) — each candidate counterpart is typed from its intrinsic, dereddened color when it is a background object behind a measured column",
+                field.radius_as
+            );
+        }
+    }
     let (candidates, scanned) = scan_lss1(&bin_path, brief);
     let mut post = 0usize;
     let mut excluded = 0usize;
+    let mut excluded_midir_agn = 0usize;
     for (cra, cdec) in &candidates {
         let hit = objs
             .iter()
@@ -1528,11 +1828,28 @@ fn cone_scan(
                         "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class {} {}) — a natural dimmer, excluded",
                         o.id, o.class, o.simbad
                     );
+                } else if wise {
+                    match allwise_witness(&o.id, o.ra_deg, o.dec_deg) {
+                        WiseOutcome::Agn => {
+                            excluded += 1;
+                            excluded_midir_agn += 1;
+                        }
+                        WiseOutcome::Field => post += 1,
+                        WiseOutcome::Pending => post += 1,
+                    }
                 } else {
                     post += 1;
                     println!(
                         "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class -1, no SIMBAD id) — unclassified, pending the natural-class crossmatch",
                         o.id
+                    );
+                }
+                if let Some(field) = dust.as_deref_mut() {
+                    report_intrinsic_counterpart(
+                        field,
+                        o.ra_deg,
+                        o.dec_deg,
+                        &format!("diaObject {}", o.id),
                     );
                 }
             }
@@ -1544,13 +1861,14 @@ fn cone_scan(
         }
     }
     println!(
-        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as catalogued natural dimmers, {post} unclassified dip(s) remain pending the natural-class crossmatch"
+        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as natural dimmers ({excluded_midir_agn} by the AllWISE mid-IR AGN wedge), {post} unclassified dip(s) remain pending the natural-class crossmatch"
     );
     ConeVerdict {
         fetched,
         multiband_scanned: scanned,
         candidates_pre: candidates.len(),
         excluded_natural: excluded,
+        excluded_midir_agn,
         unclassified: post,
     }
 }
@@ -2685,7 +3003,24 @@ fn antares_scan(max_loci: usize) {
     );
 }
 
-fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
+fn optional_dust_field(
+    map: &Option<String>,
+    stars: &Option<String>,
+    radius: Option<f64>,
+) -> Option<DustField> {
+    match (map, stars) {
+        (Some(m), Some(s)) => load_dust_field(m, s, radius.unwrap_or(90.0)),
+        (None, None) => None,
+        _ => {
+            println!(
+                "Nadel V (dust round): the intrinsic type read needs both --dust-map and --dust-stars — the observed color keeps the type call"
+            );
+            None
+        }
+    }
+}
+
+fn grid_scan(cones: &[(f64, f64, f64, usize)], mut dust: Option<&mut DustField>, wise: bool) {
     println!(
         "\n=== Nadel V (LSST round): anonymous cone grid, time layer MJD/TAI → TDB (embedded naif0012.tls), {} cone(s) ===",
         cones.len()
@@ -2697,21 +3032,32 @@ fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
             i + 1,
             cones.len()
         );
-        let v = cone_scan(*ra, *dec, *radius, *min, None, true);
+        let v = cone_scan(
+            *ra,
+            *dec,
+            *radius,
+            *min,
+            None,
+            true,
+            dust.as_deref_mut(),
+            wise,
+        );
         verdict.fetched += v.fetched;
         verdict.multiband_scanned += v.multiband_scanned;
         verdict.candidates_pre += v.candidates_pre;
         verdict.excluded_natural += v.excluded_natural;
+        verdict.excluded_midir_agn += v.excluded_midir_agn;
         verdict.unclassified += v.unclassified;
         sleep_ms(CONE_PAUSE_MS);
     }
     println!(
-        "\n=== Nadel V grid verdict over {} anonymous cone scan(s): {} object light curve(s) fetched, {} multiband object(s) fully evaluated on the TDB fold axis, {} pre-exclusion candidate dip(s), {} excluded as catalogued natural dimmers, {} unclassified dip(s) pending the natural-class crossmatch ===",
+        "\n=== Nadel V grid verdict over {} anonymous cone scan(s): {} object light curve(s) fetched, {} multiband object(s) fully evaluated on the TDB fold axis, {} pre-exclusion candidate dip(s), {} excluded as natural dimmers ({} by the AllWISE mid-IR AGN wedge), {} unclassified dip(s) pending the natural-class crossmatch ===",
         cones.len(),
         verdict.fetched,
         verdict.multiband_scanned,
         verdict.candidates_pre,
         verdict.excluded_natural,
+        verdict.excluded_midir_agn,
         verdict.unclassified
     );
     println!(
@@ -3025,8 +3371,12 @@ fn usage() {
          \x20 lsst_anomaly_probe --fink-fp-scan <fink_fp_<diaObjectId>.json>\n\
          Fink/LSST anonymous cone scan over a real object set, no token:\n\
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
+         \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin> [--dust-radius <arcsec=90>]] — type each candidate counterpart from its intrinsic (dereddened) color when it is a background object behind dust\n\
+         \x20   [--wise] — mid-IR witness: cone-query the AllWISE catalog (IRSA TAP, 6 arcsec) for each unclassified candidate and exclude it when its W1-W2 color sits in the AGN wedge (>= 0.8 mag, Stern et al. 2012)\n\
          Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
+         \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin>] — the same intrinsic type read over the grid\n\
+         \x20   [--wise] — the AllWISE mid-IR AGN wedge over the grid's unclassified candidates\n\
          Lasair-LSST cone with the operator's account token (LASAIR_LSST_TOKEN in the .secrets.local key or env):\n\
          \x20 lsst_anomaly_probe --lasair-ra <deg> --lasair-dec <deg> --lasair-radius <arcsec> [--lasair-max <objects=6>]\n\
          Lasair-ZTF historical cone (LASAIR_TOKEN in the .secrets.local key or env):\n\
@@ -3346,6 +3696,10 @@ fn main() {
     let mut neg_control_depth: f64 = 8.0;
     let mut antares = false;
     let mut antares_max: usize = 24;
+    let mut dust_map: Option<String> = None;
+    let mut dust_stars: Option<String> = None;
+    let mut dust_radius: Option<f64> = None;
+    let mut wise = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -3460,6 +3814,24 @@ fn main() {
                 antares_max = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(24);
                 i += 1;
             }
+            "--dust-map" => {
+                dust_map = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--dust-stars" => {
+                dust_stars = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--dust-radius" => {
+                dust_radius = args
+                    .get(i + 1)
+                    .and_then(|v| v.parse::<f64>().ok())
+                    .filter(|r| *r > 0.0 && r.is_finite());
+                i += 1;
+            }
+            "--wise" => {
+                wise = true;
+            }
             _ => {
                 usage();
                 return;
@@ -3483,7 +3855,11 @@ fn main() {
         return;
     }
     if !cones.is_empty() {
-        grid_scan(&cones);
+        grid_scan(
+            &cones,
+            optional_dust_field(&dust_map, &dust_stars, dust_radius).as_mut(),
+            wise,
+        );
         return;
     }
     if let Some(id) = fink {
@@ -3501,7 +3877,16 @@ fn main() {
     if let Some(ra) = cone_ra {
         match (cone_dec, cone_radius) {
             (Some(dec), Some(radius)) => {
-                cone_scan(ra, dec, radius, cone_min, save.as_deref(), false);
+                cone_scan(
+                    ra,
+                    dec,
+                    radius,
+                    cone_min,
+                    save.as_deref(),
+                    false,
+                    optional_dust_field(&dust_map, &dust_stars, dust_radius).as_mut(),
+                    wise,
+                );
             }
             _ => {
                 usage();
