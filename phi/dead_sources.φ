@@ -218,13 +218,13 @@ dead 404
 url https://ameriflux.lbl.gov/api/public/v2/sites?format=json&climate_zone=arctic,subarctic&data_product=FLUXNET2015&active=true
 note HTTP 404 — Endpoint weg.
 
-decline no-physical-force
+integrated
 url https://antares.noirlab.edu/api/v1/
-note Recheck 2026-08-17: Portal-Login (antares.noirlab.edu) ist NICHT der API-Zugang — API-Credentials werden nur per Anfrage beim ANTARES-Team vergeben (antares-client-Doku „Obtaining Credentials"). GAVO-Mirror dc.g-vo.org/tap (antares.data, 5 921 Zeilen) trägt id/raj2000/dej2000/n_hits/ang_error/epoch_mjd — zugänglich ohne Key, aber nur Counts + Position → Decline per §3.2/§3.9 (Alerts ohne Feldwert). Verdikt 2026-08-17: kein natürlicher Feldwert (nur Counts/Position) — CDN-Redistribution irrelevant, decline no-physical-force.
+note Korrigiert 2026-09-05: der alte decline (2026-08-17, „nur Counts/Position", „Credentials nur per Anfrage") beruhte auf dem GAVO-Mirror (Counts-only) und der Stream-Annahme. Messung 2026-09-05: die Lese-REST-API ist anonym offen; die echten Loci unter /v1/loci tragen ra/dec + attributes.properties.*_alert_magnitude (echte em-mag-Messwerte). Quelle IST physikalisch. Feld-Träger pending (richtung-only ohne Distanz) — lebt in blocked_sources.φ (parser-def json). integrated: der Mirror-Befund ist hier tot, die Quelle lebt als pending-Registrierung.
 
-decline no-physical-force
+integrated
 url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte=
-note ANTARES verlangt Token (siehe Eintrag oben). Verdikt 2026-08-17: decline no-physical-force.
+note Korrigiert 2026-09-05: alter decline („verlangt Token") widerlegt — die Loci-REST ist anonym offen. Integriert: Quelle lebt als pending-Registrierung in blocked_sources.φ (parser-def json), Feld-Träger (Richtung ohne Distanz) pending.
 
 decline registry-premium-gzip
 url https://api.511.org/transit/stops?operator_id=SF&api_key={TRANSIT511_KEY}&format=json
