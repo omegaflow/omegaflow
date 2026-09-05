@@ -159,9 +159,14 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   (All-Lock-Tag-Zählung + Stations-Pooling, Konjunktion-Station-Tag 0,28–0,58 Hz);
   Pass-Segmentierung gemessen (`befund-galileo-pass-segmentierung`, done):
   Mode-1-8,2-Hz = Pooling-Artefakt bestätigt, Mode-2-Konjunktion = echte ruhige
-  Pässe (mit kurzen lauten an 43/63). Offen (pending): α–Zeit–Sonnenzyklus-
-  Verwebung, Mode-2-Stärke-Split, Stärke-Zustand je Unter-Arc, detrendete
-  Pass-Metrik, 1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2). Nebenfund:
+  Pässe (mit kurzen lauten an 43/63). Richtungs-TE gemessen
+  (`befund-galileo-te-staerke-floor`, done): auf Tages-Achse kein gerichteter
+  Stärke→Rauschen-Pfeil — TE überlebt die Monats-/Stations-Konditionierung nicht
+  (62/64 unter cThr), der −2560-Boden ist Epochen-/Stations-kollokiert, kein
+  SNR-getriebener PLL-Term. Offen (pending): α–Zeit–Sonnenzyklus-
+  Verwebung, Mode-2-Stärke-Split, Stärke-Zustand je Unter-Arc, In-Pass-Stärke-
+  Rampe bei Pass-Identität, detrendete Pass-Metrik,
+  1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2). Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
