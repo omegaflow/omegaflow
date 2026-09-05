@@ -2,7 +2,7 @@
   title: Befund — Galileo-Pass-Segmentierung: der Pass-Boden der GASR-Residuen
   class: befund
   date: 2026-09-05
-  sha256: 479790381d134fdc6e49367b1f06153ce075c02b856860fdce41d530f6fccc1f
+  sha256: 248b05e9064d020e7757c1935342d3aa6367ad83bc0719f4a9be334100940eb8
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md
   see-also: docs/befund/befund-galileo-rausch-kurve.md docs/TODO.md
@@ -219,3 +219,9 @@ Proben-Bin-Achse ungetestet); die innerhalb-des-Passes getrennte Stärke-Messung
 `cargo check` 0/0; der Lauf ist ein lokales Artefakt (stdout). Die Pass-Segmentierung ist
 gebaut; der Stärke-Gradient ist auf Pass-Ebene nicht entscheidbar, das Mode-2-Fenster trägt
 echte ruhige Pässe mit kurzen lauten an 43/63.
+
+Folge-Befunde: die 1,5→0,65-Tagesmengen-Reconciliation ist geschlossen
+(`befund-galileo-tagesmengen-reconciliation`, done — E1 hält, exakt 2 All-Lock-Tage);
+der Stärke-Gradient ist jetzt auf der Proben-Bin-Achse entschieden
+(`befund-galileo-inpass-staerke-rampe`, done — an 43/63 genuine Boden↔Rauschen-Kovarianz
+bei Pass-Identität, an 14 Epochen-Kollokation).
