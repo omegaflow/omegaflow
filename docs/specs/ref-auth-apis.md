@@ -1,8 +1,8 @@
 <!--
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
-  date: 2026-09-03
-  sha256: 8a2aebc8ba5d4fc21179fbd846761a66ffbc29577797432dcdd7455003d8d495
+  date: 2026-09-05
+  sha256: 3fdba2b4fa03635b68d353a4c87905daaa646bcad3cfb58745229ef3f0813fee
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -217,6 +217,41 @@ und in `phi/pipeline/interesting_domains.φ`.
 
 > Zeilenverweise entfallen absichtlich: `phi/sources.φ` wächst; die Quellen-Blöcke
 > sind über ihren Namen adressiert, nicht über eine brüchige Zeilennummer.
+
+**§E.2 — Astronomische Transienten-Broker (LSST/Rubin community brokers):**
+
+Stand 2026-09-05 — aus dem Review *An overview of astronomical transient brokers
+in Rubin era* (CAOSP 55/2, pp95–105) plus Live-Verifikation der Zugangswege.
+omegaflow nutzt die Broker im **historischen REST-Modus** (paginiert abfragbare
+Daten), nicht den Echtzeit-Kafka-Stream. Kein Stream-Stub liegt in
+`.secrets.local` (der Datenweg ist REST; Stream-Keys werden nicht genutzt).
+URLs/Auth-Pfade sind NUR hier, nie in `.secrets.local`. (gemessen):
+
+| Broker | Zugangstyp | Daten lesen | Register-Status 2026-09-05 |
+|---|---|---|---|
+| **ALeRCE** | REST `api.alerce.online/alerts/v1` | anonym offen | live in sources.φ (fanout-Detections) |
+| **ANTARES** | REST `api.antares.noirlab.edu/v1` | **anonym offen** | **pending** in blocked_sources.φ (parser-def: richtung-only ohne Distanz, kein Feld-Träger) |
+| **Fink** | REST `api.*.fink-portal.org/api/v1/*` | anonym offen | ungenutzt (kein Kandidat) |
+| **Lasair** | REST `api/query` (Token) | Token nötig | live in sources.φ (gmag) |
+| **Pitt-Google** | GCP Pub/Sub+BigQuery | GCP-Datasets | ungenutzt (Stream/BigQuery-Modus) |
+| **AMPEL** | REST `api/live/*` | Token (nur 2 offen) | ungenutzt (kein Kandidat) |
+| **Babamul** | — | — | nie entwickelt (verwaist) |
+
+**§E.2.1 — Zugangs-/Auth-Pfad je Broker (Lese- und Stream-Weg getrennt):**
+
+| Broker | Lese-Zugang (REST, genutzt) | Stream-Zugang (Kafka, NICHT genutzt — kein .secrets.local-Stub) |
+|---|---|---|
+| **ANTARES** | `https://api.antares.noirlab.edu/v1/` anonym, keyless | Key+Secret per E-Mail via `https://antares.noirlab.edu/support` |
+| **Fink** | `https://api.ztf.fink-portal.org` / `https://api.lsst.fink-portal.org` anonym | Google-Formular `https://forms.gle/2td4jysT4e9pkf889` → E-Mail-Credentials |
+| **AMPEL** | `https://ampel-ztf.zeuthen.desy.de/api/live/docs` (2 Endpunkte offen) | Bearer-Token: GitHub-Org `https://github.com/AmpelProject` + `https://ampel-ztf.zeuthen.desy.de/live/dashboard/tokens` |
+| **Pitt-Google** | `https://mwvgroup.github.io/pittgoogle-client/` (GCP-Datasets) | GCP Service-Account (kein Broker-Konto) `https://mwvgroup.github.io/pittgoogle-client/one-time-setup/authentication.html` |
+| **Lasair** | Token (Pflicht): `LASAIR_TOKEN`/`LASAIR_LSST_TOKEN` in .secrets.local; Registrierung `https://lasair-ztf.lsst.ac.uk/register/`, Token "My Profile" | Kafka `lasair_consumer` — ungenutzt |
+
+ALeRCE (live) und die ANTARES-/Fink-Lese-REST-APIs brauchen **keinen** Key
+(anonym). AMPEL: nur `/stock/ztf/{id}`-Pfade sind offen,
+Rest 403 ohne Token; Root leitet auf Doku, `/live/dashboard` auf toten Port 8500,
+das echte Dashboard liegt unter `/live/dashboard/tokens`. Pitt-Google hat kein
+Login — Zugang ausschließlich über eigenes GCP-Projekt (Service-Account).
 
 **Geklärt — offen ohne Key (aus key-needed entfernt, Stand 2026-08-17):**
 
