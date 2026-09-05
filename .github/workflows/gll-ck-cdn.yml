@@ -1,0 +1,46 @@
+name: gll-ck-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  gll-1990-ck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Idempotence — skip if the raw kernel already rests on the CDN
+        run: |
+          if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "gll_plt_rec_1990_tav_v00.bc"; then
+            echo "asset gll_plt_rec_1990_tav_v00.bc already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset gll_plt_rec_1990_tav_v00.bc missing — mirroring"
+      - name: Fetch the Galileo 1990 CK from NAIF and verify the sha256 (the hash is the gate)
+        run: |
+          curl -sSfL --retry 3 --max-time 3000 -o gll_plt_rec_1990_tav_v00.bc \
+            https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/gll_plt_rec_1990_tav_v00.bc
+          got=$(sha256sum gll_plt_rec_1990_tav_v00.bc | cut -d' ' -f1)
+          want=c1765fd4baad6e32a98de3a333a62ddd9627e541dd3ef6e2c115f491af3666bd
+          echo "sha256 $got"
+          if [ "$got" != "$want" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "gll-ck-cdn: sha256 der frischen NAIF-CK weicht ab" \
+              "Die CK gll_plt_rec_1990_tav_v00.bc lieferte $got statt $want — kein Upload (0 honored, der Hash ist das Tor). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Ensure the naif.jpl.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view naif.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create naif.jpl.nasa.gov --repo omegaflow/sources \
+              --title "naif.jpl.nasa.gov" \
+              --notes "raw NAIF SPICE reference kernels mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
+        run: |
+          gh release upload naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc \
+            --clobber --repo omegaflow/sources
