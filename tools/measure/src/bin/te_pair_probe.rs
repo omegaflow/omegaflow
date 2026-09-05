@@ -72,10 +72,10 @@ fn main() {
         "lag", "TE(a->b)", "schwelle", "TE(b->a)", "schwelle", "befund"
     );
     for &lag in &lags {
-        let te_ab = transfer_entropy_lag(a, b, lag);
-        let thr_ab = surrogate_threshold_lag(a, b, lag, 0x9E37_79B9_7F4A_7C15);
-        let te_ba = transfer_entropy_lag(b, a, lag);
-        let thr_ba = surrogate_threshold_lag(b, a, lag, 0x9E37_79B9_7F4A_7C15);
+        let te_ab = transfer_entropy_lag(b, a, lag);
+        let thr_ab = surrogate_threshold_lag(b, a, lag, 0x9E37_79B9_7F4A_7C15);
+        let te_ba = transfer_entropy_lag(a, b, lag);
+        let thr_ba = surrogate_threshold_lag(a, b, lag, 0x9E37_79B9_7F4A_7C15);
         let (Some(te_ab), Some(thr_ab), Some(te_ba), Some(thr_ba)) = (te_ab, thr_ab, te_ba, thr_ba)
         else {
             println!("{:>4} | too few data", lag);
