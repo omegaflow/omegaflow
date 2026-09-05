@@ -1742,6 +1742,23 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Chemie, OCS-Routen in reduzierten Atmosphaeren, Atmos-Metallizitaeten der CO2-nur-
   Wirte. Ehrlich: Bio '16 -> 1 schwach' (Techno analog '2 -> 0').
 
+
+- Nadel XIII V1298-Tau-b-OCS TIEFEN-PRUEFUNG (2026-09-05, Barat 2025 2025AJ....170..165B
+  + Mukherjee 2025 2025ApJ...985..209M + Reed 2024 2024ApJ...973L..38R): der letzte
+  Bio-Kandidat FAELLT ALS NATUERLICH aus — Bio-Zaehlung '16 -> 0'. Vier Gruende:
+  (1) Barat nennt OCS selbst 'tentative' (3.5sigma), und das PICASO-Photochemie-Grid
+  des Papers sagt OCS voraus (~3sigma ueber dem retrievten Wert). (2) junger-Stern-
+  XUV dissoziiert OCS (erzeugt es nicht); die natuerliche Route ist kuehler
+  Terminator (~450 K) + Mischung + Metalle. (3) 'metallarm' war invertiert:
+  Retrieval log Z = +0.6 (~4x solar, nicht metallarm). (4) OCS-Route existiert:
+  kuehle H2-reiche metallreiche S-Disequilibrium-Chemie mit starkem Kzz
+  (Mukherjee 2025). Der Disequilibrium-Hit beruhte auf der Fehl-Referenz
+  (Gleichgewicht bei Teq~670 K/solar statt ~450 K, 4-10x solar, C/O 0.22).
+  Offen (nicht ganz geschlossen): (b) nur 3.5sigma, keine Degeneranz-Analyse von
+  OCS gegen CO/CO2/H2O im Paper. Naechste Messung: dediziertes S-Disequilibrium+
+  Photochemie-Modell am Terminator + hoeher-S/N-OCS-v3-Band (4.85-4.9 um) gegen
+  die CO/CO2-Fluegel.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
