@@ -1759,6 +1759,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Photochemie-Modell am Terminator + hoeher-S/N-OCS-v3-Band (4.85-4.9 um) gegen
   die CO/CO2-Fluegel.
 
+
+- Nadel XIII V1298-Tau-b-OCS QUENCH-MODELL (2026-09-05, v1298_tau_b_sulfur_quench_probe):
+  disequilibrium-Luecke 14.6 dex an der 450-K-Schicht (eq OCS 2.2e-23 vs 1e-8-Detektion),
+  ABER die kinetikfreie freeze-in-Einhuelle (Max ueber T): OCS erreicht ~1e-8, wenn heisses
+  Gleichgewichtsmaterial (~1000-1750 K) per Kzz in die kuehle 450-K-Schicht gemischt wird;
+  nominal logZ +0.6 Decke 6.5e-9 (0.2 dex unter 1e-8, in 3.5sigma-Ordnung), ueber +0.4..+1.0
+  klammert es 1e-8. BEDINGUNG benannt, nicht behauptet: die Tiefe muss ~1000-1750 K erreichen.
+  Barat favorisiert nur ~500 K innere T — liegt der tiefe Terminator unter ~1000 K, schliesst
+  Gleichgewicht die Detektion nicht (dann Kinetik/Photochemie noetig). Arbiter = T-P-Profil,
+  pending. DEGENERANZ-Daten: Rohspektrum oeffentlich (MAST 10.17909/kjg5-8t66, JWST GO 2149
+  G395H), aber die gebinnte Spektrum-Tabelle/Posterior-Samples in keinem maschinenlesbaren
+  Archiv (Zenodo nur Corner-PDFs) — exakt benannte pending-Quelle, kein Spektrum fabriziert.
+  Test offen: Posterior-Korrelation rho(log OCS, log CO2/CO/H2O).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
