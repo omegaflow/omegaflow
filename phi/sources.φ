@@ -3317,6 +3317,16 @@ dec dec
 z z
 field T cmb_planck_smica_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_dust_av_rq_n512.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e16
+field av_rq planck_dust_av_rq_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves.bin
 format lightcurve
 ttl 604800
