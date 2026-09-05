@@ -533,6 +533,17 @@ physikalischen Aussage — kein Blatt ohne diese:
   Paper v3 + Blatt-Survey aktualisiert. Korpus manifestiert aufs CDN
   (jsoc.stanford.edu/aia2014_lines.bin, 90 MB, ersetzt den 1-Tag-Stub;
   Workflow auf --chunk-days 1 gestellt). geschlossen.
+
+- **EVE-Bandbreiten-Kreuzpruefung (2026-09-05, h × 0.5–3.0)**: der einzige
+  EVE-fam-Pfeil 1032→131 (kanonisch D 5.11e-1 > fam 4.70e-1) traegt nur bis
+  h≈1.75 und versagt bei h≥2.0 (h=2.0 D 4.34e-1 < fam 4.46e-1; h=3.0 klar);
+  robust gegen die Surrogat-Zahl (fam = Max der Runden-Surrogate, mehr
+  Surrogate nur strenger, a-fortiori). Keine andere EVE-Sprosse traegt bei
+  irgendeinem h. Zusammen mit AIA-Stille bei fam: unter fam + Bandbreite kein
+  robuster Pfeil auf irgendeiner Sprosse, beider Instrumente. Paper v4 +
+  Blatt-Survey als ehrliche Null umgeschrieben. Werkzeug: te.rs
+  `transfer_entropy_lag_h` (additiv, kanonisch unberuehrt, factor=1.0
+  byte-identisch) + corona_ladder_probe --h/--surr (dc11735). geschlossen.
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
@@ -1651,6 +1662,30 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   kanonische SO2-Photochemie-Ziel) traegt keinen numerischen L_X-Zeugen (pending).
   Ausgabe /tmp/opencode/disequilibrium_register_verdict_v2.txt. cargo check
   -p omegaflow-measure 0 Warnungen.
+
+
+- XUV-L_X-Harvest-Probe (2026-09-06, xuv_lx_harvest_probe, die Lücken-Audit):
+  die benannte XUV-Datenlücke der Zielwirte ohne numerischen L_X/F_X-Zeugen ist
+  jetzt maschinen-auditiert statt angenommen. Die Probe liest das Zeugen-Register,
+  bestimmt die 20 Wirte ohne numerisches lx/fx, holt RA/Dec/Distanz (sy_dist) aus
+  NExScI-TAP-pscomppars und kegelt jeden Wirt über die drei X-ray-Survey-Kataloge
+  (verifizierte Codes: eROSITA eRASS1 J/A+A/682/A34/erass1-m MLFlux1 0.2-2.3 keV;
+  ROSAT 2RXS J/A+A/588/A103/cat2rxs Fluxp 0.1-2.4 keV; XMM 4XMM-DR13 IX/69/xmm4d13s
+  Flux8 0.2-12 keV; XMMSL3 IX/71 verifiziert, nicht geerntet; 1 mW/m2 = 1 erg/s/cm2,
+  L_X = 4 pi (d_pc·3.08570e18 cm)^2 F_X). Assoziations-Radien an den im Register
+  akzeptierten Stern-Offsets kalibriert: xmm4/erass1 6.0" (Register 0.7-5.2"),
+  2rxs 15.0" (Register akzeptierte 10.3", verweigerte 22"); 72"-Kegel = Absenz-Gate.
+  BEFUND (gemessen, 0 honored): keiner der 20 Wirte traegt eine attribuierbare
+  maschinenlesbare X-ray-Quelle — die einzigen Nachbarn (WASP-39 XMM J142918.0-032623
+  bei 17.5", TOI-199 eRASS1 1eRASS J052020.7-595357 bei 37.6", HAT-P-12 XMM
+  J135734.1+433043 bei 68.5") liegen jenseits des Assoziationsradius, eine Adoption
+  waere Fehlzuordnung. Literatur-Maschinentabellen (Behr 2023 MUSCLES AJ166/35 kein
+  VizieR-Code, Maggio 2023/24, Sairam 2025): keine gefunden — die XUV-Zahlen liegen
+  nur in Figur/PDF/data_log, der externe Auftrag lieferte den data_log nicht.
+  Die genannten MUSCLES/Maggio-Werte (HAT-P-12/26, WASP-17/127, LP 791-18) bleiben
+  pending bis zum data_log; 20/20 Wirte absent im maschinellen Weg. Probe committet,
+  cargo check -p omegaflow-measure 0 Warnungen. Der Hebel fuer die Zahlen ist der
+  data_log der Analysen (Operator/Extern), nicht eine weitere Katalogsuche.
 
 
 - Nadel-V-LSST-Erweiterung — TDB+Zeuge (pending, Verdrahtung 2026-09-05):
