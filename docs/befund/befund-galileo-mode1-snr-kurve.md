@@ -2,7 +2,7 @@
   title: Befund — Galileo Mode-1-SNR-Kurve: zweistufiges Stärke-Feld, Epochen-gebunden (keine durchgängige ∝-Kurve)
   class: befund
   date: 2026-09-05
-  sha256: bc367b380d22af58e683c30071e5166f81e5cde5dce54e1e967f02be0501a7a4
+  sha256: f73dc8c3135cbdfa63c5dd168965bb631ec8dfe58e07082f8f4d503f6fcd72ef
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode1-fingerabdruck.md
   see-also: docs/befund/befund-galileo-mode1-fingerabdruck.md
@@ -248,3 +248,12 @@ Plateau ist innerhalb jeder Epoche flach. Analyse außerhalb des Repos gemessen
 (numpy, Zell-Definition wie die Probe); keine Probe ins Repo geschrieben.
 Vollständige Werttabellen: `/tmp/opencode/snr_report.txt`, `snr_report2.txt`,
 `snr_report3.txt`.
+
+Recherche-Folge (`~/Schreibtisch/galileo-mode1-agc-recherche.md`): keine
+publizierte AGC→SNR-Kalibrierung — der −2560-Floor ist ein **Klemmwert**
+(Formatter-Wort, ATDF-Feld 78 „dBm oder volts×10", mit keiner Lesart
+verträglich); als dBm×10 ist das starke Plateau (−172,7…−178,2 dBm) plausibel
+für Galileo-S-Band-LGA → der lautere Floor = Max-Verstärkung = Schwachsignal-
+Zustand. Die Epochen-Struktur fällt nicht auf einen Stations-Hardware-Schritt,
+sondern auf Missions-Epochen (Sonneneinfluss-Konjunktionen 1995-12 + 1997-01,
+LGA-S-Band nach HGA-Fehler 1991); per-Pass-/Receiver-Kausalität bleibt offen.
