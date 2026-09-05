@@ -1,0 +1,642 @@
+[
+ {
+  "hostname": "GJ 1132",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "GJ 1214",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "GJ 3090",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "GJ 357",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "GJ 486",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "GJ 9827",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HAT-P-12",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HAT-P-14",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HAT-P-18",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HAT-P-26",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HAT-P-30",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HD 15337",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "HIP 67522",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "K2-18",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "K2-22",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "KELT-7",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "Kepler-51",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "L 168-9",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "L 98-59",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "LHS 1140",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "LHS 475",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "LP 791-18",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "LTT 3780",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "LTT 9779",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "NGTS-2",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-1130",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-1685",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-199",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-260",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-270",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-421",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-5205",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-776",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TOI-836",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TRAPPIST-1",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "TrES-4",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "V1298 Tau",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-107",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-121",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-127",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-15",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-166",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-17",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-39",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-43",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-52",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-94 A",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "WASP-96",
+  "facility": "JWST"
+ },
+ {
+  "hostname": "55 Cnc",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2016ApJ...820...99T",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "AU Mic",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2026arXiv260631281W",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "CoRoT-1",
+  "facility": "HST",
+  "instrument": [
+   "WFC3",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014ApJ...785..148R",
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+ },
+ {
+  "hostname": "GJ 3470",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014A&A...570A..89E",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "GJ 436",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014Natur.505...66K",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-1",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2013MNRAS.435.3481W",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-11",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014Natur.513..526F",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-2",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023ApJS..269...31E",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-32",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2017AJ....154...39D",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-41",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....159..204W",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HAT-P-7",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022ApJS..260....3C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 106315",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2021AJ....161...19G",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 189733",
+  "facility": "HST",
+  "instrument": [
+   "Advanced Camera for Surveys",
+   "Near Infrared Camera and Multi-Object Spectrometer",
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2008NATUR.452..329S",
+  "note": "HST transmission, instruments: Advanced Camera for Surveys, Near Infrared Camera and Multi-Object Spectrometer, Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 209458",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2013ApJ...774...95D",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 219666",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023ApJS..269...31E",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 3167",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2021AJ....161...18M",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 86226",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2025A&A...701A.184K",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "HD 97658",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014ApJ...794..155K",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "HIP 41378",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022ApJ...927L...5A",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "K2-24",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023ApJS..269...31E",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "K2-33",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023AJ....165...23T",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "KELT-1",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022ApJS..260....3C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "KELT-11",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....160..260C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "KELT-20",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2025AJ....170..234C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "Kepler-79",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....160..201C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "Kepler-9",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023ApJS..269...31E",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "LTT 1445 A",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2025AJ....169..111B",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "TOI-674",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2023ApJS..269...31E",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "TrES-2",
+  "facility": "HST",
+  "instrument": [
+   "WFC3",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2014ApJ...785..148R",
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-101",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2017ApJ...835L..12W",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-103",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022ApJS..260....3C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-117",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....160..233A",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-12",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2013ApJ...779..128M",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-178",
+  "facility": "HST",
+  "instrument": [
+   "WFC3",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022Natur.604...49L",
+  "note": "HST transmission, instruments: WFC3, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-18",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022ApJS..260....3C",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-19",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2013ApJ...779..128M",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-29",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022AJ....164...30W",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-31",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2015MNRAS.446.2428S",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-6",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020MNRAS.494.5449C",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-62",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....160..109S",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-63",
+  "facility": "HST",
+  "instrument": [
+   "WFC3"
+  ],
+  "primary_bibcode": "2018AJ....156..103K",
+  "note": "HST transmission, instruments: WFC3"
+ },
+ {
+  "hostname": "WASP-74",
+  "facility": "HST",
+  "instrument": [
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2019MNRAS.485.5168M",
+  "note": "HST transmission, instruments: Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-76",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020A&A...637A..76V",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-79",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2020AJ....159....5S",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "WASP-80",
+  "facility": "HST",
+  "instrument": [
+   "Space Telescope Imaging Spectrograph",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2022AJ....164...30W",
+  "note": "HST transmission, instruments: Space Telescope Imaging Spectrograph, Wide Field Camera 3"
+ },
+ {
+  "hostname": "XO-1",
+  "facility": "HST",
+  "instrument": [
+   "Near Infrared Camera and Multi-Object Spectrometer",
+   "Wide Field Camera 3"
+  ],
+  "primary_bibcode": "2012ApJ...761....7C",
+  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer, Wide Field Camera 3"
+ },
+ {
+  "hostname": "XO-2 N",
+  "facility": "HST",
+  "instrument": [
+   "Near Infrared Camera and Multi-Object Spectrometer"
+  ],
+  "primary_bibcode": "2012ApJ...761....7C",
+  "note": "HST transmission, instruments: Near Infrared Camera and Multi-Object Spectrometer"
+ }
+]
