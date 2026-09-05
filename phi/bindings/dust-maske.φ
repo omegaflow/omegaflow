@@ -16,11 +16,19 @@ science run.
   z > 0.0, so `z` 0.0 would place nothing).
 - The shell length is physical, not invented: the compiler refuses without
   `--screen-pc <pc>` (the screen distance is never silent).
-- D_screen = 300 pc, ADOPTED (not a measured value): no published dust-weighted
-  mean distance exists. The value is bracketed by the local dust-depleted
-  cavity 100-200 pc and the dust sheet |Z| <= 300-400 pc (Lallement et al.
-  2022, A&A 661 A147, arXiv:2203.01627). Pending a direct integration of the
-  3D dust cube (Lallement 2019/2022, Bayestar19).
+- D_screen = 205 pc (median 194, 1 sigma 71 pc), MEASURED 2026-09-05 from the
+  Bayestar19 (Green+2019, arXiv:1905.02734) dust-column centroid over galactic
+  |b| >= 30 deg: D_col = sum(r_bar * dE) / sum(dE) per ray, where dE is the
+  positive increase of the cumulative E(B-V) profile between distance samples.
+  The previously adopted 300 pc is NOT supported by the measurement (the
+  high-latitude dust column centroid is ~200 pc, nearer the lower edge of the
+  100-200 pc cavity - 300-400 pc sheet bracket).
+  Caveat: a single shell is an approximation, not an exact constant — the
+  high-latitude column is compact (~200 pc) but carries ~1 sigma 71 pc scatter
+  and real longitude structure (l-sector means 157-237 pc, factor ~1.5). The
+  low-latitude sky |b| < 20 is not representable by one screen (band centroids
+  ~1.4-1.7 kpc). Source FITS sha256 03f43318f90faed414d9db99dcf34c2217089636
+  d4697fa70cc081eb1b5528ac; DM grid mu = 4.0 + 0.125 j, r = 63 pc..59.6 kpc.
 
 ## Binding 3 — resolution
 - nside 512 by default. Pixel 0.11 deg <= sigma/2 of the GD-1 12 arcmin
