@@ -1,0 +1,22 @@
+name: hmi-polar-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  hmi-polar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile HMI polar field 2010-2026 once and upload to CDN
+        run: |
+          mkdir -p kernels
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern hmi_polar.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin hmi_polar_compiler -- \
+              --out hmi_polar.bin --ci-mode
