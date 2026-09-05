@@ -175,13 +175,13 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   allein: 3 Pfeile (Korona, GIC, Trishuli-Pegel), 6 Stille, 1
   Gegenrichtung (Gyirong); Thuậns These in den Zahlen — die Pfeile sind
   lokal, die Mehrheit der Fronten Stille.
-- `auftrag-grat-trishuli-konditionierung.md` — PENDING (2026-09-05):
-  Grat-Folge — den co-lokalen Trishuli-Regen→Pegel-Pfeil (TE 0.265 >
-  0.218, Lag 24 h, n = 129) auf den gemeinsamen synoptischen Treiber
-  konditionieren (gyirong temperature_2m / Zweit-Proxies,
-  Residuen-Surrogat, mean + 2σ); die vier Blatt-Pflichten binden;
-  Verdikt: dritter Pfeil festigt sich oder Kollab-Stille (Grat-Bilanz
-  fortschreiben).
+- `auftrag-grat-trishuli-konditionierung.md` — GESCHLOSSEN (2026-09-05):
+  Befund `docs/befund/befund-grat-trishuli-konditionierung.md` —
+  Regen→Pegel fällt zur Stille unter Konditionierung; 0.265 ist
+  Pegel→Regen.
+- `auftrag-grat-rest-verifikation.md` — PENDING (2026-09-05):
+  KDE-h-Sensitivität (Faktor 2) + §3.3/§3.7-Richtungs-Verifikation
+  (te_pair_probe-Spiegelung) — offene Grat-Reste.
 
 ### Katastrophen-Recherche (eigene Linie)
 
@@ -334,8 +334,9 @@ physikalischen Aussage — kein Blatt ohne diese:
   +1.42e-1 < fam → stumm; GOES-13 208 Ereignisse fam = 1.80e-1, +1.40e-1 < fam
   → stumm. Kein Instrument belegt die Heiß-Rung-Richtung auf fam-Niveau; der
   „EVE ab/AIA auf"-Zwiespalt löst sich auf (bekannt-schlecht geschlossen).
-  Paper v3 + Blatt-Survey aktualisiert. Offen: Korpus-Manifestation aufs CDN
-  (CI, ersetzt den 1-Tag-Stub). pending (Manifest).
+  Paper v3 + Blatt-Survey aktualisiert. Korpus manifestiert aufs CDN
+  (jsoc.stanford.edu/aia2014_lines.bin, 90 MB, ersetzt den 1-Tag-Stub;
+  Workflow auf --chunk-days 1 gestellt). geschlossen.
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
