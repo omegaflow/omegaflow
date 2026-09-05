@@ -175,6 +175,13 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   allein: 3 Pfeile (Korona, GIC, Trishuli-Pegel), 6 Stille, 1
   Gegenrichtung (Gyirong); Thuậns These in den Zahlen — die Pfeile sind
   lokal, die Mehrheit der Fronten Stille.
+- `auftrag-grat-trishuli-konditionierung.md` — PENDING (2026-09-05):
+  Grat-Folge — den co-lokalen Trishuli-Regen→Pegel-Pfeil (TE 0.265 >
+  0.218, Lag 24 h, n = 129) auf den gemeinsamen synoptischen Treiber
+  konditionieren (gyirong temperature_2m / Zweit-Proxies,
+  Residuen-Surrogat, mean + 2σ); die vier Blatt-Pflichten binden;
+  Verdikt: dritter Pfeil festigt sich oder Kollab-Stille (Grat-Bilanz
+  fortschreiben).
 
 ### Katastrophen-Recherche (eigene Linie)
 
