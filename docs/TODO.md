@@ -1651,14 +1651,22 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Achse: 2026-08-22/24 geregelt, die ENSO/Bz-Auswahl bleibt).
 
 - Richtungs-Transient ohne Distanz — das Feld-Atom (Council 2026-09-05,
-  offen): ZTF-Transienten-Quellen (Lasair-cmap, ALeRCE `build_alerce_channels`,
-  ANTARES-REST) liefern ra/dec + em-Magnitude, aber KEINE Distanz. Die
-  CelestialMap-Distanz-Gate (extract.rs ~2121, `no_distance_skipped` assertiert
-  0) verwirft jedes richtung-only-Element — keine erfundene Distanz (0 honored).
-  Der ehrliche Träger fehlt: eine Richtung auf der Einheitskugel (RA/Dec ohne
-  Radius), Winkel-Kernel ohne radialen Abfall. Neues Atom, zwei Seiten:
-  Archivar (Position/Motion-Richtungs-Variante, p_hat + Winkelableitung ohne
-  d-Faktor) + Mathematikerin (neuer WGSL-force-Zweig) + Kugel-Index statt
-  3D-Euklid-Enclosure. ANTARES in blocked_sources.φ als `parser-def json`
-  registriert (pending, kein live-cmap); Lasair (sources.φ) und ALeRCE tragen
-  dieselbe pending-Klasse benannt ("dark until a distance channel exists").
+  verdikt: GROSSES offenes Architektur-Atom, KEIN Quickfix): ZTF-Transienten-
+  Quellen (Lasair, ALeRCE, ANTARES) liefern ra/dec + em-Magnitude, aber KEINE
+  Distanz. Die CelestialMap-Distanz-Gate (extract.rs ~2121, no_distance_skipped
+  assertiert 0) verwirft jedes richtung-only-Element. Drei Dispositionen
+  (Council-einstimmig): (A) Referenzradius/Einheitsvektor-in-Metern = erfundene
+  Distanz = **Fabrication, ausgeschlossen** (0 honored, A=A). (B) ist der EINZIGE
+  ehrliche Pfad: eine Himmelsrichtung als eigenes Atom — Winkel-Kernel ohne
+  radialen Abfall, Richtungs-Unsicherheit statt Radius, Präsenzrahmen ohne Tiefe.
+  Das ist eine **fundamentale Wire-Vertrags-Erweiterung über drei Ebenen**
+  (Rust-Wire 26×f64 + JS-Repack + WGSL), KEIN 26×f64-Overload, KEIN Overload
+  der 3D-xyz-Slots. **Gehört vor den vollen Rat**, wenn richtung-only der
+  Endzustand einer Messung ist — nicht ihr Wartezustand. Heute lohnt der Bruch
+  nicht für drei Quellen, deren Distanz mit Klassifikation/Redshift nachrückt.
+  Litmus-Befund: die Richtung IST ein echter Sinn (das Auge misst die Richtung
+  eines Blitzes ohne Distanz) — legitimes zukuenftiges Atom, kein totes Ende.
+  Drei Quellen = EINE pending-Klasse. Registriert in blocked_sources.φ:
+  Lasair (parser-def, 2026-09-05 aus sources.φ verschoben), ANTARES (parser-def
+  json), ALeRCE (Code: build_alerce_channels, "dark until a distance channel
+  exists").
