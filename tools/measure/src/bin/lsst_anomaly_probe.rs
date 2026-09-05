@@ -7,11 +7,15 @@ const LSST_ROOT: &str = "https://lasair.lsst.ac.uk/";
 const LSST_API: &str = "https://lasair.lsst.ac.uk/api/query/";
 const LSST_API_OBJECT: &str = "https://lasair.lsst.ac.uk/api/object/";
 const FINK_API_SOURCES: &str = "https://api.lsst.fink-portal.org/api/v1/sources";
+const FINK_CONE: &str = "https://api.lsst.fink-portal.org/api/v1/conesearch";
 const FINK_BAND: &str = "r:band";
 const FINK_MJD: &str = "r:midpointMjdTai";
 const FINK_FLUX: &str = "r:scienceFlux";
 const FINK_RA: &str = "r:ra";
 const FINK_DEC: &str = "r:dec";
+const FINK_NDIA: &str = "r:nDiaSources";
+const FINK_CLASS: &str = "f:main_label_classifier";
+const FINK_SIMBAD: &str = "f:xm_simbad_otype";
 const UA: &str = "omegaflow-nadel-v-lsst-scan/1.0";
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
@@ -403,6 +407,320 @@ fn deepest_dip(res: &[(f64, f32)]) -> (f64, f64) {
     (min, min / sd.max(1e-300))
 }
 
+struct ConeObject {
+    id: String,
+    ra_deg: f64,
+    dec_deg: f64,
+    n_sources: usize,
+    class: i64,
+    simbad: String,
+}
+
+fn extract_dia_ids(body: &[u8]) -> Vec<String> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return Vec::new();
+    };
+    let needle = "\"r:diaObjectId\":";
+    let mut out: Vec<String> = Vec::new();
+    let mut pos = 0;
+    while let Some(rel) = text[pos..].find(needle) {
+        let s = pos + rel + needle.len();
+        let mut digits = String::new();
+        for c in text[s..].chars() {
+            if c.is_ascii_digit() {
+                digits.push(c);
+            } else {
+                break;
+            }
+        }
+        if !digits.is_empty() {
+            let consumed = digits.len();
+            out.push(digits);
+            pos = s + consumed;
+        } else {
+            pos = s + 1;
+        }
+    }
+    out
+}
+
+fn fink_cone_list(
+    ra: f64,
+    dec: f64,
+    radius_arcsec: f64,
+    min_sources: usize,
+    save: Option<&str>,
+) -> Vec<ConeObject> {
+    let payload = format!(
+        "{{\"ra\": {ra}, \"dec\": {dec}, \"radius\": {radius_arcsec}, \"columns\": \"r:diaObjectId,r:ra,r:dec,r:nDiaSources,f:main_label_classifier,f:xm_simbad_otype\"}}"
+    );
+    let Some((code, body)) = curl_post_bytes(FINK_CONE, &payload) else {
+        println!("Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone query did not answer (measured stall) — pending");
+        return Vec::new();
+    };
+    if code != "200" {
+        println!("Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone answered HTTP {code} — pending");
+        return Vec::new();
+    }
+    if let Some(p) = save {
+        if std::fs::write(p, &body).is_err() {
+            println!("Fink/LSST cone: the cone sample was not saved ({p})");
+        }
+    }
+    let Ok(text) = std::str::from_utf8(&body) else {
+        println!("Fink/LSST cone: the cone body is not UTF-8 — the parser stays pending");
+        return Vec::new();
+    };
+    let Some(JsonVal::Arr(rows)) = parse_json(text) else {
+        println!("Fink/LSST cone: the cone body is not a JSON array — the parser stays pending");
+        return Vec::new();
+    };
+    let ids = extract_dia_ids(&body);
+    if ids.len() != rows.len() {
+        println!(
+            "Fink/LSST cone: {} row(s) but {} exact diaObjectId token(s) — the id alignment stays pending",
+            rows.len(),
+            ids.len()
+        );
+        return Vec::new();
+    }
+    let mut objs: Vec<ConeObject> = Vec::new();
+    for (idx, r) in rows.iter().enumerate() {
+        let JsonVal::Obj(m) = r else { continue };
+        let (Some(ra_v), Some(dec_v), Some(n_v)) = (
+            obj_f64(m, FINK_RA),
+            obj_f64(m, FINK_DEC),
+            obj_f64(m, FINK_NDIA),
+        ) else {
+            continue;
+        };
+        let class = obj_f64(m, FINK_CLASS).map(|c| c as i64).unwrap_or(-1);
+        let simbad = obj_str(m, FINK_SIMBAD).unwrap_or("Fail").to_string();
+        objs.push(ConeObject {
+            id: ids[idx].clone(),
+            ra_deg: ra_v,
+            dec_deg: dec_v,
+            n_sources: n_v as usize,
+            class,
+            simbad,
+        });
+    }
+    objs.sort_by(|a, b| b.n_sources.cmp(&a.n_sources));
+    let total = objs.len();
+    objs.retain(|o| o.n_sources >= min_sources);
+    println!(
+        "Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): HTTP {code}, {total} object row(s); {} with nDiaSources >= {min_sources} chosen for the light-curve fetch",
+        objs.len()
+    );
+    objs
+}
+
+fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Option<(f64, f64)>)> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return None;
+    };
+    let Some(JsonVal::Arr(rows)) = parse_json(text) else {
+        return None;
+    };
+    let mut rows_ok: Vec<(String, f64, f64)> = Vec::new();
+    let mut coord: Option<(f64, f64)> = None;
+    for r in &rows {
+        let JsonVal::Obj(m) = r else { continue };
+        let (Some(band), Some(mjd), Some(flux)) = (
+            obj_str(m, FINK_BAND),
+            obj_f64(m, FINK_MJD),
+            obj_f64(m, FINK_FLUX),
+        ) else {
+            continue;
+        };
+        if coord.is_none() {
+            if let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
+                coord = Some((ra, dec));
+            }
+        }
+        rows_ok.push((band.to_string(), mjd, flux));
+    }
+    Some((rows_ok, coord))
+}
+
+fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
+    let mut t_min = f64::INFINITY;
+    for (_, mjd, _) in rows {
+        if *mjd < t_min {
+            t_min = *mjd;
+        }
+    }
+    let mut curves: Vec<LsstCurve> = Vec::new();
+    for (name, _) in LSST_LAMBDA_NM {
+        let Some(freq) = lsst_freq_of_band(name) else {
+            continue;
+        };
+        let mut samples: Vec<(f64, f32)> = rows
+            .iter()
+            .filter(|(b, _, _)| b == name)
+            .map(|(_, mjd, flux)| ((mjd - t_min) * 86400.0, *flux as f32))
+            .collect();
+        if samples.is_empty() {
+            continue;
+        }
+        samples.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        curves.push(LsstCurve {
+            ra_deg: ra,
+            dec_deg: dec,
+            freq,
+            samples,
+        });
+    }
+    curves
+}
+
+fn natural_excluded(class: i64, simbad: &str) -> bool {
+    !(class == -1 && simbad == "Fail")
+}
+
+fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Option<&str>) {
+    let cone_save = save.map(str::to_string);
+    let objs = fink_cone_list(ra, dec, radius_arcsec, min_sources, cone_save.as_deref());
+    if objs.is_empty() {
+        println!(
+            "Nadel V (LSST round): the cone ({ra}, {dec}, {radius_arcsec} arcsec) yields no object above the cut — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let source_cols = "r:diaObjectId,r:ra,r:dec,r:band,r:midpointMjdTai,r:scienceFlux";
+    let mut curves_all: Vec<LsstCurve> = Vec::new();
+    let mut fetched = 0usize;
+    let mut total_rows = 0usize;
+    for o in &objs {
+        let payload = format!(
+            "{{\"diaObjectId\": \"{}\", \"columns\": \"{source_cols}\"}}",
+            o.id
+        );
+        let Some((code, body)) = curl_post_bytes(FINK_API_SOURCES, &payload) else {
+            println!(
+                "Fink/LSST {}: the sources query did not answer (measured stall) — pending",
+                o.id
+            );
+            continue;
+        };
+        if code != "200" {
+            println!(
+                "Fink/LSST {}: the light curve answered HTTP {code} — pending",
+                o.id
+            );
+            continue;
+        }
+        let Some((rows, _)) = parse_fink_source_rows(&body) else {
+            println!(
+                "Fink/LSST {}: the sample is not a JSON array — parser pending on the real schema",
+                o.id
+            );
+            continue;
+        };
+        if rows.is_empty() {
+            println!(
+                "Fink/LSST {}: no row carries the full band/time/flux triple (absent)",
+                o.id
+            );
+            continue;
+        }
+        let curves = build_band_curves(o.ra_deg, o.dec_deg, &rows);
+        if curves.is_empty() {
+            println!(
+                "Fink/LSST {}: no measurement row maps to a known LSST band (absent)",
+                o.id
+            );
+            continue;
+        }
+        let mut per_band: HashMap<String, usize> = HashMap::new();
+        for (band, _, _) in &rows {
+            *per_band.entry(band.clone()).or_insert(0) += 1;
+        }
+        let mut band_counts: Vec<(&str, usize)> =
+            per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
+        band_counts.sort();
+        let counts: Vec<String> = band_counts
+            .iter()
+            .map(|(b, n)| format!("{b} {n}"))
+            .collect();
+        println!(
+            "Fink/LSST {} (nDiaSources {}): {} rows over {} — {}",
+            o.id,
+            o.n_sources,
+            rows.len(),
+            counts.join(", "),
+            curves.len()
+        );
+        curves_all.extend(curves);
+        fetched += 1;
+        total_rows += rows.len();
+    }
+    println!(
+        "Nadel V (LSST round): {fetched} object light curve(s) fetched, {total_rows} measurement row(s) total"
+    );
+    if curves_all.is_empty() {
+        println!(
+            "Nadel V (LSST round): no object carries a light curve — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let bin_path =
+        format!("/tmp/opencode/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
+    if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
+        println!("Nadel V (LSST round): the LSS1 asset was not written ({bin_path})");
+        return;
+    }
+    let map_path =
+        format!("/tmp/opencode/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    {
+        let mut lines: Vec<String> = Vec::new();
+        lines.push("diaObjectId,ra,dec,nDiaSources,class,simbad".to_string());
+        for o in &objs {
+            lines.push(format!(
+                "{},{:.8},{:.8},{},{},{}",
+                o.id, o.ra_deg, o.dec_deg, o.n_sources, o.class, o.simbad
+            ));
+        }
+        if std::fs::write(&map_path, lines.join("\n")).is_err() {
+            println!("Nadel V (LSST round): the object map was not written ({map_path})");
+        }
+    }
+    println!("Nadel V (LSST round): LSS1 asset written {bin_path}, object map {map_path}");
+    let candidates = scan_lss1(&bin_path);
+    let mut post = 0usize;
+    let mut excluded = 0usize;
+    for (cra, cdec) in &candidates {
+        let hit = objs
+            .iter()
+            .find(|o| (o.ra_deg - cra).abs() < 1e-3 && (o.dec_deg - cdec).abs() < 1e-3);
+        match hit {
+            Some(o) => {
+                if natural_excluded(o.class, &o.simbad) {
+                    excluded += 1;
+                    println!(
+                        "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class {} {}) — a natural dimmer, excluded",
+                        o.id, o.class, o.simbad
+                    );
+                } else {
+                    post += 1;
+                    println!(
+                        "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class -1, no SIMBAD id) — unclassified, pending the natural-class crossmatch",
+                        o.id
+                    );
+                }
+            }
+            None => {
+                println!(
+                    "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} has no object row in the cone map — pending the crossmatch"
+                );
+            }
+        }
+    }
+    println!(
+        "Nadel V (LSST round) verdict: {excluded} candidate dip(s) excluded as catalogued natural dimmers; {post} unclassified dip(s) remain pending — 0 unexcluded candidate over {fetched} cone object(s) unless the line above names one"
+    );
+}
+
 fn fink_scan(id: &str, save: Option<&str>) {
     let payload = format!("{{\"diaObjectId\": \"{id}\"}}");
     let Some((code, body)) = curl_post_bytes(FINK_API_SOURCES, &payload) else {
@@ -424,36 +742,12 @@ fn fink_scan(id: &str, save: Option<&str>) {
         "Fink/LSST /api/v1/sources {id}: HTTP {code}, {} bytes, real sample saved: {raw_path}",
         body.len()
     );
-    let Ok(text) = std::str::from_utf8(&body) else {
-        println!(
-            "Fink/LSST {id}: the sample is not UTF-8 text — parser pending on the real schema"
-        );
-        return;
-    };
-    let Some(JsonVal::Arr(rows)) = parse_json(text) else {
+    let Some((rows_ok, coord)) = parse_fink_source_rows(&body) else {
         println!(
             "Fink/LSST {id}: the sample is not a JSON array — parser pending on the real schema"
         );
         return;
     };
-    let mut rows_ok: Vec<(String, f64, f64)> = Vec::new();
-    let mut coord: Option<(f64, f64)> = None;
-    for r in &rows {
-        let JsonVal::Obj(m) = r else { continue };
-        let (Some(band), Some(mjd), Some(flux)) = (
-            obj_str(m, FINK_BAND),
-            obj_f64(m, FINK_MJD),
-            obj_f64(m, FINK_FLUX),
-        ) else {
-            continue;
-        };
-        if coord.is_none() {
-            if let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
-                coord = Some((ra, dec));
-            }
-        }
-        rows_ok.push((band.to_string(), mjd, flux));
-    }
     if rows_ok.is_empty() {
         println!("Fink/LSST {id}: no row carries the full band/time/flux triple (absent)");
         return;
@@ -466,12 +760,8 @@ fn fink_scan(id: &str, save: Option<&str>) {
         }
     };
     let mut per_band: HashMap<String, usize> = HashMap::new();
-    let mut t_min = f64::INFINITY;
-    for (band, mjd, _) in &rows_ok {
+    for (band, _, _) in &rows_ok {
         *per_band.entry(band.clone()).or_insert(0) += 1;
-        if *mjd < t_min {
-            t_min = *mjd;
-        }
     }
     let mut band_counts: Vec<(&str, usize)> =
         per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
@@ -479,27 +769,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
     for (b, n) in &band_counts {
         println!("  Fink/LSST band {b}: {n} measurement rows");
     }
-    let mut curves: Vec<LsstCurve> = Vec::new();
-    for (name, _) in LSST_LAMBDA_NM {
-        let Some(freq) = lsst_freq_of_band(name) else {
-            continue;
-        };
-        let mut samples: Vec<(f64, f32)> = rows_ok
-            .iter()
-            .filter(|(b, _, _)| b == name)
-            .map(|(_, mjd, flux)| ((mjd - t_min) * 86400.0, *flux as f32))
-            .collect();
-        if samples.is_empty() {
-            continue;
-        }
-        samples.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-        curves.push(LsstCurve {
-            ra_deg: ra,
-            dec_deg: dec,
-            freq,
-            samples,
-        });
-    }
+    let curves = build_band_curves(ra, dec, &rows_ok);
     if curves.is_empty() {
         println!("Fink/LSST {id}: no measurement row maps to a known LSST band (absent)");
         return;
@@ -524,6 +794,8 @@ fn usage() {
          \x20 lsst_anomaly_probe [--object <diaObjectId>] [--token <t>] [--save <path.json>]\n\
          Fink/LSST anonymous light curve (api.lsst.fink-portal.org), no token:\n\
          \x20 lsst_anomaly_probe --fink <diaObjectId> [--save <raw.json>]\n\
+         Fink/LSST anonymous cone scan over a real object set, no token:\n\
+         \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
          scan_lss1 of a real LSS1 light-curve asset:\n\
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
          LASAIR_TOKEN (the register token name) is read from the environment when --token is absent."
@@ -620,21 +892,21 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
     );
 }
 
-fn scan_lss1(path: &str) {
+fn scan_lss1(path: &str) -> Vec<(f64, f64)> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
         Err(_) => {
             println!(
                 "Nadel V (LSST round): no LSS1 asset at {path} — the scan waits for the Lasair-LSST light curves (0 honored, pending)"
             );
-            return;
+            return Vec::new();
         }
     };
     let Some(curves) = parse_lss1(&bytes) else {
         println!(
             "Nadel V (LSST round): {path} carries no LSS1 record — the scan stays void (0 honored)"
         );
-        return;
+        return Vec::new();
     };
     struct Group {
         ra: f64,
@@ -662,6 +934,7 @@ fn scan_lss1(path: &str) {
     let mut scanned = 0usize;
     let mut kandidaten = 0usize;
     let mut single_band = 0usize;
+    let mut cand_coords: Vec<(f64, f64)> = Vec::new();
     for g in &groups {
         let bands: Vec<(&str, &LsstCurve)> = g
             .curves
@@ -751,6 +1024,7 @@ fn scan_lss1(path: &str) {
         scanned += 1;
         if achromatisch && nicht_periodisch {
             kandidaten += 1;
+            cand_coords.push((g.ra, g.dec));
         }
         let word = if achromatisch && nicht_periodisch {
             "CANDIDATE (pre-exclusion)"
@@ -773,6 +1047,9 @@ fn scan_lss1(path: &str) {
         );
     }
     println!("\nVerdict: {kandidaten} candidate dip(s) of {scanned} scanned multiband objects; {single_band} single-band objects without an achromatic cell (absent)");
+    for (cra, cdec) in &cand_coords {
+        println!("  candidate pre-exclusion at ra {cra:.4} dec {cdec:.4}");
+    }
     println!(
         "Exclusion gate: a candidate dip is no candidate until the natural dimmers are removed upstream (Sherlock/known-class crossmatch): {:?}",
         NATURAL_DIMMERS
@@ -780,6 +1057,7 @@ fn scan_lss1(path: &str) {
     println!(
         "Quantitative limit: no achromatic non-periodic dip above DIP_SIG {DIP_SIG}σ across {scanned} LSS1 object(s) — or the line above names it"
     );
+    cand_coords
 }
 
 fn main() {
@@ -789,6 +1067,10 @@ fn main() {
     let mut save: Option<String> = None;
     let mut scan: Option<String> = None;
     let mut fink: Option<String> = None;
+    let mut cone_ra: Option<f64> = None;
+    let mut cone_dec: Option<f64> = None;
+    let mut cone_radius: Option<f64> = None;
+    let mut cone_min: usize = 24;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -812,6 +1094,22 @@ fn main() {
                 fink = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--cone-ra" => {
+                cone_ra = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--cone-dec" => {
+                cone_dec = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--cone-radius" => {
+                cone_radius = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--cone-min" => {
+                cone_min = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(24);
+                i += 1;
+            }
             _ => {
                 usage();
                 return;
@@ -828,6 +1126,18 @@ fn main() {
     }
     if let Some(id) = fink {
         fink_scan(&id, save.as_deref());
+        return;
+    }
+    if let Some(ra) = cone_ra {
+        match (cone_dec, cone_radius) {
+            (Some(dec), Some(radius)) => {
+                cone_scan(ra, dec, radius, cone_min, save.as_deref());
+            }
+            _ => {
+                usage();
+                return;
+            }
+        }
         return;
     }
     reach(tok, object, save);
