@@ -1353,9 +1353,16 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   + techno_gas_register_probe — 0 Industrie-Detektionen im Seed, systematische
   CFC/SF6-Absenz mit Empfindlichkeits-Achse (23 beobachtbare Paare), Floors
   astronomisch tief (SF6 1e-84..1e-102). (2) Kanal 1 Narrowband: Breakthrough-
-  Listen-Produkte verortet (HTTP 200, echte Linien-Samples 339k+ Zeilen); Blocker
-  = kein Linien-Compiler ins Register (freq/bin_width hart 0 in extract.rs) —
-  pending, benannt. (3) Kanal 3 Negativ-Fuzzy: negativ_fuzzy_probe (zweistufig:
+  Listen-Produkte verortet (HTTP 200, echte Linien-Samples 339k+ Zeilen); der
+  Linien-Weg ist gebaut — bl_narrowband_compiler
+  (tools/harvest/src/bin/bl_narrowband_compiler.rs) schreibt den BLN1-Traeger
+  (src/archivar/bl_narrowband.rs, Format bl_narrowband, jede Zeile traegt
+  freq/bin_width/val + RA/DEC + MJD-Epoche, Lesepfad meidet die hart-0-extract.rs-
+  Stellen), Quellen-Block in phi/sources.φ registriert, Lauf auf echtem CSV-Slice
+  + Roundtrip gruen. Pending, benannt: der volle 133-MB-Lauf (Download-Budget),
+  die CDN-Manifestation (--ci-mode), die Distanz der Ziel-Sterne (HIP-
+  Parallaxen-Abgleich pending; die Messung ist am Messort GBT geankert, 0 honored
+  statt erfundener Parallaxe). (3) Kanal 3 Negativ-Fuzzy: negativ_fuzzy_probe (zweistufig:
   OLS-Rest + Negativ-Test, 'not carried' nie 'independent', 3 Grenzen sichtbar);
   te.rs ols_residual + Skalen-Fix; Real-Laeufe + Positiv-Kontrolle + Bio-Katalog
   P=0.9424 reproduziert. (4) Bio-Zeugen: st_met [Fe/H] gelesen (30/30 Hosts),
