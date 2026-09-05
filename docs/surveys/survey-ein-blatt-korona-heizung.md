@@ -2,7 +2,7 @@
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: survey
   date: 2026-09-05
-  sha256: f712c077513fe8d4c91d9252457c8abee08a8e145fe0f36387cdc14293eab113
+  sha256: f333d9b5c209f286db1803ba3716d869caf189cbfb2efa5842ae2c5fb6f1be75
   status: live
   see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md docs/specs/broken-null-control.md
 -->
@@ -149,9 +149,12 @@ und — mit der nachgelegten Familien-Schwelle — jetzt auch auf AIA-2014 still
 (D +1,42e-1 unter AIAs fam 1,89e-1). Der frühere „EVE ab / AIA auf"-Zwiespalt
 (→ bekannt-schlecht „AIA ohne fam / EVE mit fam") löste sich auf, als AIA
 eine Familien-Schwelle bekam: kein Instrument misst die Heiß-Rung-Richtung
-auf fam-Niveau. Es bleibt der fam-signifikante Eintritt (EVE 1032→131) und,
-nur auf der AIA-Seite, ein unter-fam kohärentes koronales Rung-Muster mit
-~96-s-Lag (Paper §4.2/§4.3, `docs/paper/corona-heating-ladder.md`).
+auf fam-Niveau. Der EVE-1032→131-Eintritt, der bei kanonischer Bandbreite
+fam-signifikant ist, hält der Bandbreiten-Kreuzprüfung (Silverman h × 0.5–3)
+nicht stand — er versagt bei h ≥ 2.0, robust gegen die Surrogat-Zahl (Paper
+§4.4). Unter fam **und** Bandbreite trägt keine Sprosse beider Leitern einen
+robusten Pfeil; der Befund ist eine ehrliche Null/Einhegung, kein
+Aufwärts-Transport (Paper v4, `docs/paper/corona-heating-ladder.md`).
 
 ## Der Lang-Fenster-Befund (F10.7 ↔ X-Ray, 1995–2020)
 
@@ -208,6 +211,10 @@ gemessen und geschlossen:
   signifikant. Der heißeste Rung (335→94) ist auf KEINEM Instrument fam-
   belegt (EVE-2011 ab unter fam, AIA-2014 auf unter fam). Die kühle Seite
   (304→131) still.
+- **EVE-1032→131 h-fragil:** der einzige Rung, der bei kanonischer Bandbreite
+  über EVEs fam kommt, versagt unter der Bandbreiten-Kreuzprüfung (h ≥ 2.0,
+  robust gegen Surrogat-Zahl). Unter fam **und** Bandbreite: kein robuster
+  Pfeil auf irgendeiner Sprosse, beider Instrumente — ehrliche Null (v4).
 - **Tage:** Stille über 11 Jahre, fam-gereinigt (fam = 2,108e-1) — mit
   dem bandbreiten-empfindlichen Rand-Kandidaten Lya1216 → XRSB (7 d,
   nur bei h × 2,0 fam-signifikant) und Bz ↔ Dichte (lag 0) als
