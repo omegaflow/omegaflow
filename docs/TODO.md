@@ -49,9 +49,14 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Klasse-2-Galileo-Cross-Mission gemessen (2026-09-05,
   `befund-galileo-banden-negativ.md`): NEGATIV — Pioneer-Linien
   45,75/51,55/47,35 mHz missions-spezifisch (kein Modus/keine Ära ±0,5 mHz
-  auf Galileo, Stationen 14/43/63); exakter 20-s-Kamm (50/100/150/200 mHz,
-  Reduktions-Periodik, Mechanismus offen) + Station-42-Ton 52,39 mHz
-  (3,14 U/min, Identität offen) = neue offene Linien.
+  auf Galileo, Stationen 14/43/63). Nachmessung des exakten 20-s-Kamms
+  (2026-09-05, `befund-galileo-banden-kamm-ton.md`): 50/100/150/200 mHz =
+  **Degeneranz des 60-s-Abtastrasters** (f·60 s ganzzahlig → singuläre
+  Normalengleichung; normiert ≤ 8 % Varianz, Weißrausch-Kontrolle auf demselben
+  Grid reproduziert), keine Linie; Station-42-Ton 52,39 mHz = isolierte
+  Einzellinie (98,9–100 % Varianz, keine Harmonischen), Identität offen;
+  GWE-ODR-Adresse `GO-X-RSS-1-ODR-V1.0` verifiziert erreichbar (HTTP 200),
+  Cross-Check-Lauf offen.
 - `auftrag-gic-p-wert.md` — GIC: p-Wert nachlegen, dann Mail an
   Wing/Viljanen.
 - `auftrag-korona-aia-fam.md` — Korona: AIA-fam-Zahl, dann Woods.
@@ -134,9 +139,18 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Mode 1 flach auf beiden Achsen — der Stärke-Split
   (`befund-galileo-mode1-fingerabdruck.md`) misst einen empfangsstärke-
   abhängigen Schwachsignal-PLL-Term, kein reines Oszillator-Rauschen.
-  Distanz-Achse n-leer (nur 5–6 AU). Offen (pending): Mode-2/3-Rausch-Kurve
-  auf der ε-Achse neu ziehen, Mode-2-Station-Tag-Split (1,5-Hz-Fenster
-  gepoolt), Pass-Segmentierung, α–Zeit–Sonnenzyklus-Verwebung. Nebenfund:
+  Feiner gemessen (2026-09-05, `befund-galileo-mode1-snr-kurve.md`, done): das
+  Stärke-Feld ist zweistufig + Epochen/Monats-geschichtet; das starke Plateau
+  ist innerhalb jeder Epoche flach (keine ∝-Kurve messbar); das „10–20× lauter"
+  gilt nur für die lauten Boden-Populationen (1996/97 + 1995-12 Station 43/63),
+  nicht für den ruhigen 1995-11-Boden. Der AGC-Boden ist Epochen-/Stations-
+  gebunden, keine reine SNR-Lesart.
+  Distanz-Achse n-leer (nur 5–6 AU). ε-Redraw ausgeführt (2026-09-05,
+  `befund-galileo-rausch-kurve-epsilon.md`, done): der kohärente Fall ist auf ε
+  invers zur Plasma-Erwartung (leise Konjunktion / laut Opposition, mittlere
+  ε-Bänder 30–150° n-leer) — die Plasma-Deutung dort `getötet`, der
+  Distanz-/Ära-Confound bleibt. Offen (pending): Mode-2-Station-Tag-Split
+  (1,5-Hz-Fenster gepoolt), Pass-Segmentierung, α–Zeit–Sonnenzyklus-Verwebung. Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
@@ -195,9 +209,10 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Befund `docs/befund/befund-grat-trishuli-konditionierung.md` —
   Regen→Pegel fällt zur Stille unter Konditionierung; 0.265 ist
   Pegel→Regen.
-- `auftrag-grat-rest-verifikation.md` — PENDING (2026-09-05):
-  KDE-h-Sensitivität (Faktor 2) + §3.3/§3.7-Richtungs-Verifikation
-  (te_pair_probe-Spiegelung) — offene Grat-Reste.
+- `auftrag-grat-rest-verifikation.md` — GESCHLOSSEN (2026-09-05): Zelle (b)
+  §3.3/§3.7 gespiegelt verifiziert (Gyirong→Rasuwa), Wurzelfix committet;
+  Zelle (a) KDE-h robust gelaufen (`trishuli_kde_sensitivity_probe.rs`);
+  schwache Regen→Pegel-2h-Kreuzung als Nebenbefund benannt.
 
 ### Katastrophen-Recherche (eigene Linie)
 
