@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 3fdba2b4fa03635b68d353a4c87905daaa646bcad3cfb58745229ef3f0813fee
+  sha256: bb13aeef438952d9a35dc1eb6eabdfef0f5868a5a1e5a370a0e3db3f23398820
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -104,7 +104,7 @@ Endpoint liegt in `phi/dead_sources.φ` und ist dort nachschlagbar.
 **Live in sources.φ (schon da / integriert):** Open-Meteo (Punkt-/Archiv-Stationen),
 NOAA NCDC/CDO (thermal, P09-Fanout), OpenAQ (diffusion, P09-Fanout, v3/sensors),
 TNS/WIS (em, Vollkatalog), PurpleAir (diffusion), NASA DONKI CME/FLR (em),
-frost.met.no (thermal/advective), Lasair ZTF (em). Siehe auch §E.1.
+frost.met.no (thermal/advective). Die ZTF-Richtungs-Transienten (ALeRCE, Lasair) sind pending — Richtung ohne Distanz, siehe §E.2 und TODO. Siehe auch §E.1.
 
 **dead (Endpoint weg, `dead_sources.φ`):** NASA-ADS-Subendpoints (`/v1/export/bibtex`),
 PODAAC/NSIDC (S3-`scheme-unsupported` + DNS), GES-DISC (`404`, GLDAS = Modell),
@@ -213,7 +213,7 @@ und in `phi/pipeline/interesting_domains.φ`.
 | Host | Secret | Quellen-Block | Was IS |
 |---|---|---|---|
 | frost.met.no | `FROST_BASIC_AUTH` | `frost_*` (air_temperature, wind_speed) | thermal (C) + advective (m/s), Stations-Fanout, Basic-Auth-Header. |
-| lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | `lasair_ztf_*` | ZTF-Transienten (em), SQL-SELECT mit token, gmag-Fluss (`flux_from_mag`), 24h-Fenster über `{jd_start}`, Himmelskugel. |
+| lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | ZTF-Transienten (em) | SQL-SELECT mit token, gmag-Fluss (`flux_from_mag`), 24h-Fenster über `{jd_start}`. **pending**: Richtung-only ohne Distanz (blocked_sources.φ, parser-def 2026-09-05). Token bleibt genutzt von lsst_anomaly_probe. |
 
 > Zeilenverweise entfallen absichtlich: `phi/sources.φ` wächst; die Quellen-Blöcke
 > sind über ihren Namen adressiert, nicht über eine brüchige Zeilennummer.
@@ -229,10 +229,10 @@ URLs/Auth-Pfade sind NUR hier, nie in `.secrets.local`. (gemessen):
 
 | Broker | Zugangstyp | Daten lesen | Register-Status 2026-09-05 |
 |---|---|---|---|
-| **ALeRCE** | REST `api.alerce.online/alerts/v1` | anonym offen | live in sources.φ (fanout-Detections) |
+| **ALeRCE** | REST `api.alerce.online/alerts/v1` | anonym offen | **pending** (Richtung-only ohne Distanz; build_alerce_channels liefert leere Channels, "dark until a distance channel exists") |
 | **ANTARES** | REST `api.antares.noirlab.edu/v1` | **anonym offen** | **pending** in blocked_sources.φ (parser-def: richtung-only ohne Distanz, kein Feld-Träger) |
 | **Fink** | REST `api.*.fink-portal.org/api/v1/*` | anonym offen | ungenutzt (kein Kandidat) |
-| **Lasair** | REST `api/query` (Token) | Token nötig | live in sources.φ (gmag) |
+| **Lasair** | REST `api/query` (Token) | Token nötig | **pending** in blocked_sources.φ (parser-def 2026-09-05, aus sources.φ verschoben: richtung-only ohne Distanz) |
 | **Pitt-Google** | GCP Pub/Sub+BigQuery | GCP-Datasets | ungenutzt (Stream/BigQuery-Modus) |
 | **AMPEL** | REST `api/live/*` | Token (nur 2 offen) | ungenutzt (kein Kandidat) |
 | **Babamul** | — | — | nie entwickelt (verwaist) |
