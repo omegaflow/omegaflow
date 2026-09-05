@@ -534,6 +534,14 @@ physikalischen Aussage — kein Blatt ohne diese:
   (jsoc.stanford.edu/aia2014_lines.bin, 90 MB, ersetzt den 1-Tag-Stub;
   Workflow auf --chunk-days 1 gestellt). geschlossen.
 
+- **AIA-Volljahr-2014-Messung (2026-09-05, GOES-15, 1019 Ereignisse)**: das
+  volle 2014-Korpus (12 stabile Monats-Assets, 13.95 M Records, ~5x Ereignisse)
+  gegen die 3-Monats-194-Ereignis-Messung: keine Sprosse steigt ueber die fam
+  (1.96e-1). 193->211 +1.78e-1 (0.91xfam, am naechsten), 211->335 +7.15e-2,
+  335->94 +1.24e-1 (0.63xfam, verblasst von 0.75x). Die Kaskade bleibt ein
+  reproduzierbares gerichtetes unter-fam Muster, aber mehr Daten bestaetigen
+  die fam-Signifikanz NICHT; der heisseste Rung staerkt sich nicht. Befund =
+  reproduzierbar-gerichtet, nicht fam-signifikant.
 - **EVE-Bandbreiten-Kreuzpruefung (2026-09-05, h × 0.5–3.0)**: der einzige
   EVE-fam-Pfeil 1032→131 (kanonisch D 5.11e-1 > fam 4.70e-1) traegt nur bis
   h≈1.75 und versagt bei h≥2.0 (h=2.0 D 4.34e-1 < fam 4.46e-1; h=3.0 klar);
