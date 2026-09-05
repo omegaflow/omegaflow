@@ -135,6 +135,57 @@ pub fn transfer_entropy_lag(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     Some(te / m as f64)
 }
 
+/// Bandwidth-scaled variant of `transfer_entropy_lag`: the same KDE core with
+/// the Silverman width of each series multiplied by `factor`. Non-canonical:
+/// the canonical `transfer_entropy`/`transfer_entropy_lag` above are untouched.
+/// lag == 0 here reproduces `transfer_entropy_lag`'s own lag-0 path (the
+/// shift-1 core), scaled. A global rescale of both series leaves TE invariant,
+/// so the data cannot fake this: only the kernel width relative to the data is
+/// changed.
+pub fn transfer_entropy_lag_h(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<f64> {
+    let n = x.len();
+    if n < 8 {
+        return None;
+    }
+    let shift = if lag == 0 { 1usize } else { lag };
+    let m = n - shift;
+    if m < 8 {
+        return None;
+    }
+    let hx = silverman(x)? * factor;
+    let hy = silverman(y)? * factor;
+    let mut te = 0.0;
+    for t in 0..m {
+        let xt = x[t] as f64;
+        let xt1 = x[t + shift] as f64;
+        let yt = y[t] as f64;
+        let mut k3 = 0.0;
+        for s in 0..m {
+            k3 += gaussian(xt1 - x[s + shift] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy);
+        }
+        let p3 = k3 / m as f64;
+        let mut k1 = 0.0;
+        for s in 0..n {
+            k1 += gaussian(xt - x[s] as f64, hx);
+        }
+        let p1 = k1 / n as f64;
+        let mut k2xy = 0.0;
+        for s in 0..n {
+            k2xy += gaussian(xt - x[s] as f64, hx) * gaussian(yt - y[s] as f64, hy);
+        }
+        let p2xy = k2xy / n as f64;
+        let mut k2x = 0.0;
+        for s in 0..m {
+            k2x += gaussian(xt1 - x[s + shift] as f64, hx) * gaussian(xt - x[s] as f64, hx);
+        }
+        let p2x = k2x / m as f64;
+        te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
 pub fn transfer_entropy_conditional(x: &[f32], y: &[f32], c: &[f32], lag: usize) -> Option<f64> {
     let n = x.len();
     if n < 8 || y.len() < n || c.len() < n {
@@ -384,6 +435,36 @@ pub fn block_bootstrap_surrogate(v: &[f32], block: usize, rng: &mut u64) -> Vec<
         }
     }
     out.truncate(n);
+    out
+}
+
+/// Cycle-wise cyclic phase shift: each complete cycle of `cycle_len` samples is
+/// rotated by a random integer offset drawn per cycle. The per-cycle sample
+/// set — hence the cycle amplitude envelope and per-cycle variance — is kept
+/// exactly; only the in-cycle phase order is randomized. A trailing partial
+/// cycle is left untouched (its sample set is not a full phase circle).
+///
+/// This is the surrogate for a per-cycle folded or equi-spaced multi-cycle
+/// periodic series: a raw shuffle would destroy the amplitude envelope
+/// (te_surrogate_amp warning), an FFT full-circle phase randomization
+/// re-randomizes every spectral phase and broadens the narrow periodic peak's
+/// autocorrelation structure. When the analysis holds the data per cycle
+/// (fold axis), the cyclic rotation below is the amplitude-preserving
+/// in-cycle phase randomization.
+pub fn cycle_phase_shift_surrogate(v: &[f32], cycle_len: usize, rng: &mut u64) -> Vec<f32> {
+    let n = v.len();
+    if n < 2 || cycle_len < 2 {
+        return v.to_vec();
+    }
+    let mut out = v.to_vec();
+    let mut start = 0usize;
+    while start + cycle_len <= n {
+        let shift = (next_rng(rng) * cycle_len as f64) as usize % cycle_len;
+        if shift != 0 {
+            out[start..start + cycle_len].rotate_left(shift);
+        }
+        start += cycle_len;
+    }
     out
 }
 
@@ -1191,6 +1272,76 @@ mod tests {
             let b = autocorr(&s, lag);
             assert!((a - b).abs() < 0.35, "lag {}: {} vs {}", lag, a, b);
         }
+    }
+
+    #[test]
+    fn cycle_phase_shift_preserves_each_cycles_amplitude_exactly() {
+        let n = 256;
+        let cycle = 16;
+        let mut x = Vec::with_capacity(n);
+        for c in 0..n / cycle {
+            for s in 0..cycle {
+                let phase = 2.0 * std::f64::consts::PI * s as f64 / cycle as f64;
+                x.push((c as f64 * 0.05 + phase).sin() as f32 + 0.02 * (c % 5) as f32);
+            }
+        }
+        for seed in 1u64..=12 {
+            let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let s = cycle_phase_shift_surrogate(&x, cycle, &mut rng);
+            assert_eq!(s.len(), n);
+            let mut cx = x.chunks_exact(cycle).map(|ch| {
+                let mut v = ch.to_vec();
+                v.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+                v
+            });
+            for ch in s.chunks_exact(cycle) {
+                let mut v = ch.to_vec();
+                v.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+                let orig = cx.next().unwrap();
+                for (a, b) in v.iter().zip(&orig) {
+                    assert_eq!(a, b, "seed {seed}: cycle amplitude set changed");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn cycle_phase_shift_randomizes_the_in_cycle_phase_order() {
+        let cycle = 16;
+        let cycles = 12;
+        let mut x = vec![0f32; cycle * cycles];
+        for c in 0..cycles {
+            x[c * cycle] = 1.0;
+        }
+        let mut any_moved = false;
+        for seed in 1u64..=8 {
+            let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let s = cycle_phase_shift_surrogate(&x, cycle, &mut rng);
+            let markers_at_zero = s.chunks_exact(cycle).filter(|ch| ch[0] == 1.0).count();
+            if markers_at_zero != cycles {
+                any_moved = true;
+                break;
+            }
+        }
+        assert!(
+            any_moved,
+            "no seed shifted the in-cycle marker — the phase order was not randomized"
+        );
+    }
+
+    #[test]
+    fn cycle_phase_shift_leaves_partial_and_short_series_alone() {
+        let x = vec![1.0f32, 2.0, 3.0];
+        let mut rng = 7u64;
+        assert_eq!(cycle_phase_shift_surrogate(&x, 5, &mut rng), x);
+        let partial = vec![1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0];
+        let mut rng = 7u64;
+        let s = cycle_phase_shift_surrogate(&partial, 4, &mut rng);
+        assert_eq!(
+            s[4..],
+            partial[4..],
+            "trailing partial cycle stays in place"
+        );
     }
 
     #[test]
