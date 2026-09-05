@@ -1,9 +1,8 @@
-use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag_h};
 
 const MAGIC: [u8; 4] = *b"EVL1";
 const DT: f64 = 10.0;
 const WINDOW: usize = 120;
-const N_SURR: usize = 10;
 const THRESH_FACTOR: f64 = 1.3;
 const REFRACTORY: usize = 180;
 
@@ -117,6 +116,7 @@ fn stack_pair(
     lag: usize,
     shuffle: bool,
     seed: u64,
+    factor: f64,
 ) -> (f64, usize, usize) {
     let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
     let mut sum = 0.0;
@@ -132,8 +132,8 @@ fn stack_pair(
         };
         let hot = &ev.lines[hi];
         let (Some(f), Some(r)) = (
-            transfer_entropy_lag(hot, cool, lag),
-            transfer_entropy_lag(cool, hot, lag),
+            transfer_entropy_lag_h(hot, cool, lag, factor),
+            transfer_entropy_lag_h(cool, hot, lag, factor),
         ) else {
             continue;
         };
@@ -154,6 +154,14 @@ fn main() {
         eprintln!("--eve <eve_lines.bin> absent");
         return;
     };
+    let factor = arg_value(&args, "--h")
+        .and_then(|v| v.parse::<f64>().ok())
+        .filter(|f| *f > 0.0)
+        .unwrap_or(1.0);
+    let n_surr = arg_value(&args, "--surr")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|n| *n >= 1)
+        .unwrap_or(10);
     let records = read_eve_lines(&path);
     let mut series: Vec<(f64, f64)> = Vec::new();
     for (idx, _name, _logt) in LINES {
@@ -270,9 +278,9 @@ fn main() {
     let mut fam_pool: Vec<f64> = Vec::new();
     for p in 0..LINES.len() - 1 {
         for lag in 0..=12 {
-            let (d, _, _) = stack_pair(&events, p, p + 1, lag, false, 0);
+            let (d, _, _) = stack_pair(&events, p, p + 1, lag, false, 0, factor);
             real[p][lag] = d;
-            for s in 1..=N_SURR {
+            for s in 1..=n_surr {
                 let (d_null, _, _) = stack_pair(
                     &events,
                     p,
@@ -280,6 +288,7 @@ fn main() {
                     lag,
                     true,
                     s as u64 * 0x9E37_79B9_7F4A_7C15,
+                    factor,
                 );
                 fam_pool.push(d_null);
             }
@@ -313,10 +322,11 @@ fn main() {
     }
     println!();
     println!(
-        "fam = {:.4e} — the strongest surrogate D of the whole round ({} pairs × 13 lags × {} surrogates).",
+        "fam = {:.4e} — the strongest surrogate D of the whole round ({} pairs × 13 lags × {} surrogates, h × {}).",
         fam,
         LINES.len() - 1,
-        N_SURR
+        n_surr,
+        factor
     );
     println!("lag in 10-s cells (0..120 s); * = D over the full-round family bound fam.");
 }
