@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 3b74388f029f94d0c6f56c6a83ada66e15b5d290fa5dea182ced2de6da2bfc1f
+  sha256: e3aeacb720c7c67e7d7693c704550087825f2d69f7e6be2a5abfc1506f5fb82e
   status: live
   see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/concepts/der-kausalpfeil.md
 -->
@@ -38,10 +38,14 @@ never 0.0.
   - Response: DAHITI Koshi water level (satellite altimetry, api_key) or a
     co-located Trishuli gauge when one is open.
 - **Path-1 finding (already measured, sealed here for reproducibility):**
-  Niederschlag Oberlauf ↔ Unterlauf gives **Rasuwa → Gyirong at Lag
-  12–24 h** (TE 0.162/0.151 > threshold 0.133/0.131). The reproduction
-  prediction: with the sealed protocol on the sealed series, the arrow
-  reproduces at Lag 12–24 h, not at Lag 1–6 h.
+  Niederschlag Oberlauf ↔ Unterlauf gives **Gyirong → Rasuwa at Lag
+  12–24 h** (TE 0.162/0.151 > threshold 0.133/0.131). **Named direction
+  correction (2026-09-05):** the finding was printed by `te_pair_probe`
+  with mirrored direction labels (its printed "TE(a→b)" column measures
+  b→a); correctly oriented it is **Gyirong → Rasuwa**
+  (Oberlauf/Tibet → Unterlauf/Nepal). The reproduction prediction: with
+  the sealed protocol on the sealed series, the arrow reproduces as
+  Gyirong → Rasuwa at Lag 12–24 h, not at Lag 1–6 h.
 - **The prediction (pending arrow):** if the co-located discharge response
   becomes measurable, the direction hypothesis is **Niederschlag →
   Abfluss at a positive lag** (precipitation leads discharge; monsoon
@@ -87,8 +91,9 @@ both at 12/48) reflecting the small sample and the slow stage dynamics.
 > sealed; the verdict cell is corrected to: **no forward Niederschlag→Pegel
 > arrow at Lag 24 — the arrow falls to silence.** The short-lag forward
 > coupling (1–6 h) is unconditionally significant but not isolable under
-> conditioning. The Path-1 spatial finding (Rasuwa → Gyirong) above is a
-> different arrow and is not touched by this reversal.
+> conditioning. The Path-1 spatial finding above (corrected to Gyirong →
+> Rasuwa by the same mirror) is a different arrow from this co-lokale
+> reversal.
 
 Ehrliche Einordnung: measured is **Pegel (stage, m)**, not **Abfluss
 (discharge, m³/s)**, on the **pre-flood window** (the open series stops at
