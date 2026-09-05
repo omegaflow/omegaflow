@@ -2,9 +2,9 @@
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
   date: 2026-09-05
-  version: 3
-  sha256: a6ef15b45cfbc9656df1358a5851ea4c7a83c6adbf967fd7007ee705b237ad77
-  fam-machine: pre-fix (EVE-2011); AIA-2014 fam nachgelegt 2026-09-05 post-fix
+  version: 4
+  sha256: 31cae10209ebc07adc9651509d05814de98b7676e7a82687ec9d2e6c326d8824
+  fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
 -->
@@ -15,7 +15,7 @@
 
 ## Abstract
 
-The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (chromosphere, log T = 4.16) to 94 Å (hot corona, log T = 6.81) — at 10 s cadence, over 109 flares (2011), with a phase-randomized null. The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Against the full-round family bound (fam = 4.70e-1), a single arrow survives: 1032→131 Å (O VI → Fe VIII, the transition-region→corona boundary) flows upward at zero lag (D = 5.11e-1); every other rung — including the 977→1032 Å entry and the hottest rungs' downward cooling — is silent at fam. SDO/AIA (2014, 194 GOES flares, 24-s cells) reproduces the coronal-rung amplitudes EVE could not resolve (193→211→335→94 at +1.50e-1/+1.13e-1/+1.42e-1, ~96 s) but, against its own full-round family bound (fam = 1.89e-1), every AIA rung — including 335→94 — is silent. The hottest rung's direction is therefore established by neither instrument at its family bound: the apparent 335→94 reversal (down in EVE, up in AIA) dissolves once AIA carries a family bound. EVE's single fam arrow (1032→131 Å, the transition-region→corona entry) stands; the coronal propagation rung and the Alfvén-versus-nanoflare distinction remain unmeasured at fam.
+The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (chromosphere, log T = 4.16) to 94 Å (hot corona, log T = 6.81) — at 10 s cadence, over 109 flares (2011), with a phase-randomized null. The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Against the full-round family bound (fam = 4.70e-1), a single rung clears it at the canonical bandwidth: 1032→131 Å (O VI → Fe VIII) flows upward at zero lag (D = 5.11e-1). But this arrow is not bandwidth-robust: under a Silverman-width cross-check (h × 0.5–3.0), it holds only through h ≈ 1.75 (D/fam 1.28 at h=0.5, 1.09 at h=1.0, 1.02 at h=1.5) and falls below a freshly recomputed fam at h ≥ 2.0 (0.97× at h=2.0) — a failure robust to the surrogate count, since a larger surrogate band is only stricter. Every other EVE rung is silent at every bandwidth. SDO/AIA (2014, 194 GOES flares, 24-s cells) reproduces the coronal-rung amplitudes EVE could not resolve (193→211→335→94 at +1.50e-1/+1.13e-1/+1.42e-1, ~96 s) but falls below its own full-round family bound (fam = 1.89e-1). The measurement therefore does not establish a family-bound- *and* bandwidth-robust directional energy flow on any rung of either ladder: the honest statement is a null/bound, not an upward-transport claim.
 ## 1. Introduction
 
 The coronal heating problem is the temperature inversion of the outer solar
@@ -201,12 +201,20 @@ marks D above the full-round family bound fam = 4.6982e-1:
 | 284→335 (corona) | −4.31e-1 | −1.61e-1 | 1.95e-2 | 3.40e-2 | 3.30e-2 | 2.40e-2 | 1.46e-2 | silent |
 | 335→94 (hot corona) | 2.21e-1 | −9.23e-2 | −3.02e-1 | −3.15e-1 | −3.11e-1 | −3.00e-1 | −2.78e-1 | silent |
 
-One arrow survives the full-round family bound: **1032→131 Å** (O VI → Fe
-VIII, the transition-region→corona boundary) is strongest at zero lag
-(5.11e-1) and carries the only fam-significant D in the round. Every other
-rung is silent at fam, including the 977→1032 Å entry (peak 3.91e-2, well
-below fam) and the hottest rungs' negative D (335→94, down to −3.15e-1).
-The lag structure is front-loaded at lag 0, not a ~100 s peak.
+One arrow clears the full-round family bound at the canonical bandwidth:
+**1032→131 Å** (O VI → Fe VIII, the transition-region→corona boundary) is
+strongest at zero lag (5.11e-1, fam 4.70e-1). Every other rung is silent at
+fam, including the 977→1032 Å entry (peak 3.91e-2) and the hottest rungs'
+negative D (335→94, down to −3.15e-1). The lag structure is front-loaded at
+lag 0, not a ~100 s peak.
+
+**Bandwidth cross-check (§4.4).** This single arrow is not robust to the KDE
+bandwidth. Under a Silverman-width scale h × {0.5, 1.0, 1.5, 1.75, 2.0, 3.0},
+with fam freshly recomputed per h over surrogates of the same h (fair test,
+109 events at every h), the 1032→131 D holds through h ≈ 1.75 and falls
+below fam at h ≥ 2.0. The failure is robust to the surrogate count: fam is
+the maximum of the round's surrogate D, so a larger surrogate sample is only
+stricter (a-fortiori). No other EVE rung clears fam at any bandwidth.
 
 ### 4.2 AIA-2014 (194 GOES events, 24-s cells)
 
@@ -242,31 +250,63 @@ Restoring the family bound on the AIA side removes the disagreement: AIA's
 335→94 (down to −3.15e-1) is below its own fam (4.70e-1). Neither instrument
 measures the hottest rung's direction at its family bound. The two
 measurements no longer disagree on a reversal — each independently fails to
-establish the hot-rung direction at fam. What remains across both is the
-fam-significant entry at the transition-region→corona boundary (EVE,
-1032→131) and, on the AIA side only, a below-fam but coherent coronal-rung
-pattern carrying the ~96 s crossing lag.
+establish the hot-rung direction at fam. What remains across both is a
+single EVE candidate at the transition-region→corona boundary (1032→131)
+that clears its family bound only at canonical/narrow bandwidth (§4.4) and,
+on the AIA side, a below-fam but coherent coronal-rung pattern carrying the
+~96 s crossing lag. Neither survives the combined fam + bandwidth
+criterion.
+
+### 4.4 EVE bandwidth cross-check (Silverman h × 0.5–3.0)
+
+The single EVE arrow (1032→131) is tested against the KDE bandwidth. The
+probe gains a non-canonical bandwidth-scaled estimator (`transfer_entropy_lag_h`,
+canonical estimator untouched); factor 1.0 reproduces the canonical round
+byte-identically. Each h is a full round with fam freshly recomputed over
+surrogates of the same h (fair test). Event count is h-independent (109 at
+every h).
+
+| h | 1032→131 D (lag 0) | fam (same round, same h) | D/fam | arrow |
+|---|---|---|---|---|
+| 0.5 | 4.09e-1 | 3.19e-1 | 1.28 | yes |
+| 1.0 | 5.11e-1 | 4.70e-1 | 1.09 | yes |
+| 1.5 | 4.99e-1 | 4.89e-1 | 1.02 | yes |
+| 1.75 | 4.71e-1 | 4.69e-1 | 1.00 | marginal |
+| 2.0 | 4.34e-1 | 4.46e-1 | 0.97 | no |
+| 3.0 | 2.17e-1 | 3.24e-1 | 0.67 | no |
+
+The arrow holds only through h ≈ 1.75 and falls below fam at h ≥ 2.0. The
+failure is robust to the surrogate count: fam is the maximum of the round's
+surrogate D, so a larger surrogate sample (stricter band) cannot lower it —
+an arrow that misses the loose n=10 band misses any sharper band a fortiori.
+No other EVE rung clears fam at any h in 0.5–3.0. Under a combined
+family-bound + bandwidth criterion, the EVE-2011 ladder carries no robust
+directional arrow.
 
 ## 5. Discussion
 
-**The energy enters from below, fast.** The sole fam-significant flow is
-1032→131 Å, at zero lag — the transition-region→corona boundary (log T
-5.47 → 5.57, O VI → Fe VIII). The adjacent log-T rung gap at this boundary
-(Δ 0.10) is not the ladder's steepest: the largest gap lies at 977→1032 Å
-(Δ 0.63 in log T). The 977→1032 entry
-(peak 3.91e-2) and the hottest rungs' downward D are all below fam, so they
-are reported as silent, not as negative findings. The ~100 s coronal
-crossing is not resolved as a fam-significant arrow in these sun-as-a-star
-lines; the AIA imaging ladder (§4.2) shows it only as a below-fam pattern.
+**No bandwidth-robust arrow.** The sole rung that clears the family bound at
+the canonical bandwidth is 1032→131 Å, at zero lag — the
+transition-region→corona boundary (log T 5.47 → 5.57, O VI → Fe VIII). The
+adjacent log-T rung gap at this boundary (Δ 0.10) is not the ladder's
+steepest: the largest gap lies at 977→1032 Å (Δ 0.63 in log T). The 977→1032
+entry (peak 3.91e-2) and the hottest rungs' downward D are all below fam, so
+they are reported as silent, not as negative findings. But the single
+1032→131 arrow is not bandwidth-robust (§4.4): it clears fam only through
+h ≈ 1.75 and falls below at h ≥ 2.0, robustly to the surrogate count. Under
+a combined family-bound + bandwidth criterion the EVE-2011 ladder carries no
+robust directional flow; the coronal crossing appears only as a below-fam
+pattern on either instrument.
 
-**What this does and does not decide.** The measurement confirms the
-*upward* direction at the transition-region→corona boundary. It does *not*
-separate Alfvén waves from nanoflares decisively: a lag-0 front-loaded
-excess is the co-heating signature, and that is exactly what 1032→131
-shows. The distinction requires the coronal crossing time itself as a
-fam-significant rung — a crossing that appears only as a below-fam AIA
-pattern (§4.2), so it needs a larger event ensemble (or the spatially
-resolved active-region path) before it is established.
+**What this does and does not decide.** The measurement does *not* establish
+an upward transport claim: the one candidate rung (1032→131) survives the
+family bound only at canonical/narrow bandwidth, and the coronal hot rung is
+silent at fam on both instruments. It therefore does *not* separate Alfvén
+waves from nanoflares, and it does not confirm an energy entry at the
+transition-region→corona boundary beyond a single-bandwidth candidate. The
+distinction requires a coronal crossing time that is both fam- *and*
+bandwidth-significant — which needs a larger event ensemble (or the
+spatially resolved active-region path) before it is established.
 
 **Instrument degradation is the honest constraint.** The full ladder is
 measurable only in the 2011 MEGS-A era; 2014 is degraded (304 Å flat at 1.2×
@@ -283,25 +323,25 @@ D, and the phase-randomized null that calibrates it, isolate the *directional*
 residual — the information the cooler rung carries about the hotter rung's
 future that the shared envelope does not.
 
-**Two instruments, one fam-significant arrow.** Read together, the two
-measurements do not bracket a full energy path: EVE-2011 carries the single
-fam-significant flow (1032→131 Å, the transition-region→corona entry at lag
-0); AIA-2014 reproduces the coronal-rung amplitudes and the ~96 s crossing
-lag but below its own family bound (§4.2). The earlier "entry first,
-propagation after" bracket assumed AIA's coronal flow was fam-significant;
-with AIA's family bound restored it is not, so the propagation leg is a
-coherent but unestablished pattern, not a second measured arrow. No reversal
-remains to reconcile: neither instrument measures the 335→94 direction at
-fam, so the candidate readings of a reversal (era, degradation, phase) are
-moot — there is nothing to explain beyond two independent silences.
+**Two instruments, one bandwidth-limited candidate.** Read together, the two
+measurements bracket no full energy path. EVE-2011's single rung that clears
+its family bound at the canonical bandwidth (1032→131 Å, the
+transition-region→corona entry at lag 0) does not survive the bandwidth
+cross-check (§4.4); AIA-2014 reproduces the coronal-rung amplitudes and the
+~96 s crossing lag but below its own family bound (§4.2). There is no
+reversal to reconcile — neither instrument measures the 335→94 direction at
+fam — and there is also no robust positive flow: the two independent results
+are a family-bound-limited EVE candidate and a below-fam AIA pattern, i.e.
+two silences and one fragile candidate.
 
 ## 6. Limitations
 
-- **Two instruments, one fam arrow.** EVE-2011 carries the sole
-  fam-significant flow (1032→131 Å). AIA-2014 reproduces the coronal-rung
+- **Two instruments, no robust arrow.** EVE-2011's single candidate
+  (1032→131 Å) clears its family bound only at canonical/narrow bandwidth and
+  fails the bandwidth cross-check (§4.4); AIA-2014 reproduces the coronal-rung
   amplitudes and ~96 s lag but below its own family bound (§4.2); the hottest
-  rung (335→94) is established by neither instrument at fam. A single
-  instrument that measures a fam-significant coronal rung is the next
+  rung (335→94) is established by neither instrument at fam. No instrument
+  yet measures a fam- *and* bandwidth-robust coronal arrow; that is the next
   measurement, not yet made.
 - **One era each.** EVE is 2011 (healthy MEGS-A) and AIA is 2014 (healthy
   imaging); the 2014 EVE era is degraded and excluded, so no single era
@@ -311,11 +351,14 @@ moot — there is nothing to explain beyond two independent silences.
 - **Full-round family bound.** The null reported is the strongest surrogate
   D over all pairs × lags of the round — the canonical family bound shared
   with the system's other blades. EVE-2011's fam = 4.6982e-1 (pre-fix RNG,
-  conservative-high); under it only the 1032→131 Å lag-0 arrow survives.
-  AIA-2014 is now measured under its own full-round fam = 1.8925e-1 (194
-  events, post-fix RNG), under which all six rungs — 335→94 included — are
-  silent; a per-lag reading that earlier marked several AIA D as significant
-  is superseded by this bound, just as it was for EVE.
+  conservative-high). AIA-2014 is now measured under its own full-round
+  fam = 1.8925e-1 (194 events, post-fix RNG), under which all six rungs —
+  335→94 included — are silent.
+- **Bandwidth sensitivity (new, measured).** The EVE fam verdict is not
+  robust to the KDE bandwidth (§4.4): the single 1032→131 arrow that clears
+  fam at h=1.0 fails at h ≥ 2.0, and the failure is robust to the surrogate
+  count (a larger surrogate band is stricter). A verdict must now survive
+  both the family bound and the bandwidth cross-check to be called an arrow.
 - **109 events, one solar-maximum window.** The event ensemble is a single
   90-day window; a second window or a cycle-spanning ensemble is not
   measured.
@@ -336,20 +379,21 @@ moot — there is nothing to explain beyond two independent silences.
 ## 7. Conclusion
 
 Transfer entropy across the solar temperature ladder, at sub-minute cadence,
-measures a directed, null-significant upward energy flow. On EVE-2011, against
-the full-round family bound (fam = 4.70e-1), a single arrow survives:
-1032→131 Å (O VI → Fe VIII) flows upward at zero lag, at the
-transition-region→corona boundary, while every other rung — including the
-hottest rungs' downward D — is silent at fam. On AIA-2014 the coronal rungs
-reproduce the hot-side amplitudes and the ~96 s crossing lag (193→211→335→94
-at +1.50e-1/+1.13e-1/+1.42e-1) but fall below AIA's own family bound (fam =
-1.89e-1): no AIA rung, and no hottest-rung direction, is established at fam.
-The energy enters the corona from below, fast, at the
-transition-region→corona boundary; whether it then propagates through the
-corona on the Alfvén crossing time — and along which leg — remains below the
-fam threshold. The Alfvén-versus-nanoflare dichotomy is now a question of one
-more fam-significant coronal rung, not of an unresolved two-instrument
-reversal.
+does not establish a robust directional energy flow on any rung, on either
+instrument, under the combined criterion of a full-round family bound and a
+KDE-bandwidth cross-check. On EVE-2011, against the full-round family bound
+(fam = 4.70e-1), a single rung clears it at the canonical bandwidth —
+1032→131 Å (O VI → Fe VIII) upward at zero lag — but that arrow fails at
+h ≥ 2.0 under the bandwidth cross-check (§4.4), robustly to the surrogate
+count, and every other EVE rung is silent at every bandwidth. On AIA-2014
+the coronal rungs reproduce the hot-side amplitudes and the ~96 s crossing
+lag (193→211→335→94 at +1.50e-1/+1.13e-1/+1.42e-1) but fall below AIA's own
+family bound (fam = 1.89e-1). The hottest rung (335→94) is established by
+neither instrument at fam. The honest statement is a null/bound (0 honored):
+no fam- and bandwidth-robust upward transport, and no established coronal
+crossing time, is measured on this sun-as-a-star ladder. The
+Alfvén-versus-nanoflare distinction therefore stays open, gated on a
+measurement that clears both the family bound and the bandwidth check.
 
 ## References
 
