@@ -2,7 +2,7 @@
   title: Befund — Ära-Treiber der lauten Pioneer-1978–82- und Galileo-Boden-Ären gegen f107/Sonnenzyklus
   class: befund
   date: 2026-09-05
-  sha256: 291f67ca35d8a68e223f263cf588bf399295d0f1de05a7cb86d7ee1e8191717b
+  sha256: 274be60767e57a5eabc6cf130b48bc18bc3e6a101289574c8dd8b45aee878a61
   status: done
   antwortet-auf: docs/befund/befund-front-c-epsilon-2d.md
 -->
@@ -202,3 +202,10 @@ folgt der ~13-monatlichen Konjunktions-Geometrie im flachen Zyklus-22-Minimum
 Lautheits-Zahlen unverändert aus den zwei Referenz-Blättern. Treiber (A):
 Zyklus-21-Koinzidenz ja, allgemeiner Aktivitäts-Treiber nein, ära-spezifisch;
 Treiber (B): Konjunktions-Geometrie, Sonnenaktivität ausgeschlossen.
+
+Folge-Befund (`befund-pioneer-aera-solarwind-omni2`, done): der omni2-nahe-Erde-
+Sonnenwind (V, HSS/CIR, IMF B) erklärt die laute 1978–82-Ära **nicht** — sie war
+die V-ärmste/HSS-ärmste Epoche 1973–90; das HSS/CIR-Regime gehört der ruhigen
+absteigenden Phase (1983–86); Zyklus-21-HSS/CIR-Treiber gemessen widerlegt.
+Verbleibende Erklärung der lauten 1978–82-Pioneer-Ära: eine DSN-Empfangs-/
+Betriebs-Ära-Baseline, nicht die Sonne.
