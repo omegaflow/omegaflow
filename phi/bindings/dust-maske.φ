@@ -1,0 +1,28 @@
+# dust-maske binding — Council-ruled front for the Planck dust foreground
+
+Registered 2026-09-05, Council verdict (do not re-litigate). This file is the
+committed preregistration the compiler's `--mask-run` gate reads before a
+science run.
+
+## Binding 1 — column
+- AV_RQ (column 3) of COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits carries the
+  measured reddening value. AV_DL stays unread.
+- `--column` selects the FITS BINTABLE column; default 3. The JSON value key is
+  the selected TTYPE lowercased (`av_rq`). R_V 3.1, unit mag.
+
+## Binding 2 — geometry
+- The map is a single 2D foreground shell carried as `dist`, a screen distance
+  D_screen in pc — never the redshift `z` (the cmap parser gates `z` at
+  z > 0.0, so `z` 0.0 would place nothing).
+- The shell length is physical, not invented: the compiler refuses without
+  `--screen-pc <pc>` (the screen distance is never silent).
+
+## Binding 3 — resolution
+- nside 512 by default. Pixel 0.11 deg <= sigma/2 of the GD-1 12 arcmin
+  stream width.
+
+## Binding 4 — media-token pin
+- FITS source:
+  https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
+- sha256 of the downloaded FITS: pending — the operator pins the digest the
+  workflow records (sha256sum over the fetched bytes, release-annotated).
