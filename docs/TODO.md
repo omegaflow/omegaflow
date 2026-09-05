@@ -1231,6 +1231,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   (seed_state loaded). OFFEN: disequilibrium_register_probe (wartet nun auf
   Daten — ist geliefert); die registry braucht einen Manifestations-Heimatort.
 
+
+- Disequilibrium-Register-Urteil (2026-09-05, disequilibrium_register_probe gebaut):
+  10 disequilibrium-Hit-Hosts (alle CO2-auf-heissem-Planet unter Floor 1e-6),
+  8 equilibrium-praesent, 12 pending (11 Multi-Transit-Hosts nicht attribuierbar +
+  K2-18 unter Modell-Domain 500 K). Katalog-Permutations-Null (10000 Zuege, fixer
+  Seed, voller Kreis): beobachtet 10 | Null mean 9.61 | sigma 1.58 | mean+2sigma
+  12.77 | P(T>=10)=0.529 — die Hit-Zahl liegt unter der Zufalls-Schwelle, KEIN
+  Disequilibrium-Signal im Katalog ueber den Zufall hinaus. Ehrliche Abdeckung:
+  das thermochem-Modell ist S-frei (H/C/N/O) — die kanonischen Schwefel-Signale
+  (WASP-39b/WASP-107b SO2, HAT-P-26 SO2, TOI-5205 H2S, V1298 Tau OCS) sind
+  out-of-model, nicht als Hit/Nicht-Hit klassifiziert. Floor (--floor, default
+  1e-6) ist ein benannter Judgment-Wert (Seed traegt keinen Instrument-Floor);
+  Sensitivitaet: 1e-7 -> 3 Hit-Hosts, 1e-6/1e-5/1e-4 -> 10.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
