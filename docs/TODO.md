@@ -1371,6 +1371,16 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Hit-vs-Metallizitaet r=+0.051 P=0.79. 33 thermochem-Tests gruen, cargo check
   0 Warnungen.
 
+
+- Narrowband-Manifestation korrigiert (2026-09-05): die volle BL-2017-Datei ist
+  Content-Length 10,77 GB (All_hits_turbo_seti.csv), NICHT 133 MB (der Sub-Agent
+  hatte die Groesse falsch gemessen; AAA_candidates 440 MB, 2019er Events ~0,9 MB
+  mit anderem Schema: Source=HIP, kein RA/DEC -> braucht HIP-Parallaxen-Abgleich).
+  Der volle Lauf ist eine Budget-Ernte (Range-Fetch, ~1,6 MB/s -> ~2 h fuer 10,77 GB),
+  kein Einzel-Download. Compiler-Upload-Tag auf blpd0.ssl.berkeley.edu korrigiert
+  (upload_release, war faelschlich ssd.jpl.nasa.gov). Manifestation pending: volle
+  Ernte + CDN + HIP-Parallaxen (kein Fabricat).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
