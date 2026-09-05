@@ -30,7 +30,8 @@
   "oh": 0.2,
   "nh": -0.07,
   "feh": 0.05,
-  "logrhk": null
+  "logrhk": null,
+  "s_index": 0.18
  },
  {
   "hostname": "HAT-P-30",
@@ -41,7 +42,8 @@
   "oh": 0.14,
   "nh": 0.17,
   "feh": 0.07,
-  "logrhk": null
+  "logrhk": null,
+  "s_index": 0.13
  },
  {
   "hostname": "TrES-4",
@@ -74,7 +76,8 @@
   "oh": 0.08,
   "nh": -0.14,
   "feh": -0.01,
-  "logrhk": null
+  "logrhk": null,
+  "s_index": 0.12
  },
  {
   "hostname": "HAT-P-14",
@@ -221,27 +224,6 @@
    "note": "log R'HK anomal hoch, Zahlenwert nicht extrahiert"
   },
   {
-   "hostname": "WASP-17",
-   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
-   "delivery": "Sonnet 5 High Search",
-   "pending": "ch,oh,co",
-   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
-  },
-  {
-   "hostname": "WASP-52",
-   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
-   "delivery": "Sonnet 5 High Search",
-   "pending": "ch,oh,co",
-   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
-  },
-  {
-   "hostname": "WASP-127",
-   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
-   "delivery": "Sonnet 5 High Search",
-   "pending": "ch,oh,co",
-   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
-  },
-  {
    "hostname": "K2-18",
    "analysis": "Boro Saikia et al. 2018",
    "delivery": "Gemini 3 Chat",
@@ -343,7 +325,9 @@
    "oh": 0.04,
    "feh": -0.01,
    "co": 0.46,
-   "note": "C/O 0.46 ± 0.09"
+   "note": "C/O 0.46 ± 0.09",
+   "nh": -0.06,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "HAT-P-12",
@@ -459,51 +443,86 @@
   {
    "hostname": "HAT-P-14",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.24 +/- 0.05 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": -0.15,
+   "oh": 0.22,
+   "nh": 0.15,
+   "feh": -0.02,
+   "co": 0.24,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "HAT-P-26",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.41 +/- 0.08 (KeckSpec-Maschinentabelle)",
+   "ch": 0.11,
+   "oh": 0.24,
+   "nh": -0.1,
+   "feh": 0.02,
+   "co": 0.41,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "WASP-17",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.18 +/- 0.04 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": -0.29,
+   "oh": 0.19,
+   "nh": 0.09,
+   "feh": 0.0,
+   "co": 0.18,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "WASP-52",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.59 +/- 0.12 (KeckSpec-Maschinentabelle)",
+   "ch": 0.16,
+   "oh": 0.13,
+   "nh": 0.29,
+   "feh": 0.29,
+   "co": 0.59,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "WASP-121",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.23 +/- 0.05 (KeckSpec-Maschinentabelle); Gruppe HAT-P-14/WASP-17/WASP-121 niedriges C/O bestaetigt (<0.25)",
+   "ch": 0.04,
+   "oh": 0.42,
+   "nh": 0.54,
+   "feh": 0.24,
+   "co": 0.23,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "WASP-127",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.43 +/- 0.09 (KeckSpec-Maschinentabelle)",
+   "ch": -0.12,
+   "oh": -0.01,
+   "nh": -0.38,
+   "feh": -0.16,
+   "co": 0.43,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "WASP-166",
    "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
-   "delivery": "Kimi K2",
-   "pending": "ch,oh,co",
-   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+   "delivery": "Maschinenlese aspolanski.github.io (HTTP, 2026-09-05)",
+   "note": "C/O 0.41 +/- 0.08 (KeckSpec-Maschinentabelle)",
+   "ch": 0.15,
+   "oh": 0.28,
+   "nh": 0.27,
+   "feh": 0.23,
+   "co": 0.41,
+   "catalog": "aspolanski.github.io/stellar_labels_polanski.csv (KeckSpec, Polanski et al. 2022 RNAAS ac8676; HTTP 2026-09-05)"
   },
   {
    "hostname": "HAT-P-12",
@@ -581,5 +600,129 @@
    "delivery": "Claude 5 High (Chat)",
    "pending": "lx",
    "note": "XUV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "GJ 3090",
+   "analysis": "eROSITA eRASS1 (erass1main, broad 0.2-2.3 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "1eRASS J012145.2-464250",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 1.62170868e-13,
+   "lx": 9.8e+27,
+   "note": "F_X = b1_flux eRASS1 (0.2-2.3 keV); L_X = 4 pi d^2 F_X mit d = 22.48 pc (NExScI pscomppars); Offset 3.0\"; kein 5XMM-/2RXS-Eintrag"
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J135006.1-405011",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 2.27514e-12,
+   "lx": 4.4e+30,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 127.28 pc (pscomppars); Offset 2.6\"; zusaetzlich eRASS1 b1 1.90e-12 (2.1\") und 2RXS plaw 2.02e-12 (10.3\")"
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J081808.1-681854",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 9.86531e-14,
+   "lx": 1.3e+27,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 10.62 pc (pscomppars); Offset 3.2\"; zusaetzlich eRASS1 b1 2.52e-14 (5.2\"); zweite 5XMM-Epoche ep 4.86e-14"
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J040519.6+200924",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 1.14086e-12,
+   "lx": 1.6e+30,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 108.20 pc (pscomppars); Offset 0.7\"; 2RXS-Quelle 22\" entfernt nicht zugeordnet"
+  },
+  {
+   "hostname": "TOI-270",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J043339.7-515726",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 6.81733e-15,
+   "lx": 4.1e+26,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 22.48 pc (pscomppars); Offset 0.8\"; kein eRASS1-/2RXS-Eintrag"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J232705.3-011706",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 5.78275e-15,
+   "lx": 6.1e+26,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 29.66 pc (pscomppars); Offset 1.8\"; zweite 5XMM-Epoche ep 9.13e-15; erste Roentgen-Nachweis-Bericht (Sanz-Forcada et al.) bestaetigt"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "XMM-Newton 5XMM-DR15 (serendipitous, ep 0.2-12 keV)",
+   "catalog": "HEASARC TAP (heasarc.gsfc.nasa.gov/xamin/vo/tap/sync), 2026-09-05",
+   "catname": "5XMM J101938.0-094823",
+   "delivery": "HEASARC-TAP-Abfrage (2026-09-05)",
+   "fx": 9.83756e-15,
+   "lx": 8.9e+27,
+   "note": "F_X = ep_flux (0.2-12 keV); L_X mit d = 86.75 pc (pscomppars); Offset 0.9\"; zweite 5XMM-Epoche ep 8.74e-15"
+  },
+  {
+   "hostname": "GJ 3090",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "GJ 3090",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 17.95
+  },
+  {
+   "hostname": "TOI-1130",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "TOI-1130",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 25.6
+  },
+  {
+   "hostname": "WASP-96",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "WASP-96",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 20.16
+  },
+  {
+   "hostname": "LTT 3780",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "LTT 3780",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 104.0
+  },
+  {
+   "hostname": "WASP-166",
+   "analysis": "NASA Exoplanet Archive pscomppars (st_rotp)",
+   "catalog": "NExScI TAP (exoplanetarchive.ipac.caltech.edu/TAP/sync), pscomppars st_rotp, 2026-09-05",
+   "catname": "WASP-166",
+   "delivery": "NExScI-TAP-Abfrage (2026-09-05)",
+   "p_rot": 12.1
+  },
+  {
+   "hostname": "TOI-199",
+   "analysis": "Suchstand maschinelle Kataloge 2026-09-05",
+   "catalog": "NExScI pscomppars; HEASARC 2RXS/5XMM/eRASS1; VizieR Brewer 2016+2018; aspolanski KeckSpec",
+   "delivery": "Research-Ingest (2026-09-05)",
+   "note": "alle geprueften maschinellen Kataloge ohne Wert: st_rotp leer (pscomppars); 2RXS/5XMM/eRASS1 kein Eintrag; Brewer 2016/2018 kein Eintrag; KeckSpec-Liste fuehrt den Wirt nicht - logrhk/lx/abundanz pending"
+  },
+  {
+   "hostname": "TOI-5205",
+   "analysis": "Suchstand maschinelle Kataloge 2026-09-05",
+   "catalog": "NExScI pscomppars; HEASARC 2RXS/5XMM/eRASS1; VizieR Brewer 2016+2018; aspolanski KeckSpec",
+   "delivery": "Research-Ingest (2026-09-05)",
+   "note": "alle geprueften maschinellen Kataloge ohne Wert: st_rotp leer (pscomppars); 2RXS/5XMM/eRASS1 kein Eintrag; Brewer 2016/2018 kein Eintrag (M-Zwerg); KeckSpec-Liste fuehrt den Wirt nicht - logrhk/lx/abundanz pending"
   }
 ]
