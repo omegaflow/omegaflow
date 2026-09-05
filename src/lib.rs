@@ -8,6 +8,7 @@ pub mod mathematikerin;
 pub use gate::{axioms, commit_gate, friction, handover, state, tool_perm};
 
 pub use archivar::atdf;
+pub use archivar::bayestar;
 pub use archivar::bison_basu;
 pub use archivar::bison_shift;
 pub use archivar::bison_velocity;
