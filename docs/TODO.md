@@ -113,6 +113,11 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   als eigene Ausreißerklasse mit mitgeführtem n_lock je Segment (nicht nur
   Schwelle); Mode 2/3 = Plasma-Test, Mode 1 = Oszillator-Fund, Station =
   Banden-Brücke.
+  Job-Prüfung (2026-09-05): GO-SUN-INDEX.TAB ist stale (126 Zeilen vs 83
+  Dateien auf der Platte), GO-JG ebenso (28 vs 20) — Enumeration läuft jetzt
+  über das Verzeichnis-Listing (Bodengrund), nicht den INDEX; GO-SS ⊆ GO-SUN
+  (globaler Dedup). Realer Bestand ~138 TDF-Dateien, nicht 192. Der
+  Befund-`192`-Wert war der stale INDEX, keine Platten-Wahrheit.
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
