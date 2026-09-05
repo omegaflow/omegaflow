@@ -3502,6 +3502,12 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
+format bl_narrowband
+on earth 38.4331409 -79.8397246 0
+ttl 604800
+field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
 ttl 604800
 format json
