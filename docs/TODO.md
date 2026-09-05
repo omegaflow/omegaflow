@@ -818,7 +818,7 @@ ICRS-4D-Rahmen teilt:
   Heuristik-Schwellen fallen mit friction.rs. Ort: on-the-fly im
   Interceptor als neues Modul (`src/tool_te.rs`) + Ernte des Tool-Stroms
   in ein neues Ledger (`phi/llm_tool_ledger.φ` — das bestehende
-  `llm_gate_ledger.φ` trägt nur Verdicts, keinen Strom). n<30 fließt
+  `commit_gate_ledger.φ` trägt nur Verdicts, keinen Strom). n<30 fließt
   stumm.
 - Webhook-Empfänger: der Sender `tools/work/src/bin/smail.rs` ist gebaut
   (REST über curl, `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN`,
@@ -1703,6 +1703,19 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Forced-Photometrie-Zugang. Antaeres: Key+Secret per E-Mail antares@noirlab.edu
   (Kafka); Fink: fink-broker.org/joining/ (Wochen-Alert-Strom). Account-Anfragen
   = Operator-Aktion, vorbereitet.
+
+
+- Nadel-V DURCHBRUCH Forced-Photometrie (2026-09-05): anonyme FP existiert auf
+  Fink-LSST — POST api.lsst.fink-portal.org/api/v1/fp {diaObjectId}, kein Token,
+  HTTP 200: 1033 FP-Zeilen fuer ein Objekt (g197/i385/r188/u47/y20/z196,
+  MJD 61090-61205), scienceFlux/psfFlux (negativ bei Nicht-Detektion), Messung
+  an fester Koordinate unabhaengig von Detektion. Das ist die dichte g/r/i-
+  Oberflaeche fuer den achromatischen Test. ZTF-anonym = nein (401/keine FP in
+  IRSA), Lasair-ZTF forcedphot mit LASAIR_TOKEN = ja, Lasair-LSST heute
+  unerreichbar (pending). Account-Vorlagen in docs/reference/ (antares +
+  fink-konto). Fink-Kafka = Python-only (fink-client), anon. REST-FP bleibt der
+  Rust-Weg. Naechster Schritt: /api/v1/fp in die Maschine verdrahten + erster
+  dichter-FP-achromatischer Scan.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
