@@ -1,0 +1,33 @@
+name: galileo-receiver-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  galileo-receiver:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_receiver.bin"; then
+            echo "asset galileo_receiver.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset galileo_receiver.bin missing — compiling and manifesting"
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "Galileo TRK-2-25 ATDF series compiled to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the Galileo TRK-2-25 ATDF receiver field to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin galileo_atdf_receiver_compiler -- --ci-mode
