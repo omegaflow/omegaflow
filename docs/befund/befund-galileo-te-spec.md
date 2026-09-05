@@ -3,7 +3,7 @@
   class: befund
   date: 2026-09-05
   status: done
-  sha256: 0f9d7a200cdb48a606400b508e42d9ffb49999c843cd82535111e11656c4bfbe
+  sha256: 8a9905cb621184896bb9770847fd38b8ca2128dae42f6ab2a12b9bf1a138218c
 -->
 
 # Befund — ist das Galileo-resid spec-getrieben? (gerichtete TE, ref_hz / mode / Kadenz)
@@ -226,8 +226,12 @@ Mode-3-Fenster (three-way-Kampagnen) mit ausreichenden Tagen; die S1-Isolat-Zell
 
 ## Status
 
-Draft. Messung: `tools/measure/src/bin/galileo_spec_te.rs` (neu, additiv;
-`cargo check` 0 Warnungen), Lauf `cargo run --release -p omegaflow-measure --
+`done` (Rat gehalten, 2026-09-05). Messung: `tools/measure/src/bin/galileo_spec_te.rs`
+(neu, additiv; `cargo check` 0 Warnungen), Lauf `cargo run --release -p omegaflow-measure --
 bin galileo_spec_te` → Vollausgabe in /tmp/opencode/galileo_spec_te.out.
 Bash-Scratch (Parsing-Erkundung) in /tmp/opencode/. Keine Repo-Datei
 überschrieben oder gelöscht.
+
+Folge-Befund: die Same-Day-Niveau-Assoziation ist geschlossen
+(`befund-galileo-sameday-spec-assoziation`, done — null, within-day-Paarung
+kollabiert); S1-Isolat-Replikation und Mode-3-Fenster bleiben `pending`.
