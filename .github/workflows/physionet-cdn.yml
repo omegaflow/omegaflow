@@ -116,22 +116,38 @@ jobs:
           - chunk: 0
             offset: 0
           - chunk: 1
-            offset: 36
+            offset: 12
           - chunk: 2
-            offset: 72
+            offset: 24
           - chunk: 3
+            offset: 36
+          - chunk: 4
+            offset: 48
+          - chunk: 5
+            offset: 60
+          - chunk: 6
+            offset: 72
+          - chunk: 7
+            offset: 84
+          - chunk: 8
+            offset: 96
+          - chunk: 9
             offset: 108
+          - chunk: 10
+            offset: 120
+          - chunk: 11
+            offset: 132
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile LTMM movement chunk (advective) and upload to CDN
+      - name: Compile LTMM movement sub-chunk (advective) and upload to CDN
         continue-on-error: true
         run: |
           gh release download physionet.org --repo omegaflow/sources \
-            --pattern "ltmm_movement_${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
+            --pattern "ltmm_movement_m${{ matrix.chunk }}.bin" --clobber 2>/dev/null || \
           cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
-            --out "ltmm_movement_${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
-            --offset ${{ matrix.offset }} --limit 36
+            --out "ltmm_movement_m${{ matrix.chunk }}.bin" --ci-mode --jobs 8 \
+            --offset ${{ matrix.offset }} --limit 12
 
   ltmm-merge:
     runs-on: ubuntu-latest
@@ -140,12 +156,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Merge the four LTMM chunks into ltmm_movement.bin and upload
+      - name: Merge the twelve LTMM sub-chunks into ltmm_movement.bin and upload
         continue-on-error: true
         run: |
           gh release download physionet.org --repo omegaflow/sources \
-            --pattern "ltmm_movement_[0-3].bin" --clobber 2>/dev/null || true
+            --pattern "ltmm_movement_m[0-9]*.bin" --clobber 2>/dev/null || true
           cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
             --out ltmm_movement.bin --ci-mode \
-            --merge ltmm_movement_0.bin ltmm_movement_1.bin \
-              ltmm_movement_2.bin ltmm_movement_3.bin
+            --merge ltmm_movement_m0.bin ltmm_movement_m1.bin \
+              ltmm_movement_m2.bin ltmm_movement_m3.bin \
+              ltmm_movement_m4.bin ltmm_movement_m5.bin \
+              ltmm_movement_m6.bin ltmm_movement_m7.bin \
+              ltmm_movement_m8.bin ltmm_movement_m9.bin \
+              ltmm_movement_m10.bin ltmm_movement_m11.bin
