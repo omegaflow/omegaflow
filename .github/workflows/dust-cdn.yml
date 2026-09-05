@@ -1,0 +1,40 @@
+name: dust-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      screen_pc:
+        description: foreground shell distance in pc (the dust screen, <= 1000)
+        required: true
+        type: string
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Planck AV_RQ map (column 3) to a NSIDE-512 dist shell and upload to CDN
+        run: |
+          FITS_URL=https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
+          mkdir -p kernels
+          gh release download irsa.ipac.caltech.edu --repo omegaflow/sources \
+            --pattern planck_dust_av_rq_n512.json --clobber 2>/dev/null && exit 0
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/dl07_av.fits "$FITS_URL"
+          sha256sum kernels/dl07_av.fits | tee kernels/dl07_av.fits.sha256
+          {
+            echo "### Planck dust AV_RQ map manifest"
+            echo "- FITS: $FITS_URL"
+            echo "- sha256: $(awk '{print $1}' kernels/dl07_av.fits.sha256)"
+            echo "- screen_pc: ${{ inputs.screen_pc }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          cargo run -p omegaflow-harvest --release --bin dust_map_compiler -- \
+            --input kernels/dl07_av.fits --nside 512 --column 3 \
+            --screen-pc "${{ inputs.screen_pc }}" --out planck_dust_av_rq_n512.json \
+            --mask-run --binding phi/bindings/dust-maske.φ --ci-mode
+          gh release upload irsa.ipac.caltech.edu kernels/dl07_av.fits.sha256 \
+            --repo omegaflow/sources --clobber
