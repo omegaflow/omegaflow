@@ -56,8 +56,12 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Normalengleichung; normiert ≤ 8 % Varianz, Weißrausch-Kontrolle auf demselben
   Grid reproduziert), keine Linie; Station-42-Ton 52,39 mHz = isolierte
   Einzellinie (98,9–100 % Varianz, keine Harmonischen), Identität offen;
-  GWE-ODR-Adresse `GO-X-RSS-1-ODR-V1.0` verifiziert erreichbar (HTTP 200),
-  Cross-Check-Lauf offen.
+  GWE-ODR-Adresse `GO-X-RSS-1-ODR-V1.0` verifiziert erreichbar (HTTP 200).
+  GWE-ODR-Cross-Check gemessen (2026-09-05, `befund-galileo-gwe-odr-banden-check`,
+  gezielte Ein-Pass-Stichprobe 3/241): die 45,75/51,55/47,35-mHz-Linien erscheinen
+  in Trägerfrequenz- und Amplitudenreihe nicht (injektions-kalibriert, nicht blind).
+  Offen (pending): Transfer-Frage (ob resid-Linien überhaupt auf ODR prägen) +
+  Restbestand 238 Dateien/77 Tage.
 - `auftrag-gic-p-wert.md` — GIC: p-Wert nachlegen, dann Mail an
   Wing/Viljanen.
 - `auftrag-korona-aia-fam.md` — Korona: AIA-fam-Zahl, dann Woods.
@@ -150,8 +154,14 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   `befund-galileo-rausch-kurve-epsilon.md`, done): der kohärente Fall ist auf ε
   invers zur Plasma-Erwartung (leise Konjunktion / laut Opposition, mittlere
   ε-Bänder 30–150° n-leer) — die Plasma-Deutung dort `getötet`, der
-  Distanz-/Ära-Confound bleibt. Offen (pending): Mode-2-Station-Tag-Split
-  (1,5-Hz-Fenster gepoolt), Pass-Segmentierung, α–Zeit–Sonnenzyklus-Verwebung. Nebenfund:
+  Distanz-/Ära-Confound bleibt. Mode-2-Station-Tag-Split gemessen
+  (`befund-galileo-mode2-station-split`, done): 1,5-Hz-Wert fragil
+  (All-Lock-Tag-Zählung + Stations-Pooling, Konjunktion-Station-Tag 0,28–0,58 Hz);
+  Pass-Segmentierung gemessen (`befund-galileo-pass-segmentierung`, done):
+  Mode-1-8,2-Hz = Pooling-Artefakt bestätigt, Mode-2-Konjunktion = echte ruhige
+  Pässe (mit kurzen lauten an 43/63). Offen (pending): α–Zeit–Sonnenzyklus-
+  Verwebung, Mode-2-Stärke-Split, Stärke-Zustand je Unter-Arc, detrendete
+  Pass-Metrik, 1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2). Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
