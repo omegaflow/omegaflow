@@ -5,6 +5,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "rpw_efield" => crate::rpw::parse_bin(bytes),
         "goes_xrs" => goes::parse_bin(bytes),
         "intermagnet_dbdt" => intermagnet::parse_bin(bytes),
+        "eve_lines" => eve_lines::parse_bin(bytes),
+        "aia_lines" => aia_lines::parse_bin(bytes),
         "omni2_serie" => omni2::parse_bin(bytes),
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
