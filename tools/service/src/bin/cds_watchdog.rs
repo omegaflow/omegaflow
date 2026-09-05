@@ -3,7 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
 
-const ASSETS: [(&str, &str); 9] = [
+const ASSETS: [(&str, &str); 10] = [
     ("jwst_spectra.bin", "ssd.jpl.nasa.gov"),
     ("spectra.bin", "ssd.jpl.nasa.gov"),
     ("nvss.json", "ssd.jpl.nasa.gov"),
