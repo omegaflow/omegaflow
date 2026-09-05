@@ -1575,6 +1575,23 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Ausgabe /tmp/opencode/disequilibrium_register_verdict_v2.txt. cargo check
   -p omegaflow-measure 0 Warnungen.
 
+
+- Nadel-V-LSST-Erweiterung — TDB+Zeuge (pending, Verdrahtung 2026-09-05):
+  (1) Roemer-Term ergaenzt: je Reihe TDB + n·(Station-Sonne)/c, Cerro Pachon
+  WGS84, real gemessen 9625/9625 Reihen; Term-Budget: Roemer 499,0 s Amplitude,
+  60,1 s/Woche Drift, TAI-UTC 37 s fold-invariant, Diurnal 21 ms, Shapiro 9,85 us.
+  (2) VSX-Zeuge extern verdrahtet (B/vsx 200, 3″-Kreuzmatch, broker-Spalte nie
+  Zeuge), Kegel AGN-dominiert: 0 VSX-Treffer (gemessene Abwesenheit).
+  (3) NEGATIVKONTROLLE FING EINEN ECHTEN FEHLER: lomb_scargle_fap ist NICHT
+  skaleninvariant — FAP 0.00e0 auf jeder Zeile auch bei 6-10σ-achromatischen
+  Injektionen; die frueheren LSST-'0 Kandidaten' sind eine Tor-Grenze, keine
+  Messung. Kriterien-Grenze vor jedem Voll-Lauf: skaleninvariante LS-Normalisierung
+  fixen. (4) cycle_phase_shift_surrogate als getestete Primitive in te.rs gebaut
+  (Nutzung pending, keine erfundene Faltung). (5) Positivkontrolle: leer benannt
+  (AGN-Feld ohne bestaetigte Chromatik-Periodika, wartet auf variablenreichen
+  Kegel). (6) B-Unlock geparkt: Fink-Account/Kafka (fink-broker.org/joining/)
+  oder Rubin-Science-Platform, benannte Kosten, kein Datum.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
