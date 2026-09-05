@@ -1,0 +1,27 @@
+name: chandra-csc-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  chandra-csc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile Chandra CSC 2.1 X-ray catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "IX/70/csc21mas" \
+            --columns 'name:2CXO;ra:RAICRS;dec:DEICRS;z:z;flux:Fluxb' \
+            --skip-null flux \
+            --async 600 --limit 500000 \
+            --out chandra_csc.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: chandra_csc returned void" \
+                 "chandra_csc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

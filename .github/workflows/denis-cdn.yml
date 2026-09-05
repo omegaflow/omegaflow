@@ -1,0 +1,41 @@
+name: denis-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  denis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Chunk-compile denis (16 RA-slices) and upload to CDN
+        run: |
+          mkdir -p kernels
+          for lo in $(seq 0 22.5 337.5); do
+            hi=$(awk "BEGIN{print $lo+22.5}")
+            out="kernels/denis_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/denis/denis" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;imag:Imag;jmag:Jmag;kmag:Kmag' \
+                --skip-null jmag \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/denis_c*.json > kernels/denis.json
+          gh release upload ssd.jpl.nasa.gov kernels/denis.json --clobber --repo omegaflow/sources \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: denis returned void" \
+                 "denis chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

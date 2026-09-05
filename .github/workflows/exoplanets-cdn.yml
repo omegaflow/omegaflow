@@ -1,0 +1,27 @@
+name: exoplanets-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  exoplanets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile exoplanet catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://exoplanetarchive.ipac.caltech.edu/TAP/sync \
+            --table pscomppars \
+            --cols-unquoted \
+            --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade;orbsmax:pl_orbsmax;orbeccen:pl_orbeccen;orbincl:pl_orbincl;orblper:pl_orblper;tranmid:pl_tranmid;orbper:pl_orbper;strad:st_rad' \
+            --skip-null dist \
+            --out exoplanets.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: exoplanets returned void" \
+                 "exoplanets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

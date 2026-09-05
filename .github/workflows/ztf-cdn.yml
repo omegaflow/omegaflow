@@ -1,0 +1,27 @@
+name: ztf-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ztf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile ZTF light curves and upload to CDN
+        run: |
+          curl -sSfL --retry 3 --max-time 300 -o dr3_stars.bin \
+            https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin \
+            && cargo run -p omegaflow-harvest --release --bin ztf_lightcurves_compiler -- \
+              --catalog dr3_stars.bin \
+              --out ztf_lightcurves.bin \
+              --limit 32 \
+              --radius 0.02 \
+              --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: ztf_lightcurves returned void" \
+                 "ztf_lightcurves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

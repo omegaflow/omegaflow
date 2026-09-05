@@ -1,0 +1,24 @@
+name: magnetar-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  magnetar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile sexagesimal catalogs and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 300 -o kernels/tabo1.csv \
+            https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+          cargo run -p omegaflow-harvest --release --bin sexagesimal_compiler -- \
+            --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: magnetar_flat returned void" \
+                 "magnetar_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

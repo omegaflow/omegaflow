@@ -1,0 +1,54 @@
+name: tevcat-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  tevcat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile sexagesimal catalogs and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 300 -o kernels/tevcat2.json \
+            https://tevcat2.tevcat.org/api/sources
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table J/A+A/495/691/bzcat4 \
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z' \
+            --out kernels/blazars_z.json \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: blazars_z returned void" \
+                 "blazars_z compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table J/A+A/612/A1/snrcat \
+            --columns 'name:Source;ra:@8;dec:@9;dist:Dist' \
+            --out kernels/snr_dist.json \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: snr_dist returned void" \
+                 "snr_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table B/psr/psr \
+            --columns 'name:Name;ra:RA2000;dec:DE2000;dist:Dist' \
+            --out kernels/pulsar_dist.json \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: pulsar_dist returned void" \
+                 "pulsar_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          cargo run -p omegaflow-harvest --release --bin sexagesimal_compiler -- \
+            --source tevcat --input kernels/tevcat2.json \
+            --join-z kernels/blazars_z.json --join-dist kernels/snr_dist.json \
+            --join-dist2 kernels/pulsar_dist.json 0.0083 \
+            --out tevcat_flat.json --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: tevcat_flat returned void" \
+                 "tevcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
