@@ -130,6 +130,13 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Normalengleichung; normiert ≤ 8 % Varianz, Weißrausch-Kontrolle auf demselben
   Grid reproduziert), keine Linie; Station-42-Ton 52,39 mHz = isolierte
   Einzellinie (98,9–100 % Varianz, keine Harmonischen), Identität offen;
+  IDENTITÄT GEKLÄRT (2026-09-05): der 52,39-mHz-Ton ist epochal als
+  Galileo-Rotor-Spin bestätigt — die −77000-Rotor-CKs für 1990-12-07..10
+  (ck90341..344 _rtr.bc) messen in Rust 52,39006 mHz (19,0876 s), exakte
+  Übereinstimmung mit dem Ton (Verhältnis 1,000001);
+  `befund-galileo-rotor-spin-epoch-anchor`. Dez-1990 Dual-Spin bestätigt
+  (`befund-galileo-1990-ck-dualspin`). Rotor-CKs als Referenz-Kernel-Assets für
+  die CI/CDN-Manifestation registriert (.github/workflows/gll-ck-cdn.yml).
   GWE-ODR-Adresse `GO-X-RSS-1-ODR-V1.0` verifiziert erreichbar (HTTP 200).
   GWE-ODR-Cross-Check gemessen (2026-09-05, `befund-galileo-gwe-odr-banden-check`,
   gezielte Ein-Pass-Stichprobe 3/241): die 45,75/51,55/47,35-mHz-Linien erscheinen
