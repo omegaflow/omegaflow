@@ -90,7 +90,8 @@ fn main() {
     }
 
     let mut dist_bands: BTreeMap<(i64, i64), Vec<f64>> = BTreeMap::new();
-    let mut sep_bands: BTreeMap<(i64, i64), Vec<f64>> = BTreeMap::new();
+    let mut alpha_bands: BTreeMap<(i64, i64), Vec<f64>> = BTreeMap::new();
+    let mut elong_bands: BTreeMap<(i64, i64), Vec<f64>> = BTreeMap::new();
     let mut mode_days: BTreeMap<i64, usize> = BTreeMap::new();
     let mut mode_nlock: BTreeMap<i64, usize> = BTreeMap::new();
     let mut mode_nsamp: BTreeMap<i64, usize> = BTreeMap::new();
@@ -105,14 +106,26 @@ fn main() {
         let sun = [0.0, 0.0, 0.0];
         let r_probe = norm(sub(p_pos, sun));
         let r_earth = norm(sub(e_pos, sun));
-        let cos_sep = dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30);
-        let sep_deg = cos_sep.clamp(-1.0, 1.0).acos().to_degrees();
+        let e_to_p = sub(p_pos, e_pos);
+        let r_e_p = norm(e_to_p);
+        // alpha = angle at the Sun between the Earth and probe vectors
+        let alpha_deg = (dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30))
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees();
+        // epsilon = solar elongation = angle at the Earth between Sun and probe
+        let elong_deg = (dot(sub(sun, e_pos), e_to_p) / (r_earth * r_e_p).max(1e-30))
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees();
         let au = r_probe / AU;
         let r = rms(vals);
         let db = au.floor() as i64;
-        let sb = (sep_deg / 30.0).floor() as i64;
+        let ab = (alpha_deg / 30.0).floor() as i64;
+        let eb = (elong_deg / 30.0).floor() as i64;
         dist_bands.entry((*mode, db)).or_default().push(r);
-        sep_bands.entry((*mode, sb)).or_default().push(r);
+        alpha_bands.entry((*mode, ab)).or_default().push(r);
+        elong_bands.entry((*mode, eb)).or_default().push(r);
         *mode_days.entry(*mode).or_default() += 1;
         *mode_nlock.entry(*mode).or_default() += n_lock;
         *mode_nsamp.entry(*mode).or_default() += n_total;
@@ -156,13 +169,28 @@ fn main() {
             med = median(v),
         );
     }
-    eprintln!("galileo: per-day resid-RMS by SEP band (deg), mode-split (n >= 10):");
-    for ((mode, band), v) in &sep_bands {
+    eprintln!(
+        "galileo: per-day resid-RMS by alpha band (angle at Sun, deg), mode-split (n >= 10):"
+    );
+    for ((mode, band), v) in &alpha_bands {
         if v.len() < 10 {
             continue;
         }
         eprintln!(
-            "  mode {mode} SEP {lo}-{hi} deg: median resid-RMS {med:.1} Hz ({n} days)",
+            "  mode {mode} alpha {lo}-{hi} deg: median resid-RMS {med:.1} Hz ({n} days)",
+            lo = band * 30,
+            hi = (band + 1) * 30,
+            med = median(v),
+            n = v.len(),
+        );
+    }
+    eprintln!("galileo: per-day resid-RMS by solar elongation band (angle at Earth, deg), mode-split (n >= 10):");
+    for ((mode, band), v) in &elong_bands {
+        if v.len() < 10 {
+            continue;
+        }
+        eprintln!(
+            "  mode {mode} elong {lo}-{hi} deg: median resid-RMS {med:.1} Hz ({n} days)",
             lo = band * 30,
             hi = (band + 1) * 30,
             med = median(v),

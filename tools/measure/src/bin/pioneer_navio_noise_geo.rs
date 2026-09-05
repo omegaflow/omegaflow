@@ -53,8 +53,9 @@ fn run(probe: &str, sc_body: &str) {
                 .push(r[1]);
         }
     }
-    // Compute SEP + heliocentric distance per day, pair with noise
-    let mut rows: Vec<(i64, f64, f64, f64)> = Vec::new();
+    // Compute alpha (angle at Sun) + epsilon (solar elongation, angle at Earth)
+    // + heliocentric distance per day, pair with noise
+    let mut rows: Vec<(i64, f64, f64, f64, f64)> = Vec::new();
     for (day, vals) in &day_noise {
         if vals.len() < 30 {
             continue;
@@ -69,23 +70,38 @@ fn run(probe: &str, sc_body: &str) {
         let sun = [0.0, 0.0, 0.0];
         let r_probe = norm(sub(p_pos, sun));
         let r_earth = norm(sub(e_pos, sun));
-        // SEP = angle at Sun between Earth-probe (r_earth) and probe (r_probe)
-        let cos_sep = dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30);
-        let sep_deg = cos_sep.clamp(-1.0, 1.0).acos().to_degrees();
+        let e_to_p = sub(p_pos, e_pos);
+        let r_e_p = norm(e_to_p);
+        // alpha = angle at the Sun between the Earth and probe vectors
+        let alpha_deg = (dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30))
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees();
+        // epsilon = solar elongation = angle at the Earth between Sun and probe
+        let elong_deg = (dot(sub(sun, e_pos), e_to_p) / (r_earth * r_e_p).max(1e-30))
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees();
         // noise RMS
         let m = vals.iter().sum::<f64>() / vals.len() as f64;
         let rms = (vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64).sqrt();
-        rows.push((*day, r_probe / AU, sep_deg, rms));
+        rows.push((*day, r_probe / AU, alpha_deg, elong_deg, rms));
     }
     rows.sort_by_key(|r| r.0);
-    // Average noise by SEP band and by heliocentric-distance band
-    let mut sep_bands: std::collections::BTreeMap<i64, Vec<f64>> =
+    // Average noise by alpha band, by elongation band, and by heliocentric-distance band
+    let mut alpha_bands: std::collections::BTreeMap<i64, Vec<f64>> =
+        std::collections::BTreeMap::new();
+    let mut elong_bands: std::collections::BTreeMap<i64, Vec<f64>> =
         std::collections::BTreeMap::new();
     let mut dist_bands: std::collections::BTreeMap<i64, Vec<f64>> =
         std::collections::BTreeMap::new();
-    for (_, au, sep, rms) in &rows {
-        sep_bands
-            .entry((*sep as i64 / 10) * 10)
+    for (_, au, alpha, elong, rms) in &rows {
+        alpha_bands
+            .entry((*alpha as i64 / 10) * 10)
+            .or_default()
+            .push(*rms);
+        elong_bands
+            .entry((*elong as i64 / 10) * 10)
             .or_default()
             .push(*rms);
         dist_bands
@@ -94,10 +110,10 @@ fn run(probe: &str, sc_body: &str) {
             .push(*rms);
     }
     eprintln!(
-        "{probe}: {n} days. Mean per-day resid-RMS by SEP band (deg):",
+        "{probe}: {n} days. Mean per-day resid-RMS by alpha band (angle at Sun, deg):",
         n = rows.len()
     );
-    for (band, v) in &sep_bands {
+    for (band, v) in &alpha_bands {
         if v.len() < 10 {
             continue;
         }
@@ -107,7 +123,24 @@ fn run(probe: &str, sc_body: &str) {
             s[s.len() / 2]
         };
         eprintln!(
-            "  SEP {band_lo}-{band_hi}+ deg: median resid-RMS {med:.0} Hz ({len} days)",
+            "  alpha {band_lo}-{band_hi}+ deg: median resid-RMS {med:.0} Hz ({len} days)",
+            band_lo = band,
+            band_hi = band,
+            len = v.len()
+        );
+    }
+    eprintln!("{probe}: Mean per-day resid-RMS by solar elongation band (angle at Earth, deg):");
+    for (band, v) in &elong_bands {
+        if v.len() < 10 {
+            continue;
+        }
+        let med = {
+            let mut s = v.clone();
+            s.sort_by(f64::total_cmp);
+            s[s.len() / 2]
+        };
+        eprintln!(
+            "  elong {band_lo}-{band_hi}+ deg: median resid-RMS {med:.0} Hz ({len} days)",
             band_lo = band,
             band_hi = band,
             len = v.len()
