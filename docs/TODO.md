@@ -1456,6 +1456,21 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   hip2019_icrs.csv) + 2019er-Wiring (Schema ohne RA/DEC/MJD, DriftBW=0,0005 MHz
   ist Such-Konstante, keine Linienbreite — als bin_width waere es Fabricat).
 
+
+- Nadel-XIII-XUV-Zensus + Nadel-V-LSST-Scan (2026-09-05, externe Rueckmeldung +
+  Broker-Eskalation): (1) co_rhk_witness_seed jetzt 77 Zeugen-Zeilen (log R'HK
+  10 Wirte, L_X 3, P_rot 13, C/O); XUV-Regression r=-0.609 P=0.0724 — Hits sitzen
+  auf ruhigeren Sternen (Gegenteil der Photochemie-Erwartung), alle 16 Hits
+  ueberleben, kein Hit bewegt; voller 48er-Zensus (30 detection + 18 non_detection
+  als 0 honored, jwst_host_census.json). (2) LSST-Scan: Fink/LSST-Broker anonym
+  erreichbar (api.lsst.fink-portal.org 200, echte g/r/i/z-Lichtkurven), --fink in
+  lsst_anomaly_probe; Live-Lauf: achromatischer Dip aber periodisch (FAP 0) ->
+  still, 0 Kandidaten; Significance-Gate-Bug korrigiert (negative Dip-Signifikanz
+  wurde nie >= +DIP_SIG, achromatischer Schnitt war inaktiv). Lasair-LSST token-
+  gated (Selbstregistrierung moeglich, pending). VPN (Proton) noetig fuer lasair,
+  Fink ohne VPN erreichbar. Photochemie-Re-Erklaerung der SO2/CO2-Hits bleibt
+  pending (kein XUV-Kanal im thermochem, 3 Wirte tragen L_X).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
