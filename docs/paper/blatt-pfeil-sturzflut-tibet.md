@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: ae9fa0c50ddfeb97b6a12379decc682671af080e1f832e0c726d3a5eba55f144
+  sha256: 7701cf4f409964e82b0bdf391ed1026d6c93601099576896d9a4ffb2687bb231
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -22,6 +22,11 @@
 > Niederschlag→Pegel; die echte Niederschlag→Pegel-Richtung ist bei Lag 24
 > unter der Schwelle und fällt unter Konditionierung. Verifikation und
 > Konditionierungslauf: `docs/befund/befund-grat-trishuli-konditionierung.md`.
+>
+> Dasselbe Spiegelbild tragen die räumlichen Spalten in §3.3: der dort
+> gedruckte „Rasuwa → Gyirong (Lag 12–24)“ ist **Gyirong → Rasuwa**
+> (Oberlauf/Tibet als Quelle → Unterlauf/Nepal) — verifiziert mit
+> `cross_te_screen` und im Kollab-Screening §3.1 (identische Zahlen).
 
 ---
 
@@ -35,10 +40,10 @@ Ereignisses: Zeit (JD TDB), Ort (ICRS geozentrisch) und Kraft (force_type).
 
 **Befunde (gemessen, nicht behauptet):**
 
-1. **Niederschlags-Ausbreitungspfeil Rasuwa → Gyirong** bei Lag 12–24 h —
-   die Monsun-Zelle wandert vom Süden (Nepal) nordwärts in den Himalaya;
-   sie erreicht das untere Becken vor der tibetischen Seite. Das ist das
-   Gegenteil der naiven Erwartung. (mathematikerin, `te.rs`)
+1. **Niederschlags-Ausbreitungspfeil Gyirong → Rasuwa** bei Lag 12–24 h —
+   der Niederschlag am Oberlauf (Tibet) führt den am Unterlauf (Nepal):
+   die erwartete obere-zu-untere Becken-Entwässerung. (mathematikerin,
+   `te.rs`)
 2. **Der Auslöser ist ein gravitativer Kollaps, kein Erdbeben** — gemessen:
    ein einziges Ereignis (`us7000tbwb`), Typ `landslide`, Magnitude
    **5.2 `ms_vx`**, **kein Moment-Tensor**; M5.2/02:52:10 UTC, lat 28.271/
@@ -100,7 +105,7 @@ ICRS-Umrechnung: WGS84 + GMST-Erdrotation. Das Prezession/Nutations-Delta
 
 | # | potentieller Treiber | Status | Messung |
 |---|----------------------|--------|---------|
-| 1 | Niederschlag (Monsunregen) | **gemessen** | Pfeil Rasuwa→Gyirong, Lag 12–24 h |
+| 1 | Niederschlag (Monsunregen) | **gemessen** | Pfeil Gyirong→Rasuwa, Lag 12–24 h |
 | 2 | Temperatur / Schmelzwasser (thermisch) | **gemessen** | beidseitig, kein sauberer Pfeil (geteilter Tagesgang) |
 | 3 | Eis-/Fels-Kollaps (Lirung-Gletscher) | **gemessen** | USGS `us7000tbwb` `landslide`, 5.2 `ms_vx`, kein Moment-Tensor — gravitativer Quellfeld |
 | 4 | Tektonisches Erdbeben | **kein Befund** | kein separates Beben im Fenster; „M4.4" = vorläufige Magnitude desselben Ereignisses |
@@ -187,16 +192,16 @@ Vor-Baseline für die Seen).
 `te_pair_probe`, Paar Oberlauf Gyirong ↔ Unterlauf Rasuwa, n = 240,
 2026-08-18…27:
 
-    lag   TE(Gyirong→Rasuwa) schwelle  TE(Rasuwa→Gyirong) schwelle  Befund
+    lag   TE(Rasuwa→Gyirong) schwelle  TE(Gyirong→Rasuwa) schwelle  Befund
     1     8.09e-2    1.13e-1   6.90e-2    1.05e-1   kein Befund
     3     8.92e-2    1.31e-1   1.26e-1    1.39e-1   kein Befund
     6     1.06e-1    1.08e-1   9.81e-2    1.40e-1   kein Befund
-    12    1.10e-1    1.30e-1   1.62e-1    1.33e-1   Rasuwa → Gyirong
-    24    1.09e-1    1.11e-1   1.51e-1    1.31e-1   Rasuwa → Gyirong
+    12    1.10e-1    1.30e-1   1.62e-1    1.33e-1   Gyirong → Rasuwa
+    24    1.09e-1    1.11e-1   1.51e-1    1.31e-1   Gyirong → Rasuwa
 
-**Verdikt: Pfeil Rasuwa → Gyirong bei Lag 12–24 h.** Der Niederschlag am
-Unterlauf (Nepal) führt den am Oberlauf (Tibet). Physikalisch stimmig: die
-Monsun-Zelle wandert vom Süden (Nepal-Ebene) nach Norden in den Himalaya.
+**Verdikt: Pfeil Gyirong → Rasuwa bei Lag 12–24 h.** Der Niederschlag am
+Oberlauf (Tibet) führt den am Unterlauf (Nepal) — die erwartete
+Becken-Entwässerung von oben nach unten (Oberlauf/Tibet → Unterlauf/Nepal).
 Die Maschine misst, welcher Pfeil schlägt.
 
 **Temperatur-Paar (thermischer Treiber):** beidseitig signifikant bei allen
@@ -465,8 +470,9 @@ Das Ereignis ist gemessen in Zeit (JD TDB), Ort (ICRS geozentrisch) und
 Kraft (`gravitation`). Die Maschine misst, welcher Pfeil schlägt:
 
 - **Ein gerichteter, signifikanter Pfeil** existiert im Becken:
-  **Niederschlag Rasuwa → Gyirong (Lag 12–24 h)** — der Monsun wandert
-  süd→nord, entgegen der naiven Erwartung.
+  **Niederschlag Gyirong → Rasuwa (Lag 12–24 h)** — der Niederschlag am
+  Oberlauf (Tibet) führt den am Unterlauf (Nepal): die erwartete
+  obere-zu-untere Becken-Entwässerung.
 - **Am co-lokalen Gauge: kein Vorwärts-Pfeil (korrigiert)** — die
   registrierte „Niederschlag → Pegel 0.265 bei Lag 24 h" war Pegel→Regen
   (Richtungsfehler aus `te_pair_probe`-gespiegelten Spalten); die echte

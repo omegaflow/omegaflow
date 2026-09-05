@@ -2,7 +2,7 @@
   title: Auftrag — Grat-Reste: KDE-h-Sensitivität und räumliche Richtungs-Verifikation
   class: auftrag
   date: 2026-09-05
-  sha256: c59e3a9f05667cb2ef0cbb35ad6981508e074d3a1a0c849fe022e5d1fb21b81c
+  sha256: c84f461d92f848f1e2ba4873a7c82bd4554c40a398ec7ebf6e2061a38b414121
   status: pending
   see-also: docs/befund/befund-grat-trishuli-konditionierung.md docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/paper/blatt-pfeil-sturzflut-tibet.md
 -->
@@ -33,7 +33,7 @@ Bandbreiten-Faktor freigibt, oder einen eigenen Sensitivitäts-Lauf —
 ein scoped Code-Nachfolger, `pending`. Die Zelle bleibt `pending`, 0
 honored.
 
-### (b) §3.3-räumliche und §3.7-Bahrabise Richtungs-Verifikation — `pending`
+### (b) §3.3-räumliche und §3.7-Bahrabise Richtungs-Verifikation — GELAUFEN (2026-09-05)
 
 Die räumlichen Rasuwa→Gyirong-Pfeile (§3.3) und die Bahrabise-Lesungen
 (§3.7, n = 169) des Quell-Blattes
@@ -44,6 +44,17 @@ zu prüfen, bevor es Vertrauen trägt — die co-lokale Umkehr der
 0.265 (`docs/befund/befund-grat-trishuli-konditionierung.md`) ist
 der Beleg, dass die Spiegelung an den Zahlen wirkt. Die Prüfung ist
 ein Messlauf, `pending`.
+
+**GELAUFEN (2026-09-05):** Der Messlauf steht — beide Abschnitte sind
+gespiegelt. §3.3: der gedruckte „Rasuwa → Gyirong (Lag 12–24)" ist
+physikalisch **Gyirong → Rasuwa** (Oberlauf/Tibet → Unterlauf/Nepal,
+die erwartete Becken-Entwässerung), verifiziert mit `cross_te_screen`
+und quergeprüft gegen das Kollab-Screening §3.1 (identische Zahlen);
+der `te_pair_probe`-Wurzelfix (a→b misst jetzt a→b) ist committet. Die
+§3.3-Richtungskorrektur an den drei betroffenen Dokumenten
+(`blatt-pfeil-sturzflut-tibet.md`, `causal-arrow-preregistration.md`,
+`blatt-der-grat.md`) ist angewandt. Zelle (b) ist damit **erfüllt**;
+die Zelle (a) KDE-h bleibt `pending` (braucht Code).
 
 ## Kernregel (0 honored)
 
