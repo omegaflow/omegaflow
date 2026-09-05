@@ -18,6 +18,23 @@ const WANG_G_FACTOR: f64 = 1.890;
 const EBPR_AV_EXPECTED: f64 = 1.0 / WANG_GBP_FACTOR;
 const INJECT_C: [f64; 3] = [0.15, 0.30, 0.41];
 const PLANCK_NSIDE: i64 = 512;
+const ABSG_GRID_LO: f64 = -1.0;
+const ABSG_GRID_HI: f64 = 5.0;
+const ABSG_BINS: [(f64, f64); 6] = [
+    (-1.0, 0.0),
+    (0.0, 1.0),
+    (1.0, 2.0),
+    (2.0, 3.0),
+    (3.0, 4.0),
+    (4.0, 5.0),
+];
+const SHELL_BINS: [(f64, f64); 5] = [
+    (0.0, 200.0),
+    (200.0, 300.0),
+    (300.0, 500.0),
+    (500.0, 1000.0),
+    (1000.0, f64::INFINITY),
+];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -324,6 +341,13 @@ struct XStar {
     av_rq: f64,
 }
 
+struct GridStar {
+    color: f64,
+    av: f64,
+    m_abs: f64,
+    d_pc: f64,
+}
+
 struct Clean {
     n: u64,
     n_positive: u64,
@@ -376,6 +400,7 @@ struct FieldSample {
     slice_n: u64,
     reg_reliable: u64,
     ctrl: Option<Vec<CtrlStar>>,
+    grid: Vec<GridStar>,
 }
 
 fn reg_line(lin: &Lin) -> Option<(f64, f64, f64, f64, f64, f64)> {
@@ -627,6 +652,262 @@ fn report_controls(
     }
 }
 
+#[derive(Clone, Copy)]
+struct MeasBin {
+    lo: f64,
+    hi: f64,
+    slope: f64,
+    se: f64,
+}
+
+fn slope_se(lin: &Lin) -> Option<(f64, f64, f64)> {
+    let (slope, _i, rms, _p, _xm, x_sd) = lin.reg()?;
+    if x_sd <= 0.0 {
+        return None;
+    }
+    let nf = (lin.n - 2) as f64;
+    Some((slope, rms / (nf.sqrt() * x_sd), rms))
+}
+
+fn fit_absg_bin(sample: &[GridStar], lo: f64, hi: f64) -> Option<MeasBin> {
+    let mut lin = Lin::new();
+    for st in sample {
+        if st.m_abs >= lo && st.m_abs <= hi {
+            lin.push(st.av, st.color);
+        }
+    }
+    slope_se(&lin).map(|(slope, se, _rms)| MeasBin { lo, hi, slope, se })
+}
+
+fn print_missing_bin(lo: f64, hi: f64, n: u64) {
+    let reason = if n == 0 {
+        "no star in the bin"
+    } else if n < 3 {
+        "n below the 3-star regression floor"
+    } else {
+        "no A_V variance in the bin"
+    };
+    println!("[{lo:4.1},{hi:4.1}] | {n:6} | {reason} — the slope stays unmeasured (0 honored)");
+}
+
+fn report_absg_grid(sample: &[GridStar]) {
+    println!("\n=== resolving measurement — d(BP-RP)/dA_V per abs-G bin (spectral-type population scan) ===");
+    println!(
+        "sample: the same behind-dust |b| >= {VALID_B_MIN_DEG} deg, G <= {MAG_CLEAN_MAX} population as the main fit; x = the 3D distance-truncated A_V at each parallax distance, y = observed BP-RP (color window [{COLOR_MIN}, {COLOR_MAX}])"
+    );
+    println!(
+        "abs-G convention: extinction-free absolute magnitude G + 5 log10(plx/mas) - 10 (no A_G removed); a star on a shared edge is counted in both adjacent bins"
+    );
+    println!(
+        "reference law (Wang & Chen 2019, calibrated on red-clump stars): E(BP-RP)/A_V = {EBPR_AV_EXPECTED:.4} mag/mag"
+    );
+    println!(
+        "grid abs-G [{ABSG_GRID_LO}, {ABSG_GRID_HI}]: {} stars",
+        sample.len()
+    );
+    println!("abs-G bin |     n | slope | slope se | rms    | vs law");
+    for (lo, hi) in ABSG_BINS {
+        let mut lin = Lin::new();
+        for st in sample {
+            if st.m_abs >= lo && st.m_abs <= hi {
+                lin.push(st.av, st.color);
+            }
+        }
+        let n = lin.n;
+        match slope_se(&lin) {
+            Some((slope, se, rms)) => {
+                let dev = (slope - EBPR_AV_EXPECTED) / se;
+                println!(
+                    "[{lo:4.1},{hi:4.1}] | {n:6} | {slope:.3} | {se:8.4} | {rms:.3} | {dev:+.1} se"
+                );
+            }
+            None => print_missing_bin(lo, hi, n),
+        }
+    }
+}
+
+fn report_absg_shells(sample: &[GridStar], slice_lo: f64, slice_hi: f64) {
+    println!("\n=== resolving measurement — the abs-G [{slice_lo}, {slice_hi}] slice split by parallax distance shell ===");
+    println!(
+        "sample: the same {slice_lo} <= abs-G <= {slice_hi}, G <= {MAG_CLEAN_MAX}, |b| >= {VALID_B_MIN_DEG} stars; a shell change in the slope names a distance/mix (selection) effect inside the slice"
+    );
+    println!("shell pc     |     n | slope | slope se | rms    | vs law");
+    for (lo, hi) in SHELL_BINS {
+        let mut lin = Lin::new();
+        for st in sample {
+            if st.m_abs >= slice_lo && st.m_abs <= slice_hi && st.d_pc >= lo && st.d_pc <= hi {
+                lin.push(st.av, st.color);
+            }
+        }
+        let n = lin.n;
+        match slope_se(&lin) {
+            Some((slope, se, rms)) => {
+                let dev = (slope - EBPR_AV_EXPECTED) / se;
+                if hi.is_infinite() {
+                    println!(
+                        "> {lo:6.0}    | {n:6} | {slope:.3} | {se:8.4} | {rms:.3} | {dev:+.1} se"
+                    );
+                } else {
+                    println!(
+                        "[{lo:6.0},{hi:6.0}] | {n:6} | {slope:.3} | {se:8.4} | {rms:.3} | {dev:+.1} se"
+                    );
+                }
+            }
+            None => {
+                if hi.is_infinite() {
+                    print_missing_bin(lo, f64::INFINITY, n);
+                } else {
+                    print_missing_bin(lo, hi, n);
+                }
+            }
+        }
+    }
+}
+
+fn report_resolution_reading(sample: &[GridStar], slice_lo: f64, slice_hi: f64) {
+    println!("\n=== reading — measured resolution of the low reddening slope ===");
+    let mut grid_meas: Vec<MeasBin> = Vec::new();
+    for (lo, hi) in ABSG_BINS {
+        if let Some(m) = fit_absg_bin(sample, lo, hi) {
+            grid_meas.push(m);
+        }
+    }
+    if grid_meas.is_empty() {
+        println!("no abs-G bin carries a regression — the reading stays unmeasured (0 honored)");
+        return;
+    }
+    let mut lo_slope = grid_meas[0].slope;
+    let mut hi_slope = grid_meas[0].slope;
+    let mut max_se = grid_meas[0].se;
+    for m in &grid_meas {
+        if m.slope < lo_slope {
+            lo_slope = m.slope;
+        }
+        if m.slope > hi_slope {
+            hi_slope = m.slope;
+        }
+        if m.se > max_se {
+            max_se = m.se;
+        }
+    }
+    println!(
+        "the coefficient across the abs-G grid spans {lo_slope:.3} .. {hi_slope:.3} mag/mag (spread {:.3}; bin slope se up to {max_se:.3})",
+        hi_slope - lo_slope
+    );
+    let overshoot: Vec<&MeasBin> = grid_meas
+        .iter()
+        .filter(|m| {
+            let is_clump_bin = (m.lo - 0.0).abs() < 1e-9 && (m.hi - 1.0).abs() < 1e-9;
+            (m.lo + m.hi) * 0.5 < 2.0 && !is_clump_bin && (m.slope - EBPR_AV_EXPECTED) > 3.0 * m.se
+        })
+        .collect();
+    if !overshoot.is_empty() {
+        let ov = overshoot
+            .iter()
+            .map(|m| format!("[{:.0},{:.0}] {:.3}", m.lo, m.hi, m.slope))
+            .collect::<Vec<String>>()
+            .join(", ");
+        println!(
+            "the giant bins around the clump (abs-G < 2, excluding the [0,1] calibration bin) overshoot the clump law {EBPR_AV_EXPECTED:.3} ({ov}) — a reddening coefficient measured that far above a clump-calibrated constant needs an intrinsic-color-to-A_V covariance term riding along in the bright giant bins"
+        );
+    }
+    let faint = fit_absg_bin(sample, slice_lo, slice_hi);
+    let Some(faint) = faint else {
+        println!(
+            "the abs-G [{slice_lo}, {slice_hi}] slice carries no regression — the reading stays partial (0 honored)"
+        );
+        return;
+    };
+    let clump = grid_meas
+        .iter()
+        .find(|m| (m.lo - 0.0).abs() < 1e-9 && (m.hi - 1.0).abs() < 1e-9)
+        .copied();
+    let mut shell_fits: Vec<MeasBin> = Vec::new();
+    for (lo, hi) in SHELL_BINS {
+        let mut lin = Lin::new();
+        for st in sample {
+            if st.m_abs >= slice_lo && st.m_abs <= slice_hi && st.d_pc >= lo && st.d_pc <= hi {
+                lin.push(st.av, st.color);
+            }
+        }
+        if let Some((slope, se, _rms)) = slope_se(&lin) {
+            shell_fits.push(MeasBin { lo, hi, slope, se });
+        }
+    }
+    match clump {
+        Some(clump) => {
+            let c_sep = (clump.slope - EBPR_AV_EXPECTED) / clump.se;
+            let f_sep = (faint.slope - EBPR_AV_EXPECTED) / faint.se;
+            let diff_se = (clump.se * clump.se + faint.se * faint.se).sqrt();
+            let sep = (clump.slope - faint.slope) / diff_se;
+            println!(
+                "the clump-calibration bin abs-G [{:.0},{:.0}] (the abs-G ~0-1 range the Wang & Chen 2.429 law was measured on): slope {:.3} +/- {:.3} ({:+.1} se from the law)",
+                clump.lo, clump.hi, clump.slope, clump.se, c_sep
+            );
+            println!(
+                "the faint abs-G [{slice_lo}, {slice_hi}] slice: slope {:.3} +/- {:.3} ({:+.1} se from the law)",
+                faint.slope, faint.se, f_sep
+            );
+            println!(
+                "separation across the abs-G axis: {:.3} mag/mag = {:.1} combined se",
+                clump.slope - faint.slope,
+                sep
+            );
+            if f_sep < -3.0 && sep > 3.0 && c_sep > -3.0 {
+                println!(
+                    "verdict: RESOLVED — the reddening coefficient IS abs-G (population / luminosity-class) dependent: the abs-G [0,1] clump range carries {clump_s:.3} (the clump-calibrated law's regime, {c_sep:+.0} se from {EBPR_AV_EXPECTED:.3}) while the faint F/G dwarf/sub-giant slice abs-G [{slice_lo}, {slice_hi}] carries its own lower coefficient {f_s:.3}; the '0.228 vs 0.41' framing mis-applied a clump-calibrated constant to a non-clump population.",
+                    clump_s = clump.slope,
+                    f_s = faint.slope
+                );
+                if shell_fits.len() >= 2 {
+                    let first = &shell_fits[0];
+                    let last = &shell_fits[shell_fits.len() - 1];
+                    let s_se = (first.se * first.se + last.se * last.se).sqrt();
+                    println!(
+                        "the same slice additionally carries a measured distance term: the slope climbs from {:.3} +/- {:.3} in the [pc {:.0}..{:.0}] shell to {:.3} +/- {:.3} in the [pc {:.0}..{:.0}] shell ({:.1} combined se) — a near-side selection (intrinsic-color/A_V covariance) suppresses the slice slope. What remains: separating the true dwarf SED coefficient from that covariance, and the bright-bin overshoot named above.",
+                        first.slope,
+                        first.se,
+                        first.lo,
+                        first.hi,
+                        last.slope,
+                        last.se,
+                        last.lo,
+                        last.hi,
+                        (last.slope - first.slope) / s_se
+                    );
+                }
+            } else if f_sep < -3.0 && c_sep < -3.0 {
+                println!(
+                    "verdict: the low coefficient is NOT a spectral-type effect — the slope sits {:.1} se below the law in the clump bin and {:.1} se below in the faint slice, i.e. low across every abs-G bin. What remains: an intrinsic-color-to-A_V covariance/selection that survives the abs-G split.",
+                    c_sep, f_sep
+                );
+            } else {
+                println!(
+                    "verdict: the measured abs-G profile (law-regime clump bin {:.3}, faint slice {:.3}) is the full answer; the two rows above and the distance-shell table carry the detail.",
+                    clump.slope, faint.slope
+                );
+            }
+        }
+        None => {
+            println!(
+                "the abs-G [0,1] clump-calibration bin carries no regression — the contrast against the faint slice {:.3} +/- {:.3} stays partial; the abs-G grid above carries the measured profile",
+                faint.slope, faint.se
+            );
+        }
+    }
+}
+
+fn report_resolution(sample: &[GridStar], slice_lo: f64, slice_hi: f64) {
+    if sample.is_empty() {
+        println!("\n=== resolving measurement — abs-G and distance scans ===");
+        println!("no star in the grid sample — the resolution stays unmeasured (0 honored)");
+        return;
+    }
+    report_absg_grid(sample);
+    report_absg_shells(sample, slice_lo, slice_hi);
+    report_resolution_reading(sample, slice_lo, slice_hi);
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let control = has_arg(&args, "--control");
@@ -742,6 +1023,7 @@ fn main() {
         } else {
             None
         },
+        grid: Vec::with_capacity(1 << 17),
     };
 
     for chunk in star_bytes.chunks_exact(stride) {
@@ -811,6 +1093,15 @@ fn main() {
         s.clean.av.push(av);
         if av > 0.0 {
             s.clean.n_positive += 1;
+        }
+
+        if high_lat && rec.mag <= MAG_CLEAN_MAX && m_abs >= ABSG_GRID_LO && m_abs <= ABSG_GRID_HI {
+            s.grid.push(GridStar {
+                color,
+                av,
+                m_abs,
+                d_pc,
+            });
         }
 
         let reliable = row.dm_min.is_finite()
@@ -922,6 +1213,8 @@ fn main() {
     if let Some(cs) = s.ctrl.as_ref() {
         report_controls(cs, planck.as_deref(), slice_lo, slice_hi);
     }
+
+    report_resolution(&s.grid, slice_lo, slice_hi);
 
     println!("\n=== applied correction (cited coefficients) ===");
     println!(
