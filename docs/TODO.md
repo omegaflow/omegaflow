@@ -118,6 +118,11 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   über das Verzeichnis-Listing (Bodengrund), nicht den INDEX; GO-SS ⊆ GO-SUN
   (globaler Dedup). Realer Bestand ~138 TDF-Dateien, nicht 192. Der
   Befund-`192`-Wert war der stale INDEX, keine Platten-Wahrheit.
+  Rausch-Kurve gezeichnet (2026-09-05, `befund-galileo-rausch-kurve.md`):
+  Mode-Split gemessen — Mode 1 flach (Selbst-Rauschen), Mode 2/3 SEP-steil
+  (28×/12×, Plasma); Distanz-Achse n-leer (nur 5–6 AU beprobt, 0–2 AU 4–8
+  Tage); ruhiges Fenster = Mode 2, SEP 150–180°, 1,5 Hz. `galileo_daily`-
+  Ephemeride liegt nur lokal (CDN-Manifestation offen).
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
