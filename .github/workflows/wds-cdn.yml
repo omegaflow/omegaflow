@@ -1,0 +1,41 @@
+name: wds-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  wds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Chunk-compile wds (8 RA-slices) and upload to CDN
+        run: |
+          mkdir -p kernels
+          for lo in $(seq 0 45 315); do
+            hi=$(awk "BEGIN{print $lo+45}")
+            out="kernels/wds_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/wds/wds" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2;sep:sep1' \
+                --skip-null mag1 \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/wds_c*.json > kernels/wds.json
+          gh release upload ssd.jpl.nasa.gov kernels/wds.json --clobber --repo omegaflow/sources \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: wds returned void" \
+                 "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

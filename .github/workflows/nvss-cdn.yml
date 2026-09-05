@@ -1,0 +1,30 @@
+name: nvss-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nvss:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile NVSS 1.4 GHz radio catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VIII/65/nvss" \
+            --columns 'name:NVSS;ra:RAJ2000;dec:DEJ2000;flux:S1.4' \
+            --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' \
+            --xmatch-radius 10 \
+            --skip-null flux \
+            --skip-null z \
+            --async 600 --limit 2000000 \
+            --out nvss.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: nvss returned void" \
+                 "nvss compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

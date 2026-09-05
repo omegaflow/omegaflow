@@ -1,0 +1,26 @@
+name: cometels-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cometels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile MPC cometels catalog and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/cometels.json.gz \
+            https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
+          cargo run -p omegaflow-harvest --release --bin cometels_compiler -- \
+            --input kernels/cometels.json.gz \
+            --out cometels_flat.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: cometels_flat returned void" \
+                 "cometels_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
