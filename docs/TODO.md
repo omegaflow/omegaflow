@@ -31,10 +31,13 @@ Pflicht vor jedem Blatt (blätter-übergreifend, siehe Nadel Ⅲ-Abschnitt):
 Mehrfachvergleichskorrektur über alle getesteten Paare, Lag-Sweep
 (Lag 0 ist kein Sweep), KDE-Bandbreiten-Sensitivität (h, Faktor 2),
 Kontrollrichtung des gemeinsamen Treibers, bedingte Multi-Force-TE
-(pending-Instrument). Kein Blatt ohne diese vier — eine halbe Messung
-ist kein Befund.
+(pending-Instrument), Abzugsliste vorab gebunden (welcher Treiber,
+welches Modell, welche Version — vor dem Rest; der Rest ist Boden, kein
+Verdikt; Boden → Verdikt nur über den Doppel-Test fam + treiberfrei;
+nicht messbar = pending, nie 0). Kein Blatt ohne diese fünf — eine
+halbe Messung ist kein Befund.
 
-## Nadel-V-LSST-Erweiterung — TDB+Zeuge (pending, Verdrahtung 2026-09-05)
+## Nadel-V-LSST-Erweiterung — TDB+Zeuge (pending: Lasair-Token, Positivkegel; Verdrahtung 2026-09-05)
 
 - **Rømer-Lichtzeit in den Fold-Pfad verdrahtet** (lsst_anomaly_probe):
   MJD/TAI → TDB (Uhr-Skala) → + n̂·(Station−Sonne)/c je Reihe. Real gemessen
@@ -43,18 +46,48 @@ ist kein Befund.
   Budget gemessen: Rømer-Amplitude 499,0 s, Erddrift 60,1 s/Woche (= 3,0
   Zyklen einer 20-s-Periode, 0,83 % einer 2-h-Periode), Diurnal 21,28 ms,
   Shapiro-Koeffizient 2GM/c³ = 9,85 µs (nur limb-nahe ~59 µs; Nachthimmels-
-  Elongationen sub-µs). pending: die Zwei-Proben-Konsolidierung der FAP-Frage
-  (nächster Punkt) vor dem ersten Voll-Lauf als Kriterien-Grenze.
-- **FAP-Gate-Befund (gemessen, nicht angenommen):** `lomb_scargle_fap`
-  skaliert ~ n/σ² (nicht skaleninvariant) — auf dem realen Kegel steht in
-  JEDER Zeile FAP 0.00e0, auch bei echten achromatischen 6–10-σ-Dips
-  (FAP-Tor liest „periodisch"); die Negativkontrolle (8σ-achromatische
-  Injektion auf einen realen Objektkegel, ra 148.8746 dec 2.5208) wird vom
-  Dip-/Achromatie-Tor gemessen (i −6,1σ, z −5,9σ, ratio 0,93), das
-  aperiodische FAP-Tor öffnet nicht. Fix (skaleninvariante LS-Normalisierung,
-  ein Pfad, beide lsst-Proben) pending — bis dahin ist die „0-Kandidaten"-
-  Stille der LSST-Scans eine Tor-Grenze, keine Messung. Beide Kontrollen
-  gelaufen; die Negativkontrolle benennt die Lücke (0 honored).
+  Elongationen sub-µs). Konsolidiert: die Zwei-Proben-FAP-Konsolidierung ist
+  unten geschlossen (der Kriterien-Posten ist kein offenes Tor mehr).
+- **FAP-Gate-Fix GESCHLOSSEN (gemessen, 2026-09-05):** die Wurzel der
+  Skalenabhängigkeit in `lomb_scargle_fap` ist benannt und behoben: die
+  Periodogramm-Leistung trug x² im Nenner (`den = Σ x² sin²`), dadurch skaliert
+  die Teststatistik ~ n/σ² (Amplituden-skalen-gebunden) — leise fraktionelle
+  Photometrie (σ ~ 0.02) las FAP 0.00e0 auf JEDER Zeile (auch auf echten
+  6–10-σ-achromatischen Dips), das aperiodische Tor war zu. Fix: Standard-
+  Normalisierung (varianz-normiert, beide Quadraturterme, τ über
+  tan(2ωτ)=Σsin2ωt/Σcos2ωt) — amplitudeninvariant. Gemessen an drei
+  Dekaden weißem Rauschen (sd 0.02/3/30): FAP 9.52e-1 auf allen drei Skalen
+  (Spread 1.6e-8 = f32-Rundung). Negativkontrolle auf dem realen DDF-Kegel
+  (ra 148.8746 dec 2.5208) jetzt VOLL durchs Tor: 8σ-Injektion misst
+  i −6.1σ/z −5.9σ ratio 0.93 achromatisch, FAP 3.74e-2 ≥ 0.01 → Kandidat
+  gefunden; 6σ → −4.2/−4.2 FAP 1.61e-2, 10σ → −7.8/−7.4 FAP 7.48e-2.
+  Periodisch-Natur-Positivkontrolle: echte 2-h-Sinusoid mit 8σ-achromatischem
+  Dip bleibt vom FAP-Tor ausgeschlossen (FAP 3.79e-4 < 0.01, 0 Kandidaten) —
+  das Tor trennt jetzt. Auf dem unverseuchten Kegel: 10/26 Objekte lesen
+  periodisch (FAP 2.45e-9…7.08e-3) und bleiben ausgeschlossen, 9 aperiodische
+  achromatische Dip-Kandidaten erscheinen als pre-exclusion und werden alle
+  als katalogisierte natürliche Dimmer (Fink-Klasse 11/13/22) aussortiert —
+  0 unklassifiziert post-exclusion, aber jetzt durch offene Tore gemessen,
+  keine geschlossene Tor-Stille mehr. Ein Pfad, alle drei Kopien (beide
+  lsst-Proben + ztf_anomaly_probe, byte-identischer Defekt). Folgewirkung:
+  lsst_color_coupling liest `is_periodic = FAP < Tor` — unter dem alten
+  Skalen-Bug war JEDE Reihe "periodisch" (FAP 0), die gemessenen
+  Farbe-Helligkeits-Kopplungs-Zahlen (12 Kandidaten, fam 4.49e-1) stammen aus
+  dieser Alles-periodisch-Übermenge; die periodische Heimschicht selektiert
+  jetzt echt (FAP < 0.01), ein Neu-Lauf auf dem Kegel ist pending.
+- **Lasair-LSST-Quelle verdrahtet (bereit für den Token):** `--lasair-ra/
+  --lasair-dec/--lasair-radius [--lasair-max]` in lsst_anomaly_probe. Endpunkte
+  und Spalten gemessen (lasair-lsst.readthedocs.io REST-API + lsst-uk/
+  lasair-examples-Notebooks): Host api.lasair.lsst.ac.uk/api, `/api/cone/`
+  (ra/dec/radius/requestType) → [{object, separation}], `/api/object/`
+  (objectId) → diaSourcesList mit band/midpointMjdTai/psfFlux (MJD/TAI, gleiche
+  TDB-Faltebene wie Fink). Token-Schlüssel LASAIR_LSST_TOKEN in .secrets.local
+  (Env-Override), mast_token-Idiom. Parser am dokumentierten Schema getestet
+  (2 Unit-Tests). Token NOCH NICHT gelegt (gemessen: .secrets.local trägt nur
+  LASAIR_TOKEN, nicht LASAIR_LSST_TOKEN) → anonymer Lauf misst beide Endpunkte
+  401 (lebend, token-gated) und bleibt benannt pending; der Code läuft, sobald
+  der Token liegt. Pending: das authentifizierte Live-Schema gegen den ersten
+  echten Sample-Abruf verifizieren.
 - **Positivkontrolle:** 0 VSX-bestätigte Chromatik-Periodika im DDF-Kegel
   (Feld ist AGN-dominiert) — gemessene Abwesenheit, kein Durchfall; ein
   variablenreicher Kegel (echte RR-Lyrae/EB mit LSST-Mehrband-Zeitreihen)
@@ -1585,8 +1618,10 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   (3) NEGATIVKONTROLLE FING EINEN ECHTEN FEHLER: lomb_scargle_fap ist NICHT
   skaleninvariant — FAP 0.00e0 auf jeder Zeile auch bei 6-10σ-achromatischen
   Injektionen; die frueheren LSST-'0 Kandidaten' sind eine Tor-Grenze, keine
-  Messung. Kriterien-Grenze vor jedem Voll-Lauf: skaleninvariante LS-Normalisierung
-  fixen. (4) cycle_phase_shift_surrogate als getestete Primitive in te.rs gebaut
+  Messung. GESCHLOSSEN (2026-09-05): skaleninvariante Standard-Normalisierung
+  verdrahtet (Ursache gemessen: x² im Nenner ⇒ Statistik ~ n/σ²); Negativkontrolle
+  findet die Injektion jetzt voll durchs Tor (FAP 1.61e-2/3.74e-2/7.48e-2 bei
+  6/8/10σ), Periodisch-Natur bleibt ausgeschlossen (FAP 3.79e-4). (4) cycle_phase_shift_surrogate als getestete Primitive in te.rs gebaut
   (Nutzung pending, keine erfundene Faltung). (5) Positivkontrolle: leer benannt
   (AGN-Feld ohne bestaetigte Chromatik-Periodika, wartet auf variablenreichen
   Kegel). (6) B-Unlock geparkt: Fink-Account/Kafka (fink-broker.org/joining/)
