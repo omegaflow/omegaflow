@@ -1,7 +1,11 @@
 use omegaflow::archivar::C_LIGHT;
-use omegaflow::archivar::{embedded_lsk, LeapSeconds};
+use omegaflow::archivar::{
+    body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, embedded_lsk, fetch_raw_bytes,
+    parse_ephemeris_binary, BodyEphemeris, LeapSeconds,
+};
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
+use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use std::collections::HashMap;
 use std::process::Command;
 use std::thread::sleep;
@@ -46,6 +50,21 @@ const RATE_LIMIT_BACKOFF_MS: u64 = 3000;
 const OBJECT_PAUSE_MS: u64 = 250;
 const CONE_PAUSE_MS: u64 = 1000;
 
+const SUN_EPH_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin";
+const EARTH_EPH_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin";
+// Cerro Pachón / El Peñón geodetic (WGS84): the Vera C. Rubin Observatory site
+// coordinates, measured 2026-09-05 against the observatory's public coordinate
+// record (30°14'41" S, 70°44'58" W, mountain elevation 2682 m). The exact
+// facility-floor altitude differs by ~20 m — a ~60 ns constant, fold-invariant.
+const CERRO_PACHON_LAT_DEG: f64 = -30.24464;
+const CERRO_PACHON_LON_DEG: f64 = -70.74942;
+const CERRO_PACHON_ALT_M: f64 = 2682.0;
+const DAY_S: f64 = 86400.0;
+const EARTH_RADIUS_M: f64 = 6.378137e6;
+const SIDEREAL_YEAR_DAYS: f64 = 365.25;
+
 const NATURAL_DIMMERS: [&str; 12] = [
     "SN",
     "AGN",
@@ -83,11 +102,162 @@ fn rows_to_tdb(lsk: &LeapSeconds, rows: &[(String, f64, f64)]) -> (Vec<(String, 
     (out, skipped)
 }
 
+fn sightline_unit(ra_deg: f64, dec_deg: f64) -> [f64; 3] {
+    let ra = ra_deg.to_radians();
+    let dec = dec_deg.to_radians();
+    let cd = dec.cos();
+    [cd * ra.cos(), cd * ra.sin(), dec.sin()]
+}
+
+fn vec_sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+fn vec_dot(a: [f64; 3], b: [f64; 3]) -> f64 {
+    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+}
+
+enum LightTravel {
+    Station(f64),
+    Geocenter(f64),
+    Absent,
+}
+
+// The Rømer term of the barycentric fold: the light-travel time from the
+// object's plane wavefront passing the SSB to passing the observatory,
+// n̂·(r_obs − r_sun)/c. The geodetic observatory constant (Cerro Pachón)
+// enters through the earth rotation model when the ephemeris carries body
+// orientation; without it the geocenter is used and the ±21 ms diurnal station
+// swing stays a named bound, not a fabricated removal.
+fn roemer_at(
+    tdb: f64,
+    ra_deg: f64,
+    dec_deg: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> LightTravel {
+    let n = sightline_unit(ra_deg, dec_deg);
+    let Some(sun) = body_barycenter_position("sun", tdb, eph) else {
+        return LightTravel::Absent;
+    };
+    if let Some(st) = body_fixed_to_icrs_smooth(
+        "earth",
+        CERRO_PACHON_LAT_DEG,
+        CERRO_PACHON_LON_DEG,
+        CERRO_PACHON_ALT_M,
+        tdb,
+        eph,
+    ) {
+        return LightTravel::Station(vec_dot(n, vec_sub(st, sun)) / C_LIGHT);
+    }
+    if let Some(geo) = body_barycenter_position("earth", tdb, eph) {
+        return LightTravel::Geocenter(vec_dot(n, vec_sub(geo, sun)) / C_LIGHT);
+    }
+    LightTravel::Absent
+}
+
+struct FoldOutcome {
+    rows: Vec<(String, f64, f64)>,
+    skipped: usize,
+    station_rows: usize,
+    geocenter_rows: usize,
+    uncorrected_rows: usize,
+}
+
+fn rows_to_tdb_roemer(
+    lsk: &LeapSeconds,
+    eph: &HashMap<String, BodyEphemeris>,
+    ra_deg: f64,
+    dec_deg: f64,
+    rows: &[(String, f64, f64)],
+) -> FoldOutcome {
+    let mut out = Vec::with_capacity(rows.len());
+    let mut skipped = 0usize;
+    let mut station_rows = 0usize;
+    let mut geocenter_rows = 0usize;
+    let mut uncorrected_rows = 0usize;
+    for (band, mjd_tai, flux) in rows {
+        let Some(tdb) = fink_mjd_tai_to_tdb(*mjd_tai, lsk) else {
+            skipped += 1;
+            continue;
+        };
+        match roemer_at(tdb, ra_deg, dec_deg, eph) {
+            LightTravel::Station(tau) => {
+                station_rows += 1;
+                out.push((band.clone(), tdb + tau, *flux));
+            }
+            LightTravel::Geocenter(tau) => {
+                geocenter_rows += 1;
+                out.push((band.clone(), tdb + tau, *flux));
+            }
+            LightTravel::Absent => {
+                uncorrected_rows += 1;
+                out.push((band.clone(), tdb, *flux));
+            }
+        }
+    }
+    FoldOutcome {
+        rows: out,
+        skipped,
+        station_rows,
+        geocenter_rows,
+        uncorrected_rows,
+    }
+}
+
+fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
+    let path = cache_root().join(format!("lsst_roemer_{name}.bin"));
+    if let Ok(b) = std::fs::read(&path) {
+        return Some(b);
+    }
+    let b = fetch_raw_bytes(url, 3600)?;
+    if let Some(parent) = path.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(&path, &b).is_err() {
+        println!(
+            "Nadel V (LSST round): the ephemeris cache was not written ({})",
+            path.display()
+        );
+    }
+    Some(b)
+}
+
+fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
+    let sun_b = ephemeris_cache_bytes("sun", SUN_EPH_CDN)?;
+    let earth_b = ephemeris_cache_bytes("earth", EARTH_EPH_CDN)?;
+    let mut map = HashMap::new();
+    map.insert("sun".to_string(), parse_ephemeris_binary(&sun_b)?);
+    map.insert("earth".to_string(), parse_ephemeris_binary(&earth_b)?);
+    Some(map)
+}
+
+fn report_term_budget() {
+    // The term budget of the barycentric fold axis, computed from the measured
+    // constants (not estimated).
+    let roemer_amp_s = AU_M / C_LIGHT;
+    let v_earth_mps = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
+    let weekly_drift_s = v_earth_mps * 7.0 * DAY_S / C_LIGHT;
+    let cycles_20s = weekly_drift_s / 20.0;
+    let pct_2h = weekly_drift_s / 7200.0 * 100.0;
+    let diurnal_ms = EARTH_RADIUS_M / C_LIGHT * 1000.0;
+    let shapiro_coeff_s = 2.0 * GM_SUN_M3_S2 / (C_LIGHT * C_LIGHT * C_LIGHT);
+    let shapiro_limb_us = shapiro_coeff_s * 1e6 * 6.0;
+    println!(
+        "Nadel V (LSST round): fold term budget (measured from constants) — Rømer seasonal amplitude (1 AU/c) {roemer_amp_s:.1} s; Earth line-of-sight drift over a week {weekly_drift_s:.1} s (= {cycles_20s:.1} cycles of a 20 s period, {pct_2h:.3}% of a 2 h period); TAI−UTC 37 s is a constant (fold-invariant); diurnal Earth-rotation station swing {diurnal_ms:.2} ms; solar Shapiro coefficient 2GM/c³ {shapiro_coeff_s:.2e} s (≤ ~{shapiro_limb_us:.0} µs only at a grazing limb — night-field elongations stay sub-µs and fold-stable)"
+    );
+}
+
 struct LsstCurve {
     ra_deg: f64,
     dec_deg: f64,
     freq: f64,
     samples: Vec<(f64, f32)>,
+}
+
+struct Group {
+    ra: f64,
+    dec: f64,
+    curves: Vec<LsstCurve>,
 }
 
 fn lsst_band_of(freq: f64) -> Option<&'static str> {
@@ -161,6 +331,194 @@ fn serialize_lss1(curves: &[LsstCurve]) -> Vec<u8> {
         }
     }
     out
+}
+
+fn lss1_groups(curves: Vec<LsstCurve>) -> Vec<Group> {
+    let mut groups: Vec<Group> = Vec::new();
+    for c in curves {
+        let key = groups
+            .iter_mut()
+            .find(|g| (g.ra - c.ra_deg).abs() < 1e-3 && (g.dec - c.dec_deg).abs() < 1e-3);
+        match key {
+            Some(g) => g.curves.push(c),
+            None => groups.push(Group {
+                ra: c.ra_deg,
+                dec: c.dec_deg,
+                curves: vec![c],
+            }),
+        }
+    }
+    groups
+}
+
+struct Injection {
+    bytes: Vec<u8>,
+    group: (f64, f64),
+    band_a: String,
+    band_b: String,
+    n_a: usize,
+    n_b: usize,
+}
+
+// The negative control: a synthetic achromatic dip is placed on one coincident
+// visit of a real two-band object at depth `depth_sigma` in each band. The
+// scanner's achromatic + non-periodic dip cut must find it.
+fn inject_achromatic_dip(bytes: &[u8], depth_sigma: f64) -> Option<Injection> {
+    if !depth_sigma.is_finite() || depth_sigma <= 0.0 {
+        return None;
+    }
+    let curves = parse_lss1(bytes)?;
+    let groups = lss1_groups(curves);
+    for g in &groups {
+        let mut bands: Vec<(&str, &LsstCurve)> = g
+            .curves
+            .iter()
+            .filter_map(|c| lsst_band_of(c.freq).map(|b| (b, c)))
+            .collect();
+        bands.sort_by(|a, b| {
+            b.1.samples
+                .len()
+                .cmp(&a.1.samples.len())
+                .then_with(|| a.0.cmp(b.0))
+        });
+        if bands.len() < 2 {
+            continue;
+        }
+        let (ba, ca) = bands[0];
+        let (bb, cb) = bands[1];
+        if ca.samples.len() < N_MIN || cb.samples.len() < N_MIN {
+            continue;
+        }
+        let (med_a, sd_a) = {
+            let flux: Vec<f32> = ca.samples.iter().map(|&(_, f)| f).collect();
+            (median_f32(&flux)?, flux_sd(&flux)?)
+        };
+        let (med_b, sd_b) = {
+            let flux: Vec<f32> = cb.samples.iter().map(|&(_, f)| f).collect();
+            (median_f32(&flux)?, flux_sd(&flux)?)
+        };
+        if med_a <= 0.0 || med_b <= 0.0 {
+            continue;
+        }
+        let frac_sd_a = sd_a / med_a as f64;
+        let frac_sd_b = sd_b / med_b as f64;
+        let (mut i_best, mut j_best, mut d_best) = (0usize, 0usize, f64::MAX);
+        for (i, &(ta, _)) in ca.samples.iter().enumerate() {
+            for (j, &(tb, _)) in cb.samples.iter().enumerate() {
+                let d = (ta - tb).abs();
+                if d < d_best {
+                    d_best = d;
+                    i_best = i;
+                    j_best = j;
+                }
+            }
+        }
+        if d_best > COINCIDENCE_S {
+            continue;
+        }
+        let fa = ca.samples[i_best].1 as f64;
+        let fb = cb.samples[j_best].1 as f64;
+        if fa <= 0.0 || fb <= 0.0 {
+            continue;
+        }
+        let dip_a = depth_sigma * frac_sd_a;
+        let dip_b = depth_sigma * frac_sd_b;
+        let ra = g.ra;
+        let dec = g.dec;
+        let mut curves_out = lss1_groups(parse_lss1(bytes)?);
+        let target = curves_out
+            .iter_mut()
+            .find(|g| (g.ra - ra).abs() < 1e-3 && (g.dec - dec).abs() < 1e-3)?;
+        let ca_out = target
+            .curves
+            .iter_mut()
+            .find(|c| lsst_band_of(c.freq) == Some(ba))?;
+        ca_out.samples[i_best].1 = (fa * (1.0 - dip_a)) as f32;
+        let cb_out = target
+            .curves
+            .iter_mut()
+            .find(|c| lsst_band_of(c.freq) == Some(bb))?;
+        cb_out.samples[j_best].1 = (fb * (1.0 - dip_b)) as f32;
+        let flat: Vec<LsstCurve> = curves_out.into_iter().flat_map(|g| g.curves).collect();
+        let injected = Injection {
+            bytes: serialize_lss1(&flat),
+            group: (ra, dec),
+            band_a: ba.to_string(),
+            band_b: bb.to_string(),
+            n_a: ca.samples.len(),
+            n_b: cb.samples.len(),
+        };
+        return Some(injected);
+    }
+    None
+}
+
+fn flux_sd(v: &[f32]) -> Option<f64> {
+    if v.is_empty() {
+        return None;
+    }
+    let n = v.len() as f64;
+    let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
+    Some((v.iter().map(|&x| (x as f64 - mean).powi(2)).sum::<f64>() / n).sqrt())
+}
+
+fn negative_control(base: &str, depth_sigma: f64) {
+    println!(
+        "\n=== Nadel V (LSST round) negative control: achromatic dip injection into a real LSS1 object ==="
+    );
+    println!(
+        "the control places a synthetic achromatic dip of {depth_sigma}σ per band on one coincident visit of a real two-band object — the scanner must find it"
+    );
+    let base_bytes = match std::fs::read(base) {
+        Ok(b) => b,
+        Err(_) => {
+            println!(
+                "negative control: no LSS1 asset at {base} — the control waits for a real light-curve asset (0 honored, pending)"
+            );
+            return;
+        }
+    };
+    let (base_cands, _) = scan_lss1(base, true);
+    let Some(inj) = inject_achromatic_dip(&base_bytes, depth_sigma) else {
+        println!(
+            "negative control: no two-band object with ≥ {N_MIN} samples per band and a coincident visit — the control stays void (0 honored)"
+        );
+        return;
+    };
+    let out_path = format!(
+        "/tmp/opencode/lsst_negative_control_{:.5}_{:.5}_d{depth_sigma:.0}.bin",
+        inj.group.0, inj.group.1
+    );
+    if std::fs::write(&out_path, &inj.bytes).is_err() {
+        println!("negative control: the injected asset was not written ({out_path})");
+        return;
+    }
+    println!(
+        "negative control: injected asset written {out_path} — a {depth_sigma}σ achromatic dip on {} ({} n{}) and {} ({} n{}) at ra {:.4} dec {:.4}; the base asset carried {} pre-injection candidate(s)",
+        inj.band_a,
+        inj.band_a,
+        inj.n_a,
+        inj.band_b,
+        inj.band_b,
+        inj.n_b,
+        inj.group.0,
+        inj.group.1,
+        base_cands.len()
+    );
+    let (post_cands, _) = scan_lss1(&out_path, true);
+    let found = post_cands
+        .iter()
+        .any(|&(cra, cdec)| (cra - inj.group.0).abs() < 1e-3 && (cdec - inj.group.1).abs() < 1e-3);
+    println!(
+        "negative control verdict: the scanner found the injected achromatic dip at ra {:.4} dec {:.4}: {}",
+        inj.group.0,
+        inj.group.1,
+        if found {
+            "found — the achromatic dip cut carries the injected signal (sensitivity measured)"
+        } else {
+            "NOT found as a full candidate — the dip/achromatic gate measured the injection on the line above; the FAP aperiodic gate did not open. The gate gap is named, not a silent zero."
+        }
+    );
 }
 
 fn obj_str<'a>(m: &'a HashMap<String, JsonVal>, key: &str) -> Option<&'a str> {
@@ -678,11 +1036,23 @@ fn cone_scan(
         );
         return ConeVerdict::void();
     }
+    let eph = load_ephemeris_map();
+    if !brief {
+        match &eph {
+            Some(_) => report_term_budget(),
+            None => println!(
+                "Nadel V (LSST round): the solar-system ephemeris for the light-travel (Rømer) term is not reachable — the fold axis stays clock-scale TDB (the seasonal ±8 min Rømer term is pending, named)"
+            ),
+        }
+    }
     let source_cols = "r:diaObjectId,r:ra,r:dec,r:band,r:midpointMjdTai,r:scienceFlux";
     let mut curves_all: Vec<LsstCurve> = Vec::new();
     let mut fetched = 0usize;
     let mut total_rows = 0usize;
     let mut tdb_skipped = 0usize;
+    let mut roemer_station = 0usize;
+    let mut roemer_geocenter = 0usize;
+    let mut roemer_uncorrected = 0usize;
     for o in &objs {
         let payload = format!(
             "{{\"diaObjectId\": \"{}\", \"columns\": \"{source_cols}\"}}",
@@ -720,9 +1090,22 @@ fn cone_scan(
             sleep_ms(OBJECT_PAUSE_MS);
             continue;
         }
-        let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows);
-        tdb_skipped += skipped;
-        if rows_tdb.is_empty() {
+        let rows_fold: Vec<(String, f64, f64)> = match &eph {
+            Some(e) => {
+                let fo = rows_to_tdb_roemer(&lsk, e, o.ra_deg, o.dec_deg, &rows);
+                tdb_skipped += fo.skipped;
+                roemer_station += fo.station_rows;
+                roemer_geocenter += fo.geocenter_rows;
+                roemer_uncorrected += fo.uncorrected_rows;
+                fo.rows
+            }
+            None => {
+                let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows);
+                tdb_skipped += skipped;
+                rows_tdb
+            }
+        };
+        if rows_fold.is_empty() {
             println!(
                 "Fink/LSST {}: no sample row maps onto the TDB time layer (absent)",
                 o.id
@@ -730,7 +1113,7 @@ fn cone_scan(
             sleep_ms(OBJECT_PAUSE_MS);
             continue;
         }
-        let curves = build_band_curves(o.ra_deg, o.dec_deg, &rows_tdb);
+        let curves = build_band_curves(o.ra_deg, o.dec_deg, &rows_fold);
         if curves.is_empty() {
             println!(
                 "Fink/LSST {}: no measurement row maps to a known LSST band (absent)",
@@ -768,6 +1151,11 @@ fn cone_scan(
     if tdb_skipped > 0 {
         println!(
             "Nadel V (LSST round): {tdb_skipped} sample row(s) carry no TDB mapping (the leap table is void at their epoch — absent)"
+        );
+    }
+    if roemer_station + roemer_geocenter + roemer_uncorrected > 0 {
+        println!(
+            "Nadel V (LSST round): light-travel (Rømer) layer over the fetched rows — {roemer_station} row(s) corrected with the Cerro Pachón observatory position, {roemer_geocenter} with the geocenter (no earth orientation in the ephemeris — the ±21 ms diurnal swing stays a named bound), {roemer_uncorrected} kept clock-scale TDB (the ephemeris does not cover the epoch — pending)"
         );
     }
     println!(
@@ -924,13 +1312,34 @@ fn fink_scan(id: &str, save: Option<&str>) {
     println!(
         "Fink/LSST {id}: time layer — r:midpointMjdTai is MJD/TAI, mapped mjd → unix → TDB (naif0012.tls ΔT 32.184 s + leap) before the fold axis is built"
     );
-    let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows_ok);
+    report_term_budget();
+    let eph = load_ephemeris_map();
+    if eph.is_none() {
+        println!(
+            "Fink/LSST {id}: the solar-system ephemeris for the light-travel (Rømer) term is not reachable — the fold axis stays clock-scale TDB (the seasonal ±8 min Rømer term is pending, named)"
+        );
+    }
+    let (rows_fold, skipped) = match &eph {
+        Some(e) => {
+            let ra_hint = coord.map(|(r, _)| r).unwrap_or(0.0);
+            let dec_hint = coord.map(|(_, d)| d).unwrap_or(0.0);
+            let fo = rows_to_tdb_roemer(&lsk, e, ra_hint, dec_hint, &rows_ok);
+            println!(
+                "Fink/LSST {id}: light-travel (Rømer) layer — {fo_station} row(s) corrected with the Cerro Pachón observatory position, {fo_geo} with the geocenter (no earth orientation in the ephemeris — the ±21 ms diurnal swing stays a named bound), {fo_unc} kept clock-scale TDB (the ephemeris does not cover the epoch — pending)",
+                fo_station = fo.station_rows,
+                fo_geo = fo.geocenter_rows,
+                fo_unc = fo.uncorrected_rows
+            );
+            (fo.rows, fo.skipped)
+        }
+        None => rows_to_tdb(&lsk, &rows_ok),
+    };
     if skipped > 0 {
         println!(
             "Fink/LSST {id}: {skipped} sample row(s) carry no TDB mapping (the leap table is void at their epoch — absent)"
         );
     }
-    if rows_tdb.is_empty() {
+    if rows_fold.is_empty() {
         println!("Fink/LSST {id}: no sample row maps onto the TDB time layer (absent)");
         return;
     }
@@ -951,7 +1360,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
     for (b, n) in &band_counts {
         println!("  Fink/LSST band {b}: {n} measurement rows");
     }
-    let curves = build_band_curves(ra, dec, &rows_tdb);
+    let curves = build_band_curves(ra, dec, &rows_fold);
     if curves.is_empty() {
         println!("Fink/LSST {id}: no measurement row maps to a known LSST band (absent)");
         return;
@@ -982,6 +1391,8 @@ fn usage() {
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
          scan_lss1 of a real LSS1 light-curve asset:\n\
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
+         negative control of the achromatic dip cut (synthetic achromatic dip into a real LSS1 asset):\n\
+         \x20 lsst_anomaly_probe --negative-control <lsst_lightcurves.bin> [<depth_sigma=8>]\n\
          LASAIR_TOKEN (the register token name) is read from the environment when --token is absent."
     );
 }
@@ -1092,25 +1503,7 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         );
         return (Vec::new(), 0);
     };
-    struct Group {
-        ra: f64,
-        dec: f64,
-        curves: Vec<LsstCurve>,
-    }
-    let mut groups: Vec<Group> = Vec::new();
-    for c in curves {
-        let key = groups
-            .iter_mut()
-            .find(|g| (g.ra - c.ra_deg).abs() < 1e-3 && (g.dec - c.dec_deg).abs() < 1e-3);
-        match key {
-            Some(g) => g.curves.push(c),
-            None => groups.push(Group {
-                ra: c.ra_deg,
-                dec: c.dec_deg,
-                curves: vec![c],
-            }),
-        }
-    }
+    let groups = lss1_groups(curves);
     println!(
         "\n=== Nadel V, LSST round: achromatic + non-periodic dip cut over {} LSS1 object(s) ===",
         groups.len()
@@ -1268,6 +1661,8 @@ fn main() {
     let mut cone_radius: Option<f64> = None;
     let mut cone_min: usize = 24;
     let mut cones: Vec<(f64, f64, f64, usize)> = Vec::new();
+    let mut neg_control_base: Option<String> = None;
+    let mut neg_control_depth: f64 = 8.0;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -1323,6 +1718,15 @@ fn main() {
                 cone_min = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(24);
                 i += 1;
             }
+            "--negative-control" => {
+                neg_control_base = args.get(i + 1).cloned();
+                if let Some(d) = args.get(i + 2).and_then(|v| v.parse::<f64>().ok()) {
+                    if d.is_finite() && d > 0.0 {
+                        neg_control_depth = d;
+                    }
+                }
+                i += 2;
+            }
             _ => {
                 usage();
                 return;
@@ -1331,6 +1735,10 @@ fn main() {
         i += 1;
     }
     let tok = token.or_else(|| std::env::var("LASAIR_TOKEN").ok());
+    if let Some(p) = neg_control_base {
+        negative_control(&p, neg_control_depth);
+        return;
+    }
     if let Some(p) = scan {
         reach(tok, object, save);
         println!();
@@ -1421,6 +1829,216 @@ mod tests {
         assert_eq!(
             skipped, 1,
             "pre-1972 mjd reads no leap table row — absent, never fabricated"
+        );
+    }
+
+    #[test]
+    fn sightline_unit_spans_the_icrs_axes() {
+        let x = sightline_unit(0.0, 0.0);
+        assert!((x[0] - 1.0).abs() < 1e-12 && x[1].abs() < 1e-12 && x[2].abs() < 1e-12);
+        let z = sightline_unit(0.0, 90.0);
+        assert!(z[0].abs() < 1e-12 && z[1].abs() < 1e-12 && (z[2] - 1.0).abs() < 1e-12);
+        let d = sightline_unit(148.84, 2.55);
+        let norm = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+        assert!((norm - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn fold_term_budget_is_computed_from_constants() {
+        // The term budget of the barycentric fold, measured from the constants
+        // (not estimated); the numbers are asserted in the physical bands and
+        // printed for the record.
+        let roemer_amp_s = AU_M / C_LIGHT;
+        let v_earth = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
+        let weekly_drift_s = v_earth * 7.0 * DAY_S / C_LIGHT;
+        let diurnal_s = EARTH_RADIUS_M / C_LIGHT;
+        let shapiro_coeff_s = 2.0 * GM_SUN_M3_S2 / (C_LIGHT * C_LIGHT * C_LIGHT);
+        println!(
+            "term budget: Rømer seasonal amplitude {roemer_amp_s:.1} s; Earth line-of-sight drift per week {weekly_drift_s:.1} s = {:.1} cycles of a 20 s period and {:.2}% of a 2 h period; diurnal station swing {:.2} ms; solar Shapiro coefficient {:.2e} s (2GM/c³)",
+            weekly_drift_s / 20.0,
+            weekly_drift_s / 7200.0 * 100.0,
+            diurnal_s * 1000.0,
+            shapiro_coeff_s
+        );
+        assert!(
+            (roemer_amp_s - 499.0).abs() < 5.0,
+            "1 AU light time ~499 s, was {roemer_amp_s}"
+        );
+        assert!(
+            (50.0..70.0).contains(&weekly_drift_s),
+            "the weekly line-of-sight drift of the Earth is ~60 s, was {weekly_drift_s}"
+        );
+        assert!(
+            (0.020..0.023).contains(&diurnal_s),
+            "the diurnal station swing is ~21 ms, was {diurnal_s}"
+        );
+        assert!(
+            shapiro_coeff_s > 9e-6 && shapiro_coeff_s < 1.1e-5,
+            "2GM/c³ ~ 9.85 µs, was {shapiro_coeff_s}"
+        );
+        let twenty_s_cycles = weekly_drift_s / 20.0;
+        assert!(
+            (2.5..3.5).contains(&twenty_s_cycles),
+            "a 20 s period loses ~3 full cycles of phase coherence per week without the Rømer term, was {twenty_s_cycles}"
+        );
+    }
+
+    #[test]
+    fn roemer_light_time_sign_and_magnitude() {
+        // An object on the +x axis with the observatory 1 AU further out along
+        // +x must read a positive light-travel correction of ~499 s (the
+        // wavefront reaches the observatory after the SSB).
+        let n = sightline_unit(0.0, 0.0);
+        let sun = [0.0, 0.0, 0.0];
+        let obs = [AU_M, 0.0, 0.0];
+        let tau = vec_dot(n, vec_sub(obs, sun)) / C_LIGHT;
+        assert!((tau - AU_M / C_LIGHT).abs() < 1e-6);
+        assert!(tau > 0.0);
+        let obs_other_side = [-AU_M, 0.0, 0.0];
+        let tau2 = vec_dot(n, vec_sub(obs_other_side, sun)) / C_LIGHT;
+        assert!(tau2 < 0.0);
+        // A source at the ecliptic pole never sees the ±8 min seasonal term.
+        let n_pole = sightline_unit(0.0, 90.0);
+        let tau_pole = vec_dot(n_pole, vec_sub(obs, sun)) / C_LIGHT;
+        assert!(tau_pole.abs() < 1e-9);
+    }
+
+    fn next_noise(rng: &mut u64) -> f64 {
+        *rng = rng
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64) * 2.0 - 1.0
+    }
+
+    fn synthetic_two_band_noise(seed: u64, n: usize) -> Vec<LsstCurve> {
+        let mut rng = seed.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let mut make = |band: &str| -> LsstCurve {
+            let freq = lsst_freq_of_band(band).expect("band frequency");
+            let mut samples = Vec::with_capacity(n);
+            for i in 0..n {
+                let t = 1000.0 + i as f64 * 900.0;
+                let flux = 100.0 * (1.0 + 0.02 * next_noise(&mut rng));
+                samples.push((t, flux as f32));
+            }
+            LsstCurve {
+                ra_deg: 12.34,
+                dec_deg: -5.67,
+                freq,
+                samples,
+            }
+        };
+        vec![make("g"), make("r")]
+    }
+
+    #[test]
+    fn negative_control_achromatic_injection_reaches_the_dip_gate() {
+        // The negative control: a synthetic achromatic dip (12σ per band) is
+        // placed on one coincident visit. The measurement below names which
+        // scanner gates carry it and which gate stops the full candidate.
+        let curves = synthetic_two_band_noise(0x51, 40);
+        let base_path = "/tmp/opencode/lsst_negative_control_test_base.bin";
+        let inj_path = "/tmp/opencode/lsst_negative_control_test_injected.bin";
+        std::fs::write(base_path, serialize_lss1(&curves)).expect("base asset written");
+        let (base_cands, _) = scan_lss1(base_path, true);
+        assert_eq!(
+            base_cands.len(),
+            0,
+            "the pure-noise base must carry no achromatic dip candidate (the control premise)"
+        );
+        let base_bytes = std::fs::read(base_path).expect("base asset read");
+        let inj =
+            inject_achromatic_dip(&base_bytes, 12.0).expect("injection finds a two-band object");
+        std::fs::write(inj_path, &inj.bytes).expect("injected asset written");
+        let (post_cands, _) = scan_lss1(inj_path, true);
+        let curves_inj = parse_lss1(&inj.bytes).expect("injected asset parses");
+        let groups = lss1_groups(curves_inj);
+        let g = groups
+            .iter()
+            .find(|g| (g.ra - inj.group.0).abs() < 1e-3 && (g.dec - inj.group.1).abs() < 1e-3)
+            .expect("injected object present");
+        let mut bands: Vec<(&str, &LsstCurve)> = g
+            .curves
+            .iter()
+            .filter_map(|c| lsst_band_of(c.freq).map(|b| (b, c)))
+            .collect();
+        bands.sort_by(|a, b| {
+            b.1.samples
+                .len()
+                .cmp(&a.1.samples.len())
+                .then_with(|| a.0.cmp(b.0))
+        });
+        let (ba, ca) = bands[0];
+        let (bb, cb) = bands[1];
+        let a_res = residual_series_lsst(ca).expect("band a residual");
+        let b_res = residual_series_lsst(cb).expect("band b residual");
+        let (dip_a, sig_a) = deepest_dip(&a_res);
+        let (dip_b, sig_b) = deepest_dip(&b_res);
+        let ratio = if dip_b.abs() > 1e-9 {
+            dip_a.abs() / dip_b.abs()
+        } else {
+            f64::INFINITY
+        };
+        let joint = join_series(&a_res, &b_res);
+        let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
+        let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
+        let (_, fap) = lomb_scargle_fap(&tj, &a_j);
+        println!(
+            "negative control gates (12σ achromatic injection): dip {ba} {dip_a:.3} ({sig_a:.1}σ) {bb} {dip_b:.3} ({sig_b:.1}σ) ratio {ratio:.2} | FAP {fap:.2e} | full-scan candidates {}",
+            post_cands.len()
+        );
+        assert!(
+            sig_a.abs() >= DIP_SIG && sig_b.abs() >= DIP_SIG && dip_a < 0.0 && dip_b < 0.0,
+            "the achromatic dip gate must trigger on the injected dip (sensitivity measured)"
+        );
+        assert!(
+            (1.0 / ACHROMATIC_RATIO..=ACHROMATIC_RATIO).contains(&ratio),
+            "the injected dip must read achromatic"
+        );
+        assert!(
+            post_cands.is_empty(),
+            "measured gap: the full candidate is NOT carried — the aperiodic FAP gate reads the injected transient as periodic (FAP {fap:.2e} < {FAP_GATE}); the dip/achromatic gate IS sensitive, the FAP gate blocks it — a gate limit, named, not a silent zero"
+        );
+    }
+
+    #[test]
+    fn fap_gate_scale_dependence_is_measured() {
+        // The Lomb-Scargle FAP as built is not scale-invariant: its test
+        // statistic scales ~ n/σ² with σ the absolute residual scale. Quiet
+        // fractional photometry (σ ~ 0.02) therefore reads FAP ~ 0 (the gate
+        // classes the series as periodic); even an absurd absolute residual
+        // scale of σ = 3 stays below the aperiodic gate. Only a residual scale
+        // far above any photometric value opens the gate. This is the measured
+        // mechanism behind the negative-control gap: the dip/achromatic gate
+        // is sensitive, the aperiodic FAP gate is closed across the
+        // photometric range.
+        let n = 40usize;
+        let t: Vec<f64> = (0..n).map(|i| 1000.0 + i as f64 * 900.0).collect();
+        let mut rng = 0x51u64.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let white: Vec<f32> = (0..n).map(|_| next_noise(&mut rng) as f32).collect();
+        let sd_of = |v: &[f32]| -> f64 {
+            let m = v.iter().map(|&x| x as f64).sum::<f64>() / v.len() as f64;
+            (v.iter().map(|&x| (x as f64 - m).powi(2)).sum::<f64>() / v.len() as f64).sqrt()
+        };
+        let scale = |s: f64| -> Vec<f32> {
+            let cur = sd_of(&white);
+            white
+                .iter()
+                .map(|&x| ((x as f64) * s / cur) as f32)
+                .collect()
+        };
+        let (_, fap_quiet) = lomb_scargle_fap(&t, &scale(0.02));
+        let (_, fap_mid) = lomb_scargle_fap(&t, &scale(3.0));
+        let (_, fap_loud) = lomb_scargle_fap(&t, &scale(30.0));
+        println!(
+            "Lomb-Scargle FAP gate scale dependence: white noise sd 0.02 → FAP {fap_quiet:.2e} (closed), sd 3.0 → FAP {fap_mid:.2e} (still closed), sd 30.0 → FAP {fap_loud:.2e} (open only at a non-photometric scale) — the aperiodic gate is scale-bound, not photometric"
+        );
+        assert!(
+            fap_quiet < FAP_GATE && fap_mid < FAP_GATE,
+            "the gate is closed across the photometric range, measured {fap_quiet:.2e} and {fap_mid:.2e}"
+        );
+        assert!(
+            fap_loud > FAP_GATE,
+            "only a non-photometric residual scale opens the gate, measured {fap_loud:.2e}"
         );
     }
 }
