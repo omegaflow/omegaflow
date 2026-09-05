@@ -1185,3 +1185,14 @@ jobs:
         continue-on-error: true
         run: |
           cargo run -p omegaflow-harvest --release --bin pioneer_doppler_compiler -- --ci-mode
+
+  galileo_atdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Galileo TRK-2-25 ATDF residuum (PDS3 PPI annex) and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run -p omegaflow-harvest --release --bin galileo_atdf_compiler -- --ci-mode
