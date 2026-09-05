@@ -3,10 +3,10 @@
   class: befund
   date: 2026-09-05
   version: 2
-  sha256: 2b63392f2737012ee1985dbc96260a69f4db8b8d3b90a9c2126486c5524d612e
+  sha256: 7488b3a652150478707b75b97c7fb66627103c6fc8408576f2343c072ef7d404
   status: done
   antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
-  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-mode1-fingerabdruck.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
+  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
 -->
 
 # Befund: Galileo-Rausch-Kurve — Achsen-Revision (α statt ε), Plasma-Deutung unverifiziert
@@ -152,3 +152,9 @@ invertiert, die Plasma-Deutung auf `unverifiziert` gestuft. Der Mode-2/3-Trend
 auf der ε-Achse ist `pending`, ebenso der Mode-2-Station-Tag-Split. Der
 ursprüngliche `done`-Kernbefund („Plasma auf der Sichtlinie") ist revidiert —
 er war ein Distanz-/Ära-Confound auf einer falsch benannten Achse.
+
+Folge-Befund (`befund-galileo-rausch-kurve-epsilon`, done): die Mode-2/3-Kurve
+ist auf der ε-Achse neu gezogen — der kohärente Fall ist invers zur
+Plasma-Erwartung (leise an Konjunktion, laut an Opposition); die
+Plasma-Deutung ist dort auf `getötet` gestuft. Der Mode-2-Station-Tag-Split
+bleibt `pending`.
