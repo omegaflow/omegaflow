@@ -7,7 +7,7 @@ use omegaflow::thermochem::{
     equilibrium_composition_sulfur_scaled, sulfur_gas_names, COOL_T_MIN, P0_PA, SOLAR_C, SOLAR_O,
     WATER_LIQ_T_MIN, WATER_P_TRIPLE_PA,
 };
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 const RNG_MULT: u64 = 6364136223846793005;
 const RNG_INC: u64 = 1442695040888963407;
@@ -48,18 +48,57 @@ struct PlanetRow {
     st_vsin_kms: Option<f64>,
 }
 
-// One measured host-abundance analysis row: stellar [C/H], [O/H], [N/H] (the
-// C/O witness) and log R'HK (the activity witness) from a cross-identified
-// high-resolution abundance catalog. The row's own [Fe/H] carries the S proxy.
-// The catalog identity lives on the JSON row for the human reader; the run
-// header carries the catalog provenance.
+// One witness row as the register carries it: a (host, analysis) statement
+// with any of the measured channels [C/H]/[O/H]/[N/H]/[Fe/H]/C-O (the C/O
+// witness), log R'HK / L_X / F_X / L_X/L_bol / S-index / P_rot (the
+// activity/XUV witness). A channel the row does not carry is None; a channel
+// the row names as pending stays a token in `pending`, never a fabricated
+// number. A row with a full [C/H]/[O/H]/[Fe/H] budget is what the C/O
+// equilibrium regression can run; the activity channels feed the second
+// cleaning step.
 struct WitnessRow {
     analysis: String,
-    ch: f64,
-    oh: f64,
+    delivery: Option<String>,
+    ch: Option<f64>,
+    oh: Option<f64>,
     nh: Option<f64>,
-    feh: f64,
+    feh: Option<f64>,
+    co: Option<f64>,
     logrhk: Option<f64>,
+    lx: Option<f64>,
+    fx: Option<f64>,
+    lxlbol: Option<f64>,
+    s_index: Option<f64>,
+    p_rot: Option<f64>,
+    pending: Vec<String>,
+    note: Option<String>,
+}
+
+impl WitnessRow {
+    fn budget(&self) -> Option<(f64, f64, Option<f64>, f64)> {
+        let (ch, oh, feh) = (self.ch?, self.oh?, self.feh?);
+        if !ch.is_finite() || !oh.is_finite() || !feh.is_finite() {
+            return None;
+        }
+        Some((ch, oh, self.nh.filter(|v| v.is_finite()), feh))
+    }
+
+    fn activity_number(&self) -> bool {
+        [
+            self.logrhk,
+            self.lx,
+            self.fx,
+            self.lxlbol,
+            self.s_index,
+            self.p_rot,
+        ]
+        .iter()
+        .any(|v| v.is_some())
+    }
+
+    fn pending_activity(&self) -> bool {
+        self.pending.iter().any(|t| is_activity_token(t))
+    }
 }
 
 fn read_witness(path: &str) -> Result<HashMap<String, Vec<WitnessRow>>, String> {
@@ -73,25 +112,155 @@ fn read_witness(path: &str) -> Result<HashMap<String, Vec<WitnessRow>>, String> 
         let (Some(host), Some(analysis)) = (jstr(row, "hostname"), jstr(row, "analysis")) else {
             continue;
         };
-        let (Some(ch), Some(oh), Some(feh)) = (jnum(row, "ch"), jnum(row, "oh"), jnum(row, "feh"))
-        else {
-            continue;
+        let nf = |k: &str| jnum(row, k).filter(|v| v.is_finite());
+        let pending = jstr(row, "pending")
+            .map(|s| {
+                s.split(',')
+                    .map(|t| t.trim().to_string())
+                    .filter(|t| !t.is_empty())
+                    .collect::<Vec<String>>()
+            })
+            .unwrap_or_default();
+        let w = WitnessRow {
+            analysis: analysis.to_string(),
+            delivery: jstr(row, "delivery"),
+            ch: nf("ch"),
+            oh: nf("oh"),
+            nh: nf("nh"),
+            feh: nf("feh"),
+            co: nf("co"),
+            logrhk: nf("logrhk"),
+            lx: nf("lx"),
+            fx: nf("fx"),
+            lxlbol: nf("lxlbol"),
+            s_index: nf("s_index"),
+            p_rot: nf("p_rot"),
+            pending,
+            note: jstr(row, "note"),
         };
-        if !ch.is_finite() || !oh.is_finite() || !feh.is_finite() {
+        let empty = [
+            w.ch, w.oh, w.nh, w.feh, w.co, w.logrhk, w.lx, w.fx, w.lxlbol, w.s_index, w.p_rot,
+        ]
+        .iter()
+        .all(|v| v.is_none());
+        if empty && w.note.is_none() && w.pending.is_empty() {
             continue;
         }
-        let nh = jnum(row, "nh").filter(|v| v.is_finite());
-        let logrhk = jnum(row, "logrhk").filter(|v| v.is_finite());
-        out.entry(host.to_string()).or_default().push(WitnessRow {
-            analysis: analysis.to_string(),
-            ch,
-            oh,
-            nh,
-            feh,
-            logrhk,
-        });
+        out.entry(host.to_string()).or_default().push(w);
     }
     Ok(out)
+}
+
+struct CensusHost {
+    hostname: String,
+    class: String,
+    note: Option<String>,
+}
+
+fn read_census(path: &str) -> Result<Vec<CensusHost>, String> {
+    let body = std::fs::read_to_string(path).map_err(|e| format!("census {path}: {e}"))?;
+    let root = parse_json(&body).ok_or_else(|| format!("census {path}: json absent"))?;
+    let JsonVal::Arr(rows) = &root else {
+        return Err(format!("census {path}: root is not an array"));
+    };
+    let mut out = Vec::new();
+    for row in rows {
+        let (Some(hostname), Some(class)) = (jstr(row, "hostname"), jstr(row, "class")) else {
+            continue;
+        };
+        if !hostname.is_empty() && !class.is_empty() {
+            out.push(CensusHost {
+                hostname,
+                class,
+                note: jstr(row, "note"),
+            });
+        }
+    }
+    Ok(out)
+}
+
+fn mean_v(v: &[f64]) -> f64 {
+    let n = v.len() as f64;
+    if n == 0.0 {
+        f64::NAN
+    } else {
+        v.iter().sum::<f64>() / n
+    }
+}
+
+fn pearson_r(x: &[f64], y: &[f64]) -> f64 {
+    let mx = mean_v(x);
+    let my = mean_v(y);
+    let cov: f64 = x.iter().zip(y).map(|(a, b)| (a - mx) * (b - my)).sum();
+    let vx: f64 = x.iter().map(|a| (a - mx) * (a - mx)).sum();
+    let vy: f64 = y.iter().map(|a| (a - my) * (a - my)).sum();
+    if vx <= 0.0 || vy <= 0.0 {
+        f64::NAN
+    } else {
+        cov / (vx * vy).sqrt()
+    }
+}
+
+fn activity_label(t: &str) -> &str {
+    match t {
+        "logrhk" => "log R'HK",
+        "lx" => "L_X",
+        "fx" => "F_X",
+        "lxlbol" => "L_X/L_bol",
+        "s_index" => "S-index",
+        "p_rot" => "P_rot",
+        "xuv" => "XUV",
+        _ => t,
+    }
+}
+
+fn fmt_activity_witness(w: &WitnessRow) -> String {
+    let mut parts: Vec<String> = Vec::new();
+    if let Some(v) = w.logrhk {
+        parts.push(format!("log R'HK {v:.2}"));
+    }
+    if let Some(v) = w.lx {
+        parts.push(format!("L_X {v:.1e} erg/s"));
+    }
+    if let Some(v) = w.fx {
+        parts.push(format!("F_X {v:.1e} erg/s/cm2"));
+    }
+    if let Some(v) = w.lxlbol {
+        parts.push(format!("L_X/L_bol {v:.1e}"));
+    }
+    if let Some(v) = w.s_index {
+        parts.push(format!("S-index {v:.3}"));
+    }
+    if let Some(v) = w.p_rot {
+        parts.push(format!("P_rot {v:.1} d"));
+    }
+    let open: Vec<String> = w
+        .pending
+        .iter()
+        .filter(|t| is_activity_token(t))
+        .map(|t| activity_label(t).to_string())
+        .collect();
+    if parts.is_empty() && !open.is_empty() {
+        parts.push(format!("{} pending", open.join("/")));
+    } else if !open.is_empty() {
+        parts.push(format!("offen: {}", open.join("/")));
+    }
+    let mut s = format!("{} [{}", parts.join(" | "), w.analysis);
+    if let Some(d) = &w.delivery {
+        s.push_str(&format!("; {d}"));
+    }
+    s.push(']');
+    if let Some(n) = &w.note {
+        s.push_str(&format!(" — {n}"));
+    }
+    s
+}
+
+fn is_activity_token(t: &str) -> bool {
+    matches!(
+        t,
+        "logrhk" | "lx" | "fx" | "lxlbol" | "s_index" | "p_rot" | "xuv"
+    )
 }
 
 fn read_detections(path: &str) -> Result<Vec<Detection>, String> {
@@ -168,6 +337,7 @@ fn main() {
     let mut seed = "docs/reference/jwst_detection_seed.json".to_string();
     let mut params = String::new();
     let mut witness = "docs/reference/co_rhk_witness_seed.json".to_string();
+    let mut census = "docs/reference/jwst_host_census.json".to_string();
     let mut out = "/tmp/opencode/disequilibrium_register_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut trials = DEFAULT_TRIALS;
@@ -185,6 +355,10 @@ fn main() {
             "--witness" => {
                 i += 1;
                 witness = args.get(i).cloned().unwrap_or(witness);
+            }
+            "--census" => {
+                i += 1;
+                census = args.get(i).cloned().unwrap_or(census);
             }
             "--out" => {
                 i += 1;
@@ -219,7 +393,7 @@ fn main() {
         );
         std::process::exit(1);
     }
-    if let Err(msg) = run(&seed, &params, &witness, &out, floor, trials) {
+    if let Err(msg) = run(&seed, &params, &witness, &census, &out, floor, trials) {
         eprintln!("disequilibrium_register_probe: {msg}");
         std::process::exit(1);
     }
@@ -256,12 +430,17 @@ struct MeasuredRun {
     oh: f64,
     feh: f64,
     c_over_o: f64,
-    logrhk: Option<f64>,
     frac: Vec<f64>,
 }
 
-fn measured_budget_frac(t_eq: f64, w: &WitnessRow) -> Option<Vec<f64>> {
-    let b = elemental_budget_sulfur(w.ch, w.oh, w.nh, w.feh)?;
+fn measured_budget_frac(
+    t_eq: f64,
+    ch: f64,
+    oh: f64,
+    nh: Option<f64>,
+    feh: f64,
+) -> Option<Vec<f64>> {
+    let b = elemental_budget_sulfur(ch, oh, nh, feh)?;
     if t_eq >= SULFUR_T_MIN {
         equilibrium_composition_sulfur_budget(t_eq, P0_PA, b)
     } else {
@@ -277,6 +456,7 @@ fn run(
     seed_path: &str,
     params_path: &str,
     witness_path: &str,
+    census_path: &str,
     out_path: &str,
     floor: f64,
     trials: usize,
@@ -284,6 +464,25 @@ fn run(
     let detections = read_detections(seed_path)?;
     let planet_rows = read_planet_rows(params_path)?;
     let witness = read_witness(witness_path)?;
+    let census = read_census(census_path)?;
+
+    let n_witness_rows: usize = witness.values().map(|v| v.len()).sum();
+    let n_budget_rows: usize = witness
+        .values()
+        .flatten()
+        .filter(|w| w.budget().is_some())
+        .count();
+    let n_act_hosts: usize = witness
+        .iter()
+        .filter(|(_, rows)| {
+            rows.iter()
+                .any(|w| w.activity_number() || w.pending_activity())
+        })
+        .count();
+    let n_xuv_hosts: usize = witness
+        .iter()
+        .filter(|(_, rows)| rows.iter().any(|w| w.lx.is_some() || w.fx.is_some()))
+        .count();
 
     let spec_names: Vec<String> = sulfur_gas_names();
     let slot_by_name: HashMap<String, usize> = spec_names
@@ -334,14 +533,20 @@ fn run(
         "  C/O traegt pscomppars nicht (gemessen am NExScI-TAP-Schema 2026-09-05: keine C/O-, keine log R'HK-, keine XUV-Spalte in irgendeiner Tabelle) — C/O wird aus dem C/O-Zeugen gelesen\n",
     );
     out.push_str(&format!(
-        "  C/O-Zeuge: hochaufgeloeste Wirts-Abundanzen [C/H]/[O/H]/[N/H] aus Brewer-&-Fischer-Katalogen (VizieR J/ApJS/225/32 = 2016ApJS..225...32B, J/ApJS/237/38 = 2018ApJS..237...38B; abgerufen 2026-09-05; Wirt per RA/Dec kreuzidentifiziert, <~5\"-Matches durch SIMBAD-Namensbestaetigung) — Zeilen in {} ({} Analysen)\n",
-        witness_path, witness.values().map(|v| v.len()).sum::<usize>()
+        "  Zeugen-Register {}: {} Zeilen ({} davon Budget-Analysen mit [C/H]/[O/H]/[Fe/H]; {} Wirte tragen einen Aktivitaets-/XUV-Zeugen, {} einen XUV-Fluss L_X/F_X)\n",
+        witness_path, n_witness_rows, n_budget_rows, n_act_hosts, n_xuv_hosts
     ));
+    out.push_str(
+        "  C/O-Zeuge: hochaufgeloeste Wirts-Abundanzen [C/H]/[O/H]/[N/H] — Quellen: VizieR-Kataloge J/ApJS/225/32 (2016ApJS..225...32B) + J/ApJS/237/38 (2018ApJS..237...38B; abgerufen 2026-09-05, Wirt per RA/Dec kreuzidentifiziert, <~5\";) und die externe Literatur-Rueckmeldung (Brewer & Fischer 2018, Brewer et al. 2016, Mesa et al. 2019, Polanski et al. 2022)\n",
+    );
     out.push_str(
         "  der C/O-Zeuge ersetzt C und O durch die gemessenen [C/H]/[O/H]; N traegt sein gemessenes [N/H] (sonst [Fe/H]); S hat in keiner geprueften Quelle eine Wirts-Abundanz und bleibt auf [Fe/H] — benannter Proxy. Die dex stehen auf der Katalog-eigenen solaren Skala; die Anwendung auf die Archiv-SOLAR_-Werte ist transparent\n",
     );
     out.push_str(
-        "  Aktivitaets-Zeuge: log R'HK (aus den Brewer-Katalogen, wo die Analyse ihn traegt), Rotation st_rotp/v sin i (pscomppars) — kein XUV-Fluss in NExScI oder MUSCLES/Mega-MUSCLES fuer diese 30 Wirte (gemessen); XUV pending\n",
+        "  Aktivitaets-Zeuge: log R'HK, S-index, L_X/F_X/L_X-L_bol und P_rot aus dem Zeugen-Register (externe Rueckmeldung + Brewer-Kataloge) je Wirt; Rotation st_rotp/v sin i zusaetzlich aus pscomppars. Ein Wert, den das Register nicht traegt, bleibt pending — nie geschaetzt\n",
+    );
+    out.push_str(
+        "  der zweite Reinigungsschritt regressiert die Hit-Indikator-Spalte gegen das publizierte log R'HK der Wirte (XUV/Aktivitaets-Zeuge); die Photochemie-Re-Erklaerung (XUV-Fluss treibt SO2/CO2) ist ein nicht-Gleichgewichts-Modell und bleibt als solche pending\n",
     );
     out.push_str(
         "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression und die C/O-Zeugen-Regression melden Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
@@ -530,7 +735,8 @@ fn run(
     let mut n_co_hosts = 0usize;
     let mut n_co_rows = 0usize;
     let mut n_co_refused = 0usize;
-    let mut co_pending_hosts: Vec<String> = Vec::new();
+    let mut co_refused_hosts: Vec<String> = Vec::new();
+    let mut co_no_budget_hosts: Vec<String> = Vec::new();
     for id in 0..host_ids.len() {
         let host = &host_ids[id];
         let Some(hp) = &plan[id] else {
@@ -541,15 +747,17 @@ fn run(
         };
         let mut any_run = false;
         for w in rows {
-            match measured_budget_frac(hp.teq_k, w) {
+            let Some((ch, oh, nh, feh)) = w.budget() else {
+                continue;
+            };
+            match measured_budget_frac(hp.teq_k, ch, oh, nh, feh) {
                 Some(frac) => {
                     witness_runs[id].push(MeasuredRun {
                         analysis: w.analysis.clone(),
-                        ch: w.ch,
-                        oh: w.oh,
-                        feh: w.feh,
-                        c_over_o: c_over_o_solar(w.ch, w.oh),
-                        logrhk: w.logrhk,
+                        ch,
+                        oh,
+                        feh,
+                        c_over_o: c_over_o_solar(ch, oh),
                         frac,
                     });
                     n_co_rows += 1;
@@ -561,7 +769,11 @@ fn run(
         if any_run {
             n_co_hosts += 1;
         } else if !rows.is_empty() {
-            co_pending_hosts.push(host.clone());
+            if rows.iter().any(|w| w.budget().is_some()) {
+                co_refused_hosts.push(host.clone());
+            } else {
+                co_no_budget_hosts.push(host.clone());
+            }
         }
     }
 
@@ -726,24 +938,69 @@ fn run(
                 ));
             }
         }
-        let mut act_parts: Vec<String> = Vec::new();
-        for mr in &witness_runs[id] {
-            if let Some(rhk) = mr.logrhk {
-                act_parts.push(format!("log R'HK {rhk:.2} ({})", mr.analysis));
+        let mut act_lines: Vec<String> = Vec::new();
+        if let Some(rows) = witness.get(host) {
+            for w in rows {
+                if w.activity_number() || w.pending_activity() {
+                    act_lines.push(fmt_activity_witness(w));
+                }
             }
         }
-        match hp.st_rotp_days {
-            Some(p) => act_parts.push(format!("st_rotp {p:.1} d (pscomppars)")),
-            None => act_parts.push("st_rotp pending (pscomppars leer)".to_string()),
-        }
+        let mut rot_part = match hp.st_rotp_days {
+            Some(p) => format!("st_rotp {p:.1} d (pscomppars)"),
+            None => "st_rotp pending (pscomppars leer)".to_string(),
+        };
         if let Some(v) = hp.st_vsin_kms {
-            act_parts.push(format!("v sin i {v:.1} km/s (pscomppars)"));
+            rot_part.push_str(&format!(" | v sin i {v:.1} km/s (pscomppars)"));
         }
-        if !act_parts.is_empty() {
-            block.push_str(&format!(
-                "      Aktivitaets-Zeuge: {}\n",
-                act_parts.join(" | ")
-            ));
+        if act_lines.is_empty() {
+            block.push_str(&format!("      Aktivitaets-Zeuge: {rot_part}\n"));
+        } else {
+            for l in &act_lines {
+                block.push_str(&format!("      Aktivitaets-Zeuge: {l}\n"));
+            }
+            block.push_str(&format!("      Rotation-Zeuge: {rot_part}\n"));
+        }
+        if let Some(rows) = witness.get(host) {
+            for w in rows {
+                if w.budget().is_some() {
+                    continue;
+                }
+                let mut vparts: Vec<String> = Vec::new();
+                if let Some(v) = w.co {
+                    vparts.push(format!("C/O {v:.2}"));
+                }
+                if let (Some(ch), Some(oh)) = (w.ch, w.oh) {
+                    vparts.push(format!("[C/H] {ch:+.2} [O/H] {oh:+.2}"));
+                }
+                if let Some(feh) = w.feh {
+                    vparts.push(format!("[Fe/H] {feh:+.2}"));
+                }
+                let abundance_pending: Vec<&str> = w
+                    .pending
+                    .iter()
+                    .map(|t| t.as_str())
+                    .filter(|t| matches!(*t, "ch" | "oh" | "nh" | "co" | "feh"))
+                    .collect();
+                if vparts.is_empty() && abundance_pending.is_empty() {
+                    continue;
+                }
+                let mut s = format!("      C/O-Zeuge {}: {}", w.analysis, vparts.join(" | "));
+                if !abundance_pending.is_empty() {
+                    if w.activity_number() {
+                        s.push_str(&format!(" — nur pending: {}", abundance_pending.join(",")));
+                    } else {
+                        s.push_str(&format!(" — pending: {}", abundance_pending.join(",")));
+                        if let Some(n) = &w.note {
+                            s.push_str(&format!(" — {n}"));
+                        }
+                    }
+                } else if let Some(n) = &w.note {
+                    s.push_str(&format!(" — {n}"));
+                }
+                block.push_str(&s);
+                block.push('\n');
+            }
         }
         for s in &hit_species {
             block.push_str(&format!("      disequilibrium  {s}\n"));
@@ -798,10 +1055,16 @@ fn run(
         "C/O-Zeugen-Regression (gemessene [C/H]/[O/H]/[N/H]-Haushalte): {} Wirte gelesen ({} Analyse-Zeilen) | {} Zeilen Loeser verweigert (pending) | Klassifikations-Bewegung: {} Wirte, {} Spezies\n",
         n_co_hosts, n_co_rows, n_co_refused, n_co_moved_hosts, n_co_moved_species
     ));
-    if !co_pending_hosts.is_empty() {
+    if !co_refused_hosts.is_empty() {
         out.push_str(&format!(
-            "  C/O-pending (Zeuge vorhanden, Loeser verweigert): {}\n",
-            co_pending_hosts.join(", ")
+            "  C/O-Loeser verweigert (pending): {}\n",
+            co_refused_hosts.join(", ")
+        ));
+    }
+    if !co_no_budget_hosts.is_empty() {
+        out.push_str(&format!(
+            "  C/O-Regression nicht anwendbar (Zeuge vorhanden, aber keine [C/H]+[O/H]+[Fe/H]-Budget-Zeile im Register): {}\n",
+            co_no_budget_hosts.join(", ")
         ));
     }
     for id in 0..host_ids.len() {
@@ -1023,6 +1286,208 @@ fn run(
                 mean(&pres_feh)
             ));
         }
+    }
+
+    // Second cleaning step — the XUV/activity regression. Host coordinate: the
+    // mean of the published numeric log R'HK values the register carries for
+    // the host (each value printed above at its read site). Only hosts that are
+    // evaluable (in-model species) AND carry a numeric log R'HK witness enter;
+    // hosts without a measured value stay pending, never estimated.
+    let mut act_host: Vec<String> = Vec::new();
+    let mut act_x: Vec<f64> = Vec::new();
+    let mut act_n: Vec<usize> = Vec::new();
+    let mut act_hit: Vec<f64> = Vec::new();
+    let mut xuv_hosts: Vec<(String, f64)> = Vec::new();
+    let mut act_pending_hosts: Vec<String> = Vec::new();
+    for id in 0..host_ids.len() {
+        let host = &host_ids[id];
+        if !possible[id] {
+            continue;
+        }
+        let Some(rows) = witness.get(host) else {
+            act_pending_hosts.push(host.clone());
+            continue;
+        };
+        let logrhk: Vec<f64> = rows.iter().filter_map(|w| w.logrhk).collect();
+        if logrhk.is_empty() {
+            act_pending_hosts.push(host.clone());
+        } else {
+            let m = logrhk.iter().sum::<f64>() / logrhk.len() as f64;
+            let hit = host_det[id].iter().any(|d| {
+                slot_by_name
+                    .get(&d.species)
+                    .map(|slot| plan[id].as_ref().unwrap().frac[*slot] < floor)
+                    .unwrap_or(false)
+            });
+            act_host.push(host.clone());
+            act_x.push(m);
+            act_n.push(logrhk.len());
+            act_hit.push(if hit { 1.0 } else { 0.0 });
+        }
+        for w in rows {
+            let xv = [w.lx, w.fx, w.lxlbol].iter().find_map(|o| *o);
+            if let Some(v) = xv {
+                xuv_hosts.push((host.clone(), v));
+            }
+        }
+    }
+    let n_act = act_x.len();
+    out.push_str(&format!(
+        "Aktivitaets-Regression (zweiter Reinigungsschritt): {} Wirte mit numerischem log R'HK-Zeuge + wertbarer Detektion\n",
+        n_act
+    ));
+    if n_act < 3 {
+        out.push_str(&format!("  {} Wirte — zu wenige Paare (pending)\n", n_act));
+    } else {
+        let r_obs = pearson_r(&act_x, &act_hit);
+        if !r_obs.is_finite() {
+            out.push_str("  log R'HK-Spalte konstant — Pearson nicht definiert (pending)\n");
+        } else {
+            let mut rng_act = CORR_RNG_SEED.wrapping_add(0xACE7);
+            let mut hit_perm = act_hit.clone();
+            let mut over_abs = 0usize;
+            for _ in 0..trials {
+                shuffle(&mut hit_perm, &mut rng_act);
+                let r = pearson_r(&act_x, &hit_perm);
+                if r.is_finite() && r.abs() >= r_obs.abs() {
+                    over_abs += 1;
+                }
+            }
+            let p_act = over_abs as f64 / trials as f64;
+            let hit_x: Vec<f64> = act_x
+                .iter()
+                .zip(&act_hit)
+                .filter(|(_, h)| **h == 1.0)
+                .map(|(x, _)| *x)
+                .collect();
+            let pres_x: Vec<f64> = act_x
+                .iter()
+                .zip(&act_hit)
+                .filter(|(_, h)| **h == 0.0)
+                .map(|(x, _)| *x)
+                .collect();
+            out.push_str(&format!(
+                "  Pearson r = {r_obs:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_act:.4}\n",
+                trials
+            ));
+            out.push_str(&format!(
+                "  Hit-Wirte ({}): mean log R'HK {:+.2} | equilibrium-present ({}): mean log R'HK {:+.2}  (log R'HK aktiver = weniger negativ)\n",
+                hit_x.len(),
+                mean_v(&hit_x),
+                pres_x.len(),
+                mean_v(&pres_x)
+            ));
+            let mut rows_txt: Vec<String> = Vec::new();
+            for (h, (x, n)) in act_host.iter().zip(act_x.iter().zip(&act_n)) {
+                rows_txt.push(format!("{h} {x:.2} ({n} Werte)"));
+            }
+            out.push_str(&format!("  Wirte: {}\n", rows_txt.join(" | ")));
+        }
+    }
+    if !act_pending_hosts.is_empty() {
+        out.push_str(&format!(
+            "  Aktivitaets-pending (wertbar, kein numerischer log R'HK-Zeuge): {}\n",
+            act_pending_hosts.join(", ")
+        ));
+    }
+    let n_xuv_distinct = xuv_hosts
+        .iter()
+        .map(|(h, _)| h.as_str())
+        .collect::<HashSet<_>>()
+        .len();
+    out.push_str(&format!(
+        "XUV-Fluss-Zeugen (L_X/F_X/L_X-L_bol numerisch im Register): {} Wirte ({} Messwerte) — {}\n",
+        n_xuv_distinct,
+        xuv_hosts.len(),
+        if xuv_hosts.is_empty() {
+            "keine".to_string()
+        } else {
+            xuv_hosts
+                .iter()
+                .map(|(h, v)| format!("{h} {v:.1e}"))
+                .collect::<Vec<_>>()
+                .join(" | ")
+        }
+    ));
+    if n_xuv_distinct < 4 {
+        out.push_str(
+            "  XUV-vs-Hit-Regression: zu wenige XUV-Wirte (pending; die Photochemie-Re-Erklaerung braucht einen XUV-Fluss je Wirt)\n",
+        );
+    }
+    out.push_str(
+        "  Gleichgewichts-Urteile bewegen sich unter den Aktivitaets-Zeugen nicht: thermochemisches Gleichgewicht hat keinen Aktivitaets-Kanal — die gemessene Regression ist die statistische Fassung; die Photochemie-Re-Erklaerung (XUV treibt SO2/CO2) bleibt ein nicht-Gleichgewichts-Modell (pending)\n",
+    );
+
+    // Full 48-host census: every JWST-transmission host of the survey gets a
+    // row. The 30 with a published detection carry the probe verdict; the 18
+    // without a published detection are explicit non-detection rows (0 honored
+    // — the observed absence of a published species detection is the measured
+    // fact, never a fabricated species).
+    let census_detected: Vec<&CensusHost> =
+        census.iter().filter(|c| c.class == "detection").collect();
+    let census_nd: Vec<&CensusHost> = census
+        .iter()
+        .filter(|c| c.class == "non_detection")
+        .collect();
+    let mut census_word: Vec<String> = Vec::new();
+    let mut census_missing: Vec<String> = Vec::new();
+    for c in &census_detected {
+        let Some(id) = host_ids.iter().position(|h| h == &c.hostname) else {
+            census_missing.push(c.hostname.clone());
+            census_word.push(format!(
+                "{}: nicht in der Detektions-Saat (Register-Konflikt)",
+                c.hostname
+            ));
+            continue;
+        };
+        let word = if let Some(hp) = &plan[id] {
+            let has_in_model = host_det[id]
+                .iter()
+                .any(|d| slot_by_name.contains_key(&d.species));
+            if !has_in_model {
+                "ohne-Modell-Daten-only (Gleichgewicht nicht prüfbar — pending)".to_string()
+            } else if host_det[id].iter().any(|d| {
+                slot_by_name
+                    .get(&d.species)
+                    .map(|slot| hp.frac[*slot] < floor)
+                    .unwrap_or(false)
+            }) {
+                "disequilibrium-hit".to_string()
+            } else {
+                "equilibrium-present".to_string()
+            }
+        } else if let Some(r) = &pending_reason[id] {
+            format!("pending — {r}")
+        } else {
+            "pending".to_string()
+        };
+        census_word.push(format!("{}: {}", c.hostname, word));
+    }
+    out.push_str(&format!(
+        "\nZensus ({} Wirte): {} mit publizierter Detektion, {} ohne publizierte Detektion (non-detection, 0 honored)\n",
+        census.len(),
+        census_detected.len(),
+        census_nd.len()
+    ));
+    for w in &census_word {
+        out.push_str(&format!("  {w}\n"));
+    }
+    for c in &census_nd {
+        let mut s = format!(
+            "  {}: non-detection (0 honored) — keine publizierte Spezies-Detektion",
+            c.hostname
+        );
+        if let Some(note) = &c.note {
+            s.push_str(&format!(" ({note})"));
+        }
+        out.push_str(&s);
+        out.push('\n');
+    }
+    if !census_missing.is_empty() {
+        out.push_str(&format!(
+            "  Zensus-Register-Konflikt (detection-Klasse ohne Saat-Eintrag): {}\n",
+            census_missing.join(", ")
+        ));
     }
 
     std::fs::write(out_path, &out).map_err(|e| format!("{out_path}: {e}"))?;
