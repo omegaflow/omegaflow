@@ -1,3 +1,7 @@
 blocked account
 url https://cddis.nasa.gov/archive/
 note NASA Earthdata GNSS/geodaetische Produkte; OAuth (urs.earthdata.nasa.gov), free Registrierung. reg https://urs.earthdata.nasa.gov/users/new. Messwert (RINEX GNSS, em) echt, Zugang account-gegatet (2026-09-03).
+
+parser-def json
+url https://api.antares.noirlab.edu/v1/loci?limit=20
+note ANTARES-REST anonym offen (2026-09-05 verifiziert), ZTF-Transienten-Loci mit ra/dec + attributes.properties.{newest,brightest,oldest}_alert_magnitude (echte em-mag-Messwerte). Aber richtung-only ohne Distanz/plx/z — die CelestialMap-Distanz-Gate (extract.rs ~2121) verwirft jedes Element (no_distance_skipped assertiert 0), keine erfundene Distanz (0 honored, A=A). Parser-Gap: Richtungs-Transient (ra/dec ohne Radius) traegt kein 3D-ICRS-Feld. Gleiche pending-Klasse wie Lasair-cmap und ALeRCE (channels.rs 605: "dark until a distance channel exists"). Verdikt 2026-08-17 (decline no-physical-force) korrigiert: Quelle IST physikalisch (em-mag); aber Feld-Traeger pending — pending, kein live-cmap. Eintrag lebt hier, bis ein Richtungs-Kanal-Atom existiert (TODO: Position::Direction/Motion + WGSL-force-Zweig).
