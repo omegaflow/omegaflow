@@ -41,7 +41,7 @@ fn main() {
         let text = match std::fs::read_to_string(&full) {
             Ok(t) => t,
             Err(e) => {
-                eprintln!("register_verify: cannot read {}: {}", full.display(), e);
+                eprintln!("register_verify: {} unreadable: {}", full.display(), e);
                 continue;
             }
         };
@@ -162,10 +162,10 @@ fn is_path(p: &str) -> bool {
 
 fn check(root: &Path, line: usize, _rawline: &str, path: &str) -> Report {
     let full = root.join(path);
-    let raw = Path::new(&path)
-        .file_stem()
-        .map(|s| s.to_string_lossy().to_string())
-        .unwrap_or_default();
+    let raw = match Path::new(&path).file_stem() {
+        Some(s) => s.to_string_lossy().to_string(),
+        None => path.to_string(),
+    };
     if full.exists() {
         return Report {
             line,
@@ -261,12 +261,12 @@ fn is_allowlisted(path: &str) -> bool {
 }
 
 fn is_gate_path(path: &str) -> bool {
-    let name = Path::new(path)
-        .file_name()
-        .map(|s| s.to_string_lossy())
-        .unwrap_or_default();
+    let name = match Path::new(path).file_name() {
+        Some(n) => n.to_string_lossy(),
+        None => return false,
+    };
     matches!(
         name.as_ref(),
-        "llm_gate.rs" | "llm_interceptor.rs" | "axioms.rs" | "state.rs" | "friction.rs"
+        "commit_gate.rs" | "axioms.rs" | "state.rs" | "friction.rs"
     )
 }

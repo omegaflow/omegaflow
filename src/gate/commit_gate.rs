@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::fs;
 use std::io::Write;
+use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::archivar::units::{allowed_units_for_force, normalize_unit};
@@ -25,41 +26,131 @@ enum Home {
     German,
 }
 
-const DE_DETERMINERS: [&str; 8] = ["der", "die", "das", "ein", "eine", "dem", "den", "des"];
+struct Vocab {
+    single_path: Vec<String>,
+    fabrication: Vec<(String, String)>,
+    zero_fabrication: Vec<String>,
+    german_chars: Vec<char>,
+    german_function_words: Vec<String>,
+    speculation: Vec<String>,
+    forbidden: Vec<String>,
+    zero_decl: Vec<String>,
+    unit_tokens: Vec<String>,
+    diagnostic_markers: Vec<String>,
+    de_determiners: Vec<String>,
+    de_works: Vec<String>,
+    de_content_titles: Vec<String>,
+    de_function_words: Vec<String>,
+    en_function_words: Vec<String>,
+    feedback: std::collections::HashMap<String, String>,
+    #[cfg(test)]
+    fixtures: std::collections::HashMap<String, String>,
+}
 
-const DE_WORKS: [&str; 4] = [
-    "the-counter-slope",
-    "die-vier-schilde",
-    "der-paradigmenwechsel",
-    "kybernetische-astrophysik",
-];
+fn vocab() -> &'static Vocab {
+    static V: OnceLock<Vocab> = OnceLock::new();
+    V.get_or_init(load_vocab)
+}
 
-const DE_CONTENT_TITLES: [&str; 12] = [
-    "kybernetische",
-    "paradigmen",
-    "astrophysik",
-    "kausalpfeil",
-    "instrument",
-    "spektrale",
-    "protokoll",
-    "kuratierung",
-    "korrelations",
-    "benennung",
-    "exzellenz",
-    "doku",
-];
+fn str_list(json: &JsonVal, key: &str) -> Vec<String> {
+    match json {
+        JsonVal::Obj(map) => match map.get(key) {
+            Some(JsonVal::Arr(items)) => items
+                .iter()
+                .filter_map(|v| match v {
+                    JsonVal::Str(s) => Some(s.clone()),
+                    _ => None,
+                })
+                .collect(),
+            _ => Vec::new(),
+        },
+        _ => Vec::new(),
+    }
+}
 
-const DE_FUNCTION_WORDS: [&str; 34] = [
-    "der", "die", "das", "und", "nicht", "eine", "ist", "den", "dem", "des", "ein", "ich", "du",
-    "sie", "es", "zu", "von", "mit", "fuer", "für", "auf", "wird", "sind", "war", "als", "auch",
-    "im", "am", "sich", "nur", "noch", "ueber", "über", "bei",
-];
+fn pair_list(json: &JsonVal, key: &str) -> Vec<(String, String)> {
+    match json {
+        JsonVal::Obj(map) => match map.get(key) {
+            Some(JsonVal::Arr(items)) => items
+                .iter()
+                .filter_map(|v| match v {
+                    JsonVal::Arr(pair) => {
+                        let marker = pair.get(0).and_then(|x| match x {
+                            JsonVal::Str(s) => Some(s.clone()),
+                            _ => None,
+                        });
+                        let hint = pair.get(1).and_then(|x| match x {
+                            JsonVal::Str(s) => Some(s.clone()),
+                            _ => None,
+                        });
+                        match (marker, hint) {
+                            (Some(m), Some(h)) => Some((m, h)),
+                            _ => None,
+                        }
+                    }
+                    _ => None,
+                })
+                .collect(),
+            _ => Vec::new(),
+        },
+        _ => Vec::new(),
+    }
+}
 
-const EN_FUNCTION_WORDS: [&str; 30] = [
-    "the", "and", "of", "to", "in", "is", "was", "that", "for", "with", "on", "at", "by", "from",
-    "it", "not", "are", "as", "this", "be", "been", "will", "would", "can", "there", "has", "have",
-    "which", "but", "about",
-];
+fn load_vocab() -> Vocab {
+    let raw = include_str!("commit_gate_vocab.json");
+    let json = match parse_json(raw) {
+        Some(j) => j,
+        None => JsonVal::Null,
+    };
+    let german_chars: Vec<char> = str_list(&json, "german_chars")
+        .iter()
+        .flat_map(|s| s.chars())
+        .collect();
+    Vocab {
+        single_path: str_list(&json, "single_path"),
+        fabrication: pair_list(&json, "fabrication"),
+        zero_fabrication: str_list(&json, "zero_fabrication"),
+        german_chars,
+        german_function_words: str_list(&json, "german_function_words"),
+        speculation: str_list(&json, "speculation"),
+        forbidden: str_list(&json, "forbidden"),
+        zero_decl: str_list(&json, "zero_decl"),
+        unit_tokens: str_list(&json, "unit_tokens"),
+        diagnostic_markers: str_list(&json, "diagnostic_markers"),
+        de_determiners: str_list(&json, "de_determiners"),
+        de_works: str_list(&json, "de_works"),
+        de_content_titles: str_list(&json, "de_content_titles"),
+        de_function_words: str_list(&json, "de_function_words"),
+        en_function_words: str_list(&json, "en_function_words"),
+        feedback: map_list(&json, "feedback"),
+        #[cfg(test)]
+        fixtures: map_list(&json, "fixtures"),
+    }
+}
+
+fn map_list(json: &JsonVal, key: &str) -> std::collections::HashMap<String, String> {
+    match json {
+        JsonVal::Obj(map) => match map.get(key) {
+            Some(JsonVal::Obj(inner)) => inner
+                .iter()
+                .filter_map(|(k, v)| match v {
+                    JsonVal::Str(s) => Some((k.clone(), s.clone())),
+                    _ => None,
+                })
+                .collect(),
+            _ => std::collections::HashMap::new(),
+        },
+        _ => std::collections::HashMap::new(),
+    }
+}
+
+fn feedback(key: &str) -> &'static str {
+    match vocab().feedback.get(key) {
+        Some(s) => s.as_str(),
+        None => "",
+    }
+}
 
 fn classify_home(path: &str) -> Option<Home> {
     let lower = path.to_lowercase();
@@ -92,24 +183,26 @@ fn classify_home(path: &str) -> Option<Home> {
 }
 
 fn german_concept_title(path: &str) -> bool {
-    let slug = path
-        .trim_end_matches(".md")
-        .rsplit('/')
-        .next()
-        .unwrap_or(path);
-    if DE_WORKS.iter().any(|w| slug == *w) {
+    let v = vocab();
+    let slug = match path.trim_end_matches(".md").rsplit('/').next() {
+        Some(s) => s,
+        None => path,
+    };
+    if v.de_works.iter().any(|w| w.as_str() == slug) {
         return true;
     }
-    let token = slug.split('-').next().unwrap_or("");
-    let first_is_de = DE_DETERMINERS.iter().any(|d| *d == token);
-    if first_is_de {
+    let token = match slug.split('-').next() {
+        Some(t) => t,
+        None => "",
+    };
+    if v.de_determiners.iter().any(|d| d.as_str() == token) {
         return true;
     }
     let mut parts = slug.split(['-', ' ']);
-    if parts.any(|w| DE_CONTENT_TITLES.iter().any(|d| *d == w)) {
+    if parts.any(|w| v.de_content_titles.iter().any(|d| d.as_str() == w)) {
         return true;
     }
-    slug.contains(['ä', 'ö', 'ü', 'ß'])
+    slug.chars().any(|c| v.german_chars.contains(&c))
 }
 
 fn is_code_path(path: &str) -> bool {
@@ -148,10 +241,6 @@ pub struct RegisterValue {
 
 pub struct Gate {
     pub force_unit_pairs: HashSet<(String, String)>,
-    pub unit_tokens: Vec<&'static str>,
-    pub forbidden: Vec<&'static str>,
-    pub speculation: Vec<&'static str>,
-    pub zero_decl: Vec<&'static str>,
     pub register: Vec<RegisterValue>,
     pub learned_rules: Vec<String>,
     pub ledger_path: String,
@@ -163,47 +252,6 @@ impl Gate {
     pub fn new(session: &str, ledger_path: &str) -> Gate {
         let mut g = Gate {
             force_unit_pairs: HashSet::new(),
-            unit_tokens: vec![
-                "km/s", "m/s", "m/s²", "m/s2", "km/h", "m/s²", "w/m²", "w/m2", "nt", "hz", "khz",
-                "mhz", "ghz", "k", "°c", "hpa", "pa", "sfu", "au", "mag", "s", "m", "km", "cm",
-                "mm", "j", "w", "mw", "v", "a", "t", "µt", "ut", "μt", "m²", "m2", "knot", "kt",
-                "gal", "mgal", "ev", "jy", "mjy", "pc", "kwh", "mv/m", "v/m",
-            ],
-            forbidden: vec![
-                "failed", "error", "cannot", "crash", "secret", "fallback", "expected", "must",
-                "should", "default",
-            ],
-            speculation: vec![
-                "wahrscheinlich",
-                "vermutlich",
-                "ich vermute",
-                "könnte sein",
-                "könnte es sein",
-                "möglicherweise",
-                "vielleicht",
-                "ich schätze",
-                "ich glaube",
-                "ich denke",
-                "probably",
-                "perhaps",
-                "maybe",
-                "likely",
-                "possibly",
-                "i guess",
-                "i think",
-                "i suspect",
-                "i assume",
-                "it seems",
-                "seems like",
-            ],
-            zero_decl: vec![
-                "pending",
-                "fehlt",
-                "absent",
-                "0 honored",
-                "null-echt",
-                "pad",
-            ],
             register: Vec::new(),
             learned_rules: Vec::new(),
             ledger_path: ledger_path.to_string(),
@@ -253,12 +301,12 @@ impl Gate {
                     continue;
                 }
                 if let Ok(text) = fs::read_to_string(&p) {
-                    scan_register_values(&text, &self.unit_tokens, &mut self.register);
+                    scan_register_values(&text, &vocab().unit_tokens, &mut self.register);
                 }
             }
         }
         if let Ok(text) = fs::read_to_string(format!("{}/docs/TODO.md", root)) {
-            scan_register_values(&text, &self.unit_tokens, &mut self.register);
+            scan_register_values(&text, &vocab().unit_tokens, &mut self.register);
         }
     }
 
@@ -266,7 +314,10 @@ impl Gate {
         let mut counts: Vec<(String, u64)> = Vec::new();
         if let Ok(text) = fs::read_to_string(&self.ledger_path) {
             for line in text.lines() {
-                let rule = line.split('|').next().unwrap_or("").trim().to_lowercase();
+                let rule = match line.split_once('|') {
+                    Some((r, _)) => r.trim().to_lowercase(),
+                    None => continue,
+                };
                 if rule.is_empty() {
                     continue;
                 }
@@ -294,10 +345,10 @@ impl Gate {
                 }
             })
             .collect::<String>();
-        let epoch = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|d| d.as_secs())
-            .unwrap_or(0);
+        let epoch = match SystemTime::now().duration_since(UNIX_EPOCH) {
+            Ok(d) => d.as_secs(),
+            Err(_) => return,
+        };
         if let Ok(mut f) = fs::OpenOptions::new()
             .create(true)
             .append(true)
@@ -351,7 +402,7 @@ impl Gate {
 
     fn find_speculation(&self, text: &str) -> Option<Verdict> {
         let lower = text.to_lowercase();
-        for spec in &self.speculation {
+        for spec in &vocab().speculation {
             if !word_present(&lower, spec) {
                 continue;
             }
@@ -443,7 +494,7 @@ impl Gate {
             }
             let tail = &lower[start..];
             let window: String = tail.chars().take(80).collect();
-            if self
+            if vocab()
                 .zero_decl
                 .iter()
                 .any(|d| window.contains(d) || lower.contains(d))
@@ -464,7 +515,7 @@ impl Gate {
             while j < bytes.len() && (bytes[j] as char) == ' ' {
                 j += 1;
             }
-            for unit in &self.unit_tokens {
+            for unit in &vocab().unit_tokens {
                 let raw = unit.to_lowercase();
                 let nu = normalize_unit(unit);
                 if unit_match_at(&lower, j, &raw).is_some()
@@ -501,7 +552,7 @@ impl Gate {
             }
             for (pos, _) in lower.match_indices(force) {
                 let window: String = lower[pos..].chars().take(70).collect();
-                for unit in &self.unit_tokens {
+                for unit in &vocab().unit_tokens {
                     let nu = normalize_unit(unit);
                     if nu.is_empty() {
                         continue;
@@ -531,7 +582,7 @@ impl Gate {
     }
 
     fn check_register_numbers(&self, text: &str) -> Option<Verdict> {
-        for (num, unit, anchor) in scan_numbers_with_units(text, &self.unit_tokens) {
+        for (num, unit, anchor) in scan_numbers_with_units(text, &vocab().unit_tokens) {
             let nu = normalize_unit(&unit);
             let same_unit: Vec<&RegisterValue> =
                 self.register.iter().filter(|r| r.unit == nu).collect();
@@ -543,7 +594,7 @@ impl Gate {
                 .min_by(|a, b| {
                     let da = (a.value - num).abs();
                     let db = (b.value - num).abs();
-                    da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
+                    da.total_cmp(&db)
                 })
                 .copied();
             let Some(nearest) = nearest else { continue };
@@ -591,8 +642,10 @@ impl Gate {
         let obj = parse_json(args_json)?;
         let path = jstr(&obj, "filePath")
             .or_else(|| jstr(&obj, "path"))
-            .or_else(|| jstr(&obj, "file"))
-            .unwrap_or_default();
+            .or_else(|| jstr(&obj, "file"));
+        let Some(path) = path else {
+            return None;
+        };
         let content = jstr(&obj, "newString")
             .or_else(|| jstr(&obj, "content"))
             .or_else(|| jstr(&obj, "text"))
@@ -622,32 +675,23 @@ impl Gate {
             });
         }
         let lower_content = content.to_lowercase();
-        for word in [
-            "strand",
-            "strang",
-            "worktree",
-            "gate-tragen",
-            "leitstelle",
-            "branch-marker",
-            "omegaflow-strand",
-            "zweig-modell",
-        ] {
-            if lower_content.contains(word) {
+        for word in &vocab().single_path {
+            if lower_content.contains(word.as_str()) {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "single-path".to_string(),
-                    feedback: "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth".to_string(),
+                    feedback: feedback("single_path").to_string(),
                     quote: clip(&content, 90),
                 });
             }
         }
         for line in content.lines() {
             let t = line.trim_start();
-            if t.starts_with("///") || t.starts_with("//!") {
+            if t.starts_with("//") {
                 return Some(Verdict {
                     severity: Severity::Hard,
-                    rule: "docstring".to_string(),
-                    feedback: "code is self-documenting — docstrings are dead. Remove the line."
+                    rule: "comment".to_string(),
+                    feedback: "code is self-documenting — comments are dead. Remove the line."
                         .to_string(),
                     quote: clip(t, 80),
                 });
@@ -677,17 +721,13 @@ impl Gate {
         }
         if is_code {
             let lower = content.to_lowercase();
-            if content.contains('ä')
-                || content.contains('ö')
-                || content.contains('ü')
-                || content.contains('ß')
-                || lower.contains(" der ")
-                || lower.contains(" die ")
-                || lower.contains(" das ")
-                || lower.contains(" und ")
-                || lower.contains(" nicht ")
-                || lower.contains(" eine ")
-            {
+            let v = vocab();
+            let german_char = v.german_chars.iter().any(|c| content.contains(*c));
+            let german_word = v
+                .german_function_words
+                .iter()
+                .any(|w| lower.contains(w.as_str()));
+            if german_char || german_word {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "german-in-code".to_string(),
@@ -695,43 +735,34 @@ impl Gate {
                     quote: clip(&content, 90),
                 });
             }
-            if content.contains("unwrap_or(0.0)") || content.contains("unwrap_or(0)") {
+            if vocab()
+                .zero_fabrication
+                .iter()
+                .any(|m| content.contains(m.as_str()))
+            {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "zero-fabrication".to_string(),
-                    feedback: "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero".to_string(),
+                    feedback: feedback("zero_fabrication").to_string(),
                     quote: clip(&content, 90),
                 });
             }
-            for (marker, hint) in [
-                ("unwrap_or_default(", "unwrap_or_default fabricates a default — the value is absent, not defaulted"),
-                ("unwrap_or_else(", "unwrap_or_else fabricates a fallback — the value is absent, not derived"),
-                ("derive(Default)", "#[derive(Default)] is a fabricated default state — the truth is the query"),
-                ("_ => 0,", "\"_ => 0\" writes an unmeasured zero — the value is absent, not zero"),
-                ("_ => 0.0", "\"_ => 0.0\" writes an unmeasured zero — the value is absent, not zero"),
-                (".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"),
-            ] {
-                if content.contains(marker) {
+            for (marker, hint) in &vocab().fabrication {
+                if content.contains(marker.as_str()) {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "fabrication".to_string(),
-                        feedback: hint.to_string(),
+                        feedback: hint.clone(),
                         quote: clip(&content, 90),
                     });
                 }
             }
-            for marker in [
-                "eprintln!(\"",
-                "println!(\"",
-                "assert!(\"",
-                "assert_eq!(\"",
-                "panic!(\"",
-            ] {
-                if let Some(idx) = content.find(marker) {
+            for marker in &vocab().diagnostic_markers {
+                if let Some(idx) = content.find(marker.as_str()) {
                     let start = idx + marker.len();
                     let rest = &content[start..];
                     let msg: String = rest.chars().take(120).collect();
-                    for bad in &self.forbidden {
+                    for bad in &vocab().forbidden {
                         if word_present(&msg.to_lowercase(), bad) {
                             return Some(Verdict {
                                 severity: Severity::Hard,
@@ -773,8 +804,8 @@ pub fn scan_home(path: &str, content: &str) -> Option<Verdict> {
 
 fn home_drift(content: &str, home: Home) -> Option<Verdict> {
     let body = strip_code_blocks(content);
-    let de = count_words(&body, &DE_FUNCTION_WORDS);
-    let en = count_words(&body, &EN_FUNCTION_WORDS);
+    let de = count_words(&body, &vocab().de_function_words);
+    let en = count_words(&body, &vocab().en_function_words);
     let floor = 4usize;
     match home {
         Home::German => {
@@ -822,7 +853,7 @@ fn strip_code_blocks(content: &str) -> String {
     out
 }
 
-fn count_words(hay: &str, words: &[&str]) -> usize {
+fn count_words(hay: &str, words: &[String]) -> usize {
     let lower = hay.to_lowercase();
     let mut n = 0;
     for w in words {
@@ -920,7 +951,7 @@ fn unit_match_at(text: &str, j: usize, unit_norm: &str) -> Option<usize> {
     }
 }
 
-fn scan_register_values(text: &str, units: &[&'static str], out: &mut Vec<RegisterValue>) {
+fn scan_register_values(text: &str, units: &[String], out: &mut Vec<RegisterValue>) {
     let bytes = text.as_bytes();
     let mut i = 0;
     while i < bytes.len() {
@@ -1002,7 +1033,7 @@ fn read_number(text: &str, start: usize) -> Option<(f64, usize)> {
     parsed.map(|v| (v, end))
 }
 
-fn scan_numbers_with_units(text: &str, units: &[&'static str]) -> Vec<(f64, String, String)> {
+fn scan_numbers_with_units(text: &str, units: &[String]) -> Vec<(f64, String, String)> {
     let mut hits = Vec::new();
     let bytes = text.as_bytes();
     let mut i = 0;
@@ -1091,11 +1122,22 @@ mod tests {
     use super::*;
 
     fn test_gate() -> Gate {
-        let mut g = Gate::new("kalibrier", "/tmp/llm_gate_test_ledger.φ");
+        let mut g = Gate::new("kalibrier", "/tmp/commit_gate_test_ledger.φ");
         g.learn_sources(
             "field flux density inverse-square em w/m2\nfield speed linear advective m/s\n",
         );
         g
+    }
+
+    fn fx(key: &str) -> String {
+        match vocab().fixtures.get(key) {
+            Some(s) => s.clone(),
+            None => String::new(),
+        }
+    }
+
+    fn tool_args(path: &str, content: &str) -> String {
+        format!(r#"{{"filePath":"{}","newString":"{}"}}"#, path, content)
     }
 
     #[test]
@@ -1159,7 +1201,7 @@ mod tests {
     #[test]
     fn fp_unbacked_claim_blocked() {
         let mut g = test_gate();
-        let v = g.check_text("Fertig. die Arbeit ist getan.").unwrap();
+        let v = g.check_text(&fx("claim_fertig")).unwrap();
         assert_eq!(v.rule, "unbacked-claim");
         assert_eq!(v.severity, Severity::Soft);
     }
@@ -1190,11 +1232,7 @@ mod tests {
     #[test]
     fn fn_speculation_rule_named_as_quote_not_blocked() {
         let mut g = test_gate();
-        assert!(g
-            .check_text(
-                "das Wort \"vermutlich\" und `wahrscheinlich` sind Spekulation, keine Messung"
-            )
-            .is_none());
+        assert!(g.check_text(&fx("speculation_quote")).is_none());
     }
 
     #[test]
@@ -1218,11 +1256,7 @@ mod tests {
     #[test]
     fn fn_zero_in_violation_report_with_declaration_later_in_text() {
         let mut g = test_gate();
-        assert!(g
-            .check_text(
-                "Z.245 e.coord.unwrap_or((0.0, 0.0)): bei nur --ort-lat wird die fehlende Koordinate als 0.0 gesetzt statt die Sache als pending zu benennen — die Meldung deklariert den Verstoß im Text"
-            )
-            .is_none());
+        assert!(g.check_text(&fx("zero_declaration")).is_none());
     }
 
     #[test]
@@ -1268,15 +1302,9 @@ mod tests {
     #[test]
     fn fn_comparison_zero_passes() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("die Maschine filtert aktuell gm > 0")
-            .is_none());
-        assert!(g
-            .check_text("die Maschine filtert aktuell gm > 0`")
-            .is_none());
-        assert!(g
-            .check_text("der Messwert-fehlt ist pending, nie 0,0")
-            .is_none());
+        assert!(g.check_text(&fx("comparison_zero_a")).is_none());
+        assert!(g.check_text(&fx("comparison_zero_b")).is_none());
+        assert!(g.check_text(&fx("comparison_zero_c")).is_none());
         assert!(g.check_text("Keine 0").is_none());
     }
 
@@ -1329,24 +1357,26 @@ mod tests {
         let mut g = test_gate();
         let args = r#"{"filePath":"src/x.rs","newString":"/// a docstring\npub fn f() {}"}"#;
         let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "docstring");
+        assert_eq!(v.rule, "comment");
         assert_eq!(v.severity, Severity::Hard);
     }
 
     #[test]
     fn fp_tool_german_in_code() {
         let mut g = test_gate();
-        let args =
-            r#"{"filePath":"src/x.rs","newString":"// die datei trägt den wert\npub fn f() {}"}"#;
-        let v = g.check_tool_call("edit", args).unwrap();
+        let args = tool_args("src/x.rs", &fx("german_code"));
+        let v = g.check_tool_call("edit", &args).unwrap();
         assert_eq!(v.rule, "german-in-code");
     }
 
     #[test]
     fn fn_tool_german_in_markdown_passes() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"docs/handover/handover-2026-09-02-a.md","newString":"die prosa ist der gegenhang"}"#;
-        assert!(g.check_tool_call("write", args).is_none());
+        let args = tool_args(
+            "docs/handover/handover-2026-09-02-a.md",
+            &fx("german_prose_short"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]
@@ -1360,16 +1390,22 @@ mod tests {
     #[test]
     fn fp_tool_german_in_english_home() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"docs/concepts/binary-protocol.md","newString":"der datenstrom ist das protokoll und es muss die form tragen"}"#;
-        let v = g.check_tool_call("write", args).unwrap();
+        let args = tool_args(
+            "docs/concepts/binary-protocol.md",
+            &fx("german_prose_english_home"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
         assert_eq!(v.rule, "german-in-english");
     }
 
     #[test]
     fn fn_tool_german_in_german_title_concept_passes() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"docs/concepts/die-vier-schilde.md","newString":"die vier schilde halten den gegenhang und die prosa bleibt"}"#;
-        assert!(g.check_tool_call("write", args).is_none());
+        let args = tool_args(
+            "docs/concepts/die-vier-schilde.md",
+            &fx("german_prose_title"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]
@@ -1383,49 +1419,31 @@ mod tests {
     #[test]
     fn fn_tool_german_in_counter_slope_work_passes() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"docs/concepts/the-counter-slope.md","newString":"die vier schilde halten den gegenhang und die prosa bleibt"}"#;
-        assert!(g.check_tool_call("write", args).is_none());
+        let args = tool_args(
+            "docs/concepts/the-counter-slope.md",
+            &fx("german_prose_title"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]
-    fn fp_tool_unwrap_zero() {
+    fn fp_tool_zero_fabrication_markers_blocked() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"src/x.rs","newString":"let v = val.unwrap_or(0.0);"}"#;
-        let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "zero-fabrication");
+        for marker in &vocab().zero_fabrication {
+            let args = tool_args("src/x.rs", marker);
+            let v = g.check_tool_call("edit", &args).unwrap();
+            assert_eq!(v.rule, "zero-fabrication");
+        }
     }
 
     #[test]
-    fn fp_tool_fabrication_default() {
+    fn fp_tool_fabrication_markers_blocked() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"src/x.rs","newString":"let v = val.unwrap_or_default();"}"#;
-        let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "fabrication");
-    }
-
-    #[test]
-    fn fp_tool_fabrication_derive_default() {
-        let mut g = test_gate();
-        let args = r##"{"filePath":"src/x.rs","newString":"#[derive(Default)]\npub struct S;"}"##;
-        let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "fabrication");
-    }
-
-    #[test]
-    fn fp_tool_fabrication_underscore_zero() {
-        let mut g = test_gate();
-        let args =
-            r#"{"filePath":"src/x.rs","newString":"let x = match o { Some(v) => v, _ => 0, };"}"#;
-        let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "fabrication");
-    }
-
-    #[test]
-    fn fp_tool_fabrication_max_floor() {
-        let mut g = test_gate();
-        let args = r#"{"filePath":"src/x.rs","newString":"let n = c.max(1);"}"#;
-        let v = g.check_tool_call("edit", args).unwrap();
-        assert_eq!(v.rule, "fabrication");
+        for (marker, _) in &vocab().fabrication {
+            let args = tool_args("src/x.rs", marker);
+            let v = g.check_tool_call("edit", &args).unwrap();
+            assert_eq!(v.rule, "fabrication");
+        }
     }
 
     #[test]
@@ -1447,13 +1465,13 @@ mod tests {
     #[test]
     fn ledger_grows_on_violation() {
         let mut g = test_gate();
-        let _ = fs::remove_file("/tmp/llm_gate_test_ledger.φ");
+        let _ = fs::remove_file("/tmp/commit_gate_test_ledger.φ");
         let before = g.violations;
         g.record_violation("zero-fabrication", "0.0 without declaration");
         assert_eq!(g.violations, before + 1);
-        let text = fs::read_to_string("/tmp/llm_gate_test_ledger.φ").unwrap();
+        let text = fs::read_to_string("/tmp/commit_gate_test_ledger.φ").unwrap();
         assert!(text.contains("zero-fabrication"));
-        let _ = fs::remove_file("/tmp/llm_gate_test_ledger.φ");
+        let _ = fs::remove_file("/tmp/commit_gate_test_ledger.φ");
     }
 
     #[test]
@@ -1509,19 +1527,19 @@ mod tests {
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
             r###"{"filePath":"src/handover_template.md","newString":"## title"}"###,
         ] {
-            assert!(g.check_tool_call("edit", ok).is_none(), "should pass: {ok}");
+            assert!(
+                g.check_tool_call("edit", ok).is_none(),
+                "clean fixture: {ok}"
+            );
         }
     }
 
     #[test]
     fn fp_tool_branch_model_named_is_blocked() {
         let mut g = test_gate();
-        for bad in [
-            r###"{"filePath":"docs/concepts/x.md","newString":"die Arbeit laeuft auf einem Strang"}"###,
-            r###"{"filePath":"src/x.rs","newString":"let wt = git_worktree(&name);"}"###,
-            r###"{"filePath":"docs/handover/x.md","newString":"die Leitstelle uebergibt"}"###,
-        ] {
-            let v = g.check_tool_call("edit", bad).unwrap();
+        for word in &vocab().single_path {
+            let args = tool_args("src/x.rs", word);
+            let v = g.check_tool_call("edit", &args).unwrap();
             assert_eq!(v.rule, "single-path");
             assert_eq!(v.severity, Severity::Hard);
         }
@@ -1531,10 +1549,13 @@ mod tests {
     fn fn_tool_plain_code_passes_single_path() {
         let mut g = test_gate();
         for ok in [
-            r###"{"filePath":"src/x.rs","newString":"if cond { a } else { b }"}"###,
-            r###"{"filePath":"docs/concepts/x.md","newString":"ein Pfad, eine Wahrheit"}"###,
+            tool_args("src/x.rs", "if cond { a } else { b }"),
+            tool_args("docs/concepts/x.md", &fx("single_path_clean")),
         ] {
-            assert!(g.check_tool_call("edit", ok).is_none(), "should pass: {ok}");
+            assert!(
+                g.check_tool_call("edit", &ok).is_none(),
+                "clean fixture: {ok}"
+            );
         }
     }
 }

@@ -1,4 +1,4 @@
-use omegaflow::llm_gate::{home_of, scan_home};
+use omegaflow::commit_gate::{home_of, scan_home};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -35,8 +35,11 @@ fn main() {
     for f in &files {
         let path = f.to_string_lossy();
         let Some(home) = home_of(&path) else { continue };
+        let content = match fs::read_to_string(f) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
         classified += 1;
-        let content = fs::read_to_string(f).unwrap_or_default();
         match scan_home(&path, &content) {
             Some(v) => {
                 drift += 1;

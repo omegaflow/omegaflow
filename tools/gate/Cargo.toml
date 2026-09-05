@@ -6,7 +6,7 @@ license-file = "../../LICENSE"
 description = "the real-time A=A gate"
 
 [dependencies]
-omegaflow = { path = "../..", features = ["llm_gate"] }
+omegaflow = { path = "../..", features = ["commit_gate"] }
 
 geotiff-reader = { version = "0.8", default-features = false, features = ["local"] }
 miniz_oxide = "0.8"
