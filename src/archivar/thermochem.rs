@@ -588,6 +588,468 @@ pub fn equilibrium_concentrations(t_k: f64, p_pa: f64, b: [f64; 4]) -> Option<Ve
     Some(rho)
 }
 
+// Sulfur-aware equilibrium — a SEPARATE species set and element basis.
+// The 16-slot H/C/N/O list above is the archived jwst_equilibrium.bin contract
+// (EQUILIBRIUM_NSPECIES = 16, species_names written to the asset header); it is
+// left untouched. The sulfur channel is a parallel Gibbs-minimizer over the same
+// 16 species plus sulfur carriers, on a 5-element basis H,C,O,N,S. The two paths
+// are solved by the same generic code below (equilibrium_composition keeps the
+// fixed 4-element surface; equilibrium_composition_sulfur the 5-element one).
+//
+// Element budget provenance: the archival solar C/N/O abundances equal the
+// Anders & Grevesse 1989 photospheric scale (C/H 3.63e-4, N/H 1.12e-4,
+// O/H 8.51e-4); SOLAR_S is the same scale's sulfur abundance (S/H 1.62e-5,
+// log eps_S = 7.21, Anders & Grevesse 1989, Geochim. Cosmochim. Acta 53, 197).
+//
+// Sulfur gas-phase data provenance: NIST-JANAF Thermochemical Tables (Chase,
+// M.W., Jr., 4th edition, J. Phys. Chem. Ref. Data Monograph 9, 1998), as
+// rendered on the NIST Chemistry WebBook gas-thermochemistry pages (Shomate
+// fits, accessed 2026-09-05). Each species below carries its fit domain and the
+// JANAF 298.15-K anchors (standard enthalpy of formation and standard entropy)
+// that the WebBook page reports for that species; the unit tests verify the
+// encoded fits reproduce those measured anchors. The NIST-JANAF sulphur
+// reference state is orthorhombic S, matching the C(graphite)/H2/O2/N2 datum of
+// the archival NASA-7 H/C/N/O fits, so cross-reactions (e.g. H2S+2H2O
+// <-> SO2+3H2) sit on one consistent element datum.
+//
+// Atomic S(g) is in the set but carries fit data only for T >= 882.117 K
+// (NIST-JANAF Shomate fit domain; below that the fit does not exist). Below its
+// fit floor the species contributes no moles (its equilibrium abundance is
+// negligible there), which is data-honored absence, not a fabricated value.
+// S3 and S4 clusters and HSO are not in the set (no detection among the seed
+// demands them; adding a species is a data-sourcing act, not a default).
+
+pub const SOLAR_S: f64 = 1.62e-5;
+
+pub fn sulfur_solar() -> [f64; 5] {
+    [SOLAR_H, SOLAR_C, SOLAR_O, SOLAR_N, SOLAR_S]
+}
+
+pub const NELEM_S: usize = 5;
+
+pub struct ShomateSeg {
+    pub t_min: f64,
+    pub t_max: f64,
+    // Shomate coefficients A..G: cp/R-form heat capacity A+B*t+C*t^2+D*t^3+E/t^2
+    // with t = T/1000; F carries the JANAF formation-datum enthalpy offset.
+    pub a: f64,
+    pub b: f64,
+    pub c: f64,
+    pub d: f64,
+    pub e: f64,
+    pub f: f64,
+    pub g: f64,
+}
+
+pub enum GasGibbs {
+    Nasa7 { low: [f64; 7], high: [f64; 7] },
+    Shomate { segs: Vec<ShomateSeg> },
+}
+
+pub struct GasSpec {
+    pub name: &'static str,
+    pub formula: [i32; NELEM_S],
+    pub g: GasGibbs,
+}
+
+fn nasa7_g_over_rt(low: &[f64; 7], high: &[f64; 7], t: f64) -> f64 {
+    let a = if t <= T_MID { low } else { high };
+    h_over_rt(a, t) - s_over_r(a, t)
+}
+
+fn shomate_g_over_rt(segs: &[ShomateSeg], t: f64) -> Option<f64> {
+    let seg = segs
+        .iter()
+        .find(|s| t < s.t_max)
+        .or_else(|| segs.last().filter(|s| t <= s.t_max))?;
+    if t < seg.t_min {
+        return None;
+    }
+    let tt = t / 1000.0;
+    let h = seg.a * tt
+        + seg.b * tt * tt / 2.0
+        + seg.c * tt * tt * tt / 3.0
+        + seg.d * tt * tt * tt * tt / 4.0
+        - seg.e / tt
+        + seg.f;
+    let s = seg.a * tt.ln() + seg.b * tt + seg.c * tt * tt / 2.0 + seg.d * tt * tt * tt / 3.0
+        - seg.e / (2.0 * tt * tt)
+        + seg.g;
+    Some((1000.0 * h - t * s) / (R_GAS * t))
+}
+
+pub fn gas_g_over_rt(spec: &GasSpec, t: f64) -> Option<f64> {
+    match &spec.g {
+        GasGibbs::Nasa7 { low, high } => Some(nasa7_g_over_rt(low, high, t)),
+        GasGibbs::Shomate { segs } => shomate_g_over_rt(segs, t),
+    }
+}
+
+fn shomate_spec(name: &'static str, formula: [i32; NELEM_S], segs: Vec<ShomateSeg>) -> GasSpec {
+    GasSpec {
+        name,
+        formula,
+        g: GasGibbs::Shomate { segs },
+    }
+}
+
+fn s_seg(
+    t_min: f64,
+    t_max: f64,
+    a: f64,
+    b: f64,
+    c: f64,
+    d: f64,
+    e: f64,
+    f: f64,
+    g: f64,
+) -> ShomateSeg {
+    ShomateSeg {
+        t_min,
+        t_max,
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+    }
+}
+
+// NIST-JANAF (Chase 1998) Shomate fits, coefficient order A..G. Fit-domain and
+// 298.15-K anchors per species are listed; the 298.15 anchors are the measured
+// values the tests verify against.
+fn sulfur_shomate_species() -> Vec<GasSpec> {
+    vec![
+        // S(g) atomic sulfur — JANAF fit domain 882.117..6000 K; no fit below.
+        shomate_spec(
+            "S",
+            [0, 0, 0, 0, 1],
+            vec![
+                s_seg(
+                    882.117, 1400.0, 27.45968, -13.32784, 10.06574, -2.662381, -0.055851, 269.1149,
+                    204.2955,
+                ),
+                s_seg(
+                    1400.0, 6000.0, 16.55345, 2.400266, -0.255760, 0.005821, 3.564793, 278.4356,
+                    194.5447,
+                ),
+            ],
+        ),
+        // S2(g) — JANAF 298..6000 K single fit; dHf298 128.60 kJ/mol, S298 228.19 J/mol/K.
+        shomate_spec(
+            "S2",
+            [0, 0, 0, 0, 2],
+            vec![s_seg(
+                298.0, 6000.0, 33.51313, 5.065360, -1.059670, 0.089905, -0.211911, 117.6855,
+                266.0919,
+            )],
+        ),
+        // SH(g) — JANAF 298..1200 / 1200..6000 K; dHf298 139.33 kJ/mol, S298 195.63 J/mol/K.
+        shomate_spec(
+            "SH",
+            [1, 0, 0, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1200.0, 38.04306, -27.46792, 34.06462, -11.79875, -0.009743, 128.8961,
+                    248.3945,
+                ),
+                s_seg(
+                    1200.0, 6000.0, 32.99507, 2.841514, -0.507766, 0.038247, -2.909667, 124.4870,
+                    230.0066,
+                ),
+            ],
+        ),
+        // H2S(g) — JANAF 298..1400 / 1400..6000 K; dHf298 -20.50 kJ/mol, S298 205.77 J/mol/K.
+        shomate_spec(
+            "H2S",
+            [2, 0, 0, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1400.0, 26.88412, 18.67809, 3.434203, -3.378702, 0.135882, -28.91211,
+                    233.3747,
+                ),
+                s_seg(
+                    1400.0, 6000.0, 51.22136, 4.147486, -0.643566, 0.041621, -10.46385, -55.87606,
+                    243.6900,
+                ),
+            ],
+        ),
+        // SO(g) — JANAF 298..1400 / 1400..6000 K; dHf298 5.01 kJ/mol, S298 221.94 J/mol/K.
+        shomate_spec(
+            "SO",
+            [0, 0, 1, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1400.0, 22.56414, 29.93305, -22.87987, 6.408968, 0.047560, -2.702237,
+                    241.5511,
+                ),
+                s_seg(
+                    1400.0, 6000.0, 23.50387, 10.82133, -2.260566, 0.168555, 5.052557, 5.425853,
+                    254.7734,
+                ),
+            ],
+        ),
+        // SO2(g) — JANAF 298..1200 / 1200..6000 K; dHf298 -296.84 kJ/mol, S298 248.21 J/mol/K.
+        shomate_spec(
+            "SO2",
+            [0, 0, 2, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1200.0, 21.43049, 74.35094, -57.75217, 16.35534, 0.086731, -305.7688,
+                    254.8872,
+                ),
+                s_seg(
+                    1200.0, 6000.0, 57.48188, 1.009328, -0.076290, 0.005174, -4.045401, -324.4140,
+                    302.7798,
+                ),
+            ],
+        ),
+        // CS(g) — JANAF 298..600 / 600..6000 K; dHf298 280.33 kJ/mol, S298 210.55 J/mol/K.
+        shomate_spec(
+            "CS",
+            [0, 1, 0, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 600.0, 21.76387, 24.99890, -8.095581, -4.563949, 0.126372, 273.2328,
+                    230.5497,
+                ),
+                s_seg(
+                    600.0, 6000.0, 34.47721, 2.966255, -0.950722, 0.113718, -0.997482, 267.0275,
+                    247.0731,
+                ),
+            ],
+        ),
+        // OCS(g) carbonyl sulfide — JANAF 298..1200 / 1200..6000 K; dHf298 -138.41 kJ/mol, S298 231.57 J/mol/K.
+        shomate_spec(
+            "OCS",
+            [0, 1, 1, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1200.0, 34.53892, 43.05378, -26.61773, 6.338844, -0.327515, -151.5001,
+                    259.8118,
+                ),
+                s_seg(
+                    1200.0, 6000.0, 60.32240, 1.738332, -0.209982, 0.014110, -5.128873, -168.6307,
+                    287.6454,
+                ),
+            ],
+        ),
+    ]
+}
+
+fn sulfur_gas_specs() -> Vec<GasSpec> {
+    let mut out: Vec<GasSpec> = species()
+        .into_iter()
+        .map(|s| GasSpec {
+            name: s.name,
+            formula: [s.formula[0], s.formula[1], s.formula[2], s.formula[3], 0],
+            g: GasGibbs::Nasa7 {
+                low: s.low,
+                high: s.high,
+            },
+        })
+        .collect();
+    out.extend(sulfur_shomate_species());
+    out
+}
+
+pub fn sulfur_gas_names() -> Vec<String> {
+    sulfur_gas_specs()
+        .into_iter()
+        .map(|s| s.name.to_string())
+        .collect()
+}
+
+fn gas_residual(lam: &[f64], specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64]) -> (bool, f64) {
+    let nelem = b.len();
+    let big_n = lam[nelem].exp();
+    if !big_n.is_finite() || big_n <= 0.0 {
+        return (false, f64::INFINITY);
+    }
+    let mut r = vec![0.0f64; nelem + 1];
+    for j in 0..nelem {
+        r[j] = -b[j];
+    }
+    let mut e_sum = 0.0f64;
+    for s in specs.iter() {
+        let Some(g) = gas_g_over_rt(s, t) else {
+            continue;
+        };
+        let mut phi = -g - ln_p;
+        for j in 0..nelem {
+            phi += s.formula[j] as f64 * lam[j];
+        }
+        let e = phi.exp();
+        if !e.is_finite() {
+            return (false, f64::INFINITY);
+        }
+        e_sum += e;
+        let ni = big_n * e;
+        for j in 0..nelem {
+            r[j] += s.formula[j] as f64 * ni;
+        }
+    }
+    r[nelem] = e_sum - 1.0;
+    let norm = r.iter().map(|x| x * x).sum::<f64>().sqrt();
+    (norm.is_finite(), norm)
+}
+
+fn gas_newton_step(specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64], lam: &mut [f64]) -> bool {
+    let nelem = b.len();
+    for _ in 0..80 {
+        let big_n = lam[nelem].exp();
+        let n_species = specs.len();
+        let mut e = vec![0.0f64; n_species];
+        let mut n = vec![0.0f64; n_species];
+        for (i, s) in specs.iter().enumerate() {
+            let Some(g) = gas_g_over_rt(s, t) else {
+                continue;
+            };
+            let mut phi = -g - ln_p;
+            for j in 0..nelem {
+                phi += s.formula[j] as f64 * lam[j];
+            }
+            e[i] = phi.exp();
+            n[i] = big_n * e[i];
+        }
+        let mut r = vec![0.0f64; nelem + 1];
+        for j in 0..nelem {
+            r[j] = -b[j];
+            for (i, s) in specs.iter().enumerate() {
+                r[j] += s.formula[j] as f64 * n[i];
+            }
+        }
+        r[nelem] = e.iter().sum::<f64>() - 1.0;
+        let rel = (0..nelem)
+            .map(|j| (r[j] / b[j].max(1e-30)).abs())
+            .fold(r[nelem].abs(), f64::max);
+        if rel < 1e-10 {
+            return true;
+        }
+        let dim = nelem + 1;
+        let mut jac = vec![vec![0.0f64; dim]; dim];
+        for j in 0..nelem {
+            for k in 0..nelem {
+                for (i, s) in specs.iter().enumerate() {
+                    jac[j][k] += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
+                }
+            }
+        }
+        for j in 0..nelem {
+            for (i, s) in specs.iter().enumerate() {
+                jac[j][nelem] += s.formula[j] as f64 * n[i];
+            }
+        }
+        for k in 0..nelem {
+            for (i, s) in specs.iter().enumerate() {
+                jac[nelem][k] += s.formula[k] as f64 * e[i];
+            }
+        }
+        let mut dl = vec![0.0f64; dim];
+        for j in 0..dim {
+            dl[j] = -r[j];
+        }
+        gauss_solve(&mut jac, &mut dl);
+        let norm0 = r.iter().map(|x| x * x).sum::<f64>().sqrt();
+        let mut alpha = 1.0f64;
+        let mut accepted = false;
+        while alpha > 1e-14 {
+            let mut trial = vec![0.0f64; dim];
+            for k in 0..dim {
+                trial[k] = lam[k] + alpha * dl[k];
+            }
+            let (ok, norm) = gas_residual(&trial, specs, t, ln_p, b);
+            if ok && norm < norm0 {
+                lam.copy_from_slice(&trial);
+                accepted = true;
+                break;
+            }
+            alpha *= 0.5;
+        }
+        if !accepted {
+            return false;
+        }
+    }
+    false
+}
+
+fn solve_gas(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    if !t_k.is_finite() || t_k < 500.0 || t_k > 3000.0 || !p_pa.is_finite() || p_pa <= 0.0 {
+        return None;
+    }
+    if b.iter().any(|x| !x.is_finite() || *x <= 0.0) {
+        return None;
+    }
+    let nelem = b.len();
+    let ln_p = (p_pa / P0_PA).ln();
+    let Some(atomic_species) = gas_atomic_species_indices(specs, nelem) else {
+        return None;
+    };
+    let mut lam = vec![0.0f64; nelem + 1];
+    for (j, &ai) in atomic_species.iter().enumerate() {
+        let g = gas_g_over_rt(&specs[ai], 6000.0)?;
+        lam[j] = g + ln_p + b[j].ln();
+    }
+    lam[nelem] = 0.0;
+
+    let mut tcur = 6000.0f64;
+    let mut converged = true;
+    while tcur > t_k {
+        let next = (tcur * 0.96).max(t_k);
+        converged = gas_newton_step(specs, next, ln_p, b, &mut lam);
+        if !converged {
+            break;
+        }
+        tcur = next;
+    }
+    if !converged {
+        return None;
+    }
+    let big_n = lam[nelem].exp();
+    let mut n = vec![0.0f64; specs.len()];
+    for (i, s) in specs.iter().enumerate() {
+        let Some(g) = gas_g_over_rt(s, t_k) else {
+            continue;
+        };
+        let mut phi = -g - ln_p;
+        for j in 0..nelem {
+            phi += s.formula[j] as f64 * lam[j];
+        }
+        n[i] = big_n * phi.exp();
+    }
+    let total: f64 = n.iter().sum();
+    if !total.is_finite() || total <= 0.0 {
+        return None;
+    }
+    for x in &mut n {
+        *x /= total;
+    }
+    Some(n)
+}
+
+fn gas_atomic_species_indices(specs: &[GasSpec], nelem: usize) -> Option<Vec<usize>> {
+    // Element basis is ordered H,C,O,N,(S); the atomic-gas carrier of each
+    // element seeds the 6000-K starting potential. S(g) is only in the set on
+    // the 5-element path (its fit domain starts at 882.117 K; the solver starts
+    // the ramp at 6000 K, inside the fit).
+    let names = ["H", "C", "O", "N", "S"];
+    let mut idx = Vec::with_capacity(nelem);
+    for name in names.iter().take(nelem) {
+        idx.push(specs.iter().position(|s| s.name == *name)?);
+    }
+    Some(idx)
+}
+
+// Sulfur-aware equilibrium composition at 1 bar and solar H/C/O/N/S abundances.
+// Slots: the 16 archival H/C/N/O species in their archived order, then
+// S, S2, SH, H2S, SO, SO2, CS, OCS (slot order follows sulfur_shomate_species).
+pub fn equilibrium_composition_sulfur(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    let specs = sulfur_gas_specs();
+    solve_gas(&specs, &sulfur_solar(), t_k, p_pa)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -734,5 +1196,165 @@ mod tests {
     fn concentrations_refuse_out_of_domain() {
         assert!(equilibrium_concentrations(300.0, P0_PA, solar()).is_none());
         assert!(equilibrium_concentrations(1200.0, 0.0, solar()).is_none());
+    }
+
+    fn s_species_by_name() -> Vec<GasSpec> {
+        sulfur_shomate_species()
+    }
+
+    fn seg_value(segs: &[ShomateSeg], t: f64) -> Option<(f64, f64)> {
+        // H°(T) [kJ/mol] and S°(T) [J/mol/K] from one Shomate segment.
+        let seg = segs
+            .iter()
+            .find(|s| t < s.t_max)
+            .or_else(|| segs.last().filter(|s| t <= s.t_max))?;
+        if t < seg.t_min {
+            return None;
+        }
+        let tt = t / 1000.0;
+        let h = seg.a * tt
+            + seg.b * tt * tt / 2.0
+            + seg.c * tt * tt * tt / 3.0
+            + seg.d * tt * tt * tt * tt / 4.0
+            - seg.e / tt
+            + seg.f;
+        let s = seg.a * tt.ln() + seg.b * tt + seg.c * tt * tt / 2.0 + seg.d * tt * tt * tt / 3.0
+            - seg.e / (2.0 * tt * tt)
+            + seg.g;
+        Some((h, s))
+    }
+
+    #[test]
+    fn sulfur_fits_reproduce_the_nist_janaf_298_anchors() {
+        // NIST-JANAF (Chase 1998) 298.15-K anchors from the WebBook pages the
+        // constants were read from. S(g) has no fit at 298.15 K (domain starts
+        // at 882.117 K); it is checked separately.
+        let anchors: [(&str, f64, f64); 7] = [
+            ("S2", 128.60, 228.19),
+            ("SH", 139.33, 195.63),
+            ("H2S", -20.50, 205.77),
+            ("SO", 5.01, 221.94),
+            ("SO2", -296.84, 248.21),
+            ("CS", 280.33, 210.55),
+            ("OCS", -138.41, 231.57),
+        ];
+        for (name, d_hf, s_ref) in anchors {
+            let specs = s_species_by_name();
+            let spec = specs
+                .iter()
+                .find(|sp| sp.name == name)
+                .unwrap_or_else(|| panic!("{name} absent"));
+            let GasGibbs::Shomate { segs } = &spec.g else {
+                panic!("{name} not shomate");
+            };
+            let (h, s) = seg_value(segs, 298.15).unwrap();
+            assert!(
+                (h - d_hf).abs() < 0.5,
+                "{name}: H(298) {:.3} kJ/mol vs JANAF {:.2}",
+                h,
+                d_hf
+            );
+            assert!(
+                (s - s_ref).abs() < 0.5,
+                "{name}: S(298) {:.3} J/mol/K vs JANAF {:.2}",
+                s,
+                s_ref
+            );
+        }
+    }
+
+    #[test]
+    fn atomic_s_gas_fit_domain_starts_at_882k() {
+        let specs = s_species_by_name();
+        let spec = specs.iter().find(|sp| sp.name == "S").unwrap();
+        let GasGibbs::Shomate { segs } = &spec.g else {
+            panic!("S not shomate");
+        };
+        assert!(seg_value(segs, 298.15).is_none());
+        assert!(seg_value(segs, 500.0).is_none());
+        assert!(seg_value(segs, 882.0).is_none());
+        assert!(seg_value(segs, 900.0).is_some());
+        assert!(seg_value(segs, 3000.0).is_some());
+    }
+
+    #[test]
+    fn sulfur_composition_conserves_the_element_budget() {
+        let x = equilibrium_composition_sulfur(1200.0, P0_PA).unwrap();
+        assert_eq!(x.len(), 24);
+        let specs = sulfur_gas_specs();
+        let mut atoms = [0.0f64; NELEM_S];
+        for (i, s) in specs.iter().enumerate() {
+            for j in 0..NELEM_S {
+                atoms[j] += s.formula[j] as f64 * x[i];
+            }
+        }
+        let solar5 = sulfur_solar();
+        for j in 0..NELEM_S {
+            assert!(
+                (atoms[j] / atoms[0] / solar5[j] - 1.0).abs() < 1e-6,
+                "element {} balance off: {}",
+                j,
+                atoms[j] / atoms[0]
+            );
+        }
+    }
+
+    #[test]
+    fn sulfur_solver_matches_direct_kp() {
+        // H2S + 2 H2O <-> SO2 + 3 H2 — the cross-datum reaction that pins the
+        // NIST-JANAF sulfur scale to the archival H/C/N/O datum.
+        let t = 1200.0f64;
+        let x = equilibrium_composition_sulfur(t, P0_PA).unwrap();
+        let specs = sulfur_gas_specs();
+        let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+        let (ih2s, ih2o, iso2, ih2) = (pos("H2S"), pos("H2O"), pos("SO2"), pos("H2"));
+        let (g_h2s, g_h2o, g_so2, g_h2) = (
+            gas_g_over_rt(&specs[ih2s], t).unwrap(),
+            gas_g_over_rt(&specs[ih2o], t).unwrap(),
+            gas_g_over_rt(&specs[iso2], t).unwrap(),
+            gas_g_over_rt(&specs[ih2], t).unwrap(),
+        );
+        let dg = g_so2 + 3.0 * g_h2 - g_h2s - 2.0 * g_h2o;
+        let kp = (-dg).exp();
+        let from_solver = (x[iso2] * x[ih2].powi(3)) / (x[ih2s] * x[ih2o].powi(2));
+        assert!(
+            (from_solver / kp - 1.0).abs() < 1e-6,
+            "solver Kp {} vs direct {}",
+            from_solver,
+            kp
+        );
+    }
+
+    #[test]
+    fn sulfur_h2s_dominates_cold_sh_s2_hot() {
+        let x_cold = equilibrium_composition_sulfur(700.0, P0_PA).unwrap();
+        let x_hot = equilibrium_composition_sulfur(1700.0, P0_PA).unwrap();
+        let specs = sulfur_gas_specs();
+        let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+        let (ih2s, ish, is2) = (pos("H2S"), pos("SH"), pos("S2"));
+        let s_share_cold = x_cold[ih2s] + x_cold[ish] + x_cold[is2];
+        let s_share_hot = x_hot[ih2s] + x_hot[ish] + x_hot[is2];
+        assert!(
+            x_cold[ih2s] > 0.9 * s_share_cold,
+            "H2S is the S reservoir at 700 K, got {:.3e} of S in H2S",
+            x_cold[ih2s] / s_share_cold
+        );
+        assert!(
+            x_hot[ih2s] > 0.9 * s_share_hot,
+            "H2S remains the S reservoir at 1700 K, got {:.3e} of S in H2S",
+            x_hot[ih2s] / s_share_hot
+        );
+        assert!(
+            x_hot[ish] + x_hot[is2] > x_cold[ish] + x_cold[is2],
+            "SH/S2 share grows from 700 K to 1700 K"
+        );
+    }
+
+    #[test]
+    fn sulfur_composition_refuses_out_of_domain() {
+        assert!(equilibrium_composition_sulfur(300.0, P0_PA).is_none());
+        assert!(equilibrium_composition_sulfur(4000.0, P0_PA).is_none());
+        assert!(equilibrium_composition_sulfur(1200.0, 0.0).is_none());
+        assert!(equilibrium_composition_sulfur(f64::NAN, P0_PA).is_none());
     }
 }
