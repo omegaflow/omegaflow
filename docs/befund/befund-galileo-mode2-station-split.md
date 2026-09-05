@@ -2,7 +2,7 @@
   title: Befund — Galileo Mode-2-Station-Tag-Split: 1,5-Hz-Wert fragil (All-Lock-Tag-Zählung) + Stations-Pooling senkt auf 0,28–0,58 Hz
   class: befund
   date: 2026-09-05
-  sha256: a9ca9078e9068c2d81ff9a258534d9ba75bbd2cfca975ad367f33a4ba7f805f2
+  sha256: e45977bef43b6fd92b0ad00afaf112b5a3bf4eff6ed2eef76b0fb49877a93f22
   status: done
   antwortet-auf: docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/befund/befund-galileo-mode1-fingerabdruck.md
   see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/TODO.md
@@ -58,7 +58,7 @@ benannt). Die gebundene Zell-Definition (≥ 30 Proben, All-Lock-Tage absent) se
 den Konjunktions-Median auf 0,65 Hz. Der Mechanismus ist ein **Median-Index-Effekt**,
 kein „Zählen von NaN-Zellen": die Referenz nimmt `list[len/2]` über die 77
 Einträge (die 2 All-Lock-Tage sortieren als absent ans Ende); ihr Ausschluss
-schiebt den oberen Median-Index von s[37] auf s[38] über eine bimodale Lücke der
+schiebt den oberen Median-Index von s[38] auf s[37] über eine bimodale Lücke der
 Tages-RMS-Verteilung — von 1,46 auf 0,65 Hz (gemessen, unten belegt).
 
 ## Tabelle 2 — Stations-Split Mode 2: Median der (Tag, Station)-Zell-RMS (Zellen ≥ 30)
@@ -156,3 +156,10 @@ Mode-1-Starksignals. Der Mode-2-Stärke-Split bleibt ausstehend.*
 `reports/galileo_mode2_station_split.txt`. Der 1,5-Hz-Wert ist fragil
 (All-Lock-Tag-Zählung + Stations-Pooling, Faktor 1,1–2,3); ein einzelner Boden
 nicht getragen.
+
+Folge-Befunde: die 1,5→0,65-Tagesmengen-Reconciliation ist geschlossen
+(`befund-galileo-tagesmengen-reconciliation`, done — E1 hält: exakt 2 All-Lock-
+Tage, 77→75 schließt darüber); der Mode-2-Stärke-Split ist gemessen
+(`befund-galileo-mode2-staerke-split`, done — Boden lauter als starkes Quartil
+im ruhigen Fenster); der Stärke-Gradient ist stationenabhängig echt an 43/63,
+nicht an 14 (`befund-galileo-inpass-staerke-rampe`, done).
