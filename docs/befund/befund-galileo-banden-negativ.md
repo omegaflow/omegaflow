@@ -2,7 +2,7 @@
   title: Befund — 20-s-Bande Cross-Mission: Pioneer-Linienfrequenzen missions-spezifisch (negativ)
   class: befund
   date: 2026-09-05
-  sha256: 77735df672a76162d7d8b578dccb70f9f91bb5c570d7faca6382b3e1ff5f36da
+  sha256: 281066c4c30fa950037e81d077b4fea71e5935c82e20ec2f69af19960ab5b68a
   status: done
   antwortet-auf: docs/auftrag/auftrag-bande-split.md
   see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-rausch-kurve.md docs/paper/ground-sources-20s-band.md docs/TODO.md
@@ -41,12 +41,16 @@ Unterschied ist 0 honored: ein negatives Cross-Mission-Ergebnis schließt die
 Frequenzen als Galileo-Eigenschaft aus, nicht die 20-s-Bande als
 Pioneer-Befund.
 
-**Der exakte 20-s-Kamm (50/100/150/200 mHz, ~100 % Varianz)** tritt in den
-dünnen Dez-1990-Zweiweg-Pässen der 70-m-Stationen auf — eine
-Reduktions-Periodik (Harmonische von 1/20 s), Mechanismus offen.
+**Der exakte 20-s-Kamm (50/100/150/200 mHz)** erscheint in den dünnen
+Dez-1990-Zweiweg-Pässen der 70-m-Stationen — gemessen ist er die **Degeneranz
+des 60-s-Abtastrasters**, keine Linie (siehe `befund-galileo-banden-kamm-ton`):
+die Rohe-LS-Leistung an f·60 s = ganzzahlig explodiert numerisch, normiert
+erklärt er ≤ 8 % Varianz (Alias-Paar 50/150 mHz), und weißes Rauschen auf
+demselben 60-s-Grid reproduziert ihn. Mechanismus des Reduktionsrasters offen.
 
 **Der Station-42-Ton 52,39 mHz** (Periode 19,1 s = 3,14 U/min, 4 Tage
-Dez-1990) ist eine neue Linie, Identität offen.
+Dez-1990) ist eine isolierte Einzellinie (98,9–100 % Varianz, keine
+Harmonischen), Identität offen.
 
 ## Grenzen
 
@@ -62,11 +66,12 @@ Dez-1990) ist eine neue Linie, Identität offen.
 
 *Die Pioneer-Linienfrequenzen der 20-s-Bande sind missions-spezifisch: auf
 Galileo erscheinen sie an denselben Stationen in keinem Modus und keiner Ära.
-Der exakte 20-s-Kamm (50/100/150/200 mHz) und der Station-42-Ton 52,39 mHz
-sind neue, offene Linien.*
+Der exakte 20-s-Kamm ist gemessen eine Abtastraster-Degeneranz (keine Linie);
+der Station-42-Ton 52,39 mHz ist eine isolierte Linie, Identität offen.*
 
 ## Status
 
-`done`. Der Cross-Mission-Test ist negativ (die Sonde sieht den 20-s-Kamm und
-den 52,39-mHz-Ton — sie ist nicht blind); der Mechanismus des 20-s-Kamms und
-die Identität des Station-42-Tons bleiben offen.
+`done`. Der Cross-Mission-Test ist negativ (die Sonde sieht den
+52,39-mHz-Ton — sie ist nicht blind); der exakte 20-s-Kamm ist nachgemessen
+eine Abtastraster-Degeneranz (`befund-galileo-banden-kamm-ton`), der
+Mechanismus des Rasters und die Identität des Station-42-Tons bleiben offen.
