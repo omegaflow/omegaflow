@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: 649f6a0542420a5d8852b8d3dba37baf089d3df9f426ea008c7d8e1f44ccf825
+  sha256: 1917556e419d36f4c9d1700dada74b74fffc7f5c473e540bfea9ad28027fe21c
   status: live
   see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -30,12 +30,17 @@ stehen in den benannten Blättern (Kernregel des Auftrags).
 
 ## Die Tabelle
 
-N = 10. Aus dem Korpus der zwölf Kandidaten-Blätter treten genau jene zehn in
-die Tabelle ein, die ein gemessenes TE-gegen-Schwelle-Verdikt tragen; zwei
-tragen keines und sind ausgeschlossen (je eine Zeile unten). Eine Zeile ist
-ein System — ein Messfront-Blatt mit seinen Paaren und seiner Schwelle, wie
-das Blatt sie druckt. Die Werte sind wörtlich aus den Blättern übernommen;
-eine Zelle ohne Zahl im Quell-Blatt bleibt `pending`.
+N = 10. Aus dem Korpus der zwölf Kandidaten-Blätter des Auftrags-Inventars
+treten genau jene zehn in die Tabelle ein, die ein gemessenes
+TE-gegen-Schwelle-Verdikt tragen; zwei tragen keines und sind ausgeschlossen
+(je eine Zeile unten). Eine Zeile ist ein System — ein Messfront-Blatt mit
+seinen Paaren und seiner Schwelle, wie das Blatt sie druckt. Das Kriterium
+ist das gemessene Verdikt: was keines trägt (die zwei) tritt nicht in die
+Tabelle; was das Screening im Korpus außerdem nennt, aber noch nicht als
+Verdikt gemessen hat (der ENSO-Pfeil, `ein-blatt-axiom` Rätsel 1 — als
+Handover geplant, Messung `pending`), ist kein Kandidat und unten benannt,
+damit der Korpus schließt. Die Werte sind wörtlich aus den Blättern
+übernommen; eine Zelle ohne Zahl im Quell-Blatt bleibt `pending`.
 
 | System | Paar/Richtung | TE-Wert | Schwelle | Verdikt | geteilter Treiber / Konditionierung |
 |---|---|---|---|---|---|
@@ -74,24 +79,34 @@ steht ohne registrierte Konditionierung.
   TE 0.265 > 0.218, Lag 24 h) ist dieselbe co-lokale Pegel-Messung, die
   `blatt-pfeil-sturzflut-tibet.md` trägt — eine Doppelzählung wäre
   Fabrikation.
+- `ein-blatt-axiom.md` (ENSO-Pfeil, Rätsel 1) — das Screening nennt ihn im
+  Korpus; das Blatt tabuliert ihn nicht, weil kein gemessenes
+  TE-gegen-Schwelle-Verdikt vorliegt: als Handover geplant
+  (`handover-2026-08-21-enso-kausalpfeil.md`), Messung `pending`. Hier
+  benannt, damit kein Nachfolger die Lücke als stillen Fehlbestand neu
+  ausgräbt.
 
 ## Das Verdikt
 
 Aus der Tabelle allein: **Ja — aber in der Minderheit.** Drei von zehn
-Systemen tragen einen gemessenen Pfeil über ihrer Schwelle, der die Frage
-„mehr gerichtete Ordnung als gemeiner Treiber + Zufall?" mit Pfeil
-beantwortet: die Korona (Energiefluss aufwärts über die Sprossenleiter,
-über fam), der GIC-Treiber (Bz→dB/dt über fam, sub-täglich) und der
-co-lokale Trishuli-Regen→Pegel (TE über Schwelle, Lag 24 h). Ein weiteres
-Screening (Gyirong) misst nur gegenläufig einen die Konditionierung
-überlebenden Pfeil (Regen blockt Einstrahlung), während seine eigentliche
-Frage Stille bleibt. Sechs Fronten — LAIC, Kollab, KBO/Planet-Neun,
-Big-Bang-Echo, Dark Flow und das ECG-Kontroll-System — antworten mit
-Stille, darunter jede, deren Kandidat-Pfeil auf den geteilten Treiber
-konditioniert wurde (Kollab, Gyirong-Flutfrage) und dort aus der
-Signifikanz fällt. Das ist Thuậns These in den Zahlen des Systems: das
-Universum ist ein nur-gerade-balanciertes System — die gemessenen Pfeile
-sind lokal und physikalisch erwartet (Heizung, Sonnenwind-Kopplung,
+Systemen tragen einen gemessenen Pfeil über ihrer Schwelle: die Korona
+(Energiefluss aufwärts über die Sprossenleiter, über fam) und der
+GIC-Treiber (Bz→dB/dt über fam, sub-täglich) beantworten die Frage „mehr
+gerichtete Ordnung als gemeiner Treiber + Zufall?" — beide überleben ihre
+fam-Schwelle und ihre Kontrolle. Der co-lokale Trishuli-Regen→Pegel
+(TE 0.265 über 0.218, Lag 24 h) schlägt seine Per-Lag-Schwelle, trägt aber
+keine registrierte Konfund-Konditionierung im Quell-Blatt: er beantwortet
+„mehr als Zufall"; „mehr als gemeiner Treiber" bleibt `pending`. Ein
+weiteres Screening (Gyirong) misst nur gegenläufig einen die
+Konditionierung überlebenden Pfeil (Regen blockt Einstrahlung), während
+seine eigentliche Frage Stille bleibt. Sechs Fronten — LAIC, Kollab,
+KBO/Planet-Neun, Big-Bang-Echo, Dark Flow und das ECG-Kontroll-System —
+antworten mit Stille, darunter jede, deren Kandidat-Pfeil auf den
+geteilten Treiber konditioniert wurde (Kollab, Gyirong-Flutfrage) und
+dort aus der Signifikanz fällt. Das ist Thuậns These in den Zahlen des
+Systems: das Universum ist ein nur-gerade-balanciertes System — die
+gemessenen Pfeile sind lokal und physikalisch erwartet (Heizung,
+Sonnenwind-Kopplung,
 Niederschlags-Abfluss), keine globale gerichtete Ordnung; die Mehrheit der
 gemessenen Fronten ist Stille. Das ECG-Kontroll-System ist die Messung der
 Notwendigkeit der Konditionierung selbst: TE über dem Zufall allein ist
