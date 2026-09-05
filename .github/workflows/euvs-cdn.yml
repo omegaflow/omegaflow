@@ -1,0 +1,22 @@
+name: euvs-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  euvs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile GOES EUV Lyman-alpha 2009-2020 once and upload to CDN
+        run: |
+          mkdir -p kernels
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern goes_euvs.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin euvs_compiler -- \
+              --out goes_euvs.bin --ci-mode
