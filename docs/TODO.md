@@ -292,6 +292,14 @@ Messreihe archiviert: `archive/messreihe-nadel3-corona.md`. Befund lebt
 in `docs/paper/corona-heating-ladder.md`. OFFENE PFLICHTEN vor einer
 physikalischen Aussage — kein Blatt ohne diese:
 
+- **AIA-fam-Tool nachgelegt (2026-09-05)**: `aia_ladder_probe` rechnet jetzt
+  den Full-Round-Family-Bound wie `corona_ladder_probe` (6 Paare × 13 Lags × 10
+  Surrogate) und markiert * nur darüber — die methodische Luecke „AIA ohne fam /
+  EVE mit fam" (bekannt-schlecht) ist im Werkzeug geschlossen. Die fam-ZAHL ueber
+  dem 194-Flare-AIA-2014-Korpus steht noch aus: das manifestierte aia2014_lines.bin
+  deckt nur einen Tag (~7194 Samples/Band), der Ladder-Lauf findet 0 Ereignisse —
+  das Paper-Korpus (194 Flares) ist nicht als CDN-Asset manifestiert. pending
+  (Korpus-Harvest zuerst).
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
