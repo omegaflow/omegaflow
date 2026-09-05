@@ -1,0 +1,21 @@
+name: bison-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile BiSON p-mode velocity 1976-2024 once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern bison_pmode.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin bison_compiler -- \
+              --out bison_pmode.bin --ci-mode

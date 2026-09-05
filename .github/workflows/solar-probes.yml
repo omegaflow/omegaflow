@@ -1,0 +1,50 @@
+name: solar-probes
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  long-window-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the long-window probe (F10.7 history × GOES-XRS history)
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern goes_xrs.bin --pattern f107_penticton.bin --clobber && \
+            cargo run -p omegaflow-measure --release --bin long_window_probe -- \
+              --goes-bin goes_xrs.bin --f107-bin f107_penticton.bin
+  solar-causal-graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the solar DAG sheet (6 channels × 30 pairs × lag 0..7 d)
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern goes_xrs.bin --pattern f107_penticton.bin \
+            --pattern omni2_serie.bin --pattern goes_euvs.bin --clobber && \
+            cargo run -p omegaflow-measure --release --bin solar_causal_graph_probe -- \
+              --goes-bin goes_xrs.bin --f107-bin f107_penticton.bin \
+              --omni2-bin omni2_serie.bin --euvs-bin goes_euvs.bin
+  wso-hmi-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Cross-check WSO polar field against HMI (2010-2026)
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern wso_polar.bin --pattern hmi_polar.bin \
+            --pattern f107_penticton.bin --clobber && \
+            cargo run -p omegaflow-measure --release --bin wso_hmi_consistency -- \
+              --wso-bin wso_polar.bin --hmi-bin hmi_polar.bin && \
+            cargo run -p omegaflow-measure --release --bin hmi_cycle_probe -- \
+              --hmi-bin hmi_polar.bin --f107-bin f107_penticton.bin
