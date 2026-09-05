@@ -1310,6 +1310,18 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   DMS/DMDS-K2-18 nicht in der Saat (degeneriert). cargo check 0 Warnungen
   (omegaflow-measure + omegaflow-harvest), keine CDN-Manifestation.
 
+
+- Kondensation unter 500 K (2026-09-05): 500-K-Floor war eine kodierte Schranke,
+  kein Fit-Limit — separater Pfad equilibrium_composition_condensed (273,16-500 K,
+  H2O(l)-JANAF-Kondensat gesourct, p_sat-Kreuzdatum 3,169 kPa; NH3/CO2/CH4/H2S-
+  Kondensate pending, fuer die 5 Ziele irrelevant). Die 5 domain-pending aufgeloest:
+  K2-18 b CO2 = Disequilibrium-Hit (Gleichgewichts-CO2 ~1e-30 vs detektiert ~1%,
+  photochemisch; CH4 gleichgewichts-konsistent), TOI-270 d Hit; LP 791-18 c /
+  LTT 3780 c / TOI-199 b equilibrium-praesent (CH4 im Gleichgewicht). Katalog:
+  16 Hits / 13 praesent / 1 ohne-Modell / 0 pending; Permutations-Null mean 18,30
+  sigma 1,79 Schwelle 21,89 P(T>=16)=0,9424 — kein Ueberschuss. 23 thermochem-
+  Tests gruen (H2O(l)-Anker, p_sat, Grenzabgleich 500 K), cargo check 0 Warnungen.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
