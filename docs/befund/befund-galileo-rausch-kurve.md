@@ -2,7 +2,7 @@
   title: Befund — Galileo-Rausch-Kurve: Mode-Split (1 vs 2/3) und SEP-Geometrie ≤5 AU
   class: befund
   date: 2026-09-05
-  sha256: 18ffe2ba407c37857dcd0216d223bec7c1bb23b00bf52ab8590727c962259e5b
+  sha256: a886812b6a2608b44fdd2831b1ee0aa84f1f1a1766d970dd8c37cb80817909cb
   status: done
   antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
   see-also: docs/befund/befund-galileo-gwe-bestand.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
@@ -109,8 +109,6 @@ bei ≤5 AU kein Ort, sondern ein Winkel.*
   der Befund).
 - Die 34m-Unterstationen (12/15/24/34/42/45/61) erscheinen tageweise — die
   Banden-Brücke (20-s-Stationen) ist effektiv 14/43/63.
-- `galileo_daily`-Ephemeride liegt lokal, noch nicht auf dem CDN manifestiert
-  (Reproduzierbarkeits-Posten).
 
 ## Status
 
