@@ -200,7 +200,7 @@
   "primary_bibcode": "2016ApJ...820...99T",
   "note": "HST transmission, instruments: Wide Field Camera 3",
   "detection": "pending",
-  "detection_source": "HST/WFC3 atmosphere 6sigma (2016ApJ...820...99T); species HCN unconfirmed - no disequilibrium species basis"
+  "detection_source": "spectrum measured (opt de Mooij 2014; WFC3 Tsiaras 2016); HCN unconfirmed, upper limits Deibert 2021"
  },
  {
   "hostname": "AU Mic",
@@ -438,8 +438,8 @@
   ],
   "primary_bibcode": "2023ApJS..269...31E",
   "note": "HST transmission, instruments: Wide Field Camera 3",
-  "detection": "pending",
-  "detection_source": "no HST spectral publication found"
+  "detection": "featureless",
+  "detection_source": "K2-24 b measured flat WFC3 G141 (Edwards 2023 ApJS 269,31); c not observed"
  },
  {
   "hostname": "K2-33",
@@ -499,7 +499,7 @@
   "primary_bibcode": "2020AJ....160..201C",
   "note": "HST transmission, instruments: Wide Field Camera 3",
   "detection": "pending",
-  "detection_source": "no HST spectral publication; proposal only"
+  "detection_source": "GO-15138 observed d (featureless, Chachan 2020) not b; b has no measured spectrum"
  },
  {
   "hostname": "Kepler-9",
@@ -509,8 +509,8 @@
   ],
   "primary_bibcode": "2023ApJS..269...31E",
   "note": "HST transmission, instruments: Wide Field Camera 3",
-  "detection": "pending",
-  "detection_source": "no HST spectral publication; proposal only"
+  "detection": "featureless",
+  "detection_source": "Kepler-9 b/c measured flat (Edwards 2023, GO-12482); d not observed"
  },
  {
   "hostname": "LTT 1445 A",
