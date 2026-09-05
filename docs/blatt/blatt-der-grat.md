@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: 1917556e419d36f4c9d1700dada74b74fffc7f5c473e540bfea9ad28027fe21c
+  sha256: d5431e5866f889d3f27e08c583a57aacc84ac1fb4a7e7d5ec5e34dcb112a34a9
   status: live
   see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -122,7 +122,11 @@ kein System-Pfeil, wenn der geteilte Treiber die Quelle beider Kanäle ist.
   ihre fam aus dem pre-fix Surrogat-RNG. Die Blätter benennen: das pre-fix
   Band liegt höher als das post-fix Band; ein Verdikt, das gegen das höhere
   Band hält, hält post-fix a fortiori. Der GIC-Pfeil ist unter dem
-  korrigierten (post-fix) Null gemessen.
+  korrigierten (post-fix) Null gemessen — das GIC-Blatt ist selbst post-fix
+  (`fam-machine: post-fix`, `status: live`) und druckt dieselben Werte,
+  die diese Tabelle zitiert; der pre-fix-Stand wurde in
+  `04640a5` („GIC post-fix-Nachmessung") überholt. Die Kette
+  Quell-Blatt → Grat ist heil, kein 1321-Fall.
 - **`pending`-Zellen:** (a) die AIA-2014-Je-Zellen-Schwellen der Korona
   (das Blatt druckt die D-Werte und „über Null", nicht die Schwellen);
   (b) die exakten cTE-Werte der im 8-Wochen-Power-Fenster konditioniert
