@@ -9,6 +9,7 @@ pub(crate) use std::sync::{Arc, OnceLock};
 
 pub mod aia_lines;
 pub mod atdf;
+pub mod bayestar;
 pub mod bidsleep;
 pub mod bison_basu;
 pub mod bison_shift;
