@@ -1,7 +1,11 @@
 use omegaflow::archivar::C_LIGHT;
+use omegaflow::archivar::{embedded_lsk, LeapSeconds};
 use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::jwst::mjd_to_unix;
 use std::collections::HashMap;
 use std::process::Command;
+use std::thread::sleep;
+use std::time::Duration;
 
 const LSST_ROOT: &str = "https://lasair.lsst.ac.uk/";
 const LSST_API: &str = "https://lasair.lsst.ac.uk/api/query/";
@@ -37,6 +41,11 @@ const COINCIDENCE_S: f64 = 1800.0;
 const N_MIN: usize = 24;
 const N_COINC_MIN: usize = 12;
 
+const HTTP_RETRY: usize = 3;
+const RATE_LIMIT_BACKOFF_MS: u64 = 3000;
+const OBJECT_PAUSE_MS: u64 = 250;
+const CONE_PAUSE_MS: u64 = 1000;
+
 const NATURAL_DIMMERS: [&str; 12] = [
     "SN",
     "AGN",
@@ -51,6 +60,28 @@ const NATURAL_DIMMERS: [&str; 12] = [
     "EB",
     "Blazar",
 ];
+
+fn sleep_ms(ms: u64) {
+    sleep(Duration::from_millis(ms));
+}
+
+fn fink_mjd_tai_to_tdb(mjd_tai: f64, lsk: &LeapSeconds) -> Option<f64> {
+    let as_utc_unix = mjd_to_unix(mjd_tai);
+    let tai_minus_utc = lsk.leap_at(as_utc_unix)?;
+    lsk.unix_to_tdb(as_utc_unix - tai_minus_utc)
+}
+
+fn rows_to_tdb(lsk: &LeapSeconds, rows: &[(String, f64, f64)]) -> (Vec<(String, f64, f64)>, usize) {
+    let mut out = Vec::with_capacity(rows.len());
+    let mut skipped = 0usize;
+    for (band, mjd_tai, flux) in rows {
+        match fink_mjd_tai_to_tdb(*mjd_tai, lsk) {
+            Some(tdb) => out.push((band.clone(), tdb, *flux)),
+            None => skipped += 1,
+        }
+    }
+    (out, skipped)
+}
 
 struct LsstCurve {
     ra_deg: f64,
@@ -221,6 +252,28 @@ fn curl_post_bytes(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
         .trim()
         .to_string();
     Some((code, stdout[..idx].to_vec()))
+}
+
+fn curl_post_rate_aware(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
+    for attempt in 0..HTTP_RETRY {
+        let Some(resp) = curl_post_bytes(url, json_body) else {
+            return None;
+        };
+        if resp.0 == "429" {
+            let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
+            println!(
+                "Fink/LSST: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
+                attempt + 1
+            );
+            sleep_ms(backoff);
+            continue;
+        }
+        return Some(resp);
+    }
+    println!(
+        "Fink/LSST: HTTP 429 held across {HTTP_RETRY} backed-off tries — the rate limit stands, the query stays pending"
+    );
+    None
 }
 
 fn top_level_shape(body: &[u8]) -> Vec<(String, usize)> {
@@ -454,7 +507,7 @@ fn fink_cone_list(
     let payload = format!(
         "{{\"ra\": {ra}, \"dec\": {dec}, \"radius\": {radius_arcsec}, \"columns\": \"r:diaObjectId,r:ra,r:dec,r:nDiaSources,f:main_label_classifier,f:xm_simbad_otype\"}}"
     );
-    let Some((code, body)) = curl_post_bytes(FINK_CONE, &payload) else {
+    let Some((code, body)) = curl_post_rate_aware(FINK_CONE, &payload) else {
         println!("Fink/LSST cone ({ra}, {dec}, {radius_arcsec} arcsec): the cone query did not answer (measured stall) — pending");
         return Vec::new();
     };
@@ -545,9 +598,9 @@ fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Optio
 
 fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
     let mut t_min = f64::INFINITY;
-    for (_, mjd, _) in rows {
-        if *mjd < t_min {
-            t_min = *mjd;
+    for (_, tdb, _) in rows {
+        if *tdb < t_min {
+            t_min = *tdb;
         }
     }
     let mut curves: Vec<LsstCurve> = Vec::new();
@@ -558,7 +611,7 @@ fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<Lsst
         let mut samples: Vec<(f64, f32)> = rows
             .iter()
             .filter(|(b, _, _)| b == name)
-            .map(|(_, mjd, flux)| ((mjd - t_min) * 86400.0, *flux as f32))
+            .map(|(_, tdb, flux)| (tdb - t_min, *flux as f32))
             .collect();
         if samples.is_empty() {
             continue;
@@ -578,29 +631,69 @@ fn natural_excluded(class: i64, simbad: &str) -> bool {
     !(class == -1 && simbad == "Fail")
 }
 
-fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Option<&str>) {
+struct ConeVerdict {
+    fetched: usize,
+    multiband_scanned: usize,
+    candidates_pre: usize,
+    excluded_natural: usize,
+    unclassified: usize,
+}
+
+impl ConeVerdict {
+    fn void() -> ConeVerdict {
+        ConeVerdict {
+            fetched: 0,
+            multiband_scanned: 0,
+            candidates_pre: 0,
+            excluded_natural: 0,
+            unclassified: 0,
+        }
+    }
+}
+
+fn cone_scan(
+    ra: f64,
+    dec: f64,
+    radius_arcsec: f64,
+    min_sources: usize,
+    save: Option<&str>,
+    brief: bool,
+) -> ConeVerdict {
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Nadel V (LSST round): the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return ConeVerdict::void();
+    };
+    if !brief {
+        println!(
+            "Nadel V (LSST round): time layer — Fink r:midpointMjdTai is MJD/TAI; each row is mapped mjd → unix → TDB (naif0012.tls ΔT 32.184 s + leap) before the fold axis is built"
+        );
+    }
     let cone_save = save.map(str::to_string);
     let objs = fink_cone_list(ra, dec, radius_arcsec, min_sources, cone_save.as_deref());
     if objs.is_empty() {
         println!(
             "Nadel V (LSST round): the cone ({ra}, {dec}, {radius_arcsec} arcsec) yields no object above the cut — the scan stays void (0 honored)"
         );
-        return;
+        return ConeVerdict::void();
     }
     let source_cols = "r:diaObjectId,r:ra,r:dec,r:band,r:midpointMjdTai,r:scienceFlux";
     let mut curves_all: Vec<LsstCurve> = Vec::new();
     let mut fetched = 0usize;
     let mut total_rows = 0usize;
+    let mut tdb_skipped = 0usize;
     for o in &objs {
         let payload = format!(
             "{{\"diaObjectId\": \"{}\", \"columns\": \"{source_cols}\"}}",
             o.id
         );
-        let Some((code, body)) = curl_post_bytes(FINK_API_SOURCES, &payload) else {
+        let Some((code, body)) = curl_post_rate_aware(FINK_API_SOURCES, &payload) else {
             println!(
                 "Fink/LSST {}: the sources query did not answer (measured stall) — pending",
                 o.id
             );
+            sleep_ms(OBJECT_PAUSE_MS);
             continue;
         };
         if code != "200" {
@@ -608,6 +701,7 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
                 "Fink/LSST {}: the light curve answered HTTP {code} — pending",
                 o.id
             );
+            sleep_ms(OBJECT_PAUSE_MS);
             continue;
         }
         let Some((rows, _)) = parse_fink_source_rows(&body) else {
@@ -615,6 +709,7 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
                 "Fink/LSST {}: the sample is not a JSON array — parser pending on the real schema",
                 o.id
             );
+            sleep_ms(OBJECT_PAUSE_MS);
             continue;
         };
         if rows.is_empty() {
@@ -622,38 +717,58 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
                 "Fink/LSST {}: no row carries the full band/time/flux triple (absent)",
                 o.id
             );
+            sleep_ms(OBJECT_PAUSE_MS);
             continue;
         }
-        let curves = build_band_curves(o.ra_deg, o.dec_deg, &rows);
+        let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows);
+        tdb_skipped += skipped;
+        if rows_tdb.is_empty() {
+            println!(
+                "Fink/LSST {}: no sample row maps onto the TDB time layer (absent)",
+                o.id
+            );
+            sleep_ms(OBJECT_PAUSE_MS);
+            continue;
+        }
+        let curves = build_band_curves(o.ra_deg, o.dec_deg, &rows_tdb);
         if curves.is_empty() {
             println!(
                 "Fink/LSST {}: no measurement row maps to a known LSST band (absent)",
                 o.id
             );
+            sleep_ms(OBJECT_PAUSE_MS);
             continue;
         }
-        let mut per_band: HashMap<String, usize> = HashMap::new();
-        for (band, _, _) in &rows {
-            *per_band.entry(band.clone()).or_insert(0) += 1;
+        if !brief {
+            let mut per_band: HashMap<String, usize> = HashMap::new();
+            for (band, _, _) in &rows {
+                *per_band.entry(band.clone()).or_insert(0) += 1;
+            }
+            let mut band_counts: Vec<(&str, usize)> =
+                per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
+            band_counts.sort();
+            let counts: Vec<String> = band_counts
+                .iter()
+                .map(|(b, n)| format!("{b} {n}"))
+                .collect();
+            println!(
+                "Fink/LSST {} (nDiaSources {}): {} rows over {} — {}",
+                o.id,
+                o.n_sources,
+                rows.len(),
+                counts.join(", "),
+                curves.len()
+            );
         }
-        let mut band_counts: Vec<(&str, usize)> =
-            per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
-        band_counts.sort();
-        let counts: Vec<String> = band_counts
-            .iter()
-            .map(|(b, n)| format!("{b} {n}"))
-            .collect();
-        println!(
-            "Fink/LSST {} (nDiaSources {}): {} rows over {} — {}",
-            o.id,
-            o.n_sources,
-            rows.len(),
-            counts.join(", "),
-            curves.len()
-        );
         curves_all.extend(curves);
         fetched += 1;
         total_rows += rows.len();
+        sleep_ms(OBJECT_PAUSE_MS);
+    }
+    if tdb_skipped > 0 {
+        println!(
+            "Nadel V (LSST round): {tdb_skipped} sample row(s) carry no TDB mapping (the leap table is void at their epoch — absent)"
+        );
     }
     println!(
         "Nadel V (LSST round): {fetched} object light curve(s) fetched, {total_rows} measurement row(s) total"
@@ -662,13 +777,19 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
         println!(
             "Nadel V (LSST round): no object carries a light curve — the scan stays void (0 honored)"
         );
-        return;
+        return ConeVerdict {
+            fetched,
+            ..ConeVerdict::void()
+        };
     }
     let bin_path =
         format!("/tmp/opencode/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Nadel V (LSST round): the LSS1 asset was not written ({bin_path})");
-        return;
+        return ConeVerdict {
+            fetched,
+            ..ConeVerdict::void()
+        };
     }
     let map_path =
         format!("/tmp/opencode/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
@@ -686,7 +807,7 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
         }
     }
     println!("Nadel V (LSST round): LSS1 asset written {bin_path}, object map {map_path}");
-    let candidates = scan_lss1(&bin_path);
+    let (candidates, scanned) = scan_lss1(&bin_path, brief);
     let mut post = 0usize;
     let mut excluded = 0usize;
     for (cra, cdec) in &candidates {
@@ -717,7 +838,49 @@ fn cone_scan(ra: f64, dec: f64, radius_arcsec: f64, min_sources: usize, save: Op
         }
     }
     println!(
-        "Nadel V (LSST round) verdict: {excluded} candidate dip(s) excluded as catalogued natural dimmers; {post} unclassified dip(s) remain pending — 0 unexcluded candidate over {fetched} cone object(s) unless the line above names one"
+        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as catalogued natural dimmers, {post} unclassified dip(s) remain pending the natural-class crossmatch"
+    );
+    ConeVerdict {
+        fetched,
+        multiband_scanned: scanned,
+        candidates_pre: candidates.len(),
+        excluded_natural: excluded,
+        unclassified: post,
+    }
+}
+
+fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
+    println!(
+        "\n=== Nadel V (LSST round): anonymous cone grid, time layer MJD/TAI → TDB (embedded naif0012.tls), {} cone(s) ===",
+        cones.len()
+    );
+    let mut verdict = ConeVerdict::void();
+    for (i, (ra, dec, radius, min)) in cones.iter().enumerate() {
+        println!(
+            "\n--- grid cone {} of {}: ra {ra} dec {dec} radius {radius} arcsec min nDiaSources {min} ---",
+            i + 1,
+            cones.len()
+        );
+        let v = cone_scan(*ra, *dec, *radius, *min, None, true);
+        verdict.fetched += v.fetched;
+        verdict.multiband_scanned += v.multiband_scanned;
+        verdict.candidates_pre += v.candidates_pre;
+        verdict.excluded_natural += v.excluded_natural;
+        verdict.unclassified += v.unclassified;
+        sleep_ms(CONE_PAUSE_MS);
+    }
+    println!(
+        "\n=== Nadel V grid verdict over {} anonymous cone scan(s): {} object light curve(s) fetched, {} multiband object(s) fully evaluated on the TDB fold axis, {} pre-exclusion candidate dip(s), {} excluded as catalogued natural dimmers, {} unclassified dip(s) pending the natural-class crossmatch ===",
+        cones.len(),
+        verdict.fetched,
+        verdict.multiband_scanned,
+        verdict.candidates_pre,
+        verdict.excluded_natural,
+        verdict.unclassified
+    );
+    println!(
+        "Quantitative limit: no unexcluded achromatic non-periodic dip above DIP_SIG {DIP_SIG}σ across {scanned} fully evaluated multiband object(s) on the TDB time layer — or the line above names it",
+        scanned = verdict.multiband_scanned
     );
 }
 
@@ -752,6 +915,25 @@ fn fink_scan(id: &str, save: Option<&str>) {
         println!("Fink/LSST {id}: no row carries the full band/time/flux triple (absent)");
         return;
     }
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Fink/LSST {id}: the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return;
+    };
+    println!(
+        "Fink/LSST {id}: time layer — r:midpointMjdTai is MJD/TAI, mapped mjd → unix → TDB (naif0012.tls ΔT 32.184 s + leap) before the fold axis is built"
+    );
+    let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows_ok);
+    if skipped > 0 {
+        println!(
+            "Fink/LSST {id}: {skipped} sample row(s) carry no TDB mapping (the leap table is void at their epoch — absent)"
+        );
+    }
+    if rows_tdb.is_empty() {
+        println!("Fink/LSST {id}: no sample row maps onto the TDB time layer (absent)");
+        return;
+    }
     let (ra, dec) = match coord {
         Some(c) => c,
         None => {
@@ -769,7 +951,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
     for (b, n) in &band_counts {
         println!("  Fink/LSST band {b}: {n} measurement rows");
     }
-    let curves = build_band_curves(ra, dec, &rows_ok);
+    let curves = build_band_curves(ra, dec, &rows_tdb);
     if curves.is_empty() {
         println!("Fink/LSST {id}: no measurement row maps to a known LSST band (absent)");
         return;
@@ -784,7 +966,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
         curves.len(),
         rows_ok.len()
     );
-    scan_lss1(&bin_path);
+    scan_lss1(&bin_path, false);
 }
 
 fn usage() {
@@ -796,6 +978,8 @@ fn usage() {
          \x20 lsst_anomaly_probe --fink <diaObjectId> [--save <raw.json>]\n\
          Fink/LSST anonymous cone scan over a real object set, no token:\n\
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
+         Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
+         \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
          scan_lss1 of a real LSS1 light-curve asset:\n\
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
          LASAIR_TOKEN (the register token name) is read from the environment when --token is absent."
@@ -892,21 +1076,21 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
     );
 }
 
-fn scan_lss1(path: &str) -> Vec<(f64, f64)> {
+fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
         Err(_) => {
             println!(
                 "Nadel V (LSST round): no LSS1 asset at {path} — the scan waits for the Lasair-LSST light curves (0 honored, pending)"
             );
-            return Vec::new();
+            return (Vec::new(), 0);
         }
     };
     let Some(curves) = parse_lss1(&bytes) else {
         println!(
             "Nadel V (LSST round): {path} carries no LSS1 record — the scan stays void (0 honored)"
         );
-        return Vec::new();
+        return (Vec::new(), 0);
     };
     struct Group {
         ra: f64,
@@ -943,10 +1127,12 @@ fn scan_lss1(path: &str) -> Vec<(f64, f64)> {
             .collect();
         if bands.len() < 2 {
             single_band += 1;
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — one band carries no achromatic cut (0 honored)",
-                g.ra, g.dec
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — one band carries no achromatic cut (0 honored)",
+                    g.ra, g.dec
+                );
+            }
             continue;
         }
         let mut pick: Vec<(&str, &LsstCurve)> = bands
@@ -962,48 +1148,58 @@ fn scan_lss1(path: &str) -> Vec<(f64, f64)> {
         });
         if pick.len() < 2 {
             single_band += 1;
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — only {} of the g/r/i/z test bands carry a light curve (0 honored)",
-                g.ra,
-                g.dec,
-                pick.len()
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — only {} of the g/r/i/z test bands carry a light curve (0 honored)",
+                    g.ra,
+                    g.dec,
+                    pick.len()
+                );
+            }
             continue;
         }
         let (ba, ca) = pick[0];
         let (bb, cb) = pick[1];
         let Some(a_res) = residual_series_lsst(ca) else {
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — {ba} residual carries no positive noise model (0 honored)",
-                g.ra, g.dec
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — {ba} residual carries no positive noise model (0 honored)",
+                    g.ra, g.dec
+                );
+            }
             continue;
         };
         let Some(b_res) = residual_series_lsst(cb) else {
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — {bb} residual carries no positive noise model (0 honored)",
-                g.ra, g.dec
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — {bb} residual carries no positive noise model (0 honored)",
+                    g.ra, g.dec
+                );
+            }
             continue;
         };
         if a_res.len() < N_MIN || b_res.len() < N_MIN {
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — {ba}/{bb} hold only {}/{} samples, too few for the dip cut (0 honored)",
-                g.ra,
-                g.dec,
-                a_res.len(),
-                b_res.len()
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — {ba}/{bb} hold only {}/{} samples, too few for the dip cut (0 honored)",
+                    g.ra,
+                    g.dec,
+                    a_res.len(),
+                    b_res.len()
+                );
+            }
             continue;
         }
         let joint = join_series(&a_res, &b_res);
         if joint.len() < N_COINC_MIN {
-            println!(
-                "  ra {:9.4} dec {:9.4}: absent — {} coincident {ba}/{bb} visits (|Δt| ≤ {COINCIDENCE_S} s), too few (0 honored)",
-                g.ra,
-                g.dec,
-                joint.len()
-            );
+            if !brief {
+                println!(
+                    "  ra {:9.4} dec {:9.4}: absent — {} coincident {ba}/{bb} visits (|Δt| ≤ {COINCIDENCE_S} s), too few (0 honored)",
+                    g.ra,
+                    g.dec,
+                    joint.len()
+                );
+            }
             continue;
         }
         let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
@@ -1057,7 +1253,7 @@ fn scan_lss1(path: &str) -> Vec<(f64, f64)> {
     println!(
         "Quantitative limit: no achromatic non-periodic dip above DIP_SIG {DIP_SIG}σ across {scanned} LSS1 object(s) — or the line above names it"
     );
-    cand_coords
+    (cand_coords, scanned)
 }
 
 fn main() {
@@ -1071,6 +1267,7 @@ fn main() {
     let mut cone_dec: Option<f64> = None;
     let mut cone_radius: Option<f64> = None;
     let mut cone_min: usize = 24;
+    let mut cones: Vec<(f64, f64, f64, usize)> = Vec::new();
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -1093,6 +1290,22 @@ fn main() {
             "--fink" => {
                 fink = args.get(i + 1).cloned();
                 i += 1;
+            }
+            "--cone" => {
+                if let Some(spec) = args.get(i + 1) {
+                    let p: Vec<&str> = spec.split(',').collect();
+                    if p.len() == 4 {
+                        if let (Some(ra), Some(dec), Some(radius), Some(min)) = (
+                            p[0].trim().parse().ok(),
+                            p[1].trim().parse().ok(),
+                            p[2].trim().parse().ok(),
+                            p[3].trim().parse().ok(),
+                        ) {
+                            cones.push((ra, dec, radius, min));
+                            i += 1;
+                        }
+                    }
+                }
             }
             "--cone-ra" => {
                 cone_ra = args.get(i + 1).and_then(|v| v.parse().ok());
@@ -1121,7 +1334,11 @@ fn main() {
     if let Some(p) = scan {
         reach(tok, object, save);
         println!();
-        scan_lss1(&p);
+        scan_lss1(&p, false);
+        return;
+    }
+    if !cones.is_empty() {
+        grid_scan(&cones);
         return;
     }
     if let Some(id) = fink {
@@ -1131,7 +1348,7 @@ fn main() {
     if let Some(ra) = cone_ra {
         match (cone_dec, cone_radius) {
             (Some(dec), Some(radius)) => {
-                cone_scan(ra, dec, radius, cone_min, save.as_deref());
+                cone_scan(ra, dec, radius, cone_min, save.as_deref(), false);
             }
             _ => {
                 usage();
@@ -1141,4 +1358,69 @@ fn main() {
         return;
     }
     reach(tok, object, save);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn lsk() -> LeapSeconds {
+        embedded_lsk().expect("the embedded naif0012 table parses")
+    }
+
+    #[test]
+    fn fink_tai_mjd_maps_to_an_absolute_tdb() {
+        let mjd_tai = 61024.2459327064;
+        let tdb = fink_mjd_tai_to_tdb(mjd_tai, &lsk()).expect("2026 epoch maps");
+        let as_utc = mjd_to_unix(mjd_tai);
+        let expected = as_utc + 32.184 - 946_728_000.0;
+        assert!(
+            (tdb - expected).abs() < 1e-6,
+            "leap cancels: the TAI label overstates the UTC unix by the leap, which unix_to_tdb restores — tdb {tdb}, expected {expected}"
+        );
+        assert!(
+            (tdb - 819_050_080.769_833).abs() < 1e-3,
+            "a real Fink/LSST 2025 row maps to a concrete TDB seconds-since-J2000, was {tdb}"
+        );
+    }
+
+    #[test]
+    fn tdb_axis_reproduces_the_relative_mjd_axis_per_object() {
+        let lsk = lsk();
+        let rows: Vec<(String, f64, f64)> = vec![
+            ("r".to_string(), 61024.2459327064, 100.0),
+            ("r".to_string(), 61024.2469322589, 101.0),
+            ("g".to_string(), 61205.9837394019, 200.0),
+            ("g".to_string(), 61205.9889914105, 201.0),
+        ];
+        let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows);
+        assert_eq!(skipped, 0);
+        let curves = build_band_curves(1.0, 2.0, &rows_tdb);
+        let r_curve = curves
+            .iter()
+            .find(|c| lsst_band_of(c.freq) == Some("r"))
+            .expect("the r band curve exists");
+        assert_eq!(r_curve.samples.len(), 2);
+        let expect = (61024.2469322589 - 61024.2459327064) * 86400.0;
+        assert!(
+            (r_curve.samples[1].0 - expect).abs() < 1e-6,
+            "within one leap regime the TDB map is an affine shift, so a single-object relative fold axis is unchanged — {:.6} vs {expect:.6}",
+            r_curve.samples[1].0
+        );
+    }
+
+    #[test]
+    fn void_epochs_stay_absent_on_the_tdb_layer() {
+        let lsk = lsk();
+        let rows: Vec<(String, f64, f64)> = vec![
+            ("r".to_string(), 61024.2459327064, 100.0),
+            ("r".to_string(), 35_000.0, 101.0),
+        ];
+        let (rows_tdb, skipped) = rows_to_tdb(&lsk, &rows);
+        assert_eq!(rows_tdb.len(), 1);
+        assert_eq!(
+            skipped, 1,
+            "pre-1972 mjd reads no leap table row — absent, never fabricated"
+        );
+    }
 }
