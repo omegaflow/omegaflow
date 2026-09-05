@@ -1340,6 +1340,23 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   negativ-fuzzy-techno — der negative Fuzzy-Index formal auf Bio/Techno-Ausschluss.
   Alle status pending.
 
+
+- Vier Kanal-Sessions (2026-09-05, parallel, sub-agents): (1) Kanal 2 Techno-Gase:
+  equilibrium_composition_halogen (7 Elemente, 11 F/Cl-Spezies NIST-JANAF gesourct)
+  + techno_gas_register_probe — 0 Industrie-Detektionen im Seed, systematische
+  CFC/SF6-Absenz mit Empfindlichkeits-Achse (23 beobachtbare Paare), Floors
+  astronomisch tief (SF6 1e-84..1e-102). (2) Kanal 1 Narrowband: Breakthrough-
+  Listen-Produkte verortet (HTTP 200, echte Linien-Samples 339k+ Zeilen); Blocker
+  = kein Linien-Compiler ins Register (freq/bin_width hart 0 in extract.rs) —
+  pending, benannt. (3) Kanal 3 Negativ-Fuzzy: negativ_fuzzy_probe (zweistufig:
+  OLS-Rest + Negativ-Test, 'not carried' nie 'independent', 3 Grenzen sichtbar);
+  te.rs ols_residual + Skalen-Fix; Real-Laeufe + Positiv-Kontrolle + Bio-Katalog
+  P=0.9424 reproduziert. (4) Bio-Zeugen: st_met [Fe/H] gelesen (30/30 Hosts),
+  reservoir-scaling; EIN Hit bewegt sich (WASP-166 b CO2 knife-edge bei
+  [Fe/H]=+0.19), 15 bleiben; C/O + Aktivitaet/XUV pending (keine NExScI-Spalte);
+  Hit-vs-Metallizitaet r=+0.051 P=0.79. 33 thermochem-Tests gruen, cargo check
+  0 Warnungen.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
