@@ -1,88 +1,78 @@
 <!--
-  title: Auftrag — Richtungs-Transient-Atom: die Himmelsrichtung als Feldmaß
+  title: Auftrag — Richtungs-Transient: die Himmelsrichtung halten, nicht erfinden
   class: auftrag
   date: 2026-09-05
   status: pending
-  sha256: e695dac5ca60b7cb9c9e7ddccc6844b1e0ecfa3fe4e663921e4dbd692b62cdf1
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/docs-naming.md
+  sha256: f64a6ed718f2f369065b53f8bb1c17e204213529f1a8ece2c72d54b4ebf029f8
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-vier-schilde.md docs/concepts/docs-naming.md
 -->
 
-# Auftrag: das Richtungs-Transient-Atom bauen — ra/dec ohne Distanz als eigenes Feldmaß
+# Auftrag: die Himmelsrichtung als ehrliche Archivar-Entität halten (SkyDirection)
 
 ## Zweck
 
 ZTF-Transienten-Quellen (Lasair, ALeRCE, ANTARES) liefern ra/dec + em-Magnitude,
 aber keine Distanz (gemessen: ALeRCE-Objekt `ZTF17aaaaaak`, `class: null`). Die
 CelestialMap-Distanz-Gate (extract.rs ~2121, Test `no_distance_skipped`)
-verwirft jede solche Zeile. Ein Sensor misst die Richtung eines Lichtblitzes
-ohne seine Ferne — der Litmus der Sinnesorgane spricht für die Richtung als
-echtes Feldmaß. Der aktuelle Stand (blocked_sources.φ, drei Quellen, ein
-pending) benennt die Lücke; dieser Auftrag beauftragt, sie zu **bauen**.
+verwirft jede solche Zeile — 0 honored in Aktion. Ein Sensor misst die Richtung
+eines Lichtblitzes ohne seine Ferne (Litmus: das Auge). Der Auftrag beauftragt,
+die Richtung **zu halten, nicht zu erfinden**.
 
-Die Kerndisziplin bleibt 0 honored: eine erfundene Distanz (Referenzradius,
-Einheitsvektor-in-Metern, Default-dist) ist Fabrication und ausgeschlossen. Der
-Träger ist eine Himmelsrichtung mit Winkel-Unsicherheit statt radialem Abfall —
-ein eigenes Atom, kein 26×f64-Overload.
+## Kernbefund (Council 2026-09-05, einstimmig)
+
+- Eine ra/dec-Richtung ohne Distanz ist ein Punkt auf der Einheits-Himmelskugel
+  S² am Sonnen-Barycenter — eine Winkel-Position, **kein Ort**. Im strikten
+  ICRS-Positions-Block (ℝ³-Voxel) ist sie nicht als Ort darstellbar.
+- **Workaround, ausgeschlossen:** die toten Wire-Slots 16–20 (`pole_y, pole_z,
+  j2, j4, r_eq`) für ra/dec umzuwidmen — das wäre eine Namens-Umbiegung; diese
+  Namen tragen die Bedeutung "Pol-Richtung/Form eines Körpers", die heute am
+  Anker (`BodyProperties`, motion.rs) lebt. Ebenso ausgeschlossen: `presence`
+  als Richtungs-Flag überladen, jede erfundene Distanz (Referenzradius,
+  Einheitsvektor-in-Metern, `dist_scale`), eine Richtung mit fiktivem Radius in
+  x,y,z schreiben.
+- **Physikalisch korrekt:** die Richtung ist eine eigene, eigenbenannte
+  Archivar-Entität — `SkyDirection` mit den wahren Feldnamen `ra`/`dec`. Sie
+  **emittiert keine Positions-Probe ans Wire** (Samples ohne Position sind
+  nicht räumlich auffindbar — 0 honored). Sie hält die Richtung **für den
+  Crossmatch** (Axiom 2), bis eine echte Distanz ankommt.
 
 ## Umfang
 
-1. **Den Wire-Vertrag als offene Frage kartieren.** Das Sample ist heute
-   26×f64 (208 B) mit `x,y,z` als ICRS-Meter. Eine Richtung ohne Radius hat kein
-   endliches `x,y,z`. Prüfen (nicht annehmen): welche Darstellung trägt eine
-   Richtung ehrlich durch Rust → JS-DataView → WGSL, ohne die 3D-xyz-Slots zu
-   überladen und ohne einen erfundenen Radius. Optionen messen — ein 27./Flag-
-   Feld, ein Winkel-Paar im freien Prop-Slot mit presence-Bit, oder ein
-   normierter Richtungsvektor mit dem vorhandenen presence-Flag als
-   Disambiguator (die Bit-Semantik existiert schon: presence = 1 → phase ist
-   eine Messung; analog: presence-Richtung). Der ehrliche Träger wird an der
-   Physik gemessen, nicht an der Bequemlichkeit.
+1. **`SkyDirection` bauen (Archivar).** Eine Entität, die ra/dec (als Winkel,
+   echte Feldnamen, nicht umgewidmete Slots) und die em-Magnituden-Lichtkurve
+   hält. Sie trägt die Einheitsrichtung `p̂` aus ra/dec als ehrliches Maß. Sie
+   schreibt **nichts** in den 26×f64-Positions-Wire — kein Hack, kein Flag.
 
-   **Schritt 1 KARTIERT (2026-09-05, gemessen am Code):** Truly dead sind die
-   fünf Slots 16–20 `pole_y, pole_z, j2, j4, r_eq` — Literale 0.0 in allen
-   vier Producern (spatial.rs, membrane.rs, actuators.rs), von keinem WGSL
-   gelesen. `phase`/`presence` (Slots 24/25) werden **nirgends erzeugt**
-   (Sample.phase ist in jeder Konstruktion None; presence überall 0.0) — das
-   presence-Bit ist definiert, aber ungenutzt. Der ehrliche Träger: die
-   toten Slots 16/17 (`pole_y`, `pole_z`) als Winkel-Paar (ra/dec in rad) der
-   Himmelsrichtung, mit `presence` (heute tot) als Disambiguator "dieses
-   Sample trägt eine Richtung, keine 3D-Meter-Position". pole_x behält für
-   em die redshift-Bedeutung (eine Richtung hat keinen z → 0.0 pad). Kein 27.
-   Slot, kein erfundener Radius, keine Überladung belegter Semantik. Die
-   3D-xyz bleiben für echte Positionen; presence markiert die Richtung.
+2. **Die drei Quellen ernten.** Lasair, ALeRCE, ANTARES wandern von
+   `blocked_sources.φ` in einen Richtungs-Harvest: sie werden als
+   `SkyDirection`-Quellen gehalten (ra/dec + Magnitude), positions-pending. Die
+   Magnituden-Lichtkurve darf als Rohmaterial der TE daneben gehalten werden.
 
-2. **Archivar-Seite bauen.** Eine `Position`-/`Motion`-Richtungs-Variante, die
-   `p_hat` (Einheitsrichtung aus ra/dec) und die Winkelableitung ohne
-   d-Faktor trägt. Der Extract-Pfad (CelestialMap) erhält einen
-   richtung-only-Zweig, der ra/dec zu einer Himmelsrichtung macht — ohne die
-   Distanz-Gate zu umgehen oder einen Radius zu erfinden.
+3. **Die Distanz-Gate bleibt.** `no_distance_skipped` bleibt. Die Distanz kommt
+   nur durch den Crossmatch (Axiom 2): Klassifikation/Redshift des Transienten,
+   oder Match gegen einen positions-tragenden Katalog (Gaia-Parallaxe). Wenn
+   eine echte Distanz ankommt, wird die Richtung ein echter (x,y,z)-Oszillator
+   und tritt in den Block; die ganze Lichtkurve tritt als Reihe ein.
 
-3. **Mathematikerin-Seite bauen.** WGSL: ein Winkel-/Richtungs-Zweig statt des
-   radialen Abfalls — der Kernel fällt über den Winkelabstand, nicht über den
-   Radius. Der Fragment-/Compute-Shader, der `force_type`/`kernel_id` schaltet,
-   erhält den Zweig. Presence-Frame und Retardation für eine Richtung ohne
-   Tiefe neu bestimmen.
+4. **Register.** Eine TODO-Zeile benennt den Zustand: Richtung
+   geerntet-und-gehalten, positions-pending. Das S²-Richtungsraum-Atom
+   (Winkel-Kernel, Winkel-Residuum) bleibt eine benannte Zukunfts-Frage,
+   getrennt vom Positions-Wire.
 
-4. **Die drei Quellen aktivieren.** Lasair, ALeRCE, ANTARES aus der
-   pending-Klasse in echte Quellen überführen, sobald das Atom steht — jede
-   als ra/dec-only-Messung am `at sun`-Frame.
-
-5. **Verifikation nach archivar-mathematikerin.md:** den vollen
-   Rust → JS-DataView → WGSL-Alignment-Pfad manuell nachziehen (nicht nur
-   cargo check), die force/kernel-Switche kreuzreferenzieren, Rendering mit
-   `cargo run` + Browser bestätigen.
-
-## Kernregel (0 honored)
+## Kernregel (0 honored, die fünf Axiome)
 
 Die Richtung ist eine Messung; der Radius ist absent, nicht null — kein
-Default, kein `dist_scale`, kein Einheitsvektor-in-Metern als erfundene
-Distanz. Der Träger trägt, was gemessen ist (Richtung, Fluss), und lässt das
-Ungemessene (Radius) absent. Wo eine Option in die Fabrication kippt, wird sie
-verworfen und die ehrliche Alternative gemessen.
+Default, kein erfundener Ort. Axiom 1 (Voxel): die Richtung hat keinen Voxel,
+bis sie eine Distanz hat. Axiom 2 (Crossmatch): die Richtung wird gehalten,
+damit ein zweiter Sinn (Parallaxe/Redshift) antworten kann. Axiom 4
+(Nullkontrolle): keine erfundene Distanz wächst eine Phantomwurzel. Axiom 5
+(Residuum): keine erfundene Distanz vergiftet das Residuum. Wo eine Option in
+die Fabrication kippt, wird sie verworfen.
 
 ## Lieferung
 
-Ein committedes Atom: die Richtungs-Darstellung durch alle drei Ebenen (Rust-
-Wire + JS + WGSL), der Extract-/Motion-Zweig, der WGSL-Winkel-Kernel, die drei
-Quellen live — plus ein Befund (`docs/befund/befund-richtungs-atom.md`),
-`status: done`. cargo check 0/0 und die manuelle Drei-Ebenen-Verifikation
-vollzogen.
+Ein committedes `SkyDirection`-Atom: die Entität mit echten `ra`/`dec`-Namen,
+der Richtungs-Harvest der drei Quellen (aus blocked in gehalten-überführt), die
+Distanz-Gate unverändert, der Register-Eintrag (positions-pending) — plus ein
+Befund (`docs/befund/befund-richtungs-atom.md`), `status: done`. cargo check
+0/0. Kein Wire-Eingriff, keine Namens-Umbiegung, kein Workaround.
