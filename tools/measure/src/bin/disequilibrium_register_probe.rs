@@ -1,7 +1,8 @@
 use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
 use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
 use omegaflow::thermochem::{
-    equilibrium_composition_condensed, equilibrium_composition_sulfur, sulfur_gas_names,
+    equilibrium_composition_condensed, equilibrium_composition_condensed_scaled,
+    equilibrium_composition_sulfur, equilibrium_composition_sulfur_scaled, sulfur_gas_names,
     COOL_T_MIN, P0_PA, WATER_LIQ_T_MIN, WATER_P_TRIPLE_PA,
 };
 use std::collections::HashMap;
@@ -10,6 +11,7 @@ const RNG_MULT: u64 = 6364136223846793005;
 const RNG_INC: u64 = 1442695040888963407;
 const FULL_CIRCLE: f64 = (u32::MAX >> 1) as f64;
 const RNG_SEED: u64 = 0x5EED_0D15_EA5E_2026;
+const CORR_RNG_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const DEFAULT_TRIALS: usize = 10_000;
 const DEFAULT_FLOOR: f64 = 1.0e-6;
 const SULFUR_T_MIN: f64 = 500.0;
@@ -39,6 +41,7 @@ struct PlanetRow {
     teff: f64,
     rad_solar: f64,
     orbsmax_au: f64,
+    feh: Option<f64>,
 }
 
 fn read_detections(path: &str) -> Result<Vec<Detection>, String> {
@@ -91,6 +94,7 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
         {
             continue;
         }
+        let feh = jnum(row, "st_met").filter(|v| v.is_finite());
         let planets = hosts.entry(host).or_default();
         if !planets.iter().any(|p| p.pl_name == pl_name) {
             planets.push(PlanetRow {
@@ -98,6 +102,7 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
                 teff,
                 rad_solar,
                 orbsmax_au,
+                feh,
             });
         }
     }
@@ -176,6 +181,8 @@ struct HostPlan {
     pl_name: String,
     teq_k: f64,
     frac: Vec<f64>,
+    frac_res: Option<Vec<f64>>,
+    feh: Option<f64>,
     model: HostModel,
 }
 
@@ -231,6 +238,15 @@ fn run(
     out.push_str(
         "  die Saat traegt keine Instrumenten-Nachweisgrenze je Spezies; die Schwelle steht als --floor und ihre Empfindlichkeit ist unten gemessen\n",
     );
+    out.push_str(
+        "reservoir-zeuge: pscomppars st_met ([Fe/H]) gelesen — je Wirt skaliert die Regression die Metall-Elemente (C,O,N,S je H) um z = 10^[Fe/H]; H bleibt die Referenz\n",
+    );
+    out.push_str(
+        "  C/O traegt pscomppars nicht (gemessen am NExScI-TAP-Schema 2026-09-05: keine C/O-, keine log R'HK-, keine XUV-Spalte in irgendeiner Tabelle) — C/O pending, Aktivitaets-/XUV-Zeuge pending\n",
+    );
+    out.push_str(
+        "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression meldet Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
+    );
 
     out.push_str(&format!(
         "gleichgewichts-Spezies des Modells ({} Slots): ",
@@ -279,6 +295,7 @@ fn run(
 
     let mut plan: Vec<Option<HostPlan>> = vec![None; host_ids.len()];
     let mut pending_reason: Vec<Option<String>> = vec![None; host_ids.len()];
+    let mut reservoir_pending_hosts: Vec<String> = Vec::new();
     let mut n_pending_params = 0usize;
     let mut n_pending_multi = 0usize;
     let mut n_pending_domain = 0usize;
@@ -379,10 +396,26 @@ fn run(
             };
             (eq.frac, model)
         };
+        let frac_res = match p.feh {
+            Some(feh) => {
+                let r = if t_eq >= SULFUR_T_MIN {
+                    equilibrium_composition_sulfur_scaled(t_eq, P0_PA, feh)
+                } else {
+                    equilibrium_composition_condensed_scaled(t_eq, P0_PA, feh).map(|eq| eq.frac)
+                };
+                if r.is_none() {
+                    reservoir_pending_hosts.push(host.clone());
+                }
+                r
+            }
+            None => None,
+        };
         plan[id] = Some(HostPlan {
             pl_name: p.pl_name.clone(),
             teq_k: t_eq,
             frac,
+            frac_res,
+            feh: p.feh,
             model,
         });
     }
@@ -390,6 +423,9 @@ fn run(
     let mut n_hit_hosts = 0usize;
     let mut n_eq_hosts = 0usize;
     let mut n_oom_only_hosts = 0usize;
+    let mut n_reservoir_pending = 0usize;
+    let mut n_moved_hosts = 0usize;
+    let mut n_moved_species = 0usize;
     let mut lines: Vec<String> = Vec::new();
     for id in 0..host_ids.len() {
         let Some(hp) = &plan[id] else {
@@ -434,8 +470,13 @@ fn run(
             "equilibrium-present"
         };
         let mut block = format!(
-            "  {host}: {}  Teq {:.0} K  VERDICT {word}",
-            hp.pl_name, hp.teq_k
+            "  {host}: {}  Teq {:.0} K  [Fe/H] {}  VERDICT {word}",
+            hp.pl_name,
+            hp.teq_k,
+            match hp.feh {
+                Some(f) => format!("{f:+.2}"),
+                None => "pending (st_met absent)".to_string(),
+            }
         );
         if !oom.is_empty() {
             block.push_str(&format!(
@@ -444,6 +485,61 @@ fn run(
             ));
         }
         block.push('\n');
+        match &hp.frac_res {
+            Some(frac_res) => {
+                let feh = hp.feh.unwrap();
+                let z = 10f64.powf(feh);
+                let mut moved: Vec<String> = Vec::new();
+                for d in &host_det[id] {
+                    let Some(slot) = slot_by_name.get(&d.species) else {
+                        continue;
+                    };
+                    let solar_word = if hp.frac[*slot] >= floor {
+                        "equilibrium-present"
+                    } else {
+                        "disequilibrium"
+                    };
+                    let res_word = if frac_res[*slot] >= floor {
+                        "equilibrium-present"
+                    } else {
+                        "disequilibrium"
+                    };
+                    if solar_word != res_word {
+                        moved.push(format!(
+                            "{}: {} -> {} (reservoir-Anteil {:.3e})",
+                            d.species, solar_word, res_word, frac_res[*slot]
+                        ));
+                    }
+                }
+                moved.sort();
+                moved.dedup();
+                if moved.is_empty() {
+                    block.push_str(&format!(
+                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — keine Klassifikations-Aenderung\n"
+                    ));
+                } else {
+                    n_moved_hosts += 1;
+                    n_moved_species += moved.len();
+                    block.push_str(&format!(
+                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — Spezies-Bewegung: {}\n",
+                        moved.join("; ")
+                    ));
+                }
+            }
+            None => {
+                if hp.feh.is_some() {
+                    n_reservoir_pending += 1;
+                    block.push_str(&format!(
+                        "      reservoir: [Fe/H] {:+.2} — Reservoir-Loeser verweigert (pending)\n",
+                        hp.feh.unwrap()
+                    ));
+                } else {
+                    block.push_str(
+                        "      reservoir: pscomppars traegt kein st_met — Reservoir pending\n",
+                    );
+                }
+            }
+        }
         for s in &hit_species {
             block.push_str(&format!("      disequilibrium  {s}\n"));
         }
@@ -483,6 +579,16 @@ fn run(
         n_pending_params + n_pending_multi + n_pending_domain + n_pending_solver,
         n_pending_params, n_pending_multi, n_pending_domain, n_pending_solver
     ));
+    out.push_str(&format!(
+        "Reservoir [Fe/H]-Regression: {} Wirte gelesen | {} ohne st_met (pending) | {} Reservoir-Loeser verweigert (pending) | Klassifikations-Bewegung: {} Wirte, {} Spezies\n",
+        host_count,
+        plan.iter()
+            .filter(|p| p.as_ref().map(|hp| hp.feh.is_none()).unwrap_or(false))
+            .count(),
+        n_reservoir_pending,
+        n_moved_hosts,
+        n_moved_species
+    ));
     for id in 0..host_ids.len() {
         if let Some(reason) = &pending_reason[id] {
             out.push_str(&format!(
@@ -495,6 +601,12 @@ fn run(
                     .join(",")
             ));
         }
+    }
+    if !reservoir_pending_hosts.is_empty() {
+        out.push_str(&format!(
+            "  Reservoir-pending (Loeser verweigert): {}\n",
+            reservoir_pending_hosts.join(", ")
+        ));
     }
     out.push('\n');
     for l in &lines {
@@ -599,6 +711,104 @@ fn run(
     out.push_str("Empfindlichkeit der floor-Urteilswerts (beobachtet): ");
     out.push_str(&sens.join(" | "));
     out.push('\n');
+
+    // Hit-vs-reservoir correlation: host [Fe/H] against the solar hit
+    // indicator (>=1 in-model species below the floor). Hosts without an
+    // in-model species or without st_met carry no pair.
+    let mut feh_list: Vec<f64> = Vec::new();
+    let mut hit_list: Vec<f64> = Vec::new();
+    for id in 0..host_ids.len() {
+        let Some(hp) = &plan[id] else {
+            continue;
+        };
+        if !possible[id] {
+            continue;
+        }
+        let Some(feh) = hp.feh else {
+            continue;
+        };
+        let hit = host_det[id].iter().any(|d| {
+            slot_by_name
+                .get(&d.species)
+                .map(|slot| hp.frac[*slot] < floor)
+                .unwrap_or(false)
+        });
+        feh_list.push(feh);
+        hit_list.push(if hit { 1.0 } else { 0.0 });
+    }
+    let n_pairs = feh_list.len();
+    let pearson = |x: &[f64], y: &[f64]| -> f64 {
+        let n = x.len() as f64;
+        let mx = x.iter().sum::<f64>() / n;
+        let my = y.iter().sum::<f64>() / n;
+        let cov: f64 = x.iter().zip(y).map(|(a, b)| (a - mx) * (b - my)).sum();
+        let vx: f64 = x.iter().map(|a| (a - mx) * (a - mx)).sum();
+        let vy: f64 = y.iter().map(|a| (a - my) * (a - my)).sum();
+        if vx <= 0.0 || vy <= 0.0 {
+            return f64::NAN;
+        }
+        cov / (vx * vy).sqrt()
+    };
+    if n_pairs < 3 {
+        out.push_str(&format!(
+            "Reservoir-Korrelation: {} Wirte mit [Fe/H]-Zeuge — zu wenige Paare (pending)\n",
+            n_pairs
+        ));
+    } else {
+        let r_obs = pearson(&feh_list, &hit_list);
+        if !r_obs.is_finite() {
+            out.push_str(
+                "Reservoir-Korrelation: [Fe/H]-Spalte konstant — Pearson nicht definiert (pending)\n",
+            );
+        } else {
+            let mut rng_corr = CORR_RNG_SEED;
+            let mut hit_perm = hit_list.clone();
+            let mut over_abs = 0usize;
+            for _ in 0..trials {
+                shuffle(&mut hit_perm, &mut rng_corr);
+                let r = pearson(&feh_list, &hit_perm);
+                if r.is_finite() && r.abs() >= r_obs.abs() {
+                    over_abs += 1;
+                }
+            }
+            let p_corr = over_abs as f64 / trials as f64;
+            let mean = |v: &[f64]| -> f64 {
+                let n = v.len() as f64;
+                if n == 0.0 {
+                    f64::NAN
+                } else {
+                    v.iter().sum::<f64>() / n
+                }
+            };
+            let hit_feh: Vec<f64> = feh_list
+                .iter()
+                .zip(&hit_list)
+                .filter(|(_, h)| **h == 1.0)
+                .map(|(f, _)| *f)
+                .collect();
+            let pres_feh: Vec<f64> = feh_list
+                .iter()
+                .zip(&hit_list)
+                .filter(|(_, h)| **h == 0.0)
+                .map(|(f, _)| *f)
+                .collect();
+            out.push_str(&format!(
+                "Reservoir-Korrelation: host [Fe/H] gegen Hit-Indikator, n = {} Wirte (solar-Klassifikation)\n",
+                n_pairs
+            ));
+            out.push_str(&format!(
+                "  Pearson r = {r_obs:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_corr:.4}\n",
+                trials
+            ));
+            out.push_str(&format!(
+                "  Hit-Wirte ({}): mean [Fe/H] {:+.3} | equilibrium-present ({}): mean [Fe/H] {:+.3}\n",
+                hit_feh.len(),
+                mean(&hit_feh),
+                pres_feh.len(),
+                mean(&pres_feh)
+            ));
+        }
+    }
 
     std::fs::write(out_path, &out).map_err(|e| format!("{out_path}: {e}"))?;
     println!("{out}");
