@@ -504,10 +504,10 @@ pub fn hour_str(unix: u64) -> String {
 }
 
 pub fn live_markers() -> Vec<(String, String)> {
-    let unix = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
+    let unix = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => return Vec::new(),
+    };
     let (y, m, d) = civil_date(unix);
     let jd = unix as f64 / 86400.0 + 2440587.5;
     let prev = unix - 366 * 86400;
@@ -721,10 +721,6 @@ pub fn rfc1123_to_unix(s: &str) -> Option<u64> {
     Some(days * 86400 + hh * 3600 + mm * 60 + ss)
 }
 
-/// Host reachability probe: returns the HTTP status code the host actually
-/// answers with (following redirects), or None when no HTTP response arrives
-/// (DNS failure, refused connection, timeout). A host that answers with
-/// 403/5xx is alive but refuses — not dead; only None is a dead candidate.
 pub fn http_code(url: &str, headers: &[(String, String)]) -> Option<u16> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
@@ -792,10 +788,10 @@ pub fn fetch_one(
 ) -> Option<String> {
     let manifest = cdn_manifest_map();
     let asset_name = |u: &str| -> String {
-        manifest
-            .get(u)
-            .cloned()
-            .unwrap_or_else(|| source_name_from_url(u))
+        match manifest.get(u) {
+            Some(name) => name.clone(),
+            None => source_name_from_url(u),
+        }
     };
     if !url.starts_with("https://github.com/omegaflow/sources") {
         if let Some(netloc) = extract_netloc(url) {
