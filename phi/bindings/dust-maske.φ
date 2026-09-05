@@ -16,6 +16,11 @@ science run.
   z > 0.0, so `z` 0.0 would place nothing).
 - The shell length is physical, not invented: the compiler refuses without
   `--screen-pc <pc>` (the screen distance is never silent).
+- D_screen = 300 pc, ADOPTED (not a measured value): no published dust-weighted
+  mean distance exists. The value is bracketed by the local dust-depleted
+  cavity 100-200 pc and the dust sheet |Z| <= 300-400 pc (Lallement et al.
+  2022, A&A 661 A147, arXiv:2203.01627). Pending a direct integration of the
+  3D dust cube (Lallement 2019/2022, Bayestar19).
 
 ## Binding 3 — resolution
 - nside 512 by default. Pixel 0.11 deg <= sigma/2 of the GD-1 12 arcmin
