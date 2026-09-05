@@ -1,0 +1,25 @@
+name: tess-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  tess:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile TESS light curves and upload to CDN
+        env:
+          MAST_TOKEN: ${{ secrets.MAST_TOKEN }}
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tess_compiler -- \
+            --out tess_lightcurves.bin \
+            --limit 16 \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: tess_lightcurves returned void" \
+                 "tess_lightcurves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
