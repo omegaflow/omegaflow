@@ -1217,6 +1217,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Null: Permutations-Familie über den Katalog (Trefferzahl gegen mean+2σ der
   Shuffle-Verteilung) — die ehrliche Fassung der gebrochenen fam-Schranke.
 
+
+- JWST-Detektions-Saat (2026-09-05, kuratiert): 73 publizierte Spezies-Detektionen,
+  30 der 48 kuratierten Ziele tragen >=1 bestaetigte Detektion — Saat unter
+  docs/reference/jwst_detection_seed.json (jede Zeile auf das Primaer-Paper
+  attribuiert; pre-JWST aus Madhusudhan 2019 Table 1, 7 Zeilen/6 Hosts). Absent
+  benannt (GJ 1132, TRAPPIST-1 b/c/d/e, LHS 1140 b u.a. — featureless/strict
+  upper limits, keine fabrizierte Detektion). Needs-review: GJ 486 b + GJ 1214 b
+  (Wasser-Atmosphaere ODER Stern-Kontamination, mehrdeutig), K2-18 DMS/DMDS
+  (degeneriert), L 98-59 d (hints), TOI-270 b (inklusiv). WASP-39 2022arXiv und
+  WASP-17 2023ApJ...956L..29G nicht ADS-aufloesbar (bzw. Mid-IR-Quarz, keine
+  Gasspezies). jwst_detection_registry_compiler --seed lädt die Saat
+  (seed_state loaded). OFFEN: disequilibrium_register_probe (wartet nun auf
+  Daten — ist geliefert); die registry braucht einen Manifestations-Heimatort.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
