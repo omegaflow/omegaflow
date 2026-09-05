@@ -1,9 +1,9 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root,
-    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
+    body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, embedded_lsk, fetch_raw_bytes,
+    parse_ephemeris_binary, BodyEphemeris, LeapSeconds,
 };
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use std::collections::HashMap;
@@ -722,33 +722,51 @@ struct LasairConeRow {
 
 fn parse_lasair_cone(body: &[u8]) -> Option<Vec<LasairConeRow>> {
     let text = std::str::from_utf8(body).ok()?;
-    let root = parse_json(text)?;
-    let rows: Vec<&JsonVal> = match &root {
-        JsonVal::Arr(a) => a.iter().collect(),
-        JsonVal::Obj(map) => match map.get("objects") {
-            Some(JsonVal::Arr(a)) => a.iter().collect(),
-            _ => return None,
-        },
-        _ => return None,
-    };
+    // Lasair carries the object id as a JSON number > 2^53 — f64 parsing loses
+    // its last digits. Extract id + separation from the raw text so the id
+    // stays exact for the /api/object/ call that follows.
     let mut out: Vec<LasairConeRow> = Vec::new();
-    for r in rows {
-        let JsonVal::Obj(m) = r else {
-            continue;
+    let mut rest = text;
+    while let Some(p) = rest.find("\"object\"") {
+        let after = &rest[p + "\"object\"".len()..];
+        let after = after.trim_start().strip_prefix(':')?;
+        let after = after.trim_start();
+        let (id, tail) = match after.strip_prefix('"') {
+            Some(q) => {
+                let end = q.find('"')?;
+                (&q[..end], &q[end + 1..])
+            }
+            None => {
+                let end = after
+                    .find(|c: char| !(c.is_ascii_digit() || c == '-'))
+                    .unwrap_or(after.len());
+                (&after[..end], &after[end..])
+            }
         };
-        let (Some(JsonVal::Str(id)), Some(sep)) = (m.get("object"), m.get("separation")) else {
-            continue;
-        };
-        let JsonVal::Num(sep) = sep else {
-            continue;
-        };
-        if !sep.is_finite() {
-            continue;
+        let sep_pos = tail.find("\"separation\"")?;
+        let sep_after = &tail[sep_pos + "\"separation\"".len()..];
+        let sep_after = sep_after.trim_start().strip_prefix(':')?.trim_start();
+        let sep_end = sep_after
+            .find(|c: char| {
+                !(c.is_ascii_digit() || c == '.' || c == 'e' || c == 'E' || c == '-' || c == '+')
+            })
+            .unwrap_or(sep_after.len());
+        let sep: f64 = sep_after[..sep_end].parse().ok()?;
+        if sep.is_finite() {
+            out.push(LasairConeRow {
+                id: id.to_string(),
+                separation: sep,
+            });
         }
-        out.push(LasairConeRow {
-            id: id.clone(),
-            separation: *sep,
-        });
+        let next_start = tail[sep_pos + "\"separation\"".len()..].len();
+        let advance = p + "\"object\"".len() + tail.len() - next_start;
+        if advance >= rest.len() {
+            break;
+        }
+        rest = &rest[advance..];
+    }
+    if out.is_empty() {
+        return None;
     }
     out.sort_by(|a, b| {
         a.separation
