@@ -2,7 +2,7 @@
   title: Befund — Galileo Mode-1-Fingerabdruck: Stärke-Split (Oszillator vs. Schwachsignal-PLL)
   class: befund
   date: 2026-09-05
-  sha256: 87564430e3b6e0dc08a524fda13afb144b2700f184ee08a4479add563edf5ea6
+  sha256: eb0ce767198e75aed069f8ed671a5c5e39367fc1b8bfcb1fb16ddc7bdcd8a9b9
   status: done
   antwortet-auf: docs/befund/befund-galileo-rausch-kurve.md
   see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/paper/probe-front-dark-matter.md docs/befund/befund-galileo-mode1-snr-kurve.md docs/TODO.md
@@ -76,13 +76,16 @@ wächst bei schwachem SNR; hier als Bodenanstieg am AGC-Boden). Die Stärke-Skal
 (Boden vs Plateau, kein feines SNR-Kontinuum) — die Aussage ist „Boden-Zustand ≈ 10–20× lauter
 als Plateau-Zustand", nicht eine durchgängige ∝-Kurve.
 
-**2. Der „8-Hz-Boden" von Mode 1 ist ein Tag-Pooling-Artefakt, noch keine Pass-Wahrheit belegt.**
+**2. Der „8-Hz-Boden" von Mode 1 ist ein Tag-Pooling-Artefakt; die Pass-Wahrheit ist gemessen.**
 Kontrolle (Station-Tag-Zellen, alle Bin): Station 14 Median 0,98 Hz (129), Station 43 2,14 Hz
 (122), Station 63 3,69 Hz (136) — der gepoolte Tag-Median liegt bei 8,20 Hz (163). Das starke
 Station-Tag-Rauschen liegt bei ~0,1 Hz (Q3/Q4). Die Tag-Metrik mischt mehrere Pässe/Stationen
-desselben Tages; die Pass-Wahrheit braucht Pass-Segmentierung (`pending`). Das Pooling-Artefakt
-ist **für Mode 1 gemessen**; die Übertragung auf das Mode-2-1,5-Hz-Fenster der Rausch-Kurve ist
-**`pending`** — der Mode-2-Station-Tag-Split ist ungemessen, nicht extrapolieren.
+desselben Tages. Auf Pass-Ebene (`befund-galileo-pass-segmentierung`) ist das Pooling-Artefakt
+bestätigt (Pass-Boden 0,79–3,69 Hz, ruhigstes Pass-Zehntel 0,04 Hz); die Pass-Ebene widerlegt den
+Stärke-Gradienten **nicht** (Pass-Median mischt Stärke-Zustände). Die Übertragung auf das
+Mode-2-1,5-Hz-Fenster ist gemessen (`befund-galileo-mode2-station-split`): der 1,5-Hz-Wert ist
+fragil (All-Lock-Tag-Zählung + Stations-Pooling), der Konjunktions-Station-Tag-Boden fällt auf
+0,28–0,58 Hz.
 
 ## Die Achse: der Rausch-Kurven-„SEP" ist der Winkel am Sonnenort, nicht die Elongation
 
@@ -117,7 +120,11 @@ Tag-/Pass-Ereignisse, unsegmentiert.
 - Stärke-Feld ohne Kalibrierung, grobe Skala (Boden vs Plateau); Q1 könnte neben SNR eine
   Empfänger-/Epochen-Klasse tragen — ref konstant und Q1 über 83 anti-Tage verteilt schließt
   Band-Mix aus, eine Epochen-Rest-Verwebung bleibt benannt.
-- Tag-Metrik mischt Pässe; Pass-Wahrheit des starken Signals (~0,1 Hz) braucht Segmentierung.
+- Tag-Metrik mischt Pässe; Pass-Segmentierung ist gemessen
+  (`befund-galileo-pass-segmentierung`): Pass-Boden 0,79–3,69 Hz, ruhigstes
+  Pass-Zehntel 0,04 Hz; der Stärke-Gradient ist auf Pass-Ebene nicht entscheidbar
+  (Pass-Median mischt Stärke-Zustände), der Fingerabdruck-Befund bleibt
+  unwiderlegt.
 - α/ε-Inversion: Mode-2/3-Rausch-Kurve auf der ε-Achse neu zu ziehen — `pending`.
 - Q2/Q3-„Nah"-Zellen (α-Metrik) sind leer (0 geehrt): der α-Split ist in den mittleren Bins
   ohne n; die SEP-Trennung trägt nur Q1 und Q4 (Tabelle 1 der Bins, n in den Reports).
