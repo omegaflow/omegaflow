@@ -188,7 +188,10 @@ pub fn transfer_entropy_conditional(x: &[f32], y: &[f32], c: &[f32], lag: usize)
     Some(te / m as f64)
 }
 
-fn residual_surrogate_conditional(y: &[f32], c: &[f32], rng: &mut u64) -> Vec<f32> {
+fn ols_fit(y: &[f32], c: &[f32]) -> Option<(f64, f64)> {
+    if y.len() < 2 || y.len() != c.len() {
+        return None;
+    }
     let n = y.len();
     let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
     let cf: Vec<f64> = c.iter().map(|&v| v as f64).collect();
@@ -202,24 +205,54 @@ fn residual_surrogate_conditional(y: &[f32], c: &[f32], rng: &mut u64) -> Vec<f3
     let ym = sy / n as f64;
     let mut num = 0.0;
     let mut den = 0.0;
+    let mut ssc = 0.0;
     for i in 0..n {
         num += (cf[i] - xm) * (yf[i] - ym);
         den += (cf[i] - xm) * (cf[i] - xm);
+        ssc += cf[i] * cf[i];
     }
-    let beta1 = if den > 1e-12 { num / den } else { 0.0 };
-    let beta0 = ym - beta1 * xm;
-    let mut resid: Vec<f64> = (0..n).map(|i| yf[i] - (beta0 + beta1 * cf[i])).collect();
+    if den <= 1e-12 * ssc {
+        return None;
+    }
+    let beta1 = num / den;
+    Some((beta1, ym - beta1 * xm))
+}
 
-    for i in (1..n).rev() {
-        *rng = rng
-            .wrapping_mul(6364136223846793005)
-            .wrapping_add(1442695040888963407);
-        let j = ((*rng >> 33) as usize) % (i + 1);
-        resid.swap(i, j);
+pub fn ols_residual(y: &[f32], c: &[f32]) -> Option<Vec<f32>> {
+    let n = y.len();
+    if n < 2 || y.len() != c.len() {
+        return None;
     }
-    (0..n)
-        .map(|i| (beta0 + beta1 * cf[i] + resid[i]) as f32)
-        .collect()
+    let (beta1, beta0) = ols_fit(y, c)?;
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let cf: Vec<f64> = c.iter().map(|&v| v as f64).collect();
+    Some(
+        (0..n)
+            .map(|i| (yf[i] - (beta0 + beta1 * cf[i])) as f32)
+            .collect(),
+    )
+}
+
+fn residual_surrogate_conditional(y: &[f32], c: &[f32], rng: &mut u64) -> Vec<f32> {
+    let n = y.len();
+    match ols_fit(y, c) {
+        Some((beta1, beta0)) => {
+            let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+            let cf: Vec<f64> = c.iter().map(|&v| v as f64).collect();
+            let mut resid: Vec<f64> = (0..n).map(|i| yf[i] - (beta0 + beta1 * cf[i])).collect();
+            for i in (1..n).rev() {
+                *rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                let j = ((*rng >> 33) as usize) % (i + 1);
+                resid.swap(i, j);
+            }
+            (0..n)
+                .map(|i| (beta0 + beta1 * cf[i] + resid[i]) as f32)
+                .collect()
+        }
+        None => shuffle_series(y, rng),
+    }
 }
 
 pub fn conditional_te_stats(
