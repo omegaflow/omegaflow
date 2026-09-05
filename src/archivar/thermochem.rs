@@ -1050,6 +1050,287 @@ pub fn equilibrium_composition_sulfur(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
     solve_gas(&specs, &sulfur_solar(), t_k, p_pa)
 }
 
+// === Condensation-aware equilibrium for the sub-500 K domain ===
+//
+// Floor origin (measured 2026-09-05): the 500-K lower bound of the archival
+// gas solvers is an encoded model-domain guard, not a fit floor. The archival
+// 16 NASA-7 gas fits are the GRI-Mech 3.0 polynomials (low segments published
+// over 200..1000 K; N2 over 300..5000 K — GRI-Mech 3.0 thermo30.dat), and the
+// NIST-JANAF sulfur Shomate fits start at 298.15 K (atomic S(g) at 882.117 K).
+// A single-phase gas at 1 bar solar abundance is the physical equilibrium down
+// to the water condensation onset near 254 K: no other volatile's condensed
+// phase can exist above ~240 K (NH3) / 213 K (H2S) / 195 K (CO2) / 111 K (CH4)
+// at 1 bar. The five disequilibrium targets below 500 K (283..388 K) all sit
+// in that single-phase-gas regime, provided the water condensation stability
+// is verified with sourced condensed-phase data. This path is that
+// verification and the general sub-500 K equilibrium.
+//
+// Condensed-phase data provenance: NIST-JANAF (Chase, M.W., Jr., 4th edition,
+// J. Phys. Chem. Ref. Data Monograph 9, 1998) as rendered on the NIST
+// Chemistry WebBook condensed-phase thermochemistry pages (accessed
+// 2026-09-05). The WebBook carries a condensed Shomate heat-capacity fit for
+// H2O(l) (domain 298.15..500 K) with anchors dHf(l,298.15) = -285.830 kJ/mol,
+// S(l,298.15) = 69.95 J/mol/K — the fit's F/G reproduce those anchors
+// (unit-tested below). The WebBook condensed pages of NH3, CO2, CH4 and H2S
+// carry no condensed Shomate fits (gas + phase-change data only; measured
+// 2026-09-05), so those condensed phases are registered pending — never
+// extrapolated. Their pending state does not touch the targets: none can
+// condense above ~240 K at 1 bar, above this path's whole domain.
+//
+// The 298.15-K cross-datum anchor is the H2O saturation pressure p_sat =
+// P0*exp(g_liq - g_gas) = 3.169 kPa (NIST), verifying that the WebBook
+// condensed fit and the archival GRI H2O gas fit sit on one element datum.
+//
+// Below the liquid fit floor (298.15 K) the H2O(l) Gibbs is not in the fit.
+// The single gas phase remains exact there for 1-bar solar abundances by the
+// saturation bound: the largest conceivable H2O vapor partial pressure is
+// 2*SOLAR_O*P0 = 172 Pa, while liquid water's saturation pressure on its
+// liquid branch (T >= 273.16 K) never falls below its triple-point value
+// P triple = 0.0061 bar = 610 Pa (WebBook, Sato-Watanabe 1991). A gas whose
+// H2O partial pressure reaches 610 Pa below 298.15 K is refused (None): its
+// condensation state is pending-data, not zero.
+
+pub const COOL_T_MIN: f64 = 273.16;
+pub const COOL_T_MAX: f64 = 500.0;
+pub const WATER_LIQ_T_MIN: f64 = 298.15;
+pub const N2_GAS_T_MIN: f64 = 300.0;
+pub const WATER_P_TRIPLE_PA: f64 = 610.0;
+
+pub struct CondensateSpec {
+    pub name: &'static str,
+    pub vapor: &'static str,
+    pub formula: [i32; NELEM_S],
+    pub segs: Vec<ShomateSeg>,
+}
+
+fn cond_g_over_rt(c: &CondensateSpec, t: f64) -> Option<f64> {
+    shomate_g_over_rt(&c.segs, t)
+}
+
+// H2O(l) — NIST-JANAF (Chase 1998) liquid Shomate fit, WebBook condensed page,
+// domain 298.15..500 K; dHf(l,298.15) = -285.830 kJ/mol, S(l,298.15) =
+// 69.95 J/mol/K.
+fn water_liquid() -> CondensateSpec {
+    CondensateSpec {
+        name: "H2O(l)",
+        vapor: "H2O",
+        formula: [2, 0, 1, 0, 0],
+        segs: vec![s_seg(
+            298.15, 500.0, -203.6060, 1523.290, -3196.413, 2474.455, 3.855326, -256.5478, -488.7163,
+        )],
+    }
+}
+
+pub struct CoolEquilibrium {
+    // Gas mole fractions over the 24 sulfur-gas slots. Slots whose species fit
+    // does not reach the temperature are data-honored zero (0 honored): N2
+    // below 300 K, the sulfur carriers below 298.15 K.
+    pub frac: Vec<f64>,
+    // Condensed liquid-water moles per 1-H-atom element budget; 0.0 means the
+    // equilibrium is a single gas phase (the case for every 1-bar solar host).
+    pub h2o_condensed_moles: f64,
+    // Measured H2O vapor partial pressure in the returned gas.
+    pub h2o_vapor_pa: f64,
+    // p_sat over H2O(l) from the sourced Shomate fit when T >= 298.15 K; None
+    // below the fit floor (the triple-point bound carries the single-gas case).
+    pub h2o_sat_pa: Option<f64>,
+}
+
+pub fn equilibrium_composition_condensed(t_k: f64, p_pa: f64) -> Option<CoolEquilibrium> {
+    if !t_k.is_finite() || t_k < COOL_T_MIN || t_k > COOL_T_MAX {
+        return None;
+    }
+    if !p_pa.is_finite() || p_pa <= 0.0 {
+        return None;
+    }
+    let water_in_domain = t_k >= WATER_LIQ_T_MIN;
+    // Sulfur data floor: the NIST-JANAF S-gas Shomate fits start at 298.15 K;
+    // below that the S element is pending, not fabricated into the gas.
+    let b: Vec<f64> = if water_in_domain {
+        sulfur_solar().to_vec()
+    } else {
+        vec![SOLAR_H, SOLAR_C, SOLAR_O, SOLAR_N]
+    };
+    cool_solve(&b, t_k, p_pa, water_in_domain)
+}
+
+fn cool_solve(b: &[f64], t_k: f64, p_pa: f64, water_in_domain: bool) -> Option<CoolEquilibrium> {
+    let gas = cool_gas_species(t_k);
+    let water = water_liquid();
+    let vapor_idx = gas.iter().position(|s| s.name == water.vapor)?;
+    let frac = ramp_gas_equilibrium(&gas, b, t_k, p_pa)?;
+    let x_vapor = frac[vapor_idx];
+    let h2o_vapor_pa = x_vapor * p_pa;
+    let h2o_sat_pa = if water_in_domain {
+        let g_cond = cond_g_over_rt(&water, t_k)?;
+        let g_gas = gas_g_over_rt(&gas[vapor_idx], t_k)?;
+        Some(P0_PA * (g_cond - g_gas).exp())
+    } else {
+        None
+    };
+    if let Some(p_sat) = h2o_sat_pa {
+        if h2o_vapor_pa > p_sat {
+            // Supersaturated gas: the condensate forms until its vapor sits at
+            // the saturation pressure; its atoms leave the gas element budget.
+            let c = condense_moles(&gas, b, t_k, p_pa, vapor_idx, &water.formula, p_sat)?;
+            let mut bc = b.to_vec();
+            for (j, n) in water.formula.iter().enumerate() {
+                bc[j] -= *n as f64 * c;
+            }
+            let frac_c = ramp_gas_equilibrium(&gas, &bc, t_k, p_pa)?;
+            return Some(CoolEquilibrium {
+                frac: cool_slot_layout(&gas, &frac_c),
+                h2o_condensed_moles: c,
+                h2o_vapor_pa: frac_c[vapor_idx] * p_pa,
+                h2o_sat_pa: Some(p_sat),
+            });
+        }
+    } else if h2o_vapor_pa >= WATER_P_TRIPLE_PA {
+        return None;
+    }
+    Some(CoolEquilibrium {
+        frac: cool_slot_layout(&gas, &frac),
+        h2o_condensed_moles: 0.0,
+        h2o_vapor_pa,
+        h2o_sat_pa,
+    })
+}
+
+fn cool_gas_species(t_k: f64) -> Vec<GasSpec> {
+    // Data floors: N2's GRI-Mech 3.0 low polynomial starts at 300 K and the
+    // NIST-JANAF sulfur Shomate fits at 298.15 K. Below a carrier's floor the
+    // species carries no moles. The sulfur carriers must leave the set below
+    // 298.15 K entirely: during the 6000-K ramp they would be in-domain while
+    // the S element row is absent (its budget is pending), which leaves S
+    // unconstrained.
+    let s_floor_ok = t_k >= WATER_LIQ_T_MIN;
+    let n2_ok = t_k >= N2_GAS_T_MIN;
+    let s_carriers = ["S", "S2", "SH", "H2S", "SO", "SO2", "CS", "OCS"];
+    sulfur_gas_specs()
+        .into_iter()
+        .filter(|s| (!s_carriers.contains(&s.name) || s_floor_ok) && (s.name != "N2" || n2_ok))
+        .collect()
+}
+
+fn cool_slot_layout(gas: &[GasSpec], frac: &[f64]) -> Vec<f64> {
+    let canon: Vec<&str> = sulfur_gas_specs().iter().map(|s| s.name).collect();
+    let mut out = vec![0.0; canon.len()];
+    for (i, name) in canon.iter().enumerate() {
+        if let Some(pos) = gas.iter().position(|s| s.name == *name) {
+            out[i] = frac[pos];
+        }
+    }
+    out
+}
+
+// Condensed moles that bring the gas vapor to its saturation mole fraction
+// p_sat/p_pa. Each condensed mole removes one condensate-formula unit from the
+// gas element budget; the gas-only equilibrium is re-solved for each trial.
+fn condense_moles(
+    gas: &[GasSpec],
+    b: &[f64],
+    t_k: f64,
+    p_pa: f64,
+    vapor_idx: usize,
+    formula: &[i32; NELEM_S],
+    p_sat: f64,
+) -> Option<f64> {
+    let target = p_sat / p_pa;
+    let mut c_max = f64::INFINITY;
+    for (j, n) in formula.iter().enumerate() {
+        if *n > 0 {
+            c_max = c_max.min(b[j] * (1.0 - 1e-6) / *n as f64);
+        }
+    }
+    let f = |c: f64| -> Option<f64> {
+        let mut bc = b.to_vec();
+        for (j, n) in formula.iter().enumerate() {
+            bc[j] -= *n as f64 * c;
+        }
+        if bc.iter().any(|v| *v <= 0.0) {
+            return None;
+        }
+        let fr = ramp_gas_equilibrium(gas, &bc, t_k, p_pa)?;
+        Some(fr[vapor_idx] - target)
+    };
+    let f0 = f(0.0)?;
+    if f0 <= 0.0 {
+        return Some(0.0);
+    }
+    let mut hi = c_max;
+    let mut f_hi = f(hi);
+    while !matches!(f_hi, Some(v) if v < 0.0) {
+        hi *= 0.5;
+        if hi < c_max * 1e-6 {
+            return None;
+        }
+        f_hi = f(hi);
+    }
+    let mut lo = 0.0;
+    for _ in 0..80 {
+        let mid = 0.5 * (lo + hi);
+        let fm = f(mid)?;
+        if fm < 0.0 {
+            hi = mid;
+        } else {
+            lo = mid;
+        }
+        if hi - lo < 1e-12 * c_max.max(1.0) {
+            break;
+        }
+    }
+    Some(0.5 * (lo + hi))
+}
+
+// Generic gas-only equilibrium without the archival 500-K domain guard. The
+// element basis is b.len(); a species whose fit does not reach the current
+// temperature contributes no moles (the atomic-S-below-882-K pattern).
+fn ramp_gas_equilibrium(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    if !t_k.is_finite() || !p_pa.is_finite() || p_pa <= 0.0 {
+        return None;
+    }
+    if b.iter().any(|x| !x.is_finite() || *x <= 0.0) {
+        return None;
+    }
+    let nelem = b.len();
+    let ln_p = (p_pa / P0_PA).ln();
+    let atomic_species = gas_atomic_species_indices(specs, nelem)?;
+    let mut lam = vec![0.0f64; nelem + 1];
+    for (j, &ai) in atomic_species.iter().enumerate() {
+        let g = gas_g_over_rt(&specs[ai], 6000.0)?;
+        lam[j] = g + ln_p + b[j].ln();
+    }
+    lam[nelem] = 0.0;
+    let mut tcur = 6000.0f64;
+    while tcur > t_k {
+        let next = (tcur * 0.96).max(t_k);
+        if !gas_newton_step(specs, next, ln_p, b, &mut lam) {
+            return None;
+        }
+        tcur = next;
+    }
+    let big_n = lam[nelem].exp();
+    let mut n = vec![0.0f64; specs.len()];
+    for (i, s) in specs.iter().enumerate() {
+        let Some(g) = gas_g_over_rt(s, t_k) else {
+            continue;
+        };
+        let mut phi = -g - ln_p;
+        for j in 0..nelem {
+            phi += s.formula[j] as f64 * lam[j];
+        }
+        n[i] = big_n * phi.exp();
+    }
+    let total: f64 = n.iter().sum();
+    if !total.is_finite() || total <= 0.0 {
+        return None;
+    }
+    for x in &mut n {
+        *x /= total;
+    }
+    Some(n)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1356,5 +1637,157 @@ mod tests {
         assert!(equilibrium_composition_sulfur(4000.0, P0_PA).is_none());
         assert!(equilibrium_composition_sulfur(1200.0, 0.0).is_none());
         assert!(equilibrium_composition_sulfur(f64::NAN, P0_PA).is_none());
+    }
+
+    #[test]
+    fn water_liquid_fit_reproduces_the_janaf_298_anchors() {
+        // NIST-JANAF (Chase 1998) 298.15-K anchors as listed on the WebBook
+        // condensed page the constants were read from.
+        let w = water_liquid();
+        let (h, s) = seg_value(&w.segs, 298.15).unwrap();
+        assert!(
+            (h - -285.830).abs() < 0.05,
+            "H2O(l): H(298) {:.3} kJ/mol vs JANAF -285.830",
+            h
+        );
+        assert!(
+            (s - 69.95).abs() < 0.05,
+            "H2O(l): S(298) {:.3} J/mol/K vs JANAF 69.95",
+            s
+        );
+    }
+
+    #[test]
+    fn water_liquid_svp_at_298_matches_nist() {
+        // p_sat = P0*exp(g_liq - g_gas) at 298.15 K must reproduce the NIST
+        // saturation pressure of water, 3.169 kPa — the cross-datum proof that
+        // the WebBook condensed fit and the archival GRI H2O gas fit share one
+        // element datum.
+        let w = water_liquid();
+        let specs = sulfur_gas_specs();
+        let h2o = specs.iter().find(|s| s.name == "H2O").unwrap();
+        let g_cond = cond_g_over_rt(&w, 298.15).unwrap();
+        let g_gas = gas_g_over_rt(h2o, 298.15).unwrap();
+        let p_sat = P0_PA * (g_cond - g_gas).exp();
+        assert!(
+            (p_sat / 3169.0 - 1.0).abs() < 0.03,
+            "p_sat(298.15 K) = {:.1} Pa vs NIST 3169 Pa",
+            p_sat
+        );
+    }
+
+    #[test]
+    fn condensed_gas_path_matches_the_archival_solvers_above_500k() {
+        // At 1 bar no condensate forms above the boiling point; the condensed
+        // path must equal the archival sulfur gas solver at the domain
+        // boundary, and the 4-element cool path must extend the archival
+        // equilibrium_composition below its own 500-K domain guard.
+        let cool = equilibrium_composition_condensed(500.0, P0_PA).unwrap();
+        let sulfur = equilibrium_composition_sulfur(500.0, P0_PA).unwrap();
+        for i in 0..24 {
+            assert!(
+                (cool.frac[i] - sulfur[i]).abs() < 1e-12,
+                "slot {i}: cool {:.6e} vs sulfur {:.6e}",
+                cool.frac[i],
+                sulfur[i]
+            );
+        }
+        assert_eq!(cool.h2o_condensed_moles, 0.0);
+        let cool_4 = equilibrium_composition_condensed(283.15, P0_PA).unwrap();
+        let arch = equilibrium_composition(283.15, P0_PA, solar());
+        assert!(arch.is_none());
+        assert_eq!(cool_4.frac.len(), 24);
+        let h2o = 7usize;
+        assert!(cool_4.frac[h2o] > 0.0);
+    }
+
+    #[test]
+    fn cool_target_temperatures_stay_single_phase_gas() {
+        // The five sub-500 K disequilibrium hosts sit at 283..388 K; at 1 bar
+        // solar abundances the H2O vapor partial pressure (172 Pa max) is far
+        // below the liquid-water saturation pressure, so the equilibrium is a
+        // single gas phase at each Teq.
+        let targets: [f64; 5] = [283.0, 352.0, 354.0, 363.0, 388.0];
+        for t in targets {
+            let eq = equilibrium_composition_condensed(t, P0_PA)
+                .unwrap_or_else(|| panic!("cool solve at {t} K"));
+            assert_eq!(eq.h2o_condensed_moles, 0.0);
+            let sum: f64 = eq.frac.iter().sum();
+            assert!((sum - 1.0).abs() < 1e-9, "frac sum {sum} at {t} K");
+            let (ch4, co2) = (11usize, 10usize);
+            assert!(
+                eq.frac[ch4] > eq.frac[co2] * 1e6,
+                "CH4 is the C reservoir at {t} K"
+            );
+            assert!(eq.h2o_vapor_pa < 200.0, "solar H2O partial at {t} K");
+        }
+        // K2-18 b (283 K) is below the liquid Shomate floor: the saturation
+        // value is not in the fit, but the vapor is below the triple-point
+        // bound, so the single-gas verdict stands with sat = None.
+        let k2 = equilibrium_composition_condensed(283.0, P0_PA).unwrap();
+        assert!(k2.h2o_sat_pa.is_none());
+        assert!(k2.h2o_vapor_pa < WATER_P_TRIPLE_PA);
+        // The four warmer hosts carry the measured saturation pressure.
+        let lp791 = equilibrium_composition_condensed(354.0, P0_PA).unwrap();
+        let sat = lp791.h2o_sat_pa.unwrap();
+        assert!(sat > 1e4, "p_sat(354 K) should far exceed the solar vapor");
+    }
+
+    #[test]
+    fn cool_water_condenses_at_high_pressure_until_saturation() {
+        // At 30 bar the solar H2O partial pressure (1.7e-3 * 30 bar) exceeds
+        // p_sat(298.15 K) = 3169 Pa, so liquid water condenses until the gas
+        // H2O sits at saturation. Exercises the two-phase bisection.
+        let p = 30.0 * 101325.0;
+        let eq = equilibrium_composition_condensed(298.15, p).unwrap();
+        assert!(
+            eq.h2o_condensed_moles > 0.0,
+            "water must condense at 30 bar"
+        );
+        let sat = eq.h2o_sat_pa.unwrap();
+        assert!((sat / 3169.0 - 1.0).abs() < 0.03);
+        assert!(
+            (eq.h2o_vapor_pa / sat - 1.0).abs() < 0.02,
+            "gas H2O at saturation: {} vs {}",
+            eq.h2o_vapor_pa,
+            sat
+        );
+        // Solar budget conservation across gas + condensate: removing
+        // c condensed H2O from the element budget and re-solving conserves the
+        // rest by construction; the gas keeps H2O only at saturation.
+        let h2o = 7usize;
+        assert!(eq.frac[h2o] > 0.0 && eq.frac[h2o] < 2.0 * SOLAR_O);
+    }
+
+    #[test]
+    fn cool_refuses_out_of_domain_and_pending_condensation() {
+        assert!(equilibrium_composition_condensed(250.0, P0_PA).is_none());
+        assert!(equilibrium_composition_condensed(600.0, P0_PA).is_none());
+        assert!(equilibrium_composition_condensed(350.0, 0.0).is_none());
+        assert!(equilibrium_composition_condensed(f64::NAN, P0_PA).is_none());
+        // A gas that would push H2O vapor to the triple-point bound below the
+        // liquid fit floor cannot be judged: condensation state pending, not
+        // fabricated single phase. At 290 K solar is far below the bound, so
+        // the refusal must come from a supersolar O budget (internal call).
+        let b = vec![1.0, SOLAR_C, 1.0e-2, SOLAR_N];
+        let res = cool_solve(&b, 290.0, P0_PA, false);
+        assert!(res.is_none(), "supersolar O below 298.15 K is pending");
+        let solar = equilibrium_composition_condensed(290.0, P0_PA).unwrap();
+        assert!(solar.h2o_sat_pa.is_none());
+        assert!(solar.h2o_vapor_pa < WATER_P_TRIPLE_PA);
+        // Sulfur channel is data-pending below 298.15 K: S-tail slots are zero.
+        assert_eq!(solar.frac[17], 0.0);
+        assert_eq!(solar.frac[19], 0.0);
+    }
+
+    #[test]
+    fn cool_n2_slot_is_zero_below_300k() {
+        // N2's GRI-Mech 3.0 low polynomial starts at 300 K; at 283 K the slot
+        // is data-honored zero and the N budget is carried by NH3.
+        let eq = equilibrium_composition_condensed(283.0, P0_PA).unwrap();
+        assert_eq!(eq.frac[4], 0.0);
+        let nh3 = 12usize;
+        let n2 = 4usize;
+        assert!(eq.frac[nh3] > 100.0 * eq.frac[n2]);
     }
 }
