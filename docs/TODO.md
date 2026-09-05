@@ -1490,6 +1490,39 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   M-Zwerge absent. Photochemie-Re-Erklaerung: jetzt 10 Wirte mit L_X/F_X
   evaluierbar.
 
+- Disequilibrium-Register-Urteil III — externe Korrekturen verifiziert + L_X-Kanal
+  (2026-09-05, disequilibrium_register_probe): (1) Ordnungen-Gegenpruefung:
+  Wiederholungslauf misst die solaren 1-bar-Teq-Gleichgewichtsanteile unveraendert
+  (WASP-39 b Teq 1166 K SO2 1.625e-16; WASP-107 b Teq 737 K SO2 4.899e-22; K2-18 b
+  CO2 8.011e-31). Die Zahl "16-22 Ordnungen" steht nirgends als Text (gemessen per
+  grep — das Register sagt "Detektion um >10 Groessenordnungen"); gemessen gegen
+  eine publizierte Photochemie-Detektion von 1-10 ppm (Tsai et al. 2023 Nature) ist
+  die Diskrepanz ~10-11 Ordnungen (WASP-39 b) und ~15-16 Ordnungen (WASP-107 b).
+  Die Literatur-Korrektur "3-4 Ordnungen" misst gegen ein anderes Referenz-
+  Gleichgewicht: Tsai nennt ~1 ppb als thermochemische Obergrenze entlang des
+  heissen Atmosphären-P-T-Profils, die Sonde loest das solare Gleichgewicht bei
+  einheitlichem Teq und 1 bar — beide klein, verschiedene Bezuege; das
+  disequilibrium-Urteil (hit) traegt, nicht ein Ordnungen-Exponent. (2) WASP-166 b
+  verifiziert: CO2-hit (Gleichgewichts-CO2 4.146e-7 < floor 1e-6), bewegt sich bei
+  [Fe/H]+0.19 (1.006e-6) und C/O-Zeuge (1.338e-6) zu equilibrium-present — knife-
+  edge bestaetigt; die Saat fuehrt WASP-166 nur als H2O+CO2 (Mayo et al. 2025,
+  2025AJ....170...50M) — kein SO2-Hit, keine Korrektur noetig. (3) HST/JWST:
+  kein Text in docs/paper, TODO oder auftrag zitiert die 20-Planeten-Stellar-
+  Aktivitaets-Kontaminations-Studie (HST STIS/WFC3) als JWST — keine Fehlattribution
+  gefunden; die Zensus-Note GJ 1214/GJ 486 "Wasser-Atmosphaere ODER Stern-
+  Kontamination" bleibt instrumenten-neutral. (4) NEU im Probe-Code: der zweite
+  Reinigungsschritt regressiert die Hit-Indikator-Spalte jetzt auch gegen log10 L_X
+  (erg/s, Mittel ueber die L_X-Werte des Registers); F_X/L_X-L_bol sind mit L_X
+  nicht kommensurabel und tragen keinen gemeinsamen Kanal. Gemessen, n = 9 Wirte:
+  Pearson r = +0.066, Permutations-P = 0.873 — die SO2/CO2-Hits sitzen NICHT
+  bevorzugt auf den hohen-L_X-Wirten (Hit-mean log10 L_X 28.16 | present 27.95);
+  die Hits spannen die volle L_X-Breite (K2-18 26.42, TOI-270 26.61, L 98-59 27.11,
+  WASP-107 27.94 bis HIP 67522 30.64, V1298 Tau 30.20), WASP-121 (29.11) ist
+  equilibrium-present — keine XUV-Re-Erklaerung im Katalogmassstab; WASP-39 b (das
+  kanonische SO2-Photochemie-Ziel) traegt keinen numerischen L_X-Zeugen (pending).
+  Ausgabe /tmp/opencode/disequilibrium_register_verdict_v2.txt. cargo check
+  -p omegaflow-measure 0 Warnungen.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
