@@ -12,6 +12,17 @@
   "facility": "JWST"
  },
  {
+  "hostname": "GJ 341",
+  "facility": "JWST",
+  "instrument": [
+   "NIRCam"
+  ],
+  "primary_bibcode": "2024AJ....167...90K",
+  "note": "JWST transmission, instruments: NIRCam",
+  "detection": "featureless",
+  "detection_source": "Kirk et al. 2024 (AJ 167, 90): 3.9-5.0 um NIRCam sub-Earth spectrum (Rp 0.92 Rearth, Teq 540 K, d 10.4 pc), three pipelines; no pipeline rules out a flat line, weak features (2.3/2.9 sigma) inconsistent across pipelines (CO2 vs O3 retrievals) not astrophysical; forward models rule out <350x solar mean-molecular-weight atmospheres >=3 sigma, disfavor CH4-dominated"
+ },
+ {
   "hostname": "GJ 357",
   "facility": "JWST"
  },
