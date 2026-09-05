@@ -1,0 +1,28 @@
+name: polarbase-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  polarbase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile polarimetry catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/polarbase/polarbase" \
+            --columns 'ra:RA_ICRS;dec:DE_ICRS;teff:Teff;logg:logg;mag:Vmag' \
+            --skip-null teff \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+            --out polarbase.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: polarbase returned void" \
+                 "polarbase compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

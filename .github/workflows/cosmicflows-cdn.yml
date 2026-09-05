@@ -1,0 +1,22 @@
+name: cosmicflows-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cosmicflows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile Cosmicflows-4 peculiar velocities and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin cosmicflows_compiler -- \
+            --out cosmicflows_cf4.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: cosmicflows_cf4 returned void" \
+                 "cosmicflows_cf4 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

@@ -1,0 +1,26 @@
+name: bzcat5-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bzcat5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile BZCAT5 blazar catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VII/274/bzcat5" \
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z;flux:FR;typ:Class' \
+            --skip-null z \
+            --out bzcat5.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: bzcat5 returned void" \
+                 "bzcat5 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
