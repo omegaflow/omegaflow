@@ -1,0 +1,25 @@
+name: wind-waves-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  wind-waves:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile Wind WAVES 1994-2021 once and upload to CDN
+        run: |
+          mkdir -p kernels
+          [ -s kernels/naif0012.tls ] || curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources \
+            --pattern wind_waves.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin wind_waves_compiler -- \
+              --lsk kernels/naif0012.tls --out wind_waves.bin --ci-mode \
+              --window-start 1994-11-10 --window-end 2021-12-31 --jobs 8

@@ -1,0 +1,22 @@
+name: f107-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  f107:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile F10.7 Penticton 1947-2026 once and upload to CDN
+        run: |
+          mkdir -p kernels
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern f107_penticton.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin f107_compiler -- \
+              --out f107_penticton.bin --ci-mode
