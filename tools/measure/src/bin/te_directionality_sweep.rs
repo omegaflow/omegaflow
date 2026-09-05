@@ -46,9 +46,10 @@ fn main() {
         "c", "n", "TE(X->Y)", "TE(Y->X)", "ratio", "thr_fwd", "thr_rev", "fwd", "rev"
     );
 
-    let cs: [f64; 8] = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50];
+    let cs: [f64; 9] = [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50];
     let ns: [usize; 3] = [1000, 3000, 10000];
 
+    let mut cell: u64 = 0;
     for &c in &cs {
         for &n in &ns {
             let (xc, yc) = coupled_henon(n, TRANSIENT, c);
@@ -60,7 +61,8 @@ fn main() {
             let te_xy = transfer_entropy_lag(&yc, &xc, 1);
             let te_yx = transfer_entropy_lag(&xc, &yc, 1);
 
-            let mut rng = SEED ^ (c as u64 * 0x9E37_79B9_7F4A_7C15);
+            let mut rng = SEED ^ cell.wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            cell += 1;
             if let (Some(f), Some(r)) = (te_xy, te_yx) {
                 for _ in 0..N_SURR {
                     let sf = phase_randomized_surrogate(&xc, &mut rng);
@@ -96,4 +98,5 @@ fn main() {
     }
     println!();
     println!("rev crosses its own thr/fam -> look at whether that crossing c moves with n (bias) or not (asymmetry).");
+    println!("c = 0 anchors the uncoupled control: a reverse arrow there is a false-arrow bias that n scaling must not carry.");
 }
