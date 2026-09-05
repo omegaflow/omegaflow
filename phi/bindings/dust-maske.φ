@@ -29,5 +29,5 @@ science run.
 ## Binding 4 — media-token pin
 - FITS source:
   https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
-- sha256 of the downloaded FITS: pending — the operator pins the digest the
-  workflow records (sha256sum over the fetched bytes, release-annotated).
+- sha256 of the downloaded FITS (measured 2026-09-05, dust-cdn run 33965354922):
+  90f0ff42e2eced3105281ee70a5a8faef9758851a4faaac01d687d889a750cef
