@@ -107,6 +107,32 @@ halbe Messung ist kein Befund.
   benannt pending.
 - **B-Unlock geparkt:** Fink-Account/Kafka oder Rubin-Strom als benannter
   Kostenpunkt (Konto, Stream-Rechte, Betrieb); kein Datum.
+- **ANTARES-Scan verdrahtet und gemessen (2026-09-06, `--antares` in
+  lsst_anomaly_probe, anonym, kein Token):** Datenweg live gemessen —
+  antares.noirlab.edu liefert eine Vue-SPA (200), deren config.json
+  https://api.antares.noirlab.edu/v1 als Datenbasis benennt; die anonyme
+  REST trägt die loci-Liste (/v1/loci, paginiert) + das je-Locus-Alert-Bündel
+  (/v1/loci/{id}/alerts, ein Antwortpaket). Kegel-/Datums-/Such-Parameter der
+  anonymen Liste sind träge (gemessen: ra/dec/radius/polygon antworten mit
+  derselben globalen Seite); ein ZTF-Locus = ein ZTF-Transient mit
+  ztf_candidate-Detektionen (ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci) und
+  ztf_upper_limit-Obergrenzen (diffmaglim). Gemessener Inhalt des anonymen
+  Korpus (20-Locus-Sample über die Seiten): pro Locus kollabieren die
+  Alert-Bündel nach Duplikat-Paket-Bereinigung (gleiche Band+Sekunde = ein
+  Besuch) auf wenige echte Band-Epochen; auch der dichteste getroffene Locus
+  (ANT2020bf6im, 486 Alerts, 210 echte g+r-Besuche über ~6,4 a) trägt nur 2
+  g/r-Besuche ≤ 1800 s (ZTF-Bänder alternieren nächtlich, kein
+  Forced-Photometry-Surface auf der anonymen REST) → der N_MIN-24-/
+  N_COINC-12-Boden der Nadel-Ⅴ-Dip-Gates bleibt ehrlich geschlossen
+  (0 Kandidaten, 0 honored — kein erfundener Dip). Verdrahtung fertig:
+  Parser an den gemessenen Schemata getestet (2 Unit-Tests), LSS1-Asset +
+  Locus-Map werden geschrieben, der Scan läuft auf jedem --antares-Aufruf
+  über dem echten Korpus. Stream-Blocker benannt: der ZTF-Alert-Stream
+  braucht Key+Secret per E-Mail (antares@noirlab.edu via /support), kein
+  Konsumenten-Credential liegt in .secrets.local (RUBIN_USER/RUBIN_PASS sind
+  nicht der ANTARES-Broker-Schlüssel) — Sobald ein Schlüssel liegt, läuft
+  derselbe Pfad gegen die authentifizierte Suche/den Stream; bis dahin bleibt
+  die anonyme REST der gemessene Weg.
 
 ## Auftrags-Programm — offene Ordnungen (docs/auftrag/)
 
