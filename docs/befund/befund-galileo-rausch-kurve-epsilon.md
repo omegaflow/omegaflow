@@ -2,7 +2,7 @@
   title: Befund — Galileo-Rausch-Kurve auf der ε-Achse: kohärenter Fall invers zur Plasma-Erwartung, Plasma-Deutung getötet
   class: befund
   date: 2026-09-05
-  sha256: 5c7d08f5603c2ec2789595198cbca0eb378a4ea36304d1b99d90c180ec869c48
+  sha256: 2a5678da3bb32ef5a6af5f68b140412f1cc74d19ee173528c361e7b0633b6bc3
   status: done
   antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
   see-also: docs/befund/befund-galileo-rausch-kurve.md docs/befund/befund-galileo-mode1-fingerabdruck.md
@@ -51,6 +51,10 @@ Endbänder. Das ist die gemessene Grenze, kein Kurvenpunkt.
 |---|---|---|---|
 | 1 | 7,5 Hz (133) | 8,6 Hz (12) | 8,2 Hz (10) |
 | 2 | **1,5 Hz (77)** | — | **42,0 Hz (16)** |
+
+(Zum 1,5-Hz-Wert: ε am TDB-Tagesanfang über 75 Nicht-Lock-Tage misst 0,65 Hz;
+die 1,5-Hz-Differenz hängt an zwei All-Lock-Tagen und der Stations-Pooling-
+Metrik — siehe `befund-galileo-mode2-station-split`.)
 | 3 | **4,9 Hz (60)** | — | **79,5 Hz (15)** |
 
 Die ε- und α-Bänder sind nicht dieselben Tag-Mengen — α und ε sind für die
@@ -90,9 +94,11 @@ besetzten Bänder, nicht über die unbesetzte ε-Mitte.
 - Mittlere ε-Bänder 30–150° für Mode 2/3 n-leer (n < 10): die ε-Kurve trägt nur
   zwei Endpunkte, beide mit Distanz/Ära verwoben; die solare Achse ist auf
   diesen Daten nicht unabhängig von der Distanzachse prüfbar.
-- Der Mode-2-Station-Tag-Split (Prüfung des 1,5-Hz-Bodens auf ein
-  Tag-Pooling-Artefakt wie Mode 1: 8,2 Hz gepoolt → 0,98/2,14/3,69 Hz
-  Station-Tag) blieb außerhalb des Budgets dieses Entwurfs — `pending`.
+- Der Mode-2-Station-Tag-Split ist gemessen (`befund-galileo-mode2-station-split`):
+  der 1,5-Hz-Wert ist fragil (All-Lock-Tag-Zählung + Stations-Pooling, Faktor
+  1,1–2,3); die Konjunktions-Station-Tag-Mediane fallen auf 0,28–0,58 Hz, der
+  Stations-Restboden ist metrik-abhängig (Pass-Ebene 0,3–1,2 Hz,
+  `befund-galileo-pass-segmentierung`). Der Mode-2-Stärke-Split bleibt `pending`.
 - α–Zeit–Sonnenzyklus-Verwebung (1990–97, Maximum → Minimum) aus v2 übernommen;
   die Oppositionstage liegen früh, die Konjunktionstage spät.
 
@@ -110,5 +116,7 @@ unabhängig prüfbar. Mode 1 bleibt auf ε flach (7,5/8,6/8,2 Hz).*
 
 `done` (Rat gehalten, 2026-09-05). Zeichnet die in v2 als `pending`
 registrierte Mode-2/3-Kurve auf der ε-Achse: der kohärente Fall ist invers zur
-Plasma-Erwartung, die Plasma-Deutung getötet. Der 1,5-Hz-Boden (Mode 2, ε 0–30°)
-wartet weiter auf den Station-Tag-Split — `pending`.
+Plasma-Erwartung, die Plasma-Deutung getötet. Der Mode-2-Station-Tag-Split ist
+nachgemessen (`befund-galileo-mode2-station-split`): der 1,5-Hz-Wert ist fragil
+(0,65 Hz über 75 Nicht-Lock-Tage ohne zwei All-Lock-Tage; Station-Tag-Konjunktion
+0,28–0,58 Hz); ein einzelner Boden nicht getragen.

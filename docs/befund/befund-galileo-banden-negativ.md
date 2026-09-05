@@ -2,7 +2,7 @@
   title: Befund — 20-s-Bande Cross-Mission: Pioneer-Linienfrequenzen missions-spezifisch (negativ)
   class: befund
   date: 2026-09-05
-  sha256: 281066c4c30fa950037e81d077b4fea71e5935c82e20ec2f69af19960ab5b68a
+  sha256: 96e0a68c8b65423e0a29859b571c70353f8d4c0fc688c9f9946f9b55746b6a88
   status: done
   antwortet-auf: docs/auftrag/auftrag-bande-split.md
   see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-rausch-kurve.md docs/paper/ground-sources-20s-band.md docs/TODO.md
@@ -59,8 +59,10 @@ Harmonischen), Identität offen.
 - Mode 1 (Einweg) ist der schwache Kanal; der exakte 20-s-Kamm erscheint nur in
   den dünnen Dez-1990-Zweiweg-Pässen.
 - Die GWE-ODR-Quelle (`GO-X-RSS-1-ODR-V1.0`, 1994/95, open-loop, DSS 14/43/63)
-  ist die nächste stärkere externe Validierung — nicht in diesem Lauf (das
-  Klasse-2-Item bleibt dort offen).
+  ist geprüft (`befund-galileo-gwe-odr-banden-check`): in einer gezielten
+  Ein-Pass-Stichprobe (3 von 241 Dateien) erscheinen die 45,75/51,55/47,35-mHz-
+  Linien in der Trägerfrequenz- und Amplitudenreihe nicht (injektions-kalibriert,
+  nicht blind). Transfer-Frage und Restbestand (238 Dateien) bleiben offen.
 
 ## Register-Satz
 
