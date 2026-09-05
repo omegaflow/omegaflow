@@ -1,0 +1,29 @@
+name: first14-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  first14:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile FIRST 1.4 GHz radio catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VIII/92/first14" \
+            --columns 'name:FIRST;ra:RAJ2000;dec:DEJ2000;fpeak:Fpeak;fint:Fint' \
+            --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' \
+            --skip-null fint \
+            --skip-null z \
+            --async 600 --limit 1100000 \
+            --out first14.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: first14 returned void" \
+                 "first14 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
