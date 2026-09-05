@@ -625,6 +625,19 @@ pub fn sulfur_solar() -> [f64; 5] {
     [SOLAR_H, SOLAR_C, SOLAR_O, SOLAR_N, SOLAR_S]
 }
 
+// Reservoir regression budget: the host [Fe/H] scales every metal element
+// (C, O, N, S) per H by z = 10^feh; H stays the reference 1.0. feh = 0.0 is
+// exactly the archival solar budget (10^0 = 1). The scaling reads the host
+// metallicity as a reservoir witness; a non-finite feh is absent, not a value.
+pub fn scaled_solar_budget(feh: f64) -> Option<[f64; NELEM_S]> {
+    let z = 10f64.powf(feh);
+    if !z.is_finite() || z <= 0.0 {
+        return None;
+    }
+    let s = sulfur_solar();
+    Some([s[0], s[1] * z, s[2] * z, s[3] * z, s[4] * z])
+}
+
 pub const NELEM_S: usize = 5;
 
 pub struct ShomateSeg {
@@ -1042,12 +1055,489 @@ fn gas_atomic_species_indices(specs: &[GasSpec], nelem: usize) -> Option<Vec<usi
     Some(idx)
 }
 
-// Sulfur-aware equilibrium composition at 1 bar and solar H/C/O/N/S abundances.
+// Sulfur-aware equilibrium composition at a scaled metallicity budget.
+// feh = 0.0 reproduces the archival solar budget (scaled_solar_budget equals
+// sulfur_solar; unit-tested); a non-finite feh is absent, never a budget.
 // Slots: the 16 archival H/C/N/O species in their archived order, then
 // S, S2, SH, H2S, SO, SO2, CS, OCS (slot order follows sulfur_shomate_species).
-pub fn equilibrium_composition_sulfur(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+pub fn equilibrium_composition_sulfur_scaled(t_k: f64, p_pa: f64, feh: f64) -> Option<Vec<f64>> {
     let specs = sulfur_gas_specs();
-    solve_gas(&specs, &sulfur_solar(), t_k, p_pa)
+    let b = scaled_solar_budget(feh)?;
+    solve_gas(&specs, &b, t_k, p_pa)
+}
+
+// === Halogen-aware equilibrium for the techno-gas floor ===
+//
+// The disequilibrium register's model gap (docs/befund/befund-techno-atmosphaeren-
+// gase.md, 2026-09-05): a numeric equilibrium floor for the industrial gases
+// CFCl3/CF2Cl2/SF6/CF4/NF3 needs a 7-element (F, Cl) extension of the Gibbs
+// minimizer, with halide reservoirs HF/HCl and solar F/Cl on the Anders &
+// Grevesse 1989 scale. This path is that extension — a SEPARATE element basis
+// H,C,O,N,S,F,Cl over the 16 archival H/C/N/O species, the 8 sulfur carriers
+// and 11 F/Cl species. The archival 16-slot gas solver, the 24-slot sulfur
+// solver and the condensation path above are untouched; the probe calls
+// equilibrium_composition_halogen.
+//
+// Element budget provenance: SOLAR_F and SOLAR_CL sit on the same Anders &
+// Grevesse 1989 photospheric scale as the archived C/N/O/S (log eps_F = 4.48,
+// log eps_Cl = 5.50; F/H = 3.02e-8, Cl/H = 3.16e-7; Anders & Grevesse 1989,
+// Geochim. Cosmochim. Acta 53, 197 — the same table row that carries the
+// archived S/H = 1.62e-5, log eps_S = 7.21). The Cl photospheric value carries
+// the sunspot-HCl determination; the CI-meteoritic Cl sits ~0.24 dex lower.
+// A 0.1-0.2 dex change in F/H or Cl/H rescales the halogen floors below by the
+// same factor and moves no verdict: every floor sits orders of magnitude below
+// any instrument floor (measured in the probe run).
+//
+// F/Cl gas-phase data provenance: NIST-JANAF Thermochemical Tables (Chase,
+// M.W., Jr., 4th edition, J. Phys. Chem. Ref. Data Monograph 9, 1998), as
+// rendered on the NIST Chemistry WebBook gas-thermochemistry pages (Shomate
+// fits, curl + cache /tmp/opencode/nist_fcl/, accessed 2026-09-05). Each added
+// species below carries its fit domain and the Chase-1998 298.15-K anchors
+// (standard enthalpy of formation and standard entropy) reported on the page;
+// the unit tests verify the encoded fits reproduce those anchors. The JANAF F
+// and Cl reference states are F2(g) and Cl2(g) — same element datum as the
+// archival C(graphite)/H2/O2/N2 and the orthorhombic-S sulfur datum, so
+// cross-reactions (2 HF <-> H2 + F2, 2 HCl <-> H2 + Cl2) sit on one scale.
+// Every halogen species in the set carries a 298.15-K fit floor; no F/Cl
+// species is extrapolated.
+
+pub const NELEM_HALOGEN: usize = 7;
+pub const SOLAR_F: f64 = 3.02e-8;
+pub const SOLAR_CL: f64 = 3.16e-7;
+
+pub fn halogen_solar() -> [f64; NELEM_HALOGEN] {
+    [
+        SOLAR_H, SOLAR_C, SOLAR_O, SOLAR_N, SOLAR_S, SOLAR_F, SOLAR_CL,
+    ]
+}
+
+pub struct HalogenSpec {
+    pub name: &'static str,
+    pub formula: [i32; NELEM_HALOGEN],
+    pub g: GasGibbs,
+}
+
+fn halogen_g_over_rt(spec: &HalogenSpec, t: f64) -> Option<f64> {
+    match &spec.g {
+        GasGibbs::Nasa7 { low, high } => Some(nasa7_g_over_rt(low, high, t)),
+        GasGibbs::Shomate { segs } => shomate_g_over_rt(segs, t),
+    }
+}
+
+fn hshomate_spec(
+    name: &'static str,
+    formula: [i32; NELEM_HALOGEN],
+    segs: Vec<ShomateSeg>,
+) -> HalogenSpec {
+    HalogenSpec {
+        name,
+        formula,
+        g: GasGibbs::Shomate { segs },
+    }
+}
+
+fn halogen_shomate_species() -> Vec<HalogenSpec> {
+    vec![
+        // F2(g) — JANAF 298..6000 K single fit; reference state, dHf298 0.00 kJ/mol, S298 202.79 J/mol/K.
+        hshomate_spec(
+            "F2",
+            [0, 0, 0, 0, 0, 2, 0],
+            vec![s_seg(
+                298.0, 6000.0, 31.44510, 8.413831, -2.778850, 0.218104, -0.211175, -10.43260,
+                237.2770,
+            )],
+        ),
+        // F(g) atomic fluorine — JANAF 298..6000 K single fit; dHf298 79.39 kJ/mol, S298 158.78 J/mol/K.
+        hshomate_spec(
+            "F",
+            [0, 0, 0, 0, 0, 1, 0],
+            vec![s_seg(
+                298.0, 6000.0, 21.97336, -0.958182, 0.251916, -0.021107, 0.103471, 73.22586,
+                186.2286,
+            )],
+        ),
+        // HF(g) — JANAF 298..1000 / 1000..6000 K; dHf298 -272.55 kJ/mol, S298 173.78 J/mol/K. The F reservoir.
+        hshomate_spec(
+            "HF",
+            [1, 0, 0, 0, 0, 1, 0],
+            vec![
+                s_seg(
+                    298.0, 1000.0, 30.11693, -3.246612, 2.868116, 0.457914, -0.024861, -281.4912,
+                    210.9226,
+                ),
+                s_seg(
+                    1000.0, 6000.0, 24.57033, 6.893391, -1.243874, 0.082583, -0.234060, -279.7653,
+                    202.8525,
+                ),
+            ],
+        ),
+        // Cl2(g) — JANAF 298..1000 / 1000..3000 / 3000..6000 K; reference state, dHf298 0.00, S298 223.08.
+        hshomate_spec(
+            "Cl2",
+            [0, 0, 0, 0, 0, 0, 2],
+            vec![
+                s_seg(
+                    298.0, 1000.0, 33.05060, 12.22940, -12.06510, 4.385330, -0.159494, -10.83480,
+                    259.0290,
+                ),
+                s_seg(
+                    1000.0, 3000.0, 42.67730, -5.009570, 1.904621, -0.165641, -2.098480, -17.28980,
+                    269.8400,
+                ),
+                s_seg(
+                    3000.0, 6000.0, -42.55350, 41.68570, -7.126830, 0.387839, 101.1440, 132.7640,
+                    264.7860,
+                ),
+            ],
+        ),
+        // Cl(g) atomic chlorine — JANAF 298..600 / 600..6000 K; dHf298 121.30 kJ/mol, S298 165.19 J/mol/K.
+        hshomate_spec(
+            "Cl",
+            [0, 0, 0, 0, 0, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 600.0, 13.38298, 42.33999, -64.74656, 32.99532, 0.063319, 116.1491,
+                    171.7038,
+                ),
+                s_seg(
+                    600.0, 6000.0, 23.26597, -1.555939, 0.346910, -0.025961, 0.153212, 114.6604,
+                    193.8882,
+                ),
+            ],
+        ),
+        // HCl(g) — JANAF 298..1200 / 1200..6000 K; dHf298 -92.31 kJ/mol, S298 186.90 J/mol/K. The Cl reservoir.
+        hshomate_spec(
+            "HCl",
+            [1, 0, 0, 0, 0, 0, 1],
+            vec![
+                s_seg(
+                    298.0, 1200.0, 32.12392, -13.45805, 19.86852, -6.853936, -0.049672, -101.6206,
+                    228.6866,
+                ),
+                s_seg(
+                    1200.0, 6000.0, 31.91923, 3.203184, -0.541539, 0.035925, -3.438525, -108.0150,
+                    218.2768,
+                ),
+            ],
+        ),
+        // CF4(g) carbon tetrafluoride — JANAF 298..1000 / 1000..6000 K; dHf298 -933.20 kJ/mol, S298 261.41.
+        hshomate_spec(
+            "CF4",
+            [0, 1, 0, 0, 0, 4, 0],
+            vec![
+                s_seg(
+                    298.0, 1000.0, 15.96778, 210.3318, -189.4657, 62.20227, -0.217317, -946.4877,
+                    224.6766,
+                ),
+                s_seg(
+                    1000.0, 6000.0, 106.2221, 1.076122, -0.223192, 0.015753, -8.340679, -987.7755,
+                    355.9764,
+                ),
+            ],
+        ),
+        // CFCl3(g) CFC-11 — JANAF 298..600 / 600..6000 K; dHf298 -288.70 kJ/mol, S298 309.74 J/mol/K.
+        hshomate_spec(
+            "CFCl3",
+            [0, 1, 0, 0, 0, 1, 3],
+            vec![
+                s_seg(
+                    298.0, 600.0, 34.06650, 230.4309, -289.4558, 135.5248, -0.232263, -307.5847,
+                    292.6202,
+                ),
+                s_seg(
+                    600.0, 6000.0, 106.2694, 1.245277, -0.292652, 0.022658, -3.710084, -331.8887,
+                    419.8728,
+                ),
+            ],
+        ),
+        // CF2Cl2(g) CFC-12 — JANAF 298..1100 / 1100..6000 K; dHf298 -491.62 kJ/mol, S298 300.89 J/mol/K.
+        hshomate_spec(
+            "CF2Cl2",
+            [0, 1, 0, 0, 0, 2, 2],
+            vec![
+                s_seg(
+                    298.0, 1100.0, 48.01014, 139.1808, -124.3326, 39.75147, -0.633834, -513.2304,
+                    319.1028,
+                ),
+                s_seg(
+                    1100.0, 6000.0, 107.3635, 0.404844, -0.082033, 0.005689, -5.707394, -539.7486,
+                    406.4660,
+                ),
+            ],
+        ),
+        // SF6(g) sulfur hexafluoride — JANAF 298..1000 / 1000..6000 K; dHf298 -1220.47 kJ/mol, S298 291.52.
+        hshomate_spec(
+            "SF6",
+            [0, 0, 0, 0, 1, 6, 0],
+            vec![
+                s_seg(
+                    298.0, 1000.0, 58.90319, 255.5399, -252.2747, 88.76063, -1.608971, -1252.744,
+                    287.9914,
+                ),
+                s_seg(
+                    1000.0, 6000.0, 157.1393, 0.484022, -0.100724, 0.007127, -8.279635, -1291.990,
+                    443.2111,
+                ),
+            ],
+        ),
+        // NF3(g) nitrogen trifluoride — JANAF 298..1000 / 1000..6000 K; dHf298 -132.09 kJ/mol, S298 260.77.
+        hshomate_spec(
+            "NF3",
+            [0, 0, 0, 1, 0, 3, 0],
+            vec![
+                s_seg(
+                    298.0, 1000.0, 26.45610, 142.2606, -137.6134, 47.68505, -0.404491, -146.5375,
+                    253.7876,
+                ),
+                s_seg(
+                    1000.0, 6000.0, 82.54781, 0.345728, -0.071941, 0.005089, -4.482487, -169.6763,
+                    340.7860,
+                ),
+            ],
+        ),
+    ]
+}
+
+fn halogen_specs() -> Vec<HalogenSpec> {
+    let mut out: Vec<HalogenSpec> = species()
+        .into_iter()
+        .map(|s| HalogenSpec {
+            name: s.name,
+            formula: [
+                s.formula[0],
+                s.formula[1],
+                s.formula[2],
+                s.formula[3],
+                0,
+                0,
+                0,
+            ],
+            g: GasGibbs::Nasa7 {
+                low: s.low,
+                high: s.high,
+            },
+        })
+        .collect();
+    for s in sulfur_shomate_species() {
+        out.push(HalogenSpec {
+            name: s.name,
+            formula: [
+                s.formula[0],
+                s.formula[1],
+                s.formula[2],
+                s.formula[3],
+                s.formula[4],
+                0,
+                0,
+            ],
+            g: s.g,
+        });
+    }
+    out.extend(halogen_shomate_species());
+    out
+}
+
+pub fn halogen_gas_names() -> Vec<String> {
+    halogen_specs()
+        .into_iter()
+        .map(|s| s.name.to_string())
+        .collect()
+}
+
+fn halogen_residual(
+    lam: &[f64],
+    specs: &[HalogenSpec],
+    t: f64,
+    ln_p: f64,
+    b: &[f64],
+) -> (bool, f64) {
+    let nelem = b.len();
+    let big_n = lam[nelem].exp();
+    if !big_n.is_finite() || big_n <= 0.0 {
+        return (false, f64::INFINITY);
+    }
+    let mut r = vec![0.0f64; nelem + 1];
+    for j in 0..nelem {
+        r[j] = -b[j];
+    }
+    let mut e_sum = 0.0f64;
+    for s in specs.iter() {
+        let Some(g) = halogen_g_over_rt(s, t) else {
+            continue;
+        };
+        let mut phi = -g - ln_p;
+        for j in 0..nelem {
+            phi += s.formula[j] as f64 * lam[j];
+        }
+        let e = phi.exp();
+        if !e.is_finite() {
+            return (false, f64::INFINITY);
+        }
+        e_sum += e;
+        let ni = big_n * e;
+        for j in 0..nelem {
+            r[j] += s.formula[j] as f64 * ni;
+        }
+    }
+    r[nelem] = e_sum - 1.0;
+    let norm = r.iter().map(|x| x * x).sum::<f64>().sqrt();
+    (norm.is_finite(), norm)
+}
+
+fn halogen_newton_step(
+    specs: &[HalogenSpec],
+    t: f64,
+    ln_p: f64,
+    b: &[f64],
+    lam: &mut [f64],
+) -> bool {
+    let nelem = b.len();
+    let dim = nelem + 1;
+    for _ in 0..80 {
+        let big_n = lam[nelem].exp();
+        let n_species = specs.len();
+        let mut e = vec![0.0f64; n_species];
+        let mut n = vec![0.0f64; n_species];
+        for (i, s) in specs.iter().enumerate() {
+            let Some(g) = halogen_g_over_rt(s, t) else {
+                continue;
+            };
+            let mut phi = -g - ln_p;
+            for j in 0..nelem {
+                phi += s.formula[j] as f64 * lam[j];
+            }
+            e[i] = phi.exp();
+            n[i] = big_n * e[i];
+        }
+        let mut r = vec![0.0f64; nelem + 1];
+        for j in 0..nelem {
+            r[j] = -b[j];
+            for (i, s) in specs.iter().enumerate() {
+                r[j] += s.formula[j] as f64 * n[i];
+            }
+        }
+        r[nelem] = e.iter().sum::<f64>() - 1.0;
+        let rel = (0..nelem)
+            .map(|j| (r[j] / b[j].max(1e-30)).abs())
+            .fold(r[nelem].abs(), f64::max);
+        if rel < 1e-10 {
+            return true;
+        }
+        let mut jac = vec![vec![0.0f64; dim]; dim];
+        for j in 0..nelem {
+            for k in 0..nelem {
+                for (i, s) in specs.iter().enumerate() {
+                    jac[j][k] += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
+                }
+            }
+        }
+        for j in 0..nelem {
+            for (i, s) in specs.iter().enumerate() {
+                jac[j][nelem] += s.formula[j] as f64 * n[i];
+            }
+        }
+        for k in 0..nelem {
+            for (i, s) in specs.iter().enumerate() {
+                jac[nelem][k] += s.formula[k] as f64 * e[i];
+            }
+        }
+        let mut dl = vec![0.0f64; dim];
+        for j in 0..dim {
+            dl[j] = -r[j];
+        }
+        gauss_solve(&mut jac, &mut dl);
+        let norm0 = r.iter().map(|x| x * x).sum::<f64>().sqrt();
+        let mut alpha = 1.0f64;
+        let mut accepted = false;
+        while alpha > 1e-14 {
+            let mut trial = vec![0.0f64; dim];
+            for k in 0..dim {
+                trial[k] = lam[k] + alpha * dl[k];
+            }
+            let (ok, norm) = halogen_residual(&trial, specs, t, ln_p, b);
+            if ok && norm < norm0 {
+                lam.copy_from_slice(&trial);
+                accepted = true;
+                break;
+            }
+            alpha *= 0.5;
+        }
+        if !accepted {
+            return false;
+        }
+    }
+    false
+}
+
+fn halogen_atomic_indices(specs: &[HalogenSpec]) -> Option<[usize; NELEM_HALOGEN]> {
+    let names = ["H", "C", "O", "N", "S", "F", "Cl"];
+    let mut idx = [0usize; NELEM_HALOGEN];
+    for (i, name) in names.iter().enumerate() {
+        idx[i] = specs.iter().position(|s| s.name == *name)?;
+    }
+    Some(idx)
+}
+
+fn halogen_ramp(specs: &[HalogenSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    let nelem = b.len();
+    let ln_p = (p_pa / P0_PA).ln();
+    let atomic = halogen_atomic_indices(specs)?;
+    let mut lam = vec![0.0f64; nelem + 1];
+    for (j, &ai) in atomic.iter().enumerate() {
+        let g = halogen_g_over_rt(&specs[ai], 6000.0)?;
+        lam[j] = g + ln_p + b[j].ln();
+    }
+    lam[nelem] = 0.0;
+    let mut tcur = 6000.0f64;
+    while tcur > t_k {
+        let next = (tcur * 0.96).max(t_k);
+        if !halogen_newton_step(specs, next, ln_p, b, &mut lam) {
+            return None;
+        }
+        tcur = next;
+    }
+    let big_n = lam[nelem].exp();
+    let mut n = vec![0.0f64; specs.len()];
+    for (i, s) in specs.iter().enumerate() {
+        let Some(g) = halogen_g_over_rt(s, t_k) else {
+            continue;
+        };
+        let mut phi = -g - ln_p;
+        for j in 0..nelem {
+            phi += s.formula[j] as f64 * lam[j];
+        }
+        n[i] = big_n * phi.exp();
+    }
+    let total: f64 = n.iter().sum();
+    if !total.is_finite() || total <= 0.0 {
+        return None;
+    }
+    for x in &mut n {
+        *x /= total;
+    }
+    Some(n)
+}
+
+// Halogen-aware equilibrium composition at 1 bar and solar H/C/O/N/S/F/Cl
+// abundances. Slots: the 16 archival H/C/N/O species in their archived order,
+// then the 8 sulfur carriers (sulfur_shomate_species order), then
+// F2, F, HF, Cl2, Cl, HCl, CF4, CFCl3, CF2Cl2, SF6, NF3. Domain 500..3000 K,
+// the archival gas domain; below 500 K the halogen fit floors still hold but
+// the condensed-water bookkeeping of the sub-500 K path is not yet extended to
+// the F/Cl basis (pending, named in the probe when it meets a cool host).
+pub fn equilibrium_composition_halogen(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    if !t_k.is_finite() || t_k < 500.0 || t_k > 3000.0 || !p_pa.is_finite() || p_pa <= 0.0 {
+        return None;
+    }
+    let specs = halogen_specs();
+    let b = halogen_solar();
+    halogen_ramp(&specs, &b, t_k, p_pa)
+}
+
+// Sulfur-aware equilibrium at the archival solar budget (feh = 0.0). The
+// scaled entry point is the reservoir-regression face of the same solver.
+pub fn equilibrium_composition_sulfur(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
+    equilibrium_composition_sulfur_scaled(t_k, p_pa, 0.0)
 }
 
 // === Condensation-aware equilibrium for the sub-500 K domain ===
@@ -1136,7 +1626,11 @@ pub struct CoolEquilibrium {
     pub h2o_sat_pa: Option<f64>,
 }
 
-pub fn equilibrium_composition_condensed(t_k: f64, p_pa: f64) -> Option<CoolEquilibrium> {
+pub fn equilibrium_composition_condensed_scaled(
+    t_k: f64,
+    p_pa: f64,
+    feh: f64,
+) -> Option<CoolEquilibrium> {
     if !t_k.is_finite() || t_k < COOL_T_MIN || t_k > COOL_T_MAX {
         return None;
     }
@@ -1147,11 +1641,20 @@ pub fn equilibrium_composition_condensed(t_k: f64, p_pa: f64) -> Option<CoolEqui
     // Sulfur data floor: the NIST-JANAF S-gas Shomate fits start at 298.15 K;
     // below that the S element is pending, not fabricated into the gas.
     let b: Vec<f64> = if water_in_domain {
-        sulfur_solar().to_vec()
+        scaled_solar_budget(feh)?.to_vec()
     } else {
-        vec![SOLAR_H, SOLAR_C, SOLAR_O, SOLAR_N]
+        let z = 10f64.powf(feh);
+        if !z.is_finite() || z <= 0.0 {
+            return None;
+        }
+        vec![SOLAR_H, SOLAR_C * z, SOLAR_O * z, SOLAR_N * z]
     };
     cool_solve(&b, t_k, p_pa, water_in_domain)
+}
+
+// Condensation-aware equilibrium at the archival solar budget (feh = 0.0).
+pub fn equilibrium_composition_condensed(t_k: f64, p_pa: f64) -> Option<CoolEquilibrium> {
+    equilibrium_composition_condensed_scaled(t_k, p_pa, 0.0)
 }
 
 fn cool_solve(b: &[f64], t_k: f64, p_pa: f64, water_in_domain: bool) -> Option<CoolEquilibrium> {
@@ -1789,5 +2292,235 @@ mod tests {
         let nh3 = 12usize;
         let n2 = 4usize;
         assert!(eq.frac[nh3] > 100.0 * eq.frac[n2]);
+    }
+
+    #[test]
+    fn reservoir_zero_feh_is_exactly_the_solar_budget() {
+        let scaled = scaled_solar_budget(0.0).unwrap();
+        let solar = sulfur_solar();
+        for j in 0..NELEM_S {
+            assert!(
+                scaled[j] == solar[j],
+                "element {j}: scaled {:.6e} vs solar {:.6e}",
+                scaled[j],
+                solar[j]
+            );
+        }
+        assert!(scaled_solar_budget(f64::NAN).is_none());
+        assert!(scaled_solar_budget(f64::INFINITY).is_none());
+    }
+
+    #[test]
+    fn reservoir_scaled_solvers_equal_the_solar_solvers_at_zero_feh() {
+        let a = equilibrium_composition_sulfur_scaled(1200.0, P0_PA, 0.0).unwrap();
+        let b = equilibrium_composition_sulfur(1200.0, P0_PA).unwrap();
+        assert_eq!(a.len(), b.len());
+        for i in 0..a.len() {
+            assert!(a[i] == b[i], "sulfur slot {i} differs");
+        }
+        let ca = equilibrium_composition_condensed_scaled(283.0, P0_PA, 0.0).unwrap();
+        let cb = equilibrium_composition_condensed(283.0, P0_PA).unwrap();
+        assert_eq!(ca.frac.len(), cb.frac.len());
+        for i in 0..ca.frac.len() {
+            assert!(ca.frac[i] == cb.frac[i], "cool slot {i} differs");
+        }
+        assert_eq!(ca.h2o_condensed_moles, cb.h2o_condensed_moles);
+        assert_eq!(ca.h2o_sat_pa, cb.h2o_sat_pa);
+    }
+
+    #[test]
+    fn reservoir_scaling_raises_metal_molecule_abundances() {
+        // A metal-rich budget raises the equilibrium of metal-carrier gases.
+        // At 736 K H2S is the sulfur reservoir and CO the carbon reservoir; the
+        // sulfur solver carries both on one budget.
+        let feh_rich = 0.3f64;
+        let feh_poor = -0.3f64;
+        let specs = sulfur_gas_specs();
+        let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+        let (ih2s, ico) = (pos("H2S"), pos("CO"));
+        let rich = equilibrium_composition_sulfur_scaled(736.0, P0_PA, feh_rich).unwrap();
+        let solar = equilibrium_composition_sulfur(736.0, P0_PA).unwrap();
+        let poor = equilibrium_composition_sulfur_scaled(736.0, P0_PA, feh_poor).unwrap();
+        let z = 10f64.powf(feh_rich);
+        assert!(
+            (rich[ih2s] / solar[ih2s] - z).abs() < 0.25 * z,
+            "H2S should scale ~z={z}: {:.3e} vs solar {:.3e}",
+            rich[ih2s],
+            solar[ih2s]
+        );
+        assert!(rich[ih2s] > solar[ih2s] && solar[ih2s] > poor[ih2s]);
+        assert!(rich[ico] > solar[ico] && solar[ico] > poor[ico]);
+    }
+
+    fn halogen_anchor(name: &str) -> (f64, f64) {
+        // Chase-1998 298.15-K anchors read from the NIST Chemistry WebBook gas
+        // pages (cache /tmp/opencode/nist_fcl/, accessed 2026-09-05): the
+        // Shomate "H" column (standard enthalpy of formation) and the reported
+        // standard entropy. F2 and Cl2 are reference states (dHf = 0).
+        match name {
+            "F2" => (0.0, 202.79),
+            "F" => (79.39, 158.78),
+            "HF" => (-272.55, 173.78),
+            "Cl2" => (0.0, 223.08),
+            "Cl" => (121.30, 165.19),
+            "HCl" => (-92.31, 186.90),
+            "CF4" => (-933.20, 261.41),
+            "CFCl3" => (-288.70, 309.74),
+            "CF2Cl2" => (-491.62, 300.89),
+            "SF6" => (-1220.47, 291.52),
+            "NF3" => (-132.09, 260.77),
+            other => panic!("no halogen anchor for {other}"),
+        }
+    }
+
+    #[test]
+    fn halogen_fits_reproduce_the_nist_janaf_298_anchors() {
+        let names = halogen_shomate_species();
+        for spec in names {
+            let (d_hf, s_ref) = halogen_anchor(spec.name);
+            let GasGibbs::Shomate { segs } = &spec.g else {
+                panic!("{} not shomate", spec.name);
+            };
+            let (h, s) = seg_value(segs, 298.15).unwrap();
+            assert!(
+                (h - d_hf).abs() < 0.05,
+                "{}: H(298) {:.3} kJ/mol vs JANAF {:.2}",
+                spec.name,
+                h,
+                d_hf
+            );
+            assert!(
+                (s - s_ref).abs() < 0.05,
+                "{}: S(298) {:.3} J/mol/K vs JANAF {:.2}",
+                spec.name,
+                s,
+                s_ref
+            );
+        }
+    }
+
+    #[test]
+    fn halogen_techno_fits_all_cover_298_to_500k() {
+        // The probe meets cool hosts down to the 500-K domain floor; every
+        // halogen species must carry a fit through 500 K so no floor is a
+        // fabricated value there.
+        for spec in halogen_shomate_species() {
+            let GasGibbs::Shomate { segs } = &spec.g else {
+                panic!("{} not shomate", spec.name);
+            };
+            assert!(
+                seg_value(segs, 298.15).is_some() && seg_value(segs, 500.0).is_some(),
+                "{} must reach 500 K",
+                spec.name
+            );
+        }
+    }
+
+    #[test]
+    fn halogen_composition_conserves_the_element_budget() {
+        let x = equilibrium_composition_halogen(1200.0, P0_PA).unwrap();
+        assert_eq!(x.len(), 35);
+        let specs = halogen_specs();
+        let mut atoms = [0.0f64; NELEM_HALOGEN];
+        for (i, s) in specs.iter().enumerate() {
+            for j in 0..NELEM_HALOGEN {
+                atoms[j] += s.formula[j] as f64 * x[i];
+            }
+        }
+        let solar7 = halogen_solar();
+        for j in 0..NELEM_HALOGEN {
+            assert!(
+                (atoms[j] / atoms[0] / solar7[j] - 1.0).abs() < 1e-6,
+                "element {j} balance off: {}",
+                atoms[j] / atoms[0]
+            );
+        }
+    }
+
+    #[test]
+    fn halogen_solver_matches_direct_kp() {
+        // 2 HF <-> H2 + F2 — the reaction that pins the F2-reference datum of
+        // the NIST-JANAF halogen fits to the archival H2 datum.
+        let t = 1200.0f64;
+        let x = equilibrium_composition_halogen(t, P0_PA).unwrap();
+        let specs = halogen_specs();
+        let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+        let (ihf, ih2, if2) = (pos("HF"), pos("H2"), pos("F2"));
+        let (g_hf, g_h2, g_f2) = (
+            halogen_g_over_rt(&specs[ihf], t).unwrap(),
+            halogen_g_over_rt(&specs[ih2], t).unwrap(),
+            halogen_g_over_rt(&specs[if2], t).unwrap(),
+        );
+        let dg = g_h2 + g_f2 - 2.0 * g_hf;
+        let kp = (-dg).exp();
+        let from_solver = (x[ih2] * x[if2]) / (x[ihf] * x[ihf]);
+        assert!(
+            (from_solver / kp - 1.0).abs() < 1e-6,
+            "solver Kp {} vs direct {}",
+            from_solver,
+            kp
+        );
+    }
+
+    #[test]
+    fn hf_and_hcl_are_the_halogen_reservoirs() {
+        // At every probe temperature the F budget sits in HF and the Cl budget
+        // in HCl; the techno molecules sit orders of magnitude below them.
+        for t in [500.0, 700.0, 1000.0, 1500.0] {
+            let x = equilibrium_composition_halogen(t, P0_PA)
+                .unwrap_or_else(|| panic!("halogen solve at {t} K"));
+            let specs = halogen_specs();
+            let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+            let (ihf, ihcl) = (pos("HF"), pos("HCl"));
+            let mut f_atoms = 0.0f64;
+            let mut cl_atoms = 0.0f64;
+            for (i, s) in specs.iter().enumerate() {
+                f_atoms += s.formula[5] as f64 * x[i];
+                cl_atoms += s.formula[6] as f64 * x[i];
+            }
+            let f_in_hf = x[ihf] / f_atoms;
+            let cl_in_hcl = x[ihcl] / cl_atoms;
+            assert!(
+                (f_in_hf - 1.0).abs() < 0.2,
+                "F in HF at {t} K: {:.3e} of F atoms",
+                f_in_hf
+            );
+            assert!(
+                (cl_in_hcl - 1.0).abs() < 0.2,
+                "Cl in HCl at {t} K: {:.3e} of Cl atoms",
+                cl_in_hcl
+            );
+        }
+    }
+
+    #[test]
+    fn techno_gas_equilibrium_floors_are_astronomically_low() {
+        // The numeric floor the industrial-only axis judges against: the
+        // equilibrium mixing ratio of each techno molecule at solar abundance
+        // is orders of magnitude below any plausible instrument floor (the
+        // probe's named --floor defaults to 1e-6).
+        for t in [500.0, 700.0, 1000.0, 1500.0] {
+            let x = equilibrium_composition_halogen(t, P0_PA)
+                .unwrap_or_else(|| panic!("halogen solve at {t} K"));
+            let specs = halogen_specs();
+            let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+            for name in ["CFCl3", "CF2Cl2", "SF6", "CF4", "NF3"] {
+                let f = x[pos(name)];
+                assert!(
+                    f < 1e-20,
+                    "{name} equilibrium floor at {t} K = {:.2e} must be negligible",
+                    f
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn halogen_composition_refuses_out_of_domain() {
+        assert!(equilibrium_composition_halogen(300.0, P0_PA).is_none());
+        assert!(equilibrium_composition_halogen(4000.0, P0_PA).is_none());
+        assert!(equilibrium_composition_halogen(1200.0, 0.0).is_none());
+        assert!(equilibrium_composition_halogen(f64::NAN, P0_PA).is_none());
+        assert!(equilibrium_composition_halogen(1200.0, f64::INFINITY).is_none());
     }
 }
