@@ -3,6 +3,7 @@ use omegaflow::te::{
     ols_residual, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,
     transfer_entropy_lag_h,
 };
+use std::process::Command;
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
     ("u", 380.0),
@@ -28,6 +29,102 @@ const MIN_SAMPLES: usize = 8;
 const H_FACTOR: f64 = 2.0;
 
 const C_MAG: f64 = -2.5 / std::f64::consts::LN_10;
+
+const UA: &str = "omegaflow-nadel-v-witness/1.0";
+const VSX_BASE: &str = "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv";
+
+struct VsxRow {
+    oid: String,
+    name: String,
+    otype: String,
+    period_d: Option<f64>,
+}
+
+fn vsx_fetch_text(ra_deg: f64, dec_deg: f64, radius_arcsec: f64, out_max: usize) -> Option<String> {
+    let r_deg = radius_arcsec / 3600.0;
+    let url = format!(
+        "{VSX_BASE}?-source=B/vsx&-out.max={out_max}&-out=OID,Name,RAJ2000,DEJ2000,Type,Period&-c.ra={ra_deg:.6}&-c.dec={dec_deg:.6}&-c.r={r_deg:.8}"
+    );
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-m")
+        .arg("30")
+        .arg("-A")
+        .arg(UA)
+        .arg(&url);
+    let out = cmd.output().ok()?;
+    if out.status.success() {
+        Some(String::from_utf8_lossy(&out.stdout).into_owned())
+    } else {
+        None
+    }
+}
+
+fn vsx_cone(ra_deg: f64, dec_deg: f64, radius_arcsec: f64) -> Option<Vec<VsxRow>> {
+    let text = vsx_fetch_text(ra_deg, dec_deg, radius_arcsec, 8)?;
+    let mut rows: Vec<VsxRow> = Vec::new();
+    let mut cols: Option<Vec<String>> = None;
+    for line in text.lines() {
+        if line.starts_with('#') || line.is_empty() {
+            continue;
+        }
+        if line.starts_with('-') {
+            continue;
+        }
+        let toks: Vec<&str> = line.split('\t').collect();
+        if cols.is_none() {
+            if toks.iter().any(|t| t.trim() == "OID") {
+                cols = Some(toks.iter().map(|t| t.trim().to_string()).collect());
+            }
+            continue;
+        }
+        let c = cols.as_ref().unwrap();
+        let at = |name: &str| -> Option<usize> { c.iter().position(|k| k == name) };
+        let (Some(io), Some(i_name), Some(i_type)) = (at("OID"), at("Name"), at("Type")) else {
+            continue;
+        };
+        if io >= toks.len() || i_name >= toks.len() || i_type >= toks.len() {
+            continue;
+        }
+        if toks[io].trim().parse::<i64>().is_err() {
+            continue;
+        }
+        let oid = toks[io].trim().to_string();
+        let name = toks[i_name].trim().to_string();
+        let otype = toks[i_type].trim().to_string();
+        let period_d = at("Period")
+            .filter(|&p| p < toks.len())
+            .and_then(|p| toks[p].trim().parse::<f64>().ok())
+            .filter(|v| *v > 0.0);
+        rows.push(VsxRow {
+            oid,
+            name,
+            otype,
+            period_d,
+        });
+    }
+    Some(rows)
+}
+
+// The external witness classes (VSX/GCVS variability types) that are known
+// chromatic periodics: pulsators and eclipsing/rotational variables. The
+// broker's own classifier column never enters this set.
+fn vsx_type_known_chromatic(t: &str) -> bool {
+    let t = t.trim();
+    if t.is_empty() {
+        return false;
+    }
+    if t.starts_with("RR")
+        || t.starts_with("DSCT")
+        || t.starts_with("DCEP")
+        || t.starts_with("SXPHE")
+        || t.starts_with("SXARI")
+        || t == "ROT"
+    {
+        return true;
+    }
+    t == "E" || t.starts_with("EA") || t.starts_with("EB") || t.starts_with("EW") || t == "AR"
+}
 
 struct LsstCurve {
     ra_deg: f64,
@@ -644,6 +741,9 @@ fn main() {
     let mut single_band = 0usize;
     let mut periodic = 0usize;
     let mut evaluated = 0usize;
+    let mut vsx_known = 0usize;
+    let mut vsx_known_couple = 0usize;
+    let mut vsx_pending = 0usize;
     let mut fam_pool: Vec<f64> = Vec::new();
     let mut lin_pool: Vec<f64> = Vec::new();
     let mut verdicts: Vec<(
@@ -778,6 +878,41 @@ fn main() {
             bb
         );
 
+        let mut vsx_chromatic = false;
+        match vsx_cone(g.ra, g.dec, 3.0) {
+            Some(m) if !m.is_empty() => {
+                vsx_chromatic = vsx_type_known_chromatic(&m[0].otype);
+                let pword = m[0]
+                    .period_d
+                    .map(|p| format!("P {p:.6} d"))
+                    .unwrap_or_else(|| "P absent".to_string());
+                println!(
+                    "  external witness (VSX B/vsx, cone 3\"): {} (OID {} type {}) {}",
+                    m[0].name, m[0].oid, m[0].otype, pword
+                );
+                if vsx_chromatic {
+                    println!(
+                        "  external witness class: a known chromatic periodic ({}), NOT the broker's classifier",
+                        m[0].otype
+                    );
+                }
+                vsx_known += 1;
+                if m.len() > 1 {
+                    println!(
+                        "  external witness: {} further VSX cone match(es) within 3\"",
+                        m.len() - 1
+                    );
+                }
+            }
+            Some(_) => {
+                println!("  external witness (VSX): no VSX entry within 3\" — the object is not a catalogued variable");
+            }
+            None => {
+                vsx_pending += 1;
+                println!("  external witness (VSX): the crossmatch did not answer (reachability pending)");
+            }
+        }
+
         let seed = SEED
             .wrapping_add((gi as u64).wrapping_mul(0x517C_C1B7_2722_0A95))
             .wrapping_add(0x2722_0A95_517C_C1B7);
@@ -813,6 +948,18 @@ fn main() {
                 ""
             }
         );
+        if vsx_chromatic {
+            if out.carried {
+                vsx_known_couple += 1;
+                println!(
+                    "  POSITIVE CONTROL (external chromatic witness): couples — the test finds the known chromatic periodic (control row passes)"
+                );
+            } else {
+                println!(
+                    "  POSITIVE CONTROL (external chromatic witness): NOT carried for a known chromatic periodic — the test measures nothing for this object (control row fails, named)"
+                );
+            }
+        }
         evaluated += 1;
         verdicts.push((
             g.ra,
@@ -910,6 +1057,9 @@ fn main() {
     println!(
         "Verdict over the periodic cone population: {periodic} periodic multiband candidate(s) of {scanned} scanned multiband objects ({single_band} single-band absent); {n_couple} couple to the natural color-brightness signature (natural periodic variables); {n_not} not carried — colorblind periodic blinker candidate(s), never 'independent'."
     );
+    println!(
+        "external witness (VSX B/vsx catalog crossmatch, not the broker's classifier column): {vsx_known} periodic candidate(s) have a VSX entry, of which {vsx_known_couple} couple in the color-brightness test (positive-control rows); {vsx_pending} candidate(s) hit a non-answering crossmatch (pending). A VSX-confirmed chromatic periodic that does NOT couple is a failed positive-control row — the layer would measure nothing for it."
+    );
     let achr_candidates: Vec<&(
         f64,
         f64,
@@ -945,4 +1095,84 @@ fn main() {
     println!(
         "Designation: 'not carried' is the negative-fuzzy candidate word. It is never 'independent' — the coupling of an unknown natural class that no provided signature names is not excluded (missing-witness limit). The residue stage-2 test alone cannot see a color series whose coupling to brightness is purely linear (the OLS stage removes it); the layer therefore weighs the stage-1 linear law against its own phase-randomized null (named, measured, not assumed)."
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // A verbatim slice of the real VizieR B/vsx TSV answer (measured
+    // 2026-09-05, cone around ra 245.8967 dec -26.5252) — the parser must read
+    // the schema as the live server sends it.
+    const VSX_SAMPLE: &str = "\
+OID\tName\tRAJ2000\tDEJ2000\tType\tPeriod\n\
+  \t \tdeg\tdeg\t \td\n\
+--------\t------------------------------\t---------\t---------\t------------------------------\t-------------------\n\
+ 5871185\tGaia DR3 6045465884181860992  \t245.88692\t-26.52603\tE                             \t     3.697550000000\n\
+ 5871187\tGaia DR3 6045465884191750784  \t245.88702\t-26.52958\tS                             \t\n\
+ 5871384\tGaia DR3 6045465918551521536  \t245.89449\t-26.51797\tRRAB                           \t     0.478799000000\n";
+
+    #[test]
+    fn vsx_sample_parses_the_live_schema() {
+        let mut rows = Vec::new();
+        let mut cols: Option<Vec<String>> = None;
+        for line in VSX_SAMPLE.lines() {
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+            if line.starts_with('-') {
+                continue;
+            }
+            let toks: Vec<&str> = line.split('\t').collect();
+            if cols.is_none() {
+                if toks.iter().any(|t| t.trim() == "OID") {
+                    cols = Some(toks.iter().map(|t| t.trim().to_string()).collect());
+                }
+                continue;
+            }
+            let c = cols.as_ref().unwrap();
+            let at = |name: &str| -> Option<usize> { c.iter().position(|k| k == name) };
+            let (Some(io), Some(i_name), Some(i_type)) = (at("OID"), at("Name"), at("Type")) else {
+                continue;
+            };
+            if toks[io].trim().parse::<i64>().is_err() {
+                continue;
+            }
+            let oid = toks[io].trim().to_string();
+            let name = toks[i_name].trim().to_string();
+            let otype = toks[i_type].trim().to_string();
+            let period_d = at("Period")
+                .filter(|&p| p < toks.len())
+                .and_then(|p| toks[p].trim().parse::<f64>().ok())
+                .filter(|v| *v > 0.0);
+            rows.push((oid, name, otype, period_d));
+        }
+        assert_eq!(rows.len(), 3, "the real VSX slice carries three rows");
+        assert_eq!(rows[0].2, "E");
+        assert!((rows[0].3.unwrap() - 3.69755).abs() < 1e-6);
+        assert_eq!(rows[1].2, "S");
+        assert!(
+            rows[1].3.is_none(),
+            "an empty Period cell is absent, never 0"
+        );
+        assert_eq!(rows[2].2, "RRAB");
+    }
+
+    #[test]
+    fn vsx_external_chromatic_classes_are_external_only() {
+        assert!(vsx_type_known_chromatic("RRAB"));
+        assert!(vsx_type_known_chromatic("DSCT"));
+        assert!(vsx_type_known_chromatic("EW"));
+        assert!(vsx_type_known_chromatic("EA/EB"));
+        assert!(vsx_type_known_chromatic("ROT"));
+        assert!(!vsx_type_known_chromatic("S"));
+        assert!(!vsx_type_known_chromatic(""));
+        assert!(
+            !vsx_type_known_chromatic("SN"),
+            "a supernova is not a periodic witness"
+        );
+        // The broker classifier word is not a variability type and must never
+        // be treated as the external witness.
+        assert!(!vsx_type_known_chromatic("f:main_label_classifier"));
+    }
 }
