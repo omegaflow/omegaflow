@@ -135,13 +135,6 @@ pub fn transfer_entropy_lag(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     Some(te / m as f64)
 }
 
-/// Bandwidth-scaled variant of `transfer_entropy_lag`: the same KDE core with
-/// the Silverman width of each series multiplied by `factor`. Non-canonical:
-/// the canonical `transfer_entropy`/`transfer_entropy_lag` above are untouched.
-/// lag == 0 here reproduces `transfer_entropy_lag`'s own lag-0 path (the
-/// shift-1 core), scaled. A global rescale of both series leaves TE invariant,
-/// so the data cannot fake this: only the kernel width relative to the data is
-/// changed.
 pub fn transfer_entropy_lag_h(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<f64> {
     let n = x.len();
     if n < 8 {
@@ -438,19 +431,6 @@ pub fn block_bootstrap_surrogate(v: &[f32], block: usize, rng: &mut u64) -> Vec<
     out
 }
 
-/// Cycle-wise cyclic phase shift: each complete cycle of `cycle_len` samples is
-/// rotated by a random integer offset drawn per cycle. The per-cycle sample
-/// set — hence the cycle amplitude envelope and per-cycle variance — is kept
-/// exactly; only the in-cycle phase order is randomized. A trailing partial
-/// cycle is left untouched (its sample set is not a full phase circle).
-///
-/// This is the surrogate for a per-cycle folded or equi-spaced multi-cycle
-/// periodic series: a raw shuffle would destroy the amplitude envelope
-/// (te_surrogate_amp warning), an FFT full-circle phase randomization
-/// re-randomizes every spectral phase and broadens the narrow periodic peak's
-/// autocorrelation structure. When the analysis holds the data per cycle
-/// (fold axis), the cyclic rotation below is the amplitude-preserving
-/// in-cycle phase randomization.
 pub fn cycle_phase_shift_surrogate(v: &[f32], cycle_len: usize, rng: &mut u64) -> Vec<f32> {
     let n = v.len();
     if n < 2 || cycle_len < 2 {
@@ -1760,8 +1740,11 @@ mod tests {
                 }
             }
         }
+        if meas == 0 {
+            panic!("Kalibrier-Gate FN: no coupling measurement succeeded in 20 trials");
+        }
         assert!(
-            found as f64 / meas.max(1) as f64 > 0.5,
+            found as f64 / meas as f64 > 0.5,
             "Kalibrier-Gate FN: {} of {} true couplings found — the machine overlooks the coupling",
             found,
             meas
