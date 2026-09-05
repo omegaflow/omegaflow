@@ -5755,3 +5755,40 @@ fn test_ionex_channels_two_lat_five_lon() {
     }
     assert!(seen_lat[0] && seen_lat[1], "both lat rows present");
 }
+
+#[test]
+fn test_bl_narrowband_read_path_honors_freq_bin_width() {
+    let events = vec![crate::bl_narrowband::BlNarrowbandEvent {
+        ra_deg: 344.3679166,
+        dec_deg: 20.7689,
+        epoch_tdb: 1455000000.0,
+        freq_hz: 1116.651519e6,
+        bin_width_hz: 1.628e3,
+        val: 107.386932,
+    }];
+    let bytes = crate::bl_narrowband::write_bin(&events).expect("write");
+    let parsed = crate::bl_narrowband::parse_bin(&bytes).expect("parse");
+    assert_eq!(parsed.len(), 1);
+    let fc = field_fixture("snr", 604800.0);
+    let channels: Vec<(Channel, FieldConfig)> = parsed
+        .iter()
+        .map(|ev| {
+            (
+                Channel {
+                    z: 0.0,
+                    freq: ev.freq_hz,
+                    bin_width: ev.bin_width_hz,
+                    epoch: ev.epoch_tdb,
+                    position: Position::Source,
+                    name: fc.name.clone(),
+                    value: ev.val,
+                },
+                fc.clone(),
+            )
+        })
+        .collect();
+    let (ch, _) = &channels[0];
+    assert_eq!(ch.freq, events[0].freq_hz);
+    assert_eq!(ch.bin_width, events[0].bin_width_hz);
+    assert!(ch.freq > 0.0 && ch.bin_width > 0.0, "compiled line read-back must not hard-0 the band slots");
+}

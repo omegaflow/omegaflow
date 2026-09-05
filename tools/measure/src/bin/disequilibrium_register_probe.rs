@@ -1,9 +1,11 @@
 use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
 use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
 use omegaflow::thermochem::{
-    equilibrium_composition_condensed, equilibrium_composition_condensed_scaled,
-    equilibrium_composition_sulfur, equilibrium_composition_sulfur_scaled, sulfur_gas_names,
-    COOL_T_MIN, P0_PA, WATER_LIQ_T_MIN, WATER_P_TRIPLE_PA,
+    elemental_budget_sulfur, equilibrium_composition_condensed,
+    equilibrium_composition_condensed_budget, equilibrium_composition_condensed_scaled,
+    equilibrium_composition_sulfur, equilibrium_composition_sulfur_budget,
+    equilibrium_composition_sulfur_scaled, sulfur_gas_names, COOL_T_MIN, P0_PA, SOLAR_C, SOLAR_O,
+    WATER_LIQ_T_MIN, WATER_P_TRIPLE_PA,
 };
 use std::collections::HashMap;
 
@@ -42,6 +44,54 @@ struct PlanetRow {
     rad_solar: f64,
     orbsmax_au: f64,
     feh: Option<f64>,
+    st_rotp_days: Option<f64>,
+    st_vsin_kms: Option<f64>,
+}
+
+// One measured host-abundance analysis row: stellar [C/H], [O/H], [N/H] (the
+// C/O witness) and log R'HK (the activity witness) from a cross-identified
+// high-resolution abundance catalog. The row's own [Fe/H] carries the S proxy.
+// The catalog identity lives on the JSON row for the human reader; the run
+// header carries the catalog provenance.
+struct WitnessRow {
+    analysis: String,
+    ch: f64,
+    oh: f64,
+    nh: Option<f64>,
+    feh: f64,
+    logrhk: Option<f64>,
+}
+
+fn read_witness(path: &str) -> Result<HashMap<String, Vec<WitnessRow>>, String> {
+    let body = std::fs::read_to_string(path).map_err(|e| format!("witness {path}: {e}"))?;
+    let root = parse_json(&body).ok_or_else(|| format!("witness {path}: json absent"))?;
+    let JsonVal::Arr(rows) = &root else {
+        return Err(format!("witness {path}: root is not an array"));
+    };
+    let mut out: HashMap<String, Vec<WitnessRow>> = HashMap::new();
+    for row in rows {
+        let (Some(host), Some(analysis)) = (jstr(row, "hostname"), jstr(row, "analysis")) else {
+            continue;
+        };
+        let (Some(ch), Some(oh), Some(feh)) = (jnum(row, "ch"), jnum(row, "oh"), jnum(row, "feh"))
+        else {
+            continue;
+        };
+        if !ch.is_finite() || !oh.is_finite() || !feh.is_finite() {
+            continue;
+        }
+        let nh = jnum(row, "nh").filter(|v| v.is_finite());
+        let logrhk = jnum(row, "logrhk").filter(|v| v.is_finite());
+        out.entry(host.to_string()).or_default().push(WitnessRow {
+            analysis: analysis.to_string(),
+            ch,
+            oh,
+            nh,
+            feh,
+            logrhk,
+        });
+    }
+    Ok(out)
 }
 
 fn read_detections(path: &str) -> Result<Vec<Detection>, String> {
@@ -95,6 +145,8 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
             continue;
         }
         let feh = jnum(row, "st_met").filter(|v| v.is_finite());
+        let st_rotp_days = jnum(row, "st_rotp").filter(|v| v.is_finite() && *v > 0.0);
+        let st_vsin_kms = jnum(row, "st_vsin").filter(|v| v.is_finite());
         let planets = hosts.entry(host).or_default();
         if !planets.iter().any(|p| p.pl_name == pl_name) {
             planets.push(PlanetRow {
@@ -103,6 +155,8 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
                 rad_solar,
                 orbsmax_au,
                 feh,
+                st_rotp_days,
+                st_vsin_kms,
             });
         }
     }
@@ -113,6 +167,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut seed = "docs/reference/jwst_detection_seed.json".to_string();
     let mut params = String::new();
+    let mut witness = "docs/reference/co_rhk_witness_seed.json".to_string();
     let mut out = "/tmp/opencode/disequilibrium_register_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut trials = DEFAULT_TRIALS;
@@ -126,6 +181,10 @@ fn main() {
             "--params" => {
                 i += 1;
                 params = args.get(i).cloned().unwrap_or(params);
+            }
+            "--witness" => {
+                i += 1;
+                witness = args.get(i).cloned().unwrap_or(witness);
             }
             "--out" => {
                 i += 1;
@@ -160,7 +219,7 @@ fn main() {
         );
         std::process::exit(1);
     }
-    if let Err(msg) = run(&seed, &params, &out, floor, trials) {
+    if let Err(msg) = run(&seed, &params, &witness, &out, floor, trials) {
         eprintln!("disequilibrium_register_probe: {msg}");
         std::process::exit(1);
     }
@@ -183,18 +242,48 @@ struct HostPlan {
     frac: Vec<f64>,
     frac_res: Option<Vec<f64>>,
     feh: Option<f64>,
+    st_rotp_days: Option<f64>,
+    st_vsin_kms: Option<f64>,
     model: HostModel,
+}
+
+// The measured host-abundance regression: equilibrium at the host's own
+// [C/H]/[O/H]/[N/H] budget (S on the row's [Fe/H]) instead of solar C/O.
+#[derive(Clone)]
+struct MeasuredRun {
+    analysis: String,
+    ch: f64,
+    oh: f64,
+    feh: f64,
+    c_over_o: f64,
+    logrhk: Option<f64>,
+    frac: Vec<f64>,
+}
+
+fn measured_budget_frac(t_eq: f64, w: &WitnessRow) -> Option<Vec<f64>> {
+    let b = elemental_budget_sulfur(w.ch, w.oh, w.nh, w.feh)?;
+    if t_eq >= SULFUR_T_MIN {
+        equilibrium_composition_sulfur_budget(t_eq, P0_PA, b)
+    } else {
+        equilibrium_composition_condensed_budget(t_eq, P0_PA, b).map(|eq| eq.frac)
+    }
+}
+
+fn c_over_o_solar(ch: f64, oh: f64) -> f64 {
+    (SOLAR_C / SOLAR_O) * 10f64.powf(ch - oh)
 }
 
 fn run(
     seed_path: &str,
     params_path: &str,
+    witness_path: &str,
     out_path: &str,
     floor: f64,
     trials: usize,
 ) -> Result<(), String> {
     let detections = read_detections(seed_path)?;
     let planet_rows = read_planet_rows(params_path)?;
+    let witness = read_witness(witness_path)?;
 
     let spec_names: Vec<String> = sulfur_gas_names();
     let slot_by_name: HashMap<String, usize> = spec_names
@@ -242,10 +331,20 @@ fn run(
         "reservoir-zeuge: pscomppars st_met ([Fe/H]) gelesen — je Wirt skaliert die Regression die Metall-Elemente (C,O,N,S je H) um z = 10^[Fe/H]; H bleibt die Referenz\n",
     );
     out.push_str(
-        "  C/O traegt pscomppars nicht (gemessen am NExScI-TAP-Schema 2026-09-05: keine C/O-, keine log R'HK-, keine XUV-Spalte in irgendeiner Tabelle) — C/O pending, Aktivitaets-/XUV-Zeuge pending\n",
+        "  C/O traegt pscomppars nicht (gemessen am NExScI-TAP-Schema 2026-09-05: keine C/O-, keine log R'HK-, keine XUV-Spalte in irgendeiner Tabelle) — C/O wird aus dem C/O-Zeugen gelesen\n",
+    );
+    out.push_str(&format!(
+        "  C/O-Zeuge: hochaufgeloeste Wirts-Abundanzen [C/H]/[O/H]/[N/H] aus Brewer-&-Fischer-Katalogen (VizieR J/ApJS/225/32 = 2016ApJS..225...32B, J/ApJS/237/38 = 2018ApJS..237...38B; abgerufen 2026-09-05; Wirt per RA/Dec kreuzidentifiziert, <~5\"-Matches durch SIMBAD-Namensbestaetigung) — Zeilen in {} ({} Analysen)\n",
+        witness_path, witness.values().map(|v| v.len()).sum::<usize>()
+    ));
+    out.push_str(
+        "  der C/O-Zeuge ersetzt C und O durch die gemessenen [C/H]/[O/H]; N traegt sein gemessenes [N/H] (sonst [Fe/H]); S hat in keiner geprueften Quelle eine Wirts-Abundanz und bleibt auf [Fe/H] — benannter Proxy. Die dex stehen auf der Katalog-eigenen solaren Skala; die Anwendung auf die Archiv-SOLAR_-Werte ist transparent\n",
     );
     out.push_str(
-        "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression meldet Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
+        "  Aktivitaets-Zeuge: log R'HK (aus den Brewer-Katalogen, wo die Analyse ihn traegt), Rotation st_rotp/v sin i (pscomppars) — kein XUV-Fluss in NExScI oder MUSCLES/Mega-MUSCLES fuer diese 30 Wirte (gemessen); XUV pending\n",
+    );
+    out.push_str(
+        "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression und die C/O-Zeugen-Regression melden Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
     );
 
     out.push_str(&format!(
@@ -416,8 +515,54 @@ fn run(
             frac,
             frac_res,
             feh: p.feh,
+            st_rotp_days: p.st_rotp_days,
+            st_vsin_kms: p.st_vsin_kms,
             model,
         });
+    }
+
+    // Measured host-abundance regression (the C/O witness): every sourced
+    // analysis row is its own equilibrium run against the host's measured
+    // [C/H]/[O/H]/[N/H] budget. S carries no host measurement and rides the
+    // row's own [Fe/H] — a named proxy. A row whose solver refuses stays
+    // pending (counted), never a fabricated budget.
+    let mut witness_runs: Vec<Vec<MeasuredRun>> = vec![Vec::new(); host_ids.len()];
+    let mut n_co_hosts = 0usize;
+    let mut n_co_rows = 0usize;
+    let mut n_co_refused = 0usize;
+    let mut co_pending_hosts: Vec<String> = Vec::new();
+    for id in 0..host_ids.len() {
+        let host = &host_ids[id];
+        let Some(hp) = &plan[id] else {
+            continue;
+        };
+        let Some(rows) = witness.get(host) else {
+            continue;
+        };
+        let mut any_run = false;
+        for w in rows {
+            match measured_budget_frac(hp.teq_k, w) {
+                Some(frac) => {
+                    witness_runs[id].push(MeasuredRun {
+                        analysis: w.analysis.clone(),
+                        ch: w.ch,
+                        oh: w.oh,
+                        feh: w.feh,
+                        c_over_o: c_over_o_solar(w.ch, w.oh),
+                        logrhk: w.logrhk,
+                        frac,
+                    });
+                    n_co_rows += 1;
+                    any_run = true;
+                }
+                None => n_co_refused += 1,
+            }
+        }
+        if any_run {
+            n_co_hosts += 1;
+        } else if !rows.is_empty() {
+            co_pending_hosts.push(host.clone());
+        }
     }
 
     let mut n_hit_hosts = 0usize;
@@ -426,6 +571,8 @@ fn run(
     let mut n_reservoir_pending = 0usize;
     let mut n_moved_hosts = 0usize;
     let mut n_moved_species = 0usize;
+    let mut n_co_moved_hosts = 0usize;
+    let mut n_co_moved_species = 0usize;
     let mut lines: Vec<String> = Vec::new();
     for id in 0..host_ids.len() {
         let Some(hp) = &plan[id] else {
@@ -540,6 +687,64 @@ fn run(
                 }
             }
         }
+        for mr in &witness_runs[id] {
+            let mut moved: Vec<String> = Vec::new();
+            for d in &host_det[id] {
+                let Some(slot) = slot_by_name.get(&d.species) else {
+                    continue;
+                };
+                let solar_word = if hp.frac[*slot] >= floor {
+                    "equilibrium-present"
+                } else {
+                    "disequilibrium"
+                };
+                let meas_word = if mr.frac[*slot] >= floor {
+                    "equilibrium-present"
+                } else {
+                    "disequilibrium"
+                };
+                if solar_word != meas_word {
+                    moved.push(format!(
+                        "{}: {} -> {} (C/O-Zeuge-Anteil {:.3e})",
+                        d.species, solar_word, meas_word, mr.frac[*slot]
+                    ));
+                }
+            }
+            moved.sort();
+            moved.dedup();
+            if moved.is_empty() {
+                block.push_str(&format!(
+                    "      C/O-Zeuge {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — keine Klassifikations-Aenderung\n",
+                    mr.analysis, mr.ch, mr.oh, mr.feh, mr.c_over_o
+                ));
+            } else {
+                n_co_moved_hosts += 1;
+                n_co_moved_species += moved.len();
+                block.push_str(&format!(
+                    "      C/O-Zeuge {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — Spezies-Bewegung: {}\n",
+                    mr.analysis, mr.ch, mr.oh, mr.feh, mr.c_over_o, moved.join("; ")
+                ));
+            }
+        }
+        let mut act_parts: Vec<String> = Vec::new();
+        for mr in &witness_runs[id] {
+            if let Some(rhk) = mr.logrhk {
+                act_parts.push(format!("log R'HK {rhk:.2} ({})", mr.analysis));
+            }
+        }
+        match hp.st_rotp_days {
+            Some(p) => act_parts.push(format!("st_rotp {p:.1} d (pscomppars)")),
+            None => act_parts.push("st_rotp pending (pscomppars leer)".to_string()),
+        }
+        if let Some(v) = hp.st_vsin_kms {
+            act_parts.push(format!("v sin i {v:.1} km/s (pscomppars)"));
+        }
+        if !act_parts.is_empty() {
+            block.push_str(&format!(
+                "      Aktivitaets-Zeuge: {}\n",
+                act_parts.join(" | ")
+            ));
+        }
         for s in &hit_species {
             block.push_str(&format!("      disequilibrium  {s}\n"));
         }
@@ -589,6 +794,16 @@ fn run(
         n_moved_hosts,
         n_moved_species
     ));
+    out.push_str(&format!(
+        "C/O-Zeugen-Regression (gemessene [C/H]/[O/H]/[N/H]-Haushalte): {} Wirte gelesen ({} Analyse-Zeilen) | {} Zeilen Loeser verweigert (pending) | Klassifikations-Bewegung: {} Wirte, {} Spezies\n",
+        n_co_hosts, n_co_rows, n_co_refused, n_co_moved_hosts, n_co_moved_species
+    ));
+    if !co_pending_hosts.is_empty() {
+        out.push_str(&format!(
+            "  C/O-pending (Zeuge vorhanden, Loeser verweigert): {}\n",
+            co_pending_hosts.join(", ")
+        ));
+    }
     for id in 0..host_ids.len() {
         if let Some(reason) = &pending_reason[id] {
             out.push_str(&format!(

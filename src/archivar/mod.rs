@@ -13,6 +13,7 @@ pub mod bidsleep;
 pub mod bison_basu;
 pub mod bison_shift;
 pub mod bison_velocity;
+pub mod bl_narrowband;
 pub mod bpc;
 pub mod bsp_reader;
 pub mod cdf;
