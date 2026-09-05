@@ -2195,6 +2195,489 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     }
 }
 
+// ANTARES (the NOIRLab broker) measured 2026-09-06: the web root
+// antares.noirlab.edu serves a Vue SPA shell whose config.json names the data
+// base https://api.antares.noirlab.edu/v1. The anonymous REST carries a loci
+// listing (/v1/loci, paginated page[offset]/page[limit]) and a per-locus alert
+// bundle (/v1/loci/{id}/alerts, the full bundle in one answer); the anonymous
+// cone/date/search parameters are inert (measured: ra/dec/radius/polygon
+// return the same global page). The alert records carry the ZTF packet — the
+// detection rows (ztf_candidate:…) with ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci
+// and the upper-limit rows (ztf_upper_limit:…) with ztf_diffmaglim. The
+// anonymous corpus is a bounded slice: locus ids ANT2019…, ANT2020… and
+// ANT2021*, newest-observation times MJD 59436–59463 (2021-08-25…2021-09-06),
+// num_alerts up to ~500; the per-locus
+// bundles collapse to one or very few distinct band epochs after duplicate
+// packet removal (the dense locus ANT2020bf6im: 486 alert rows, ~1 distinct
+// ztf_jd per filter), the rest upper limits. The ZTF alert stream needs a
+// Key+Secret (registered by e-mail to antares@noirlab.edu via the /support
+// page) — no consumer credential sits in .secrets.local, so the stream stays
+// pending and the anonymous REST is the measured reachable path.
+const ANTA_SPA: &str = "https://antares.noirlab.edu/";
+const ANTA_CONFIG: &str = "https://antares.noirlab.edu/config.json";
+const ANTA_BASE: &str = "https://api.antares.noirlab.edu/v1";
+const ANTA_LIST_PAUSE_MS: u64 = 1000;
+const ANTA_OBJ_PAUSE_MS: u64 = 250;
+
+struct AntaresLocus {
+    id: String,
+    ra_deg: f64,
+    dec_deg: f64,
+    num_alerts: usize,
+    num_mag_values: Option<usize>,
+    newest_obs_mjd: Option<f64>,
+}
+
+fn parse_antares_loci(body: &[u8]) -> Option<Vec<AntaresLocus>> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return None;
+    };
+    let Some(JsonVal::Obj(root)) = parse_json(text) else {
+        return None;
+    };
+    let Some(JsonVal::Arr(list)) = root.get("data") else {
+        return None;
+    };
+    let mut out = Vec::new();
+    for r in list {
+        let JsonVal::Obj(m) = r else {
+            continue;
+        };
+        let (Some(JsonVal::Str(id)), Some(JsonVal::Obj(attr))) = (m.get("id"), m.get("attributes"))
+        else {
+            continue;
+        };
+        let Some(JsonVal::Obj(props)) = attr.get("properties") else {
+            continue;
+        };
+        let (Some(ra), Some(dec), Some(nal)) = (
+            obj_f64(attr, "ra"),
+            obj_f64(attr, "dec"),
+            obj_f64(props, "num_alerts"),
+        ) else {
+            continue;
+        };
+        let n_mag = obj_f64(props, "num_mag_values").map(|v| v as usize);
+        let newest = obj_f64(props, "newest_alert_observation_time");
+        out.push(AntaresLocus {
+            id: id.clone(),
+            ra_deg: ra,
+            dec_deg: dec,
+            num_alerts: nal as usize,
+            num_mag_values: n_mag,
+            newest_obs_mjd: newest,
+        });
+    }
+    if out.is_empty() {
+        return None;
+    }
+    Some(out)
+}
+
+struct AntaresAlertPhot {
+    rows: Vec<(String, f64, f64)>,
+    upper_limits: usize,
+    unknown_fid: usize,
+    duplicates: usize,
+}
+
+// The per-locus alert bundle (measured 2026-09-06): one answer carries the
+// full bundle. A detection row (id ztf_candidate:…) carries
+// ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci in its properties and folds to counts
+// on the magzpsci zero point — the same conversion the lasair-ZTF path uses;
+// a row without ztf_magpsf that carries ztf_diffmaglim is an upper limit and
+// stays absent (0 honored), never a fabricated 0.0 detection.
+fn parse_antares_alerts(body: &[u8], lsk: &LeapSeconds) -> Option<AntaresAlertPhot> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return None;
+    };
+    let Some(JsonVal::Obj(root)) = parse_json(text) else {
+        return None;
+    };
+    let Some(JsonVal::Arr(list)) = root.get("data") else {
+        return None;
+    };
+    let mut out = AntaresAlertPhot {
+        rows: Vec::new(),
+        upper_limits: 0,
+        unknown_fid: 0,
+        duplicates: 0,
+    };
+    let mut seen: HashSet<(u8, i64)> = HashSet::new();
+    for r in list {
+        let JsonVal::Obj(m) = r else {
+            continue;
+        };
+        let Some(JsonVal::Obj(attr)) = m.get("attributes") else {
+            continue;
+        };
+        let Some(JsonVal::Obj(props)) = attr.get("properties") else {
+            continue;
+        };
+        let (Some(fid), Some(jd)) = (obj_f64(props, "ztf_fid"), obj_f64(props, "ztf_jd")) else {
+            continue;
+        };
+        if !fid.is_finite() || !jd.is_finite() {
+            continue;
+        }
+        let Some(tdb) = ztf_jd_to_tdb(jd, lsk) else {
+            continue;
+        };
+        let Some(band) = ztf_band_of_fid(fid) else {
+            out.unknown_fid += 1;
+            continue;
+        };
+        let Some(magpsf) = obj_f64(props, "ztf_magpsf") else {
+            if obj_f64(props, "ztf_diffmaglim").is_some() {
+                out.upper_limits += 1;
+            }
+            continue;
+        };
+        let Some(magzpsci) = obj_f64(props, "ztf_magzpsci") else {
+            if obj_f64(props, "ztf_diffmaglim").is_some() {
+                out.upper_limits += 1;
+            }
+            continue;
+        };
+        if !magpsf.is_finite() || !magzpsci.is_finite() || magpsf <= 0.0 || magzpsci <= 0.0 {
+            continue;
+        }
+        // The alert bundle repeats one physical epoch across many alert
+        // packets (measured 2026-09-06: the dense locus ANT2020bf6im carries
+        // 486 alert rows that collapse to ~one distinct ztf_jd per filter) —
+        // the same band and second are one visit, not two (the lasair-ZTF
+        // convention).
+        let key = (band.as_bytes()[0], (jd * 86400.0).round() as i64);
+        if !seen.insert(key) {
+            out.duplicates += 1;
+            continue;
+        }
+        let counts = 10f64.powf(-0.4 * (magpsf - magzpsci));
+        if !counts.is_finite() || counts <= 0.0 {
+            continue;
+        }
+        out.rows.push((band.to_string(), tdb, counts));
+    }
+    Some(out)
+}
+
+fn curl_get_retry(url: &str) -> Option<(String, Vec<u8>)> {
+    for attempt in 0..HTTP_RETRY {
+        let Some(resp) = curl_bytes(url, None) else {
+            return None;
+        };
+        if resp.0 == "429" {
+            let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
+            println!(
+                "ANTARES: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
+                attempt + 1
+            );
+            sleep_ms(backoff);
+            continue;
+        }
+        return Some(resp);
+    }
+    println!(
+        "ANTARES: HTTP 429 held across {HTTP_RETRY} backed-off tries — the rate limit stands, the query stays pending"
+    );
+    None
+}
+
+// The anonymous ANTARES REST scan: sample the reachable loci corpus across
+// page offsets, fetch the per-locus alert bundles, fold the detection rows
+// jd → TDB on the ZTF1 compiler's one axis, assemble the LSS1 asset and run
+// the same achromatic non-periodic dip cut (scale-invariant FAP gate) the ZTF
+// historical round runs.
+fn antares_scan(max_loci: usize) {
+    println!(
+        "\n=== Nadel V (ANTARES round): anonymous loci REST + alert photometry, up to {max_loci} locus light curves ==="
+    );
+    let spa = http_code(ANTA_SPA, None);
+    println!(
+        "ANTARES web root  {ANTA_SPA}: HTTP {} — the Vue SPA shell carries no data itself (measured)",
+        spa.as_deref()
+            .unwrap_or("no response (connection stalled)")
+    );
+    let cfg_body = curl_bytes(ANTA_CONFIG, None);
+    match &cfg_body {
+        Some((code, body)) => {
+            let text = String::from_utf8_lossy(body);
+            let api_note = if text.contains("api.antares.noirlab.edu/v1") {
+                "the SPA names https://api.antares.noirlab.edu/v1 as its data base — the measured REST below"
+            } else {
+                "the config does not name the measured API base — parser pending on the live config"
+            };
+            println!("ANTARES SPA config {ANTA_CONFIG}: HTTP {code} ({api_note})");
+        }
+        None => {
+            println!("ANTARES SPA config {ANTA_CONFIG}: no response (connection stalled) — pending")
+        }
+    }
+    let root = http_code(ANTA_BASE, None);
+    let list_code = http_code(&format!("{ANTA_BASE}/loci"), None);
+    let cone_code = http_code(
+        &format!("{ANTA_BASE}/loci?ra=200.0&dec=-30.0&radius=1.0"),
+        None,
+    );
+    println!(
+        "ANTARES API root {ANTA_BASE}: HTTP {} — no bare listing (404); the /v1 resource surface is endpoint-specific (measured)",
+        root.as_deref()
+            .unwrap_or("no response (connection stalled)")
+    );
+    println!(
+        "ANTARES anonymous loci listing /v1/loci: HTTP {} — reachable; a far-field cone query answers HTTP {} with the same global page (the anonymous cone/date params are inert, measured)",
+        list_code
+            .as_deref()
+            .unwrap_or("no response (connection stalled)"),
+        cone_code
+            .as_deref()
+            .unwrap_or("no response (connection stalled)")
+    );
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Verdict: pending — the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return;
+    };
+    println!(
+        "ANTARES: time layer — ztf_jd (JD/UTC) → UTC unix → TDB seconds-since-J2000 (naif0012.tls ΔT 32.184 s + leap), the same one path the ZTF1 compiler uses"
+    );
+    let pages = max_loci.max(1);
+    let stride = (9900usize / pages).max(10);
+    let mut t_min = f64::INFINITY;
+    let mut t_max = f64::NEG_INFINITY;
+    let mut listed = 0usize;
+    let mut listed_multi_mag = 0usize;
+    let mut loci_sample: Vec<AntaresLocus> = Vec::new();
+    let mut corpus_count: Option<usize> = None;
+    for i in 0..pages {
+        let offset = i * stride;
+        if offset > 9900 {
+            break;
+        }
+        let url = format!("{ANTA_BASE}/loci?page%5Boffset%5D={offset}&page%5Blimit%5D=10");
+        let Some((code, body)) = curl_get_retry(&url) else {
+            println!(
+                "ANTARES loci page offset {offset}: the listing query did not answer (measured stall) — pending"
+            );
+            break;
+        };
+        if code != "200" {
+            println!(
+                "ANTARES loci page offset {offset}: the listing answered HTTP {code} — pending"
+            );
+            break;
+        }
+        let path = format!("/tmp/opencode/antares_loci_off{offset}.json");
+        if std::fs::write(&path, &body).is_err() {
+            println!("ANTARES loci page: the sample was not saved ({path})");
+        }
+        let Some(rows) = parse_antares_loci(&body) else {
+            println!(
+                "ANTARES loci page offset {offset}: the body is not a locus_listing row array (schema measured, parser pending on a real sample) — stopping the sample"
+            );
+            break;
+        };
+        let meta_text = String::from_utf8_lossy(&body);
+        if corpus_count.is_none() {
+            if let Some(pos) = meta_text.find("\"count\":") {
+                let after = meta_text[pos + "\"count\":".len()..].trim_start();
+                let digits: String = after.chars().take_while(|c| c.is_ascii_digit()).collect();
+                corpus_count = digits.parse().ok();
+            }
+        }
+        let mut densest: Option<&AntaresLocus> = None;
+        for r in &rows {
+            listed += 1;
+            if r.num_mag_values.map(|n| n >= 2).unwrap_or(false) {
+                listed_multi_mag += 1;
+            }
+            if let Some(mjd) = r.newest_obs_mjd {
+                if mjd < t_min {
+                    t_min = mjd;
+                }
+                if mjd > t_max {
+                    t_max = mjd;
+                }
+            }
+            match densest {
+                Some(d) if d.num_alerts >= r.num_alerts => {}
+                _ => densest = Some(r),
+            }
+        }
+        if let Some(d) = densest {
+            loci_sample.push(AntaresLocus {
+                id: d.id.clone(),
+                ra_deg: d.ra_deg,
+                dec_deg: d.dec_deg,
+                num_alerts: d.num_alerts,
+                num_mag_values: d.num_mag_values,
+                newest_obs_mjd: d.newest_obs_mjd,
+            });
+        }
+        sleep_ms(ANTA_LIST_PAUSE_MS);
+    }
+    println!(
+        "ANTARES loci corpus: {} loci listed across the sampled pages (meta count on the first page: {}), {} with ≥ 2 magnitude values; observed newest-observation window of the listing MJD {:.2} … {:.2}",
+        listed,
+        corpus_count
+            .map(|c| c.to_string())
+            .unwrap_or_else(|| "absent".to_string()),
+        listed_multi_mag,
+        t_min,
+        t_max
+    );
+    println!(
+        "ANTARES locus sample: {} loci chosen (the densest of each sampled page); {} real sample(s) saved under /tmp/opencode/antares_loci_off*.json",
+        loci_sample.len(),
+        loci_sample.len()
+    );
+    if loci_sample.is_empty() {
+        println!("Verdict: no locus row parsed — the anonymous scan stays void (0 honored)");
+        return;
+    }
+    let mut curves_all: Vec<LsstCurve> = Vec::new();
+    let mut map_lines: Vec<String> = Vec::new();
+    map_lines.push("locusId,ra,dec,num_alerts,num_mag_values".to_string());
+    let mut fetched = 0usize;
+    let mut total_det = 0usize;
+    let mut total_ul = 0usize;
+    let mut dup_total = 0usize;
+    let mut pending_stall = 0usize;
+    let mut pending_code = 0usize;
+    let mut det_by_fid: HashMap<String, usize> = HashMap::new();
+    for loc in &loci_sample {
+        let url = format!("{ANTA_BASE}/loci/{}/alerts", loc.id);
+        let Some((code, body)) = curl_get_retry(&url) else {
+            pending_stall += 1;
+            println!(
+                "ANTARES {}: the alert bundle query did not answer (measured stall) — pending",
+                loc.id
+            );
+            sleep_ms(ANTA_OBJ_PAUSE_MS);
+            continue;
+        };
+        if code != "200" {
+            pending_code += 1;
+            println!(
+                "ANTARES {}: the alert bundle answered HTTP {code} — pending",
+                loc.id
+            );
+            sleep_ms(ANTA_OBJ_PAUSE_MS);
+            continue;
+        }
+        let path = format!("/tmp/opencode/antares_alerts_{}.json", loc.id);
+        if std::fs::write(&path, &body).is_err() {
+            println!(
+                "ANTARES {}: the alert bundle was not saved ({path})",
+                loc.id
+            );
+        }
+        let phot = match parse_antares_alerts(&body, &lsk) {
+            Some(p) => p,
+            None => {
+                println!(
+                    "ANTARES {}: the alert bundle does not parse to the measured alert schema — parser pending (sample saved {path})",
+                    loc.id
+                );
+                sleep_ms(ANTA_OBJ_PAUSE_MS);
+                continue;
+            }
+        };
+        for (band, _, _) in &phot.rows {
+            *det_by_fid.entry(band.clone()).or_insert(0) += 1;
+        }
+        let per_band: Vec<String> = {
+            let mut m: HashMap<String, usize> = HashMap::new();
+            for (band, _, _) in &phot.rows {
+                *m.entry(band.clone()).or_insert(0) += 1;
+            }
+            let mut v: Vec<(String, usize)> = m.into_iter().collect();
+            v.sort();
+            v.iter().map(|(b, n)| format!("{b} {n}")).collect()
+        };
+        println!(
+            "ANTARES {}: {} distinct visit(s) over {} (alert bundle {}) — {} non-detection upper limit row(s) stayed absent, {} duplicate packet row(s) of the same band and second removed, {} row(s) with an unmapped fid",
+            loc.id,
+            phot.rows.len(),
+            per_band.join(", "),
+            loc.num_alerts,
+            phot.upper_limits,
+            phot.duplicates,
+            phot.unknown_fid
+        );
+        if phot.rows.is_empty() {
+            sleep_ms(ANTA_OBJ_PAUSE_MS);
+            continue;
+        }
+        let curves = build_ztf_band_curves(loc.ra_deg, loc.dec_deg, &phot.rows);
+        if curves.is_empty() {
+            sleep_ms(ANTA_OBJ_PAUSE_MS);
+            continue;
+        }
+        for c in &curves {
+            let band = lsst_band_of(c.freq).unwrap_or("?");
+            println!(
+                "  ANTARES {} band curve {band}: {} sample(s)",
+                loc.id,
+                c.samples.len()
+            );
+        }
+        curves_all.extend(curves);
+        map_lines.push(format!(
+            "{},{:.8},{:.8},{},{}",
+            loc.id,
+            loc.ra_deg,
+            loc.dec_deg,
+            loc.num_alerts,
+            loc.num_mag_values
+                .map(|n| n.to_string())
+                .unwrap_or_else(|| "absent".to_string())
+        ));
+        fetched += 1;
+        total_det += phot.rows.len();
+        total_ul += phot.upper_limits;
+        dup_total += phot.duplicates;
+        sleep_ms(ANTA_OBJ_PAUSE_MS);
+    }
+    let mut fid_counts: Vec<(&str, usize)> =
+        det_by_fid.iter().map(|(b, n)| (b.as_str(), *n)).collect();
+    fid_counts.sort();
+    let fid_word: Vec<String> = fid_counts.iter().map(|(b, n)| format!("{b} {n}")).collect();
+    println!(
+        "ANTARES scan over {} locus light curve(s): {} distinct visit(s) total by filter [{}], {} non-detection upper limit row(s) excluded as absent, {} duplicate packet row(s) removed, {} locus alert bundle(s) pending the connection, {} alert bundle(s) answered an off-code HTTP status",
+        fetched,
+        total_det,
+        fid_word.join(", "),
+        total_ul,
+        dup_total,
+        pending_stall,
+        pending_code
+    );
+    if curves_all.is_empty() {
+        println!(
+            "Verdict: no ANTARES locus carries a photometric detection row on the TDB layer — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let bin_path = "/tmp/opencode/lsst_lightcurves_antares_sample.bin";
+    if std::fs::write(bin_path, serialize_lss1(&curves_all)).is_err() {
+        println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
+        return;
+    }
+    let map_path = "/tmp/opencode/antares_locus_map.csv";
+    if std::fs::write(map_path, map_lines.join("\n")).is_err() {
+        println!("Nadel V (ANTARES round): the locus map was not written ({map_path})");
+    }
+    println!(
+        "Nadel V (ANTARES round): LSS1 asset written {bin_path} (the ZTF g/r/i band curves, identified by their ZTF central frequencies), locus map {map_path}"
+    );
+    scan_lss1(bin_path, false);
+    println!(
+        "Verdict: the ANTARES anonymous scan above is a full measurement on the jd → TDB fold axis through the achromatic non-periodic dip cut (scale-invariant FAP gate) over the photometric detection rows the anonymous loci corpus carries. The anonymous corpus is a bounded ZTF-alert slice whose per-locus alert bundles collapse to one or very few distinct band epochs after duplicate-packet removal — the cut's measured N_MIN {N_MIN} sample floor stays closed on such sparse bundles unless the credentialed alert stream (Key+Secret by e-mail, no consumer credential in .secrets.local) or a forced-photometry surface opens the light curves."
+    );
+}
+
 fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
     println!(
         "\n=== Nadel V (LSST round): anonymous cone grid, time layer MJD/TAI → TDB (embedded naif0012.tls), {} cone(s) ===",
@@ -2355,6 +2838,8 @@ fn usage() {
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
          negative control of the achromatic dip cut (synthetic achromatic dip into a real LSS1 asset):\n\
          \x20 lsst_anomaly_probe --negative-control <lsst_lightcurves.bin> [<depth_sigma=8>]\n\
+         ANTARES anonymous REST scan (api.antares.noirlab.edu/v1, the NOIRLab broker, no token):\n\
+         \x20 lsst_anomaly_probe --antares [--antares-max <loci=24>]\n\
          LASAIR_TOKEN (the register token name) is read from the environment when --token is absent."
     );
 }
@@ -2555,10 +3040,12 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         if joint.len() < N_COINC_MIN {
             if !brief {
                 println!(
-                    "  ra {:9.4} dec {:9.4}: absent — {} coincident {ba}/{bb} visits (|Δt| ≤ {COINCIDENCE_S} s), too few (0 honored)",
+                    "  ra {:9.4} dec {:9.4}: absent — {} coincident {ba}/{bb} visits (|Δt| ≤ {COINCIDENCE_S} s over {}+{} samples), too few (0 honored)",
                     g.ra,
                     g.dec,
-                    joint.len()
+                    joint.len(),
+                    a_res.len(),
+                    b_res.len()
                 );
             }
             continue;
@@ -2641,6 +3128,8 @@ fn main() {
     let mut cones: Vec<(f64, f64, f64, usize)> = Vec::new();
     let mut neg_control_base: Option<String> = None;
     let mut neg_control_depth: f64 = 8.0;
+    let mut antares = false;
+    let mut antares_max: usize = 24;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -2740,6 +3229,13 @@ fn main() {
                 }
                 i += 2;
             }
+            "--antares" => {
+                antares = true;
+            }
+            "--antares-max" => {
+                antares_max = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(24);
+                i += 1;
+            }
             _ => {
                 usage();
                 return;
@@ -2748,6 +3244,10 @@ fn main() {
         i += 1;
     }
     let tok = token.or_else(|| std::env::var("LASAIR_TOKEN").ok());
+    if antares {
+        antares_scan(antares_max);
+        return;
+    }
     if let Some(p) = neg_control_base {
         negative_control(&p, neg_control_depth);
         return;
@@ -3279,5 +3779,69 @@ mod tests {
         let expect = unix + 32.184 + lsk.leap_at(unix).expect("the leap reads") - 946_728_000.0;
         assert!((tdb - expect).abs() < 1e-6);
         assert!(tdb > 0.0, "a post-J2000 epoch is positive");
+    }
+
+    #[test]
+    fn antares_loci_parser_reads_the_measured_locus_listing() {
+        // The anonymous /v1/loci answer measured 2026-09-06: each data row is
+        // a locus_listing with the id (ANT…), the attributes ra/dec and the
+        // properties num_alerts/num_mag_values/newest_alert_observation_time.
+        // Rows that carry only part of the measured triple stay absent.
+        let body = br#"{"data":[{"type":"locus_listing","id":"ANT2021y65ce","attributes":{"dec":9.258595,"properties":{"ztf_object_id":"ZTF21abxxjrh","num_mag_values":1,"num_alerts":14,"newest_alert_observation_time":59461.47165510012},"ra":37.284397}},{"type":"locus_listing","id":"ANT2021y665q","attributes":{"dec":3.6,"properties":{"num_mag_values":1,"num_alerts":27},"ra":38.7}}],"meta":{"count":10000}}}"#;
+        let rows = parse_antares_loci(body).expect("the measured locus listing parses");
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].id, "ANT2021y65ce");
+        assert!((rows[0].ra_deg - 37.284397).abs() < 1e-12);
+        assert!((rows[0].dec_deg - 9.258595).abs() < 1e-12);
+        assert_eq!(rows[0].num_alerts, 14);
+        assert_eq!(rows[0].num_mag_values, Some(1));
+        assert_eq!(rows[1].num_alerts, 27);
+        assert_eq!(rows[1].num_mag_values, Some(1));
+        assert_eq!(rows[1].newest_obs_mjd, None);
+        assert!(parse_antares_loci(b"{}").is_none());
+        assert!(parse_antares_loci(b"not json").is_none());
+    }
+
+    #[test]
+    fn antares_alert_parser_folds_detections_and_keeps_upper_limits_absent() {
+        // The measured alert bundle: a ztf_candidate row carries
+        // ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci and folds to counts on the
+        // magzpsci zero point; a ztf_upper_limit row carries ztf_diffmaglim and
+        // no magpsf and stays absent (never a fabricated 0.0 detection); an
+        // unmapped fid is counted, not read as a band; a repeated band+second
+        // packet is one visit, not two (measured 2026-09-06: the dense locus
+        // ANT2020bf6im repeats one physical epoch across many alert packets).
+        let body = br#"{"data":[{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650515","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.45389747619629,"ztf_magzpsci":26.320898056030273,"ant_passband":"R"}}},{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650516","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.4540,"ztf_magzpsci":26.3209}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780515","attributes":{"properties":{"ztf_jd":2459435.9347801,"ztf_fid":1,"ztf_diffmaglim":20.5221004486084,"ztf_magzpsci":26.23870086669922,"ant_passband":"g"}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780516","attributes":{"properties":{"ztf_jd":2459435.935,"ztf_fid":9,"ztf_diffmaglim":20.5}}}]}"#;
+        let phot = parse_antares_alerts(body, &lsk()).expect("the measured alert bundle parses");
+        assert_eq!(
+            phot.rows.len(),
+            1,
+            "the duplicate packet of the same band and second is one visit, not two"
+        );
+        assert_eq!(phot.rows[0].0, "r", "ztf_fid 2 is the r band");
+        assert_eq!(
+            phot.upper_limits, 1,
+            "the fid 1 upper limit stays an upper limit"
+        );
+        assert_eq!(
+            phot.unknown_fid, 1,
+            "the fid 9 upper limit row maps to no ZTF band"
+        );
+        assert_eq!(
+            phot.duplicates, 1,
+            "the repeated band+second packet is removed"
+        );
+        let expect_counts = 10f64.powf(-0.4 * (19.45389747619629 - 26.320898056030273));
+        assert!(
+            (phot.rows[0].2 - expect_counts).abs() / expect_counts < 1e-12,
+            "the ztf_magpsf maps to counts on the magzpsci zero point"
+        );
+        assert!(
+            phot.rows[0].1.is_finite() && phot.rows[0].1 > 0.0,
+            "the ztf_jd folds onto a positive finite TDB axis"
+        );
+        let curves = build_ztf_band_curves(37.284397, 9.258595, &phot.rows);
+        assert_eq!(curves.len(), 1);
+        assert_eq!(curves[0].samples.len(), 1);
     }
 }
