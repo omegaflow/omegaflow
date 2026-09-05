@@ -1638,6 +1638,18 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Kegel). (6) B-Unlock geparkt: Fink-Account/Kafka (fink-broker.org/joining/)
   oder Rubin-Science-Platform, benannte Kosten, kein Datum.
 
+
+- Nadel-V IRSA-ZTF-Flaeche (2026-09-05, gemessen): das vorhandene
+  ztf_lightcurves.bin (CDN, 1,48 MB, 2253 Objekte, 2018-2025) ist KEIN Sky-Sweep,
+  sondern eine 7-Kegel-Stichprobe (Cluster 503/421/371/369/260/200/129, RA 243-284,
+  dec -24..+25, ohne i-Band) — Re-Scan = dieselbe Flaeche. FRISCHE Flaeche ist
+  anonym erreichbar: IRSA nph_light_curves (POS=CIRCLE) liefert echte g/r+i-Kurven
+  (frischer Kegel ra 210 dec +30: 78 Objekte, g 3787 + r 6005 + i 2282; langsam
+  27-180 s/Kegel aber live, kein Auth fuer die oeffentliche DR). Der
+  ztf_lightcurves_compiler ist ein generischer Kegel-Harvester — ein frischer
+  Catalog-Lauf ueber die volle Palomar-ZTF-Footprint (ohne --limit 32) erschliesst
+  neue Objekte samt i-Band: die echte historische Mehrband-Flaeche fuer Nadel V.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
