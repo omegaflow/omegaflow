@@ -1839,6 +1839,21 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   die photochemische Erklaerung (Mukherjee-Onset <500 K, konsistent mit PICASO-Grid)
   bleiben. Bio 16->0 haelt. Ehrlich offen (nicht geschlossen): nur 3.5 sigma; die
   Kinetik-Grenze (T_q aus tau_chem=Kzz/H_p^2) braucht Raten+g+P-T.
+- Nadel XIII HD-3167-c-CO2 NATUR-PRUEFUNG (2026-09-06, der letzte Disequilibrium-Kandidat der HST-Flaeche):
+  FAELLT ALS SCHWACH/SYSTEMATISCH — Disequilibrium-Linie (Bio) endet bei 0 unerklaerten
+  Kandidaten ueber JWST (16->0) + HST (19->1->0). Belegt: (1) CO2 ~3.28 sigma, vom eigenen
+  Paper (ARES IV, Guilluy 2021 AJ 161,19) als 'moderate' + 'could be due to possible
+  systematics' markiert; die unabhaengige Analyse desselben einzigen HST-Datensatzes
+  (Mikal-Evans 2021 AJ 161,18) bestaetigt kein spezifisches CO2 (2.5 sigma, H2O/HCN/CO2/CH4-
+  degeneriert; CO2 nur in einem von zwei Retrieval-Codes, 'extremely tentative'); kein
+  unabhaengiger Datensatz. (2) natuerlich/abiotisch: hochmetallisches Enveloppen-Gleichgewicht
+  (>700x solar, wolkenfrei) erklaert die Absorption; Photochemie+vertikale Mischung konsistent;
+  der 11-dex-Disequilibrium-Hit misst die Solarmetallizitaets-Baseline, nicht gemessene
+  Ueberschusschemie. (3) kein Gegenargument vom Stern: alt (~6.7 Gyr) inaktiv, c auf polarer
+  Bahn; CO2-Zuordnung scheitert an Visit-3-Weisslicht-Anomalie + b-Blend-Kontamination.
+  Ehrlich offen (pending, benannt): einzige Entscheidungsinstanz = kuenftige JWST-NIRSpec/NIRCam-
+  Transmission von HD 3167 c (so beide 2021-Papiere); keine JWST-Transmission publiziert.
+
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
