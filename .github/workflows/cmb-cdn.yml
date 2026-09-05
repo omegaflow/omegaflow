@@ -1,0 +1,25 @@
+name: cmb-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cmb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Planck SMICA CMB map once and upload to CDN
+        run: |
+          mkdir -p kernels
+          gh release download irsa.ipac.caltech.edu --repo omegaflow/sources \
+            --pattern cmb_planck_smica_n64.json --clobber 2>/dev/null && exit 0
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/smica.fits \
+            https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
+          cargo run -p omegaflow-harvest --release --bin cmb_planck_compiler -- \
+            --input kernels/smica.fits --nside 64 \
+            --out cmb_planck_smica_n64.json --ci-mode
