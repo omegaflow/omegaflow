@@ -156,7 +156,14 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
   „SEP = Winkel am Sonnenort"-Fehlbezeichnung (korrigiert: α benannt, ε
   ergänzt). Jedes Blatt der Pioneer-Quiet-Zone-Rezept ist auf der ε-Achse neu
-  zu prüfen, nicht nur Galileo. pending.
+  zu prüfen, nicht nur Galileo. Front-C-ε-Recheck ausgeführt (2026-09-05,
+  `befund-front-c-noise-vs-epsilon`, done): Distanz-Befund hält (P10 7412 →
+  651–805 Hz, P11 5820 → 993–1181 Hz); die „Winkel nicht der Treiber"-Aussage ist
+  auf ε präzisiert — P11 trägt eine Konjunktions-Spitze (ε 0–10°, 8013 Hz, n=43)
+  über jedem Distanz-Median, P10 ist auf ε flach mit anti-Plasma-Form, global kein
+  ε-Treiber. Distanz-basierte Ergebnisse (Quiet-Zone-`--zone`, sub-Hz-Boden —
+  Deduktion 44 geschlossen, leeres Netz) unberührt (Distanz ≠ Winkel). Offen
+  (pending): die ε×Distanz×Ära-2D-Entzerrung der P11-Konjunktions-Spitze.
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
