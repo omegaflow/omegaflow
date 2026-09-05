@@ -46,6 +46,12 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Mail-Ledger-Zeile je Mail.
 - `auftrag-bande-split.md` — 20-s-Bande: two-/three-way-Split + die drei
   offenen Registerzeilen (f*, 1-s-Zählung, Amplitude) vor Mail 1.
+  Klasse-2-Galileo-Cross-Mission gemessen (2026-09-05,
+  `befund-galileo-banden-negativ.md`): NEGATIV — Pioneer-Linien
+  45,75/51,55/47,35 mHz missions-spezifisch (kein Modus/keine Ära ±0,5 mHz
+  auf Galileo, Stationen 14/43/63); exakter 20-s-Kamm (50/100/150/200 mHz,
+  Reduktions-Periodik, Mechanismus offen) + Station-42-Ton 52,39 mHz
+  (3,14 U/min, Identität offen) = neue offene Linien.
 - `auftrag-gic-p-wert.md` — GIC: p-Wert nachlegen, dann Mail an
   Wing/Viljanen.
 - `auftrag-korona-aia-fam.md` — Korona: AIA-fam-Zahl, dann Woods.
@@ -118,15 +124,25 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   über das Verzeichnis-Listing (Bodengrund), nicht den INDEX; GO-SS ⊆ GO-SUN
   (globaler Dedup). Realer Bestand ~138 TDF-Dateien, nicht 192. Der
   Befund-`192`-Wert war der stale INDEX, keine Platten-Wahrheit.
-  Rausch-Kurve gezeichnet (2026-09-05, `befund-galileo-rausch-kurve.md`,
-  Rat-Verdikt eingearbeitet): Mode-Split als Negativ-Kontrolle — Mode 2 28×,
-  Mode 3 12× (getrennte Daten) SEP-steil, Mode 1 flach (keine Geometrie;
-  Oszillator vs. PLL offen, Stärke-Split); Achse = Stoßparameter b=r·sin(SEP);
-  Distanz/SEP-Trennung nur teilweise (Nah-Sonne verwoben); Distanz-Achse
-  n-leer (nur 5–6 AU); ruhiges Fenster = Mode 2, SEP 150–180°, 1,5 Hz.
-  Offen: Einweg-Nah-Sonne-Arm (8,2 Hz vs. ~20–30 Hz erwartet),
-  SEP–Zeit–Sonnenzyklus. Nebenfund: Stationen 12/15/24/34/42/45/61 (34m) →
-  GWE-Banden-Test-Erwartungsliste. `galileo_daily`-Ephemeride manifestiert.
+  Rausch-Kurve revidiert (2026-09-05, `befund-galileo-rausch-kurve.md` v2,
+  Achsen-Revision): der gemessene Winkel war α (Winkel am Sonnenort), nicht ε
+  (solare Elongation, Winkel an der Erde) — die Achse war falsch benannt; α/ε
+  sind für die äußere Sonde komplementär. Der kohärente Kanal ist laut an
+  Opposition, leise an Konjunktion — das Gegenteil von Plasma-Szintillation;
+  die Plasma-Deutung ist `unverifiziert`, der Mode-2-28×/Mode-3-12×-Fall ein
+  Distanz-/Ära-Confound (Stoßparameter b ≈ 1 AU·sin ε, nicht r·sin(SEP)).
+  Mode 1 flach auf beiden Achsen — der Stärke-Split
+  (`befund-galileo-mode1-fingerabdruck.md`) misst einen empfangsstärke-
+  abhängigen Schwachsignal-PLL-Term, kein reines Oszillator-Rauschen.
+  Distanz-Achse n-leer (nur 5–6 AU). Offen (pending): Mode-2/3-Rausch-Kurve
+  auf der ε-Achse neu ziehen, Mode-2-Station-Tag-Split (1,5-Hz-Fenster
+  gepoolt), Pass-Segmentierung, α–Zeit–Sonnenzyklus-Verwebung. Nebenfund:
+  Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
+  `galileo_daily`-Ephemeride manifestiert.
+  Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
+  „SEP = Winkel am Sonnenort"-Fehlbezeichnung (korrigiert: α benannt, ε
+  ergänzt). Jedes Blatt der Pioneer-Quiet-Zone-Rezept ist auf der ε-Achse neu
+  zu prüfen, nicht nur Galileo. pending.
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
@@ -211,13 +227,16 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Job-"success" verschleiert, kein Upload (daher fehlte auch `ltmm_movement.
   bin` historisch). Fix: `--out`/`--ci-mode` vor `--merge`.
   **bidsleep_mehrnacht.bin MANIFESTIERT (verified 2026-09-05: HTTP 200,
-  10.263.728 B).** ltmm offen: Chunks 0/1 (Records 0–71, ~14 GB echter
+  10.263.728 B).** Die bidsleep-Ernte-Chunks (`_0`, `r0..r7`) wurden mit
+  Nachweis (merged-Asset verifiziert) geloescht (2026-09-05, Operator-Wort).
+  ltmm offen: Chunks 0/1 (Records 0–71, ~14 GB echter
   ~200-MB/Record-Daten) liefen in die 360-min-Cap (Run 1 cancelled); ltmm
   auf 12-Record-Sub-Chunks `m0..m11` umgestellt (Run 33938814788, m6–m11
   gelandet, m0–m5 in Ernte), merge → `ltmm_movement.bin` pending. Maß ~25 GB
   Rohdownloads über CI; ltmm ist keine sources.φ-Referenz (Extra-Artefakt).
-  Alte Chunks (`bidsleep_mehrnacht_0.bin`, `r0..r7`, `ltmm_movement_2/3.bin`)
-  sind Orphans für cd_reconcile, nicht löschen.
+  ltmm-Reste (`ltmm_movement_2/3.bin`, dann `m0..m11`) sind Ernte-Chunks für
+  den noch offenen Merge; loeschbar erst nach Manifestation von
+  `ltmm_movement.bin` (evidenzbasiert, nicht von Hand vorher).
 - `auftrag-docs-reference-verteilung.md` — docs/reference + docs/plans
   verteilen (main-Reinigung).
 - `auftrag-sicherung-risiko-heime.md` — Sicherung der
