@@ -332,11 +332,17 @@ fn main() {
     push("target: the station-bound floor peak days (robust floor cells, n >= 30, RMS >= 1 Hz) per (mode, station) against sky line position and body distance".to_string());
     push("binding: floor = strength == -2560; cell = (mode, station, tdb day); lock (|resid| > 1000 Hz) and non-finite excluded; cell RMS about the cell mean; robust day = cell n >= 30; loud = cell RMS >= 1 Hz".to_string());
     push("geometry at the TDB day start from galileo_daily / earth / jupiter barycentric ICRS (m): u = unit(galileo - earth) sight line; rE AU = |galileo - earth|; J RJ = |galileo - jupiter| / 71492 km; RA/Dec of u ICRS".to_string());
+    let era_min_s = match era_min {
+        Some(d) => fmt_daycell(d),
+        None => "-".to_string(),
+    };
+    let era_max_s = match era_max {
+        Some(d) => fmt_daycell(d),
+        None => "-".to_string(),
+    };
     push(format!(
-        "samples {n_total}; lock/non-finite excluded {n_lock}; floor trio cells {} over era {} .. {}",
-        rows.len(),
-        era_min.map(fmt_daycell).unwrap_or_else(|| "-".to_string()),
-        era_max.map(fmt_daycell).unwrap_or_else(|| "-".to_string())
+        "samples {n_total}; lock/non-finite excluded {n_lock}; floor trio cells {} over era {era_min_s} .. {era_max_s}",
+        rows.len()
     ));
 
     let mut state: BTreeMap<(i64, i64, i64), u8> = BTreeMap::new();
@@ -568,9 +574,10 @@ fn main() {
         }
         let mk = |x: &[f64], y: &[f64]| -> String {
             if x.len() == y.len() {
-                spearman(x, y)
-                    .map(|v| format!("{v:+.2}"))
-                    .unwrap_or_else(|| "-".to_string())
+                match spearman(x, y) {
+                    Some(v) => format!("{v:+.2}"),
+                    None => "-".to_string(),
+                }
             } else {
                 "-".to_string()
             }
@@ -645,7 +652,7 @@ fn main() {
             }
         }
         let max_of = |v: &[f64]| -> Option<f64> {
-            v.iter().copied().fold(None, |a: Option<f64>, x| Some(a.map_or(x, |m: f64| m.max(x))))
+            v.iter().copied().fold(None, |a: Option<f64>, x| match a { Some(m) => Some(m.max(x)), None => Some(x) })
         };
         push(format!(
             "  flip count {nflip}; sky step deg med {} max {}; |d rE| AU med {} max {}; |d J| RJ med {} max {}",
@@ -705,7 +712,7 @@ fn main() {
         }
     }
     let max_of = |v: &[f64]| -> Option<f64> {
-        v.iter().copied().fold(None, |a: Option<f64>, x| Some(a.map_or(x, |m: f64| m.max(x))))
+        v.iter().copied().fold(None, |a: Option<f64>, x| match a { Some(m) => Some(m.max(x)), None => Some(x) })
     };
     push(format!(
         "flips total {all_count}; sky step deg med {} max {} (<1 deg {lt1}, <2 deg {lt2}, <5 deg {lt5}); |d rE| AU med {}; |d J| RJ med {}",
@@ -783,10 +790,10 @@ fn main() {
         if let Some(g) = day_geo.get(&dd) {
             if let Some(jrj) = g.jrj {
                 let ym = ym_of_daycell(dd);
-                let upd = monthly_min
-                    .get(&ym)
-                    .map(|(_, v)| jrj < *v)
-                    .unwrap_or(true);
+                let upd = match monthly_min.get(&ym) {
+                    Some((_, v)) => jrj < *v,
+                    None => true,
+                };
                 if upd {
                     monthly_min.insert(ym, (dd, jrj));
                 }
@@ -844,7 +851,11 @@ fn main() {
             body_barycenter_position("jupiter", t, &eph),
         ) {
             let jrj = norm(sub(gp, jp)) / AU_M * AU_M / R_J_M;
-            if best.map(|(_, v)| jrj < v).unwrap_or(true) {
+            let is_min = match best {
+                Some((_, v)) => jrj < v,
+                None => true,
+            };
+            if is_min {
                 best = Some((sd, jrj));
             }
         }
