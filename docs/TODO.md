@@ -1322,6 +1322,14 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   sigma 1,79 Schwelle 21,89 P(T>=16)=0,9424 — kein Ueberschuss. 23 thermochem-
   Tests gruen (H2O(l)-Anker, p_sat, Grenzabgleich 500 K), cargo check 0 Warnungen.
 
+
+- Manifestation Biosignatur-Linie (2026-09-05): jwst_detection_registry.json
+  auf dem CDN (HTTP 200, 32026 B, 48 Ziele / 73 Detektionen mit pl_name).
+  Detektions-Saat versioniert unter docs/reference/jwst_detection_seed.json
+  (73 Zeilen). pl_name-Duty geschlossen (Compiler traegt pl_name durch, dedup
+  host+pl_name). Das Mess-Urteil (16 Hits, P=0.9424) ist registriert; ein
+  Blaetter-Ein-Blatt steht noch aus (ein-blatt-papier.md-Form).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
