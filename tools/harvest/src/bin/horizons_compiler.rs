@@ -672,16 +672,21 @@ fn main() {
         }
         return;
     }
-    if std::env::args().any(|a| a == "--daily") {
+    if std::env::args().any(|a| a == "--daily") || std::env::args().any(|a| a == "--galileo") {
         let end_jd = 2451545.0 + 31.0 * 365.25;
+        let galileo_only = std::env::args().any(|a| a == "--galileo");
         let bodies_daily: &[(&str, &str, f64, f64)] = &[
             ("-23", "pioneer10_daily", 2441380.5, end_jd),
             ("-24", "pioneer11_daily", 2441779.5, end_jd),
             ("-31", "voyager1_daily", 2443392.5, end_jd),
             ("-32", "voyager2_daily", 2443376.5, end_jd),
             ("-98", "new_horizons_daily", 2453755.5, end_jd),
+            ("-77", "galileo_daily", 2447892.5, 2450815.5),
         ];
         for (cmd, name, start_jd, stop_jd) in bodies_daily {
+            if galileo_only && *name != "galileo_daily" {
+                continue;
+            }
             eprintln!("  {name} (Horizons daily window, 1-d raster, 32-d granules)");
             let (granules, gm_m3_s2) = generate_long(cmd, name, *start_jd, *stop_jd, "1d", 1.0);
             if granules.is_empty() {
