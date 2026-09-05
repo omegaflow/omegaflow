@@ -2,7 +2,7 @@
   title: Befund — Galileo 20-s-Kamm & Station-42-Ton: Kamm = Abtastgitter-Degeneranz, Ton = Einzellinie (Identität offen)
   class: befund
   date: 2026-09-05
-  sha256: 8cc5453178c5bac38defb4a3f65318d91dd41ca7091702353a56818de43bb1ef
+  sha256: 4d99eba762e159b8074ad919dffd4eab8790ecc1490bbb4cac6f8a7885316fe2
   status: done
   antwortet-auf: docs/auftrag/auftrag-bande-split.md
   see-also: docs/befund/befund-galileo-banden-negativ.md docs/befund/befund-galileo-gwe-bestand.md docs/paper/ground-sources-20s-band.md
@@ -131,5 +131,14 @@ Einzellinie über 4 Tage (Dez-1990), Identität offen.*
 ## Status
 
 `done` (Rat gehalten, 2026-09-05). Charakterisierung gemessen; der Kamm ist
-Abtastraster-Degeneranz, der Station-42-Ton eine isolierte Einzellinie
-(Identität offen).
+Abtastraster-Degeneranz, der Station-42-Ton eine isolierte Einzellinie.
+
+Folge-Befunde: der Station-42-Ton-Identität ist recherchiert
+(`~/Schreibtisch/recherche-galileo-station42-ton.md`) — wahrscheinlichste Identität
+der **Galileo-Rotor-Spin** (~3 rpm; 3,14 rpm gemessen vs. ~3,0–3,15 rpm
+dokumentiert; LGA-only auf dem rotierenden Teil während EGA-1 12/1990);
+Kreuz-Stations-Bestätigung (Raumfahrzeug-Eigenschaft) bleibt offen. Die
+Kadenz-Reconciliation (`/tmp/opencode/recherche-galileo-kadenz-reconciliation.md`)
+— der „60-s-Grid" der Kamm-Analyse ist echte native Sub-Struktur in den
+Dez-1990-Mode-2-70-m-Pässen (~8100/9900 globalen Mode-2-60-s-Paaren), nicht ein
+Analyse-Artefakt; welcher Reduktions-Schritt dort 60-s setzte, bleibt offen.
