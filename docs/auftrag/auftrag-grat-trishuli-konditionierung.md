@@ -2,8 +2,8 @@
   title: Auftrag — Grat-Folge: Trishuli Regen→Pegel konditionieren (dritter Pfeil)
   class: auftrag
   date: 2026-09-05
-  sha256: 4d55173e6385ebccef0e90c452a2640c1fc29044baa78e55584cdea7fa4092fa
-  status: pending
+  sha256: e334d2f45974c25f44f5057693cf3bff3076d024dc2d16e1e14bf2347e7678f3
+  status: done
   see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-der-grat.md docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/blatt-kreuz-screening-kollab.md
 -->
 # Auftrag: Grat-Folge — Trishuli Regen→Pegel konditionieren (dritter Pfeil)
@@ -94,3 +94,5 @@ Der Auftrag ist GESCHLOSSEN, wenn ein konditionierter Lauf steht und das
 Verdikt als Bilanz-Fortschreibung oder Blatt kommittiert ist (Stille ist ein
 Verdikt). Bis dahin `pending` — dieser Eintrag registriert die Ordnung; die
 Ausführung ist nicht Teil der Registrierung.
+
+**GESCHLOSSEN (2026-09-05):** Das Verdikt steht im Befund `docs/befund/befund-grat-trishuli-konditionierung.md`: unter der Konditionierung auf den geteilten synoptischen Treiber fällt die Regen→Pegel-Kopplung in die Kollab-Stille (Lag 24 h TE 0.223 unter ihrer Schwelle 0.246); die registrierte 0.265 ist die Gegenorientierung Pegel→Regen (Richtungs-Fehler, Kalibrierung des Instruments). Die dritte Grat-Zeile trägt keinen dritten Pfeil. Die Zelle KDE-h (Pflicht 4) bleibt `pending` — registriert in `docs/auftrag/auftrag-grat-rest-verifikation.md`.
