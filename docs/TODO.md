@@ -170,9 +170,11 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   als offener, menschlich zu prüfender Literaturpunkt.
 - `auftrag-glm-uebernahme.md` — GLM-Verifikation registrieren + Paper auf
   main führen.
-- `auftrag-der-grat.md` — Der Grat: Zufall/Notwendigkeit-Bilanz über N
-  Systeme — TE-Residuen je Korpus-Blatt als eine Tabelle, keine neue Ernte;
-  Lieferung `docs/blatt/blatt-der-grat.md`; Stille ist ein Verdikt.
+- `auftrag-der-grat.md` — GESCHLOSSEN (2026-09-05): Blatt
+  `docs/blatt/blatt-der-grat.md` steht — N = 10, Verdikt aus der Tabelle
+  allein: 3 Pfeile (Korona, GIC, Trishuli-Pegel), 6 Stille, 1
+  Gegenrichtung (Gyirong); Thuậns These in den Zahlen — die Pfeile sind
+  lokal, die Mehrheit der Fronten Stille.
 
 ### Katastrophen-Recherche (eigene Linie)
 
