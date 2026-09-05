@@ -106,13 +106,23 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
+// The periodogram power in the standard normalization (variance-normalized,
+// both quadrature terms, the τ shift that makes the cosine/sine basis
+// orthogonal). The statistic is amplitude-invariant: a uniform rescale of the
+// series moves the data and the variance together, so the FAP measures the
+// significance of the periodicity, not the photometric scale. The form it
+// replaces carried x² inside the denominator, making the power scale ~ n/σ² —
+// quiet fractional photometry (σ ~ 0.02) read FAP 0 on every row (measured in
+// the LSST round, committed a4b1dcc; the same one path served this probe).
 fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let n = t.len();
     if n < 8 {
         return (0.0, 1.0);
     }
-    let (mean, sd) = mean_sd(&r.iter().map(|&x| x as f64).collect::<Vec<f64>>());
-    if sd <= 0.0 {
+    let x: Vec<f64> = r.iter().map(|&v| v as f64).collect();
+    let mean = x.iter().sum::<f64>() / n as f64;
+    let var = x.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n as f64;
+    if var <= 0.0 {
         return (0.0, 1.0);
     }
     let tmin = t[0];
@@ -125,23 +135,27 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let mut f = fmin;
     while f <= fmax {
         let w = 2.0 * std::f64::consts::PI * f;
-        let mut c = 0.0f64;
-        let mut s = 0.0f64;
+        let mut c2 = 0.0f64;
+        let mut s2 = 0.0f64;
         for &ti in t {
-            c += (w * ti).cos();
-            s += (w * ti).sin();
+            c2 += (2.0 * w * ti).cos();
+            s2 += (2.0 * w * ti).sin();
         }
-        let tau = 0.5 * (2.0 * s / c).atan();
-        let mut num = 0.0f64;
-        let mut den = 0.0f64;
+        let tau = 0.5 * s2.atan2(c2) / w;
+        let mut num_c = 0.0f64;
+        let mut num_s = 0.0f64;
+        let mut den_c = 0.0f64;
+        let mut den_s = 0.0f64;
         for (i, &ti) in t.iter().enumerate() {
-            let x = r[i] as f64 - mean;
+            let xv = x[i] - mean;
             let ph = w * (ti - tau);
-            num += x * ph.cos();
-            den += x * x * ph.sin() * ph.sin();
+            num_c += xv * ph.cos();
+            num_s += xv * ph.sin();
+            den_c += ph.cos() * ph.cos();
+            den_s += ph.sin() * ph.sin();
         }
-        if den > 0.0 {
-            let z = 0.5 * n as f64 * num * num / (sd * sd * den);
+        if den_c > 1e-12 && den_s > 1e-12 {
+            let z = 0.5 * (num_c * num_c / den_c + num_s * num_s / den_s) / var;
             if z > best_z {
                 best_z = z;
             }
