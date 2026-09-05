@@ -1,0 +1,26 @@
+name: galileo-atdf-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  galileo-atdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_resid.bin"; then
+            echo "asset galileo_resid.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset galileo_resid.bin missing — compiling and manifesting"
+      - name: Compile and manifest the Galileo TRK-2-25 ATDF residuum to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin galileo_atdf_compiler -- --ci-mode
