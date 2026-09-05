@@ -549,6 +549,9 @@ fn run(
         "  der zweite Reinigungsschritt regressiert die Hit-Indikator-Spalte gegen das publizierte log R'HK der Wirte (XUV/Aktivitaets-Zeuge); die Photochemie-Re-Erklaerung (XUV-Fluss treibt SO2/CO2) ist ein nicht-Gleichgewichts-Modell und bleibt als solche pending\n",
     );
     out.push_str(
+        "  derselbe Reinigungsschritt regressiert gegen log10 L_X (erg/s, Mittel ueber die L_X-Werte des Registers): F_X (Fluss an der Erde) und L_X/L_bol (Verhaeltnis) sind mit L_X nicht kommensurabel und tragen keinen gemeinsamen Kanal — ein Wirt ohne L_X-Zahlenwert bleibt pending, nie geschaetzt\n",
+    );
+    out.push_str(
         "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression und die C/O-Zeugen-Regression melden Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
     );
 
@@ -1299,6 +1302,10 @@ fn run(
     let mut act_hit: Vec<f64> = Vec::new();
     let mut xuv_hosts: Vec<(String, f64)> = Vec::new();
     let mut act_pending_hosts: Vec<String> = Vec::new();
+    let mut lx_host: Vec<String> = Vec::new();
+    let mut lx_x: Vec<f64> = Vec::new();
+    let mut lx_hit: Vec<f64> = Vec::new();
+    let mut lx_pending_hosts: Vec<String> = Vec::new();
     for id in 0..host_ids.len() {
         let host = &host_ids[id];
         if !possible[id] {
@@ -1329,6 +1336,31 @@ fn run(
             if let Some(v) = xv {
                 xuv_hosts.push((host.clone(), v));
             }
+        }
+        // L_X channel of the same cleaning step: host coordinate is the mean
+        // of log10(L_X/erg/s) over the numeric L_X values the register carries
+        // (luminosities span decades; the mean is taken in log space). F_X is
+        // a flux at Earth and L_X/L_bol a ratio — neither is commensurable
+        // with L_X on the same axis; only the L_X channel enters.
+        let lx_log: Vec<f64> = rows
+            .iter()
+            .filter_map(|w| w.lx)
+            .filter(|v| *v > 0.0)
+            .map(|v| v.log10())
+            .collect();
+        if lx_log.is_empty() {
+            lx_pending_hosts.push(host.clone());
+        } else {
+            let m = lx_log.iter().sum::<f64>() / lx_log.len() as f64;
+            let hit = host_det[id].iter().any(|d| {
+                slot_by_name
+                    .get(&d.species)
+                    .map(|slot| plan[id].as_ref().unwrap().frac[*slot] < floor)
+                    .unwrap_or(false)
+            });
+            lx_host.push(host.clone());
+            lx_x.push(m);
+            lx_hit.push(if hit { 1.0 } else { 0.0 });
         }
     }
     let n_act = act_x.len();
@@ -1413,6 +1445,65 @@ fn run(
         out.push_str(
             "  XUV-vs-Hit-Regression: zu wenige XUV-Wirte (pending; die Photochemie-Re-Erklaerung braucht einen XUV-Fluss je Wirt)\n",
         );
+    }
+    let n_lx = lx_x.len();
+    out.push_str(&format!(
+        "L_X-Regression (zweiter Reinigungsschritt, log10 L_X/erg/s je Wirt, Mittel ueber die L_X-Werte des Registers): {} Wirte mit numerischem L_X-Zeuge + wertbarer Detektion\n",
+        n_lx
+    ));
+    if n_lx < 3 {
+        out.push_str(&format!("  {} Wirte — zu wenige Paare (pending)\n", n_lx));
+    } else {
+        let r_lx = pearson_r(&lx_x, &lx_hit);
+        if !r_lx.is_finite() {
+            out.push_str("  log10-L_X-Spalte konstant — Pearson nicht definiert (pending)\n");
+        } else {
+            let mut rng_lx = CORR_RNG_SEED.wrapping_add(0x5EED);
+            let mut hit_perm = lx_hit.clone();
+            let mut over_abs = 0usize;
+            for _ in 0..trials {
+                shuffle(&mut hit_perm, &mut rng_lx);
+                let r = pearson_r(&lx_x, &hit_perm);
+                if r.is_finite() && r.abs() >= r_lx.abs() {
+                    over_abs += 1;
+                }
+            }
+            let p_lx = over_abs as f64 / trials as f64;
+            let hit_x: Vec<f64> = lx_x
+                .iter()
+                .zip(&lx_hit)
+                .filter(|(_, h)| **h == 1.0)
+                .map(|(x, _)| *x)
+                .collect();
+            let pres_x: Vec<f64> = lx_x
+                .iter()
+                .zip(&lx_hit)
+                .filter(|(_, h)| **h == 0.0)
+                .map(|(x, _)| *x)
+                .collect();
+            out.push_str(&format!(
+                "  Pearson r = {r_lx:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_lx:.4}\n",
+                trials
+            ));
+            out.push_str(&format!(
+                "  Hit-Wirte ({}): mean log10 L_X {:.2} | equilibrium-present ({}): mean log10 L_X {:.2}  (hoeheres L_X = aktivere Röntgen-Korona)\n",
+                hit_x.len(),
+                mean_v(&hit_x),
+                pres_x.len(),
+                mean_v(&pres_x)
+            ));
+            let mut lx_rows_txt: Vec<String> = Vec::new();
+            for (h, x) in lx_host.iter().zip(&lx_x) {
+                lx_rows_txt.push(format!("{h} log10L_X {x:.2}"));
+            }
+            out.push_str(&format!("  Wirte: {}\n", lx_rows_txt.join(" | ")));
+        }
+    }
+    if !lx_pending_hosts.is_empty() {
+        out.push_str(&format!(
+            "  L_X-pending (wertbar, kein numerischer L_X-Zeuge): {}\n",
+            lx_pending_hosts.join(", ")
+        ));
     }
     out.push_str(
         "  Gleichgewichts-Urteile bewegen sich unter den Aktivitaets-Zeugen nicht: thermochemisches Gleichgewicht hat keinen Aktivitaets-Kanal — die gemessene Regression ist die statistische Fassung; die Photochemie-Re-Erklaerung (XUV treibt SO2/CO2) bleibt ein nicht-Gleichgewichts-Modell (pending)\n",
