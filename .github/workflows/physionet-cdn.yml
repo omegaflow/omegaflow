@@ -100,11 +100,11 @@ jobs:
           gh release download physionet.org --repo omegaflow/sources \
             --pattern "bidsleep_mehrnacht_r[0-7].bin" --clobber 2>/dev/null || true
           cargo run -p omegaflow-harvest --release --bin bidsleep_compiler -- \
+            --out bidsleep_mehrnacht.bin --ci-mode \
             --merge bidsleep_mehrnacht_r0.bin bidsleep_mehrnacht_r1.bin \
               bidsleep_mehrnacht_r2.bin bidsleep_mehrnacht_r3.bin \
               bidsleep_mehrnacht_r4.bin bidsleep_mehrnacht_r5.bin \
-              bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin \
-            --out bidsleep_mehrnacht.bin --ci-mode
+              bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin
 
   ltmm:
     runs-on: ubuntu-latest
@@ -146,6 +146,6 @@ jobs:
           gh release download physionet.org --repo omegaflow/sources \
             --pattern "ltmm_movement_[0-3].bin" --clobber 2>/dev/null || true
           cargo run -p omegaflow-harvest --release --bin movement_monitoring_compiler -- \
+            --out ltmm_movement.bin --ci-mode \
             --merge ltmm_movement_0.bin ltmm_movement_1.bin \
-              ltmm_movement_2.bin ltmm_movement_3.bin \
-            --out ltmm_movement.bin --ci-mode
+              ltmm_movement_2.bin ltmm_movement_3.bin
