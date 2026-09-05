@@ -1471,6 +1471,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Fink ohne VPN erreichbar. Photochemie-Re-Erklaerung der SO2/CO2-Hits bleibt
   pending (kein XUV-Kanal im thermochem, 3 Wirte tragen L_X).
 
+
+- Galaxie-Scan (LSST/Fink) + XUV-Kataloge (2026-09-05, beide parallel): (A) Kegel-
+  Scan ueber echte Menge — Fink conesearch (anonym, Radius bis 5°), 62 Objekte
+  in 300″, 12 mit Mehrband-Daten erreichen das achromatische Tor, Verdikt 0
+  Kandidaten (quantitatives Limit); lsst_anomaly_probe + conesearch. Skalengrenze
+  ehrlich: voller Wochen-Galaxie-Scan (~1,4 Mio) braucht Fink-Account/Kafka oder
+  Rubin-Science-Platform (kein anonymes Vollflaechen-Endpoint, /api/v1/tags 500).
+  (B) XUV via HEASARC/XMM-Newton/ROSAT/eRASS1 + Polanski-KeckSpec: L_X gefunden
+  fuer GJ 3090, HIP 67522, L 98-59, V1298 Tau, TOI-270, GJ 9827, WASP-43; C/O
+  fuer 7 Wirte; Seed 77 -> 88 Zeilen. Pending ehrlich: X-ray absent <72″ fuer die
+  meisten hellen + M-Zwerg-Wirte, log R'HK numerisch blank in Brewer, C/O der
+  M-Zwerge absent. Photochemie-Re-Erklaerung: jetzt 10 Wirte mit L_X/F_X
+  evaluierbar.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
