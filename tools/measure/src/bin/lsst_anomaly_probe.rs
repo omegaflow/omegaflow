@@ -17,9 +17,11 @@ const LSST_API: &str = "https://lasair.lsst.ac.uk/api/query/";
 const LSST_API_OBJECT: &str = "https://lasair.lsst.ac.uk/api/object/";
 const FINK_API_SOURCES: &str = "https://api.lsst.fink-portal.org/api/v1/sources";
 const FINK_CONE: &str = "https://api.lsst.fink-portal.org/api/v1/conesearch";
+const FINK_FP: &str = "https://api.lsst.fink-portal.org/api/v1/fp";
 const FINK_BAND: &str = "r:band";
 const FINK_MJD: &str = "r:midpointMjdTai";
 const FINK_FLUX: &str = "r:scienceFlux";
+const FINK_PSF_FLUX: &str = "r:psfFlux";
 const FINK_RA: &str = "r:ra";
 const FINK_DEC: &str = "r:dec";
 const FINK_NDIA: &str = "r:nDiaSources";
@@ -27,27 +29,10 @@ const FINK_CLASS: &str = "f:main_label_classifier";
 const FINK_SIMBAD: &str = "f:xm_simbad_otype";
 const UA: &str = "omegaflow-nadel-v-lsst-scan/1.0";
 
-// Lasair-LSST (the operator's registered broker; LASAIR_LSST_TOKEN in
-// .secrets.local). The API host and the cone/object endpoints are measured
-// from the Lasair-LSST REST documentation
-// (lasair-lsst.readthedocs.io/en/main/core_functions/rest-api.html) and the
-// lsst-uk/lasair-examples notebooks (cone.ipynb, object.ipynb,
-// examine_object.ipynb) 2026-09-05: cone returns rows of {object,
-// separation}; the object record carries the lightcurve as diaSourcesList
-// rows with band, midpointMjdTai (MJD/TAI) and psfFlux — the same time layer
-// the Fink path already folds to TDB.
 const LAS_CONE: &str = "https://api.lasair.lsst.ac.uk/api/cone/";
 const LAS_OBJECT: &str = "https://api.lasair.lsst.ac.uk/api/object/";
 const LAS_OBJECT_PAUSE_MS: u64 = 1500;
 
-// Lasair-ZTF (the ZTF alert broker at lasair-ztf.lsst.ac.uk, authenticated with
-// the LASAIR_TOKEN register key). Measured 2026-09-05: the cone answers a form
-// POST ra/dec/radius/requestType with rows of {object, separation} (radius in
-// arcsec, max 1000); the object record answers a form POST objectId=… with the
-// alert candidates (fid 1=g, 2=r, 3=i; magpsf on a magzpsci zero point) and the
-// forced-photometry stream (forcediffimflux with forcediffimfluxunc on the same
-// magzpsci scale). The ZTF hourly token budget is 100 calls for a user token
-// (measured: HTTP 429 "wait an hour" after the budget is spent).
 const ZTF_CONE: &str = "https://lasair-ztf.lsst.ac.uk/api/cone/";
 const ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";
 const ZTF_OBJECT_PAUSE_MS: u64 = 2000;
@@ -81,10 +66,6 @@ const SUN_EPH_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin";
 const EARTH_EPH_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin";
-// Cerro Pachón / El Peñón geodetic (WGS84): the Vera C. Rubin Observatory site
-// coordinates, measured 2026-09-05 against the observatory's public coordinate
-// record (30°14'41" S, 70°44'58" W, mountain elevation 2682 m). The exact
-// facility-floor altitude differs by ~20 m — a ~60 ns constant, fold-invariant.
 const CERRO_PACHON_LAT_DEG: f64 = -30.24464;
 const CERRO_PACHON_LON_DEG: f64 = -70.74942;
 const CERRO_PACHON_ALT_M: f64 = 2682.0;
@@ -150,12 +131,6 @@ enum LightTravel {
     Absent,
 }
 
-// The Rømer term of the barycentric fold: the light-travel time from the
-// object's plane wavefront passing the SSB to passing the observatory,
-// n̂·(r_obs − r_sun)/c. The geodetic observatory constant (Cerro Pachón)
-// enters through the earth rotation model when the ephemeris carries body
-// orientation; without it the geocenter is used and the ±21 ms diurnal station
-// swing stays a named bound, not a fabricated removal.
 fn roemer_at(
     tdb: f64,
     ra_deg: f64,
@@ -259,8 +234,6 @@ fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
 }
 
 fn report_term_budget() {
-    // The term budget of the barycentric fold axis, computed from the measured
-    // constants (not estimated).
     let roemer_amp_s = AU_M / C_LIGHT;
     let v_earth_mps = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
     let weekly_drift_s = v_earth_mps * 7.0 * DAY_S / C_LIGHT;
@@ -387,9 +360,6 @@ struct Injection {
     n_b: usize,
 }
 
-// The negative control: a synthetic achromatic dip is placed on one coincident
-// visit of a real two-band object at depth `depth_sigma` in each band. The
-// scanner's achromatic + non-periodic dip cut must find it.
 fn inject_achromatic_dip(bytes: &[u8], depth_sigma: f64) -> Option<Injection> {
     if !depth_sigma.is_finite() || depth_sigma <= 0.0 {
         return None;
@@ -719,9 +689,6 @@ fn curl_form_post_rate_aware(url: &str, form: &str, token: &str) -> Option<(Stri
     curl_form_post_rate_aware_label(url, form, token, "Lasair-LSST")
 }
 
-// Same backoff discipline as the rate-aware helper, but the last HTTP answer
-// (a 429 included) is returned so the caller can name the standing budget
-// limit instead of reading a stall.
 fn curl_form_post_budget_aware(
     url: &str,
     form: &str,
@@ -782,9 +749,6 @@ struct LasairConeRow {
 
 fn parse_lasair_cone(body: &[u8]) -> Option<Vec<LasairConeRow>> {
     let text = std::str::from_utf8(body).ok()?;
-    // Lasair carries the object id as a JSON number > 2^53 — f64 parsing loses
-    // its last digits. Extract id + separation from the raw text so the id
-    // stays exact for the /api/object/ call that follows.
     let mut out: Vec<LasairConeRow> = Vec::new();
     let mut rest = text;
     while let Some(p) = rest.find("\"object\"") {
@@ -836,12 +800,6 @@ fn parse_lasair_cone(body: &[u8]) -> Option<Vec<LasairConeRow>> {
     Some(out)
 }
 
-// The lightcurve rows of a Lasair-LSST object: the official example notebook
-// (examine_object.ipynb) reads each diaSourcesList row's band, midpointMjdTai
-// and psfFlux — MJD/TAI, the same time layer the Fink path folds to TDB. The
-// parser stays honest to the measured keys; a real authenticated sample is
-// saved before it is read, and an unmapped shape stays pending (never a
-// fabricated row).
 fn parse_lasair_lightcurve(body: &[u8]) -> (Option<(f64, f64)>, Vec<(String, f64, f64)>) {
     let Ok(text) = std::str::from_utf8(body) else {
         return (None, Vec::new());
@@ -1003,14 +961,6 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
-// The periodogram power in the standard normalization (variance-normalized,
-// both quadrature terms, the τ shift that makes the cosine/sine basis
-// orthogonal). The statistic is amplitude-invariant: a uniform rescale of the
-// series moves the data and the variance together, so the FAP measures the
-// significance of the periodicity, not the photometric scale. The form it
-// replaces carried x² inside the denominator, making the power scale ~ n/σ² —
-// quiet fractional photometry (σ ~ 0.02) read FAP 0 on every row and the
-// aperiodic gate never opened (measured, committed a4b1dcc).
 fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let n = t.len();
     if n < 8 {
@@ -1065,16 +1015,18 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     (best_z, fap)
 }
 
-fn deepest_dip(res: &[(f64, f32)]) -> (f64, f64) {
+fn deepest_dip_at(res: &[(f64, f32)]) -> (f64, f64, f64) {
     let vals: Vec<f64> = res.iter().map(|&(_, r)| r as f64).collect();
     let (_, sd) = mean_sd(&vals);
     let mut min = res[0].1 as f64;
-    for &(_, r) in res {
+    let mut t_min = res[0].0;
+    for &(t, r) in res {
         if (r as f64) < min {
             min = r as f64;
+            t_min = t;
         }
     }
-    (min, min / sd.max(1e-300))
+    (min, min / sd.max(1e-300), t_min)
 }
 
 struct ConeObject {
@@ -1215,6 +1167,85 @@ fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Optio
         rows_ok.push((band.to_string(), mjd, flux));
     }
     Some((rows_ok, coord))
+}
+
+struct FpCensus {
+    total: usize,
+    per_band_rows: Vec<(String, usize)>,
+    per_band_science: Vec<(String, usize)>,
+    per_band_psf: Vec<(String, usize)>,
+    science_absent: usize,
+}
+
+fn census_count(census: &[(String, usize)], band: &str) -> usize {
+    let mut count = 0usize;
+    for (b, n) in census {
+        if b == band {
+            count = *n;
+        }
+    }
+    count
+}
+
+fn sorted_counts(c: HashMap<String, usize>) -> Vec<(String, usize)> {
+    let mut v: Vec<(String, usize)> = c.into_iter().collect();
+    v.sort();
+    v
+}
+
+fn parse_fink_fp_rows(
+    body: &[u8],
+) -> Option<(Vec<(String, f64, f64)>, Option<(f64, f64)>, FpCensus)> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return None;
+    };
+    let Some(JsonVal::Arr(rows)) = parse_json(text) else {
+        return None;
+    };
+    let mut detections: Vec<(String, f64, f64)> = Vec::new();
+    let mut coord: Option<(f64, f64)> = None;
+    let mut total = 0usize;
+    let mut per_band: HashMap<String, usize> = HashMap::new();
+    let mut per_science: HashMap<String, usize> = HashMap::new();
+    let mut per_psf: HashMap<String, usize> = HashMap::new();
+    let mut science_absent = 0usize;
+    for r in &rows {
+        let JsonVal::Obj(m) = r else { continue };
+        let (Some(band), Some(mjd)) = (obj_str(m, FINK_BAND), obj_f64(m, FINK_MJD)) else {
+            continue;
+        };
+        total += 1;
+        *per_band.entry(band.to_string()).or_insert(0) += 1;
+        if coord.is_none() {
+            if let (Some(ra), Some(dec)) = (obj_f64(m, FINK_RA), obj_f64(m, FINK_DEC)) {
+                coord = Some((ra, dec));
+            }
+        }
+        match obj_f64(m, FINK_FLUX) {
+            Some(s) if s.is_finite() && s > 0.0 => {
+                detections.push((band.to_string(), mjd, s));
+                *per_science.entry(band.to_string()).or_insert(0) += 1;
+            }
+            _ => science_absent += 1,
+        }
+        match obj_f64(m, FINK_PSF_FLUX) {
+            Some(p) if p.is_finite() && p > 0.0 => {
+                *per_psf.entry(band.to_string()).or_insert(0) += 1;
+            }
+            _ => {}
+        }
+    }
+    Some((
+        detections,
+        coord,
+        FpCensus {
+            total,
+            per_band_rows: sorted_counts(per_band),
+            per_band_science: sorted_counts(per_science),
+            per_band_psf: sorted_counts(per_psf),
+            science_absent,
+        },
+    ))
 }
 
 fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
@@ -1500,13 +1531,6 @@ fn cone_scan(
     }
 }
 
-// The Lasair-LSST cone flow (the operator's registered broker, LASAIR_LSST_TOKEN).
-// Without the token the authenticated queries stay pending — the reachability is
-// measured, never a fabricated query. With the token the flow is: /api/cone/
-// (requestType all) for the object ids, then /api/object/ per id for the
-// multi-band lightcurve rows (band, midpointMjdTai, psfFlux — measured from the
-// official example notebook) onto the same TDB fold layer and LSS1 dip cut the
-// Fink path uses.
 fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     println!(
         "\n=== Nadel V (LSST round): Lasair-LSST cone ({ra}, {dec}, {radius_arcsec} arcsec, up to {max_objects} object light curves) ==="
@@ -1730,10 +1754,6 @@ fn ztf_band_freq(band: &str) -> Option<f64> {
     Some(C_LIGHT / (lam_nm * 1e-9))
 }
 
-// The ZTF time layer: the alert and forced-photometry epochs are JD on the UTC
-// clock. The map jd → UTC unix → TDB seconds-since-J2000 (unix_to_tdb adds ΔT
-// 32.184 s + the leap second) is the same one path the ZTF1 compiler uses for
-// the IRSA HJD rows, so the lasair and the IRSA assets share one fold axis.
 fn ztf_jd_to_tdb(jd: f64, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb((jd - 2440587.5) * 86400.0)
 }
@@ -1746,18 +1766,6 @@ struct ZtfPhot {
     duplicates: usize,
 }
 
-// The lasair-ZTF object record, measured 2026-09-05: the candidates array
-// carries the alert detections (candid, jd, fid, magpsf on the magzpsci zero
-// point) interleaved with the jd-only upper-limit rows (diffmaglim, no flux);
-// the forcedphot array carries the historical forced photometry
-// (objectid, jd, fid, forcediffimflux, forcediffimfluxunc, magzpsci). Both
-// streams are converted to the same linear-counts scale — candidate counts
-// 10^(−0.4·(magpsf − magzpsci)), forced counts forcediffimflux — so the two
-// can share one per-band curve. A forced epoch enters only when its flux is a
-// measured detection (flux > 0 at ≥ ZTF_FORCED_SIGMA its uncertainty); the
-// jd-only upper limits and the sub-gate forced epochs stay absent, never a
-// fabricated 0.0. Alert and forced epochs of the same band and second are one
-// visit, not two.
 fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
     let Ok(text) = std::str::from_utf8(body) else {
         return None;
@@ -1765,9 +1773,6 @@ fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
     let Some(JsonVal::Obj(map)) = parse_json(text) else {
         return None;
     };
-    // A real object record carries the string objectId; a rate-limit body (the
-    // HTTP 429 {"message": …}) does not and must not read as an absent
-    // light curve.
     if !matches!(map.get("objectId"), Some(JsonVal::Str(_))) {
         return None;
     }
@@ -1911,15 +1916,6 @@ fn build_ztf_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<
     curves
 }
 
-// The lasair-ZTF cone flow (the register LASAIR_TOKEN). The cone answers a form
-// POST ra/dec/radius/requestType=all; each object record is fetched (a saved
-// real sample from an earlier measurement is reused when present, HTTP spared),
-// the multi-band g/r/i epochs over the object history are folded jd → TDB on
-// the ZTF1 compiler's one axis, and the record is assembled as an LSS1 asset
-// for the same achromatic non-periodic dip cut (scale-invariant FAP) that the
-// LSST round runs. The diurnal station term stays geocenter-named: this probe
-// carries no Palomar geodetic constant, and the dip cut's 1800 s coincidence
-// window is fold-invariant to the ±8 min seasonal Rømer term.
 fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     let cap = if max_objects == usize::MAX {
         "all".to_string()
@@ -2022,9 +2018,6 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     let mut budget_down = false;
     for row in rows.iter().take(chosen) {
         let obj_path = format!("/tmp/opencode/ztf_obj_{}.json", row.id);
-        // A saved real sample is reused when it parses to the measured schema;
-        // a stale saved body (e.g. an earlier HTTP 429 answer) is discarded and
-        // the object is fetched afresh.
         let mut body: Option<Vec<u8>> = std::fs::read(&obj_path).ok().filter(|b| !b.is_empty());
         let mut local = false;
         if let Some(b) = &body {
@@ -2036,8 +2029,6 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
             }
         }
         if body.is_none() && budget_down {
-            // The hourly budget is spent: objects without a saved real sample
-            // stay unmeasured (0 honored) — later local samples still run.
             pending_quota += 1;
             println!(
                 "Lasair-ZTF {}: the light curve is pending the hourly budget (HTTP 429) — the object stays unmeasured (0 honored)",
@@ -2195,24 +2186,6 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     }
 }
 
-// ANTARES (the NOIRLab broker) measured 2026-09-06: the web root
-// antares.noirlab.edu serves a Vue SPA shell whose config.json names the data
-// base https://api.antares.noirlab.edu/v1. The anonymous REST carries a loci
-// listing (/v1/loci, paginated page[offset]/page[limit]) and a per-locus alert
-// bundle (/v1/loci/{id}/alerts, the full bundle in one answer); the anonymous
-// cone/date/search parameters are inert (measured: ra/dec/radius/polygon
-// return the same global page). The alert records carry the ZTF packet — the
-// detection rows (ztf_candidate:…) with ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci
-// and the upper-limit rows (ztf_upper_limit:…) with ztf_diffmaglim. The
-// anonymous corpus is a bounded slice: locus ids ANT2019…, ANT2020… and
-// ANT2021*, newest-observation times MJD 59436–59463 (2021-08-25…2021-09-06),
-// num_alerts up to ~500; the per-locus
-// bundles collapse to one or very few distinct band epochs after duplicate
-// packet removal (the dense locus ANT2020bf6im: 486 alert rows, ~1 distinct
-// ztf_jd per filter), the rest upper limits. The ZTF alert stream needs a
-// Key+Secret (registered by e-mail to antares@noirlab.edu via the /support
-// page) — no consumer credential sits in .secrets.local, so the stream stays
-// pending and the anonymous REST is the measured reachable path.
 const ANTA_SPA: &str = "https://antares.noirlab.edu/";
 const ANTA_CONFIG: &str = "https://antares.noirlab.edu/config.json";
 const ANTA_BASE: &str = "https://api.antares.noirlab.edu/v1";
@@ -2281,12 +2254,6 @@ struct AntaresAlertPhot {
     duplicates: usize,
 }
 
-// The per-locus alert bundle (measured 2026-09-06): one answer carries the
-// full bundle. A detection row (id ztf_candidate:…) carries
-// ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci in its properties and folds to counts
-// on the magzpsci zero point — the same conversion the lasair-ZTF path uses;
-// a row without ztf_magpsf that carries ztf_diffmaglim is an upper limit and
-// stays absent (0 honored), never a fabricated 0.0 detection.
 fn parse_antares_alerts(body: &[u8], lsk: &LeapSeconds) -> Option<AntaresAlertPhot> {
     let Ok(text) = std::str::from_utf8(body) else {
         return None;
@@ -2342,11 +2309,6 @@ fn parse_antares_alerts(body: &[u8], lsk: &LeapSeconds) -> Option<AntaresAlertPh
         if !magpsf.is_finite() || !magzpsci.is_finite() || magpsf <= 0.0 || magzpsci <= 0.0 {
             continue;
         }
-        // The alert bundle repeats one physical epoch across many alert
-        // packets (measured 2026-09-06: the dense locus ANT2020bf6im carries
-        // 486 alert rows that collapse to ~one distinct ztf_jd per filter) —
-        // the same band and second are one visit, not two (the lasair-ZTF
-        // convention).
         let key = (band.as_bytes()[0], (jd * 86400.0).round() as i64);
         if !seen.insert(key) {
             out.duplicates += 1;
@@ -2383,11 +2345,6 @@ fn curl_get_retry(url: &str) -> Option<(String, Vec<u8>)> {
     None
 }
 
-// The anonymous ANTARES REST scan: sample the reachable loci corpus across
-// page offsets, fetch the per-locus alert bundles, fold the detection rows
-// jd → TDB on the ZTF1 compiler's one axis, assemble the LSS1 asset and run
-// the same achromatic non-periodic dip cut (scale-invariant FAP gate) the ZTF
-// historical round runs.
 fn antares_scan(max_loci: usize) {
     println!(
         "\n=== Nadel V (ANTARES round): anonymous loci REST + alert photometry, up to {max_loci} locus light curves ==="
@@ -2520,9 +2477,10 @@ fn antares_scan(max_loci: usize) {
     println!(
         "ANTARES loci corpus: {} loci listed across the sampled pages (meta count on the first page: {}), {} with ≥ 2 magnitude values; observed newest-observation window of the listing MJD {:.2} … {:.2}",
         listed,
-        corpus_count
-            .map(|c| c.to_string())
-            .unwrap_or_else(|| "absent".to_string()),
+        match corpus_count {
+            Some(c) => c.to_string(),
+            None => "absent".to_string(),
+        },
         listed_multi_mag,
         t_min,
         t_max
@@ -2630,9 +2588,10 @@ fn antares_scan(max_loci: usize) {
             loc.ra_deg,
             loc.dec_deg,
             loc.num_alerts,
-            loc.num_mag_values
-                .map(|n| n.to_string())
-                .unwrap_or_else(|| "absent".to_string())
+            match loc.num_mag_values {
+                Some(n) => n.to_string(),
+                None => "absent".to_string(),
+            }
         ));
         fetched += 1;
         total_det += phot.rows.len();
@@ -2723,9 +2682,10 @@ fn fink_scan(id: &str, save: Option<&str>) {
         println!("Fink/LSST {id}: the light curve answered HTTP {code} — pending");
         return;
     }
-    let raw_path = save
-        .map(str::to_string)
-        .unwrap_or_else(|| format!("/tmp/opencode/fink_lsst_sources_{id}.json"));
+    let raw_path = match save {
+        Some(s) => s.to_string(),
+        None => format!("/tmp/opencode/fink_lsst_sources_{id}.json"),
+    };
     if std::fs::write(&raw_path, &body).is_err() {
         println!("Fink/LSST {id}: the real sample was not saved ({raw_path})");
         return;
@@ -2760,10 +2720,8 @@ fn fink_scan(id: &str, save: Option<&str>) {
             "Fink/LSST {id}: the solar-system ephemeris for the light-travel (Rømer) term is not reachable — the fold axis stays clock-scale TDB (the seasonal ±8 min Rømer term is pending, named)"
         );
     }
-    let (rows_fold, skipped) = match &eph {
-        Some(e) => {
-            let ra_hint = coord.map(|(r, _)| r).unwrap_or(0.0);
-            let dec_hint = coord.map(|(_, d)| d).unwrap_or(0.0);
+    let (rows_fold, skipped) = match (&eph, coord) {
+        (Some(e), Some((ra_hint, dec_hint))) => {
             let fo = rows_to_tdb_roemer(&lsk, e, ra_hint, dec_hint, &rows_ok);
             println!(
                 "Fink/LSST {id}: light-travel (Rømer) layer — {fo_station} row(s) corrected with the Cerro Pachón observatory position, {fo_geo} with the geocenter (no earth orientation in the ephemeris — the ±21 ms diurnal swing stays a named bound), {fo_unc} kept clock-scale TDB (the ephemeris does not cover the epoch — pending)",
@@ -2773,7 +2731,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
             );
             (fo.rows, fo.skipped)
         }
-        None => rows_to_tdb(&lsk, &rows_ok),
+        _ => rows_to_tdb(&lsk, &rows_ok),
     };
     if skipped > 0 {
         println!(
@@ -2819,6 +2777,193 @@ fn fink_scan(id: &str, save: Option<&str>) {
     scan_lss1(&bin_path, false);
 }
 
+fn fink_fp_body(id: &str, body: &[u8], source_label: &str) {
+    let Some((rows, coord, census)) = parse_fink_fp_rows(body) else {
+        println!(
+            "Fink/LSST FP {id}: the forced-photometry sample is not a JSON array — parser pending on the real schema ({source_label})"
+        );
+        return;
+    };
+    let Some((ra, dec)) = coord else {
+        println!(
+            "Fink/LSST FP {id}: no FP row carries ra/dec — the object stays unplaced (pending)"
+        );
+        return;
+    };
+    let band_set: Vec<String> = {
+        let mut bands: Vec<String> = census
+            .per_band_rows
+            .iter()
+            .map(|(b, _)| b.clone())
+            .collect();
+        bands.sort();
+        bands.dedup();
+        bands
+    };
+    println!(
+        "Fink/LSST FP {id} ({source_label}): {total} forced-photometry row(s) at ra {ra:.4} dec {dec:.4}; {science_absent} row(s) with scienceFlux <= 0 stay absent (never 0.0)",
+        total = census.total,
+        science_absent = census.science_absent
+    );
+    println!("  FP per-band epoch census — FP rows | scienceFlux>0 (detection rows) | psfFlux>0:");
+    for b in &band_set {
+        println!(
+            "    band {b}: FP {} | science {} | psf {}",
+            census_count(&census.per_band_rows, b),
+            census_count(&census.per_band_science, b),
+            census_count(&census.per_band_psf, b)
+        );
+    }
+    for alt in [
+        format!("/tmp/opencode/fink_sources_{id}.json"),
+        format!("/tmp/opencode/fink_src_{id}.json"),
+    ] {
+        let Some(src_body) = std::fs::read(&alt).ok() else {
+            continue;
+        };
+        match parse_fink_source_rows(&src_body) {
+            Some((src_rows, _)) if !src_rows.is_empty() => {
+                let mut per: HashMap<String, usize> = HashMap::new();
+                for (band, _, _) in &src_rows {
+                    *per.entry(band.clone()).or_insert(0) += 1;
+                }
+                let counts = sorted_counts(per);
+                let parts: Vec<String> = counts.iter().map(|(b, n)| format!("{b} {n}")).collect();
+                println!(
+                    "  sources path (the detection epochs of the same object, {}): {} rows over {}",
+                    alt,
+                    src_rows.len(),
+                    parts.join(", ")
+                );
+            }
+            _ => {
+                println!(
+                    "  sources path ({alt}): the saved sample does not parse to band/time/flux rows (absent)"
+                );
+            }
+        }
+        break;
+    }
+    if rows.is_empty() {
+        println!(
+            "Fink/LSST FP {id}: every forced-photometry row reads scienceFlux <= 0 — the object carries no detection in the FP window (0 honored, the scan stays void)"
+        );
+        return;
+    }
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Fink/LSST FP {id}: the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return;
+    };
+    println!(
+        "Fink/LSST FP {id}: time layer — r:midpointMjdTai is MJD/TAI, mapped mjd → unix → TDB (naif0012.tls ΔT 32.184 s + leap) before the fold axis is built"
+    );
+    report_term_budget();
+    let eph = load_ephemeris_map();
+    if eph.is_none() {
+        println!(
+            "Fink/LSST FP {id}: the solar-system ephemeris for the light-travel (Rømer) term is not reachable — the fold axis stays clock-scale TDB (the seasonal ±8 min Rømer term is pending, named)"
+        );
+    }
+    let (rows_fold, skipped) = match &eph {
+        Some(e) => {
+            let fo = rows_to_tdb_roemer(&lsk, e, ra, dec, &rows);
+            println!(
+                "Fink/LSST FP {id}: light-travel (Rømer) layer — {fo_station} row(s) corrected with the Cerro Pachón observatory position, {fo_geo} with the geocenter (no earth orientation in the ephemeris — the ±21 ms diurnal swing stays a named bound), {fo_unc} kept clock-scale TDB (the ephemeris does not cover the epoch — pending)",
+                fo_station = fo.station_rows,
+                fo_geo = fo.geocenter_rows,
+                fo_unc = fo.uncorrected_rows
+            );
+            (fo.rows, fo.skipped)
+        }
+        None => rows_to_tdb(&lsk, &rows),
+    };
+    if skipped > 0 {
+        println!(
+            "Fink/LSST FP {id}: {skipped} forced-photometry row(s) carry no TDB mapping (the leap table is void at their epoch — absent)"
+        );
+    }
+    if rows_fold.is_empty() {
+        println!("Fink/LSST FP {id}: no FP row maps onto the TDB time layer (absent)");
+        return;
+    }
+    let curves = build_band_curves(ra, dec, &rows_fold);
+    if curves.is_empty() {
+        println!("Fink/LSST FP {id}: no detection row maps to a known LSST band (absent)");
+        return;
+    }
+    let bin_path = format!("/tmp/opencode/lsst_lightcurves_fp_{id}.bin");
+    if std::fs::write(&bin_path, serialize_lss1(&curves)).is_err() {
+        println!("Fink/LSST FP {id}: the LSS1 asset was not written ({bin_path})");
+        return;
+    }
+    println!(
+        "Fink/LSST FP {id}: LSS1 asset written {bin_path} — {} band curve(s) over {} detection row(s)",
+        curves.len(),
+        rows_fold.len()
+    );
+    scan_lss1(&bin_path, false);
+    println!(
+        "Fink/LSST FP {id}: the achromatic verdict above runs on the dense forced-photometry surface; a candidate stays pre-exclusion until the natural-class crossmatch (cone class/SIMBAD) removes the natural dimmers"
+    );
+}
+
+fn fink_fp_scan(id: &str, save: Option<&str>) {
+    let payload = format!("{{\"diaObjectId\": \"{id}\"}}");
+    let Some((code, body)) = curl_post_rate_aware(FINK_FP, &payload) else {
+        println!(
+            "Fink/LSST FP {id}: the forced-photometry query did not answer (measured stall) — pending"
+        );
+        return;
+    };
+    if code != "200" {
+        println!("Fink/LSST FP {id}: the forced photometry answered HTTP {code} — pending");
+        return;
+    }
+    let raw_path = match save {
+        Some(s) => s.to_string(),
+        None => format!("/tmp/opencode/fink_fp_{id}.json"),
+    };
+    if std::fs::write(&raw_path, &body).is_err() {
+        println!("Fink/LSST FP {id}: the real sample was not saved ({raw_path})");
+        return;
+    }
+    println!(
+        "Fink/LSST /api/v1/fp {id}: HTTP {code}, {} bytes, real sample saved: {raw_path}",
+        body.len()
+    );
+    fink_fp_body(id, &body, &raw_path);
+}
+
+fn fink_fp_scan_sample(path: &str) {
+    let body = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(_) => {
+            println!(
+                "Fink/LSST FP: no forced-photometry sample at {path} — the re-scan stays void (0 honored, pending)"
+            );
+            return;
+        }
+    };
+    let Ok(text) = std::str::from_utf8(&body) else {
+        println!("Fink/LSST FP: the sample at {path} is not UTF-8 — the parser stays pending");
+        return;
+    };
+    if parse_json(text).is_none() {
+        println!(
+            "Fink/LSST FP: the sample at {path} is not a JSON array — the parser stays pending"
+        );
+        return;
+    }
+    let Some(id) = extract_dia_ids(&body).first().cloned() else {
+        println!("Fink/LSST FP: the sample at {path} carries no r:diaObjectId — the re-scan stays void (absent)");
+        return;
+    };
+    println!("Fink/LSST FP re-scan of the saved real sample: {path} — parsed object {id}");
+    fink_fp_body(&id, &body, path);
+}
+
 fn usage() {
     eprintln!(
         "lsst_anomaly_probe — Nadel V over the Lasair-LSST broker\n\
@@ -2826,6 +2971,10 @@ fn usage() {
          \x20 lsst_anomaly_probe [--object <diaObjectId>] [--token <t>] [--save <path.json>]\n\
          Fink/LSST anonymous light curve (api.lsst.fink-portal.org), no token:\n\
          \x20 lsst_anomaly_probe --fink <diaObjectId> [--save <raw.json>]\n\
+         Fink/LSST anonymous forced photometry (api.lsst.fink-portal.org/api/v1/fp), no token:\n\
+         \x20 lsst_anomaly_probe --fink-fp <diaObjectId> [--save <raw.json>]\n\
+         re-scan of a saved /api/v1/fp forced-photometry sample (offline):\n\
+         \x20 lsst_anomaly_probe --fink-fp-scan <fink_fp_<diaObjectId>.json>\n\
          Fink/LSST anonymous cone scan over a real object set, no token:\n\
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
          Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
@@ -2918,7 +3067,10 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
         println!("Verdict: pending — the light curve is token-gated (HTTP {code})");
         return;
     }
-    let path = save.unwrap_or_else(|| "/tmp/opencode/lasair_lsst_object.json".to_string());
+    let path = match save {
+        Some(s) => s.to_string(),
+        None => "/tmp/opencode/lasair_lsst_object.json".to_string(),
+    };
     if std::fs::write(&path, &body).is_err() {
         println!("Verdict: pending — the real sample was not saved ({path})");
         return;
@@ -3053,8 +3205,8 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         let a_j: Vec<f32> = joint.iter().map(|&(_, v, _)| v).collect();
         let b_j: Vec<f32> = joint.iter().map(|&(_, _, v)| v).collect();
         let tj: Vec<f64> = joint.iter().map(|&(t, _, _)| t).collect();
-        let (dip_a, sig_a) = deepest_dip(&a_res);
-        let (dip_b, sig_b) = deepest_dip(&b_res);
+        let (dip_a, sig_a, t_a) = deepest_dip_at(&a_res);
+        let (dip_b, sig_b, t_b) = deepest_dip_at(&b_res);
         let ratio = if dip_b.abs() > 1e-9 {
             dip_a.abs() / dip_b.abs()
         } else {
@@ -3065,6 +3217,7 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
         let (_, fap) = lomb_scargle_fap(&tj, &a_j);
         let nicht_periodisch = fap >= FAP_GATE;
         let rho = spearman(&a_j, &b_j);
+        let dt_dip_s = (t_a - t_b).abs();
         scanned += 1;
         if achromatisch && nicht_periodisch {
             kandidaten += 1;
@@ -3076,7 +3229,7 @@ fn scan_lss1(path: &str, brief: bool) -> (Vec<(f64, f64)>, usize) {
             "still"
         };
         println!(
-            "  ra {:9.4} dec {:9.4} {ba}/{bb} {word} | dip {ba} {dip_a:.3} ({sig_a:.1}σ) {bb} {dip_b:.3} ({sig_b:.1}σ) ratio {ratio:.2} {} | FAP {fap:.2e} {}",
+            "  ra {:9.4} dec {:9.4} {ba}/{bb} {word} | dip {ba} {dip_a:.3} ({sig_a:.1}σ) at t {t_a:.0} s {bb} {dip_b:.3} ({sig_b:.1}σ) at t {t_b:.0} s (|Δt| {dt_dip_s:.0} s) ratio {ratio:.2} {} | FAP {fap:.2e} {}",
             g.ra,
             g.dec,
             if achromatisch {
@@ -3113,6 +3266,8 @@ fn main() {
     let mut save: Option<String> = None;
     let mut scan: Option<String> = None;
     let mut fink: Option<String> = None;
+    let mut fink_fp: Option<String> = None;
+    let mut fp_sample: Option<String> = None;
     let mut cone_ra: Option<f64> = None;
     let mut cone_dec: Option<f64> = None;
     let mut cone_radius: Option<f64> = None;
@@ -3151,6 +3306,14 @@ fn main() {
             }
             "--fink" => {
                 fink = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--fink-fp" => {
+                fink_fp = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--fink-fp-scan" => {
+                fp_sample = args.get(i + 1).cloned();
                 i += 1;
             }
             "--cone" => {
@@ -3264,6 +3427,14 @@ fn main() {
     }
     if let Some(id) = fink {
         fink_scan(&id, save.as_deref());
+        return;
+    }
+    if let Some(id) = fink_fp {
+        fink_fp_scan(&id, save.as_deref());
+        return;
+    }
+    if let Some(p) = fp_sample {
+        fink_fp_scan_sample(&p);
         return;
     }
     if let Some(ra) = cone_ra {
@@ -3382,9 +3553,6 @@ mod tests {
 
     #[test]
     fn fold_term_budget_is_computed_from_constants() {
-        // The term budget of the barycentric fold, measured from the constants
-        // (not estimated); the numbers are asserted in the physical bands and
-        // printed for the record.
         let roemer_amp_s = AU_M / C_LIGHT;
         let v_earth = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
         let weekly_drift_s = v_earth * 7.0 * DAY_S / C_LIGHT;
@@ -3422,9 +3590,6 @@ mod tests {
 
     #[test]
     fn roemer_light_time_sign_and_magnitude() {
-        // An object on the +x axis with the observatory 1 AU further out along
-        // +x must read a positive light-travel correction of ~499 s (the
-        // wavefront reaches the observatory after the SSB).
         let n = sightline_unit(0.0, 0.0);
         let sun = [0.0, 0.0, 0.0];
         let obs = [AU_M, 0.0, 0.0];
@@ -3434,7 +3599,6 @@ mod tests {
         let obs_other_side = [-AU_M, 0.0, 0.0];
         let tau2 = vec_dot(n, vec_sub(obs_other_side, sun)) / C_LIGHT;
         assert!(tau2 < 0.0);
-        // A source at the ecliptic pole never sees the ±8 min seasonal term.
         let n_pole = sightline_unit(0.0, 90.0);
         let tau_pole = vec_dot(n_pole, vec_sub(obs, sun)) / C_LIGHT;
         assert!(tau_pole.abs() < 1e-9);
@@ -3491,13 +3655,6 @@ mod tests {
 
     #[test]
     fn periodic_natural_variable_with_achromatic_dip_stays_excluded_by_the_fap_gate() {
-        // A genuinely periodic natural variable (the sinusoid) that carries a
-        // synthetic achromatic dip must NOT surface as a candidate: its series
-        // reads periodic on the variance-normalized periodogram, so the FAP
-        // gate (aperiodicity test) holds it out. This is the counterpart of
-        // the aperiodic injection control: the dip/achromatic gate alone is
-        // not sufficient — the FAP gate must still exclude the periodic
-        // naturals.
         let curves = synthetic_two_band_periodic(0xA1, 48, 7200.0);
         let base_path = "/tmp/opencode/lsst_periodic_gate_test_base.bin";
         let inj_path = "/tmp/opencode/lsst_periodic_gate_test_injected.bin";
@@ -3527,8 +3684,8 @@ mod tests {
         let (bb, cb) = bands[1];
         let a_res = residual_series_lsst(ca).expect("band a residual");
         let b_res = residual_series_lsst(cb).expect("band b residual");
-        let (dip_a, sig_a) = deepest_dip(&a_res);
-        let (dip_b, sig_b) = deepest_dip(&b_res);
+        let (dip_a, sig_a, _) = deepest_dip_at(&a_res);
+        let (dip_b, sig_b, _) = deepest_dip_at(&b_res);
         let ratio = if dip_b.abs() > 1e-9 {
             dip_a.abs() / dip_b.abs()
         } else {
@@ -3559,9 +3716,6 @@ mod tests {
 
     #[test]
     fn negative_control_achromatic_injection_reaches_the_dip_gate() {
-        // The negative control: a synthetic achromatic dip (12σ per band) is
-        // placed on one coincident visit. The measurement below names which
-        // scanner gates carry it and which gate stops the full candidate.
         let curves = synthetic_two_band_noise(0x51, 40);
         let base_path = "/tmp/opencode/lsst_negative_control_test_base.bin";
         let inj_path = "/tmp/opencode/lsst_negative_control_test_injected.bin";
@@ -3598,8 +3752,8 @@ mod tests {
         let (bb, cb) = bands[1];
         let a_res = residual_series_lsst(ca).expect("band a residual");
         let b_res = residual_series_lsst(cb).expect("band b residual");
-        let (dip_a, sig_a) = deepest_dip(&a_res);
-        let (dip_b, sig_b) = deepest_dip(&b_res);
+        let (dip_a, sig_a, _) = deepest_dip_at(&a_res);
+        let (dip_b, sig_b, _) = deepest_dip_at(&b_res);
         let ratio = if dip_b.abs() > 1e-9 {
             dip_a.abs() / dip_b.abs()
         } else {
@@ -3633,14 +3787,6 @@ mod tests {
 
     #[test]
     fn fap_gate_is_scale_invariant_and_white_noise_reads_aperiodic() {
-        // The Lomb-Scargle FAP in the standard normalization is
-        // amplitude-invariant: a uniform rescale of the residual series moves
-        // data and variance together and leaves the power (hence the FAP)
-        // unchanged. The form it replaces scaled ~ n/σ² and read quiet
-        // fractional photometry (σ ~ 0.02) as periodic (FAP 0) on every row.
-        // The gate it serves is the aperiodicity test: white noise of any
-        // photometric scale must read aperiodic (FAP above the gate), and the
-        // FAP must not move with the amplitude.
         let n = 40usize;
         let t: Vec<f64> = (0..n).map(|i| 1000.0 + i as f64 * 900.0).collect();
         let mut rng = 0x51u64.wrapping_mul(0x9E37_79B9_7F4A_7C15);
@@ -3677,8 +3823,6 @@ mod tests {
 
     #[test]
     fn lasair_cone_parser_reads_the_documented_row_shape() {
-        // The Lasair-LSST REST docs show the cone return as rows of
-        // {object, separation}; the parser must map exactly that.
         let body = br#"[{"object":"12345678901234","separation":2.393511865261539},{"object":"98765432109876","separation":0.5}]"#;
         let rows = parse_lasair_cone(body).expect("the documented row array parses");
         assert_eq!(rows.len(), 2);
@@ -3692,10 +3836,6 @@ mod tests {
 
     #[test]
     fn lasair_lightcurve_parser_reads_the_measured_diasource_columns() {
-        // The official lsst-uk example notebook (examine_object.ipynb) reads
-        // each diaSourcesList row's band, midpointMjdTai and psfFlux — the
-        // parser maps exactly those column names, keeps positive finite flux
-        // and never fabricates a row from an unmapped shape.
         let body = br#"{"diaObject":{"ra":148.87,"decl":2.52,"firstDiaSourceMjdTai":61024.0,"lastDiaSourceMjdTai":61205.0},"diaSourcesList":[{"band":"g","midpointMjdTai":61024.2459327064,"psfFlux":1.2e-3,"psfFluxErr":1.0e-5},{"band":"r","midpointMjdTai":61025.1,"psfFlux":0.0},{"band":"i","midpointMjdTai":61026.2,"psfFlux":-3.0e-4},{"band":"z","midpointMjdTai":61027.3,"psfFlux":4.5e-4}]}"#;
         let (coord, rows) = parse_lasair_lightcurve(body);
         let (ra, dec) = coord.expect("the diaObject ra/decl map");
@@ -3729,13 +3869,6 @@ mod tests {
 
     #[test]
     fn ztf_phot_parser_reads_the_measured_object_schema() {
-        // The lasair-ZTF object record measured 2026-09-05: candidates rows
-        // carry candid/jd/fid/magpsf/magzpsci; the jd-only rows are upper
-        // limits (diffmaglim, no flux); the forcedphot rows carry
-        // forcediffimflux with forcediffimfluxunc on the magzpsci scale. The
-        // parser keeps only measured positive in-band flux — the upper limits,
-        // the sub-3σ forced epochs and a repeated band/second visit stay
-        // absent, never a fabricated 0.0.
         let body = br#"{"objectId":"ZTF20test","candidates":[{"candid":2277225591215015002,"jd":2460031.7255903,"ra":148.8745407,"dec":2.5209382,"fid":1,"nid":2277,"magpsf":20.829599380493164,"sigmapsf":0.3,"magnr":20.2,"sigmagnr":0.03,"magzpsci":26.319599151611328,"isdiffpos":"t","ssdistnr":null,"ssnamenr":null,"drb":null},{"jd":2460016.7284028,"fid":2,"diffmaglim":20.54050064086914},{"candid":2,"jd":2460031.7255903,"ra":148.8745,"dec":2.5209,"fid":1,"magpsf":20.8,"magzpsci":26.3}],"forcedphot":[{"objectid":"ZTF20test","jd":2460646.9634838,"ranr":148.8745587,"decnr":2.5208508,"fid":2,"forcediffimflux":140.17,"forcediffimfluxunc":26.4,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460647.0,"ranr":148.8745,"decnr":2.5209,"fid":1,"forcediffimflux":10.0,"forcediffimfluxunc":10.0,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460648.0,"ranr":148.8745,"decnr":2.5209,"fid":2,"forcediffimflux":-5.0,"forcediffimfluxunc":3.0,"magzpsci":26.2}]}"#;
         let phot = parse_ztf_phot(body, &lsk()).expect("the measured schema parses");
         let (ra, dec) = phot.coord.expect("the first candidate ra/dec maps");
@@ -3769,9 +3902,6 @@ mod tests {
 
     #[test]
     fn ztf_jd_to_tdb_is_the_compiler_one_axis() {
-        // The jd → UTC unix → TDB map must agree with the ZTF1 compiler's own
-        // hjd → unix → TDB path (same numeric formula, same leap table), so a
-        // lasair asset and an IRSA asset share one fold axis.
         let lsk = lsk();
         let jd = 2460031.7255903;
         let tdb = ztf_jd_to_tdb(jd, &lsk).expect("a 2023 jd maps");
@@ -3783,10 +3913,6 @@ mod tests {
 
     #[test]
     fn antares_loci_parser_reads_the_measured_locus_listing() {
-        // The anonymous /v1/loci answer measured 2026-09-06: each data row is
-        // a locus_listing with the id (ANT…), the attributes ra/dec and the
-        // properties num_alerts/num_mag_values/newest_alert_observation_time.
-        // Rows that carry only part of the measured triple stay absent.
         let body = br#"{"data":[{"type":"locus_listing","id":"ANT2021y65ce","attributes":{"dec":9.258595,"properties":{"ztf_object_id":"ZTF21abxxjrh","num_mag_values":1,"num_alerts":14,"newest_alert_observation_time":59461.47165510012},"ra":37.284397}},{"type":"locus_listing","id":"ANT2021y665q","attributes":{"dec":3.6,"properties":{"num_mag_values":1,"num_alerts":27},"ra":38.7}}],"meta":{"count":10000}}}"#;
         let rows = parse_antares_loci(body).expect("the measured locus listing parses");
         assert_eq!(rows.len(), 2);
@@ -3804,13 +3930,6 @@ mod tests {
 
     #[test]
     fn antares_alert_parser_folds_detections_and_keeps_upper_limits_absent() {
-        // The measured alert bundle: a ztf_candidate row carries
-        // ztf_jd/ztf_fid/ztf_magpsf/ztf_magzpsci and folds to counts on the
-        // magzpsci zero point; a ztf_upper_limit row carries ztf_diffmaglim and
-        // no magpsf and stays absent (never a fabricated 0.0 detection); an
-        // unmapped fid is counted, not read as a band; a repeated band+second
-        // packet is one visit, not two (measured 2026-09-06: the dense locus
-        // ANT2020bf6im repeats one physical epoch across many alert packets).
         let body = br#"{"data":[{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650515","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.45389747619629,"ztf_magzpsci":26.320898056030273,"ant_passband":"R"}}},{"type":"alert","id":"ztf_candidate:ZTF21abxxjrh-1707471650516","attributes":{"properties":{"ztf_jd":2459461.9716551,"ztf_fid":2,"ztf_magpsf":19.4540,"ztf_magzpsci":26.3209}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780515","attributes":{"properties":{"ztf_jd":2459435.9347801,"ztf_fid":1,"ztf_diffmaglim":20.5221004486084,"ztf_magzpsci":26.23870086669922,"ant_passband":"g"}}},{"type":"alert","id":"ztf_upper_limit:ZTF21abxxjrh-1681434780516","attributes":{"properties":{"ztf_jd":2459435.935,"ztf_fid":9,"ztf_diffmaglim":20.5}}}]}"#;
         let phot = parse_antares_alerts(body, &lsk()).expect("the measured alert bundle parses");
         assert_eq!(
@@ -3843,5 +3962,63 @@ mod tests {
         let curves = build_ztf_band_curves(37.284397, 9.258595, &phot.rows);
         assert_eq!(curves.len(), 1);
         assert_eq!(curves[0].samples.len(), 1);
+    }
+
+    #[test]
+    fn fink_fp_parser_reads_the_real_forced_photometry_rows() {
+        let body = include_str!("lsst_fp_313998569858662581_6rows.json");
+        let (rows, coord, census) =
+            parse_fink_fp_rows(body.as_bytes()).expect("the real FP rows parse");
+        assert_eq!(census.total, 6);
+        assert_eq!(rows.len(), 6, "every real row reads a positive scienceFlux");
+        assert_eq!(census.science_absent, 0);
+        assert_eq!(census_count(&census.per_band_rows, "r"), 1);
+        assert_eq!(census_count(&census.per_band_rows, "g"), 2);
+        assert_eq!(census_count(&census.per_band_rows, "u"), 3);
+        assert_eq!(census_count(&census.per_band_science, "u"), 3);
+        assert_eq!(census_count(&census.per_band_psf, "r"), 0);
+        assert_eq!(census_count(&census.per_band_psf, "g"), 0);
+        let (ra, dec) = coord.expect("the FP rows carry ra/dec");
+        assert!((ra - 148.8745712297).abs() < 1e-9);
+        assert!((dec - 2.5208047616).abs() < 1e-9);
+        assert!((rows[0].1 - 61205.9837394019).abs() < 1e-9);
+        assert!(
+            (rows[0].2 - 46041.09).abs() < 1e-9,
+            "scienceFlux is the nJy flux"
+        );
+        assert_eq!(rows[0].0, "r");
+        let lsk = lsk();
+        let (folded, skipped) = rows_to_tdb(&lsk, &rows);
+        assert_eq!(skipped, 0);
+        assert_eq!(folded.len(), 6);
+        assert!(folded.iter().all(|(_, t, _)| t.is_finite()));
+    }
+
+    #[test]
+    fn fink_fp_negative_science_flux_stays_absent_and_psf_counts_separately() {
+        let body = br#"[{"r:band":"g","r:dec":2.5208047696,"r:diaForcedSourceId":1,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61204.9817515752,"r:psfFlux":3180.5,"r:psfFluxErr":314.0,"r:ra":148.8745712188,"r:scienceFlux":-320.1,"r:scienceFluxErr":314.9,"r:visit":1},{"r:band":"r","r:dec":2.5208047616,"r:diaForcedSourceId":2,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61205.9837394019,"r:psfFlux":-1.0,"r:ra":148.8745712297,"r:scienceFlux":0.0,"r:visit":2},{"r:band":"i","r:dec":2.5208,"r:diaForcedSourceId":3,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61206.0,"r:psfFlux":99.0,"r:ra":148.8746,"r:scienceFlux":5100.0,"r:visit":3},{"r:detector":7,"r:visit":4}]"#;
+        let (rows, _, census) = parse_fink_fp_rows(body).expect("the schema-identical rows parse");
+        assert_eq!(
+            census.total, 3,
+            "the row without band/time stays outside the census"
+        );
+        assert_eq!(census.science_absent, 2);
+        assert_eq!(
+            rows.len(),
+            1,
+            "only the positive scienceFlux row is a detection"
+        );
+        assert_eq!(rows[0].0, "i");
+        assert!((rows[0].2 - 5100.0).abs() < 1e-9);
+        assert_eq!(census_count(&census.per_band_rows, "g"), 1);
+        assert_eq!(census_count(&census.per_band_science, "g"), 0);
+        assert_eq!(
+            census_count(&census.per_band_psf, "g"),
+            1,
+            "the positive psfFlux of the g non-detection counts in its own estimator"
+        );
+        assert_eq!(census_count(&census.per_band_psf, "r"), 0);
+        assert_eq!(census_count(&census.per_band_psf, "i"), 1);
+        assert_eq!(census_count(&census.per_band_science, "i"), 1);
     }
 }
