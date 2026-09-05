@@ -1834,6 +1834,83 @@ fn ramp_gas_equilibrium(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Op
     Some(n)
 }
 
+// === Measured host-abundance reservoir (the C/O witness) ===
+//
+// The reservoir regression above scales every metal row by the host [Fe/H] and
+// so keeps the C/O ratio solar by construction. The C/O witness regression
+// overrides the carbon and oxygen rows with the host's measured [C/H] and
+// [O/H] (high-resolution abundance catalogs; the per-host rows and their
+// sources live in the probe's witness seed). Nitrogen keeps its measured [N/H]
+// when the same catalog row carries it, else the [Fe/H]-scaled solar value.
+// Sulfur carries no per-host abundance in any source tested for the 30-host
+// seed (measured 2026-09-05) and keeps the [Fe/H]-scaled solar value — a named
+// proxy, not a measurement. H stays the reference 1.0. All dex are relative to
+// the catalog's own solar scale; applying them to the archival SOLAR_* rows is
+// transparent and reproducible, with the solar zero-point caveat named at the
+// call site.
+pub fn elemental_budget_sulfur(
+    ch_dex: f64,
+    oh_dex: f64,
+    nh_dex: Option<f64>,
+    feh: f64,
+) -> Option<[f64; NELEM_S]> {
+    if !ch_dex.is_finite() || !oh_dex.is_finite() || !feh.is_finite() {
+        return None;
+    }
+    let z = 10f64.powf(feh);
+    if !z.is_finite() || z <= 0.0 {
+        return None;
+    }
+    let c = 10f64.powf(ch_dex);
+    let o = 10f64.powf(oh_dex);
+    let n = match nh_dex {
+        Some(v) if v.is_finite() => 10f64.powf(v),
+        _ => z,
+    };
+    if !c.is_finite() || c <= 0.0 || !o.is_finite() || o <= 0.0 || !n.is_finite() || n <= 0.0 {
+        return None;
+    }
+    Some([SOLAR_H, SOLAR_C * c, SOLAR_O * o, SOLAR_N * n, SOLAR_S * z])
+}
+
+// Sulfur-aware equilibrium at an explicitly measured element budget b in the
+// [H, C, O, N, S] ordering of scaled_solar_budget. The caller owns the budget
+// provenance; a non-finite or non-positive row is absent, never a value.
+pub fn equilibrium_composition_sulfur_budget(
+    t_k: f64,
+    p_pa: f64,
+    b: [f64; NELEM_S],
+) -> Option<Vec<f64>> {
+    let specs = sulfur_gas_specs();
+    solve_gas(&specs, &b, t_k, p_pa)
+}
+
+// Condensation-aware equilibrium at an explicitly measured element budget (the
+// 24-slot gas layout of the cool path). Below the 298.15-K sulfur-data floor
+// the sulfur row leaves the element basis, exactly as the scaled cool path.
+pub fn equilibrium_composition_condensed_budget(
+    t_k: f64,
+    p_pa: f64,
+    b: [f64; NELEM_S],
+) -> Option<CoolEquilibrium> {
+    if !t_k.is_finite() || t_k < COOL_T_MIN || t_k > COOL_T_MAX {
+        return None;
+    }
+    if !p_pa.is_finite() || p_pa <= 0.0 {
+        return None;
+    }
+    if b.iter().any(|x| !x.is_finite() || *x <= 0.0) {
+        return None;
+    }
+    let water_in_domain = t_k >= WATER_LIQ_T_MIN;
+    let bc: Vec<f64> = if water_in_domain {
+        b.to_vec()
+    } else {
+        b[..4].to_vec()
+    };
+    cool_solve(&bc, t_k, p_pa, water_in_domain)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2522,5 +2599,116 @@ mod tests {
         assert!(equilibrium_composition_halogen(1200.0, 0.0).is_none());
         assert!(equilibrium_composition_halogen(f64::NAN, P0_PA).is_none());
         assert!(equilibrium_composition_halogen(1200.0, f64::INFINITY).is_none());
+    }
+
+    #[test]
+    fn measured_budget_solar_rows_equal_the_solar_budget() {
+        let b = elemental_budget_sulfur(0.0, 0.0, Some(0.0), 0.0).unwrap();
+        for j in 0..NELEM_S {
+            assert!(
+                b[j] == sulfur_solar()[j],
+                "element {j}: {:.6e} vs solar {:.6e}",
+                b[j],
+                sulfur_solar()[j]
+            );
+        }
+        // All elements at the same dex reproduce the uniform [Fe/H] scaling.
+        let feh = 0.25f64;
+        let b2 = elemental_budget_sulfur(feh, feh, Some(feh), feh).unwrap();
+        let scaled = scaled_solar_budget(feh).unwrap();
+        for j in 0..NELEM_S {
+            assert!(
+                (b2[j] - scaled[j]).abs() / scaled[j] < 1e-12,
+                "element {j}: measured {:.6e} vs scaled {:.6e}",
+                b2[j],
+                scaled[j]
+            );
+        }
+    }
+
+    #[test]
+    fn measured_budget_refuses_non_finite_dex() {
+        assert!(elemental_budget_sulfur(f64::NAN, 0.0, Some(0.0), 0.0).is_none());
+        assert!(elemental_budget_sulfur(0.0, f64::INFINITY, Some(0.0), 0.0).is_none());
+        assert!(elemental_budget_sulfur(0.0, 0.0, None, f64::INFINITY).is_none());
+        // A non-finite nitrogen dex in the Option is the caller encoding absent
+        // (the probe stores None, never NaN); the builder carries the [Fe/H]
+        // scale for that element.
+        let b = elemental_budget_sulfur(0.0, 0.0, Some(f64::NAN), 0.0).unwrap();
+        for j in 0..NELEM_S {
+            assert!(
+                b[j] == sulfur_solar()[j],
+                "element {j}: {:.6e} vs solar {:.6e}",
+                b[j],
+                sulfur_solar()[j]
+            );
+        }
+        // A None nitrogen dex keeps the [Fe/H] scale, never a value.
+        let b = elemental_budget_sulfur(0.0, 0.0, None, 0.3).unwrap();
+        let scaled = scaled_solar_budget(0.3).unwrap();
+        assert!(
+            (b[3] - scaled[3]).abs() / scaled[3] < 1e-12,
+            "N keeps the [Fe/H] scale"
+        );
+    }
+
+    #[test]
+    fn budget_solvers_guard_the_domain() {
+        let b = elemental_budget_sulfur(0.0, 0.0, Some(0.0), 0.0).unwrap();
+        assert!(equilibrium_composition_sulfur_budget(300.0, P0_PA, b).is_none());
+        assert!(equilibrium_composition_sulfur_budget(4000.0, P0_PA, b).is_none());
+        assert!(equilibrium_composition_sulfur_budget(1200.0, 0.0, b).is_none());
+        assert!(
+            equilibrium_composition_sulfur_budget(1200.0, P0_PA, [0.0, 0.0, 0.0, 0.0, 0.0])
+                .is_none()
+        );
+        assert!(equilibrium_composition_condensed_budget(283.0, P0_PA, b).is_some());
+        assert!(
+            equilibrium_composition_condensed_budget(283.0, P0_PA, [0.0, 0.0, 0.0, 0.0, 0.0])
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn oxygen_rich_budget_raises_co2_over_solar() {
+        // C/O < solar (O-rich): the same C atoms must partition toward CO2 and
+        // away from CO; CO2 equilibrium rises against the solar budget.
+        let solar = equilibrium_composition_sulfur(1000.0, P0_PA).unwrap();
+        let specs = sulfur_gas_specs();
+        let pos = |name: &str| specs.iter().position(|s| s.name == name).unwrap();
+        let (ico, ico2) = (pos("CO"), pos("CO2"));
+        // [C/H] = -0.3, [O/H] = +0.3 -> C/O = solar C/O * 1e-0.6 ~ 0.11.
+        let b = elemental_budget_sulfur(-0.3, 0.3, Some(0.0), 0.0).unwrap();
+        let o_rich = equilibrium_composition_sulfur_budget(1000.0, P0_PA, b).unwrap();
+        assert!(
+            o_rich[ico2] > solar[ico2],
+            "O-rich CO2 {:.3e} must exceed solar {:.3e}",
+            o_rich[ico2],
+            solar[ico2]
+        );
+        assert!(
+            o_rich[ico] < solar[ico],
+            "O-rich CO {:.3e} must fall below solar {:.3e}",
+            o_rich[ico],
+            solar[ico]
+        );
+        // The returned mix conserves the input budget's element ratios: the
+        // element balance in the gas equals the budget rows per H atom.
+        let mut atoms = [0.0f64; NELEM_S];
+        for (i, s) in specs.iter().enumerate() {
+            for j in 0..NELEM_S {
+                atoms[j] += s.formula[j] as f64 * o_rich[i];
+            }
+        }
+        for j in 1..NELEM_S {
+            let expect = b[j] / b[0];
+            let got = atoms[j] / atoms[0];
+            assert!(
+                (got - expect).abs() / expect < 1e-6,
+                "element {j} conservation: {:.6e} vs budget ratio {:.6e}",
+                got,
+                expect
+            );
+        }
     }
 }
