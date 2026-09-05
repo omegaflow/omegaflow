@@ -1803,10 +1803,14 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   klammert es 1e-8. BEDINGUNG benannt, nicht behauptet: die Tiefe muss ~1000-1750 K erreichen.
   Barat favorisiert nur ~500 K innere T — liegt der tiefe Terminator unter ~1000 K, schliesst
   Gleichgewicht die Detektion nicht (dann Kinetik/Photochemie noetig). Arbiter = T-P-Profil,
-  pending. DEGENERANZ-Daten: Rohspektrum oeffentlich (MAST 10.17909/kjg5-8t66, JWST GO 2149
-  G395H), aber die gebinnte Spektrum-Tabelle/Posterior-Samples in keinem maschinenlesbaren
-  Archiv (Zenodo nur Corner-PDFs) — exakt benannte pending-Quelle, kein Spektrum fabriziert.
-  Test offen: Posterior-Korrelation rho(log OCS, log CO2/CO/H2O).
+  pending. DEGENERANZ-Daten KORRIGIERT (2026-09-06, gemessen): die fruehere Notiz
+  "Posterior-Samples in keinem maschinenlesbaren Archiv (Zenodo nur Corner-PDFs)" war
+  FALSCH/veraltet — das Zenodo-Reproduktionspaket des Papers (Record 16782958) traegt
+  die Posterior-Samples maschinenlesbar: atmospheric models/picaso/1-samples_iso_free.dat
+  (19361 Zeilen, 17 Spalten: teq,h2o,ch4,co2,co,nh3,so2,h2s,ocs,hcn,n2,c2h2,kappacld,xRp,
+  m_planet,offset,offset2), 1-samples_grid_new.dat (grid), plus final spectrum/ im
+  final-spectrum-Zip und 1-best_TP (P-T-Profil). Rohspektrum zusaetzlich MAST
+  10.17909/kjg5-8t66 (JWST GO 2149 G395H).
   T-P-ARBITER GEMESSEN-ENTSCHIEDEN (2026-09-06, Barat 2025 arXiv:2507.08837 Volltext):
   die Gleichgewichts-Schliessung ist widerlegt, die Schliessung ist photochemisch.
   Gemessen am Paper: (1) das favorisierte tiefe T_int ~500 K (Frei-Retrieval + selbst-
@@ -1821,9 +1825,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   laege 1-10 bar tief und braeuchte unrealistisch hohes Kzz, das CO2 zerstoert.
   Fazit: die ~500-K-Tiefe ist gemessen (nicht nur angenommen) unter der
   Gleichgewichts-Grenze; die natuerliche OCS-Schliessung laeuft ueber die photochemische
-  Route, nicht ueber Gleichgewicht. Bio 16->0 haelt. Ehrlich offen (nicht geschlossen):
-  nur 3.5 sigma; keine Posterior-Degeneranz rho(log OCS, log CO2/CO/H2O) (Samples nicht
-  maschinenlesbar); die Kinetik-Grenze (T_q aus tau_chem=Kzz/H_p^2) braucht Raten+g+P-T.
+  Route, nicht ueber Gleichgewicht. Bio 16->0 haelt.
+  DEGENERANZ-TEST GEMESSEN (2026-09-06, rho direkt aus 1-samples_iso_free.dat = die
+  OCS-Detektions-Posterior, log10-Abundanzen): rho(log OCS, log CO2) = +0.600,
+  rho(log OCS, log CO) = +0.529, rho(log OCS, log H2O) = +0.590, rho(log OCS, log CH4)
+  = +0.556, rho(log OCS, log SO2) = +0.511, rho(log OCS, log H2S) = +0.014. OCS median
+  log10 = -8.00 (10^-8.00), 16-84 % 10^-8.56..10^-7.58, 49.9 % der Posterior ueber 1e-8.
+  Lesart: die Degeneranz ist MODERAT-POSITIV (rho ~0.5-0.6), nicht ~0 und nicht stark-
+  negativ — ein reiner CO2/CO-Fluegel-Artefakt (OCS als Rest der starken Banden) wuerde
+  stark-negativ oder ~1-korreliert lesen; stattdessen sitzt OCS positiv mit der ganzen
+  C/O/S-Familie gekoppelt bei median 1e-8. Das OCS-Signal ist damit kein isoliert
+  unabhaengiger Nachweis, aber auch kein reines Banden-Artefakt; die 3.5-sigma-Natur und
+  die photochemische Erklaerung (Mukherjee-Onset <500 K, konsistent mit PICASO-Grid)
+  bleiben. Bio 16->0 haelt. Ehrlich offen (nicht geschlossen): nur 3.5 sigma; die
+  Kinetik-Grenze (T_q aus tau_chem=Kzz/H_p^2) braucht Raten+g+P-T.
 
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
