@@ -256,9 +256,12 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   19/3), α–Zeit–Sonnenzyklus (`befund-galileo-alpha-zeit-sonnenzyklus`:
   Fall-Magnitude Ära-konfundiert, kollabiert auf ~2×), Mode-3
   (`befund-galileo-mode3-und-s1-replikation`: Daten-Dünn-Grenze, 17 isolierte
-  Tage), S1-Isolat (repliziert nicht). Offen (pending): Geometrie-innerhalb-Pass
-  (Elevation, G1 — gemessen daten-begrenzt wenn nötig), late-conjunction
-  Station-Split (G4), Mode-2/3-Ära-Halte-Kontrast jenseits 1996 (G4, daten-dünn).
+  Tage), S1-Isolat (repliziert nicht). Late-Conjunction-Split gemessen
+  (`befund-galileo-late-conjunction-split`: Station 63 trägt den 1997er-Boden,
+  ruhiger Kern = starker Zustand, Fenster zustands-gemischt). Offen (pending):
+  Geometrie-innerhalb-Pass (Elevation, G1 — gemessen daten-begrenzt wenn nötig),
+  late-conjunction Station-Split (G4), Mode-2/3-Ära-Halte-Kontrast jenseits 1996
+  (G4, daten-dünn).
   Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
