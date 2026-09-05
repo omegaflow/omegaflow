@@ -1,10 +1,10 @@
 <!--
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
-  date: 2026-09-03
-  version: 2
-  sha256: 559fbe628851dc2cdf58819d82c2153f33028e90a924d127d76adae055d02d61
-  fam-machine: pre-fix
+  date: 2026-09-05
+  version: 3
+  sha256: a6ef15b45cfbc9656df1358a5851ea4c7a83c6adbf967fd7007ee705b237ad77
+  fam-machine: pre-fix (EVE-2011); AIA-2014 fam nachgelegt 2026-09-05 post-fix
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
 -->
@@ -15,7 +15,7 @@
 
 ## Abstract
 
-The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (chromosphere, log T = 4.16) to 94 Å (hot corona, log T = 6.81) — at 10 s cadence, over 109 flares (2011), with a phase-randomized null. The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Against the full-round family bound (fam = 4.70e-1), a single arrow survives: 1032→131 Å (O VI → Fe VIII, the transition-region→corona boundary) flows upward at zero lag (D = 5.11e-1); every other rung — including the 977→1032 Å entry and the hottest rungs' downward cooling — is silent at fam. SDO/AIA (304 Å, 2014, 194 flares, 24-s cells) resolves the coronal rung EVE could not: 193→211→335→94 flows upward (D = +1.50e-1/+1.13e-1/+1.42e-1) at ~96 s. The two instruments do not yet tell one story (335→94 Å flows down in EVE, up in AIA); the Alfvén-versus-nanoflare question stays open.
+The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (chromosphere, log T = 4.16) to 94 Å (hot corona, log T = 6.81) — at 10 s cadence, over 109 flares (2011), with a phase-randomized null. The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Against the full-round family bound (fam = 4.70e-1), a single arrow survives: 1032→131 Å (O VI → Fe VIII, the transition-region→corona boundary) flows upward at zero lag (D = 5.11e-1); every other rung — including the 977→1032 Å entry and the hottest rungs' downward cooling — is silent at fam. SDO/AIA (2014, 194 GOES flares, 24-s cells) reproduces the coronal-rung amplitudes EVE could not resolve (193→211→335→94 at +1.50e-1/+1.13e-1/+1.42e-1, ~96 s) but, against its own full-round family bound (fam = 1.89e-1), every AIA rung — including 335→94 — is silent. The hottest rung's direction is therefore established by neither instrument at its family bound: the apparent 335→94 reversal (down in EVE, up in AIA) dissolves once AIA carries a family bound. EVE's single fam arrow (1032→131 Å, the transition-region→corona entry) stands; the coronal propagation rung and the Alfvén-versus-nanoflare distinction remain unmeasured at fam.
 ## 1. Introduction
 
 The coronal heating problem is the temperature inversion of the outer solar
@@ -210,29 +210,42 @@ The lag structure is front-loaded at lag 0, not a ~100 s peak.
 
 ### 4.2 AIA-2014 (194 GOES events, 24-s cells)
 
-The imaging ladder measures the coronal rung that EVE's degraded lines could
-not. The hot corona flows *up* the ladder, at the coronal crossing time:
+The imaging ladder reads the coronal rung that EVE's degraded lines could not.
+Measured over the full 2014-03-01–05-30 window (7 bands, GOES-15 trigger,
+194 events, our own fam), the coronal rungs show a coherent upward *pattern*
+with the ~96 s crossing lag — but every rung stays below the full-round
+family bound. No AIA arrow is fam-significant:
 
-| pair | D | lag | verdict |
+| pair | D(peak) | lag | fam verdict |
 |---|---|---|---|
-| **193→211** | **+1.50e-1** | ~96 s | upward (over null) |
-| **211→335** | **+1.13e-1** | ~144 s | upward (over null) |
-| **335→94** | **+1.42e-1** | ~96 s | upward (over null) |
-| 304→131 (cool side) | — | — | silent / negative |
+| 304→131 (cool side) | −9.79e-2 | 192 s | silent / negative |
+| 131→171 | −9.19e-2 | 192 s | silent / negative |
+| 171→193 | −4.17e-2 | 120 s | silent / negative |
+| 193→211 | +1.50e-1 | ~96 s | below fam |
+| 211→335 | +1.13e-1 | ~144 s | below fam |
+| **335→94** | **+1.42e-1** | ~96 s | **below fam (fam = 1.89e-1)** |
 
-Most cells clear the phase-randomized null. The ~96 s lag of 193→211 is the
-coronal Alfvén crossing that the EVE-2011 run left silent. The cool side
-(304→131) is silent or negative — the same full-disk damping that caps every
-sun-as-a-star channel.
+fam = 1.8925e-1 — the strongest surrogate D of the full round (6 pairs × 13
+lags × 10 surrogates, post-fix RNG). The hot-corona rungs (193→211→335→94)
+are the ladder's largest D and carry the ~96 s coronal crossing lag, but
+none clears the family bound. The GOES-13 trigger (208 events, its own fam =
+1.80e-1) reproduces the same picture: 335→94 peaks at +1.40e-1, below fam.
+The cool side (304→131) is silent or negative — the same full-disk damping
+that caps every sun-as-a-star channel.
 
-### 4.3 The two instruments disagree on one rung
+### 4.3 The hottest rung is not established at fam
 
-The same pair **335→94 Å** is silent at fam in EVE-2011 (D down to −3.15e-1,
-below fam) but flows *upward* in AIA-2014 (D = +1.42e-1). The two
-measurements are two instruments, two years, two null models; they are not a
-single picture and are not forced into one. The agreement (energy flows
-upward, sub-minute, null-significant at the boundary rung) and the
-disagreement (the direction of the hottest rung) are reported side by side.
+Earlier this AIA run was read against a per-lag surrogate null (no family
+bound), which marked 335→94 "upward" while EVE-2011's same rung was silent.
+Restoring the family bound on the AIA side removes the disagreement: AIA's
+335→94 (peak +1.42e-1) is below its own fam (1.89e-1), just as EVE's
+335→94 (down to −3.15e-1) is below its own fam (4.70e-1). Neither instrument
+measures the hottest rung's direction at its family bound. The two
+measurements no longer disagree on a reversal — each independently fails to
+establish the hot-rung direction at fam. What remains across both is the
+fam-significant entry at the transition-region→corona boundary (EVE,
+1032→131) and, on the AIA side only, a below-fam but coherent coronal-rung
+pattern carrying the ~96 s crossing lag.
 
 ## 5. Discussion
 
@@ -243,16 +256,17 @@ disagreement (the direction of the hottest rung) are reported side by side.
 (Δ 0.63 in log T). The 977→1032 entry
 (peak 3.91e-2) and the hottest rungs' downward D are all below fam, so they
 are reported as silent, not as negative findings. The ~100 s coronal
-crossing is not resolved in these sun-as-a-star lines; the AIA imaging
-ladder (§4.2) is the instrument that sees it.
+crossing is not resolved as a fam-significant arrow in these sun-as-a-star
+lines; the AIA imaging ladder (§4.2) shows it only as a below-fam pattern.
 
 **What this does and does not decide.** The measurement confirms the
 *upward* direction at the transition-region→corona boundary. It does *not*
 separate Alfvén waves from nanoflares decisively: a lag-0 front-loaded
 excess is the co-heating signature, and that is exactly what 1032→131
-shows. The distinction requires the coronal crossing time itself, which
-needs either sub-10 s cadence or the AIA imaging ladder (healthy 304 Å,
-independent instrument — the named next step).
+shows. The distinction requires the coronal crossing time itself as a
+fam-significant rung — a crossing that appears only as a below-fam AIA
+pattern (§4.2), so it needs a larger event ensemble (or the spatially
+resolved active-region path) before it is established.
 
 **Instrument degradation is the honest constraint.** The full ladder is
 measurable only in the 2011 MEGS-A era; 2014 is degraded (304 Å flat at 1.2×
@@ -269,39 +283,39 @@ D, and the phase-randomized null that calibrates it, isolate the *directional*
 residual — the information the cooler rung carries about the hotter rung's
 future that the shared envelope does not.
 
-**Two instruments, one bracketed path.** Read together, the two measurements
-bracket the full energy path: EVE-2011 sees the *entry* at the
-transition-region→corona boundary (1032→131 at lag 0), AIA-2014 sees the
-*propagation* through the corona (193→211 at ~96 s). That ordering — entry
-first, propagation after — is the signature of heating from below, and the
-~96 s coronal crossing is the first resolution of the Alfvén timescale that
-the whole series sought. But the bracket is a hypothesis spanning two
-separate measurements, not a single measured chain, and it rests against the
-335→94 reversal (§4.3). Candidate readings of the reversal, named not
-chosen: (i) era — 2011 is rising solar maximum, 2014 declining, and the
-corona's energy balance differs between them; (ii) instrument — EVE's 335/94
-lines are the degraded MEGS-A rungs, AIA's are healthy, so the reversal may
-be a calibration artifact of the very degradation that forced the two-era
-design; (iii) phase — the EVE window catches the cooling leg, the AIA window
-the impulsive leg of the same heating event. None is testable within these
-two measurements.
+**Two instruments, one fam-significant arrow.** Read together, the two
+measurements do not bracket a full energy path: EVE-2011 carries the single
+fam-significant flow (1032→131 Å, the transition-region→corona entry at lag
+0); AIA-2014 reproduces the coronal-rung amplitudes and the ~96 s crossing
+lag but below its own family bound (§4.2). The earlier "entry first,
+propagation after" bracket assumed AIA's coronal flow was fam-significant;
+with AIA's family bound restored it is not, so the propagation leg is a
+coherent but unestablished pattern, not a second measured arrow. No reversal
+remains to reconcile: neither instrument measures the 335→94 direction at
+fam, so the candidate readings of a reversal (era, degradation, phase) are
+moot — there is nothing to explain beyond two independent silences.
 
 ## 6. Limitations
 
-- **Two instruments, one unresolved rung.** EVE-2011 and AIA-2014 agree on
-  the upward, sub-minute, null-significant flow; they disagree on the
-  direction of the hottest rung (335→94 Å, §4.3). The reversal is named, not
-  resolved; a single-instrument, single-era reconciliation is the next
+- **Two instruments, one fam arrow.** EVE-2011 carries the sole
+  fam-significant flow (1032→131 Å). AIA-2014 reproduces the coronal-rung
+  amplitudes and ~96 s lag but below its own family bound (§4.2); the hottest
+  rung (335→94) is established by neither instrument at fam. A single
+  instrument that measures a fam-significant coronal rung is the next
   measurement, not yet made.
 - **One era each.** EVE is 2011 (healthy MEGS-A) and AIA is 2014 (healthy
   imaging); the 2014 EVE era is degraded and excluded, so no single era
-  carries both ladders. The era difference is one candidate explanation of
-  the 335→94 reversal, not a control.
+  carries both ladders. The era difference no longer explains a 335→94
+  reversal (there is none at fam); it remains a limit on a single-era
+  coronal-rung arrow.
 - **Full-round family bound.** The null reported is the strongest surrogate
-  D over all pairs × lags of the round (fam = 4.6982e-1), the canonical
-  family bound shared with the system's other blades. Under this single
-  bound, only the 1032→131 Å lag-0 arrow survives; the earlier per-lag
-  reading, which marked several weaker D as significant, is superseded.
+  D over all pairs × lags of the round — the canonical family bound shared
+  with the system's other blades. EVE-2011's fam = 4.6982e-1 (pre-fix RNG,
+  conservative-high); under it only the 1032→131 Å lag-0 arrow survives.
+  AIA-2014 is now measured under its own full-round fam = 1.8925e-1 (194
+  events, post-fix RNG), under which all six rungs — 335→94 included — are
+  silent; a per-lag reading that earlier marked several AIA D as significant
+  is superseded by this bound, just as it was for EVE.
 - **109 events, one solar-maximum window.** The event ensemble is a single
   90-day window; a second window or a cycle-spanning ensemble is not
   measured.
@@ -326,17 +340,16 @@ measures a directed, null-significant upward energy flow. On EVE-2011, against
 the full-round family bound (fam = 4.70e-1), a single arrow survives:
 1032→131 Å (O VI → Fe VIII) flows upward at zero lag, at the
 transition-region→corona boundary, while every other rung — including the
-hottest rungs' downward D — is silent at fam. On AIA-2014 the hot corona
-flows up the ladder (193→211→335→94 at ~96 s) while the cool side is silent.
-Read together, the two measurements bracket the energy path — entry at the
-transition-region→corona boundary, propagation through the corona on the
-Alfvén crossing time — the signature of heating from below. But the bracket
-is a hypothesis across two instruments and two years, and it rests against
-one unresolved reversal: the same hottest rung, 335→94 Å, flows down in
-EVE-2011 and up in AIA-2014. The energy enters the corona from below, fast,
-and propagates through it at the Alfvén timescale — the
-Alfvén-versus-nanoflare dichotomy is now a question of one instrument and one
-era, not a missing measurement.
+hottest rungs' downward D — is silent at fam. On AIA-2014 the coronal rungs
+reproduce the hot-side amplitudes and the ~96 s crossing lag (193→211→335→94
+at +1.50e-1/+1.13e-1/+1.42e-1) but fall below AIA's own family bound (fam =
+1.89e-1): no AIA rung, and no hottest-rung direction, is established at fam.
+The energy enters the corona from below, fast, at the
+transition-region→corona boundary; whether it then propagates through the
+corona on the Alfvén crossing time — and along which leg — remains below the
+fam threshold. The Alfvén-versus-nanoflare dichotomy is now a question of one
+more fam-significant coronal rung, not of an unresolved two-instrument
+reversal.
 
 ## References
 
@@ -350,8 +363,8 @@ era, not a missing measurement.
 
 *Data and code:* the instrument, probes and register live in the omegaflow
 repository (`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
-`tools/work/src/bin/eve_compiler.rs`, `tools/work/src/bin/corona_ladder_probe.rs` (EVE-2011);
-`tools/work/src/bin/aia_compiler.rs`, `tools/work/src/bin/aia_ladder_probe.rs`, the FITS-Rice
+`tools/harvest/src/bin/eve_compiler.rs`, `tools/measure/src/bin/corona_ladder_probe.rs` (EVE-2011);
+`tools/harvest/src/bin/aia_compiler.rs`, `tools/measure/src/bin/aia_ladder_probe.rs`, the FITS-Rice
 decoder in `src/archivar/fits.rs` (AIA-2014); survey
 `docs/surveys/survey-ein-blatt-korona-heizung.md`). All verdicts are
 machine-measured; the register language of the system is German, this
