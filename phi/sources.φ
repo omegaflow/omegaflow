@@ -3323,6 +3323,11 @@ format lightcurve
 ttl 604800
 at sun
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves_fresh.bin
+format lightcurve
+ttl 604800
+at sun
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
 at sun
