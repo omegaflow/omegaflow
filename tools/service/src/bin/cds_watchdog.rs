@@ -10,6 +10,7 @@ const ASSETS: [(&str, &str); 9] = [
     ("first14.json", "ssd.jpl.nasa.gov"),
     ("chandra_csc.json", "ssd.jpl.nasa.gov"),
     ("ztf_lightcurves.bin", "irsa.ipac.caltech.edu"),
+    ("ztf_lightcurves_fresh.bin", "irsa.ipac.caltech.edu"),
     ("dr3_stars.bin", "ssd.jpl.nasa.gov"),
     ("twomass_psc.bin", "irsa.ipac.caltech.edu"),
     ("ephemeris_sun.bin", "ssd.jpl.nasa.gov"),

@@ -1650,6 +1650,17 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Catalog-Lauf ueber die volle Palomar-ZTF-Footprint (ohne --limit 32) erschliesst
   neue Objekte samt i-Band: die echte historische Mehrband-Flaeche fuer Nadel V.
 
+
+- Nadel-V FRISCHER ZTF-Harvest aufs CDN (2026-09-05): dedizierter Workflow
+  ztf-fresh-cdn.yml (1 Job, workflow_dispatch, NICHT kernel-flatten) erntete die
+  frische Region ra 210 dec +30 (Radius 0.02) via IRSA anonym — 78 Kurven, 12074
+  Samples, g+r+i — und uploadete als NEUES Asset ztf_lightcurves_fresh.bin
+  (irsa.ipac.caltech.edu, CDN HTTP 200, 148328 B). Das stale 7-Kegel-Asset
+  ztf_lightcurves.bin bleibt unangetastet (A=A: neue Messung = eigener Name).
+  sources.phi-Block + cds_watchdog-Paar registriert. Naechster Schritt: den
+  frischen Harvest durch die Nadel-V-Achromatizitaets-Logik (lsst_anomaly_probe
+  --ztf / ztf_anomaly_probe) laufen lassen.
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
