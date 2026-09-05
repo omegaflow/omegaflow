@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: aa0c8ffce2ae95a04cf6e2f957b70ab336cfca139995152a33728a52c7b1200d
+  sha256: ae9fa0c50ddfeb97b6a12379decc682671af080e1f832e0c726d3a5eba55f144
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -11,6 +11,17 @@
 
 **Datum:** 2026-08-27 · **Axiom:** A = A
 **Verdikt-Ordnung:** 0 honored — kein Wert erfunden; fehlende Felder bleiben `pending`.
+
+> **Richtungskorrektur (registriert, 2026-09-05):** Die Pfeilrichtung folgt
+> der maßgeblichen Bibliothek `transfer_entropy_lag(x, y) = TE(y → x)`
+> (zweites Argument = Quelle). §3.5 (co-lokaler Gauge) lief mit
+> `te_pair_probe`, dessen gedruckte „TE(a→b)"-Spalte **gespiegelt** zum
+> Schätzer ist (`te_pair_probe.rs` beschriftet `transfer_entropy_lag(a,b)`
+> als „a→b", misst aber b→a). Die Spalten in §3.5 sind korrigiert: der
+> registrierte Wert 0.265 (Lag 24) ist **Pegel→Regen**, nicht
+> Niederschlag→Pegel; die echte Niederschlag→Pegel-Richtung ist bei Lag 24
+> unter der Schwelle und fällt unter Konditionierung. Verifikation und
+> Konditionierungslauf: `docs/befund/befund-grat-trishuli-konditionierung.md`.
 
 ---
 
@@ -33,10 +44,13 @@ Ereignisses: Zeit (JD TDB), Ort (ICRS geozentrisch) und Kraft (force_type).
    **5.2 `ms_vx`**, **kein Moment-Tensor**; M5.2/02:52:10 UTC, lat 28.271/
    lon 85.515, depth 0. Der Kollaps (02:52:10) geht der Flut (~03:15) voraus.
    Die „M4.4" war die vorläufige Magnitude desselben Ereignisses.
-3. **Der Regen→Pegel-Pfeil ist gemessen** — DHM-Bhotekoshi-Gauge (co-lokal),
-   **Niederschlag→Pegel bei Lag 24 h** (Vor-Flut-Fenster; der Flut-Peak selbst
-   wurde nicht aufgezeichnet). Der räumliche Response (CEMS EMSR927) ist
-   ausgeliefert (Grading, Kollabpunkt außerhalb — kein Flut-Footprint).
+3. **Der Regen→Pegel-Pfeil am co-lokalen Gauge fällt zur Stille
+   (korrigiert)** — die registrierte „Niederschlag→Pegel 0.265 (Lag 24)" war
+   Pegel→Regen (Richtungsfehler aus `te_pair_probe`-gespiegelten Spalten,
+   siehe Richtungskorrektur); die echte Vorwärts-Richtung ist bei Lag 24
+   unter der Schwelle und fällt unter Konditionierung. Der räumliche
+   Response (CEMS EMSR927) ist ausgeliefert (Grading, Kollabpunkt
+   außerhalb — kein Flut-Footprint).
 
 ---
 
@@ -198,26 +212,33 @@ lat 28.2713/lon 85.3776), Pegel (m), 10-min-Auflösung. Die Reihe wurde über
 die offene Seite gezogen (769 Punkte, 08-20 18:45 … 08-26 02:55 UTC) und mit
 dem stündlichen Rasuwa-Niederschlag auf den Überlapp (n = 129) gelegt.
 
-Versiegeltes Protokoll (`te_pair_probe`, Surrogate mean+2σ):
+Versiegeltes Protokoll (`te_pair_probe`, Surrogate mean+2σ); Spalten
+korrigiert (Richtungskorrektur oben — `te_pair_probe` beschriftet „a→b"
+gespiegelt, die erste Zahlenspalte ist im Schätzer Pegel→Regen):
 
-    lag   TE(Niederschlag→Pegel) schwelle  TE(Pegel→Niederschlag) schwelle  Befund
-    1     1.60e-1   1.76e-1   1.20e-1   1.11e-1   Pegel→Niederschlag
+    lag   TE(Pegel→Regen) schwelle  TE(Niederschlag→Pegel) schwelle  Befund
+    1     1.60e-1   1.76e-1   1.20e-1   1.11e-1   Niederschlag→Pegel
     3     1.82e-1   1.83e-1   1.79e-1   1.94e-1   kein Befund
-    6     1.52e-1   2.01e-1   1.95e-1   1.71e-1   Pegel→Niederschlag
+    6     1.52e-1   2.01e-1   1.95e-1   1.71e-1   Niederschlag→Pegel
     12    2.55e-1   2.25e-1   2.60e-1   2.20e-1   beide
-    24    2.65e-1   2.18e-1   2.23e-1   2.31e-1   **Niederschlag→Pegel**
+    24    2.65e-1   2.18e-1   2.23e-1   2.31e-1   **Pegel→Regen**
     48    3.43e-1   2.47e-1   2.72e-1   2.46e-1   beide
 
-**Befund im Sinne der Präregistrierung:** **Niederschlag → Pegel bei Lag
-24 h** (TE 0.265 > Schwelle 0.218) — der Regen treibt den Fluss-Pegel ~1 Tag
-später an. Das ist der erste **gemessene Regen→Fluss-Pfeil am co-lokalen
-Gauge**. Ehrliche Grenze: gemessen ist **Pegel** (m), nicht Abfluss (m³/s),
-auf dem **Vor-Flut-Fenster** (die Reihe bricht am Flutbeginn ab) — es misst
-die Monsun-Anspeisung des Flusses, **nicht** den Flut-Peak selbst (der wurde
-vom offenen Pegel nie aufgezeichnet; Telemetrie-Stopp 08-26 02:55). Bei
-Lag 1/6 zeigt sich ein schwacher Gegen-Pfeil (Pegel→Niederschlag) und bei
-12/48 beidseitig — das Rauschen der kleinen Stichprobe (n=129) und der
-langsamen Pegel-Dynamik.
+**Befund korrigiert (im Sinne der Präregistrierung):** der registrierte
+Wert **0.265 bei Lag 24 ist Pegel→Regen** — die Gegenrichtung, nicht
+Niederschlag→Pegel (Richtungsfehler aus `te_pair_probe`-gespiegelten
+Spalten, siehe Richtungskorrektur oben). Die echte **Niederschlag→Pegel-
+Richtung ist bei Lag 24 TE 0.223 < Schwelle 0.231 — unter der Schwelle**:
+kein Vorwärts-Pfeil am co-lokalen Gauge bei dessen betontem Lag. Die
+Vorwärts-Kopplung ist bei kurzen Lags (1–6 h, teils 12) signifikant — die
+schnelle Pegel-Antwort auf Regen —, aber unter der Konditionierung auf den
+geteilten synoptischen Treiber übersteht **keine** Vorwärts-Orientierung
+die Signifikanz (`docs/befund/befund-grat-trishuli-konditionierung.md`).
+Der präregistrierte Vorwärts-Pfeil fällt zur Stille. Ehrliche Grenze:
+gemessen ist **Pegel** (m), nicht Abfluss (m³/s), auf dem **Vor-Flut-
+Fenster** (die Reihe bricht am Flutbeginn ab) — es misst die
+Monsun-Anspeisung des Flusses, **nicht** den Flut-Peak selbst (der wurde
+vom offenen Pegel nie aufgezeichnet; Telemetrie-Stopp 08-26 02:55).
 
 ### 3.6 Räumlicher Response — Footprint-Messung (archivar `--sentinel`, 0 honored)
 
@@ -311,12 +332,17 @@ versterben vor der Kamm-Form). Der End-zu-End-Zeitpfeil über einen
 überlebenden Pegel ist am **Trishuli-Pfad pending** (0 honored); der
 rasterliche/bildliche Response (CEMS/S1) bleibt die offene Bestätigung.
 
-**mathematikerin am Netzwerk:** der Pfeil Niederschlag→Pegel ist am
-**co-lokalen** Rasuwagadhi sauber (Lag 24 h, siehe §3.5); am weit abwärts
-liegenden Bahrabise (n=169) ist er gemischt (Lag 12/24/48 beidseitig, Lag 6
-rückwärts) — die Regen→Pegel-Kausal-Signatur **verdünnt flussabwärts** durch
-Zuflüsse (Dhunche/Trishuli-Khola). Ehrlich: der klare Pfeil gehört zum
-Einzugsgebiets-Pegel, nicht zum Misch-Pegel 70 km abwärts.
+**mathematikerin am Netzwerk (korrigiert):** der Vorwärts-Pfeil am
+**co-lokalen** Rasuwagadhi ist **nicht** sauber — er fällt zur Stille
+(§3.5, Richtungskorrektur). Der am weit abwärts liegende Bahrabise
+(n=169) läuft durch dasselbe `te_pair_probe` und trägt damit dieselbe
+Spiegel-Unsicherheit; seine „gemischten" Lags (Lag 12/24/48 beidseitig,
+Lag 6 rückwärts) sind ohne Richtungs-Verifikation nicht als
+„verdünnende Regen→Pegel-Kausal-Signatur flussabwärts" zu lesen. Ehrlich:
+die frühere Netzwerk-Lesart (klarer Oberlauf-Pfeil, der sich abwärts
+verdünnt) ist durch die Stille am co-lokalen Gauge nicht mehr getragen;
+eine Richtungs-Verifikation der Bahrabise-Spalten ist ein offener
+Nachfolgepunkt, nicht dieser Befund.
 
 ### 3.4 Der Treiber-Niederschlag (gemessen)
 
@@ -399,13 +425,15 @@ kein co-lagbarer Response. Zusätzlich liegen die Koshi-Stationen ~300 km
 
 **Konsequenz für den Abfluss (m³/s):** nicht offen messbar — DHM liefert
 offen nur **Pegel (m)**, Abfluss steht hinter einem bezahlten Portal. Der
-**Pegel-Pfeil Regen→Fluss** ist dagegen **gemessen** (siehe §3.5): die
-co-lokale DHM-Reihe existiert (offen, key-los) und trägt ein präregistriertes
-**Niederschlag→Pegel bei Lag 24 h**. Die ehrliche Grenze bleibt: der
-**Flut-Peak selbst** wurde vom offenen Pegel nie aufgezeichnet (Telemetrie-
-Stopp am Flutbeginn) — der Pfeil misst die Vor-Flut-Anspeisung, nicht die
-Flutwelle. Der räumliche Response (CEMS EMSR927) ist ausgeliefert (Grading,
-Kollabpunkt außerhalb — kein Flut-Footprint).
+**Pegel-Pfeil Regen→Fluss** ist am co-lokalen Gauge **nicht gemessen**
+(siehe §3.5, korrigiert): die co-lokale DHM-Reihe existiert (offen,
+key-los), aber der Vorwärts-Pfeil bei Lag 24 h ist unter der Schwelle und
+fällt unter Konditionierung — die echte Zahl 0.265 war die Gegenrichtung.
+Die ehrliche Grenze bleibt: der **Flut-Peak selbst** wurde vom offenen
+Pegel nie aufgezeichnet (Telemetrie-Stopp am Flutbeginn) — und eine
+Vor-Flut-Anspeisungs-Signatur ist als Pfeil über dem geteilten Treiber
+nicht isolierbar. Der räumliche Response (CEMS EMSR927) ist ausgeliefert
+(Grading, Kollabpunkt außerhalb — kein Flut-Footprint).
 
 ---
 
@@ -413,8 +441,9 @@ Kollabpunkt außerhalb — kein Flut-Footprint).
 
 - **Flut-Peak nicht aufgezeichnet** — der co-lokale DHM-Pegel bricht am
   Flutbeginn ab (letzter Wert 1.62 m, 08-26 02:55 UTC); der Peak existiert
-  in keiner offenen Reihe. Der gemessene Regen→Pegel-Pfeil (Lag 24 h) gilt
-  für das Vor-Flut-Fenster, nicht für die Flutwelle.
+   in keiner offenen Reihe. Ein Vorwärts-Pfeil am co-lokalen Gauge ist
+   über den geteilten Treiber hinaus nicht isolierbar (siehe §3.5,
+   korrigiert; Lag 24 fällt zur Stille).
 - **Pegel ≠ Abfluss** — DHM offen nur Pegel (m); Abfluss (m³/s) ist
   bezahlt/geschlossen.
 - **Prezession/Nutation-Delta** der ICRS-Umrechnung (~0.35° zum J2000-ICRS)
@@ -438,16 +467,20 @@ Kraft (`gravitation`). Die Maschine misst, welcher Pfeil schlägt:
 - **Ein gerichteter, signifikanter Pfeil** existiert im Becken:
   **Niederschlag Rasuwa → Gyirong (Lag 12–24 h)** — der Monsun wandert
   süd→nord, entgegen der naiven Erwartung.
-- **Am co-lokalen Gauge gemessen:** **Niederschlag → Pegel bei Lag 24 h**
-  (DHM Bhotekoshi Rasuwagadhi) — der Regen treibt den Fluss ~1 Tag später
-  an; präregistriertes Verdict erfüllt.
+- **Am co-lokalen Gauge: kein Vorwärts-Pfeil (korrigiert)** — die
+  registrierte „Niederschlag → Pegel 0.265 bei Lag 24 h" war Pegel→Regen
+  (Richtungsfehler aus `te_pair_probe`-gespiegelten Spalten); die echte
+  Vorwärts-Richtung ist bei Lag 24 unter der Schwelle und fällt unter
+  Konditionierung auf den geteilten synoptischen Treiber. Das
+  präregistrierte Vorwärts-Verdikt ist zur Stille korrigiert.
 - **Der Auslöser ist als gravitativer Kollaps gemessen** (`us7000tbwb`:
   `landslide`, `ms_vx`, **kein Moment-Tensor**, depth 0) — **kein tektonisches
   Erdbeben**; „M4.4" war die vorläufige Magnitude desselben Ereignisses. Der
   Kollaps (02:52:10Z) geht der Flut (~03:15Z) voraus.
 - **Der Flut-Peak bleibt ungemessen** (offener Pegel brach am Flutbeginn ab;
-  Abfluss m³/s ist geschlossen). Der Regen→Pegel-Pfeil gilt für das Vor-Flut-
-  Fenster, nicht für die Flutwelle — ehrlich `pending`, 0 honored.
+  Abfluss m³/s ist geschlossen). Ein Vorwärts-Pfeil am co-lokalen Gauge ist
+  über den geteilten Treiber hinaus nicht isolierbar — ehrlich `pending`,
+  0 honored.
 - **Ursache des Kollapses: `pending`** — kein co-lokaler kontinuierlicher
   Seismik-/Verschiebungskanal; es wird **nicht hypothetisiert** (Monsun-
   Last, Permafrost, lokales Subkatalog-Ereignis: alles ungemessen).
