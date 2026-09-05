@@ -1,9 +1,11 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::LeapSeconds;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
 use omegaflow::json::{jnum, parse_json, JsonVal};
 use omegaflow::lsk::days_from_civil;
+
+const CDN_TAG: &str = "jsoc.stanford.edu";
 
 const JSOC_FETCH: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch";
 const JSOC_INFO: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info";
@@ -482,7 +484,7 @@ fn harvest_mode(args: &[String], lsk: &LeapSeconds) {
         t0,
         t1
     );
-    if has_flag(args, "--ci-mode") && !upload_asset(&out) {
+    if has_flag(args, "--ci-mode") && !upload_release(CDN_TAG, &out) {
         std::process::exit(1);
     }
 }
