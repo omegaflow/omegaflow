@@ -204,10 +204,20 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   bidsleep-Chunk-Matrix (253 Nächte, offsets 0..252 Schritt 36, frische
   Namen `bidsleep_mehrnacht_r0..r7.bin`, da der Merge nicht dedupliziert
   und der Vorbestands-Chunk nicht verifizierbar partitioniert ist) +
-  bidsleep-merge → `bidsleep_mehrnacht.bin`. ltmm-Nebenfund: `ltmm_movement_
-  0/1.bin` fehlten, `ltmm_movement.bin` (Merge) nie hochgeladen; die
-  ltmm-Matrix erntet 0/1 nach und merge-t. Maß ~25 GB Rohdownloads über CI.
-  Verifikation: CDN-Asset-HEAD (HTTP 200) + Asset-Zählung je Release.
+  bidsleep-merge. BUG-Fix (Run 2, `2f5ef51`): die `merge_chunks`-Parser
+  beider Compiler nehmen alles nach `--merge` als Chunk-Pfade
+  (`args[p+1..]`); `--out`/`--ci-mode` standen nach der Chunk-Liste, wurden
+  als Chunk-Dateien gelesen → `exit(1)`, von `continue-on-error` als
+  Job-"success" verschleiert, kein Upload (daher fehlte auch `ltmm_movement.
+  bin` historisch). Fix: `--out`/`--ci-mode` vor `--merge`.
+  **bidsleep_mehrnacht.bin MANIFESTIERT (verified 2026-09-05: HTTP 200,
+  10.263.728 B).** ltmm offen: Chunks 0/1 (Records 0–71, ~14 GB echter
+  ~200-MB/Record-Daten) liefen in die 360-min-Cap (Run 1 cancelled); ltmm
+  auf 12-Record-Sub-Chunks `m0..m11` umgestellt (Run 33938814788, m6–m11
+  gelandet, m0–m5 in Ernte), merge → `ltmm_movement.bin` pending. Maß ~25 GB
+  Rohdownloads über CI; ltmm ist keine sources.φ-Referenz (Extra-Artefakt).
+  Alte Chunks (`bidsleep_mehrnacht_0.bin`, `r0..r7`, `ltmm_movement_2/3.bin`)
+  sind Orphans für cd_reconcile, nicht löschen.
 - `auftrag-docs-reference-verteilung.md` — docs/reference + docs/plans
   verteilen (main-Reinigung).
 - `auftrag-sicherung-risiko-heime.md` — Sicherung der
