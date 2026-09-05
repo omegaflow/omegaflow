@@ -109,15 +109,477 @@
   "feh": 0.31,
   "logrhk": null
  },
- {
-  "hostname": "WASP-52",
-  "analysis": "2018ApJS..237...38B",
-  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
-  "catname": "WASP-52",
-  "ch": 0.17,
-  "oh": 0.18,
-  "nh": 0.26,
-  "feh": 0.31,
-  "logrhk": null
- }
+  {
+   "hostname": "WASP-52",
+   "analysis": "2018ApJS..237...38B",
+   "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+   "catname": "WASP-52",
+   "ch": 0.17,
+   "oh": 0.18,
+   "nh": 0.26,
+   "feh": 0.31,
+   "logrhk": null
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "arXiv:2211.10490 (Tsai/Powell et al., SO2-Paper; Zitat auf Fischer/Polanski-Referenz)",
+   "delivery": "Sonnet 5 High Search",
+   "logrhk": -4.97,
+   "p_rot": 42.1,
+   "pending": "lx,co",
+   "note": "log R'HK -4.97 ± 0.06; P_rot 42.1 ± 2.6 d; L_X: nicht gefunden in gepruefter Quelle; C/O: nicht geprueft"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "arXiv:2311.12515 (XMM-Newton)",
+   "delivery": "Sonnet 5 High Search",
+   "lx": 8.8e27,
+   "p_rot": 17.5,
+   "pending": "logrhk",
+   "note": "L_X ≈8.8e27 erg/s (0.1-10 keV, abs.-korr.); P_rot 17.5 ± 1.5 d (K2), 17 ± 1 d (WASP-Phot.); log R'HK nicht geprueft"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "arXiv:2304.03808 (Brewer & Fischer-Vergleich)",
+   "delivery": "Sonnet 5 High Search",
+   "co": 0.5,
+   "note": "C/O = 0.50; Mg/Si = 1.08"
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Czesla et al. 2024 (XMM-Newton, 5-100 Å)",
+   "delivery": "Sonnet 5 High Search",
+   "lx": 1.3e29,
+   "pending": "logrhk,p_rot",
+   "note": "L_X 1.3e29 erg/s (5-100 Å); log R'HK und P_rot nicht geprueft"
+  },
+  {
+   "hostname": "WASP-94 A",
+   "analysis": "arXiv:2201.02212 (HARPS)",
+   "delivery": "Sonnet 5 High Search",
+   "logrhk": -5.18,
+   "pending": "lx",
+   "note": "log R'HK -5.18 ± 0.27; keine publizierten Roentgen-/EUV-Beschraenkungen (dokumentierte Luecke)"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "arXiv:2510.06939 (XMM-Newton 100 ks + Chandra + eROSITA)",
+   "delivery": "Sonnet 5 High Search",
+   "fx": 1e-15,
+   "lxlbol": 1e-5,
+   "pending": "co",
+   "note": "F_X ≈1e-15 erg/s/cm² (0.2-2 keV); L_X/L_bol ≈1e-5; kleine Flare detektiert"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Sarkis et al. 2018 (K2-Photometrie)",
+   "delivery": "Sonnet 5 High Search",
+   "p_rot": 39.6,
+   "note": "P_rot 39.6 ± 0.9 d"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "arXiv:2208.01650 (Caldiroli/Sanz-Forcada et al.)",
+   "delivery": "Sonnet 5 High Search",
+   "s_index": 0.677,
+   "pending": "lx",
+   "note": "S-Index 0.677 ± 0.034 (HARPS), 0.739 ± 0.021 (HARPS-N) — kein log R'HK; erste Roentgendetektion berichtet, kein L_X-Zahlenwert extrahiert"
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "arXiv:1802.09557, arXiv:2009.03398",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "p_rot",
+   "note": "P_rot ~15 d oder ~30 d (harmonische Mehrdeutigkeit)"
+  },
+  {
+   "hostname": "TOI-270",
+   "analysis": "arXiv:2101.01593",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "p_rot",
+   "note": "P_rot je nach Methode: Hα 54.0 ± 2.4 d; NaD 61.5 ± 4.0 d; CCF-FWHM 57.5 ± 5.7 d; TESS 57.90 ± 0.23 d"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "GAPS-XVI, arXiv:1802.03859",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk,p_rot",
+   "note": "log R'HK: niedrige Aktivitaet bestaetigt, Zahlenwert nicht extrahiert; P_rot photometrisch nicht detektiert"
+  },
+  {
+   "hostname": "HAT-P-30",
+   "analysis": "arXiv:1612.01739",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk",
+   "note": "log R'HK anomal niedrig fuer sein Alter, Zahlenwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "arXiv:1612.01739",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "logrhk",
+   "note": "log R'HK anomal hoch, Zahlenwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-17",
+   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "ch,oh,co",
+   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "ch,oh,co",
+   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
+  },
+  {
+   "hostname": "WASP-127",
+   "analysis": "Measuring Elemental Abundances of JWST Target Stars I. FGK Stars (2021)",
+   "delivery": "Sonnet 5 High Search",
+   "pending": "ch,oh,co",
+   "note": "Abundanz-Katalog vorhanden (C,N,O inkl.); Einzelwerte nicht zuverlaessig extrahierbar"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Boro Saikia et al. 2018",
+   "delivery": "Gemini 3 Chat",
+   "lx": 1e26,
+   "note": "L_X ~1e26 erg/s (XMM limitiert)"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Newton et al. 2019 (VizieR J/ApJ/866/99)",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 38.8,
+   "feh": -0.14,
+   "note": "P_rot 38.8 d; [Fe/H] -0.14"
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Knutson et al. 2010",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.95
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Brewer & Fischer 2018",
+   "delivery": "Gemini 3 Chat",
+   "ch": -0.15,
+   "oh": -0.1,
+   "feh": -0.12,
+   "co": 0.55
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Gaia DR3 / Activity (zit. Gemini 3 Chat)",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.42
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Rice et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 12.3,
+   "feh": -0.28,
+   "note": "P_rot 12.3 d; [Fe/H] -0.28 (Soubiran et al. 2018)"
+  },
+  {
+   "hostname": "WASP-107",
+   "analysis": "Dai & Winn 2018",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 15.6,
+   "feh": -0.03
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Knutson et al. 2013",
+   "delivery": "Gemini 3 Chat",
+   "logrhk": -4.9
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Hartman et al. 2011",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 22.3
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Brewer et al. 2016",
+   "delivery": "Gemini 3 Chat",
+   "ch": 0.08,
+   "oh": 0.12,
+   "feh": 0.1,
+   "co": 0.54
+  },
+  {
+   "hostname": "LP 791-18",
+   "analysis": "Crossfield et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 38.0,
+   "feh": -0.32
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Bonomo et al. 2017",
+   "delivery": "Gemini 3 Chat",
+   "p_rot": 2.7
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Mesa et al. 2019",
+   "delivery": "Gemini 3 Chat",
+   "ch": 0.1,
+   "oh": 0.15,
+   "feh": 0.13,
+   "co": 0.51
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Polanski et al. 2022 (RNAAS, KeckSpec/HIRES) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "ch": -0.04,
+   "oh": 0.04,
+   "feh": -0.01,
+   "co": 0.46,
+   "note": "C/O 0.46 ± 0.09"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.82
+  },
+  {
+   "hostname": "HAT-P-14",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.77
+  },
+  {
+   "hostname": "HAT-P-18",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.47
+  },
+  {
+   "hostname": "WASP-15",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.74
+  },
+  {
+   "hostname": "WASP-39",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.74
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.0,
+   "note": "aktivster der GAPS-Stichprobe"
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Claudi et al. 2024 (GAPS, Tab. 2)",
+   "delivery": "Kimi K2",
+   "logrhk": -4.07
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Passegger et al. 2024 (ESPRESSO)",
+   "delivery": "Kimi K2",
+   "logrhk": -5.28,
+   "note": "log R'HK -5.28 ± 0.05"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Cloutier et al. 2017",
+   "delivery": "Kimi K2",
+   "p_rot": 38.6
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Rukdee et al. 2025 (XMM)",
+   "delivery": "Kimi K2",
+   "lx": 7e26,
+   "note": "L_X ≈7e26 erg/s; L_EUV ≈2.7e26 erg/s (dos Santos et al. 2020, HST/Lyα)"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Hellier et al. 2011",
+   "delivery": "Kimi K2",
+   "p_rot": 15.6
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Hébrard et al. 2013",
+   "delivery": "Kimi K2",
+   "p_rot": 16.4
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Bourrier et al. 2020",
+   "delivery": "Kimi K2",
+   "p_rot": 1.13
+  },
+  {
+   "hostname": "GJ 9827",
+   "analysis": "Engle & Guinan 2023",
+   "delivery": "Kimi K2",
+   "p_rot": 28.7
+  },
+  {
+   "hostname": "TOI-421",
+   "analysis": "Krenn et al. 2024",
+   "delivery": "Kimi K2",
+   "p_rot": 39.6
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "arXiv:2507.09343",
+   "delivery": "Kimi K2",
+   "p_rot": 76.7
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "Rizzuto et al. 2020",
+   "delivery": "Kimi K2",
+   "p_rot": 1.4
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "Feinstein et al. 2022",
+   "delivery": "Kimi K2",
+   "p_rot": 2.97
+  },
+  {
+   "hostname": "HAT-P-14",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+  },
+  {
+   "hostname": "HAT-P-26",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-17",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+  },
+  {
+   "hostname": "WASP-52",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-121",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert; Gruppe HAT-P-14/WASP-17/WASP-121: niedriges C/O (<0.25)"
+  },
+  {
+   "hostname": "WASP-127",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+  },
+  {
+   "hostname": "WASP-166",
+   "analysis": "Polanski et al. 2022 (RNAAS) 10.3847/2515-5172/ac8676",
+   "delivery": "Kimi K2",
+   "pending": "ch,oh,co",
+   "note": "Katalog-Eintrag vorhanden, Einzelwert nicht extrahiert"
+  },
+  {
+   "hostname": "HAT-P-12",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "HAT-P-26",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-43",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-127",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "WASP-17",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "L 98-59",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "LP 791-18",
+   "analysis": "Behr et al. 2023 (MUSCLES Extension, arXiv:2306.05322)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "X-ray/UV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "K2-18",
+   "analysis": "Sairam & Madhusudhan 2025 (arXiv:2503.19908)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "Aktivitaets/X-ray beansprucht (obere Grenze); Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "LTT 3780",
+   "analysis": "Sairam & Madhusudhan 2025 (arXiv:2503.19908)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "Aktivitaets/X-ray beansprucht (obere Grenze); Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "V1298 Tau",
+   "analysis": "Maggio et al. 2023/2024 (XUV)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "XUV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  },
+  {
+   "hostname": "HIP 67522",
+   "analysis": "Maggio et al. 2023/2024 (XUV)",
+   "delivery": "Claude 5 High (Chat)",
+   "pending": "lx",
+   "note": "XUV beansprucht; Zahlenwert nicht in der Lieferung (data_log nicht beigefuegt) — pending"
+  }
 ]
