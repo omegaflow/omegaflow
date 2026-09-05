@@ -46,5 +46,5 @@ jobs:
         run: |
           cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
             --harvest --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
-            --bands "${{ inputs.bands }}" \
+            --bands "${{ inputs.bands }}" --chunk-days 1 \
             --out "${{ inputs.asset }}" --ci-mode
