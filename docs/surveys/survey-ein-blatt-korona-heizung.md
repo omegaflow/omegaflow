@@ -1,8 +1,8 @@
 <!--
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: survey
-  date: 2026-08-21
-  sha256: 8ebf4945cc72f067fbfbde6abc8b504ced34661390a4f15db30ab6efce140b60
+  date: 2026-09-05
+  sha256: f712c077513fe8d4c91d9252457c8abee08a8e145fe0f36387cdc14293eab113
   status: live
   see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md docs/specs/broken-null-control.md
 -->
@@ -130,25 +130,28 @@ Das Bild-Experiment (SDO/AIA, Vollscheiben-DATAMEAN, 194 GOES-Ereignisse,
 24-s-Zellen, Fenster ±40 min, 2014 — die gesunde Kamera-Ära) misst den
 koronalen Rung, den die EVE-2011-Leiter still ließ:
 
-| Paar | D | lag | Verdikt |
+| Paar | D(Spitze) | lag | Verdikt |
 |---|---|---|---|
-| **193→211** | **+1,50e-1** | ~96 s | aufwärts (über der Null) |
-| **211→335** | **+1,13e-1** | ~144 s | aufwärts (über der Null) |
-| **335→94** | **+1,42e-1** | ~96 s | aufwärts (über der Null) |
-| 304→131 (kühle Seite) | — | — | still / negativ |
+| 193→211 | +1,50e-1 | ~96 s | unter fam |
+| 211→335 | +1,13e-1 | ~144 s | unter fam |
+| **335→94** | **+1,42e-1** | ~96 s | unter fam (fam = 1,89e-1) |
+| 304→131 (kühle Seite) | −9,79e-2 | — | still / negativ |
 
-Die heiße Korona fließt die Leiter HOCH; der ~96-s-Lag von 193→211 ist
-die koronale Alfvén-Überquerung, die EVE-2011 nicht auflöste. Die kühle
-Seite (304→131) ist still oder negativ — dieselbe Vollscheiben-Dämpfung
-wie auf der Minute-Skala. Die Zellen schlagen die phasenrandomisierte
-Null.
+Die heiße Korona trägt die größten D der Leiter (193→211→335→94) mit dem
+~96-s-Überquerungs-Lag, aber unter AIAs EIGENER Familien-Schwelle: fam =
+1,89e-1 (194 GOES-Ereignisse, GOES-15, post-fix-RNG) — keine AIA-Sprosse
+ist fam-signifikant, auch 335→94 nicht (D-Spitze +1,42e-1 < fam). GOES-13
+(208 Ereignisse, fam 1,80e-1) bestätigt die Stille (335→94 +1,40e-1 < fam).
 
-**Der Zwei-Instrumente-Zwiespalt, benannt:** dasselbe Paar **335→94 Å**
-fließt auf EVE-2011 AB (D = −2,997e-1) und auf AIA-2014 AUF
-(D = +1,42e-1) — zwei Instrumente, zwei Jahre, zwei Nullmodelle; die
-Übereinstimmung (Energie fließt aufwärts, sub-minütig, null-signifikant)
-und der Streit (die Richtung des heißesten Rungs) stehen nebeneinander
-(Paper §4.2/§4.3, `docs/paper/corona-heating-ladder.md`).
+**Der heißeste Rung ist auf fam-Niveau nicht belegt:** dasselbe Paar
+**335→94 Å** ist auf EVE-2011 still (D bis −3,15e-1 unter EVEs fam 4,70e-1)
+und — mit der nachgelegten Familien-Schwelle — jetzt auch auf AIA-2014 still
+(D +1,42e-1 unter AIAs fam 1,89e-1). Der frühere „EVE ab / AIA auf"-Zwiespalt
+(→ bekannt-schlecht „AIA ohne fam / EVE mit fam") löste sich auf, als AIA
+eine Familien-Schwelle bekam: kein Instrument misst die Heiß-Rung-Richtung
+auf fam-Niveau. Es bleibt der fam-signifikante Eintritt (EVE 1032→131) und,
+nur auf der AIA-Seite, ein unter-fam kohärentes koronales Rung-Muster mit
+~96-s-Lag (Paper §4.2/§4.3, `docs/paper/corona-heating-ladder.md`).
 
 ## Der Lang-Fenster-Befund (F10.7 ↔ X-Ray, 1995–2020)
 
@@ -199,11 +202,12 @@ gemessen und geschlossen:
   signifikante TE bei lag 0/1 — eine gemessene Informations-Richtung,
   keine Mechanismus-Entscheidung (die Minuten-fam fehlt, und die Zellen
   lösen ~100 s nicht auf).
-- **AIA-2014:** die heiße Korona fließt die Leiter aufwärts (193→211
-  →335→94, D = +1,50e-1/+1,13e-1/+1,42e-1, lag ~96–144 s, über der
-  Null) — die koronale Alfvén-Überquerung, die EVE-2011 still ließ; die
-  kühle Seite (304→131) still. Der Streit auf dem heißesten Rung
-  (335→94: EVE-2011 ab, AIA-2014 auf) ist benannt, nicht entschieden.
+- **AIA-2014:** die heiße Korona trägt die größten D der Leiter (193→211
+  →335→94, D = +1,50e-1/+1,13e-1/+1,42e-1, lag ~96–144 s), aber unter AIAs
+  eigener Familien-Schwelle (fam = 1,89e-1): keine AIA-Sprosse fam-
+  signifikant. Der heißeste Rung (335→94) ist auf KEINEM Instrument fam-
+  belegt (EVE-2011 ab unter fam, AIA-2014 auf unter fam). Die kühle Seite
+  (304→131) still.
 - **Tage:** Stille über 11 Jahre, fam-gereinigt (fam = 2,108e-1) — mit
   dem bandbreiten-empfindlichen Rand-Kandidaten Lya1216 → XRSB (7 d,
   nur bei h × 2,0 fam-signifikant) und Bz ↔ Dichte (lag 0) als
@@ -216,8 +220,10 @@ eine andere Art:
 
 1. **Sub-minütige Auflösung** (Datenlücke, teilweise geschlossen): die
    AIA-2014-Leiter (24-s-Zellen) löst die koronale Alfvén-Überquerung
-   (~96 s) historisch auf; die Live-Kanäle tragen keine sub-minütige
-   Kadenz, also keine lebende Zelle, die den Effekt auflöst.
+   (~96 s) historisch auf, aber nur als unter-fam Muster — ein fam-
+   signifikanter koronaler Rung braucht noch mehr Ereignisse (oder den
+   ortsaufgelösten aktiven-Regionen-Pfad); die Live-Kanäle tragen keine
+   sub-minütige Kadenz, also keine lebende Zelle, die den Effekt auflöst.
 2. **Minuten-fam** (Statistiklücke): die zwei Minuten-Befunde (EUV→X-Ray,
    Bz→X-Ray) tragen nur die per-Paar-Schwelle, keine Familien-Schwelle
    über die ganze Minuten-Matrix — die Daten liegen, die Korrektur
