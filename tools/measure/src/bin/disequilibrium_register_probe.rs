@@ -1,6 +1,6 @@
 use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
 use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
-use omegaflow::thermochem::{equilibrium_composition, solar, species, P0_PA};
+use omegaflow::thermochem::{equilibrium_composition_sulfur, sulfur_gas_names, P0_PA};
 use std::collections::HashMap;
 
 const RNG_MULT: u64 = 6364136223846793005;
@@ -24,9 +24,11 @@ fn shuffle<T>(v: &mut [T], rng: &mut u64) {
     }
 }
 
+#[derive(Clone)]
 struct Detection {
     host: String,
     species: String,
+    pl_name: Option<String>,
 }
 
 struct PlanetRow {
@@ -48,7 +50,12 @@ fn read_detections(path: &str) -> Result<Vec<Detection>, String> {
             continue;
         };
         if !host.is_empty() && !species.is_empty() {
-            out.push(Detection { host, species });
+            let pl_name = jstr(row, "pl_name").map(|s| s.to_string());
+            out.push(Detection {
+                host,
+                species,
+                pl_name,
+            });
         }
     }
     Ok(out)
@@ -168,7 +175,7 @@ fn run(
     let detections = read_detections(seed_path)?;
     let planet_rows = read_planet_rows(params_path)?;
 
-    let spec_names: Vec<String> = species().into_iter().map(|s| s.name.to_string()).collect();
+    let spec_names: Vec<String> = sulfur_gas_names();
     let slot_by_name: HashMap<String, usize> = spec_names
         .iter()
         .enumerate()
@@ -186,9 +193,12 @@ fn run(
         planet_rows.len()
     ));
     out.push_str(&format!(
-        "modell: thermochem::equilibrium_composition bei {:.0} bar, solare Haeufigkeit (H,C,O,N) | Domäne {}..{} K\n",
+        "modell: thermochem::equilibrium_composition_sulfur bei {:.0} bar, solare Haeufigkeit H,C,O,N,S (S/H 1.62e-5, Anders-Grevesse 1989) | Domäne {}..{} K\n",
         P0_PA / 101325.0, MODEL_T_MIN, MODEL_T_MAX
     ));
+    out.push_str(
+        "sulfur-Daten: NIST-JANAF (Chase 1998) Shomate-Fits, atomares S(g) nur ab 882 K Fit-Domäne; S2,SH,H2S,SO,SO2,CS,OCS tragen Fits bis 6000 K\n",
+    );
     out.push_str(&format!(
         "detektions-schwelle floor = {:.1e} (Mischungsverhältnis); Herkunft: Urteilswert, benannt —\n",
         floor
@@ -220,14 +230,14 @@ fn run(
         .filter(|s| !slot_by_name.contains_key(*s))
         .collect();
     out.push_str(&format!(
-        "erkannte Spezies ({}): mit Slot {}; out-of-model {}\n",
+        "erkannte Spezies ({}): mit Slot {}; ohne Modell-Daten {}\n",
         detected_species.len(),
         in_model.join(","),
         out_model.join(",")
     ));
 
     let mut host_ids: Vec<String> = Vec::new();
-    let mut host_det: Vec<Vec<String>> = Vec::new();
+    let mut host_det: Vec<Vec<Detection>> = Vec::new();
     let mut rows: Vec<(usize, String)> = Vec::new();
     for d in &detections {
         let id = match host_ids.iter().position(|h| h == &d.host) {
@@ -238,7 +248,7 @@ fn run(
                 host_ids.len() - 1
             }
         };
-        host_det[id].push(d.species.clone());
+        host_det[id].push(d.clone());
         rows.push((id, d.species.clone()));
     }
 
@@ -256,17 +266,47 @@ fn run(
             n_pending_params += 1;
             continue;
         };
-        if planets.len() > 1 {
-            let names: Vec<&str> = planets.iter().map(|p| p.pl_name.as_str()).collect();
+        let mut claims: Vec<&String> = host_det[id]
+            .iter()
+            .filter_map(|d| d.pl_name.as_ref())
+            .collect();
+        claims.sort();
+        claims.dedup();
+        if claims.len() > 1 {
+            let named: Vec<&str> = claims.iter().map(|s| s.as_str()).collect();
             pending_reason[id] = Some(format!(
-                "Attribution offen — {} transiting-Planeten: {}",
-                planets.len(),
-                names.join(", ")
+                "Saat-Zeilen nennen mehrere Planeten: {}",
+                named.join(", ")
             ));
             n_pending_multi += 1;
             continue;
         }
-        let p = &planets[0];
+        let target: Option<&PlanetRow> = if let Some(pl) = claims.first() {
+            planets.iter().find(|p| p.pl_name == **pl)
+        } else if planets.len() == 1 {
+            Some(&planets[0])
+        } else {
+            None
+        };
+        let Some(p) = target else {
+            if let Some(pl) = claims.first() {
+                let names: Vec<&str> = planets.iter().map(|p| p.pl_name.as_str()).collect();
+                pending_reason[id] = Some(format!(
+                    "Saat nennt {pl}, pscomppars fuehrt nur {}",
+                    names.join(", ")
+                ));
+                n_pending_params += 1;
+            } else {
+                let names: Vec<&str> = planets.iter().map(|p| p.pl_name.as_str()).collect();
+                pending_reason[id] = Some(format!(
+                    "Attribution offen — {} transiting-Planeten: {}",
+                    planets.len(),
+                    names.join(", ")
+                ));
+                n_pending_multi += 1;
+            }
+            continue;
+        };
         let Some(t_eq) = teq(p.teff, p.rad_solar * SUN_RADIUS_M, p.orbsmax_au * AU_M, 0.0) else {
             pending_reason[id] = Some("Teq nicht berechenbar".to_string());
             n_pending_domain += 1;
@@ -280,7 +320,7 @@ fn run(
             n_pending_domain += 1;
             continue;
         }
-        let Some(frac) = equilibrium_composition(t_eq, P0_PA, solar()) else {
+        let Some(frac) = equilibrium_composition_sulfur(t_eq, P0_PA) else {
             pending_reason[id] = Some(format!(
                 "Gleichgewichts-Loeser konvergiert bei {:.0} K nicht",
                 t_eq
@@ -307,22 +347,21 @@ fn run(
         let mut hit_species: Vec<String> = Vec::new();
         let mut present_species: Vec<String> = Vec::new();
         let mut oom: Vec<String> = Vec::new();
-        for name in &host_det[id] {
+        for d in &host_det[id] {
+            let name = d.species.as_str();
             match slot_by_name.get(name) {
                 Some(slot) => {
+                    let entry = format!(
+                        "{} (Slot {}; gleichgewichts-Anteil {:.3e})",
+                        name, slot, hp.frac[*slot]
+                    );
                     if hp.frac[*slot] >= floor {
-                        present_species.push(format!(
-                            "{} (Slot {}; gleichgewichts-Anteil {:.3e})",
-                            name, slot, hp.frac[*slot]
-                        ));
+                        present_species.push(entry);
                     } else {
-                        hit_species.push(format!(
-                            "{} (Slot {}; gleichgewichts-Anteil {:.3e})",
-                            name, slot, hp.frac[*slot]
-                        ));
+                        hit_species.push(entry);
                     }
                 }
-                None => oom.push(name.clone()),
+                None => oom.push(name.to_string()),
             }
         }
         oom.sort();
@@ -330,7 +369,7 @@ fn run(
         if hit_species.is_empty() && present_species.is_empty() {
             n_oom_only_hosts += 1;
             lines.push(format!(
-                "  {host}: {}  Teq {:.0} K  — nur out-of-model-Detektionen ({}): Gleichgewicht nicht prüfbar",
+                "  {host}: {}  Teq {:.0} K  — nur ohne-Modell-Daten-Detektionen ({}): Gleichgewicht nicht prüfbar (pending)",
                 hp.pl_name, hp.teq_k, oom.join(",")
             ));
             continue;
@@ -347,7 +386,10 @@ fn run(
             hp.pl_name, hp.teq_k
         );
         if !oom.is_empty() {
-            block.push_str(&format!("  (out-of-model benannt: {})", oom.join(",")));
+            block.push_str(&format!(
+                "  (ohne Modell-Daten benannt: {} — pending)",
+                oom.join(",")
+            ));
         }
         block.push('\n');
         for s in &hit_species {
@@ -361,7 +403,7 @@ fn run(
 
     let host_count = host_ids.len();
     out.push_str(&format!(
-        "Wirte: {} gesamt | disequilibrium-hit {} | equilibrium-present {} | out-of-model-only {} | pending {} (params-fehlend {}, multi-planet {}, Domäne {}, Loeser {})\n",
+        "Wirte: {} gesamt | disequilibrium-hit {} | equilibrium-present {} | ohne-Modell-Daten-only {} | pending {} (params-fehlend {}, attribution-offen {}, Domäne {}, Loeser {})\n",
         host_count, n_hit_hosts, n_eq_hosts, n_oom_only_hosts,
         n_pending_params + n_pending_multi + n_pending_domain + n_pending_solver,
         n_pending_params, n_pending_multi, n_pending_domain, n_pending_solver
@@ -371,7 +413,11 @@ fn run(
             out.push_str(&format!(
                 "  {host}: pending — {reason} (detektiert: {det})\n",
                 host = host_ids[id],
-                det = host_det[id].join(",")
+                det = host_det[id]
+                    .iter()
+                    .map(|d| d.species.clone())
+                    .collect::<Vec<_>>()
+                    .join(",")
             ));
         }
     }
@@ -384,16 +430,21 @@ fn run(
     let possible: Vec<bool> = plan
         .iter()
         .enumerate()
-        .map(|(id, hp)| hp.is_some() && host_det[id].iter().any(|s| slot_by_name.contains_key(s)))
+        .map(|(id, hp)| {
+            hp.is_some()
+                && host_det[id]
+                    .iter()
+                    .any(|d| slot_by_name.contains_key(&d.species))
+        })
         .collect();
     let possible_count = possible.iter().filter(|b| **b).count();
     let observed = possible
         .iter()
         .enumerate()
         .filter(|(id, p)| {
-            **p && host_det[*id].iter().any(|name| {
+            **p && host_det[*id].iter().any(|d| {
                 slot_by_name
-                    .get(name)
+                    .get(&d.species)
                     .map(|slot| plan[*id].as_ref().unwrap().frac[*slot] < floor)
                     .unwrap_or(false)
             })
@@ -459,9 +510,9 @@ fn run(
             let h = (0..host_ids.len())
                 .filter(|id| {
                     plan[*id].is_some()
-                        && host_det[*id].iter().any(|name| {
+                        && host_det[*id].iter().any(|d| {
                             slot_by_name
-                                .get(name)
+                                .get(&d.species)
                                 .map(|slot| plan[*id].as_ref().unwrap().frac[*slot] < *f)
                                 .unwrap_or(false)
                         })
