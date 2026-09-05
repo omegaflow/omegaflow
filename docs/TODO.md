@@ -1436,6 +1436,15 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   (upload_release, war faelschlich ssd.jpl.nasa.gov). Manifestation pending: volle
   Ernte + CDN + HIP-Parallaxen (kein Fabricat).
 
+
+- Narrowband-2017-Ernte + CDN GESCHLOSSEN (2026-09-05): volle 10,77-GB-Datei
+  gestreamt kompiliert (28,86 M Hits, 0 malformed), Bin 1,385 GB, Release
+  blpd0.ssl.berkeley.edu angelegt + Asset manifestiert (HTTP 200, Register-URL
+  erfuellt). Compiler liest jetzt gestreamt (read_to_string konnte 10,77 GB
+  nicht halten). OFFEN bleibt: HIP-Parallaxen-Abgleich (I/311/hip2-Map gezogen,
+  hip2019_icrs.csv) + 2019er-Wiring (Schema ohne RA/DEC/MJD, DriftBW=0,0005 MHz
+  ist Such-Konstante, keine Linienbreite — als bin_width waere es Fabricat).
+
 - Kanonische Ein-Blatt-Auswahl (2026-08-21, offen — Konsolidierung ist
   ein Wort des Operators): die Ein-Blatt-Dokumentation liegt in mehreren
   parallelen Bäumen — Konzepte `ein-blatt-axiom.md`,
