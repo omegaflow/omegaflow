@@ -2,7 +2,7 @@
   title: Befund — Richtungs-TE Stärke → Mode-1-Rauschen: der AGC-Boden ist auf Tages-Achse nicht gerichtet treibend (Epochen-/Stations-kollokiert)
   class: befund
   date: 2026-09-05
-  sha256: ecc89dec7b82fc2cee4f3b0ba72cf3b1bb80089ad12813b0f6422d4f0557fca9
+  sha256: b85085740a97cc26b68a28e60a44371929464f9f61b07d80e4b0f319ecfeea9d
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode1-snr-kurve.md docs/befund/befund-galileo-pass-segmentierung.md
 -->
@@ -150,5 +150,12 @@ das Stärke-Feld trägt die Rausch-Anhebung nicht gerichtet. Was bleibt, ist die
 
 ## Status
 
-`draft` (Richtungs-TE, Tages-Achse, zwei Epochen-Inseln). Sonde `galileo_te_floor_direction.rs`
-additiv, `cargo check` 0/0; Report auf stdout. Vollständige Zell-Tabellen: Probe-Stdout.
+`done` (Rat gehalten, 2026-09-05). Richtungs-TE, Tages-Achse, zwei Epochen-Inseln.
+Sonde `galileo_te_floor_direction.rs` additiv, `cargo check` 0/0; Report auf
+stdout. Vollständige Zell-Tabellen: Probe-Stdout.
+
+Folge-Befund: die Pass-Wahrheit ist gemessen (`befund-galileo-inpass-staerke-rampe`,
+done) — an Stationen 43/63 ist der statische Boden↔Rauschen-Link bei Pass-Identität
+echt (nicht Epochen-/Stations-Kollokation), an 14 nicht. Das Tages-Achsen-Null-Urteil
+dieses Blatts gilt für die **Richtung**; die statische Assoziation ist an 43/63
+nicht bloß kollokiert (F3 misst keine Richtung).
