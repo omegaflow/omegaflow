@@ -592,6 +592,11 @@ Auftrag):** quiet-zone-Isolation (P10 >50 AU, P11 15–30 AU) als `--zone`-Weg i
 negativ-fuzzy-Tool → misst Floor der Zonen-Reduktion vs. 133 Hz Gesamt-Floor.
 Drei Ausgänge (tiefer = Isolation gewinnt, Regressions-Schritt neu stellbar;
 gleich = Gesamt-Reduktion bereits distanz-optimal; lauter = Parameter je Zone).
+**ε-Nachmessung (2026-09-05, α/ε-Fehlbenennung korrigiert, `befund-front-c-noise-vs-epsilon`):
+der Distanz-Befund hält; die Winkel-Aussage („SEP schwach / Winkel nicht der
+Treiber") ist auf ε präzisiert — P11 trägt eine Konjunktions-Spitze (ε 0–10°,
+8013 Hz, n=43), P10 nicht; global kein ε-Treiber; die ε×Distanz×Ära-Entzerrung
+der P11-Spitze bleibt pending.**
 
 **Operator-Lehre (2026-09-03, in die Front aufgenommen):** *Die Maschine sagte:
 „Reduziere das Rauschen." Der Operator fragte: „Wo ist das Rauschen?" — und die
