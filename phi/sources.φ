@@ -1584,6 +1584,16 @@ field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu/eve2011_lines.bin
+format eve_lines
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_lines.bin
+format aia_lines
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
 format spectral
 on earth 19.82 -155.47 4142.6
