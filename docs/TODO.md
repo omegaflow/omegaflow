@@ -34,6 +34,47 @@ Kontrollrichtung des gemeinsamen Treibers, bedingte Multi-Force-TE
 (pending-Instrument). Kein Blatt ohne diese vier — eine halbe Messung
 ist kein Befund.
 
+## Nadel-V-LSST-Erweiterung — TDB+Zeuge (pending, Verdrahtung 2026-09-05)
+
+- **Rømer-Lichtzeit in den Fold-Pfad verdrahtet** (lsst_anomaly_probe):
+  MJD/TAI → TDB (Uhr-Skala) → + n̂·(Station−Sonne)/c je Reihe. Real gemessen
+  auf dem DDF-Kegel (148.84, 2.55, 600″): 9625/9625 Reihen mit der
+  Cerro-Pachón-Station korrigiert (Ephemeride trägt die Erd-Orientierung);
+  Budget gemessen: Rømer-Amplitude 499,0 s, Erddrift 60,1 s/Woche (= 3,0
+  Zyklen einer 20-s-Periode, 0,83 % einer 2-h-Periode), Diurnal 21,28 ms,
+  Shapiro-Koeffizient 2GM/c³ = 9,85 µs (nur limb-nahe ~59 µs; Nachthimmels-
+  Elongationen sub-µs). pending: die Zwei-Proben-Konsolidierung der FAP-Frage
+  (nächster Punkt) vor dem ersten Voll-Lauf als Kriterien-Grenze.
+- **FAP-Gate-Befund (gemessen, nicht angenommen):** `lomb_scargle_fap`
+  skaliert ~ n/σ² (nicht skaleninvariant) — auf dem realen Kegel steht in
+  JEDER Zeile FAP 0.00e0, auch bei echten achromatischen 6–10-σ-Dips
+  (FAP-Tor liest „periodisch"); die Negativkontrolle (8σ-achromatische
+  Injektion auf einen realen Objektkegel, ra 148.8746 dec 2.5208) wird vom
+  Dip-/Achromatie-Tor gemessen (i −6,1σ, z −5,9σ, ratio 0,93), das
+  aperiodische FAP-Tor öffnet nicht. Fix (skaleninvariante LS-Normalisierung,
+  ein Pfad, beide lsst-Proben) pending — bis dahin ist die „0-Kandidaten"-
+  Stille der LSST-Scans eine Tor-Grenze, keine Messung. Beide Kontrollen
+  gelaufen; die Negativkontrolle benennt die Lücke (0 honored).
+- **Positivkontrolle:** 0 VSX-bestätigte Chromatik-Periodika im DDF-Kegel
+  (Feld ist AGN-dominiert) — gemessene Abwesenheit, kein Durchfall; ein
+  variablenreicher Kegel (echte RR-Lyrae/EB mit LSST-Mehrband-Zeitreihen)
+  ist als nächster Lauf pending.
+- **Externer Zeuge VSX verdrahtet** (lsst_color_coupling_probe): VizieR
+  `B/vsx`-Kegelkreuzmatch, erreichbar (HTTP 200), Parser am realen
+  Schema getestet (OID/Name/Type/Period, 3 Datensätze gemessen). Die
+  broker-eigene Klassifikator-Spalte (`f:main_label_classifier`) bleibt
+  Report-Label, nie Zeuge. Im Kegel 0 Treffer ≤ 3″ (AGN-Feld) — der Zeuge
+  wartet auf den variablenreichen Kegel.
+- **Zyklus-konsistenter Surrogat** (`cycle_phase_shift_surrogate`, te.rs,
+  amplitudenerhaltende Phasen-Rotation je Zyklus, Tests grün):
+  lsst_color_coupling nutzt für die ungefaltete Zeitreihe bereits die
+  amplitudenerhaltende FFT-Phasen-Null (kein Shuffle) — die
+  Zyklus-Rotation ist die Null der gefalteten/Per-Zyklus-Reihe; eine
+  echte Faltung existiert im Layer nicht, die Nutzung bleibt bis dahin
+  benannt pending.
+- **B-Unlock geparkt:** Fink-Account/Kafka oder Rubin-Strom als benannter
+  Kostenpunkt (Konto, Stream-Rechte, Betrieb); kein Datum.
+
 ## Auftrags-Programm — offene Ordnungen (docs/auftrag/)
 
 Die versionierten Forschungs-/Recherche-Ordnungen (`class: auftrag`) sind
@@ -166,11 +207,18 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   SNR-getriebener PLL-Term. Spec-TE gemessen (`befund-galileo-te-spec`, done):
   Spec-Träger ref_hz/mode/Kadenz → resid-Noise **entkoppelt/era-koinzident**
   (kein gerichteter Pfad über die Epoche; Kadenz-Achse im Feld degeneriert,
-  1-s realisiert statt 60-s). Offen (pending): α–Zeit–Sonnenzyklus-
-  Verwebung, Mode-2-Stärke-Split, Stärke-Zustand je Unter-Arc, In-Pass-Stärke-
-  Rampe bei Pass-Identität, detrendete Pass-Metrik,
-  1,5→0,65-Tagesmengen-Reconciliation (E1 vs E2), Same-Day-Spec-Niveau-
-  Assoziation, Mode-3-Fenster (three-way). Nebenfund:
+  1-s realisiert statt 60-s). Letzte pendings gemessen (2026-09-05): Mode-2-
+  Stärke-Split (`befund-galileo-mode2-staerke-split`: Boden lauter als starkes
+  Q4 im ruhigen Fenster), 1,5→0,65-Tagesmengen-Reconciliation
+  (`befund-galileo-tagesmengen-reconciliation`: E1 hält, 2 All-Lock-Tage),
+  In-Pass-Stärke-Rampe (`befund-galileo-inpass-staerke-rampe`: an 43/63 genuine
+  Boden↔Rauschen-Kovarianz bei Pass-Identität — verfeinert das T1b-Tages-Null für
+  die statische Assoziation; Richtung bleibt offen —, an 14 Epochen-Kollokation),
+  Same-Day-Spec-Niveau (`befund-galileo-sameday-spec-assoziation`: null).
+  Offen (pending): α–Zeit–Sonnenzyklus-Verwebung, In-Pass-Richtungstest (Pfeil),
+  Geometrie-innerhalb-Pass (Elevation), Same-Day-Floor-vs-Strong-Tag-Paarung (F1),
+  detrendete Pass-Metrik, Mode-3-three-way-Fenster, S1-Isolat-Replikation.
+  Nebenfund:
   Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-Erwartungsliste.
   `galileo_daily`-Ephemeride manifestiert.
   Register-Pflicht (recipe-level): `pioneer_navio_noise_geo.rs` trug dieselbe
