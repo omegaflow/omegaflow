@@ -1,0 +1,123 @@
+[
+ {
+  "hostname": "HAT-P-14",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR195-003",
+  "ch": -0.31,
+  "oh": 0.25,
+  "nh": 0.06,
+  "feh": 0.06,
+  "logrhk": -4.9
+ },
+ {
+  "hostname": "HAT-P-18",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR239-004",
+  "ch": 0.16,
+  "oh": 0.09,
+  "nh": -0.06,
+  "feh": 0.18,
+  "logrhk": -4.63
+ },
+ {
+  "hostname": "HAT-P-26",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR376-001",
+  "ch": 0.14,
+  "oh": 0.2,
+  "nh": -0.07,
+  "feh": 0.05,
+  "logrhk": null
+ },
+ {
+  "hostname": "HAT-P-30",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "HTR365-001",
+  "ch": 0.03,
+  "oh": 0.14,
+  "nh": 0.17,
+  "feh": 0.07,
+  "logrhk": null
+ },
+ {
+  "hostname": "TrES-4",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "TrES-4",
+  "ch": 0.1,
+  "oh": 0.42,
+  "nh": 0.43,
+  "feh": 0.32,
+  "logrhk": -5.09
+ },
+ {
+  "hostname": "WASP-15",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "WASP15",
+  "ch": -0.11,
+  "oh": -0.16,
+  "nh": 0.38,
+  "feh": -0.07,
+  "logrhk": null
+ },
+ {
+  "hostname": "WASP-17",
+  "analysis": "2016ApJS..225...32B",
+  "catalog": "J/ApJS/225/32/stars (VizieR TAP, 2026-09-05)",
+  "catname": "WASP-17",
+  "ch": -0.45,
+  "oh": 0.08,
+  "nh": -0.14,
+  "feh": -0.01,
+  "logrhk": null
+ },
+ {
+  "hostname": "HAT-P-14",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "HAT-P-14",
+  "ch": -0.25,
+  "oh": 0.27,
+  "nh": 0.14,
+  "feh": 0.07,
+  "logrhk": null
+ },
+ {
+  "hostname": "HAT-P-18",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "HAT-P-18",
+  "ch": 0.39,
+  "oh": 0.38,
+  "nh": 0.08,
+  "feh": 0.19,
+  "logrhk": null
+ },
+ {
+  "hostname": "TrES-4",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "TRES-4",
+  "ch": 0.15,
+  "oh": 0.44,
+  "nh": 0.42,
+  "feh": 0.31,
+  "logrhk": null
+ },
+ {
+  "hostname": "WASP-52",
+  "analysis": "2018ApJS..237...38B",
+  "catalog": "J/ApJS/237/38/abund (VizieR TAP, 2026-09-05)",
+  "catname": "WASP-52",
+  "ch": 0.17,
+  "oh": 0.18,
+  "nh": 0.26,
+  "feh": 0.31,
+  "logrhk": null
+ }
+]
