@@ -125,12 +125,12 @@ fn main() {
     let mut best: Option<(usize, f64)> = None;
     for lag in 0..=LAG_MAX {
         let seed = SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let ab = transfer_entropy_lag(&a, &b, lag).unwrap_or(f64::NAN);
-        let ba = transfer_entropy_lag(&b, &a, lag).unwrap_or(f64::NAN);
+        let ab = transfer_entropy_lag(&b, &a, lag).unwrap_or(f64::NAN);
+        let ba = transfer_entropy_lag(&a, &b, lag).unwrap_or(f64::NAN);
         let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
         for _ in 0..N_SURR {
             let sa = phase_randomized_surrogate(&a, &mut rng);
-            if let Some(v) = transfer_entropy_lag(&sa, &b, lag) {
+            if let Some(v) = transfer_entropy_lag(&b, &sa, lag) {
                 if v > fam {
                     fam = v;
                 }
