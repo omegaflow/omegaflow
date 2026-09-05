@@ -23,7 +23,7 @@ default-members = ["."]
 
 [features]
 browser_relay = []
-llm_gate = []
+commit_gate = []
 
 [dependencies]
 wgpu = "24"
