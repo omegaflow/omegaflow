@@ -1,0 +1,27 @@
+name: ztf-fresh-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ztf-fresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the fresh ZTF region (ra 210 dec +30) and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ztf_lightcurves_compiler -- \
+            --cone 210 30 \
+            --radius 0.02 \
+            --out ztf_lightcurves_fresh.bin \
+            --ci-mode \
+          || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "ztf-fresh-cdn: ztf_lightcurves_fresh returned void" \
+               "ztf_lightcurves_fresh harvest returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
