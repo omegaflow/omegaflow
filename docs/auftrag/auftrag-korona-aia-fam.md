@@ -47,7 +47,8 @@ post-fix-RNG): GOES-15 194 Ereignisse, fam = 1.8925e-1, 335→94-Spitze
 +1.42e-1 **unter fam → stumm**; GOES-13 208 Ereignisse, fam = 1.80e-1,
 +1.40e-1 unter fam → stumm. Der frühere „EVE ab / AIA auf"-Zwiespalt (335→94)
 löst sich auf: kein Instrument belegt die Heiß-Rung-Richtung auf fam-Niveau.
-Paper v3 + Blatt-Survey committet. Offen bis dahin: Manifestation des vollen
-Korpus aufs CDN (ersetzt den 1-Tag-Stub, CI). Die Kleinpass-Korrektur
-„steepest 5.47→5.57" ist als falsch bestätigt (bekannt-schlecht). Woods-Kontakt
-folgt nach Reaktion auf den 20-s-Bande-Block (auftrag-adoption, zweite Welle).
+Paper v3 + Blatt-Survey committet. Volles Korpus manifestiert aufs CDN
+(jsoc.stanford.edu/aia2014_lines.bin, 90 MB — ersetzt den 1-Tag-Stub). Die
+Kleinpass-Korrektur „steepest 5.47→5.57" ist als falsch bestätigt
+(bekannt-schlecht). Woods-Kontakt folgt nach Reaktion auf den 20-s-Bande-Block
+(auftrag-adoption, zweite Welle).
