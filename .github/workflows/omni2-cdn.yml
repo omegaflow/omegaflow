@@ -1,0 +1,25 @@
+name: omni2-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  omni2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile OMNI2 full series 1963-2026 once and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern omni2_serie.bin --clobber 2>/dev/null || \
+            cargo run -p omegaflow-harvest --release --bin omni2_compiler -- \
+              --lsk kernels/naif0012.tls --out omni2_serie.bin --ci-mode \
+              --window-start 1963-01-01 --window-end 2026-08-06 --decimate-min 1440 --jobs 8
