@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
+use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const MAGIC: [u8; 4] = *b"AIA1";
@@ -367,7 +367,7 @@ fn main() {
     println!();
     println!("The AIA ladder (cool → hot): 304 → 131 → 171 → 193 → 211 → 335 → 94 Å");
     println!(
-        "D(lag) = TE(cool→hot) − TE(hot→cool), positive = flux up the ladder. * = over the phase null."
+        "D(lag) = TE(cool→hot) − TE(hot→cool), positive = flux up the ladder. * = over the full-round family bound fam."
     );
     println!();
     let out_path = arg_value(&args, "--out");
@@ -384,16 +384,13 @@ fn main() {
             .collect(),
         None => Vec::new(),
     };
-    for p in 0..LADDER.len() - 1 {
-        let pair = format!("{}→{}", LADDER[p].1, LADDER[p + 1].1);
-        if done_pairs.contains(&pair) {
-            continue;
-        }
-        let mut cells: Vec<String> = Vec::new();
-        let mut peak: Option<(usize, f64)> = None;
+    let n_pairs = LADDER.len() - 1;
+    let mut real: Vec<Vec<f64>> = vec![vec![f64::NAN; 13]; n_pairs];
+    let mut fam_pool: Vec<f64> = Vec::new();
+    for p in 0..n_pairs {
         for lag in 0..=12 {
             let (d, _, _) = stack_pair(&events, p, p + 1, lag, false, 0);
-            let mut null_max = f64::NEG_INFINITY;
+            real[p][lag] = d;
             for s in 1..=N_SURR {
                 let (d_null, _, _) = stack_pair(
                     &events,
@@ -403,14 +400,24 @@ fn main() {
                     true,
                     s as u64 * 0x9E37_79B9_7F4A_7C15,
                 );
-                if d_null > null_max {
-                    null_max = d_null;
-                }
+                fam_pool.push(d_null);
             }
+        }
+    }
+    let fam = fam_pool.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    for p in 0..n_pairs {
+        let pair = format!("{}→{}", LADDER[p].1, LADDER[p + 1].1);
+        if done_pairs.contains(&pair) {
+            continue;
+        }
+        let mut cells: Vec<String> = Vec::new();
+        let mut peak: Option<(usize, f64)> = None;
+        for lag in 0..=12 {
+            let d = real[p][lag];
             if d > peak.map_or(f64::NEG_INFINITY, |(_, b)| b) {
                 peak = Some((lag, d));
             }
-            let sig = if d > null_max { "*" } else { " " };
+            let sig = if d > fam { "*" } else { " " };
             cells.push(format!("{:>8.2e}{}", d, sig));
         }
         let peak_s = peak
@@ -447,6 +454,10 @@ fn main() {
     }
     println!();
     println!(
-        "lag in 24-s cells (0..288 s); * = D over the strongest phase-randomized round of this lag."
+        "fam = {:.4e} — the strongest surrogate D of the whole round ({} pairs × 13 lags × {} surrogates).",
+        fam,
+        n_pairs,
+        N_SURR
     );
+    println!("lag in 24-s cells (0..288 s); * = D over the full-round family bound fam.");
 }
