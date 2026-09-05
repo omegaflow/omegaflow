@@ -2,8 +2,8 @@
   title: Auftrag — Der Grat: Zufall/Notwendigkeit-Bilanz über N Systeme (Meta-Blatt)
   class: auftrag
   date: 2026-09-05
-  sha256: 1536322a13241ac1c77701d56b6b0db9bd2524a7ff254531b9da3ec713ee333a
-  status: pending
+  sha256: e699ba1b5348b84352f2ca33c06134d7ace887f898acec73037aebfd9ddb4002
+  status: done
   see-also: docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md
 -->
 # Auftrag: Der Grat — Zufall/Notwendigkeit-Bilanz über N Systeme
@@ -66,3 +66,11 @@ Quelle, keine CDN-Manifestation.
 
 Blatt steht = Auftrag GESCHLOSSEN (Stille ist ein Verdikt). Bis dahin
 `pending`, 0 honored.
+
+**GESCHLOSSEN (2026-09-05):** `docs/blatt/blatt-der-grat.md` steht —
+N = 10, Verdikt aus der Tabelle allein: 3 Pfeile über Schwelle (Korona,
+GIC, Trishuli-Pegel), 6 Stille, 1 konditioniert überlebende Gegenrichtung
+(Gyirong Regen→Einstrahlung); zwei Kandidaten ohne TE-gegen-Schwelle-
+Verdikt ausgeschlossen (Signalkegel-Audit, Kausalpfeil-Siegel). Thuậns
+These in den Zahlen: die Pfeile sind lokal, die Mehrheit der Fronten
+Stille.
