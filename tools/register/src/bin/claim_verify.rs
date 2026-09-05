@@ -19,8 +19,7 @@ struct PathCheck {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let mut db: Option<PathBuf> = None;
     let mut root = PathBuf::from(".");
     let mut session_arg: Option<String> = None;
     let mut write = false;
@@ -29,7 +28,7 @@ fn main() {
         match args[i].as_str() {
             "--db" => {
                 i += 1;
-                db = PathBuf::from(&args[i]);
+                db = Some(PathBuf::from(&args[i]));
             }
             "--root" => {
                 i += 1;
@@ -44,6 +43,17 @@ fn main() {
         }
         i += 1;
     }
+
+    let db = match db {
+        Some(p) => p,
+        None => match env::var("HOME") {
+            Ok(h) => PathBuf::from(h).join(".local/share/opencode/opencode.db"),
+            Err(_) => {
+                eprintln!("claim_verify: HOME absent — pass --db <path>");
+                std::process::exit(1);
+            }
+        },
+    };
 
     let session = match session_arg {
         Some(s) => s,
@@ -426,13 +436,13 @@ fn is_completion(text: &str) -> bool {
 }
 
 fn claim_word(text: &str) -> &'static str {
-    let low = text.to_lowercase();
+    let low = fold_umlauts(&text.to_lowercase());
     let measured = [
         "git",
         "grep",
         "sqlite",
         "gemessen",
-        "läuft",
+        "laeuft",
         "messbar",
         "messung",
         "gemeldet",
@@ -440,7 +450,6 @@ fn claim_word(text: &str) -> &'static str {
         "verifiziert",
         "belegt",
         "quanti",
-        "zählt",
         "zaehlt",
         "ausgabe",
         "ergebnis",
@@ -458,7 +467,6 @@ fn claim_word(text: &str) -> &'static str {
         "committet",
         "gemacht",
         "implementiert",
-        "geprüft",
         "geprueft",
         "getestet",
         "verifiziert",
@@ -478,6 +486,20 @@ fn claim_word(text: &str) -> &'static str {
     } else {
         "leer"
     }
+}
+
+fn fold_umlauts(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '\u{e4}' | '\u{c4}' => out.push_str("ae"),
+            '\u{f6}' | '\u{d6}' => out.push_str("oe"),
+            '\u{fc}' | '\u{dc}' => out.push_str("ue"),
+            '\u{df}' => out.push_str("ss"),
+            _ => out.push(c),
+        }
+    }
+    out
 }
 
 fn extract_paths(line: &str) -> Vec<String> {
@@ -553,13 +575,13 @@ fn find_by_basename(root: &Path, path: &str) -> Option<PathBuf> {
 }
 
 fn is_gate_path(path: &str) -> bool {
-    let name = Path::new(path)
-        .file_name()
-        .map(|s| s.to_string_lossy())
-        .unwrap_or_default();
+    let name = match Path::new(path).file_name() {
+        Some(n) => n.to_string_lossy(),
+        None => return false,
+    };
     matches!(
         name.as_ref(),
-        "llm_gate.rs" | "llm_interceptor.rs" | "axioms.rs" | "state.rs" | "friction.rs"
+        "commit_gate.rs" | "axioms.rs" | "state.rs" | "friction.rs"
     )
 }
 
