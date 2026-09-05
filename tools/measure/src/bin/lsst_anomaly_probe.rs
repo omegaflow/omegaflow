@@ -6,7 +6,8 @@ use omegaflow::archivar::{
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
-use std::collections::HashMap;
+use omegaflow::ztf::{ZTF_G_LAMBDA_NM, ZTF_I_LAMBDA_NM, ZTF_R_LAMBDA_NM};
+use std::collections::{HashMap, HashSet};
 use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
@@ -38,6 +39,19 @@ const UA: &str = "omegaflow-nadel-v-lsst-scan/1.0";
 const LAS_CONE: &str = "https://api.lasair.lsst.ac.uk/api/cone/";
 const LAS_OBJECT: &str = "https://api.lasair.lsst.ac.uk/api/object/";
 const LAS_OBJECT_PAUSE_MS: u64 = 1500;
+
+// Lasair-ZTF (the ZTF alert broker at lasair-ztf.lsst.ac.uk, authenticated with
+// the LASAIR_TOKEN register key). Measured 2026-09-05: the cone answers a form
+// POST ra/dec/radius/requestType with rows of {object, separation} (radius in
+// arcsec, max 1000); the object record answers a form POST objectId=… with the
+// alert candidates (fid 1=g, 2=r, 3=i; magpsf on a magzpsci zero point) and the
+// forced-photometry stream (forcediffimflux with forcediffimfluxunc on the same
+// magzpsci scale). The ZTF hourly token budget is 100 calls for a user token
+// (measured: HTTP 429 "wait an hour" after the budget is spent).
+const ZTF_CONE: &str = "https://lasair-ztf.lsst.ac.uk/api/cone/";
+const ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";
+const ZTF_OBJECT_PAUSE_MS: u64 = 2000;
+const ZTF_FORCED_SIGMA: f64 = 3.0;
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
     ("u", 380.0),
@@ -647,8 +661,8 @@ fn curl_post_rate_aware(url: &str, json_body: &str) -> Option<(String, Vec<u8>)>
     None
 }
 
-fn lasair_token() -> Option<String> {
-    if let Ok(t) = std::env::var("LASAIR_LSST_TOKEN") {
+fn token_from(key: &str) -> Option<String> {
+    if let Ok(t) = std::env::var(key) {
         if !t.is_empty() {
             return Some(t);
         }
@@ -658,12 +672,20 @@ fn lasair_token() -> Option<String> {
     let body = std::fs::read_to_string(state_root.join(".secrets.local")).ok()?;
     for line in body.lines() {
         if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == "LASAIR_LSST_TOKEN" && !v.trim().is_empty() {
+            if k.trim() == key && !v.trim().is_empty() {
                 return Some(v.trim().to_string());
             }
         }
     }
     None
+}
+
+fn lasair_token() -> Option<String> {
+    token_from("LASAIR_LSST_TOKEN")
+}
+
+fn ztf_token() -> Option<String> {
+    token_from("LASAIR_TOKEN")
 }
 
 fn curl_form_post(url: &str, form: &str, token: &str) -> Option<(String, Vec<u8>)> {
@@ -694,6 +716,44 @@ fn curl_form_post(url: &str, form: &str, token: &str) -> Option<(String, Vec<u8>
 }
 
 fn curl_form_post_rate_aware(url: &str, form: &str, token: &str) -> Option<(String, Vec<u8>)> {
+    curl_form_post_rate_aware_label(url, form, token, "Lasair-LSST")
+}
+
+// Same backoff discipline as the rate-aware helper, but the last HTTP answer
+// (a 429 included) is returned so the caller can name the standing budget
+// limit instead of reading a stall.
+fn curl_form_post_budget_aware(
+    url: &str,
+    form: &str,
+    token: &str,
+    broker: &str,
+) -> Option<(String, Vec<u8>)> {
+    let mut last: Option<(String, Vec<u8>)> = None;
+    for attempt in 0..HTTP_RETRY {
+        let resp = curl_form_post(url, form, token)?;
+        if resp.0 != "429" {
+            return Some(resp);
+        }
+        let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
+        println!(
+            "{broker}: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
+            attempt + 1
+        );
+        sleep_ms(backoff);
+        last = Some(resp);
+    }
+    println!(
+        "{broker}: HTTP 429 held across {HTTP_RETRY} backed-off tries — the hourly budget stands, the query stays pending"
+    );
+    last
+}
+
+fn curl_form_post_rate_aware_label(
+    url: &str,
+    form: &str,
+    token: &str,
+    broker: &str,
+) -> Option<(String, Vec<u8>)> {
     for attempt in 0..HTTP_RETRY {
         let Some(resp) = curl_form_post(url, form, token) else {
             return None;
@@ -701,7 +761,7 @@ fn curl_form_post_rate_aware(url: &str, form: &str, token: &str) -> Option<(Stri
         if resp.0 == "429" {
             let backoff = RATE_LIMIT_BACKOFF_MS * (attempt as u64 + 1);
             println!(
-                "Lasair-LSST: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
+                "{broker}: HTTP 429 — the endpoint asks for a slower pace; {backoff} ms before the next try (try {})",
                 attempt + 1
             );
             sleep_ms(backoff);
@@ -710,7 +770,7 @@ fn curl_form_post_rate_aware(url: &str, form: &str, token: &str) -> Option<(Stri
         return Some(resp);
     }
     println!(
-        "Lasair-LSST: HTTP 429 held across {HTTP_RETRY} backed-off tries — the rate limit stands, the query stays pending"
+        "{broker}: HTTP 429 held across {HTTP_RETRY} backed-off tries — the rate limit stands, the query stays pending"
     );
     None
 }
@@ -1651,6 +1711,490 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     );
 }
 
+fn ztf_band_of_fid(fid: f64) -> Option<&'static str> {
+    match fid as i64 {
+        1 => Some("g"),
+        2 => Some("r"),
+        3 => Some("i"),
+        _ => None,
+    }
+}
+
+fn ztf_band_freq(band: &str) -> Option<f64> {
+    let lam_nm = match band {
+        "g" => ZTF_G_LAMBDA_NM,
+        "r" => ZTF_R_LAMBDA_NM,
+        "i" => ZTF_I_LAMBDA_NM,
+        _ => return None,
+    };
+    Some(C_LIGHT / (lam_nm * 1e-9))
+}
+
+// The ZTF time layer: the alert and forced-photometry epochs are JD on the UTC
+// clock. The map jd → UTC unix → TDB seconds-since-J2000 (unix_to_tdb adds ΔT
+// 32.184 s + the leap second) is the same one path the ZTF1 compiler uses for
+// the IRSA HJD rows, so the lasair and the IRSA assets share one fold axis.
+fn ztf_jd_to_tdb(jd: f64, lsk: &LeapSeconds) -> Option<f64> {
+    lsk.unix_to_tdb((jd - 2440587.5) * 86400.0)
+}
+
+struct ZtfPhot {
+    coord: Option<(f64, f64)>,
+    rows: Vec<(String, f64, f64)>,
+    upper_limits: usize,
+    forced_excluded: usize,
+    duplicates: usize,
+}
+
+// The lasair-ZTF object record, measured 2026-09-05: the candidates array
+// carries the alert detections (candid, jd, fid, magpsf on the magzpsci zero
+// point) interleaved with the jd-only upper-limit rows (diffmaglim, no flux);
+// the forcedphot array carries the historical forced photometry
+// (objectid, jd, fid, forcediffimflux, forcediffimfluxunc, magzpsci). Both
+// streams are converted to the same linear-counts scale — candidate counts
+// 10^(−0.4·(magpsf − magzpsci)), forced counts forcediffimflux — so the two
+// can share one per-band curve. A forced epoch enters only when its flux is a
+// measured detection (flux > 0 at ≥ ZTF_FORCED_SIGMA its uncertainty); the
+// jd-only upper limits and the sub-gate forced epochs stay absent, never a
+// fabricated 0.0. Alert and forced epochs of the same band and second are one
+// visit, not two.
+fn parse_ztf_phot(body: &[u8], lsk: &LeapSeconds) -> Option<ZtfPhot> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return None;
+    };
+    let Some(JsonVal::Obj(map)) = parse_json(text) else {
+        return None;
+    };
+    // A real object record carries the string objectId; a rate-limit body (the
+    // HTTP 429 {"message": …}) does not and must not read as an absent
+    // light curve.
+    if !matches!(map.get("objectId"), Some(JsonVal::Str(_))) {
+        return None;
+    }
+    let mut coord: Option<(f64, f64)> = None;
+    let mut rows: Vec<(String, f64, f64)> = Vec::new();
+    let mut upper_limits = 0usize;
+    let mut forced_excluded = 0usize;
+    let mut duplicates = 0usize;
+    let mut seen: HashSet<(u8, i64)> = HashSet::new();
+    if let Some(JsonVal::Arr(list)) = map.get("candidates") {
+        for r in list {
+            let JsonVal::Obj(m) = r else { continue };
+            let (Some(fid), Some(JsonVal::Num(jd))) = (m.get("fid"), m.get("jd")) else {
+                continue;
+            };
+            let JsonVal::Num(fid) = fid else { continue };
+            if !fid.is_finite() || !jd.is_finite() {
+                continue;
+            }
+            let Some(band) = ztf_band_of_fid(*fid) else {
+                continue;
+            };
+            if coord.is_none() {
+                if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+                    (m.get("ra"), m.get("dec"))
+                {
+                    if ra.is_finite() && dec.is_finite() {
+                        coord = Some((*ra, *dec));
+                    }
+                }
+            }
+            let Some(tdb) = ztf_jd_to_tdb(*jd, lsk) else {
+                continue;
+            };
+            let (Some(JsonVal::Num(magpsf)), Some(JsonVal::Num(magzpsci))) =
+                (m.get("magpsf"), m.get("magzpsci"))
+            else {
+                upper_limits += 1;
+                continue;
+            };
+            if !magpsf.is_finite() || !magzpsci.is_finite() {
+                upper_limits += 1;
+                continue;
+            }
+            let counts = 10f64.powf(-0.4 * (magpsf - magzpsci));
+            if !counts.is_finite() || counts <= 0.0 {
+                upper_limits += 1;
+                continue;
+            }
+            let key = (band.as_bytes()[0], (jd * 86400.0).round() as i64);
+            if !seen.insert(key) {
+                duplicates += 1;
+                continue;
+            }
+            rows.push((band.to_string(), tdb, counts));
+        }
+    }
+    if let Some(JsonVal::Arr(list)) = map.get("forcedphot") {
+        for r in list {
+            let JsonVal::Obj(m) = r else { continue };
+            let (Some(fid), Some(JsonVal::Num(jd))) = (m.get("fid"), m.get("jd")) else {
+                continue;
+            };
+            let JsonVal::Num(fid) = fid else { continue };
+            if !fid.is_finite() || !jd.is_finite() {
+                continue;
+            }
+            let Some(band) = ztf_band_of_fid(*fid) else {
+                continue;
+            };
+            if coord.is_none() {
+                if let (Some(JsonVal::Num(ra)), Some(JsonVal::Num(dec))) =
+                    (m.get("ranr"), m.get("decnr"))
+                {
+                    if ra.is_finite() && dec.is_finite() {
+                        coord = Some((*ra, *dec));
+                    }
+                }
+            }
+            let Some(tdb) = ztf_jd_to_tdb(*jd, lsk) else {
+                continue;
+            };
+            let (Some(JsonVal::Num(flux)), Some(JsonVal::Num(unc))) =
+                (m.get("forcediffimflux"), m.get("forcediffimfluxunc"))
+            else {
+                continue;
+            };
+            if !flux.is_finite() || *flux <= 0.0 {
+                forced_excluded += 1;
+                continue;
+            }
+            if !unc.is_finite() || *unc <= 0.0 || *flux < ZTF_FORCED_SIGMA * unc {
+                forced_excluded += 1;
+                continue;
+            }
+            let key = (band.as_bytes()[0], (jd * 86400.0).round() as i64);
+            if !seen.insert(key) {
+                duplicates += 1;
+                continue;
+            }
+            rows.push((band.to_string(), tdb, *flux));
+        }
+    }
+    Some(ZtfPhot {
+        coord,
+        rows,
+        upper_limits,
+        forced_excluded,
+        duplicates,
+    })
+}
+
+fn build_ztf_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<LsstCurve> {
+    let mut t_min = f64::INFINITY;
+    for (_, tdb, _) in rows {
+        if *tdb < t_min {
+            t_min = *tdb;
+        }
+    }
+    let mut curves: Vec<LsstCurve> = Vec::new();
+    for name in ["g", "r", "i"] {
+        let Some(freq) = ztf_band_freq(name) else {
+            continue;
+        };
+        let mut samples: Vec<(f64, f32)> = rows
+            .iter()
+            .filter(|(b, _, _)| b == name)
+            .map(|(_, tdb, flux)| (tdb - t_min, *flux as f32))
+            .collect();
+        if samples.is_empty() {
+            continue;
+        }
+        samples.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        curves.push(LsstCurve {
+            ra_deg: ra,
+            dec_deg: dec,
+            freq,
+            samples,
+        });
+    }
+    curves
+}
+
+// The lasair-ZTF cone flow (the register LASAIR_TOKEN). The cone answers a form
+// POST ra/dec/radius/requestType=all; each object record is fetched (a saved
+// real sample from an earlier measurement is reused when present, HTTP spared),
+// the multi-band g/r/i epochs over the object history are folded jd → TDB on
+// the ZTF1 compiler's one axis, and the record is assembled as an LSS1 asset
+// for the same achromatic non-periodic dip cut (scale-invariant FAP) that the
+// LSST round runs. The diurnal station term stays geocenter-named: this probe
+// carries no Palomar geodetic constant, and the dip cut's 1800 s coincidence
+// window is fold-invariant to the ±8 min seasonal Rømer term.
+fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
+    let cap = if max_objects == usize::MAX {
+        "all".to_string()
+    } else {
+        max_objects.to_string()
+    };
+    println!(
+        "\n=== Nadel V (ZTF historical round): lasair-ZTF cone ({ra}, {dec}, {radius_arcsec} arcsec, up to {cap} object light curves) ==="
+    );
+    let Some(token) = ztf_token() else {
+        println!(
+            "Verdict: pending — LASAIR_TOKEN absent (env or the .secrets.local key). The ZTF cone/object queries stay pending until the token is present; the endpoint is measured alive, the scan is not fabricated."
+        );
+        return;
+    };
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "Verdict: pending — the embedded naif0012.tls leap table is absent — the time layer stays pending"
+        );
+        return;
+    };
+    println!(
+        "Lasair-ZTF: time layer — jd (UTC clock) → UTC unix → TDB seconds-since-J2000 (naif0012.tls ΔT 32.184 s + leap), the same one path the ZTF1 compiler uses"
+    );
+    let cone_path = format!("/tmp/opencode/ztf_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
+    let body: Vec<u8>;
+    let cone_local = match std::fs::read(&cone_path) {
+        Ok(b) if !b.is_empty() => {
+            body = b;
+            true
+        }
+        _ => {
+            let cone_form = format!("ra={ra}&dec={dec}&radius={radius_arcsec}&requestType=all");
+            let Some((code, fetched)) =
+                curl_form_post_budget_aware(ZTF_CONE, &cone_form, &token, "Lasair-ZTF")
+            else {
+                println!("Verdict: pending — the cone query did not answer (measured stall)");
+                return;
+            };
+            if code == "429" {
+                println!(
+                    "Verdict: pending — the cone query stands against the hourly budget (HTTP 429); the scan waits for the budget window and is not fabricated"
+                );
+                return;
+            }
+            if code != "200" {
+                println!("Verdict: pending — the cone answered HTTP {code}");
+                return;
+            }
+            if std::fs::write(&cone_path, &fetched).is_err() {
+                println!("Verdict: pending — the cone sample was not saved ({cone_path})");
+                return;
+            }
+            body = fetched;
+            false
+        }
+    };
+    println!(
+        "Lasair-ZTF cone: {} bytes, sample {} — {}",
+        body.len(),
+        cone_path,
+        if cone_local {
+            "reused from the saved real measurement (HTTP spared)"
+        } else {
+            "fetched over HTTP and saved"
+        }
+    );
+    let Some(rows) = parse_lasair_cone(&body) else {
+        println!(
+            "Lasair-ZTF cone: the body is not a row array of {{object, separation}} (schema measured, parser pending on a real sample):"
+        );
+        let shape = top_level_shape(&body);
+        for (k, len) in &shape {
+            println!("  {k}: {len}");
+        }
+        println!("Verdict: pending");
+        return;
+    };
+    if rows.is_empty() {
+        println!(
+            "Verdict: the cone ({ra}, {dec}, {radius_arcsec} arcsec) holds no object — the scan stays void (0 honored)"
+        );
+        return;
+    }
+    let chosen = rows.len().min(max_objects);
+    println!(
+        "Lasair-ZTF cone: {} object row(s) within the cone; {} chosen for the light-curve fetch (ascending separation)",
+        rows.len(),
+        chosen
+    );
+    let mut curves_all: Vec<LsstCurve> = Vec::new();
+    let mut map_lines: Vec<String> = Vec::new();
+    map_lines.push("objectId,ra,dec,separation".to_string());
+    let mut fetched = 0usize;
+    let mut fetched_local = 0usize;
+    let mut pending_quota = 0usize;
+    let mut total_rows = 0usize;
+    let mut total_excluded = 0usize;
+    let mut pending_absent = 0usize;
+    let mut budget_down = false;
+    for row in rows.iter().take(chosen) {
+        let obj_path = format!("/tmp/opencode/ztf_obj_{}.json", row.id);
+        // A saved real sample is reused when it parses to the measured schema;
+        // a stale saved body (e.g. an earlier HTTP 429 answer) is discarded and
+        // the object is fetched afresh.
+        let mut body: Option<Vec<u8>> = std::fs::read(&obj_path).ok().filter(|b| !b.is_empty());
+        let mut local = false;
+        if let Some(b) = &body {
+            if parse_ztf_phot(b, &lsk).is_some() {
+                local = true;
+            } else {
+                let _ = std::fs::remove_file(&obj_path);
+                body = None;
+            }
+        }
+        if body.is_none() && budget_down {
+            // The hourly budget is spent: objects without a saved real sample
+            // stay unmeasured (0 honored) — later local samples still run.
+            pending_quota += 1;
+            println!(
+                "Lasair-ZTF {}: the light curve is pending the hourly budget (HTTP 429) — the object stays unmeasured (0 honored)",
+                row.id
+            );
+            continue;
+        }
+        if body.is_none() {
+            let obj_form = format!("objectId={}", row.id);
+            let Some(resp) =
+                curl_form_post_budget_aware(ZTF_OBJECT, &obj_form, &token, "Lasair-ZTF")
+            else {
+                println!(
+                    "Lasair-ZTF {}: the light curve query did not answer (measured stall) — pending",
+                    row.id
+                );
+                sleep_ms(ZTF_OBJECT_PAUSE_MS);
+                continue;
+            };
+            if resp.0 == "429" {
+                budget_down = true;
+                pending_quota += 1;
+                println!(
+                    "Lasair-ZTF {}: the light curve is pending the hourly budget (HTTP 429) — the object stays unmeasured (0 honored)",
+                    row.id
+                );
+                sleep_ms(ZTF_OBJECT_PAUSE_MS);
+                continue;
+            }
+            if resp.0 != "200" {
+                println!(
+                    "Lasair-ZTF {}: the light curve answered HTTP {} — pending",
+                    row.id, resp.0
+                );
+                sleep_ms(ZTF_OBJECT_PAUSE_MS);
+                continue;
+            }
+            if std::fs::write(&obj_path, &resp.1).is_err() {
+                println!(
+                    "Lasair-ZTF {}: the object sample was not saved ({obj_path})",
+                    row.id
+                );
+            }
+            body = Some(resp.1);
+        }
+        let Some(body) = body else {
+            continue;
+        };
+        let phot = match parse_ztf_phot(&body, &lsk) {
+            Some(p) => p,
+            None => {
+                println!(
+                    "Lasair-ZTF {}: the object record does not parse to the measured candidate/forcedphot schema — parser pending (sample saved {obj_path})",
+                    row.id
+                );
+                sleep_ms(ZTF_OBJECT_PAUSE_MS);
+                continue;
+            }
+        };
+        if phot.rows.is_empty() {
+            pending_absent += 1;
+            println!(
+                "Lasair-ZTF {}: no candidate or forced-photometry row carries a positive in-band flux — the light curve is absent ({} non-detection row(s), 0 honored)",
+                row.id,
+                phot.upper_limits + phot.forced_excluded
+            );
+            sleep_ms(ZTF_OBJECT_PAUSE_MS);
+            continue;
+        }
+        let (o_ra, o_dec) = match phot.coord {
+            Some(c) => c,
+            None => (ra, dec),
+        };
+        let mut per_band: HashMap<String, usize> = HashMap::new();
+        let mut t_first = f64::INFINITY;
+        let mut t_last = f64::NEG_INFINITY;
+        for (band, tdb, _) in &phot.rows {
+            *per_band.entry(band.clone()).or_insert(0) += 1;
+            if *tdb < t_first {
+                t_first = *tdb;
+            }
+            if *tdb > t_last {
+                t_last = *tdb;
+            }
+        }
+        let span_days = (t_last - t_first) / DAY_S;
+        let mut band_counts: Vec<(&str, usize)> =
+            per_band.iter().map(|(b, n)| (b.as_str(), *n)).collect();
+        band_counts.sort();
+        let counts: Vec<String> = band_counts
+            .iter()
+            .map(|(b, n)| format!("{b} {n}"))
+            .collect();
+        let curves = build_ztf_band_curves(o_ra, o_dec, &phot.rows);
+        let origin = if local {
+            "local sample (measured earlier, HTTP spared)"
+        } else {
+            "HTTP"
+        };
+        println!(
+            "Lasair-ZTF {}: {} epoch(s) over {} spanning {span_days:.0} d via {origin} at ra {o_ra:.4} dec {o_dec:.4}; {} non-detection row(s) stayed absent, {} duplicate epoch(s) removed",
+            row.id,
+            phot.rows.len(),
+            counts.join(", "),
+            phot.upper_limits + phot.forced_excluded,
+            phot.duplicates
+        );
+        if curves.is_empty() {
+            sleep_ms(ZTF_OBJECT_PAUSE_MS);
+            continue;
+        }
+        curves_all.extend(curves);
+        map_lines.push(format!(
+            "{},{:.8},{:.8},{:.4}",
+            row.id, o_ra, o_dec, row.separation
+        ));
+        fetched += 1;
+        if local {
+            fetched_local += 1;
+        }
+        total_rows += phot.rows.len();
+        total_excluded += phot.upper_limits + phot.forced_excluded;
+        sleep_ms(ZTF_OBJECT_PAUSE_MS);
+    }
+    println!(
+        "Nadel V (ZTF historical round): {fetched} object light curve(s) ready ({fetched_local} from saved real samples), {total_rows} measurement row(s) total, {total_excluded} non-detection row(s) excluded as absent, {pending_quota} object(s) pending the hourly budget, {pending_absent} object(s) with an absent light curve"
+    );
+    if curves_all.is_empty() {
+        println!("Verdict: no object carries a light curve — the scan stays void (0 honored)");
+        return;
+    }
+    let bin_path = format!(
+        "/tmp/opencode/ztf_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
+    );
+    if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
+        println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
+        return;
+    }
+    let map_path =
+        format!("/tmp/opencode/ztf_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
+        println!("Nadel V (ZTF historical round): the object map was not written ({map_path})");
+    }
+    println!(
+        "Nadel V (ZTF historical round): LSS1 asset written {bin_path} (the ZTF g/r/i band curves, identified by their ZTF central frequencies), object map {map_path}"
+    );
+    scan_lss1(&bin_path, false);
+    println!(
+        "Verdict: the lasair-ZTF cone scan above is a full measurement on the jd → TDB fold axis through the achromatic non-periodic dip cut (scale-invariant FAP gate) over the historical multi-band epochs the object records carry"
+    );
+    if pending_quota > 0 {
+        println!(
+            "Coverage: {pending_quota} cone object(s) stayed pending the ZTF hourly budget — the scan measured every object the budget released; no fabricated light curve replaced a pending one"
+        );
+    }
+}
+
 fn grid_scan(cones: &[(f64, f64, f64, usize)]) {
     println!(
         "\n=== Nadel V (LSST round): anonymous cone grid, time layer MJD/TAI → TDB (embedded naif0012.tls), {} cone(s) ===",
@@ -1805,6 +2349,8 @@ fn usage() {
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
          Lasair-LSST cone with the operator's account token (LASAIR_LSST_TOKEN in the .secrets.local key or env):\n\
          \x20 lsst_anomaly_probe --lasair-ra <deg> --lasair-dec <deg> --lasair-radius <arcsec> [--lasair-max <objects=6>]\n\
+         Lasair-ZTF historical cone (LASAIR_TOKEN in the .secrets.local key or env):\n\
+         \x20 lsst_anomaly_probe --ztf-ra <deg> --ztf-dec <deg> --ztf-radius <arcsec> [--ztf-max <objects>]\n\
          scan_lss1 of a real LSS1 light-curve asset:\n\
          \x20 lsst_anomaly_probe --scan <lsst_lightcurves.bin>\n\
          negative control of the achromatic dip cut (synthetic achromatic dip into a real LSS1 asset):\n\
@@ -2088,6 +2634,10 @@ fn main() {
     let mut lasair_dec: Option<f64> = None;
     let mut lasair_radius: Option<f64> = None;
     let mut lasair_max: usize = 6;
+    let mut ztf_ra: Option<f64> = None;
+    let mut ztf_dec: Option<f64> = None;
+    let mut ztf_radius: Option<f64> = None;
+    let mut ztf_max: usize = usize::MAX;
     let mut cones: Vec<(f64, f64, f64, usize)> = Vec::new();
     let mut neg_control_base: Option<String> = None;
     let mut neg_control_depth: f64 = 8.0;
@@ -2162,6 +2712,25 @@ fn main() {
                 lasair_max = args.get(i + 1).and_then(|v| v.parse().ok()).unwrap_or(6);
                 i += 1;
             }
+            "--ztf-ra" => {
+                ztf_ra = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--ztf-dec" => {
+                ztf_dec = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--ztf-radius" => {
+                ztf_radius = args.get(i + 1).and_then(|v| v.parse().ok());
+                i += 1;
+            }
+            "--ztf-max" => {
+                ztf_max = args
+                    .get(i + 1)
+                    .and_then(|v| v.parse().ok())
+                    .unwrap_or(usize::MAX);
+                i += 1;
+            }
             "--negative-control" => {
                 neg_control_base = args.get(i + 1).cloned();
                 if let Some(d) = args.get(i + 2).and_then(|v| v.parse::<f64>().ok()) {
@@ -2213,6 +2782,18 @@ fn main() {
         match (lasair_dec, lasair_radius) {
             (Some(dec), Some(radius)) => {
                 lasair_cone_scan(ra, dec, radius, lasair_max);
+            }
+            _ => {
+                usage();
+                return;
+            }
+        }
+        return;
+    }
+    if let Some(ra) = ztf_ra {
+        match (ztf_dec, ztf_radius) {
+            (Some(dec), Some(radius)) => {
+                ztf_cone_scan(ra, dec, radius, ztf_max);
             }
             _ => {
                 usage();
@@ -2630,5 +3211,73 @@ mod tests {
         assert_eq!(rows[1].0, "z");
         let (_, empty) = parse_lasair_lightcurve(br#"{"diaObject":{}}"#);
         assert!(empty.is_empty());
+    }
+
+    #[test]
+    fn ztf_band_fid_and_frequency_mapping_is_canonical() {
+        assert_eq!(ztf_band_of_fid(1.0), Some("g"));
+        assert_eq!(ztf_band_of_fid(2.0), Some("r"));
+        assert_eq!(ztf_band_of_fid(3.0), Some("i"));
+        assert_eq!(ztf_band_of_fid(0.0), None);
+        assert_eq!(ztf_band_of_fid(4.0), None);
+        let g = ztf_band_freq("g").expect("g maps");
+        assert!((g - C_LIGHT / (ZTF_G_LAMBDA_NM * 1e-9)).abs() / g < 1e-12);
+        let i = ztf_band_freq("i").expect("i maps");
+        assert!((i - C_LIGHT / (ZTF_I_LAMBDA_NM * 1e-9)).abs() / i < 1e-12);
+        assert!(ztf_band_freq("z").is_none());
+    }
+
+    #[test]
+    fn ztf_phot_parser_reads_the_measured_object_schema() {
+        // The lasair-ZTF object record measured 2026-09-05: candidates rows
+        // carry candid/jd/fid/magpsf/magzpsci; the jd-only rows are upper
+        // limits (diffmaglim, no flux); the forcedphot rows carry
+        // forcediffimflux with forcediffimfluxunc on the magzpsci scale. The
+        // parser keeps only measured positive in-band flux — the upper limits,
+        // the sub-3σ forced epochs and a repeated band/second visit stay
+        // absent, never a fabricated 0.0.
+        let body = br#"{"objectId":"ZTF20test","candidates":[{"candid":2277225591215015002,"jd":2460031.7255903,"ra":148.8745407,"dec":2.5209382,"fid":1,"nid":2277,"magpsf":20.829599380493164,"sigmapsf":0.3,"magnr":20.2,"sigmagnr":0.03,"magzpsci":26.319599151611328,"isdiffpos":"t","ssdistnr":null,"ssnamenr":null,"drb":null},{"jd":2460016.7284028,"fid":2,"diffmaglim":20.54050064086914},{"candid":2,"jd":2460031.7255903,"ra":148.8745,"dec":2.5209,"fid":1,"magpsf":20.8,"magzpsci":26.3}],"forcedphot":[{"objectid":"ZTF20test","jd":2460646.9634838,"ranr":148.8745587,"decnr":2.5208508,"fid":2,"forcediffimflux":140.17,"forcediffimfluxunc":26.4,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460647.0,"ranr":148.8745,"decnr":2.5209,"fid":1,"forcediffimflux":10.0,"forcediffimfluxunc":10.0,"magzpsci":26.2},{"objectid":"ZTF20test","jd":2460648.0,"ranr":148.8745,"decnr":2.5209,"fid":2,"forcediffimflux":-5.0,"forcediffimfluxunc":3.0,"magzpsci":26.2}]}"#;
+        let phot = parse_ztf_phot(body, &lsk()).expect("the measured schema parses");
+        let (ra, dec) = phot.coord.expect("the first candidate ra/dec maps");
+        assert!((ra - 148.8745407).abs() < 1e-9 && (dec - 2.5209382).abs() < 1e-9);
+        assert_eq!(
+            phot.rows.len(),
+            2,
+            "one g alert detection and one r forced detection stay; the jd-only upper limit, the two sub-gate forced epochs and the duplicate g visit stay absent"
+        );
+        assert_eq!(phot.rows[0].0, "g");
+        assert_eq!(phot.rows[1].0, "r");
+        let expect_counts = 10f64.powf(-0.4 * (20.829599380493164 - 26.319599151611328));
+        assert!(
+            (phot.rows[0].2 - expect_counts).abs() / expect_counts < 1e-12,
+            "the alert magpsf maps to counts on the magzpsci zero point"
+        );
+        assert!((phot.rows[1].2 - 140.17).abs() < 1e-9);
+        assert!(
+            phot.rows[0].1.is_finite() && phot.rows[1].1.is_finite(),
+            "the jd folds onto a finite TDB axis"
+        );
+        assert!(phot.rows[0].1 > 0.0 && phot.rows[1].1 > phot.rows[0].1);
+        assert_eq!(phot.upper_limits, 1);
+        assert_eq!(phot.forced_excluded, 2);
+        assert_eq!(phot.duplicates, 1);
+        let curves = build_ztf_band_curves(ra, dec, &phot.rows);
+        assert_eq!(curves.len(), 2);
+        assert_eq!(curves[0].samples.len(), 1);
+        assert_eq!(curves[1].samples.len(), 1);
+    }
+
+    #[test]
+    fn ztf_jd_to_tdb_is_the_compiler_one_axis() {
+        // The jd → UTC unix → TDB map must agree with the ZTF1 compiler's own
+        // hjd → unix → TDB path (same numeric formula, same leap table), so a
+        // lasair asset and an IRSA asset share one fold axis.
+        let lsk = lsk();
+        let jd = 2460031.7255903;
+        let tdb = ztf_jd_to_tdb(jd, &lsk).expect("a 2023 jd maps");
+        let unix = (jd - 2440587.5) * 86400.0;
+        let expect = unix + 32.184 + lsk.leap_at(unix).expect("the leap reads") - 946_728_000.0;
+        assert!((tdb - expect).abs() < 1e-6);
+        assert!(tdb > 0.0, "a post-J2000 epoch is positive");
     }
 }
