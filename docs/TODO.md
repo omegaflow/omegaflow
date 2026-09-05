@@ -119,10 +119,13 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   (globaler Dedup). Realer Bestand ~138 TDF-Dateien, nicht 192. Der
   Befund-`192`-Wert war der stale INDEX, keine Platten-Wahrheit.
   Rausch-Kurve gezeichnet (2026-09-05, `befund-galileo-rausch-kurve.md`):
-  Mode-Split gemessen — Mode 1 flach (Selbst-Rauschen), Mode 2/3 SEP-steil
-  (28×/12×, Plasma); Distanz-Achse n-leer (nur 5–6 AU beprobt, 0–2 AU 4–8
-  Tage); ruhiges Fenster = Mode 2, SEP 150–180°, 1,5 Hz. `galileo_daily`-
-  Ephemeride manifestiert (ssd.jpl.nasa.gov, 2026-09-05).
+  Mode-Split gemessen — Mode 2/3 SEP-steil (28×/12×, Plasma), Mode 1 flach
+  (keine Geometrie; Oszillator vs. PLL-Schwachsignal offen, Stärke-Split);
+  SEP erstmals von der Distanz getrennt (Pioneer-verwoben); Distanz-Achse
+  n-leer (nur 5–6 AU beprobt); ruhiges Fenster = Mode 2, SEP 150–180°,
+  1,5 Hz. Nebenfund: Stationen 12/15/24/34/42/45/61 (34m) → GWE-Banden-Test-
+  Erwartungsliste. `galileo_daily`-Ephemeride manifestiert
+  (ssd.jpl.nasa.gov, 2026-09-05).
 - `auftrag-quiet-zone-vorfilter.md` — GESCHLOSSEN (2026-09-04): Vorfilter Tür 2
   (New Horizons ~60 AU) + Tür 4 (Mariner/Galileo/Cassini) ausgeführt.
   Verdikte gemessen: New Horizons `besteht` (Cruise spinstabilisiert, keine
