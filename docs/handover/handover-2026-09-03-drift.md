@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-03
   status: live
-  see-also: TODO.md
+  see-also: docs/TODO.md
 -->
 
 # Übergabe — Drift gemessen

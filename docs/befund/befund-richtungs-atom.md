@@ -5,7 +5,7 @@
   sha256: 1f3bb62a6801caa0b1478a3a9fa59a5b7acbccfadc07e1bd2f5ceb3897a82b95
   status: done
   antwortet-auf: docs/auftrag/auftrag-richtungs-transient-atom.md
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/docs-naming.md docs/TODO.md phi/blocked_sources.phi phi/dead_sources.phi
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/docs-naming.md docs/TODO.md phi/blocked_sources.φ phi/dead_sources.φ
 -->
 
 # Befund — SkyDirection: die Himmelsrichtung gehalten, nicht erfunden
