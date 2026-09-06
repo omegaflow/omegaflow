@@ -589,8 +589,9 @@ physikalischen Aussage — kein Blatt ohne diese:
   drei heissen Rungs positiv (193->211 +1.21e-1, 211->335 +9.37e-2,
   335->94 +1.30e-1), ~72-168-s-Lag, fam 1.75e-1 unter-fam. Zwei unabhaengige
   Jahre (2014 1019 Ev + 2015 281 Ev) tragen dieselbe gerichtete Aufwaerts-
-  Kaskade: reproduzierbar-gerichtet, unter-fam. (2013 pending: Monat 11
-  haengt.)
+  Kaskade: reproduzierbar-gerichtet, unter-fam. (2013 pending: Monat 11 —
+  CI-Ernte aia2013_11.bin via aia-cdn dispatch 34042431334 gestartet
+  2026-09-06; danach 12 Monate mergen + fam-Probe fuer das dritte Jahr.)
 - **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse, gemessen 2026-09-06):
   die Richtung ist KONSISTENT, nicht alternierend** — 76% der Ereignisse
   positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00), Monats-Mittel
@@ -1101,8 +1102,10 @@ Schuss, das Vlies als das eine Bild. Die acht Stufen sind ungebaut —
 - CDN-Manifestations-Weg des Vlies-Assets.
 - Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien nicht
   konvergieren, benennt die Maschine den Riss und seinen Knoten in der
-  Abstammungs-Kette. Erster Anwendungs-Knoten: die Hubble-Spannung (Planck
-  ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) — benennen statt mitteln.
+  Abstammungs-Kette. Gemessen wird der Riss zuerst an den eigenen Linien
+  (MPC gegen SPK, SWARM gegen INTERMAGNET); die Hubble-Spannung (Planck
+  ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) ist die Illustration —
+  benennbar heute, messbar erst, wenn beide Linien im Bestand einziehen.
 
 ## Source-Port — der eine Pfad
 
