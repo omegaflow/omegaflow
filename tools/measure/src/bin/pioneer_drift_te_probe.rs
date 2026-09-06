@@ -85,7 +85,7 @@ fn span_text(first: i64, last: i64) -> String {
 }
 
 fn main() {
-    let path = "data/pioneer10_skyfreq.bin";
+    let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
         return;

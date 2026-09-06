@@ -123,9 +123,9 @@ fn measure_form(daily: &[(f64, f64)], k: usize) -> Option<Form> {
 }
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio_subkhz_daily.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
     if !std::path::Path::new(&path).exists() {
-        let path = format!("data/{name}_navio_daily.bin");
+        let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
         let Some(daily) = read_daily(&path) else {
             eprintln!("{name}: daily bin void/parse void ({path})");
             return;
@@ -214,7 +214,7 @@ fn scan(name: &str, daily: &[(f64, f64)]) {
     forms.sort_by(|a, b| b.1.jump.abs().total_cmp(&a.1.jump.abs()));
 
     eprintln!(
-        "{name}: form measured on {measured} of {nflag} flags — {fine} fine (≥{FINE_MIN_DAYS}d), {coarse} coarse ({COARSE_MIN_DAYS}-{fine}...d), {too_short} below {COARSE_MIN_DAYS}-day continuous window (benannt, nicht bemalt, 0 honored)",
+        "{name}: form measured on {measured} of {nflag} flags — {fine} fine (≥{FINE_MIN_DAYS}d), {coarse} coarse ({COARSE_MIN_DAYS}-{fine}...d), {too_short} below {COARSE_MIN_DAYS}-day continuous window (named, not embellished, 0 honored)",
         fine = fine,
         coarse = coarse,
         nflag = flagged.len()
@@ -308,7 +308,7 @@ fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
 }
 
 fn measure_date(name: &str, date_str: &str) {
-    let path = format!("data/{name}_navio_daily.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
     let Some(daily) = read_daily(&path) else {
         eprintln!("{name}: daily bin void/parse void ({path})");
         return;

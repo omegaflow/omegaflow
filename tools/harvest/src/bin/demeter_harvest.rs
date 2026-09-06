@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use omegaflow::json::{JsonVal, jpath_val, jstr, parse_json};
+use omegaflow::json::{jpath_val, jstr, parse_json, JsonVal};
 
 const AUTH: &str = "https://regards.cnes.fr/api/v1/rs-authentication/oauth/token";
 const ORDER: &str = "https://regards.cnes.fr/api/v1/rs-order";
@@ -18,10 +18,13 @@ const CREATE_PAUSE_SECS: u64 = 45;
 const WAF_BACKOFF_SECS: u64 = 1800;
 
 fn now() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0)
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(e) => {
+            eprintln!("the system clock lies before the UNIX epoch: {e}");
+            std::process::exit(1);
+        }
+    }
 }
 
 fn auth_header(token: &str) -> Vec<(String, String)> {
@@ -136,31 +139,34 @@ fn scan_urns(token: &str) -> Vec<String> {
                 JsonVal::Str(s) => s.parse::<i64>().ok(),
                 _ => None,
             })
-            .unwrap_or(0);
+            .map(|t| t as usize);
         println!(
             "harvest: catalog page {page} ({len} URNs)",
             len = urns.len()
         );
-        if page + 1 >= total_pages as usize {
-            break;
+        if let Some(tp) = total_pages {
+            if page + 1 >= tp {
+                break;
+            }
         }
         page += 1;
         std::thread::sleep(std::time::Duration::from_millis(250));
     }
     urns
 }
-
 fn load_urns(token: &str) -> Vec<String> {
-    let path =
-        std::env::var("DEMETER_URNS").unwrap_or_else(|_| "/tmp/opencode/demeter_urns.txt".into());
-    let existing = fs::read_to_string(&path)
-        .map(|body| {
-            body.lines()
-                .map(|l| l.trim().to_string())
-                .filter(|l| !l.is_empty())
-                .collect::<Vec<String>>()
-        })
-        .unwrap_or_default();
+    let path = match std::env::var("DEMETER_URNS") {
+        Ok(p) => p,
+        Err(_) => "tmp/demeter_urns.txt".into(),
+    };
+    let existing = match fs::read_to_string(&path) {
+        Ok(body) => body
+            .lines()
+            .map(|l| l.trim().to_string())
+            .filter(|l| !l.is_empty())
+            .collect::<Vec<String>>(),
+        Err(_) => Vec::new(),
+    };
     if !existing.is_empty() {
         return existing;
     }
@@ -263,7 +269,9 @@ fn find_order_by_label(token: &str, label: &str) -> Option<i64> {
         return None;
     };
     for item in arr {
-        let lab = jstr(item, "label").unwrap_or_default();
+        let Some(lab) = jstr(item, "label") else {
+            continue;
+        };
         if lab == label {
             return jpath_val(item, "id").and_then(|x| match x {
                 JsonVal::Num(n) => Some(*n as i64),
@@ -283,7 +291,10 @@ fn order_status(token: &str, oid: i64) -> (String, i64) {
     let Some(c) = jpath_val(&v, "content") else {
         return default;
     };
-    let st = jstr(c, "status").unwrap_or_default();
+    let st = match jstr(c, "status") {
+        Some(s) => s,
+        None => "UNKNOWN".to_string(),
+    };
     let avail = jnum_i64(c, "availableFilesCount");
     (st, avail)
 }
@@ -563,10 +574,13 @@ fn run() -> std::io::Result<()> {
     );
 
     if ci_mode {
-        let compiler = std::env::current_exe()?
-            .parent()
-            .map(|p| p.join("demeter_compiler"))
-            .unwrap_or_else(|| PathBuf::from("demeter_compiler"));
+        let compiler = match std::env::current_exe() {
+            Ok(exe) => match exe.parent() {
+                Some(par) => par.join("demeter_compiler"),
+                None => PathBuf::from("demeter_compiler"),
+            },
+            Err(_) => PathBuf::from("demeter_compiler"),
+        };
         let st = Command::new(&compiler)
             .arg("--aggregate")
             .arg(&workdir)
