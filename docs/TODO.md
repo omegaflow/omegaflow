@@ -584,12 +584,14 @@ physikalischen Aussage — kein Blatt ohne diese:
   (jsoc.stanford.edu/aia2014_lines.bin, 90 MB, ersetzt den 1-Tag-Stub;
   Workflow auf --chunk-days 1 gestellt). geschlossen.
 
-- **AIA-2015-Reproduzierbarkeit (2026-09-06, GOES-15, 281 Ereignisse)**: die
+- **AIA-2015-Reproduzierbarkeit (2026-09-06, GOES-15, 613 Ereignisse)**: die
   193->211->335->94-Kaskade reproduziert sich im unabhaengigen Jahr 2015: alle
-  drei heissen Rungs positiv (193->211 +1.21e-1, 211->335 +9.37e-2,
-  335->94 +1.30e-1), ~72-168-s-Lag, fam 1.75e-1 unter-fam. Zwei unabhaengige
-  Jahre (2014 1019 Ev + 2015 281 Ev) tragen dieselbe gerichtete Aufwaerts-
-  Kaskade: reproduzierbar-gerichtet, unter-fam.
+  drei heissen Rungs positiv (193->211 +1.54e-1, 211->335 +8.09e-2,
+  335->94 +1.25e-1), ~96-144-s-Lag, fam 1.78e-1 unter-fam. (Korrigiert: der
+  frueher committete 2015-Wert mit 281 Ereignissen stand auf einem partiellen
+  GOES-Trigger-Satz; der vollstaendige 2015-Korpus — 349 GOES-Tage, 12
+  Monats-Assets, 18.17 M Records, gemergt zu aia2015_fullyear.bin — traegt
+  613 Ereignisse, dieselbe gerichtete Kaskade, fam 1.78e-1 unter-fam.)
 - **AIA-2013-Reproduzierbarkeit (2026-09-06, GOES-15, 524 Ereignisse)**: die
   193->211->335->94-Kaskade reproduziert sich im dritten unabhaengigen Jahr 2013
   (Monat 11 via aia-cdn CI, 34042431334, aufs CDN manifestiert; 12 Monate
@@ -597,12 +599,21 @@ physikalischen Aussage — kein Blatt ohne diese:
   211->335 +7.71e-2, 335->94 +1.01e-1, alle ~96-s-Lag (Lag 4), fam 1.71e-1
   unter-fam — kein Rung uebersteigt die fam-Schwelle, der heisseste Rung
   (335->94, 0.59xfam) reproduziert sich moderat wie 2014/2015. Drei
-  unabhaengige Jahre (2013 524 Ev, 2014 1019 Ev, 2015 281 Ev) tragen dieselbe
+  unabhaengige Jahre (2013 524 Ev, 2014 1019 Ev, 2015 613 Ev) tragen dieselbe
   gerichtete Aufwaerts-Kaskade: reproduzierbar-gerichtet, fam-still.
-- **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse, gemessen 2026-09-06):
-  die Richtung ist KONSISTENT, nicht alternierend** — 76% der Ereignisse
-  positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00), Monats-Mittel
-  durchweg positiv. Die Wellen-/Alternations-Hypothese (oszillierender
+- **AIA-Drei-Jahres-Stack (2026-09-06, GOES-15, 2156 Ereignisse)**: die volle
+  Akteurs-TE ueber alle Flare-Ereignisse der drei Jahre in EINEM konsistenten
+  Stack (aia_three_year_probe, gleiche C1.0-Schwelle, 24-s-Zellen): 193->211
+  +1.68e-1 (96 s, 0.94xfam), 211->335 +7.42e-2 (144 s), 335->94 +1.19e-1
+  (96 s); fam 1.79e-1 — kein Rung ueber fam. Die Kaskade
+  193->211->335->94 reproduziert sich ueber den gesamten 3-Jahres-Korpus,
+  family bound (gerichtet, unter der Familien-Schwelle).
+- **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse [partieller GOES-Satz],
+  gemessen 2026-09-06): die Richtung ist KONSISTENT, nicht alternierend** — 76%
+  der Ereignisse positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00),
+  Monats-Mittel durchweg positiv. (Auf dem partiellen 281-Ereignis-Satz gemessen;
+  der volle 613-Ereignis-Satz steht fuer die Richtungs-Nachmessung offen.)
+  Die Wellen-/Alternations-Hypothese (oszillierender
   Richtungs-Treiber) wird auf Ereignis- und Monats-Skala NICHT getragen; die
   Unter-fam-Lage ist NICHT Richtungs-Kompensation, sondern moderate Amplitude
   gegen das (konservative) fam. Naechster Hebel: Korrelation der Kaskaden-
@@ -1098,37 +1109,79 @@ und navigierende Zeilen.
   (`membrane.rs:347–348`, `shaders.rs:11–12`) → der Fold fällt für 5/6
   praktisch aus. Physik-Frage: gewollt oder pending?
 
-## Die Weberin — Bau-Linie (docs/concepts/die-weberin.md, pending)
+## Die Weberin — Bau-Linie (docs/concepts/die-weberin.md)
 
 Die eine Mess-Anordnung: ICRS·TDB als Webstuhl, die Weltlinien (Direction,
 Body, Station) als Kette, die Beziehungen (Verdict, TE, Abstammung) als
-Schuss, das Vlies als das eine Bild. Die neun Stufen sind ungebaut —
-`pending`, registriert, nicht fabriziert:
+Schuss, das Vlies als das eine Bild.
 
-- Zweite Körper-Linie: MPC-Bahnen (`mpcorb_extended.json.gz`, offener
-  Live-Block) gegen die Ephemeris-Punkte — Verdict für Körper
-  (Placed/Absent/DirectionOnly statt der einen JPL-Linie).
-- Stations-Konvergenz: unabhängige Netz-Linien am selben Punkt
-  (INTERMAGNET gegen SWARM-Überflug, Pegel gegen Altimetrie) — Verdict für
-  Stationen, auf den fanout-Ringen, ohne neues Netz.
-- Topozentrische Kopplung: Rømer-Toleranz vom Stationspunkt,
-  Stations-Parallaxe als unabhängige Sichtlinien — S²-Kugel und
-  Körper-/Stations-Vlies als ein Bild.
-- Vollständige Abbildung der ~20k Tafeln in den position-indizierten
-  Bestand — die Dichte des Vlieses, Kompilier-Pflicht.
-- Survey-Footprints der großen Durchmusterungen als eigene Assets.
-- GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne.
-- CDN-Manifestations-Weg des Vlies-Assets.
-- Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien nicht
-  konvergieren, benennt die Maschine den Riss und seinen Knoten in der
-  Abstammungs-Kette. Gemessen wird der Riss zuerst an den eigenen Linien
-  (MPC gegen SPK, SWARM gegen INTERMAGNET); die Hubble-Spannung (Planck
-  ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) ist die Illustration —
-  benennbar heute, messbar erst, wenn beide Linien im Bestand einziehen.
-- Geliehener Sinn: der Broker-Klassifikator (Fink-ML, ALeRCE-Stamp) als
-  Zeuge für Gestalt in der natural-class-Gate — registriert wird sein
-  Urteil, nie der einzige Zeuge; Widerspruch gegen die unabhängigen Fenster
-  ist ein Riss.
+Gebaut (2026-09-06, sub-agents):
+
+- Zweite Körper-Linie + Riss-Knoten (Schritt 1 + 8): `src/mathematikerin/
+  weberin.rs` — Verdict Placed/Absent/DirectionOnly + Riss mit Knoten
+  [SPK, DASTCOM]; voller Körper-Satz = union(eph, BODY_NUMBER), kein
+  stilles Überspringen; Absent benennt die fehlende Linie. Probe
+  `tools/measure/src/bin/weberin_body_verdict.rs` — das Verdict-Blatt je
+  Körper (Verdict-Vokabular korrigiert, vorher nur Placed/Riss). Der Riss
+  wird zuerst an den eigenen Linien gemessen (MPC/DASTCOM gegen SPK).
+- Stations-Konvergenz (Schritt 2): Probe
+  `tools/measure/src/bin/station_convergence_probe.rs` — INTERMAGNET
+  (Boden-Magnetometer) gegen SWARM-Überflug am selben Punkt, Verdict
+  Placed/Absent/Riss auf den fanout-Ring-Caches. Gemessen (2026-09-06):
+  Boden-vs-450-km-Paar liest Riss (Höhen-Gradient, nie geglättet).
+- Topozentrische Kopplung (Schritt 3): Probe
+  `tools/measure/src/bin/topocentric_coupling_probe.rs` — die Station
+  sieht den Himmel von ihrer eigenen Weltlinie: Rømer-Lichtzeit vom
+  Stationspunkt, Stations-Parallaxe zweier unabhängiger Sichtlinien,
+  ICRS·TDB.
+- Vlies-Dichtefeld (Schritt 4): der position-indizierte Bestand als
+  HEALPix-Dichtefeld. Compiler `tools/harvest/src/bin/vlies_density_compiler.rs`
+  (Asset `VLDE`, nside 128, Zählung je nest-Pixel; Eingänge `--catalog
+  stars|twomass`) + Probe `tools/measure/src/bin/vlies_density_probe.rs`
+  (Dichte je Richtung, count/sr).
+- GW-/Neutrino-/CR-Skymap-Routen (Schritt 6): GW = bayestar (Bestand);
+  Neutrino `src/archivar/amon.rs` (AMN1, AMON-IceCube-Meldungen,
+  gcn.gsfc.nasa.gov live 200 gemessen) + `amon_compiler.rs`; CR
+  `src/archivar/auger.rs` (PAO1, Auger-Katalog, opendata.auger.org 200
+  gemessen) + `auger_compiler.rs`. Register: blocked_sources.φ
+  (Richtungs-Zeugen, keine Feld-Blöcke — direction-only) + dead_sources.φ
+  (gcn.nasa.gov-API 404).
+- Geliehener Sinn (Schritt 9): `tools/measure/src/borrowed_sense.rs` —
+  der Broker-Klassifikator (Fink-LSST, anonym HTTP 200) als Zeuge für
+  Gestalt in der natural-class-Gate (`nadel_gate.rs`): registriert sein
+  Urteil (Klasse; probability absent — die anonyme Fläche trägt sie nicht),
+  nie der einzige Zeuge, Widerspruch = Riss; in `lsst_anomaly_probe`
+  verdrahtet.
+
+- Riss-Knoten Vollausbau (Schritt 8): Probe
+  `tools/measure/src/bin/riss_knoten_probe.rs` — das eine Bild der Risse:
+  je unabhängiges Linien-Paar benennt die beiden Linien + ihre Herkunft
+  (Knoten in der Abstammungs-Kette: spk-granules vs dastcom-elements,
+  intermagnet-xyzf-best-avail vs swarm-maga_lr-1b-scalar-f,
+  fink-lsst-main_label_classifier vs simbad-otype|allwise-w1-w2),
+  Zustand zwirn/riss/absent. Die Hubble-Spannung (Planck ≈ 67 gegen die
+  Entfernungsleiter ≈ 73, ~5σ) ist die Illustration — benennbar heute,
+  messbar erst, wenn beide Linien im Bestand einziehen.
+
+`pending` — registriert, nicht fabriziert:
+
+- Vollständige ~20k-Tafel-Ingestion in den position-indizierten Bestand —
+  das Dichtefeld (Schritt 4) steht, `--catalog stars|twomass` verdrahtet;
+  gemessen liegt nur dr3_stars.bin auf der Platte (twomass/asteroiden-bins
+  absent). Die übrigen Tafeln sind Kompilier-Pflicht.
+- Survey-Footprints (Schritt 5): gemessen (2026-09-06) — keine Durch-
+  musterung legt eine echte Footprint-/Exposure-Maske anonym ab; der
+  CDS-MOCServer (200, echte ASCII-MOCs) trägt nur positions-abgeleitete
+  Katalog-Abdeckung, keine Feld-Masken → refused (observed-nothing vs
+  never-observed bliebe ununterscheidbar). Register: dead_sources.φ
+  (alasky.u-strasbg.fr/footprints 503) + blocked_sources.φ (DES).
+- CDN-Manifestations-Weg des Vlies-Assets (Schritt 7): Compiler-Seite
+  gebaut (upload_asset in vlies_density/amon/auger_compiler `--ci-mode`,
+  Muster bayestar_compiler); der Workflow (`*-cdn.yml`) im
+  omegaflow/sources-Repo bleibt ausstehend (Operator-Aktion).
+- Skymap-Reste (Schritt 6): Telescope Array (kein öffentliches Dataset,
+  pending) und icecube.wisc.edu/data-releases (403 origin-seitig/nginx,
+  Mechanismus benannt — recheck bleibt, kein Compiler).
 
 ## Source-Port — der eine Pfad
 
