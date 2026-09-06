@@ -8,7 +8,10 @@ fn main() {
     let recv_active = service_active("smail-recv.service");
     let tunnel_active = service_active("smail-tunnel.service");
     let ledger_age = ledger_age_s();
-    let line = report_line(epoch(), &tunnel, recv_active, tunnel_active, ledger_age);
+    let Some(epoch) = epoch() else {
+        return;
+    };
+    let line = report_line(epoch, &tunnel, recv_active, tunnel_active, ledger_age);
     append_report(&state_dir().join("reports/mail_watchdog.φ"), &line);
     println!("{}", line.trim_end());
 }
@@ -17,7 +20,7 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 fn curl_code(url: &str) -> String {
@@ -53,7 +56,7 @@ fn ledger_age_s() -> Option<u64> {
     let text = std::fs::read_to_string(state_dir().join("mail/mail_ledger.φ")).ok()?;
     let last = text.lines().last()?;
     let ts = last.split('\t').nth(1)?.parse::<u64>().ok()?;
-    let now = epoch();
+    let now = epoch()?;
     Some(now.saturating_sub(ts))
 }
 
@@ -74,11 +77,11 @@ fn report_line(
     )
 }
 
-fn epoch() -> u64 {
+fn epoch() -> Option<u64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
+        .ok()
         .map(|d| d.as_secs())
-        .unwrap_or(0)
 }
 
 fn append_report<P: AsRef<std::path::Path>>(path: P, line: &str) {
