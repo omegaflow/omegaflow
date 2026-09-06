@@ -1,7 +1,7 @@
 use omegaflow::archivar::spatial::{star_stride, STAR_RECORD_BYTES};
 use omegaflow::healpix::icrs_to_galactic;
 use omegaflow::json::{parse_json, JsonVal};
-use omegaflow_measure::deredden::{
+use omegaflow_measure::weberin::deredden::{
     abs_mag, build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
     BACKGROUND_PC_MIN, WANG_GBP_FACTOR, WANG_G_FACTOR,
 };
@@ -102,7 +102,7 @@ struct MatchStar {
     sep_arcsec: f64,
     b_deg: f64,
     d_pc: f64,
-    dust: Option<omegaflow_measure::deredden::DustHit>,
+    dust: Option<omegaflow_measure::weberin::deredden::DustHit>,
     dust_refused: &'static str,
 }
 
