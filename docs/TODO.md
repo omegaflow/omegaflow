@@ -1090,7 +1090,7 @@ und navigierende Zeilen.
 
 Die eine Mess-Anordnung: ICRS·TDB als Webstuhl, die Weltlinien (Direction,
 Body, Station) als Kette, die Beziehungen (Verdict, TE, Abstammung) als
-Schuss, das Vlies als das eine Bild. Die acht Stufen sind ungebaut —
+Schuss, das Vlies als das eine Bild. Die neun Stufen sind ungebaut —
 `pending`, registriert, nicht fabriziert:
 
 - Zweite Körper-Linie: MPC-Bahnen (`mpcorb_extended.json.gz`, offener
@@ -1113,6 +1113,10 @@ Schuss, das Vlies als das eine Bild. Die acht Stufen sind ungebaut —
   (MPC gegen SPK, SWARM gegen INTERMAGNET); die Hubble-Spannung (Planck
   ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) ist die Illustration —
   benennbar heute, messbar erst, wenn beide Linien im Bestand einziehen.
+- Geliehener Sinn: der Broker-Klassifikator (Fink-ML, ALeRCE-Stamp) als
+  Zeuge für Gestalt in der natural-class-Gate — registriert wird sein
+  Urteil, nie der einzige Zeuge; Widerspruch gegen die unabhängigen Fenster
+  ist ein Riss.
 
 ## Source-Port — der eine Pfad
 
