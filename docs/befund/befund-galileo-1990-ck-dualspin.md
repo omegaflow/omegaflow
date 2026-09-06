@@ -5,7 +5,7 @@
   sha256: 62d0b7a7a3953aadb1326512660e84e8a4e92f45046af0787278e5344adcc2c4
   status: done
   antwortet-auf: docs/befund/befund-galileo-banden-kamm-ton.md
-  see-also: docs/befund/befund-galileo-ssd-star-scanner.md
+  see-also: docs/reference/galileo-ssd-ddr-harvest.md
 -->
 
 # Befund: Galileo-1990-CK — Dual-Spin für Dez-1990 bestätigt
