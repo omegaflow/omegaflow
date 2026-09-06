@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
 
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 
 fn main() {
     let port: u16 = env_u64("OMEGAFLOW_MAIL_PORT", 1619) as u16;
@@ -20,11 +20,7 @@ fn main() {
         "smail-recv: webhook listens on 127.0.0.1:{} (ledger {}, token {})",
         port,
         ledger,
-        if token.is_empty() {
-            "offen"
-        } else {
-            "gefordert"
-        }
+        if token.is_empty() { "open" } else { "required" }
     );
     for conn in listener.incoming() {
         let Ok(mut stream) = conn else { continue };
@@ -115,11 +111,13 @@ fn read_request(
             headers.push((k.trim().to_lowercase(), v.trim().to_string()));
         }
     }
-    let content_length: usize = headers
-        .iter()
-        .find(|(k, _)| k == "content-length")
-        .and_then(|(_, v)| v.parse().ok())
-        .unwrap_or(0);
+    let content_length: usize = match headers.iter().find(|(k, _)| k == "content-length") {
+        Some((_, v)) => match v.trim().parse::<usize>() {
+            Ok(n) => n,
+            Err(_) => return None,
+        },
+        None => 0,
+    };
     let mut body = buf[header_end + 4..].to_vec();
     while body.len() < content_length {
         match stream.read(&mut tmp) {
@@ -158,10 +156,10 @@ fn record_line(text: &str) -> Option<String> {
     if from.is_empty() || to.is_empty() {
         return None;
     }
-    let ts = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
+    let ts = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => return None,
+    };
     let subject_clean = subject
         .replace('\r', "")
         .replace('\t', " ")
@@ -196,7 +194,10 @@ fn mime_plaintext(raw: &str) -> String {
             }
             out
         }
-        None => plaintext_of_part(raw).unwrap_or_default(),
+        None => match plaintext_of_part(raw) {
+            Some(pl) => pl,
+            None => String::new(),
+        },
     }
 }
 
@@ -211,13 +212,16 @@ fn plaintext_of_part(part: &str) -> Option<String> {
         if !is_plain {
             return None;
         }
-        let enc = header_value(head, "content-transfer-encoding")
-            .unwrap_or_default()
-            .to_lowercase();
-        if enc.contains("base64") {
+        let is_base64 = header_value(head, "content-transfer-encoding")
+            .map(|v| v.to_lowercase().contains("base64"))
+            .unwrap_or(false);
+        if is_base64 {
             return Some(decode_base64(body));
         }
-        if enc.contains("quoted-printable") {
+        let is_quoted_printable = header_value(head, "content-transfer-encoding")
+            .map(|v| v.to_lowercase().contains("quoted-printable"))
+            .unwrap_or(false);
+        if is_quoted_printable {
             return Some(decode_quoted_printable(body));
         }
         return Some(body.trim().to_string());
@@ -322,14 +326,17 @@ fn env_u64(name: &str, default: u64) -> u64 {
 }
 
 fn env_str(name: &str, default: &str) -> String {
-    std::env::var(name).unwrap_or_else(|_| default.to_string())
+    match std::env::var(name) {
+        Ok(v) => v,
+        Err(_) => default.to_string(),
+    }
 }
 
 fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 #[cfg(test)]
@@ -390,7 +397,7 @@ mod tests {
     #[test]
     fn quoted_printable_decoded() {
         let raw = "Content-Type: text/plain\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\nGr=C3=BC=C3=9F";
-        assert!(mime_plaintext(raw).contains("Grüß"));
+        assert_eq!(mime_plaintext(raw), "Gr\u{fc}\u{df}");
     }
 
     #[test]
