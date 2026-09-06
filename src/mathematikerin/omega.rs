@@ -107,6 +107,18 @@ pub struct OmegaLoop {
     pub te_read_buf: Option<wgpu::Buffer>,
     pub te_map: Option<Arc<AtomicBool>>,
     pub te_named: String,
+    pub s2_pipe: Option<wgpu::ComputePipeline>,
+    pub s2_layout: Option<wgpu::BindGroupLayout>,
+    pub s2_bind: Option<wgpu::BindGroup>,
+    pub s2_osc_buf: Option<wgpu::Buffer>,
+    pub s2_probe_buf: Option<wgpu::Buffer>,
+    pub s2_param_buf: Option<wgpu::Buffer>,
+    pub s2_out_buf: Option<wgpu::Buffer>,
+    pub s2_read_buf: Option<wgpu::Buffer>,
+    pub sky: SkyState,
+    pub sky_named: String,
+    pub sky_fingerprint: Option<(u64, u64)>,
+    pub sky_perm_t: Option<f64>,
     pub field_cap: u32,
     pub buf_sel: usize,
     pub packed_gen: u64,
@@ -200,6 +212,18 @@ impl OmegaLoop {
             te_read_buf: None,
             te_map: None,
             te_named: String::new(),
+            s2_pipe: None,
+            s2_layout: None,
+            s2_bind: None,
+            s2_osc_buf: None,
+            s2_probe_buf: None,
+            s2_param_buf: None,
+            s2_out_buf: None,
+            s2_read_buf: None,
+            sky: SkyState::new(),
+            sky_named: String::new(),
+            sky_fingerprint: None,
+            sky_perm_t: None,
             field_cap: 0,
             buf_sel: 0,
             packed_gen: 0,
@@ -652,6 +676,194 @@ impl OmegaLoop {
         probe_read.unmap();
     }
 
+    pub fn sky_say(&mut self, word: &str) {
+        if self.sky_named != word {
+            eprintln!("sky {}", word);
+            self.sky_named = word.to_string();
+        }
+    }
+
+    pub fn sky_reload(&mut self) {
+        let path = sky_asset_path();
+        let meta = match std::fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => {
+                if self.sky_fingerprint.is_some() {
+                    self.sky_fingerprint = None;
+                    self.sky.directions.clear();
+                    self.sky.loaded = false;
+                    self.sky_say("asset absent — the held directions stay held on disk, the layer rests (0 honored)");
+                }
+                return;
+            }
+        };
+        let modified = match meta.modified() {
+            Ok(t) => match t.duration_since(std::time::UNIX_EPOCH) {
+                Ok(d) => d.as_secs(),
+                Err(_) => 0,
+            },
+            Err(_) => 0,
+        };
+        let fp = (meta.len(), modified);
+        if self.sky_fingerprint == Some(fp) {
+            return;
+        }
+        self.sky_fingerprint = Some(fp);
+        match load_asset(&path) {
+            Some(dirs) => {
+                let n = dirs.len();
+                let placed = dirs.iter().filter(|d| d.distance_m().is_some()).count();
+                self.sky.directions = dirs;
+                self.sky.loaded = true;
+                self.sky_say(&format!(
+                    "{n} direction(s) held, {placed} distance-bearing — the rest rest on the sphere (0 honored)"
+                ));
+            }
+            None => {
+                self.sky_say("asset refused — the S² layer rests (0 honored)");
+            }
+        }
+    }
+
+    pub fn sky_tick(&mut self) {
+        self.sky_reload();
+        let t = self.t_presence;
+        let oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
+        let shell: f64 = oscs.iter().map(|o| o.weight).sum();
+        self.sky.shell_prev = self.sky.shell;
+        self.sky.shell = shell;
+        self.sky.oscs = oscs;
+        let (_, _, forward) = self.frame();
+        let forward_field = field_at(forward, &self.sky.oscs, S2_LMAX);
+        let dt = match self.sky_perm_t {
+            Some(pt) => (t - pt).max(0.0),
+            None => 1.0,
+        };
+        self.sky_perm_t = Some(t);
+        let target = breath_target(shell, self.sky.shell_prev, shell);
+        let alpha = 1.0 - (-dt / S2_PERM_TAU_S).exp();
+        self.sky.permeability += ((target as f32) - self.sky.permeability) * (alpha as f32);
+        self.sky.permeability = self.sky.permeability.clamp(PERM_GROUND, 1.0);
+        self.sky.forward_field = forward_field as f32;
+        self.sky.points.clear();
+        if self.sky.oscs.is_empty() {
+            self.sky_say("the S² layer rests — no direction carries a live series (0 honored)");
+            return;
+        }
+        let pack = pack_oscs(&self.sky.oscs, S2_OSC_CAP);
+        let mut gpu_fields: Option<Vec<f32>> = None;
+        if let (Some(device), Some(queue)) = (&self.device, &self.queue) {
+            if pack.count > 0 && self.s2_eval_gpu(device, queue, &pack) {
+                gpu_fields = self.s2_read_gpu(&pack.probe_count);
+            }
+        }
+        let cap = self.sky.oscs.len().min(S2_OSC_CAP as usize);
+        for (i, o) in self.sky.oscs.iter().take(cap).enumerate() {
+            let field = match &gpu_fields {
+                Some(f) if i < f.len() => f[i] as f64,
+                Some(_) => self_field(o, S2_LMAX),
+                None if i < S2_CPU_PROBE_CAP => field_at(o.p_hat, &self.sky.oscs, S2_LMAX),
+                None => self_field(o, S2_LMAX),
+            };
+            let sigma = match o.sigma_rad {
+                Some(s) if s.is_finite() && s > 0.0 => s as f32,
+                Some(_) => 0.0,
+                None => 0.0,
+            };
+            self.sky.points.push(SkyPoint {
+                p: [o.p_hat[0] as f32, o.p_hat[1] as f32, o.p_hat[2] as f32],
+                sigma_rad: sigma,
+                activity: o.weight as f32,
+                field: field as f32,
+            });
+        }
+    }
+
+    fn s2_eval_gpu(&self, device: &wgpu::Device, queue: &wgpu::Queue, pack: &S2Pack) -> bool {
+        let (
+            Some(pipe),
+            Some(bind),
+            Some(osc_buf),
+            Some(probe_buf),
+            Some(param_buf),
+            Some(out_buf),
+        ) = (
+            self.s2_pipe.as_ref(),
+            self.s2_bind.as_ref(),
+            self.s2_osc_buf.as_ref(),
+            self.s2_probe_buf.as_ref(),
+            self.s2_param_buf.as_ref(),
+            self.s2_out_buf.as_ref(),
+        )
+        else {
+            return false;
+        };
+        if pack.count == 0 {
+            return false;
+        }
+        queue.write_buffer(osc_buf, 0, &le_bytes_f32(&pack.osc));
+        queue.write_buffer(probe_buf, 0, &le_bytes_f32(&pack.probes));
+        let param = [pack.count, S2_LMAX, pack.probe_count, 0];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let groups = (pack.probe_count + 63) / 64;
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(groups, 1, 1);
+        }
+        queue.submit(std::iter::once(enc.finish()));
+        let read_buf = match self.s2_read_buf.as_ref() {
+            Some(b) => b,
+            None => return false,
+        };
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        enc.copy_buffer_to_buffer(
+            out_buf,
+            0,
+            read_buf,
+            0,
+            (pack.probe_count as usize * 4) as u64,
+        );
+        queue.submit(std::iter::once(enc.finish()));
+        true
+    }
+
+    fn s2_read_gpu(&mut self, probe_count: &u32) -> Option<Vec<f32>> {
+        let device = self.device.clone()?;
+        let read_buf = self.s2_read_buf.as_ref()?;
+        let n = (*probe_count as usize) * 4;
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..n as u64);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(200);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.sky_say("s2 readback pending");
+            return None;
+        }
+        let data = slice.get_mapped_range();
+        let mut out = vec![0f32; *probe_count as usize];
+        for k in 0..out.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+            out[k] = f32::from_le_bytes(b);
+        }
+        drop(data);
+        read_buf.unmap();
+        Some(out)
+    }
+
     pub fn init_gpu(&mut self) {
         if self.device.is_some() {
             return;
@@ -837,6 +1049,114 @@ impl OmegaLoop {
                 },
             ],
         });
+        let s2_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(S2_WGSL.into()),
+        });
+        let s2_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 3;
+                    e
+                },
+            ],
+        });
+        let s2_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&s2_layout],
+            push_constant_ranges: &[],
+        });
+        let s2_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&s2_pipe_layout),
+            module: &s2_module,
+            entry_point: Some("s2_field"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let s2_cap_bytes = (S2_OSC_CAP as usize * 32) as u64;
+        let s2_osc_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: s2_cap_bytes,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 16) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let s2_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (S2_OSC_CAP as usize * 4) as u64,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let s2_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &s2_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: s2_osc_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: s2_param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: s2_probe_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
+                    resource: s2_out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.s2_pipe = Some(s2_pipe);
+        self.s2_layout = Some(s2_layout);
+        self.s2_bind = Some(s2_bind);
+        self.s2_osc_buf = Some(s2_osc_buf);
+        self.s2_probe_buf = Some(s2_probe_buf);
+        self.s2_param_buf = Some(s2_param_buf);
+        self.s2_out_buf = Some(s2_out_buf);
+        self.s2_read_buf = Some(s2_read_buf);
         self.probe_pipe = Some(probe_pipe);
         self.probe_layout = Some(probe_layout);
         self.vp_buf = Some(vp_buf);
@@ -918,27 +1238,27 @@ impl OmegaLoop {
                 self.prev_in_te = in_te;
                 self.ticks_since_turn += 1;
                 if self.direction > 0 && delta_te < -threshold {
-                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
                     self.ticks_since_turn = 0;
                     self.direction = -1;
                 }
                 if self.direction < 0
                     && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
                 {
-                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
                     self.ticks_since_turn = 0;
                     self.direction = 1;
                 }
                 let target =
                     (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
-                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             } else {
                 let omega_sum: f32 = self.probe_omega.iter().sum();
                 let delta = omega_sum - self.prev_omega_sum;
                 if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
-                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
                     self.ticks_since_turn = 0;
                 }
                 self.ticks_since_turn += 1;
@@ -947,10 +1267,11 @@ impl OmegaLoop {
                 let g = omega_sum.abs();
                 let v_c = delta.abs();
                 let target = (v_c / (g + PERM_GROUND)).tanh();
-                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             }
+            self.sky_tick();
             let frame = PresenceFrame {
                 omega: self.probe_omega,
             };
@@ -1000,8 +1321,9 @@ impl OmegaLoop {
                 }
                 None => ("-".to_string(), "-".to_string()),
             };
+            let skyrep = self.sky.report();
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -1025,6 +1347,12 @@ impl OmegaLoop {
                 tau_s,
                 pe_s,
                 te_word,
+                skyrep.osc_count,
+                skyrep.live_count,
+                skyrep.shell,
+                skyrep.forward_field,
+                skyrep.permeability,
+                self.sky.points.len(),
             );
         }
     }
