@@ -2,6 +2,10 @@ blocked account
 url https://cddis.nasa.gov/archive/
 note NASA Earthdata GNSS/geodaetische Produkte; OAuth (urs.earthdata.nasa.gov), free Registrierung. reg https://urs.earthdata.nasa.gov/users/new. Messwert (RINEX GNSS, em) echt, Zugang account-gegatet (2026-09-03).
 
+blocked account
+url https://des.ncsa.illinois.edu/releases/dr2/dr2-files/
+note DES-DR2 (DECam-Durchmusterung, Y6A2), Footprint-Asset der Weberin §9 Stufe 5. Gemessen 2026-09-06: Host 200, aber /releases/dr2 und /dr2-files antworten die JS-SPA-Huelle (kein anonymer Datei-/MOC-Index, im HTML kein Footprint-Link); die DR2-Dateien einschliesslich der Y6A2-Coverage-Maske liegen hinter dem NCSA-Datenkonto. reg https://des.ncsa.illinois.edu/. Die Katalog-Coverage CDS/II/371/des_dr2 (MOCServer 200) bleibt nach dem Footprint-Litmus verweigert (positions-abgeleitet). Footprint pending bis eine anonyme Route oder das Konto steht.
+
 parser-def json
 url https://api.antares.noirlab.edu/v1/loci?limit=20
 note ANTARES-REST anonym offen (2026-09-06 gemessen HTTP 200), ZTF-Transienten-Loci mit attributes.ra/attributes.dec + attributes.properties.{newest,brightest,oldest}_alert_magnitude (echte em-mag-Messwerte, Band absent — unbanded gehalten). Zustand: gehalten via skydirection_compiler (SkyDirection-Records), positions-pending. Kein Oszillator in sources.φ (distanzlos, wuerde still-null) — Registrierung = TODO/Befund-Weg (auftrag-richtungs-transient-atom). Distanz NUR durch Crossmatch (direction_distance_join/Gaia/Redshift), nie erraten (0 honored). Wire unangetastet; CelestialMap-Distanz-Gate unveraendert.
@@ -10,6 +14,18 @@ parser-def json
 url https://api.lsst.fink-portal.org/api/v1/conesearch
 note Fink-LSST cone (2026-09-06 gemessen HTTP 200, anonym): POST ra/dec/radius antwortet die r:diaObjectId-Array-Zeilen mit r:ra, r:dec, r:nDiaSources — die Konus-Zeilen tragen KEINE em-Photometrie, die Per-Objekt-Lichtkurven (/api/v1/sources, /api/v1/fp) bleiben ein benanntes Pending. Zustand: gehalten via skydirection_compiler (SkyDirection-Records, Richtung ohne Magnitude — ehrlich absent, 0 honored), positions-pending. Kein Oszillator in sources.φ (distanzlos) — Registrierung = TODO/Befund-Weg (auftrag-richtungs-transient-atom). Successor of https://api.fink-portal.org (dead_sources.φ, dead unreachable). Die Scanner (mycelium_fan_navigator, lsst_anomaly_probe, broker_difference_probe) lesen den Konus weiter als natural-class identity gate, nie als Feld-Wert.
 
+parser-def text
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+note AMON-IceCube-Gold/Bronze-Alert-Index (2026-09-06 gemessen HTTP 200, live — neueste Notices 26/08/27, 814 Index-Zeilen); je Notice eine .amon-Datei unter gcn.gsfc.nasa.gov/notices_amon_g_b/<RunNum>_<EventNum>.amon (je ~2,9 KB) mit RUN_NUM/EVENT_NUM, NOTICE_TYPE (ICECUBE Astrotrack Gold/Bronze), SRC_RA/SRC_DEC (J2000, deg), SRC_ERROR/SRC_ERROR50 (arcmin radius, stat-only), ENERGY [TeV], SIGNALNESS, FAR [yr^-1], DISCOVERY_DATE (TJD) + DISCOVERY_TIME (SOD), REVISION — echte, positions-tragende Neutrino-Alert-Messungen. Zustand: kompiliert als Healpix-Karte icecube_alerts.amn1 via amon_compiler (tools/harvest, AMN1, src/archivar/amon.rs; Weberin §9 Stufe 6, Neutrino-Zeuge), positions-pending. Kein Oszillator in sources.φ (distanzlos, wuerde still-null; Teilchen-Kanal ohne Medium in der 9er-Force-Registry — Registry-Frage pending, SOURCE_PORT §12). Die toten JSON-API-Geschwister gcn.nasa.gov/api/alerts/icecube (bronze+gold) und api/v1/events sind dead_sources.φ (dead 404).
+
+parser-def html
+url https://icecube.wisc.edu/data-releases/
+note IceCube-Daten-Releases-Portal (Recheck 2026-09-06: HTTP 403 von direktem curl mit Browser-UA und vom Jina-Reader r.jina.ai — der Reader transportiert 200, sein Body nennt das Ziel "Target URL returned error 403: Forbidden" auf nginx/1.20.1; der 403 ist damit an zwei verschiedenen Exit-IPs gemessen Origin-Ebene, kein ip-block, keine Auth-Form — Mechanismus benannt: der Origin verweigert, weder dead noch blocked account/key); die einzige konkret gepruefte Daten-Route des Portals (hese_12yr_events.csv, /2023/07/...) bleibt dead 404 (dead_sources.φ:1978). Keine Kompilier-Route gebaut; kein Oszillator (distanzlos), die .amon-Notices tragen die Neutrino-Messung (Eintrag davor).
+
 parser-def json
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
 note Lasair-ZTF (2026-09-06 gemessen HTTP 200 mit LASAIR_TOKEN, anonym HTTP 401): skydirection_compiler erntet das objects-Window als SkyDirection-Records (objectId/ramean/decmean + gmag). Die gmag wird NUR mit Einzel-Detektions-Epoche (jdmin==jdmax, gemessen) als Probe gehalten; Multi-Detektions-gmag (g-Epoche nicht geliefert) bleibt ungehalten (0 honored). Zustand: gehalten via skydirection_compiler, positions-pending. Kein Oszillator in sources.φ (distanzlos, wuerde still-null) — Registrierung = TODO/Befund-Weg (auftrag-richtungs-transient-atom). LASAIR_TOKEN bleibt in .secrets.local. CelestialMap-Distanz-Gate unveraendert (no_distance_skipped).
+
+parser-def json
+url https://opendata.auger.org/catalog/data.zip
+note Pierre-Auger-Open-Data-Katalog der hoechsten-energetischen kosmischen Strahlen (109 Ereignisse 2004-2020, ApJ 935,170 (2022)/ApJS 264,50 (2023)); data.zip (2026-09-06 gemessen HTTP 200, 3,4 MB, deflate) enthaelt 109 PAO*.json mit sdrec.ra/sdrec.dec (J2000 deg), sdrec.energy [EeV], sdrec.l/sdrec.b, info.gpstime — echte, positions-tragende CR-Ankunftsrichtungs-Messungen. Index-Seite opendata.auger.org/catalog/index.php (200). Zustand: kompiliert als Healpix-Karte auger_catalog.pao1 via auger_compiler (tools/harvest, PAO1, src/archivar/auger.rs; Weberin §9 Stufe 6, CR-Zeuge), positions-pending. Kein Oszillator in sources.φ (distanzlos, wuerde still-null; Teilchen-Kanal ohne Medium in der 9er-Force-Registry — Registry-Frage pending, SOURCE_PORT §12).
