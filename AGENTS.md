@@ -165,9 +165,9 @@ workflow procedure, reference map and path map. Work surface: `phi/pipeline/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
 `phi/dead_sources.φ`. The pre-CDN history and the finished corpora live
-under the external archive root `archive-root` (a sibling of this repo,
-e.g. `../archive/`; physisch heute `archive-root/` —
-archeology + phi-research). The one physical address lives here only; every
+under the external archive root `archive-root` (physisch heute
+`/home/johannes/backup/archive-root/` — archeology + phi-research). The one
+physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.
 
