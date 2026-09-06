@@ -2,6 +2,40 @@
 
 Nur offene Pflichten.
 
+## Register — /tmp-Scratch & Python-Tools (2026-09-06)
+
+Scratch in /tmp/opencode ist die benannte Erkundungsfläche; was bleibt, gehört
+ins Repo oder wird geschlossen. Gemessen: 37 Python-Scratch-Dateien (außerhalb
+der venv), 16 GB Assets — der Stack ist Rust std-only + curl, Python ist
+Fremdcode.
+
+**Portiert zu Rust (2026-09-06, Operator-Wort):** die Python-Scratch-Tools ohne
+Rust-Twin sind als dauerhafte Rust-Werkzeuge im Repo gebaut, nicht an /tmp
+gebunden — ein tmp-Wipe verliert nichts von ihrer Funktion:
+- Nadel-ⅩⅢ-Evidenzfilter (`ads_digest*.py`, `ads_ev*.py`, `digest*.py` → gelöscht)
+  → neu `tools/science/src/bin/evidence_sieve.rs` (`--list`, `one <bibcode>`,
+  `scan <abs-dir>`, `census`); liest die committeten Zensus-JSONs
+  (`jwst_host_census.json`, `jwst_detection_seed.json`,
+  `transmission_host_census.json`), 11 Tests.
+- arXiv-Keyword-Scoring (`arxiv_fetch.py`, `round2.py` → gelöscht)
+  → `tools/science/src/bin/arxiv.rs` um `rank` + `censusrank` erweitert
+  (Scoring-Gewichte als benannte Konstanten), 8 Tests.
+- Broker-/Sondierungs-Scratch: `alerce_core.py`, `harvest/probe.py` → Rolle belegt
+  als Archivar-Rust (`channels.rs`/`tap_compiler.rs`), Endpunkt tot gemessen —
+  `.py` entfernt; `scan/spot.py` → neu
+  `tools/measure/src/bin/exoplanet_ps_spot_probe.rs` (live ps-TAP), `.py` entfernt.
+
+**Asset-Manifestations-Pflicht (pending):** `bayestar2019` (11,4 GB fits+h5+gz),
+`aia2014_fullyear.bin`, `planck_dust_av`, `eve2011_lines.bin`, `dr3_stars.bin`,
+`omni2_raw/`, `goes15*/`, die `galileo_tdf_cache_*.TDF`, die SPICE-`.bc`-Kernels
+liegen in /tmp/opencode unmanifestiert — Kernel-/CDN-Schicksal je Quelle ist
+ein Register-Gegenstand (CDN-Manifestation), nicht lokal zu schließen.
+
+**Gescruppt (2026-09-06, Operator-Wort):** obsolete Python-Scratch, überholt
+durch die committeten Rust-Tools (`ck_daf_probe`, `tap_compiler`,
+`omni2_compiler`, `xuv_lx_harvest_probe`, `exoplanet_outlier_scan_probe`,
+`lsst_anomaly_probe`) samt `venv/` + `get-pip.py` aus /tmp entfernt.
+
 ## Nadeln — Register
 
 Eine Quelle, ein Blick: jede Nadel mit ihrem Status an dieser Stelle.
@@ -1108,9 +1142,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   HAWC = HTML+FITS-Portale, TLS-Kette unvollständig; LHAASO = News-Seite
   2021 → Decline. IRSA spherex.obscore = VOTableJSON-Atom; Euclid
   mer_catalogue = SpaltenAusMetadata-Atom; ESO tap_obs = echte CSV, aber
-  probe_csv klassifiziert Header-CSV nicht; Pan-STARRS dr1 mean =
-  Endpoint lebt, Probe-Env kennt {ra}/{dec}/{radius} nicht (Nachweis im
-  Register-Lauf offen). Befunde:
+  probe_csv klassifiziert Header-CSV nicht. Befunde:
   phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ.
 - Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten,
   Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen,
