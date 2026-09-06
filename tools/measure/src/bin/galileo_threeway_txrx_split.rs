@@ -172,7 +172,7 @@ fn main() {
     let mut target_days: BTreeSet<i64> = BTreeSet::new();
     for (volume, name) in TARGETS {
         let url = format!("{BASE}{volume}/TDF/{name}");
-        let cache_path = format!("/tmp/opencode/galileo_tdf_cache_{name}");
+        let cache_path = format!("tmp/galileo_tdf_cache_{name}");
         let bytes = match std::fs::read(&cache_path) {
             Ok(b) => b,
             Err(_) => {
@@ -483,7 +483,7 @@ fn main() {
 }
 
 fn floor_report(target_days: &BTreeSet<i64>) {
-    let path = "data/galileo_resid.bin";
+    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {

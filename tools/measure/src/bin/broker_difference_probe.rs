@@ -11,7 +11,7 @@ const VERDICT_BROKER_MIN: usize = 2;
 const LAS_TUNNEL_IFACE: &str = "proton0";
 const STALL_WORD: &str = "no response (connection stalled)";
 const UA: &str = "omegaflow-broker-difference-probe/1.0";
-const STATE_SAMPLE_DIR: &str = "/tmp/opencode";
+const STATE_SAMPLE_DIR: &str = "tmp";
 const ALERCE_RETIRE_NOTE: &str =
     "api.alerce.online is the retired direct-database stub (dead_sources.φ: Direct database \
      access is being retired) — a non-200 read is no negative, excluded from the verdict";
@@ -185,12 +185,6 @@ fn curl_form_post(
 fn cache_state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
-    }
-    if let Ok(home) = std::env::var("HOME") {
-        return std::path::PathBuf::from(home)
-            .join(".local")
-            .join("state")
-            .join("omegaflow");
     }
     std::path::PathBuf::from(".")
 }

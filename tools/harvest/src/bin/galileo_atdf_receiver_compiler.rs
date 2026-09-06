@@ -212,7 +212,7 @@ fn main() {
         .cloned()
     {
         Some(path) => path,
-        None => "data/galileo_receiver.bin".to_string(),
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_receiver.bin".to_string(),
     };
     let local: Option<&str> = args
         .iter()

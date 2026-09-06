@@ -26,7 +26,11 @@ fn sas_token(collection: &str) -> Option<String> {
     let key = "\"token\":\"";
     let i = body.find(key)? + key.len();
     let tok = body[i..].split('"').next()?.to_string();
-    if tok.is_empty() { None } else { Some(tok) }
+    if tok.is_empty() {
+        None
+    } else {
+        Some(tok)
+    }
 }
 
 fn first_post_scene() -> Option<(String, String, String)> {
@@ -63,19 +67,19 @@ fn main() {
     let tok = match sas_token("sentinel-1-grd") {
         Some(t) => t,
         None => {
-            println!("SAS-Token: pending (fehlgeschlagen)");
+            println!("S1-Post-Scene: no token granted");
             return;
         }
     };
     match first_post_scene() {
         Some((id, href, dt)) => {
-            println!("=== S1-Post-Scene gefunden ===");
+            println!("=== S1-Post-Scene found ===");
             println!("id: {id}");
-            println!("datetime: {dt}  (Kollab {} )", EVENT_EPOCH);
+            println!("datetime: {dt}  (collapse {})", EVENT_EPOCH);
             println!("vv-asset: {href}");
-            let path = format!("/tmp/opencode/s1post/{id}_vv.tif");
-            std::fs::create_dir_all("/tmp/opencode/s1post").ok();
-            println!("lade VV-COG nach {path} …");
+            let path = format!("tmp/s1post/{id}_vv.tif");
+            std::fs::create_dir_all("tmp/s1post").ok();
+            println!("fetching VV-COG to {path}");
             let out = Command::new("curl")
                 .arg("-sL")
                 .arg("--max-time")
@@ -89,17 +93,25 @@ fn main() {
                 .arg(format!("{href}?{tok}"))
                 .output();
             match out {
-                Ok(o) if o.status.success() => {
-                    let sz = std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
-                    println!("fertig: {sz} bytes → {path}");
-                    let vor = std::env::var("OMEGAFLOW_S1_VOR").unwrap_or_default();
-                    if !vor.is_empty() {
-                        println!("Vor-Baseline gesetzt: {vor} → Post-vs-Vor-Differenz bereit.");
-                    } else {
-                        println!("no pre-baseline set (OMEGAFLOW_S1_VOR) — difference pending.");
+                Ok(o) if o.status.success() => match std::fs::metadata(&path) {
+                    Ok(m) => {
+                        let sz = m.len();
+                        println!("written: {sz} bytes -> {path}");
+                        let vor = std::env::var("OMEGAFLOW_S1_VOR").ok();
+                        match vor.as_deref() {
+                            Some(v) if !v.is_empty() => {
+                                println!("pre-baseline set: {v} -> post-vs-pre difference ready.");
+                            }
+                            _ => {
+                                println!(
+                                    "no pre-baseline set (OMEGAFLOW_S1_VOR) — difference pending."
+                                );
+                            }
+                        }
                     }
-                }
-                _ => println!("Download: pending (curl fehlgeschlagen)"),
+                    Err(e) => println!("S1-Post-Scene: file written, size unread ({e})"),
+                },
+                _ => println!("S1-Post-Scene: download pending (curl non-zero)"),
             }
         }
         None => {
@@ -107,7 +119,8 @@ fn main() {
                 "S1-Post-Scene: PENDING — no pass since {} at (85.4–85.6/28.15–28.4).",
                 EVENT_EPOCH
             );
-            println!("next pass expected ~08-30 (6-day cycle: 08-24 -> 08-30).");
+            println!("next pass ~08-30 (6-day cycle: 08-24 to 08-30).");
+            println!("the post-scene stays absent, 0 honored.");
         }
     }
 }

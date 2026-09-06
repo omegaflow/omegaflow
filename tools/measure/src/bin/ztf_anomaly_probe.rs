@@ -1,5 +1,5 @@
 use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
-use omegaflow::ztf::{ZtfCurve, parse_ztf_bin};
+use omegaflow::ztf::{parse_ztf_bin, ZtfCurve};
 
 const COINCIDENCE_S: f64 = 1800.0;
 const N_MIN: usize = 24;
@@ -106,14 +106,6 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
-// The periodogram power in the standard normalization (variance-normalized,
-// both quadrature terms, the τ shift that makes the cosine/sine basis
-// orthogonal). The statistic is amplitude-invariant: a uniform rescale of the
-// series moves the data and the variance together, so the FAP measures the
-// significance of the periodicity, not the photometric scale. The form it
-// replaces carried x² inside the denominator, making the power scale ~ n/σ² —
-// quiet fractional photometry (σ ~ 0.02) read FAP 0 on every row (measured in
-// the LSST round, committed a4b1dcc; the same one path served this probe).
 fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let n = t.len();
     if n < 8 {
@@ -163,8 +155,10 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
         nf += 1;
         f *= 1.05;
     }
-    let n_indep = nf.max(1) as f64;
-    let fap = 1.0 - (1.0 - (-best_z).exp()).powf(n_indep);
+    if nf == 0 {
+        return (0.0, 1.0);
+    }
+    let fap = 1.0 - (1.0 - (-best_z).exp()).powf(nf as f64);
     (best_z, fap)
 }
 
@@ -223,10 +217,10 @@ struct StarGroup {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let path = args
-        .get(1)
-        .cloned()
-        .unwrap_or_else(|| "data/ztf_scan/ztf_lightcurves.bin".to_string());
+    let path = match args.get(1) {
+        Some(p) => p.clone(),
+        None => "data/irsa.ipac.caltech.edu/ztf_lightcurves.bin".to_string(),
+    };
     let bytes = match std::fs::read(&path) {
         Ok(b) => b,
         Err(e) => {

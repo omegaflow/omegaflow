@@ -3,7 +3,7 @@ use omegaflow::cdn::upload_asset;
 use std::process::Command;
 
 const TAP_ROOT: &str = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync";
-const OUT_DEFAULT: &str = "/tmp/opencode/ir.bin";
+const OUT_DEFAULT: &str = "tmp/ir.bin";
 const W1_MAX: f64 = 9.0;
 const W1W2_MAX: f64 = 0.2;
 const SNR_MIN: f64 = 10.0;
