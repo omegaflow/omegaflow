@@ -1,0 +1,23 @@
+name: vlies-density-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  vlies-density:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Vlies catalog-density field once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern vlies_density.vlde --clobber 2>/dev/null || \
+          ( gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern dr3_stars.bin --clobber && \
+            cargo run -p omegaflow-harvest --release --bin vlies_density_compiler -- \
+              --stars dr3_stars.bin --out vlies_density.vlde --ci-mode )
