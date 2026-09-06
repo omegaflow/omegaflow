@@ -1923,20 +1923,56 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   tote Handover-Referenzen (docs/paper/-Ordner-Klasse + Concepts-Zweite-
   Achse: 2026-08-22/24 geregelt, die ENSO/Bz-Auswahl bleibt).
 
-- Richtungs-Transient ohne Distanz — aufgelöst über den Identitäts-Join
-  (2026-09-06): Der Rat-Verdikt (2026-09-05) stand — die Richtung bekommt ihre
-  Distanz „mit Klassifikation/Redshift nach". Genau das ist jetzt gebaut:
-  `direction_distance_join.rs` joint jeden richtung-only-Transienten gegen
-  Gaia-DR3-Parallaxe (identity_join, Trennung = Match-Evidenz, kein Treffer /
-  plx<=0 = absent, 0 honored — nie eine erfundene Distanz). Gemessen (ALeRCE
-  6000 Transienten): 3 placed / 5997 direction-only (0,05 % = das
-  e32-Zufallsniveau; die Trennung ist die Evidenz). Der Winkel-Kernel (Richtung
-  als eigenes Atom, Wire über 3 Ebenen) bleibt nach Rats-Verdikt DEFERRIERT
-  („heute lohnt der Bruch nicht") — ein legitimes zukünftiges Atom, kein totes
-  Ende, aber kein aktives Pending. Der direction-only-Rest (kein
-  Gaia-Gegenstück) ist ein gemessener Zustand (Abwesenheit eines Gegenstücks),
-  keine Schuld. Registriert: blocked_sources.φ (Lasair/ANTARES/ALeRCE +
-  Fink-LSST, parser-def) + direction_distance_join.rs.
+- Richtungs-Transient ohne Distanz — geerntet-und-gehalten, positions-pending
+  (2026-09-06): die Richtung wird als eigene Archivar-Entität gehalten statt
+  erfinden oder verwerfen. Gebaut: `SkyDirection` (src/archivar/skydirection.rs,
+  ra/dec in Grad ICRS, band-strukturierte Magnituden-Serie, distance/redshift =
+  Option/None absent, `unit_direction` = die p̂-Formel aus extract.rs/spatial.rs,
+  eigenes SKD1-Binär-Asset, kein Wire-Eingriff) + `skydirection_compiler`
+  (tools/harvest, `--ci-mode` gated den CDN-Upload). Vier Quellen gemessen
+  (2026-09-06): Lasair-ZTF objects-Window HTTP 200 (1000 Richtungen, gmag nur mit
+  Einzel-Detektions-Epoche gehalten), ANTARES loci HTTP 200 (unbanded
+  Summary-Magnituden), Fink-LSST conesearch HTTP 200 (Richtung, Konus trägt keine
+  Photometrie — Magnituden absent), ALeRCE api.alerce.online/objects HTTP 404
+  (Retired-Stub, unreachable benannt, nie ein Negativ). Distanz bleibt absent bis
+  der Crossmatch antwortet (direction_distance_join/Gaia-Parallaxe/Redshift) —
+  der Identitäts-Join steht (2026-09-06), die gehaltenen Richtungen sind sein
+  Futter. Der Winkel-Kernel bleibt nach Rats-Verdikt DEFERRIERT (benanntes
+  Zukunfts-Atom, kein aktives Pending). Registriert: blocked_sources.φ
+  (Lasair/ANTARES/Fink-LSST gehalten, ALeRCE dead_sources.φ) + befund-richtungs-atom.md.
+  CDN-Manifestations-Route geschlossen (2026-09-06): der Workflow
+  skydirection-cdn.yml (Muster bayestar-cdn.yml) fährt den skydirection_compiler
+  mit `--ci-mode` und der echten Window-/Konus-Wahl, idempotenter Guard vor jedem
+  Compile; das Asset skydirections.bin steht auf dem CDN (Tag ssd.jpl.nasa.gov,
+  Repo omegaflow/sources, HTTP 200, 65 949 Byte gemessen).
+
+- S²-Richtungssinn — der Winkel-Kernel-Deferral ist aufgelöst, das Atom gebaut
+  (2026-09-06, Rat): zwei Räume, zwei Sinne — ℝ³ (Ort+Distanz, der 26×f64-Wire
+  bleibt unberührt) und S² (Richtung, neues paralleles Feld). Gebaut: σ als
+  `sigma_arcsec: Option<f64>` auf `SkyDirection` (SKD1 trägt es, absent bleibt
+  absent) + `distance_m()` (Parallax-/Hubble-flow-Distanz) + `spatial_position()`
+  (p̂·dist, der ℝ³-Übertritt) + `src/mathematikerin/s2.rs` (Richtungs-Oszillator
+  p̂+σ, Präsenz-Gewicht aus den eigenen Band-Samples mit eigenem τ, bandbegrenzter
+  Kugelflächen-Kernel Σ_l (2l+1) b_l(σ) P_l bis `S2_LMAX`=64, CPU-Referenz,
+  Packen/Manifest-Punkte auf der Einheitskugel) + `S2_WGSL` (eigener Pass
+  `s2_field`, ein Thread je Proben-Richtung, registriert in omega.rs init_gpu,
+  GPU↔CPU f32/f64-Parität gemessen) + Atem (tanh(v_c/(g+ε))-Pfad aus der
+  S²-Schalen-Messreihe, exponentiell, eigenes τ `S2_PERM_TAU_S`, Präsenz τ je
+  Richtung aus ihrem Serien-Mediangap, `S2_TAU_DEFAULT_S`=2^18 s benannt) +
+  Manifestation (die Richtungspunkte p̂ auf der Sphäre im ω-Loop-Zustand, HUD-
+  Zwilling `sky osc … pts …`, Asset-Zuführung über `OMEGAFLOW_SKY_ASSET`/
+  state_dir/data, Diagnostik englisch) + Crossmatch-Übergang
+  (direction_distance_join `--directions <skd1> [--out]`: Placed-Richtungen
+  tragen die Gaia-Distanz in Some und treten mit p̂·dist in ℝ³ ein, absent bleibt
+  auf S², 0 honored). cargo check 0/0 core+measure+harvest; Tests grün (S²-Kern,
+  absent-bleibt-auf-S², Some-tritt-in-ℝ³-ein, WGSL offline via naga, GPU↔CPU).
+  Offen (gemessen, keine Deferrals): die Endpunkte liefern keine σ je Objekt
+  (Fink/Lasair/ANTARES-Abfragen führen keine Positions-Unsicherheit — σ bleibt
+  absent, kein erfundener Default); das Laufzeit-Asset liegt noch nicht im
+  state_dir/data (der Harvest-Bestand steht unter dem Compiler-`--out` und auf
+  dem CDN-Tag ssd.jpl.nasa.gov, die OMEGAFLOW_SKY_ASSET-Route erwartet ihn
+  lokal); die CDN-Manifestations-Route ist geschlossen (skydirection-cdn.yml,
+  `--ci-mode` gated, skydirections.bin manifestiert, HTTP 200 gemessen).
 
 - Myzel-Scan-Linie — die fünf Funken der Anomalie-Jagd (Konzept
   docs/concepts/fuenf-funken-anomalie-jagd.md, 2026-09-05): Atome 0/0b

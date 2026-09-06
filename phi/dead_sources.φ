@@ -2240,7 +2240,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 dead 404
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
-note MAST tap-sync 404 (nginx) — key-needed (Port-Befund 2026-08-15 bestätigt den TODO-Befund).
+note MAST tap-sync 404 (nginx) — der alte Pfad ist tot; der lebende TAP liegt unter https://mast.stsci.edu/portal/api/tap/sync (2026-09-06 gemessen HTTP 200 via VPN + direkt, POST FORMAT=json). Dieser Eintrag behaelt die tote URL; das Live-Ziel gehoert in sources.φ wenn ein Port es aufnimmt.
 
 decline no-physical-force
 url https://mempool.space/api/v1/fees/recommended
@@ -4652,7 +4652,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
-note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert; api.alerce.online = 404-Stub (alle Pfade); tap.alerce.online = 502 (TAP-Backend down). ALeRCE migriert auf TAP („Direct database access is being retired"). Recheck: tap.alerce.online/vo/tap/sync sobald TAP wieder 200 liefert.
+note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert; api.alerce.online = 404-Stub (alle Pfade); tap.alerce.online = 502 (TAP-Backend down). ALeRCE migriert auf TAP („Direct database access is being retired"). Recheck: tap.alerce.online/vo/tap/sync sobald TAP wieder 200 liefert. Richtungs-Harvest-Status (2026-09-06): api.alerce.online/objects erneut HTTP 404 gemessen (skydirection_compiler, --alerce) — als unreachable benannt, nie ein Negativ, kein Oszillator; die Richtungs-Klasse wird ueber Lasair/ANTARES/Fink gehalten (auftrag-richtungs-transient-atom, befund-richtungs-atom).
 
 dead scheme-unsupported
 url s3://lp-prod-protected/GEDI02_A.002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002.cmr.xml

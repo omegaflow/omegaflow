@@ -2,7 +2,7 @@
   title: Auftrag — Richtungs-Transient: die Himmelsrichtung halten, nicht erfinden
   class: auftrag
   date: 2026-09-05
-  status: pending
+  status: consumed
   sha256: f64a6ed718f2f369065b53f8bb1c17e204213529f1a8ece2c72d54b4ebf029f8
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-vier-schilde.md docs/concepts/docs-naming.md
 -->
