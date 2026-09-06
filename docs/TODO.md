@@ -851,14 +851,6 @@ ICRS-4D-Rahmen teilt:
 
 ## Archivar & Werkzeuge — offene Pflichten
 
-- **EVE-/AIA-Linien als series-Format registriert (2026-09-05)**: `eve_lines`/
-  `aia_lines` parsen in `series_parse_bin` (`src/archivar/extract.rs`) über eigene
-  Modul-Parser (`EVL1`/`AIA1`, 20-Byte-Records t/v/idx) + Roundtrip-Tests; gegen das
-  reale CDN-Asset verifiziert (aia2014_lines.bin, 50362 Records, Länge 8+count×20
-  exakt). Die sources.φ-Assets (`at sun`, 558b92e) lesen damit am Loader nicht mehr
-  void. Bewusst offen: series_component_name-Namen + field-Tokens — keine fabrizierten
-  Kanal-Namen ohne series-Konsument. pending (nur wenn ein series-Konsument die Reihe
-  über den Archivar zieht).
 - feature-gate `gpu` — eigenes Atom, pending: `pub mod mathematikerin` als
   #[cfg(feature="gpu")] + Co-Gate der main_flow-Verdrahtung (crate::
   mathematikerin::-Stellen PresenceFrame/EMOscillator/KineticRadiator)
