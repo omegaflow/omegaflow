@@ -1,5 +1,7 @@
 use omegaflow::archivar::json::{jnum, jstr, parse_json, JsonVal};
+use omegaflow::archivar::skydirection::{parse_bin, write_bin, SkyDirection};
 use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::PARSEC_M;
 use omegaflow_measure::deredden::{build_star_index, StarIndex};
 
 const DEG2_PER_SR: f64 = 129600.0 / std::f64::consts::PI;
@@ -171,7 +173,7 @@ fn object_arg(args: &[String]) -> Option<(f64, f64)> {
 
 fn usage() {
     println!(
-        "usage: direction_distance_join --stars <dr3_stars.bin> --radius <arcsec> (--object <ra> <dec> [--name <id>] | --transients <alerts.json> [--transients <more.json> ...])"
+        "usage: direction_distance_join --stars <dr3_stars.bin> --radius <arcsec> (--object <ra> <dec> [--name <id>] | --transients <alerts.json> [--transients <more.json> ...] | --directions <skd1> [--out <skd1>])"
     );
 }
 
@@ -256,8 +258,12 @@ fn main() {
         absent: 0usize,
     };
 
-    match (object_arg(&args), transients.is_empty()) {
-        (Some((ra, dec)), _) => {
+    match (
+        object_arg(&args),
+        transients.is_empty(),
+        arg_value(&args, "--directions"),
+    ) {
+        (Some((ra, dec)), _, _) => {
             tally.n += 1;
             let name = arg_value(&args, "--name");
             let t = Transient {
@@ -265,15 +271,53 @@ fn main() {
                 ra_deg: ra,
                 dec_deg: dec,
             };
-            report(&distance, &present, &t, radius_as, &mut tally);
+            let _ = report(&distance, &present, &t, radius_as, &mut tally);
         }
-        (None, false) => {
+        (None, false, None) => {
             for t in &transients {
                 tally.n += 1;
-                report(&distance, &present, t, radius_as, &mut tally);
+                let _ = report(&distance, &present, t, radius_as, &mut tally);
             }
         }
-        (None, true) => {
+        (None, _, Some(directions_path)) => {
+            let bytes = match std::fs::read(&directions_path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("read {directions_path} returned void: {e} — the asset stays unread");
+                    return;
+                }
+            };
+            let Some(dirs) = parse_bin(&bytes) else {
+                eprintln!(
+                    "read {directions_path}: the SKD1 asset does not read back — the join stays closed"
+                );
+                return;
+            };
+            let out_path = arg_value(&args, "--out");
+            let next = join_directions(&distance, &present, &dirs, radius_as, &mut tally);
+            if let Some(out) = out_path {
+                match write_bin(&next) {
+                    Some(bytes) => {
+                        if std::fs::write(&out, &bytes).is_err() {
+                            eprintln!(
+                                "write {out} returned void — the placed directions stay in memory"
+                            );
+                        } else {
+                            let placed = next.iter().filter(|d| d.distance.is_some()).count();
+                            println!(
+                                "Direction-distance join: {out} written with {placed} direction(s) carrying a measured distance; the distance-less stay distance-less (0 honored)"
+                            );
+                        }
+                    }
+                    None => {
+                        eprintln!(
+                            "write {out} returned void — a placed direction is not serializable"
+                        );
+                    }
+                }
+            }
+        }
+        (None, true, None) => {
             eprintln!("no transient position given — the join stays void (0 honored)");
             return;
         }
@@ -292,13 +336,40 @@ struct Tally {
     absent: usize,
 }
 
+fn join_directions(
+    distance: &StarIndex,
+    present: &StarIndex,
+    dirs: &[SkyDirection],
+    radius_as: f64,
+    tally: &mut Tally,
+) -> Vec<SkyDirection> {
+    let mut next = Vec::with_capacity(dirs.len());
+    for d in dirs {
+        tally.n += 1;
+        let t = Transient {
+            id: Some(d.name.clone()),
+            ra_deg: d.ra_deg,
+            dec_deg: d.dec_deg,
+        };
+        match report(distance, present, &t, radius_as, tally) {
+            Some(dist_m) => {
+                let mut placed = d.clone();
+                placed.distance = Some(dist_m);
+                next.push(placed);
+            }
+            None => next.push(d.clone()),
+        }
+    }
+    next
+}
+
 fn report(
     distance: &StarIndex,
     present: &StarIndex,
     t: &Transient,
     radius_as: f64,
     tally: &mut Tally,
-) {
+) -> Option<f64> {
     match resolve(distance, present, t.ra_deg, t.dec_deg, radius_as) {
         Verdict::Placed { star, sep, within } => {
             tally.placed += 1;
@@ -314,6 +385,7 @@ fn report(
                 "Direction-distance join: {subj} | Gaia DR3 identity record {star} at ra {:.5} dec {:.5} | separation {sep:.3} arcsec | parallax {:.3} mas -> distance {d_pc:.1} pc | placed",
                 s.ra_deg, s.dec_deg, s.plx_mas
             );
+            Some(d_pc * PARSEC_M)
         }
         Verdict::Absent { sep, within } => {
             tally.absent += 1;
@@ -326,6 +398,7 @@ fn report(
             println!(
                 "Direction-distance join: {subj} | the nearest Gaia DR3 record (separation {sep:.3} arcsec) carries no usable parallax — the distance stays absent (0 honored), the transient is present-but-unplaceable"
             );
+            None
         }
         Verdict::DirectionOnly => {
             tally.direction_only += 1;
@@ -333,6 +406,7 @@ fn report(
             println!(
                 "Direction-distance join: {subj} | no Gaia DR3 record within the {radius_as:.0} arcsec cone — the direction stays direction-only (0 honored, the absence of a counterpart is measured)"
             );
+            None
         }
     }
 }
@@ -434,6 +508,47 @@ mod tests {
             other => panic!(
                 "the nearer distance-less record is the identity — no distance may reach past it: {other:?}"
             ),
+        }
+    }
+
+    #[test]
+    fn a_delivered_distance_moves_the_direction_into_the_block_and_absent_stays_on_the_sphere() {
+        let bytes = star_rec(246.5, -16.8, 1.512);
+        let distance = build_star_index(&bytes);
+        let mut refused = 0usize;
+        let standins = build_present_standins(&bytes, &mut refused);
+        let present = build_star_index(&standins);
+        let mk = |name: &str, ra: f64, dec: f64| SkyDirection {
+            name: name.to_string(),
+            ra_deg: ra,
+            dec_deg: dec,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            distance: None,
+            redshift: None,
+        };
+        let dirs = vec![mk("known", 246.5, -16.8), mk("void", 100.0, 30.0)];
+        let mut tally = Tally {
+            n: 0,
+            placed: 0,
+            direction_only: 0,
+            absent: 0,
+        };
+        let next = join_directions(&distance, &present, &dirs, 5.0, &mut tally);
+        assert_eq!(next.len(), 2);
+        assert_eq!(tally.placed, 1);
+        assert_eq!(tally.direction_only, 1);
+        let expect = 1000.0 / (1.512f32 as f64) * PARSEC_M;
+        let known_d = next[0].distance.unwrap();
+        assert!(
+            (known_d - expect).abs() < expect * 1e-9,
+            "the Gaia distance lands in Some: {known_d} vs {expect}"
+        );
+        assert_eq!(next[1].distance, None);
+        let pos = next[0].spatial_position().unwrap();
+        let p = next[0].unit_direction();
+        for k in 0..3 {
+            assert!((pos[k] - p[k] * expect).abs() < expect * 1e-9);
         }
     }
 }

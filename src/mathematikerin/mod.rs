@@ -17,6 +17,7 @@ pub mod mat;
 pub mod media;
 pub mod omega;
 pub mod orientation;
+pub mod s2;
 pub mod shaders;
 pub mod te;
 #[cfg(test)]
@@ -25,6 +26,7 @@ mod tests;
 pub use actuators::*;
 pub use omega::*;
 pub use orientation::*;
+pub use s2::*;
 pub use shaders::*;
 
 pub(crate) use crate::force::kernel_id_for_force;
