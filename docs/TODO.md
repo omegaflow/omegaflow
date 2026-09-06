@@ -606,8 +606,21 @@ physikalischen Aussage — kein Blatt ohne diese:
   Stack (aia_three_year_probe, gleiche C1.0-Schwelle, 24-s-Zellen): 193->211
   +1.68e-1 (96 s, 0.94xfam), 211->335 +7.42e-2 (144 s), 335->94 +1.19e-1
   (96 s); fam 1.79e-1 — kein Rung ueber fam. Die Kaskade
-  193->211->335->94 reproduziert sich ueber den gesamten 3-Jahres-Korpus,
-  family bound (gerichtet, unter der Familien-Schwelle).
+   193->211->335->94 reproduziert sich ueber den gesamten 3-Jahres-Korpus,
+   family bound (gerichtet, unter der Familien-Schwelle).
+- **Solar-alle-Akteure-Tages-Matrix (2026-09-06, 2013-2015)**: die volle
+  Kanal-DAG ueber die drei Jahre (solar_3year_matrix_probe --grain daily,
+  13 Akteure = F10.7, Lya1216, XRSA, XRSB, Bz, Density, 7 AIA-Baender; 156
+  gerichtete Paare x 8 lags): fam = 3.01e-1, KEIN Pfeil ueber fam, 32 family
+  bound, 124 still. Die staerksten family-bound-Kopplungen: F10.7->Bz
+  (2.02e-1), Bz<->Density (2.03e-1), Lya->Bz, AIA-Linien->Bz/XRS — alle unter
+  der Familien-Schwelle. Die Kaskaden-Rungs (193->211, 211->335, 335->94)
+  sind auf Tages-Skala STILL (die ~96-s-Flare-Struktur ist im Tagesmittel
+  verschmiert) — die Tages-Matrix traegt die Kanal-DAG, nicht die Flare-
+  Kaskade (letztere bleibt das 24-s-Ereignis-Mass). Stunden-Skala: die
+  kontinuierliche TE ueber 3 Jahre (26280 Zellen) und ueber ein volles Jahr
+  (8760 Zellen) ist mit dem O(n^2)-Schaetzer an der Rechen-Wand (~9 h je
+  Jahr) — als Grenze gemessen, Stunden-ereignisweise offen.
 - **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse [partieller GOES-Satz],
   gemessen 2026-09-06): die Richtung ist KONSISTENT, nicht alternierend** — 76%
   der Ereignisse positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00),
