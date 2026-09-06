@@ -1,6 +1,6 @@
 use omegaflow::archivar::spectral::civil_from_days;
 use omegaflow::json::{parse_json, JsonVal};
-use omegaflow_measure::nadel_gate::{allwise_witness, natural_excluded, sep_arcsec, WiseOutcome};
+use omegaflow_measure::weberin::nadel_gate::{allwise_witness, natural_excluded, sep_arcsec, WiseOutcome};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
