@@ -1115,6 +1115,13 @@ Die eine Mess-Anordnung: ICRS·TDB als Webstuhl, die Weltlinien (Direction,
 Body, Station) als Kette, die Beziehungen (Verdict, TE, Abstammung) als
 Schuss, das Vlies als das eine Bild.
 
+Struktur (Rat, 2026-09-06): die Weberin bleibt eine Anordnung, kein Crate.
+LIVE-Seite im Kern (`src/weberin.rs` neben `archivar/` + `mathematikerin/`),
+Offline-Seite unter `tools/measure/src/weberin/` (der Schuss: `nadel_gate`,
+`borrowed_sense`, `deredden` — umgezogen aus der anonymen `measure`-Lib).
+Name `weberin`, nie `weave`. Der Umzug ist der eine Zug, der die
+Struktur-Frage schließt; nichts weiter geöffnet.
+
 Gebaut (2026-09-06, sub-agents):
 
 - Zweite Körper-Linie + Riss-Knoten (Schritt 1 + 8): `src/mathematikerin/
@@ -1177,8 +1184,12 @@ Gebaut (2026-09-06, sub-agents):
   (alasky.u-strasbg.fr/footprints 503) + blocked_sources.φ (DES).
 - CDN-Manifestations-Weg des Vlies-Assets (Schritt 7): Compiler-Seite
   gebaut (upload_asset in vlies_density/amon/auger_compiler `--ci-mode`,
-  Muster bayestar_compiler); der Workflow (`*-cdn.yml`) im
-  omegaflow/sources-Repo bleibt ausstehend (Operator-Aktion).
+  Muster bayestar_compiler); Workflows gebaut in `.github/workflows/`
+  (`vlies-density-cdn.yml` → `vlies_density.vlde` aus dr3_stars.bin,
+  `amon-cdn.yml` → `icecube_alerts.amn1` aus den AMON-Notices,
+  `auger-cdn.yml` → `auger_catalog.pao1` aus data.zip). Manifestation
+  (Assets aufs CDN) braucht erst den Commit der Compiler + `gh workflow
+  run` — offen, bis der Klumpen committet ist.
 - Skymap-Reste (Schritt 6): Telescope Array (kein öffentliches Dataset,
   pending) und icecube.wisc.edu/data-releases (403 origin-seitig/nginx,
   Mechanismus benannt — recheck bleibt, kein Compiler).
