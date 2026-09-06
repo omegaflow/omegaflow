@@ -1,0 +1,29 @@
+name: amon-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  amon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the AMON-IceCube neutrino alerts once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern icecube_alerts.amn1 --clobber 2>/dev/null || \
+          ( mkdir -p amon_notices && \
+            curl -sSfL --max-time 120 \
+              https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html -o idx.html && \
+            grep -oE 'notices_amon_g_b/[A-Za-z0-9_.-]+\.amon' idx.html | sort -u | \
+            while read -r p; do \
+              curl -sSfL --max-time 120 "https://gcn.gsfc.nasa.gov/$p" \
+                -o "amon_notices/$(basename "$p")"; \
+            done && \
+            cargo run -p omegaflow-harvest --release --bin amon_compiler -- \
+              --input amon_notices --out icecube_alerts.amn1 --ci-mode )

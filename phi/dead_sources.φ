@@ -210,6 +210,10 @@ dead 404
 url https://aisstream.io/api/v1/stream/vessels?latitude=
 note HTTP 404 — Endpoint weg.
 
+dead 503
+url https://alasky.u-strasbg.fr/footprints/
+note CDS-Survey-Footprint-Host (Footprint-HiPS grosser Durchmusterungen), gemessen 2026-09-06: HTTP 503 Service Unavailable fuer /footprints/ und jeden Survey-Pfad (SDSS9/2MASS/AllWISE/GALEX/ROSAT/PanSTARRS/DES/Gaia); der MOCServer-Geschwister alasky.u-strasbg.fr/MocServer/query lebt (200). Weberin §9 Stufe 5 (Survey-Footprints als eigene Assets), Recherche-Stand der Alternativen: MOCServer-Records tragen positions-abgeleitete Katalog-Coverage (CDS/P/..., z.B. CDS/II/371/des_dr2 moc_sky_fraction 0.1261, CDS/P/GALEXGR6_7/color 0.7897), nach dem Footprint-Litmus verweigert — beobachtet-nichts gegen nie-beobachtet bliebe an der Quelle (Punkt-Positionen statt Feld-/Exposure-Maske) ununterscheidbar, keine Maske; die Survey-nativen Archive (SDSS SAS data.sdss.org/sas 200, MAST/ps1images 200, IRSA data/download 200, HEASARC FTP 200, des.ncsa.illinois.edu 200, s3df.slac.stanford.edu/data/rubin 200) sind anonym erreichbar, aber an den geprueften Pfaden keine anonyme Footprint-Maske (SDSS dr18-Baum, PS1, AllWISE-Katalogteile, ROSAT-Datenbaum, Rubin sim-data sind Kataloge/Produkte ohne Coverage-Maske). Fund: keine anonyme Survey-Footprint-Maske; Recheck beim naechsten Host-Verdikt.
+
 dead 400
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
@@ -1713,6 +1717,14 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
 note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://gcn.nasa.gov/api/alerts/icecube?alert_type=gold&limit=100
+note HTTP 404 — Endpoint weg (2026-09-06 gemessen); Gold-Geschwister des Bronze-Eintrags davor. Die Alerts leben als .amon-Notices unter gcn.gsfc.nasa.gov (blocked_sources.φ, parser-def text) — kompiliert via amon_compiler (Neutrino-Zeuge, Weberin §9 Stufe 6).
+
+dead 404
+url https://gcn.nasa.gov/api/v1/events?query=instrument:IceCube&order-by=-created
+note HTTP 404 — Endpoint weg (2026-09-06 gemessen); die IceCube-Alert-Route lebt als .amon-Notices (blocked_sources.φ, parser-def text).
 
 decline alerts
 url https://gdacs.org/xml/rss.xml
