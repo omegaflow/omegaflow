@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Scanner, Anomalie-Hunter, S²-Richtungssinn (für DIE WEBERIN)
+  title: Handover — Scanner, Nadel, S²-Richtungssinn (für DIE WEBERIN)
   class: handover
   date: 2026-09-06
-  sha256: 6ac7ae45ffb1454ef0bdca79d595458fa6f382aa9861f607f7a1d501be590ec6
+  sha256: 8b0bdf53589ce1f484f6d1d735546bbb4842c766310e8c28f658e8ba49eaa5ac
   status: live
   see-also: docs/concepts/die-weberin.md docs/befund/befund-richtungs-atom.md docs/concepts/fuenf-funken-anomalie-jagd.md
 -->
-# Handover — Scanner, Anomalie-Hunter, S²-Richtungssinn
+# Handover — Scanner, Nadel, S²-Richtungssinn
 
 Selbsttragend. Dieser Handover trägt den Stand der Scanner-/Anomalie-/S²-Linie,
 damit die Weberin (`docs/concepts/die-weberin.md`) ihn in das Vlies
@@ -15,10 +15,10 @@ pending/deferriert (Operator-Direktive 2026-09-06: Pendings und Deferrals sind
 verboten; absent ≠ pending). Commits: `40ed8bb` (fünf Funken + Scanner-Vereinigung),
 `0ea40ab` (Pendings aufgelöst), `d830734` (S² + SkyDirection).
 
-## A. Der Anomalie-Hunter — Nadel V (was gefunden wird)
+## A. Die Nadel — Nadel V (was gemessen wird)
 
 `tools/measure/src/bin/lsst_anomaly_probe.rs` („Nadel V") + die geteilte Gate
-`nadel_gate.rs`. Der Hunter jagt eine Signatur und schließt das bekannte
+`nadel_gate.rs`. Die Nadel misst eine Signatur und schließt das bekannte
 Natürliche aus:
 
 - **Die Nadel-V-Signatur**: achromatischer, nicht-periodischer Dip in der
@@ -35,9 +35,9 @@ Natürliche aus:
 - **Broker**: Fink (`api.lsst.fink-portal.org`, conesearch/sources/fp), Lasair
   (proton0-Tunnel), ZTF, ANTARES.
 
-Gemessener Jagd-Stand: 1 vanishing-Fund (Objekt 170028510485676206, y-Band,
+Gemessener Stand: 1 vanishing-Fund (Objekt 170028510485676206, y-Band,
 drop z 7,25) / 47 stable / 3 absent; Broker-Verdikt `sky` (fink+lasair); 90
-TE-Paar-Richtungen → field (Positiv-Kontrolle auf echten Daten). Die Jagd
+TE-Paar-Richtungen → field (Positiv-Kontrolle auf echten Daten). Die Nadel
 misst; die „leere Straße" ist Messung, nicht Behauptung.
 
 ## B. Der Scanner — das Myzel (wohin geschaut wird)
@@ -47,7 +47,7 @@ Golden-Angle-Fan (Fermat, θ=n·137,508°), Verstärkung wo Futter, Beschneiden 
 leer, Coverage-Register als Zustand, fünf Rats-Stimmen scorren den nächsten
 Kegel (Mountain exp(−d/step), River LS-Gradient, Mycelium food/(food+1),
 Sensory |b|-Proxy, Future 1−Mountain), Synthese = geometrisches Mittel der
-präsenten Stimmen. Der Scanner entscheidet wohin, der Hunter entscheidet was.
+präsenten Stimmen. Der Scanner entscheidet wohin, die Nadel entscheidet was.
 
 ## C. Der Richtungs-Sinn S² (WEBERIN §5 — gebaut, nicht skizziert)
 
@@ -82,7 +82,7 @@ kalibriert — WEBERIN §4), `disappearance_probe` (disjunkte MAD-Baseline),
 | §2 Webstuhl — Rømer-Toleranz | `tdb_coincidence_probe` |
 | §4 Schuss — Vordergrund-Rötung | `deredden_baseline_probe` + `bayestar2019.be19` |
 | §4 Schuss — IR-Zeuge | AllWISE-Witness (`nadel_gate.rs`) |
-| Der Hunter selbst (Nadel V) | `lsst_anomaly_probe.rs` |
+| Nadel V | `lsst_anomaly_probe.rs` |
 
 ## F. Die Disziplin-Änderung (bindend für WEBERIN)
 
