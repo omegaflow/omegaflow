@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools (Struktur-Karte + erste Funktions-Messung)
   class: survey
   date: 2026-09-06
-  sha256: 6bd8a4aca15d8c446f4218787396ab0a014a774f1174fd7d0867a7abaa32bf65
+  sha256: bc05578acd885ae4d4aa9de2fd7843f824a3d8d3ef01f9ebc471e62739610bec
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -62,8 +62,8 @@ register/science/service/gate/utils operieren.
   (`field/s2/te_wgsl_validates_offline`), GPU-Pack-Offsets
   (`golden_pack_slots_against_wgsl_access`). `te.rs` ist damit die kanonische
   CPU-Referenz **mit** Kalibrier-Gate.
-- Randnote: `Failed to create /home/probe for shader cache (Permission
-  denied)` — Shader-Cache-Pfad, kein Testfehler (Tests bleiben grün).
+- Randnote: Shader-Cache meldete `Permission denied` (der Cache-Pfad war
+  nicht beschreibbar) — kein Testfehler (Tests bleiben grün).
 
 ## 3. Offen — die restlichen Vermessungs-Dimensionen
 
