@@ -4,7 +4,7 @@
   date: 2026-09-05
   status: done
   sha256: 4c59cbcb4bbf647379aeef9b783f58c823b706029156e449325f1b4ce359c016
-  see-also: antwortet-auf: docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/auftrag/auftrag-der-grat.md docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/blatt-kreuz-screening-kollab.md docs/blatt/blatt-der-grat.md
+  see-also: antwortet-auf: docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/auftrag/auftrag-der-grat.md docs/paper/sturzflut-tibet-pfeil.md docs/paper/blatt-kreuz-screening-kollab.md docs/blatt/blatt-der-grat.md
 -->
 
 # Befund: Trishuli Regen→Pegel unter Konditionierung auf den geteilten synoptischen Treiber
@@ -15,7 +15,7 @@ kein Wert erfunden; jede Lücke als `pending` benannt.
 ## Antwort auf die Auftragsfrage
 
 Die Frage des Auftrags: Übersteht die co-lokale Regen→Pegel-Kopplung des
-Quell-Blattes (`blatt-pfeil-sturzflut-tibet.md` §3.5, TE 0.265 > 0.218,
+Quell-Blattes (`sturzflut-tibet-pfeil.md` §3.5, TE 0.265 > 0.218,
 Lag 24 h, n = 129) die Konditionierung auf den gemeinsamen synoptischen
 Treiber — gyirong temperature_2m als Tagesgang-Proxi, pressure_msl und
 relative_humidity_2m als unabhängige Zweit-Proxies, Residuen-Surrogat,
@@ -173,7 +173,7 @@ Instrument nicht isolierbar.
 ## Grenzen
 
 - **Richtungs-Benennung des Quell-Blattes:** die in
-  `blatt-pfeil-sturzflut-tibet.md` §3.5, `causal-arrow-preregistration.md`
+  `sturzflut-tibet-pfeil.md` §3.5, `causal-arrow-preregistration.md`
   und der Grat-Zeile registrierte „Regen→Pegel"-Benennung des 0.265-Werts
   ist gegen die Schätzer-Orientierung gespiegelt (Kalibrierung oben). Der
   vorliegende Befund misst die Orientierungen und benennt beide; die

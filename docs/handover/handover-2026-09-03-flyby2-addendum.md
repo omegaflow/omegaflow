@@ -4,7 +4,7 @@
   date: 2026-09-03
   sha256: b296d1f343e80aaef4edac02c58ea7454ce30922dcacc86e7689eafb6f07b1d2
   status: live
-  see-also: docs/auftrag/auftrag-flyby2-addendum.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/flyby-path-2-preregistration.md
+  see-also: docs/auftrag/auftrag-flyby2-addendum.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/paper/sturzflut-tibet-pfeil.md docs/paper/flyby-path-2-preregistration.md
 -->
 
 # Handover — flyby-2-Addendum vor dem 28.09.2026
@@ -33,7 +33,7 @@ Erd-Vorbeiflug 28./29.09.).
 - Das Addendum trägt die σ-Metrik, aber **keine „Vorhersagekette"** nach
   Trishuli-Muster und **keine Siegel-Zeile vom Operator** (gemessen: kein
   Treffer für Vorhersagekette/Trishuli/Siegel im Dokument).
-- Das Trishuli-Muster (die Vorlage): `docs/paper/blatt-pfeil-sturzflut-tibet.md`
+- Das Trishuli-Muster (die Vorlage): `docs/paper/sturzflut-tibet-pfeil.md`
   — ein Kausalpfeil-Blatt mit messbarer **Vorhersage-/Kausalkette**
   (Zeitstempel, nicht erzählt) und Surrogat-Schwelle (mean + 2σ).
 

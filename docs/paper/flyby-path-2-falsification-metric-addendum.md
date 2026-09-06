@@ -21,7 +21,7 @@ This Blatt is an addendum to the Path-2 pre-registration, sealed 2026-08-28 — 
 
 This addendum also carries the prediction chain that links the pre-registration
 to the in-situ measurement, in the timestamped form of the Trishuli Blatt
-(`docs/paper/blatt-pfeil-sturzflut-tibet.md` §3.2): a chain of anchors with
+(`docs/paper/sturzflut-tibet-pfeil.md` §3.2): a chain of anchors with
 their own time, not a narrative. For Path 2 the chain is the transit-time
 corrected link from each upstream living channel to the JUICE perigee tube,
 per channel — the object the σ-Metric (§"The metric") then weighs. Every cell
