@@ -2,7 +2,7 @@
   title: Übergabe — Korona-Leiter & Kaskade (AIA-fam, Bandbreite, Volljahr, Richtungs-Test)
   class: handover
   date: 2026-09-06
-  sha256: aede458ce54e1c91969d4c55d45a25db813a54802204e00a329eab59da5db40b
+  sha256: 94cb7e7dd5e1061afe7a81c3bc61b0f5b93788e7a88edf1dd81d55566c6bfdc2
   status: live
   see-also: docs/paper/corona-heating-ladder.md docs/surveys/survey-ein-blatt-korona-heizung.md docs/TODO.md
 -->
@@ -36,6 +36,10 @@ heißeste Rung (335→94) stärkt sich mit mehr Ereignissen nicht.
 - `7c8c978` Volljahr-2014-Messung (1019 Ev, Kaskade unter-fam).
 - `33f04b1` 2015-Reproduzierbarkeit (281 Ev, Kaskade reproduziert).
 - `0882b8b` Per-Ereignis-Richtung konsistent (76% positiv, nicht alternierend).
+- `1f93478` 2013-Reproduzierbarkeit (524 Ev, drittes Jahr, Kaskade reproduziert).
+- `85b2bca` Multi-Akteur-Blatt auf den Kaskaden-Pfeil: Drei-Jahres-Matrix
+  (2013/14/15 family bound), Paper v5 gerahmt (reproduzierbare gerichtete
+  Kaskade, kein Null), Grat-Tabelle Korona Pfeil→family bound korrigiert.
 
 ## Gemessene Zahlen (verlässlich)
 
@@ -57,9 +61,10 @@ heißeste Rung (335→94) stärkt sich mit mehr Ereignissen nicht.
 ## Offen / nächste Hebel
 
 1. **Framing des Korona-Papers** nach Operator-Vorgabe (kein Null-Paper).
-   Messgestützte Optionen: die reproduzierbare gerichtete Kaskade als Befund
-   berichten (mit fam ehrlich benannt), oder ein gerichtetes Gate (nur die 3
-   heißen Rungs / nur die ~96-s-Lags) prüfen.
+   **V5-Entwurf steht (85b2bca)** — als reproduzierbare gerichtete Kaskade
+   unter der Familien-Schwelle gerahmt (family bound, kein Null, kein Pfeil),
+   gestützt auf die Drei-Jahres-Matrix + Rat-Verdikt. Die endgültige
+   Framing-Entscheidung liegt beim Operator.
 2. **Korrelation der Kaskaden-Stärke mit Sonnenstruktur** (Operator-Idee, die
    Stärke der Maschine): Amplitude der Kaskade / Flare-Eigenschaften gegen
    aktive Breiten, Polkappen-Verschiebung, Magnetogramme auf **derselben
@@ -68,7 +73,8 @@ heißeste Rung (335→94) stärkt sich mit mehr Ereignissen nicht.
    (34042431334) aufs CDN manifestiert (12/12), Volljahr gemergt und gemessen
    (524 Ev): Kaskade reproduziert sich (193→211 +1.67e-1, 211→335 +7.71e-2,
    335→94 +1.01e-1, ~96-s, fam 1.71e-1 unter-fam). Drei Jahre tragen die
-   gerichtete Aufwärts-Kaskade.
+   gerichtete Aufwärts-Kaskade; die Multi-Akteur-Matrix (alle Akteure auf den
+   Pfeil 193→211→335→94) ist als Blatt gezogen, Rat-Verdikt family bound.
 
 ## Datenlage (wichtig)
 

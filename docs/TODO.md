@@ -626,6 +626,18 @@ physikalischen Aussage — kein Blatt ohne diese:
   Blatt-Survey als ehrliche Null umgeschrieben. Werkzeug: te.rs
   `transfer_entropy_lag_h` (additiv, kanonisch unberuehrt, factor=1.0
   byte-identisch) + corona_ladder_probe --h/--surr (dc11735). geschlossen.
+- **Multi-Akteur-Blatt auf dem Kaskaden-Pfeil (2026-09-06)**: die vereinbarte
+  Sicht (alle Akteure einladen, den Pfeil 193→211→335→94 ansehen; Vorbild
+  Pioneer-Deduktion) als Drei-Jahres-Matrix gezogen: AIA 2013 (524 Ev), 2014
+  (1019 Ev), 2015 (281 Ev) reproduzieren die Aufwaerts-Kaskade am ~96-s-Lag —
+  alle neun Sprossen-Jahr-Werte positiv, Richtung per-Ereignis 76% konsistent
+  (nicht alternierend) — aber jede Sprosse bleibt unter ihrer fam (1.71–1.96e-1);
+  der heisseste Rung staerkt sich nicht. EVE-1032→131 ist bandbreiten-fragil
+  (h ≥ 2.0). Rat-Verdikt: family bound, kein Pfeil, keine Stille. Paper v5 +
+  Blatt-Survey als reproduzierbare gerichtete Kaskade unter der Familien-Schwelle
+  gerahmt (kein Null-Paper); Grat-Tabelle Korona Pfeil→family bound korrigiert
+  (85b2bca). Offen: Paper-Framing-Entscheidung liegt beim Operator; fam-lose
+  Minuten-Schwelle + Multi-Force-TE (nobel_probe_corona v2).
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
