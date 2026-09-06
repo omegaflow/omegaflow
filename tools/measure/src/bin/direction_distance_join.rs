@@ -2,7 +2,7 @@ use omegaflow::archivar::json::{jnum, jstr, parse_json, JsonVal};
 use omegaflow::archivar::skydirection::{parse_bin, write_bin, SkyDirection};
 use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
 use omegaflow::archivar::PARSEC_M;
-use omegaflow_measure::deredden::{build_star_index, StarIndex};
+use omegaflow_measure::weberin::deredden::{build_star_index, StarIndex};
 
 const DEG2_PER_SR: f64 = 129600.0 / std::f64::consts::PI;
 

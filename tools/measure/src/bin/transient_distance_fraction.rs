@@ -1,6 +1,6 @@
 use omegaflow::archivar::json::{jnum, jstr, parse_json, JsonVal};
 use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
-use omegaflow_measure::deredden::build_star_index;
+use omegaflow_measure::weberin::deredden::build_star_index;
 use std::collections::HashSet;
 
 const BACKGROUND_PC_MIN: f64 = 200.0;
@@ -76,7 +76,7 @@ fn parse_objects(text: &str) -> Vec<Alert> {
 }
 
 fn classify(
-    idx: &omegaflow_measure::deredden::StarIndex,
+    idx: &omegaflow_measure::weberin::deredden::StarIndex,
     alert: &Alert,
     radius_as: f64,
 ) -> (ClassTally, Option<Hit>) {
@@ -165,7 +165,7 @@ fn each_after(args: &[String], flag: &str) -> Vec<String> {
 }
 
 fn report_table(
-    idx: &omegaflow_measure::deredden::StarIndex,
+    idx: &omegaflow_measure::weberin::deredden::StarIndex,
     alerts: &[Alert],
     radius_as: f64,
     window_label: &str,
