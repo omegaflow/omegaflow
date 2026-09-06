@@ -23,6 +23,7 @@ server.log
 /tmp/
 /out/
 /data/
+/cache/
 archeology/
 
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
