@@ -4,7 +4,7 @@
   date: 2026-09-03
   sha256: 69e033aec27ee27319bb0ce5758683f47861971ec76db224b93fb04904ce933b
   status: live
-  see-also: AGENTS.md (The Cache Ablage), docs/plans/ref-* 
+  see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
 
 # Daten-Holdings-Inventur (Teil B)
