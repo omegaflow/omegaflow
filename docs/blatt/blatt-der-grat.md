@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: 7820463d593851bdbcb09533a022ac446439ced588bd3beed6552901d47a53de
+  sha256: c7bf3604135946265aaa1209644c217d31400077f81e0b8e3562fa9b604a7e8e
   status: live
   see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -44,7 +44,7 @@ damit der Korpus schließt. Die Werte sind wörtlich aus den Blättern
 
 | System | Paar/Richtung | TE-Wert | Schwelle | Verdikt | geteilter Treiber / Konditionierung |
 |---|---|---|---|---|---|
-| Korona-Heizung (Sonne) — `corona-heating-ladder.md` | EVE-Sprossenleiter: 1032→131 Å (O VI → Fe VIII, TR→Korona), aufwärts, Lag 0; übrige 9 Sprossen still. AIA-2014: 193→211, 211→335, 335→94 aufwärts (~96–144 s) | D(0 s) = 5.11e-1 (einziger fam-signifikanter D des Laufs). AIA: D = +1.50e-1 / +1.13e-1 / +1.42e-1 (über Null) | fam = 4.6982e-1, voller Lauf (fam-machine pre-fix). AIA-Je-Zellen-Schwellen: Zahl nicht im Blatt gedruckt (`pending`) | **Pfeil** (aufwärts über die Sprossenleiter, Lag 0, fam) | die Sprossenleiter ist selbst die Konfund-Kontrolle (geteilter Heizimpuls des Flares); der fam-Pfeil ist die Richtungs-Asymmetrie über die gemeinsame Heizung hinaus |
+| Korona-Heizung (Sonne) — `corona-heating-ladder.md` | EVE-Sprossenleiter: 1032→131 Å (O VI → Fe VIII, TR→Korona), aufwärts, Lag 0; übrige 9 Sprossen still. AIA-Kaskade: 193→211, 211→335, 335→94 aufwärts (~96 s) über drei Jahre (2013/14/15) | EVE D(0 s) = 5.11e-1 (einziger Wert über EVE-fam bei kanonischer Bandbreite, hält der Bandbreiten-Kreuzprüfung h × 0.5–3 nicht stand: versagt bei h ≥ 2.0). AIA: D = +1.67e-1/+1.78e-1/+1.21e-1 (193→211), +7.71e-2/+7.15e-2/+9.37e-2 (211→335), +1.01e-1/+1.24e-1/+1.30e-1 (335→94) über 2013/14/15 | EVE-fam = 4.6982e-1 (pre-fix); AIA-fam = 1.71e-1 (2013) / 1.96e-1 (2014) / 1.75e-1 (2015) (post-fix). AIA-Je-Zellen-Schwellen: Zahl nicht im Blatt gedruckt (`pending`) | **family bound** — kein fam-Pfeil: der EVE-1032→131-Eintritt ist bandbreiten-fragil (h ≥ 2.0), die AIA-Kaskade ist über drei Jahre gerichtet-reproduzierbar (alle neun Sprossen-Jahr-Werte positiv, Richtung per-Ereignis 76 % konsistent) aber unter jeder AIA-fam — keine Sprosse über der Familien-Schwelle | die Sprossenleiter ist selbst die Konfund-Kontrolle (geteilter Heizimpuls des Flares); der fam-Pfeil fehlt — die Richtungs-Asymmetrie über die gemeinsame Heizung hinaus bleibt unter der Familien-Schwelle |
 | GIC-Treiber (Sonnenwind → Erdstrom) — `gic-causal-driver.md` | Bz → dB/dt (Stundengut, sub-täglich); Gegenrichtung dB/dt→Bz; Dichte-Kontrolle; Tag-Gut 32 a (1994–2026) | Bz→dB/dt: ABK 2024 TE 0.12670; ABK 2025 TE 0.13309; SOD 2024 TE 0.11695. Tag-Gut: alle sechs Paare unter fam | fam: ABK 2024 0.10557; ABK 2025 0.12136; SOD 2024 0.10571 (post-fix). Minuten-Gut: per-lag-Schwelle, fam-gebunden in einem 22-h-Fenster | **Pfeil** (Bz→dB/dt, beide Sturmjahre, beide Stationen, fam); die Dichte-Kontrolle bleibt still | die Dichte-Kontrolle (gemeinsamer Sonnenwind-Transport) bleibt unter fam; Gegenrichtung dB/dt→Bz in Abisko unter fam, in Sodankylä marginal darüber (benannt) |
 | LAIC-Richtung (Lithosphäre → Ionosphäre) — `laic-arrow-direction.md` | Lithosphäre ↔ Ionosphäre (F-, TEC-GIM-, CHAMP-Dichte-Kanäle); Sonnen-Kontrolle Bz→Ionosphäre | L→I −7.97e-2, I→L −1.08e-2 (Stack-Mittel des TE-Exzesses, n = 176); Voll-Ära (n = 1369): −7.63e-2 / −1.26e-2; Kontrolle Bz→I +4.35e-2 | μ + 2σ über 40 Zufallsfenster; keine Richtung erreicht ihre Schwelle (Kontrolle: +1.28e-1-Schwelle nicht erreicht) | **Stille** (beide Richtungen; der negative Exzess ist der Surrogat-Floor-Bias des Schätzers, kein gemessener Negativ-Fluss) | die Sonnen-Kontrolle Bz→Ionosphäre ist selbst unter ihrer Schwelle — kein versteckter positiver Konfund |
 | Kreuz-Screening Kollab-Fenster (Trishuli 2026) — `blatt-kreuz-screening-kollab.md` | süd→nord-Monsun-Kette rasuwa_precip→kollab_precip→gyirong_precip (Lag 6); Gegenrichtung nord→süd (Lag 12/24); Temperatur-Synchronisation über das Becken | unbedingt: rasuwa→kollab Lag 6 TE 0.2085, kollab→gyirong Lag 6 TE 0.1377; kollab→rasuwa Lag 12 TE 0.1750. Power-Update (n = 1392): kollab→rasuwa Lag 12 TE 0.1172. Exakte cTE der im 8-Wochen-Fenster konditioniert überlebenden gyirong-Pfeile: `pending` | mean + 2σ (phasenrandomisiert, n = 20). Konditioniert (Tagesgang): kollab→rasuwa Lag 12 cTE 0.2001 > 0.1970; gyirong→rasuwa cTE 0.1811 > 0.1627. Zweit-Proxies: Druck cTE 0.1902 > 0.1866; rel. Feuchte cTE 0.1898 > 0.1872. Power-Update: Schwelle 0.1072 | **Stille** — Aussage A (süd→nord) fällt unter allen drei Konditionierungen aus (gestützte Stille mit drei Kontrollen); Aussage B (nord→süd, Lag 12) kippt im Power-Test unter Konditionierung (nicht isolierbar über den geteilten Treiber hinaus) | Tagesgang (gyirong temperature_2m); Zweit-Proxies Druck (pressure_msl), rel. Feuchte (relative_humidity_2m) |
@@ -55,19 +55,21 @@ damit der Korpus schließt. Die Werte sind wörtlich aus den Blättern
 | Dark Flow (Nadel Ⅷ) — `dark-flow-sheet-8.md` | CMB → lokales Pekuliargeschwindigkeitsfeld vpec und zurück; Lag 1–3 | TE(CMB→vpec) = 2,0e-1; TE(vpec→CMB) = 2,1e-1; Asymmetrie −1,3e-2 … −4,1e-2 | 2,2e-1 (mean + 2σ, fam; fam-machine pre-fix) | **Stille** (die Planck-Aussage in Maschinenform: kein Fluss, kein Pfeil) | keine Konditionierung im Blatt; Selbsttest: der künstliche Pfeil (TE 1,17) wird gefunden |
 | ECG-Lead-Geometrie (Kontroll-System) — `lead-geometry-direction.md` | 46 Brust↔Gliedmaßen-Leitungen (MIT-BIH), MLII↔V1 dominant; Richtung Gliedmaße→Brust | 27 Pfeile von 96 Richtungstests (Takens-TE); einseitig 26, davon 19 limb→chest (P = 0.0145); MLII↔V1: 17:6 (P = 0.0173); MLII↔V5: 1:1 | μ + 2σ (10 phasenrandomisierte Surrogate je Richtung); Zufalls-Erwartung ≈ 2,2 Pfeile | **Stille** im Grat-Sinn — der Richtungs-Überschuss über dem Zufall ist gemessen, gehört aber dem geteilten Treiber + der Messgeometrie: das Blatt nennt den Pfeil keine Kausalität, sondern eine Eigenschaft der Lead-Geometrie (zwei Blicke auf dieselbe Quelle) | das Herz — beide Leitungen messen dieselbe elektrische Quelle; die Konditionierung ist intrinsisch (zwei simultane Blicke auf eine Quelle) |
 
-**Zählung der Verdikte (aus der Tabelle):** zwei Systeme tragen einen
-gemessenen Pfeil über ihrer Schwelle in die Bilanz — Korona (D 5.11e-1 über
-fam) und GIC (Bz→dB/dt über fam in beiden Sturmjahren). Das
-Gyirong-Screening misst eine die Konditionierung überlebende Gegenrichtung
-(Regen→Einstrahlung, cTE 0.0811–0.0899) als Einzelpfeil, während seine
-Flutfrage Stille bleibt. Die übrigen sieben Fronten antworten mit Stille:
-LAIC, Kollab, Trishuli-Gauge (der Rat-Korrektur nach: die registrierte 0.265
-ist Pegel→Regen, die echte Vorwärts-Richtung ist bei Lag 24 unter der
-Schwelle und fällt unter der Konditionierung), KBO/Planet-Neun, Big-Bang-
-Echo, Dark Flow, ECG-Kontroll. In der Trishuli-Front ist der räumliche
-Monsun-Pfeil (Rasuwa→Gyirong) nur unbedingt messbar — nach Konditionierung
-auf den geteilten Treiber ist er nicht isolierbar (Kollab: drei Proxies,
-Power-Update).
+**Zählung der Verdikte (aus der Tabelle):** ein System trägt einen
+gemessenen Pfeil über seiner Schwelle in die Bilanz — GIC (Bz→dB/dt über fam
+in beiden Sturmjahren). Das Gyirong-Screening misst eine die Konditionierung
+überlebende Gegenrichtung (Regen→Einstrahlung, cTE 0.0811–0.0899) als
+Einzelpfeil, während seine Flutfrage Stille bleibt. Korona trägt nach der
+Bandbreiten-Kreuzprüfung und der Drei-Jahres-Matrix **keinen fam-Pfeil**
+mehr: der EVE-1032→131-Eintritt ist h-fragil (versagt bei h ≥ 2.0), die
+AIA-Kaskade ist über drei Jahre family bound (gerichtet, unter fam). Die
+übrigen sieben Fronten antworten mit Stille: LAIC, Kollab, Trishuli-Gauge
+(der Rat-Korrektur nach: die registrierte 0.265 ist Pegel→Regen, die echte
+Vorwärts-Richtung ist bei Lag 24 unter der Schwelle und fällt unter der
+Konditionierung), KBO/Planet-Neun, Big-Bang-Echo, Dark Flow, ECG-Kontroll.
+In der Trishuli-Front ist der räumliche Monsun-Pfeil (Rasuwa→Gyirong) nur
+unbedingt messbar — nach Konditionierung auf den geteilten Treiber ist er
+nicht isolierbar (Kollab: drei Proxies, Power-Update).
 
 **Ausgeschlossene Kandidaten (kein TE-gegen-Schwelle-Verdikt):**
 
@@ -89,13 +91,18 @@ Power-Update).
 
 ## Das Verdikt
 
-Aus der Tabelle allein: **Ja — aber in der Minderheit.** Zwei von zehn
-Systemen tragen einen gemessenen Pfeil über ihrer Schwelle, der die Frage
-„mehr gerichtete Ordnung als gemeiner Treiber + Zufall?" beantwortet — die
-Korona (Energiefluss aufwärts über die Sprossenleiter, über fam) und der
-GIC-Treiber (Bz→dB/dt über fam, sub-täglich) — beide überleben ihre
-fam-Schwelle und ihre Kontrolle. Der co-lokale Trishuli-Gauge zählt nicht
-als dritter Pfeil: die dort registrierte Lag-24-Zahl 0.265 ist nach der
+Aus der Tabelle allein: **Ja — aber in der Minderheit.** Ein System von
+zehn trägt einen gemessenen Pfeil über seiner Schwelle, der die Frage
+„mehr gerichtete Ordnung als gemeiner Treiber + Zufall?" beantwortet — der
+GIC-Treiber (Bz→dB/dt über fam, sub-täglich), der seine fam-Schwelle und
+seine Kontrolle überlebt. Korona zählt nicht mehr als zweiter Pfeil: der
+einzige fam-signifikante EVE-Eintritt (1032→131, D 5.11e-1) ist
+bandbreiten-fragil (versagt bei Silverman h ≥ 2.0, robust gegen die
+Surrogat-Zahl), und die AIA-Kaskade (193→211→335→94) ist über drei Jahre
+zwar gerichtet-reproduzierbar (alle neun Sprossen-Jahr-Werte positiv,
+Richtung per-Ereignis 76 % konsistent), bleibt aber unter jeder AIA-fam —
+family bound, kein Pfeil. Der co-lokale Trishuli-Gauge zählt nicht als
+dritter Pfeil: die dort registrierte Lag-24-Zahl 0.265 ist nach der
 Rat-Korrektur Pegel→Regen (Richtungsfehler aus `te_pair_probe`-gespiegelten
 Spalten), die echte Niederschlag→Pegel-Richtung ist bei Lag 24 TE 0.223
 unter der Schwelle, und keine Vorwärts-Orientierung übersteht die
@@ -110,14 +117,15 @@ Kandidat-Pfeil auf den geteilten Treiber konditioniert wurde (Kollab,
 Gyirong-Flutfrage, Trishuli-Gauge) und dort aus der Signifikanz fällt.
 Das ist Thuậns These in den Zahlen des Systems: das Universum ist ein
 nur-gerade-balanciertes System — die gemessenen Pfeile sind lokal und
-physikalisch erwartet (Heizung, Sonnenwind-Kopplung), keine globale
-gerichtete Ordnung; die Mehrheit der gemessenen Fronten ist Stille. Die
-Korrektur stärkt die These: der eine hydrologisch erwartete Pfeil — der,
-den ein naiver Leser sicher gefunden hätte — ist auf dem
-richtungs-kalibrierten Instrument gerade der, der fällt. Das
-ECG-Kontroll-System ist die Messung der Notwendigkeit der Konditionierung
-selbst: TE über dem Zufall allein ist kein System-Pfeil, wenn der
-geteilte Treiber die Quelle beider Kanäle ist.
+physikalisch erwartet (Sonnenwind-Kopplung), keine globale gerichtete
+Ordnung; die Mehrheit der gemessenen Fronten ist Stille. Die Korrektur
+stärkt die These: der eine hydrologisch erwartete Pfeil — der, den ein
+naiver Leser sicher gefunden hätte — ist auf dem richtungs-kalibrierten
+Instrument gerade der, der fällt, und die Korona-Heizung trägt Richtung,
+aber nicht über der Familien-Schwelle. Das ECG-Kontroll-System ist die
+Messung der Notwendigkeit der Konditionierung selbst: TE über dem Zufall
+allein ist kein System-Pfeil, wenn der geteilte Treiber die Quelle beider
+Kanäle ist.
 
 ## Grenzen
 
