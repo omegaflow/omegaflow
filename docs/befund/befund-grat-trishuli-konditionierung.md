@@ -4,7 +4,7 @@
   date: 2026-09-05
   status: done
   sha256: 4c59cbcb4bbf647379aeef9b783f58c823b706029156e449325f1b4ce359c016
-  see-also: antwortet-auf: docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/auftrag/auftrag-der-grat.md docs/paper/sturzflut-tibet-pfeil.md docs/paper/blatt-kreuz-screening-kollab.md docs/blatt/blatt-der-grat.md
+  see-also: antwortet-auf: docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/auftrag/auftrag-der-grat.md docs/paper/sturzflut-tibet-pfeil.md docs/blatt/blatt-kreuz-screening-kollab.md docs/blatt/blatt-der-grat.md
 -->
 
 # Befund: Trishuli Regen→Pegel unter Konditionierung auf den geteilten synoptischen Treiber
