@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 571561472fb8da1a470746be43f3fee89d6e6ecbf560e348c41818a57be52c8c
   status: done
-  see-also: docs/befund/befund-grat-trishuli-konditionierung.md docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/paper/blatt-pfeil-sturzflut-tibet.md
+  see-also: docs/befund/befund-grat-trishuli-konditionierung.md docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/paper/sturzflut-tibet-pfeil.md
 -->
 # Auftrag: Grat-Reste — KDE-h-Sensitivität und räumliche Richtungs-Verifikation
 
@@ -47,7 +47,7 @@ der marginale Kreuzungs-Nebenbefund ist benannt, nicht geglättet).
 
 Die räumlichen Rasuwa→Gyirong-Pfeile (§3.3) und die Bahrabise-Lesungen
 (§3.7, n = 169) des Quell-Blattes
-`docs/paper/blatt-pfeil-sturzflut-tibet.md` liefen durch `te_pair_probe`,
+`docs/paper/sturzflut-tibet-pfeil.md` liefen durch `te_pair_probe`,
 dessen gedruckte „TE(a→b)"-Spalte gegen die Schätzer-Orientierung
 gespiegelt ist. Jedes Richtungs-Label ist gegen die Schätzer-Orientierung
 zu prüfen, bevor es Vertrauen trägt — die co-lokale Umkehr der
@@ -62,7 +62,7 @@ die erwartete Becken-Entwässerung), verifiziert mit `cross_te_screen`
 und quergeprüft gegen das Kollab-Screening §3.1 (identische Zahlen);
 der `te_pair_probe`-Wurzelfix (a→b misst jetzt a→b) ist committet. Die
 §3.3-Richtungskorrektur an den drei betroffenen Dokumenten
-(`blatt-pfeil-sturzflut-tibet.md`, `causal-arrow-preregistration.md`,
+(`sturzflut-tibet-pfeil.md`, `causal-arrow-preregistration.md`,
 `blatt-der-grat.md`) ist angewandt. Zelle (b) ist damit **erfüllt**.
 Zelle (a) (KDE-h) siehe oben — ebenfalls erfüllt.
 
