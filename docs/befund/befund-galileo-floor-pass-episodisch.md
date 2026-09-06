@@ -1,12 +1,12 @@
 <!--
-  title: Befund — Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette: die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände der Galileo-Empfangskette dieser Station in diesem Pass (Klarstellung A: 7/7 flag-bedeckte anhaltende Episoden out-of-lock, anhaltend-bei-Lock n=0) — eingegrenzt auf Konfiguration, nicht Defekt, nicht Signal, nicht Himmel; Deduktion 27 als Empfangskette benannt (Simultanität, Open-Loop sauber, Sende-Klasse n=0), Uplink-Pfad gemessen leer
+  title: Befund — Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette: die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände der Galileo-Empfangskette dieser Station in diesem Pass (Klarstellung A: 7/7 flag-bedeckte anhaltende Episoden out-of-lock, anhaltend-bei-Lock n=0) — nicht Signal, nicht Himmel; Deduktion 27 als Empfangskette benannt (Simultanität, Open-Loop sauber, Sende-Klasse n=0), Uplink-Pfad gemessen leer
   class: befund
   date: 2026-09-06
-  sha256: ba9711cb6a5fbaccc059d3b501ac3dc56d590bcc770a3670a2055f87f67f6dfe
+  sha256: f7b1e646f7c92c2f722134c5ad9a248fdca72cee3105c3ac6a1951c85b3c424e
   status: draft
   see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md docs/befund/befund-galileo-floor-stufen-te.md docs/befund/befund-galileo-floor-ort-himmelskoerper.md docs/befund/befund-galileo-floor-subtages-recurrenz.md docs/befund/befund-galileo-receiver-je-pass-floor.md docs/befund/befund-galileo-dreiweg-sendempfang-floor.md docs/befund/befund-galileo-dsn-passplan-uplink.md docs/befund/befund-galileo-doppler-odf-beschaffung3.md docs/befund/befund-galileo-odr-uplink-swse-anchor.md docs/befund/befund-galileo-goj-odr-ded31-sameday.md docs/befund/befund-galileo-gwe-odr-zweiter-zeuge.md docs/befund/befund-galileo-pioneer-stationsfloor-kreuz.md docs/befund/befund-galileo-pioneer-passfenster-subtaeglich.md docs/befund/befund-galileo-simultan-intrapass-trk225.md docs/befund/befund-galileo-h1-receiver-regression.md docs/befund/befund-galileo-beide-laut-simultan.md docs/befund/befund-galileo-cycle-slip-disziplin.md docs/befund/befund-galileo-elevation-ausbruchdauer.md docs/befund/befund-galileo-odr-goj-beschaffung2.md docs/befund/befund-galileo-odf-sender-uplink.md docs/befund/befund-galileo-dsn-passplan-uplink-beschaffung1.md docs/reference/133A.pdf /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results_2.md
 -->
-# Befund: Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette — die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände, eingegrenzt auf die Galileo-spezifische Empfangskonfiguration der Station in diesem Pass
+# Befund: Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette — die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände der Galileo-Empfangskette dieser Station in diesem Pass, nicht Signal, nicht Himmel
 
 ## 1. Phänomen
 
@@ -42,7 +42,7 @@ der Lautheit ist nicht getragen; n zuerst, 0 geehrt.
 
 | # | Hypothese (Sitz = …) | Messung (Probe / Mess-ID) | Ergebnis ✗ (n) | Commit |
 |---|---|---|---|---|
-| A1 | kalendarische Betriebs-Ära der Stationen (BVR 9/95, 5.12.95-Wechsel, DGT 5/96, Full-Array 11/96) als Stufen | `galileo_ops_era_station_step_probe` (Richtung A): Ein-Schnitt + ankergebundene Fenster | ✗ BVR/Wartung/DGT auf der Serie unbesetzt (vor n = 0); einzige Stufen-Konzentration 5.12.95 datendünn (links n 2–13) und konjunktions-konfundiert; dominante Struktur: 114 Nachbar-Tages-Flips (76 % ohne Anker in ±7 d) | `dae5062` |
+| A1 | kalendarische Betriebs-Ära der Stationen (BVR 9/95, 5.12.95-Wechsel, DGT 5/96, Full-Array 11/96) als Stufen | `galileo_ops_era_station_step_probe` (Richtung A): Ein-Schnitt + ankergebundene Fenster | ✗ BVR/Wartung/DGT auf der Serie unbesetzt (vor n = 0); einzige Stufen-Konzentration 5.12.95 datendünn (links n 2–13) und konjunktions-konfundiert; dominante Struktur: **114 Nachbar-Tages-Flips über alle Boden-Tage inkl. dünner Zellen** (76 % ohne Anker in ±7 d; davon **105 auf der robusten n≥30-Teilmenge** — die §1-Zählung) | `dae5062` |
 | A2 | 1996er-Rest 1,9×/2,4× (Opposition gegen Konjunktion) = kleine station-stabile Geometrie-Magnitude | `galileo_1996_rest_split`: Tages-/Stations-/Pass-/Ausreißer-Zerlegung | ✗ hängt an 1–2 episodischen Pass-Tagen (ohne die zwei lautesten Mode-2-Tage: 2,79 → 0,04 Hz = 0,03×; Mode 3 ohne den einen Tag 2,40× → 1,20×); Modi dekorrelieren je Station/Tag bis 10⁴ (st63 06-28: 0,012/11,4/123,9 Hz); kein Nicht-Oppositions-Boden im 30-d-Umkreis (0 Zellen) | `4a33e3c` |
 | A3 | Wochen-Treppe/Telegraph der Tages-Serie (mehrere Tage verharrendes Niveau) | `galileo_floor_stair_te` (Richtung C): Permutations-Segmentierung der 8 Fenster 8–15 d | ✗ 0 anhaltende Stufen in allen 8 Fenstern (beste Schnitte p 0,10–0,77; Kontrolllauf detektiert eine 7/8-d-Stufe mit p 0,0005); 133/137 laute Episoden 1–3 d; laute Amplitude kontinuierlich gestreut (bis 530 Hz) | `505e5e7` |
 | A4 | gerichtete Kopplung: Zustand einer Station/ eines Treibers treibt den Floor (TE) | derselbe Lauf (Messung 2/3): `transfer_entropy_lag`, Phasen- und Block-Null, Reverse-Kontrolle | ✗ TE station→station nur im Mode-2-Fenster Nov–Dez 1995 messbar (n 12–14) und dort unter beiden Nullen; ε- und konstruierter 5.12.95-Schritt-Treiber ohne Kopplung über der Null (n 12–14, ein Fenster) | `505e5e7` |
@@ -116,10 +116,14 @@ Drei gemessene Zeugen lokalisieren den Sitz auf die Empfangskette:
    der anderen ruhig → der Sitz ist der Empfangsort, nicht das gemeinsame
    Signal.
 2. **Open-Loop sauber:** der unabhängige open-loop-Trägerlinien-Ton der
-   deckenden Tage bricht in den laut-markierten Sub-Phasen nicht ein (segsnr in
-   der Spanne der ruhigen Phasen; Same-Day-Splits st14 1997-02-26 128,2 gegen
-   110,4, n 3/7) — die Lautheit ist keine empfangene Spektral-Störung vor dem
-   Closed-Loop-Abgriff.
+   deckenden Tage bricht in den laut-markierten Sub-Phasen nicht ein. Dieser
+   Zeuge deckt nur **Mode-1-Tage** und ist **n-dünn**: Same-Day-Splits auf drei
+   laut-Tagen (st14 1997-02-26 128,2 gegen 110,4, n 3/7; st14 1996-12-21 und
+   st43 1996-12-19 je n 1/1) — in jedem liegt der Ton der laut-Phase in der
+   Spanne der ruhigen Phase desselben Tages, kein systematischer Einbruch. Die
+   Lautheit erscheint nicht als empfangene Spektral-Störung vor dem
+   Closed-Loop-Abgriff; in den Modi 2/3 erreicht dieser Zeuge n = 0 (kein
+   zeitgleicher open-loop-Record der betreffenden Tage, 0 geehrt).
 3. **Sende-Flags n = 0:** über die Roh-Caches tragen 12/12 Transient-Ereignisse
    eine Empfangs-Signatur (Out-of-Lock/Good-bad/Slipped-Cycle), kein Ereignis
    die Sende-Predict-Signatur; die Lock-Cut-Marker (> 1000 Hz) koinzidieren mit
@@ -130,7 +134,14 @@ Sende-Station nicht, ein Doppler-ODF/TRK-2-18 der Ära existiert in keiner
 erreichten Quelle, die ODR-SFDU führt kein Uplink-Feld, der DSN-Pass-Plan ist
 nicht öffentlich erreichbar. Ded-27 ist damit auf Galileo nicht als
 Sender/Empfänger-Zerlegung ziehbar — aber über die drei Zeugen als
-**Empfangskette, nicht Uplink** benannt. Verbleibend (`pending`, kein Ersatz):
+**Empfangskette, nicht Uplink** benannt. **Asymmetrie des Schlusses:** „nicht
+Uplink" ist dort ein *gezogener* Schluss, wo der Zeuge n trägt — die
+Simultanität (Mode 1, 16 eine-laut/32 beide-ruhig bei Uplink-Modi n = 0), der
+Open-Loop-Ton (Mode-1-Tage, n-dünn) und die Send-Predict-Klasse (D4, n = 0,
+durch Abwesenheit über 3 Anker-Pässe definiert). Für die lauten Zellen der
+Modi 2/3 (106 von 207) trägt gegen den Uplink allein die Send-Predict-Klasse
+n = 0; Simultanität und open-loop erreichen dort n = 0 (keine zeitgleichen
+Records). Verbleibend (`pending`, kein Ersatz):
 das konkrete **Bauteil/der Parameter der Empfangskette je Pass** (Loop-
 Bandbreite, DGT-/Array-Konfiguration, Geräte-Zustand — die kodierten
 Receiver-Felder tragen es nicht; die per-Pass-Geräte-Zuweisung ist auf dem
