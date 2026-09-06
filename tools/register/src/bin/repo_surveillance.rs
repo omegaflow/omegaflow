@@ -11,8 +11,11 @@ fn main() {
     let last = git(&["log", "-1", "--oneline"]);
     let ahead = git(&["rev-list", "--count", "@{u}..HEAD"]);
     let check = git_verdict();
+    let Some(epoch) = epoch() else {
+        return;
+    };
     let line = report_line(
-        epoch(),
+        epoch,
         modified,
         untracked,
         last.trim(),
@@ -27,7 +30,7 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 fn git_verdict() -> String {
@@ -64,11 +67,11 @@ fn report_line(
     )
 }
 
-fn epoch() -> u64 {
+fn epoch() -> Option<u64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
+        .ok()
         .map(|d| d.as_secs())
-        .unwrap_or(0)
 }
 
 fn append_report<P: AsRef<std::path::Path>>(path: P, line: &str) {

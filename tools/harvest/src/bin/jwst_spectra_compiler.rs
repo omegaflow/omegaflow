@@ -14,7 +14,7 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 fn mast_token() -> Option<String> {
@@ -34,7 +34,7 @@ fn mast_token() -> Option<String> {
     None
 }
 
-fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> {
+fn curl_json(url: &str, data: &[(&str, String)], token: Option<&str>) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-L")
@@ -49,9 +49,10 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
     for (k, v) in data {
         cmd.arg("--data-urlencode").arg(format!("{}={}", k, v));
     }
-    if !token.is_empty() {
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {}", token));
+    if let Some(tok) = token {
+        if !tok.is_empty() {
+            cmd.arg("-H").arg(format!("Authorization: Bearer {}", tok));
+        }
     }
     cmd.arg(url);
     let out = cmd.output().ok()?;
@@ -67,7 +68,7 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
     }
 }
 
-fn curl_bytes(url: &str, data: &[(&str, String)], token: &str, dest: &str) -> bool {
+fn curl_bytes(url: &str, data: &[(&str, String)], token: Option<&str>, dest: &str) -> bool {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-L")
@@ -84,9 +85,10 @@ fn curl_bytes(url: &str, data: &[(&str, String)], token: &str, dest: &str) -> bo
     for (k, v) in data {
         cmd.arg("--data-urlencode").arg(format!("{}={}", k, v));
     }
-    if !token.is_empty() {
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {}", token));
+    if let Some(tok) = token {
+        if !tok.is_empty() {
+            cmd.arg("-H").arg(format!("Authorization: Bearer {}", tok));
+        }
     }
     cmd.arg(url);
     match cmd.output() {
@@ -113,7 +115,7 @@ struct Target {
     plx_mas: f64,
 }
 
-fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
+fn tap_targets(token: Option<&str>, limit: usize) -> Vec<Target> {
     let adql = "SELECT pl_name,hostname,ra,dec,sy_dist FROM pscomppars WHERE pl_tranmid IS NOT NULL AND sy_dist IS NOT NULL";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
@@ -157,10 +159,13 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
         let (Some(ra), Some(dec)) = (jnum(row, "ra"), jnum(row, "dec")) else {
             continue;
         };
-        let plx = match jnum(row, "sy_dist") {
-            Some(d) if d > 0.0 => 1000.0 / d,
-            _ => 0.0,
+        let Some(dist) = jnum(row, "sy_dist") else {
+            continue;
         };
+        if dist <= 0.0 {
+            continue;
+        }
+        let plx = 1000.0 / dist;
         targets.push(Target {
             host,
             ra_deg: ra,
@@ -171,7 +176,7 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
     targets
 }
 
-fn tap_curated_targets(token: &str) -> Vec<Target> {
+fn tap_curated_targets(token: Option<&str>) -> Vec<Target> {
     let adql = "SELECT DISTINCT p.hostname, p.ra, p.dec FROM spectra s, ps p WHERE s.pl_name = p.pl_name AND p.default_flag = 1 AND p.ra IS NOT NULL AND p.dec IS NOT NULL AND s.facility LIKE '%James Webb Space Telescope%' AND s.spec_type = 'Transmission' AND (s.instrument LIKE '%NIRSpec%' OR s.instrument LIKE '%NIRISS%' OR s.instrument LIKE '%MIRI%')";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
@@ -225,13 +230,13 @@ fn tap_curated_targets(token: &str) -> Vec<Target> {
 struct CuratedSpectrum {
     pl_name: String,
     host: String,
-    bibcode: String,
+    bibcode: Option<String>,
     wl_min: Option<f64>,
     wl_max: Option<f64>,
-    instrument: String,
+    instrument: Option<String>,
 }
 
-fn tap_curated_spectra(token: &str) -> Vec<CuratedSpectrum> {
+fn tap_curated_spectra(token: Option<&str>) -> Vec<CuratedSpectrum> {
     let adql = "SELECT p.hostname, s.pl_name, s.bibcode, s.minwavelng, s.maxwavelng, s.instrument FROM spectra s, ps p WHERE s.pl_name = p.pl_name AND p.default_flag = 1 AND p.ra IS NOT NULL AND p.dec IS NOT NULL AND s.facility LIKE '%James Webb Space Telescope%' AND s.spec_type = 'Transmission' AND (s.instrument LIKE '%NIRSpec%' OR s.instrument LIKE '%NIRISS%' OR s.instrument LIKE '%MIRI%')";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
@@ -265,10 +270,10 @@ fn tap_curated_spectra(token: &str) -> Vec<CuratedSpectrum> {
         let (Some(host), Some(pl_name)) = (jstr(row, "hostname"), jstr(row, "pl_name")) else {
             continue;
         };
-        let bibcode = jstr(row, "bibcode").unwrap_or_default();
+        let bibcode = jstr(row, "bibcode").filter(|b| !b.is_empty());
         let wl_min = jnum(row, "minwavelng").filter(|v| v.is_finite());
         let wl_max = jnum(row, "maxwavelng").filter(|v| v.is_finite());
-        let instrument = jstr(row, "instrument").unwrap_or_default();
+        let instrument = jstr(row, "instrument").filter(|i| !i.is_empty());
         out.push(CuratedSpectrum {
             pl_name,
             host,
@@ -289,7 +294,7 @@ struct CaomRow {
     t_max: f64,
 }
 
-fn caom_jwst_timeseries(token: &str) -> Vec<CaomRow> {
+fn caom_jwst_timeseries(token: Option<&str>) -> Vec<CaomRow> {
     let request = r#"{"service":"Mast.Caom.Filtered","params":{"columns":"*","filters":[{"paramName":"obs_collection","values":["JWST"]},{"paramName":"dataproduct_type","values":["timeseries"]},{"paramName":"calib_level","min":3}]},"format":"json","pagesize":5000,"removenullcolumns":true}"#;
     let body = match curl_json(
         "https://mast.stsci.edu/api/v0/invoke",
@@ -319,15 +324,19 @@ fn caom_jwst_timeseries(token: &str) -> Vec<CaomRow> {
             let (Some(t_min), Some(t_max)) = (jnum(row, "t_min"), jnum(row, "t_max")) else {
                 continue;
             };
-            let instrument = jstr(row, "instrument_name").unwrap_or_default();
+            let Some(instrument) = jstr(row, "instrument_name") else {
+                continue;
+            };
             if !(instrument.starts_with("NIRISS")
                 || instrument.starts_with("NIRSPEC")
                 || instrument.starts_with("MIRI"))
             {
                 continue;
             }
-            let rights = jstr(row, "dataRights").unwrap_or_default();
-            if rights == "EXCLUSIVE_ACCESS" || rights == "PROPRIETARY" {
+            if matches!(
+                jstr(row, "dataRights").as_deref(),
+                Some("EXCLUSIVE_ACCESS") | Some("PROPRIETARY")
+            ) {
                 continue;
             }
             rows.push(CaomRow {
@@ -520,20 +529,24 @@ fn probe_fits(path: &str) {
         ext += 1;
         let names: Vec<String> = t.columns.iter().map(|c| c.name.clone()).collect();
         let rows = collect_table(&t, &bytes);
-        let n_bins = rows.as_ref().map(|r| r.axis.len()).unwrap_or(0);
+        let n_bins = rows.as_ref().map(|r| r.axis.len());
+        let bins = match n_bins {
+            Some(n) => n.to_string(),
+            None => "absent".to_string(),
+        };
         eprintln!(
             "ext {}: rows {} row_bytes {} heap {} bins {} cols {:?}",
-            ext, t.n_rows, t.row_bytes, t.heap_bytes, n_bins, names
+            ext, t.n_rows, t.row_bytes, t.heap_bytes, bins, names
         );
         if let Some(r) = &rows {
             if !r.axis.is_empty() {
                 let dq0 = r.dq_rows.first().and_then(|d| d.as_ref()).map(|d| d[0]);
                 eprintln!(
-                    "  first bin: wl {} flux {:?} dq {:?}, first row bins {}",
+                    "  first bin: wl {} flux {:?} dq {:?}, first row bins {:?}",
                     r.axis[0],
                     r.flux_rows.first().map(|f| f[0]),
                     dq0,
-                    r.flux_rows.first().map(|f| f.len()).unwrap_or(0)
+                    r.flux_rows.first().map(|f| f.len())
                 );
                 for &i in &[500usize, 1000, 1500, 2000] {
                     if i >= r.axis.len() {
@@ -620,7 +633,9 @@ fn main() {
                 i += 1;
             }
             "--workdir" => {
-                workdir = std::path::PathBuf::from(args.get(i + 1).cloned().unwrap_or_default());
+                if let Some(v) = args.get(i + 1) {
+                    workdir = std::path::PathBuf::from(v);
+                }
                 i += 1;
             }
             "--budget" => {
@@ -644,9 +659,8 @@ fn main() {
         probe_fits(&p);
         return;
     }
-    let token = mast_token().unwrap_or_default();
     if spectra_list {
-        let rows = tap_curated_spectra(&token);
+        let rows = tap_curated_spectra(mast_token().as_deref());
         eprintln!("curated jwst transmission spectra rows: {}", rows.len());
         let mut hosts: Vec<&String> = rows.iter().map(|r| &r.host).collect();
         hosts.sort();
@@ -661,7 +675,11 @@ fn main() {
             };
             println!(
                 "{} {} {} {} {}",
-                r.bibcode, r.pl_name, r.host, wl, r.instrument
+                r.bibcode.as_deref().unwrap_or("void"),
+                r.pl_name,
+                r.host,
+                wl,
+                r.instrument.as_deref().unwrap_or("void")
             );
         }
         return;
@@ -683,16 +701,18 @@ fn main() {
             return;
         }
     };
-    let token = mast_token().unwrap_or_default();
-    if token.is_empty() {
-        eprintln!("MAST_TOKEN absent (.secrets.local or env)");
-        return;
-    }
+    let token = match mast_token() {
+        Some(t) => t,
+        None => {
+            eprintln!("MAST_TOKEN absent (.secrets.local or env)");
+            return;
+        }
+    };
     let targets = if curated {
-        tap_curated_targets(&token)
+        tap_curated_targets(Some(&token))
     } else {
         tap_targets(
-            &token,
+            Some(&token),
             if hosts_filter.is_some() {
                 usize::MAX
             } else {
@@ -710,7 +730,7 @@ fn main() {
         None => targets,
     };
     eprintln!("tap targets: {}", targets.len());
-    let caom_rows = caom_jwst_timeseries(&token);
+    let caom_rows = caom_jwst_timeseries(Some(&token));
     eprintln!("caom jwst timeseries rows: {}", caom_rows.len());
     if std::fs::create_dir_all(&workdir).is_err() {
         eprintln!(
@@ -799,7 +819,7 @@ fn main() {
                 if !curl_bytes(
                     "https://mast.stsci.edu/api/v0.1/Download/file",
                     &[("uri", uri)],
-                    &token,
+                    Some(token.as_str()),
                     &tmp,
                 ) {
                     continue;

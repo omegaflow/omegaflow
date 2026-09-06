@@ -61,10 +61,7 @@ fn reports() {
 }
 
 fn status() {
-    match Command::new("git")
-        .args(["status", "--short"])
-        .output()
-    {
+    match Command::new("git").args(["status", "--short"]).output() {
         Ok(o) => {
             print!("{}", String::from_utf8_lossy(&o.stdout));
             eprint!("{}", String::from_utf8_lossy(&o.stderr));
@@ -81,10 +78,10 @@ fn run_sibling(name: &str, args: &[String]) {
             return;
         }
     };
-    let dir = exe
-        .parent()
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| Path::new(".").to_path_buf());
+    let dir = match exe.parent() {
+        Some(p) => p.to_path_buf(),
+        None => Path::new(".").to_path_buf(),
+    };
     let sibling = dir.join(name);
     match Command::new(&sibling).args(args).output() {
         Ok(o) => {
@@ -129,11 +126,15 @@ fn state_dir() -> PathBuf {
     if let Ok(dir) = env::var("OMEGAFLOW_STATE") {
         return PathBuf::from(dir);
     }
-    PathBuf::from(".")
+    PathBuf::from("state")
 }
 
 fn jwst_verdict(status: &str) -> &'static str {
-    if status == "200" { "DA" } else { "absent" }
+    if status == "200" {
+        "DA"
+    } else {
+        "absent"
+    }
 }
 
 #[cfg(test)]
