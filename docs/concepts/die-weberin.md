@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: 8c66d17692706cd60868613ce51e1e8e062d13e7a48603b79dea7341f197cac8
+  sha256: d73cdd396f4c5996f6106e1c62df4d6213dcc84a6e9a61ccfd54c56e9ba0ddf9
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -164,17 +164,32 @@ nicht drei Bilder, sondern eines.
 
 ## 8. Name = Implementation — die gebauten Entsprechungen
 
+Die gebauten Entsprechungen zerfallen in zwei Welten, die nicht vermischt
+werden: **LIVE** — Organe, die im ω-Pfad laufen — und **OFFLINE** —
+Kommandozeilen-Proben in `tools/measure`, die auf derselben Bibliothek
+stehen, aber keine Membran-Teile sind (gemessen 2026-09-06,
+survey-2026-09-06-codestruktur).
+
+LIVE — im ω-Pfad:
+
 | DIE WEBERIN | gebaut als |
 |---|---|
-| §2 Der Webstuhl (ICRS·TDB) | `motion.rs` (`Motion::at`, `body_fixed_to_icrs`), `eraen.md` |
-| §3 Kette — Direction | `skydirection.rs` (`SkyDirection`), `s2.rs` + `S2_WGSL` + `omega.rs` |
+| §2 Der Webstuhl (ICRS·TDB) | `motion.rs` (`Motion::at`, `body_fixed_to_icrs`) |
+| §3 Kette — Direction | `skydirection.rs` (`SkyDirection`), `s2.rs` + `S2_WGSL` + `omega.rs` (`sky_reload`/`sky_tick`) |
 | §3 Kette — Body | `ephemeris_binary` (72) + `orbit_bin` (Wind), `BodyEphemeris` |
 | §3 Kette — Station | `Motion::Surface`, `StationEntry`, `stations_*`/`fanout` |
-| §4 Schuss — Verdict | `direction_distance_join` (Placed/Absent/DirectionOnly) |
-| §4 Schuss — TE | `te.rs`, `te_compute`, `pair_te_screen` |
-| §4 Schuss — Linien/Footprint | `nadel_gate.rs` (SIMBAD-Otype + AllWISE-W1−W2), `deredden_baseline_probe` |
-| §5 Vlies — das eine Bild | `s2.rs` (Y_lm, Einheitskugel), `tdb_coincidence_probe` (Rømer) |
+| §4 Schuss — TE | `te.rs` + `te_compute` (WGSL, `te_pipe`) |
+| §5 Vlies — das eine Bild | `s2.rs` (Y_lm), `S2_WGSL`, Einheitskugel |
 | §6 Verdichtung am Punkt | `machines/matrix.rs` (MatrixMachine: record/rebuild, paarweise TE, `eph_<body>`-Serien) |
+
+OFFLINE — tools/measure-Proben:
+
+| DIE WEBERIN | gebaut als |
+|---|---|
+| §4 Schuss — Verdict | `direction_distance_join` (Placed/Absent/DirectionOnly) |
+| §4 Schuss — TE-Screen | `pair_te_screen` |
+| §4 Schuss — Linien/Footprint | `nadel_gate.rs` (SIMBAD-Otype + AllWISE-W1−W2), `deredden_baseline_probe` |
+| §5 Vlies — Rømer-Toleranz | `tdb_coincidence_probe` |
 
 ## 9. Die Bau-Linie — alles wird gebaut, nichts wird vertagt
 
