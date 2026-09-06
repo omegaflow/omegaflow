@@ -26,7 +26,7 @@ Sauerstoff; die Konsolidierung das Immunsystem. Beide — sonst stirbt je eines.
 
 **Ergebnis darf Stille sein. Grenzwert ist Erfolgsformat. Und die Frage steht
 vor der Maschine, nicht der Fund.** Das Novum der 20-s-Bande kam als
-Nebenprodukt einer absurden Frage, nicht durch Jagd danach. Beim Form-Test ist
+Nebenprodukt einer absurden Frage, nicht durch Suche danach. Beim Form-Test ist
 das messbar Interessante nicht „Anomalie entdeckt", sondern: *die ∝t²-Frage an
 die Vollmissions-Daten beantwortet — was auch immer die Antwort ist.* Kein
 Interpretieren über die Messung.
