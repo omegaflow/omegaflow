@@ -1,5 +1,5 @@
 use omegaflow::archivar::spatial::{star_stride, STAR_RECORD_BYTES};
-use omegaflow_measure::deredden::{
+use omegaflow_measure::weberin::deredden::{
     build_star_index, dwarf_color_type, type_label, DustMap, StarIndex, WANG_GBP_FACTOR,
 };
 
