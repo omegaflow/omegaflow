@@ -1,16 +1,16 @@
 <!--
-  title: Handover — Scanner, Anomalie-Hunter, S²-Richtungssinn (für SKYBRIDGE)
+  title: Handover — Scanner, Anomalie-Hunter, S²-Richtungssinn (für DIE WEBERIN)
   class: handover
   date: 2026-09-06
-  sha256: 33cd548159da6479815978615f2ea54458500a7b323fd0f2fb03d42077c36e3e
+  sha256: 6ac7ae45ffb1454ef0bdca79d595458fa6f382aa9861f607f7a1d501be590ec6
   status: live
-  see-also: docs/concepts/skybridge.md docs/befund/befund-richtungs-atom.md docs/concepts/fuenf-funken-anomalie-jagd.md
+  see-also: docs/concepts/die-weberin.md docs/befund/befund-richtungs-atom.md docs/concepts/fuenf-funken-anomalie-jagd.md
 -->
 # Handover — Scanner, Anomalie-Hunter, S²-Richtungssinn
 
 Selbsttragend. Dieser Handover trägt den Stand der Scanner-/Anomalie-/S²-Linie,
-damit die SKYBRIDGE-Session (`docs/concepts/skybridge.md`) ihn in den Entwurf
-der Identitäts-Röhre einfließen lassen kann. Alles committet, nichts
+damit die Weberin (`docs/concepts/die-weberin.md`) ihn in das Vlies
+einweben kann. Alles committet, nichts
 pending/deferriert (Operator-Direktive 2026-09-06: Pendings und Deferrals sind
 verboten; absent ≠ pending). Commits: `40ed8bb` (fünf Funken + Scanner-Vereinigung),
 `0ea40ab` (Pendings aufgelöst), `d830734` (S² + SkyDirection).
@@ -49,10 +49,10 @@ Kegel (Mountain exp(−d/step), River LS-Gradient, Mycelium food/(food+1),
 Sensory |b|-Proxy, Future 1−Mountain), Synthese = geometrisches Mittel der
 präsenten Stimmen. Der Scanner entscheidet wohin, der Hunter entscheidet was.
 
-## C. Der Richtungs-Sinn S² (SKYBRIDGE §10 — gebaut, nicht skizziert)
+## C. Der Richtungs-Sinn S² (WEBERIN §5 — gebaut, nicht skizziert)
 
 - **`SkyDirection`** (`src/archivar/skydirection.rs`): Richtungs-Entität —
-  `ra/dec`, `bands: Vec<SkyBandSeries>` (tdb/mag — die SKYBRIDGE §3-Form,
+  `ra/dec`, `bands: Vec<SkyBandSeries>` (tdb/mag — die WEBERIN §3-Form,
   fertig), `distance`/`redshift: Option` (absent, kein 0.0), `sigma_arcsec:
   Option`, `unit_direction()` = p̂.
 - **S²-Feld** (`src/mathematikerin/s2.rs` + `S2_WGSL` + `omega.rs`):
@@ -66,27 +66,27 @@ präsenten Stimmen. Der Scanner entscheidet wohin, der Hunter entscheidet was.
 ## D. Die Funken (erweitertes Detektions-Werkzeug)
 
 `broker_difference_probe` (sky/pipeline/pending), `tdb_coincidence_probe`
-(Rømer/TDB-Fenster — SKYBRIDGE §3), `pair_te_screen` (TE-Null, empirisch
-kalibriert — SKYBRIDGE §4), `disappearance_probe` (disjunkte MAD-Baseline),
-`deredden_baseline_probe` (intrinsische Farbe — SKYBRIDGE §1). CDN:
+(Rømer/TDB-Fenster — WEBERIN §2), `pair_te_screen` (TE-Null, empirisch
+kalibriert — WEBERIN §4), `disappearance_probe` (disjunkte MAD-Baseline),
+`deredden_baseline_probe` (intrinsische Farbe — WEBERIN §4). CDN:
 `dr3_stars.bin`, `bayestar2019.be19`, `skydirections.bin`.
 
-## E. Direkte SKYBRIDGE-Anschlüsse
+## E. Direkte WEBERIN-Anschlüsse
 
-| SKYBRIDGE | gebaut als |
+| WEBERIN | gebaut als |
 |---|---|
-| §3 Lichtkurve als Identität | `SkyDirection.bands` (tdb/mag) |
-| §4 TE als Beweis | `pair_te_screen` + `te.rs` |
-| §10 S²-Kugel als ein Bild | `s2.rs` + `S2_WGSL` + `omega.rs` |
-| §2/§12 Distanz-Anker | `direction_distance_join` |
-| §3 Rømer-Toleranz | `tdb_coincidence_probe` |
-| §1 Vordergrund-Rötung | `deredden_baseline_probe` + `bayestar2019.be19` |
-| §9 IR-Zeuge | AllWISE-Witness (`nadel_gate.rs`) |
+| §3 Kette — Direction (Lichtkurve als Identität) | `SkyDirection.bands` (tdb/mag) |
+| §4 Schuss — TE als Beweis | `pair_te_screen` + `te.rs` |
+| §5 Vlies — die Kugel als ein Bild | `s2.rs` + `S2_WGSL` + `omega.rs` |
+| §4 Schuss — Distanz-Anker | `direction_distance_join` |
+| §2 Webstuhl — Rømer-Toleranz | `tdb_coincidence_probe` |
+| §4 Schuss — Vordergrund-Rötung | `deredden_baseline_probe` + `bayestar2019.be19` |
+| §4 Schuss — IR-Zeuge | AllWISE-Witness (`nadel_gate.rs`) |
 | Der Hunter selbst (Nadel V) | `lsst_anomaly_probe.rs` |
 
-## F. Die Disziplin-Änderung (bindend für SKYBRIDGE)
+## F. Die Disziplin-Änderung (bindend für WEBERIN)
 
-Pendings/Deferrals verboten. SKYBRIDGE §14 („Was bleibt offen") ist
+Pendings/Deferrals verboten. WEBERIN §9 (die Bau-Linie) ist
 umzuschreiben: keine „benannt offen"-Stufen. Ein fehlender Wert ist `absent`
 (None, 0 honored) — ein vollständiger Befund. Der Mechanismus wird komplett
 gebaut (auch Rückkopplung, auch Kugelflächenfunktionen), nie als „größere

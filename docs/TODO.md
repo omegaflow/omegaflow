@@ -1070,6 +1070,28 @@ und navigierende Zeilen.
   (`membrane.rs:347–348`, `shaders.rs:11–12`) → der Fold fällt für 5/6
   praktisch aus. Physik-Frage: gewollt oder pending?
 
+## Die Weberin — Bau-Linie (docs/concepts/die-weberin.md, pending)
+
+Die eine Mess-Anordnung: ICRS·TDB als Webstuhl, die Weltlinien (Direction,
+Body, Station) als Kette, die Beziehungen (Verdict, TE, Abstammung) als
+Schuss, das Vlies als das eine Bild. Die sieben Stufen sind ungebaut —
+`pending`, registriert, nicht fabriziert:
+
+- Zweite Körper-Linie: MPC-Bahnen (`mpcorb_extended.json.gz`, offener
+  Live-Block) gegen die Ephemeris-Punkte — Verdict für Körper
+  (Placed/Absent/DirectionOnly statt der einen JPL-Linie).
+- Stations-Konvergenz: unabhängige Netz-Linien am selben Punkt
+  (INTERMAGNET gegen SWARM-Überflug, Pegel gegen Altimetrie) — Verdict für
+  Stationen, auf den fanout-Ringen, ohne neues Netz.
+- Topozentrische Kopplung: Rømer-Toleranz vom Stationspunkt,
+  Stations-Parallaxe als unabhängige Sichtlinien — S²-Kugel und
+  Körper-/Stations-Vlies als ein Bild.
+- Vollständige Abbildung der ~20k Tafeln in den position-indizierten
+  Bestand — die Dichte des Vlieses, Kompilier-Pflicht.
+- Survey-Footprints der großen Durchmusterungen als eigene Assets.
+- GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne.
+- CDN-Manifestations-Weg des Vlies-Assets.
+
 ## Source-Port — der eine Pfad
 
 Alle Source-Arbeit läuft über `docs/SOURCE_PORT.md`. Arbeitsfläche:
