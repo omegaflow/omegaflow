@@ -7,7 +7,7 @@ const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
 const MIN_CELL: usize = 30;
 const CONJ_ELONG_DEG: f64 = 30.0;
-const OUT: &str = "reports/galileo_mode2_strength_split.txt";
+const OUT: &str = "state/reports/galileo_mode2_strength_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()

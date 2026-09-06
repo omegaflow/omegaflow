@@ -66,6 +66,4 @@ cloudflare/.wrangler/
 cloudflare/cloudflared-config.yml
 
 # Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
-/gate/
-/mail/
-/reports/
+/state/
