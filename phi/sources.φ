@@ -1580,11 +1580,6 @@ format eve_lines
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_lines.bin
-format aia_lines
-at sun
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
 format spectral
 on earth 19.82 -155.47 4142.6
