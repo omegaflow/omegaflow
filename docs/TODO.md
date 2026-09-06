@@ -589,9 +589,16 @@ physikalischen Aussage — kein Blatt ohne diese:
   drei heissen Rungs positiv (193->211 +1.21e-1, 211->335 +9.37e-2,
   335->94 +1.30e-1), ~72-168-s-Lag, fam 1.75e-1 unter-fam. Zwei unabhaengige
   Jahre (2014 1019 Ev + 2015 281 Ev) tragen dieselbe gerichtete Aufwaerts-
-  Kaskade: reproduzierbar-gerichtet, unter-fam. (2013 pending: Monat 11 —
-  CI-Ernte aia2013_11.bin via aia-cdn dispatch 34042431334 gestartet
-  2026-09-06; danach 12 Monate mergen + fam-Probe fuer das dritte Jahr.)
+  Kaskade: reproduzierbar-gerichtet, unter-fam.
+- **AIA-2013-Reproduzierbarkeit (2026-09-06, GOES-15, 524 Ereignisse)**: die
+  193->211->335->94-Kaskade reproduziert sich im dritten unabhaengigen Jahr 2013
+  (Monat 11 via aia-cdn CI, 34042431334, aufs CDN manifestiert; 12 Monate
+  gemergt zu aia2013_fullyear.bin, 18.18 M Records): 193->211 +1.67e-1,
+  211->335 +7.71e-2, 335->94 +1.01e-1, alle ~96-s-Lag (Lag 4), fam 1.71e-1
+  unter-fam — kein Rung uebersteigt die fam-Schwelle, der heisseste Rung
+  (335->94, 0.59xfam) reproduziert sich moderat wie 2014/2015. Drei
+  unabhaengige Jahre (2013 524 Ev, 2014 1019 Ev, 2015 281 Ev) tragen dieselbe
+  gerichtete Aufwaerts-Kaskade: reproduzierbar-gerichtet, fam-still.
 - **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse, gemessen 2026-09-06):
   die Richtung ist KONSISTENT, nicht alternierend** — 76% der Ereignisse
   positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00), Monats-Mittel
