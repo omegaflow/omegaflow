@@ -40,7 +40,7 @@ nebeneinander als eine Tabelle, N Systeme, mit der Frage:
    gelesen, nur was es als gemessene Zahl trägt, geht in die Tabelle):
    `corona-heating-ladder`, `gic-causal-driver`, `laic-arrow-direction`,
    `blatt-kreuz-screening-kollab`, `blatt-kreuz-screening-gyirong`,
-   `blatt-pfeil-sturzflut-tibet`, `signal-cone-audit-sheet`,
+   `sturzflut-tibet-pfeil`, `signal-cone-audit-sheet`,
    `planet-nine-kbo-residue`, `big-bang-echo-sheet-12`, `dark-flow-sheet-8`
    und was der Nadel-Register-Stand (TODO.md) sonst als Blatt mit
    TE-Verdikt führt.
