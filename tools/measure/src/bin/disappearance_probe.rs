@@ -1,7 +1,7 @@
 use omegaflow::archivar::{embedded_lsk, LeapSeconds};
 use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
-use omegaflow_measure::nadel_gate::sep_arcsec;
+use omegaflow_measure::weberin::nadel_gate::sep_arcsec;
 use std::collections::HashMap;
 use std::process::Command;
 use std::thread::sleep;
