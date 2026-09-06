@@ -2,7 +2,7 @@
   title: DAS BLATT DER KORONA-HEIZUNG — der kausale DAG der solaren Kanäle
   class: survey
   date: 2026-09-05
-  sha256: f333d9b5c209f286db1803ba3716d869caf189cbfb2efa5842ae2c5fb6f1be75
+  sha256: e3b31f9655a493e56ef4e947f78fac5f23f49a91e42443001a268d3be96a1a02
   status: live
   see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md docs/specs/broken-null-control.md
 -->
@@ -12,8 +12,9 @@ Selbsttragend. Dieses Blatt trägt den gemessenen kausalen DAG der
 Korona-Heizung: die Transferentropie über alle Paare der solaren Kanäle
 mit historischer Serie, beide Richtungen, mit Lag, Schwelle und n — auf
 drei Skalen. Die Tages-Skala (11 Jahre) trägt Stille; die Minute-Skala
-(7 Tage) trägt gerichtete TE ohne fam; die AIA-2014-Leiter (24-s-Zellen)
-trägt die heiße Korona aufwärts. Alles drei sind Befunde (0 honored).
+(7 Tage) trägt gerichtete TE ohne fam; die AIA-Leiter (24-s-Zellen) trägt
+die heiße Korona über drei Jahre reproduziert aufwärts, unter ihrer
+Familien-Schwelle. Alles drei sind Befunde (0 honored).
 
 ## Das Rätsel
 
@@ -156,6 +157,33 @@ nicht stand — er versagt bei h ≥ 2.0, robust gegen die Surrogat-Zahl (Paper
 robusten Pfeil; der Befund ist eine ehrliche Null/Einhegung, kein
 Aufwärts-Transport (Paper v4, `docs/paper/corona-heating-ladder.md`).
 
+## Die AIA-Drei-Jahres-Matrix — die Kaskade über drei Jahre
+
+Die AIA-Leiter läuft jetzt über drei unabhängige Jahre (GOES-Trigger,
+24-s-Zellen, gesunde Bild-Ära). Jede Sprosse trägt D, Lag, fam, Verdikt:
+
+| Jahr | Ereignisse | 193→211 D | 211→335 D | 335→94 D | Lag | fam | Verdikt |
+|---|---|---|---|---|---|---|---|
+| 2013 (GOES-15) | 524 | +1,67e-1 | +7,71e-2 | +1,01e-1 | ~96 s | 1,71e-1 | family bound |
+| 2014 (GOES-15) | 1019 | +1,78e-1 (0,91×) | +7,15e-2 | +1,24e-1 (0,63×) | ~96 s | 1,96e-1 | family bound |
+| 2015 | 281 | +1,21e-1 | +9,37e-2 | +1,30e-1 | ~96 s | 1,75e-1 | family bound |
+
+**Der Richtungs-Befund (per-Ereignis, 335→94, 2015):** 76 % der 281
+Ereignisse positiv; jeder Monat mehrheitlich positiv (posfrac 0,56–1,00);
+alle Monatsmittel positiv. Die Richtung ist konsistent, nicht alternierend —
+die Oszillations-/Alternierungs-Hypothese (wechselnder Richtungs-Treiber) ist
+auf Ereignis- wie Monatsskala nicht getragen. GOES-13 wie GOES-15 bestätigen
+(2014-Teilmenge) die Unter-fam-Lage.
+
+**Befund:** drei Jahre reproduzieren dieselbe gerichtete Aufwärts-Kaskade
+193→211→335→94 am vorhergesagten ~96-s-Lag — alle neun Sprossen-Jahr-Werte
+positiv — aber keine Sprosse klärt in irgendeinem Jahr die fam-Schwelle, und
+der heißeste Rung (335→94) verstärkt sich mit mehr Ereignissen nicht
+(+1,42e-1 bei 194 → +1,24e-1 bei 1019). Verdikt je Sprosse: **family bound**
+(gerichtet, reproduzierbar, unter fam) — kein Pfeil, keine Stille. Die
+eigene Per-Lag-Schwelle je Sprosse ist zu drucken (`pending`, nötig für die
+Trennung family bound / still).
+
 ## Der Lang-Fenster-Befund (F10.7 ↔ X-Ray, 1995–2020)
 
 `long_window_probe` auf den echten Serien (n ≈ 9090 Tages-Zellen, lag
@@ -205,16 +233,22 @@ gemessen und geschlossen:
   signifikante TE bei lag 0/1 — eine gemessene Informations-Richtung,
   keine Mechanismus-Entscheidung (die Minuten-fam fehlt, und die Zellen
   lösen ~100 s nicht auf).
-- **AIA-2014:** die heiße Korona trägt die größten D der Leiter (193→211
-  →335→94, D = +1,50e-1/+1,13e-1/+1,42e-1, lag ~96–144 s), aber unter AIAs
-  eigener Familien-Schwelle (fam = 1,89e-1): keine AIA-Sprosse fam-
-  signifikant. Der heißeste Rung (335→94) ist auf KEINEM Instrument fam-
-  belegt (EVE-2011 ab unter fam, AIA-2014 auf unter fam). Die kühle Seite
-  (304→131) still.
+- **AIA-Drei-Jahres-Matrix (2013/2014/2015):** die heiße Korona trägt die
+  größten D der Leiter (193→211→335→94, D ≈ +1,2…1,8e-1, ~96-s-Lag) über
+  drei unabhängige Jahre reproduziert — alle neun Sprossen-Jahr-Werte positiv,
+  die Richtung per-Ereignis 76 % konsistent (2015) — aber unter AIAs eigenen
+  Familien-Schwellen (fam 1,71–1,96e-1): keine AIA-Sprosse fam-signifikant in
+  irgendeinem Jahr, der heißeste Rung (335→94) verstärkt sich nicht mit mehr
+  Ereignissen. Verdikt je Sprosse: **family bound** (gerichtet, reproduzierbar,
+  unter fam) — kein Pfeil, keine Stille. Der heißeste Rung (335→94) ist auf
+  KEINEM Instrument fam-belegt (EVE-2011 ab unter fam, AIA drei Jahre unter
+  fam). Die kühle Seite (304→131) still.
 - **EVE-1032→131 h-fragil:** der einzige Rung, der bei kanonischer Bandbreite
   über EVEs fam kommt, versagt unter der Bandbreiten-Kreuzprüfung (h ≥ 2.0,
   robust gegen Surrogat-Zahl). Unter fam **und** Bandbreite: kein robuster
-  Pfeil auf irgendeiner Sprosse, beider Instrumente — ehrliche Null (v4).
+  Pfeil auf irgendeiner Sprosse, beider Instrumente — der Befund ist eine
+  reproduzierbare gerichtete Kaskade unter der Familien-Schwelle, keine
+  fam-gereinigte Einzel-Sprosse (v5, `docs/paper/corona-heating-ladder.md`).
 - **Tage:** Stille über 11 Jahre, fam-gereinigt (fam = 2,108e-1) — mit
   dem bandbreiten-empfindlichen Rand-Kandidaten Lya1216 → XRSB (7 d,
   nur bei h × 2,0 fam-signifikant) und Bz ↔ Dichte (lag 0) als
@@ -227,10 +261,12 @@ eine andere Art:
 
 1. **Sub-minütige Auflösung** (Datenlücke, teilweise geschlossen): die
    AIA-2014-Leiter (24-s-Zellen) löst die koronale Alfvén-Überquerung
-   (~96 s) historisch auf, aber nur als unter-fam Muster — ein fam-
-   signifikanter koronaler Rung braucht noch mehr Ereignisse (oder den
-   ortsaufgelösten aktiven-Regionen-Pfad); die Live-Kanäle tragen keine
-   sub-minütige Kadenz, also keine lebende Zelle, die den Effekt auflöst.
+   (~96 s) historisch auf, aber nur als unter-fam Muster. Drei Jahre
+   (2013/14/15, 1824 Ereignisse) reproduzieren die Richtung, heben aber
+   keine Sprosse über fam — der heißeste Rung verstärkt sich nicht. Ein
+   fam-signifikanter koronaler Rung braucht den ortsaufgelösten
+   aktiven-Regionen-Pfad (den Live-Kanäle mit sub-minütiger Kadenz nicht
+   tragen).
 2. **Minuten-fam** (Statistiklücke): die zwei Minuten-Befunde (EUV→X-Ray,
    Bz→X-Ray) tragen nur die per-Paar-Schwelle, keine Familien-Schwelle
    über die ganze Minuten-Matrix — die Daten liegen, die Korrektur
