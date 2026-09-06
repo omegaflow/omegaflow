@@ -584,6 +584,13 @@ physikalischen Aussage — kein Blatt ohne diese:
   (jsoc.stanford.edu/aia2014_lines.bin, 90 MB, ersetzt den 1-Tag-Stub;
   Workflow auf --chunk-days 1 gestellt). geschlossen.
 
+- **AIA-2015-Reproduzierbarkeit (2026-09-06, GOES-15, 281 Ereignisse)**: die
+  193->211->335->94-Kaskade reproduziert sich im unabhaengigen Jahr 2015:
+  alle drei heissen Rungs positiv (193->211 +1.21e-1, 211->335 +9.37e-2,
+  335->94 +1.30e-1), ~72-168-s-Lag, fam 1.75e-1 unter-fam. Zwei unabhaengige
+  Jahre (2014 1019 Ev + 2015 281 Ev) tragen dieselbe gerichtete Aufwaerts-
+  Kaskade: reproduzierbar-gerichtet, unter-fam. (2013 pending: Monat 11
+  haengt.)
 - **AIA-Volljahr-2014-Messung (2026-09-05, GOES-15, 1019 Ereignisse)**: das
   volle 2014-Korpus (12 stabile Monats-Assets, 13.95 M Records, ~5x Ereignisse)
   gegen die 3-Monats-194-Ereignis-Messung: keine Sprosse steigt ueber die fam
