@@ -31,6 +31,21 @@ fn te_wgsl_validates_offline() {
 }
 
 #[test]
+fn s2_wgsl_validates_offline() {
+    let module = match naga::front::wgsl::parse_str(S2_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(S2_WGSL)),
+    };
+    let mut validator = naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(S2_WGSL));
+    }
+}
+
+#[test]
 fn te_gpu_crosscheck_against_cpu_reference() {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
     let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
@@ -307,8 +322,10 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         }
         drop(mapped_data);
         read_buf.unmap();
-        let scaled = crate::te::topological_verdict_from_gpu(&verdict)
-            .unwrap_or_else(|| panic!("te verdict invalid at bandwidth scale {}", h_scale));
+        let scaled = match crate::te::topological_verdict_from_gpu(&verdict) {
+            Some(v) => v,
+            None => panic!("te verdict invalid at bandwidth scale {}", h_scale),
+        };
         assert!(
             (scaled.te - gpu_v.te).abs() > 1e-4,
             "te unchanged at bandwidth scale {}: {}",
@@ -477,4 +494,277 @@ fn aberration_shifts_toward_apex_and_stays_unit() {
     let rest = aberr([0.3, 0.4, 0.916515139], [0.0, 0.0, 0.0]);
     assert!((rest[0] - 0.3).abs() < 1e-9);
     assert!((rest[1] - 0.4).abs() < 1e-9);
+}
+
+#[test]
+fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
+    use crate::archivar::skydirection::{SkyBandSeries, SkyDirection, SkySample};
+    let dir = |name: &str, ra: f64, dec: f64| SkyDirection {
+        name: name.to_string(),
+        ra_deg: ra,
+        dec_deg: dec,
+        sigma_arcsec: None,
+        bands: vec![SkyBandSeries {
+            band: Some("g".to_string()),
+            samples: vec![SkySample {
+                tdb: 8.4e8,
+                mag: 18.0,
+            }],
+        }],
+        distance: None,
+        redshift: None,
+    };
+    let dirs = vec![
+        dir("a", 10.0, 20.0),
+        dir("b", 40.0, -15.0),
+        dir("c", 200.0, 55.0),
+    ];
+    let oscs = crate::s2::osc_window(&dirs, 8.4e8, crate::s2::S2_TAU_DEFAULT_S);
+    let expect = crate::s2::shell_field(&oscs, crate::s2::S2_LMAX);
+    let pack = crate::s2::pack_oscs(&oscs, crate::s2::S2_OSC_CAP);
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — s2 gpu crosscheck skipped");
+            return;
+        }
+    };
+    let (device, queue) = match pollster::block_on(
+        adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+    ) {
+        Ok(dq) => dq,
+        Err(e) => {
+            eprintln!("device request returned: {}", e);
+            return;
+        }
+    };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(S2_WGSL.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStages::COMPUTE,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 2;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 3;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("s2_field"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let cap = crate::s2::S2_OSC_CAP as usize;
+    let osc_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 32) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 16) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 4) as u64,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (cap * 4) as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: osc_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: param_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: probe_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&osc_buf, 0, &le_bytes_f32(&pack.osc));
+    queue.write_buffer(&probe_buf, 0, &le_bytes_f32(&pack.probes));
+    let param = [pack.count, crate::s2::S2_LMAX, pack.probe_count, 0];
+    let mut pb = [0u8; 16];
+    for (i, p) in param.iter().enumerate() {
+        pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb);
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(1, 1, 1);
+    }
+    let copy_bytes = (pack.probe_count as usize * 4) as u64;
+    enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, copy_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..copy_bytes);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "s2 gpu readback returned void"
+    );
+    let data = slice.get_mapped_range();
+    let mut gpu = vec![0f32; pack.probe_count as usize];
+    for k in 0..pack.probe_count as usize {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+        gpu[k] = f32::from_le_bytes(b);
+    }
+    drop(data);
+    read_buf.unmap();
+    for k in 0..gpu.len() {
+        let e = expect[k];
+        let g = gpu[k] as f64;
+        let rel = if e.abs() > 0.0 {
+            ((g - e) / e).abs()
+        } else {
+            g.abs()
+        };
+        assert!(
+            rel < 2e-2,
+            "s2 field diverges at probe {k}: gpu {g} cpu {e} rel {rel}"
+        );
+    }
+    let n2 = 130usize;
+    let mut dirs2: Vec<SkyDirection> = Vec::with_capacity(n2);
+    for i in 0..n2 {
+        let z = 1.0 - 2.0 * (i as f64) / (n2 as f64 - 1.0);
+        let theta = (i as f64) * 2.399963229728653;
+        let ra = (theta.to_degrees() % 360.0 + 360.0) % 360.0;
+        let dec = (z.asin()).to_degrees();
+        dirs2.push(dir(&format!("s{i}"), ra, dec));
+    }
+    let oscs2 = crate::s2::osc_window(&dirs2, 8.4e8, crate::s2::S2_TAU_DEFAULT_S);
+    let expect2 = crate::s2::shell_field(&oscs2, crate::s2::S2_LMAX);
+    let pack2 = crate::s2::pack_oscs(&oscs2, crate::s2::S2_OSC_CAP);
+    assert_eq!(pack2.count, n2 as u32);
+    assert_eq!(pack2.probe_count, n2 as u32);
+    queue.write_buffer(&osc_buf, 0, &le_bytes_f32(&pack2.osc));
+    queue.write_buffer(&probe_buf, 0, &le_bytes_f32(&pack2.probes));
+    let param2 = [pack2.count, crate::s2::S2_LMAX, pack2.probe_count, 0];
+    let mut pb2 = [0u8; 16];
+    for (i, p) in param2.iter().enumerate() {
+        pb2[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+    }
+    queue.write_buffer(&param_buf, 0, &pb2);
+    let groups = (pack2.probe_count + 63) / 64;
+    assert!(groups >= 3, "a 130-probe window must span workgroups");
+    let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(groups, 1, 1);
+    }
+    let copy_bytes2 = (pack2.probe_count as usize * 4) as u64;
+    enc2.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, copy_bytes2);
+    queue.submit(std::iter::once(enc2.finish()));
+    let mapped2 = Arc::new(AtomicBool::new(false));
+    let m22 = mapped2.clone();
+    let slice2 = read_buf.slice(..copy_bytes2);
+    slice2.map_async(wgpu::MapMode::Read, move |r| {
+        m22.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline2 = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped2.load(Ordering::SeqCst) && std::time::Instant::now() < deadline2 {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped2.load(Ordering::SeqCst),
+        "s2 gpu readback returned void for the wide window"
+    );
+    let data2 = slice2.get_mapped_range();
+    let mut gpu2 = vec![0f32; pack2.probe_count as usize];
+    for k in 0..gpu2.len() {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&data2[k * 4..k * 4 + 4]);
+        gpu2[k] = f32::from_le_bytes(b);
+    }
+    drop(data2);
+    read_buf.unmap();
+    for k in 0..gpu2.len() {
+        let e = expect2[k];
+        let g = gpu2[k] as f64;
+        let rel = if e.abs() > 0.0 {
+            ((g - e) / e).abs()
+        } else {
+            g.abs()
+        };
+        assert!(
+            rel < 2e-2,
+            "s2 field diverges at wide-window probe {k}: gpu {g} cpu {e} rel {rel}"
+        );
+    }
 }
