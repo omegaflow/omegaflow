@@ -487,3 +487,55 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
     verdict[o + 5u] = pe_valid;
 }
 "#;
+
+pub const S2_WGSL: &str = r#"
+const FOUR_PI_INV: f32 = 0.07957747154594767;
+
+@group(0) @binding(0) var<storage, read> osc: array<vec4f>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read> probes: array<vec4f>;
+@group(0) @binding(3) var<storage, read_write> out: array<f32>;
+
+fn band_coef(sigma2: f32, l: u32) -> f32 {
+    if (sigma2 <= 0.0) { return 1.0; }
+    return exp(-0.5 * f32(l) * f32(l + 1u) * sigma2);
+}
+
+fn kernel_at(cosg: f32, sigma2: f32, lmax: u32) -> f32 {
+    let x = clamp(cosg, -1.0, 1.0);
+    var acc: f32 = 1.0;
+    if (lmax >= 1u) {
+        acc = acc + 3.0 * band_coef(sigma2, 1u) * x;
+    }
+    var p0: f32 = 1.0;
+    var p1: f32 = x;
+    for (var l = 2u; l <= lmax; l = l + 1u) {
+        let p2 = (f32(2u * l - 1u) * x * p1 - f32(l - 1u) * p0) / f32(l);
+        acc = acc + f32(2u * l + 1u) * band_coef(sigma2, l) * p2;
+        p0 = p1;
+        p1 = p2;
+    }
+    return acc * FOUR_PI_INV;
+}
+
+@compute @workgroup_size(64)
+fn s2_field(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let pid = gid.x;
+    let osc_count = params.x;
+    let lmax = params.y;
+    let probe_count = params.z;
+    if (pid >= probe_count) { return; }
+    let q = probes[pid].xyz;
+    var field: f32 = 0.0;
+    for (var j = 0u; j < osc_count; j = j + 1u) {
+        let a = osc[j * 2u];
+        let b = osc[j * 2u + 1u];
+        let act = a.w;
+        if (act <= 0.0) { continue; }
+        let cosg = dot(q, a.xyz);
+        let sigma2 = b.x * b.x;
+        field = field + act * kernel_at(cosg, sigma2, lmax);
+    }
+    out[pid] = field;
+}
+"#;
