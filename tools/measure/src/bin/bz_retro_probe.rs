@@ -12,12 +12,15 @@ const HOUR: f64 = 3600.0;
 const DAY: f64 = 86400.0;
 const OMNI2_BIN: &str = "omni2_serie.bin";
 const FIRST_YEAR: i64 = 1994;
+const DEFAULT_STATION: &str = "ABK";
+const DEFAULT_HOUR_START: &str = "2024-01-01";
+const DEFAULT_HOUR_END: &str = "2024-12-31";
 
-fn now_unix() -> f64 {
+fn now_unix() -> Option<f64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
+        .ok()
         .map(|d| d.as_secs_f64())
-        .unwrap_or(0.0)
 }
 
 fn iso_to_unix(s: &str) -> Option<f64> {
@@ -74,6 +77,47 @@ fn iso_utc(unix: f64) -> String {
     format!("{y:04}-{m:02}-{d:02}T{hh:02}:{mm:02}:{ss:02}Z")
 }
 
+fn edge_iso(t: Option<f64>) -> String {
+    match t {
+        Some(v) => iso_utc(v),
+        None => "absent".to_string(),
+    }
+}
+
+fn shared_window(
+    a: &[(f64, f64)],
+    b: &[(f64, f64)],
+    lo_clamp: Option<f64>,
+    hi_clamp: Option<f64>,
+) -> Option<(f64, f64)> {
+    let (Some(a0), Some(a1)) = (a.first().map(|&(t, _)| t), a.last().map(|&(t, _)| t)) else {
+        return None;
+    };
+    let (Some(b0), Some(b1)) = (b.first().map(|&(t, _)| t), b.last().map(|&(t, _)| t)) else {
+        return None;
+    };
+    let lo = match lo_clamp {
+        Some(c) => a0.max(b0).max(c),
+        None => a0.max(b0),
+    };
+    let hi = match hi_clamp {
+        Some(c) => a1.min(b1).min(c),
+        None => a1.min(b1),
+    };
+    if hi <= lo {
+        None
+    } else {
+        Some((lo, hi))
+    }
+}
+
+fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
+    args.iter()
+        .position(|a| a == flag)
+        .and_then(|i| args.get(i + 1))
+        .map(|s| s.as_str())
+}
+
 fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
     match std::fs::read(path) {
         Ok(bytes) => match parse_bin(&bytes) {
@@ -94,6 +138,7 @@ const CACHE_BASE: &str = "abk_dbdt_daily";
 
 fn disk_cache(name: &str) -> String {
     omegaflow::archivar::cache_root()
+        .join("bz_retro")
         .join(name)
         .to_string_lossy()
         .into_owned()
@@ -140,7 +185,9 @@ fn write_cache(path: &str, series: &[(f64, f64)]) {
 }
 
 fn harvest_station_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<(f64, f64)> {
-    let now = now_unix();
+    let Some(now) = now_unix() else {
+        return Vec::new();
+    };
     let mut peaks: Vec<(f64, f64)> = Vec::new();
     let mut bucket_epoch = 0.0f64;
     let mut bucket_peak = f64::NEG_INFINITY;
@@ -153,10 +200,15 @@ fn harvest_station_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<
         };
         let start = format!("{year:04}-{month:02}-01T00:00:00Z");
         let mut stop = format!("{ny:04}-{nm:02}-01T00:00:00Z");
-        if iso_to_unix(&stop).unwrap_or(0.0) > now - 2.0 * HOUR {
-            stop = iso_utc(now - 2.0 * HOUR);
+        if let Some(stop_t) = iso_to_unix(&stop) {
+            if stop_t > now - 2.0 * HOUR {
+                stop = iso_utc(now - 2.0 * HOUR);
+            }
         }
-        if iso_to_unix(&stop).unwrap_or(0.0) <= iso_to_unix(&start).unwrap_or(0.0) {
+        let (Some(stop_t), Some(start_t)) = (iso_to_unix(&stop), iso_to_unix(&start)) else {
+            continue;
+        };
+        if stop_t <= start_t {
             continue;
         }
         let url = format!(
@@ -381,7 +433,6 @@ fn run_hourly(
     hour_end: &str,
     harvest_only: bool,
     force_harvest: bool,
-    now: f64,
 ) {
     let sy: i64 = hour_start
         .get(..4)
@@ -393,8 +444,8 @@ fn run_hourly(
         .unwrap_or(2026);
     let cache_1h = disk_cache(&format!("abk_dbdt_1h_{station}_{sy}.tsv"));
     let omni2_1h = disk_cache("omni2_serie_1h.bin").to_string();
-    let h_start = iso_to_unix(&format!("{hour_start}T00:00:00Z")).unwrap_or(0.0);
-    let h_end = iso_to_unix(&format!("{hour_end}T00:00:00Z")).unwrap_or(now - 2.0 * HOUR);
+    let h_start = iso_to_unix(&format!("{hour_start}T00:00:00Z"));
+    let h_end = iso_to_unix(&format!("{hour_end}T00:00:00Z"));
 
     let omni = load_omni2(&omni2_1h);
     let omni_bz: Vec<(f64, f64)> = omni
@@ -470,22 +521,14 @@ fn run_hourly(
     println!(
         "ABK hourly max |dB/dt|: {} hours ({} → {})",
         dbdt_1h.len(),
-        iso_utc(dbdt_1h.first().map(|&(t, _)| t).unwrap_or(0.0)),
-        iso_utc(dbdt_1h.last().map(|&(t, _)| t).unwrap_or(0.0))
+        edge_iso(dbdt_1h.first().map(|&(t, _)| t)),
+        edge_iso(dbdt_1h.last().map(|&(t, _)| t))
     );
 
-    let lo = omni_bz
-        .first()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .max(dbdt_1h.first().map(|&(t, _)| t).unwrap_or(0.0))
-        .max(h_start);
-    let hi = omni_bz
-        .last()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .min(dbdt_1h.last().map(|&(t, _)| t).unwrap_or(0.0))
-        .min(h_end);
+    let Some((lo, hi)) = shared_window(&omni_bz, &dbdt_1h, h_start, h_end) else {
+        println!("common hourly window: absent — no hour shared by OMNI2 and ABK |dB/dt|");
+        return;
+    };
     let t0 = (lo / HOUR).floor() * HOUR;
     let n_cells = ((hi - t0) / HOUR).floor().max(1.0) as usize;
     println!(
@@ -524,7 +567,11 @@ fn run_hourly(
     println!(
         "=== Pair verdicts (threshold at the best lag, fam = multiple-comparison correction) ==="
     );
-    let fam_state = format!("fam_state_{station}_{sy}.txt");
+    let fam_state = omegaflow::archivar::cache_root()
+        .join("bz_retro")
+        .join(format!("fam_state_{station}_{sy}.txt"))
+        .to_string_lossy()
+        .into_owned();
     let fam = family_bound_resumable(&pairs, &lags, &fam_state);
     println!("fam = {fam:.4e}");
     for (from, to, to_s, from_s) in pairs.iter() {
@@ -571,32 +618,25 @@ fn main() {
     let harvest_only = args.iter().any(|a| a == "--harvest-only");
     let force_harvest = args.iter().any(|a| a == "--force-harvest");
     let hourly = args.iter().any(|a| a == "--hourly");
-    let station = args
-        .iter()
-        .position(|a| a == "--station")
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "ABK".to_string());
-    let hour_start = args
-        .iter()
-        .position(|a| a == "--hour-start")
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "2024-01-01".to_string());
-    let hour_end = args
-        .iter()
-        .position(|a| a == "--hour-end")
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "2024-12-31".to_string());
-    let stride: usize = args
-        .iter()
-        .position(|a| a == "--stride")
-        .and_then(|i| args.get(i + 1))
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(1)
-        .max(1);
-    let now = now_unix();
+    let station = match arg_after(&args, "--station") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_STATION.to_string(),
+    };
+    let hour_start = match arg_after(&args, "--hour-start") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_HOUR_START.to_string(),
+    };
+    let hour_end = match arg_after(&args, "--hour-end") {
+        Some(v) => v.to_string(),
+        None => DEFAULT_HOUR_END.to_string(),
+    };
+    let stride = match arg_after(&args, "--stride").and_then(|v| v.parse::<usize>().ok()) {
+        Some(s) if s > 0 => s,
+        _ => 1,
+    };
+    let Some(now) = now_unix() else {
+        return;
+    };
     println!("=== Bz retro probe — the driver over 60 years (storm ensemble) ===");
     println!("system time: {}", iso_utc(now));
     println!(
@@ -610,7 +650,6 @@ fn main() {
             &hour_end,
             harvest_only,
             force_harvest,
-            now,
         );
         return;
     }
@@ -682,20 +721,14 @@ fn main() {
     println!(
         "ABK daily max |dB/dt|: {} days ({} → {})",
         dbdt_daily.len(),
-        iso_utc(dbdt_daily.first().map(|&(t, _)| t).unwrap_or(0.0)),
-        iso_utc(dbdt_daily.last().map(|&(t, _)| t).unwrap_or(0.0))
+        edge_iso(dbdt_daily.first().map(|&(t, _)| t)),
+        edge_iso(dbdt_daily.last().map(|&(t, _)| t))
     );
 
-    let lo = omni_bz
-        .first()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .max(dbdt_daily.first().map(|&(t, _)| t).unwrap_or(0.0));
-    let hi = omni_bz
-        .last()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .min(dbdt_daily.last().map(|&(t, _)| t).unwrap_or(0.0));
+    let Some((lo, hi)) = shared_window(&omni_bz, &dbdt_daily, None, None) else {
+        println!("common daily window: absent — no day shared by OMNI2 and ABK |dB/dt|");
+        return;
+    };
     let t0 = (lo / DAY).floor() * DAY;
     let n_days = ((hi - t0) / DAY).floor().max(1.0) as usize;
     println!(
