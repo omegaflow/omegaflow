@@ -1,17 +1,17 @@
 <!--
-  title: Fünf Funken der Anomalie-Jagd
+  title: Fünf Funken der Anomalie-Suche
   class: concept
   date: 2026-09-05
-  sha256: fc89babc3f4b0c9791f444049084770e11d97d00c08b5bf7f57c5540bed5f4e1
+  sha256: 14988b667876ca17fc55550a2030ac4288f45e8ad46dd6541e057a02533d59cc
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/TODO.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
 -->
-# Fünf Funken der Anomalie-Jagd
+# Fünf Funken der Anomalie-Suche
 
 Selbsttragend. Dieses Konzept trägt die erweiterte Anomalie-Taxonomie der
-Nadel-V-Himmelsjagd (`lsst_anomaly_probe`, tools/measure) und die fünf
+Nadel-V-Himmelssuche (`lsst_anomaly_probe`, tools/measure) und die fünf
 Funken, die aus der Verdrahtung abfallen. Status ehrlich: **ungebaut** —
-Ideen, keine Entscheidungen. Der Anker der Jagd ist der Commit `e76e66f`
+Ideen, keine Entscheidungen. Der Anker der Suche ist der Commit `e76e66f`
 (AllWISE-W1-W2-AGN-Witness in die natural-class-Gate). Die Gate entfernt das
 *bekannt* Natürliche (vier unabhängige Zeugen: optische Klasse, intrinsische
 Farbe, Variabilität, Mid-IR); was sie lässt, heißt „keiner bekannten
@@ -31,7 +31,7 @@ Klasse 2 — quellen-lokal, nicht-zu-erwartend (Residual-getrieben): keine
 Vorlage, **kein Modell** — Abweichung vom Mittel der eigenen Referenz.
 Rats-Kern: das Fenster muss **disjunkt stromaufwärts** liegen (nie die ganze
 Serie — sonst misst der Dip gegen seine eigene Baseline), Skala als **MAD**
-(der gejagte Ausreißer darf seine eigene Schwelle nicht aufblähen), Schwelle
+(der gesuchte Ausreißer darf seine eigene Schwelle nicht aufblähen), Schwelle
 `mean + n·σ` mit benanntem `n` (spiegelt `DIP_SIG 3.0`), dreiwertig
 (Abweichung null-echt / absent / pending). Name = Implementation: „Residual
 gegen eigenes Referenzfenster", nicht „unerwartet" (ein Urteil über das
@@ -50,7 +50,7 @@ gegen Nachbarschaft) sind **zwei getrennte Atome**, nie verschweißt.
 
 ## Die fünf Funken
 
-1. **Verschwinden statt Erscheinen.** Alle Broker jagen das Aufleuchten; die
+1. **Verschwinden statt Erscheinen.** Alle Broker suchen das Aufleuchten; die
    leere Straße ist das Gegenteil — Quellen, die leiser werden, ausgehen,
    weggehen. Möglich über Forced Photometry (messen an fester Stelle ohne
    Alert) + das Coverage-Register (wir wissen, wo wir schon geschaut haben).

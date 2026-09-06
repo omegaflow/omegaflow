@@ -1996,8 +1996,8 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   lokal); die CDN-Manifestations-Route ist geschlossen (skydirection-cdn.yml,
   `--ci-mode` gated, skydirections.bin manifestiert, HTTP 200 gemessen).
 
-- Myzel-Scan-Linie — die fünf Funken der Anomalie-Jagd (Konzept
-  docs/concepts/fuenf-funken-anomalie-jagd.md, 2026-09-05): Atome 0/0b
+- Myzel-Scan-Linie — die fünf Funken der Anomalie-Suche (Konzept
+  docs/concepts/fuenf-funken-anomalie-suche.md, 2026-09-05): Atome 0/0b
   (mycelium_fan_navigator, fünf Stimmen, Golden-Angle-Fan) + 3
   (broker_difference_probe) + 5 (tdb_coincidence_probe) + 1
   (disappearance_probe) + 4 (deredden_baseline_probe) + 2 (pair_te_screen)

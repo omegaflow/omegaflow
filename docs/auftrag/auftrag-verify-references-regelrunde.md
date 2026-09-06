@@ -34,7 +34,7 @@ inline-Archiv-Absolutpfad-Stelle (`survey-auswertung`) wurde entfernt.
   (z. B. `survey-fortschritt.md` in Prosa) werden nicht geprüft. Der
   historische Anteil ist dokumentierte Grenze (historische Anker werden nicht
   zurückverfolgt). Offen die echte Resthälfte: **Fließtext-Drift in lebenden
-  Dokumenten** — wird die Klasse gejagt (Backtick-lose Pfade in lebenden
+  Dokumenten** — wird die Klasse gesucht (Backtick-lose Pfade in lebenden
   Dokumenten erkennen und auflösen) oder als dokumentierte Grenze
   festgeschrieben? Entscheidung + Kalibrationslauf + Commit, getrennt vom
   CASE-5-Commit.
