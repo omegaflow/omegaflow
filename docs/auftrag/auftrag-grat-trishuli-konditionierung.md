@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: e334d2f45974c25f44f5057693cf3bff3076d024dc2d16e1e14bf2347e7678f3
   status: done
-  see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-der-grat.md docs/paper/blatt-pfeil-sturzflut-tibet.md docs/paper/blatt-kreuz-screening-kollab.md
+  see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-der-grat.md docs/paper/sturzflut-tibet-pfeil.md docs/paper/blatt-kreuz-screening-kollab.md
 -->
 # Auftrag: Grat-Folge — Trishuli Regen→Pegel konditionieren (dritter Pfeil)
 
@@ -15,7 +15,7 @@ Die Grat-Bilanz `docs/blatt/blatt-der-grat.md` (Auftrag
 Trishuli-Regen→Pegel-Pfeil (TE 0.265 > 0.218, Lag 24 h, n = 129,
 Vor-Flut-Fenster) als über-Schwellen-Pfeil in die Bilanz — und benennt in
 ihren Grenzen die Lücke: das Quell-Blatt
-`docs/paper/blatt-pfeil-sturzflut-tibet.md` registriert am co-lokalen
+`docs/paper/sturzflut-tibet-pfeil.md` registriert am co-lokalen
 Gauge keine Konfund-Konditionierung. Der Pfeil beantwortet „mehr als
 Zufall"; „mehr als gemeiner Treiber" bleibt `pending`. Dieser Auftrag
 schließt die Lücke:
