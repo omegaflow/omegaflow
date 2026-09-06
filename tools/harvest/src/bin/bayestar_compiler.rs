@@ -2,6 +2,7 @@ use omegaflow::bayestar::{
     decode_rec, decode_row, encode_rec, parse_header, table_of, write_header, Be19Table, MapHeader,
     REC_BYTES,
 };
+use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip_stream;
 use std::collections::BTreeMap;
 use std::io::{BufReader, BufWriter, Read, Seek, SeekFrom, Write};
@@ -104,13 +105,14 @@ fn run(args: &[String]) -> Result<(), String> {
     let Some(input) = arg_value(args, "--input") else {
         return Err(
             "usage: bayestar_compiler --input <bayestar2019.fits[.gz]> --out <map.be19> \
-             [--decompressed <uncompressed-fits>] — refused"
+             [--ci-mode] [--decompressed <uncompressed-fits>] — refused"
                 .into(),
         );
     };
     let Some(out_path) = arg_value(args, "--out") else {
         return Err("--out <map.be19>: the asset path is never silent — refused".into());
     };
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
     let is_gz = input.ends_with(".gz");
     let fits_path = if is_gz {
@@ -306,6 +308,9 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|e| format!("read {out_path} tail returned void: {e}"))?;
     decode_rec(&tail).ok_or_else(|| format!("{out_path}: the last record stays unread"))?;
     eprintln!("{out_path}: last record reads back");
+    if ci_mode && !upload_asset(&out_path) {
+        return Err(format!("{out_path}: CDN upload returned void"));
+    }
     Ok(())
 }
 
