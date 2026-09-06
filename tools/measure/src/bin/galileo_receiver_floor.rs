@@ -93,12 +93,12 @@ fn main() {
     let first_arg = args.iter().find(|a| !a.starts_with('-')).cloned();
     let path = match first_arg {
         Some(p) => p,
-        None => "data/galileo_receiver.bin".to_string(),
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_receiver.bin".to_string(),
     };
     let pos = args.iter().position(|a| a == "--report");
     let report = match pos.and_then(|i| args.get(i + 1)).cloned() {
         Some(r) => r,
-        None => "/tmp/opencode/galileo_receiver_floor_report.txt".to_string(),
+        None => "tmp/galileo_receiver_floor_report.txt".to_string(),
     };
     let anchor_only = args.iter().any(|a| a == "--anchor-only");
 

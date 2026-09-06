@@ -5,7 +5,7 @@ use std::process::Command;
 
 const TAP_ROOT: &str = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync";
 const NASA_TAP: &str = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-const OUT_DEFAULT: &str = "/tmp/opencode/exclude.bin";
+const OUT_DEFAULT: &str = "tmp/exclude.bin";
 const CONE_RADIUS_DEG: f64 = 0.02;
 const IR_EXCESS_THRESHOLD_MAG: f64 = -0.5;
 
@@ -214,7 +214,7 @@ fn run(
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let mut ir = "/tmp/opencode/ir.bin".to_string();
+    let mut ir = "tmp/ir.bin".to_string();
     let mut out = OUT_DEFAULT.to_string();
     let mut radius = CONE_RADIUS_DEG;
     let mut ci = false;

@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase, transfer_entropy_conditional,
-    transfer_entropy_lag,
+    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    transfer_entropy_conditional, transfer_entropy_lag,
 };
 
 const LOCK_HZ: f64 = 1.0e3;
@@ -53,7 +53,12 @@ fn series_var(v: &[f32]) -> Option<f64> {
     }
     let n = v.len() as f64;
     let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
-    Some(v.iter().map(|&x| (x as f64 - mean) * (x as f64 - mean)).sum::<f64>() / n)
+    Some(
+        v.iter()
+            .map(|&x| (x as f64 - mean) * (x as f64 - mean))
+            .sum::<f64>()
+            / n,
+    )
 }
 
 fn distinct_count(v: &[f32], tol: f64) -> usize {
@@ -63,12 +68,22 @@ fn distinct_count(v: &[f32], tol: f64) -> usize {
     w.len()
 }
 
-#[derive(Default)]
 struct Agg {
     n: usize,
     n_non1: usize,
     vals: Vec<f32>,
     refs: Vec<f64>,
+}
+
+impl Agg {
+    fn new() -> Agg {
+        Agg {
+            n: 0,
+            n_non1: 0,
+            vals: Vec::new(),
+            refs: Vec::new(),
+        }
+    }
 }
 
 struct DayRow {
@@ -132,10 +147,10 @@ fn te_tables(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
 }
 
 fn main() {
-    let path = std::env::args()
-        .skip(1)
-        .find(|a| !a.starts_with('-'))
-        .unwrap_or_else(|| "data/galileo_resid.bin".to_string());
+    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+        Some(p) => p,
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+    };
     let bytes = std::fs::read(&path).expect("resid bin read");
     if bytes.len() < 8 || &bytes[0..4] != b"GASR" {
         println!("no GASR header");
@@ -187,7 +202,7 @@ fn main() {
         }
         let day = unix_day(rec[0]);
         let key = (day, rec[2] as i64, rec[3] as i64);
-        let a = agg.entry(key).or_default();
+        let a = agg.entry(key).or_insert_with(Agg::new);
         a.n += 1;
         if (rec[6] * 10.0).round() as i64 != 10 {
             a.n_non1 += 1;
@@ -226,10 +241,15 @@ fn main() {
             cnon1 += a.n_non1;
         }
     }
-    println!(
-        "cleaned cadence field: {c1s} records at 1 s, {cnon1} at other cadence (frac1s {:.6})",
-        c1s as f64 / (c1s + cnon1).max(1) as f64
-    );
+    let cleaned_n = c1s + cnon1;
+    if cleaned_n == 0 {
+        println!("cleaned cadence field: no qualifying records");
+    } else {
+        println!(
+            "cleaned cadence field: {c1s} records at 1 s, {cnon1} at other cadence (frac1s {:.6})",
+            c1s as f64 / cleaned_n as f64
+        );
+    }
     let mut rows: BTreeMap<i64, Vec<DayRow>> = BTreeMap::new();
     for ((d, st), bins) in &daymap {
         let tot = bins.iter().map(|(_, a)| a.n).sum::<usize>();
@@ -306,11 +326,10 @@ fn main() {
             let mut ml: Vec<String> = Vec::new();
             for (m, v) in &mode_logrms {
                 let mut c = v.clone();
-                ml.push(format!(
-                    "m{m}:n{}:medlog10rms {:.2}",
-                    c.len(),
-                    median(&mut c).unwrap_or(0.0)
-                ));
+                match median(&mut c) {
+                    Some(med) => ml.push(format!("m{m}:n{}:medlog10rms {med:.2}", c.len())),
+                    None => ml.push(format!("m{m}:n{}:medlog10rms absent", c.len())),
+                }
             }
             println!(
                 "  run {d0}-{d1}: {nd} days | domfrac mean {mean_df:.2} | mode-day counts {:?} | mode persist {same}/{adj} | {}",
@@ -329,7 +348,11 @@ fn main() {
                 .max_by(|(_, a), (_, b)| a.cmp(b))
                 .map(|(m, c)| (*m, *c))
                 .expect("mode_days");
-            let mj_rows: Vec<&DayRow> = d.iter().copied().filter(|r| (r.mode as i64) == mj_mode).collect();
+            let mj_rows: Vec<&DayRow> = d
+                .iter()
+                .copied()
+                .filter(|r| (r.mode as i64) == mj_mode)
+                .collect();
             if mj_rows.len() >= MIN_DAYS {
                 let drv_ref_m: Vec<f32> = mj_rows.iter().map(|r| r.ref_med as f32).collect();
                 let tgt_rms_m: Vec<f32> = mj_rows.iter().map(|r| r.noise_rms as f32).collect();
@@ -356,15 +379,34 @@ fn main() {
             let drv_mode: Vec<f32> = d.iter().map(|r| r.mode as f32).collect();
             let nmodes = distinct_count(&drv_mode, 1.0);
             if nmodes >= 2 {
-                te_tables(&format!("S0 ctl mode->ref | {l_base}"), &drv_mode, &drv_ref, &era);
+                te_tables(
+                    &format!("S0 ctl mode->ref | {l_base}"),
+                    &drv_mode,
+                    &drv_ref,
+                    &era,
+                );
             }
-            let small_mode = mode_days.values().min().cloned().unwrap_or(0);
-            if nmodes >= 2 && small_mode >= MIN_MODE_DAYS {
-                te_tables(&format!("S2 mode->rms | {l_base}"), &drv_mode, &tgt_rms, &era);
-                te_tables(&format!("S2 mode->med | {l_base}"), &drv_mode, &tgt_med, &era);
+            let small_mode = mode_days.values().min().copied();
+            if nmodes >= 2 && small_mode.is_some_and(|s| s >= MIN_MODE_DAYS) {
+                te_tables(
+                    &format!("S2 mode->rms | {l_base}"),
+                    &drv_mode,
+                    &tgt_rms,
+                    &era,
+                );
+                te_tables(
+                    &format!("S2 mode->med | {l_base}"),
+                    &drv_mode,
+                    &tgt_med,
+                    &era,
+                );
             } else {
                 println!(
-                    "    S2 skip: {nmodes} mode levels, smallest mode-day count {small_mode} < {MIN_MODE_DAYS}"
+                    "    S2 skip: {nmodes} mode levels, smallest mode-day count {} < {MIN_MODE_DAYS}",
+                    match small_mode {
+                        Some(s) => format!("{s}"),
+                        None => "absent".to_string(),
+                    }
                 );
             }
             let non1: Vec<f32> = d.iter().map(|r| r.frac_non1 as f32).collect();

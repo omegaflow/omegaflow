@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase, transfer_entropy_conditional,
-    transfer_entropy_lag,
+    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    transfer_entropy_conditional, transfer_entropy_lag,
 };
 
 const DAY_S: f64 = 86400.0;
@@ -103,7 +103,7 @@ fn block(label: &str, xs: &[f32], ys: &[f32], era: &[f32], metric: &str) {
 }
 
 fn main() {
-    let Some(recs) = load("data/galileo_resid.bin") else {
+    let Some(recs) = load("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         println!("no resid bin");
         return;
     };
@@ -162,6 +162,9 @@ fn main() {
                 if v.len() < MIN_DAY {
                     continue;
                 }
+                let Some(mi) = month_index(*d) else {
+                    continue;
+                };
                 let mut ss: Vec<f64> = v.iter().map(|r| r[7]).collect();
                 let rr: Vec<f64> = v.iter().map(|r| r[1].abs()).collect();
                 let (Some(sm), Some(rmm), Some(rrms)) =
@@ -175,7 +178,7 @@ fn main() {
                 xs.push(sm as f32);
                 ys_m.push(rmm as f32);
                 ys_r.push(rrms as f32);
-                era.push(month_index(*d).unwrap_or(0) as f32);
+                era.push(mi as f32);
                 daykeys.push(*d);
             }
             if xs.len() < 30 {

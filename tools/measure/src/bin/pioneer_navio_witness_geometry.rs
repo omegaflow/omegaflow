@@ -33,7 +33,7 @@ fn tdb_of_date(s: &str) -> Option<f64> {
 }
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ephemeris_{name}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     match std::fs::read(&path)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))

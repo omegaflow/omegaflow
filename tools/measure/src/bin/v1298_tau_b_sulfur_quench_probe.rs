@@ -342,7 +342,7 @@ fn run_report() -> Result<String, String> {
 fn main() {
     match run_report() {
         Ok(out) => {
-            let path = "/tmp/opencode/v1298_tau_b_sulfur_quench_verdict.txt";
+            let path = "tmp/v1298_tau_b_sulfur_quench_verdict.txt";
             if let Err(e) = std::fs::write(path, &out) {
                 eprintln!("v1298_tau_b_sulfur_quench_probe: write {path}: {e}");
                 std::process::exit(1);

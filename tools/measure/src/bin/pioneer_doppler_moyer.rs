@@ -58,7 +58,7 @@ fn lin_fit3(x1: &[f64], x2: &[f64], y: &[f64]) -> Option<(f64, f64, f64)> {
 }
 
 fn main() {
-    let path = "data/pioneer10_skyfreq.bin";
+    let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
         return;
@@ -69,7 +69,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [EARTH, SC_BODY] {
-        let p = format!("data/ephemeris_{body}.bin");
+        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))

@@ -91,7 +91,7 @@ fn test_last_where_picks_matching_row() {
             assert_eq!(vals.get("euv304"), Some(&3.3e-4));
             assert_eq!(vals.get("euv284"), Some(&4.4e-4));
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -105,7 +105,7 @@ fn test_last_where_no_match_absent() {
         ExtractResult::Measurements(channels) => {
             assert!(channels.is_empty(), "no matching row → absent, never 0.0")
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -122,7 +122,7 @@ fn test_first_where_picks_first_matching_row() {
             assert_eq!(channels.len(), 1);
             assert_eq!(channels[0].0.value, 1.1e-4);
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -141,7 +141,7 @@ fn test_last_where_numeric_filter_value() {
             assert_eq!(channels.len(), 1);
             assert_eq!(channels[0].0.value, 7.0);
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -168,7 +168,7 @@ fn test_parse_where_clause() {
             assert_eq!(fk, "line");
             assert_eq!(fv, "304");
         }
-        _ => panic!("expected filtered last extract"),
+        _ => panic!("parsed extract is not a filtered last extract"),
     }
 }
 
@@ -194,7 +194,10 @@ fn test_parse_where_refused_on_field() {
 #[test]
 fn test_convert_to_si() {
     let close = |a: Option<f64>, b: f64| {
-        let a = a.unwrap_or_else(|| panic!("conversion returned None"));
+        let a = match a {
+            Some(v) => v,
+            None => panic!("conversion returned None"),
+        };
         assert!((a - b).abs() < 1e-9 * b.abs().max(1e-12), "{a} vs {b}");
     };
     close(convert_to_si(5.0, "km"), 5000.0);
@@ -340,7 +343,7 @@ fn test_hapi_fill_skipped_and_component_index() {
             assert!(vals.contains(&("z", 3.3)));
             assert!(vals.contains(&("s", 7.5)));
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
     let fill_only = r#"{
         "parameters": [{"name": "Time"}, {"name": "SCAL", "fill": "-1.0e31"}],
@@ -357,7 +360,7 @@ fn test_hapi_fill_skipped_and_component_index() {
         ExtractResult::Measurements(channels) => {
             assert!(channels.is_empty(), "fill must not be ingested");
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -398,7 +401,7 @@ fn test_hapi_without_parameters_array_vector_and_declared_fill() {
             assert!(vals.contains(&("z", 52404.9)));
             assert!(vals.contains(&("f", 53546.8)));
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 use std::collections::HashMap;
@@ -676,7 +679,7 @@ fn test_extract_default_epoch_is_observer_epoch() {
                 "an epoch-less row carries the observer's epoch, not the machine now"
             );
         }
-        _ => panic!("expected measurements"),
+        _ => panic!("extract is not Measurements"),
     }
 }
 
@@ -2912,10 +2915,10 @@ fn test_anchor_body_agnostic() {
             body_name,
             "mars",
             "body name: {}",
-            sample
-                .motion
-                .anchor_body()
-                .unwrap_or_else(|| "absent".into())
+            match sample.motion.anchor_body() {
+                Some(n) => n,
+                None => "absent",
+            }
         );
     } else {
         panic!("motion is Barycenter or Linear, Surface absent");
@@ -3066,7 +3069,7 @@ fn test_last_form_captures_unit() {
             assert_eq!(fk, "satellite");
             assert_eq!(fv, "18");
         }
-        _ => panic!("expected filtered last extract"),
+        _ => panic!("parsed extract is not a filtered last extract"),
     }
 }
 
@@ -3695,11 +3698,15 @@ fn test_body_barycenter_position_at_granule_boundary() {
         let mut map = std::collections::HashMap::new();
         map.insert("boundary".to_string(), eph);
         let tdb = (boundary_jd - super::J2000_EPOCH) * 86400.0;
-        let p = super::body_barycenter_position("boundary", tdb, &map)
-            .unwrap_or_else(|| panic!("boundary {boundary_jd} (t0 {t0_jd}, dt {dt_jd}) uncovered"));
+        let p = match super::body_barycenter_position("boundary", tdb, &map) {
+            Some(p) => p,
+            None => panic!("boundary {boundary_jd} (t0 {t0_jd}, dt {dt_jd}) uncovered"),
+        };
         assert_eq!(p[0], 1.0e9);
-        let v = super::body_barycenter_velocity("boundary", tdb, &map)
-            .unwrap_or_else(|| panic!("boundary {boundary_jd} uncovered by the velocity lookup"));
+        let v = match super::body_barycenter_velocity("boundary", tdb, &map) {
+            Some(v) => v,
+            None => panic!("boundary {boundary_jd} uncovered by the velocity lookup"),
+        };
         assert!(v[0].is_finite());
     }
 }
@@ -4237,14 +4244,14 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
     let dst_body = match super::fetch_raw(&dst_src.url, None, &[], 3600) {
         Some(b) => b,
         None => {
-            eprintln!("dst fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("dst fetch void — network-dependent, the series stays unread");
             return;
         }
     };
     let co2_body = match super::fetch_raw(&co2_src.url, None, &[], 3600) {
         Some(b) => b,
         None => {
-            eprintln!("co2 fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("co2 fetch void — network-dependent, the series stays unread");
             return;
         }
     };
@@ -4296,7 +4303,7 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
     ) {
         Some(b) => b,
         None => {
-            eprintln!("qbo fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("qbo fetch void — network-dependent, the series stays unread");
             return;
         }
     };
@@ -4341,7 +4348,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
     ) {
         Some(b) => b,
         None => {
-            eprintln!("oulu fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("oulu fetch void — network-dependent, the series stays unread");
             return;
         }
     };
@@ -4355,7 +4362,7 @@ format text
 on earth 65.06 25.47 0
 rows .
 epoch 0
-field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
+field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 0.0 0.0
 ";
     let osrcs = super::parse_sources(oulu_block);
     assert_eq!(osrcs.len(), 1);
@@ -4381,7 +4388,7 @@ field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
     ) {
         Some(b) => b,
         None => {
-            eprintln!("d20 fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("d20 fetch void — network-dependent, the series stays unread");
             return;
         }
     };
@@ -4396,7 +4403,7 @@ on earth 0.0 -120.0 0
 rows .
 epoch 0
 gate iso_6 0.0 500.0
-field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
+field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
 ";
     let dsrcs = super::parse_sources(d20_block);
     assert_eq!(dsrcs.len(), 1);
@@ -4404,7 +4411,10 @@ field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
         super::ExtractResult::Measurements(v) => {
             assert!(!v.is_empty(), "d20 series must not be empty");
             assert_eq!(v[0].0.name, "d20_thermocline_depth_m");
-            assert_eq!(v[0].1.force, 5, "d20 is thermal (force 5)");
+            assert_eq!(
+                v[0].1.force, 1,
+                "d20 depth is a gravity-anchored length (force 1)"
+            );
             let plausible = v.iter().all(|(c, _)| c.value > 0.0 && c.value < 500.0);
             assert!(plausible, "d20 depths must be plausible m");
         }
@@ -4432,7 +4442,7 @@ field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0
     ) {
         Some(b) => b,
         None => {
-            eprintln!("drifter fetch void — netzabhängig, Reihe übersprungen");
+            eprintln!("drifter fetch void — network-dependent, the series stays unread");
             return;
         }
     };
@@ -5790,5 +5800,8 @@ fn test_bl_narrowband_read_path_honors_freq_bin_width() {
     let (ch, _) = &channels[0];
     assert_eq!(ch.freq, events[0].freq_hz);
     assert_eq!(ch.bin_width, events[0].bin_width_hz);
-    assert!(ch.freq > 0.0 && ch.bin_width > 0.0, "compiled line read-back must not hard-0 the band slots");
+    assert!(
+        ch.freq > 0.0 && ch.bin_width > 0.0,
+        "compiled line read-back must not hard-0 the band slots"
+    );
 }

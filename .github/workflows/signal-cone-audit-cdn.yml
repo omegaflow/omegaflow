@@ -10,7 +10,7 @@ permissions:
 
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  OMEGAFLOW_STATE: /home/runner/.local/state/omegaflow
+  OMEGAFLOW_STATE: data/state
 
 jobs:
   signal-cone-audit:

@@ -48,7 +48,7 @@ fn median(vals: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -80,7 +80,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -126,7 +126,10 @@ fn main() {
 
     let mut out: Vec<String> = Vec::new();
     out.push("galileo mode-2 station split — the quiet-window pooling test".to_string());
-    out.push("binding: mode 2 records only; lock transitions (|resid| > 1000 Hz) excluded before noise".to_string());
+    out.push(
+        "binding: mode 2 records only; lock transitions (|resid| > 1000 Hz) excluded before noise"
+            .to_string(),
+    );
     out.push("noise cell = per (day) and per (day, station); cell RMS about the cell mean; median across cells".to_string());
     out.push(format!("day-cell minimum sample count: {MIN_CELL}"));
     out.push("geometry: alpha = angle at the Sun (Earth/probe), elong = angle at Earth (Sun/probe), from galileo_daily + earth barycenters".to_string());
@@ -137,8 +140,14 @@ fn main() {
     out.push(format!("  mode 2 lock transitions: {n_lock}"));
     let n: usize = day_cells.values().map(|v| v.len()).sum();
     out.push(format!("  mode 2 samples after lock exclusion: {n}"));
-    out.push(format!("  days with any mode-2 record: {}", day_total.len()));
-    out.push(format!("  days after lock exclusion (>= 1 non-lock sample): {}", day_cells.len()));
+    out.push(format!(
+        "  days with any mode-2 record: {}",
+        day_total.len()
+    ));
+    out.push(format!(
+        "  days after lock exclusion (>= 1 non-lock sample): {}",
+        day_cells.len()
+    ));
     out.push(format!(
         "  days whose mode-2 records are all lock transitions: {}",
         day_total
@@ -169,7 +178,11 @@ fn main() {
 
     let mut geo: BTreeMap<i64, (f64, f64, f64)> = BTreeMap::new();
     let mut no_geom = 0usize;
-    let geom_days: BTreeSet<i64> = day_total.keys().copied().chain(day_cells.keys().copied()).collect();
+    let geom_days: BTreeSet<i64> = day_total
+        .keys()
+        .copied()
+        .chain(day_cells.keys().copied())
+        .collect();
     for d in &geom_days {
         let t = *d as f64 * DAY_S;
         let (Some(p), Some(e)) = (
@@ -227,7 +240,9 @@ fn main() {
         .filter_map(|(d, v)| daycell(v).map(|r| (*d, r)))
         .collect();
     out.push(String::new());
-    out.push(format!("A. pooled per-day RMS, mode 2 (cells >= {MIN_CELL} samples)"));
+    out.push(format!(
+        "A. pooled per-day RMS, mode 2 (cells >= {MIN_CELL} samples)"
+    ));
     let mut fmt_pool = |tag: &str, dayset: &BTreeSet<i64>| {
         let list: Vec<f64> = pooled_all
             .iter()
@@ -277,35 +292,41 @@ fn main() {
             list.len()
         ));
     };
-    ref_band("all mode-2 day cells (incl all-lock days)", &geo.keys().copied().collect());
+    ref_band(
+        "all mode-2 day cells (incl all-lock days)",
+        &geo.keys().copied().collect(),
+    );
     ref_band("elong < 30", &quiet_elong);
     ref_band("alpha >= 150", &quiet_alpha);
     {
         let mut sorted: Vec<(String, f64, f64, f64, usize)> = Vec::new();
         for d in &quiet_elong {
-            let v = day_cells.get(d);
-            let r = match v {
-                Some(x) => rms(x),
-                None => f64::NAN,
+            let (r, nn) = match day_cells.get(d) {
+                Some(x) => (rms(x), x.len()),
+                None => (f64::NAN, 0),
             };
-            let (al, el, _au) = geo.get(d).copied().unwrap_or((f64::NAN, f64::NAN, f64::NAN));
-            sorted.push((
-                jd_date(*d as f64 * DAY_S),
-                al,
-                el,
-                r,
-                v.map(|x| x.len()).unwrap_or(0),
-            ));
+            let (al, el, _au) = geo
+                .get(d)
+                .copied()
+                .unwrap_or((f64::NAN, f64::NAN, f64::NAN));
+            sorted.push((jd_date(*d as f64 * DAY_S), al, el, r, nn));
         }
         sorted.sort_by(|a, b| a.3.total_cmp(&b.3));
-        out.push("  elong < 30 day cells sorted by day RMS (date, alpha, elong, day_rms, n_nonlock):".to_string());
+        out.push(
+            "  elong < 30 day cells sorted by day RMS (date, alpha, elong, day_rms, n_nonlock):"
+                .to_string(),
+        );
         for (date, al, el, r, nn) in &sorted {
-            out.push(format!("    {date}  alpha {al:.1}  elong {el:.1}  rms {r:.3} Hz  n {nn}"));
+            out.push(format!(
+                "    {date}  alpha {al:.1}  elong {el:.1}  rms {r:.3} Hz  n {nn}"
+            ));
         }
     }
 
     out.push(String::new());
-    out.push(format!("B. per-(day, station) RMS, mode 2 (cells >= {MIN_CELL} samples)"));
+    out.push(format!(
+        "B. per-(day, station) RMS, mode 2 (cells >= {MIN_CELL} samples)"
+    ));
     out.push("   station: med_all = median over all station-day cells; med_conj = median over cells whose day has elong < 30".to_string());
     for (s, (_, _)) in &st_hist {
         let cells_all: Vec<((i64, i64), f64, usize)> = stday_cells
@@ -323,14 +344,22 @@ fn main() {
             .collect();
         let rms_all: Vec<f64> = cells_all.iter().map(|c| c.1).collect();
         let ncell_all: Vec<f64> = cells_all.iter().map(|c| c.2 as f64).collect();
-        let ndays_all: usize = cells_all.iter().map(|c| c.0 .0).collect::<BTreeSet<i64>>().len();
+        let ndays_all: usize = cells_all
+            .iter()
+            .map(|c| c.0 .0)
+            .collect::<BTreeSet<i64>>()
+            .len();
         let cells_conj: Vec<((i64, i64), f64, usize)> = cells_all
             .iter()
             .filter(|c| quiet_elong.contains(&c.0 .0))
             .copied()
             .collect();
         let rms_conj: Vec<f64> = cells_conj.iter().map(|c| c.1).collect();
-        let ndays_conj: usize = cells_conj.iter().map(|c| c.0 .0).collect::<BTreeSet<i64>>().len();
+        let ndays_conj: usize = cells_conj
+            .iter()
+            .map(|c| c.0 .0)
+            .collect::<BTreeSet<i64>>()
+            .len();
         out.push(format!(
             "  station {s}: med_all {} Hz ({} cells, {} days, cell n med/min/max {}/{}/{})   med_conj {} Hz ({} cells, {} days)",
             fmt_o(median(&rms_all)),
