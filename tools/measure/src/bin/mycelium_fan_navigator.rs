@@ -1,5 +1,6 @@
 use omegaflow::archivar::spectral::civil_from_days;
 use omegaflow::json::{parse_json, JsonVal};
+use omegaflow_measure::nadel_gate::{allwise_witness, natural_excluded, sep_arcsec, WiseOutcome};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -13,9 +14,7 @@ const FINK_DEC: &str = "r:dec";
 const FINK_NDIA: &str = "r:nDiaSources";
 const FINK_CLASS: &str = "f:main_label_classifier";
 const FINK_SIMBAD: &str = "f:xm_simbad_otype";
-const IRSA_TAP: &str = "https://irsa.ipac.caltech.edu/TAP/sync";
-const ALLWISE_TABLE: &str = "allsky_4band_p3as_psd";
-const UA: &str = "omegaflow-mycelium-fan-navigator/1.0";
+const FINK_UA: &str = "omegaflow-mycelium-fan-navigator/1.0";
 
 const GOLDEN_ANGLE_DEG: f64 = 137.50776405003785;
 const FLOOR_DEFAULT: usize = 24;
@@ -25,9 +24,6 @@ const HTTP_RETRY: usize = 3;
 const RATE_LIMIT_BACKOFF_MS: u64 = 3000;
 const CONE_PAUSE_MS: u64 = 1000;
 const OBJECT_PAUSE_MS: u64 = 250;
-const WISE_RADIUS_ARCSEC: f64 = 6.0;
-const AGN_WEDGE_W1_W2: f64 = 0.8;
-const ALLWISE_MAG_CODE_MIN: f64 = 90.0;
 const RA_NGP_DEG: f64 = 192.85948;
 const DEC_NGP_DEG: f64 = 27.12825;
 const OBSERVABILITY_LAT_SCALE_DEG: f64 = 10.0;
@@ -59,6 +55,7 @@ struct ConeCandidate {
 }
 
 struct ConeObjectRow {
+    dia: String,
     ra_deg: f64,
     dec_deg: f64,
     n_sources: usize,
@@ -74,19 +71,6 @@ struct ConeMeasure {
     agn_excluded: usize,
     wise_pending: usize,
     food: usize,
-}
-
-struct WiseMatch {
-    sep_arcsec: f64,
-    w1: Option<f64>,
-    w2: Option<f64>,
-    w1_sig: Option<f64>,
-}
-
-enum WiseTag {
-    Agn,
-    Field,
-    Pending,
 }
 
 struct VoiceScores {
@@ -441,10 +425,7 @@ fn voice_scores(
         None => None,
     };
     let future = mountain.map(voice_future);
-    let river = match nearest {
-        Some((n, _)) => voice_river(ra_deg, dec_deg, n, measured, river_window_deg),
-        None => None,
-    };
+    let river = voice_river(ra_deg, dec_deg, measured, river_window_deg);
     let mycelium = voice_mycelium(ra_deg, dec_deg, measured, mycelium_window_deg);
     let sensory = Some(voice_sensory(ra_deg, dec_deg));
     let mut present: Vec<f64> = Vec::new();
@@ -489,37 +470,56 @@ fn voice_sensory(ra_deg: f64, dec_deg: f64) -> f64 {
     (lat_deg / OBSERVABILITY_LAT_SCALE_DEG).min(1.0)
 }
 
-fn voice_river(
-    c_ra: f64,
-    c_dec: f64,
-    nearest_idx: usize,
-    measured: &[&ConeVisit],
-    window_deg: f64,
-) -> Option<f64> {
-    let n = measured[nearest_idx];
-    let toward = local_unit(n.ra_deg, n.dec_deg, c_ra, c_dec)?;
-    let mut sum = 0.0;
-    let mut total = 0usize;
-    for (i, m) in measured.iter().enumerate() {
-        if i == nearest_idx {
+fn voice_river(c_ra: f64, c_dec: f64, measured: &[&ConeVisit], window_deg: f64) -> Option<f64> {
+    let cos_dec = c_dec.to_radians().cos();
+    let mut xs: Vec<f64> = Vec::new();
+    let mut ys: Vec<f64> = Vec::new();
+    let mut zs: Vec<f64> = Vec::new();
+    for m in measured {
+        if sep_deg(c_ra, c_dec, m.ra_deg, m.dec_deg) > window_deg {
             continue;
         }
-        if sep_deg(n.ra_deg, n.dec_deg, m.ra_deg, m.dec_deg) > window_deg {
-            continue;
-        }
-        total += 1;
-        if let Some(e) = local_unit(n.ra_deg, n.dec_deg, m.ra_deg, m.dec_deg) {
-            let cos = toward.0 * e.0 + toward.1 * e.1;
-            if cos > 0.0 {
-                sum += cos;
+        match m.food {
+            Some(food) => {
+                xs.push(delta_ra(c_ra, m.ra_deg) * cos_dec);
+                ys.push(m.dec_deg - c_dec);
+                zs.push(food as f64);
             }
+            None => {}
         }
     }
-    if total == 0 {
-        None
-    } else {
-        Some(sum / total as f64)
+    if xs.len() < 3 {
+        return None;
     }
+    let n = xs.len() as f64;
+    let sx: f64 = xs.iter().sum();
+    let sy: f64 = ys.iter().sum();
+    let sz: f64 = zs.iter().sum();
+    let sxx: f64 = xs.iter().map(|a| a * a).sum();
+    let syy: f64 = ys.iter().map(|b| b * b).sum();
+    let sxy: f64 = xs.iter().zip(ys.iter()).map(|(a, b)| a * b).sum();
+    let sxz: f64 = xs.iter().zip(zs.iter()).map(|(a, c)| a * c).sum();
+    let syz: f64 = ys.iter().zip(zs.iter()).map(|(b, c)| b * c).sum();
+    let det = sxx * (syy * n - sy * sy) - sxy * (sxy * n - sy * sx) + sx * (sxy * sy - syy * sx);
+    if det.abs() < 1e-12 {
+        return None;
+    }
+    let a =
+        (sxz * (syy * n - sy * sy) - syz * (sxy * n - sy * sx) + sz * (sxy * sy - syy * sx)) / det;
+    let b =
+        (sxx * (syz * n - sy * sz) - sxz * (sxy * n - sy * sx) + sx * (sxy * sz - syz * sx)) / det;
+    let g_norm = (a * a + b * b).sqrt();
+    if g_norm < 1e-9 {
+        return None;
+    }
+    let ox = -sx / n;
+    let oy = -sy / n;
+    let o_norm = (ox * ox + oy * oy).sqrt();
+    if o_norm < 1e-9 {
+        return None;
+    }
+    let dot = (a * ox + b * oy) / (g_norm * o_norm);
+    Some(((dot + 1.0) / 2.0).clamp(0.0, 1.0))
 }
 
 fn voice_mycelium(
@@ -687,10 +687,10 @@ fn measure_cone(ra: f64, dec: f64, radius_arcsec: f64, floor: usize, wise: bool)
             continue;
         }
         if wise {
-            match allwise_witness(r.ra_deg, r.dec_deg) {
-                WiseTag::Agn => agn_excluded += 1,
-                WiseTag::Field => food += 1,
-                WiseTag::Pending => {
+            match allwise_witness(&r.dia, r.ra_deg, r.dec_deg) {
+                WiseOutcome::Agn => agn_excluded += 1,
+                WiseOutcome::Field => food += 1,
+                WiseOutcome::Pending => {
                     food += 1;
                     wise_pending += 1;
                 }
@@ -713,10 +713,6 @@ fn measure_cone(ra: f64, dec: f64, radius_arcsec: f64, floor: usize, wise: bool)
         wise_pending,
         food,
     }
-}
-
-fn natural_excluded(class: i64, simbad: &str) -> bool {
-    !(class == -1 && simbad == "Fail")
 }
 
 fn cone_rows(ra: f64, dec: f64, radius_arcsec: f64) -> Option<Vec<ConeObjectRow>> {
@@ -760,7 +756,7 @@ fn cone_rows(ra: f64, dec: f64, radius_arcsec: f64) -> Option<Vec<ConeObjectRow>
         return None;
     }
     let mut objs: Vec<ConeObjectRow> = Vec::new();
-    for r in &rows {
+    for (k, r) in rows.iter().enumerate() {
         let JsonVal::Obj(m) = r else { continue };
         let (Some(ra_v), Some(dec_v), Some(n_v)) = (
             obj_f64(m, FINK_RA),
@@ -778,6 +774,7 @@ fn cone_rows(ra: f64, dec: f64, radius_arcsec: f64) -> Option<Vec<ConeObjectRow>
             None => "Fail".to_string(),
         };
         objs.push(ConeObjectRow {
+            dia: ids[k].clone(),
             ra_deg: ra_v,
             dec_deg: dec_v,
             n_sources: n_v as usize,
@@ -835,168 +832,6 @@ fn extract_dia_ids(body: &[u8]) -> Vec<String> {
     out
 }
 
-fn allwise_witness(ra: f64, dec: f64) -> WiseTag {
-    let matches = match allwise_cone(ra, dec) {
-        Some(m) => m,
-        None => {
-            println!(
-                "mycelium AllWISE witness ra {ra:.4} dec {dec:.4}: the IRSA TAP query did not answer or answered non-200 — the mid-IR witness stays pending"
-            );
-            return WiseTag::Pending;
-        }
-    };
-    let m = match matches.first() {
-        Some(x) => x,
-        None => {
-            println!(
-                "mycelium AllWISE witness ra {ra:.4} dec {dec:.4}: no AllWISE source within {WISE_RADIUS_ARCSEC} arcsec (0 honored)"
-            );
-            return WiseTag::Field;
-        }
-    };
-    let color = match (m.w1, m.w2, m.w1_sig) {
-        (Some(w1), Some(w2), Some(sig)) if sig > 0.0 => Some(w1 - w2),
-        _ => None,
-    };
-    match color {
-        Some(c) if c >= AGN_WEDGE_W1_W2 => {
-            println!(
-                "mycelium AllWISE witness ra {ra:.4} dec {dec:.4}: nearest match {:.1} arcsec W1-W2 {c:.3} >= {AGN_WEDGE_W1_W2} — the mid-IR AGN wedge excludes the object",
-                m.sep_arcsec
-            );
-            WiseTag::Agn
-        }
-        Some(c) => {
-            println!(
-                "mycelium AllWISE witness ra {ra:.4} dec {dec:.4}: nearest match {:.1} arcsec W1-W2 {c:.3} below the {AGN_WEDGE_W1_W2} wedge — the object remains",
-                m.sep_arcsec
-            );
-            WiseTag::Field
-        }
-        None => {
-            println!(
-                "mycelium AllWISE witness ra {ra:.4} dec {dec:.4}: nearest match {:.1} arcsec carries no two-band W1/W2 detection — no wedge color (0 honored), the object remains",
-                m.sep_arcsec
-            );
-            WiseTag::Field
-        }
-    }
-}
-
-fn allwise_cone(ra: f64, dec: f64) -> Option<Vec<WiseMatch>> {
-    let r_deg = WISE_RADIUS_ARCSEC / 3600.0;
-    let adql = format!(
-        "SELECT designation, ra, dec, w1mpro, w2mpro, w3mpro, w4mpro, w1sigmpro FROM {ALLWISE_TABLE} WHERE CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', {ra:.6}, {dec:.6}, {r_deg})) = 1"
-    );
-    let (code, body) = match irsa_tap_sync(&adql) {
-        Some(r) => r,
-        None => {
-            println!(
-                "mycelium AllWISE cone ra {ra:.4} dec {dec:.4}: the IRSA TAP query did not answer (measured stall) — the witness stays pending"
-            );
-            return None;
-        }
-    };
-    if code != "200" {
-        println!(
-            "mycelium AllWISE cone ra {ra:.4} dec {dec:.4}: IRSA TAP answered HTTP {code} — the witness stays pending"
-        );
-        return None;
-    }
-    let mut matches = parse_wise_csv(&body, ra, dec);
-    matches.sort_by(|a, b| a.sep_arcsec.total_cmp(&b.sep_arcsec));
-    Some(matches)
-}
-
-fn irsa_tap_sync(adql: &str) -> Option<(String, Vec<u8>)> {
-    let mut cmd = Command::new("curl");
-    cmd.arg("-sS")
-        .arg("-m")
-        .arg("60")
-        .arg("-A")
-        .arg(UA)
-        .arg("-G")
-        .arg(IRSA_TAP)
-        .arg("--data-urlencode")
-        .arg(format!("QUERY={adql}"))
-        .arg("--data-urlencode")
-        .arg("FORMAT=csv")
-        .arg("--data-urlencode")
-        .arg("MAXREC=10")
-        .arg("-o")
-        .arg("-")
-        .arg("-w")
-        .arg("\n%{http_code}");
-    let out = cmd.output().ok()?;
-    let stdout = out.stdout;
-    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
-    let code = String::from_utf8_lossy(&stdout[idx + 1..])
-        .trim()
-        .to_string();
-    Some((code, stdout[..idx].to_vec()))
-}
-
-fn parse_wise_csv(body: &[u8], ra: f64, dec: f64) -> Vec<WiseMatch> {
-    let Ok(text) = std::str::from_utf8(body) else {
-        return Vec::new();
-    };
-    let mut out: Vec<WiseMatch> = Vec::new();
-    let mut lines = text.lines();
-    let header = match lines.next() {
-        Some(h) => h,
-        None => return out,
-    };
-    let cols: Vec<&str> = header.split(',').map(|c| c.trim()).collect();
-    let index_of = |name: &str| cols.iter().position(|c| *c == name);
-    let (Some(ira), Some(idec), Some(iw1), Some(iw2), Some(iw1s)) = (
-        index_of("ra"),
-        index_of("dec"),
-        index_of("w1mpro"),
-        index_of("w2mpro"),
-        index_of("w1sigmpro"),
-    ) else {
-        return out;
-    };
-    for line in lines {
-        if line.trim().is_empty() {
-            continue;
-        }
-        let f: Vec<&str> = line.split(',').collect();
-        let (Some(sra), Some(sdec)) = (csv_num(&f, ira), csv_num(&f, idec)) else {
-            continue;
-        };
-        out.push(WiseMatch {
-            sep_arcsec: sep_arcsec(ra, dec, sra, sdec),
-            w1: mag_num(&f, iw1),
-            w2: mag_num(&f, iw2),
-            w1_sig: mag_num(&f, iw1s),
-        });
-    }
-    out
-}
-
-fn csv_num(f: &[&str], k: usize) -> Option<f64> {
-    let cell = f.get(k)?.trim();
-    if cell.is_empty() {
-        return None;
-    }
-    let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
-}
-
-fn mag_num(f: &[&str], k: usize) -> Option<f64> {
-    let v = csv_num(f, k)?;
-    if v < ALLWISE_MAG_CODE_MIN {
-        Some(v)
-    } else {
-        None
-    }
-}
-
 fn curl_post_retry(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
     for attempt in 0..HTTP_RETRY {
         let resp = match curl_post_bytes(url, json_body) {
@@ -1026,7 +861,7 @@ fn curl_post_bytes(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
         .arg("-m")
         .arg("90")
         .arg("-A")
-        .arg(UA)
+        .arg(FINK_UA)
         .arg("-H")
         .arg("Content-Type: application/json")
         .arg("-X")
@@ -1291,18 +1126,6 @@ fn nearest_scanned(ra_deg: f64, dec_deg: f64, measured: &[&ConeVisit]) -> Option
     best
 }
 
-fn local_unit(from_ra: f64, from_dec: f64, to_ra: f64, to_dec: f64) -> Option<(f64, f64)> {
-    let cos_dec = from_dec.to_radians().cos();
-    let x = delta_ra(from_ra, to_ra) * cos_dec;
-    let y = to_dec - from_dec;
-    let len = (x * x + y * y).sqrt();
-    if len > 0.0 {
-        Some((x / len, y / len))
-    } else {
-        None
-    }
-}
-
 fn delta_ra(a_deg: f64, b_deg: f64) -> f64 {
     let d = (b_deg - a_deg).rem_euclid(360.0);
     if d > 180.0 {
@@ -1319,10 +1142,6 @@ fn sep_deg(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
     let d2 = dec2.to_radians();
     let a = ((d2 - d1) / 2.0).sin().powi(2) + d1.cos() * d2.cos() * ((r2 - r1) / 2.0).sin().powi(2);
     2.0 * a.sqrt().clamp(0.0, 1.0).asin().to_degrees()
-}
-
-fn sep_arcsec(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
-    sep_deg(ra1, dec1, ra2, dec2) * 3600.0
 }
 
 #[cfg(test)]
@@ -1431,5 +1250,62 @@ mod tests {
         for c in &fine {
             assert_eq!(c.radius_arcsec, 450.0);
         }
+    }
+
+    fn food_visit(ra: f64, dec: f64, food: usize) -> ConeVisit {
+        ConeVisit {
+            ra_deg: ra,
+            dec_deg: dec,
+            radius_arcsec: 900.0,
+            food: Some(food),
+        }
+    }
+
+    #[test]
+    fn river_prefers_the_rich_side_of_a_food_gradient() {
+        let window_deg = RIVER_WINDOW_MULT * 900.0 / 3600.0;
+        let state: Vec<ConeVisit> = vec![
+            food_visit(266.5168, -29.0078, 0),
+            food_visit(266.6168, -28.9578, 1),
+            food_visit(266.7168, -29.0078, 2),
+            food_visit(266.8168, -28.9578, 3),
+        ];
+        let measured: Vec<&ConeVisit> = state.iter().collect();
+        let up = voice_river(266.9168, -28.9578, &measured, window_deg).unwrap();
+        let down = voice_river(266.3668, -29.0078, &measured, window_deg).unwrap();
+        assert!(
+            up > down,
+            "the river follows the least-squares food gradient — measured uphill {up:.3} vs downhill {down:.3}"
+        );
+        assert!(up > 0.5);
+        assert!(down < 0.5);
+    }
+
+    #[test]
+    fn river_is_absent_with_fewer_than_three_food_anchors() {
+        let window_deg = RIVER_WINDOW_MULT * 900.0 / 3600.0;
+        let state: Vec<ConeVisit> = vec![food_visit(266.5, -29.0, 0), food_visit(266.6, -28.9, 2)];
+        let measured: Vec<&ConeVisit> = state.iter().collect();
+        assert_eq!(voice_river(266.4168, -29.0078, &measured, window_deg), None);
+    }
+
+    #[test]
+    fn mycelium_is_absent_without_neighbours_and_measured_zero_with_void_neighbours() {
+        let window_deg = MYCELIUM_WINDOW_MULT * 900.0 / 3600.0;
+        let empty: Vec<&ConeVisit> = Vec::new();
+        assert_eq!(voice_mycelium(266.4168, -29.0078, &empty, window_deg), None);
+        let binding = vec![food_visit(266.4168, -29.0078, 0)];
+        let anchors: Vec<&ConeVisit> = binding.iter().collect();
+        assert_eq!(
+            voice_mycelium(266.4168, -29.0078, &anchors, window_deg),
+            Some(0.0)
+        );
+    }
+
+    #[test]
+    fn a_measured_zero_is_a_veto_and_an_absent_voice_is_excluded() {
+        assert_eq!(synthesis_geometric_mean(&[0.0, 0.9, 0.9]), Some(0.0));
+        let g = synthesis_geometric_mean(&[0.9, 0.9]).unwrap();
+        assert!(approx(g, 0.9));
     }
 }
