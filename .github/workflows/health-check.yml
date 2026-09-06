@@ -18,7 +18,7 @@ env:
   OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
   NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
   FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
-  OMEGAFLOW_STATE: /home/runner/.local/state/omegaflow
+  OMEGAFLOW_STATE: data/state
 jobs:
   verify:
     runs-on: ubuntu-latest

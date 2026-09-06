@@ -41,7 +41,7 @@ fn median(vals: &[f64]) -> Option<f64> {
     Some(s[s.len() / 2])
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -73,7 +73,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

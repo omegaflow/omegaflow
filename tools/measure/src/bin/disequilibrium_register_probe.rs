@@ -48,14 +48,6 @@ struct PlanetRow {
     st_vsin_kms: Option<f64>,
 }
 
-// One witness row as the register carries it: a (host, analysis) statement
-// with any of the measured channels [C/H]/[O/H]/[N/H]/[Fe/H]/C-O (the C/O
-// witness), log R'HK / L_X / F_X / L_X/L_bol / S-index / P_rot (the
-// activity/XUV witness). A channel the row does not carry is None; a channel
-// the row names as pending stays a token in `pending`, never a fabricated
-// number. A row with a full [C/H]/[O/H]/[Fe/H] budget is what the C/O
-// equilibrium regression can run; the activity channels feed the second
-// cleaning step.
 struct WitnessRow {
     analysis: String,
     delivery: Option<String>,
@@ -113,14 +105,14 @@ fn read_witness(path: &str) -> Result<HashMap<String, Vec<WitnessRow>>, String> 
             continue;
         };
         let nf = |k: &str| jnum(row, k).filter(|v| v.is_finite());
-        let pending = jstr(row, "pending")
-            .map(|s| {
-                s.split(',')
-                    .map(|t| t.trim().to_string())
-                    .filter(|t| !t.is_empty())
-                    .collect::<Vec<String>>()
-            })
-            .unwrap_or_default();
+        let pending = match jstr(row, "pending") {
+            Some(s) => s
+                .split(',')
+                .map(|t| t.trim().to_string())
+                .filter(|t| !t.is_empty())
+                .collect::<Vec<String>>(),
+            None => Vec::new(),
+        };
         let w = WitnessRow {
             analysis: analysis.to_string(),
             delivery: jstr(row, "delivery"),
@@ -243,7 +235,7 @@ fn fmt_activity_witness(w: &WitnessRow) -> String {
     if parts.is_empty() && !open.is_empty() {
         parts.push(format!("{} pending", open.join("/")));
     } else if !open.is_empty() {
-        parts.push(format!("offen: {}", open.join("/")));
+        parts.push(format!("pending: {}", open.join("/")));
     }
     let mut s = format!("{} [{}", parts.join(" | "), w.analysis);
     if let Some(d) = &w.delivery {
@@ -338,7 +330,7 @@ fn main() {
     let mut params = String::new();
     let mut witness = "docs/reference/co_rhk_witness_seed.json".to_string();
     let mut census = "docs/reference/jwst_host_census.json".to_string();
-    let mut out = "/tmp/opencode/disequilibrium_register_verdict.txt".to_string();
+    let mut out = "tmp/disequilibrium_register_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut trials = DEFAULT_TRIALS;
     let mut i = 1usize;
@@ -421,8 +413,6 @@ struct HostPlan {
     model: HostModel,
 }
 
-// The measured host-abundance regression: equilibrium at the host's own
-// [C/H]/[O/H]/[N/H] budget (S on the row's [Fe/H]) instead of solar C/O.
 #[derive(Clone)]
 struct MeasuredRun {
     analysis: String,
@@ -492,71 +482,71 @@ fn run(
         .collect();
 
     let mut out = String::new();
-    out.push_str("disequilibrium_register_probe — ko-indizierter Disequilibrium-Befund\n");
-    out.push_str("signal: eine PUBLIZIERT-DETEKTIERTE Spezies, deren Gleichgewichts-Mischungsverhältnis bei Teq die Detektions-Schwelle nicht erreicht = disequilibrium-hit\n");
+    out.push_str("disequilibrium_register_probe — co-indexed disequilibrium verdict\n");
+    out.push_str("signal: a PUBLISHED-DETECTED species whose equilibrium mixing ratio at Teq does not reach the detection threshold = disequilibrium-hit\n");
     out.push_str(&format!(
-        "inputs: seed {} ({} Detektionen) | params {} ({} Wirte)\n",
+        "inputs: seed {} ({} detections) | params {} ({} hosts)\n",
         seed_path,
         detections.len(),
         params_path,
         planet_rows.len()
     ));
     out.push_str(&format!(
-        "modell: Gleichgewicht bei {:.0} bar, solare Haeufigkeit H,C,O,N,S (S/H 1.62e-5, Anders-Grevesse 1989)\n",
+        "model: equilibrium at {:.0} bar, solar abundance H,C,O,N,S (S/H 1.62e-5, Anders-Grevesse 1989)\n",
         P0_PA / 101325.0
     ));
     out.push_str(&format!(
-        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_sulfur (einphasiges Gas, 24 Slots)\n",
+        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_sulfur (single-phase gas, 24 slots)\n",
         SULFUR_T_MIN, MODEL_T_MAX
     ));
     out.push_str(&format!(
-        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_condensed (kondensations-bewusst; dieselben 24 Gas-Slots)\n",
+        "  Teq {:.0}..{:.0} K: thermochem::equilibrium_composition_condensed (condensation-aware; the same 24 gas slots)\n",
         COOL_T_MIN, SULFUR_T_MIN
     ));
     out.push_str(
-        "sulfur-Daten: NIST-JANAF (Chase 1998) Shomate-Fits, atomares S(g) nur ab 882 K Fit-Domäne\n",
+        "sulfur data: NIST-JANAF (Chase 1998) Shomate fits; atomic S(g) only above the 882 K fit domain\n",
     );
     out.push_str(
-        "kondensat-Daten: H2O(l) NIST-JANAF-Shomate 298.15..500 K (dHf298 -285.830 kJ/mol, S298 69.95 J/mol/K, WebBook 2026-09-05); NH3/CO2/CH4/H2S-kondensiert pending (WebBook traegt keine kondensierten Shomate-Fits; 0 honored); unter 298.15 K traegt die Dreipunkt-Sättigung 610 Pa den Einphasen-Befund bei 1-bar-solarer Häufigkeit\n",
+        "condensate data: H2O(l) NIST-JANAF Shomate 298.15..500 K (dHf298 -285.830 kJ/mol, S298 69.95 J/mol/K, WebBook 2026-09-05); condensed NH3/CO2/CH4/H2S pending (the WebBook carries no condensed Shomate fits; 0 honored); below 298.15 K the triple-point saturation 610 Pa carries the single-phase verdict at 1-bar solar abundance\n",
     );
     out.push_str(&format!(
-        "detektions-schwelle floor = {:.1e} (Mischungsverhältnis); Herkunft: Urteilswert, benannt —\n",
+        "detection threshold floor = {:.1e} (mixing ratio); origin: the verdict value, named —\n",
         floor
     ));
     out.push_str(
-        "  die Saat traegt keine Instrumenten-Nachweisgrenze je Spezies; die Schwelle steht als --floor und ihre Empfindlichkeit ist unten gemessen\n",
+        "  the seed carries no instrument detection limit per species; the threshold stands as --floor and its sensitivity is measured below\n",
     );
     out.push_str(
-        "reservoir-zeuge: pscomppars st_met ([Fe/H]) gelesen — je Wirt skaliert die Regression die Metall-Elemente (C,O,N,S je H) um z = 10^[Fe/H]; H bleibt die Referenz\n",
+        "reservoir witness: pscomppars st_met ([Fe/H]) read — per host the regression scales the metal elements (C,O,N,S per H) by z = 10^[Fe/H]; H stays the reference\n",
     );
     out.push_str(
-        "  C/O traegt pscomppars nicht (gemessen am NExScI-TAP-Schema 2026-09-05: keine C/O-, keine log R'HK-, keine XUV-Spalte in irgendeiner Tabelle) — C/O wird aus dem C/O-Zeugen gelesen\n",
+        "  pscomppars carries no C/O (measured against the NExScI-TAP schema 2026-09-05: no C/O, no log R'HK, no XUV column in any table) — C/O is read from the C/O witness\n",
     );
     out.push_str(&format!(
-        "  Zeugen-Register {}: {} Zeilen ({} davon Budget-Analysen mit [C/H]/[O/H]/[Fe/H]; {} Wirte tragen einen Aktivitaets-/XUV-Zeugen, {} einen XUV-Fluss L_X/F_X)\n",
+        "  witness register {}: {} rows ({} of them budget analyses with [C/H]/[O/H]/[Fe/H]; {} hosts carry an activity/XUV witness, {} carry an XUV flux L_X/F_X)\n",
         witness_path, n_witness_rows, n_budget_rows, n_act_hosts, n_xuv_hosts
     ));
     out.push_str(
-        "  C/O-Zeuge: hochaufgeloeste Wirts-Abundanzen [C/H]/[O/H]/[N/H] — Quellen: VizieR-Kataloge J/ApJS/225/32 (2016ApJS..225...32B) + J/ApJS/237/38 (2018ApJS..237...38B; abgerufen 2026-09-05, Wirt per RA/Dec kreuzidentifiziert, <~5\";) und die externe Literatur-Rueckmeldung (Brewer & Fischer 2018, Brewer et al. 2016, Mesa et al. 2019, Polanski et al. 2022)\n",
+        "  C/O witness: high-resolution host abundances [C/H]/[O/H]/[N/H] — sources: VizieR catalogs J/ApJS/225/32 (2016ApJS..225...32B) + J/ApJS/237/38 (2018ApJS..237...38B; retrieved 2026-09-05, host cross-identified by RA/Dec, <~5\";) and the external literature report (Brewer & Fischer 2018, Brewer et al. 2016, Mesa et al. 2019, Polanski et al. 2022)\n",
     );
     out.push_str(
-        "  der C/O-Zeuge ersetzt C und O durch die gemessenen [C/H]/[O/H]; N traegt sein gemessenes [N/H] (sonst [Fe/H]); S hat in keiner geprueften Quelle eine Wirts-Abundanz und bleibt auf [Fe/H] — benannter Proxy. Die dex stehen auf der Katalog-eigenen solaren Skala; die Anwendung auf die Archiv-SOLAR_-Werte ist transparent\n",
+        "  the C/O witness replaces C and O with the measured [C/H]/[O/H]; N carries its measured [N/H] (else [Fe/H]); S has a host abundance in no checked source and stays on [Fe/H] — a named proxy. The dex stand on the catalog's own solar scale; the application to the archive SOLAR_ values is transparent\n",
     );
     out.push_str(
-        "  Aktivitaets-Zeuge: log R'HK, S-index, L_X/F_X/L_X-L_bol und P_rot aus dem Zeugen-Register (externe Rueckmeldung + Brewer-Kataloge) je Wirt; Rotation st_rotp/v sin i zusaetzlich aus pscomppars. Ein Wert, den das Register nicht traegt, bleibt pending — nie geschaetzt\n",
+        "  activity witness: log R'HK, S-index, L_X/F_X/L_X-L_bol and P_rot from the witness register (external report + Brewer catalogs) per host; rotation st_rotp/v sin i additionally from pscomppars. A value the register does not carry stays pending — never estimated\n",
     );
     out.push_str(
-        "  der zweite Reinigungsschritt regressiert die Hit-Indikator-Spalte gegen das publizierte log R'HK der Wirte (XUV/Aktivitaets-Zeuge); die Photochemie-Re-Erklaerung (XUV-Fluss treibt SO2/CO2) ist ein nicht-Gleichgewichts-Modell und bleibt als solche pending\n",
+        "  the second cleaning step regresses the hit-indicator column against the hosts' published log R'HK (XUV/activity witness); the photochemistry re-explanation (XUV flux drives SO2/CO2) is a non-equilibrium model and stays pending as such\n",
     );
     out.push_str(
-        "  derselbe Reinigungsschritt regressiert gegen log10 L_X (erg/s, Mittel ueber die L_X-Werte des Registers): F_X (Fluss an der Erde) und L_X/L_bol (Verhaeltnis) sind mit L_X nicht kommensurabel und tragen keinen gemeinsamen Kanal — ein Wirt ohne L_X-Zahlenwert bleibt pending, nie geschaetzt\n",
+        "  the same cleaning step regresses against log10 L_X (erg/s, mean over the register's L_X values): F_X (flux at Earth) and L_X/L_bol (a ratio) are not commensurable with L_X and share no channel — a host without an L_X number stays pending, never estimated\n",
     );
     out.push_str(
-        "  das Gleichgewichts-Urteil (hit/praesent) bleibt das solare; die Reservoir-Regression und die C/O-Zeugen-Regression melden Bewegung, wenn eine Spezies die floor-Klassifikation wechselt\n",
+        "  the equilibrium verdict (hit/present) stays the solar one; the reservoir regression and the C/O-witness regression report movement when a species changes its floor classification\n",
     );
 
     out.push_str(&format!(
-        "gleichgewichts-Spezies des Modells ({} Slots): ",
+        "equilibrium species of the model ({} slots): ",
         spec_names.len()
     ));
     for (i, n) in spec_names.iter().enumerate() {
@@ -578,7 +568,7 @@ fn run(
         .filter(|s| !slot_by_name.contains_key(*s))
         .collect();
     out.push_str(&format!(
-        "erkannte Spezies ({}): mit Slot {}; ohne Modell-Daten {}\n",
+        "recognized species ({}): with a slot {}; without model data {}\n",
         detected_species.len(),
         in_model.join(","),
         out_model.join(",")
@@ -611,7 +601,7 @@ fn run(
     for id in 0..host_ids.len() {
         let host = &host_ids[id];
         let Some(planets) = planet_rows.get(host) else {
-            pending_reason[id] = Some("keine pscomppars-Zeile".to_string());
+            pending_reason[id] = Some("no pscomppars row".to_string());
             n_pending_params += 1;
             continue;
         };
@@ -624,7 +614,7 @@ fn run(
         if claims.len() > 1 {
             let named: Vec<&str> = claims.iter().map(|s| s.as_str()).collect();
             pending_reason[id] = Some(format!(
-                "Saat-Zeilen nennen mehrere Planeten: {}",
+                "seed rows name several planets: {}",
                 named.join(", ")
             ));
             n_pending_multi += 1;
@@ -641,14 +631,14 @@ fn run(
             if let Some(pl) = claims.first() {
                 let names: Vec<&str> = planets.iter().map(|p| p.pl_name.as_str()).collect();
                 pending_reason[id] = Some(format!(
-                    "Saat nennt {pl}, pscomppars fuehrt nur {}",
+                    "the seed names {pl}, pscomppars carries only {}",
                     names.join(", ")
                 ));
                 n_pending_params += 1;
             } else {
                 let names: Vec<&str> = planets.iter().map(|p| p.pl_name.as_str()).collect();
                 pending_reason[id] = Some(format!(
-                    "Attribution offen — {} transiting-Planeten: {}",
+                    "attribution open — {} transiting planets: {}",
                     planets.len(),
                     names.join(", ")
                 ));
@@ -657,14 +647,14 @@ fn run(
             continue;
         };
         let Some(t_eq) = teq(p.teff, p.rad_solar * SUN_RADIUS_M, p.orbsmax_au * AU_M, 0.0) else {
-            pending_reason[id] = Some("Teq nicht berechenbar".to_string());
+            pending_reason[id] = Some("Teq not computable".to_string());
             n_pending_domain += 1;
             continue;
         };
         let (frac, model) = if t_eq >= SULFUR_T_MIN {
             if !(SULFUR_T_MIN..=MODEL_T_MAX).contains(&t_eq) {
                 pending_reason[id] = Some(format!(
-                    "Teq {:.0} K ausserhalb der Modell-Domäne {}..{} K",
+                    "Teq {:.0} K outside the model domain {}..{} K",
                     t_eq, SULFUR_T_MIN, MODEL_T_MAX
                 ));
                 n_pending_domain += 1;
@@ -672,7 +662,7 @@ fn run(
             }
             let Some(frac) = equilibrium_composition_sulfur(t_eq, P0_PA) else {
                 pending_reason[id] = Some(format!(
-                    "Gleichgewichts-Loeser konvergiert bei {:.0} K nicht",
+                    "the equilibrium solver does not converge at {:.0} K",
                     t_eq
                 ));
                 n_pending_solver += 1;
@@ -682,7 +672,7 @@ fn run(
         } else {
             if t_eq < COOL_T_MIN {
                 pending_reason[id] = Some(format!(
-                    "Teq {:.0} K unter der Daten-Domäne {:.0}..{:.0} K (kondensiertes NH3/CO2/CH4/H2S pending)",
+                    "Teq {:.0} K below the data domain {:.0}..{:.0} K (condensed NH3/CO2/CH4/H2S pending)",
                     t_eq, COOL_T_MIN, SULFUR_T_MIN
                 ));
                 n_pending_domain += 1;
@@ -690,7 +680,7 @@ fn run(
             }
             let Some(eq) = equilibrium_composition_condensed(t_eq, P0_PA) else {
                 pending_reason[id] = Some(format!(
-                    "kondensations-bewusster Loeser konvergiert bei {:.0} K nicht (oder Kondensation unter 298.15 K nicht beurteilbar)",
+                    "the condensation-aware solver does not converge at {:.0} K (or condensation below 298.15 K stays unadjudicated)",
                     t_eq
                 ));
                 n_pending_solver += 1;
@@ -729,11 +719,6 @@ fn run(
         });
     }
 
-    // Measured host-abundance regression (the C/O witness): every sourced
-    // analysis row is its own equilibrium run against the host's measured
-    // [C/H]/[O/H]/[N/H] budget. S carries no host measurement and rides the
-    // row's own [Fe/H] — a named proxy. A row whose solver refuses stays
-    // pending (counted), never a fabricated budget.
     let mut witness_runs: Vec<Vec<MeasuredRun>> = vec![Vec::new(); host_ids.len()];
     let mut n_co_hosts = 0usize;
     let mut n_co_rows = 0usize;
@@ -802,7 +787,7 @@ fn run(
             match slot_by_name.get(name) {
                 Some(slot) => {
                     let entry = format!(
-                        "{} (Slot {}; gleichgewichts-Anteil {:.3e})",
+                        "{} (slot {}; equilibrium fraction {:.3e})",
                         name, slot, hp.frac[*slot]
                     );
                     if hp.frac[*slot] >= floor {
@@ -819,7 +804,7 @@ fn run(
         if hit_species.is_empty() && present_species.is_empty() {
             n_oom_only_hosts += 1;
             lines.push(format!(
-                "  {host}: {}  Teq {:.0} K  — nur ohne-Modell-Daten-Detektionen ({}): Gleichgewicht nicht prüfbar (pending)",
+                "  {host}: {}  Teq {:.0} K  — only out-of-model detections ({}): equilibrium unadjudicable (pending)",
                 hp.pl_name, hp.teq_k, oom.join(",")
             ));
             continue;
@@ -842,7 +827,7 @@ fn run(
         );
         if !oom.is_empty() {
             block.push_str(&format!(
-                "  (ohne Modell-Daten benannt: {} — pending)",
+                "  (out-of-model species named: {} — pending)",
                 oom.join(",")
             ));
         }
@@ -868,7 +853,7 @@ fn run(
                     };
                     if solar_word != res_word {
                         moved.push(format!(
-                            "{}: {} -> {} (reservoir-Anteil {:.3e})",
+                            "{}: {} -> {} (reservoir fraction {:.3e})",
                             d.species, solar_word, res_word, frac_res[*slot]
                         ));
                     }
@@ -877,13 +862,13 @@ fn run(
                 moved.dedup();
                 if moved.is_empty() {
                     block.push_str(&format!(
-                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — keine Klassifikations-Aenderung\n"
+                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — no classification change\n"
                     ));
                 } else {
                     n_moved_hosts += 1;
                     n_moved_species += moved.len();
                     block.push_str(&format!(
-                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — Spezies-Bewegung: {}\n",
+                        "      reservoir: [Fe/H] {feh:+.2} (z {z:.3}) — species movement: {}\n",
                         moved.join("; ")
                     ));
                 }
@@ -892,12 +877,12 @@ fn run(
                 if hp.feh.is_some() {
                     n_reservoir_pending += 1;
                     block.push_str(&format!(
-                        "      reservoir: [Fe/H] {:+.2} — Reservoir-Loeser verweigert (pending)\n",
+                        "      reservoir: [Fe/H] {:+.2} — the reservoir solver refuses (pending)\n",
                         hp.feh.unwrap()
                     ));
                 } else {
                     block.push_str(
-                        "      reservoir: pscomppars traegt kein st_met — Reservoir pending\n",
+                        "      reservoir: pscomppars carries no st_met — reservoir pending\n",
                     );
                 }
             }
@@ -920,7 +905,7 @@ fn run(
                 };
                 if solar_word != meas_word {
                     moved.push(format!(
-                        "{}: {} -> {} (C/O-Zeuge-Anteil {:.3e})",
+                        "{}: {} -> {} (C/O-witness fraction {:.3e})",
                         d.species, solar_word, meas_word, mr.frac[*slot]
                     ));
                 }
@@ -929,14 +914,14 @@ fn run(
             moved.dedup();
             if moved.is_empty() {
                 block.push_str(&format!(
-                    "      C/O-Zeuge {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — keine Klassifikations-Aenderung\n",
+                    "      C/O witness {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — no classification change\n",
                     mr.analysis, mr.ch, mr.oh, mr.feh, mr.c_over_o
                 ));
             } else {
                 n_co_moved_hosts += 1;
                 n_co_moved_species += moved.len();
                 block.push_str(&format!(
-                    "      C/O-Zeuge {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — Spezies-Bewegung: {}\n",
+                    "      C/O witness {}: [C/H] {:+.2} [O/H] {:+.2} (S@[Fe/H] {:+.2}) C/O {:.3} — species movement: {}\n",
                     mr.analysis, mr.ch, mr.oh, mr.feh, mr.c_over_o, moved.join("; ")
                 ));
             }
@@ -951,18 +936,18 @@ fn run(
         }
         let mut rot_part = match hp.st_rotp_days {
             Some(p) => format!("st_rotp {p:.1} d (pscomppars)"),
-            None => "st_rotp pending (pscomppars leer)".to_string(),
+            None => "st_rotp pending (pscomppars empty)".to_string(),
         };
         if let Some(v) = hp.st_vsin_kms {
             rot_part.push_str(&format!(" | v sin i {v:.1} km/s (pscomppars)"));
         }
         if act_lines.is_empty() {
-            block.push_str(&format!("      Aktivitaets-Zeuge: {rot_part}\n"));
+            block.push_str(&format!("      activity witness: {rot_part}\n"));
         } else {
             for l in &act_lines {
-                block.push_str(&format!("      Aktivitaets-Zeuge: {l}\n"));
+                block.push_str(&format!("      activity witness: {l}\n"));
             }
-            block.push_str(&format!("      Rotation-Zeuge: {rot_part}\n"));
+            block.push_str(&format!("      rotation witness: {rot_part}\n"));
         }
         if let Some(rows) = witness.get(host) {
             for w in rows {
@@ -988,10 +973,10 @@ fn run(
                 if vparts.is_empty() && abundance_pending.is_empty() {
                     continue;
                 }
-                let mut s = format!("      C/O-Zeuge {}: {}", w.analysis, vparts.join(" | "));
+                let mut s = format!("      C/O witness {}: {}", w.analysis, vparts.join(" | "));
                 if !abundance_pending.is_empty() {
                     if w.activity_number() {
-                        s.push_str(&format!(" — nur pending: {}", abundance_pending.join(",")));
+                        s.push_str(&format!(" — only pending: {}", abundance_pending.join(",")));
                     } else {
                         s.push_str(&format!(" — pending: {}", abundance_pending.join(",")));
                         if let Some(n) = &w.note {
@@ -1019,17 +1004,17 @@ fn run(
         {
             if *condensed_h2o_moles > 0.0 {
                 block.push_str(&format!(
-                    "      kondensat: H2O(l) praesent ({:.3e} mol je H-Atom); Gas-H2O bei Sättigung {:.3e} Pa\n",
+                    "      condensate: H2O(l) present ({:.3e} mol per H atom); gas H2O at saturation {:.3e} Pa\n",
                     condensed_h2o_moles, vapor_pa
                 ));
             } else if let Some(p_sat) = sat_pa {
                 block.push_str(&format!(
-                    "      kondensat: einphasiges Gas — H2O(l) untersättigt (p_H2O {:.3e} Pa < p_sat {:.3e} Pa)\n",
+                    "      condensate: single-phase gas — H2O(l) undersaturated (p_H2O {:.3e} Pa < p_sat {:.3e} Pa)\n",
                     vapor_pa, p_sat
                 ));
             } else {
                 block.push_str(&format!(
-                    "      kondensat: einphasiges Gas — H2O(l)-Sättigung unter {:.0} K nicht im NIST-Fit; p_H2O {:.3e} Pa < Dreipunkt-Bindung {:.0} Pa\n",
+                    "      condensate: single-phase gas — H2O(l) saturation below {:.0} K is outside the NIST fit; p_H2O {:.3e} Pa < the triple-point binding {:.0} Pa\n",
                     WATER_LIQ_T_MIN, vapor_pa, WATER_P_TRIPLE_PA
                 ));
             }
@@ -1039,13 +1024,13 @@ fn run(
 
     let host_count = host_ids.len();
     out.push_str(&format!(
-        "Wirte: {} gesamt | disequilibrium-hit {} | equilibrium-present {} | ohne-Modell-Daten-only {} | pending {} (params-fehlend {}, attribution-offen {}, Domäne {}, Loeser {})\n",
+        "hosts: {} total | disequilibrium-hit {} | equilibrium-present {} | out-of-model-only {} | pending {} (params-missing {}, attribution-open {}, domain {}, solver {})\n",
         host_count, n_hit_hosts, n_eq_hosts, n_oom_only_hosts,
         n_pending_params + n_pending_multi + n_pending_domain + n_pending_solver,
         n_pending_params, n_pending_multi, n_pending_domain, n_pending_solver
     ));
     out.push_str(&format!(
-        "Reservoir [Fe/H]-Regression: {} Wirte gelesen | {} ohne st_met (pending) | {} Reservoir-Loeser verweigert (pending) | Klassifikations-Bewegung: {} Wirte, {} Spezies\n",
+        "reservoir [Fe/H] regression: {} hosts read | {} without st_met (pending) | {} reservoir solvers refused (pending) | classification movement: {} hosts, {} species\n",
         host_count,
         plan.iter()
             .filter(|p| p.as_ref().map(|hp| hp.feh.is_none()).unwrap_or(false))
@@ -1055,25 +1040,25 @@ fn run(
         n_moved_species
     ));
     out.push_str(&format!(
-        "C/O-Zeugen-Regression (gemessene [C/H]/[O/H]/[N/H]-Haushalte): {} Wirte gelesen ({} Analyse-Zeilen) | {} Zeilen Loeser verweigert (pending) | Klassifikations-Bewegung: {} Wirte, {} Spezies\n",
+        "C/O-witness regression (measured [C/H]/[O/H]/[N/H] budgets): {} hosts read ({} analysis rows) | {} rows solver refused (pending) | classification movement: {} hosts, {} species\n",
         n_co_hosts, n_co_rows, n_co_refused, n_co_moved_hosts, n_co_moved_species
     ));
     if !co_refused_hosts.is_empty() {
         out.push_str(&format!(
-            "  C/O-Loeser verweigert (pending): {}\n",
+            "  C/O solver refused (pending): {}\n",
             co_refused_hosts.join(", ")
         ));
     }
     if !co_no_budget_hosts.is_empty() {
         out.push_str(&format!(
-            "  C/O-Regression nicht anwendbar (Zeuge vorhanden, aber keine [C/H]+[O/H]+[Fe/H]-Budget-Zeile im Register): {}\n",
+            "  C/O regression not applicable (witness present, but no [C/H]+[O/H]+[Fe/H] budget row in the register): {}\n",
             co_no_budget_hosts.join(", ")
         ));
     }
     for id in 0..host_ids.len() {
         if let Some(reason) = &pending_reason[id] {
             out.push_str(&format!(
-                "  {host}: pending — {reason} (detektiert: {det})\n",
+                "  {host}: pending — {reason} (detected: {det})\n",
                 host = host_ids[id],
                 det = host_det[id]
                     .iter()
@@ -1085,7 +1070,7 @@ fn run(
     }
     if !reservoir_pending_hosts.is_empty() {
         out.push_str(&format!(
-            "  Reservoir-pending (Loeser verweigert): {}\n",
+            "  reservoir pending (solver refused): {}\n",
             reservoir_pending_hosts.join(", ")
         ));
     }
@@ -1151,24 +1136,24 @@ fn run(
     let tail = over_obs as f64 / trials as f64;
 
     out.push_str(&format!(
-        "Katalog-Null: Permutation der Spezies-Zuweisung ueber {} Detektions-Zeilen, {} Ziehungen, fester Samen {:016x}\n",
+        "catalog null: permutation of the species assignment over {} detection rows, {} draws, fixed seed {:016x}\n",
         rows.len(), trials, RNG_SEED
     ));
     out.push_str(&format!(
-        "  Hosts, in denen eine Detektion als disequilibrium wertbar ist (möglich): {}\n",
+        "  hosts in which a detection is classifiable as disequilibrium (possible): {}\n",
         possible_count
     ));
     out.push_str(&format!(
-        "  beobachtete Treffer-Wirte {} | Null mean {:.2} | sigma {:.2} | Schwelle mean+2sigma {:.2} | tail P(T >= {}) = {:.4}\n",
+        "  observed hit hosts {} | null mean {:.2} | sigma {:.2} | threshold mean+2sigma {:.2} | tail P(T >= {}) = {:.4}\n",
         observed, mean, sd, threshold, observed, tail
     ));
     if observed as f64 >= threshold {
         out.push_str(
-            "  Befund: die beobachtete Treffer-Zahl liegt auf/ueber der mean+2sigma-Schwelle — die Koinzidenz ist aussergewoehnlich\n",
+            "  finding: the observed hit count lies at/above the mean+2sigma threshold — the coincidence is extraordinary\n",
         );
     } else {
         out.push_str(
-            "  Befund: die beobachtete Treffer-Zahl liegt unter der mean+2sigma-Schwelle — mit dem Zufall vertraeglich\n",
+            "  finding: the observed hit count lies below the mean+2sigma threshold — consistent with chance\n",
         );
     }
 
@@ -1186,16 +1171,13 @@ fn run(
                         })
                 })
                 .count();
-            format!("floor {:.0e} -> {} Treffer-Wirte", f, h)
+            format!("floor {:.0e} -> {} hit hosts", f, h)
         })
         .collect();
-    out.push_str("Empfindlichkeit der floor-Urteilswerts (beobachtet): ");
+    out.push_str("sensitivity of the floor verdict value (observed): ");
     out.push_str(&sens.join(" | "));
     out.push('\n');
 
-    // Hit-vs-reservoir correlation: host [Fe/H] against the solar hit
-    // indicator (>=1 in-model species below the floor). Hosts without an
-    // in-model species or without st_met carry no pair.
     let mut feh_list: Vec<f64> = Vec::new();
     let mut hit_list: Vec<f64> = Vec::new();
     for id in 0..host_ids.len() {
@@ -1232,14 +1214,14 @@ fn run(
     };
     if n_pairs < 3 {
         out.push_str(&format!(
-            "Reservoir-Korrelation: {} Wirte mit [Fe/H]-Zeuge — zu wenige Paare (pending)\n",
+            "reservoir correlation: {} hosts with an [Fe/H] witness — too few pairs (pending)\n",
             n_pairs
         ));
     } else {
         let r_obs = pearson(&feh_list, &hit_list);
         if !r_obs.is_finite() {
             out.push_str(
-                "Reservoir-Korrelation: [Fe/H]-Spalte konstant — Pearson nicht definiert (pending)\n",
+                "reservoir correlation: the [Fe/H] column is constant — Pearson undefined (pending)\n",
             );
         } else {
             let mut rng_corr = CORR_RNG_SEED;
@@ -1274,15 +1256,15 @@ fn run(
                 .map(|(f, _)| *f)
                 .collect();
             out.push_str(&format!(
-                "Reservoir-Korrelation: host [Fe/H] gegen Hit-Indikator, n = {} Wirte (solar-Klassifikation)\n",
+                "reservoir correlation: host [Fe/H] against the hit indicator, n = {} hosts (solar classification)\n",
                 n_pairs
             ));
             out.push_str(&format!(
-                "  Pearson r = {r_obs:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_corr:.4}\n",
+                "  Pearson r = {r_obs:+.3} | permutation null ({} draws, |r_perm| >= |r|): P = {p_corr:.4}\n",
                 trials
             ));
             out.push_str(&format!(
-                "  Hit-Wirte ({}): mean [Fe/H] {:+.3} | equilibrium-present ({}): mean [Fe/H] {:+.3}\n",
+                "  hit hosts ({}): mean [Fe/H] {:+.3} | equilibrium-present ({}): mean [Fe/H] {:+.3}\n",
                 hit_feh.len(),
                 mean(&hit_feh),
                 pres_feh.len(),
@@ -1291,11 +1273,6 @@ fn run(
         }
     }
 
-    // Second cleaning step — the XUV/activity regression. Host coordinate: the
-    // mean of the published numeric log R'HK values the register carries for
-    // the host (each value printed above at its read site). Only hosts that are
-    // evaluable (in-model species) AND carry a numeric log R'HK witness enter;
-    // hosts without a measured value stay pending, never estimated.
     let mut act_host: Vec<String> = Vec::new();
     let mut act_x: Vec<f64> = Vec::new();
     let mut act_n: Vec<usize> = Vec::new();
@@ -1337,11 +1314,6 @@ fn run(
                 xuv_hosts.push((host.clone(), v));
             }
         }
-        // L_X channel of the same cleaning step: host coordinate is the mean
-        // of log10(L_X/erg/s) over the numeric L_X values the register carries
-        // (luminosities span decades; the mean is taken in log space). F_X is
-        // a flux at Earth and L_X/L_bol a ratio — neither is commensurable
-        // with L_X on the same axis; only the L_X channel enters.
         let lx_log: Vec<f64> = rows
             .iter()
             .filter_map(|w| w.lx)
@@ -1365,15 +1337,15 @@ fn run(
     }
     let n_act = act_x.len();
     out.push_str(&format!(
-        "Aktivitaets-Regression (zweiter Reinigungsschritt): {} Wirte mit numerischem log R'HK-Zeuge + wertbarer Detektion\n",
+        "activity regression (second cleaning step): {} hosts with a numeric log R'HK witness + classifiable detection\n",
         n_act
     ));
     if n_act < 3 {
-        out.push_str(&format!("  {} Wirte — zu wenige Paare (pending)\n", n_act));
+        out.push_str(&format!("  {} hosts — too few pairs (pending)\n", n_act));
     } else {
         let r_obs = pearson_r(&act_x, &act_hit);
         if !r_obs.is_finite() {
-            out.push_str("  log R'HK-Spalte konstant — Pearson nicht definiert (pending)\n");
+            out.push_str("  the log R'HK column is constant — Pearson undefined (pending)\n");
         } else {
             let mut rng_act = CORR_RNG_SEED.wrapping_add(0xACE7);
             let mut hit_perm = act_hit.clone();
@@ -1399,11 +1371,11 @@ fn run(
                 .map(|(x, _)| *x)
                 .collect();
             out.push_str(&format!(
-                "  Pearson r = {r_obs:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_act:.4}\n",
+                "  Pearson r = {r_obs:+.3} | permutation null ({} draws, |r_perm| >= |r|): P = {p_act:.4}\n",
                 trials
             ));
             out.push_str(&format!(
-                "  Hit-Wirte ({}): mean log R'HK {:+.2} | equilibrium-present ({}): mean log R'HK {:+.2}  (log R'HK aktiver = weniger negativ)\n",
+                "  hit hosts ({}): mean log R'HK {:+.2} | equilibrium-present ({}): mean log R'HK {:+.2}  (active log R'HK = less negative)\n",
                 hit_x.len(),
                 mean_v(&hit_x),
                 pres_x.len(),
@@ -1411,14 +1383,14 @@ fn run(
             ));
             let mut rows_txt: Vec<String> = Vec::new();
             for (h, (x, n)) in act_host.iter().zip(act_x.iter().zip(&act_n)) {
-                rows_txt.push(format!("{h} {x:.2} ({n} Werte)"));
+                rows_txt.push(format!("{h} {x:.2} ({n} values)"));
             }
-            out.push_str(&format!("  Wirte: {}\n", rows_txt.join(" | ")));
+            out.push_str(&format!("  hosts: {}\n", rows_txt.join(" | ")));
         }
     }
     if !act_pending_hosts.is_empty() {
         out.push_str(&format!(
-            "  Aktivitaets-pending (wertbar, kein numerischer log R'HK-Zeuge): {}\n",
+            "  activity pending (classifiable, no numeric log R'HK witness): {}\n",
             act_pending_hosts.join(", ")
         ));
     }
@@ -1428,11 +1400,11 @@ fn run(
         .collect::<HashSet<_>>()
         .len();
     out.push_str(&format!(
-        "XUV-Fluss-Zeugen (L_X/F_X/L_X-L_bol numerisch im Register): {} Wirte ({} Messwerte) — {}\n",
+        "XUV flux witnesses (L_X/F_X/L_X-L_bol numeric in the register): {} hosts ({} measurements) — {}\n",
         n_xuv_distinct,
         xuv_hosts.len(),
         if xuv_hosts.is_empty() {
-            "keine".to_string()
+            "none".to_string()
         } else {
             xuv_hosts
                 .iter()
@@ -1443,20 +1415,20 @@ fn run(
     ));
     if n_xuv_distinct < 4 {
         out.push_str(
-            "  XUV-vs-Hit-Regression: zu wenige XUV-Wirte (pending; die Photochemie-Re-Erklaerung braucht einen XUV-Fluss je Wirt)\n",
+            "  XUV-vs-hit regression: too few XUV hosts (pending; the photochemistry re-explanation needs an XUV flux per host)\n",
         );
     }
     let n_lx = lx_x.len();
     out.push_str(&format!(
-        "L_X-Regression (zweiter Reinigungsschritt, log10 L_X/erg/s je Wirt, Mittel ueber die L_X-Werte des Registers): {} Wirte mit numerischem L_X-Zeuge + wertbarer Detektion\n",
+        "L_X regression (second cleaning step, log10 L_X/erg/s per host, mean over the register's L_X values): {} hosts with a numeric L_X witness + classifiable detection\n",
         n_lx
     ));
     if n_lx < 3 {
-        out.push_str(&format!("  {} Wirte — zu wenige Paare (pending)\n", n_lx));
+        out.push_str(&format!("  {} hosts — too few pairs (pending)\n", n_lx));
     } else {
         let r_lx = pearson_r(&lx_x, &lx_hit);
         if !r_lx.is_finite() {
-            out.push_str("  log10-L_X-Spalte konstant — Pearson nicht definiert (pending)\n");
+            out.push_str("  the log10-L_X column is constant — Pearson undefined (pending)\n");
         } else {
             let mut rng_lx = CORR_RNG_SEED.wrapping_add(0x5EED);
             let mut hit_perm = lx_hit.clone();
@@ -1482,11 +1454,11 @@ fn run(
                 .map(|(x, _)| *x)
                 .collect();
             out.push_str(&format!(
-                "  Pearson r = {r_lx:+.3} | Permutations-Null ({} Ziehungen, |r_perm| >= |r|): P = {p_lx:.4}\n",
+                "  Pearson r = {r_lx:+.3} | permutation null ({} draws, |r_perm| >= |r|): P = {p_lx:.4}\n",
                 trials
             ));
             out.push_str(&format!(
-                "  Hit-Wirte ({}): mean log10 L_X {:.2} | equilibrium-present ({}): mean log10 L_X {:.2}  (hoeheres L_X = aktivere Röntgen-Korona)\n",
+                "  hit hosts ({}): mean log10 L_X {:.2} | equilibrium-present ({}): mean log10 L_X {:.2}  (higher L_X = more active X-ray corona)\n",
                 hit_x.len(),
                 mean_v(&hit_x),
                 pres_x.len(),
@@ -1496,24 +1468,19 @@ fn run(
             for (h, x) in lx_host.iter().zip(&lx_x) {
                 lx_rows_txt.push(format!("{h} log10L_X {x:.2}"));
             }
-            out.push_str(&format!("  Wirte: {}\n", lx_rows_txt.join(" | ")));
+            out.push_str(&format!("  hosts: {}\n", lx_rows_txt.join(" | ")));
         }
     }
     if !lx_pending_hosts.is_empty() {
         out.push_str(&format!(
-            "  L_X-pending (wertbar, kein numerischer L_X-Zeuge): {}\n",
+            "  L_X pending (classifiable, no numeric L_X witness): {}\n",
             lx_pending_hosts.join(", ")
         ));
     }
     out.push_str(
-        "  Gleichgewichts-Urteile bewegen sich unter den Aktivitaets-Zeugen nicht: thermochemisches Gleichgewicht hat keinen Aktivitaets-Kanal — die gemessene Regression ist die statistische Fassung; die Photochemie-Re-Erklaerung (XUV treibt SO2/CO2) bleibt ein nicht-Gleichgewichts-Modell (pending)\n",
+        "  equilibrium verdicts do not move under the activity witnesses: thermochemical equilibrium has no activity channel — the measured regression is the statistical articulation; the photochemistry re-explanation (XUV drives SO2/CO2) stays a non-equilibrium model (pending)\n",
     );
 
-    // Full 48-host census: every JWST-transmission host of the survey gets a
-    // row. The 30 with a published detection carry the probe verdict; the 18
-    // without a published detection are explicit non-detection rows (0 honored
-    // — the observed absence of a published species detection is the measured
-    // fact, never a fabricated species).
     let census_detected: Vec<&CensusHost> =
         census.iter().filter(|c| c.class == "detection").collect();
     let census_nd: Vec<&CensusHost> = census
@@ -1526,7 +1493,7 @@ fn run(
         let Some(id) = host_ids.iter().position(|h| h == &c.hostname) else {
             census_missing.push(c.hostname.clone());
             census_word.push(format!(
-                "{}: nicht in der Detektions-Saat (Register-Konflikt)",
+                "{}: absent from the detection seed (register conflict)",
                 c.hostname
             ));
             continue;
@@ -1536,7 +1503,7 @@ fn run(
                 .iter()
                 .any(|d| slot_by_name.contains_key(&d.species));
             if !has_in_model {
-                "ohne-Modell-Daten-only (Gleichgewicht nicht prüfbar — pending)".to_string()
+                "out-of-model-only (equilibrium unadjudicable — pending)".to_string()
             } else if host_det[id].iter().any(|d| {
                 slot_by_name
                     .get(&d.species)
@@ -1555,7 +1522,7 @@ fn run(
         census_word.push(format!("{}: {}", c.hostname, word));
     }
     out.push_str(&format!(
-        "\nZensus ({} Wirte): {} mit publizierter Detektion, {} ohne publizierte Detektion (non-detection, 0 honored)\n",
+        "\ncensus ({} hosts): {} with a published detection, {} without a published detection (non-detection, 0 honored)\n",
         census.len(),
         census_detected.len(),
         census_nd.len()
@@ -1565,7 +1532,7 @@ fn run(
     }
     for c in &census_nd {
         let mut s = format!(
-            "  {}: non-detection (0 honored) — keine publizierte Spezies-Detektion",
+            "  {}: non-detection (0 honored) — no published species detection",
             c.hostname
         );
         if let Some(note) = &c.note {
@@ -1576,7 +1543,7 @@ fn run(
     }
     if !census_missing.is_empty() {
         out.push_str(&format!(
-            "  Zensus-Register-Konflikt (detection-Klasse ohne Saat-Eintrag): {}\n",
+            "  census register conflict (detection class without a seed entry): {}\n",
             census_missing.join(", ")
         ));
     }

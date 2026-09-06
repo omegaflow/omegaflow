@@ -46,10 +46,12 @@ fn run(
     let mut radio_flux = Vec::new();
     if Path::new(radio_path).exists() {
         let rb = std::fs::read(radio_path).map_err(|e| format!("radio {radio_path}: {e}"))?;
-        for s in parse_radio(&rb).unwrap_or_default() {
-            radio_ra.push(s.ra_deg);
-            radio_dec.push(s.dec_deg);
-            radio_flux.push(s.flux);
+        if let Some(srcs) = parse_radio(&rb) {
+            for s in srcs {
+                radio_ra.push(s.ra_deg);
+                radio_dec.push(s.dec_deg);
+                radio_flux.push(s.flux);
+            }
         }
     }
     let radio = ConeCatalog::with_values(radio_ra, radio_dec, radio_flux);
@@ -60,10 +62,12 @@ fn run(
     let mut tns_z = Vec::new();
     if Path::new(tns_path).exists() {
         let tb = std::fs::read(tns_path).map_err(|e| format!("tns {tns_path}: {e}"))?;
-        for o in parse_tns(&tb).unwrap_or_default() {
-            tns_ra.push(o.ra_deg);
-            tns_dec.push(o.dec_deg);
-            tns_z.push(o.z);
+        if let Some(objs) = parse_tns(&tb) {
+            for o in objs {
+                tns_ra.push(o.ra_deg);
+                tns_dec.push(o.dec_deg);
+                tns_z.push(o.z);
+            }
         }
     }
     let tns = ConeCatalog::with_values(tns_ra, tns_dec, tns_z);
@@ -74,10 +78,12 @@ fn run(
     let mut excl_name = Vec::new();
     if Path::new(excl_path).exists() {
         let eb = std::fs::read(excl_path).map_err(|e| format!("excl {excl_path}: {e}"))?;
-        for r in parse_excl(&eb).unwrap_or_default() {
-            excl_ra.push(r.ra_deg);
-            excl_dec.push(r.dec_deg);
-            excl_name.push(r.name);
+        if let Some(rows) = parse_excl(&eb) {
+            for r in rows {
+                excl_ra.push(r.ra_deg);
+                excl_dec.push(r.dec_deg);
+                excl_name.push(r.name);
+            }
         }
     }
     let excl = ConeCatalog::with_names(excl_ra, excl_dec, excl_name);
@@ -98,7 +104,7 @@ fn run(
     let excluded = rows.iter().filter(|r| r.excluded).count();
     let remaining = rows.len() - excluded;
     let mut out = String::new();
-    out.push_str("Doppel-Anomalie catalog — Verdict\n");
+    out.push_str("double-anomaly catalog — verdict\n");
     out.push_str("OA = (Variability_observed − Variability_expected)/Chromativity\n");
     out.push_str(&format!(
         "IR-excess threshold: W3−W4 < {:.1} mag | Match radius: {:.2}°\n",
@@ -152,12 +158,12 @@ fn run(
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let mut ir = "/tmp/opencode/ir.bin".to_string();
-    let mut stars = "/tmp/opencode/dr3_stars.bin".to_string();
-    let mut radio = "/tmp/opencode/radio.bin".to_string();
-    let mut tns = "/tmp/opencode/tns.bin".to_string();
-    let mut excl = "/tmp/opencode/exclude.bin".to_string();
-    let mut out = "/tmp/opencode/double_anomaly.txt".to_string();
+    let mut ir = "tmp/ir.bin".to_string();
+    let mut stars = "tmp/dr3_stars.bin".to_string();
+    let mut radio = "tmp/radio.bin".to_string();
+    let mut tns = "tmp/tns.bin".to_string();
+    let mut excl = "tmp/exclude.bin".to_string();
+    let mut out = "tmp/double_anomaly.txt".to_string();
     let mut only_excess = true;
     let mut i = 0usize;
     while i < args.len() {

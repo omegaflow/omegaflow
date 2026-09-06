@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
 
@@ -185,7 +185,11 @@ fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
             .split('|')
             .map(|s| {
                 let c = s.trim().to_string();
-                if c == "null" { String::new() } else { c }
+                if c == "null" {
+                    String::new()
+                } else {
+                    c
+                }
             })
             .collect();
         rows.push(cells);
@@ -235,7 +239,7 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
             break;
         }
         if phase == "ERROR" {
-            eprintln!("uws job ERROR");
+            eprintln!("uws job phase {phase} — the query stays unharvested");
             return None;
         }
         std::thread::sleep(std::time::Duration::from_secs(10));
@@ -407,7 +411,7 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     }
     let ci = match (get("bpmag"), get("rpmag")) {
         (Some(b), Some(r)) if b.is_finite() && r.is_finite() => b - r,
-        _ => 0.0,
+        _ => return None,
     };
     let plx_mas = 1000.0 / dist_pc;
     let Some(rv_km_s) = get("rv") else {
@@ -488,12 +492,15 @@ fn emit_rows(
             }
             pos += 1;
             let out = if k == "ra" {
-                ra_v.map(|v| format!("{}", v))
-                    .unwrap_or_else(|| "null".to_string())
+                match ra_v {
+                    Some(v) => format!("{}", v),
+                    None => "null".to_string(),
+                }
             } else if k == "dec" {
-                dec_v
-                    .map(|v| format!("{}", v))
-                    .unwrap_or_else(|| "null".to_string())
+                match dec_v {
+                    Some(v) => format!("{}", v),
+                    None => "null".to_string(),
+                }
             } else {
                 let raw = cells.get(*i).map(|s| s.as_str()).unwrap_or("");
                 if raw.is_empty() {
@@ -567,8 +574,14 @@ fn dedup_crossmatch(
     let mut keep: Vec<Vec<String>> = Vec::with_capacity(cells_rows.len());
     for row in cells_rows.into_iter() {
         let key = (
-            row.get(ra_i).cloned().unwrap_or_default(),
-            row.get(dec_i).cloned().unwrap_or_default(),
+            match row.get(ra_i) {
+                Some(s) => s.clone(),
+                None => String::new(),
+            },
+            match row.get(dec_i) {
+                Some(s) => s.clone(),
+                None => String::new(),
+            },
         );
         let has_dist = dist_i
             .map(|i2| row.get(i2).map(|s| !s.is_empty()).unwrap_or(false))
@@ -660,8 +673,14 @@ fn main() {
             "--votable" => votable_flag = true,
             "--join" => {
                 join_spec = Some((
-                    args.get(i + 1).cloned().unwrap_or_default(),
-                    args.get(i + 2).cloned().unwrap_or_default(),
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                    match args.get(i + 2) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
                 ));
                 i += 2;
             }
@@ -688,18 +707,39 @@ fn main() {
             }
             "--mag-bands" => {
                 mag_bands = Some((
-                    args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-                    args.get(i + 2).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-                    args.get(i + 3).and_then(|s| s.parse().ok()).unwrap_or(0.1),
+                    match args.get(i + 1).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    match args.get(i + 2).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    match args.get(i + 3).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 0.1,
+                    },
                 ));
                 i += 3;
             }
             "--band" => {
                 band_spec = Some((
-                    args.get(i + 1).cloned().unwrap_or_default(),
-                    args.get(i + 2).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-                    args.get(i + 3).and_then(|s| s.parse().ok()).unwrap_or(0.0),
-                    args.get(i + 4).and_then(|s| s.parse().ok()).unwrap_or(1.0),
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                    match args.get(i + 2).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    match args.get(i + 3).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    match args.get(i + 4).and_then(|s| s.parse().ok()) {
+                        Some(v) => v,
+                        None => 1.0,
+                    },
                 ));
                 i += 4;
             }
@@ -712,7 +752,10 @@ fn main() {
                 i += 1;
             }
             "--skip-null" => {
-                skip_nulls.push(args.get(i + 1).cloned().unwrap_or_default());
+                skip_nulls.push(match args.get(i + 1) {
+                    Some(a) => a.clone(),
+                    None => String::new(),
+                });
                 i += 1;
             }
             "--cols-unquoted" => cols_unquoted = true,
@@ -730,10 +773,10 @@ fn main() {
             }
             "--index" => index_mode = true,
             "--style" => {
-                style = args
-                    .get(i + 1)
-                    .cloned()
-                    .unwrap_or_else(|| "uws".to_string());
+                style = match args.get(i + 1) {
+                    Some(s) => s.clone(),
+                    None => "uws".to_string(),
+                };
                 i += 1;
             }
             _ => {}
@@ -814,12 +857,21 @@ fn main() {
                 std::process::exit(1);
             };
             for r in &rows {
-                let name = r.get(tn).cloned().unwrap_or_default();
+                let name = match r.get(tn) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
                 if name.is_empty() {
                     continue;
                 }
-                let schema = r.get(sn).cloned().unwrap_or_default();
-                let typ = r.get(tt).cloned().unwrap_or_default();
+                let schema = match r.get(sn) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
+                let typ = match r.get(tt) {
+                    Some(v) => v.clone(),
+                    None => String::new(),
+                };
                 triples.push((name, schema, typ));
             }
         } else {
@@ -831,7 +883,7 @@ fn main() {
                 Some(p) => p,
                 None => {
                     preview("json", &body);
-                    let dump = "/tmp/opencode/tap_index_body.txt";
+                    let dump = "tmp/tap_index_body.txt";
                     if let Ok(mut f) = std::fs::File::create(dump) {
                         let _ = f.write_all(body.as_bytes());
                     }
@@ -861,9 +913,18 @@ fn main() {
                     (row_str(&r[0]), row_str(&r[2]), row_str(&r[1]))
                 } else if let Some(o) = as_obj(row) {
                     (
-                        o.get("table_name").map(row_str).unwrap_or_default(),
-                        o.get("schema_name").map(row_str).unwrap_or_default(),
-                        o.get("table_type").map(row_str).unwrap_or_default(),
+                        match o.get("table_name") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
+                        match o.get("schema_name") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
+                        match o.get("table_type") {
+                            Some(v) => row_str(v),
+                            None => String::new(),
+                        },
                     )
                 } else {
                     continue;
@@ -871,9 +932,12 @@ fn main() {
                 triples.push((name, schema, typ));
             }
         }
-        let out_path = out.unwrap_or_else(|| "tap_index.φ".to_string());
+        let out_path = match out {
+            Some(p) => p,
+            None => "tap_index.φ".to_string(),
+        };
         let mut buf = String::new();
-        buf.push_str(&format!("# tap-inventar {}\n", root));
+        buf.push_str(&format!("# tap inventory {}\n", root));
         for (name, schema, typ) in &triples {
             buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
         }
@@ -1145,7 +1209,13 @@ fn main() {
             .map(|(_, lo, hi, step)| (*lo, *hi, *step))
             .or(mag_bands);
         let is_xm = crossmatch_spec.is_some() || crossmatch_z_spec.is_some();
-        let band_qual = |c: &str| -> String { if is_xm { format!("t.{}", xq(c)) } else { xq(c) } };
+        let band_qual = |c: &str| -> String {
+            if is_xm {
+                format!("t.{}", xq(c))
+            } else {
+                xq(c)
+            }
+        };
         let left_from = if is_xm {
             format!("{} AS t", table_ref)
         } else {
@@ -1170,18 +1240,16 @@ fn main() {
                         out.push((a, b));
                         continue;
                     }
-                    let w = band_col
-                        .as_ref()
-                        .map(|c| {
-                            format!(
-                                " WHERE {} >= {} AND {} < {}",
-                                band_qual(c),
-                                a,
-                                band_qual(c),
-                                b
-                            )
-                        })
-                        .unwrap_or_default();
+                    let w = match band_col.as_ref() {
+                        Some(c) => format!(
+                            " WHERE {} >= {} AND {} < {}",
+                            band_qual(c),
+                            a,
+                            band_qual(c),
+                            b
+                        ),
+                        None => String::new(),
+                    };
                     let count_adql = format!("SELECT COUNT(*) FROM {} {}", left_from, w);
                     let n = tap_query(&root, &count_adql)
                         .and_then(|body| parse_json(&body))
@@ -1219,13 +1287,19 @@ fn main() {
         let mut void_bands = 0usize;
         let mut total = 0usize;
         let mut col_idx_band: Option<Vec<(String, usize)>> = None;
-        let out_path_band = out.clone().unwrap_or_default();
+        let out_path_band = match out {
+            Some(p) => p,
+            None => String::new(),
+        };
         let mut out_file: Option<std::fs::File> = None;
         let mut first_row = true;
         for &(a, b) in &ranges {
             let part_path = format!("{}.part{:.4}", out_path_band, a);
             if star_bin && !out_path_band.is_empty() {
-                let part = std::fs::read(&part_path).unwrap_or_default();
+                let part = match std::fs::read(&part_path) {
+                    Ok(bytes) => bytes,
+                    Err(_) => Vec::new(),
+                };
                 if !part.is_empty() && part.len() % STAR_BIN_STRIDE == 0 {
                     if out_file.is_none() {
                         match std::fs::File::create(&out_path_band) {
@@ -1254,19 +1328,16 @@ fn main() {
                     }
                 }
             }
-            let w = band_col
-                .as_ref()
-                .filter(|_| b.is_finite())
-                .map(|c| {
-                    format!(
-                        " WHERE {} >= {} AND {} < {}",
-                        band_qual(c),
-                        a,
-                        band_qual(c),
-                        b
-                    )
-                })
-                .unwrap_or_default();
+            let w = match band_col.as_ref().filter(|_| b.is_finite()) {
+                Some(c) => format!(
+                    " WHERE {} >= {} AND {} < {}",
+                    band_qual(c),
+                    a,
+                    band_qual(c),
+                    b
+                ),
+                None => String::new(),
+            };
             let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
             q.push_str(&w);
             if let Some(o) = &order_by {
@@ -1313,7 +1384,8 @@ fn main() {
                                 .filter_map(|(k, c)| idx_of(c).map(|i| (k.clone(), i)))
                                 .collect(),
                         );
-                        if col_idx_band.as_ref().map(|v| v.len()).unwrap_or(0) != mapping.len() {
+                        if col_idx_band.as_ref().map(|v| v.len()).map_or(0, |l| l) != mapping.len()
+                        {
                             for (k, c) in &mapping {
                                 if idx_of(c).is_none() {
                                     eprintln!(
@@ -1464,9 +1536,11 @@ fn main() {
                                         get("pmdec"),
                                     ) {
                                         if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
+                                            let Some(ci) = get("bp_rp") else {
+                                                continue;
+                                            };
                                             let plx_mas = 1000.0 / dist_pc;
                                             let flux = 10f64.powf(-0.4 * mag) as f32;
-                                            let ci = get("bp_rp").unwrap_or(0.0);
                                             let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
                                             rec.extend_from_slice(&ra.to_le_bytes());
                                             rec.extend_from_slice(&dec.to_le_bytes());

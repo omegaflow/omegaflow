@@ -158,7 +158,7 @@ impl Key {
 }
 
 fn main() {
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -235,8 +235,10 @@ fn main() {
             let Some(k) = state.get(&key) else {
                 continue;
             };
-            let samples = sm.get(&key).copied().unwrap_or(0);
-            let days = sdays.get(&key).map(|d| d.len()).unwrap_or(0);
+            let (Some(samples), Some(sdays_k)) = (sm.get(&key).copied(), sdays.get(&key)) else {
+                continue;
+            };
+            let days = sdays_k.len();
             let ge30: Vec<&PassStat> = k
                 .stats
                 .iter()
@@ -312,17 +314,26 @@ fn main() {
                     ad.push(d);
                 }
             }
-            let ma = median(&ar).unwrap_or(0.0);
-            let md = median(&ad).unwrap_or(0.0);
-            out.push(format!(
-                "  mode {mode} station {station}: ratio p50 {}, ratio<0.9 {}/{} passes, med const {:.2} -> med detr {:.2} Hz (slow-trend share {:.2} Hz)",
-                fmt_o(median(&ratios)),
-                below,
-                ratios.len(),
-                ma,
-                md,
-                ma - md
-            ));
+            if ar.is_empty() {
+                out.push(format!(
+                    "  mode {mode} station {station}: no matched passes (0 honored)"
+                ));
+                continue;
+            }
+            let ma = median(&ar);
+            let md = median(&ad);
+            match (ma, md) {
+                (Some(ma), Some(md)) => out.push(format!(
+                    "  mode {mode} station {station}: ratio p50 {}, ratio<0.9 {}/{} passes, med const {ma:.2} -> med detr {md:.2} Hz (slow-trend share {:.2} Hz)",
+                    fmt_o(median(&ratios)),
+                    below,
+                    ratios.len(),
+                    ma - md
+                )),
+                _ => out.push(format!(
+                    "  mode {mode} station {station}: matched passes present but medians absent"
+                )),
+            }
         }
     }
     out.push(String::new());

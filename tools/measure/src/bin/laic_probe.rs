@@ -192,16 +192,14 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let days = ymd_to_days(y, m, d)? as f64;
     let mut tp = time.split(':');
     let hh: f64 = tp.next()?.parse().ok()?;
-    let mm: f64 = tp
-        .next()
-        .map(|s| s.parse::<f64>().ok())
-        .flatten()
-        .unwrap_or(0.0);
-    let ss: f64 = tp
-        .next()
-        .map(|s| s.parse::<f64>().ok())
-        .flatten()
-        .unwrap_or(0.0);
+    let mm: f64 = match tp.next().and_then(|s| s.parse().ok()) {
+        Some(m) => m,
+        None => 0.0,
+    };
+    let ss: f64 = match tp.next().and_then(|s| s.parse().ok()) {
+        Some(s) => s,
+        None => 0.0,
+    };
     Some(days * 86400.0 + hh * 3600.0 + mm * 60.0 + ss)
 }
 
@@ -388,7 +386,7 @@ fn swarm_pass_samples(body: &str) -> Vec<(f64, f64, f64, f64)> {
 fn day_of_year(t: f64) -> (i64, u32) {
     let days = t.div_euclid(86400.0) as i64;
     let (y, _, _) = days_to_ymd(days);
-    let y0 = ymd_to_days(y, 1, 1).unwrap_or(0) as i64;
+    let y0 = ymd_to_days(y, 1, 1).unwrap() as i64;
     let doy = days - y0 + 1;
     (y, doy as u32)
 }
@@ -476,7 +474,10 @@ fn mseed_time(h: &[u8]) -> Option<f64> {
     let hour = bcd(h[25])?;
     let min = bcd(h[26])?;
     let sec = bcd(h[27])?;
-    let frac = bcd(h[29]).unwrap_or(0) as f64 / 10000.0;
+    let frac = match bcd(h[29]) {
+        Some(f) => f as f64 / 10000.0,
+        None => 0.0,
+    };
     let days = ymd_to_days(year as i64, 1, 1)? as f64;
     Some(
         (days + doy as f64 - 1.0) * 86400.0
@@ -676,7 +677,9 @@ fn mseed_samples(
         _ => return Vec::new(),
     }
     raw.truncate(nsamp);
-    let t = mseed_time(h).unwrap_or(0.0);
+    let Some(t) = mseed_time(h) else {
+        return Vec::new();
+    };
     let mut out = Vec::with_capacity(raw.len());
     for (i, v) in raw.iter().enumerate() {
         out.push((t + i as f64 / rate, *v as f64));
@@ -1834,7 +1837,10 @@ fn parse_window_file(body: &str) -> Option<WindowData> {
         mag: get_num("mag")?,
         lat: get_num("lat")?,
         lon: get_num("lon")?,
-        station: get_str("station").unwrap_or_default(),
+        station: match get_str("station") {
+            Some(s) => s,
+            None => String::new(),
+        },
         f: Vec::new(),
         bz: Vec::new(),
         region: Vec::new(),
@@ -2083,7 +2089,10 @@ fn main() {
         return;
     }
     if let Some(dir) = arg_value(&args, "--compile") {
-        let asset = arg_value(&args, "--asset").unwrap_or_else(|| "laic".to_string());
+        let asset = match arg_value(&args, "--asset") {
+            Some(a) => a,
+            None => "laic".to_string(),
+        };
         let ci_mode = args.iter().any(|a| a == "--ci-mode");
         compile_main(&dir, &asset, ci_mode);
         return;
@@ -2379,67 +2388,92 @@ fn harvest_main(args: &[String]) {
             return;
         }
     };
-    let max_events = arg_value(args, "--max-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let n_null = arg_value(args, "--null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(60);
-    let swarm_limit = arg_value(args, "--swarm-limit")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(60);
-    let swarm_null = arg_value(args, "--swarm-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(30);
-    let mag_min = arg_value(args, "--mag")
-        .and_then(|v| v.parse::<f64>().ok())
-        .unwrap_or(M_MIN_EVENT);
-    let tec_events = arg_value(args, "--tec-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let tec_null = arg_value(args, "--tec-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let champ_events = arg_value(args, "--champ-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let champ_null = arg_value(args, "--champ-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let mseed_events = arg_value(args, "--mseed-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let mseed_null = arg_value(args, "--mseed-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let radon_events = arg_value(args, "--radon-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let radon_null = arg_value(args, "--radon-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let weather_events = arg_value(args, "--weather-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let weather_null = arg_value(args, "--weather-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let gps_events = arg_value(args, "--gps-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let gps_null = arg_value(args, "--gps-null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let now_s = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs_f64())
-        .unwrap_or(ERA_START_S + 4.0e8);
-    let era_start = arg_value(args, "--era-start")
-        .and_then(|v| iso_to_unix(&format!("{v}T00:00:00")))
-        .unwrap_or(ERA_START_S);
-    let era_end = arg_value(args, "--era-end")
-        .and_then(|v| iso_to_unix(&format!("{v}T00:00:00")))
-        .unwrap_or(now_s);
+    let usize_arg =
+        |name: &str| -> Option<usize> { arg_value(args, name).and_then(|v| v.parse().ok()) };
+    let f64_arg =
+        |name: &str| -> Option<f64> { arg_value(args, name).and_then(|v| v.parse().ok()) };
+    let max_events = match usize_arg("--max-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let n_null = match usize_arg("--null") {
+        Some(v) => v,
+        None => 60,
+    };
+    let swarm_limit = match usize_arg("--swarm-limit") {
+        Some(v) => v,
+        None => 60,
+    };
+    let swarm_null = match usize_arg("--swarm-null") {
+        Some(v) => v,
+        None => 30,
+    };
+    let mag_min = match f64_arg("--mag") {
+        Some(v) => v,
+        None => M_MIN_EVENT,
+    };
+    let tec_events = match usize_arg("--tec-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let tec_null = match usize_arg("--tec-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let champ_events = match usize_arg("--champ-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let champ_null = match usize_arg("--champ-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let mseed_events = match usize_arg("--mseed-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let mseed_null = match usize_arg("--mseed-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let radon_events = match usize_arg("--radon-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let radon_null = match usize_arg("--radon-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let weather_events = match usize_arg("--weather-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let weather_null = match usize_arg("--weather-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let gps_events = match usize_arg("--gps-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let gps_null = match usize_arg("--gps-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let now_s = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(_) => ERA_START_S + 4.0e8,
+    };
+    let era_start =
+        match arg_value(args, "--era-start").and_then(|v| iso_to_unix(&format!("{v}T00:00:00"))) {
+            Some(t) => t,
+            None => ERA_START_S,
+        };
+    let era_end =
+        match arg_value(args, "--era-end").and_then(|v| iso_to_unix(&format!("{v}T00:00:00"))) {
+            Some(t) => t,
+            None => now_s,
+        };
 
     println!("=== Nadel-IV harvest: window series to disk (no TE — analysis runs offline) ===");
     println!(
@@ -2959,18 +2993,20 @@ fn analyze_main(args: &[String]) {
     let kde_scale = arg_value(args, "--kde-scale")
         .and_then(|v| v.parse::<f32>().ok())
         .unwrap_or(1.0);
-    let max_events = arg_value(args, "--max-events")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
-    let max_null = arg_value(args, "--null")
-        .and_then(|v| v.parse::<usize>().ok())
-        .unwrap_or(0);
+    let max_events = match arg_value(args, "--max-events").and_then(|v| v.parse::<usize>().ok()) {
+        Some(v) => v,
+        None => 0,
+    };
+    let max_null = match arg_value(args, "--null").and_then(|v| v.parse::<usize>().ok()) {
+        Some(v) => v,
+        None => 0,
+    };
     let bin_path: Option<String> = match arg_value(args, "--cdn") {
         Some(name) => {
             let url = format!("{}/{}/{}.bin", CDN_BASE, CDN_RELEASE, name);
             match fetch_raw_bytes(&url, 86400) {
                 Some(bytes) => {
-                    let path = format!("/tmp/opencode/{name}.bin");
+                    let path = format!("tmp/{name}.bin");
                     std::fs::write(&path, &bytes).ok();
                     Some(path)
                 }
@@ -3006,7 +3042,7 @@ fn analyze_main(args: &[String]) {
     println!(
         "TEC channel (where sidecars exist): COD 1-h rapid GIMs (ESA GSSC FTP, bilinear at the epicenter), TEC pair on 1-h cells, sweep 0…{MAX_LAG_H} h (m ≥ {MIN_M}), control TE(Solar Bz → TEC);"
     );
-    println!("registered alternative A — Ereignisrate — remains unbuilt (register).");
+    println!("registered alternative A — event-rate — remains unbuilt (register).");
 
     let mut events: Vec<(f64, f64, f64, f64)> = Vec::new();
     let mut null_windows: Vec<(f64, f64, f64)> = Vec::new();
@@ -3541,7 +3577,7 @@ fn analyze_main(args: &[String]) {
                        z: f64| {
         println!();
         println!("=== per-lag mean excess — {label} ===");
-        let n_lags = curve.iter().map(|c| c.len()).max().unwrap_or(0);
+        let n_lags = curve.iter().map(|c| c.len()).max().map_or(0, |m| m);
         for lag_h in 0..n_lags {
             let evs: Vec<f64> = curve
                 .iter()
@@ -3581,7 +3617,7 @@ fn analyze_main(args: &[String]) {
     };
     let best_lag = |curve: &[Vec<Option<f64>>]| -> (Option<usize>, f64) {
         let mut best: (Option<usize>, f64) = (None, f64::NEG_INFINITY);
-        let n_lags = curve.iter().map(|c| c.len()).max().unwrap_or(0);
+        let n_lags = curve.iter().map(|c| c.len()).max().map_or(0, |m| m);
         for lag_h in 0..n_lags {
             let evs: Vec<f64> = curve
                 .iter()
@@ -3640,7 +3676,7 @@ fn analyze_main(args: &[String]) {
     let ctrl_arrow = s_ctrl.n >= MIN_N_WINDOWS && s_ctrl.mean > n_ctrl.mean + 2.0 * n_ctrl.sd;
 
     println!();
-    println!("=== das Blatt ===");
+    println!("=== the sheet ===");
     println!(
         "TE(Lithosphere → Ionosphere) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
         s_li.mean,

@@ -7,11 +7,15 @@ const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const LAG_MAX: usize = 2;
 const MIN_N: usize = 8;
 
-fn verdict_label(forward: f64, thr: f64, fam: f64) -> &'static str {
+fn verdict_label(forward: f64, thr: Option<f64>, fam: f64) -> &'static str {
     if forward > fam {
         "fam-tragend"
-    } else if forward > thr {
-        "ueber eigener Schwelle, unter Familien-Schwelle"
+    } else if let Some(t) = thr {
+        if forward > t {
+            "ueber eigener Schwelle, unter Familien-Schwelle"
+        } else {
+            "still"
+        }
     } else {
         "still"
     }
@@ -19,9 +23,9 @@ fn verdict_label(forward: f64, thr: f64, fam: f64) -> &'static str {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let mut spectra = "/tmp/opencode/jwst_spectra.bin".to_string();
-    let mut equilibrium = "/tmp/opencode/jwst_equilibrium.bin".to_string();
-    let mut out = "/tmp/opencode/jwst_biosignature_verdict.txt".to_string();
+    let mut spectra = "tmp/jwst_spectra.bin".to_string();
+    let mut equilibrium = "tmp/jwst_equilibrium.bin".to_string();
+    let mut out = "tmp/jwst_biosignature_verdict.txt".to_string();
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
@@ -67,7 +71,7 @@ fn run(spectra_path: &str, equilibrium_path: &str, out_path: &str) -> Result<(),
     let mut n_te = 0usize;
     let mut n_fam = 0usize;
     let mut sums_te = 0.0f64;
-    let mut results: Vec<(String, f64, f64, f64, String)> = Vec::new();
+    let mut results: Vec<(String, f64, Option<f64>, f64, String)> = Vec::new();
 
     for spec in &spectra {
         let Some(eq) = eq_by_obs.get(&spec.obs_id) else {
@@ -109,9 +113,7 @@ fn run(spectra_path: &str, equilibrium_path: &str, out_path: &str) -> Result<(),
             (rev_te, "chem->stellar")
         };
         let lag = best_lag;
-        let thr = surrogate_stats_phase(&x, &y, lag, SEED)
-            .map(|(_, _, t)| t)
-            .unwrap_or(0.0);
+        let thr = surrogate_stats_phase(&x, &y, lag, SEED).map(|(_, _, t)| t);
         let fam = best_te.max(rev_te);
         let word = verdict_label(forward, thr, fam);
         n_te += 1;
@@ -120,10 +122,16 @@ fn run(spectra_path: &str, equilibrium_path: &str, out_path: &str) -> Result<(),
             n_fam += 1;
         }
         results.push((spec.obs_id.clone(), forward, thr, fam, word.to_string()));
-        lines.push(format!(
-            "  {}  te {:.4e} ({dir}, lag {}) thr {:.4e} fam {:.4e} | {}",
-            spec.obs_id, forward, lag, thr, fam, word
-        ));
+        lines.push(match thr {
+            Some(t) => format!(
+                "  {}  te {:.4e} ({dir}, lag {}) thr {:.4e} fam {:.4e} | {}",
+                spec.obs_id, forward, lag, t, fam, word
+            ),
+            None => format!(
+                "  {}  te {:.4e} ({dir}, lag {}) thr absent fam {:.4e} | {}",
+                spec.obs_id, forward, lag, fam, word
+            ),
+        });
     }
 
     let fam = if n_te > 0 {

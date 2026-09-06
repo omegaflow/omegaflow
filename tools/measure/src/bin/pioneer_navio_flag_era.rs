@@ -112,7 +112,7 @@ fn median(v: &[f64]) -> f64 {
 }
 
 fn run(name: &str, years: &[i32]) {
-    let path = format!("data/{name}_navio_residuum.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_residuum.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: residuum bin void ({path})");
         return;

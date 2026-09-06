@@ -49,7 +49,7 @@ fn median_upper(s: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -74,7 +74,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -124,7 +124,11 @@ fn main() {
         .filter(|(d, (_, el))| band(*el) == 0 && day_total.contains_key(d))
         .map(|(d, _)| *d)
         .collect();
-    let quiet_real: BTreeSet<i64> = quiet_any.iter().filter(|d| day_nl.contains_key(d)).copied().collect();
+    let quiet_real: BTreeSet<i64> = quiet_any
+        .iter()
+        .filter(|d| day_nl.contains_key(d))
+        .copied()
+        .collect();
     let all_lock: Vec<i64> = quiet_any.difference(&quiet_real).copied().collect();
 
     let band1_any: BTreeSet<i64> = geo
@@ -132,7 +136,11 @@ fn main() {
         .filter(|(d, (_, el))| band(*el) == 1 && day_total.contains_key(d))
         .map(|(d, _)| *d)
         .collect();
-    let band1_real: BTreeSet<i64> = band1_any.iter().filter(|d| day_nl.contains_key(d)).copied().collect();
+    let band1_real: BTreeSet<i64> = band1_any
+        .iter()
+        .filter(|d| day_nl.contains_key(d))
+        .copied()
+        .collect();
 
     let mut out: Vec<String> = Vec::new();
     out.push("galileo mode-2 quiet-window day-set reconciliation (1.5 vs 0.65 Hz)".to_string());
@@ -143,8 +151,14 @@ fn main() {
     out.push(String::new());
 
     out.push("quiet window (elong band 0 = el < 30 deg)".to_string());
-    out.push(format!("  days with any mode-2 record (the rausch/eps-curve count): {}", quiet_any.len()));
-    out.push(format!("  days with >= 1 non-lock sample (the pass-seg / real-cell count): {}", quiet_real.len()));
+    out.push(format!(
+        "  days with any mode-2 record (the rausch/eps-curve count): {}",
+        quiet_any.len()
+    ));
+    out.push(format!(
+        "  days with >= 1 non-lock sample (the pass-seg / real-cell count): {}",
+        quiet_real.len()
+    ));
     out.push(format!(
         "  all-lock days (any record, 0 non-lock samples): {}",
         quiet_any.len() - quiet_real.len()
@@ -157,14 +171,24 @@ fn main() {
             day_total[d]
         ));
     }
-    out.push(format!("  band1 (30 <= el < 60): days any record {}, days with non-lock {}", band1_any.len(), band1_real.len()));
+    out.push(format!(
+        "  band1 (30 <= el < 60): days any record {}, days with non-lock {}",
+        band1_any.len(),
+        band1_real.len()
+    ));
 
     out.push(String::new());
     out.push("set arithmetic between the two probe conventions".to_string());
     let overlap_b1 = band1_any.intersection(&quiet_any).count();
     out.push(format!("  quiet_any (rausch) ∩ band1_any (30-60): {} days (the 8 loud days must be disjoint if both eps-curve and pass-seg used the same classification)", overlap_b1));
-    out.push(format!("  quiet_any − quiet_real = {} all-lock days", quiet_any.difference(&quiet_real).count()));
-    out.push(format!("  band1_real ∩ quiet_real: {} days", band1_real.intersection(&quiet_real).count()));
+    out.push(format!(
+        "  quiet_any − quiet_real = {} all-lock days",
+        quiet_any.difference(&quiet_real).count()
+    ));
+    out.push(format!(
+        "  band1_real ∩ quiet_real: {} days",
+        band1_real.intersection(&quiet_real).count()
+    ));
 
     let ref_list: Vec<f64> = quiet_any
         .iter()
@@ -175,7 +199,10 @@ fn main() {
         .collect();
     let ref_sorted = sorted_nan_last(&ref_list);
     out.push(String::new());
-    out.push("reference reproduction (rausch noise_geo convention: all-lock day = NaN cell sorted last)".to_string());
+    out.push(
+        "reference reproduction (rausch noise_geo convention: all-lock day = NaN cell sorted last)"
+            .to_string(),
+    );
     out.push(format!(
         "  n = {}, median index n/2 = {} -> {:.3} Hz",
         ref_sorted.len(),
@@ -188,7 +215,11 @@ fn main() {
         .filter_map(|d| {
             let v = day_nl.get(d)?;
             let r = rms(v);
-            if r.is_finite() { Some((*d, r)) } else { None }
+            if r.is_finite() {
+                Some((*d, r))
+            } else {
+                None
+            }
         })
         .collect();
     let mut real_sorted = real.clone();
@@ -225,11 +256,22 @@ fn main() {
     }
 
     out.push(String::new());
-    let n_lo = real_sorted.iter().filter(|(_, r)| *r <= lobe_boundary).count();
-    let up: Vec<&(i64, f64)> = real_sorted.iter().filter(|(_, r)| *r > lobe_boundary).collect();
+    let n_lo = real_sorted
+        .iter()
+        .filter(|(_, r)| *r <= lobe_boundary)
+        .count();
+    let up: Vec<&(i64, f64)> = real_sorted
+        .iter()
+        .filter(|(_, r)| *r > lobe_boundary)
+        .collect();
     out.push(format!("  bimodal split at the upper median {lobe_boundary:.3} Hz: {} cells in the quiet lobe, {} cells in the upper lobe", n_lo, up.len()));
     let up_max = up.last().unwrap().1;
-    out.push(format!("  upper lobe range: {:.3} .. {:.3} Hz ({} days)", up.first().unwrap().1, up_max, up.len()));
+    out.push(format!(
+        "  upper lobe range: {:.3} .. {:.3} Hz ({} days)",
+        up.first().unwrap().1,
+        up_max,
+        up.len()
+    ));
     let loud1: Vec<&(i64, f64)> = real_sorted.iter().filter(|(_, r)| *r > 1.0).collect();
     out.push(format!("  loud days (day RMS > 1.0 Hz): {}", loud1.len()));
     for (d, r) in &loud1 {
@@ -240,31 +282,34 @@ fn main() {
         ));
     }
     let loud_deep = loud1.iter().filter(|(d, _)| geo[d].1 < 10.0).count();
-    out.push(format!("  of the loud (>1 Hz) days, those with elong < 10 deg: {} / {}", loud_deep, loud1.len()));
+    out.push(format!(
+        "  of the loud (>1 Hz) days, those with elong < 10 deg: {} / {}",
+        loud_deep,
+        loud1.len()
+    ));
 
     out.push(String::new());
     out.push("band1 (30 <= el < 60) mode-2 days with any record, sorted by rms (the pass-seg 8-day 16.7 Hz window)".to_string());
-    let mut b1: Vec<(i64, f64)> = band1_any
+    let mut b1: Vec<(i64, f64, usize)> = band1_any
         .iter()
-        .map(|d| {
-            let r = match day_nl.get(d) {
-                Some(v) => rms(v),
-                None => f64::NAN,
-            };
-            (*d, r)
+        .map(|d| match day_nl.get(d) {
+            Some(v) => (*d, rms(v), v.len()),
+            None => (*d, f64::NAN, 0),
         })
         .collect();
     b1.sort_by(|a, b| a.1.total_cmp(&b.1));
-    for (d, r) in &b1 {
+    for (d, r, nn) in &b1 {
         let (al, el) = geo[d];
-        let nn = day_nl.get(d).map(|v| v.len()).unwrap_or(0);
         out.push(format!(
-            "  {} elong {el:6.2} alpha {al:6.2} rms {r:9.3} n_nonlock {}",
+            "  {} elong {el:6.2} alpha {al:6.2} rms {r:9.3} n_nonlock {nn}",
             jd_date(*d as f64 * DAY_S),
-            nn
         ));
     }
-    let b1_real_rms: Vec<f64> = b1.iter().filter(|(_, r)| r.is_finite()).map(|(_, r)| *r).collect();
+    let b1_real_rms: Vec<f64> = b1
+        .iter()
+        .filter(|(_, r, _)| r.is_finite())
+        .map(|(_, r, _)| *r)
+        .collect();
     if !b1_real_rms.is_empty() {
         let s = sorted_nan_last(&b1_real_rms);
         out.push(format!(
@@ -275,7 +320,10 @@ fn main() {
     }
 
     out.push(String::new());
-    out.push("edge sensitivity: quiet days whose elong is within 1.0 deg of the 30-deg band edge".to_string());
+    out.push(
+        "edge sensitivity: quiet days whose elong is within 1.0 deg of the 30-deg band edge"
+            .to_string(),
+    );
     for (d, (al, el)) in &geo {
         if !quiet_any.contains(d) {
             continue;

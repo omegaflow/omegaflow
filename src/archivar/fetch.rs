@@ -854,14 +854,7 @@ pub fn cache_root() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir).join("archivar_cache");
     }
-    if let Ok(home) = std::env::var("HOME") {
-        return std::path::PathBuf::from(home)
-            .join(".local")
-            .join("state")
-            .join("omegaflow")
-            .join("archivar_cache");
-    }
-    std::path::PathBuf::from("archivar_cache")
+    std::path::PathBuf::from("data").join("cache")
 }
 
 pub fn cache_path_for(netloc: &str, name: &str) -> String {
@@ -1050,12 +1043,8 @@ mod cache_root_tests {
         }
         assert_eq!(
             cache_root(),
-            std::path::PathBuf::from("/home/probe")
-                .join(".local")
-                .join("state")
-                .join("omegaflow")
-                .join("archivar_cache"),
-            "without OMEGAFLOW_STATE the cache root lives in the documented home"
+            std::path::PathBuf::from("data").join("cache"),
+            "without OMEGAFLOW_STATE the cache root lives in the folder"
         );
 
         unsafe {

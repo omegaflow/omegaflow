@@ -1,8 +1,10 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
-use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
+use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
+
+const PARALLAX_ABSENT_MAS: f64 = 0.0;
 
 fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
@@ -151,10 +153,10 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
         if !seen.insert(tic.clone()) {
             continue;
         }
-        let plx = match jnum(row, "sy_dist") {
-            Some(d) if d > 0.0 => 1000.0 / d,
-            _ => 0.0,
-        };
+        let plx = jnum(row, "sy_dist")
+            .filter(|d| d.is_finite() && *d > 0.0)
+            .map(|d| 1000.0 / d)
+            .unwrap_or(PARALLAX_ABSENT_MAS);
         targets.push(Target {
             tic_id: tic,
             ra_deg: ra,
@@ -371,11 +373,13 @@ fn main() {
         eprintln!("--out absent");
         return;
     };
-    let token = mast_token().unwrap_or_default();
-    if token.is_empty() {
-        eprintln!("MAST_TOKEN absent (.secrets.local or env)");
-        return;
-    }
+    let token = match mast_token() {
+        Some(t) if !t.is_empty() => t,
+        _ => {
+            eprintln!("MAST_TOKEN absent (.secrets.local or env)");
+            return;
+        }
+    };
     let tic_set: Option<std::collections::HashSet<String>> =
         tic_filter.map(|s| s.split(',').map(|t| t.trim().to_string()).collect());
     let targets = tap_targets(&token, limit);
@@ -397,7 +401,7 @@ fn main() {
         }
         let mut samples = Vec::new();
         for obs_id in &ids {
-            let tmp = format!("/tmp/opencode/tess_lc_{}.fits", obs_id);
+            let tmp = format!("tmp/tess_lc_{}.fits", obs_id);
             if !curl_bytes(
                 "https://mast.stsci.edu/api/v0.1/Download/file",
                 &[("uri", format!("mast:TESS/product/{}_lc.fits", obs_id))],

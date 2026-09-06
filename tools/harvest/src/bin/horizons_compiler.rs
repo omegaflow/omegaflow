@@ -310,11 +310,11 @@ fn current_jd() -> f64 {
     use std::time::{SystemTime, UNIX_EPOCH};
     const UNIX_AT_J2000: f64 = 946728000.0;
     const J2000_JD: f64 = 2451545.0;
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs_f64();
-    J2000_JD + (now - UNIX_AT_J2000) / 86400.0
+    let since_epoch = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(e) => -(e.duration().as_secs_f64()),
+    };
+    J2000_JD + (since_epoch - UNIX_AT_J2000) / 86400.0
 }
 
 fn fit_granule_from_samples(
@@ -510,7 +510,8 @@ fn tile_segment(
     if len <= 0.0 {
         return;
     }
-    let n = ((len / target_width).round() as usize).max(1);
+    let rounded = (len / target_width).round() as usize;
+    let n = if rounded == 0 { 1 } else { rounded };
     let width = len / n as f64;
     for i in 0..n {
         let mid_jd = seg_lo + (i as f64 + 0.5) * width;
@@ -608,7 +609,7 @@ fn generate_flyby_arc(command: &str, body_name: &str, jd0: f64, radius_d: f64) {
         eprintln!("  {body_name}: no granules fit");
         return;
     }
-    let path = format!("data/ephemeris_{}.bin", body_name);
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
     write_binary(&path, body_name, &granules, &[], None);
     match std::fs::read(&path)
         .ok()
@@ -663,7 +664,7 @@ fn main() {
             if granules.is_empty() {
                 continue;
             }
-            let path = format!("data/ephemeris_{}.bin", name);
+            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
             write_binary(&path, name, &granules, &[], gm_m3_s2);
             if ci_mode && !omegaflow::cdn::upload_asset(&path) {
                 eprintln!("upload: {} did not reach the CDN", path);
@@ -692,7 +693,7 @@ fn main() {
             if granules.is_empty() {
                 continue;
             }
-            let path = format!("data/ephemeris_{}.bin", name);
+            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
             write_binary(&path, name, &granules, &[], gm_m3_s2);
             match std::fs::read(&path)
                 .ok()
@@ -721,7 +722,7 @@ fn main() {
             let jd0 = julian_day_utc(*y, *m, *d);
             eprintln!("  {name} (flyby {y}-{m}-{d}, window ±{radius:.0} d)");
             generate_flyby_arc(cmd, name, jd0, *radius);
-            let path = format!("data/ephemeris_{name}.bin");
+            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
             if ci_mode && !omegaflow::cdn::upload_asset(&path) {
                 eprintln!("upload: {path} did not reach the CDN");
                 std::process::exit(1);
@@ -737,7 +738,7 @@ fn main() {
         if gm_m3_s2.is_none() {
             eprintln!("  {}: granules only, no Horizons GM", body_name);
         }
-        let path = format!("data/ephemeris_{}.bin", body_name);
+        let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
         write_binary(&path, body_name, &granules, &[], gm_m3_s2);
         if ci_mode && !omegaflow::cdn::upload_asset(&path) {
             eprintln!("upload: {} did not reach the CDN", path);

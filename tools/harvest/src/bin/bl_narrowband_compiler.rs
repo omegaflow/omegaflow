@@ -80,7 +80,10 @@ fn column_index(header: &[String], want: &str) -> Option<usize> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "/tmp/opencode/bl_narrowband.bin".into());
+    let out = match arg_value(&args, "--out") {
+        Some(o) => o,
+        None => "tmp/bl_narrowband.bin".into(),
+    };
     let input = arg_value(&args, "--input");
     let url = arg_value(&args, "--url");
     let limit: Option<usize> = arg_value(&args, "--limit").and_then(|v| v.parse().ok());
@@ -132,13 +135,16 @@ fn main() {
         .map(|s| s.trim().to_string())
         .collect();
     let idx = |name: &str| -> usize {
-        column_index(&header, name).unwrap_or_else(|| {
-            eprintln!(
-                "column {} absent from the header — the row stays uncompiled",
-                name
-            );
-            std::process::exit(1);
-        })
+        match column_index(&header, name) {
+            Some(i) => i,
+            None => {
+                eprintln!(
+                    "column {} absent from the header — the row stays uncompiled",
+                    name
+                );
+                std::process::exit(1);
+            }
+        }
     };
     let ra_i = idx("RA");
     let dec_i = idx("DEC");
@@ -149,7 +155,7 @@ fn main() {
     let fe_i = column_index(&header, "FreqEnd");
     let bw_i = column_index(&header, "bin_width").or_else(|| column_index(&header, "BinWidth"));
     if (fs_i.is_some()) != (fe_i.is_some()) {
-        eprintln!("FreqStart and FreqEnd must both be present — the band width stays unread");
+        eprintln!("FreqStart and FreqEnd are not both present — the band width stays unread");
         std::process::exit(1);
     }
     if fs_i.is_none() && bw_i.is_none() {
@@ -173,7 +179,12 @@ fn main() {
         }
         rows += 1;
         if rows % 1_000_000 == 0 {
-            eprintln!("{}: {} rows read, {} hits compiled", input.as_deref().unwrap_or("CSV"), rows, events.len());
+            eprintln!(
+                "{}: {} rows read, {} hits compiled",
+                input.as_deref().unwrap_or("CSV"),
+                rows,
+                events.len()
+            );
         }
         let cols: Vec<&str> = line.split(',').map(|s| s.trim()).collect();
         let at = |i: usize| -> Option<&str> { cols.get(i).copied().filter(|s| !s.is_empty()) };

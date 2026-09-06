@@ -25,7 +25,7 @@ fn percentile(mut v: Vec<f64>, p: f64) -> f64 {
 }
 
 fn clean(name: &str) {
-    let raw_path = format!("data/{name}_doppler.bin");
+    let raw_path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler.bin");
     let Ok(bytes) = std::fs::read(&raw_path) else {
         eprintln!("{name}: doppler bin void ({raw_path})");
         return;
@@ -48,11 +48,16 @@ fn clean(name: &str) {
         .map(|(v, _)| *v)
         .collect();
     band.sort_unstable();
-    let band_span = band.last().copied().unwrap_or(0) - band.first().copied().unwrap_or(0);
+    let band_lo = band.first().copied();
+    let band_hi = band.last().copied();
     let distinct = freq_map.len();
     eprintln!(
-        "{name}: FREQCY — {distinct} distinct values, {band_len} of them in the S-band window [2,0–2,5 GHz], S-band span {band_span} Hz",
-        band_len = band.len()
+        "{name}: FREQCY — {distinct} distinct values, {band_len} of them in the S-band window [2,0–2,5 GHz], S-band span {span_txt} Hz",
+        band_len = band.len(),
+        span_txt = match (band_lo, band_hi) {
+            (Some(lo), Some(hi)) => (hi - lo).to_string(),
+            _ => "absent".to_string(),
+        }
     );
 
     let mut neg: Vec<f64> = Vec::new();
@@ -86,12 +91,15 @@ fn clean(name: &str) {
     }
     neg_runs.sort_unstable();
     let all: Vec<f64> = records.iter().map(|r| r[1]).collect();
+    let longest_txt = match neg_runs.last() {
+        Some(&l) => l.to_string(),
+        None => "none".to_string(),
+    };
     eprintln!(
-        "{name}: OBSVBL — positive {pos}, zero {zero}, negative {neg_count} ({:.1} %); negative median {:.3e} Hz, negative runs {} (longest {})",
+        "{name}: OBSVBL — positive {pos}, zero {zero}, negative {neg_count} ({:.1} %); negative median {:.3e} Hz, negative runs {} (longest {longest_txt})",
         neg_count as f64 / n as f64 * 100.0,
         median(neg.clone()),
         neg_runs.len(),
-        neg_runs.last().copied().unwrap_or(0)
     );
     eprintln!(
         "{name}: OBSVBL percentiles [0,1,50,90,99,100] = [{:.3e}, {:.3e}, {:.3e}, {:.3e}, {:.3e}, {:.3e}] Hz",
@@ -194,7 +202,7 @@ fn clean(name: &str) {
         }
         out.push(clean_records[i]);
     }
-    let out_path = format!("data/{name}_doppler_clean.bin");
+    let out_path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
     let bin = write_bin(&out);
     if std::fs::write(&out_path, &bin).is_err() {
         eprintln!("{name}: write {out_path} void");

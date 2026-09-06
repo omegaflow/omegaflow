@@ -91,17 +91,17 @@ impl Deploy {
                     "instrument_systematics",
                     "hephaistos_background",
                 ],
-                note: "Techno-Dip: Staub/Flecken/Variabilitaet/Bedeckung/Systematik als Boden-Zeugen (Befund 2026-09-05)",
+                note: "Techno-Dip: dust/spots/variability/occultation/systematics as the ground witnesses (verdict 2026-09-05)",
             }),
             Deploy::TechnoNarrowband => Some(Manifest {
                 candidate: "narrowband_channel_series",
                 witnesses: &["rfi_off_source", "channel_baseline"],
-                note: "Techno-Narrowband: die Kanal-Serie existiert nicht im Bestand; jeder Linien-Zeuge ist noetig (Befund 2026-09-05)",
+                note: "Techno-Narrowband: the channel series is not in the holdings; every line witness is needed (verdict 2026-09-05)",
             }),
             Deploy::BioDisequilibrium => Some(Manifest {
                 candidate: "disequilibrium_series",
                 witnesses: &["stellar_activity_xuv", "reservoir_feh"],
-                note: "Bio-Disequilibrium: Primaer-Null = thermochemisches Gleichgewicht (disequilibrium_register_probe); Aktivitaet/XUV und [Fe/H] als Serie fehlen (Befund 2026-09-05)",
+                note: "Bio-Disequilibrium: primary null = thermochemical equilibrium (disequilibrium_register_probe); activity/XUV and [Fe/H] as a series are missing (verdict 2026-09-05)",
             }),
         }
     }
@@ -447,7 +447,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut candidate_path: Option<String> = None;
     let mut witness_args: Vec<(String, String)> = Vec::new();
-    let mut out = "/tmp/opencode/negativ_fuzzy_verdict.txt".to_string();
+    let mut out = "tmp/negativ_fuzzy_verdict.txt".to_string();
     let mut seed = DEFAULT_SEED;
     let mut lag_max = DEFAULT_LAG_MAX;
     let mut deploy = Deploy::None;
@@ -465,7 +465,9 @@ fn main() {
                     if let Some((name, path)) = spec.split_once('=') {
                         witness_args.push((name.to_string(), path.to_string()));
                     } else {
-                        eprintln!("negativ_fuzzy_probe: --witness must be <name>=<path> — refused");
+                        eprintln!(
+                            "negativ_fuzzy_probe: --witness carries no <name>=<path> — refused"
+                        );
                         std::process::exit(1);
                     }
                 }

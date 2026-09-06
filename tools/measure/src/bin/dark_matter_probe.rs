@@ -1,6 +1,6 @@
 use omegaflow::archivar::{
-    BodyEphemeris, J2000_EPOCH, SourceConfig, body_barycenter_position, download_ephemeris_batch,
-    fetch_raw_bytes, load_sources, parse_ephemeris_binary,
+    body_barycenter_position, download_ephemeris_batch, fetch_raw_bytes, load_sources,
+    parse_ephemeris_binary, BodyEphemeris, SourceConfig, J2000_EPOCH,
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
@@ -136,7 +136,7 @@ fn date_of(days: i64) -> String {
 
 fn load_probe_daily(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
     let key = format!("{name}_daily");
-    let path = format!("data/ephemeris_{key}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{key}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{key}.bin", CDN_BASE);
@@ -245,7 +245,11 @@ fn compute_residue(
         }
         prev_a_res = Some(a_res);
     }
-    if out.days.is_empty() { None } else { Some(out) }
+    if out.days.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 fn print_summary(name: &str, res: &Residue) {
@@ -460,11 +464,15 @@ fn log_pair(a: &[f32], b: &[f32]) -> Option<(Vec<f32>, Vec<f32>)> {
             lb.push(y.ln() as f32);
         }
     }
-    if la.len() < 24 { None } else { Some((la, lb)) }
+    if la.len() < 24 {
+        None
+    } else {
+        Some((la, lb))
+    }
 }
 
 fn load_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ephemeris_{name}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
@@ -754,7 +762,10 @@ fn main() {
             (
                 idx,
                 s.clone(),
-                format!("data/ephemeris_{}.bin", s.body.as_deref().unwrap_or("")),
+                format!(
+                    "data/ssd.jpl.nasa.gov/ephemeris_{}.bin",
+                    s.body.as_deref().unwrap_or("")
+                ),
             )
         })
         .collect();
@@ -762,7 +773,9 @@ fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut planets: Vec<Planet> = Vec::new();
     for (_, s, path) in &items {
-        let name = s.body.clone().unwrap_or_default();
+        let Some(name) = s.body.clone() else {
+            continue;
+        };
         match std::fs::read(path)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -804,15 +817,16 @@ fn main() {
             MODEL_BODIES.len()
         );
     }
-    let earth_j2 = planets
-        .iter()
-        .find(|p| p.name == "earth")
-        .map(|p| p.j2)
-        .unwrap_or(0.0);
+    let earth_j2 = planets.iter().find(|p| p.name == "earth").map(|p| p.j2);
     let moon_in = planets.iter().any(|p| p.name == "moon");
-    println!(
-        "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2}, residue a_obs − a_known per daily step"
-    );
+    match earth_j2 {
+        Some(earth_j2) => println!(
+            "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2}, residue a_obs − a_known per daily step"
+        ),
+        None => println!(
+            "model: Sun+8+Moon point masses (moon {moon_in}), no earth — the Earth-J2 slot stays absent, residue a_obs − a_known per daily step"
+        ),
+    }
 
     let mut residues: HashMap<String, Residue> = HashMap::new();
     for name in PROBES {

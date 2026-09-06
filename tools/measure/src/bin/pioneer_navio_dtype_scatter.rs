@@ -3,12 +3,11 @@ use omegaflow::doppler::parse_pnav_bin;
 const DAY_S: f64 = 86400.0;
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
     let Some(recs) = std::fs::read(&path).ok().and_then(|d| parse_pnav_bin(&d)) else {
         eprintln!("{name}: pnav bin void ({path})");
         return;
     };
-    // record: [timtag, obs, freq, cmptime, dtype, sc, trans, rcvr1, linkmode]
     let mut by12: std::collections::BTreeMap<i64, Vec<f64>> = std::collections::BTreeMap::new();
     let mut by13: std::collections::BTreeMap<i64, Vec<f64>> = std::collections::BTreeMap::new();
     let mut n12 = 0usize;
@@ -37,7 +36,6 @@ fn run(name: &str) {
         by13.len()
     );
 
-    // per-day de-trended (subtract day median) per-sample RMS for each DTYPE
     let scatter = |map: &std::collections::BTreeMap<i64, Vec<f64>>| -> (usize, f64, f64) {
         let mut rms_vals: Vec<f64> = Vec::new();
         let mut n_used = 0usize;

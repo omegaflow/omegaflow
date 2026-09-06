@@ -1,11 +1,11 @@
-use omegaflow::archivar::json::{JsonVal, parse_json};
-use omegaflow::archivar::radio::{RADIO_BIN_WIDTH_HZ, RADIO_FREQ_HZ, RadioSource, write_bin};
+use omegaflow::archivar::json::{parse_json, JsonVal};
+use omegaflow::archivar::radio::{write_bin, RadioSource, RADIO_BIN_WIDTH_HZ, RADIO_FREQ_HZ};
 use omegaflow::cdn::upload_asset;
 use std::path::Path;
 
-const NVSS_DEFAULT: &str = "/tmp/opencode/nvss.json";
-const FIRST_DEFAULT: &str = "/tmp/opencode/first14.json";
-const OUT_DEFAULT: &str = "/tmp/opencode/radio.bin";
+const NVSS_DEFAULT: &str = "tmp/nvss.json";
+const FIRST_DEFAULT: &str = "tmp/first14.json";
+const OUT_DEFAULT: &str = "tmp/radio.bin";
 const MJY_TO_WM2HZ: f64 = 1e-29;
 
 fn val_of(el: &JsonVal, key: &str) -> Option<f64> {
@@ -24,7 +24,7 @@ fn array_of(bytes: &[u8], path: &str) -> Option<Vec<JsonVal>> {
     match j {
         JsonVal::Arr(arr) => Some(arr),
         _ => {
-            eprintln!("{path}: expected a JSON array at top level");
+            eprintln!("{path}: the top level carries no JSON array");
             None
         }
     }

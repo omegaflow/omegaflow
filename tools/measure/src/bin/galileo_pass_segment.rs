@@ -62,7 +62,11 @@ struct Cell {
 
 impl Cell {
     fn new() -> Cell {
-        Cell { n: 0, mean: 0.0, m2: 0.0 }
+        Cell {
+            n: 0,
+            mean: 0.0,
+            m2: 0.0,
+        }
     }
     fn add(&mut self, x: f64) {
         self.n += 1;
@@ -80,7 +84,7 @@ impl Cell {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -120,7 +124,10 @@ struct Grp {
 
 impl Grp {
     fn new() -> Grp {
-        Grp { prev: None, open: None }
+        Grp {
+            prev: None,
+            open: None,
+        }
     }
 }
 
@@ -133,7 +140,12 @@ struct Open {
 
 impl Open {
     fn start(t: f64) -> Open {
-        Open { t0: t, t_last: t, xs: Vec::new(), ss: Vec::new() }
+        Open {
+            t0: t,
+            t_last: t,
+            xs: Vec::new(),
+            ss: Vec::new(),
+        }
     }
 }
 
@@ -146,7 +158,11 @@ struct PassStat {
     med_strength: Option<f64>,
 }
 
-fn finish_pass(o: Option<Open>, passmap: &mut BTreeMap<(i64, i64), Vec<PassStat>>, key: (i64, i64)) {
+fn finish_pass(
+    o: Option<Open>,
+    passmap: &mut BTreeMap<(i64, i64), Vec<PassStat>>,
+    key: (i64, i64),
+) {
     if let Some(o) = o {
         let n_xs = o.xs.len();
         let mut c = Cell::new();
@@ -240,7 +256,7 @@ fn main() {
         }
     }
 
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -271,7 +287,10 @@ fn main() {
         if r[1].abs() > LOCK_HZ {
             *mode_lock.entry(mode).or_insert(0) += 1;
         } else {
-            daycell.entry((mode, day)).or_insert_with(Cell::new).add(r[1]);
+            daycell
+                .entry((mode, day))
+                .or_insert_with(Cell::new)
+                .add(r[1]);
             stationday
                 .entry((mode, station, day))
                 .or_insert_with(Cell::new)
@@ -294,8 +313,22 @@ fn main() {
     let mut state: BTreeMap<(i64, i64), Grp> = BTreeMap::new();
     let mut dts: Vec<f64> = Vec::new();
     let dt_edges: [f64; 16] = [
-        0.0, 1.0, 2.0, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0, 600.0, 1800.0, 3600.0, 7200.0, 21600.0,
-        86400.0, 3.0 * DAY_S,
+        0.0,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        30.0,
+        60.0,
+        120.0,
+        300.0,
+        600.0,
+        1800.0,
+        3600.0,
+        7200.0,
+        21600.0,
+        86400.0,
+        3.0 * DAY_S,
     ];
     let mut dtbins = [0usize; 15];
     let dt_labels: [&str; 15] = [
@@ -336,9 +369,7 @@ fn main() {
         }
         let o = g.open.get_or_insert_with(|| Open::start(t));
         o.t_last = t;
-        if r[1].abs() > LOCK_HZ {
-            // lock transition: counted, excluded from the noise series
-        } else {
+        if r[1].abs() <= LOCK_HZ {
             o.xs.push(r[1]);
             o.ss.push(r[7]);
         }
@@ -364,11 +395,16 @@ fn main() {
     out.push("overview".to_string());
     out.push(format!("  total resid samples: {total}"));
     for (mode, s) in &mode_samples {
+        let lk = match mode_lock.get(mode) {
+            Some(&v) => format!("{v}"),
+            None => "0".to_string(),
+        };
+        let nd = match mode_days.get(mode) {
+            Some(d) => d.len().to_string(),
+            None => "0".to_string(),
+        };
         out.push(format!(
-            "  mode {mode}: {} samples, {} lock transitions, {} days",
-            s,
-            mode_lock.get(mode).copied().unwrap_or(0),
-            mode_days.get(mode).map(|d| d.len()).unwrap_or(0)
+            "  mode {mode}: {s} samples, {lk} lock transitions, {nd} days"
         ));
     }
     out.push(String::new());
@@ -414,7 +450,10 @@ fn main() {
     out.push(String::new());
 
     out.push("pass structure per station per mode".to_string());
-    out.push("  st mode samples days passes pass_ge30 med_dur_min med_pass_n med_pass_resid_hz".to_string());
+    out.push(
+        "  st mode samples days passes pass_ge30 med_dur_min med_pass_n med_pass_resid_hz"
+            .to_string(),
+    );
     let mut keys: Vec<(i64, i64)> = passmap.keys().copied().collect();
     keys.sort();
     for (mode, station) in keys {
@@ -422,7 +461,10 @@ fn main() {
         if passes == 0 {
             continue;
         }
-        let dur: Vec<f64> = passmap[&(mode, station)].iter().map(|p| p.dur_s / 60.0).collect();
+        let dur: Vec<f64> = passmap[&(mode, station)]
+            .iter()
+            .map(|p| p.dur_s / 60.0)
+            .collect();
         let ge30: Vec<&PassStat> = passmap[&(mode, station)]
             .iter()
             .filter(|p| p.n_xs >= MIN_CELL)
@@ -431,8 +473,8 @@ fn main() {
         let resid_med: Vec<f64> = ge30.iter().filter_map(|p| p.med_resid).collect();
         out.push(format!(
             "  {station} {mode} {} {} {} {} {} {} {}",
-            sm_samples.get(&(mode, station)).copied().unwrap_or(0),
-            sm_days.get(&(mode, station)).map(|d| d.len()).unwrap_or(0),
+            sm_samples[&(mode, station)],
+            sm_days[&(mode, station)].len(),
             passes,
             ge30.len(),
             fmt_o(median(&dur)),
@@ -442,7 +484,10 @@ fn main() {
     }
     out.push(String::new());
 
-    out.push("A. RMS floor: day-cell (mode,day, all stations pooled) — the rausch metric reference".to_string());
+    out.push(
+        "A. RMS floor: day-cell (mode,day, all stations pooled) — the rausch metric reference"
+            .to_string(),
+    );
     for mode in [1i64, 2, 3] {
         let list: Vec<f64> = daycell
             .iter()
@@ -458,27 +503,38 @@ fn main() {
     }
     out.push(String::new());
 
-    out.push("B. RMS floor: pass-level vs station-day-level, modes 1 and 2, stations 14/43/63".to_string());
+    out.push(
+        "B. RMS floor: pass-level vs station-day-level, modes 1 and 2, stations 14/43/63"
+            .to_string(),
+    );
     for mode in [1i64, 2] {
         for station in STATIONS {
-            let samples = sm_samples.get(&(mode, station)).copied().unwrap_or(0);
-            let days = sm_days.get(&(mode, station)).map(|d| d.len()).unwrap_or(0);
-            let passes_all = passmap.get(&(mode, station)).map(|v| v.len()).unwrap_or(0);
+            let samples = match sm_samples.get(&(mode, station)) {
+                Some(&v) => v,
+                None => 0,
+            };
+            let days = match sm_days.get(&(mode, station)) {
+                Some(d) => d.len(),
+                None => 0,
+            };
+            let passes_all = match passmap.get(&(mode, station)) {
+                Some(v) => v.len(),
+                None => 0,
+            };
             let day_rms: Vec<f64> = stationday
                 .iter()
                 .filter(|((m, s, _), _)| *m == mode && *s == station)
                 .filter_map(|((_, _, _), c)| if c.n >= MIN_CELL { c.rms() } else { None })
                 .filter(|r| r.is_finite())
                 .collect();
-            let pass_ge30: Vec<f64> = passmap
-                .get(&(mode, station))
-                .map(|v| {
-                    v.iter()
-                        .filter(|p| p.n_xs >= MIN_CELL)
-                        .filter_map(|p| p.rms)
-                        .collect()
-                })
-                .unwrap_or_default();
+            let pass_ge30: Vec<f64> = match passmap.get(&(mode, station)) {
+                Some(v) => v
+                    .iter()
+                    .filter(|p| p.n_xs >= MIN_CELL)
+                    .filter_map(|p| p.rms)
+                    .collect(),
+                None => Vec::new(),
+            };
             let mut psorted = pass_ge30.clone();
             psorted.sort_by(f64::total_cmp);
             out.push(format!(
@@ -495,7 +551,9 @@ fn main() {
     }
     out.push(String::new());
 
-    out.push("C. mode 1 pass floor by signal-strength quartile (fingerprint confirmation)".to_string());
+    out.push(
+        "C. mode 1 pass floor by signal-strength quartile (fingerprint confirmation)".to_string(),
+    );
     out.push(format!(
         "  strength quartile cuts: b1 = {}, b2 = {}, b3 = {}",
         cut_str(0),
@@ -504,19 +562,18 @@ fn main() {
     ));
     for station in STATIONS {
         for q in 1u8..=4 {
-            let rms: Vec<f64> = passmap
-                .get(&(1, station))
-                .map(|v| {
-                    v.iter()
-                        .filter(|p| p.n_xs >= MIN_CELL)
-                        .filter(|p| match p.med_strength {
-                            Some(s) => q_of(s, &bounds) == q,
-                            None => false,
-                        })
-                        .filter_map(|p| p.rms)
-                        .collect()
-                })
-                .unwrap_or_default();
+            let rms: Vec<f64> = match passmap.get(&(1, station)) {
+                Some(v) => v
+                    .iter()
+                    .filter(|p| p.n_xs >= MIN_CELL)
+                    .filter(|p| match p.med_strength {
+                        Some(s) => q_of(s, &bounds) == q,
+                        None => false,
+                    })
+                    .filter_map(|p| p.rms)
+                    .collect(),
+                None => Vec::new(),
+            };
             out.push(format!(
                 "  mode 1 station {station} Q{q}: pass floor {} Hz ({} passes)",
                 fmt_o(median(&rms)),
@@ -552,7 +609,10 @@ fn main() {
                     lo = band * 30,
                     hi = (band + 1) * 30,
                     med = fmt_o(median(v)),
-                    n = band_days.get(band).map(|d| d.len()).unwrap_or(0)
+                    n = match band_days.get(band) {
+                        Some(d) => d.len(),
+                        None => 0,
+                    }
                 ));
             }
         }
@@ -564,22 +624,21 @@ fn main() {
             for station in STATIONS {
                 let mut parts: Vec<String> = Vec::new();
                 for (lo, hi, tag) in [(0.0f64, 30.0f64, "quiet"), (150.0, 180.0, "loud")] {
-                    let pass_rms: Vec<f64> = passmap
-                        .get(&(mode, station))
-                        .map(|v| {
-                            v.iter()
-                                .filter(|p| p.n_xs >= MIN_CELL)
-                                .filter(|p| {
-                                    let tmid = p.t0 + p.dur_s * 0.5;
-                                    match elong_deg_at(tmid, &eph) {
-                                        Some(e) => e >= lo && e < hi,
-                                        None => false,
-                                    }
-                                })
-                                .filter_map(|p| p.rms)
-                                .collect()
-                        })
-                        .unwrap_or_default();
+                    let pass_rms: Vec<f64> = match passmap.get(&(mode, station)) {
+                        Some(v) => v
+                            .iter()
+                            .filter(|p| p.n_xs >= MIN_CELL)
+                            .filter(|p| {
+                                let tmid = p.t0 + p.dur_s * 0.5;
+                                match elong_deg_at(tmid, &eph) {
+                                    Some(e) => e >= lo && e < hi,
+                                    None => false,
+                                }
+                            })
+                            .filter_map(|p| p.rms)
+                            .collect(),
+                        None => Vec::new(),
+                    };
                     let day_rms: Vec<f64> = stationday
                         .iter()
                         .filter(|((m, s, _), _)| *m == mode && *s == station)
@@ -604,7 +663,10 @@ fn main() {
                         day_rms.len()
                     ));
                 }
-                out.push(format!("  mode {mode} station {station}: {}", parts.join(" | ")));
+                out.push(format!(
+                    "  mode {mode} station {station}: {}",
+                    parts.join(" | ")
+                ));
             }
         }
         out.push(String::new());

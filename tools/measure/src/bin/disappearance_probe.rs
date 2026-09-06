@@ -787,7 +787,7 @@ fn run_fp_target(
     }
     let raw_path = match save {
         Some(s) => s.to_string(),
-        None => format!("/tmp/opencode/fink_fp_{id}.json"),
+        None => format!("tmp/fink_fp_{id}.json"),
     };
     if std::fs::write(&raw_path, &body).is_err() {
         println!("Fink/LSST FP {id}: the real sample was not saved ({raw_path})");

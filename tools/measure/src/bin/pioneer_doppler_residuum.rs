@@ -9,7 +9,7 @@ const DAY: f64 = 86400.0;
 const PIONEER_ANOMALY: f64 = 8.74e-10;
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ephemeris_{name}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     match std::fs::read(&path)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -59,9 +59,9 @@ fn lin_fit(xs: &[f64], ys: &[f64]) -> (f64, f64) {
 
 fn run(name: &str, eph: &HashMap<String, BodyEphemeris>, clean: bool) {
     let doppler_path = if clean {
-        format!("data/{name}_doppler_clean.bin")
+        format!("data/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin")
     } else {
-        format!("data/{name}_doppler.bin")
+        format!("data/spdf.gsfc.nasa.gov/{name}_doppler.bin")
     };
     let Ok(bytes) = std::fs::read(&doppler_path) else {
         eprintln!("{name}: doppler bin void ({doppler_path})");

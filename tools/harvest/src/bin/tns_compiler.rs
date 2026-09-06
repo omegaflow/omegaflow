@@ -3,7 +3,7 @@ use omegaflow::cdn::upload_asset;
 use std::process::Command;
 
 const TNS_BASE: &str = "https://www.wis-tns.org";
-const OUT_DEFAULT: &str = "/tmp/opencode/tns.bin";
+const OUT_DEFAULT: &str = "tmp/tns.bin";
 const CONE_RADIUS_DEG: f64 = 0.05;
 
 fn secret(name: &str) -> Option<String> {
@@ -70,7 +70,7 @@ fn cone_names(ra: f64, dec: f64, radius: f64, ua: &str, key: &str) -> Vec<String
         ra, dec, radius
     );
     let Some(body) = tns_post("/api/get/search", &data, ua, key) else {
-        eprintln!("  tns_post search: leer (http-fehl)");
+        eprintln!("  tns_post search: no reply (http)");
         return Vec::new();
     };
     let mut names = Vec::new();
@@ -82,7 +82,9 @@ fn cone_names(ra: f64, dec: f64, radius: f64, ua: &str, key: &str) -> Vec<String
             break;
         }
         rest = &rest[idx + 11..];
-        let end = rest.find('"').unwrap_or(0);
+        let Some(end) = rest.find('"') else {
+            break;
+        };
         if end > 0 {
             names.push(rest[..end].to_string());
         }
@@ -106,7 +108,7 @@ fn run(out_path: &str, candidates: &[(f64, f64)], radius: f64, ci: bool) -> Resu
     let mut objs: Vec<TnsObject> = Vec::new();
     for &(ra, dec) in candidates {
         let names = cone_names(ra, dec, radius, &ua, &key);
-        eprintln!("cone ({ra},{dec}) r={radius}: {} objekte", names.len());
+        eprintln!("cone ({ra},{dec}) r={radius}: {} objects", names.len());
         for name in names {
             if let Some((or_, od, oz)) = object_z(&name, &ua, &key) {
                 let mut nb = [0u8; NAME_LEN];

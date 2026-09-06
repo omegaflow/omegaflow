@@ -102,9 +102,21 @@ fn event_scan(name: &str, mts: &[f64], mvs: &[f64]) {
     let n = mts.len();
     let t0 = mts[0];
     let tc: Vec<f64> = mts.iter().map(|t| (t - t0) / DAY_S).collect();
-    let a = lin_fit(&tc, mvs).map(|(a, _)| a).unwrap_or(0.0);
+    let slope = match lin_fit(&tc, mvs) {
+        Some((a, _)) => a,
+        None => {
+            eprintln!(
+                "{name}: event scan — masked series too thin for a linear trend, stays silent (0 honored)"
+            );
+            return;
+        }
+    };
     let mtc = tc.iter().sum::<f64>() / tc.len() as f64;
-    let resid: Vec<f64> = tc.iter().zip(mvs).map(|(t, v)| v - a * (t - mtc)).collect();
+    let resid: Vec<f64> = tc
+        .iter()
+        .zip(mvs)
+        .map(|(t, v)| v - slope * (t - mtc))
+        .collect();
     let mres = resid.iter().sum::<f64>() / n as f64;
     let resid_c: Vec<f64> = resid.iter().map(|x| x - mres).collect();
 
@@ -166,7 +178,7 @@ fn event_scan(name: &str, mts: &[f64], mvs: &[f64]) {
         multi = multi
     );
 
-    let real_max_run = runs.iter().map(|(i0, j0)| j0 - i0 + 1).max().unwrap_or(0);
+    let real_max_run = runs.iter().map(|(i0, j0)| j0 - i0 + 1).max();
     let elev_bool = |res: &[f64], thr: f64| -> Vec<bool> {
         res.iter()
             .map(|r| r.abs() > thr && r.abs() <= QUIET_HZ)
@@ -199,17 +211,22 @@ fn event_scan(name: &str, mts: &[f64], mvs: &[f64]) {
         .filter(|(i0, j0)| j0 - i0 + 1 >= MIN_EXC_DAYS)
         .count();
     eprintln!(
-        "{name}: block null (block {BLOCK} d, {N_SURR} surrogates) — max consecutive elevated quiet days under noise: p95 {p95:.0}; real max run {real_max_run} ({transit} multi-day runs) — {sig}",
-        sig = if real_max_run > p95 as usize && transit > 0 {
-            "a sustained excursion exceeds the noise structure"
-        } else {
-            "no sustained (multi-day) excursion — no transit-form event resolved"
+        "{name}: block null (block {BLOCK} d, {N_SURR} surrogates) — max consecutive elevated quiet days under noise: p95 {p95:.0}; real max run {real_txt} ({transit} multi-day runs) — {sig}",
+        real_txt = match real_max_run {
+            Some(mx) => format!("{mx}"),
+            None => "none".to_string(),
+        },
+        sig = match real_max_run {
+            Some(mx) if mx > p95 as usize && transit > 0 => {
+                "a sustained excursion exceeds the noise structure"
+            }
+            _ => "no sustained (multi-day) excursion — no transit-form event resolved",
         }
     );
 }
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio_subkhz_zone_daily.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
     let Some(daily) = read_zone_daily(&path) else {
         eprintln!("{name}: zone daily bin void ({path}) — 0 honored");
         return;

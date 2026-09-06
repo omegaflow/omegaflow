@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs, icrs_to_body_surface,
-    parse_ephemeris_binary, BodyEphemeris,
+    body_barycenter_position, body_fixed_to_icrs, icrs_to_body_surface, parse_ephemeris_binary,
+    BodyEphemeris,
 };
 use omegaflow::atdf::parse_resid_bin;
 use omegaflow::odp::{dsn_station, EARTH};
@@ -37,7 +37,6 @@ fn median(vals: &[f64]) -> Option<f64> {
     s.sort_by(f64::total_cmp);
     Some(s[s.len() / 2])
 }
-
 
 fn fmt_o(v: Option<f64>) -> String {
     match v {
@@ -113,7 +112,10 @@ struct BandCells {
 impl BandCells {
     fn add(&mut self, label: u8, el: f64, dev2: f64) {
         let b = (el / self.band_w).floor() as i64;
-        let cell = self.cells.entry(b).or_insert([Acc::default(), Acc::default()]);
+        let cell = self
+            .cells
+            .entry(b)
+            .or_insert([Acc::default(), Acc::default()]);
         let acc = &mut cell[(label - 1) as usize];
         acc.n += 1;
         acc.dev2 += dev2;
@@ -143,7 +145,10 @@ impl PassOpen {
             chunks: Vec::new(),
             floor_els: Vec::new(),
             plateau_els: Vec::new(),
-            cells: BandCells { cells: BTreeMap::new(), band_w },
+            cells: BandCells {
+                cells: BTreeMap::new(),
+                band_w,
+            },
         }
     }
 }
@@ -200,7 +205,11 @@ fn flush_chunk(open: &mut PassOpen, label: u8, samples: &[Sample]) {
         label,
         n: samples.len(),
         dev2,
-        el_mean: if el_n > 0 { Some(el_sum / el_n as f64) } else { None },
+        el_mean: if el_n > 0 {
+            Some(el_sum / el_n as f64)
+        } else {
+            None
+        },
         t0,
         t1,
     });
@@ -257,7 +266,10 @@ struct KeyState {
 
 impl KeyState {
     fn new() -> KeyState {
-        KeyState { prev: None, pass: None }
+        KeyState {
+            prev: None,
+            pass: None,
+        }
     }
 }
 
@@ -281,10 +293,13 @@ fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> O
     Some(sin_el.clamp(-1.0, 1.0).asin().to_degrees())
 }
 
-
-
-
-fn histogram(recs: &[[f64; 8]], eph: &HashMap<String, BodyEphemeris>, station: i64, t0: f64, t1: f64) {
+fn histogram(
+    recs: &[[f64; 8]],
+    eph: &HashMap<String, BodyEphemeris>,
+    station: i64,
+    t0: f64,
+    t1: f64,
+) {
     let hours = ((t1 - t0) / 3600.0).round() as usize;
     let mut counts = vec![0usize; hours];
     for r in recs {
@@ -331,7 +346,12 @@ fn passcheck(recs: &[[f64; 8]], eph: &HashMap<String, BodyEphemeris>) {
 
     let windows = [
         (43i64, -94478400.0f64, -94305600.0f64, "st43 1997-01-03..05"),
-        (63i64, -127742400.0f64, -127656000.0f64, "st63 1995-12-15..16"),
+        (
+            63i64,
+            -127742400.0f64,
+            -127656000.0f64,
+            "st63 1995-12-15..16",
+        ),
     ];
     for (station, t0, t1, tag) in windows {
         let mut els: Vec<f64> = Vec::new();
@@ -417,7 +437,10 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
     }
     println!("sanity frame: start tdb {start:.0} (1997-01-04); DSS43 geodetic ({lat0}, {lon0}, {alt0:.0} m)");
     println!("sanity station offset |st-earth| = {r_st:.0} m (expect ~6378200); recovered body-fixed lat/lon {latr:.3} {lonr:.3} (DSS43 = -35.401 148.982)");
-    println!("sanity probe-earth dist {r_pe:.3} AU; earth-barycenter |e| {:.3e} m", norm(e0));
+    println!(
+        "sanity probe-earth dist {r_pe:.3} AU; earth-barycenter |e| {:.3e} m",
+        norm(e0)
+    );
     for (tag, tq) in [
         ("1995-12-15 12:00", -127706400.0f64),
         ("1997-01-04 12:00", -94348800.0f64),
@@ -470,7 +493,12 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
                 let nu = norm(up);
                 let nl = norm(los);
                 if nu > 0.0 && nl > 0.0 && nu.is_finite() && nl.is_finite() {
-                    els.push((dot(los, up) / (nu * nl)).clamp(-1.0, 1.0).asin().to_degrees());
+                    els.push(
+                        (dot(los, up) / (nu * nl))
+                            .clamp(-1.0, 1.0)
+                            .asin()
+                            .to_degrees(),
+                    );
                 }
             }
         }
@@ -494,7 +522,14 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
             "sanity st{station} elevation sweep h0..h21 (3 h step): {}",
             row.join(" ")
         );
-        println!("  min {} p10 {} p50 {} p90 {} max {}", pick(0.0), pick(0.1), pick(0.5), pick(0.9), pick(1.0));
+        println!(
+            "  min {} p10 {} p50 {} p90 {} max {}",
+            pick(0.0),
+            pick(0.1),
+            pick(0.5),
+            pick(0.9),
+            pick(1.0)
+        );
     }
 }
 
@@ -517,7 +552,7 @@ fn main() {
         return;
     }
 
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -581,7 +616,11 @@ fn main() {
                     2 => pass.plateau_all += 1,
                     _ => {}
                 }
-                let el = if mode == 1 { elevation_at(t, station, &eph) } else { None };
+                let el = if mode == 1 {
+                    elevation_at(t, station, &eph)
+                } else {
+                    None
+                };
                 if el.is_none() && mode == 1 {
                     *el_missing.entry(mode).or_insert(0) += 1;
                 }
@@ -619,7 +658,10 @@ fn main() {
     drop(state);
 
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo in-pass elevation match — floor vs plateau noise at matched probe elevation".to_string());
+    out.push(
+        "galileo in-pass elevation match — floor vs plateau noise at matched probe elevation"
+            .to_string(),
+    );
     out.push("binding: pass/sub-arc/state construction identical to galileo_pass_strength_ramp (gap > gap_s pass boundary; |resid| > 1000 Hz lock excluded; strength floor <= -2560, plateau >= -1900, between or 0 = transition/pad; sub-arc = contiguous same-state run split on state change, > 120 s gap, or 60 samples; chunk noise = resid RMS about the chunk mean; chunk >= 30 samples enters the pool)".to_string());
     out.push("elevation proxy: spherical-astronomy topocentric elevation of the probe above the station horizon; probe topocentric direction = galileo_daily barycenter minus earth barycenter (ICRS RA/Dec; station parallax negligible at ~6 AU, probe-earth dist 1-6 AU over the era); station geodetic position via dsn_station (DSS 14 35.4268333N -116.8900000E, DSS 43 -35.4014889N 148.9816167E, DSS 63 40.4312500N -4.2487778E); local sidereal time = GMST (IAU 1982: 280.46061837 + 360.98564736629 deg/day from J2000; tdb~UT1 to ~1 min, equinox-of-date vs ICRS RA <= ~0.5 deg) + east longitude; elevation = asin(sin lat sin dec + cos lat cos dec cos HA), horizon = 0 deg; validated by pass gating (file samples occupy exactly the positive-elevation hours, e.g. DSS43 1997-01-04 peak ~+71 deg at 04:00 UTC)".to_string());
     out.push("matched-elevation comparison: (A) per dual pass, floor and plateau sub-arcs whose chunk-mean elevations both fall within a tolerance window of width 2T (best common window per pass, min(state sample n) maximised, both >= 30); (B) per pass per elevation band of width band_w, sample-level floor vs plateau noise within the same band".to_string());
@@ -630,15 +672,24 @@ fn main() {
 
     out.push("overview".to_string());
     for mode in [1i64, 2] {
-        out.push(format!(
-            "  mode {mode}: {} samples at 14/43/63, {} lock transitions",
-            mode_samples.get(&mode).copied().unwrap_or(0),
-            mode_lock.get(&mode).copied().unwrap_or(0)
-        ));
+        out.push(
+            match (
+                mode_samples.get(&mode).copied(),
+                mode_lock.get(&mode).copied(),
+            ) {
+                (Some(ns), Some(nl)) => {
+                    format!("  mode {mode}: {ns} samples at 14/43/63, {nl} lock transitions")
+                }
+                _ => format!("  mode {mode}: no records at 14/43/63"),
+            },
+        );
     }
     out.push(String::new());
 
-    out.push("pass structure per station per mode (dual_full = floor pool >= 30 and plateau pool >= 30)".to_string());
+    out.push(
+        "pass structure per station per mode (dual_full = floor pool >= 30 and plateau pool >= 30)"
+            .to_string(),
+    );
     out.push("  st mode passes floor_pres plateau_pres dual_full dual_int floor_only plateau_only neither".to_string());
     let mut keys: Vec<(i64, i64)> = passmap.keys().copied().collect();
     keys.sort();
@@ -692,7 +743,10 @@ fn main() {
     out.push(String::new());
 
     out.push("anchor replication (unrestricted within-pass paired noise), mode 1: floor vs plateau of the same pass".to_string());
-    out.push("  st n_dual med_floor med_plateau med_diff mean_diff floor>plat floor<plat med_ratio".to_string());
+    out.push(
+        "  st n_dual med_floor med_plateau med_diff mean_diff floor>plat floor<plat med_ratio"
+            .to_string(),
+    );
     for station in STATIONS {
         let key = (1, station);
         let mut dv: Vec<f64> = Vec::new();
@@ -737,7 +791,10 @@ fn main() {
     out.push(String::new());
 
     out.push("anchor replication interior (120 s edge excluded), mode 1".to_string());
-    out.push("  st n_dual med_floor med_plateau med_diff mean_diff floor>plat floor<plat med_ratio".to_string());
+    out.push(
+        "  st n_dual med_floor med_plateau med_diff mean_diff floor>plat floor<plat med_ratio"
+            .to_string(),
+    );
     for station in STATIONS {
         let key = (1, station);
         let mut dv: Vec<f64> = Vec::new();
@@ -878,7 +935,9 @@ fn main() {
     out.push(format!(
         "matched-elevation paired test B (same pass AND same elevation band of width {band_w:.0} deg, both state pools >= 30 samples)"
     ));
-    out.push("  st n_pairs med_floor med_plateau med_diff floor>plat floor<plat med_ratio".to_string());
+    out.push(
+        "  st n_pairs med_floor med_plateau med_diff floor>plat floor<plat med_ratio".to_string(),
+    );
     for station in STATIONS {
         let key = (1, station);
         let mut dv: Vec<f64> = Vec::new();
@@ -949,7 +1008,10 @@ fn main() {
     out.push("elevation availability (mode 1 classified samples)".to_string());
     out.push(format!(
         "  samples without probe/station ephemeris elevation: {}",
-        el_missing.get(&1).copied().unwrap_or(0)
+        match el_missing.get(&1) {
+            Some(&v) => format!("{v}"),
+            None => "0".to_string(),
+        }
     ));
     for station in [43i64, 63, 14] {
         let key = (1, station);
@@ -980,7 +1042,10 @@ fn main() {
                 100.0 * *nlow as f64 / *n as f64
             ));
         }
-        out.push(format!("  st{station} chunk-el by year: {}", parts.join(" | ")));
+        out.push(format!(
+            "  st{station} chunk-el by year: {}",
+            parts.join(" | ")
+        ));
     }
     out.push(String::new());
 
@@ -988,10 +1053,7 @@ fn main() {
     println!("{body}");
 }
 
-fn pass_match(
-    ps: &PassStat,
-    tol: f64,
-) -> Option<(f64, f64, usize, usize, f64)> {
+fn pass_match(ps: &PassStat, tol: f64) -> Option<(f64, f64, usize, usize, f64)> {
     let mut fc: Vec<(f64, usize, f64)> = Vec::new();
     let mut pc: Vec<(f64, usize, f64)> = Vec::new();
     for c in &ps.chunks {
@@ -1057,7 +1119,7 @@ fn pass_match(
 }
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))

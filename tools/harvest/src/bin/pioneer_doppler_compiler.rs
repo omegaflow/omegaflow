@@ -122,7 +122,7 @@ fn main() {
             eprintln!("{name}: no records — the series stays unwritten (0 honored)");
             continue;
         }
-        let out = format!("data/{name}_doppler.bin");
+        let out = format!("data/spdf.gsfc.nasa.gov/{name}_doppler.bin");
         std::fs::create_dir_all("data").ok();
         let bin = write_bin(&records);
         if std::fs::write(&out, &bin).is_err() {
@@ -162,7 +162,7 @@ fn main() {
             std::process::exit(1);
         }
 
-        let out_nav = format!("data/{name}_navio.bin");
+        let out_nav = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
         let bin_nav = write_pnav_bin(&pnav_records);
         if std::fs::write(&out_nav, &bin_nav).is_err() {
             eprintln!("{name}: write {out_nav} void");

@@ -466,7 +466,7 @@ fn lit_tags(analyses: &[String]) -> Vec<String> {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut seed = "docs/reference/co_rhk_witness_seed.json".to_string();
-    let mut out_path = "/tmp/opencode/xuv_lx_harvest_report.txt".to_string();
+    let mut out_path = "tmp/xuv_lx_harvest_report.txt".to_string();
     let mut coords: Option<String> = None;
     let mut i = 1usize;
     while i < args.len() {

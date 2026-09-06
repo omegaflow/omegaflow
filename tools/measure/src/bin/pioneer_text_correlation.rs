@@ -189,9 +189,10 @@ fn corr_report(name: &str, tokens: &[f64], series: &[f64], rng: &mut u64) {
 }
 
 fn main() {
-    let text_path = std::env::var("TE_TEXT").unwrap_or_else(|_| {
-        "docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt".to_string()
-    });
+    let text_path = match std::env::var("TE_TEXT") {
+        Ok(p) => p,
+        Err(_) => "docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt".to_string(),
+    };
     let Some(text) = std::fs::read_to_string(&text_path).ok() else {
         eprintln!("Text absent ({text_path}) — empty (0 honored)");
         return;
@@ -215,13 +216,13 @@ fn main() {
     let mut car11: Vec<f64> = Vec::new();
     for (path, tdb, obs, car) in [
         (
-            "data/pioneer10_doppler_clean.bin",
+            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             &mut tdb10,
             &mut obs10,
             &mut car10,
         ),
         (
-            "data/pioneer11_doppler_clean.bin",
+            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             &mut tdb11,
             &mut obs11,
             &mut car11,
