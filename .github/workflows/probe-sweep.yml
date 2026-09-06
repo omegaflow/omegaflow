@@ -8,7 +8,7 @@ permissions:
 env:
   RUSTFLAGS: -D warnings
   JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
-  OMEGAFLOW_STATE: /home/runner/.local/state/omegaflow
+  OMEGAFLOW_STATE: data/state
 jobs:
   sweep:
     runs-on: ubuntu-latest

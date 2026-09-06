@@ -300,7 +300,7 @@ fn band_scan(label: &str, ts: &[f64], vs: &[f64], gap: f64) {
 }
 
 fn main() {
-    let podf = "data/pioneer11_odf.bin";
+    let podf = "data/spdf.gsfc.nasa.gov/pioneer11_odf.bin";
     let Ok(bytes) = std::fs::read(podf) else {
         eprintln!("p11-resid PODF bin void ({podf})");
         return;
@@ -311,7 +311,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [EARTH, SC_BODY] {
-        let p = format!("data/ephemeris_{body}.bin");
+        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -533,7 +533,7 @@ fn main() {
         }
         modeled = keep;
     }
-    let out = "data/pioneer11_residuum.bin";
+    let out = "data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin";
     let bin = write_p11r_bin(&modeled);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("p11-resid write {out} void");

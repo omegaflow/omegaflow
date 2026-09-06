@@ -71,7 +71,14 @@ struct Chunk {
 
 impl Chunk {
     fn start(label: u8, t: f64, resid: f64) -> Chunk {
-        Chunk { label, t0: t, last_t: t, n: 1, mean: resid, m2: 0.0 }
+        Chunk {
+            label,
+            t0: t,
+            last_t: t,
+            n: 1,
+            mean: resid,
+            m2: 0.0,
+        }
     }
     fn add(&mut self, t: f64, resid: f64) {
         self.last_t = t;
@@ -150,7 +157,13 @@ fn close_pass(pass: Option<PassOpen>) -> Option<PassStat> {
     let mut pass = pass?;
     if let Some(c) = pass.cur.take() {
         if c.n >= MIN_CELL {
-            pass.done.push(Done { label: c.label, n: c.n, m2: c.m2, t0: c.t0, t1: c.last_t });
+            pass.done.push(Done {
+                label: c.label,
+                n: c.n,
+                m2: c.m2,
+                t0: c.t0,
+                t1: c.last_t,
+            });
         }
     }
     let (f_n, f_m2) = pool_of(&pass, 1, false);
@@ -180,7 +193,10 @@ struct KeyState {
 
 impl KeyState {
     fn new() -> KeyState {
-        KeyState { prev: None, pass: None }
+        KeyState {
+            prev: None,
+            pass: None,
+        }
     }
 }
 
@@ -191,7 +207,7 @@ fn main() {
         None => DEFAULT_GAP_S,
     };
 
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -240,7 +256,13 @@ fn main() {
             if lbl == 0 {
                 if let Some(c) = pass.cur.take() {
                     if c.n >= MIN_CELL {
-                        pass.done.push(Done { label: c.label, n: c.n, m2: c.m2, t0: c.t0, t1: c.last_t });
+                        pass.done.push(Done {
+                            label: c.label,
+                            n: c.n,
+                            m2: c.m2,
+                            t0: c.t0,
+                            t1: c.last_t,
+                        });
                     }
                 }
             } else {
@@ -260,7 +282,13 @@ fn main() {
                 if need_new {
                     if let Some(c) = pass.cur.take() {
                         if c.n >= MIN_CELL {
-                            pass.done.push(Done { label: c.label, n: c.n, m2: c.m2, t0: c.t0, t1: c.last_t });
+                            pass.done.push(Done {
+                                label: c.label,
+                                n: c.n,
+                                m2: c.m2,
+                                t0: c.t0,
+                                t1: c.last_t,
+                            });
                         }
                     }
                     pass.cur = Some(Chunk::start(lbl, t, resid));
@@ -288,15 +316,24 @@ fn main() {
 
     out.push("overview".to_string());
     for mode in [1i64, 2] {
-        out.push(format!(
-            "  mode {mode}: {} samples at 14/43/63, {} lock transitions",
-            mode_samples.get(&mode).copied().unwrap_or(0),
-            mode_lock.get(&mode).copied().unwrap_or(0)
-        ));
+        out.push(
+            match (
+                mode_samples.get(&mode).copied(),
+                mode_lock.get(&mode).copied(),
+            ) {
+                (Some(ns), Some(nl)) => {
+                    format!("  mode {mode}: {ns} samples at 14/43/63, {nl} lock transitions")
+                }
+                _ => format!("  mode {mode}: no records at 14/43/63"),
+            },
+        );
     }
     out.push(String::new());
 
-    out.push("pass structure and dual-pass counts (dual = floor pool >= 30 and plateau pool >= 30)".to_string());
+    out.push(
+        "pass structure and dual-pass counts (dual = floor pool >= 30 and plateau pool >= 30)"
+            .to_string(),
+    );
     out.push("  st mode passes floor_pres plateau_pres dual_full dual_int floor_only plateau_only neither".to_string());
     let mut keys: Vec<(i64, i64)> = passmap.keys().copied().collect();
     keys.sort();
@@ -357,8 +394,16 @@ fn main() {
             let v = passmap.get(&key);
             if let Some(list) = v {
                 for ps in list {
-                    let (fn_, fm2) = if interior { (ps.fi_n, ps.fi_m2) } else { (ps.f_n, ps.f_m2) };
-                    let (pn_, pm2) = if interior { (ps.pi_n, ps.pi_m2) } else { (ps.p_n, ps.p_m2) };
+                    let (fn_, fm2) = if interior {
+                        (ps.fi_n, ps.fi_m2)
+                    } else {
+                        (ps.f_n, ps.f_m2)
+                    };
+                    let (pn_, pm2) = if interior {
+                        (ps.pi_n, ps.pi_m2)
+                    } else {
+                        (ps.p_n, ps.p_m2)
+                    };
                     if fn_ < MIN_CELL || pn_ < MIN_CELL {
                         continue;
                     }

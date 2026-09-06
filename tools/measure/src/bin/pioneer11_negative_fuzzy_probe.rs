@@ -48,11 +48,10 @@ fn ls_scan(ts: &[f64], vs: &[f64], flo: f64, fhi: f64, step: f64) -> (Vec<(f64, 
     (grid, floor)
 }
 
-fn at(grid: &[(f64, f64)], f: f64, floor: f64) -> f64 {
+fn at(grid: &[(f64, f64)], f: f64, floor: f64) -> Option<f64> {
     grid.iter()
         .min_by(|a, b| (a.0 - f).abs().total_cmp(&(b.0 - f).abs()))
         .map(|(_, p)| *p / floor)
-        .unwrap_or(0.0)
 }
 
 fn rms(v: &[f64]) -> f64 {
@@ -110,8 +109,8 @@ fn quad_detrend(ts: &[f64], vs: &[f64], gap: f64, min_len: usize) -> (Vec<f64>, 
 }
 
 fn main() {
-    let Some(bytes) = std::fs::read("data/pioneer11_residuum.bin").ok() else {
-        eprintln!("data/pioneer11_residuum.bin void — leer (0 honored)");
+    let Some(bytes) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin").ok() else {
+        eprintln!("data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin void — leer (0 honored)");
         return;
     };
     let Some(recs) = odf::parse_p11r_bin(&bytes) else {
@@ -195,16 +194,22 @@ fn main() {
     let (g1, fl1) = ls_scan(&dq_ts, &r2, 0.0004, 0.0015, 0.00002);
     let mut top1 = g1.clone();
     top1.sort_by(|a, b| b.1.total_cmp(&a.1));
+    let a_alias = match at(&g1, 0.000714, fl1) {
+        Some(x) => format!("{x:.1}"),
+        None => "-".to_string(),
+    };
+    let a_raster1 = match at(&g1, 1.0 / 600.0, fl1) {
+        Some(x) => format!("{x:.1}"),
+        None => "-".to_string(),
+    };
     eprintln!(
-        "Stufe C  Rest (0,4–1,5 mHz): Spitzen {:.5} ({:.1}×), {:.5} ({:.1}×), {:.5} ({:.1}×) — Alias 0,71 mHz: {:.1}×, Gap-Raster 1/600: {:.1}×",
+        "Stufe C  Rest (0,4–1,5 mHz): Spitzen {:.5} ({:.1}×), {:.5} ({:.1}×), {:.5} ({:.1}×) — Alias 0,71 mHz: {a_alias}×, Gap-Raster 1/600: {a_raster1}×",
         top1[0].0,
         top1[0].1 / fl1,
         top1[1].0,
         top1[1].1 / fl1,
         top1[2].0,
         top1[2].1 / fl1,
-        at(&g1, 0.000714, fl1),
-        at(&g1, 1.0 / 600.0, fl1)
     );
     let (g2, fl2) = ls_scan(&dq_ts, &r2, 0.0002, 0.008, 0.00005);
     let mut top2 = g2.clone();
@@ -214,10 +219,16 @@ fn main() {
         .take(4)
         .map(|(f, p)| format!("{:.4} Hz ({:.1}×)", f, p / fl2))
         .collect();
+    let a_r600 = match at(&g2, 1.0 / 600.0, fl2) {
+        Some(x) => format!("{x:.1}"),
+        None => "-".to_string(),
+    };
+    let a_r600b = match at(&g2, 2.0 / 600.0, fl2) {
+        Some(x) => format!("{x:.1}"),
+        None => "-".to_string(),
+    };
     eprintln!(
-        "Stufe C  Rest (0,2–8 mHz): Spitzen {} — am 1/600-Raster (1,67/3,33 mHz): {:.1}×/{:.1}×",
+        "Stufe C  Rest (0,2–8 mHz): Spitzen {} — am 1/600-Raster (1,67/3,33 mHz): {a_r600}×/{a_r600b}×",
         tops2.join(", "),
-        at(&g2, 1.0 / 600.0, fl2),
-        at(&g2, 2.0 / 600.0, fl2)
     );
 }
