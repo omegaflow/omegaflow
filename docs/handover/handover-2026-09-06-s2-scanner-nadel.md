@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: 8b0bdf53589ce1f484f6d1d735546bbb4842c766310e8c28f658e8ba49eaa5ac
   status: live
-  see-also: docs/concepts/die-weberin.md docs/befund/befund-richtungs-atom.md docs/concepts/fuenf-funken-anomalie-jagd.md
+  see-also: docs/concepts/die-weberin.md docs/befund/befund-richtungs-atom.md docs/concepts/fuenf-funken-anomalie-suche.md
 -->
 # Handover — Scanner, Nadel, S²-Richtungssinn
 

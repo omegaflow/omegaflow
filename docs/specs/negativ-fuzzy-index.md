@@ -2,14 +2,14 @@
   title: DER NEGATIVE FUZZY-INDEX — das Unvorhersagbare ist die Wahrheit
   class: concept
   date: 2026-08-24
-  sha256: 89bef103d386c776d06bdedca1aa96ff55e8f2bcf5fbf85a76f31f766ec4f4a3
+  sha256: 0794d2c48ec12a1fc0b05dc88081e7ff70de62461a36a1e7b38b6ba8e555147e
   status: live
   see-also: docs/paper/twenty-second-band-ground-chain.md, docs/TODO.md (Pioneer-Front)
 -->
 
 # DER NEGATIVE FUZZY-INDEX — das Unvorhersagbare ist die Wahrheit
 
-Der Paradigmenwechsel: die ganze bisherige Jagd fragte „was IST das?" — und die
+Der Paradigmenwechsel: die ganze bisherige Suche fragte „was IST das?" — und die
 Antwort war immer dieselbe: Boden. Der NEGATIVE FUZZY-INDEX dreht die Frage um:
 „was ist das NICHT?" Die Wahrheit des Raums spricht die Sprache des Bodens
 nicht; also ist die Unabhängigkeit das Kriterium, nicht die Kopplung.
