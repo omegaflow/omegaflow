@@ -1,0 +1,11 @@
+scan-coverage register — the Nadel V anomaly hunt footprint
+each cone: center ra/dec (ICRS, deg), radius (arcsec), instrument, TDB date, outcome
+
+cone ra 266.4168 dec -29.0078 radius 900 instrument fink-lsst date 2026-09-05 outcome void (0 object rows nDiaSources>=24; galactic-center optical extinction A_V~30)
+note the mycelial first probe at the galactic center measured a sterile optical field; expansion follows the golden-angle spiral outward (Fermat, r=k sqrt(n), theta=n*137.508 deg)
+
+pass instrument antares-loci date 2026-09-05 loci 3 outcome wise-typed 1 AGN (ANT2021j25gy W1-W2 1.272), 2 field/unclassified, 0 candidate dips (anonymous bundles below the N_MIN 24 floor)
+cone ra 267.4955 dec -29.6079 radius 900 instrument fink-lsst date 2026-09-05 outcome void (Fink returned 0 object rows) raw 0 floor 0 natural 0 agn 0 food 0
+note cone 267.4955 -29.6079 chosen-as successor-of spiral-n5 voices mountain 0.107 river absent mycelium 0.000 sensory 0.000 future 0.428 synthesis 0.000 present 4 absent river
+cone ra 264.8314 dec -28.4355 radius 900 instrument fink-lsst date 2026-09-05 outcome void (Fink returned 0 object rows) raw 0 floor 0 natural 0 agn 0 food 0
+note cone 264.8314 -28.4355 chosen-as successor-of spiral-n9 voices mountain 0.049 river absent mycelium absent sensory 0.000 future 0.528 synthesis 0.000 present 3 absent river mycelium
