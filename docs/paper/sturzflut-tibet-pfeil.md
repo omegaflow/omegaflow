@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 7701cf4f409964e82b0bdf391ed1026d6c93601099576896d9a4ffb2687bb231
+  sha256: 1ec90afc91ec3dc0b8b7df7178e3e0446a9b8b75a8bd63069c93e2d2e38d2f0e
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -401,7 +401,7 @@ Kollabpunkt (28.271/85.515), 08-23 00:00 … 08-26 03:00, Kollaps 02:52 UTC:
 ## 4. Der Pfeil, der nicht messbar ist (0 honored)
 
 **Abfluss-Pfeil Regen→Flut.** Um ihn zu messen, braucht es eine co-lokale,
-co-temporale Abfluss-Response-Reihe am Trishuli. Die Quellen-Jagd gegen den
+co-temporale Abfluss-Response-Reihe am Trishuli. Die Quellen-Suche gegen den
 `akteure-verdrahten`-Katalog (`phi/`), bestätigt 2026-08-27:
 
 | Quelle | Status |
