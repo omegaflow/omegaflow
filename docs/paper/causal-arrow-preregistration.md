@@ -4,7 +4,7 @@
   date: 2026-08-27
   sha256: e3aeacb720c7c67e7d7693c704550087825f2d69f7e6be2a5abfc1506f5fb82e
   status: live
-  see-also: docs/paper/blatt-pfeil-sturzflut-tibet.md docs/concepts/der-kausalpfeil.md
+  see-also: docs/paper/sturzflut-tibet-pfeil.md docs/concepts/der-kausalpfeil.md
 -->
 
 # The causal arrow — the pre-registration
