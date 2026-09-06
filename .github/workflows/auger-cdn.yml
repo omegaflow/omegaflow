@@ -1,0 +1,25 @@
+name: auger-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  auger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the Pierre Auger cosmic-ray catalog once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern auger_catalog.pao1 --clobber 2>/dev/null || \
+          ( mkdir -p pao_json && \
+            curl -sSfL --retry 3 --max-time 600 -o pao.zip \
+              https://opendata.auger.org/catalog/data.zip && \
+            unzip -o pao.zip -d pao_json && \
+            cargo run -p omegaflow-harvest --release --bin auger_compiler -- \
+              --input pao_json/data --out auger_catalog.pao1 --ci-mode )
