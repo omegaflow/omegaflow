@@ -8,6 +8,8 @@ const LAS_CONE: &str = "https://api.lasair.lsst.ac.uk/api/cone/";
 const ALERCE_OBJECTS: &str = "https://api.alerce.online/objects";
 const MATCH_RADIUS_ARCSEC: f64 = 2.0;
 const VERDICT_BROKER_MIN: usize = 2;
+const LAS_TUNNEL_IFACE: &str = "proton0";
+const STALL_WORD: &str = "no response (connection stalled)";
 const UA: &str = "omegaflow-broker-difference-probe/1.0";
 const STATE_SAMPLE_DIR: &str = "/tmp/opencode";
 const ALERCE_RETIRE_NOTE: &str =
@@ -74,14 +76,17 @@ fn lasair_cone_parse(body: &[u8]) -> ConeParse {
     let Ok(text) = std::str::from_utf8(body) else {
         return ConeParse::Unresolved;
     };
-    let Some(JsonVal::Arr(rows)) = parse_json(text) else {
+    let Some(JsonVal::Obj(root)) = parse_json(text) else {
+        return ConeParse::Unresolved;
+    };
+    let Some(JsonVal::Arr(rows)) = root.get("objects") else {
         return ConeParse::Unresolved;
     };
     if rows.is_empty() {
         return ConeParse::Empty;
     }
     let mut n = 0usize;
-    for r in &rows {
+    for r in rows {
         match r {
             JsonVal::Obj(m) if id_present(m.get("object")) => n += 1,
             _ => return ConeParse::Unresolved,
@@ -141,7 +146,12 @@ fn curl_post(url: &str, json_body: &str) -> Option<(String, Vec<u8>)> {
     Some((code, stdout[..idx].to_vec()))
 }
 
-fn curl_form_post(url: &str, form: &str, token: Option<&str>) -> Option<(String, Vec<u8>)> {
+fn curl_form_post(
+    url: &str,
+    form: &str,
+    token: Option<&str>,
+    iface: Option<&str>,
+) -> Option<(String, Vec<u8>)> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-m")
@@ -158,6 +168,9 @@ fn curl_form_post(url: &str, form: &str, token: Option<&str>) -> Option<(String,
         .arg("\n%{http_code}");
     if let Some(t) = token {
         cmd.arg("-H").arg(format!("Authorization: Token {t}"));
+    }
+    if let Some(i) = iface {
+        cmd.arg("--interface").arg(i);
     }
     cmd.arg(url);
     let out = cmd.output().ok()?;
@@ -216,7 +229,7 @@ fn fink_membership(ra: f64, dec: f64) -> BrokerLine {
     let Some((code, body)) = curl_post(FINK_CONE, &payload) else {
         return BrokerLine {
             broker: "fink",
-            code: "no response (connection stalled)".to_string(),
+            code: STALL_WORD.to_string(),
             read: Read::Excluded,
             note:
                 "the conesearch query did not answer — excluded from the verdict (never a negative)"
@@ -265,64 +278,158 @@ fn lasair_token() -> Option<String> {
     token_from("LASAIR_LSST_TOKEN")
 }
 
-fn lasair_membership(ra: f64, dec: f64) -> BrokerLine {
-    let token = lasair_token();
-    let token_word = match &token {
-        Some(_) => "LASAIR_LSST_TOKEN present",
-        None => "LASAIR_LSST_TOKEN absent (env or the .secrets.local key)",
+fn tunnel_iface_present(iface: &str) -> bool {
+    let Ok(out) = Command::new("ip")
+        .arg("-o")
+        .arg("link")
+        .arg("show")
+        .arg(iface)
+        .output()
+    else {
+        return false;
     };
-    let form = format!("ra={ra:.8}&dec={dec:.8}&radius={MATCH_RADIUS_ARCSEC}&requestType=all");
-    let Some((code, body)) = curl_form_post(LAS_CONE, &form, token.as_deref()) else {
-        return BrokerLine {
-            broker: "lasair",
-            code: "no response (connection stalled)".to_string(),
-            read: Read::Excluded,
-            note: "the api.lasair.lsst.ac.uk cone endpoint did not answer (measured 000 on 2026-09-05) — excluded from the verdict (never a negative)".to_string(),
-        };
-    };
-    if code != "200" {
-        return BrokerLine {
-            broker: "lasair",
-            code: code.clone(),
-            read: Read::Excluded,
-            note: format!(
-                "a non-200 cone read is no negative — excluded from the verdict (0 honored); {token_word}"
-            ),
-        };
+    out.status.success()
+}
+
+fn fetch_code(fetch: &Option<(String, Vec<u8>)>) -> String {
+    match fetch {
+        Some((code, _)) => code.clone(),
+        None => STALL_WORD.to_string(),
     }
+}
+
+fn route_down(fetch: &Option<(String, Vec<u8>)>) -> bool {
+    match fetch {
+        Some((code, _)) => code == "000",
+        None => true,
+    }
+}
+
+fn lasair_cone_line(
+    ra: f64,
+    dec: f64,
+    code: &str,
+    body: &[u8],
+    token_word: &str,
+    route_lead: &str,
+) -> BrokerLine {
     let path = sample_name(STATE_SAMPLE_DIR, ra, dec, "lasair");
-    save_sample(&path, &body);
-    match lasair_cone_parse(&body) {
+    save_sample(&path, body);
+    match lasair_cone_parse(body) {
         ConeParse::Empty => BrokerLine {
             broker: "lasair",
-            code,
+            code: code.to_string(),
             read: Read::Absent,
             note: format!(
-                "the {MATCH_RADIUS_ARCSEC} arcsec cone holds no object row (0 honored); {token_word}; sample {path}"
+                "{route_lead}the {MATCH_RADIUS_ARCSEC} arcsec cone holds no object row (0 honored); {token_word}; sample {path}"
             ),
         },
         ConeParse::Objects(n) => BrokerLine {
             broker: "lasair",
-            code,
+            code: code.to_string(),
             read: Read::Present,
             note: format!(
-                "{n} object row(s) within the {MATCH_RADIUS_ARCSEC} arcsec cone; {token_word}; sample {path}"
+                "{route_lead}{n} object row(s) within the {MATCH_RADIUS_ARCSEC} arcsec cone; {token_word}; sample {path}"
             ),
         },
         ConeParse::Unresolved => BrokerLine {
             broker: "lasair",
-            code,
+            code: code.to_string(),
             read: Read::Excluded,
-            note: format!("the 200 body is not the measured cone row array (object per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"),
+            note: format!("{route_lead}the 200 body is not the measured cone row array (object per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"),
         },
     }
+}
+
+fn lasair_membership_core<F, P>(
+    ra: f64,
+    dec: f64,
+    token: Option<&str>,
+    iface_present: F,
+    probe: P,
+) -> BrokerLine
+where
+    F: Fn(&str) -> bool,
+    P: Fn(Option<&str>) -> Option<(String, Vec<u8>)>,
+{
+    let token_word = match token {
+        Some(_) => "LASAIR_LSST_TOKEN present",
+        None => "LASAIR_LSST_TOKEN absent (env or the .secrets.local key)",
+    };
+    let direct = probe(None);
+    let direct_code = fetch_code(&direct);
+    if let Some((code, body)) = &direct {
+        if code == "200" {
+            return lasair_cone_line(ra, dec, code, body, token_word, "");
+        }
+    }
+    if !route_down(&direct) {
+        let note = format!(
+            "the direct route answered HTTP {direct_code} — a non-200 cone read is no negative; excluded from the verdict (0 honored); {token_word}"
+        );
+        return BrokerLine {
+            broker: "lasair",
+            code: direct_code,
+            read: Read::Excluded,
+            note,
+        };
+    }
+    if !iface_present(LAS_TUNNEL_IFACE) {
+        let note = format!(
+            "the direct route read {direct_code} and the {LAS_TUNNEL_IFACE} tunnel interface is not present (ip link) — no tunnel retry exists, the direct finding stands; excluded from the verdict (never a negative); {token_word}"
+        );
+        return BrokerLine {
+            broker: "lasair",
+            code: direct_code,
+            read: Read::Excluded,
+            note,
+        };
+    }
+    let tunnel = probe(Some(LAS_TUNNEL_IFACE));
+    let tunnel_code = fetch_code(&tunnel);
+    if let Some((code, body)) = &tunnel {
+        if code == "200" {
+            let route_lead = format!(
+                "the direct route read {direct_code} — the {LAS_TUNNEL_IFACE} tunnel carried the 200 — "
+            );
+            return lasair_cone_line(ra, dec, code, body, token_word, &route_lead);
+        }
+    }
+    if !route_down(&tunnel) {
+        let note = format!(
+            "the direct route read {direct_code}; the {LAS_TUNNEL_IFACE} tunnel answered HTTP {tunnel_code} — a non-200 cone read is no negative; excluded from the verdict (0 honored); {token_word}"
+        );
+        return BrokerLine {
+            broker: "lasair",
+            code: tunnel_code,
+            read: Read::Excluded,
+            note,
+        };
+    }
+    let note = format!(
+        "the direct route read {direct_code} and the {LAS_TUNNEL_IFACE} tunnel route read {tunnel_code} — no route carries the cone; excluded from the verdict (never a negative); {token_word}"
+    );
+    BrokerLine {
+        broker: "lasair",
+        code: tunnel_code,
+        read: Read::Excluded,
+        note,
+    }
+}
+
+fn lasair_membership(ra: f64, dec: f64) -> BrokerLine {
+    let token = lasair_token();
+    let form = format!("ra={ra:.8}&dec={dec:.8}&radius={MATCH_RADIUS_ARCSEC}&requestType=all");
+    lasair_membership_core(ra, dec, token.as_deref(), tunnel_iface_present, |iface| {
+        curl_form_post(LAS_CONE, &form, token.as_deref(), iface)
+    })
 }
 
 fn alerce_membership(ra: f64, dec: f64) -> BrokerLine {
     let Some((code, body)) = curl_get(ALERCE_OBJECTS, None) else {
         return BrokerLine {
             broker: "alerce",
-            code: "no response (connection stalled)".to_string(),
+            code: STALL_WORD.to_string(),
             read: Read::Excluded,
             note: ALERCE_RETIRE_NOTE.to_string(),
         };
@@ -471,7 +578,7 @@ fn print_verdict_line(lines: &[BrokerLine]) -> usize {
                 );
             } else {
                 println!(
-                    "  the {VERDICT_BROKER_MIN}-broker floor of the sky/pipeline gate is open: {reachable} reachable broker(s) with {hits} hit(s); Lasair/ALeRCE dead on 2026-09-05 leaves the verdict pending, not negative"
+                    "  the {VERDICT_BROKER_MIN}-broker floor of the sky/pipeline gate is open: {reachable} reachable broker(s) with {hits} hit(s); fewer than {VERDICT_BROKER_MIN} reachable brokers leaves the verdict pending, not negative"
                 );
             }
         }
@@ -517,9 +624,10 @@ fn usage() {
          \x20 broker_difference_probe --pos <ra>,<dec> [--pos <ra>,<dec> ...]\n\
          \x20 broker_difference_probe --object <diaObjectId> [--object <diaObjectId> ...]\n\
          \x20   a diaObjectId is placed through Fink /api/v1/sources (ra/dec), then cone-searched.\n\
-         today (2026-09-05) Lasair (000) and ALeRCE (404 stub) are dead, so the verdict is often\n\
-         \x20 pending with only Fink reachable — that IS the honest measurement, not a bug. The full\n\
-         \x20 three-broker logic runs now and carries the moment Lasair/ALeRCE answer again.\n\
+         Lasair: a direct cone read of 000 (or a stall) is retried once through the proton0\n\
+         \x20 tunnel interface (measured 2026-09-06: direct 000, tunnel HTTP 200) and the tunnel\n\
+         \x20 is named when it carries the read; ALeRCE api.alerce.online is the retired 404 stub\n\
+         \x20 (excluded by design).\n\
          LAS token key for api.lasair.lsst.ac.uk: LASAIR_LSST_TOKEN (env or the .secrets.local\n\
          \x20 key in the omegaflow state dir)."
     );
@@ -597,7 +705,7 @@ fn main() {
         }
     }
     println!(
-        "broker-difference survey: {hits_total} present read(s) across the probed position(s); the reachability wall (Lasair 000, ALeRCE 404 on 2026-09-05) keeps every verdict honest — pending where fewer than {VERDICT_BROKER_MIN} brokers answer, never a fabricated sky or pipeline"
+        "broker-difference survey: {hits_total} present read(s) across the probed position(s); every verdict is honest — pending where fewer than {VERDICT_BROKER_MIN} brokers answer, never a fabricated sky or pipeline"
     );
 }
 
@@ -635,16 +743,22 @@ mod tests {
     }
 
     #[test]
-    fn lasair_cone_parser_reads_the_documented_row_shape() {
-        let body = br#"[{"object":"12345678901234","separation":0.5},{"object":"98765432109876","separation":2.39}]"#;
-        assert_eq!(lasair_cone_parse(body), ConeParse::Objects(2));
-        assert_eq!(lasair_cone_parse(b"[]"), ConeParse::Empty);
+    fn lasair_cone_parser_reads_the_measured_response_object() {
+        let body = br#"{"objects":[{"object":313998569858662581,"separation":0.12750748541524667}],"count":1,"nearest":{"object":313998569858662581,"separation":0.12750748541524667}}"#;
+        assert_eq!(lasair_cone_parse(body), ConeParse::Objects(1));
+        let string_id = br#"{"objects":[{"object":"313998569858662581","separation":0.5}],"count":1,"nearest":{}}"#;
+        assert_eq!(lasair_cone_parse(string_id), ConeParse::Objects(1));
         assert_eq!(
-            lasair_cone_parse(br#"[{"separation":0.5}]"#),
+            lasair_cone_parse(br#"{"objects":[],"count":0,"nearest":{}}"#),
+            ConeParse::Empty
+        );
+        assert_eq!(
+            lasair_cone_parse(br#"{"objects":[{"separation":0.5}],"count":1,"nearest":{}}"#),
             ConeParse::Unresolved,
             "a row without object is not the measured schema — never read as absent"
         );
         assert_eq!(lasair_cone_parse(b"{}"), ConeParse::Unresolved);
+        assert_eq!(lasair_cone_parse(b"[]"), ConeParse::Unresolved);
     }
 
     #[test]
@@ -708,7 +822,7 @@ mod tests {
         assert_eq!(
             broker_verdict_word(hits, reachable),
             "pending",
-            "with one reachable broker the gate stays open — Lasair/ALeRCE dead means pending, not pipeline and not sky"
+            "with one reachable broker the gate stays open — excluded brokers mean pending, not pipeline and not sky"
         );
     }
 
@@ -752,5 +866,100 @@ mod tests {
         assert_eq!(hits, 2);
         assert_eq!(reachable, 2);
         assert_eq!(broker_verdict_word(hits, reachable), "sky");
+    }
+
+    const LAS_OBJECTS_BODY: &[u8] =
+        br#"{"objects":[{"object":313998569858662581,"separation":0.5}],"count":1,"nearest":{}}"#;
+
+    #[test]
+    fn lasair_direct_000_tunnel_200_reads_present_through_the_tunnel() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            match iface {
+                None => Some(("000".to_string(), Vec::new())),
+                Some(_) => Some(("200".to_string(), LAS_OBJECTS_BODY.to_vec())),
+            }
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| true, probe);
+        assert_eq!(line.read, Read::Present);
+        assert_eq!(line.code, "200");
+        assert!(line.note.contains("direct route read 000"));
+        assert!(line.note.contains("proton0 tunnel carried the 200"));
+    }
+
+    #[test]
+    fn lasair_direct_000_without_the_tunnel_interface_stays_unreachable() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            match iface {
+                None => Some(("000".to_string(), Vec::new())),
+                Some(_) => Some(("200".to_string(), LAS_OBJECTS_BODY.to_vec())),
+            }
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| false, probe);
+        assert_eq!(line.read, Read::Excluded);
+        assert_eq!(line.code, "000");
+        assert!(line
+            .note
+            .contains("tunnel interface is not present (ip link)"));
+        assert!(line.note.contains("no tunnel retry exists"));
+    }
+
+    #[test]
+    fn lasair_direct_000_and_tunnel_000_stays_unreachable() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            match iface {
+                None => Some(("000".to_string(), Vec::new())),
+                Some(_) => Some(("000".to_string(), Vec::new())),
+            }
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| true, probe);
+        assert_eq!(line.read, Read::Excluded);
+        assert_eq!(line.code, "000");
+        assert!(line.note.contains("no route carries the cone"));
+    }
+
+    #[test]
+    fn lasair_direct_200_reads_without_any_tunnel_call() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            assert!(
+                iface.is_none(),
+                "the tunnel is not attempted after a direct 200"
+            );
+            Some(("200".to_string(), LAS_OBJECTS_BODY.to_vec()))
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| true, probe);
+        assert_eq!(line.read, Read::Present);
+        assert!(!line.note.contains("tunnel"));
+    }
+
+    #[test]
+    fn lasair_direct_http_error_is_a_broker_answer_not_a_route_stall() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            assert!(
+                iface.is_none(),
+                "a real HTTP answer is not retried over the tunnel"
+            );
+            Some(("500".to_string(), b"{}".to_vec()))
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| true, probe);
+        assert_eq!(line.read, Read::Excluded);
+        assert_eq!(line.code, "500");
+        assert!(line.note.contains("answered HTTP 500"));
+    }
+
+    #[test]
+    fn lasair_tunnel_200_with_an_empty_cone_reads_absent() {
+        let probe = |iface: Option<&str>| -> Option<(String, Vec<u8>)> {
+            match iface {
+                None => Some(("000".to_string(), Vec::new())),
+                Some(_) => Some((
+                    "200".to_string(),
+                    br#"{"objects":[],"count":0,"nearest":{}}"#.to_vec(),
+                )),
+            }
+        };
+        let line = lasair_membership_core(0.5, 1.5, None, |_| true, probe);
+        assert_eq!(line.read, Read::Absent);
+        assert!(line.note.contains("proton0 tunnel carried the 200"));
+        assert!(line.note.contains("0 honored"));
     }
 }
