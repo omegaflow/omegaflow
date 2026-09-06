@@ -77,7 +77,7 @@ fn elong_deg(probe: [f64; 3], earth: [f64; 3]) -> Option<f64> {
 }
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -310,7 +310,7 @@ fn main() {
         println!("galileo_floor_stair_te: ephemeris binaries void");
         return;
     }
-    let bytes = match std::fs::read("data/galileo_resid.bin") {
+    let bytes = match std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") {
         Ok(b) => b,
         Err(_) => {
             println!("galileo_floor_stair_te: resid bin void");

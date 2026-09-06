@@ -7,7 +7,7 @@ const AU: f64 = 1.495978707e11;
 const LOCK_HZ: f64 = 1.0e3;
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -54,17 +54,19 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
-    let recs = omegaflow::atdf::parse_resid_bin(&bytes).unwrap_or_default();
+    let Some(recs) = omegaflow::atdf::parse_resid_bin(&bytes) else {
+        eprintln!("galileo: resid bin parse void");
+        return;
+    };
     if recs.is_empty() {
         eprintln!("galileo: resid bin empty");
         return;
     }
 
-    // resid slots: [0]=tdb [1]=resid_hz [2]=station [3]=mode [4]=dtype [5]=ref [6]=sampler [7]=strength
     let mut per: BTreeMap<(i64, i64), (Vec<f64>, usize, usize)> = BTreeMap::new();
     let mut per_station: BTreeMap<i64, (usize, usize)> = BTreeMap::new();
     let mut per_station_day: BTreeMap<(i64, i64), Vec<f64>> = BTreeMap::new();
@@ -108,12 +110,10 @@ fn main() {
         let r_earth = norm(sub(e_pos, sun));
         let e_to_p = sub(p_pos, e_pos);
         let r_e_p = norm(e_to_p);
-        // alpha = angle at the Sun between the Earth and probe vectors
         let alpha_deg = (dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30))
             .clamp(-1.0, 1.0)
             .acos()
             .to_degrees();
-        // epsilon = solar elongation = angle at the Earth between Sun and probe
         let elong_deg = (dot(sub(sun, e_pos), e_to_p) / (r_earth * r_e_p).max(1e-30))
             .clamp(-1.0, 1.0)
             .acos()
@@ -139,12 +139,12 @@ fn main() {
     for mode in mode_days.keys() {
         eprintln!(
             "  mode {mode}: {} days, {} samples, {n_lock} lock transitions (|resid| > {LOCK_HZ:.0} Hz)",
-            mode_days.get(mode).copied().unwrap_or(0),
-            mode_nsamp.get(mode).copied().unwrap_or(0),
-            n_lock = mode_nlock.get(mode).copied().unwrap_or(0),
+            mode_days[mode],
+            mode_nsamp[mode],
+            n_lock = mode_nlock[mode],
         );
     }
-    eprintln!("galileo: per-station (14/43/63 = die 20-s-Bande-Stationen):");
+    eprintln!("galileo: per-station (14/43/63 = the 20-s band stations):");
     for (station, (nsamp, nlock)) in &per_station {
         let day_rms: Vec<f64> = per_station_day
             .iter()

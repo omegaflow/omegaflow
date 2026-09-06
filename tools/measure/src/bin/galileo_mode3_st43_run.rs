@@ -90,7 +90,10 @@ fn ls_grid(times: &[f64], vals: &[f64], flo: f64, fhi: f64, step: f64) -> Vec<(f
         freqs.push(f);
         f += step;
     }
-    let threads = available_parallelism().map(|n| n.get()).unwrap_or(1).min(freqs.len());
+    let threads = available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1)
+        .min(freqs.len());
     let mut out: Vec<(f64, f64)> = freqs.iter().map(|&x| (x, 0.0)).collect();
     std::thread::scope(|scope| {
         let mut handles = Vec::new();
@@ -212,35 +215,63 @@ fn spec_scan(label: &str, ts: &[f64], vs: &[f64]) {
     let pows: Vec<f64> = grid.iter().map(|(_, p)| *p).collect();
     let floor = median(&pows).expect("nonempty grid");
     let (fp, pp) = peak_of(&grid);
-    let mir: Vec<(f64, f64)> = grid.iter().copied().filter(|(f, _)| *f >= MIR_LO && *f <= MIR_HI).collect();
+    let mir: Vec<(f64, f64)> = grid
+        .iter()
+        .copied()
+        .filter(|(f, _)| *f >= MIR_LO && *f <= MIR_HI)
+        .collect();
     let (fm, pm) = peak_of(&mir);
     let mir_pows: Vec<f64> = mir.iter().map(|(_, p)| *p).collect();
     let mir_floor = median(&mir_pows).expect("nonempty mirror grid");
     let p_ref = grid
         .iter()
-        .min_by(|a, b| (a.0 - ST43_REF_HZ).abs().total_cmp(&(b.0 - ST43_REF_HZ).abs()))
-        .map(|(_, p)| *p)
-        .unwrap_or(0.0);
+        .min_by(|a, b| {
+            (a.0 - ST43_REF_HZ)
+                .abs()
+                .total_cmp(&(b.0 - ST43_REF_HZ).abs())
+        })
+        .map(|(_, p)| *p);
     let mems = members(&grid, floor, 3.0);
-    let mem_txt: Vec<String> = mems.iter().map(|(f, r)| format!("{:.3} mHz {:.1}x", f * 1000.0, r)).collect();
+    let mem_txt: Vec<String> = mems
+        .iter()
+        .map(|(f, r)| format!("{:.3} mHz {:.1}x", f * 1000.0, r))
+        .collect();
+    match p_ref {
+        Some(p_ref) => println!(
+            "spec {label}: n_scan {} | LS 30-70 mHz @0.05 mHz | band floor {floor:.3e} | band peak {:.4} mHz {:.1}x floor | 44-56 subwindow peak {:.4} mHz {:.1}x band-floor / {:.1}x subwindow-median | ref 51.55 mHz {:.1}x floor",
+            dts.len(),
+            fp * 1000.0,
+            pp / floor,
+            fm * 1000.0,
+            pm / floor,
+            pm / mir_floor,
+            p_ref / floor
+        ),
+        None => println!(
+            "spec {label}: n_scan {} | LS 30-70 mHz @0.05 mHz | band floor {floor:.3e} | band peak {:.4} mHz {:.1}x floor | 44-56 subwindow peak {:.4} mHz {:.1}x band-floor / {:.1}x subwindow-median | ref 51.55 mHz absent",
+            dts.len(),
+            fp * 1000.0,
+            pp / floor,
+            fm * 1000.0,
+            pm / floor,
+            pm / mir_floor
+        ),
+    }
     println!(
-        "spec {label}: n_scan {} | LS 30-70 mHz @0.05 mHz | band floor {floor:.3e} | band peak {:.4} mHz {:.1}x floor | 44-56 subwindow peak {:.4} mHz {:.1}x band-floor / {:.1}x subwindow-median | ref 51.55 mHz {:.1}x floor",
-        dts.len(),
-        fp * 1000.0,
-        pp / floor,
-        fm * 1000.0,
-        pm / floor,
-        pm / mir_floor,
-        p_ref / floor
+        "  members(>=3x floor): {}",
+        if mem_txt.is_empty() {
+            "none".to_string()
+        } else {
+            mem_txt.join(" ")
+        }
     );
-    println!("  members(>=3x floor): {}", if mem_txt.is_empty() { "none".to_string() } else { mem_txt.join(" ") });
 }
 
 fn main() {
-    let path = std::env::args()
-        .skip(1)
-        .find(|a| !a.starts_with('-'))
-        .unwrap_or_else(|| "data/galileo_resid.bin".to_string());
+    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+        Some(p) => p,
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+    };
     let bytes = fs::read(&path).expect("resid bin read");
     if bytes.len() < 8 || &bytes[0..4] != b"GASR" {
         println!("no GASR header");
@@ -325,7 +356,15 @@ fn main() {
     println!("per-day noise: med = median|resid|, rms = sqrt(mean resid^2), n = cleaned samples of that mode at st{ST}");
     println!(
         "{:>5} | {:>7} {:>10} {:>10} | {:>7} {:>10} {:>10} | {:>7} {:>7}",
-        "day", "m2 n", "m2 med Hz", "m2 rms Hz", "m3 n", "m3 med Hz", "m3 rms Hz", "med 3/2", "rms 3/2"
+        "day",
+        "m2 n",
+        "m2 med Hz",
+        "m2 rms Hz",
+        "m3 n",
+        "m3 med Hz",
+        "m3 rms Hz",
+        "med 3/2",
+        "rms 3/2"
     );
     for day in &alldays {
         let v2 = pd2.get(day);
@@ -423,8 +462,14 @@ fn main() {
         lg3,
         sp3 / 3600.0
     );
-    let sampler_txt: Vec<String> = samp3.iter().map(|(k, v)| format!("{:.1} s x{v}", *k as f64 / 10.0)).collect();
-    println!("  m3 sampler_s histogram (x0.1 rounded): {}", sampler_txt.join(" "));
+    let sampler_txt: Vec<String> = samp3
+        .iter()
+        .map(|(k, v)| format!("{:.1} s x{v}", *k as f64 / 10.0))
+        .collect();
+    println!(
+        "  m3 sampler_s histogram (x0.1 rounded): {}",
+        sampler_txt.join(" ")
+    );
 
     println!();
     spec_scan("st43 m2 days 9457-9471 (context, same method)", &ts2, &vs2);

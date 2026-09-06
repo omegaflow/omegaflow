@@ -51,7 +51,11 @@ fn sas_token(collection: &str) -> Option<String> {
     let key = "\"token\":\"";
     let i = body.find(key)? + key.len();
     let tok = body[i..].split('"').next()?.to_string();
-    if tok.is_empty() { None } else { Some(tok) }
+    if tok.is_empty() {
+        None
+    } else {
+        Some(tok)
+    }
 }
 
 fn scan_features(body: &str) -> Vec<(String, String, String)> {
@@ -130,11 +134,17 @@ fn download(url: &str, path: &str) -> bool {
         .arg(url)
         .output();
     match out {
-        Ok(o) if o.status.success() => {
-            let sz = std::fs::metadata(path).map(|m| m.len()).unwrap_or(0);
-            eprintln!("COG downloaded: {sz} B -> {path}");
-            sz > 0
-        }
+        Ok(o) if o.status.success() => match std::fs::metadata(path) {
+            Ok(m) => {
+                let sz = m.len();
+                eprintln!("COG downloaded: {sz} B -> {path}");
+                sz > 0
+            }
+            Err(e) => {
+                eprintln!("COG download void: {e}");
+                false
+            }
+        },
         Ok(o) => {
             eprintln!(
                 "COG download void: {} {}",
@@ -150,13 +160,13 @@ fn download(url: &str, path: &str) -> bool {
     }
 }
 
-fn type_size(typ: u16) -> usize {
+fn type_size(typ: u16) -> Result<usize, String> {
     match typ {
-        1 | 2 | 6 | 7 => 1,
-        3 | 8 => 2,
-        4 | 9 | 11 => 4,
-        5 | 10 | 12 => 8,
-        _ => 0,
+        1 | 2 | 6 | 7 => Ok(1),
+        3 | 8 => Ok(2),
+        4 | 9 | 11 => Ok(4),
+        5 | 10 | 12 => Ok(8),
+        other => Err(format!("type code {other} carries no byte width")),
     }
 }
 
@@ -185,7 +195,7 @@ fn read_ifd_tags(path: &str) -> Result<HashMap<u16, (u16, u32, u32)>, String> {
     f.read_exact(&mut hdr)
         .map_err(|e| format!("hdr {path}: {e}"))?;
     if &hdr[0..2] != b"II" {
-        return Err("nur little-endian TIFF".to_string());
+        return Err("little-endian TIFF only".to_string());
     }
     let ifd_off = u32::from_le_bytes([hdr[4], hdr[5], hdr[6], hdr[7]]) as u64;
     f.seek(SeekFrom::Start(ifd_off))
@@ -224,7 +234,12 @@ fn tag_u32s(
     if cnt == 0 {
         return Ok(vec![]);
     }
-    let sz = type_size(typ);
+    let sz = type_size(typ)?;
+    if sz > 4 {
+        return Err(format!(
+            "{path}: tag {tag} type code {typ} does not fit a u32 field"
+        ));
+    }
     let mut f = std::fs::File::open(path).map_err(|e| format!("open {path}: {e}"))?;
     let mut out = Vec::with_capacity(cnt as usize);
     for k in 0..cnt as usize {
@@ -234,11 +249,12 @@ fn tag_u32s(
         let mut b = [0u8; 4];
         f.read_exact(&mut b[..sz])
             .map_err(|e| format!("read {e}"))?;
-        let v = match sz {
-            1 => b[0] as u32,
-            2 => u16::from_le_bytes([b[0], b[1]]) as u32,
-            4 => u32::from_le_bytes(b),
-            _ => 0,
+        let v = if sz == 1 {
+            b[0] as u32
+        } else if sz == 2 {
+            u16::from_le_bytes([b[0], b[1]]) as u32
+        } else {
+            u32::from_le_bytes(b)
         };
         out.push(v);
     }
@@ -251,7 +267,7 @@ fn tag_f64s(
     tag: u16,
 ) -> Result<Vec<f64>, String> {
     let (typ, cnt, off) = *tags.get(&tag).ok_or(format!("{path}: tag {tag} absent"))?;
-    let sz = type_size(typ);
+    let sz = type_size(typ)?;
     let mut f = std::fs::File::open(path).map_err(|e| format!("open {path}: {e}"))?;
     let mut out = Vec::with_capacity(cnt as usize);
     for k in 0..cnt as usize {
@@ -284,7 +300,7 @@ impl Cog {
         let geo = tag_f64s(path, &tags, 33922)?;
         if geo.is_empty() || geo.len() % 6 != 0 {
             return Err(format!(
-                "{path}: geolocation-Grid unerwartet ({})",
+                "{path}: geolocation grid carries {} values, not a multiple of 6",
                 geo.len()
             ));
         }
@@ -352,7 +368,7 @@ impl Cog {
             zstd::stream::decode_all(raw.as_slice()).map_err(|e| format!("zstd {idx}: {e}"))?;
         if dec.len() < self.tw * self.th * 2 {
             return Err(format!(
-                "tile {idx}: dekodiert {} < {}B",
+                "tile {idx}: decoded {} < {} bytes",
                 dec.len(),
                 self.tw * self.th * 2
             ));
@@ -530,7 +546,10 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<Pixel>> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "s1_sar_diff.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(o) => o,
+        None => "s1_sar_diff.bin".to_string(),
+    };
 
     let mut lon0 = BBOX.0;
     let mut lon1 = BBOX.2;
@@ -565,7 +584,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        let dir = "/tmp/opencode/s1sar";
+        let dir = "tmp/s1sar";
         std::fs::create_dir_all(dir).ok();
         if post_path.is_none() {
             let (id, href, dt) = match find_post() {
@@ -643,7 +662,7 @@ fn main() {
     let mut near_collapse_dark = 0usize;
     let mut verr = 0usize;
 
-    eprintln!("=== SAR-Amplituden-Differenz Post-vs-Vor ===");
+    eprintln!("=== SAR amplitude difference post-vs-pre ===");
     eprintln!("Post: {post_path} ({}x{})", post.width, post.height);
     eprintln!("Vor:  {vor_path} ({}x{})", vor.width, vor.height);
     eprintln!(
@@ -666,7 +685,16 @@ fn main() {
                     && vx < vor.width as f64
                     && vy < vor.height as f64
                 {
-                    let vp = post.value_bilinear(px, py).unwrap_or(0.0);
+                    let vp = match post.value_bilinear(px, py) {
+                        Ok(v) => v,
+                        Err(e) => {
+                            if verr < 3 {
+                                eprintln!("post-err @({px:.1},{py:.1}): {e}");
+                            }
+                            verr += 1;
+                            continue;
+                        }
+                    };
                     let vv = match vor.value_bilinear(vx, vy) {
                         Ok(v) => v,
                         Err(e) => {
@@ -674,7 +702,7 @@ fn main() {
                                 eprintln!("vor-err @({vx:.1},{vy:.1}): {e}");
                             }
                             verr += 1;
-                            0.0
+                            continue;
                         }
                     };
                     if vp > 0.0 && vv > 0.0 {

@@ -71,7 +71,7 @@ fn fmt_level(v: Option<f64>) -> String {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    std::fs::read(format!("data/ephemeris_{name}.bin"))
+    std::fs::read(format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
         .map(|e| eph.insert(name.to_string(), e))
@@ -590,7 +590,7 @@ fn envelope_rows(
 fn main() {
     let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_floor_4d_report.txt".to_string(),
+        None => "tmp/galileo_floor_4d_report.txt".to_string(),
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for b in ["galileo_daily", "earth"] {
@@ -599,7 +599,7 @@ fn main() {
         }
     }
     let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

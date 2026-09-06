@@ -199,7 +199,7 @@ fn fixed_effects_cells(
         epoch[i] = eid;
     }
     let n_epoch = eid + 1;
-    let n_files = files.iter().copied().max().unwrap_or(0) as usize + 1;
+    let n_files = files.iter().copied().max().map_or(1, |m| m as usize + 1);
     let n_cells = n_epoch * n_files;
     let mut cell = vec![0usize; n];
     for i in 0..n {
@@ -338,7 +338,7 @@ fn fixed_effects_cells_w(
         epoch[i] = eid;
     }
     let n_epoch = eid + 1;
-    let n_files = files.iter().copied().max().unwrap_or(0) as usize + 1;
+    let n_files = files.iter().copied().max().map_or(1, |m| m as usize + 1);
     let n_cells = n_epoch * n_files;
     let mut cell = vec![0usize; n];
     for i in 0..n {
@@ -456,6 +456,13 @@ fn median(v: &mut [f64]) -> f64 {
         return f64::NAN;
     }
     v[v.len() / 2]
+}
+
+fn nearest_power(grid: &[(f64, f64)], f: f64) -> f64 {
+    grid.iter()
+        .min_by(|a, b| (a.0 - f).abs().total_cmp(&(b.0 - f).abs()))
+        .map(|(_, p)| *p)
+        .expect("the ls scan grid holds band bins")
 }
 
 fn ls_grid(times: &[f64], vals: &[f64], flo: f64, fhi: f64, step: f64) -> Vec<(f64, f64)> {
@@ -1035,7 +1042,7 @@ fn main() {
                 .find(|p| std::path::Path::new(p).exists())
         }
     };
-    let sky = "data/pioneer10_skyfreq.bin";
+    let sky = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(sky) else {
         eprintln!("pioneer10 link: skyfreq bin void ({sky})");
         return;
@@ -1046,7 +1053,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [EARTH, SC_BODY] {
-        let p = format!("data/ephemeris_{body}.bin");
+        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -1313,7 +1320,11 @@ fn main() {
         for i in 0..n {
             cnt[cell0[i]] += 1;
         }
-        cnt.iter().copied().filter(|&c| c > 0).min().unwrap_or(0)
+        cnt.iter()
+            .copied()
+            .filter(|&c| c > 0)
+            .min()
+            .map_or(0, |v| v)
     };
     let max_off = offset0
         .iter()
@@ -1365,7 +1376,7 @@ fn main() {
         }
     }
     {
-        let n_files = files.iter().copied().max().unwrap_or(0) as usize + 1;
+        let n_files = files.iter().copied().max().map_or(1, |m| m as usize + 1);
         let mut order: Vec<usize> = (0..n).collect();
         order.sort_by(|&a, &b| strength[a].total_cmp(&strength[b]));
         for q in 0..4 {
@@ -1903,7 +1914,7 @@ fn main() {
         rms_of(&resid_d) - rms_e
     );
     {
-        let pdpl_loaded = std::fs::read("data/pioneer10_doppler_clean.bin")
+        let pdpl_loaded = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
             .ok()
             .and_then(|b| parse_pdpl(&b));
         match pdpl_loaded {
@@ -2033,7 +2044,7 @@ fn main() {
     eprintln!(
         "  a_P-scan ±8e-6 m/s² (aniso {best_aniso:.3}): residual-RMS flat {rms_lo:.3e}…{rms_hi:.3e} Hz — best a_P {best_a_p:.4e} m/s²"
     );
-    let ptl = std::fs::read("data/pioneer10_telemetry.bin")
+    let ptl = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
         .ok()
         .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b));
     match ptl {
@@ -2163,7 +2174,7 @@ fn main() {
             "  the self-test does NOT carry the anomaly: |a| sits ~{times_anomaly:.0e}× above the Pioneer anomaly ({PIONEER_ANOMALY:.3e} m/s²) — the floor remains the per-sample scatter (0 honored)"
         );
     }
-    if let Some(recs_t) = std::fs::read("data/pioneer10_telemetry.bin")
+    if let Some(recs_t) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
         .ok()
         .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b))
     {
@@ -2262,7 +2273,7 @@ fn main() {
         );
     }
     {
-        let Some(recs_te) = std::fs::read("data/pioneer10_telemetry.bin")
+        let Some(recs_te) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
             .ok()
             .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b))
         else {
@@ -2578,11 +2589,7 @@ fn main() {
             let mut shape: Vec<String> = Vec::new();
             let mut f = 0.020;
             while f <= 0.070 {
-                let p = g_shape
-                    .iter()
-                    .min_by(|a, b| (a.0 - f).abs().total_cmp(&(b.0 - f).abs()))
-                    .map(|(_, p)| *p)
-                    .unwrap_or(0.0);
+                let p = nearest_power(&g_shape, f);
                 shape.push(format!("{:.0}:{:.1}", f * 1000.0, p / floor17));
                 f += 0.002;
             }
@@ -2614,11 +2621,7 @@ fn main() {
                 let ref_parts: Vec<String> = refs17
                     .iter()
                     .map(|&fr| {
-                        let p = g
-                            .iter()
-                            .min_by(|a, b| (a.0 - fr).abs().total_cmp(&(b.0 - fr).abs()))
-                            .map(|(_, p)| *p)
-                            .unwrap_or(0.0);
+                        let p = nearest_power(&g, fr);
                         format!("{:.1} mHz:{:.1}×", fr * 1000.0, p / floor2)
                     })
                     .collect();
@@ -2670,11 +2673,7 @@ fn main() {
                     .collect();
                 local.sort_by(f64::total_cmp);
                 let local_floor = local[local.len() / 2];
-                let p_alias = g
-                    .iter()
-                    .min_by(|a, b| (a.0 - 0.000714).abs().total_cmp(&(b.0 - 0.000714).abs()))
-                    .map(|(_, p)| *p)
-                    .unwrap_or(0.0);
+                let p_alias = nearest_power(&g, 0.000714);
                 eprintln!(
                     "Deduction 17   ATDF-60-s class ({} samples): band 0.1–2 mHz — peak {:.4} mHz ({ratio:.1}×); at the 60-s alias 0.71 mHz: {:.1}× local floor [1–2 mHz] — the alias is {}",
                     idx60.len(),
@@ -2709,11 +2708,7 @@ fn main() {
                         .collect();
                     localy.sort_by(f64::total_cmp);
                     let localy_floor = localy[localy.len() / 2];
-                    let py = gy
-                        .iter()
-                        .min_by(|a, b| (a.0 - 0.000714).abs().total_cmp(&(b.0 - 0.000714).abs()))
-                        .map(|(_, p)| *p)
-                        .unwrap_or(0.0);
+                    let py = nearest_power(&gy, 0.000714);
                     eprintln!(
                         "Deduction 17     60-s year {y} ({} samples): P(0.71 mHz) = {:.1}× local floor [0.8–1.2 mHz]",
                         idx.len(),
@@ -2755,12 +2750,7 @@ fn main() {
                 .collect();
             local.sort_by(f64::total_cmp);
             let local_floor = local[local.len() / 2];
-            let at = |fref: f64| {
-                g.iter()
-                    .min_by(|a, b| (a.0 - fref).abs().total_cmp(&(b.0 - fref).abs()))
-                    .map(|(_, p)| *p / local_floor)
-                    .unwrap_or(0.0)
-            };
+            let at = |fref: f64| nearest_power(&g, fref) / local_floor;
             let p071 = at(0.000714);
             eprintln!(
                 "Deduction 18 Witness {label} ({} samples, {}..{}): band 0.05–2 mHz — peak {:.4} mHz ({ratio:.1}× band floor); at the 60-s alias 0.71 mHz: {:.1}× local floor [1–2 mHz]; shape P(0.2)/P(0.5)/P(0.71)/P(1.0)/P(1.5) mHz = {:.1}/{:.1}/{:.1}/{:.1}/{:.1}× — the alias is {}",
@@ -2781,7 +2771,11 @@ fn main() {
                 }
             );
         };
-        if let Some((ts, vs)) = nav_series("data/pioneer10_doppler_clean.bin", t_first, t_last) {
+        if let Some((ts, vs)) = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            t_first,
+            t_last,
+        ) {
             witness_scan("NAVIO-clean P10 (overlap era)", &ts, &vs);
             let mut years18: Vec<u32> = ts.iter().filter_map(|&t| year_of(t)).collect();
             years18.sort_unstable();
@@ -2803,11 +2797,7 @@ fn main() {
                     .collect();
                 localy.sort_by(f64::total_cmp);
                 let localy_floor = localy[localy.len() / 2];
-                let py = gy
-                    .iter()
-                    .min_by(|a, b| (a.0 - 0.000714).abs().total_cmp(&(b.0 - 0.000714).abs()))
-                    .map(|(_, p)| *p)
-                    .unwrap_or(0.0);
+                let py = nearest_power(&gy, 0.000714);
                 eprintln!(
                     "Deduction 18   NAVIO overlap year {y} ({} samples): P(0.71 mHz) = {:.1}× local floor [0.8–1.2 mHz]",
                     idx.len(),
@@ -2817,19 +2807,27 @@ fn main() {
         } else {
             eprintln!("Deduction 18 Witness NAVIO-clean P10: file void — empty (0 honored)");
         }
-        if let Some((ts, vs)) =
-            nav_series("data/pioneer10_doppler_clean.bin", NAVIO_T_MIN, NAVIO_T_MAX)
-        {
+        if let Some((ts, vs)) = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            NAVIO_T_MIN,
+            NAVIO_T_MAX,
+        ) {
             witness_scan("NAVIO-clean P10 (full era 1973–2002)", &ts, &vs);
         }
-        if let Some((ts, vs)) =
-            nav_series("data/pioneer11_doppler_clean.bin", NAVIO_T_MIN, NAVIO_T_MAX)
-        {
+        if let Some((ts, vs)) = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            NAVIO_T_MIN,
+            NAVIO_T_MAX,
+        ) {
             witness_scan("NAVIO-clean P11 (full era)", &ts, &vs);
         } else {
             eprintln!("Deduction 18 Witness NAVIO-clean P11: file void — empty (0 honored)");
         }
-        if let Some((ts, vs)) = nav_series("data/pioneer11_doppler_clean.bin", t_first, t_last) {
+        if let Some((ts, vs)) = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            t_first,
+            t_last,
+        ) {
             witness_scan("NAVIO-clean P11 (overlap era)", &ts, &vs);
         } else {
             eprintln!(
@@ -2977,7 +2975,10 @@ fn main() {
                 }
             }
             let (fp, pp, _) = peak_of(&g);
-            let k0 = g.iter().position(|(fr, _)| *fr == fp).unwrap_or(0);
+            let k0 = g
+                .iter()
+                .position(|(fr, _)| *fr == fp)
+                .expect("the peak frequency lies on the scan grid");
             let half = 0.5 * (pp - floor).max(0.0);
             let mut lo = k0;
             while lo > 0 && g[lo - 1].1 - floor >= half {
@@ -3052,7 +3053,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3089,21 +3090,28 @@ fn main() {
                 .filter(|(i, _)| lattice[*i])
                 .map(|(_, &c)| c)
                 .sum();
-            let lattice_frac = lattice_hits as f64 / n_ok.max(1) as f64;
-            eprintln!(
-                "Deduction 22 count structure ({} PASF samples, {} with finite doppler_cnt): {} of 1000 fraction bins occupied — the 1/256 grid (256 rounded points) carries {:.3} of the holding — {}",
-                recs.len(),
-                n_ok,
-                occupied,
-                lattice_frac,
-                if occupied <= 300 && lattice_frac > 0.95 {
-                    "the 1/256 resolver structure IS carried (grid pattern in the L/P field)"
-                } else if occupied > 900 {
-                    "the L/P field is uniformly distributed over ~1000 bins — the 0.001-cycle resolution is native, no 1/256 grid (0 honored)"
-                } else {
-                    "neither the full 1/256 grid nor the uniform distribution — mixed structure, named (0 honored)"
-                }
-            );
+            if n_ok == 0 {
+                eprintln!(
+                    "Deduction 22 count structure ({} PASF samples): no finite doppler_cnt — the lattice share stays absent (0 honored)",
+                    recs.len()
+                );
+            } else {
+                let lattice_frac = lattice_hits as f64 / n_ok as f64;
+                eprintln!(
+                    "Deduction 22 count structure ({} PASF samples, {} with finite doppler_cnt): {} of 1000 fraction bins occupied — the 1/256 grid (256 rounded points) carries {:.3} of the holding — {}",
+                    recs.len(),
+                    n_ok,
+                    occupied,
+                    lattice_frac,
+                    if occupied <= 300 && lattice_frac > 0.95 {
+                        "the 1/256 resolver structure IS carried (grid pattern in the L/P field)"
+                    } else if occupied > 900 {
+                        "the L/P field is uniformly distributed over ~1000 bins — the 0.001-cycle resolution is native, no 1/256 grid (0 honored)"
+                    } else {
+                        "neither the full 1/256 grid nor the uniform distribution — mixed structure, named (0 honored)"
+                    }
+                );
+            }
             for (k, label) in [(0usize, "1-s class"), (1, "10-s class"), (2, "60-s class")] {
                 let tot: u64 = hist_class[k].iter().sum();
                 if tot < 1000 {
@@ -3141,7 +3149,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3357,8 +3365,16 @@ fn main() {
             let b = (cy * ss - sy * sc) / det;
             ((a * a + b * b).sqrt(), b.atan2(a))
         };
-        let p10o = nav_series("data/pioneer10_doppler_clean.bin", t_first, t_last);
-        let p11o = nav_series("data/pioneer11_doppler_clean.bin", t_first, t_last);
+        let p10o = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            t_first,
+            t_last,
+        );
+        let p11o = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            t_first,
+            t_last,
+        );
         match (p10o, p11o) {
             (Some((ts10, vs10)), Some((ts11, vs11))) => {
                 let mut s10 = ts10.clone();
@@ -3450,7 +3466,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3757,7 +3773,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -4112,8 +4128,16 @@ fn main() {
             }
             te
         };
-        let p10o = nav_series("data/pioneer10_doppler_clean.bin", t_first, t_last);
-        let p11o = nav_series("data/pioneer11_doppler_clean.bin", t_first, t_last);
+        let p10o = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            t_first,
+            t_last,
+        );
+        let p11o = nav_series(
+            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            t_first,
+            t_last,
+        );
         match (p10o, p11o) {
             (Some((ts10, vs10)), Some((ts11, vs11))) => {
                 let mut s10 = ts10.clone();
@@ -4911,7 +4935,7 @@ fn main() {
         }
         m
     };
-    if let Some(pdpl) = std::fs::read("data/pioneer10_doppler_clean.bin")
+    if let Some(pdpl) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
         .ok()
         .and_then(|b| parse_pdpl(&b))
     {
@@ -4968,10 +4992,10 @@ fn main() {
     }
 
     if let (Some(pdpl11), Some(ep11)) = (
-        std::fs::read("data/pioneer11_doppler_clean.bin")
+        std::fs::read("data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin")
             .ok()
             .and_then(|b| parse_pdpl(&b)),
-        std::fs::read("data/ephemeris_pioneer11_daily.bin")
+        std::fs::read("data/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin")
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d)),
     ) {
