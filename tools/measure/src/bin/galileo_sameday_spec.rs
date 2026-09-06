@@ -249,11 +249,17 @@ fn process_day(
             if ma == mb {
                 continue;
             }
-            let dmed = match (bin_med(&ba.vals).and_then(ld), bin_med(&bb.vals).and_then(ld)) {
+            let dmed = match (
+                bin_med(&ba.vals).and_then(ld),
+                bin_med(&bb.vals).and_then(ld),
+            ) {
                 (Some(x), Some(y)) => x - y,
                 _ => continue,
             };
-            let darm = match (bin_arms(&ba.vals).and_then(ld), bin_arms(&bb.vals).and_then(ld)) {
+            let darm = match (
+                bin_arms(&ba.vals).and_then(ld),
+                bin_arms(&bb.vals).and_then(ld),
+            ) {
                 (Some(x), Some(y)) => x - y,
                 _ => continue,
             };
@@ -270,10 +276,10 @@ fn process_day(
 }
 
 fn main() {
-    let path = std::env::args()
-        .skip(1)
-        .find(|a| !a.starts_with('-'))
-        .unwrap_or_else(|| "data/galileo_resid.bin".to_string());
+    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+        Some(p) => p,
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+    };
     let bytes = std::fs::read(&path).expect("resid bin read");
     if bytes.len() < 8 || &bytes[0..4] != b"GASR" {
         println!("no GASR header");
@@ -327,9 +333,11 @@ fn main() {
             n_mode_other += 1;
         }
         refs.entry((day, st)).or_insert_with(Vec::new).push(rec[5]);
-        let b = bins
-            .entry((day, st, mo))
-            .or_insert_with(|| Bin { n: 0, n_non1: 0, vals: Vec::new() });
+        let b = bins.entry((day, st, mo)).or_insert_with(|| Bin {
+            n: 0,
+            n_non1: 0,
+            vals: Vec::new(),
+        });
         b.n += 1;
         if non1 {
             b.n_non1 += 1;
@@ -339,10 +347,17 @@ fn main() {
     println!(
         "GASR {path}: {total} records, cleaned {cleaned} (|resid|<={LOCK_HZ:.0} Hz, strength != 0, finite), lock {n_lock}, zero-strength {n_zero}"
     );
-    println!(
-        "cleaned cadence: {n1s} at 1 s, {n_non1} other (frac1s {:.6}); cleaned samples with mode outside 1..=3: {n_mode_other}",
-        n1s as f64 / (n1s + n_non1).max(1) as f64
-    );
+    let cleaned_n = n1s + n_non1;
+    if cleaned_n == 0 {
+        println!(
+            "cleaned cadence: no cleaned samples; cleaned samples with mode outside 1..=3: {n_mode_other}"
+        );
+    } else {
+        println!(
+            "cleaned cadence: {n1s} at 1 s, {n_non1} other (frac1s {:.6}); cleaned samples with mode outside 1..=3: {n_mode_other}",
+            n1s as f64 / cleaned_n as f64
+        );
+    }
     let mut rows: Vec<Row> = Vec::new();
     let mut within: Vec<Within> = Vec::new();
     let mut day_drop = 0usize;
@@ -352,7 +367,15 @@ fn main() {
         let key = (*d, *st);
         if cur_key != Some(key) {
             if let Some((pd, ps)) = cur_key.take() {
-                process_day(pd, ps, &day_bins, &refs, &mut rows, &mut within, &mut day_drop);
+                process_day(
+                    pd,
+                    ps,
+                    &day_bins,
+                    &refs,
+                    &mut rows,
+                    &mut within,
+                    &mut day_drop,
+                );
             }
             day_bins.clear();
             cur_key = Some(key);
@@ -360,7 +383,15 @@ fn main() {
         day_bins.push((*mo, b));
     }
     if let Some((pd, ps)) = cur_key.take() {
-        process_day(pd, ps, &day_bins, &refs, &mut rows, &mut within, &mut day_drop);
+        process_day(
+            pd,
+            ps,
+            &day_bins,
+            &refs,
+            &mut rows,
+            &mut within,
+            &mut day_drop,
+        );
     }
     println!(
         "qualifying day-rows: {} (>=1 mode-bin with >= {MIN_SAMP} cleaned samples, dominant mode 1..=3); {day_drop} days dropped (level degenerate in log10)",
@@ -417,12 +448,14 @@ fn main() {
         let mut mstr: Vec<String> = Vec::new();
         for m in 1..=3 {
             if let Some(v) = g_arms.get(&m) {
-                let a = median_f64_of(v)
-                    .map(|x| format!("{x:.2}"))
-                    .unwrap_or_else(|| "-".to_string());
-                let d = median_f64_of(&g_med[&m])
-                    .map(|x| format!("{x:.2}"))
-                    .unwrap_or_else(|| "-".to_string());
+                let a = match median_f64_of(v) {
+                    Some(x) => format!("{x:.2}"),
+                    None => "-".to_string(),
+                };
+                let d = match median_f64_of(&g_med[&m]) {
+                    Some(x) => format!("{x:.2}"),
+                    None => "-".to_string(),
+                };
                 mstr.push(format!("m{m} n{} arms {a} med {d}", v.len()));
             }
         }
@@ -448,12 +481,14 @@ fn main() {
             }
             let ma = &g_med[&a];
             let mb = &g_med[&b];
-            let da = sub_med(ga, gb)
-                .map(|x| format!("{x:.2}"))
-                .unwrap_or_else(|| "-".to_string());
-            let dm = sub_med(ma, mb)
-                .map(|x| format!("{x:.2}"))
-                .unwrap_or_else(|| "-".to_string());
+            let da = match sub_med(ga, gb) {
+                Some(x) => format!("{x:.2}"),
+                None => "-".to_string(),
+            };
+            let dm = match sub_med(ma, mb) {
+                Some(x) => format!("{x:.2}"),
+                None => "-".to_string(),
+            };
             println!(
                 "  d{a}v{b} n{a}={} n{b}={} armsDek {da} medDek {dm}",
                 ga.len(),
@@ -479,12 +514,14 @@ fn main() {
             let mv: Vec<f64> = blk.iter().map(|r| r.med_l).collect();
             let sa = spearman(&refv, &av);
             let sm = spearman(&refv, &mv);
-            let sa_s = sa
-                .map(|x| format!("{x:.2}"))
-                .unwrap_or_else(|| "-".to_string());
-            let sm_s = sm
-                .map(|x| format!("{x:.2}"))
-                .unwrap_or_else(|| "-".to_string());
+            let sa_s = match sa {
+                Some(x) => format!("{x:.2}"),
+                None => "-".to_string(),
+            };
+            let sm_s = match sm {
+                Some(x) => format!("{x:.2}"),
+                None => "-".to_string(),
+            };
             println!(
                 "  ref same-month: distinct levels {lv} | rho(arms) {sa_s} rho(med) {sm_s} n {nd}"
             );
@@ -505,15 +542,18 @@ fn main() {
                 let dav: Vec<f64> = m12.iter().map(|w| w.del_arms).collect();
                 let posm = dmv.iter().filter(|&&x| x > 0.0).count();
                 let negm = dmv.len() - posm;
-                let pm = binom_two_tail(dmv.len(), posm.min(negm))
-                    .map(|x| format!("{x:.2}"))
-                    .unwrap_or_else(|| "-".to_string());
-                let md = median_f64_of(&dmv)
-                    .map(|x| format!("{x:.2}"))
-                    .unwrap_or_else(|| "-".to_string());
-                let md_arms = median_f64_of(&dav)
-                    .map(|x| format!("{x:.2}"))
-                    .unwrap_or_else(|| "-".to_string());
+                let pm = match binom_two_tail(dmv.len(), posm.min(negm)) {
+                    Some(x) => format!("{x:.2}"),
+                    None => "-".to_string(),
+                };
+                let md = match median_f64_of(&dmv) {
+                    Some(x) => format!("{x:.2}"),
+                    None => "-".to_string(),
+                };
+                let md_arms = match median_f64_of(&dav) {
+                    Some(x) => format!("{x:.2}"),
+                    None => "-".to_string(),
+                };
                 println!(
                     "  within-day m1v2: n {} days | medDek(med) {md} medDek(arms) {md_arms} | +{posm} -{negm} | p {pm}",
                     m12.len()
@@ -539,18 +579,22 @@ fn main() {
     for (lab, da, dm, na, nb) in &d23_rows {
         println!("  d2v3 {lab}: n2 {na} n3 {nb} armsDek {da:.2} medDek {dm:.2}");
     }
-    println!("\n## ref same-month level association — rho(day med ref, day noise) per (station, month)");
+    println!(
+        "\n## ref same-month level association — rho(day med ref, day noise) per (station, month)"
+    );
     let mut rp = 0usize;
     let mut rn = 0usize;
     let mut rm_p = 0usize;
     let mut rm_n = 0usize;
     for (lab, a, m, nd) in &ref_rows {
-        let sa = a
-            .map(|x| format!("{x:.2}"))
-            .unwrap_or_else(|| "-".to_string());
-        let sm = m
-            .map(|x| format!("{x:.2}"))
-            .unwrap_or_else(|| "-".to_string());
+        let sa = match a {
+            Some(x) => format!("{x:.2}"),
+            None => "-".to_string(),
+        };
+        let sm = match m {
+            Some(x) => format!("{x:.2}"),
+            None => "-".to_string(),
+        };
         if let Some(x) = a {
             if *x > 0.0 {
                 rp += 1;
@@ -580,20 +624,24 @@ fn main() {
         let dav: Vec<f64> = m12all.iter().map(|w| w.del_arms).collect();
         let posm = dmv.iter().filter(|&&x| x > 0.0).count();
         let negm = dmv.len() - posm;
-        let pm = binom_two_tail(dmv.len(), posm.min(negm))
-            .map(|x| format!("{x:.3}"))
-            .unwrap_or_else(|| "-".to_string());
+        let pm = match binom_two_tail(dmv.len(), posm.min(negm)) {
+            Some(x) => format!("{x:.3}"),
+            None => "-".to_string(),
+        };
         let posa = dav.iter().filter(|&&x| x > 0.0).count();
         let nega = dav.len() - posa;
-        let pm_a = binom_two_tail(dav.len(), posa.min(nega))
-            .map(|x| format!("{x:.3}"))
-            .unwrap_or_else(|| "-".to_string());
-        let md = median_f64_of(&dmv)
-            .map(|x| format!("{x:.2}"))
-            .unwrap_or_else(|| "-".to_string());
-        let md_arms = median_f64_of(&dav)
-            .map(|x| format!("{x:.2}"))
-            .unwrap_or_else(|| "-".to_string());
+        let pm_a = match binom_two_tail(dav.len(), posa.min(nega)) {
+            Some(x) => format!("{x:.3}"),
+            None => "-".to_string(),
+        };
+        let md = match median_f64_of(&dmv) {
+            Some(x) => format!("{x:.2}"),
+            None => "-".to_string(),
+        };
+        let md_arms = match median_f64_of(&dav) {
+            Some(x) => format!("{x:.2}"),
+            None => "-".to_string(),
+        };
         let nblk = m12all
             .iter()
             .map(|w| (w.st, w.mi))

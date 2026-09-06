@@ -151,7 +151,7 @@ fn fmt_hour(tdb: f64) -> String {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut positional: Vec<String> = Vec::new();
-    let mut report = "/tmp/opencode/galileo_receiver_pass_cross_report.txt".to_string();
+    let mut report = "tmp/galileo_receiver_pass_cross_report.txt".to_string();
     let mut it = args.iter();
     while let Some(a) = it.next() {
         if a == "--report" {
@@ -164,11 +164,11 @@ fn main() {
     }
     let recv_path = match positional.first() {
         Some(p) => p.clone(),
-        None => "data/galileo_receiver.bin".to_string(),
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_receiver.bin".to_string(),
     };
     let resid_path = match positional.get(1) {
         Some(p) => p.clone(),
-        None => "data/galileo_resid.bin".to_string(),
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };
 
     let mut out: Vec<String> = Vec::new();

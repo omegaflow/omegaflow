@@ -50,8 +50,8 @@ fn ls_peak(ts: &[f64], vs: &[f64], flo: f64, fhi: f64, step: f64) -> (f64, f64, 
 }
 
 fn main() {
-    let Some(bytes) = std::fs::read("data/pioneer11_odf.bin").ok() else {
-        eprintln!("data/pioneer11_odf.bin void — leer (0 honored)");
+    let Some(bytes) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer11_odf.bin").ok() else {
+        eprintln!("data/spdf.gsfc.nasa.gov/pioneer11_odf.bin void — leer (0 honored)");
         return;
     };
     let Some(recs) = odf::parse_podf_bin(&bytes) else {

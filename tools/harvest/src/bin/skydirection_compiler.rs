@@ -17,12 +17,6 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    if let Ok(home) = std::env::var("HOME") {
-        return std::path::PathBuf::from(home)
-            .join(".local")
-            .join("state")
-            .join("omegaflow");
-    }
     std::path::PathBuf::from(".")
 }
 

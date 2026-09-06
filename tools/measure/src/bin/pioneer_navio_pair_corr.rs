@@ -80,11 +80,11 @@ fn jd_date(tdb: f64) -> String {
 }
 
 fn main() {
-    let Some(p10) = read_daily("data/pioneer10_navio_subkhz_daily.bin") else {
+    let Some(p10) = read_daily("data/spdf.gsfc.nasa.gov/pioneer10_navio_subkhz_daily.bin") else {
         eprintln!("p10 daily void");
         return;
     };
-    let Some(p11) = read_daily("data/pioneer11_navio_subkhz_daily.bin") else {
+    let Some(p11) = read_daily("data/spdf.gsfc.nasa.gov/pioneer11_navio_subkhz_daily.bin") else {
         eprintln!("p11 daily void");
         return;
     };

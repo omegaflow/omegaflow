@@ -155,9 +155,9 @@ fn fmt_bins(b: &[usize; 24]) -> String {
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_floor_subday_clock_report.txt".to_string(),
+        None => "tmp/galileo_floor_subday_clock_report.txt".to_string(),
     };
-    let Ok(bytes) = fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

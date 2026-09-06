@@ -12,7 +12,7 @@ const J2000_JD: f64 = 2451545.0;
 const MIN_DAY_SAMPLES: usize = 30;
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -100,7 +100,7 @@ fn run(probe: &str, sc_body: &str) {
             return;
         }
     }
-    let p = format!("data/{probe}_navio_residuum.bin");
+    let p = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let Ok(bytes) = std::fs::read(&p) else {
         eprintln!("{probe}: residuum bin void ({p})");
         return;

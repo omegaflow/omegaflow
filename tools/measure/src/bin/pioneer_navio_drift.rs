@@ -55,7 +55,7 @@ fn lin_fit(xs: &[f64], ys: &[f64]) -> Option<(f64, f64)> {
 }
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio_subkhz_daily.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
     let Some(daily) = read_daily(&path) else {
         eprintln!("{name}: sub-kHz daily bin void/parse void ({path})");
         return;
@@ -105,46 +105,54 @@ fn run(name: &str) {
     let accel_lin = drift_lin_hzday / DAY_S / (k_phys * F0);
 
     let x2: Vec<f64> = q_t.iter().map(|t| (t - mt) * (t - mt)).collect();
-    let a_q = lin_fit(&x2, &q_v).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_quad: Vec<f64> = q_t
-        .iter()
-        .zip(q_v.iter())
-        .map(|(t, v)| v - a_q * ((t - mt) * (t - mt)))
-        .collect();
-    let rms_quad = rms_of(&resid_quad);
+    let quad_rms = lin_fit(&x2, &q_v).map(|(a, _)| {
+        let resid_quad: Vec<f64> = q_t
+            .iter()
+            .zip(q_v.iter())
+            .map(|(t, v)| v - a * ((t - mt) * (t - mt)))
+            .collect();
+        rms_of(&resid_quad)
+    });
 
     let tau_y = 126.52;
     let tau_s = tau_y * 365.25 * DAY_S;
     let dec: Vec<f64> = q_t.iter().map(|&t| 1.0 - (-t / tau_s).exp()).collect();
-    let a_e = lin_fit(&dec, &q_v).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_exp: Vec<f64> = q_t
-        .iter()
-        .zip(q_v.iter())
-        .map(|(&t, &v)| v - a_e * (1.0 - (-t / tau_s).exp()))
-        .collect();
-    let rms_exp = rms_of(&resid_exp);
+    let exp_rms = lin_fit(&dec, &q_v).map(|(a, _)| {
+        let resid_exp: Vec<f64> = q_t
+            .iter()
+            .zip(q_v.iter())
+            .map(|(&t, &v)| v - a * (1.0 - (-t / tau_s).exp()))
+            .collect();
+        rms_of(&resid_exp)
+    });
 
-    eprintln!(
-        "{name}: raw resid RMS {rms_raw:.3e} Hz — model resid RMS: linear {rms_lin:.3e}, ∝t² {rms_quad:.3e}, RTG-exp τ={tau_y:.0}y {rms_exp:.3e}"
-    );
     eprintln!(
         "{name}: linear slope → {accel_lin:.3e} m/s² ({:.1e}× anomaly, sign convention: negative sunward)",
         accel_lin / PIONEER_ANOMALY
     );
-
-    let improve = |a: f64, b: f64| -> f64 { (a - b) / a * 100.0 };
-    let ilq = improve(rms_lin, rms_quad);
-    let ilr = improve(rms_lin, rms_exp);
-    let best = if rms_quad < rms_lin && rms_quad < rms_exp {
-        "quadratic ∝t² (constant force)"
-    } else if rms_exp < rms_lin && rms_exp < rms_quad {
-        "exponential τ=87.7y (RTG thermal decay)"
-    } else {
-        "linear (no resolvable curvature or decay)"
-    };
-    eprintln!(
-        "{name}: ∝t² improves on linear by {ilq:.2} %, RTG-exp by {ilr:.2} % — preferred model: {best}"
-    );
+    match (quad_rms, exp_rms) {
+        (Some(rms_quad), Some(rms_exp)) => {
+            eprintln!(
+                "{name}: raw resid RMS {rms_raw:.3e} Hz — model resid RMS: linear {rms_lin:.3e}, ∝t² {rms_quad:.3e}, RTG-exp τ={tau_y:.0}y {rms_exp:.3e}"
+            );
+            let improve = |a: f64, b: f64| -> f64 { (a - b) / a * 100.0 };
+            let ilq = improve(rms_lin, rms_quad);
+            let ilr = improve(rms_lin, rms_exp);
+            let best = if rms_quad < rms_lin && rms_quad < rms_exp {
+                "quadratic ∝t² (constant force)"
+            } else if rms_exp < rms_lin && rms_exp < rms_quad {
+                "exponential τ=87.7y (RTG thermal decay)"
+            } else {
+                "linear (no resolvable curvature or decay)"
+            };
+            eprintln!(
+                "{name}: ∝t² improves on linear by {ilq:.2} %, RTG-exp by {ilr:.2} % — preferred model: {best}"
+            );
+        }
+        _ => eprintln!(
+            "{name}: raw resid RMS {rms_raw:.3e} Hz — model resid RMS: linear {rms_lin:.3e}; ∝t² and RTG-exp fits absent (degenerate regressor)"
+        ),
+    }
     let span_y = (q_t.last().unwrap_or(&0.0) - q_t[0]) / 365.25;
     let exp_lin_frac = 1.0 - (-span_y / tau_y).exp();
     eprintln!(

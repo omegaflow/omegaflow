@@ -6,7 +6,7 @@ const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -36,13 +36,15 @@ fn run(probe: &str, sc_body: &str) {
             return;
         }
     }
-    // Per-day noise (residuum RMS) from the navio residuum
-    let p = format!("data/{probe}_navio_residuum.bin");
+    let p = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let Ok(bytes) = std::fs::read(&p) else {
         eprintln!("{probe}: residuum void");
         return;
     };
-    let recs = omegaflow::odf::parse_p11r_bin(&bytes).unwrap_or_default();
+    let Some(recs) = omegaflow::odf::parse_p11r_bin(&bytes) else {
+        eprintln!("{probe}: residuum parse void");
+        return;
+    };
     let mut day_noise: std::collections::BTreeMap<i64, Vec<f64>> =
         std::collections::BTreeMap::new();
     for r in &recs {
@@ -53,8 +55,6 @@ fn run(probe: &str, sc_body: &str) {
                 .push(r[1]);
         }
     }
-    // Compute alpha (angle at Sun) + epsilon (solar elongation, angle at Earth)
-    // + heliocentric distance per day, pair with noise
     let mut rows: Vec<(i64, f64, f64, f64, f64)> = Vec::new();
     for (day, vals) in &day_noise {
         if vals.len() < 30 {
@@ -72,23 +72,19 @@ fn run(probe: &str, sc_body: &str) {
         let r_earth = norm(sub(e_pos, sun));
         let e_to_p = sub(p_pos, e_pos);
         let r_e_p = norm(e_to_p);
-        // alpha = angle at the Sun between the Earth and probe vectors
         let alpha_deg = (dot(sub(e_pos, sun), sub(p_pos, sun)) / (r_earth * r_probe).max(1e-30))
             .clamp(-1.0, 1.0)
             .acos()
             .to_degrees();
-        // epsilon = solar elongation = angle at the Earth between Sun and probe
         let elong_deg = (dot(sub(sun, e_pos), e_to_p) / (r_earth * r_e_p).max(1e-30))
             .clamp(-1.0, 1.0)
             .acos()
             .to_degrees();
-        // noise RMS
         let m = vals.iter().sum::<f64>() / vals.len() as f64;
         let rms = (vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64).sqrt();
         rows.push((*day, r_probe / AU, alpha_deg, elong_deg, rms));
     }
     rows.sort_by_key(|r| r.0);
-    // Average noise by alpha band, by elongation band, and by heliocentric-distance band
     let mut alpha_bands: std::collections::BTreeMap<i64, Vec<f64>> =
         std::collections::BTreeMap::new();
     let mut elong_bands: std::collections::BTreeMap<i64, Vec<f64>> =
@@ -163,8 +159,6 @@ fn run(probe: &str, sc_body: &str) {
             len = v.len()
         );
     }
-    // Payoff: emit the quiet-zone (far-out) days with their per-day medians so the drift
-    // can be measured there alone. Print the median resid-RMS of the far-out half.
     let far_med = {
         let mut s: Vec<f64> = dist_bands
             .values()

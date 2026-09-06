@@ -29,13 +29,8 @@ pub const MATRIX_STATE_FILE: &str = "omegaflow_matrix_state.bin";
 pub fn matrix_state_path() -> String {
     let base = if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         std::path::PathBuf::from(dir)
-    } else if let Ok(home) = std::env::var("HOME") {
-        std::path::PathBuf::from(home)
-            .join(".local")
-            .join("state")
-            .join("omegaflow")
     } else {
-        std::path::PathBuf::from(".")
+        std::path::PathBuf::from("data")
     };
     base.join(MATRIX_STATE_FILE).to_string_lossy().into_owned()
 }

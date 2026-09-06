@@ -42,7 +42,7 @@ fn main() {
         eprintln!("galileo ODR same-day phase probe: <odr> <label> <YYYY-MM-DD> <station> <h0> <h1> [...] (6 tokens per window)");
         return;
     }
-    let Ok(bytes) = fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo resid bin void");
         return;
     };

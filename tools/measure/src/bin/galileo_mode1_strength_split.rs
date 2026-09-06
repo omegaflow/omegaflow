@@ -37,7 +37,7 @@ fn median(vals: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -120,7 +120,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -216,10 +216,7 @@ fn main() {
     }
     let mut st_line = String::from("  samples by station: ");
     for (s, c) in &station_hist {
-        st_line.push_str(&format!(
-            "{s} {c} ({} d), ",
-            station_days.get(s).map(|x| x.len()).unwrap_or(0)
-        ));
+        st_line.push_str(&format!("{s} {c} ({} d), ", station_days[s].len()));
     }
     out.push(st_line.trim_end_matches(", ").to_string());
 
@@ -243,13 +240,11 @@ fn main() {
     ));
     let mut dec = String::from("  sample-strength percentiles: ");
     for (i, pct) in [10usize, 20, 30, 40, 50, 60, 70, 80, 90].iter().enumerate() {
-        dec.push_str(&format!(
-            "p{}={}, ",
-            (i + 1) * 10,
-            value_at_fraction(&counts, nonzero, *pct)
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| "-".to_string())
-        ));
+        let pv = match value_at_fraction(&counts, nonzero, *pct) {
+            Some(v) => v.to_string(),
+            None => "-".to_string(),
+        };
+        dec.push_str(&format!("p{}={}, ", (i + 1) * 10, pv));
     }
     out.push(dec.trim_end_matches(", ").to_string());
     out.push(format!(
