@@ -31,7 +31,7 @@ fn scan(root: &Path) -> (usize, usize) {
             || rel.contains("docs/reference/")
             || rel.starts_with("gate/")
             || rel.starts_with("mail/")
-            || rel.starts_with("reports/")
+            || rel.starts_with("state/reports/")
         {
             continue;
         }
@@ -90,7 +90,10 @@ fn scan(root: &Path) -> (usize, usize) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let root = args.get(1).cloned().unwrap_or_else(|| ".".to_string());
+    let root = match args.get(1).cloned() {
+        Some(r) => r,
+        None => ".".to_string(),
+    };
     let (missing, absolute) = scan(Path::new(&root));
     if missing > 0 || absolute > 0 {
         std::process::exit(1);

@@ -158,9 +158,9 @@ fn main() {
     let report = match args.iter().position(|a| a == "--report") {
         Some(i) => match args.get(i + 1) {
             Some(p) => p.clone(),
-            None => "reports/galileo_ops_era_floor.txt".to_string(),
+            None => "state/reports/galileo_ops_era_floor.txt".to_string(),
         },
-        None => "reports/galileo_ops_era_floor.txt".to_string(),
+        None => "state/reports/galileo_ops_era_floor.txt".to_string(),
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();

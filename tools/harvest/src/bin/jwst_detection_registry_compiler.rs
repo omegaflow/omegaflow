@@ -7,13 +7,13 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
-fn mast_token() -> String {
+fn mast_token() -> Option<String> {
     if let Ok(t) = std::env::var("MAST_TOKEN") {
         if !t.is_empty() {
-            return t;
+            return Some(t);
         }
     }
     std::fs::read_to_string(state_dir().join(".secrets.local"))
@@ -24,10 +24,9 @@ fn mast_token() -> String {
                 (k.trim() == "MAST_TOKEN" && !v.trim().is_empty()).then(|| v.trim().to_string())
             })
         })
-        .unwrap_or_default()
 }
 
-fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> {
+fn curl_json(url: &str, data: &[(&str, String)], token: Option<&str>) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-L")
@@ -42,9 +41,10 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
     for (k, v) in data {
         cmd.arg("--data-urlencode").arg(format!("{}={}", k, v));
     }
-    if !token.is_empty() {
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {}", token));
+    if let Some(tok) = token {
+        if !tok.is_empty() {
+            cmd.arg("-H").arg(format!("Authorization: Bearer {}", tok));
+        }
     }
     cmd.arg(url);
     let out = cmd.output().ok()?;
@@ -63,12 +63,12 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
 struct SpectrumRow {
     pl_name: String,
     host: String,
-    bibcode: String,
+    bibcode: Option<String>,
     wl_min: Option<f64>,
     wl_max: Option<f64>,
 }
 
-fn tap_curated_spectrum_rows(token: &str) -> Vec<SpectrumRow> {
+fn tap_curated_spectrum_rows(token: Option<&str>) -> Vec<SpectrumRow> {
     let adql = "SELECT p.hostname, s.pl_name, s.bibcode, s.minwavelng, s.maxwavelng FROM spectra s, ps p WHERE s.pl_name = p.pl_name AND p.default_flag = 1 AND p.ra IS NOT NULL AND p.dec IS NOT NULL AND s.facility LIKE '%James Webb Space Telescope%' AND s.spec_type = 'Transmission' AND (s.instrument LIKE '%NIRSpec%' OR s.instrument LIKE '%NIRISS%' OR s.instrument LIKE '%MIRI%')";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
@@ -102,7 +102,7 @@ fn tap_curated_spectrum_rows(token: &str) -> Vec<SpectrumRow> {
         let (Some(host), Some(pl_name)) = (jstr(row, "hostname"), jstr(row, "pl_name")) else {
             continue;
         };
-        let bibcode = jstr(row, "bibcode").unwrap_or_default();
+        let bibcode = jstr(row, "bibcode").filter(|b| !b.is_empty());
         let wl_min = jnum(row, "minwavelng").filter(|v| v.is_finite());
         let wl_max = jnum(row, "maxwavelng").filter(|v| v.is_finite());
         out.push(SpectrumRow {
@@ -118,9 +118,9 @@ fn tap_curated_spectrum_rows(token: &str) -> Vec<SpectrumRow> {
 
 struct Detection {
     host: String,
-    pl_name: String,
+    pl_name: Option<String>,
     species: String,
-    bibcode: String,
+    bibcode: Option<String>,
     abundance: Option<f64>,
     snr: Option<f64>,
 }
@@ -159,8 +159,8 @@ fn parse_seed(path: &str) -> Option<(Vec<Detection>, usize)> {
             skipped += 1;
             continue;
         }
-        let bibcode = jstr(row, "bibcode").unwrap_or_default();
-        let pl_name = jstr(row, "pl_name").unwrap_or_default();
+        let bibcode = jstr(row, "bibcode").filter(|b| !b.is_empty());
+        let pl_name = jstr(row, "pl_name").filter(|p| !p.is_empty());
         let abundance = jnum(row, "abundance").filter(|v| v.is_finite());
         let snr = jnum(row, "snr").filter(|v| v.is_finite());
         out.push(Detection {
@@ -181,8 +181,8 @@ fn json_escape(s: &str) -> String {
 
 fn spectrum_obj(r: &SpectrumRow) -> String {
     let mut fields = vec![format!("\"pl_name\":\"{}\"", json_escape(&r.pl_name))];
-    if !r.bibcode.is_empty() {
-        fields.push(format!("\"bibcode\":\"{}\"", json_escape(&r.bibcode)));
+    if let Some(b) = &r.bibcode {
+        fields.push(format!("\"bibcode\":\"{}\"", json_escape(b)));
     }
     if let Some(a) = r.wl_min {
         fields.push(format!("\"wl_min\":{}", a));
@@ -195,11 +195,11 @@ fn spectrum_obj(r: &SpectrumRow) -> String {
 
 fn detection_obj(d: &Detection) -> String {
     let mut fields = vec![format!("\"species\":\"{}\"", json_escape(&d.species))];
-    if !d.pl_name.is_empty() {
-        fields.push(format!("\"pl_name\":\"{}\"", json_escape(&d.pl_name)));
+    if let Some(p) = &d.pl_name {
+        fields.push(format!("\"pl_name\":\"{}\"", json_escape(p)));
     }
-    if !d.bibcode.is_empty() {
-        fields.push(format!("\"bibcode\":\"{}\"", json_escape(&d.bibcode)));
+    if let Some(b) = &d.bibcode {
+        fields.push(format!("\"bibcode\":\"{}\"", json_escape(b)));
     }
     if let Some(a) = d.abundance {
         fields.push(format!("\"abundance\":{}", a));
@@ -211,14 +211,22 @@ fn detection_obj(d: &Detection) -> String {
 }
 
 fn detection_key(d: &Detection) -> String {
+    let abundance = match d.abundance {
+        Some(v) => v.to_string(),
+        None => String::new(),
+    };
+    let snr = match d.snr {
+        Some(v) => v.to_string(),
+        None => String::new(),
+    };
     format!(
         "{}\u{1f}{}\u{1f}{}\u{1f}{}\u{1f}{}\u{1f}{}",
         d.host,
-        d.pl_name,
+        d.pl_name.as_deref().unwrap_or(""),
         d.species,
-        d.bibcode,
-        d.abundance.map(|v| v.to_string()).unwrap_or_default(),
-        d.snr.map(|v| v.to_string()).unwrap_or_default()
+        d.bibcode.as_deref().unwrap_or(""),
+        abundance,
+        snr
     )
 }
 
@@ -328,8 +336,7 @@ fn main() {
         }
         i += 1;
     }
-    let token = mast_token();
-    let rows = tap_curated_spectrum_rows(&token);
+    let rows = tap_curated_spectrum_rows(mast_token().as_deref());
     eprintln!("curated jwst transmission spectrum rows: {}", rows.len());
     let mut hosts: Vec<String> = rows.iter().map(|r| r.host.clone()).collect();
     hosts.sort();
@@ -424,21 +431,21 @@ mod tests {
             SpectrumRow {
                 pl_name: "WASP-39 b".to_string(),
                 host: "WASP-39".to_string(),
-                bibcode: "2018Natur.555..227W".to_string(),
+                bibcode: Some("2018Natur.555..227W".to_string()),
                 wl_min: Some(0.6),
                 wl_max: Some(2.8),
             },
             SpectrumRow {
                 pl_name: "WASP-39 b".to_string(),
                 host: "WASP-39".to_string(),
-                bibcode: "".to_string(),
+                bibcode: None,
                 wl_min: Some(5.0),
                 wl_max: Some(12.0),
             },
             SpectrumRow {
                 pl_name: "HAT-P-12 b".to_string(),
                 host: "HAT-P-12".to_string(),
-                bibcode: "2025A&A...703A.264C".to_string(),
+                bibcode: Some("2025A&A...703A.264C".to_string()),
                 wl_min: Some(2.85),
                 wl_max: Some(5.17),
             },
@@ -449,29 +456,33 @@ mod tests {
         vec![
             Detection {
                 host: "WASP-39".to_string(),
+                pl_name: None,
                 species: "H2O".to_string(),
-                bibcode: "2023Natur.614..649F".to_string(),
+                bibcode: Some("2023Natur.614..649F".to_string()),
                 abundance: Some(3.2e-5),
                 snr: Some(8.4),
             },
             Detection {
                 host: "WASP-39".to_string(),
+                pl_name: None,
                 species: "H2O".to_string(),
-                bibcode: "2023Natur.614..649F".to_string(),
+                bibcode: Some("2023Natur.614..649F".to_string()),
                 abundance: Some(3.2e-5),
                 snr: Some(8.4),
             },
             Detection {
                 host: "WASP-39".to_string(),
+                pl_name: None,
                 species: "CO2".to_string(),
-                bibcode: "2023Natur.614..649F".to_string(),
+                bibcode: Some("2023Natur.614..649F".to_string()),
                 abundance: None,
                 snr: None,
             },
             Detection {
                 host: "WASP-96".to_string(),
+                pl_name: None,
                 species: "H2O".to_string(),
-                bibcode: "2022Natur..946A".to_string(),
+                bibcode: Some("2022Natur..946A".to_string()),
                 abundance: None,
                 snr: Some(11.0),
             },

@@ -9,7 +9,7 @@ const MIN_CELL: usize = 30;
 const AU_M: f64 = 1.495978707e11;
 const NEAR_ALPHA_DEG: f64 = 60.0;
 const ANTI_ALPHA_DEG: f64 = 120.0;
-const OUT: &str = "reports/galileo_mode1_strength_split.txt";
+const OUT: &str = "state/reports/galileo_mode1_strength_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()

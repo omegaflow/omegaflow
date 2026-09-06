@@ -9,7 +9,7 @@ const MIN_CELL: usize = 30;
 const AU_M: f64 = 1.495978707e11;
 const PASS_GAP_S: f64 = 600.0;
 const TARGET_YEAR: u32 = 1996;
-const OUT: &str = "reports/galileo_1996_residual.txt";
+const OUT: &str = "state/reports/galileo_1996_residual.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
