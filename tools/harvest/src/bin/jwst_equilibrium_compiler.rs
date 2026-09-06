@@ -1,11 +1,11 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::equilibrium::{AU_M, SUN_RADIUS_M, teq};
-use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
-use omegaflow::jwst::{JwstSpectrum, parse_jwst_bin};
+use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
+use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
+use omegaflow::jwst::{parse_jwst_bin, JwstSpectrum};
 use omegaflow::jwst_equilibrium::{
-    EQUILIBRIUM_NSPECIES, EquilibriumRecord, parse_equilibrium_bin, write_equilibrium_bin,
+    parse_equilibrium_bin, write_equilibrium_bin, EquilibriumRecord, EQUILIBRIUM_NSPECIES,
 };
-use omegaflow::thermochem::{P0_PA, equilibrium_concentrations, solar};
+use omegaflow::thermochem::{equilibrium_concentrations, solar, P0_PA};
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 
@@ -13,13 +13,13 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
-fn mast_token() -> String {
+fn mast_token() -> Option<String> {
     if let Ok(t) = std::env::var("MAST_TOKEN") {
         if !t.is_empty() {
-            return t;
+            return Some(t);
         }
     }
     std::fs::read_to_string(state_dir().join(".secrets.local"))
@@ -30,10 +30,9 @@ fn mast_token() -> String {
                 (k.trim() == "MAST_TOKEN" && !v.trim().is_empty()).then(|| v.trim().to_string())
             })
         })
-        .unwrap_or_default()
 }
 
-fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> {
+fn curl_json(url: &str, data: &[(&str, String)], token: Option<&str>) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-L")
@@ -48,9 +47,10 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
     for (k, v) in data {
         cmd.arg("--data-urlencode").arg(format!("{}={}", k, v));
     }
-    if !token.is_empty() {
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {}", token));
+    if let Some(tok) = token {
+        if !tok.is_empty() {
+            cmd.arg("-H").arg(format!("Authorization: Bearer {}", tok));
+        }
     }
     cmd.arg(url);
     let out = cmd.output().ok()?;
@@ -66,7 +66,9 @@ fn curl_json(url: &str, data: &[(&str, String)], token: &str) -> Option<String> 
     }
 }
 
-fn tap_single_planet_hosts(token: &str) -> (HashMap<String, (f64, f64, f64)>, HashSet<String>) {
+fn tap_single_planet_hosts(
+    token: Option<&str>,
+) -> (HashMap<String, (f64, f64, f64)>, HashSet<String>) {
     let adql = "SELECT pl_name,hostname,st_teff,st_rad,pl_orbsmax FROM pscomppars WHERE pl_tranmid IS NOT NULL AND st_teff IS NOT NULL AND st_rad IS NOT NULL AND pl_orbsmax IS NOT NULL";
     let body = match curl_json(
         "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
@@ -138,11 +140,20 @@ fn tap_single_planet_hosts(token: &str) -> (HashMap<String, (f64, f64, f64)>, Ha
     (single, multi)
 }
 
-#[derive(Default)]
 struct SkipCounts {
     multi_planet: usize,
     no_pscomppars: usize,
     out_of_domain: usize,
+}
+
+impl SkipCounts {
+    fn new() -> SkipCounts {
+        SkipCounts {
+            multi_planet: 0,
+            no_pscomppars: 0,
+            out_of_domain: 0,
+        }
+    }
 }
 
 fn compile_records(
@@ -151,7 +162,7 @@ fn compile_records(
     multi: &HashSet<String>,
 ) -> (Vec<EquilibriumRecord>, SkipCounts) {
     let mut records = Vec::new();
-    let mut skips = SkipCounts::default();
+    let mut skips = SkipCounts::new();
     for spec in spectra {
         let Some(&(teff, rad, orb)) = single.get(&spec.host) else {
             if multi.contains(&spec.host) {
@@ -240,7 +251,7 @@ fn main() {
         return;
     };
     eprintln!("{}: {} spectra", input, spectra.len());
-    let (single, multi) = tap_single_planet_hosts(&mast_token());
+    let (single, multi) = tap_single_planet_hosts(mast_token().as_deref());
     eprintln!(
         "pscomppars: {} single-transit-planet hosts, {} multi-planet hosts",
         single.len(),

@@ -9,7 +9,7 @@ const MIN_CLASS: usize = 30;
 const FLOOR: i64 = -2560;
 const STRONG_MIN: i64 = -1750;
 const CONJ_ELONG_DEG: f64 = 30.0;
-const OUT: &str = "reports/galileo_sameday_floor_strong.txt";
+const OUT: &str = "state/reports/galileo_sameday_floor_strong.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
