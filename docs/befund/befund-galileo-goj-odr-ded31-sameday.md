@@ -2,7 +2,7 @@
   title: Befund — Ded-31-Zweiter-Zeuge verbreitert (Same-Day-Phase): die GO-J/GO-JS-ODR-Fenster der Floor-Ära phasenaufgelöst — wo ein Fenster auf einen laut-registrierten Tag fällt, trägt der geschlossene Regelkreis laut/ruhig nur als kurze Sub-Phasen (300-s), und der unabhängige open-loop Trägerlinien-Ton bricht in den lauten Sub-Phasen nicht ein (st14 1997-02-26: laut 128.2 gegen ruhig 110.4 im selben Fenster, n 3/7) — kein Same-Day-laut/ruhig-Signal über die erreichbaren laut-Tage, Verbreiterung des gemessenen Nein zur Open-Loop-Lautheits-Signatur
   class: befund
   date: 2026-09-06
-  sha256: abbfb6b182b23a105cd7f6309bcae1e628c8daf99274e4dd64f4ec3d1bc6c9b0
+  sha256: b67b7a8d11fbe292a4452214c8dc21b5d403d1e843d8079d8c556397ad1aa9c4
   status: draft
   antwortet-auf: docs/befund/befund-galileo-odr-goj-beschaffung2.md docs/befund/befund-galileo-gwe-odr-zweiter-zeuge.md
   see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-floor-stufen-te.md
@@ -80,14 +80,18 @@ geschlossene-Scheife-Lautheit. Ergebnis je Fenster (Ton = segsnr-Median der
 | GOJ 63131033 st43 1996-11-08 | m2 laut, Fenster 4 min | n 0 | n 0 | 0 geehrt (kein Bin ≥ 8 Floor) |
 | übrige ruhig-Tage (st43 1996-11-08/12-22/1997-02-26, st63 1996-11-08, st14 1997-02-25) | ruhig | n 0 | alle ruhig (Ton 74.9–132.8) | 0 geehrt |
 
-In allen drei Fenstern mit beiden Phasen ist der open-loop Ton in der
-laut-markierten Sub-Phase **nicht** unter dem Ton der ruhigen Sub-Phase
-desselben Tages und derselben Station (128.2 gegen 110.4; 62.4 gegen 69.3;
-81.8 gegen 104.1) — die laut-Phase trägt eher einen etwas stärkeren Träger.
-Die frühere Fenster-Ebene-Klassierung („GOJS-Window = laut-Phase, 84 Hz") ist
-damit präzisiert: der geschlossene Regelkreis ist auch in diesem Fenster nur in
-kurzen Sub-Phasen laut (die 84-Hz-Window-RMS des Vorgängers war über n 3576
-in-window Samples gemittelt; phasenaufgelöst liegen die lauten Samples in einem
+Die drei Fenster mit beiden Phasen lesen keinen systematischen Einbruch der
+open-loop Tons in der laut-markierten Sub-Phase: st14 1997-02-26 laut 128.2
+gegen ruhig 110.4 (laut-Phase leicht höher, tragfähig n 3/7), st14 1996-12-21
+laut 62.4 gegen ruhig 69.3 und st43 1996-12-19 laut 81.8 gegen ruhig 104.1
+(je n 1/1, dünn; hier liest die laut-Phase leicht niedriger — die Richtung ist
+je Split einzeln benannt, nicht zu einem „laut = stärker" geglättet). Die
+laut-Phasen-Töne aller drei Splits liegen vollständig innerhalb der Spanne der
+ruhigen Phasen desselben Tages (kein Einbruch um Größenordnungen). Die frühere
+Fenster-Ebene-Klassierung („GOJS-Window = laut-Phase, 84 Hz") ist damit
+präzisiert: der geschlossene Regelkreis ist auch in diesem Fenster nur in kurzen
+Sub-Phasen laut (die 84-Hz-Window-RMS des Vorgängers war über n 3576 in-window
+Samples gemittelt; phasenaufgelöst liegen die lauten Samples in einem
 Schluss-Burst von ~15 min), und der unabhängige open-loop Träger bricht dort
 nicht ein.
 
@@ -96,10 +100,9 @@ nicht ein.
 Der Same-Day-laut/ruhig-Split ist jetzt über **drei** laut-registrierte Tage
 gezogen (Vorgänger: ein Tag, Fenster-Ebene) — bei 300-s-Auflösung innerhalb
 derselben ODR-Fenster, derselben Station und desselben Tages: st14 1997-02-26
-(n 3/7), st14 1996-12-21 (n 1/1), st43 1996-12-19 (n 1/1). In allen drei liest
-der open-loop Trägerlinien-Ton in der laut-Phase **nicht** unter der ruhigen
-Phase desselben Tages — kein Same-Day-laut/ruhig-Signal über die erreichbaren
-laut-Tage. Die Floor-Lautheit erscheint damit auch bei phasenaufgelöster
+(n 3/7), st14 1996-12-21 (n 1/1), st43 1996-12-19 (n 1/1). In allen drei liegt der open-loop Trägerlinien-Ton der laut-Phase innerhalb der
+Spanne der ruhigen Phase desselben Tages (kein systematischer Einbruch in der
+laut-Phase) — kein Same-Day-laut/ruhig-Signal über die erreichbaren laut-Tage. Die Floor-Lautheit erscheint damit auch bei phasenaufgelöster
 Betrachtung nicht als empfangene Spektral-Störung im unabhängigen open-loop
 Record; die Richtung des Ded-31-Zweiter-Zeugen-Verdikts ist über mehr laut-Tage
 verbreitert und bleibt ein gemessenes Nein zur Open-Loop-Lautheits-Signatur. Die
