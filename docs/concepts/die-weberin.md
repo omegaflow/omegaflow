@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: e93e7d111c1dbd1eff0a16605c764ee2fd7736c3249c92b982b890ffe9c4d74e
+  sha256: b7f96a81fa5db9f97649602e815722952599c447b2ef831dddfae84271fb2774
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -105,6 +105,12 @@ einschießt — und zwirnt zwei unabhängige Fäden zur einen Weltlinie.
   ehrliche Leere. Nur das zweite Schweigen zählt gegen eine Identität.
 - **Die neun Sinne** hören in ihrer eigenen `signal_reach`; der Posterior
   bleibt Posterior, die kuratierte Klasse bleibt kuratiert.
+- **Der geliehene Sinn:** ein Schwarzkasten (Broker-Klassifikator) darf als
+  Zeuge für Gestalt eintreten — registriert wird sein Urteil, nicht seine
+  Gründe. Nie der einzige Zeuge; widerspricht er den unabhängigen Fenstern,
+  ist das ein Riss, kein Fehler. Die eigene Messung lebt im Zeitreich
+  (Lichtkurve, S², TE); was keine Baseline modelliert und kein Netz je sah,
+  bleibt im Vlies liegen — sichtbar, unbenannt.
 
 Der Schuss hat zwei Bewegungen — den **Zwirn** (unabhängige Fäden, die zur
 selben Weltlinie konvergieren: der Beweis) und den **Riss** (unabhängige
@@ -235,7 +241,11 @@ komplett zu bauen:
    Linien (MPC gegen SPK, Schritt 1; SWARM gegen INTERMAGNET, Schritt 2).
    Die Hubble-Spannung (Planck ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ)
    ist die Illustration des Risses — benennbar heute, messbar erst, wenn
-   beide Linien im Bestand einziehen.
+    beide Linien im Bestand einziehen.
+9. Der geliehene Sinn: der Broker-Klassifikator (Fink-ML, ALeRCE-Stamp) tritt
+   als Zeuge für Gestalt in die natural-class-Gate — registriert wird sein
+   Urteil (Klasse + Wahrscheinlichkeit), nie der einzige Zeuge; widerspricht
+   er den unabhängigen Fenstern, ist das ein Riss.
 
 Zwischen den Stufen gibt es keine Wartezone. Wo eine Stufe noch nicht
 gebaut ist, ist ihr Wert `pending` — der Wert existiert, die Ernte fehlt,
