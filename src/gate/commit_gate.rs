@@ -228,8 +228,18 @@ pub enum Severity {
 pub struct Verdict {
     pub severity: Severity,
     pub rule: String,
+    pub line: usize,
     pub quote: String,
     pub feedback: String,
+}
+
+fn line_of(content: &str, byte_idx: usize) -> usize {
+    let end = byte_idx.min(content.len());
+    content.as_bytes()[..end]
+        .iter()
+        .filter(|b| **b == b'\n')
+        .count()
+        + 1
 }
 
 #[derive(Clone, Debug)]
@@ -415,6 +425,7 @@ impl Gate {
             return Some(Verdict {
                 severity: Severity::Hard,
                 rule: "speculation".to_string(),
+                line: 0,
                 feedback: format!(
                     "A = A: the machine does not speculate. \"{}\" is a guess, not a measurement. Name what IS.",
                     spec
@@ -432,6 +443,7 @@ impl Gate {
                 return Some(Verdict {
                     severity: Severity::Soft,
                     rule: "learned-rule".to_string(),
+                    line: 0,
                     feedback: format!("the ledger has flagged \"{}\" three times before", rule),
                     quote: clip(text, 80),
                 });
@@ -467,6 +479,7 @@ impl Gate {
         Some(Verdict {
             severity: Severity::Soft,
             rule: "unbacked-claim".to_string(),
+            line: 0,
             feedback: "a completion claim needs an anchor: name the path (src/…, docs/…) that backs it in the tree — a commit SHA is not a measurement".to_string(),
             quote: clip(text, 80),
         })
@@ -505,6 +518,7 @@ impl Gate {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "zero-fabrication".to_string(),
+                    line: 0,
                     feedback:
                         "0 honored: the value 0.0 was spoken without a declaration (pending/absent). Fabrication suspected."
                             .to_string(),
@@ -524,6 +538,7 @@ impl Gate {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "zero-fabrication".to_string(),
+                        line: 0,
                         feedback: format!(
                             "0 honored: \"0 {}\" was spoken without a declaration (pending/absent). Fabrication suspected.",
                             unit
@@ -568,6 +583,7 @@ impl Gate {
                         return Some(Verdict {
                             severity: Severity::Hard,
                             rule: "force-unit-gate".to_string(),
+                            line: 0,
                             feedback: format!(
                                 "the force \"{}\" paired with the unit \"{}\" is not in the registry ({} carries its own units)",
                                 force, unit, force
@@ -614,6 +630,7 @@ impl Gate {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "register-contradiction".to_string(),
+                        line: 0,
                         feedback: format!(
                             "the number {} {} contradicts the registered measurement {} {} in the same context",
                             num, unit, r.value, r.unit
@@ -625,6 +642,7 @@ impl Gate {
             return Some(Verdict {
                 severity: Severity::Soft,
                 rule: "unverified-number".to_string(),
+                line: 0,
                 feedback: format!(
                     "the number {} {} stands in no register entry — pending, not proven",
                     num, unit
@@ -670,27 +688,30 @@ impl Gate {
             return Some(Verdict {
                 severity: Severity::Hard,
                 rule: "canonical-doc-home".to_string(),
+                line: 0,
                 feedback: "a root-level markdown document is not a canonical home — the document lives under docs/; the root carries only AGENTS.md, README.md and code".to_string(),
                 quote: clip(&path, 90),
             });
         }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
-            if lower_content.contains(word.as_str()) {
+            if let Some(idx) = lower_content.find(word.as_str()) {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "single-path".to_string(),
+                    line: line_of(&content, idx),
                     feedback: feedback("single_path").to_string(),
                     quote: clip(&content, 90),
                 });
             }
         }
-        for line in content.lines() {
+        for (line_idx, line) in content.lines().enumerate() {
             let t = line.trim_start();
             if t.starts_with("//") {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "comment".to_string(),
+                    line: line_idx + 1,
                     feedback: "code is self-documenting — comments are dead. Remove the line."
                         .to_string(),
                     quote: clip(t, 80),
@@ -709,6 +730,7 @@ impl Gate {
                         return Some(Verdict {
                             severity: Severity::Hard,
                             rule: "force-unit-gate".to_string(),
+                            line: line_idx + 1,
                             feedback: format!(
                                 "field line: the force \"{}\" with the unit \"{}\" is not in the registry",
                                 force, tokens[5]
@@ -722,36 +744,40 @@ impl Gate {
         if is_code {
             let lower = content.to_lowercase();
             let v = vocab();
-            let german_char = v.german_chars.iter().any(|c| content.contains(*c));
-            let german_word = v
+            let german_char_idx = v.german_chars.iter().find_map(|c| content.find(*c));
+            let german_word_idx = v
                 .german_function_words
                 .iter()
-                .any(|w| lower.contains(w.as_str()));
-            if german_char || german_word {
+                .find_map(|w| lower.find(w.as_str()));
+            if let Some(idx) = german_char_idx.or(german_word_idx) {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "german-in-code".to_string(),
+                    line: line_of(&content, idx),
                     feedback: "the code speaks English — German is the counter-slope of the register and the philosophy, not of code".to_string(),
                     quote: clip(&content, 90),
                 });
             }
-            if vocab()
+            let zf_idx = vocab()
                 .zero_fabrication
                 .iter()
-                .any(|m| content.contains(m.as_str()))
-            {
+                .filter_map(|m| content.find(m.as_str()))
+                .min();
+            if let Some(idx) = zf_idx {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "zero-fabrication".to_string(),
+                    line: line_of(&content, idx),
                     feedback: feedback("zero_fabrication").to_string(),
                     quote: clip(&content, 90),
                 });
             }
             for (marker, hint) in &vocab().fabrication {
-                if content.contains(marker.as_str()) {
+                if let Some(idx) = content.find(marker.as_str()) {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "fabrication".to_string(),
+                        line: line_of(&content, idx),
                         feedback: hint.clone(),
                         quote: clip(&content, 90),
                     });
@@ -767,6 +793,7 @@ impl Gate {
                             return Some(Verdict {
                                 severity: Severity::Hard,
                                 rule: "forbidden-diagnostic".to_string(),
+                                line: line_of(&content, idx),
                                 feedback: format!(
                                     "the diagnostic carries \"{}\" — diagnostics name what IS",
                                     bad
@@ -813,6 +840,7 @@ fn home_drift(content: &str, home: Home) -> Option<Verdict> {
                 Some(Verdict {
                     severity: Severity::Hard,
                     rule: "english-in-german".to_string(),
+                    line: 0,
                     feedback: "this document lives in a German home (register, handover, philosophy) — English-dominant prose is drift, not the measurement".to_string(),
                     quote: clip(&body, 90),
                 })
@@ -825,6 +853,7 @@ fn home_drift(content: &str, home: Home) -> Option<Verdict> {
                 Some(Verdict {
                     severity: Severity::Hard,
                     rule: "german-in-english".to_string(),
+                    line: 0,
                     feedback: "this document lives in an English home (code, paper, spec) — German-dominant prose is drift, not the measurement".to_string(),
                     quote: clip(&body, 90),
                 })
