@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-05
   status: pending
-  see-also: granit.md docs/
+  see-also: docs/granit.md docs/
 -->
 
 # Untersuchungsorder: Phantom Island im Williston Reservoir (BC) aufgetaucht, verschwunden, wieder aufgetaucht (NYT 2026-08-31)
