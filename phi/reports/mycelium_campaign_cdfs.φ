@@ -1,0 +1,8 @@
+scan-coverage register — mycelium fan campaign, CDF-S kernel (ra 53.125 dec -28.1)
+each cone: center ra/dec (ICRS, deg), radius (arcsec), instrument, TDB date, outcome
+note mycelium campaign date 2026-09-06 kernel ra 53.1250 dec -28.1000 radius 900 arcsec floor 24 steps 5 AllWISE on
+cone ra 53.1250 dec -28.1000 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2685 above-floor 8 natural-excluded 8 agn-excluded 0 wise-pending 0 food 0 via kernel (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
+cone ra 52.7071 dec -27.7623 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2546 above-floor 3 natural-excluded 3 agn-excluded 0 wise-pending 0 food 0 via golden-fan-n1 (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
+cone ra 53.1951 dec -28.8044 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2671 above-floor 9 natural-excluded 9 agn-excluded 0 wise-pending 0 food 0 via golden-fan-n2 (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
+cone ra 52.0087 dec -28.2742 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2409 above-floor 2 natural-excluded 2 agn-excluded 0 wise-pending 0 food 0 via golden-fan-n4 (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
+cone ra 52.4338 dec -29.2740 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2496 above-floor 4 natural-excluded 4 agn-excluded 0 wise-pending 0 food 0 via golden-fan-n7 (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)

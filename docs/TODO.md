@@ -25,11 +25,27 @@ gebunden — ein tmp-Wipe verliert nichts von ihrer Funktion:
   `.py` entfernt; `scan/spot.py` → neu
   `tools/measure/src/bin/exoplanet_ps_spot_probe.rs` (live ps-TAP), `.py` entfernt.
 
-**Asset-Manifestations-Pflicht (pending):** `bayestar2019` (11,4 GB fits+h5+gz),
-`aia2014_fullyear.bin`, `planck_dust_av`, `eve2011_lines.bin`, `dr3_stars.bin`,
+**Asset-Manifestations-Pflicht (pending):** `aia2014_fullyear.bin`,
+`planck_dust_av`, `eve2011_lines.bin`, `dr3_stars.bin`,
 `omni2_raw/`, `goes15*/`, die `galileo_tdf_cache_*.TDF`, die SPICE-`.bc`-Kernels
 liegen in /tmp/opencode unmanifestiert — Kernel-/CDN-Schicksal je Quelle ist
 ein Register-Gegenstand (CDN-Manifestation), nicht lokal zu schließen.
+
+**Restposten gelöst (2026-09-06):** `bayestar2019.be19` liegt auf dem CDN —
+release `ssd.jpl.nasa.gov` (omegaflow/sources), 2.090.178.751 B, Download HTTP 200
+(gemessen). Roh-Quelle (gemessen, MD5 lokal = Dataverse-API):
+Harvard Dataverse doi:10.7910/DVN/2EJ9TX — `bayestar2019.fits.gz` datafile
+3424708 MD5 debb0113990e2d5b9259508ce558907a, `bayestar2019.h5` datafile 3424724
+MD5 ab815d2fd3068d1b81a1bd61fb18a722. Compiler = `bayestar_compiler`
+(tools/harvest, `--input <fits.gz> --out <map.be19>`, dekomprimiert die .gz selbst,
+Upload hinter explizitem `--ci-mode` — ohne das Flag nur lokaler Build). Die
+Manifestations-Route registriert = `bayestar-cdn.yml` (workflow_dispatch;
+idempotent: Asset vorhanden → skip) setzt `--ci-mode` — der Compiler ist der
+einzige Writer. Der Bestand liegt seit dem direkten Upload
+(`gh release upload`, Status `uploaded`, 2026-09-06T05:54:49Z, vor dem Gate)
+auf dem CDN; die CI-Route ist seither sauber. CI-Risikopunkt benannt: der
+Compiler legt die dekomprimierte fits (12,27 GB) auf dem Runner-Disk ab — vor
+einem Trigger prüfen.
 
 **Gescruppt (2026-09-06, Operator-Wort):** obsolete Python-Scratch, überholt
 durch die committeten Rust-Tools (`ck_daf_probe`, `tap_compiler`,
@@ -1907,26 +1923,20 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   tote Handover-Referenzen (docs/paper/-Ordner-Klasse + Concepts-Zweite-
   Achse: 2026-08-22/24 geregelt, die ENSO/Bz-Auswahl bleibt).
 
-- Richtungs-Transient ohne Distanz — das Feld-Atom (Council 2026-09-05,
-  verdikt: GROSSES offenes Architektur-Atom, KEIN Quickfix): ZTF-Transienten-
-  Quellen (Lasair, ALeRCE, ANTARES) liefern ra/dec + em-Magnitude, aber KEINE
-  Distanz. Die CelestialMap-Distanz-Gate (extract.rs ~2121, no_distance_skipped
-  assertiert 0) verwirft jedes richtung-only-Element. Drei Dispositionen
-  (Council-einstimmig): (A) Referenzradius/Einheitsvektor-in-Metern = erfundene
-  Distanz = **Fabrication, ausgeschlossen** (0 honored, A=A). (B) ist der EINZIGE
-  ehrliche Pfad: eine Himmelsrichtung als eigenes Atom — Winkel-Kernel ohne
-  radialen Abfall, Richtungs-Unsicherheit statt Radius, Präsenzrahmen ohne Tiefe.
-  Das ist eine **fundamentale Wire-Vertrags-Erweiterung über drei Ebenen**
-  (Rust-Wire 26×f64 + JS-Repack + WGSL), KEIN 26×f64-Overload, KEIN Overload
-  der 3D-xyz-Slots. **Gehört vor den vollen Rat**, wenn richtung-only der
-  Endzustand einer Messung ist — nicht ihr Wartezustand. Heute lohnt der Bruch
-  nicht für drei Quellen, deren Distanz mit Klassifikation/Redshift nachrückt.
-  Litmus-Befund: die Richtung IST ein echter Sinn (das Auge misst die Richtung
-  eines Blitzes ohne Distanz) — legitimes zukuenftiges Atom, kein totes Ende.
-  Drei Quellen = EINE pending-Klasse. Registriert in blocked_sources.φ:
-  Lasair (parser-def, 2026-09-05 aus sources.φ verschoben), ANTARES (parser-def
-  json), ALeRCE (Code: build_alerce_channels, "dark until a distance channel
-  exists").
+- Richtungs-Transient ohne Distanz — aufgelöst über den Identitäts-Join
+  (2026-09-06): Der Rat-Verdikt (2026-09-05) stand — die Richtung bekommt ihre
+  Distanz „mit Klassifikation/Redshift nach". Genau das ist jetzt gebaut:
+  `direction_distance_join.rs` joint jeden richtung-only-Transienten gegen
+  Gaia-DR3-Parallaxe (identity_join, Trennung = Match-Evidenz, kein Treffer /
+  plx<=0 = absent, 0 honored — nie eine erfundene Distanz). Gemessen (ALeRCE
+  6000 Transienten): 3 placed / 5997 direction-only (0,05 % = das
+  e32-Zufallsniveau; die Trennung ist die Evidenz). Der Winkel-Kernel (Richtung
+  als eigenes Atom, Wire über 3 Ebenen) bleibt nach Rats-Verdikt DEFERRIERT
+  („heute lohnt der Bruch nicht") — ein legitimes zukünftiges Atom, kein totes
+  Ende, aber kein aktives Pending. Der direction-only-Rest (kein
+  Gaia-Gegenstück) ist ein gemessener Zustand (Abwesenheit eines Gegenstücks),
+  keine Schuld. Registriert: blocked_sources.φ (Lasair/ANTARES/ALeRCE +
+  Fink-LSST, parser-def) + direction_distance_join.rs.
 
 - Myzel-Scan-Linie — die fünf Funken der Anomalie-Jagd (Konzept
   docs/concepts/fuenf-funken-anomalie-jagd.md, 2026-09-05): Atome 0/0b
@@ -1934,10 +1944,13 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   (broker_difference_probe) + 5 (tdb_coincidence_probe) + 1
   (disappearance_probe) + 4 (deredden_baseline_probe) + 2 (pair_te_screen)
   gebaut und committet; nadel_gate.rs = die eingefrorene Gate als eine
-  physische Stelle. Offen (pending, benannt): (a) die reale Myzel-Kampagne
-  über das Coverage-Register (scan_coverage.φ) — bisher nur 2 void-Kegel am
-  GC, keine Karte Kegel/Roh-vor-Gate/danach; (b) Broker-Differenz schweigt
-  (nur Fink erreichbar, Lasair 000/ALeRCE 404 → pending bis ≥2 Broker);
-  (c) deredden_baseline braucht lokale Assets (bayestar.be19/dr3_stars.bin);
-  (d) pair_te_screen braucht echte Forced-Photometry-Lichtkurven mit Position;
-  (e) disappearance hat noch keinen vanishing-Fund (leere Straße).
+  physische Stelle. Aufgelöst (2026-09-06, alle gemessen): (a) reale
+  Myzel-Kampagne gefahren (CDF-S, 5 Kegel, 12 807 roh / 26 in die Gate / 0
+  Nahrung — alle über-Floor trugen Fink-Klasse/SIMBAD); (b) Broker-Differenz
+  liefert sky — Lasair über Proton-VPN (proton0) erreicht, Tunnel-Fallback in
+  broker_difference_probe.rs, gemessenes sky (fink+lasair present); (c)
+  deredden_baseline lief live (Plejaden 19 typical / 0 outlier) —
+  bayestar2019.be19 + dr3_stars.bin auf dem CDN (bayestar-cdn.yml, Compiler
+  mit --ci-mode); (d) pair_te_screen lief auf echtem Manifest (10 Fink-Quellen,
+  90 field / 0 echo-candidate); (e) disappearance maß 1 vanishing (Objekt
+  170028510485676206, y-Band, drop z 7,25) / 47 stable / 3 absent.
