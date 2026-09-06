@@ -2,9 +2,9 @@
   title: Befund — Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette: die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände der Galileo-Empfangskette dieser Station in diesem Pass (Klarstellung A: 7/7 flag-bedeckte anhaltende Episoden out-of-lock, anhaltend-bei-Lock n=0) — nicht Signal, nicht Himmel; Deduktion 27 als Empfangskette benannt (Simultanität, Open-Loop sauber, Sende-Klasse n=0), Uplink-Pfad gemessen leer
   class: befund
   date: 2026-09-06
-  sha256: f7b1e646f7c92c2f722134c5ad9a248fdca72cee3105c3ac6a1951c85b3c424e
+  sha256: 7b3559f1b694bbc218ee56c046a7ea053dccd3e65b2d6b54c432f47ba54f72c7
   status: draft
-  see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md docs/befund/befund-galileo-floor-stufen-te.md docs/befund/befund-galileo-floor-ort-himmelskoerper.md docs/befund/befund-galileo-floor-subtages-recurrenz.md docs/befund/befund-galileo-receiver-je-pass-floor.md docs/befund/befund-galileo-dreiweg-sendempfang-floor.md docs/befund/befund-galileo-dsn-passplan-uplink.md docs/befund/befund-galileo-doppler-odf-beschaffung3.md docs/befund/befund-galileo-odr-uplink-swse-anchor.md docs/befund/befund-galileo-goj-odr-ded31-sameday.md docs/befund/befund-galileo-gwe-odr-zweiter-zeuge.md docs/befund/befund-galileo-pioneer-stationsfloor-kreuz.md docs/befund/befund-galileo-pioneer-passfenster-subtaeglich.md docs/befund/befund-galileo-simultan-intrapass-trk225.md docs/befund/befund-galileo-h1-receiver-regression.md docs/befund/befund-galileo-beide-laut-simultan.md docs/befund/befund-galileo-cycle-slip-disziplin.md docs/befund/befund-galileo-elevation-ausbruchdauer.md docs/befund/befund-galileo-odr-goj-beschaffung2.md docs/befund/befund-galileo-odf-sender-uplink.md docs/befund/befund-galileo-dsn-passplan-uplink-beschaffung1.md docs/reference/133A.pdf /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results_2.md
+  see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md docs/befund/befund-galileo-floor-stufen-te.md docs/befund/befund-galileo-floor-ort-himmelskoerper.md docs/befund/befund-galileo-floor-subtages-recurrenz.md docs/befund/befund-galileo-receiver-je-pass-floor.md docs/befund/befund-galileo-dreiweg-sendempfang-floor.md docs/befund/befund-galileo-dsn-passplan-uplink.md docs/befund/befund-galileo-doppler-odf-beschaffung3.md docs/befund/befund-galileo-odr-uplink-swse-anchor.md docs/befund/befund-galileo-goj-odr-ded31-sameday.md docs/befund/befund-galileo-gwe-odr-zweiter-zeuge.md docs/befund/befund-galileo-pioneer-stationsfloor-kreuz.md docs/befund/befund-galileo-pioneer-passfenster-subtaeglich.md docs/befund/befund-galileo-simultan-intrapass-trk225.md docs/befund/befund-galileo-h1-receiver-regression.md docs/befund/befund-galileo-beide-laut-simultan.md docs/befund/befund-galileo-cycle-slip-disziplin.md docs/befund/befund-galileo-elevation-ausbruchdauer.md docs/befund/befund-galileo-odr-goj-beschaffung2.md docs/befund/befund-galileo-odf-sender-uplink.md docs/befund/befund-galileo-dsn-passplan-uplink-beschaffung1.md docs/reference/133A.pdf docs/reference/19930020414.pdf /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results.md /home/johannes/Schreibtisch/rechercheauftrag-extern-galileo-floor-ded27_results_2.md
 -->
 # Befund: Konsolidierungs-Blatt der Galileo-Floor-Deduktionskette — die lauten Pässe sind anhaltende per-Pass-Empfangs-Out-of-Lock-Zustände der Galileo-Empfangskette dieser Station in diesem Pass, nicht Signal, nicht Himmel
 
@@ -94,6 +94,30 @@ ganze 2-h-Lauf eine durchgehend Out-of-Lock-geflagte Strecke (M1 st14
 1995-11-24: 6106/6106 AGC-Boden-Records des Laufs lock-out); die anhaltende
 Laut-Zeit sitzt damit in per-Pass-Out-of-Lock-Strecken, nicht als Rauschen in
 einem gelockten Loop mit Slips nur an den Rändern.
+
+**AGC-Kontrolle der Register-Fläche (Signalstärke laut gegen ruhig, neue
+Messung `galileo_floor_agc_loud_quiet`, Report
+`/tmp/opencode/galileo_floor_agc_loud_quiet_report.txt`, `cargo check` 0/0).**
+Über die reproduzierten 400 robusten Floor-Zellen des Registers (207 laut /
+193 ruhig, 105 Flips) liegt das Signalstärke-Feld (AGC in 0,1-dBm-Einheiten)
+der Zell-Mitglieder in **100 % beider Klassen am Klemmwert −2560** (laut:
+207 Zellen, n = 2 106 313 Mitglied-Samples; ruhig: 193 Zellen, n = 2 539 919;
+je Zelle Spanne 0, kein Mitglieds-Sample auf einem anderen Registerwert). Die
+laut/ruhig-Trennung des Registers lebt damit vollständig **innerhalb eines
+einzigen AGC-Werts** — ein Signalstärke-Gradient trennt die Klassen nicht, die
+AGC unterscheidet laut nicht von ruhig. Auch die Tages-Komposition trennt
+nicht: der mediane in-track-Anteil der Tage am Klemmwert ist in beiden Klassen
+1,0000 (laut-Zell-RMS-Median 23,08 Hz gegen 0,064 Hz ruhig bei gleichem AGC);
+ganz-geklemmte Tage (einziges AGC-Registerwort des Tages = −2560) zählen
+97/207 laut gegen 128/193 ruhig, Tage mit einem starken Ausflug (≥ −1750)
+85/207 laut gegen 45/193 ruhig. Die Gegen-Prüfung auf der starken Population
+(≥ −1750) stützt keine Bindung der Lautheit an den Klemmwert allein: 322
+robuste stark-Zellen der Ära tragen 85 laut / 237 ruhig (26 % laut; 75
+stark-Zellen auf laut-Floor-Tagen, davon 26 selbst laut) — laut und ruhig
+existieren in beiden AGC-Regimen. Der laute Floor-Zustand sitzt damit bei
+**identischem (geklemmtem) Empfangs-Signalpegel** als erhöhtes Rauschen der
+Empfangskette — die Morabito-Klasse „gleiches Signallevel, erhöhtes Rauschen →
+Boden-Gerät" ist auf der AGC-Achse gestützt (Abschnitt 8, Präzedenzfall).
 
 Die Konsolidierung der Negativ-Kette setzt das Positive in Kontrast: Pioneer 10
 liest dieselbe Station am selben Tag ruhig, während Galileo laut ist (die
@@ -206,7 +230,27 @@ ODR-Volumina ohne Juni-1996-Eintrag, 0 geehrt).
   Jupitermond-Ephemeriden-Asset); der messbare Stellvertreter Jupiter-Distanz/
   Perijove trennt die lauten von den ruhigen Tagen des 1996er-Fensters nicht.
 
-## 8. Pending (extern, nicht blockierend)
+## 8. Präzedenzfall — Morabito et al., TDA Progress Report 42-113 (1993)
+
+Der externe Präzedenzfall `docs/reference/19930020414.pdf` (Morabito et al.,
+TDA Progress Report 42-113, 1993, Galileo-USO-Doppler-Stabilität) dokumentiert
+dieselbe Phänomen-Klasse in der Cruise-Ära: **drei Pässe, 900330 (90-089)
+DSS-43, 911019 (91-292) DSS-63 und 911130 (91-334) DSS-14, mit unerklärter
+Doppler-Degradation, „possibly due to ground equipment problems"** — dieselben
+drei 70-m-Stationen wie der Floor, dieselbe Klasse (per-Pass-Degradation des
+Empfangs; die AGC korreliert dort mit der Spacecraft-Range) in einer früheren
+Ära (Cruise/USO, 1/sec-Doppler, 10-Hz-Loop-Filter). Die Analyse lief im Rahmen
+der Galileo-Radio-Wissenschaft und wurde laut Dokument fortgeführt („will
+continue for the duration"). § V „Data Products" des Dokuments bestätigt den
+**Passfolder-Inhalt** der DSN-Passfolder: „a pass folder from the DSN
+containing copies of frequency predictions, operator logs and related
+material" — die Passfolder-Achse (Abschnitt 9) ist damit als externer
+Präzedenzfall belegt, ihr Inhalt deckt die gesuchte per-Pass-Achse ab
+(Predictions/Logs/Material je Pass). **Table-1-Format** des Dokuments
+(per-Pass-Tabelle Year/DOY/DSS/AGC/geschätzte Frequenz) ist das Format, das für
+die Orbital-Phase als Nachfolge-/Anfrage-Analogon relevant ist (Abschnitt 9).
+
+## 9. Pending (extern, nicht blockierend)
 
 - **RSSN/332K (Buccino & Barbini, 2025er `gll.rss.raw`-Bundle):** Nachfrage bei
   den Autoren, ob auf denselben RSST-Bändern überlebt haben: Keyword-Files/
@@ -216,11 +260,23 @@ ODR-Volumina ohne Juni-1996-Eintrag, 0 geehrt).
 - **Passfolder-Archiv der JPL Radio Science Library, Building 264-325**
   (HANDBK6 §1.2/§5.1.5: Logsheets/Displays je Pass, „part of the permanent
   record of the track") — das physische Tagebuch des gesuchten per-Pass-
-  Empfangs-Zustands.
+  Empfangs-Zustands; der Inhalt der Passfolder ist durch den Morabito-
+  Präzedenzfall (Abschnitt 8) als „frequency predictions, operator logs and
+  related material" extern belegt.
 - **NTRS 19950010764 (SOE/Readiness-Reports der Ära)** — extern benannt als
   zu prüfende Quelle für die Sequence-of-Events-/Readiness-Achse.
+- **Morabito-Fortsetzungs-Suche für die Orbital-Phase:** die Nachfolge-Berichte
+  der TDA-Serie für 1995–1997 (Suche „Morabito Galileo USO orbital", TDA
+  42-1xx), die die Doppler-Stabilitäts-/Ground-Equipment-Analyse des
+  Präzedenzfalls (Abschnitt 8) auf die Floor-Ära 1995-11-23..1997-02-28
+  fortführen.
+- **Per-Pass-AGC/DSS-Tabelle der Orbital-Phase:** Anfrage an RSSN/JPL um ein
+  Table-1-Analogon (Year/DOY/DSS/AGC/geschätzte Frequenz, Abschnitt 8) für die
+  Floor-Ära — die AGC-Achse des vorliegenden Befunds ist auf dem Resid-Record
+  ein einziger Klemmwert; eine per-Pass-AGC-Tabelle der Orbital-Phase wäre der
+  externe Vergleich auf der Signalstärke-Achse.
 
-Diese drei Achsen sind extern und blockieren die vorliegende Konsolidierung
+Diese fünf Achsen sind extern und blockieren die vorliegende Konsolidierung
 nicht; sie sind als offene Beschaffungs-/Nachfrage-Punkte registriert, nicht
 als gemessene Werte.
 
@@ -247,12 +303,26 @@ der positive Befund lautet: anhaltender per-Pass-Empfangs-Out-of-Lock-Zustand.
 Ded-27 ist über drei Zeugen als Empfangskette benannt (Simultanität 16
 eine-laut/32 beide-ruhig bei Uplink-Modi n = 0; Open-Loop-Ton ohne Einbruch;
 Sende-Klasse n = 0); verbleibend pending das Bauteil/der Parameter der
-Empfangskette je Pass. Episoden-Definition (10 Hz, gap 30 s, anhaltend ≥ 60 s,
-Einzel-Samples eigene 0-s-Klasse; Median stabil 70/68 s bei 1–10 Hz) und der
-Provenienz-Caveat (Juni-1996-g1-ATDF = dieselbe RSST-Bandquelle, als
-unabhängiger Kanal ungeeignet, als Reproduktion geeignet) sind dokumentiert.
-Extern-pending ohne Blockade: RSSN/332K-TRK-2-15/MON-5-Bänder, Passfolder-
-Archiv JPL 264-325, NTRS 19950010764.*
+Empfangskette je Pass. Die AGC-Kontrolle der Register-Fläche
+(`galileo_floor_agc_loud_quiet`): 100 % der Mitglied-Samples beider Floor-
+Klassen am Klemmwert −2560 (laut 207 Zellen / n 2 106 313, ruhig 193 / n 2 539
+919, je Zelle Spanne 0), der mediane in-track-Anteil am Klemmwert 1,0000 in
+beiden Klassen — die AGC unterscheidet laut nicht von ruhig; die starke
+Population ist nicht systematisch ruhig (322 robuste stark-Zellen der Ära: 85
+laut / 237 ruhig), die Lautheit bindet an keine AGC-Stufe. Präzedenzfall
+Morabito et al., TDA 42-113 (1993): drei Cruise-Pässe 90-089 DSS-43, 91-292
+DSS-63, 91-334 DSS-14 mit unerklärter Doppler-Degradation „possibly due to
+ground equipment problems" — dieselbe Phänomen-Klasse; der Passfolder-Inhalt
+(„frequency predictions, operator logs and related material", § V) ist extern
+belegt; die AGC-Achse stützt die Boden-Gerät-/Loop-Klasse bei identischem
+geklemmtem Signallevel (nicht Signal-Schwelle). Episoden-Definition (10 Hz, gap
+30 s, anhaltend ≥ 60 s, Einzel-Samples eigene 0-s-Klasse; Median stabil 70/68 s
+bei 1–10 Hz) und der Provenienz-Caveat (Juni-1996-g1-ATDF = dieselbe
+RSST-Bandquelle, als unabhängiger Kanal ungeeignet, als Reproduktion geeignet)
+sind dokumentiert. Extern-pending ohne Blockade: RSSN/332K-TRK-2-15/MON-5-
+Bänder, Passfolder-Archiv JPL 264-325, NTRS 19950010764,
+Morabito-Fortsetzungs-Suche 1995–1997 (TDA 42-1xx), per-Pass-AGC/DSS-Tabelle
+der Orbital-Phase (RSSN/JPL-Anfrage).*
 
 ## Status
 
@@ -263,4 +333,4 @@ RUSTFLAGS `-D warnings`, 0/0), Report
 `/tmp/opencode/galileo_floor_sustained_lock_state_report.txt`. Blatt und Probe
 in einem Commit (pfad-beschränkt); `phi/`, `docs/TODO.md` und fremde Dateien
 nicht angefasst. Die Deduktionskette trägt je ✗ eine Mess-ID (Probe) und den
-Mess-Commit.
+Mess-Commit. AGC-Kontrolle additiv neu (`galileo_floor_agc_loud_quiet`, `cargo check` 0/0, Report `/tmp/opencode/galileo_floor_agc_loud_quiet_report.txt`), Morabito-Präzedenzfall (Abschnitt 8) und die zwei neuen extern-pending-Achsen (Abschnitt 9) in diesem Blatt-Stand.
