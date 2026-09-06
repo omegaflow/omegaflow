@@ -388,7 +388,7 @@ note Arzneimittel-Registry.
 
 dead unreachable
 url https://api.fink-portal.org/api/v1/objects
-note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar.
+note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar. Successor host api.lsst.fink-portal.org (2026-09-06 curl-verified HTTP 200, anonymous) is registered in blocked_sources.φ as parser-def of the pending class "Richtungs-Transient ohne Distanz" — the old host stays dead, Fink itself is not absent.
 
 dead dns-unresolved
 url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
@@ -2036,7 +2036,11 @@ note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a
 
 decline redundant
 url https://irsa.ipac.caltech.edu/TAP/sync
-note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS).
+note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS). 2026-09-06 (scanner route): the AllWISE cone on this TAP (nadel_gate.rs allwise_cone/allwise_witness, table allsky_4band_p3as_psd, columns ra/dec/w1mpro-w4mpro/w1sigmpro, FORMAT=csv, anonymous, curl-verified HTTP 200) stays decline redundant as a FIELD source — static photometry without distance (holdings verdict dead_sources.φ, W1/W2 redundant to the AllWISE CDN asset). The gate reads it only as identity_join crossmatch reference for the natural-class decision (W1-W2 AGN wedge, Stern et al. 2012), never as an oscillator value — the decline covers the scanner route; no silent source entry in sources.φ.
+
+decline redundant
+url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
+note Pan-STARRS DR1 mean (MAST catalogs API), measured 2026-09-06. Probe: host alive (root HTTP 200); table route answers HTTP 200 JSON {info,data} — 125-column positional rows, names only in the info metadata list (the SpaltenAusMetadata parser-gap class, ledger.φ), NOT the keyed objects the earlier geparkt note assumed (that shape was never measured — probe was env-void). gMeanPSFMag/rMeanPSFMag/iMeanPSFMag/zMeanPSFMag/yMeanPSFMag present, unit mag; absent per band = numeric float sentinel -999.0 (measured: PSO J095955.653+700218.130 z=18.139 with the other four bands -999.0; 4740 of 41392 rows all-five absent). The {ra}/{dec}/{radius} cone returned no bytes within 40-90 s on three attempts this run — cone latency itself measured; schema proven via the full-table fetch. Force-Gate: photometry is physical (em mag) but distance-less (no plx/z/dist) — the CelestialMap distance gate drops every row, so a sources.φ field block would be still-null (forbidden). Classification decline redundant, same standing and same day as the AllWISE cone (this file, irsa TAP, scanner route): static distance-less photometry is a gate-side reference, never an oscillator source. The council verdict (fuenf-funken-anomalie-jagd.md, PS1 deliberately not added) holds: broad optical color is already carried by Gaia dr3_stars BP/RP (CDN) and the distance-bearing optical by sdss_photoobj psfMag+spec-z (sources.φ). The narrow pre-baseline utility the scanner could draw is served by the nadel_gate in-gate ADQL cone pattern (allwise_cone/allwise_witness), not by a register source. Draft stays historical in grind_astro_tap_2026-08-19.φ; ledger.φ geparkt entry closed.
 
 decline derived-crossmatch
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+splices
