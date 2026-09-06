@@ -3,11 +3,14 @@ pub mod archivar;
 #[cfg(feature = "commit_gate")]
 pub mod gate;
 pub mod mathematikerin;
+pub mod weberin;
 
 #[cfg(feature = "commit_gate")]
 pub use gate::{axioms, commit_gate, friction, handover, state, tool_perm};
 
+pub use archivar::amon;
 pub use archivar::atdf;
+pub use archivar::auger;
 pub use archivar::bayestar;
 pub use archivar::bison_basu;
 pub use archivar::bison_shift;
