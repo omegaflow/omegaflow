@@ -2121,10 +2121,13 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             } else {
                                 continue;
                             };
-                            let zval = if !z_key.is_empty() {
-                                jpath(v, z_key).filter(|z| z.is_finite() && *z > 0.0)
+                            let zval = if z_key.is_empty() {
+                                0.0
                             } else {
-                                None
+                                match jpath(v, z_key) {
+                                    Some(z) if z.is_finite() && z > 0.0 => z,
+                                    _ => continue,
+                                }
                             };
                             let ra = ra_deg.to_radians();
                             let dec = dec_deg.to_radians();
@@ -2220,7 +2223,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 }
                                 channels.push((
                                     Channel {
-                                        z: zval.unwrap_or(0.0),
+                                        z: zval,
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch: sample_epoch,
