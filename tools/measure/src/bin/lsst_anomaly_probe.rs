@@ -11,6 +11,7 @@ use omegaflow_measure::deredden::{
     build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
     BACKGROUND_PC_MIN,
 };
+use omegaflow_measure::nadel_gate::*;
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 use std::thread::sleep;
@@ -31,7 +32,6 @@ const FINK_DEC: &str = "r:dec";
 const FINK_NDIA: &str = "r:nDiaSources";
 const FINK_CLASS: &str = "f:main_label_classifier";
 const FINK_SIMBAD: &str = "f:xm_simbad_otype";
-const UA: &str = "omegaflow-nadel-v-lsst-scan/1.0";
 
 const LAS_CONE: &str = "https://api.lasair.lsst.ac.uk/api/cone/";
 const LAS_OBJECT: &str = "https://api.lasair.lsst.ac.uk/api/object/";
@@ -41,12 +41,6 @@ const ZTF_CONE: &str = "https://lasair-ztf.lsst.ac.uk/api/cone/";
 const ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";
 const ZTF_OBJECT_PAUSE_MS: u64 = 2000;
 const ZTF_FORCED_SIGMA: f64 = 3.0;
-
-const IRSA_TAP: &str = "https://irsa.ipac.caltech.edu/TAP/sync";
-const ALLWISE_TABLE: &str = "allsky_4band_p3as_psd";
-const WISE_RADIUS_ARCSEC: f64 = 6.0;
-const AGN_WEDGE_W1_W2: f64 = 0.8;
-const WISE_AGN_CITE: &str = "Stern et al. 2012, ApJ 753, 30";
 
 const LSST_LAMBDA_NM: [(&str, f64); 6] = [
     ("u", 380.0),
@@ -1172,193 +1166,6 @@ fn fink_cone_list(
     objs
 }
 
-struct WiseMatch {
-    designation: Option<String>,
-    sep_arcsec: f64,
-    w1: Option<f64>,
-    w2: Option<f64>,
-    w3: Option<f64>,
-    w4: Option<f64>,
-    w1_sig: Option<f64>,
-}
-
-fn fmt_mag(v: Option<f64>) -> String {
-    match v {
-        Some(x) => format!("{x:.3}"),
-        None => "absent".to_string(),
-    }
-}
-
-fn csv_num(f: &[&str], k: usize) -> Option<f64> {
-    let cell = f.get(k)?.trim();
-    if cell.is_empty() {
-        return None;
-    }
-    let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
-}
-
-fn sep_arcsec(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
-    let r1 = ra1.to_radians();
-    let d1 = dec1.to_radians();
-    let r2 = ra2.to_radians();
-    let d2 = dec2.to_radians();
-    let a = ((d2 - d1) / 2.0).sin().powi(2) + d1.cos() * d2.cos() * ((r2 - r1) / 2.0).sin().powi(2);
-    2.0 * a.sqrt().asin().to_degrees() * 3600.0
-}
-
-fn parse_wise_csv(body: &[u8], ra: f64, dec: f64) -> Vec<WiseMatch> {
-    let Ok(text) = std::str::from_utf8(body) else {
-        return Vec::new();
-    };
-    let mut out: Vec<WiseMatch> = Vec::new();
-    let mut lines = text.lines();
-    let header = match lines.next() {
-        Some(h) => h,
-        None => return out,
-    };
-    let cols: Vec<&str> = header.split(',').map(|c| c.trim()).collect();
-    let index_of = |name: &str| cols.iter().position(|c| *c == name);
-    let (Some(ides), Some(ira), Some(idec), Some(iw1), Some(iw2), Some(iw1s)) = (
-        index_of("designation"),
-        index_of("ra"),
-        index_of("dec"),
-        index_of("w1mpro"),
-        index_of("w2mpro"),
-        index_of("w1sigmpro"),
-    ) else {
-        return out;
-    };
-    let iw3 = index_of("w3mpro");
-    let iw4 = index_of("w4mpro");
-    for line in lines {
-        if line.trim().is_empty() {
-            continue;
-        }
-        let f: Vec<&str> = line.split(',').collect();
-        let (Some(sra), Some(sdec)) = (csv_num(&f, ira), csv_num(&f, idec)) else {
-            continue;
-        };
-        let des = match f.get(ides).map(|c| c.trim()) {
-            Some(d) if !d.is_empty() => Some(d.to_string()),
-            _ => None,
-        };
-        out.push(WiseMatch {
-            designation: des,
-            sep_arcsec: sep_arcsec(ra, dec, sra, sdec),
-            w1: csv_num(&f, iw1),
-            w2: csv_num(&f, iw2),
-            w3: iw3.and_then(|k| csv_num(&f, k)),
-            w4: iw4.and_then(|k| csv_num(&f, k)),
-            w1_sig: csv_num(&f, iw1s),
-        });
-    }
-    out
-}
-
-fn irsa_tap_sync(adql: &str) -> Option<(String, Vec<u8>)> {
-    let mut cmd = Command::new("curl");
-    cmd.arg("-sS")
-        .arg("-m")
-        .arg("60")
-        .arg("-A")
-        .arg(UA)
-        .arg("-G")
-        .arg(IRSA_TAP)
-        .arg("--data-urlencode")
-        .arg(format!("QUERY={adql}"))
-        .arg("--data-urlencode")
-        .arg("FORMAT=csv")
-        .arg("--data-urlencode")
-        .arg("MAXREC=10")
-        .arg("-o")
-        .arg("-")
-        .arg("-w")
-        .arg("\n%{http_code}");
-    let out = cmd.output().ok()?;
-    let stdout = out.stdout;
-    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
-    let code = String::from_utf8_lossy(&stdout[idx + 1..])
-        .trim()
-        .to_string();
-    Some((code, stdout[..idx].to_vec()))
-}
-
-fn allwise_cone(ra: f64, dec: f64) -> Option<Vec<WiseMatch>> {
-    let r_deg = WISE_RADIUS_ARCSEC / 3600.0;
-    let adql = format!(
-        "SELECT designation, ra, dec, w1mpro, w2mpro, w3mpro, w4mpro, w1sigmpro FROM {ALLWISE_TABLE} WHERE CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', {ra:.6}, {dec:.6}, {r_deg})) = 1"
-    );
-    let Some((code, body)) = irsa_tap_sync(&adql) else {
-        println!(
-            "Nadel V (AllWISE round): ra {ra:.4} dec {dec:.4} — the IRSA TAP query did not answer (measured stall), the mid-IR witness stays pending"
-        );
-        return None;
-    };
-    if code != "200" {
-        println!(
-            "Nadel V (AllWISE round): ra {ra:.4} dec {dec:.4} — IRSA TAP answered HTTP {code}, the mid-IR witness stays pending"
-        );
-        return None;
-    }
-    let mut matches = parse_wise_csv(&body, ra, dec);
-    matches.sort_by(|a, b| a.sep_arcsec.total_cmp(&b.sep_arcsec));
-    Some(matches)
-}
-
-enum WiseOutcome {
-    Agn,
-    Field,
-    Pending,
-}
-
-fn allwise_witness(dia: &str, ra: f64, dec: f64) -> WiseOutcome {
-    let Some(matches) = allwise_cone(ra, dec) else {
-        return WiseOutcome::Pending;
-    };
-    let Some(m) = matches.first() else {
-        println!(
-            "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} — no AllWISE source within {WISE_RADIUS_ARCSEC} arcsec (0 honored) — the candidate remains pending the natural-class crossmatch"
-        );
-        return WiseOutcome::Field;
-    };
-    let des = match m.designation.as_deref() {
-        Some(d) => d,
-        None => "AllWISE",
-    };
-    let sep = m.sep_arcsec;
-    match (m.w1, m.w2, m.w1_sig) {
-        (Some(w1), Some(w2), Some(sig)) if sig > 0.0 => {
-            let color = w1 - w2;
-            let w3 = fmt_mag(m.w3);
-            let w4 = fmt_mag(m.w4);
-            if color >= AGN_WEDGE_W1_W2 {
-                println!(
-                    "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1:.3} W2 {w2:.3} (W1 sig {sig:.3}) W3 {w3} W4 {w4} | W1-W2 {color:.3} >= {AGN_WEDGE_W1_W2} — the mid-IR AGN wedge ({WISE_AGN_CITE}) — a natural AGN, excluded"
-                );
-                WiseOutcome::Agn
-            } else {
-                println!(
-                    "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1:.3} W2 {w2:.3} (W1 sig {sig:.3}) W3 {w3} W4 {w4} | W1-W2 {color:.3} below the {AGN_WEDGE_W1_W2} wedge — the mid-IR reads a field source, the candidate remains"
-                );
-                WiseOutcome::Field
-            }
-        }
-        _ => {
-            let w1 = fmt_mag(m.w1);
-            let w2 = fmt_mag(m.w2);
-            println!(
-                "Nadel V (AllWISE round): diaObject {dia} at ra {ra:.4} dec {dec:.4} matches AllWISE {des} {sep:.1} arcsec | W1 {w1} W2 {w2} — no two-band W1/W2 detection, no wedge color (0 honored) — the candidate remains"
-            );
-            WiseOutcome::Field
-        }
-    }
-}
-
 fn parse_fink_source_rows(body: &[u8]) -> Option<(Vec<(String, f64, f64)>, Option<(f64, f64)>)> {
     let Ok(text) = std::str::from_utf8(body) else {
         return None;
@@ -1498,10 +1305,6 @@ fn build_band_curves(ra: f64, dec: f64, rows: &[(String, f64, f64)]) -> Vec<Lsst
         });
     }
     curves
-}
-
-fn natural_excluded(class: i64, simbad: &str) -> bool {
-    !(class == -1 && simbad == "Fail")
 }
 
 struct DustField {
@@ -2700,7 +2503,7 @@ fn curl_get_retry(url: &str) -> Option<(String, Vec<u8>)> {
     None
 }
 
-fn antares_scan(max_loci: usize) {
+fn antares_scan(max_loci: usize, wise: bool) {
     println!(
         "\n=== Nadel V (ANTARES round): anonymous loci REST + alert photometry, up to {max_loci} locus light curves ==="
     );
@@ -2870,7 +2673,35 @@ fn antares_scan(max_loci: usize) {
     let mut pending_stall = 0usize;
     let mut pending_code = 0usize;
     let mut det_by_fid: HashMap<String, usize> = HashMap::new();
+    let mut wise_agn = 0usize;
+    let mut wise_field = 0usize;
+    let mut wise_pending = 0usize;
     for loc in &loci_sample {
+        if wise {
+            match allwise_witness(&loc.id, loc.ra_deg, loc.dec_deg) {
+                WiseOutcome::Agn => {
+                    wise_agn += 1;
+                    println!(
+                        "Nadel V (AllWISE round): ANTARES locus {} — the mid-IR witness reads a natural AGN (the W1-W2 wedge, separate voice; the light-curve cut keeps the locus)",
+                        loc.id
+                    );
+                }
+                WiseOutcome::Field => {
+                    wise_field += 1;
+                    println!(
+                        "Nadel V (AllWISE round): ANTARES locus {} — the mid-IR witness reads field/unclassified (separate voice; the light-curve cut keeps the locus)",
+                        loc.id
+                    );
+                }
+                WiseOutcome::Pending => {
+                    wise_pending += 1;
+                    println!(
+                        "Nadel V (AllWISE round): ANTARES locus {} — the mid-IR witness stays pending, no natural-class read (0 honored; the locus remains a candidate)",
+                        loc.id
+                    );
+                }
+            }
+        }
         let url = format!("{ANTA_BASE}/loci/{}/alerts", loc.id);
         let Some((code, body)) = curl_get_retry(&url) else {
             pending_stall += 1;
@@ -2964,6 +2795,15 @@ fn antares_scan(max_loci: usize) {
         total_ul += phot.upper_limits;
         dup_total += phot.duplicates;
         sleep_ms(ANTA_OBJ_PAUSE_MS);
+    }
+    if wise {
+        println!(
+            "Nadel V (AllWISE round): over the {} sampled ANTARES loci the mid-IR witness read {} as a natural AGN, {} as field/unclassified, {} as pending (0 honored — pending never a fabricated AGN verdict)",
+            loci_sample.len(),
+            wise_agn,
+            wise_field,
+            wise_pending
+        );
     }
     let mut fid_counts: Vec<(&str, usize)> =
         det_by_fid.iter().map(|(b, n)| (b.as_str(), *n)).collect();
@@ -3386,7 +3226,7 @@ fn usage() {
          negative control of the achromatic dip cut (synthetic achromatic dip into a real LSS1 asset):\n\
          \x20 lsst_anomaly_probe --negative-control <lsst_lightcurves.bin> [<depth_sigma=8>]\n\
          ANTARES anonymous REST scan (api.antares.noirlab.edu/v1, the NOIRLab broker, no token):\n\
-         \x20 lsst_anomaly_probe --antares [--antares-max <loci=24>]\n\
+         \x20 lsst_anomaly_probe --antares [--antares-max <loci=24>] [--wise] — the AllWISE mid-IR AGN wedge as a separate per-locus typing voice (IRSA TAP, one query per sampled locus)\n\
          LASAIR_TOKEN (the register token name) is read from the environment when --token is absent."
     );
 }
@@ -3841,7 +3681,7 @@ fn main() {
     }
     let tok = token.or_else(|| std::env::var("LASAIR_TOKEN").ok());
     if antares {
-        antares_scan(antares_max);
+        antares_scan(antares_max, wise);
         return;
     }
     if let Some(p) = neg_control_base {
@@ -4465,5 +4305,71 @@ mod tests {
         assert_eq!(census_count(&census.per_band_psf, "r"), 0);
         assert_eq!(census_count(&census.per_band_psf, "i"), 1);
         assert_eq!(census_count(&census.per_band_science, "i"), 1);
+    }
+
+    const IRSA_MRK231_CONEWISE_CSV: &str = "\
+designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,w1sigmpro
+J125614.24+565225.3,194.0593522,56.8737158,7.446,6.354,3.197,0.250,0.027";
+
+    const IRSA_EMPTY_CONEWISE_CSV: &str =
+        "designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,w1sigmpro";
+
+    #[test]
+    fn allwise_cone_reads_the_measured_agn_wedge() {
+        let mut rows = parse_wise_csv(IRSA_MRK231_CONEWISE_CSV.as_bytes(), 194.0592, 56.8736);
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].designation.as_deref(), Some("J125614.24+565225.3"));
+        assert!(
+            rows[0].sep_arcsec > 0.0 && rows[0].sep_arcsec < WISE_RADIUS_ARCSEC,
+            "the identity carries its separation within the cone as match evidence"
+        );
+        assert!((rows[0].w1.unwrap() - 7.446).abs() < 1e-6);
+        assert!((rows[0].w2.unwrap() - 6.354).abs() < 1e-6);
+        let (w1, w2, _, color) = agn_wedge(&rows[0]).unwrap();
+        assert!((color - (w1 - w2)).abs() < 1e-12);
+        assert!(
+            color >= AGN_WEDGE_W1_W2,
+            "Mrk 231 reads mid-IR AGN-consistent (W1-W2 {color:.3} >= {AGN_WEDGE_W1_W2}, {WISE_AGN_CITE})"
+        );
+        rows.sort_by(|a, b| a.sep_arcsec.total_cmp(&b.sep_arcsec));
+        assert_eq!(
+            rows.first().unwrap().designation.as_deref(),
+            Some("J125614.24+565225.3")
+        );
+    }
+
+    #[test]
+    fn allwise_empty_cone_is_absent_not_a_verdict() {
+        let rows = parse_wise_csv(IRSA_EMPTY_CONEWISE_CSV.as_bytes(), 12.34, -40.56);
+        assert!(
+            rows.is_empty(),
+            "an answered-but-empty cone is zero sources, not a number"
+        );
+    }
+
+    #[test]
+    fn allwise_upper_limit_code_stays_absent_from_the_wedge() {
+        let body = "\
+designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,w1sigmpro
+J000000.00+000000.0,0.0,0.0,99.99,16.0,99.99,99.99,99.99
+J000001.00+000001.0,0.0003,0.0003,15.5,,15.0,14.0,0.05";
+        let rows = parse_wise_csv(body.as_bytes(), 0.0, 0.0);
+        assert_eq!(rows.len(), 2);
+        assert!(
+            rows[0].w1.is_none(),
+            "a 99.99 W1 cell is the non-detection code, absent"
+        );
+        assert!(rows[0].w1_sig.is_none(), "a 99.99 W1 sigma cell is absent");
+        assert!(rows[0].w2.is_some());
+        assert!(rows[0].w3.is_none());
+        assert!(
+            agn_wedge(&rows[0]).is_none(),
+            "an upper-limit W1 must never read a wedge color"
+        );
+        assert!(rows[1].w2.is_none(), "an empty W2 cell is absent");
+        assert!(
+            agn_wedge(&rows[1]).is_none(),
+            "a one-band row reads no W1-W2 wedge (0 honored)"
+        );
     }
 }
