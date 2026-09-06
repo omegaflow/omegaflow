@@ -1074,7 +1074,7 @@ und navigierende Zeilen.
 
 Die eine Mess-Anordnung: ICRS·TDB als Webstuhl, die Weltlinien (Direction,
 Body, Station) als Kette, die Beziehungen (Verdict, TE, Abstammung) als
-Schuss, das Vlies als das eine Bild. Die sieben Stufen sind ungebaut —
+Schuss, das Vlies als das eine Bild. Die acht Stufen sind ungebaut —
 `pending`, registriert, nicht fabriziert:
 
 - Zweite Körper-Linie: MPC-Bahnen (`mpcorb_extended.json.gz`, offener
@@ -1091,6 +1091,10 @@ Schuss, das Vlies als das eine Bild. Die sieben Stufen sind ungebaut —
 - Survey-Footprints der großen Durchmusterungen als eigene Assets.
 - GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne.
 - CDN-Manifestations-Weg des Vlies-Assets.
+- Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien nicht
+  konvergieren, benennt die Maschine den Riss und seinen Knoten in der
+  Abstammungs-Kette. Erster Anwendungs-Knoten: die Hubble-Spannung (Planck
+  ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) — benennen statt mitteln.
 
 ## Source-Port — der eine Pfad
 
