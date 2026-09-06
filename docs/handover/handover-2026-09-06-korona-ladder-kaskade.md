@@ -2,7 +2,7 @@
   title: Übergabe — Korona-Leiter & Kaskade (AIA-fam, Bandbreite, Volljahr, Richtungs-Test)
   class: handover
   date: 2026-09-06
-  sha256: d3bc0c18ebd66815362d223f0e3757ca19a80e2d9f612cbdec278a7fed235730
+  sha256: aede458ce54e1c91969d4c55d45a25db813a54802204e00a329eab59da5db40b
   status: live
   see-also: docs/paper/corona-heating-ladder.md docs/surveys/survey-ein-blatt-korona-heizung.md docs/TODO.md
 -->
@@ -18,10 +18,10 @@ Null-Paper** — die Messung soll bestimmen, was die Daten tragen.
 
 Die koronale **Aufwärts-Kaskade 193→211→335→94 Å** (~96-s-Alfvén-Lag) ist ein
 **reproduzierbares, gerichtetes, aber unter-fam Signal**: sie reproduziert sich
-in zwei unabhängigen Jahren (2014: 1019, 2015: 281 GOES-15-Ereignisse), und die
-Per-Ereignis-Richtung ist **konsistent positiv (76%), nicht alternierend**. Sie
-erreicht die strenge fam-Schwelle nicht; der heißeste Rung (335→94) stärkt sich
-mit mehr Ereignissen nicht.
+in drei unabhängigen Jahren (2013: 524, 2014: 1019, 2015: 281
+GOES-15-Ereignisse), und die Per-Ereignis-Richtung ist **konsistent positiv
+(76%), nicht alternierend**. Sie erreicht die strenge fam-Schwelle nicht; der
+heißeste Rung (335→94) stärkt sich mit mehr Ereignissen nicht.
 
 ## Committet (mein Stand, englische Nachrichten)
 
@@ -42,6 +42,8 @@ mit mehr Ereignissen nicht.
 - **AIA-2014** (Volljahr, 1019 Ev): 193→211 +1.78e-1, 211→335 +7.15e-2,
   335→94 +1.24e-1; fam 1.96e-1. 3 Monate (194 Ev) dagegen: 335→94 +1.42e-1,
   fam 1.89e-1 (0.75× → 0.63×fam: mehr Daten stärken den heißesten Rung nicht).
+- **AIA-2013** (Volljahr, 524 Ev): 193→211 +1.67e-1, 211→335 +7.71e-2,
+  335→94 +1.01e-1, alle ~96-s-Lag; fam 1.71e-1. Kaskade reproduziert sich.
 - **AIA-2015** (281 Ev): 193→211 +1.21e-1, 211→335 +9.37e-2, 335→94 +1.30e-1;
   fam 1.75e-1. Kaskade reproduziert sich.
 - **Per-Ereignis 335→94 (2015)**: 76% positiv, jeder Monat mehrheitlich positiv
@@ -62,23 +64,31 @@ mit mehr Ereignissen nicht.
    Stärke der Maschine): Amplitude der Kaskade / Flare-Eigenschaften gegen
    aktive Breiten, Polkappen-Verschiebung, Magnetogramme auf **derselben
    Raumzeitachse**. Die Richtung ist konsistent — was moduliert die Amplitude?
-3. **2013** (drittes Bestätigungsjahr): Monat 11 hängt in CI. Bei 12/12 dann
-   Merge + fam-Probe für drittes Jahr.
+3. **2013** (drittes Bestätigungsjahr): **ERLEDIGT** — Monat 11 via aia-cdn CI
+   (34042431334) aufs CDN manifestiert (12/12), Volljahr gemergt und gemessen
+   (524 Ev): Kaskade reproduziert sich (193→211 +1.67e-1, 211→335 +7.71e-2,
+   335→94 +1.01e-1, ~96-s, fam 1.71e-1 unter-fam). Drei Jahre tragen die
+   gerichtete Aufwärts-Kaskade.
 
 ## Datenlage (wichtig)
 
 - **Dauerhaft:** die AIA-Monats-Assets liegen als CDN-Release
-  `jsoc.stanford.edu/aiaYYYY_MM.bin` (2013 11/12, 2014 12/12, 2015 12/12),
-  20–31 MB je Monat. phi/sources.φ verweist weiter auf `aia2014_lines.bin`
+  `jsoc.stanford.edu/aiaYYYY_MM.bin` (2013 12/12, 2014 12/12, 2015 12/12),
+  20–31 MB je Monat. Die GOES-15-Trigger liegen dauerhaft unter
+  `data/ncei.noaa.gov/goes15_2013/` (363, 2013) und `data/ncei.noaa.gov/goes15/`
+  (357, 2014) im Repo-Datenpfad; die gemergten Volljahr-Bins unter
+  `data/jsoc.stanford.edu/aia2014_fullyear.bin` und `aia2013_fullyear.bin`.
+  phi/sources.φ verweist weiter auf `aia2014_lines.bin`
   (dangling — das Einzel-Asset wurde gelöscht, die Monats-Assets sind die
   stabile Form; phi-Referenz ist zu aktualisieren).
-- **Transient (wipe-gefährdet):** gemergte Volljahr-Bins und GOES-Trigger liegen
-  in `/tmp/opencode/` (aia2014/2015_fullyear.bin, goes15_2013/2015/…). Beim
-  Neustart erneut von CDN ziehen und mit `aia_compiler --merge` mergen. Die
-  dauerhaften Monats-Assets sind die Quelle der Wahrheit.
+- **Transient/neu zu ziehen:** die 2015-AIA- und 2015-GOES-Trigger liegen nur
+  auf dem CDN bzw. NCEI — nicht lokal. 2013/2014-Volljahre sind dauerhaft unter
+  `data/` abgelegt. Die dauerhaften Monats-Assets auf dem CDN sind die Quelle
+  der Wahrheit; eine lokale Ernte in `/tmp` ist kein Ersatz für sie.
 - **GOES-Trigger:** NCEI 2-s XRS (goes15/gxrs-l2-irrad), je Tag
-  `xr_YYYYMMDD.nc`. 2014 und 2015 (GOES-15) je ~350+ Tage; für 2013 liegt die
-  Datei ebenfalls bereit. Auf Restart erneut laden.
+  `sci_gxrs-l2-irrad_g15_d{YYYYMMDD}_v0-1-0.nc`. 2013 (363) und 2014 (357) unter
+  `data/ncei.noaa.gov/goes15_2013/` resp. `goes15/`. 2015 bei Bedarf von NCEI
+  ziehen (Version v2-2-1).
 
 ## Workflow-Notiz
 
