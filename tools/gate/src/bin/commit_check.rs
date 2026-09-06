@@ -24,7 +24,12 @@ fn main() {
         obj.insert("content".to_string(), JsonVal::Str(content));
         let args = json_write(&JsonVal::Obj(obj));
         if let Some(v) = gate.check_tool_call("write", &args) {
-            eprintln!("commit_check: {path}: {} - {}", v.rule, v.feedback);
+            let loc = if v.line > 0 {
+                format!("{path}:{}", v.line)
+            } else {
+                path.to_string()
+            };
+            eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
             fail = true;
         }
     }
