@@ -37,7 +37,10 @@ fn main() {
         statuses.push(format!("{}={}", asset, code));
     }
     let ci = ci_summary();
-    let line = report_line(epoch(), &statuses.join(" "), &ci);
+    let Some(now) = epoch() else {
+        return;
+    };
+    let line = report_line(now, &statuses.join(" "), &ci);
     append_report(&reports_dir().join("cds_watchdog.φ"), &line);
     println!("{}", line.trim_end());
 }
@@ -46,7 +49,7 @@ fn reports_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir).join("reports");
     }
-    std::path::PathBuf::from(".").join("reports")
+    std::path::PathBuf::from("state").join("reports")
 }
 
 fn ci_summary() -> String {
@@ -74,11 +77,11 @@ fn report_line(epoch: u64, statuses: &str, ci: &str) -> String {
     format!("cds_watchdog | {} | {} | {}\n", epoch, statuses, ci)
 }
 
-fn epoch() -> u64 {
+fn epoch() -> Option<u64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs())
-        .unwrap_or(0)
+        .ok()
 }
 
 fn append_report<P: AsRef<std::path::Path>>(path: P, line: &str) {

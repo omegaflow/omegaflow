@@ -46,7 +46,7 @@ fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 fn has_unprocessed_notes(content: &str) -> bool {
@@ -75,9 +75,7 @@ mod tests {
 
     #[test]
     fn a_note_line_is_dirty() {
-        assert!(has_unprocessed_notes(
-            "# Notizen\n\n## Eingang\n\n- eine notiz\n"
-        ));
+        assert!(has_unprocessed_notes("# Notes\n\n## Inbox\n\n- a note\n"));
     }
 
     #[test]

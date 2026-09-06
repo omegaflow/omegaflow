@@ -13,7 +13,7 @@ const YEAR: i64 = 1996;
 const NEAR_DAYS: i64 = 30;
 const MIN_SPEAR: usize = 8;
 const LOUD_HZ: f64 = 3.0;
-const OUT: &str = "reports/galileo_1996_rest_split.txt";
+const OUT: &str = "state/reports/galileo_1996_rest_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()

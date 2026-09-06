@@ -12,7 +12,7 @@ pub fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from(".")
+    std::path::PathBuf::from("state")
 }
 
 pub fn state_asset(rel: &str) -> std::path::PathBuf {

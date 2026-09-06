@@ -172,7 +172,7 @@ fn main() {
 
     std::fs::create_dir_all("reports").ok();
     let body = out.join("\n") + "\n";
-    match std::fs::write("reports/galileo_mode1_elongation.txt", &body) {
+    match std::fs::write("state/reports/galileo_mode1_elongation.txt", &body) {
         Ok(()) => {
             eprintln!("galileo: mode 1 elongation report written");
         }
