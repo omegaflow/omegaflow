@@ -1,10 +1,19 @@
 use crate::mathematikerin::healpix::ang2pix_nest;
 
 pub const MAGIC: [u8; 4] = *b"AMN1";
-pub const VERSION: u8 = 1;
+pub const VERSION: u8 = 2;
 pub const HEADER_LEN: usize = 13;
 pub const REC_BYTES: usize = 56;
 pub const NSIDE: i64 = 1024;
+
+pub const PRES_ERR90: u8 = 0x01;
+pub const PRES_ERR50: u8 = 0x02;
+pub const PRES_ENERGY: u8 = 0x04;
+pub const PRES_SIGNALNESS: u8 = 0x08;
+pub const PRES_FAR: u8 = 0x10;
+pub const PRES_REVISION: u8 = 0x20;
+pub const PRES_TJD: u8 = 0x40;
+pub const PRES_SOD: u8 = 0x80;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum NoticeClass {
@@ -17,6 +26,7 @@ pub struct AmonRecord {
     pub order: u8,
     pub class: NoticeClass,
     pub ipix: u32,
+    pub present: u8,
     pub run: u32,
     pub event: u32,
     pub ra_deg: f32,
@@ -64,6 +74,7 @@ pub fn encode_rec(out: &mut [u8; REC_BYTES], r: &AmonRecord) {
     out.fill(0);
     out[0] = r.order;
     out[1] = r.class as u8;
+    out[2] = r.present;
     out[4..8].copy_from_slice(&r.ipix.to_le_bytes());
     out[8..12].copy_from_slice(&r.run.to_le_bytes());
     out[12..16].copy_from_slice(&r.event.to_le_bytes());
@@ -106,6 +117,7 @@ pub fn decode_rec(b: &[u8]) -> Option<AmonRecord> {
         order,
         class,
         ipix,
+        present: b[2],
         run: u32::from_le_bytes(b[8..12].try_into().ok()?),
         event: u32::from_le_bytes(b[12..16].try_into().ok()?),
         ra_deg,
@@ -131,6 +143,7 @@ mod tests {
             order,
             class: NoticeClass::Gold,
             ipix,
+            present: 0xFF,
             run: 143048,
             event: 12474624,
             ra_deg: 86.31,
@@ -183,6 +196,7 @@ mod tests {
         let back = decode_rec(&b).unwrap();
         assert_eq!(back.order, r.order);
         assert_eq!(back.ipix, r.ipix);
+        assert_eq!(back.present, r.present);
         assert_eq!(back.class, NoticeClass::Gold);
         assert_eq!(back.run, 143048);
         assert_eq!(back.event, 12474624);
