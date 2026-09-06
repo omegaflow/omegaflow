@@ -10,7 +10,7 @@ const DAY: f64 = 86400.0;
 const PIONEER_ANOMALY: f64 = 8.74e-10;
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ephemeris_{name}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     match std::fs::read(&path)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -66,7 +66,7 @@ fn span_date(d: i64) -> String {
 }
 
 fn run(eph: &HashMap<String, BodyEphemeris>) {
-    let path = "data/pioneer10_skyfreq.bin";
+    let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
         return;

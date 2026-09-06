@@ -112,9 +112,9 @@ fn is_atomic_ionic(species: &str) -> bool {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let mut seed = "/tmp/opencode/hst_detection_seed.json".to_string();
-    let mut params = "/tmp/opencode/pscomppars_hst.json".to_string();
-    let mut out = "/tmp/opencode/hst_disequilibrium_verdict.txt".to_string();
+    let mut seed = "tmp/hst_detection_seed.json".to_string();
+    let mut params = "tmp/pscomppars_hst.json".to_string();
+    let mut out = "tmp/hst_disequilibrium_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut i = 1usize;
     while i < args.len() {

@@ -45,7 +45,7 @@ fn median(vals: &[f64]) -> Option<f64> {
     Some(s[s.len() / 2])
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    std::fs::read(format!("data/ephemeris_{name}.bin"))
+    std::fs::read(format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
         .map(|e| {
@@ -94,7 +94,7 @@ fn main() {
     }
     let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
 
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -162,7 +162,9 @@ fn main() {
     }
 
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo late-conjunction (1997, elong < 30 deg) station x strength split".to_string());
+    out.push(
+        "galileo late-conjunction (1997, elong < 30 deg) station x strength split".to_string(),
+    );
     out.push(format!(
         "binding: modes 1/2/3; lock transitions (|resid| > {:.0} Hz) excluded before noise; s = signal_strength slot 7",
         LOCK_HZ
@@ -179,45 +181,50 @@ fn main() {
         pad_zero
     ));
     for m in 1..=3i64 {
-        out.push(format!(
-            "mode {m}: non-lock samples {}, lock transitions {}",
-            merged
-                .iter()
-                .filter(|((mm, _, _), _)| *mm == m)
-                .map(|(_, v)| v.len())
-                .sum::<usize>(),
-            locks.get(&m).copied().unwrap_or(0)
-        ));
+        let nsamp: usize = merged
+            .iter()
+            .filter(|((mm, _, _), _)| *mm == m)
+            .map(|(_, v)| v.len())
+            .sum();
+        if nsamp == 0 {
+            out.push(format!("mode {m}: no non-lock samples"));
+        } else {
+            let lk = match locks.get(&m) {
+                Some(&v) => format!("{v}"),
+                None => "0".to_string(),
+            };
+            out.push(format!(
+                "mode {m}: non-lock samples {nsamp}, lock transitions {lk}"
+            ));
+        }
     }
 
     let mut by_mode: BTreeMap<i64, Vec<(i64, i64, u8, f64, usize)>> = BTreeMap::new();
     for ((m, day, st, bk), v) in &cells {
-        if !STATIONS.contains(st)
-            || v.len() < MIN_CELL
-            || !window_day(*day, &year_of, &elong_of)
-        {
+        if !STATIONS.contains(st) || v.len() < MIN_CELL || !window_day(*day, &year_of, &elong_of) {
             continue;
         }
-        by_mode.entry(*m).or_default().push((*day, *st, *bk, rms(v), v.len()));
+        by_mode
+            .entry(*m)
+            .or_default()
+            .push((*day, *st, *bk, rms(v), v.len()));
     }
     let mut all_by_mode: BTreeMap<i64, Vec<(i64, i64, f64, usize)>> = BTreeMap::new();
     for ((m, day, st), v) in &merged {
-        if !STATIONS.contains(st)
-            || v.len() < MIN_CELL
-            || !window_day(*day, &year_of, &elong_of)
-        {
+        if !STATIONS.contains(st) || v.len() < MIN_CELL || !window_day(*day, &year_of, &elong_of) {
             continue;
         }
-        all_by_mode.entry(*m).or_default().push((*day, *st, rms(v), v.len()));
+        all_by_mode
+            .entry(*m)
+            .or_default()
+            .push((*day, *st, rms(v), v.len()));
     }
 
     for m in 1..=3i64 {
         let wdays: BTreeSet<i64> = merged
             .keys()
             .filter(|(mm, day, st)| {
-                *mm == m
-                    && STATIONS.contains(st)
-                    && window_day(*day, &year_of, &elong_of)
+                *mm == m && STATIONS.contains(st) && window_day(*day, &year_of, &elong_of)
             })
             .map(|k| k.1)
             .collect();
@@ -230,16 +237,15 @@ fn main() {
             out.push("  no window days (0 honored)".to_string());
             continue;
         }
-        let win_rows = by_mode.get(&m).cloned().unwrap_or_default();
-        let win_all = all_by_mode.get(&m).cloned().unwrap_or_default();
+        let (Some(win_rows), Some(win_all)) = (by_mode.get(&m), all_by_mode.get(&m)) else {
+            continue;
+        };
 
         for st in STATIONS {
             let samp: usize = merged
                 .iter()
                 .filter(|((mm, day, ss), _)| {
-                    *mm == m
-                        && *ss == st
-                        && window_day(*day, &year_of, &elong_of)
+                    *mm == m && *ss == st && window_day(*day, &year_of, &elong_of)
                 })
                 .map(|(_, v)| v.len())
                 .sum();

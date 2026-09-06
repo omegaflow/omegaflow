@@ -1,5 +1,5 @@
 use omegaflow::archivar::{
-    BodyEphemeris, body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
+    body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris,
 };
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 use std::collections::HashMap;
@@ -75,8 +75,10 @@ fn tidal_at(tdb: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let f107_path = arg_value(&args, "--f107-bin")
-        .unwrap_or_else(|| "/tmp/opencode/f107_penticton.bin".to_string());
+    let f107_path = match arg_value(&args, "--f107-bin") {
+        Some(p) => p,
+        None => "tmp/f107_penticton.bin".to_string(),
+    };
     let mut f107 = read_f107(&f107_path);
     if f107.is_empty() {
         if let Some(bytes) = fetch_raw_bytes(F107_CDN, 3600) {
