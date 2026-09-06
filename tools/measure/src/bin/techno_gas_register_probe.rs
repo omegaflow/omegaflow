@@ -53,13 +53,13 @@ fn techno_species_catalog() -> Vec<TechnoSpecies> {
             name: "CF4",
             band: Band::Pending,
             ambiguity: Ambiguity::IndustrialOnly,
-            band_source: "kein Band in den Befund-Quellen gemessen — pending",
+            band_source: "no band measured in the verdict sources — pending",
         },
         TechnoSpecies {
             name: "NF3",
             band: Band::Pending,
             ambiguity: Ambiguity::IndustrialOnly,
-            band_source: "kein Band in den Befund-Quellen gemessen — pending",
+            band_source: "no band measured in the verdict sources — pending",
         },
         TechnoSpecies {
             name: "NO2",
@@ -206,7 +206,7 @@ fn main() {
     let mut seed = "docs/reference/jwst_detection_seed.json".to_string();
     let mut registry = "jwst_detection_registry.json".to_string();
     let mut params = String::new();
-    let mut out = "/tmp/opencode/techno_gas_register_verdict.txt".to_string();
+    let mut out = "tmp/techno_gas_register_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut i = 1usize;
     while i < args.len() {
@@ -305,13 +305,11 @@ fn run(
     let solar7 = halogen_solar();
 
     let mut out = String::new();
-    out.push_str(
-        "techno_gas_register_probe — industrielle Atmosphaeren-Gase (CFC/SF6/CF4/NF3/NO2)\n",
-    );
-    out.push_str("signal: eine PUBLIZIERT-DETEKTIERTE techno-Spezies, deren Gleichgewichts-Mischungsverhältnis bei Teq die Detektions-Schwelle nicht erreicht = industrial-only-hit (kein natuerlicher/lebender Ursprung)\n");
-    out.push_str("  NO2-Achse benannt: bio+industriell mehrdeutig (Kopparapu 2021) — eine NO2-Detektion ist living-ODER industrial, keine saubere Trennlinie; CFC/SF6/CF4/NF3 haben keine natuerliche/lebende Quelle\n");
+    out.push_str("techno_gas_register_probe — industrial atmosphere gases (CFC/SF6/CF4/NF3/NO2)\n");
+    out.push_str("signal: a PUBLISHED-DETECTED techno species whose equilibrium mixing ratio at Teq does not reach the detection threshold = industrial-only-hit (no natural/biological origin)\n");
+    out.push_str("  the NO2 axis is named: bio+industrial ambiguous (Kopparapu 2021) — an NO2 detection is living-OR-industrial, no clean dividing line; CFC/SF6/CF4/NF3 have no natural/biological source\n");
     out.push_str(&format!(
-        "inputs: seed {} ({} Detektionen) | registry {} ({} Wirte) | params {} ({} Wirts-Tabellen)\n",
+        "inputs: seed {} ({} detections) | registry {} ({} hosts) | params {} ({} host tables)\n",
         seed_path,
         seed.len(),
         registry_path,
@@ -320,25 +318,25 @@ fn run(
         planet_rows.len()
     ));
     out.push_str(&format!(
-        "modell: Gleichgewicht bei {:.0} bar, solare Haeufigkeit H,C,O,N,S,F,Cl (F/H {:.2e}, Cl/H {:.2e}, Anders-Grevesse 1989) — thermochem::equilibrium_composition_halogen (35 Slots: 16 archival + 8 S + 11 F/Cl)\n",
+        "model: equilibrium at {:.0} bar, solar abundance H,C,O,N,S,F,Cl (F/H {:.2e}, Cl/H {:.2e}, Anders-Grevesse 1989) — thermochem::equilibrium_composition_halogen (35 slots: 16 archival + 8 S + 11 F/Cl)\n",
         P0_PA / 101325.0, SOLAR_F, SOLAR_CL
     ));
     out.push_str(&format!(
-        "  Domäne Teq {:.0}..{:.0} K; unter {:.0} K ist der F/Cl-Floor pending (Kondensations-Buchhaltung des 273-K-Pfads noch nicht auf die F/Cl-Basis erweitert — benannt, kein Wert gefälscht)\n",
+        "  domain Teq {:.0}..{:.0} K; below {:.0} K the F/Cl floor stays pending (the condensation bookkeeping of the 273-K path is not yet extended to the F/Cl basis — named, no value fabricated)\n",
         HALOGEN_T_MIN, MODEL_T_MAX, HALOGEN_T_MIN
     ));
     out.push_str(&format!(
-        "F/Cl-Daten: NIST-JANAF (Chase 1998) Shomate-Fits, NIST-WebBook-Gasseiten (curl-Cache /tmp/opencode/nist_fcl/, 2026-09-05); jede Spezies mit 298,15-K-Anker + Fit-Domäne, unit-getestet\n",
+        "F/Cl data: NIST-JANAF (Chase 1998) Shomate fits, NIST WebBook gas pages (curl cache tmp/nist_fcl/, 2026-09-05); every species with a 298.15-K anchor + fit domain, unit-tested\n",
     ));
     out.push_str(&format!(
-        "detektions-schwelle floor = {:.1e} (Mischungsverhältnis); Herkunft: benannter Urteilswert — die Saat traegt keine Instrumenten-Nachweisgrenze je Spezies\n",
+        "detection threshold floor = {:.1e} (mixing ratio); origin: the named verdict value — the seed carries no instrument detection limit per species\n",
         floor
     ));
     out.push_str(
-        "sensitivitäts-Achse (der benannte Kern): je Wirt gemessen, ob ein beobachtetes Spektrum die Band-Lage der Spezies ueberdeckt (registry spectra wl_min/wl_max) — die numerische Nachweisgrenze je Wirt ist in keiner Quelle publiziert und wird nicht erfunden; wo keine Band-Abdeckung, ist die Abwesenheit nicht beurteilbar (pending)\n",
+        "sensitivity axis (the named core): per host measured whether an observed spectrum covers the species band location (registry spectra wl_min/wl_max) — the numeric detection limit per host is published in no source and is not invented; where there is no band coverage, the absence is unadjudicable (pending)\n",
     );
     out.push_str(
-        "reservoir-zeuge [Fe/H]: pscomppars st_met skaliert den sulfur-Pfad (paralleler, archivierter Befund); der halogen-Pfad traegt noch keine scaled-F/Cl-Regression — der [Fe/H]-Zeuge fuer F/Cl bleibt pending (benannt)\n",
+        "reservoir witness [Fe/H]: pscomppars st_met scales the sulfur path (parallel, archived verdict); the halogen path carries no scaled F/Cl regression yet — the [Fe/H] witness for F/Cl stays pending (named)\n",
     );
 
     let techno_names: Vec<&str> = catalog.iter().map(|s| s.name).collect();
@@ -361,22 +359,22 @@ fn run(
         }
     }
     out.push_str(&format!(
-        "techno-Spezies der Katalog ({}): {}\n",
+        "techno species of the catalog ({}): {}\n",
         catalog.len(),
         catalog.iter().map(|s| s.name).collect::<Vec<_>>().join(",")
     ));
     let detected_techno_note = if detected_techno.is_empty() {
-        "(keine — absent, benannt)".to_string()
+        "(none — absent, named)".to_string()
     } else {
         detected_techno.join(",")
     };
     let registry_techno_note = if registry_techno.is_empty() {
-        "(keine)".to_string()
+        "(none)".to_string()
     } else {
         registry_techno.join(",")
     };
     out.push_str(&format!(
-        "gemessen: techno-Detektionen in der Saat = {} {} | im Registry = {} {}\n",
+        "measured: techno detections in the seed = {} {} | in the registry = {} {}\n",
         detected_techno.len(),
         detected_techno_note,
         registry_techno.len(),
@@ -406,8 +404,6 @@ fn run(
         claims.sort_unstable();
         claims.dedup();
 
-        // Floor: the planet carrying the host's spectra, attributed like the
-        // disequilibrium probe (single claimed planet; else pending).
         let target_planet: Option<&PlanetRow> = if claims.len() == 1 {
             planet_rows
                 .get(&h.host)
@@ -419,38 +415,40 @@ fn run(
         let (floor_blocks, floor_pending_reason) = match target_planet {
             None => {
                 let reason = if claims.is_empty() {
-                    "kein Spektrum mit Planeten-Attribution".to_string()
+                    "no spectrum with a planet attribution".to_string()
                 } else if planet_rows.get(&h.host).is_none() {
                     format!(
-                        "keine pscomppars-Zeile fuer {} (Spektren: {})",
+                        "no pscomppars row for {} (spectra: {})",
                         h.host,
                         claims.join(", ")
                     )
                 } else if claims.len() > 1 {
                     format!(
-                        "Attribution offen — Spektren nennen {} Planeten: {}",
+                        "attribution open — the spectra name {} planets: {}",
                         claims.len(),
                         claims.join(", ")
                     )
                 } else {
-                    format!("pscomppars fuehrt {} nicht fuer {}", claims[0], h.host)
+                    format!("pscomppars carries {} for no {} planet", claims[0], h.host)
                 };
                 (Vec::new(), Some(reason))
             }
             Some(p) => match teq(p.teff, p.rad_solar * SUN_RADIUS_M, p.orbsmax_au * AU_M, 0.0) {
-                None => (Vec::new(), Some("Teq nicht berechenbar".to_string())),
+                None => (Vec::new(), Some("Teq not computable".to_string())),
                 Some(t_eq) => {
                     if !(HALOGEN_T_MIN..=MODEL_T_MAX).contains(&t_eq) {
                         let reason = format!(
-                            "Teq {:.0} K ausserhalb der halogen-Domäne {:.0}..{:.0} K (F/Cl-Floor pending)",
+                            "Teq {:.0} K outside the halogen domain {:.0}..{:.0} K (F/Cl floor pending)",
                             t_eq, HALOGEN_T_MIN, MODEL_T_MAX
                         );
                         (Vec::new(), Some(reason))
                     } else {
                         match equilibrium_composition_halogen(t_eq, P0_PA) {
                             None => {
-                                let reason =
-                                    format!("halogen-Loeser konvergiert bei {:.0} K nicht", t_eq);
+                                let reason = format!(
+                                    "the halogen solver does not converge at {:.0} K",
+                                    t_eq
+                                );
                                 (Vec::new(), Some(reason))
                             }
                             Some(frac) => {
@@ -463,15 +461,15 @@ fn run(
                                     *per += 1;
                                     let tag = if s.ambiguity == Ambiguity::IndustrialOnly {
                                         if f < floor {
-                                            "industrial-only-wertbar"
+                                            "industrial-only-classifiable"
                                         } else {
-                                            "gleichgewichts-tragend"
+                                            "equilibrium-carrying"
                                         }
                                     } else {
-                                        "bio/industriell-mehrdeutig"
+                                        "bio/industrial-ambiguous"
                                     };
                                     blocks.push(format!(
-                                        "      floor {} = {} (Slot {}) bei Teq {:.0} K — jede Detektion waere {}",
+                                        "      floor {} = {} (slot {}) at Teq {:.0} K — any detection would be {}",
                                         s.name,
                                         fmt_floor(f),
                                         slot,
@@ -492,13 +490,12 @@ fn run(
             n_floor_pending += 1;
         }
 
-        // Sensitivity axis: band coverage of the observed spectra per species.
         let mut cov_blocks: Vec<String> = Vec::new();
         let mut cov_pending: Vec<String> = Vec::new();
         for s in &catalog {
             match s.band {
                 Band::Pending => {
-                    cov_pending.push(format!("{}: Band-Lage pending", s.name));
+                    cov_pending.push(format!("{}: band location pending", s.name));
                 }
                 band => {
                     let mut covered = false;
@@ -512,14 +509,14 @@ fn run(
                             }
                             if b > a {
                                 span = format!(
-                                    "Ueberdeckung [{:.3},{:.3}] um im Spektrum {:.3}-{:.3} um",
+                                    "coverage [{:.3},{:.3}] um in the spectrum {:.3}-{:.3} um",
                                     a, b, sp.wl_min, sp.wl_max
                                 );
                             }
                         }
                     }
                     if !any_spectrum {
-                        cov_blocks.push(format!("{}: keine Spektren im Registry", s.name));
+                        cov_blocks.push(format!("{}: no spectra in the registry", s.name));
                         continue;
                     }
                     let is_range = matches!(band, Band::Range(_, _));
@@ -531,23 +528,23 @@ fn run(
                         *c += 1;
                         if is_range {
                             cov_blocks.push(format!(
-                                "{}: Band im beobachteten Spektrum teilabgedeckt ({}) — vollstaendige 0.2-0.7-um-Abdeckung fehlt",
+                                "{}: band partially covered in the observed spectrum ({}) — the full 0.2-0.7-um coverage is missing",
                                 s.name, span
                             ));
                         } else {
                             cov_blocks.push(format!(
-                                "{}: Band-Lage {:.2} um im beobachteten Spektrum (sichtbar; numerische Nachweisgrenze pending)",
+                                "{}: band location {:.2} um in the observed spectrum (visible; numeric detection limit pending)",
                                 s.name, band_wavelength(s.band)
                             ));
                         }
                     } else if is_range && !span.is_empty() {
                         cov_blocks.push(format!(
-                            "{}: nur Rand-Ueberdeckung ({}) — der 0.2-0.7-um-Kanal ist hier nicht beobachtet (pending)",
+                            "{}: edge coverage only ({}) — the 0.2-0.7-um channel is not observed here (pending)",
                             s.name, span
                         ));
                     } else {
                         cov_blocks.push(format!(
-                            "{}: Band nicht in einem beobachteten Spektrum — Abwesenheit nicht beurteilbar (pending)",
+                            "{}: band in no observed spectrum — absence unadjudicable (pending)",
                             s.name
                         ));
                     }
@@ -566,9 +563,9 @@ fn run(
             .filter(|d| techno_names.contains(&d.as_str()))
             .count();
         if n_abs == 0 {
-            block.push_str("VERDICT absent (keine techno-Detektion)");
+            block.push_str("VERDICT absent (no techno detection)");
         } else {
-            block.push_str("VERDICT industrial-only-hit (techno-Detektion registriert)");
+            block.push_str("VERDICT industrial-only-hit (techno detection registered)");
         }
         block.push('\n');
         match (&floor_pending_reason, floor_blocks.is_empty()) {
@@ -576,7 +573,7 @@ fn run(
                 block.push_str(&format!("      floor: pending — {reason}\n"));
             }
             (None, true) => {
-                block.push_str("      floor: (keine Spezies auswertbar)\n");
+                block.push_str("      floor: (no species classifiable)\n");
             }
             (None, false) => {
                 for f in &floor_blocks {
@@ -586,12 +583,12 @@ fn run(
             }
         }
         for c in &cov_blocks {
-            block.push_str("      abdeckung: ");
+            block.push_str("      coverage: ");
             block.push_str(c);
             block.push('\n');
         }
         for p in &cov_pending {
-            block.push_str("      abdeckung: ");
+            block.push_str("      coverage: ");
             block.push_str(p);
             block.push('\n');
         }
@@ -599,16 +596,16 @@ fn run(
     }
 
     out.push_str(&format!(
-        "Wirte: {} | floor berechnet {} | floor pending {} | Band-ueberdeckende (host,spezies)-Paare {}\n",
+        "hosts: {} | floor computed {} | floor pending {} | band-covering (host,species) pairs {}\n",
         hosts.len(),
         n_floor_computed,
         n_floor_pending,
         n_observable_band
     ));
-    out.push_str("je Spezies: Wirte mit berechnetem floor | Wirte mit Band-Ueberdeckung\n");
+    out.push_str("per species: hosts with a computed floor | hosts with band coverage\n");
     for s in &catalog {
         out.push_str(&format!(
-            "  {}: floor {} | ueberdeckt {} | {}\n",
+            "  {}: floor {} | covered {} | {}\n",
             s.name, per_species_floor[s.name], per_species_observable[s.name], s.band_source
         ));
     }
@@ -619,43 +616,43 @@ fn run(
     }
 
     out.push('\n');
-    out.push_str("systematische Abwesenheits-Aussage (gemessen):\n");
+    out.push_str("systematic absence statement (measured):\n");
     out.push_str(&format!(
-        "  - 0 techno-Detektionen in der Saat ({}) und im Registry ueber {} Wirte — CFC-11/CFC-12/SF6/CF4/NF3/NO2 sind absent, benannt, nie fabriziert (0 honored)\n",
+        "  - 0 techno detections in the seed ({}) and in the registry over {} hosts — CFC-11/CFC-12/SF6/CF4/NF3/NO2 are absent, named, never fabricated (0 honored)\n",
         seed_path, hosts.len()
     ));
     out.push_str(&format!(
-        "  - der halogen-Gleichgewichts-Floor jeder techno-Spezies liegt bei jedem auswertbaren Teq um viele Groessenordnungen unter der benannten Schwelle {:.1e}: eine kuenftige Detektion waere industrial-only-wertbar (CFC/SF6/CF4/NF3) bzw. bio/industriell-mehrdeutig (NO2)\n",
+        "  - the halogen equilibrium floor of every techno species lies at every classifiable Teq many orders of magnitude below the named threshold {:.1e}: a future detection would be industrial-only-classifiable (CFC/SF6/CF4/NF3) resp. bio/industrial-ambiguous (NO2)\n",
         floor
     ));
-    out.push_str("  - die Sensitivitaets-Achse (gemessen):\n");
+    out.push_str("  - the sensitivity axis (measured):\n");
     out.push_str(&format!(
-        "      CFCl3 11.8 um ueberdeckt {} Wirte, CF2Cl2 10.8 um {} Wirte, SF6 10.7 um {} Wirte — auf diesen Wirten liegt die Spezies-Band in einem beobachteten Spektrum; die Abwesenheit ist dort ein echter Null ueber dem Band (numerische Nachweisgrenze je Wirt: pending, in keiner Quelle publiziert)\n",
+        "      CFCl3 11.8 um covers {} hosts, CF2Cl2 10.8 um {} hosts, SF6 10.7 um {} hosts — on these hosts the species band lies in an observed spectrum; the absence there is a true null above the band (numeric detection limit per host: pending, published in no source)\n",
         per_species_observable["CFCl3"], per_species_observable["CF2Cl2"], per_species_observable["SF6"]
     ));
     out.push_str(&format!(
-        "      CF4/NF3: Band-Lage in den Befund-Quellen nicht gemessen — Beobachtbarkeit pending; NO2 0.2-0.7 um: nur Rand-Ueberdeckung ab ~0.6 um in NIRSpec-Spektren, der volle sichtbare Kanal ist hier nicht beobachtet — pending\n",
+        "      CF4/NF3: band location not measured in the verdict sources — observability pending; NO2 0.2-0.7 um: edge coverage only from ~0.6 um in NIRSpec spectra, the full visible channel is not observed here — pending\n",
     ));
     out.push_str(
-        "      wo weder Band-Ueberdeckung noch numerische Nachweisgrenze gemessen ist, bleibt die Abwesenheit pending — nie als \"sub-floor\" behauptet (0 honored, keine Fabrikation)\n",
+        "      where neither band coverage nor a numeric detection limit is measured, the absence stays pending — never claimed as \"sub-floor\" (0 honored, no fabrication)\n",
     );
 
     let mut sensitivity_hits = String::new();
     for f in [1.0e-8, 1.0e-6, 1.0e-4] {
         let count = host_lines
             .iter()
-            .filter(|l| l.contains("floor") && l.contains("industrial-only-wertbar"))
+            .filter(|l| l.contains("floor") && l.contains("industrial-only-classifiable"))
             .count();
         sensitivity_hits.push_str(&format!(
-            "bei floor {:.0e}: {:.1} hypothetische hit-faehige Wirte (Spezies-Flaeche, keine echten Detektionen) | ",
+            "at floor {:.0e}: {:.1} hypothetical hit-capable hosts (species area, no real detections) | ",
             f, count as f64 / 1.0
         ));
     }
-    out.push_str("empfindlichkeit der floor-Urteilswerts (hypothetisch, kein Fund): ");
+    out.push_str("sensitivity of the floor verdict value (hypothetical, no find): ");
     out.push_str(&sensitivity_hits);
     out.push('\n');
     out.push_str(&format!(
-        "solare F/Cl-Basis: F/H {:.2e}, Cl/H {:.2e} (Anders-Grevesse 1989; die halogen-Spezies-Floors skalieren linear mit der F/Cl-Basis — eine 0,2-dex-Verschiebung aendert kein Urteil)\n",
+        "solar F/Cl basis: F/H {:.2e}, Cl/H {:.2e} (Anders-Grevesse 1989; the halogen species floors scale linearly with the F/Cl basis — a 0.2-dex shift changes no verdict)\n",
         solar7[5], solar7[6]
     ));
 

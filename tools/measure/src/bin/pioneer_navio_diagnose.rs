@@ -9,7 +9,7 @@ fn median(v: &mut [f64]) -> f64 {
 }
 
 fn main() {
-    let path = "data/pioneer10_doppler.bin";
+    let path = "data/spdf.gsfc.nasa.gov/pioneer10_doppler.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: doppler bin void ({path})");
         return;

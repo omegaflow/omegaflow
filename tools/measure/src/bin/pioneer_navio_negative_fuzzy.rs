@@ -76,30 +76,35 @@ fn subhz_drift(name: &str, ts: &[f64], r2: &[f64]) {
         r = accel / AP
     );
     let x2: Vec<f64> = t.iter().map(|tt| (tt - mt) * (tt - mt)).collect();
-    let a_q = lin_fit(&x2, r2).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_q: Vec<f64> = x2.iter().zip(r2.iter()).map(|(x, v)| v - a_q * x).collect();
-    let rms_q = rms(&resid_q);
+    let q_resid = lin_fit(&x2, r2).map(|(a, _)| {
+        let resid_q: Vec<f64> = x2.iter().zip(r2.iter()).map(|(x, v)| v - a * x).collect();
+        rms(&resid_q)
+    });
     let tau_s = TAU_Y * 365.25 * day_s;
     let dec: Vec<f64> = t
         .iter()
         .map(|tt| 1.0 - (-tt * day_s / tau_s).exp())
         .collect();
-    let a_e = lin_fit(&dec, r2).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_e: Vec<f64> = dec
-        .iter()
-        .zip(r2.iter())
-        .map(|(d, v)| v - a_e * d)
-        .collect();
-    let rms_e = rms(&resid_e);
-    eprintln!(
-        "{name}: model resid RMS — linear {rms_lin:.3e}, ∝t² {rms_q:.3e}, RTG-exp τ={TAU_Y:.0}y {rms_e:.3e} Hz"
-    );
-    let imp = |a: f64, b: f64| (a - b) / a * 100.0;
-    eprintln!(
-        "{name}: ∝t² improves on linear {iq:.2} %, RTG-exp {ie:.2} % (per-sample regression, √N over ~600k samples)",
-        iq = imp(rms_lin, rms_q),
-        ie = imp(rms_lin, rms_e)
-    );
+    let e_resid = lin_fit(&dec, r2).map(|(a, _)| {
+        let resid_e: Vec<f64> = dec.iter().zip(r2.iter()).map(|(d, v)| v - a * d).collect();
+        rms(&resid_e)
+    });
+    match (q_resid, e_resid) {
+        (Some(rms_q), Some(rms_e)) => {
+            eprintln!(
+                "{name}: model resid RMS — linear {rms_lin:.3e}, ∝t² {rms_q:.3e}, RTG-exp τ={TAU_Y:.0}y {rms_e:.3e} Hz"
+            );
+            let imp = |a: f64, b: f64| (a - b) / a * 100.0;
+            eprintln!(
+                "{name}: ∝t² improves on linear {iq:.2} %, RTG-exp {ie:.2} % (per-sample regression, √N over ~600k samples)",
+                iq = imp(rms_lin, rms_q),
+                ie = imp(rms_lin, rms_e)
+            );
+        }
+        _ => eprintln!(
+            "{name}: model resid RMS — linear {rms_lin:.3e}; ∝t² and RTG-exp fits absent (degenerate regressor)"
+        ),
+    }
     eprintln!(
         "{name}: the anomaly (~1 Hz/mission) vs per-sample regression floor {rms_lin:.1e} Hz — held against this floor, not claimed (0 honored)"
     );
@@ -275,7 +280,7 @@ fn report(name: &str, ts: &[f64], resid: &[f64], rx: &[i64], out_path: Option<&s
 }
 
 fn load_ephemeris(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -287,8 +292,6 @@ fn load_ephemeris(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool 
 
 fn zone_predicate(probe: &str) -> Option<(f64, f64)> {
     match probe {
-        // quiet-zone ranges from pioneer_navio_noise_geo (0932cae): the distance
-        // band whose per-day resid-RMS fell to the floor is the drift-only zone.
         "pioneer10" => Some((50.0, f64::INFINITY)),
         "pioneer11" => Some((15.0, 30.0)),
         _ => None,
@@ -296,7 +299,7 @@ fn zone_predicate(probe: &str) -> Option<(f64, f64)> {
 }
 
 fn run(probe: &str, sc_body: &str, zone: bool) {
-    let path = format!("data/{probe}_navio_residuum.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let Some(bytes) = std::fs::read(&path).ok() else {
         eprintln!("{probe}: residuum bin void ({path}) — 0 honored");
         return;
@@ -319,13 +322,14 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
         rms0 = rms(&resid)
     );
 
-    // The global floor (existing path), always — byte-identical serialization.
     report(
         probe,
         &ts,
         &resid,
         &rx,
-        Some(&format!("data/{probe}_navio_subkhz_daily.bin")),
+        Some(&format!(
+            "data/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_daily.bin"
+        )),
     );
 
     if !zone {
@@ -343,8 +347,6 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
         eprintln!("{probe}: {sc_body} ephemeris bin void — zone isolation void (0 honored)");
         return;
     }
-    // Per-day heliocentric distance (barycentric ≈ heliocentric for an outbound
-    // probe; same AU convention as pioneer_navio_noise_geo 0932cae).
     let mut day_au: BTreeMap<i64, f64> = BTreeMap::new();
     for &t in ts.iter() {
         let day = (t / DAY_S).floor() as i64;
@@ -385,8 +387,6 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
             last_day = last_day.max(day);
         }
     }
-    // timtag is TDB seconds since J2000 (the residuum compiler derives jd via
-    // jd = tdb/DAY_S + 2451545.0), so the era year counts from 2000.
     let era_y0 = 2000.0 + first_day as f64 / 365.25;
     let era_y1 = 2000.0 + last_day as f64 / 365.25;
     eprintln!(
@@ -403,7 +403,9 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
         &zts,
         &zres,
         &zrx,
-        Some(&format!("data/{probe}_navio_subkhz_zone_daily.bin")),
+        Some(&format!(
+            "data/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_zone_daily.bin"
+        )),
     );
     eprintln!(
         "{probe}: quiet-zone reduction above — compare its |daily-med| floor against the global floor of the non-zone run"

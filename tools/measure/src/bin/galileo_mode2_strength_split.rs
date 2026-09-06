@@ -48,7 +48,7 @@ fn median(vals: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ephemeris_{name}.bin");
+    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -132,7 +132,7 @@ fn main() {
     }
     let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
 
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -244,13 +244,11 @@ fn main() {
     ));
     let mut dec = String::from("  sample-strength percentiles: ");
     for (i, pct) in [10usize, 20, 30, 40, 50, 60, 70, 80, 90].iter().enumerate() {
-        dec.push_str(&format!(
-            "p{}={}, ",
-            (i + 1) * 10,
-            value_at_fraction(&counts, nonzero, *pct)
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| "-".to_string())
-        ));
+        let s = match value_at_fraction(&counts, nonzero, *pct) {
+            Some(v) => v.to_string(),
+            None => "-".to_string(),
+        };
+        dec.push_str(&format!("p{}={}, ", (i + 1) * 10, s));
     }
     out.push(dec.trim_end_matches(", ").to_string());
     out.push(format!(
@@ -259,8 +257,14 @@ fn main() {
         cut(1),
         cut(2)
     ));
-    let minv = counts.iter().min_by_key(|(v, _)| **v).map(|(v, c)| (*v, *c));
-    let maxc = counts.iter().max_by_key(|(_, c)| **c).map(|(v, c)| (*v, *c));
+    let minv = counts
+        .iter()
+        .min_by_key(|(v, _)| **v)
+        .map(|(v, c)| (*v, *c));
+    let maxc = counts
+        .iter()
+        .max_by_key(|(_, c)| **c)
+        .map(|(v, c)| (*v, *c));
     match minv {
         Some((v, c)) => out.push(format!(
             "  weakest non-zero strength: {v} ({c} samples, {:.2} % of non-zero)",
@@ -424,7 +428,9 @@ fn main() {
     }
 
     out.push(String::new());
-    out.push(format!("B. station split, cells (day, station, q) >= {MIN_CELL} samples"));
+    out.push(format!(
+        "B. station split, cells (day, station, q) >= {MIN_CELL} samples"
+    ));
     out.push("   row per station per bin: cells, samples, days, med cell RMS; conj subset = cells whose day has elong < 30".to_string());
     let stations: BTreeSet<i64> = agg_stq.keys().map(|k| k.1).collect();
     for st in stations {
@@ -433,11 +439,7 @@ fn main() {
                 stqcells.iter().filter(|c| c.1 == st && c.2 == q).collect();
             let cell_n: Vec<f64> = cells.iter().map(|c| c.4 as f64).collect();
             let rms_list: Vec<f64> = cells.iter().map(|c| c.3).collect();
-            let days_seen: usize = cells
-                .iter()
-                .map(|c| c.0)
-                .collect::<BTreeSet<i64>>()
-                .len();
+            let days_seen: usize = cells.iter().map(|c| c.0).collect::<BTreeSet<i64>>().len();
             let conj: Vec<f64> = cells
                 .iter()
                 .filter(|c| conj_days.contains(&c.0))
@@ -457,8 +459,7 @@ fn main() {
                 fmt_o(median(&conj))
             ));
         }
-        let cells: Vec<&(i64, i64, f64, usize)> =
-            stdaycells.iter().filter(|c| c.1 == st).collect();
+        let cells: Vec<&(i64, i64, f64, usize)> = stdaycells.iter().filter(|c| c.1 == st).collect();
         let rms_list: Vec<f64> = cells.iter().map(|c| c.2).collect();
         let conj: Vec<f64> = cells
             .iter()

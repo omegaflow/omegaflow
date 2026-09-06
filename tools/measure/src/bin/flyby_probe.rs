@@ -1,7 +1,6 @@
 use omegaflow::archivar::{
-    BodyEphemeris, NAIF_LSK_EMBEDDED, SourceConfig, body_barycenter_position,
-    body_barycenter_velocity, download_ephemeris_batch, fetch_raw_bytes, load_sources,
-    parse_ephemeris_binary,
+    body_barycenter_position, body_barycenter_velocity, download_ephemeris_batch, fetch_raw_bytes,
+    load_sources, parse_ephemeris_binary, BodyEphemeris, SourceConfig, NAIF_LSK_EMBEDDED,
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -193,7 +192,7 @@ fn coverage(eph: &BodyEphemeris) -> (f64, f64) {
 }
 
 fn load_flyby_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ephemeris_{name}.bin");
+    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
@@ -451,20 +450,29 @@ fn verdict_row(
         println!("{from:>10} → {to:<10} | no TE (n < 8)");
         return (0.0, "still".to_string());
     };
-    let thr = surrogate_stats_phase(to_s, from_s, lag, SEED)
-        .map(|(_, _, t)| t)
-        .unwrap_or(0.0);
-    let word = if te > fam {
-        "fam-carrying"
-    } else if te > thr {
-        "arrow over own threshold"
-    } else {
-        "still"
-    };
-    println!(
-        "{from:>10} → {to:<10} | lag {lag} h | TE {te:>10.4e} | thr {thr:>10.4e} | fam {fam:.4e} | {word}"
-    );
-    (te, word.to_string())
+    let thr = surrogate_stats_phase(to_s, from_s, lag, SEED).map(|(_, _, t)| t);
+    match thr {
+        Some(thr) => {
+            let word = if te > fam {
+                "fam-carrying"
+            } else if te > thr {
+                "arrow over own threshold"
+            } else {
+                "still"
+            };
+            println!(
+                "{from:>10} → {to:<10} | lag {lag} h | TE {te:>10.4e} | thr {thr:>10.4e} | fam {fam:.4e} | {word}"
+            );
+            (te, word.to_string())
+        }
+        None => {
+            let word = if te > fam { "fam-carrying" } else { "still" };
+            println!(
+                "{from:>10} → {to:<10} | lag {lag} h | TE {te:>10.4e} | thr absent | fam {fam:.4e} | {word}"
+            );
+            (te, word.to_string())
+        }
+    }
 }
 
 fn integrate_leg(
@@ -679,8 +687,8 @@ fn run_flyby(
 
     let mut j_cells = vec![None; n_hours];
     for h in 1..n_hours - 1 {
-        match (r_cells[h - 1], r_cells[h + 1]) {
-            (Some(a), Some(b)) => j_cells[h] = Some(b - 2.0 * r_cells[h].unwrap_or(0.0) + a),
+        match (r_cells[h - 1], r_cells[h], r_cells[h + 1]) {
+            (Some(a), Some(c), Some(b)) => j_cells[h] = Some(b - 2.0 * c + a),
             _ => {}
         }
     }
@@ -776,7 +784,10 @@ fn main() {
             (
                 idx,
                 s.clone(),
-                format!("data/ephemeris_{}.bin", s.body.as_deref().unwrap_or("")),
+                format!(
+                    "data/ssd.jpl.nasa.gov/ephemeris_{}.bin",
+                    s.body.as_deref().unwrap_or("")
+                ),
             )
         })
         .collect();
@@ -784,7 +795,9 @@ fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut planets: Vec<Planet> = Vec::new();
     for (_, s, path) in &items {
-        let name = s.body.clone().unwrap_or_default();
+        let Some(name) = s.body.clone() else {
+            continue;
+        };
         match std::fs::read(path)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -826,15 +839,16 @@ fn main() {
             MODEL_BODIES.len()
         );
     }
-    let earth_j2 = planets
-        .iter()
-        .find(|p| p.name == "earth")
-        .map(|p| p.j2)
-        .unwrap_or(0.0);
+    let earth_j2 = planets.iter().find(|p| p.name == "earth").map(|p| p.j2);
     let moon_in = planets.iter().any(|p| p.name == "moon");
-    println!(
-        "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2} (from the ephemeris-bins), Leapfrog {MODEL_DT_S:.0} s"
-    );
+    match earth_j2 {
+        Some(earth_j2) => println!(
+            "model: Sun+8+Moon point masses (moon {moon_in}) + Earth-J2 {earth_j2} (from the ephemeris-bins), Leapfrog {MODEL_DT_S:.0} s"
+        ),
+        None => println!(
+            "model: Sun+8+Moon point masses (moon {moon_in}), no earth — the Earth-J2 slot stays absent, Leapfrog {MODEL_DT_S:.0} s"
+        ),
+    }
 
     for (name, y, m, d) in FLYBYS {
         if let Some(only) = &only {
