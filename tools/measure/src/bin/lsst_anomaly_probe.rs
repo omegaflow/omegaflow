@@ -7,11 +7,11 @@ use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use omegaflow::ztf::{ZTF_G_LAMBDA_NM, ZTF_I_LAMBDA_NM, ZTF_R_LAMBDA_NM};
-use omegaflow_measure::deredden::{
+use omegaflow_measure::weberin::deredden::{
     build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
     BACKGROUND_PC_MIN,
 };
-use omegaflow_measure::nadel_gate::*;
+use omegaflow_measure::weberin::nadel_gate::*;
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 use std::thread::sleep;
@@ -1404,6 +1404,10 @@ struct ConeVerdict {
     excluded_natural: usize,
     excluded_midir_agn: usize,
     unclassified: usize,
+    zwirn: usize,
+    riss: usize,
+    borrowed_pending: usize,
+    broker_silent: usize,
 }
 
 impl ConeVerdict {
@@ -1415,6 +1419,10 @@ impl ConeVerdict {
             excluded_natural: 0,
             excluded_midir_agn: 0,
             unclassified: 0,
+            zwirn: 0,
+            riss: 0,
+            borrowed_pending: 0,
+            broker_silent: 0,
         }
     }
 }
@@ -1582,8 +1590,7 @@ fn cone_scan(
             ..ConeVerdict::void()
         };
     }
-    let bin_path =
-        format!("tmp/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
+    let bin_path = format!("tmp/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Nadel V (LSST round): the LSS1 asset was not written ({bin_path})");
         return ConeVerdict {
@@ -1591,8 +1598,7 @@ fn cone_scan(
             ..ConeVerdict::void()
         };
     }
-    let map_path =
-        format!("tmp/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    let map_path = format!("tmp/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     {
         let mut lines: Vec<String> = Vec::new();
         lines.push("diaObjectId,ra,dec,nDiaSources,class,simbad".to_string());
@@ -1619,33 +1625,39 @@ fn cone_scan(
     let mut post = 0usize;
     let mut excluded = 0usize;
     let mut excluded_midir_agn = 0usize;
+    let mut zwirn = 0usize;
+    let mut riss = 0usize;
+    let mut borrowed_pending = 0usize;
+    let mut broker_silent = 0usize;
     for (cra, cdec) in &candidates {
         let hit = objs
             .iter()
             .find(|o| (o.ra_deg - cra).abs() < 1e-3 && (o.dec_deg - cdec).abs() < 1e-3);
         match hit {
             Some(o) => {
-                if natural_excluded(o.class, &o.simbad) {
+                let g = natural_gate_with_borrowed_sense(
+                    &o.id,
+                    o.ra_deg,
+                    o.dec_deg,
+                    Some(&o.simbad),
+                    o.class,
+                    wise,
+                );
+                match &g.word {
+                    GateWord::Zwirn => zwirn += 1,
+                    GateWord::Riss => riss += 1,
+                    GateWord::PendingBorrowed | GateWord::PendingConfirmation => {
+                        borrowed_pending += 1
+                    }
+                    GateWord::BrokerSilent => broker_silent += 1,
+                }
+                if g.excluded {
                     excluded += 1;
-                    println!(
-                        "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class {} {}) — a natural dimmer, excluded",
-                        o.id, o.class, o.simbad
-                    );
-                } else if wise {
-                    match allwise_witness(&o.id, o.ra_deg, o.dec_deg) {
-                        WiseOutcome::Agn => {
-                            excluded += 1;
-                            excluded_midir_agn += 1;
-                        }
-                        WiseOutcome::Field => post += 1,
-                        WiseOutcome::Pending => post += 1,
+                    if g.wise_excluded {
+                        excluded_midir_agn += 1;
                     }
                 } else {
                     post += 1;
-                    println!(
-                        "Nadel V (LSST round): candidate at ra {cra:.4} dec {cdec:.4} is {} (class -1, no SIMBAD id) — unclassified, pending the natural-class crossmatch",
-                        o.id
-                    );
                 }
                 if let Some(field) = dust.as_deref_mut() {
                     report_intrinsic_counterpart(
@@ -1664,7 +1676,7 @@ fn cone_scan(
         }
     }
     println!(
-        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as natural dimmers ({excluded_midir_agn} by the AllWISE mid-IR AGN wedge), {post} unclassified dip(s) remain pending the natural-class crossmatch"
+        "Nadel V (LSST round) verdict over {fetched} cone object(s): {excluded} candidate dip(s) excluded as natural dimmers ({excluded_midir_agn} by the AllWISE mid-IR AGN wedge), {post} unclassified dip(s) remain pending the natural-class crossmatch — borrowed-sense round (die Weberin §4): {zwirn} zwirn (agreement), {riss} riss (contradiction, both witnesses named), {borrowed_pending} pending (borrowed sense unconfirmed or unreachable), {broker_silent} with the black box holding no class"
     );
     ConeVerdict {
         fetched,
@@ -1673,6 +1685,10 @@ fn cone_scan(
         excluded_natural: excluded,
         excluded_midir_agn,
         unclassified: post,
+        zwirn,
+        riss,
+        borrowed_pending,
+        broker_silent,
     }
 }
 
@@ -1717,8 +1733,7 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         println!("Verdict: pending — the cone answered HTTP {code}");
         return;
     }
-    let cone_path =
-        format!("tmp/lasair_lsst_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
+    let cone_path = format!("tmp/lasair_lsst_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
     if std::fs::write(&cone_path, &body).is_err() {
         println!("Verdict: pending — the cone sample was not saved ({cone_path})");
         return;
@@ -1861,15 +1876,13 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         );
         return;
     }
-    let bin_path = format!(
-        "tmp/lsst_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
-    );
+    let bin_path =
+        format!("tmp/lsst_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
         return;
     }
-    let map_path =
-        format!("tmp/lasair_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    let map_path = format!("tmp/lasair_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
         println!("Nadel V (LSST round): the object map was not written ({map_path})");
     }
@@ -2318,15 +2331,13 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         println!("Verdict: no object carries a light curve — the scan stays void (0 honored)");
         return;
     }
-    let bin_path = format!(
-        "tmp/ztf_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
-    );
+    let bin_path =
+        format!("tmp/ztf_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
         return;
     }
-    let map_path =
-        format!("tmp/ztf_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+    let map_path = format!("tmp/ztf_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
         println!("Nadel V (ZTF historical round): the object map was not written ({map_path})");
     }
@@ -2888,17 +2899,25 @@ fn grid_scan(cones: &[(f64, f64, f64, usize)], mut dust: Option<&mut DustField>,
         verdict.excluded_natural += v.excluded_natural;
         verdict.excluded_midir_agn += v.excluded_midir_agn;
         verdict.unclassified += v.unclassified;
+        verdict.zwirn += v.zwirn;
+        verdict.riss += v.riss;
+        verdict.borrowed_pending += v.borrowed_pending;
+        verdict.broker_silent += v.broker_silent;
         sleep_ms(CONE_PAUSE_MS);
     }
     println!(
-        "\n=== Nadel V grid verdict over {} anonymous cone scan(s): {} object light curve(s) fetched, {} multiband object(s) fully evaluated on the TDB fold axis, {} pre-exclusion candidate dip(s), {} excluded as natural dimmers ({} by the AllWISE mid-IR AGN wedge), {} unclassified dip(s) pending the natural-class crossmatch ===",
+        "\n=== Nadel V grid verdict over {} anonymous cone scan(s): {} object light curve(s) fetched, {} multiband object(s) fully evaluated on the TDB fold axis, {} pre-exclusion candidate dip(s), {} excluded as natural dimmers ({} by the AllWISE mid-IR AGN wedge), {} unclassified dip(s) pending the natural-class crossmatch; borrowed-sense round: {} zwirn (agreement), {} riss (contradiction, both witnesses named), {} pending (borrowed sense unconfirmed or unreachable), {} with the black box holding no class ===",
         cones.len(),
         verdict.fetched,
         verdict.multiband_scanned,
         verdict.candidates_pre,
         verdict.excluded_natural,
         verdict.excluded_midir_agn,
-        verdict.unclassified
+        verdict.unclassified,
+        verdict.zwirn,
+        verdict.riss,
+        verdict.borrowed_pending,
+        verdict.broker_silent
     );
     println!(
         "Quantitative limit: no unexcluded achromatic non-periodic dip above DIP_SIG {DIP_SIG}σ across {scanned} fully evaluated multiband object(s) on the TDB time layer — or the line above names it",
@@ -3213,6 +3232,7 @@ fn usage() {
          \x20 lsst_anomaly_probe --cone-ra <deg> --cone-dec <deg> --cone-radius <arcsec> [--cone-min <nDiaSources>] [--save <cone.json>]\n\
          \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin> [--dust-radius <arcsec=90>]] — type each candidate counterpart from its intrinsic (dereddened) color when it is a background object behind dust\n\
          \x20   [--wise] — mid-IR witness: cone-query the AllWISE catalog (IRSA TAP, 6 arcsec) for each unclassified candidate and exclude it when its W1-W2 color sits in the AGN wedge (>= 0.8 mag, Stern et al. 2012)\n\
+         \x20   natural-class gate (die Weberin §4/§9 step 9): the Fink-ML classifier is the borrowed-sense witness for Gestalt — it never excludes alone; the gate names zwirn (agreement), riss (contradiction, both witnesses named), pending (borrowed sense unreachable); a candidate whose only natural read is the broker class stays visible pending a second independent line\n\
          Fink/LSST anonymous grid of cone scans, no token (repeated --cone ra,dec,radius_arcsec,min):\n\
          \x20 lsst_anomaly_probe --cone 148.84,2.55,260,24 --cone 149.44,2.55,260,24\n\
          \x20   [--dust-map <bayestar.be19> --dust-stars <dr3_stars.bin>] — the same intrinsic type read over the grid\n\
