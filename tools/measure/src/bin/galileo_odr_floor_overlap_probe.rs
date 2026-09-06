@@ -90,7 +90,7 @@ fn main() {
     }
     wins.sort_by_key(|w| (w.day, w.station));
 
-    let Ok(bytes) = fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         push("galileo resid bin void".to_string());
         let _ = fs::write(&report_path, out.join("\n") + "\n");
         return;

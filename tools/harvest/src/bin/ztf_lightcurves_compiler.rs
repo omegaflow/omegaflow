@@ -21,9 +21,9 @@ fn curl_csv(ra: f64, dec: f64, radius: f64) -> Option<String> {
         .arg("--retry-delay")
         .arg("2")
         .arg("-b")
-        .arg("/tmp/opencode/ztf_cookies.txt")
+        .arg("tmp/ztf_cookies.txt")
         .arg("-c")
-        .arg("/tmp/opencode/ztf_cookies.txt")
+        .arg("tmp/ztf_cookies.txt")
         .arg(&url)
         .output()
         .ok()?;
@@ -186,7 +186,7 @@ fn main() {
         eprintln!("naif0012 table void — the TDB epoch stays void (no fabricated epoch)");
         return;
     };
-    let _ = std::fs::create_dir_all("/tmp/opencode");
+    let _ = std::fs::create_dir_all("tmp");
     let mut curves: HashMap<(String, String), CurveBuilder> = HashMap::new();
     for (n, (ra, dec)) in targets.iter().enumerate() {
         let Some(body) = curl_csv(*ra, *dec, radius) else {

@@ -222,7 +222,7 @@ fn doppler_runs(raw: &[RawO], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<Run> {
 }
 
 fn read_resid_cells() -> BTreeMap<(i64, i64, i64), CellStat> {
-    let path = "data/galileo_resid.bin";
+    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {
@@ -383,7 +383,7 @@ fn main() {
             continue;
         }
         let url = format!("{BASE}{name}");
-        let cache_path = format!("/tmp/opencode/galileo_odf_cache_{name}");
+        let cache_path = format!("tmp/galileo_odf_cache_{name}");
         let bytes = match std::fs::read(&cache_path) {
             Ok(b) => b,
             Err(_) => match fetch_raw_bytes(&url, 604800) {
@@ -431,7 +431,7 @@ fn main() {
     println!("\n== 4. (receiving x transmitting) three-way runs and the floor split ==");
     let mut runs_all: Vec<Run> = Vec::new();
     for name in &fetched {
-        let cache_path = format!("/tmp/opencode/galileo_odf_cache_{name}");
+        let cache_path = format!("tmp/galileo_odf_cache_{name}");
         let Ok(bytes) = std::fs::read(&cache_path) else {
             continue;
         };
@@ -470,7 +470,7 @@ fn main() {
         );
         return;
     }
-    let path = "data/galileo_resid.bin";
+    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {

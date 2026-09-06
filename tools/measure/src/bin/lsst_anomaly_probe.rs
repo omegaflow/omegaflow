@@ -487,7 +487,7 @@ fn negative_control(base: &str, depth_sigma: f64) {
         return;
     };
     let out_path = format!(
-        "/tmp/opencode/lsst_negative_control_{:.5}_{:.5}_d{depth_sigma:.0}.bin",
+        "tmp/lsst_negative_control_{:.5}_{:.5}_d{depth_sigma:.0}.bin",
         inj.group.0, inj.group.1
     );
     if std::fs::write(&out_path, &inj.bytes).is_err() {
@@ -1583,7 +1583,7 @@ fn cone_scan(
         };
     }
     let bin_path =
-        format!("/tmp/opencode/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
+        format!("tmp/lsst_lightcurves_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Nadel V (LSST round): the LSS1 asset was not written ({bin_path})");
         return ConeVerdict {
@@ -1592,7 +1592,7 @@ fn cone_scan(
         };
     }
     let map_path =
-        format!("/tmp/opencode/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+        format!("tmp/lsst_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     {
         let mut lines: Vec<String> = Vec::new();
         lines.push("diaObjectId,ra,dec,nDiaSources,class,simbad".to_string());
@@ -1718,7 +1718,7 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         return;
     }
     let cone_path =
-        format!("/tmp/opencode/lasair_lsst_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
+        format!("tmp/lasair_lsst_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
     if std::fs::write(&cone_path, &body).is_err() {
         println!("Verdict: pending — the cone sample was not saved ({cone_path})");
         return;
@@ -1785,7 +1785,7 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
             sleep_ms(LAS_OBJECT_PAUSE_MS);
             continue;
         }
-        let obj_path = format!("/tmp/opencode/lasair_lsst_object_{}.json", row.id);
+        let obj_path = format!("tmp/lasair_lsst_object_{}.json", row.id);
         if std::fs::write(&obj_path, &body).is_err() {
             println!(
                 "Lasair-LSST {}: the object sample was not saved ({obj_path})",
@@ -1862,14 +1862,14 @@ fn lasair_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         return;
     }
     let bin_path = format!(
-        "/tmp/opencode/lsst_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
+        "tmp/lsst_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
     );
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
         return;
     }
     let map_path =
-        format!("/tmp/opencode/lasair_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+        format!("tmp/lasair_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
         println!("Nadel V (LSST round): the object map was not written ({map_path})");
     }
@@ -2088,7 +2088,7 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     println!(
         "Lasair-ZTF: time layer — jd (UTC clock) → UTC unix → TDB seconds-since-J2000 (naif0012.tls ΔT 32.184 s + leap), the same one path the ZTF1 compiler uses"
     );
-    let cone_path = format!("/tmp/opencode/ztf_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
+    let cone_path = format!("tmp/ztf_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.json");
     let body: Vec<u8>;
     let cone_local = match std::fs::read(&cone_path) {
         Ok(b) if !b.is_empty() => {
@@ -2165,7 +2165,7 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
     let mut pending_absent = 0usize;
     let mut budget_down = false;
     for row in rows.iter().take(chosen) {
-        let obj_path = format!("/tmp/opencode/ztf_obj_{}.json", row.id);
+        let obj_path = format!("tmp/ztf_obj_{}.json", row.id);
         let mut body: Option<Vec<u8>> = std::fs::read(&obj_path).ok().filter(|b| !b.is_empty());
         let mut local = false;
         if let Some(b) = &body {
@@ -2319,14 +2319,14 @@ fn ztf_cone_scan(ra: f64, dec: f64, radius_arcsec: f64, max_objects: usize) {
         return;
     }
     let bin_path = format!(
-        "/tmp/opencode/ztf_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
+        "tmp/ztf_lightcurves_lasair_cone_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.bin"
     );
     if std::fs::write(&bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
         return;
     }
     let map_path =
-        format!("/tmp/opencode/ztf_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
+        format!("tmp/ztf_cone_object_map_{ra:.5}_{dec:.5}_{radius_arcsec:.0}.csv");
     if std::fs::write(&map_path, map_lines.join("\n")).is_err() {
         println!("Nadel V (ZTF historical round): the object map was not written ({map_path})");
     }
@@ -2589,7 +2589,7 @@ fn antares_scan(max_loci: usize, wise: bool) {
             );
             break;
         }
-        let path = format!("/tmp/opencode/antares_loci_off{offset}.json");
+        let path = format!("tmp/antares_loci_off{offset}.json");
         if std::fs::write(&path, &body).is_err() {
             println!("ANTARES loci page: the sample was not saved ({path})");
         }
@@ -2655,7 +2655,7 @@ fn antares_scan(max_loci: usize, wise: bool) {
         window_word
     );
     println!(
-        "ANTARES locus sample: {} loci chosen (the densest of each sampled page); {} real sample(s) saved under /tmp/opencode/antares_loci_off*.json",
+        "ANTARES locus sample: {} loci chosen (the densest of each sampled page); {} real sample(s) saved under tmp/antares_loci_off*.json",
         loci_sample.len(),
         loci_sample.len()
     );
@@ -2721,7 +2721,7 @@ fn antares_scan(max_loci: usize, wise: bool) {
             sleep_ms(ANTA_OBJ_PAUSE_MS);
             continue;
         }
-        let path = format!("/tmp/opencode/antares_alerts_{}.json", loc.id);
+        let path = format!("tmp/antares_alerts_{}.json", loc.id);
         if std::fs::write(&path, &body).is_err() {
             println!(
                 "ANTARES {}: the alert bundle was not saved ({path})",
@@ -2825,12 +2825,12 @@ fn antares_scan(max_loci: usize, wise: bool) {
         );
         return;
     }
-    let bin_path = "/tmp/opencode/lsst_lightcurves_antares_sample.bin";
+    let bin_path = "tmp/lsst_lightcurves_antares_sample.bin";
     if std::fs::write(bin_path, serialize_lss1(&curves_all)).is_err() {
         println!("Verdict: pending — the LSS1 asset was not written ({bin_path})");
         return;
     }
-    let map_path = "/tmp/opencode/antares_locus_map.csv";
+    let map_path = "tmp/antares_locus_map.csv";
     if std::fs::write(map_path, map_lines.join("\n")).is_err() {
         println!("Nadel V (ANTARES round): the locus map was not written ({map_path})");
     }
@@ -2918,7 +2918,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
     }
     let raw_path = match save {
         Some(s) => s.to_string(),
-        None => format!("/tmp/opencode/fink_lsst_sources_{id}.json"),
+        None => format!("tmp/fink_lsst_sources_{id}.json"),
     };
     if std::fs::write(&raw_path, &body).is_err() {
         println!("Fink/LSST {id}: the real sample was not saved ({raw_path})");
@@ -2998,7 +2998,7 @@ fn fink_scan(id: &str, save: Option<&str>) {
         println!("Fink/LSST {id}: no measurement row maps to a known LSST band (absent)");
         return;
     }
-    let bin_path = format!("/tmp/opencode/lsst_lightcurves_{id}.bin");
+    let bin_path = format!("tmp/lsst_lightcurves_{id}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves)).is_err() {
         println!("Fink/LSST {id}: the LSS1 asset was not written ({bin_path})");
         return;
@@ -3049,8 +3049,8 @@ fn fink_fp_body(id: &str, body: &[u8], source_label: &str) {
         );
     }
     for alt in [
-        format!("/tmp/opencode/fink_sources_{id}.json"),
-        format!("/tmp/opencode/fink_src_{id}.json"),
+        format!("tmp/fink_sources_{id}.json"),
+        format!("tmp/fink_src_{id}.json"),
     ] {
         let Some(src_body) = std::fs::read(&alt).ok() else {
             continue;
@@ -3127,7 +3127,7 @@ fn fink_fp_body(id: &str, body: &[u8], source_label: &str) {
         println!("Fink/LSST FP {id}: no detection row maps to a known LSST band (absent)");
         return;
     }
-    let bin_path = format!("/tmp/opencode/lsst_lightcurves_fp_{id}.bin");
+    let bin_path = format!("tmp/lsst_lightcurves_fp_{id}.bin");
     if std::fs::write(&bin_path, serialize_lss1(&curves)).is_err() {
         println!("Fink/LSST FP {id}: the LSS1 asset was not written ({bin_path})");
         return;
@@ -3157,7 +3157,7 @@ fn fink_fp_scan(id: &str, save: Option<&str>) {
     }
     let raw_path = match save {
         Some(s) => s.to_string(),
-        None => format!("/tmp/opencode/fink_fp_{id}.json"),
+        None => format!("tmp/fink_fp_{id}.json"),
     };
     if std::fs::write(&raw_path, &body).is_err() {
         println!("Fink/LSST FP {id}: the real sample was not saved ({raw_path})");
@@ -3307,7 +3307,7 @@ fn reach(token: Option<String>, object: Option<String>, save: Option<String>) {
     }
     let path = match save {
         Some(s) => s.to_string(),
-        None => "/tmp/opencode/lasair_lsst_object.json".to_string(),
+        None => "tmp/lasair_lsst_object.json".to_string(),
     };
     if std::fs::write(&path, &body).is_err() {
         println!("Verdict: pending — the real sample was not saved ({path})");

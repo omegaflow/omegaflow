@@ -232,7 +232,7 @@ fn analyze_pass(pass: &[Rec]) -> PassAgg {
 }
 
 fn main() {
-    let Ok(bytes) = std::fs::read("data/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

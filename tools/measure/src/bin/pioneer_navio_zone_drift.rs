@@ -114,33 +114,38 @@ fn lag1_autocorr(v: &[f64]) -> f64 {
     num / den
 }
 
-fn fit_three(tc: &[f64], v: &[f64]) -> (f64, f64, f64, f64) {
+fn fit_three(tc: &[f64], v: &[f64]) -> (Option<f64>, Option<f64>, Option<f64>, Option<f64>) {
     let n = v.len() as f64;
     let mv = v.iter().sum::<f64>() / n;
     let vc: Vec<f64> = v.iter().map(|x| x - mv).collect();
     let mt = tc.iter().sum::<f64>() / n;
     let tc_c: Vec<f64> = tc.iter().map(|x| x - mt).collect();
 
-    let a_lin = lin_fit(&tc_c, &vc).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_lin: Vec<f64> = tc_c.iter().zip(&vc).map(|(t, x)| x - a_lin * t).collect();
-    let rms_lin = rms_about0(&resid_lin);
+    let lin_res = lin_fit(&tc_c, &vc).map(|(a, _)| {
+        let resid_lin: Vec<f64> = tc_c.iter().zip(&vc).map(|(t, x)| x - a * t).collect();
+        (a, rms_about0(&resid_lin))
+    });
+    let rms_lin = lin_res.as_ref().map(|(_, r)| *r);
+    let a_lin = lin_res.map(|(a, _)| a);
 
     let x2: Vec<f64> = tc_c.iter().map(|t| t * t).collect();
-    let a_q = lin_fit(&x2, &vc).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_q: Vec<f64> = x2.iter().zip(&vc).map(|(x, vv)| vv - a_q * x).collect();
-    let rms_q = rms_about0(&resid_q);
+    let rms_q = lin_fit(&x2, &vc).map(|(a, _)| {
+        let resid_q: Vec<f64> = x2.iter().zip(&vc).map(|(x, vv)| vv - a * x).collect();
+        rms_about0(&resid_q)
+    });
 
     let tau_s = TAU_Y * 365.25 * DAY_S;
     let dec: Vec<f64> = tc.iter().map(|&t| 1.0 - (-t / tau_s).exp()).collect();
-    let a_e = lin_fit(&dec, &vc).map(|(a, _)| a).unwrap_or(0.0);
-    let resid_e: Vec<f64> = dec.iter().zip(&vc).map(|(d, vv)| vv - a_e * d).collect();
-    let rms_e = rms_about0(&resid_e);
+    let rms_e = lin_fit(&dec, &vc).map(|(a, _)| {
+        let resid_e: Vec<f64> = dec.iter().zip(&vc).map(|(d, vv)| vv - a * d).collect();
+        rms_about0(&resid_e)
+    });
 
     (rms_lin, rms_q, rms_e, a_lin)
 }
 
 fn run(name: &str) {
-    let path = format!("data/{name}_navio_subkhz_zone_daily.bin");
+    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
     let Some(daily) = read_zone_daily(&path) else {
         eprintln!("{name}: zone daily bin void/parse void ({path}) — 0 honored");
         return;
@@ -214,9 +219,11 @@ fn run(name: &str) {
     for _ in 0..N_SURR {
         let surr = block_surrogate(&centered, BLOCK, &mut rng);
         let (rl, rq, re, sl) = fit_three(&tc, &surr);
-        null_slope.push(sl.abs());
-        null_dq.push((rl - rq) / rl);
-        null_de.push((rl - re) / rl);
+        if let (Some(rl), Some(rq), Some(re), Some(sl)) = (rl, rq, re, sl) {
+            null_slope.push(sl.abs());
+            null_dq.push((rl - rq) / rl);
+            null_de.push((rl - re) / rl);
+        }
     }
     let thr_slope = pct(null_slope.clone(), 0.95);
     let thr_dq = pct(null_dq.clone(), 0.95);
@@ -225,7 +232,15 @@ fn run(name: &str) {
         "{name}: surrogate null (block bootstrap, block {BLOCK} d, {N_SURR} surrogates, seed fixed) — p95 thresholds: |linear slope| {thr_slope:.3e} Hz/d, Δ∝t² {thr_dq:.4}, Δexp {thr_de:.4}"
     );
 
-    let (rms_lin, rms_q, rms_e, slope_lin) = fit_three(&tc, &mvs);
+    let (rms_lin, rms_q, rms_e, slope_lin) = match fit_three(&tc, &mvs) {
+        (Some(a), Some(b), Some(c), Some(d)) => (a, b, c, d),
+        _ => {
+            eprintln!(
+                "{name}: real fits absent (degenerate regressor) — the verdict stays silent (0 honored)"
+            );
+            return;
+        }
+    };
     let dq = (rms_lin - rms_q) / rms_lin;
     let de = (rms_lin - rms_e) / rms_lin;
     let k_phys = TRANS_RATIO / C;

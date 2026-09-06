@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase, transfer_entropy_conditional,
-    transfer_entropy_lag,
+    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    transfer_entropy_conditional, transfer_entropy_lag,
 };
 
 const LOCK_HZ: f64 = 1.0e3;
@@ -63,7 +63,12 @@ fn series_var(v: &[f32]) -> Option<f64> {
     }
     let n = v.len() as f64;
     let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
-    Some(v.iter().map(|&x| (x as f64 - mean) * (x as f64 - mean)).sum::<f64>() / n)
+    Some(
+        v.iter()
+            .map(|&x| (x as f64 - mean) * (x as f64 - mean))
+            .sum::<f64>()
+            / n,
+    )
 }
 
 fn distinct_count(v: &[f32], tol: f64) -> usize {
@@ -73,11 +78,20 @@ fn distinct_count(v: &[f32], tol: f64) -> usize {
     w.len()
 }
 
-#[derive(Default)]
 struct Bin63 {
     vals: Vec<f32>,
     refs: Vec<f64>,
     strn: Vec<f64>,
+}
+
+impl Bin63 {
+    fn new() -> Bin63 {
+        Bin63 {
+            vals: Vec::new(),
+            refs: Vec::new(),
+            strn: Vec::new(),
+        }
+    }
 }
 
 struct RDay {
@@ -203,7 +217,11 @@ fn seed_repl3(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
 }
 
 fn chain_in(rows: &[RDay], lo: i64, hi: i64) -> Option<(i64, i64)> {
-    let inr: Vec<i64> = rows.iter().map(|r| r.day).filter(|&d| d >= lo && d <= hi).collect();
+    let inr: Vec<i64> = rows
+        .iter()
+        .map(|r| r.day)
+        .filter(|&d| d >= lo && d <= hi)
+        .collect();
     if inr.is_empty() {
         return None;
     }
@@ -213,10 +231,10 @@ fn chain_in(rows: &[RDay], lo: i64, hi: i64) -> Option<(i64, i64)> {
 }
 
 fn main() {
-    let path = std::env::args()
-        .skip(1)
-        .find(|a| !a.starts_with('-'))
-        .unwrap_or_else(|| "data/galileo_resid.bin".to_string());
+    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+        Some(p) => p,
+        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+    };
     let bytes = std::fs::read(&path).expect("resid bin read");
     if bytes.len() < 8 || &bytes[0..4] != b"GASR" {
         println!("no GASR header");
@@ -262,7 +280,7 @@ fn main() {
         let st = rec[2] as i64;
         *cnt.entry((day, st, mode)).or_insert(0) += 1;
         if st == 63 && mode == 1 && (9830..=9930).contains(&day) {
-            let b = bins63.entry(day).or_default();
+            let b = bins63.entry(day).or_insert_with(Bin63::new);
             b.vals.push(rec[1].abs() as f32);
             b.refs.push(rec[5]);
             b.strn.push(rec[7]);
@@ -279,7 +297,12 @@ fn main() {
         let mut stday: BTreeMap<i64, BTreeMap<i64, Vec<(i64, usize)>>> = BTreeMap::new();
         for (&(day, st, mode), &n) in &cnt {
             if n >= MIN_SAMP {
-                stday.entry(st).or_default().entry(day).or_default().push((mode, n));
+                stday
+                    .entry(st)
+                    .or_default()
+                    .entry(day)
+                    .or_default()
+                    .push((mode, n));
             }
         }
         for (st, dm) in stday {
@@ -305,7 +328,14 @@ fn main() {
                         best = n;
                     }
                 }
-                v.push(RDay { day, dom, cap3, m1, m2, m3 });
+                v.push(RDay {
+                    day,
+                    dom,
+                    cap3,
+                    m1,
+                    m2,
+                    m3,
+                });
             }
             strows.insert(st, v);
         }
@@ -372,7 +402,11 @@ fn main() {
         if let Some(x) = longest3 {
             println!("   longest m3dom segment {}-{} ({} d)", x.0, x.1, x.2);
         }
-        let long3: Vec<String> = s3.iter().filter(|x| x.2 >= 3).map(|(a, b, l)| format!("{a}-{b}({l})")).collect();
+        let long3: Vec<String> = s3
+            .iter()
+            .filter(|x| x.2 >= 3)
+            .map(|(a, b, l)| format!("{a}-{b}({l})"))
+            .collect();
         if !long3.is_empty() {
             println!("   m3dom segs >=3d: {}", long3.join(" "));
         }
@@ -384,18 +418,26 @@ fn main() {
         if let Some(x) = longest3c {
             println!("   longest mode3Sample segment {}-{} ({} d)", x.0, x.1, x.2);
         }
-        let long3c: Vec<String> = s3c.iter().filter(|x| x.2 >= 3).map(|(a, b, l)| format!("{a}-{b}({l})")).collect();
+        let long3c: Vec<String> = s3c
+            .iter()
+            .filter(|x| x.2 >= 3)
+            .map(|(a, b, l)| format!("{a}-{b}({l})"))
+            .collect();
         if !long3c.is_empty() {
             println!("   mode3Sample segs >=3d: {}", long3c.join(" "));
         }
     }
     println!("mission: mode3-dominant days total {all_dom3}");
     match best_dom3 {
-        Some((s, e, l, st)) => println!("longest mode3-dominant window: st{st} {s}-{e} = {l} contiguous days"),
+        Some((s, e, l, st)) => {
+            println!("longest mode3-dominant window: st{st} {s}-{e} = {l} contiguous days")
+        }
         None => println!("longest mode3-dominant window: none"),
     }
     match best_cap3 {
-        Some((s, e, l, st)) => println!("longest mode3-sample window: st{st} {s}-{e} = {l} contiguous days"),
+        Some((s, e, l, st)) => {
+            println!("longest mode3-sample window: st{st} {s}-{e} = {l} contiguous days")
+        }
         None => println!("longest mode3-sample window: none"),
     }
 
@@ -407,7 +449,10 @@ fn main() {
     println!("=== (B) station 63 qualifying-day structure around the isolate (day: dom | m1/m2/m3 cleaned counts; '-' = not a qualifying day)");
     for day in 9856..=9914 {
         match r63.iter().find(|r| r.day == day) {
-            Some(r) => println!("  {day}: dom{} m1 {} m2 {} m3 {} mode3Sample {}", r.dom, r.m1, r.m2, r.m3, r.cap3),
+            Some(r) => println!(
+                "  {day}: dom{} m1 {} m2 {} m3 {} mode3Sample {}",
+                r.dom, r.m1, r.m2, r.m3, r.cap3
+            ),
             None => println!("  {day}: -"),
         }
     }

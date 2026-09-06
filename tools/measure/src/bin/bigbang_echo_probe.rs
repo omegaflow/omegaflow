@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::healpix::{ang2pix_nest, icrs_to_galactic};
-use omegaflow::json::{JsonVal, jnum, parse_json};
+use omegaflow::json::{jnum, parse_json, JsonVal};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const NSIDE_CELL: i64 = 8;
@@ -15,9 +15,14 @@ const DEPTH_BINS: usize = 16;
 const DEPTH_MAX_MPC: f64 = 800.0;
 
 fn fetch_cached(name: &str, release: &str) -> Option<Vec<u8>> {
-    let path = format!("data/{name}");
+    let dir = match name {
+        "cmb_planck_smica_n64.json" => "data/irsa.ipac.caltech.edu",
+        "cosmicflows_cf4.json" => "data/tapvizier.cds.unistra.fr",
+        _ => "data",
+    };
+    let path = format!("{dir}/{name}");
     if !std::path::Path::new(&path).exists() {
-        std::fs::create_dir_all("data").ok();
+        std::fs::create_dir_all(dir).ok();
         let url = format!("{CDN_BASE}/{release}/{name}");
         let bytes = fetch_raw_bytes(&url, 604800)?;
         if std::fs::write(&path, &bytes).is_err() {
