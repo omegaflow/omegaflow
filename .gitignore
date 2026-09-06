@@ -47,7 +47,11 @@ phi/*
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).
+# Runtime-Ledger im selben Ordner (gate_state.φ) bleiben ignoriert.
 !phi/reports/
+phi/reports/*
+!phi/reports/scan_coverage.φ
+!phi/reports/mycelium_campaign_cdfs.φ
 
 # Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
 .omegaflow-strand
