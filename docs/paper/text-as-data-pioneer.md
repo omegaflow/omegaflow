@@ -5,7 +5,7 @@
   version: 3
   sha256: cbcb7308ff2b0a9dc78414052e4c2924e25ecf4dc6054d9ec76f2762443ff4e0
   status: live
-  see-also: docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt, docs/TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
+  see-also: docs/reference/pioneer-anomaly-lrr-2010-4.txt, docs/TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
 
 # The text as data — the Pioneer review's numbers against the Doppler series
@@ -91,7 +91,7 @@ next step, not a finding.
 ## References
 
 1. Turyshev S. G., Toth V. T., 2010, Living Rev. Relativity 13, 4 — text:
-   docs/reference/pioneer-anomaly/pioneer-anomaly-lrr-2010-4.txt.
+   docs/reference/pioneer-anomaly-lrr-2010-4.txt.
 2. The probe: tools/measure/src/bin/pioneer_text_correlation.rs.
 3. Data: data/pioneer10_doppler_clean.bin, data/pioneer11_doppler_clean.bin
    (NAVIO 60-s, cleaned — see TODO.md, Pioneer-Front).
