@@ -22,14 +22,12 @@ pub mod shaders;
 pub mod te;
 #[cfg(test)]
 mod tests;
-pub mod weberin;
 
 pub use actuators::*;
 pub use omega::*;
 pub use orientation::*;
 pub use s2::*;
 pub use shaders::*;
-pub use weberin::*;
 
 pub(crate) use crate::force::kernel_id_for_force;
 pub(crate) use std::io::IsTerminal;
