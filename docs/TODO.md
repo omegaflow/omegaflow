@@ -1895,3 +1895,17 @@ sind gebaut — die Verifikation trägt der nächste Release-Lauf.
   Lasair (parser-def, 2026-09-05 aus sources.φ verschoben), ANTARES (parser-def
   json), ALeRCE (Code: build_alerce_channels, "dark until a distance channel
   exists").
+
+- Myzel-Scan-Linie — die fünf Funken der Anomalie-Jagd (Konzept
+  docs/concepts/fuenf-funken-anomalie-jagd.md, 2026-09-05): Atome 0/0b
+  (mycelium_fan_navigator, fünf Stimmen, Golden-Angle-Fan) + 3
+  (broker_difference_probe) + 5 (tdb_coincidence_probe) + 1
+  (disappearance_probe) + 4 (deredden_baseline_probe) + 2 (pair_te_screen)
+  gebaut und committet; nadel_gate.rs = die eingefrorene Gate als eine
+  physische Stelle. Offen (pending, benannt): (a) die reale Myzel-Kampagne
+  über das Coverage-Register (scan_coverage.φ) — bisher nur 2 void-Kegel am
+  GC, keine Karte Kegel/Roh-vor-Gate/danach; (b) Broker-Differenz schweigt
+  (nur Fink erreichbar, Lasair 000/ALeRCE 404 → pending bis ≥2 Broker);
+  (c) deredden_baseline braucht lokale Assets (bayestar.be19/dr3_stars.bin);
+  (d) pair_te_screen braucht echte Forced-Photometry-Lichtkurven mit Position;
+  (e) disappearance hat noch keinen vanishing-Fund (leere Straße).
