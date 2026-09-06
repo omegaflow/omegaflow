@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: b6d7c874cfae158c7561dfac5e703eb5d41f0a2ebc1f09eb34b163b3e18293af
+  sha256: 8c66d17692706cd60868613ce51e1e8e062d13e7a48603b79dea7341f197cac8
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -96,6 +96,17 @@ einschießt — und zwirnt zwei unabhängige Fäden zur einen Weltlinie.
 - **Die neun Sinne** hören in ihrer eigenen `signal_reach`; der Posterior
   bleibt Posterior, die kuratierte Klasse bleibt kuratiert.
 
+Der Schuss hat zwei Bewegungen — den **Zwirn** (unabhängige Fäden, die zur
+selben Weltlinie konvergieren: der Beweis) und den **Riss** (unabhängige
+Fäden, die sich weigern zu konvergieren). Der Riss ist kein Fehler: wo zwei
+Werte in Beziehung nicht beide sein können, ist die Unverträglichkeit selbst
+die Messung. Der Riss bleibt im Vlies sichtbar, nie geglättet — ein
+Mittelwert über den Riss wäre Fabrication. Er ist zugleich der natürliche
+Schutz vor Fabrikation: falsche Modelle und fabrizierte Werte werden als
+Risse sichtbar; ein fabrizierter Faden widerspricht, sobald die kritische
+Masse unabhängiger Fäden erreicht ist, einem anderen Faden an derselben
+Weltlinie — die Relation entlarvt, was die Einzelzahl verbergen konnte.
+
 ## 5. Das Vlies — das eine Bild, nichts verdeckt
 
 Das fertige Gewebe ist das **Vlies**: jeder Faden bleibt einzeln sichtbar,
@@ -188,6 +199,11 @@ komplett zu bauen:
 5. Die Survey-Footprints der großen Durchmusterungen als eigene Assets.
 6. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne.
 7. Der CDN-Manifestations-Weg des Vlies-Assets.
+8. Der Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien
+   nicht konvergieren, benennt die Maschine den Riss und seinen Knoten in
+   der Abstammungs-Kette. Erster Anwendungs-Knoten: die Hubble-Spannung
+   (Planck ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) — benennen statt
+   mitteln.
 
 Zwischen den Stufen gibt es keine Wartezone. Wo eine Stufe noch nicht
 gebaut ist, ist ihr Wert `pending` — der Wert existiert, die Ernte fehlt,
