@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: d73cdd396f4c5996f6106e1c62df4d6213dcc84a6e9a61ccfd54c56e9ba0ddf9
+  sha256: e93e7d111c1dbd1eff0a16605c764ee2fd7736c3249c92b982b890ffe9c4d74e
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -17,6 +17,16 @@ Schrei"): Archivar, Mathematikerin, Weberin — der Name ist das Handwerk.
 Die bindende Disziplin gilt (Operator-Wort 2026-09-06): kein Deferral, kein
 Parken. Der 0-Kanon gilt unverändert: `absent` ist der vollständige Befund
 der nicht-tragenden Quelle; ungebaut ist `pending`, eine Register-Pflicht.
+
+Die drei Sätze — die flache Form zum Operieren:
+
+1. Alles, was das System misst, ist eine Weltlinie in einem Rahmen (ICRS)
+   und einer Zeit (TDB); eine Weltlinie ist noch kein Beweis.
+2. Der Beweis liegt am Vergleich: zwei unabhängige Linien, die dieselbe
+   Weltlinie treiben, ergeben Placed; zwei, die sich widersprechen, ergeben
+   einen Riss — und der Riss bleibt sichtbar, er wird nie geglättet.
+3. Jede Linien-Klasse braucht ihre zweite unabhängige Linie; wo sie fehlt,
+   ist der Wert absent — nie erfunden.
 
 ## 1. Das Material — der Bestand, der schon da liegt
 
@@ -106,6 +116,11 @@ Schutz vor Fabrikation: falsche Modelle und fabrizierte Werte werden als
 Risse sichtbar; ein fabrizierter Faden widerspricht, sobald die kritische
 Masse unabhängiger Fäden erreicht ist, einem anderen Faden an derselben
 Weltlinie — die Relation entlarvt, was die Einzelzahl verbergen konnte.
+Der Riss ist das Flimmern zweier Suchbilder — die älteste Methode der
+Himmelsvermessung, vom Blink-Komparator (Tombaughs Pluto, Bessels erste
+Entfernung) bis zum VLBI, aus dem ICRS selbst geschlagen ist. Er trägt nur,
+wo der Rest still steht: ICRS·TDB stellt das sinnlose Flimmern (den
+Rømer-Drift) ab, damit das sinnvolle übrig bleibt.
 
 ## 5. Das Vlies — das eine Bild, nichts verdeckt
 
@@ -216,9 +231,11 @@ komplett zu bauen:
 7. Der CDN-Manifestations-Weg des Vlies-Assets.
 8. Der Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien
    nicht konvergieren, benennt die Maschine den Riss und seinen Knoten in
-   der Abstammungs-Kette. Erster Anwendungs-Knoten: die Hubble-Spannung
-   (Planck ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ) — benennen statt
-   mitteln.
+   der Abstammungs-Kette. Gemessen wird der Riss zuerst an den eigenen
+   Linien (MPC gegen SPK, Schritt 1; SWARM gegen INTERMAGNET, Schritt 2).
+   Die Hubble-Spannung (Planck ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ)
+   ist die Illustration des Risses — benennbar heute, messbar erst, wenn
+   beide Linien im Bestand einziehen.
 
 Zwischen den Stufen gibt es keine Wartezone. Wo eine Stufe noch nicht
 gebaut ist, ist ihr Wert `pending` — der Wert existiert, die Ernte fehlt,
