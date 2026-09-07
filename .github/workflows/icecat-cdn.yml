@@ -1,0 +1,27 @@
+name: icecat-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  icecat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the IceCat-1 IceCube neutrino event threads once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern icecat_events.s2e1 --clobber 2>/dev/null && \
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern icecat_sky1.sky1 --clobber 2>/dev/null || \
+          ( mkdir -p icecat && \
+            curl -sSfL --retry 3 --max-time 600 -o icecat/icecat_events.tsv \
+              https://dataverse.harvard.edu/api/access/datafile/7502710 && \
+            cargo run -p omegaflow-harvest --release --bin icecat_compiler -- \
+              --input icecat/icecat_events.tsv --out icecat_events.s2e1 \
+              --out-map icecat_sky1.sky1 --ci-mode )
