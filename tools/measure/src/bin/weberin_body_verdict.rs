@@ -6,8 +6,12 @@ use omegaflow::archivar::{
     LeapSeconds, SourceConfig, J2000_EPOCH,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
-use omegaflow::dastcom::{parse_record, AsteroidRec, RECORD_STRIDE};
-use omegaflow::weberin::{BodyOutcome, Weberin, WeberinFeed, BODY_NUMBER, WEBERIN_TOL_M};
+use omegaflow::dastcom::{
+    parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
+};
+use omegaflow::weberin::{
+    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, WEBERIN_TOL_M,
+};
 
 const BIN_TTL_S: u64 = 604800;
 
@@ -38,7 +42,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     println!(
-        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--epoch <jd>] [--tol <m>]"
+        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--epoch <jd>] [--tol <m>]"
     );
 }
 
@@ -78,6 +82,10 @@ fn main() {
     let dastcom_path = match arg_value(&args, "--dastcom") {
         Some(d) => d,
         None => "data/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
+    };
+    let dcom5_path = match arg_value(&args, "--dcom5") {
+        Some(d) => d,
+        None => "data/ssd.jpl.nasa.gov/dcom5_comets.bin".to_string(),
     };
     let tol_m = match arg_value(&args, "--tol").and_then(|w| w.parse::<f64>().ok()) {
         Some(t) if t.is_finite() && t > 0.0 => t,
@@ -130,6 +138,30 @@ fn main() {
         return;
     }
 
+    let comets: Vec<CometRec> = match ensure_bin(
+        &dcom5_path,
+        CDN_RELEASE,
+        "dcom5_comets.bin",
+        BIN_TTL_S,
+    ) {
+        Some(b) => b
+            .chunks_exact(COMET_RECORD_BYTES)
+            .filter_map(parse_comet_record)
+            .collect(),
+        None => {
+            println!(
+                    "weberin: {dcom5_path} bin void — absent on disk and the CDN fetch returned non-200 — the comet second line stays unread"
+                );
+            Vec::new()
+        }
+    };
+    if comets.is_empty() {
+        println!(
+            "weberin: {dcom5_path} carries no {}-byte comet record",
+            COMET_RECORD_BYTES
+        );
+    }
+
     println!("=== weberin — the second body line (dastcom/MPC Keplerian elements) against the JPL SPK ephemeris points ===");
 
     let sources = load_sources();
@@ -143,7 +175,7 @@ fn main() {
         println!("weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void");
         return;
     }
-    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies and the {}-body dastcom table", recs.len(), bodies.len(), BODY_NUMBER.len());
+    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
 
     let Some(lsk) = embedded_lsk() else {
         println!(
@@ -188,6 +220,7 @@ fn main() {
         eph: Arc::new(eph),
         sun: Arc::new(sun_map),
         recs,
+        comets,
     });
     w.weave(tdb, tol_m);
     if !w.woven {
