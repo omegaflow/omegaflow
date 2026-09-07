@@ -83,6 +83,15 @@ lon geometry.coordinates.0
 alt geometry.coordinates.2
 field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
 
+url https://ceic.ac.cn/data/data.json
+ttl 60
+at earth
+map .
+lat latitude
+lon longitude
+field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
 on earth 0 0 0
@@ -104,6 +113,14 @@ format fdsn_waveform
 on earth 0 0 0
 ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
+
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+ttl 60
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_ga_mag_today erfc seismic-surface Mw 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
@@ -675,6 +692,14 @@ ttl 300
 at earth
 field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
 
+url https://seismic-api.science.unimelb.edu.au/three-day-quakes
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_ga_mag_3day erfc seismic-surface Mw 30.0 0.0 0.0
+
 url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 300
 at earth
@@ -748,6 +773,14 @@ stations_lon long
 fanout 40
 last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
 
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+ttl 900
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.value bfs_odl_gamma_dose_rate_usv_h inverse-square em usv/h 3600 0.0 0.0
+
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
 ttl 1800
 at earth
@@ -803,6 +836,14 @@ fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
 field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
+
+url https://seismic-api.science.unimelb.edu.au/month-quakes
+ttl 1800
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_ga_mag_month erfc seismic-surface Mw 180.0 0.0 0.0
 
 url https://api.alerce.online/alerts/v1/objects/?page=1&page_size=1000&order_by=firstmjd&order_mode=DESC
 format alerce
@@ -5244,6 +5285,12 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms ga
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
+format iss_lis
+on earth 0 0 0
+ttl 604800
+field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um gaussian-inverse-square electric uJ/sr/m2/um 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 ttl 604800
 at sun
@@ -5272,12 +5319,6 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 format lightcurve
 ttl 604800
 at sun
-
-url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
-format iss_lis
-on earth 0 0 0
-ttl 604800
-field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um gaussian-inverse-square electric uJ/sr/m2/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
