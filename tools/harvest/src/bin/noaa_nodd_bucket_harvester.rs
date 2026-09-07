@@ -9,6 +9,7 @@ const NETLOC: &str = "storage.googleapis.com";
 
 const DEFAULT_BUCKET: &str = "noaa-passive-bioacoustic";
 const DEFAULT_PREFIX: &str = "nrs/products/";
+const STATIONS_TABLE: &str = "data/pmel.noaa.gov/nrs_stations.Φ";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -394,6 +395,73 @@ fn wkt_point(s: &str) -> Option<(f64, f64)> {
 fn shape_of(body: &str) -> Option<(f64, f64)> {
     let i = body.find("\"SHAPE\"")?;
     wkt_point(&body[i..])
+}
+
+fn nrs_site_key(site: &str) -> Option<String> {
+    let digits: String = site.chars().filter(|c| c.is_ascii_digit()).collect();
+    let n = digits.parse::<u32>().ok()?;
+    if (1..=99).contains(&n) {
+        Some(format!("{:02}", n))
+    } else {
+        None
+    }
+}
+
+fn station_from_key(key: &str) -> Option<String> {
+    for seg in key.split('/') {
+        let lower = seg.to_ascii_lowercase();
+        if let Some(i) = lower.find("nrs") {
+            let after = &lower[i + 3..];
+            let mut digits = String::new();
+            for ch in after.chars() {
+                if ch.is_ascii_digit() {
+                    digits.push(ch);
+                } else if !digits.is_empty() {
+                    break;
+                }
+            }
+            if !digits.is_empty() {
+                return Some(digits);
+            }
+        }
+    }
+    None
+}
+
+fn parse_station_table(text: &str) -> Vec<(String, f64, f64)> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut it = line.split_whitespace();
+        let (Some(site), Some(lat), Some(lon)) = (it.next(), it.next(), it.next()) else {
+            continue;
+        };
+        let (Ok(lat), Ok(lon)) = (lat.parse::<f64>(), lon.parse::<f64>()) else {
+            continue;
+        };
+        if lat.is_finite() && lon.is_finite() {
+            out.push((site.to_string(), lat, lon));
+        }
+    }
+    out
+}
+
+fn station_position(
+    body: &str,
+    site: Option<&str>,
+    rows: &[(String, f64, f64)],
+) -> Option<(f64, f64)> {
+    if let Some((lon, lat)) = shape_of(body) {
+        return Some((lat, lon));
+    }
+    let site = site?;
+    let key = nrs_site_key(site)?;
+    rows.iter()
+        .find(|(s, _, _)| nrs_site_key(s).as_deref() == Some(key.as_str()))
+        .map(|(_, lat, lon)| (*lat, *lon))
 }
 
 fn parse_positive_lead(s: &str) -> Option<f64> {
@@ -1295,6 +1363,20 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
     let mut recs: Vec<GeoRec> = Vec::new();
     let mut n_deploy = 0usize;
     let mut n_depth = 0usize;
+    let stations_path = match arg_value(args, "--stations-table") {
+        Some(path) => path,
+        None => STATIONS_TABLE.to_string(),
+    };
+    let stations = match fs::read_to_string(&stations_path) {
+        Ok(text) => parse_station_table(&text),
+        Err(_) => {
+            eprintln!(
+                "noaa: station table {} unreadable — no table fallback for positions (0 honored)",
+                stations_path
+            );
+            Vec::new()
+        }
+    };
     for mk in &meta {
         if !station_filter.is_empty() && !mk.contains(&format!("/{}/", station_filter)) {
             continue;
@@ -1303,8 +1385,16 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
             eprintln!("noaa-nodd: {} stayed unreadable — pending", mk);
             continue;
         };
-        let Some((lon, lat)) = shape_of(&body) else {
-            eprintln!("noaa-nodd: {} carries no SHAPE point — pending", mk);
+        let site = station_from_key(mk);
+        let site_word = match site.as_deref() {
+            Some(s) => format!("station {s}"),
+            None => "no site key".to_string(),
+        };
+        let Some((lat, lon)) = station_position(&body, site.as_deref(), &stations) else {
+            eprintln!(
+                "noaa-nodd: {} carries no SHAPE point and {} has no table position — deployment stays position-less (0 honored)",
+                mk, site_word
+            );
             continue;
         };
         let Some(dep) = depdir_of_metadata_key(mk) else {
@@ -1458,5 +1548,80 @@ fn main() {
     }
     if w.objects >= cap {
         eprintln!("noaa-nodd: cap {} reached — the walk is partial", cap);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const STATION_TABLE: &str = "\
+# NRS-Stationstabelle (SITE_NAME lat lon) — gemessen 2026-09-07
+# Quelle: PMEL Ocean Noise Reference Station Network
+NRS01 72.44 -156.55
+NRS02 50.25 -145.13
+NRS11 37.88 -123.44
+";
+
+    fn table() -> Vec<(String, f64, f64)> {
+        parse_station_table(STATION_TABLE)
+    }
+
+    #[test]
+    fn station_table_parses_measured_rows() {
+        let rows = table();
+        assert_eq!(rows.len(), 3);
+        let nrs01 = rows.iter().find(|(site, _, _)| site == "NRS01").unwrap();
+        assert_eq!(nrs01.1, 72.44);
+        assert_eq!(nrs01.2, -156.55);
+    }
+
+    #[test]
+    fn station_from_metadata_key_yields_the_site_digits() {
+        let key = "nrs/products/sound_level_metrics/11/nrs_11_20191023-20211004_hmd_v3/metadata/NRS_11_20191023-20211004_HMD_v3-metadata.json";
+        assert_eq!(station_from_key(key).as_deref(), Some("11"));
+    }
+
+    #[test]
+    fn deployment_shape_is_kept_when_present() {
+        let body =
+            r#"{"PACKAGE": "NRS_11_20191023-20211004_HMD", "SHAPE": "POINT (-123.45 37.88)"}"#;
+        let pos = station_position(body, Some("11"), &table());
+        assert_eq!(pos, Some((37.88, -123.45)));
+    }
+
+    #[test]
+    fn station_without_shape_takes_the_harvested_table_position() {
+        let body = r#"{"PACKAGE": "NRS_11_20191023-20211004_HMD"}"#;
+        let pos = station_position(body, Some("11"), &table());
+        assert_eq!(pos, Some((37.88, -123.44)));
+    }
+
+    #[test]
+    fn station_without_any_measured_position_stays_positionless() {
+        let body = r#"{"PACKAGE": "NRS_13_2020-2022"}"#;
+        let pos = station_position(body, Some("13"), &table());
+        assert_eq!(pos, None);
+    }
+
+    #[test]
+    fn resolved_position_flows_into_georec_rows() {
+        let body = r#"{"PACKAGE": "NRS_11_20191023-20211004_HMD"}"#;
+        let (lat, lon) = station_position(body, Some("11"), &table()).unwrap();
+        let rec = GeoRec {
+            t: 0.0,
+            lat,
+            lon,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 0.0,
+            comp: COMP_NRS_PSD,
+        };
+        let bytes = write_bin(MAGIC_NRS, &[rec]);
+        let parsed = parse_bin(MAGIC_NRS, &bytes).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].lat, 37.88);
+        assert_eq!(parsed[0].lon, -123.44);
     }
 }

@@ -27,9 +27,17 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
 - **GBCO-Verbrauch**: gebaut — `gestalt_surface_threads` (`motion.rs`) + der Lade-Pfad
   (`load_gestalt_surface_threads`, `main_flow.rs`, Halte-Feld `gestalt_surface_threads`).
   Offen bleibt nur der CDN-Dispatch (`gebco-bathymetry-cdn.yml`, Operator-Wort).
-- **`witness presence`** bleibt reserviert (Rat 2026-09-07 erneut): die presence-catalog-
-  Ablehnungen stehen — Position + Urteil, kein gemessener Skalar. Positives Gate (wann die
-  Tür aufgeht): gemessener Skalar am Punkt + Consent-Wurzel zuerst; nie der einzige Zeuge.
+- **`witness presence`** bleibt reserviert (Rat 2026-09-07, sechs Stimmen — die fünf
+  Charten + die sechste Stimme des Operators als Peer): die presence-catalog-Ablehnungen
+  stehen — Position + Urteil, kein gemessener Skalar. Positives Gate (wann die Tür aufginge):
+  gemessener Skalar am Punkt + Consent-Wurzel zuerst; nie der einzige Zeuge. Beschluss
+  (einstimmig, sechs Wege, ein Schluss): eine maschinen-gemessene biologische Detektion
+  (Hydrophon hört einen Ruf) ist KEIN Presence-Zeuge — der Ton ist die Messung, der Wal ist
+  ein Urteil (A = A). Der Ton lebt als akustische Serie (NRS, C1), nie als presence; die
+  biologische Einordnung wäre ein geborgter-Sinn-Verdict als Annotation auf der Serie, nie
+  ein Punkt, nie ein Name (der Wal ist ein Peer, kein Körpername). Die Consent-Wurzel
+  scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
+  der Wal bleibt frei, namenlos, im Wasser (0 honored).
 
 ## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
 
@@ -883,13 +891,19 @@ physikalischen Aussage — kein Blatt ohne diese:
   volle multivariate Klasse bleibt das Nobel-DAG-Atom (ein Tigramite-Lauf ist
   durch die Python-Regel ausgeschlossen). Query-Anker der Prior-Art-0 in
   te-literatur-matrix.md nachgetragen. geschlossen.
-- **Minimales nobel v2 (CPU, offen):** transfer_entropy_conditional(X→Y | C)
-  auf C = geteilte Flare-Hülle (XRSB bzw. heißester Kanal 94/335 als
-  Neupert-Stellvertreter) gegen `conditional_te_stats_lagged` (die geflickte
-  lag-bewusste Null, NICHT die leckende lineare), auf den Flare-Ereignissen
-  (24-s-Zellen) — die Richtung unter Konfund-Kontrolle.
-  corona_event_probe/corona_lag_probe rechnen te_conditional bereits (nur
-  berichten, nicht bauen).
+- **Korona-Konditional-Messung 2014 — die heiße Kaskade fällt (2026-09-07,
+  corona_conditional_probe, C=GOES-b_flux, max_lag 8, 989 Ereignisse)**: unter
+  Konditionierung auf die Röntgen-Hülle hält die unkonditionale heiße Kaskade
+  193→211→335→94 NICHT stand — D|C kippt auf null/abwärts (193→211 −3.64e-2,
+  211→335 −1.07e-2, 335→94 −9.09e-3 bei 96 s); die Richtung war die gemeinsame
+  Hülle (Neupert: das Röntgen treibt die heißen EUV, die Antwortzeit-Asymmetrie
+  sah aus wie Kanal→Kanal-Fluss). Überlebt: 304→131 aufwärts (+4.26e-2 bei 96 s,
+  wächst mit Lag) und 131→171 abwärts (−3.87e-2) — das TR-Grenzstück, Echo des
+  EVE-2011-Kandidaten 1032→131. geschlossen.
+- **Konfund-Kreuzprüfung + Restjahre (offen):** (a) C=335 und C=94 gegen
+  C=GOES-b_flux halten (läuft 2026-09-07); (b) Bandbreiten-Check für 304→131
+  (wie EVE-1032→131, sonst ebenso fragil); (c) Jahre 2013/2015 mit demselben
+  Konfund. Erst dann trägt der 304→131-Aufwärtsbefund als Verdikt.
 - **Nobel-DAG (Atom, getrennt):** die volle DAG „alle Kräfte im Phasenraum,
   alle Paare und Verzögerungen" — multivariate Konditionierung (KDE-Fluch) und
   der Konditional-Pfad in der GPU-Maschine (matrix.rs/solar.rs, die heute nur
