@@ -61,6 +61,7 @@ pub mod pioneer_telemetry;
 pub mod radio;
 pub mod rixs;
 pub mod rpw;
+pub mod s2event;
 pub mod sexagesimal;
 pub mod skydirection;
 pub mod suprastrom;
@@ -87,6 +88,7 @@ pub mod port;
 #[cfg(feature = "browser_relay")]
 pub mod relay;
 pub mod render;
+pub mod skymap;
 pub mod spatial;
 pub mod spectral;
 #[cfg(test)]
