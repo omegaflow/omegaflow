@@ -25,17 +25,17 @@ aus dem Event lesen), nicht das 52-Superset.
 
 ## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
 
-- **ned-cdn — blocked auf NED-TAP-Dienst (gemessen 2026-09-08):** der Walk
-  paginiert `NEDTAP.objdir` (1 Mrd+ Objekte) per TAP. Befund: der Sync-Endpoint
-  bricht große `SELECT TOP N`-Abfragen mitten im Stream ab ("stopped unexpectedly
-  without any result", `ERROR_TYPE=fatal`), nicht-deterministisch (~62 s, ~60–80k
-  Zeilen) — Seite 1 (`objid > 0`, 50000 Zeilen) lief, Seite 2 (`objid > 50984`)
-  brach ab (reproduziert). Der Async-Endpoint (`/tap/async`, UWS) stellt Jobs ein,
-  die selbst für `TOP 10` ohne `ORDER BY` viele Minuten `PENDING` bleiben — der
-  Queue ist verstopft. Code-Fixes stehen (`--limit 50000` + `--order objid`,
-  Async-Pfad wendet `--order` jetzt an), aber beide Dienstwege tragen die Ernte
-  derzeit nicht. Der eigentliche Weg ist der NED-Bulk-Download (NEDL/Katalog-Dump)
-  statt TAP-Pagination — pending.
+- **ned-cdn — Ursache + Fix (gemessen 2026-09-08):** der NED-TAP-Sync-Endpoint
+  hat eine **harte 60-s-Grenze** (`202 + "limited to 60 seconds … in asynchronous
+  mode"`, `ERROR_TYPE=fatal` — sogar `SELECT count(*)` scheitert). Meine `--limit
+  50000`-Seiten brauchten ~62 s → Seite 1 lief knapp, Seite 2 wurde gekillt. Ein
+  **Bulk-Download existiert nicht** („NEDL" kein Format; einziges Dateiprodukt =
+  NED-LVS, kuratiertes 2-Mio-Sample, kein objdir-Ersatz). objdir = 1,1 Mrd
+  Objekte, aber nur **11–19 Mio tragen ein z** — das z-Feld ist die ehrliche
+  Zielmenge. Fix (umgesetzt): `--limit 2000` (je Seite ~4,5 s, weit unter 60 s)
+  + `WHERE z > 0` ins SQL (z-Subset statt Voll-Katalog). Ein Voll-Crawl = ~5600
+  Requests als gestaffelte Kampagne; der Lauf steht auf dem Lattice-Budget-Gate
+  (4194304 Zellen) — landen verifizieren.
 - **argo_bgc.bin (Commit `01a2731` + paralleler Fetch, dispatched):** das
   Release `data-argo.ifremer.fr` war leer — alle 3 Läufe brachen am 240-min-
   Timeout ab (sequentieller Fetch, gemessen ~270 Profile/h, ~7,5 h für 2000).
