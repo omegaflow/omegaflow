@@ -1548,7 +1548,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 decline terrain
 url https://epqs.nationalmap.gov/v1/json?x=13.41&y=52.52&units=Meters&output=json
-note DEM-Höhenabfrage — Terrain per Gate declined. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note DEM-Höhenabfrage — Terrain per Gate declined. Council-Verdikt 2026-09-07 (Gestalt-Litmus): echter Gestalt-Zeuge — DEM-Höhe in m ist der gemessene SI-Skalar (die Form selbst); Land-Höhen-Geschwister zu gebco/eudem25m, zweite unabhängige Land-Linie → Binding/Compiler. Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
 dead dns-unresolved
 url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv
@@ -1800,11 +1800,11 @@ note grind: grind_arcgis_index.φ
 
 decline terrain
 url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify
-note Terrain-DEM — geografische Infrastruktur per Gate declined. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note Terrain-DEM — geografische Infrastruktur per Gate declined. Council-Verdikt 2026-09-07 (Gestalt-Litmus): derived — Schattierungs-Ableitung des DEM, kein Höhenwert, kein Messwert → kein Gestalt-Zeuge, zurückgestuft.
 
 decline terrain
 url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22
-note Terrain-DEM. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note Terrain-DEM. Council-Verdikt 2026-09-07 (Gestalt-Litmus): derived — Schattierungs-Ableitung des DEM, kein Höhenwert → kein Gestalt-Zeuge, zurückgestuft.
 
 decline derived-product
 url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
@@ -2180,7 +2180,7 @@ note HTTP 404 — Endpoint weg.
 
 decline terrain
 url https://macrostrat.org/api/mobile/map_query?lng=8.67&lat=47.37&z=10
-note Geologische Kartendaten. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note Geologische Kartendaten. Council-Verdikt 2026-09-07 (Gestalt-Litmus): catalog — Gesteins-Einheiten (Kategorie, kein Skalar) → kein Gestalt-Zeuge, zurückgestuft.
 
 decline catalog
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
