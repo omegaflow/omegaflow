@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-06
   version: 5
-  sha256: 2c2b31ad2af0d458c8d88f2bf1928c1d1e91f03167c24b07c91264fb9c0704f5
+  sha256: ff76b349f9ecdea590746aa3e32e04e5df7f3df6c76f4dd5b62417fd733c9773
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -15,7 +15,7 @@
 
 ## Abstract
 
-The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (chromosphere, log T = 4.16) to 94 Å (hot corona, log T = 6.81) — at 10 s cadence, over 109 flares (2011), with a phase-randomized null, complemented by SDO/AIA imaging (24-s cells) over three independent years (2013, 2014, 2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). The central result is a **reproducible, directed, family-bound cascade**: the hot-corona chain 193→211→335→94 Å carries the largest TE up the ladder at the ~96 s Alfvén crossing in every one of three years (all nine rung-year values positive), and the per-event direction of the hottest rung is 76% positive with every month majority-positive — a direction that is consistent and reproduced, not alternating. The cascade's amplitude, however, stays below the full-round family bound in every year (0.63–0.91 × fam), and the hottest rung does not strengthen as the ensemble grows fivefold. The single EVE rung that clears the family bound at canonical bandwidth (1032→131 Å, D = 5.11e-1 > fam = 4.70e-1) is not bandwidth-robust: it fails at Silverman h ≥ 2.0, robustly to the surrogate count, and every other EVE rung is silent at every bandwidth. The measurement therefore establishes a reproduced coronal direction under the family bound, but no rung of either ladder clears both the family bound and the bandwidth check — the honest verdict is a family-bound cascade, not a null and not a Pfeil.
+The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (log T = 4.16) to 94 Å (log T = 6.81) — at 10 s cadence over 109 flares (2011) with a phase-randomized null, complemented by SDO/AIA imaging (24-s cells) over three independent years (2013, 2014, 2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). The central result is a reproducible, directed, family-bound cascade: the hot-corona chain 193→211→335→94 Å carries the largest TE up the ladder at the ~96 s Alfvén crossing in all three years, and the per-event direction of the hottest rung is 76% positive — consistent, not alternating. The amplitude stays below the full-round family bound in every year (0.63–0.91 × fam). The single EVE rung that clears the family bound at canonical bandwidth (1032→131 Å) is not bandwidth-robust, failing at h ≥ 2.0. The measurement establishes a reproduced coronal direction under the family bound, but no rung clears both the family bound and the bandwidth check — a family-bound cascade, not a Pfeil.
 ## 1. Introduction
 
 The coronal heating problem is the temperature inversion of the outer solar
