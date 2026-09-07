@@ -99,12 +99,15 @@ pub fn spawn_ephemeris_bootstrap(
     }
     let anchor_uses = anchor_uses(sources);
     let anchor_order = |s: &SourceConfig| {
-        std::cmp::Reverse(
-            anchor_uses
-                .get(s.body.as_deref().unwrap_or(""))
-                .copied()
-                .unwrap_or(0),
-        )
+        let key = match s.body.as_deref() {
+            Some(b) => b,
+            None => "",
+        };
+        let uses = match anchor_uses.get(key) {
+            Some(n) => *n,
+            None => 0,
+        };
+        std::cmp::Reverse(uses)
     };
     let mut fresh_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
@@ -140,7 +143,13 @@ pub fn spawn_ephemeris_bootstrap(
                 return;
             }
         };
-        let now = lsk.system_now_tdb().unwrap_or(0.0);
+        let now = match lsk.system_now_tdb() {
+            Some(t) => t,
+            None => {
+                guard.store(false, std::sync::atomic::Ordering::SeqCst);
+                return;
+            }
+        };
         for (i, s, p) in fresh_items {
             load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
         }
@@ -266,13 +275,13 @@ impl RefusalLedger {
 
     pub fn register(&mut self, url: &str, class: &str) {
         let key = format!("{}|{}", class, url);
+        let unix = match SystemTime::now().duration_since(UNIX_EPOCH) {
+            Ok(d) => d.as_secs(),
+            Err(_) => return,
+        };
         if !self.seen.insert(key) {
             return;
         }
-        let unix = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|d| d.as_secs())
-            .unwrap_or(0);
         let line = format!("refused {} {} {}\n", unix, class, url);
         if let Ok(mut f) = std::fs::OpenOptions::new()
             .create(true)
@@ -1230,7 +1239,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
-                let cap = src_clone.fanout_cap.max(1) as usize;
+                let cap = src_clone.fanout_cap as usize;
                 let delay = src_clone.fanout_delay;
                 thread::spawn(move || {
                     let channels = build_alerce_channels(&src_clone, cap, delay);
@@ -1844,6 +1853,124 @@ pub fn main_flow() {
                                 position: Position::Source,
                                 name: fc.name.clone(),
                                 value: val,
+                            },
+                            fc.clone(),
+                        ));
+                    }
+                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                    });
+                });
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "bgr_infrasound" | "noaa_nrs_psd" | "superdarn_fitacf" | "argo_bgc"
+            ) {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("series").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let records = match geo_series_parse_bin(&fmt, &bytes) {
+                        Some(r) => r,
+                        None => {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no {} geo contract",
+                                fmt,
+                                url,
+                                bytes.len(),
+                                fmt
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    if fields.is_empty() {
+                        eprintln!(
+                            "{} {}: field undeclared — the block carries no field line",
+                            fmt, url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let body_name = frame_body_name(&src.frame);
+                    let mut channels = Vec::with_capacity(records.len());
+                    for r in records {
+                        let Some(name) = geo_series_component_name(&fmt, r.comp) else {
+                            continue;
+                        };
+                        let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                            continue;
+                        };
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq: r.freq,
+                                bin_width: r.bin_width,
+                                epoch: r.t,
+                                position: Position::Surface {
+                                    body_name: body_name.clone(),
+                                    lat: r.lat,
+                                    lon: r.lon,
+                                    alt: r.alt,
+                                },
+                                name: fc.name.clone(),
+                                value: r.val,
                             },
                             fc.clone(),
                         ));

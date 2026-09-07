@@ -68,6 +68,40 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     }
 }
 
+pub fn geo_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<crate::geo::GeoRec>> {
+    let magic = crate::geo::magic_of(format)?;
+    crate::geo::parse_bin(magic, bytes)
+}
+
+pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str> {
+    match format {
+        "bgr_infrasound" => match comp {
+            crate::geo::COMP_BGR_AZIM => Some("bgr_infrasound_back_azimuth_deg"),
+            crate::geo::COMP_BGR_VAPP => Some("bgr_infrasound_apparent_velocity_ms"),
+            crate::geo::COMP_BGR_RMS => Some("bgr_infrasound_rms_amplitude_pa"),
+            crate::geo::COMP_BGR_FREQ => Some("bgr_infrasound_center_frequency_hz"),
+            _ => None,
+        },
+        "noaa_nrs_psd" => match comp {
+            crate::geo::COMP_NRS_PSD => Some("noaa_nrs_psd_db"),
+            _ => None,
+        },
+        "superdarn_fitacf" => match comp {
+            crate::geo::COMP_SDARN_V => Some("superdarn_fitacf_los_velocity_ms"),
+            _ => None,
+        },
+        "argo_bgc" => match comp {
+            crate::geo::COMP_ARGO_DOXY => Some("argo_dac_bgc_doxy_umol_kg"),
+            crate::geo::COMP_ARGO_NITRATE => Some("argo_dac_bgc_nitrate_umol_kg"),
+            crate::geo::COMP_ARGO_CHLA => Some("argo_dac_bgc_chla_mg_m3"),
+            crate::geo::COMP_ARGO_BBP700 => Some("argo_dac_bgc_bbp700_m1"),
+            crate::geo::COMP_ARGO_PH_TOTAL => Some("argo_dac_bgc_ph_total"),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
 pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
     if let Some((target_path, final_key)) = key.rsplit_once('.') {
         let parent = if target_path.is_empty() {
