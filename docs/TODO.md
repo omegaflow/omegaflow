@@ -203,10 +203,14 @@ dem Bezug; NRS01 72.49,-156.6 → alt −833 m, live gemessen 2026-09-07), nie a
 Feldwert (Binding-Verbrauch phi/bindings/bathymetrie-gebco.φ Binding 4, f889793).
 Verifikation: `cargo check --workspace` 0/0, `anchor_bodies` grün, die
 gbco-Tests halten die Station-Sicht auf −833. url-Linie in phi/sources.φ:
-**CI-pending** — das Release opentopodata.org existiert nicht (404 gemessen
-2026-09-07), keine erfundene Live-URL. Die Manifestation
+**Release opentopodata.org existiert jetzt (2026-09-07 gemessen, gh api), aber
+das Asset `gebco_bathymetry.gbco` ist ein 56-Byte-Stub** (gbco = Magic(4) +
+len(4) + 24-B-Records → 56 B = genau 2 lat/lon/elev-Records statt echter
+Bathymetrie) — Inhalt gegen den `gebco_bathymetry_compiler`-Ausgabe
+`unverifiziert`. Die Manifestation
 (`gebco-bathymetry-cdn.yml` committen und dispatchen) bleibt Operator-Wort
-(B2); danach registriert die url-Linie
+(B2); der 404-Stand ist überholt — zu prüfen, ob der Stub ein echter
+2-Punkt-Test oder ein fehlgeschlagener Upload ist. url-Linie danach:
 https://github.com/omegaflow/sources/releases/download/opentopodata.org/gebco_bathymetry.gbco.
 
 ## Nadeln — Register
@@ -623,7 +627,7 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   + CASE 6 (Fließtext-Drift in lebenden Dokumenten jagen oder als Grenze
   festschreiben) — je Kalibrationslauf, je Commit, getrennt entschieden.
 - `auftrag-saubere-datenbank.md` — eine Datenbank über sources.φ / CI / CDN.
-  Steps 1-2 committet (cd_reconcile, CDN_ZIEL_SCHEMA). Step 3 (Registry
+  Steps 1-2 committet (cdn_reconcile, CDN_ZIEL_SCHEMA). Step 3 (Registry
   zuerst): Verdikt-Ledger `docs/specs/cdn_orphan_verdicts.json` steht — 156
   Orphans klassifiziert; verlässlicher Host-Abgleich gegen sources.φ +
   dead_sources.φ: 80 stale_pending dokumentiert tot, **55 in keinem Register**.
@@ -778,16 +782,16 @@ Register-Pflichten, keine stillen Schwebestände:
   (`format intermagnet_dbdt` + `on earth` + ttl, ohne field-Tokens),
   Workflow-Job mit Idempotenz-Guard, Probe um CDN-Lesepfad erweitern,
   Manifestation nur über CI (`--ci-mode`). Bestehende Schuld: auch
-  `omni2_serie_1h.bin` ist unmanifestiert. pending.
+  `omni2_serie_1h.bin` war unmanifestiert. pending.
   **Gemessen 2026-09-07:** `omni2_serie_1h.bin` kompiliert in CI vollständig
   (omni2-cdn workflow_dispatch, decimate-min 60, 1963-01-01…2026-08-06,
-  2.718.952 Records, Roundtrip parses, Run 34135899125), aber der CDN-Upload
-  endet `401 Bad credentials` — `OMEGAFLOW_TOKEN` (omegaflow/omegaflow, neu
-  gesetzt 2026-09-07T14:25:07Z) schreibt nicht auf omegaflow/sources; vor der
+  2.718.952 Records, Roundtrip parses, Run 34135899125); ein früher CDN-Upload
+  endete `401 Bad credentials` — `OMEGAFLOW_TOKEN` (omegaflow/omegaflow, neu
+  gesetzt 2026-09-07T14:25:07Z) schrieb nicht auf omegaflow/sources; vor der
   Rotation schrieben CI-Uploads noch am selben Tag 13:10Z (icecat/antares →
   ssd.jpl.nasa.gov), der letzte Beleg 2026-09-06T15:56Z (aia2013_11). Das Asset
-  ist auf dem CDN gemessen absent. Re-Dispatch (gh workflow run omni2-cdn.yml,
-  decimate-min 60, asset omni2_serie_1h.bin) nach Token-Freigabe. pending.
+  ist auf dem CDN gemessen manifestiert (ssd.jpl.nasa.gov/omni2_serie_1h.bin,
+  54.379.048 B, Upload 2026-09-07T15:11Z, gh api verifiziert). geschlossen.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
@@ -1248,7 +1252,7 @@ ICRS-4D-Rahmen teilt:
   in ein neues Ledger (`phi/llm_tool_ledger.φ` — das bestehende
   `commit_gate_ledger.φ` trägt nur Verdicts, keinen Strom). n<30 fließt
   stumm.
-- Webhook-Empfänger: der Sender `tools/work/src/bin/smail.rs` ist gebaut
+- Webhook-Empfänger: der Sender `tools/service/src/bin/smail.rs` ist gebaut
   (REST über curl, `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN`,
   Tests grün); offen bleibt der Webhook-Empfänger und der
   Cloudflare-Worker davor (Lesepfad = Cloudflare Routing → Worker →
@@ -1358,7 +1362,7 @@ Der Mechanismus gegen den Verlust: **kein Top-N — das Verzeichnis ist
 vollständig.** Jede Funktion des Systems, jedes Konzept, jede fehlende
 Funktion trägt ein Urteil. Der Inventar-Prozess ist wiederholbar:
 `grep -nE "^\s*(pub\s+)?(async\s+)?fn"` über src/main.rs + src/lib.rs +
-tools/work/src/bin/* + tools/live/src/bin/* + die WGSL-Entry-Points
+tools/service/src/bin/* + tools/utils/src/bin/* + die WGSL-Entry-Points
 (`@vertex/@fragment/@compute fn`) + `docs/concepts/*` + die Registry
 (phi/sources.φ, phi/dead_sources.φ). Urteile: **WAHR** (die Messung ist
 die Messung der Sache selbst — der Gradient schweigt), **UNWAHR**
