@@ -1671,6 +1671,16 @@ Offen (Detail in phi/pipeline/ledger.φ):
   KBR-Absolute_Ne trägt nativ m^-3 (gemessen: Relative_Ne ≡
   Relative_Hor_TEC/Distance); die VirES-Metadaten-Unit cm^-3 ist ein
   Duplikat-Fehler, nicht registriert.
+- VirES-Nachmessung GF_OPER_NE__KBR_2F + CS_OPER_MAG-Probe (2026-09-07):
+  die m^-3-Registrierung reproduzierbar bestätigt — über alle 720 Proben des
+  registrierten Fensters 2024-11-17T20:00–20:59Z ist Relative_Hor_TEC × 1e16
+  / Distance ≡ der native Relative_Ne-Wert, Quotient = 1,000 (Probe 1:
+  2,372132 TECU × 1e16 / 198011,56 m = 1,19798e11 = nativ Relative_Ne).
+  Absolute_Ne liegt nativ bei 1,70e11–1,66e11 m^-3 — als cm^-3 (1,7e17 m^-3)
+  unphysikalisch; die VirES-Metadaten-Unit cm^-3 ist ein Quell-Duplikat-Fehler,
+  das Registerfeld gracefo_kbr_absolute_electron_density_m3 bleibt 1/m3, keine
+  Register-Änderung. CS_OPER_MAG-Fenster 2018-10-10 erneut geprobt (--probe):
+  1 überlebt / 0 verworfen, 900 F-Proben ~45,0–45,8 nT — Fenster bestätigt.
 - BGR-Infraschall-Stations-Elevation: gemessen 2026-09-07 — jede der 53
   Stations-NetCDF traegt einen lesbaren `elev`-Skalar (2024 + kleinste
   historische Datei je Station geprueft), keine Station gehalten; Geodaten-
