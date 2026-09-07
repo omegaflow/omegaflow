@@ -4,31 +4,21 @@ Nur offene Pflichten.
 
 ## Source-Registrierung — Ursprungs-API statt CDN-Url-Line (2026-09-07)
 
-Operator-Korrektur: eine Quelle, deren Ursprungs-API erreichbar ist und die
-Feld-Daten trägt, wird an ihrer Ursprungs-API-Url registriert, nicht an einer
-github-CDN-Url-Line — das github-Asset ist nur die Cache-Schicht. Der Archivar
-löst eine Nicht-github-Url als lokaler Cache → CDN-Asset → Ursprung auf
-(`fetch_one`).
+Der Archivar löst eine Nicht-github-Url als lokaler Cache → CDN-Asset → Ursprung
+auf (`fetch_one`); der CDN-Asset-Name ist eine reine Funktion der Ursprungs-Url
+(`source_name_from_url`). Der `meteo_cache_manifest`-Manifestator (meteo-cdn.yml)
+publiziert die archive-api.open-meteo.com-Cache-Assets (Ursprungs-Response
+verbatim, eine Url je Variable) seit 2026-09-07 unter genau diesem abgeleiteten
+Namen — Lokaler Cache → CDN → API schließt konstruktionsgemäß.
 
-**Umgeregistriert — archive-api.open-meteo.com (90):** die 90
+**Ausstehend — CDN-Dispatch der umgeregistrierten Namen:** die 90
 open-meteo-Archiv-Quellen (gyirong/kollab/rasuwa, je 30 stündliche Variablen,
-Fenster 2026-08-18…27) stehen jetzt an der Ursprungs-API-Url
-(`/v1/archive?latitude=…&longitude=…&start_date=2026-08-18&end_date=2026-08-27&hourly=<variable>&timezone=UTC`);
-der Wertpfad wurde vom kompilierten `points`-Envelope auf die
-Ursprungs-Form `hourly.<variable>.-1` gestellt. Wert-Parität gemessen
-(Stationen gyirong/rasuwa/kollab, apparent_temperature: Ursprung 4.4 / 6.0 /
--5.4 == Asset 4.4 / 6 / -5.4; die kompilierten Werte sind verbatim aus dem
-Ursprung in Reihenfolge übernommen — Parität gilt konstruktionsgemäß für jede
-Variable).
-
-**Offene Pflicht — CDN-Manifestation der umgeregistrierten Namen:** der
-`meteo-cdn.yml`-Manifestator (und `meteo_harvest`) publiziert die Assets als
-`<station>_open-meteo_<variable>.json`; `fetch_one` leitet den CDN-Asset-Namen
-seit der Umregistrierung aber aus der Ursprungs-Url ab
-(`source_name_from_url`) — die abgeleiteten Namen sind noch nicht manifestiert,
-der CDN-Treffer geht bis dahin leer und der Ursprung trägt (erreichbar,
-gemessen 200). Der Manifestator übernimmt die Ursprungs-Url-abgeleitete
-Benennung, damit lokaler Cache → CDN → API wieder als Kette schließt.
+Fenster 2026-08-18…27) stehen an der Ursprungs-API-Url
+(`/v1/archive?latitude=…&longitude=…&start_date=2026-08-18&end_date=2026-08-27&hourly=<variable>&timezone=UTC`),
+Wertpfad `hourly.<variable>.-1`. Die abgeleiteten Cache-Assets sind noch nicht
+auf dem CDN manifestiert — der `meteo-cdn.yml`-Dispatch (Event
+`tibet-flut-2026`) muss einmal laufen; bis dahin trägt der Ursprung
+(erreichbar, gemessen 200).
 
 ## Oszillator/Zeuge/Serie — die Identität (gebaut 2026-09-07)
 
