@@ -88,7 +88,10 @@ pub fn port_block(block: &str) -> String {
                 }
             }
             "map" | "cmap" | "rows" => {
-                let arg = parts.get(1).copied().unwrap_or(".");
+                let arg = match parts.get(1).copied() {
+                    Some(a) => a,
+                    None => ".",
+                };
                 map_line = Some(format!("{} {}", parts[0], arg));
             }
             "lat_key" if parts.len() >= 2 => lat_key = Some(parts[1].to_string()),
@@ -153,7 +156,10 @@ pub fn port_block(block: &str) -> String {
     }
     if let Some(m) = &map_line {
         if celestial {
-            let arg = m.splitn(2, ' ').nth(1).unwrap_or(".");
+            let arg = match m.splitn(2, ' ').nth(1) {
+                Some(a) => a,
+                None => ".",
+            };
             out.push_str("cmap ");
             out.push_str(arg);
             out.push('\n');
@@ -331,7 +337,7 @@ pub fn probe_one(
         fetch_raw_probe(&url, None, &headers)
     };
     let parsed = raw.as_ref().and_then(|r| parse_json(r));
-    let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
+    let auto_ttl = raw.as_ref().and_then(|r| derive_ttl(&url, r, env));
     let mut block = String::new();
     block.push_str(&format!("url {}\n", src.url));
     let ttl = match auto_ttl {
@@ -457,16 +463,20 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
         findings.len(),
         ok + findings.len()
     );
+    let clock = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|d| d.as_secs());
+    let dash = clock.map(|u| format!("{} — ", date_str(u)));
     let mut lines: Vec<String> = vec![
-        format!(
-            "# recheck-live {} — mechanical re-verification sweep over phi/sources.φ (live sources)",
-            date_str(
-                SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .map(|d| d.as_secs())
-                    .unwrap_or(0)
-            )
-        ),
+        match &dash {
+            Some(d) => format!(
+                "# recheck-live {}mechanical re-verification sweep over phi/sources.φ (live sources)",
+                d
+            ),
+            None => "# recheck-live mechanical re-verification sweep over phi/sources.φ (live sources)"
+                .into(),
+        },
         "# Classes: key-void (key marker without .secrets.local) | drift-void (API drift — curation duty) | quiet-void (empty = truth) | refused (host answers but refuses body — alive, not dead) | broken (fetch void — host unreachable, dead candidate)".into(),
     ];
     for f in findings.iter() {
@@ -475,16 +485,17 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
         lines.push(line);
     }
     if findings.is_empty() {
-        lines.push(format!(
-            "recheck-live {}: 0 findings — all {} tested sources harvested samples",
-            date_str(
-                SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .map(|d| d.as_secs())
-                    .unwrap_or(0)
+        let colon = clock.map(|u| format!("{}: ", date_str(u)));
+        lines.push(match &colon {
+            Some(c) => format!(
+                "recheck-live {}0 findings — all {} tested sources harvested samples",
+                c, ok
             ),
-            ok
-        ));
+            None => format!(
+                "recheck-live 0 findings — all {} tested sources harvested samples",
+                ok
+            ),
+        });
     }
     match std::fs::write("phi/pipeline/stage/recheck_live.φ", lines.join("\n") + "\n") {
         Ok(_) => 0,
@@ -556,7 +567,7 @@ pub fn probe_mode(
     match &time_pair {
         Some((now, lsk_ref)) => {
             let now = *now;
-            let workers = 8.min(non_kernel.len().max(1));
+            let workers = 8.min(non_kernel.len());
             std::thread::scope(|scope| {
                 for _ in 0..workers {
                     scope.spawn(|| loop {
@@ -716,29 +727,184 @@ pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64)
     format!("# template_precision {}dp\n", effective_dp)
 }
 
-pub fn probe_ttl(body: &str) -> Option<u64> {
-    let val = parse_json(body)?;
-    match val {
-        JsonVal::Arr(ref arr) if arr.len() >= 2 => {
-            let t0 = find_timestamp(&arr[0]);
-            let t1 = find_timestamp(&arr[1]);
-            match (t0, t1) {
-                (Some(a), Some(b)) if (a - b).abs() >= 1.0 => Some((a - b).abs() as u64),
-                _ => None,
+fn iso_sample_seconds(s: &str) -> Option<f64> {
+    let b = s.as_bytes();
+    if b.len() < 19 || !b[..19].iter().all(u8::is_ascii) {
+        return None;
+    }
+    if b[4] != b'-'
+        || b[7] != b'-'
+        || (b[10] != b'T' && b[10] != b' ')
+        || b[13] != b':'
+        || b[16] != b':'
+    {
+        return None;
+    }
+    let year: i64 = s[0..4].parse().ok()?;
+    let month: u32 = s[5..7].parse().ok()?;
+    let day: u32 = s[8..10].parse().ok()?;
+    let hour: u32 = s[11..13].parse().ok()?;
+    let minute: u32 = s[14..16].parse().ok()?;
+    let second: u32 = s[17..19].parse().ok()?;
+    if month == 0 || month > 12 || day == 0 || day > 31 || hour > 23 || minute > 59 || second > 60 {
+        return None;
+    }
+    let days = ymd_to_days(year, month, day)?;
+    let mut secs =
+        days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second as f64;
+    if b.len() > 19 && b[19] == b'.' {
+        let mut end = 20;
+        while end < b.len() && b[end].is_ascii_digit() {
+            end += 1;
+        }
+        if end == 20 {
+            return None;
+        }
+        let places = (end - 20) as i32;
+        let fraction: f64 = s[20..end].parse().ok()?;
+        secs += fraction / 10f64.powi(places);
+    }
+    Some(secs)
+}
+
+fn scan_iso_samples(body: &str) -> Vec<f64> {
+    let b = body.as_bytes();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i + 19 <= b.len() {
+        if b[i].is_ascii_digit()
+            && b[i + 4] == b'-'
+            && b[i + 7] == b'-'
+            && (b[i + 10] == b'T' || b[i + 10] == b' ')
+            && b[i + 13] == b':'
+            && b[i + 16] == b':'
+        {
+            if let Some(secs) = iso_sample_seconds(&body[i..]) {
+                out.push(secs);
+                i += 19;
+                continue;
             }
         }
-        JsonVal::Obj(ref map) => {
+        i += 1;
+    }
+    out
+}
+
+fn to_ttl_seconds(secs: f64) -> Option<u64> {
+    if secs.is_finite() && secs >= 1.0 {
+        Some(secs.round() as u64)
+    } else {
+        None
+    }
+}
+
+fn body_sample_ttl(body: &str) -> Option<u64> {
+    let mut samples = scan_iso_samples(body);
+    samples.sort_by(f64::total_cmp);
+    samples.dedup();
+    if samples.len() < 2 {
+        return None;
+    }
+    let mut spacing = Vec::with_capacity(samples.len() - 1);
+    for pair in samples.windows(2) {
+        let gap = pair[1] - pair[0];
+        if gap < 1.0 {
+            return None;
+        }
+        spacing.push(gap);
+    }
+    spacing.sort_by(f64::total_cmp);
+    let n = spacing.len();
+    let median = if n % 2 == 1 {
+        spacing[n / 2]
+    } else {
+        (spacing[n / 2 - 1] + spacing[n / 2]) * 0.5
+    };
+    to_ttl_seconds(median)
+}
+
+fn cadence_seconds(field: &str) -> Option<u64> {
+    let t = field.trim();
+    if let Ok(secs) = t.parse::<f64>() {
+        return to_ttl_seconds(secs);
+    }
+    let rest = t.strip_prefix("PT")?;
+    let cut = rest.find(|c: char| !c.is_ascii_digit() && c != '.')?;
+    let (amount, unit) = rest.split_at(cut);
+    let secs: f64 = amount.parse().ok()?;
+    let mult = match unit {
+        "S" => 1.0,
+        "M" => 60.0,
+        "H" => 3600.0,
+        _ => return None,
+    };
+    to_ttl_seconds(secs * mult)
+}
+
+fn cadence_value_seconds(val: &JsonVal) -> Option<u64> {
+    match val {
+        JsonVal::Num(n) => to_ttl_seconds(*n),
+        JsonVal::Str(s) => cadence_seconds(s),
+        _ => None,
+    }
+}
+
+fn find_cadence_seconds(val: &JsonVal) -> Option<u64> {
+    match val {
+        JsonVal::Obj(map) => {
             for (k, v) in map {
-                if is_time_key(k) {
-                    if json_num(v).is_some() {
-                        return Some(60);
+                if k.eq_ignore_ascii_case("cadence") {
+                    if let Some(secs) = cadence_value_seconds(v) {
+                        return Some(secs);
                     }
                 }
             }
-            None
+            map.values().find_map(find_cadence_seconds)
         }
+        JsonVal::Arr(arr) => arr.iter().find_map(find_cadence_seconds),
         _ => None,
     }
+}
+
+fn hapi_cadence_url(url: &str) -> Option<String> {
+    let after = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    let (netloc, route) = after.split_once('/')?;
+    let (path, query) = match route.split_once('?') {
+        Some((p, q)) => (p, q),
+        None => (route, ""),
+    };
+    if !path.contains("hapi/") {
+        return None;
+    }
+    let id = query
+        .split('&')
+        .find_map(|p| p.strip_prefix("id="))
+        .filter(|v| !v.is_empty())?;
+    let base = if url.starts_with("https://") {
+        "https://"
+    } else {
+        "http://"
+    };
+    Some(format!("{}{}/hapi/info?id={}", base, netloc, id))
+}
+
+fn hapi_cadence_ttl(url: &str, env: &HashMap<String, String>) -> Option<u64> {
+    let info_url = resolve_secret(&hapi_cadence_url(url)?, env);
+    let body = fetch_raw_probe(&info_url, None, &[])?;
+    let parsed = parse_json(&body)?;
+    find_cadence_seconds(&parsed)
+}
+
+pub fn derive_ttl(url: &str, body: &str, env: &HashMap<String, String>) -> Option<u64> {
+    if let Some(secs) = body_sample_ttl(body) {
+        return Some(secs);
+    }
+    if url.contains("/hapi/") {
+        return hapi_cadence_ttl(url, env);
+    }
+    None
 }
 
 pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
@@ -1057,9 +1223,10 @@ pub fn walk_json_probe(
                 ));
             } else if force != "DROP" {
                 let unit_lc = unit.to_lowercase();
-                let in_registry = force_id_of(&force)
-                    .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
-                    .unwrap_or(false);
+                let in_registry = match force_id_of(&force) {
+                    Some(fid) => allowed_units_for_force(fid).contains(&unit_lc.as_str()),
+                    None => false,
+                };
                 if !in_registry {
                     out.push_str(&format!("# unit {} not in force registry — review\n", unit));
                 }
@@ -1090,9 +1257,10 @@ pub fn walk_json_probe(
                     ));
                 } else if force != "DROP" {
                     let unit_lc = unit.to_lowercase();
-                    let in_registry = force_id_of(&force)
-                        .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
-                        .unwrap_or(false);
+                    let in_registry = match force_id_of(&force) {
+                        Some(fid) => allowed_units_for_force(fid).contains(&unit_lc.as_str()),
+                        None => false,
+                    };
                     if !in_registry {
                         out.push_str(&format!("# unit {} not in force registry — review\n", unit));
                     }
@@ -1360,10 +1528,10 @@ pub fn ci_mode(dir: &str) -> i32 {
         }
         let netloc = extract_netloc(&src.url);
         let manifest = cdn_manifest_map();
-        let name = manifest
-            .get(&src.url)
-            .cloned()
-            .unwrap_or_else(|| source_name_from_url(&src.url));
+        let name = match manifest.get(&src.url).cloned() {
+            Some(n) => n,
+            None => source_name_from_url(&src.url),
+        };
         let cache_path = match (&netloc, &name) {
             (Some(nl), nm) if !nm.is_empty() => Some(cache_path_for(nl, nm)),
             _ => None,
@@ -1397,10 +1565,10 @@ pub fn ci_mode(dir: &str) -> i32 {
             }
             if mirror_enabled {
                 if let Some(netloc) = extract_netloc(&src.url) {
-                    let name = manifest
-                        .get(&src.url)
-                        .cloned()
-                        .unwrap_or_else(|| source_name_from_url(&src.url));
+                    let name = match manifest.get(&src.url).cloned() {
+                        Some(n) => n,
+                        None => source_name_from_url(&src.url),
+                    };
                     let tmp_path = cache_path_for(netloc, &name);
                     if std::fs::write(&tmp_path, &raw).is_ok()
                         && crate::cdn::upload_release(netloc, &tmp_path)
@@ -1431,7 +1599,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             };
             let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
             let body = anomaly_issue_body(&anomalies);
-            let already_open = Command::new("gh")
+            let already_open = match Command::new("gh")
                 .arg("issue")
                 .arg("list")
                 .arg("--repo")
@@ -1445,8 +1613,10 @@ pub fn ci_mode(dir: &str) -> i32 {
                 .arg("--jq")
                 .arg(".[].title")
                 .output()
-                .map(|o| String::from_utf8_lossy(&o.stdout).contains(&title))
-                .unwrap_or(false);
+            {
+                Ok(o) => String::from_utf8_lossy(&o.stdout).contains(&title),
+                Err(_) => false,
+            };
             if already_open {
                 eprintln!(
                     "ci-mode: anomaly issue already open ({}) — no new issue",
@@ -1490,11 +1660,10 @@ pub fn ci_mode(dir: &str) -> i32 {
 }
 pub fn fanout_stations_secret_void(src: &SourceConfig, env: &HashMap<String, String>) -> bool {
     src.url.contains('{')
-        && src
-            .stations_url
-            .as_deref()
-            .map(|u| secret_resolves_void(u, env))
-            .unwrap_or(false)
+        && match src.stations_url.as_deref() {
+            Some(u) => secret_resolves_void(u, env),
+            None => false,
+        }
 }
 
 pub fn mirror_stations(
@@ -1666,9 +1835,10 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
         .map(|l| {
             let t = l.trim();
             let u = if t.starts_with("live ") || t.starts_with("candidate ") {
-                t.split_whitespace()
-                    .find(|w| w.starts_with("http"))
-                    .unwrap_or("")
+                match t.split_whitespace().find(|w| w.starts_with("http")) {
+                    Some(w) => w,
+                    None => "",
+                }
             } else {
                 t
             };
@@ -1681,7 +1851,7 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     let learned_lock = std::sync::Mutex::new(HashMap::<String, String>::new());
     let drafted = std::sync::atomic::AtomicUsize::new(0);
     let next = std::sync::atomic::AtomicUsize::new(0);
-    let workers = 8.min(total.max(1));
+    let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
             scope.spawn(|| loop {
@@ -1698,7 +1868,10 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                 if let Some(body) = raw {
                     if let Some(parsed) = parse_json(&body) {
                         let tap_flat = tap_to_json(&parsed);
-                        let effective = tap_flat.as_ref().unwrap_or(&parsed);
+                        let effective = match tap_flat.as_ref() {
+                            Some(flat) => flat,
+                            None => &parsed,
+                        };
                         let mut fields = String::new();
                         let mut coords = String::new();
                         let mut map_path: Option<String> = None;
@@ -1711,7 +1884,7 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                             &mut map_path,
                             &mut budget,
                         );
-                        let ttl = probe_ttl(&body);
+                        let ttl = derive_ttl(&url, &body, env);
                         let (frame, reason) = derive_frame(effective, &coords);
                         if !frame.is_empty() {
                             if let Some(rk) = route_key(&urls[i]) {
@@ -1800,11 +1973,11 @@ pub fn draft_context_mode(path: &str) -> i32 {
                     for l in c.lines() {
                         let t = l.trim();
                         if let Some(pos) = t.find("http") {
-                            let u = t[pos..]
-                                .split_whitespace()
-                                .next()
-                                .unwrap_or("")
-                                .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
+                            let u = match t[pos..].split_whitespace().next() {
+                                Some(w) => w,
+                                None => "",
+                            }
+                            .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
                             if u.starts_with("http") {
                                 context_map
                                     .entry(u.to_string())
@@ -1852,7 +2025,10 @@ pub fn draft_context_mode(path: &str) -> i32 {
             out.push_str("\n\n");
             continue;
         }
-        let context = context_map.get(url).cloned().unwrap_or_default();
+        let context = match context_map.get(url) {
+            Some(c) => c.clone(),
+            None => String::new(),
+        };
         let (frame, reason) = draft_frame_guess(url, &context, &registry);
         if frame.is_empty() {
             pending += 1;
@@ -1949,7 +2125,13 @@ pub fn gate_learn_mode() -> i32 {
     if std::fs::write("phi/pipeline/library_gate_delta.φ", d).is_err() {
         eprintln!("write phi/pipeline/library_gate_delta.φ: the register does not remember");
     }
-    let library = std::fs::read_to_string("phi/pipeline/library.φ").unwrap_or_default();
+    let library = match std::fs::read_to_string("phi/pipeline/library.φ") {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("learn-gate: read phi/pipeline/library.φ: {}", e);
+            String::new()
+        }
+    };
     let delta_lines: Vec<String> = delta
         .iter()
         .map(|(w, f, tag)| format!("{} {} {}", w, f, tag))
@@ -2008,7 +2190,11 @@ pub fn url_probe_mode(
             } else {
                 t
             };
-            u.split_whitespace().next().unwrap_or("").to_string()
+            let word = match u.split_whitespace().next() {
+                Some(w) => w,
+                None => "",
+            };
+            word.to_string()
         })
         .filter(|u| u.starts_with("http"))
         .collect();
@@ -2019,7 +2205,7 @@ pub fn url_probe_mode(
     let void_lock = std::sync::Mutex::new(String::new());
     let jina_lock = std::sync::Mutex::new(Vec::<String>::new());
     let next = std::sync::atomic::AtomicUsize::new(0);
-    let workers = 8.min(total.max(1));
+    let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
             scope.spawn(|| loop {
@@ -2082,13 +2268,16 @@ pub fn url_probe_mode(
         let jina_out = std::sync::Mutex::new(String::new());
         let jn = std::sync::atomic::AtomicUsize::new(0);
         let n_cand = candidates.len();
-        let jina_key = env.get("JINA_API_KEY").cloned().unwrap_or_default();
+        let jina_key = match env.get("JINA_API_KEY") {
+            Some(k) => k.clone(),
+            None => String::new(),
+        };
         let jina_headers: Vec<(String, String)> = if jina_key.is_empty() {
             Vec::new()
         } else {
             vec![("Authorization".to_string(), format!("Bearer {}", jina_key))]
         };
-        let j_workers = 4.min(n_cand.max(1));
+        let j_workers = 4.min(n_cand);
         let j_pacing = if jina_key.is_empty() { 4000u64 } else { 500u64 };
         std::thread::scope(|scope| {
             for _ in 0..j_workers {
