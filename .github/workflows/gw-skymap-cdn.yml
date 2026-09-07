@@ -1,0 +1,24 @@
+name: gw-skymap-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gw-skymap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the GW250207_115645 bayestar gravity-witness map once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern gw250207_115645.sky1 --clobber 2>/dev/null || \
+          ( mkdir -p gracedb && \
+            curl -sSfL --retry 3 --max-time 600 -o gracedb/bayestar.multiorder.fits \
+              https://gracedb.ligo.org/api/superevents/S250207bg/files/bayestar.multiorder.fits && \
+            cargo run -p omegaflow-harvest --release --bin gw_skymap_compiler -- \
+              --input gracedb/bayestar.multiorder.fits --out gw250207_115645.sky1 --ci-mode )
