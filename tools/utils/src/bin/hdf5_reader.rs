@@ -42,6 +42,55 @@ fn note_text(note: &Hdf5Note) -> String {
     }
 }
 
+fn attr_value(a: &omegaflow::hdf5::Hdf5Attribute) -> String {
+    use omegaflow::hdf5::Endian;
+    let data = &a.data;
+    let be = a.datatype.endian == Endian::Be;
+    let f64n = |c: &[u8], be: bool| -> Option<String> {
+        let arr: [u8; 8] = c.try_into().ok()?;
+        let v = if be {
+            f64::from_be_bytes(arr)
+        } else {
+            f64::from_le_bytes(arr)
+        };
+        Some(v.to_string())
+    };
+    let f32n = |c: &[u8], be: bool| -> Option<String> {
+        let arr: [u8; 4] = c.try_into().ok()?;
+        let v = if be {
+            f32::from_be_bytes(arr)
+        } else {
+            f32::from_le_bytes(arr)
+        };
+        Some(v.to_string())
+    };
+    let i32n = |c: &[u8], be: bool| -> Option<String> {
+        let arr: [u8; 4] = c.try_into().ok()?;
+        let v = if be {
+            i32::from_be_bytes(arr)
+        } else {
+            i32::from_le_bytes(arr)
+        };
+        Some(v.to_string())
+    };
+    let nums = |data: &[u8], f: &dyn Fn(&[u8], bool) -> Option<String>| {
+        data.chunks(8)
+            .filter_map(|c| f(c, be))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    match a.datatype.class {
+        3 => String::from_utf8_lossy(data)
+            .trim_matches('\0')
+            .trim_end()
+            .to_string(),
+        1 if a.datatype.size == 8 => nums(data, &f64n),
+        1 if a.datatype.size == 4 => nums(data, &f32n),
+        0 if a.datatype.signed && a.datatype.size == 4 => nums(data, &i32n),
+        _ => format!("class {} {} B", a.datatype.class, data.len()),
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(path) = args.first() else {
@@ -135,6 +184,9 @@ fn struktur(file: &Hdf5File) {
         };
         if obj.is_group {
             println!("group {}", path);
+            for a in &obj.attrs {
+                println!("  attr {} = {}", a.name, attr_value(a));
+            }
             for l in &obj.links {
                 if l.soft.is_some() {
                     println!("  {} -> {} (soft)", l.name, l.soft.as_ref().unwrap());
@@ -146,7 +198,7 @@ fn struktur(file: &Hdf5File) {
             let dims: Vec<String> = ds.dims.iter().map(|d| d.to_string()).collect();
             println!("dataset {} ({}) [{}]", path, dt.class, dims.join(","));
             for a in &obj.attrs {
-                println!("  attr {} (class {})", a.name, a.datatype.class);
+                println!("  attr {} = {}", a.name, attr_value(a));
             }
         } else {
             println!("object {} @ {}", path, obj.addr);
