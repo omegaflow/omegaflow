@@ -15,17 +15,17 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
         run: |
-          if gh release view www.cpc.ncep.noaa.gov --repo omegaflow/sources \
+          if gh release view cpc.ncep.noaa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "qbo_30hpa.csv"; then
             echo "asset qbo_30hpa.csv already present — manifest skipped"
             exit 0
           fi
           echo "asset qbo_30hpa.csv missing — compiling and manifesting"
-      - name: Ensure the www.cpc.ncep.noaa.gov release exists on the CDN
+      - name: Ensure the cpc.ncep.noaa.gov release exists on the CDN
         run: |
-          if ! gh release view www.cpc.ncep.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.cpc.ncep.noaa.gov --repo omegaflow/sources \
-              --title "www.cpc.ncep.noaa.gov" \
+          if ! gh release view cpc.ncep.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cpc.ncep.noaa.gov --repo omegaflow/sources \
+              --title "cpc.ncep.noaa.gov" \
               --notes "CPC QBO 30 hPa zonal wind index series compiled to CSV assets (CDN tag = netloc)"
           fi
       - name: Compile and manifest the QBO 30 hPa index to the CDN
