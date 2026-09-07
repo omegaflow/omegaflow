@@ -98,7 +98,7 @@ Pro Korpus:
    (Linse 57% vs 2% Survivor-Rate, fetch_one == fetch_raw_probe für
    unmanifestierte Kandidaten).
 4. Review (Mensch): Survivor-Duplikate gegen `phi/sources.φ` prüfen;
-   Force-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
+   Oszillator-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
    Tote nach `phi/dead_sources.φ`; `ledger.φ` aktualisieren; den nächsten
    Batch in `phi/pipeline/probe_batch.φ` nachrücken.
 5. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
@@ -133,7 +133,7 @@ Review bleibt in der Session: Bericht lesen → Schritt 4 → Commit.
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
 URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
-kein Daten-JSON) → Force-Gate → Klassifikation → Disposition.
+kein Daten-JSON) → Oszillator-Gate → Klassifikation → Disposition.
 
 Die kanonischen Register werden nie gemirrort — nur `--verify phi` spiegelt
 (CI). `phi/pipeline/` und `phi/pipeline/research/` sind fetch-only (kein Mirror, Quota).
@@ -168,9 +168,9 @@ dist/dist_scale/z`.
 | `docs/concepts/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
 | `docs/concepts/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
 
-## 8. Force-Gate + τ + Klassifikation
+## 8. Oszillator-Gate + τ + Klassifikation
 
-Force-Gate: `force` deklariert die physikalische Ausbreitung DER MESSUNG
+Oszillator-Gate: `force` deklariert die physikalische Ausbreitung DER MESSUNG
 selbst, nicht das Transportmedium der API. Litmus: könnte ein
 nicht-menschlicher Organismus ein Sinnesorgan für diese Messung evolvieren?
 Automatisch decline: nackte Zählwerte ohne Ereignis-Records, Stationslisten/
@@ -187,14 +187,14 @@ thermal → exponential-decay, advective → patch-levy.
 Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
 unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
 Block-Draft); `key-needed` → `blocked_sources.φ` mit Key-Marker;
-`decline` (Force-Gate) → `dead_sources.φ`.
+`decline` (Oszillator-Gate) → `dead_sources.φ`.
 
 **Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
 Redirects, Pfad-Renames) und Misspellings. `dead 404/400/5xx/dns/timeout`
 ist ein Recherche-Auftrag, keine Disposition. Wirklich declined sind nur
 drei Fälle: (a) der Anbieter ist komplett abgeschaltet (kein öffentlicher
-Nachfolger), (b) die Quelle ist nicht-physikalisch (Force-Gate), (c) der
+Nachfolger), (b) die Quelle ist nicht-physikalisch (Oszillator-Gate), (c) der
 Anbieter ist kommerziell (Bezahl/Proprietär-Zugang). Erst wenn die
 Recherche leer bleibt, wird `dead` mit `note` festgeschrieben, die den
 Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
@@ -334,7 +334,7 @@ Teleskope mit ihren APIs. Status-Legende: ✓ aktiv in `sources.φ` · ▣
 Kandidat in `phi/pipeline/queue/master.φ` · ⛔ in `blocked_sources.φ` ·
 ● offen/unkuratiert · `pending` = Detail unverifiziert — der nächste
 Schritt ist Probe/Klassifikation am vorliegenden Befund, keine neue
-Adress-Recherche (0 honored). Force-Gate-Schnellurteil: alle
+Adress-Recherche (0 honored). Oszillator-Gate-Schnellurteil: alle
 elektromagnetischen Teleskope messen `em`; GW-Detektoren `gravity`;
 CR/ν-Detektoren (Auger, TA, IceCube, KM3NeT, Super-K/JUNO) — Teilchen-
 Kanal: Registry-Frage, `pending` (die 9er-Force-Registry kennt kein
@@ -464,7 +464,7 @@ Mirror-Frage stellen: Open-Data bleibt, kommerzielle ToS →
 (4) KEINE Begrenzung des Abschlussberichts — die Recherchearbeit wird
 in voller Länge wiedergegeben. Befunde: fester `kandidat`/`url`/`note`-
 Block in `phi/pipeline/research/agent_output/`. Der Agent entscheidet
-kein Force-Gate — er klassifiziert nur, was die Messung IST.
+kein Oszillator-Gate — er klassifiziert nur, was die Messung IST.
 
 | Adresse | Befund | Korrektur/Neufund |
 |---------|--------|-------------------|
