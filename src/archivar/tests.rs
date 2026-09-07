@@ -5805,3 +5805,113 @@ fn test_bl_narrowband_read_path_honors_freq_bin_width() {
         "compiled line read-back must not hard-0 the band slots"
     );
 }
+
+#[test]
+fn gbco_depth_threads_hold_stations_on_the_measured_surface() {
+    let recs = vec![
+        crate::geo::GbcoRec {
+            lat: 72.49,
+            lon: -156.6,
+            elev: -833.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 51.2,
+            lon: 10.4,
+            elev: 283.0,
+        },
+    ];
+    let bytes = crate::geo::write_gbco(&recs);
+    let parsed = crate::geo::parse_gbco(&bytes).expect("the compiler contract parses");
+    assert_eq!(parsed.len(), 2);
+    let threads = gbco_threads("earth", &parsed);
+    assert_eq!(threads.len(), 2);
+    let nrs = &threads[0];
+    assert_eq!(nrs.lat, 72.49);
+    assert_eq!(nrs.lon, -156.6);
+    assert_eq!(nrs.alt, -833.0);
+    let view = station_view(&threads);
+    assert!(
+        view.contains("-833"),
+        "the station view carries the NRS depth: {view}"
+    );
+    assert!(
+        view.contains("283"),
+        "the station view carries the land sibling: {view}"
+    );
+    match nrs.motion() {
+        Motion::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            assert_eq!(body_name, "earth");
+            assert_eq!(lat, 72.49);
+            assert_eq!(lon, -156.6);
+            assert_eq!(alt, -833.0);
+        }
+        _ => panic!("the depth thread is not a surface motion"),
+    }
+}
+
+#[test]
+fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
+    let now = 840511523.88;
+    let recs = vec![crate::geo::GbcoRec {
+        lat: 72.49,
+        lon: -156.6,
+        elev: -833.0,
+    }];
+    let parsed = crate::geo::parse_gbco(&crate::geo::write_gbco(&recs)).unwrap();
+    let threads = gbco_threads("earth", &parsed);
+    let props = super::BodyProperties {
+        α0_deg: 270.0,
+        dα0_dt_deg_per_century: 0.003,
+        δ0_deg: 66.54,
+        dδ0_dt_deg_per_century: 0.013,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
+        gaussian_inverse_square: 340.2,
+        gaussian_inverse: 5950.0,
+        erfc: 3630.0,
+        exponential_decay: 2.18e-5,
+        patch_levy: 2.00e-5,
+        gm: Some(3.986004418e14),
+        j2: Some(1.08262668e-3),
+        j4: Some(-1.619e-6),
+        radii_b: Some(6378136.6),
+        radii_c: Some(6356751.9),
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let jd_now = super::J2000_EPOCH + now / 86400.0;
+    let mut eph = super::BodyEphemeris {
+        granules: Vec::new(),
+        rotation_matrices: Vec::new(),
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+    };
+    for i in -1..=1 {
+        let t0 = jd_now + i as f64 * 16.0;
+        let mut cx = [0.0_f64; super::CHEBYSHEV_N];
+        cx[0] = 1.5e11;
+        eph.granules.push(super::ChebyshevGranule {
+            t0_jd: t0,
+            dt_jd: 16.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        });
+    }
+    let mut eph_map = std::collections::HashMap::new();
+    eph_map.insert("earth".to_string(), eph);
+    let icrs = threads[0]
+        .icrs_at(now, &eph_map)
+        .expect("the surface thread projects to ICRS at the epoch");
+    assert!(icrs[0].is_finite() && icrs[1].is_finite() && icrs[2].is_finite());
+}
