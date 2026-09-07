@@ -12,10 +12,11 @@ lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
 
-url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Absolute_Ne&format=json
+url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 ttl 5
 at earth
-hapi Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
+hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
+field gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square gravity m 5 0.0 0.0
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
