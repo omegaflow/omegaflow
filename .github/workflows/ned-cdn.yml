@@ -38,9 +38,10 @@ jobs:
                 --root https://ned.ipac.caltech.edu/tap/sync \
                 --table NEDTAP.objdir \
                 --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
-                --limit 90001 \
+                --limit 50000 \
                 --lattice 1024 \
                 --where "objid > ${cursor}" \
+                --order objid \
                 --out "$part" && ok=1 && break
               sleep 60
             done
@@ -82,7 +83,7 @@ jobs:
                 health
               exit 1
             fi
-            [ "$raw" -lt 90001 ] && break
+            [ "$raw" -lt 50000 ] && break
           done
           awk -F' ' '{sub(/^[^ ]* [^ ]* [^ ]* /, ""); print}' "$STATE" | jq -s '.' > ned.json
           gh release upload ssd.jpl.nasa.gov ned.json --clobber --repo omegaflow/sources \
