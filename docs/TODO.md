@@ -1648,6 +1648,18 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 ## Curation & Quellen
 
+- VirES-HAPI-Archivblöcke registriert (2026-09-07): CS_OPER_MAG (Cryosat-2
+  F, ttl 4, Fenster 2018-10-10 verifiziert — das 2026-07-31-Fenster war eine
+  Datenlücke, kein Formatfehler), GO_MAG_ACAL_CORR (GOCE F, ttl 16),
+  GF_OPER_NE__KBR_2F (Absolute_Ne, ttl 5 — Distance nicht registriert,
+  Kraft-Kanal unbestimmt), GR_OPER_DNS1ACC_2_ (ttl 10), CH_OPER_DNS_ACC_2_
+  (ttl 10), CH_OPER_WND_ACC_2_ (crosswind m/s, ttl 10), CH_OPER_TEC_TMS_2F
+  (Absolute_VTEC TECU, ttl 10) — je festes 1-h-Fenster über dem echten
+  Datenbestand, ttl = Serien-Kadenz. Einheiten-Wachstum in units.rs: kg/m3
+  (diffusion, Identität), TECU (em, ×1e16), 1/m3 (em, Identität). GF
+  KBR-Absolute_Ne trägt nativ m^-3 (gemessen: Relative_Ne ≡
+  Relative_Hor_TEC/Distance); die VirES-Metadaten-Unit cm^-3 ist ein
+  Duplikat-Fehler, nicht registriert.
 - BGR-Infraschall-Stations-Elevation: gemessen 2026-09-07 — jede der 53
   Stations-NetCDF traegt einen lesbaren `elev`-Skalar (2024 + kleinste
   historische Datei je Station geprueft), keine Station gehalten; Geodaten-
