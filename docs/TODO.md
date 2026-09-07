@@ -2,6 +2,32 @@
 
 Nur offene Pflichten.
 
+## Oszillator/Zeuge/Serie — die Identität (gebaut 2026-09-07)
+
+Der Register-Split ist gebaut: `phi/witnesses.φ` trägt die Zeugen (aus
+`blocked_sources.φ` ausgezogen, IceCat-1 + GBCO nachgezogen); `src/archivar/zeuge.rs`
+trägt `FeldIdentitaet` (Oszillator | Zeuge(Art) | Pending) + `magic_identity`
+(das 4-Byte-Magic → Identität) + das Zeugen-Gate `zeugen_gate`; die Witness-Compiler
+lesen ihre Identität am Kopf über `magic_identity`. Zwei Wesen (Oszillator, Zeuge),
+Record = Behälter, `blocked` = Zugriffszustand.
+
+**Drei Tore, benannt nach der Identität (Rat 2026-09-07, einstimmig):**
+- **Oszillator-Gate** (war `Force-Gate`) — hält den Oszillator; innere Frage: welche Kraft (9 Medien)?
+- **Zeugen-Gate** — hält den Zeugen; innere Frage: welche Art?
+- **Serien-Gate** — hält die Serie; innere Frage: welche Achse?
+
+`Force-Gate` wurde in `docs/SOURCE_PORT.md` zu `Oszillator-Gate` umgezogen; die
+historischen `Force-Gate`-Verdicts (dead_sources.φ, pipeline-Research, Handover)
+bleiben als historisches Register unangetastet — Vergangenheit wird nicht umgeschrieben.
+
+**Die Serie ist eine dritte FORM, kein drittes Wesen.** `magic_identity(NRS1)=Pending`
+war die Schuld einer unbenannten Form — das Benennen zahlt sie: NRS1 ist eine
+gehaltene Serie (kein Band gewählt, kein Skalar erfunden); `serien_gate` steht
+neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
+- **GBCO-Verbrauch**: der `witness gestalt`-Eintrag steht, aber die
+  Station-Thread-Integration (Motion::Surface, motion.rs) ist das benannte Follow-on.
+- **`witness presence`** bleibt reserviert ohne gebautes Gegenstück (Doktrin C2).
+
 ## Register — /tmp-Scratch & Python-Tools (2026-09-06)
 
 Scratch in /tmp/opencode ist die benannte Erkundungsfläche; was bleibt, gehört
@@ -730,6 +756,22 @@ physikalischen Aussage — kein Blatt ohne diese:
   gerahmt (kein Null-Paper); Grat-Tabelle Korona Pfeil→family bound korrigiert
   (85b2bca). Offen: Paper-Framing-Entscheidung liegt beim Operator; fam-lose
   Minuten-Schwelle + Multi-Force-TE (nobel_probe_corona v2).
+- **Prior-Art-Recherche Solar-TE-Matrix (2026-09-07, arXiv+Crossref+ADS
+  gemessen, ADS-Token aus .secrets.local)**: die Ziel-Kombination — TE zwischen
+  Emissionskanaelen (GOES-XRS + 7 AIA-Baender) pro Flare-Ereignis, alle 72
+  gerichteten Paare, Surrogat-Schwelle je Paar — ist NICHT gefunden: arXiv
+  `"transfer entropy" AND "solar flare"` = 0, `AND "corona"` (astro-ph.SR) = 0,
+  `AND "solar"` = 4 (keiner auf Emissionskanaele); Crossref `"transfer entropy"
+  solar flare`/`coronal heating` ohne Treffer. Nachbarliste der Parallel-Session
+  korrigiert (ADS-verifiziert): „Zou et al. 2014" existiert nicht (ADS: 0) — die
+  Polfeld→Sonnenflecken-TE ist Wing, Johnson & Vourlidas 2018, ApJ 854, 85,
+  `2018ApJ...854...85W`; „Simões 2015" → der Flare-Ribbon-Lead-Lag-Autor ist Qiu
+  et al. 2010 (`2010ApJ...725..319Q`, Kreuzkorrelation, nicht TE); „Behreetas
+  2020/21" (ADS: 0) / „Dósa 2025" / „Zhao 2022" nicht gefunden. Zwei echte 2025er
+  sind die Livadiotis-Gruppe (Science Advances `2025SciA...11z7419L`; ApJL
+  `2025ApJ...984L..50C`) — thermodynamische „entropy transfer" (Kappa-Rahmen),
+  NICHT Schreiber-TE; Reda et al. 2024 `2024RLSFN..35...49R`. Matrix um Blatt 4
+  (Flare-Emissionskanaele) ergaenzt + bibcodes nachgetragen. geschlossen.
 - Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2 Pfeile
   bei 20 getesteten Paaren ohne Korrektur — der erwartete
   Falsch-positiv-Bereich ist nicht verlassen);
@@ -737,9 +779,39 @@ physikalischen Aussage — kein Blatt ohne diese:
 - KDE-Bandbreite: Silverman-Heuristik, Sensitivität der Urteile gegen h
   ungeprüft;
 - Fenster-Kongruenz: OMNI↔GOES-Schnittmenge bleibt leer (stopDate 06.08.);
-- nobel_probe_corona v2 (Multi-Force-TE): die bedingte Multi-Force-TE
-  (alle Kräfte im Phasenraum, DAG über alle Paare und Verzögerungen) ist
-  pending;
+- **Flare-Hüllen-Null-Gate — gemessen + Null geflickt (2026-09-07)**: die drei
+  Gates stehen in te.rs (`flare_envelope_*`). Blindheit PASS (Phase-Null meldet
+  den falschen Pfeil x→y bei gemeinsamem impulsivem Treiber + Zeitkonstanten-
+  Asymmetrie); echte Kopplung PASS. Suppression zunächst FAIL: die lineare
+  OLS-Residual-Null leckt am impulsiven/verzögerten Konfund — konditionale TE
+  4.92e-2 über Schwelle 3.27e-2 bei keiner echten Kopplung (falscher Pfeil).
+  Fix additiv: `conditional_te_stats_lagged` (ARX — y-Lag + Treiber-Lag, über
+  `residual_surrogate_conditional_lagged` + `ols_fit_lagged` + `solve_linear`)
+  neben der kanonischen `conditional_te_stats`; kanonischer skalarer Pfad
+  unberührt. Alle drei Gates jetzt grün; `cargo check` 0 Warnungen; te-Modul
+  55 Tests grün. geschlossen.
+- **Synthetischer DAG-Benchmark (2026-09-07)**: bekanntes DAG (gemeinsamer
+  impulsiver Treiber Z → A schnell / B langsam + echte Kante A→B über A's
+  unabhängige Komponente) durch die Kette (`conditional_te_stats_lagged`): die
+  echte Kante A→B wird über der lag-bewussten Null gefunden, die falsche
+  Rückkante B→A verworfen — `synthetic_dag_recovers_known_direction` (te.rs,
+  grün). Erste Hälfte des Crossmatch: die Kette findet bekannte Wahrheit auf
+  Flare-artigem Rauschen (gemessen, nicht angenommen). Der Vergleich gegen die
+  volle multivariate Klasse bleibt das Nobel-DAG-Atom (ein Tigramite-Lauf ist
+  durch die Python-Regel ausgeschlossen). Query-Anker der Prior-Art-0 in
+  te-literatur-matrix.md nachgetragen. geschlossen.
+- **Minimales nobel v2 (CPU, offen):** transfer_entropy_conditional(X→Y | C)
+  auf C = geteilte Flare-Hülle (XRSB bzw. heißester Kanal 94/335 als
+  Neupert-Stellvertreter) gegen `conditional_te_stats_lagged` (die geflickte
+  lag-bewusste Null, NICHT die leckende lineare), auf den Flare-Ereignissen
+  (24-s-Zellen) — die Richtung unter Konfund-Kontrolle.
+  corona_event_probe/corona_lag_probe rechnen te_conditional bereits (nur
+  berichten, nicht bauen).
+- **Nobel-DAG (Atom, getrennt):** die volle DAG „alle Kräfte im Phasenraum,
+  alle Paare und Verzögerungen" — multivariate Konditionierung (KDE-Fluch) und
+  der Konditional-Pfad in der GPU-Maschine (matrix.rs/solar.rs, die heute nur
+  phase_randomized_surrogate rufen; WGSL-te_compute kennt keinen konditionalen
+  Pfad) bleiben als größeres Atom nach der Kalibrier-Session.
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);

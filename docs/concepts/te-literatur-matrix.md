@@ -1,14 +1,14 @@
 <!--
   title: TE Literature Matrix
   class: concept
-  sha256: efd8fe47b25d48b28f3de5938fc62989ca098ed8ec2a92fbf87e91a9bb01ade1
+  sha256: 00ca81063e37a32490eca2fa7ec3e9c1c235b4d42b59c6701f58b67472e74abe
   status: live
 -->
 # TE Literature Matrix
 
 ## Purpose
 
-This matrix calibrates the omegaflow TE protocol (lag sweeps, phase-randomized surrogates, 10 per series, mean+2σ threshold, family threshold as the maximum over all tested pairs) against the published literature on directed information transfer and Granger causality. It answers three questions: (1) ENSO wind↔SST, (2) solar wind → geomagnetic field, (3) seismicity → ionosphere proxy (LAIC). Every entry was found on the web during this session and carries a DOI or arXiv address. Verification status per entry: **[V] = abstract fetched and read**, **[T] = title/entry only verified** (Crossref/DOI resolution). Where a field does not follow from the verified abstract, it explicitly says "not stated in the abstract" — no value is added.
+This matrix calibrates the omegaflow TE protocol (lag sweeps, phase-randomized surrogates, 10 per series, mean+2σ threshold, family threshold as the maximum over all tested pairs) against the published literature on directed information transfer and Granger causality. It answers four questions: (1) ENSO wind↔SST, (2) solar wind → geomagnetic field, (3) seismicity → ionosphere proxy (LAIC), (4) corona — flare emission channels (X-ray ↔ EUV). Every entry was found on the web during this session and carries a DOI or arXiv address. Verification status per entry: **[V] = abstract fetched and read**, **[T] = title/entry only verified** (Crossref/DOI resolution). Where a field does not follow from the verified abstract, it explicitly says "not stated in the abstract" — no value is added.
 
 ## Reference references (methodology foundations)
 
@@ -80,6 +80,95 @@ The Bz sheet is the best calibrated: the literature consistently confirms the di
 ### Convergence/divergence to the omegaflow protocol
 
 The LAIC sheet (seismicity → ionosphere proxy around M≥6 earthquakes) has **no direct calibration basis**: no verified paper was found that tests the seismicity rate directed onto TEC or an ionosphere proxy with TE/Granger. The existing precursor literature works with anomaly statistics (TEC deviation against a reference, precursor time windows) or with non-directed entropy measures (Fisher information, Approximate Entropy), never with a surrogate null model in the TE sense and never with a multiple-comparison correction. The divergences are therefore structural: (a) cadence — the precursor literature works event-centered (precursor weeks/days before individual M≥6 earthquakes), omegaflow as continuous time-series causality; (b) null model and (c) multiple comparison do not exist in the LAIC literature in verifiable form — omegaflow is methodologically alone here. The LAIC sheet of the omegaflow protocol (seismicity → ionosphere) is therefore to be read as an independent contribution, not as the reproduction of a published procedure. The closest methodological relative is the TEC anomaly statistics (Heki 2011), which however tests no direction.
+
+---
+
+## Question 4: corona — flare emission channels (X-ray ↔ EUV)
+
+### Target (measured absent)
+
+The target combination — transfer entropy **between emission channels** (GOES
+soft X-ray bands + AIA EUV bands), **per flare event**, over **all directed
+channel pairs**, with a **per-pair surrogate threshold** — was searched on the
+arXiv API and Crossref this session and found in no entry. The arXiv queries
+`"transfer entropy" AND "solar flare"` (0 results), `"transfer entropy" AND
+"corona"` in astro-ph.SR (0 results), and `"transfer entropy" AND "solar"`
+(4 results, none on emission channels) all return empty or off-target; the
+Crossref queries `"transfer entropy" solar flare` and `"transfer entropy"
+coronal heating` return no TE-between-channels work. The ADS verification this
+session confirms the absence: the four disputed names below resolve to zero or
+off-target in ADS (see "Disputed entries"). As with Question 3, the absence is
+a measured result, not a gap of the search.
+
+### Neighbor matrix (verified this session, ADS bibcodes)
+
+| Work | Method | Series/cadence | Lags | Null model | Multiple comparison | Finding | Status | Source |
+|---|---|---|---|---|---|---|---|---|
+| Wing, Johnson, Vourlidas (2018). *Information Theoretic Approach to Discovering Causalities in the Solar Cycle*. The Astrophysical Journal. | Transfer entropy | Solar-cycle indices (polar field ↔ sunspot number) | Cycle-scale (months–years) | Not stated in the entry | Not stated in the entry | TE on solar-cycle **indices**, not emission channels — the correct attribution for the entry a parallel session listed as "Zou et al. 2014" | [T] | https://doi.org/10.3847/1538-4357/aaa8e7 |
+| Reda, Stumpo, Giovannelli, Alberti, Consolini (2024). *Disentangling the solar activity-solar wind predictive causality at Space Climate scales*. Rendiconti Lincei. Scienze Fisiche e Naturali. | Transfer entropy | Solar-activity indices → solar wind; space-climate (long) scales | Cycle-scale (long) | Not stated in the entry | Not stated in the entry | TE on solar-activity **indices**, not emission channels | [T] | https://doi.org/10.1007/s12210-023-01213-w |
+| Livadiotis, Cuesta, Khoo, Shen (2025). *Entropy transfer from solar radio bursts to energetic particles*. Science Advances. | Thermodynamic entropy transfer (kappa framework) | Solar radio bursts → energetic particles | — | — | — | "Entropy transfer" in the Livadiotis thermodynamic/kappa sense, **not** Schreiber transfer entropy — a neighbor at the solar object, not a methodological predecessor | [T] | https://doi.org/10.1126/sciadv.adz7419 |
+| Cuesta, Livadiotis, McComas, Khoo (2025). *Transfer of Entropy between the Magnetic Field and Solar Energetic Particles during an Interplanetary Coronal Mass Ejection*. The Astrophysical Journal Letters. | Thermodynamic entropy transfer (kappa framework) | Magnetic field ↔ SEPs during an ICME | — | — | — | Same thermodynamic entropy transfer as above, during an ICME passage | [T] | https://doi.org/10.3847/2041-8213/adcbff |
+| Qiu, Liu, Hill, Kazachenko (2010). *Reconnection and Energetics in Two-Ribbon Flares: A Revisit of the Bastille-Day Flare*. The Astrophysical Journal. | Cross-correlation / lead-lag | HXR ↔ UV/EUV flare ribbons per event | Event-scale lead-lag | Not stated in the entry | Not stated in the entry | Lead-lag between emission channels measured by **linear cross-correlation**, not TE — the closest empirical neighbor on the channel object | [T] | https://doi.org/10.1088/0004-637x/725/1/319 |
+
+ADS bibcodes (this session): `2018ApJ...854...85W`, `2024RLSFN..35...49R`,
+`2025SciA...11z7419L`, `2025ApJ...984L..50C`, `2010ApJ...725..319Q`,
+`2019Entrp..21..140W`.
+
+### Disputed entries — ADS-verified absent
+
+The neighbor list a parallel session produced carried entries that the ADS run
+this session confirms absent or off-target: **"Zou et al. 2014"** (ADS: 0 — the
+polar-field→sunspot-number TE is Wing, Johnson & Vourlidas 2018, above),
+**"Behreetas et al. 2020/2021"** (ADS: 0), **"Zhao et al. 2022"** (ADS: 1
+off-target hit, perovskites), **"Dósa et al. 2025"** (ADS: the real M. Dósa
+works on solar-wind propagation, not solar hemispheres — no such 2025 entry).
+The cross-correlation lead-lag neighbor listed as "Simões et al. 2015" is Qiu
+et al. 2010 (above). The attributions in this sheet are the ADS-measured ones.
+
+### Search anchors (this session's queries — the zero is re-runnable)
+
+The "measured absent" claims above are anchored to these exact queries, so a
+later layer can re-run them (a zero without its query list is a number without
+an anchor). arXiv API (`http://export.arxiv.org/api/query`, full-text field
+`all`): `all:"transfer entropy" AND all:"solar flare"` (0), `all:"transfer
+entropy" AND all:"corona" AND cat:astro-ph.SR` (0), `all:"transfer entropy" AND
+all:"solar"` (4, none on emission channels), `all:"transfer entropy" AND
+all:"sunspot"` (0). Crossref (`https://api.crossref.org/works`):
+`query=transfer+entropy+solar+flare`, `query=transfer+entropy+coronal+heating`.
+ADS (`https://api.adsabs.harvard.edu/v1/search/query`, NASA_ADS_TOKEN):
+`author:"Zou" AND abs:"transfer entropy" AND abs:"solar"` (0),
+`author:"Behreetas"` (0),
+`author:"Zhao" AND abs:"transfer entropy" AND abs:"solar"` (1 off-target),
+`author:"Dosa" AND abs:"solar"` (29, none a 2025 hemispheres-TE). DOI
+resolutions: `doi:"10.1007/s12210-023-01213-w"`, `doi:"10.1126/sciadv.adz7419"`,
+`doi:"10.3847/2041-8213/adcbff"`, `doi:"10.1088/0004-637x/725/1/319"`,
+`doi:"10.3390/e21020140"`.
+
+### Convergence/divergence to the omegaflow protocol
+
+The corona sheet is the least calibrated: no published TE-between-emission-
+channels work was found. The methodological neighbors split into three kinds
+that must not be collapsed: (a) TE on solar **indices** over long time scales
+(Wing et al. 2018; Reda 2024; Wing & Johnson 2019) — different object, long
+lags, no per-event window; (b) **thermodynamic** "entropy transfer" in the Livadiotis kappa
+framework (Livadiotis 2025; Cuesta 2025) — a different quantity, not Schreiber
+TE, so no calibration for the estimator; (c) **linear** cross-correlation
+lead-lag between flare emission channels (Qiu 2010) — the closest empirical
+neighbor on the channel object, but linear and without a surrogate null. The
+per-flare, all-pairs, per-pair-surrogate arrangement itself is, in this
+search, unrepresented.
+
+The shared-driver confound is the standing risk of this sheet (the same risk
+the Bz sheet names): the channels are all fed by one common flare driver
+(particle deposition) with different response time constants, so a naive TE
+can report a "direction" that only mirrors the differing response functions,
+not channel-to-channel flow. The omegaflow ladder formulation already treats
+this by construction — the D excess and the phase-randomized null isolate the
+directional residual (see `corona-heating-ladder.md` §5). Whether the per-pair
+phase-randomized surrogate preserves the common flare envelope, or needs an
+envelope-preserving surrogate (one that keeps the shared driver and destroys
+only the fine channel coupling), is the open methodological question for the
+full 72-pair matrix.
 
 ---
 
