@@ -1,0 +1,27 @@
+name: gebco-bathymetry-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gebco-bathymetry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view opentopodata.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "gebco_bathymetry.gbco"; then
+            echo "asset gebco_bathymetry.gbco already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset gebco_bathymetry.gbco missing — compiling and manifesting"
+      - name: Compile GEBCO2020 depth witnesses and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gebco_bathymetry_compiler -- \
+            --locations "72.49,-156.6;51.2,10.4" --out gebco_bathymetry.gbco --ci-mode
