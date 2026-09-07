@@ -27,11 +27,13 @@ re-read here as witnesses for shape.
   height changed last in geological time, not yesterday.
 
 ## Binding 4 — consumption
-- Held through the Station thread (`Motion::Surface`): the thread first, the
-  projection second. The Gestalt-witness compiler fetches point threads
-  (lat/lon/depth records) and manifests them via `--ci-mode`; the Station-thread
-  integration into the Mathematikerin is the named follow-on, not silently
-  assumed.
+- Held through the Station thread (`Motion::Surface`, Archivar): the thread
+  first, the projection second. The Gestalt-witness compiler fetches point
+  threads (lat/lon/depth records) and manifests them via `--ci-mode`; the
+  Station-thread integration into the Archivar (`motion.rs`) is the named
+  follow-on, not silently assumed. The Mathematikerin does not hold a
+  non-radiating shape — it evaluates force fields; the S² direction witnesses
+  live there, the body-surface Gestalt witness lives in the Archivar.
 
 ## Binding 5 — media-token pin
 - https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng> — live,
