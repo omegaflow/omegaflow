@@ -386,3 +386,133 @@ mod tests {
         assert!(quiet.abs() < 1e-12);
     }
 }
+
+use crate::archivar::s2event::S2EventRecord;
+
+pub fn event_scalar(e: &S2EventRecord) -> f64 {
+    match e.energy {
+        Some(v) if v.is_finite() && v > 0.0 => v,
+        _ => match e.signalness {
+            Some(v) if v.is_finite() && v > 0.0 => v,
+            _ => 1.0,
+        },
+    }
+}
+
+pub fn event_presence(e: &S2EventRecord, t: f64, tau_s: f64) -> f64 {
+    let Some(tdb) = e.epoch_tdb else {
+        return 0.0;
+    };
+    if !(tau_s.is_finite() && tau_s > 0.0 && tdb.is_finite()) {
+        return 0.0;
+    }
+    let dt = (t - tdb).abs();
+    event_scalar(e) * (-dt / tau_s).exp()
+}
+
+impl S2Osc {
+    pub fn from_event(e: &S2EventRecord, t: f64, tau_s: f64) -> Self {
+        S2Osc {
+            p_hat: e.unit_direction(),
+            sigma_rad: e.angular_uncertainty_rad(),
+            weight: event_presence(e, t, tau_s),
+        }
+    }
+}
+
+pub fn event_window(events: &[S2EventRecord], t: f64, tau_s: f64) -> Vec<S2Osc> {
+    events
+        .iter()
+        .map(|e| S2Osc::from_event(e, t, tau_s))
+        .collect()
+}
+
+#[cfg(test)]
+mod s2event_tests {
+    use super::{
+        event_presence, event_window, field_at, S2Osc, S2_LMAX, S2_TAU_DEFAULT_S,
+    };
+    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
+
+    fn evt(ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>) -> S2EventRecord {
+        S2EventRecord {
+            ra_deg: ra as f32,
+            dec_deg: dec as f32,
+            sigma_arcsec: None,
+            epoch_tdb: epoch,
+            energy,
+            signalness: None,
+            far: None,
+            particle_root: ROOT_NEUTRINO,
+        }
+    }
+
+    #[test]
+    fn an_event_with_an_epoch_manifests_at_its_direction_with_its_energy_scalar() {
+        let e = evt(30.0, 60.0, Some(8.4e8), Some(187.0));
+        let o = S2Osc::from_event(&e, 8.4e8, S2_TAU_DEFAULT_S);
+        assert!((o.weight - 187.0).abs() < 1e-6);
+        let p = e.unit_direction();
+        for k in 0..3 {
+            assert!((o.p_hat[k] - p[k]).abs() < 1e-12);
+        }
+        let field = field_at(o.p_hat, &[o], S2_LMAX);
+        assert!(field.is_finite());
+        assert!(field > 0.0);
+        let peak = 187.0 * ((S2_LMAX + 1) as f64).powi(2) / (4.0 * std::f64::consts::PI);
+        let rel = ((field - peak) / peak).abs();
+        assert!(
+            rel < 1e-9,
+            "event self-field carries the full band-limited peak: field {field} peak {peak} rel {rel}"
+        );
+    }
+
+    #[test]
+    fn an_event_without_an_epoch_has_the_gate_closed_and_stays_silent() {
+        let e = evt(30.0, 60.0, None, Some(187.0));
+        let o = S2Osc::from_event(&e, 8.4e8, S2_TAU_DEFAULT_S);
+        assert_eq!(o.weight, 0.0);
+        assert_eq!(field_at(o.p_hat, &[o], S2_LMAX), 0.0);
+    }
+
+    #[test]
+    fn an_event_presence_relaxes_exponentially_from_its_epoch() {
+        let e = evt(10.0, 20.0, Some(8.4e8), Some(187.0));
+        assert!((event_presence(&e, 8.4e8, S2_TAU_DEFAULT_S) - 187.0).abs() < 1e-6);
+        let later = event_presence(&e, 8.4e8 + S2_TAU_DEFAULT_S, S2_TAU_DEFAULT_S);
+        assert!((later - 187.0 * (-1.0f64).exp()).abs() < 1e-6);
+    }
+
+    #[test]
+    fn an_event_without_a_scalar_still_manifests_unit_presence() {
+        let e = evt(10.0, 20.0, Some(8.4e8), None);
+        assert!((event_presence(&e, 8.4e8, S2_TAU_DEFAULT_S) - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_measured_sigma_arcsec_broadens_an_event_kernel_below_the_band_peak() {
+        let sharp = evt(45.0, 45.0, Some(8.4e8), Some(17.0));
+        let mut wide = evt(45.0, 45.0, Some(8.4e8), Some(17.0));
+        wide.sigma_arcsec = Some(20626.5);
+        let o_sharp = S2Osc::from_event(&sharp, 8.4e8, S2_TAU_DEFAULT_S);
+        let o_wide = S2Osc::from_event(&wide, 8.4e8, S2_TAU_DEFAULT_S);
+        let field_sharp = field_at(o_sharp.p_hat, &[o_sharp], S2_LMAX);
+        let field_wide = field_at(o_wide.p_hat, &[o_wide], S2_LMAX);
+        assert!(field_wide < field_sharp);
+        assert!(field_wide > 0.0);
+        let wrad = wide.angular_uncertainty_rad().unwrap();
+        let expect = 20626.5 * std::f64::consts::PI / 648000.0;
+        assert!((wrad - expect).abs() < 1e-12);
+    }
+
+    #[test]
+    fn event_window_builds_one_oscillator_per_thread() {
+        let es = vec![
+            evt(0.0, 0.0, Some(8.4e8), None),
+            evt(90.0, 0.0, Some(8.4e8), None),
+        ];
+        let ws = event_window(&es, 8.4e8, S2_TAU_DEFAULT_S);
+        assert_eq!(ws.len(), 2);
+        assert!((ws[0].weight - 1.0).abs() < 1e-9);
+    }
+}
