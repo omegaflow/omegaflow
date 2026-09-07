@@ -1303,6 +1303,11 @@ format catalog_dastcom
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mpcorb_distant.bin
+format catalog_mpcorb
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
 format ephemeris_binary
 at adrastea
