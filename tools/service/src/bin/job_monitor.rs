@@ -189,7 +189,10 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
         lines.push(paint(
             color,
             "2",
-            &format!("      cmd {}", truncate(exec, 118)),
+            &format!(
+                "      cmd {}",
+                truncate(exec, term_width().saturating_sub(10))
+            ),
         ));
     }
     let keys = job_keys(u.exec.as_deref(), &u.name);
@@ -517,7 +520,7 @@ fn journal_tail(unit: &str) -> Option<String> {
     if s.is_empty() {
         None
     } else {
-        Some(truncate(s, 160).to_string())
+        Some(truncate(s, term_width().saturating_sub(10)).to_string())
     }
 }
 
@@ -577,7 +580,7 @@ fn tail_of(path: &Path) -> Option<String> {
     if l.is_empty() {
         None
     } else {
-        Some(truncate(l, 140).to_string())
+        Some(truncate(l, term_width().saturating_sub(10)).to_string())
     }
 }
 
@@ -852,6 +855,32 @@ fn paint(color: bool, code: &str, s: &str) -> String {
         format!("\x1b[{}m{}\x1b[0m", code, s)
     } else {
         s.to_string()
+    }
+}
+
+fn term_width() -> usize {
+    #[repr(C)]
+    struct Winsize {
+        ws_row: u16,
+        ws_col: u16,
+        ws_xpixel: u16,
+        ws_ypixel: u16,
+    }
+    unsafe extern "C" {
+        fn ioctl(fd: i32, request: u64, ...) -> i32;
+    }
+    const TIOCGWINSZ: u64 = 0x5413;
+    let mut ws = Winsize {
+        ws_row: 0,
+        ws_col: 0,
+        ws_xpixel: 0,
+        ws_ypixel: 0,
+    };
+    let ok = unsafe { ioctl(1, TIOCGWINSZ, &mut ws as *mut Winsize) };
+    if ok == 0 && ws.ws_col > 0 {
+        ws.ws_col as usize
+    } else {
+        100
     }
 }
 
