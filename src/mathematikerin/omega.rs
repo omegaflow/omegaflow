@@ -2,7 +2,7 @@ use super::*;
 
 pub const Φ: f64 = 1.618033988749895;
 
-pub const C: f64 = 299792458.0;
+pub const C: f64 = crate::archivar::types::C_LIGHT;
 
 pub const GRID_INIT: f64 = 2147483648.0;
 
