@@ -1,3 +1,9 @@
+url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2018-10-10T00:00:00Z&stop=2018-10-10T00:59:59Z&parameters=F&format=json
+ttl 4
+at earth
+hapi F=cryosat_magnetic_field_intensity_nt
+field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 4 0.0 0.0
+
 url https://api.wolfx.jp/jma_eew.json
 ttl 5
 at earth
@@ -5,6 +11,12 @@ map .
 lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
+
+url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Absolute_Ne&format=json
+ttl 5
+at earth
+hapi Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
+field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 ttl 10
@@ -14,6 +26,36 @@ lat lat
 lon lon
 field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
 field track adsb_track_deg inverse-square em deg 1 0.0 0.0
+
+url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=champ_thermosphere_density_kgm3
+field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
+
+url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 10
+at earth
+hapi Absolute_VTEC=champ_absolute_vertical_tec_tecu
+field champ_absolute_vertical_tec_tecu champ_absolute_vertical_tec_tecu inverse-square em TECU 10 0.0 0.0
+
+url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
+ttl 10
+at earth
+hapi crosswind=champ_thermosphere_crosswind_ms
+field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0
+
+url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=grace_thermosphere_density_kgm3
+field grace_thermosphere_density_kgm3 grace_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
+
+url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+ttl 16
+at earth
+hapi F=goce_magnetic_field_intensity_nt
+field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-square em nT 16 0.0 0.0
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 30
