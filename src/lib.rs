@@ -64,6 +64,7 @@ pub use archivar::twomass;
 pub use archivar::wind;
 pub use archivar::wind_orbit;
 pub use archivar::wso_polar;
+pub use archivar::zeuge;
 pub use archivar::ztf;
 pub use mathematikerin::doppler;
 pub use mathematikerin::equilibrium;

@@ -46,15 +46,17 @@ pub fn draft_frame_guess(
     context: &str,
     registry: &HashMap<String, String>,
 ) -> (String, String) {
-    let netloc = extract_netloc(url).unwrap_or_default();
+    let netloc = extract_netloc(url);
     for key in route_prefix_keys(url) {
         if let Some(f) = registry.get(&key) {
             return (format!("{}\n", f), format!("route-registry: {}", f));
         }
     }
-    for n in CELESTIAL_NETLOCS {
-        if netloc == *n || netloc.ends_with(n) {
-            return ("at sun\n".to_string(), "celestial netloc".to_string());
+    if let Some(netloc) = netloc {
+        for n in CELESTIAL_NETLOCS {
+            if netloc == *n || netloc.ends_with(n) {
+                return ("at sun\n".to_string(), "celestial netloc".to_string());
+            }
         }
     }
     let lower = context.to_lowercase();
@@ -95,6 +97,7 @@ pub fn build_frame_registry() -> HashMap<String, String> {
         "phi/sources.φ",
         "phi/dead_sources.φ",
         "phi/blocked_sources.φ",
+        "phi/witnesses.φ",
     ] {
         let Ok(content) = std::fs::read_to_string(path) else {
             continue;

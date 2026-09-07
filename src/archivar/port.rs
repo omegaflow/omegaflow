@@ -2322,6 +2322,18 @@ pub fn gate_learn_mode() -> i32 {
             }
         }
     }
+    if let Ok(content) = std::fs::read_to_string("phi/witnesses.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("w{}", nl)) {
+                        delta.push((2, "w".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
     let (mut pos, mut neg) = (0usize, 0usize);
     for (w, _, _) in &delta {
         if *w > 0 {
@@ -2331,7 +2343,7 @@ pub fn gate_learn_mode() -> i32 {
         }
     }
     let mut d = String::from(
-        "# gate-delta — netloc weights, self-learning from sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b)\n",
+        "# gate-delta — netloc weights, self-learning from sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b) + witnesses.φ (w)\n",
     );
     for (w, f, tag) in &delta {
         d.push_str(&format!("{} {} {}\n", w, f, tag));

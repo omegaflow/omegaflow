@@ -1,0 +1,61 @@
+# witnesses.φ — die Zeugen. Zwei Wesen: der Oszillator strahlt (sources.φ, Force-Gate
+# über die 9 Medien), der Zeuge bezeugt (hier). Drei Zeugen-Arten (die-weberin §4):
+# s2-direction (distanzlos, τ=0), gestalt (Körperfläche, τ = geologische Stabilität),
+# presence (ein Wesen am Punkt, nie der einzige Zeuge). Der Record (.bin, 4-Byte-Magic)
+# ist nur der Behälter — magic_identity (src/archivar/zeuge.rs) sagt, was darin sitzt.
+# NRS1 (Spektral) bleibt pending; der noaa_nrs_psd-Feldblock ist in sources.φ gestrichen
+# (c3f33f6, Council C1), sein Sitz ist phi/blocked_sources.φ — benannt offen, nicht geglättet.
+# Disposition: witness s2-direction | witness gestalt | witness presence. Sortiert nach Art, dann URL.
+
+witness s2-direction
+url https://api.antares.noirlab.edu/v1/loci?limit=20
+record skydirection
+force em
+note ANTARES-REST anonym offen (2026-09-06 gemessen HTTP 200), ZTF-Transienten-Loci mit attributes.ra/attributes.dec + attributes.properties.{newest,brightest,oldest}_alert_magnitude (echte em-mag-Messwerte, Band absent — unbanded gehalten). Zeugen-Art S²-Richtung (distanzlos, τ=0), gehalten via skydirection_compiler (SkyDirection-Records). Crossmatch gemessen (2026-09-07, direction_distance_join/Gaia DR3 im 5-arcsec-Kegel + direction_z_join/NED-objdir im 30-arcsec-Kegel, ueber das gehaltene Asset skydirections.bin): 0 der 10 gehaltenen Loci tragen eine gemessene Distanz - kein Gaia-Parallax-Record und kein NED-z im Kegel; die 10 bleiben ehrlich DirectionOnly, die Abwesenheit der Distanz ist gemessen, kein positions-pending mehr (0 honored). Distanz kommt nur durch den Join, nie erraten.
+
+witness s2-direction
+url https://api.lsst.fink-portal.org/api/v1/conesearch
+record skydirection
+force em
+note Fink-LSST cone (2026-09-06 gemessen HTTP 200, anonym): POST ra/dec/radius antwortet die r:diaObjectId-Array-Zeilen mit r:ra, r:dec, r:nDiaSources — die Konus-Zeilen tragen KEINE em-Photometrie, die Per-Objekt-Lichtkurven (/api/v1/sources, /api/v1/fp) bleiben ein benanntes Pending. Zeugen-Art S²-Richtung (Richtung ohne Magnitude — ehrlich absent, 0 honored), gehalten via skydirection_compiler. Crossmatch gemessen (2026-09-07, direction_z_join/NED-objdir im 30-arcsec-Kegel ueber das gehaltene Asset skydirections.bin): 53 der 61 gehaltenen Konus-Richtungen tragen eine gemessene Rotverschiebung (Hubble-Distanz 0.45-4210.10 Mpc gemessen), keine eine Gaia-Parallax-Distanz; 8 bleiben ehrlich DirectionOnly (0 honored). Successor von api.fink-portal.org (dead_sources.φ, dead unreachable). Die Scanner (mycelium_fan_navigator, lsst_anomaly_probe, broker_difference_probe) lesen den Konus als natural-class identity gate, nie als Feld-Wert.
+
+witness s2-direction
+url https://dataverse.harvard.edu/api/access/datafile/7502710
+record s2e1 sky1
+force em
+note IceCat-1-IceCube-Neutrino-Katalog, Harvard-Dataverse-Datafile 7502710 (2026-09-06 gemessen, HTTP 303 — Redirect auf die Datei; die curl-Route in icecat-cdn.yml): 348 astrophysikalische Neutrino-Ereignisse. Die Kompilierung liest je Zeile NAME/EVENTMJD/RA/DEC (J2000, deg) und kombiniert die asymmetrischen Fehler-Spalten RA_ERR_PLUS/MINUS + DEC_ERR_PLUS/MINUS zur Kreis-Sigma (arcsec); Energie und FAR werden nur bei echtem Messwert (v>0) gehalten, die Signalness bei v>=0 — absent bleibt absent, nie fabriziert (0 honored); epoch_tdb aus EVENTMJD ueber die eingebettete Leap-Second-Tabelle. Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz neutrino (ROOT_NEUTRINO), gemessen durch em (Cherenkov). Kompiliert als icecat_events.s2e1 (348 Neutrino-Faeden) + icecat_sky1.sky1 (Dichte-Projektion, value 1.0 je Faden, kind neutrino) via icecat_compiler (tools/harvest, S2E1/SKY1; Weberin §9 Stufe 6, Neutrino-Zeuge), CDN live (Release ssd.jpl.nasa.gov), Roundtrip verifiziert.
+
+witness s2-direction
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+record amn1
+force em
+note AMON-IceCube-Gold/Bronze-Alert-Index (2026-09-06 gemessen HTTP 200, live — neueste Notices 26/08/27, 814 Index-Zeilen); je Notice eine .amon-Datei unter gcn.gsfc.nasa.gov/notices_amon_g_b/<RunNum>_<EventNum>.amon (je ~2,9 KB) mit RUN_NUM/EVENT_NUM, NOTICE_TYPE, SRC_RA/SRC_DEC (J2000, deg), SRC_ERROR/SRC_ERROR50 (arcmin), ENERGY [TeV], SIGNALNESS, FAR [yr^-1] — echte, positions-tragende Neutrino-Alert-Messungen. Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz neutrino, gemessen durch em (Cherenkov). Kompiliert als icecube_alerts.amn1 via amon_compiler (tools/harvest, AMN1, src/archivar/amon.rs; Weberin §9 Stufe 6, Neutrino-Zeuge), CDN live. Das IceCube-Daten-Releases-Portal (icecube.wisc.edu/data-releases/) verweigert 403 am Origin (zwei Exit-IPs gemessen, kein ip-block, keine Auth-Form) — die .amon-Notices tragen die Messung, das Portal ist keine Route. Die toten JSON-Geschwister gcn.nasa.gov/api/alerts/icecube (bronze+gold) und api/v1/events sind dead_sources.φ (dead 404).
+
+witness s2-direction
+url https://gracedb.ligo.org/api/superevents/S250207bg/files/
+record sky1
+force gravity
+note GraceDB-Superevent-Datei-Route (2026-09-07 gemessen, anonym, HTTP 200): bayestar.multiorder.fits (S250207bg = GW250207_115645, reale CBC; 777600 B, content-type image/fits, OBJECT G553034). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gravity (KIND_GRAVITY=4), gemessen durch gravity. Kompiliert als gw250207_115645.sky1 via gw_skymap_compiler, CDN live (Sky-Integral = 1.0, Wahrscheinlichkeitsmasse erhalten, multiorder as-is). Die direction-lose Superevent-Liste bleibt als Skalar in sources.φ (gravity_wave_far). Per-Ereignis-Workflow (ein Superevent), kein allgemeiner GW-Zeuge; die Spitze der Liste trägt (2026-09-07 gemessen) category MDC (Mock-Daten), der Compile-Lauf braucht ein echtes Superevent (gracedb_id).
+
+witness s2-direction
+url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+record skydirection
+force em
+note Lasair-ZTF (2026-09-06 gemessen HTTP 200 mit LASAIR_TOKEN, anonym HTTP 401): skydirection_compiler erntet das objects-Window als SkyDirection-Records (objectId/ramean/decmean + gmag). Die gmag wird NUR mit Einzel-Detektions-Epoche (jdmin==jdmax, gemessen) als Probe gehalten; Multi-Detektions-gmag (g-Epoche nicht geliefert) bleibt ungehalten (0 honored). Zeugen-Art S²-Richtung, gehalten via skydirection_compiler. Crossmatch gemessen (2026-09-07, direction_distance_join/Gaia DR3 im 5-arcsec-Kegel + direction_z_join/NED-objdir im 30-arcsec-Kegel, ueber das gehaltene Asset skydirections.bin): 10 der 1000 gehaltenen Window-Richtungen tragen eine gemessene Gaia-Parallax-Distanz (167.4-3995.1 pc = 0.17-4.00 kpc gemessen) und 89 eine gemessene NED-Rotverschiebungs-Distanz (Hubble 0.01-15739 Mpc gemessen) - 901 bleiben ehrlich DirectionOnly, die leeren Kegel sind gemessen, kein positions-pending mehr (0 honored). LASAIR_TOKEN bleibt in .secrets.local.
+
+witness s2-direction
+url https://opendata.auger.org/catalog/data.zip
+record pao1
+force em
+note Pierre-Auger-Open-Data-Katalog der hoechsten-energetischen kosmischen Strahlen (109 Ereignisse 2004-2020, ApJ 935,170/ApJS 264,50); data.zip (2026-09-06 gemessen HTTP 200, 3,4 MB, deflate) enthaelt 109 PAO*.json mit sdrec.ra/sdrec.dec (J2000 deg), sdrec.energy [EeV], sdrec.l/sdrec.b, info.gpstime — echte, positions-tragende CR-Ankunftsrichtungs-Messungen. Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz CR (Proton), gemessen durch em (Luftschauer). Kompiliert als auger_catalog.pao1 via auger_compiler (tools/harvest, PAO1, src/archivar/auger.rs; Weberin §9 Stufe 6, CR-Zeuge), CDN live.
+
+witness s2-direction
+url https://vo.km3net.de/ant20_01/nu/cone/form
+record s2e1 sky1
+force em
+note ANTARES-2007-2017-Punktquellen-Ereignisliste (2026-09-07 gemessen, anonym, HTTP 200): der KM3NeT-VO-Konus (DaCHS ant20_01/nu/cone) liefert die 8754 Track-Neutrino-Ereignisse als CSV (POST form, hscs_pos/hscs_sr in Bogenminuten, _FORMAT=CSV, MAXREC=250000). Spalten: _r, MJD, Beta (Winkelunsicherheit, deg), Nhit, RA, Decl (ICRS, deg), ID — eine Energie-Spalte traegt der Katalog nicht (Energie absent, nie fabriziert). Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz neutrino, gemessen durch em (Cherenkov). Kompiliert als antares_events_2007_2017.s2e1 (sigma aus Beta, epoch_tdb aus MJD) + .sky1 via antares_vo_compiler, CDN live, Roundtrip verifiziert.
+
+witness gestalt
+url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>
+record gbco
+note GEBCO2020-Bathymetrie via opentopodata (2026-09-07 gemessen HTTP 200): die Query ?locations=<lat>,<lng> antwortet eine Elevation in Metern — ein gemessener Skalar aus lat/lon und Tiefe, negativ unter dem Meeresspiegel (gemessen -833 m bei NRS01 72.49, -156.6); das Land-Geschwister eudem25m traegt die Form ueber der Wasserlinie (286.25 m bei 51.2, 10.4) — beide zusammen eine Gestalt, die feste Oberflaeche unter und ueber der Wasserlinie. Zeugen-Art Gestalt (Koerperflaeche), τ = geologische Stabilitaet (langes ttl), gehalten via gebco_bathymetry_compiler als gbco-Records (GBCO), nie als Oszillator und nie als Kraftfeld — es strahlt nicht. Haupt-Heim ist das Binding bathymetrie-gebco.φ (phi/bindings/); der Verbrauch laeuft ueber den Station-Thread (Motion::Surface, Archivar), die Station zuerst, die Projektion zweitens — die Station-Thread-Integration in motion.rs bleibt benanntes follow-on, nicht stillschweigend angenommen. Die Mathematikerin haelt die nicht-strahlende Form nicht.

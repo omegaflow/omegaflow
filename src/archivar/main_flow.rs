@@ -65,6 +65,7 @@ pub struct Archive {
     pub asteroid_samples: Vec<Sample>,
     pub star_samples: Vec<Sample>,
     pub stations: Arc<Mutex<Vec<StationThread>>>,
+    pub gestalt_surface_threads: Arc<Mutex<Vec<Motion>>>,
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
     pub pending_channels: Vec<(Channel, FieldConfig, u32)>,
@@ -184,6 +185,15 @@ fn load_ephemeris_cache(
             fetch_ok: true,
         });
     }
+}
+
+pub fn load_gestalt_surface_threads(
+    path: &str,
+    body_name: &str,
+) -> Option<Vec<Motion>> {
+    let bytes = std::fs::read(path).ok()?;
+    let recs = crate::geo::parse_gbco(&bytes)?;
+    Some(gestalt_surface_threads(&recs, body_name))
 }
 
 pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
@@ -485,6 +495,7 @@ pub fn main_flow() {
         asteroid_samples: Vec::new(),
         star_samples: Vec::new(),
         stations: Arc::new(Mutex::new(Vec::new())),
+        gestalt_surface_threads: Arc::new(Mutex::new(Vec::new())),
         curves: None,
         spectral: Vec::new(),
         pending_channels: Vec::new(),
@@ -1879,6 +1890,7 @@ pub fn main_flow() {
                 let fmt = archive.sources[i].format.clone();
                 let body_name = frame_body_name(&src.frame);
                 let held = archive.stations.clone();
+                let gestalt_held = archive.gestalt_surface_threads.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
@@ -1938,6 +1950,7 @@ pub fn main_flow() {
                         return;
                     }
                     let threads = gbco_threads(&body_name, &recs);
+                    let gestalt = gestalt_surface_threads(&recs, &body_name);
                     eprintln!(
                         "\r\x1b[K{} {}: {} depth threads held as stations (no field radiation)",
                         fmt,
@@ -1945,6 +1958,15 @@ pub fn main_flow() {
                         threads.len()
                     );
                     eprint!("{}", station_view(&threads));
+                    eprintln!(
+                        "{} {}: {} gestalt surface threads held for projection (no field radiation)",
+                        fmt,
+                        url,
+                        gestalt.len()
+                    );
+                    if let Ok(mut held) = gestalt_held.lock() {
+                        *held = gestalt;
+                    }
                     if let Ok(mut held) = held.lock() {
                         *held = threads;
                     }
