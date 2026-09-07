@@ -3233,8 +3233,6 @@ url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitud
 ttl 604800
 on earth 19.48 -155.6 0
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
-<<<<<<< HEAD
-=======
 
 url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
 ttl 604800
