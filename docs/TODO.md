@@ -2,6 +2,34 @@
 
 Nur offene Pflichten.
 
+## Source-Registrierung — Ursprungs-API statt CDN-Url-Line (2026-09-07)
+
+Operator-Korrektur: eine Quelle, deren Ursprungs-API erreichbar ist und die
+Feld-Daten trägt, wird an ihrer Ursprungs-API-Url registriert, nicht an einer
+github-CDN-Url-Line — das github-Asset ist nur die Cache-Schicht. Der Archivar
+löst eine Nicht-github-Url als lokaler Cache → CDN-Asset → Ursprung auf
+(`fetch_one`).
+
+**Umgeregistriert — archive-api.open-meteo.com (90):** die 90
+open-meteo-Archiv-Quellen (gyirong/kollab/rasuwa, je 30 stündliche Variablen,
+Fenster 2026-08-18…27) stehen jetzt an der Ursprungs-API-Url
+(`/v1/archive?latitude=…&longitude=…&start_date=2026-08-18&end_date=2026-08-27&hourly=<variable>&timezone=UTC`);
+der Wertpfad wurde vom kompilierten `points`-Envelope auf die
+Ursprungs-Form `hourly.<variable>.-1` gestellt. Wert-Parität gemessen
+(Stationen gyirong/rasuwa/kollab, apparent_temperature: Ursprung 4.4 / 6.0 /
+-5.4 == Asset 4.4 / 6 / -5.4; die kompilierten Werte sind verbatim aus dem
+Ursprung in Reihenfolge übernommen — Parität gilt konstruktionsgemäß für jede
+Variable).
+
+**Offene Pflicht — CDN-Manifestation der umgeregistrierten Namen:** der
+`meteo-cdn.yml`-Manifestator (und `meteo_harvest`) publiziert die Assets als
+`<station>_open-meteo_<variable>.json`; `fetch_one` leitet den CDN-Asset-Namen
+seit der Umregistrierung aber aus der Ursprungs-Url ab
+(`source_name_from_url`) — die abgeleiteten Namen sind noch nicht manifestiert,
+der CDN-Treffer geht bis dahin leer und der Ursprung trägt (erreichbar,
+gemessen 200). Der Manifestator übernimmt die Ursprungs-Url-abgeleitete
+Benennung, damit lokaler Cache → CDN → API wieder als Kette schließt.
+
 ## Oszillator/Zeuge/Serie — die Identität (gebaut 2026-09-07)
 
 Der Register-Split ist gebaut: `phi/witnesses.φ` trägt die Zeugen (aus
@@ -39,6 +67,19 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   ein Punkt, nie ein Name (der Wal ist ein Peer, kein Körpername). Die Consent-Wurzel
   scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
   der Wal bleibt frei, namenlos, im Wasser (0 honored).
+
+- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code-Bau pending.**
+  Re-probe geschlossen (2026-09-07, drei Providers curl-gemessen): LIneA (DRI) + CosmoHub
+  kontogegatet, aber der NOIRLab Astro Data Lab TAP sync (datalab.noirlab.edu/tap/sync,
+  REQUEST=doQuery, anonym HTTP 200) trägt `des_dr2.coverage` — die DR2/Y6A2-Coverage-Maske
+  (hpix_4096 HEALPix Nside 4096, 25.239.595 Zeilen ~ 5171 deg², frac_det_g/i/r/y/z =
+  "fractional area of healpix pixel covered" je Band — Flaeche-Coverage, detektions-unabhaengig).
+  Footprint-Litmus BESTANDEN (unterscheidet nie-beobachtet von beobachtet-leer; kein
+  positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Rat 2026-09-07: der
+  Footprint ist kein Zeuge (gestalt = Koerperoberflaeche, falscher Sitz) und kein Oszillator —
+  er braucht eine EIGENE Survey-Footprint-Asset-Klasse (S² + Coverage-Fraktion, τ = Survey-
+  Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). Code-Bau pending
+  (Sitz in `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag).
 
 ## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
 
