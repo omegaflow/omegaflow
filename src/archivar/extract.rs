@@ -90,6 +90,14 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_SDARN_V => Some("superdarn_fitacf_los_velocity_ms"),
             _ => None,
         },
+        "fdsn_waveform" => match comp {
+            crate::geo::COMP_FDSN_BHZ => Some("fdsn_waveform_bhz_ms"),
+            _ => None,
+        },
+        "fmi_gic" => match comp {
+            crate::geo::COMP_GIC_A => Some("fmi_gic_a"),
+            _ => None,
+        },
         "argo_bgc" => match comp {
             crate::geo::COMP_ARGO_DOXY => Some("argo_dac_bgc_doxy_umol_kg"),
             crate::geo::COMP_ARGO_NITRATE => Some("argo_dac_bgc_nitrate_umol_kg"),
@@ -100,6 +108,35 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         _ => None,
     }
+}
+
+pub fn gbco_threads(body_name: &str, recs: &[crate::geo::GbcoRec]) -> Vec<StationThread> {
+    recs.iter()
+        .map(|r| StationThread {
+            body_name: body_name.to_string(),
+            lat: r.lat,
+            lon: r.lon,
+            alt: r.elev,
+        })
+        .collect()
+}
+
+pub fn station_view(threads: &[StationThread]) -> String {
+    let mut out = String::new();
+    for t in threads {
+        if t.alt < 0.0 {
+            out.push_str(&format!(
+                "{} @ {},{}: surface elevation {} m — depth {} m below the datum\n",
+                t.body_name, t.lat, t.lon, t.alt, -t.alt
+            ));
+        } else {
+            out.push_str(&format!(
+                "{} @ {},{}: surface elevation {} m\n",
+                t.body_name, t.lat, t.lon, t.alt
+            ));
+        }
+    }
+    out
 }
 
 pub fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
