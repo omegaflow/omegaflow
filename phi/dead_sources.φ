@@ -1582,6 +1582,10 @@ dead unreachable
 url https://erddap.gml.noaa.gov/erddap/tabledap/greenhouse_gases_sf6_aircraft_pfp_discrete.json?time,latitude,longitude,sf6&time
 note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server
 
+decline synthetic-product
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC
+note Force-Gate decline, title/summary measured 2026-09-07: "Argo float synthetic vertical profiles : BGC data", built by ARGO_simplified_profile — an interpolated standard-depth product, not a per-level float measurement. The measured BGC parameters live per float in the GDAC netCDF profiles indexed by argo_bio-profile_index.txt.gz (data-argo.ifremer.fr, HTTP 200, format v2.2, 410088 profiles, columns file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update); the catalog-wide netCDF harvest is a register duty. ifremer raw ArgoFloats serves no BGC values (doxy null across full-suite float 1901614, doxy>0 query 404 — measured 2026-09-07).
+
 dead 400
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
