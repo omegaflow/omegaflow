@@ -1131,6 +1131,9 @@ fn main() {
         if let Some(w) = &where_clause {
             adql.push_str(&format!(" WHERE {}", w));
         }
+        if let Some(o) = &order_by {
+            adql.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
         let Some(poll) = async_mode else {
             unreachable!()
         };

@@ -25,14 +25,17 @@ aus dem Event lesen), nicht das 52-Superset.
 
 ## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
 
-- **ned-cdn (Commit `01a2731`, dispatched):** der NED-TAP-Sync-Endpoint bricht
-  `SELECT TOP 90001` ab — gültiges JSON bis ~82058 Zeilen, dann ein angehängter
-  VOTable-`ERROR` ("stopped unexpectedly without any result") → ungültiges JSON
-  → `query returned void`. Gemessene Schwelle: 70000/80000 sauber, 90001
-  scheitert (`FORMAT=csv` schon bei 70000). Zweiter Fehler: der Walk paginierte
-  `WHERE objid > cursor` ohne `ORDER BY` → ungeordnete Seiten übersprangen
-  Zeilen. Fix: `--limit 50000` + `--order objid` + Loop-Bruch `-lt 50000`;
-  `ORDER BY "objid"` verifiziert monoton (1..71721).
+- **ned-cdn — blocked auf NED-TAP-Dienst (gemessen 2026-09-08):** der Walk
+  paginiert `NEDTAP.objdir` (1 Mrd+ Objekte) per TAP. Befund: der Sync-Endpoint
+  bricht große `SELECT TOP N`-Abfragen mitten im Stream ab ("stopped unexpectedly
+  without any result", `ERROR_TYPE=fatal`), nicht-deterministisch (~62 s, ~60–80k
+  Zeilen) — Seite 1 (`objid > 0`, 50000 Zeilen) lief, Seite 2 (`objid > 50984`)
+  brach ab (reproduziert). Der Async-Endpoint (`/tap/async`, UWS) stellt Jobs ein,
+  die selbst für `TOP 10` ohne `ORDER BY` viele Minuten `PENDING` bleiben — der
+  Queue ist verstopft. Code-Fixes stehen (`--limit 50000` + `--order objid`,
+  Async-Pfad wendet `--order` jetzt an), aber beide Dienstwege tragen die Ernte
+  derzeit nicht. Der eigentliche Weg ist der NED-Bulk-Download (NEDL/Katalog-Dump)
+  statt TAP-Pagination — pending.
 - **argo_bgc.bin (Commit `01a2731` + paralleler Fetch, dispatched):** das
   Release `data-argo.ifremer.fr` war leer — alle 3 Läufe brachen am 240-min-
   Timeout ab (sequentieller Fetch, gemessen ~270 Profile/h, ~7,5 h für 2000).
