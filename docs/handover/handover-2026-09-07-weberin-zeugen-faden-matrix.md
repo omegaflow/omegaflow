@@ -2,7 +2,7 @@
   title: Handover — Weberin-Zeugen (S²-Ereignis-Fäden), Thread-Matrix, Faden-Lücken-Kaskade
   class: handover
   date: 2026-09-07
-  sha256: 9e1287c802097d408377a9aab90bea07440b74ca4d5c1e7312f9584463264621
+  sha256: 9221085fbd1a96c2f4dbd25e6962b30d99885297457b0fd4eab4712724704600
   status: live
   see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md docs/auftrag/auftrag-extern-weberin-faden-luecken.md docs/TODO.md
 -->
@@ -40,11 +40,15 @@ TA (nur Papier-Figuren), KM3NeT (nur KM3-230213A), Super-K, JUNO, LHAASO (nur 90
 
 **Nächster Schritt für 8+9:** die von den Sub-Agenten entworfenen Register-Feldblöcke prüfen + in `phi/sources.φ` eintragen. WICHTIG (Sub-Agent-Messung): BGC-Argo-Slice `time>=max-2d` = ~22 MB → Block braucht enge Zeit-Bindung; der „synthetic"-Label ist ein Force-Gate-Review-Punkt. HF-radar-Root trägt NUR Radials (VELU/VELV = kartesische Zerlegung des einen Radial-Skalars VELO).
 
-## Uncommittet (Stand Ende Session)
+## Commit-Stand (HEAD 3bde17c, 2026-09-07)
 
-- `phi/sources.φ` — **Merge-Konflikt-Marker gefixt** (Sub-Agent, 2026-09-07): Zeilen 3236-3237 `<<<<<<<`/`=======` entfernt; HEAD-Seite leer; beide Blöcke (Mauna-Loa-CO₂ + Argo-DAC) behalten. Verifiziert: keine Marker, 410 url-Blöcke, keine Duplikate, Parser-Test grün. **Committen.**
-- `docs/auftrag/auftrag-extern-weberin-faden-luecken.md` — der externe Rechercheauftrag (9 Kategorien). **Committen.**
-- NICHT von dieser Session (parallel Galileo/Nadel): `bin/seconds_matrix_watchdog.sh`, `tools/measure/src/bin/solar_seconds_matrix_probe.rs`.
+Diese Session (Weberin-Zeugen 8adf234 → 3bde17c, interleaved mit der parallelen Galileo/Nadel-Session) ist **committet + gepusht**, inklusive:
+- `phi/sources.φ` — **Merge-Konflikt-Marker gefixt** (Zeilen 3236-3237 `<<<<<<<`/`=======` entfernt; HEAD-Seite leer; beide Blöcke Mauna-Loa-CO₂ + Argo-DAC behalten; keine Marker, 410 url-Blöcke, keine Duplikate, Parser grün) — in 3bde17c.
+- `docs/auftrag/auftrag-extern-weberin-faden-luecken.md` (der externe Rechercheauftrag, 9 Kategorien) — in 3bde17c.
+- Dieses Handover — in 3bde17c.
+- Die `archive_search`-Verbesserungen (d954bca → cd869b6) + Thread-Matrix-Survey (ab37dc2) + S²-Entität/Compiler (8adf234 → 6c13f85).
+
+**Nicht von dieser Session (parallel Galileo/Nadel, unangetastet):** `bin/seconds_matrix_watchdog.sh`, `tools/measure/src/bin/solar_seconds_matrix_probe.rs` + die vielen `galileo_*`-WIP-Dateien.
 
 ## Offen / für die nächste Session
 
