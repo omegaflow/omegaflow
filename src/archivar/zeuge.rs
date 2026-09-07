@@ -9,6 +9,7 @@ pub enum ZeugeArt {
 pub enum FeldIdentitaet {
     Oszillator,
     Zeuge(ZeugeArt),
+    Footprint,
     Pending,
 }
 
@@ -16,6 +17,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
     match &magic {
         b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" => Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)),
         b"GBCO" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)),
+        b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" => {
             Some(FeldIdentitaet::Oszillator)
@@ -42,7 +44,7 @@ pub fn zeugen_gate(
     };
     match magic_identity(m) {
         Some(FeldIdentitaet::Oszillator) => ZeugeVerdict::Radiator,
-        Some(FeldIdentitaet::Pending) => ZeugeVerdict::Pending,
+        Some(FeldIdentitaet::Footprint) | Some(FeldIdentitaet::Pending) => ZeugeVerdict::Pending,
         Some(FeldIdentitaet::Zeuge(art)) => {
             if !has_scalar {
                 return ZeugeVerdict::BareCoordinate;
@@ -71,7 +73,7 @@ pub fn serien_gate(magic: Option<[u8; 4]>, samples: &[(f64, f64, f64)]) -> Serie
     };
     match magic_identity(m) {
         None => SerienVerdict::Pending,
-        Some(FeldIdentitaet::Zeuge(_)) => SerienVerdict::Reject,
+        Some(FeldIdentitaet::Zeuge(_)) | Some(FeldIdentitaet::Footprint) => SerienVerdict::Reject,
         Some(FeldIdentitaet::Oszillator) | Some(FeldIdentitaet::Pending) => {
             for &(freq, bin_width, val) in samples {
                 if !freq.is_finite() || !bin_width.is_finite() || !val.is_finite() {
@@ -111,6 +113,19 @@ mod tests {
     #[test]
     fn nrs1_stays_pending() {
         assert_eq!(magic_identity(*b"NRS1"), Some(FeldIdentitaet::Pending));
+    }
+
+    #[test]
+    fn fp01_is_a_footprint_sibling_not_a_witness() {
+        assert_eq!(magic_identity(*b"FP01"), Some(FeldIdentitaet::Footprint));
+        assert_eq!(
+            zeugen_gate(Some(*b"FP01"), Some(ZeugeArt::S2Richtung), true),
+            ZeugeVerdict::Pending
+        );
+        assert_eq!(
+            serien_gate(Some(*b"FP01"), &[(10.0, 1.0, 3.0)]),
+            SerienVerdict::Reject
+        );
     }
 
     #[test]
