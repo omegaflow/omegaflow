@@ -26,10 +26,15 @@ gebunden — ein tmp-Wipe verliert nichts von ihrer Funktion:
   `tools/measure/src/bin/exoplanet_ps_spot_probe.rs` (live ps-TAP), `.py` entfernt.
 
 **Asset-Manifestations-Pflicht (pending):** `aia2014_fullyear.bin`,
-`planck_dust_av`, `eve2011_lines.bin`, `dr3_stars.bin`,
+`planck_dust_av`, `eve2011_lines.bin`,
 `omni2_raw/`, `goes15*/`, die `galileo_tdf_cache_*.TDF`, die SPICE-`.bc`-Kernels
 liegen in /tmp/opencode unmanifestiert — Kernel-/CDN-Schicksal je Quelle ist
 ein Register-Gegenstand (CDN-Manifestation), nicht lokal zu schließen.
+Gelöst: `dr3_stars.bin` ist manifestiert (CDN `ssd.jpl.nasa.gov`, 75.001.828 B,
+sources.φ-Url); `dr3_stars_stable.bin` (data/gea.esac.esa.int/) ist byte-identisch
+dazu (sha256 fb9a14089ef8348e12961caf8253c8e886b4a16862a1a71394b96465d75bcfbb),
+`tap_compiler` kennt keine `--stable`-Variante, keine Referenz im Repo — lokale
+Analyse-Kopie, kein kanonisches Asset, kein CDN-Gegenstand.
 
 **Restposten gelöst (2026-09-06):** `bayestar2019.be19` liegt auf dem CDN —
 release `ssd.jpl.nasa.gov` (omegaflow/sources), 2.090.178.751 B, Download HTTP 200
