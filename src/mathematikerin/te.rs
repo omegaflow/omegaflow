@@ -325,6 +325,151 @@ pub fn conditional_te_stats(
     Some((mean, sd, mean + 2.0 * sd))
 }
 
+fn solve_linear(a: &[f64], b: &[f64], k: usize) -> Option<Vec<f64>> {
+    let mut m = vec![0f64; k * (k + 1)];
+    for i in 0..k {
+        for j in 0..k {
+            m[i * (k + 1) + j] = a[i * k + j];
+        }
+        m[i * (k + 1) + k] = b[i];
+    }
+    for col in 0..k {
+        let mut pivot = col;
+        let mut best = m[col * (k + 1) + col].abs();
+        for r in (col + 1)..k {
+            let v = m[r * (k + 1) + col].abs();
+            if v > best {
+                best = v;
+                pivot = r;
+            }
+        }
+        if best <= 1e-12 {
+            return None;
+        }
+        if pivot != col {
+            for j in 0..=k {
+                m.swap(col * (k + 1) + j, pivot * (k + 1) + j);
+            }
+        }
+        let d = m[col * (k + 1) + col];
+        for j in col..=k {
+            m[col * (k + 1) + j] /= d;
+        }
+        for r in 0..k {
+            if r == col {
+                continue;
+            }
+            let f = m[r * (k + 1) + col];
+            if f == 0.0 {
+                continue;
+            }
+            for j in col..=k {
+                m[r * (k + 1) + j] -= f * m[col * (k + 1) + j];
+            }
+        }
+    }
+    Some((0..k).map(|i| m[i * (k + 1) + k]).collect())
+}
+
+fn ols_fit_lagged(y: &[f32], c: &[f32], max_lag: usize) -> Option<Vec<f64>> {
+    let n = y.len();
+    if n < max_lag + 4 || y.len() != c.len() {
+        return None;
+    }
+    let k = 1 + max_lag + (max_lag + 1);
+    let mut a = vec![0f64; k * k];
+    let mut b = vec![0f64; k];
+    for t in max_lag..n {
+        let mut row = Vec::with_capacity(k);
+        row.push(1.0);
+        for l in 1..=max_lag {
+            row.push(y[t - l] as f64);
+        }
+        for l in 0..=max_lag {
+            row.push(c[t - l] as f64);
+        }
+        let yt = y[t] as f64;
+        for i in 0..k {
+            b[i] += row[i] * yt;
+            for j in 0..k {
+                a[i * k + j] += row[i] * row[j];
+            }
+        }
+    }
+    solve_linear(&a, &b, k)
+}
+
+fn lagged_predict(coeffs: &[f64], y: &[f32], c: &[f32], t: usize, max_lag: usize) -> f64 {
+    let mut v = coeffs[0];
+    for l in 1..=max_lag {
+        v += coeffs[l] * y[t - l] as f64;
+    }
+    for l in 0..=max_lag {
+        v += coeffs[1 + max_lag + l] * c[t - l] as f64;
+    }
+    v
+}
+
+fn residual_surrogate_conditional_lagged(
+    y: &[f32],
+    c: &[f32],
+    max_lag: usize,
+    rng: &mut u64,
+) -> Vec<f32> {
+    let n = y.len();
+    match ols_fit_lagged(y, c, max_lag) {
+        Some(coeffs) => {
+            let mut resid: Vec<f64> = (max_lag..n)
+                .map(|t| y[t] as f64 - lagged_predict(&coeffs, y, c, t, max_lag))
+                .collect();
+            for i in (1..resid.len()).rev() {
+                *rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                let j = ((*rng >> 33) as usize) % (i + 1);
+                resid.swap(i, j);
+            }
+            let mut out = vec![0f32; n];
+            for t in 0..n {
+                out[t] = if t < max_lag {
+                    y[t]
+                } else {
+                    (lagged_predict(&coeffs, y, c, t, max_lag) + resid[t - max_lag]) as f32
+                };
+            }
+            out
+        }
+        None => shuffle_series(y, rng),
+    }
+}
+
+pub fn conditional_te_stats_lagged(
+    x: &[f32],
+    y: &[f32],
+    c: &[f32],
+    lag: usize,
+    max_lag: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<(f64, f64, f64)> {
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..n_surr {
+        let ys = residual_surrogate_conditional_lagged(y, c, max_lag, &mut rng);
+        if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
+            vals.push(te);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let n = vals.len() as f64;
+    let mean = vals.iter().sum::<f64>() / n;
+    let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
+    let sd = var.sqrt();
+    Some((mean, sd, mean + 2.0 * sd))
+}
+
 pub fn surrogate_threshold_lag(x: &[f32], y: &[f32], lag: usize, seed: u64) -> Option<f64> {
     surrogate_stats(x, y, lag, seed).map(|(_, _, threshold)| threshold)
 }
@@ -1851,5 +1996,169 @@ mod tests {
             conditional_te_stats(&x, &y, &c, 1, 0x9E37_79B9_7F4A_7C15, 10).expect("stats resolve");
         assert!(mean.is_finite() && sd.is_finite() && threshold.is_finite());
         assert!(threshold >= mean);
+    }
+
+    fn flare_envelope(n: usize, starts: &[usize], amp: f32, tau: f32) -> Vec<f32> {
+        let mut c = vec![0f32; n];
+        for &s in starts {
+            for t in s..n {
+                c[t] += amp * (-((t - s) as f32) / tau).exp();
+            }
+        }
+        c
+    }
+
+    fn flare_pair(n: usize, seed: u64) -> (Vec<f32>, Vec<f32>, Vec<f32>) {
+        let mut rng = seed;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        let alpha = 0.90f32;
+        for t in 0..n {
+            x[t] = c[t] + 0.05 * noise(&mut rng);
+            y[t] = if t == 0 {
+                0.0
+            } else {
+                alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.05 * noise(&mut rng)
+            };
+        }
+        (c, x, y)
+    }
+
+    #[test]
+    fn flare_envelope_phase_null_reports_time_constant_confound() {
+        let (_, x, y) = flare_pair(240, 0x7A5B_3C1D_9E4F_6A2Bu64);
+        let te_fwd = transfer_entropy_lag(&x, &y, 1).expect("forward TE resolves");
+        let te_rev = transfer_entropy_lag(&y, &x, 1).expect("reverse TE resolves");
+        let (_, _, thr_fwd) =
+            surrogate_stats_phase(&x, &y, 1, 0x9E37_79B9_7F4A_7C15).expect("phase null resolves");
+        assert!(
+            te_fwd > te_rev,
+            "flare-envelope gate blindness: phase-null D must carry x->y (fast->slow), got fwd {} rev {}",
+            te_fwd,
+            te_rev
+        );
+        assert!(
+            te_fwd > thr_fwd,
+            "flare-envelope gate blindness: the false arrow must clear the phase null, got fwd {} thr {}",
+            te_fwd,
+            thr_fwd
+        );
+    }
+
+    #[test]
+    fn flare_envelope_conditional_suppresses_confound() {
+        let (c, x, y) = flare_pair(240, 0x3C1D_9E4F_6A2B_7A5Bu64);
+        let te_u = transfer_entropy_lag(&x, &y, 1).expect("unconditional TE resolves");
+        let te_c = transfer_entropy_conditional(&x, &y, &c, 1).expect("conditional TE resolves");
+        let (_, _, thr_c) =
+            conditional_te_stats_lagged(&x, &y, &c, 1, 1, 0x9E37_79B9_7F4A_7C15, 10)
+                .expect("lagged conditional null resolves");
+        assert!(
+            te_c < te_u,
+            "flare-envelope gate: conditioning on the shared envelope must lower the spurious TE, got cond {} uncond {}",
+            te_c,
+            te_u
+        );
+        assert!(
+            te_c <= thr_c,
+            "flare-envelope gate: lagged residual null must not leak on the impulsive envelope (cond {} over thr {})",
+            te_c,
+            thr_c
+        );
+    }
+
+    #[test]
+    fn flare_envelope_conditional_keeps_true_coupling() {
+        let n = 240;
+        let mut rng = 0x6A2B_7A5B_3C1D_9E4Fu64;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        let mut y_ind = vec![0f32; n];
+        let alpha = 0.90f32;
+        for t in 0..n {
+            let ny = noise(&mut rng);
+            y_ind[t] = ny;
+            x[t] = c[t] + 0.4 * noise(&mut rng);
+            y[t] = if t == 0 {
+                0.0
+            } else {
+                alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.3 * ny
+            };
+        }
+        for t in 0..n - 1 {
+            x[t + 1] += 0.6 * y_ind[t];
+        }
+        let te_c = transfer_entropy_conditional(&x, &y, &c, 1).expect("conditional TE resolves");
+        let (_, _, thr_c) =
+            conditional_te_stats_lagged(&x, &y, &c, 1, 1, 0x9E37_79B9_7F4A_7C15, 10)
+                .expect("lagged conditional null resolves");
+        assert!(
+            te_c > thr_c,
+            "flare-envelope gate: true coupling beyond the shared envelope must survive conditioning, got cond {} thr {}",
+            te_c,
+            thr_c
+        );
+    }
+
+    #[test]
+    fn synthetic_dag_recovers_known_direction() {
+        let n = 240;
+        let mut rng = 0x9E4F_6A2B_7A5B_3C1Du64;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let z = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+        let mut a = vec![0f32; n];
+        let mut b = vec![0f32; n];
+        let mut a_ind = vec![0f32; n];
+        let alpha = 0.90f32;
+        for t in 0..n {
+            a_ind[t] = noise(&mut rng);
+            a[t] = z[t] + 0.4 * a_ind[t];
+            b[t] = if t == 0 {
+                0.0
+            } else {
+                alpha * b[t - 1] + (1.0 - alpha) * z[t - 1] + 0.3 * noise(&mut rng)
+            };
+        }
+        for t in 0..n - 1 {
+            b[t + 1] += 0.5 * a_ind[t];
+        }
+        let seed = 0x9E37_79B9_7F4A_7C15;
+        let te_ab = transfer_entropy_conditional(&b, &a, &z, 1).expect("A->B resolves");
+        let te_ba = transfer_entropy_conditional(&a, &b, &z, 1).expect("B->A resolves");
+        let (_, _, thr_ab) =
+            conditional_te_stats_lagged(&b, &a, &z, 1, 1, seed, 10).expect("null A->B resolves");
+        let (_, _, thr_ba) =
+            conditional_te_stats_lagged(&a, &b, &z, 1, 1, seed, 10).expect("null B->A resolves");
+        assert!(
+            te_ab > thr_ab,
+            "synthetic DAG: recover the known true edge A->B, got cond {} thr {}",
+            te_ab,
+            thr_ab
+        );
+        assert!(
+            te_ba <= thr_ba,
+            "synthetic DAG: reject the false reverse edge B->A, got cond {} thr {}",
+            te_ba,
+            thr_ba
+        );
     }
 }
