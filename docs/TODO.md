@@ -617,6 +617,21 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
     meta.icos. Stubs: 0 Zero-Byte-Assets; bodc `catalogue.json` 12 B und epqs
     `json.json` 12 B sind Minimal-Stubs (Re-Harvest-Hinweis). Vollständige
     Liste + Gründe in dieser Session-Disposition; Entfernen erst in Step 5.
+  - **Step-5-Safe-Delete ausgeführt (2026-09-07, Operator-Wort):** die 64
+    Cleanup-Hosts / 811 Assets / 192.377.716 B gelöscht (gh api
+    releases/assets/<id>, 0 Fehler). Vor jeder Löschung Referenz-Gate:
+    kein `releases/download/<host>/`-Link in sources.φ/witnesses.φ, keine
+    Live-Feld-Referenz (Basename-Grep über phi/ traf nur generische
+    Fremd-Tokens); 0 Zero-Byte-Assets betroffen. **Übersprungen (referenziert,
+    1 Asset / 23.205 B):** `www.cpc.ncep.noaa.gov/qbo_30hpa.csv` — die
+    `cpc.ncep.noaa.gov`-Zählung der Disposition (7) konflierte den
+    registrierten qbo-Netloc; gelöscht wurden die 6 Telekonnektions-/
+    Index-Assets des `cpc.ncep.noaa.gov`-Releases, der qbo-Link in
+    sources.φ:1032 bleibt unberührt. **Release-Tags vollständig gelöscht:
+    65** (64 Netloc-Tags, opendap.nccs.nasa.gov doppelt vergeben); CDN von
+    211 auf 146 Releases. Kein KEEP-/REVIEW-/Compiler-/registrierter Tag
+    gelöscht (ssd.jpl, jsoc, service.iris, www.cpc.ncep.noaa.gov u. a.
+    unangetastet). Cleanup-Set damit geschlossen.
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
 
