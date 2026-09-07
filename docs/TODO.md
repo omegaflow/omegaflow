@@ -1499,11 +1499,48 @@ Gebaut (2026-09-06, sub-agents):
 `pending` — registriert, nicht fabriziert:
 
 - **Sonnensystem-Weben (zweite Linie je Körper-Klasse)**: die Körper-Kette
-  webt dünn (10 Kleinkörper, 4 TNOs, SPK-gegen-DASTCOM) gegen die reiche
-  S²-Richtungs-Kette außerhalb — Planeten/Monde/Raumsonden tragen nur die
-  SPK-Linie, keine zweite. Aufgabe: zweite unabhängige Positions-Linie je
-  Klasse (Planeten/Monde: zweite Abstammung; Sonden: Doppler-Linie; breite
-  TNO-Kette: mpcorb_extended + zweite Linie). Übergabe:
+  webt dünn gegen die reiche S²-Richtungs-Kette außerhalb. Bestands-Inventar
+  gemessen (survey-2026-09-07-weberin-sonnensystem-kette): 72
+  `ephemeris_binary` + 1 `orbit_bin` (Wind); zwei Linien tragen heute nur 8
+  Kleinkörper (ceres, vesta, apophis, bennu, pluto, eris, makemake, haumea,
+  SPK-gegen-DASTCOM). Planeten (8), Monde (45), Sonne, Raumsonden (9+Wind)
+  tragen nur die SPK-Linie → `Absent`. Korrigiert (Code): die Namens-Kollision
+  `juno` (Raumsonde −61 vs Asteroid 3) — Asteroid heißt `juno_asteroid`;
+  `weberin_body_verdict` webt jetzt den vollen Körper-Satz aus
+  `phi/sources.φ` (nicht nur BODY_NUMBER). Offen je Klasse:
+  (a) Planeten/Monde — zweite Abstammung (INPOP vs DE) oder Astrometrie,
+   `pending`; (b) Raumsonden — Doppler gemessen als **keine** unabhängige
+   Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
+   Der Compiler erntet die SPDF-Trägerfrequenz `OBSVBL`/`FREQCY` (Hz,
+   `pioneer_doppler_compiler.rs`); das Referenz-Modell `downlink_rate_core`/
+   `uplink_rate` bildet `dot(Δr,Δv)/ρ` — die Radial-Geschwindigkeit längs der
+   Sichtlinie, gerechnet aus der SPK-Bahn selbst (`sc` =
+   `body_barycenter_position(sc_body,…)` in `pioneer_navio_residuum.rs`); die
+   Ernte ist die Residuen-Reihe in Hz (`*_navio_residuum.bin`,
+   `*_navio_daily.bin`) und deren Drift → anomale Beschleunigung m/s²
+   (`FitStat`/`navio_chain` in `pioneer_link_correction_probe.rs`) — der
+   Träger der Pioneer-Anomalie, nie eine Position. Eine Position daraus
+   bräuchte ein dynamisches Modell mit `state0` aus derselben SPK-Linie
+   (`body_barycenter_position(SC_BODY,…)`): die zweite Linie aus der ersten
+   abgeleitet, kein unabhängiger Faden; der Skalar `dot(Δr,Δv)/ρ` bestimmt 3D
+   nicht. Der NAVIO-Bestand trägt nur Pioneer 10/11 (`pioneer{10,11}_navio*`);
+   für die gewebten Sonden (iss, juno, jwst, new_horizons,
+   parker_solar_probe, solar_orbiter, voyager1, voyager2, atlas_3i, wind)
+   liegt kein Doppler vor. `BodyLine::Doppler` bleibt ungebaut, `pending`.
+   Eine echte zweite Positions-Linie braucht eine Observable, die den vollen
+   Zustand unabhängig von der SPK-Abstammung trägt: VLBI-Winkel (ΔDOR, zwei
+   Stationen, Ebene-am-Himmel) + Range (Zwei-Wege-Lichtzeit, Distanz) oder
+   eine zweite Ephemeriden-Abstammung (INPOP/ESA-OD) — nichts davon geerntet;
+  (c) breite TNO-Kette — erste Kepler-Linie gebaut (Sitzung 2026-09-07):
+  `mpcorb_compiler` (`tools/harvest/src/bin/mpcorb_compiler.rs`) parst
+  `mpcorb_extended.json.gz` (Messung: 1.562.906 Körper, 8.082
+  `Orbit_type: Distant Object`), emittiert das feste Kepler-Register
+  `mpcorb_distant.bin` (85 B/Körper: number, Principal_desig, epoch, a, e, i,
+  node, peri, M, H, G mit Präsenz-Bits; `src/archivar/mpcorb.rs`, 8.082
+  Records, 0 verworfen); Register + kernel-flatten-Manifestator-Schritt
+  eingetragen; CDN-Geburt steht im nächsten CI-Lauf aus. Zweite Linie
+  (SPK-Route oder zweiter Katalog) bleibt `pending`; (d) Kometen —
+  `encke` hat keine `AsteroidRec`-Linie (CometRec/dcom5 `pending`). Übergabe:
   docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md.
 - Vollständige ~20k-Tafel-Ingestion in den position-indizierten Bestand —
   das Dichtefeld (Schritt 4) steht, `--catalog stars|twomass` verdrahtet;
