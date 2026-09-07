@@ -921,6 +921,17 @@ ICRS-4D-Rahmen teilt:
 
 ## Archivar & Werkzeuge — offene Pflichten
 
+- φ-Register-Sortier-Werkzeug gebaut (2026-09-07):
+  `tools/utils/src/bin/register_sort.rs` (`cargo run -p omegaflow-utils --bin
+  register_sort`) — trennt ein φ-Quellen-Register in Blöcke (url+ttl), meldet
+  ttl-Ordnungs-Verstöße mit url + ttl und exit 0/1; `--write` sortiert
+  (ttl aufsteigend, dann url byte-aufsteigend), erhält die Block-Innenordnung
+  und die eine Leerzeile zwischen Blöcken; ohne `--write` wird nie
+  geschrieben. Register-Pflicht daraus (offen): `phi/sources.φ` trägt committet
+  den ttl-Verstoß metar ttl 300 nach ttl 86400 und im Arbeitsbaum den
+  uncommittierten fdsn_waveform-Block ttl 60 nach ttl 604800 — nach dem
+  Committen der eingehenden Register-Ergänzungen schließt
+  `register_sort --write phi/sources.φ` die Ordnung.
 - feature-gate `gpu` — eigenes Atom, pending: `pub mod mathematikerin` als
   #[cfg(feature="gpu")] + Co-Gate der main_flow-Verdrahtung (crate::
   mathematikerin::-Stellen PresenceFrame/EMOscillator/KineticRadiator)
