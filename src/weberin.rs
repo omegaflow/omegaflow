@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use crate::archivar::dastcom::{comet_state_at, CometRec};
 use crate::archivar::{
     body_barycenter_position, state_at, AsteroidRec, BodyEphemeris, J2000_EPOCH,
 };
@@ -84,12 +85,14 @@ pub struct BodyVerdict {
 pub struct BodyThread {
     pub name: String,
     pub rec: Option<AsteroidRec>,
+    pub comet: Option<CometRec>,
 }
 
 pub struct WeberinFeed {
     pub eph: Arc<HashMap<String, BodyEphemeris>>,
     pub sun: Arc<HashMap<String, BodyEphemeris>>,
     pub recs: Vec<AsteroidRec>,
+    pub comets: Vec<CometRec>,
 }
 
 pub struct Weberin {
@@ -122,19 +125,68 @@ pub fn body_number(name: &str) -> Option<u32> {
         .map(|(_, num)| *num)
 }
 
-pub fn build_threads(body_names: &[String], recs: &[AsteroidRec]) -> Vec<BodyThread> {
+pub const BODY_COMET: &[(&str, &str)] = &[("encke", "2P")];
+
+pub fn comet_desig(name: &str) -> Option<&str> {
+    BODY_COMET
+        .iter()
+        .find(|(n, _)| *n == name)
+        .map(|(_, desig)| *desig)
+}
+
+fn trim(bytes: &[u8]) -> String {
+    String::from_utf8_lossy(bytes).trim().to_string()
+}
+
+fn primary_desig(rec: &CometRec) -> String {
+    let desig = trim(&rec.desig);
+    if !desig.is_empty() {
+        desig
+    } else {
+        trim(&rec.comnam)
+    }
+}
+
+fn best_comet_by_desig<'a>(comets: &'a [CometRec]) -> HashMap<String, &'a CometRec> {
+    let mut by_desig: HashMap<String, &CometRec> = HashMap::new();
+    for c in comets {
+        let key = primary_desig(c);
+        match by_desig.get(&key) {
+            Some(current) => {
+                if c.epoch_jd > current.epoch_jd {
+                    by_desig.insert(key, c);
+                }
+            }
+            None => {
+                by_desig.insert(key, c);
+            }
+        }
+    }
+    by_desig
+}
+
+pub fn build_threads(
+    body_names: &[String],
+    recs: &[AsteroidRec],
+    comets: &[CometRec],
+) -> Vec<BodyThread> {
     let mut by_num: HashMap<u32, &AsteroidRec> = HashMap::new();
     for r in recs {
         by_num.entry(r.number).or_insert(r);
     }
+    let by_desig = best_comet_by_desig(comets);
     let mut threads = Vec::new();
     for name in body_names {
         let rec = body_number(name)
             .and_then(|num| by_num.get(&num).copied())
             .cloned();
+        let comet = comet_desig(name)
+            .and_then(|desig| by_desig.get(desig).copied())
+            .cloned();
         threads.push(BodyThread {
             name: name.clone(),
             rec,
+            comet,
         });
     }
     threads.sort_by(|a, b| a.name.cmp(&b.name));
@@ -171,7 +223,12 @@ impl Weberin {
                 names.push((*n).to_string());
             }
         }
-        self.threads = build_threads(&names, &feed.recs);
+        for (n, _) in BODY_COMET {
+            if !names.iter().any(|k| k == n) {
+                names.push((*n).to_string());
+            }
+        }
+        self.threads = build_threads(&names, &feed.recs, &feed.comets);
         self.eph = Some(eph);
         self.sun = Some(feed.sun);
     }
@@ -187,7 +244,11 @@ impl Weberin {
         let jd = tdb / 86400.0 + J2000_EPOCH;
         for t in &self.threads {
             let spk = body_barycenter_position(&t.name, tdb, eph);
-            let kepler = t.rec.as_ref().and_then(|r| state_at(r, jd));
+            let kepler = match (&t.rec, &t.comet) {
+                (Some(r), _) => state_at(r, jd),
+                (None, Some(c)) => comet_state_at(c, jd),
+                (None, None) => None,
+            };
             let outcome = match (spk, kepler) {
                 (Some(spk_p), Some((helio, _))) => {
                     let sep_m = separation_m(spk_p, add_sun(helio, sun));
@@ -241,6 +302,30 @@ mod tests {
         }
     }
 
+    fn comet_encke() -> CometRec {
+        CometRec {
+            number: 90000091,
+            nobs: 156,
+            epoch_jd: J2000_EPOCH,
+            ma_deg: 3.0,
+            w_deg: 186.0,
+            om_deg: 334.0,
+            in_deg: 11.8,
+            ec: 0.848,
+            a_au: 2.21,
+            qr_au: 0.336,
+            tp_jd: J2000_EPOCH - 40.0,
+            h: 99.0,
+            g: 99.0,
+            m1: 15.6,
+            rad_km: 2.4,
+            albedo: 0.046,
+            sbnam: [0; 12],
+            desig: *b"2P           ",
+            comnam: *b"Encke                        ",
+        }
+    }
+
     fn constant_eph(p: [f64; 3], jd: f64) -> BodyEphemeris {
         let mut cx = [0.0; CHEBYSHEV_N];
         let mut cy = [0.0; CHEBYSHEV_N];
@@ -276,6 +361,7 @@ mod tests {
         eph_pairs: &[(&str, [f64; 3])],
         sun: [f64; 3],
         recs: Vec<AsteroidRec>,
+        comets: Vec<CometRec>,
         tol: f64,
     ) -> Weberin {
         let eph = map_of(eph_pairs);
@@ -285,6 +371,7 @@ mod tests {
             eph,
             sun: sun_map,
             recs,
+            comets,
         });
         w.weave(0.0, tol);
         w
@@ -318,6 +405,7 @@ mod tests {
             eph,
             sun: map_of(&[("sun", [0.0; 3])]),
             recs: vec![rec(3)],
+            comets: Vec::new(),
         });
         w.weave(0.0, WEBERIN_TOL_M);
         match outcome(&w, "juno") {
@@ -337,14 +425,43 @@ mod tests {
             .map(|s| s.to_string())
             .collect();
         let recs = vec![rec(1), rec(4)];
-        let threads = build_threads(&names, &recs);
+        let comets = vec![comet_encke()];
+        let threads = build_threads(&names, &recs, &comets);
         assert_eq!(threads.len(), 3);
         let ceres = threads.iter().find(|t| t.name == "ceres").unwrap();
         assert!(ceres.rec.is_some());
+        assert!(ceres.comet.is_none());
         let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
         assert!(vesta.rec.is_some());
+        assert!(vesta.comet.is_none());
         let charon = threads.iter().find(|t| t.name == "charon").unwrap();
         assert!(charon.rec.is_none());
+        assert!(charon.comet.is_none());
+    }
+
+    #[test]
+    fn encke_thread_carries_its_comet_line_from_the_designation_map() {
+        let names: Vec<String> = ["encke", "vesta", "halley"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let comets = vec![comet_encke()];
+        let threads = build_threads(&names, &[], &comets);
+        let encke = threads.iter().find(|t| t.name == "encke").unwrap();
+        assert!(encke.rec.is_none());
+        assert!(encke.comet.is_some());
+        assert_eq!(&trim(&encke.comet.as_ref().unwrap().desig)[..2], "2P");
+        let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
+        assert!(vesta.comet.is_none());
+        let halley = threads.iter().find(|t| t.name == "halley").unwrap();
+        assert!(halley.comet.is_none());
+    }
+
+    #[test]
+    fn comet_desig_maps_encke_and_leaves_asteroid_names_void() {
+        assert_eq!(comet_desig("encke"), Some("2P"));
+        assert_eq!(comet_desig("ceres"), None);
+        assert_eq!(comet_desig("halley"), None);
     }
 
     #[test]
@@ -371,7 +488,13 @@ mod tests {
         let jd = J2000_EPOCH;
         let (helio, _) = state_at(&ceres, jd).unwrap();
         let sun = [-helio[0], -helio[1], -helio[2]];
-        let w = woven(&[("ceres", [0.0; 3])], sun, vec![ceres], WEBERIN_TOL_M);
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            sun,
+            vec![ceres],
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Placed { sep_m }) => {
                 assert!(sep_m.is_finite(), "a measured separation stays finite");
@@ -386,9 +509,67 @@ mod tests {
     }
 
     #[test]
+    fn weave_places_a_comet_against_its_dcom5_kepler_line() {
+        let encke = comet_encke();
+        let jd = J2000_EPOCH;
+        let (helio, _) = comet_state_at(&encke, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven(
+            &[("encke", [0.0; 3])],
+            sun,
+            Vec::new(),
+            vec![encke],
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Placed { sep_m }) => {
+                assert!(sep_m.is_finite(), "a measured separation stays finite");
+                assert!(*sep_m <= WEBERIN_TOL_M, "sep {sep_m:e}");
+            }
+            other => panic!("the comet line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_comet_line_when_the_dcom5_catalog_is_void() {
+        let w = woven(
+            &[("encke", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
+            other => panic!("the comet-void weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn weave_absent_names_the_spk_line_when_only_the_comet_catalog_lies_in() {
+        let w = woven(
+            &[],
+            [0.0; 3],
+            Vec::new(),
+            vec![comet_encke()],
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "encke") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the comet-only weave reads {other:?}"),
+        }
+    }
+
+    #[test]
     fn weave_risses_when_two_present_lines_refuse_to_converge() {
         let ceres = rec(1);
-        let w = woven(&[("ceres", [0.0; 3])], [0.0; 3], vec![ceres], 1.0e6);
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            [0.0; 3],
+            vec![ceres],
+            Vec::new(),
+            1.0e6,
+        );
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Riss { sep_m, knot }) => {
                 assert!(sep_m.is_finite());
@@ -409,7 +590,13 @@ mod tests {
 
     #[test]
     fn weave_absent_names_the_missing_dastcom_line() {
-        let w = woven(&[("ceres", [0.0; 3])], [0.0; 3], Vec::new(), WEBERIN_TOL_M);
+        let w = woven(
+            &[("ceres", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Absent { line }) => {
                 assert!(matches!(line, BodyLine::Dastcom));
@@ -424,7 +611,7 @@ mod tests {
 
     #[test]
     fn weave_absent_names_the_missing_spk_line() {
-        let w = woven(&[], [0.0; 3], vec![rec(1)], WEBERIN_TOL_M);
+        let w = woven(&[], [0.0; 3], vec![rec(1)], Vec::new(), WEBERIN_TOL_M);
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Absent { line }) => {
                 assert!(matches!(line, BodyLine::Spk));
@@ -435,7 +622,7 @@ mod tests {
 
     #[test]
     fn weave_covers_the_full_body_union_even_when_only_the_second_line_lies_in() {
-        let w = woven(&[], [0.0; 3], vec![rec(134340)], WEBERIN_TOL_M);
+        let w = woven(&[], [0.0; 3], vec![rec(134340)], Vec::new(), WEBERIN_TOL_M);
         assert!(
             outcome(&w, "pluto").is_some(),
             "pluto is woven from its record alone"
