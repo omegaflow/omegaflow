@@ -45,12 +45,17 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
 Assets. Produzenten-Compiler und CDN-Workflows sind gebaut und committet
 (cbd80e7):
 - `d20-cdn.yml` — `d20_compiler` → release `data.pmel.noaa.gov`
-- `qbo-cdn.yml` — `qbo_compiler` → release `www.cpc.ncep.noaa.gov` (der
+- `qbo-cdn.yml` — `qbo_compiler` → release `cpc.ncep.noaa.gov` (der
   Compiler lud zuvor auf das ssd-Default — die Bindung an den registrierten
   Netloc ist korrigiert)
 
-**qbo_30hpa.csv — geschlossen:** auf dem CDN (`www.cpc.ncep.noaa.gov`,
-23.205 B, Upload 2026-09-07T18:21Z, qbo-cdn run 34151182163).
+**qbo_30hpa.csv — geschlossen:** auf dem CDN (`cpc.ncep.noaa.gov`, 23.205 B,
+Upload 2026-09-07T18:21Z, qbo-cdn run 34151182163). Der Netloc ist seit der
+Reconciliation auf den bare-Netloc ohne `www.` vereinheitlicht: Asset am
+2026-09-07 von `www.cpc.ncep.noaa.gov` auf `cpc.ncep.noaa.gov` gezogen
+(sha256 unverändert `58d90083…`), das leere `www.`-Release gelöscht,
+sources.φ-Url-Line, `qbo-cdn.yml` und `qbo_compiler` auf den bare-Netloc
+gestellt.
 
 **d20_thermocline.csv — geschlossen:** auf dem CDN (release
 `data.pmel.noaa.gov`, 78.899 B, Upload 2026-09-07T18:35:47Z, d20-cdn run
