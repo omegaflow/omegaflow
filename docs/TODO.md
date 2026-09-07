@@ -58,6 +58,34 @@ Spektral-Rekord (positions-pending, Stationstabelle noetig) in
 `phi/blocked_sources.φ` (parser-def netcdf). Scan-Bericht:
 `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md`.
 
+**Zeugen-Doktrin Council-Verdikte (2026-09-07, Folge-Sitzung):**
+- C1 (NOAA-NRS): Halteform = Spektral-Record (NRS1-Bin, geo-Serie), kein
+  Oszillator; der `noaa_nrs_psd`-Feldblock wurde als Oszillator gestrichen, das
+  CDN-Asset bleibt als Record (Reconciliation benannt, nie geglättet).
+- C2 (Presence-Nicht-Wesen): die Ablehnungen stehen — Katalog/Register ist kein
+  Wesen am Punkt; individualCount ist ein gefallener Grenzfall; Consent-Wurzel
+  für ungefragte Positionen (die-weberin §4). Art (c) öffnet sie nicht; die Tür
+  ist aufgezeichnet, nicht gebaut.
+- C3 (Terrain): epqs = echter Gestalt-Zeuge (DEM-Höhe m → Binding/Compiler,
+  zweite unabhängige Land-Linie); hillshade = derived (Schattierung, kein
+  Höhenwert); macrostrat = catalog (Kategorie, kein Skalar). Noten in
+  dead_sources.φ zugespitzt.
+
+**Gestalt-Zeuge gebco, D1-Code-Bau (2026-09-07, committet):** der Archivar
+lädt das `.gbco`-Asset (Magic GBCO, 24-B-Records lat/lon/elev, Compiler
+81ea97f) über die Format-Route `gebco_bathymetry` im Station-Thread:
+`parse_gbco` (geo.rs), die Fäden werden als StationThreads gehalten
+(`Motion::Surface`, alt = die gemessene Oberflächen-Elevation, negativ unter
+dem Bezug; NRS01 72.49,-156.6 → alt −833 m, live gemessen 2026-09-07), nie als
+Feldwert (Binding-Verbrauch phi/bindings/bathymetrie-gebco.φ Binding 4, f889793).
+Verifikation: `cargo check --workspace` 0/0, `anchor_bodies` grün, die
+gbco-Tests halten die Station-Sicht auf −833. url-Linie in phi/sources.φ:
+**CI-pending** — das Release opentopodata.org existiert nicht (404 gemessen
+2026-09-07), keine erfundene Live-URL. Die Manifestation
+(`gebco-bathymetry-cdn.yml` committen und dispatchen) bleibt Operator-Wort
+(B2); danach registriert die url-Linie
+https://github.com/omegaflow/sources/releases/download/opentopodata.org/gebco_bathymetry.gbco.
+
 ## Nadeln — Register
 
 Eine Quelle, ein Blick: jede Nadel mit ihrem Status an dieser Stelle.
@@ -1560,32 +1588,49 @@ Offen (Detail in phi/pipeline/ledger.φ):
   argo_bgc registriert.
 - FDSN-Stationsliste (EarthScope fdsnws/station/1 text, 200) —
   Force-Gate-decline als Feldquelle (position-only, kein Messwert;
-  SOURCE_PORT §8). Die Stations-Weltlinien sind Kette (Anker), kein
-  Oszillator: pending bis ein Waveform-Reader (miniSEED/FDSN dataselect,
-  Lead 4) den Anker mit gemessener Bodenbewegung (seismic-body/surface)
-  verbindet. fdsn_station_compiler bleibt Harvest-Tool für die
-  Anker-Tabelle, schreibt keinen field-Block in sources.φ.
+  SOURCE_PORT §8). Die Stations-Weltlinien sind Kette (Anker) — seit
+  2026-09-07 verbindet der Waveform-Reader (fdsn_waveform_compiler,
+  miniSEED/FDSN dataselect, Lead 4) den Anker mit gemessener Bodenbewegung
+  (seismic-surface m/s, Feldblock fdsn_waveform registriert).
+  fdsn_station_compiler bleibt Harvest-Tool für die Anker-Tabelle,
+  schreibt keinen field-Block in sources.φ (die Liste selbst bleibt
+  position-only-declined; der Messwert kommt aus der Waveform).
 - Faden-Lücken-Kaskade Leads 2/3/7/9 — gebaut & registriert
   (2026-09-07, alle vier Compiler lokal gelaufen, siehe Survey): die
   Feldbindung manifestiert sich am CDN-Asset — neu ist der
   geo-Serien-Bin (src/archivar/geo.rs: Rekord t/lat/lon/alt/freq/
-  bin_width/val/comp, 60 B fix, Magic je Format BGR1/NRS1/SDN1/ARG1;
+  bin_width/val/comp, 60 B fix, Magic je Format BGR1/NRS1/SDN1/ARG1/FDS1;
   extract geo_series_parse_bin/geo_series_component_name; main_flow
-  läd die vier Formate als Position::Surface-Zeilen). Lead 2 BGR:
+  läd die fünf Formate als Position::Surface-Zeilen). Lead 2 BGR:
   bgr_infrasound_compiler --out-bin/--ci-mode (IS52 2024: 35608 Zeilen,
   station lat/lon/elev + azim°/vapp m/s/a_rms Pa/freq Hz je Detektion);
   Feldblock bgr_infrasound (acoustic), workflow bgr-infrasound-cdn.yml.
   Lead 3 NOAA-NODD: noaa_nodd_bucket_harvester --emit-bin/--ci-mode
   (station 01, 1. Tag je Deployment: 3.57 M psd-Zeilen t/lat/lon/freq/
-  psd-dB); Feldblock noaa_nrs_psd (acoustic db), workflow
-  noaa-nrs-psd-cdn.yml. Lead 7 SuperDARN: superdarn_fitacf_compiler
+  psd-dB); Council 2026-09-07: kein Oszillator — das 1195-Bin-Spektrum
+  ist ein Spektral-Record (NRS1-Bin, nie Band-Wahl); der
+  noaa_nrs_psd-Feldblock wurde gestrichen, das CDN-Asset bleibt als
+  Record (Archivar liest, nie in ω()); workflow noaa-nrs-psd-cdn.yml. Lead 7 SuperDARN: superdarn_fitacf_compiler
   --out-bin/--ci-mode (20191113 sye: 11033 Zellen, geographic lat/lon +
   v m/s); Feldblock superdarn_fitacf (electric m/s), workflow
   superdarn-fitacf-cdn.yml. Lead 9 BGC-Argo: argo_bgc_profile_compiler
   --out-bin/--ci-mode (40 Profile: 2821 Level-Zeilen; DOXY/NITRATE/CHLA/
   BBP700/PH_IN_SITU_TOTAL, PRES→alt, JULD→TDB); Feldblock argo_bgc
   registriert + live-Block um BBP700 (m-1) und PH_IN_SITU_TOTAL (1)
-  ergänzt, workflow argo-bgc-cdn.yml. Offen, weil echt absent: die vier
+  ergänzt, workflow argo-bgc-cdn.yml. Lead 4 FDSN-Waveform:
+  fdsn_waveform_compiler --emit-bin/--ci-mode (IU.ANMO.00.BHZ
+  2020-01-01 1-min-Fenster lokal gelaufen: 2400 Proben; die Kanal-
+  Sensitivity kommt aus service.earthscope.org fdsnws/station level=
+  channel (Scale-Spalte, InstrumentSensitivity bei ScaleFreq) und wirkt
+  als Skalar-Gain counts × 1/Scale → m/s — die ehrliche SI-Konversion,
+  kein Voll-Deconvolution (benannt im Emit-Header); Kanal ohne
+  Sensitivity bleibt counts und wird benannt, nie fabriziert); GeoRec
+  alt = Stations-Elevation (1632.7 m bei ANMO, gemessen); Feldblock
+  fdsn_waveform (seismic-surface m/s — die Boden-Geschwindigkeit an der
+  Station ist ein Oberflächen-Messwert, und m/s ist im Unit-Registry für
+  seismic-surface registriert; diese Wahl ist benannt), Magic FDS1,
+  workflow fdsn-waveform-cdn.yml.
+  Offen, weil echt absent: die fünf
   Assets sind noch nicht aufs CDN gehoben (CI-Dispatch-Pflicht der neuen
   Workflows; kein lokaler Upload — nur --ci-mode hebt).
   Die drei offenen Mess-Punkte sind terminal gemessen (2026-09-07,
@@ -1607,7 +1652,22 @@ Offen (Detail in phi/pipeline/ledger.φ):
   available, 2 = fewer but at least three, 3 = less than three, no PMCC
   detection; der PMCC-Autor-Code `MATLAB_read_hf_products_netcdf.m`
   liest dieselbe Variable als „sensor availability"; Lesepfad = `flag`,
-  nicht `N_avail`).
+  nicht `N_avail`). Eingewoben & terminal (2026-09-07, letzter
+  Wiring-Schritt): die Deployment-Tiefe fliesst im
+  `noaa_nodd_bucket_harvester --emit-bin` als alt = −Depth_m (gelesen
+  aus der `*_MANTA_Metadata_v3.xlsx`-`Depth_m`-Spalte bzw. der
+  metadata-`DepthInstrument_m`/`DEPLOY_INSTRUMENT_DEPTH`; ein Deployment
+  ohne gemessene Tiefe bleibt an der Oberfläche, 0 honored — lokal
+  verifiziert: Deployment 01 → alt −500); NRS-quality_flag 1-3 fliessen
+  als gemessene Zustände in den Wert (Emit-Header nennt die Semantik),
+  4 (Unusable/Bad) ist default ausgeschlossen (`--keep-unusable` trägt
+  4 mit — lokal verifiziert: 1 565 632 Werte ohne, 1 719 605 mit 4);
+  BGR `flag` 1/2/3 wird je Detektion als `flag`-Spalte statt der leeren
+  `N_avail`-0en gelesen und ausgegeben (IS52 2024: 8902 Zeilen mit
+  flag-Wert 1; lokal verifiziert) — eine Zustands-Reihe wie quality_flag,
+  kein Strahlungsfeld (unit „1" ist im force-registry kein acoustic-
+  Wert, die Reihe bleibt Komponente des Detektions-Outputs, nicht des
+  Feldes).
 - Faden-Lücken-Folge-Terminals der offenen Subfragen (gemessen
   2026-09-07, Folge-Auftrag, Kaskade curl → r.jina.ai → WebArchive →
   Websuche): IGETS/Gravimeter = **blocked** (Konto): die ISDC-Seite
@@ -1616,25 +1676,43 @@ Offen (Detail in phi/pipeline/ledger.φ):
   igetsftp.gfz.de; L2-Datensatz-DOIs existieren als offene Metadaten
   (10.5880/igets.pe.l2.001, igets.bg.l2.001, je 200), ihr Download-Funnel
   ist aber dieselbe Datenbasis; L3-Kompilate „tba"; Messgröße nm/s².
-  GIC kontinuierlich gemessen = **not-published** (kein offener
-  kontinuierlicher gemessener GIC-Datensatz mit Stationsposition nach
-  der Suche; Zenodo 10594301 als Einzel-Ereignis-Ausnahme separat
-  vermerkt: Alberta 2023-04-23/24, Dateien Mag_Data.zip +
-  Magnetotelluric_Data.zip + Network_Data.xlsx — geomagnetische/MT-
-  Eingaben + Netz-Spezifikation, keine gemessene GIC-Zeitreihe;
-  DataCite-Suche trägt nur Modell-/simulations-Pakete, kein
-  Mess-Datensatz). WWLLN-Thunder-Hour-Route = **live** als Host
+  GIC kontinuierlich = **not-published** (kein offener laufender
+  gemessener GIC-Feed mit Stationsposition); das GIC-**Archiv** ist
+  **live** (registrierte Quelle, terminal): FMI Mäntsälä
+  `space.fmi.fi/gic/man_ascii` (200, jährliche ASCII-ZIPs, Ampere,
+  Position 60.6°N/25.2°E, CC BY 4.0, Reihe 1999–2023, eingestellt
+  2023-10-23, beste Qualität 1999–2005-04) — Kompilat
+  `fmi_gic_compiler` (Format `fmi_gic`, Magic GIC1, geo-Bin
+  60-B-Stride, Komponente `gic` = Ampere; gemessen: 6 435 Messtage,
+  die 10-s-Rohreihe als Einzel-Asset ~3,3 GB — über der
+  Release-Grenze, daher der Scheitel je 60-min-Bucket, Wert = die
+  real gemessene Ampere-Probe größter Magnitude bei exakter
+  Sample-Epoche, NaN-Zeilen absent), Asset registriert in
+  `phi/sources.φ` (`space.fmi.fi/fmi_gic.bin`, `on earth 60.6 25.2 0`,
+  `field fmi_gic_a … electric A`), Manifestation via
+  `.github/workflows/fmi-gic-cdn.yml`; die Presence bewegt sich frei
+  im Block — ein historischer gemessener Bestand ist gültig, „ceased"
+  ist kein Disqualifikator (Block-Universe-Prinzip, messtechnisch
+  verifiziert 2026-09-07). Zenodo
+  10594301 als Einzel-Ereignis-Ausnahme separat vermerkt: Alberta
+  2023-04-23/24, Dateien Mag_Data.zip + Magnetotelluric_Data.zip +
+  Network_Data.xlsx — geomagnetische/MT-Eingaben + Netz-Spezifikation,
+  keine gemessene GIC-Zeitreihe; DataCite-Suche trägt nur Modell-/
+  simulations-Pakete. WWLLN-Thunder-Hour-Route = **live** als Host
   (wwlln.net/climate/th_yr/data/, 200, offenes Verzeichnis: Jahres-
   netCDF-4-Zips `WWLLN_th_2005..2025.nc.zip`, Grid 0.05°×0.05° × 12
   Monats-Layer, thunder_hours u16 [7200,3600,12] gemessen); NASA-GHRC-
   Spiegel ghrc-daac-wwllnmth-1 (DOI 10.5067/WWLLN/DATA101, netCDF-4)
   ist Earthdata-Login-gated; als Feld bleibt Thunder-Hour declined
   (Monats-Aggregat, keine Ereignis-Position). NASA LIS/OTD
-  (lightning.nsstc.nasa.gov/data/) = **declined**: Gridded-Lightning-
-  Climatology-Komposite (HRFC/HRMC/LRTS u. a., PNG/KML + HDF-Gitter,
+  (lightning.nsstc.nasa.gov/data/) = **declined** (Klimatologie):
+  Gridded-Lightning-Composites (HRFC/HRMC/LRTS, PNG/KML + HDF-Gitter,
   Seite 200), Satelliten-Blitzraten-Klimatologie OTD 1995-2000 + LIS
-  1998-2015, aggregiert/positionslos — kein Ereignis-Kanal neben GLM
-  (GLM bleibt der in-register-Ereignis-Kanal). Stations-Endpoints aus
+  1998-2015, aggregiert/positionslos. Der Ereignis-Level-Zweig (LIS/ISS-
+  LIS Level-2 Events/Groups/Flashes, orbit granules, ~4 km/2 ms) =
+  **live** (EARTHDATA_EDL_TOKEN in .secrets.local, GHRC DAAC) — ein
+  echter Ereignis-Kanal neben GLM (in-register), noch ohne Compiler/
+  Asset; getrennt gehalten. Stations-Endpoints aus
   archive_search = **live** als Routen (Stations-Tabellen mit Position;
   sie speisen den Anker, kein Feldblock — Council-Stationsliste-decline
   bleibt): GEOFON geofon.gfz.de/fdsnws/station/1/query?level=station&
