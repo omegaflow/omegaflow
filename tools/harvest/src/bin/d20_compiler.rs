@@ -1,6 +1,7 @@
 use omegaflow::cdn::upload_release;
 
 const ERDDAP_URL: &str = "https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv?time,longitude,latitude,station,ISO_6,QI_5006&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>={d_start}&time<={d_end}";
+const COASTWATCH_URL: &str = "https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyIso.csv?time%2Clongitude%2Clatitude%2Cstation%2CISO_6%2CQI_5006&latitude%3E=-2&latitude%3C=2&longitude%3E=200&longitude%3C=280&time%3E={d_start}&time%3C={d_end}";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -12,11 +13,17 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "d20_thermocline.csv".to_string());
-    let now = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0);
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "d20_thermocline.csv".to_string(),
+    };
+    let now = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_secs() as i64,
+        Err(_) => {
+            eprintln!("system clock before UNIX_EPOCH — no d20 window computable");
+            std::process::exit(1);
+        }
+    };
     let d_end = now - 7 * 86400;
     let d_start = d_end - 120 * 86400;
     let fmt = |u: i64| {
@@ -24,14 +31,40 @@ fn main() {
         let (y, m, d) = civil_from_days(days);
         format!("{:04}-{:02}-{:02}T00:00:00Z", y, m, d)
     };
-    let url = ERDDAP_URL
-        .replace("{d_start}", &fmt(d_start))
-        .replace("{d_end}", &fmt(d_end));
-    let body = match omegaflow::archivar::fetch_raw_bytes(&url, 60) {
-        Some(b) => String::from_utf8_lossy(&b).into_owned(),
+    let body = match arg_value(&args, "--input") {
+        Some(path) => match std::fs::read_to_string(&path) {
+            Ok(b) => b,
+            Err(e) => {
+                eprintln!("read {} returned void: {}", path, e);
+                std::process::exit(1);
+            }
+        },
         None => {
-            eprintln!("d20 fetch from {} returned void", url);
-            std::process::exit(1);
+            let url = ERDDAP_URL
+                .replace("{d_start}", &fmt(d_start))
+                .replace("{d_end}", &fmt(d_end));
+            let cw = COASTWATCH_URL
+                .replace("{d_start}", &fmt(d_start))
+                .replace("{d_end}", &fmt(d_end));
+            match omegaflow::archivar::fetch_raw(&url, None, &[], 60) {
+                Some(b) => b,
+                None => {
+                    let jina = format!("https://r.jina.ai/{}", cw);
+                    eprintln!("d20 direct fetch void — cascade via r.jina.ai reader");
+                    match omegaflow::archivar::fetch_raw(
+                        &jina,
+                        None,
+                        &[("X-Return-Format".to_string(), "text".to_string())],
+                        120,
+                    ) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!("d20 cascade fetch from {} returned void", jina);
+                            std::process::exit(1);
+                        }
+                    }
+                }
+            }
         }
     };
     let mut rows: Vec<(String, String, f64, f64, f64)> = Vec::new();
