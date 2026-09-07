@@ -71,6 +71,28 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). Code-Bau pending
   (Sitz in `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag).
 
+- **NRS-Re-Emitt — verifiziert, Tabellen-Fallback dormant (2026-09-07).** Der
+  sound_level_metrics-Prefix trägt genau 5 Deployments (4× NRS01, 1× NRS11), alle mit
+  SHAPE — der Tabellen-Fallback (gebaut a21d4c8, Stationstabelle b867c23) hat keinen
+  SHAPE-losen Verbrauch; NRS02–10/12/13 haben keine Spektren-Verankerung (nur die
+  Netz-Tabelle trägt ihre Koordinaten). Re-Emitt-Lauf (`--emit-bin --days 1`, alle 5
+  Deployments) trägt SHAPE-Position + gemessene Tiefe (alt −500/−420 m), 3.260.056
+  Records, roundtrip-parses. Der `STATIONS_TABLE`-Default zeigte auf `…nrs_stations.Φ`
+  (U+03A6) statt der Datei `…nrs_stations.φ` (U+03C6) — korrigiert. Offen: die
+  Stationstabelle ist gitignored (`data/`), der CI-Manifestator (noaa-nrs-psd-cdn.yml)
+  trägt sie nicht — CI-Tabellen-Fallback braucht eine committete Tabelle oder url-Linie.
+
+- **RINEX-Parser gebaut, cddis-Oszillator-Registrierung pending (2026-09-07).** Der
+  RINEX-Parser existiert jetzt: `src/archivar/rinex.rs` — `parse_rinex_header`
+  (Version/Typ/MARKER NAME/APPROX POSITION XYZ/Obs-Typen/Interval/Antenna-Delta),
+  `parse_rinex_nav_gps` (GPS-Broadcast-Ephemeride, 8-Zeilen-Block, D-Exponent),
+  `parse_rinex_obs` (Epoche + Satelliten-Observationen, 16-Zeichen-Felder), 3 Tests,
+  `cargo check --workspace` 0/0. Der parser-def-Gap in `phi/blocked_sources.φ` (cddis)
+  ist geschlossen. Offen: die Oszillator-Registrierung (sources.φ-Feldblock +
+  `build_rinex_channels` + format-Dispatch in main_flow/fetch) — `phi/sources.φ` ist
+  eine Parallel-Session-Grenze (Handover §3), die Registrierung wird nachgezogen,
+  sobald die Fremd-Arbeit steht.
+
 ## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
 
 `area_reconcile` (Kreuzprüfung b) fand zwei registrierte, unmanifestierte
@@ -1470,6 +1492,13 @@ Gebaut (2026-09-06, sub-agents):
 
 `pending` — registriert, nicht fabriziert:
 
+- **Sonnensystem-Weben (zweite Linie je Körper-Klasse)**: die Körper-Kette
+  webt dünn (10 Kleinkörper, 4 TNOs, SPK-gegen-DASTCOM) gegen die reiche
+  S²-Richtungs-Kette außerhalb — Planeten/Monde/Raumsonden tragen nur die
+  SPK-Linie, keine zweite. Aufgabe: zweite unabhängige Positions-Linie je
+  Klasse (Planeten/Monde: zweite Abstammung; Sonden: Doppler-Linie; breite
+  TNO-Kette: mpcorb_extended + zweite Linie). Übergabe:
+  docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md.
 - Vollständige ~20k-Tafel-Ingestion in den position-indizierten Bestand —
   das Dichtefeld (Schritt 4) steht, `--catalog stars|twomass` verdrahtet;
   gemessen liegt nur dr3_stars.bin auf der Platte (twomass/asteroiden-bins
