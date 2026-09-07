@@ -620,7 +620,27 @@ physikalischen Aussage — kein Blatt ohne diese:
   Kaskade (letztere bleibt das 24-s-Ereignis-Mass). Stunden-Skala: die
   kontinuierliche TE ueber 3 Jahre (26280 Zellen) und ueber ein volles Jahr
   (8760 Zellen) ist mit dem O(n^2)-Schaetzer an der Rechen-Wand (~9 h je
-  Jahr) — als Grenze gemessen, Stunden-ereignisweise offen.
+  Jahr) — als Grenze gemessen; die Stunden-ereignisweise Variante ist
+  gemessen (solar_hourly_event_probe, unten).
+- **Solar-Stunden-ereignisweise-Matrix (2026-09-06, 2013-2015)**: die
+  Stunden-ereignisweise all-actor TE (solar_hourly_event_probe, 636
+  GOES-Flare-Ereignisse ueber 3 Jahre, 11 stuendlich-aufloesbare Akteure =
+  XRSA/XRSB, Bz/Density aus omni2_1h, 7 AIA-Baender; F10.7/Lya taeglich und
+  ausgeschlossen; ±24-h-Fenster auf Stunden-Zellen, per-Ereignis-D gestackt):
+  fam = 2.68e-1 ueber 110 gerichtete Paare. EIN Paar klaert fam knapp —
+  211A->193A (heiss->kuehl, lag 0 h, D 2.70e-1 vs fam 2.68e-1, +0.52 %, pos
+  549/635 = 86 %). Rat-Verdikt: **borderline/threshold-edge, Flare-Ko-
+  variation** (die zeitgemittelte Flare-Huellkurve — die heisse 211A traegt
+  den gleichen-Stunden-Zustand der kuehleren 193A in 86 % der Flares), KEIN
+  unabhaengiger kausaler Kanal; die Richtungs-Asymmetrie (86 %) ist robust,
+  die Magnitude gegen die Familien-Null marginal (fam = max ueber 8800
+  Null-Draws, 110 Paare x 8 lags x 10 Surrogate — der Rand liegt im
+  Null-Extrem). Die uebrigen 109 gerichteten Paare sind family bound oder
+  still (Stille ist Befund). Die 24-s-kuehl->heiss-Kaskade (aia_three_year_
+  probe, 193->211->335->94 aufwaerts bei ~96 s, family bound) steht als
+  separates sub-minuten-Mass — nicht widersprochen (zwei Zeitskalen, zwei
+  Mechanismen: sub-minuten-Energietransport aufwaerts vs. stuendliche
+  Flare-Relaxation abwaerts).
 - **Per-Ereignis-Richtung 335->94 (2015, 281 Ereignisse [partieller GOES-Satz],
   gemessen 2026-09-06): die Richtung ist KONSISTENT, nicht alternierend** — 76%
   der Ereignisse positiv, jeder Monat mehrheitlich positiv (posfrac 0.56-1.00),
@@ -1203,9 +1223,16 @@ Gebaut (2026-09-06, sub-agents):
   `auger-cdn.yml` → `auger_catalog.pao1` aus data.zip). Manifestation
   (Assets aufs CDN) braucht erst den Commit der Compiler + `gh workflow
   run` — offen, bis der Klumpen committet ist.
-- Skymap-Reste (Schritt 6): Telescope Array (kein öffentliches Dataset,
-  pending) und icecube.wisc.edu/data-releases (403 origin-seitig/nginx,
-  Mechanismus benannt — recheck bleibt, kein Compiler).
+- Skymap-Zeugen (Schritt 6): die Routen sind gefunden, nicht blockiert —
+  TA `J/ApJ/867/L27`, HESE-7,5J `J/PhRvD/104/022002`, 10-J-PS `J/ApJ/907/L48`
+  (alle VizieR) + Auger-GAVO `auger.main`; IceCat-1 (Dataverse datafile
+  7502710, 303). Prinzip (die-weberin §4, 2026-09-07): das Teilchen ist
+  Abstammung, nicht Kraft — der Detektor misst `em` (Schauer/Cherenkov), die
+  Teilchen-Art (Proton/Neutrino/Gamma) ist die Wurzel; kein particle-Bit.
+  Löst SOURCE_PORT §12.6 „Teilchen-Kanal pending". Richtung: generischer
+  TAP-CSV-Skymap-Compiler (Muster amon/auger) → `em`-S²-Zeugen
+  (healpix-Karten), direction-only; die portal-403 (icecube.wisc.edu,
+  telescopearray.org) bleiben named, die Daten laufen über VizieR/Dataverse.
 
 ## Source-Port — der eine Pfad
 
