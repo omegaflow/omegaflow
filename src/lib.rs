@@ -27,6 +27,7 @@ pub use archivar::demeter;
 pub use archivar::ephemeris;
 pub use archivar::fits;
 pub use archivar::fk;
+pub use archivar::geo;
 pub use archivar::gong;
 pub use archivar::gong_series;
 pub use archivar::hdf5;

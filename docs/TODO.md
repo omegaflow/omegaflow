@@ -1255,6 +1255,13 @@ Der Sweep liest `phi/pipeline/stage/*_converted.φ`. Stale-Specs gebannert:
 parser-evaluation-matrix.md + EXTRACT_TYPES.md (SUPERSEDED by
 sources-v2-spec.md).
 
+- Discovery-Ladder gebaut (`source_url_candidates` + `probe_sweep`, siehe
+  SOURCE_PORT §5 Discovery-Ladder): die Ernte läuft jetzt lokal, deterministisch;
+  der Wochen-Cron `probe-sweep.yml` (14k-Fabrikation) ist entfernt. Nächster
+  Schritt: `probe_sweep` auf die 30 Kandidaten laufen lassen, den Bericht
+  (`phi/reports/probe_sweep_survivors.φ` / `probe_sweep_void.txt`) reviewen und
+  die 5 neuen (nicht in master_urls) nach §1.0 disponieren.
+
 - Kompilat-Pfad in die Zustandsmaschine holen: der Weg tap_index →
   kernel_flatten.yml → tap_compiler → CDN → sources.φ läuft außerhalb der
   Zustandsmaschine (SOURCE_PORT §4) — kein ledger-Eintrag, kein
@@ -1507,17 +1514,27 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Site geprüft); Spaltenordnung time,longitude,latitude,VELO = 0,1,2,3
   gemessen an UCSB_ACI1, BML_BML1, WHOI_TLSP (columnNames
   ["time","longitude","latitude","VELO"], Einheiten UTC/degrees_east/
-  degrees_north/cm/s). Die 20 Wave-Datensätze (Wellenhöhe/-periode, eine
-  andere physikalische Größe als ein Strom) sind nicht als
-  Radial-Geschwindigkeit registriert — eigene Registrierung pending.
+  degrees_north/cm/s). Die 20 "Wave data for <site>"-Datensätze
+  (Wellenhöhe/-periode, eine andere physikalische Größe als ein Strom)
+  sind am 2026-09-07 als eigene Feldblöcke registriert —
+  CODAR/Rutgers/UPR/WHOI/OSU_<site>_hfr_wave, je Site die Spalten
+  time/longitude/latitude/MWHT/MWPD (MWHT m =
+  sea_surface_wave_significant_height, MWPD s =
+  sea_surface_wave_mean_period; gemessen an CODAR_BIGC_hfr_wave
+  info/index.json + Live-Rows 2026-08-01; die Variablenliste steht je
+  Datensatz identisch im ERDDAP-Such-Index). Feldname
+  hfradar_wave_height_<site>_m / hfradar_wave_period_<site>_s,
+  force acoustic (Oberflächen-Schwerewelle, sources-v2-spec: Buoy wave
+  height → acoustic m).
   Lead 9 BGC-Argo
   DECLINED für `ArgoFloats-synthetic-BGC` (Ifremer-Titel "Argo float
   synthetic vertical profiles : BGC data", ARGO_simplified_profile — ein
   interpoliertes Standard-Tiefen-Produkt, kein Level-Messwert); die echte
   BGC-Messung liegt je Float als GDAC-netzCDF-Profil
   (argo_bio-profile_index.txt.gz live 200, Format 2.2, 410088 Profile) —
-  die katalog-weite netCDF-Ernte bleibt register duty (pending);
-  dead_sources.φ-Eintrag gesetzt.
+  dead_sources.φ-Eintrag gesetzt. Der Index→Profil-Katalog-Pfad ist als
+  argo_bgc.bin gebaut (argo_bgc_profile_compiler --out-bin), der Feldblock
+  argo_bgc registriert.
 - FDSN-Stationsliste (EarthScope fdsnws/station/1 text, 200) —
   Force-Gate-decline als Feldquelle (position-only, kein Messwert;
   SOURCE_PORT §8). Die Stations-Weltlinien sind Kette (Anker), kein
@@ -1525,53 +1542,32 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Lead 4) den Anker mit gemessener Bodenbewegung (seismic-body/surface)
   verbindet. fdsn_station_compiler bleibt Harvest-Tool für die
   Anker-Tabelle, schreibt keinen field-Block in sources.φ.
-- Faden-Lücken-Kaskade Leads 2/3/7/9 — Dispositionen (gemessen
-  2026-09-07): Lead 2 BGR-Infraschall (acoustic) — die Messung ist je Band
-  eine Detektions-Liste (back-azimuth, apparent velocity, RMS amplitude,
-  mean frequency) im netCDF-4/HDF5-Container hinter
-  download.bgr.de/…/BGR_infrasound_<band>_product.zip (band maw | mb_lf |
-  mb_hf | hf, HTTP 200, Last-Modified 2025-11-24; vDEC-Roh-Waveform =
-  blocked account, nicht registriert); Feldblock pending, kein Phantom:
-  die Live-Register-Grammatik liest netCDF nur als classic CDF-1/2
-  (format netcdf), json/csv live — netCDF-4-in-Zip hat keine Feldblock-
-  Form. bgr_infrasound_compiler liest die Detektionen (Zeilen-Rows); die
-  Feldbindung (force acoustic; deg/m/s/Pa/Hz je Parameter) manifestiert
-  sich am CDN-Asset, nicht davor. Lead 3 NOAA-NODD-Hydroakustik
-  (acoustic) — Bucket noaa-passive-bioacoustic, prefix
-  nrs/products/sound_level_metrics/, Stationen 01/11 (5 Deployments
-  gemessen), Position je Deployment aus metadata.json SHAPE; Wert psd
-  (single-sided mean-square sound pressure spectral density, dB re
-  1 µPa²/Hz) je 1-min-Bin × hybrid-millidecade, frequency-Achse Hz, im
-  netCDF-4/HDF5-Container (*_DAILY_MILLIDEC_MinRes_v3.nc) — Feldblock
-  pending bis zum CDN-Asset (noaa_nodd_bucket_harvester --stations/--values
-  liest Position + psd). pending, nicht fabriziert: Deployment-Tiefe (keine
-  offene Quelle — absent), quality_flag-Semantik. Lead 7 SuperDARN
-  (electric) — FITACF-Tages-zelle (Zenodo 18525142, .nc.zip) trägt je
-  Messzelle lat/lon (geographic) + v (ionospheric E×B LOS Doppler
-  velocity, m/s) + Fehler/width/power/beam/range; grid-Route (8274510)
-  mlat/mlon = AACGM v2, glat/glon = geographic; Container netCDF-4/HDF5 —
-  Feldblock pending bis zum CDN-Asset (superdarn_fitacf_compiler --mode
-  fitacf liest die Zelle; force electric m/s; Stationen via
-  raw.githubusercontent.com/SuperDARN/rst hdw.dat). Lead 9 BGC-Argo real
-  REGISTRIERT (Feldblock in sources.φ, Muster R1901843):
-  argo_bio-profile_index.txt.gz (200, v2.2, 410080 Zeilen, 409536
-  BGC-Profile, 2863 Floats — gemessen 2026-09-07) → je Profil CDF-1-netcdf
-  unter data-argo.ifremer.fr/dac/<file>; Beispielprofil gemessen:
-  aoml/1901614/profiles/BR1901614_022.nc (lat 16.45, lon −156.578, CDF-1,
-  PRES-Dim 748, Variablen PRES/DOXY/NITRATE/CHLA/BBP700/CDOM/
-  PH_IN_SITU_FREE/PH_IN_SITU_TOTAL; TEMP/PSAL absent — die tragen nur die
-  R-Float-Profile). Der Feldblock trägt die chemischen Tracer DOXY,
-  NITRATE, CHLA (force diffusion; Einheiten gemessen micromole/kg, mg/m3);
-  der Index→Profil-Katalog-Pfad bleibt register duty (pending). Kein
-  field-Block für BBP700 (m-1) und PH_IN_SITU_TOTAL (dimensionless):
-  BBP700-Force (Streuungs-Sensor: diffusion vs. em) und die Unit-Arme
-  micromole/kg/m-1/dimensionless-pH sind pending. CDN: keine der vier
-  Quellen manifestiert (BGR-Detektions-zips, SuperDARN-FITACF,
-  NOAA-Bucket-Objects, BGC-Index) — pending mit Grund: die Compiler
-  bgr_infrasound/noaa_nodd_bucket/superdarn_fitacf/argo_bgc_profile tragen
-  keinen --ci-mode/upload_asset-Pfad (Muster bayestar-cdn.yml); ein
-  Workflow, der nicht laufen kann, wird nicht fabriziert. Der Feldblock je
-  Quelle folgt, sobald der Compiler sein Asset aufs CDN hebt.
+- Faden-Lücken-Kaskade Leads 2/3/7/9 — gebaut & registriert
+  (2026-09-07, alle vier Compiler lokal gelaufen, siehe Survey): die
+  Feldbindung manifestiert sich am CDN-Asset — neu ist der
+  geo-Serien-Bin (src/archivar/geo.rs: Rekord t/lat/lon/alt/freq/
+  bin_width/val/comp, 60 B fix, Magic je Format BGR1/NRS1/SDN1/ARG1;
+  extract geo_series_parse_bin/geo_series_component_name; main_flow
+  läd die vier Formate als Position::Surface-Zeilen). Lead 2 BGR:
+  bgr_infrasound_compiler --out-bin/--ci-mode (IS52 2024: 35608 Zeilen,
+  station lat/lon/elev + azim°/vapp m/s/a_rms Pa/freq Hz je Detektion);
+  Feldblock bgr_infrasound (acoustic), workflow bgr-infrasound-cdn.yml.
+  Lead 3 NOAA-NODD: noaa_nodd_bucket_harvester --emit-bin/--ci-mode
+  (station 01, 1. Tag je Deployment: 3.57 M psd-Zeilen t/lat/lon/freq/
+  psd-dB); Feldblock noaa_nrs_psd (acoustic db), workflow
+  noaa-nrs-psd-cdn.yml. Lead 7 SuperDARN: superdarn_fitacf_compiler
+  --out-bin/--ci-mode (20191113 sye: 11033 Zellen, geographic lat/lon +
+  v m/s); Feldblock superdarn_fitacf (electric m/s), workflow
+  superdarn-fitacf-cdn.yml. Lead 9 BGC-Argo: argo_bgc_profile_compiler
+  --out-bin/--ci-mode (40 Profile: 2821 Level-Zeilen; DOXY/NITRATE/CHLA/
+  BBP700/PH_IN_SITU_TOTAL, PRES→alt, JULD→TDB); Feldblock argo_bgc
+  registriert + live-Block um BBP700 (m-1) und PH_IN_SITU_TOTAL (1)
+  ergänzt, workflow argo-bgc-cdn.yml. Offen, weil echt absent: die vier
+  Assets sind noch nicht aufs CDN gehoben (CI-Dispatch-Pflicht der neuen
+  Workflows; kein lokaler Upload — nur --ci-mode hebt); Deployment-Tiefe
+  der NOAA-Hydrophone (keine offene Quelle); quality_flag-Semantik der
+  NRS-psd (nicht gedeutet, nicht mitgeführt); BGR N_avail=0
+  (unbelegte Lese-Pflicht, kein Datenwert).
 - Crossmatch indexiert → live heben: GALEX-GUVcat (UV), SkyMapper DR4,
   UKIDSS/VISTA/VIKING (NIR), DES DR2/Legacy Surveys DR10.
 - Zeitkritisch: Gaia DR4 (2. Dez 2026) — dr4_stars.bin + DR4-Schema im
@@ -1588,6 +1584,10 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 ## Curation & Quellen
 
+- BGR-Infraschall-Stations-Elevation: ein station_scalar `elev` fehlt je
+  Station im netCDF — die Station wird gehalten (kein fabrizierter alt=0.0),
+  bis ihre Höhe aus Geodaten (lat/lon → Elevation) aufgelöst ist (pending,
+  bgr_infrasound_compiler).
 - Pending Unit-Arme: F (Fahrenheit, CHPL-Lufttemperatur), μg/L
   (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje) — die Felder
   existieren in den Quellen, manifestieren erst mit dem convert_to_si-Arm.
