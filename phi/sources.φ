@@ -211,6 +211,456 @@ lon longitude
 epoch captured_at
 last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
 
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=apparent_temperature&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.apparent_temperature.-1 meteo_rasuwa_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.cloud_cover.-1 meteo_rasuwa_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_high&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.cloud_cover_high.-1 meteo_rasuwa_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_low&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.cloud_cover_low.-1 meteo_rasuwa_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_mid&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.cloud_cover_mid.-1 meteo_rasuwa_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=dew_point_2m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.dew_point_2m.-1 meteo_rasuwa_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=diffuse_radiation&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.diffuse_radiation.-1 meteo_rasuwa_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_normal_irradiance&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.direct_normal_irradiance.-1 meteo_rasuwa_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_radiation&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.direct_radiation.-1 meteo_rasuwa_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=freezing_level_height&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.freezing_level_height.-1 meteo_rasuwa_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=global_tilted_irradiance&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.global_tilted_irradiance.-1 meteo_rasuwa_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=leaf_wetness_probability&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.leaf_wetness_probability.-1 meteo_rasuwa_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation_probability&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.precipitation_probability.-1 meteo_rasuwa_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=pressure_msl&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.pressure_msl.-1 meteo_rasuwa_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=relative_humidity_2m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.relative_humidity_2m.-1 meteo_rasuwa_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=shortwave_radiation&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.shortwave_radiation.-1 meteo_rasuwa_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=snow_depth&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.snow_depth.-1 meteo_rasuwa_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_0cm&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.soil_temperature_0cm.-1 meteo_rasuwa_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_18cm&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.soil_temperature_18cm.-1 meteo_rasuwa_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_54cm&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.soil_temperature_54cm.-1 meteo_rasuwa_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_6cm&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.soil_temperature_6cm.-1 meteo_rasuwa_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_pressure&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.surface_pressure.-1 meteo_rasuwa_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_temperature&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.surface_temperature.-1 meteo_rasuwa_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=temperature_2m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.temperature_2m.-1 meteo_rasuwa_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wet_bulb_temperature_2m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wet_bulb_temperature_2m.-1 meteo_rasuwa_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_gusts_10m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wind_gusts_10m.-1 meteo_rasuwa_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_10m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wind_speed_10m.-1 meteo_rasuwa_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_120m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wind_speed_120m.-1 meteo_rasuwa_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_180m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wind_speed_180m.-1 meteo_rasuwa_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.1&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_80m&timezone=UTC
+on earth 28.25 85.1 0
+ttl 300
+last hourly.wind_speed_80m.-1 meteo_rasuwa_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=apparent_temperature&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.apparent_temperature.-1 meteo_kollab_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.cloud_cover.-1 meteo_kollab_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_high&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.cloud_cover_high.-1 meteo_kollab_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_low&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.cloud_cover_low.-1 meteo_kollab_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_mid&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.cloud_cover_mid.-1 meteo_kollab_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=dew_point_2m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.dew_point_2m.-1 meteo_kollab_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=diffuse_radiation&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.diffuse_radiation.-1 meteo_kollab_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_normal_irradiance&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.direct_normal_irradiance.-1 meteo_kollab_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_radiation&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.direct_radiation.-1 meteo_kollab_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=freezing_level_height&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.freezing_level_height.-1 meteo_kollab_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=global_tilted_irradiance&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.global_tilted_irradiance.-1 meteo_kollab_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=leaf_wetness_probability&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.leaf_wetness_probability.-1 meteo_kollab_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation_probability&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.precipitation_probability.-1 meteo_kollab_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=pressure_msl&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.pressure_msl.-1 meteo_kollab_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=relative_humidity_2m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.relative_humidity_2m.-1 meteo_kollab_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=shortwave_radiation&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.shortwave_radiation.-1 meteo_kollab_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=snow_depth&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.snow_depth.-1 meteo_kollab_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_0cm&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.soil_temperature_0cm.-1 meteo_kollab_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_18cm&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.soil_temperature_18cm.-1 meteo_kollab_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_54cm&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.soil_temperature_54cm.-1 meteo_kollab_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_6cm&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.soil_temperature_6cm.-1 meteo_kollab_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_pressure&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.surface_pressure.-1 meteo_kollab_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_temperature&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.surface_temperature.-1 meteo_kollab_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=temperature_2m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.temperature_2m.-1 meteo_kollab_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wet_bulb_temperature_2m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wet_bulb_temperature_2m.-1 meteo_kollab_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_gusts_10m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wind_gusts_10m.-1 meteo_kollab_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_10m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wind_speed_10m.-1 meteo_kollab_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_120m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wind_speed_120m.-1 meteo_kollab_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_180m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wind_speed_180m.-1 meteo_kollab_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.271&longitude=85.515&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_80m&timezone=UTC
+on earth 28.271 85.515 0
+ttl 300
+last hourly.wind_speed_80m.-1 meteo_kollab_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=apparent_temperature&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.apparent_temperature.-1 meteo_gyirong_apparent_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.cloud_cover.-1 meteo_gyirong_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_high&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.cloud_cover_high.-1 meteo_gyirong_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_low&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.cloud_cover_low.-1 meteo_gyirong_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=cloud_cover_mid&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.cloud_cover_mid.-1 meteo_gyirong_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=dew_point_2m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.dew_point_2m.-1 meteo_gyirong_dew_point_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=diffuse_radiation&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.diffuse_radiation.-1 meteo_gyirong_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_normal_irradiance&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.direct_normal_irradiance.-1 meteo_gyirong_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=direct_radiation&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.direct_radiation.-1 meteo_gyirong_direct_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=freezing_level_height&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.freezing_level_height.-1 meteo_gyirong_freezing_level_height patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=global_tilted_irradiance&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.global_tilted_irradiance.-1 meteo_gyirong_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=leaf_wetness_probability&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.leaf_wetness_probability.-1 meteo_gyirong_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation_probability&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.precipitation_probability.-1 meteo_gyirong_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=pressure_msl&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.pressure_msl.-1 meteo_gyirong_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=relative_humidity_2m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.relative_humidity_2m.-1 meteo_gyirong_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=shortwave_radiation&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.shortwave_radiation.-1 meteo_gyirong_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=snow_depth&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.snow_depth.-1 meteo_gyirong_snow_depth patch-levy advective m 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_0cm&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.soil_temperature_0cm.-1 meteo_gyirong_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_18cm&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.soil_temperature_18cm.-1 meteo_gyirong_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_54cm&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.soil_temperature_54cm.-1 meteo_gyirong_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=soil_temperature_6cm&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.soil_temperature_6cm.-1 meteo_gyirong_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_pressure&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.surface_pressure.-1 meteo_gyirong_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=surface_temperature&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.surface_temperature.-1 meteo_gyirong_surface_temperature exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=temperature_2m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.temperature_2m.-1 meteo_gyirong_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wet_bulb_temperature_2m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wet_bulb_temperature_2m.-1 meteo_gyirong_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_gusts_10m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wind_gusts_10m.-1 meteo_gyirong_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_10m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wind_speed_10m.-1 meteo_gyirong_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_120m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wind_speed_120m.-1 meteo_gyirong_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_180m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wind_speed_180m.-1 meteo_gyirong_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.295&start_date=2026-08-18&end_date=2026-08-27&hourly=wind_speed_80m&timezone=UTC
+on earth 28.8559 85.295 0
+ttl 300
+last hourly.wind_speed_80m.-1 meteo_gyirong_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
+
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 ttl 300
 on earth 0 0 0
@@ -231,456 +681,6 @@ lat location.latitude
 lon location.longitude
 field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
 field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_apparent_temperature.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_apparent_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_high.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_low.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_cloud_cover_mid.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_dew_point_2m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_dew_point_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_diffuse_radiation.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_direct_normal_irradiance.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_direct_radiation.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_direct_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_freezing_level_height.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_freezing_level_height patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_global_tilted_irradiance.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_leaf_wetness_probability.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_precipitation_probability.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_pressure_msl.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_relative_humidity_2m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_shortwave_radiation.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_snow_depth.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_snow_depth patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_0cm.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_18cm.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_54cm.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_soil_temperature_6cm.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_surface_pressure.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_surface_temperature.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_surface_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_temperature_2m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wet_bulb_temperature_2m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_gusts_10m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_10m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_120m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_180m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/gyirong_open-meteo_wind_speed_80m.json
-on earth 28.8559 85.295 0
-ttl 300
-last points.v meteo_gyirong_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_apparent_temperature.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_apparent_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_high.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_low.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_cloud_cover_mid.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_dew_point_2m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_dew_point_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_diffuse_radiation.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_direct_normal_irradiance.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_direct_radiation.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_direct_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_freezing_level_height.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_freezing_level_height patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_global_tilted_irradiance.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_leaf_wetness_probability.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_precipitation_probability.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_pressure_msl.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_relative_humidity_2m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_shortwave_radiation.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_snow_depth.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_snow_depth patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_0cm.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_18cm.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_54cm.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_soil_temperature_6cm.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_surface_pressure.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_surface_temperature.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_surface_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_temperature_2m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wet_bulb_temperature_2m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_gusts_10m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_10m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_120m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_180m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/kollab_open-meteo_wind_speed_80m.json
-on earth 28.271 85.515 0
-ttl 300
-last points.v meteo_kollab_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_apparent_temperature.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_apparent_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_cloud_cover gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_high.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_cloud_cover_high gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_low.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_cloud_cover_low gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_cloud_cover_mid.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_cloud_cover_mid gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_dew_point_2m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_dew_point_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_diffuse_radiation.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_diffuse_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_direct_normal_irradiance.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_direct_normal_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_direct_radiation.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_direct_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_freezing_level_height.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_freezing_level_height patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_global_tilted_irradiance.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_global_tilted_irradiance inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_leaf_wetness_probability.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_leaf_wetness_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_precipitation_probability.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_precipitation_probability gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_pressure_msl.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_pressure_msl gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_relative_humidity_2m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_relative_humidity_2m gaussian-inverse-square diffusion % 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_shortwave_radiation.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_shortwave_radiation inverse-square em W/m2 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_snow_depth.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_snow_depth patch-levy advective m 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_0cm.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_soil_temperature_0cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_18cm.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_soil_temperature_18cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_54cm.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_soil_temperature_54cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_soil_temperature_6cm.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_soil_temperature_6cm exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_surface_pressure.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_surface_pressure gaussian-inverse-square acoustic hPa 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_surface_temperature.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_surface_temperature exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_temperature_2m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wet_bulb_temperature_2m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wet_bulb_temperature_2m exponential-decay thermal C 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_gusts_10m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wind_gusts_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_10m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wind_speed_10m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_120m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wind_speed_120m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_180m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wind_speed_180m patch-levy advective km/h 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/rasuwa_open-meteo_wind_speed_80m.json
-on earth 28.25 85.1 0
-ttl 300
-last points.v meteo_rasuwa_wind_speed_80m patch-levy advective km/h 300 0.0 0.0
 
 url https://gracedb.ligo.org/api/superevents/?limit=10
 ttl 300
@@ -1006,6 +1006,15 @@ stations_lon geometry.coordinates.0
 fanout 40
 first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
+ttl 3600
+format text
+on earth 1.35 103.99 0
+rows .
+epoch year month day 0 0
+gate qbo_30hpa_ms -300.0 300.0
+field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
 ttl 3600
 format text
@@ -1028,15 +1037,6 @@ at solar_orbiter
 ttl 3600
 field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
-ttl 3600
-format text
-on earth 1.35 103.99 0
-rows .
-epoch year month day 0 0
-gate qbo_30hpa_ms -300.0 300.0
-field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
