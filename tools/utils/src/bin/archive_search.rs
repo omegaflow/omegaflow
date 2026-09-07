@@ -76,7 +76,10 @@ fn main() {
         std::process::exit(2);
     }
     if roots.is_empty() {
-        roots.push(".".to_string());
+        match env::var("HOME") {
+            Ok(h) if !h.is_empty() => roots.push(h),
+            _ => roots.push(".".to_string()),
+        }
     }
 
     let needle: Vec<String> = keywords.iter().map(|k| k.to_lowercase()).collect();
