@@ -1,0 +1,37 @@
+name: d20-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  d20:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.pmel.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "d20_thermocline.csv"; then
+            echo "asset d20_thermocline.csv already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset d20_thermocline.csv missing — compiling and manifesting"
+      - name: Ensure the data.pmel.noaa.gov release exists on the CDN
+        run: |
+          if ! gh release view data.pmel.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.pmel.noaa.gov --repo omegaflow/sources \
+              --title "data.pmel.noaa.gov" \
+              --notes "PMEL ERDDAP TAO/TRITON d20 isotherm-depth series compiled to CSV assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the d20 thermocline depth series to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin d20_compiler -- --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "d20-cdn: d20_thermocline compile returned void" \
+                 "d20 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
