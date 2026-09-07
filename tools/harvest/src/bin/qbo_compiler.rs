@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 
 const QBO_URL: &str = "https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index";
 
@@ -12,7 +12,10 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "qbo_30hpa.csv".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(o) => o,
+        None => "qbo_30hpa.csv".to_string(),
+    };
     let body = match omegaflow::archivar::fetch_raw_bytes(QBO_URL, 30) {
         Some(b) => String::from_utf8_lossy(&b).into_owned(),
         None => {
@@ -67,8 +70,8 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!("qbo transposed {} cells → {}", rows.len(), out);
-    if ci_mode && !upload_asset(&out) {
-        eprintln!("upload_asset for {} returned void", out);
+    if ci_mode && !upload_release("www.cpc.ncep.noaa.gov", &out) {
+        eprintln!("upload_release for {} returned void", out);
         std::process::exit(1);
     }
 }
