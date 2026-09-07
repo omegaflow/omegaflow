@@ -1,0 +1,11 @@
+{
+  "id": "tibet-flut-2026",
+  "source": "open-meteo archive-api",
+  "cdn": "archive-api.open-meteo.com",
+  "window": ["2026-08-18", "2026-08-27"],
+  "stations": [
+    {"id": "gyirong", "lat": 28.8559, "lon": 85.2950},
+    {"id": "kollab", "lat": 28.2710, "lon": 85.5150},
+    {"id": "rasuwa", "lat": 28.2500, "lon": 85.1000}
+  ]
+}
