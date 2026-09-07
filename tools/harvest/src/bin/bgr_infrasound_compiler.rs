@@ -6,6 +6,7 @@ use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File, Hdf5Layout};
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -347,6 +348,69 @@ fn var_mean(v: &VarLoad, j: usize) -> Option<f64> {
     elem_f64(&v.raw, j, v.class, v.size, v.endian)
 }
 
+fn flag_by_step(file: &Hdf5File) -> Option<HashMap<i64, f64>> {
+    let (obj_t, ds_t, dt_t) = file.dataset("time").ok()?;
+    if obj_t.is_group {
+        return None;
+    }
+    let n: usize = *ds_t.dims.last().unwrap_or(&0) as usize;
+    if n == 0 {
+        return None;
+    }
+    let lead: usize = if ds_t.dims.len() <= 1 {
+        1
+    } else {
+        ds_t.dims[..ds_t.dims.len() - 1]
+            .iter()
+            .map(|d| *d as usize)
+            .product::<usize>()
+    };
+    if lead == 0 {
+        return None;
+    }
+    let t_raw = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        file.read_dataset("time")
+    })) {
+        Ok(Ok(b)) => b,
+        _ => return None,
+    };
+    let (obj_f, ds_f, dt_f) = file.dataset("flag").ok()?;
+    if obj_f.is_group {
+        return None;
+    }
+    let f_count: usize = ds_f
+        .dims
+        .iter()
+        .fold(1usize, |a, d| a.saturating_mul(*d as usize));
+    let f_raw = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        file.read_dataset("flag")
+    })) {
+        Ok(Ok(b)) => b,
+        _ => return None,
+    };
+    if f_count < n {
+        return None;
+    }
+    let mut map = HashMap::new();
+    for j in 0..n {
+        let s = if dt_t.size > 1 {
+            let off = (j * dt_t.size).min(t_raw.len().saturating_sub(dt_t.size));
+            let raw = t_raw.get(off..off + dt_t.size)?;
+            String::from_utf8_lossy(raw).into_owned()
+        } else {
+            string_cell(&t_raw, j, n, lead)
+        };
+        let Some(epoch) = dt_to_unix(s.trim_end_matches(['\0', ' ', 'T'])) else {
+            continue;
+        };
+        let Some(fl) = elem_f64(&f_raw, j, dt_f.class, dt_f.size, dt_f.endian) else {
+            continue;
+        };
+        map.insert(epoch as i64, fl);
+    }
+    Some(map)
+}
+
 fn detection_records(file: &Hdf5File, lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> {
     let Some(ta) = time_axis(file) else {
         return Vec::new();
@@ -609,6 +673,9 @@ fn main() {
 
     let mut loads: Vec<(String, VarLoad, usize)> = Vec::new();
     for name in &names {
+        if name == "N_avail" {
+            continue;
+        }
         if let Some(l) = load_detection_var(&file, name, n_det) {
             let dims = match file.dataset(name) {
                 Ok((_, ds, _)) => ds.dims.clone(),
@@ -632,8 +699,12 @@ fn main() {
         );
         std::process::exit(1);
     }
+    let flag_by_step = flag_by_step(&file);
 
     let mut header = String::from("#idx|time_utc");
+    if flag_by_step.is_some() {
+        header.push_str("|flag");
+    }
     for (name, _, lead) in &loads {
         if *lead <= 1 {
             header.push_str(&format!("|{}", name));
@@ -644,28 +715,32 @@ fn main() {
         }
     }
     let mut buf = String::new();
+    if flag_by_step.is_some() {
+        buf.push_str("#flag=1 all sensors|2 fewer but at least three|3 less than three, no PMCC\n");
+    }
     buf.push_str(&header);
     buf.push('\n');
     for j in 0..n_det {
         let mut row = vec![j.to_string()];
-        row.push(if tp_size > 1 {
+        let time_s = if tp_size > 1 {
             let off = (j * tp_size).min(time_raw.len().saturating_sub(tp_size));
             let s = String::from_utf8_lossy(&time_raw[off..off + tp_size]).into_owned();
             s.trim_end_matches(['\0', ' ']).to_string()
         } else {
             string_cell(&time_raw, j, n_det, lead_tp)
-        });
+        };
+        row.push(time_s.clone());
+        if let Some(map) = &flag_by_step {
+            let step = dt_to_unix(time_s.trim_end_matches(['\0', ' ', 'T']))
+                .map(|t| t as i64)
+                .and_then(|t| map.get(&t).copied());
+            row.push(cell(step));
+        }
         for (_, l, lead) in &loads {
             for r in 0..*lead {
                 let idx = r * n_det + j;
                 if idx < l.n {
-                    row.push(cell(elem_f64(
-                        &l.raw,
-                        idx,
-                        l.class,
-                        l.size,
-                        l.endian,
-                    )));
+                    row.push(cell(elem_f64(&l.raw, idx, l.class, l.size, l.endian)));
                 } else {
                     row.push(String::new());
                 }
