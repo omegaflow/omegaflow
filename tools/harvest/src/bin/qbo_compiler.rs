@@ -70,7 +70,7 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!("qbo transposed {} cells → {}", rows.len(), out);
-    if ci_mode && !upload_release("www.cpc.ncep.noaa.gov", &out) {
+    if ci_mode && !upload_release("cpc.ncep.noaa.gov", &out) {
         eprintln!("upload_release for {} returned void", out);
         std::process::exit(1);
     }

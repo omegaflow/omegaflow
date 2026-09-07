@@ -4309,7 +4309,8 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
     };
     let qbo_csv = transpose_qbo_table(&qbo_body);
     assert!(!qbo_csv.is_empty(), "qbo transposition must produce rows");
-    let qbo_block = "url https://github.com/omegaflow/sources/releases/download/www.cpc.ncep.noaa.gov/qbo_30hpa.csv
+    let qbo_block =
+        "url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
 ttl 3600
 format text
 on earth 1.35 103.99 0
@@ -5936,8 +5937,8 @@ fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
             elev: 0.0,
         },
     ];
-    let parsed = crate::geo::parse_gbco(&crate::geo::write_gbco(&recs))
-        .expect("the GBCO roundtrip parses");
+    let parsed =
+        crate::geo::parse_gbco(&crate::geo::write_gbco(&recs)).expect("the GBCO roundtrip parses");
     assert_eq!(parsed.len(), 3);
     let props = super::BodyProperties {
         α0_deg: 270.0,
