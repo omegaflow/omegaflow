@@ -1961,6 +1961,7 @@ pub fn main_flow() {
                     | "fdsn_waveform"
                     | "fmi_gic"
                     | "igets"
+                    | "iss_lis"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
