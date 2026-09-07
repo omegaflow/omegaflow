@@ -5915,3 +5915,46 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
         .expect("the surface thread projects to ICRS at the epoch");
     assert!(icrs[0].is_finite() && icrs[1].is_finite() && icrs[2].is_finite());
 }
+
+#[test]
+fn iss_lis_geo_series_roundtrip_and_component_name() {
+    let recs = vec![crate::geo::GeoRec {
+        t: 753_440_003.0,
+        lat: -3.117,
+        lon: -76.283,
+        alt: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        val: 12.5,
+        comp: crate::geo::COMP_ISSLIS_FLASH_RAD,
+    }];
+    let magic = crate::geo::magic_of("iss_lis").expect("the iss_lis format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed =
+        super::extract::geo_series_parse_bin("iss_lis", &bytes).expect("iss_lis bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].val, 12.5);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_ISSLIS_FLASH_RAD);
+    assert_eq!(
+        crate::geo::comp_max("iss_lis"),
+        Some(crate::geo::COMP_ISSLIS_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("iss_lis", crate::geo::COMP_ISSLIS_FLASH_RAD),
+        Some("iss_lis_flash_radiance_uj_sr_m2_um")
+    );
+}
+
+#[test]
+fn iss_lis_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "iss_lis")
+        .expect("phi/sources.φ registers the iss_lis source");
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the iss_lis block carries a field line");
+    };
+    assert_eq!(fc.name, "iss_lis_flash_radiance_uj_sr_m2_um");
+    assert_eq!(fc.force, 8);
+}

@@ -5261,6 +5261,12 @@ format lightcurve
 ttl 604800
 at sun
 
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
+format iss_lis
+on earth 0 0 0
+ttl 604800
+field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um gaussian-inverse-square electric uJ/sr/m2/um 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
 on earth 60.6 25.2 0

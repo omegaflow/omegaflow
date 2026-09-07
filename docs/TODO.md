@@ -1708,11 +1708,23 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (lightning.nsstc.nasa.gov/data/) = **declined** (Klimatologie):
   Gridded-Lightning-Composites (HRFC/HRMC/LRTS, PNG/KML + HDF-Gitter,
   Seite 200), Satelliten-Blitzraten-Klimatologie OTD 1995-2000 + LIS
-  1998-2015, aggregiert/positionslos. Der Ereignis-Level-Zweig (LIS/ISS-
-  LIS Level-2 Events/Groups/Flashes, orbit granules, ~4 km/2 ms) =
-  **live** (EARTHDATA_EDL_TOKEN in .secrets.local, GHRC DAAC) — ein
-  echter Ereignis-Kanal neben GLM (in-register), noch ohne Compiler/
-  Asset; getrennt gehalten. Stations-Endpoints aus
+  1998-2015, aggregiert/positionslos. Der ISS-LIS-Level-2-Ereignis-Zweig
+  ist gebaut (2026-09-07): GHRC-DAAC-Kollektionen `isslis_v2_fin`/
+  `isslis_v3_fin` (QC final, 2017-03 → 2023-11-16, ~72.8k Orbit-Granules
+  je Version, 1,3–2,2 MB, in HDF-4 UND netCDF-4); `iss_lis_compiler`
+  liest die offiziellen netCDF-4-Granules (HDF5-Container — der
+  Kern-HDF5-Reader konsumiert sie, kein HDF-4-Reader nötig) über die
+  CMR/GHRC-Route (HTTP 200 mit `EARTHDATA_EDL_TOKEN`), extrahiert je
+  Granule die gemessenen Blitze (`lightning_flash_lat/lon/TAI93_time/
+  radiance`, ~4 km / 2 ms, `uJ/sr/m2/um`; gemessen: 3 Granules
+  2017-03-01 → 234 Blitze) und schreibt `iss_lis.bin` (Format `iss_lis`,
+  Magic ISL1, 60-B-Stride, geo-Serie). Register: sources.φ-Block
+  `ghrc.nasa.gov/iss_lis.bin` + Feld `iss_lis_flash_radiance_uj_sr_m2_um`
+  (electric, τ 3600) — ein echter Blitz-Entladungs-Kanal neben GLM
+  (in-register nur als Bolide, em-Ratsurteil; ISS-LIS ist der Weberin-
+  Faden electric). Manifestation via `.github/workflows/iss-lis-cdn.yml`
+  ausstehend (Operator-Zug: `EARTHDATA_EDL_TOKEN` als GitHub-Secret +
+  Release-Tag `ghrc.nasa.gov` in omegaflow/sources). Stations-Endpoints aus
   archive_search = **live** als Routen (Stations-Tabellen mit Position;
   sie speisen den Anker, kein Feldblock — Council-Stationsliste-decline
   bleibt): GEOFON geofon.gfz.de/fdsnws/station/1/query?level=station&
