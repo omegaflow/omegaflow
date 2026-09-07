@@ -23,6 +23,7 @@ registrierten Ort.
 | `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
 | `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. |
 | `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
+| `phi/pipeline/library.φ` | Die kuratierte Tag-Library (Linse). Kuratiertes Input — versioniert (force-add, obwohl `phi/pipeline/` fetch-only ist). |
 | `phi/pipeline/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
 | `phi/pipeline/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
 | `phi/pipeline/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
@@ -76,7 +77,7 @@ Beispiel:
 ```
 ausstehend
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
-note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --gold + Sweep, dann Disposition
+note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --port + Sweep, dann Disposition
 ```
 
 ## 5. Workflow-Prozedur (Trichter: Linse → Probe → Review)
@@ -102,11 +103,33 @@ Pro Korpus:
    Batch in `phi/pipeline/probe_batch.φ` nachrücken.
 5. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
 
-**CI-Schleife:** `.github/workflows/probe-sweep.yml` (wöchentlich + manuell)
-läuft die mechanischen Stufen — Linse über die Kataloge + `--probe` über
-`phi/pipeline/probe_batch.φ` — und lädt `probe_survivors.φ` / `probe_void.txt` /
-`weights_*.txt` als Artefakte hoch. Die Review bleibt in der Session: Artefakt
-herunterladen → Schritt 4 → Commit. Die CI probt, der Mensch prüft.
+**Discovery-Ladder (Ernte + Probe).** Die mechanische Suche nach neuen
+Probe-Quellen ist als zwei std-only Rust-Bins gebaut (CWD = Repo-Root; die
+Stufen schreiben relativ nach `phi/pipeline/`):
+
+- `cargo run -p omegaflow-utils --bin source_url_candidates` — die Linse:
+  liest die kuratierte Tag-Library `phi/pipeline/library.φ` + die Katalog-Inventare
+  `phi/pipeline/catalog/*.φ`; wiegt NUR die `url `/`candidate `-Zeilen (der
+  erste `http(s)`-Token, `gate_weigh`, Schwelle `CANDIDATE_WEIGHT_FLOOR = 1`);
+  schreibt die dedupliziert sortierte Kandidaten-URL-Liste deterministisch
+  nach `phi/pipeline/probe_url_candidates.txt`. Beschreibungs-Zeilen
+  (`catalog `/`# dataset `/nackt) bleiben ungewogen — ihre positiven Gewichte
+  (die Leads) liegen bereits pro Katalog in `weights_*.txt` (Linse
+  `source_scanner`). `master_urls.txt` ist nur Quercheck (bekannt/neu), nie
+  Quelle. Messung: 30 Kandidaten (25 bekannt, 5 neu) statt der fabrizierten 14k.
+- `cargo run -p omegaflow-utils --bin probe_sweep [--candidates <datei>]` —
+  die Kette: Linse (übersprungen bei `--candidates`) → `url_probe_mode`
+  (Reachability, Jina) → `draft` → `draft-context` → Rust-Totfilter (Blöcke
+  mit `# frame: frame pending` fallen) → `probe`. Überlebende nach
+  `phi/pipeline/probe_survivors.φ`, Diagnosen nach `phi/pipeline/probe_void.txt`;
+  der Review-Bericht wird nach `phi/reports/probe_sweep_survivors.φ` +
+  `phi/reports/probe_sweep_void.txt` kopiert (versioniert — ein Commit = Häkchen).
+
+Die Kette ist LOKAL (kein Cron, keine CI-Schleife): die Katalog-Korpora
+(~120 MB, gitignored) und `.secrets.local` (46 Keys) liegen nur auf der
+Maschine — die CI könnte die Ernte nicht ehrlich fahren. Der Wochen-Cron
+`probe-sweep.yml`, der eine 14k-URL-Ernte aus nichts fabrizierte, ist entfernt.
+Review bleibt in der Session: Bericht lesen → Schritt 4 → Commit.
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
 URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
@@ -230,7 +253,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
   Provider-Namen, (5) Jina-Präfix für Netzwerk-Blocks. Nur wenn all das leer
   bleibt → `dead` mit `note`, die den Recherche-Stand nennt.
-- Der `--gold`-Konverter übernimmt: `url/format/header/target/catalog/
+- Der `--port`-Konverter übernimmt: `url/format/header/target/catalog/
   flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
   numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
   `lat_key/lon_key/alt_key/epoch_key` → `lat/lon/alt/epoch`; `field/field_in/
