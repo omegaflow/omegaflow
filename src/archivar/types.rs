@@ -90,6 +90,29 @@ pub enum Position {
     },
 }
 
+#[derive(Clone, Debug)]
+pub struct StationThread {
+    pub body_name: String,
+    pub lat: f64,
+    pub lon: f64,
+    pub alt: f64,
+}
+
+impl StationThread {
+    pub fn motion(&self) -> Motion {
+        Motion::Surface {
+            body_name: self.body_name.clone(),
+            lat: self.lat,
+            lon: self.lon,
+            alt: self.alt,
+        }
+    }
+
+    pub fn icrs_at(&self, tdb: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<[f64; 3]> {
+        self.motion().at(tdb, tdb, eph)
+    }
+}
+
 #[derive(Clone)]
 pub struct DeclaredBody {
     pub body_name: String,
