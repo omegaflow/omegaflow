@@ -31,6 +31,7 @@ pub mod exclude;
 pub mod f107;
 pub mod fits;
 pub mod fk;
+pub mod geo;
 pub mod goes;
 pub mod gong;
 pub mod gong_series;
