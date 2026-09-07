@@ -98,6 +98,12 @@ on earth 0 0 0
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
 
+url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
+format fdsn_waveform
+on earth 0 0 0
+ttl 60
+field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
 on earth 0.0 -75.2 35786023
@@ -186,16 +192,6 @@ lat latitude
 lon longitude
 epoch captured_at
 last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
-
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
-ttl 86400
-format csv
-on earth 38.9925 -76.839833 87
-rows
-field AOD_500nm aeronet_aod_500nm inverse-square em 1 86400.0 0.0 0.0
-field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
-field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
-field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 ttl 300
@@ -1017,6 +1013,14 @@ rows .
 epoch 0
 field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
 
+url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 65.05 25.47 0
+rows .
+epoch 0
+field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
+
 url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
 at earth
@@ -1143,14 +1147,6 @@ stations_lon longitude
 fanout 50
 last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
-url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
-ttl 3600
-format text
-on earth 65.05 25.47 0
-rows .
-epoch 0
-field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
-
 url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
 format csv_zip
 header user-agent {TNS_UA}
@@ -1182,6 +1178,16 @@ stations_lon coordinates.longitude
 fanout 25
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
+ttl 86400
+format csv
+on earth 38.9925 -76.839833 87
+rows
+field AOD_500nm aeronet_aod_500nm inverse-square em 1 86400.0 0.0 0.0
+field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
+field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
+field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 ttl 86400
@@ -1217,6 +1223,16 @@ format csv
 on earth 46.05 -125.0 0
 lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
 lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
+format intermagnet_dbdt
+on earth 68.358 18.823 380
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
+format intermagnet_dbdt
+at earth
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 format bidsleep
@@ -1647,296 +1663,6 @@ format csv
 on earth 19.5362 -155.5763 0
 lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_ANGL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_toward_instrument_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_BIGC_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_BIGC_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_BIGC_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRMR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_BRMR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_BRMR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CMPT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_CMPT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_CMPT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_FORT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_FORT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_FORT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_FRDO_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_FRDO_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_FRDO_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_GCYN_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_GCYN_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_GCYN_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLGT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_HLGT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_HLGT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_MBAC_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_MBAC_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_MBAC_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_MONT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_MONT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_MONT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_PILR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_PILR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_PILR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_PSLR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_PSLR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_PSLR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_SBAY_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SBAY_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SBAY_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_SCRZ_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SCRZ_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SCRZ_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SEAB_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SEAB_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SEAB_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SILD_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SILD_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SILD_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_SOB2_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SOB2_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SOB2_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SPRK_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_SPRK_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_SPRK_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WLD2_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_WLD2_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_WLD2_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WOOD_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_WOOD_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_WOOD_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WSH1_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_wave_height_WSH1_m gaussian-inverse-square acoustic m 21600 0.0 0.0
-field 4 hfradar_wave_period_WSH1_s gaussian-inverse-square acoustic s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_ACI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_ACI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_AGL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_AGL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_AMAG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_AMAG_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/TexAM_ANWR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_TexAM_ANWR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_ARG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_ARG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/ODU_ASSA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_ODU_ASSA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_BIGC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_BIGC_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/URI_BISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_URI_BISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BLCK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_BLCK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -1955,15 +1681,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_BML_BMLR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRAD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_BRAD_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/BML_BRAG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -1973,285 +1690,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_BML_BRAG_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRIG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_BRIG_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRMR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_BRMR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/MTU_BRVW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_MTU_BRVW_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CAPE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_CAPE_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_CBL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_OSU_CBL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_CDDO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_CDDO_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UMiami_CDN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UMiami_CDN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/ODU_CEDR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_ODU_CEDR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CMPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_CMPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SKIO_CNS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SKIO_CNS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_COP1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_COP1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UNC_CORE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UNC_CORE_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Fugro_CPLF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Fugro_CPLF_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_CPVN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_CPVN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_CRIS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_CRIS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SC_CSW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SC_CSW_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_DCLR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_DCLR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_DCSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_DCSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_ESPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_ESPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_ESTR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_ESTR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_EXPL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_EXPL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_FARO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_FARO_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_FBK1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_FBK1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USF_FDS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USF_FDS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/ODU_FLND.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_ODU_FLND_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_FOCF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_FOCF_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_FORT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_FORT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_FRDO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_FRDO_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/MTU_FTMK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_MTU_FTMK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_FURA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_FURA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UConn_GCAP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UConn_GCAP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/BML_GCVE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -2260,492 +1698,6 @@ lat 2
 lon 1
 epoch 0
 field 3 hfradar_radial_velocity_BML_GCVE_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_GCYN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_GCYN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USM_GPTP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USM_GPTP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SC_GTN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SC_GTN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UNC_HATY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UNC_HATY_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/FAU_HAUL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_FAU_HAUL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USM_HBSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USM_HBSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_HBSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_HBSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HEMP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_HEMP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/FAU_HILL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_FAU_HILL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLGT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_HLGT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLPN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_HLPN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HOOK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_HOOK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/FIT_HTR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_FIT_HTR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USF_JEFF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USF_JEFF_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SKIO_JEK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SKIO_JEK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UNC_JENN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UNC_JENN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KAK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KAK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KAL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KAL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_KAL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_OSU_KAL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KAP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KAP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UAF_KBCH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UAF_KBCH_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KKH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KKH_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KNA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KNA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_KOK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_KOK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SKIO_KSC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SKIO_KSC_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_LEWE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_LEWE_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/ODU_LISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_ODU_LISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_LOO1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_OSU_LOO1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_LOVE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_LOVE_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_LPWR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_LPWR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_LUIS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_LUIS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_MABO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_MABO_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_MAN1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_OSU_MAN1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USF_MARA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USF_MARA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_MBAC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_MBAC_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/TexAM_MBNP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_TexAM_MBNP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SC_MBP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SC_MBP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/RATES_MCPK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_RATES_MCPK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_MGS1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_MGS1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/URI_MISQ.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_URI_MISQ_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_MLML.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_MLML_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/URI_MNTK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_URI_MNTK_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/RATES_MOLA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_RATES_MOLA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/CODAR_MONT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_CODAR_MONT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_MRCH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_MRCH_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_NANT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_NANT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USF_NAPL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USF_NAPL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UMassDart_NAUS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UMassDart_NAUS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_NIC1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_NIC1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UMiami_NKL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UMiami_NKL_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_NWTP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_NWTP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USM_OBSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USM_OBSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UNC_OCRA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UNC_OCRA_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_OLDB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_OLDB_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/BML_PAFS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -2765,23 +1717,181 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_BML_PBON_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/UAF_PBRW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/BML_PREY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_UAF_PBRW_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_BML_PREY_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/USM_PCYC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/BML_SHEL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_USM_PCYC_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_BML_SHEL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/BML_SLID.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_BML_SLID_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/BML_SMOA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_BML_SMOA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/BML_TRIN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_BML_TRIN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_ANGL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_toward_instrument_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_BIGC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_BIGC_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_BIGC_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_BIGC_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_BIGC_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_CRIS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_CRIS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_EXPL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_EXPL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_FORT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_FORT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_FORT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_FORT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_FORT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_GCYN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_GCYN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_GCYN_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_GCYN_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_GCYN_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_MBAC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_MBAC_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_MBAC_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_MBAC_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_MBAC_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_MLML.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_MLML_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_MONT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_CODAR_MONT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_MONT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_MONT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_MONT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/CODAR_PILR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -2792,68 +1902,15 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_CODAR_PILR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/TexAM_PINS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_PILR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_TexAM_PINS_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/RATES_PLA8.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_RATES_PLA8_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/RATES_PLPI.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_RATES_PLPI_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/TexAM_PMGC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_TexAM_PMGC_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_POPB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_POPB_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_PORT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_PORT_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UH_PPK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UH_PPK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_wave_height_PILR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_PILR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/CODAR_PPNS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -2864,24 +1921,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_CODAR_PPNS_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/BML_PREY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_BML_PREY_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/OSU_PSG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_OSU_PSG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/CODAR_PSLR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -2891,77 +1930,15 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_CODAR_PSLR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/SLO_PTC1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_PSLR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_SLO_PTC1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_PTM1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_PTM1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_PTWN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_PTWN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UPR_PYFC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_PYFC_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/SLO_RAGG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_SLO_RAGG_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_RATH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_Rutgers_RATH_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USF_RDSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USF_RDSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_RFG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_RFG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_wave_height_PSLR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_PSLR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/CODAR_RTC1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -2981,78 +1958,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_CODAR_SAUS_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/UPR_SBAY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UPR_SBAY_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_SBSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_WHOI_SBSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCCI.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USC_SCCI_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCDB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USC_SCDB_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCDH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USC_SCDH_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_SCI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UCSB_SCI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCNB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USC_SCNB_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCPF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_USC_SCPF_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/CODAR_SCRZ.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -3062,14 +1967,627 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_CODAR_SCRZ_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/USC_SCTB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/CODAR_SCRZ_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_USC_SCTB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_wave_height_SCRZ_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SCRZ_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/FAU_HAUL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_FAU_HAUL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/FAU_HILL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_FAU_HILL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/FIT_HTR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_FIT_HTR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/FIT_TRS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_FIT_TRS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Fugro_CPLF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Fugro_CPLF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Fugro_SWPP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Fugro_SWPP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/MTU_BRVW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_MTU_BRVW_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/MTU_FTMK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_MTU_FTMK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_ASSA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_ASSA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_CEDR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_CEDR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_FLND.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_FLND_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_LISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_LISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_SUNS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_SUNS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/ODU_VIEW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_ODU_VIEW_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_CBL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_CBL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_KAL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_KAL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_LOO1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_LOO1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_MAN1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_MAN1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_PSG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_PSG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_SEA1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_SEA1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_STV2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_STV2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WIN1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_WIN1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WLD2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_WLD2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WLD2_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_WLD2_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_WLD2_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WSH1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_WSH1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WSH1_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_WSH1_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_WSH1_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_WSP1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_WSP1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_YHL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_YHL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/OSU_YHS2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_OSU_YHS2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/RATES_MCPK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_RATES_MCPK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/RATES_MOLA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_RATES_MOLA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/RATES_PLA8.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_RATES_PLA8_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/RATES_PLPI.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_RATES_PLPI_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/RATES_SMPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_RATES_SMPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_AMAG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_AMAG_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BLCK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_BLCK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRAD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_BRAD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRIG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_BRIG_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRMR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_BRMR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_BRMR_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_BRMR_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_BRMR_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CAPE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_CAPE_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CMPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_CMPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_CMPT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_CMPT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_CMPT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HEMP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_HEMP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLGT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_HLGT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLGT_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_HLGT_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_HLGT_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HLPN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_HLPN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_HOOK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_HOOK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_LEWE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_LEWE_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_LOVE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_LOVE_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_MRCH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_MRCH_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_NANT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_NANT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_OLDB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_OLDB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_PORT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_PORT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_RATH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_RATH_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SEAB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_SEAB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SEAB_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_SEAB_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SEAB_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SILD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_SILD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SILD_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_SILD_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SILD_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SPRK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_SPRK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SPRK_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_SPRK_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SPRK_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WILD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_WILD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WOOD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_Rutgers_WOOD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WOOD_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_WOOD_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_WOOD_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/SC_CSW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_SC_CSW_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/SC_GTN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_SC_GTN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/SC_MBP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_SC_MBP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/SIO_SDBP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3097,15 +2615,6 @@ lat 2
 lon 1
 epoch 0
 field 3 hfradar_radial_velocity_SIO_SDDP_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UAF_SDPD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UAF_SDPD_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/SIO_SDPL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3170,122 +2679,149 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_SIO_SDWW_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_SEA1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SKIO_CNS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_SEA1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SKIO_CNS_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SEAB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SKIO_JEK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Rutgers_SEAB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SKIO_JEK_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/USM_SGRV.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SKIO_KSC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_USM_SGRV_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SKIO_KSC_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/BML_SHEL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_AGL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_BML_SHEL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_AGL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SILD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_ARG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Rutgers_SILD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_ARG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/USM_SISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_DCLR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_USM_SISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_DCLR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/BML_SLID.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_DCSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_BML_SLID_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_DCSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/BML_SMOA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_ESTR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_BML_SMOA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_ESTR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/RATES_SMPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_FBK1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_RATES_SMPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_FBK1_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_SNI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_LUIS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_UCSB_SNI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_LUIS_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_SOB2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_PTC1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_WHOI_SOB2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_PTC1_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_SPRK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/SLO_RAGG.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Rutgers_SPRK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_SLO_RAGG_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/UCSB_SSD1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/TexAM_ANWR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_UCSB_SSD1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_TexAM_ANWR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/TexAM_MBNP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_TexAM_MBNP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/TexAM_PINS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_TexAM_PINS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/TexAM_PMGC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_TexAM_PMGC_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/TexAM_SSDE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3296,14 +2832,131 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_TexAM_SSDE_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/UMiami_STF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/UAF_KBCH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_UMiami_STF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_UAF_KBCH_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UAF_PBRW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UAF_PBRW_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UAF_SDPD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UAF_SDPD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UAF_WAIN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UAF_WAIN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_ACI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_ACI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_COP1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_COP1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_MGS1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_MGS1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_NIC1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_NIC1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_PTM1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_PTM1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_RFG1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_RFG1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_SCI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_SCI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_SNI1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_SNI1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UCSB_SSD1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UCSB_SSD1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UConn_GCAP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UConn_GCAP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/UConn_STLI.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3314,32 +2967,232 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_UConn_STLI_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_STV2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/UH_KAK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_STV2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_UH_KAK_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/ODU_SUNS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/UH_KAL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_ODU_SUNS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_UH_KAL_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Fugro_SWPP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/UH_KAP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Fugro_SWPP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_UH_KAP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UH_KKH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UH_KKH_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UH_KNA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UH_KNA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UH_KOK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UH_KOK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UH_PPK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UH_PPK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UMassDart_NAUS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UMassDart_NAUS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UMiami_CDN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UMiami_CDN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UMiami_NKL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UMiami_NKL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UMiami_STF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UMiami_STF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UMiami_VIR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UMiami_VIR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UNC_CORE.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UNC_CORE_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UNC_HATY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UNC_HATY_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UNC_JENN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UNC_JENN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UNC_OCRA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UNC_OCRA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_CDDO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_CDDO_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_FARO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_FARO_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_FRDO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_FRDO_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_FRDO_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_FRDO_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_FRDO_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_FURA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_FURA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_MABO.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_MABO_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_PYFC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_PYFC_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_SBAY.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_UPR_SBAY_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/UPR_SBAY_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_SBAY_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SBAY_s gaussian-inverse-square acoustic s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/UPR_THOM.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3350,32 +3203,131 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_UPR_THOM_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/WHOI_TLSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/URI_BISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_WHOI_TLSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_URI_BISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/BML_TRIN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/URI_MISQ.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_BML_TRIN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_URI_MISQ_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/FIT_TRS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/URI_MNTK.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_FIT_TRS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_URI_MNTK_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCCI.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCCI_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCDB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCDB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCDH.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCDH_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCNB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCNB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCPF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCPF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USC_SCTB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USC_SCTB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USF_FDS.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USF_FDS_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USF_JEFF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USF_JEFF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USF_MARA.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USF_MARA_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USF_NAPL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USF_NAPL_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/USF_RDSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_USF_RDSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/USF_VEN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
@@ -3395,33 +3347,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_USF_VENI_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/ODU_VIEW.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_ODU_VIEW_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UMiami_VIR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UMiami_VIR_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
-url https://hfradar.ioos.us/erddap/tabledap/UAF_WAIN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_UAF_WAIN_cm_s inverse-square advective cm/s 21600 0.0 0.0
-
 url https://hfradar.ioos.us/erddap/tabledap/USF_WEST.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -3431,77 +3356,168 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_USF_WEST_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WILD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_GPTP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Rutgers_WILD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_GPTP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WIN1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_HBSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_WIN1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_HBSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WLD2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_OBSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_WLD2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_OBSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/Rutgers_WOOD.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_PCYC.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_Rutgers_WOOD_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_PCYC_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WSH1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_SGRV.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_WSH1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_SGRV_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_WSP1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/USM_SISL.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_WSP1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_USM_SISL_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_YHL1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_CPVN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_YHL1_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_WHOI_CPVN_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://hfradar.ioos.us/erddap/tabledap/OSU_YHS2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_ESPT.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
 map table.rows
 lat 2
 lon 1
 epoch 0
-field 3 hfradar_radial_velocity_OSU_YHS2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+field 3 hfradar_radial_velocity_WHOI_ESPT_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_FOCF.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_FOCF_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_HBSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_HBSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_LPWR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_LPWR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_NWTP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_NWTP_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_POPB.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_POPB_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_PTWN.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_PTWN_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_SBSR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_SBSR_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_SOB2.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_SOB2_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_SOB2_hfr_wave.json?time,longitude,latitude,MWHT,MWPD&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_wave_height_SOB2_m gaussian-inverse-square acoustic m 21600 0.0 0.0
+field 4 hfradar_wave_period_SOB2_s gaussian-inverse-square acoustic s 21600 0.0 0.0
+
+url https://hfradar.ioos.us/erddap/tabledap/WHOI_TLSP.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+epoch 0
+field 3 hfradar_radial_velocity_WHOI_TLSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
@@ -3525,16 +3541,6 @@ field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0
 field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
 field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
 field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
-format intermagnet_dbdt
-on earth 68.358 18.823 380
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
-format intermagnet_dbdt
-at earth
-ttl 86400
 
 url https://maia.usno.navy.mil/ser7/finals.all
 format finals
@@ -5159,37 +5165,6 @@ alt PRES decibar
 field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
 field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
-format argo_bgc
-on earth 0 0 0
-ttl 604800
-field argo_dac_bgc_doxy_umol_kg argo_dac_bgc_doxy_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
-field argo_dac_bgc_nitrate_umol_kg argo_dac_bgc_nitrate_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
-field argo_dac_bgc_chla_mg_m3 argo_dac_bgc_chla_mg_m3 erfc diffusion mg/m3 604800 0.0 0.0
-field argo_dac_bgc_bbp700_m1 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
-field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
-format bgr_infrasound
-on earth 0 0 0
-ttl 604800
-field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg gaussian-inverse-square acoustic deg 300 0.0 0.0
-field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms gaussian-inverse-square acoustic m/s 300 0.0 0.0
-field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
-field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/noaa_nrs_psd.bin
-format noaa_nrs_psd
-on earth 0 0 0
-ttl 604800
-field noaa_nrs_psd_db noaa_nrs_psd_db gaussian-inverse-square acoustic db 600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_fitacf.bin
-format superdarn_fitacf
-on earth 0 0 0
-ttl 604800
-field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms gaussian-inverse-square electric m/s 600 0.0 0.0
-
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
 ttl 604800
 at sun
@@ -5231,6 +5206,31 @@ dist sy_dist
 dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
+format bl_narrowband
+on earth 38.4331409 -79.8397246 0
+ttl 604800
+field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
+format argo_bgc
+on earth 0 0 0
+ttl 604800
+field argo_dac_bgc_doxy_umol_kg argo_dac_bgc_doxy_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
+field argo_dac_bgc_nitrate_umol_kg argo_dac_bgc_nitrate_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
+field argo_dac_bgc_chla_mg_m3 argo_dac_bgc_chla_mg_m3 erfc diffusion mg/m3 604800 0.0 0.0
+field argo_dac_bgc_bbp700_m1 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
+field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
+format bgr_infrasound
+on earth 0 0 0
+ttl 604800
+field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg gaussian-inverse-square acoustic deg 300 0.0 0.0
+field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms gaussian-inverse-square acoustic m/s 300 0.0 0.0
+field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
+field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 ttl 604800
 at sun
@@ -5259,6 +5259,12 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 format lightcurve
 ttl 604800
 at sun
+
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
+format fmi_gic
+on earth 60.6 25.2 0
+ttl 604800
+field fmi_gic_a fmi_gic_a gaussian-inverse-square electric A 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
@@ -5339,6 +5345,12 @@ dec dec
 dist dist_mpc
 dist_scale 3.085677581e22
 field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
+format jwst_spectra
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
 ttl 604800
@@ -5433,18 +5445,6 @@ format gong_modes
 at sun
 ttl 604800
 field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
-format jwst_spectra
-at sun
-ttl 604800
-field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
-format bl_narrowband
-on earth 38.4331409 -79.8397246 0
-ttl 604800
-field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
 ttl 604800
@@ -5694,6 +5694,18 @@ dist_scale 3.085677581e16
 field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/noaa_nrs_psd.bin
+format noaa_nrs_psd
+on earth 0 0 0
+ttl 604800
+field noaa_nrs_psd_db noaa_nrs_psd_db gaussian-inverse-square acoustic db 600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_fitacf.bin
+format superdarn_fitacf
+on earth 0 0 0
+ttl 604800
+field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms gaussian-inverse-square electric m/s 600 0.0 0.0
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
 ttl 604800
