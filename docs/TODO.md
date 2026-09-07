@@ -44,15 +44,14 @@ Assets. Produzenten-Compiler und CDN-Workflows sind gebaut und committet
 **qbo_30hpa.csv — geschlossen:** auf dem CDN (`www.cpc.ncep.noaa.gov`,
 23.205 B, Upload 2026-09-07T18:21Z, qbo-cdn run 34151182163).
 
-**d20_thermocline.csv — offen, Kaskade gebaut, Dispatch ausstehend (2026-09-07):**
-der Runner (Azure eastus) 403t auf der Kette data.pmel.noaa.gov →
-coastwatch.pfeg.noaa.gov (curl exit 22; lokal 200, 93.390 B). Der
-d20_compiler holt jetzt direkt pmel → bei Void über den r.jina.ai-Reader
-auf dem coastwatch-Mirror (X-Return-Format: text — lokal gemessen 200,
-93.390 B, CSV unverändert) und nimmt `--input` (lokal geerntet 1.799
-station-days kompiliert); `d20-cdn.yml` erntet die Kaskade vom Runner und
-gated den Manifest auf die gemessene Körpergröße. Die url-Linie in
-phi/sources.φ bleibt. Dispatch ausstehend — kein Asset auf dem CDN.
+**d20_thermocline.csv — geschlossen:** auf dem CDN (release
+`data.pmel.noaa.gov`, 78.899 B, Upload 2026-09-07T18:35:47Z, d20-cdn run
+34152218456). Der Runner 403te zuvor (Health-Issue #7) auf der Kette
+data.pmel.noaa.gov → coastwatch.pfeg.noaa.gov; im manifestierenden Lauf
+maß der Workflow die direkte Route vom Runner mit 200 und die Kaskade
+(r.jina.ai-Reader über den coastwatch-Mirror) mit 93.390 B; `d20_compiler`
+(0bbdd3e) holt direkt → bei Void über den Reader und nimmt `--input`.
+Beide area_reconcile-Debts geschlossen.
 
 ## Register — /tmp-Scratch & Python-Tools (2026-09-06)
 
