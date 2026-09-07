@@ -638,13 +638,13 @@ dead 404
 url https://api.openquake.org/v1/hazard/pga/?model=GEM_GLOBAL_v2023.1&poe=0.02&investigation_time=50&bbox=
 note HTTP 404 — Endpoint weg.
 
-dead 400
+decline terrain
 url https://api.opentopodata.org/v1/eudem25m?locations=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note Recheck 2026-09-07: live HTTP 200 mit korrektem Fragment ?locations=<lat,lng> — echte Höhe (51.2,10.4 → 286,25 m). Terrain (Höhe) als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten), Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
-dead 400
+decline terrain
 url https://api.opentopodata.org/v1/gebco2020?locations=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note Recheck 2026-09-07: live HTTP 200 mit korrektem Fragment ?locations=<lat,lng> — echte Tiefe (NRS01 72.49,-156.6 → −833 m). Bathymetrie als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten), löst die NOAA-NRS-Tiefen-pending. Halteart Binding, nie Kraft-Feld.
 
 dead 404
 url https://api.p2pquake.net/v2/
@@ -1548,7 +1548,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 decline terrain
 url https://epqs.nationalmap.gov/v1/json?x=13.41&y=52.52&units=Meters&output=json
-note DEM-Höhenabfrage — Terrain per Gate declined.
+note DEM-Höhenabfrage — Terrain per Gate declined. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
 dead dns-unresolved
 url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv
@@ -1800,11 +1800,11 @@ note grind: grind_arcgis_index.φ
 
 decline terrain
 url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify
-note Terrain-DEM — geografische Infrastruktur per Gate declined.
+note Terrain-DEM — geografische Infrastruktur per Gate declined. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
 decline terrain
 url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22
-note Terrain-DEM.
+note Terrain-DEM. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
 decline derived-product
 url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
@@ -2180,7 +2180,7 @@ note HTTP 404 — Endpoint weg.
 
 decline terrain
 url https://macrostrat.org/api/mobile/map_query?lng=8.67&lat=47.37&z=10
-note Geologische Kartendaten.
+note Geologische Kartendaten. Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten, 2026-09-07): als Oszillator declined, als Zeuge für Gestalt neu zu lesen; Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
 
 decline catalog
 url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
