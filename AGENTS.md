@@ -164,9 +164,14 @@ workflow procedure, reference map and path map. Work surface: `phi/pipeline/`
 (`queue/master.φ` the one master file + `queue/grind_*` drafts, `stage/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
-`phi/dead_sources.φ`. The pre-CDN history and the finished corpora live
-under the external archive root `archive-root` (physisch heute
-`/home/johannes/backup/archive-root/` — archeology + phi-research). The one
+`phi/dead_sources.φ`. Harvested data that stays belongs on the local machine in `data/` (final
+datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
+`cache/`; its durable home is the CDN asset registered as a `url`-line in
+`phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
+unmanifested local file. The external archive root `archive-root` (physisch
+heute `/home/johannes/backup/archive-root/`) holds only the legacy material:
+pre-CDN history (`archeology/`) and `phi-research/` (batches, probe_batches,
+Dispositionen); it is not the home of current harvests. The one
 physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.

@@ -1,6 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 
+use omegaflow_measure::stats::gammln;
+
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
 const FLOOR: i64 = -2560;
@@ -39,7 +41,6 @@ fn month_key(day: i64) -> i64 {
     }
 }
 
-
 fn median(vals: &[f64]) -> Option<f64> {
     if vals.is_empty() {
         return None;
@@ -63,27 +64,6 @@ fn mean_log10(vals: &[f64]) -> Option<f64> {
     } else {
         None
     }
-}
-
-fn gammln(xx: f64) -> f64 {
-    let cof = [
-        76.18009172947146,
-        -86.50532032941677,
-        24.01409824083091,
-        -1.231739572450155,
-        0.1208650973866179e-2,
-        -0.5395239384953e-5,
-    ];
-    let x = xx;
-    let y = xx;
-    let tmp = x + 5.5;
-    let tmp = (x + 0.5) * tmp.ln() - tmp;
-    let ser = 1.000000000190015
-        + cof
-            .iter()
-            .enumerate()
-            .fold(0.0, |s, (i, c)| s + c / (y + (i + 1) as f64));
-    tmp + (2.5066282746310005 * ser / x).ln()
 }
 
 fn ln_choose(n: f64, k: f64) -> f64 {
@@ -278,17 +258,13 @@ fn main() {
     for ms in &milestones {
         push(format!(
             "  TEST {} (daycell {}) — {}",
-            ms.name,
-            ms.day,
-            ms.note
+            ms.name, ms.day, ms.note
         ));
     }
     for ms in &context_events {
         push(format!(
             "  CONTEXT {} (daycell {}) — {}",
-            ms.name,
-            ms.day,
-            ms.note
+            ms.name, ms.day, ms.note
         ));
     }
 
@@ -302,7 +278,10 @@ fn main() {
     push("series | robust days | loud | quiet | adjacent-day flips | loud frac".to_string());
     for mode in modes {
         for st in trio {
-            let sub: Vec<&Cell> = cells_sorted.iter().filter(|c| c.mode == mode && c.st == st).collect();
+            let sub: Vec<&Cell> = cells_sorted
+                .iter()
+                .filter(|c| c.mode == mode && c.st == st)
+                .collect();
             let loud = sub.iter().filter(|c| c.rms >= LOUD_HZ).count();
             let quiet = sub.len() - loud;
             let mut flips = 0usize;
@@ -320,11 +299,18 @@ fn main() {
                 loud,
                 quiet,
                 flips,
-                if sub.is_empty() { 0.0 } else { loud as f64 / sub.len() as f64 }
+                if sub.is_empty() {
+                    0.0
+                } else {
+                    loud as f64 / sub.len() as f64
+                }
             ));
         }
     }
-    push(format!("total | {tot_rob} | {tot_loud} | {} | {tot_flip} |", tot_rob - tot_loud));
+    push(format!(
+        "total | {tot_rob} | {tot_loud} | {} | {tot_flip} |",
+        tot_rob - tot_loud
+    ));
     push("register reference: 400 robust days, 207 loud, 193 quiet, 105 flips (floor register, n >= 30)".to_string());
 
     push(String::new());
@@ -338,7 +324,9 @@ fn main() {
                 .filter(|c| c.st == st && month_key(c.day) == y * 100 + m)
                 .collect();
             if sub.is_empty() {
-                push(format!("st{st} {y:04}-{m:02}: 0 cells (0 honored) | 0 station-days (0 honored)"));
+                push(format!(
+                    "st{st} {y:04}-{m:02}: 0 cells (0 honored) | 0 station-days (0 honored)"
+                ));
                 continue;
             }
             let mut modes_s: Vec<String> = Vec::new();
@@ -380,9 +368,7 @@ fn main() {
         push(String::new());
         push(format!(
             "--- TEST {} (daycell {}) — {}",
-            ms.name,
-            ms.day,
-            ms.note
+            ms.name, ms.day, ms.note
         ));
         for mode in modes {
             for st in trio {
@@ -397,7 +383,10 @@ fn main() {
                 let pre_q = pre.len() - pre_l;
                 let post_q = post.len() - post_l;
                 let p = if pre.len() >= MIN_SIDE && post.len() >= MIN_SIDE {
-                    match fisher_two_sided(pre_l, pre_q, post_l, post_q) { Some(v) => format!("{v:.4}"), None => "-".to_string() }
+                    match fisher_two_sided(pre_l, pre_q, post_l, post_q) {
+                        Some(v) => format!("{v:.4}"),
+                        None => "-".to_string(),
+                    }
                 } else {
                     "thin".to_string()
                 };
@@ -425,12 +414,25 @@ fn main() {
             let pre_l = pre.iter().filter(|c| c.rms >= LOUD_HZ).count();
             let post_l = post.iter().filter(|c| c.rms >= LOUD_HZ).count();
             let p = if pre.len() >= MIN_SIDE && post.len() >= MIN_SIDE {
-                fmt_p(fisher_two_sided(pre_l, pre.len() - pre_l, post_l, post.len() - post_l))
+                fmt_p(fisher_two_sided(
+                    pre_l,
+                    pre.len() - pre_l,
+                    post_l,
+                    post.len() - post_l,
+                ))
             } else {
                 "thin".to_string()
             };
-            let fpre = if pre.is_empty() { 0.0 } else { pre_l as f64 / pre.len() as f64 };
-            let fpost = if post.is_empty() { 0.0 } else { post_l as f64 / post.len() as f64 };
+            let fpre = if pre.is_empty() {
+                0.0
+            } else {
+                pre_l as f64 / pre.len() as f64
+            };
+            let fpost = if post.is_empty() {
+                0.0
+            } else {
+                post_l as f64 / post.len() as f64
+            };
             push(format!(
                 "  st{st} pooled modes (cell unit): pre n {} loud {pre_l} frac {:.3} | post n {} loud {post_l} frac {:.3} | diff {:+.3} | fisher p {p}",
                 pre.len(),
@@ -446,12 +448,25 @@ fn main() {
         let pre_l = pre.iter().filter(|c| c.rms >= LOUD_HZ).count();
         let post_l = post.iter().filter(|c| c.rms >= LOUD_HZ).count();
         let p = if pre.len() >= MIN_SIDE && post.len() >= MIN_SIDE {
-            fmt_p(fisher_two_sided(pre_l, pre.len() - pre_l, post_l, post.len() - post_l))
+            fmt_p(fisher_two_sided(
+                pre_l,
+                pre.len() - pre_l,
+                post_l,
+                post.len() - post_l,
+            ))
         } else {
             "thin".to_string()
         };
-        let fpre = if pre.is_empty() { 0.0 } else { pre_l as f64 / pre.len() as f64 };
-        let fpost = if post.is_empty() { 0.0 } else { post_l as f64 / post.len() as f64 };
+        let fpre = if pre.is_empty() {
+            0.0
+        } else {
+            pre_l as f64 / pre.len() as f64
+        };
+        let fpost = if post.is_empty() {
+            0.0
+        } else {
+            post_l as f64 / post.len() as f64
+        };
         push(format!(
             "  all stations pooled (cell unit): pre n {} loud {pre_l} frac {:.3} | post n {} loud {post_l} frac {:.3} | diff {:+.3} | fisher p {p}",
             pre.len(),
@@ -489,7 +504,10 @@ fn main() {
     }
 
     push(String::new());
-    push("== 2c. per-series data-driven best split inside the whole floor era, robust series ==".to_string());
+    push(
+        "== 2c. per-series data-driven best split inside the whole floor era, robust series =="
+            .to_string(),
+    );
     push(format!("split point between consecutive robust days, both sides >= {MIN_SIDE} cells; the gap = |loud frac right - loud frac left|; nearest tested milestone given"));
     for mode in modes {
         for st in trio {
@@ -498,7 +516,10 @@ fn main() {
                 .filter(|c| c.mode == mode && c.st == st)
                 .collect();
             if sub.len() < 2 * MIN_SIDE {
-                push(format!("M{mode} st{st}: {} robust days, no split with >= {MIN_SIDE} per side", sub.len()));
+                push(format!(
+                    "M{mode} st{st}: {} robust days, no split with >= {MIN_SIDE} per side",
+                    sub.len()
+                ));
                 continue;
             }
             let mut best: Option<(f64, usize, i64)> = None;
@@ -534,13 +555,13 @@ fn main() {
     push(String::new());
     push("== 3. station-day level probability (a station-day = distinct day with >= 1 robust cell; loud = >= 1 loud robust cell), milestone split ==".to_string());
     for ms in &milestones {
-        push(format!(
-            "--- TEST {} (daycell {})",
-            ms.name,
-            ms.day
-        ));
+        push(format!("--- TEST {} (daycell {})", ms.name, ms.day));
         for st in trio {
-            let days: BTreeSet<i64> = cells_sorted.iter().filter(|c| c.st == st).map(|c| c.day).collect();
+            let days: BTreeSet<i64> = cells_sorted
+                .iter()
+                .filter(|c| c.st == st)
+                .map(|c| c.day)
+                .collect();
             let pre_d: Vec<i64> = days.iter().filter(|d| **d < ms.day).copied().collect();
             let post_d: Vec<i64> = days.iter().filter(|d| **d >= ms.day).copied().collect();
             let loud_of = |d: &i64| -> bool {
@@ -551,12 +572,25 @@ fn main() {
             let pre_l = pre_d.iter().filter(|d| loud_of(d)).count();
             let post_l = post_d.iter().filter(|d| loud_of(d)).count();
             let p = if pre_d.len() >= MIN_SIDE && post_d.len() >= MIN_SIDE {
-                fmt_p(fisher_two_sided(pre_l, pre_d.len() - pre_l, post_l, post_d.len() - post_l))
+                fmt_p(fisher_two_sided(
+                    pre_l,
+                    pre_d.len() - pre_l,
+                    post_l,
+                    post_d.len() - post_l,
+                ))
             } else {
                 "thin".to_string()
             };
-            let fpre = if pre_d.is_empty() { 0.0 } else { pre_l as f64 / pre_d.len() as f64 };
-            let fpost = if post_d.is_empty() { 0.0 } else { post_l as f64 / post_d.len() as f64 };
+            let fpre = if pre_d.is_empty() {
+                0.0
+            } else {
+                pre_l as f64 / pre_d.len() as f64
+            };
+            let fpost = if post_d.is_empty() {
+                0.0
+            } else {
+                post_l as f64 / post_d.len() as f64
+            };
             push(format!(
                 "  st{st}: pre days {} loud {pre_l} frac {:.3} | post days {} loud {post_l} frac {:.3} | diff {:+.3} | fisher p {p}",
                 pre_d.len(),
@@ -569,18 +603,30 @@ fn main() {
         let all_days: BTreeSet<i64> = cells_sorted.iter().map(|c| c.day).collect();
         let pre_d: Vec<i64> = all_days.iter().filter(|d| **d < ms.day).copied().collect();
         let post_d: Vec<i64> = all_days.iter().filter(|d| **d >= ms.day).copied().collect();
-        let loud_of = |d: &i64| -> bool {
-            cells_sorted.iter().any(|c| c.day == *d && c.rms >= LOUD_HZ)
-        };
+        let loud_of =
+            |d: &i64| -> bool { cells_sorted.iter().any(|c| c.day == *d && c.rms >= LOUD_HZ) };
         let pre_l = pre_d.iter().filter(|d| loud_of(d)).count();
         let post_l = post_d.iter().filter(|d| loud_of(d)).count();
         let p = if pre_d.len() >= MIN_SIDE && post_d.len() >= MIN_SIDE {
-            fmt_p(fisher_two_sided(pre_l, pre_d.len() - pre_l, post_l, post_d.len() - post_l))
+            fmt_p(fisher_two_sided(
+                pre_l,
+                pre_d.len() - pre_l,
+                post_l,
+                post_d.len() - post_l,
+            ))
         } else {
             "thin".to_string()
         };
-        let fpre = if pre_d.is_empty() { 0.0 } else { pre_l as f64 / pre_d.len() as f64 };
-        let fpost = if post_d.is_empty() { 0.0 } else { post_l as f64 / post_d.len() as f64 };
+        let fpre = if pre_d.is_empty() {
+            0.0
+        } else {
+            pre_l as f64 / pre_d.len() as f64
+        };
+        let fpost = if post_d.is_empty() {
+            0.0
+        } else {
+            post_l as f64 / post_d.len() as f64
+        };
         push(format!(
             "  all stations (station-days over all modes): pre days {} loud {pre_l} frac {:.3} | post days {} loud {post_l} frac {:.3} | diff {:+.3} | fisher p {p}",
             pre_d.len(),
@@ -592,30 +638,51 @@ fn main() {
     }
 
     push(String::new());
-    push("== 3b. station concordance at each milestone (station-day level, all modes) ==".to_string());
+    push(
+        "== 3b. station concordance at each milestone (station-day level, all modes) =="
+            .to_string(),
+    );
     push("station deltas of the section-3 day metric (post loud-day frac - pre loud-day frac); concordance counts how many stations move up at the milestone; H1 station-bound config steps put the change at the station whose equipment changed (staggered rollout), a global date step moves all stations alike".to_string());
     for ms in &milestones {
         let mut deltas: Vec<(i64, f64, usize, usize, usize, usize)> = Vec::new();
         for st in trio {
-            let days: BTreeSet<i64> = cells_sorted.iter().filter(|c| c.st == st).map(|c| c.day).collect();
+            let days: BTreeSet<i64> = cells_sorted
+                .iter()
+                .filter(|c| c.st == st)
+                .map(|c| c.day)
+                .collect();
             let loud_of = |d: &i64| -> bool {
-                cells_sorted.iter().any(|c| c.st == st && c.day == *d && c.rms >= LOUD_HZ)
+                cells_sorted
+                    .iter()
+                    .any(|c| c.st == st && c.day == *d && c.rms >= LOUD_HZ)
             };
             let pre: Vec<i64> = days.iter().filter(|d| **d < ms.day).copied().collect();
             let post: Vec<i64> = days.iter().filter(|d| **d >= ms.day).copied().collect();
             let pre_l = pre.iter().filter(|d| loud_of(d)).count();
             let post_l = post.iter().filter(|d| loud_of(d)).count();
-            let fp = if pre.is_empty() { 0.0 } else { pre_l as f64 / pre.len() as f64 };
-            let fo = if post.is_empty() { 0.0 } else { post_l as f64 / post.len() as f64 };
+            let fp = if pre.is_empty() {
+                0.0
+            } else {
+                pre_l as f64 / pre.len() as f64
+            };
+            let fo = if post.is_empty() {
+                0.0
+            } else {
+                post_l as f64 / post.len() as f64
+            };
             deltas.push((st, fo - fp, pre.len(), pre_l, post.len(), post_l));
         }
-        let up = deltas.iter().filter(|(_, d, _, _, _, _)| *d > 0.001).count();
-        let down = deltas.iter().filter(|(_, d, _, _, _, _)| *d < -0.001).count();
+        let up = deltas
+            .iter()
+            .filter(|(_, d, _, _, _, _)| *d > 0.001)
+            .count();
+        let down = deltas
+            .iter()
+            .filter(|(_, d, _, _, _, _)| *d < -0.001)
+            .count();
         let dstr: Vec<String> = deltas
             .iter()
-            .map(|(st, d, pn, pl, on, ol)| {
-                format!("st{st} {d:+.3} (pre {pl}/{pn} post {ol}/{on})")
-            })
+            .map(|(st, d, pn, pl, on, ol)| format!("st{st} {d:+.3} (pre {pl}/{pn} post {ol}/{on})"))
             .collect();
         push(format!(
             "--- TEST {} (daycell {}) | stations up {up} down {down} | {}",
@@ -634,22 +701,33 @@ fn main() {
                     .iter()
                     .filter(|c| c.mode == mode && c.st == st)
                     .collect();
-                let pre: Vec<f64> = sub.iter().filter(|c| c.day < ms.day).map(|c| c.rms).collect();
-                let post: Vec<f64> = sub.iter().filter(|c| c.day >= ms.day).map(|c| c.rms).collect();
+                let pre: Vec<f64> = sub
+                    .iter()
+                    .filter(|c| c.day < ms.day)
+                    .map(|c| c.rms)
+                    .collect();
+                let post: Vec<f64> = sub
+                    .iter()
+                    .filter(|c| c.day >= ms.day)
+                    .map(|c| c.rms)
+                    .collect();
                 let fmt = |v: &[f64]| -> String {
                     if v.is_empty() {
                         "n 0".to_string()
                     } else {
                         match (median(v), mean_log10(v)) {
-                            (Some(med), Some(mv)) => format!(
-                                "n {} med {med:.3} Hz meanlog {mv:+.2}",
-                                v.len()
-                            ),
+                            (Some(med), Some(mv)) => {
+                                format!("n {} med {med:.3} Hz meanlog {mv:+.2}", v.len())
+                            }
                             _ => format!("n {}", v.len()),
                         }
                     }
                 };
-                push(format!("  M{mode} st{st}: pre {} | post {}", fmt(&pre), fmt(&post)));
+                push(format!(
+                    "  M{mode} st{st}: pre {} | post {}",
+                    fmt(&pre),
+                    fmt(&post)
+                ));
             }
         }
     }
