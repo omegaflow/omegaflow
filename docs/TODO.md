@@ -24,9 +24,35 @@ bleiben als historisches Register unangetastet — Vergangenheit wird nicht umge
 war die Schuld einer unbenannten Form — das Benennen zahlt sie: NRS1 ist eine
 gehaltene Serie (kein Band gewählt, kein Skalar erfunden); `serien_gate` steht
 neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
-- **GBCO-Verbrauch**: der `witness gestalt`-Eintrag steht, aber die
-  Station-Thread-Integration (Motion::Surface, motion.rs) ist das benannte Follow-on.
-- **`witness presence`** bleibt reserviert ohne gebautes Gegenstück (Doktrin C2).
+- **GBCO-Verbrauch**: gebaut — `gestalt_surface_threads` (`motion.rs`) + der Lade-Pfad
+  (`load_gestalt_surface_threads`, `main_flow.rs`, Halte-Feld `gestalt_surface_threads`).
+  Offen bleibt nur der CDN-Dispatch (`gebco-bathymetry-cdn.yml`, Operator-Wort).
+- **`witness presence`** bleibt reserviert (Rat 2026-09-07 erneut): die presence-catalog-
+  Ablehnungen stehen — Position + Urteil, kein gemessener Skalar. Positives Gate (wann die
+  Tür aufgeht): gemessener Skalar am Punkt + Consent-Wurzel zuerst; nie der einzige Zeuge.
+
+## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
+
+`area_reconcile` (Kreuzprüfung b) fand zwei registrierte, unmanifestierte
+Assets. Produzenten-Compiler und CDN-Workflows sind gebaut und committet
+(cbd80e7):
+- `d20-cdn.yml` — `d20_compiler` → release `data.pmel.noaa.gov`
+- `qbo-cdn.yml` — `qbo_compiler` → release `www.cpc.ncep.noaa.gov` (der
+  Compiler lud zuvor auf das ssd-Default — die Bindung an den registrierten
+  Netloc ist korrigiert)
+
+**qbo_30hpa.csv — geschlossen:** auf dem CDN (`www.cpc.ncep.noaa.gov`,
+23.205 B, Upload 2026-09-07T18:21Z, qbo-cdn run 34151182163).
+
+**d20_thermocline.csv — offen, CI-Route blockiert (gemessen 2026-09-07):**
+der Compiler holt live von data.pmel.noaa.gov/pmel/erddap (pmelTaoDyIso);
+die Quelle antwortet lokal 200 (93.390 B), vom GitHub-Runner (Azure
+eastus) aber 403 auf der Kette data.pmel.noaa.gov → coastwatch.pfeg.noaa.gov
+(curl exit 22) — kein Upload, Health-Issue #7 trägt den Befund. Der Block
+sitzt an der Runner-Route, nicht an der Quelle: die url-Linie in
+phi/sources.φ bleibt; der Dispatch (`d20-cdn.yml`) ist der benannte Weg,
+sobald die Route entblockt ist oder ein nicht-Azure-Manifestator existiert.
+Bestand gemessen: kein Asset auf dem CDN, keine erfundene Live-URL.
 
 ## Register — /tmp-Scratch & Python-Tools (2026-09-06)
 
