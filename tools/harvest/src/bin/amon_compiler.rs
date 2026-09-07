@@ -4,6 +4,7 @@ use omegaflow::amon::{
     PRES_TJD, REC_BYTES,
 };
 use omegaflow::cdn::upload_asset;
+use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use std::collections::BTreeSet;
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 
@@ -89,7 +90,29 @@ fn parse_notice(text: &str) -> Result<Parsed, Skip> {
     })
 }
 
+fn witness_s2_direction_identity(magic: [u8; 4]) -> Result<(), String> {
+    match magic_identity(magic) {
+        Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)) => {
+            eprintln!(
+                "{} reads as an s2-direction witness record",
+                String::from_utf8_lossy(&magic)
+            );
+            Ok(())
+        }
+        Some(other) => Err(format!(
+            "{} reads {:?}, not s2-direction — the asset stays unwritten",
+            String::from_utf8_lossy(&magic),
+            other
+        )),
+        None => Err(format!(
+            "{} reads no identity — the asset stays unwritten",
+            String::from_utf8_lossy(&magic)
+        )),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
+    witness_s2_direction_identity(omegaflow::amon::MAGIC)?;
     let Some(input) = arg_value(args, "--input") else {
         return Err(
             "usage: amon_compiler --input <dir-of-.amon> --out <map.amn1> [--ci-mode] — refused"
