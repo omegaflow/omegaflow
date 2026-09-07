@@ -367,7 +367,9 @@ pub fn probe_one(
         let mut coords = String::new();
         let mut map_path: Option<String> = None;
         let mut budget = 48usize;
-        walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+        if !hapi_draft_fields(&url, &p, env, &mut fields) {
+            walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+        }
         if map_path.is_none() && !coords.is_empty() {
             map_path = Some(".".to_string());
         }
@@ -907,6 +909,193 @@ pub fn derive_ttl(url: &str, body: &str, env: &HashMap<String, String>) -> Optio
     None
 }
 
+struct HapiMetaParam {
+    name: String,
+    unit: Option<String>,
+}
+
+fn hapi_meta_params(parsed: &JsonVal) -> Option<Vec<HapiMetaParam>> {
+    let JsonVal::Obj(root) = parsed else {
+        return None;
+    };
+    let JsonVal::Arr(list) = root.get("parameters")? else {
+        return None;
+    };
+    let mut out = Vec::new();
+    for p in list {
+        let JsonVal::Obj(pm) = p else {
+            continue;
+        };
+        let Some(JsonVal::Str(name)) = pm.get("name") else {
+            continue;
+        };
+        if name.is_empty() {
+            continue;
+        }
+        let unit = match pm.get("units") {
+            Some(JsonVal::Str(u)) if !u.trim().is_empty() => Some(u.clone()),
+            _ => None,
+        };
+        out.push(HapiMetaParam {
+            name: name.clone(),
+            unit,
+        });
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
+fn hapi_meta_for(
+    url: &str,
+    parsed: &JsonVal,
+    env: &HashMap<String, String>,
+) -> Option<Vec<HapiMetaParam>> {
+    hapi_meta_params(parsed).or_else(|| {
+        let info_url = resolve_secret(&hapi_cadence_url(url)?, env);
+        let info_body = fetch_raw_probe(&info_url, None, &[])?;
+        let info_json = parse_json(&info_body)?;
+        hapi_meta_params(&info_json)
+    })
+}
+
+fn hapi_request_order(url: &str, meta: &[HapiMetaParam]) -> Vec<String> {
+    let query = match url.split_once('?') {
+        Some((_, q)) => q,
+        None => "",
+    };
+    let requested: Option<Vec<String>> = query
+        .split('&')
+        .find_map(|kv| kv.strip_prefix("parameters="))
+        .map(|list| {
+            list.split(',')
+                .map(str::trim)
+                .filter(|s| !s.is_empty())
+                .map(str::to_string)
+                .collect()
+        });
+    match requested {
+        Some(rs) if !rs.is_empty() => rs,
+        _ => meta.iter().skip(1).map(|m| m.name.clone()).collect(),
+    }
+}
+
+fn hapi_draft_fields(
+    url: &str,
+    parsed: &JsonVal,
+    env: &HashMap<String, String>,
+    fields: &mut String,
+) -> bool {
+    if !url.contains("/hapi/") {
+        return false;
+    }
+    let JsonVal::Obj(root) = parsed else {
+        return false;
+    };
+    let Some(JsonVal::Arr(data)) = root.get("data") else {
+        return false;
+    };
+    if !matches!(data.first(), Some(JsonVal::Arr(_))) {
+        return false;
+    }
+    let Some(meta) = hapi_meta_for(url, parsed, env) else {
+        fields.push_str("# pending hapi columns — HAPI parameter metadata absent, review\n");
+        return true;
+    };
+    let width = match data.first() {
+        Some(JsonVal::Arr(row)) => row.len(),
+        _ => 1,
+    };
+    let ncols = width.saturating_sub(1);
+    if ncols == 0 {
+        fields.push_str("# pending hapi — data rows carry no value column\n");
+        return true;
+    }
+    let order = hapi_request_order(url, &meta);
+    if order.len() != ncols {
+        for (i, req) in order.iter().enumerate() {
+            fields.push_str(&format!(
+                "# pending hapi column {} — {} alignment unverified (metadata width {} vs data width {}), review\n",
+                i + 1,
+                req,
+                order.len(),
+                ncols
+            ));
+        }
+        return true;
+    }
+    let resolved: Vec<Option<&HapiMetaParam>> = order
+        .iter()
+        .map(|req| meta.iter().find(|m| m.name == *req))
+        .collect();
+    if resolved.iter().any(|c| c.is_none()) {
+        for (i, req) in order.iter().enumerate() {
+            fields.push_str(&format!(
+                "# pending hapi column {} — parameter {} absent from metadata, review\n",
+                i + 1,
+                req
+            ));
+        }
+        return true;
+    }
+    let mut hapi_line = String::from("hapi");
+    for (short, col) in order.iter().zip(resolved.iter()) {
+        match col {
+            Some(col) => hapi_line.push_str(&format!(" {}={}", short, col.name)),
+            None => return true,
+        }
+    }
+    fields.push_str(&hapi_line);
+    fields.push('\n');
+    for col in resolved.iter() {
+        let Some(col) = col else {
+            return true;
+        };
+        let (force, _guess_unit, tau) = probe_classify(&col.name);
+        match force {
+            "UNCERTAIN" => {
+                fields.push_str(&format!(
+                    "# uncertain field {} — force/unit undetermined, review\n",
+                    col.name
+                ));
+            }
+            "DROP" => {}
+            _ => match &col.unit {
+                Some(unit) => {
+                    let unit_norm = normalize_unit(unit);
+                    let in_registry = match force_id_of(force) {
+                        Some(fid) => allowed_units_for_force(fid).contains(&unit_norm.as_str()),
+                        None => false,
+                    };
+                    if !in_registry {
+                        fields
+                            .push_str(&format!("# unit {} not in force registry — review\n", unit));
+                    }
+                    if let Some(line) = hapi_field_line(&col.name, force, unit, tau) {
+                        fields.push_str(&line);
+                    }
+                }
+                None => {
+                    fields.push_str(&format!(
+                        "# pending field {} — HAPI unit absent, review\n",
+                        col.name
+                    ));
+                }
+            },
+        }
+    }
+    if let Some(JsonVal::Arr(row)) = data.first() {
+        for (col, cell) in resolved.iter().zip(row.iter().skip(1)) {
+            if let Some(col) = col {
+                fields.push_str(&format!("# {} = {:?}\n", col.name, cell));
+            }
+        }
+    }
+    true
+}
+
 pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
     if let JsonVal::Obj(map) = val {
         for (k, v) in map {
@@ -944,6 +1133,29 @@ pub fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<
     Some(format!(
         "field {} {} {} {} {} {} 0.0 0.0\n",
         key, key, kid, force, unit, tau
+    ))
+}
+
+fn kernel_name_of(id: u8) -> Option<&'static str> {
+    match id {
+        0 => Some("inverse-square"),
+        1 => Some("gaussian-inverse-square"),
+        2 => Some("gaussian-inverse"),
+        3 => Some("erfc"),
+        4 => Some("exponential-decay"),
+        5 => Some("patch-levy"),
+        6 => Some("inverse-linear"),
+        _ => None,
+    }
+}
+
+fn hapi_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<String> {
+    let fid = force_id_of(force)?;
+    let kid = kernel_id_for_force(fid)?;
+    let kernel = kernel_name_of(kid)?;
+    Some(format!(
+        "field {} {} {} {} {} {} 0.0 0.0\n",
+        key, key, kernel, force, unit, tau
     ))
 }
 
@@ -1876,14 +2088,16 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                         let mut coords = String::new();
                         let mut map_path: Option<String> = None;
                         let mut budget = 48usize;
-                        walk_json_probe(
-                            effective,
-                            "",
-                            &mut fields,
-                            &mut coords,
-                            &mut map_path,
-                            &mut budget,
-                        );
+                        if !hapi_draft_fields(&url, effective, env, &mut fields) {
+                            walk_json_probe(
+                                effective,
+                                "",
+                                &mut fields,
+                                &mut coords,
+                                &mut map_path,
+                                &mut budget,
+                            );
+                        }
                         let ttl = derive_ttl(&url, &body, env);
                         let (frame, reason) = derive_frame(effective, &coords);
                         if !frame.is_empty() {
