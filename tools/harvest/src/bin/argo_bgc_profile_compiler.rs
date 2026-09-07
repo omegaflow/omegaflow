@@ -11,6 +11,7 @@ use omegaflow::netcdf::{NetcdfFile, NetcdfType};
 use std::collections::HashSet;
 use std::env;
 use std::fs;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 const NETLOC: &str = "data-argo.ifremer.fr";
 
@@ -610,30 +611,57 @@ fn run_emit_bin(args: &[String], bgc: &[IndexRow], out_path: &str, ci: bool) {
     };
     let wmo = arg_value(args, "--wmo");
     let max = arg_usize(args, "--max-profiles").unwrap_or(300);
-    let mut records: Vec<GeoRec> = Vec::new();
-    let mut n_profiles = 0usize;
-    for row in bgc {
-        if n_profiles >= max {
-            break;
-        }
-        if let Some(w) = &wmo {
-            if wmo_of(&row.file).as_deref() != Some(w.as_str()) {
-                continue;
+    let selected: Vec<&IndexRow> = bgc
+        .iter()
+        .filter(|row| match &wmo {
+            Some(w) => wmo_of(&row.file).as_deref() == Some(w.as_str()),
+            None => true,
+        })
+        .take(max)
+        .collect();
+    let n_threads = match std::thread::available_parallelism() {
+        Ok(n) => n.get(),
+        Err(_) => 1,
+    };
+    let n_profiles = AtomicUsize::new(0);
+    let lsk_ref = &lsk;
+    let n_profiles_ref = &n_profiles;
+    let mut records: Vec<GeoRec> = if selected.is_empty() {
+        Vec::new()
+    } else {
+        let chunk_size = selected.len().div_ceil(n_threads);
+        std::thread::scope(|s| {
+            let mut handles = Vec::new();
+            for chunk in selected.chunks(chunk_size) {
+                handles.push(s.spawn(move || {
+                    let mut out = Vec::new();
+                    for row in chunk {
+                        let url = format!("{}/{}", DAC_ROOT, row.file);
+                        let Some(bytes) = fetch_raw_bytes(&url, 60) else {
+                            eprintln!("argo_bgc: {} fetch void — pending", url);
+                            continue;
+                        };
+                        if !bytes.starts_with(b"CDF") {
+                            continue;
+                        }
+                        let recs = bgc_rows(&bytes, lsk_ref);
+                        n_profiles_ref.fetch_add(1, Ordering::Relaxed);
+                        eprintln!("argo_bgc: {} → {} level rows", row.file, recs.len());
+                        out.extend(recs);
+                    }
+                    out
+                }));
             }
-        }
-        let url = format!("{}/{}", DAC_ROOT, row.file);
-        let Some(bytes) = fetch_raw_bytes(&url, 60) else {
-            eprintln!("argo_bgc: {} fetch void — pending", url);
-            continue;
-        };
-        if !bytes.starts_with(b"CDF") {
-            continue;
-        }
-        let recs = bgc_rows(&bytes, &lsk);
-        n_profiles += 1;
-        eprintln!("argo_bgc: {} → {} level rows", row.file, recs.len());
-        records.extend(recs);
-    }
+            let mut merged = Vec::new();
+            for h in handles {
+                if let Ok(v) = h.join() {
+                    merged.extend(v);
+                }
+            }
+            merged
+        })
+    };
+    let n_profiles = n_profiles.load(Ordering::Relaxed);
     eprintln!("argo_bgc: {} profiles read", n_profiles);
     if records.is_empty() {
         eprintln!("argo_bgc: no level rows — the bin stays unwritten (0 honored)");
