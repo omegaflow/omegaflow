@@ -768,3 +768,55 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
         );
     }
 }
+
+#[test]
+fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
+    use crate::archivar::s2event::{S2EventRecord, ROOT_NEUTRINO};
+    let evt = |ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>| S2EventRecord {
+        ra_deg: ra as f32,
+        dec_deg: dec as f32,
+        sigma_arcsec: None,
+        epoch_tdb: epoch,
+        energy,
+        signalness: None,
+        far: None,
+        particle_root: ROOT_NEUTRINO,
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(Mutex::new(None)),
+            Arc::new(AtomicBool::new(false)),
+            Arc::new(AtomicBool::new(false)),
+            mpsc::channel().0,
+            mpsc::channel().0,
+            mpsc::channel().1,
+            mpsc::channel().1,
+            Arc::new(RwLock::new(PresenceState::rest())),
+            Arc::new(RwLock::new(DiodeState {
+                force_ref: [0.0; 9],
+                expose_offset: EXPOSE_OFFSET_BASE,
+            })),
+        )
+    };
+    app.t_presence = 8.4e8;
+    app.sky.events = vec![
+        evt(30.0, 60.0, Some(8.4e8), Some(187.0)),
+        evt(40.0, 50.0, None, Some(9.0)),
+    ];
+    app.sky_tick();
+    assert_eq!(app.sky.oscs.len(), 2);
+    let with_epoch = &app.sky.oscs[0];
+    assert!((with_epoch.weight - 187.0).abs() < 1e-6);
+    let expected = evt(30.0, 60.0, Some(8.4e8), Some(187.0));
+    let p = expected.unit_direction();
+    for k in 0..3 {
+        assert!((with_epoch.p_hat[k] - p[k]).abs() < 1e-12);
+    }
+    let epochless = &app.sky.oscs[1];
+    assert_eq!(epochless.weight, 0.0);
+    assert_eq!(app.sky.report().live_count, 1);
+    assert_eq!(app.sky.report().osc_count, 2);
+}

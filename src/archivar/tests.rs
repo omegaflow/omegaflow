@@ -5917,6 +5917,224 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
 }
 
 #[test]
+fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
+    let now = 840511523.88;
+    let recs = vec![
+        crate::geo::GbcoRec {
+            lat: -67.6,
+            lon: 62.87,
+            elev: -833.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 51.2,
+            lon: 10.4,
+            elev: 283.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 0.0,
+            lon: -156.6,
+            elev: 0.0,
+        },
+    ];
+    let parsed = crate::geo::parse_gbco(&crate::geo::write_gbco(&recs))
+        .expect("the GBCO roundtrip parses");
+    assert_eq!(parsed.len(), 3);
+    let props = super::BodyProperties {
+        α0_deg: 270.0,
+        dα0_dt_deg_per_century: 0.003,
+        δ0_deg: 66.54,
+        dδ0_dt_deg_per_century: 0.013,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
+        gaussian_inverse_square: 340.2,
+        gaussian_inverse: 5950.0,
+        erfc: 3630.0,
+        exponential_decay: 2.18e-5,
+        patch_levy: 2.00e-5,
+        gm: Some(3.986004418e14),
+        j2: Some(1.08262668e-3),
+        j4: Some(-1.619e-6),
+        radii_b: Some(6378136.6),
+        radii_c: Some(6356751.9),
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let jd_now = super::J2000_EPOCH + now / 86400.0;
+    let mut eph = super::BodyEphemeris {
+        granules: Vec::new(),
+        rotation_matrices: Vec::new(),
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+    };
+    for i in -1..=1 {
+        let t0 = jd_now + i as f64 * 16.0;
+        let mut cx = [0.0_f64; super::CHEBYSHEV_N];
+        cx[0] = 1.5e11;
+        eph.granules.push(super::ChebyshevGranule {
+            t0_jd: t0,
+            dt_jd: 16.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        });
+    }
+    let mut eph_map = std::collections::HashMap::new();
+    eph_map.insert("earth".to_string(), eph);
+    let motions = gestalt_surface_threads(&parsed, "earth");
+    assert_eq!(motions.len(), 3);
+    for (m, rec) in motions.iter().zip(recs.iter()) {
+        let icrs = m
+            .at(now, now, &eph_map)
+            .expect("the gestalt surface thread projects to ICRS");
+        assert!(
+            icrs[0].is_finite() && icrs[1].is_finite() && icrs[2].is_finite(),
+            "the projected gestalt station is finite"
+        );
+        match m {
+            Motion::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+                ..
+            } => {
+                assert_eq!(body_name, "earth");
+                assert_eq!(*lat, rec.lat);
+                assert_eq!(*lon, rec.lon);
+                assert_eq!(*alt, rec.elev);
+            }
+            _ => panic!("the gestalt thread is not a surface motion"),
+        }
+    }
+}
+
+#[test]
+fn gestalt_surface_threads_skip_records_without_a_finite_measured_depth() {
+    let recs = vec![
+        crate::geo::GbcoRec {
+            lat: -67.6,
+            lon: 62.87,
+            elev: -833.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 44.0,
+            lon: 12.0,
+            elev: f64::NAN,
+        },
+    ];
+    let motions = gestalt_surface_threads(&recs, "earth");
+    assert_eq!(motions.len(), 1);
+    match &motions[0] {
+        Motion::Surface { alt, .. } => assert_eq!(*alt, -833.0),
+        _ => panic!("the surviving gestalt thread is not a surface motion"),
+    }
+}
+
+#[test]
+fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
+    let now = 840511523.88;
+    let recs = vec![
+        crate::geo::GbcoRec {
+            lat: -67.6,
+            lon: 62.87,
+            elev: -833.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 51.2,
+            lon: 10.4,
+            elev: 283.0,
+        },
+        crate::geo::GbcoRec {
+            lat: 0.0,
+            lon: -156.6,
+            elev: 0.0,
+        },
+    ];
+    let path = "/tmp/opencode/gbco_gestalt_asset_test.gbco";
+    if std::fs::write(&path, &crate::geo::write_gbco(&recs)).is_err() {
+        return;
+    }
+    let held = load_gestalt_surface_threads(path, "earth")
+        .expect("the .gbco asset load holds the gestalt surface threads");
+    assert_eq!(held.len(), 3);
+    let props = super::BodyProperties {
+        α0_deg: 270.0,
+        dα0_dt_deg_per_century: 0.003,
+        δ0_deg: 66.54,
+        dδ0_dt_deg_per_century: 0.013,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
+        gaussian_inverse_square: 340.2,
+        gaussian_inverse: 5950.0,
+        erfc: 3630.0,
+        exponential_decay: 2.18e-5,
+        patch_levy: 2.00e-5,
+        gm: Some(3.986004418e14),
+        j2: Some(1.08262668e-3),
+        j4: Some(-1.619e-6),
+        radii_b: Some(6378136.6),
+        radii_c: Some(6356751.9),
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let jd_now = super::J2000_EPOCH + now / 86400.0;
+    let mut eph = super::BodyEphemeris {
+        granules: Vec::new(),
+        rotation_matrices: Vec::new(),
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+    };
+    for i in -1..=1 {
+        let t0 = jd_now + i as f64 * 16.0;
+        let mut cx = [0.0_f64; super::CHEBYSHEV_N];
+        cx[0] = 1.5e11;
+        eph.granules.push(super::ChebyshevGranule {
+            t0_jd: t0,
+            dt_jd: 16.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        });
+    }
+    let mut eph_map = std::collections::HashMap::new();
+    eph_map.insert("earth".to_string(), eph);
+    for (m, rec) in held.iter().zip(recs.iter()) {
+        let icrs = m
+            .at(now, now, &eph_map)
+            .expect("the held gestalt surface thread projects to ICRS");
+        assert!(
+            icrs[0].is_finite() && icrs[1].is_finite() && icrs[2].is_finite(),
+            "the held gestalt surface thread projects to a finite ICRS position"
+        );
+        match m {
+            Motion::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+                ..
+            } => {
+                assert_eq!(body_name, "earth");
+                assert_eq!(*lat, rec.lat);
+                assert_eq!(*lon, rec.lon);
+                assert_eq!(*alt, rec.elev);
+            }
+            _ => panic!("the held gestalt thread is not a surface motion"),
+        }
+    }
+}
+
+#[test]
 fn iss_lis_geo_series_roundtrip_and_component_name() {
     let recs = vec![crate::geo::GeoRec {
         t: 753_440_003.0,
