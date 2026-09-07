@@ -2,7 +2,7 @@
   title: Handover — Die offenen Zeugen-Fäden der Weberin: vollständige Übergabe aller Zeugen-Stränge
   class: handover
   date: 2026-09-07
-  sha256: 3d2e5649ba7d80db300422826a3fc7586f82a671eb21b181d4e672de52ecb643
+  sha256: 1db65fb867dd68397191813837046b36ef34da6cfe4706c96dbda04a05a236cb
   status: live
   see-also: docs/concepts/die-weberin.md docs/handover/handover-2026-09-07-weberin-zeugen-faden-matrix.md docs/handover/handover-2026-09-06-weberin-archivar.md docs/concepts/docs-naming.md
 -->
@@ -47,9 +47,11 @@ omegaflow/omegaflow am 2026-09-07). Wo ein Zustand nicht gemessen ist, steht
   dispatcht (Releases `download.bgr.de`, `zenodo.org`,
   `storage.googleapis.com`, `data-argo.ifremer.fr`, erstellt
   2026-09-07T10:58:38–41Z): `bgr_infrasound.bin`, `superdarn_fitacf.bin`,
-  `noaa_nrs_psd.bin`, `argo_bgc.bin`. Diese vier sind Feldblöcke
-  (Oszillatoren), keine Zeugen — sie stehen hier nur als CDN-Hintergrund.
-  `fdsn_waveform.bin` fehlt (Workflow `fdsn-waveform-cdn.yml` uncommittet).
+  `noaa_nrs_psd.bin` sind gemessen auf dem CDN; `argo_bgc.bin` fehlt noch
+  (Release `data-argo.ifremer.fr` ohne Asset, Run 34114243234 in_progress).
+  Diese vier sind Feldblöcke (Oszillatoren), keine Zeugen — sie stehen hier
+  nur als CDN-Hintergrund. `fdsn_waveform.bin` fehlt (Workflow
+  `fdsn-waveform-cdn.yml` uncommittet).
 
 ## 2. Klasse (a) — done: manifestiert, kein offener Schritt
 
