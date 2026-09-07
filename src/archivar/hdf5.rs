@@ -648,10 +648,11 @@ fn parse_datatype(buf: &[u8], off: usize) -> Result<(Hdf5Datatype, usize), Hdf5N
             }
             let (base, used) = parse_datatype(buf, p)?;
             p += used;
-            let count = dims.iter().fold(1usize, |a, d| a * (*d as usize)).max(1);
+            let count = dims.iter().fold(1usize, |a, d| a * (*d as usize));
             dt.array_dims = dims;
+            let base_size = base.size;
             dt.base = Some(Box::new(base));
-            dt.size = size.max(dt.base.as_ref().map(|b| b.size).unwrap_or(0) * count);
+            dt.size = size.max(base_size * count);
         }
         _ => return Err(Hdf5Note::Datatype { class, off }),
     }
@@ -687,7 +688,10 @@ fn parse_layout(buf: &[u8], off: usize) -> Result<Hdf5Layout, Hdf5Note> {
             for i in 0..ndims {
                 dims.push(le_u32(buf, p + 9 + i * 4));
             }
-            let elem_size = dims.pop().unwrap_or(0);
+            let elem_size = match dims.pop() {
+                Some(v) => v,
+                None => return Err(Hdf5Note::Layout { class, off }),
+            };
             Ok(Hdf5Layout::Chunked {
                 btree,
                 chunk_dims: dims,
@@ -856,7 +860,7 @@ fn parse_fractal_heap(buf: &[u8], addr: u64) -> Result<FractalHeap, Hdf5Note> {
         while (1u64 << (n * 8)) - 1 < v {
             n += 1;
         }
-        n.max(1)
+        n
     };
     Ok(FractalHeap {
         id_len,
@@ -918,7 +922,7 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
                     b"FHIB" => {
                         let mut p = a + 4 + 1 + 8 + h.heap_off_size;
                         let mut child_off = block_off;
-                        for row in 0..h.curr_root_rows.max(1) as usize {
+                        for row in 0..h.curr_root_rows as usize {
                             let size = heap_row_size(h, row);
                             for _ in 0..h.table_width {
                                 if p + 8 > buf.len() {
@@ -1425,7 +1429,10 @@ fn apply_filters(
                 *data = out;
             }
             FILTER_SHUFFLE => {
-                let n = data.len() / elem_size.max(1);
+                if elem_size == 0 {
+                    return Err(Hdf5Note::Filter { id: f.id, off: 0 });
+                }
+                let n = data.len() / elem_size;
                 if n == 0 {
                     return Err(Hdf5Note::Filter { id: f.id, off: 0 });
                 }
@@ -1465,7 +1472,10 @@ fn apply_filters(
             }
             FILTER_SCALEOFFSET => {
                 let scale_type = f.cd_values.first().copied().unwrap_or(2);
-                let sf = f.cd_values.get(1).copied().unwrap_or(0);
+                let sf = match f.cd_values.get(1).copied() {
+                    Some(v) => v,
+                    None => 0,
+                };
                 if data.len() < 21 {
                     return Err(Hdf5Note::Filter { id: f.id, off: 0 });
                 }
@@ -1478,16 +1488,18 @@ fn apply_filters(
                 let n_elems = packed.len() * 8 / minbits;
                 let mut out = Vec::with_capacity(n_elems * elem_size);
                 let mut bit_pos = 0usize;
-                let fill_defined = f.cd_values.get(7).copied().unwrap_or(0) == 1;
+                let fill_defined = match f.cd_values.get(7) {
+                    Some(&v) => v == 1,
+                    None => false,
+                };
                 let fill: Vec<u8> = if fill_defined {
                     let mut v = vec![0u8; elem_size];
                     for i in 0..elem_size {
-                        v[i] = f
-                            .cd_values
-                            .get(8 + i / 4)
-                            .copied()
-                            .unwrap_or(0)
-                            .to_le_bytes()[i % 4];
+                        let word = match f.cd_values.get(8 + i / 4) {
+                            Some(&w) => w,
+                            None => 0,
+                        };
+                        v[i] = word.to_le_bytes()[i % 4];
                     }
                     v
                 } else {
@@ -1569,6 +1581,16 @@ fn parse_fill_old(m: &RawMessage) -> Result<(bool, Vec<u8>), Hdf5Note> {
     }
     let size = le_u32(&m.data, 0) as usize;
     Ok((size > 0, m.data[4..4 + size.min(m.data.len() - 4)].to_vec()))
+}
+
+fn unallocated_contiguous(fill_defined: bool, fill: &[u8], len: usize) -> Vec<u8> {
+    let mut out = vec![0u8; len];
+    if fill_defined && !fill.is_empty() {
+        for (i, b) in out.iter_mut().enumerate() {
+            *b = fill[i % fill.len()];
+        }
+    }
+    out
 }
 
 #[derive(Clone, Debug)]
@@ -1828,9 +1850,10 @@ impl<'a> Hdf5File<'a> {
     }
 
     pub fn links_of(&self, path: &str) -> Vec<&Hdf5Link> {
-        self.resolve(path)
-            .map(|o| o.links.iter().collect())
-            .unwrap_or_default()
+        match self.resolve(path) {
+            Ok(o) => o.links.iter().collect(),
+            Err(_) => Vec::new(),
+        }
     }
 
     pub fn read_dataset(&self, name: &str) -> Result<Vec<u8>, Hdf5Note> {
@@ -1843,12 +1866,22 @@ impl<'a> Hdf5File<'a> {
         match obj.layout.as_ref() {
             Some(Hdf5Layout::Compact { data }) => Ok(data.clone()),
             Some(Hdf5Layout::Contiguous { addr, size }) => {
-                let off = *addr as usize;
                 let len = count * elem_size;
                 if *size > 0 && *size as usize != len {
-                    return Err(Hdf5Note::Chunk { off });
+                    return Err(Hdf5Note::Chunk {
+                        off: *addr as usize,
+                    });
                 }
-                Ok(self.buf[off..off + len].to_vec())
+                if *addr == UNDEF {
+                    return Ok(unallocated_contiguous(obj.fill_defined, &obj.fill, len));
+                }
+                let off = *addr as usize;
+                let Some(end) = off.checked_add(len).filter(|e| *e <= self.buf.len()) else {
+                    return Err(Hdf5Note::EndAtByte {
+                        off: self.buf.len(),
+                    });
+                };
+                Ok(self.buf[off..end].to_vec())
             }
             Some(Hdf5Layout::Chunked {
                 btree,
@@ -2183,5 +2216,108 @@ mod tests {
             let v = i32::from_le_bytes(data[i * 4..i * 4 + 4].try_into().unwrap());
             assert_eq!(v, i as i32);
         }
+    }
+
+    #[test]
+    fn contiguous_layout_reads_declared_extent() {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_i32() -> Vec<u8> {
+            vec![
+                0x10, 0x08, 0x00, 0x00, 0x04, 0, 0, 0, 0x00, 0x00, 0x20, 0x00,
+            ]
+        }
+        fn layout(addr: u64, size: u64) -> Vec<u8> {
+            let mut d = vec![3u8, 1];
+            d.extend_from_slice(&addr.to_le_bytes());
+            d.extend_from_slice(&size.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+
+        let root_len = 43usize;
+        let d_addr = 48u64 + root_len as u64;
+        let d_len = 65usize;
+        let payload_addr = d_addr as usize + d_len;
+        let u_addr = (payload_addr + 16) as u64;
+
+        let root_header = header(vec![
+            message(MSG_LINK, link("d", d_addr)),
+            message(MSG_LINK, link("u", u_addr)),
+        ]);
+        assert_eq!(root_header.len(), root_len);
+        let ds_msg = message(MSG_DATASPACE, dataspace(&[4]));
+        let dt_msg = message(MSG_DATATYPE, datatype_i32());
+        let d_header = header(vec![
+            ds_msg.clone(),
+            dt_msg.clone(),
+            message(MSG_LAYOUT, layout(payload_addr as u64, 16)),
+        ]);
+        assert_eq!(d_header.len(), d_len);
+        let u_header = header(vec![
+            ds_msg,
+            dt_msg,
+            message(MSG_LAYOUT, layout(u64::MAX, 16)),
+        ]);
+        assert_eq!(u_header.len(), d_len);
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&48u64.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        assert_eq!(buf.len(), 48);
+        buf.extend_from_slice(&root_header);
+        buf.extend_from_slice(&d_header);
+        let payload: Vec<u8> = [10i32, 20, 30, 40]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        buf.extend_from_slice(&payload);
+        buf.extend_from_slice(&u_header);
+
+        let file = Hdf5File::parse(&buf).unwrap();
+        let (_, ds, dt) = file.dataset("d").unwrap();
+        assert_eq!(ds.dims, vec![4]);
+        let data = file.read_dataset("d").unwrap();
+        assert_eq!(data, payload);
+        assert_eq!(data.len() / dt.size, 4);
+        let (_, ds_u, _) = file.dataset("u").unwrap();
+        assert_eq!(ds_u.dims, vec![4]);
+        let unalloc = file.read_dataset("u").unwrap();
+        assert_eq!(unalloc.len(), 16);
+        assert_eq!(unalloc, vec![0u8; 16]);
     }
 }
