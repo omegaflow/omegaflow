@@ -1,4 +1,5 @@
 use omegaflow::cdn::upload_release;
+use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::json::{jpath, parse_json};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
@@ -52,7 +53,29 @@ fn parse_locations(spec: &str) -> Vec<(f64, f64)> {
     pts
 }
 
+fn witness_gestalt_identity(magic: [u8; 4]) -> Result<(), String> {
+    match magic_identity(magic) {
+        Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)) => {
+            eprintln!(
+                "{} reads as a gestalt witness record",
+                String::from_utf8_lossy(&magic)
+            );
+            Ok(())
+        }
+        Some(other) => Err(format!(
+            "{} reads {:?}, not gestalt — the asset stays unwritten",
+            String::from_utf8_lossy(&magic),
+            other
+        )),
+        None => Err(format!(
+            "{} reads no identity — the asset stays unwritten",
+            String::from_utf8_lossy(&magic)
+        )),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
+    witness_gestalt_identity(MAGIC)?;
     let Some(loc) = arg_value(args, "--locations") else {
         return Err(
             "usage: gebco_bathymetry_compiler --locations <lat,lon[;lat,lon...]> --out <map.gbco> [--ci-mode] — refused"

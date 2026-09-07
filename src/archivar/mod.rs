@@ -72,6 +72,7 @@ pub mod twomass;
 pub mod wind;
 pub mod wind_orbit;
 pub mod wso_polar;
+pub mod zeuge;
 pub mod ztf;
 
 pub mod channels;
