@@ -161,7 +161,9 @@ fn run_leads(
                     cwd.display()
                 ),
                 Err(_) => {
-                    eprintln!("archive_search --leads: phi/sources.\u{3c6} absent, current dir unknown")
+                    eprintln!(
+                        "archive_search --leads: phi/sources.\u{3c6} absent, current dir unknown"
+                    )
                 }
             }
             std::process::exit(2);
@@ -178,12 +180,15 @@ fn run_leads(
             std::process::exit(2);
         }
     };
-    let mut register_docs: Vec<String> = Vec::with_capacity(3);
+    let mut register_docs: Vec<String> = Vec::with_capacity(4);
     register_docs.push(sources);
     if let Some(text) = optional_text(&repo.join("phi").join("blocked_sources.\u{3c6}")) {
         register_docs.push(text);
     }
     if let Some(text) = optional_text(&repo.join("phi").join("dead_sources.\u{3c6}")) {
+        register_docs.push(text);
+    }
+    if let Some(text) = optional_text(&repo.join("phi").join("witnesses.\u{3c6}")) {
         register_docs.push(text);
     }
     let curated = curated_hosts(&register_docs);
@@ -203,7 +208,13 @@ fn run_leads(
                         .join("apis")
                         .join("harvester-leads.txt"),
                 );
-                roots.push(home_path.join("backup").join("archive").join("apis").join("APIs"));
+                roots.push(
+                    home_path
+                        .join("backup")
+                        .join("archive")
+                        .join("apis")
+                        .join("APIs"),
+                );
             }
         }
     } else {
@@ -336,7 +347,27 @@ fn url_hosts(text: &str) -> Vec<String> {
 
 fn host_of(after_scheme: &str) -> Option<String> {
     let end = after_scheme.find(|c: char| {
-        matches!(c, '/' | '?' | '#' | ' ' | '\t' | '\n' | '\r' | '"' | '\'' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';')
+        matches!(
+            c,
+            '/' | '?'
+                | '#'
+                | ' '
+                | '\t'
+                | '\n'
+                | '\r'
+                | '"'
+                | '\''
+                | '<'
+                | '>'
+                | '('
+                | ')'
+                | '['
+                | ']'
+                | '{'
+                | '}'
+                | ','
+                | ';'
+        )
     });
     let raw = match end {
         Some(position) => &after_scheme[..position],
@@ -429,13 +460,10 @@ fn scan_leads_file(
             scan.skipped.insert(host);
         }
         for host in new_hosts {
-            let lead = scan
-                .leads
-                .entry(host)
-                .or_insert_with(|| HostLead {
-                    matches: 0,
-                    lines: Vec::new(),
-                });
+            let lead = scan.leads.entry(host).or_insert_with(|| HostLead {
+                matches: 0,
+                lines: Vec::new(),
+            });
             lead.matches += 1;
             let shown = format!(
                 "{}:{}: {}",

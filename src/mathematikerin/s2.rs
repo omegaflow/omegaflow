@@ -189,6 +189,7 @@ pub struct SkyReport {
 
 pub struct SkyState {
     pub directions: Vec<SkyDirection>,
+    pub events: Vec<S2EventRecord>,
     pub oscs: Vec<S2Osc>,
     pub points: Vec<SkyPoint>,
     pub shell: f64,
@@ -202,6 +203,7 @@ impl SkyState {
     pub fn new() -> Self {
         SkyState {
             directions: Vec::new(),
+            events: Vec::new(),
             oscs: Vec::new(),
             points: Vec::new(),
             shell: 0.0,
