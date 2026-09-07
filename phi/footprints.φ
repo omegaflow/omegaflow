@@ -1,0 +1,40 @@
+# footprints.φ — die Survey-Footprints. Die vierte Asset-Klasse neben den drei
+# Zeugen-Arten (phi/witnesses.φ): ein Footprint ist KEIN Zeuge (gestalt = Koerperflaeche,
+# falscher Sitz) und KEIN Oszillator — er strahlt nicht, er bezeugt nicht, er deckt.
+# Record (.fp01, 4-Byte-Magic FP01): S² (HEALPix Nside 4096 nest) + Coverage-Fraktion
+# je Band, τ = Survey-Epoche (nicht geologische Stabilitaet). Archivar-Seite, konsumiert
+# als Gate (zeugnis §7: "beobachtet oder nie beobachtet" vor jeder Abfrage), nie als ω()-Feld.
+# magic_identity (src/archivar/zeuge.rs): FP01 -> FeldIdentitaet::Footprint (Geschwister der
+# drei Zeugen-Arten, keine vierte Art). Record src/archivar/footprint.rs, Band-Register
+# U/G/R/I/Z/Y/J/H/Ks/W1/W2. Disposition: footprint <survey>.
+# Gate-Worte (footprint_gate): Observed | NeverObserved | BandUncovered | Pending.
+
+footprint des-dr2
+url https://datalab.noirlab.edu/tap/sync
+table des_dr2.coverage
+asset des_dr2_coverage.fp01
+band g i r y z
+note DES-DR2 (DECam Y6A2) Survey-Coverage-Maske, NOIRLab Astro Data Lab TAP sync (anonym HTTP 200, REQUEST=doQuery LANG=ADQL FORMAT=csv, gemessen 2026-09-07). 25.239.595 Zeilen ~ 5171 deg²; frac_det_g/i/r/y/z = "fractional area of healpix pixel covered simultaneously by the X band" — Flaeche-Coverage je Band, detektions-unabhaengig (Footprint-Litmus BESTANDEN: trennt nie-beobachtet [Pixel absent] von beobachtet-leer [frac_det>0]; kein positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Messung: NULL=0 (alle 5 Baender tragen einen expliziten Wert), explizite Nullen vorhanden (g 116.693, i 39.654, r 206.867, y 0, z 52.163) — null-echt gehalten, nie fabriziert. Duplikat-Zeilen existieren (byte-identisch), exakt entdupliziert im Compiler. Ernte: Pagination je hpix_4096-Bereich (Range-Width 2^20), OFFSET defekt, TOP unsupported (gemessen). Kompiliert via des_coverage_compiler (tools/harvest, FP01), CDN live (des-coverage-cdn.yml), Roundtrip verifiziert.
+
+# Die vier uebrigen Durchmusterungen (Weberin §9 Stufe 5, Plural): curl-gemessen 2026-09-08,
+# alle vier ohne anonyme Flaeche-Coverage-Tabelle — Footprint-Quelle pending, nie fabriziert.
+# Befund je Survey (grind-pro, jede Route curl-gemessen, nicht geraten):
+footprint ps1
+url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/
+band g r i z y
+note PS1 (Pan-STARRS1) — pending: keine anonyme Flaeche-Coverage-Tabelle. MAST PS1-Katalog-Service (dr2/mean) antwortet anonym HTTP 200, aber Objekt-Katalog (objName/objID/skyCellID — detektions-abgeleitet, Litmus refused); Data Lab traegt kein PS1; VizieR 0 coverage/footprint-Treffer. Der DR-Footprint liegt als Geometrie/Polygon, nicht als frac-Tabelle.
+
+footprint sdss
+url https://skyserver.sdss.org/dr18/
+band u g r i z
+note SDSS — pending: keine anonyme maschinenlesbare Coverage-Tabelle. SkyServer SQL (GET) liefert HTTP 200 aber nur das Suchformular-HTML (parser-def-Gap); POST cmd -> HTTP 500; CasJobs/SciServer kontogegatet; Data Lab/VizieR tragen nur Spektren/Kataloge, keine Coverage. Der Footprint liegt als Imaging-Window-Polygon-Geometrie, nicht als per-Pixel-Coverage.
+
+footprint 2mass
+url https://irsa.ipac.caltech.edu/TAP/sync
+band j h ks
+note 2MASS — pending: IRSA TAP (anonym 200) traegt keine Coverage-Tabelle (0 Treffer ueber alle Schemata). Das 2mass-Schema haelt nur Quell-Kataloge (fp_psc/fp_xsc) + Scan/Atlas-Metadaten (fp_scan_dat/fp_coadd_dat — Grosskreis-Grenzen, Kachel-Inventar, geometrische Frame-Deskriptoren), keine per-Pixel-Flaeche. Die Gator-"Coverage" ist detektions-basiert (Litmus refused).
+
+footprint allwise
+url https://irsa.ipac.caltech.edu/TAP/sync
+band w1 w2
+note AllWISE — pending: IRSA TAP (anonym 200) traegt keine Coverage-Tabelle (0 Treffer). Das wise-Schema haelt Kataloge + Kachel-Inventare (allwise_p3am_cdd/_xrf, unwise, catwise — per-Kachel/per-Objekt), keine per-Pixel-Belichtung. Die echte per-Pixel-Belichtung liegt als per-Kachel -cov.fits-Dateien (~18k Kacheln) — Datei/Bild-Route ohne Tabellen-Vertrag, pending (keine Einzel-Kachel-URL curl-verifiziert).
