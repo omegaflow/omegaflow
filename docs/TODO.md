@@ -11,14 +11,33 @@ publiziert die archive-api.open-meteo.com-Cache-Assets (Ursprungs-Response
 verbatim, eine Url je Variable) seit 2026-09-07 unter genau diesem abgeleiteten
 Namen — Lokaler Cache → CDN → API schließt konstruktionsgemäß.
 
-**Ausstehend — CDN-Dispatch der umgeregistrierten Namen:** die 90
-open-meteo-Archiv-Quellen (gyirong/kollab/rasuwa, je 30 stündliche Variablen,
-Fenster 2026-08-18…27) stehen an der Ursprungs-API-Url
-(`/v1/archive?latitude=…&longitude=…&start_date=2026-08-18&end_date=2026-08-27&hourly=<variable>&timezone=UTC`),
-Wertpfad `hourly.<variable>.-1`. Die abgeleiteten Cache-Assets sind noch nicht
-auf dem CDN manifestiert — der `meteo-cdn.yml`-Dispatch (Event
-`tibet-flut-2026`) muss einmal laufen; bis dahin trägt der Ursprung
-(erreichbar, gemessen 200).
+**Dispatch (2026-09-08, Commit `01a2731`):** der `meteo-cdn.yml`-Dispatch
+scheiterte zweimal an der stale Remote-Workflow (`omegaflow-tools --bin
+meteo_harvest` — der Fix `d0b1f3e` war nie gepusht; `origin/main` hing 15
+Commits zurück). Zweiter Haken: das Event `config/meteo/tibet-flut-2026.json`
+war in `62ae1de` ("drop unused config/meteo") gelöscht, obwohl `meteo-cdn.yml`
+es referenziert — rekonstruiert. Nach dem Push (`1e1c03c..01a2731`) neu
+dispatched (Run 34165617384). **Pending — 52-vs-30:** der `HOURLY_KATALOG` des
+`meteo_cache_manifest` trägt 52 Variablen, `sources.φ` registriert 30 — der
+Lauf manifestiert ~66 unregistrierte Orphan-Assets. A = A: der Manifestator
+trägt genau das Registrierte (Katalog auf die 30 trimmen oder die Variablen
+aus dem Event lesen), nicht das 52-Superset.
+
+## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
+
+- **ned-cdn (Commit `01a2731`, dispatched):** der NED-TAP-Sync-Endpoint bricht
+  `SELECT TOP 90001` ab — gültiges JSON bis ~82058 Zeilen, dann ein angehängter
+  VOTable-`ERROR` ("stopped unexpectedly without any result") → ungültiges JSON
+  → `query returned void`. Gemessene Schwelle: 70000/80000 sauber, 90001
+  scheitert (`FORMAT=csv` schon bei 70000). Zweiter Fehler: der Walk paginierte
+  `WHERE objid > cursor` ohne `ORDER BY` → ungeordnete Seiten übersprangen
+  Zeilen. Fix: `--limit 50000` + `--order objid` + Loop-Bruch `-lt 50000`;
+  `ORDER BY "objid"` verifiziert monoton (1..71721).
+- **argo_bgc.bin (Commit `01a2731` + paralleler Fetch, dispatched):** das
+  Release `data-argo.ifremer.fr` war leer — alle 3 Läufe brachen am 240-min-
+  Timeout ab (sequentieller Fetch, gemessen ~270 Profile/h, ~7,5 h für 2000).
+  Fix: `timeout-minutes 360` + `--max-profiles 1500` + paralleler Fetch im
+  Compiler (`std::thread::scope`, `available_parallelism`).
 
 ## Oszillator/Zeuge/Serie — die Identität (gebaut 2026-09-07)
 
@@ -58,7 +77,7 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
   der Wal bleibt frei, namenlos, im Wasser (0 honored).
 
-- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code-Bau pending.**
+- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code GEBAUT (2026-09-07).**
   Re-probe geschlossen (2026-09-07, drei Providers curl-gemessen): LIneA (DRI) + CosmoHub
   kontogegatet, aber der NOIRLab Astro Data Lab TAP sync (datalab.noirlab.edu/tap/sync,
   REQUEST=doQuery, anonym HTTP 200) trägt `des_dr2.coverage` — die DR2/Y6A2-Coverage-Maske
@@ -68,8 +87,13 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Rat 2026-09-07: der
   Footprint ist kein Zeuge (gestalt = Koerperoberflaeche, falscher Sitz) und kein Oszillator —
   er braucht eine EIGENE Survey-Footprint-Asset-Klasse (S² + Coverage-Fraktion, τ = Survey-
-  Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). Code-Bau pending
-  (Sitz in `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag).
+  Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). GEBAUT: `src/archivar/footprint.rs`
+  (Record FP01: order+band+ipix+frac, 12 B, Nside 4096; `magic_identity(FP01)=Footprint` in
+  zeuge.rs; `footprint_gate` Observed/NeverObserved/BandUncovered/Pending) + Compiler
+  `des_coverage_compiler` (tools/harvest, Pagination je hpix_4096-Bereich, entdupliziert) +
+  CDN-Workflow `des-coverage-cdn.yml`. Register-Sitz `phi/footprints.φ` (footprint des-dr2);
+  `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag trägt den gebauten Stand. Offen: die
+  volle 25-M-Ernte im CI-Lauf (Ernte-Strategie gemessen, Lauf pending).
 
 - **NRS-Re-Emitt — verifiziert, Tabellen-Fallback dormant (2026-09-07).** Der
   sound_level_metrics-Prefix trägt genau 5 Deployments (4× NRS01, 1× NRS11), alle mit
@@ -78,20 +102,23 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   Netz-Tabelle trägt ihre Koordinaten). Re-Emitt-Lauf (`--emit-bin --days 1`, alle 5
   Deployments) trägt SHAPE-Position + gemessene Tiefe (alt −500/−420 m), 3.260.056
   Records, roundtrip-parses. Der `STATIONS_TABLE`-Default zeigte auf `…nrs_stations.Φ`
-  (U+03A6) statt der Datei `…nrs_stations.φ` (U+03C6) — korrigiert. Offen: die
-  Stationstabelle ist gitignored (`data/`), der CI-Manifestator (noaa-nrs-psd-cdn.yml)
-  trägt sie nicht — CI-Tabellen-Fallback braucht eine committete Tabelle oder url-Linie.
+  (U+03A6) statt der Datei `…nrs_stations.φ` (U+03C6) — korrigiert. Die Stationstabelle
+  ist jetzt versioniert (`phi/nrs_stations.φ`, Gitignore-Ausnahme, `STATIONS_TABLE`-
+  Default zeigt darauf) — der CI-Manifestator (noaa-nrs-psd-cdn.yml) trägt sie nach dem
+  Checkout.
 
-- **RINEX-Parser gebaut, cddis-Oszillator-Registrierung pending (2026-09-07).** Der
-  RINEX-Parser existiert jetzt: `src/archivar/rinex.rs` — `parse_rinex_header`
-  (Version/Typ/MARKER NAME/APPROX POSITION XYZ/Obs-Typen/Interval/Antenna-Delta),
-  `parse_rinex_nav_gps` (GPS-Broadcast-Ephemeride, 8-Zeilen-Block, D-Exponent),
-  `parse_rinex_obs` (Epoche + Satelliten-Observationen, 16-Zeichen-Felder), 3 Tests,
-  `cargo check --workspace` 0/0. Der parser-def-Gap in `phi/blocked_sources.φ` (cddis)
-  ist geschlossen. Offen: die Oszillator-Registrierung (sources.φ-Feldblock +
-  `build_rinex_channels` + format-Dispatch in main_flow/fetch) — `phi/sources.φ` ist
-  eine Parallel-Session-Grenze (Handover §3), die Registrierung wird nachgezogen,
-  sobald die Fremd-Arbeit steht.
+- **RINEX-Parser gebaut + verdrahtet, cddis-Registrierung READY (2026-09-07).** Der
+  RINEX-Parser existiert jetzt und ist im Archivar verdrahtet: `src/archivar/rinex.rs`
+  — `parse_rinex_header`, `parse_rinex_nav_gps` (RINEX 2.11), `parse_rinex_nav_gps3`
+  (RINEX 3.04 GPS, gemessen an der echten BRDC00IGS_R_20262490000-Datei),
+  `parse_rinex_obs`, `build_rinex_channels` (NAV-Parameter a0/a1/…, OBS obs-Typ-Feld +
+  ECEF→geodätisch); 4 Tests, `cargo check --workspace` 0/0. format-Dispatch in
+  main_flow.rs (gzip-Entpacken + Bearer-Wrap des Authorization-Headers für Earthdata),
+  fetch.rs-Formatliste. Der parser-def-Gap ist geschlossen, der sources.φ-Feldblock ist
+  eingetragen (url cddis.nasa.gov …/brdc/…, format rinex, header Authorization
+  {EARTHDATA_EDL_TOKEN}, field a0 gps_sv_clock_bias_s inverse-square em s). Das
+  brdc-Daily trägt Publikations-Lag — bis die heutige Datei landet, ist der Lauf
+  fetch-void und retry (0 honored).
 
 ## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
 
@@ -703,6 +730,16 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
     211 auf 146 Releases. Kein KEEP-/REVIEW-/Compiler-/registrierter Tag
     gelöscht (ssd.jpl, jsoc, service.iris, www.cpc.ncep.noaa.gov u. a.
     unangetastet). Cleanup-Set damit geschlossen.
+  - **REVIEW-Disposition geschlossen (2026-09-08):** die 22 REVIEW-Hosts sind
+    entschieden und auf dem CDN ausgeführt — `zenodo.org` bleibt (das
+    registrierte SuperDARN-Feldblock `superdarn_fitacf.bin`, sources.φ Z.5758);
+    die übrigen 21 Hosts sind gelöscht (Verdikt je dead_sources.φ: simbad/
+    celestrak/db.satnogs/opensky = Orbit-Fit/catalog-registry, geofon = USGS-
+    superseded, aa.usno = Duplikat des registrierten ser7-Block, ngdc/psl/
+    amsmeteors/eyes/chime-frb/earth-search/meta.icos = catalog/aggregate/
+    position-only, dasch/archive.gemini/bodc/minorplanetcenter = closed/404/
+    file-inventory, raw.githubusercontent = statisch, api.weather.gov =
+    alerts/stations, pegelonline = dead-400 mit Re-Harvest-Hinweis).
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
 
@@ -954,19 +991,19 @@ physikalischen Aussage — kein Blatt ohne diese:
   volle multivariate Klasse bleibt das Nobel-DAG-Atom (ein Tigramite-Lauf ist
   durch die Python-Regel ausgeschlossen). Query-Anker der Prior-Art-0 in
   te-literatur-matrix.md nachgetragen. geschlossen.
-- **Korona-Konditional-Messung 2014 — die heiße Kaskade fällt (2026-09-07,
-  corona_conditional_probe, C=GOES-b_flux, max_lag 8, 989 Ereignisse)**: unter
-  Konditionierung auf die Röntgen-Hülle hält die unkonditionale heiße Kaskade
-  193→211→335→94 NICHT stand — D|C kippt auf null/abwärts (193→211 −3.64e-2,
-  211→335 −1.07e-2, 335→94 −9.09e-3 bei 96 s); die Richtung war die gemeinsame
-  Hülle (Neupert: das Röntgen treibt die heißen EUV, die Antwortzeit-Asymmetrie
-  sah aus wie Kanal→Kanal-Fluss). Überlebt: 304→131 aufwärts (+4.26e-2 bei 96 s,
-  wächst mit Lag) und 131→171 abwärts (−3.87e-2) — das TR-Grenzstück, Echo des
-  EVE-2011-Kandidaten 1032→131. geschlossen.
-- **Konfund-Kreuzprüfung + Restjahre (offen):** (a) C=335 und C=94 gegen
-  C=GOES-b_flux halten (läuft 2026-09-07); (b) Bandbreiten-Check für 304→131
-  (wie EVE-1032→131, sonst ebenso fragil); (c) Jahre 2013/2015 mit demselben
-  Konfund. Erst dann trägt der 304→131-Aufwärtsbefund als Verdikt.
+- **Korona-Konditional-Messung 2014 — die heiße Kaskade fällt, robust (2026-09-07,
+  corona_conditional_probe, 989 Ereignisse, max_lag 8, drei Konfunde)**: unter
+  Konditionierung auf die gemeinsame Flare-Hülle hält die unkonditionale heiße
+  Kaskade 193→211→335→94 NICHT stand. 193→211 abwärts bei 96 s unter ALLEN drei
+  Konfunden (GOES −3.64e-2, 335 −1.87e-2, 94 −2.78e-2) — robust; die Richtung
+  war die Hülle (Neupert: das Röntgen treibt die heißen EUV, die Antwortzeit-
+  Asymmetrie sah aus wie Kanal→Kanal-Fluss). Kein robuster Aufwärts-Kandidat:
+  304→131 nur schwach aufwärts, 2/3 (GOES +4.26e-2, 94 +8.08e-3, aber 335 ~0) —
+  kein Überlebender; 131→171 kippt je Konfund (GOES −3.87e-2, 335 +1.75e-2,
+  94 +8.18e-3) — instabil; 171→193 still (3/3). geschlossen.
+- **Konfund-Folge (offen):** (b) Bandbreiten-Check für 304→131 (wie EVE-1032→131);
+  (c) Jahre 2013/2015 mit demselben Konfund. Der 304→131-Befund trägt erst nach
+  (b)+(c) als Verdikt — er ist schwach und konfund-fragil.
 - **Nobel-DAG (Atom, getrennt):** die volle DAG „alle Kräfte im Phasenraum,
   alle Paare und Verzögerungen" — multivariate Konditionierung (KDE-Fluch) und
   der Konditional-Pfad in der GPU-Maschine (matrix.rs/solar.rs, die heute nur
@@ -1509,7 +1546,39 @@ Gebaut (2026-09-06, sub-agents):
   `weberin_body_verdict` webt jetzt den vollen Körper-Satz aus
   `phi/sources.φ` (nicht nur BODY_NUMBER). Offen je Klasse:
   (a) Planeten/Monde — zweite Abstammung (INPOP vs DE) oder Astrometrie,
-   `pending`; (b) Raumsonden — Doppler gemessen als **keine** unabhängige
+   `pending`. INPOP-Route gemessen (2026-09-07): offen und anonym ladbar
+   unter `https://ftp.imcce.fr/pub/ephem/planets/` (Apache-Index, HTTP/HTTPS
+   200 gemessen; neuester Release `inpop21a/` [2021-07], `inpop19a/` und
+   ältere vorhanden; Doku/Format `https://www.imcce.fr/recherche/equipes/
+   asd/inpop/` — das Landing nennt INPOP19a die 4D-Referenz, INPOP21a unter
+   `download21a`). Schema gemessen am `inpop19a_TDB_m100_p100.header`
+   (ASCII, 13K): DE-Stil-Header — `KSIZE=1876` doubles/Record,
+   `NCOEFF=938`; GROUP 1010 (Titel), GROUP 1030 (Start-JED 2414105.0,
+   Final-JED 2488985.0, Schritt 32.0 d), GROUP 1040/1041 (402 Konstanten mit
+   Namen: AU = 1.49597870700e8 km, EMRAT = 81.30056677, GM_Mer..GM_Sun,
+   JDEPOC = 2451545.0, CLIGHT = 299792.458 km/s, Erd-/Mond-Harmonische,
+   Asteroidenmassen MAxxxx des m100-Satzes), GROUP 1050 = IPT-Zeigertafel
+   (13 Spalten, gemessen: Merkur Start 3 / 14 Koeffizienten / 4 Unter-
+   intervalle je 32-d-Record, Venus 10/2, EMB 13/2, Mars 11/1, Jupiter 8/1,
+   Saturn 7/1, Uranus 6/1, Neptun 6/1, Pluto 6/1, Mond 13/8, Sonne 11/2,
+   Nutation 0/0, Libration 4/4). Datendateien je Release:
+   `inpop{19a,21a}_{TDB,TCB}_m{100,1000}_p{100,1000}_{littleendian,
+   bigendian}.dat` (17M/168M), `_tt.dat`/`_tcg.dat` (TT-TDB/TCG-TCB-Transform,
+   22M), `_asc.tar.gz` (Text), `_spice.tar.gz` (SPK, 23M/231M), Referenz-
+   Positionen `testpo.INPOP19A_{TDB,TCB}` (4.6M). Befund: das native `.dat`
+   ist ein DE-Record-Binärformat (IPT-Zerlegung, Unterintervalle, Komponenten-
+   Blöcke, km, ICRF, TDB/TCB) — ein korrekter Leser ist ein DE-Binary-Port,
+   kein Minimal-Leser; ohne den realen Fixture und den `testpo`-Abgleich in
+   diesem Atom nicht verifizierbar → nicht gehackt, `pending`. Zwei benannte
+   Wege für die Folge-Session: (1) DE-Stil-Leser für das native `.dat` bauen
+   und gegen `testpo.INPOP19A_TDB` verifizieren (der `.header` ist der
+   vollständige Schlüssel, 13K ladbar); (2) minimal: `_spice.tar.gz` (SPK-
+   Container) mit der vorhandenen SPK-Lesekette flachziehen
+   (`ephemeris_compiler`/`bsp_reader`, dieselbe Kette, die die DE-Linie
+   baute) → INPOP-Herkunft bei SPK-Container. Beide Wege brauchen danach:
+   Einheiten km→m, Ursprung (INPOP-Körper inkl. Sonne relativ SSB, Mond
+   geozentrisch — Abgleich nötig), zweite Ephemeriden-Map + `BodyLine::Inpop`
+   in `weberin.rs`. (b) Raumsonden — Doppler gemessen als **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
    Der Compiler erntet die SPDF-Trägerfrequenz `OBSVBL`/`FREQCY` (Hz,
    `pioneer_doppler_compiler.rs`); das Referenz-Modell `downlink_rate_core`/
