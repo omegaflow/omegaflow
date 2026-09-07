@@ -1257,10 +1257,17 @@ sources-v2-spec.md).
 
 - Discovery-Ladder gebaut (`source_url_candidates` + `probe_sweep`, siehe
   SOURCE_PORT §5 Discovery-Ladder): die Ernte läuft jetzt lokal, deterministisch;
-  der Wochen-Cron `probe-sweep.yml` (14k-Fabrikation) ist entfernt. Nächster
-  Schritt: `probe_sweep` auf die 30 Kandidaten laufen lassen, den Bericht
-  (`phi/reports/probe_sweep_survivors.φ` / `probe_sweep_void.txt`) reviewen und
-  die 5 neuen (nicht in master_urls) nach §1.0 disponieren.
+  der Wochen-Cron `probe-sweep.yml` (14k-Fabrikation) ist entfernt. Erster Lauf
+  (2026-09-07): 30 Kandidaten → 18 live → 14 Drafts → 13 Frame-aufgelöst →
+  **0 Survivors** — Befund: frische Auto-Drafts tragen kein `ttl`
+  (draft_url_mode setzt es nur bei `probe_ttl`-Treffer, port.rs:1714), und
+  `parse_sources` verwirft `ttl = 0`-Blöcke (parse.rs:45) — `probe` ist auf
+  Auto-Drafts inert. Konkret neu (nicht in master_urls): live
+  `GF_OPER_NE__KBR_2F` (GRACE-FO-KBR, vires.services). Nächster Schritt: den
+  13 Frame-aufgelösten Drafts menschlich `ttl` + Review geben
+  (`phi/pipeline/probe_drafts.φ`), den neuen GRACE-FO-Block nach §1.0 disponieren;
+  `probe_sweep` so verfeinern, dass es nur `ttl`-tragende Blöcke prüft oder den
+  Probe-Schritt hinter die menschliche `ttl`-Vergabe stellt (pending).
 
 - Kompilat-Pfad in die Zustandsmaschine holen: der Weg tap_index →
   kernel_flatten.yml → tap_compiler → CDN → sources.φ läuft außerhalb der
