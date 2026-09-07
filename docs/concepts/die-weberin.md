@@ -100,6 +100,12 @@ einschießt — und zwirnt zwei unabhängige Fäden zur einen Weltlinie.
 - **Das Abstammungs-Feld** zählt die Wurzeln: Kopien zählen als ein Faden.
   Gaia-Kopien und SPK-Derivate sind dieselbe Linie, fünf Zitate sind eine
   Messung mit fünf Wurzeln an einem Baum.
+- **Das Teilchen ist Abstammung, nicht Kraft.** Ein Detektor, der ein
+  Teilchen (CR, Neutrino) über sein EM-Licht misst (Luftschauer,
+  Cherenkov), misst `em` — das Photon, nicht das Teilchen. Die Teilchen-Art
+  (Proton, Neutrino, Gamma) ist die Wurzel im Abstammungs-Feld, keine zehnte
+  Kraft; ein „particle"-Bit wäre Fabrication. Ohne Distanz ruht der Faden
+  auf S² (direction-only) — dieselbe Lage wie jede Richtung.
 - **Der Footprint** unterscheidet das Schweigen: nie beobachtet (`absent`)
   ist ein weißes Feld; beobachtet und nichts über der Schwelle ist die
   ehrliche Leere. Nur das zweite Schweigen zählt gegen eine Identität.
