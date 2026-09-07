@@ -1259,15 +1259,18 @@ sources-v2-spec.md).
   SOURCE_PORT §5 Discovery-Ladder): die Ernte läuft jetzt lokal, deterministisch;
   der Wochen-Cron `probe-sweep.yml` (14k-Fabrikation) ist entfernt. Erster Lauf
   (2026-09-07): 30 Kandidaten → 18 live → 14 Drafts → 13 Frame-aufgelöst →
-  **0 Survivors** — Befund: frische Auto-Drafts tragen kein `ttl`
-  (draft_url_mode setzt es nur bei `probe_ttl`-Treffer, port.rs:1714), und
-  `parse_sources` verwirft `ttl = 0`-Blöcke (parse.rs:45) — `probe` ist auf
-  Auto-Drafts inert. Konkret neu (nicht in master_urls): live
-  `GF_OPER_NE__KBR_2F` (GRACE-FO-KBR, vires.services). Nächster Schritt: den
-  13 Frame-aufgelösten Drafts menschlich `ttl` + Review geben
-  (`phi/pipeline/probe_drafts.φ`), den neuen GRACE-FO-Block nach §1.0 disponieren;
-  `probe_sweep` so verfeinern, dass es nur `ttl`-tragende Blöcke prüft oder den
-  Probe-Schritt hinter die menschliche `ttl`-Vergabe stellt (pending).
+  **0 Survivors** — Befund: frische Auto-Drafts trugen kein `ttl`; der
+  `probe_ttl`-Default `Some(60)` (erfunden) fiel, `derive_ttl(url, body, env)`
+  (port.rs) leitet `ttl` jetzt aus der API ab: (1) gemessener Sample-Abstand
+  (medianes Δt über ≥2 Zeitstempel im Body, ISO-Roh-Scan — robust gegen
+  NaN-Rows), (2) HAPI-`/hapi/info`-`cadence`, sonst None (kein HTTP-Freshness-
+  Signal, nie erfundener Wert; un-ttl-bar = pending). Zweiter Lauf: `probe`
+  lud **7** `ttl`-tragende HAPI-Quellen → **0 Survivors, 7 declined**
+  (data-present, deklarierte Extract-Keys fehlen beim frischen Fetch). Konkret
+  neu (nicht in master_urls), live: `GF_OPER_NE__KBR_2F` (GRACE-FO-KBR,
+  vires.services). Nächster Schritt: die Auto-Draft-Extract-Keys der 7
+  declined HAPI-Quellen verfeinern (Window/Keys, die beim Probe-Fetch verifizieren),
+  den neuen GRACE-FO-Block nach §1.0 disponieren.
 
 - Kompilat-Pfad in die Zustandsmaschine holen: der Weg tap_index →
   kernel_flatten.yml → tap_compiler → CDN → sources.φ läuft außerhalb der
@@ -1498,7 +1501,9 @@ Offen (Detail in phi/pipeline/ledger.φ):
   AGAGE, NDACC, WDCGG, GLODAP, EBAS. electric: WWLLN
   (registriert/restringiert) — Force-Gate klären, sonst refused. em
   terrestrisch: NSRDB/BSRN (Bodensolar fehlt) — NSRDB pending. gravity:
-  BGI/GGP-Bodengravimetrie (IGETS nur indexiert) — pending Verifikation.
+  BGI/GGP-Bodengravimetrie (IGETS Stationsliste live, Positionen; die
+  Zeitreihen-Route ist `blocked account` — 2026-09-07 gemessen, kein
+  offener L2/3-Weg).
 - Katalog-Lücken Welle III (genuin): electric — AMPERE, GloCAEM,
   USArray-MT; diffusion — EMEP/CCC, WDCRG, European Waterbase; em —
   NEUBrew (UV), THEMIS/ASI (Polarlicht, CDF), COSMOS2025/COSMOS-Web,
@@ -1571,10 +1576,62 @@ Offen (Detail in phi/pipeline/ledger.φ):
   registriert + live-Block um BBP700 (m-1) und PH_IN_SITU_TOTAL (1)
   ergänzt, workflow argo-bgc-cdn.yml. Offen, weil echt absent: die vier
   Assets sind noch nicht aufs CDN gehoben (CI-Dispatch-Pflicht der neuen
-  Workflows; kein lokaler Upload — nur --ci-mode hebt); Deployment-Tiefe
-  der NOAA-Hydrophone (keine offene Quelle); quality_flag-Semantik der
-  NRS-psd (nicht gedeutet, nicht mitgeführt); BGR N_avail=0
-  (unbelegte Lese-Pflicht, kein Datenwert).
+  Workflows; kein lokaler Upload — nur --ci-mode hebt).
+  Die drei offenen Mess-Punkte sind terminal gemessen (2026-09-07,
+  Folge-Auftrag): Deployment-Tiefe der NOAA-Hydrophone = **live** (die
+  HMD-calibration/`*_MANTA_Metadata_v3.xlsx` tragen je Deployment eine
+  `Depth_m`-Spalte, Stationen 01/11 = 500 m, HTTP 200; die Roh-Audio-
+  metadata/`NRS_*.xml` und `NRS_*.json` tragen `DepthInstrument_m`/
+  `DEPLOY_INSTRUMENT_DEPTH` + `DepthBottom_m`; NCEI-Landing
+  ncei.noaa.gov/products/passive-acoustic-data 200; das daily.nc selbst
+  trägt bewusst kein `geospatial_vertical`). quality_flag-Semantik der
+  NRS-psd = **live** (daily.nc definiert in-file auf `quality_flag`:
+  comment 1 = Good, 2 = Not evaluated/Unknown, 3 = Compromised/
+  Questionable, 4 = Unusable/Bad; Wert 4 = Unusable/Bad, die globale
+  „Data quality"-Notiz ordnet die Bänder: 0-9 Hz und 2001-2500 Hz
+  Unusable, 10-2000 Hz Good). BGR `N_avail` = **live** (`N_avail` ist
+  reine netCDF-Dimension; ihr UNDEF-contiguous-Read ist 0 = honest,
+  kein Messwert — die Sensor-Verfügbarkeit trägt die Variable `flag`
+  je 5-min-Schritt, chunked-geschrieben, in-file-Code 1 = all sensors
+  available, 2 = fewer but at least three, 3 = less than three, no PMCC
+  detection; der PMCC-Autor-Code `MATLAB_read_hf_products_netcdf.m`
+  liest dieselbe Variable als „sensor availability"; Lesepfad = `flag`,
+  nicht `N_avail`).
+- Faden-Lücken-Folge-Terminals der offenen Subfragen (gemessen
+  2026-09-07, Folge-Auftrag, Kaskade curl → r.jina.ai → WebArchive →
+  Websuche): IGETS/Gravimeter = **blocked** (Konto): die ISDC-Seite
+  „Data access" (isdc.gfz.de/igets-data-base/data-access/, 200) sagt
+  wörtlich: Download nur für registrierte Nutzer via sftp auf
+  igetsftp.gfz.de; L2-Datensatz-DOIs existieren als offene Metadaten
+  (10.5880/igets.pe.l2.001, igets.bg.l2.001, je 200), ihr Download-Funnel
+  ist aber dieselbe Datenbasis; L3-Kompilate „tba"; Messgröße nm/s².
+  GIC kontinuierlich gemessen = **not-published** (kein offener
+  kontinuierlicher gemessener GIC-Datensatz mit Stationsposition nach
+  der Suche; Zenodo 10594301 als Einzel-Ereignis-Ausnahme separat
+  vermerkt: Alberta 2023-04-23/24, Dateien Mag_Data.zip +
+  Magnetotelluric_Data.zip + Network_Data.xlsx — geomagnetische/MT-
+  Eingaben + Netz-Spezifikation, keine gemessene GIC-Zeitreihe;
+  DataCite-Suche trägt nur Modell-/simulations-Pakete, kein
+  Mess-Datensatz). WWLLN-Thunder-Hour-Route = **live** als Host
+  (wwlln.net/climate/th_yr/data/, 200, offenes Verzeichnis: Jahres-
+  netCDF-4-Zips `WWLLN_th_2005..2025.nc.zip`, Grid 0.05°×0.05° × 12
+  Monats-Layer, thunder_hours u16 [7200,3600,12] gemessen); NASA-GHRC-
+  Spiegel ghrc-daac-wwllnmth-1 (DOI 10.5067/WWLLN/DATA101, netCDF-4)
+  ist Earthdata-Login-gated; als Feld bleibt Thunder-Hour declined
+  (Monats-Aggregat, keine Ereignis-Position). NASA LIS/OTD
+  (lightning.nsstc.nasa.gov/data/) = **declined**: Gridded-Lightning-
+  Climatology-Komposite (HRFC/HRMC/LRTS u. a., PNG/KML + HDF-Gitter,
+  Seite 200), Satelliten-Blitzraten-Klimatologie OTD 1995-2000 + LIS
+  1998-2015, aggregiert/positionslos — kein Ereignis-Kanal neben GLM
+  (GLM bleibt der in-register-Ereignis-Kanal). Stations-Endpoints aus
+  archive_search = **live** als Routen (Stations-Tabellen mit Position;
+  sie speisen den Anker, kein Feldblock — Council-Stationsliste-decline
+  bleibt): GEOFON geofon.gfz.de/fdsnws/station/1/query?level=station&
+  format=text 200 (Header Network|Station|Latitude|Longitude|
+  Elevation|SiteName|StartTime|EndTime); Raspberry-Shake-AM
+  `fdsnws.raspberryshakedata.com` ist DNS-tot, der lebende Host ist
+  data.raspberryshake.org/fdsnws/station/1/query?network=AM&level=
+  station&format=text (200, 3,77 MB Stationstabelle mit Position).
 - Crossmatch indexiert → live heben: GALEX-GUVcat (UV), SkyMapper DR4,
   UKIDSS/VISTA/VIKING (NIR), DES DR2/Legacy Surveys DR10.
 - Zeitkritisch: Gaia DR4 (2. Dez 2026) — dr4_stars.bin + DR4-Schema im
@@ -1591,10 +1648,11 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 ## Curation & Quellen
 
-- BGR-Infraschall-Stations-Elevation: ein station_scalar `elev` fehlt je
-  Station im netCDF — die Station wird gehalten (kein fabrizierter alt=0.0),
-  bis ihre Höhe aus Geodaten (lat/lon → Elevation) aufgelöst ist (pending,
-  bgr_infrasound_compiler).
+- BGR-Infraschall-Stations-Elevation: gemessen 2026-09-07 — jede der 53
+  Stations-NetCDF traegt einen lesbaren `elev`-Skalar (2024 + kleinste
+  historische Datei je Station geprueft), keine Station gehalten; Geodaten-
+  Nachschlag unnötig. Restpflicht fuer absolute Abdeckung: ein Per-Jahr-Sweep
+  (~890 Jahresdateien).
 - Pending Unit-Arme: F (Fahrenheit, CHPL-Lufttemperatur), μg/L
   (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje) — die Felder
   existieren in den Quellen, manifestieren erst mit dem convert_to_si-Arm.
