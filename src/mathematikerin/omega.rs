@@ -1238,14 +1238,22 @@ impl OmegaLoop {
                 self.prev_in_te = in_te;
                 self.ticks_since_turn += 1;
                 if self.direction > 0 && delta_te < -threshold {
-                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
                     self.ticks_since_turn = 0;
                     self.direction = -1;
                 }
                 if self.direction < 0
                     && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
                 {
-                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
                     self.ticks_since_turn = 0;
                     self.direction = 1;
                 }
@@ -1258,7 +1266,11 @@ impl OmegaLoop {
                 let omega_sum: f32 = self.probe_omega.iter().sum();
                 let delta = omega_sum - self.prev_omega_sum;
                 if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
-                    self.natural_latency_ticks = if self.ticks_since_turn == 0 { 1 } else { self.ticks_since_turn };
+                    self.natural_latency_ticks = if self.ticks_since_turn == 0 {
+                        1
+                    } else {
+                        self.ticks_since_turn
+                    };
                     self.ticks_since_turn = 0;
                 }
                 self.ticks_since_turn += 1;
