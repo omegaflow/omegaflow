@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::dastcom::{COMET_RECORD_BYTES, comet_state_at, parse_comet_record};
+use omegaflow::dastcom::{comet_state_at, parse_comet_record, COMET_RECORD_BYTES};
 use omegaflow::kepler::AU_M;
 use std::io::Write;
 
@@ -58,7 +58,7 @@ fn json_string(s: &str) -> String {
     o
 }
 
-fn read_records(input: &str) -> Option<Vec<omegaflow::dastcom::CometRec>> {
+fn open_records(input: &str) -> Option<(std::fs::File, Vec<omegaflow::dastcom::CometRec>)> {
     let mut file = std::fs::File::open(input).ok()?;
     let mut header = [0u8; COMET_RECORD_BYTES];
     std::io::Read::read_exact(&mut file, &mut header).ok()?;
@@ -81,13 +81,78 @@ fn read_records(input: &str) -> Option<Vec<omegaflow::dastcom::CometRec>> {
             Err(_) => break,
         }
     }
-    Some(recs)
+    Some((file, recs))
+}
+
+fn read_records(input: &str) -> Option<Vec<omegaflow::dastcom::CometRec>> {
+    open_records(input).map(|(_, recs)| recs)
+}
+
+fn primary_key(rec: &omegaflow::dastcom::CometRec) -> String {
+    let desig = trim(&rec.desig);
+    if !desig.is_empty() {
+        return desig;
+    }
+    trim(&rec.comnam)
+}
+
+fn write_comet_catalog(input: &str, out_path: &str) -> Option<usize> {
+    let mut file = std::fs::File::open(input).ok()?;
+    let mut header = [0u8; COMET_RECORD_BYTES];
+    std::io::Read::read_exact(&mut file, &mut header).ok()?;
+    if header[79] != b'5' {
+        return None;
+    }
+    let mut slots: Vec<Vec<u8>> = Vec::new();
+    let mut slot_of: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    let mut buf = [0u8; COMET_RECORD_BYTES];
+    loop {
+        match std::io::Read::read_exact(&mut file, &mut buf) {
+            Ok(()) => {}
+            Err(_) => break,
+        }
+        let Some(rec) = parse_comet_record(&buf) else {
+            continue;
+        };
+        if rec.ec >= 1.0 || !(rec.a_au > 0.0) {
+            continue;
+        }
+        let key = primary_key(&rec);
+        let raw = buf.to_vec();
+        match slot_of.get(&key).copied() {
+            Some(idx) => {
+                let Some(held) = parse_comet_record(&slots[idx]) else {
+                    continue;
+                };
+                if rec.epoch_jd > held.epoch_jd {
+                    slots[idx] = raw;
+                }
+            }
+            None => {
+                slot_of.insert(key, slots.len());
+                slots.push(raw);
+            }
+        }
+    }
+    let mut buf = Vec::with_capacity(slots.len() * COMET_RECORD_BYTES);
+    for s in &slots {
+        buf.extend_from_slice(s);
+    }
+    std::fs::write(out_path, &buf).ok()?;
+    eprintln!(
+        "dcom5: comet catalog {} records (current solution per primary designation, elliptic), {} B → {}",
+        slots.len(),
+        buf.len(),
+        out_path
+    );
+    Some(slots.len())
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;
+    let mut catalog: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<String> = None;
     let mut i = 1;
@@ -99,6 +164,10 @@ fn main() {
             }
             "--out" => {
                 out = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--catalog" => {
+                catalog = args.get(i + 1).cloned();
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -168,6 +237,20 @@ fn main() {
         }
         if shown == 0 {
             eprintln!("probe: {} not present", pat);
+        }
+        return;
+    }
+    if let Some(catalog_path) = &catalog {
+        match write_comet_catalog(&input, catalog_path) {
+            Some(_) => {}
+            None => {
+                eprintln!("catalog {} returned void", catalog_path);
+                std::process::exit(1);
+            }
+        }
+        if ci_mode && !upload_asset(catalog_path) {
+            eprintln!("upload: {} did not reach the CDN", catalog_path);
+            std::process::exit(1);
         }
         return;
     }
