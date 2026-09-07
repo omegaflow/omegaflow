@@ -3,6 +3,7 @@ use omegaflow::archivar::skydirection::{parse_bin, write_bin, SkyDirection};
 use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
 use omegaflow::archivar::PARSEC_M;
 use omegaflow_measure::weberin::deredden::{build_star_index, StarIndex};
+use omegaflow::cdn::upload_asset;
 
 const DEG2_PER_SR: f64 = 129600.0 / std::f64::consts::PI;
 
@@ -173,12 +174,13 @@ fn object_arg(args: &[String]) -> Option<(f64, f64)> {
 
 fn usage() {
     println!(
-        "usage: direction_distance_join --stars <dr3_stars.bin> --radius <arcsec> (--object <ra> <dec> [--name <id>] | --transients <alerts.json> [--transients <more.json> ...] | --directions <skd1> [--out <skd1>])"
+        "usage: direction_distance_join --stars <dr3_stars.bin> --radius <arcsec> (--object <ra> <dec> [--name <id>] | --transients <alerts.json> [--transients <more.json> ...] | --directions <skd1> [--out <skd1>]) [--ci-mode]"
     );
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(stars_path) = arg_value(&args, "--stars") else {
         usage();
         return;
@@ -307,6 +309,11 @@ fn main() {
                             println!(
                                 "Direction-distance join: {out} written with {placed} direction(s) carrying a measured distance; the distance-less stay distance-less (0 honored)"
                             );
+                            if ci_mode && !upload_asset(&out) {
+                                eprintln!(
+                                    "Direction-distance join: {out} did not reach the CDN release ssd.jpl.nasa.gov — the joined asset stands local, the manifest is pending"
+                                );
+                            }
                         }
                     }
                     None => {
