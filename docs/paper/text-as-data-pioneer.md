@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 3
-  sha256: cbcb7308ff2b0a9dc78414052e4c2924e25ecf4dc6054d9ec76f2762443ff4e0
+  sha256: 9fcb5ebf10f010a5815995dad9d4ae7dc8a9da47b6c2967eba2a73ac946332aa
   status: live
   see-also: docs/reference/pioneer-anomaly-lrr-2010-4.txt, docs/TODO.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->

@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-08-28
-  sha256: 8b7c0533f936e8d71fd59c45a88920256827d6bf2174c6950ccfc8b9f52ada22
+  sha256: 04137f189a41bc61a5be9ab98a4cb903010e523b56596fcaa099e078ac250db3
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
