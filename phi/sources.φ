@@ -1029,7 +1029,7 @@ ttl 3600
 field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.cpc.ncep.noaa.gov/qbo_30hpa.csv
+url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
 ttl 3600
 format text
 on earth 1.35 103.99 0
