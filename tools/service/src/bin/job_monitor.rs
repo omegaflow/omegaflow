@@ -40,6 +40,8 @@ struct CiRun {
     status: String,
     conclusion: String,
     created: Option<u64>,
+    done_steps: Option<usize>,
+    total_steps: Option<usize>,
 }
 
 fn main() {
@@ -177,7 +179,11 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
         paint(color, "2", &pid),
     ));
     if let Some(exec) = &u.exec {
-        lines.push(paint(color, "2", &format!("      cmd {}", truncate(exec, 118))));
+        lines.push(paint(
+            color,
+            "2",
+            &format!("      cmd {}", truncate(exec, 118)),
+        ));
     }
     let keys = job_keys(u.exec.as_deref(), &u.name);
     if let Some(hint) = log_hint(&keys, Some(&u.name)) {
@@ -213,7 +219,11 @@ fn ci_panel(color: bool) -> Vec<String> {
     let now = unix_now_secs();
     let runs = ci_runs();
     if runs.is_empty() {
-        lines.push(paint(color, "2", "  no ci runs visible (gh unreachable or no runs)"));
+        lines.push(paint(
+            color,
+            "2",
+            "  no ci runs visible (gh unreachable or no runs)",
+        ));
         return lines;
     }
     for r in &runs {
@@ -225,21 +235,50 @@ fn ci_panel(color: bool) -> Vec<String> {
 fn ci_run_line(r: &CiRun, now: u64, color: bool) -> String {
     let sc = state_color(&r.status, &r.conclusion);
     let mark = ci_mark(&r.status, &r.conclusion);
-    let status_word = if r.status == "in_progress" {
-        "in-progress"
-    } else {
-        "completed"
-    };
-    format!(
-        "  {} {} {} {} {} {} {}",
+    let name_part = format!(
+        "{} {} {} {} {}",
         paint(color, sc, mark),
-        paint(color, "0", &fit(&r.name, 46)),
-        paint(color, "0", &fit(&r.workflow, 20)),
-        paint(color, "0", &fit(&r.branch, 18)),
-        fit(&age_label(now, r.created), 10),
-        paint(color, "2", status_word),
-        paint(color, sc, &fit(&verdict_word(&r.status, &r.conclusion), 10)),
-    )
+        paint(color, "0", &fit(&r.name, 40)),
+        paint(color, "36", &fit(&r.workflow, 18)),
+        fit(&r.branch, 16),
+        fit(&age_label(now, r.created), 8),
+    );
+    if r.status == "in_progress" {
+        let bar = progress_bar(r.done_steps, r.total_steps, 16);
+        let pct = progress_pct(r.done_steps, r.total_steps);
+        format!(
+            "  {}{} {}",
+            name_part,
+            paint(color, "33", &bar),
+            paint(color, "33", &pct),
+        )
+    } else {
+        format!(
+            "  {}{}",
+            name_part,
+            paint(color, sc, &fit(&verdict_word(&r.status, &r.conclusion), 10)),
+        )
+    }
+}
+
+fn progress_bar(done: Option<usize>, total: Option<usize>, width: usize) -> String {
+    let (d, t) = match (done, total) {
+        (Some(d), Some(t)) if t > 0 => (d.min(t), t),
+        _ => return "[ waiting ]".to_string(),
+    };
+    let filled = (d as f64 / t as f64 * width as f64).round() as usize;
+    let filled = filled.min(width);
+    let empty = width - filled;
+    format!("[{}>{}]", "█".repeat(filled), "░".repeat(empty))
+}
+
+fn progress_pct(done: Option<usize>, total: Option<usize>) -> String {
+    match (done, total) {
+        (Some(d), Some(t)) if t > 0 => {
+            format!("{:>4}%", (d as f64 / t as f64 * 100.0).round() as u64)
+        }
+        _ => "  --  ".to_string(),
+    }
 }
 
 fn systemd_jobs() -> Vec<UnitJob> {
@@ -301,18 +340,21 @@ fn ps_jobs(active: &BTreeSet<u64>) -> Vec<ProcJob> {
         if !has_target {
             continue;
         }
-        if !(lower.contains("omegaflow") || hits_keyword(&lower)) {
+        let bin = match Path::new(argv0).file_name() {
+            Some(f) => f.to_string_lossy().to_string(),
+            None => continue,
+        };
+        if bin == "job_monitor" {
             continue;
         }
-        let name = match Path::new(argv0).file_name() {
-            Some(f) => f.to_string_lossy().to_string(),
-            None => argv0.to_string(),
-        };
+        if !hits_keyword(&bin) && !bin.contains("omegaflow") {
+            continue;
+        }
         jobs.push(ProcJob {
             pid,
             etime: toks[1].to_string(),
             cpu: toks[2].to_string(),
-            name,
+            name: bin,
         });
     }
     jobs
@@ -350,13 +392,22 @@ fn ci_runs() -> Vec<CiRun> {
                 f[idx].to_string()
             }
         };
+        let id = field(0);
+        let status = field(3);
+        let (done, total) = if status == "in_progress" {
+            run_progress(&id)
+        } else {
+            (None, None)
+        };
         runs.push(CiRun {
             name: field(1),
             branch: field(2),
-            status: field(3),
+            status,
             conclusion: field(4),
             created: parse_rfc3339(&field(5)),
             workflow: field(6),
+            done_steps: done,
+            total_steps: total,
         });
     }
     let mut open = Vec::new();
@@ -370,6 +421,23 @@ fn ci_runs() -> Vec<CiRun> {
     }
     open.extend(closed);
     open
+}
+
+fn run_progress(id: &str) -> (Option<usize>, Option<usize>) {
+    let jq = "[.jobs[].steps[]] | {total:length, done:(map(select(.status==\"completed\"))|length)} | [.done,.total] | @tsv";
+    let args = [
+        "run", "view", id, "--repo", CI_REPO, "--json", "jobs", "--jq", jq,
+    ];
+    let Some(text) = run_cmd("gh", &args) else {
+        return (None, None);
+    };
+    let f: Vec<&str> = text.split('\t').collect();
+    if f.len() < 2 {
+        return (None, None);
+    }
+    let done = f[0].trim().parse().ok();
+    let total = f[1].trim().parse().ok();
+    (done, total)
 }
 
 fn run_cmd(program: &str, args: &[&str]) -> Option<String> {
@@ -676,10 +744,7 @@ fn parse_rfc3339(s: &str) -> Option<u64> {
     let rest = &s[19..];
     let rest = match rest.strip_prefix('.') {
         Some(fraction) => {
-            let digits = fraction
-                .chars()
-                .take_while(|c| c.is_ascii_digit())
-                .count();
+            let digits = fraction.chars().take_while(|c| c.is_ascii_digit()).count();
             &fraction[digits..]
         }
         None => rest,
@@ -725,8 +790,47 @@ fn days_from_civil(y: i64, m: u32, d: u32) -> i64 {
 }
 
 fn clock_label() -> String {
-    let s = unix_now_secs() % 86400;
-    format!("{:02}:{:02}:{:02} UTC", s / 3600, (s % 3600) / 60, s % 60)
+    let now = SystemTime::now();
+    let secs = match now.duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => 0,
+    };
+    let local = secs as i64 + local_utc_offset();
+    let s = local.rem_euclid(86400);
+    format!("{:02}:{:02}:{:02} local", s / 3600, (s % 3600) / 60, s % 60)
+}
+
+fn local_utc_offset() -> i64 {
+    let tz = env::var("TZ").ok();
+    if tz.as_deref() == Some("UTC") || tz.as_deref() == Some("Etc/UTC") {
+        return 0;
+    }
+    let out = Command::new("date")
+        .args(["+%z"])
+        .output()
+        .ok()
+        .filter(|o| o.status.success());
+    match out {
+        Some(o) => {
+            let s = String::from_utf8_lossy(&o.stdout);
+            let s = s.trim();
+            if s.len() == 5 && (s.starts_with('+') || s.starts_with('-')) {
+                let sign: i64 = if s.starts_with('-') { -1 } else { 1 };
+                let h: i64 = match s[1..3].parse() {
+                    Ok(v) => v,
+                    Err(_) => 0,
+                };
+                let m: i64 = match s[3..5].parse() {
+                    Ok(v) => v,
+                    Err(_) => 0,
+                };
+                sign * (h * 3600 + m * 60)
+            } else {
+                0
+            }
+        }
+        None => 0,
+    }
 }
 
 fn unix_now_secs() -> u64 {
@@ -801,7 +905,10 @@ mod tests {
     #[test]
     fn exec_bin_extraction() {
         let exec = "/home/o/omegaflow/target/release/solar_seconds_matrix_probe --scan";
-        assert_eq!(exec_target_bin(exec), Some("solar_seconds_matrix_probe".to_string()));
+        assert_eq!(
+            exec_target_bin(exec),
+            Some("solar_seconds_matrix_probe".to_string())
+        );
     }
 
     #[test]
