@@ -1611,8 +1611,19 @@ Gebaut (2026-09-06, sub-agents):
   node, peri, M, H, G mit Präsenz-Bits; `src/archivar/mpcorb.rs`, 8.082
   Records, 0 verworfen); Register + kernel-flatten-Manifestator-Schritt
   eingetragen; CDN-Geburt steht im nächsten CI-Lauf aus. Zweite Linie
-  (SPK-Route oder zweiter Katalog) bleibt `pending`; (d) Kometen —
-  `encke` hat keine `AsteroidRec`-Linie (CometRec/dcom5 `pending`). Übergabe:
+  (SPK-Route oder zweiter Katalog) bleibt `pending`; (d) Kometen — der
+  Weberin-Zwirn liest jetzt den dcom5-Kometen-Zweig (Sitzung 2026-09-08):
+  `CometRec`/`comet_state_at` (src/archivar/dastcom.rs), `BODY_COMET`
+  `encke`→2P in `src/weberin.rs`; die Kometen-Elemente als feste Katalog-
+  Records `dcom5_comets.bin` (dcom5_compiler `--catalog`, aktuelle Lösung
+  je primärer Designation, nur elliptisch; gemessen am dcom5_le.dat vom
+  2026-09-07: 1.792 Records; Encke 2P = DASTCOM 90000091, Epoche
+  2459897.5); Manifestations-Schritt im dcom5-cdn.yml. `encke` webt jetzt
+  SPK gegen die Kometen-Kepler-Linie (derselbe `BodyLine::Dastcom`).
+  Offen: CDN-Geburt des `dcom5_comets.bin`-Assets im nächsten
+  dcom5-cdn-Lauf (`weberin_body_verdict --dcom5` erwartet es); der
+  Placed/Riss-Befund für encke misst die Separation gegen
+  `ephemeris_encke.bin` erst nach der Manifestation. Übergabe:
   docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md.
 - Vollständige ~20k-Tafel-Ingestion in den position-indizierten Bestand —
   das Dichtefeld (Schritt 4) steht, `--catalog stars|twomass` verdrahtet;
