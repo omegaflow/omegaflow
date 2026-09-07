@@ -1217,8 +1217,10 @@ ICRS-4D-Rahmen teilt:
   sofort extrahieren statt nach der ganzen Anker-Phase) für wörtliches
   „Sekunden"-Laden; der Kalt-Download (~360 MB) bleibt einmalig bis zum
   Warm-Cache.
-- C_LIGHT konsolidieren (PENDING): `omega::C` + `odp::C` →
-  `crate::archivar::types::C_LIGHT`; `solar.rs`-Literal → `C_LIGHT`.
+- C_LIGHT konsolidieren — GESCHLOSSEN (2026-09-07): `omega::C` + `odp::C` zeigen
+  auf `crate::archivar::types::C_LIGHT` (kanonische Konstante, `types.rs:318`); die
+  Duplikat-Literale sind ersetzt. `cargo check --workspace` 0 Warnungen. (`solar.rs`
+  trug kein eigenes C-Literal mehr — kein Ersatz nötig.)
 - „41 Parser" klären (PENDING): gemessen sind 49
   `pub mod`-Format-Module in `archivar/mod.rs:10-58`; die „41" ist eine
   Teilmenge, deren Definition das Register klären muss.
