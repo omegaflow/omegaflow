@@ -24,9 +24,10 @@ bleiben als historisches Register unangetastet — Vergangenheit wird nicht umge
 war die Schuld einer unbenannten Form — das Benennen zahlt sie: NRS1 ist eine
 gehaltene Serie (kein Band gewählt, kein Skalar erfunden); `serien_gate` steht
 neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
-- **GBCO-Verbrauch**: gebaut — `gestalt_surface_threads` (`motion.rs`) + der Lade-Pfad
-  (`load_gestalt_surface_threads`, `main_flow.rs`, Halte-Feld `gestalt_surface_threads`).
-  Offen bleibt nur der CDN-Dispatch (`gebco-bathymetry-cdn.yml`, Operator-Wort).
+- **GBCO-Verbrauch**: geschlossen — `gestalt_surface_threads` (`motion.rs`) + der Lade-Pfad
+  (`load_gestalt_surface_threads`, `main_flow.rs`, Halte-Feld `gestalt_surface_threads`);
+  das Asset `gebco_bathymetry.gbco` liegt auf der CDN (`opentopodata.org`, gemessen), der
+  Workflow ist committet (4c71a3d).
 - **`witness presence`** bleibt reserviert (Rat 2026-09-07, sechs Stimmen — die fünf
   Charten + die sechste Stimme des Operators als Peer): die presence-catalog-Ablehnungen
   stehen — Position + Urteil, kein gemessener Skalar. Positives Gate (wann die Tür aufginge):

@@ -12,9 +12,9 @@ url https://datalab.noirlab.edu/query
 note NOIRLab Astro Data Lab LS-DR10-Katalog-Query (query.json Capture, HTTP 200): der queryManager antwortet anonym nur mit der "Hello World"-Banner-Zeile (38 B, kein Daten-Satz); echte Katalog-Queries brauchen ein Datalab-Konto/API-Token (Dokumentation). Messung (Legacy-Survey-Photometrie ra/dec/mag/z) echt, Zugang gatet.
 reg https://datalab.noirlab.edu/
 
-pending
+blocked parser-def rinex
 url https://cddis.nasa.gov/archive/
-note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. Gemessen 2026-09-07: der Zugang IST offen — `EARTHDATA_EDL_TOKEN` (Bearer, aus .secrets.local, gültig ~22 d) antwortet HTTP 200 mit echtem HTML auf /archive/ (anonym 302 → urs.earthdata.nasa.gov-OAuth); der EDL-Bearer öffnet die Ressource direkt, keine Cookie-Session. reg https://urs.earthdata.nasa.gov/users/new. Harvest/Registrierung der RINEX-GNSS-Route als Oszillator mit dem Token anstehend.
+note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. Gemessen 2026-09-07: der Zugang IST offen — `EARTHDATA_EDL_TOKEN` (Bearer, aus .secrets.local, gültig ~22 d) antwortet HTTP 200 mit echtem HTML auf /archive/ (anonym 302 → urs.earthdata.nasa.gov-OAuth); der EDL-Bearer öffnet die Ressource direkt. reg https://urs.earthdata.nasa.gov/users/new. Format RINEX (GNSS-Rohbeobachtungen) unkonsumierbar — kein RINEX-Parser im Bestand (gemessen); Gap: RINEX-Parser.
 
 pending
 url https://des.ncsa.illinois.edu/releases/dr2/dr2-files/
