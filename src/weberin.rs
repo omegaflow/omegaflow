@@ -105,7 +105,7 @@ pub const WEBERIN_TOL_M: f64 = 1.0e6;
 pub const BODY_NUMBER: &[(&str, u32)] = &[
     ("ceres", 1),
     ("pallas", 2),
-    ("juno", 3),
+    ("juno_asteroid", 3),
     ("vesta", 4),
     ("pluto", 134340),
     ("bennu", 101955),
@@ -304,8 +304,30 @@ mod tests {
         assert_eq!(body_number("bennu"), Some(101955));
         assert_eq!(body_number("apophis"), Some(99942));
         assert_eq!(body_number("pluto"), Some(134340));
+        assert_eq!(body_number("juno_asteroid"), Some(3));
+        assert_eq!(body_number("juno"), None);
         assert_eq!(body_number("moon"), None);
         assert_eq!(body_number("charon"), None);
+    }
+
+    #[test]
+    fn spacecraft_juno_does_not_pair_with_asteroid_three() {
+        let mut w = Weberin::new();
+        let eph = map_of(&[("juno", [0.0; 3])]);
+        w.feed(WeberinFeed {
+            eph,
+            sun: map_of(&[("sun", [0.0; 3])]),
+            recs: vec![rec(3)],
+        });
+        w.weave(0.0, WEBERIN_TOL_M);
+        match outcome(&w, "juno") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
+            other => panic!("the spacecraft juno reads {other:?}, not absent-dastcom"),
+        }
+        match outcome(&w, "juno_asteroid") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the asteroid juno reads {other:?}, not absent-spk"),
+        }
     }
 
     #[test]

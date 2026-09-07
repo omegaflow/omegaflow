@@ -51,6 +51,7 @@ pub mod lzw;
 pub mod matfile;
 pub mod mitdb;
 pub mod movement_monitoring;
+pub mod mpcorb;
 pub mod nc4;
 pub mod netcdf;
 pub mod odf;

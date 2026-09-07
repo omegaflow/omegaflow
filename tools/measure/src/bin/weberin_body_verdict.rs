@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, system_now, BodyEphemeris, LeapSeconds,
-    J2000_EPOCH,
+    embedded_lsk, extract, fetch_raw_bytes, load_sources, system_now, BodyEphemeris, ExtractResult,
+    LeapSeconds, SourceConfig, J2000_EPOCH,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{parse_record, AsteroidRec, RECORD_STRIDE};
@@ -38,21 +38,14 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     println!(
-        "usage: weberin_body_verdict [--eph-dir <dir>] [--dastcom <dastcom_asteroids.bin>] [--epoch <jd>] [--tol <m>]"
+        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--epoch <jd>] [--tol <m>]"
     );
 }
 
-fn read_ephemeris(dir: &str, name: &str) -> Result<BodyEphemeris, String> {
-    let path = format!("{dir}/ephemeris_{name}.bin");
-    let asset = format!("ephemeris_{name}.bin");
-    let bytes = ensure_bin(&path, CDN_RELEASE, &asset, BIN_TTL_S).ok_or_else(|| {
-        format!(
-            "weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200"
-        )
-    })?;
-    parse_ephemeris_binary(&bytes).ok_or_else(|| {
-        format!("weberin {name}: {path} reads but does not parse to a BodyEphemeris")
-    })
+fn cdn_parts(url: &str) -> Option<(String, String)> {
+    let rest = url.strip_prefix(CDN_BASE)?.strip_prefix('/')?;
+    let (netloc, asset) = rest.split_once('/')?;
+    Some((netloc.to_string(), asset.to_string()))
 }
 
 fn verdict_line(name: &str, outcome: &BodyOutcome) -> String {
@@ -80,7 +73,7 @@ fn main() {
     }
     let eph_dir = match arg_value(&args, "--eph-dir") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov".to_string(),
+        None => "data".to_string(),
     };
     let dastcom_path = match arg_value(&args, "--dastcom") {
         Some(d) => d,
@@ -138,30 +131,56 @@ fn main() {
     }
 
     println!("=== weberin — the second body line (dastcom/MPC Keplerian elements) against the JPL SPK ephemeris points ===");
-    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | the body set is the union of the read SPK keys and the {}-body dastcom table", recs.len(), BODY_NUMBER.len());
 
-    let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
-    match read_ephemeris(&eph_dir, "sun") {
-        Ok(e) => {
-            sun_map.insert("sun".to_string(), e);
-        }
-        Err(note) => {
-            println!("{note}");
-            println!("weberin: the sun reference is void — the heliocentric dastcom line cannot fold to the barycentric frame");
-            return;
-        }
+    let sources = load_sources();
+    let mut bodies: Vec<(String, SourceConfig)> = sources
+        .into_iter()
+        .filter(|s| s.format == "ephemeris_binary" || s.format == "orbit_bin")
+        .filter_map(|s| s.body.clone().map(|b| (b, s)))
+        .collect();
+    bodies.sort_by(|a, b| a.0.cmp(&b.0));
+    if bodies.is_empty() {
+        println!("weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void");
+        return;
     }
+    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies and the {}-body dastcom table", recs.len(), bodies.len(), BODY_NUMBER.len());
 
+    let Some(lsk) = embedded_lsk() else {
+        println!(
+            "weberin: the embedded leap-second table reads void — the body line cannot be judged"
+        );
+        return;
+    };
+    let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened = 0usize;
-    for (name, _) in BODY_NUMBER {
-        match read_ephemeris(&eph_dir, name) {
-            Ok(e) => {
-                eph.insert(name.to_string(), e);
+    for (name, src) in &bodies {
+        let Some((netloc, asset)) = cdn_parts(&src.url) else {
+            println!(
+                "weberin {name}: register url {} is not a CDN release path — the body line is not read",
+                src.url
+            );
+            continue;
+        };
+        let path = format!("{eph_dir}/{netloc}/{asset}");
+        if ensure_bin(&path, &netloc, &asset, BIN_TTL_S).is_none() {
+            println!("weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200");
+            continue;
+        }
+        match extract(src, &path, tdb, &lsk) {
+            ExtractResult::WithEphemeris(_, body_eph) => {
+                if name == "sun" {
+                    sun_map.insert(name.clone(), body_eph.clone());
+                }
+                eph.insert(name.clone(), body_eph);
                 opened += 1;
             }
-            Err(note) => println!("{note}"),
+            _ => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
         }
+    }
+    if sun_map.is_empty() {
+        println!("weberin: the sun reference is void — the heliocentric dastcom line cannot fold to the barycentric frame");
+        return;
     }
 
     let mut w = Weberin::new();
@@ -188,9 +207,9 @@ fn main() {
         println!("{}", verdict_line(&v.name, &v.outcome));
     }
     println!(
-        "weberin tally: {opened}/{len} SPK body bin(s) opened | {} body line(s) | placed {placed} | absent {absent} | riss {riss}",
+        "weberin tally: {opened}/{} registered body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
+        bodies.len(),
         w.verdicts.len(),
-        len = BODY_NUMBER.len()
     );
 }
 

@@ -43,6 +43,7 @@ pub use archivar::kepler;
 pub use archivar::lsk;
 pub use archivar::lzw;
 pub use archivar::matfile;
+pub use archivar::mpcorb;
 pub use archivar::nc4;
 pub use archivar::netcdf;
 pub use archivar::odf;
