@@ -396,6 +396,275 @@ fn shape_of(body: &str) -> Option<(f64, f64)> {
     wkt_point(&body[i..])
 }
 
+fn parse_positive_lead(s: &str) -> Option<f64> {
+    let t = s.trim_start();
+    let bytes = t.as_bytes();
+    let mut i = 0usize;
+    let mut seen_dot = false;
+    let mut seen_exp = false;
+    if bytes.first() == Some(&b'+') || bytes.first() == Some(&b'-') {
+        i = 1;
+    }
+    let mut got = false;
+    while i < bytes.len() {
+        let b = bytes[i];
+        if b.is_ascii_digit() {
+            got = true;
+            i += 1;
+        } else if b == b'.' && !seen_dot && !seen_exp {
+            seen_dot = true;
+            i += 1;
+        } else if (b == b'e' || b == b'E') && !seen_exp && got {
+            seen_exp = true;
+            i += 1;
+            if i < bytes.len() && (bytes[i] == b'+' || bytes[i] == b'-') {
+                i += 1;
+            }
+        } else {
+            break;
+        }
+    }
+    if !got {
+        return None;
+    }
+    let v = t[..i].parse::<f64>().ok()?;
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn depth_value(body: &str, key: &str) -> Option<f64> {
+    let mut from = 0usize;
+    while let Some(p) = body[from..].find(key) {
+        let at = from + p + key.len();
+        let tail = &body[at..(at + 120).min(body.len())];
+        let c = tail.chars().next()?;
+        if !matches!(c, ':' | '>' | '=' | '"' | ' ' | '\t' | '\n' | '\r' | '[') {
+            from = at + key.len();
+            continue;
+        }
+        let v = tail.trim_start_matches([':', '>', '=', ' ', '"', '\t', '\r', '\n', '[', '{']);
+        if v.starts_with('"') || v.starts_with('}') || v.starts_with(',') {
+            from = at + key.len();
+            continue;
+        }
+        let seek = match v.find(|ch: char| ch == '-' || ch.is_ascii_digit()) {
+            Some(s) => s,
+            None => {
+                from = at + key.len();
+                continue;
+            }
+        };
+        if let Some(d) = parse_positive_lead(&v[seek..]) {
+            return Some(d);
+        }
+        from = at + key.len();
+    }
+    None
+}
+
+fn depth_from_metadata_text(body: &str) -> Option<f64> {
+    for key in ["DepthInstrument_m", "DEPLOY_INSTRUMENT_DEPTH"] {
+        if let Some(v) = depth_value(body, key) {
+            return Some(v);
+        }
+    }
+    None
+}
+
+fn u16_le(b: &[u8], off: usize) -> u16 {
+    b[off] as u16 | ((b[off + 1] as u16) << 8)
+}
+
+fn u32_le(b: &[u8], off: usize) -> u32 {
+    b[off] as u32
+        | ((b[off + 1] as u32) << 8)
+        | ((b[off + 2] as u32) << 16)
+        | ((b[off + 3] as u32) << 24)
+}
+
+fn zip_members(bytes: &[u8]) -> Option<Vec<(String, u16, usize, usize)>> {
+    let n = bytes.len();
+    if n < 22 {
+        return None;
+    }
+    let mut eocd: Option<usize> = None;
+    let mut i = n.saturating_sub(4);
+    let lo = n.saturating_sub(65557);
+    while i >= lo {
+        if bytes.get(i..i + 4) == Some(&[0x50, 0x4b, 0x05, 0x06]) {
+            eocd = Some(i);
+            break;
+        }
+        if i == 0 {
+            break;
+        }
+        i -= 1;
+    }
+    let e = eocd?;
+    let cd_size = u32_le(bytes, e + 12) as usize;
+    let cd_off = u32_le(bytes, e + 16) as usize;
+    let cd = bytes.get(cd_off..cd_off + cd_size)?;
+    let mut members = Vec::new();
+    let mut p = 0usize;
+    while p + 46 <= cd.len() {
+        if cd.get(p..p + 4) == Some(&[0x50, 0x4b, 0x01, 0x02]) {
+            let method = u16_le(cd, p + 10);
+            let comp = u32_le(cd, p + 20) as usize;
+            let nlen = u16_le(cd, p + 28) as usize;
+            let xlen = u16_le(cd, p + 30) as usize;
+            let clen = u16_le(cd, p + 32) as usize;
+            let local = u32_le(cd, p + 42) as usize;
+            let name = String::from_utf8_lossy(&cd[p + 46..p + 46 + nlen]).into_owned();
+            members.push((name, method, comp, local));
+            p += 46 + nlen + xlen + clen;
+        } else {
+            p += 1;
+        }
+    }
+    if members.is_empty() {
+        None
+    } else {
+        Some(members)
+    }
+}
+
+fn xlsx_entry(
+    bytes: &[u8],
+    members: &[(String, u16, usize, usize)],
+    name: &str,
+) -> Option<Vec<u8>> {
+    let (_, method, comp, local) = members.iter().find(|(m, ..)| m == name)?;
+    if *local + 30 > bytes.len() {
+        return None;
+    }
+    let nlen = u16_le(bytes, local + 26) as usize;
+    let xlen = u16_le(bytes, local + 28) as usize;
+    let data_start = local + 30 + nlen + xlen;
+    let payload = bytes.get(data_start..data_start + comp)?;
+    match method {
+        0 => Some(payload.to_vec()),
+        8 => omegaflow::inflate::inflate(payload),
+        _ => None,
+    }
+}
+
+fn shared_index(shared: &str, want: &str) -> Option<usize> {
+    let mut idx = 0usize;
+    let mut rest = shared;
+    while let Some(p) = rest.find("<si>") {
+        let body = &rest[p + 4..];
+        let end = body.find("</si>")?;
+        let cell = &body[..end];
+        let t = if let Some(ts) = cell.find("<t") {
+            let gt = cell[ts..].find('>').map(|g| ts + g + 1)?;
+            let te = cell[gt..].find("</t>").map(|e| gt + e)?;
+            cell[gt..te].trim().to_string()
+        } else {
+            String::new()
+        };
+        if t == want {
+            return Some(idx);
+        }
+        idx += 1;
+        rest = &body[end + 5..];
+    }
+    None
+}
+
+fn xml_v(s: &str) -> Option<String> {
+    let p = s.find("<v>")?;
+    let tail = &s[p + 3..];
+    let e = tail.find("</v>")?;
+    Some(tail[..e].trim().to_string())
+}
+
+fn col_of_ref(cr: &str) -> Option<&str> {
+    let d = cr.find(|c: char| c.is_ascii_digit())?;
+    if d == 0 {
+        None
+    } else {
+        Some(&cr[..d])
+    }
+}
+
+fn row_of_ref(cr: &str) -> Option<usize> {
+    let d = cr.find(|c: char| c.is_ascii_digit())?;
+    cr[d..].parse::<usize>().ok()
+}
+
+fn sheet_cells(sheet: &str) -> Vec<(String, Option<usize>, Option<f64>)> {
+    let mut out = Vec::new();
+    let mut pos = 0usize;
+    while let Some(rel) = sheet[pos..].find("<c ") {
+        let cs = pos + rel + 3;
+        let Some(gt_rel) = sheet[cs..].find('>') else {
+            break;
+        };
+        let gt = cs + gt_rel;
+        let attrs = &sheet[cs..gt];
+        let self_close = attrs.ends_with('/');
+        let (inner, next) = if self_close {
+            (String::new(), gt + 1)
+        } else {
+            let body_start = gt + 1;
+            match sheet[body_start..].find("</c>") {
+                Some(cc) => (
+                    sheet[body_start..body_start + cc].to_string(),
+                    body_start + cc + 4,
+                ),
+                None => (String::new(), sheet.len()),
+            }
+        };
+        let mut cr = String::new();
+        if let Some(rp) = attrs.find("r=\"") {
+            let ra = &attrs[rp + 3..];
+            if let Some(qe) = ra.find('"') {
+                cr = ra[..qe].to_string();
+            }
+        }
+        let shared = if attrs.contains("t=\"s\"") {
+            xml_v(&inner).and_then(|v| v.parse::<usize>().ok())
+        } else {
+            None
+        };
+        let num = if attrs.contains("t=\"s\"") {
+            None
+        } else {
+            xml_v(&inner).and_then(|v| parse_positive_lead(&v))
+        };
+        out.push((cr, shared, num));
+        pos = next;
+        if next >= sheet.len() {
+            break;
+        }
+    }
+    out
+}
+
+fn xlsx_depth_m(bytes: &[u8]) -> Option<f64> {
+    let members = zip_members(bytes)?;
+    let shared = xlsx_entry(bytes, &members, "xl/sharedStrings.xml")?;
+    let shared = String::from_utf8_lossy(&shared);
+    let depth_idx = shared_index(&shared, "Depth_m")?;
+    let sheet = xlsx_entry(bytes, &members, "xl/worksheets/sheet1.xml")?;
+    let sheet = String::from_utf8_lossy(&sheet);
+    let cells = sheet_cells(&sheet);
+    let header = cells
+        .iter()
+        .find(|(cr, shared, _num)| shared == &Some(depth_idx) && row_of_ref(cr) == Some(1))?;
+    let col = col_of_ref(&header.0)?;
+    let val = cells
+        .iter()
+        .find(|(cr, shared, _num)| {
+            shared.is_none() && col_of_ref(cr) == Some(col) && row_of_ref(cr) == Some(2)
+        })
+        .and_then(|(_, _, num)| *num)?;
+    Some(val)
+}
+
 fn nrs_id(s: &str) -> String {
     let b = s.as_bytes();
     let mut i = 0usize;
@@ -642,6 +911,7 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         Some(v) => v,
         None => 0,
     };
+    let keep_unusable = args.iter().any(|a| a == "--keep-unusable");
     let psd_obj = file.resolve("psd").ok();
     let psd_unit = match psd_obj.as_ref().and_then(|o| attr_text(o, "units")) {
         Some(t) => t,
@@ -676,9 +946,16 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         buf.push_str(&format!("#psd_unit={}\n", psd_unit));
     }
     buf.push_str("#time_unit=seconds since 1970-01-01T00:00:00Z\n");
+    buf.push_str(
+        "#quality_flag=1 Good|2 Not evaluated/Unknown|3 Compromised/Questionable|4 Unusable/Bad\n",
+    );
+    if !keep_unusable {
+        buf.push_str("#quality_flag_4_exclusion=Unusable (4) samples are not emitted as values; 2/3 are a measured state and flow — pass --keep-unusable to carry 4 as well\n");
+    }
     buf.push_str("#row=epoch_s|freq_hz|psd_db|quality_flag\n");
 
     let mut total = 0usize;
+    let mut excluded_unusable = 0usize;
     let mut partial = false;
     for i in 0..nt * nf {
         let t = i / nf;
@@ -696,6 +973,10 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         let (Some(epoch), Some(freq), Some(spl), Some(q)) = (epoch, freq, spl, q) else {
             continue;
         };
+        if !keep_unusable && q == 4.0 {
+            excluded_unusable += 1;
+            continue;
+        }
         if limit > 0 && total >= limit {
             partial = true;
             break;
@@ -718,6 +999,12 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         print!("{}", buf);
     }
     eprintln!("noaa-nodd: {} value lines from {}", total, path);
+    if excluded_unusable > 0 {
+        eprintln!(
+            "noaa-nodd: {} quality_flag-4 (Unusable/Bad) samples excluded from the value field",
+            excluded_unusable
+        );
+    }
     if partial {
         eprintln!(
             "noaa-nodd: limit {} reached — the extraction is partial",
@@ -864,7 +1151,14 @@ fn collect_nc_keys(bucket: &str, depdir: &str, out: &mut Vec<String>, days: usiz
     }
 }
 
-fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> {
+fn nc_rows(
+    bytes: &[u8],
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    lsk: &omegaflow::lsk::LeapSeconds,
+    keep_unusable: bool,
+) -> Vec<GeoRec> {
     let Ok(file) = Hdf5File::parse(bytes) else {
         return Vec::new();
     };
@@ -877,6 +1171,7 @@ fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) 
     let Some(frequency) = ds_load(&file, "frequency") else {
         return Vec::new();
     };
+    let quality = ds_load(&file, "quality_flag");
     if psd.dims.len() != 2 {
         return Vec::new();
     }
@@ -890,11 +1185,16 @@ fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) 
         Some(&v) => v as usize,
         None => return Vec::new(),
     };
+    let quality_ok = match &quality {
+        None => true,
+        Some(q) => raw_elems(q.raw.len(), q.size) >= nt * nf,
+    };
     if ax != nt
         || fx != nf
         || raw_elems(psd.raw.len(), psd.size) < nt * nf
         || raw_elems(time.raw.len(), time.size) < nt
         || raw_elems(frequency.raw.len(), frequency.size) < nf
+        || !quality_ok
     {
         return Vec::new();
     }
@@ -918,6 +1218,13 @@ fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) 
         if !(spl.is_finite() && freq.is_finite() && freq > 0.0 && epoch.is_finite()) {
             continue;
         }
+        if let Some(q) = &quality {
+            if let Some(flag) = elem_f64(&q.raw, i, q.class, q.size, q.endian) {
+                if !keep_unusable && flag == 4.0 {
+                    continue;
+                }
+            }
+        }
         let Some(tdb) = lsk.unix_to_tdb(epoch) else {
             continue;
         };
@@ -925,7 +1232,7 @@ fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) 
             t: tdb,
             lat,
             lon,
-            alt: 0.0,
+            alt,
             freq,
             bin_width: 0.0,
             val: spl,
@@ -933,6 +1240,39 @@ fn nc_rows(bytes: &[u8], lat: f64, lon: f64, lsk: &omegaflow::lsk::LeapSeconds) 
         });
     }
     out
+}
+
+fn deployment_depth(bucket: &str, dep: &str, meta_body: &str) -> Option<f64> {
+    if let Some(d) = depth_from_metadata_text(meta_body) {
+        return Some(d);
+    }
+    if let Some(p) = page(bucket, &format!("{}metadata/", dep), "") {
+        for o in &p.objects {
+            if !(o.key.ends_with(".json") || o.key.ends_with(".xml")) {
+                continue;
+            }
+            let Some(b) = curl(&object_url(bucket, &o.key)) else {
+                continue;
+            };
+            if let Some(d) = depth_from_metadata_text(&b) {
+                return Some(d);
+            }
+        }
+    }
+    if let Some(p) = page(bucket, &format!("{}calibration/", dep), "") {
+        for o in &p.objects {
+            if !o.key.ends_with(".xlsx") {
+                continue;
+            }
+            let Some(bytes) = curl_bytes(&object_url(bucket, &o.key)) else {
+                continue;
+            };
+            if let Some(d) = xlsx_depth_m(&bytes) {
+                return Some(d);
+            }
+        }
+    }
+    None
 }
 
 fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci: bool) -> usize {
@@ -945,6 +1285,7 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
         std::process::exit(1);
     };
     let days = arg_usize(args, "--days").unwrap_or(1);
+    let keep_unusable = args.iter().any(|a| a == "--keep-unusable");
     let station_filter = match arg_value(args, "--station") {
         Some(v) => v,
         None => String::new(),
@@ -953,6 +1294,7 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
     collect_metadata_keys(bucket, prefix, 10, &mut meta);
     let mut recs: Vec<GeoRec> = Vec::new();
     let mut n_deploy = 0usize;
+    let mut n_depth = 0usize;
     for mk in &meta {
         if !station_filter.is_empty() && !mk.contains(&format!("/{}/", station_filter)) {
             continue;
@@ -968,6 +1310,23 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
         let Some(dep) = depdir_of_metadata_key(mk) else {
             continue;
         };
+        let alt = match deployment_depth(bucket, &dep, &body) {
+            Some(d) => {
+                n_depth += 1;
+                eprintln!(
+                    "noaa-nodd: deployment {} sits {} m below the surface — alt {}",
+                    dep, d, -d
+                );
+                -d
+            }
+            None => {
+                eprintln!(
+                    "noaa-nodd: deployment {} carries no measured depth — records stay at the surface (0 honored)",
+                    dep
+                );
+                0.0
+            }
+        };
         let mut ncs = Vec::new();
         collect_nc_keys(bucket, &format!("{}data/", dep), &mut ncs, days);
         n_deploy += 1;
@@ -976,15 +1335,20 @@ fn run_emit_bin(args: &[String], bucket: &str, prefix: &str, out_path: &str, ci:
                 eprintln!("noaa-nodd: {} stayed unreadable — pending", key);
                 continue;
             };
-            let rows = nc_rows(&bytes, lat, lon, &lsk);
+            let rows = nc_rows(&bytes, lat, lon, alt, &lsk, keep_unusable);
             eprintln!("noaa-nodd: {} → {} psd rows", key, rows.len());
             recs.extend(rows);
         }
     }
     eprintln!(
-        "noaa-nodd: {} deployments under {}/{} carry psd rows",
-        n_deploy, bucket, prefix
+        "noaa-nodd: {} deployments under {}/{} carry psd rows, {} with a measured depth",
+        n_deploy, bucket, prefix, n_depth
     );
+    if !keep_unusable {
+        eprintln!(
+            "noaa-nodd: quality_flag 4 (Unusable/Bad) samples are not carried as values (0 honored); --keep-unusable carries them"
+        );
+    }
     if recs.is_empty() {
         eprintln!("noaa-nodd: no psd rows — the bin stays unwritten (0 honored)");
         std::process::exit(1);
