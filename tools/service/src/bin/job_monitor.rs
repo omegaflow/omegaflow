@@ -29,7 +29,8 @@ struct UnitJob {
 struct ProcJob {
     pid: u64,
     etime: String,
-    cpu: String,
+    cpu: f64,
+    rss_kb: u64,
     name: String,
 }
 
@@ -64,7 +65,7 @@ fn main() {
 
     let tty = stdout().is_terminal();
     if !tty {
-        print!("{}", dashboard(interval, false));
+        print!("{}\n", dashboard(interval, false).join("\n"));
         return;
     }
 
@@ -98,8 +99,16 @@ fn main() {
 
     print!("\x1b[?25l");
     loop {
-        let text = dashboard(interval, true);
-        print!("\x1b[2J\x1b[H{}", text);
+        let frame = dashboard(interval, true);
+        let width = term_width();
+        print!("\x1b[H");
+        let mut buf = String::new();
+        for line in &frame {
+            buf.push_str(&fit_visible(line, width));
+            buf.push('\n');
+        }
+        print!("{}", buf);
+        print!("\x1b[J");
         let _ = stdout().flush();
         let ticks = interval * 4;
         let mut stop = false;
@@ -117,7 +126,7 @@ fn main() {
     print!("\x1b[?25h\x1b[0m");
 }
 
-fn dashboard(interval: u64, color: bool) -> String {
+fn dashboard(interval: u64, color: bool) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(paint(
         color,
@@ -129,6 +138,8 @@ fn dashboard(interval: u64, color: bool) -> String {
         ),
     ));
     lines.push(String::new());
+    lines.extend(system_panel(color));
+    lines.push(String::new());
     lines.extend(local_panel(color));
     lines.push(String::new());
     lines.extend(ci_panel(color));
@@ -138,7 +149,102 @@ fn dashboard(interval: u64, color: bool) -> String {
         "2",
         "◉ running jobs    ✓ success    ✗ failure    ▶ in-progress    − cancelled",
     ));
-    lines.join("\n")
+    lines
+}
+
+fn system_panel(color: bool) -> Vec<String> {
+    let mut lines = Vec::new();
+    lines.push(paint(color, "1;33", "▌ SYSTEM ▐"));
+    let load = loadavg();
+    let ncpu = n_cpus();
+    let load = match load {
+        Some(l) => l,
+        None => 0.0,
+    };
+    let (used_gb, total_gb, frac) = mem_frac();
+    let ncpu_f = ncpu as f64;
+    let loadbar = meter_bar(load / ncpu_f, 12);
+    let membar = meter_bar(frac, 12);
+    let load_pct = ((load / ncpu_f) * 100.0).round() as u64;
+    let mem_pct = (frac * 100.0).round() as u64;
+    let load_col = if load / ncpu_f < 0.7 {
+        "1;32"
+    } else if load / ncpu_f < 1.3 {
+        "1;33"
+    } else {
+        "1;31"
+    };
+    let mem_col = if frac < 0.7 {
+        "1;32"
+    } else if frac < 0.85 {
+        "1;33"
+    } else {
+        "1;31"
+    };
+    lines.push(format!(
+        "  {} load {}/{} {}  {:>3}%   {} mem {}/{} {}  {:>3}%",
+        paint(color, load_col, "CPU"),
+        format!("{:.2}", load),
+        ncpu,
+        loadbar,
+        load_pct,
+        paint(color, mem_col, "RAM"),
+        format!("{:.1}G", used_gb),
+        format!("{:.1}G", total_gb),
+        membar,
+        mem_pct,
+    ));
+    lines
+}
+
+fn loadavg() -> Option<f64> {
+    let text = fs::read_to_string("/proc/loadavg").ok()?;
+    let first = text.split_whitespace().next()?;
+    first.parse().ok()
+}
+
+fn n_cpus() -> usize {
+    fs::read_to_string("/proc/cpuinfo")
+        .map(|s| s.matches("processor").count())
+        .unwrap_or(1)
+}
+
+fn mem_frac() -> (f64, f64, f64) {
+    let text = match fs::read_to_string("/proc/meminfo") {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    };
+    let mut total = 0.0f64;
+    let mut avail = 0.0f64;
+    let parse_kb = |s: &str| -> f64 {
+        match s.split_whitespace().nth(1).and_then(|v| v.parse().ok()) {
+            Some(v) => v,
+            None => 0.0,
+        }
+    };
+    for line in text.lines() {
+        if line.starts_with("MemTotal:") {
+            total = parse_kb(line);
+        } else if line.starts_with("MemAvailable:") {
+            avail = parse_kb(line);
+        }
+    }
+    let total_gb = total / 1048576.0;
+    let used_gb = (total - avail) / 1048576.0;
+    let frac = if total > 0.0 {
+        (total - avail) / total
+    } else {
+        0.0
+    };
+    (used_gb, total_gb, frac)
+}
+
+fn meter_bar(frac: f64, width: usize) -> String {
+    let frac = frac.clamp(0.0, 1.0);
+    let filled = (frac * width as f64).round() as usize;
+    let filled = filled.min(width);
+    let empty = width - filled;
+    format!("[{}|{}]", "█".repeat(filled), "─".repeat(empty))
 }
 
 fn local_panel(color: bool) -> Vec<String> {
@@ -174,7 +280,21 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
     let (code, icon) = unit_style(&u.sub);
     let name = clean_unit(&u.name);
     let state = format!("{}/{}/{}", u.load, u.active, u.sub);
-    let pid = match u.pid {
+    let metrics = match u.pid {
+        Some(pid) => proc_metrics(pid),
+        None => None,
+    };
+    let metric_str = match &metrics {
+        Some((cpu, rss, etime)) => format!(
+            "  {} cpu {:<6} {:<10} {:<16}",
+            paint(color, "1;33", &spin_char().to_string()),
+            format!("{:.0}%", cpu),
+            fit(&format!("mem {}", fmt_size(*rss)), 10),
+            fit(&format!("elapsed {}", etime), 16),
+        ),
+        None => String::new(),
+    };
+    let pid_str = match u.pid {
         Some(p) => format!("pid {}", p),
         None => "no main pid".to_string(),
     };
@@ -183,8 +303,11 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
         paint(color, code, icon),
         fit(&name, 42),
         paint(color, code, &state),
-        paint(color, "2", &pid),
+        paint(color, "2", &pid_str),
     ));
+    if !metric_str.is_empty() {
+        lines.push(metric_str);
+    }
     if let Some(exec) = &u.exec {
         lines.push(paint(
             color,
@@ -202,15 +325,52 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
     lines
 }
 
+fn spin_char() -> char {
+    let frames = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
+    let ms = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_millis() as usize,
+        Err(_) => 0,
+    };
+    frames[(ms / 180) % frames.len()]
+}
+
+fn fmt_size(kb: u64) -> String {
+    if kb >= 1024 * 1024 {
+        format!("{:.1}G", kb as f64 / (1024.0 * 1024.0))
+    } else if kb >= 1024 {
+        format!("{:.0}M", kb as f64 / 1024.0)
+    } else {
+        format!("{}K", kb)
+    }
+}
+
+fn proc_metrics(pid: u64) -> Option<(f64, u64, String)> {
+    let text = run_cmd("ps", &["-o", "pcpu=,rss=", "-p", &pid.to_string()])?;
+    let toks: Vec<&str> = text.split_whitespace().collect();
+    if toks.len() < 2 {
+        return None;
+    }
+    let cpu = toks[0].parse().ok()?;
+    let rss = toks[1].parse().ok()?;
+    let etime = match run_cmd("ps", &["-o", "etime=", "-p", &pid.to_string()]) {
+        Some(s) => s.trim().to_string(),
+        None => String::new(),
+    };
+    Some((cpu, rss, etime))
+}
+
 fn proc_lines(p: &ProcJob, color: bool) -> Vec<String> {
     let mut lines = Vec::new();
+    let cpu = format!("{:.0}%", p.cpu);
     lines.push(format!(
-        "  {} {} {} {} {}",
+        "  {} {} pid {:<6} {:<9} {:<11} {:<16} {}",
         paint(color, "36", "+"),
-        format!("pid {:<6}", p.pid),
-        paint(color, "2", &fit(&format!("elapsed {}", p.etime), 18)),
-        paint(color, "2", &fit(&format!("cpu {}%", p.cpu), 12)),
-        fit(&p.name, 50),
+        paint(color, "1;33", &spin_char().to_string()),
+        p.pid,
+        format!("cpu {}", paint(color, "1;33", &cpu)),
+        fit(&format!("mem {}", fmt_size(p.rss_kb)), 11),
+        fit(&format!("elapsed {}", p.etime), 16),
+        fit(&p.name, 40),
     ));
     let keys = vec![p.name.clone()];
     if let Some(hint) = log_hint(&keys, None) {
@@ -328,13 +488,13 @@ fn systemd_jobs() -> Vec<UnitJob> {
 
 fn ps_jobs(active: &BTreeSet<u64>) -> Vec<ProcJob> {
     let mut jobs = Vec::new();
-    let Some(text) = run_cmd("ps", &["-eo", "pid=,etime=,pcpu=,args="]) else {
+    let Some(text) = run_cmd("ps", &["-eo", "pid=,etime=,pcpu=,rss=,args="]) else {
         return jobs;
     };
     let me = id() as u64;
     for line in text.lines() {
         let toks: Vec<&str> = line.split_whitespace().collect();
-        if toks.len() < 4 {
+        if toks.len() < 5 {
             continue;
         }
         let pid: u64 = match toks[0].parse() {
@@ -344,7 +504,7 @@ fn ps_jobs(active: &BTreeSet<u64>) -> Vec<ProcJob> {
         if pid == me || active.contains(&pid) {
             continue;
         }
-        let argv0 = toks[3];
+        let argv0 = toks[4];
         let lower = argv0.to_lowercase();
         let has_target = lower.contains("target/release/") || lower.contains("target/debug/");
         if !has_target {
@@ -363,7 +523,14 @@ fn ps_jobs(active: &BTreeSet<u64>) -> Vec<ProcJob> {
         jobs.push(ProcJob {
             pid,
             etime: toks[1].to_string(),
-            cpu: toks[2].to_string(),
+            cpu: match toks[2].parse() {
+                Ok(v) => v,
+                Err(_) => 0.0,
+            },
+            rss_kb: match toks[3].parse() {
+                Ok(v) => v,
+                Err(_) => 0,
+            },
             name: bin,
         });
     }
@@ -902,6 +1069,68 @@ fn fit(s: &str, width: usize) -> String {
     out
 }
 
+fn visible_len(s: &str) -> usize {
+    let mut n = 0usize;
+    let mut chars = s.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '\x1b' {
+            if chars.peek() == Some(&'[') {
+                chars.next();
+                while let Some(&nxt) = chars.peek() {
+                    chars.next();
+                    if (nxt as char).is_ascii_alphabetic() {
+                        break;
+                    }
+                }
+            }
+        } else {
+            n += 1;
+        }
+    }
+    n
+}
+
+fn fit_visible(s: &str, width: usize) -> String {
+    let vis = visible_len(s);
+    if vis > width {
+        truncate_visible(s, width)
+    } else {
+        let mut out = s.to_string();
+        while visible_len(&out) < width {
+            out.push(' ');
+        }
+        out
+    }
+}
+
+fn truncate_visible(s: &str, width: usize) -> String {
+    let mut out = String::new();
+    let mut n = 0usize;
+    let mut chars = s.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '\x1b' {
+            out.push(c);
+            if chars.peek() == Some(&'[') {
+                out.push(chars.next().unwrap());
+                while let Some(&nxt) = chars.peek() {
+                    out.push(nxt);
+                    chars.next();
+                    if (nxt as char).is_ascii_alphabetic() {
+                        break;
+                    }
+                }
+            }
+        } else {
+            if n >= width {
+                break;
+            }
+            out.push(c);
+            n += 1;
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -958,7 +1187,7 @@ mod tests {
     #[test]
     fn age_units() {
         assert_eq!(age_label(1000, Some(910)), "1m 30s");
-        assert_eq!(age_label(1000, Some(6400)), "1h 30m");
+        assert_eq!(age_label(6400, Some(1000)), "1h 30m");
         assert_eq!(age_label(1000, Some(1000)), "now");
         assert_eq!(age_label(1000, None), "–");
     }
