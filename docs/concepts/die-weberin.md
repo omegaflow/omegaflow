@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: b7f96a81fa5db9f97649602e815722952599c447b2ef831dddfae84271fb2774
+  sha256: 353d78351e262a7188fdb09cc78a4710ea104d9325299a3d4061e8ae95ce668d
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -117,6 +117,16 @@ einschießt — und zwirnt zwei unabhängige Fäden zur einen Weltlinie.
   ist das ein Riss, kein Fehler. Die eigene Messung lebt im Zeitreich
   (Lichtkurve, S², TE); was keine Baseline modelliert und kein Netz je sah,
   bleibt im Vlies liegen — sichtbar, unbenannt.
+- **Die drei Zeugen-Arten.** Ein Nicht-Strahler, der als Oszillator abgelehnt
+  wurde, ist damit nicht als Zeuge abgelehnt. Drei Arten bezeugen, keine
+  strahlt: (a) der S²-Richtungs-Zeuge (ra/dec + Signalness/Energie, τ=0,
+  distanzlos); (b) der räumliche Gestalt-Zeuge — eine Körperoberflächen-Form,
+  ein lat/lon-Skalarfeld aus gemessener Höhe oder Tiefe, gehalten als Binding
+  wie `dust-maske.φ`, nie als Kraft-Feld, τ = geologische Stabilität; (c) der
+  Presence-Zeuge — ein Wesen am Punkt, Ort und Zeit gemessen, die Art ein
+  Urteil, nie der einzige Zeuge. Jeder Zeuge trägt einen gemessenen Skalar;
+  eine nackte Koordinate ohne Wert bleibt verworfen. Ein Modell oder Forecast
+  ist kein Zeuge.
 
 Der Schuss hat zwei Bewegungen — den **Zwirn** (unabhängige Fäden, die zur
 selben Weltlinie konvergieren: der Beweis) und den **Riss** (unabhängige
