@@ -4,7 +4,7 @@ use crate::archivar::{
     body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth, BodyEphemeris,
 };
 
-pub const C: f64 = 299792458.0;
+pub const C: f64 = crate::archivar::types::C_LIGHT;
 pub const SUN_MU: f64 = 1.32712440018e20;
 pub const EARTH: &str = "earth";
 
