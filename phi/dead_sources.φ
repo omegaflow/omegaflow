@@ -298,6 +298,10 @@ decline no-physical-force
 url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
 note Kryptopreis.
 
+decline derived-satellite-index
+url https://api.coral.tsr.lol/stations
+note Coral-Reef-Watch-Bleaching-Metriken (current.json/stations.json CDN-Captures): SST-basierte DHW/SSTA-Schwellen-Indizes aus Satelliten-SST, kein direkt gemessener Punktwert; derived product.
+
 decline no-physical-force
 url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd
 note Kryptopreis — ökonomische Abstraktion, kein Sensor-Organ denkbar.
@@ -657,6 +661,10 @@ note HTTP 405 — Endpoint verlangt anderen Interaktionsmodus.
 decline redistribution
 url https://api.protectedplanet.net/v3/protected_areas?with_geometry=true&latitude=
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
+
+decline derived-radar-product
+url https://api.rainviewer.com/public/weather-maps.json
+note Radar-Komposit-Tile-Manifest (weather-maps.json, HTTP 200, 818 B): Liste vergangener/Nowcast-Radar-Tile-Pfade, keine Punkt-Messung; derived image product.
 
 dead 404
 url https://api.reliefweb.int/v1/
@@ -1282,6 +1290,10 @@ dead 404
 url https://droughtmonitor.unl.edu/api/drought/briefingmaps/
 note HTTP 404 — Endpoint weg.
 
+dead 500
+url https://ds.iris.edu/spud/momenttensor
+note IRIS-SPUD-Moment-Tensor-Service (momenttensor.json Capture): HTTP 500 am 2026-09-07 (Server-Fehler); IRIS-fdsnws/event = Gone. Moment-Tensor-Messung gehoert der GCMT-Linie (globalcmt.org); die Waveform-Messung ist via service.earthscope.org (fdsn_waveform.bin) registriert.
+
 dead dns-unresolved
 url https://dsn.jpl.nasa.gov/dsn/data/dsn.xml
 note curl: curl: (6) Could not resolve host: dsn.jpl.nasa.gov
@@ -1289,6 +1301,10 @@ note curl: curl: (6) Could not resolve host: dsn.jpl.nasa.gov
 decline catalog
 url https://earth-search.aws.element84.com/v0/search
 note STAC-Suchkatalog (Metadata-Suche).
+
+decline catalog-duplicate
+url https://earthquake.tmd.go.th/earthquake_json.php
+note TMD-Thailand-Erdbeben-Bulletin. Die earthquake_json.json/200.json-Captures stammen vom HTTP-404-Pfad (am 2026-09-07 gemessen); der lebende RSS (feed/rss_inside.xml) traegt lat/lon/magnitude nur im <title>-Freitext (Parser-Gap) und dupliziert den registrierten USGS-Epizentrum-Messwert-Typ.
 
 dead 400
 url https://earth-search.aws.element84.com/v0/search\
@@ -1674,6 +1690,10 @@ dead 5xx
 url https://fenixservices.fao.org/faostat/api/v1/en/
 note HTTP 521 — Server antwortet nicht brauchbar.
 
+decline registry-list
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+note FRIPON-Feuerkugel-Liste (liste_multiple.ajax.json Capture, HTTP 200, 20784 Events): Event-Register mit Datum/Kamera-Anzahl/Status/Stationsnamen, keine Spalte mit Position oder physikalischem Messwert am Punkt; Feuerkugel-Energien sind via ssd-api.jpl.nasa.gov fireball.api registriert.
+
 dead 404
 url https://fireballs.ndc.nasa.gov/api/meteors/last24h
 note HTTP 404 — Endpoint weg.
@@ -1701,6 +1721,10 @@ note Preisindizes.
 decline no-physical-force
 url https://fred.stlouisfed.org/docs/api/api_key.html
 note Ökonomie-Daten.
+
+decline archive-catalog
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items
+note PDS-STAC-Granulat-Index LOLA (items.json Capture, HTTP 200, geo+json): Produkt-Katalog mit Granulat-Footprints und Asset-Links, kein Messwert am Punkt.
 
 decline kompilat
 url https://gaia.ari.uni-heidelberg.de/tap/sync
@@ -1765,6 +1789,10 @@ note Schema-Dokument.
 dead 404-route
 url https://geomag.bgs.ac.uk/data_service/data/magnetic_indices/saa/
 note Recheck b4 2026-08-18: 404 HTML — SAA-Route absent; Portal lebt. HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline duplicate-intermagnet
+url https://geomag.usgs.gov/ws/data/
+note USGS-Geomagnetik (data.json Capture, HTTP 200: InterMAGNET-adjusted XYZF nT, 1-min, Station BOU): dieselbe InterMAGNET-Messung wie der registrierte imag-data.bgs.ac.uk/GIN-HAPI-Fanout (154 Stationen, inkl. BOU) — Duplikat, kein neuer Messwert.
 
 dead dns-unresolved
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
@@ -1890,6 +1918,10 @@ dead 404
 url https://goldsmr5.gesdisc.eosdis.nasa.gov/erddap/griddap/
 note HTTP 404 — Endpoint weg.
 
+decline product-file-index
+url https://gong2.nso.edu/HA/hag/
+note GONG-hag/zqs-Synoptik (hag.json/zqs.json CDN-Captures): Verzeichnis-Index von FITS-Bildprodukten (H-alpha/Magnetogramm), kein Skalar-Punkt-Feed; die GONG-p-Moden-Messung ist via ssd.jpl.nasa.gov (gong_modes.bin) registriert.
+
 decline significance-registry
 url https://gracedb.ligo.org/api/superevents/
 note grind: grind_host.φ
@@ -1945,6 +1977,10 @@ note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN in .secrets.local): /
 decline 
 url https://hosting.wsapi.cloud.bom.gov.au/arcgis/rest/services/flood/National_Flood_Gauge_Network/FeatureServer/0
 note grind: grind_arcgis_deep.φ
+
+decline duplicate-eop
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+note IERS-EOP (bulletinb.json/eopc04.json/eopc04.1962-now.json CDN-Captures, HTTP 200): UT1-UTC + Polbewegung — dieselbe Messung wie der registrierte maia.usno.navy.mil ser7/finals.all-Block (ut1_utc/pmx/pmy) — Duplikat.
 
 dead 404
 url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=
@@ -2434,6 +2470,10 @@ decline catalog
 url https://odereest.rsl.wustl.edu/
 note PDS Geosciences ODE = Cross-Mission-Query-Index orbitaler Datenprodukte, kein Messwert am Punkt; dns-fail, ODE lebt unter ode.rsl.wustl.edu.
 
+decline archive-catalog
+url https://oderest.rsl.wustl.edu/live2/
+note PDS-ODE-live2 (live2.json Capture, HTTP 200, XML Count 89): Produkt-Auslieferungs-Katalog (MOLA-MEGDR/PEDR-Dateien), kein Messwert am Punkt.
+
 dead 404
 url https://odims.ospar.org/api/
 note HTTP 404 — Endpoint weg.
@@ -2441,6 +2481,10 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://odlinfo.bfs.de/daten/odl-status-de.json
 note HTTP 404 — Endpoint weg.
+
+decline duplicate-omni
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi
+note OMNI-Solarwind (nx1.json Capture): OMNI2-1h — Duplikat der registrierten SPDF-HAPI-OMNI-Route (sources.φ omni_*); nx1.cgi antwortete am 2026-09-07 auf die vars-Query mit HTML-Fehler (Wrong value).
 
 decline no-physical-force
 url https://open.er-api.com/v6/latest/USD
@@ -2822,6 +2866,10 @@ dead timeout
 url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
 note curl: curl: (28) Connection timed out after 12002 milliseconds
 
+decline station-registry
+url https://seismic-api.science.unimelb.edu.au/monitoring-sites
+note AGOS-Stations-Inventar (monitoring-sites.json, HTTP 200, 143 Stationen: Position + Betreiber): Register ohne Messwert; die Quake-Feeds desselben Hosts sind in sources.φ registriert.
+
 dead ssl
 url https://sepem.eu/api/events/
 note curl: curl: (35) OpenSSL/3.0.13: error:0A00010B:SSL routines::wrong version number
@@ -2845,6 +2893,10 @@ note curl: curl: (6) Could not resolve host: service.das.earthscope.org
 dead 404
 url https://service.iris.edu/fdsnws/event/1/query?format=json&starttime=
 note HTTP 410 — Endpoint weg.
+
+decline catalog-duplicate
+url https://service.scedc.caltech.edu/fdsnws/event/1/query
+note SCEDC/CI-Suedkalifornien-Katalog (query.json Capture, HTTP 200, FDSN-text): Epizentrum-Katalog — regionale Vollstaendigkeit desselben Messwert-Typs wie der registrierte USGS-all_day-Feed; die text-Rows tragen keine Daten-Position in map-Form.
 
 dead 
 url https://services-eu1.arcgis.com/BkJxImVcTMyS7LID/arcgis/rest/services/Catalogue_compilation_1901_June2020__web_v2_/FeatureServer/1
@@ -3994,6 +4046,14 @@ dead 404
 url https://www.bodc.ac.uk/cgi-bin/nbo/vault.pl?format=json
 note HTTP 404 — Endpoint weg.
 
+decline aggregate-index
+url https://www.bom.gov.au/climate/mjo/
+note MJO-RMM-Index (rmm.74toRealtime.json CDN-Capture): Madden-Julian-Oszillations-Phasenindex, aggregiert und positionslos.
+
+decline aggregate-index
+url https://www.cpc.ncep.noaa.gov/data/indices/
+note CPC-Telekonnektions-Indizes (oni.ascii.json/sstoi.json/soi.json/norm.nao-Captures, 6 Assets): SOI/ONI/SSTOI/NAO — aggregierte, skalare, positionslose Klima-Indizes.
+
 decline model-forecast
 url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_ao_index/ao_index.html
 note CPC = Forecast/Outlook-Modell + dimensionslose Telekonnektions-Indizes (AO/NAO/ONI); 200.
@@ -4101,6 +4161,10 @@ note GOA-ON-Stations-Registry (Ozeanversauerungs-Netz).
 decline no-physical-force
 url https://www.govtrack.us/api/v2/vote
 note Abstimmungsdaten.
+
+decline aggregate-indices
+url https://www.hamqsl.com/solarxml.php
+note N0NBH-solarxml (solarxml.json/solarxml.php.json CDN-Captures, HTTP 200): Zusammenfassung von solarflux/sunspots/xray/a-k/protonflux — aggregierte Indizes bereits registrierter Primaerquellen (SWPC-GOES-JSON, SIDC-Sonnenfleckenzahl).
 
 dead 404
 url https://www.govtrack.us/api/v2/vote...`
@@ -4467,8 +4531,16 @@ url https://www.nmdb.eu/nest/draw_graph.php
 note grind: grind_terrapulse_a.φ
 
 decline model-reanalysis
+url https://www.nohrsc.noaa.gov/interactive/html/graph.html
+note SNOTEL/SNODAS-Stations-Graph (graph.json/csv.json CDN-Captures, Station CEMR WTEQ/SNWD): dieselbe Assimilations-Produktlinie wie der unter www.nohrsc.noaa.gov/snowfall dokumentierte decline model-reanalysis.
+
+decline model-reanalysis
 url https://www.nohrsc.noaa.gov/snowfall/
 note SNODAS = Schnee-Daten-Assimilation-Reanalyse/abgeleitetes Produkt, kein Punkt-Live-Feed; 200.
+
+decline redistributed-synop
+url https://www.ogimet.com/cgi-bin/getsynop
+note OGIMET-SYNOP (getsynop.json CDN-Capture, HTTP 200, CSV-AAXX-Zeilen): WMO-SYNOP-Rebroadcast, Stationen nur per Block-Nummer ohne Daten-Position — keine neue Messung gegenueber den registrierten Meteorologie-Kanaelen.
 
 decline registry
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=json&starttime=2020-01-01

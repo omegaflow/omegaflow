@@ -559,11 +559,17 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   Steps 1-2 committet (cd_reconcile, CDN_ZIEL_SCHEMA). Step 3 (Registry
   zuerst): Verdikt-Ledger `docs/specs/cdn_orphan_verdicts.json` steht — 156
   Orphans klassifiziert; verlässlicher Host-Abgleich gegen sources.φ +
-  dead_sources.φ: 80 stale_pending dokumentiert tot, **55 in keinem Register**
-  (die eine offene Disposition). **Offen:** SOURCE_PORT-Disposition der 55
-  (je Netloc Force-Gate → `sources.φ`-Block oder `dead_sources.φ`-Eintrag);
-  14 undocumented `repo_tag` (§1 keine Registry-Heimat) + 3 undocumented
-  `dataset_host` (Compiler-Lease) → Step-5-Verdikt. Step 4 (CI-Dedupe)
+  dead_sources.φ: 80 stale_pending dokumentiert tot, **55 in keinem Register**.
+  SOURCE_PORT-Disposition der 55 (2026-09-07, Session): Querverweis gegen die
+  aktuellen Register — 31 Netloc zwischenzeitlich dokumentiert (dead/sources/
+  witnesses-Split), die verbliebenen 24 still-orphanen Netloce (40 CDN-Assets,
+  v. a. Seismik + geparkte BfS-ODL/COSMIC-2) sind disponiert: 4 live in
+  sources.φ (ceic.ac.cn, seismic-api.science.unimelb.edu.au, imis.bfs.de),
+  4 blocked (datalab.noirlab.edu account; isc.ac.uk quakeml, globalcmt.org ndk,
+  data.cosmic.ucar.edu netcdf parser-def), 18 dead/decline in dead_sources.φ.
+  Offen bleibt nur die Step-5-Klasse: 14 undocumented `repo_tag` + 3
+  undocumented `dataset_host` (Compiler-Lease) → Step-5-Verdikt.
+  Step 4 (CI-Dedupe)
   ausgeführt (2026-09-05): kernel-flatten von 24 auf 5 Jobs zerlegt (index,
   bodies, jwst-spectra, eve, aia) — 36 Katalog-, 10 Solar-, 3 Radio-,
   cmb/goes/euvs als pro-Quelle-Workflows; eve/aia bleiben (Netloc-Umzug =
@@ -574,6 +580,43 @@ Zeile = Datei + Kurzpflicht. Alle `status: pending` (Stand 2026-09-03).
   alternative Ref derselben ATNF-Pulsar-Familie — Ref-Abgleich als
   Folge-Posten, keine Abdeckungslücke.
   Step 5 destruktiv nur mit Nachbau-Quelle je Asset.
+  - **Orphan-Disposition dokumentiert-toter Netlocs geschlossen (2026-09-07,
+    live-CDN `omegaflow/sources` via gh-api gemessen):** 117 Hosts / 1545
+    Assets, deren Host nur in `dead_sources.φ`/`blocked_sources.φ` dokumentiert
+    ist (keine `sources.φ`-Referenz; witnesses.φ geprüft — kein Zeuge darunter).
+    Klassen: `dead-after-harvest` 29 Hosts/231 Assets → 24 KEEP (erhaltene
+    Records, Endpunkt nach Ernte weg), 5 REVIEW; `decline` 71/1233 → 4 KEEP
+    (ssd.jpl + archive-api.open-meteo + service.iris = Compiler-Netloc-Lease,
+    erddap.emodnet-physics Argo, api.wheretheiss superseded-by-ephemeris), 58
+    REMOVE, 9 REVIEW; gemischt 16/77 → 2 KEEP (ncei.noaa.gov Klima-Archive,
+    epqs.nationalmap.gov Gestalt-Zeuge, Rat 2026-09-07), 6 REMOVE, 8 REVIEW;
+    blocked/pending 1/4 (cddis.nasa.gov) → KEEP bis Zugang. Verdikt: **KEEP 31
+    Hosts/597 Assets/11,96 GB als erhaltene Records** (dazu die toten Endpunkte
+    gea.esac.esa.int 101, jsoc.stanford.edu 36 http-live, lasp 5, sidc 6, die
+    NOAA-Buoy-/Klima-Hosts, cddis pending). **Cleanup-Set (REMOVE, 64 Hosts /
+    812 Assets / 192 MB) zur Step-5-Safe-Delete** (mit Sicherung, nie die letzte
+    Kopie), Grund je Host = decline-kein-Messwert: data-gis.unep-wcmc.org 661
+    (modellierte Verbreitungsprodukte, no-measurement), presence-catalog
+    (gbif/inaturalist/obis/nbnatlas/openlittermap), catalog/registry
+    (api.github/openalex/stackexchange, sciencebase, planetarycomputer, cmr,
+    neotomadb, marinespecies, orfeus, network.igs, ies-ows), schedule
+    (irail/irishrail/wienerlinien), aggregate/computation/randomness
+    (energy-charts, carbonintensity, data.giss, waqi, drand, beacon, qrng,
+    sunrise-sunset), alerts (gdacs, opendata.dwd), imagery (landsatlook, epic),
+    model/reanalysis/derived (open-meteo-Teilhosts, api.met.no, cpc, cmems,
+    esgf, globalfloods, nohrsc, opendap.nccs, power.larc, rest.isric,
+    newton.spacedys, gis1.servir, services.terrascope, services3/6.arcgis),
+    Lizenz data.blitzortung (Redistribution ausgeschlossen), Rat-negativ
+    macrostrat/gis.ngdc. **REVIEW (22 Hosts / 136 Assets):** api.weather.gov +
+    geofon.gfz-potsdam (echte Mess-Dienste, dead-400-Browser-Historie = Registry-
+    Artefakt), minorplanetcenter/pegelonline (Daten echt, Registry offen),
+    simbad.cds/u-strasbg (Identifikations-Zeuge möglich), celestrak/db.satnogs/
+    opensky (Orbit-Fit), ngdc/psl (gemischt), zenodo (1×302-MB-Inhalt
+    ungeprüft), raw.githubusercontent (repo_tag, §1-Content-Disposition), bodc/
+    amsmeteors/aa.usno/archive.gemini/dasch/chime-frb/eyes/earth-search/
+    meta.icos. Stubs: 0 Zero-Byte-Assets; bodc `catalogue.json` 12 B und epqs
+    `json.json` 12 B sind Minimal-Stubs (Re-Harvest-Hinweis). Vollständige
+    Liste + Gründe in dieser Session-Disposition; Entfernen erst in Step 5.
 
 ### Register-Lücken des Papier-Korpus (2026-09-03)
 
