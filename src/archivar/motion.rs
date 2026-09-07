@@ -356,6 +356,17 @@ impl Motion {
         }
     }
 }
+pub fn gestalt_surface_threads(recs: &[crate::geo::GbcoRec], body_name: &str) -> Vec<Motion> {
+    recs.iter()
+        .filter(|r| r.lat.is_finite() && r.lon.is_finite() && r.elev.is_finite())
+        .map(|r| Motion::Surface {
+            body_name: body_name.to_string(),
+            lat: r.lat,
+            lon: r.lon,
+            alt: r.elev,
+        })
+        .collect()
+}
 
 #[derive(Clone)]
 pub struct BodyProperties {

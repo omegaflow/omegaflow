@@ -728,7 +728,8 @@ impl OmegaLoop {
     pub fn sky_tick(&mut self) {
         self.sky_reload();
         let t = self.t_presence;
-        let oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
+        let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
+        oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
         let shell: f64 = oscs.iter().map(|o| o.weight).sum();
         self.sky.shell_prev = self.sky.shell;
         self.sky.shell = shell;
@@ -747,7 +748,7 @@ impl OmegaLoop {
         self.sky.forward_field = forward_field as f32;
         self.sky.points.clear();
         if self.sky.oscs.is_empty() {
-            self.sky_say("the S² layer rests — no direction carries a live series (0 honored)");
+            self.sky_say("the S² layer rests — no direction series and no event epoch carries presence (0 honored)");
             return;
         }
         let pack = pack_oscs(&self.sky.oscs, S2_OSC_CAP);

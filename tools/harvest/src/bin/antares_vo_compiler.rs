@@ -1,5 +1,6 @@
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::cdn::upload_asset;
+use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::s2event::{
     decode_rec as s2e_decode, encode_rec as s2e_encode, parse_header as s2e_parse_header,
@@ -273,7 +274,30 @@ fn verify_asset(
     Ok(tail)
 }
 
+fn witness_s2_direction_identity(magic: [u8; 4]) -> Result<(), String> {
+    match magic_identity(magic) {
+        Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)) => {
+            eprintln!(
+                "{} reads as an s2-direction witness record",
+                String::from_utf8_lossy(&magic)
+            );
+            Ok(())
+        }
+        Some(other) => Err(format!(
+            "{} reads {:?}, not s2-direction — the asset stays unwritten",
+            String::from_utf8_lossy(&magic),
+            other
+        )),
+        None => Err(format!(
+            "{} reads no identity — the asset stays unwritten",
+            String::from_utf8_lossy(&magic)
+        )),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
+    witness_s2_direction_identity(omegaflow::s2event::MAGIC)?;
+    witness_s2_direction_identity(omegaflow::skymap::MAGIC)?;
     let out_path = match arg_value(args, "--out") {
         Some(v) => v,
         None => {
