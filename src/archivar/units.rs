@@ -61,6 +61,9 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "cpm" => Some(value * 1.0e-6 / (334.0 * 3600.0)),
         "e10j" => Some(value * 1.0e10),
         "kt_tnt" => Some(value * 4.184e12),
+        "kg/m3" | "kg/m³" => Some(value),
+        "1/m3" => Some(value),
+        "tecu" => Some(value * 1e16),
         _ => None,
     }
 }
@@ -154,8 +157,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
             "w", "w/m2", "t", "nt", "ev", "jy", "mjy", "jy_km/s", "hz", "m", "km", "mag", "pc/cm3",
-            "erg/cm2", "crab", "cpm", "e10j", "kt_tnt", "sfu", "1/cm3", "wm2_1au", "1e-4w/m2", "1",
-            "pfu", "pfu/mev",
+            "erg/cm2", "crab", "cpm", "e10j", "kt_tnt", "sfu", "1/cm3", "1/m3", "tecu", "wm2_1au",
+            "1e-4w/m2", "1", "pfu", "pfu/mev",
         ],
         1 => &[
             "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
@@ -180,6 +183,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "du",
             "cm-3",
             "1/cm3",
+            "kg/m3",
             "micromole/kg",
             "m-1",
             "1",
