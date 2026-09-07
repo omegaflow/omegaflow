@@ -1,0 +1,40 @@
+# bathymetry-gebco binding — Gestalt-witness preregistration
+
+Registered 2026-09-07 (die-weberin witness kinds, Council 2026-09-07). This file
+is the committed preregistration the Gestalt-witness compiler reads before a
+science run. A non-radiating measurement declined as oscillator is not declined
+as witness: the terrain/bathymetry entries re-labelled in dead_sources.φ are
+re-read here as witnesses for shape.
+
+## Binding 1 — source
+- opentopodata `gebco2020` (recheck 2026-09-07, HTTP 200): the query
+  `?locations=<lat>,<lng>` returns one elevation in meters; negative means
+  below sea level (measured −833 m at NRS01 72.49, −156.6).
+- Land sibling `eudem25m` (recheck 2026-09-07, HTTP 200) carries the land form
+  (measured 286.25 m at 51.2, 10.4). The two together are one Gestalt: the
+  solid surface, above and below the water line.
+
+## Binding 2 — field and unit
+- Value = surface elevation/depth, unit meter (SI). It is a measured scalar.
+  A bare coordinate without a value stays dropped — a witness carries its
+  measurement, never an empty pointing.
+
+## Binding 3 — geometry and holding
+- A body-surface scalar field over lat/lon (WGS84/ICRS surface). Held as a
+  binding (the dust-maske pattern), never as a force field and never as an
+  oscillator; it does not radiate.
+- τ = geological stability (long ttl), unlike the τ=0 event witnesses. A DEM
+  height changed last in geological time, not yesterday.
+
+## Binding 4 — consumption
+- Held through the Station thread (`Motion::Surface`): the thread first, the
+  projection second. The Gestalt-witness compiler fetches point threads
+  (lat/lon/depth records) and manifests them via `--ci-mode`; the Station-thread
+  integration into the Mathematikerin is the named follow-on, not silently
+  assumed.
+
+## Binding 5 — media-token pin
+- https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng> — live,
+  recheck 2026-09-07. Land sibling: https://api.opentopodata.org/v1/eudem25m?locations=<lat>,<lng>.
+- EMODnet-Bathymetrie-WCS stays dead 404 (recheck 2026-09-07) — not a source
+  for this binding.
