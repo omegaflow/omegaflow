@@ -40,3 +40,7 @@ re-read here as witnesses for shape.
   recheck 2026-09-07. Land sibling: https://api.opentopodata.org/v1/eudem25m?locations=<lat>,<lng>.
 - EMODnet-Bathymetrie-WCS stays dead 404 (recheck 2026-09-07) — not a source
   for this binding.
+
+## Register cross-reference
+- The Gestalt-witness identity now also lives in phi/witnesses.φ (witness gestalt, record gbco):
+  this binding stays the primary home (Haupt-Heim); the register names the kind.
