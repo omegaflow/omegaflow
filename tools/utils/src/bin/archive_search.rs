@@ -11,6 +11,15 @@ const SKIP_DIRS: &[&str] = &[
     ".cache",
     ".venv",
     "venv",
+    ".local",
+    ".config",
+    "Library",
+    "log",
+    "storage",
+    "session_diff",
+    "tool-output",
+    "tmp",
+    "Trash",
 ];
 const SNIPPET_CHARS: usize = 200;
 
