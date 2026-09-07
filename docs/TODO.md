@@ -1223,16 +1223,22 @@ Gebaut (2026-09-06, sub-agents):
   `auger-cdn.yml` → `auger_catalog.pao1` aus data.zip). Manifestation
   (Assets aufs CDN) braucht erst den Commit der Compiler + `gh workflow
   run` — offen, bis der Klumpen committet ist.
-- Skymap-Zeugen (Schritt 6): die Routen sind gefunden, nicht blockiert —
-  TA `J/ApJ/867/L27`, HESE-7,5J `J/PhRvD/104/022002`, 10-J-PS `J/ApJ/907/L48`
-  (alle VizieR) + Auger-GAVO `auger.main`; IceCat-1 (Dataverse datafile
-  7502710, 303). Prinzip (die-weberin §4, 2026-09-07): das Teilchen ist
-  Abstammung, nicht Kraft — der Detektor misst `em` (Schauer/Cherenkov), die
-  Teilchen-Art (Proton/Neutrino/Gamma) ist die Wurzel; kein particle-Bit.
-  Löst SOURCE_PORT §12.6 „Teilchen-Kanal pending". Richtung: generischer
-  TAP-CSV-Skymap-Compiler (Muster amon/auger) → `em`-S²-Zeugen
-  (healpix-Karten), direction-only; die portal-403 (icecube.wisc.edu,
-  telescopearray.org) bleiben named, die Daten laufen über VizieR/Dataverse.
+- Skymap-Zeugen (Schritt 6): gebaut — `src/archivar/s2event.rs` (S2E1, der
+  S²-Ereignis-Faden: ra/dec, sigma, epoch_tdb, energy, signalness, far,
+  particle_root; kein Distanz-Slot) + `S2Osc::from_event` in s2.rs (τ=0
+  ohne Epoche, 0 honored); `icecat_compiler` (IceCat-1, 348 echte Ereignisse
+  → Fäden + SKY1-Dichte-Projektion), `gw_skymap_compiler` (bayestar-NUNIQ-
+  FITS → SKY1-Gravity-Zeuge, KIND_GRAVITY=4), `tap_skymap_compiler`
+  (generisch). Rats-Verdikt (2026-09-07): Fäden zuerst, Karte nur Projektion.
+  Prinzip (die-weberin §4): Teilchen = Abstammung, nicht Kraft — löst
+  SOURCE_PORT §12.6. Extern-Recheck 2 (2026-09-07): ANTARES (8754 Ereignisse,
+  `vo.km3net.de/ant20_01/nu/cone`, offen, kein Konto) + KASCADE-Grande
+  (433 M, KCDC `kcdc.iap.kit.edu`, EULA, Zenit/Az→RA/Dec) sind kompilierbar
+  (Compiler folgt); HAWC 3HWC-HEALPix-Karten (`data.hawc-observatory.org`,
+  NSIDE 1024) direkt kompilierbar (Register-Referenz `J/A+A/712/A60` ist
+  falsch zugeordnet). Nicht publiziert (0 honored, kein Ersatz): TA
+  (Ereignisse nur in Papier-Figuren), KM3NeT (nur Einzelereignis
+  KM3-230213A), Super-K, JUNO, LHAASO (nur 90-Quellen-Katalog).
 
 ## Source-Port — der eine Pfad
 
