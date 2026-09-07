@@ -26,7 +26,7 @@ const SNIPPET_CHARS: usize = 200;
 struct State {
     scanned: u64,
     matched: u64,
-    shown: usize,
+    results: Vec<(PathBuf, usize, Vec<String>)>,
 }
 
 fn main() {
@@ -87,38 +87,26 @@ fn main() {
     let mut state = State {
         scanned: 0,
         matched: 0,
-        shown: 0,
+        results: Vec::new(),
     };
     for root in &roots {
-        walk(
-            Path::new(root),
-            &needle,
-            lines_per_file,
-            max_files,
-            max_mb,
-            &mut state,
-        );
-        if state.shown >= max_files {
-            break;
+        walk(Path::new(root), &needle, lines_per_file, max_mb, &mut state);
+    }
+    state.results.sort_by(|a, b| b.1.cmp(&a.1));
+    let shown = state.results.len().min(max_files);
+    for (path, _count, hits) in state.results.iter().take(shown) {
+        println!("{}", path.display());
+        for line in hits {
+            println!("  {}", line);
         }
     }
     eprintln!(
         "archive_search: scanned {} files | matched {} | shown {}",
-        state.scanned, state.matched, state.shown
+        state.scanned, state.matched, shown
     );
 }
 
-fn walk(
-    dir: &Path,
-    needle: &[String],
-    lines_per_file: usize,
-    max_files: usize,
-    max_mb: u64,
-    state: &mut State,
-) {
-    if state.shown >= max_files {
-        return;
-    }
+fn walk(dir: &Path, needle: &[String], lines_per_file: usize, max_mb: u64, state: &mut State) {
     let entries = match fs::read_dir(dir) {
         Ok(e) => e,
         Err(_) => return,
@@ -129,9 +117,6 @@ fn walk(
     }
     paths.sort();
     for path in paths {
-        if state.shown >= max_files {
-            return;
-        }
         let name = match path.file_name() {
             Some(n) => n.to_string_lossy().to_string(),
             None => continue,
@@ -140,18 +125,12 @@ fn walk(
             if SKIP_DIRS.contains(&name.as_str()) {
                 continue;
             }
-            walk(&path, needle, lines_per_file, max_files, max_mb, state);
+            walk(&path, needle, lines_per_file, max_mb, state);
         } else {
             state.scanned += 1;
-            if let Some(hits) = search_file(&path, needle, lines_per_file, max_mb) {
+            if let Some((count, hits)) = search_file(&path, needle, lines_per_file, max_mb) {
                 state.matched += 1;
-                if state.shown < max_files {
-                    state.shown += 1;
-                    println!("{}", path.display());
-                    for line in hits {
-                        println!("  {}", line);
-                    }
-                }
+                state.results.push((path, count, hits));
             }
         }
     }
@@ -162,7 +141,7 @@ fn search_file(
     needle: &[String],
     max_lines: usize,
     max_mb: u64,
-) -> Option<Vec<String>> {
+) -> Option<(usize, Vec<String>)> {
     let bytes = fs::read(path).ok()?;
     if bytes.len() > max_mb as usize * 1024 * 1024 {
         return None;
@@ -171,24 +150,25 @@ fn search_file(
         return None;
     }
     let text = String::from_utf8_lossy(&bytes);
+    let mut count = 0usize;
     let mut hits: Vec<String> = Vec::new();
     for (idx, line) in text.lines().enumerate() {
         if !line_matches(line, needle) {
             continue;
         }
-        if hits.len() >= max_lines {
-            break;
+        count += 1;
+        if hits.len() < max_lines {
+            hits.push(format!(
+                "{}: {}",
+                idx + 1,
+                truncate(line.trim(), SNIPPET_CHARS)
+            ));
         }
-        hits.push(format!(
-            "{}: {}",
-            idx + 1,
-            truncate(line.trim(), SNIPPET_CHARS)
-        ));
     }
-    if hits.is_empty() {
+    if count == 0 {
         None
     } else {
-        Some(hits)
+        Some((count, hits))
     }
 }
 
@@ -245,10 +225,15 @@ mod tests {
     fn search_file_finds_keyword_in_temp_file() {
         let dir = std::env::temp_dir();
         let path = dir.join(format!("archive_search_test_{}.txt", std::process::id()));
-        fs::write(&path, "first line\nICECUBE alert here\nthird line\n").unwrap();
+        fs::write(
+            &path,
+            "first line\nICECUBE alert here\nICECUBE again\nthird line\n",
+        )
+        .unwrap();
         let needle = vec!["icecube".to_string()];
-        let hits = search_file(&path, &needle, 2, 100).unwrap();
-        assert_eq!(hits.len(), 1);
+        let (count, hits) = search_file(&path, &needle, 2, 100).unwrap();
+        assert_eq!(count, 2);
+        assert_eq!(hits.len(), 2);
         assert!(hits[0].contains("ICECUBE"));
         let _ = fs::remove_file(&path);
     }
@@ -260,6 +245,19 @@ mod tests {
         fs::write(&path, [0x41, 0x00, 0x42]).unwrap();
         let needle = vec!["a".to_string()];
         assert!(search_file(&path, &needle, 2, 100).is_none());
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn relevance_counts_all_matches_beyond_display() {
+        let body: String = "needle line\nplain\n".repeat(50);
+        let dir = std::env::temp_dir();
+        let path = dir.join(format!("archive_search_rel_{}.txt", std::process::id()));
+        fs::write(&path, &body).unwrap();
+        let needle = vec!["needle".to_string()];
+        let (count, hits) = search_file(&path, &needle, 2, 100).unwrap();
+        assert_eq!(count, 50);
+        assert_eq!(hits.len(), 2);
         let _ = fs::remove_file(&path);
     }
 }
