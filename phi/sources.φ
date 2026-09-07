@@ -5696,12 +5696,6 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/noaa_nrs_psd.bin
-format noaa_nrs_psd
-on earth 0 0 0
-ttl 604800
-field noaa_nrs_psd_db noaa_nrs_psd_db gaussian-inverse-square acoustic db 600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_fitacf.bin
 format superdarn_fitacf
 on earth 0 0 0
