@@ -53,6 +53,9 @@ phi/*
 phi/reports/*
 !phi/reports/scan_coverage.φ
 !phi/reports/mycelium_campaign_cdfs.φ
+# Der Probe-Sweep-Bericht (survivors/void) ist ein Registrierungs-Urteil — versioniert.
+!phi/reports/probe_sweep_survivors.φ
+!phi/reports/probe_sweep_void.txt
 
 # Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
 .omegaflow-strand
