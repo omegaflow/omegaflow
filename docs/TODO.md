@@ -603,6 +603,15 @@ Register-Pflichten, keine stillen Schwebestände:
   Workflow-Job mit Idempotenz-Guard, Probe um CDN-Lesepfad erweitern,
   Manifestation nur über CI (`--ci-mode`). Bestehende Schuld: auch
   `omni2_serie_1h.bin` ist unmanifestiert. pending.
+  **Gemessen 2026-09-07:** `omni2_serie_1h.bin` kompiliert in CI vollständig
+  (omni2-cdn workflow_dispatch, decimate-min 60, 1963-01-01…2026-08-06,
+  2.718.952 Records, Roundtrip parses, Run 34135899125), aber der CDN-Upload
+  endet `401 Bad credentials` — `OMEGAFLOW_TOKEN` (omegaflow/omegaflow, neu
+  gesetzt 2026-09-07T14:25:07Z) schreibt nicht auf omegaflow/sources; vor der
+  Rotation schrieben CI-Uploads noch am selben Tag 13:10Z (icecat/antares →
+  ssd.jpl.nasa.gov), der letzte Beleg 2026-09-06T15:56Z (aia2013_11). Das Asset
+  ist auf dem CDN gemessen absent. Re-Dispatch (gh workflow run omni2-cdn.yml,
+  decimate-min 60, asset omni2_serie_1h.bin) nach Token-Freigabe. pending.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
