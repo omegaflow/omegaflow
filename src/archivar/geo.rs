@@ -6,6 +6,7 @@ pub const MAGIC_FDSN: [u8; 4] = *b"FDS1";
 pub const MAGIC_GIC: [u8; 4] = *b"GIC1";
 pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
+pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -28,6 +29,9 @@ pub const COMP_GIC_MAX: u32 = 1;
 
 pub const COMP_IGETS_G: u32 = 1;
 pub const COMP_IGETS_MAX: u32 = 1;
+
+pub const COMP_ISSLIS_FLASH_RAD: u32 = 1;
+pub const COMP_ISSLIS_MAX: u32 = 1;
 
 pub const COMP_ARGO_DOXY: u32 = 1;
 pub const COMP_ARGO_NITRATE: u32 = 2;
@@ -62,6 +66,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "fdsn_waveform" => Some(MAGIC_FDSN),
         "fmi_gic" => Some(MAGIC_GIC),
         "igets" => Some(MAGIC_IGETS),
+        "iss_lis" => Some(MAGIC_ISSLIS),
         _ => None,
     }
 }
@@ -75,6 +80,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "igets" => Some(COMP_IGETS_MAX),
+        "iss_lis" => Some(COMP_ISSLIS_MAX),
         _ => None,
     }
 }
