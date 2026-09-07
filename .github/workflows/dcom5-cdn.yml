@@ -24,3 +24,13 @@ jobs:
                  "flatten: dcom5_comets returned void" \
                  "dcom5_comets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
+      - name: Compile DASTCOM5 comet elements catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin dcom5_compiler -- \
+            --input kernels/dcom5_le.dat \
+            --catalog dcom5_comets.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: dcom5_comets.bin returned void" \
+                 "dcom5_comets.bin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
