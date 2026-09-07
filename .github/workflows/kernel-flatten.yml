@@ -65,7 +65,7 @@ jobs:
             --systems planets,jupiter,saturn,mars,uranus,neptune,pluto \
             --dest kernels \
             --ci-mode \
-            --omega-g phi/pipeline/katalog/solar_omega_g.φ \
+            --omega-g phi/pipeline/catalog/solar_omega_g.φ \
             --index phi/sources_index.φ
       - name: Flatten asteroid longbow and upload to CDN
         run: |
@@ -83,7 +83,7 @@ jobs:
             https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/sb441-n373.bsp \
             | cargo run -p omegaflow-utils --release --bin spk_split -- \
               --bodies 2136199,2136108,2136472 \
-              --gm-catalog phi/pipeline/katalog/asteroid_gm_sb441.φ \
+              --gm-catalog phi/pipeline/catalog/asteroid_gm_sb441.φ \
               --carrier kernels/de441.bsp \
               --dest kernels \
               --ci-mode
@@ -107,8 +107,8 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin dastcom_compiler -- \
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
-            --gm phi/pipeline/katalog/asteroid_gm_inpop25c.φ \
-            --diameters phi/pipeline/katalog/asteroid_diameters_neowise.φ,phi/pipeline/katalog/asteroid_diameters_akari.φ \
+            --gm phi/pipeline/catalog/asteroid_gm_inpop25c.φ \
+            --diameters phi/pipeline/catalog/asteroid_diameters_neowise.φ,phi/pipeline/catalog/asteroid_diameters_akari.φ \
             --ci-mode
       - name: Compile KBO elements and upload to CDN
         run: |
