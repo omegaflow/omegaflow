@@ -44,15 +44,15 @@ Assets. Produzenten-Compiler und CDN-Workflows sind gebaut und committet
 **qbo_30hpa.csv — geschlossen:** auf dem CDN (`www.cpc.ncep.noaa.gov`,
 23.205 B, Upload 2026-09-07T18:21Z, qbo-cdn run 34151182163).
 
-**d20_thermocline.csv — offen, CI-Route blockiert (gemessen 2026-09-07):**
-der Compiler holt live von data.pmel.noaa.gov/pmel/erddap (pmelTaoDyIso);
-die Quelle antwortet lokal 200 (93.390 B), vom GitHub-Runner (Azure
-eastus) aber 403 auf der Kette data.pmel.noaa.gov → coastwatch.pfeg.noaa.gov
-(curl exit 22) — kein Upload, Health-Issue #7 trägt den Befund. Der Block
-sitzt an der Runner-Route, nicht an der Quelle: die url-Linie in
-phi/sources.φ bleibt; der Dispatch (`d20-cdn.yml`) ist der benannte Weg,
-sobald die Route entblockt ist oder ein nicht-Azure-Manifestator existiert.
-Bestand gemessen: kein Asset auf dem CDN, keine erfundene Live-URL.
+**d20_thermocline.csv — offen, Kaskade gebaut, Dispatch ausstehend (2026-09-07):**
+der Runner (Azure eastus) 403t auf der Kette data.pmel.noaa.gov →
+coastwatch.pfeg.noaa.gov (curl exit 22; lokal 200, 93.390 B). Der
+d20_compiler holt jetzt direkt pmel → bei Void über den r.jina.ai-Reader
+auf dem coastwatch-Mirror (X-Return-Format: text — lokal gemessen 200,
+93.390 B, CSV unverändert) und nimmt `--input` (lokal geerntet 1.799
+station-days kompiliert); `d20-cdn.yml` erntet die Kaskade vom Runner und
+gated den Manifest auf die gemessene Körpergröße. Die url-Linie in
+phi/sources.φ bleibt. Dispatch ausstehend — kein Asset auf dem CDN.
 
 ## Register — /tmp-Scratch & Python-Tools (2026-09-06)
 
