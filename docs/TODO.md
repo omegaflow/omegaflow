@@ -1680,7 +1680,8 @@ Offen (Detail in phi/pipeline/ledger.φ):
   unphysikalisch; die VirES-Metadaten-Unit cm^-3 ist ein Quell-Duplikat-Fehler,
   das Registerfeld gracefo_kbr_absolute_electron_density_m3 bleibt 1/m3, keine
   Register-Änderung. CS_OPER_MAG-Fenster 2018-10-10 erneut geprobt (--probe):
-  1 überlebt / 0 verworfen, 900 F-Proben ~45,0–45,8 nT — Fenster bestätigt.
+  1 überlebt / 0 verworfen; 900 F-Zeilen, Zeilen 0–1 tragen NaN-Füllung,
+  die Zahlenwerte liegen bei 17,1–45,8·10³ nT — Fenster bestätigt.
 - BGR-Infraschall-Stations-Elevation: gemessen 2026-09-07 — jede der 53
   Stations-NetCDF traegt einen lesbaren `elev`-Skalar (2024 + kleinste
   historische Datei je Station geprueft), keine Station gehalten; Geodaten-
