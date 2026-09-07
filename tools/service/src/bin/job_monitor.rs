@@ -121,9 +121,9 @@ fn dashboard(interval: u64, color: bool) -> String {
     let mut lines = Vec::new();
     lines.push(paint(
         color,
-        "1",
+        "1;7",
         &format!(
-            "{}  job monitor | local jobs + GitHub Actions | refresh {}s | q + Enter quits",
+            " {}  omegaflow job monitor | local jobs + GitHub Actions | refresh {}s | q quits ",
             clock_label(),
             interval
         ),
@@ -133,6 +133,11 @@ fn dashboard(interval: u64, color: bool) -> String {
     lines.push(String::new());
     lines.extend(ci_panel(color));
     lines.push(String::new());
+    lines.push(paint(
+        color,
+        "2",
+        "◉ running jobs    ✓ success    ✗ failure    ▶ in-progress    − cancelled",
+    ));
     lines.join("\n")
 }
 
@@ -143,15 +148,17 @@ fn local_panel(color: bool) -> Vec<String> {
     let procs = ps_jobs(&active);
     lines.push(paint(
         color,
-        "4",
+        "1;36",
         &format!(
-            "LOCAL JOBS | {} systemd units, {} local processes",
+            "▌ LOCAL JOBS ▐  {} systemd unit{} · {} process{}",
             units.len(),
-            procs.len()
+            if units.len() == 1 { "" } else { "s" },
+            procs.len(),
+            if procs.len() == 1 { "" } else { "s" },
         ),
     ));
     if units.is_empty() && procs.is_empty() {
-        lines.push(paint(color, "2", "  no omegaflow jobs running"));
+        lines.push(paint(color, "2", "   no omegaflow jobs running"));
     }
     for u in &units {
         lines.extend(unit_lines(u, color));
@@ -213,8 +220,8 @@ fn ci_panel(color: bool) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(paint(
         color,
-        "4",
-        "CI RUNS | github.com/omegaflow/omegaflow | newest first, in-progress on top",
+        "1;35",
+        "▌ CI RUNS ▐  github.com/omegaflow/omegaflow · newest first · in-progress on top",
     ));
     let now = unix_now_secs();
     let runs = ci_runs();
@@ -657,11 +664,11 @@ fn unit_style(sub: &str) -> (&'static str, &'static str) {
 
 fn state_color(status: &str, conclusion: &str) -> &'static str {
     if status == "in_progress" {
-        "33"
+        "1;33"
     } else if conclusion == "success" {
-        "32"
+        "1;32"
     } else if conclusion == "failure" {
-        "31"
+        "1;31"
     } else if conclusion == "cancelled" || conclusion == "skipped" {
         "2"
     } else {
