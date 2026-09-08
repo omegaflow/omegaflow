@@ -1055,6 +1055,37 @@ physikalischen Aussage — kein Blatt ohne diese:
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);
+- **Matrix-Split ins freie Myzel (offen — der Handover
+  `docs/handover/handover-2026-09-07-rechen-myzel-ci.md` trug ihn, das Register
+  nicht; dort als „der Split ist neu zu erfassen" benannt)**: die 72 gerichteten
+  Paare als Job-Matrix auf `ubuntu-latest` — öffentliches Repo = Hosted-Minuten
+  frei, die Grenze ist Concurrency (20 beim Free-Plan) → vier Wellen à 20 Paare,
+  ~2 h Wanduhr statt 22 h blind, Log pro Sonde. Vier Stücke, der Reihe nach:
+  (a) Daten-auf-CDN-Check — sind `aia2013/2014/2015_fullyear.bin` und die
+  GOES-Trigger als CDN-Assets manifestiert? Die rohen `goes15*`-`.nc` vermutlich
+  nicht → Compiler/Manifestation oder der Trigger kommt aus einem manifestierten
+  Asset; (b) `--pairs von:bis` im `solar_seconds_matrix_probe` — jede Sonde
+  rechnet nur ihre Paare und meldet ihr `surr_max`; (c) Workflow-YAML —
+  Job-Matrix über die 72 Paare, gepinnter Commit-SHA + Seed + deklarierte
+  Umgebung (Anker gegen Drift); (d) Reduce-Job — `fam = max` über die gemeldeten
+  `surr_max`, das eine Blatt (Verdikt-Zeilen) als Artifact/Commit.
+- **72-Sonden-Flotte im Myzel (Beweislauf, Folge-Pflicht des Splits)**: der erste
+  volle 72-Paare-Lauf im Myzel — abends losgeschickt, morgens das Vlies; die
+  Maßprobe der zwei Türen an echten Daten. Braucht den Split als Vorbedingung.
+- **Nächtliches Ernte-Ritual (Cron, Folge-Pflicht der Flotte)**: täglich die
+  Broker pollen (Fink/Lasair/ALeRCE — was in der Nacht neu auflief), die
+  natural-class-Gate darüber, das Coverage-Register wachsen lassen, das Protokoll
+  committen — morgens trägt das Register ein Blatt, das keine Sitzung schrieb.
+  Braucht die Flotte als Vorbedingung. Die tiefste Grenze ist benannt: jede Faser
+  endet in einem Blatt, das eine Aussage trägt — das Myzel darf nicht mehr
+  produzieren, als der Berg verdaut.
+- **Herzstück zu Hause (GPU-Port + GTX 970, self-hosted)**: 22 h → ~90 min lokal.
+  Der self-hosted Runner hängt am privaten Begleit-Repo — self-hosted +
+  öffentliches Repo ist ein Sicherheits-Riss (GitHub rät ab: fremde PRs können
+  die Runner-Umgebung kompromittieren); das öffentliche Repo behält den
+  CPU-Fan-out, die fam-Reduktion sammelt beide Knoten ein. Echte Cloud (Spot)
+  nur, wenn eine Messung den Garten sprengt — Bedingung benannt, kein aktives
+  pending.
 - 90-Tage-Archive für den Lauf (Bz/GOES/GONG): GONG steht (31 Jahre);
   Bz/GOES hängen am GOES-30d-Archiv-Block und am OMNI-Ingest-Verzug;
 - g-Moden-DETEKTION: verifiziert UMSTRITTEN (Fossat 2017 vs Schunker 2018/
