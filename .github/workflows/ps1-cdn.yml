@@ -1,21 +1,64 @@
 name: ps1-cdn
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
 permissions:
   contents: write
+concurrency:
+  group: ps1-cdn
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
   ps1-coverage:
     runs-on: ubuntu-latest
-    timeout-minutes: 600
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Harvest the PS1 DR2 survey-footprint coverage asset once and upload to CDN
+      - name: Auto-resume chunked PS1 DR2 harvest (one projcell band per pass)
         run: |
-          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --pattern ps1_dr2_coverage.fp01 --clobber 2>/dev/null || \
-          cargo run -p omegaflow-harvest --release --bin ps1_coverage_compiler -- \
-            --out ps1_dr2_coverage.fp01 --full --ci-mode
+          cargo build -p omegaflow-harvest --release --bin ps1_coverage_compiler --bin ps1_coverage_combiner
+          band_min=637
+          band_max=2643
+          total=$(( band_max - band_min + 1 ))
+          budget_s=5400
+          deadline=$(( $(date +%s) + budget_s ))
+          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]|select(.name|startswith("ps1_part_"))|.name' 2>/dev/null || true)
+          # harvest bands from the south edge upward, one undone band per pass
+          P=$band_min
+          while [ "$P" -le "$band_max" ] && [ "$(date +%s)" -lt "$deadline" ]; do
+            if echo "$parts" | grep -qx "ps1_part_${P}.fp01"; then
+              P=$((P+1))
+              continue
+            fi
+            start_s=$(date +%s)
+            echo "=== harvesting projcell band ${P} ==="
+            if ./target/release/ps1_coverage_compiler --full --proj-min "${P}" --proj-max "${P}" \
+                --out "ps1_part_${P}.fp01" --ci-mode; then
+              echo "uploaded ps1_part_${P}.fp01 in $(( $(date +%s) - start_s )) s"
+              parts="${parts}"$'\n'"ps1_part_${P}.fp01"
+            else
+              echo "band ${P} void this run — the hourly schedule retries it"
+              break
+            fi
+            P=$((P+1))
+          done
+          # combine when every band has a part and the final asset is absent
+          state=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets 2>/dev/null || true)
+          nums=$(printf '%s' "$state" | jq -r '[.assets[]?.name | select(startswith("ps1_part_") and endswith(".fp01")) | ltrimstr("ps1_part_") | rtrimstr(".fp01") | select(test("^[0-9]+$")) | tonumber] | unique | .[]' 2>/dev/null || true)
+          done_count=$(printf '%s\n' "$nums" | awk -v lo="$band_min" -v hi="$band_max" '$1>=lo && $1<=hi' | wc -l)
+          has_final=$(printf '%s' "$state" | jq -r '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/dev/null || echo 0)
+          echo "bands done: ${done_count}/${total}; final asset present: ${has_final}"
+          if [ "$done_count" = "$total" ] && [ "$has_final" = "0" ]; then
+            echo "=== combining ==="
+            mkdir -p parts
+            gh release download ssd.jpl.nasa.gov -p "ps1_part_*.fp01" --repo omegaflow/sources --dir parts --clobber
+            ./target/release/ps1_coverage_combiner --parts-dir parts --out ps1_dr2_coverage.fp01 \
+              --expect-min "$band_min" --expect-max "$band_max"
+            gh release upload ssd.jpl.nasa.gov ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
+            echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
+          fi
