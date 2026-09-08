@@ -172,6 +172,41 @@ full 72-pair matrix.
 
 ---
 
+## Question 5: Farben-Laufzeit-Dispersion — arrival-time differences between the XUV/XRS channels of one solar source, against a surrogate null
+
+### Target (measured absent)
+
+The combination the dispersion probe (`tools/measure/src/bin/dispersion_solar_probe.rs`, Atom E) measures: (i) per-flare arrival differences between the XUV/XRS channels (AIA 94–335 Å + GOES XRS A/B) of **one** solar source, (ii) significance against a phase-randomized surrogate null (TE, per-pair threshold), (iii) a medium-vs-source separation (the Neupert envelope as the shared source driver; the residual is the medium). In the measured corpora this combination is unrepresented (anchors below; PDF full-text level unmeasured).
+
+### Neighbor matrix (verified this session, ADS bibcodes)
+
+| Work | Object | Method | Relation to the probe |
+|---|---|---|---|
+| Weber 1977 `1977SoPh...54..431W` | HELIOS-A/B type III radio bursts | two-spacecraft TOA triangulation | arrival-difference method, radio, no surrogate null |
+| Reiner 2009 `2009SoPh..259..255R` | STEREO/Wind type III | multipoint triangulation | same, current |
+| Krupar 2024 `2024ApJ...960..101K` | interplanetary type III | triangulation enhancement | same, current |
+| Macquart 2020 (FRB DM) | FRB dispersion | ν⁻² medium delay | the dispersion law, radio/ISM, not XUV |
+| Takakura 1983 `1983SoPh...89..379T` | HXR↔microwave peak delay | cross-correlation | channel delay, source-side, no null |
+| Dennis & Zarro 1993 `1993SoPh..146..177D` | Neupert effect | light-curve ordering | the shared-driver object |
+| Aschwanden 2007 `2007ApJ...661.1242A` | RHESSI multithermal delays | cross-correlation | channel delay, source-side |
+| Woods 2014 `2014SoPh..289.3391W` | EUV late phase | light-curve delay | channel delay, source-side |
+| Chen 2020 `2020ApJ...890..158C` | EUV late-phase channel delay | cross-correlation | channel delay, source-side |
+| Li/Yuan/Wang 2017 `2017MNRAS.468.2552L` | frequency-dependent delay | cross-correlation | Sgr A*, not the Sun |
+
+### Type III drift is not ν⁻² dispersion
+
+The classical type III drift (Wild 1950 `1950AuSRA...3..387W`/`1950AuSRA...3..541W`, Wild & Smerd 1972 `1972ARA&A..10..159W`, Dulk 1985 `1985ARA&A..23..169D`, Boischot 1960 `1960ApJ...131...61B`) is the exciter motion against the plasma-frequency/density scale — a radial drift, not the ν⁻² medium dispersion of two bands of the same source. The ν⁻² measurement of the medium belongs to the radio/pulsar/FRB line, not to the solar drift line.
+
+### Search anchors (the zero is re-runnable)
+
+ADS abstract search (NASA_ADS_TOKEN): `abs:"transfer entropy" AND abs:"solar flare"` (0), `abs:"transfer entropy" AND abs:"EUV" AND abs:"flare"` (0), `abs:"dispersion measure" AND abs:"EUV" AND abs:"solar flare"` (0). arXiv API `all:` (metadata level, no PDF full text): `all:"transfer entropy" AND all:"solar flare"` (0), `all:"transfer entropy" AND all:"EUV"` (0), `all:"dispersion measure" AND all:"EUV" AND all:"solar"` (0), `all:"Neupert effect" AND all:"delay" AND all:"EUV"` (0).
+
+### Convergence/divergence to the omegaflow protocol
+
+The measured neighbors are the radio multi-point TOA triangulations (Weber 1977, Reiner 2009) for the arrival-difference *method*, and the Neupert family (Dennis 1993, Aschwanden 2007, Woods 2014) for the channel-delay *object*. None of them joins channel delay to a surrogate null, and at XUV energies the ν⁻² plasma dispersion of the FRB sense carries no measurable arrival component — the medium-vs-source separation is therefore carried by the analysis construction (the conditional null on the shared envelope + the ν⁻² ceiling), not by a directly dispersed arrival. The three-verb state of the dispersion verdict — flat / quell-seitig (source response order) / medium — is the register name of this separation.
+
+---
+
 ## Caveats
 
 - All entries were verified during this session; no citation is added from memory. [V] entries were read via Crossref abstract fields or the original page; [T] entries via Crossref records, DOI resolution, or reference lists in fetched abstracts.
