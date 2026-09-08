@@ -1,0 +1,26 @@
+name: extinction-curves-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  extinction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Fitzpatrick & Massa 2007 per-sightline extinction curves and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin extinction_curves_compiler -- \
+            --out extinction_curves.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: extinction_curves returned void" \
+                 "extinction_curves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          sha256sum extinction_curves.json | tee extinction_curves.json.sha256
+          gh release upload ssd.jpl.nasa.gov extinction_curves.json.sha256 --repo omegaflow/sources --clobber
