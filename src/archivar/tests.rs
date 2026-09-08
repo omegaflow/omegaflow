@@ -46,6 +46,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     }
 }
@@ -487,6 +488,7 @@ fn test_render_source_url_substitutions() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = super::LeapSeconds {
@@ -748,6 +750,7 @@ fn test_post_body_rendering() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = super::LeapSeconds {
@@ -851,6 +854,7 @@ fn test_celestial_map_redshift_distance() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -940,6 +944,7 @@ fn test_extract_csv_zip_end_to_end() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -975,6 +980,41 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
         }
         _ => panic!("expected CelestialMap extract"),
     }
+}
+
+#[test]
+fn test_parse_reference_seat_holds() {
+    let phi = "url https://arxiv.org/e-print/2012.08534\n\
+format reference\n\
+sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7\n\
+ttl 86400\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].format, "reference");
+    assert!(matches!(sources[0].frame, Frame::Manifest));
+    assert!(sources[0].extracts.is_empty());
+    assert_eq!(
+        sources[0].sha256.as_deref(),
+        Some("bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7")
+    );
+}
+
+#[test]
+fn test_parse_fieldless_block_without_reference_stays_refused() {
+    let phi = "url https://example.com/bare.dat\n\
+ttl 86400\n";
+    assert!(parse_sources(phi).is_empty());
+}
+
+#[test]
+fn test_parse_reference_without_sha256_still_seats() {
+    let phi = "url https://example.com/dataset.csv\n\
+format reference\n\
+ttl 86400\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].format, "reference");
+    assert_eq!(sources[0].sha256, None);
 }
 
 #[test]
@@ -1050,6 +1090,7 @@ fn test_extract_cmap_dist_scale_kpc() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -1132,6 +1173,7 @@ fn test_extract_cmap_pm_radvel_plx() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -1244,6 +1286,7 @@ fn test_extract_cmap_no_distance_skipped() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -1315,6 +1358,7 @@ fn test_extract_cmap_null_dist_skipped() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -1388,6 +1432,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let fixture_lsk = LeapSeconds {
@@ -1733,6 +1778,7 @@ fn test_parse_station_entries() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let stations = parse_station_entries(&j, &src);
@@ -1781,6 +1827,7 @@ fn test_parse_station_entries_flatten_filter() {
         stations_flatten: "sensors".into(),
         stations_filter: Some(("parameter.name".into(), "pm25".into())),
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let stations = parse_station_entries(&j, &src);
@@ -2328,6 +2375,7 @@ fn test_erddap_argo_map_extract() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
@@ -2887,6 +2935,7 @@ fn test_anchor_body_agnostic() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let channel = super::Channel {
@@ -3028,6 +3077,7 @@ fn test_anchor_applies_declared_unit() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let channel = super::Channel {
@@ -4636,6 +4686,7 @@ fn test_diagnose_no_samples() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let empty_geojson =
@@ -4742,6 +4793,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
@@ -4831,6 +4883,7 @@ fn test_map_vel_unit_and_tau_key_override() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"data":[
@@ -5055,6 +5108,7 @@ fn test_fold_directive_parse_and_extract() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"data":[
@@ -5162,6 +5216,7 @@ fn test_keplermap_elements_to_icrs() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let au = 1.495978707e11;
@@ -5265,6 +5320,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"rows":[
@@ -5352,6 +5408,7 @@ fn test_flux_from_mag_manifests() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0,"plx":10.0}]"#;
@@ -5432,6 +5489,7 @@ fn test_map_lat_sign_lon_sign() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"data":[["2026-08-01 17:43:48","2.9","0.1","19.5","S","176.2","E","45.0",null],["2026-07-21 01:14:45","3.2","0.11","9.4","N","57.4","W","31.5",null]]}"#;
@@ -5534,6 +5592,7 @@ fn test_mag_type_gating() {
         stations_flatten: String::new(),
         stations_filter: None,
         fanout_delay: 0,
+        sha256: None,
         hapi_fill: HashMap::new(),
     };
     let body = r#"{"data":[
