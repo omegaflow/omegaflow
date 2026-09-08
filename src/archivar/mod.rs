@@ -24,6 +24,7 @@ pub mod cdn;
 pub mod cif;
 pub mod dastcom;
 pub mod demeter;
+pub mod des_y6;
 pub mod double;
 pub mod ephemeris;
 pub mod euvs;
