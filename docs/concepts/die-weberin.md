@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: 353d78351e262a7188fdb09cc78a4710ea104d9325299a3d4061e8ae95ce668d
+  sha256: 3d647deeb4db4e521d52c2987eadae05f0e915fd226b97d9e761d882d90041c3
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
@@ -231,7 +231,15 @@ OFFLINE — tools/measure-Proben:
 ## 9. Die Bau-Linie — alles wird gebaut, nichts wird vertagt
 
 Kein Deferral, kein Parken. Was ungebaut ist, wird registriert — `pending`,
-nicht `absent`. Was folgt, ist die Bau-Linie, jede Stufe benannt, jede
+nicht `absent`. Was gemessen nie gebaut wurde und nicht gebraucht wird, ist
+`descoped` — der Befund ist der Eintrag („gemessen: nie gebaut, nicht
+gebraucht"), kein Vertagen, keine Pflege; ein descoped ohne Messung wäre
+gepudertes Deferred (2026-09-08, cone mode). Der Parkplatz der ersten
+Übergabe ist abgewickelt und als Zustand geschlossen: die Flotten-Idee
+trägt die Kette als die 72-Sonden-Flotte im Myzel-Split; BepiColombo-Zeile
+und Maske-Front N–ⅠⅧ tragen keine Commit-Spur (git log --all, gemessen) —
+Grabsteine ohne Messung werden nicht gesetzt. Was folgt, ist die Bau-Linie,
+jede Stufe benannt, jede
 komplett zu bauen:
 
 1. Die zweite Körper-Linie: MPC-Bahnen als Live-Leg (oder ein kleines
