@@ -1870,7 +1870,16 @@ Gebaut (2026-09-06, sub-agents):
     Jahrhundert Bogenminuten-Astrometrie) — der Riß ist kein Bureau-Streit.
     Das Planetenzentrum öffnet drei Bau-Linien — (a) topozentrische
     Kopplung gegen das Zentrum (die Wobble wird Information statt Störung,
-    sie trägt die Mond-Massen); (b) die Versionen-Differenz als
+    sie trägt die Mond-Massen): GEBAUT (2026-09-09) — der Diurnal-Probe
+    trägt `--center`: die Planeten-Tabelle (uranu_j, 3516 Positionen)
+    reduziert gegen das Zentrum (ephemeris_uranus_c.bin + ura111 799−7),
+    c_par 0.95–0.97 (die Planeten-Tabelle trägt die topozentrische
+    Parallaxe wie die Monde), RMS 249.5/226.8/233.8 → 73.0/69.5/69.3 mas,
+    die Wobble (Zentrum − Baryzentrum) gemessen (Mittel 21.653 m,
+    max 42.627 m); der Riß am Zentrum (27.0/35.5/47.9 mas) ist
+    Skalen-konsistent mit dem Mond-Riß. Befund:
+    docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md;
+    (b) die Versionen-Differenz als
     registrierbare Größe an jedem Punkt der Bahn (wo der Riß am größten
     ist, steht jetzt ein Meßwert); (c) Neptun als zweiter Planet desselben
     Baus — `pending` je Linie. Der Horizons-Raster-
