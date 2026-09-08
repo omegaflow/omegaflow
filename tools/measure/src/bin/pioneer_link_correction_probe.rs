@@ -5,6 +5,7 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::{
     body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth, embedded_lsk,
+    light_time_worldline,
     omni2::{parse_bin as parse_omni2, COMP_N1800},
     parse_ephemeris_binary, BodyEphemeris,
 };
@@ -872,25 +873,6 @@ fn recoil_telem_accel(
     [-a * r[0] / rn, -a * r[1] / rn, -a * r[2] / rn]
 }
 
-fn light_time_sc_pos(
-    t1: f64,
-    r_st1: [f64; 3],
-    sc: &dyn Fn(f64) -> Option<([f64; 3], [f64; 3])>,
-) -> Option<(f64, [f64; 3])> {
-    let mut t3 = t1;
-    for _ in 0..6 {
-        let (r_sc3, _) = sc(t3)?;
-        let rho = dist(r_st1, r_sc3);
-        let t3_new = t1 - rho / C;
-        if (t3_new - t3).abs() < 1e-9 {
-            t3 = t3_new;
-            break;
-        }
-        t3 = t3_new;
-    }
-    let (r_sc3, _) = sc(t3)?;
-    Some((t3, r_sc3))
-}
 
 fn subset_rms(covered: &[bool], resid: &[f64]) -> Option<f64> {
     let mut s = 0.0f64;
@@ -1188,7 +1170,9 @@ fn main() {
             no_model += 1;
             continue;
         }
-        let Some((t3, r3)) = light_time_sc_pos(t1, rs, &granule_sc) else {
+        let Some((r3, t3)) =
+            light_time_worldline(rs, t1, &|t| granule_sc(t).map(|(p, _)| p))
+        else {
             no_model += 1;
             continue;
         };
@@ -5104,7 +5088,9 @@ fn navio_chain(
             no_model += 1;
             continue;
         }
-        let Some((t3, r3)) = light_time_sc_pos(r[0], rs, sc) else {
+        let Some((r3, t3)) =
+            light_time_worldline(rs, r[0], &|t| sc(t).map(|(p, _)| p))
+        else {
             no_model += 1;
             continue;
         };
