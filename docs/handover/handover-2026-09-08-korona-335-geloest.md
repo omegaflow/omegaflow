@@ -2,7 +2,7 @@
   title: Handover — Korona: der 335-Konfund-Widerspruch ist aufgelöst
   class: handover
   date: 2026-09-08
-  sha256: 5fd347a82acd3c1cb0648be2d84661418e19fe75ede7c4462af2a47c4a78be9f
+  sha256: 2f1a79a38ce12476790fe424b3d08906a807cf871dc12ff8641174a2d59face2
   status: live
   see-also: docs/paper/corona-heating-ladder.md docs/handover/handover-2026-09-07-korona-335-widerspruch.md docs/TODO.md
 -->
@@ -51,8 +51,23 @@ C=335 allein ist ein schwacher Hüllen-Abzug: sein Residual lässt 304 und 131
 stark und symmetrisch gekoppelt, sodass das D|C-Mittel verschwindet, während
 beide Richtungs-TEs hoch bleiben. 335 ist nicht der Konfund, der die
 304→131-Richtung „wegerklärt". 304→131 ist unter jeder gemessenen Einzel- und
-Zweikonfund-Konditionierung aufwärts-robust. Paper §4.6/§7/Abstract sind auf
-Version 7 fortgeschrieben, TODO-Eintrag geschlossen.
+Zweikonfund-Konditionierung aufwärts-robust.
+
+## Dreijahres-Reproduktion (2026-09-08, nachgetragen)
+
+Die Auflösung ist kein 2014-Artefakt; alle drei Säulen reproduzieren sich auf
+2013 (522 Ev) und 2015 (612 Ev). Bei 96 s:
+
+| Jahr | GOES D|C (Pfeil) | C=335 D|C (Pfeil) | {GOES,335} D|C (Pfeil) |
+|---|---|---|---|---|
+| 2013 | +5.20e-2 (87%) | +1.13e-2 (65%) | +2.97e-2 (52%) |
+| 2014 | +4.26e-2 (87%) | −9.46e-4 (63%) | +2.39e-2 (48%) |
+| 2015 | +4.63e-2 (85%) | −1.62e-3 (61%) | +2.49e-2 (44%) |
+
+(Vorwärts-Pfeil = TE(304→131\|C) über der lag-bewussten Null je Ereignis.)
+
+Paper §4.6/§7/Abstract sind auf Version 8 fortgeschrieben, TODO-Eintrag
+geschlossen.
 
 ## Werkzeug & Logs
 
