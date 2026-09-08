@@ -17,11 +17,13 @@ meteo_harvest` — der Fix `d0b1f3e` war nie gepusht; `origin/main` hing 15
 Commits zurück). Zweiter Haken: das Event `config/meteo/tibet-flut-2026.json`
 war in `62ae1de` ("drop unused config/meteo") gelöscht, obwohl `meteo-cdn.yml`
 es referenziert — rekonstruiert. Nach dem Push (`1e1c03c..01a2731`) neu
-dispatched (Run 34165617384). **Pending — 52-vs-30:** der `HOURLY_KATALOG` des
-`meteo_cache_manifest` trägt 52 Variablen, `sources.φ` registriert 30 — der
-Lauf manifestiert ~66 unregistrierte Orphan-Assets. A = A: der Manifestator
-trägt genau das Registrierte (Katalog auf die 30 trimmen oder die Variablen
-aus dem Event lesen), nicht das 52-Superset.
+dispatched (Run 34165617384). **52-vs-30 — umgesetzt:** der `HOURLY_KATALOG`
+(51 Variablen) ist gestrichen; der Manifestator liest die Variablen jetzt aus
+dem Event (`variables`-Array in `config/meteo/tibet-flut-2026.json` = genau die
+30 registrierten). A = A: das Event trägt das Registrierte, kein hartkodiertes
+Superset. Offen: die ~63 Orphan-Assets (21 Extra-Variablen × 3 Stationen) aus
+dem früheren 51-Variablen-Lauf liegen noch auf der CDN — Reconcile/Delete
+pending.
 
 ## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
 
@@ -1007,11 +1009,15 @@ physikalischen Aussage — kein Blatt ohne diese:
 - **Konfund-Folge (offen):** (b) Bandbreiten-Check für 304→131 (wie EVE-1032→131);
   (c) Jahre 2013/2015 mit demselben Konfund. Der 304→131-Befund trägt erst nach
   (b)+(c) als Verdikt — er ist schwach und konfund-fragil.
-- **Nobel-DAG (Atom, getrennt):** die volle DAG „alle Kräfte im Phasenraum,
-  alle Paare und Verzögerungen" — multivariate Konditionierung (KDE-Fluch) und
-  der Konditional-Pfad in der GPU-Maschine (matrix.rs/solar.rs, die heute nur
-  phase_randomized_surrogate rufen; WGSL-te_compute kennt keinen konditionalen
-  Pfad) bleiben als größeres Atom nach der Kalibrier-Session.
+- **Nobel-DAG (Atom, getrennt — geplant für Bz und LAIC):** die volle DAG
+  „alle Kräfte im Phasenraum, alle Paare und Verzögerungen" — multivariate
+  Konditionierung (KDE-Fluch) + der Konditional-Pfad in der GPU-Maschine
+  (matrix.rs/solar.rs rufen nur phase_randomized_surrogate; WGSL-te_compute
+  kennt keinen konditionalen Pfad). Für die Korona gemessen unnötig (2026-09-07:
+  Zweikonfund GOES+94 bestätigte den Einkonfund, fand nichts Neues). Ziel sind
+  die mehrköpfigen Konfunde: Bz (Sonnenwind → Geomagnetik, Runge-2018-Gegenstück)
+  und LAIC (unbesetzt). Übergabe:
+  docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md.
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);
