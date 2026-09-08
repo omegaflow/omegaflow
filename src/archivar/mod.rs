@@ -32,6 +32,7 @@ pub mod f107;
 pub mod fits;
 pub mod fk;
 pub mod footprint;
+pub mod gaia_sso;
 pub mod geo;
 pub mod goes;
 pub mod gong;
