@@ -1,5 +1,5 @@
 <!--
-  title: BLATT — Die Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweislauf (XRS treibt die heißen EUV-Bänder)
+  title: BLATT — Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweis (XRS→EUV)
   class: sheet
   date: 2026-09-08
   sha256: 4c5dc35b3fe755ef6bdd0bb393832f55f99c16ee1ccddfeb044ee67dea2d6a46
