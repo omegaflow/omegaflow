@@ -790,10 +790,6 @@ fn main() {
             std::process::exit(1);
         }
     };
-    if lattice.is_some() && (mag_bands.is_some() || band_spec.is_some()) {
-        eprintln!("--lattice and band split are separate harvest shapes — refused together");
-        std::process::exit(1);
-    }
     let mut lattice_rng: u64 = 0x9E37_79B9_7F4A_7C15;
     if index_mode {
         let adql = "SELECT table_name, table_type, schema_name, description FROM tap_schema.tables";
@@ -1331,7 +1327,7 @@ fn main() {
                     }
                 }
             }
-            let w = match band_col.as_ref().filter(|_| b.is_finite()) {
+            let mut w = match band_col.as_ref().filter(|_| b.is_finite()) {
                 Some(c) => format!(
                     " WHERE {} >= {} AND {} < {}",
                     band_qual(c),
@@ -1341,6 +1337,13 @@ fn main() {
                 ),
                 None => String::new(),
             };
+            if let Some(wc) = &where_clause {
+                if w.is_empty() {
+                    w = format!(" WHERE {}", wc);
+                } else {
+                    w.push_str(&format!(" AND {}", wc));
+                }
+            }
             let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
             q.push_str(&w);
             if let Some(o) = &order_by {
