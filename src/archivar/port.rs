@@ -1680,6 +1680,57 @@ pub fn ci_mode(dir: &str) -> i32 {
         {
             continue;
         }
+        if src.format == "reference" {
+            let bytes = match fetch_raw_bytes(&src.url, src.ttl) {
+                Some(b) => b,
+                None => {
+                    eprintln!("ci-mode: {} reference fetch returned void", src.url);
+                    report_anomaly("API Unreachable", &src.url, "reference fetch returned void");
+                    dead += 1;
+                    continue;
+                }
+            };
+            if let Some(pin) = src.sha256.as_deref() {
+                let measured = crate::archivar::sha256::sha256_hex(&bytes);
+                if measured != pin {
+                    eprintln!(
+                        "ci-mode: {} reference sha256 drift (measured {}, registered {})",
+                        src.url, measured, pin
+                    );
+                    report_anomaly(
+                        "Sha256 Drift",
+                        &src.url,
+                        &format!("measured {measured}, registered {pin}"),
+                    );
+                    dead += 1;
+                    continue;
+                }
+            }
+            let Some(netloc) = extract_netloc(&src.url) else {
+                dead += 1;
+                continue;
+            };
+            let file_name = src
+                .url
+                .split(['/', '?', '#'])
+                .filter(|s| !s.is_empty())
+                .last()
+                .unwrap_or("reference")
+                .to_string();
+            let tmp_path = format!("{}/{}", std::env::temp_dir().display(), file_name);
+            if std::fs::write(&tmp_path, &bytes).is_ok()
+                && crate::cdn::upload_release(netloc, &tmp_path)
+            {
+                mirrored += 1;
+                reachable += 1;
+                eprintln!("ci-mode: {} reference ok ({} B)", src.url, bytes.len());
+            } else {
+                eprintln!("ci-mode: {} reference upload returned void", src.url);
+                dead += 1;
+            }
+            let _ = std::fs::remove_file(&tmp_path);
+            continue;
+        }
         let headers = render_headers(&src.headers, &env);
         if headers.iter().any(|(_, v)| secret_resolves_void(v, &env)) {
             eprintln!("ci-mode: {} header secret void — pending", src.url);
