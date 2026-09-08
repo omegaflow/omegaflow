@@ -2,7 +2,7 @@
   title: Handover — Nobel-DAG: der multivariate Atom B für Bz und LAIC (geschlossen)
   class: handover
   date: 2026-09-08
-  sha256: ae7db0ac8dd9ed56b652d08cb4ad88aa855fe80ed2a1c378e79f49b0b0594314
+  sha256: 397f7f453a54f783323fdc5aa2a56aca9bacb654d75cd5ec4a2ae508ba7619a2
   status: live
   see-also: docs/concepts/te-literatur-matrix.md docs/TODO.md docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md
 -->
@@ -44,12 +44,13 @@ handover-2026-09-07-nobel-dag-bz-laic.md.
   (Rückkanten AE/Dst→Solarwind) — eine Eigenschaft der zeitgleichen (nicht
   lag-geschobenen) Konditionierung, benannt, nicht verschleiert.
 
-## 4. Descoped (mit Messung)
+## 4. Descoped (mit Messung, 2026-09-08)
 
-- CDAWeb-HAPI-Erweiterung des omni2_compiler: CDAWeb-HAPI down gemessen; SPDF-Static
-  liefert denselben Bestand.
-- Kyoto-Realtime-Schwanz: der Index-Bestand trägt Quicklook bis 2026-08; der
-  ~1-Tage-Frische-Schwanz trägt kein Atom-Quantum.
+- CDAWeb-HAPI-Erweiterung des omni2_compiler: CDAWeb-HAPI down gemessen (Timeout,
+  0 Bytes); SPDF-Static liefert denselben OMNI-Bestand (geerntet 1995–2026).
+- Kyoto-Realtime-Schwanz: der SPDF-Quicklook trägt AE bis Tag 228 (2026-08-16),
+  DST bis Tag 243 (2026-08-31); Kyoto-Realtime (dst2609, aktuell) trägt den
+  ~8-Tage-Schwanz — kein Atom-Quantum.
 
 ## 5. Register
 
