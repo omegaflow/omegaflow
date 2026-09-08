@@ -1244,19 +1244,30 @@ ICRS-4D-Rahmen teilt:
   (v = PROPAGATION_SPEED[force]); eine echte Dispersionsrelation
   (Rayleigh-Oberflächenwelle) ist pending — die Steckstelle v(freq)
   steht, kein erfundenes v0·(f/f0)^β (0 honored).
-- SED → BP−RP: der chromatische Dip als SED-Messung — die Farbe einer
-  Spektralquelle aus ihrer SED (SED → BP−RP → color_index → bestehender
-  LUT) ist PENDING — die Gaia-DR3-Passbänder (BP/RP-Antwortkurven) sind
-  die Ernte-Konstante; color_index bleibt 0 (weiß), kein erinnertes
-  Passband (0 honored).
-- Farbe-Render-Bein (PENDING): die `color_lut_rgb`-Farb-LUT ist in der
-  Membran gebacken (Bindings 9+12), aber der Browser-Render-Pfad
-  (Browser-Relay) bindet `color_lut_rgba` noch nicht als Textur — die
-  Browser-Station zeigt die Spektralfarbe nicht.
-- Passband-CDN-Umzug (PENDING): die Gaia-EDR3-BP/RP-Passbänder (Riello+
-  2021, 781 Stützstellen) sind lokal in `sed_to_bp_rp` eingebettet; sie
-  gehören auf die CDN (Asset), damit der Compiler die Ernte aktualisieren
-  kann statt sie neu zu kompilieren.
+- SED → BP−RP GESCHLOSSEN (2026-09-08): `spectral::parse_passbands` (Gaia
+  EDR3 BP/RP, 781 Stützstellen, Riello+ 2021, 7 Spalten, 99.99 = absent,
+  als Kernel eingebettet wie `naif0012.tls`) + `spectral::sed_to_bp_rp`
+  (photon-counting BP−RP); die Spektral-Emission (`membrane.rs`) trägt den
+  gemessenen color_index statt hart 0 (kein erinnertes Passband, 0 honored).
+  Gates grün: Passband-Zahl, leer→None, blau-only→None, rot-bin→positiv,
+  heißer Schwarzkörper blauer als kühler. Der Passband-CDN-Umzug ist damit
+  hinfällig — das Passband ist ein Referenz-Kernel, kein Ernte-Asset.
+- Band-Gate GESCHLOSSEN (2026-09-08): `spectral::band_overlap` + Threading
+  (`SenseReq.band`/`sense_membrane`/`emit_curves`/`PresenceState.band`).
+  Operator-Wort 2026-09-08 (Gaze): Default ratifiziert — `freq = 0`
+  (Punktquelle) bleibt im Band-Modus sichtbar; der Band-Modus reichert an,
+  er verdeckt nicht. Eine filternde Sicht wäre ein eigener benannter Modus,
+  nie ein stiller Default.
+- Farbe-Verbraucher GESCHLOSSEN (2026-09-08): `color_emission` (actuators.rs,
+  Muster `force_ref_medians`) sampelt `color_lut_rgba` über die
+  em-Oszillatoren des Presence-Fensters und erreicht `DiodeState.em_color`
+  + HUD — die LUT ist kein Orphan mehr (befund-Korrektur). Der
+  Browser-Textur-Pfad (`color_lut_rgb`, Bindings 9+12) bleibt ein toter
+  Zweig — descoped, kein Renderer trägt ihn.
+- cone mode (Lichtkegel-Differenz dispersiv) — descoped, nie gebaut:
+  Rendering-Konzept im toten Browser-Zweig. `archivar-mathematikerin.md`
+  führte ihn als „done"; die Blattkorrektur (2026-09-08) stellt das richtig.
+  Getrennt von der Dispersionsrelation (oben) — zwei Zeilen, nicht eine.
 
 ## Archivar & Werkzeuge — offene Pflichten
 
