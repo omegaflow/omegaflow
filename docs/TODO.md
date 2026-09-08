@@ -1012,12 +1012,22 @@ physikalischen Aussage — kein Blatt ohne diese:
   (b)+(c) als Verdikt — er ist schwach und konfund-fragil.
 - **Nobel-DAG (Atom, getrennt — geplant für Bz und LAIC):** die volle DAG
   „alle Kräfte im Phasenraum, alle Paare und Verzögerungen" — multivariate
-  Konditionierung (KDE-Fluch) + der Konditional-Pfad in der GPU-Maschine
-  (matrix.rs/solar.rs rufen nur phase_randomized_surrogate; WGSL-te_compute
-  kennt keinen konditionalen Pfad). Für die Korona gemessen unnötig (2026-09-07:
-  Zweikonfund GOES+94 bestätigte den Einkonfund, fand nichts Neues). Ziel sind
-  die mehrköpfigen Konfunde: Bz (Sonnenwind → Geomagnetik, Runge-2018-Gegenstück)
-  und LAIC (unbesetzt). Übergabe:
+  Konditionierung (KDE-Fluch) + der Konditional-Pfad in der GPU-Maschine.
+  Für die Korona gemessen unnötig (2026-09-07). Ziel: die mehrköpfigen Konfunde
+  Bz (Sonnenwind → Geomagnetik, Runge-2018-Gegenstück) und LAIC (unbesetzt).
+  **Gebaut (2026-09-08):** `transfer_entropy_conditional_binned_n` (Binning, N
+  Konditionen, additiv — KDE-Kanon unberührt) + `conditional_te_stats_lagged_n`
+  (N-dim lag-bewusste Null) + `pcmci_links` (Vorwärts-Elternsuche) +
+  `benjamini_hochberg` (FDR) in te.rs, 11 Gates grün; gemessen: die naive
+  Binning-TE trägt einen Endlich-Stichproben-Bias, den die Null absorbiert.
+  Ernte-Compiler `omni2_static_compiler` (SPDF-Static, nicht CDAWeb-HAPI — der
+  ist down gemessen): stündliche AE/AL/AU aus omni2_YYYY.dat + 1-min SYM-H aus
+  omni_minYYYYMM.asc (Format-Positionen an Beispieldaten verifiziert, 3 Gates);
+  geerntet stündlich 1995–2026 + SYM-H 2020–2026 (in /tmp/opencode/, noch nicht
+  CDN-manifestiert). Offen: CDAWeb-HAPI-Erweiterung des `omni2_compiler`
+  (kanonische Route, Parameternamen unverifiziert solange CDAWeb down),
+  Kyoto-Realtime-Schwanz, die Proben `nobel_probe_bz`/`nobel_probe_laic`, der
+  konditionale GPU-Pfad (Muster `ScalarTeGpu`). Übergabe:
   docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
