@@ -2,8 +2,28 @@ use omegaflow::archivar::footprint::{
     decode_rec, footprint_gate, parse_header, FootprintBand, FootprintRecord, FootprintVerdict,
     HEADER_LEN, REC_BYTES,
 };
+use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
+
+const DOWNLOAD_TTL: u64 = 7200;
+
+#[derive(Debug)]
+struct FootprintBinding {
+    survey: &'static str,
+    asset: &'static str,
+    source_host: &'static str,
+    tables: &'static [&'static str],
+}
+
+const DES_DR2: FootprintBinding = FootprintBinding {
+    survey: "des-dr2",
+    asset: "des_dr2_coverage.fp01",
+    source_host: "datalab.noirlab.edu",
+    tables: &["II/357/des_dr1", "des_dr2"],
+};
+
+const FOOTPRINTS: [FootprintBinding; 1] = [DES_DR2];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -25,6 +45,8 @@ fn band_from_letter(s: &str) -> Option<FootprintBand> {
         "ks" => Some(FootprintBand::Ks),
         "w1" => Some(FootprintBand::W1),
         "w2" => Some(FootprintBand::W2),
+        "w3" => Some(FootprintBand::W3),
+        "w4" => Some(FootprintBand::W4),
         _ => None,
     }
 }
@@ -42,7 +64,75 @@ fn band_name(band: FootprintBand) -> &'static str {
         FootprintBand::Ks => "ks",
         FootprintBand::W1 => "w1",
         FootprintBand::W2 => "w2",
+        FootprintBand::W3 => "w3",
+        FootprintBand::W4 => "w4",
     }
+}
+
+fn footprint_binding(name: &str) -> Option<&'static FootprintBinding> {
+    FOOTPRINTS
+        .iter()
+        .find(|f| f.survey == name || f.tables.contains(&name))
+}
+
+fn survey_label(binding: &FootprintBinding, given: &str) -> String {
+    if given == binding.survey {
+        format!("survey {}", binding.survey)
+    } else {
+        format!("survey {} table {}", binding.survey, given)
+    }
+}
+
+fn resolve_asset(args: &[String]) -> Result<(String, String), String> {
+    let survey_arg = arg_value(args, "--survey");
+    let asset_arg = arg_value(args, "--asset");
+    if survey_arg.is_some() && asset_arg.is_some() {
+        return Err("--survey and --asset: one resolution — refused".into());
+    }
+    if let Some(name) = survey_arg {
+        let binding = footprint_binding(&name)
+            .ok_or_else(|| format!("survey {name}: no registered footprint — refused"))?;
+        let local = format!("data/{}/{}", binding.source_host, binding.asset);
+        if std::path::Path::new(&local).exists() {
+            Ok((survey_label(binding, &name), local))
+        } else {
+            let url = format!("{CDN_BASE}/{CDN_RELEASE}/{}", binding.asset);
+            let bytes = omegaflow::archivar::fetch_raw_bytes(&url, DOWNLOAD_TTL)
+                .ok_or_else(|| format!("survey {name}: {url} stays unread — refused"))?;
+            if let Some(parent) = std::path::Path::new(&local).parent() {
+                std::fs::create_dir_all(parent)
+                    .map_err(|e| format!("mkdir {} returned void: {e}", parent.display()))?;
+            }
+            std::fs::write(&local, &bytes)
+                .map_err(|e| format!("write {local} returned void: {e}"))?;
+            eprintln!("survey {name}: {url} -> {local} ({} bytes)", bytes.len());
+            Ok((survey_label(binding, &name), local))
+        }
+    } else if let Some(path) = asset_arg {
+        Ok((format!("asset {path}"), path))
+    } else {
+        Err("usage: footprint_gate_probe (--survey des-dr2 | --asset <file.fp01>) --ra <deg> --dec <deg> --band <g|r|i|z|y|u|j|h|ks|w1|w2|w3|w4> — refused".into())
+    }
+}
+
+fn verdict_word(verdict: FootprintVerdict) -> &'static str {
+    match verdict {
+        FootprintVerdict::Observed => "Observed",
+        FootprintVerdict::NeverObserved => "NeverObserved",
+        FootprintVerdict::BandUncovered => "BandUncovered",
+        FootprintVerdict::Pending => "Pending",
+    }
+}
+
+fn coverage_text(records: &[FootprintRecord]) -> String {
+    if records.is_empty() {
+        return "none".to_string();
+    }
+    records
+        .iter()
+        .map(|r| format!("{}={:.6}", band_name(r.band), r.frac))
+        .collect::<Vec<String>>()
+        .join(" ")
 }
 
 fn read_ipix(file: &mut File, index: u64) -> Option<u32> {
@@ -89,12 +179,7 @@ fn records_for_pixel(
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let asset = match arg_value(args, "--asset") {
-        Some(v) => v,
-        None => {
-            return Err("usage: footprint_gate_probe --asset <footprint.fp01> --ra <deg> --dec <deg> --band <g|r|i|z|y|u|j|h|ks|w1|w2> — refused".into())
-        }
-    };
+    let (label, asset) = resolve_asset(args)?;
     let ra = match arg_value(args, "--ra").and_then(|s| s.parse::<f64>().ok()) {
         Some(v) if v.is_finite() => v,
         _ => return Err("--ra <deg>: a finite degree value — refused".into()),
@@ -105,7 +190,7 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let band = match arg_value(args, "--band").and_then(|s| band_from_letter(&s)) {
         Some(b) => b,
-        None => return Err("--band: one of g r i z y u j h ks w1 w2 — refused".into()),
+        None => return Err("--band: one of g r i z y u j h ks w1 w2 w3 w4 — refused".into()),
     };
 
     let mut file = File::open(&asset).map_err(|e| format!("open {asset} returned void: {e}"))?;
@@ -115,31 +200,17 @@ fn run(args: &[String]) -> Result<(), String> {
     let n_rows = parse_header(&head).ok_or_else(|| format!("{asset}: the header stays unread"))?;
 
     let Some((order, ipix)) = FootprintRecord::pixel_of(ra, dec) else {
-        println!("ra {ra} dec {dec}: pending — the direction does not place on S²");
+        println!("{label} | ra {ra} dec {dec}: Pending — the direction does not place on S²");
         return Ok(());
     };
 
     let records = records_for_pixel(&mut file, n_rows, ipix)?;
     let verdict = footprint_gate(Some(&records), band);
-
-    let bands_held: Vec<String> = records
-        .iter()
-        .map(|r| format!("{}={:.6}", band_name(r.band), r.frac))
-        .collect();
-    let held = if bands_held.is_empty() {
-        "none".to_string()
-    } else {
-        bands_held.join(" ")
-    };
-    let word = match verdict {
-        FootprintVerdict::Observed => "observed",
-        FootprintVerdict::NeverObserved => "never-observed",
-        FootprintVerdict::BandUncovered => "band-uncovered",
-        FootprintVerdict::Pending => "pending",
-    };
+    let coverage = coverage_text(&records);
     println!(
-        "ra {ra} dec {dec} -> order {order} ipix {ipix} | band {} -> {word} | held: {held}",
-        band_name(band)
+        "{label} | ra {ra} dec {dec} | order {order} ipix {ipix} | band {} -> {} | coverage {coverage}",
+        band_name(band),
+        verdict_word(verdict)
     );
     Ok(())
 }
@@ -170,11 +241,58 @@ mod tests {
             ("ks", FootprintBand::Ks),
             ("w1", FootprintBand::W1),
             ("w2", FootprintBand::W2),
+            ("w3", FootprintBand::W3),
+            ("w4", FootprintBand::W4),
         ] {
             assert_eq!(band_from_letter(letter), Some(band));
             assert_eq!(band_name(band), letter);
         }
         assert_eq!(band_from_letter("x"), None);
         assert_eq!(band_from_letter(""), None);
+    }
+
+    #[test]
+    fn footprint_binding_resolves_the_survey_and_its_bound_tables() {
+        for name in ["des-dr2", "II/357/des_dr1", "des_dr2"] {
+            let binding = footprint_binding(name).unwrap();
+            assert_eq!(binding.survey, "des-dr2");
+            assert_eq!(binding.asset, "des_dr2_coverage.fp01");
+        }
+        assert!(footprint_binding("ps1").is_none());
+        assert!(footprint_binding("2mass").is_none());
+    }
+
+    #[test]
+    fn coverage_text_names_what_the_pixel_holds() {
+        assert_eq!(coverage_text(&[]), "none");
+        let recs = [
+            FootprintRecord {
+                order: 12,
+                band: FootprintBand::G,
+                ipix: 7,
+                frac: 0.75,
+            },
+            FootprintRecord {
+                order: 12,
+                band: FootprintBand::I,
+                ipix: 7,
+                frac: 0.5,
+            },
+        ];
+        assert_eq!(coverage_text(&recs), "g=0.750000 i=0.500000");
+    }
+
+    #[test]
+    fn verdict_words_match_the_gate_register() {
+        assert_eq!(verdict_word(FootprintVerdict::Observed), "Observed");
+        assert_eq!(
+            verdict_word(FootprintVerdict::NeverObserved),
+            "NeverObserved"
+        );
+        assert_eq!(
+            verdict_word(FootprintVerdict::BandUncovered),
+            "BandUncovered"
+        );
+        assert_eq!(verdict_word(FootprintVerdict::Pending), "Pending");
     }
 }
