@@ -1,15 +1,8 @@
 name: ned-cdn
 on:
   workflow_dispatch:
-    inputs:
-      ra:
-        description: 'RA window start (0-340, step 20)'
-        required: false
-        default: '0'
-      combine:
-        description: 'Combine all ned_part_*.json into ned.json'
-        required: false
-        default: 'false'
+  schedule:
+    - cron: '23 * * * *'
 permissions:
   contents: write
 env:
@@ -18,34 +11,54 @@ env:
 jobs:
   ned:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Harvest one RA window (20 deg)
-        if: github.event.inputs.combine == 'false'
+      - name: Auto-resume chunked harvest (one 20-deg window per run)
         run: |
-          RA=${{ github.event.inputs.ra }}
-          RA_END=$((RA + 20))
+          WINDOWS="0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340"
           cargo build -p omegaflow-harvest --release --bin tap_compiler
-          ./target/release/tap_compiler --root https://ned.ipac.caltech.edu/tap/sync \
-            --table NEDTAP.objdir \
-            --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
-            --where "z > 0" --band ra ${RA} ${RA_END} 1 --limit 5000 --lattice 1024 \
-            --out ned_raw_${RA}.json
-          jq -r '.[] | [(.cell|tostring),(.rank|tostring),(.objid|tostring),({ra,dec,z,name,type,n_spectra}|tojson)] | join(" ")' ned_raw_${RA}.json \
-            | sort -k1,1n -k2,2n -k3,3n \
-            | awk -F' ' '{cell=$1; if(cell!=cur){cur=cell;n=0;delete seen} if(n>=4)next; oid=$3; if(seen[oid])next; seen[oid]=1; n++; print}' \
-            | awk -F' ' '{sub(/^[^ ]* [^ ]* [^ ]* /,"");print}' | jq -s '.' > ned_part_${RA}.json
-          gh release upload ssd.jpl.nasa.gov ned_part_${RA}.json --clobber --repo omegaflow/sources
-      - name: Combine all parts into ned.json
-        if: github.event.inputs.combine == 'true'
-        run: |
-          mkdir -p parts
-          gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets --jq '.assets[] | select(.name|startswith("ned_part_")) | .name' \
-            | while read n; do
-                gh release download ssd.jpl.nasa.gov -p "$n" --repo omegaflow/sources --dir parts --clobber
-              done
-          jq -s 'add' parts/ned_part_*.json > ned.json
-          gh release upload ssd.jpl.nasa.gov ned.json --clobber --repo omegaflow/sources
-          echo "ned.json: $(jq 'length' ned.json) objects from $(ls parts/ned_part_*.json | wc -l) parts"
+          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]|select(.name|startswith("ned_part_"))|.name' 2>/dev/null || true)
+          # harvest the first undone window, one per run
+          for RA in $WINDOWS; do
+            if echo "$parts" | grep -qx "ned_part_${RA}.json"; then continue; fi
+            echo "=== harvesting ra window ${RA}..$((RA+20)) ==="
+            if ./target/release/tap_compiler --root https://ned.ipac.caltech.edu/tap/sync \
+                --table NEDTAP.objdir \
+                --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
+                --where "z > 0" --band ra ${RA} $((RA+20)) 1 --limit 5000 --lattice 1024 \
+                --out ned_raw_${RA}.json; then
+              jq -r '.[] | [(.cell|tostring),(.rank|tostring),(.objid|tostring),({ra,dec,z,name,type,n_spectra}|tojson)] | join(" ")' ned_raw_${RA}.json \
+                | sort -k1,1n -k2,2n -k3,3n \
+                | awk -F' ' '{cell=$1; if(cell!=cur){cur=cell;n=0;delete seen} if(n>=4)next; oid=$3; if(seen[oid])next; seen[oid]=1; n++; print}' \
+                | awk -F' ' '{sub(/^[^ ]* [^ ]* [^ ]* /,"");print}' | jq -s '.' > ned_part_${RA}.json
+              gh release upload ssd.jpl.nasa.gov ned_part_${RA}.json --clobber --repo omegaflow/sources
+              echo "uploaded ned_part_${RA}.json"
+            else
+              echo "ra window ${RA} void this run — the hourly schedule retries"
+            fi
+            break
+          done
+          # combine when every window has a part and ned.json is absent
+          done_count=0
+          for RA in $WINDOWS; do
+            if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+                --json assets --jq ".assets[]|select(.name==\"ned_part_${RA}.json\")|.name" 2>/dev/null | grep -q .; then
+              done_count=$((done_count+1))
+            fi
+          done
+          has_ned=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]|select(.name=="ned.json")|.name' 2>/dev/null || true)
+          echo "windows done: ${done_count}/18; ned.json present: ${has_ned}"
+          if [ "$done_count" = "18" ] && [ -z "$has_ned" ]; then
+            echo "=== combining ==="
+            mkdir -p parts
+            for RA in $WINDOWS; do
+              gh release download ssd.jpl.nasa.gov -p "ned_part_${RA}.json" --repo omegaflow/sources --dir parts --clobber
+            done
+            jq -s 'add' parts/ned_part_*.json > ned.json
+            gh release upload ssd.jpl.nasa.gov ned.json --clobber --repo omegaflow/sources
+            echo "ned.json uploaded: $(jq 'length' ned.json) objects"
+          fi
