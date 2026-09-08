@@ -527,6 +527,7 @@ pub fn main_flow() {
         std::sync::Arc::new(std::sync::RwLock::new(crate::mathematikerin::DiodeState {
             force_ref: [0.0; 9],
             expose_offset: crate::mathematikerin::EXPOSE_OFFSET_BASE,
+            em_color: [0.0; 4],
         }));
     let (acoustic_tx, acoustic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
     let (seismic_tx, seismic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
