@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-08
-  sha256: bdfa5615638afad5b0b202decad98dbbb399dad7c7b9a4b630d84ce98cbf61a1
+  sha256: 397d79e04ed40acf7609821bb90a494eda02e0ebd275f3db5af709ad233188d3
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -292,11 +292,11 @@ Cepheid-Astes.
 
 | Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
 |---|---|---|---|---|---|---|---|---|
-| Said et al. (DESI PV, Fundamentalebene) | 2024 | arXiv:2408.13842 | Fundamentalebene | 76.05 | ±0.35 stat ±0.49 sys(FP) ±4.86 stat(Kal.) | FP-Nullpunkt an SBF-Distanz NGC 4874 = 99.1 ± 5.8 Mpc (Jensen 2021) | spät | [c] |
+| Said et al. (DESI PV, Fundamentalebene) | 2025 | MNRAS 539, 3627 · DOI 10.1093/mnras/staf700 · arXiv:2408.13842 | Fundamentalebene | 76.05 | ±0.35 stat ±0.49 sys(FP) ±4.86 stat(Kal.) | FP-Nullpunkt an SBF-Distanz NGC 4874 = 99.1 ± 5.8 Mpc (Jensen 2021) | spät | [c] |
 | Scolnic et al. (FP-Kreuzprüfung) | 2024 | arXiv:2409.14546 | Fundamentalebene | 76.5 | ±2.2 | SN-Ia-Coma-Distanz 98.5 ± 2.2 Mpc (HST-Leiter) | spät | [c] |
 | Schombert, McGaugh & Lelli (bTFR) | 2020 | AJ 160, 71 | Tully-Fisher | 75.1 | ±2.3 stat ±1.5 sys | bTFR-Nullpunkt aus 50 Galaxien (Cepheiden/TRGB) | spät | [c] |
 
-Said 2024 (Fundamentalebene) liegt bei 76.05, aber die Route ist umstritten:
+Said et al. (Fundamentalebene) liegt bei 76.05, aber die Route ist umstritten:
 Scolnic et al. 2024 misst denselben FP mit der SN-Ia-Coma-Distanz → 76.5 ± 2.2,
 während die Planck-Kalibration D_Coma = 111.8 ± 1.8 Mpc verlangt (4.6σ vom
 direkten Maß entfernt). Der Streit ist Teil des Befunds, nicht Grund zur
@@ -361,6 +361,7 @@ Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record)
 timandersen.substack.com, search.proquest.com, autoclaw.z.ai, zcode.z.ai,
 ned.ipac.caltech.edu/level5 (Reese 2004, Petroff 2019 — Review-Kontext).
 
-**`pending`:** die MNRAS-Druckfassung von Said et al. 2024 (Band/DOI nicht
-bestätigt; arXiv-Status „accepted"). Die VizieR-ID der Riess-2021-Tabelle ist
-gewogen-`absent`, das Freedman-Erratum kosmetisch (s. zweiter Nachtrag).
+**`pending`:** keine offenen Punkte. Die MNRAS-Druckfassung von Said et al.
+(MNRAS 539, 3627, DOI 10.1093/mnras/staf700) ist bestätigt; die VizieR-ID der
+Riess-2021-Tabelle ist gewogen-`absent`, das Freedman-Erratum kosmetisch
+(s. zweiter Nachtrag).
