@@ -1365,6 +1365,21 @@ format spk
 at sun
 ttl 86400
 
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura111xl-799.bsp
+format spk
+at sun
+ttl 86400
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp
+format spk
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin
+format ephemeris_binary
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
 format catalog_ossos
 at sun

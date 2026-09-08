@@ -1853,16 +1853,20 @@ Gebaut (2026-09-06, sub-agents):
     src/archivar/motion.rs, alle acht Proben tragen keinen probe-lokalen
     Fold mehr (Reports byte-identisch, Kalibrierung 1.00/1.00); (6)
     Camargo-TSV- + ura111/ura184-SPK-Manifestation — CDN vollständig
-    (camargo-uranus-cdn.yml CI green, 6 TSVs + 2 SPKs). Offen bleibt:
-    (5) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum (SPK 7),
-    nicht das Planetenzentrum (799) — der Pfad ist gemessen (kernel-flatten
-    dedupet Namen aufsteigend nach id; Planetenzentrum = Horizons-Fetch
-    COMMAND='799' CENTER='500@0' via horizons_compiler als eigener Asset
-    ephemeris_uranus_c.bin + phi/sources.φ + CI) — `pending`, der Bau ist
-    das erste Atom der Folge-Sitzung. Die alten Zeilen „~170-mas-Boden
-    zerlegen" und „Papier-gegen-Tabellen-Diskrepanz" schließen mit dem
-    korrigierten Befund: der Boden war die Parallaxe, eine Diskrepanz
-    besteht nicht.
+    (camargo-uranus-cdn.yml CI green, 6 TSVs + 2 SPKs). (5) Das
+    Planetenzentrum (799) ist gebaut: `ephemeris_uranus_c.bin` = DE441-
+    Baryzentrum + ura111xl-799 (799−7), 2-d-Granulen, 0.1-d-Abtastung —
+    reproduziert seine Quelle auf RMS 104 m / max 208 m (0.007 mas bei
+    Uranus); gemessen gegen Horizons 799 (ura184_merged, DE442-basiert):
+    0.36–1.57e6 m (0.048″ median) — die DE441-gegen-DE442-Linien-Differenz
+    am Planetenzentrum, dieselbe Skala wie der Riss. Der Horizons-Raster-
+    Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
+    ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
+    Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
+    phi/sources.φ), der kernel-flatten-CI-Schritt steht (dispatch läuft).
+    Die alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
+    Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
+    Parallaxe, eine Diskrepanz besteht nicht.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
