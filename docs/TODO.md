@@ -1847,30 +1847,27 @@ Gebaut (2026-09-06, sub-agents):
     27.0/31.5/47.3 nach der Reduktion). Verdict (ii): die Beobachtungen
     schlichten nicht — ΔRMS 0.3–3.9 mas ≪ X = 175.6. Befund (korrigiert):
     docs/befund/befund-2026-09-08-uranus-diurnal-dekomposition.md.
-    Offen: (1) `iau_rotate_to_icrs` in src/archivar/motion.rs bildet den
-    Erdpfahl falsch ab (gemessen: Zenith +14.6° statt −22.5°) — `pending`,
-    `src/` belegt (Parallel-Session); (2) Matrix-Snap in
-    `body_fixed_to_icrs` (32-Tage-Raster) — `pending`, `src/` belegt; (3)
-    die INPOP/EPM-Earth-Bins trugen keine body-fixed Orientierung —
-    **behoben** in tools/harvest (--pck pck00010/00011, lokal neu kompiliert,
-    audit-verifiziert 120/120 via body_fixed_earth_audit_probe.rs); die
-    CDN-Re-Manifestation der neuen Bins ist ein CI-Lauf — `pending`; (4)
-    `roemer_fold`/`light_time_sc_pos` existiert siebenfach probe-lokal
-    (topocentric_coupling_probe, pioneer_navio_residuum, pioneer11_odf_residuum,
-    pioneer_link_correction_probe, uranus_riss_schiedsspruch_probe,
-    uranus_satellite_schiedsspruch_probe, uranus_diurnal_decomposition_probe) —
-    Heben in die Archivar beim nächsten Template-Griff, erst wenn `src/` ruhig
-    ist; (5) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
-    (SPK 7), nicht das Planetenzentrum (799) — der Pfad ist gemessen
-    (kernel-flatten dedupet Namen aufsteigend nach id; Planetenzentrum =
-    neuer Asset ephemeris_uranus_c.bin über eigenen NAIF-Namen +
-    phi/sources.φ + CI) — `pending`; (6) Camargo-TSV- + ura111/
-    ura184-SPK-Manifestation: Manifestor gebaut, aber der Workflow
-    (camargo-uranus-cdn.yml) legt die Ziel-Releases nicht an und der
-    Manifestor stagt ura184_part-3 nicht — behoben, CI-Lauf steht aus. Die
-    alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
-    Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
-    Parallaxe, eine Diskrepanz besteht nicht.
+    Geschlossen (Sitzung 2026-09-08, spät): (1) `iau_rotate_to_icrs` —
+    behoben (korrekte IAU-Rotation Rz(90°+α)·Rx(90°−δ)·Rz(W), physikalisch
+    verifiziert: Erd-Zenith −22.40° geozentrisch, Regressionstest
+    test_earth_zenith_geometry); (2) Matrix-Snap in `body_fixed_to_icrs` —
+    behoben (Fortsetzung um die Polachse mit der PM-Rate, keine
+    32-Tage-Einfrierung mehr); (3) INPOP/EPM-Earth-Bins — behoben und
+    re-manifestiert (inpop-epm-cdn.yml CI green, 9+9 Bins auf dem CDN);
+    (4) `roemer_fold` — gehoben: `light_time_worldline` lebt in
+    src/archivar/motion.rs, alle acht Proben tragen keinen probe-lokalen
+    Fold mehr (Reports byte-identisch, Kalibrierung 1.00/1.00); (6)
+    Camargo-TSV- + ura111/ura184-SPK-Manifestation — CDN vollständig
+    (camargo-uranus-cdn.yml CI green, 6 TSVs + 2 SPKs). Offen bleibt:
+    (5) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum (SPK 7),
+    nicht das Planetenzentrum (799) — der Pfad ist gemessen (kernel-flatten
+    dedupet Namen aufsteigend nach id; Planetenzentrum = Horizons-Fetch
+    COMMAND='799' CENTER='500@0' via horizons_compiler als eigener Asset
+    ephemeris_uranus_c.bin + phi/sources.φ + CI) — `pending`, der Bau ist
+    das erste Atom der Folge-Sitzung. Die alten Zeilen „~170-mas-Boden
+    zerlegen" und „Papier-gegen-Tabellen-Diskrepanz" schließen mit dem
+    korrigierten Befund: der Boden war die Parallaxe, eine Diskrepanz
+    besteht nicht.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
