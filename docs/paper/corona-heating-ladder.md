@@ -2,8 +2,8 @@
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
   date: 2026-09-06
-  version: 8
-  sha256: da34ec48ada98bceb9e1d13d143aae02100e6488ee4b809b7c2ddd7ee6d0bf53
+  version: 9
+  sha256: b147bc804601141d6034f21f3bc519938d65b7fc298d8e77027067322bc0fdde
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -370,15 +370,31 @@ crossing is robust across every single- and two-confounder conditioning
 measured; the earlier "contradiction" was the mean-difference statistic, not
 the direction.
 
-The resolution reproduces across all three years. At the 96 s crossing, the
-GOES baseline is upward in every year with an 85–87% forward-arrow majority
-(D|C 2013 +5.20e-2, 2014 +4.26e-2, 2015 +4.63e-2); the single-C=335 reading
-keeps the reverse term inflated toward the forward in every year, leaving
-D|C ≈ 0 with a 61–65% forward-arrow majority (2013 +1.13e-2, 2014 −9.46e-4,
-2015 −1.62e-3); and conditioning on {GOES,335} restores the upward asymmetry
-in every year (+2.97e-2, +2.39e-2, +2.49e-2). The single-line 335 collapse is
-therefore not a 2014 artifact but a reproduced property of conditioning on 335
-alone.
+The resolution reproduces structurally across 2013, 2014 and 2015 — three
+genuine independent flare populations drawn by the declining cycle, not a
+seed repetition of one ensemble. The architecture stands in every year: the
+GOES baseline is strongly upward, 335 alone symmetrizes, and the two-confounder
+conditioning restores the direction. That structural concordance weighs more
+than any single D|C number. At the 96 s crossing:
+
+| year | GOES D|C (fwd %) | C=335 D|C (fwd %) | {GOES,335} D|C (fwd %) |
+|---|---|---|---|
+| 2013 | +5.20e-2 (87) | +1.13e-2 (65) | +2.97e-2 (52) |
+| 2014 | +4.26e-2 (87) | −9.46e-4 (63) | +2.39e-2 (48) |
+| 2015 | +4.63e-2 (85) | −1.62e-3 (61) | +2.49e-2 (44) |
+
+Two boundaries belong in the reading. First, under the strongest control
+{GOES,335} the event participation halves: the forward arrow stays above its
+null in only 44–52% of events, while the stacked mean D|C stays positive in
+every year. The honest form is *robust in direction, halved in participation
+under the strongest double conditioning* — not a hidden weakness, the measured
+limit. Second, the degree of symmetrization varies between years: under 335
+alone D|C remains slightly positive in 2013 (+1.13e-2, 65% forward), while in
+2014 and 2015 it collapses to ≈ 0 (−9.46e-4, −1.62e-3). The structure holds
+everywhere — the reverse term rises, the forward arrow stays a majority — but
+its amplitude is year-dependent: *structure stable, amplitude variable.* The
+single-line 335 collapse is therefore not a 2014 artifact but a reproduced
+property of conditioning on 335 alone, one whose depth tracks the cycle.
 
 ## 5. Discussion
 
