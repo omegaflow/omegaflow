@@ -488,6 +488,115 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
 }
 "#;
 
+pub const SCALAR_TE_WGSL: &str = r#"
+const S_RING_MAX: u32 = 1024u;
+
+@group(0) @binding(0) var<storage, read> series: array<f32>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
+
+fn s_at(s: u32, i: u32) -> f32 {
+    return series[s * S_RING_MAX + i];
+}
+
+fn scalar_silverman(s: u32, n: u32) -> f32 {
+    var acc: f32 = 0.0;
+    var mn: f32 = s_at(s, 0u);
+    var mx: f32 = mn;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let v = s_at(s, i);
+        acc = acc + v;
+        mn = min(mn, v);
+        mx = max(mx, v);
+    }
+    if (mx == mn) {
+        return -1.0;
+    }
+    let mean = acc / f32(n);
+    var var_acc: f32 = 0.0;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let d = s_at(s, i) - mean;
+        var_acc = var_acc + d * d;
+    }
+    var_acc = var_acc / f32(n);
+    if (var_acc <= 0.0) {
+        return -1.0;
+    }
+    return 1.06 * sqrt(var_acc) * pow(f32(n), -0.2);
+}
+
+fn scalar_te(sf: u32, sd: u32, n: u32, shift: u32, hx: f32, hy: f32) -> f32 {
+    let m = n - shift;
+    let inv2_hx = 0.5 / (hx * hx);
+    let inv2_hy = 0.5 / (hy * hy);
+    var te: f32 = 0.0;
+    for (var t = 0u; t < m; t = t + 1u) {
+        let xt = s_at(sf, t);
+        let xt1 = s_at(sf, t + shift);
+        let yt = s_at(sd, t);
+        var k3: f32 = 0.0;
+        for (var s = 0u; s < m; s = s + 1u) {
+            let d1 = xt1 - s_at(sf, s + shift);
+            let d2 = xt - s_at(sf, s);
+            let d3 = yt - s_at(sd, s);
+            k3 = k3 + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hx - (d3 * d3) * inv2_hy);
+        }
+        let p3 = k3 / f32(m);
+        var k1: f32 = 0.0;
+        for (var s = 0u; s < n; s = s + 1u) {
+            let d = xt - s_at(sf, s);
+            k1 = k1 + exp(-(d * d) * inv2_hx);
+        }
+        let p1 = k1 / f32(n);
+        var k2xy: f32 = 0.0;
+        for (var s = 0u; s < n; s = s + 1u) {
+            let d1 = xt - s_at(sf, s);
+            let d2 = yt - s_at(sd, s);
+            k2xy = k2xy + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hy);
+        }
+        let p2xy = k2xy / f32(n);
+        var k2x: f32 = 0.0;
+        for (var s = 0u; s < m; s = s + 1u) {
+            let d1 = xt1 - s_at(sf, s + shift);
+            let d2 = xt - s_at(sf, s);
+            k2x = k2x + exp(-(d1 * d1) * inv2_hx - (d2 * d2) * inv2_hx);
+        }
+        let p2x = k2x / f32(m);
+        te = te + log(p3 * p1 / max(p2xy * p2x, 1e-30));
+    }
+    return te / f32(m);
+}
+
+@compute @workgroup_size(64)
+fn scalar_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let tid = gid.x;
+    let n = params.x;
+    let n_lags = params.y;
+    if (tid >= 286u) {
+        return;
+    }
+    let dir = tid / 143u;
+    let k = (tid % 143u) / 13u;
+    let lag = tid % 13u;
+    let shift = max(lag, 1u);
+    var te: f32 = 0.0;
+    var valid: f32 = 0.0;
+    if (lag < n_lags && n >= 8u && n - shift >= 8u) {
+        let sf = select(k + 1u, 0u, dir == 0u);
+        let sd = select(0u, k + 1u, dir == 0u);
+        let hx = scalar_silverman(sf, n);
+        let hy = scalar_silverman(sd, n);
+        if (hx > 0.0 && hy > 0.0) {
+            te = scalar_te(sf, sd, n, shift, hx, hy);
+            valid = 1.0;
+        }
+    }
+    let o = tid * 2u;
+    verdict[o] = te;
+    verdict[o + 1u] = valid;
+}
+"#;
+
 pub const S2_WGSL: &str = r#"
 const FOUR_PI_INV: f32 = 0.07957747154594767;
 
