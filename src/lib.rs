@@ -50,6 +50,7 @@ pub use archivar::nc4;
 pub use archivar::netcdf;
 pub use archivar::odf;
 pub use archivar::odp;
+pub use archivar::ossos;
 pub use archivar::pck;
 pub use archivar::pioneer_telemetry;
 #[cfg(feature = "browser_relay")]

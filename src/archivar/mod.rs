@@ -60,6 +60,7 @@ pub mod netcdf;
 pub mod odf;
 pub mod odp;
 pub mod omni2;
+pub mod ossos;
 pub mod pck;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
