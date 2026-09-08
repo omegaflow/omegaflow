@@ -1318,6 +1318,11 @@ format catalog_gaia_sso
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
+format catalog_des_y6
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
 format ephemeris_inpop
 at sun
