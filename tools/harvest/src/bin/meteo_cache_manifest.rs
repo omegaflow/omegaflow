@@ -3,60 +3,6 @@ use omegaflow::cdn::upload_release;
 use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
 use std::process::Command;
 
-const HOURLY_KATALOG: &[&str] = &[
-    "temperature_2m",
-    "relative_humidity_2m",
-    "dew_point_2m",
-    "apparent_temperature",
-    "precipitation_probability",
-    "precipitation",
-    "rain",
-    "showers",
-    "snowfall",
-    "snow_depth",
-    "freezing_level_height",
-    "weather_code",
-    "pressure_msl",
-    "surface_pressure",
-    "cloud_cover",
-    "cloud_cover_low",
-    "cloud_cover_mid",
-    "cloud_cover_high",
-    "wind_speed_10m",
-    "wind_speed_80m",
-    "wind_speed_120m",
-    "wind_speed_180m",
-    "wind_direction_10m",
-    "wind_direction_80m",
-    "wind_direction_120m",
-    "wind_direction_180m",
-    "wind_gusts_10m",
-    "shortwave_radiation",
-    "direct_radiation",
-    "diffuse_radiation",
-    "direct_normal_irradiance",
-    "global_tilted_irradiance",
-    "vapour_pressure_deficit",
-    "et0_fao_evapotranspiration",
-    "evapotranspiration",
-    "surface_temperature",
-    "soil_temperature_0cm",
-    "soil_temperature_6cm",
-    "soil_temperature_18cm",
-    "soil_temperature_54cm",
-    "soil_moisture_0_1cm",
-    "soil_moisture_1_3cm",
-    "soil_moisture_3_9cm",
-    "soil_moisture_9_27cm",
-    "soil_moisture_27_81cm",
-    "is_day",
-    "wet_bulb_temperature_2m",
-    "total_column_integrated_water_vapour",
-    "snowfall_water_equivalent",
-    "leaf_wetness_probability",
-    "sunshine_duration",
-];
-
 const CDN_TAG: &str = "archive-api.open-meteo.com";
 
 struct Event {
@@ -64,6 +10,7 @@ struct Event {
     window_start: String,
     window_end: String,
     stations: Vec<Station>,
+    variables: Vec<String>,
 }
 
 struct Station {
@@ -108,11 +55,25 @@ fn event_from(path: &str) -> Option<Event> {
     if sts.is_empty() {
         return None;
     }
+    let JsonVal::Arr(variables) = jpath_val(&j, "variables")? else {
+        return None;
+    };
+    let mut vars = Vec::new();
+    for v in variables {
+        match v {
+            JsonVal::Str(s) => vars.push(s.clone()),
+            _ => return None,
+        }
+    }
+    if vars.is_empty() {
+        return None;
+    }
     Some(Event {
         cdn,
         window_start,
         window_end,
         stations: sts,
+        variables: vars,
     })
 }
 
@@ -185,7 +146,7 @@ fn main() {
     let _ = std::fs::create_dir_all(&out_dir);
     let mut uploads: Vec<String> = Vec::new();
     for station in &e.stations {
-        for variable in HOURLY_KATALOG {
+        for variable in &e.variables {
             let url = open_meteo_url(
                 station.lat,
                 station.lon,
