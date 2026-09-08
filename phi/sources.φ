@@ -5532,7 +5532,7 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/xp_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/xp_spectra.bin
 format xp_spectra
 at sun
 ttl 604800
