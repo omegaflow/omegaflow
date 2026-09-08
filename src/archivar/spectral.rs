@@ -82,18 +82,12 @@ fn is_leap(year: u32) -> bool {
     year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }
 
-fn days_in_month(year: u32, month: u32) -> u32 {
+fn days_in_month(year: u32, month: u32) -> Option<u32> {
     match month {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 => {
-            if is_leap(year) {
-                29
-            } else {
-                28
-            }
-        }
-        _ => 0,
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => Some(31),
+        4 | 6 | 9 | 11 => Some(30),
+        2 => Some(if is_leap(year) { 29 } else { 28 }),
+        _ => None,
     }
 }
 
@@ -106,9 +100,17 @@ pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
         days += if is_leap(y) { 366 } else { 365 };
     }
     for m in 1..month {
-        days += days_in_month(year, m) as u64;
+        let d = match days_in_month(year, m) {
+            Some(d) => d,
+            None => return None,
+        };
+        days += d as u64;
     }
-    Some(days as f64 * 86400.0 + days_in_month(year, month) as f64 * 43200.0)
+    let mid = match days_in_month(year, month) {
+        Some(d) => d as f64,
+        None => return None,
+    };
+    Some(days as f64 * 86400.0 + mid * 43200.0)
 }
 
 pub fn civil_from_days(days: i64) -> Option<(u32, u32, u32)> {
@@ -218,6 +220,107 @@ pub fn color_lut_rgba() -> [[f32; 4]; COLOR_LUT_LEN] {
     lut
 }
 
+const PASSBAND_SENTINEL: f64 = 99.0;
+
+fn passband_table() -> &'static Vec<(f64, f64, f64)> {
+    static TABLE: std::sync::OnceLock<Vec<(f64, f64, f64)>> = std::sync::OnceLock::new();
+    TABLE.get_or_init(|| parse_passbands(include_str!("kernels/gaia_edr3_passbands.dat")))
+}
+
+pub fn parse_passbands(raw: &str) -> Vec<(f64, f64, f64)> {
+    let mut out = Vec::new();
+    for line in raw.lines() {
+        let cols: Vec<&str> = line.split_whitespace().collect();
+        if cols.len() < 7 {
+            continue;
+        }
+        let (Ok(lambda), Ok(bp), Ok(rp)) = (
+            cols[0].parse::<f64>(),
+            cols[3].parse::<f64>(),
+            cols[5].parse::<f64>(),
+        ) else {
+            continue;
+        };
+        if !lambda.is_finite() || !bp.is_finite() || !rp.is_finite() {
+            continue;
+        }
+        let bp = if bp >= PASSBAND_SENTINEL { 0.0 } else { bp };
+        let rp = if rp >= PASSBAND_SENTINEL { 0.0 } else { rp };
+        out.push((lambda, bp, rp));
+    }
+    out
+}
+
+fn passband_at(table: &[(f64, f64, f64)], lam_nm: f64) -> (f64, f64) {
+    let (first, last) = (table[0], table[table.len() - 1]);
+    if lam_nm <= first.0 {
+        return (first.1, first.2);
+    }
+    if lam_nm >= last.0 {
+        return (last.1, last.2);
+    }
+    let idx = table.partition_point(|&(l, _, _)| l < lam_nm);
+    let (l0, b0, r0) = table[idx - 1];
+    let (l1, b1, r1) = table[idx];
+    let t = (lam_nm - l0) / (l1 - l0);
+    (b0 + t * (b1 - b0), r0 + t * (r1 - r0))
+}
+
+pub fn sed_to_bp_rp(bins: &[(f64, f64, f64)]) -> Option<f64> {
+    let table = passband_table();
+    if table.len() < 2 {
+        return None;
+    }
+    let mut num_bp = 0.0f64;
+    let mut num_rp = 0.0f64;
+    for &(freq, bin_width, val) in bins {
+        if !freq.is_finite() || !bin_width.is_finite() || !val.is_finite() {
+            continue;
+        }
+        if freq <= 0.0 || val <= 0.0 {
+            continue;
+        }
+        let lam_nm = C_LIGHT / freq * 1e9;
+        let (sbp, srp) = passband_at(table, lam_nm);
+        num_bp += val * sbp * lam_nm * bin_width;
+        num_rp += val * srp * lam_nm * bin_width;
+    }
+    if !num_bp.is_finite() || !num_rp.is_finite() || num_bp <= 0.0 || num_rp <= 0.0 {
+        return None;
+    }
+    Some(-2.5 * (num_bp / num_rp).log10())
+}
+
+pub fn band_overlap(freq: f64, bin_width: f64, lo: f64, hi: f64) -> bool {
+    if !freq.is_finite() || !bin_width.is_finite() || !lo.is_finite() || !hi.is_finite() {
+        return false;
+    }
+    if freq <= 0.0 {
+        return false;
+    }
+    let half = (bin_width * 0.5).abs();
+    let band_lo = freq - half;
+    let band_hi = freq + half;
+    band_hi >= lo && band_lo <= hi
+}
+
+pub fn color_for_ci(ci: f64) -> [f32; 4] {
+    if ci == 0.0 {
+        return [1.0, 1.0, 1.0, 1.0];
+    }
+    let lut = color_lut_rgba();
+    let lo = COLOR_LOCUS[0].0;
+    let hi = COLOR_LOCUS[COLOR_LOCUS.len() - 1].0;
+    if ci <= lo {
+        return lut[0];
+    }
+    if ci >= hi {
+        return lut[COLOR_LUT_LEN - 1];
+    }
+    let idx = ((ci - lo) / (hi - lo) * COLOR_LUT_LEN as f64) as usize;
+    lut[idx.min(COLOR_LUT_LEN - 1)]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -322,5 +425,100 @@ mod tests {
                 "last entry mismatch"
             );
         }
+    }
+
+    #[test]
+    fn parse_passbands_reads_the_embedded_table() {
+        let table = parse_passbands(include_str!("kernels/gaia_edr3_passbands.dat"));
+        assert_eq!(table.len(), 781);
+        assert_eq!(table[0].0, 320.0);
+        assert_eq!(table[table.len() - 1].0, 1100.0);
+        assert!(table
+            .iter()
+            .all(|&(l, b, r)| l.is_finite() && b.is_finite() && r.is_finite()));
+        assert!(table
+            .iter()
+            .all(|&(_, b, r)| b >= 0.0 && b < 99.0 && r >= 0.0 && r < 99.0));
+    }
+
+    #[test]
+    fn sed_to_bp_rp_returns_none_for_an_empty_spectrum() {
+        assert!(sed_to_bp_rp(&[]).is_none());
+    }
+
+    #[test]
+    fn sed_to_bp_rp_refuses_a_bin_without_rp_response() {
+        let lam_m = 400.0e-9;
+        let freq = C_LIGHT / lam_m;
+        assert!(sed_to_bp_rp(&[(freq, 1.0e13, 1.0)]).is_none());
+    }
+
+    #[test]
+    fn sed_to_bp_rp_rp_dominant_bin_is_positive() {
+        let lam_m = 660.0e-9;
+        let freq = C_LIGHT / lam_m;
+        let ci = sed_to_bp_rp(&[(freq, 1.0e13, 1.0)]).unwrap();
+        assert!(ci.is_finite());
+        assert!(ci > 0.0, "red band color {ci}");
+    }
+
+    #[test]
+    fn sed_to_bp_rp_hot_blackbody_is_bluer_than_cool() {
+        let hot = sed_to_bp_rp(&blackbody_bins(10_000.0)).unwrap();
+        let cool = sed_to_bp_rp(&blackbody_bins(3_000.0)).unwrap();
+        assert!(hot < cool, "hot blackbody {hot} vs cool blackbody {cool}");
+    }
+
+    #[test]
+    fn band_overlap_matches_the_window() {
+        assert!(band_overlap(500.0, 20.0, 490.0, 510.0));
+        assert!(band_overlap(500.0, 20.0, 505.0, 520.0));
+        assert!(!band_overlap(500.0, 20.0, 600.0, 700.0));
+        assert!(
+            !band_overlap(0.0, 0.0, 0.0, 1.0e15),
+            "a point source carries no band"
+        );
+        assert!(!band_overlap(f64::NAN, 20.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn color_for_ci_zero_is_white() {
+        assert_eq!(color_for_ci(0.0), [1.0, 1.0, 1.0, 1.0]);
+    }
+
+    #[test]
+    fn color_for_ci_clamps_to_the_lut_ends() {
+        let lo = COLOR_LOCUS[0].0;
+        let hi = COLOR_LOCUS[COLOR_LOCUS.len() - 1].0;
+        assert_eq!(color_for_ci(lo - 1.0), color_lut_rgba()[0]);
+        assert_eq!(color_for_ci(hi + 1.0), color_lut_rgba()[COLOR_LUT_LEN - 1]);
+    }
+
+    fn planck_nu(nu: f64, t: f64) -> f64 {
+        const H: f64 = 6.626_070_15e-34;
+        const K: f64 = 1.380_649e-23;
+        let x = H * nu / (K * t);
+        if x > 700.0 {
+            return 0.0;
+        }
+        let b = 2.0 * H * nu.powi(3) / (C_LIGHT * C_LIGHT) * 1.0 / (x.exp() - 1.0);
+        if b.is_finite() {
+            b
+        } else {
+            0.0
+        }
+    }
+
+    fn blackbody_bins(t: f64) -> Vec<(f64, f64, f64)> {
+        let mut bins = Vec::new();
+        let mut lam_nm = 320.0f64;
+        while lam_nm <= 1100.0 {
+            let lam_m = lam_nm * 1e-9;
+            let nu = C_LIGHT / lam_m;
+            let dnu = C_LIGHT / (lam_m * lam_m) * 20.0e-9;
+            bins.push((nu, dnu, planck_nu(nu, t)));
+            lam_nm += 20.0;
+        }
+        bins
     }
 }

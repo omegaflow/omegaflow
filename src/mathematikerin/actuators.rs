@@ -163,6 +163,31 @@ pub fn log2_bin_of(l: f32) -> usize {
     ((l + 126.0) as i32).clamp(0, 255) as usize
 }
 
+pub fn color_emission(field: &[f32], meta: &[f32]) -> [f32; 4] {
+    let mut acc = [0.0f32; 4];
+    for (j, f) in field.chunks_exact(12).enumerate() {
+        let ft = f[6] as i64;
+        if ft != 0 {
+            continue;
+        }
+        let v = f[3];
+        if !v.is_finite() {
+            continue;
+        }
+        let w = v.abs();
+        if w <= 0.0 || !w.is_finite() {
+            continue;
+        }
+        let ci = meta[j * 16 + 10] as f64;
+        let c = crate::spectral::color_for_ci(ci);
+        acc[0] += c[0] * w;
+        acc[1] += c[1] * w;
+        acc[2] += c[2] * w;
+        acc[3] += w;
+    }
+    acc
+}
+
 pub fn emit_curves(
     cset: &CurveSet,
     center: [f64; 3],
@@ -240,4 +265,72 @@ pub struct SenseReq {
     pub expose_offset: f32,
     pub force_ref: [f32; 9],
     pub softening: f64,
+    pub band: Option<(f64, f64)>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn pack_one(force_type: f64, val: f64, color_index: f64) -> (Vec<f32>, Vec<f32>) {
+        let r: SampleRecord = (
+            0.0,
+            0.0,
+            0.0,
+            val,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            force_type,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            color_index,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        );
+        let p = pack_window(&[r], [0.0, 0.0, 0.0]);
+        (p.field, p.meta)
+    }
+
+    #[test]
+    fn color_emission_white_for_absent_color() {
+        let (field, meta) = pack_one(0.0, 2.0, 0.0);
+        let e = color_emission(&field, &meta);
+        assert!(e[3] > 0.0);
+        let w = e[3];
+        assert!((e[0] / w - 1.0).abs() < 1e-6);
+        assert!((e[1] / w - 1.0).abs() < 1e-6);
+        assert!((e[2] / w - 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn color_emission_red_for_red_color_index() {
+        let (field, meta) = pack_one(0.0, 2.0, 2.0);
+        let e = color_emission(&field, &meta);
+        let w = e[3];
+        assert!(w > 0.0);
+        let (r, g, b) = (e[0] / w, e[1] / w, e[2] / w);
+        assert!(r > b, "red source r {r} vs b {b}");
+        assert!(g > b, "red source g {g} vs b {b}");
+    }
+
+    #[test]
+    fn color_emission_ignores_non_em_forces() {
+        let (field, meta) = pack_one(1.0, 2.0, 2.0);
+        let e = color_emission(&field, &meta);
+        assert_eq!(e[3], 0.0, "gravity carries no color of its own");
+    }
 }
