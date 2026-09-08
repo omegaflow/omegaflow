@@ -1019,6 +1019,24 @@ physikalischen Aussage — kein Blatt ohne diese:
   die mehrköpfigen Konfunde: Bz (Sonnenwind → Geomagnetik, Runge-2018-Gegenstück)
   und LAIC (unbesetzt). Übergabe:
   docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md.
+- **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
+  skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
+  `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
+  Serien × 13 Lags, `shift = max(lag,1)`) + `ScalarTeGpu`-Runner im Kern
+  (compute-only Device `compatible_surface: None`; Surrogate bleiben CPU-f64-FFT
+  byte-identisch + Vollkreis-RNG, Batch-Upload in den 12×1024-Puffer, die f64-
+  Reduktion der zehn Surrogat-d-Statistiken bleibt CPU). Der Probe hebt die
+  Surrogat-Erzeugung aus der Lag-Schleife (der `lag`-Seed-Faktor `0xD1B5…` fiel,
+  der Fenster-`idx` bleibt) — die ~23,5-M-Surrogat-Erzeugung entfällt ~13×.
+  Paritäts-Gates in `tests.rs` (alle grün auf echtem Adapter): FP/FN-Entscheidung,
+  Symmetrie, n-floor, Surrogat-Slots (alle 286 Grid-Slots gegen die CPU-Referenz,
+  0 Abweichungen) + numerischer Floor `SCALAR_PARITY_TOL = 1e-3`. Gemessen dabei:
+  das f32-Silverman meldete für eine exakt konstante Serie Varianz ~6e-16
+  (Akkumulationsrauschen) → `valid=1`; geflickt durch den `max == min`-Test im
+  Silverman. WGSL-FFT ist entschieden-gegen (WGSL kennt kein f64/u64; ein f32-FFT
+  bräche Byte-Identität und Vollkreis-RNG). Offen bleibt nur der Voll-Lauf der
+  Matrix auf dem Desktop (GTX 970, unten); der konditionale GPU-Pfad bleibt dem
+  Nobel-DAG-Atom.
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);
