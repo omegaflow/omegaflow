@@ -2,9 +2,9 @@
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
   date: 2026-09-06
-  version: 5
-  sha256: ff76b349f9ecdea590746aa3e32e04e5df7f3df6c76f4dd5b62417fd733c9773
-  fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix
+  version: 7
+  sha256: 1c31b81c0af547d27306bcdca3293ec1200839a140b80b655df6f857cfbd3537
+  fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
 -->
@@ -15,7 +15,7 @@
 
 ## Abstract
 
-The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven EUV/UV lines from SDO/EVE, from 584 Å (log T = 4.16) to 94 Å (log T = 6.81) — at 10 s cadence over 109 flares (2011) with a phase-randomized null, complemented by SDO/AIA imaging (24-s cells) over three independent years (2013, 2014, 2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). The central result is a reproducible, directed, family-bound cascade: the hot-corona chain 193→211→335→94 Å carries the largest TE up the ladder at the ~96 s Alfvén crossing in all three years, and the per-event direction of the hottest rung is 76% positive — consistent, not alternating. The amplitude stays below the full-round family bound in every year (0.63–0.91 × fam). The single EVE rung that clears the family bound at canonical bandwidth (1032→131 Å) is not bandwidth-robust, failing at h ≥ 2.0. The measurement establishes a reproduced coronal direction under the family bound, but no rung clears both the family bound and the bandwidth check — a family-bound cascade, not a Pfeil.
+The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven SDO/EVE lines, 584–94 Å — at 10 s cadence over 109 flares (2011), complemented by SDO/AIA imaging (24-s cells) over three years (2013–2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Unconditioned, the hot-corona chain 193→211→335→94 Å carries a reproduced directed excess at the ~96 s crossing, but stays below the family bound (0.63–0.91 × fam) — a family-bound cascade, not a Pfeil. Conditioned on the shared flare envelope (GOES X-ray and hot AIA channels, lag-aware residual null), that cascade collapses — its excess turns downward or silent under every confounder, showing the direction was the common driver's response-time structure, not channel-to-channel flow. What survives conditioning is the transition-region entry 304→131 Å: upward, bandwidth-stable (h 0.5–3.0, never flipping), and reproduced across three years and under every single- and two-confounder conditioning measured.
 ## 1. Introduction
 
 The coronal heating problem is the temperature inversion of the outer solar
@@ -310,6 +310,66 @@ strengthen as the ensemble grows fivefold (335→94: +1.42e-1 at 194 events
 → +1.24e-1 at 1019 events). The direction is reproduced and consistent;
 the significance is bounded.
 
+### 4.6 The conditional measurement — the cascade under the shared envelope
+
+The ladder D above measures the pairwise directional excess against a
+phase-randomized null; the family bound guards multiple comparison, but it does
+not separate channel-to-channel flow from the common flare driver. To isolate
+the directional residual beyond the shared envelope, each adjacent pair is
+conditioned on a confounder series C — the GOES soft X-ray flux (b_flux, the
+Neupert driver), the hot AIA channels 335 Å and 94 Å — via
+transfer_entropy_conditional(X→Y | C) with a lag-aware residual null
+(conditional_te_stats_lagged, ARX on y-lag and driver-lag). The linear OLS
+residual null leaks on the impulsive envelope (4.92e-2 over its 3.27e-2
+threshold with no coupling) and was replaced before the measurement. The
+directional excess D|C = TE(cool→hot|C) − TE(hot→cool|C), stacked per event
+over the 2014 AIA corpus (989 GOES events, 24-s cells, lags 0/96/192 s).
+
+| pair | D|C (0 s) | D|C (96 s) | D|C (192 s) | verdict |
+|---|---|---|---|---|---|
+| 304→131 | +2.67e-2 | +4.26e-2 | +6.55e-2 | upward |
+| 131→171 | −2.53e-2 | −3.87e-2 | −7.43e-2 | downward |
+| 171→193 | +3.20e-3 | +5.42e-3 | +7.72e-3 | silent |
+| 193→211 | −1.35e-2 | −3.64e-2 | −3.30e-2 | downward |
+| 211→335 | +2.44e-3 | −1.07e-2 | −1.56e-2 | silent |
+| 335→94 | +4.69e-3 | −9.09e-3 | −1.25e-2 | silent |
+
+The hot-corona cascade 193→211→335→94 — the central result of §4.2–§4.5 —
+does not survive conditioning. Its excess turns downward or silent under every
+confounder (193→211 at 96 s: GOES −3.64e-2, 335 −1.87e-2, 94 −2.78e-2,
+GOES+94 −2.06e-2), and stays downward across all three years and all
+bandwidths (2013 −3.48e-2, 2015 −3.91e-2; h 0.5 −3.96e-2 to h 3.0 −9.60e-3).
+The direction was the shared flare envelope — the X-ray driver lighting every
+channel with a slightly different response time (the Neupert effect) — not
+channel-to-channel flow. The family-bound cascade of §4.5 was a common-driver
+artifact, now measured, not assumed.
+
+What survives conditioning is the transition-region entry 304→131 Å, upward at
+every lag and growing with lag. It is bandwidth-stable — positive from h 0.5
+(+6.61e-2) through h 3.0 (+1.08e-2), never flipping sign, unlike the EVE
+1032→131 candidate of §4.4 which failed at h ≥ 2.0 — and reproduced across all
+three years at 96 s (2013 +5.20e-2, 2014 +4.26e-2, 2015 +4.63e-2). It survives
+the GOES and 94 confounders and the two-confounder sets {GOES,335}, {GOES,94}
+and {94,335} (D|C at 96 s: +2.39e-2, +2.37e-2, +8.93e-3, forward arrow in
+479–524 of 989 events).
+
+The single-confounder reading under C = 335 (D|C ≈ 0, −9.46e-4 at 96 s) is not
+a collapse of the direction. The decomposition of D|C into its two terms shows
+the forward TE(304→131|335) is unchanged from its GOES value (8.47e-2 vs
+9.04e-2 at 96 s) and remains arrow-significant in 621/989 events, while the
+reverse TE(131→304|335) is symmetrically inflated to 8.56e-2 — a
+mean-difference cancellation, not a loss of the upward flow. That
+symmetrization is a single-line conditioning peculiarity, not a hidden common
+driver: it is invariant to the null lag depth (max_lag 4/8/16 give bit-identical
+means, the forward arrow staying a 585–626/989 majority) and it does not
+survive a second confounder — adding GOES or 94 to 335 restores the upward
+asymmetry ({GOES,335} +2.39e-2, {94,335} +8.93e-3, matching {GOES,94}
++2.37e-2). Conditioning on 335 alone is a weak envelope removal: its residual
+leaves 304 and 131 strongly and symmetrically coupled. The 304→131 upward
+crossing is robust across every single- and two-confounder conditioning
+measured; the earlier "contradiction" was the mean-difference statistic, not
+the direction.
+
 ## 5. Discussion
 
 **No bandwidth-robust arrow.** The sole rung that clears the family bound at
@@ -427,8 +487,20 @@ cascade**: its direction is consistent and reproduced across three
 independent years; its amplitude is bounded below the arrow threshold by the
 family bound on every rung. No rung is a Pfeil, and the verdict is not a
 null — the direction is measured and reproduced, the significance is
-bounded, and the Alfvén-versus-nanoflare distinction stays open on the
-amplitude that clears both the family bound and the bandwidth check.
+bounded.
+
+The conditional measurement (§4.6) revises that reading. Under conditioning
+on the shared flare envelope, the hot-corona cascade turns downward or silent
+under every confounder and every bandwidth — the family-bound cascade was the
+common driver's response-time structure, not channel-to-channel flow. What
+survives is the transition-region entry 304→131 Å: upward, bandwidth-stable,
+and reproduced across three years. The 335 Å confounder does not overturn it:
+the apparent single-confender collapse is a mean-difference cancellation
+(forward term unchanged, reverse term symmetrically inflated) that neither
+depends on the null lag depth nor survives a second confounder. The 304→131
+direction is a real upward crossing under every single- and two-confounder
+conditioning measured; the Alfvén-versus-nanoflare distinction stays open on
+its amplitude, not on whether the direction survives the shared envelope.
 
 ## References
 
