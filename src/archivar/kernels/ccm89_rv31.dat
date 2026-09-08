@@ -1,0 +1,46 @@
+# CCM 1989 mean galactic extinction curve, R_V = 3.1 — kuratierte Klasse
+# (the representative form fitted to many measured sightlines; not a
+# per-sightline measurement — the individual curves stay a named pending)
+# source: Cardelli, Clayton & Mathis 1989, ApJ 345, 245 (bibcode 1989ApJ...345..245C)
+# numbers evaluated from the CCM piecewise a(x), b(x) equations read via
+# sncosmo/extinction v0.4.9 (_extinction.pyx); A/A_V = a(x) + b(x)/3.1,
+# x = 1000 / lambda_nm. Not verified against the original CCM table scan.
+# columns: lambda_nm A_over_AV
+100.0 5.238355
+110.0 4.217207
+120.0 3.587130
+130.0 3.127016
+140.0 2.838757
+150.0 2.663879
+160.0 2.560430
+175.0 2.507294
+190.0 2.615369
+200.0 2.842526
+210.0 3.130237
+217.5 3.185101
+220.0 3.151702
+230.0 2.861234
+240.0 2.546892
+250.0 2.315317
+260.0 2.153519
+270.0 2.036508
+280.0 1.947527
+300.0 1.818157
+320.0 1.704552
+350.0 1.591630
+365.0 1.556896
+400.0 1.464556
+440.0 1.324521
+500.0 1.122247
+549.45 1.000001
+600.0 0.906714
+700.0 0.750173
+800.0 0.597489
+900.0 0.478808
+1000.0 0.404000
+1250.0 0.282070
+1500.0 0.210317
+2000.0 0.132350
+2500.0 0.092406
+3000.0 0.068900
+3300.0 0.059098
