@@ -78,6 +78,114 @@ pub fn parse_spectral_bin(bytes: &[u8]) -> Option<(f64, Vec<(f64, f64, f64)>)> {
     Some((epoch, bins))
 }
 
+pub const XP_SPECTRAL_VERSION: u8 = 0x02;
+
+pub struct XpStar {
+    pub source_id: u64,
+    pub ra: f64,
+    pub dec: f64,
+    pub plx_mas: f64,
+    pub bins: Vec<(f64, f64, f64)>,
+}
+
+pub const XP_GRID_LAM_NM_FIRST: f64 = 400.0;
+pub const XP_GRID_LAM_NM_STEP: f64 = 10.0;
+pub const XP_GRID_SAMPLES: usize = 41;
+
+pub fn xp_bins_from_flux_array(flux: &[f64]) -> Vec<(f64, f64, f64)> {
+    if flux.len() != XP_GRID_SAMPLES {
+        return Vec::new();
+    }
+    let mut rows = Vec::with_capacity(XP_GRID_SAMPLES);
+    for (i, &e) in flux.iter().enumerate() {
+        let lam_nm = XP_GRID_LAM_NM_FIRST + i as f64 * XP_GRID_LAM_NM_STEP;
+        let flag = if e.is_finite() && e > 0.0 { 0 } else { 1 };
+        rows.push((lam_nm, e, flag));
+    }
+    bins_from_lambda_rows(&rows)
+}
+
+pub fn write_xp_spectra_bin(epoch_tdb: f64, stars: &[XpStar]) -> Vec<u8> {
+    let mut size = SPECTRAL_HEADER_BYTES;
+    for s in stars {
+        size += 36 + s.bins.len() * SPECTRAL_RECORD_BYTES;
+    }
+    let mut out = Vec::with_capacity(size);
+    out.extend_from_slice(&SPECTRAL_MAGIC);
+    out.push(XP_SPECTRAL_VERSION);
+    out.extend_from_slice(&epoch_tdb.to_le_bytes());
+    out.extend_from_slice(&(stars.len() as u32).to_le_bytes());
+    for s in stars {
+        out.extend_from_slice(&s.source_id.to_le_bytes());
+        out.extend_from_slice(&s.ra.to_le_bytes());
+        out.extend_from_slice(&s.dec.to_le_bytes());
+        out.extend_from_slice(&s.plx_mas.to_le_bytes());
+        out.extend_from_slice(&(s.bins.len() as u32).to_le_bytes());
+        for &(freq, bin_width, val) in &s.bins {
+            out.extend_from_slice(&freq.to_le_bytes());
+            out.extend_from_slice(&bin_width.to_le_bytes());
+            out.extend_from_slice(&val.to_le_bytes());
+        }
+    }
+    out
+}
+
+pub fn parse_xp_spectra_bin(bytes: &[u8]) -> Option<(f64, Vec<XpStar>)> {
+    if bytes.len() < SPECTRAL_HEADER_BYTES
+        || bytes[0] != SPECTRAL_MAGIC[0]
+        || bytes[1] != SPECTRAL_MAGIC[1]
+        || bytes[2] != XP_SPECTRAL_VERSION
+    {
+        return None;
+    }
+    let epoch = f64::from_le_bytes(bytes[3..11].try_into().ok()?);
+    let count = u32::from_le_bytes(bytes[11..15].try_into().ok()?) as usize;
+    if !epoch.is_finite() {
+        return None;
+    }
+    let mut stars = Vec::with_capacity(count);
+    let mut off = SPECTRAL_HEADER_BYTES;
+    for _ in 0..count {
+        if off + 36 > bytes.len() {
+            return None;
+        }
+        let source_id = u64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
+        let ra = f64::from_le_bytes(bytes[off + 8..off + 16].try_into().ok()?);
+        let dec = f64::from_le_bytes(bytes[off + 16..off + 24].try_into().ok()?);
+        let plx_mas = f64::from_le_bytes(bytes[off + 24..off + 32].try_into().ok()?);
+        let n_bins = u32::from_le_bytes(bytes[off + 32..off + 36].try_into().ok()?) as usize;
+        if !ra.is_finite() || !dec.is_finite() || !plx_mas.is_finite() {
+            return None;
+        }
+        off += 36;
+        let mut bins = Vec::with_capacity(n_bins);
+        for _ in 0..n_bins {
+            if off + SPECTRAL_RECORD_BYTES > bytes.len() {
+                return None;
+            }
+            let freq = f64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
+            let bin_width = f64::from_le_bytes(bytes[off + 8..off + 16].try_into().ok()?);
+            let val = f64::from_le_bytes(bytes[off + 16..off + 24].try_into().ok()?);
+            if !freq.is_finite() || !bin_width.is_finite() || !val.is_finite() {
+                return None;
+            }
+            bins.push((freq, bin_width, val));
+            off += SPECTRAL_RECORD_BYTES;
+        }
+        stars.push(XpStar {
+            source_id,
+            ra,
+            dec,
+            plx_mas,
+            bins,
+        });
+    }
+    if off != bytes.len() {
+        return None;
+    }
+    Some((epoch, stars))
+}
+
 fn is_leap(year: u32) -> bool {
     year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }
@@ -492,6 +600,79 @@ mod tests {
         let hi = COLOR_LOCUS[COLOR_LOCUS.len() - 1].0;
         assert_eq!(color_for_ci(lo - 1.0), color_lut_rgba()[0]);
         assert_eq!(color_for_ci(hi + 1.0), color_lut_rgba()[COLOR_LUT_LEN - 1]);
+    }
+
+    #[test]
+    fn xp_bins_map_the_fixed_grid() {
+        let mut flux = [0.0f64; XP_GRID_SAMPLES];
+        flux[0] = 1.0;
+        flux[XP_GRID_SAMPLES - 1] = 2.0;
+        let bins = xp_bins_from_flux_array(&flux);
+        assert_eq!(bins.len(), 2);
+        let lam0 = 400e-9;
+        assert!((bins[0].0 - C_LIGHT / lam0).abs() / bins[0].0 < 1e-12);
+        assert!((bins[0].2 - 1.0 * 1e9 * lam0 * lam0 / C_LIGHT).abs() / bins[0].2 < 1e-12);
+        let lam1 = 800e-9;
+        assert!((bins[1].0 - C_LIGHT / lam1).abs() / bins[1].0 < 1e-12);
+    }
+
+    #[test]
+    fn xp_bins_drop_nonpositive_and_reject_wrong_arity() {
+        let mut flux = [1.0f64; XP_GRID_SAMPLES];
+        flux[10] = -0.5;
+        flux[20] = f64::NAN;
+        let bins = xp_bins_from_flux_array(&flux);
+        assert_eq!(bins.len(), XP_GRID_SAMPLES - 2);
+        assert!(xp_bins_from_flux_array(&[1.0; 5]).is_empty());
+    }
+
+    #[test]
+    fn xp_spectra_roundtrip() {
+        let stars = vec![
+            XpStar {
+                source_id: 424140906078848,
+                ra: 45.0,
+                dec: 30.0,
+                plx_mas: 1.0,
+                bins: vec![(5.0e14, 1.0e14, 2.5e-14)],
+            },
+            XpStar {
+                source_id: 1,
+                ra: 180.0,
+                dec: -60.0,
+                plx_mas: 0.5,
+                bins: Vec::new(),
+            },
+        ];
+        let bytes = write_xp_spectra_bin(1781488800.0, &stars);
+        let (epoch, parsed) = parse_xp_spectra_bin(&bytes).unwrap();
+        assert_eq!(epoch, 1781488800.0);
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed[0].source_id, 424140906078848);
+        assert_eq!(parsed[0].ra, 45.0);
+        assert_eq!(parsed[0].plx_mas, 1.0);
+        assert_eq!(parsed[0].bins, stars[0].bins);
+        assert!(parsed[1].bins.is_empty());
+    }
+
+    #[test]
+    fn xp_spectra_refuses_malformed() {
+        assert!(parse_xp_spectra_bin(&[0xCF, 0x86, 0x01]).is_none());
+        assert!(parse_xp_spectra_bin(&[0xCF, 0x86, 0x02]).is_none());
+        let bytes = write_xp_spectra_bin(
+            0.0,
+            &[XpStar {
+                source_id: 1,
+                ra: 0.0,
+                dec: 0.0,
+                plx_mas: 0.0,
+                bins: vec![(1.0, 2.0, 3.0)],
+            }],
+        );
+        assert!(parse_xp_spectra_bin(&bytes[..bytes.len() - 1]).is_none());
+        let mut wrong_nbins = bytes.clone();
+        wrong_nbins[47] = 2;
+        assert!(parse_xp_spectra_bin(&wrong_nbins).is_none());
     }
 
     fn planck_nu(nu: f64, t: f64) -> f64 {
