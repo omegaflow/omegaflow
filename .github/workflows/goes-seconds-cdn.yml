@@ -13,13 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Idempotence — skip if the corpus ends already exist on the CDN
+      - name: Idempotence — skip if the three year-tars already exist on the CDN
         id: idempotence
         run: |
           assets=$(gh release view ncei.noaa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null)
-          if echo "$assets" | grep -qx "xr_20130101.nc" && \
-             echo "$assets" | grep -qx "xr_20151231.nc"; then
+          if echo "$assets" | grep -qx "goes15_xrs_2s_2013.tar" && \
+             echo "$assets" | grep -qx "goes15_xrs_2s_2014.tar" && \
+             echo "$assets" | grep -qx "goes15_xrs_2s_2015.tar"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "goes 2-s corpus present — manifest skipped"
           else
