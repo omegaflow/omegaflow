@@ -1,0 +1,39 @@
+name: omni2-indices-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      window-start:
+        description: harvest window start (year)
+        required: false
+        type: string
+        default: "1995"
+      window-end:
+        description: harvest window end (year)
+        required: false
+        type: string
+        default: "2026"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  indices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "omni2_indices.bin"; then
+            echo "asset omni2_indices.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset omni2_indices.bin missing — compiling and manifesting"
+      - name: Compile OMNI2 geomagnetic indices and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin omni2_static_compiler -- \
+            --window-start "${{ inputs.window-start }}" --window-end "${{ inputs.window-end }}" \
+            --symh --out omni2_indices.bin --ci-mode
