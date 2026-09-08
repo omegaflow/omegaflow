@@ -1709,7 +1709,7 @@ Gebaut (2026-09-06, sub-agents):
   `mpcorb_distant.bin` (85 B/Körper: number, Principal_desig, epoch, a, e, i,
   node, peri, M, H, G mit Präsenz-Bits; `src/archivar/mpcorb.rs`, 8.082
   Records, 0 verworfen); Register + kernel-flatten-Manifestator-Schritt
-  eingetragen; CDN-Geburt steht im nächsten CI-Lauf aus. Zweite Linie je
+  eingetragen; manifestiert (CDN ssd.jpl.nasa.gov, 2026-09-08). Zweite Linie je
   Wurzel gebaut (2026-09-08): die vier unabhängigen Wurzeln stehen — MPC
   (`mpcorb_distant.bin`), CFHT-Survey (`ossos_tno.bin`, 840, OSSOS. VII
   CDS J/ApJS/236/18, baryzentrische Elemente), DES-Survey (`des_y6_tno.bin`,
@@ -1727,12 +1727,11 @@ Gebaut (2026-09-06, sub-agents):
   je primärer Designation, nur elliptisch; gemessen am dcom5_le.dat vom
   2026-09-07: 1.792 Records; Encke 2P = DASTCOM 90000091, Epoche
   2459897.5); Manifestations-Schritt im dcom5-cdn.yml. `encke` webt jetzt
-  SPK gegen die Kometen-Kepler-Linie (derselbe `BodyLine::Dastcom`).
-  Offen: CDN-Geburt des `dcom5_comets.bin`-Assets im nächsten
-  dcom5-cdn-Lauf (`weberin_body_verdict --dcom5` erwartet es); der
-  Placed/Riss-Befund für encke misst die Separation gegen
-  `ephemeris_encke.bin` erst nach der Manifestation. Übergabe:
-  docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md.
+   SPK gegen die Kometen-Kepler-Linie (derselbe `BodyLine::Dastcom`).
+   Manifestiert (CDN ssd.jpl.nasa.gov, 2026-09-08) — der encke-Placed/Riss-
+   Befund misst die Separation gegen `ephemeris_encke.bin` via
+   `weberin_body_verdict --dcom5`. Übergabe:
+   docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md.
 - Vollständige ~20k-Tafel-Ingestion in den position-indizierten Bestand —
   das Dichtefeld (Schritt 4) steht, `--catalog stars|twomass` verdrahtet;
   gemessen liegt nur dr3_stars.bin auf der Platte (twomass/asteroiden-bins
