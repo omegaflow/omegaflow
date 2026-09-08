@@ -4,7 +4,7 @@
   date: 2026-09-08
   probe-commit: b0b7b7d
   sha256: 210e8e251e4f0da44d04411ca7b5c8eb598ae588c636332d207cd6360626535a
-  status: pending
+  status: done
   see-also: docs/TODO.md docs/handover/handover-2026-09-08-atom-c-offene-pflichten.md docs/specs/spectral-oscillator.md docs/auftrag/auftrag-dispersions-ortungstest.md
 -->
 
