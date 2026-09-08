@@ -1,4 +1,6 @@
-use omegaflow::archivar::omni2::{parse_bin, write_bin, COMP_AE, COMP_AL, COMP_AU, COMP_SYMH};
+use omegaflow::archivar::omni2::{
+    parse_bin, write_bin, COMP_AE, COMP_AL, COMP_AU, COMP_DST, COMP_SYMH,
+};
 use omegaflow::cdn::upload_asset;
 use omegaflow::lsk::days_from_civil;
 use std::process::Command;
@@ -73,6 +75,11 @@ fn parse_hourly(line: &str) -> Vec<(f64, f64, u32)> {
         return Vec::new();
     };
     let mut out = Vec::new();
+    if let Some(dst) = token_f64(&tokens, 40) {
+        if keep(dst, FILL_I6) {
+            out.push((t, dst, COMP_DST));
+        }
+    }
     if let Some(ae) = token_f64(&tokens, 41) {
         if keep(ae, FILL_AE_H) {
             out.push((t, ae, COMP_AE));
@@ -206,9 +213,15 @@ mod tests {
     fn hourly_indices_match_verified_sample() {
         let line = "2025   1  0 2610 51 52  61  26  13.6  12.8 -15.3 129.0  -7.7   9.6  -3.4  10.1  -1.0   0.7   4.6   3.2   2.4   2.4  178561.  19.6  427.  -4.5   5.9 0.029  6.66   45580.   2.3    5.   1.0   1.5 0.002   0.43   1.35   7.0 40 198   -26  287 999999.99 99999.99 99999.99 99999.99 99999.99 99999.99  0  27 211.9 999.9  -187   100  4.7";
         let recs = parse_hourly(line);
+        let dst = recs.iter().find(|r| r.2 == COMP_DST).expect("DST present");
         let ae = recs.iter().find(|r| r.2 == COMP_AE).expect("AE present");
         let al = recs.iter().find(|r| r.2 == COMP_AL).expect("AL present");
         let au = recs.iter().find(|r| r.2 == COMP_AU).expect("AU present");
+        assert!(
+            (dst.1 - -26.0).abs() < 1e-6,
+            "DST must be -26, got {}",
+            dst.1
+        );
         assert!((ae.1 - 287.0).abs() < 1e-6, "AE must be 287, got {}", ae.1);
         assert!(
             (al.1 - -187.0).abs() < 1e-6,

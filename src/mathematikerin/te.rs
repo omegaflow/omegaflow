@@ -1026,6 +1026,7 @@ pub struct CausalLink {
 pub fn pcmci_links(
     series: &[&[f32]],
     max_lag: usize,
+    null_lag: usize,
     bins: usize,
     seed: u64,
     n_surr: usize,
@@ -1041,6 +1042,7 @@ pub fn pcmci_links(
         }
     }
     let mut parents: Vec<Vec<(usize, usize)>> = vec![Vec::new(); n_chan];
+    let mut tested: Vec<Vec<(usize, usize)>> = vec![Vec::new(); n_chan];
     let mut links: Vec<CausalLink> = Vec::new();
     for j in 0..n_chan {
         for _pass in 0..2 {
@@ -1049,9 +1051,10 @@ pub fn pcmci_links(
                     continue;
                 }
                 for lag in 1..=max_lag {
-                    if parents[j].iter().any(|&(d, l)| d == i && l == lag) {
+                    if tested[j].iter().any(|&(d, l)| d == i && l == lag) {
                         continue;
                     }
+                    tested[j].push((i, lag));
                     let conds: Vec<&[f32]> = parents[j].iter().map(|&(d, _)| series[d]).collect();
                     let te = transfer_entropy_conditional_binned_n(
                         series[j], series[i], &conds, lag, bins,
@@ -1061,7 +1064,7 @@ pub fn pcmci_links(
                         series[i],
                         &conds,
                         lag,
-                        max_lag,
+                        null_lag,
                         bins,
                         seed ^ (j as u64).wrapping_mul(0x9E37_79B9)
                             ^ (i as u64).wrapping_mul(0x85EB_CA6B)
@@ -3157,7 +3160,8 @@ mod tests {
             };
         }
         let series: [&[f32]; 3] = [&z, &a, &b];
-        let links = pcmci_links(&series, 1, 3, 0x9E37_79B9_7F4A_7C15, 10).expect("pcmci resolves");
+        let links =
+            pcmci_links(&series, 1, 3, 3, 0x9E37_79B9_7F4A_7C15, 10).expect("pcmci resolves");
         let ab = links
             .iter()
             .find(|l| l.driver == 1 && l.target == 2 && l.lag == 1)
