@@ -18,6 +18,7 @@ pub mod media;
 pub mod omega;
 pub mod orientation;
 pub mod s2;
+pub mod scalar_te_gpu;
 pub mod shaders;
 pub mod te;
 #[cfg(test)]
@@ -27,6 +28,7 @@ pub use actuators::*;
 pub use omega::*;
 pub use orientation::*;
 pub use s2::*;
+pub use scalar_te_gpu::*;
 pub use shaders::*;
 
 pub(crate) use crate::force::kernel_id_for_force;
