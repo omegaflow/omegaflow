@@ -15,7 +15,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Manifest the Camargo+2015 Uranus astrometry (6 VizieR asu-tsv) and the ura111 SPK to the CDN
+      - name: Ensure the vizier.cfa.harvard.edu release exists on the CDN
+        run: |
+          if ! gh release view vizier.cfa.harvard.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create vizier.cfa.harvard.edu --repo omegaflow/sources \
+              --title "vizier.cfa.harvard.edu" \
+              --notes "raw VizieR catalog exports mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Ensure the naif.jpl.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view naif.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create naif.jpl.nasa.gov --repo omegaflow/sources \
+              --title "naif.jpl.nasa.gov" \
+              --notes "raw NAIF SPICE reference kernels mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Manifest the Camargo+2015 Uranus astrometry (6 VizieR asu-tsv), ura111 and ura184_part-3 SPKs to the CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin camargo_uranus_manifestor -- --ci-mode \
             || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
