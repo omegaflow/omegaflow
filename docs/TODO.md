@@ -1034,21 +1034,25 @@ physikalischen Aussage — kein Blatt ohne diese:
   Bz→F als einzige erhöhte Kante, 0,27). GPU-Pfad: `COND_BIN_TE_WGSL` +
   `CondBinTeGpu` + Paritäts-Gate (GPU==CPU, 1e-3, grün auf echtem Adapter).
   Übergabe: docs/handover/handover-2026-09-08-nobel-dag-atom.md.
-- **Klassen-Benchmark gegen die publizierte PCMCI-Suite (Auftrag erteilt 2026-09-08 —
-  die eine Messung, die das Superlativ „fortschrittlichste TE-Maschine" erst
-  beantwortbar macht)**: Atom B ist gebaut und hat Runge am Bz-Ankerfall
-  reproduziert (Bz gemeinsamer Treiber von AE/Dst); der synthetische
-  DAG-Benchmark (2026-09-07) deckt eine einzelne Kante. Was fehlt: die breite
-  Fläche — `pcmci_links` gegen die publizierten Recovery-Raten der vollen
-  synthetischen PCMCI-Benchmarksuite (TPR/FPR je Kante, wie in der
-  Runge-Literatur berichtet) und, wo zitierbar, gegen die Testbatterien von
-  IDTxl/Tigramite (der Vergleich läuft gegen publizierte Zahlen, nie gegen
-  deren Code — Python-Regel). Der Auftrag liegt in
-  `docs/auftrag/auftrag-klassen-benchmark-pcmci.md`: die empfangende Sitzung
-  schließt als Atom (keine pendings, keine deferrals, keine „for nows") und
-  delegiert Recherche und Analyse an Subagenten. Erst die gemessene Fläche
-  trägt oder tötet das Superlativ — bis dahin bleibt es ungemessen und
-  gestrichen.
+- **Klassen-Benchmark gegen die publizierte PCMCI-Suite — GEMESSEN, das Superlativ
+  „fortschrittlichste TE-Maschine" ist gestrichen (2026-09-08, geschlossen)**: der
+  Probe `pcmci_class_benchmark` (tools/measure) baut die publizierte Suite nach —
+  SciAdv Eq. (S60) mit dem Tab.-S3-Sweep (arXiv:1702.07007v2), Chaos 28, 075310
+  (§VII.A Logistik, §VII.B Common-Driver), IDTxl-MuTE (JOSS 10.21105/joss.01081)
+  und Tigramite-Overview (Tutorial) — und legt die eigene TPR/FPR-Fläche je Kante
+  neben die publizierten Text-Zahlen; IDTxl/Tigramite tragen keine publizierten
+  Recovery-Zahlen (gemessene Abwesenheit), PCMCI+ keinen Lagged-only-PCMCI-Arm —
+  deren Blätter stehen allein. Blatt: am publizierten Anker N=10/T=150/c=0.287
+  0/30 Links >70 % Power (publiziert: 99 % der Links) bei FPR 6,4 % (publiziert:
+  ≈/unter 5 %); Chaos-Logistik σ=0.2 FPR 13,6 % (publiziert ~0.05); Common-Driver
+  FPR wächst mit a bis 17,5 % (publiziert: a-unabhängig kontrolliert). Der
+  Verdikt-Satz, das volle Blatt und die benannten Methoden-Unterschiede stehen im
+  Befund `docs/befund/befund-klassen-benchmark-pcmci.md`; die Bz-Reproduktion
+  (Runge-Anker, 4,3×/2,4× Schwelle) bleibt als eigene Messung unberührt. Gemessen
+  offen für einen künftigen Auftrag: ob ein anderer Betriebspunkt (bins, null_lag,
+  τ-Budget) die publizierte Fläche erreicht — der Befund trägt die Daten, und
+  `pcmci_links` re-testet im zweiten Durchgang nichts (`tested` blockt; gebauter
+  Ist-Zustand, im Befund benannt).
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
