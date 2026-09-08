@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris,
-    C_LIGHT,
+    body_barycenter_position, embedded_lsk, fetch_raw_bytes, light_time_worldline,
+    parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -342,27 +342,6 @@ fn tangent_basis(ra_deg: f64, dec_deg: f64) -> ([f64; 3], [f64; 3]) {
     )
 }
 
-fn roemer_fold_state(
-    station: [f64; 3],
-    tdb: f64,
-    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
-) -> Option<[f64; 3]> {
-    let mut emitted = tdb;
-    for _ in 0..12 {
-        let apparent = worldline(emitted)?;
-        let d = vec_len(vec_sub(apparent, station))?;
-        let next = tdb - d / C_LIGHT;
-        if !next.is_finite() {
-            return None;
-        }
-        if (next - emitted).abs() < 1e-9 {
-            emitted = next;
-            break;
-        }
-        emitted = next;
-    }
-    worldline(emitted)
-}
 
 fn sat_worldline(
     sat: &SatSpk,
@@ -577,8 +556,8 @@ fn main() {
                     skip_geo += 1;
                     continue;
                 };
-                let Some(s_em) =
-                    roemer_fold_state(geocenter, tdb, &|t| sat_worldline(sat, &spk, map, t))
+                let Some((s_em, _)) =
+                    light_time_worldline(geocenter, tdb, &|t| sat_worldline(sat, &spk, map, t))
                 else {
                     skip_fold += 1;
                     continue;

@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::odp::dsn_station;
 use omegaflow::archivar::{
-    body_barycenter_position, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris, Motion,
-    C_LIGHT,
+    body_barycenter_position, fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
+    BodyEphemeris, Motion,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 
@@ -146,41 +146,19 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
     }
 }
 
-fn roemer_fold(
-    station: [f64; 3],
-    tdb: f64,
-    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
-) -> Option<Fold> {
-    let mut emitted = tdb;
-    for _ in 0..12 {
-        let apparent = worldline(emitted)?;
-        let d = vec_len(vec_sub(apparent, station))?;
-        if !(d > 0.0) {
-            return None;
-        }
-        let next = tdb - d / C_LIGHT;
-        if !next.is_finite() {
-            return None;
-        }
-        if (next - emitted).abs() < 1e-9 {
-            emitted = next;
-            break;
-        }
-        emitted = next;
-    }
-    let apparent = worldline(emitted)?;
-    let distance_m = vec_len(vec_sub(apparent, station))?;
+fn to_fold(station: [f64; 3], tdb: f64, pos: [f64; 3], emitted_tdb: f64) -> Option<Fold> {
+    let distance_m = vec_len(vec_sub(pos, station))?;
     if !(distance_m > 0.0) {
         return None;
     }
-    let unit = toward_unit(station, apparent)?;
-    let t_light_s = tdb - emitted;
+    let unit = toward_unit(station, pos)?;
+    let t_light_s = tdb - emitted_tdb;
     if !(t_light_s.is_finite() && t_light_s > 0.0) {
         return None;
     }
     Some(Fold {
         t_light_s,
-        emitted_tdb: emitted,
+        emitted_tdb,
         distance_m,
         unit,
     })
@@ -193,10 +171,16 @@ fn station_outcome(icrs: [f64; 3], tdb: f64, wl: &Worldline) -> StationOutcome {
             fold: None,
         };
     }
-    match roemer_fold(icrs, tdb, &|t| wl.at(t)) {
-        Some(f) => StationOutcome {
-            unit: Some(f.unit),
-            fold: Some(f),
+    match light_time_worldline(icrs, tdb, &|t| wl.at(t)) {
+        Some((pos, emitted_tdb)) => match to_fold(icrs, tdb, pos, emitted_tdb) {
+            Some(fold) => StationOutcome {
+                unit: Some(fold.unit),
+                fold: Some(fold),
+            },
+            None => StationOutcome {
+                unit: None,
+                fold: None,
+            },
         },
         None => StationOutcome {
             unit: None,
@@ -577,6 +561,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use omegaflow::archivar::C_LIGHT;
 
     const MOON_M: f64 = 384_400_000.0;
 
@@ -617,10 +602,11 @@ mod tests {
     }
 
     #[test]
-    fn roemer_fold_on_a_static_target_is_distance_over_c() {
+    fn light_time_fold_on_a_static_target_is_distance_over_c() {
         let tdb = 8.0e8;
         let target = |_t: f64| Some([MOON_M, 0.0, 0.0]);
-        let f = roemer_fold([0.0, 0.0, 0.0], tdb, &target).unwrap();
+        let (pos, emitted_tdb) = light_time_worldline([0.0, 0.0, 0.0], tdb, &target).unwrap();
+        let f = to_fold([0.0; 3], tdb, pos, emitted_tdb).unwrap();
         assert!((f.t_light_s - MOON_M / C_LIGHT).abs() < 1e-6);
         assert!((f.distance_m - MOON_M).abs() < 1e-6);
         assert!((f.emitted_tdb - (tdb - MOON_M / C_LIGHT)).abs() < 1e-6);
@@ -628,14 +614,15 @@ mod tests {
         assert!(f.unit[1].abs() < 1e-12);
         assert!(f.unit[2].abs() < 1e-12);
     }
-
     #[test]
     fn two_stations_measure_the_station_parallax_of_one_target() {
         let tdb = 8.0e8;
         let b = 10_000_000.0;
         let target = |_t: f64| Some([MOON_M, 0.0, 0.0]);
-        let f1 = roemer_fold([0.0, 0.0, 0.0], tdb, &target).unwrap();
-        let f2 = roemer_fold([0.0, b, 0.0], tdb, &target).unwrap();
+        let (p1, e1) = light_time_worldline([0.0, 0.0, 0.0], tdb, &target).unwrap();
+        let f1 = to_fold([0.0; 3], tdb, p1, e1).unwrap();
+        let (p2, e2) = light_time_worldline([0.0, b, 0.0], tdb, &target).unwrap();
+        let f2 = to_fold([0.0, b, 0.0], tdb, p2, e2).unwrap();
         let sep = separation_rad(f1.unit, f2.unit).unwrap();
         let expect = (b / MOON_M).atan();
         assert!((sep - expect).abs() < 1e-12);

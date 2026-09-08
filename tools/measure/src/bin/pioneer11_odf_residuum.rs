@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
-    parse_ephemeris_binary,
+    light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, write_p11r_bin};
 use omegaflow::odp::{C, EARTH, downlink_rate_core, dsn_station, station_velocity};
@@ -92,25 +92,6 @@ fn fixed_effects_1(
     Some((a, resid, epoch, offset))
 }
 
-fn light_time_sc_pos(
-    t3: f64,
-    r_rx: [f64; 3],
-    sc: &dyn Fn(f64) -> Option<([f64; 3], [f64; 3])>,
-) -> Option<(f64, [f64; 3])> {
-    let mut t2 = t3;
-    for _ in 0..6 {
-        let (r_sc2, _) = sc(t2)?;
-        let rho = dist(r_rx, r_sc2);
-        let t2_new = t3 - rho / C;
-        if (t2_new - t2).abs() < 1e-9 {
-            t2 = t2_new;
-            break;
-        }
-        t2 = t2_new;
-    }
-    let (r_sc2, _) = sc(t2)?;
-    Some((t2, r_sc2))
-}
 
 fn uplink_rate(
     t2: f64,
@@ -433,7 +414,9 @@ fn main() {
         }
         let mut rate = rdown;
         if let Some((tx_lat, tx_lon, tx_alt)) = tx_ll {
-            let Some((t2, r_sc2)) = light_time_sc_pos(t3, r_rx, &sc) else {
+            let Some((r_sc2, t2)) =
+                light_time_worldline(r_rx, t3, &|t| sc(t).map(|(p, _)| p))
+            else {
                 no_model += 1;
                 continue;
             };

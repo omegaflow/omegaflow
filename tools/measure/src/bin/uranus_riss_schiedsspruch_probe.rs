@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
     body_barycenter_position, body_barycenter_velocity, embedded_lsk, fetch_raw_bytes,
-    parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    light_time_worldline, parse_ephemeris_binary, BodyEphemeris,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -146,34 +146,6 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
     }
 }
 
-struct Fold {
-    unit: [f64; 3],
-}
-
-fn roemer_fold(
-    station: [f64; 3],
-    tdb: f64,
-    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
-) -> Option<Fold> {
-    let mut emitted = tdb;
-    for _ in 0..12 {
-        let apparent = worldline(emitted)?;
-        let d = vec_len(vec_sub(apparent, station))?;
-        let next = tdb - d / C_LIGHT;
-        if !next.is_finite() {
-            return None;
-        }
-        if (next - emitted).abs() < 1e-9 {
-            emitted = next;
-            break;
-        }
-        emitted = next;
-    }
-    let apparent = worldline(emitted)?;
-    let unit = toward_unit(station, apparent)?;
-    Some(Fold { unit })
-}
-
 fn load_line(
     word: &'static str,
     netloc: &str,
@@ -203,14 +175,12 @@ fn load_line(
 fn predict(line: &Line, tdb: f64) -> Option<Predict> {
     let map = line.map.as_ref()?;
     let station = body_barycenter_position("earth", tdb, map)?;
-    let fold = roemer_fold(station, tdb, &|t| {
+    let (em, _) = light_time_worldline(station, tdb, &|t| {
         body_barycenter_position("uranus", t, map)
     })?;
+    let unit = toward_unit(station, em)?;
     let vel = body_barycenter_velocity("uranus", tdb, map)?;
-    Some(Predict {
-        unit: fold.unit,
-        vel,
-    })
+    Some(Predict { unit, vel })
 }
 
 fn wrap_delta_deg(d: f64) -> f64 {
