@@ -2,8 +2,8 @@
   title: Auftrag — Atom E: die Dispersionsrelation gemessen, nicht erfunden
   class: auftrag
   date: 2026-09-08
-  probe-commit: pending
-  sha256: 6ac9e7c5eef1934e4fc12dad8aab65eeace596eeb6ea011201b5041c1cdc42e7
+  probe-commit: a480734
+  sha256: 7f65b75c4425baaf09e6692046ca363ba684ef4ba03647f42c20ddb6a3cc098f
   status: pending
   see-also: docs/TODO.md docs/handover/handover-2026-09-08-atom-c-offene-pflichten.md docs/specs/spectral-oscillator.md docs/auftrag/auftrag-dispersions-ortungstest.md
 -->
@@ -52,17 +52,32 @@ Modelle — getrennt gehalten.
 
 ## Vorab genagelte Abschluss-Wortlaute (Konditionierung vor Verdikt)
 
-- **flach:** „Alle Bandpaare liegen unter der konditionalen Null oder unter
-  δτ_min = 24 s. Die band-flache Konstante v = PROPAGATION_SPEED[force] ist
-  damit die gemessene Nullhypothese mit benannter Auflösungs-Grenze
-  δv = 1,44e7 m/s bei 1 AU. Das v(f)-Regal trägt die flachen Messzeilen
-  (v = c je Band, v_unc = δv); der Feld-Pfad bleibt unverdrahtet."
-- **Schichten:** „Mindestens ein Bandpaar liegt über der konditionalen Null
-  bei |δτ| ≥ 24 s. v(f) wird Messpflicht und ist dreischichtig verdrahtet in
-  derselben Sitzung (Schreiben → pack_window → WGSL-Binding 5)."
+Der Verdict trägt **drei** Zustände — flach / quell-seitig / medium. Grund
+(gemessen, 20-Ereignis-Kalibrierlauf): die lag-bewusste Null ist ein
+Magnituden-Test und fällt in BEIDEN Richtungen (geteilter Treiber) — die
+Hüllen-Konditionierung entfernt die Hülle, nicht die Antwortzeit-Asymmetrie
+der Kanäle auf die Hülle. Ein Mittelwert-Exzess als Pforte läse fast jedes
+Paar als „Schichten" und fabrizierte eine v(f)-Pflicht aus Neupert-Resten.
+Die Richtungs-Pforte ist deshalb der **Binomial** der per-Ereignis-Asymmetrie
+(fwd−rev über N Ereignisse, zweiseitig exakt, FDR α=0.05 über die 84 Tests),
+und die **Decke** ist das ν⁻²-Medium je Paar (DM-Spalte aktive Korona
+≈ 3,2 pc/cm³ → δτ(94↔335) ≈ 1,5e-16 s, null-echt unter jeder Zelle).
 
-Rayleigh (force 4, seismische Oberfläche) bleibt eine eigene
-pending-Regalklasse — kein Abkürzen über sie.
+- **flach:** kein Bandpaar trägt einen Richtungs-Pfeil über der Binomial-FDR-
+  Pforte. Die band-flache Konstante ist die gemessene Nullhypothese mit
+  benannter Auflösungs-Grenze δv = 1,44e7 m/s bei 1 AU.
+- **quell-seitig:** mindestens ein Bandpaar trägt einen Richtungs-Pfeil über
+  der Pforte, aber das ν⁻²-Medium ist null-echt (δτ_medium ≈ 1e-16 s ≪
+  δτ_min) — der Pfeil ist Quell-Antwortordnung (Neupert), keine v(f)-Pflicht.
+- **medium:** mindestens ein Bandpaar liegt über der Pforte bei δτ_medium ≥
+  δτ_min — v(f) wird Messpflicht und ist dreischichtig verdrahtet in
+  derselben Sitzung (Schreiben → pack_window → WGSL-Binding 5). Der Zweig ist
+  gebaut und feuert bei XUV nie.
+
+Das Regal trägt in flach und quell-seitig die flachen Messzeilen (v = c je
+Band, v_unc = δv); der Feld-Pfad bleibt unverdrahtet. Rayleigh (force 4,
+seismische Oberfläche) bleibt eine eigene pending-Regalklasse — kein
+Abkürzen über sie.
 
 ## Mess-Design (Rat-Verdikt 2026-09-08)
 
@@ -75,7 +90,10 @@ pending-Regalklasse — kein Abkürzen über sie.
   (`te.rs:733`, Residuum-Surrogat, OLS auf eigenen Lags + Hüllen-Lags,
   mean + 2σ über 10 Surrogate); PE-Gate `permutation_entropy`
   (`te.rs:1630`), |pe − mean| > 2·sd → separat als `gated`.
-- `δτ = sign · ℓ* · 24 s`; `freq = C_LIGHT / (λ · 1e-10)`.
+- Pforte: Binomial der per-Ereignis-Asymmetrie fwd−rev (zweiseitig exakt,
+  `benjamini_hochberg` FDR α=0.05 über 84 Tests); Decke: δτ_medium je Paar
+  aus 4,15 ms·GHz²·pc⁻¹·cm⁻³ × DM 3,24 pc/cm³ × (ν_lo⁻² − ν_hi⁻²) in GHz;
+  Meldung: τ* je Ereignis (Modus/Mittel/Streuung). `freq = C_LIGHT / (λ · 1e-10)`.
 - Die Sonne ist der freie Kalibrier-Sender (bekannter Ursprung aus
   Ephemeriden, 1 AU, Mehrband-Emission, **2514 Schüsse** — gemessener
   Ereignis-Bestand der `solar-seconds-matrix`, 2013–2015) — der Zirkel
@@ -93,8 +111,9 @@ leeren Körper).
 
 ## Verdrahtung beider Ausgänge (explore A, gemessen)
 
-- **flach:** Feld-Pfad bleibt unverdrahtet; das Regal trägt die Messzeilen.
-- **Schichten:** dreischichtig — CPU `signal_reach`/`propagation_speed`
+- **flach / quell-seitig:** Feld-Pfad bleibt unverdrahtet; das Regal trägt
+  die flachen Messzeilen (v = c je Band, v_unc = δv).
+- **medium:** dreischichtig — CPU `signal_reach`/`propagation_speed`
   (`src/archivar/membrane.rs:320/362`) + Retardation
   (`src/archivar/spatial.rs:408-413`) → `pack_window` (`actuators.rs`,
   meta[m+11] = freq, meta[m+12] = bin_width) → WGSL `PROPAGATION_SPEED[ft]`
