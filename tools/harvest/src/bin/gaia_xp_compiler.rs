@@ -82,14 +82,15 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let mut lines = text.lines();
-    let header = match lines.next() {
-        Some(h) => split_csv_line(h),
+    let lines: Vec<&str> = text.lines().collect();
+    let header_idx = match lines.iter().position(|l| l.contains(',')) {
+        Some(i) => i,
         None => {
             eprintln!("{}: header absent — the columns stay unnamed", input);
             std::process::exit(1);
         }
     };
+    let header = split_csv_line(lines[header_idx]);
     let col = |name: &str| header.iter().position(|c| c.trim() == name);
     let (Some(ci_source), Some(ci_ra), Some(ci_dec), Some(ci_plx), Some(ci_flux)) = (
         col("source_id"),
@@ -108,7 +109,7 @@ fn main() {
     let mut malformed = 0usize;
     let mut skipped_bins = 0usize;
     let mut skipped_plx = 0usize;
-    for line in lines {
+    for line in &lines[header_idx + 1..] {
         let parts = split_csv_line(line);
         let max = ci_source.max(ci_ra).max(ci_dec).max(ci_plx).max(ci_flux);
         if parts.len() <= max {
