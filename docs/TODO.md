@@ -123,7 +123,10 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   eingetragen (url cddis.nasa.gov …/brdc/…, format rinex, header Authorization
   {EARTHDATA_EDL_TOKEN}, field a0 gps_sv_clock_bias_s inverse-square em s). Das
   brdc-Daily trägt Publikations-Lag — bis die heutige Datei landet, ist der Lauf
-  fetch-void und retry (0 honored).
+  fetch-void und retry (0 honored). **Geschlossen (2026-09-08):** der cddis-Zugriff
+  ist gemessen — die brdc-Datei-URL liefert HTTP 200 mit dem konfigurierten
+  `EARTHDATA_EDL_TOKEN` (Bearer-Wrap in main_flow.rs); Data-Caster-Registrierung
+  entfällt (NTRIP-Echtzeit ist nicht der brdc-Download-Pfad). Code committet.
 
 ## CDN-Debts d20 & qbo — area_reconcile Kreuzprüfung b (2026-09-07)
 
@@ -1058,6 +1061,43 @@ physikalischen Aussage — kein Blatt ohne diese:
   τ-Budget) die publizierte Fläche erreicht — der Befund trägt die Daten, und
   `pcmci_links` re-testet im zweiten Durchgang nichts (`tested` blockt; gebauter
   Ist-Zustand, im Befund benannt).
+- **Block-Null + n_surr=100 im PCMCI-Pfad — gebaut, Zug 5 grün (2026-09-08,
+  geschlossen)**: `TeNull` (Residual/Block/Shift) als Parameter in
+  `conditional_te_surrogates_n` und `pcmci_links`; Block-Länge `block_len_from_n`
+  = round(n^(1/3)) = 5 am Anker T=150 (die Galileo-Wahl BLOCK=5 und die
+  Faustregel konvergieren am Standard-Punkt — benannt); der n_surr-Parameter
+  durchzieht die 0..10-Schleifen (surrogate_threshold/_with, surrogate_stats_with,
+  topological_te_with/instantaneous_phase_with) mit Default 10 überall — kein
+  stiller Shift. Betriebspunkt: `pcmci_class_benchmark` läuft jetzt Block-Null +
+  n_surr=100 (Flags `--null residual|block|shift`, `--n-surr`, `--block` für den
+  Sweep); nobel_probe_bz/laic Residual + 100. Zug 5 als Dauer-Tor in
+  `te.rs #[cfg(test)]`: common-driver-Batterie, Kriterium FPR ≤ 8 % je a
+  (beide D_Z) + Anstieg ≤ 2 pp über a, 500/360 Falschkanten je Zelle — grün
+  (~5,5 min Debug-Laufzeit, benannte Kriteriumskosten). Nachher-Batterie gegen
+  den Befund (fester Seed, identische Ensembles): Anker N=10/T=150/c=0.287
+  FPR 6,4 → 3,29 % (publiziert ≈5 %), Power 0/30 unverändert (der Schätzer ist
+  das KSG-Atom); a-set2 7,7 → 4,25 %; max_lag=5 5,4 → 2,72 %; Chaos-Logistik
+  σ=0.2 13,6 → 3,60 %, σ=0.4 11,8 → 2,40 % (σ=0 bleibt 50/50-Münzwurf — benannte
+  Determinismus-Grenze, keine Null trägt sie); Common-Driver D_Z=0 5,0/8,8/17,5
+  → 0,0/2,5/7,5 % (neg=80, Klein-n-Rauschen benannt — das Gate misst dieselbe
+  Zelle mit 500 Kanten), D_Z=4 6,3/7,3/7,8 → 3,08/3,00/4,33 %. Benannte
+  Regression: IDTxl-MuTE (n=1000) FPR 14,9 → 23,27 % und drei Lag-2/3-Kanten
+  verloren, Tigramite FPR 11,3 → 14,38 % — die Block-Null mit block=n^(1/3)=10
+  ist auf n=1000-Serien zu kurz (die Faustregel wurde am T=150-Anker genagelt;
+  die n=1000-Blätter stehen allein, keine publizierte Zahl fällt). Folgepflicht
+  registriert: Zug 5 erneut bei jedem künftigen Null-/Schätzer-Einsatz
+  (Shift-Null, KSG) — das Tor ist das Regime, nicht ein Atom-1-Test; der
+  Betriebspunkt-Sweep (bins, null_lag, τ, Block-Länge, n_surr) läuft als
+  eigener Auftrag unter der neuen Null. Zielzeile: „Empfindlichkeitsgrenze der
+  eigenen Jagd gemessen und geschlossen bis X" — X ist heute die FPR-Fläche
+  ~3 % auf der Suite; die Power-Fläche (0/30 am Anker) bleibt das offene
+  Gemessene der Atome 2 und 3.
+- **Galileo-Phasen/Block bleiben beim Ist-Zustand 10 (benannt, kein stiller
+  Shift)**: `surrogate_stats_phase`/`surrogate_stats_block` tragen intern 10
+  Surrogate — das Papier dachte 20, der Baum trägt 10 (die Galileo-Proben setzen
+  N_SURR=20 nur auf den konditionalen Pfad). Die Serie wurde unter 10 geboren;
+  ein stilles Heben machte die bestehenden Zahlen inkonsistent. Bis ein eigener
+  Auftrag die Erhebung prüft, bleibt 10 — die Diskrepanz hat eine Adresse.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
