@@ -7,6 +7,11 @@ pub const COMP_BX: u32 = 4;
 pub const COMP_BY: u32 = 5;
 pub const COMP_BZ: u32 = 6;
 pub const COMP_PRESSURE: u32 = 7;
+pub const COMP_AE: u32 = 8;
+pub const COMP_AL: u32 = 9;
+pub const COMP_AU: u32 = 10;
+pub const COMP_SYMH: u32 = 11;
+pub const COMP_MAX: u32 = 11;
 
 pub fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * 20);
@@ -37,7 +42,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         off += 8;
         let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
         off += 4;
-        if !(COMP_V1800..=COMP_PRESSURE).contains(&comp) {
+        if !(COMP_V1800..=COMP_MAX).contains(&comp) {
             return None;
         }
         out.push((t, val, comp));
