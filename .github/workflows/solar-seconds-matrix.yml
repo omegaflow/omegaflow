@@ -33,10 +33,10 @@ jobs:
             --pattern 'aia2014_1?.bin' --pattern 'aia2015_fullyear.bin' \
             --clobber --dir data/jsoc.stanford.edu
           gh release download ncei.noaa.gov --repo omegaflow/sources \
-            --pattern 'xr_*.nc' --clobber
-          mv xr_2013*.nc data/ncei.noaa.gov/goes15_2013/
-          mv xr_2014*.nc data/ncei.noaa.gov/goes15/
-          mv xr_2015*.nc data/ncei.noaa.gov/goes15_2015/
+            --pattern 'goes15_xrs_2s_*.tar' --clobber
+          tar -xf goes15_xrs_2s_2013.tar -C data/ncei.noaa.gov/goes15_2013
+          tar -xf goes15_xrs_2s_2014.tar -C data/ncei.noaa.gov/goes15
+          tar -xf goes15_xrs_2s_2015.tar -C data/ncei.noaa.gov/goes15_2015
       - name: Anchor the corpus
         run: |
           echo "SHA $(git rev-parse HEAD)" > "report-${{ matrix.pair }}.txt"
