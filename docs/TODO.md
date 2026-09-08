@@ -1723,30 +1723,57 @@ Gebaut (2026-09-06, sub-agents):
    `WEBERIN_TOL_M` (1.0e6 m) bleibt die Linie SPK-gegen-Kepler der
    Kleinkörper/Kometen (an der Element-Epoche gemessen). Befund heute
    (2026-09-08): uranus 1.59e6 m → Riss, neptune 1.07e6 m → Riss — ehrlich
-   benannt, nie geglättet; die inneren 7 Placed bei ~2.2e4 m. Die
-   Eisriesen-Kluft wächst mit dem Extrapolations-Abstand (uranus
-   5.6e5→1.6e6 m, neptune 4.3e5→1.1e6 m über 2000–2026) — eine dritte Linie
-   zur Schlichtung bleibt `pending`. Der Schiedsspruch (Atom 2026-09-08,
-   Übergabe handover-2026-09-08-uranus-riss-schiedsspruch.md) ist gebaut und
-   gemessen — die Wurzel (fünf Satelliten-Tabellen, 9797 Positionen, geozentrisch
-   astrometrisch) misst den Riss sauber: paarweise Mittelwert-Differenzen
-   ~32–47 mas (DE-INPOP 32.1, DE-EPM 39.5, INPOP-EPM 47.0). Das Mondmodell ist
-   mas-Niveau (ura111 ≈ ura184_part-3 auf 5–25 mas) — nicht der Engpass; der
-   absolute Offset liegt unter einem ~200 mas common-mode Diurnal-Term
-   (Parallaxe/Aberration), der sich in den Differenzen kürzt — **kein
-   Schiedsspruch**. Das Blatt `uranu_j` ist geozentrisch (nicht topozentrisch),
-   DE432-gewurzelt, Planetenzentrum. Befund:
-   docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
-   Offen: (1) volle topozentrische + Aberrations-Reduktion (NOVAS-Niveau) —
-   `pending`, damit wäre der absolute Baryzentrum-Offset entscheidbar; (2)
-   `roemer_fold`/`light_time_sc_pos` existiert sechsfach probe-lokal
-   (topocentric_coupling_probe, pioneer_navio_residuum, pioneer11_odf_residuum,
-   pioneer_link_correction_probe, uranus_riss_schiedsspruch_probe,
-   uranus_satellite_schiedsspruch_probe) — Heben in die Archivar beim nächsten
-   Template-Griff; (3) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
-   (SPK 7), nicht das Planetenzentrum (799); (4) Camargo-TSV- + ura111/
-   ura184-SPK-Manifestation: Manifestor gebaut (camargo_uranus_manifestor.rs +
-   camargo-uranus-cdn.yml), der CI-Lauf steht aus.
+    benannt, nie geglättet; die inneren 7 Placed bei ~2.2e4 m. Die
+    Eisriesen-Kluft wächst mit dem Extrapolations-Abstand (uranus
+    5.6e5→1.6e6 m, neptune 4.3e5→1.1e6 m über 2000–2026) — eine dritte Linie
+    zur Schlichtung bleibt `pending`. Der Schiedsspruch (Atom 2026-09-08,
+    Übergabe handover-2026-09-08-uranus-riss-schiedsspruch.md) ist gebaut und
+    gemessen — die Wurzel (fünf Satelliten-Tabellen, 9797 Positionen, geozentrisch
+    astrometrisch) misst den Riss sauber: paarweise Mittelwert-Differenzen
+    ~32–47 mas (DE-INPOP 32.1, DE-EPM 39.5, INPOP-EPM 47.0). Das Mondmodell ist
+    mas-Niveau (ura111 ≈ ura184_part-3 auf 5–25 mas) — nicht der Engpass; der
+    absolute Offset liegt unter einem ~200 mas common-mode Diurnal-Term
+    (Parallaxe/Aberration), der sich in den Differenzen kürzt — **kein
+    Schiedsspruch**. Das Blatt `uranu_j` ist geozentrisch (nicht topozentrisch),
+    DE432-gewurzelt, Planetenzentrum. Befund:
+    docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
+    (2026-09-08, Diurnal-Dekomposition — Atom der Übergabe
+    handover-2026-09-08-uranus-riss-diurnal-reduktion.md, gebaut, gemessen,
+    kalibriert): die Zerlegung
+    (uranus_diurnal_decomposition_probe.rs, Kalibrier-Gate: injizierte
+    Signaturen werden exakt zurückgewonnen) misst **keinen Diurnal-Term in den
+    publizierten Tabellen** — c_par −0.08/−0.04/−0.03 ± 0.01, c_aber
+    −0.09/−0.17/−0.17 ± 0.01 (DE/INPOP/EPM, gepoolt; pro Satellit gestreut,
+    Miranda kippt das Vorzeichen — Satelliten-eigener Leak, kein getragener
+    Term). Die Tabellen sind **geozentrisch astrometrisch** — weder Parallaxe
+    noch Diurnal-Aberration — gegen die Papier-Aussage „our positions are
+    topocentric" (Camargo+ 2015 §4). Die Diurnal-Term-Hypothese (~200 mas) ist
+    damit widerlegt; der reduzierte Boden (RMS 169–175 mas) liegt über der
+    per-row-Skala (⟨σ⟩ = 87.8 mas) und ist kein Diurnal-Term — Quelle
+    unbenannt. Der Riss-Anker steht (32.1/39.5/47.0 unter der Reduktion
+    unverändert, LSQ-Identität). Verdict (ii): die Beobachtungen schlichten
+    nicht — ΔRMS 2.0–5.9 mas ≪ X = 175.6. Befund:
+    docs/befund/befund-2026-09-08-uranus-diurnal-dekomposition.md.
+    Offen: (1) den ~170-mas-Boden zerlegen (Kandidaten ungemessen benannt:
+    UCAC4-Frame-zonal gegen ICRF, DCR/Refraktion-Reste, PRAIA-
+    Reduktions-Kette) — `pending`; (2) Papier-gegen-Tabellen-Diskrepanz
+    („topocentric" vs geozentrisch gemessen) — warum tragen die publizierten
+    Tabellen die Parallaxe nicht, Messpfad: Paper-Anhang (V03-Vergleich)/
+    PRAIA-Kette — `pending`; (3) die INPOP/EPM-Earth-Bins tragen keine
+    body-fixed Orientierung (body_fixed_to_icrs liefert None, Zensus 0/9797;
+    die de441-Erde diente als der eine Beobachter) — `pending`; (4)
+    `roemer_fold`/`light_time_sc_pos` existiert siebenfach probe-lokal
+    (topocentric_coupling_probe, pioneer_navio_residuum, pioneer11_odf_residuum,
+    pioneer_link_correction_probe, uranus_riss_schiedsspruch_probe,
+    uranus_satellite_schiedsspruch_probe, uranus_diurnal_decomposition_probe) —
+    Heben in die Archivar beim nächsten Template-Griff, erst wenn `src/` ruhig
+    ist; (5) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
+    (SPK 7), nicht das Planetenzentrum (799); (6) Camargo-TSV- + ura111/
+    ura184-SPK-Manifestation: Manifestor gebaut (camargo_uranus_manifestor.rs +
+    camargo-uranus-cdn.yml), der CI-Lauf steht aus. Die alte offene Zeile
+    „volle topozentrische + Aberrations-Reduktion" ist gemessen geschlossen:
+    die Tabellen tragen nichts, was die Reduktion entfernen müsste — der
+    Befund ist der Eintrag, keine Reduktion nötig.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
