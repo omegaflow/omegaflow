@@ -160,6 +160,42 @@ pub fn body_barycenter_velocity(
     None
 }
 
+fn vec3_sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+fn vec3_norm(v: [f64; 3]) -> Option<f64> {
+    let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    if n.is_finite() && n > 0.0 {
+        Some(n)
+    } else {
+        None
+    }
+}
+
+pub fn light_time_worldline(
+    station: [f64; 3],
+    tdb: f64,
+    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
+) -> Option<([f64; 3], f64)> {
+    let mut emitted = tdb;
+    for _ in 0..12 {
+        let apparent = worldline(emitted)?;
+        let d = vec3_norm(vec3_sub(apparent, station))?;
+        let next = tdb - d / C_LIGHT;
+        if !next.is_finite() {
+            return None;
+        }
+        if (next - emitted).abs() < 1e-9 {
+            emitted = next;
+            break;
+        }
+        emitted = next;
+    }
+    let pos = worldline(emitted)?;
+    Some((pos, emitted))
+}
+
 fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> Option<[f64; 3]> {
     let lr = lat.to_radians();
     let nr = lon.to_radians();
@@ -183,18 +219,33 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
 
 fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> [f64; 3] {
     let (ra, dec, pm) = orientation_angles_at(bp, jd);
-    let a = ra.to_radians();
-    let d = dec.to_radians();
-    let w = (pm - ra).to_radians();
-    let xt = xyz[0] * w.cos() + xyz[1] * w.sin();
-    let yt = -xyz[0] * w.sin() + xyz[1] * w.cos();
-    let zt = xyz[2];
+    let a = (90.0 + ra).to_radians();
+    let d = (90.0 - dec).to_radians();
+    let w = pm.to_radians();
+    let (sw, cw) = w.sin_cos();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
+    let xt = xyz[0] * cw - xyz[1] * sw;
+    let yt = xyz[0] * sw + xyz[1] * cw;
+    let yp = yt * cd - xyz[2] * sd;
+    [xt * ca - yp * sa, xt * sa + yp * ca, yt * sd + xyz[2] * cd]
+}
+
+fn rotate_about_pole(m: &[f64; 9], mt: f64, jd: f64, rate_deg_day: f64, v: [f64; 3]) -> [f64; 3] {
+    let angle = rate_deg_day.to_radians() * (jd - mt);
+    let (sa, ca) = angle.sin_cos();
+    let (ax, ay, az) = (m[6], m[7], m[8]);
+    let omc = 1.0 - ca;
+    let dot = ax * v[0] + ay * v[1] + az * v[2];
+    let cross = [
+        ay * v[2] - az * v[1],
+        az * v[0] - ax * v[2],
+        ax * v[1] - ay * v[0],
+    ];
     [
-        xt * cd * ca - yt * sa - zt * sd * ca,
-        xt * cd * sa + yt * ca - zt * sd * sa,
-        xt * sd + zt * cd,
+        v[0] * ca + ax * dot * omc + cross[0] * sa,
+        v[1] * ca + ay * dot * omc + cross[1] * sa,
+        v[2] * ca + az * dot * omc + cross[2] * sa,
     ]
 }
 
@@ -213,7 +264,7 @@ pub fn body_fixed_to_icrs(
     let jd = tdb / 86400.0 + J2000_EPOCH;
     if !e.rotation_matrices.is_empty() {
         let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
-        let mut best: Option<&[f64; 9]> = None;
+        let mut best: Option<(&[f64; 9], f64)> = None;
         let mut best_d = f64::INFINITY;
         let lo = idx.saturating_sub(2);
         let hi = (idx + 2).min(e.rotation_matrices.len().saturating_sub(1));
@@ -225,13 +276,14 @@ pub fn body_fixed_to_icrs(
             let d = (jd - t).abs();
             if d < best_d {
                 best_d = d;
-                best = Some(m);
+                best = Some((m, *t));
             }
         }
-        let rot_m = best?;
-        let xi = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
-        let yi = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
-        let zi = rot_m[6] * xb + rot_m[7] * yb + rot_m[8] * zb;
+        let (rot_m, mt) = best?;
+        let xi0 = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
+        let yi0 = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
+        let zi0 = rot_m[6] * xb + rot_m[7] * yb + rot_m[8] * zb;
+        let [xi, yi, zi] = rotate_about_pole(rot_m, mt, jd, bp.dw_dt_deg_per_day, [xi0, yi0, zi0]);
         return Some([xi + bx, yi + by, zi + bz]);
     }
     let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd);
@@ -269,33 +321,36 @@ pub fn icrs_to_body_surface(
     let ry = y - by;
     let rz = z - bz;
     let (xb, yb, zb) = if !e.rotation_matrices.is_empty() {
+        let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
-        let rot_m = e
+        let (rot_m, mt) = e
             .rotation_matrices
             .iter()
             .filter(|(t, _)| t.is_finite())
             .min_by(|a, b| (jd - a.0).abs().total_cmp(&(jd - b.0).abs()))
-            .map(|(_, m)| m)?;
-        let xt = rot_m[0] * rx + rot_m[3] * ry + rot_m[6] * rz;
-        let yt = rot_m[1] * rx + rot_m[4] * ry + rot_m[7] * rz;
-        let zt = rot_m[2] * rx + rot_m[5] * ry + rot_m[8] * rz;
+            .map(|(t, m)| (m, *t))?;
+        let [ux, uy, uz] = rotate_about_pole(rot_m, mt, jd, -bp.dw_dt_deg_per_day, [rx, ry, rz]);
+        let xt = rot_m[0] * ux + rot_m[3] * uy + rot_m[6] * uz;
+        let yt = rot_m[1] * ux + rot_m[4] * uy + rot_m[7] * uz;
+        let zt = rot_m[2] * ux + rot_m[5] * uy + rot_m[8] * uz;
         (xt, yt, zt)
     } else {
         let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
         let (ra, dec, pm) = orientation_angles_at(bp, jd);
-        let a = ra.to_radians();
-        let d = dec.to_radians();
-        let w = (pm - ra).to_radians();
+        let a = (90.0 + ra).to_radians();
+        let d = (90.0 - dec).to_radians();
+        let w = pm.to_radians();
         let (sw, cw) = w.sin_cos();
         let (sa, ca) = a.sin_cos();
         let (sd, cd) = d.sin_cos();
-        let xt = cd * ca * rx + cd * sa * ry + sd * rz;
-        let yt = -sa * rx + ca * ry;
-        let zt = -sd * ca * rx - sd * sa * ry + cd * rz;
-        let xb = xt * cw - yt * sw;
-        let yb = xt * sw + yt * cw;
-        (xb, yb, zt)
+        let x1 = rx * ca + ry * sa;
+        let y1 = -rx * sa + ry * ca;
+        let y2 = y1 * cd + rz * sd;
+        let z2 = -y1 * sd + rz * cd;
+        let xb = x1 * cw + y2 * sw;
+        let yb = -x1 * sw + y2 * cw;
+        (xb, yb, z2)
     };
     let bp = e.props.as_ref()?;
     let lon = yb.atan2(xb);
