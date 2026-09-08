@@ -429,6 +429,53 @@ pub fn color_for_ci(ci: f64) -> [f32; 4] {
     lut[idx.min(COLOR_LUT_LEN - 1)]
 }
 
+fn extinction_table() -> &'static Vec<(f64, f64)> {
+    static TABLE: std::sync::OnceLock<Vec<(f64, f64)>> = std::sync::OnceLock::new();
+    TABLE.get_or_init(|| parse_extinction(include_str!("kernels/ccm89_rv31.dat")))
+}
+
+pub fn parse_extinction(raw: &str) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    for line in raw.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = t.split_whitespace().collect();
+        if cols.len() < 2 {
+            continue;
+        }
+        let (Ok(lam), Ok(av)) = (cols[0].parse::<f64>(), cols[1].parse::<f64>()) else {
+            continue;
+        };
+        if !lam.is_finite() || !av.is_finite() || lam <= 0.0 || av <= 0.0 {
+            continue;
+        }
+        out.push((lam, av));
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
+pub fn extinction_at(lam_nm: f64) -> Option<f64> {
+    let table = extinction_table();
+    if table.len() < 2 || !lam_nm.is_finite() || lam_nm <= 0.0 {
+        return None;
+    }
+    let (first, last) = (table[0], table[table.len() - 1]);
+    if lam_nm <= first.0 {
+        return Some(first.1);
+    }
+    if lam_nm >= last.0 {
+        return Some(last.1);
+    }
+    let idx = table.partition_point(|&(l, _)| l < lam_nm);
+    let (l0, a0) = table[idx - 1];
+    let (l1, a1) = table[idx];
+    let t = (lam_nm - l0) / (l1 - l0);
+    Some(a0 + t * (a1 - a0))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -701,5 +748,49 @@ mod tests {
             lam_nm += 20.0;
         }
         bins
+    }
+
+    #[test]
+    fn parse_extinction_reads_the_embedded_table() {
+        let table = parse_extinction(include_str!("kernels/ccm89_rv31.dat"));
+        assert!(table.len() >= 30);
+        assert!(
+            table.windows(2).all(|w| w[0].0 < w[1].0),
+            "must be sorted by lambda"
+        );
+    }
+
+    #[test]
+    fn extinction_is_normalized_at_v() {
+        let a = extinction_at(549.45).unwrap();
+        assert!(
+            (a - 1.0).abs() < 1e-3,
+            "A/A_V must be ~1 at the V band, got {}",
+            a
+        );
+    }
+
+    #[test]
+    fn extinction_carries_the_2175_bump_and_a_monotone_ir() {
+        let bump = extinction_at(217.5).unwrap();
+        let optical = extinction_at(550.0).unwrap();
+        assert!(
+            bump > optical,
+            "the 2175 A bump must exceed the optical value"
+        );
+        let a1000 = extinction_at(1000.0).unwrap();
+        let a2000 = extinction_at(2000.0).unwrap();
+        let a3000 = extinction_at(3000.0).unwrap();
+        assert!(
+            a1000 > a2000 && a2000 > a3000,
+            "the IR must fall monotonically"
+        );
+    }
+
+    #[test]
+    fn extinction_clamps_to_the_table_ends() {
+        let lo = extinction_at(50.0).unwrap();
+        let hi = extinction_at(5000.0).unwrap();
+        assert!(lo.is_finite() && hi.is_finite() && hi > 0.0);
     }
 }
