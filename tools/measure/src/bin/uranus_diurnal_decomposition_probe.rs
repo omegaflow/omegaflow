@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs, body_fixed_to_icrs_smooth, embedded_lsk,
-    fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris,
+    C_LIGHT,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -14,7 +14,10 @@ const OBS_ALT_M: f64 = 1810.7;
 const UNIX_JD_OFFSET: f64 = 2440587.5;
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
 const BIN_TTL_S: u64 = 604800;
-const VEL_DT_S: f64 = 10.0;
+const JD_J2000: f64 = 2451545.0;
+const WGS84_A_M: f64 = 6378137.0;
+const WGS84_F: f64 = 1.0 / 298.257223563;
+const EARTH_ROT_RAD_S: f64 = 7.2921150e-5;
 
 const SATELLITES: [(&str, i32); 5] = [
     ("ariel_j", 701),
@@ -23,6 +26,26 @@ const SATELLITES: [(&str, i32); 5] = [
     ("obero_j", 704),
     ("miran_j", 705),
 ];
+
+fn station_offset(jd_utc: f64, lat_deg: f64, lon_deg: f64, alt_m: f64) -> ([f64; 3], [f64; 3]) {
+    let lr = lat_deg.to_radians();
+    let nr = lon_deg.to_radians();
+    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let sl = lr.sin();
+    let n = WGS84_A_M / (1.0 - e2 * sl * sl).sqrt();
+    let xb = (n + alt_m) * lr.cos() * nr.cos();
+    let yb = (n + alt_m) * lr.cos() * nr.sin();
+    let zb = (n * (1.0 - e2) + alt_m) * sl;
+    let d = jd_utc - JD_J2000;
+    let t = d / 36525.0;
+    let gmst_deg =
+        280.46061837 + 360.98564736629 * d + 0.000387933 * t * t - t * t * t / 38710000.0;
+    let g = gmst_deg.to_radians();
+    let (sg, cg) = g.sin_cos();
+    let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
+    let vel = [-pos[1] * EARTH_ROT_RAD_S, pos[0] * EARTH_ROT_RAD_S, 0.0];
+    (pos, vel)
+}
 
 #[derive(Clone)]
 struct Obs {
@@ -534,20 +557,13 @@ fn main() {
     let sigma_mean = all_sigma.iter().sum::<f64>() / all_sigma.len() as f64;
     let x_mas = 2.0 * sigma_mean;
 
-    let de_map = lines
-        .iter()
-        .find(|l| l.word == "de441")
-        .and_then(|l| l.map.as_ref());
-
     let mut groups: Vec<Group> = Vec::new();
-    let mut census: Vec<(String, usize, usize, usize, usize)> = Vec::new();
+    let mut census: Vec<(String, usize, usize)> = Vec::new();
     for line in lines.iter() {
         let Some(map) = line.map.as_ref() else {
             continue;
         };
         let mut line_rows: Vec<EpochRow> = Vec::new();
-        let mut obs_from_own = 0usize;
-        let mut obs_from_de = 0usize;
         let mut skip_geo = 0usize;
         let mut skip_fold = 0usize;
         for (name, sat, obs) in &sats {
@@ -571,102 +587,17 @@ fn main() {
                     skip_fold += 1;
                     continue;
                 };
-                let (sta, from_de) = match body_fixed_to_icrs(
-                    "earth",
-                    OBS_LAT_DEG,
-                    OBS_LON_DEG,
-                    OBS_ALT_M,
-                    tdb,
-                    map,
-                ) {
-                    Some(s) => (s, false),
-                    None => match de_map.and_then(|m| {
-                        body_fixed_to_icrs("earth", OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M, tdb, m)
-                    }) {
-                        Some(s) => (s, true),
-                        None => {
-                            skip_geo += 1;
-                            continue;
-                        }
-                    },
-                };
-                if from_de {
-                    obs_from_de += 1;
-                } else {
-                    obs_from_own += 1;
-                }
+                let (off, v_rot) = station_offset(o.jd_utc, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M);
+                let sta = [
+                    geocenter[0] + off[0],
+                    geocenter[1] + off[1],
+                    geocenter[2] + off[2],
+                ];
                 let Some(u_top) = toward_unit(sta, s_em) else {
                     skip_geo += 1;
                     continue;
                 };
                 let s_par = vec_sub(u_top, u_geo);
-                let (sta_p, sta_m) = if from_de {
-                    match (
-                        de_map.and_then(|m| {
-                            body_fixed_to_icrs_smooth(
-                                "earth",
-                                OBS_LAT_DEG,
-                                OBS_LON_DEG,
-                                OBS_ALT_M,
-                                tdb + VEL_DT_S,
-                                m,
-                            )
-                        }),
-                        de_map.and_then(|m| {
-                            body_fixed_to_icrs_smooth(
-                                "earth",
-                                OBS_LAT_DEG,
-                                OBS_LON_DEG,
-                                OBS_ALT_M,
-                                tdb - VEL_DT_S,
-                                m,
-                            )
-                        }),
-                    ) {
-                        (Some(p), Some(n)) => (p, n),
-                        _ => {
-                            skip_geo += 1;
-                            continue;
-                        }
-                    }
-                } else {
-                    match (
-                        body_fixed_to_icrs_smooth(
-                            "earth",
-                            OBS_LAT_DEG,
-                            OBS_LON_DEG,
-                            OBS_ALT_M,
-                            tdb + VEL_DT_S,
-                            map,
-                        ),
-                        body_fixed_to_icrs_smooth(
-                            "earth",
-                            OBS_LAT_DEG,
-                            OBS_LON_DEG,
-                            OBS_ALT_M,
-                            tdb - VEL_DT_S,
-                            map,
-                        ),
-                    ) {
-                        (Some(p), Some(n)) => (p, n),
-                        _ => {
-                            skip_geo += 1;
-                            continue;
-                        }
-                    }
-                };
-                let Some(geo_p) = body_barycenter_position("earth", tdb + VEL_DT_S, map) else {
-                    continue;
-                };
-                let Some(geo_m) = body_barycenter_position("earth", tdb - VEL_DT_S, map) else {
-                    continue;
-                };
-                let dt2 = 2.0 * VEL_DT_S;
-                let v_rot = [
-                    (sta_p[0] - sta_m[0]) / dt2 - (geo_p[0] - geo_m[0]) / dt2,
-                    (sta_p[1] - sta_m[1]) / dt2 - (geo_p[1] - geo_m[1]) / dt2,
-                    (sta_p[2] - sta_m[2]) / dt2 - (geo_p[2] - geo_m[2]) / dt2,
-                ];
                 let udotv = u_geo[0] * v_rot[0] + u_geo[1] * v_rot[1] + u_geo[2] * v_rot[2];
                 let s_aber = [
                     (v_rot[0] - u_geo[0] * udotv) / C_LIGHT,
@@ -723,13 +654,7 @@ fn main() {
             name: line.word.to_string(),
             rows: line_rows,
         });
-        census.push((
-            line.word.to_string(),
-            obs_from_own,
-            obs_from_de,
-            skip_geo,
-            skip_fold,
-        ));
+        census.push((line.word.to_string(), skip_geo, skip_fold));
     }
 
     let mut report = String::new();
@@ -741,7 +666,7 @@ fn main() {
         "Tables: five Camargo+ 2015 satellite tables (A&A 582 A8), moon orbits {spk_name}, {sigma_mean:.1} mas mean per-row sigma, X = 2·⟨σ⟩ = {x_mas:.1} mas\n"
     ));
     report.push_str("Model: geocentric astrometric (ICRS, light-time, no aberration/deflection) — the root-probe convention\n");
-    report.push_str("Signatures: parallax = topocentric − geocentric direction (computed with body_fixed_to_icrs at the MPC-874 geodetic); diurnal aberration = observer rotational velocity projected on the sky\n");
+    report.push_str("Signatures: parallax = topocentric − geocentric direction (probe-local WGS84 + IAU 1982 GMST station at the MPC-874 geodetic); diurnal aberration = observer rotational velocity (analytic ω×r) projected on the sky\n");
     report.push_str("Fit per line and satellite: ΔRA·cosδ, ΔDec = c0 + c_par·parallax + c_aber·diurnal_aberration\n\n");
 
     if calibrating {
@@ -750,10 +675,10 @@ fn main() {
         ));
     }
 
-    report.push_str("Row census per line (the observer side is one physical observer — the de441 Earth model serves the station when the line's own Earth bin carries no body-fixed orientation):\n");
-    for (word, own, de, sgeo, sfold) in &census {
+    report.push_str("Row census per line (the station is probe-local: WGS84 geodetic + IAU 1982 GMST rotation, one physical observer for all three lines):\n");
+    for (word, sgeo, sfold) in &census {
         report.push_str(&format!(
-            "  {word:9} : {own} rows station from own Earth bin, {de} from de441, {sgeo} skipped (geocenter/station void), {sfold} skipped (light-time fold void)\n"
+            "  {word:9} : {sgeo} skipped (geocenter/station void), {sfold} skipped (light-time fold void)\n"
         ));
     }
 
@@ -837,7 +762,7 @@ fn main() {
                     .map(|v| format!("{v:.1}"))
                     .unwrap_or("na".to_string());
                 report.push_str(&format!(
-                    "  {} : c_par {:.2} ± {:.2} → the tables {} | c_aber {:.2} ± {:.2} → the tables {} | RMS {rms0} → {rms1} mas ({n} epochs)\n",
+                    "  {} : c_par {:.2} ± {:.2} → the tables {} | c_aber {:.2} ± {:.2} → the tables {} | RMS {rms0} → {rms1} mas | c0 {:+.1}/{:+.1} mas ({n} epochs)\n",
                     line.word,
                     x[2],
                     sigma[2],
@@ -845,6 +770,8 @@ fn main() {
                     x[3],
                     sigma[3],
                     carries_word(x[3], sigma[3]),
+                    x[0],
+                    x[1],
                     n = g.rows.len()
                 ));
             }
@@ -937,6 +864,40 @@ fn main() {
         "\nAnchor check: the fits carry free constants, so the fitted model reproduces the raw mean vectors exactly (LSQ identity) — the Riss under the reduction IS the raw pairwise set above ({}) and stands unchanged.\n",
         riss_set.join(" / ")
     ));
+
+    report.push_str(
+        "\nAbsolute residual vector after the parallax removal (the pooled fit constants c0 per line — the fitted parallax mean is removed, so the line offset is visible):\n",
+    );
+    let mut abs_vecs: Vec<(&str, f64, f64)> = Vec::new();
+    for (i, line) in lines.iter().enumerate() {
+        match line_pars.get(i).and_then(|p| *p) {
+            Some((x, _)) => {
+                abs_vecs.push((line.word, x[0], x[1]));
+                report.push_str(&format!(
+                    "  {} : ΔRA·cosδ {:+.1} mas, ΔDec {:+.1} mas\n",
+                    line.word, x[0], x[1]
+                ));
+            }
+            None => {
+                report.push_str(&format!("  {} : absent — no pooled fit\n", line.word));
+            }
+        }
+    }
+    report.push_str(
+        "Pairwise differences of the absolute vectors (mas — the Riss after the reduction):\n",
+    );
+    for a in 0..abs_vecs.len() {
+        for b in (a + 1)..abs_vecs.len() {
+            let (wa, mra, mdec) = abs_vecs[a];
+            let (wb, brra, brdec) = abs_vecs[b];
+            let dra = mra - brra;
+            let ddec = mdec - brdec;
+            let mag = (dra * dra + ddec * ddec).sqrt();
+            report.push_str(&format!(
+                "  {wa} − {wb} : ΔRA·cosδ {dra:+.1} mas, ΔDec {ddec:+.1} mas, magnitude {mag:.1} mas\n"
+            ));
+        }
+    }
 
     report.push('\n');
     let mut sorted = red_rms.clone();
