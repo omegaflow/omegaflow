@@ -2,7 +2,7 @@
   title: Handover — Atom C geschlossen: die offenen Pflichten der Spektralen Achse
   class: handover
   date: 2026-09-08
-  sha256: 446f2a86384441d003026ee40f7f4394c4af2c6a2f5a6b3852b330c052d0a898
+  sha256: 91225f50275e932f4a8fbd0c80b145c2713754223df86994ddc70750b24cf2bb
   status: live
   see-also: docs/TODO.md docs/concepts/archivar-mathematikerin.md docs/specs/spectral-oscillator.md docs/befund/befund-todo-gegen-code-leichen.md
 -->
@@ -15,9 +15,20 @@ getrennt nach pending, descoped und tot.
 
 ## 1. Geschlossen (Commit 404cd78)
 
+Commit-Lage (gemessen 2026-09-08): 404cd78 trägt den Atom-C-Code und die
+Blattkorrektur von `archivar-mathematikerin.md` (cone mode descoped); das
+Operator-Wort ist als Code (Band-Gate-Postfilter, `freq = 0` bleibt sichtbar)
+in 404cd78 und als Wort in §1 unten registriert; dieses Blatt selbst liegt in
+4741582, der Register-Feinschliff (TODO-Ein-Pending, `color_lut_rgb`-Doc-
+Korrektur) in abf6d11. Puls (gemessen): `cargo check --workspace` 0/0, die
+Atom-C-Suite grün (18 Tests inkl. des 781-Stützstellen- und der
+`sed_to_bp_rp`-Tests).
+
 - SED → BP−RP: `spectral::parse_passbands` (Gaia EDR3 BP/RP, 781 Stützstellen,
   Riello+ 2021, 7 Spalten, 99.99 = absent, als Kernel eingebettet wie
-  `naif0012.tls`) + `spectral::sed_to_bp_rp` (photon-counting); die
+  `naif0012.tls` — `src/archivar/kernels/gaia_edr3_passbands.dat`, sha256
+  `46160d3b84dc0b78530d1ef3d18c0cf632fdaeb27876c0773c7a62033127f301`) +
+  `spectral::sed_to_bp_rp` (photon-counting); die
   Spektral-Emission (`membrane.rs`) trägt den gemessenen color_index statt hart 0.
 - Band-Gate: `spectral::band_overlap` als Postfilter im Omega-Loop (filtert nur
   `freq>0`-Oszillatoren). Operator-Wort 2026-09-08 (Gaze): `freq = 0`
@@ -34,7 +45,11 @@ getrennt nach pending, descoped und tot.
   erfundenes v0·(f/f0)^β (0 honored). Getrennt vom cone mode — zwei Zeilen,
   nicht eine.
 
-## 3. Descoped — kein pending, sondern liegen gelassen
+## 3. Descoped — gemessen freigegeben, kein pending
+
+Kanonsatz (AGENTS.md 0-Kanon, 2026-09-08): descoped ist der Befund als
+Eintrag — „gemessen: nie gebaut, nicht gebraucht", kein später, keine Pflege;
+ohne Messung wäre es gepudertes Deferred. Jede Zeile trägt ihren Befund:
 
 - **cone mode** (Lichtkegel-Differenz dispersiv): Rendering-Konzept im toten
   Browser-Zweig, nie gebaut. `archivar-mathematikerin.md` führte ihn als „done";
