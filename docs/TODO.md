@@ -1706,8 +1706,17 @@ Gebaut (2026-09-06, sub-agents):
   `mpcorb_distant.bin` (85 B/Körper: number, Principal_desig, epoch, a, e, i,
   node, peri, M, H, G mit Präsenz-Bits; `src/archivar/mpcorb.rs`, 8.082
   Records, 0 verworfen); Register + kernel-flatten-Manifestator-Schritt
-  eingetragen; CDN-Geburt steht im nächsten CI-Lauf aus. Zweite Linie
-  (SPK-Route oder zweiter Katalog) bleibt `pending`; (d) Kometen — der
+  eingetragen; CDN-Geburt steht im nächsten CI-Lauf aus. Zweite Linie je
+  Wurzel gebaut (2026-09-08): die vier unabhängigen Wurzeln stehen — MPC
+  (`mpcorb_distant.bin`), CFHT-Survey (`ossos_tno.bin`, 840, OSSOS. VII
+  CDS J/ApJS/236/18, baryzentrische Elemente), DES-Survey (`des_y6_tno.bin`,
+  814, CDS J/ApJS/258/41, ICRS-Zustandsvektoren + Kovarianz), Gaia
+  (`gaia_sso_tno.bin`, 14). `descoped` (gemessen freigegeben, nie gebaut,
+  nicht nötig): CFEPS und Buie-DES tragen dieselbe Wurzel wie OSSOS/DES-Y6 —
+  CFEPS = frühere CFHT-Auswertung, Buie = frühere DES-Auswertung; „Kopien
+  zählen als ein Faden". Die breite 8.082-Menge trägt keine offene
+  MPC-unabhängige Linie (`not-published`, gemessen) — nur die Survey-
+  Untermengen; (d) Kometen — der
   Weberin-Zwirn liest jetzt den dcom5-Kometen-Zweig (Sitzung 2026-09-08):
   `CometRec`/`comet_state_at` (src/archivar/dastcom.rs), `BODY_COMET`
   `encke`→2P in `src/weberin.rs`; die Kometen-Elemente als feste Katalog-
