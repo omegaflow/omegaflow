@@ -63,6 +63,7 @@ pub mod pck;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
 pub mod radio;
+pub mod regrid;
 pub mod rixs;
 pub mod rpw;
 pub mod s2event;
