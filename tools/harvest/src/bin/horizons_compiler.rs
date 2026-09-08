@@ -1,3 +1,4 @@
+use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::least_squares::solve_normal_equations;
 use std::process::Command;
 
@@ -670,6 +671,98 @@ fn main() {
                 eprintln!("upload: {} did not reach the CDN", path);
                 std::process::exit(1);
             }
+        }
+        return;
+    }
+    if let Some(pos) = std::env::args().position(|a| a == "--uranus-c-spk") {
+        let spk_path = match std::env::args().nth(pos + 1) {
+            Some(p) => p,
+            None => {
+                eprintln!("--uranus-c-spk: kernel path absent");
+                std::process::exit(1);
+            }
+        };
+        let de_path = if std::path::Path::new("ephemeris_uranus.bin").exists() {
+            "ephemeris_uranus.bin".to_string()
+        } else {
+            "data/ssd.jpl.nasa.gov/ephemeris_uranus.bin".to_string()
+        };
+        let de_bytes = match std::fs::read(&de_path) {
+            Ok(b) => b,
+            Err(e) => {
+                eprintln!("--uranus-c-spk: {de_path} reads void — {e}");
+                std::process::exit(1);
+            }
+        };
+        let Some(de_eph) = omegaflow::archivar::parse_ephemeris_binary(&de_bytes) else {
+            eprintln!("--uranus-c-spk: ephemeris_uranus.bin does not parse to a BodyEphemeris");
+            std::process::exit(1);
+        };
+        let mut de_map = std::collections::HashMap::new();
+        de_map.insert("uranus".to_string(), de_eph);
+        let spk = match SpkFile::open(&spk_path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("--uranus-c-spk: {spk_path} opens void — {e:?}");
+                std::process::exit(1);
+            }
+        };
+        let start_jd = 2451545.0 - 30.0 * 365.25;
+        let stop_jd = 2451545.0 + 30.0 * 365.25;
+        let mut vectors: Vec<(f64, f64, f64, f64)> = Vec::new();
+        let mut jd = start_jd;
+        let mut days = 0usize;
+        while jd <= stop_jd && days < 1_000_000 {
+            let tdb = (jd - 2451545.0) * 86400.0;
+            let bary = match omegaflow::archivar::body_barycenter_position("uranus", tdb, &de_map) {
+                Some(b) => b,
+                None => {
+                    eprintln!("--uranus-c-spk: no barycenter granule at jd {jd:.2}");
+                    break;
+                }
+            };
+            match spk.state(799, 7, tdb) {
+                Ok(rel) => {
+                    vectors.push((
+                        jd,
+                        bary[0] + rel[0] * 1000.0,
+                        bary[1] + rel[1] * 1000.0,
+                        bary[2] + rel[2] * 1000.0,
+                    ));
+                }
+                Err(e) => {
+                    eprintln!("--uranus-c-spk: spk.state(799, 7) void at jd {jd:.2} — {e:?}");
+                    break;
+                }
+            }
+            jd += 0.1;
+            days += 1;
+        }
+        eprintln!(
+            "  uranus_c (DE441 barycenter + ura111xl 799-7): {} vectors, {:.2}..{:.2} JD",
+            vectors.len(),
+            start_jd,
+            jd
+        );
+        if vectors.len() < 10 {
+            std::process::exit(1);
+        }
+        let mut granules = Vec::new();
+        let granule_days = 2.0;
+        let n = ((stop_jd - start_jd) / granule_days).ceil() as usize;
+        for i in 0..n {
+            let mid_jd = start_jd + (i as f64 + 0.5) * granule_days;
+            let half_jd = granule_days / 2.0;
+            if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+                granules.push((mid_jd, half_jd, cx, cy, cz));
+            }
+        }
+        let path = "data/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin";
+        let _ = std::fs::create_dir_all("data/ssd.jpl.nasa.gov");
+        write_binary(&path, "uranus_c", &granules, &[], None);
+        if ci_mode && !omegaflow::cdn::upload_asset(&path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
         }
         return;
     }
