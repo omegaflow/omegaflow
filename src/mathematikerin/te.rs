@@ -232,6 +232,65 @@ pub fn transfer_entropy_conditional(x: &[f32], y: &[f32], c: &[f32], lag: usize)
     Some(te / m as f64)
 }
 
+pub fn transfer_entropy_conditional_h(
+    x: &[f32],
+    y: &[f32],
+    c: &[f32],
+    lag: usize,
+    factor: f64,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || y.len() < n || c.len() < n {
+        return None;
+    }
+    if lag == 0 {
+        return transfer_entropy_conditional_h(x, y, c, 1, factor);
+    }
+    let m = n - lag;
+    if m < 8 {
+        return None;
+    }
+    let hx = silverman(x)? * factor;
+    let hy = silverman(y)? * factor;
+    let hz = silverman(c)? * factor;
+    let mut te = 0.0;
+    for t in 0..m {
+        let xt = x[t] as f64;
+        let xk = x[t + lag] as f64;
+        let yt = y[t] as f64;
+        let zt = c[t] as f64;
+        let mut k4 = 0.0;
+        for s in 0..m {
+            k4 += gaussian(xk - x[s + lag] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy)
+                * gaussian(zt - c[s] as f64, hz);
+        }
+        let p4 = k4 / m as f64;
+        let mut k2 = 0.0;
+        for s in 0..n {
+            k2 += gaussian(xt - x[s] as f64, hx) * gaussian(zt - c[s] as f64, hz);
+        }
+        let p2 = k2 / n as f64;
+        let mut k3a = 0.0;
+        for s in 0..n {
+            k3a += gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy)
+                * gaussian(zt - c[s] as f64, hz);
+        }
+        let p3a = k3a / n as f64;
+        let mut k3b = 0.0;
+        for s in 0..m {
+            k3b += gaussian(xk - x[s + lag] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(zt - c[s] as f64, hz);
+        }
+        let p3b = k3b / m as f64;
+        te += ((p4 * p2) / (p3a * p3b).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
 pub fn transfer_entropy_conditional_2(
     x: &[f32],
     y: &[f32],
