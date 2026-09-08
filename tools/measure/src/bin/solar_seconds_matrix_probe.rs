@@ -635,12 +635,35 @@ fn main() {
             }
         }
     }
+    let sel: Option<(usize, usize)> = match arg_value(&args, "--pairs") {
+        Some(spec) => match spec.split_once(':') {
+            Some((a, b)) => match (a.trim().parse::<usize>(), b.trim().parse::<usize>()) {
+                (Ok(von), Ok(bis)) if von <= bis && bis < pairs.len() => Some((von, bis)),
+                _ => {
+                    eprintln!(
+                        "--pairs von:bis needs 0 <= von <= bis < {} directed pairs",
+                        pairs.len()
+                    );
+                    std::process::exit(2);
+                }
+            },
+            None => {
+                eprintln!("--pairs carries no von:bis");
+                std::process::exit(2);
+            }
+        },
+        None => None,
+    };
+    let selected: Vec<(usize, usize)> = match sel {
+        Some((von, bis)) => pairs[von..=bis].to_vec(),
+        None => pairs.clone(),
+    };
     let n_threads = std::thread::available_parallelism()
         .map(|v| v.get())
         .unwrap_or(4)
         .min(16)
-        .min(pairs.len());
-    let chunk = pairs.len().div_ceil(n_threads);
+        .min(selected.len());
+    let chunk = selected.len().div_ceil(n_threads);
     let gpu = ScalarTeGpu::new(LAG_MAX + 1).map(Mutex::new);
     match &gpu {
         Some(_) => println!("Scalar TE path: WebGPU device present - the KDE runs on the GPU."),
@@ -649,7 +672,7 @@ fn main() {
     let gpu_ref: Option<&Mutex<ScalarTeGpu>> = gpu.as_ref();
     let names_ref = &names;
     let mut rows: Vec<Row> = std::thread::scope(|scope| {
-        let handles: Vec<_> = pairs
+        let handles: Vec<_> = selected
             .chunks(chunk)
             .map(|chunk_pairs| {
                 let cells_ref = &cells;
@@ -686,6 +709,46 @@ fn main() {
         out
     });
     rows.sort_by_key(|r| (block_rank(kinds[r.from], kinds[r.to]), r.from, r.to));
+
+    if let Some((von, bis)) = sel {
+        let mut sm = f64::NEG_INFINITY;
+        for r in &rows {
+            if r.surr_max.is_finite() && r.surr_max > sm {
+                sm = r.surr_max;
+            }
+        }
+        for r in &rows {
+            let cell_s = if r.n_ev > 0 {
+                format!("{:.1}", r.cells_mean)
+            } else {
+                "-".to_string()
+            };
+            let lag_s = if r.n_ev > 0 {
+                format!("{}", r.best_lag)
+            } else {
+                "-".to_string()
+            };
+            println!(
+                "ROW {} {} {} {} {} {} {} {}",
+                r.from,
+                r.to,
+                r.n_ev,
+                cell_s,
+                lag_s,
+                sig_s(r.d),
+                sig_s(r.thr),
+                r.pos
+            );
+        }
+        println!("SURRM_MAX {}", sig_s(sm));
+        eprintln!(
+            "sonde complete: pairs {}..={} of {}",
+            von,
+            bis,
+            pairs.len() - 1
+        );
+        return;
+    }
 
     let mut fam = f64::NEG_INFINITY;
     for r in &rows {
