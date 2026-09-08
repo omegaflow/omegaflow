@@ -30,6 +30,7 @@ pub enum BodyLine {
     Spk,
     Dastcom,
     Inpop,
+    Epm,
 }
 
 impl BodyLine {
@@ -38,7 +39,64 @@ impl BodyLine {
             BodyLine::Spk => "spk-ephemeris",
             BodyLine::Dastcom => "dastcom-keplerian",
             BodyLine::Inpop => "inpop-ephemeris",
+            BodyLine::Epm => "epm-ephemeris",
         }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TriadFold {
+    United,
+    Shared { line: BodyLine },
+    Outlier { line: BodyLine, knot: [BodyLine; 2] },
+    Severed,
+}
+
+impl TriadFold {
+    pub fn word(&self) -> &'static str {
+        match self {
+            TriadFold::United => "united",
+            TriadFold::Shared { .. } => "shared",
+            TriadFold::Outlier { .. } => "outlier",
+            TriadFold::Severed => "severed",
+        }
+    }
+}
+
+pub struct ThreeWayVerdict {
+    pub name: String,
+    pub spk_inpop: Agreement,
+    pub spk_epm: Agreement,
+    pub inpop_epm: Agreement,
+    pub fold: TriadFold,
+}
+
+fn three_way_fold(spk_inpop: &Agreement, spk_epm: &Agreement, inpop_epm: &Agreement) -> TriadFold {
+    let placed = |a: &Agreement| matches!(a, Agreement::Placed { .. });
+    match (placed(spk_inpop), placed(spk_epm), placed(inpop_epm)) {
+        (true, true, true) => TriadFold::United,
+        (false, false, false) => TriadFold::Severed,
+        (true, true, false) => TriadFold::Shared {
+            line: BodyLine::Spk,
+        },
+        (true, false, true) => TriadFold::Shared {
+            line: BodyLine::Inpop,
+        },
+        (false, true, true) => TriadFold::Shared {
+            line: BodyLine::Epm,
+        },
+        (true, false, false) => TriadFold::Outlier {
+            line: BodyLine::Epm,
+            knot: [BodyLine::Spk, BodyLine::Inpop],
+        },
+        (false, true, false) => TriadFold::Outlier {
+            line: BodyLine::Inpop,
+            knot: [BodyLine::Spk, BodyLine::Epm],
+        },
+        (false, false, true) => TriadFold::Outlier {
+            line: BodyLine::Spk,
+            knot: [BodyLine::Inpop, BodyLine::Epm],
+        },
     }
 }
 
@@ -96,6 +154,7 @@ pub struct WeberinFeed {
     pub eph: Arc<HashMap<String, BodyEphemeris>>,
     pub sun: Arc<HashMap<String, BodyEphemeris>>,
     pub eph_inpop: Arc<HashMap<String, BodyEphemeris>>,
+    pub eph_epm: Arc<HashMap<String, BodyEphemeris>>,
     pub recs: Vec<AsteroidRec>,
     pub comets: Vec<CometRec>,
 }
@@ -103,9 +162,11 @@ pub struct WeberinFeed {
 pub struct Weberin {
     pub threads: Vec<BodyThread>,
     pub verdicts: Vec<BodyVerdict>,
+    pub triads: Vec<ThreeWayVerdict>,
     pub eph: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub sun: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub eph_inpop: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub eph_epm: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub woven: bool,
 }
 
@@ -114,6 +175,10 @@ pub const WEBERIN_TOL_M: f64 = 1.0e6;
 pub const PLANET_WEBERIN_TOL_M: f64 = 1.0e5;
 
 pub const INPOP_LINE_BODIES: &[&str] = &[
+    "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
+];
+
+pub const EPM_LINE_BODIES: &[&str] = &[
     "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
 
@@ -221,9 +286,11 @@ impl Weberin {
         Weberin {
             threads: Vec::new(),
             verdicts: Vec::new(),
+            triads: Vec::new(),
             eph: None,
             sun: None,
             eph_inpop: None,
+            eph_epm: None,
             woven: false,
         }
     }
@@ -246,10 +313,16 @@ impl Weberin {
                 names.push(k.clone());
             }
         }
+        for k in feed.eph_epm.keys() {
+            if !names.iter().any(|n| n == k) {
+                names.push(k.clone());
+            }
+        }
         self.threads = build_threads(&names, &feed.recs, &feed.comets);
         self.eph = Some(eph);
         self.sun = Some(feed.sun);
         self.eph_inpop = Some(feed.eph_inpop);
+        self.eph_epm = Some(feed.eph_epm);
     }
 
     pub fn weave(&mut self, tdb: f64, tol_kepler_m: f64) {
@@ -260,7 +333,9 @@ impl Weberin {
             return;
         };
         let inpop_map = self.eph_inpop.as_ref();
+        let epm_map = self.eph_epm.as_ref();
         self.verdicts.clear();
+        self.triads.clear();
         let jd = tdb / 86400.0 + J2000_EPOCH;
         for t in &self.threads {
             let spk = body_barycenter_position(&t.name, tdb, eph);
@@ -272,6 +347,15 @@ impl Weberin {
             let inpop_woven = INPOP_LINE_BODIES.contains(&t.name.as_str());
             let inpop = if inpop_woven {
                 match inpop_map {
+                    Some(m) => body_barycenter_position(&t.name, tdb, m),
+                    None => None,
+                }
+            } else {
+                None
+            };
+            let epm_woven = EPM_LINE_BODIES.contains(&t.name.as_str());
+            let epm = if epm_woven {
+                match epm_map {
                     Some(m) => body_barycenter_position(&t.name, tdb, m),
                     None => None,
                 }
@@ -317,6 +401,21 @@ impl Weberin {
                     },
                 }
             };
+            if epm_woven {
+                if let (Some(spk_p), Some(inp_p), Some(epm_p)) = (spk, inpop, epm) {
+                    let spk_inpop = classify(separation_m(spk_p, inp_p), PLANET_WEBERIN_TOL_M);
+                    let spk_epm = classify(separation_m(spk_p, epm_p), PLANET_WEBERIN_TOL_M);
+                    let inpop_epm = classify(separation_m(inp_p, epm_p), PLANET_WEBERIN_TOL_M);
+                    let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
+                    self.triads.push(ThreeWayVerdict {
+                        name: t.name.clone(),
+                        spk_inpop,
+                        spk_epm,
+                        inpop_epm,
+                        fold,
+                    });
+                }
+            }
             self.verdicts.push(BodyVerdict {
                 name: t.name.clone(),
                 outcome,
@@ -425,14 +524,28 @@ mod tests {
         comets: Vec<CometRec>,
         tol: f64,
     ) -> Weberin {
+        woven_with_lines(eph_pairs, inpop_pairs, &[], sun, recs, comets, tol)
+    }
+
+    fn woven_with_lines(
+        eph_pairs: &[(&str, [f64; 3])],
+        inpop_pairs: &[(&str, [f64; 3])],
+        epm_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        recs: Vec<AsteroidRec>,
+        comets: Vec<CometRec>,
+        tol: f64,
+    ) -> Weberin {
         let eph = map_of(eph_pairs);
         let sun_map = map_of(&[("sun", sun)]);
         let inpop_map = map_of(inpop_pairs);
+        let epm_map = map_of(epm_pairs);
         let mut w = Weberin::new();
         w.feed(WeberinFeed {
             eph,
             sun: sun_map,
             eph_inpop: inpop_map,
+            eph_epm: epm_map,
             recs,
             comets,
         });
@@ -445,6 +558,10 @@ mod tests {
             .iter()
             .find(|v| v.name == name)
             .map(|v| &v.outcome)
+    }
+
+    fn triad<'a>(w: &'a Weberin, name: &str) -> Option<&'a ThreeWayVerdict> {
+        w.triads.iter().find(|t| t.name == name)
     }
 
     #[test]
@@ -467,6 +584,7 @@ mod tests {
             eph: map_of(&[("juno", [0.0; 3])]),
             sun: map_of(&[("sun", [0.0; 3])]),
             eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
             recs: vec![rec(3)],
             comets: Vec::new(),
         });
@@ -788,6 +906,196 @@ mod tests {
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
             other => panic!("an inpop-uncovered asteroid reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_places_a_planet_whose_three_lineages_converge() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Placed { sep_m }) => {
+                assert!(sep_m.is_finite());
+                assert!(*sep_m <= PLANET_WEBERIN_TOL_M);
+            }
+            other => panic!("the three converging planet lines read {other:?}"),
+        }
+        match triad(&w, "mars") {
+            Some(t) => {
+                assert!(matches!(t.fold, TriadFold::United));
+                assert!(matches!(t.spk_inpop, Agreement::Placed { .. }));
+                assert!(matches!(t.spk_epm, Agreement::Placed { .. }));
+                assert!(matches!(t.inpop_epm, Agreement::Placed { .. }));
+            }
+            None => panic!("the three-way of the converging planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_names_the_de_line_as_outlier_when_inpop_and_epm_converge() {
+        let w = woven_with_lines(
+            &[("uranus", [2.0e6, 0.0, 0.0])],
+            &[("uranus", [0.0; 3])],
+            &[("uranus", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "uranus") {
+            Some(BodyOutcome::Riss { sep_m, knot }) => {
+                assert!(*sep_m > PLANET_WEBERIN_TOL_M);
+                match knot {
+                    [BodyLine::Spk, BodyLine::Inpop] => {}
+                    other => panic!("the single de-vs-inpop line keeps its knot {other:?}"),
+                }
+            }
+            other => panic!("the de-vs-inpop pair reads {other:?}"),
+        }
+        match triad(&w, "uranus") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Spk);
+                    assert_eq!(*knot, [BodyLine::Inpop, BodyLine::Epm]);
+                }
+                other => panic!("the converged inpop+epm pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+        let t = triad(&w, "uranus").unwrap();
+        assert!(matches!(t.inpop_epm, Agreement::Placed { .. }));
+        assert!(matches!(t.spk_inpop, Agreement::Riss { .. }));
+        assert!(matches!(t.spk_epm, Agreement::Riss { .. }));
+    }
+
+    #[test]
+    fn epm_weave_names_inpop_as_outlier_when_de_and_epm_converge() {
+        let w = woven_with_lines(
+            &[("neptune", [0.0; 3])],
+            &[("neptune", [2.0e6, 0.0, 0.0])],
+            &[("neptune", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "neptune") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Inpop);
+                    assert_eq!(*knot, [BodyLine::Spk, BodyLine::Epm]);
+                }
+                other => panic!("the converged de+epm pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_names_epm_as_outlier_when_de_and_inpop_converge() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [0.0; 3])],
+            &[("mars", [2.0e6, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "mars") {
+            Some(t) => match &t.fold {
+                TriadFold::Outlier { line, knot } => {
+                    assert_eq!(*line, BodyLine::Epm);
+                    assert_eq!(*knot, [BodyLine::Spk, BodyLine::Inpop]);
+                }
+                other => panic!("the converged de+inpop pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_reads_shared_when_two_pairs_converge_on_de() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[("mars", [6.0e4, 0.0, 0.0])],
+            &[("mars", [-6.0e4, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "mars") {
+            Some(t) => match &t.fold {
+                TriadFold::Shared { line } => assert_eq!(*line, BodyLine::Spk),
+                other => panic!("the de-centred pair reads {other:?}"),
+            },
+            None => panic!("the three-way of the planet is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_reads_severed_when_no_pair_converges() {
+        let w = woven_with_lines(
+            &[("uranus", [0.0; 3])],
+            &[("uranus", [2.0e6, 0.0, 0.0])],
+            &[("uranus", [4.0e6, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match triad(&w, "uranus") {
+            Some(t) => match &t.fold {
+                TriadFold::Severed => {}
+                other => panic!("the three mutually refusing lines read {other:?}"),
+            },
+            None => panic!("the three-way of the ice giant is void"),
+        }
+    }
+
+    #[test]
+    fn epm_weave_absent_names_the_missing_inpop_line_even_with_epm_present() {
+        let w = woven_with_lines(
+            &[("mars", [0.0; 3])],
+            &[],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Inpop)),
+            other => panic!("the inpop-less three-way reads {other:?}"),
+        }
+        assert!(
+            triad(&w, "mars").is_none(),
+            "the incomplete three-way stays unjudged"
+        );
+    }
+
+    #[test]
+    fn epm_weave_absent_names_the_spk_line_when_only_the_epm_line_lies_in() {
+        let w = woven_with_lines(
+            &[],
+            &[],
+            &[("mars", [0.0; 3])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the epm-only planet reads {other:?}"),
         }
     }
 
