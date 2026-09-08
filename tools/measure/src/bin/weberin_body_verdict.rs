@@ -2,15 +2,15 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    embedded_lsk, extract, fetch_raw_bytes, load_sources, system_now, BodyEphemeris, ExtractResult,
-    LeapSeconds, SourceConfig, J2000_EPOCH,
+    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
+    BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig, J2000_EPOCH,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{
     parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
 };
 use omegaflow::weberin::{
-    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, WEBERIN_TOL_M,
+    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, INPOP_LINE_BODIES, WEBERIN_TOL_M,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -162,7 +162,7 @@ fn main() {
         );
     }
 
-    println!("=== weberin — the second body line (dastcom/MPC Keplerian elements) against the JPL SPK ephemeris points ===");
+    println!("=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP SPK planets/moon) against the JPL SPK ephemeris points ===");
 
     let sources = load_sources();
     let mut bodies: Vec<(String, SourceConfig)> = sources
@@ -215,10 +215,30 @@ fn main() {
         return;
     }
 
+    const INPOP_NETLOC: &str = "ftp.imcce.fr";
+    let mut inpop_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut opened_inpop = 0usize;
+    for name in INPOP_LINE_BODIES {
+        let asset = format!("ephemeris_inpop_{}.bin", name);
+        let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
+        let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset, BIN_TTL_S) else {
+            println!("weberin {name} inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP line stays unread");
+            continue;
+        };
+        match parse_ephemeris_binary(&bytes) {
+            Some(e) => {
+                inpop_map.insert((*name).to_string(), e);
+                opened_inpop += 1;
+            }
+            None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
+        }
+    }
+
     let mut w = Weberin::new();
     w.feed(WeberinFeed {
         eph: Arc::new(eph),
         sun: Arc::new(sun_map),
+        eph_inpop: Arc::new(inpop_map),
         recs,
         comets,
     });
@@ -240,8 +260,9 @@ fn main() {
         println!("{}", verdict_line(&v.name, &v.outcome));
     }
     println!(
-        "weberin tally: {opened}/{} registered body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
+        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
         bodies.len(),
+        INPOP_LINE_BODIES.len(),
         w.verdicts.len(),
     );
 }
@@ -287,6 +308,29 @@ mod tests {
         assert_eq!(
             verdict_line("apophis", &o),
             "weberin apophis state riss sep 2.3e9 knot spk-ephemeris+dastcom-keplerian"
+        );
+    }
+
+    #[test]
+    fn absent_inpop_line_names_the_inpop_ephemeris() {
+        let o = BodyOutcome::Absent {
+            line: BodyLine::Inpop,
+        };
+        assert_eq!(
+            verdict_line("uranus", &o),
+            "weberin uranus state absent sep absent missing inpop-ephemeris"
+        );
+    }
+
+    #[test]
+    fn riss_line_names_the_inpop_knot() {
+        let o = BodyOutcome::Riss {
+            sep_m: 1.6e6,
+            knot: [BodyLine::Spk, BodyLine::Inpop],
+        };
+        assert_eq!(
+            verdict_line("neptune", &o),
+            "weberin neptune state riss sep 1.6e6 knot spk-ephemeris+inpop-ephemeris"
         );
     }
 }
