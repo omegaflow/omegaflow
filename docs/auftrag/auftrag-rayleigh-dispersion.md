@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-08
   sha256: dc89e21d78726727afeb33181427d29034605e955e54ad2c2d370d7f284422df
-  status: open
+  status: done
   see-also: docs/TODO.md docs/auftrag/auftrag-dispersionsrelation.md docs/specs/spectral-oscillator.md
 -->
 
