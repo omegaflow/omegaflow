@@ -46,6 +46,59 @@ fn scalar_te_wgsl_validates_offline() {
 }
 
 #[test]
+fn cond_bin_te_wgsl_validates_offline() {
+    let module = match naga::front::wgsl::parse_str(COND_BIN_TE_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(COND_BIN_TE_WGSL)),
+    };
+    let mut validator = naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(COND_BIN_TE_WGSL));
+    }
+}
+
+#[test]
+fn cond_bin_te_gpu_crosscheck_against_cpu() {
+    let mut gpu = match CondBinTeGpu::new() {
+        Some(g) => g,
+        None => {
+            eprintln!("compute-only device request returned void — crosscheck skipped");
+            return;
+        }
+    };
+    let n = 512;
+    let c: Vec<f32> = (0..n).map(|t| (t as f32 * 0.2).sin()).collect();
+    let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+    let noise = |rng: &mut u64| -> f32 {
+        *rng = rng
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+    };
+    let x: Vec<f32> = c.iter().map(|&z| z + 0.4 * noise(&mut rng)).collect();
+    let mut y = vec![0f32; n];
+    for t in 0..n {
+        y[t] = if t == 0 {
+            0.3 * noise(&mut rng)
+        } else {
+            0.9 * y[t - 1] + (1.0 - 0.9) * c[t - 1] + 0.3 * noise(&mut rng)
+        };
+    }
+    let cpu = crate::te::transfer_entropy_conditional_binned_n(&y, &x, &[&c], 1, 4)
+        .expect("cpu resolves");
+    let gpu_te = gpu.run(&y, &x, &c, 1).expect("gpu resolves");
+    assert!(
+        (gpu_te - cpu).abs() < 1e-3,
+        "cond binning TE parity: gpu {} vs cpu {}",
+        gpu_te,
+        cpu
+    );
+}
+
+#[test]
 fn s2_wgsl_validates_offline() {
     let module = match naga::front::wgsl::parse_str(S2_WGSL) {
         Ok(m) => m,
