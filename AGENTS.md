@@ -38,6 +38,11 @@ Three reasons for "no value" are fundamentally different and never collapse:
 - **absent** — the source does not carry the value: Option/None/skip, never a fabricated 0.0.
 - **pending** — the value exists, the harvest is missing: a register duty (TODO/ledger), never a data value.
 
+The 0-Kanon also names the build states — an unbuilt idea is never a parking lot:
+- **pending** — unbuilt and needed: a promise, the socket stands and waits (a register duty).
+- **descoped** — unbuilt and released by measurement: the finding itself is the entry ("never built, not needed" — no later, no upkeep); a `descoped` without a measurement is powdered deferral. cone mode and the browser-texture path each carry their Befund (Atom C, 2026-09-08).
+Deferral/parking is no state: the parking lot was settled once and closed (2026-09-08) — every parked idea took a building line or a measured release, never a shelf. A new category is earned only by a Sprachloch (a true sentence that was unsayable); the house heals when commits outgrow categories, not the reverse.
+
 Every value answers four gates:
 (a) Is it a value? (b) Is it a plausible value? (c) Are format and unit correct (SI)? (d) Is a value mandatory? — absent + mandatory → record skipped.
 
