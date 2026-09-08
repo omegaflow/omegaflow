@@ -1588,7 +1588,19 @@ Gebaut (2026-09-06, sub-agents):
    baute) → INPOP-Herkunft bei SPK-Container. Beide Wege brauchen danach:
    Einheiten km→m, Ursprung (INPOP-Körper inkl. Sonne relativ SSB, Mond
    geozentrisch — Abgleich nötig), zweite Ephemeriden-Map + `BodyLine::Inpop`
-   in `weberin.rs`. (b) Raumsonden — Doppler gemessen als **keine** unabhängige
+   in `weberin.rs`. Kalibriert (2026-09-08), die Toleranz ist Klassen-gebunden:
+   `PLANET_WEBERIN_TOL_M` = 1.0e5 m für die INPOP-Linie (gemessen über JD
+   2451545–2461000, 6 Epochen: die 7 konvergierenden Planeten/Mond-Körper lesen
+   1.9e4–3.05e4 m DE-vs-INPOP, die zwei Eisriesen 4.3e5–1.6e6 m — die Klasse-
+   Toleranz sitzt im gemessenen leeren Zehner zwischen den zwei Skalen);
+   `WEBERIN_TOL_M` (1.0e6 m) bleibt die Linie SPK-gegen-Kepler der
+   Kleinkörper/Kometen (an der Element-Epoche gemessen). Befund heute
+   (2026-09-08): uranus 1.59e6 m → Riss, neptune 1.07e6 m → Riss — ehrlich
+   benannt, nie geglättet; die inneren 7 Placed bei ~2.2e4 m. Die
+   Eisriesen-Kluft wächst mit dem Extrapolations-Abstand (uranus
+   5.6e5→1.6e6 m, neptune 4.3e5→1.1e6 m über 2000–2026) — eine dritte Linie
+   zur Schlichtung bleibt `pending`. (b) Raumsonden — Doppler gemessen als
+   **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
    Der Compiler erntet die SPDF-Trägerfrequenz `OBSVBL`/`FREQCY` (Hz,
    `pioneer_doppler_compiler.rs`); das Referenz-Modell `downlink_rate_core`/

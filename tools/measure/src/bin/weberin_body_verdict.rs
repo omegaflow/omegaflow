@@ -10,7 +10,8 @@ use omegaflow::dastcom::{
     parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
 };
 use omegaflow::weberin::{
-    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, INPOP_LINE_BODIES, WEBERIN_TOL_M,
+    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, INPOP_LINE_BODIES,
+    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -175,7 +176,7 @@ fn main() {
         println!("weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void");
         return;
     }
-    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
+    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop line) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
 
     let Some(lsk) = embedded_lsk() else {
         println!(
