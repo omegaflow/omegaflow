@@ -1,18 +1,14 @@
 use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
-use omegaflow::te::{
-    conditional_te_stats_lagged, conditional_te_stats_lagged_2, transfer_entropy_conditional_2,
-    transfer_entropy_conditional_h,
-};
+use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
 
 const MAGIC: [u8; 4] = *b"AIA1";
 const DT: f64 = 24.0;
 const WINDOW: usize = 100;
-const N_SURR: usize = 10;
 const REFRACTORY: usize = 75;
 const FLARE_THRESH: f64 = 5e-6;
 const FILL: f64 = -9999.0;
 const LAGS: [usize; 3] = [0, 4, 8];
-const C_IDX: usize = 7;
+const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 
 const LADDER: [(u32, &str, f64); 7] = [
     (5, "304A", 4.70),
@@ -24,22 +20,15 @@ const LADDER: [(u32, &str, f64); 7] = [
     (0, "94A", 6.81),
 ];
 
-fn arg_value(args: &[String], name: &str) -> Option<String> {
-    args.iter()
-        .position(|a| a == name)
-        .and_then(|i| args.get(i + 1))
-        .cloned()
-}
-
-fn confound_idx(name: &str) -> Option<usize> {
-    if name == "goes" {
-        return Some(C_IDX);
-    }
-    let n = name.trim_end_matches(['A', 'a']);
-    LADDER
-        .iter()
-        .position(|(_, band, _)| band.trim_end_matches('A') == n)
-}
+const CHANNELS: [(usize, &str); 2] = [(0, "304"), (1, "131")];
+const CONFOUNDERS: [(usize, &str); 6] = [
+    (2, "171"),
+    (3, "193"),
+    (4, "211"),
+    (5, "335"),
+    (6, "94"),
+    (7, "goes"),
+];
 
 fn read_aia_lines(path: &str) -> Vec<(f64, f64, u32)> {
     let Ok(bytes) = std::fs::read(path) else {
@@ -206,10 +195,38 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
     events
 }
 
+fn pearson(a: &[f32], b: &[f32]) -> Option<f64> {
+    let n = a.len().min(b.len());
+    if n < 8 {
+        return None;
+    }
+    let mut sa = 0.0f64;
+    let mut sb = 0.0f64;
+    for i in 0..n {
+        sa += a[i] as f64;
+        sb += b[i] as f64;
+    }
+    let ma = sa / n as f64;
+    let mb = sb / n as f64;
+    let mut cov = 0.0f64;
+    let mut va = 0.0f64;
+    let mut vb = 0.0f64;
+    for i in 0..n {
+        let da = a[i] as f64 - ma;
+        let db = b[i] as f64 - mb;
+        cov += da * db;
+        va += da * da;
+        vb += db * db;
+    }
+    if va <= 0.0 || vb <= 0.0 {
+        return None;
+    }
+    Some(cov / (va * vb).sqrt())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let lsk = omegaflow::archivar::embedded_lsk();
-
     let mut positions: Vec<usize> = Vec::new();
     let mut idx = 0usize;
     while idx < args.len() {
@@ -224,37 +241,6 @@ fn main() {
         eprintln!("--year <aia_lines.bin> <goes-dir> absent (repeat per year)");
         return;
     }
-    let max_lag: usize = match arg_value(&args, "--max-lag").and_then(|s| s.parse().ok()) {
-        Some(v) => v,
-        None => 8,
-    };
-    let confound_name = match arg_value(&args, "--confound") {
-        Some(n) => n,
-        None => "goes".to_string(),
-    };
-    let h_factor: f64 = match arg_value(&args, "--h").and_then(|s| s.parse().ok()) {
-        Some(v) => v,
-        None => 1.0,
-    };
-    let c_idx = match confound_idx(&confound_name) {
-        Some(i) => i,
-        None => {
-            eprintln!("--confound {} carries no band", confound_name);
-            return;
-        }
-    };
-    let confound2_name = arg_value(&args, "--confound2");
-    let c2_idx = match confound2_name.as_deref() {
-        Some(name) => match confound_idx(name) {
-            Some(i) => Some(i),
-            None => {
-                eprintln!("--confound2 {} carries no band", name);
-                return;
-            }
-        },
-        None => None,
-    };
-
     let mut all_events: Vec<Event> = Vec::new();
     for (yi, &pos) in positions.iter().enumerate() {
         let path = match args.get(pos + 1) {
@@ -276,7 +262,16 @@ fn main() {
             eprintln!("year {}: {} reads void", yi, path);
             return;
         }
-        let mut series: Vec<(f64, f64)> = Vec::new();
+        let t0 = records
+            .iter()
+            .map(|&(t, _, _)| t)
+            .fold(f64::INFINITY, f64::min);
+        let t1 = records
+            .iter()
+            .map(|&(t, _, _)| t)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let bins = ((t1 - t0) / DT).floor() as usize;
+        let mut grid: Vec<Vec<Option<f32>>> = Vec::new();
         for (bidx, _name, _logt) in LADDER {
             let s: Vec<(f64, f64)> = records
                 .iter()
@@ -287,21 +282,6 @@ fn main() {
                 eprintln!("year {} band {} absent in the bin", yi, bidx);
                 return;
             }
-            series.extend(s);
-        }
-        let t0 = series.iter().map(|&(t, _)| t).fold(f64::INFINITY, f64::min);
-        let t1 = series
-            .iter()
-            .map(|&(t, _)| t)
-            .fold(f64::NEG_INFINITY, f64::max);
-        let bins = ((t1 - t0) / DT).floor() as usize;
-        let mut grid: Vec<Vec<Option<f32>>> = Vec::new();
-        for (bidx, _name, _logt) in LADDER {
-            let s: Vec<(f64, f64)> = records
-                .iter()
-                .filter(|(_, _, i)| *i == bidx)
-                .map(|&(t, v, _)| (t, v))
-                .collect();
             grid.push(bin_median(&s, t0, bins));
         }
         let mut b_flux: Vec<(f64, f64)> = Vec::new();
@@ -338,84 +318,62 @@ fn main() {
     }
     let events = all_events;
     println!(
-        "stack: {} events; confounder C = {}; null max_lag {}",
-        events.len(),
-        confound_name,
-        max_lag
+        "stack: {} events; cross-information matrix C <-> Y, C in {{171,193,211,335,94,goes}}, Y in {{304,131}}",
+        events.len()
     );
-    if let Some(name) = confound2_name.as_deref() {
-        println!("second confounder C2 = {}", name);
-    }
-    println!("conditional directional excess D|C = TE(cool->hot|C) - TE(hot->cool|C), lagged null");
+    println!(
+        "TE(C->Y) measured as the driver C informing the target Y beyond its own past; null = mean+2sd over 10 phase-randomized surrogates of the driver."
+    );
     println!();
 
-    let n_pairs = LADDER.len() - 1;
-    let mut d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+    let n_ch = CHANNELS.len();
+    let n_co = CONFOUNDERS.len();
+    let mut cy_sum = vec![vec![vec![0.0f64; LAGS.len()]; n_co]; n_ch];
+    let mut yc_sum = vec![vec![vec![0.0f64; LAGS.len()]; n_co]; n_ch];
+    let mut cnt = vec![vec![vec![0usize; LAGS.len()]; n_co]; n_ch];
+    let mut cy_arrow = vec![vec![vec![0usize; LAGS.len()]; n_co]; n_ch];
+    let mut yc_arrow = vec![vec![vec![0usize; LAGS.len()]; n_co]; n_ch];
+    let mut corr_sum = vec![vec![0.0f64; n_co]; n_ch];
+    let mut corr_cnt = vec![vec![0usize; n_co]; n_ch];
 
     for (ei, ev) in events.iter().enumerate() {
         if ei % 50 == 0 {
             println!("progress {} / {}", ei, events.len());
         }
-        for li in 0..n_pairs {
-            if li == c_idx || li + 1 == c_idx {
-                continue;
-            }
-            if let Some(ci2) = c2_idx {
-                if li == ci2 || li + 1 == ci2 {
-                    continue;
+        for (yi, _yn) in CHANNELS.iter().enumerate() {
+            let y = &ev.lines[CHANNELS[yi].0];
+            for (ci, _cn) in CONFOUNDERS.iter().enumerate() {
+                let c = &ev.lines[CONFOUNDERS[ci].0];
+                if let Some(r) = pearson(y, c) {
+                    corr_sum[yi][ci] += r;
+                    corr_cnt[yi][ci] += 1;
                 }
-            }
-            let cool = &ev.lines[li];
-            let hot = &ev.lines[li + 1];
-            let c = &ev.lines[c_idx];
-            for (lagi, &lag) in LAGS.iter().enumerate() {
-                let seed =
-                    0x9E37_79B9_7F4A_7C15 ^ (li as u64 * 0x9E37_79B9) ^ (lag as u64 * 0x85EB_CA6B);
-                let (te_fwd, te_rev, thr_fwd, thr_rev) = match c2_idx {
-                    Some(ci2) => {
-                        let c2 = &ev.lines[ci2];
-                        (
-                            transfer_entropy_conditional_2(hot, cool, c, c2, lag),
-                            transfer_entropy_conditional_2(cool, hot, c, c2, lag),
-                            conditional_te_stats_lagged_2(
-                                hot, cool, c, c2, lag, max_lag, seed, N_SURR,
-                            )
-                            .map(|t| t.2),
-                            conditional_te_stats_lagged_2(
-                                cool, hot, c, c2, lag, max_lag, seed, N_SURR,
-                            )
-                            .map(|t| t.2),
-                        )
+                for (lagi, &lag) in LAGS.iter().enumerate() {
+                    let seed = SEED
+                        ^ (ei as u64).wrapping_mul(0x9E37_79B9)
+                        ^ (ci as u64).wrapping_mul(0x85EB_CA6B)
+                        ^ (yi as u64).wrapping_mul(0xC2B2_AE35)
+                        ^ (lag as u64).wrapping_mul(0x27D4_EB2F);
+                    let (Some(fwd), Some(rev)) = (
+                        transfer_entropy_lag(y, c, lag),
+                        transfer_entropy_lag(c, y, lag),
+                    ) else {
+                        continue;
+                    };
+                    let (Some(thr_fwd), Some(thr_rev)) = (
+                        surrogate_stats_phase(y, c, lag, seed).map(|t| t.2),
+                        surrogate_stats_phase(c, y, lag, seed).map(|t| t.2),
+                    ) else {
+                        continue;
+                    };
+                    cy_sum[yi][ci][lagi] += fwd;
+                    yc_sum[yi][ci][lagi] += rev;
+                    cnt[yi][ci][lagi] += 1;
+                    if fwd > thr_fwd {
+                        cy_arrow[yi][ci][lagi] += 1;
                     }
-                    None => (
-                        transfer_entropy_conditional_h(hot, cool, c, lag, h_factor),
-                        transfer_entropy_conditional_h(cool, hot, c, lag, h_factor),
-                        conditional_te_stats_lagged(hot, cool, c, lag, max_lag, seed, N_SURR)
-                            .map(|t| t.2),
-                        conditional_te_stats_lagged(cool, hot, c, lag, max_lag, seed, N_SURR)
-                            .map(|t| t.2),
-                    ),
-                };
-                let (Some(te_fwd), Some(te_rev)) = (te_fwd, te_rev) else {
-                    continue;
-                };
-                d_sum[li][lagi] += te_fwd - te_rev;
-                fwd_sum[li][lagi] += te_fwd;
-                rev_sum[li][lagi] += te_rev;
-                d_cnt[li][lagi] += 1;
-                if let Some(thr) = thr_fwd {
-                    if te_fwd > thr {
-                        fwd_arrow[li][lagi] += 1;
-                    }
-                }
-                if let Some(thr) = thr_rev {
-                    if te_rev > thr {
-                        rev_arrow[li][lagi] += 1;
+                    if rev > thr_rev {
+                        yc_arrow[yi][ci][lagi] += 1;
                     }
                 }
             }
@@ -423,43 +381,40 @@ fn main() {
     }
 
     println!();
-    println!("pair      | lag |   mean D|C | TE c->h|C | TE h->c|C | fwd/events | rev/events");
-    for li in 0..n_pairs {
-        let pair = format!("{}->{}", LADDER[li].1, LADDER[li + 1].1);
-        if li == c_idx || li + 1 == c_idx {
-            println!("{:>9} | skipped (confounder is a member)", pair);
-            continue;
-        }
-        if let Some(ci2) = c2_idx {
-            if li == ci2 || li + 1 == ci2 {
-                println!("{:>9} | skipped (confounder2 is a member)", pair);
-                continue;
+    println!("C -> Y   | lag | mean TE(C->Y) | mean TE(Y->C) | C->Y/ev | Y->C/ev | r(C,Y)");
+    for (ci, (_, cn)) in CONFOUNDERS.iter().enumerate() {
+        for (yi, (_, yn)) in CHANNELS.iter().enumerate() {
+            let label = format!("{}->{}", cn, yn);
+            let r = if corr_cnt[yi][ci] > 0 {
+                corr_sum[yi][ci] / corr_cnt[yi][ci] as f64
+            } else {
+                f64::NAN
+            };
+            for (lagi, &lag) in LAGS.iter().enumerate() {
+                if cnt[yi][ci][lagi] == 0 {
+                    println!("{:>7} | {:>3}s | absent", label, lag * 24);
+                    continue;
+                }
+                let n = cnt[yi][ci][lagi];
+                let mf = cy_sum[yi][ci][lagi] / n as f64;
+                let mr = yc_sum[yi][ci][lagi] / n as f64;
+                println!(
+                    "{:>7} | {:>3}s | {:>12.3e} | {:>12.3e} | {:>3}/{:<4} | {:>3}/{:<4} | {:+.3}",
+                    label,
+                    lag * 24,
+                    mf,
+                    mr,
+                    cy_arrow[yi][ci][lagi],
+                    n,
+                    yc_arrow[yi][ci][lagi],
+                    n,
+                    r
+                );
             }
-        }
-        for (lagi, &lag) in LAGS.iter().enumerate() {
-            if d_cnt[li][lagi] == 0 {
-                println!("{:>9} | {:>3}s | absent", pair, lag * 24);
-                continue;
-            }
-            let mean = d_sum[li][lagi] / d_cnt[li][lagi] as f64;
-            let mf = fwd_sum[li][lagi] / d_cnt[li][lagi] as f64;
-            let mr = rev_sum[li][lagi] / d_cnt[li][lagi] as f64;
-            println!(
-                "{:>9} | {:>3}s | {:>10.2e} | {:>10.2e} | {:>10.2e} | {:>3}/{:<4} | {:>3}/{:<4}",
-                pair,
-                lag * 24,
-                mean,
-                mf,
-                mr,
-                fwd_arrow[li][lagi],
-                d_cnt[li][lagi],
-                rev_arrow[li][lagi],
-                d_cnt[li][lagi]
-            );
         }
     }
     println!();
     println!(
-        "fwd = cool->hot conditional arrow (TE > lagged null), rev = hot->cool. TE c->h|C = mean TE(cool->hot|C); mean D|C > 0 = direction survives conditioning on the shared envelope."
+        "mean TE(C->Y) > mean TE(Y->C) with C->Y/ev high = the confounder leads the cool channel; a confounder that both leads the channels and collapses 304->131 on conditioning carries the shared driver."
     );
 }
