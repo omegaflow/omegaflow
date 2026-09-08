@@ -72,31 +72,6 @@ fn curl_bytes(url: &str) -> Option<Vec<u8>> {
     Some(out.stdout)
 }
 
-fn has_arg(flag: &str) -> bool {
-    std::env::args().any(|a| a == flag)
-}
-
-fn upload_asset_bytes(netloc: &str, name: &str, bytes: &[u8]) {
-    let dir = std::env::temp_dir().join(format!("omegaflow_h0_ladder_cdn_{}", std::process::id()));
-    if std::fs::create_dir_all(&dir).is_err() {
-        return;
-    }
-    let path = dir.join(name);
-    if std::fs::write(&path, bytes).is_err() {
-        let _ = std::fs::remove_dir_all(&dir);
-        return;
-    }
-    let path_str = match path.to_str() {
-        Some(s) => s,
-        None => {
-            let _ = std::fs::remove_dir_all(&dir);
-            return;
-        }
-    };
-    omegaflow::cdn::upload_release(netloc, path_str);
-    let _ = std::fs::remove_dir_all(&dir);
-}
-
 fn sha256_stdin(bytes: &[u8]) -> Option<String> {
     let mut child = Command::new("sha256sum")
         .stdin(Stdio::piped())
@@ -561,7 +536,6 @@ fn diagonal_mean(vals: &[(f64, f64)]) -> Option<(f64, f64)> {
 }
 
 fn main() {
-    let ci_mode = has_arg("--ci-mode");
     let tarball = or_unmeasured(
         curl_bytes(ARXIV_EPRINT),
         "the arXiv e-print returned no bytes",
@@ -852,20 +826,6 @@ fn main() {
         }
         println!(
             "h0_ladder_weigh: suspicion order on a rift — weigh the own chain first (units → parser → fit), then the published value"
-        );
-    }
-
-    if ci_mode {
-        upload_asset_bytes("arxiv.org", "2012.08534.tar.gz", &tarball);
-        upload_asset_bytes(
-            "raw.githubusercontent.com",
-            "Pantheon+SH0ES.dat",
-            &dat_bytes,
-        );
-        upload_asset_bytes(
-            "raw.githubusercontent.com",
-            "Pantheon+SH0ES_STAT+SYS.cov",
-            &cov_bytes,
         );
     }
 }
