@@ -1703,20 +1703,24 @@ Gebaut (2026-09-06, sub-agents):
    zur Schlichtung bleibt `pending`. Der Schiedsspruch (Atom 2026-09-08,
    Übergabe handover-2026-09-08-uranus-riss-schiedsspruch.md) ist gebaut und
    gemessen — die Wurzel (fünf Satelliten-Tabellen, 9797 Positionen, geozentrisch
-   astrometrisch) misst den Riss: paarweise Mittelwert-Differenzen ~32–47 mas
-   (DE-INPOP 32.1, DE-EPM 39.5, INPOP-EPM 47.0), aber der ura111-Mondmodell-Fehler
-   (~220 mas gegen ura184) überragt ihn — **kein Schiedsspruch**. Das Blatt
-   `uranu_j` ist geozentrisch (nicht topozentrisch), DE432-gewurzelt,
-   Planetenzentrum. Befund: docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
-   Offen: (1) baryzentrum-unabhängiges Mondmodell auf mas-Niveau (ura184-Split) —
-   `pending`, damit wäre der Schiedsspruch entscheidbar; (2) `roemer_fold`/
-   `light_time_sc_pos` existiert sechsfach probe-lokal (topocentric_coupling_probe,
-   pioneer_navio_residuum, pioneer11_odf_residuum, pioneer_link_correction_probe,
-   uranus_riss_schiedsspruch_probe, uranus_satellite_schiedsspruch_probe) — Heben
-   in die Archivar beim nächsten Template-Griff; (3) die Ephemeris-Bins tragen das
-   Uranus-System-Baryzentrum (SPK 7), nicht das Planetenzentrum (799); (4)
-   Camargo-TSV- und ura111-SPK-Manifestation aufs CDN `pending` — URLs in
-   sources.φ registriert, kein Raw-Manifestor gebaut.
+   astrometrisch) misst den Riss sauber: paarweise Mittelwert-Differenzen
+   ~32–47 mas (DE-INPOP 32.1, DE-EPM 39.5, INPOP-EPM 47.0). Das Mondmodell ist
+   mas-Niveau (ura111 ≈ ura184_part-3 auf 5–25 mas) — nicht der Engpass; der
+   absolute Offset liegt unter einem ~200 mas common-mode Diurnal-Term
+   (Parallaxe/Aberration), der sich in den Differenzen kürzt — **kein
+   Schiedsspruch**. Das Blatt `uranu_j` ist geozentrisch (nicht topozentrisch),
+   DE432-gewurzelt, Planetenzentrum. Befund:
+   docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
+   Offen: (1) volle topozentrische + Aberrations-Reduktion (NOVAS-Niveau) —
+   `pending`, damit wäre der absolute Baryzentrum-Offset entscheidbar; (2)
+   `roemer_fold`/`light_time_sc_pos` existiert sechsfach probe-lokal
+   (topocentric_coupling_probe, pioneer_navio_residuum, pioneer11_odf_residuum,
+   pioneer_link_correction_probe, uranus_riss_schiedsspruch_probe,
+   uranus_satellite_schiedsspruch_probe) — Heben in die Archivar beim nächsten
+   Template-Griff; (3) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
+   (SPK 7), nicht das Planetenzentrum (799); (4) Camargo-TSV- + ura111/
+   ura184-SPK-Manifestation: Manifestor gebaut (camargo_uranus_manifestor.rs +
+   camargo-uranus-cdn.yml), der CI-Lauf steht aus.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
