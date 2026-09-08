@@ -37,6 +37,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             omni2::COMP_BY => Some("omni_imf_by_gsm_nt"),
             omni2::COMP_BZ => Some("omni_imf_bz_gsm_nt"),
             omni2::COMP_PRESSURE => Some("omni_solarwind_pressure_npa"),
+            omni2::COMP_AE => Some("magnetosphere_ae_nt"),
+            omni2::COMP_AL => Some("magnetosphere_al_nt"),
+            omni2::COMP_AU => Some("magnetosphere_au_nt"),
+            omni2::COMP_SYMH => Some("magnetosphere_symh_nt"),
+            omni2::COMP_DST => Some("magnetosphere_dst_nt"),
             _ => None,
         },
         "mitdb" => match comp {
