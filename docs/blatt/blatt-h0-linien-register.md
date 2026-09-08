@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-08
-  sha256: 397d79e04ed40acf7609821bb90a494eda02e0ebd275f3db5af709ad233188d3
+  sha256: 53636113cc266fa9ac9a5fbf23c3044ed54546555ef300949c3596cff0ca7510
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -124,17 +124,20 @@ Schiedsspruch über die ~5σ wäre Fabrikation.
 
 Die zwei Wurzeln stehen nicht gleich da:
 
-- **Leiter-Wurzel: teils gewogen (Klasse), teils zitiert (Auswahl + Abzug).**
-  Der Probe `cepheid_parallax_weigh` hat das Gaia-DR3-Parallaxenfeld der
-  klassischen Cepheiden (DCEP) selbst gemessen (Query im Anhang):
-  **N = 1606 Cepheiden** (type_best_classification = DCEP, Parallaxe > 5σ),
-  **inversvarianz-gewichtetes Parallaxen-Mittel 0.2619 mas, Standardfehler
-  ±0.0004 mas**, 1/π = 3818.0 pc, Median 0.2270 mas, Spanne 0.059–4.194 mas.
-  Der statistische Standardfehler wird vom nicht-angewendeten ~14-μas-Zeropunkt
-  dominiert. Das Feld ist das rohe Archiv ohne L20b-Abzug — die publizierte
-  SH0ES-Kalibration (Riess 2021) nutzt 75 ausgewählte Cepheiden und zieht
-  diesen Abzug ab; der H₀-tragende Anker bleibt `zitiert`, gewogen ist nur die
-  Klasse.
+- **Leiter-Wurzel: ganz gewogen (Leiter).**
+  Der Probe `h0_ladder_weigh` wiegt die Leiter end-to-end im Haus (Cepheiden-PL
+  im Parallaxenraum → SN-Ia-Kalibration → eigener H₀): **H₀ = 73.56 ± 1.40
+  km/s/Mpc** (volle STAT+SYS-Kovarianz; diagonaler Checkpoint 73.53 ± 1.14),
+  M_W1 = −5.914 ± 0.017 (publiziert −5.915 ± 0.022), zp = −13 ± 5 μas
+  (publiziert −14 ± 6), M_B = −19.2469 ± 0.0299 (77 Kalibratoren),
+  a_B = 0.7159 ± 0.0018 (flach ΛCDM Ωm = 0.3). Reproduktions-Gate **PASS** —
+  jeder Parameter innerhalb 1σ des publizierten Wertes (Bestehensregel als
+  genagelte Zahl; bei Abweichung: erst die eigene Kette wiegen — Einheiten →
+  Parser → Fit —, dann der publizierte Wert). Die Cepheiden-Anker-Wurzel ist
+  transkribiert: die 75er-Tabelle trägt keine Koordinaten-/ID-Spalte, das
+  eigene Gaia-TAP-Crossmatch der 75 bleibt `pending`. Der Probe
+  `cepheid_parallax_weigh` bleibt das Klassen-Feld (N = 1606, 0.2619 mas,
+  Query im Anhang). Der H₀-tragende Anker ist gewogen, nicht zitiert.
 - **CMB-Wurzel: zitiert.** Die Planck-Likelihood (θ*, r_d, das CMB-Leistungs-
   spektrum) ist eine Forschungsmaschine, keine Session. Keine Zeile dieser
   Familie wird selbst gerechnet; die Klasse ist benannt, nicht verschwiegen.
@@ -325,6 +328,46 @@ Unverändert. Die CMB-Familie ist klassen-intern reicher (ACT, WMAP), aber alle
 Instrumente teilen r_d — die „Ehe" bleibt. Die späten Routen (Fundamentalebene,
 Tully-Fisher) liegen hoch (75–76), teilen ihre Nullpunkte aber mit
 Cepheiden-/TRGB-/SBF-Ankern — keine neue unabhängige Wurzel, kein Schlichter.
+
+## Die eigene Leiter-H₀ (gewogen 2026-09-08)
+
+Der Probe `tools/measure/src/bin/h0_ladder_weigh.rs` wiegt die Leiter
+end-to-end — kein Wert aus dem Abstract kopiert, jeder aus der Datei gerechnet.
+Drei gewogene Byte-Strömungen mit sha256 (arXiv-2012.08534-Tarball,
+`Pantheon+SH0ES.dat`, `Pantheon+SH0ES_STAT+SYS.cov`), 0-Kanon durchgehend.
+
+| Sprosse | eigener Wert | publiziert |
+|---|---|---|
+| Anker M_W1 (2-param, R19-fix) | −5.914 ± 0.017 | −5.915 ± 0.022 |
+| Anker zp (Rest-Parallaxenoffset) | −13 ± 5 μas | −14 ± 6 μas |
+| Anker b_W (4-param) | −3.34 ± 0.05 | −3.28 ± 0.06 |
+| Anker Z_W (4-param) | −0.11 ± 0.09 | −0.20 ± 0.13 |
+| M_B (77 Kalibratoren) | −19.2469 ± 0.0299 | −19.253 (fiduzial) |
+| a_B (277 Hubble-Fluss) | 0.7159 ± 0.0018 | 0.7137 (fiduzial) |
+| **H₀** | **73.56 ± 1.40 km/s/Mpc** | **73.0 ± 1.4** |
+
+Gemessene Zustände, benannt nicht geglättet:
+
+- **74 Zeilen, nicht 75:** die Tabelle `bigtable_redux3.tex` trägt 74 volle
+  Datenzeilen (die Prosa zitiert 75); 7 Zeilen führen `\nd` (absent) in π_EDR3
+  (CY-AUR, DL-CAS, RW-CAM, SV-PER, SY-NOR, RX-CAM, U-AQL) — übersprungen und
+  gezählt, 67 gefittet.
+- **Kovarianz-Zeilenzuordnung zertifiziert:** 182/191 Duplikat-CID-Paare liegen
+  exakt auf den .dat-Zeilindizes der STATONLY-Matrix. Die DIAG-Spalten sind
+  VPEC-aufgebläht und ungleich der .cov-Diagonale (eine Eigenschaft des
+  Release, gemessen — das .cov trägt keine Pekuliar-Geschwindigkeitsfehler).
+- **77 Kalibratoren, 43 eindeutige CIDs:** das Paper nennt 42; die 42er-Liste
+  ist aus den ausgelieferten Dateien nicht extrahierbar (lebt in der
+  Journal-MRT von ApJ 934, L7). Gewogen wird die vollständige gemessene Menge.
+- **Anker χ²/ndf = 120.1/65:** die Tabellen-Streuung übersteigt die zitierten
+  Parallaxen+Photometrie-Fehler (das publizierte Fit trägt einen zusätzlichen
+  Streu-Term); die Ankerfehler sind H₀-untergeordnet (dominiert von M_B/a_B).
+- **Registratur-Grammatik:** `sources.φ` trägt keinen ehrlichen Sitz für
+  field-lose Probe-Eingaben (der Parser verwirft Blöcke ohne Feld/Frame) — die
+  statischen Beine sind über `--ci-mode` + Workflow `h0-ladder-cdn.yml` auf
+  dem CDN manifestiert (Präzedenz: die lebendige TAP-Leg ist ebenfalls
+  unregistriert). Ein vierter Zeugen-Typ „Referenzdatensatz" wäre ein
+  `zeuge.rs`-Eingriff — registriert, nicht verschwiegen.
 
 ## Der Anhang
 
