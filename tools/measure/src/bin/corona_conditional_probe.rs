@@ -351,6 +351,8 @@ fn main() {
 
     let n_pairs = LADDER.len() - 1;
     let mut d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+    let mut fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+    let mut rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
     let mut d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
     let mut fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
     let mut rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
@@ -403,6 +405,8 @@ fn main() {
                     continue;
                 };
                 d_sum[li][lagi] += te_fwd - te_rev;
+                fwd_sum[li][lagi] += te_fwd;
+                rev_sum[li][lagi] += te_rev;
                 d_cnt[li][lagi] += 1;
                 if let Some(thr) = thr_fwd {
                     if te_fwd > thr {
@@ -419,7 +423,7 @@ fn main() {
     }
 
     println!();
-    println!("pair      | lag |   mean D|C | fwd/events | rev/events");
+    println!("pair      | lag |   mean D|C | TE c->h|C | TE h->c|C | fwd/events | rev/events");
     for li in 0..n_pairs {
         let pair = format!("{}->{}", LADDER[li].1, LADDER[li + 1].1);
         if li == c_idx || li + 1 == c_idx {
@@ -438,11 +442,15 @@ fn main() {
                 continue;
             }
             let mean = d_sum[li][lagi] / d_cnt[li][lagi] as f64;
+            let mf = fwd_sum[li][lagi] / d_cnt[li][lagi] as f64;
+            let mr = rev_sum[li][lagi] / d_cnt[li][lagi] as f64;
             println!(
-                "{:>9} | {:>3}s | {:>10.2e} | {:>3}/{:<4} | {:>3}/{:<4}",
+                "{:>9} | {:>3}s | {:>10.2e} | {:>10.2e} | {:>10.2e} | {:>3}/{:<4} | {:>3}/{:<4}",
                 pair,
                 lag * 24,
                 mean,
+                mf,
+                mr,
                 fwd_arrow[li][lagi],
                 d_cnt[li][lagi],
                 rev_arrow[li][lagi],
@@ -452,6 +460,6 @@ fn main() {
     }
     println!();
     println!(
-        "fwd = cool->hot conditional arrow (TE > lagged null), rev = hot->cool. mean D|C > 0 = direction survives conditioning on the shared X-ray envelope."
+        "fwd = cool->hot conditional arrow (TE > lagged null), rev = hot->cool. TE c->h|C = mean TE(cool->hot|C); mean D|C > 0 = direction survives conditioning on the shared envelope."
     );
 }
