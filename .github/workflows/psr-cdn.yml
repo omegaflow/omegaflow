@@ -16,7 +16,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table "B/psr/psr" \
-            --columns 'ra:RAJ2000;dec:DEJ2000;p0:P0;dm:DM;s1400:S1400' \
+            --columns 'ra:RAJ2000;dec:DEJ2000;p0:P0;dm:DM;dm_unc:e_DM;s1400:S1400' \
             --skip-null dm \
             --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
@@ -26,3 +26,5 @@ jobs:
                  "flatten: psr returned void" \
                  "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
+          sha256sum psr.json | tee psr.json.sha256
+          gh release upload ssd.jpl.nasa.gov psr.json.sha256 --repo omegaflow/sources --clobber
