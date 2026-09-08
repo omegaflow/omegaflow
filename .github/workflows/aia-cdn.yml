@@ -48,3 +48,32 @@ jobs:
             --harvest --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
             --bands "${{ inputs.bands }}" --chunk-days 1 \
             --out "${{ inputs.asset }}" --ci-mode
+  aia-fullyear:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if both fullyear bins already exist on the CDN
+        run: |
+          assets=$(gh release view jsoc.stanford.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null)
+          if echo "$assets" | grep -qx "aia2013_fullyear.bin" && \
+             echo "$assets" | grep -qx "aia2015_fullyear.bin"; then
+            echo "fullyear bins present — manifest skipped"
+            exit 0
+          fi
+          echo "fullyear bins missing — merging and manifesting"
+      - name: Merge the CDN monthlies into the fullyear bins and manifest them
+        run: |
+          mkdir -p aia-merge
+          gh release download jsoc.stanford.edu --repo omegaflow/sources \
+            --pattern 'aia2013_0?.bin' --pattern 'aia2013_1?.bin' \
+            --pattern 'aia2015_0?.bin' --pattern 'aia2015_1?.bin' \
+            --clobber --dir aia-merge
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --merge aia-merge/aia2013_01.bin,aia-merge/aia2013_02.bin,aia-merge/aia2013_03.bin,aia-merge/aia2013_04.bin,aia-merge/aia2013_05.bin,aia-merge/aia2013_06.bin,aia-merge/aia2013_07.bin,aia-merge/aia2013_08.bin,aia-merge/aia2013_09.bin,aia-merge/aia2013_10.bin,aia-merge/aia2013_11.bin,aia-merge/aia2013_12.bin \
+            --out aia2013_fullyear.bin --ci-mode
+          cargo run --release -p omegaflow-harvest --bin aia_compiler -- \
+            --merge aia-merge/aia2015_01.bin,aia-merge/aia2015_02.bin,aia-merge/aia2015_03.bin,aia-merge/aia2015_04.bin,aia-merge/aia2015_05.bin,aia-merge/aia2015_06.bin,aia-merge/aia2015_07.bin,aia-merge/aia2015_08.bin,aia-merge/aia2015_09.bin,aia-merge/aia2015_10.bin,aia-merge/aia2015_11.bin,aia-merge/aia2015_12.bin \
+            --out aia2015_fullyear.bin --ci-mode
