@@ -1098,6 +1098,16 @@ physikalischen Aussage — kein Blatt ohne diese:
   N_SURR=20 nur auf den konditionalen Pfad). Die Serie wurde unter 10 geboren;
   ein stilles Heben machte die bestehenden Zahlen inkonsistent. Bis ein eigener
   Auftrag die Erhebung prüft, bleibt 10 — die Diskrepanz hat eine Adresse.
+- **Bz/LAIC-Anker-Wiederholung unter n_surr=100 — gemessener Preis, Myzel-Duty**:
+  `nobel_probe_bz`/`nobel_probe_laic` laufen jetzt Residual + 100; die
+  Befund-Zahlen (Bz→AE 4,3×, Bz→Dst 2,4×) wurden unter n_surr=10 geboren und
+  bleiben die Befund-Zahlen, bis die Wiederholung gemessen ist. Die
+  Bz-Wiederholung auf 95 483 Zellen wurde heute gestartet und nach ~36 min
+  gemessen abgebrochen: die Residual-OLS-Null baut je Surrogat eine
+  k×k-Normalmatrix (k = 1 + 12 + n_cond·13) über 95k Zellen — 42 Kanten × 100
+  Surrogate ≈ Stunden auf der Haus-CPU (die Block-Null ist dort billiger: kein
+  OLS). Register-Duty: die Wiederholungen laufen auf dem Desktop/Myzel, nicht
+  auf dem Laptop unter Last.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
@@ -1367,6 +1377,22 @@ ICRS-4D-Rahmen teilt:
   Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
   beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
   parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
+- Extinktionskurve A(λ)/A_V (CCM 1989, R_V = 3.1) — kuratierte Klasse, gebaut
+  (2026-09-08): `src/archivar/kernels/ccm89_rv31.dat` (37 Stützstellen
+  100–3300 nm) + `parse_extinction`/`extinction_at` in spectral.rs (lineare
+  Interpolation wie die Passbands; Tests: Normierung bei V, 2175-Å-Bump,
+  monotoner IR). Provenienz: Cardelli/Clayton/Mathis 1989
+  (`1989ApJ...345..245C`), Zahlen aus den CCM-Gleichungen via
+  sncosmo/extinction (sekundär, nicht am Original-Scan verifiziert —
+  benannt); Fitzpatrick 1999 als Zahlen-Tabelle absent (gemessen). Die Kurve
+  ist der Repräsentant vieler gemessener Sichtlinien — kuratierte Klasse,
+  keine je-Sichtlinien-Messung. Konsistenz benannt: deredden trägt
+  Wang&Chen-Faktoren (Gaia-Band-Anpassung), der Kernel die Roh-Kurve — zwei
+  Stände desselben Gesetzes, verschiedene Verbraucher; R_V = 3.1 durchgehend
+  (AV_RQ-Karte, deredden, Kurve), die R_V-Streuung über Sichtlinien ist
+  kuratiert-standardisiert. Individuelle Extinktionskurven je Sichtlinie
+  (aus Sternspektren gemessen) sind das Mess-Regal des Staubes, analog zum
+  DM-Regal — pending, benannt.
 - Gaia XP (Atom B 3): GEBAUT (2026-09-08) — Compiler `gaia_xp_compiler`
   (`--input <TAP-csv> --epoch-tdb <s>` → `xp_spectra.bin` v2, roundtrip-
   geprüft) + `write/parse_xp_spectra_bin` + `xp_bins_from_flux_array` in
