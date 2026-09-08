@@ -15,6 +15,8 @@ const VIZIER_PREFIX: &str = "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-sou
 const VIZIER_SUFFIX: &str = "&-out.max=100000";
 const SPK_URL: &str =
     "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp";
+const URA184_PART3_URL: &str =
+    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -141,8 +143,17 @@ fn main() {
     if let Some(path) = store_asset(SPK_URL, &root, NAIF_NETLOC, "ura111.bsp", true) {
         staged.push((path, NAIF_NETLOC));
     }
-    if staged.len() < 7 {
-        eprintln!("manifestor: {} of 7 assets present", staged.len());
+    if let Some(path) = store_asset(
+        URA184_PART3_URL,
+        &root,
+        NAIF_NETLOC,
+        "ura184_part-3.bsp",
+        true,
+    ) {
+        staged.push((path, NAIF_NETLOC));
+    }
+    if staged.len() < 8 {
+        eprintln!("manifestor: {} of 8 assets present", staged.len());
         std::process::exit(1);
     }
     if !ci_mode {
