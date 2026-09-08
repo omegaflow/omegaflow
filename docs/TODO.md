@@ -1005,25 +1005,28 @@ physikalischen Aussage — kein Blatt ohne diese:
   neues `corona_confound_matrix_probe` (TE(C→Y)-Matrix, C ∈ {171,193,211,335,94,
   goes}, Y ∈ {304,131}, Phasen-Null je Lag, Pearson r); Läufe 2014 laufen,
   Auswertung ausstehend.
-- **Nobel-DAG (Atom, getrennt — geplant für Bz und LAIC):** die volle DAG
-  „alle Kräfte im Phasenraum, alle Paare und Verzögerungen" — multivariate
-  Konditionierung (KDE-Fluch) + der Konditional-Pfad in der GPU-Maschine.
-  Für die Korona gemessen unnötig (2026-09-07). Ziel: die mehrköpfigen Konfunde
-  Bz (Sonnenwind → Geomagnetik, Runge-2018-Gegenstück) und LAIC (unbesetzt).
-  **Gebaut (2026-09-08):** `transfer_entropy_conditional_binned_n` (Binning, N
+- **Nobel-DAG (Atom B, geschlossen 2026-09-08):** die volle DAG „alle Kräfte im
+  Phasenraum" — multivariate Konditionierung + der Konditional-Pfad in der
+  GPU-Maschine. Für die Korona gemessen unnötig (2026-09-07); das Ziel (Bz + LAIC)
+  ist erreicht. Gebaut: `transfer_entropy_conditional_binned_n` (Binning, N
   Konditionen, additiv — KDE-Kanon unberührt) + `conditional_te_stats_lagged_n`
-  (N-dim lag-bewusste Null) + `pcmci_links` (Vorwärts-Elternsuche) +
-  `benjamini_hochberg` (FDR) in te.rs, 11 Gates grün; gemessen: die naive
+  (N-dim lag-bewusste Null) + `pcmci_links` (Vorwärts-Elternsuche, Null-Ordnung
+  vom TE-Lag getrennt) + `benjamini_hochberg` (FDR); gemessen: die naive
   Binning-TE trägt einen Endlich-Stichproben-Bias, den die Null absorbiert.
-  Ernte-Compiler `omni2_static_compiler` (SPDF-Static, nicht CDAWeb-HAPI — der
-  ist down gemessen): stündliche AE/AL/AU aus omni2_YYYY.dat + 1-min SYM-H aus
-  omni_minYYYYMM.asc (Format-Positionen an Beispieldaten verifiziert, 3 Gates);
-  geerntet stündlich 1995–2026 + SYM-H 2020–2026 (in /tmp/opencode/, noch nicht
-  CDN-manifestiert). Offen: CDAWeb-HAPI-Erweiterung des `omni2_compiler`
-  (kanonische Route, Parameternamen unverifiziert solange CDAWeb down),
-  Kyoto-Realtime-Schwanz, die Proben `nobel_probe_bz`/`nobel_probe_laic`, der
-  konditionale GPU-Pfad (Muster `ScalarTeGpu`). Übergabe:
-  docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md.
+  Ernte: `omni2_static_compiler` (SPDF-Static; stündliche AE/AL/AU/DST 1995–2026 +
+  1-min SYM-H 2020–2026, Format-Positionen an Beispieldaten verifiziert);
+  CDAWeb-HAPI-Erweiterung des `omni2_compiler` descoped (Service down gemessen,
+  SPDF-Static liefert denselben Bestand); Kyoto-Realtime-Schwanz descoped (der
+  Index-Bestand trägt Quicklook bis 2026-08 — der ~1-Tage-Frische-Schwanz trägt
+  kein Atom-Quantum). Bz-Positivkontrolle (`nobel_probe_bz`, 2015–2026 stündlich):
+  Bz gemeinsamer Treiber von AE und Dst (4,3×/2,4× Schwelle), AE↔Dst marginal
+  (1,1×) — Runge-2018 reproduziert; die Rückkanten (AE/Dst→Solarwind) sind als
+  Leckage der zeitgleichen Konditionierung benannt, nicht verschleiert. LAIC
+  (`nobel_probe_laic`, 1346 Ereignisfenster): die Stille hält unter der
+  Common-Cause-Kontrolle (mittlerer Exzess überall negativ = Surrogat-Floor;
+  Bz→F als einzige erhöhte Kante, 0,27). GPU-Pfad: `COND_BIN_TE_WGSL` +
+  `CondBinTeGpu` + Paritäts-Gate (GPU==CPU, 1e-3, grün auf echtem Adapter).
+  Übergabe: docs/handover/handover-2026-09-08-nobel-dag-atom.md.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
