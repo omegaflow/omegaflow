@@ -31,6 +31,21 @@ fn te_wgsl_validates_offline() {
 }
 
 #[test]
+fn scalar_te_wgsl_validates_offline() {
+    let module = match naga::front::wgsl::parse_str(SCALAR_TE_WGSL) {
+        Ok(m) => m,
+        Err(e) => panic!("wgsl parse: {}", e.emit_to_string(SCALAR_TE_WGSL)),
+    };
+    let mut validator = naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("wgsl validate: {}", e.emit_to_string(SCALAR_TE_WGSL));
+    }
+}
+
+#[test]
 fn s2_wgsl_validates_offline() {
     let module = match naga::front::wgsl::parse_str(S2_WGSL) {
         Ok(m) => m,
@@ -414,6 +429,7 @@ fn force_ref_medians_holds_reference_on_absence() {
             Arc::new(RwLock::new(DiodeState {
                 force_ref: [0.0; 9],
                 expose_offset: EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
             })),
         )
     };
@@ -459,6 +475,7 @@ fn force_ref_snaps_on_first_sight() {
             Arc::new(RwLock::new(DiodeState {
                 force_ref: [0.0; 9],
                 expose_offset: EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
             })),
         )
     };
@@ -798,6 +815,7 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
             Arc::new(RwLock::new(DiodeState {
                 force_ref: [0.0; 9],
                 expose_offset: EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
             })),
         )
     };
@@ -819,4 +837,288 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
     assert_eq!(epochless.weight, 0.0);
     assert_eq!(app.sky.report().live_count, 1);
     assert_eq!(app.sky.report().osc_count, 2);
+}
+
+const SCALAR_PARITY_TOL: f64 = 1e-3;
+
+fn sg_gate_rng(rng: &mut u64) -> f64 {
+    *rng = rng
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+}
+
+fn sg_gate_ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f32> {
+    let mut v = Vec::with_capacity(n);
+    let mut x = 0.0f64;
+    for _ in 0..n {
+        x = phi * x + sg_gate_rng(rng) * 2.0 - 1.0;
+        v.push(x as f32);
+    }
+    v
+}
+
+fn sg_fr(gpu: &mut ScalarTeGpu, x: &[f32], y: &[f32], lag: usize) -> Option<(f64, f64)> {
+    let grid = gpu.run(x, y, &[]);
+    if grid.is_empty() {
+        return None;
+    }
+    let fv = grid[((0 * 11 + 0) * 13 + lag) * 2 + 1];
+    let rv = grid[((1 * 11 + 0) * 13 + lag) * 2 + 1];
+    if fv == 0.0 || rv == 0.0 {
+        return None;
+    }
+    Some((
+        grid[((0 * 11 + 0) * 13 + lag) * 2] as f64,
+        grid[((1 * 11 + 0) * 13 + lag) * 2] as f64,
+    ))
+}
+
+fn sg_parity_agree(
+    gpu: &mut ScalarTeGpu,
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+) -> Option<(bool, bool, f64, f64)> {
+    let cpu_te = crate::te::transfer_entropy_lag(x, y, lag)?;
+    let (_, _, thr) = crate::te::surrogate_stats_phase(x, y, lag, seed)?;
+    let (gf, _) = sg_fr(gpu, x, y, lag)?;
+    Some((cpu_te > thr, gf > thr, cpu_te, gf))
+}
+
+#[test]
+fn scalar_gpu_parity_fp_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fp gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+    let mut gpu_fp = 0usize;
+    let mut gpu_meas = 0usize;
+    let mut agree = 0usize;
+    let mut agree_tot = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..30 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let x = sg_gate_ar1(300, 0.7, &mut rng);
+        let y = sg_gate_ar1(300, 0.7, &mut rng);
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &x, &y, 0, seed)
+        else {
+            continue;
+        };
+        gpu_meas += 1;
+        if gpu_ab {
+            gpu_fp += 1;
+        }
+        agree_tot += 1;
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    assert!(
+        gpu_meas >= 20,
+        "scalar gpu FP gate: {} of 30 measurable — the machine stays silent too often",
+        gpu_meas
+    );
+    assert!(
+        gpu_fp <= 8,
+        "scalar gpu FP gate: {} of {} above the threshold — the null does not hold on the GPU",
+        gpu_fp,
+        gpu_meas
+    );
+    assert!(
+        agree * 100 >= agree_tot * 95,
+        "scalar gpu FP gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        agree_tot
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FP gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_fn_decision() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu fn gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x517C_C1B7_2722_0A95u64;
+    let mut found = 0usize;
+    let mut meas = 0usize;
+    let mut agree = 0usize;
+    let mut floor_viol = 0usize;
+    for t in 0..20 {
+        let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+        let a: Vec<f32> = (0..300)
+            .map(|_| (sg_gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+            .collect();
+        let b: Vec<f32> = (0..a.len())
+            .map(|i| {
+                if i == 0 {
+                    sg_gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * a[i - 1] as f64 + (sg_gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        let Some((cpu_ab, gpu_ab, cpu_te, gpu_te)) = sg_parity_agree(&mut gpu, &b, &a, 0, seed)
+        else {
+            continue;
+        };
+        meas += 1;
+        if cpu_ab && gpu_ab {
+            found += 1;
+        }
+        if cpu_ab == gpu_ab {
+            agree += 1;
+        }
+        if (gpu_te - cpu_te).abs() > SCALAR_PARITY_TOL * (cpu_te.abs() + 1e-3) {
+            floor_viol += 1;
+        }
+    }
+    if meas == 0 {
+        panic!("scalar gpu FN gate: no coupling measurement succeeded in 20 trials");
+    }
+    assert!(
+        found as f64 / meas as f64 > 0.5,
+        "scalar gpu FN gate: {} of {} true couplings found on the GPU",
+        found,
+        meas
+    );
+    assert!(
+        agree * 100 >= meas * 95,
+        "scalar gpu FN gate: CPU/GPU classification agrees in {}/{}",
+        agree,
+        meas
+    );
+    assert_eq!(
+        floor_viol, 0,
+        "scalar gpu FN gate: {} numeric-floor violations",
+        floor_viol
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_symmetry() {
+    let Some(mut gpu) = ScalarTeGpu::new(1) else {
+        eprintln!("scalar gpu symmetry gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x2722_0A95_517C_C1B7u64;
+    let a = sg_gate_ar1(300, 0.7, &mut rng);
+    let Some((f, r)) = sg_fr(&mut gpu, &a, &a, 0) else {
+        return;
+    };
+    assert!(
+        (f - r).abs() < 1e-3,
+        "scalar gpu symmetry: a=a measures unequal, {} vs {}",
+        f,
+        r
+    );
+}
+
+#[test]
+fn scalar_gpu_parity_n_floor() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu n-floor gate skipped: no adapter");
+        return;
+    };
+    let x = sg_gate_ar1(300, 0.7, &mut 0x9E37_79B9_7F4A_7C15u64);
+    let constant = vec![1.0f32; 300];
+    let gpu_te = crate::te::transfer_entropy_lag(&x, &constant, 0);
+    assert!(
+        gpu_te.is_none(),
+        "scalar CPU constant series must stay absent"
+    );
+    let grid = gpu.run(&x, &constant, &[]);
+    if !grid.is_empty() {
+        let valid = grid[0 + 1];
+        assert_eq!(valid, 0.0, "scalar GPU constant series must stay absent");
+    }
+}
+
+#[test]
+fn scalar_gpu_parity_surrogate_slots_match_cpu() {
+    let Some(mut gpu) = ScalarTeGpu::new(13) else {
+        eprintln!("scalar gpu surrogate-slot gate skipped: no adapter");
+        return;
+    };
+    let mut rng = 0x0FEB_11D1_B2D1_9C93u64;
+    let x = sg_gate_ar1(300, 0.7, &mut rng);
+    let y = sg_gate_ar1(300, 0.7, &mut rng);
+    let mut surrs: Vec<Vec<f32>> = Vec::new();
+    for _ in 0..10 {
+        surrs.push(crate::te::phase_randomized_surrogate(&y, &mut rng));
+    }
+    let grid = gpu.run(&x, &y, &surrs);
+    if grid.is_empty() {
+        return;
+    }
+    let series_at = |k: usize| -> &[f32] {
+        if k == 0 {
+            &y
+        } else {
+            &surrs[k - 1]
+        }
+    };
+    let mut viol = 0usize;
+    let mut meas = 0usize;
+    for dir in 0..2 {
+        for k in 0..11 {
+            for lag in 0..13 {
+                let idx = ((dir * 11 + k) * 13 + lag) * 2;
+                let gpu_te = grid[idx];
+                let gpu_valid = grid[idx + 1];
+                let cpu_te = if dir == 0 {
+                    crate::te::transfer_entropy_lag(&x, series_at(k), lag)
+                } else {
+                    crate::te::transfer_entropy_lag(series_at(k), &x, lag)
+                };
+                match (gpu_valid > 0.0, cpu_te) {
+                    (true, Some(c)) => {
+                        meas += 1;
+                        if (gpu_te as f64 - c).abs() > SCALAR_PARITY_TOL * (c.abs() + 1e-3) {
+                            viol += 1;
+                            eprintln!(
+                                "surrogate slot: dir {} k {} lag {} gpu {} cpu {}",
+                                dir, k, lag, gpu_te, c
+                            );
+                        }
+                    }
+                    (false, None) => {}
+                    (true, None) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu valid, cpu absent",
+                            dir, k, lag
+                        );
+                    }
+                    (false, Some(c)) => {
+                        viol += 1;
+                        eprintln!(
+                            "surrogate slot: dir {} k {} lag {} gpu absent, cpu {}",
+                            dir, k, lag, c
+                        );
+                    }
+                }
+            }
+        }
+    }
+    assert!(
+        meas >= 200,
+        "scalar gpu surrogate-slot gate: only {} of 286 grid slots measurable",
+        meas
+    );
+    assert_eq!(
+        viol, 0,
+        "scalar gpu surrogate-slot gate: {} grid mismatches",
+        viol
+    );
 }
