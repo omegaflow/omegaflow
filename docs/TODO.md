@@ -997,19 +997,14 @@ physikalischen Aussage — kein Blatt ohne diese:
   volle multivariate Klasse bleibt das Nobel-DAG-Atom (ein Tigramite-Lauf ist
   durch die Python-Regel ausgeschlossen). Query-Anker der Prior-Art-0 in
   te-literatur-matrix.md nachgetragen. geschlossen.
-- **Korona-Konditional-Messung 2014 — die heiße Kaskade fällt, robust (2026-09-07,
-  corona_conditional_probe, 989 Ereignisse, max_lag 8, drei Konfunde)**: unter
-  Konditionierung auf die gemeinsame Flare-Hülle hält die unkonditionale heiße
-  Kaskade 193→211→335→94 NICHT stand. 193→211 abwärts bei 96 s unter ALLEN drei
-  Konfunden (GOES −3.64e-2, 335 −1.87e-2, 94 −2.78e-2) — robust; die Richtung
-  war die Hülle (Neupert: das Röntgen treibt die heißen EUV, die Antwortzeit-
-  Asymmetrie sah aus wie Kanal→Kanal-Fluss). Kein robuster Aufwärts-Kandidat:
-  304→131 nur schwach aufwärts, 2/3 (GOES +4.26e-2, 94 +8.08e-3, aber 335 ~0) —
-  kein Überlebender; 131→171 kippt je Konfund (GOES −3.87e-2, 335 +1.75e-2,
-  94 +8.18e-3) — instabil; 171→193 still (3/3). geschlossen.
-- **Konfund-Folge (offen):** (b) Bandbreiten-Check für 304→131 (wie EVE-1032→131);
-  (c) Jahre 2013/2015 mit demselben Konfund. Der 304→131-Befund trägt erst nach
-  (b)+(c) als Verdikt — er ist schwach und konfund-fragil.
+- **304→131: 335-Konfund-Widerspruch (offen):** 304→131 überlebt Bandbreite
+  (h 0.5–3.0), drei Jahre (2013/14/15) und die GOES-/94-Konfunde, aber
+  kollabiert unter C=335 (~0). Warum 335 es bricht, ist offen. Befund + Zahlen
+  im Paper `docs/paper/corona-heating-ladder.md`. Instrumente (2026-09-08):
+  `corona_conditional_probe` druckt die D|C-Zerlegung (TE c→h|C, TE h→c|C) +
+  neues `corona_confound_matrix_probe` (TE(C→Y)-Matrix, C ∈ {171,193,211,335,94,
+  goes}, Y ∈ {304,131}, Phasen-Null je Lag, Pearson r); Läufe 2014 laufen,
+  Auswertung ausstehend.
 - **Nobel-DAG (Atom, getrennt — geplant für Bz und LAIC):** die volle DAG
   „alle Kräfte im Phasenraum, alle Paare und Verzögerungen" — multivariate
   Konditionierung (KDE-Fluch) + der Konditional-Pfad in der GPU-Maschine.
