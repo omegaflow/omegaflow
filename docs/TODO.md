@@ -1858,8 +1858,22 @@ Gebaut (2026-09-06, sub-agents):
     Baryzentrum + ura111xl-799 (799−7), 2-d-Granulen, 0.1-d-Abtastung —
     reproduziert seine Quelle auf RMS 104 m / max 208 m (0.007 mas bei
     Uranus); gemessen gegen Horizons 799 (ura184_merged, DE442-basiert):
-    0.36–1.57e6 m (0.048″ median) — die DE441-gegen-DE442-Linien-Differenz
-    am Planetenzentrum, dieselbe Skala wie der Riss. Der Horizons-Raster-
+    0.36–1.57e6 m (0.048″ median) — die DE441-gegen-DE442-Versionen-Differenz
+    am Planetenzentrum. **Skalen-Konsistenz, nicht Identität:** die
+    1.57·10⁶ m (DE441↔DE442, zwei Auflagen desselben Hauses) gegen die
+    1.59·10⁶ m des Weberin-Risses (DE↔INPOP↔EPM, drei Häuser) — zwei
+    verschiedene Meßpaare, dieselbe Größenordnung; Konsistenz ist ein
+    Zwirn am Riß, keine Bestätigung derselben Zahl. Daß sogar zwei
+    Auflagen desselben Hauses am Zentrum in Riß-Skala divergieren, heißt:
+    die Uranus-Position ist beobachtungsmäßig unterbestimmt (keine zwei
+    Umläufe seit der Entdeckung, ein einziger Besucher 1986, ein
+    Jahrhundert Bogenminuten-Astrometrie) — der Riß ist kein Bureau-Streit.
+    Das Planetenzentrum öffnet drei Bau-Linien — (a) topozentrische
+    Kopplung gegen das Zentrum (die Wobble wird Information statt Störung,
+    sie trägt die Mond-Massen); (b) die Versionen-Differenz als
+    registrierbare Größe an jedem Punkt der Bahn (wo der Riß am größten
+    ist, steht jetzt ein Meßwert); (c) Neptun als zweiter Planet desselben
+    Baus — `pending` je Linie. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
