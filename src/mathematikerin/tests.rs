@@ -877,6 +877,8 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
         evt(30.0, 60.0, Some(8.4e8), Some(187.0)),
         evt(40.0, 50.0, None, Some(9.0)),
     ];
+    app.sky_reload();
+    app.sky.directions.clear();
     app.sky_tick();
     assert_eq!(app.sky.oscs.len(), 2);
     let with_epoch = &app.sky.oscs[0];
