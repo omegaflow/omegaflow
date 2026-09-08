@@ -1747,6 +1747,16 @@ field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_indices.bin
+format omni2_serie
+at earth
+ttl 86400
+field magnetosphere_ae_nt magnetosphere_ae_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_al_nt magnetosphere_al_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_au_nt magnetosphere_au_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_symh_nt magnetosphere_symh_nt inverse-square em nT 60 0.0 0.0
+field magnetosphere_dst_nt magnetosphere_dst_nt inverse-square em nT 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
 format spectral
 on earth 19.82 -155.47 4142.6
