@@ -335,15 +335,48 @@ fn harvest_mode(args: &[String]) {
             skipped_days.len()
         );
     }
-    if has_flag(args, "--ci-mode") {
+    for &year in &years {
+        let mut files: Vec<String> = Vec::new();
         for entry in std::fs::read_dir(&out_dir).into_iter().flatten().flatten() {
-            let path = entry.path().to_string_lossy().to_string();
-            if !path.ends_with(".nc") {
-                continue;
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with(&format!("xr_{}", year)) && name.ends_with(".nc") {
+                files.push(name);
             }
-            eprintln!("upload {} -> cdn tag {}", path, CDN_TAG);
-            if !upload_release(CDN_TAG, &path) {
-                eprintln!("upload {} void", path);
+        }
+        if files.is_empty() {
+            eprintln!(
+                "{} carries no xr_{} day — that year's tar stays unwritten (0 honored)",
+                out_dir, year
+            );
+            continue;
+        }
+        files.sort();
+        let tar_path = format!("goes15_xrs_2s_{}.tar", year);
+        let out = Command::new("tar")
+            .arg("-cf")
+            .arg(&tar_path)
+            .arg("-C")
+            .arg(&out_dir)
+            .args(&files)
+            .output();
+        match out {
+            Ok(o) if o.status.success() => {
+                eprintln!(
+                    "{} files -> {} ({} days, origin verbatim)",
+                    tar_path,
+                    year,
+                    files.len()
+                );
+            }
+            _ => {
+                eprintln!("{}: tar returned void", tar_path);
+                std::process::exit(1);
+            }
+        }
+        if has_flag(args, "--ci-mode") {
+            eprintln!("upload {} -> cdn tag {}", tar_path, CDN_TAG);
+            if !upload_release(CDN_TAG, &tar_path) {
+                eprintln!("upload {} void", tar_path);
                 std::process::exit(1);
             }
         }
