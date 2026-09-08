@@ -91,3 +91,9 @@ jobs:
                  "flatten: ned.json returned void" \
                  "ned chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
+      - name: Persist harvest state (also on failure)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: kernels/ned_state
+          key: ned-chunks-v2
