@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-08
   probe-commit: a480734
-  sha256: 7f65b75c4425baaf09e6692046ca363ba684ef4ba03647f42c20ddb6a3cc098f
+  sha256: 210e8e251e4f0da44d04411ca7b5c8eb598ae588c636332d207cd6360626535a
   status: pending
   see-also: docs/TODO.md docs/handover/handover-2026-09-08-atom-c-offene-pflichten.md docs/specs/spectral-oscillator.md docs/auftrag/auftrag-dispersions-ortungstest.md
 -->
@@ -36,7 +36,7 @@ Dateien) sind der Floor, nicht die Zelle. Damit:
 - δτ_min = **24 s**;
 - δv = C · δτ_min / τ = **1,44e7 m/s** (4,8 % von c bei 1 AU, τ = 499,0 s).
 
-Beide Abschluss-Wortlaute tragen die Zahl **im Text**: „v band-flach gemessen
+Alle drei Abschluss-Wortlaute tragen die Zahl **im Text**: „v band-flach gemessen
 **bis herab zu 24 s Latenz** (24-s-Zellen, 2-s-Rohdaten als Floor)". Die zwei
 Lesungen werden mitgetragen, nie geglättet — Fluss: „24 s ist die Kadenz,
 nicht das Medium"; Berg: „das Flat-Verdikt trägt die benannte Grenze δv".
@@ -133,6 +133,6 @@ Broken-null-Kontrolle (Muster `flare_envelope_*`); `cargo check --workspace`
 
 ## Abschluss
 
-Die TODO-Zeile „Spektrale Achse" wird durch einen der beiden vorab genagelten
+Die TODO-Zeile „Spektrale Achse" wird durch einen der drei vorab genagelten
 Wortlaute ersetzt; Regal + Sonne-als-Kalibrier-Sender werden registriert;
 `probe-commit` ist gefüllt. Bis dahin `pending`.

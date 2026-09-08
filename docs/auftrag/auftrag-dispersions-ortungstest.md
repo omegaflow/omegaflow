@@ -2,7 +2,7 @@
   title: Auftrag — Ortungs-Test: ein Ereignis, drei Kegel, die Sonne als Kalibrier-Referenz
   class: auftrag
   date: 2026-09-08
-  probe-commit: pending
+  probe-commit: a480734
   sha256: 22b698730ec97a99926b69bc9d092f3ffd722c0f21417a66e0be95051c88ffe2
   status: pending
   see-also: docs/auftrag/auftrag-dispersionsrelation.md docs/TODO.md
