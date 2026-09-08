@@ -1367,16 +1367,19 @@ ICRS-4D-Rahmen teilt:
 
 ## Spektrale Achse — offene Pflichten
 
-- Dispersionsrelation: die Laufzeit-Geschwindigkeit bleibt band-flach
-  (v = PROPAGATION_SPEED[force]); eine echte Dispersionsrelation
-  (Rayleigh-Oberflächenwelle) ist pending — die Steckstelle v(freq)
-  steht, kein erfundenes v0·(f/f0)^β (0 honored). Getrennt vom cone mode
-  (descoped, nie gebaut) — zwei Zeilen, nicht eine. Auftrag (2026-09-08,
-  Atom E): `docs/auftrag/auftrag-dispersionsrelation.md` — Messung gegen
-  die band-flache Nullhypothese (Sonne als Kalibrier-Sender, 2514
-  Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
-  beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
-  parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
+- Dispersionsrelation — gemessen (2026-09-08, Atom E + Rayleigh):
+  `v_freq_shelf.dat` trägt beide Messungen mit sha256. (a) em-Pfad,
+  sonnenkalibriert (GOES XRSA/XRSB + 7 AIA, 986 Ereignisse 2014, 24-s-
+  Zellen, Binomial-FDR α=0.05 über 84 Tests): Verdict **quell-seitig** —
+  28 Band-Paare tragen einen Richtungs-Pfeil über der Pforte, aber das
+  ν⁻²-Medium ist null-echt (δτ ≈ 1e-16 s ≪ 24 s) — der Pfeil ist
+  Quell-Antwortordnung (Neupert), keine v(f)-Pflicht; 8 Zeilen v = c mit
+  δv = 1,44e7 m/s. (b) seismic-surface (force 4), M7.8 Indonesien, 19
+  BHZ-Stationen, Goertzel-Band-Zerlegung: Rayleigh-Gruppen-Geschwindigkeit
+  gemessen, 11 Zeilen v_g = 2,90 … 3,74 km/s (20–200 s), Streuung 0,1–0,3
+  km/s — die Kurve fällt aus der Messanordnung. Der Feld-Pfad bleibt
+  unverdrahtet (Konstante = Nullhypothese; das Regal trägt die Messungen).
+  Ortungs-Test parallel: `docs/auftrag/auftrag-dispersions-ortungstest.md`.
 - Extinktionskurve A(λ)/A_V (CCM 1989, R_V = 3.1) — kuratierte Klasse, gebaut
   (2026-09-08): `src/archivar/kernels/ccm89_rv31.dat` (37 Stützstellen
   100–3300 nm) + `parse_extinction`/`extinction_at` in spectral.rs (lineare
