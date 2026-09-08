@@ -1392,15 +1392,15 @@ ICRS-4D-Rahmen teilt:
   (AV_RQ-Karte, deredden, Kurve), die R_V-Streuung über Sichtlinien ist
   kuratiert-standardisiert. Individuelle Extinktionskurven je Sichtlinie
   (aus Sternspektren gemessen) sind das Mess-Regal des Staubes, analog zum
-  DM-Regal — pending, aber gemessen-erneuerbar statt absent (2026-09-08):
-  erntbar sind Fitzpatrick & Massa 2007 (`J/ApJ/663/320`, 328 Sichtlinien
-  mit R_V ± e_RV und FM-Kurvenparametern), Krelowski 1991 (`II/175`, 166
-  UV-Kurven mit λ-Achse), Zuo 2021 (`J/ApJS/257/63`, 81 mit R_V ± e),
-  Wegner 2003 (`J/AN/324/219`, 597 R = A(V)/E(B−V) ± rms) — alle HTTP 200;
-  zusammen ~1000 Sichtlinien, IUE-alt und OB-selektiert. Ein moderner
-  großflächiger je-Sichtlinien-Katalog ist absent: Gaia/GSP-Phot (470 M)
-  und Zhang+ 2023 kuratieren R_0 = 3.1 statt je-Sichtlinie zu messen. Die
-  Ernte wäre das Pulsar-DM-Gegenstück (ein Wert ± Fehler je Objekt), schmal.
+  DM-Regal — GEBAUT (2026-09-08): `extinction_curves_compiler`
+  (`tools/harvest`, VizieR `J/ApJ/663/320` = Fitzpatrick & Massa 2007) →
+  CDN-Asset `extinction_curves.json` (328 Sichtlinien: name/ra/dec,
+  E(B−V)±e, R(V)±e_RV, FM-Kurvenparameter x0/γ/c1–c5), sha256-Sidecar,
+  Workflow `extinction-curves-cdn.yml`, `sources.φ`-Block (rv/e_rv/ebv/e_ebv).
+  Zusammen mit Krelowski 1991 (`II/175`, 166 UV-Kurven mit λ-Achse),
+  Zuo 2021 (81) und Wegner 2003 (597) erntbar — IUE-alt, OB-selektiert.
+  Ein moderner großflächiger je-Sichtlinien-Katalog ist absent: Gaia/GSP-Phot
+  (470 M) und Zhang+ 2023 kuratieren R_0 = 3.1 statt je-Sichtlinie zu messen.
 - Gaia XP (Atom B 3): GEBAUT (2026-09-08) — Compiler `gaia_xp_compiler`
   (`--input <TAP-csv> --epoch-tdb <s>` → `xp_spectra.bin` v2, roundtrip-
   geprüft) + `write/parse_xp_spectra_bin` + `xp_bins_from_flux_array` in
