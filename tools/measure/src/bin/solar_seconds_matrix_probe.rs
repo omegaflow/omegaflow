@@ -1,5 +1,7 @@
 use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::scalar_te_gpu::ScalarTeGpu;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use std::sync::Mutex;
 
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
 const DT: f64 = 24.0;
@@ -272,44 +274,6 @@ fn window_pairs(
     out
 }
 
-fn stack_pass(windows: &[WindowPair], lag: usize, shuffle: bool, seed: u64) -> (f64, usize, usize, f64) {
-    let mut sum = 0.0;
-    let mut pos = 0usize;
-    let mut tot = 0usize;
-    let mut cell_sum = 0.0;
-    for (idx, w) in windows.iter().enumerate() {
-        let (f, r) = if shuffle {
-            let mut rng = seed.wrapping_add(idx as u64 * 0x9E37_79B9_7F4A_7C15);
-            let y_sur = phase_randomized_surrogate(&w.y, &mut rng);
-            let (Some(f), Some(r)) = (
-                transfer_entropy_lag(&w.x, &y_sur, lag),
-                transfer_entropy_lag(&y_sur, &w.x, lag),
-            ) else {
-                continue;
-            };
-            (f, r)
-        } else {
-            let (Some(f), Some(r)) = (
-                transfer_entropy_lag(&w.x, &w.y, lag),
-                transfer_entropy_lag(&w.y, &w.x, lag),
-            ) else {
-                continue;
-            };
-            (f, r)
-        };
-        let d = f - r;
-        let scale = f.abs() + r.abs();
-        let term = if scale > 0.0 { d / scale } else { 0.0 };
-        sum += term;
-        if d > 0.0 {
-            pos += 1;
-        }
-        tot += 1;
-        cell_sum += w.x.len() as f64;
-    }
-    (sum, pos, tot, cell_sum)
-}
-
 struct Row {
     from: usize,
     to: usize,
@@ -329,8 +293,76 @@ fn row_for(
     to: usize,
     half: usize,
     min_cells: usize,
+    gpu: Option<&Mutex<ScalarTeGpu>>,
 ) -> Row {
     let windows = window_pairs(cells, events, from, to, half, min_cells);
+    let mut surrogates: Vec<Vec<Vec<f32>>> = Vec::with_capacity(windows.len());
+    for (idx, w) in windows.iter().enumerate() {
+        let mut per = Vec::with_capacity(N_SURR);
+        for s in 1..=N_SURR {
+            let base = SURROGATE_SEED
+                ^ (from as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+                ^ (to as u64).wrapping_mul(0x517C_C1B7_2722_0A95)
+                ^ (s as u64).wrapping_mul(0x0FEB_11D1_B2D1_9C93);
+            let mut rng = base.wrapping_add(idx as u64 * 0x9E37_79B9_7F4A_7C15);
+            per.push(phase_randomized_surrogate(&w.y, &mut rng));
+        }
+        surrogates.push(per);
+    }
+    let grids: Option<Vec<Vec<f32>>> = gpu.map(|g| {
+        windows
+            .iter()
+            .zip(surrogates.iter())
+            .map(|(w, surr)| g.lock().unwrap().run(&w.x, &w.y, surr))
+            .collect()
+    });
+    let measure = |lag: usize, sel: Option<usize>| -> (f64, usize, usize, f64) {
+        let mut sum = 0.0;
+        let mut pos = 0usize;
+        let mut tot = 0usize;
+        let mut cell_sum = 0.0;
+        for (idx, w) in windows.iter().enumerate() {
+            let (f, r) = match &grids {
+                Some(grids) => {
+                    let k = match sel {
+                        None => 0usize,
+                        Some(s) => 1 + s,
+                    };
+                    let fv = grids[idx][((0 * 11 + k) * 13 + lag) * 2 + 1];
+                    let rv = grids[idx][((1 * 11 + k) * 13 + lag) * 2 + 1];
+                    if fv == 0.0 || rv == 0.0 {
+                        continue;
+                    }
+                    let f = grids[idx][((0 * 11 + k) * 13 + lag) * 2] as f64;
+                    let r = grids[idx][((1 * 11 + k) * 13 + lag) * 2] as f64;
+                    (f, r)
+                }
+                None => {
+                    let y = match sel {
+                        None => &w.y,
+                        Some(s) => &surrogates[idx][s],
+                    };
+                    let (Some(f), Some(r)) = (
+                        transfer_entropy_lag(&w.x, y, lag),
+                        transfer_entropy_lag(y, &w.x, lag),
+                    ) else {
+                        continue;
+                    };
+                    (f, r)
+                }
+            };
+            let d = f - r;
+            let scale = f.abs() + r.abs();
+            let term = if scale > 0.0 { d / scale } else { 0.0 };
+            sum += term;
+            if d > 0.0 {
+                pos += 1;
+            }
+            tot += 1;
+            cell_sum += w.x.len() as f64;
+        }
+        (sum, pos, tot, cell_sum)
+    };
     let mut surr_max = f64::NEG_INFINITY;
     let mut best: Option<(usize, f64)> = None;
     let mut best_thr = f64::NAN;
@@ -338,20 +370,11 @@ fn row_for(
     let mut best_tot = 0usize;
     let mut best_cells = f64::NAN;
     for lag in 0..=LAG_MAX {
-        let (sum, pos, tot, cell_sum) = stack_pass(&windows, lag, false, 0);
-        let d = if tot > 0 {
-            sum / tot as f64
-        } else {
-            f64::NAN
-        };
+        let (sum, pos, tot, cell_sum) = measure(lag, None);
+        let d = if tot > 0 { sum / tot as f64 } else { f64::NAN };
         let mut surr_vals: Vec<f64> = Vec::new();
-        for s in 1..=N_SURR {
-            let seed = SURROGATE_SEED
-                ^ (from as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
-                ^ (to as u64).wrapping_mul(0x517C_C1B7_2722_0A95)
-                ^ (lag as u64).wrapping_mul(0xD1B5_4A32_D192_ED03)
-                ^ (s as u64).wrapping_mul(0x0FEB_11D1_B2D1_9C93);
-            let (ss, _, stot, _) = stack_pass(&windows, lag, true, seed);
+        for s in 0..N_SURR {
+            let (ss, _, stot, _) = measure(lag, Some(s));
             if stot > 0 {
                 surr_vals.push(ss / stot as f64);
             }
@@ -531,7 +554,10 @@ fn main() {
     for (yi, dir) in goes_dirs.iter().enumerate() {
         let series = dir_xrs_series(dir, "b_flux", "b_flags");
         if series.is_empty() {
-            eprintln!("{} carries no b_flux - that year's flare record stays unmeasured", dir);
+            eprintln!(
+                "{} carries no b_flux - that year's flare record stays unmeasured",
+                dir
+            );
         } else {
             let yr_grid = bin_median(&series, YEAR_UNIX[yi], year_cells);
             place(&mut xrsb_grid, &yr_grid, yi * year_cells);
@@ -540,7 +566,10 @@ fn main() {
     for (yi, dir) in goes_dirs.iter().enumerate() {
         let series = dir_xrs_series(dir, "a_flux", "a_flags");
         if series.is_empty() {
-            eprintln!("{} carries no a_flux - that year's XRSA channel stays unmeasured", dir);
+            eprintln!(
+                "{} carries no a_flux - that year's XRSA channel stays unmeasured",
+                dir
+            );
         } else {
             let yr_grid = bin_median(&series, YEAR_UNIX[yi], year_cells);
             place(&mut xrsa_grid, &yr_grid, yi * year_cells);
@@ -612,19 +641,39 @@ fn main() {
         .min(16)
         .min(pairs.len());
     let chunk = pairs.len().div_ceil(n_threads);
+    let gpu = ScalarTeGpu::new(LAG_MAX + 1).map(Mutex::new);
+    match &gpu {
+        Some(_) => println!("Scalar TE path: WebGPU device present - the KDE runs on the GPU."),
+        None => println!("Scalar TE path: no WebGPU device - the KDE stays on the CPU."),
+    }
+    let gpu_ref: Option<&Mutex<ScalarTeGpu>> = gpu.as_ref();
+    let names_ref = &names;
     let mut rows: Vec<Row> = std::thread::scope(|scope| {
         let handles: Vec<_> = pairs
             .chunks(chunk)
             .map(|chunk_pairs| {
                 let cells_ref = &cells;
                 let events_ref = &events;
+                let names_c = names_ref;
                 scope.spawn(move || {
-                    chunk_pairs
-                        .iter()
-                        .map(|&(fi, ti)| {
-                            row_for(cells_ref, events_ref, fi, ti, window_cells, min_cells)
-                        })
-                        .collect::<Vec<_>>()
+                    let mut out = Vec::with_capacity(chunk_pairs.len());
+                    for &(fi, ti) in chunk_pairs {
+                        let r = row_for(
+                            cells_ref,
+                            events_ref,
+                            fi,
+                            ti,
+                            window_cells,
+                            min_cells,
+                            gpu_ref,
+                        );
+                        eprintln!(
+                            "row {:>6} -> {:<6} complete: {} events",
+                            names_c[fi], names_c[ti], r.n_ev
+                        );
+                        out.push(r);
+                    }
+                    out
                 })
             })
             .collect();
