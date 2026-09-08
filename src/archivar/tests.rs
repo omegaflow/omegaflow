@@ -2526,6 +2526,74 @@ fn test_wgccre_roundtrip() {
 }
 
 #[test]
+fn test_earth_zenith_geometry() {
+    use std::collections::HashMap;
+    let jd = 2448782.70138981;
+    let tdb = (jd - super::J2000_EPOCH) * 86400.0;
+    let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+    cx[0] = 1.5e9;
+    let props = super::BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some(0.0033528131084554157),
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let granule = super::ChebyshevGranule {
+        t0_jd: super::J2000_EPOCH - 0.0,
+        dt_jd: 5000.0,
+        cx,
+        cy: [0.0; super::CHEBYSHEV_N],
+        cz: [0.0; super::CHEBYSHEV_N],
+    };
+    let eph = super::BodyEphemeris {
+        granules: vec![granule],
+        rotation_matrices: vec![],
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
+    };
+    let mut map = HashMap::new();
+    map.insert("earth".to_string(), eph);
+    let p = super::body_fixed_to_icrs("earth", -22.534444444, -45.5825, 1810.7, tdb, &map).unwrap();
+    let b = super::body_barycenter_position("earth", tdb, &map).unwrap();
+    let w = [p[0] - b[0], p[1] - b[1], p[2] - b[2]];
+    let n = (w[0] * w[0] + w[1] * w[1] + w[2] * w[2]).sqrt();
+    let lat = (w[2] / n).asin().to_degrees();
+    let ra = w[1].atan2(w[0]).to_degrees().rem_euclid(360.0);
+    let d = jd - 2451545.0;
+    let t = d / 36525.0;
+    let gmst = (280.46061837 + 360.98564736629 * d + 0.000387933 * t * t - t * t * t / 38710000.0)
+        .rem_euclid(360.0);
+    let ra_expect = (gmst + (-45.5825)).rem_euclid(360.0);
+    assert!(
+        (lat - (-22.3989)).abs() < 0.01,
+        "station geocentric latitude {lat} vs -22.3989"
+    );
+    assert!(
+        (ra - ra_expect).abs() < 0.6,
+        "station RA {ra} vs GMST+lon {ra_expect}"
+    );
+}
+
+#[test]
 fn test_rotation_matrix_roundtrip() {
     use std::collections::HashMap;
     let tdb = 3.0 * 86400.0;
