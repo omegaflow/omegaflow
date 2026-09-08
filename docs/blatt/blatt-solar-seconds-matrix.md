@@ -2,7 +2,7 @@
   title: BLATT — Die Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweislauf (XRS treibt die heißen EUV-Bänder)
   class: sheet
   date: 2026-09-08
-  sha256: 581b62f47c7c465bba389a4050d5949a184c3b75091cf3fdc31f3e0e86f13c7d
+  sha256: 4c5dc35b3fe755ef6bdd0bb393832f55f99c16ee1ccddfeb044ee67dea2d6a46
   status: live
   see-also: docs/TODO.md docs/specs/spectral-oscillator.md
 -->
@@ -36,6 +36,16 @@ XRS-intern (2) bound 1 / still 1.
 | XRSA → 131A | 192 s | 1.468e-1 | ja | XRS → AIA |
 | XRSB → 131A | 96 s | 1.644e-1 | ja | XRS → AIA |
 | XRSB → 193A | 96 s | 1.485e-1 | ja | XRS → AIA |
+
+## Der Schlichtungsfall (pending)
+
+**211A → 193A** — der einzige intra-AIA-Pfeil — trägt nur einen Zeugen (die
+Matrix selbst): 211 und 193 antworten beide auf das Röntgen mit etwas
+unterschiedlicher Verzögerung, und die paarweise TE liest das als „211 treibt
+193". Das ist dieselbe Klasse (intra-AIA, geteilter Treiber), an der die
+konditionale Sonde ihre Hüllen-Artefakt-Kippe maß. Stufe 2 der Arbeitsteilung:
+die Matrix siebt, die konditionale Sonde schlichtet. Der Pfeil ist `pending`
+der konditionalen Prüfung — ehrlich etikettiert, nicht überinterpretiert.
 
 ## Das Verdikt
 
