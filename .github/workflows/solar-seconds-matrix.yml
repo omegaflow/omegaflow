@@ -28,15 +28,28 @@ jobs:
             data/ncei.noaa.gov/goes15_2013 \
             data/ncei.noaa.gov/goes15 \
             data/ncei.noaa.gov/goes15_2015
-          gh release download jsoc.stanford.edu --repo omegaflow/sources \
-            --pattern 'aia2013_fullyear.bin' --pattern 'aia2014_0?.bin' \
-            --pattern 'aia2014_1?.bin' --pattern 'aia2015_fullyear.bin' \
-            --clobber --dir data/jsoc.stanford.edu
-          gh release download ncei.noaa.gov --repo omegaflow/sources \
-            --pattern 'goes15_xrs_2s_*.tar' --clobber
-          tar -xf goes15_xrs_2s_2013.tar -C data/ncei.noaa.gov/goes15_2013
-          tar -xf goes15_xrs_2s_2014.tar -C data/ncei.noaa.gov/goes15
-          tar -xf goes15_xrs_2s_2015.tar -C data/ncei.noaa.gov/goes15_2015
+          for attempt in 1 2 3; do
+            gh release download jsoc.stanford.edu --repo omegaflow/sources \
+              --pattern 'aia2013_fullyear.bin' --pattern 'aia2014_0?.bin' \
+              --pattern 'aia2014_1?.bin' --pattern 'aia2015_fullyear.bin' \
+              --clobber --dir data/jsoc.stanford.edu \
+              && gh release download ncei.noaa.gov --repo omegaflow/sources \
+              --pattern 'goes15_xrs_2s_*.tar' --clobber \
+              && tar -xf goes15_xrs_2s_2013.tar -C data/ncei.noaa.gov/goes15_2013 \
+              && tar -xf goes15_xrs_2s_2014.tar -C data/ncei.noaa.gov/goes15 \
+              && tar -xf goes15_xrs_2s_2015.tar -C data/ncei.noaa.gov/goes15_2015 \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/jsoc.stanford.edu/aia2013_fullyear.bin
+          test -s data/jsoc.stanford.edu/aia2015_fullyear.bin
+          for d in data/ncei.noaa.gov/goes15_2013 data/ncei.noaa.gov/goes15 data/ncei.noaa.gov/goes15_2015; do
+            test -n "$(find "$d" -name 'xr_*.nc' | head -1)" || {
+              echo "$d carries no xr corpus after the retry (0 honored)"
+              exit 1
+            }
+          done
       - name: Anchor the corpus
         run: |
           echo "SHA $(git rev-parse HEAD)" > "report-${{ matrix.pair }}.txt"
