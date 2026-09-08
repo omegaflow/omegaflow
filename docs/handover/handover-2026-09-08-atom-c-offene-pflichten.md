@@ -2,7 +2,7 @@
   title: Handover — Atom C geschlossen: die offenen Pflichten der Spektralen Achse
   class: handover
   date: 2026-09-08
-  sha256: 232cab9a670c3607493e25a3a3d6448c894c3119364983f6a40df121c28fc487
+  sha256: 446f2a86384441d003026ee40f7f4394c4af2c6a2f5a6b3852b330c052d0a898
   status: live
   see-also: docs/TODO.md docs/concepts/archivar-mathematikerin.md docs/specs/spectral-oscillator.md docs/befund/befund-todo-gegen-code-leichen.md
 -->
@@ -49,15 +49,9 @@ Der Browser-Render-Zweig (index.html, constants.js, fieldShader) existierte in
 keinem Commit — gemessen in `befund-todo-gegen-code-leichen.md`. Eine
 Wiederbelebung wäre ein eigener Auftrag, keine offene Pflicht dieser Sitzung.
 
-## 5. Register-Korrektur (fällig)
+## 5. Register
 
-Die `TODO.md`-Zeile „Band-Gate" nennt noch das Threading
-(`SenseReq.band`/`sense_membrane`/`emit_curves`) — die finale Implementierung
-ist der Postfilter im Omega-Loop (`SenseReq.band` + `PresenceState.band` +
-`records.retain`). Die Zeile ist auf „Postfilter" zu stellen.
-
-## 6. Register
-
-Die drei Wahrheiten stehen in `docs/TODO.md` (Spektrale Achse) und der
-Blattkorrektur in `docs/concepts/archivar-mathematikerin.md`. TODO trägt nur
-pending; Geschlossenes liegt im Commit.
+Die eine offene Pflicht steht in `docs/TODO.md` (Spektrale Achse, Dispersionsrelation);
+die Blattkorrekturen (cone mode descoped, em-Pfad `color_emission`/`color_lut_rgba`)
+in `docs/concepts/archivar-mathematikerin.md`. TODO trägt nur pending; Geschlossenes
+liegt im Commit.
