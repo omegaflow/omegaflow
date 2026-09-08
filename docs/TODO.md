@@ -1882,12 +1882,23 @@ Gebaut (2026-09-06, sub-agents):
     docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md;
     (b) die Versionen-Differenz als
     registrierbare Größe an jedem Punkt der Bahn (wo der Riß am größten
-    ist, steht jetzt ein Meßwert); (c) Neptun als zweiter Planet desselben
+    ist, steht jetzt ein Meßwert) — der SCHLÜSSEL nach (a): das reduzierte
+    RMS liegt jetzt auf Riß-Skala (69–73 mas gegen den 27–48-mas-Riß), aber
+    die drei reduzierten RMS sind fast identisch (69–73) — verdict (ii)
+    bleibt, sein Grund wechselt („zu unscharf" → „scharf genug, die Linien
+    sind trotzdem ununterscheidbar"); die Schlichtung wird nicht im
+    Gesamtmittel entschieden (dort sind alle gleich), sondern in der
+    systematischen per-Punkt-Struktur unter dem Rauschen — Epochen und
+    Regionen, wo eine Linie systematisch besser trägt; der Übergang (ii)→(i)
+    läuft durch dieses Atom; (c) Neptun als zweiter Planet desselben
     Baus — `pending` je Linie. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
-    phi/sources.φ), der kernel-flatten-CI-Schritt steht (dispatch läuft).
+    phi/sources.φ); der kernel-flatten-CI-Schritt ist fixiert (Commit-Step
+    addete die gitignore-Ableitung sources_index.φ → bodies geskippt;
+    behoben + Push-Retry) und re-dispatched — die CDN-200-Verifikation von
+    ephemeris_uranus_c.bin ist in flight.
     Die alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
     Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
     Parallaxe, eine Diskrepanz besteht nicht.
