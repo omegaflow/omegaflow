@@ -232,6 +232,72 @@ pub fn transfer_entropy_conditional(x: &[f32], y: &[f32], c: &[f32], lag: usize)
     Some(te / m as f64)
 }
 
+pub fn transfer_entropy_conditional_2(
+    x: &[f32],
+    y: &[f32],
+    c1: &[f32],
+    c2: &[f32],
+    lag: usize,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || y.len() < n || c1.len() < n || c2.len() < n {
+        return None;
+    }
+    if lag == 0 {
+        return transfer_entropy_conditional_2(x, y, c1, c2, 1);
+    }
+    let m = n - lag;
+    if m < 8 {
+        return None;
+    }
+    let hx = silverman(x)?;
+    let hy = silverman(y)?;
+    let h1 = silverman(c1)?;
+    let h2 = silverman(c2)?;
+    let mut te = 0.0;
+    for t in 0..m {
+        let xt = x[t] as f64;
+        let xk = x[t + lag] as f64;
+        let yt = y[t] as f64;
+        let z1 = c1[t] as f64;
+        let z2 = c2[t] as f64;
+        let mut k5 = 0.0;
+        for s in 0..m {
+            k5 += gaussian(xk - x[s + lag] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy)
+                * gaussian(z1 - c1[s] as f64, h1)
+                * gaussian(z2 - c2[s] as f64, h2);
+        }
+        let p5 = k5 / m as f64;
+        let mut k3 = 0.0;
+        for s in 0..n {
+            k3 += gaussian(xt - x[s] as f64, hx)
+                * gaussian(z1 - c1[s] as f64, h1)
+                * gaussian(z2 - c2[s] as f64, h2);
+        }
+        let p3 = k3 / n as f64;
+        let mut k4a = 0.0;
+        for s in 0..n {
+            k4a += gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy)
+                * gaussian(z1 - c1[s] as f64, h1)
+                * gaussian(z2 - c2[s] as f64, h2);
+        }
+        let p4a = k4a / n as f64;
+        let mut k4b = 0.0;
+        for s in 0..m {
+            k4b += gaussian(xk - x[s + lag] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(z1 - c1[s] as f64, h1)
+                * gaussian(z2 - c2[s] as f64, h2);
+        }
+        let p4b = k4b / m as f64;
+        te += ((p5 * p3) / (p4a * p4b).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
 fn ols_fit(y: &[f32], c: &[f32]) -> Option<(f64, f64)> {
     if y.len() < 2 || y.len() != c.len() {
         return None;
@@ -457,6 +523,120 @@ pub fn conditional_te_stats_lagged(
     for _ in 0..n_surr {
         let ys = residual_surrogate_conditional_lagged(y, c, max_lag, &mut rng);
         if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
+            vals.push(te);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let n = vals.len() as f64;
+    let mean = vals.iter().sum::<f64>() / n;
+    let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
+    let sd = var.sqrt();
+    Some((mean, sd, mean + 2.0 * sd))
+}
+
+fn ols_fit_lagged_2(y: &[f32], c1: &[f32], c2: &[f32], max_lag: usize) -> Option<Vec<f64>> {
+    let n = y.len();
+    if n < max_lag + 4 || y.len() != c1.len() || y.len() != c2.len() {
+        return None;
+    }
+    let k = 1 + max_lag + (max_lag + 1) + (max_lag + 1);
+    let mut a = vec![0f64; k * k];
+    let mut b = vec![0f64; k];
+    for t in max_lag..n {
+        let mut row = Vec::with_capacity(k);
+        row.push(1.0);
+        for l in 1..=max_lag {
+            row.push(y[t - l] as f64);
+        }
+        for l in 0..=max_lag {
+            row.push(c1[t - l] as f64);
+        }
+        for l in 0..=max_lag {
+            row.push(c2[t - l] as f64);
+        }
+        let yt = y[t] as f64;
+        for i in 0..k {
+            b[i] += row[i] * yt;
+            for j in 0..k {
+                a[i * k + j] += row[i] * row[j];
+            }
+        }
+    }
+    solve_linear(&a, &b, k)
+}
+
+fn lagged_predict_2(
+    coeffs: &[f64],
+    y: &[f32],
+    c1: &[f32],
+    c2: &[f32],
+    t: usize,
+    max_lag: usize,
+) -> f64 {
+    let mut v = coeffs[0];
+    for l in 1..=max_lag {
+        v += coeffs[l] * y[t - l] as f64;
+    }
+    for l in 0..=max_lag {
+        v += coeffs[1 + max_lag + l] * c1[t - l] as f64;
+    }
+    for l in 0..=max_lag {
+        v += coeffs[2 + 2 * max_lag + l] * c2[t - l] as f64;
+    }
+    v
+}
+
+fn residual_surrogate_conditional_lagged_2(
+    y: &[f32],
+    c1: &[f32],
+    c2: &[f32],
+    max_lag: usize,
+    rng: &mut u64,
+) -> Vec<f32> {
+    let n = y.len();
+    match ols_fit_lagged_2(y, c1, c2, max_lag) {
+        Some(coeffs) => {
+            let mut resid: Vec<f64> = (max_lag..n)
+                .map(|t| y[t] as f64 - lagged_predict_2(&coeffs, y, c1, c2, t, max_lag))
+                .collect();
+            for i in (1..resid.len()).rev() {
+                *rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                let j = ((*rng >> 33) as usize) % (i + 1);
+                resid.swap(i, j);
+            }
+            let mut out = vec![0f32; n];
+            for t in 0..n {
+                out[t] = if t < max_lag {
+                    y[t]
+                } else {
+                    (lagged_predict_2(&coeffs, y, c1, c2, t, max_lag) + resid[t - max_lag]) as f32
+                };
+            }
+            out
+        }
+        None => shuffle_series(y, rng),
+    }
+}
+
+pub fn conditional_te_stats_lagged_2(
+    x: &[f32],
+    y: &[f32],
+    c1: &[f32],
+    c2: &[f32],
+    lag: usize,
+    max_lag: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<(f64, f64, f64)> {
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..n_surr {
+        let ys = residual_surrogate_conditional_lagged_2(y, c1, c2, max_lag, &mut rng);
+        if let Some(te) = transfer_entropy_conditional_2(x, &ys, c1, c2, lag) {
             vals.push(te);
         }
     }
@@ -2160,5 +2340,70 @@ mod tests {
             te_ba,
             thr_ba
         );
+    }
+
+    #[test]
+    fn conditional_te_2_suppresses_two_drivers() {
+        let n = 400;
+        let c1: Vec<f32> = (0..n).map(|t| (t as f32 * 0.23).sin()).collect();
+        let c2: Vec<f32> = (0..n).map(|t| (t as f32 * 0.11).cos()).collect();
+        let mut rng = 0x0FEB_11D1_B2D1_9C93u64;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let x: Vec<f32> = c1
+            .iter()
+            .zip(&c2)
+            .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
+            .collect();
+        let y: Vec<f32> = c1
+            .iter()
+            .zip(&c2)
+            .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
+            .collect();
+        let te_1 =
+            transfer_entropy_conditional(&x, &y, &c1, 1).expect("one-confounder TE resolves");
+        let te_2 = transfer_entropy_conditional_2(&x, &y, &c1, &c2, 1)
+            .expect("two-confounder TE resolves");
+        assert!(
+            te_2 < te_1,
+            "two-confounder must remove more than one-confounder, got 2:{te_2} >= 1:{te_1}"
+        );
+        assert!(
+            te_2.abs() < 0.05,
+            "two-confounder should suppress the shared-driver pair to near zero, got {te_2}"
+        );
+    }
+
+    #[test]
+    fn conditional_te_2_surrogate_stats_threshold_is_finite() {
+        let n = 300;
+        let c1: Vec<f32> = (0..n).map(|t| (t as f32 * 0.26).sin()).collect();
+        let c2: Vec<f32> = (0..n).map(|t| (t as f32 * 0.13).cos()).collect();
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let x: Vec<f32> = c1
+            .iter()
+            .zip(&c2)
+            .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
+            .collect();
+        let y: Vec<f32> = c1
+            .iter()
+            .zip(&c2)
+            .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
+            .collect();
+        let (mean, sd, threshold) =
+            conditional_te_stats_lagged_2(&x, &y, &c1, &c2, 1, 1, 0x9E37_79B9_7F4A_7C15, 10)
+                .expect("stats resolve");
+        assert!(mean.is_finite() && sd.is_finite() && threshold.is_finite());
+        assert!(threshold >= mean);
     }
 }
