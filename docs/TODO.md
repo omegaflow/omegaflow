@@ -21,9 +21,10 @@ dispatched (Run 34165617384). **52-vs-30 — umgesetzt:** der `HOURLY_KATALOG`
 (51 Variablen) ist gestrichen; der Manifestator liest die Variablen jetzt aus
 dem Event (`variables`-Array in `config/meteo/tibet-flut-2026.json` = genau die
 30 registrierten). A = A: das Event trägt das Registrierte, kein hartkodiertes
-Superset. Offen: die ~63 Orphan-Assets (21 Extra-Variablen × 3 Stationen) aus
-dem früheren 51-Variablen-Lauf liegen noch auf der CDN — Reconcile/Delete
-pending.
+Superset. Geschlossen: die 65 Orphan-Assets (21 Extra-Variablen × 3 Stationen
++ archive.json/auto.json) vom 51-Variablen-Lauf gelöscht — der Release trägt
+jetzt genau 90 Assets (30 × 3 Stationen = die Registrierung). Re-Dispatch
+(34190317919) grün.
 
 ## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
 
