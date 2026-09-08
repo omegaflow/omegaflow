@@ -56,12 +56,17 @@ Befund heißt `pending`. Jeder Befund trägt das Datum der Messung.
   14 helle TNOs (pluto 230 … varda 278 Transits; Sedna/Gonggong absent). Jede
   breite Katalog-Alternative (JPL SBDB/DASTCOM 7287, Horizons-SPK, AstDyS,
   Lowell astorb, Johnston) ist MPC-root — dieselbe Abstammung, keine zweite.
-- Offen: Gibt es eine offene, von der MPC-Astrometrie unabhängige Orbit-Linie
-  für die breite TNO-Menge — die DES-Orbit-Lösungen (Deep Ecliptic Survey,
-  Buie/SWRI) als eigene Fits mit eigenen CCD-Positionen, OSSOS/CFEPS publizierte
-  Orbit-Kataloge, oder ein anderer unabhängiger Astrometrie-Bestand (eigene
-  Durchmusterung, nicht MPC)? Gemessen: Route, Format (Orbit-Tabelle mit
-  Position ja/nein), Umfang (wie viele TNOs), Zugang, HTTP-Status.
+- Gemessen und gebaut (2026-09-08): die zwei großen unabhängigen Survey-Wurzeln
+  sind geerntet — DES-Y6 (`des_y6_tno.bin`, 814, ICRS-Zustandsvektoren,
+  CDS J/ApJS/258/41) und OSSOS. VII (`ossos_tno.bin`, 840, baryzentrische
+  Elemente, CDS J/ApJS/236/18). Vier unabhängige Wurzeln stehen damit: MPC,
+  CFHT-Survey (OSSOS), DES-Survey (DES-Y6), Gaia.
+- `descoped` (gemessen freigegeben, nie gebaut, nicht nötig): **CFEPS** und
+  **Buie-DES** tragen dieselbe Wurzel wie bereits gebaute Zeugen — CFEPS
+  (Petit+ 2011) ist die frühere Auswertung derselben CFHT/MegaCam-Astrometrie
+  wie OSSOS; Buie-DES (Buie/Bernstein) ist die frühere Auswertung derselben
+  DES/DECam-Astrometrie wie DES-Y6. „Kopien zählen als ein Faden" — sie wären
+  dieselbe Linie, kein neuer Zeuge.
 
 ### 3. Sonden-Zweitlinie — offene Positions-Astrometrie (VLBI/ΔDOR/Range)
 
