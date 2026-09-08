@@ -1017,7 +1017,7 @@ physikalischen Aussage — kein Blatt ohne diese:
   1-min SYM-H 2020–2026, Format-Positionen an Beispieldaten verifiziert);
   CDAWeb-HAPI-Erweiterung des `omni2_compiler` descoped (Service down gemessen,
   SPDF-Static liefert denselben Bestand); Kyoto-Realtime-Schwanz descoped (der
-  Index-Bestand trägt Quicklook bis 2026-08 — der ~1-Tage-Frische-Schwanz trägt
+  SPDF-Quicklook trägt AE bis Tag 228 / DST bis Tag 243; der ~8-Tage-Schwanz trägt
   kein Atom-Quantum). Bz-Positivkontrolle (`nobel_probe_bz`, 2015–2026 stündlich):
   Bz gemeinsamer Treiber von AE und Dst (4,3×/2,4× Schwelle), AE↔Dst marginal
   (1,1×) — Runge-2018 reproduziert; die Rückkanten (AE/Dst→Solarwind) sind als
