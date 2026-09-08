@@ -1,0 +1,35 @@
+name: gaia-xp-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gaia-xp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch Gaia DR3 XP spectra (TAP async) and compile to xp_spectra.bin
+        run: |
+          mkdir -p kernels
+          QUERY="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id"
+          curl -sS -D kernels/job.headers -o kernels/job.body \
+            --data-urlencode "REQUEST=doQuery" \
+            --data-urlencode "LANG=ADQL" \
+            --data-urlencode "FORMAT=csv" \
+            --data-urlencode "QUERY=$QUERY" \
+            https://dc.g-vo.org/tap/async
+          JOB_URL=$(grep -i '^location:' kernels/job.headers | tr -d '\r' | awk '{print $2}')
+          for i in $(seq 1 600); do
+            curl -sS "$JOB_URL/phase" -o kernels/phase.txt || true
+            grep -q COMPLETED kernels/phase.txt && break
+            sleep 10
+          done
+          curl -sSfL "$JOB_URL/results/result" -o kernels/xp.csv
+          # epoch_tdb 504921600 = J2016.0 (Gaia DR3 reference epoch), seconds since J2000
+          cargo run -p omegaflow-harvest --release --bin gaia_xp_compiler -- \
+            --input kernels/xp.csv --epoch-tdb 504921600 --out xp_spectra.bin --ci-mode
