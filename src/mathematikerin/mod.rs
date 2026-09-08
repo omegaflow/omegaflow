@@ -8,6 +8,7 @@ pub(crate) use crate::machines::{
 
 pub mod actuators;
 pub mod cond_bin_te_gpu;
+pub mod dispersion;
 pub mod doppler;
 pub mod equilibrium;
 pub mod force;
