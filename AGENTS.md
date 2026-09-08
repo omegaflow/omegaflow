@@ -169,9 +169,10 @@ datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
 `cache/`; its durable home is the CDN asset registered as a `url`-line in
 `phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
 unmanifested local file. The external archive root `archive-root` (physisch
-heute `/home/johannes/backup/archive-root/`) holds only the legacy material:
-pre-CDN history (`archeology/`) and `phi-research/` (batches, probe_batches,
-Dispositionen); it is not the home of current harvests. The one
+heute `/home/johannes/backup/archive-root/`) holds only legacy material:
+`handover/` (ein Altfund, keine laufende Praxis), `bundles/`, `concept-history/`,
+`omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`,
+`commit_rewrite-2026-09-06/`; it is not the home of current harvests. The one
 physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.

@@ -11,7 +11,7 @@ mehr nur für genuine externe Bündel (`reference/pioneer-anomaly/`).
 | `concepts/` | stehende Ideen, Philosophie, kybernetische Ethik | kebab-case; Eigenname in Prosa bleibt UPPER_SNAKE |
 | `specs/` | feste Verträge + Register (binäre Protokolle, Force-System, CI-Pläne, lauf-log, ref-Listen) | kebab-case; Register/Listen `ref-<slug>.md` |
 | `surveys/` | datierte Befunde, Snapshot-Surveys | `survey-YYYY-MM-DD-<slug>.md` bzw. `survey-<slug>.md` (stehend) |
-| `handover/` | Übergaben + Session-Pläne | `handover-YYYY-MM-DD-<slug>.md`; unveränderlich, nach Einarbeitung + Commit → `archive-root/handover/` |
+| `handover/` | Übergaben + Session-Pläne | `handover-YYYY-MM-DD-<slug>.md`; unveränderlich, bleibt im Baum — Git ist die Geschichte |
 | `paper/` | publizierbare Messungen (Paper + Ein-Blatt-Verdikte) | kebab-case, `class: paper` |
 | `auftrag/` | Untersuchungsaufträge eines Gates | `auftrag-<slug>.md` |
 | `reference/` | externes Material, nativer Format (kein Header), Originalnamen | Provenienz unangetastet |
