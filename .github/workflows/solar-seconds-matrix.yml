@@ -1,0 +1,75 @@
+name: solar-seconds-matrix
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        pair:
+          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+           19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+           36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+           53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+           70, 71]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the solar-seconds corpus from the CDN
+        run: |
+          mkdir -p data/jsoc.stanford.edu \
+            data/ncei.noaa.gov/goes15_2013 \
+            data/ncei.noaa.gov/goes15 \
+            data/ncei.noaa.gov/goes15_2015
+          gh release download jsoc.stanford.edu --repo omegaflow/sources \
+            --pattern 'aia2013_fullyear.bin' --pattern 'aia2014_0?.bin' \
+            --pattern 'aia2014_1?.bin' --pattern 'aia2015_fullyear.bin' \
+            --clobber --dir data/jsoc.stanford.edu
+          gh release download ncei.noaa.gov --repo omegaflow/sources \
+            --pattern 'xr_*.nc' --clobber
+          mv xr_2013*.nc data/ncei.noaa.gov/goes15_2013/
+          mv xr_2014*.nc data/ncei.noaa.gov/goes15/
+          mv xr_2015*.nc data/ncei.noaa.gov/goes15_2015/
+      - name: Anchor the corpus
+        run: |
+          echo "SHA $(git rev-parse HEAD)" > "report-${{ matrix.pair }}.txt"
+          echo -n "CORPUS " >> "report-${{ matrix.pair }}.txt"
+          find data/jsoc.stanford.edu data/ncei.noaa.gov -type f -name '*.bin' -o -type f -name '*.nc' \
+            | sort | xargs sha256sum | sha256sum | cut -d' ' -f1 >> "report-${{ matrix.pair }}.txt"
+      - name: Run the pair sonde
+        run: |
+          cargo run --release -p omegaflow-measure --bin solar_seconds_matrix_probe -- \
+            --pairs "${{ matrix.pair }}:${{ matrix.pair }}" >> "report-${{ matrix.pair }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-${{ matrix.pair }}
+          path: report-${{ matrix.pair }}.txt
+  reduce:
+    needs: probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: probe-*
+          merge-multiple: true
+          path: reports
+      - name: Reduce the family and write the sheet
+        run: |
+          cargo run --release -p omegaflow-measure --bin solar_matrix_reduce -- \
+            --dir reports --out solar_matrix_sheet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: solar-matrix-sheet
+          path: solar_matrix_sheet.txt

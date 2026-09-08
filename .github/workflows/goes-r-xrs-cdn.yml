@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 720
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile GOES-R XRS retro 2017-2025 once and upload to CDN
         run: |
