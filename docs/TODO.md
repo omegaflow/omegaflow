@@ -28,17 +28,16 @@ jetzt genau 90 Assets (30 × 3 Stationen = die Registrierung). Re-Dispatch
 
 ## CDN-Dispatch-Fixes — ned + argo (2026-09-08)
 
-- **ned-cdn — Ursache + Fix (gemessen 2026-09-08):** der NED-TAP-Sync-Endpoint
-  hat eine **harte 60-s-Grenze** (`202 + "limited to 60 seconds … in asynchronous
-  mode"`, `ERROR_TYPE=fatal` — sogar `SELECT count(*)` scheitert). Meine `--limit
-  50000`-Seiten brauchten ~62 s → Seite 1 lief knapp, Seite 2 wurde gekillt. Ein
-  **Bulk-Download existiert nicht** („NEDL" kein Format; einziges Dateiprodukt =
-  NED-LVS, kuratiertes 2-Mio-Sample, kein objdir-Ersatz). objdir = 1,1 Mrd
-  Objekte, aber nur **11–19 Mio tragen ein z** — das z-Feld ist die ehrliche
-  Zielmenge. Fix (umgesetzt): `--limit 2000` (je Seite ~4,5 s, weit unter 60 s)
-  + `WHERE z > 0` ins SQL (z-Subset statt Voll-Katalog). Ein Voll-Crawl = ~5600
-  Requests als gestaffelte Kampagne; der Lauf steht auf dem Lattice-Budget-Gate
-  (4194304 Zellen) — landen verifizieren.
+- **ned-cdn — ra-Band-Pagination (Rat 2026-09-08, gemessen):** der objid-Keyset-
+  Walk ist tot — NEDs Sync wird mit wachsendem cursor langsamer (`objid > 0` = 4,1 s,
+  `objid > 3,6 Mio` = 61 s → reproduzierbare 60-s-Wand bei objid ~3,6 Mio). Die
+  `ra`-Achse ist index-freundlich (Band-Probe: ra 0–30° = 5,4 s, 150–180° = 7,8 s,
+  300–330° = 11,6 s, alle 2000 Zeilen). Fix: `--band ra 0 360 1 --limit 5000
+  --lattice 1024 --where "z > 0"` — der Band-Modus trägt jetzt `--where`
+  (tap_compiler) und erlaubt `--lattice` zusammen mit `--band`. Ein Lauf füllt
+  das Himmelsgitter bandweise (~1,8 Mio Objekte), stoppt an der 2²²-Decke. Der
+  objid-Walk ist mit Befund registriert, nicht gefüllt (Rat: leere Zellen = pending,
+  nie ein Walk-Rest unter dem Vollhimmel-Namen).
 - **argo_bgc.bin (Commit `01a2731` + paralleler Fetch, dispatched):** das
   Release `data-argo.ifremer.fr` war leer — alle 3 Läufe brachen am 240-min-
   Timeout ab (sequentieller Fetch, gemessen ~270 Profile/h, ~7,5 h für 2000).
@@ -1068,20 +1067,25 @@ physikalischen Aussage — kein Blatt ohne diese:
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);
-- **Matrix-Split ins freie Myzel (offen — der Handover
-  `docs/handover/handover-2026-09-07-rechen-myzel-ci.md` trug ihn, das Register
-  nicht; dort als „der Split ist neu zu erfassen" benannt)**: die 72 gerichteten
-  Paare als Job-Matrix auf `ubuntu-latest` — öffentliches Repo = Hosted-Minuten
-  frei, die Grenze ist Concurrency (20 beim Free-Plan) → vier Wellen à 20 Paare,
-  ~2 h Wanduhr statt 22 h blind, Log pro Sonde. Vier Stücke, der Reihe nach:
-  (a) Daten-auf-CDN-Check — sind `aia2013/2014/2015_fullyear.bin` und die
-  GOES-Trigger als CDN-Assets manifestiert? Die rohen `goes15*`-`.nc` vermutlich
-  nicht → Compiler/Manifestation oder der Trigger kommt aus einem manifestierten
-  Asset; (b) `--pairs von:bis` im `solar_seconds_matrix_probe` — jede Sonde
-  rechnet nur ihre Paare und meldet ihr `surr_max`; (c) Workflow-YAML —
-  Job-Matrix über die 72 Paare, gepinnter Commit-SHA + Seed + deklarierte
-  Umgebung (Anker gegen Drift); (d) Reduce-Job — `fam = max` über die gemeldeten
-  `surr_max`, das eine Blatt (Verdikt-Zeilen) als Artifact/Commit.
+- **Matrix-Split ins freie Myzel — gebaut (2026-09-08), Dispatch offen**: die 72
+  gerichteten Paare als Job-Matrix auf `ubuntu-latest` — öffentliches Repo =
+  Hosted-Minuten frei, die Grenze ist Concurrency (20 beim Free-Plan) → vier
+  Wellen à 20 Paare, ~2 h Wanduhr statt 22 h blind, Log pro Sonde. Die vier
+  Stücke stehen: (a) CDN-Manifestation der fehlenden Assets — `aia-cdn.yml`
+  trägt den `aia-fullyear`-Job (merge der 12 Monate → `aia2013/2015_fullyear.bin`,
+  `aia_compiler --merge --ci-mode`) und `goes-seconds-cdn.yml` + der neue
+  `goes_seconds_manifest` (NCEI GOES-15 2-s XRS, Origin verbatim → `xr_*.nc`,
+  `--ci-mode` lädt jedes Asset). Gemessen am 2026-09-08: die AIA-Monats-Bins
+  liegen auf dem CDN, die `fullyear`-Bins und die GOES-`xr_*.nc` noch NICHT —
+  beide Manifestationen laufen erst per `workflow_dispatch` (braucht
+  `OMEGAFLOW_TOKEN`, die Sitzung trägt es nicht); (b) `--pairs von:bis` im
+  `solar_seconds_matrix_probe` — jede Sonde rechnet nur ihre Paare, meldet
+  `ROW …` + `SURRM_MAX`, schließt sauber; (c) `solar-seconds-matrix.yml` —
+  Job-Matrix über die 72 Paare + Corpus-Anker (SHA + Corpus-Hash pro Sonde);
+  (d) `solar_matrix_reduce` — `fam = max` über die gemeldeten `surr_max`, das
+  eine Blatt (Verdikt-Zeilen) als Artifact; Drift-Gate (SHA/Corpus ungleich →
+  kein Verdikt, 0 honored). Die Flotte (unten) ist der Beweislauf, sobald (a)
+  manifestiert ist.
 - **72-Sonden-Flotte im Myzel (Beweislauf, Folge-Pflicht des Splits)**: der erste
   volle 72-Paare-Lauf im Myzel — abends losgeschickt, morgens das Vlies; die
   Maßprobe der zwei Türen an echten Daten. Braucht den Split als Vorbedingung.
