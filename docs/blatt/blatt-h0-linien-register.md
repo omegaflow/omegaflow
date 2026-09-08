@@ -1,8 +1,8 @@
 <!--
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
-  date: 2026-09-08
-  sha256: 53636113cc266fa9ac9a5fbf23c3044ed54546555ef300949c3596cff0ca7510
+  date: 2026-09-09
+  sha256: 8acde6ab9257432bde6b2797b33f6a4a18e6f420bc6ca9d5e120cc7954754b8e
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -368,6 +368,41 @@ Gemessene Zustände, benannt nicht geglättet:
   dem CDN manifestiert (Präzedenz: die lebendige TAP-Leg ist ebenfalls
   unregistriert). Ein vierter Zeugen-Typ „Referenzdatensatz" wäre ein
   `zeuge.rs`-Eingriff — registriert, nicht verschwiegen.
+
+## Das eigene Gaia-TAP-Crossmatch der 74 (gewogen 2026-09-09)
+
+Der Probe `tools/measure/src/bin/h0_gaia_crossmatch_probe.rs` schlägt die 74
+Namen der Tabelle über SIMBAD (`sim-tap/sync`, `ident`→`basic`) in Positionen
+auf und zieht je Position den nächsten Gaia-DR3-Quellstern (`gaiadr3.gaia_source`
+im 3″-Konus); die Klassifikation als zweite Linie kommt aus `gaiadr3.vari_cepheid`.
+Der Namen-Resolver war die Vorarbeit: die Tabelle trägt nur Sternnamen
+(`AA-GEM`, `V0386-CYG`, `S-CRU$^e$` …) — die Fußnoten-Marker `$…$` und die
+`V0`-Nullen werden vor der Auflösung genormt (`h0.rs::normalize_name`), der
+Name allein wird nie geraten.
+
+| Befund | Wert |
+|---|---|
+| Namen aufgelöst | 74/74 via SIMBAD `ident` (Hauptname `V* …`, einer `* 12 Sgr`) |
+| Identität (Separation < 2″) | 74/74 — Identity-Gate PASS |
+| Parallax-Offset π_EDR3 − Gaia-DR3 | Median +21 μas, Spanne [+4, +38] μas |
+| vari_cepheid-Klassifikation | 70 DCEP, 4 absent (T Mon, 12 Sgr, U Sgr, V636 Sco) |
+
+Gemessene Zustände, benannt nicht geglättet:
+
+- **Der Offset ist der L20b-Nullpunkt:** die Tabelle trägt laut Note d den
+  L20b-Parallax-Offset (nicht den Residuen-Offset −14 μas). Der gemessene
+  Median +21 μas über 67 gefittete Sterne ist genau dieser Offset — die
+  Transkription π_EDR3 ist damit gegen Gaia-DR3 zertifiziert, nicht kopiert.
+- **74 von 74, nicht 75:** die Tabelle trägt 74 volle Datenzeilen; der Probe
+  schlägt alle 74 auf. Die 7 `\nd`-Sterne (absent in π_EDR3) tragen trotzdem
+  eine gemessene Identität (CY-AUR → V* CY Aur, RX-CAM → V* RX Cam …) — ihr
+  π bleibt absent, ihre Position ist gemessen (0 honored).
+- **4 Sterne ohne vari_cepheid-Klasse:** T Mon, 12 Sgr (= AP Sgr), U Sgr und
+  V636 Sco tragen `otype cC*` (SIMBAD), aber keine `gaiadr3.vari_cepheid`-Zeile —
+  eine Gaia-Katalog-Vollständigkeit, kein Riss der Identität.
+- **Die lebendige TAP-Leg bleibt unregistriert:** der Probe materialisiert kein
+  Asset (reine Messung, stdout) — Präzedenz `cepheid_parallax_weigh`. Der
+  ehrliche Registratur-Sitz ist die Pende von Atom 2 (Registratur-Grammatik).
 
 ## Der Anhang
 
