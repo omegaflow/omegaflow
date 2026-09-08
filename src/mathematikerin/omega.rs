@@ -52,6 +52,7 @@ pub fn storage_entry(
 pub struct DiodeState {
     pub force_ref: [f32; 9],
     pub expose_offset: f32,
+    pub em_color: [f32; 4],
 }
 
 #[derive(Clone, Copy)]
@@ -61,6 +62,7 @@ pub struct PresenceState {
     pub grid_step: f64,
     pub range: f64,
     pub t_thrust: f64,
+    pub band: Option<(f64, f64)>,
 }
 
 impl PresenceState {
@@ -71,6 +73,7 @@ impl PresenceState {
             grid_step: GRID_INIT,
             range: 1280.0 * GRID_INIT * 2.0,
             t_thrust: 0.0,
+            band: None,
         }
     }
 }
@@ -135,12 +138,14 @@ pub struct OmegaLoop {
     pub t0: f64,
     pub t_presence: f64,
     pub t_thrust: f64,
+    pub band: Option<(f64, f64)>,
     pub last_tick: Option<std::time::Instant>,
     pub q: [f64; 4],
     pub grid_step: f64,
     pub range: f64,
     pub expose_offset: f32,
     pub force_ref: [f32; 9],
+    pub em_color: [f32; 4],
     pub probe_omega: [f32; 9],
     pub probe_flow: [f32; 3],
     pub probe_ring: [[f32; 12]; 256],
@@ -242,8 +247,10 @@ impl OmegaLoop {
             q: [1.0, 0.0, 0.0, 0.0],
             grid_step: rest.grid_step,
             range: rest.range,
+            band: rest.band,
             expose_offset: EXPOSE_OFFSET_BASE,
             force_ref: [0.0; 9],
+            em_color: [0.0; 4],
             probe_omega: [0.0; 9],
             probe_flow: [0.0; 3],
             probe_ring: [[0.0; 12]; 256],
@@ -289,6 +296,7 @@ impl OmegaLoop {
             self.grid_step = pres.grid_step;
             self.range = pres.range;
             self.t_thrust = pres.t_thrust;
+            self.band = pres.band;
         }
         if self.t_presence == 0.0 {
             if let Some(t) = system_now(&self.time) {
@@ -302,6 +310,7 @@ impl OmegaLoop {
         if let Ok(mut d) = self.diode.write() {
             d.force_ref = self.force_ref;
             d.expose_offset = self.expose_offset;
+            d.em_color = self.em_color;
         }
     }
 
@@ -438,6 +447,7 @@ impl OmegaLoop {
             expose_offset: self.expose_offset,
             force_ref: self.force_ref,
             softening: self.grid_step,
+            band: self.band,
         });
     }
 
@@ -1199,6 +1209,7 @@ impl OmegaLoop {
             self.packed_gen = generation;
             self.last_response_epoch = t;
             self.relax_force_refs();
+            self.em_color = color_emission(&self.packed_field, &self.packed_meta);
             self.publish_diode();
         }
         self.sense();
@@ -1335,8 +1346,16 @@ impl OmegaLoop {
                 None => ("-".to_string(), "-".to_string()),
             };
             let skyrep = self.sky.report();
+            let em_word = {
+                let [r, g, b, w] = self.em_color;
+                if w > 0.0 && w.is_finite() {
+                    format!("{:.2} {:.2} {:.2} w{:.1e}", r / w, g / w, b / w, w)
+                } else {
+                    "-".to_string()
+                }
+            };
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -1360,6 +1379,7 @@ impl OmegaLoop {
                 tau_s,
                 pe_s,
                 te_word,
+                em_word,
                 skyrep.osc_count,
                 skyrep.live_count,
                 skyrep.shell,
@@ -1458,6 +1478,7 @@ impl LoopRadiator {
                     expose_offset,
                     force_ref,
                     softening,
+                    band,
                     ..
                 } = req;
                 let mut records: Vec<Record> = Vec::new();
@@ -1484,6 +1505,14 @@ impl LoopRadiator {
                 );
                 if let Some(cset) = &field.curves {
                     emit_curves(cset, center, t, pad, &mut records);
+                }
+                if let Some((lo, hi)) = band {
+                    records.retain(|r| {
+                        if r.22 <= 0.0 {
+                            return true;
+                        }
+                        crate::spectral::band_overlap(r.22, r.23, lo, hi)
+                    });
                 }
                 let packed = pack_window(&records, center);
                 let mut key = Vec::with_capacity(packed.field.len() * 4 + packed.meta.len() * 4);
