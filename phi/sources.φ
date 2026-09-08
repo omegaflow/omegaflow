@@ -1308,6 +1308,61 @@ format catalog_mpcorb
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.bin
+format catalog_dcom5
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
+format catalog_gaia_sso
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_venus.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_moon.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mars.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_jupiter.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_saturn.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_uranus.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_neptune.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
 format ephemeris_binary
 at adrastea
