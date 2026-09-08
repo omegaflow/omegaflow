@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris,
-    C_LIGHT,
+    body_barycenter_position, embedded_lsk, fetch_raw_bytes, light_time_worldline,
+    parse_ephemeris_binary, BodyEphemeris,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -162,28 +162,6 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
     }
 }
 
-fn roemer_fold(
-    station: [f64; 3],
-    tdb: f64,
-    worldline: &dyn Fn(f64) -> Option<[f64; 3]>,
-) -> Option<[f64; 3]> {
-    let mut emitted = tdb;
-    for _ in 0..12 {
-        let apparent = worldline(emitted)?;
-        let d = vec_len(vec_sub(apparent, station))?;
-        let next = tdb - d / C_LIGHT;
-        if !next.is_finite() {
-            return None;
-        }
-        if (next - emitted).abs() < 1e-9 {
-            emitted = next;
-            break;
-        }
-        emitted = next;
-    }
-    let apparent = worldline(emitted)?;
-    toward_unit(station, apparent)
-}
 
 fn sat_worldline(
     sat: &SatSpk,
@@ -387,8 +365,12 @@ fn main() {
                 let Some(station) = body_barycenter_position("earth", tdb, map) else {
                     continue;
                 };
-                let Some(unit) = roemer_fold(station, tdb, &|t| sat_worldline(sat, &spk, map, t))
+                let Some((s_em, _)) =
+                    light_time_worldline(station, tdb, &|t| sat_worldline(sat, &spk, map, t))
                 else {
+                    continue;
+                };
+                let Some(unit) = toward_unit(station, s_em) else {
                     continue;
                 };
                 seps[i] = separation_rad(obs_unit, unit).map(|r| r * MAS_PER_RAD);
