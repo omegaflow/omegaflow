@@ -1303,7 +1303,12 @@ ICRS-4D-Rahmen teilt:
   (v = PROPAGATION_SPEED[force]); eine echte Dispersionsrelation
   (Rayleigh-Oberflächenwelle) ist pending — die Steckstelle v(freq)
   steht, kein erfundenes v0·(f/f0)^β (0 honored). Getrennt vom cone mode
-  (descoped, nie gebaut) — zwei Zeilen, nicht eine.
+  (descoped, nie gebaut) — zwei Zeilen, nicht eine. Auftrag (2026-09-08,
+  Atom E): `docs/auftrag/auftrag-dispersionsrelation.md` — Messung gegen
+  die band-flache Nullhypothese (Sonne als Kalibrier-Sender, 2514
+  Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
+  beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
+  parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
 
 ## Archivar & Werkzeuge — offene Pflichten
 
