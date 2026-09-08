@@ -1317,6 +1317,17 @@ ICRS-4D-Rahmen teilt:
   beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
   parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
 
+- LISA Pathfinder PSD (Atom B 4, LISA-Teil): `not-published` (2026-09-08) — kein
+  offener Tabellen-Bestand (VizieR: 0 Treffer in keiner ID; PRL/PRD nur Figur;
+  kein arXiv; ESA-Archiv interaktiv, TAP deaktiviert gemessen; HEASARC = NASA-
+  ST7/DRS, nicht Δg). Das publizierte Modell S_Δg = S_Brown + S_IFO·(2πf)⁴ ist
+  in `lpf_psd_probe` als Modell ausgewertet (S_Brown^½ = 5,2 fm·s⁻²/√Hz,
+  S_IFO^½ = 34,8 fm/√Hz, Übergang ~61 mHz) — es ersetzt die gemessene Reihe
+  nicht. Offene Pflicht: Autoren-Anfrage an Michele Armano / Paul McNamara nach
+  der Δg-Zeitreihe (L1/L2, 10 Hz, Noise-Runs) + Magnetfeld/Temperatur/Thruster
+  oder der tabellierten PSD — gesendet 2026-09-08; Antwort = Messung, bis dahin
+  `pending`. Entwurf + Sendedatum in `docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md`.
+
 ## Archivar & Werkzeuge — offene Pflichten
 
 - φ-Register-Sortier-Werkzeug gebaut (2026-09-07):
