@@ -3,9 +3,9 @@
   class: auftrag
   date: 2026-09-08
   probe-commit: b0b7b7d
-  sha256: 22b698730ec97a99926b69bc9d092f3ffd722c0f21417a66e0be95051c88ffe2
-  status: pending
-  see-also: docs/auftrag/auftrag-dispersionsrelation.md docs/TODO.md
+  sha256: 9cf49d764b7caf5191bbc8bef976993bdd7480aa1cdef67ed3698b95a2d8eaeb
+  status: done
+  see-also: docs/auftrag/auftrag-dispersionsrelation.md docs/TODO.md docs/befund/befund-2026-09-09-dispersions-ortungstest.md
 -->
 
 # Auftrag: der Ortungs-Test (Kreuzprobe der Dispersion)
@@ -49,3 +49,14 @@ Register-Zeile im Register des Auftrags.
 Dieser Auftrag ist das einzige Blatt der Kybernautin — er trägt alles, sie
 trägt nur ihn (Kontext-Hygiene). `probe-commit` wird gefüllt, sobald die
 Dispersions-Probe committet ist; bis dahin `pending`.
+
+## Register
+
+- 2026-09-09: Befund `docs/befund/befund-2026-09-09-dispersions-ortungstest.md`
+  (status: done) — ein Ereignis (Beleg: XRSB 24-s-Median-Spitze 4.647e-4 W/m²,
+  2013-05-14 01:11:36, unix 1368493896, Rang 2 von 22 Kandidaten, skalenfrei
+  gerankt); drei Kegel XRSA/94A/335A (Δt = 264.3 / 480.3 / 504.3 s; eps =
+  −240.0 / −24.0 / −0.0 s); Fehlerkreis leer (Lücke 5.756e10 m); die Antwort
+  gegen die Sonne: Offset 2.638e10 m = 88.0 s — die per-Kegel-eps sind die
+  Zahlen des Befunds. Probe: `tools/measure/src/bin/dispersion_ortung_probe.rs`.
+
