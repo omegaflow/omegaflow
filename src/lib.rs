@@ -77,4 +77,5 @@ pub use mathematikerin::machines;
 pub use mathematikerin::mat;
 pub use mathematikerin::media;
 pub use mathematikerin::s2;
+pub use mathematikerin::scalar_te_gpu;
 pub use mathematikerin::te;
