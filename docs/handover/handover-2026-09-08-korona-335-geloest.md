@@ -2,7 +2,7 @@
   title: Handover — Korona: der 335-Konfund-Widerspruch ist aufgelöst
   class: handover
   date: 2026-09-08
-  sha256: 2f1a79a38ce12476790fe424b3d08906a807cf871dc12ff8641174a2d59face2
+  sha256: 7264e35c81c3f198389d00e0e681951c196b01705c739e9f87bdcbca4d99e6ec
   status: live
   see-also: docs/paper/corona-heating-ladder.md docs/handover/handover-2026-09-07-korona-335-widerspruch.md docs/TODO.md
 -->
@@ -53,10 +53,14 @@ beide Richtungs-TEs hoch bleiben. 335 ist nicht der Konfund, der die
 304→131-Richtung „wegerklärt". 304→131 ist unter jeder gemessenen Einzel- und
 Zweikonfund-Konditionierung aufwärts-robust.
 
-## Dreijahres-Reproduktion (2026-09-08, nachgetragen)
+## Dreijahres-Reproduktion — eine Struktur, dreimal unabhängig (2026-09-08)
 
-Die Auflösung ist kein 2014-Artefakt; alle drei Säulen reproduzieren sich auf
-2013 (522 Ev) und 2015 (612 Ev). Bei 96 s:
+2013, 2014, 2015 sind drei echte Natur-Stichproben — getrennte Flare-
+Populationen über den abnehmenden Sonnenzyklus, keine Seed-Wiederholung eines
+Ensembles. Daß die Auflösungs-*Struktur* in allen drei Jahren steht — GOES-
+Baseline stark aufwärts, C=335 allein symmetrisierend, Doppel-Konditionierung
+wiederherstellend — ist ein Struktur-Zwirn, gewichtiger als jede Einzel-D-Zahl.
+Bei 96 s:
 
 | Jahr | GOES D|C (Pfeil) | C=335 D|C (Pfeil) | {GOES,335} D|C (Pfeil) |
 |---|---|---|---|---|
@@ -66,17 +70,51 @@ Die Auflösung ist kein 2014-Artefakt; alle drei Säulen reproduzieren sich auf
 
 (Vorwärts-Pfeil = TE(304→131\|C) über der lag-bewussten Null je Ereignis.)
 
-Paper §4.6/§7/Abstract sind auf Version 8 fortgeschrieben, TODO-Eintrag
-geschlossen.
+Zwei ehrliche Grenzen gehören zum Bild:
+
+1. **Beteiligung halbiert unter der stärksten Kontrolle:** Unter {GOES,335}
+   bleibt der Vorwärts-Pfeil nur in 44–52 % der Events über seiner Null, bei
+   positivem gemitteltem D in jedem Jahr — robust in der Richtung, halbiert in
+   der Beteiligung. Die Grenze wird benannt, nicht versteckt.
+2. **Struktur stabil, Amplitude variabel:** Unter C=335 allein bleibt D|C in
+   2013 leicht positiv (+1.1e-2, 65 %), während 2014/2015 auf ~0 kollabieren
+   (−9e-4, −1.6e-3). Der Grad der Symmetrisierung variiert mit dem Jahr; die
+   Struktur (Rückwärts-Term steigt, Pfeil bleibt mehrheitlich) hält überall.
+   A = A auch für Jahresvariationen.
+
+## Die Sonne als Kalibrier-Feld beider Maschinen-Linien
+
+Heute trägt die Sonne zwei Maschinen-Linien gleichzeitig, konvergierend: die
+paarweise Matrix (72 Sonden) findet XRS→131/193 — die Neupert-Struktur von
+oben (Röntgen→heiß); die konditionale Sonde reproduziert 304→131 dreijährig
+unter jeder Kontrollstufe — die Chromosphäre→TR-Struktur von unten. Zwei
+Pfade, ein Objekt. Damit ist der Kalibrier-Feld-Status offiziell: die Sonne
+ist der permanente Kalibrier-Sender, von dem die Linien ihre Wahrheit ablesen.
+
+Paper ist auf Version 9 fortgeschrieben, TODO-Eintrag geschlossen.
 
 ## Werkzeug & Logs
 
 `corona_conditional_probe` (D|C-Zerlegung, `--confound2`, `--max-lag`) und neu
-`corona_confound_matrix_probe` (TE(C→Y)-Matrix). Logs (2014, 989 Ev):
+`corona_confound_matrix_probe` (TE(C→Y)-Matrix). Logs:
 `/tmp/opencode/corona_cond_2014_{Cgoes,C335,C94,Cgoes+C335,Cgoes+C94,C94+C335}.log`,
-`corona_matrix_2014.log`.
+`corona_matrix_2014.log`, `/tmp/opencode/corona_cond_{2013,2015}_{Cgoes,C335,
+go335}.log` (Reproduktion).
+
+## Laufbedingungen (verankert)
+
+Probe `corona_conditional_probe` (Release), Daten `aiaYYYY_fullyear.bin` (7
+AIA-Bänder, 24-s-Median-Zellen, DATAMEAN/EXPTIME, JSOC) + GOES-15-Trigger
+`xr_*.nc` (2-s b_flux). Ereignis: GOES b_flux > 5e-6 W/m² (C1.0), Fenster
+±40 min um den Peak (WINDOW 100 Zellen à 24 s), REFRACTORY 75, ≥ 100
+vollständige Zellen. Messung: D|C = TE(cool→hot|C) − TE(hot→cool|C), lags
+0/96/192 s (LAGS [0,4,8] Zellen); Null = lag-bewusste ARX-Residual-Surrogate,
+mean+2σ über N_SURR 10; Seed je Ereignis `0x9E37_79B9_7F4A_7C15 ^ (pair·
+0x9E37_79B9) ^ (lag·0x85EB_CA6B)`; max_lag 8 (H2-Sweep: 4/16). Ereigniszahlen:
+2013 = 522, 2014 = 989, 2015 = 612. Damit kann die achte Schicht die
+Reproduktion nachlaufen, nicht nur glauben.
 
 ## Register
 
-Paper `docs/paper/corona-heating-ladder.md` Version 7 (§4.6, §7, Abstract);
+Paper `docs/paper/corona-heating-ladder.md` Version 9 (§4.6, §7, Abstract);
 TODO „304→131: 335-Konfund-Widerspruch" geschlossen (2026-09-08).

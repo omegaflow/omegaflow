@@ -1010,10 +1010,13 @@ physikalischen Aussage — kein Blatt ohne diese:
   (kein Konfund führt die kühlen Kanäle). C=335 allein ist ein schwacher
   Hüllen-Abzug, der 304/131 symmetrisch gekoppelt lässt — kein versteckter
   gemeinsamer Treiber. 304→131 ist unter jeder gemessenen Einzel- und
-  Zweikonfund-Konditionierung aufwärts-robust, dreijährig bestätigt
-  (2013/14/15: GOES 85–87% Pfeile; C=335 D|C ≈ 0 bei 61–65% Pfeilen; {GOES,335}
-  aufwärts je Jahr). Zahlen im Paper `docs/paper/corona-heating-ladder.md`
-  §4.6 (Version 8).
+  Zweikonfund-Konditionierung aufwärts-robust, dreijährig strukturell bestätigt
+  (2013/14/15, drei unabhängige Flare-Populationen: GOES-Baseline stark,
+  C=335 allein symmetrisierend — Struktur stabil, Amplitude variabel,
+  2013 D|C +1.1e-2 vs 2014/15 ~0 —, {GOES,335} wiederherstellend mit halbierter
+  Beteiligung 44–52%). Bedingungen (Seed/Fenster/n) im Handover
+  `handover-2026-09-08-korona-335-geloest.md` verankert. Zahlen im Paper
+  `docs/paper/corona-heating-ladder.md` §4.6 (Version 9).
 - **Nobel-DAG (Atom B, geschlossen 2026-09-08):** die volle DAG „alle Kräfte im
   Phasenraum" — multivariate Konditionierung + der Konditional-Pfad in der
   GPU-Maschine. Für die Korona gemessen unnötig (2026-09-07); das Ziel (Bz + LAIC)
