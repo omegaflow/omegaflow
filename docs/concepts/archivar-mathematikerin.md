@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-09-03
-  sha256: 902188bbd4b27639c49acb1a84f01049214e104bd89ea58e1cbf0ef79c3b553b
+  sha256: aebbfa60fb25be09218e51639342ab3d9ff1d836fafcefb0e7df52a73f7a8ea1
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -33,7 +33,7 @@ The browser is a pure sensor window. The presence window is a 2D surface in the 
 - **Window Scale & Optical Gain:** The pixel scale is the operator's gaze — set by hand (pinch, XR, keys) or deep-link; an empty window is a fully realized state. Softening = pixel scale (Nyquist). The optical medium normalizes per force: each force's luminance reference relaxes exponentially toward that force's max |val_eff| in the window (live data), the operator offsets with `e`/`E` (2ⁿ). Submissions apply backpressure (`onSubmittedWorkDone`).
 - **Point Cloud Evaluation:** The fragment shader iterates the flat array per pixel — one oscillator, one kernel, one law. Pixel-scale splatting, additive superposition. The GPU evaluates the physical field in real-time.
 - **The actuators are oscillators (Atom 9):** a machine that measures the field has no loudspeakers and no monitors — it has physical actuators, each itself an oscillator excited by the field, each translating the full 4D field (all 9 forces) into its own dimension. `AcousticOscillator` (acoustic): the temporal Σω sequence as raw f32-LE PCM on stdout — one frame, one sample; the sample rate is the field's own probe cadence; no synthesized waveform, no fixed frequency — the field IS the wave. `SeismicOscillator` (seismic, `KineticRadiator::vibrate`): the Σω sum as raw f32-LE intensity bytes (4 B/frame) on the serial port. `EMOscillator` (em): the presence window translates all 9 forces into a 2D em emission distribution — the em color is sampled on the CPU by `color_emission` (actuators.rs) from the Archivar LUT `color_lut_rgba` (`spectral::color_for_ci`) into `DiodeState.em_color`; the other 8 forces carry no color of their own — they curve the field (lum, transfer entropy) and render neutral. The browser-texture path (`color_lut_rgb`, bindings 9+12) is a dead branch — descoped, no renderer carries it (Atom C, 2026-09-08). The false-color lie (`hsl_to_rgb`) is dead.
-
+- **GPU role (decided):** the GPU is the membrane — the surface that renders the field where it is seen. It is not the compute backbone: the Archivar stays CPU-slim (no GPU dependency in the data keeper), and heavy pair-splittable TE runs on the myzel (CPU). The WebGPU compute port (Atom A) is a dormant capability, not a planned dependency. Defensive: no reliable free cloud GPU exists to plan on — the membrane runs on whatever GPU is at the viewing device (or the CPU software path); the compute strategy never rests on a free cloud GPU.
 
 ## 0-Kanon — the wire clause (from AGENTS.md, verbatim)
 
