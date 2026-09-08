@@ -283,12 +283,13 @@ fn arg_token(args: &[String], key: &str) -> Option<String> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus-satellite Schiedsspruch — the five observed moons against DE441/INPOP19a/EPM2021 (ura111 satellite orbits, geocentric astrometric).");
+    println!("Uranus-satellite Schiedsspruch — the five observed moons against DE441/INPOP19a/EPM2021 (moon-orbit SPK, geocentric astrometric).");
 
     let tsv_dir =
         arg_token(&args, "--tsv-dir").unwrap_or("data/vizier.cfa.harvard.edu".to_string());
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_dir = arg_token(&args, "--spk-dir").unwrap_or("data/naif.jpl.nasa.gov".to_string());
+    let spk_name = arg_token(&args, "--spk").unwrap_or("ura111.bsp".to_string());
     let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
 
     let Some(lsk) = embedded_lsk() else {
@@ -319,7 +320,7 @@ fn main() {
     );
     let lines = [de, inpop, epm];
 
-    let spk_path = format!("{spk_dir}/ura111.bsp");
+    let spk_path = format!("{spk_dir}/{spk_name}");
     let spk = match SpkFile::open(&spk_path) {
         Ok(s) => s,
         Err(e) => {
@@ -432,7 +433,7 @@ fn main() {
     let mut report = String::new();
     report.push_str("Uranus-satellite Schiedsspruch — residual probe\n\n");
     report.push_str(&format!(
-        "Satellites: {} tables (Camargo+ 2015, A&A 582 A8, ariel_j/umbri_j/titan_j/obero_j/miran_j), ura111 SPK orbits\n",
+        "Satellites: {} tables (Camargo+ 2015, A&A 582 A8, ariel_j/umbri_j/titan_j/obero_j/miran_j), {spk_name} SPK orbits\n",
         sats.len()
     ));
     report.push_str(&format!(
@@ -441,7 +442,7 @@ fn main() {
     report.push_str(&format!(
         "Observatory: Pico dos Dias (MPC 874), λ = {OBS_LON_DEG}°, φ = {OBS_LAT_DEG}°, h = {OBS_ALT_M} m — geocentric astrometric (ICRS, light-time, no aberration/deflection)\n"
     ));
-    report.push_str("Reduction: satellite = planet barycenter (DE441/INPOP19a/EPM2021) + (satellite − barycenter) (ura111, common to all three lines)\n\n");
+    report.push_str("Reduction: satellite = planet barycenter (DE441/INPOP19a/EPM2021) + (satellite − barycenter) (the SPK moon model, common to all three lines)\n\n");
 
     report.push_str("RMS per ephemeris (unweighted, mas, all satellites):\n");
     let mut rms_list: Vec<(&str, f64)> = Vec::new();
