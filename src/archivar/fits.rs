@@ -145,14 +145,20 @@ impl FitsTable {
         }
         let row_bytes = header.int("NAXIS1")? as usize;
         let n_rows = header.int("NAXIS2")? as usize;
-        let heap_bytes = header.int("PCOUNT").unwrap_or(0) as usize;
-        let tfields = header.int("TFIELDS").unwrap_or(0) as usize;
+        let heap_bytes = match header.int("PCOUNT") {
+            Some(v) => v as usize,
+            None => 0,
+        };
+        let tfields = match header.int("TFIELDS") {
+            Some(v) => v as usize,
+            None => 0,
+        };
         let mut columns = Vec::new();
         let mut next_tbcol = 1usize;
         for i in 1..=tfields {
             let name = header
                 .str_unescaped(&format!("TTYPE{}", i))
-                .unwrap_or_default()
+                .unwrap_or(String::new())
                 .trim()
                 .to_string();
             let tform = header
@@ -175,7 +181,10 @@ impl FitsTable {
             }
             next_tbcol = tbcol + width;
             let tscal = header.f64(&format!("TSCAL{}", i)).unwrap_or(1.0);
-            let tzero = header.f64(&format!("TZERO{}", i)).unwrap_or(0.0);
+            let tzero = match header.f64(&format!("TZERO{}", i)) {
+                Some(v) => v,
+                None => 0.0,
+            };
             columns.push(FitsColumn {
                 name,
                 code,
@@ -318,7 +327,7 @@ impl FitsTable {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FitsWcs {
     ctype1: String,
     ctype2: String,
@@ -327,6 +336,13 @@ pub struct FitsWcs {
     crpix1: f64,
     crpix2: f64,
     cd: [[f64; 2]; 2],
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum WcsProjection {
+    Linear,
+    Tan,
+    Sin,
 }
 
 impl FitsWcs {
@@ -347,7 +363,25 @@ impl FitsWcs {
             _ => {
                 let cdelt1 = h.f64("CDELT1").unwrap_or(1.0);
                 let cdelt2 = h.f64("CDELT2").unwrap_or(1.0);
-                [[cdelt1, 0.0], [0.0, cdelt2]]
+                let mut pc = [[1.0, 0.0], [0.0, 1.0]];
+                let mut pc_found = false;
+                for i in 1..=2 {
+                    for j in 1..=2 {
+                        let key = format!("PC{i:03}{j:03}");
+                        if let Some(v) = h.f64(&key) {
+                            pc[i - 1][j - 1] = v;
+                            pc_found = true;
+                        }
+                    }
+                }
+                if pc_found {
+                    [
+                        [pc[0][0] * cdelt1, pc[0][1] * cdelt2],
+                        [pc[1][0] * cdelt1, pc[1][1] * cdelt2],
+                    ]
+                } else {
+                    [[cdelt1, 0.0], [0.0, cdelt2]]
+                }
             }
         };
         Some(Self {
@@ -361,28 +395,99 @@ impl FitsWcs {
         })
     }
 
+    pub fn tan(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
+        Self {
+            ctype1: "RA---TAN".into(),
+            ctype2: "DEC--TAN".into(),
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+        }
+    }
+
+    pub fn sin(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
+        Self {
+            ctype1: "RA---SIN".into(),
+            ctype2: "DEC--SIN".into(),
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+        }
+    }
+
+    pub fn projection(&self) -> WcsProjection {
+        if self.ctype1.contains("TAN") && self.ctype2.contains("TAN") {
+            WcsProjection::Tan
+        } else if self.ctype1.contains("SIN") && self.ctype2.contains("SIN") {
+            WcsProjection::Sin
+        } else {
+            WcsProjection::Linear
+        }
+    }
+
+    pub fn is_tan(&self) -> bool {
+        self.projection() == WcsProjection::Tan
+    }
+
+    pub fn is_sin(&self) -> bool {
+        self.projection() == WcsProjection::Sin
+    }
+
+    pub fn xi_eta_deg(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        let dx = x - self.crpix1;
+        let dy = y - self.crpix2;
+        let xi = self.cd[0][0] * dx + self.cd[0][1] * dy;
+        let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
+        Some((xi, eta))
+    }
+
+    pub fn tangent_pixel_sr(&self) -> Option<f64> {
+        let a = self.cd[0][0] * self.cd[1][1] - self.cd[0][1] * self.cd[1][0];
+        let deg2 = a.abs() * (std::f64::consts::PI / 180.0) * (std::f64::consts::PI / 180.0);
+        if deg2.is_finite() && deg2 > 0.0 {
+            Some(deg2)
+        } else {
+            None
+        }
+    }
+
     pub fn world(&self, x: f64, y: f64) -> Option<(f64, f64)> {
         let dx = x - self.crpix1;
         let dy = y - self.crpix2;
         let xi = self.cd[0][0] * dx + self.cd[0][1] * dy;
         let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
-        if !self.ctype1.contains("TAN") && !self.ctype2.contains("TAN") {
-            return Some((self.crval1 + xi, self.crval2 + eta));
+        match self.projection() {
+            WcsProjection::Linear => Some((self.crval1 + xi, self.crval2 + eta)),
+            WcsProjection::Tan | WcsProjection::Sin => {
+                let xi = xi.to_radians();
+                let eta = eta.to_radians();
+                let rho2 = xi * xi + eta * eta;
+                let ra0 = self.crval1.to_radians();
+                let dec0 = self.crval2.to_radians();
+                if rho2 == 0.0 {
+                    return Some((self.crval1, self.crval2));
+                }
+                let rho = rho2.sqrt();
+                let c = match self.projection() {
+                    WcsProjection::Tan => rho.atan(),
+                    WcsProjection::Sin => {
+                        if rho > 1.0 {
+                            return None;
+                        }
+                        rho.asin()
+                    }
+                    WcsProjection::Linear => return None,
+                };
+                let dec = (c.cos() * dec0.sin() + eta * c.sin() * dec0.cos() / rho).asin();
+                let ra = ra0
+                    + (xi * c.sin()).atan2(rho * dec0.cos() * c.cos() - eta * dec0.sin() * c.sin());
+                Some((ra.to_degrees(), dec.to_degrees()))
+            }
         }
-        let xi = xi.to_radians();
-        let eta = eta.to_radians();
-        let rho2 = xi * xi + eta * eta;
-        let ra0 = self.crval1.to_radians();
-        let dec0 = self.crval2.to_radians();
-        if rho2 == 0.0 {
-            return Some((self.crval1, self.crval2));
-        }
-        let rho = rho2.sqrt();
-        let c = rho.atan();
-        let dec = (c.cos() * dec0.sin() + eta * c.sin() * dec0.cos() / rho).asin();
-        let ra =
-            ra0 + (xi * c.sin()).atan2(rho * dec0.cos() * c.cos() - eta * dec0.sin() * c.sin());
-        Some((ra.to_degrees(), dec.to_degrees()))
     }
 }
 
@@ -430,7 +535,10 @@ impl FitsImage {
         }
         let next = hdu_start + (data_start - hdu_start + data_bytes).div_ceil(2880) * 2880;
         let bscale = header.f64("BSCALE").unwrap_or(1.0);
-        let bzero = header.f64("BZERO").unwrap_or(0.0);
+        let bzero = match header.f64("BZERO") {
+            Some(v) => v,
+            None => 0.0,
+        };
         let wcs = FitsWcs::from_header(&header, dims[0], dims[1]);
         Some((
             Self {
@@ -636,7 +744,7 @@ impl FitsCompressedImage {
             dims[i - 1] = d as usize;
             tile[i - 1] = header.int(&format!("ZTILE{}", i)).unwrap_or(d) as usize;
         }
-        let cmptype = header.str_unescaped("ZCMPTYPE").unwrap_or_default();
+        let cmptype = header.str_unescaped("ZCMPTYPE").unwrap_or(String::new());
         let mut block = 32usize;
         let mut bytepix = 0usize;
         for i in 1..=16 {
@@ -653,13 +761,19 @@ impl FitsCompressedImage {
             }
         }
         let zscale = header.f64("ZSCALE").unwrap_or(1.0);
-        let zzero = header.f64("ZZERO").unwrap_or(0.0);
+        let zzero = match header.f64("ZZERO") {
+            Some(v) => v,
+            None => 0.0,
+        };
         let blank = header.int("BLANK");
         let crpix1 = header.f64("CRPIX1").unwrap_or(f64::NAN);
         let crpix2 = header.f64("CRPIX2").unwrap_or(f64::NAN);
         let r_sun = header.f64("R_SUN").unwrap_or(f64::NAN);
         let datamean = header.f64("DATAMEAN").unwrap_or(f64::NAN);
-        let totvals = header.int("TOTVALS").unwrap_or(0) as usize;
+        let totvals = match header.int("TOTVALS") {
+            Some(v) => v as usize,
+            None => 0,
+        };
         Some((
             Self {
                 zbitpix,
@@ -683,7 +797,28 @@ impl FitsCompressedImage {
     }
 
     pub fn tiles_per_axis(&self, axis: usize) -> usize {
-        self.dims[axis].div_ceil(self.tile[axis].max(1))
+        self.dims[axis].div_ceil(std::cmp::max(self.tile[axis], 1))
+    }
+
+    pub fn tile_origin(&self, t: [usize; 3]) -> [usize; 3] {
+        [
+            t[0] * std::cmp::max(self.tile[0], 1),
+            t[1] * std::cmp::max(self.tile[1], 1),
+            t[2] * std::cmp::max(self.tile[2], 1),
+        ]
+    }
+
+    fn gzip_bytepix(&self) -> Option<usize> {
+        if self.bytepix > 0 {
+            return Some(self.bytepix);
+        }
+        match self.zbitpix {
+            8 => Some(1),
+            16 => Some(2),
+            32 => Some(4),
+            64 => Some(8),
+            _ => None,
+        }
     }
 
     pub fn tile_pixels(&self, buf: &[u8], t: [usize; 3]) -> Option<Vec<i64>> {
@@ -697,34 +832,25 @@ impl FitsCompressedImage {
         let row = t[0] + n1 * (t[1] + n2 * t[2]);
         let col = self.table.column("COMPRESSED_DATA")?;
         let raw = self.table.cell_varlen(buf, row, col)?;
-        if self.cmptype.trim() != "RICE_1" {
-            return None;
-        }
         let nvals = self.tile[0] * self.tile[1] * self.tile[2];
-        let bytes = rice_decompress(raw, nvals, self.bytepix, self.block)?;
-        if bytes.len() != nvals * self.bytepix {
-            return None;
+        match self.cmptype.trim() {
+            "RICE_1" => {
+                let bytes = rice_decompress(raw, nvals, self.bytepix, self.block)?;
+                if bytes.len() != nvals * self.bytepix {
+                    return None;
+                }
+                decode_int_bytes(&bytes, self.bytepix, nvals)
+            }
+            "GZIP_1" => {
+                let bytepix = self.gzip_bytepix()?;
+                let bytes = crate::archivar::inflate::gunzip(raw)?;
+                if bytes.len() != nvals * bytepix {
+                    return None;
+                }
+                decode_int_bytes(&bytes, bytepix, nvals)
+            }
+            _ => None,
         }
-        let mut out = Vec::with_capacity(nvals);
-        match self.bytepix {
-            1 => {
-                for i in 0..nvals {
-                    out.push(bytes[i] as i64);
-                }
-            }
-            2 => {
-                for i in 0..nvals {
-                    out.push(i16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]]) as i64);
-                }
-            }
-            4 => {
-                for i in 0..nvals {
-                    out.push(i32::from_be_bytes(bytes[i * 4..i * 4 + 4].try_into().ok()?) as i64);
-                }
-            }
-            _ => return None,
-        }
-        Some(out)
     }
 
     pub fn pixel_value(&self, raw: i64) -> Option<f64> {
@@ -737,9 +863,37 @@ impl FitsCompressedImage {
     }
 }
 
+fn decode_int_bytes(bytes: &[u8], bytepix: usize, nvals: usize) -> Option<Vec<i64>> {
+    let mut out = Vec::with_capacity(nvals);
+    match bytepix {
+        1 => {
+            for i in 0..nvals {
+                out.push(bytes[i] as i64);
+            }
+        }
+        2 => {
+            for i in 0..nvals {
+                out.push(i16::from_be_bytes([bytes[i * 2], bytes[i * 2 + 1]]) as i64);
+            }
+        }
+        4 => {
+            for i in 0..nvals {
+                out.push(i32::from_be_bytes(bytes[i * 4..i * 4 + 4].try_into().ok()?) as i64);
+            }
+        }
+        8 => {
+            for i in 0..nvals {
+                out.push(i64::from_be_bytes(bytes[i * 8..i * 8 + 8].try_into().ok()?));
+            }
+        }
+        _ => return None,
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{FitsHeader, FitsImage, FitsTable};
+    use super::{FitsHeader, FitsImage, FitsTable, FitsWcs, WcsProjection};
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -1109,6 +1263,98 @@ mod tests {
         let (ra, dec) = img.world(50.5, 51.5).unwrap();
         assert!((ra - 200.0).abs() < 1e-9);
         assert!((dec - 45.001).abs() < 1e-6);
+    }
+
+    #[test]
+    fn wcs_sin_orthographic_center_and_offsets() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "4"),
+                ("NAXIS2", "4"),
+                ("CTYPE1", "'RA---SIN'"),
+                ("CTYPE2", "'DEC--SIN'"),
+                ("CRVAL1", "10.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.0"),
+                ("CRPIX2", "0.0"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+            ],
+            &[0u8; 64],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(0.0, 0.0).is_some());
+        let (ra0, dec0) = img.world(0.0, 0.0).unwrap();
+        assert!((ra0 - 10.0).abs() < 1e-12);
+        assert!(dec0.abs() < 1e-12);
+        let offset_deg = 0.3f64.to_degrees();
+        let c_deg = 0.3f64.asin().to_degrees();
+        let (ra_n, dec_n) = img.world(0.0, offset_deg).unwrap();
+        assert!((ra_n - 10.0).abs() < 1e-12);
+        assert!((dec_n - c_deg).abs() < 1e-9);
+        let (ra_e, dec_e) = img.world(offset_deg, 0.0).unwrap();
+        assert!((ra_e - (10.0 + c_deg)).abs() < 1e-9);
+        assert!(dec_e.abs() < 1e-12);
+    }
+
+    #[test]
+    fn wcs_sin_stays_within_the_orthographic_disk() {
+        let wcs = FitsWcs::sin(10.0, 0.0, 0.0, 0.0, [[1.0, 0.0], [0.0, 1.0]]);
+        assert!(wcs.world(0.0, 60.0).is_none());
+        assert!(wcs.world(0.0, -60.0).is_none());
+        assert!(wcs.world(0.0, 0.9).is_some());
+    }
+
+    #[test]
+    fn wcs_projection_names_tan_sin_and_linear() {
+        let tan = FitsWcs::tan(1.0, 2.0, 3.0, 4.0, [[0.01, 0.0], [0.0, 0.01]]);
+        let sin = FitsWcs::sin(1.0, 2.0, 3.0, 4.0, [[0.01, 0.0], [0.0, 0.01]]);
+        assert!(tan.is_tan());
+        assert!(!tan.is_sin());
+        assert_eq!(tan.projection(), WcsProjection::Tan);
+        assert!(sin.is_sin());
+        assert!(!sin.is_tan());
+        assert_eq!(sin.projection(), WcsProjection::Sin);
+    }
+
+    #[test]
+    fn wcs_pc_matrix_reflects_axes() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "152.0"),
+                ("CRVAL2", "2.0"),
+                ("CRPIX1", "-22800.0"),
+                ("CRPIX2", "242.0"),
+                ("CDELT1", "6.94444461259988E-05"),
+                ("CDELT2", "6.94444461259988E-05"),
+                ("PC001001", "-1.0"),
+                ("PC001002", "0.0"),
+                ("PC002001", "0.0"),
+                ("PC002002", "1.0"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(150.5, 242.0).unwrap();
+        assert!(
+            (150.3..150.6).contains(&ra),
+            "ra {ra} sits west of the reference (the PC matrix reflects the axis)"
+        );
+        assert!(
+            (dec - 2.0).abs() < 0.02,
+            "dec {dec} stays near the reference"
+        );
+        let (ra0, dec0) = img.world(-22800.0, 242.0).unwrap();
+        assert!((ra0 - 152.0).abs() < 1e-9);
+        assert!((dec0 - 2.0).abs() < 1e-9);
     }
 
     #[test]
