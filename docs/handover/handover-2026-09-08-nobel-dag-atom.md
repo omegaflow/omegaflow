@@ -2,7 +2,7 @@
   title: Handover — Nobel-DAG: der multivariate Atom B für Bz und LAIC (geschlossen)
   class: handover
   date: 2026-09-08
-  sha256: 62a5e8fc50fb0502c8a5a193e0f8e213f8fb4ea3ee2ab59ba445d85572f39a5d
+  sha256: 2439bf13215eeee114bd041ceea100f200f15c57e87d4870bca06b43d4b62604
   status: live
   see-also: docs/concepts/te-literatur-matrix.md docs/TODO.md docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md
 -->
@@ -56,8 +56,7 @@ handover-2026-09-07-nobel-dag-bz-laic.md.
 
 Der Atom-Eintrag in TODO.md ist geschlossen. Das Index-Asset ist in sources.φ
 registriert (omni2_indices.bin, format omni2_serie, at earth); die CDN-Manifestation
-läuft über den CI-Manifestator (workflow omni2-indices-cdn.yml). Benannt: der
-1-min-Kanal `magnetosphere_symh_nt` ist geerntet (Compiler --symh) und deklariert,
-aber von keinem Probe konsumiert — die Bz/LAIC-Messung läuft auf der Stunden-Taktung
-(Runge-2018 ist stündlich); ein 1-min-SYM-H-Verbrauch bräuchte 1-min-Solarwind, der
-nicht geerntet ist.
+läuft über den CI-Manifestator (workflow omni2-indices-cdn.yml). Der 1-min-Kanal
+`magnetosphere_symh_nt` ist konsumiert: nobel_probe_bz führt SYM-H als zweiten
+Sturm-Kanal neben Dst — Bz→SYM-H 2,63× neben Bz→Dst 2,43× (SYM-H und Dst sind als
+Ringstrom-Kanal austauschbar, gemessen).
