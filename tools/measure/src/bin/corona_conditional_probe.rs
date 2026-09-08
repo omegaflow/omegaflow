@@ -1,5 +1,8 @@
 use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
-use omegaflow::te::{conditional_te_stats_lagged, transfer_entropy_conditional};
+use omegaflow::te::{
+    conditional_te_stats_lagged, conditional_te_stats_lagged_2, transfer_entropy_conditional,
+    transfer_entropy_conditional_2,
+};
 
 const MAGIC: [u8; 4] = *b"AIA1";
 const DT: f64 = 24.0;
@@ -236,6 +239,17 @@ fn main() {
             return;
         }
     };
+    let confound2_name = arg_value(&args, "--confound2");
+    let c2_idx = match confound2_name.as_deref() {
+        Some(name) => match confound_idx(name) {
+            Some(i) => Some(i),
+            None => {
+                eprintln!("--confound2 {} carries no band", name);
+                return;
+            }
+        },
+        None => None,
+    };
 
     let mut all_events: Vec<Event> = Vec::new();
     for (yi, &pos) in positions.iter().enumerate() {
@@ -325,6 +339,9 @@ fn main() {
         confound_name,
         max_lag
     );
+    if let Some(name) = confound2_name.as_deref() {
+        println!("second confounder C2 = {}", name);
+    }
     println!("conditional directional excess D|C = TE(cool->hot|C) - TE(hot->cool|C), lagged null");
     println!();
 
@@ -342,22 +359,45 @@ fn main() {
             if li == c_idx || li + 1 == c_idx {
                 continue;
             }
+            if let Some(ci2) = c2_idx {
+                if li == ci2 || li + 1 == ci2 {
+                    continue;
+                }
+            }
             let cool = &ev.lines[li];
             let hot = &ev.lines[li + 1];
             let c = &ev.lines[c_idx];
             for (lagi, &lag) in LAGS.iter().enumerate() {
                 let seed =
                     0x9E37_79B9_7F4A_7C15 ^ (li as u64 * 0x9E37_79B9) ^ (lag as u64 * 0x85EB_CA6B);
-                let Some(te_fwd) = transfer_entropy_conditional(hot, cool, c, lag) else {
+                let (te_fwd, te_rev, thr_fwd, thr_rev) = match c2_idx {
+                    Some(ci2) => {
+                        let c2 = &ev.lines[ci2];
+                        (
+                            transfer_entropy_conditional_2(hot, cool, c, c2, lag),
+                            transfer_entropy_conditional_2(cool, hot, c, c2, lag),
+                            conditional_te_stats_lagged_2(
+                                hot, cool, c, c2, lag, max_lag, seed, N_SURR,
+                            )
+                            .map(|t| t.2),
+                            conditional_te_stats_lagged_2(
+                                cool, hot, c, c2, lag, max_lag, seed, N_SURR,
+                            )
+                            .map(|t| t.2),
+                        )
+                    }
+                    None => (
+                        transfer_entropy_conditional(hot, cool, c, lag),
+                        transfer_entropy_conditional(cool, hot, c, lag),
+                        conditional_te_stats_lagged(hot, cool, c, lag, max_lag, seed, N_SURR)
+                            .map(|t| t.2),
+                        conditional_te_stats_lagged(cool, hot, c, lag, max_lag, seed, N_SURR)
+                            .map(|t| t.2),
+                    ),
+                };
+                let (Some(te_fwd), Some(te_rev)) = (te_fwd, te_rev) else {
                     continue;
                 };
-                let Some(te_rev) = transfer_entropy_conditional(cool, hot, c, lag) else {
-                    continue;
-                };
-                let thr_fwd = conditional_te_stats_lagged(hot, cool, c, lag, max_lag, seed, N_SURR)
-                    .map(|t| t.2);
-                let thr_rev = conditional_te_stats_lagged(cool, hot, c, lag, max_lag, seed, N_SURR)
-                    .map(|t| t.2);
                 d_sum[li][lagi] += te_fwd - te_rev;
                 d_cnt[li][lagi] += 1;
                 if let Some(thr) = thr_fwd {
@@ -381,6 +421,12 @@ fn main() {
         if li == c_idx || li + 1 == c_idx {
             println!("{:>9} | skipped (confounder is a member)", pair);
             continue;
+        }
+        if let Some(ci2) = c2_idx {
+            if li == ci2 || li + 1 == ci2 {
+                println!("{:>9} | skipped (confounder2 is a member)", pair);
+                continue;
+            }
         }
         for (lagi, &lag) in LAGS.iter().enumerate() {
             if d_cnt[li][lagi] == 0 {
