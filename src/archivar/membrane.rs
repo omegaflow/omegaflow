@@ -115,6 +115,10 @@ pub fn sense_membrane(
         let vx = (p2[0] - p[0]) / 1e-3;
         let vy = (p2[1] - p[1]) / 1e-3;
         let vz = (p2[2] - p[2]) / 1e-3;
+        let ci = match crate::spectral::sed_to_bp_rp(&sh.bins) {
+            Some(measured) => measured,
+            None => 0.0,
+        };
         for &(freq, bin_width, val) in &sh.bins {
             records.push((
                 p[0],
@@ -138,7 +142,7 @@ pub fn sense_membrane(
                 0.0,
                 0.0,
                 0.0,
-                0.0,
+                ci,
                 freq,
                 bin_width,
                 0.0,
