@@ -66,6 +66,7 @@ pub use archivar::spectral;
 pub use archivar::suprastrom;
 pub use archivar::thermochem;
 pub use archivar::twomass;
+pub use archivar::twomrs;
 pub use archivar::wind;
 pub use archivar::wind_orbit;
 pub use archivar::wso_polar;
