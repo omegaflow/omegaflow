@@ -2,8 +2,8 @@
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
   date: 2026-09-06
-  version: 7
-  sha256: 1c31b81c0af547d27306bcdca3293ec1200839a140b80b655df6f857cfbd3537
+  version: 8
+  sha256: da34ec48ada98bceb9e1d13d143aae02100e6488ee4b809b7c2ddd7ee6d0bf53
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -370,6 +370,16 @@ crossing is robust across every single- and two-confounder conditioning
 measured; the earlier "contradiction" was the mean-difference statistic, not
 the direction.
 
+The resolution reproduces across all three years. At the 96 s crossing, the
+GOES baseline is upward in every year with an 85–87% forward-arrow majority
+(D|C 2013 +5.20e-2, 2014 +4.26e-2, 2015 +4.63e-2); the single-C=335 reading
+keeps the reverse term inflated toward the forward in every year, leaving
+D|C ≈ 0 with a 61–65% forward-arrow majority (2013 +1.13e-2, 2014 −9.46e-4,
+2015 −1.62e-3); and conditioning on {GOES,335} restores the upward asymmetry
+in every year (+2.97e-2, +2.39e-2, +2.49e-2). The single-line 335 collapse is
+therefore not a 2014 artifact but a reproduced property of conditioning on 335
+alone.
+
 ## 5. Discussion
 
 **No bandwidth-robust arrow.** The sole rung that clears the family bound at
@@ -499,8 +509,9 @@ the apparent single-confender collapse is a mean-difference cancellation
 (forward term unchanged, reverse term symmetrically inflated) that neither
 depends on the null lag depth nor survives a second confounder. The 304→131
 direction is a real upward crossing under every single- and two-confounder
-conditioning measured; the Alfvén-versus-nanoflare distinction stays open on
-its amplitude, not on whether the direction survives the shared envelope.
+conditioning measured, in all three years; the Alfvén-versus-nanoflare
+distinction stays open on its amplitude, not on whether the direction survives
+the shared envelope.
 
 ## References
 
