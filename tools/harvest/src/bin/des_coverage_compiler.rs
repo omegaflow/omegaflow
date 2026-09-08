@@ -168,11 +168,15 @@ fn harvest_range(lo: i64, hi: i64, census: &mut Census) -> Vec<FootprintRecord> 
             }
         }
     }
+    collapse_max(records, census)
+}
+
+fn collapse_max(mut records: Vec<FootprintRecord>, census: &mut Census) -> Vec<FootprintRecord> {
     records.sort_by(|a, b| {
         a.ipix
             .cmp(&b.ipix)
             .then(band_code(a.band).cmp(&band_code(b.band)))
-            .then(a.frac.to_bits().cmp(&b.frac.to_bits()))
+            .then(b.frac.to_bits().cmp(&a.frac.to_bits()))
     });
     let mut deduped: Vec<FootprintRecord> = Vec::with_capacity(records.len());
     for r in records {
@@ -333,5 +337,76 @@ mod tests {
         assert_eq!(column_index(header, "frac_det_g"), Some(0));
         assert_eq!(column_index(header, "frac_det_z"), Some(4));
         assert_eq!(column_index(header, "frac_det_nope"), None);
+    }
+
+    fn census_zero() -> Census {
+        Census {
+            rows: 0,
+            bad_hpix: 0,
+            absent_band: 0,
+            invalid_frac: 0,
+            dup_exact: 0,
+            dup_divergent: 0,
+        }
+    }
+
+    fn rec(ipix: u32, band: FootprintBand, frac: f32) -> FootprintRecord {
+        FootprintRecord {
+            order: 12,
+            band,
+            ipix,
+            frac,
+        }
+    }
+
+    #[test]
+    fn collapse_keeps_the_deepest_fraction_per_pixel_band() {
+        let mut c = census_zero();
+        let records = vec![
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.5625),
+            rec(67115728, FootprintBand::G, 0.5625),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::G, 0.0),
+            rec(67115728, FootprintBand::I, 1.0),
+            rec(67115728, FootprintBand::I, 0.6875),
+            rec(135705536, FootprintBand::Z, 1.0),
+            rec(135705536, FootprintBand::Z, 0.09375),
+        ];
+        let out = collapse_max(records, &mut c);
+        assert_eq!(out.len(), 3);
+        let g = out
+            .iter()
+            .find(|r| r.ipix == 67115728 && r.band == FootprintBand::G)
+            .unwrap();
+        assert_eq!(g.frac, 0.5625);
+        let i = out
+            .iter()
+            .find(|r| r.ipix == 67115728 && r.band == FootprintBand::I)
+            .unwrap();
+        assert_eq!(i.frac, 1.0);
+        let z = out
+            .iter()
+            .find(|r| r.ipix == 135705536 && r.band == FootprintBand::Z)
+            .unwrap();
+        assert_eq!(z.frac, 1.0);
+    }
+
+    #[test]
+    fn collapse_keeps_a_real_zero_when_every_row_is_zero() {
+        let mut c = census_zero();
+        let records = vec![
+            rec(135704016, FootprintBand::Z, 0.0),
+            rec(135704016, FootprintBand::Z, 0.0),
+            rec(135704016, FootprintBand::Z, 0.0),
+        ];
+        let out = collapse_max(records, &mut c);
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].frac, 0.0);
+        assert_eq!(c.dup_exact, 2);
     }
 }
