@@ -67,6 +67,16 @@ jobs:
             --ci-mode \
             --omega-g phi/pipeline/catalog/solar_omega_g.φ \
             --index phi/sources_index.φ
+      - name: Compose the DE441-consistent Uranus planet-center line and upload
+        run: |
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/ura111xl-799.bsp \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura111xl-799.bsp \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "kernel-flatten: ura111xl-799.bsp returned void" \
+                 "curl on naif.jpl.nasa.gov did not reach the SPK. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- \
+            --uranus-c-spk kernels/ura111xl-799.bsp --ci-mode
       - name: Flatten asteroid longbow and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
