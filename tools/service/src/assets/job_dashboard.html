@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>ωflow · job-monitor</title>
+<style>
+  :root{
+    --bg:      #171a14;   /* Mint-Schwarz mit Grünstich */
+    --panel:   #20261b;
+    --border:  #3a4630;
+    --text:    #c9d4c2;
+    --dim:     #6e7a68;
+    --green:   #87cf3e;   /* Mint-Akzent (Mint-X-Grün) */
+    --green-d: #5a8f2e;
+    --red:     #e05656;
+    --amber:   #f0c050;
+    --blue:    #6fc3e0;
+    --barbg:   #2a3324;
+    --mono: 'JetBrains Mono','Fira Code','Cascadia Code',
+            'Ubuntu Mono','DejaVu Sans Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:var(--mono); font-size:13.5px; line-height:1.45;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  ::selection{background:var(--green); color:#141710}
+
+  /* ── tmux-Statusbar ─────────────────────────────── */
+  #bar{
+    display:flex; align-items:center; gap:0;
+    background:var(--green); color:#141710;
+    font-weight:700; user-select:none; flex:none;
+  }
+  #bar.warn{background:var(--amber)}
+  #bar.err {background:var(--red);   color:#1a0f0f}
+  #bar .seg{padding:3px 10px; white-space:nowrap}
+  #bar .grow{flex:1; text-align:right}
+  #bar .btn{
+    padding:3px 8px; cursor:pointer; background:rgba(0,0,0,.12);
+  }
+  #bar .btn:hover{background:rgba(0,0,0,.28)}
+
+  /* ── Panels ─────────────────────────────────────── */
+  #grid{
+    flex:1; overflow:auto; padding:10px; gap:10px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+    grid-auto-rows:minmax(180px,auto);
+  }
+  .panel{
+    border:1px solid var(--border); background:var(--panel);
+    display:flex; flex-direction:column; min-height:0;
+  }
+  .panel-title{
+    display:flex; gap:10px; padding:5px 10px; flex:none;
+    color:var(--dim); font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .panel-title::before,.panel-title::after{
+    content:''; border-top:1px solid var(--border);
+    flex:1; align-self:center;
+  }
+  .panel-body{padding:6px 10px 10px; overflow:auto; flex:1}
+
+  /* ── Job-Zeilen ─────────────────────────────────── */
+  .job{
+    display:flex; align-items:baseline; gap:8px;
+    padding:2px 0; white-space:nowrap;
+  }
+  .job .sym{width:1.4em; text-align:center}
+  .job .name{flex:1; overflow:hidden; text-overflow:ellipsis}
+  .job .meta{color:var(--dim)}
+  .s-run {color:var(--amber)}
+  .s-ok  {color:var(--green)}
+  .s-fail{color:var(--red)}
+  .s-pend{color:var(--dim)}
+  .s-info{color:var(--blue)}
+  .dot-run{animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.30}}
+
+  .blocker{
+    border:1px dashed var(--red); color:var(--red);
+    padding:4px 8px; margin-top:8px;
+  }
+
+  /* ── System-Balken ──────────────────────────────── */
+  .meter{margin:6px 0}
+  .meter .lbl{display:flex; justify-content:space-between; color:var(--dim)}
+  .meter .bar{
+    background:var(--barbg); height:16px; overflow:hidden;
+    display:flex; margin-top:2px;
+  }
+  .meter .fill{
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-right:4px; color:#141710; font-weight:700; font-size:11px;
+    transition:width .8s ease;
+  }
+  .f-ok  {background:var(--green)}
+  .f-mid {background:var(--amber)}
+  .f-hot {background:var(--red)}
+
+  /* ── Log ────────────────────────────────────────── */
+  .logline{display:flex; gap:8px}
+  .logline .t{color:var(--dim); flex:none}
+  .logline .lvl-ok  {color:var(--green)}
+  .logline .lvl-err {color:var(--red)}
+  .logline .lvl-run {color:var(--amber)}
+
+  /* ── Footer / Filter-Prompt ─────────────────────── */
+  #prompt{
+    flex:none; display:flex; align-items:center; gap:6px;
+    border-top:1px solid var(--border); padding:4px 10px;
+    color:var(--dim);
+  }
+  #filter{
+    background:none; border:none; outline:none; color:var(--text);
+    font-family:var(--mono); font-size:13.5px; flex:1;
+  }
+  #prompt .cursor{animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  #legend{color:var(--dim); white-space:nowrap; padding:4px 10px; flex:none}
+
+  /* ── CRT-Option (aus, default) ──────────────────── */
+  body.crt::after{
+    content:''; position:fixed; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(
+      0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px);
+  }
+</style>
+</head>
+<body>
+
+  <!-- tmux-Statusbar: Zustand des Hauses auf einen Blick -->
+  <div id="bar" class="err">
+    <div class="seg">ωflow · job-monitor</div>
+    <div class="seg" id="seg-myzel">MYZEL 5</div>
+    <div class="seg" id="seg-blocker">BLOCKER 1</div>
+    <div class="grow"></div>
+    <div class="btn" id="btn-crt" title="Scanlines an/aus">crt</div>
+    <div class="seg" id="seg-clock">--:--:--</div>
+    <div class="seg">⟳ <span id="seg-refresh">5s</span></div>
+  </div>
+
+  <div id="grid">
+
+    <!-- ── SYSTEM ─────────────────────────────── -->
+    <div class="panel">
+      <div class="panel-title">system</div>
+      <div class="panel-body">
+        <div class="meter">
+          <div class="lbl"><span>cpu</span><span id="cpu-pct">–</span></div>
+          <div class="bar"><div class="fill f-hot" id="cpu-fill" style="width:0%">0%</div></div>
+        </div>
+        <div class="meter">
+          <div class="lbl"><span>ram</span><span id="ram-pct">–</span></div>
+          <div class="bar"><div class="fill f-ok" id="ram-fill" style="width:0%">0%</div></div>
+        </div>
+        <div style="color:var(--dim); margin-top:8px" id="sys-note">
+          3 cores aktiv · matrix-dispersion läuft
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CI-QUEUE (GitHub Actions) ──────────── -->
+    <div class="panel">
+      <div class="panel-title">ci-queue · github actions</div>
+      <div class="panel-body" id="ci-list"><!-- job rows --></div>
+    </div>
+
+    <!-- ── LOKALE LÄUFE (Myzel) ───────────────── -->
+    <div class="panel">
+      <div class="panel-title">lokale läufe · myzel</div>
+      <div class="panel-body" id="local-list"><!-- job rows + blocker --></div>
+    </div>
+
+    <!-- ── LOG-TAIL ───────────────────────────── -->
+    <div class="panel">
+      <div class="panel-title">log</div>
+      <div class="panel-body" id="log-list"><!-- log lines --></div>
+    </div>
+  </div>
+
+  <!-- Filter-Prompt im OpenCode-Stil -->
+  <div id="prompt">
+    <span>›</span>
+    <input id="filter" placeholder="filter: alle" spellcheck="false">
+    <span class="cursor">_</span>
+  </div>
+  <div id="legend">● läuft&nbsp; ✓ ok&nbsp; ✗ fail&nbsp; ◌ pending&nbsp; ○ skip&nbsp;·&nbsp;A = A</div>
+
+<script>
+  // >>> HIER: echte Daten einhängen — fetch() auf deinen Monitor-Endpunkt
+  // und state = await res.json() liefern. Bis dahin: Demo-Daten aus dem Feld.
+  const state = {
+    cpu: 89, ram: 54,
+    ci: [
+      {sym:'✗', cls:'s-fail', name:'ci-check (main)',        meta:'2m 41s'},
+      {sym:'✗', cls:'s-fail', name:'ci-check (matrix-split)',meta:'18m 03s'},
+      {sym:'●', cls:'s-run',  name:'aia-dispatch 2015',      meta:'12m'},
+      {sym:'●', cls:'s-run',  name:'ps1-footprint-ernte',    meta:'41m'},
+      {sym:'✓', cls:'s-ok',   name:'register-verify',        meta:'3m 12s'},
+      {sym:'✓', cls:'s-ok',   name:'psr-cdn (atnf-dm)',      meta:'9m 55s'},
+      {sym:'◌', cls:'s-pend', name:'goes-2s-ernte',          meta:'wartet'},
+    ],
+    local: [
+      {sym:'●', cls:'s-run',  name:'dispersion_solar_probe 2014', meta:'~3h'},
+      {sym:'●', cls:'s-run',  name:'korona-repro 2013 (×3)',      meta:'6 jobs'},
+      {sym:'●', cls:'s-run',  name:'korona-repro 2015 (×3)',      meta:'6 jobs'},
+      {sym:'●', cls:'s-run',  name:'ned-cdn (ra-band-walk)',      meta:'läuft'},
+      {sym:'✓', cls:'s-ok',   name:'weberin body-verdict',        meta:'fertig'},
+    ],
+    blocker: 'GOES-2s-Ernte fehlgeschlagen — Fehler lesen, nicht raten',
+    log: [
+      {t:'22:41:07', lvl:'err', msg:'goes-ernte: timeout nach 6h — abgebrochen'},
+      {t:'22:41:12', lvl:'run', msg:'dispersion 2014: 612/986 ereignisse'},
+      {t:'22:42:33', lvl:'ok',  msg:'psr-cdn: 2166 pulsare + σ auf cdn'},
+      {t:'22:44:01', lvl:'run', msg:'ci-check main: unwrap-panic in split-reduce'},
+    ]
+  };
+
+  const SYM = {run:'●', ok:'✓', fail:'✗', pend:'◌'};
+
+  function row(j){
+    return `<div class="job ${j.cls}" data-name="${j.name.toLowerCase()}">
+      <span class="sym ${j.cls==='s-run'?'dot-run':''}">${j.sym}</span>
+      <span class="name">${j.name}</span>
+      <span class="meta">${j.meta}</span></div>`;
+  }
+  function render(){
+    document.getElementById('ci-list').innerHTML =
+      state.ci.map(row).join('') +
+      `<div class="blocker">⚑ ${state.blocker}</div>`;
+    document.getElementById('local-list').innerHTML =
+      state.local.map(row).join('');
+    document.getElementById('log-list').innerHTML =
+      state.log.map(l=>`<div class="logline">
+        <span class="t">${l.t}</span>
+        <span class="lvl-${l.lvl}">${l.lvl==='err'?'✗':l.lvl==='run'?'●':'✓'}</span>
+        <span>${l.msg}</span></div>`).join('');
+    // Meter
+    const set=(id,fill,v)=>{document.getElementById(id).style.width=v+'%';
+      document.getElementById(fill).textContent=v+'%';
+      document.getElementById(fill).className=
+        'fill '+(v>80?'f-hot':v>60?'f-mid':'f-ok');};
+    set('cpu-fill','cpu-pct',state.cpu);
+    set('ram-fill','ram-pct',state.ram);
+    // Statusbar-Zustand
+    const fails = state.ci.filter(j=>j.cls==='s-fail').length;
+    const bar=document.getElementById('bar');
+    bar.className = fails? 'err' : (state.ci.some(j=>j.cls==='s-run')?'warn':'');
+    document.getElementById('seg-myzel').textContent =
+      'MYZEL ' + state.local.filter(j=>j.cls==='s-run').length;
+    document.getElementById('seg-blocker').textContent =
+      'BLOCKER ' + (state.blocker?1:0);
+    applyFilter(document.getElementById('filter').value);
+  }
+
+  function applyFilter(q){
+    q=(q||'').toLowerCase().replace(/^filter:\s*/,'');
+    document.querySelectorAll('.job').forEach(el=>{
+      el.style.display = !q || el.dataset.name.includes(q) ? '' : 'none';
+    });
+  }
+  document.getElementById('filter')
+    .addEventListener('input', e=>applyFilter(e.target.value));
+
+  // Uhr + Refresh (tmux-Gefühl)
+  setInterval(()=>{document.getElementById('seg-clock').textContent=
+    new Date().toLocaleTimeString('de-DE');},1000);
+  document.getElementById('btn-crt')
+    .addEventListener('click',()=>document.body.classList.toggle('crt'));
+
+  render();
+  // >>> ECHTBETRIEB: setInterval(async()=>{ state = await ladeVomMonitor(); render(); }, 5000);
+</script>
+</body>
+</html>
+
