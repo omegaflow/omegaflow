@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::te::pcmci_links;
+use omegaflow::te::{pcmci_links, TeNull};
 
 const LAIC_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/laic.bin";
@@ -194,7 +194,16 @@ fn main() {
             continue;
         }
         let series: [&[f32]; 3] = [&s0, &s1, &s2];
-        let Some(links) = pcmci_links(&series, 2, 4, 3, 0x9E37_79B9_7F4A_7C15, 10) else {
+        let Some(links) = pcmci_links(
+            &series,
+            2,
+            4,
+            3,
+            0x9E37_79B9_7F4A_7C15,
+            100,
+            TeNull::Residual,
+            0,
+        ) else {
             continue;
         };
         runs += 1;
