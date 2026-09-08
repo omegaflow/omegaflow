@@ -365,7 +365,7 @@ fn main() {
     let mut per_sat: Vec<(String, [Acc; 3])> = Vec::new();
     let mut series = String::new();
     series.push_str(
-        "sat\tjd_utc\ttdb_secs\tra_deg\tdec_deg\te_ra_mas\te_dec_mas\tsep_de441_mas\tsep_inpop19a_mas\tsep_epm2021_mas\n",
+        "sat\tjd_utc\ttdb_secs\tra_deg\tdec_deg\te_ra_mas\te_dec_mas\tsep_de441_mas\tsep_inpop19a_mas\tsep_epm2021_mas\tdra_de441_mas\tddec_de441_mas\n",
     );
 
     for (name, sat, obs) in &sats {
@@ -415,7 +415,7 @@ fn main() {
                 None => "na".to_string(),
             };
             series.push_str(&format!(
-                "{name}\t{:.8}\t{:.3}\t{:.7}\t{:.7}\t{:.1}\t{:.1}\t{}\t{}\t{}\n",
+                "{name}\t{:.8}\t{:.3}\t{:.7}\t{:.7}\t{:.1}\t{:.1}\t{}\t{}\t{}\t{}\t{}\n",
                 o.jd_utc,
                 tdb,
                 o.ra_deg,
@@ -425,6 +425,8 @@ fn main() {
                 f(seps[0]),
                 f(seps[1]),
                 f(seps[2]),
+                f(dra[0]),
+                f(ddec[0]),
             ));
         }
         per_sat.push((name.clone(), pacc));
@@ -442,7 +444,8 @@ fn main() {
     report.push_str(&format!(
         "Observatory: Pico dos Dias (MPC 874), λ = {OBS_LON_DEG}°, φ = {OBS_LAT_DEG}°, h = {OBS_ALT_M} m — geocentric astrometric (ICRS, light-time, no aberration/deflection)\n"
     ));
-    report.push_str("Reduction: satellite = planet barycenter (DE441/INPOP19a/EPM2021) + (satellite − barycenter) (the SPK moon model, common to all three lines)\n\n");
+    report.push_str("Reduction: satellite = planet barycenter (DE441/INPOP19a/EPM2021) + (satellite − barycenter) (the SPK moon model, common to all three lines)\n");
+    report.push_str("Diurnal signal: the absolute residual carries a ~200 mas common-mode diurnal term (parallax/aberration) — it cancels in the pairwise mean differences, so the Riss is measured cleanly while the absolute barycenter offset stays buried\n\n");
 
     report.push_str("RMS per ephemeris (unweighted, mas, all satellites):\n");
     let mut rms_list: Vec<(&str, f64)> = Vec::new();
