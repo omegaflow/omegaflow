@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-08
-  sha256: ed081415885a1b2c0370f81b882858ec47bcd695ad9781d1c3221f1ad78219a0
+  sha256: aea40786724c89bc635fa3612998901fb484d8a65f16c7e7761e7dd2a3a9fd28
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -126,14 +126,15 @@ Die zwei Wurzeln stehen nicht gleich da:
 
 - **Leiter-Wurzel: teils gewogen (Klasse), teils zitiert (Auswahl + Abzug).**
   Der Probe `cepheid_parallax_weigh` hat das Gaia-DR3-Parallaxenfeld der
-  Cepheiden-Klasse selbst gemessen (Query im Anhang): **N = 2078 Cepheiden**
-  (Parallaxe > 5σ), **inversvarianz-gewichtetes Parallaxen-Mittel 0.2530 mas,
-  Standardfehler ±0.0004 mas**, 1/π = 3951.8 pc, Median 0.2105 mas, Spanne
-  0.059–5.245 mas. Der statistische Standardfehler wird vom nicht-angewendeten
-  ~14-μas-Zeropunkt dominiert. Das Feld ist das rohe Archiv ohne L20b-Abzug —
-  die publizierte SH0ES-Kalibration (Riess 2021) nutzt 75 ausgewählte Cepheiden
-  und zieht diesen Abzug ab; der H₀-tragende Anker bleibt `zitiert`, gewogen
-  ist nur die Klasse.
+  klassischen Cepheiden (DCEP) selbst gemessen (Query im Anhang):
+  **N = 1606 Cepheiden** (type_best_classification = DCEP, Parallaxe > 5σ),
+  **inversvarianz-gewichtetes Parallaxen-Mittel 0.2619 mas, Standardfehler
+  ±0.0004 mas**, 1/π = 3818.0 pc, Median 0.2270 mas, Spanne 0.059–4.194 mas.
+  Der statistische Standardfehler wird vom nicht-angewendeten ~14-μas-Zeropunkt
+  dominiert. Das Feld ist das rohe Archiv ohne L20b-Abzug — die publizierte
+  SH0ES-Kalibration (Riess 2021) nutzt 75 ausgewählte Cepheiden und zieht
+  diesen Abzug ab; der H₀-tragende Anker bleibt `zitiert`, gewogen ist nur die
+  Klasse.
 - **CMB-Wurzel: zitiert.** Die Planck-Likelihood (θ*, r_d, das CMB-Leistungs-
   spektrum) ist eine Forschungsmaschine, keine Session. Keine Zeile dieser
   Familie wird selbst gerechnet; die Klasse ist benannt, nicht verschwiegen.
@@ -250,10 +251,10 @@ bleibt; die 88 sind die Erweiterung des 53er-Rückens.
   `mode_best_classification` ∈ {FUNDAMENTAL, FIRST_OVERTONE, SECOND_OVERTONE,
   MULTI, UNDEFINED, NOT_APPLICABLE}; dazu `multi_mode_best_classification` ∈
   {F/1O, F/2O, 1O/2O, 1O/3O, 2O/3O, F/1O/2O, 1O/2O/3O}. Konsequenz für die
-  Asymmetrie: der Probe-Query filtert nicht nach Typ — die gewogene Klasse
-  (N = 2078) umfasst DCEP + T2CEP + ACEP, während die SH0ES-Kalibration nur die
-  DCEP-Teilmenge nutzt. Der Probe wiegt einen breiteren Boden; das ist benannt,
-  nicht korrigiert.
+  Asymmetrie: der Probe-Query filtert jetzt auf `type_best_classification =
+  'DCEP'` — die gewogene Klasse (N = 1606, 0.2619 mas) ist die klassische
+  Cepheiden-Teilmenge der SH0ES-Kalibration; der breite Boden (alle Typen,
+  N = 2078) wog 0.2530 mas.
 
 ### Gemessene Abweichungen vom externen Nachtrag
 
@@ -293,7 +294,8 @@ Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record)
     SELECT g.parallax, g.parallax_error
     FROM gaiadr3.vari_cepheid AS c
     JOIN gaiadr3.gaia_source AS g USING (source_id)
-    WHERE g.parallax > 0 AND g.parallax_error > 0
+    WHERE c.type_best_classification = 'DCEP'
+      AND g.parallax > 0 AND g.parallax_error > 0
       AND g.parallax > 5 * g.parallax_error
 
 **Kontext-Links, nie Zeilen** (Blogs/Produktseiten/Suchportale): astrobites

@@ -2,7 +2,7 @@ use std::process::Command;
 
 use omegaflow::gaia_sso::GAIA_TAP_SYNC;
 
-const ADQL: &str = "SELECT g.parallax, g.parallax_error FROM gaiadr3.vari_cepheid AS c JOIN gaiadr3.gaia_source AS g USING (source_id) WHERE g.parallax > 0 AND g.parallax_error > 0 AND g.parallax > 5 * g.parallax_error";
+const ADQL: &str = "SELECT g.parallax, g.parallax_error FROM gaiadr3.vari_cepheid AS c JOIN gaiadr3.gaia_source AS g USING (source_id) WHERE c.type_best_classification = 'DCEP' AND g.parallax > 0 AND g.parallax_error > 0 AND g.parallax > 5 * g.parallax_error";
 
 fn tap_csv(adql: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -106,11 +106,11 @@ fn main() {
     let max = meds[meds.len() - 1];
     let unweighted = meds.iter().sum::<f64>() / meds.len() as f64;
     println!(
-        "cepheid_parallax_weigh: N={} | inverse-variance weighted mean parallax = {:.4} mas ± {:.4} mas (standard error) | 1/π = {:.1} pc",
+        "cepheid_parallax_weigh (DCEP): N={} | inverse-variance weighted mean parallax = {:.4} mas ± {:.4} mas (standard error) | 1/π = {:.1} pc",
         rows.len(), mean, err, dist_pc
     );
     println!(
-        "cepheid_parallax_weigh: sample median parallax = {:.4} mas | min {:.4} | max {:.4} | unweighted mean {:.4} mas",
+        "cepheid_parallax_weigh (DCEP): sample median parallax = {:.4} mas | min {:.4} | max {:.4} | unweighted mean {:.4} mas",
         med, min, max, unweighted
     );
 }
