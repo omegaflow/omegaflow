@@ -1,7 +1,7 @@
 <!--
   title: Binary Protocol — v9
   class: concept
-  sha256: 223b00e7003aad2f6b5fe021724796828822571ccbaabb54c2bbbf8ae9b1fa3f
+  sha256: 21ac0eb891c8fdb18372de606393217e6c4651f6cf1255b072e885d7930e1fd5
   status: live
 -->
 # Binary Protocol — v9
@@ -92,44 +92,6 @@ The harvest step (NCEI-SSI netCDF-4/HDF5) is deployed since 2026-08-21 — `src/
 reads the container, `spectral_compiler --input-nc` builds the bins; unreadable
 containers are named, never replaced.
 
-## Spectral Star Catalog File — v2 (xp_spectra.bin)
-
-Multi-star variant of the spectral asset (`gaia_xp_compiler`, Atom B item 3). One record
-per Gaia DR3 XP spectrum; each star carries its own position and its own valid bins.
-
-| Offset | Size | Value |
-|--------|------|-------|
-| 0 | 2 | `0xCF 0x86` (magic) |
-| 2 | 1 | `0x02` (spectral-star version) |
-| 3 | 8 | `epoch_tdb` f64 LE — the catalog reference epoch (TDB seconds since J2000) |
-| 11 | 4 | `count` u32 LE — number of stars |
-| 15 | count × star records | see below |
-
-Header total: 15 bytes.
-
-### Spectral Star Record (36 bytes + n_bins × 24, variable)
-
-| Slot | Size | Field |
-|------|------|-------|
-| 0 | 8 | `source_id` u64 LE — Gaia DR3 source id |
-| 8 | 8 | `ra` f64 LE — ICRS right ascension, degrees |
-| 16 | 8 | `dec` f64 LE — ICRS declination, degrees |
-| 24 | 8 | `plx_mas` f64 LE — parallax, milliarcseconds |
-| 32 | 4 | `n_bins` u32 LE — number of valid bins |
-| 36 | n_bins × 24 | bin records (the same 3 × f64 layout as v1: freq, bin_width, val) |
-
-The wavelength grid is the fixed `gdr3spec.ssameta` axis — 400–800 nm, Δλ = 10 nm, 41
-samples. `xp_bins_from_flux_array` maps each sample λ→ν (ν = c/λ) and converts
-W·m⁻²·nm⁻¹ → W·m⁻²·Hz⁻¹ (E_ν = E_λ·λ²/c) through the same conversion as v1;
-non-positive or non-finite samples fall (0 honored — a noise-negative flux is absent,
-never padded). The compiler reads a TAP CSV export (`--input`, the `gdr3spec.withpos`
-view: `source_id`, `ra`, `dec`, `parallax`, `flux`) and requires `--epoch-tdb` (seconds
-since J2000; J2016.0 = 504921600). `parse_xp_spectra_bin` (`src/archivar/spectral.rs`)
-refuses malformed files — wrong magic/version, non-finite epoch, stride overrun. The
-ω-loop consumer (`format xp_spectra`, `src/archivar/main_flow.rs`) expands each star to a
-SpectralHash at its parallax seat (Motion::Spherical); stars without a positive parallax
-are named and skipped.
-
 ## WebSocket Query Frame (browser → server)
 
 `static/constants.js` `syncFrame`:
@@ -170,6 +132,6 @@ props[j*4+2]  = vec4f(j4, r_eq, color_index, freq)
 props[j*4+3]  = vec4f(bin_width, phase, presence, 0)
 ```
 
-`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, `extent` as `mt.x` — the canonical field shader reads only `props[j*4]` and the three `field` vec4s. The remaining slots (`z` as `mt.w`, pole/j2/j4/r_eq in `props[j*4+1..2]`, `color_index`/`freq` in `props[j*4+2]`, `bin_width`/`phase`/`presence` in `props[j*4+3]`) ride the record and the pack but are not read by the field shader: freq/bin_width are carried since v8 and consumed by the spectral oscillator atoms (see `docs/specs/spectral-oscillator.md`), phase/presence are the Atom D bit, and pole/j2/j4/r_eq are pad (Atom 7 — the form belongs to the anchor, no multipole moments on the wire).
+`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, `extent` as `mt.x` — the canonical field shader reads only `props[j*4]` and the three `field` vec4s. The remaining slots (`z` as `mt.w`, pole/j2/j4/r_eq in `props[j*4+1..2]`, `color_index`/`freq` in `props[j*4+2]`, `bin_width`/`phase`/`presence` in `props[j*4+3]`) ride the record and the pack but are not read by the field shader: freq/bin_width are carried since v8 and consumed by the spectral oscillator atoms (see `docs/concepts/spectral-oscillator.md`), phase/presence are the Atom D bit, and pole/j2/j4/r_eq are pad (Atom 7 — the form belongs to the anchor, no multipole moments on the wire).
 
 Slot identity is verified by `golden_pack_slots_against_wgsl_access` (mathematikerin tests) — the golden test of the `pack_window` slot layout. The WGSL sources validate offline via naga (`field_wgsl_validates_offline`).
