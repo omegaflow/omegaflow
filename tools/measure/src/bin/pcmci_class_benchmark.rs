@@ -1,11 +1,23 @@
-use omegaflow::te::pcmci_links;
+use omegaflow::te::{pcmci_links, TeNull};
+use std::sync::atomic::{AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const MAX_LAG: usize = 2;
-const NULL_LAG: usize = 12;
 const BINS: usize = 4;
-const N_SURR: usize = 10;
 const BURN: usize = 200;
+
+static NULL_LAG: AtomicUsize = AtomicUsize::new(12);
+static N_SURR: AtomicUsize = AtomicUsize::new(100);
+static NULL_MODEL: AtomicU8 = AtomicU8::new(1);
+static BLOCK: AtomicUsize = AtomicUsize::new(0);
+
+fn null_model() -> TeNull {
+    match NULL_MODEL.load(Ordering::Relaxed) {
+        0 => TeNull::Residual,
+        2 => TeNull::Shift,
+        _ => TeNull::Block,
+    }
+}
 
 fn next_rng(rng: &mut u64) -> f64 {
     *rng = rng
@@ -134,7 +146,16 @@ fn measure(
     seed: u64,
 ) -> Option<(Vec<bool>, usize, usize)> {
     let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
-    let links = pcmci_links(&refs, max_lag, NULL_LAG, bins, seed, N_SURR)?;
+    let links = pcmci_links(
+        &refs,
+        max_lag,
+        NULL_LAG.load(Ordering::Relaxed),
+        bins,
+        seed,
+        N_SURR.load(Ordering::Relaxed),
+        null_model(),
+        BLOCK.load(Ordering::Relaxed),
+    )?;
     let n_chan = series.len();
     let found: Vec<bool> = true_links
         .iter()
@@ -389,11 +410,66 @@ fn tigramite_overview(n: usize, rng: &mut u64) -> Vec<Vec<f32>> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let quick = args.iter().any(|a| a == "--quick");
+    let null_arg = args
+        .iter()
+        .position(|a| a == "--null")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    match null_arg.as_deref() {
+        None => {}
+        Some("residual") => NULL_MODEL.store(0, Ordering::Relaxed),
+        Some("block") => NULL_MODEL.store(1, Ordering::Relaxed),
+        Some("shift") => NULL_MODEL.store(2, Ordering::Relaxed),
+        Some(other) => {
+            eprintln!("--null carries {other} — the probe builds residual, block, shift");
+            std::process::exit(1);
+        }
+    }
+    let n_surr_arg = args
+        .iter()
+        .position(|a| a == "--n-surr")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = n_surr_arg {
+        match v.parse::<usize>() {
+            Ok(n) if n >= 2 => N_SURR.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--n-surr carries {v} — not a surrogate count");
+                std::process::exit(1);
+            }
+        }
+    }
+    let block_arg = args
+        .iter()
+        .position(|a| a == "--block")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = block_arg {
+        match v.parse::<usize>() {
+            Ok(n) => BLOCK.store(n, Ordering::Relaxed),
+            Err(_) => {
+                eprintln!("--block carries {v} — not a block length");
+                std::process::exit(1);
+            }
+        }
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {MAX_LAG} null_lag {NULL_LAG} bins {BINS} n_surr {N_SURR} seed {SEED:#X} quick={quick}"
+        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} seed {SEED:#X} quick={quick}",
+        NULL_LAG.load(Ordering::Relaxed),
+        N_SURR.load(Ordering::Relaxed),
+        match null_model() {
+            TeNull::Residual => "residual",
+            TeNull::Block => "block",
+            TeNull::Shift => "shift",
+        },
+        BLOCK.load(Ordering::Relaxed)
     );
 
     println!();

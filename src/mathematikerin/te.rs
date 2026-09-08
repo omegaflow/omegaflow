@@ -72,9 +72,13 @@ pub fn shuffle_series(v: &[f32], rng: &mut u64) -> Vec<f32> {
 }
 
 pub fn surrogate_threshold(x: &[f32], y: &[f32], seed: u64) -> Option<f64> {
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    surrogate_threshold_with(x, y, seed, 10)
+}
+
+pub fn surrogate_threshold_with(x: &[f32], y: &[f32], seed: u64, n_surr: usize) -> Option<f64> {
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..n_surr {
         let ys = shuffle_series(y, &mut rng);
         if let Some(te) = transfer_entropy(x, &ys) {
             vals.push(te);
@@ -954,6 +958,17 @@ fn residual_surrogate_conditional_lagged_n(
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum TeNull {
+    Residual,
+    Block,
+    Shift,
+}
+
+pub fn block_len_from_n(n: usize) -> usize {
+    (n as f64).powf(1.0 / 3.0).round() as usize
+}
+
 pub fn conditional_te_stats_lagged_n(
     x: &[f32],
     y: &[f32],
@@ -963,8 +978,9 @@ pub fn conditional_te_stats_lagged_n(
     bins: usize,
     seed: u64,
     n_surr: usize,
+    null: TeNull,
 ) -> Option<(f64, f64, f64)> {
-    let vals = conditional_te_surrogates_n(x, y, conds, lag, max_lag, bins, seed, n_surr)?;
+    let vals = conditional_te_surrogates_n(x, y, conds, lag, max_lag, bins, seed, n_surr, null, 0)?;
     let n = vals.len() as f64;
     let mean = vals.iter().sum::<f64>() / n;
     let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
@@ -981,11 +997,24 @@ pub fn conditional_te_surrogates_n(
     bins: usize,
     seed: u64,
     n_surr: usize,
+    null: TeNull,
+    block: usize,
 ) -> Option<Vec<f64>> {
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    let block_len = if block == 0 {
+        block_len_from_n(y.len())
+    } else {
+        block
+    };
     for _ in 0..n_surr {
-        let ys = residual_surrogate_conditional_lagged_n(y, conds, max_lag, &mut rng);
+        let ys = match null {
+            TeNull::Residual => {
+                residual_surrogate_conditional_lagged_n(y, conds, max_lag, &mut rng)
+            }
+            TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
+            TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
+        };
         if let Some(te) = transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins) {
             vals.push(te);
         }
@@ -1025,6 +1054,8 @@ pub fn pcmci_links(
     bins: usize,
     seed: u64,
     n_surr: usize,
+    null: TeNull,
+    block: usize,
 ) -> Option<Vec<CausalLink>> {
     let n_chan = series.len();
     if n_chan < 2 {
@@ -1065,6 +1096,8 @@ pub fn pcmci_links(
                             ^ (i as u64).wrapping_mul(0x85EB_CA6B)
                             ^ (lag as u64).wrapping_mul(0xC2B2_AE3D),
                         n_surr,
+                        null,
+                        block,
                     )?;
                     let mean = surr.iter().sum::<f64>() / surr.len() as f64;
                     let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>()
@@ -1119,7 +1152,7 @@ pub fn surrogate_threshold_lag(x: &[f32], y: &[f32], lag: usize, seed: u64) -> O
 }
 
 pub fn surrogate_stats(x: &[f32], y: &[f32], lag: usize, seed: u64) -> Option<(f64, f64, f64)> {
-    surrogate_stats_with(x, y, lag, seed, &mut |v, rng| shuffle_series(v, rng))
+    surrogate_stats_with(x, y, lag, seed, 10, &mut |v, rng| shuffle_series(v, rng))
 }
 
 pub fn surrogate_stats_phase(
@@ -1128,7 +1161,7 @@ pub fn surrogate_stats_phase(
     lag: usize,
     seed: u64,
 ) -> Option<(f64, f64, f64)> {
-    surrogate_stats_with(x, y, lag, seed, &mut |v, rng| {
+    surrogate_stats_with(x, y, lag, seed, 10, &mut |v, rng| {
         phase_randomized_surrogate(v, rng)
     })
 }
@@ -1140,7 +1173,7 @@ pub fn surrogate_stats_block(
     block: usize,
     seed: u64,
 ) -> Option<(f64, f64, f64)> {
-    surrogate_stats_with(x, y, lag, seed, &mut |v, rng| {
+    surrogate_stats_with(x, y, lag, seed, 10, &mut |v, rng| {
         block_bootstrap_surrogate(v, block, rng)
     })
 }
@@ -1150,11 +1183,12 @@ fn surrogate_stats_with(
     y: &[f32],
     lag: usize,
     seed: u64,
+    n_surr: usize,
     surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Vec<f32>,
 ) -> Option<(f64, f64, f64)> {
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..n_surr {
         let ys = surrogate(y, &mut rng);
         if let Some(te) = transfer_entropy_lag(x, &ys, lag) {
             vals.push(te);
@@ -1651,6 +1685,7 @@ fn topological_te_with(
     dim: usize,
     order: usize,
     seed: u64,
+    n_surr: usize,
     surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Vec<f32>,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
@@ -1670,9 +1705,9 @@ fn topological_te_with(
         return None;
     }
     let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..n_surr {
         let ys = surrogate(y, &mut rng);
         if ys.len() != n {
             continue;
@@ -1736,7 +1771,7 @@ pub fn topological_te_phase(
     order: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, &mut |v, rng| {
+    topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
         phase_randomized_surrogate(v, rng)
     })
 }
@@ -1749,7 +1784,7 @@ pub fn topological_te_block(
     block: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, &mut move |v, rng| {
+    topological_te_with(x, y, dim, order, seed, 10, &mut move |v, rng| {
         block_bootstrap_surrogate(v, block, rng)
     })
 }
@@ -1760,6 +1795,17 @@ pub fn topological_te_instantaneous_phase(
     dim: usize,
     order: usize,
     seed: u64,
+) -> Option<TopologicalVerdict> {
+    topological_te_instantaneous_phase_with(x, y, dim, order, seed, 10)
+}
+
+fn topological_te_instantaneous_phase_with(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    order: usize,
+    seed: u64,
+    n_surr: usize,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
     if n < 8 || y.len() != n || dim < 2 {
@@ -1780,9 +1826,9 @@ pub fn topological_te_instantaneous_phase(
         return None;
     }
     let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..n_surr {
         let ys_amp = phase_randomized_surrogate(y, &mut rng);
         let Some(ys) = hilbert_instantaneous_phase(&ys_amp) else {
             continue;
@@ -2381,8 +2427,8 @@ mod tests {
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
         }
-        let res = topological_te_with(&x, &y, 3, 3, 42, &mut |v: &[f32],
-                                                              _rng: &mut u64|
+        let res = topological_te_with(&x, &y, 3, 3, 42, 10, &mut |v: &[f32],
+                                                                  _rng: &mut u64|
          -> Vec<f32> {
             vec![1.0; v.len()]
         });
@@ -2570,6 +2616,119 @@ mod tests {
             ab.is_none() || ba.is_none(),
             "Kalibrier-Gate n-Floor: n=16 carries no verdict"
         );
+    }
+
+    fn gate_gauss(rng: &mut u64) -> f32 {
+        loop {
+            let u1 = gate_rng(rng) * 2.0 - 1.0;
+            let u2 = gate_rng(rng) * 2.0 - 1.0;
+            let s = u1 * u1 + u2 * u2;
+            if s >= 1.0 || s <= 0.0 {
+                continue;
+            }
+            let m = (-2.0 * (s as f64).ln() / (s as f64)).sqrt() as f32;
+            return (u1 as f32) * m;
+        }
+    }
+
+    fn gate_common_driver(n: usize, a: f32, c: f32, d_z: usize, rng: &mut u64) -> Vec<Vec<f32>> {
+        let burn = 200;
+        let n_chan = 2 + d_z;
+        let mut x = vec![vec![0f32; burn + n]; n_chan];
+        for step in 1..burn + n {
+            x[0][step] = a * x[0][step - 1] + gate_gauss(rng);
+            let mut yv = a * x[1][step - 1] + c * x[0][step - 1] + gate_gauss(rng);
+            for d in 0..d_z {
+                x[2 + d][step] = a * x[2 + d][step - 1] + 0.25 * gate_gauss(rng);
+                yv += 0.5 * x[2 + d][step - 1];
+            }
+            x[1][step] = yv;
+        }
+        (0..n_chan).map(|j| x[j][burn..].to_vec()).collect()
+    }
+
+    fn gate_fpr_cell(
+        a: f32,
+        d_z: usize,
+        trials: usize,
+        null: TeNull,
+        n_surr: usize,
+        rng: &mut u64,
+    ) -> (usize, usize) {
+        let mut fp = 0usize;
+        let mut neg = 0usize;
+        for t in 0..trials {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let series = gate_common_driver(150, a, 0.0, d_z, rng);
+            let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
+            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0) else {
+                continue;
+            };
+            let n_chan = refs.len();
+            for drv in 0..n_chan {
+                for tgt in 0..n_chan {
+                    if drv == tgt {
+                        continue;
+                    }
+                    for lag in 1..=2 {
+                        neg += 1;
+                        if links.iter().any(|k| {
+                            k.driver == drv && k.target == tgt && k.lag == lag && k.te > k.threshold
+                        }) {
+                            fp += 1;
+                        }
+                    }
+                }
+            }
+        }
+        (fp, neg)
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_block_null_n_surr_100() {
+        let null = TeNull::Block;
+        let n_surr = 100;
+        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+        let cells = [
+            (0.0f32, 0usize, 125usize),
+            (0.5f32, 0usize, 125usize),
+            (0.9f32, 0usize, 125usize),
+            (0.0f32, 4usize, 6usize),
+            (0.5f32, 4usize, 6usize),
+            (0.9f32, 4usize, 6usize),
+        ];
+        let mut rows: Vec<(f32, usize, f64)> = Vec::new();
+        for &(a, d_z, trials) in &cells {
+            let (fp, neg) = gate_fpr_cell(a, d_z, trials, null, n_surr, &mut rng);
+            rows.push((a, d_z, 100.0 * fp as f64 / neg as f64));
+        }
+        let named: String = rows
+            .iter()
+            .map(|&(a, d_z, fpr)| format!("a={a} D_Z={d_z}: {fpr:.2}% "))
+            .collect();
+        for &(a, d_z, fpr) in &rows {
+            assert!(
+                fpr <= 8.0,
+                "Zug 5: FPR {fpr:.2}% at a={a} D_Z={d_z} exceeds 8% — the null does not hold under autocorrelation ({named})"
+            );
+        }
+        for d_z in [0usize, 4usize] {
+            let f0 = rows
+                .iter()
+                .find(|&&(a, d, _)| a == 0.0 && d == d_z)
+                .expect("Zug 5: a=0 cell measured")
+                .2;
+            let f9 = rows
+                .iter()
+                .find(|&&(a, d, _)| a == 0.9 && d == d_z)
+                .expect("Zug 5: a=0.9 cell measured")
+                .2;
+            assert!(
+                f9 - f0 <= 2.0,
+                "Zug 5: FPR rise {:.2}pp over a at D_Z={d_z} exceeds 2pp — the null leaks autocorrelation into the FPR ({named})",
+                f9 - f0
+            );
+        }
     }
 
     #[test]
@@ -3069,6 +3228,7 @@ mod tests {
             bins,
             0x9E37_79B9_7F4A_7C15,
             10,
+            TeNull::Residual,
         )
         .expect("lagged N-dim null resolves");
         assert!(
@@ -3117,6 +3277,7 @@ mod tests {
             bins,
             0x9E37_79B9_7F4A_7C15,
             10,
+            TeNull::Residual,
         )
         .expect("lagged N-dim null resolves");
         assert!(
@@ -3155,8 +3316,17 @@ mod tests {
             };
         }
         let series: [&[f32]; 3] = [&z, &a, &b];
-        let links =
-            pcmci_links(&series, 1, 3, 3, 0x9E37_79B9_7F4A_7C15, 10).expect("pcmci resolves");
+        let links = pcmci_links(
+            &series,
+            1,
+            3,
+            3,
+            0x9E37_79B9_7F4A_7C15,
+            10,
+            TeNull::Residual,
+            0,
+        )
+        .expect("pcmci resolves");
         let ab = links
             .iter()
             .find(|l| l.driver == 1 && l.target == 2 && l.lag == 1)
