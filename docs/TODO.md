@@ -1016,19 +1016,21 @@ physikalischen Aussage — kein Blatt ohne diese:
   Bz→F als einzige erhöhte Kante, 0,27). GPU-Pfad: `COND_BIN_TE_WGSL` +
   `CondBinTeGpu` + Paritäts-Gate (GPU==CPU, 1e-3, grün auf echtem Adapter).
   Übergabe: docs/handover/handover-2026-09-08-nobel-dag-atom.md.
-- **Klassen-Benchmark gegen die publizierte PCMCI-Suite (offen — die eine Messung,
-  die das Superlativ „fortschrittlichste TE-Maschine" erst beantwortbar macht)**:
-  Atom B ist gebaut und hat Runge am Bz-Ankerfall reproduziert (Bz gemeinsamer
-  Treiber von AE/Dst); der synthetische DAG-Benchmark (2026-09-07) deckt eine
-  einzelne Kante. Was fehlt: die breite Fläche — `pcmci_links` gegen die
-  publizierten Recovery-Raten der vollen synthetischen PCMCI-Benchmarksuite
-  (TPR/FPR je Kante, wie in der Runge-Literatur berichtet) und, wo zitierbar,
-  gegen die Testbatterien von IDTxl/Tigramite. Ein Tigramite-Lauf ist durch die
-  Python-Regel ausgeschlossen — der Vergleich läuft gegen publizierte Zahlen,
-  nicht gegen deren Code. Der Probe baut die Suite nach der Prozessbeschreibung
-  des Papers nach (zitierbar, kein Python) und legt die eigenen TPR/FPR daneben.
-  Erst diese Fläche trägt oder tötet das Superlativ — bis dahin bleibt es
-  ungemessen und gestrichen.
+- **Klassen-Benchmark gegen die publizierte PCMCI-Suite (Auftrag erteilt 2026-09-08 —
+  die eine Messung, die das Superlativ „fortschrittlichste TE-Maschine" erst
+  beantwortbar macht)**: Atom B ist gebaut und hat Runge am Bz-Ankerfall
+  reproduziert (Bz gemeinsamer Treiber von AE/Dst); der synthetische
+  DAG-Benchmark (2026-09-07) deckt eine einzelne Kante. Was fehlt: die breite
+  Fläche — `pcmci_links` gegen die publizierten Recovery-Raten der vollen
+  synthetischen PCMCI-Benchmarksuite (TPR/FPR je Kante, wie in der
+  Runge-Literatur berichtet) und, wo zitierbar, gegen die Testbatterien von
+  IDTxl/Tigramite (der Vergleich läuft gegen publizierte Zahlen, nie gegen
+  deren Code — Python-Regel). Der Auftrag liegt in
+  `docs/auftrag/auftrag-klassen-benchmark-pcmci.md`: die empfangende Sitzung
+  schließt als Atom (keine pendings, keine deferrals, keine „for nows") und
+  delegiert Recherche und Analyse an Subagenten. Erst die gemessene Fläche
+  trägt oder tötet das Superlativ — bis dahin bleibt es ungemessen und
+  gestrichen.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
