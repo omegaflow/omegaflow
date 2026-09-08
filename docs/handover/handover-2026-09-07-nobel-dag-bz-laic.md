@@ -2,7 +2,7 @@
   title: Handover — Nobel-DAG: der multivariate Atom für Bz und LAIC
   class: handover
   date: 2026-09-07
-  sha256: e3b6c15899b7ec468bf1bc17cb142a567d31182f7c4edd7bc41f35e256823513
+  sha256: b7084414b89d9e5139e8bcf1b18a4e514fe92640dcc29f16c5c0cb5eb61adc4e
   status: live
   see-also: docs/concepts/te-literatur-matrix.md docs/TODO.md docs/concepts/die-weberin.md
 -->
@@ -50,8 +50,10 @@ Bz und LAIC sind anders: dort ist der Konfund mehrköpfig.
 
 1. **Schätzer-Wahl:** kNN- oder Binning-TE für N Konditionen (statt KDE) — die
    Dimensionen-Mauer umgehen.
-2. **Eltern-Suche minimal:** PCMCI ohne FDR als erste Stufe — jedes Paar auf
-   die Vereinigung der Kandidaten-Eltern konditionieren, testen.
+2. **Eltern-Suche komplett:** PCMCI mit der Mehrfachvergleichs-Korrektur (FDR)
+   als Bestandteil, nicht als Anhang — jedes Paar auf die Vereinigung der
+   Kandidaten-Eltern konditionieren, bedingte Unabhängigkeit testen, FDR über
+   die volle Matrix.
 3. **Bz zuerst:** Sonnenwind-Parameter + AE/SYM-H — der Fall, den Runge kennt,
    als Positivkontrolle der eigenen Maschine.
 4. **LAIC danach:** Seismizität + TEC + E-Feld — das unbesetzte Feld.
