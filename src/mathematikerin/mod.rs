@@ -7,6 +7,7 @@ pub(crate) use crate::machines::{
 };
 
 pub mod actuators;
+pub mod cond_bin_te_gpu;
 pub mod doppler;
 pub mod equilibrium;
 pub mod force;
@@ -25,6 +26,7 @@ pub mod te;
 mod tests;
 
 pub use actuators::*;
+pub use cond_bin_te_gpu::*;
 pub use omega::*;
 pub use orientation::*;
 pub use s2::*;
