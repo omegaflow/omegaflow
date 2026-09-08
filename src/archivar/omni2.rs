@@ -11,7 +11,8 @@ pub const COMP_AE: u32 = 8;
 pub const COMP_AL: u32 = 9;
 pub const COMP_AU: u32 = 10;
 pub const COMP_SYMH: u32 = 11;
-pub const COMP_MAX: u32 = 11;
+pub const COMP_DST: u32 = 12;
+pub const COMP_MAX: u32 = 12;
 
 pub fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * 20);
