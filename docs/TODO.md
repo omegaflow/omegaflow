@@ -1315,6 +1315,39 @@ ICRS-4D-Rahmen teilt:
   Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
   beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
   parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
+- Gaia XP (Atom B 3): GEBAUT (2026-09-08) — Compiler `gaia_xp_compiler`
+  (`--input <TAP-csv> --epoch-tdb <s>` → `xp_spectra.bin` v2, roundtrip-
+  geprüft) + `write/parse_xp_spectra_bin` + `xp_bins_from_flux_array` in
+  `src/archivar/spectral.rs` (41 Stützstellen 400–800 nm Δ10 nm, λ→ν,
+  E_ν=E_λ·λ²/c; noise-negative Samples fallen, 0 honored); Tests grün.
+  Verbraucher gebaut (2026-09-08): `format xp_spectra` in main_flow.rs —
+  jeder Stern (Parallaxen-Sitz, Motion::Spherical) → ein SpectralHash mit
+  seinen Bins; Quelle in `phi/sources.φ` registriert. OFFEN: CDN-Workflow
+  (`gaia-xp-cdn.yml`, TAP-Async-Fetch + `--ci-mode`) — erster CI-Lauf.
+- CMB-Power-Spektren (Atom B 4, Cl-Teil): DESCoped von der freq-Achse
+  (2026-09-08) — l ist der Multipol (Winkel-Achse), kein Hz; der
+  freq/bin_width-Slot trägt ihn nicht, l→Hz wäre Fabrikation. Befund =
+  Eintrag (kein freq-Compiler). Die Quelle ist real und offen (IRSA Planck
+  release_3, `COM_PowerSpect_CMB-*.txt`, D_ℓ µK²) — ihr natürlicher Sitz
+  ist die S²-Leistungsachse (Cl als Kugelflächen-Power), ein eigenes
+  Merkmal, nicht diese Achse.
+- ONC-HSD-FFT (Atom B 2): als `blocked parser-def mat5` in
+  `phi/blocked_sources.φ` geführt (2026-09-08) — Produkt `HSD`+`.fft`,
+  HYDROPHONE, exakt 85 Stationen: real; Token liegt in `.secrets.local`;
+  archiviert wird 5-Minuten-`.mat`-Spektren (MATLAB v5), nicht `.fft`-ASCII;
+  „512 × 250 Hz, dB" unbestätigt. Register-Pflicht: `.mat`-Parser (mat5)
+  bauen, Bin-Geometrie am ersten Run messen.
+- LISA Pathfinder PSD (Atom B 4, LISA-Teil): `not-published` (2026-09-08) — kein
+  offener Tabellen-Bestand (VizieR: 0 Treffer in keiner ID; PRL/PRD nur Figur;
+  kein arXiv; ESA-Archiv interaktiv, TAP deaktiviert gemessen; HEASARC = NASA-
+  ST7/DRS, nicht Δg). Das publizierte Modell S_Δg = S_Brown + S_IFO·(2πf)⁴ ist
+  in `lpf_psd_probe` als Modell ausgewertet (S_Brown^½ = 5,2 fm·s⁻²/√Hz,
+  S_IFO^½ = 34,8 fm/√Hz, Übergang ~61 mHz) — es ersetzt die gemessene Reihe
+  nicht. Offene Pflicht: Autoren-Anfrage an Michele Armano / Paul McNamara nach
+  der Δg-Zeitreihe (L1/L2, 10 Hz, Noise-Runs) + Magnetfeld/Temperatur/Thruster
+  oder der tabellierten PSD — Entwurf sendfertig in
+  `docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md`; Antwort = Messung, bis
+  dahin `pending`.
 
 ## Archivar & Werkzeuge — offene Pflichten
 
