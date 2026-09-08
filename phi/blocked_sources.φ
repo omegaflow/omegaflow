@@ -33,7 +33,3 @@ note Global-CMT (form.json CDN-Capture; qcmt.ndk live gemessen 2026-09-07, HTTP 
 blocked parser-def netcdf
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
 note COSMIC-2 FORMOSAT-7 (level3.json CDN-Capture; live gemessen 2026-09-07, HTTP 200): NRT-Level-3-Radio-Okkultations-Profile als netCDF-Granulate unter dem Verzeichnis-Index (kein Skalar-Punkt-Feed). Messung (Brechungsindex/Bending-Angle-Profile, em) echt, Format netCDF-Granulat-Enumeration unkonsumierbar — Gap: COSMIC2-Granulat-Profil-Parser.
-
-blocked parser-def mat5
-url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung (Schalldruck-Spektraldichte, acoustic) echt — Gap: MATLAB-v5-`.mat`-Parser; danach Bin-Geometrie am ersten echten Run messen.

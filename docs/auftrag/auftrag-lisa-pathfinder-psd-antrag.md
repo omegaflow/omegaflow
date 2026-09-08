@@ -1,13 +1,15 @@
 <!--
-  title: Anfrage (extern, Entwurf) — LISA Pathfinder: Δg-Zeitreihe oder PSD-Tabelle
+  title: Anfrage (extern) — LISA Pathfinder: Δg-Zeitreihe oder PSD-Tabelle
   class: auftrag
   date: 2026-09-08
-  sha256: pending
+  sha256: 0b17bcd9c967ae0048c264dc7de5320cad11bf7c5e0a1d31cd4b1306b8be8e20
   status: pending
   see-also: docs/auftrag/auftrag-lisa-pathfinder-psd.md docs/TODO.md
 -->
 
-# Anfrage (Entwurf) — LISA Pathfinder: Δg-Zeitreihe oder PSD-Tabelle
+# Anfrage — LISA Pathfinder: Δg-Zeitreihe oder PSD-Tabelle
+
+Gesendet am 2026-09-08 (Operator).
 
 Empfänger (gemessen 2026-09-08, aus der ESA-Pressemeldung zur Archiv-Eröffnung):
 Michele Armano (michele.armano@esa.int) — Erstautor PRL 116, 231101 und zugleich
