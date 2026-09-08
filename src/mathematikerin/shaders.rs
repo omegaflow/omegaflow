@@ -597,6 +597,93 @@ fn scalar_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 "#;
 
+pub const COND_BIN_TE_WGSL: &str = r#"
+const RING_MAX: u32 = 1024u;
+const BINS: u32 = 4u;
+
+@group(0) @binding(0) var<storage, read> series: array<f32>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
+
+fn c_at(s: u32, i: u32) -> f32 {
+    return series[s * RING_MAX + i];
+}
+
+fn c_minmax(s: u32, n: u32) -> vec2f {
+    var mn = c_at(s, 0u);
+    var mx = mn;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let v = c_at(s, i);
+        mn = min(mn, v);
+        mx = max(mx, v);
+    }
+    return vec2f(mn, mx);
+}
+
+fn c_bin(v: f32, mn: f32, range: f32) -> u32 {
+    var b = u32((v - mn) / range * f32(BINS));
+    if (b >= BINS) { b = BINS - 1u; }
+    return b;
+}
+
+@compute @workgroup_size(1)
+fn cond_bin_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let n = params.x;
+    let shift = max(params.y, 1u);
+    let m = n - shift;
+    let rx = c_minmax(0u, n);
+    let ry = c_minmax(1u, n);
+    let rz = c_minmax(2u, n);
+    let dx = rx.y - rx.x;
+    let dy = ry.y - ry.x;
+    let dz = rz.y - rz.x;
+    if (m < 8u || dx <= 0.0 || dy <= 0.0 || dz <= 0.0) {
+        verdict[0u] = 0.0;
+        verdict[1u] = 0.0;
+        return;
+    }
+    var full = array<f32, 256>();
+    var xz = array<f32, 16>();
+    var xyz = array<f32, 64>();
+    var fxz = array<f32, 64>();
+    for (var t = 0u; t < m; t = t + 1u) {
+        let bfx = c_bin(c_at(0u, t + shift), rx.x, dx);
+        let bx = c_bin(c_at(0u, t), rx.x, dx);
+        let by = c_bin(c_at(1u, t), ry.x, dy);
+        let bz = c_bin(c_at(2u, t), rz.x, dz);
+        let kf = bfx + 4u * bx + 16u * by + 64u * bz;
+        full[kf] = full[kf] + 1.0;
+        let kfxz = bfx + 4u * bx + 16u * bz;
+        fxz[kfxz] = fxz[kfxz] + 1.0;
+    }
+    for (var t = 0u; t < n; t = t + 1u) {
+        let bx = c_bin(c_at(0u, t), rx.x, dx);
+        let by = c_bin(c_at(1u, t), ry.x, dy);
+        let bz = c_bin(c_at(2u, t), rz.x, dz);
+        let kxz = bx + 4u * bz;
+        xz[kxz] = xz[kxz] + 1.0;
+        let kxyz = bx + 4u * by + 16u * bz;
+        xyz[kxyz] = xyz[kxyz] + 1.0;
+    }
+    var te = 0.0;
+    let mf = f32(m);
+    let nf = f32(n);
+    for (var t = 0u; t < m; t = t + 1u) {
+        let bfx = c_bin(c_at(0u, t + shift), rx.x, dx);
+        let bx = c_bin(c_at(0u, t), rx.x, dx);
+        let by = c_bin(c_at(1u, t), ry.x, dy);
+        let bz = c_bin(c_at(2u, t), rz.x, dz);
+        let p5 = full[bfx + 4u * bx + 16u * by + 64u * bz] / mf;
+        let p3 = xz[bx + 4u * bz] / nf;
+        let p4a = xyz[bx + 4u * by + 16u * bz] / nf;
+        let p4b = fxz[bfx + 4u * bx + 16u * bz] / mf;
+        te = te + log(p5 * p3 / max(p4a * p4b, 1e-30));
+    }
+    verdict[0u] = te / mf;
+    verdict[1u] = 1.0;
+}
+"#;
+
 pub const S2_WGSL: &str = r#"
 const FOUR_PI_INV: f32 = 0.07957747154594767;
 
