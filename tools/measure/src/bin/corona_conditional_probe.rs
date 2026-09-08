@@ -1,7 +1,7 @@
 use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
 use omegaflow::te::{
-    conditional_te_stats_lagged, conditional_te_stats_lagged_2, transfer_entropy_conditional,
-    transfer_entropy_conditional_2,
+    conditional_te_stats_lagged, conditional_te_stats_lagged_2, transfer_entropy_conditional_2,
+    transfer_entropy_conditional_h,
 };
 
 const MAGIC: [u8; 4] = *b"AIA1";
@@ -232,6 +232,10 @@ fn main() {
         Some(n) => n,
         None => "goes".to_string(),
     };
+    let h_factor: f64 = match arg_value(&args, "--h").and_then(|s| s.parse().ok()) {
+        Some(v) => v,
+        None => 1.0,
+    };
     let c_idx = match confound_idx(&confound_name) {
         Some(i) => i,
         None => {
@@ -387,8 +391,8 @@ fn main() {
                         )
                     }
                     None => (
-                        transfer_entropy_conditional(hot, cool, c, lag),
-                        transfer_entropy_conditional(cool, hot, c, lag),
+                        transfer_entropy_conditional_h(hot, cool, c, lag, h_factor),
+                        transfer_entropy_conditional_h(cool, hot, c, lag, h_factor),
                         conditional_te_stats_lagged(hot, cool, c, lag, max_lag, seed, N_SURR)
                             .map(|t| t.2),
                         conditional_te_stats_lagged(cool, hot, c, lag, max_lag, seed, N_SURR)
