@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-08
-  sha256: 1d042beac15af85b8528fd532ead4de2ad080e04b75ecb7d44023340854ef195
+  sha256: ed081415885a1b2c0370f81b882858ec47bcd695ad9781d1c3221f1ad78219a0
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -62,14 +62,14 @@ frühen Anker.
 | eBOSS (Alam et al.), CMB+BAO | 2021 | PRD 103, 083533 · arXiv:2007.08991 | CMB/BAO | 67.60 | ±0.43 | geteiltes r_d mit Planck — Ehe | keine | [c] |
 | eBOSS, BAO allein | 2021 | ebd. | CMB/BAO | absent | — | BAO misst nur r_d·H₀/c (dimensionslos) | keine | [a] |
 | DESI 2024 VI, BAO+CMB | 2025 | JCAP 2025, 02, 021 · arXiv:2404.03002 | CMB/BAO | 67.97 | ±0.38 | r_d aus CMB — Ehe | keine | [c] |
-| eBOSS, BAO+BBN (Kontrast) | 2021 | ebd. | CMB/BAO | 67.33 | ±0.98 | r_d aus BBN (Ω_b h²) — Herkunft `pending` (Quasar-D/H vs CMB) | keine | [c] |
-| DESI 2024 VI, BAO+BBN (Kontrast) | 2025 | ebd. | CMB/BAO | 68.52 | ±0.62 | r_d über BBN (Ω_b h²) — Herkunft `pending` | keine | [c] |
+| eBOSS, BAO+BBN (Kontrast) | 2021 | ebd. | CMB/BAO | 67.33 | ±0.98 | r_d aus BBN: Ω_b h² = 0.02235 ± 0.00037 aus D/H = (2.527 ± 0.030)×10⁻⁵ (Cooke 2018, Quasar) | keine | [c] |
+| DESI 2024 VI, BAO+BBN (Kontrast) | 2025 | ebd. | CMB/BAO | 68.52 | ±0.62 | r_d über BBN (Ω_b h² aus Quasar-D/H) | keine | [c] |
 
 Die geteilte Wurzel der Familie ist der **Schallhorizont r_d** (bzw. sein
 CMB-Winkelpendant θ*). BAO misst r_d·H₀/c — ohne externe r_d-Kalibrierung
 existiert kein H₀ aus BAO (Zeile „eBOSS, BAO allein": absent). Die einzige
-r_d-Route außerhalb des CMB ist BBN (Ω_b h²); die Herkunft von Ω_b h²
-(Quasar-D/H oder CMB-entlehnt) ist `pending`.
+r_d-Route außerhalb des CMB ist BBN (Ω_b h²); gewogen 2026-09-08: die Herkunft
+ist Quasar-D/H (Cooke 2018), nicht CMB-entlehnt.
 
 ### Der junge Forst — gravitativ/radio
 
@@ -174,6 +174,99 @@ Wurzel-Zählung) trägt dieses Blatt. Die Wurzel-Zählung ergibt: der Wald ist
 größer als zwei Bäume, die meisten Bäume sind jung, und die zwei alten Bäume
 stehen auf getrenntem Grund.
 
+## Der Nachtrag (gewogen 2026-09-08)
+
+Ein externer Nachtrag (Chat zweier Fremd-Sessions) behauptete eine „Korrektur"
+und neue Zeugen. Gewogen, nicht übernommen.
+
+**Die falsche „Korrektur":** behauptet wurde, die LVK-Dunkle-Sirenen-Zeile müsse
+76.6 +13.0/−9.5 tragen und 75.4 sei „Transkriptionsartefakt". Direkter Fetch von
+arXiv:2509.04348 [c]: das Abstract führt **H₀ = 75.4 +12.8/−9.1**; die 76.6
+kommt im Dokument nicht vor. Die Blatt-Zeile steht unverändert.
+
+### Neue Zeugen — Leiter, JWST-Ära
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| Riess et al., JWST-Validierung (Cepheid) | 2024 | ApJ 977, 120 · arXiv:2408.11770 | Leiter · Cepheid (JWST) | 73.4 | ±2.1 | N4258-Einzelanker; JWST-SN-Subprobe | spät | [c] |
+| Riess et al., JWST (JAGB) | 2024 | ebd. | Leiter · JAGB (JWST) | 72.2 | ±2.2 | N4258-Einzelanker | spät | [c] |
+| Riess et al., JWST (TRGB) | 2024 | ebd. | Leiter · TRGB (JWST) | 72.1 | ±2.2 | N4258-Einzelanker | spät | [c] |
+| Riess et al., JWST kombiniert | 2024 | ebd. | Leiter · kombiniert | 72.6 | ±2.0 | N4258; 16 SN (D < 25 Mpc) | spät | [c] |
+| Riess et al., HST-Vollsetz | 2024 | ebd. | Leiter · Cepheid (HST) | 73.2 | ±0.9 | 4 Anker; 42 SN | spät | [c] |
+| Freedman/CCHP 2025 (TRGB) | 2025 | ApJ 985, 203 · arXiv:2408.06153 | Leiter · TRGB | 70.39 | ±1.22 stat ±1.33 sys ±0.70 σ_SN | N4258-Anker; 24 SN HST+JWST | spät | [c] |
+| Freedman/CCHP 2025 (JWST-only TRGB) | 2025 | ebd. | Leiter · TRGB (JWST) | 68.81 | ±1.79 stat ±1.32 sys | N4258; SN JWST-only | spät | [c] |
+| Freedman/CCHP 2025 (JAGB) | 2025 | ebd. | Leiter · JAGB (JWST) | 67.80 | ±2.17 stat ±1.64 sys | N4258 | spät | [c] |
+| Riess et al., „The Perfect Host" | 2025 | ApJL 992, L34 · arXiv:2509.01667 | Leiter · Cepheid (JWST+HST) | 73.49 | ±0.93 | 19 JWST + 37 HST Hosts; 24+42 SN | spät | [c] |
+| Riess et al., „The Perfect Host" +TRGB | 2025 | ebd. | Leiter · Cepheid+TRGB | 73.18 | ±0.88 | +35 TRGB; 55 SN | spät | [c] |
+
+Die JWST-Ära-Zeilen sitzen auf der **späten** Sprosse: sie sind als Gegentest
+gebaut, der den frühen Anker auf N4258 reduziert (keine Gaia-Parallaxe, keine
+LMC) und die Differenz auf die SN-/Indikator-Auswahl legt. Riess 2024
+adressiert die „unrecognized crowding"-Hypothese (Photometrie-Bias in dichten
+HST-Feldern); Freedman 2025 rückt mit JWST-Daten leicht näher an SH0ES (70.39
+statt 69.8). Die Leiter-interne Spannung (Cepheid vs TRGB) verengt sich, schließt
+nicht.
+
+### Neue Zeugen — CMB/BAO, DESI DR2
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| DESI DR2, BAO+CMB | 2025 | PRD 112, 083515 · arXiv:2503.14738 | CMB/BAO | 68.17 | ±0.28 | r_d aus Planck+ACT-DR6-Lensing (Ehe) | keine | [c] |
+| DESI DR2, BAO+BBN (Kontrast) | 2025 | ebd. | CMB/BAO | 68.51 | ±0.58 | r_d aus BBN: Ω_b h² = 0.02218 ± 0.00055 (Quasar-D/H, Schöneberg 2024) | keine | [c] |
+
+DESI DR2 allein (BAO ohne r_d) bleibt `absent` für H₀ — dieselbe Struktur wie
+die „BAO allein"-Zeile (misst nur h·r_d = 101.54 ± 0.73 Mpc).
+
+### Neue Zeugen — junger Forst
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| GWTC-5.0 (LVK, O1–O4b) | 2026 | arXiv:2605.27227 | Sirene · dunkel+hell | 71.7 | +9.4/−7.5 | DES-Y6-Katalog; FullPop-4.0; GW170817 | keine | [c] |
+| TDCOSMO 2025 (Birrer et al.) | 2025 | arXiv:2506.03023 | Linsen | 71.6 | +3.9/−3.3 | Pantheon+ als Ωm; SLACS/SL2S; MST konservativ | keine | [c] |
+| TRGB-SBF III (Jensen, Blakeslee u. a.) | 2025 | arXiv:2502.15935 | SBF | 73.8 | ±0.7 stat ±2.3 sys | N4258-Anker → JWST-TRGB; SN-Ia-frei; Kreuz-Wurzel N4258 | keine | [c] |
+
+GWTC-5.0 löst GWTC-4.0 ab (Unsicherheit −22 %) und bleibt mit beiden Ankern
+verträglich. TRGB-SBF ist SN-Ia-frei (SBF direkt im Hubble-Fluss, Nullpunkt aus
+JWST-TRGB an N4258), liegt nahe SH0ES, teilt aber den N4258-Anker mit Leiter und
+Megamaser — kein dritter unabhängiger Schlichter.
+
+### Rücken-Update
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| Pantos & Perivolaropoulos | 2026 | arXiv:2601.00650 | Kompilation | 88 schallhorizont-freie H₀, 4 Klassen | — | Kat.1 Leiter (n=30) 72.73 ± 0.39 · Kat.2 Lokal-ΛCDM 67.61 ± 0.96 · Kat.3 rein-lokal (n=16) 71.03 ± 0.69 · Kat.4 CMB-schallhorizont-frei 69.07 ± 0.44 | keine | [c] |
+
+Interne Spannung Kat.2↔Kat.3: 2.9σ. Das Rücken-Bild (Leiter gegen alle übrigen)
+bleibt; die 88 sind die Erweiterung des 53er-Rückens.
+
+### Gelöste `pending`-Punkte
+
+- **BBN-Herkunft:** Quasar-D/H, nicht CMB-entlehnt. eBOSS zitiert
+  D/H = (2.527 ± 0.030)×10⁻⁵ (Cooke, Pettini & Steidel 2018); DESI entlehnt
+  Ω_b h² = 0.02218 ± 0.00055 aus Schöneberg 2024 (PRyMordial, Eingänge
+  Cooke-D/H + Aver-Y_P). Die BBN-Route ist damit echt CMB-frei.
+- **Enum-Vokabular `gaiadr3.vari_cepheid`:** `type_best_classification` ∈
+  {DCEP, T2CEP, ACEP}; `type2_best_sub_classification` ∈ {BL_HER, W_VIR, RV_TAU};
+  `mode_best_classification` ∈ {FUNDAMENTAL, FIRST_OVERTONE, SECOND_OVERTONE,
+  MULTI, UNDEFINED, NOT_APPLICABLE}; dazu `multi_mode_best_classification` ∈
+  {F/1O, F/2O, 1O/2O, 1O/3O, 2O/3O, F/1O/2O, 1O/2O/3O}. Konsequenz für die
+  Asymmetrie: der Probe-Query filtert nicht nach Typ — die gewogene Klasse
+  (N = 2078) umfasst DCEP + T2CEP + ACEP, während die SH0ES-Kalibration nur die
+  DCEP-Teilmenge nutzt. Der Probe wiegt einen breiteren Boden; das ist benannt,
+  nicht korrigiert.
+
+### Gemessene Abweichungen vom externen Nachtrag
+
+- GWTC-5.0: behauptet „71.0 +9.0/−7.1" — gemessen **71.7 +9.4/−7.5** (Abstract).
+- Die „Korrektur" 76.6: gemessen falsch (s. o.).
+
+### Auswirkung auf das Verdikt
+
+Unverändert: **zwei Bäume, gemeinsame Wurzel: absent.** Der junge Forst ist
+dichter geworden (Sirenen, Linsen, SBF, Rücken), aber noch nicht schärfer — kein
+neuer Zeuge trägt ≲1–2 %. Die Leiter-Wurzel ist mit JWST fester geworden, nicht
+lockerer; die Spannung wird robuster, nicht aufgelöst.
+
 ## Der Anhang
 
 **Route-Kaskade** (docs/SOURCE_PORT.md §Agenten-Rezept): direkter curl → Jina-
@@ -188,9 +281,9 @@ Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record)
   Review mit eingebetteter Kompilation.
 - ApJS 270, 24 (Yu et al. 2024) trägt arXiv:2311.11588 — nicht 1902.05569
   (das ist Akeson et al., WFIRST-Whitepaper 2019).
-- Der Wert „76.6 +13/−9" aus einer LIGO-O4a-PDF ist aus keiner erreichbaren
-  Primärquelle zu belegen; die LVK-Primärquelle (arXiv:2509.04348) trägt
-  75.4 +12.8/−9.1. Der unbelegte Wert bleibt `pending`.
+- Der Wert „76.6 +13/−9" (aus einer LIGO-O4a-PDF) ist gemessen falsch: direkter
+  Fetch von arXiv:2509.04348 zeigt, dass das Abstract H₀ = 75.4 +12.8/−9.1
+  führt; die 76.6 kommt im Dokument nicht vor. Die Blatt-Zeile steht.
 - „eBOSS 67.35 ± 0.97" ist nicht im Primär (PRD 103, 083533); die Primärwerte
   sind 67.33 ± 0.98 (BBN+BAO) und 67.60 ± 0.43 (CMB+BAO).
 
@@ -208,7 +301,7 @@ Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record)
 timandersen.substack.com, search.proquest.com, autoclaw.z.ai, zcode.z.ai,
 ned.ipac.caltech.edu/level5 (Reese 2004, Petroff 2019 — Review-Kontext).
 
-**`pending`:** das Klassifizierungs-Enum-Vokabular von `gaiadr3.vari_cepheid`
-(Spalten gemessen, Enuminhalt nicht); die VizieR-Katalog-ID der Riess-2021-
-Cepheidentabelle (CDS hinter Anubis/401, NAOJ-Spiegel Transportfehler — der
-arXiv-Quellpfad `bigtable_redux3.tex` trägt die 75 statt).
+**`pending`:** die VizieR-Katalog-ID der Riess-2021-Cepheidentabelle (CDS
+hinter Anubis/401, NAOJ-Spiegel Transportfehler — der arXiv-Quellpfad
+`bigtable_redux3.tex` trägt die 75 statt); die Erratum-Wirkung von Freedman 2025
+(ApJ 993, 252) — inhaltlich nicht geprüft.
