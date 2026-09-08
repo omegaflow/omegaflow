@@ -1805,41 +1805,47 @@ Gebaut (2026-09-06, sub-agents):
     docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
     (2026-09-08, Diurnal-Dekomposition — Atom der Übergabe
     handover-2026-09-08-uranus-riss-diurnal-reduktion.md, gebaut, gemessen,
-    kalibriert): die Zerlegung
-    (uranus_diurnal_decomposition_probe.rs, Kalibrier-Gate: injizierte
-    Signaturen werden exakt zurückgewonnen) misst **keinen Diurnal-Term in den
-    publizierten Tabellen** — c_par −0.08/−0.04/−0.03 ± 0.01, c_aber
-    −0.09/−0.17/−0.17 ± 0.01 (DE/INPOP/EPM, gepoolt; pro Satellit gestreut,
-    Miranda kippt das Vorzeichen — Satelliten-eigener Leak, kein getragener
-    Term). Die Tabellen sind **geozentrisch astrometrisch** — weder Parallaxe
-    noch Diurnal-Aberration — gegen die Papier-Aussage „our positions are
-    topocentric" (Camargo+ 2015 §4). Die Diurnal-Term-Hypothese (~200 mas) ist
-    damit widerlegt; der reduzierte Boden (RMS 169–175 mas) liegt über der
-    per-row-Skala (⟨σ⟩ = 87.8 mas) und ist kein Diurnal-Term — Quelle
-    unbenannt. Der Riss-Anker steht (32.1/39.5/47.0 unter der Reduktion
-    unverändert, LSQ-Identität). Verdict (ii): die Beobachtungen schlichten
-    nicht — ΔRMS 2.0–5.9 mas ≪ X = 175.6. Befund:
+    kalibriert, korrigiert): die Zerlegung
+    (uranus_diurnal_decomposition_probe.rs + uranus_floor_decomposition_probe.rs)
+    misst **die topozentrische Parallaxe in den publizierten Tabellen** —
+    c_par 0.95/0.95/0.94 (DE/INPOP/EPM, gepoolt; vier Monde 0.95–0.97,
+    Miranda 0.80–0.81), c_aber ≈ 0: **topozentrisch astrometrisch, das
+    Papier bestätigt** (Camargo+ 2015 §4 „our positions are topocentric").
+    Die erste Instrument-Version (Commit 47a8d92) maß ein Artefakt-Null
+    (Matrix-Snap in `body_fixed_to_icrs` fror die Station innerhalb der Nacht
+    ein — par_ra konstant über 1,3 h); die korrigierte Station ist
+    probe-lokal (WGS84 + IAU 1982 GMST, analytisch ω×r). Reduktion: RMS
+    242.9/222.6/228.9 → 77.5/73.6/73.3 mas — **unter** der per-row-Skala
+    (⟨σ⟩ = 87.8); der ~165-mas-„Boden" war die Parallaxe selbst, kein Boden
+    bleibt. Absolute Offsets nach der Reduktion (c0): epm2021 6.9 mas,
+    de441 33.3, inpop19a 44.9. Riss-Anker steht (32.1/39.5/47.0 roh;
+    27.0/31.5/47.3 nach der Reduktion). Verdict (ii): die Beobachtungen
+    schlichten nicht — ΔRMS 0.3–3.9 mas ≪ X = 175.6. Befund (korrigiert):
     docs/befund/befund-2026-09-08-uranus-diurnal-dekomposition.md.
-    Offen: (1) den ~170-mas-Boden zerlegen (Kandidaten ungemessen benannt:
-    UCAC4-Frame-zonal gegen ICRF, DCR/Refraktion-Reste, PRAIA-
-    Reduktions-Kette) — `pending`; (2) Papier-gegen-Tabellen-Diskrepanz
-    („topocentric" vs geozentrisch gemessen) — warum tragen die publizierten
-    Tabellen die Parallaxe nicht, Messpfad: Paper-Anhang (V03-Vergleich)/
-    PRAIA-Kette — `pending`; (3) die INPOP/EPM-Earth-Bins tragen keine
-    body-fixed Orientierung (body_fixed_to_icrs liefert None, Zensus 0/9797;
-    die de441-Erde diente als der eine Beobachter) — `pending`; (4)
+    Offen: (1) `iau_rotate_to_icrs` in src/archivar/motion.rs bildet den
+    Erdpfahl falsch ab (gemessen: Zenith +14.6° statt −22.5°) — `pending`,
+    `src/` belegt (Parallel-Session); (2) Matrix-Snap in
+    `body_fixed_to_icrs` (32-Tage-Raster) — `pending`, `src/` belegt; (3)
+    die INPOP/EPM-Earth-Bins trugen keine body-fixed Orientierung —
+    **behoben** in tools/harvest (--pck pck00010/00011, lokal neu kompiliert,
+    audit-verifiziert 120/120 via body_fixed_earth_audit_probe.rs); die
+    CDN-Re-Manifestation der neuen Bins ist ein CI-Lauf — `pending`; (4)
     `roemer_fold`/`light_time_sc_pos` existiert siebenfach probe-lokal
     (topocentric_coupling_probe, pioneer_navio_residuum, pioneer11_odf_residuum,
     pioneer_link_correction_probe, uranus_riss_schiedsspruch_probe,
     uranus_satellite_schiedsspruch_probe, uranus_diurnal_decomposition_probe) —
     Heben in die Archivar beim nächsten Template-Griff, erst wenn `src/` ruhig
     ist; (5) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
-    (SPK 7), nicht das Planetenzentrum (799); (6) Camargo-TSV- + ura111/
-    ura184-SPK-Manifestation: Manifestor gebaut (camargo_uranus_manifestor.rs +
-    camargo-uranus-cdn.yml), der CI-Lauf steht aus. Die alte offene Zeile
-    „volle topozentrische + Aberrations-Reduktion" ist gemessen geschlossen:
-    die Tabellen tragen nichts, was die Reduktion entfernen müsste — der
-    Befund ist der Eintrag, keine Reduktion nötig.
+    (SPK 7), nicht das Planetenzentrum (799) — der Pfad ist gemessen
+    (kernel-flatten dedupet Namen aufsteigend nach id; Planetenzentrum =
+    neuer Asset ephemeris_uranus_c.bin über eigenen NAIF-Namen +
+    phi/sources.φ + CI) — `pending`; (6) Camargo-TSV- + ura111/
+    ura184-SPK-Manifestation: Manifestor gebaut, aber der Workflow
+    (camargo-uranus-cdn.yml) legt die Ziel-Releases nicht an und der
+    Manifestor stagt ura184_part-3 nicht — behoben, CI-Lauf steht aus. Die
+    alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
+    Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
+    Parallaxe, eine Diskrepanz besteht nicht.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
