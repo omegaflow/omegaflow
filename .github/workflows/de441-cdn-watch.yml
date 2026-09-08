@@ -12,7 +12,7 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Watch the full-de441 bins (size is the measurement)
         run: |
           # S14-Entblock: die CDN-Bins tragen die metergenaue Generation —

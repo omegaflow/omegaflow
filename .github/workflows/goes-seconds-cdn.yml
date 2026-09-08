@@ -1,0 +1,29 @@
+name: goes-seconds-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  goes-seconds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the corpus ends already exist on the CDN
+        run: |
+          assets=$(gh release view ncei.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null)
+          if echo "$assets" | grep -qx "xr_20130101.nc" && \
+             echo "$assets" | grep -qx "xr_20151231.nc"; then
+            echo "goes 2-s corpus present — manifest skipped"
+            exit 0
+          fi
+          echo "goes 2-s corpus missing — harvesting and manifesting"
+      - name: Harvest the GOES-15 2-s XRS corpus (origin verbatim) and manifest it
+        run: |
+          cargo run --release -p omegaflow-harvest --bin goes_seconds_manifest -- \
+            --years 2013,2014,2015 --out goes-seconds --ci-mode

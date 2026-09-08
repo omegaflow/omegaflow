@@ -27,7 +27,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             artifact: omegaflow_linux_arm64
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - if: matrix.target == 'aarch64-unknown-linux-gnu'
       run: |
         sudo apt-get update -qq
@@ -52,7 +52,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - run: |
         mkdir -p _out/assets
         for tag in $(gh release list --repo omegaflow/sources --limit 1000 --json tagName --jq '.[].tagName'); do
