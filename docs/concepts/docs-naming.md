@@ -2,7 +2,7 @@
   title: Docs — Benennung & Versionierung
   class: concept
   date: 2026-09-03
-  sha256: 0e1c6638ea4af486f898930a1ba15fe742321ba15d46e8d49e077365f9297034
+  sha256: ab707f75d53a0339c5c22d2701ea05b5d58c9e5a2943a8686640451a54c82ab7
   status: live
   see-also: AGENTS.md
 -->
@@ -61,12 +61,8 @@ sha256sum`), so two local copies are compared in one command:
       see-also: …
     -->
 
-The receiving session archives a consumed handover to
-`archive-root/handover/` — **only after its own work is
-committed**, never before: git is the safety net against crashes and rogue
-sessions. The archive commit (`cp` + `git rm`) is the checkmark that the
-handover was read and understood. A consumed-but-unarchived handover is a
-register debt; an archived-but-uncommitted one is a violation. Raw
-consultation transcripts (arena/foreign-model chats) are archived to
+The receiving session consumes a handover into code/register/commits; the
+handover stays in `docs/handover/` — git is the history, no archive move.
+Raw consultation transcripts (arena/foreign-model chats) are archived to
 `archive-root/arena/` — their distilled findings live in
 the standing concept docs.
