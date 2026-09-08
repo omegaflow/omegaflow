@@ -14,6 +14,13 @@ url https://datalab.noirlab.edu/tap/sync
 table des_dr2.coverage
 asset des_dr2_coverage.fp01
 band g i r y z
+# Bindung (zeugnis §7: der Footprint ist das Feld jeder Tafel — bevor gefragt
+# wird, was gemessen wurde, wird gefragt, was beobachtet wurde). Die zwei
+# DES-Katalog-Tafeln, deren Zeilen-Richtung gegen diese Maske laeuft:
+tables II/357/des_dr1 des_dr2
+# Das Fussabdruck-Feld jeder Tafel ist die Zeilen-Richtung (ra/dec) im selben
+# hpix_4096-Nside-4096-nest-Raster wie des_dr2.coverage; die fp01-Maske ist
+# das Gate ueber beide Tafeln, nie ein Feld ihrer Zeilen.
 note DES-DR2 (DECam Y6A2) Survey-Coverage-Maske, NOIRLab Astro Data Lab TAP sync (anonym HTTP 200, REQUEST=doQuery LANG=ADQL FORMAT=csv, gemessen 2026-09-07). 25.239.595 Zeilen ~ 5171 deg²; frac_det_g/i/r/y/z = "fractional area of healpix pixel covered simultaneously by the X band" — Flaeche-Coverage je Band, detektions-unabhaengig (Footprint-Litmus BESTANDEN: trennt nie-beobachtet [Pixel absent] von beobachtet-leer [frac_det>0]; kein positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Messung: NULL=0 (alle 5 Baender tragen einen expliziten Wert), explizite Nullen vorhanden (g 116.693, i 39.654, r 206.867, y 0, z 52.163) — null-echt gehalten, nie fabriziert. Duplikat-Zeilen existieren (byte-identisch), exakt entdupliziert im Compiler. Ernte: Pagination je hpix_4096-Bereich (Range-Width 2^20), OFFSET defekt, TOP unsupported (gemessen). Kompiliert via des_coverage_compiler (tools/harvest, FP01), CI-Lauf 34168223197 (7m8s success). NEU GEMESSEN (2026-09-08, Census des vollen Laufs): die Tafel traegt eine Mehrfach-Belegung — 25.239.302 Quell-Zeilen → 126.196.510 Kandidaten-Records, davon 31.562.807 exact- und 84.322.178 divergent-duplikate (gleiches (hpix, band), verschiedener frac). Pro Pixel ~12-fache Belegung mit unterschiedlichen frac-Werten ("simultaneously" = per-Epoche/Visit). Der 'kleinster-frac'-Kollaps ist willkuerlich — das Asset (10.311.525 Records) ist NICHT vertrauenswuerdig. Tafel-Struktur/Aggregation neu zu messen (Rat), bevor der DES-Footprint gehalten wird.
 
 # Die vier uebrigen Durchmusterungen (Weberin §9 Stufe 5, Plural): curl-gemessen 2026-09-08,
