@@ -588,6 +588,7 @@ pub fn live_sweep(
                 | "alerce"
                 | "catalog_tycho"
                 | "spectral"
+                | "xp_spectra"
                 | "jwst_spectra"
                 | "bl_narrowband"
                 | "lightcurve"
