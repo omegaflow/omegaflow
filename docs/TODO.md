@@ -1392,7 +1392,15 @@ ICRS-4D-Rahmen teilt:
   (AV_RQ-Karte, deredden, Kurve), die R_V-Streuung über Sichtlinien ist
   kuratiert-standardisiert. Individuelle Extinktionskurven je Sichtlinie
   (aus Sternspektren gemessen) sind das Mess-Regal des Staubes, analog zum
-  DM-Regal — pending, benannt.
+  DM-Regal — pending, aber gemessen-erneuerbar statt absent (2026-09-08):
+  erntbar sind Fitzpatrick & Massa 2007 (`J/ApJ/663/320`, 328 Sichtlinien
+  mit R_V ± e_RV und FM-Kurvenparametern), Krelowski 1991 (`II/175`, 166
+  UV-Kurven mit λ-Achse), Zuo 2021 (`J/ApJS/257/63`, 81 mit R_V ± e),
+  Wegner 2003 (`J/AN/324/219`, 597 R = A(V)/E(B−V) ± rms) — alle HTTP 200;
+  zusammen ~1000 Sichtlinien, IUE-alt und OB-selektiert. Ein moderner
+  großflächiger je-Sichtlinien-Katalog ist absent: Gaia/GSP-Phot (470 M)
+  und Zhang+ 2023 kuratieren R_0 = 3.1 statt je-Sichtlinie zu messen. Die
+  Ernte wäre das Pulsar-DM-Gegenstück (ein Wert ± Fehler je Objekt), schmal.
 - Gaia XP (Atom B 3): GEBAUT (2026-09-08) — Compiler `gaia_xp_compiler`
   (`--input <TAP-csv> --epoch-tdb <s>` → `xp_spectra.bin` v2, roundtrip-
   geprüft) + `write/parse_xp_spectra_bin` + `xp_bins_from_flux_array` in
@@ -1730,13 +1738,27 @@ Gebaut (2026-09-06, sub-agents):
   intermagnet-xyzf-best-avail vs swarm-maga_lr-1b-scalar-f,
   fink-lsst-main_label_classifier vs simbad-otype|allwise-w1-w2),
   Zustand zwirn/riss/absent. Die Hubble-Spannung (Planck ≈ 67 gegen die
-  Entfernungsleiter ≈ 73, ~5σ) ist die Illustration — benennbar heute: das
+  Entfernungsleiter ≈ 73, ~5σ) ist die Illustration: das
   H₀-Linien-Register (docs/blatt/blatt-h0-linien-register.md) trägt die
-  Abstammungsspalte; messbar erst, wenn beide Linien im Bestand einziehen.
-  Nächstes Atom (Übergabe docs/handover/handover-2026-09-08-h0-linien-register.md):
-  die eigene Leiter-H₀ (Cepheiden-PL + Pantheon+), CMB bleibt zitiert.
+  Abstammungsspalte; die Leiter-Linie ist seit 2026-09-08 gewogen
+  (`h0_ladder_weigh`, H₀ = 73.56 ± 1.40, Reproduktions-Gate PASS), die
+  CMB-Linie bleibt zitiert — der Riss ist messbar, wenn die CMB-Linie in den
+  Bestand einzieht.
 
 `pending` — registriert, nicht fabriziert:
+
+- **Eigenes Gaia-TAP-Crossmatch der 75 SH0ES-Cepheiden**: die Tabelle
+  `bigtable_redux3.tex` (arXiv 2012.08534) trägt keine Koordinaten-/ID-Spalte
+  (nur Sternnamen); der Anker des `h0_ladder_weigh` ist die transkribierte
+  π_EDR3, benannt als Transkription. Das eigene Crossmatch (Namen-Resolver →
+  gaiadr3) ist `pending` — der Name allein reicht nicht für std-only.
+- **Registratur-Grammatik field-loser Probe-Eingaben**: `sources.φ` verwirft
+  Blöcke ohne Feld/Frame (der `flush`-Gate fordert `kernel_text` oder Frame);
+  die statischen Beine des `h0_ladder_weigh` sind über `--ci-mode` +
+  Workflow `h0-ladder-cdn.yml` auf dem CDN manifestiert (Präzedenz: die
+  lebendige TAP-Leg ist unregistriert). Ein ehrlicher Sitz (vierter
+  Zeugen-Typ „Referenzdatensatz" oder eine fetch-only-Klasse) ist ein
+  `zeuge.rs`-/`parse.rs`-Eingriff — registriert, nicht verschwiegen.
 
 - **Sonnensystem-Weben (zweite Linie je Körper-Klasse)**: die Körper-Kette
   webt dünn gegen die reiche S²-Richtungs-Kette außerhalb. Bestands-Inventar
