@@ -1253,31 +1253,8 @@ ICRS-4D-Rahmen teilt:
 - Dispersionsrelation: die Laufzeit-Geschwindigkeit bleibt band-flach
   (v = PROPAGATION_SPEED[force]); eine echte Dispersionsrelation
   (Rayleigh-Oberflächenwelle) ist pending — die Steckstelle v(freq)
-  steht, kein erfundenes v0·(f/f0)^β (0 honored).
-- SED → BP−RP GESCHLOSSEN (2026-09-08): `spectral::parse_passbands` (Gaia
-  EDR3 BP/RP, 781 Stützstellen, Riello+ 2021, 7 Spalten, 99.99 = absent,
-  als Kernel eingebettet wie `naif0012.tls`) + `spectral::sed_to_bp_rp`
-  (photon-counting BP−RP); die Spektral-Emission (`membrane.rs`) trägt den
-  gemessenen color_index statt hart 0 (kein erinnertes Passband, 0 honored).
-  Gates grün: Passband-Zahl, leer→None, blau-only→None, rot-bin→positiv,
-  heißer Schwarzkörper blauer als kühler. Der Passband-CDN-Umzug ist damit
-  hinfällig — das Passband ist ein Referenz-Kernel, kein Ernte-Asset.
-- Band-Gate GESCHLOSSEN (2026-09-08): `spectral::band_overlap` als Postfilter
-  im Omega-Loop (`SenseReq.band` + `PresenceState.band` + `records.retain`).
-  Operator-Wort 2026-09-08 (Gaze): Default ratifiziert — `freq = 0`
-  (Punktquelle) bleibt im Band-Modus sichtbar; der Band-Modus reichert an,
-  er verdeckt nicht. Eine filternde Sicht wäre ein eigener benannter Modus,
-  nie ein stiller Default.
-- Farbe-Verbraucher GESCHLOSSEN (2026-09-08): `color_emission` (actuators.rs,
-  Muster `force_ref_medians`) sampelt `color_lut_rgba` über die
-  em-Oszillatoren des Presence-Fensters und erreicht `DiodeState.em_color`
-  + HUD — die LUT ist kein Orphan mehr (befund-Korrektur). Der
-  Browser-Textur-Pfad (`color_lut_rgb`, Bindings 9+12) bleibt ein toter
-  Zweig — descoped, kein Renderer trägt ihn.
-- cone mode (Lichtkegel-Differenz dispersiv) — descoped, nie gebaut:
-  Rendering-Konzept im toten Browser-Zweig. `archivar-mathematikerin.md`
-  führte ihn als „done"; die Blattkorrektur (2026-09-08) stellt das richtig.
-  Getrennt von der Dispersionsrelation (oben) — zwei Zeilen, nicht eine.
+  steht, kein erfundenes v0·(f/f0)^β (0 honored). Getrennt vom cone mode
+  (descoped, nie gebaut) — zwei Zeilen, nicht eine.
 
 ## Archivar & Werkzeuge — offene Pflichten
 
@@ -1383,13 +1360,16 @@ ICRS-4D-Rahmen teilt:
   leben — `temperature_to_rgb` im dynamischen Loop tötet (die
   31-Stützstellen-Interpolation Pecaut-Mamajek + Helland-Polynome
   überfordern den gen9-Compiler). Fix: die Wahrheit wanderte in den
-  Archivar — `omegaflow::spectral::color_lut_rgba` (256 Bins,
-  Rgba32Float, Nearest, NonFiltering) als LUT-Textur (Binding 9+12);
-  WGSL sampelt `color_lut_rgb` (weiß bei ci==0); die drei WGSL-Funktionen
-  starben — eine Quelle, kein Duplikat. Benannt: Mesa 25.0.7 schluckte
-  das Konstrukt, 25.2.8 ist strenger; ob der OOM-Befund (GPU-Thread-
-  Panik beim Pipeline-Bau) identisch ist, trägt die nächste Prüf-Rolle;
-  ein Upstream-Bericht an Mesa/wgpu ist ein eigenes Atom.
+  Archivar — `omegaflow::spectral::color_lut_rgba` (256 Bins) als CPU-LUT
+  (`spectral::color_for_ci` → `color_emission` in actuators.rs →
+  `DiodeState.em_color`); die WGSL-Farb-Funktionen starben — eine Quelle,
+  kein Duplikat. Die hier ursprünglich notierte LUT-Textur (Binding 9+12,
+  WGSL sampelt `color_lut_rgb`) wurde nie gebaut — kein Code-Vorkommen,
+  Bindings 9+12 existieren nicht (befund-todo-gegen-code-leichen.md); der
+  Textur-/Browser-Pfad ist ein toter Zweig, descoped (Atom C, 2026-09-08).
+  Benannt: Mesa 25.0.7 schluckte das Konstrukt, 25.2.8 ist strenger; ob der
+  OOM-Befund (GPU-Thread-Panik beim Pipeline-Bau) identisch ist, trägt die
+  nächste Prüf-Rolle; ein Upstream-Bericht an Mesa/wgpu ist ein eigenes Atom.
 - M02 ESP32-Mantis-Shrimp-Firmware: docs/omegaflow_sense_hardware.yaml
   existiert (35 Sensoren/Aktuatoren). Offen: no_std-Rust-Firmware;
   Browser-Seite (actuate) + M01.
