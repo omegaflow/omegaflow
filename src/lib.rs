@@ -55,6 +55,7 @@ pub use archivar::pck;
 pub use archivar::pioneer_telemetry;
 #[cfg(feature = "browser_relay")]
 pub use archivar::relay;
+pub use archivar::rinex;
 pub use archivar::rixs;
 pub use archivar::rpw;
 pub use archivar::s2event;

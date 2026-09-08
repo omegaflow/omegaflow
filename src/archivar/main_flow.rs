@@ -187,10 +187,7 @@ fn load_ephemeris_cache(
     }
 }
 
-pub fn load_gestalt_surface_threads(
-    path: &str,
-    body_name: &str,
-) -> Option<Vec<Motion>> {
+pub fn load_gestalt_surface_threads(path: &str, body_name: &str) -> Option<Vec<Motion>> {
     let bytes = std::fs::read(path).ok()?;
     let recs = crate::geo::parse_gbco(&bytes)?;
     Some(gestalt_surface_threads(&recs, body_name))
@@ -1201,7 +1198,8 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            if archive.sources[i].format == "finals" || archive.sources[i].format == "ionex" {
+            let fmt = archive.sources[i].format.clone();
+            if fmt == "finals" || fmt == "ionex" || fmt == "rinex" {
                 let url = archive.sources[i].url.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -1210,9 +1208,20 @@ pub fn main_flow() {
                 let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
                 let now_c = now;
-                let is_ionex = archive.sources[i].format == "ionex";
+                let e = env.clone();
                 thread::spawn(move || {
-                    let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                    let fetched = if fmt == "rinex" {
+                        let mut headers = render_headers(&src_clone.headers, &e);
+                        for (k, v) in &mut headers {
+                            if k.eq_ignore_ascii_case("authorization") && !v.contains(' ') {
+                                *v = format!("Bearer {v}");
+                            }
+                        }
+                        fetch_raw_bytes_post(&url, None, &headers, src_ttl)
+                    } else {
+                        fetch_raw_bytes(&url, src_ttl)
+                    };
+                    let mut bytes = match fetched {
                         Some(b) => b,
                         None => {
                             eprintln!("finals {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -1229,11 +1238,28 @@ pub fn main_flow() {
                             return;
                         }
                     };
+                    if fmt == "rinex" && bytes.starts_with(&[0x1f, 0x8b]) {
+                        let Some(gz) = gunzip(&bytes) else {
+                            eprintln!("rinex {}: gzip stays unreadable — pending", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                curves: None,
+                                spectral: None,
+                                fetch_ok: false,
+                            });
+                            return;
+                        };
+                        bytes = gz;
+                    }
                     let text = String::from_utf8_lossy(&bytes).into_owned();
-                    let channels = if is_ionex {
-                        build_ionex_channels(&src_clone, &text, now_c, &lsk_c)
-                    } else {
-                        build_finals_channels(&src_clone, &text, &lsk_c)
+                    let channels = match fmt.as_str() {
+                        "ionex" => build_ionex_channels(&src_clone, &text, now_c, &lsk_c),
+                        "rinex" => build_rinex_channels(&src_clone, &text, now_c, &lsk_c),
+                        _ => build_finals_channels(&src_clone, &text, &lsk_c),
                     };
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -1464,6 +1490,117 @@ pub fn main_flow() {
                         spectral: Some(hash),
                         fetch_ok: true,
                     });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "xp_spectra" {
+                let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let url = src.url.clone();
+                    let name = url.rsplit('/').next().unwrap_or("xp_spectra").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_xp_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("xp_spectra {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("xp_spectra {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("xp_spectra {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let (epoch, stars) = match crate::spectral::parse_xp_spectra_bin(&bytes) {
+                        Some(x) => x,
+                        None => {
+                            eprintln!(
+                                "xp_spectra {}: bin reads void — {} B carry no xp_spectra.bin contract",
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let field = match src.extracts.first() {
+                        Some(Extract::Field(fc)) => fc.clone(),
+                        _ => {
+                            eprintln!(
+                                "xp_spectra {}: field undeclared — the block carries no field line",
+                                url
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let mut sent = 0usize;
+                    for star in stars {
+                        if star.plx_mas <= 0.0 {
+                            continue;
+                        }
+                        let rec = Arc::new(StarRec {
+                            ra_deg: star.ra,
+                            dec_deg: star.dec,
+                            pm_ra_masyr: 0.0,
+                            pm_de_masyr: 0.0,
+                            plx_mas: star.plx_mas,
+                            flux: 0.0,
+                            mag: 0.0,
+                            tau: 0.0,
+                            color_index: 0.0,
+                            rv_m_s: 0.0,
+                        });
+                        let hash = SpectralHash {
+                            name: format!("gaia_xp.{}", star.source_id),
+                            motion: Motion::Spherical { rec },
+                            epoch,
+                            ttl: src_ttl as f64,
+                            tau: field.tau,
+                            kernel_id: field.kernel as f64,
+                            force_type: field.force as f64,
+                            absorption: field.absorption,
+                            advection: field.advection,
+                            bins: star.bins,
+                        };
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: Some(hash),
+                            fetch_ok: true,
+                        });
+                        sent += 1;
+                    }
+                    eprintln!("\r\x1b[Kxp_spectra {}: {} stars sent", url, sent);
                 });
                 continue;
             }
