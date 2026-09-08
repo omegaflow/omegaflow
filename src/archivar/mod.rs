@@ -77,6 +77,7 @@ pub mod suprastrom;
 pub mod thermochem;
 pub mod tns;
 pub mod twomass;
+pub mod twomrs;
 pub mod wind;
 pub mod wind_orbit;
 pub mod wso_polar;

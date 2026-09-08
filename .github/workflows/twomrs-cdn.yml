@@ -1,0 +1,39 @@
+name: twomrs-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  twomrs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "twomrs.bin"; then
+            echo "asset twomrs.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset twomrs.bin missing — compiling and manifesting"
+      - name: Ensure the tapvizier.cds.unistra.fr release exists on the CDN
+        run: |
+          if ! gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create tapvizier.cds.unistra.fr --repo omegaflow/sources \
+              --title "tapvizier.cds.unistra.fr" \
+              --notes "2MRS galaxy redshift grid compiled to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile the 2MRS sky grid and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --bin twomrs_compiler -- \
+            --out-bin twomrs.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: twomrs returned void" \
+                 "twomrs compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
