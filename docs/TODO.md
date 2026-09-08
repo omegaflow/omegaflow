@@ -1750,13 +1750,14 @@ Gebaut (2026-09-06, sub-agents):
 
 `pending` — registriert, nicht fabriziert:
 
-- **Registratur-Grammatik field-loser Probe-Eingaben**: `sources.φ` verwirft
-  Blöcke ohne Feld/Frame (der `flush`-Gate fordert `kernel_text` oder Frame);
-  die statischen Beine des `h0_ladder_weigh` sind über `--ci-mode` +
-  Workflow `h0-ladder-cdn.yml` auf dem CDN manifestiert (Präzedenz: die
-  lebendige TAP-Leg ist unregistriert). Ein ehrlicher Sitz (vierter
-  Zeugen-Typ „Referenzdatensatz" oder eine fetch-only-Klasse) ist ein
-  `zeuge.rs`-/`parse.rs`-Eingriff — registriert, nicht verschwiegen.
+- **cdn_reconcile-Kanonik für `reference`-Assets**: der reference-Zweig
+  (`port.rs::ci_mode`) lädt die vier `h0_ladder_weigh`-Beine unter dem
+  Ursprungs-Dateinamen auf das CDN (`2012.08534`, `Pantheon+SH0ES.dat`,
+  `Pantheon+SH0ES_STAT+SYS.cov`, `Pantheon+SH0ES_STATONLY.cov`);
+  `cdn_reconcile` leitet seine Kanonik über `source_name_from_url` ab
+  (`e-print-2012.08534` …) und nennt die Abweichung im Report. Eine
+  reference-bewusste Kanonik (Ursprungs-Dateiname statt URL-Flattening) ist
+  ein enges Folge-Atom.
 
 - **Sonnensystem-Weben (zweite Linie je Körper-Klasse)**: die Körper-Kette
   webt dünn gegen die reiche S²-Richtungs-Kette außerhalb. Bestands-Inventar
