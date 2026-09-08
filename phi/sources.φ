@@ -1328,6 +1328,36 @@ format asu-tsv
 at sun
 ttl 86400
 
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
+format asu-tsv
+at sun
+ttl 86400
+
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
+format asu-tsv
+at sun
+ttl 86400
+
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
+format asu-tsv
+at sun
+ttl 86400
+
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
+format asu-tsv
+at sun
+ttl 86400
+
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
+format asu-tsv
+at sun
+ttl 86400
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp
+format spk
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
 format ephemeris_inpop
 at sun

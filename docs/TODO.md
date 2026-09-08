@@ -1697,20 +1697,21 @@ Gebaut (2026-09-06, sub-agents):
    5.6e5→1.6e6 m, neptune 4.3e5→1.1e6 m über 2000–2026) — eine dritte Linie
    zur Schlichtung bleibt `pending`. Der Schiedsspruch (Atom 2026-09-08,
    Übergabe handover-2026-09-08-uranus-riss-schiedsspruch.md) ist gebaut und
-   gemessen — Verdikt: **kein Schiedsspruch**, drei gemessene Konfunde:
-   uranu_j ist geozentrisch (nicht topozentrisch, wie die Übergabe §7 las),
-   DE432-gewurzelt (abgeleitet, nicht beobachtet), Planetenzentrum (die Bins
-   tragen das SPK-7-Baryzentrum; der Offset ~37 mas @2011 liegt common-mode).
-   Befund: docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md. Offen:
-   (1) die echte Wurzel sind die Satelliten-Positionen (ariel_j … umbri_j) +
-   ura111/NOE — `pending`; (2) `roemer_fold`/`light_time_sc_pos` existiert
-   fünffach probe-lokal (topocentric_coupling_probe, pioneer_navio_residuum,
-   pioneer11_odf_residuum, pioneer_link_correction_probe,
-   uranus_riss_schiedsspruch_probe) — Heben in die Archivar beim nächsten
-   Template-Griff; (3) die Ephemeris-Bins tragen das Uranus-System-Baryzentrum
-   (SPK 7), nicht das Planetenzentrum (799) — für Astrometrie-gegen-Zentrum
-   fehlt das Zentrum; (4) Camargo-TSV-Manifestation aufs CDN (raw asu-tsv)
-   `pending` — URL in sources.φ registriert, kein Raw-tsv-Manifestor gebaut.
+   gemessen — die Wurzel (fünf Satelliten-Tabellen, 9797 Positionen, geozentrisch
+   astrometrisch) misst den Riss: paarweise Mittelwert-Differenzen ~32–47 mas
+   (DE-INPOP 32.1, DE-EPM 39.5, INPOP-EPM 47.0), aber der ura111-Mondmodell-Fehler
+   (~220 mas gegen ura184) überragt ihn — **kein Schiedsspruch**. Das Blatt
+   `uranu_j` ist geozentrisch (nicht topozentrisch), DE432-gewurzelt,
+   Planetenzentrum. Befund: docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md.
+   Offen: (1) baryzentrum-unabhängiges Mondmodell auf mas-Niveau (ura184-Split) —
+   `pending`, damit wäre der Schiedsspruch entscheidbar; (2) `roemer_fold`/
+   `light_time_sc_pos` existiert sechsfach probe-lokal (topocentric_coupling_probe,
+   pioneer_navio_residuum, pioneer11_odf_residuum, pioneer_link_correction_probe,
+   uranus_riss_schiedsspruch_probe, uranus_satellite_schiedsspruch_probe) — Heben
+   in die Archivar beim nächsten Template-Griff; (3) die Ephemeris-Bins tragen das
+   Uranus-System-Baryzentrum (SPK 7), nicht das Planetenzentrum (799); (4)
+   Camargo-TSV- und ura111-SPK-Manifestation aufs CDN `pending` — URLs in
+   sources.φ registriert, kein Raw-Manifestor gebaut.
    (b) Raumsonden — Doppler gemessen als
    **keine** unabhängige
    Positions-Linie (Sitzung 2026-09-07): der Befund ist Signal-gegen-Modell.
