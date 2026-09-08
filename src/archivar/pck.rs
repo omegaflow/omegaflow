@@ -18,7 +18,7 @@ pub struct PckBody {
 }
 
 impl PckBody {
-    fn entry(naif_id: i32) -> Self {
+    pub fn minimal(naif_id: i32) -> Self {
         PckBody {
             naif_id,
             gm_m3_s2: None,
@@ -77,7 +77,7 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
     let mut bodies: HashMap<i32, PckBody> = HashMap::new();
     if let Some(text) = body_text {
         for ((id, key), values) in scan_entries(text) {
-            let entry = bodies.entry(id).or_insert_with(|| PckBody::entry(id));
+            let entry = bodies.entry(id).or_insert_with(|| PckBody::minimal(id));
             match key.as_str() {
                 "POLE_RA" if values.len() >= 2 => {
                     entry.pole_ra_deg = Some(values[0]);
@@ -112,7 +112,7 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
     if let Some(text) = gm_text {
         for ((id, key), values) in scan_entries(text) {
             if key == "GM" && !values.is_empty() {
-                let entry = bodies.entry(id).or_insert_with(|| PckBody::entry(id));
+                let entry = bodies.entry(id).or_insert_with(|| PckBody::minimal(id));
                 entry.gm_m3_s2 = Some(values[0] * 1.0e9);
             }
         }
