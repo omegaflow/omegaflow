@@ -43,7 +43,7 @@ jobs:
         run: |
           git config user.name "omegaflow-bot"
           git config user.email "bot@omegaflow.space"
-          git add phi/sources_index.φ docs/reference/KERNEL_INDEX.md
+          git add docs/reference/KERNEL_INDEX.md
           git diff --staged --quiet || git commit -m "kernel index $(date -u +'%Y-%m-%dT%H:%MZ')"
           git pull --rebase --autostash origin main
           git push
@@ -135,14 +135,6 @@ jobs:
             --input kernels/mpcorb_extended.json.gz \
             --out mpcorb_distant.bin \
             --ci-mode
-      - name: Commit body manifest
-        run: |
-          git config user.name "omegaflow-bot"
-          git config user.email "bot@omegaflow.space"
-          git add phi/sources_index.φ
-          git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git pull --rebase --autostash origin main
-          git push
       - name: Report bodies void
         if: failure()
         run: |
