@@ -241,7 +241,11 @@ fn export_one(ds: &str, lsk: &LeapSeconds, records: &mut Vec<(f64, f64, u32)>) -
             skipped_sum += 1;
             continue;
         };
-        let frame_mean = sum / totvals.max(1) as f64;
+        let frame_mean = if totvals > 0 {
+            sum / totvals as f64
+        } else {
+            f64::NAN
+        };
         eprintln!(
             "{} band {}: disk sum {:.6e}, DATAMEAN {:.3}, ratio {:.4}",
             fn_,
@@ -316,7 +320,11 @@ fn verify_mode(args: &[String], lsk: &LeapSeconds) {
             eprintln!("{}: the disk sum stays void", path);
             return;
         };
-        let frame_mean = sum / totvals.max(1) as f64;
+        let frame_mean = if totvals > 0 {
+            sum / totvals as f64
+        } else {
+            f64::NAN
+        };
         println!(
             "{}: disk sum {:.6e} DN, DATAMEAN {:.6} DN, TOTVALS {}, sum/TOTVALS {:.6} DN, ratio {:.4}",
             path,
@@ -349,15 +357,25 @@ fn verify_mode(args: &[String], lsk: &LeapSeconds) {
 
 fn harvest_mode(args: &[String], lsk: &LeapSeconds) {
     let bands = parse_bands(args);
-    let out = arg_value(args, "--out").unwrap_or_else(|| "aia_lines.bin".to_string());
-    let cache_dir = arg_value(args, "--cache-dir").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => "aia_lines.bin".to_string(),
+    };
+    let cache_dir = match arg_value(args, "--cache-dir") {
+        Some(v) => v,
+        None => omegaflow::archivar::cache_root()
             .join("omegaflow_aia_cache")
             .to_string_lossy()
-            .into_owned()
-    });
-    let start = arg_value(args, "--start").unwrap_or_else(|| "2014.03.01".to_string());
-    let end = arg_value(args, "--end").unwrap_or_else(|| "2014.05.30".to_string());
+            .into_owned(),
+    };
+    let start = match arg_value(args, "--start") {
+        Some(v) => v,
+        None => "2014.03.01".to_string(),
+    };
+    let end = match arg_value(args, "--end") {
+        Some(v) => v,
+        None => "2014.05.30".to_string(),
+    };
     let (sy, sm, sd) = parse_civil_date(&start);
     let (ey, em, ed) = parse_civil_date(&end);
     let start_days = days_from_civil(sy, sm, sd).unwrap();
@@ -499,7 +517,10 @@ fn parse_civil_date(s: &str) -> (i64, i64, i64) {
 }
 
 fn merge_mode(args: &[String]) {
-    let out = arg_value(args, "--out").unwrap_or_else(|| "aia_lines.bin".to_string());
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => "aia_lines.bin".to_string(),
+    };
     let Some(spec) = arg_value(args, "--merge") else {
         return;
     };
@@ -570,6 +591,9 @@ fn merge_mode(args: &[String]) {
         t0,
         t1
     );
+    if has_flag(args, "--ci-mode") && !upload_release(CDN_TAG, &out) {
+        std::process::exit(1);
+    }
 }
 
 fn main() {
