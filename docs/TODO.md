@@ -1262,8 +1262,8 @@ ICRS-4D-Rahmen teilt:
   Gates grün: Passband-Zahl, leer→None, blau-only→None, rot-bin→positiv,
   heißer Schwarzkörper blauer als kühler. Der Passband-CDN-Umzug ist damit
   hinfällig — das Passband ist ein Referenz-Kernel, kein Ernte-Asset.
-- Band-Gate GESCHLOSSEN (2026-09-08): `spectral::band_overlap` + Threading
-  (`SenseReq.band`/`sense_membrane`/`emit_curves`/`PresenceState.band`).
+- Band-Gate GESCHLOSSEN (2026-09-08): `spectral::band_overlap` als Postfilter
+  im Omega-Loop (`SenseReq.band` + `PresenceState.band` + `records.retain`).
   Operator-Wort 2026-09-08 (Gaze): Default ratifiziert — `freq = 0`
   (Punktquelle) bleibt im Band-Modus sichtbar; der Band-Modus reichert an,
   er verdeckt nicht. Eine filternde Sicht wäre ein eigener benannter Modus,
