@@ -14,8 +14,27 @@ FLOOR_MB="${OPENCODE_VACUUM_FLOOR_MB:-4}"
 FLOOR=$((FLOOR_MB * 1024 * 1024))
 LOG="${OPENCODE_VACUUM_LOG:-/tmp/opencode/opencode_vacuum.log}"
 
+# Ein VACUUM braucht eine exklusive Sperre auf der ganzen DB und hält sie
+# für die Dauer des Umschreibens (~eine Minute bei 1 GB). Läuft opencode
+# dabei (es hält die DB im WAL-Modus offen), blockieren dessen Schreibvorgänge
+# hinter der Sperre und brechen als "Failed to execute statement" ab. Deshalb:
+# VACUUM nur, wenn niemand die DB offen hält (Wochenende/Schließen der App),
+# niemals neben einem laufenden opencode.
+db_in_use() {
+  [ -f "$DB" ] || return 1
+  if command -v fuser >/dev/null 2>&1; then
+    fuser -s "$DB" 2>/dev/null
+    return $?
+  fi
+  pgrep -f 'ai.opencode.desktop|opencode serve' >/dev/null 2>&1
+}
+
 vacuum_if_bloated() {
   [ -f "$DB" ] || return 0
+  if db_in_use; then
+    echo "[vacuum] $(date -Is) übersprungen — opencode hält die DB offen" >>"$LOG"
+    return 0
+  fi
   local out ps fc free
   out=$(sqlite3 "$DB" "PRAGMA page_size; PRAGMA freelist_count;" 2>/dev/null) || return 0
   ps=$(printf '%s\n' "$out" | sed -n '1p')
