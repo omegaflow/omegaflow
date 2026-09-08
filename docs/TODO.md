@@ -1750,11 +1750,6 @@ Gebaut (2026-09-06, sub-agents):
 
 `pending` — registriert, nicht fabriziert:
 
-- **Eigenes Gaia-TAP-Crossmatch der 75 SH0ES-Cepheiden**: die Tabelle
-  `bigtable_redux3.tex` (arXiv 2012.08534) trägt keine Koordinaten-/ID-Spalte
-  (nur Sternnamen); der Anker des `h0_ladder_weigh` ist die transkribierte
-  π_EDR3, benannt als Transkription. Das eigene Crossmatch (Namen-Resolver →
-  gaiadr3) ist `pending` — der Name allein reicht nicht für std-only.
 - **Registratur-Grammatik field-loser Probe-Eingaben**: `sources.φ` verwirft
   Blöcke ohne Feld/Frame (der `flush`-Gate fordert `kernel_text` oder Frame);
   die statischen Beine des `h0_ladder_weigh` sind über `--ci-mode` +
