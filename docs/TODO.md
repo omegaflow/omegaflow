@@ -996,21 +996,22 @@ physikalischen Aussage — kein Blatt ohne diese:
   volle multivariate Klasse bleibt das Nobel-DAG-Atom (ein Tigramite-Lauf ist
   durch die Python-Regel ausgeschlossen). Query-Anker der Prior-Art-0 in
   te-literatur-matrix.md nachgetragen. geschlossen.
-- **304→131: 335-Konfund-Widerspruch (2026-09-08 gemessen, offen):** 304→131
-  überlebt Bandbreite (h 0.5–3.0), drei Jahre (2013/14/15) und die GOES-/94-
-  Konfunde, aber D|C kollabiert unter C=335 (~0). Die D|C-Zerlegung (989 Ev,
-  2014, `corona_conditional_probe` druckt jetzt TE c→h|C und TE h→c|C) zeigt:
-  der Vorwärts-Term TE(304→131|C) ist über alle Konfunde konstant (~8.1–9.0e-2
-  bei 96 s) und trägt unter C=335 in 621/989 Ev einen Pfeil über der lag-
-  bewussten Null — kein Richtungs-Kollaps. Es symmetrisiert nur der Rückwärts-
-  Term TE(131→304|C): 4.78e-2 (GOES) → 7.29e-2 (94) → 8.56e-2 (335), D|C ≈ 0
-  ist Mittelwert-Auslöschung. Die C→Y-Matrix (`corona_confound_matrix_probe`,
-  C ∈ {171,193,211,335,94,goes}, Y ∈ {304,131}) widerlegt die H1-Literalfassung:
-  kein Konfund führt die kühlen Kanäle (alle C→Y-Pfeilraten ≤ 147/989; 335
-  unauffällig). Offen: ist die Symmetrisierung robust (335 als bester
-  Hüllen-Proxi) oder ein ARX-Null-Artefakt bei max_lag 8? Folgeläufe 2014
-  laufen: max_lag 4/16 unter C=335 und C=94; Zweikonfund goes+335, goes+94,
-  94+335. Befund + Zahlen im Paper `docs/paper/corona-heating-ladder.md`.
+- **304→131: 335-Konfund-Widerspruch (2026-09-08 gemessen, geschlossen):**
+  304→131 überlebt Bandbreite (h 0.5–3.0), drei Jahre (2013/14/15) und die
+  GOES-/94-Konfunde, aber D|C kollabiert unter C=335 (~0). Auflösung: kein
+  Richtungs-Kollaps. Die D|C-Zerlegung (989 Ev, 2014) zeigt — der Vorwärts-Term
+  TE(304→131|C) ist über alle Konfunde konstant (~8.1–9.0e-2 bei 96 s) und trägt
+  unter C=335 in 621/989 Ev einen Pfeil; es symmetrisiert nur der Rückwärts-Term
+  TE(131→304|C) (4.78e-2 GOES → 7.29e-2 94 → 8.56e-2 335). Diese Symmetrisierung
+  ist (a) invariant unter der Null-Tiefe (max_lag 4/8/16 bit-identische Mittel,
+  Vorwärts-Pfeil 585–626/989) — kein ARX-Null-Artefakt; und (b) nicht robust
+  gegen einen zweiten Konfund — {GOES,335} +2.39e-2, {94,335} +8.93e-3, {GOES,94}
+  +2.37e-2 (96 s), alle aufwärts. Die C→Y-Matrix widerlegt die H1-Literalfassung
+  (kein Konfund führt die kühlen Kanäle). C=335 allein ist ein schwacher
+  Hüllen-Abzug, der 304/131 symmetrisch gekoppelt lässt — kein versteckter
+  gemeinsamer Treiber. 304→131 ist unter jeder gemessenen Einzel- und
+  Zweikonfund-Konditionierung aufwärts-robust. Zahlen im Paper
+  `docs/paper/corona-heating-ladder.md` §4.6 (Version 7).
 - **Nobel-DAG (Atom B, geschlossen 2026-09-08):** die volle DAG „alle Kräfte im
   Phasenraum" — multivariate Konditionierung + der Konditional-Pfad in der
   GPU-Maschine. Für die Korona gemessen unnötig (2026-09-07); das Ziel (Bz + LAIC)
