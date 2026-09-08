@@ -309,6 +309,7 @@ pub struct SourceConfig {
     pub stations_flatten: String,
     pub stations_filter: Option<(String, String)>,
     pub fanout_delay: u64,
+    pub sha256: Option<String>,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;

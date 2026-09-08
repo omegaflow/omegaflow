@@ -362,12 +362,21 @@ Gemessene Zustände, benannt nicht geglättet:
 - **Anker χ²/ndf = 120.1/65:** die Tabellen-Streuung übersteigt die zitierten
   Parallaxen+Photometrie-Fehler (das publizierte Fit trägt einen zusätzlichen
   Streu-Term); die Ankerfehler sind H₀-untergeordnet (dominiert von M_B/a_B).
-- **Registratur-Grammatik:** `sources.φ` trägt keinen ehrlichen Sitz für
-  field-lose Probe-Eingaben (der Parser verwirft Blöcke ohne Feld/Frame) — die
-  statischen Beine sind über `--ci-mode` + Workflow `h0-ladder-cdn.yml` auf
-  dem CDN manifestiert (Präzedenz: die lebendige TAP-Leg ist ebenfalls
-  unregistriert). Ein vierter Zeugen-Typ „Referenzdatensatz" wäre ein
-  `zeuge.rs`-Eingriff — registriert, nicht verschwiegen.
+- **Registratur-Grammatik (gebaut 2026-09-09, Rat-Spruch b):** `sources.φ` trägt
+  jetzt den frame-losen Sitz `format reference` + `sha256`-Pin (Flush-Gate in
+  `parse.rs`, Feld in `types.rs`, `Frame::Manifest`); die vier statischen Beine
+  des `h0_ladder_weigh` sitzen gemessen darin. Der Probe behält seinen Self-curl
+  (Ursprungs-Zertifizierung); `--ci-mode`/`upload_asset_bytes` sind gestrichen,
+  `h0-ladder-cdn.yml` ist gelöscht — die Manifestation trägt `health-check.yml`
+  (`cargo run -- --verify phi` → `port.rs::ci_mode` reference-Zweig: fetch_bytes
+  → sha256-Verifikation → Upload as-is). Kein vierter Zeugen-Typ — ein
+  Referenzdatensatz ist kein Zeuge (der Rat hielt den Befund, kein Sprachloch).
+- **Referenz-Pins (gemessen 2026-09-09, sha256):**
+  `arxiv.org/e-print/2012.08534` = `bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7`,
+  `Pantheon+SH0ES.dat` = `1cb0fc379ef066afdc2ffd1857681cc478024570d8a3eba284fb645775198cf8`,
+  `Pantheon+SH0ES_STAT+SYS.cov` = `abf806d966485e64afdb359c87bffc0ecc00d05eff0a31ced66f247385df0fdc`,
+  `Pantheon+SH0ES_STATONLY.cov` = `9f177129a332735d3637affd20054080d5260815f3ca0809120c05b2c902297f`.
+
 
 ## Das eigene Gaia-TAP-Crossmatch der 74 (gewogen 2026-09-09)
 
@@ -402,7 +411,9 @@ Gemessene Zustände, benannt nicht geglättet:
   eine Gaia-Katalog-Vollständigkeit, kein Riss der Identität.
 - **Die lebendige TAP-Leg bleibt unregistriert:** der Probe materialisiert kein
   Asset (reine Messung, stdout) — Präzedenz `cepheid_parallax_weigh`. Der
-  ehrliche Registratur-Sitz ist die Pende von Atom 2 (Registratur-Grammatik).
+  frame-lose Sitz `format reference` (gebaut 2026-09-09) trägt nur
+  Byte-Strömungen, keine lebendige TAP-Leg; die bleibt eine benannte
+  Messung ohne Registratur.
 
 ## Der Anhang
 
