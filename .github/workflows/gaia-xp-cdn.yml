@@ -13,18 +13,26 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Fetch Gaia DR3 XP spectra (sync, parallax>50) and compile to xp_spectra.bin
+      - name: Fetch Gaia DR3 XP spectra (complete parallax>20, two sync bands) and compile
         run: |
           mkdir -p kernels
-          # bounded sync harvest: the 2237 nearest stars (parallax > 50 mas, d < 20 pc) prove the
-          # chain end-to-end; the full-survey harvest is the async follow-up (GAVO /tap/async).
-          QUERY="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id WHERE w.parallax > 50"
+          # GAVO sync caps a response at ~20000 rows (measured). The parallax>20 sample is
+          # 34947 stars (d < 50 pc), so it is harvested in two bands, each under the cap,
+          # and concatenated. Anonymous GAVO /tap/async does not schedule jobs (measured),
+          # so the harvest is banded sync, not async.
+          B1="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id WHERE w.parallax > 25"
+          B2="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id WHERE w.parallax > 20 AND w.parallax <= 25"
           curl -sSfL --retry 3 --max-time 3600 \
-            --data-urlencode "REQUEST=doQuery" \
-            --data-urlencode "LANG=ADQL" \
-            --data-urlencode "FORMAT=csv" \
-            --data-urlencode "QUERY=$QUERY" \
-            https://dc.g-vo.org/tap/sync -o kernels/xp.csv
+            --data-urlencode "REQUEST=doQuery" --data-urlencode "LANG=ADQL" \
+            --data-urlencode "FORMAT=csv" --data-urlencode "QUERY=$B1" \
+            https://dc.g-vo.org/tap/sync -o kernels/xp_b1.csv
+          curl -sSfL --retry 3 --max-time 3600 \
+            --data-urlencode "REQUEST=doQuery" --data-urlencode "LANG=ADQL" \
+            --data-urlencode "FORMAT=csv" --data-urlencode "QUERY=$B2" \
+            https://dc.g-vo.org/tap/sync -o kernels/xp_b2.csv
+          # keep the header once, then the data rows of both bands (drop the # comment block)
+          awk 'BEGIN{h=0} /^#/{next} !/,/{next} /^source_id,/{if(!h){print; h=1} next} {print}' kernels/xp_b1.csv > kernels/xp.csv
+          awk 'BEGIN{h=0} /^#/{next} !/,/{next} /^source_id,/{next} {print}' kernels/xp_b2.csv >> kernels/xp.csv
           # epoch_tdb 504921600 = J2016.0 (Gaia DR3 reference epoch), seconds since J2000
           cargo run -p omegaflow-harvest --release --bin gaia_xp_compiler -- \
             --input kernels/xp.csv --epoch-tdb 504921600 --out xp_spectra.bin --ci-mode
