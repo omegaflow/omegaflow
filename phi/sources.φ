@@ -6014,6 +6014,26 @@ format kernel_text
 body pck00010
 ttl 604800
 
+url https://arxiv.org/e-print/2012.08534
+format reference
+sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7
+ttl 86400
+
+url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat
+format reference
+sha256 1cb0fc379ef066afdc2ffd1857681cc478024570d8a3eba284fb645775198cf8
+ttl 86400
+
+url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STAT+SYS.cov
+format reference
+sha256 abf806d966485e64afdb359c87bffc0ecc00d05eff0a31ced66f247385df0fdc
+ttl 86400
+
+url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STATONLY.cov
+format reference
+sha256 9f177129a332735d3637affd20054080d5260815f3ca0809120c05b2c902297f
+ttl 86400
+
 url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 604800
 at earth
