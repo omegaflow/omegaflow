@@ -364,6 +364,157 @@ fn binomial_p_two_sided(k: usize, n: usize) -> f64 {
     (2.0 * p_le.min(p_ge)).min(1.0)
 }
 
+struct Ckpt {
+    processed: usize,
+    d_sum: Vec<Vec<f64>>,
+    fwd_sum: Vec<Vec<f64>>,
+    rev_sum: Vec<Vec<f64>>,
+    d_cnt: Vec<Vec<usize>>,
+    fwd_arrow: Vec<Vec<usize>>,
+    rev_arrow: Vec<Vec<usize>>,
+    deltas: Vec<Vec<[Option<f64>; LAGS.len()]>>,
+    pe_hi: Vec<Vec<Vec<f64>>>,
+    pe_lo: Vec<Vec<Vec<f64>>>,
+}
+
+fn append_pe(out: &mut Vec<u8>, pe: &[Vec<Vec<f64>>], n_pairs: usize, n_lags: usize) {
+    for p in 0..n_pairs {
+        for li in 0..n_lags {
+            out.extend_from_slice(&(pe[p][li].len() as u32).to_le_bytes());
+            for &v in &pe[p][li] {
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+    }
+}
+
+fn save_checkpoint(
+    path: &str,
+    processed: usize,
+    n_pairs: usize,
+    d_sum: &[Vec<f64>],
+    fwd_sum: &[Vec<f64>],
+    rev_sum: &[Vec<f64>],
+    d_cnt: &[Vec<usize>],
+    fwd_arrow: &[Vec<usize>],
+    rev_arrow: &[Vec<usize>],
+    deltas: &[Vec<[Option<f64>; LAGS.len()]>],
+    pe_hi: &[Vec<Vec<f64>>],
+    pe_lo: &[Vec<Vec<f64>>],
+) {
+    let n_lags = LAGS.len();
+    let mut out = Vec::new();
+    out.extend_from_slice(b"DPC1");
+    out.extend_from_slice(&(processed as u32).to_le_bytes());
+    out.extend_from_slice(&(n_pairs as u32).to_le_bytes());
+    out.extend_from_slice(&(n_lags as u32).to_le_bytes());
+    for p in 0..n_pairs {
+        for li in 0..n_lags {
+            out.extend_from_slice(&d_sum[p][li].to_le_bytes());
+            out.extend_from_slice(&fwd_sum[p][li].to_le_bytes());
+            out.extend_from_slice(&rev_sum[p][li].to_le_bytes());
+            out.extend_from_slice(&(d_cnt[p][li] as u64).to_le_bytes());
+            out.extend_from_slice(&(fwd_arrow[p][li] as u64).to_le_bytes());
+            out.extend_from_slice(&(rev_arrow[p][li] as u64).to_le_bytes());
+        }
+    }
+    for p in 0..n_pairs {
+        out.extend_from_slice(&(deltas[p].len() as u32).to_le_bytes());
+        for d in &deltas[p] {
+            for li in 0..n_lags {
+                match d[li] {
+                    Some(v) => {
+                        out.push(1);
+                        out.extend_from_slice(&v.to_le_bytes());
+                    }
+                    None => out.push(0),
+                }
+            }
+        }
+    }
+    append_pe(&mut out, pe_hi, n_pairs, n_lags);
+    append_pe(&mut out, pe_lo, n_pairs, n_lags);
+    let tmp = format!("{}.tmp", path);
+    if std::fs::write(&tmp, &out).is_ok() {
+        let _ = std::fs::rename(&tmp, path);
+    }
+}
+
+fn load_checkpoint(path: &str, n_pairs: usize) -> Option<Ckpt> {
+    let bytes = std::fs::read(path).ok()?;
+    if bytes.len() < 16 || &bytes[0..4] != b"DPC1" {
+        return None;
+    }
+    let processed = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    let cp_pairs = u32::from_le_bytes(bytes[8..12].try_into().ok()?) as usize;
+    let n_lags = u32::from_le_bytes(bytes[12..16].try_into().ok()?) as usize;
+    if cp_pairs != n_pairs || n_lags != LAGS.len() {
+        return None;
+    }
+    let mut off = 16usize;
+    let take = |off: &mut usize, n: usize| -> Option<&[u8]> {
+        let s = *off;
+        *off += n;
+        bytes.get(s..*off)
+    };
+    let mut d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+    let mut fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+    let mut rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+    let mut d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
+    let mut fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+    let mut rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+    for p in 0..n_pairs {
+        for li in 0..LAGS.len() {
+            d_sum[p][li] = f64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?);
+            fwd_sum[p][li] = f64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?);
+            rev_sum[p][li] = f64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?);
+            d_cnt[p][li] = u64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?) as usize;
+            fwd_arrow[p][li] = u64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?) as usize;
+            rev_arrow[p][li] = u64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?) as usize;
+        }
+    }
+    let mut deltas: Vec<Vec<[Option<f64>; LAGS.len()]>> = vec![Vec::new(); n_pairs];
+    for p in 0..n_pairs {
+        let n = u32::from_le_bytes(take(&mut off, 4)?.try_into().ok()?) as usize;
+        for _ in 0..n {
+            let mut d: [Option<f64>; LAGS.len()] = [None; LAGS.len()];
+            for li in 0..LAGS.len() {
+                let present = take(&mut off, 1)?[0];
+                if present == 1 {
+                    d[li] = Some(f64::from_le_bytes(take(&mut off, 8)?.try_into().ok()?));
+                }
+            }
+            deltas[p].push(d);
+        }
+    }
+    let read_pe = |off: &mut usize| -> Option<Vec<Vec<Vec<f64>>>> {
+        let mut pe: Vec<Vec<Vec<f64>>> = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+        for p in 0..n_pairs {
+            for li in 0..LAGS.len() {
+                let n = u32::from_le_bytes(take(off, 4)?.try_into().ok()?) as usize;
+                for _ in 0..n {
+                    pe[p][li].push(f64::from_le_bytes(take(off, 8)?.try_into().ok()?));
+                }
+            }
+        }
+        Some(pe)
+    };
+    let pe_hi = read_pe(&mut off)?;
+    let pe_lo = read_pe(&mut off)?;
+    Some(Ckpt {
+        processed,
+        d_sum,
+        fwd_sum,
+        rev_sum,
+        d_cnt,
+        fwd_arrow,
+        rev_arrow,
+        deltas,
+        pe_hi,
+        pe_lo,
+    })
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let lsk = omegaflow::archivar::embedded_lsk();
@@ -405,6 +556,7 @@ fn main() {
         None => 0,
     };
     let shelf_path = arg_value(&args, "--write-shelf");
+    let checkpoint_path = arg_value(&args, "--checkpoint");
 
     let mut all_events: Vec<Event> = Vec::new();
     for (yi, &pos) in positions.iter().enumerate() {
@@ -513,21 +665,56 @@ fn main() {
 
     let n_bands = MEASURED.len();
     let n_pairs = n_bands * (n_bands - 1) / 2;
-    let mut d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
-    let mut d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut fwd_gated = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut rev_gated = vec![vec![0usize; LAGS.len()]; n_pairs];
-    let mut deltas: Vec<Vec<[Option<f64>; LAGS.len()]>> = vec![Vec::new(); n_pairs];
-    let mut pe_hi: Vec<Vec<Vec<f64>>> = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
-    let mut pe_lo: Vec<Vec<Vec<f64>>> = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+    let mut processed = 0usize;
+    let (mut d_sum, mut fwd_sum, mut rev_sum, mut d_cnt, mut fwd_arrow, mut rev_arrow);
+    let (mut fwd_gated, mut rev_gated, mut deltas, mut pe_hi, mut pe_lo);
+    if let Some(path) = &checkpoint_path {
+        if let Some(ck) = load_checkpoint(path, n_pairs) {
+            processed = ck.processed;
+            d_sum = ck.d_sum;
+            fwd_sum = ck.fwd_sum;
+            rev_sum = ck.rev_sum;
+            d_cnt = ck.d_cnt;
+            fwd_arrow = ck.fwd_arrow;
+            rev_arrow = ck.rev_arrow;
+            deltas = ck.deltas;
+            pe_hi = ck.pe_hi;
+            pe_lo = ck.pe_lo;
+            eprintln!(
+                "resumed {} of {} events from {}",
+                processed,
+                events.len(),
+                path
+            );
+        } else {
+            d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+            fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+            rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+            d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
+            fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+            rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+            deltas = vec![Vec::new(); n_pairs];
+            pe_hi = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+            pe_lo = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+        }
+    } else {
+        d_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+        fwd_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+        rev_sum = vec![vec![0.0f64; LAGS.len()]; n_pairs];
+        d_cnt = vec![vec![0usize; LAGS.len()]; n_pairs];
+        fwd_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+        rev_arrow = vec![vec![0usize; LAGS.len()]; n_pairs];
+        deltas = vec![Vec::new(); n_pairs];
+        pe_hi = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+        pe_lo = vec![vec![Vec::new(); LAGS.len()]; n_pairs];
+    }
+    fwd_gated = vec![vec![0usize; LAGS.len()]; n_pairs];
+    rev_gated = vec![vec![0usize; LAGS.len()]; n_pairs];
 
-    for (ei, ev) in events.iter().enumerate() {
+    for (loc, ev) in events.iter().enumerate().skip(processed) {
+        let ei = processed + loc;
         if ei % 25 == 0 {
-            println!("progress {} / {}", ei, events.len());
+            eprintln!("progress {} / {}", ei, events.len());
         }
         let mut p = 0usize;
         for hi in 0..n_bands {
@@ -582,6 +769,24 @@ fn main() {
                 }
                 deltas[p].push(del);
                 p += 1;
+            }
+        }
+        if let Some(path) = &checkpoint_path {
+            if (ei + 1) % 25 == 0 {
+                save_checkpoint(
+                    path,
+                    ei + 1,
+                    n_pairs,
+                    &d_sum,
+                    &fwd_sum,
+                    &rev_sum,
+                    &d_cnt,
+                    &fwd_arrow,
+                    &rev_arrow,
+                    &deltas,
+                    &pe_hi,
+                    &pe_lo,
+                );
             }
         }
     }
