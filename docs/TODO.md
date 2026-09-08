@@ -82,6 +82,24 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
   der Wal bleibt frei, namenlos, im Wasser (0 honored).
 
+- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code GEBAUT (2026-09-07).**
+  Re-probe geschlossen (2026-09-07, drei Providers curl-gemessen): LIneA (DRI) + CosmoHub
+  kontogegatet, aber der NOIRLab Astro Data Lab TAP sync (datalab.noirlab.edu/tap/sync,
+  REQUEST=doQuery, anonym HTTP 200) trägt `des_dr2.coverage` — die DR2/Y6A2-Coverage-Maske
+  (hpix_4096 HEALPix Nside 4096, 25.239.595 Zeilen ~ 5171 deg², frac_det_g/i/r/y/z =
+  "fractional area of healpix pixel covered" je Band — Flaeche-Coverage, detektions-unabhaengig).
+  Footprint-Litmus BESTANDEN (unterscheidet nie-beobachtet von beobachtet-leer; kein
+  positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Rat 2026-09-07: der
+  Footprint ist kein Zeuge (gestalt = Koerperoberflaeche, falscher Sitz) und kein Oszillator —
+  er braucht eine EIGENE Survey-Footprint-Asset-Klasse (S² + Coverage-Fraktion, τ = Survey-
+  Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). GEBAUT: `src/archivar/footprint.rs`
+  (Record FP01: order+band+ipix+frac, 12 B, Nside 4096; `magic_identity(FP01)=Footprint` in
+  zeuge.rs; `footprint_gate` Observed/NeverObserved/BandUncovered/Pending) + Compiler
+  `des_coverage_compiler` (tools/harvest, Pagination je hpix_4096-Bereich, entdupliziert) +
+  CDN-Workflow `des-coverage-cdn.yml`. Register-Sitz `phi/footprints.φ` (footprint des-dr2);
+  `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag trägt den gebauten Stand. Offen: die
+  volle 25-M-Ernte im CI-Lauf (Ernte-Strategie gemessen, Lauf pending).
+
 - **NRS-Re-Emitt — verifiziert, Tabellen-Fallback dormant (2026-09-07).** Der
   sound_level_metrics-Prefix trägt genau 5 Deployments (4× NRS01, 1× NRS11), alle mit
   SHAPE — der Tabellen-Fallback (gebaut a21d4c8, Stationstabelle b867c23) hat keinen
@@ -1300,10 +1318,22 @@ ICRS-4D-Rahmen teilt:
   Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
   beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
   parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
-- Gaia XP (Atom B 3): Ernte bis d<50 pc manifestiert (34947 Sterne,
-  `xp_spectra.bin` v2; Compiler, Format, Verbraucher, CDN-Workflow stehen).
-  OFFEN: volle Survey-Ernte via GAVO-DC-Async (UWS) — Zugang angefragt
-  (`docs/auftrag/gavo-dc-account-anfrage.md`), pending bis Konto eintrifft.
+- Gaia XP (Atom B 3): GEBAUT (2026-09-08) — Compiler `gaia_xp_compiler`
+  (`--input <TAP-csv> --epoch-tdb <s>` → `xp_spectra.bin` v2, roundtrip-
+  geprüft) + `write/parse_xp_spectra_bin` + `xp_bins_from_flux_array` in
+  `src/archivar/spectral.rs` (41 Stützstellen 400–800 nm Δ10 nm, λ→ν,
+  E_ν=E_λ·λ²/c; noise-negative Samples fallen, 0 honored); Tests grün.
+  Verbraucher gebaut (2026-09-08): `format xp_spectra` in main_flow.rs —
+  jeder Stern (Parallaxen-Sitz, Motion::Spherical) → ein SpectralHash mit
+  seinen Bins; Quelle in `phi/sources.φ` registriert. OFFEN: CDN-Workflow
+  (`gaia-xp-cdn.yml`, TAP-Async-Fetch + `--ci-mode`) — erster CI-Lauf.
+- CMB-Power-Spektren (Atom B 4, Cl-Teil): DESCoped von der freq-Achse
+  (2026-09-08) — l ist der Multipol (Winkel-Achse), kein Hz; der
+  freq/bin_width-Slot trägt ihn nicht, l→Hz wäre Fabrikation. Befund =
+  Eintrag (kein freq-Compiler). Die Quelle ist real und offen (IRSA Planck
+  release_3, `COM_PowerSpect_CMB-*.txt`, D_ℓ µK²) — ihr natürlicher Sitz
+  ist die S²-Leistungsachse (Cl als Kugelflächen-Power), ein eigenes
+  Merkmal, nicht diese Achse.
 - ONC-HSD-FFT (Atom B 2): als `blocked parser-def mat5` in
   `phi/blocked_sources.φ` geführt (2026-09-08) — Produkt `HSD`+`.fft`,
   HYDROPHONE, exakt 85 Stationen: real; Token liegt in `.secrets.local`;
@@ -1625,8 +1655,9 @@ Gebaut (2026-09-06, sub-agents):
   intermagnet-xyzf-best-avail vs swarm-maga_lr-1b-scalar-f,
   fink-lsst-main_label_classifier vs simbad-otype|allwise-w1-w2),
   Zustand zwirn/riss/absent. Die Hubble-Spannung (Planck ≈ 67 gegen die
-  Entfernungsleiter ≈ 73, ~5σ) ist die Illustration — benennbar heute,
-  messbar erst, wenn beide Linien im Bestand einziehen.
+  Entfernungsleiter ≈ 73, ~5σ) ist die Illustration — benennbar heute: das
+  H₀-Linien-Register (docs/blatt/blatt-h0-linien-register.md) trägt die
+  Abstammungsspalte; messbar erst, wenn beide Linien im Bestand einziehen.
 
 `pending` — registriert, nicht fabriziert:
 
@@ -1972,7 +2003,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Photometrie/Spektroskopie — RAVE DR6, APOGEE/GALAH; Extragalaktisch —
   HyperLEDA/PGC; Radio-Kontinuum (Achse leer) — TGSS ADR, SUMSS, RACS,
   LoTSS, VLASS; High-Energy — AMS-02; Sonnensystem — PDS
-  (Instrumentendaten); TAP-Indexe —
+  (Instrumentendaten), MPC-Live (mpcorb_extended.json.gz); TAP-Indexe —
   ESASky, NOIRLab Data Lab, NED; Terrestrisch — EarthScope-FDSN, EPOS,
   SeaDataNet, Smithsonian GVP, Natural Earth. Exakte Tabellen-IDs +
   Spalten + Mechanismus:
@@ -2290,7 +2321,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (TDB, 6 Stellen) lebt. Ein Live-`vectors`-Block in sources.φ bleibt
   Kurationsfrage: dead_sources.φ:3090 deklariert Horizons als
   Compiler-Eingang, keine Live-Quelle.
-- mpcobs: offener Live-Block (Sonnensystem).
+- mpcobs / mpcorb_extended.json.gz: offener Live-Block (Sonnensystem).
 - reverify-Quellen-Drift kuriert (2026-09-03, a3a2595+a): (a) NDBC-hist
   auf Direktpfad `ndbc.noaa.gov/data/historical/stdmet/<st>h{prev_year}.txt.gz`
   migriert (34 Blöcke, curl-verifiziert; 46005/46012 fest auf letztes Jahr
