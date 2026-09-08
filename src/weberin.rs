@@ -111,6 +111,8 @@ pub struct Weberin {
 
 pub const WEBERIN_TOL_M: f64 = 1.0e6;
 
+pub const PLANET_WEBERIN_TOL_M: f64 = 1.0e5;
+
 pub const INPOP_LINE_BODIES: &[&str] = &[
     "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
@@ -250,7 +252,7 @@ impl Weberin {
         self.eph_inpop = Some(feed.eph_inpop);
     }
 
-    pub fn weave(&mut self, tdb: f64, tol_m: f64) {
+    pub fn weave(&mut self, tdb: f64, tol_kepler_m: f64) {
         let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
             return;
         };
@@ -280,7 +282,7 @@ impl Weberin {
                 match (spk, inpop) {
                     (Some(spk_p), Some(inp_p)) => {
                         let sep_m = separation_m(spk_p, inp_p);
-                        match classify(sep_m, tol_m) {
+                        match classify(sep_m, PLANET_WEBERIN_TOL_M) {
                             Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
                             Agreement::Riss { sep_m } => BodyOutcome::Riss {
                                 sep_m,
@@ -299,7 +301,7 @@ impl Weberin {
                 match (spk, kepler) {
                     (Some(spk_p), Some((helio, _))) => {
                         let sep_m = separation_m(spk_p, add_sun(helio, sun));
-                        match classify(sep_m, tol_m) {
+                        match classify(sep_m, tol_kepler_m) {
                             Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
                             Agreement::Riss { sep_m } => BodyOutcome::Riss {
                                 sep_m,
@@ -786,6 +788,101 @@ mod tests {
         match outcome(&w, "ceres") {
             Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Dastcom)),
             other => panic!("an inpop-uncovered asteroid reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn planet_tolerance_sits_between_the_measured_convergence_and_divergence() {
+        let seven_body_max_m = 3.05e4;
+        let ice_giant_min_m = 4.3e5;
+        assert!(
+            PLANET_WEBERIN_TOL_M > seven_body_max_m,
+            "the planet law must hold the measured seven-body convergence (max {seven_body_max_m} m)"
+        );
+        assert!(
+            PLANET_WEBERIN_TOL_M < ice_giant_min_m,
+            "the planet law must stay below the measured ice-giant divergence (min {ice_giant_min_m} m)"
+        );
+        assert!(
+            matches!(
+                classify(2.3e4, PLANET_WEBERIN_TOL_M),
+                Agreement::Placed { .. }
+            ),
+            "an inner-planet separation reads placed"
+        );
+        assert!(
+            matches!(
+                classify(3.0e4, PLANET_WEBERIN_TOL_M),
+                Agreement::Placed { .. }
+            ),
+            "the measured seven-body ceiling reads placed"
+        );
+        assert!(
+            matches!(
+                classify(1.592e6, PLANET_WEBERIN_TOL_M),
+                Agreement::Riss { .. }
+            ),
+            "the measured uranus separation reads riss"
+        );
+        assert!(
+            matches!(
+                classify(1.075e6, PLANET_WEBERIN_TOL_M),
+                Agreement::Riss { .. }
+            ),
+            "the measured neptune separation reads riss"
+        );
+    }
+
+    #[test]
+    fn planet_weave_judges_against_the_planet_class_law_not_the_kepler_law() {
+        let w = woven_with_inpop(
+            &[("mars", [0.0; 3])],
+            &[("mars", [5.0e5, 0.0, 0.0])],
+            [0.0; 3],
+            Vec::new(),
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "mars") {
+            Some(BodyOutcome::Riss { sep_m, knot }) => {
+                assert!(
+                    *sep_m > PLANET_WEBERIN_TOL_M,
+                    "sep {sep_m:e} exceeds the planet law {PLANET_WEBERIN_TOL_M:e}"
+                );
+                assert!(
+                    *sep_m < WEBERIN_TOL_M,
+                    "sep {sep_m:e} would read placed under the kepler law"
+                );
+                match knot {
+                    [BodyLine::Spk, BodyLine::Inpop] => {}
+                    other => panic!("the inpop riss knot reads {other:?}"),
+                }
+            }
+            other => panic!("the two ephemeris lineages 5e5 m apart read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn kepler_weave_keeps_the_measured_small_body_law() {
+        let ceres = rec(1);
+        let jd = J2000_EPOCH;
+        let (helio, _) = state_at(&ceres, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven(
+            &[("ceres", [5.0e5, 0.0, 0.0])],
+            sun,
+            vec![ceres],
+            Vec::new(),
+            WEBERIN_TOL_M,
+        );
+        match outcome(&w, "ceres") {
+            Some(BodyOutcome::Placed { sep_m }) => {
+                assert!(
+                    *sep_m <= WEBERIN_TOL_M,
+                    "the kepler line judges at its own measured law"
+                );
+            }
+            other => panic!("the 5e5 m kepler-line separation reads {other:?}"),
         }
     }
 }
