@@ -38,12 +38,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_stations_filter: Option<(String, String)> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
+    let mut cur_sha256: Option<String> = None;
     let mut active = false;
 
     macro_rules! flush {
         () => {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
-                if cur_format == "kernel_text" || cur_frame.is_some() {
+                if cur_format == "kernel_text" || cur_format == "reference" || cur_frame.is_some() {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
                             "source refused: flux_from_mag + abs_mag_from conflict at {}",
@@ -80,6 +81,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             stations_flatten: std::mem::take(&mut cur_stations_flatten),
                             stations_filter: cur_stations_filter.take(),
                             fanout_delay: cur_fanout_delay,
+                            sha256: cur_sha256.clone(),
                         });
                     }
                 }
@@ -126,6 +128,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_stations_filter = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
+                cur_sha256 = None;
                 active = true;
             }
             "ttl" if parts.len() >= 2 => {
@@ -1183,6 +1186,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "trp" if parts.len() >= 2 => {}
             "trs" if parts.len() >= 2 => {}
             "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
+            "sha256" if parts.len() >= 2 => cur_sha256 = Some(parts[1].to_string()),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
             }
