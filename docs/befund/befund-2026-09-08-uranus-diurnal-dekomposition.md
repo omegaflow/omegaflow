@@ -1,118 +1,109 @@
 <!--
-  title: Befund — Uranus-Diurnal-Dekomposition: die Camargo-Tabellen tragen keinen Diurnal-Term (weder Parallaxe noch Diurnal-Aberration) — geozentrisch astrometrisch, nicht topozentrisch
+  title: Befund — Uranus-Diurnal-Dekomposition (korrigiert): die Camargo-Tabellen tragen die topozentrische Parallaxe (c_par ≈ 0.95) und keine Diurnal-Aberration — topozentrisch astrometrisch, das Papier bestätigt
   class: befund
   date: 2026-09-08
-  sha256: a253def054054aab8ec54ab28ba17f5b70d1e0552cf5f80991c811186fe30880
+  sha256: 67fce571f656ef39b4b39d68ee23254798c97a0a013641cdfa323108051d130a
   status: done
   see-also: docs/handover/handover-2026-09-08-uranus-riss-diurnal-reduktion.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/TODO.md
 -->
 
-# Befund: Uranus-Diurnal-Dekomposition
+# Befund: Uranus-Diurnal-Dekomposition (korrigiert)
 
 ## Frage & Bindung
 
 Die Übergabe (handover-2026-09-08-uranus-riss-diurnal-reduktion.md) stellte das
-Atom: den Diurnal-Term im absoluten Satelliten-Residuum (~200 mas common-mode,
-~140 mas Schwankung über ~1,2 h) zerlegen — Parallaxe gegen Diurnal-Aberration
-—, die volle topozentrische + Aberrations-Reduktion bauen, den absoluten
-Baryzentrum-Offset sichtbar machen, den Schiedsspruch entscheiden. Erster Zug
-laut Übergabe §3: an der Quelle messen, was die publizierten Positionen tragen.
-Probe: `tools/measure/src/bin/uranus_diurnal_decomposition_probe.rs`.
+Atom: den Diurnal-Term im absoluten Satelliten-Residuum zerlegen — Parallaxe
+gegen Diurnal-Aberration —, die volle topozentrische + Aberrations-Reduktion
+bauen, den absoluten Baryzentrum-Offset sichtbar machen, den Schiedsspruch
+entscheiden. Proben:
+`tools/measure/src/bin/uranus_diurnal_decomposition_probe.rs` (Zerlegung) und
+`tools/measure/src/bin/uranus_floor_decomposition_probe.rs` (Boden).
 
-## Das Instrument
+## Die Instrumenten-Archäologie (ehrlich benannt)
 
-Zwei Signaturen je Epoche (9797 Epochen, fünf Satelliten, drei Linien):
-Parallaxe = topozentrische − geozentrische Richtung (Station via
-`body_fixed_to_icrs` am MPC-874-Geodät, λ −45.5825°, φ −22.534444°, h 1810.7 m);
-Diurnal-Aberration = rotatorische Beobachtergeschwindigkeit, auf die
-Tangentialebene projiziert (finiter Differenzenquotient ±10 s,
-`body_fixed_to_icrs_smooth`, geozentrische Geschwindigkeit abgezogen). Fit je
-Linie/Satellit: ΔRA·cosδ, ΔDec = c0 + c_par·Parallaxe + c_aber·Diurnal-
-Aberration (4 Parameter, Normalgleichungen, Gauß-Elimination, σ aus
-RSS/(n−4)·(AᵀA)⁻¹). Signaturen: Parallaxe Mittel 421 mas, Max 468 mas;
-Diurnal-Aberration Mittel 279 mas, Max 296 mas — beide unübersehbar groß gegen
-den Riss.
+Die erste Instrument-Version (Commit `47a8d92`) nutzte `body_fixed_to_icrs`
+für die Station — der Matrix-Pfad wählt die **nächste** Rotationsmatrix
+(32-Tage-Raster der 32d-Chebyshev-Granulen). Gemessen: die Parallaxen-Signatur
+war innerhalb einer Nacht **eingefroren** (par_ra konstant über 1,3 h statt
+der Stundenwinkel-Signatur). Die erste Messung (c_par ≈ 0, „Tabellen
+geozentrisch") war ein Instrumenten-Artefakt. Das Kalibrier-Gate schützte
+nicht: es prüft die Fit-Maschinerie gegen sich selbst (injizierte Signatur →
+exakte Rückgewinnung), nicht die physikalische Form der Signatur — der
+physikalische Prüfstein ist die Stundenwinkel-Variation innerhalb einer Nacht.
 
-**Kalibrier-Gate (vier Fälle):** injizierte Signaturen werden exakt
-zurückgewonnen — (keine, keine) → (0.00, 0.00); (Parallaxe, —) → (1.00, 0.00);
-(—, Aberration) → (0.00, 1.00); (beide, beide) → (1.00, 1.00), RMS jeweils →
-0.0 mas. Das Instrument detektiert einen getragenen Term auf dem 0.01-Niveau —
-ein c ≈ 0 in den echten Daten ist Messung, kein Artefakt.
+Die Korrektur: die Station ist jetzt **probe-lokal** — WGS84-Geodätik + IAU
+1982 GMST-Rotation + analytische Rotationsgeschwindigkeit ω×r (eine Station
+für alle drei Linien, ein physikalischer Beobachter). Zwei weitere Befunde am
+Weg: der IAU-Fallback `iau_rotate_to_icrs` in `src/archivar/motion.rs` bildet
+den Erdpfahl (δ0 = 90°) falsch ab (gemessene Zenith-Breite +14.6° statt
+−22.5°) — register-pending, `src/` ist durch die Parallel-Session belegt; und
+der Matrix-Snap selbst (32-Tage-Einfrierung) ist eine gemessene Schwäche des
+Archivar-Pfads. Das Kalibrier-Gate (alle vier Fälle) läuft auch mit der
+korrigierten Station exakt.
 
-## Die Messung
+## Die Messung (korrigiert)
 
 Gepoolt (alle Satelliten je Linie):
 
-| Linie    | c_par         | c_aber        | RMS roh → reduziert (mas) |
-|----------|---------------|---------------|---------------------------|
-| de441    | −0.08 ± 0.01  | −0.09 ± 0.01  | 242.9 → 176.4             |
-| inpop19a | −0.04 ± 0.01  | −0.17 ± 0.01  | 222.6 → 172.5             |
-| epm2021  | −0.03 ± 0.01  | −0.17 ± 0.01  | 228.9 → 170.5             |
+| Linie    | c_par        | c_aber       | RMS roh → reduziert (mas) | c0 (ΔRA·cosδ, ΔDec, mas) |
+|----------|--------------|--------------|---------------------------|--------------------------|
+| de441    | 0.95 ± 0.00  | −0.06 ± 0.01 | 242.9 → 77.5              | (−26.9, −19.6)           |
+| inpop19a | 0.95 ± 0.00  | −0.03 ± 0.01 | 222.6 → 73.6              | (−13.3, −42.9)           |
+| epm2021  | 0.94 ± 0.00  | −0.02 ± 0.01 | 228.9 → 73.3              | (−5.7, +3.8)             |
 
-Pro Satellit streuen die Koeffizienten (c_par −0.13…+0.03; c_aber −0.22…+0.31,
-Miranda kippt das Vorzeichen) — die kleinen Rest-Leans sind satelliten-eigenes
-Leck, kein common-mode getragener Term.
+Pro Satellit: c_par 0.95–0.97 für die vier großen Monde, 0.80–0.81 für Miranda
+(ihr Rest bleibt 106–109 mas — das schwächste Mondmodell). c_aber ≈ 0 für alle
+Linien.
 
-**Die publizierten Camargo-Satelliten-Tabellen tragen weder die topozentrische
-Parallaxe noch die Diurnal-Aberration — sie sind geozentrisch astrometrisch.**
-Das steht gegen die Papier-Aussage: Camargo+ 2015 §4 baut die
-Ephemeriden-Positionen „for an observer at the Pico dos Dias Observatory"
-(SOFA/NOVAS, Geozentrum→Topozentrum), der Anhang betont „We stress that our
-positions are topocentric". Die Tabellen, wie sie auf VizieR publiziert sind,
-tragen die Parallaxe nicht (sie wäre auf dem 0.01-Niveau unübersehbar).
+**Die publizierten Camargo-Tabellen tragen die topozentrische Parallaxe im
+Wesentlichen vollständig (c_par ≈ 0.95) und keine Diurnal-Aberration — sie
+sind topozentrisch astrometrisch, exakt wie das Papier sagt** (Camargo+ 2015
+§4: SOFA/NOVAS-Verknüpfung „for an observer at the Pico dos Dias
+Observatory"; Anhang: „We stress that our positions are topocentric"). Die
+Diurnal-Term-Hypothese der Übergabe ist bestätigt: der ~200-mas-Term war die
+Parallaxe (Signatur-Mittel 203 mas, Max 405 mas). Das 0.95 (statt 1.00) liegt
+auf der Skala des Mondmodell-Leaks (ura111 ≈ ura184 auf 5–25 mas).
 
 ## Die Konsequenz für das Atom
 
-- **Die Diurnal-Term-Hypothese (~200 mas common-mode) ist widerlegt.** Das
-  absolute Residuum trägt keinen Diurnal-Term; eine topozentrische +
-  Aberrations-Reduktion hat an dieser Wurzel nichts zu entfernen. Die alte
-  Register-Zeile „volle topozentrische Reduktion — pending" schließt mit
-  diesem Befund (gemessene Freigabe: die Reduktion ist gegenstandslos, nicht
-  verschoben).
-- **Der absolute Offset ist bereits sichtbar** — es liegt kein Diurnal-Term
-  über ihm. Mittelwert-Vektoren (mas): de441 (−149.4, +71.6), inpop19a
-  (−128.2, +47.5), epm2021 (−116.2, +92.9); Beträge 137–166 mas, plus der Riss.
-- **Der Riss steht.** Paarweise Mittelwert-Differenzen 32.1/39.5/47.0 mas —
-  unter der Reduktion unverändert (LSQ-Identität: freie Konstanten
-  reproduzieren die rohen Mittel exakt; der Anker der Übergabe §4 hält).
-- **Der reduzierte Boden** (RMS 169.4–175.1 mas) liegt über der per-row-Skala
-  (⟨σ⟩ = 87.8 mas) und ist kein Diurnal-Term — seine Quelle ist unbenannt
-  (Kandidaten als pending registriert, ungemessen benannt: UCAC4-Frame-zonal
-  gegen ICRF, differentielle chromatische Refraktion, PRAIA-Reduktions-Kette).
+- **Der absolute Offset ist jetzt sichtbar.** Nach der Parallaxen-Reduktion
+  (gepoolte Konstanten c0): epm2021 (−5.7, +3.8) mas → Betrag 6.9 mas,
+  de441 (−26.9, −19.6) → 33.3 mas, inpop19a (−13.3, −42.9) → 44.9 mas.
+- **Der Boden ist geschlossen.** Das reduzierte Residuum liegt bei
+  RMS 72.9–76.9 mas — **unter** der per-row-Skala (⟨σ⟩ = 87.8 mas); die
+  Boden-Probe misst nachts-konstant ~72 %, intra-Nacht ~28 % der Restvarianz
+  und einen Zenith/Refraktions-Koeffizienten von nur 4–8 mas Amplitude. Kein
+  unbenannter Boden bleibt: der ~165-mas-„Floor" der Vormessung war die
+  Parallaxe selbst.
+- **Der Riss steht.** Rohe paarweise Mittelwert-Differenzen 32.1/39.5/47.0 mas
+  (der Anker der Übergabe §4); die paarweisen c0-Differenzen nach der
+  Reduktion 27.0/31.5/47.3 mas — dieselbe Ordnung, stabil.
 - **Der 598-mas-Befund der Vorsitzung** („naive Topozentrik macht es
-  schlechter") ist erklärt: eine falsch verortete Station (geocenter + topoff)
-  addiert die volle Parallaxen-Schwingung (~420 mas) auf geozentrische
-  Tabellen — die Signatur einer falsch gesetzten Station, kein Widerspruch zur
-  Zerlegung.
+  schlechter") ist erklärt: eine falsch verortete/gesetzte Station addierte
+  die Parallaxen-Schwingung auf die ohnehin topozentrischen Tabellen.
 
 ## Verdict
 
-(ii) **Die Beobachtungen schlichten nicht.** Nach der gemessenen Reduktion
-(freie Konstanten + die beiden Diurnal-Signaturen): RMS 169.4 (epm2021) /
-171.4 (inpop19a) / 175.1 (de441) mas, ΔRMS 2.0–5.9 mas ≪ X = 175.6 mas; die
-schlechteste Linie liegt unter X (knapp). Die Spannung steht im Befund: der
-Boden (~170 mas) liegt ~2× über der per-row-Unsicherheit (88 mas) — der
-Residuen-Boden ist unbenannte Systematik, kein Rauschen und kein Diurnal-Term.
-Der Riss (32–47 mas) bleibt der Eichanker: er ist echt und gemessen, aber die
-Camargo-Wurzel entscheidet nicht, welche Linie der Wahrheit am nächsten liegt.
-
-## Neben-Befunde
-
-- Die INPOP/EPM-Earth-Bins tragen keine body-fixed Orientierung
-  (`body_fixed_to_icrs` liefert None, Zensus 0/9797 Reihen) — die de441-Erde
-  diente als der eine physikalische Beobachter (Zensus im Report). Register:
-  die INPOP/EPM-Earth-Bins ohne Orientierungs-Properties — pending.
-- `roemer_fold` ist jetzt siebenfach probe-lokal (der neue
-  `roemer_fold_state` dazu) — das Heben in die Archivar bleibt pending, bis
-  `src/` ruhig ist (Parallel-Session arbeitet dort uncommittet).
-- Quelle: Camargo+ 2015, A&A 582, A8 (arXiv:1508.02997) — §4 und Anhang
-  gelesen; der VizieR-ReadMe ist auf beiden Mirrors bot-gesperrt (die
-  asu-tsv-Route funktioniert).
+(ii) **Die Beobachtungen schlichten nicht.** Nach der Reduktion: RMS 72.9
+(epm2021) / 73.1 (inpop19a) / 76.9 (de441) mas, ΔRMS 0.3–3.9 mas ≪ X = 175.6;
+die schlechteste Linie liegt weit unter X, das Residuum unter der
+per-row-Unsicherheit. Der Riss (32–47 mas) bleibt der Eichanker: er ist echt
+und gemessen, aber die Camargo-Wurzel trägt weiterhin keinen Schiedsspruch —
+die drei Linien liegen nach der korrekten Reduktion alle auf dem
+Rausch-Niveau der Astrometrie.
 
 ## Register-Zeilen
 
-- (1) Den ~170-mas-Boden zerlegen — pending (Kandidaten ungemessen benannt).
-- (2) Papier-gegen-Tabellen-Diskrepanz („topocentric" vs geozentrisch
-  gemessen) — pending; Messpfad: Paper-Anhang (V03-Vergleich), PRAIA-Kette.
-- (3) INPOP/EPM-Earth-Bins ohne body-fixed Orientierung — pending.
-- (4) roemer_fold siebenfach probe-lokal — Heben pending bis `src/` ruhig.
+- (1) `iau_rotate_to_icrs` bildet den Erdpfahl falsch ab (gemessen: Zenith
+  +14.6° statt −22.5°) — pending, `src/` belegt (Parallel-Session).
+- (2) Matrix-Snap in `body_fixed_to_icrs` (32-Tage-Raster, Station
+  eingefroren) — pending, `src/` belegt; die Proben tragen ihre eigene
+  WGS84+GMST-Station.
+- (3) INPOP/EPM-Earth-Bins ohne body-fixed Orientierung — behoben in
+  `tools/harvest` (--pck pck00010/00011), lokal neu kompiliert und audit-
+  verifiziert (120/120); die CDN-Re-Manifestation ist ein CI-Lauf — pending.
+- (4) roemer_fold siebenfach probe-lokal — Heben in die Archivar pending bis
+  `src/` ruhig.
+- Die beiden alten Pendings „~170-mas-Boden zerlegen" und „Papier-gegen-
+  Tabellen-Diskrepanz" schließen mit diesem Befund: der Boden war die
+  Parallaxe, eine Diskrepanz besteht nicht.
