@@ -1380,6 +1380,19 @@ ICRS-4D-Rahmen teilt:
   km/s — die Kurve fällt aus der Messanordnung. Der Feld-Pfad bleibt
   unverdrahtet (Konstante = Nullhypothese; das Regal trägt die Messungen).
   Ortungs-Test parallel: `docs/auftrag/auftrag-dispersions-ortungstest.md`.
+- Dispersions-Ortungstest — geliefert (2026-09-09): ein Ereignis
+  (2013-05-14 01:11:36, XRSB-Beleg 4.647e-4 W/m²), drei Kegel XRSA/94A/335A
+  (Δt = 264.3 / 480.3 / 504.3 s; eps = −240.0 / −24.0 / −0.0 s), Fehlerkreis
+  leer (Lücke 5.756e10 m), Antwort gegen die Sonne: Offset 2.638e10 m = 88.0 s.
+  Befund `docs/befund/befund-2026-09-09-dispersions-ortungstest.md`.
+- XRSA-Ausreißer −240 s (Ortungs-Test, 2026-09-09) — gemessen (konditionale
+  Sonde auf die drei Kanäle): **quell-seitig** — die XRSA-Anstiegskante führt
+  94A schon an der 25 %-Fraktion (−168 s), nicht nur am Mittelpunkt (−192 s),
+  über 15 Ereignisse; der Ausreißer ist die Quelle (impulsives Röntgen vor dem
+  thermischen EUV), keine Kanal-Taktung.
+  Befund `docs/befund/befund-2026-09-09-xrsa-ausreisser.md`.
+- Riss-Satz (Ortungs-Test, 2026-09-09): ein leerer Kegel-Schnitt mit
+  2/3-Konvergenz ist ein Ausreißer-Befund, keine Fehlortung.
 - Extinktionskurve A(λ)/A_V (CCM 1989, R_V = 3.1) — kuratierte Klasse, gebaut
   (2026-09-08): `src/archivar/kernels/ccm89_rv31.dat` (37 Stützstellen
   100–3300 nm) + `parse_extinction`/`extinction_at` in spectral.rs (lineare
