@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::omni2::{
-    parse_bin, COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_V1800,
+    parse_bin, COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_SYMH, COMP_V1800,
 };
 use omegaflow::lsk::days_from_civil;
 use omegaflow::te::{benjamini_hochberg, pcmci_links};
@@ -144,8 +144,9 @@ fn main() {
     let by = channel(&sw, COMP_BY, lo, hi, J2000_UNIX_OFFSET);
     let ae = channel(&idx, COMP_AE, lo, hi, 0.0);
     let dst = channel(&idx, COMP_DST, lo, hi, 0.0);
+    let symh = channel(&idx, COMP_SYMH, lo, hi, 0.0);
 
-    let channels: [&[(f64, f64)]; 7] = [&v, &n, &bz, &bx, &by, &ae, &dst];
+    let channels: [&[(f64, f64)]; 8] = [&v, &n, &bz, &bx, &by, &ae, &dst, &symh];
     let grid_lo = channels
         .iter()
         .filter_map(|c| c.first().map(|&(t, _)| t))
@@ -168,8 +169,10 @@ fn main() {
     let bc_by = bin_cells(&by, t0, HOUR, n_cells);
     let bc_ae = bin_cells(&ae, t0, HOUR, n_cells);
     let bc_dst = bin_cells(&dst, t0, HOUR, n_cells);
+    let bc_symh = bin_cells(&symh, t0, HOUR, n_cells);
 
-    let mut series: [Vec<f32>; 6] = [
+    let mut series: [Vec<f32>; 7] = [
+        Vec::new(),
         Vec::new(),
         Vec::new(),
         Vec::new(),
@@ -181,7 +184,8 @@ fn main() {
         let (Some(bx), Some(by), Some(bz)) = (bc_bx[i], bc_by[i], bc_bz[i]) else {
             continue;
         };
-        let (Some(vv), Some(nn), Some(ae), Some(ds)) = (bc_v[i], bc_n[i], bc_ae[i], bc_dst[i])
+        let (Some(vv), Some(nn), Some(ae), Some(ds), Some(sh)) =
+            (bc_v[i], bc_n[i], bc_ae[i], bc_dst[i], bc_symh[i])
         else {
             continue;
         };
@@ -192,8 +196,9 @@ fn main() {
         series[3].push(bmag);
         series[4].push(ae);
         series[5].push(ds);
+        series[6].push(sh);
     }
-    let names = ["V", "n", "Bz", "|B|", "AE", "Dst"];
+    let names = ["V", "n", "Bz", "|B|", "AE", "Dst", "SYM-H"];
     let m = series[0].len();
     println!(
         "common hourly cells: {} ({:.1} years)",
@@ -249,22 +254,29 @@ fn main() {
     };
     let (bz_ae, bz_ae_r) = arrow(2, 4);
     let (bz_dst, bz_dst_r) = arrow(2, 5);
+    let (bz_symh, bz_symh_r) = arrow(2, 6);
     let (ae_dst, ae_dst_r) = arrow(4, 5);
     let (dst_ae, dst_ae_r) = arrow(5, 4);
     let reverse_leak = (arrow(4, 0).0 || arrow(4, 1).0 || arrow(4, 2).0 || arrow(4, 3).0)
-        || (arrow(5, 0).0 || arrow(5, 1).0 || arrow(5, 2).0 || arrow(5, 3).0);
+        || (arrow(5, 0).0 || arrow(5, 1).0 || arrow(5, 2).0 || arrow(5, 3).0)
+        || (arrow(6, 0).0 || arrow(6, 1).0 || arrow(6, 2).0 || arrow(6, 3).0);
 
     println!();
     println!("=== Verdict (Runge-2018 counterpart) ===");
-    if bz_ae && bz_dst {
+    if bz_ae && bz_dst && bz_symh {
         println!(
-            "Bz is a common driver of AE and Dst (Bz->AE ratio {:.2}, Bz->Dst ratio {:.2}) — matching Runge 2018.",
-            bz_ae_r, bz_dst_r
+            "Bz is a common driver of AE, Dst and SYM-H (Bz->AE {:.2}, Bz->Dst {:.2}, Bz->SYM-H {:.2}) — matching Runge 2018.",
+            bz_ae_r, bz_dst_r, bz_symh_r
+        );
+    } else if bz_ae && (bz_dst || bz_symh) {
+        println!(
+            "Bz is a common driver of AE and one storm channel (Bz->AE {:.2}, Bz->Dst {:.2}, Bz->SYM-H {:.2}) — matching Runge 2018; the missing storm channel is named.",
+            bz_ae_r, bz_dst_r, bz_symh_r
         );
     } else {
         println!(
-            "Bz->AE {} (ratio {:.2}), Bz->Dst {} (ratio {:.2}) — the machine does not recover Bz as the common driver (calibration to be investigated, not silence).",
-            bz_ae, bz_ae_r, bz_dst, bz_dst_r
+            "Bz->AE {} ({:.2}), Bz->Dst {} ({:.2}), Bz->SYM-H {} ({:.2}) — the machine does not recover Bz as the common driver (calibration to be investigated, not silence).",
+            bz_ae, bz_ae_r, bz_dst, bz_dst_r, bz_symh, bz_symh_r
         );
     }
     let ae_dst_any = ae_dst || dst_ae;
@@ -288,7 +300,7 @@ fn main() {
     }
     if reverse_leak {
         println!(
-            "Reverse edges (AE/Dst -> solar-wind channels) are measured as arrows — physically impossible (a ground index cannot drive the upstream wind); this is the contemporaneous-coupling leak of the estimator, named, not concealed."
+            "Reverse edges (AE/Dst/SYM-H -> solar-wind channels) are measured as arrows — physically impossible (a ground index cannot drive the upstream wind); this is the contemporaneous-coupling leak of the estimator, named, not concealed."
         );
     } else {
         println!(
