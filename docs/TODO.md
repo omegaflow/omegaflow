@@ -1079,6 +1079,30 @@ physikalischen Aussage — kein Blatt ohne diese:
 - Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die GPU
   (1664 CUDA-Cores) — O(n²) × Surrogate-Kosten gegenrechnen
   (~80–90 min gemessen);
+- **Matrix-Split ins freie Myzel — gebaut (2026-09-08), Dispatch läuft**: die 72
+  gerichteten Paare als Job-Matrix auf `ubuntu-latest` — öffentliches Repo =
+  Hosted-Minuten frei, die Grenze ist Concurrency (20 beim Free-Plan) → vier
+  Wellen à 20 Paare, ~2 h Wanduhr statt 22 h blind, Log pro Sonde. Die vier
+  Stücke stehen: (a) CDN-Manifestation der fehlenden Assets — `aia-cdn.yml`
+  trägt den `aia-fullyear`-Job (merge der 12 Monate → `aia2013/2015_fullyear.bin`,
+  `aia_compiler --merge --ci-mode`) und `goes-seconds-cdn.yml` + der neue
+  `goes_seconds_manifest` (NCEI GOES-15 2-s XRS, Origin verbatim → `xr_*.nc`).
+  Manifestiert am 2026-09-08: `aia-fullyear` GELAUFEN — beide Bins auf dem CDN
+  (aia2013_fullyear.bin 364 MB, aia2015_fullyear.bin 364 MB); `goes-seconds-cdn`
+  LÄUFT (Run 34227001269, ~1095 Tagesdateien, Uploads am Laufende). Dabei
+  gemessen: der Idempotenz-Check im `aia-lines`-Job war kosmetisch (das
+  `exit 0` skipste nicht) und hätte beinahe `aia2014_01.bin` überschrieben —
+  gefixt zu einem echten `$GITHUB_OUTPUT`-Gate (`becf9ef`, drei Stellen).
+  (b) `--pairs von:bis` im `solar_seconds_matrix_probe` — jede Sonde rechnet
+  nur ihre Paare, meldet `ROW …` + `SURRM_MAX`, schließt sauber;
+  (c) `solar-seconds-matrix.yml` — Job-Matrix über die 72 Paare + Corpus-Anker
+  (SHA + Corpus-Hash pro Sonde); (d) `solar_matrix_reduce` — `fam = max` über
+  die gemeldeten `surr_max`, das eine Blatt (Verdikt-Zeilen) als Artifact;
+  Drift-Gate (SHA/Corpus ungleich → kein Verdikt, 0 honored). Die Flotte
+  (unten) ist der Beweislauf, sobald (a) manifestiert ist.
+- **72-Sonden-Flotte im Myzel (Beweislauf, Folge-Pflicht des Splits)**: der erste
+  volle 72-Paare-Lauf im Myzel — abends losgeschickt, morgens das Vlies; die
+  Maßprobe der zwei Türen an echten Daten. Braucht den Split als Vorbedingung.
 - **Nächtliches Ernte-Ritual (Cron, Folge-Pflicht der Flotte)**: täglich die
   Broker pollen (Fink/Lasair/ALeRCE — was in der Nacht neu auflief), die
   natural-class-Gate darüber, das Coverage-Register wachsen lassen, das Protokoll
@@ -1643,6 +1667,8 @@ Gebaut (2026-09-06, sub-agents):
   Entfernungsleiter ≈ 73, ~5σ) ist die Illustration — benennbar heute: das
   H₀-Linien-Register (docs/blatt/blatt-h0-linien-register.md) trägt die
   Abstammungsspalte; messbar erst, wenn beide Linien im Bestand einziehen.
+  Nächstes Atom (Übergabe docs/handover/handover-2026-09-08-h0-linien-register.md):
+  die eigene Leiter-H₀ (Cepheiden-PL + Pantheon+), CMB bleibt zitiert.
 
 `pending` — registriert, nicht fabriziert:
 
