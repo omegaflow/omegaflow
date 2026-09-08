@@ -10,8 +10,8 @@ use omegaflow::dastcom::{
     parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
 };
 use omegaflow::weberin::{
-    BodyOutcome, Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, INPOP_LINE_BODIES,
-    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
+    Agreement, BodyOutcome, ThreeWayVerdict, TriadFold, Weberin, WeberinFeed, BODY_COMET,
+    BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES, PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -68,6 +68,48 @@ fn verdict_line(name: &str, outcome: &BodyOutcome) -> String {
             knot[1].word()
         ),
     }
+}
+
+fn agreement_word(a: &Agreement) -> &'static str {
+    match a {
+        Agreement::Placed { .. } => "placed",
+        Agreement::Riss { .. } => "riss",
+    }
+}
+
+fn agreement_sep(a: &Agreement) -> f64 {
+    match a {
+        Agreement::Placed { sep_m } => *sep_m,
+        Agreement::Riss { sep_m } => *sep_m,
+    }
+}
+
+fn fold_word(f: &TriadFold) -> String {
+    match f {
+        TriadFold::United => "united all-three".to_string(),
+        TriadFold::Shared { line } => format!("shared consensus {}", line.word()),
+        TriadFold::Outlier { line, knot } => format!(
+            "outlier {} against {}+{}",
+            line.word(),
+            knot[0].word(),
+            knot[1].word()
+        ),
+        TriadFold::Severed => "severed no-pair-converges".to_string(),
+    }
+}
+
+fn triad_line(t: &ThreeWayVerdict) -> String {
+    format!(
+        "weberin-3way {} spk-inpop {} {:.3e} | spk-epm {} {:.3e} | inpop-epm {} {:.3e} | fold {}",
+        t.name,
+        agreement_word(&t.spk_inpop),
+        agreement_sep(&t.spk_inpop),
+        agreement_word(&t.spk_epm),
+        agreement_sep(&t.spk_epm),
+        agreement_word(&t.inpop_epm),
+        agreement_sep(&t.inpop_epm),
+        fold_word(&t.fold)
+    )
 }
 
 fn main() {
@@ -163,7 +205,7 @@ fn main() {
         );
     }
 
-    println!("=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP SPK planets/moon) against the JPL SPK ephemeris points ===");
+    println!("=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP + EPM SPK planets/moon) against the JPL SPK ephemeris points ===");
 
     let sources = load_sources();
     let mut bodies: Vec<(String, SourceConfig)> = sources
@@ -176,7 +218,7 @@ fn main() {
         println!("weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void");
         return;
     }
-    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop line) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
+    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
 
     let Some(lsk) = embedded_lsk() else {
         println!(
@@ -235,11 +277,31 @@ fn main() {
         }
     }
 
+    const EPM_NETLOC: &str = "ftp.iaaras.ru";
+    let mut epm_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut opened_epm = 0usize;
+    for name in EPM_LINE_BODIES {
+        let asset = format!("ephemeris_epm_{}.bin", name);
+        let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
+        let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset, BIN_TTL_S) else {
+            println!("weberin {name} epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM line stays unread");
+            continue;
+        };
+        match parse_ephemeris_binary(&bytes) {
+            Some(e) => {
+                epm_map.insert((*name).to_string(), e);
+                opened_epm += 1;
+            }
+            None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
+        }
+    }
+
     let mut w = Weberin::new();
     w.feed(WeberinFeed {
         eph: Arc::new(eph),
         sun: Arc::new(sun_map),
         eph_inpop: Arc::new(inpop_map),
+        eph_epm: Arc::new(epm_map),
         recs,
         comets,
     });
@@ -260,10 +322,14 @@ fn main() {
         }
         println!("{}", verdict_line(&v.name, &v.outcome));
     }
+    for t in &w.triads {
+        println!("{}", triad_line(t));
+    }
     println!(
-        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
+        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {opened_epm}/{} EPM body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
         bodies.len(),
         INPOP_LINE_BODIES.len(),
+        EPM_LINE_BODIES.len(),
         w.verdicts.len(),
     );
 }
@@ -333,5 +399,36 @@ mod tests {
             verdict_line("neptune", &o),
             "weberin neptune state riss sep 1.6e6 knot spk-ephemeris+inpop-ephemeris"
         );
+    }
+
+    #[test]
+    fn triad_line_names_all_three_pair_classifications_and_the_fold() {
+        let t = ThreeWayVerdict {
+            name: "uranus".to_string(),
+            spk_inpop: Agreement::Riss { sep_m: 1.6e6 },
+            spk_epm: Agreement::Riss { sep_m: 1.3e6 },
+            inpop_epm: Agreement::Placed { sep_m: 2.0e4 },
+            fold: TriadFold::Outlier {
+                line: BodyLine::Spk,
+                knot: [BodyLine::Inpop, BodyLine::Epm],
+            },
+        };
+        let line = triad_line(&t);
+        assert!(
+            line.starts_with("weberin-3way uranus spk-inpop riss 1.600e6 | spk-epm riss 1.300e6 | inpop-epm placed 2.000e4 | fold outlier spk-ephemeris against inpop-ephemeris+epm-ephemeris"),
+            "{line}"
+        );
+    }
+
+    #[test]
+    fn triad_line_reads_united_when_all_three_converge() {
+        let t = ThreeWayVerdict {
+            name: "mars".to_string(),
+            spk_inpop: Agreement::Placed { sep_m: 2.0e4 },
+            spk_epm: Agreement::Placed { sep_m: 2.1e4 },
+            inpop_epm: Agreement::Placed { sep_m: 3.0e3 },
+            fold: TriadFold::United,
+        };
+        assert!(triad_line(&t).ends_with("| fold united all-three"));
     }
 }

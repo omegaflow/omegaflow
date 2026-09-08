@@ -1363,6 +1363,51 @@ format ephemeris_inpop
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mercury.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_venus.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_moon.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mars.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_jupiter.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_saturn.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_uranus.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_neptune.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
 format ephemeris_binary
 at adrastea
