@@ -71,6 +71,7 @@ pub mod rixs;
 pub mod rpw;
 pub mod s2event;
 pub mod sexagesimal;
+pub mod sha256;
 pub mod skydirection;
 pub mod suprastrom;
 pub mod thermochem;
