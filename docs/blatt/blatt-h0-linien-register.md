@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-08
-  sha256: aea40786724c89bc635fa3612998901fb484d8a65f16c7e7761e7dd2a3a9fd28
+  sha256: bdfa5615638afad5b0b202decad98dbbb399dad7c7b9a4b630d84ce98cbf61a1
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -268,6 +268,64 @@ dichter geworden (Sirenen, Linsen, SBF, Rücken), aber noch nicht schärfer — 
 neuer Zeuge trägt ≲1–2 %. Die Leiter-Wurzel ist mit JWST fester geworden, nicht
 lockerer; die Spannung wird robuster, nicht aufgelöst.
 
+## Der zweite Nachtrag (gewogen 2026-09-08)
+
+### Neue Zeugen — CMB-Klassen-intern + Stammlinie
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| ACT DR4 (Aiola et al.), ACT allein | 2020 | JCAP 12, 004 · arXiv:2007.07288 | CMB · ACT | 67.9 | ±1.5 | ΛCDM → θ*/r_d; eigenes Teleskop+Pipeline, keine Planck-Daten | keine | [c] |
+| ACT DR4, +WMAP | 2020 | ebd. | CMB · ACT+WMAP | 67.6 | ±1.1 | θ*/r_d; WMAP für großskalige Info | keine | [c] |
+| ACT DR6 (Madhavacheril et al.) | 2024 | ApJ 962, 113 · arXiv:2304.05203 | CMB · Lensing+BAO | 68.3 | ±1.1 | Linsen-Spektrum + BAO-r_d; kein eigenständiger H₀ | keine | [c] |
+| WMAP9 (Hinshaw et al.), allein | 2013 | ApJS 208, 19 · arXiv:1212.5226 | CMB · WMAP | 70.0 | ±2.2 | θ*/r_d; eigenes Satelliten-Instrument | keine | [c] |
+| WMAP9, +eCMB+BAO | 2013 | ebd. | CMB · WMAP+BAO | 68.76 | ±0.84 | θ*/r_d + BAO | keine | [c] |
+| HST Key Project (Freedman et al.) | 2001 | ApJ 553, 47 · arXiv:astro-ph/0012376 | Leiter · Cepheid (historisch) | 72 | ±8 | Cepheiden-PL, 5 Methoden kombiniert | früh | [c] |
+
+ACT und WMAP teilen mit Planck nur das θ*/r_d-Konzept, nicht Daten, Instrument
+oder Pipeline — die CMB-Familie bekommt unabhängige Instrumente, die geteilte
+Wurzel (r_d) bleibt. Keiner trägt Plancks Präzision; alle liegen konsistent mit
+67–70. ACT DR6 ist einen Schritt entkoppelter: Linsen-Spektrum + BAO, kein
+eigenständiger H₀. HST Key Project ist die historische Stammlinie des
+Cepheid-Astes.
+
+### Neue Zeugen — späte Routen (Fundamentalebene, Tully-Fisher)
+
+| Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
+|---|---|---|---|---|---|---|---|---|
+| Said et al. (DESI PV, Fundamentalebene) | 2024 | arXiv:2408.13842 | Fundamentalebene | 76.05 | ±0.35 stat ±0.49 sys(FP) ±4.86 stat(Kal.) | FP-Nullpunkt an SBF-Distanz NGC 4874 = 99.1 ± 5.8 Mpc (Jensen 2021) | spät | [c] |
+| Scolnic et al. (FP-Kreuzprüfung) | 2024 | arXiv:2409.14546 | Fundamentalebene | 76.5 | ±2.2 | SN-Ia-Coma-Distanz 98.5 ± 2.2 Mpc (HST-Leiter) | spät | [c] |
+| Schombert, McGaugh & Lelli (bTFR) | 2020 | AJ 160, 71 | Tully-Fisher | 75.1 | ±2.3 stat ±1.5 sys | bTFR-Nullpunkt aus 50 Galaxien (Cepheiden/TRGB) | spät | [c] |
+
+Said 2024 (Fundamentalebene) liegt bei 76.05, aber die Route ist umstritten:
+Scolnic et al. 2024 misst denselben FP mit der SN-Ia-Coma-Distanz → 76.5 ± 2.2,
+während die Planck-Kalibration D_Coma = 111.8 ± 1.8 Mpc verlangt (4.6σ vom
+direkten Maß entfernt). Der Streit ist Teil des Befunds, nicht Grund zur
+Auslassung — die FP-Route trägt eine eigene, angefochtene Wurzel. Die
+baryonische Tully-Fisher (75.1 ± 2.3 ± 1.5) hängt mit ihrem Nullpunkt an
+Cepheiden-/TRGB-Kalibratoren — gebunden an die Leiter-Wurzel.
+
+### Gelöste `pending`-Punkte (zweite Runde)
+
+- **VizieR-ID Riess 2021:** `absent`. TAPVizieR antwortet 400 auf `J/ApJ/908/L6`
+  (Tabelle nicht vorhanden, TAP_SCHEMA ohne Treffer). Die Tabelle lebt im
+  arXiv-Quellpaket **2012.08534** (`bigtable_redux3.tex`, 98 Zeilen — nicht im
+  Paket 2112.04510).
+- **Freedman-Erratum (ApJ 993, 252):** kosmetisch — ändert die H₀-Werte nicht.
+  Es korrigiert nur die y-Achsen-Fehler einer Appendix-Figur (Slope 0.08 → 0.03,
+  Signifikanz >3σ → 1.6σ); wörtlich „do not impact the rest of the paper".
+
+### Gemessene Register-Pflicht
+
+- arXiv 2408.06153 (CCHP-Status) trägt eine veraltete DOI (ad7952 → anderes
+  Papier); die publizierte DOI ist adce78 (ApJ 985, 203).
+
+### Auswirkung auf das Verdikt
+
+Unverändert. Die CMB-Familie ist klassen-intern reicher (ACT, WMAP), aber alle
+Instrumente teilen r_d — die „Ehe" bleibt. Die späten Routen (Fundamentalebene,
+Tully-Fisher) liegen hoch (75–76), teilen ihre Nullpunkte aber mit
+Cepheiden-/TRGB-/SBF-Ankern — keine neue unabhängige Wurzel, kein Schlichter.
+
 ## Der Anhang
 
 **Route-Kaskade** (docs/SOURCE_PORT.md §Agenten-Rezept): direkter curl → Jina-
@@ -303,7 +361,6 @@ Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record)
 timandersen.substack.com, search.proquest.com, autoclaw.z.ai, zcode.z.ai,
 ned.ipac.caltech.edu/level5 (Reese 2004, Petroff 2019 — Review-Kontext).
 
-**`pending`:** die VizieR-Katalog-ID der Riess-2021-Cepheidentabelle (CDS
-hinter Anubis/401, NAOJ-Spiegel Transportfehler — der arXiv-Quellpfad
-`bigtable_redux3.tex` trägt die 75 statt); die Erratum-Wirkung von Freedman 2025
-(ApJ 993, 252) — inhaltlich nicht geprüft.
+**`pending`:** die MNRAS-Druckfassung von Said et al. 2024 (Band/DOI nicht
+bestätigt; arXiv-Status „accepted"). Die VizieR-ID der Riess-2021-Tabelle ist
+gewogen-`absent`, das Freedman-Erratum kosmetisch (s. zweiter Nachtrag).
