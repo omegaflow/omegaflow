@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Idempotence — skip if the raw kernel already rests on the CDN
         run: |
           if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
@@ -50,7 +50,7 @@ jobs:
     timeout-minutes: 90
     needs: gll-1990-ck
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Idempotence — skip if all 8 rotor CKs already rest on the CDN
         run: |
           present=0
