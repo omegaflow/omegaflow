@@ -391,11 +391,6 @@ fn joint_key(indices: &[usize], bins: usize) -> u64 {
     k
 }
 
-pub fn sturges_bins(n: usize) -> usize {
-    let k = (1.0 + (n.max(2) as f64).log2()).ceil() as usize;
-    k.clamp(2, 16)
-}
-
 pub fn transfer_entropy_binned(x: &[f32], y: &[f32], lag: usize, bins: usize) -> Option<f64> {
     transfer_entropy_conditional_binned_n(x, y, &[], lag, bins)
 }
