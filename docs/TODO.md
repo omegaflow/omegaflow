@@ -82,24 +82,6 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
   der Wal bleibt frei, namenlos, im Wasser (0 honored).
 
-- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code GEBAUT (2026-09-07).**
-  Re-probe geschlossen (2026-09-07, drei Providers curl-gemessen): LIneA (DRI) + CosmoHub
-  kontogegatet, aber der NOIRLab Astro Data Lab TAP sync (datalab.noirlab.edu/tap/sync,
-  REQUEST=doQuery, anonym HTTP 200) trägt `des_dr2.coverage` — die DR2/Y6A2-Coverage-Maske
-  (hpix_4096 HEALPix Nside 4096, 25.239.595 Zeilen ~ 5171 deg², frac_det_g/i/r/y/z =
-  "fractional area of healpix pixel covered" je Band — Flaeche-Coverage, detektions-unabhaengig).
-  Footprint-Litmus BESTANDEN (unterscheidet nie-beobachtet von beobachtet-leer; kein
-  positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Rat 2026-09-07: der
-  Footprint ist kein Zeuge (gestalt = Koerperoberflaeche, falscher Sitz) und kein Oszillator —
-  er braucht eine EIGENE Survey-Footprint-Asset-Klasse (S² + Coverage-Fraktion, τ = Survey-
-  Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). GEBAUT: `src/archivar/footprint.rs`
-  (Record FP01: order+band+ipix+frac, 12 B, Nside 4096; `magic_identity(FP01)=Footprint` in
-  zeuge.rs; `footprint_gate` Observed/NeverObserved/BandUncovered/Pending) + Compiler
-  `des_coverage_compiler` (tools/harvest, Pagination je hpix_4096-Bereich, entdupliziert) +
-  CDN-Workflow `des-coverage-cdn.yml`. Register-Sitz `phi/footprints.φ` (footprint des-dr2);
-  `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag trägt den gebauten Stand. Offen: die
-  volle 25-M-Ernte im CI-Lauf (Ernte-Strategie gemessen, Lauf pending).
-
 - **NRS-Re-Emitt — verifiziert, Tabellen-Fallback dormant (2026-09-07).** Der
   sound_level_metrics-Prefix trägt genau 5 Deployments (4× NRS01, 1× NRS11), alle mit
   SHAPE — der Tabellen-Fallback (gebaut a21d4c8, Stationstabelle b867c23) hat keinen
@@ -1316,7 +1298,16 @@ ICRS-4D-Rahmen teilt:
   Schüsse, Sensitivität 24 s, Pflichtfeld probe-commit, DM ± σ-Regal,
   beide Abschluss-Wortlaute vorab genagelt); der Ortungs-Test läuft
   parallel über `docs/auftrag/auftrag-dispersions-ortungstest.md`.
-
+- Gaia XP (Atom B 3): Ernte bis d<50 pc manifestiert (34947 Sterne,
+  `xp_spectra.bin` v2; Compiler, Format, Verbraucher, CDN-Workflow stehen).
+  OFFEN: volle Survey-Ernte via GAVO-DC-Async (UWS) — Zugang angefragt
+  (`docs/auftrag/gavo-dc-account-anfrage.md`), pending bis Konto eintrifft.
+- ONC-HSD-FFT (Atom B 2): als `blocked parser-def mat5` in
+  `phi/blocked_sources.φ` geführt (2026-09-08) — Produkt `HSD`+`.fft`,
+  HYDROPHONE, exakt 85 Stationen: real; Token liegt in `.secrets.local`;
+  archiviert wird 5-Minuten-`.mat`-Spektren (MATLAB v5), nicht `.fft`-ASCII;
+  „512 × 250 Hz, dB" unbestätigt. Register-Pflicht: `.mat`-Parser (mat5)
+  bauen, Bin-Geometrie am ersten Run messen.
 - LISA Pathfinder PSD (Atom B 4, LISA-Teil): `not-published` (2026-09-08) — kein
   offener Tabellen-Bestand (VizieR: 0 Treffer in keiner ID; PRL/PRD nur Figur;
   kein arXiv; ESA-Archiv interaktiv, TAP deaktiviert gemessen; HEASARC = NASA-
@@ -1325,8 +1316,9 @@ ICRS-4D-Rahmen teilt:
   S_IFO^½ = 34,8 fm/√Hz, Übergang ~61 mHz) — es ersetzt die gemessene Reihe
   nicht. Offene Pflicht: Autoren-Anfrage an Michele Armano / Paul McNamara nach
   der Δg-Zeitreihe (L1/L2, 10 Hz, Noise-Runs) + Magnetfeld/Temperatur/Thruster
-  oder der tabellierten PSD — gesendet 2026-09-08; Antwort = Messung, bis dahin
-  `pending`. Entwurf + Sendedatum in `docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md`.
+  oder der tabellierten PSD — Entwurf sendfertig in
+  `docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md`; Antwort = Messung, bis
+  dahin `pending`.
 
 ## Archivar & Werkzeuge — offene Pflichten
 
@@ -1962,7 +1954,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Photometrie/Spektroskopie — RAVE DR6, APOGEE/GALAH; Extragalaktisch —
   HyperLEDA/PGC; Radio-Kontinuum (Achse leer) — TGSS ADR, SUMSS, RACS,
   LoTSS, VLASS; High-Energy — AMS-02; Sonnensystem — PDS
-  (Instrumentendaten), MPC-Live (mpcorb_extended.json.gz); TAP-Indexe —
+  (Instrumentendaten); TAP-Indexe —
   ESASky, NOIRLab Data Lab, NED; Terrestrisch — EarthScope-FDSN, EPOS,
   SeaDataNet, Smithsonian GVP, Natural Earth. Exakte Tabellen-IDs +
   Spalten + Mechanismus:
@@ -2280,7 +2272,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (TDB, 6 Stellen) lebt. Ein Live-`vectors`-Block in sources.φ bleibt
   Kurationsfrage: dead_sources.φ:3090 deklariert Horizons als
   Compiler-Eingang, keine Live-Quelle.
-- mpcobs / mpcorb_extended.json.gz: offener Live-Block (Sonnensystem).
+- mpcobs: offener Live-Block (Sonnensystem).
 - reverify-Quellen-Drift kuriert (2026-09-03, a3a2595+a): (a) NDBC-hist
   auf Direktpfad `ndbc.noaa.gov/data/historical/stdmet/<st>h{prev_year}.txt.gz`
   migriert (34 Blöcke, curl-verifiziert; 46005/46012 fest auf letztes Jahr
