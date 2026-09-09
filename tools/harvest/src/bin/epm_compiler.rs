@@ -11,10 +11,8 @@ use omegaflow::pck::{self, PckBody};
 
 const CDN_TAG: &str = "ftp.iaaras.ru";
 const EPM2021_BSP: &str = "https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp";
-const IAU_PCK_10: &str =
-    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
-const IAU_PCK_11: &str =
-    "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
+const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
+const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
 
 fn fetch_text(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -213,12 +211,13 @@ fn main() {
     let pck_bodies: std::collections::HashMap<i32, PckBody> =
         pck::parse(None, body_pck_text(&pck_local).as_deref());
     let woven = omegaflow::weberin::EPM_LINE_BODIES;
+    let in_scope = |name: &str| name == "sun" || woven.contains(&name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
     for (target, name) in resolved_bodies(&bsps) {
-        if !woven.contains(&name.as_str()) {
+        if !in_scope(&name) {
             eprintln!(
-                "epm: {} (target {}) covered but not compiled — the weave scope is the planet/moon set",
+                "epm: {} (target {}) covered but not compiled — the weave scope is the planet/moon set plus the sun",
                 name, target
             );
             continue;
