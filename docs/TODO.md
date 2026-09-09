@@ -1763,15 +1763,6 @@ Gebaut (2026-09-06, sub-agents):
 
 `pending` — registriert, nicht fabriziert:
 
-- **cdn_reconcile-Kanonik für `reference`-Assets**: der reference-Zweig
-  (`port.rs::ci_mode`) lädt die vier `h0_ladder_weigh`-Beine unter dem
-  Ursprungs-Dateinamen auf das CDN (`2012.08534`, `Pantheon+SH0ES.dat`,
-  `Pantheon+SH0ES_STAT+SYS.cov`, `Pantheon+SH0ES_STATONLY.cov`);
-  `cdn_reconcile` leitet seine Kanonik über `source_name_from_url` ab
-  (`e-print-2012.08534` …) und nennt die Abweichung im Report. Eine
-  reference-bewusste Kanonik (Ursprungs-Dateiname statt URL-Flattening) ist
-  ein enges Folge-Atom.
-
 - **Sonnensystem-Weben (zweite Linie je Körper-Klasse)**: die Körper-Kette
   webt dünn gegen die reiche S²-Richtungs-Kette außerhalb. Bestands-Inventar
   gemessen (survey-2026-09-07-weberin-sonnensystem-kette): 72
