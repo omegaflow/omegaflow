@@ -2,16 +2,18 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
-    BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig, J2000_EPOCH,
+    body_barycenter_position, embedded_lsk, extract, fetch_raw_bytes, load_sources,
+    parse_ephemeris_binary, system_now, BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig,
+    J2000_EPOCH,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{
     parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
 };
 use omegaflow::weberin::{
-    Agreement, BodyOutcome, ThreeWayVerdict, TriadFold, Weberin, WeberinFeed, BODY_COMET,
-    BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES, PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
+    classify, separation_m, three_way_fold, Agreement, BodyOutcome, ThreeWayVerdict, TriadFold,
+    Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES,
+    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -294,6 +296,73 @@ fn main() {
             }
             None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
         }
+    }
+
+    let mut sun_inpop: HashMap<String, BodyEphemeris> = HashMap::new();
+    {
+        const SUN_ASSET: &str = "ephemeris_inpop_sun.bin";
+        let path = format!("{eph_dir}/{INPOP_NETLOC}/{SUN_ASSET}");
+        match ensure_bin(&path, INPOP_NETLOC, SUN_ASSET, BIN_TTL_S) {
+            Some(bytes) => match parse_ephemeris_binary(&bytes) {
+                Some(e) => {
+                    sun_inpop.insert("sun".to_string(), e);
+                }
+                None => println!(
+                    "weberin sun: {path} reads but does not parse to a BodyEphemeris"
+                ),
+            },
+            None => println!(
+                "weberin sun inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP sun line stays unread"
+            ),
+        }
+    }
+    let mut sun_epm: HashMap<String, BodyEphemeris> = HashMap::new();
+    {
+        const SUN_ASSET: &str = "ephemeris_epm_sun.bin";
+        let path = format!("{eph_dir}/{EPM_NETLOC}/{SUN_ASSET}");
+        match ensure_bin(&path, EPM_NETLOC, SUN_ASSET, BIN_TTL_S) {
+            Some(bytes) => match parse_ephemeris_binary(&bytes) {
+                Some(e) => {
+                    sun_epm.insert("sun".to_string(), e);
+                }
+                None => println!(
+                    "weberin sun: {path} reads but does not parse to a BodyEphemeris"
+                ),
+            },
+            None => println!(
+                "weberin sun epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM sun line stays unread"
+            ),
+        }
+    }
+
+    let de_sun = sun_map
+        .get("sun")
+        .and_then(|_| body_barycenter_position("sun", tdb, &eph));
+    let inpop_sun = body_barycenter_position("sun", tdb, &sun_inpop);
+    let epm_sun = body_barycenter_position("sun", tdb, &sun_epm);
+    match (de_sun, inpop_sun, epm_sun) {
+        (Some(de), Some(inp), Some(epm)) => {
+            let spk_inpop = classify(separation_m(de, inp), PLANET_WEBERIN_TOL_M);
+            let spk_epm = classify(separation_m(de, epm), PLANET_WEBERIN_TOL_M);
+            let inpop_epm = classify(separation_m(inp, epm), PLANET_WEBERIN_TOL_M);
+            let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
+            println!(
+                "{}",
+                triad_line(&ThreeWayVerdict {
+                    name: "sun".to_string(),
+                    spk_inpop,
+                    spk_epm,
+                    inpop_epm,
+                    fold,
+                })
+            );
+        }
+        _ => println!(
+            "weberin-3way sun absent — DE441 sun read {} of 1, INPOP sun read {} of 1, EPM sun read {} of 1",
+            if de_sun.is_some() { 1 } else { 0 },
+            if inpop_sun.is_some() { 1 } else { 0 },
+            if epm_sun.is_some() { 1 } else { 0 }
+        ),
     }
 
     let mut w = Weberin::new();
