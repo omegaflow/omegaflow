@@ -1,6 +1,6 @@
 use omegaflow::archivar::footprint::{
     decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord, HEADER_LEN,
-    MAGIC, NSIDE, REC_BYTES,
+    MAGIC, REC_BYTES,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
@@ -19,6 +19,7 @@ const PROBE_WORKERS: u32 = 8;
 const ZONE_LO: f64 = -33.5;
 const ZONE_BINS: usize = 315;
 const ZONE_BW: f64 = 0.02;
+const NSIDE: i64 = 256;
 const ORDER: u8 = NSIDE.trailing_zeros() as u8;
 const NPIX: i64 = 12 * NSIDE * NSIDE;
 const ALL5: u8 = 0b11111;
@@ -859,6 +860,20 @@ projcell subcell ra dec filter mjd type filename shortname badflag
         }
         let codes: Vec<u8> = BIT_BANDS.iter().map(|b| band_code(*b)).collect();
         assert_eq!(codes, vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn binary_raster_is_nside_256_order_8() {
+        assert_eq!(NSIDE, 256);
+        assert_eq!(ORDER, 8);
+        assert_eq!(NPIX, 12 * 256 * 256);
+        let idx = ZoneIndex::new();
+        let cells: Vec<Cell> = Vec::new();
+        let mut buf = Vec::new();
+        let n = raster_region(0, 16, &idx, &cells, Some(-90.0), -28.0, &mut buf).unwrap();
+        assert_eq!(n, 80);
+        let first = decode_rec(&buf[0..REC_BYTES]).unwrap();
+        assert_eq!(first.order, 8);
     }
 
     #[test]
