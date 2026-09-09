@@ -42,3 +42,45 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
 pub fn body_url(name: &str) -> String {
     format!("{}/{}/ephemeris_{}.bin", CDN_BASE, CDN_RELEASE, name)
 }
+
+pub fn ensure_release(tag: &str) -> bool {
+    if std::env::var("GH_TOKEN").is_err() {
+        return false;
+    }
+    let view = Command::new("gh")
+        .arg("release")
+        .arg("view")
+        .arg(tag)
+        .arg("--repo")
+        .arg(CDN_REPO)
+        .output();
+    if view.map(|o| o.status.success()).unwrap_or(false) {
+        return true;
+    }
+    let out = Command::new("gh")
+        .arg("release")
+        .arg("create")
+        .arg(tag)
+        .arg("--repo")
+        .arg(CDN_REPO)
+        .arg("--title")
+        .arg(tag)
+        .arg("--notes")
+        .arg("reference dataset mirror")
+        .output();
+    match out {
+        Ok(o) if o.status.success() => true,
+        Ok(o) => {
+            eprintln!(
+                "ensure release {}: gh returned void: {}",
+                tag,
+                String::from_utf8_lossy(&o.stderr).trim()
+            );
+            false
+        }
+        Err(e) => {
+            eprintln!("ensure release {}: gh absent: {}", tag, e);
+            false
+        }
+    }
+}

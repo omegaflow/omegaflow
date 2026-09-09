@@ -1718,6 +1718,7 @@ pub fn ci_mode(dir: &str) -> i32 {
                 .unwrap_or("reference")
                 .to_string();
             let tmp_path = format!("{}/{}", std::env::temp_dir().display(), file_name);
+            let _ = crate::cdn::ensure_release(netloc);
             if std::fs::write(&tmp_path, &bytes).is_ok()
                 && crate::cdn::upload_release(netloc, &tmp_path)
             {
