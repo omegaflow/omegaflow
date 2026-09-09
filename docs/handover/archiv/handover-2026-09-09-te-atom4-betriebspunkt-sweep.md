@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: 33f131baaee86f7891767709d95217515b7ac9bf3ed1a1134b0c85da78d35a6e
-  status: live
+  status: archived
   see-also: docs/befund/befund-betriebspunkt-sweep.md docs/auftrag/archiv/auftrag-betriebspunkt-sweep.md docs/handover/handover-thematisch-te-atom-4.md
 -->
 
