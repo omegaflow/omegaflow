@@ -71,7 +71,11 @@ pub struct ThreeWayVerdict {
     pub fold: TriadFold,
 }
 
-fn three_way_fold(spk_inpop: &Agreement, spk_epm: &Agreement, inpop_epm: &Agreement) -> TriadFold {
+pub fn three_way_fold(
+    spk_inpop: &Agreement,
+    spk_epm: &Agreement,
+    inpop_epm: &Agreement,
+) -> TriadFold {
     let placed = |a: &Agreement| matches!(a, Agreement::Placed { .. });
     match (placed(spk_inpop), placed(spk_epm), placed(inpop_epm)) {
         (true, true, true) => TriadFold::United,
