@@ -64,6 +64,8 @@ pub struct SecondaryPick {
     pub corr: f64,
     pub inverted: bool,
     pub at_edge: bool,
+    pub peak_half_width_s: Option<f64>,
+    pub runner_up_ratio: Option<f64>,
 }
 
 pub fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -353,7 +355,7 @@ pub fn correlate_window(
         return None;
     }
     let edge = ((k_hi - k_lo) as f64 * EDGE_FRAC).round() as usize;
-    let mut best: Option<(f64, f64, bool)> = None;
+    let mut surf: Vec<f64> = Vec::with_capacity(k_hi - k_lo + 1);
     for k in k_lo..=k_hi {
         let seg_lo = i_p + k;
         let seg_hi = seg_lo + nw;
@@ -362,30 +364,126 @@ pub fn correlate_window(
         }
         let seg = &bp[seg_lo..seg_hi];
         let snorm = seg.iter().map(|v| v * v).sum::<f64>().sqrt();
-        if snorm <= 1e-12 {
-            continue;
-        }
         let dot = wavelet
             .iter()
             .zip(seg.iter())
             .map(|(a, b)| a * b)
             .sum::<f64>();
-        let corr = dot / (wnorm * snorm);
-        let keep = match best {
-            None => true,
-            Some((bc, _, _)) => corr.abs() > bc.abs(),
-        };
-        if keep {
-            let at_edge = k <= k_lo + edge || k >= k_hi - edge;
-            best = Some((corr, k as f64 / rate, at_edge));
+        surf.push(dot / (wnorm * snorm));
+    }
+    if surf.is_empty() {
+        return None;
+    }
+    let mut i_star = 0usize;
+    for i in 1..surf.len() {
+        if surf[i].abs() > surf[i_star].abs() {
+            i_star = i;
         }
     }
-    best.map(|(corr, lag, at_edge)| SecondaryPick {
-        lag_s: lag,
+    let k_star = k_lo + i_star;
+    let at_edge = k_star <= k_lo + edge || k_star >= k_hi - edge;
+    let corr = surf[i_star];
+    let c0 = corr.abs();
+    let lag_s = if !at_edge && i_star > 0 && i_star + 1 < surf.len() {
+        let cm = surf[i_star - 1].abs();
+        let cp = surf[i_star + 1].abs();
+        let denom = cm + cp - 2.0 * c0;
+        if denom.abs() > 1e-12 {
+            let delta = ((cm - cp) / (2.0 * denom)).clamp(-0.5, 0.5);
+            (k_star as f64 + delta) / rate
+        } else {
+            k_star as f64 / rate
+        }
+    } else {
+        k_star as f64 / rate
+    };
+    let peak_half_width_s = if at_edge {
+        None
+    } else {
+        let threshold = c0 / 2.0;
+        let mut x_left = None;
+        for j in (k_lo..k_star).rev() {
+            let sj = surf[j - k_lo].abs();
+            let sj1 = surf[j + 1 - k_lo].abs();
+            if sj >= threshold && sj1 < threshold {
+                let denom = sj - sj1;
+                x_left = Some(if denom.abs() <= 1e-12 {
+                    j as f64 + 0.5
+                } else {
+                    j as f64 + (sj - threshold) / denom
+                });
+                break;
+            }
+        }
+        let k_end = k_lo + surf.len() - 1;
+        let mut x_right = None;
+        for j in (k_star + 1)..=k_hi.min(k_end) {
+            let sj = surf[j - k_lo].abs();
+            let sj1 = surf[j - 1 - k_lo].abs();
+            if sj >= threshold && sj1 < threshold {
+                let denom = sj - sj1;
+                x_right = Some(if denom.abs() <= 1e-12 {
+                    j as f64 - 0.5
+                } else {
+                    j as f64 - (sj - threshold) / denom
+                });
+                break;
+            }
+        }
+        match (x_left, x_right) {
+            (Some(xl), Some(xr)) => {
+                let width_samples = xr - xl;
+                if width_samples >= 1.0 {
+                    Some(width_samples / rate)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
+    };
+    let runner_up_ratio = {
+        let mut best = None;
+        for i in 0..surf.len() {
+            if i.abs_diff(i_star) <= 1 {
+                continue;
+            }
+            let above_left = i == 0 || surf[i].abs() >= surf[i - 1].abs();
+            let above_right = i + 1 == surf.len() || surf[i].abs() >= surf[i + 1].abs();
+            if above_left && above_right {
+                let v = surf[i].abs();
+                if best.map_or(true, |b| v > b) {
+                    best = Some(v);
+                }
+            }
+        }
+        best.map(|b| b / c0)
+    };
+    Some(SecondaryPick {
+        lag_s,
         corr,
         inverted: corr < 0.0,
         at_edge,
+        peak_half_width_s,
+        runner_up_ratio,
     })
+}
+
+pub fn peak_sigma_s(pick: &SecondaryPick, rate: f64) -> Option<f64> {
+    if pick.at_edge {
+        return None;
+    }
+    match pick.peak_half_width_s {
+        Some(w) if w.is_finite() && w > 0.0 => Some(w),
+        Some(_) => None,
+        None => {
+            if rate.is_finite() && rate > 0.0 {
+                Some(1.0 / rate)
+            } else {
+                None
+            }
+        }
+    }
 }
 
 pub fn p_p_lag(delta_deg: f64, depth_km: f64) -> Option<f64> {
@@ -419,6 +517,39 @@ pub fn invert_depth_single(delta_deg: f64, lag: f64) -> DepthInversion {
             if s < best.0 {
                 best = (s, h);
             }
+        }
+    }
+    inversion_state(best.0, best.1)
+}
+
+pub fn invert_depth_weighted(deltas: &[f64], lags: &[f64], weights: &[f64]) -> DepthInversion {
+    if deltas.is_empty() || deltas.len() != lags.len() || lags.len() != weights.len() {
+        return DepthInversion::Absent;
+    }
+    let mut best = (f64::INFINITY, 0.0f64);
+    let n = (INVERSION_DEPTH_MAX_KM / INVERSION_DEPTH_STEP_KM) as usize;
+    for i in 0..=n {
+        let h = i as f64 * INVERSION_DEPTH_STEP_KM;
+        let mut s = 0.0;
+        let mut ok = true;
+        for ((&d, &lag), &w) in deltas.iter().zip(lags.iter()).zip(weights.iter()) {
+            if !(w.is_finite() && w >= 0.0) {
+                ok = false;
+                break;
+            }
+            match p_p_lag(d, h) {
+                Some(pred) => {
+                    let r = lag - pred;
+                    s += r * r * w;
+                }
+                None => {
+                    ok = false;
+                    break;
+                }
+            }
+        }
+        if ok && s < best.0 {
+            best = (s, h);
         }
     }
     inversion_state(best.0, best.1)
@@ -531,6 +662,7 @@ pub struct StationMeasure {
     pub p_p: Option<SecondaryPick>,
     pub s_p: Option<SecondaryPick>,
     pub inversion: Option<DepthInversion>,
+    pub p_p_sigma_s: Option<f64>,
     pub p_p_lag_pred: f64,
     pub s_p_lag_pred: Option<f64>,
     pub skip: Option<String>,
@@ -545,6 +677,7 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         p_p: None,
         s_p: None,
         inversion: None,
+        p_p_sigma_s: None,
         p_p_lag_pred: 0.0,
         s_p_lag_pred: None,
         skip: Some(reason.to_string()),
@@ -583,6 +716,7 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
         None => return skipped(key, delta, "no ak135 pP prediction"),
     };
     let pp = correlate_window(&bp, i_p, nw, rate, p_p_lag_pred);
+    let p_p_sigma_s = pp.as_ref().and_then(|p| peak_sigma_s(p, rate));
     let s_p_lag_pred = s_p_lag(delta, event.depth_km);
     let sp = s_p_lag_pred.and_then(|l| correlate_window(&bp, i_p, nw, rate, l));
     let inversion = match &pp {
@@ -596,6 +730,7 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
         p_p: pp,
         s_p: sp,
         inversion,
+        p_p_sigma_s,
         p_p_lag_pred,
         s_p_lag_pred,
         skip: None,
@@ -955,6 +1090,176 @@ mod tests {
     }
 
     #[test]
+    fn sub_sample_lag_beats_the_nearest_sample() {
+        let rate = 40.0;
+        let t_p = 1030.0;
+        let mut samples = synth_trace(rate, 90.0, t_p, 10.0);
+        samples = inject(&samples, t_p + 6.137, 6.0, -1.0);
+        let t_onset = p_onset(&samples, rate).unwrap();
+        let bp = bandpass(&samples, rate);
+        let i_p = onset_index(&samples, rate, t_onset);
+        let nw = (P_WAVELET_S * rate).round() as usize;
+        let pick = correlate_window(&bp, i_p, nw, rate, 6.0).unwrap();
+        assert!(
+            (pick.lag_s - 6.137).abs() < 0.0125,
+            "sub-sample lag {} must beat the half-sample grid",
+            pick.lag_s
+        );
+        assert!(
+            (pick.lag_s - 6.137).abs() < (6.15f64 - 6.137).abs(),
+            "sub-sample lag {} must beat the nearest sample 6.15",
+            pick.lag_s
+        );
+    }
+
+    #[test]
+    fn sharp_and_broad_peaks_of_equal_height_carry_different_sigmas() {
+        let sharp = SecondaryPick {
+            lag_s: 6.0,
+            corr: 0.8,
+            inverted: false,
+            at_edge: false,
+            peak_half_width_s: Some(2.0),
+            runner_up_ratio: None,
+        };
+        let broad = SecondaryPick {
+            lag_s: 6.0,
+            corr: 0.8,
+            inverted: false,
+            at_edge: false,
+            peak_half_width_s: Some(5.0),
+            runner_up_ratio: None,
+        };
+        assert_eq!(peak_sigma_s(&sharp, 40.0), Some(2.0));
+        assert_eq!(peak_sigma_s(&broad, 40.0), Some(5.0));
+        assert!(
+            1.0 / (2.0 * 2.0) > 1.0 / (5.0 * 5.0),
+            "the sharp peak carries the larger weight"
+        );
+    }
+
+    #[test]
+    fn weighted_fit_with_uniform_weights_reproduces_the_equal_weight_fit() {
+        for true_h in [10.0, 20.0, 35.0] {
+            let deltas = [20.0, 35.0, 50.0, 65.0, 80.0];
+            let lags: Vec<f64> = deltas
+                .iter()
+                .map(|&d| p_p_lag(d, true_h).unwrap())
+                .collect();
+            let weights = vec![1.0; deltas.len()];
+            let h_w = invert_depth_weighted(&deltas, &lags, &weights);
+            let h_eq = invert_depth_multi(&deltas, &lags);
+            assert_eq!(
+                h_w, h_eq,
+                "uniform weights reproduce the equal-weight fit at {true_h} km"
+            );
+            assert_depth(h_w, true_h);
+            assert_depth(h_eq, true_h);
+        }
+    }
+
+    #[test]
+    fn weighted_fit_lets_the_sharp_station_dominate() {
+        let true_h = 20.0;
+        let deltas = [45.0, 60.0];
+        let lag1 = p_p_lag(45.0, true_h).unwrap();
+        let lag2 = p_p_lag(60.0, true_h).unwrap() + 1.0;
+        let lags = [lag1, lag2];
+        let weights = [1.0 / (0.05 * 0.05), 1.0 / (0.5 * 0.5)];
+        let h_w = invert_depth_weighted(&deltas, &lags, &weights);
+        let h_eq = invert_depth_multi(&deltas, &lags);
+        let (DepthInversion::Depth(hw), DepthInversion::Depth(heq)) = (h_w, h_eq) else {
+            panic!("both fits must carry Depth");
+        };
+        assert!(
+            (hw - true_h).abs() < (heq - true_h).abs(),
+            "weighted {hw} km must sit closer to {true_h} than the equal-weight {heq} km"
+        );
+    }
+
+    #[test]
+    fn runner_up_ratio_measures_the_distant_peak_not_the_flank() {
+        let rate = 40.0;
+        let t_p = 1030.0;
+        let mut samples = synth_trace(rate, 90.0, t_p, 10.0);
+        samples = inject(&samples, t_p + 6.0, 6.0, -1.0);
+        samples = inject(&samples, t_p + 8.0, 2.0, 1.0);
+        let t_onset = p_onset(&samples, rate).unwrap();
+        let bp = bandpass(&samples, rate);
+        let i_p = onset_index(&samples, rate, t_onset);
+        let nw = (P_WAVELET_S * rate).round() as usize;
+        let pick = correlate_window(&bp, i_p, nw, rate, 6.0).unwrap();
+        let ratio = pick
+            .runner_up_ratio
+            .expect("a distant peak must be measured as the runner-up");
+        assert!(
+            ratio > 0.0 && ratio < 1.0,
+            "runner-up ratio {ratio} must sit between the flank (0) and the pick (1)"
+        );
+        assert!(
+            pick.peak_half_width_s.is_some(),
+            "the main peak carries a width"
+        );
+        assert!(
+            (pick.lag_s - 6.0).abs() < 0.5,
+            "the main peak lag {} vs 6.0",
+            pick.lag_s
+        );
+    }
+
+    #[test]
+    fn single_sample_peak_carries_no_width_but_the_sample_floor() {
+        let pick = SecondaryPick {
+            lag_s: 6.0,
+            corr: 0.8,
+            inverted: false,
+            at_edge: false,
+            peak_half_width_s: None,
+            runner_up_ratio: None,
+        };
+        assert_eq!(peak_sigma_s(&pick, 20.0), Some(1.0 / 20.0));
+    }
+
+    #[test]
+    fn polarity_inversion_keeps_the_surface() {
+        let rate = 40.0;
+        let t_p = 1030.0;
+        let base = synth_trace(rate, 90.0, t_p, 10.0);
+        let trace_a = inject(&base, t_p + 6.137, 6.0, -1.0);
+        let trace_b = inject(&base, t_p + 6.137, 6.0, 1.0);
+        let measure = |trace: &[(f64, f64)]| {
+            let t_onset = p_onset(trace, rate).unwrap();
+            let bp = bandpass(trace, rate);
+            let i_p = onset_index(trace, rate, t_onset);
+            let nw = (P_WAVELET_S * rate).round() as usize;
+            correlate_window(&bp, i_p, nw, rate, 6.0).unwrap()
+        };
+        let pa = measure(&trace_a);
+        let pb = measure(&trace_b);
+        assert!(
+            (pa.lag_s - pb.lag_s).abs() < 1.0 / rate,
+            "the |corr| surface peak is polarity-blind to within a sample: lag {} vs {}",
+            pa.lag_s,
+            pb.lag_s
+        );
+        match (pa.peak_half_width_s, pb.peak_half_width_s) {
+            (Some(a), Some(b)) => assert!(
+                (a - b).abs() < 1.0 / rate,
+                "the peak width is polarity-blind: {a} s vs {b} s"
+            ),
+            (a, b) => assert_eq!(a, b),
+        }
+        match (pa.runner_up_ratio, pb.runner_up_ratio) {
+            (Some(a), Some(b)) => assert!(
+                (a - b).abs() < 0.02,
+                "the runner-up ratio is polarity-blind: {a} vs {b}"
+            ),
+            (a, b) => assert_eq!(a, b),
+        }
+        assert_eq!(pa.inverted, !pb.inverted);
+    }
+
+    #[test]
     fn a_lag_at_the_window_edge_is_flagged() {
         let rate = 40.0;
         let t_p = 1030.0;
@@ -968,6 +1273,14 @@ mod tests {
         assert!(
             pick.at_edge,
             "a lag at the edge of the [0.7,1.3] window must be flagged"
+        );
+        assert!(
+            pick.peak_half_width_s.is_none(),
+            "an edge pick carries no peak width"
+        );
+        assert!(
+            peak_sigma_s(&pick, 40.0).is_none(),
+            "an edge pick carries no sigma"
         );
     }
 }
