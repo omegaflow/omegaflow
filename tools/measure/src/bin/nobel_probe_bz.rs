@@ -7,6 +7,8 @@ use omegaflow::te::{benjamini_hochberg, pcmci_links, TeEstimator, TeNull};
 
 const OMNI2_1H_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
+const OMNI2_INDICES_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_indices.bin";
 const HOUR: f64 = 3600.0;
 const J2000_UNIX_OFFSET: f64 = 946728000.0;
 
@@ -41,13 +43,14 @@ fn load_indices() -> Option<Vec<(f64, f64, u32)>> {
         .join("omni2_indices.bin")
         .to_string_lossy()
         .into_owned();
-    match std::fs::read(&cache) {
-        Ok(bytes) => parse_bin(&bytes),
+    let bytes = match std::fs::read(&cache) {
+        Ok(b) => b,
         Err(_) => {
-            eprintln!("omni2_indices.bin reads void — the index channels stay unmeasured");
-            None
+            eprintln!("omni2_indices.bin absent locally — fetching the CDN asset");
+            fetch_raw_bytes(OMNI2_INDICES_CDN, 3600)?
         }
-    }
+    };
+    parse_bin(&bytes)
 }
 
 fn channel(recs: &[(f64, f64, u32)], comp: u32, lo: f64, hi: f64, shift: f64) -> Vec<(f64, f64)> {
