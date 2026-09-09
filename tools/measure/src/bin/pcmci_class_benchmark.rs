@@ -14,6 +14,12 @@ static N_SURR: AtomicUsize = AtomicUsize::new(100);
 static NULL_MODEL: AtomicU8 = AtomicU8::new(1);
 static BLOCK: AtomicUsize = AtomicUsize::new(0);
 static ESTIMATOR: AtomicU8 = AtomicU8::new(1);
+static SECTION: AtomicUsize = AtomicUsize::new(0);
+
+fn section(n: usize) -> bool {
+    let s = SECTION.load(Ordering::Relaxed);
+    s == 0 || s == n
+}
 
 fn null_model() -> TeNull {
     match NULL_MODEL.load(Ordering::Relaxed) {
@@ -486,6 +492,24 @@ fn main() {
             std::process::exit(1);
         }
     }
+    let section_arg = args
+        .iter()
+        .position(|a| a == "--section")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = section_arg {
+        match v.parse::<usize>() {
+            Ok(n) if (1..=6).contains(&n) => SECTION.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--section carries {n} — the probe builds sections 1..6");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--section carries {v} — not a section number");
+                std::process::exit(1);
+            }
+        }
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
@@ -506,197 +530,251 @@ fn main() {
     );
 
     println!();
-    println!("[1] Sci. Adv. 5, eaau4996 (arXiv:1702.07007v2), SM Eq. (S60) — random lagged VAR, T=150, tau in {{1,2}}:");
-    println!("    published text anchors: FP around/below 5% (Fig. 4C, all N); PCMCI: 99% of links with power > 70% at N=10; FullCI power 80% (N=5) -> 40% (N=20)");
     let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
-    for n_chan in [2usize, 5, 10] {
+    let set2 = [0.6f32, 0.8, 0.9, 0.95];
+    if section(1) {
+        println!("[1] Sci. Adv. 5, eaau4996 (arXiv:1702.07007v2), SM Eq. (S60) — random lagged VAR, T=150, tau in {{1,2}}:");
+        println!("    published text anchors: FP around/below 5% (Fig. 4C, all N); PCMCI: 99% of links with power > 70% at N=10; FullCI power 80% (N=5) -> 40% (N=20)");
+        for n_chan in [2usize, 5, 10] {
+            s60_point(
+                n_chan,
+                150,
+                0.287,
+                false,
+                &set1,
+                &format!("N={n_chan} c=0.287 a-set1"),
+                top(3),
+                div(20),
+                2,
+                BINS,
+                SEED,
+            );
+        }
         s60_point(
-            n_chan,
+            10,
             150,
             0.287,
             false,
-            &set1,
-            &format!("N={n_chan} c=0.287 a-set1"),
-            top(3),
+            &set2,
+            "N=10 c=0.287 a-set2 (strong autocorr)",
+            top(2),
             div(20),
             2,
             BINS,
             SEED,
         );
-    }
-    let set2 = [0.6f32, 0.8, 0.9, 0.95];
-    s60_point(
-        10,
-        150,
-        0.287,
-        false,
-        &set2,
-        "N=10 c=0.287 a-set2 (strong autocorr)",
-        top(2),
-        div(20),
-        2,
-        BINS,
-        SEED,
-    );
-    s60_point(
-        10,
-        150,
-        0.287,
-        false,
-        &set1,
-        "N=10 c=0.287 a-set1 max_lag=5 (published lag budget)",
-        top(2),
-        div(10),
-        5,
-        BINS,
-        SEED,
-    );
-    println!("    c-scaling (Fig. 6, qualitative):");
-    for c in [0.2f32, 0.247, 0.324, 0.414] {
-        s60_point(
-            10,
-            150,
-            c,
-            false,
-            &set1,
-            &format!("N=10 c={c}"),
-            top(2),
-            div(10),
-            2,
-            BINS,
-            SEED,
-        );
-    }
-    println!("    T-scaling (Fig. S8, qualitative):");
-    for t in [150usize, 300, 600] {
-        s60_point(
-            10,
-            t,
-            0.2,
-            false,
-            &set1,
-            &format!("N=10 T={t} c=0.2"),
-            top(2),
-            div(10),
-            2,
-            BINS,
-            SEED,
-        );
-    }
-    println!("    bins sweep at the N=10 anchor (machine config surface):");
-    for bins in [3usize, 8] {
         s60_point(
             10,
             150,
             0.287,
             false,
             &set1,
-            &format!("N=10 c=0.287 a-set1 bins={bins}"),
+            "N=10 c=0.287 a-set1 max_lag=5 (published lag budget)",
             top(2),
             div(10),
-            2,
-            bins,
-            SEED,
-        );
-    }
-
-    println!();
-    println!("[2] Sci. Adv. same model, nonlinear mix 50% f1 / 25% f2 / 25% f3:");
-    println!("    published text anchors: PCMCI highest power; slight FP inflation at large N (Fig. 5A/B)");
-    for n_chan in [5usize, 10] {
-        s60_point(
-            n_chan,
-            150,
-            0.287,
-            true,
-            &set1,
-            &format!("N={n_chan} c=0.287 mixed"),
-            top(2),
-            div(10),
-            2,
+            5,
             BINS,
             SEED,
         );
+        println!("    c-scaling (Fig. 6, qualitative):");
+        for c in [0.2f32, 0.247, 0.324, 0.414] {
+            s60_point(
+                10,
+                150,
+                c,
+                false,
+                &set1,
+                &format!("N=10 c={c}"),
+                top(2),
+                div(10),
+                2,
+                BINS,
+                SEED,
+            );
+        }
+        println!("    T-scaling (Fig. S8, qualitative):");
+        for t in [150usize, 300, 600] {
+            s60_point(
+                10,
+                t,
+                0.2,
+                false,
+                &set1,
+                &format!("N=10 T={t} c=0.2"),
+                top(2),
+                div(10),
+                2,
+                BINS,
+                SEED,
+            );
+        }
+        println!("    bins sweep at the N=10 anchor (machine config surface):");
+        for bins in [3usize, 8] {
+            s60_point(
+                10,
+                150,
+                0.287,
+                false,
+                &set1,
+                &format!("N=10 c=0.287 a-set1 bins={bins}"),
+                top(2),
+                div(10),
+                2,
+                bins,
+                SEED,
+            );
+        }
     }
 
     println!();
-    println!(
+    if section(2) {
+        println!("[2] Sci. Adv. same model, nonlinear mix 50% f1 / 25% f2 / 25% f3:");
+        println!("    published text anchors: PCMCI highest power; slight FP inflation at large N (Fig. 5A/B)");
+        for n_chan in [5usize, 10] {
+            s60_point(
+                n_chan,
+                150,
+                0.287,
+                true,
+                &set1,
+                &format!("N={n_chan} c=0.287 mixed"),
+                top(2),
+                div(10),
+                2,
+                BINS,
+                SEED,
+            );
+        }
+    }
+
+    println!();
+    if section(3) {
+        println!(
         "[3] Chaos 28, 075310 (2018) §VII.A, Eqs. (36)/(37) — coupled logistic maps, r=4, n=150:"
     );
-    println!("    published text anchors: plain PCMCI almost no power at sigma=0; PCMCI0 rate 0.8 at sigma=0; power peak at sigma=0.2; PCMCI FP ~0.05");
-    for sigma in [0.0f32, 0.2, 0.4] {
-        let s = div(50);
-        let mut zx = 0usize;
-        let mut zy = 0usize;
-        let mut fp = 0usize;
-        let mut neg = 0usize;
-        let mut void = 0usize;
-        for si in 0..s {
-            let mut rng = SEED
-                .wrapping_add((si as u64).wrapping_mul(0x9E37_79B9))
-                .wrapping_add((sigma.to_bits() as u64).wrapping_mul(0x85EB_CA6B));
-            let (z, x, y) = chaos_maps(150, sigma, &mut rng);
-            let series = [z, x, y];
-            let true_links = [(0usize, 1usize, 1usize), (0, 2, 1)];
-            match measure(&series, &true_links, 2, BINS, SEED) {
-                Some((found, f, n)) => {
-                    if found[0] {
-                        zx += 1;
-                    }
-                    if found[1] {
-                        zy += 1;
-                    }
-                    fp += f;
-                    neg += n;
-                }
-                None => void += 1,
-            }
-        }
-        let fpr = if neg > 0 {
-            100.0 * fp as f64 / neg as f64
-        } else {
-            0.0
-        };
-        println!("    sigma={sigma}: Z->X {zx}/{s} Z->Y {zy}/{s} FP={fp} FPR={fpr:.2}% (neg={neg}) void={void}");
-    }
-
-    println!();
-    println!("[4] Chaos 28, 075310 (2018) §VII.B — linear autocorrelation + common drivers, n=150, b=0.5, sigma_z=0.25:");
-    println!("    published text anchors: PCMCI FP well-controlled (~0.05) with TP levels constant across autocorrelation a; the published b(D_Z,a) calibration is figure-only, the probe sets b/sigma_z explicitly");
-    for d_z in [0usize, 4] {
-        for a in [0.0f32, 0.5, 0.9] {
-            let s = div(20);
+        println!("    published text anchors: plain PCMCI almost no power at sigma=0; PCMCI0 rate 0.8 at sigma=0; power peak at sigma=0.2; PCMCI FP ~0.05");
+        for sigma in [0.0f32, 0.2, 0.4] {
+            let s = div(50);
+            let mut zx = 0usize;
+            let mut zy = 0usize;
             let mut fp = 0usize;
             let mut neg = 0usize;
             let mut void = 0usize;
             for si in 0..s {
                 let mut rng = SEED
                     .wrapping_add((si as u64).wrapping_mul(0x9E37_79B9))
-                    .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
-                    .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
-                let series = common_driver(150, a, 0.0, d_z, 0.5, 0.25, &mut rng);
-                match measure(&series, &[], 2, BINS, SEED) {
-                    Some((_, f, n)) => {
+                    .wrapping_add((sigma.to_bits() as u64).wrapping_mul(0x85EB_CA6B));
+                let (z, x, y) = chaos_maps(150, sigma, &mut rng);
+                let series = [z, x, y];
+                let true_links = [(0usize, 1usize, 1usize), (0, 2, 1)];
+                match measure(&series, &true_links, 2, BINS, SEED) {
+                    Some((found, f, n)) => {
+                        if found[0] {
+                            zx += 1;
+                        }
+                        if found[1] {
+                            zy += 1;
+                        }
                         fp += f;
                         neg += n;
                     }
                     None => void += 1,
                 }
             }
-            let mut hit = 0usize;
-            let mut realized = 0usize;
-            for si in 0..s {
-                let mut rng = SEED
-                    .wrapping_add((si as u64).wrapping_mul(0x3C1D_9E4F))
-                    .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
-                    .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
-                let series = common_driver(150, a, 0.3, d_z, 0.5, 0.25, &mut rng);
-                match measure(&series, &[(0usize, 1usize, 1usize)], 2, BINS, SEED) {
-                    Some((found, _, _)) => {
-                        realized += 1;
-                        if found[0] {
-                            hit += 1;
+            let fpr = if neg > 0 {
+                100.0 * fp as f64 / neg as f64
+            } else {
+                0.0
+            };
+            println!("    sigma={sigma}: Z->X {zx}/{s} Z->Y {zy}/{s} FP={fp} FPR={fpr:.2}% (neg={neg}) void={void}");
+        }
+    }
+
+    println!();
+    if section(4) {
+        println!("[4] Chaos 28, 075310 (2018) §VII.B — linear autocorrelation + common drivers, n=150, b=0.5, sigma_z=0.25:");
+        println!("    published text anchors: PCMCI FP well-controlled (~0.05) with TP levels constant across autocorrelation a; the published b(D_Z,a) calibration is figure-only, the probe sets b/sigma_z explicitly");
+        for d_z in [0usize, 4] {
+            for a in [0.0f32, 0.5, 0.9] {
+                let s = div(20);
+                let mut fp = 0usize;
+                let mut neg = 0usize;
+                let mut void = 0usize;
+                for si in 0..s {
+                    let mut rng = SEED
+                        .wrapping_add((si as u64).wrapping_mul(0x9E37_79B9))
+                        .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
+                        .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
+                    let series = common_driver(150, a, 0.0, d_z, 0.5, 0.25, &mut rng);
+                    match measure(&series, &[], 2, BINS, SEED) {
+                        Some((_, f, n)) => {
+                            fp += f;
+                            neg += n;
                         }
+                        None => void += 1,
+                    }
+                }
+                let mut hit = 0usize;
+                let mut realized = 0usize;
+                for si in 0..s {
+                    let mut rng = SEED
+                        .wrapping_add((si as u64).wrapping_mul(0x3C1D_9E4F))
+                        .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
+                        .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
+                    let series = common_driver(150, a, 0.3, d_z, 0.5, 0.25, &mut rng);
+                    match measure(&series, &[(0usize, 1usize, 1usize)], 2, BINS, SEED) {
+                        Some((found, _, _)) => {
+                            realized += 1;
+                            if found[0] {
+                                hit += 1;
+                            }
+                        }
+                        None => void += 1,
+                    }
+                }
+                let fpr = if neg > 0 {
+                    100.0 * fp as f64 / neg as f64
+                } else {
+                    0.0
+                };
+                println!(
+                "    D_Z={d_z} a={a}: c=0 FPR={fpr:.2}% (neg={neg}) c=0.3 TPR={hit}/{realized} void={void}"
+            );
+            }
+        }
+    }
+
+    println!();
+    if section(5) {
+        println!("[5] IDTxl MuTE network (Wollstadt et al. 2019, JOSS 10.21105/joss.01081; idtxl/data.py:849) — n=1000, max_lag 3:");
+        println!(
+        "    published recovery numbers: none (generator only) — the machine's sheet stands alone"
+    );
+        {
+            let s = div(5);
+            let true_links = [
+                (0usize, 1usize, 2usize),
+                (0, 2, 3),
+                (0, 3, 2),
+                (3, 4, 1),
+                (4, 3, 1),
+            ];
+            let mut hits = [0usize; 5];
+            let mut fp = 0usize;
+            let mut neg = 0usize;
+            let mut void = 0usize;
+            for si in 0..s {
+                let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0x85EB_CA6B));
+                let series = mute_network(1000, &mut rng);
+                match measure(&series, &true_links, 3, BINS, SEED) {
+                    Some((found, f, n)) => {
+                        for (k, &fnd) in found.iter().enumerate() {
+                            if fnd {
+                                hits[k] += 1;
+                            }
+                        }
+                        fp += f;
+                        neg += n;
                     }
                     None => void += 1,
                 }
@@ -707,90 +785,48 @@ fn main() {
                 0.0
             };
             println!(
-                "    D_Z={d_z} a={a}: c=0 FPR={fpr:.2}% (neg={neg}) c=0.3 TPR={hit}/{realized} void={void}"
-            );
-        }
-    }
-
-    println!();
-    println!("[5] IDTxl MuTE network (Wollstadt et al. 2019, JOSS 10.21105/joss.01081; idtxl/data.py:849) — n=1000, max_lag 3:");
-    println!(
-        "    published recovery numbers: none (generator only) — the machine's sheet stands alone"
-    );
-    {
-        let s = div(5);
-        let true_links = [
-            (0usize, 1usize, 2usize),
-            (0, 2, 3),
-            (0, 3, 2),
-            (3, 4, 1),
-            (4, 3, 1),
-        ];
-        let mut hits = [0usize; 5];
-        let mut fp = 0usize;
-        let mut neg = 0usize;
-        let mut void = 0usize;
-        for si in 0..s {
-            let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0x85EB_CA6B));
-            let series = mute_network(1000, &mut rng);
-            match measure(&series, &true_links, 3, BINS, SEED) {
-                Some((found, f, n)) => {
-                    for (k, &fnd) in found.iter().enumerate() {
-                        if fnd {
-                            hits[k] += 1;
-                        }
-                    }
-                    fp += f;
-                    neg += n;
-                }
-                None => void += 1,
-            }
-        }
-        let fpr = if neg > 0 {
-            100.0 * fp as f64 / neg as f64
-        } else {
-            0.0
-        };
-        println!(
             "    x0->x1 lag2 {}/{}  x0->x2 lag3 {}/{}  x0->x3 lag2 {}/{}  x3->x4 lag1 {}/{}  x4->x3 lag1 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
             hits[0], s, hits[1], s, hits[2], s, hits[3], s, hits[4], s
         );
+        }
     }
 
     println!();
-    println!("[6] Tigramite overview linear model (tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb) — n=1000, max_lag 3:");
-    println!("    published recovery numbers: none (single-run tutorial) — the machine's sheet stands alone");
-    {
-        let s = div(5);
-        let true_links = [(1usize, 0usize, 1usize), (3, 1, 1), (1, 2, 2), (3, 2, 3)];
-        let mut hits = [0usize; 4];
-        let mut fp = 0usize;
-        let mut neg = 0usize;
-        let mut void = 0usize;
-        for si in 0..s {
-            let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0xC2B2_AE3D));
-            let series = tigramite_overview(1000, &mut rng);
-            match measure(&series, &true_links, 3, BINS, SEED) {
-                Some((found, f, n)) => {
-                    for (k, &fnd) in found.iter().enumerate() {
-                        if fnd {
-                            hits[k] += 1;
+    if section(6) {
+        println!("[6] Tigramite overview linear model (tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb) — n=1000, max_lag 3:");
+        println!("    published recovery numbers: none (single-run tutorial) — the machine's sheet stands alone");
+        {
+            let s = div(5);
+            let true_links = [(1usize, 0usize, 1usize), (3, 1, 1), (1, 2, 2), (3, 2, 3)];
+            let mut hits = [0usize; 4];
+            let mut fp = 0usize;
+            let mut neg = 0usize;
+            let mut void = 0usize;
+            for si in 0..s {
+                let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0xC2B2_AE3D));
+                let series = tigramite_overview(1000, &mut rng);
+                match measure(&series, &true_links, 3, BINS, SEED) {
+                    Some((found, f, n)) => {
+                        for (k, &fnd) in found.iter().enumerate() {
+                            if fnd {
+                                hits[k] += 1;
+                            }
                         }
+                        fp += f;
+                        neg += n;
                     }
-                    fp += f;
-                    neg += n;
+                    None => void += 1,
                 }
-                None => void += 1,
             }
-        }
-        let fpr = if neg > 0 {
-            100.0 * fp as f64 / neg as f64
-        } else {
-            0.0
-        };
-        println!(
+            let fpr = if neg > 0 {
+                100.0 * fp as f64 / neg as f64
+            } else {
+                0.0
+            };
+            println!(
             "    x1->x0 lag1 {}/{}  x3->x1 lag1 {}/{}  x1->x2 lag2 {}/{}  x3->x2 lag3 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
             hits[0], s, hits[1], s, hits[2], s, hits[3], s
         );
+        }
     }
 }
