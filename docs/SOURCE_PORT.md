@@ -101,7 +101,7 @@ Pro Korpus:
    Oszillator-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
    Tote nach `phi/dead_sources.φ`; `ledger.φ` aktualisieren; den nächsten
    Batch in `phi/pipeline/probe_batch.φ` nachrücken.
-5. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
+5. `cargo check` 0/0; ein Commit, der das Handover-Register im selben Schritt aktualisiert.
 
 **Discovery-Ladder (Ernte + Probe).** Die mechanische Suche nach neuen
 Probe-Quellen ist als zwei std-only Rust-Bins gebaut (CWD = Repo-Root; die
@@ -305,8 +305,8 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
 ## 11. Regeln
 
 - Name = Implementation. Keine Kommentare in φ-Dateien; Wissen lebt in
-  Protokoll, Ledger und TODO.
-- Ein Commit = ein Häkchen: TODO.md im selben Commit; Erledigtes entfernt.
+  Protokoll und Ledger.
+- Ein Commit = ein Häkchen: das Handover-Register im selben Commit; Erledigtes entfernt.
 - `cargo check` 0 Errors, 0 Warnings. Der Sweep-Test ist der Verifikator;
   `cargo check` prüft nur Syntax.
 - Die Session ist das Atom: ein Korpus pro Session komplett durch die

@@ -199,10 +199,12 @@ impl Friction {
         let Some(obj) = parse_json(args_json) else {
             return;
         };
-        let path = jstr(&obj, "filePath")
+        let Some(path) = jstr(&obj, "filePath")
             .or_else(|| jstr(&obj, "path"))
             .or_else(|| jstr(&obj, "file"))
-            .unwrap_or_default();
+        else {
+            return;
+        };
         if path.is_empty() {
             return;
         }
@@ -268,9 +270,7 @@ impl Friction {
         if changes.is_empty() {
             return None;
         }
-        let register_touch = changes.iter().any(|f| {
-            f.starts_with("TODO.md") || f.starts_with("status/") || f.starts_with("docs/")
-        });
+        let register_touch = changes.iter().any(|f| f.starts_with("docs/"));
         let summary: String = changes
             .iter()
             .take(5)
@@ -396,7 +396,10 @@ mod tests {
     #[test]
     fn commit_advice_on_register_touch() {
         let f = Friction::new();
-        let advice = f.commit_advice(&["TODO.md".to_string(), "src/x.rs".to_string()]);
+        let advice = f.commit_advice(&[
+            "docs/handover/handover-thematisch-x.md".to_string(),
+            "src/x.rs".to_string(),
+        ]);
         assert!(advice.unwrap().contains("register"));
     }
 

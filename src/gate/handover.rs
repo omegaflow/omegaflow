@@ -82,7 +82,7 @@ mod tests {
         assert!(md.contains("M src/friction.rs"));
         assert!(md.contains("class: handover"));
         assert!(md.contains("status: live"));
-        assert!(md.contains("TODO.md"));
+        assert!(md.contains("docs/handover"));
     }
 
     #[test]
