@@ -1,0 +1,56 @@
+name: te-bz-laic-nsurr100
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: 01-bz
+            bin: nobel_probe_bz
+            args: --window-start 2015 --window-end 2026 --max-lag 2 --null-lag 12 --bins 4
+          - point: 02-laic
+            bin: nobel_probe_laic
+            args: ""
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the n_surr=100 re-measurement
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin ${{ matrix.bin }} -- ${{ matrix.args }}
+          } > "report-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: point-${{ matrix.point }}
+          path: report-${{ matrix.point }}.txt
+  reduce:
+    needs: probe
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: point-*
+          merge-multiple: true
+          path: reports
+      - name: Assemble the n_surr=100 sheet
+        run: |
+          for f in reports/report-*.txt; do echo "===== ${f} ====="; cat "$f"; echo; done > bz-laic-nsurr100-sheet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-laic-nsurr100-sheet
+          path: bz-laic-nsurr100-sheet.txt
