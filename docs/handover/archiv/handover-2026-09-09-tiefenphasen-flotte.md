@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: eb36854e5a57a4a5d98433fae42e3a9634a9b45ffef7b96bc58b2d1d6294a0bc
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-feldpilot.md docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
 
