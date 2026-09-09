@@ -151,7 +151,7 @@ impl Job {
     }
 
     pub fn delete(&self) -> bool {
-        Command::new("curl")
+        match Command::new("curl")
             .arg("-sS")
             .arg("-X")
             .arg("DELETE")
@@ -159,8 +159,10 @@ impl Job {
             .arg("/dev/null")
             .arg(&self.url)
             .output()
-            .map(|o| o.status.success())
-            .unwrap_or(false)
+        {
+            Ok(o) => o.status.success(),
+            Err(_) => false,
+        }
     }
 }
 
@@ -276,7 +278,11 @@ pub fn parse_votable(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
                 None => continue,
             };
             let v = if let Some(c) = raw.strip_prefix("<![CDATA[") {
-                c.strip_suffix("]]>").unwrap_or(c).trim().to_string()
+                let content = match c.strip_suffix("]]>") {
+                    Some(s) => s,
+                    None => c,
+                };
+                content.trim().to_string()
             } else {
                 raw.to_string()
             };
