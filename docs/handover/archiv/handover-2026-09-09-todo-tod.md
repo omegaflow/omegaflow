@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: 99078a293b69fdb2b19fe58ec8f0ef66d930b54b73de69be708a52eee19551e9
-  status: live
+  status: archived
   see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/handover/handover-thematisch-te-atom-4.md docs/handover/handover-thematisch-membran-sonde.md docs/handover/handover-thematisch-mechanische-reste.md docs/concepts/docs-naming.md
 -->
 # Handover — TODO-Tod: die Register aufgelöst, das Handover ist das Register
