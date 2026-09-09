@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: 5f46eba3979186f94fe59338f72a991106ff961d8098c69b397f6e76ecb5f029
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4-folge.md docs/auftrag/auftrag-galileo-nsurr-20.md
+  status: archived
+  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4-folge.md docs/befund/befund-galileo-nsurr-20.md
 -->
 # Thematisches Handover — Galileo N_SURR 20-vs-10: das Instrument steht, das Blatt folgt
 
