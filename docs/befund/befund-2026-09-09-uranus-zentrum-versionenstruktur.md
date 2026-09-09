@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 003a98fba456fcd9e7555f7ef522416d5e67b1b309785754174ee4cf06358fb8
   status: done
-  see-also: docs/handover/archiv/handover-2026-09-09-uranus-zentrum-kopplung.md docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md docs/handover/handover-thematisch-mechanische-reste.md
+  see-also: docs/handover/archiv/handover-2026-09-09-uranus-zentrum-kopplung.md docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Befund: Uranus-Zentrum-Versionenstruktur

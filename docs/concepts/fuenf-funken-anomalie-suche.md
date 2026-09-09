@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 14988b667876ca17fc55550a2030ac4288f45e8ad46dd6541e057a02533d59cc
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/handover-thematisch-mechanische-reste.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-09-09-mechanische-reste.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
 -->
 # Fünf Funken der Anomalie-Suche
 
