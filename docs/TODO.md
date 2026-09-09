@@ -1982,10 +1982,18 @@ Gebaut (2026-09-06, sub-agents):
     reduziert gegen das Zentrum (ephemeris_uranus_c.bin + ura111 799−7),
     c_par 0.95–0.97 (die Planeten-Tabelle trägt die topozentrische
     Parallaxe wie die Monde), RMS 249.5/226.8/233.8 → 73.0/69.5/69.3 mas,
-    die Wobble (Zentrum − Baryzentrum) gemessen (Mittel 21.653 m,
-    max 42.627 m); der Riß am Zentrum (27.0/35.5/47.9 mas) ist
+    die Wobble (Zentrum − Baryzentrum) gemessen (Mittel 21.653 km,
+    max 42.627 km); der Riß am Zentrum (27.0/35.5/47.9 mas) ist
     Skalen-konsistent mit dem Mond-Riß. Befund:
     docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md;
+    die Wobble-Periode als physikalische Form: GEBAUT (2026-09-09) — der
+    Probe `uranus_wobble_period_probe` mißt die Wobble auf 24.77 km Mittel /
+    44.27 km max (reguläres Gitter, J2000+365 d) und ihre Perioden als die
+    Uranus-Mond-Umläufe (Oberon 13.46 d / 20.3 km, Titania 8.71 d / 16.8 km,
+    Umbriel 4.14 d, Ariel 2.52 d); die „1,4-d-Signatur" (Miranda) ist die
+    schwächste, nicht die dominante Komponente; die Einheit der Vorlage war
+    km (als „m" notiert). Befund:
+    docs/befund/befund-2026-09-09-uranus-wobble-periode.md;
     (b) die Versionen-Differenz als
     registrierbare Größe an jedem Punkt der Bahn (wo der Riß am größten
     ist, steht jetzt ein Meßwert): GEBAUT (2026-09-09) — der Probe
