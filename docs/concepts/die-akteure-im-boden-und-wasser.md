@@ -2,9 +2,9 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: c2b817a8c48e0ffd2f92d3a339d7781b068683da1c2f26ad52ea0f1bfbac8490
+  sha256: 1dbac1f1dfd542f501421ac0a7fa6c8aa136562bdef4b44bd7e1d3af9fa44d84
   status: live
-  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
+  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
 -->
 
 # DIE AKTEURE IM BODEN UND WASSER — die Seismik als Multi-Akteur-Matrix
@@ -31,20 +31,25 @@ auf die Erde.
   (`depthphase.rs` — Befund `befund-2026-09-09-tiefenphasen-inversionsklasse.md`).
 - pP/sP-Polarität — Freiflächen-Reflexion R_pp/R_sp abgeleitet (R_pp negativ
   im Pilotband, R_sp ≈ −1 — Befund `befund-2026-09-09-tiefenphasen-polaritaet.md`).
+- Die Flotte — 16 Ereignisse × Stationen, unverzerrt (+1,7 km, se 4,7 km),
+  Streuung dominiert das Gate — Befund `befund-2026-09-09-tiefenphasen-flotte.md`.
 - Tōhoku-Kette — Pegel gemessen (766 km/h), Vorhersage 4/6, Eikonal/Dijkstra
   schließt die Beugung (Adak +57→−10, Hilo +82→+7 min).
 - M9.1-Picker — gebaut, Streuung bleibt (W-Phase entschieden, offen).
 
 ## Was offen ist (die Reihenfolge)
 
-1. **Die Flotte (Ereignisse × Stationen)** — der Feldpilot trägt ein Ereignis,
-   nicht die Statistik; σ und √N brauchen die Wiederholung. Offene Folge: der
-   Quell-Strahlungsterm der pP-Polarität (CMT-Lösung, `pending`). Die feinere
-   Inversionsklasse ist gebaut (1-km-Raste, `tools/measure/src/depthphase.rs`
-   — Befund `befund-2026-09-09-tiefenphasen-inversionsklasse.md`); die
-   pP/sP-Polarität ist abgeleitet (R_pp negativ im Pilotband, R_sp ≈ −1,
-   Befund `befund-2026-09-09-tiefenphasen-polaritaet.md`); vor dem Zonen-Lauf
-   bleibt die ak135-Tiefenmodell-Erweiterung über 250 km benannt.
+1. **Die Flotte ist eine Messreihe** — 16 Ereignisse × Stationen, unverzerrt
+   (+1,7 km, se 4,7 km), aber die Streuung (19 km über Ereignisse, 36 km über
+   Stationen) dominiert das ±10-km-Gate — Befund
+   `befund-2026-09-09-tiefenphasen-flotte.md`. Offene Folge: die Streuung
+   senken (besseres Picken / der mehrdeutige pP-Zweig bei Δ≈30°) und der
+   Quell-Strahlungsterm (CMT-Lösung, `pending`). Die feinere Inversionsklasse
+   ist gebaut (1-km-Raste, `tools/measure/src/depthphase.rs` — Befund
+   `befund-2026-09-09-tiefenphasen-inversionsklasse.md`); die pP/sP-Polarität
+   ist abgeleitet (R_pp negativ im Pilotband, R_sp ≈ −1, Befund
+   `befund-2026-09-09-tiefenphasen-polaritaet.md`); vor dem Zonen-Lauf bleibt
+   die ak135-Tiefenmodell-Erweiterung über 250 km benannt.
 2. **Stationsterm / Empfänger-Korrektur** — Wiederholung zuerst (II.KIV,
    3–5 Ereignisse aus einer Ecke, stetig=Struktur, springt=Pick); das
    +5,69-s-Residuum bleibt `offen`, kein Default.
