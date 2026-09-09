@@ -1988,15 +1988,20 @@ Gebaut (2026-09-06, sub-agents):
     docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md;
     (b) die Versionen-Differenz als
     registrierbare Größe an jedem Punkt der Bahn (wo der Riß am größten
-    ist, steht jetzt ein Meßwert) — der SCHLÜSSEL nach (a): das reduzierte
-    RMS liegt jetzt auf Riß-Skala (69–73 mas gegen den 27–48-mas-Riß), aber
-    die drei reduzierten RMS sind fast identisch (69–73) — verdict (ii)
-    bleibt, sein Grund wechselt („zu unscharf" → „scharf genug, die Linien
-    sind trotzdem ununterscheidbar"); die Schlichtung wird nicht im
-    Gesamtmittel entschieden (dort sind alle gleich), sondern in der
-    systematischen per-Punkt-Struktur unter dem Rauschen — Epochen und
-    Regionen, wo eine Linie systematisch besser trägt; der Übergang (ii)→(i)
-    läuft durch dieses Atom; (c) Neptun als zweiter Planet desselben
+    ist, steht jetzt ein Meßwert): GEBAUT (2026-09-09) — der Probe
+    `uranus_center_versionenstruktur_probe` mißt sie als per-Punkt-Vektor
+    (ΔRA·cosδ, ΔDec in der Tangentialebene): |Δ| Mittel 39.6/44.6/47.9 mas,
+    säkulares Wachstum mit der Epoche (de441−epm 9.9 → 74.8 mas von 1992 bis
+    2011 — die Eisriesen-Kluft wächst mit dem Extrapolations-Abstand, das
+    Maximum steht 2011); verdict (ii) bleibt (die drei RMS 73.0/69.5/69.3
+    liegen unter ⟨σ⟩ = 82.5 mas), aber die per-Punkt-Struktur ist benannt:
+    de441 trägt am besten in vier lokalisierte Jahre (1999/2001/2004/2009)
+    gegen die Shuffle-Null (z = +8.5), epm ist der diffuse globale Beste,
+    inpop Zufall; Kalibrier-Gate hält (injiziert +40/−25 mas exakt
+    zurückgewonnen). Befund:
+    docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md;
+    offen: der physikalische Ursprung der vier de441-Trägerjahre —
+    `pending` je Linie; (c) Neptun als zweiter Planet desselben
     Baus — `pending` je Linie. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
