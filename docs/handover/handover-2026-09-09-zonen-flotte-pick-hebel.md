@@ -2,7 +2,7 @@
   title: Thematisches Handover — Tiefenphasen-Flotte, Folge-Atom: der Pick-Rausch-Hebel gebaut und gemessen (gewichtete Joint-Inversion −6,0 km; die tiefe Zone systematisch bimodal — Hebel an diesem Band erschöpft, Nachfolger: sP-Joint-Inversion)
   class: handover
   date: 2026-09-09
-  sha256: c29b8055fa0476594f755adc462cdbf2ffccd8ebf256de23dfc78eb344d011d3
+  sha256: c95ff2c92253b562d47a4bb13ddd4c87ddf7cf7fbd3158a6d7e5c5bbed1760be
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-zonen-flotte-folge.md docs/befund/befund-2026-09-09-zonen-flotte-pick-hebel.md
 -->
@@ -30,6 +30,6 @@ Stehendes Register der Tiefenphasen-/Seismik-Linie nach dem Pick-Hebel-Atom. Die
 - **Eikonal-Löser über das volle Gitter** — Dijkstra über ETOPO1; das Gitter steht registriert, der Löser pending.
 - **Die Erde als Sender** — Kreuzbereichs-Kalibrierung (Tonga 2022) pending; sub-stündlicher Druck/Infraschall (BGR-Array) als nächster Datenweg.
 
-Baum: eine fremde untracked Datei liegt im Baum (`docs/befund/befund-bz-laic-nsurr100.md`, fremde Linie) — gemessen, unangetastet, nicht im Commit.
+Baum: eine fremde untracked Datei liegt im Baum (`docs/befund/befund-bz-laic-nsurr100.md`, fremde Linie) — gemessen, unangetastet, nicht in meinem Commit; mein Pick-Hebel-Commit trägt zusätzlich den fremden Rename `handover-2026-09-09-disjunkte-linien-dispatch.md → archiv/` (Ganz-Index-Commit während einer parallel laufenden Sitzung) — benannt, nicht umgeschrieben.
 
 Gemessen und geschlossen (bleibt im Befund, nicht hier): Feldstandard Seismik — jede Komponente hat ein Feld-Äquivalent; neu ist die Einbettung (ICRS, t_ref, Signal-Kegel).
