@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: ee4b3983ff8f45be79dce3f36ab748f3ee14265112bcba23af26e1109ea73791
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
+  status: archived
+  see-also: docs/handover/handover-2026-09-09-mars-rekompilat.md
 -->
 # Thematisches Handover — Membran-Sonde
 
