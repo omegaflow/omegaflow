@@ -1,0 +1,21 @@
+name: 2mass-binary-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  2mass-binary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the 2MASS binary footprint mask (scan-tile archive-existence) once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern 2mass_binary.fp01 --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin 2mass_binary_compiler -- \
+            --out 2mass_binary.fp01 --ci-mode
