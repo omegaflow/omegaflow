@@ -18,8 +18,10 @@ jobs:
           mkdir -p kernels
           # GAVO sync caps a response at ~20000 rows (measured). The parallax>20 sample is
           # 34947 stars (d < 50 pc), so it is harvested in two bands, each under the cap,
-          # and concatenated. Anonymous GAVO /tap/async does not schedule jobs (measured),
-          # so the harvest is banded sync, not async.
+          # and concatenated. GAVO /tap/async leaves REQUEST=doQuery jobs in PENDING
+          # (measured); they run only after an explicit PHASE=RUN post, which tap_compiler
+          # now sends (2026-09-09). The harvest stays banded sync: an anonymous UWS job is
+          # bound to the CI runner's IP and orphans when the runner dies.
           B1="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id WHERE w.parallax > 25"
           B2="SELECT s.source_id, w.ra, w.dec, w.parallax, s.flux FROM gdr3spec.spectra AS s JOIN gaia.dr3lite AS w ON s.source_id = w.source_id WHERE w.parallax > 20 AND w.parallax <= 25"
           curl -sSfL --retry 3 --max-time 3600 \
