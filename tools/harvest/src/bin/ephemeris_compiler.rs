@@ -490,13 +490,14 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
                 .or_insert_with(Vec::new)
                 .push(e.clone());
         }
-        if let Some((_, best)) = bases.iter().max_by(|(a, _), (b, _)| {
-            numeric_of(a)
-                .cmp(&numeric_of(b))
-                .then((!is_light(a)).cmp(&(!is_light(b))))
-                .then(b.len().cmp(&a.len()))
-        }) {
-            out.extend(best.clone());
+        match bases.get("de441") {
+            Some(best) => out.extend(best.clone()),
+            None => {
+                eprintln!(
+                    "planets: de441 base absent from the index — the full de441.bsp has no carrier"
+                );
+                std::process::exit(1);
+            }
         }
         for e in entries
             .iter()
