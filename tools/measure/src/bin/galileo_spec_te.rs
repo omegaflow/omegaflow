@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
     transfer_entropy_conditional, transfer_entropy_lag,
 };
 
@@ -12,6 +13,7 @@ const MIN_MODE_DAYS: usize = 4;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 20;
 const BLOCK: usize = 5;
+static N_SURR_PHASE_BLOCK: AtomicUsize = AtomicUsize::new(10);
 
 fn unix_day(tdb: f64) -> i64 {
     let jd = 2451545.0 + tdb / 86400.0;
@@ -113,10 +115,11 @@ fn te_tables(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
         distinct_count(era, 1.0)
     );
     println!("    dir | lag |      TE |   thrPh |   thrBl |     cTE |    cThr");
+    let n_surr = N_SURR_PHASE_BLOCK.load(Ordering::Relaxed);
     for &lag in &[1usize, 2, 3, 5] {
         let f_te = transfer_entropy_lag(tgt, drv, lag);
-        let f_ph = surrogate_stats_phase(tgt, drv, lag, SEED).map(|(_, _, t)| t);
-        let f_bl = surrogate_stats_block(tgt, drv, lag, BLOCK, SEED).map(|(_, _, t)| t);
+        let f_ph = surrogate_stats_phase_n(tgt, drv, lag, SEED, n_surr).map(|(_, _, t)| t);
+        let f_bl = surrogate_stats_block_n(tgt, drv, lag, BLOCK, SEED, n_surr).map(|(_, _, t)| t);
         let f_ct = transfer_entropy_conditional(tgt, drv, era, lag);
         let f_cthr = conditional_te_stats(tgt, drv, era, lag, SEED, N_SURR).map(|(_, _, t)| t);
         println!(
@@ -129,8 +132,8 @@ fn te_tables(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
             fmt(f_cthr)
         );
         let r_te = transfer_entropy_lag(drv, tgt, lag);
-        let r_ph = surrogate_stats_phase(drv, tgt, lag, SEED).map(|(_, _, t)| t);
-        let r_bl = surrogate_stats_block(drv, tgt, lag, BLOCK, SEED).map(|(_, _, t)| t);
+        let r_ph = surrogate_stats_phase_n(drv, tgt, lag, SEED, n_surr).map(|(_, _, t)| t);
+        let r_bl = surrogate_stats_block_n(drv, tgt, lag, BLOCK, SEED, n_surr).map(|(_, _, t)| t);
         let r_ct = transfer_entropy_conditional(drv, tgt, era, lag);
         let r_cthr = conditional_te_stats(drv, tgt, era, lag, SEED, N_SURR).map(|(_, _, t)| t);
         println!(
@@ -147,7 +150,29 @@ fn te_tables(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
 }
 
 fn main() {
-    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut path: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--n-surr" {
+            i += 1;
+            match args.get(i).and_then(|v| v.parse::<usize>().ok()) {
+                Some(n) if n >= 2 => N_SURR_PHASE_BLOCK.store(n, Ordering::Relaxed),
+                Some(n) => {
+                    eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                    std::process::exit(1);
+                }
+                None => {
+                    eprintln!("--n-surr carries no surrogate count");
+                    std::process::exit(1);
+                }
+            }
+        } else if !args[i].starts_with('-') && path.is_none() {
+            path = Some(args[i].clone());
+        }
+        i += 1;
+    }
+    let path = match path {
         Some(p) => p,
         None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };

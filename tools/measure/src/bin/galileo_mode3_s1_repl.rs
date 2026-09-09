@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
     transfer_entropy_conditional, transfer_entropy_lag,
 };
 
@@ -10,6 +11,7 @@ const MIN_SAMP: usize = 30;
 const N_SURR: usize = 20;
 const BLOCK: usize = 5;
 const SEED0: u64 = 0x9E37_79B9_7F4A_7C15;
+static N_SURR_PHASE_BLOCK: AtomicUsize = AtomicUsize::new(10);
 const SEEDS: [u64; 10] = [
     SEED0,
     0x9E37_79B9_7F4A_7C16,
@@ -135,10 +137,11 @@ fn table(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
         distinct_count(era, 1.0)
     );
     println!("    dir | lag |      TE |   thrPh |   thrBl |     cTE |    cThr");
+    let n_surr = N_SURR_PHASE_BLOCK.load(Ordering::Relaxed);
     for &lag in &[1usize, 2, 3, 5] {
         let te = transfer_entropy_lag(tgt, drv, lag);
-        let ph = surrogate_stats_phase(tgt, drv, lag, SEED0).map(|(_, _, t)| t);
-        let bl = surrogate_stats_block(tgt, drv, lag, BLOCK, SEED0).map(|(_, _, t)| t);
+        let ph = surrogate_stats_phase_n(tgt, drv, lag, SEED0, n_surr).map(|(_, _, t)| t);
+        let bl = surrogate_stats_block_n(tgt, drv, lag, BLOCK, SEED0, n_surr).map(|(_, _, t)| t);
         let ct = transfer_entropy_conditional(tgt, drv, era, lag);
         let cthr = conditional_te_stats(tgt, drv, era, lag, SEED0, N_SURR).map(|(_, _, t)| t);
         println!(
@@ -150,8 +153,8 @@ fn table(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
             fmt(cthr)
         );
         let rte = transfer_entropy_lag(drv, tgt, lag);
-        let rph = surrogate_stats_phase(drv, tgt, lag, SEED0).map(|(_, _, t)| t);
-        let rbl = surrogate_stats_block(drv, tgt, lag, BLOCK, SEED0).map(|(_, _, t)| t);
+        let rph = surrogate_stats_phase_n(drv, tgt, lag, SEED0, n_surr).map(|(_, _, t)| t);
+        let rbl = surrogate_stats_block_n(drv, tgt, lag, BLOCK, SEED0, n_surr).map(|(_, _, t)| t);
         let rct = transfer_entropy_conditional(drv, tgt, era, lag);
         let rcthr = conditional_te_stats(drv, tgt, era, lag, SEED0, N_SURR).map(|(_, _, t)| t);
         println!(
@@ -175,8 +178,8 @@ fn row3(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
         distinct_count(drv, 1.0),
         distinct_count(era, 1.0),
         fmt(transfer_entropy_lag(tgt, drv, 3)),
-        fmt(surrogate_stats_phase(tgt, drv, 3, SEED0).map(|(_, _, t)| t)),
-        fmt(surrogate_stats_block(tgt, drv, 3, BLOCK, SEED0).map(|(_, _, t)| t)),
+        fmt(surrogate_stats_phase_n(tgt, drv, 3, SEED0, N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)).map(|(_, _, t)| t)),
+        fmt(surrogate_stats_block_n(tgt, drv, 3, BLOCK, SEED0, N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)).map(|(_, _, t)| t)),
         fmt(transfer_entropy_conditional(tgt, drv, era, 3)),
         fmt(conditional_te_stats(tgt, drv, era, 3, SEED0, N_SURR).map(|(_, _, t)| t)),
     );
@@ -231,7 +234,29 @@ fn chain_in(rows: &[RDay], lo: i64, hi: i64) -> Option<(i64, i64)> {
 }
 
 fn main() {
-    let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut path: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--n-surr" {
+            i += 1;
+            match args.get(i).and_then(|v| v.parse::<usize>().ok()) {
+                Some(n) if n >= 2 => N_SURR_PHASE_BLOCK.store(n, Ordering::Relaxed),
+                Some(n) => {
+                    eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                    std::process::exit(1);
+                }
+                None => {
+                    eprintln!("--n-surr carries no surrogate count");
+                    std::process::exit(1);
+                }
+            }
+        } else if !args[i].starts_with('-') && path.is_none() {
+            path = Some(args[i].clone());
+        }
+        i += 1;
+    }
+    let path = match path {
         Some(p) => p,
         None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };
