@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 34276817234308b9ea9f5c1ff22fdaae540f514b65bf6dcdd4c9da4c5450981c
   status: done
-  see-also: docs/handover/handover-2026-09-09-te-galileo-nsurr-folge.md docs/handover/archiv/handover-2026-09-08-nobel-dag-atom.md docs/befund/befund-klassen-benchmark-pcmci.md
+  see-also: docs/handover/archiv/handover-2026-09-09-te-galileo-nsurr-folge.md docs/handover/archiv/handover-2026-09-08-nobel-dag-atom.md docs/befund/befund-klassen-benchmark-pcmci.md
 -->
 # Befund — Bz/LAIC n_surr=100: die Bz-Pfeile halten, die LAIC-Stille bleibt
 

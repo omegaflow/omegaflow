@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: c836a409c10b93ac8a7377a596eaa86cf18567a87c07826ea2ba50ad993ea03f
   status: done
-  see-also: docs/handover/handover-2026-09-09-te-galileo-nsurr-folge.md docs/befund/befund-betriebspunkt-sweep.md docs/befund/befund-klassen-benchmark-pcmci.md
+  see-also: docs/handover/archiv/handover-2026-09-09-te-galileo-nsurr-folge.md docs/befund/befund-betriebspunkt-sweep.md docs/befund/befund-klassen-benchmark-pcmci.md
 -->
 # Befund — T-Skalierung am Betriebspunkt (T=150/300/600)
 
