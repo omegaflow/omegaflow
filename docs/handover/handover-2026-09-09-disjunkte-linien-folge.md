@@ -2,7 +2,7 @@
   title: Handover — disjunkte Linien Folge: Register-Schluss, Provenienz-Notiz, Step-5 gemessen
   class: handover
   date: 2026-09-09
-  sha256: 0923281b4287f3386eeaeeb4f1b4c1d8ed830ad257c3383843ea6e39d6aacf91
+  sha256: 8672e46ddb665781db3f734add096155d3a4860c7cc341ed5ad15f161716160f
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-dispatch.md,
             docs/handover/handover-2026-09-09-mechanische-reste.md
@@ -20,7 +20,8 @@ Die TE-/Tiefenphasen-Linie lief parallel weiter; ihre Dateien blieben unberührt
   `befund-galileo-nsurr-20.md` done; sources.φ:1917 + CDN 200 + der
   `nobel_probe_bz`-Fallback) — registriert, nichts gebaut. `ledger.φ` (lokales
   Register, gitignored): die parser-gap-Sektion trägt den Schluss (`d41cc87`),
-  die Bucket-Dispositionen je Dataset bleiben eine Operator-/Register-Frage.
+  die Bucket-Dispositionen je Dataset bleiben eine Register-Frage (Litmus:
+  url-line / Compiler-Lease / Konsument).
   `noaa_nodd_inventory.φ` steht unter `phi/pipeline/catalog/` (101 Datasets).
 - **Provenienz-Notiz-Muster** — gebaut: `docs/specs/provenienz-notiz.md` (drei
   benannte Zeilen — Frage-Ursprung / Operator-Überstimmungen / benannte
@@ -31,7 +32,8 @@ Die TE-/Tiefenphasen-Linie lief parallel weiter; ihre Dateien blieben unberührt
   Grund in der R2-Ausgabe und im Test
   `z_section_counts_are_not_a_double_count_and_r2_stays_pending`; lauf-log und
   Register stimmen überein. Die Z-Klasse braucht die Archiv-Zählung als
-  Grundwahrheit.
+  Grundwahrheit — lokal zählbar (archive-root + `/home/johannes/backup/archive/`),
+  kein Operator-Wort.
 
 ## Gemessen (Step-5, Rat gehört 2026-09-09)
 
@@ -53,12 +55,15 @@ Die TE-/Tiefenphasen-Linie lief parallel weiter; ihre Dateien blieben unberührt
   `mechanische-reste`). Nicht halb ausgeführt.
 - **Step-5-Folge** — je `mirror_*`-Asset der 12 lebenden repo_tag-Releases den
   Byte-Vergleich CDN-Digest ↔ Repo-Raw messen, dann einzeln schneiden.
-- **matrixmachine 769-Suite** gegen HEAD, sobald der Baum fremdfrei ist (die
-  Parallellinie trug die letzte Suite-Messung).
+- **matrixmachine 769-Suite** — die fremdfreie HEAD-Messung läuft in `ci-check.yml`
+  (`cargo test --release` je push, der `src/**`/`phi/**`/`tools/register/**`/`docs/**`/`Cargo.toml`
+  berührt; kein branches-Filter); die Urkunden-Zeile gegen den letzten Lauf aktualisieren.
 - **abfluss-trishuli** — der Abfluss-Pfeil bleibt `pending`; Entsperrung = das
-  archivierte externe CSV des 08-27-Zugs (Operator-seitig).
-- **NOAA-NODD-Bucket-Dispositionen** je Dataset — Operator-/Register-Frage,
-  bleibt offen.
+  archivierte externe CSV des 08-27-Zugs — gemessen lokal:
+  `/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`
+  (+ `dhm_bhotekoshi_stage.csv`); kein Operator-Wort.
+- **NOAA-NODD-Bucket-Dispositionen** je Dataset — Register-Frage (Litmus:
+  url-line / Compiler-Lease / Konsument), kein Operator-Wort; bleibt offen.
 
 ## Nicht angefasst (Parallellinie)
 
