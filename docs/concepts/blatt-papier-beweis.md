@@ -40,10 +40,11 @@ Fehlschlag.
   dim 3 order 3, MI-lag, Silverman, PE-Gate), Surrogate im f64-FFT.
   Die WGSL-Maschine `te_compute` läuft in der Membran; das Blatt
   entsteht im Probe (Offline). Die Membran-Bindung bleibt pending.
-- Geerbte Pflichten aus Nadel III (TODO.md): Mehrfachvergleichs-
-  korrektur über alle getesteten Paare, Lag-Sweep (lag 0 ist Default,
-  kein Urteil), KDE-Sensitivität gegen h. Kein Blatt wird geschrieben,
-  ohne diese drei zu beantworten.
+- Geerbte Pflichten aus Nadel III
+  (`docs/handover/handover-thematisch-te-atom-4.md`): Mehrfach-
+  vergleichskorrektur über alle getesteten Paare, Lag-Sweep (lag 0 ist
+  Default, kein Urteil), KDE-Sensitivität gegen h. Kein Blatt wird
+  geschrieben, ohne diese drei zu beantworten.
 
 ## 2. Die Form des Blatts
 
@@ -94,4 +95,4 @@ Null-Ensemble. Der Operator setzt die Zuschnitte (Betriebsverfassung).
 Jeder Kanal, der nicht lebt, läuft über `docs/SOURCE_PORT.md` — der
 eine Pfad (queue/master.φ, ledger.φ, Force-Gate-Urteil,
 τ-Deklaration). Erst die Kanäle, dann der Probe, dann das Blatt, dann
-das Register (TODO.md-Zeile schließen, Commit, Archiv).
+das Handover-Register (Zeile schließen, Commit, Archiv).

@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: f875be35c795ca632c835ecccba827b04285f70e2c63aad90d34f374b1d8ec8e
   status: done
-  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/befund/befund-2026-09-09-uranus-wobble-periode.md docs/TODO.md
+  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/befund/befund-2026-09-09-uranus-wobble-periode.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Uranus-Trägerjahre

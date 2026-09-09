@@ -167,8 +167,6 @@ fn classify_home(path: &str) -> Option<Home> {
         || lower.contains("docs/surveys/")
         || lower.contains("docs/auftrag/")
         || lower.contains("docs/blatt/")
-        || lower.contains("status/")
-        || lower.ends_with("todo.md")
     {
         return Some(Home::German);
     }

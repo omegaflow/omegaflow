@@ -12,7 +12,7 @@ Selbsttragend. Dieses Konzept trägt die Doktrin des Ein-Blatt-Ergebnisses:
 eine Messung, deren Befund auf ein Blatt Papier passt, weil die Maschine die
 Richtung des kausalen Pfeils bereits berechnet hat — Richtung und Lag, nichts
 sonst. Drei universelle Rätsel sind auf diese Form gestellt; je eines trägt
-ein eigenes Handover (Session-Plan) und einen Eintrag im Register (TODO.md).
+ein eigenes Handover (Session-Plan) und einen Eintrag im Handover-Register (docs/handover/).
 
 ## Das Axiom
 

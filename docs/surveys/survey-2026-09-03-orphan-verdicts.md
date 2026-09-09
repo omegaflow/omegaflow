@@ -4,7 +4,7 @@
   date: 2026-09-03
   sha256: 1b8d21809c6f228cec42a379a30ca82a1196922759297e13c69fd0de9f1be82b
   status: live
-  see-also: docs/auftrag/auftrag-saubere-datenbank.md,
+  see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
             docs/specs/cdn_orphan_verdicts.json,
             docs/specs/cdn-ziel-schema.md
@@ -93,6 +93,6 @@ bleibt bei unklaren Einzelfällen offen.
 ## Registrierung
 
 Die Disposition der 55 undocumented `stale_pending` ist eine offene Pflicht in
-`docs/TODO.md` (Auftrags-Programm, Pflege & Struktur →
+`docs/handover/handover-thematisch-mechanische-reste.md` (Auftrags-Programm, Pflege & Struktur →
 `auftrag-saubere-datenbank.md`). Step 4 (CI-Dedupe) ist gegen die gemessene
 Job-Zahl (health-check 4, kernel-flatten 18) neu zu fassen.
