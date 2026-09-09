@@ -234,7 +234,7 @@ fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> [f64; 3] {
 fn rotate_about_pole(m: &[f64; 9], mt: f64, jd: f64, rate_deg_day: f64, v: [f64; 3]) -> [f64; 3] {
     let angle = rate_deg_day.to_radians() * (jd - mt);
     let (sa, ca) = angle.sin_cos();
-    let (ax, ay, az) = (m[6], m[7], m[8]);
+    let (ax, ay, az) = (m[2], m[5], m[8]);
     let omc = 1.0 - ca;
     let dot = ax * v[0] + ay * v[1] + az * v[2];
     let cross = [

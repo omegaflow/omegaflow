@@ -2647,24 +2647,11 @@ fn test_rotation_matrix_roundtrip() {
     let tdb = 3.0 * 86400.0;
     let jd = super::J2000_EPOCH + 3.0;
     let tc = (jd - super::J2000_EPOCH) / 36525.0;
-    let a = (317.68143f64 - 0.1061 * tc).to_radians();
-    let d = (52.88650f64 - 0.0609 * tc).to_radians();
-    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH) - (317.68143f64 - 0.1061 * tc))
-        .to_radians();
-    let (sa, ca) = a.sin_cos();
-    let (sd, cd) = d.sin_cos();
-    let (sw, cw) = w.sin_cos();
-    let m: [f64; 9] = [
-        cd * ca * cw + sa * sw,
-        cd * ca * sw - sa * cw,
-        -sd * ca,
-        cd * sa * cw - ca * sw,
-        cd * sa * sw + ca * cw,
-        -sd * sa,
-        sd * cw,
-        sd * sw,
-        cd,
-    ];
+    let m: [f64; 9] = super::ephemeris::rotation_matrix_from_angles(
+        317.68143 - 0.1061 * tc,
+        52.88650 - 0.0609 * tc,
+        176.630 + 350.89198226 * (jd - super::J2000_EPOCH),
+    );
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 1.5e9;
     let props = super::BodyProperties {
@@ -2728,24 +2715,11 @@ fn test_matrix_vs_wgccre_agreement() {
     let tdb = 3.0 * 86400.0;
     let jd = super::J2000_EPOCH + 3.0;
     let tc = (jd - super::J2000_EPOCH) / 36525.0;
-    let a = (317.68143f64 - 0.1061 * tc).to_radians();
-    let d = (52.88650f64 - 0.0609 * tc).to_radians();
-    let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH) - (317.68143f64 - 0.1061 * tc))
-        .to_radians();
-    let (sa, ca) = a.sin_cos();
-    let (sd, cd) = d.sin_cos();
-    let (sw, cw) = w.sin_cos();
-    let m: [f64; 9] = [
-        cd * ca * cw + sa * sw,
-        cd * ca * sw - sa * cw,
-        -sd * ca,
-        cd * sa * cw - ca * sw,
-        cd * sa * sw + ca * cw,
-        -sd * sa,
-        sd * cw,
-        sd * sw,
-        cd,
-    ];
+    let m: [f64; 9] = super::ephemeris::rotation_matrix_from_angles(
+        317.68143 - 0.1061 * tc,
+        52.88650 - 0.0609 * tc,
+        176.630 + 350.89198226 * (jd - super::J2000_EPOCH),
+    );
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 1.5e9;
     let props = super::BodyProperties {
@@ -2809,6 +2783,91 @@ fn test_matrix_vs_wgccre_agreement() {
             lon,
             d2
         );
+    }
+}
+
+#[test]
+fn test_matrix_path_matches_analytic_across_bodies_and_epochs() {
+    use std::collections::HashMap;
+    let bodies: [(f64, f64, f64, f64); 4] = [
+        (317.68143, 52.88650, 176.630, 350.89198226),
+        (0.0, 90.0, 280.46, 360.9856),
+        (123.45, -17.5, 200.0, 100.0),
+        (40.66, 83.54, 200.39, -6.52),
+    ];
+    let jd0 = super::J2000_EPOCH + 5.0;
+    let lat_lon = [(35.0, -15.0, 0.0), (0.0, 90.0, 0.0), (-60.0, 170.0, 5000.0)];
+    for (a0, d0, w0, rate) in bodies {
+        let props = super::BodyProperties {
+            α0_deg: a0,
+            dα0_dt_deg_per_century: 0.0,
+            δ0_deg: d0,
+            dδ0_dt_deg_per_century: 0.0,
+            w0_deg: w0,
+            dw_dt_deg_per_day: rate,
+            radius_m: 3.0e6,
+            flattening: Some(0.0),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+            omega_g: None,
+        };
+        let w_mt = w0 + rate * (jd0 - super::J2000_EPOCH);
+        let m = super::ephemeris::rotation_matrix_from_angles(a0, d0, w_mt);
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let hint = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let eph_matrix = super::BodyEphemeris {
+            granules: vec![granule.clone()],
+            rotation_matrices: vec![(jd0, m)],
+            props: Some(props.clone()),
+            orbit: None,
+            granule_hint: hint.clone(),
+        };
+        let eph_analytic = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+            orbit: None,
+            granule_hint: hint,
+        };
+        let mut map_matrix = HashMap::new();
+        map_matrix.insert("body".to_string(), eph_matrix);
+        let mut map_analytic = HashMap::new();
+        map_analytic.insert("body".to_string(), eph_analytic);
+        for offset_d in [0.0, 0.25, 0.5, 1.0] {
+            let jd = jd0 + offset_d;
+            let tdb = (jd - super::J2000_EPOCH) * 86400.0;
+            for (lat, lon, alt) in lat_lon {
+                let pm =
+                    super::body_fixed_to_icrs("body", lat, lon, alt, tdb, &map_matrix).unwrap();
+                let pf =
+                    super::body_fixed_to_icrs("body", lat, lon, alt, tdb, &map_analytic).unwrap();
+                let d2 =
+                    (pm[0] - pf[0]).powi(2) + (pm[1] - pf[1]).powi(2) + (pm[2] - pf[2]).powi(2);
+                assert!(
+                    d2 < 1.0,
+                    "matrix vs analytic disagree (a0={a0} d0={d0} w0={w0} rate={rate} off={offset_d} lat={lat} lon={lon}): d2={d2}"
+                );
+            }
+        }
     }
 }
 
