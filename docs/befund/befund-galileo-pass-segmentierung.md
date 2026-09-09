@@ -5,7 +5,7 @@
   sha256: 248b05e9064d020e7757c1935342d3aa6367ad83bc0719f4a9be334100940eb8
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md
-  see-also: docs/befund/befund-galileo-rausch-kurve.md docs/TODO.md
+  see-also: docs/befund/befund-galileo-rausch-kurve.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Galileo-Pass-Segmentierung — der Pass-Boden der GASR-Residuen

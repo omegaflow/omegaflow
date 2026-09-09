@@ -5,7 +5,7 @@
   version: 1
   sha256: 0d4671b9c27d4db8651b48508fbf7fd7acb5c5218c0b95fb6be767ff939e29be
   status: live
-  see-also: docs/auftrag/auftrag-saubere-datenbank.md,
+  see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
             docs/concepts/4d-membrane.md, AGENTS.md
 -->

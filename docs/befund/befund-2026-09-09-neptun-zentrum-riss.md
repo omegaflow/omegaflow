@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: f8720a29b0cdd1481ad1403b5d2f025c2f4ca0cb39484589231d2757f16dcccd
   status: done
-  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/handover/handover-2026-09-09-uranus-zentrum-kopplung.md docs/TODO.md
+  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/handover/archiv/handover-2026-09-09-uranus-zentrum-kopplung.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Neptun-Zentrum-Riß

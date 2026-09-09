@@ -6,7 +6,7 @@
   sha256: c0417084f584255c0085bf98d985df2ff73c71575c2e1e666299e2d98b1e3510
   status: draft
   antwortet-auf: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md
-  see-also: docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/handover/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/handover/handover-2026-09-05-galileo-epsilon-revision.md
+  see-also: docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/handover/archiv/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/handover/archiv/handover-2026-09-05-galileo-epsilon-revision.md
 -->
 
 # Befund: Galileo-Floor je (Station, Mode) — Stufen- und Treiber-TE-Lesart der station-gebundenen Tages-Lautheit

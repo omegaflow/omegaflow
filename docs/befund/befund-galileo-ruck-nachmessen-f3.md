@@ -299,7 +299,7 @@ Probe galileo_ruck_nachmessen_f3 (cargo check 0/0, -D warnings), Report
 ## Status
 
 `draft` (Entwurf für die Haupt-Session/den Rat; die F3-Zeilen-Schärfung wird der
-Haupt-Session als Register-Satz übergeben — `docs/TODO.md` und
+Haupt-Session als Register-Satz übergeben — `docs/handover/handover-thematisch-mechanische-reste.md` und
 `befund-galileo-floor-pass-episodisch` nicht angefasst). Probe
 `galileo_ruck_nachmessen_f3` committet (`cargo check` 0/0, RUSTFLAGS `-D warnings`),
 Report `/tmp/opencode/galileo_ruck_nachmessen_f3_report.txt`. Richtung D5 (F3-Schärfung)
