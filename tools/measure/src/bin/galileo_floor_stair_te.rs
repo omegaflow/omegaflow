@@ -1,11 +1,12 @@
 use std::collections::{BTreeMap, HashMap};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase, transfer_entropy_conditional,
-    transfer_entropy_lag,
+    conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
+    transfer_entropy_conditional, transfer_entropy_lag,
 };
 
 const DAY_S: f64 = 86400.0;
@@ -21,6 +22,7 @@ const N_PERM: usize = 199;
 const N_SURR: usize = 20;
 const BLOCK: usize = 5;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+static N_SURR_PHASE_BLOCK: AtomicUsize = AtomicUsize::new(10);
 const STATIONS: [i64; 3] = [14, 43, 63];
 const MODES: [i64; 3] = [1, 2, 3];
 
@@ -73,7 +75,12 @@ fn elong_deg(probe: [f64; 3], earth: [f64; 3]) -> Option<f64> {
     if ns <= 0.0 || np <= 0.0 {
         return None;
     }
-    Some((dot3(sun, prb) / (ns * np)).clamp(-1.0, 1.0).acos().to_degrees())
+    Some(
+        (dot3(sun, prb) / (ns * np))
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees(),
+    )
 }
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
@@ -223,16 +230,31 @@ fn directed_row(
     tgt: &[f32],
     era: &[f32],
     lag: usize,
-) -> (Option<f64>, Option<f64>, Option<f64>, Option<f64>, Option<f64>) {
+) -> (
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+) {
     let te = transfer_entropy_lag(tgt, src, lag);
-    let ph = surrogate_stats_phase(tgt, src, lag, SEED).map(|t| t.2);
-    let bl = surrogate_stats_block(tgt, src, lag, BLOCK, SEED).map(|t| t.2);
+    let n_surr = N_SURR_PHASE_BLOCK.load(Ordering::Relaxed);
+    let ph = surrogate_stats_phase_n(tgt, src, lag, SEED, n_surr).map(|t| t.2);
+    let bl = surrogate_stats_block_n(tgt, src, lag, BLOCK, SEED, n_surr).map(|t| t.2);
     let cte = transfer_entropy_conditional(tgt, src, era, lag);
     let cth = conditional_te_stats(tgt, src, era, lag, SEED, N_SURR).map(|t| t.2);
     (te, ph, bl, cte, cth)
 }
 
-fn row_marks(r: &(Option<f64>, Option<f64>, Option<f64>, Option<f64>, Option<f64>)) -> String {
+fn row_marks(
+    r: &(
+        Option<f64>,
+        Option<f64>,
+        Option<f64>,
+        Option<f64>,
+        Option<f64>,
+    ),
+) -> String {
     let (te, ph, bl, cte, cth) = r;
     let mut s = String::new();
     if let (Some(t), Some(h)) = (te, ph) {
@@ -305,6 +327,20 @@ fn era_from_days(days: &[i64]) -> Option<Vec<f32>> {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(p) = args.iter().position(|a| a == "--n-surr") {
+        match args.get(p + 1).and_then(|v| v.parse::<usize>().ok()) {
+            Some(n) if n >= 2 => N_SURR_PHASE_BLOCK.store(n, Ordering::Relaxed),
+            Some(n) => {
+                eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                std::process::exit(1);
+            }
+            None => {
+                eprintln!("--n-surr carries no surrogate count");
+                std::process::exit(1);
+            }
+        }
+    }
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     if !load_eph("galileo_daily", &mut eph) || !load_eph("earth", &mut eph) {
         println!("galileo_floor_stair_te: ephemeris binaries void");
@@ -382,7 +418,11 @@ fn main() {
                 let eps = body_barycenter_position("galileo_daily", tmean, &eph)
                     .zip(body_barycenter_position("earth", tmean, &eph))
                     .and_then(|(p, e)| elong_deg(p, e));
-                vals.push(DayVal { day: *day, rms, eps });
+                vals.push(DayVal {
+                    day: *day,
+                    rms,
+                    eps,
+                });
             }
             series.push(Series {
                 station,
@@ -434,7 +474,10 @@ fn main() {
     ));
 
     for s in &series {
-        println!("==== mode {} st{} — Tages-RMS (Hz), log10-Domaine", s.mode, s.station);
+        println!(
+            "==== mode {} st{} — Tages-RMS (Hz), log10-Domaine",
+            s.mode, s.station
+        );
         let runs = s.runs();
         let loud = |i: usize| s.vals[i].rms >= LOUD_HZ;
 
@@ -501,7 +544,15 @@ fn main() {
             let mut segs: Vec<(usize, usize)> = Vec::new();
             segment_run(&y, 0, nrun - 1, &mut segs);
             let dump: Vec<String> = (a..=b)
-                .map(|i| format!("{}:{:.4}", fmt_day(s.day(i)).split_once('-').map_or(fmt_day(s.day(i)), |t| t.1.to_string()), s.vals[i].rms))
+                .map(|i| {
+                    format!(
+                        "{}:{:.4}",
+                        fmt_day(s.day(i))
+                            .split_once('-')
+                            .map_or(fmt_day(s.day(i)), |t| t.1.to_string()),
+                        s.vals[i].rms
+                    )
+                })
                 .collect();
             println!(
                 "  run {}..{} ({} d) | {} segments | days(HZ) {}",
@@ -560,7 +611,12 @@ fn main() {
             let k = ((all.len() - 1) * i / 4).min(all.len() - 1);
             all[k]
         };
-        let mut loudv: Vec<f64> = s.vals.iter().filter(|v| v.rms >= LOUD_HZ).map(|v| v.rms).collect();
+        let mut loudv: Vec<f64> = s
+            .vals
+            .iter()
+            .filter(|v| v.rms >= LOUD_HZ)
+            .map(|v| v.rms)
+            .collect();
         loudv.sort_by(f64::total_cmp);
         let quiet_med = median(
             &s.vals
@@ -651,10 +707,11 @@ fn main() {
     println!("## direction X->Y = state of X (source) on day t predicts Y on day t+lag past Y_t");
     println!("############################################################\n");
 
-    let get_series =
-        |station: i64, mode: i64| -> Option<&Series> {
-            series.iter().find(|s| s.station == station && s.mode == mode)
-        };
+    let get_series = |station: i64, mode: i64| -> Option<&Series> {
+        series
+            .iter()
+            .find(|s| s.station == station && s.mode == mode)
+    };
 
     for &mode in &MODES {
         let pairs = [(14i64, 43i64), (14, 63), (43, 63)];
@@ -707,8 +764,20 @@ fn main() {
                     nrun
                 );
                 let (sla, slb) = (&la[*p..=*q], &lb[*p..=*q]);
-                print_dir_row(&format!("st{sa}"), &format!("st{sb}"), sla, slb, &era[*p..=*q]);
-                print_dir_row(&format!("st{sb}"), &format!("st{sa}"), slb, sla, &era[*p..=*q]);
+                print_dir_row(
+                    &format!("st{sa}"),
+                    &format!("st{sb}"),
+                    sla,
+                    slb,
+                    &era[*p..=*q],
+                );
+                print_dir_row(
+                    &format!("st{sb}"),
+                    &format!("st{sa}"),
+                    slb,
+                    sla,
+                    &era[*p..=*q],
+                );
                 println!();
             }
         }
@@ -739,7 +808,10 @@ fn main() {
                 match month_index(s.day(i)) {
                     Some(m) => era.push(m as f32),
                     None => {
-                        println!("mode {} st{} run: era month index void (named)", s.mode, s.station);
+                        println!(
+                            "mode {} st{} run: era month index void (named)",
+                            s.mode, s.station
+                        );
                         break;
                     }
                 }
@@ -793,7 +865,11 @@ fn main() {
                     print_dir_row("eps", "floor", &e, &y, &era);
                     print_dir_row("floor", "eps", &y, &e, &era);
                 } else {
-                    println!("    eps driver: eps present on {}/{} days (named, driver skipped)", e.len(), nrun);
+                    println!(
+                        "    eps driver: eps present on {}/{} days (named, driver skipped)",
+                        e.len(),
+                        nrun
+                    );
                 }
             } else {
                 println!(
