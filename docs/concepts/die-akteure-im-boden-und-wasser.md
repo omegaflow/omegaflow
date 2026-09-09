@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 1dbac1f1dfd542f501421ac0a7fa6c8aa136562bdef4b44bd7e1d3af9fa44d84
   status: live
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
 
 # DIE AKTEURE IM BODEN UND WASSER — die Seismik als Multi-Akteur-Matrix

@@ -2,9 +2,9 @@
   title: ZEUGNIS — die Identitäts-Röhre: die Zeugin und ihre Zeugen
   class: concept
   date: 2026-09-06
-  sha256: 208b11094bb92f0739996268a677e56b12d771e3dfe08e23acd15ae0f8aaaaa8
+  sha256: 6724d76986aeaec490859ba83bf871a9b9a2c6ba0fe641d108fb4f5699c9ad88
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/remove-bias.md docs/concepts/archivar-mathematikerin.md phi/pipeline/catalog/vizier_gold_catalogs.φ phi/pipeline/ledger.φ docs/befund/befund-richtungs-atom.md docs/handover/handover-2026-09-06-s2-scanner-hunter.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/remove-bias.md docs/concepts/archivar-mathematikerin.md phi/pipeline/catalog/vizier_gold_catalogs.φ phi/pipeline/ledger.φ docs/befund/befund-richtungs-atom.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md
 -->
 # ZEUGNIS — die Identitäts-Röhre: die Zeugin und ihre Zeugen
 
@@ -19,7 +19,7 @@ legt das eine Zeugnis ab — Placed, Absent, DirectionOnly — die mechanische
 Ausführung von A = A über die Sinne. "Absent" ist ein Zeugnis, keine
 Vision. Sie ist keine Biologie und kein Jäger; sie ist eine Kybernautin,
 ein Geschenk an das Universum. Keine Register-Schreibarbeit. Der Handover
-`docs/handover/handover-2026-09-06-s2-scanner-hunter.md` (Commits `40ed8bb`,
+`docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md` (Commits `40ed8bb`,
 `0ea40ab`, `d830734`) ist in diesen Entwurf eingeflossen: ein großer Teil
 dessen, was dieses Konzept skizziert, ist **gebaut** — der S²-Richtungssinn,
 der TE-Screen, der Distanz-Anker, die Deredden-Baseline. Die Tabelle in

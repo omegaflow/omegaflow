@@ -2,9 +2,9 @@
   title: Befund — Seismische Ortung (P-Differenz-Inversion): der Solver ist code-seitig bewiesen, die Konstant-Nullhypothese (v_p = 5950 m/s, gerade Sehne) wird von den echten Ankünften widerlegt — der distanzabhängige Residuum-Sprung ist die Zahl
   class: befund
   date: 2026-09-09
-  sha256: 6a33942ff68f9a967626ae66f493b705c01f372e5d52a237437e07a3017c1ee0
+  sha256: 409d6a3e2353cb50d0c315af436704ee4a2e0bb36461299e3e95ae2ba426d6a4
   status: done
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/auftrag/archiv/auftrag-rayleigh-dispersion.md docs/auftrag/archiv/auftrag-dispersionsrelation.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/auftrag/archiv/auftrag-rayleigh-dispersion.md docs/auftrag/archiv/auftrag-dispersionsrelation.md
 -->
 
 # Befund: die seismische Ortung (P-Wellen-Differenz-Inversion)
@@ -17,7 +17,7 @@ NonLinLoc (Lomax et al. 2000), linearisierte Variante = Geiger 1910; STA/LTA-Pic
 
 ## Frage & Bindung
 
-TODO-Registerzeile „Seismische Ortung — pending" (`docs/handover/handover-2026-09-09-tiefenphasen-flotte.md`): die
+TODO-Registerzeile „Seismische Ortung — pending" (`docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md`): die
 Umkehrung der gemessenen Rayleigh-Kurve — die P-Welle als nicht-dispersiver
 Bote, die Differenzmethode, die Positivkontrolle gegen den Katalog. Probe:
 `tools/measure/src/bin/quake_location_probe.rs` (STA/LTA-Pick, Weltlinien über
