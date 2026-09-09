@@ -28,9 +28,18 @@ pub const LTA_WINDOW_S: f64 = 30.0;
 pub const STA_LTA_RATIO: f64 = 4.0;
 
 const INVERSION_DEPTH_MAX_KM: f64 = 700.0;
+const INVERSION_DEPTH_EDGE_KM: f64 = 660.0;
 const INVERSION_DEPTH_STEP_KM: f64 = 1.0;
 
 const PI: f64 = std::f64::consts::PI;
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum DepthInversion {
+    Depth(f64),
+    EdgeDiscontinuity,
+    SaturatedBound,
+    Absent,
+}
 
 #[derive(Clone)]
 pub struct Event {
@@ -387,7 +396,19 @@ pub fn s_p_lag(delta_deg: f64, depth_km: f64) -> Option<f64> {
     Some(s_p_travel(delta_deg, depth_km)? - p_travel_depth(delta_deg, depth_km)?)
 }
 
-pub fn invert_depth_single(delta_deg: f64, lag: f64) -> Option<f64> {
+fn inversion_state(best_sq: f64, best_h: f64) -> DepthInversion {
+    if !best_sq.is_finite() {
+        DepthInversion::Absent
+    } else if best_h == INVERSION_DEPTH_EDGE_KM {
+        DepthInversion::EdgeDiscontinuity
+    } else if best_h == INVERSION_DEPTH_MAX_KM {
+        DepthInversion::SaturatedBound
+    } else {
+        DepthInversion::Depth(best_h)
+    }
+}
+
+pub fn invert_depth_single(delta_deg: f64, lag: f64) -> DepthInversion {
     let mut best = (f64::INFINITY, 0.0f64);
     let n = (INVERSION_DEPTH_MAX_KM / INVERSION_DEPTH_STEP_KM) as usize;
     for i in 0..=n {
@@ -400,14 +421,10 @@ pub fn invert_depth_single(delta_deg: f64, lag: f64) -> Option<f64> {
             }
         }
     }
-    if best.0.is_finite() {
-        Some(best.1)
-    } else {
-        None
-    }
+    inversion_state(best.0, best.1)
 }
 
-pub fn invert_depth_multi(deltas: &[f64], lags: &[f64]) -> Option<f64> {
+pub fn invert_depth_multi(deltas: &[f64], lags: &[f64]) -> DepthInversion {
     let mut best = (f64::INFINITY, 0.0f64);
     let n = (INVERSION_DEPTH_MAX_KM / INVERSION_DEPTH_STEP_KM) as usize;
     for i in 0..=n {
@@ -430,10 +447,62 @@ pub fn invert_depth_multi(deltas: &[f64], lags: &[f64]) -> Option<f64> {
             best = (s, h);
         }
     }
-    if best.0.is_finite() {
-        Some(best.1)
-    } else {
-        None
+    inversion_state(best.0, best.1)
+}
+
+pub const BRANCH_UNSTABLE_SKIP: &str = "pP Δ-branch fold (branch-unstable)";
+const FOLD_BAND_HALF_WIDTHS_DEG: [f64; 4] = [0.25, 0.5, 0.75, 1.0];
+const SMOOTH_REFERENCE_DELTA_LO_DEG: f64 = 40.0;
+const SMOOTH_REFERENCE_DELTA_HI_DEG: f64 = 90.0;
+const SMOOTH_REFERENCE_STEP_DEG: f64 = 1.0;
+pub const FOLD_GATE_OVER_SMOOTH_FACTOR: f64 = 3.0;
+
+pub struct DeltaBranch {
+    pub fold_metric_s_per_deg: Option<f64>,
+    pub smooth_s_per_deg: Option<f64>,
+    pub unstable: bool,
+}
+
+fn p_p_lag_gradient_across(delta_deg: f64, depth_km: f64, half_width_deg: f64) -> Option<f64> {
+    let hi = p_p_lag(delta_deg + half_width_deg, depth_km)?;
+    let lo = p_p_lag(delta_deg - half_width_deg, depth_km)?;
+    Some((hi - lo).abs() / (2.0 * half_width_deg))
+}
+
+pub fn p_p_branch_fold_metric(delta_deg: f64, depth_km: f64) -> Option<f64> {
+    FOLD_BAND_HALF_WIDTHS_DEG
+        .iter()
+        .filter_map(|&d| p_p_lag_gradient_across(delta_deg, depth_km, d))
+        .fold(None, |best, g| Some(best.map_or(g, |b: f64| b.max(g))))
+}
+
+pub fn smooth_p_p_lag_gradient_s_per_deg(depth_km: f64) -> Option<f64> {
+    let mut grads = Vec::new();
+    let mut delta = SMOOTH_REFERENCE_DELTA_LO_DEG;
+    while delta <= SMOOTH_REFERENCE_DELTA_HI_DEG {
+        if let Some(g) = p_p_branch_fold_metric(delta, depth_km) {
+            grads.push(g);
+        }
+        delta += SMOOTH_REFERENCE_STEP_DEG;
+    }
+    if grads.is_empty() {
+        return None;
+    }
+    grads.sort_by(|a, b| a.total_cmp(b));
+    Some(grads[grads.len() / 2])
+}
+
+pub fn delta_branch(delta_deg: f64, depth_km: f64) -> DeltaBranch {
+    let metric = p_p_branch_fold_metric(delta_deg, depth_km);
+    let smooth = smooth_p_p_lag_gradient_s_per_deg(depth_km);
+    let unstable = match (metric, smooth) {
+        (Some(m), Some(s)) => m > s * FOLD_GATE_OVER_SMOOTH_FACTOR,
+        _ => false,
+    };
+    DeltaBranch {
+        fold_metric_s_per_deg: metric,
+        smooth_s_per_deg: smooth,
+        unstable,
     }
 }
 
@@ -461,10 +530,11 @@ pub struct StationMeasure {
     pub snr: f64,
     pub p_p: Option<SecondaryPick>,
     pub s_p: Option<SecondaryPick>,
-    pub depth_km: Option<f64>,
+    pub inversion: Option<DepthInversion>,
     pub p_p_lag_pred: f64,
     pub s_p_lag_pred: Option<f64>,
     pub skip: Option<String>,
+    pub branch_unstable: bool,
 }
 
 fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
@@ -474,16 +544,22 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         snr: 0.0,
         p_p: None,
         s_p: None,
-        depth_km: None,
+        inversion: None,
         p_p_lag_pred: 0.0,
         s_p_lag_pred: None,
         skip: Some(reason.to_string()),
+        branch_unstable: false,
     }
 }
 
 pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str) -> StationMeasure {
     let key = format!("{}.{}", station.net, station.sta);
     let delta = arc_deg(event.lat, event.lon, station.lat, station.lon);
+    if delta_branch(delta, event.depth_km).unstable {
+        let mut m = skipped(key, delta, BRANCH_UNSTABLE_SKIP);
+        m.branch_unstable = true;
+        return m;
+    }
     let Some((samples, rate)) = fetch_station_body(station, start, end) else {
         return skipped(key, delta, "no decodable record");
     };
@@ -509,8 +585,8 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
     let pp = correlate_window(&bp, i_p, nw, rate, p_p_lag_pred);
     let s_p_lag_pred = s_p_lag(delta, event.depth_km);
     let sp = s_p_lag_pred.and_then(|l| correlate_window(&bp, i_p, nw, rate, l));
-    let depth = match &pp {
-        Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => invert_depth_single(delta, p.lag_s),
+    let inversion = match &pp {
+        Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => Some(invert_depth_single(delta, p.lag_s)),
         _ => None,
     };
     StationMeasure {
@@ -519,10 +595,11 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
         snr,
         p_p: pp,
         s_p: sp,
-        depth_km: depth,
+        inversion,
         p_p_lag_pred,
         s_p_lag_pred,
         skip: None,
+        branch_unstable: false,
     }
 }
 
@@ -572,6 +649,16 @@ mod tests {
         out
     }
 
+    fn assert_depth(state: DepthInversion, true_h: f64) {
+        match state {
+            DepthInversion::Depth(v) => assert!(
+                (v - true_h).abs() <= 1.0,
+                "inverted {v} km vs true {true_h} km"
+            ),
+            other => panic!("depth {true_h} km inverted to {other:?}"),
+        }
+    }
+
     #[test]
     fn p_p_lag_vanishes_at_zero_depth() {
         for d in [20.0, 40.0, 60.0, 80.0] {
@@ -609,11 +696,8 @@ mod tests {
                 .iter()
                 .map(|&d| p_p_lag(d, true_h).unwrap())
                 .collect();
-            let h = invert_depth_multi(&deltas, &lags).unwrap();
-            assert!(
-                (h - true_h).abs() <= 1.0,
-                "inverted {h} km vs true {true_h} km"
-            );
+            let h = invert_depth_multi(&deltas, &lags);
+            assert_depth(h, true_h);
         }
     }
 
@@ -625,11 +709,14 @@ mod tests {
             .iter()
             .map(|&d| p_p_lag(d, true_h).unwrap() + 0.5)
             .collect();
-        let h = invert_depth_multi(&deltas, &lags).unwrap();
-        assert!(
-            (h - true_h).abs() <= 10.0,
-            "with +0.5 s bias, inverted {h} km"
-        );
+        let h = invert_depth_multi(&deltas, &lags);
+        match h {
+            DepthInversion::Depth(v) => assert!(
+                (v - true_h).abs() <= 10.0,
+                "with +0.5 s bias, inverted {v} km"
+            ),
+            other => panic!("depth {true_h} km with scatter must stay Depth, got {other:?}"),
+        }
     }
 
     #[test]
@@ -637,25 +724,33 @@ mod tests {
         for true_h in [35.0, 50.0, 100.0, 200.0] {
             let delta = 45.0;
             let lag = p_p_lag(delta, true_h).unwrap();
-            let h = invert_depth_single(delta, lag).unwrap();
-            assert!(
-                (h - true_h).abs() <= 1.0,
-                "inverted {h} km vs true {true_h} km"
-            );
+            let h = invert_depth_single(delta, lag);
+            assert_depth(h, true_h);
         }
     }
 
     #[test]
     fn invert_single_recovers_a_deep_catalog_depth() {
-        for true_h in [300.0, 410.0, 500.0, 600.0, 660.0, 700.0] {
+        for true_h in [300.0, 410.0, 500.0, 600.0] {
             let delta = 45.0;
             let lag = p_p_lag(delta, true_h).unwrap();
-            let h = invert_depth_single(delta, lag).unwrap();
-            assert!(
-                (h - true_h).abs() <= 1.0,
-                "inverted {h} km vs true {true_h} km"
-            );
+            let h = invert_depth_single(delta, lag);
+            assert_depth(h, true_h);
         }
+        let lag_660 = p_p_lag(45.0, 660.0).unwrap();
+        let state = invert_depth_single(45.0, lag_660);
+        assert_eq!(
+            state,
+            DepthInversion::EdgeDiscontinuity,
+            "a synthetic 660 km lag lands on the 660 wall — named, not asserted as a depth"
+        );
+        let lag_700 = p_p_lag(45.0, 700.0).unwrap();
+        let state = invert_depth_single(45.0, lag_700);
+        assert_eq!(
+            state,
+            DepthInversion::SaturatedBound,
+            "a synthetic 700 km lag saturates the search ceiling — named, not asserted as a depth"
+        );
     }
 
     #[test]
@@ -663,10 +758,38 @@ mod tests {
         let true_h = 231.0;
         let delta = 45.0;
         let lag = p_p_lag(delta, true_h).unwrap();
-        let h = invert_depth_single(delta, lag).unwrap();
-        assert!(
-            (h - true_h).abs() <= 1.0,
-            "a depth between the 200 and 250 km nodes must invert to {true_h} km, got {h}"
+        let h = invert_depth_single(delta, lag);
+        match h {
+            DepthInversion::Depth(v) => assert!(
+                (v - true_h).abs() <= 1.0,
+                "a depth between the 200 and 250 km nodes must invert to {true_h} km, got {v}"
+            ),
+            other => panic!("depth 231 km must invert to Depth, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_660_wall_700_ceiling_400_depth_and_absent() {
+        let delta = 45.0;
+        let on_660 = invert_depth_single(delta, p_p_lag(delta, 660.0).unwrap());
+        assert_eq!(
+            on_660,
+            DepthInversion::EdgeDiscontinuity,
+            "a lag whose grid minimum lands on 660 is the wall, never Depth(660)"
+        );
+        let on_700 = invert_depth_single(delta, p_p_lag(delta, 700.0).unwrap());
+        assert_eq!(
+            on_700,
+            DepthInversion::SaturatedBound,
+            "a lag whose grid minimum lands on 700 is the ceiling, never Depth(700)"
+        );
+        let mid = invert_depth_single(delta, p_p_lag(delta, 400.0).unwrap());
+        assert_depth(mid, 400.0);
+        let absent = invert_depth_single(200.0, p_p_lag(delta, 400.0).unwrap());
+        assert_eq!(
+            absent,
+            DepthInversion::Absent,
+            "a delta beyond the ak135 range carries no finite residual — Absent, never a depth"
         );
     }
 
@@ -750,6 +873,85 @@ mod tests {
             present.lag_s
         );
         assert!(present.inverted, "the injected negative sP reads inverted");
+    }
+
+    #[test]
+    fn kalibrier_gate_delta_fold_flags_the_fold_band() {
+        for (delta, h) in [
+            (31.0, 410.0),
+            (32.0, 410.0),
+            (33.0, 410.0),
+            (32.0, 450.0),
+            (33.0, 450.0),
+            (34.0, 500.0),
+            (35.0, 550.0),
+            (37.0, 600.0),
+        ] {
+            let b = delta_branch(delta, h);
+            let metric = b.fold_metric_s_per_deg.unwrap();
+            let smooth = b.smooth_s_per_deg.unwrap();
+            assert!(
+                b.unstable,
+                "a station at Δ={delta}° for {h} km sits in the folded pP family — branch-unstable (metric {metric:.2} vs smooth {smooth:.2} s/deg)"
+            );
+            assert!(
+                metric > smooth * FOLD_GATE_OVER_SMOOTH_FACTOR,
+                "the fold metric {metric:.2} must clear the smooth threshold {}",
+                smooth * FOLD_GATE_OVER_SMOOTH_FACTOR
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_delta_fold_passes_the_single_branch_band() {
+        for (delta, h) in [
+            (45.0, 410.0),
+            (45.0, 450.0),
+            (45.0, 500.0),
+            (45.0, 550.0),
+            (45.0, 600.0),
+            (60.0, 450.0),
+            (60.0, 600.0),
+        ] {
+            let b = delta_branch(delta, h);
+            let metric = b.fold_metric_s_per_deg.unwrap();
+            let smooth = b.smooth_s_per_deg.unwrap();
+            assert!(
+                !b.unstable,
+                "a station at Δ={delta}° for {h} km sits on the single-branch band — stable (metric {metric:.2} vs smooth {smooth:.2} s/deg)"
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_delta_fold_660_geometry_stays_clear() {
+        for delta in [30.0, 35.0, 40.0, 44.0, 46.0] {
+            let b = delta_branch(delta, 660.0);
+            assert!(
+                !b.unstable,
+                "the 660 km pP geometry carries no fold up to Δ≈46° — Δ={delta}° must stay stable (metric {:.2} s/deg)",
+                b.fold_metric_s_per_deg.unwrap()
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_delta_fold_depth_direction_stays_injective() {
+        for delta in [40.0, 45.0, 50.0, 60.0] {
+            let mut prev = p_p_lag(delta, 250.0).unwrap();
+            for h in [300.0, 410.0, 450.0, 500.0, 550.0, 600.0, 660.0] {
+                let lag = p_p_lag(delta, h).unwrap();
+                assert!(
+                    lag > prev,
+                    "at fixed Δ={delta}° the pP lag must stay strictly injective in depth: {h} km = {lag} not above {prev}"
+                );
+                prev = lag;
+                assert!(
+                    !delta_branch(delta, h).unstable,
+                    "a mid-band Δ={delta}° at {h} km is smooth in depth — never flagged"
+                );
+            }
+        }
     }
 
     #[test]
