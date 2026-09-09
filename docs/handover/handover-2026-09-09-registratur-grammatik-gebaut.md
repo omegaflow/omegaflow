@@ -1,17 +1,17 @@
 <!--
-  title: Handover — Registratur-Grammatik gebaut (das nächste Atom: die cdn_reconcile-Kanonik der reference-Assets)
+  title: Handover — Registratur-Grammatik gebaut (Atom geschlossen: keine Pende offen)
   class: handover
   date: 2026-09-09
-  sha256: 80efb8e5006f16775531229e8496640883fd06893f6e10b2ec176c9616017d7d
+  sha256: d48e2fb73f78cad336709b6b996608ac37b80aa241b22b79788119e2cbfa4431
   status: live
-  see-also: docs/blatt/blatt-h0-linien-register.md docs/TODO.md src/archivar/parse.rs src/archivar/types.rs src/archivar/sha256.rs src/archivar/port.rs src/archivar/main_flow.rs phi/sources.φ tools/measure/src/bin/h0_ladder_weigh.rs
+  see-also: docs/blatt/blatt-h0-linien-register.md docs/TODO.md src/archivar/parse.rs src/archivar/types.rs src/archivar/sha256.rs src/archivar/port.rs src/archivar/main_flow.rs src/archivar/naming.rs tools/register/src/bin/cdn_reconcile.rs phi/sources.φ tools/measure/src/bin/h0_ladder_weigh.rs
 -->
 # Handover — Registratur-Grammatik gebaut
 
 Übergabe für die nächste Sitzung. Der Rat hielt den Befund vor der
 Implementierung (Spruch b: fetch-only-Klasse `format reference`, kein vierter
-Zeugen-Typ, kein descope); die Sitzung baute den Beschluss. Eine enge Pende
-bleibt offen; sie ist das nächste Atom.
+Zeugen-Typ, kein descope); die Sitzung baute den Beschluss und schloss auch
+die Folge-Pende (cdn_reconcile-Kanonik). Keine Pende bleibt offen.
 
 ## 0. Die abgebende Sitzung ist ein abgeschlossenes Atom
 
@@ -39,14 +39,15 @@ steht); ein Referenzdatensatz ohne `sha256` sitzt trotzdem (der Pin ist
 Provenienz, kein Sitz-Kriterium). Der Probe behält seinen Self-curl — das ist
 die Ursprungs-Zertifizierung, kein redundanter Fetch.
 
-## 2. Das nächste Atom — die cdn_reconcile-Kanonik
+## 2. Die cdn_reconcile-Kanonik — geschlossen
 
 Der reference-Zweig lädt die vier Beine unter dem Ursprungs-Dateinamen auf das
-CDN (`2012.08534`, `Pantheon+SH0ES.dat`, `Pantheon+SH0ES_STAT+SYS.cov`,
-`Pantheon+SH0ES_STATONLY.cov`). `cdn_reconcile` leitet seine Kanonik über
-`source_name_from_url` ab (`e-print-2012.08534` …) und nennt die Abweichung im
-Report. Eine reference-bewusste Kanonik (Ursprungs-Dateiname statt
-URL-Flattening) ist das enge Folge-Atom (in TODO registriert).
+CDN; `cdn_reconcile` leitete seine Kanonik vorher über `source_name_from_url`
+ab (`e-print-2012.08534` …) und nannte die Abweichung im Report. Geschlossen
+durch eine geteilte Kanonik: `reference_name_from_url` (`src/archivar/naming.rs`)
+liefert den Ursprungs-Dateinamen, `port.rs` lädt unter ihm hoch und
+`cdn_reconcile` erwartet ihn — gemessen 0 `divergence` / 0 `missing` für
+`arxiv.org` und `raw.githubusercontent.com`.
 
 ## 3. Gemessene Zustände — benannt, nicht geglättet
 
@@ -74,5 +75,5 @@ URL-Flattening) ist das enge Folge-Atom (in TODO registriert).
 
 - Probe: `tools/measure/src/bin/h0_ladder_weigh.rs` (+ geteilter Parser `tools/measure/src/h0.rs`)
 - Blatt: `docs/blatt/blatt-h0-linien-register.md` (Registratur-Grammatik gebaut + Referenz-Pins)
-- TODO: `docs/TODO.md` (cdn_reconcile-Kanonik unter „pending")
-- Eingriffspunkte Atom 3: `tools/register/src/bin/cdn_reconcile.rs`, `src/archivar/naming.rs`
+- TODO: `docs/TODO.md` (die Registratur-Grammatik-Pende ist geschlossen — keine Zeile mehr offen)
+- Eingriffspunkte: `tools/register/src/bin/cdn_reconcile.rs`, `src/archivar/naming.rs`
