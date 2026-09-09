@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: 36a20409cbb8dc252917f5541363eeb68265471b286a57e6b9839de66ed22e6d
-  status: live
+  status: archived
   see-also: docs/handover/handover-thematisch-membran-sonde.md docs/befund/befund-2026-09-09-orientierung-stale-matrizen.md docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md
 -->
 
