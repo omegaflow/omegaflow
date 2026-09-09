@@ -451,11 +451,11 @@ struct Series {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let calibrate = args.iter().any(|a| a == "--calibrate");
-    println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the DE441 planet center.");
+    println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune barycenter.");
 
-    let Some(center) = load("ephemeris_neptune_c.bin") else {
+    let Some(neptune_eph) = load("ephemeris_neptune.bin") else {
         eprintln!(
-            "neptune-apparent-chain: ephemeris_neptune_c.bin void — the center line is absent"
+            "neptune-apparent-chain: ephemeris_neptune.bin void — the Neptune line is absent"
         );
         return;
     };
@@ -463,8 +463,8 @@ fn main() {
         eprintln!("neptune-apparent-chain: ephemeris_earth.bin void — the geocenter is absent");
         return;
     };
-    let mut center_map = HashMap::new();
-    center_map.insert("neptune_c".to_string(), center);
+    let mut neptune_map = HashMap::new();
+    neptune_map.insert("neptune".to_string(), neptune_eph);
     let mut earth_map = HashMap::new();
     earth_map.insert("earth".to_string(), earth);
 
@@ -601,7 +601,7 @@ fn main() {
                 skip += 1;
                 continue;
             };
-            let worldline = |t: f64| body_barycenter_position("neptune_c", t, &center_map);
+            let worldline = |t: f64| body_barycenter_position("neptune", t, &neptune_map);
             let Some((s_em, _)) = light_time_worldline(geocenter, tdb, &worldline) else {
                 skip += 1;
                 continue;
