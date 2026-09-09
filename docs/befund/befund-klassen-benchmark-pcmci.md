@@ -5,7 +5,7 @@
   sha256: faaac1d1f3aa97d48312217a72684f1f89c9591995d1a8ff1a4eea1c7245bbcb
   status: done
   antwortet-auf: docs/auftrag/archiv/auftrag-klassen-benchmark-pcmci.md
-  see-also: docs/handover/handover-2026-09-09-te-atom-4.md docs/handover/archiv/handover-2026-09-08-nobel-dag-atom.md docs/handover/archiv/handover-2026-09-08-atom-a-gpu-port.md
+  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/handover/archiv/handover-2026-09-08-nobel-dag-atom.md docs/handover/archiv/handover-2026-09-08-atom-a-gpu-port.md
 -->
 
 # Befund — Klassen-Benchmark: die TE-Maschine gegen die publizierte PCMCI-Suite (TPR/FPR)

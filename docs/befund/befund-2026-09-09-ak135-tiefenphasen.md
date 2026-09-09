@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 888e2b4806e227c19301dbbca8fd78e8e805b9c741635c82affab22fc3812893
   status: done
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md docs/befund/befund-2026-09-09-feldstandard-seismik.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md docs/befund/befund-2026-09-09-feldstandard-seismik.md
 -->
 
 # Befund: die pP/sP-Tiefenphasen (ak135-S-Modell + Oberflächen-Reflexion)
