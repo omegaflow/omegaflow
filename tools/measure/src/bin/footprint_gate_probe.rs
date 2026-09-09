@@ -199,7 +199,19 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|e| format!("read {asset} header returned void: {e}"))?;
     let n_rows = parse_header(&head).ok_or_else(|| format!("{asset}: the header stays unread"))?;
 
-    let Some((order, ipix)) = FootprintRecord::pixel_of(ra, dec) else {
+    if n_rows == 0 {
+        println!("{label} | ra {ra} dec {dec}: Pending — the asset carries no records");
+        return Ok(());
+    }
+    let mut first_b = [0u8; REC_BYTES];
+    file.seek(SeekFrom::Start(HEADER_LEN as u64))
+        .map_err(|e| format!("seek {asset} records returned void: {e}"))?;
+    file.read_exact(&mut first_b)
+        .map_err(|e| format!("read {asset} first record returned void: {e}"))?;
+    let first =
+        decode_rec(&first_b).ok_or_else(|| format!("{asset}: the first record stays unread"))?;
+    let nside = 1i64 << first.order;
+    let Some((order, ipix)) = FootprintRecord::pixel_of_nside(nside, ra, dec) else {
         println!("{label} | ra {ra} dec {dec}: Pending — the direction does not place on S²");
         return Ok(());
     };
