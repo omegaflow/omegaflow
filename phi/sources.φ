@@ -1785,6 +1785,36 @@ format ephemeris_binary
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_sun.bin
+format ephemeris_de440
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_moon.bin
+format ephemeris_de440
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_earth.bin
+format ephemeris_de440
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_sun.bin
+format ephemeris_de442
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_moon.bin
+format ephemeris_de442
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_earth.bin
+format ephemeris_de442
+at earth
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_tethys.bin
 format ephemeris_binary
 at tethys
