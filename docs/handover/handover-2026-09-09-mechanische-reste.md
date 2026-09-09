@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: 51486e207c53bd9d3cdff55237849818a6eeedab98d75814750be3def7af1b99
+  sha256: 3a9bff9911e6416645408386a68329efbe11fd5dac6ae800831966372e0c5eb1
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -114,7 +114,8 @@ nach CI, Run 34400114106):
 - **S3-ListBucketResult-Parser** — `d41cc87`: der NOAA-NODD-`ListBucketResult`-
   Parser gebaut (namespaced Tag-Scan, Contents/CommonPrefixes, Entity-Decode,
   paginierter Walk mit Continuation-Tokens), 4 stille Tests grün, live 1400
-  Objekte. Die Bucket-Dispositionen je Dataset bleiben Operator-/Register-Frage.
+  Objekte. Die Bucket-Dispositionen je Dataset bleiben Register-Frage (Litmus:
+  url-line / Compiler-Lease / Konsument).
 - **maschinen-audits R4 + Kalibrationslauf** — `eafe72d`: R4-Single-Sheet-Kommata-
   Locale gebaut, Kalibrationslauf/Regression 14/14; R2 (§2-Zählung vs. Tabellen-n)
   bleibt `pending`. Alt-Fabrikationen (derive(Default)/unwrap_or_default/
@@ -226,8 +227,10 @@ nach CI, Run 34400114106):
   Suite 12/12 grün gegen HEAD (archive-root/vanilla-dateidocs); die Gesamtsuite
   der Core-Crate (769 deklariert) gegen HEAD bleibt offen — die Parallellinie
   trägt die Suite-Messung (`cargo test -p omegaflow --lib` lief 2026-09-09
-  gegen den Arbeitsbaum); die saubere Messung gegen HEAD steht aus, bis der
-  Baum fremdfrei ist.
+  gegen den Arbeitsbaum); die saubere Messung gegen HEAD läuft in `ci-check.yml`
+  (`cargo test --release` je push, der `src/**`/`phi/**`/`tools/register/**`/`docs/**`/`Cargo.toml`
+  berührt; kein branches-Filter) — der lokale Baum bleibt fremd, der lokale
+  Lauf ist nicht die Messung.
 - **Flut-2026-Linie (Rest)** — cog-quelle geschlossen (siehe oben);
   abfluss-trishuli: Seismik-/Luft-/Oberflächen-Befunde in-file (M5.2/M4.2,
   depth 0, Landslide — gemessen), der Abfluss-Pfeil bleibt `pending`; der
@@ -235,7 +238,8 @@ nach CI, Run 34400114106):
   keyless-Livestore trägt nur 08-25…08-26 (162 Punkte, max 2,152 m), der Peak
   wurde nicht aufgezeichnet (Sensor-Ausfall erneut gemessen), das Pre-08-25-
   Archiv ist aus dem keyless-Store gerollt (Entsperrung = das archivierte
-  externe CSV des 08-27-Zugs). seen-kollabgebiet: GL085494 −73 % gemessen
+  externe CSV des 08-27-Zugs — gemessen lokal:
+  `/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`). seen-kollabgebiet: GL085494 −73 % gemessen
   (08-24); das CEMS/S1-Fenster ist NICHT abgelaufen (re-gemessen 2026-09-09):
   S1-Post-Szenen 08-28/08-31/09-05 verfügbar, EMSR927 trägt nur Grading-Produkte
   (AOI01–05), auf keinem AOI ein Delineation-Produkt — die Flutflächen-
@@ -257,4 +261,5 @@ nach CI, Run 34400114106):
   netCDF-4 + CDF-1/2 gebaut; Parquet/GRIB-2/OPeNDAP offen).
 - S3-Harvester-Namespace (NOAA-NODD-Buckets): `ListBucketResult`-Parser-Gap
   geschlossen (`d41cc87`); Inventar `noaa_nodd_inventory.φ` steht (101 Datasets);
-  die Bucket-Dispositionen je Dataset bleiben Operator-/Register-Frage.
+  die Bucket-Dispositionen je Dataset bleiben Register-Frage (Litmus:
+  url-line / Compiler-Lease / Konsument).
