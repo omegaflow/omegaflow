@@ -185,11 +185,23 @@ nach CI, Run 34400114106):
 - **flyby-doppler-rohdaten** — Roh-Doppler historischer Flybys (AGU-Beleg).
 - **maschinen-audits** — R4-single-sheet-Locale gebaut + Kalibrationsscore-Lauf
   gefahren (`eafe72d`, Regression 14/14); R2 (§2-Zählung = Tabellen-n) bleibt
-  `pending` (gemessener Grund im lauf-log). Provenienz-Notiz-Muster steht aus.
+  `pending` (gemessener Grund im lauf-log; `number_audit.rs` trägt ihn in der
+  R2-Ausgabe und im Test `z_section_counts_are_not_a_double_count_and_r2_stays_pending`).
+  Provenienz-Notiz-Muster gebaut (`docs/specs/provenienz-notiz.md`, drei benannte
+  Zeilen; `das-eine-instrument.md` §5 trägt die erste Instanz).
 - **sicherung-risiko-heime** — einzige-Kopie-Risiko-Heime sichern (der
   Backup-Akt selbst bleibt Operator-Sache).
 - **saubere-datenbank** — Step-5-Klasse (14 repo_tag + 3 dataset_host);
-  Registry-first mit Rebuild-Quelle vor jeder CDN-Änderung.
+  Registry-first mit Rebuild-Quelle vor jeder CDN-Änderung. Gemessen 2026-09-09
+  (Rat gehört): alle 14 `repo_tag`-Releases tragen `mirror_*`-Assets mit
+  sha256-Digest; 12 Quell-Repos leben (Rebuild-Quelle = das Repo, Inhalt per
+  Digest gepinnt), Bowserinator repo-tot (Release-Tag schon 404), GeoNuclearData
+  0 Assets. Der destruktive Schnitt bleibt ein benannter Folgeschritt: je Asset
+  Byte-Vergleich CDN-Digest ↔ Repo-Raw, einzeln, nie ein Blindwurf. Die 3
+  `dataset_host`-Leases: physionet.org + spdf.gsfc.nasa.gov tragen
+  sources.φ-url-lines (bidsleep/wind_orbit/wind_waves); sentinel1euwest.blob.
+  core.windows.net ist Compiler-Lease (s1_sar_compiler + s1-sar-cdn.yml) ohne
+  url-line.
 - **extern-weberin-faden-luecken + -folge + -zweitlinien** — 9 Faden-Kategorien
   Routen messen; zweite Linien je Klasse (Teil-A-Subfragen + Teil-B-Mess-Punkte
   je ein Befund; EPM/VLBI-ΔDOR als zweite Linie je Klasse).
@@ -212,7 +224,10 @@ nach CI, Run 34400114106):
   selbst bleibt ein eigenes Atom.
 - **matrixmachine-register** — Urkunden-Zustandszeile aktualisiert: MatrixMachine-
   Suite 12/12 grün gegen HEAD (archive-root/vanilla-dateidocs); die Gesamtsuite
-  der Core-Crate (769 deklariert) gegen HEAD bleibt offen.
+  der Core-Crate (769 deklariert) gegen HEAD bleibt offen — die Parallellinie
+  trägt die Suite-Messung (`cargo test -p omegaflow --lib` lief 2026-09-09
+  gegen den Arbeitsbaum); die saubere Messung gegen HEAD steht aus, bis der
+  Baum fremdfrei ist.
 - **Flut-2026-Linie (Rest)** — cog-quelle geschlossen (siehe oben);
   abfluss-trishuli: Seismik-/Luft-/Oberflächen-Befunde in-file (M5.2/M4.2,
   depth 0, Landslide — gemessen), der Abfluss-Pfeil bleibt `pending`; der
