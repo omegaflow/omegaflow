@@ -79,7 +79,7 @@ mod tests {
 
     #[test]
     fn rejects_unknown_component() {
-        let bytes = write_bin(&[(10.0, 1.0, 8)]);
+        let bytes = write_bin(&[(10.0, 1.0, COMP_MAX + 1)]);
         assert!(parse_bin(&bytes).is_none());
         let bytes = write_bin(&[(10.0, 1.0, 0)]);
         assert!(parse_bin(&bytes).is_none());

@@ -12,8 +12,11 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
 
 - `docs/handover/handover-YYYY-MM-DD-<slug>.md` — a handover (Übergabe) and a
   session plan are one kind of document: written by the closing session, read
-  by exactly one receiving session, consumed into code/register/commits.
+  by exactly one receiving session,   consumed into code/register/commits.
   Immutable. The date is the document's own date, never invented.
+  `handover-thematisch-<slug>.md` — a standing thematic handover: evolving, no
+  date in the name, read by many sessions, the live register of one open line,
+  `class: handover`, `status: live`.
 - `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
   `survey-<slug>.md` — a standing survey (evolving, no date in the name).
 - `docs/plans/ref-<slug>.md` — a standing reference list.
@@ -61,8 +64,10 @@ sha256sum`), so two local copies are compared in one command:
       see-also: …
     -->
 
-The receiving session consumes a handover into code/register/commits; the
-handover stays in `docs/handover/` — git is the history, no archive move.
+The receiving session consumes a handover into code/register/commits; when
+the new handover stands, the session moves the handover it consumed into
+`docs/handover/archiv/`. Closed documents rest in the flat archive folders
+`docs/{handover,auftrag,befund,blatt}/archiv/`.
 Raw consultation transcripts (arena/foreign-model chats) are archived to
 `archive-root/arena/` — their distilled findings live in
 the standing concept docs.
