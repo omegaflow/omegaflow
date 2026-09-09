@@ -7,7 +7,7 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
-  2mass-binary:
+  twomass-binary:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
