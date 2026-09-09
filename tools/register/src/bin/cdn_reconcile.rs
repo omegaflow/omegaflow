@@ -1,8 +1,8 @@
 use omegaflow::archivar::{
-    cdn_manifest_map, extract_netloc, json_num, jstr, load_sources_from, parse_json,
+    cdn_manifest_map, extract_netloc, jstr, load_sources_from, parse_json, reference_name_from_url,
     source_name_from_url, JsonVal, SourceConfig,
 };
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::process::Command;
 
@@ -28,15 +28,15 @@ fn release_assets(release: &JsonVal) -> Vec<(String, Option<String>, u64)> {
         return out;
     };
     for a in assets {
-        let name = jstr(a, "name").unwrap_or_default();
-        if name.is_empty() {
-            continue;
-        }
+        let name = match jstr(a, "name") {
+            Some(n) if !n.is_empty() => n,
+            _ => continue,
+        };
         let digest = jstr(a, "digest");
-        let size = json_num(a).map(|_| 0u64).unwrap_or(0);
-        let size = jstr(a, "size")
-            .and_then(|s| s.parse::<u64>().ok())
-            .unwrap_or(size);
+        let size = match jstr(a, "size").and_then(|s| s.parse::<u64>().ok()) {
+            Some(s) => s,
+            None => 0u64,
+        };
         out.push((name, digest, size));
     }
     out
@@ -48,9 +48,9 @@ fn collect_releases(body: &str) -> Vec<(String, Vec<(String, Option<String>, u64
         return out;
     };
     for it in items {
-        let tag = jstr(&it, "tag_name").unwrap_or_default();
-        if !tag.is_empty() {
-            out.push((tag, release_assets(&it)));
+        match jstr(&it, "tag_name") {
+            Some(tag) if !tag.is_empty() => out.push((tag, release_assets(&it))),
+            _ => {}
         }
     }
     out
@@ -162,18 +162,30 @@ fn main() {
     let content = match std::fs::read_to_string(&full_sources) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("cdn_reconcile: cannot read {}: {}", full_sources, e);
+            eprintln!("cdn_reconcile: read {} void: {}", full_sources, e);
             std::process::exit(1);
         }
     };
     let sources: Vec<SourceConfig> = load_sources_from(&content);
 
     let manifest = cdn_manifest_map();
+    let mut canonical_map: HashMap<String, String> = HashMap::new();
+    for s in &sources {
+        let name = if s.format == "reference" {
+            reference_name_from_url(&s.url)
+        } else {
+            match manifest.get(&s.url) {
+                Some(n) => n.clone(),
+                None => source_name_from_url(&s.url),
+            }
+        };
+        canonical_map.insert(s.url.clone(), name);
+    }
     let canonical_of = |u: &str| -> String {
-        manifest
-            .get(u)
-            .cloned()
-            .unwrap_or_else(|| source_name_from_url(u))
+        match canonical_map.get(u) {
+            Some(n) => n.clone(),
+            None => source_name_from_url(u),
+        }
     };
 
     let mut netloc_of_source: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
