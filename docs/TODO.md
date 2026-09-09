@@ -1431,6 +1431,70 @@ ICRS-4D-Rahmen teilt:
   Befund `docs/befund/befund-2026-09-09-xrsa-ausreisser.md`.
 - Riss-Satz (Ortungs-Test, 2026-09-09): ein leerer Kegel-Schnitt mit
   2/3-Konvergenz ist ein Ausreißer-Befund, keine Fehlortung.
+- Seismische Ortung — gebaut, Positivkontrolle bestanden (2026-09-09): die
+  Umkehrung der gemessenen Rayleigh-Kurve steht
+  (`tools/measure/src/bin/quake_location_probe.rs`, STA/LTA 1 s/30 s Schwelle
+  4.0, Weltlinien über `body_fixed_to_icrs` zur gemeinsamen t_ref — die
+  Rotation kürzt die Sehne, körperfeste Länge im mitrotierenden Medium;
+  Gittersuche + Verfeinerung). Der Konstant-Lauf widerlegte die Nullhypothese
+  v_p = 5950 m/s gerade Sehne (geortet −0,8600/110,6380, rms 164 s, Offset
+  1449 km — Befund `docs/befund/befund-2026-09-09-seismische-ortung.md`); der
+  ak135-Lauf ortet das Katalog-Beben aus eigenen Ankünften: geortet
+  −8,1840/121,3680, rms 1,947 s, Offset ≈ 18,7 km gegen −8,3514/121,3478 —
+  Befund `docs/befund/befund-2026-09-09-seismische-ortung-ak135.md`; der
+  3D-Lauf (Tiefe) geortet −8,2240/121,3800 bei 20 km, rms 1,887 s, Offset
+  ≈ 14,6 km — Befund `docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md`.
+- ak135-Laufzeitkurve — gebaut (2026-09-09), kuratierte Klasse: Kernel
+  `src/archivar/kernels/ak135.dat` (sha256 751889…feba4, Kennett et al. 1995,
+  TauP StdModels) + Strahlen-Tracer `src/archivar/ak135.rs` (τ(p)-Integration,
+  lineare Interpolation in Radius; zwei Schenkel über Reziprozität für die
+  Quelltiefe; verifiziert gegen TauP-Referenz auf < 0,15 s und gegen die
+  Sehne auf < 0,01 s). Der Zwirn-Test: rms 164 s → 1,947 s — die 18 gemessenen
+  Ankünfte tragen die ak135-Form, die Kurve trägt die Messung. II.KIV +5,69 s
+  (87,6°) bleibt ein Ausreißer (Pick oder laterale Subduktions-Struktur) —
+  offen, nicht gedeutet.
+- Beben-Tiefe — gebaut, flach-bestimmt (2026-09-09): T_P(Δ, h) über die
+  ak135-Tiefenkurven, 3D-Gitter (lat/lon/Tiefe 0–250 km). Das Netz ist global
+  (nur II.KAPI unter 5°), also ist die Flachtiefe schwach bestimmt: rms flach
+  0–50 km (1,887–1,947 s), > 100 km klar verworfen (2,441–6,496 s). Geortet
+  20 km gegen Katalog 10 km — konsistent, nicht scharf. Befund
+  `docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md`.
+- Scharfe Tiefe (seismische Ortung, 2026-09-09) — pending: die Flachtiefe
+  braucht Nah-Stationen oder Tiefenphasen (pP/sP-Pick) — beides fehlt diesem
+  Netz; ein eigener Kandidat, keine Erfindung. Adresse gemessen (2026-09-09):
+  Hi-net (NI) ist nicht im EarthScope-Dataselect, NIED verlangt Registrierung;
+  JP (JMA) trägt 6 Nah-Stationen als Metadaten, aber die 2011-Wellenformen
+  liefern HTTP 204 (nicht offen archiviert).
+- M9.1-Picker (seismische Ortung, 2026-09-09) — gebaut, Streuung bleibt: der
+  Bandpass+Erstbruch-Pick (0,5–2 Hz, 5×Rauschboden, STA/LTA-Fallback) steht
+  in `quake_location_probe.rs` (6 Tests), aber der Tōhoku-GSN-Lauf streut
+  weiter (Offset ≈ 600 km, rms 34 s — der Ersteinsatz der langen M9.1-Quelle
+  ist emergent, der automatisierte Pick trägt ±30–50 s intrinsisch). Die
+  Grenze ist die Automation, nicht das Modell. Befund
+  `docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md`; der nächste Hebel ist
+  die dichte Nah-Station (Hi-net/NIED-Registrierung) oder manueller Pick.
+- Tōhoku-Pegel — gebaut, gemessen (2026-09-09): der Tsunami-Schenkel steht
+  (`tools/measure/src/bin/tohoku_pegsel_probe.rs`, NOAA CO-OPS water_level vs
+  predictions, Anomalie = gemessen − Gezeit, Einsatz = |Anomalie| > 0,3 m).
+  Sechs Pazifik-Pegel (Adak 3495 km … Crescent City 7542 km): Einsatz
+  10:36–15:48 UTC, Spitzen 0,62–2,21 m, pre_floor 0,03–0,22 m. Die
+  Ankunfts-Staffelung trägt ≈ 766 km/h — √(g·d) für d ≈ 4700 m. Befund
+  `docs/befund/befund-2026-09-09-tohoku-pegsel.md`.
+- Tōhoku-Vorhersage — gebaut, Positivkontrolle teilweise bestanden
+  (2026-09-09): der Vorhersage-Schenkel steht
+  (`tools/measure/src/bin/tohoku_tsunami_vorhersage_probe.rs`, Großkreis-Slerp
+  + GEBCO2020-Punktabfrage + Σ Segment/√(g·d), Tiefen-Boden 200 m). Vier von
+  sechs Wegen treffen die gemessene Ankunft auf 1–18 min (Crescent City +1,4,
+  Honolulu +4,9, Kwajalein −11, Midway +18); zwei Wege sind über-langsam (Adak
+  +57, Hilo +82), weil der Großkreis flache Features streift (Aleuten-Schwelle,
+  Hawaii-Plattform) und die per-Segment-Rechnung keine Beugung kennt — benannt,
+  nicht gedeutet. Befund `docs/befund/befund-2026-09-09-tohoku-vorhersage.md`.
+- Noch offen und als eigene Atome (unverändert pending): der schnellste-Weg
+  (Eikonal/Dijkstra) über ein Bathymetrie-Gitter als Referenz-Kernel (nicht als
+  `sources.φ`-Quelle) — gemessen (2026-09-09): die OpenTopoData-Punktabfrage
+  nimmt nur Längengrade −180…180 (kein 120…280) und begrenzt die Batch-Größe;
+  der saubere Weg ist ein Gitter-Download (ETOPO1/GEBCO NetCDF, 1-Bogenminute)
+  statt ~300 Punkt-Batches. Stromboli als Vulkan-Lehrer bleibt ebenso pending.
 - Extinktionskurve A(λ)/A_V (CCM 1989, R_V = 3.1) — kuratierte Klasse, gebaut
   (2026-09-08): `src/archivar/kernels/ccm89_rv31.dat` (37 Stützstellen
   100–3300 nm) + `parse_extinction`/`extinction_at` in spectral.rs (lineare

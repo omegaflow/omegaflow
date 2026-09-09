@@ -222,6 +222,8 @@ fn main() {
         0,
         TeEstimator::Binned,
         4,
+        2,
+        0.05,
     ) else {
         eprintln!("pcmci_links returns void — no verdict");
         return;
