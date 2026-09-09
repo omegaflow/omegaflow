@@ -28,7 +28,8 @@ jobs:
             if ./target/release/tap_compiler --root https://ned.ipac.caltech.edu/tap/sync \
                 --table NEDTAP.objdir \
                 --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
-                --where "z > 0" --band ra ${RA} $((RA+20)) 1 --limit 5000 --lattice 1024 \
+                --where "ra >= ${RA} AND ra < $((RA+20)) AND z > 0" \
+                --async 600 --limit 5000 --lattice 1024 \
                 --out ned_raw_${RA}.json; then
               jq -r '.[] | [(.cell|tostring),(.rank|tostring),(.objid|tostring),({ra,dec,z,name,type,n_spectra}|tojson)] | join(" ")' ned_raw_${RA}.json \
                 | sort -k1,1n -k2,2n -k3,3n \
