@@ -30,8 +30,10 @@ fn main() {
     }
     if registers.is_empty() {
         registers = vec![
-            PathBuf::from("docs/TODO.md"),
-            PathBuf::from("docs/status/lose-enden.md"),
+            PathBuf::from("docs/handover/handover-thematisch-tiefenphasen-flotte.md"),
+            PathBuf::from("docs/handover/handover-thematisch-te-atom-4.md"),
+            PathBuf::from("docs/handover/handover-thematisch-membran-sonde.md"),
+            PathBuf::from("docs/handover/handover-thematisch-mechanische-reste.md"),
         ];
     }
 

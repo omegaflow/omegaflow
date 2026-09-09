@@ -299,7 +299,14 @@ impl Gate {
     }
 
     pub fn learn_register(&mut self, root: &str) {
-        for dir in ["docs/paper", "docs/concepts", "docs/surveys"] {
+        for dir in [
+            "docs/paper",
+            "docs/concepts",
+            "docs/surveys",
+            "docs/handover",
+            "docs/befund",
+            "docs/blatt",
+        ] {
             let path = format!("{}/{}", root, dir);
             let entries = match fs::read_dir(&path) {
                 Ok(e) => e,
@@ -314,9 +321,6 @@ impl Gate {
                     scan_register_values(&text, &vocab().unit_tokens, &mut self.register);
                 }
             }
-        }
-        if let Ok(text) = fs::read_to_string(format!("{}/docs/TODO.md", root)) {
-            scan_register_values(&text, &vocab().unit_tokens, &mut self.register);
         }
     }
 
@@ -1247,7 +1251,7 @@ mod tests {
     fn fn_backed_claim_anchored_path_not_blocked() {
         let mut g = test_gate();
         assert!(g
-            .check_text("Fertig. tools/src/bin/claim_verify.rs is on main")
+            .check_text("Fertig. tools/register/src/bin/register_verify.rs is on main")
             .is_none());
     }
 
@@ -1535,7 +1539,7 @@ mod tests {
     fn fp_tool_root_markdown_is_not_a_home() {
         let mut g = test_gate();
         for root_doc in [
-            r###"{"filePath":"TODO.md","newString":"# offen"}"###,
+            r###"{"filePath":"handover.md","newString":"# offen"}"###,
             r###"{"filePath":"granit.md","newString":"## A = A"}"###,
             r###"{"filePath":"LIESMICH.md","newString":"# lies"}"###,
         ] {
@@ -1549,9 +1553,9 @@ mod tests {
     fn fn_tool_canonical_homes_pass() {
         let mut g = test_gate();
         for ok in [
-            r###"{"filePath":"docs/TODO.md","newString":"# offen"}"###,
+            r###"{"filePath":"docs/handover/handover-thematisch-te-atom-4.md","newString":"# offen"}"###,
             r###"{"filePath":"docs/granit.md","newString":"## A = A"}"###,
-            r###"{"filePath":"docs/status/lose-enden.md","newString":"# lose"}"###,
+            r###"{"filePath":"docs/befund/befund-beispiel.md","newString":"# lose"}"###,
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
             r###"{"filePath":"src/handover_template.md","newString":"## title"}"###,
