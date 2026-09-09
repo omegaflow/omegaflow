@@ -4,8 +4,11 @@ const MODEL_RAW: &str = include_str!("kernels/ak135.dat");
 const R_EARTH_KM: f64 = 6371.0;
 const DR: f64 = 0.5;
 const MAX_DELTA_DEG: f64 = 98.0;
-const MAX_DEPTH_KM: f64 = 250.0;
-const DEPTH_KM: [f64; 9] = [10.0, 15.0, 20.0, 35.0, 50.0, 100.0, 150.0, 200.0, 250.0];
+const MAX_DEPTH_KM: f64 = 700.0;
+const DEPTH_KM: [f64; 18] = [
+    10.0, 15.0, 20.0, 35.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 410.0, 450.0, 500.0,
+    550.0, 600.0, 660.0, 700.0,
+];
 const P_SLOWNESS_CORE_GRAZE: f64 = 255.0;
 const S_SLOWNESS_CORE_GRAZE: f64 = 478.0;
 
@@ -673,15 +676,15 @@ mod tests {
         assert!(p_travel(99.0).is_none());
         assert!(p_travel(f64::NAN).is_none());
         assert!(p_travel_depth(60.0, -1.0).is_none());
-        assert!(p_travel_depth(60.0, 300.0).is_none());
+        assert!(p_travel_depth(60.0, 800.0).is_none());
         assert!(s_travel(-1.0).is_none());
         assert!(s_travel(99.0).is_none());
         assert!(p_p_travel(-1.0, 20.0).is_none());
         assert!(p_p_travel(99.0, 20.0).is_none());
-        assert!(p_p_travel(60.0, 300.0).is_none());
+        assert!(p_p_travel(60.0, 800.0).is_none());
         assert!(s_p_travel(60.0, -1.0).is_none());
         assert!(s_p_travel(99.0, 20.0).is_none());
-        assert!(s_p_travel(60.0, 300.0).is_none());
+        assert!(s_p_travel(60.0, 800.0).is_none());
     }
 
     #[test]
@@ -781,6 +784,114 @@ mod tests {
                 "p={p}: t_sp={t_sp} vs {t_identity}"
             );
             assert!((du_s + du_p + ds).is_finite());
+        }
+    }
+
+    #[test]
+    fn deep_tables_carry_the_transition_zone() {
+        for d in [30.0, 60.0, 90.0] {
+            for h in [300.0, 410.0, 500.0, 600.0, 660.0, 700.0] {
+                let t = p_travel_depth(d, h).unwrap();
+                assert!(t.is_finite() && t > 0.0, "T({d},{h}) = {t}");
+                assert!(
+                    t < p_travel(d).unwrap(),
+                    "deep source must shorten T({d},{h})"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn deep_depth_phases_arrive_in_order() {
+        for d in [60.0, 90.0] {
+            for h in [300.0, 410.0, 500.0, 600.0, 660.0, 700.0] {
+                let direct = p_travel_depth(d, h).unwrap();
+                let pp = p_p_travel(d, h).unwrap();
+                let sp = s_p_travel(d, h).unwrap();
+                assert!(pp > direct, "pP({d},{h})={pp} not after P={direct}");
+                assert!(sp > pp, "sP({d},{h})={sp} not after pP={pp}");
+            }
+        }
+    }
+
+    #[test]
+    fn deep_p_p_has_a_take_off_floor() {
+        assert!(p_p_travel(30.0, 700.0).is_none());
+        assert!(p_p_travel(30.0, 660.0).is_some());
+        assert!(p_p_travel(40.0, 700.0).is_some());
+        assert!(s_p_travel(30.0, 700.0).is_some());
+    }
+
+    #[test]
+    fn p_p_lag_grows_across_the_transition_zone() {
+        for d in [60.0, 90.0] {
+            let nodes = [
+                250.0, 300.0, 350.0, 410.0, 450.0, 500.0, 550.0, 600.0, 660.0, 700.0,
+            ];
+            let mut prev = p_p_travel(d, nodes[0]).unwrap() - p_travel_depth(d, nodes[0]).unwrap();
+            for &h in &nodes[1..] {
+                let lag = p_p_travel(d, h).unwrap() - p_travel_depth(d, h).unwrap();
+                assert!(
+                    lag > prev,
+                    "pP-P lag at {d} deg must grow: {h} km = {lag} not above {prev}"
+                );
+                prev = lag;
+            }
+        }
+    }
+
+    #[test]
+    fn deep_up_leg_matches_ray_branch() {
+        let m = model();
+        let rs = R_EARTH_KM - 600.0;
+        for p in [300.0, 400.0, 500.0] {
+            let (du, tu) = up_leg(&m.vp, &m.grid, p, rs).unwrap();
+            let (dr, tr) = ray(&m.vp, &m.grid, p, rs)[0];
+            assert!((du - dr).abs() < 1e-1, "p={p}: up d {du} vs ray {dr}");
+            assert!((tu - tr).abs() < 1e-1, "p={p}: up t {tu} vs ray {tr}");
+        }
+    }
+
+    #[test]
+    fn deep_branch_identity_holds_in_the_transition_zone() {
+        let m = model();
+        for h in [300.0, 600.0] {
+            let rs = R_EARTH_KM - h;
+            for p in [300.0, 400.0, 500.0] {
+                let (du, tu) = ray(&m.vp, &m.grid, p, rs)[0];
+                let (dd, td) = ray(&m.vp, &m.grid, p, rs)[1];
+                let (ds, ts) = surface_leg(&m.vp, &m.grid, p).unwrap();
+                let t_pp = tu + ts;
+                let t_identity = td + 2.0 * tu;
+                let d_pp = du + ds;
+                let d_identity = dd + 2.0 * du;
+                assert!(
+                    (t_pp - t_identity).abs() < 1e-6,
+                    "h={h}, p={p}: t_pp={t_pp} vs {t_identity}"
+                );
+                assert!(
+                    (d_pp - d_identity).abs() < 1e-6,
+                    "h={h}, p={p}: d_pp={d_pp} vs {d_identity}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn deep_rayparam_is_a_finite_positive_slowness() {
+        for d in [30.0, 60.0, 90.0] {
+            for h in [300.0, 500.0, 660.0] {
+                let p = p_p_rayparam(d, h).unwrap();
+                assert!(
+                    p.is_finite() && p > 0.0,
+                    "pP ray param at {d} deg, {h} km: {p}"
+                );
+                let sp = s_p_rayparam(d, h).unwrap();
+                assert!(
+                    sp.is_finite() && sp > 0.0,
+                    "sP ray param at {d} deg, {h} km: {sp}"
+                );
+            }
         }
     }
 }
