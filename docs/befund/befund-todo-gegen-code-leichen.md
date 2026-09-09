@@ -4,7 +4,7 @@
   date: 2026-09-07
   status: done
   sha256: f88ea856ad159152c5cf390139cd1cb974d261e5a0edf745f2f48b5ac89af1f0
-  see-also: docs/TODO.md
+  see-also: docs/handover/archiv/handover-2026-09-09-todo-tod.md
 -->
 
 # Befund: die TODO gegen den echten Code — offene Pflicht und getragene Leichen

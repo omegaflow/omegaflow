@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: cff564973d6002b1c58d28f81a635f0a0681b4f1d6fe32ce6ddac3fcced16b1d
   status: done
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md
 -->
 
 # Befund: der Tōhoku-Pegel (NOAA CO-OPS)

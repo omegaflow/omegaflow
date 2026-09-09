@@ -2,14 +2,14 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 69e033aec27ee27319bb0ce5758683f47861971ec76db224b93fb04904ce933b
+  sha256: 4bb177d951b5a8f2ba4b9591b2910d1a3b9d583c6bc9396c7ac8734bcca7d227
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
 
 # Daten-Holdings-Inventur (Teil B)
 
-Gemessen am 2026-09-03 auf dem Run-Host `johannes` (`/home/johannes`).
+Gemessen am 2026-09-03 auf dem Run-Host `johannes`.
 Zweck: vollständige Landschaft der großen Ablagen erfassen, jede nach Herkunft
 und Disposition einordnen, bevor irgendetwas bewegt wird. Regel: nie blind
 Gigabytes verschieben; Mess-/Sitzungs-/Backup-Daten erst nach Freigabe je
@@ -17,7 +17,7 @@ Holding.
 
 ## Run-Pfad (autoritativ)
 
-- `OMEGAFLOW_STATE`-Default: `~/.local/state/omegaflow` (= `/home/johannes/.local/state/omegaflow`; systemd-Dienste setzen es explizit auf genau diesen Pfad).
+- `OMEGAFLOW_STATE`-Default: `~/.local/state/omegaflow` (systemd-Dienste setzen es explizit auf genau diesen Pfad).
 - Cache-Root (`cache_root()`): `~/.local/state/omegaflow/archivar_cache`.
 - Mess-/Probe-Datensätze gehören als **flache Dateien** direkt in diesen Cache-Root (siehe AGENTS „The Cache Ablage"). Füllung ist lazy: erst ein Lauf/Compiler oder manuelles Staging legt sie an.
 - Dauerhafte Heimat jedes Datensatzes ist das CDN (`omegaflow/sources`, netloc-Releases). Abwesenheit lokal = `pending` (0 honored), nie „verloren".
