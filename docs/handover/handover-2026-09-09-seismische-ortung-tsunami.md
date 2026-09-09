@@ -2,7 +2,7 @@
   title: Handover — seismische Ortung (ak135, Positivkontrolle bestanden) + Tōhoku-Tsunami-Kette (Pegel gemessen, Vorhersage 4/6 Wege) + M9.1-Picker (Grenze benannt)
   class: handover
   date: 2026-09-09
-  sha256: 60f61b258a00f26dde449669064c236c8f4b7597a98a338ff71d8f1e006fe72d
+  sha256: 7181c176e6a6aa7d4203b4acfa171f86610c5ffb3bc3c6f10331a2c0abd948ae
   status: live
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md docs/befund/befund-2026-09-09-tohoku-pegsel.md docs/befund/befund-2026-09-09-tohoku-vorhersage.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md
 -->
@@ -12,7 +12,8 @@
 Übergabe für die nächste Sitzung. Gebaut wurde die seismische Ortung (ak135,
 Positivkontrolle bestanden), der Tsunami-Schenkel der Tōhoku-Kette (Pegel
 gemessen, Vorhersage 4/6 Wege) und der M9.1-Picker (gebaut, Grenze benannt).
-**Nichts ist committet** — die nächste Sitzung erbt einen offenen Arbeitsbaum.
+**Committet als `0c43422`** (nachgemessen 2026-09-09, Folge-Sitzung) — die
+Seismik-Sitzung liegt im Baum, nicht mehr offen.
 
 ## 1. Was gebaut wurde
 
@@ -66,17 +67,18 @@ gemessen, Vorhersage 4/6 Wege) und der M9.1-Picker (gebaut, Grenze benannt).
    `phi/sources.φ` braucht deren Provenienz-Entscheidung.
 4. Stromboli (Vulkan-Lehrer), scharfe Tiefe (pP/sP), GEBCO-Kernel — pending.
 
-## 3. Zustand des Arbeitsbaums (wichtig)
+## 3. Zustand des Arbeitsbaums (nachgemessen 2026-09-09, Folge-Sitzung)
 
-- **Nichts ist committet.** Alle Änderungen dieser Sitzung (ak135, die vier
-  Proben, die sechs Befunde, die TODO-Zeilen) liegen uncommittet im Baum.
-- **Fremde uncommittete Änderungen** existieren daneben: `weberin_body_verdict.rs`
-  trägt 2 unused-import-Warnungen (nicht von dieser Sitzung, durch die
-  Kern-Crate-Änderung sichtbar geworden); der Finsternis-/Ephemeriden-Faden
-  (`ephemeris.rs`, `spk.rs`, `epm_compiler.rs`, `inpop_compiler.rs`) gehört
-  einer parallelen Sitzung.
-- `cargo check --workspace`: die Dateien dieser Sitzung sind warnungsfrei; die
-  einzigen Warnungen sind die fremden in `weberin_body_verdict.rs`.
+- Die Seismik-Sitzung ist **committet** (`0c43422`, measure: seismic location +
+  Tōhoku tsunami). Die Urschrift dieses Abschnitts („Nichts ist committet") war
+  der Stand zum Schreibzeitpunkt und ist erledigt.
+- Der Baum ist heute parallel aktiv: `docs/TODO.md`,
+  `.github/workflows/gaia-xp-cdn.yml`, `src/mathematikerin/te.rs` (TE-Thread,
+  Konflikt gelöst), `tools/harvest/src/bin/tap_compiler.rs` und weitere gehören
+  parallelen Sitzungen — nicht dieser.
+- Event-ID der Positivkontrolle nachgetragen: USGS `us6000tkt2` (mww 7.8); die
+  Feld-Herkunft der sechs Befunde trägt jetzt
+  `docs/befund/befund-2026-09-09-feldstandard-seismik.md`.
 
 ## 4. Register
 

@@ -2,12 +2,16 @@
   title: Befund — Seismische Ortung mit ak135: das Epizentrum aus eigenen Ankünften — Offset ≈ 18,7 km, rms 1,947 s; der Zwirn-Test trägt
   class: befund
   date: 2026-09-09
-  sha256: 99b3a5b03233cd1e6822fd27e5c57b2cb37b0c0739ded9bb0016e819c42e778a
+  sha256: f57f3c5664ecf21a97ec613a70958c8935e57a9353efa669cf1bc2881bdd2cd5
   status: done
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/auftrag/auftrag-rayleigh-dispersion.md
 -->
 
 # Befund: die seismische Ortung mit ak135
+
+Prüffall: USGS `us6000tkt2` (mww 7.8, reviewed), Katalog −8,3514/121,3478/10 km.
+Feld-Herkunft: τ(p)-Integration = Buland & Chapman 1983, Referenz-Implementierung
+TauP (Crotwell et al. 1999); Modell ak135 = Kennett/Engdahl/Buland 1995.
 
 ## Frage & Bindung
 
