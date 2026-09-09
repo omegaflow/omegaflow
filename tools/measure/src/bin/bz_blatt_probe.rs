@@ -1,5 +1,5 @@
 use omegaflow::archivar::{
-    Extract, JsonVal, SourceConfig, convert_to_si, fetch_raw, load_sources, parse_json, scalar_of,
+    convert_to_si, fetch_raw, load_sources, parse_json, scalar_of, Extract, JsonVal, SourceConfig,
 };
 use omegaflow::te::{
     permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,
@@ -21,11 +21,11 @@ const PE_SEGMENT_SAMPLES: usize = 360;
 const PE_RING_MAX: usize = 16;
 const PE_ORDER: usize = 4;
 
-fn now_unix() -> f64 {
+fn now_unix() -> Option<f64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
+        .ok()
         .map(|d| d.as_secs_f64())
-        .unwrap_or(0.0)
 }
 
 fn iso_to_unix(s: &str) -> Option<f64> {
@@ -183,6 +183,9 @@ fn harvest_kp(ttl: u64) -> Vec<(f64, f64)> {
 }
 
 fn harvest_abk(start_unix: f64) -> (Vec<(f64, f64)>, Vec<(f64, f64)>, Vec<(f64, f64)>) {
+    let Some(now) = now_unix() else {
+        return (Vec::new(), Vec::new(), Vec::new());
+    };
     let date = iso_utc(start_unix)
         .split('T')
         .next()
@@ -190,7 +193,7 @@ fn harvest_abk(start_unix: f64) -> (Vec<(f64, f64)>, Vec<(f64, f64)>, Vec<(f64, 
         .to_string();
     let url = format!(
         "{ABK_HAPI}&start={date}T00:00:00Z&stop={}&format=json",
-        iso_utc(now_unix() - 2.0 * HOUR)
+        iso_utc(now - 2.0 * HOUR)
     );
     let body = match fetch_raw(&url, None, &[], 300) {
         Some(b) => b,
@@ -482,7 +485,9 @@ fn window_report(name: &str, s: &[(f64, f64)]) {
 
 fn main() {
     let sources = load_sources();
-    let now = now_unix();
+    let Some(now) = now_unix() else {
+        return;
+    };
     println!("=== Bz Blatt probe — the causal driver of the geomagnetically induced current ===");
     println!("system time: {}", iso_utc(now));
     println!(
@@ -497,10 +502,9 @@ fn main() {
 
     let mag_url = format!("{BASE}/rtsw/rtsw_mag_1m.json");
     let wind_url = format!("{BASE}/rtsw/rtsw_wind_1m.json");
-    let block_of = |name: &str| {
-        find_block(&sources, name)
-            .map(|s| s.url)
-            .unwrap_or_else(|| "block absent from the register".into())
+    let block_of = |name: &str| match find_block(&sources, name) {
+        Some(s) => s.url,
+        None => "block absent from the register".to_string(),
     };
 
     println!();
@@ -551,20 +555,28 @@ fn main() {
     window_report("ABK-dB/dt", &dbdt_raw);
     window_report("Kp", &kp_raw);
 
-    let lo = bz_raw
-        .first()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .max(speed_raw.first().map(|&(t, _)| t).unwrap_or(0.0))
-        .max(density_raw.first().map(|&(t, _)| t).unwrap_or(0.0))
-        .max(dbdt_raw.first().map(|&(t, _)| t).unwrap_or(0.0));
-    let hi = bz_raw
-        .last()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .min(speed_raw.last().map(|&(t, _)| t).unwrap_or(0.0))
-        .min(density_raw.last().map(|&(t, _)| t).unwrap_or(0.0))
-        .min(dbdt_raw.last().map(|&(t, _)| t).unwrap_or(0.0));
+    let lo = [
+        bz_raw.first().map(|&(t, _)| t),
+        speed_raw.first().map(|&(t, _)| t),
+        density_raw.first().map(|&(t, _)| t),
+        dbdt_raw.first().map(|&(t, _)| t),
+    ]
+    .into_iter()
+    .flatten()
+    .reduce(f64::max);
+    let hi = [
+        bz_raw.last().map(|&(t, _)| t),
+        speed_raw.last().map(|&(t, _)| t),
+        density_raw.last().map(|&(t, _)| t),
+        dbdt_raw.last().map(|&(t, _)| t),
+    ]
+    .into_iter()
+    .flatten()
+    .reduce(f64::min);
+    let (Some(lo), Some(hi)) = (lo, hi) else {
+        println!("common 1-min window: absent — no series carries a timestamp.");
+        return;
+    };
     let t0 = (lo / MINUTE).floor() * MINUTE;
     let n_cells = ((hi - t0) / MINUTE).floor().max(1.0) as usize;
     println!();
@@ -757,9 +769,10 @@ fn main() {
 
     println!();
     println!("=== comparison row Kp (3-h grid, lag in 3-h steps) ===");
-    if !kp_raw.is_empty() {
-        let kp_lo = kp_raw.first().map(|&(t, _)| t).unwrap_or(0.0);
-        let kp_hi = kp_raw.last().map(|&(t, _)| t).unwrap_or(0.0);
+    if let (Some(kp_lo), Some(kp_hi)) = (
+        kp_raw.first().map(|&(t, _)| t),
+        kp_raw.last().map(|&(t, _)| t),
+    ) {
         let lo3 = kp_lo.max(t0);
         let hi3 = kp_hi.min(t0 + n_cells as f64 * MINUTE);
         if lo3 < hi3 {
@@ -844,7 +857,7 @@ fn main() {
         "Retro window (years, 1-h grid): the OMNI2 series lives as omni2_serie.bin; the retro row of the Blatt is its own atom."
     );
     println!(
-        "Multiple-comparison correction over the pair matrix: open in the register (TODO.md) — the Blatt carries the raw values with threshold."
+        "Multiple-comparison correction over the pair matrix: open in the thematic handover — the Blatt carries the raw values with threshold."
     );
     println!(
         "GIC itself (electric): no feed — the Blatt measures dB/dt, the inductive driver, not the grid current."
