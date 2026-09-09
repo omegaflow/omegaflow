@@ -1,20 +1,24 @@
-use omegaflow::te::{pcmci_links, TeEstimator, TeNull};
-use std::sync::atomic::{AtomicU8, AtomicUsize, Ordering};
+use omegaflow::te::{gate_fpr_cells, pcmci_links, GateCell, TeEstimator, TeNull};
+use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
-const MAX_LAG: usize = 2;
-const BINS: usize = 4;
 const BURN: usize = 200;
 const KNN: usize = 4;
 const P_MAX: usize = 2;
 const ALPHA: f64 = 0.05;
 
+static MAX_LAG: AtomicUsize = AtomicUsize::new(2);
+static BINS: AtomicUsize = AtomicUsize::new(4);
 static NULL_LAG: AtomicUsize = AtomicUsize::new(12);
 static N_SURR: AtomicUsize = AtomicUsize::new(100);
 static NULL_MODEL: AtomicU8 = AtomicU8::new(1);
 static BLOCK: AtomicUsize = AtomicUsize::new(0);
 static ESTIMATOR: AtomicU8 = AtomicU8::new(1);
 static SECTION: AtomicUsize = AtomicUsize::new(0);
+static R_START: AtomicUsize = AtomicUsize::new(0);
+static R_END: AtomicUsize = AtomicUsize::new(usize::MAX);
+static ANCHOR_ONLY: AtomicBool = AtomicBool::new(false);
+static GATE_ONLY: AtomicBool = AtomicBool::new(false);
 
 fn section(n: usize) -> bool {
     let s = SECTION.load(Ordering::Relaxed);
@@ -265,20 +269,24 @@ fn s60_point(
     let mut void = 0usize;
     let mut top_redraws = 0usize;
     let mut top_excl = 0usize;
-    for ri in 0..r {
+    let r_start = R_START.load(Ordering::Relaxed).min(r.saturating_sub(1));
+    let r_end = R_END.load(Ordering::Relaxed).min(r.saturating_sub(1));
+    for ri in r_start..=r_end {
         let mut trng = seed.wrapping_add((ri as u64).wrapping_mul(0x9E37_79B9));
         let mut accepted: Option<(Vec<f32>, Vec<S60Link>)> = None;
+        let mut ri_redraws = 0usize;
         for _attempt in 0..50 {
             let (a, links) = s60_topology(n_chan, mixed, a_set, &mut trng);
             let mut grng = seed
                 .wrapping_add((ri as u64).wrapping_mul(0x85EB_CA6B))
-                .wrapping_add((top_redraws as u64).wrapping_mul(0x3C1D_9E4F));
+                .wrapping_add((ri_redraws as u64).wrapping_mul(0x3C1D_9E4F));
             if s60_series(n_chan, t, c, &a, &links, &mut grng).is_some() {
                 accepted = Some((a, links));
                 break;
             }
-            top_redraws += 1;
+            ri_redraws += 1;
         }
+        top_redraws += ri_redraws;
         let Some((a, links)) = accepted else {
             top_excl += 1;
             continue;
@@ -326,7 +334,7 @@ fn s60_point(
             hit_pairs.push((h, s - top_excluded));
         }
     }
-    let full = format!("{label} R={r} S={s}");
+    let full = format!("{label} R={r_start}..={r_end} S={s}");
     print_point(
         &full,
         &hit_pairs,
@@ -428,6 +436,68 @@ fn tigramite_overview(n: usize, rng: &mut u64) -> Vec<Vec<f32>> {
     x
 }
 
+fn cell_fpr(cells: &[GateCell], a: f32, d_z: usize) -> Option<f64> {
+    cells
+        .iter()
+        .find(|c| c.a == a && c.d_z == d_z)
+        .and_then(|c| (c.neg > 0).then(|| 100.0 * c.fp as f64 / c.neg as f64))
+}
+
+fn gate_battery() {
+    let cells = gate_fpr_cells(
+        null_model(),
+        estimator(),
+        MAX_LAG.load(Ordering::Relaxed),
+        NULL_LAG.load(Ordering::Relaxed),
+        BINS.load(Ordering::Relaxed),
+        BLOCK.load(Ordering::Relaxed),
+        N_SURR.load(Ordering::Relaxed),
+    );
+    println!(
+        "[gate] Zug-5 battery — common-driver FPR per a × D_Z (criterion ≤8% per cell, rise ≤2pp):"
+    );
+    let mut pass = true;
+    for c in &cells {
+        match c.neg {
+            0 => {
+                println!(
+                    "    a={} D_Z={}: void (no measurement) — GATE FAIL",
+                    c.a, c.d_z
+                );
+                pass = false;
+            }
+            neg => {
+                let fpr = 100.0 * c.fp as f64 / neg as f64;
+                println!(
+                    "    a={} D_Z={}: FPR={fpr:.2}% (fp={} neg={neg})",
+                    c.a, c.d_z, c.fp
+                );
+                if fpr > 8.0 {
+                    pass = false;
+                    println!(
+                        "    GATE FAIL: a={} D_Z={} FPR {fpr:.2}% exceeds 8%",
+                        c.a, c.d_z
+                    );
+                }
+            }
+        }
+    }
+    for d_z in [0usize, 4usize] {
+        let f0 = cell_fpr(&cells, 0.0, d_z);
+        let f9 = cell_fpr(&cells, 0.9, d_z);
+        if let (Some(f0), Some(f9)) = (f0, f9) {
+            if f9 - f0 > 2.0 {
+                pass = false;
+                println!(
+                    "    GATE FAIL: FPR rise {:.2}pp over a at D_Z={d_z} exceeds 2pp",
+                    f9 - f0
+                );
+            }
+        }
+    }
+    println!("    verdict: {}", if pass { "PASS" } else { "FAIL" });
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let quick = args.iter().any(|a| a == "--quick");
@@ -510,11 +580,94 @@ fn main() {
             }
         }
     }
+    let bins_arg = args
+        .iter()
+        .position(|a| a == "--bins")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = bins_arg {
+        match v.parse::<usize>() {
+            Ok(n) if n >= 2 => BINS.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--bins carries {n} — binning needs at least 2 bins");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--bins carries {v} — not a bin count");
+                std::process::exit(1);
+            }
+        }
+    }
+    let max_lag_arg = args
+        .iter()
+        .position(|a| a == "--max-lag")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = max_lag_arg {
+        match v.parse::<usize>() {
+            Ok(n) if n >= 1 => MAX_LAG.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--max-lag carries {n} — tau needs at least 1");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--max-lag carries {v} — not a lag budget");
+                std::process::exit(1);
+            }
+        }
+    }
+    let null_lag_arg = args
+        .iter()
+        .position(|a| a == "--null-lag")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = null_lag_arg {
+        match v.parse::<usize>() {
+            Ok(n) if n >= 1 => NULL_LAG.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--null-lag carries {n} — the residual null needs at least 1");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--null-lag carries {v} — not a lag budget");
+                std::process::exit(1);
+            }
+        }
+    }
+    let r_arg = args
+        .iter()
+        .position(|a| a == "--r")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = r_arg {
+        let Some((a, b)) = v.split_once(':') else {
+            eprintln!("--r carries {v} — the split is written a:b (inclusive)");
+            std::process::exit(1);
+        };
+        let (Ok(a), Ok(b)) = (a.parse::<usize>(), b.parse::<usize>()) else {
+            eprintln!("--r carries {v} — not an a:b range");
+            std::process::exit(1);
+        };
+        if a > b {
+            eprintln!("--r carries {v} — a must not exceed b");
+            std::process::exit(1);
+        }
+        R_START.store(a, Ordering::Relaxed);
+        R_END.store(b, Ordering::Relaxed);
+    }
+    if args.iter().any(|a| a == "--anchor") {
+        ANCHOR_ONLY.store(true, Ordering::Relaxed);
+    }
+    if args.iter().any(|a| a == "--gate") {
+        GATE_ONLY.store(true, Ordering::Relaxed);
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
+    let bins = BINS.load(Ordering::Relaxed);
+    let max_lag = MAX_LAG.load(Ordering::Relaxed);
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick}",
+        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} r={}..={}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
@@ -526,8 +679,35 @@ fn main() {
         match estimator() {
             TeEstimator::Binned => "binned",
             TeEstimator::Ksg => "ksg",
-        }
+        },
+        ANCHOR_ONLY.load(Ordering::Relaxed),
+        GATE_ONLY.load(Ordering::Relaxed),
+        R_START.load(Ordering::Relaxed),
+        R_END.load(Ordering::Relaxed),
     );
+
+    if ANCHOR_ONLY.load(Ordering::Relaxed) {
+        let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
+        s60_point(
+            10,
+            150,
+            0.287,
+            false,
+            &set1,
+            "N=10 c=0.287 a-set1 (anchor)",
+            top(3),
+            div(20),
+            max_lag,
+            bins,
+            SEED,
+        );
+    }
+    if GATE_ONLY.load(Ordering::Relaxed) {
+        gate_battery();
+    }
+    if ANCHOR_ONLY.load(Ordering::Relaxed) || GATE_ONLY.load(Ordering::Relaxed) {
+        return;
+    }
 
     println!();
     let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
@@ -546,7 +726,7 @@ fn main() {
                 top(3),
                 div(20),
                 2,
-                BINS,
+                BINS.load(Ordering::Relaxed),
                 SEED,
             );
         }
@@ -560,7 +740,7 @@ fn main() {
             top(2),
             div(20),
             2,
-            BINS,
+            BINS.load(Ordering::Relaxed),
             SEED,
         );
         s60_point(
@@ -573,7 +753,7 @@ fn main() {
             top(2),
             div(10),
             5,
-            BINS,
+            BINS.load(Ordering::Relaxed),
             SEED,
         );
         println!("    c-scaling (Fig. 6, qualitative):");
@@ -588,7 +768,7 @@ fn main() {
                 top(2),
                 div(10),
                 2,
-                BINS,
+                BINS.load(Ordering::Relaxed),
                 SEED,
             );
         }
@@ -604,7 +784,7 @@ fn main() {
                 top(2),
                 div(10),
                 2,
-                BINS,
+                BINS.load(Ordering::Relaxed),
                 SEED,
             );
         }
@@ -641,7 +821,7 @@ fn main() {
                 top(2),
                 div(10),
                 2,
-                BINS,
+                BINS.load(Ordering::Relaxed),
                 SEED,
             );
         }
@@ -667,7 +847,7 @@ fn main() {
                 let (z, x, y) = chaos_maps(150, sigma, &mut rng);
                 let series = [z, x, y];
                 let true_links = [(0usize, 1usize, 1usize), (0, 2, 1)];
-                match measure(&series, &true_links, 2, BINS, SEED) {
+                match measure(&series, &true_links, 2, BINS.load(Ordering::Relaxed), SEED) {
                     Some((found, f, n)) => {
                         if found[0] {
                             zx += 1;
@@ -706,7 +886,7 @@ fn main() {
                         .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
                         .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
                     let series = common_driver(150, a, 0.0, d_z, 0.5, 0.25, &mut rng);
-                    match measure(&series, &[], 2, BINS, SEED) {
+                    match measure(&series, &[], 2, BINS.load(Ordering::Relaxed), SEED) {
                         Some((_, f, n)) => {
                             fp += f;
                             neg += n;
@@ -722,7 +902,13 @@ fn main() {
                         .wrapping_add((d_z as u64).wrapping_mul(0x85EB_CA6B))
                         .wrapping_add((a.to_bits() as u64).wrapping_mul(0xC2B2_AE3D));
                     let series = common_driver(150, a, 0.3, d_z, 0.5, 0.25, &mut rng);
-                    match measure(&series, &[(0usize, 1usize, 1usize)], 2, BINS, SEED) {
+                    match measure(
+                        &series,
+                        &[(0usize, 1usize, 1usize)],
+                        2,
+                        BINS.load(Ordering::Relaxed),
+                        SEED,
+                    ) {
                         Some((found, _, _)) => {
                             realized += 1;
                             if found[0] {
@@ -766,7 +952,7 @@ fn main() {
             for si in 0..s {
                 let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0x85EB_CA6B));
                 let series = mute_network(1000, &mut rng);
-                match measure(&series, &true_links, 3, BINS, SEED) {
+                match measure(&series, &true_links, 3, BINS.load(Ordering::Relaxed), SEED) {
                     Some((found, f, n)) => {
                         for (k, &fnd) in found.iter().enumerate() {
                             if fnd {
@@ -805,7 +991,7 @@ fn main() {
             for si in 0..s {
                 let mut rng = SEED.wrapping_add((si as u64).wrapping_mul(0xC2B2_AE3D));
                 let series = tigramite_overview(1000, &mut rng);
-                match measure(&series, &true_links, 3, BINS, SEED) {
+                match measure(&series, &true_links, 3, BINS.load(Ordering::Relaxed), SEED) {
                     Some((found, f, n)) => {
                         for (k, &fnd) in found.iter().enumerate() {
                             if fnd {
