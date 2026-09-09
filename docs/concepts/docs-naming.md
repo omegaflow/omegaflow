@@ -12,11 +12,12 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
 
 - `docs/handover/handover-YYYY-MM-DD-<slug>.md` — a handover (Übergabe) and a
   session plan are one kind of document: written by the closing session, read
-  by exactly one receiving session,   consumed into code/register/commits.
-  Immutable. The date is the document's own date, never invented.
-  `handover-thematisch-<slug>.md` — a standing thematic handover: evolving, no
-  date in the name, read by many sessions, the live register of one open line,
-  `class: handover`, `status: live`.
+  by the next session to continue, consumed into code/register/commits.
+  Immutable. The date is the document's own date, never invented. Open points
+  stay named in the handover; the session that works them off takes them up.
+  Same-day handovers with similar slugs may coexist (in the archive or live) —
+  the name carries the day and the line, and the next session reads the one it
+  needs.
 - `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
   `survey-<slug>.md` — a standing survey (evolving, no date in the name).
 - `docs/plans/ref-<slug>.md` — a standing reference list.

@@ -24,7 +24,7 @@
 | **Spacecraft** — ISS, Juno, JWST, New Horizons, Parker Solar Probe, Solar Orbiter, Voyager 1/2 | body | in-register + built | 8 |
 | **Wind** (L1 solar wind + orbit) | body | in-register + built | 1 × `orbit_bin` + `wind_waves` |
 | **Small-body elements** (DASTCOM asteroid/comet catalog) | body-elements | in-register + built | `catalog_dastcom`, `dastcom_compiler` |
-| **MPC orbits / observations** (independent second body-line) | body | pending (route live) | `docs/handover/handover-thematisch-mechanische-reste.md`, `mpcobs_compiler` built |
+| **MPC orbits / observations** (independent second body-line) | body | pending (route live) | `docs/handover/handover-2026-09-09-mechanische-reste.md`, `mpcobs_compiler` built |
 
 72 × `ephemeris_binary` + 1 `orbit_bin` = **73 registered body worldlines** (all `at <body>`, ttl 86400, CDN JPL-SPK, compiled by `ephemeris_compiler`/`wind_orbit_compiler`).
 

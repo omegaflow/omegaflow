@@ -4,7 +4,7 @@
   date: 2026-09-08
   sha256: 4c5dc35b3fe755ef6bdd0bb393832f55f99c16ee1ccddfeb044ee67dea2d6a46
   status: live
-  see-also: docs/handover/handover-thematisch-te-atom-4.md docs/specs/spectral-oscillator.md
+  see-also: docs/handover/handover-2026-09-09-te-atom-4.md docs/specs/spectral-oscillator.md
 -->
 
 # BLATT — Die Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweislauf

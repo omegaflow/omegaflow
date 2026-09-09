@@ -4,7 +4,7 @@
   date: 2026-08-24
   sha256: 0794d2c48ec12a1fc0b05dc88081e7ff70de62461a36a1e7b38b6ba8e555147e
   status: live
-  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/handover/handover-thematisch-mechanische-reste.md (Pioneer-Front)
+  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/handover/handover-2026-09-09-mechanische-reste.md (Pioneer-Front)
 -->
 
 # DER NEGATIVE FUZZY-INDEX — das Unvorhersagbare ist die Wahrheit

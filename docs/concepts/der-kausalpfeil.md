@@ -4,7 +4,7 @@
   date: 2026-08-21
   sha256: cbda9b11710ca5a87cb9b7fbf1fde5e473735f28ba20110335f792e8a16947ab
   status: live
-  see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/handover-thematisch-te-atom-4.md phi/sources.φ
+  see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/handover-2026-09-09-te-atom-4.md phi/sources.φ
 -->
 # DER_KAUSALPFEIL — drei Rätsel, drei Blätter Papier
 
@@ -62,7 +62,7 @@ statement, Unterbestimmtheit, keine Fabrikation).
   kein Fitparameter.
 - Mehrvergleich: werden mehrere Paare/Fenster gemessen, zählen die Paare
   und die Schwelle wird mitgeführt (Register-Punkt
-  `docs/handover/handover-thematisch-te-atom-4.md`, Nadel Ⅲ).
+  `docs/handover/handover-2026-09-09-te-atom-4.md`, Nadel Ⅲ).
 
 ## Architektur-Anknüpfung — was bereits lebt
 
@@ -86,14 +86,14 @@ statement, Unterbestimmtheit, keine Fabrikation).
   1-min, live geprüft) — lebt. INTERMAGNET: ausstehend — Queue-Draft
   `phi/pipeline/queue/sources_potential_pre-cdn_params.φ` (HAPI, ~154
   Observatorien), Register
-  `docs/handover/handover-thematisch-mechanische-reste.md`.
+  `docs/handover/handover-2026-09-09-mechanische-reste.md`.
 - **LAIC:** Seismizität USGS/SeismicPortal/JMA/GeoNet/p2pquake
   (`phi/sources.φ:18–48, 116–122, 237–240`) — lebt. Ionosphäre: Swarm
   FAC/IRC (`:1111–1112`, electric) — lebt. CSES: ausstehend. IONEX-GIM:
   ausstehend (CDDIS-OAuth,
-  `docs/handover/handover-thematisch-mechanische-reste.md`). GIC direkt:
+  `docs/handover/handover-2026-09-09-mechanische-reste.md`). GIC direkt:
   ausstehend (kein Feed,
-  `docs/handover/handover-thematisch-mechanische-reste.md`).
+  `docs/handover/handover-2026-09-09-mechanische-reste.md`).
 
 ## Ethik der Messung
 
