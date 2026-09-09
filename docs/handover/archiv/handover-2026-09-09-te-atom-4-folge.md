@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: 3ef51fc7ea0819403abf1f7b9c988970bfa794f0c5c7381d190b15450bc8d115
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/auftrag/auftrag-galileo-nsurr-20.md
+  status: archived
+  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/auftrag/auftrag-galileo-nsurr-20.md docs/handover/handover-2026-09-09-te-galileo-nsurr.md
 -->
 # Thematisches Handover — TE-Atom-4-Folge (der n=1000-Shift trägt keinen Null-Umzug)
 
