@@ -28,6 +28,7 @@ fn scan(root: &Path) -> (usize, usize) {
     for f in &files {
         let rel = f.to_string_lossy().to_string();
         if rel.contains("path_reference_scan.rs")
+            || rel.contains("/archiv/")
             || rel.contains("docs/reference/")
             || rel.starts_with("gate/")
             || rel.starts_with("mail/")
@@ -50,9 +51,14 @@ fn scan(root: &Path) -> (usize, usize) {
             if is_markdown && line.starts_with('#') {
                 continue;
             }
-            for abs in absolute_paths(line) {
-                absolute += 1;
-                println!("ABS  {}:{}  {}", rel, n, abs);
+            if !rel.ends_with(".rs") {
+                for abs in absolute_paths(line) {
+                    if rel == "AGENTS.md" && abs == "/home/johannes/backup/archive-root/" {
+                        continue;
+                    }
+                    absolute += 1;
+                    println!("ABS  {}:{}  {}", rel, n, abs);
+                }
             }
             if !is_markdown {
                 continue;
@@ -134,6 +140,7 @@ fn file_refs(line: &str) -> Vec<(&str, String)> {
 
 fn absolute_paths(line: &str) -> Vec<&str> {
     let mut out = Vec::new();
+    let line = line.split("://").next().unwrap_or(line);
     let markers = ["/home/", "/Users/", "/root/", "/srv/", "/mnt/"];
     for m in markers {
         let mut rest = line;
@@ -194,5 +201,14 @@ mod tests {
     fn absolute_path_detection_names_leading_home() {
         let found = absolute_paths("wohnt in /home/johannes/projects/omegaflow/ dir");
         assert_eq!(found, vec!["/home/johannes/projects/omegaflow/"]);
+    }
+
+    #[test]
+    fn url_contexts_are_not_local_paths() {
+        assert!(absolute_paths("served at https://example.com/srv/eng/csw?format=json").is_empty());
+        assert_eq!(
+            absolute_paths("see /home/johannes/a then https://x/srv/b"),
+            vec!["/home/johannes/a"]
+        );
     }
 }

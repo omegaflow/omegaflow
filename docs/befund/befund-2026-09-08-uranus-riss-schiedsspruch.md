@@ -4,7 +4,7 @@
   date: 2026-09-08
   sha256: 2d44b69fd1dfdc7b26380c4e70de0f5b4f24b3dbb9a0f4cb722a6b4221161855
   status: done
-  see-also: docs/handover/archiv/handover-2026-09-08-uranus-riss-schiedsspruch.md docs/handover/handover-2026-09-08-weberin-zweitlinien-geschlossen.md docs/concepts/die-weberin.md
+  see-also: docs/handover/archiv/handover-2026-09-08-uranus-riss-schiedsspruch.md docs/concepts/die-weberin.md
 -->
 
 # Befund: Uranus-Riss-Schiedsspruch

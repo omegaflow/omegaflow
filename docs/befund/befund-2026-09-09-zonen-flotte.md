@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 345d7b64d5f4adc697eeb05132d853227c7039c6c0b87c398a6990a9e665c7a1
   status: done
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-tiefherd.md docs/befund/befund-2026-09-09-ak135-tiefherd-erweiterung.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-tiefherd.md docs/befund/befund-2026-09-09-ak135-tiefherd-erweiterung.md docs/befund/befund-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md
 -->
 # Befund: die Zonen-Flotte (Tonga/Fiji, 410–660 km)
 
