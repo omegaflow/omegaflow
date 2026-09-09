@@ -4,6 +4,7 @@ use omegaflow::archivar::{
 use omegaflow::cdn::{upload_asset, CDN_BASE, CDN_RELEASE};
 use omegaflow::inflate::{gunzip, unzip};
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow_measure::miniseed::decode_body;
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -446,277 +447,6 @@ fn geocentric_to_geodetic_lat(lat_geo: f64) -> f64 {
         .to_degrees()
 }
 
-fn bcd(b: u8) -> Option<u32> {
-    let hi = (b >> 4) & 0xF;
-    let lo = b & 0xF;
-    if hi > 9 || lo > 9 {
-        None
-    } else {
-        Some(hi as u32 * 10 + lo as u32)
-    }
-}
-
-fn mseed_time(h: &[u8]) -> Option<f64> {
-    let year_binary = bcd(h[20]).is_none() || bcd(h[21]).is_none();
-    let year = if year_binary {
-        (h[20] as u32) << 8 | h[21] as u32
-    } else {
-        bcd(h[20]).unwrap() * 100 + bcd(h[21]).unwrap()
-    };
-    let doy = if year_binary {
-        (h[22] as u32) << 8 | h[23] as u32
-    } else {
-        match (bcd(h[22]), bcd(h[23]), bcd(h[24])) {
-            (Some(a), Some(b), Some(c)) => a * 100 + b * 10 + c,
-            _ => (h[22] as u32) << 8 | h[23] as u32,
-        }
-    };
-    let hour = bcd(h[25])?;
-    let min = bcd(h[26])?;
-    let sec = bcd(h[27])?;
-    let frac = match bcd(h[29]) {
-        Some(f) => f as f64 / 10000.0,
-        None => 0.0,
-    };
-    let days = ymd_to_days(year as i64, 1, 1)? as f64;
-    Some(
-        (days + doy as f64 - 1.0) * 86400.0
-            + hour as f64 * 3600.0
-            + min as f64 * 60.0
-            + sec as f64
-            + frac,
-    )
-}
-
-fn sign_extend(v: u32, bits: u32) -> i64 {
-    let shift = 32 - bits;
-    ((v << shift) as i32 as i64) >> shift
-}
-
-fn steim_decode(words: &[u32], encoding: u8, nsamp: usize) -> Vec<i32> {
-    let nframes = words.len() / 16;
-    let mut out: Vec<i32> = Vec::with_capacity(nsamp.min(words.len() * 8));
-    let mut xn: i64 = 0;
-    for fi in 0..nframes {
-        if out.len() >= nsamp {
-            break;
-        }
-        let base = fi * 16;
-        let ctrl = words[base];
-        let start: usize = if fi == 0 {
-            out.push(words[base + 1] as i32);
-            xn = words[base + 1] as i64;
-            3
-        } else {
-            1
-        };
-        let mut diffs: Vec<i64> = Vec::new();
-        for widx in start..16 {
-            let w = words[base + widx];
-            let nib = (ctrl >> (30 - 2 * widx)) & 3;
-            match nib {
-                0 => {}
-                1 => {
-                    for j in 0..4 {
-                        diffs.push(((w >> (24 - 8 * j)) & 0xFF) as i8 as i64);
-                    }
-                }
-                2 => {
-                    if encoding == 10 {
-                        diffs.push(sign_extend((w >> 16) & 0xFFFF, 16));
-                        diffs.push(sign_extend(w & 0xFFFF, 16));
-                    } else {
-                        match (w >> 30) & 3 {
-                            0 => return out,
-                            1 => diffs.push(sign_extend(w & 0x3FFF_FFFF, 30)),
-                            2 => {
-                                diffs.push(sign_extend((w >> 15) & 0x7FFF, 15));
-                                diffs.push(sign_extend(w & 0x7FFF, 15));
-                            }
-                            _ => {
-                                diffs.push(sign_extend((w >> 20) & 0x3FF, 10));
-                                diffs.push(sign_extend((w >> 10) & 0x3FF, 10));
-                                diffs.push(sign_extend(w & 0x3FF, 10));
-                            }
-                        }
-                    }
-                }
-                3 => {
-                    if encoding == 10 {
-                        diffs.push(sign_extend(w, 32));
-                    } else {
-                        match (w >> 30) & 3 {
-                            0 => {
-                                for j in 0..5 {
-                                    diffs.push(sign_extend((w >> (24 - 6 * j)) & 0x3F, 6));
-                                }
-                            }
-                            1 => {
-                                for j in 0..6 {
-                                    diffs.push(sign_extend((w >> (25 - 5 * j)) & 0x1F, 5));
-                                }
-                            }
-                            2 => {
-                                for j in 0..7 {
-                                    diffs.push(sign_extend((w >> (24 - 4 * j)) & 0xF, 4));
-                                }
-                            }
-                            _ => return out,
-                        }
-                    }
-                }
-                _ => {}
-            }
-        }
-        let dstart = if fi == 0 { 1 } else { 0 };
-        for idx in dstart..diffs.len() {
-            if out.len() >= nsamp {
-                break;
-            }
-            xn += diffs[idx];
-            out.push(xn as i32);
-        }
-    }
-    out.truncate(nsamp);
-    out
-}
-
-fn mseed_samples(
-    h: &[u8],
-    data: &[u8],
-    encoding: u8,
-    byte_order: u8,
-    nsamp: usize,
-    rate: f64,
-) -> Vec<(f64, f64)> {
-    let big = byte_order == 1;
-    let rd16 = |i: usize| -> u16 {
-        let b = [data[i], data[i + 1]];
-        if big {
-            u16::from_be_bytes(b)
-        } else {
-            u16::from_le_bytes(b)
-        }
-    };
-    let rd32 = |i: usize| -> u32 {
-        let b = [data[i], data[i + 1], data[i + 2], data[i + 3]];
-        if big {
-            u32::from_be_bytes(b)
-        } else {
-            u32::from_le_bytes(b)
-        }
-    };
-    let mut raw: Vec<i32> = Vec::with_capacity(nsamp);
-    match encoding {
-        1 => {
-            for i in 0..nsamp {
-                raw.push(rd16(i * 2) as i16 as i32);
-            }
-        }
-        2 => {
-            for i in 0..nsamp {
-                let b = [data[i * 3], data[i * 3 + 1], data[i * 3 + 2]];
-                let v = if big {
-                    (b[0] as u32) << 16 | (b[1] as u32) << 8 | b[2] as u32
-                } else {
-                    (b[2] as u32) << 16 | (b[1] as u32) << 8 | b[0] as u32
-                };
-                raw.push(sign_extend(v, 24) as i32);
-            }
-        }
-        3 => {
-            for i in 0..nsamp {
-                raw.push(rd32(i * 4) as i32);
-            }
-        }
-        4 => {
-            for i in 0..nsamp {
-                let b = [
-                    data[i * 4],
-                    data[i * 4 + 1],
-                    data[i * 4 + 2],
-                    data[i * 4 + 3],
-                ];
-                let f = if big {
-                    f32::from_be_bytes(b)
-                } else {
-                    f32::from_le_bytes(b)
-                };
-                raw.push(f as i32);
-            }
-        }
-        5 => {
-            for i in 0..nsamp {
-                let b = [
-                    data[i * 8],
-                    data[i * 8 + 1],
-                    data[i * 8 + 2],
-                    data[i * 8 + 3],
-                    data[i * 8 + 4],
-                    data[i * 8 + 5],
-                    data[i * 8 + 6],
-                    data[i * 8 + 7],
-                ];
-                let f = if big {
-                    f64::from_be_bytes(b)
-                } else {
-                    f64::from_le_bytes(b)
-                };
-                raw.push(f as i32);
-            }
-        }
-        10 | 11 => {
-            let mut words = Vec::with_capacity(data.len() / 4);
-            let mut i = 0usize;
-            while i + 4 <= data.len() {
-                words.push(rd32(i));
-                i += 4;
-            }
-            raw = steim_decode(&words, encoding, nsamp);
-        }
-        _ => return Vec::new(),
-    }
-    raw.truncate(nsamp);
-    let Some(t) = mseed_time(h) else {
-        return Vec::new();
-    };
-    let mut out = Vec::with_capacity(raw.len());
-    for (i, v) in raw.iter().enumerate() {
-        out.push((t + i as f64 / rate, *v as f64));
-    }
-    out
-}
-
-fn parse_mseed(bytes: &[u8]) -> Vec<(f64, f64)> {
-    let mut out = Vec::new();
-    let mut pos = 0usize;
-    while pos + 64 <= bytes.len() {
-        let h = &bytes[pos..pos + 64];
-        let data_start = ((h[44] as usize) << 8 | h[45] as usize).max(64);
-        let nsamp = (h[30] as usize) << 8 | h[31] as usize;
-        let factor = i16::from_be_bytes([h[32], h[33]]);
-        let mult = i16::from_be_bytes([h[34], h[35]]);
-        let rate = if factor > 0 {
-            factor as f64 * mult as f64
-        } else if factor < 0 {
-            -(mult as f64) / (factor as f64)
-        } else {
-            0.0
-        };
-        let encoding = h[52];
-        let byte_order = h[53];
-        let rec_len = 1usize << h[54];
-        if data_start >= rec_len || rate <= 0.0 {
-            break;
-        }
-        let end = (pos + rec_len).min(bytes.len());
-        let data = &bytes[pos + data_start..end];
-        out.extend(mseed_samples(h, data, encoding, byte_order, nsamp, rate));
-        pos += rec_len;
-    }
-    out
-}
-
 fn champ_samples_from_zip(bytes: &[u8]) -> Vec<(f64, f64, f64, f64)> {
     let Some(unzipped) = unzip(bytes) else {
         return Vec::new();
@@ -872,7 +602,9 @@ fn harvest_mseed(dir: &str, t0: f64, lat: f64, lon: f64) -> (String, Vec<(f64, f
             let Some(bytes) = fetch_raw_bytes(&ds_url, 86400) else {
                 continue;
             };
-            let samples = parse_mseed(&bytes);
+            let Some((samples, _)) = decode_body(&bytes) else {
+                continue;
+            };
             if samples.len() < 100 {
                 continue;
             }
@@ -3798,21 +3530,23 @@ mod tests {
                 return;
             }
         };
-        let mut expected = 0usize;
+        let mut header_sum = 0usize;
         let mut pos = 0usize;
         while pos + 64 <= bytes.len() {
             let h = &bytes[pos..pos + 64];
-            expected += (h[30] as usize) << 8 | h[31] as usize;
+            header_sum += (h[30] as usize) << 8 | h[31] as usize;
             let rec_len = 1usize << h[54];
             pos += rec_len;
         }
-        let samples = parse_mseed(&bytes);
+        let Some((samples, _)) = decode_body(&bytes) else {
+            panic!("decode_body returned None; the per-record headers sum to {header_sum}");
+        };
         assert_eq!(
             samples.len(),
-            expected,
+            header_sum,
             "decoded sample count must equal the sum of the per-record header counts"
         );
-        assert!(expected > 0, "the file must carry records");
+        assert!(header_sum > 0, "the file must carry records");
         let t0 = samples[0].0;
         assert!(
             (t0 - 1704067200.0).abs() < 2.0,

@@ -174,11 +174,17 @@ fn main() {
         let depth_txt = match &pp {
             Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => {
                 match dp::invert_depth_single(delta, p.lag_s) {
-                    Some(h) => {
+                    dp::DepthInversion::Depth(h) => {
                         depths.push(h);
                         format!("{h:.0} km")
                     }
-                    None => "inversion void".to_string(),
+                    dp::DepthInversion::EdgeDiscontinuity => {
+                        "edge-clamped at the 660 wall".to_string()
+                    }
+                    dp::DepthInversion::SaturatedBound => {
+                        "saturated at the 700 ceiling".to_string()
+                    }
+                    dp::DepthInversion::Absent => "inversion void".to_string(),
                 }
             }
             _ => "-".to_string(),
