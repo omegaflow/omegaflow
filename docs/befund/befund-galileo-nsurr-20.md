@@ -4,8 +4,8 @@
   date: 2026-09-09
   sha256: b1518f50e0bc325416ac739d7778cd600c7d8842d109cd7abe4dffb6779da6e3
   status: done
-  antwortet-auf: docs/auftrag/auftrag-galileo-nsurr-20.md
-  see-also: docs/handover/handover-2026-09-09-te-galileo-nsurr.md docs/handover/archiv/handover-2026-09-09-te-atom-4-folge.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-galileo-nsurr-20.md
+  see-also: docs/handover/archiv/handover-2026-09-09-te-galileo-nsurr.md docs/handover/archiv/handover-2026-09-09-te-atom-4-folge.md
 -->
 # Befund — Galileo N_SURR 20-vs-10: 10 bleibt das gemessene Blatt
 
