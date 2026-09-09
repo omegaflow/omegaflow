@@ -82,7 +82,7 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   scheitert für ein Wesen, das man nicht fragen kann — Art (c) bleibt recorded, nicht gebaut;
   der Wal bleibt frei, namenlos, im Wasser (0 honored).
 
-- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 gefunden, Code GEBAUT (2026-09-07).**
+- **Survey-Footprint-Asset (Weberin §9 Stufe 5) — DES-DR2 GELOEST, fuenf Surveys entschieden (2026-09-09).**
   Re-probe geschlossen (2026-09-07, drei Providers curl-gemessen): LIneA (DRI) + CosmoHub
   kontogegatet, aber der NOIRLab Astro Data Lab TAP sync (datalab.noirlab.edu/tap/sync,
   REQUEST=doQuery, anonym HTTP 200) trägt `des_dr2.coverage` — die DR2/Y6A2-Coverage-Maske
@@ -93,12 +93,20 @@ neben `zeugen_gate` (Hold/Reject/Pending). Offen bleibt:
   Footprint ist kein Zeuge (gestalt = Koerperoberflaeche, falscher Sitz) und kein Oszillator —
   er braucht eine EIGENE Survey-Footprint-Asset-Klasse (S² + Coverage-Fraktion, τ = Survey-
   Epoche, Archivar-Seite, konsumiert als Gate, nie als ω()-Feld). GEBAUT: `src/archivar/footprint.rs`
-  (Record FP01: order+band+ipix+frac, 12 B, Nside 4096; `magic_identity(FP01)=Footprint` in
-  zeuge.rs; `footprint_gate` Observed/NeverObserved/BandUncovered/Pending) + Compiler
-  `des_coverage_compiler` (tools/harvest, Pagination je hpix_4096-Bereich, entdupliziert) +
-  CDN-Workflow `des-coverage-cdn.yml`. Register-Sitz `phi/footprints.φ` (footprint des-dr2);
-  `phi/blocked_sources.φ` des.ncsa.illinois.edu-Eintrag trägt den gebauten Stand. Offen: die
-  volle 25-M-Ernte im CI-Lauf (Ernte-Strategie gemessen, Lauf pending).
+  (Record FP01: order+band+ipix+frac, 12 B; `magic_identity(FP01)=Footprint` in zeuge.rs;
+  `footprint_gate` Observed/NeverObserved/BandUncovered/Pending) + Compiler
+  `des_coverage_compiler` + CDN-Workflow `des-coverage-cdn.yml`. Register-Sitz `phi/footprints.φ`.
+  GELOEST (2026-09-08): die Tafel trägt Mehrfach-Belegung (per-Epoche/Visit) — Aggregation
+  MAX je (pixel,band) `collapse_max`, Re-Ernte-Lauf 34222237312 (10.311.965 Records, 25.239.595
+  Quell-Zeilen exakt), Asset `des_dr2_coverage.fp01` auf der CDN vertrauenswuerdig. Gate-Bindung
+  `footprint_gate_probe --survey des-dr2` (tools/measure). Fuenf Surveys entschieden (2026-09-09):
+  DES fraktional (GELOEST), PS1 binar (`ps1_dr2_binary.fp01`, Rezept A, Nside 256, liegt auf der
+  CDN; Gate-Bindung `--survey ps1`) + PS1 fraktional laeuft als Tiefen-Ernte weiter (Autoresume,
+  Operator-Wort 2026-09-09), SDSS ehrlich absent (keine per-Pixel-Flaeche), 2MASS Rezept A
+  (`2mass_binary_compiler`, fp_scan_dat-Archivexistenz → binaere Maske J/H/Ks, Nside 256) +
+  AllWISE fraktional (`wise_coverage_compiler` + `wise_coverage_combiner` + `allwise-cdn.yml`,
+  Nside 1024 — Ganzhimmel × 4 Baender auf 4096 waere 9,6 GB ueber der 2-GB-Grenze). Offen:
+  Ernte-Dispatch fuer AllWISE und 2MASS = Operator-Wort (Workflows stehen, Assets fehlen bis dahin).
 
 - **NRS-Re-Emitt — verifiziert, Tabellen-Fallback dormant (2026-09-07).** Der
   sound_level_metrics-Prefix trägt genau 5 Deployments (4× NRS01, 1× NRS11), alle mit
@@ -1108,6 +1116,36 @@ physikalischen Aussage — kein Blatt ohne diese:
   Surrogate ≈ Stunden auf der Haus-CPU (die Block-Null ist dort billiger: kein
   OLS). Register-Duty: die Wiederholungen laufen auf dem Desktop/Myzel, nicht
   auf dem Laptop unter Last.
+- **KSG-kNN zweiter Schätzer — gebaut, Zug 6 grün, Zug 5-ksg grün (2026-09-08,
+  geschlossen)**: `transfer_entropy_ksg_conditional_n` (te.rs) neben der
+  Binning-TE — Frenzel–Pompe-Vollraum: ε = k-ter Nachbar (max-Norm) im
+  (x', x, y, C)-Raum, TE = ψ(k) + ⟨ψ(n_xC+1) − ψ(n_x'xC+1) − ψ(n_xyC+1)⟩;
+  std-only-digamma (Rekurrenz + 4 Bernoulli-Glieder); k = 4 (JIDT-Default,
+  Methoden-Anker); der Formel-Anker ist der JIDT-Quellcode
+  (ConditionalMutualInfoCalculatorMultiVariateKraskov1), die Literatur-Anker
+  KSG 2004 (PRE 69, 066138) und Frenzel–Pompe 2007 (PRL 99, 204101) stehen
+  crossref-verifiziert in der Literatur-Matrix. `TeEstimator` (Binned/Ksg) in
+  `pcmci_links` + Probes (`--est binned|ksg`, Default ksg; nobel-Proben bleiben
+  Binned — die Selektionsregel: dünne Stichproben → kNN, reiche → Bins,
+  benannt). Zug 6 = Miss-Funktions-Floor, grün (912 s): am Anker
+  N=10/T=150/c=0.287 mit gegebenen wahren Eltern ≥ 3/30 Links über 70 % Power —
+  der Schätzer sieht, was Bins nicht sehen; die Batterie ist das Urteil.
+  Zug 5-Nachlauf für (Block, ksg), grün (3911 s — benannte Gate-Kosten): FPR
+  ≤ 8 % je a + Anstieg ≤ 2 pp, beide D_Z. Nachher-Batterie (ksg/Block/100,
+  fester Seed): Anker 0/30 über 70 % unverändert bei FPR 3,88 % — der Schätzer
+  allein trägt den Anker nicht, die Lücke ist die Suche (ein Durchgang, kein
+  Re-Test) = die Adresse des DAG-Atoms; gemessene Gewinne: a-set2 1/20 über
+  70 % (max 0,95; war 0/20), c-Sweep bis 3/20 bei c=0.414 (war 1/20),
+  Common-Driver TPR D_Z=4: 2/3/4 → 2/6/9 von 20 und D_Z=0 a=0.9: 8 → 15,
+  Chaos-Logistik FPR 2,0–2,4 % (Befund 11,8–13,6 %), Tigramite FPR 8,75 %
+  (Befund 11,3 %). Benannte Grenzen: σ=0 bleibt der 50/50-Münzwurf
+  (Determinismus — keine der beiden Nullen trägt ihn, erwartet, nicht als Fund
+  vorgeführt); IDTxl-MuTE (n=1000) FPR 28,36 % — die Block-Länge n^(1/3)=10
+  ist auf n=1000-Serien zu kurz, der kNN-Schätzer repariert die Null nicht.
+  Zielzeile fortgeschrieben: FPR-Fläche ~2–4 % auf der Suite; die
+  Power-Fläche am Anker bleibt das offene Gemessene des Atoms 3 (die
+  Elterngabe im Zug-6-Floor zeigt: mit den wahren Konditionen findet kNN —
+  die iterative Suche ist der nächste Schnitt).
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
