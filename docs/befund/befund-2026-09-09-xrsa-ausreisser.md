@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: f5de5ed35d06e02bcb40a778e3f8218d731b61d26f94e5734962a9ec4915482f
   status: done
-  see-also: docs/befund/befund-2026-09-09-dispersions-ortungstest.md docs/auftrag/archiv/auftrag-dispersions-ortungstest.md docs/handover/handover-2026-09-09-te-atom-4.md
+  see-also: docs/befund/befund-2026-09-09-dispersions-ortungstest.md docs/auftrag/archiv/auftrag-dispersions-ortungstest.md docs/handover/archiv/handover-2026-09-09-te-atom-4.md
 -->
 
 # Befund: der XRSA-Ausreißer −240 s
