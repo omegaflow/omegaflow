@@ -1,65 +1,132 @@
 name: ned-cdn
 on:
   workflow_dispatch:
+    inputs:
+      sr_arcmin:
+        description: cone search radius in arcminutes
+        required: false
+        default: '30'
+      slice:
+        description: cone indices per release part
+        required: false
+        default: '48'
+      maxrec:
+        description: max records returned per cone query
+        required: false
+        default: '2000'
   schedule:
     - cron: '23 * * * *'
 permissions:
   contents: write
+concurrency:
+  group: ned-cdn
+  cancel-in-progress: true
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
   ned:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Auto-resume chunked harvest (one 20-deg window per run)
+      - name: Build cone compiler
+        run: cargo build -p omegaflow-harvest --release --bin ned_cone_compiler
+      - name: Resumable cone harvest (grid of RA/DEC centers, few cones per run)
         run: |
-          WINDOWS="0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340"
-          cargo build -p omegaflow-harvest --release --bin tap_compiler
-          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets --jq '.assets[]|select(.name|startswith("ned_part_"))|.name' 2>/dev/null || true)
-          # harvest the first undone window, one per run
-          for RA in $WINDOWS; do
-            if echo "$parts" | grep -qx "ned_part_${RA}.json"; then continue; fi
-            echo "=== harvesting ra window ${RA}..$((RA+20)) ==="
-            if ./target/release/tap_compiler --root https://ned.ipac.caltech.edu/tap/sync \
-                --table NEDTAP.objdir \
-                --columns 'objid:objid;ra:ra;dec:dec;z:z;name:prefname;type:type_key;n_spectra:n_spectra' \
-                --where "ra >= ${RA} AND ra < $((RA+20)) AND z > 0" \
-                --async 600 --limit 5000 --lattice 1024 \
-                --out ned_raw_${RA}.json; then
-              jq -r '.[] | [(.cell|tostring),(.rank|tostring),(.objid|tostring),({ra,dec,z,name,type,n_spectra}|tojson)] | join(" ")' ned_raw_${RA}.json \
-                | sort -k1,1n -k2,2n -k3,3n \
-                | awk -F' ' '{cell=$1; if(cell!=cur){cur=cell;n=0;delete seen} if(n>=4)next; oid=$3; if(seen[oid])next; seen[oid]=1; n++; print}' \
-                | awk -F' ' '{sub(/^[^ ]* [^ ]* [^ ]* /,"");print}' | jq -s '.' > ned_part_${RA}.json
-              gh release upload ssd.jpl.nasa.gov ned_part_${RA}.json --clobber --repo omegaflow/sources
-              echo "uploaded ned_part_${RA}.json"
-            else
-              echo "ra window ${RA} void this run — the hourly schedule retries"
+          set -euo pipefail
+          SR="${NED_SR_AM:-30}"
+          SLICE="${NED_SLICE:-48}"
+          MAXREC="${NED_MAXREC:-2000}"
+          RELEASE="ssd.jpl.nasa.gov"
+          REPO="omegaflow/sources"
+          BIN="$(pwd)/target/release/ned_cone_compiler"
+          TOTAL="$("$BIN" --count --sr-arcmin "$SR")"
+          NP=$(( (TOTAL + SLICE - 1) / SLICE ))
+          echo "grid total=${TOTAL} cones, slices=${NP}, slice=${SLICE} cones, sr=${SR}' maxrec=${MAXREC}"
+          deadline=$(( $(date +%s) + 2600 ))
+          mkdir -p raw
+          find_slice() {
+            local assets p
+            assets=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '.assets[].name' 2>/dev/null || true)
+            p=0
+            while [ "$p" -lt "$NP" ]; do
+              fname=$(printf 'ned_part_%05d.json' "$p")
+              if ! printf '%s\n' "$assets" | grep -qx "$fname"; then
+                echo "$p"
+                return 0
+              fi
+              p=$((p + 1))
+            done
+            return 1
+          }
+          # harvest undone slices, one after another, until the wall budget
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            if ! next=$(find_slice); then
+              echo "every slice present"
+              break
             fi
-            break
+            echo "=== harvesting slice ${next} (cones $((next*SLICE))..$((next*SLICE+SLICE-1))) ==="
+            start=$((next * SLICE))
+            end=$(( start + SLICE ))
+            [ "$end" -gt "$TOTAL" ] && end="$TOTAL"
+            ok=1
+            for i in $(seq "$start" $((end - 1))); do
+              if [ "$(date +%s)" -ge "$deadline" ]; then
+                echo "wall budget reached mid-slice — slice ${next} retried next run"
+                ok=0
+                break
+              fi
+              if ! "$BIN" --index "$i" --sr-arcmin "$SR" --maxrec "$MAXREC" \
+                  --lattice 1024 --out "raw/cone_${i}.json"; then
+                echo "cone ${i} void this run — slice ${next} retried next run"
+                ok=0
+                break
+              fi
+            done
+            [ "$ok" = 0 ] && break
+            part=$(printf 'ned_part_%05d.json' "$next")
+            jq -s 'add' raw/cone_*.json > "$part"
+            rm -f raw/cone_*.json
+            gh release upload "$RELEASE" "$part" --clobber --repo "$REPO"
+            echo "uploaded ${part}"
           done
-          # combine when every window has a part and ned.json is absent
-          done_count=0
-          for RA in $WINDOWS; do
-            if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-                --json assets --jq ".assets[]|select(.name==\"ned_part_${RA}.json\")|.name" 2>/dev/null | grep -q .; then
-              done_count=$((done_count+1))
-            fi
-          done
-          has_ned=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets --jq '.assets[]|select(.name=="ned.json")|.name' 2>/dev/null || true)
-          echo "windows done: ${done_count}/18; ned.json present: ${has_ned}"
-          if [ "$done_count" = "18" ] && [ -z "$has_ned" ]; then
+          # combine when every slice part is present and ned.json is absent
+          present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+            --jq '[.assets[].name | select(startswith("ned_part_"))] | length' 2>/dev/null || true)
+          has_ned=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+            --jq '[.assets[].name | select(.=="ned.json")] | length' 2>/dev/null || true)
+          echo "slices present: ${present}/${NP}, ned.json present: ${has_ned}"
+          if [ "${present:-0}" -eq "$NP" ] && [ "${has_ned:-0}" = 0 ]; then
             echo "=== combining ==="
             mkdir -p parts
-            for RA in $WINDOWS; do
-              gh release download ssd.jpl.nasa.gov -p "ned_part_${RA}.json" --repo omegaflow/sources --dir parts --clobber
-            done
-            jq -s 'add' parts/ned_part_*.json > ned.json
-            gh release upload ssd.jpl.nasa.gov ned.json --clobber --repo omegaflow/sources
+            gh release download "$RELEASE" --repo "$REPO" \
+              --pattern 'ned_part_*.json' --dir parts --clobber
+            {
+              echo '['
+              for f in parts/ned_part_*.json; do
+                jq -cr '.[] | "\(.cell)\t\(.rank)\t" + ((del(.cell,.rank))|tostring)' "$f"
+              done | sort -t"$(printf '\t')" -k1,1n -k2,2n \
+              | awk -F"$(printf '\t')" '
+                  BEGIN { first = 1 }
+                  {
+                    if ($1 != cur) { cur = $1; n = 0; delete seen }
+                    if (n >= 4) next
+                    if (seen[$3]++) next
+                    n++
+                    if (!first) printf ",\n"
+                    first = 0
+                    printf "%s", $3
+                  }
+                  END { if (!first) printf "\n" }'
+              echo ']'
+            } > ned.json
+            gh release upload "$RELEASE" ned.json --clobber --repo "$REPO"
             echo "ned.json uploaded: $(jq 'length' ned.json) objects"
           fi
+        env:
+          NED_SR_AM: ${{ inputs.sr_arcmin || '30' }}
+          NED_SLICE: ${{ inputs.slice || '48' }}
+          NED_MAXREC: ${{ inputs.maxrec || '2000' }}
