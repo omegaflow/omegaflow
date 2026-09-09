@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: 52c20570cbf7764b42a145fc234dece5b105299d0b9e728104ddbf5f8b9731f3
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-feldpilot.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md docs/concepts/die-akteure-im-boden-und-wasser.md
+  status: archived
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-feldpilot.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md docs/concepts/die-akteure-im-boden-und-wasser.md docs/handover/handover-2026-09-09-tiefenphasen-tiefherd.md
 -->
 # Thematisches Handover — Tiefenphasen-Flotte
 
