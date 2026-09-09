@@ -10,23 +10,23 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (321022 files, 7095995907697 B)
+## Family inventory (322473 files, 7113875065391 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
-| bpc | 5234 | 779673811 | 1786640820
-| ck | 103167 | 3559724308918 | 1786711500
-| dastcom | 7 | 258993 | 1786734900
+| bpc | 5308 | 779673811 | 1788800820
+| ck | 104012 | 3573716487606 | 1788881520
+| dastcom | 7 | 258993 | 1788905700
 | dsk | 940 | 259142925193 | 1784859060
-| fk | 1210 | 775639387 | 1786335480
+| fk | 1213 | 775801179 | 1787913180
 | gm | 11 | 438272 | 1783549920
-| ik | 1245 | 30660076 | 1784875920
+| ik | 1246 | 31117804 | 1787153580
 | lsk | 259 | 2622222 | 1784249340
-| misc | 179630 | 2892774313886 | 1786734900
-| mk | 11460 | 484609627 | 1786700400
-| pck-text | 1021 | 220731651 | 1786335480
-| sclk | 3961 | 128360111 | 1786520520
-| spk | 12445 | 342906459863 | 1786688700
-| spk-planets | 83 | 5548969984 | 1784078700
+| misc | 179907 | 2898489355100 | 1788905700
+| mk | 11634 | 486590043 | 1788861960
+| pck-text | 1022 | 220823811 | 1787125260
+| sclk | 3979 | 129107631 | 1788844200
+| spk | 12503 | 344382836439 | 1788877020
+| spk-planets | 83 | 2241091584 | 1784078700
 | spk-satellites | 349 | 33475935703 | 1783940280
 
 ## System resolution (flattener selection)
@@ -79,7 +79,7 @@ longbow (`asteroids` = sb441-n16.bsp + de441.bsp for the sun's SSB state,
 walk, pointer monotonicity gate, per-body DAF-in-RAM with a uniform address
 shift — and compiles the TNOs with sources.φ blocks: eris 2136199,
 haumea 2136108, makemake 2136472; GM from IOM Table 1 via
-phi/pipeline/katalog/asteroid_gm_sb441.φ; roundtrip gate against the
+phi/pipeline/catalog/asteroid_gm_sb441.φ; roundtrip gate against the
 stream, 400 epochs, ≤ 100 m). The remaining 370 n373 bodies stay named
 pending (sources.φ blocks = SOURCE_PORT curation); the 12 bodies without
 an SPK segment carry the Horizons 12-month windows; DASTCOM (K03) carries
