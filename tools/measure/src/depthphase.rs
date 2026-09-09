@@ -455,6 +455,77 @@ pub fn fetch_station_body(
     decode_body(&body)
 }
 
+pub struct StationMeasure {
+    pub key: String,
+    pub delta_deg: f64,
+    pub snr: f64,
+    pub p_p: Option<SecondaryPick>,
+    pub s_p: Option<SecondaryPick>,
+    pub depth_km: Option<f64>,
+    pub p_p_lag_pred: f64,
+    pub s_p_lag_pred: Option<f64>,
+    pub skip: Option<String>,
+}
+
+fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
+    StationMeasure {
+        key,
+        delta_deg,
+        snr: 0.0,
+        p_p: None,
+        s_p: None,
+        depth_km: None,
+        p_p_lag_pred: 0.0,
+        s_p_lag_pred: None,
+        skip: Some(reason.to_string()),
+    }
+}
+
+pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str) -> StationMeasure {
+    let key = format!("{}.{}", station.net, station.sta);
+    let delta = arc_deg(event.lat, event.lon, station.lat, station.lon);
+    let Some((samples, rate)) = fetch_station_body(station, start, end) else {
+        return skipped(key, delta, "no decodable record");
+    };
+    let Some(t_p) = p_onset(&samples, rate) else {
+        return skipped(key, delta, "no P pick");
+    };
+    let bp = bandpass(&samples, rate);
+    let i_p = onset_index(&samples, rate, t_p);
+    let Some(snr) = onset_snr(&bp, rate, i_p) else {
+        return skipped(key, delta, "no noise floor");
+    };
+    if snr < SNR_GATE {
+        return skipped(key, delta, "SNR below gate");
+    }
+    let nw = (P_WAVELET_S * rate).round() as usize;
+    if nw == 0 {
+        return skipped(key, delta, "degenerate rate");
+    }
+    let p_p_lag_pred = match p_p_lag(delta, event.depth_km) {
+        Some(l) => l,
+        None => return skipped(key, delta, "no ak135 pP prediction"),
+    };
+    let pp = correlate_window(&bp, i_p, nw, rate, p_p_lag_pred);
+    let s_p_lag_pred = s_p_lag(delta, event.depth_km);
+    let sp = s_p_lag_pred.and_then(|l| correlate_window(&bp, i_p, nw, rate, l));
+    let depth = match &pp {
+        Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => invert_depth_single(delta, p.lag_s),
+        _ => None,
+    };
+    StationMeasure {
+        key,
+        delta_deg: delta,
+        snr,
+        p_p: pp,
+        s_p: sp,
+        depth_km: depth,
+        p_p_lag_pred,
+        s_p_lag_pred,
+        skip: None,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

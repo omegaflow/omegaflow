@@ -156,13 +156,16 @@ fn record_meta(rec: &[u8]) -> Option<RecordMeta> {
         return None;
     }
     let data_offset = be16(rec, 44) as usize;
+    if data_offset < 48 || data_offset > rec.len() {
+        return None;
+    }
     let mut encoding: Option<u8> = None;
     let mut big = true;
     let mut exp: Option<usize> = None;
     let mut b100_rate: Option<f64> = None;
     let mut off = be16(rec, 46) as usize;
     let mut guard = 0usize;
-    while off >= 48 && off + 4 <= data_offset && guard < 16 {
+    while off >= 48 && off + 4 <= data_offset && off + 4 <= rec.len() && guard < 16 {
         let typ = be16(rec, off) as usize;
         let next = be16(rec, off + 2) as usize;
         if typ == 1000 {
@@ -175,7 +178,7 @@ fn record_meta(rec: &[u8]) -> Option<RecordMeta> {
                 b100_rate = Some(r);
             }
         }
-        if next <= off {
+        if next <= off || next + 4 > data_offset {
             break;
         }
         off = next;
@@ -187,10 +190,14 @@ fn record_meta(rec: &[u8]) -> Option<RecordMeta> {
     if e == 0 || e > 20 {
         return None;
     }
+    let reclen = 1 << e;
+    if reclen > rec.len() {
+        return None;
+    }
     Some(RecordMeta {
         encoding,
         big,
-        reclen: 1 << e,
+        reclen,
         data_offset,
         b100_rate,
     })
@@ -337,4 +344,25 @@ pub fn decode_body(body: &[u8]) -> Option<(Vec<(f64, f64)>, f64)> {
         return None;
     }
     Some((samples, rate))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::decode_body;
+
+    #[test]
+    fn a_non_miniseed_body_reads_absent_not_a_panic() {
+        let mut body = vec![0u8; 4096];
+        body[44] = 0x54;
+        body[45] = 0x74;
+        body[46] = 0x54;
+        body[47] = 0x70;
+        assert!(decode_body(&body).is_none());
+    }
+
+    #[test]
+    fn a_short_body_reads_absent() {
+        assert!(decode_body(&[]).is_none());
+        assert!(decode_body(&[0u8; 16]).is_none());
+    }
 }
