@@ -1594,9 +1594,16 @@ ICRS-4D-Rahmen teilt:
   Inversionsklasse GEBAUT (2026-09-09): 1-km-Raste statt der 50-km-Schritte;
   der Picking-Kern zog in `tools/measure/src/depthphase.rs` (gemeinsame Lib,
   11 Tests — 231 km invertiert auf 231 km, Befund
-  `docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md`). Nachfolger
-  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + pP-Polarität an
-  tiefer Geometrie. Benannte Grenze vor dem Zonen-Lauf: `MAX_DEPTH_KM = 250`
+  `docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md`).
+  pP/sP-Polarität an tiefer Geometrie GEBAUT (2026-09-09): die
+  Freiflächen-Reflexionskoeffizienten R_pp/R_sp aus der ak135-Oberflächenschicht
+  (α 5,80, β 3,46, Energie-Erhaltung als Vorzeichen-Test) — R_pp ist im
+  Pilotband überall negativ (Nullstelle 53,9°), R_sp ≈ −1; das gemessene
+  „sP durchgehend negativ" trägt die Freifläche allein, die pP-Mischung
+  (4×+, 2×−) trägt der Quell-Strahlungsterm (`pending` ohne CMT). Befund
+  `docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md`. Nachfolger
+  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + der Quell-Term
+  (CMT-Lösung). Benannte Grenze vor dem Zonen-Lauf: `MAX_DEPTH_KM = 250`
   in `ak135.rs` kappt die Tiefenphasen — Tiefherd-Ereignisse (Tonga
   410–660 km) brauchen erst die Modell-Erweiterung über 250 km. Der
   Nah-Stationen-Weg
