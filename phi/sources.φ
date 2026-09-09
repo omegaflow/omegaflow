@@ -1405,6 +1405,11 @@ format ephemeris_inpop
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_sun.bin
+format ephemeris_inpop
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mars.bin
 format ephemeris_inpop
 at sun
@@ -1446,6 +1451,11 @@ at sun
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_moon.bin
+format ephemeris_epm
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_sun.bin
 format ephemeris_epm
 at sun
 ttl 86400
