@@ -2,12 +2,17 @@
   title: Befund — Tōhoku-Vorhersage (GEBCO √(g·d)): die Flachwasser-Rechnung trifft die offenen Ozean-Wege auf ~1–18 min; zwei Wege (Adak, Hilo) über Schelf-Features sind über-langsam — die echte Welle beugt (schnellster Weg), das Großkreis-Routing nicht
   class: befund
   date: 2026-09-09
-  sha256: bc1d732c76fb6e2b4963bfc46f9a9e2840300bc6f49e9e2d96f87e40cbd502b0
+  sha256: 08c4957e1cce28070ef8e7b021a0fc47a71bda4e12dd8d37dccb060bdc3e8a3d
   status: done
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-tohoku-pegsel.md
 -->
 
 # Befund: die Tōhoku-Vorhersage (GEBCO-Flachwasser-Rechnung)
+
+Feld-Herkunft: Σ Segment/√(g·d) über die Tiefenkarte ist die offizielle
+Laufzeitkarten-Methode der Warnzentren (Murty 1977; TTT-Software, Wessel;
+Huygens-Prinzip) — der Großkreis ist die Streckenvariante davon, der Nachfolger
+ist Eikonal über das volle Gitter.
 
 ## Frage & Bindung
 

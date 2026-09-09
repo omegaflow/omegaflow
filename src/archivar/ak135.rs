@@ -6,31 +6,42 @@ const DR: f64 = 0.5;
 const MAX_DELTA_DEG: f64 = 98.0;
 const MAX_DEPTH_KM: f64 = 250.0;
 const DEPTH_KM: [f64; 9] = [10.0, 15.0, 20.0, 35.0, 50.0, 100.0, 150.0, 200.0, 250.0];
+const P_SLOWNESS_CORE_GRAZE: f64 = 255.0;
+const S_SLOWNESS_CORE_GRAZE: f64 = 478.0;
 
 struct Model {
-    nodes: Vec<(f64, f64)>,
+    vp: Vec<(f64, f64)>,
+    vs: Vec<(f64, f64)>,
     grid: Vec<f64>,
+    sgrid: Vec<f64>,
 }
 
-fn parse_nodes() -> Vec<(f64, f64)> {
-    let mut out = Vec::new();
+fn parse_nodes() -> (Vec<(f64, f64)>, Vec<(f64, f64)>) {
+    let mut vp = Vec::new();
+    let mut vs = Vec::new();
     for line in MODEL_RAW.lines() {
         if line.starts_with('#') {
             continue;
         }
         let mut it = line.split_whitespace();
-        let (Some(depth), Some(vp)) = (
-            it.next().and_then(|s| s.parse::<f64>().ok()),
-            it.next().and_then(|s| s.parse::<f64>().ok()),
+        let (Some(depth), Some(v), Some(s)) = (
+            it.next().and_then(|t| t.parse::<f64>().ok()),
+            it.next().and_then(|t| t.parse::<f64>().ok()),
+            it.next().and_then(|t| t.parse::<f64>().ok()),
         ) else {
             continue;
         };
-        out.push((R_EARTH_KM - depth, vp));
+        let r = R_EARTH_KM - depth;
+        vp.push((r, v));
+        if s <= 0.0 {
+            break;
+        }
+        vs.push((r, s));
     }
-    out
+    (vp, vs)
 }
 
-fn vp_nodes(nodes: &[(f64, f64)], r: f64) -> f64 {
+fn vel_nodes(nodes: &[(f64, f64)], r: f64) -> f64 {
     if r <= nodes[nodes.len() - 1].0 {
         return nodes[nodes.len() - 1].1;
     }
@@ -56,7 +67,7 @@ fn build_grid(nodes: &[(f64, f64)]) -> Vec<f64> {
     (0..n)
         .map(|k| {
             let r = k as f64 * DR;
-            r / vp_nodes(nodes, r)
+            r / vel_nodes(nodes, r)
         })
         .collect()
 }
@@ -64,27 +75,33 @@ fn build_grid(nodes: &[(f64, f64)]) -> Vec<f64> {
 fn model() -> &'static Model {
     static M: OnceLock<Model> = OnceLock::new();
     M.get_or_init(|| {
-        let nodes = parse_nodes();
-        let grid = build_grid(&nodes);
-        Model { nodes, grid }
+        let (vp, vs) = parse_nodes();
+        let grid = build_grid(&vp);
+        let sgrid = build_grid(&vs);
+        Model {
+            vp,
+            vs,
+            grid,
+            sgrid,
+        }
     })
 }
 
-fn eta_grid(m: &Model, r: f64) -> f64 {
+fn eta_grid(grid: &[f64], r: f64) -> f64 {
     if r <= 0.0 {
-        return m.grid[0];
+        return grid[0];
     }
     if r >= R_EARTH_KM {
-        return m.grid[m.grid.len() - 1];
+        return grid[grid.len() - 1];
     }
     let idx = (r / DR).floor() as usize;
-    let idx = idx.min(m.grid.len() - 2);
+    let idx = idx.min(grid.len() - 2);
     let t = r / DR - idx as f64;
-    m.grid[idx] + (m.grid[idx + 1] - m.grid[idx]) * t
+    grid[idx] + (grid[idx + 1] - grid[idx]) * t
 }
 
-fn turning_radius(m: &Model, p: f64) -> Option<f64> {
-    for w in m.nodes.windows(2) {
+fn turning_radius(nodes: &[(f64, f64)], p: f64) -> Option<f64> {
+    for w in nodes.windows(2) {
         let (rt, vt) = w[0];
         let (rb, vb) = w[1];
         if rt <= rb {
@@ -114,12 +131,12 @@ fn turning_radius(m: &Model, p: f64) -> Option<f64> {
     None
 }
 
-fn integrate(m: &Model, p: f64, rp: f64, r_end: f64) -> (f64, f64) {
+fn integrate(nodes: &[(f64, f64)], grid: &[f64], p: f64, rp: f64, r_end: f64) -> (f64, f64) {
     let xmax = (r_end - rp).sqrt();
     let n = 1024;
     let dx = xmax / n as f64;
     let h = 0.01;
-    let eta_exact = |r: f64| r / vp_nodes(&m.nodes, r);
+    let eta_exact = |r: f64| r / vel_nodes(nodes, r);
     let eta_prime = (eta_exact(rp + h) - eta_exact(rp - h)) / (2.0 * h);
     let f0 = 2.0 / (rp * (2.0 * p * eta_prime).sqrt());
     let mut sum_d = 0.0;
@@ -127,7 +144,7 @@ fn integrate(m: &Model, p: f64, rp: f64, r_end: f64) -> (f64, f64) {
     for k in 0..=n {
         let x = k as f64 * dx;
         let r = rp + x * x;
-        let e = eta_grid(m, r);
+        let e = eta_grid(grid, r);
         let f = if k == 0 {
             f0
         } else {
@@ -140,15 +157,15 @@ fn integrate(m: &Model, p: f64, rp: f64, r_end: f64) -> (f64, f64) {
     (sum_d * dx, sum_t * dx)
 }
 
-fn ray(m: &Model, p: f64, source_radius: f64) -> Vec<(f64, f64)> {
-    let Some(rp) = turning_radius(m, p) else {
+fn ray(nodes: &[(f64, f64)], grid: &[f64], p: f64, source_radius: f64) -> Vec<(f64, f64)> {
+    let Some(rp) = turning_radius(nodes, p) else {
         return Vec::new();
     };
     if rp >= source_radius {
         return Vec::new();
     }
-    let (ud, ut) = integrate(m, p, rp, R_EARTH_KM);
-    let (dd, dt) = integrate(m, p, rp, source_radius);
+    let (ud, ut) = integrate(nodes, grid, p, rp, R_EARTH_KM);
+    let (dd, dt) = integrate(nodes, grid, p, rp, source_radius);
     if source_radius >= R_EARTH_KM {
         vec![(2.0 * ud, 2.0 * ut)]
     } else {
@@ -156,17 +173,64 @@ fn ray(m: &Model, p: f64, source_radius: f64) -> Vec<(f64, f64)> {
     }
 }
 
+fn up_leg(nodes: &[(f64, f64)], grid: &[f64], p: f64, rs: f64) -> Option<(f64, f64)> {
+    if rs >= R_EARTH_KM {
+        return Some((0.0, 0.0));
+    }
+    if p >= rs / vel_nodes(nodes, rs) {
+        return None;
+    }
+    let xmax = (R_EARTH_KM - rs).sqrt();
+    let n = 512;
+    let dx = xmax / n as f64;
+    let mut sum_d = 0.0;
+    let mut sum_t = 0.0;
+    for k in 0..=n {
+        let x = k as f64 * dx;
+        let r = rs + x * x;
+        let e = eta_grid(grid, r);
+        let sq = (e * e - p * p).sqrt();
+        let w = if k == 0 || k == n { 0.5 } else { 1.0 };
+        sum_d += w * 2.0 * x * p / (r * sq);
+        sum_t += w * 2.0 * x * e * e / (r * sq);
+    }
+    Some((sum_d * dx, sum_t * dx))
+}
+
+fn surface_leg(nodes: &[(f64, f64)], grid: &[f64], p: f64) -> Option<(f64, f64)> {
+    ray(nodes, grid, p, R_EARTH_KM).into_iter().next()
+}
+
 fn table() -> &'static Vec<(f64, f64)> {
     static T: OnceLock<Vec<(f64, f64)>> = OnceLock::new();
     T.get_or_init(|| {
         let m = model();
-        let p_min = 255.0;
-        let p_max = 1098.0;
+        let p_min = P_SLOWNESS_CORE_GRAZE;
+        let p_max = R_EARTH_KM / vel_nodes(&m.vp, R_EARTH_KM);
         let n = 30000;
         let mut pts: Vec<(f64, f64)> = Vec::new();
         for k in 0..=n {
             let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
-            for (d, t) in ray(m, p, R_EARTH_KM) {
+            for (d, t) in ray(&m.vp, &m.grid, p, R_EARTH_KM) {
+                pts.push((d.to_degrees(), t));
+            }
+        }
+        pts.sort_by(|a, b| a.0.total_cmp(&b.0));
+        pts
+    })
+}
+
+fn s_table() -> &'static Vec<(f64, f64)> {
+    static T: OnceLock<Vec<(f64, f64)>> = OnceLock::new();
+    T.get_or_init(|| {
+        let m = model();
+        let p_min = S_SLOWNESS_CORE_GRAZE;
+        let p_max = R_EARTH_KM / vel_nodes(&m.vs, R_EARTH_KM);
+        let n = 30000;
+        let mut pts: Vec<(f64, f64)> = Vec::new();
+        for k in 0..=n {
+            let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
+            for (d, t) in ray(&m.vs, &m.sgrid, p, R_EARTH_KM) {
                 pts.push((d.to_degrees(), t));
             }
         }
@@ -178,15 +242,57 @@ fn table() -> &'static Vec<(f64, f64)> {
 fn build_depth_table(depth_km: f64) -> Vec<(f64, f64)> {
     let m = model();
     let rs = R_EARTH_KM - depth_km;
-    let p_min = 255.0;
-    let p_max = rs / vp_nodes(&m.nodes, rs);
+    let p_min = P_SLOWNESS_CORE_GRAZE;
+    let p_max = rs / vel_nodes(&m.vp, rs);
     let n = 6000;
     let mut pts: Vec<(f64, f64)> = Vec::new();
     for k in 0..=n {
         let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
-        for (d, t) in ray(m, p, rs) {
+        for (d, t) in ray(&m.vp, &m.grid, p, rs) {
             pts.push((d.to_degrees(), t));
         }
+    }
+    pts.sort_by(|a, b| a.0.total_cmp(&b.0));
+    pts
+}
+
+fn build_p_p_table(depth_km: f64) -> Vec<(f64, f64)> {
+    let m = model();
+    let rs = R_EARTH_KM - depth_km;
+    let p_min = P_SLOWNESS_CORE_GRAZE;
+    let p_max = (rs / vel_nodes(&m.vp, rs)).min(R_EARTH_KM / vel_nodes(&m.vp, R_EARTH_KM));
+    let n = 6000;
+    let mut pts: Vec<(f64, f64)> = Vec::new();
+    for k in 0..=n {
+        let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
+        let Some((du, tu)) = up_leg(&m.vp, &m.grid, p, rs) else {
+            continue;
+        };
+        let Some((dd, td)) = surface_leg(&m.vp, &m.grid, p) else {
+            continue;
+        };
+        pts.push(((du + dd).to_degrees(), tu + td));
+    }
+    pts.sort_by(|a, b| a.0.total_cmp(&b.0));
+    pts
+}
+
+fn build_s_p_table(depth_km: f64) -> Vec<(f64, f64)> {
+    let m = model();
+    let rs = R_EARTH_KM - depth_km;
+    let p_min = P_SLOWNESS_CORE_GRAZE;
+    let p_max = (rs / vel_nodes(&m.vs, rs)).min(R_EARTH_KM / vel_nodes(&m.vp, R_EARTH_KM));
+    let n = 6000;
+    let mut pts: Vec<(f64, f64)> = Vec::new();
+    for k in 0..=n {
+        let p = p_min + (p_max - p_min) * (k as f64 / n as f64);
+        let Some((du, tu)) = up_leg(&m.vs, &m.sgrid, p, rs) else {
+            continue;
+        };
+        let Some((dd, td)) = surface_leg(&m.vp, &m.grid, p) else {
+            continue;
+        };
+        pts.push(((du + dd).to_degrees(), tu + td));
     }
     pts.sort_by(|a, b| a.0.total_cmp(&b.0));
     pts
@@ -198,6 +304,28 @@ fn depth_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
         let mut v = vec![(0.0f64, table().clone())];
         for &d in DEPTH_KM.iter() {
             v.push((d, build_depth_table(d)));
+        }
+        v
+    })
+}
+
+fn p_p_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
+    static G: OnceLock<Vec<(f64, Vec<(f64, f64)>)>> = OnceLock::new();
+    G.get_or_init(|| {
+        let mut v = vec![(0.0f64, table().clone())];
+        for &d in DEPTH_KM.iter() {
+            v.push((d, build_p_p_table(d)));
+        }
+        v
+    })
+}
+
+fn s_p_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
+    static G: OnceLock<Vec<(f64, Vec<(f64, f64)>)>> = OnceLock::new();
+    G.get_or_init(|| {
+        let mut v = vec![(0.0f64, table().clone())];
+        for &d in DEPTH_KM.iter() {
+            v.push((d, build_s_p_table(d)));
         }
         v
     })
@@ -234,11 +362,37 @@ fn interp_delta(table: &[(f64, f64)], delta_deg: f64) -> Option<f64> {
     Some(t0 + (t1 - t0) * f)
 }
 
+fn interp_depth_grid(
+    grid: &[(f64, Vec<(f64, f64)>)],
+    delta_deg: f64,
+    depth_km: f64,
+) -> Option<f64> {
+    if depth_km <= grid[0].0 {
+        return interp_delta(&grid[0].1, delta_deg);
+    }
+    for i in 0..grid.len() - 1 {
+        if depth_km >= grid[i].0 && depth_km <= grid[i + 1].0 {
+            let t_lo = interp_delta(&grid[i].1, delta_deg)?;
+            let t_hi = interp_delta(&grid[i + 1].1, delta_deg)?;
+            let f = (depth_km - grid[i].0) / (grid[i + 1].0 - grid[i].0);
+            return Some(t_lo + (t_hi - t_lo) * f);
+        }
+    }
+    None
+}
+
 pub fn p_travel(delta_deg: f64) -> Option<f64> {
     if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
         return None;
     }
     interp_delta(table(), delta_deg)
+}
+
+pub fn s_travel(delta_deg: f64) -> Option<f64> {
+    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+        return None;
+    }
+    interp_delta(s_table(), delta_deg)
 }
 
 pub fn p_travel_depth(delta_deg: f64, depth_km: f64) -> Option<f64> {
@@ -248,19 +402,27 @@ pub fn p_travel_depth(delta_deg: f64, depth_km: f64) -> Option<f64> {
     if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
         return None;
     }
-    let g = depth_grid();
-    if depth_km <= g[0].0 {
-        return interp_delta(&g[0].1, delta_deg);
+    interp_depth_grid(depth_grid(), delta_deg, depth_km)
+}
+
+pub fn p_p_travel(delta_deg: f64, depth_km: f64) -> Option<f64> {
+    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+        return None;
     }
-    for i in 0..g.len() - 1 {
-        if depth_km >= g[i].0 && depth_km <= g[i + 1].0 {
-            let t_lo = interp_delta(&g[i].1, delta_deg)?;
-            let t_hi = interp_delta(&g[i + 1].1, delta_deg)?;
-            let f = (depth_km - g[i].0) / (g[i + 1].0 - g[i].0);
-            return Some(t_lo + (t_hi - t_lo) * f);
-        }
+    if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
+        return None;
     }
-    None
+    interp_depth_grid(p_p_grid(), delta_deg, depth_km)
+}
+
+pub fn s_p_travel(delta_deg: f64, depth_km: f64) -> Option<f64> {
+    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+        return None;
+    }
+    if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
+        return None;
+    }
+    interp_depth_grid(s_p_grid(), delta_deg, depth_km)
 }
 
 #[cfg(test)]
@@ -320,9 +482,8 @@ mod tests {
         let v = 10.0;
         let nodes = vec![(R_EARTH_KM, v), (0.0, v)];
         let grid = build_grid(&nodes);
-        let m = Model { nodes, grid };
         for p in [100.0, 300.0, 500.0, 620.0] {
-            let pts = ray(&m, p, R_EARTH_KM);
+            let pts = ray(&nodes, &grid, p, R_EARTH_KM);
             assert!(!pts.is_empty(), "p={p} carries no turning ray");
             let (d, t) = pts[0];
             let delta_deg = d.to_degrees();
@@ -342,5 +503,113 @@ mod tests {
         assert!(p_travel(f64::NAN).is_none());
         assert!(p_travel_depth(60.0, -1.0).is_none());
         assert!(p_travel_depth(60.0, 300.0).is_none());
+        assert!(s_travel(-1.0).is_none());
+        assert!(s_travel(99.0).is_none());
+        assert!(p_p_travel(-1.0, 20.0).is_none());
+        assert!(p_p_travel(99.0, 20.0).is_none());
+        assert!(p_p_travel(60.0, 300.0).is_none());
+        assert!(s_p_travel(60.0, -1.0).is_none());
+        assert!(s_p_travel(99.0, 20.0).is_none());
+        assert!(s_p_travel(60.0, 300.0).is_none());
+    }
+
+    #[test]
+    fn s_waves_arrive_after_p() {
+        for d in [10.0, 30.0, 60.0, 90.0] {
+            let tp = p_travel(d).unwrap();
+            let ts = s_travel(d).unwrap();
+            assert!(ts > tp, "S({d})={ts} not after P({d})={tp}");
+        }
+    }
+
+    #[test]
+    fn depth_phases_reduce_to_p_at_zero_depth() {
+        for d in [20.0, 40.0, 60.0, 80.0] {
+            let tp = p_travel(d).unwrap();
+            assert_eq!(p_p_travel(d, 0.0).unwrap(), tp);
+            assert_eq!(s_p_travel(d, 0.0).unwrap(), tp);
+        }
+    }
+
+    #[test]
+    fn p_p_arrives_after_direct_p() {
+        for (d, h) in [(30.0, 20.0), (60.0, 20.0), (60.0, 100.0), (90.0, 20.0)] {
+            let direct = p_travel_depth(d, h).unwrap();
+            let pp = p_p_travel(d, h).unwrap();
+            assert!(pp > direct, "pP({d},{h})={pp} not after P={direct}");
+        }
+    }
+
+    #[test]
+    fn s_p_arrives_after_p_p() {
+        for (d, h) in [(40.0, 20.0), (60.0, 20.0), (90.0, 20.0), (60.0, 100.0)] {
+            let pp = p_p_travel(d, h).unwrap();
+            let sp = s_p_travel(d, h).unwrap();
+            assert!(sp > pp, "sP({d},{h})={sp} not after pP={pp}");
+        }
+    }
+
+    #[test]
+    fn p_p_is_monotone_in_distance() {
+        let mut prev = 0.0;
+        for d in [30.0, 40.0, 50.0, 60.0, 70.0, 80.0] {
+            let t = p_p_travel(d, 20.0).unwrap();
+            assert!(t > prev, "pP({d},20)={t} not above {prev}");
+            prev = t;
+        }
+    }
+
+    #[test]
+    fn direct_up_leg_matches_ray_branch() {
+        let m = model();
+        let rs = R_EARTH_KM - 20.0;
+        for p in [300.0, 400.0, 500.0, 700.0] {
+            let (du, tu) = up_leg(&m.vp, &m.grid, p, rs).unwrap();
+            let (dr, tr) = ray(&m.vp, &m.grid, p, rs)[0];
+            assert!((du - dr).abs() < 1e-1, "p={p}: up d {du} vs ray {dr}");
+            assert!((tu - tr).abs() < 1e-1, "p={p}: up t {tu} vs ray {tr}");
+        }
+    }
+
+    #[test]
+    fn p_p_equals_direct_plus_twice_up_leg() {
+        let m = model();
+        let rs = R_EARTH_KM - 20.0;
+        for p in [300.0, 400.0, 500.0] {
+            let (du, tu) = ray(&m.vp, &m.grid, p, rs)[0];
+            let (dd, td) = ray(&m.vp, &m.grid, p, rs)[1];
+            let (ds, ts) = surface_leg(&m.vp, &m.grid, p).unwrap();
+            let t_pp = tu + ts;
+            let t_identity = td + 2.0 * tu;
+            let d_pp = du + ds;
+            let d_identity = dd + 2.0 * du;
+            assert!(
+                (t_pp - t_identity).abs() < 1e-6,
+                "p={p}: t_pp={t_pp} vs {t_identity}"
+            );
+            assert!(
+                (d_pp - d_identity).abs() < 1e-6,
+                "p={p}: d_pp={d_pp} vs {d_identity}"
+            );
+        }
+    }
+
+    #[test]
+    fn s_p_equals_direct_p_plus_both_up_legs() {
+        let m = model();
+        let rs = R_EARTH_KM - 20.0;
+        for p in [480.0, 500.0, 520.0] {
+            let (du_s, tu_s) = ray(&m.vs, &m.sgrid, p, rs)[0];
+            let (du_p, tu_p) = ray(&m.vp, &m.grid, p, rs)[0];
+            let (_, td) = ray(&m.vp, &m.grid, p, rs)[1];
+            let (ds, ts) = surface_leg(&m.vp, &m.grid, p).unwrap();
+            let t_sp = tu_s + ts;
+            let t_identity = td + tu_p + tu_s;
+            assert!(
+                (t_sp - t_identity).abs() < 1e-6,
+                "p={p}: t_sp={t_sp} vs {t_identity}"
+            );
+            assert!((du_s + du_p + ds).is_finite());
+        }
     }
 }
