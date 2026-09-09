@@ -98,6 +98,8 @@ fn main() {
 
     let mut offsets_with_clamp: Vec<f64> = Vec::new();
     let mut offsets_after_exclusion: Vec<f64> = Vec::new();
+    let mut joint_offsets: Vec<f64> = Vec::new();
+    let mut joint_pending: Vec<String> = Vec::new();
     let mut event_scatters: Vec<f64> = Vec::new();
     let mut pending_events: Vec<String> = Vec::new();
     let mut branch_skips_total = 0usize;
@@ -147,6 +149,7 @@ fn main() {
         let mut skips: Vec<String> = Vec::new();
         let mut branch_unstable = 0usize;
         let mut first = true;
+        let mut measures: Vec<dp::StationMeasure> = Vec::new();
         for st in &stations {
             if !first {
                 thread::sleep(Duration::from_millis(1000));
@@ -156,7 +159,7 @@ fn main() {
             if m.branch_unstable {
                 branch_unstable += 1;
             }
-            match m.skip {
+            match &m.skip {
                 Some(reason) => skips.push(format!("{} ({reason})", m.key)),
                 None => match m.inversion {
                     Some(dp::DepthInversion::Depth(h)) => depths.push(h),
@@ -168,6 +171,7 @@ fn main() {
                     None => skips.push(format!("{} (pP below the correlation gate)", m.key)),
                 },
             }
+            measures.push(m);
         }
         branch_skips_total += branch_unstable;
 
@@ -236,6 +240,75 @@ fn main() {
         offsets_with_clamp.push(offset_wc);
         if !skips.is_empty() {
             println!("  skipped {}: {}", skips.len(), skips.join("; "));
+        }
+        let mut fit_deltas: Vec<f64> = Vec::new();
+        let mut fit_lags: Vec<f64> = Vec::new();
+        let mut fit_weights: Vec<f64> = Vec::new();
+        let mut sigma_absent = 0usize;
+        let mut ratios: Vec<String> = Vec::new();
+        for m in &measures {
+            if let Some(p) = &m.p_p {
+                ratios.push(match p.runner_up_ratio {
+                    Some(r) => format!("{r:.2}"),
+                    None => "-".to_string(),
+                });
+            }
+            if m.skip.is_some() {
+                continue;
+            }
+            let Some(p) = &m.p_p else {
+                continue;
+            };
+            if p.corr.abs() < dp::SECONDARY_CORR_MIN {
+                continue;
+            }
+            match m.p_p_sigma_s {
+                Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
+                    fit_deltas.push(m.delta_deg);
+                    fit_lags.push(p.lag_s);
+                    fit_weights.push(1.0 / (sigma * sigma));
+                }
+                _ => sigma_absent += 1,
+            }
+        }
+        let weighted_n = fit_deltas.len();
+        if weighted_n == 0 {
+            println!(
+                "  weighted joint fit: pending (no station carried a lag weight — sigma absent or below the correlation gate)"
+            );
+        } else {
+            let joint = dp::invert_depth_weighted(&fit_deltas, &fit_lags, &fit_weights);
+            let pick_stations = weighted_n + sigma_absent;
+            let depth_txt = match joint {
+                dp::DepthInversion::Depth(h) => format!("{h:.0} km"),
+                dp::DepthInversion::EdgeDiscontinuity => {
+                    "edge-clamped at the 660 km wall".to_string()
+                }
+                dp::DepthInversion::SaturatedBound => "saturated at the 700 km ceiling".to_string(),
+                dp::DepthInversion::Absent => "absent".to_string(),
+            };
+            println!(
+                "  weighted joint fit: {weighted_n} of {pick_stations} pick stations carry a weight ({sigma_absent} sigma-absent excluded: edge/truncated peak), depth {depth_txt}"
+            );
+            match joint {
+                dp::DepthInversion::Depth(h) => joint_offsets.push(h - event.depth_km),
+                dp::DepthInversion::EdgeDiscontinuity => {
+                    joint_pending.push(format!("{} (joint clamped at the 660 wall)", event.id));
+                }
+                dp::DepthInversion::SaturatedBound => {
+                    joint_pending
+                        .push(format!("{} (joint saturated at the 700 ceiling)", event.id));
+                }
+                dp::DepthInversion::Absent => {
+                    joint_pending.push(format!("{} (joint residual never finite)", event.id));
+                }
+            }
+        }
+        if !ratios.is_empty() {
+            println!(
+                "  runner-up ratio per station (measurement, no gate): {}",
+                ratios.join(", ")
+            );
         }
     }
 
@@ -314,6 +387,31 @@ fn main() {
                 }
             }
         }
+    }
+    let n_joint = joint_offsets.len();
+    if n_joint == 0 {
+        println!("weighted joint mean offset: pending (no event carried a joint depth)");
+    } else {
+        let mean_joint = mean(&joint_offsets).unwrap();
+        let sd_joint = sample_sd(&joint_offsets);
+        let se_joint = sd_joint.map(|s| s / (n_joint as f64).sqrt());
+        println!(
+            "weighted joint mean offset {:+.1} km over {n_joint} events; sd across events {} km, se = sd/sqrt(N) = {} km",
+            mean_joint,
+            sd_joint
+                .map(|v| format!("{v:.1}"))
+                .unwrap_or("pending".into()),
+            se_joint
+                .map(|v| format!("{v:.1}"))
+                .unwrap_or("pending".into())
+        );
+    }
+    if !joint_pending.is_empty() {
+        println!(
+            "weighted joint fit pending (named, not counted): {} — {}",
+            joint_pending.len(),
+            joint_pending.join("; ")
+        );
     }
     if !pending_events.is_empty() {
         println!(
