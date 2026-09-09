@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 635434279bd2d9bea2e11f7b75d2117b07f98af5c471161166696ebebdb99768
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/concepts/die-akteure-im-boden-und-wasser.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
 
 # Befund: die feinere Tiefen-Inversionsklasse (1 km) — die 50-km-Raste im 200–250-km-Band ist gekreuzt
