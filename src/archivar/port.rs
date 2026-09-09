@@ -1710,13 +1710,7 @@ pub fn ci_mode(dir: &str) -> i32 {
                 dead += 1;
                 continue;
             };
-            let file_name = src
-                .url
-                .split(['/', '?', '#'])
-                .filter(|s| !s.is_empty())
-                .last()
-                .unwrap_or("reference")
-                .to_string();
+            let file_name = reference_name_from_url(&src.url);
             let tmp_path = format!("{}/{}", std::env::temp_dir().display(), file_name);
             let _ = crate::cdn::ensure_release(netloc);
             if std::fs::write(&tmp_path, &bytes).is_ok()
