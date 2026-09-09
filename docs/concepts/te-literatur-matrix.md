@@ -1,7 +1,7 @@
 <!--
   title: TE Literature Matrix
   class: concept
-  sha256: 7d779059d22a5ba25a1508fc1b7208ca6cedfebade2dd1fc7c94c1348071cf27
+  sha256: 914c739c5648452597a3b337a94e7e9e2f4fff667b8897ff1d827d72db687ca9
   status: live
 -->
 # TE Literature Matrix
@@ -19,6 +19,8 @@ This matrix calibrates the omegaflow TE protocol (lag sweeps, phase-randomized s
 | Theiler, J., et al. (1992). *Testing for nonlinearity in time series: The method of surrogate data*. Physica D 58, 77–94. | Surrogate data (null model) | Origin of the surrogate null model on which the TE literature builds as well. | [T] entry in fetched reference lists | https://doi.org/10.1016/0167-2789(92)90102-S |
 | Barnett, L., Barrett, A. B., Seth, A. K. (2009). *Granger causality and transfer entropy are equivalent for Gaussian variables*. Phys. Rev. Lett. 103, 238701. | TE ≈ Granger | Equivalence for Gaussian variables; justifies carrying TE and Granger in one matrix. | [T] entry in fetched reference list (Manshour 2021) | https://doi.org/10.1103/PhysRevLett.103.238701 |
 | Runge, J., Heitzig, J., Petoukhov, V., Kurths, J. (2012). *Escaping the curse of dimensionality in estimating multivariate transfer entropy*. Phys. Rev. Lett. 108, 258701. | Multivariate TE (graphical) | Causal discovery with iterative momentary conditional independence; basis of PCMCI and graphical climate causal analysis. | [T] Crossref entry fully fetched | https://doi.org/10.1103/PhysRevLett.108.258701 |
+| Kraskov, A., Stögbauer, H., Grassberger, P. (2004). *Estimating mutual information*. Phys. Rev. E 69, 066138. | kNN mutual-information estimator (KSG) | k-th-nearest-neighbor MI estimation with the digamma marginal counts; the estimator basis of the kNN conditional-MI/TE family. | [T] Crossref entry fully fetched | https://doi.org/10.1103/PhysRevE.69.066138 |
+| Frenzel, S., Pompe, B. (2007). *Partial mutual information for coupling analysis of multivariate time series*. Phys. Rev. Lett. 99, 204101. | KSG-based transfer entropy | TE from the k-th-neighbor distances in the full joint space (ψ(k) + ⟨ψ(n_x) − ψ(n_x'x) − ψ(n_xy)⟩ form); the method anchor of the omegaflow kNN estimator `transfer_entropy_ksg_conditional_n`. | [T] Crossref entry fully fetched | https://doi.org/10.1103/PhysRevLett.99.204101 |
 
 ---
 
