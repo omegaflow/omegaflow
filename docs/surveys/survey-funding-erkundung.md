@@ -63,8 +63,8 @@ der Fixed-Stride-Datensatz (24 × f64 = 192 B) trägt 0.0 nur als Pad —
 die Wahrheit lebt an der Schreib-/Lesestelle. Das Force-Gate fragt bei
 jeder Quelle: könnte ein nicht-menschlicher Organismus für genau diese
 Messung ein Sinnesorgan evolvieren? Eine Aktien-URL hat keine Kraft —
-sie wird beim Laden abgewiesen. Das Register (`TODO.md`, die
-Anomalie-Maschine `report_anomaly`/`anomaly_issue_body`) hält jede
+sie wird beim Laden abgewiesen. Das Handover-Register (`docs/handover/`,
+die Anomalie-Maschine `report_anomaly`/`anomaly_issue_body`) hält jede
 offene Stelle fest. Das ist "Trustworthy AI" als Maschinenzustand,
 nicht als Papier.
 

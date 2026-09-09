@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 902f9ae95f9ce1ab29204ba5d71272a3f0c43f7724d04d9c5912eddbeaeba950
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/auftrag-gaia-dr4-iapetus.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
 -->
 # BLATT — Trịnh Xuân Thuận als Fragesteller: Screening seiner fünf Fragen
 
@@ -146,8 +146,8 @@ bestehende (mean + 2σ, fam). Antwortet die Tabelle mit Stille, ist das
 Thuậns These — „das Universum ist ein nur-gerade-balanciertes System" —
 in den Zahlen des Systems: Stille als Harmonie, gemessen. A = A.
 
-**In Auftrag gegeben (2026-09-05):** `docs/auftrag/auftrag-der-grat.md` —
-`status: pending`, Register-Zeile im Auftrags-Programm (TODO.md).
+**In Auftrag gegeben (2026-09-05):** `docs/auftrag/archiv/auftrag-der-grat.md` —
+`status: pending`, Register-Zeile im Handover-Register.
 
 ---
 
