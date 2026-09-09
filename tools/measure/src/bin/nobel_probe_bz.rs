@@ -3,7 +3,7 @@ use omegaflow::archivar::omni2::{
     parse_bin, COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_SYMH, COMP_V1800,
 };
 use omegaflow::lsk::days_from_civil;
-use omegaflow::te::{benjamini_hochberg, pcmci_links, TeNull};
+use omegaflow::te::{benjamini_hochberg, pcmci_links, TeEstimator, TeNull};
 
 const OMNI2_1H_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
@@ -220,6 +220,8 @@ fn main() {
         100,
         TeNull::Residual,
         0,
+        TeEstimator::Binned,
+        4,
     ) else {
         eprintln!("pcmci_links returns void — no verdict");
         return;

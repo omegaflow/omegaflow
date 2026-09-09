@@ -1,21 +1,30 @@
-use omegaflow::te::{pcmci_links, TeNull};
+use omegaflow::te::{pcmci_links, TeEstimator, TeNull};
 use std::sync::atomic::{AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const MAX_LAG: usize = 2;
 const BINS: usize = 4;
 const BURN: usize = 200;
+const KNN: usize = 4;
 
 static NULL_LAG: AtomicUsize = AtomicUsize::new(12);
 static N_SURR: AtomicUsize = AtomicUsize::new(100);
 static NULL_MODEL: AtomicU8 = AtomicU8::new(1);
 static BLOCK: AtomicUsize = AtomicUsize::new(0);
+static ESTIMATOR: AtomicU8 = AtomicU8::new(1);
 
 fn null_model() -> TeNull {
     match NULL_MODEL.load(Ordering::Relaxed) {
         0 => TeNull::Residual,
         2 => TeNull::Shift,
         _ => TeNull::Block,
+    }
+}
+
+fn estimator() -> TeEstimator {
+    match ESTIMATOR.load(Ordering::Relaxed) {
+        0 => TeEstimator::Binned,
+        _ => TeEstimator::Ksg,
     }
 }
 
@@ -155,6 +164,8 @@ fn measure(
         N_SURR.load(Ordering::Relaxed),
         null_model(),
         BLOCK.load(Ordering::Relaxed),
+        estimator(),
+        KNN,
     )?;
     let n_chan = series.len();
     let found: Vec<bool> = true_links
@@ -457,11 +468,25 @@ fn main() {
             }
         }
     }
+    let est_arg = args
+        .iter()
+        .position(|a| a == "--est")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    match est_arg.as_deref() {
+        None => {}
+        Some("binned") => ESTIMATOR.store(0, Ordering::Relaxed),
+        Some("ksg") => ESTIMATOR.store(1, Ordering::Relaxed),
+        Some(other) => {
+            eprintln!("--est carries {other} — the probe builds binned, ksg");
+            std::process::exit(1);
+        }
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} seed {SEED:#X} quick={quick}",
+        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} est {} knn {KNN} seed {SEED:#X} quick={quick}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
@@ -469,7 +494,11 @@ fn main() {
             TeNull::Block => "block",
             TeNull::Shift => "shift",
         },
-        BLOCK.load(Ordering::Relaxed)
+        BLOCK.load(Ordering::Relaxed),
+        match estimator() {
+            TeEstimator::Binned => "binned",
+            TeEstimator::Ksg => "ksg",
+        }
     );
 
     println!();
