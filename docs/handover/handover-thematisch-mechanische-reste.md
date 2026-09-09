@@ -21,8 +21,8 @@ Geschlossenes trägt Git.
 
 ## CDN-Manifestation (Assets fehlen bis zum Dispatch)
 
-- **neptune-c-spk-cdn.yml** — Dispatch + CDN-200 von `ephemeris_neptune_c.bin`
-  (404). (handover-2026-09-09-uranus-push-cdn)
+- **neptune-c-spk-cdn.yml** — erledigt: Dispatch 34359296647, `ephemeris_neptune_c.bin`
+  200 / 17.18 MB (breit 1802–2030). (handover-2026-09-09-uranus-push-cdn)
 - **AllWISE-Ernte** — läuft (~13 Tage); `allwise_coverage.fp01` noch nicht
   verifiziert; CI-Partial-Check + Regrid-Optimierung (korrektheitskritisch).
 - **2MASS-Footprint** — Compiler + Workflow stehen, Dispatch = Operator-Wort.
@@ -35,7 +35,8 @@ Geschlossenes trägt Git.
 - **Gaia XP** — Ernte-Schnitt (ganze Erde / helle Klasse / Jagd-Regionen);
   Ring↔Nest-Brücke source_id↔FP01-ipix ungemessen; `xp_pilot_p6144.bin` noch
   kein CDN-Asset.
-- **ned-Crawl-Landung verifizieren** (Run 34348633104); IPAC-Antwort ausstehend.
+- **ned-Crawl-Landung verifizieren** — 1/40 Slices (`ned_part_00000.json`),
+  `ned.json` erst bei 40/40 (~40 h, stündlicher Cron); IPAC-Antwort ausstehend.
 
 ## Nadeln (offene Linien; Blätter tragen die Urteile)
 
