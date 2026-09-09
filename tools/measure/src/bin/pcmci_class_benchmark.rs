@@ -19,6 +19,7 @@ static R_START: AtomicUsize = AtomicUsize::new(0);
 static R_END: AtomicUsize = AtomicUsize::new(usize::MAX);
 static ANCHOR_ONLY: AtomicBool = AtomicBool::new(false);
 static GATE_ONLY: AtomicBool = AtomicBool::new(false);
+static T600_ONLY: AtomicBool = AtomicBool::new(false);
 
 fn section(n: usize) -> bool {
     let s = SECTION.load(Ordering::Relaxed);
@@ -661,13 +662,16 @@ fn main() {
     if args.iter().any(|a| a == "--gate") {
         GATE_ONLY.store(true, Ordering::Relaxed);
     }
+    if args.iter().any(|a| a == "--t600") {
+        T600_ONLY.store(true, Ordering::Relaxed);
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
     let bins = BINS.load(Ordering::Relaxed);
     let max_lag = MAX_LAG.load(Ordering::Relaxed);
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} r={}..={}",
+        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} t600={} r={}..={}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
@@ -682,6 +686,7 @@ fn main() {
         },
         ANCHOR_ONLY.load(Ordering::Relaxed),
         GATE_ONLY.load(Ordering::Relaxed),
+        T600_ONLY.load(Ordering::Relaxed),
         R_START.load(Ordering::Relaxed),
         R_END.load(Ordering::Relaxed),
     );
@@ -706,6 +711,24 @@ fn main() {
         gate_battery();
     }
     if ANCHOR_ONLY.load(Ordering::Relaxed) || GATE_ONLY.load(Ordering::Relaxed) {
+        return;
+    }
+    if T600_ONLY.load(Ordering::Relaxed) {
+        let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
+        println!("    T-scaling (Fig. S8, qualitative) — T=600 point only:");
+        s60_point(
+            10,
+            600,
+            0.2,
+            false,
+            &set1,
+            "N=10 T=600 c=0.2",
+            top(2),
+            div(10),
+            2,
+            BINS.load(Ordering::Relaxed),
+            SEED,
+        );
         return;
     }
 
