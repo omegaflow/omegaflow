@@ -2,9 +2,9 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: d9b953f80fddeb8b7d6ac0940883350f8e404a25dce31247fff25c5d8e4778fd
-  status: archived
-  see-also: docs/handover/archiv/handover-2026-09-09-housekeeping-sauberer-schnitt.md docs/auftrag/archiv/
+  sha256: 0e096d3a91eadeca4193a5fdba690fb24d319e4a5142bbda08c2f7fbe60fcdb5
+  status: live
+  see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 # Thematisches Handover — mechanische Reste
 
@@ -13,25 +13,44 @@ Follow-up der aufgelösten Aufträge, der Nadeln, der Weberin-Linien und der
 CDN-/Source-Port-Reste. Jeder Eintrag trägt einen gemessenen offenen Punkt;
 Geschlossenes trägt Git.
 
+## Geschlossen (trägt Git)
+
+Die CDN-Manifestations-Reste wurden 2026-09-09 gemessen und geschlossen (Rat,
+fünf Stimmen einstimmig):
+
+- **gebco 56-Byte-Stub** — `gebco_bathymetry.gbco` (56 B = 2 Records) frisch
+  nachkompiliert, byte-identisch (cmp 0) zum CDN-Asset: echter 2-Punkt-Zeuge
+  aus dem Workflow, kein Uploadfehler.
+- **2MASS** — `2mass_binary.fp01` CDN 200 / 27 MB (Run 34316774357);
+  Operator-Wort war erteilt (handover-allwise-2mass-ernte §5).
+- **planck_dust_av** — registriert (sources.φ:5540) + CDN 200.
+- **eve2011_lines.bin** — CDN 200; Maßkanal, nicht Oszillator
+  (`corona_ladder_probe` liest per Pfad, magic `EVL1`) — kein url-line fällig.
+- **aia2014_fullyear.bin** — descoped: Monatsbins (aia2014_10.bin CDN 200) sind
+  das Dauerheim; der fullyear-Merge für 2014 wurde nie gebaut.
+- **omni2_raw/** — descoped: kompilierte Serie (sources.φ 1893/1905/1917 + CDN
+  200); Roh-CSVs aus CDAWeb-HAPI reproduzierbar.
+- **goes15*/** — descoped: drei Jahres-Tars (CDN 200); loose .nc sind entpackte
+  Arbeitskopien.
+- **galileo_tdf_cache_*.TDF** — descoped: PDS-Origin lebt (200 gemessen) +
+  `galileo_resid.bin` (CDN 200); rohe TDF re-ernterbar, keine einzige Kopie.
+- **ck90342a_plt.bc** — descoped: konsumentenlos (kein Treffer im Baum, nicht in
+  der 9er-Kernelliste des Workflows).
+
 ## vo-tap / uvor
 
 - **Crate pushen** — `ivoa/uvor` existiert (HTTP 200 gemessen); der Seed
   `tools/vo-tap` (BSD-3-Clause, Copyright Johannes Tyroller) steht. Der Push
   hängt am Operator-Wort/Markus-Übergabe, nicht an Code.
 
-## CDN-Manifestation (Assets fehlen bis zum Dispatch)
+## CDN-Manifestation
 
-- **neptune-c-spk-cdn.yml** — erledigt: Dispatch 34359296647, `ephemeris_neptune_c.bin`
-  200 / 17.18 MB (breit 1802–2030). (handover-2026-09-09-uranus-push-cdn)
 - **AllWISE-Ernte** — läuft (~13 Tage); `allwise_coverage.fp01` noch nicht
   verifiziert; CI-Partial-Check + Regrid-Optimierung (korrektheitskritisch).
-- **2MASS-Footprint** — Compiler + Workflow stehen, Dispatch = Operator-Wort.
-- **PS1-fraktional** — läuft als Tiefen-Ernte (Autoresume).
-- **Asset-Manifestations-Pflicht** — `aia2014_fullyear.bin`, `planck_dust_av`,
-  `eve2011_lines.bin`, `omni2_raw/`, `goes15*/`, `galileo_tdf_cache_*.TDF`,
-  SPICE-`.bc`-Kernels — Kernel-/CDN-Schicksal je Quelle.
-- **gebco 56-Byte-Stub** — `gebco_bathymetry.gbco` trägt 2 Records statt
-  Bathymetrie; prüfen: echter 2-Punkt-Test oder fehlgeschlagener Upload.
+- **PS1-fraktional** — läuft als Tiefen-Ernte (Autoresume); Partial-Landung
+  reißt am 180-min-Timeout vor der ersten Band — eigenes Atom (Chunking/Timeout).
+- **SPICE-`.bc`-Kernels** — `gll-ck-cdn.yml` steht (9 GLL-Kernels, sha256-Tor),
+  naif-Release leer (404 gemessen); Dispatch = Operator-Wort.
 - **Gaia XP** — Ernte-Schnitt (ganze Erde / helle Klasse / Jagd-Regionen);
   Ring↔Nest-Brücke source_id↔FP01-ipix ungemessen; `xp_pilot_p6144.bin` noch
   kein CDN-Asset.
