@@ -64,6 +64,16 @@ fn main() {
     println!("  narrows with sqrt(n) stations, the fleet mean narrows with sqrt(N) events");
     println!("polarity witness: free-surface R_pp is negative across the steep band (befund");
     println!("  tiefenphasen-polaritaet) — a sign flip carries the source term, not the angle");
+    println!(
+        "Δ-restriction gate (named instrument, registered before the first fetch): a station whose"
+    );
+    println!(
+        "  code-read pP-lag changes across 2δ above the measured smooth teleseismic gradient × a"
+    );
+    println!(
+        "  factor is branch-unstable — the pP family folds there; the station is skipped by name,"
+    );
+    println!("  never fed into the inversion as an ambiguous pick (660-edge gate untouched)");
     println!("match gate: catalog depth uncertainty ~ +/- {DEPTH_MATCH_GATE_KM} km");
     println!();
 
@@ -86,9 +96,11 @@ fn main() {
         events.len()
     );
 
-    let mut offsets: Vec<f64> = Vec::new();
+    let mut offsets_with_clamp: Vec<f64> = Vec::new();
+    let mut offsets_after_exclusion: Vec<f64> = Vec::new();
     let mut event_scatters: Vec<f64> = Vec::new();
     let mut pending_events: Vec<String> = Vec::new();
+    let mut branch_skips_total = 0usize;
 
     for (idx, event) in events.iter().take(max_events).enumerate() {
         println!();
@@ -130,7 +142,10 @@ fn main() {
         stations.truncate(MAX_STATIONS);
 
         let mut depths: Vec<f64> = Vec::new();
+        let mut edge_clamped = 0usize;
+        let mut saturated = 0usize;
         let mut skips: Vec<String> = Vec::new();
+        let mut branch_unstable = 0usize;
         let mut first = true;
         for st in &stations {
             if !first {
@@ -138,17 +153,26 @@ fn main() {
             }
             first = false;
             let m = dp::measure_station(event, st, &start, &end);
+            if m.branch_unstable {
+                branch_unstable += 1;
+            }
             match m.skip {
                 Some(reason) => skips.push(format!("{} ({reason})", m.key)),
-                None => match m.depth_km {
-                    Some(h) => depths.push(h),
+                None => match m.inversion {
+                    Some(dp::DepthInversion::Depth(h)) => depths.push(h),
+                    Some(dp::DepthInversion::EdgeDiscontinuity) => edge_clamped += 1,
+                    Some(dp::DepthInversion::SaturatedBound) => saturated += 1,
+                    Some(dp::DepthInversion::Absent) => {
+                        skips.push(format!("{} (inversion: no finite residual)", m.key))
+                    }
                     None => skips.push(format!("{} (pP below the correlation gate)", m.key)),
                 },
             }
         }
+        branch_skips_total += branch_unstable;
 
-        let picked = stations.len() - skips.len();
-        if depths.is_empty() {
+        let carried = depths.len() + edge_clamped + saturated;
+        if carried == 0 {
             pending_events.push(format!(
                 "{} (0 stations inverted a depth; {} skipped)",
                 event.id,
@@ -156,78 +180,138 @@ fn main() {
             ));
             continue;
         }
-        let median_depth = dp::median(&mut depths.clone());
-        let offset = median_depth - event.depth_km;
-        let sd = sample_sd(&depths);
-        let verdict = if offset.abs() <= DEPTH_MATCH_GATE_KM {
-            "inside the match gate"
-        } else {
-            "outside the match gate"
-        };
-        let depth_list = depths
-            .iter()
-            .map(|d| format!("{d:.0}"))
-            .collect::<Vec<_>>()
-            .join(", ");
         println!(
-            "  {picked} stations passed the gate; depths [{depth_list}] km -> median {median_depth:.0} km, sd {} km, offset {:+.1} km ({verdict})",
-            sd.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
-            offset
+            "  {edge_clamped} of {carried} stations edge-clamped at 660; {saturated} of {carried} saturated at 700"
         );
+        if branch_unstable > 0 {
+            println!(
+                "  the Δ-gate skipped {branch_unstable} of {} branch-unstable stations (pP fold band)",
+                stations.len()
+            );
+        }
+        if let Some(smooth_grad) = dp::smooth_p_p_lag_gradient_s_per_deg(event.depth_km) {
+            println!(
+                "  Δ-gate reference at {:.0} km: smooth pP-lag gradient {smooth_grad:.2} s/deg, fold gate {:.2} s/deg (×{})",
+                event.depth_km,
+                smooth_grad * dp::FOLD_GATE_OVER_SMOOTH_FACTOR,
+                dp::FOLD_GATE_OVER_SMOOTH_FACTOR
+            );
+        }
+        let mut combined = depths.clone();
+        combined.extend(std::iter::repeat(660.0).take(edge_clamped));
+        combined.extend(std::iter::repeat(700.0).take(saturated));
+        let with_clamp_median = dp::median(&mut combined);
+        let offset_wc = with_clamp_median - event.depth_km;
+        if depths.is_empty() {
+            println!("  after-exclusion depth: absent (no station measured a depth — all {carried} carried a clamp at the model bounds, never 0)");
+        } else {
+            let median_depth = dp::median(&mut depths.clone());
+            let offset_ae = median_depth - event.depth_km;
+            let sd = sample_sd(&depths);
+            let verdict = if offset_ae.abs() <= DEPTH_MATCH_GATE_KM {
+                "inside the match gate"
+            } else {
+                "outside the match gate"
+            };
+            let depth_list = depths
+                .iter()
+                .map(|d| format!("{d:.0}"))
+                .collect::<Vec<_>>()
+                .join(", ");
+            println!(
+                "  {} of {carried} stations measured a depth [{depth_list}] km -> after-exclusion median {median_depth:.0} km, sd {} km, offset {:+.1} km ({verdict})",
+                depths.len(),
+                sd.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
+                offset_ae
+            );
+            offsets_after_exclusion.push(offset_ae);
+            if let Some(s) = sd {
+                event_scatters.push(s);
+            }
+        }
+        println!(
+            "  with-clamp median {with_clamp_median:.0} km (edge-clamped counted as 660, saturated as 700), offset {:+.1} km",
+            offset_wc
+        );
+        offsets_with_clamp.push(offset_wc);
         if !skips.is_empty() {
             println!("  skipped {}: {}", skips.len(), skips.join("; "));
-        }
-        offsets.push(offset);
-        if let Some(s) = sd {
-            event_scatters.push(s);
         }
     }
 
     println!();
     println!("=== fleet summary ===");
-    let n = offsets.len();
-    if n == 0 {
-        println!("no event inverted a depth — the fleet carries no statistic (0 honored)");
-    } else {
-        let mean_offset = mean(&offsets).unwrap();
-        let sd_offset = sample_sd(&offsets);
-        let se = sd_offset.map(|s| s / (n as f64).sqrt());
-        let offsets_txt = offsets
-            .iter()
-            .map(|o| format!("{:+.0}", o))
-            .collect::<Vec<_>>()
-            .join(", ");
-        println!("N = {n} events carried an inverted depth");
-        println!("per-event offsets (median - catalog): [{offsets_txt}] km");
+    if branch_skips_total > 0 {
         println!(
-            "mean offset {:+.1} km, sd across events {} km, se = sd/sqrt(N) = {} km",
-            mean_offset,
-            sd_offset
-                .map(|v| format!("{v:.1}"))
-                .unwrap_or("pending".into()),
-            se.map(|v| format!("{v:.1}")).unwrap_or("pending".into())
+            "the Δ-gate skipped {branch_skips_total} stations fleet-wide as branch-unstable (pP fold band)"
         );
-        let median_station_scatter = if event_scatters.is_empty() {
-            None
+    } else {
+        println!("the Δ-gate skipped no station (no measured station sat in a pP fold band)");
+    }
+    let n_wc = offsets_with_clamp.len();
+    let n_ae = offsets_after_exclusion.len();
+    if n_wc == 0 && n_ae == 0 {
+        println!(
+            "no event carried an inversion state — the fleet carries no statistic (0 honored)"
+        );
+    } else {
+        if n_wc == 0 {
+            println!("with-clamp mean offset: pending (no event carried a depth or clamp)");
         } else {
-            Some(dp::median(&mut event_scatters.clone()))
-        };
-        match median_station_scatter {
-            Some(s) => {
-                let comparison = match sd_offset {
-                    Some(v) if v > s => "above the station scatter".to_string(),
-                    Some(_) => "within the station scatter".to_string(),
-                    None => {
-                        "scatter relation pending (the event-to-event sd stays unread)".to_string()
-                    }
-                };
-                println!(
-                    "typical within-event station scatter (median per-event sd): {s:.1} km — the event-to-event sd {} km sits {comparison}",
-                    sd_offset.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
-                );
-            }
-            None => {
-                println!("within-event station scatter stays pending (no event carried 2+ depths)")
+            let mean_wc = mean(&offsets_with_clamp).unwrap();
+            let sd_wc = sample_sd(&offsets_with_clamp);
+            let se_wc = sd_wc.map(|s| s / (n_wc as f64).sqrt());
+            println!(
+                "with-clamp mean offset {:+.1} km over {n_wc} events (edge-clamped counted as 660, saturated as 700); sd across events {} km, se = sd/sqrt(N) = {} km",
+                mean_wc,
+                sd_wc
+                    .map(|v| format!("{v:.1}"))
+                    .unwrap_or("pending".into()),
+                se_wc
+                    .map(|v| format!("{v:.1}"))
+                    .unwrap_or("pending".into())
+            );
+        }
+        if n_ae == 0 {
+            println!("after-exclusion mean offset: pending (no event measured an unclamped depth)");
+        } else {
+            let mean_ae = mean(&offsets_after_exclusion).unwrap();
+            let sd_ae = sample_sd(&offsets_after_exclusion);
+            let se_ae = sd_ae.map(|s| s / (n_ae as f64).sqrt());
+            let offsets_txt = offsets_after_exclusion
+                .iter()
+                .map(|o| format!("{:+.0}", o))
+                .collect::<Vec<_>>()
+                .join(", ");
+            println!("after-exclusion mean offset {:+.1} km over {n_ae} events; per-event offsets [{offsets_txt}] km", mean_ae);
+            println!(
+                "after-exclusion sd across events {} km, se = sd/sqrt(N) = {} km",
+                sd_ae.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
+                se_ae.map(|v| format!("{v:.1}")).unwrap_or("pending".into())
+            );
+            let median_station_scatter = if event_scatters.is_empty() {
+                None
+            } else {
+                Some(dp::median(&mut event_scatters.clone()))
+            };
+            match median_station_scatter {
+                Some(s) => {
+                    let comparison = match sd_ae {
+                        Some(v) if v > s => "above the station scatter".to_string(),
+                        Some(_) => "within the station scatter".to_string(),
+                        None => "scatter relation pending (the event-to-event sd stays unread)"
+                            .to_string(),
+                    };
+                    println!(
+                        "typical within-event station scatter (median per-event sd): {s:.1} km — the after-exclusion event-to-event sd {} km sits {comparison}",
+                        sd_ae.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
+                    );
+                }
+                None => {
+                    println!(
+                        "within-event station scatter stays pending (no event carried 2+ depths)"
+                    )
+                }
             }
         }
     }
