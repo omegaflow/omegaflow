@@ -35,9 +35,15 @@ fn main() {
         .filter(|&d| dp::p_p_lag(d, SOURCE_DEPTH_KM).is_some())
         .collect();
     let recovered = dp::invert_depth_multi(&deltas_valid, &lags);
+    let recovered_txt = match recovered {
+        dp::DepthInversion::Depth(h) => format!("{h:.0}"),
+        dp::DepthInversion::EdgeDiscontinuity => "edge-clamped at the 660 km wall".to_string(),
+        dp::DepthInversion::SaturatedBound => "saturated at the 700 km ceiling".to_string(),
+        dp::DepthInversion::Absent => "absent".to_string(),
+    };
     println!(
-        "synthetic pP-P lags at the catalog depth ({:.0} km) invert to h = {:?} km",
-        SOURCE_DEPTH_KM, recovered
+        "synthetic pP-P lags at the catalog depth ({:.0} km) invert to h = {} km",
+        SOURCE_DEPTH_KM, recovered_txt
     );
     let lag_per_5km = dp::p_p_lag(30.0, 15.0).unwrap() - dp::p_p_lag(30.0, 10.0).unwrap();
     println!(
