@@ -6,6 +6,8 @@ const MAX_LAG: usize = 2;
 const BINS: usize = 4;
 const BURN: usize = 200;
 const KNN: usize = 4;
+const P_MAX: usize = 2;
+const ALPHA: f64 = 0.05;
 
 static NULL_LAG: AtomicUsize = AtomicUsize::new(12);
 static N_SURR: AtomicUsize = AtomicUsize::new(100);
@@ -166,6 +168,8 @@ fn measure(
         BLOCK.load(Ordering::Relaxed),
         estimator(),
         KNN,
+        P_MAX,
+        ALPHA,
     )?;
     let n_chan = series.len();
     let found: Vec<bool> = true_links
@@ -486,7 +490,7 @@ fn main() {
     let top = |r: usize| if quick { 1 } else { r };
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} est {} knn {KNN} seed {SEED:#X} quick={quick}",
+        "machine operating point: max_lag {MAX_LAG} null_lag {} bins {BINS} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
