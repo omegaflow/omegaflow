@@ -1,10 +1,10 @@
 <!--
-  title: Befund — Orientierungs-Sonde: fünf Linien, ein korrigierter Matrix-Pfad — de440/de442/inpop/epm earth + de441 mars tragen Vor-Fix-Matrizen
+  title: Befund — Orientierungs-Sonde: Vor-Fix-Matrizen auf vier Erd-Linien + Mars — vier rekompiliert und re-verifiziert (Δ 0,0 km), Mars bleibt offen
   class: befund
   date: 2026-09-09
-  sha256: 52532df21d2f4d79a5c7685f7ad8fb88af2dbabaa9da68a5ee1d11d566f7f33e
+  sha256: 62d5a9f94f979499a7f8cf052f41545db85649b209f260f0d7c300f83b21465e
   status: live
-  see-also: docs/TODO.md docs/handover/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/handover-2026-09-09-finsternis-schattenortung.md
+  see-also: docs/handover/handover-thematisch-membran-sonde.md docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
 
 # Befund: die Orientierungs-Sonde misst die Matrix-Pfade
@@ -53,12 +53,22 @@ Vor-Fix-Matrizen — Großkreis-Δs ~120–138° (Anker ~13 500–15 000 km), ex
 die Vor-Fix-Signatur (~117°-Klasse, `w = pm − ra` mit vertauschten Zeilen).
 Nur das frisch rekompilierte de441 earth (36 020 Matrizen) trägt den Fix.
 
+## Nachmessung (2026-09-09, nach Rekompilat)
+
+de44-cdn (run 34363451986) + inpop-epm-cdn (run 34363458584) grün. Nach dem
+Auffrischen der Bins misst die Sonde: de440/de442/inpop19a/epm2021 earth tragen
+jetzt Δ 0,0 km (Anker Matrix 11.8598/−95.8416 gegen Analytik 11.8597/−95.8416;
+DSS43 Matrix = Analytik = −27,302°). `galileo_elevation_match sanity`: DSS43-Peak
+jetzt ~04:00 (Matrix-Pfad im Einklang mit dem Lehrbuch, vorher ~117°-Shift);
+`full` reproduziert den Befund exakt (Haupttabellen unverändert: st43 med_diff
+1,828 / 20/5 / 9,688 · st63 18,827 / 9/4 / 35,304 · interior st43 1,162/19/5,
+st63 4,757/9/4). de441 mars bleibt stale (Δ Anker 6 045,3 km).
+
 ## Register-Pflicht
 
-Der Rekompilat der fünf stale Bins (de440/de442/inpop19a/epm2021 earth +
-de441 mars) mit dem fixierten Code ist ein neuer offener Stein des
-konsolidierten Follow-ups — diese Sitzung baute und maß, kompilierte nicht.
-Vorbestehend benannt, nicht mitgeführt: der ssd-earth-Struktur-Unterschied
-(18 MB / 36 020 vs 183 MB / 346 876 Granulen, ungemessen), der TNO-Split
-(`asteroid_gm_sb441.φ` absent auf CI), `--omega-g` liest `solar_omega_g.φ`
-void.
+Vier der fünf stale Bins (de440/de442/inpop19a/epm2021 earth) sind rekompiliert
+und re-verifiziert. Offen bleibt de441 mars — hängt am kernel-flatten-Körperjob
+und am ungemessenen ssd-earth-Struktur-Unterschied. Vorbestehend benannt, nicht
+mitgeführt: der ssd-earth-Struktur-Unterschied (18 MB / 36 020 vs 183 MB / 346 876
+Granulen, ungemessen), der TNO-Split (`asteroid_gm_sb441.φ` absent auf CI),
+`--omega-g` liest `solar_omega_g.φ` void.
