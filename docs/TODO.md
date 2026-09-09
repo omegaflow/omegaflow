@@ -2016,7 +2016,14 @@ Gebaut (2026-09-06, sub-agents):
     (Triton-Wobble 74.1 km Mittel / Reproduktions-RMS 51 m,
     `neptune_center_check_probe`), eigener Workflow `neptune-c-spk-cdn.yml`,
     Ernte registriert (nep097.bsp + nep097xl-899.bsp + ephemeris_neptune_c.bin
-    in phi/sources.φ); die Astrometrie-Kopplung (Neptun-Tabelle ernten und
+    in phi/sources.φ); der Riß am Zentrum GEBAUT (2026-09-09): der Probe
+    `neptune_center_rift_probe` mißt die drei Häuser am Zentrum (DE441 direkt,
+    INPOP/EPM + nep097 899−8): |Δ| Mittel 589/3227/3208 km, säkulares Wachstum
+    mit Minimum in den 1980ern (Voyager-2-Anker 1989) bis 9571 km in den
+    2020ern (Eisriesen-Kluft), Kalibrier-Gate exakt (+100/−50/+200 km
+    zurückgewonnen). Befund:
+    docs/befund/befund-2026-09-09-neptun-zentrum-riss.md;
+    die Astrometrie-Kopplung (Neptun-Tabelle ernten und
     gegen das Zentrum reduzieren) — `pending`; Erreichbarkeit gemessen
     (2026-09-09): Camargo 2015 (J/A+A/582/A8) ist Uranus-only („Astrometry of
     the main satellites of Uranus", kein neptu_j), GeoAzur-Basis
