@@ -2010,7 +2010,14 @@ Gebaut (2026-09-06, sub-agents):
     docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md;
     offen: der physikalische Ursprung der vier de441-Trägerjahre —
     `pending` je Linie; (c) Neptun als zweiter Planet desselben
-    Baus — `pending` je Linie. Der Horizons-Raster-
+    Baus — Komposition GEBAUT (2026-09-09): `horizons_compiler` trägt
+    `--neptune-c-spk` (DE441-Baryzentrum + nep097xl 899−8,
+    `ephemeris_neptune_c.bin`, 2-d-Granulen, 0.1-d-Abtastung), verifiziert
+    (Triton-Wobble 74.1 km Mittel / Reproduktions-RMS 51 m,
+    `neptune_center_check_probe`), eigener Workflow `neptune-c-spk-cdn.yml`,
+    Ernte registriert (nep097.bsp + nep097xl-899.bsp + ephemeris_neptune_c.bin
+    in phi/sources.φ); die Astrometrie-Kopplung (Neptun-Tabelle ernten und
+    gegen das Zentrum reduzieren) — `pending`. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
