@@ -1619,9 +1619,17 @@ ICRS-4D-Rahmen teilt:
   Pilotband überall negativ (Nullstelle 53,9°), R_sp ≈ −1; das gemessene
   „sP durchgehend negativ" trägt die Freifläche allein, die pP-Mischung
   (4×+, 2×−) trägt der Quell-Strahlungsterm (`pending` ohne CMT). Befund
-  `docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md`. Nachfolger
-  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + der Quell-Term
-  (CMT-Lösung). Benannte Grenze vor dem Zonen-Lauf: `MAX_DEPTH_KM = 250`
+  `docs/befund/befund-2026-09-09-tiefenphasen-polaritaet.md`. Die Flotte
+  GEBAUT+gemessen (2026-09-09): 16 Ereignisse × Stationen
+  (`depth_phase_fleet_probe.rs`, Statistik `mean`/`sample_sd` in `stats.rs`);
+  Mittelwert +1,7 km (se 4,7 km, unverzerrt), aber σ 19 km über die Ereignisse
+  und 36 km über die Stationen dominiert das ±10-km-Gate — der Pilot-Offset
+  +19 km war Streuung, kein Bias; MiniSEED-Robustheit gefixt (Fehlkörper →
+  absent statt Panik, 2 Tests). Befund
+  `docs/befund/befund-2026-09-09-tiefenphasen-flotte.md`. Nachfolger benannt:
+  die Streuung senken (besseres Picken / der mehrdeutige pP-Zweig bei Δ≈30°)
+  + der Quell-Term (CMT-Lösung). Benannte Grenze vor dem Zonen-Lauf:
+  `MAX_DEPTH_KM = 250`
   in `ak135.rs` kappt die Tiefenphasen — Tiefherd-Ereignisse (Tonga
   410–660 km) brauchen erst die Modell-Erweiterung über 250 km. Der
   Nah-Stationen-Weg
