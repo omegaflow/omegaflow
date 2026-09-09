@@ -30,10 +30,10 @@ fn main() {
     }
     if registers.is_empty() {
         registers = vec![
-            PathBuf::from("docs/handover/handover-thematisch-tiefenphasen-flotte.md"),
-            PathBuf::from("docs/handover/handover-thematisch-te-atom-4.md"),
-            PathBuf::from("docs/handover/handover-thematisch-membran-sonde.md"),
-            PathBuf::from("docs/handover/handover-thematisch-mechanische-reste.md"),
+            PathBuf::from("docs/handover/handover-2026-09-09-tiefenphasen-flotte.md"),
+            PathBuf::from("docs/handover/handover-2026-09-09-te-atom-4.md"),
+            PathBuf::from("docs/handover/handover-2026-09-09-membran-sonde.md"),
+            PathBuf::from("docs/handover/handover-2026-09-09-mechanische-reste.md"),
         ];
     }
 

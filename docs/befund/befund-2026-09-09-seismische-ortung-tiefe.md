@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 2fbc18809e6fdf12947def72153fbae15188701307a4d08dcf32d372679b8365
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md
 -->
 
 # Befund: die seismische Ortung mit Tiefe

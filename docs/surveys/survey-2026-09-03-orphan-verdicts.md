@@ -93,6 +93,6 @@ bleibt bei unklaren Einzelfällen offen.
 ## Registrierung
 
 Die Disposition der 55 undocumented `stale_pending` ist eine offene Pflicht in
-`docs/handover/handover-thematisch-mechanische-reste.md` (Auftrags-Programm, Pflege & Struktur →
+`docs/handover/handover-2026-09-09-mechanische-reste.md` (Auftrags-Programm, Pflege & Struktur →
 `auftrag-saubere-datenbank.md`). Step 4 (CI-Dedupe) ist gegen die gemessene
 Job-Zahl (health-check 4, kernel-flatten 18) neu zu fassen.

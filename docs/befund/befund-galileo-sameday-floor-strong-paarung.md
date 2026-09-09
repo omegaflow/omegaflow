@@ -5,7 +5,7 @@
   sha256: 0ecc26397f8de224923047d562ec791335c804f45dad99f3c348cdf8c8751815
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode2-staerke-split.md
-  see-also: docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-inpass-staerke-rampe.md docs/handover/handover-thematisch-mechanische-reste.md
+  see-also: docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-inpass-staerke-rampe.md docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 # Befund: Galileo Tag-gepaarte Boden/Stark-Messung — der AGC-Boden ist auch am selben Tag lauter als das starke Plateau
 
