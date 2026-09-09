@@ -146,24 +146,16 @@ pub fn state_ssb_multi(kernels: &[SpkFile], target: i32, et: f64) -> Option<[f64
 }
 
 pub fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 9] {
-    let a = ra_deg.to_radians();
-    let d = dec_deg.to_radians();
-    let w = (pm_deg - ra_deg).to_radians();
+    let a = (90.0 + ra_deg).to_radians();
+    let d = (90.0 - dec_deg).to_radians();
+    let w = pm_deg.to_radians();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
     let (sw, cw) = w.sin_cos();
-    let xt_target = cw * ca - sw * sa * cd;
-    let yt_target = cw * sa + sw * ca * cd;
-    let zt_target = sw * sd;
-    let xt_up = -sw * ca - cw * sa * cd;
-    let yt_up = -sw * sa + cw * ca * cd;
-    let zt_up = cw * sd;
-    let xt_east = -sa * sd;
-    let yt_east = ca * sd;
-    let zt_east = -cd;
-    [
-        xt_target, yt_target, zt_target, xt_east, yt_east, zt_east, xt_up, yt_up, zt_up,
-    ]
+    let rz_a = [ca, -sa, 0.0, sa, ca, 0.0, 0.0, 0.0, 1.0];
+    let rx_d = [1.0, 0.0, 0.0, 0.0, cd, -sd, 0.0, sd, cd];
+    let rz_w = [cw, -sw, 0.0, sw, cw, 0.0, 0.0, 0.0, 1.0];
+    matmul(&rz_a, &matmul(&rx_d, &rz_w))
 }
 
 pub fn libration_matrix(phi_deg: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
