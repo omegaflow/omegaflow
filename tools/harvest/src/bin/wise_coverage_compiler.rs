@@ -11,6 +11,7 @@ use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 const TAP_ROOT: &str = "https://irsa.ipac.caltech.edu/TAP/sync";
 const COV_ROOT: &str = "https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd";
@@ -227,6 +228,40 @@ struct Census {
     nominal_from_tap: bool,
 }
 
+impl Census {
+    fn empty() -> Self {
+        Census {
+            tap_queries: 0,
+            tiles_harvested: 0,
+            planes_fetched: 0,
+            planes_missing: 0,
+            planes_unreadable: 0,
+            planes_non_zenithal: 0,
+            planes_empty: 0,
+            measured_pixels: 0,
+            zero_pixels: 0,
+            absent_pixels: 0,
+            unmapped_pixels: 0,
+            nominal_from_tap: false,
+        }
+    }
+
+    fn merge(&mut self, other: Census) {
+        self.tap_queries += other.tap_queries;
+        self.tiles_harvested += other.tiles_harvested;
+        self.planes_fetched += other.planes_fetched;
+        self.planes_missing += other.planes_missing;
+        self.planes_unreadable += other.planes_unreadable;
+        self.planes_non_zenithal += other.planes_non_zenithal;
+        self.planes_empty += other.planes_empty;
+        self.measured_pixels += other.measured_pixels;
+        self.zero_pixels += other.zero_pixels;
+        self.absent_pixels += other.absent_pixels;
+        self.unmapped_pixels += other.unmapped_pixels;
+        self.nominal_from_tap |= other.nominal_from_tap;
+    }
+}
+
 fn regrid_plane(buf: &[u8], census: &mut Census) -> Option<Plane> {
     let raw = gunzip(buf)?;
     let (header, _) = FitsHeader::parse(&raw, 0)?;
@@ -344,6 +379,54 @@ fn harvest_coadd(
     }
 }
 
+fn harvest_parallel(
+    ids: &[String],
+) -> Result<([HashMap<u32, f64>; BAND_COUNT], [f64; BAND_COUNT], Census), String> {
+    let workers = 4usize;
+    let next = AtomicUsize::new(0);
+    std::thread::scope(|s| {
+        let mut handles = Vec::with_capacity(workers);
+        for _ in 0..workers {
+            let ids = ids;
+            let next = &next;
+            handles.push(s.spawn(move || {
+                let mut accum: [HashMap<u32, f64>; BAND_COUNT] =
+                    std::array::from_fn(|_| HashMap::new());
+                let mut band_max = [0.0f64; BAND_COUNT];
+                let mut census = Census::empty();
+                loop {
+                    let i = next.fetch_add(1, Ordering::Relaxed);
+                    if i >= ids.len() {
+                        break;
+                    }
+                    eprintln!("coadd {}", ids[i]);
+                    harvest_coadd(&ids[i], &mut accum, &mut band_max, &mut census);
+                }
+                (accum, band_max, census)
+            }));
+        }
+        let mut total_accum: [HashMap<u32, f64>; BAND_COUNT] =
+            std::array::from_fn(|_| HashMap::new());
+        let mut total_max = [0.0f64; BAND_COUNT];
+        let mut total_census = Census::empty();
+        for h in handles {
+            let (a, m, c) = h
+                .join()
+                .map_err(|_| "a harvest worker stayed unjoined".to_string())?;
+            for (bi, map) in a.into_iter().enumerate() {
+                for (ipix, v) in map {
+                    *total_accum[bi].entry(ipix).or_insert(0.0) += v;
+                }
+                if m[bi] > total_max[bi] {
+                    total_max[bi] = m[bi];
+                }
+            }
+            total_census.merge(c);
+        }
+        Ok((total_accum, total_max, total_census))
+    })
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     footprint_identity(omegaflow::archivar::footprint::MAGIC)?;
     let out_path = match arg_value(args, "--out") {
@@ -401,9 +484,6 @@ fn run(args: &[String]) -> Result<(), String> {
     file.write_all(&hbuf)
         .map_err(|e| format!("write {out_path} header returned void: {e}"))?;
 
-    let mut band_accum: [HashMap<u32, f64>; BAND_COUNT] = std::array::from_fn(|_| HashMap::new());
-    let mut band_max: [f64; BAND_COUNT] = [0.0; BAND_COUNT];
-
     let nominal = {
         census.tap_queries += 1;
         match nominal_depth_per_band() {
@@ -447,10 +527,8 @@ fn run(args: &[String]) -> Result<(), String> {
         ids.truncate(n as usize);
     }
 
-    for coadd_id in &ids {
-        eprintln!("coadd {coadd_id}");
-        harvest_coadd(coadd_id, &mut band_accum, &mut band_max, &mut census);
-    }
+    let (band_accum, band_max, harvest_census) = harvest_parallel(&ids)?;
+    census.merge(harvest_census);
 
     let nominal: [f64; BAND_COUNT] = match nominal {
         Some(n) => n,
