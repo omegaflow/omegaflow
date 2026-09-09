@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: e28f59453e9cee829cfe803f0d8d5ff8cb556ee9b4fc1c2ded0c0023826d8e20
   status: done
-  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/concepts/die-akteure-im-boden-und-wasser.md
+  see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
 
 # Befund: pP/sP-Polarität an tiefer Geometrie — die Freiflächen-Reflexion ist im Pilotband überall invertierend
