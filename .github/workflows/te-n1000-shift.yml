@@ -1,0 +1,58 @@
+name: te-n1000-shift
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: 01-idtxl-block
+            args: --section 5 --null block
+          - point: 02-idtxl-shift
+            args: --section 5 --null shift
+          - point: 03-tigramite-block
+            args: --section 6 --null block
+          - point: 04-tigramite-shift
+            args: --section 6 --null shift
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the n=1000 null point
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- ${{ matrix.args }}
+          } > "report-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: point-${{ matrix.point }}
+          path: report-${{ matrix.point }}.txt
+  reduce:
+    needs: probe
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: point-*
+          merge-multiple: true
+          path: reports
+      - name: Assemble the n=1000 shift sheet
+        run: |
+          for f in reports/report-*.txt; do echo "===== ${f} ====="; cat "$f"; echo; done > n1000-shift-sheet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: n1000-shift-sheet
+          path: n1000-shift-sheet.txt
