@@ -2,6 +2,62 @@
 
 Nur offene Pflichten.
 
+## vo-tap — TAP-Client-Keim für github.com/ivoa (Rat/Operator 2026-09-09)
+
+Markus Demleitner bot an, einen Rust-VO-Client-Keim unter github.com/ivoa
+einzurichten und zu übergeben. GEBAUT (2026-09-09): das eigenständige,
+abhängigkeitsfreie Crate `tools/vo-tap` (std-only + curl, kein omegaflow-Dep,
+edition 2024): sync (csv/json/text/votable/votable/td), UWS-1.1-async
+(submit/phase/run/wait/result/delete — der PENDING+PHASE=RUN-Fund als
+wait-Logik), Parser parse_csv/parse_text/parse_votable(TABLEDATA)/
+parse_json_rows, tables(root), kleine CLI; `cargo check` 0 Warnungen.
+VERIFIZIERT (2026-09-09, via Proton-WireGuard): sync csv + async votable/td
+gegen dc.g-vo.org — COUNT(*) = 219.196.404, UWS-Fluss (PENDING → PHASE=RUN →
+COMPLETED) grün. OFFEN: (1) die Lizenz (MIT / Apache-2.0 / dual — Markus
+gefragt, unentschieden; die LICENSE-Datei fehlt bewusst, nicht fabriziert);
+(2) Repo-Übergabe durch Markus.
+
+## Gaia XP Volkernte — Feld-Baseline der Spektralformen (Rat + Operator 2026-09-09)
+
+Die Volkernte trägt einen Namen (Operator 2026-09-09): **„Feld-Baseline der
+Spektralformen — die Weberin-Anreicherung: jedem Katalog-Faden seine Form; die
+zweite, eigene Zeugenlinie; die spektrale Klasse-2-Frage."** Die Spektren machen
+das Vlies nicht dichter (die Dichte trägt die Position, die steht schon), sondern
+tiefer — „verdeckt nicht, reichert an": (1) instrumentelle Spektralform gegen
+literarische Klassifikation = zweite eigene Zeugenlinie; (2) die Gate vom Skalar
+(BP−RP) zur Form (41 Bins); (3) die Anomalie-Frage in Spektralform — was weicht
+an dieser Himmelsrichtung vom Mittel ab.
+
+Gemessen (2026-09-09): 219.196.404 Quellen in gdr3spec.spectra; withpos ohne
+parallax (JOIN gaia.dr3lite); ein XpStar = 1020 B → Volkernte ≈ 224 GB = 52× über
+MAX_SAMPLES (2²²) und über der 2-GB-CDN-Asset-Grenze. Kein Konto nötig (GAVO
+anonym; der PENDING-Hang war der Client — siehe VizieR-/GAVO-async-Befund).
+Sync-COUNT über die ganze Tafel timed out (Server: „use async").
+
+Rat (2026-09-09): keine 224-GB-Vorernte. Keine neue Asset-Klasse — source_id>>35
+trägt den Level-12-HEALPix-Pixel (Nside 4096, derselbe Raster wie Footprint FP01),
+die Spektren bleiben format xp_spectra v2. Weg = Zur-Laufzeit-Weben: ein
+source_id-Range = eine Sync-Abfrage unter der ~20k-Kappe = ein Stück Himmel,
+nach Frage zuschneidbar. OFFEN: die Ring↔Nest-Brücke zwischen source_id-Index und
+FP01-ipix ist nicht gemessen (pending) — gemessen ist nur der gemeinsame Nside-4096-Raster.
+
+GEBAUT (2026-09-09): gaia_xp_compiler --source-range <lo> <hi> — Sync-Fetch
+(withpos JOIN dr3lite, FORMAT=csv), Kappen-Wächter (≥20k Zeilen → refuse, nie ein
+stiller Abbruch), Parallaxen-Sitz ohne >20-Schnitt (ohne positive Parallaxe →
+skipped_plx, 0 honored), Pilot-Befund je Chunk (Parallaxen-, Katalog-BP−RP- und
+Spektralform-Verteilung). Ein Level-5-Pixel = source_id ∈ [k·2⁴⁹, (k+1)·2⁴⁹) ≈
+2–13k Spektren (Pol dünn, Scheibenmitte dichter).
+
+PILOT (2026-09-09, Pixel k=6144, südliche Scheibenmitte): 12.552 Sterne, Parallaxe
+median 0.550 mas (d ≈ 1.8 kpc), Katalog-BP−RP median 1.06, 6 blau-seitig / 471
+rot-seitig (>|median|+1 mag — der rote Schwanz trägt die staubgerötete/kühle
+Population), 455 Spektralform-Ausreißer (rms > 0.5 gegen die Chunk-Medianform,
+Top-Residuum 4.99). Roundtrip geparst, 12.8 MB. Der Pilot trägt: die Kette läuft,
+die Formen trennen sich. OFFEN: der Schnitt der Ernte (ganze Erde / helle Klasse /
+Jagd-Regionen), den der Pilot-Befund entscheidet; die übrigen ~12.287 Pixel folgen
+dem Schnitt. Pilot-Bin = Arbeitskopie `data/dc.g-vo.org/xp_pilot_p6144.bin` (noch
+kein CDN-Asset).
+
 ## Source-Registrierung — Ursprungs-API statt CDN-Url-Line (2026-09-07)
 
 Der Archivar löst eine Nicht-github-Url als lokaler Cache → CDN-Asset → Ursprung
@@ -14,12 +70,12 @@ Namen — Lokaler Cache → CDN → API schließt konstruktionsgemäß.
 **Dispatch (2026-09-08, Commit `01a2731`):** der `meteo-cdn.yml`-Dispatch
 scheiterte zweimal an der stale Remote-Workflow (`omegaflow-tools --bin
 meteo_harvest` — der Fix `d0b1f3e` war nie gepusht; `origin/main` hing 15
-Commits zurück). Zweiter Haken: das Event `config/meteo/tibet-flut-2026.json`
+Commits zurück). Zweiter Haken: das Event `phi/meteo/tibet-flut-2026.json`
 war in `62ae1de` ("drop unused config/meteo") gelöscht, obwohl `meteo-cdn.yml`
 es referenziert — rekonstruiert. Nach dem Push (`1e1c03c..01a2731`) neu
 dispatched (Run 34165617384). **52-vs-30 — umgesetzt:** der `HOURLY_KATALOG`
 (51 Variablen) ist gestrichen; der Manifestator liest die Variablen jetzt aus
-dem Event (`variables`-Array in `config/meteo/tibet-flut-2026.json` = genau die
+dem Event (`variables`-Array in `phi/meteo/tibet-flut-2026.json` = genau die
 30 registrierten). A = A: das Event trägt das Registrierte, kein hartkodiertes
 Superset. Geschlossen: die 65 Orphan-Assets (21 Extra-Variablen × 3 Stationen
 + archive.json/auto.json) vom 51-Variablen-Lauf gelöscht — der Release trägt
@@ -1146,6 +1202,46 @@ physikalischen Aussage — kein Blatt ohne diese:
   Power-Fläche am Anker bleibt das offene Gemessene des Atoms 3 (die
   Elterngabe im Zug-6-Floor zeigt: mit den wahren Konditionen findet kNN —
   die iterative Suche ist der nächste Schnitt).
+- **Nobel-DAG-Atom — PCMCI-Suche in Rust: PC-Phase mit Subset-Re-Test, MCI-Phase,
+  FDR innen — gebaut, Zug 5 beide grün (2026-09-09, geschlossen)**: der tote
+  zweite Durchgang ist ersetzt — `pcmci_links` (te.rs) trägt jetzt die
+  PC-Phase (p = 0 unkonditioniert, dann Subset-Re-Tests gegen die
+  Level-Snapshot-Eltern, Entfernung nach dem Level) + die MCI-Phase
+  (Konditionierung auf Eltern von Ziel UND Treiber, dedupliziert) +
+  `benjamini_hochberg` innen (`fdr_pass`-Flag auf jedem Link, α = 0.05 —
+  der publizierte Satz); p_max = 2 (benannte Konditionierungstiefe); der
+  Auftrag steht in `docs/auftrag/auftrag-nobel-dag-mci.md`. Gates: Zug 5
+  Binned grün (429 s) und Zug 5 Ksg grün (6733 s — benannte Kosten) durch
+  die neue Suche, Kriterium unverändert. Gemessene Korrektur:
+  `pcmci_recovers_known_dag` prüfte die Konfound-Leckage (gemessen im
+  bbcf2c4-Worktree: der alte ab-te == die unkonditionierte Binning-TE —
+  der Fund, keine Vermutung); der Generator trägt jetzt eine direkte
+  A→B-Kante (0.6·a[t−1]) und der Test läuft am Betriebspunkt
+  (ksg/Block/100, 115 s). Nachher-Batterie (PCMCI, ksg/Block/100, p_max 2,
+  α 0.05, fester Seed) gegen das eigene Blatt: **Anker N=10 3/30 Links
+  >70 % (war 0/30) bei FPR 5,19 %** (publiziert ≈5 — die FPR-Disziplin am
+  Anker ist jetzt publiziert-Niveau); a-set2 9/20 (war 1/20), FPR 9,68
+  benannt; max_lag=5 4/20, FPR 9,42 benannt; c-Sweep 2/3/5/11 von 20
+  >70 % (war 0/1/1/3) — Power steigt mit c, Fig.-6-qualitativ
+  reproduziert; T=300 5/20; nonlinear N=5 7/10 (publiziert „höchste
+  Power"), FPR 18,43 benannt; Common-Driver FPR 1,25–4,67 % je Zelle —
+  das Kriterium hält auch auf der Batterie; TPR D_Z=4 5/5/9 (war 2/6/9).
+  Benannte Risse (gemessen, nicht geschlossen): (a) Chaos-Logistik
+  σ=0.2 FPR 20,4 % (war 2,4) — die MCI-Konditionierung (dim 4) auf
+  nahezu deterministischen Serien bias't die echten TEs über die
+  Block-Null hinaus; σ=0 bleibt der 50/50-Münzwurf. (b) n=1000-Blätter:
+  IDTxl volle Erholung 5/5 auf allen fünf Kanten (war 0/0/0/5/1), aber
+  FPR 75,64 % (war 28,36); Tigramite 5/5, 5/5, 5/5, 5/5 (war 5/5, 5/5,
+  0/5, 5/5), FPR 31,88 — die Block-Länge n^(1/3)=10 leakt auf n=1000
+  unter PCMCI lauter; die Shift-Null (ganze Serie rotiert) ist gebaut und
+  verdrahtet, ihr Zug-5-Nachlauf ist jetzt die dringlichste
+  Folgepflicht. (c) T=600-Batteriepunkt ungemessen — PC+MCI×ksg×100 bei
+  T=600 ≈ Stunden je Punkt (gemessen abgebrochen); Myzel-Duty. Der
+  Probe trägt jetzt `--section 1..6` (die Sektionen laufen einzeln).
+  Zielzeile geschlossen bis X: Anker 0 → 3/30, a-set2 1 → 9/20, c-Sweep
+  bis 11/20, Anker-FPR 5,19 % — gegen das eigene Blatt, PCMCI-Parität war
+  explizit kein Kriterium; die n=1000-Null ist die nächste gemessene
+  Adresse.
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11
@@ -2424,9 +2520,17 @@ Offen (Detail in phi/pipeline/ledger.φ):
   — das J−K-Farb-Atom trägt Crossmatch + Lader. 2MASS J−K
   (twomass_psc.bin) bleibt ein separater, offener Farbindex
   (Gaia-Crossmatch + Feld-Lader).
-- VizieR-async-Befund: --async + gaiadr3-JOIN hängt PENDING — UWS-Jobs
-  sind IP-gebunden: stirbt der Runner, verwaist der Job. RA-Slices
-  sind der Weg für Crossmatch-Kompilate.
+- VizieR-/GAVO-async-Befund (GAVO gemessen 2026-09-09): der PENDING-Hang
+  war der Client — tap_async postete nie PHASE=RUN; DaCHS lässt
+  REQUEST=doQuery-Jobs in PENDING (TAP-1.1-konform), erst der explizite
+  POST PHASE=RUN an {job}/phase startet ihn. Gemessen anonym: PENDING →
+  RUN-Post → COMPLETED, Resultat geholt, Job gelöscht. Gebaut: tap_async
+  postet RUN, sobald die Phase PENDING ist, und fordert FORMAT=votable/td
+  (DaCHS liefert Standard-votable als BINARY, das votable_rows nicht
+  dekodiert — votable/td = TABLEDATA, end-to-end verifiziert: 3 Felder,
+  3 Zeilen). UWS-Jobs bleiben IP-gebunden: stirbt der CI-Runner,
+  verwaist der Job — RA-Slices bleiben der Weg für Crossmatch-Kompilate
+  im CI.
 - ω-Loop-Fetch-Sturm (Befund 2026-08-21): der Live-Source-Zyklus fischt
   ~200 Quellen kontinuierlich mit 4 Retries × 23 s und ttl/Φ-Backoff —
   ein unbegrenzter Churn, der die Heimleitung bei jedem Membran-Lauf
@@ -2759,12 +2863,15 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 Die Binaries liegen in GitHub Releases (omegaflow/omegaflow) — Tag =
 Identität, `SHA256SUMS.txt` je Release, Rollback = älterer Tag. Pages
-(omegaflow.space) trägt nur die Landing; die Binaries verlinkt auf
-`releases/latest/download/<asset>`. Atom 1 (Release-Kanal: release.yml +
-entschlacktes pages.yml), Atom 2 (Φ-Paket aus allen CDN-Netlocs statt
-0-Byte-Lüge) und Atom 3 (Plattform-Wahrheit: userAgentData statt
-UA-Selbstbericht, Termux-Bootstrap ersetzt, Unsigned-Status benannt)
-sind gebaut — die Verifikation trägt der nächste Release-Lauf.
+(omegaflow.space) trägt nur die Landing; die Binaries verlinken auf
+`releases/latest/download/<asset>`. Atom 1 (Release-Kanal) und Atom 3
+(Plattform-Wahrheit: userAgentData, Termux-Bootstrap, Unsigned-Status)
+gebaut. Atom 2 (Φ-Paket aus allen CDN-Netlocs) ist DESCoped (Operator
+2026-09-09, gemessen): das Bündel wuchs auf 6,9 GB — über der 2-GB-Asset-
+Grenze, der erste Release-Lauf scheiterte am Upload (HTTP 422). Weg =
+„Fragen statt Horten": der φ-Binary lädt Ephemeriden/Kataloge bedarfsweise
+vom CDN (github.com/omegaflow/sources); die Landing verlinkt das CDN statt
+des Monolithen. Der nächste Release-Lauf trägt nur die 5 Binaries.
 
 ## Ausstehende Build- und Verteil-Pflichten
 
