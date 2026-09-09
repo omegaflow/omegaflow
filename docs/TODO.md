@@ -1571,9 +1571,16 @@ ICRS-4D-Rahmen teilt:
   → Median 250 km, Offset +19 km, außerhalb des ±10-km-Gates; die
   Flachquellen-Polaritätsannahme (pP invertiert) kippt an tiefer Geometrie
   (pP positiv, sP negativ). Schließung: Feldpilot bestanden (1 Ereignis) —
-  Befund `docs/befund/befund-2026-09-09-tiefenphasen-feld.md`. Nachfolger
-  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + feinere
-  Inversionsklasse + pP-Polarität an tiefer Geometrie. Der Nah-Stationen-Weg
+  Befund `docs/befund/befund-2026-09-09-tiefenphasen-feld.md`. Feinere
+  Inversionsklasse GEBAUT (2026-09-09): 1-km-Raste statt der 50-km-Schritte;
+  der Picking-Kern zog in `tools/measure/src/depthphase.rs` (gemeinsame Lib,
+  11 Tests — 231 km invertiert auf 231 km, Befund
+  `docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md`). Nachfolger
+  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + pP-Polarität an
+  tiefer Geometrie. Benannte Grenze vor dem Zonen-Lauf: `MAX_DEPTH_KM = 250`
+  in `ak135.rs` kappt die Tiefenphasen — Tiefherd-Ereignisse (Tonga
+  410–660 km) brauchen erst die Modell-Erweiterung über 250 km. Der
+  Nah-Stationen-Weg
   (Hi-net) bleibt die Alternative; Adresse gemessen (2026-09-09): Hi-net (NI)
   ist nicht im EarthScope-Dataselect, NIED verlangt Registrierung; JP (JMA)
   trägt 6 Nah-Stationen als Metadaten, aber die 2011-Wellenformen liefern
