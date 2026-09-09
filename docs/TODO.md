@@ -1498,6 +1498,21 @@ ICRS-4D-Rahmen teilt:
   (rotationslose Körper wurden verworfen, Rotation abgeschnitten) —
   CDN-Neukompilat verifizieren (rotationslose Körper laden, Rotations-
   Matrizen präsent).
+- Membran-Folgeauftrag Orientierungs-Sonde — GEBAUT (2026-09-09): der
+  `orientation_probe` (tools/measure, Muster eclipse_shadow_probe, headless)
+  misst die Orientierung statt sie zu behaupten — Sub-Solar-Punkt über zwei
+  Pfade (Matrix-Pfad = Bins wie gelesen, Analytik-Pfad = IAU-Zweig) gegen die
+  unabhängige Lehrbuch-Formel (DSS43-Elevation, Schwelle 1,0°). Funktions-
+  Check bestanden: de441 earth Matrix ≡ Analytik (0,0 km), DSS43 Analytik
+  −27,302° vs Lehrbuch −26,853° (0,449°). Kern-Befund (gemessen, widerspricht
+  handover-2026-09-09-matrix-fix-nachtrag §4): de440/de442/inpop/epm earth +
+  de441 mars tragen Vor-Fix-Matrizen (~120–138°-Klasse; nur de441 earth trägt
+  den Fix). Rekompilat der fünf stale Bins mit dem fixierten Code = neuer
+  Stein im konsolidierten Follow-up. Befund
+  docs/befund/befund-2026-09-09-orientierung-stale-matrizen.md. Vorbestehend
+  benannt, nicht mitgeführt: ssd-earth-Struktur-Unterschied (18 MB/36 020 vs
+  183 MB/346 876, ungemessen), TNO-Split (asteroid_gm_sb441.φ absent),
+  --omega-g liest solar_omega_g.φ void.
 
 ## Spektrale Achse — offene Pflichten
 
