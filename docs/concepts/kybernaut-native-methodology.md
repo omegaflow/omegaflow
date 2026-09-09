@@ -80,11 +80,11 @@ Rule: Invest tokens in deliberation, not correction. One Council deliberation th
 
 #### Fixing is cheaper than registering
 
-An open task that the current session can close is not `pending` — it is work. Registering it costs a TODO line, a handover paragraph, a future session's archaeological re-read, and the tokens of every session that re-loads the debt. That ledger is not cheaper than the fix; the fix is done once, the debt is paid every time it is named.
+An open task that the current session can close is not `pending` — it is work. Registering it costs a handover line, a handover paragraph, a future session's archaeological re-read, and the tokens of every session that re-loads the debt. That ledger is not cheaper than the fix; the fix is done once, the debt is paid every time it is named.
 
 Rule: When a session names an open item, the first question is *can this be done now?* If the task is within reach — the source is read, the layer is in context, the fix is mechanical — close it in the same session instead of writing it down. `pending` is the name of work that genuinely cannot be done here (missing data, inaccessible layer, an operator decision), never the badge of a task deferred because registering felt lighter. A register line that says nothing more than "this was found and left" is a confession of the wrong choice, not a duty fulfilled.
 
-Rule: The TODO is written the moment the work is *done or genuinely blocked*, not as a substitute for doing it. A session that ends with more register lines than closed items has spent its tokens on the ledger, not on the machine.
+Rule: The handover is written the moment the work is *done or genuinely blocked*, not as a substitute for doing it. A session that ends with more register lines than closed items has spent its tokens on the ledger, not on the machine.
 
 #### Verification: What `cargo check` Cannot Catch
 

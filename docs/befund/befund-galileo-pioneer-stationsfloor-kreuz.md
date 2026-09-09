@@ -5,7 +5,7 @@
   sha256: cf034bdc7accdba8cd306c4386834c64f81e569b621bdf19f5246ea2c37bfeab
   status: draft
   antwortet-auf: docs/befund/befund-galileo-floor-stufen-te.md docs/befund/befund-galileo-ops-aera-floor.md
-  see-also: docs/auftrag/auftrag-subhz-drift-quiet-zone.md docs/befund/befund-pioneer-aera-solarwind-omni2.md
+  see-also: docs/auftrag/archiv/auftrag-subhz-drift-quiet-zone.md docs/befund/befund-pioneer-aera-solarwind-omni2.md
 -->
 
 # Befund: Galileo-Floor-Laut-Tage gegen Pioneer-10-Tages-Boden an derselben DSN-Bodenstation — die tagesscharfe Koinzidenz ist leer (n = 0 laut-beide), eine einzige gemeinsame robuste Zelle liest gegenläufig

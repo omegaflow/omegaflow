@@ -4,14 +4,14 @@
   date: 2026-09-09
   sha256: ea94bb544eb36c1175daf1a153cbfa4f9b8a3f8aa4c8f76408d8d184c9ba3fc6
   status: done
-  see-also: docs/auftrag/auftrag-dispersions-ortungstest.md docs/auftrag/auftrag-dispersionsrelation.md docs/TODO.md
+  see-also: docs/auftrag/archiv/auftrag-dispersions-ortungstest.md docs/auftrag/archiv/auftrag-dispersionsrelation.md docs/handover/handover-thematisch-te-atom-4.md
 -->
 
 # Befund: der Dispersions-Ortungstest
 
 ## Frage & Bindung
 
-Auftrag `docs/auftrag/auftrag-dispersions-ortungstest.md` (`probe-commit` b0b7b7d):
+Auftrag `docs/auftrag/archiv/auftrag-dispersions-ortungstest.md` (`probe-commit` b0b7b7d):
 die gemessene Band-Latenz muss das Ereignis auf den bekannten Sonnenort
 abbilden — Ortung statt Wartung, das Dispersion-Verdikt von außen geprüft.
 Probe: `tools/measure/src/bin/dispersion_ortung_probe.rs` (24-s-Zellen, Fenster

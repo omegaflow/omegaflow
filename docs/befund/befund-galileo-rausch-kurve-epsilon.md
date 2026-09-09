@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 5f63cbcdff1dc5377293eb09c94eeb5ddd066f95d8e8a55c7d50f18fab8ffe8c
   status: done
-  antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md
   see-also: docs/befund/befund-galileo-rausch-kurve.md docs/befund/befund-galileo-mode1-fingerabdruck.md
 -->
 
