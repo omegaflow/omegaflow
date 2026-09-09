@@ -128,10 +128,13 @@ Stufen schreiben relativ nach `phi/pipeline/`):
   `phi/reports/probe_sweep_void.txt` kopiert (versioniert — ein Commit = Häkchen).
 
 Die Kette ist LOKAL (kein Cron, keine CI-Schleife): die Katalog-Korpora
-(~120 MB, gitignored) und `.secrets.local` (46 Keys) liegen nur auf der
-Maschine — die CI könnte die Ernte nicht ehrlich fahren. Der Wochen-Cron
-`probe-sweep.yml`, der eine 14k-URL-Ernte aus nichts fabrizierte, ist entfernt.
-Review bleibt in der Session: Bericht lesen → Schritt 4 → Commit.
+(~120 MB, gitignored) liegen nur auf der Maschine. Die Keys
+(`.secrets.local`, 46, GitHub-Parität — §10) sind gespiegelt und die
+`*-cdn.yml`-Jobs fetchen mit ihnen bereits; die Discovery-Ernte bleibt
+lokal, weil die Korpora der CI fehlen und die Review (Schritt 4) in der
+Session bleibt. Der Wochen-Cron `probe-sweep.yml`, der eine 14k-URL-Ernte
+aus nichts fabrizierte, ist entfernt. Review bleibt in der Session:
+Bericht lesen → Schritt 4 → Commit.
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
 URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
