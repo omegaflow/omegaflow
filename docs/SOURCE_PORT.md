@@ -54,10 +54,12 @@ gewollt, nicht tot.
 
 ## 4. Zustandsmaschine + ledger.φ
 
-Zustände: `ausstehend | verifiziert | void | geparkt | disponiert`.
+Zustände: `ausstehend | verifiziert | kompiliert | void | geparkt | disponiert`.
 
-- `ausstehend` — unberührt, offene Arbeit
+- `ausstehend` — unberührt, offene Arbeit (entdeckt, noch nicht angefasst)
 - `verifiziert` — Sweep lief, Samples extrahiert, Merge in die Register steht aus
+- `kompiliert` — Kompilat gebaut (Struktur-Reader/Compiler lief, Asset erzeugt);
+  die Disposition in die Register steht aus
 - `void` — Sweep lief, alle URLs void (diagnostiziert) — Korpus ist erschöpft
 - `geparkt` — Kandidat wartet auf einen Parser-Gap (Gap im Eintrag benannt)
 - `disponiert` — in `sources.φ` / `dead_sources.φ` / `blocked_sources.φ` eingegangen; Eintrag wird entfernt (Git trägt ihn)
