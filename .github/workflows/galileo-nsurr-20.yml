@@ -1,0 +1,91 @@
+name: galileo-nsurr-20
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: 01-direction-10
+            bin: galileo_te_floor_direction
+            args: --n-surr 10
+          - point: 02-direction-20
+            bin: galileo_te_floor_direction
+            args: --n-surr 20
+          - point: 03-spec-10
+            bin: galileo_spec_te
+            args: --n-surr 10
+          - point: 04-spec-20
+            bin: galileo_spec_te
+            args: --n-surr 20
+          - point: 05-external-10
+            bin: galileo_floor_external_te
+            args: --n-surr 10
+          - point: 06-external-20
+            bin: galileo_floor_external_te
+            args: --n-surr 20
+          - point: 07-stair-10
+            bin: galileo_floor_stair_te
+            args: --n-surr 10
+          - point: 08-stair-20
+            bin: galileo_floor_stair_te
+            args: --n-surr 20
+          - point: 09-mode3s1-10
+            bin: galileo_mode3_s1_repl
+            args: --n-surr 10
+          - point: 10-mode3s1-20
+            bin: galileo_mode3_s1_repl
+            args: --n-surr 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the Galileo residuum and ephemeris from the CDN
+        run: |
+          mkdir -p data/pds-ppi.igpp.ucla.edu data/ssd.jpl.nasa.gov
+          gh release download pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+            --pattern galileo_resid.bin --dir data/pds-ppi.igpp.ucla.edu
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern ephemeris_earth.bin --dir data/ssd.jpl.nasa.gov
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern ephemeris_galileo_daily.bin --dir data/ssd.jpl.nasa.gov
+      - name: Run the n_surr point
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            echo "N_SURR ${{ matrix.args }}"
+            cargo run --release -p omegaflow-measure --bin ${{ matrix.bin }} -- ${{ matrix.args }}
+          } > "report-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: point-${{ matrix.point }}
+          path: report-${{ matrix.point }}.txt
+  reduce:
+    needs: probe
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: point-*
+          merge-multiple: true
+          path: reports
+      - name: Assemble the n_surr 10-vs-20 sheet
+        run: |
+          for f in reports/report-*.txt; do echo "===== ${f} ====="; cat "$f"; echo; done > galileo-nsurr-20-sheet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: galileo-nsurr-20-sheet
+          path: galileo-nsurr-20-sheet.txt
