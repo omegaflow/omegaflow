@@ -75,20 +75,17 @@ fn report(path: &str, eph: &BodyEphemeris, size: u64) {
         ),
         None => "props absent".to_string(),
     };
+    let granules = eph.granules.len();
+    let cadence = fmt_opt(cad);
+    let matrices = eph.rotation_matrices.len();
     let nutation = eph
         .props
         .as_ref()
         .and_then(|p| p.nutation.as_ref())
-        .map(|n| n.len());
+        .map(|n| n.len())
+        .map_or_else(|| "-".to_string(), |n| n.to_string());
     println!(
-        "structure {path}: {size} B · {g} granules · span jd [{lo:.3}..{hi:.3}] = {years:.0} yr · cadence {cad} d · {m} matrices span jd [{mlo:.3}..{mhi:.3}] · nutation {nutation} · {props}",
-        g = eph.granules.len(),
-        cad = fmt_opt(cad),
-        m = eph.rotation_matrices.len(),
-        nutation = match nutation {
-            Some(n) => n.to_string(),
-            None => "-".to_string(),
-        },
+        "structure {path}: {size} B · {granules} granules · span jd [{lo:.3}..{hi:.3}] = {years:.0} yr · cadence {cadence} d · {matrices} matrices span jd [{mlo:.3}..{mhi:.3}] · nutation {nutation} · {props}",
     );
     let anchor = J2000_EPOCH + (1503273600.0 + 18.0 * 3600.0 + 26.0 * 60.0 + 40.0) / DAY_S;
     let covers_anchor = lo <= anchor && anchor <= hi;
