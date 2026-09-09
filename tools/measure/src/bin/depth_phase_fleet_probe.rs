@@ -24,12 +24,38 @@ fn main() {
     let max_events = dp::arg_value(&args, "--max-events")
         .and_then(|v| v.parse::<usize>().ok())
         .unwrap_or(8);
+    let region = match dp::arg_value(&args, "--region") {
+        Some(v) => {
+            let parts: Vec<f64> = v.split(',').filter_map(|s| s.trim().parse().ok()).collect();
+            if parts.len() == 4 && parts.iter().all(|p| p.is_finite()) {
+                [parts[0], parts[1], parts[2], parts[3]]
+            } else {
+                eprintln!(
+                    "depth-phase fleet: --region needs four comma-separated finite numbers (lat0,lat1,lon0,lon1) — the default box stands"
+                );
+                REGION
+            }
+        }
+        None => REGION,
+    };
+    let min_depth_km = match dp::arg_value(&args, "--mindepth") {
+        Some(v) => match v.parse::<f64>() {
+            Ok(d) if d.is_finite() && d >= 0.0 => d,
+            _ => {
+                eprintln!(
+                    "depth-phase fleet: --mindepth is not a finite non-negative number — the default {MIN_DEPTH_KM} km stands"
+                );
+                MIN_DEPTH_KM
+            }
+        },
+        None => MIN_DEPTH_KM,
+    };
 
     println!("=== depth-phase fleet — many events x stations, sigma and sqrt(N) ===");
     println!("selection rule (registered before the first fetch):");
     println!(
-        "  depth >= {MIN_DEPTH_KM} km, magnitude >= {MIN_MAG}, land epicenter (Hindu Kush box lat {}..{} lon {}..{}), GBCO witness per event",
-        REGION[0], REGION[1], REGION[2], REGION[3]
+        "  depth >= {min_depth_km} km, magnitude >= {MIN_MAG}, box lat {}..{} lon {}..{}, GBCO witness per event",
+        region[0], region[1], region[2], region[3]
     );
     println!(
         "  station band {MIN_DIST_DEG}..{MAX_DIST_DEG} deg, SNR gate >= {SNR_GATE}, up to {max_events} events (orderby magnitude)"
@@ -42,8 +68,8 @@ fn main() {
     println!();
 
     let cat_url = format!(
-        "{CATALOG_URL}?format=geojson&starttime={SEARCH_START}&endtime={search_end}&minmagnitude={MIN_MAG}&mindepth={MIN_DEPTH_KM}&minlatitude={}&maxlatitude={}&minlongitude={}&maxlongitude={}&orderby=magnitude&limit=100",
-        REGION[0], REGION[1], REGION[2], REGION[3]
+        "{CATALOG_URL}?format=geojson&starttime={SEARCH_START}&endtime={search_end}&minmagnitude={MIN_MAG}&mindepth={min_depth_km}&minlatitude={}&maxlatitude={}&minlongitude={}&maxlongitude={}&orderby=magnitude&limit=100",
+        region[0], region[1], region[2], region[3]
     );
     let Some(body) = fetch_raw(&cat_url, None, &[], 86400) else {
         eprintln!("catalog carries no body — the channel stays unmeasured (0 honored)");
