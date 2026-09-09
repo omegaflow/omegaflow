@@ -9,6 +9,7 @@ pub(crate) use std::sync::{Arc, OnceLock};
 
 pub mod ak135;
 pub mod amon;
+pub mod astrometry;
 pub mod atdf;
 pub mod auger;
 pub mod bayestar;
@@ -108,6 +109,7 @@ mod tests;
 pub mod types;
 pub mod units;
 
+pub use astrometry::*;
 pub use channels::*;
 pub use extract::*;
 pub use fetch::*;
