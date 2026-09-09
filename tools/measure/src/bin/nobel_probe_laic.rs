@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::te::{pcmci_links, TeNull};
+use omegaflow::te::{pcmci_links, TeEstimator, TeNull};
 
 const LAIC_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/laic.bin";
@@ -203,6 +203,8 @@ fn main() {
             100,
             TeNull::Residual,
             0,
+            TeEstimator::Binned,
+            4,
         ) else {
             continue;
         };
