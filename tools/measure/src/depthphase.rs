@@ -27,7 +27,7 @@ pub const STA_WINDOW_S: f64 = 1.0;
 pub const LTA_WINDOW_S: f64 = 30.0;
 pub const STA_LTA_RATIO: f64 = 4.0;
 
-const INVERSION_DEPTH_MAX_KM: f64 = 250.0;
+const INVERSION_DEPTH_MAX_KM: f64 = 700.0;
 const INVERSION_DEPTH_STEP_KM: f64 = 1.0;
 
 const PI: f64 = std::f64::consts::PI;
@@ -635,6 +635,19 @@ mod tests {
     #[test]
     fn invert_single_recovers_the_catalog_depth() {
         for true_h in [35.0, 50.0, 100.0, 200.0] {
+            let delta = 45.0;
+            let lag = p_p_lag(delta, true_h).unwrap();
+            let h = invert_depth_single(delta, lag).unwrap();
+            assert!(
+                (h - true_h).abs() <= 1.0,
+                "inverted {h} km vs true {true_h} km"
+            );
+        }
+    }
+
+    #[test]
+    fn invert_single_recovers_a_deep_catalog_depth() {
+        for true_h in [300.0, 410.0, 500.0, 600.0, 660.0, 700.0] {
             let delta = 45.0;
             let lag = p_p_lag(delta, true_h).unwrap();
             let h = invert_depth_single(delta, lag).unwrap();
