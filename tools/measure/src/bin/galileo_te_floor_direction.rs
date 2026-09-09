@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
     transfer_entropy_conditional, transfer_entropy_lag,
 };
 
@@ -11,6 +12,7 @@ const MIN_DAY: usize = 30;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 20;
 const BLOCK: usize = 5;
+static N_SURR_PHASE_BLOCK: AtomicUsize = AtomicUsize::new(10);
 
 fn unix_day(tdb: f64) -> i64 {
     let jd = 2451545.0 + tdb / DAY_S;
@@ -58,14 +60,15 @@ fn block(label: &str, xs: &[f32], ys: &[f32], era: &[f32], metric: &str) {
         return;
     }
     println!("== {label} | {metric} | n = {n}");
+    let n_surr = N_SURR_PHASE_BLOCK.load(Ordering::Relaxed);
     println!("    dir | lag |    TE  |  thrPh |  thrBl |  cTE|era |  cThr");
     for &lag in &[1usize, 2, 3, 5] {
         let te_sn = transfer_entropy_lag(ys, xs, lag);
-        let thr_sn_p = surrogate_stats_phase(ys, xs, lag, SEED).map(|(_, _, t)| t);
-        let thr_sn_b = surrogate_stats_block(ys, xs, lag, BLOCK, SEED).map(|(_, _, t)| t);
+        let thr_sn_p = surrogate_stats_phase_n(ys, xs, lag, SEED, n_surr).map(|(_, _, t)| t);
+        let thr_sn_b = surrogate_stats_block_n(ys, xs, lag, BLOCK, SEED, n_surr).map(|(_, _, t)| t);
         let te_ns = transfer_entropy_lag(xs, ys, lag);
-        let thr_ns_p = surrogate_stats_phase(xs, ys, lag, SEED).map(|(_, _, t)| t);
-        let thr_ns_b = surrogate_stats_block(xs, ys, lag, BLOCK, SEED).map(|(_, _, t)| t);
+        let thr_ns_p = surrogate_stats_phase_n(xs, ys, lag, SEED, n_surr).map(|(_, _, t)| t);
+        let thr_ns_b = surrogate_stats_block_n(xs, ys, lag, BLOCK, SEED, n_surr).map(|(_, _, t)| t);
         let cte_sn = transfer_entropy_conditional(ys, xs, era, lag);
         let cthr_sn = conditional_te_stats(ys, xs, era, lag, SEED, N_SURR).map(|(_, _, t)| t);
         let cte_ns = transfer_entropy_conditional(xs, ys, era, lag);
@@ -103,6 +106,20 @@ fn block(label: &str, xs: &[f32], ys: &[f32], era: &[f32], metric: &str) {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(p) = args.iter().position(|a| a == "--n-surr") {
+        match args.get(p + 1).and_then(|v| v.parse::<usize>().ok()) {
+            Some(n) if n >= 2 => N_SURR_PHASE_BLOCK.store(n, Ordering::Relaxed),
+            Some(n) => {
+                eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                std::process::exit(1);
+            }
+            None => {
+                eprintln!("--n-surr carries no surrogate count");
+                std::process::exit(1);
+            }
+        }
+    }
     let Some(recs) = load("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         println!("no resid bin");
         return;
