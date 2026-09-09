@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: 0e096d3a91eadeca4193a5fdba690fb24d319e4a5142bbda08c2f7fbe60fcdb5
+  sha256: ddf5bef61246eb2255f4b9c0b041e021cc97dd18c0534eebeff82321cf5bc7a7
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -36,6 +36,76 @@ fünf Stimmen einstimmig):
   `galileo_resid.bin` (CDN 200); rohe TDF re-ernterbar, keine einzige Kopie.
 - **ck90342a_plt.bc** — descoped: konsumentenlos (kein Treffer im Baum, nicht in
   der 9er-Kernelliste des Workflows).
+
+Die Register-Pflichten wurden 2026-09-09 gemessen und geschlossen (Rat gehört;
+je Linie die gemessene Stelle):
+
+- **gate-bereinigung-abschluss** — `04408e4` löste die benannten
+  Fabrikationsstellen (fetch/te/thermochem/home_scan/register_verify); heute
+  nachgemessen: keine der Stellen im Baum, `claim_verify.rs` existiert nicht
+  mehr (Bin-Satz trägt `claim_reader`).
+- **drei Techno-Kanäle** — geschlossen: die drei Befunde (done, je eigene
+  sha256, je `antwortet-auf`) liegen committet im Baum — letzte Berührung
+  `8d2d40b` (Register-Sweep): docs/befund/befund-techno-narrowband-scan.md,
+  docs/befund/befund-techno-atmosphaeren-gase.md,
+  docs/befund/befund-negativ-fuzzy-techno.md.
+- **extern-neutrino-cr-routen** — geschlossen: Routen-Verdikte stehen in
+  docs/surveys/survey-2026-09-07-weberin-thread-matrix.md (L92–94: gebaute
+  Compiler amon/icecat/ANTARES/KM3NeT/Auger; L172: TA, Super-K, JUNO, LHAASO,
+  HAWC not-published gemessen — externer Zustand, kein offener Posten).
+  `icecat_compiler.rs` + `icecat-cdn.yml` im Baum (letzte Berührungen
+  `a21d4c8` / `825e25b`).
+- **glm-uebernahme** — geschlossen: Paper auf main —
+  docs/paper/gic-causal-driver.md (letzte Berührung `3b6a50c` — GIC-Re-Messung)
+  und docs/paper/lead-geometry-direction.md (`1fe5870`); die Blatt-Anker sind
+  grep-gemessen (1378↔1260 im gic-Blatt, PhysioNet-201/202 im
+  lead-geometry-Blatt L175/202); die solar-cycle-Punkte sind via `8e1639a` +
+  `ec6cca6` aufgelöst (im Auftrag registriert). Die Verifikations-Datei
+  `docs/audit/glm-verifikation-2026-08-28.md` existiert nicht und war nie
+  committet — der Verlust ist gemessen und registriert, keine Fabrikation.
+- **cog-quelle** — geschlossen: Messkette verifiziert (COG-Quelle +
+  std-only-15-bit-Reader + UTM; Bhote-Koshi wird als Wasser erkannt, 150
+  Pixel); Seebaseline an den OSM-Punkten 0 (gemessen 08-12, NDWI max 0.071);
+  kein offener Posten im Blatt.
+- **iapetus-scan** — geschlossen: docs/befund/befund-2026-09-09-iapetus-literatur-scan.md
+  — Ausgang **offen**: die Lücke ist bestätigt (arXiv `dark matter AND
+  Iapetus` = 0 Treffer; Iorio/Pitjeva-EPM/DM-Klumpen-PBH messen je andere
+  Proben). Front B (Horizons + N-Body) ist gated frei und bleibt eine eigene,
+  benannte Messung.
+- **phantom-island-williston-bc** — geschlossen:
+  docs/befund/befund-2026-09-09-phantom-island-williston-bc.md — gemessen: ein
+  echtes, treibendes Torf-/Holz-Floß (70×140 m, windgetrieben, Rekord-
+  Stauwasserstand als Freisetzungs-Bedingung), 08-15 am Ospika-Arm-Nordeingang
+  verortet; kein kartografisches Phantom. force_type / ICRS / exakte
+  Koordinaten bleiben `pending` (kein Kraft-Medium der 9er-Liste trägt eine
+  treibende irdische Masse).
+- **verify-references — CASE 5 (Regel-Entscheidung, Rat, einstimmig)** — die
+  dokumentierten Ausnahme-Klassen stehen in dieser Zeile und sind im Code
+  geformt (tools/register/src/bin/path_reference_scan.rs): Archiv-Ordner
+  (`/archiv/`) und docs/reference/ sind historische Anker, keine
+  Rückverfolgung; URL-Schwänze nach `://` tragen keinen lokalen Pfad;
+  `.rs`-Dateien tragen Beispiele, keine Referenzpflicht; AGENTS.md trägt die
+  eine physische Adresse als Einzel-Segment-Allowlist. Kalibrierung (gemessen
+  2026-09-09): 17 ABS-Stellen im Baum liquidiert oder klassifiziert → 0 ABS;
+  die Regel ist in CI verdrahtet (ci-check.yml testet jetzt
+  `omegaflow-register`).
+- **verify-references — CASE 6 (Regel-Entscheidung, Rat, einstimmig)** —
+  dokumentierte Grenze: die Prüfpflicht gilt see-also- und Link-Referenzen
+  (`file_refs`, erzwungen), nicht jedem Prosa-Token; backtick-lose
+  Pfad-Tokens in lebender Prosa lösen sich bei Berührung (fix-as-you-touch).
+  Kalibrierung (gemessen): 2614 pfad-förmige Tokens in docs/**.md, die
+  Prosa-Klasse konzentriert in Struktur-Dokumenten; kein Detektor gebaut
+  (False-Positive-Maschine in deutscher Prosa — Rat).
+- **Referenz-Hygiene des Baums** — der Kalibrierungs-Lauf fand 30 tote
+  see-also-Referenzen in lebenden Dokumenten: Archivierungs-Umzüge
+  (Handover → docs/handover/archiv/) hatten ihre Referenten nicht mitgeführt.
+  Alle 30 sind repariert (Umzug nach `/archiv/`, Neu-Verdrahtung auf den
+  gemessenen Datensatz oder Entfernung nie-existenter Ziele); der Scanner
+  meldet 0 MISS / 0 ABS über 1101 Dateien.
+- **Kompilat-Stufe** — geschlossen: docs/SOURCE_PORT.md §4 trägt `kompiliert`
+  zwischen `verifiziert` und `disponiert` (Rat bestätigt; `void`/`geparkt`
+  sind als Endzweige zu lesen, nicht als Kette). Ledger-Vokabular erweitert:
+  `ausstehend | verifiziert | kompiliert | void | geparkt | disponiert`.
 
 ## vo-tap / uvor
 
@@ -89,39 +159,65 @@ fünf Stimmen einstimmig):
   Amplitude); Restbestand 238 Dateien/77 Tage; Transfer-Frage.
 - **gic-p-wert** — GIC p-Wert nachlegen, dann Wing/Viljanen.
 - **papier-kleinpass** — nach dem Merge, Zahlen je Blatt.
-- **maschinen-audits** — Nummern-Audit, Provenienz-Notiz, Kalibrationsscore.
 - **quiet-zone-uebertragung** — Rezept (nicht Pioneer-Ergebnis); New Horizons
   request-only als nächster Harvest-Weg.
 - **gaia-dr4-iapetus** — Gaia DR4 (2.12.2026) als 4D-Feld.
-- **iapetus-scan** — Literatur-Scan jetzt.
 - **flyby2-addendum** — Metrik vor dem 28.09.
 - **flyby-doppler-rohdaten** — Roh-Doppler historischer Flybys (AGU-Beleg).
-- **glm-uebernahme** — GLM-Verifikation registrieren + Paper auf main.
-- **abfluss-trishuli / cog-quelle / seen-kollabgebiet / satellitenbilder-post** —
-  Flut-2026-Linie (Trishuli-Reihe, COG-Bandquelle, Seen-Baseline, Post-Bild).
-- **docs-reference-verteilung** — docs/reference + docs/plans verteilen.
-- **sicherung-risiko-heime** — einzige-Kopie-Risiko-Heime sichern.
-- **matrixmachine-register** — Urkunden-Zustandszeile + Statuszeile.
-- **verify-references-regelrunde** — CASE 5 (Archiv-Absolutpfade) + CASE 6
-  (Fließtext-Drift).
-- **saubere-datenbank** — Step-5-Klasse (14 repo_tag + 3 dataset_host).
-- **gate-bereinigung-abschluss** — Gate-Bereinigung.
+- **maschinen-audits** — Nummern-Audit: R2 (§2-Zählung = Tabellen-n,
+  number_audit.rs) und R4-single-sheet-Locale ungebaut; Provenienz-Notiz-
+  Muster + Kalibrationsscore-Lauf stehen aus (Regression + Korpus committet,
+  c94d431).
+- **sicherung-risiko-heime** — einzige-Kopie-Risiko-Heime sichern (der
+  Backup-Akt selbst bleibt Operator-Sache).
+- **saubere-datenbank** — Step-5-Klasse (14 repo_tag + 3 dataset_host);
+  Registry-first mit Rebuild-Quelle vor jeder CDN-Änderung.
 - **extern-weberin-faden-luecken + -folge + -zweitlinien** — 9 Faden-Kategorien
-  Routen messen; zweite Linien je Klasse.
-- **extern-stellar-aktivitaet-xuv-co** — XUV/C-O-Werte der 30 Wirte.
-- **extern-neutrino-cr-routen** — IceCube-/CR-Routen verifizieren.
+  Routen messen; zweite Linien je Klasse (Teil-A-Subfragen + Teil-B-Mess-Punkte
+  je ein Befund; EPM/VLBI-ΔDOR als zweite Linie je Klasse).
+- **extern-stellar-aktivitaet-xuv-co** — seed committet (`f7c02de`: L_X + C/O
+  für 7/30 Wirte; X-ray <72″ und M-Zwerg-C/O absent gemessen); Rest 23 Wirte
+  `pending`.
 - **bio-kanal-zeugen** — O2/O3, Rotkante, saisonal + Bio-Zeugen.
-- **techno-narrowband-scan / techno-atmosphaeren-gase / negativ-fuzzy-techno** —
-  Technosignatur-Kanäle.
 - **nadel-xiii-xuv-zensus / nadel-v-lsst-scan** — Zensus + LSST-Scan.
 - **lisa-pathfinder-psd + -antrag** — Δg-Zeitreihe anfragen; Antwort = Messung.
-- **ned-objdir-zugang** — NED objdir.
-- **phantom-island-williston-bc** — Phantom-Island-Prüfung.
+- **ned-objdir-zugang** — Desktop-Befund ist eingefaltet
+  (docs/handover/archiv/handover-2026-09-09-weberin-folge-cdn-ned-twomrs.md:
+  TAP-60-s-Limit, async-Stau, kein Bulk-z, 2MRS-Alternative gebaut);
+  IPAC-Anfrage versandt — Antwort ausstehend (Verdikt je Kanal).
+- **docs-reference-verteilung** — Prämisse gemessen überholt (80 lebende
+  Dateien, kein Pioneer-Zweig; docs/plans leer = erledigt). Verteilung
+  vermessen: NAIF/SPICE + DSN/TDA-PR-Paare bleiben als Referenz-Ort unter dem
+  README-Index; verarbeitete Messreihen → docs/concepts; publizierte Literatur
+  → docs/paper; datierte Konten/Berichte handover-nah; Seeds → Survey-Heimat
+  (Benennung `pending`); verbrauchte Alt-Belege → archive-root. Die Bewegung
+  selbst bleibt ein eigenes Atom.
+- **matrixmachine-register** — Urkunden-Zustandszeile (live, Teststand
+  428/428, 2026-08-31) liegt in archive-root/vanilla-dateidocs; matrix.rs
+  committet (letzte Berührung `9a0f623`); der Testlauf gegen heutiges HEAD +
+  Zeilen-Aktualisierung bleiben offen.
+- **Flut-2026-Linie (Rest)** — cog-quelle geschlossen (siehe oben);
+  abfluss-trishuli: Seismik-/Luft-/Oberflächen-Befunde in-file (M5.2/M4.2,
+  depth 0, Landslide — gemessen), der Abfluss-Pfeil bleibt `pending` mit zwei
+  benannten Fortsetzungen (DHM-Pegel-Reihe ziehen — co-lokal, key-lose API —
+  und CEMS/S1 nächster Pass); der co-lokale Pegel trug den Peak nicht
+  (Sensor-Ausfall, gemessen). seen-kollabgebiet: GL085494 −73 % gemessen
+  (08-24); die S1/CEMS-Post-Flut-Fläche bleibt `pending` — das ~08-28/31-Fenster
+  ist geöffnet, der Abruf ist der nächste Schritt. satellitenbilder-post: eine
+  frei ladbare Nach-Aufnahme existiert (Landsat 9 26.08., wasserfrei am
+  Kollabpunkt gemessen); die robuste Flut-/Narbenfläche braucht S1-SAR +
+  CEMS-EMSR927-Delineation (Abruf offen).
 
 ## Source-Port & Katalog-Reste
 
-- Kompilat-Stufe in die Zustandsmaschine (entdeckt → kompiliert → disponiert).
-- Queue: 10 Untested-Korpora; 38 VizieR-Bulks; 77 Archeology-Gaps.
+- Kompilat-Stufe: geschlossen, siehe oben (§4 trägt `kompiliert`).
+- Queue: 10 Untested-Korpora; 38 VizieR-Bulks; 77 Archeology-Gaps. Die 10
+  `bestand`-Korpus-Dateien des Ledger sind unter dem registrierten Pfad
+  physisch absent (gemessen 2026-09-09; der Pfad liegt außerhalb von
+  archive-root) — Herkunft klären, dann Linie schließen.
 - Katalog-Lücken (RAVE DR6, APOGEE/GALAH, HyperLEDA, TGSS ADR, VLASS, AMS-02,
-  GLADE+); FITS/Parquet/netCDF-4/OPeNDAP/GRIB-2-Struktur-Reader.
-- S3-Harvester-Namespace (NOAA-NODD-Buckets).
+  GLADE+); FITS/Parquet/netCDF-4/OPeNDAP/GRIB-2-Struktur-Reader (FITS +
+  netCDF-4 + CDF-1/2 gebaut; Parquet/GRIB-2/OPeNDAP offen).
+- S3-Harvester-Namespace (NOAA-NODD-Buckets): `ListBucketResult`-Parser-Gap
+  (xml_harvester, gemessen 2026-08-20); Inventar `noaa_nodd_inventory.φ`
+  steht (101 Datasets).
