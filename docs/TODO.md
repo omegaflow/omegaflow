@@ -1444,6 +1444,8 @@ ICRS-4D-Rahmen teilt:
   Befund `docs/befund/befund-2026-09-09-seismische-ortung-ak135.md`; der
   3D-Lauf (Tiefe) geortet −8,2240/121,3800 bei 20 km, rms 1,887 s, Offset
   ≈ 14,6 km — Befund `docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md`.
+  Prüffall: USGS `us6000tkt2` (mww 7.8, reviewed, 2026-08-14T21:58:21.505Z) — die
+  ID stand bisher nur in der Rayleigh-Probe; nachgetragen 2026-09-09.
 - ak135-Laufzeitkurve — gebaut (2026-09-09), kuratierte Klasse: Kernel
   `src/archivar/kernels/ak135.dat` (sha256 751889…feba4, Kennett et al. 1995,
   TauP StdModels) + Strahlen-Tracer `src/archivar/ak135.rs` (τ(p)-Integration,
@@ -1459,12 +1461,21 @@ ICRS-4D-Rahmen teilt:
   0–50 km (1,887–1,947 s), > 100 km klar verworfen (2,441–6,496 s). Geortet
   20 km gegen Katalog 10 km — konsistent, nicht scharf. Befund
   `docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md`.
-- Scharfe Tiefe (seismische Ortung, 2026-09-09) — pending: die Flachtiefe
-  braucht Nah-Stationen oder Tiefenphasen (pP/sP-Pick) — beides fehlt diesem
-  Netz; ein eigener Kandidat, keine Erfindung. Adresse gemessen (2026-09-09):
-  Hi-net (NI) ist nicht im EarthScope-Dataselect, NIED verlangt Registrierung;
-  JP (JMA) trägt 6 Nah-Stationen als Metadaten, aber die 2011-Wellenformen
-  liefern HTTP 204 (nicht offen archiviert).
+- Scharfe Tiefe (seismische Ortung, 2026-09-09) — Tiefenphasen gebaut, Tiefenmaß
+  gebaut, echtes Picken pending: `src/archivar/ak135.rs` trägt Vs (S-Modell bis
+  zur Kern-Mantel-Grenze) und die Reflexions-Phasen `s_travel`, `p_p_travel`,
+  `s_p_travel` (direkte Integration, 14 Tests — Befund
+  `docs/befund/befund-2026-09-09-ak135-tiefenphasen.md`); der
+  pP/sP-Lag liest die Tiefe direkt (~2 h/vp, 1 s Pick-Streu = 3,2 km — die
+  Lag-Diagonale + 1D-Inversion in `tools/measure/src/bin/depth_phase_probe.rs`,
+  5 Tests, synthetische Positivkontrolle bestanden — Befund
+  `docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md`). Für dieses Beben
+  (10 km) liegt der Lag (~3 s) an der P-Pick-Streu — echtes pP/sP-Picken an
+  einem tieferen Ereignis (≥20 km) ist der Nachfolger. Der Nah-Stationen-Weg
+  (Hi-net) bleibt die Alternative; Adresse gemessen (2026-09-09): Hi-net (NI)
+  ist nicht im EarthScope-Dataselect, NIED verlangt Registrierung; JP (JMA)
+  trägt 6 Nah-Stationen als Metadaten, aber die 2011-Wellenformen liefern
+  HTTP 204 (nicht offen archiviert).
 - M9.1-Picker (seismische Ortung, 2026-09-09) — gebaut, Streuung bleibt: der
   Bandpass+Erstbruch-Pick (0,5–2 Hz, 5×Rauschboden, STA/LTA-Fallback) steht
   in `quake_location_probe.rs` (6 Tests), aber der Tōhoku-GSN-Lauf streut
@@ -1473,6 +1484,11 @@ ICRS-4D-Rahmen teilt:
   Grenze ist die Automation, nicht das Modell. Befund
   `docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md`; der nächste Hebel ist
   die dichte Nah-Station (Hi-net/NIED-Registrierung) oder manueller Pick.
+  Entscheidung (2026-09-09, Feldstandard-Befund): das Feld ortet M9 nicht per
+  Ersteinsatz-Picker — der Ersteinsatz der langen Quelle ist emergent; der
+  Nachfolger ist W-Phase-CMT (Kanamori & Rivera 2008) als eigenes Atom, der
+  STA/LTA-Pick bleibt Einsatz-Detektor (trägt Ausbruch-Existenz, nicht
+  Epizentrum).
 - Tōhoku-Pegel — gebaut, gemessen (2026-09-09): der Tsunami-Schenkel steht
   (`tools/measure/src/bin/tohoku_pegsel_probe.rs`, NOAA CO-OPS water_level vs
   predictions, Anomalie = gemessen − Gezeit, Einsatz = |Anomalie| > 0,3 m).
@@ -1489,12 +1505,37 @@ ICRS-4D-Rahmen teilt:
   +57, Hilo +82), weil der Großkreis flache Features streift (Aleuten-Schwelle,
   Hawaii-Plattform) und die per-Segment-Rechnung keine Beugung kennt — benannt,
   nicht gedeutet. Befund `docs/befund/befund-2026-09-09-tohoku-vorhersage.md`.
-- Noch offen und als eigene Atome (unverändert pending): der schnellste-Weg
-  (Eikonal/Dijkstra) über ein Bathymetrie-Gitter als Referenz-Kernel (nicht als
-  `sources.φ`-Quelle) — gemessen (2026-09-09): die OpenTopoData-Punktabfrage
-  nimmt nur Längengrade −180…180 (kein 120…280) und begrenzt die Batch-Größe;
-  der saubere Weg ist ein Gitter-Download (ETOPO1/GEBCO NetCDF, 1-Bogenminute)
-  statt ~300 Punkt-Batches. Stromboli als Vulkan-Lehrer bleibt ebenso pending.
+- Feldstandard Seismik — Befund `docs/befund/befund-2026-09-09-feldstandard-seismik.md`
+  (2026-09-09): die gebaute Seismik ist kein Neubau — jede Komponente hat ein
+  Feld-Äquivalent (τ(p) = Buland & Chapman 1983/TauP; Gittersuche = NonLinLoc/
+  Geiger 1910; STA/LTA = Allen 1978; √(g·d) = Murty 1977/TTT; M9 = W-Phase/
+  GCMT); neu ist nur die Einbettung (ICRS, t_ref, Signal-Kegel). Die sechs
+  Befunde tragen jetzt ihre Feld-Herkunft-Zeile.
+- MiniSEED-Dopplung (2026-09-09, Pflege): `laic_probe.rs` trägt einen eigenen
+  STEIM2/miniSEED-Parser parallel zu `tools/measure/src/miniseed.rs` — gegen
+  „keine Dopplung"; Konsolidierung auf `miniseed.rs` pending.
+- Eikonal — gebaut (2026-09-09): der schnellste Weg über das volle ETOPO1-Gitter
+  (1 Bogenminute, Dijkstra über den Nordpazifik, √(g·d) je Zelle, Tiefen-Boden
+  200 m, Land gesperrt) statt der Großkreis-Punktabfrage — die bestellten
+  Beugungs-Wege sind geschlossen (Adak +57 → −10,4 min, Hilo +82 → +6,7 min);
+  alle sechs Wege innerhalb ~18 min. Befund
+  `docs/befund/befund-2026-09-09-tsunami-eikonal.md`. Der Referenz-Kernel
+  (Vollauflösung + CDN-Manifestation des 395-MB-Gitters) bleibt Folge-Pflicht.
+  Stromboli als Vulkan-Lehrer bleibt ebenso pending.
+- Die Erde als Sender — vier Uhren, alle Medien (Kreuzbereichs-Kalibrierung,
+  Rats-Verdikt + GLM 2026-09-09) — pending, Messung zuerst: ein Ereignis, das
+  Wasser UND Luft zündet (Tonga 2022), am selben Ohr die zwei Uhren trennen
+  (Wasser ~766 km/h gegen Luft ~1150 km/h, Faktor ~1,5) und die Kopplung
+  wiegen (~1 hPa ≈ 1 cm Wasser). Der Kern: ein Zeuge außerhalb des Bodens
+  bricht die Nullpunkt-Verwicklung der Stations-Faktoren (Luft und Wasser
+  teilen die Startzeit, nicht die Boden-Statis) — die vierte Uhr (Empfänger)
+  wird von außen genagelt. Datenstand gemessen (2026-09-09): Pegel (NOAA
+  CO-OPS, minuten-genau) halten wir; der Luft-Schenkel trägt heute nur
+  open-meteo-Druck **stündlich** — zu grob für den Lamb-Puls (~Minuten) — der
+  sub-stündliche Druck/Infraschall (BGR-Array) ist der nächste Datenweg.
+  DART-Bojen und TEC sind die teurere Ernte (Budget vorneweg). Kontestiert und
+  `pending`, kein Kalibrierstoff: Radon/geochemischer Vorläufer (unser
+  LAIC-Gate ist Stille, beide Richtungen).
 - Extinktionskurve A(λ)/A_V (CCM 1989, R_V = 3.1) — kuratierte Klasse, gebaut
   (2026-09-08): `src/archivar/kernels/ccm89_rv31.dat` (37 Stützstellen
   100–3300 nm) + `parse_extinction`/`extinction_at` in spectral.rs (lineare

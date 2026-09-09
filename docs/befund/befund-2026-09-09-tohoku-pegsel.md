@@ -2,12 +2,15 @@
   title: Befund — Tōhoku 2011 Pegel: der Tsunami ist in sechs NOAA-Pegeln gemessen — die Ankunfts-Staffelung trägt ~750–800 km/h (√(g·d)), der erste Pegel-Zwirn des Hauses
   class: befund
   date: 2026-09-09
-  sha256: 04e32c2e2e83e108f7913b288e34fa018b80876efbab23cec066b5c54c107b33
+  sha256: cff564973d6002b1c58d28f81a635f0a0681b4f1d6fe32ce6ddac3fcced16b1d
   status: done
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md
 -->
 
 # Befund: der Tōhoku-Pegel (NOAA CO-OPS)
+
+Feld-Herkunft: √(g·d) ist die klassische Langwellen-Geschwindigkeit (Airy/Murty);
+die Pegel-Staffelung ist das Tide-Gauge-Verfahren der Warnzentren.
 
 ## Frage & Bindung
 
