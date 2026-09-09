@@ -85,9 +85,40 @@ pub fn t_two_p(t: f64, df: f64) -> f64 {
     betai(df / 2.0, 0.5, df / (df + t * t))
 }
 
+pub fn mean(xs: &[f64]) -> Option<f64> {
+    if xs.is_empty() {
+        return None;
+    }
+    let s: f64 = xs.iter().sum();
+    Some(s / xs.len() as f64)
+}
+
+pub fn sample_sd(xs: &[f64]) -> Option<f64> {
+    if xs.len() < 2 {
+        return None;
+    }
+    let m = mean(xs)?;
+    let var = xs.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (xs.len() - 1) as f64;
+    if var.is_finite() {
+        Some(var.sqrt())
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::t_two_p;
+    use super::{mean, sample_sd, t_two_p};
+
+    #[test]
+    fn mean_and_sample_sd_read_the_series() {
+        assert_eq!(mean(&[1.0, 2.0, 3.0, 4.0]).unwrap(), 2.5);
+        let sd = sample_sd(&[2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0]).unwrap();
+        let expect = (32.0f64 / 7.0).sqrt();
+        assert!((sd - expect).abs() < 1e-9, "sample sd {sd} vs {expect}");
+        assert!(sample_sd(&[1.0]).is_none(), "one point carries no sd");
+        assert!(mean(&[]).is_none(), "no points carry no mean");
+    }
 
     fn close(p: f64, expect: f64, tol: f64) {
         assert!(
