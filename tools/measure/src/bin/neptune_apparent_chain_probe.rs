@@ -451,11 +451,11 @@ struct Series {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let calibrate = args.iter().any(|a| a == "--calibrate");
-    println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune barycenter.");
+    println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune center.");
 
-    let Some(neptune_eph) = load("ephemeris_neptune.bin") else {
+    let Some(neptune_eph) = load("ephemeris_neptune_c.bin") else {
         eprintln!(
-            "neptune-apparent-chain: ephemeris_neptune.bin void — the Neptune line is absent"
+            "neptune-apparent-chain: ephemeris_neptune_c.bin void — the center line is absent"
         );
         return;
     };
@@ -464,7 +464,7 @@ fn main() {
         return;
     };
     let mut neptune_map = HashMap::new();
-    neptune_map.insert("neptune".to_string(), neptune_eph);
+    neptune_map.insert("neptune_c".to_string(), neptune_eph);
     let mut earth_map = HashMap::new();
     earth_map.insert("earth".to_string(), earth);
 
@@ -601,7 +601,7 @@ fn main() {
                 skip += 1;
                 continue;
             };
-            let worldline = |t: f64| body_barycenter_position("neptune", t, &neptune_map);
+            let worldline = |t: f64| body_barycenter_position("neptune_c", t, &neptune_map);
             let Some((s_em, _)) = light_time_worldline(geocenter, tdb, &worldline) else {
                 skip += 1;
                 continue;
@@ -674,14 +674,28 @@ fn main() {
         }
         let mean = |v: &[f64]| v.iter().sum::<f64>() / v.len() as f64;
         let rms = |v: &[f64]| (v.iter().map(|x| x * x).sum::<f64>() / v.len() as f64).sqrt();
+        let median = |v: &[f64]| {
+            let mut s = v.to_vec();
+            s.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            let n = s.len();
+            if n == 0 {
+                f64::NAN
+            } else if n % 2 == 1 {
+                s[n / 2]
+            } else {
+                (s[n / 2 - 1] + s[n / 2]) / 2.0
+            }
+        };
         total_dra.extend_from_slice(&dra);
         total_ddec.extend_from_slice(&ddec);
         let m_ra = mean(&dra);
         let m_dec = if n_dec > 0 { mean(&ddec) } else { f64::NAN };
         let r_dec = if n_dec > 0 { rms(&ddec) } else { f64::NAN };
+        let md_ra = median(&dra);
+        let md_dec = if n_dec > 0 { median(&ddec) } else { f64::NAN };
         println!(
-            "{:<18} {} rows, dec-absent {}, reduced {} RA / {} Dec, mean ΔRA·cosδ {:+.1}, mean ΔDec {:+.1}, RMS {:+.1} / {:+.1}",
-            s.name, obs.len(), dec_absent, n_ra, n_dec, m_ra, m_dec, rms(&dra), r_dec
+            "{:<18} {} rows, dec-absent {}, reduced {} RA / {} Dec, mean ΔRA·cosδ {:+.1}, mean ΔDec {:+.1}, median {:+.1} / {:+.1}, RMS {:+.1} / {:+.1}",
+            s.name, obs.len(), dec_absent, n_ra, n_dec, m_ra, m_dec, md_ra, md_dec, rms(&dra), r_dec
         );
     }
 
@@ -691,9 +705,21 @@ fn main() {
     }
     let mean = |v: &[f64]| v.iter().sum::<f64>() / v.len() as f64;
     let rms = |v: &[f64]| (v.iter().map(|x| x * x).sum::<f64>() / v.len() as f64).sqrt();
+    let median = |v: &[f64]| {
+        let mut s = v.to_vec();
+        s.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        let n = s.len();
+        if n == 0 {
+            f64::NAN
+        } else if n % 2 == 1 {
+            s[n / 2]
+        } else {
+            (s[n / 2 - 1] + s[n / 2]) / 2.0
+        }
+    };
     println!(
-        "TOTAL: {} parsed, {} dec-absent, {} skipped | mean ΔRA·cosδ {:+.1} mas, mean ΔDec {:+.1} mas, RMS {:+.1} / {:+.1} mas",
-        total_parsed, total_dec_absent, total_skipped, mean(&total_dra), mean(&total_ddec), rms(&total_dra), rms(&total_ddec)
+        "TOTAL: {} parsed, {} dec-absent, {} skipped | mean ΔRA·cosδ {:+.1} mas, mean ΔDec {:+.1} mas, median {:+.1} / {:+.1} mas, RMS {:+.1} / {:+.1} mas",
+        total_parsed, total_dec_absent, total_skipped, mean(&total_dra), mean(&total_ddec), median(&total_dra), median(&total_ddec), rms(&total_dra), rms(&total_ddec)
     );
     if calibrate {
         println!(
