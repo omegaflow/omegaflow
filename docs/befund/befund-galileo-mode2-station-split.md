@@ -5,7 +5,7 @@
   sha256: e45977bef43b6fd92b0ad00afaf112b5a3bf4eff6ed2eef76b0fb49877a93f22
   status: done
   antwortet-auf: docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/befund/befund-galileo-mode1-fingerabdruck.md
-  see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/TODO.md
+  see-also: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Galileo Mode-2-Station-Tag-Split — 1,5-Hz-Wert fragil (All-Lock-Tag-Zählung), Stations-Pooling senkt auf 0,28–0,58 Hz

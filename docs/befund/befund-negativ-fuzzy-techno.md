@@ -4,7 +4,7 @@
   date: 2026-09-05
   status: done
   sha256: 79108b0a028219abf450330065675af7e568d87931bdba92d9cc9abdda61a1f2
-  antwortet-auf: docs/auftrag/auftrag-negativ-fuzzy-techno.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-negativ-fuzzy-techno.md
 -->
 
 # Befund: der negative Fuzzy-Index auf Bio/Techno

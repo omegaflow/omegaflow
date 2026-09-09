@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 4d99eba762e159b8074ad919dffd4eab8790ecc1490bbb4cac6f8a7885316fe2
   status: done
-  antwortet-auf: docs/auftrag/auftrag-bande-split.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-bande-split.md
   see-also: docs/befund/befund-galileo-banden-negativ.md docs/befund/befund-galileo-gwe-bestand.md docs/paper/ground-sources-20s-band.md
 -->
 

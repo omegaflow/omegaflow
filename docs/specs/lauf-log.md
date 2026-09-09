@@ -3,7 +3,7 @@
   class: register
   date: 2026-08-31
   status: live
-  see-also: docs/specs/bekannt-schlecht-korpus.md docs/auftrag/auftrag-maschinen-audits.md
+  see-also: docs/specs/bekannt-schlecht-korpus.md docs/auftrag/archiv/auftrag-maschinen-audits.md
 -->
 
 # Maschinen-Audit-Lauf-Log

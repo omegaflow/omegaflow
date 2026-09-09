@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 08c4957e1cce28070ef8e7b021a0fc47a71bda4e12dd8d37dccb060bdc3e8a3d
   status: done
-  see-also: docs/TODO.md docs/befund/befund-2026-09-09-tohoku-pegsel.md
+  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-tohoku-pegsel.md
 -->
 
 # Befund: die Tōhoku-Vorhersage (GEBCO-Flachwasser-Rechnung)

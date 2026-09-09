@@ -4,8 +4,8 @@
   date: 2026-09-04
   sha256: c8a596e6f021ef4406345cb8d0fabdca2568ed547cdfc1c12ef86e705b904ee8
   status: done
-  antwortet-auf: docs/auftrag/auftrag-voyager-roh-doppler-zugang.md
-  see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/TODO.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-voyager-roh-doppler-zugang.md
+  see-also: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 # Befund: Voyager-Roh-Doppler-Zugang (PDS/JPL) — eigenhändige Gegenprüfung
 
