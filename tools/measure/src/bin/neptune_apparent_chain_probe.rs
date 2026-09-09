@@ -90,6 +90,25 @@ fn year_decimal(year: i64, month: i64, day: i64) -> Option<f64> {
     Some(year as f64 + ((d - jan1) as f64 + 0.5) / 365.25)
 }
 
+fn civil_from_days(z: i64) -> (i64, i64, i64) {
+    let z = z + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
+fn date_label(unix: f64) -> String {
+    let day = (unix as i64).div_euclid(86_400);
+    let (y, m, d) = civil_from_days(day);
+    format!("{y:04}-{m:02}-{d:02}")
+}
+
 fn leading(line: &str) -> Option<(f64, i64, i64, i64, f64, Option<f64>, String)> {
     let year: i64 = col(line, 10, 14)? as i64;
     let day: i64 = col(line, 15, 17)? as i64;
@@ -451,6 +470,12 @@ struct Series {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let calibrate = args.iter().any(|a| a == "--calibrate");
+    let report: Option<f64> = args
+        .iter()
+        .position(|a| a == "--report")
+        .and_then(|i| args.get(i + 1))
+        .and_then(|v| v.parse().ok())
+        .filter(|n| *n > 0.0);
     println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune center.");
 
     let Some(neptune_eph) = load("ephemeris_neptune_c.bin") else {
@@ -584,15 +609,21 @@ fn main() {
             Frame::AppGeo => parse_urss(line, false),
             Frame::B1950Geo => parse_urss(line, true),
         };
-        let obs: Vec<Obs> = text.lines().filter_map(parse).collect();
+        let raw_lines: Vec<&str> = text.lines().collect();
+        let obs: Vec<(usize, Obs)> = raw_lines
+            .iter()
+            .enumerate()
+            .filter_map(|(i, l)| parse(l).map(|o| (i, o)))
+            .collect();
         total_parsed += obs.len();
-        let dec_absent = obs.iter().filter(|o| o.dec_deg.is_none()).count();
+        let dec_absent = obs.iter().filter(|(_, o)| o.dec_deg.is_none()).count();
         total_dec_absent += dec_absent;
 
         let mut dra = Vec::new();
         let mut ddec = Vec::new();
+        let mut res_rows: Vec<(usize, f64, f64, f64)> = Vec::new();
         let mut skip = 0usize;
-        for o in &obs {
+        for (line_no, o) in &obs {
             let Some(dec_deg) = o.dec_deg else {
                 continue;
             };
@@ -664,6 +695,7 @@ fn main() {
             };
             dra.push(r_ra);
             ddec.push(r_dec);
+            res_rows.push((*line_no, o.unix, r_ra, r_dec));
         }
         total_skipped += skip;
         let n_ra = dra.len();
@@ -697,6 +729,69 @@ fn main() {
             "{:<18} {} rows, dec-absent {}, reduced {} RA / {} Dec, mean ΔRA·cosδ {:+.1}, mean ΔDec {:+.1}, median {:+.1} / {:+.1}, RMS {:+.1} / {:+.1}",
             s.name, obs.len(), dec_absent, n_ra, n_dec, m_ra, m_dec, md_ra, md_dec, rms(&dra), r_dec
         );
+        if let Some(nsig) = report {
+            let robust_sigma = |v: &[f64]| -> Option<f64> {
+                let mut s = v.to_vec();
+                s.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+                let n = s.len();
+                let med = if n == 0 {
+                    return None;
+                } else if n % 2 == 1 {
+                    s[n / 2]
+                } else {
+                    (s[n / 2 - 1] + s[n / 2]) / 2.0
+                };
+                let mut dev: Vec<f64> = s.iter().map(|x| (x - med).abs()).collect();
+                dev.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+                let k = dev.len();
+                let mad = if k % 2 == 1 {
+                    dev[k / 2]
+                } else {
+                    (dev[k / 2 - 1] + dev[k / 2]) / 2.0
+                };
+                let sig = 1.4826 * mad;
+                if sig.is_finite() && sig > 0.0 {
+                    Some(sig)
+                } else {
+                    None
+                }
+            };
+            let thr_ra = robust_sigma(&dra).map(|s| nsig * s);
+            let thr_dec = robust_sigma(&ddec).map(|s| nsig * s);
+            let mut listed = 0usize;
+            for &(ln, unix, rr, rd) in &res_rows {
+                let ra_hit = match thr_ra {
+                    Some(t) => rr.abs() > t,
+                    None => false,
+                };
+                let dec_hit = match thr_dec {
+                    Some(t) => rd.abs() > t,
+                    None => false,
+                };
+                if !ra_hit && !dec_hit {
+                    continue;
+                }
+                if listed == 0 {
+                    println!(
+                        "  {:<18} rows beyond {nsig}·σ (σ = 1.4826·MAD per axis):",
+                        s.name
+                    );
+                }
+                listed += 1;
+                let raw = raw_lines.get(ln).copied().unwrap_or("").trim();
+                println!(
+                    "    source line {:>4}  {}  ΔRA {:+.3}″  ΔDec {:+.3}″  | {}",
+                    ln + 1,
+                    date_label(unix),
+                    rr / 1000.0,
+                    rd / 1000.0,
+                    raw
+                );
+            }
+            if listed == 0 {
+                println!("  {:<18} no row beyond {nsig}·σ", s.name);
+            }
+        }
     }
 
     if total_dra.is_empty() {
