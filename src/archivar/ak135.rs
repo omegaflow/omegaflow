@@ -425,9 +425,180 @@ pub fn s_p_travel(delta_deg: f64, depth_km: f64) -> Option<f64> {
     interp_depth_grid(s_p_grid(), delta_deg, depth_km)
 }
 
+pub fn surface_p_velocity() -> Option<f64> {
+    model().vp.first().map(|&(_, v)| v)
+}
+
+pub fn surface_s_velocity() -> Option<f64> {
+    model().vs.first().map(|&(_, v)| v)
+}
+
+const DEG_TO_KM: f64 = 111.1949;
+
+fn rayparam_deg(
+    travel: impl Fn(f64, f64) -> Option<f64>,
+    delta_deg: f64,
+    depth_km: f64,
+) -> Option<f64> {
+    let d = 0.5;
+    let t_lo = travel(delta_deg - d, depth_km)?;
+    let t_hi = travel(delta_deg + d, depth_km)?;
+    Some((t_hi - t_lo) / (2.0 * d) / DEG_TO_KM)
+}
+
+pub fn p_p_rayparam(delta_deg: f64, depth_km: f64) -> Option<f64> {
+    rayparam_deg(p_p_travel, delta_deg, depth_km)
+}
+
+pub fn s_p_rayparam(delta_deg: f64, depth_km: f64) -> Option<f64> {
+    rayparam_deg(s_p_travel, delta_deg, depth_km)
+}
+
+pub fn surface_incidence_deg(p_s_km: f64) -> Option<f64> {
+    let alpha = surface_p_velocity()?;
+    let s = p_s_km * alpha;
+    if !s.is_finite() || s <= 0.0 || s >= 1.0 {
+        return None;
+    }
+    Some(s.asin().to_degrees())
+}
+
+pub fn free_surface_pp(p_s_km: f64) -> Option<f64> {
+    let alpha = surface_p_velocity()?;
+    let beta = surface_s_velocity()?;
+    free_surface_pp_ab(p_s_km, alpha, beta)
+}
+
+fn free_surface_pp_ab(p: f64, alpha: f64, beta: f64) -> Option<f64> {
+    let eta = (1.0 / (alpha * alpha) - p * p).sqrt();
+    let xi = (1.0 / (beta * beta) - p * p).sqrt();
+    if !eta.is_finite() || !xi.is_finite() || eta <= 0.0 || xi <= 0.0 {
+        return None;
+    }
+    let d = 1.0 / (beta * beta) - 2.0 * p * p;
+    let num = 4.0 * p * p * eta * xi - d * d;
+    let den = 4.0 * p * p * eta * xi + d * d;
+    if den.abs() < 1e-15 {
+        return None;
+    }
+    Some(num / den)
+}
+
+pub fn free_surface_sp(p_s_km: f64) -> Option<f64> {
+    let alpha = surface_p_velocity()?;
+    let beta = surface_s_velocity()?;
+    let eta = (1.0 / (alpha * alpha) - p_s_km * p_s_km).sqrt();
+    let xi = (1.0 / (beta * beta) - p_s_km * p_s_km).sqrt();
+    if !eta.is_finite() || !xi.is_finite() || eta <= 0.0 || xi <= 0.0 {
+        return None;
+    }
+    let d = 1.0 / (beta * beta) - 2.0 * p_s_km * p_s_km;
+    let num = -4.0 * xi * p_s_km * d;
+    let den = 4.0 * p_s_km * p_s_km * eta * xi + d * d;
+    if den.abs() < 1e-15 {
+        return None;
+    }
+    Some(num / den)
+}
+
+#[cfg(test)]
+fn free_surface_ps(p: f64, alpha: f64, beta: f64) -> Option<f64> {
+    let eta = (1.0 / (alpha * alpha) - p * p).sqrt();
+    let xi = (1.0 / (beta * beta) - p * p).sqrt();
+    if !eta.is_finite() || !xi.is_finite() || eta <= 0.0 || xi <= 0.0 {
+        return None;
+    }
+    let d = 1.0 / (beta * beta) - 2.0 * p * p;
+    let r_pp = free_surface_pp_ab(p, alpha, beta)?;
+    Some(2.0 * eta * p * (1.0 - r_pp) / d)
+}
+
+#[cfg(test)]
+fn free_surface_ss(p: f64, alpha: f64, beta: f64) -> Option<f64> {
+    free_surface_pp_ab(p, alpha, beta)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn free_surface_pp_reverses_at_normal_incidence() {
+        let alpha = surface_p_velocity().unwrap();
+        let beta = surface_s_velocity().unwrap();
+        let r = free_surface_pp_ab(0.0, alpha, beta).unwrap();
+        assert!(
+            (r + 1.0).abs() < 1e-9,
+            "at normal incidence the free surface reflects P inverted, got {r}"
+        );
+        assert!(
+            free_surface_sp(0.0).unwrap().abs() < 1e-12,
+            "no conversion at normal incidence"
+        );
+    }
+
+    #[test]
+    fn free_surface_reflection_conserves_energy() {
+        let alpha = surface_p_velocity().unwrap();
+        let beta = surface_s_velocity().unwrap();
+        let inv_a2 = 1.0 / (alpha * alpha);
+        let inv_b2 = 1.0 / (beta * beta);
+        let mut p = 0.01;
+        while p < 1.0 / alpha - 0.005 {
+            let eta = (inv_a2 - p * p).sqrt();
+            let xi = (inv_b2 - p * p).sqrt();
+            let r_pp = free_surface_pp_ab(p, alpha, beta).unwrap();
+            let r_ps = free_surface_ps(p, alpha, beta).unwrap();
+            let r_ss = free_surface_ss(p, alpha, beta).unwrap();
+            let r_sp = free_surface_sp(p).unwrap();
+            let flux_p = eta * r_pp * r_pp + xi * r_ps * r_ps;
+            let flux_s = xi * r_ss * r_ss + eta * r_sp * r_sp;
+            assert!(
+                (flux_p - eta).abs() < 1e-6,
+                "P flux {flux_p} vs {eta} at p={p}"
+            );
+            assert!(
+                (flux_s - xi).abs() < 1e-6,
+                "S flux {flux_s} vs {xi} at p={p}"
+            );
+            assert!(r_pp.abs() <= 1.0 + 1e-9, "|R_pp| {r_pp} exceeds 1 at p={p}");
+            assert!(r_ss.abs() <= 1.0 + 1e-9, "|R_ss| {r_ss} exceeds 1 at p={p}");
+            p += 0.005;
+        }
+    }
+
+    #[test]
+    fn free_surface_pp_crosses_zero_at_an_oblique_angle() {
+        let alpha = surface_p_velocity().unwrap();
+        let beta = surface_s_velocity().unwrap();
+        let r0 = free_surface_pp_ab(0.0, alpha, beta).unwrap();
+        assert!(r0 < 0.0, "near-normal incidence must be inverted");
+        let mut prev = r0;
+        let mut crossed = false;
+        let mut p = 0.005;
+        while p < 1.0 / alpha {
+            let r = free_surface_pp_ab(p, alpha, beta).unwrap();
+            if prev < 0.0 && r > 0.0 {
+                crossed = true;
+            }
+            prev = r;
+            p += 0.005;
+        }
+        assert!(
+            crossed,
+            "R_pp must cross zero (the positive-polarity band) at an oblique incidence angle"
+        );
+    }
+
+    #[test]
+    fn rayparam_of_the_deep_phases_is_a_finite_positive_slowness() {
+        for d in [30.0, 60.0, 90.0] {
+            let p = p_p_rayparam(d, 231.0).unwrap();
+            assert!(p.is_finite() && p > 0.0, "pP ray param at {d} deg: {p}");
+            let sp = s_p_rayparam(d, 231.0).unwrap();
+            assert!(sp.is_finite() && sp > 0.0, "sP ray param at {d} deg: {sp}");
+        }
+    }
 
     #[test]
     fn surface_p_times_match_published_ak135() {
