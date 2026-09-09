@@ -1172,6 +1172,30 @@ pub struct CausalLink {
     pub te: f64,
     pub threshold: f64,
     pub p_value: f64,
+    pub fdr_pass: bool,
+}
+
+fn subsets_of_size(v: &[(usize, usize)], p: usize) -> Vec<Vec<(usize, usize)>> {
+    fn rec(
+        v: &[(usize, usize)],
+        p: usize,
+        start: usize,
+        cur: &mut Vec<(usize, usize)>,
+        out: &mut Vec<Vec<(usize, usize)>>,
+    ) {
+        if cur.len() == p {
+            out.push(cur.clone());
+            return;
+        }
+        for idx in start..v.len() {
+            cur.push(v[idx]);
+            rec(v, p, idx + 1, cur, out);
+            cur.pop();
+        }
+    }
+    let mut out = Vec::new();
+    rec(v, p, 0, &mut Vec::new(), &mut out);
+    out
 }
 
 pub fn pcmci_links(
@@ -1185,6 +1209,8 @@ pub fn pcmci_links(
     block: usize,
     est: TeEstimator,
     k: usize,
+    p_max: usize,
+    alpha: f64,
 ) -> Option<Vec<CausalLink>> {
     let n_chan = series.len();
     if n_chan < 2 {
@@ -1196,58 +1222,124 @@ pub fn pcmci_links(
             return None;
         }
     }
+    if !(alpha > 0.0 && alpha <= 1.0) {
+        return None;
+    }
+
+    let test = |j: usize,
+                i: usize,
+                lag: usize,
+                conds: &[&[f32]],
+                seed_t: u64|
+     -> Option<(f64, f64, f64)> {
+        let te = match est {
+            TeEstimator::Binned => {
+                transfer_entropy_conditional_binned_n(series[j], series[i], conds, lag, bins)?
+            }
+            TeEstimator::Ksg => {
+                transfer_entropy_ksg_conditional_n(series[j], series[i], conds, lag, k)?
+            }
+        };
+        let surr = conditional_te_surrogates_n(
+            series[j], series[i], conds, lag, null_lag, bins, seed_t, n_surr, null, block, est, k,
+        )?;
+        let mean = surr.iter().sum::<f64>() / surr.len() as f64;
+        let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / surr.len() as f64;
+        let sd = var.sqrt();
+        let threshold = mean + 2.0 * sd;
+        let p_value = if sd > 0.0 {
+            1.0 - normal_cdf((te - mean) / sd)
+        } else if te > mean {
+            0.0
+        } else {
+            1.0
+        };
+        Some((te, threshold, p_value))
+    };
+
     let mut parents: Vec<Vec<(usize, usize)>> = vec![Vec::new(); n_chan];
-    let mut tested: Vec<Vec<(usize, usize)>> = vec![Vec::new(); n_chan];
-    let mut links: Vec<CausalLink> = Vec::new();
-    for j in 0..n_chan {
-        for _pass in 0..2 {
-            for i in 0..n_chan {
-                if i == j {
-                    continue;
-                }
-                for lag in 1..=max_lag {
-                    if tested[j].iter().any(|&(d, l)| d == i && l == lag) {
+    for p in 0..=p_max {
+        let snapshot: Vec<Vec<(usize, usize)>> = parents.clone();
+        let mut removals: Vec<(usize, usize, usize)> = Vec::new();
+        for j in 0..n_chan {
+            if p == 0 {
+                for i in 0..n_chan {
+                    if i == j {
                         continue;
                     }
-                    tested[j].push((i, lag));
-                    let conds: Vec<&[f32]> = parents[j].iter().map(|&(d, _)| series[d]).collect();
-                    let te = match est {
-                        TeEstimator::Binned => transfer_entropy_conditional_binned_n(
-                            series[j], series[i], &conds, lag, bins,
-                        )?,
-                        TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(
-                            series[j], series[i], &conds, lag, k,
-                        )?,
-                    };
-                    let surr = conditional_te_surrogates_n(
-                        series[j],
-                        series[i],
-                        &conds,
-                        lag,
-                        null_lag,
-                        bins,
-                        seed ^ (j as u64).wrapping_mul(0x9E37_79B9)
+                    for lag in 1..=max_lag {
+                        let seed_t = seed
+                            ^ (j as u64).wrapping_mul(0x9E37_79B9)
                             ^ (i as u64).wrapping_mul(0x85EB_CA6B)
-                            ^ (lag as u64).wrapping_mul(0xC2B2_AE3D),
-                        n_surr,
-                        null,
-                        block,
-                        est,
-                        k,
-                    )?;
-                    let mean = surr.iter().sum::<f64>() / surr.len() as f64;
-                    let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>()
-                        / surr.len() as f64;
-                    let sd = var.sqrt();
-                    let threshold = mean + 2.0 * sd;
-                    let p_value = if sd > 0.0 {
-                        1.0 - normal_cdf((te - mean) / sd)
-                    } else if te > mean {
-                        0.0
-                    } else {
-                        1.0
-                    };
-                    let dependent = te > threshold;
+                            ^ (lag as u64).wrapping_mul(0xC2B2_AE3D);
+                        if let Some((te, threshold, _pv)) = test(j, i, lag, &[], seed_t) {
+                            if te > threshold {
+                                parents[j].push((i, lag));
+                            }
+                        }
+                    }
+                }
+                continue;
+            }
+            let pool: Vec<(usize, usize)> = snapshot[j].clone();
+            for &(i, lag) in &pool {
+                let rest: Vec<(usize, usize)> = pool
+                    .iter()
+                    .copied()
+                    .filter(|&(d, l)| (d, l) != (i, lag))
+                    .collect();
+                if rest.len() < p {
+                    continue;
+                }
+                let mut removed_here = false;
+                for (ci, comb) in subsets_of_size(&rest, p).iter().enumerate() {
+                    let conds: Vec<&[f32]> = comb.iter().map(|&(d, _)| series[d]).collect();
+                    let seed_t = seed
+                        ^ (j as u64).wrapping_mul(0x9E37_79B9)
+                        ^ (i as u64).wrapping_mul(0x85EB_CA6B)
+                        ^ (lag as u64).wrapping_mul(0xC2B2_AE3D)
+                        ^ (p as u64).wrapping_mul(0xD1B5_4A32)
+                        ^ (ci as u64).wrapping_mul(0x4A32_D1B5);
+                    if let Some((te, threshold, _pv)) = test(j, i, lag, &conds, seed_t) {
+                        if te <= threshold {
+                            removed_here = true;
+                            break;
+                        }
+                    }
+                }
+                if removed_here {
+                    removals.push((j, i, lag));
+                }
+            }
+        }
+        for &(j, i, lag) in &removals {
+            parents[j].retain(|&(d, l)| (d, l) != (i, lag));
+        }
+    }
+
+    let mut links: Vec<CausalLink> = Vec::new();
+    for j in 0..n_chan {
+        for i in 0..n_chan {
+            if i == j {
+                continue;
+            }
+            for lag in 1..=max_lag {
+                let mut cond_specs: Vec<(usize, usize)> = parents[j]
+                    .iter()
+                    .copied()
+                    .filter(|&(d, l)| (d, l) != (i, lag))
+                    .collect();
+                for &(d, l) in &parents[i] {
+                    if !cond_specs.contains(&(d, l)) {
+                        cond_specs.push((d, l));
+                    }
+                }
+                let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();
+                let seed_t = seed
+                    ^ (j as u64).wrapping_mul(0x9E37_79B9)
+                    ^ (i as u64).wrapping_mul(0x85EB_CA6B)
+                    ^ (lag as u64).wrapping_mul(0xC2B2_AE3D);
+                if let Some((te, threshold, p_value)) = test(j, i, lag, &conds, seed_t) {
                     links.push(CausalLink {
                         driver: i,
                         target: j,
@@ -1255,11 +1347,17 @@ pub fn pcmci_links(
                         te,
                         threshold,
                         p_value,
+                        fdr_pass: false,
                     });
-                    if dependent {
-                        parents[j].push((i, lag));
-                    }
                 }
+            }
+        }
+    }
+    let p_vals: Vec<f64> = links.iter().map(|l| l.p_value).collect();
+    if let Some(cutoff) = benjamini_hochberg(&p_vals, alpha) {
+        for l in &mut links {
+            if l.p_value <= cutoff {
+                l.fdr_pass = true;
             }
         }
     }
@@ -2798,7 +2896,8 @@ mod tests {
             let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
             let series = gate_common_driver(150, a, 0.0, d_z, rng);
             let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
-            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0, est, 4) else {
+            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0, est, 4, 2, 0.05)
+            else {
                 continue;
             };
             let n_chan = refs.len();
@@ -2825,12 +2924,12 @@ mod tests {
         let n_surr = 100;
         let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
         let cells = [
-            (0.0f32, 0usize, 125usize),
-            (0.5f32, 0usize, 125usize),
-            (0.9f32, 0usize, 125usize),
-            (0.0f32, 4usize, 6usize),
-            (0.5f32, 4usize, 6usize),
-            (0.9f32, 4usize, 6usize),
+            (0.0f32, 0usize, 100usize),
+            (0.5f32, 0usize, 100usize),
+            (0.9f32, 0usize, 100usize),
+            (0.0f32, 4usize, 7usize),
+            (0.5f32, 4usize, 7usize),
+            (0.9f32, 4usize, 7usize),
         ];
         let mut rows: Vec<(f32, usize, f64)> = Vec::new();
         for &(a, d_z, trials) in &cells {
@@ -3609,6 +3708,8 @@ mod tests {
             0,
             TeEstimator::Binned,
             4,
+            2,
+            0.05,
         )
         .expect("pcmci resolves");
         let ab = links

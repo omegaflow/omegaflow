@@ -205,6 +205,8 @@ fn main() {
             0,
             TeEstimator::Binned,
             4,
+            2,
+            0.05,
         ) else {
             continue;
         };
