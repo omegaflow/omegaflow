@@ -1461,17 +1461,23 @@ ICRS-4D-Rahmen teilt:
   0–50 km (1,887–1,947 s), > 100 km klar verworfen (2,441–6,496 s). Geortet
   20 km gegen Katalog 10 km — konsistent, nicht scharf. Befund
   `docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md`.
-- Scharfe Tiefe (seismische Ortung, 2026-09-09) — Tiefenphasen gebaut, Tiefenmaß
-  gebaut, echtes Picken pending: `src/archivar/ak135.rs` trägt Vs (S-Modell bis
-  zur Kern-Mantel-Grenze) und die Reflexions-Phasen `s_travel`, `p_p_travel`,
-  `s_p_travel` (direkte Integration, 14 Tests — Befund
+- Scharfe Tiefe (seismische Ortung, 2026-09-09) — Tiefenphasen gebaut, echtes
+  Picken gebaut (Feldpilot, 1 Ereignis): `src/archivar/ak135.rs` trägt Vs
+  (S-Modell bis zur Kern-Mantel-Grenze) und die Reflexions-Phasen `s_travel`,
+  `p_p_travel`, `s_p_travel` (direkte Integration, 14 Tests — Befund
   `docs/befund/befund-2026-09-09-ak135-tiefenphasen.md`); der
   pP/sP-Lag liest die Tiefe direkt (~2 h/vp, 1 s Pick-Streu = 3,2 km — die
   Lag-Diagonale + 1D-Inversion in `tools/measure/src/bin/depth_phase_probe.rs`,
   5 Tests, synthetische Positivkontrolle bestanden — Befund
-  `docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md`). Für dieses Beben
-  (10 km) liegt der Lag (~3 s) an der P-Pick-Streu — echtes pP/sP-Picken an
-  einem tieferen Ereignis (≥20 km) ist der Nachfolger. Der Nah-Stationen-Weg
+  `docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md`). Der Feldpilot
+  (`tools/measure/src/bin/depth_phase_field_probe.rs`, 5 Tests) läuft die
+  Kette an echter Wellenform: us10003re5 (M7.5 Hindu Kush, Katalog 231 km)
+  → Median 250 km, Offset +19 km, außerhalb des ±10-km-Gates; die
+  Flachquellen-Polaritätsannahme (pP invertiert) kippt an tiefer Geometrie
+  (pP positiv, sP negativ). Schließung: Feldpilot bestanden (1 Ereignis) —
+  Befund `docs/befund/befund-2026-09-09-tiefenphasen-feld.md`. Nachfolger
+  benannt: die Flotte (Ereignisse × Stationen, σ und √N) + feinere
+  Inversionsklasse + pP-Polarität an tiefer Geometrie. Der Nah-Stationen-Weg
   (Hi-net) bleibt die Alternative; Adresse gemessen (2026-09-09): Hi-net (NI)
   ist nicht im EarthScope-Dataselect, NIED verlangt Registrierung; JP (JMA)
   trägt 6 Nah-Stationen als Metadaten, aber die 2011-Wellenformen liefern
