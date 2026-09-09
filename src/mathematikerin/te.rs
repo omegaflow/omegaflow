@@ -2168,6 +2168,102 @@ pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVe
     })
 }
 
+fn gate_rng(rng: &mut u64) -> f64 {
+    *rng = rng
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+}
+
+fn gate_gauss(rng: &mut u64) -> f32 {
+    loop {
+        let u1 = gate_rng(rng) * 2.0 - 1.0;
+        let u2 = gate_rng(rng) * 2.0 - 1.0;
+        let s = u1 * u1 + u2 * u2;
+        if s >= 1.0 || s <= 0.0 {
+            continue;
+        }
+        let m = (-2.0 * (s as f64).ln() / (s as f64)).sqrt() as f32;
+        return (u1 as f32) * m;
+    }
+}
+
+fn gate_common_driver(n: usize, a: f32, c: f32, d_z: usize, rng: &mut u64) -> Vec<Vec<f32>> {
+    let burn = 200;
+    let n_chan = 2 + d_z;
+    let mut x = vec![vec![0f32; burn + n]; n_chan];
+    for step in 1..burn + n {
+        x[0][step] = a * x[0][step - 1] + gate_gauss(rng);
+        let mut yv = a * x[1][step - 1] + c * x[0][step - 1] + gate_gauss(rng);
+        for d in 0..d_z {
+            x[2 + d][step] = a * x[2 + d][step - 1] + 0.25 * gate_gauss(rng);
+            yv += 0.5 * x[2 + d][step - 1];
+        }
+        x[1][step] = yv;
+    }
+    (0..n_chan).map(|j| x[j][burn..].to_vec()).collect()
+}
+
+pub struct GateCell {
+    pub a: f32,
+    pub d_z: usize,
+    pub fp: usize,
+    pub neg: usize,
+}
+
+pub fn gate_fpr_cells(
+    null: TeNull,
+    est: TeEstimator,
+    max_lag: usize,
+    null_lag: usize,
+    bins: usize,
+    block: usize,
+    n_surr: usize,
+) -> Vec<GateCell> {
+    let cells = [
+        (0.0f32, 0usize, 100usize),
+        (0.5f32, 0usize, 100usize),
+        (0.9f32, 0usize, 100usize),
+        (0.0f32, 4usize, 7usize),
+        (0.5f32, 4usize, 7usize),
+        (0.9f32, 4usize, 7usize),
+    ];
+    let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+    let mut out = Vec::with_capacity(6);
+    for &(a, d_z, trials) in &cells {
+        let mut fp = 0usize;
+        let mut neg = 0usize;
+        for t in 0..trials {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let series = gate_common_driver(150, a, 0.0, d_z, &mut rng);
+            let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
+            let Some(links) = pcmci_links(
+                &refs, max_lag, null_lag, bins, seed, n_surr, null, block, est, 4, 2, 0.05,
+            ) else {
+                continue;
+            };
+            let n_chan = refs.len();
+            for drv in 0..n_chan {
+                for tgt in 0..n_chan {
+                    if drv == tgt {
+                        continue;
+                    }
+                    for lag in 1..=max_lag {
+                        neg += 1;
+                        if links.iter().any(|k| {
+                            k.driver == drv && k.target == tgt && k.lag == lag && k.te > k.threshold
+                        }) {
+                            fp += 1;
+                        }
+                    }
+                }
+            }
+        }
+        out.push(GateCell { a, d_z, fp, neg });
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2734,13 +2830,6 @@ mod tests {
         assert_eq!(r.pe_y, None);
     }
 
-    fn gate_rng(rng: &mut u64) -> f64 {
-        *rng = rng
-            .wrapping_mul(6364136223846793005)
-            .wrapping_add(1442695040888963407);
-        ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
-    }
-
     fn gate_ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f32> {
         let mut v = Vec::with_capacity(n);
         let mut x = 0.0f64;
@@ -2852,90 +2941,22 @@ mod tests {
         );
     }
 
-    fn gate_gauss(rng: &mut u64) -> f32 {
-        loop {
-            let u1 = gate_rng(rng) * 2.0 - 1.0;
-            let u2 = gate_rng(rng) * 2.0 - 1.0;
-            let s = u1 * u1 + u2 * u2;
-            if s >= 1.0 || s <= 0.0 {
-                continue;
-            }
-            let m = (-2.0 * (s as f64).ln() / (s as f64)).sqrt() as f32;
-            return (u1 as f32) * m;
-        }
-    }
-
-    fn gate_common_driver(n: usize, a: f32, c: f32, d_z: usize, rng: &mut u64) -> Vec<Vec<f32>> {
-        let burn = 200;
-        let n_chan = 2 + d_z;
-        let mut x = vec![vec![0f32; burn + n]; n_chan];
-        for step in 1..burn + n {
-            x[0][step] = a * x[0][step - 1] + gate_gauss(rng);
-            let mut yv = a * x[1][step - 1] + c * x[0][step - 1] + gate_gauss(rng);
-            for d in 0..d_z {
-                x[2 + d][step] = a * x[2 + d][step - 1] + 0.25 * gate_gauss(rng);
-                yv += 0.5 * x[2 + d][step - 1];
-            }
-            x[1][step] = yv;
-        }
-        (0..n_chan).map(|j| x[j][burn..].to_vec()).collect()
-    }
-
-    fn gate_fpr_cell(
-        a: f32,
-        d_z: usize,
-        trials: usize,
-        null: TeNull,
-        n_surr: usize,
-        est: TeEstimator,
-        rng: &mut u64,
-    ) -> (usize, usize) {
-        let mut fp = 0usize;
-        let mut neg = 0usize;
-        for t in 0..trials {
-            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-            let series = gate_common_driver(150, a, 0.0, d_z, rng);
-            let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
-            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0, est, 4, 2, 0.05)
-            else {
-                continue;
-            };
-            let n_chan = refs.len();
-            for drv in 0..n_chan {
-                for tgt in 0..n_chan {
-                    if drv == tgt {
-                        continue;
-                    }
-                    for lag in 1..=2 {
-                        neg += 1;
-                        if links.iter().any(|k| {
-                            k.driver == drv && k.target == tgt && k.lag == lag && k.te > k.threshold
-                        }) {
-                            fp += 1;
-                        }
-                    }
-                }
-            }
-        }
-        (fp, neg)
-    }
-
     fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
-        let n_surr = 100;
-        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
-        let cells = [
-            (0.0f32, 0usize, 100usize),
-            (0.5f32, 0usize, 100usize),
-            (0.9f32, 0usize, 100usize),
-            (0.0f32, 4usize, 7usize),
-            (0.5f32, 4usize, 7usize),
-            (0.9f32, 4usize, 7usize),
-        ];
-        let mut rows: Vec<(f32, usize, f64)> = Vec::new();
-        for &(a, d_z, trials) in &cells {
-            let (fp, neg) = gate_fpr_cell(a, d_z, trials, null, n_surr, est, &mut rng);
-            rows.push((a, d_z, 100.0 * fp as f64 / neg as f64));
-        }
+        let cells = gate_fpr_cells(null, est, 2, 12, 4, 0, 100);
+        let rows: Vec<(f32, usize, f64)> = cells
+            .iter()
+            .map(|c| {
+                (
+                    c.a,
+                    c.d_z,
+                    if c.neg > 0 {
+                        100.0 * c.fp as f64 / c.neg as f64
+                    } else {
+                        0.0
+                    },
+                )
+            })
+            .collect();
         let named: String = rows
             .iter()
             .map(|&(a, d_z, fpr)| format!("a={a} D_Z={d_z}: {fpr:.2}% "))
@@ -2973,6 +2994,16 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_block_null_ksg_n_surr_100() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Ksg);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_shift_null_binned_n_surr_100() {
+        gate_fpr_autocorr(TeNull::Shift, TeEstimator::Binned);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_100() {
+        gate_fpr_autocorr(TeNull::Shift, TeEstimator::Ksg);
     }
 
     fn gate_s60_f(x: f32) -> f32 {
