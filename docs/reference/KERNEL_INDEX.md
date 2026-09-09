@@ -10,7 +10,7 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (322628 files, 7121947275081 B)
+## Family inventory (322627 files, 7121969295177 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
 | bpc | 5312 | 779673811 | 1788887220
@@ -21,7 +21,7 @@ by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 | gm | 11 | 438272 | 1783549920
 | ik | 1246 | 31117804 | 1787153580
 | lsk | 259 | 2622222 | 1784249340
-| misc | 179973 | 2902080177471 | 1788977700
+| misc | 179972 | 2902102197567 | 1788977700
 | mk | 11649 | 486719067 | 1788946800
 | pck-text | 1022 | 220823811 | 1787125260
 | sclk | 3980 | 129122991 | 1788844200
@@ -32,7 +32,7 @@ by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 ## System resolution (flattener selection)
 | System | SPK | PCK |
 |---|---|---|
-| planets | de721_full.bsp | pck00011.tpc |
+| planets | de441_part-2.bsp | pck00011.tpc |
 | asteroids | de441.bsp | — |
 | jupiter | jup365.bsp | pck.jup365.tpc |
 | saturn | sat441.bsp | pck.sat441.tpc |
