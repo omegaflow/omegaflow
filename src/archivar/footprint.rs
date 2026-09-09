@@ -19,6 +19,8 @@ pub enum FootprintBand {
     Ks = 8,
     W1 = 9,
     W2 = 10,
+    W3 = 11,
+    W4 = 12,
 }
 
 pub fn band_code(band: FootprintBand) -> u8 {
@@ -38,6 +40,8 @@ pub fn band_from_code(code: u8) -> Option<FootprintBand> {
         8 => Some(FootprintBand::Ks),
         9 => Some(FootprintBand::W1),
         10 => Some(FootprintBand::W2),
+        11 => Some(FootprintBand::W3),
+        12 => Some(FootprintBand::W4),
         _ => None,
     }
 }
@@ -52,17 +56,24 @@ pub struct FootprintRecord {
 
 impl FootprintRecord {
     pub fn pixel_of(ra_deg: f64, dec_deg: f64) -> Option<(u8, u32)> {
+        Self::pixel_of_nside(NSIDE, ra_deg, dec_deg)
+    }
+
+    pub fn pixel_of_nside(nside: i64, ra_deg: f64, dec_deg: f64) -> Option<(u8, u32)> {
+        if nside <= 0 || (nside & (nside - 1)) != 0 || nside > (1i64 << 29) {
+            return None;
+        }
         if !(ra_deg.is_finite() && dec_deg.is_finite() && (-90.0..=90.0).contains(&dec_deg)) {
             return None;
         }
         let theta = (90.0 - dec_deg).to_radians();
         let phi = ra_deg.rem_euclid(360.0).to_radians();
-        let pix = ang2pix_nest(NSIDE, theta, phi)?;
-        let npix = 12 * NSIDE * NSIDE;
+        let pix = ang2pix_nest(nside, theta, phi)?;
+        let npix = 12 * nside * nside;
         if pix < 0 || pix >= npix {
             return None;
         }
-        Some((NSIDE.trailing_zeros() as u8, pix as u32))
+        Some((nside.trailing_zeros() as u8, pix as u32))
     }
 }
 
@@ -133,7 +144,11 @@ pub fn direction_gate(
     dec_deg: f64,
     band: FootprintBand,
 ) -> FootprintVerdict {
-    match FootprintRecord::pixel_of(ra_deg, dec_deg) {
+    let Some(first) = records.first() else {
+        return FootprintVerdict::Pending;
+    };
+    let nside = 1i64 << first.order;
+    match FootprintRecord::pixel_of_nside(nside, ra_deg, dec_deg) {
         Some((_, ipix)) => footprint_gate(Some(find_pixel_records(records, ipix)), band),
         None => FootprintVerdict::Pending,
     }
@@ -183,10 +198,10 @@ mod tests {
 
     #[test]
     fn band_code_roundtrip() {
-        for code in 0..=10u8 {
+        for code in 0..=12u8 {
             assert_eq!(band_code(band_from_code(code).unwrap()), code);
         }
-        assert_eq!(band_from_code(11), None);
+        assert_eq!(band_from_code(13), None);
         assert_eq!(band_from_code(255), None);
     }
 
@@ -233,7 +248,11 @@ mod tests {
         assert!(decode_rec(&b).is_none());
         b = [0u8; REC_BYTES];
         encode_rec(&mut b, &r);
-        b[1] = 11;
+        b[1] = 13;
+        assert!(decode_rec(&b).is_none());
+        b = [0u8; REC_BYTES];
+        encode_rec(&mut b, &r);
+        b[1] = 255;
         assert!(decode_rec(&b).is_none());
         b = [0u8; REC_BYTES];
         encode_rec(&mut b, &r);
@@ -332,6 +351,45 @@ mod tests {
         );
         assert_eq!(
             direction_gate(&recs, f64::NAN, 0.0, FootprintBand::G),
+            FootprintVerdict::Pending
+        );
+    }
+
+    #[test]
+    fn pixel_of_nside_reports_the_order_of_the_given_nside() {
+        assert_eq!(FootprintRecord::pixel_of(40.0, -30.0).unwrap().0, 12);
+        let (order, _) = FootprintRecord::pixel_of_nside(256, 40.0, -30.0).unwrap();
+        assert_eq!(order, 8);
+        assert!(FootprintRecord::pixel_of_nside(256, 40.0, -30.0).is_some());
+        assert!(FootprintRecord::pixel_of_nside(3, 40.0, -30.0).is_none());
+        assert!(FootprintRecord::pixel_of_nside(-256, 40.0, -30.0).is_none());
+        assert!(FootprintRecord::pixel_of_nside(1i64 << 30, 40.0, -30.0).is_none());
+        assert!(FootprintRecord::pixel_of_nside(256, f64::NAN, 0.0).is_none());
+    }
+
+    #[test]
+    fn direction_gate_reads_the_asset_order() {
+        let (order, ipix) = FootprintRecord::pixel_of_nside(256, 40.0, -30.0).unwrap();
+        let recs = [FootprintRecord {
+            order,
+            band: FootprintBand::G,
+            ipix,
+            frac: 0.9,
+        }];
+        assert_eq!(
+            direction_gate(&recs, 40.0, -30.0, FootprintBand::G),
+            FootprintVerdict::Observed
+        );
+        assert_eq!(
+            direction_gate(&recs, 40.0, -30.0, FootprintBand::Z),
+            FootprintVerdict::BandUncovered
+        );
+        assert_eq!(
+            direction_gate(&recs, 200.0, 85.0, FootprintBand::G),
+            FootprintVerdict::NeverObserved
+        );
+        assert_eq!(
+            direction_gate(&[], 40.0, -30.0, FootprintBand::G),
             FootprintVerdict::Pending
         );
     }
