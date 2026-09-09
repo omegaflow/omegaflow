@@ -44,4 +44,6 @@ jobs:
                  "inpop-epm-cdn: the epm2021 bsp returned void" \
                  "curl on ftp.iaaras.ru did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
+          echo "epm2021.bsp sha256: $(sha256sum epm2021.bsp | cut -d' ' -f1)"
+          echo "epm2021.bsp bytes: $(stat -c%s epm2021.bsp)"
           cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --ci-mode
