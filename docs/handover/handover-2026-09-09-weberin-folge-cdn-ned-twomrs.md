@@ -2,7 +2,7 @@
   title: Handover — Weberin-Folge: CDN-Dispatch-Fixes, NED-REST-API-Kegel-Tiling, 2MRS-z-Feldwert
   class: handover
   date: 2026-09-09
-  sha256: fe31b7919911d1559c435f531450cd99f4ccebcd91a1660bbe56dbaccf7cb191
+  sha256: b8c4c263a3a0679cc6a15025a3abe34fa0b0e5df1632bf91c7191858b3865bef
   status: live
   see-also: docs/TODO.md docs/auftrag/auftrag-ned-objdir-zugang.md phi/sources.φ docs/concepts/archivar-mathematikerin.md
 -->
@@ -61,19 +61,20 @@ dienst-begrenzt; die stabile z-Ernte läuft über 2MRS-via-CDS.
 
 ## Offen / für die nächste Session
 
-- **`fa5467c` (Spacing-Default 5°) ist committet, aber NICHT gepusht** — blockiert
-  durch die Fremdlinie (8 untracked Dateien mit anderem Inhalt im Baum:
-  `tools/vo-tap/*`, `astrometry.rs`, `depth_phase_field_probe.rs`,
-  `neptune_apparent_chain_probe.rs`). Nächste Session: pushen, dann
-  `gh workflow enable ned-cdn.yml` + Dispatch — der unterabgetastete Crawl
-  läuft dann ~1 Tag autonom.
-- **`ned-cdn.yml` ist derzeit `disabled_manually`** (Voll-Crawl gecancelt,
-  Schedule pausiert). Erst nach Push von `fa5467c` wieder aktivieren.
-- **`docs/auftrag/auftrag-ned-objdir-zugang.md`** (externer Rechercheauftrag,
-  `status: pending`): die menschliche IPAC-Rückfrage (Dienst-Erholung, Bulk-z,
-  schonende Route) ist offen. Ergebnis-Datei der Messung liegt lokal:
+- **Der unterabgetastete ned-Crawl läuft autonom.** `fa5467c` (Spacing-Default 5°
+  ≈ 1900 Kegel ≈ ~1 Tag) ist gepusht, `ned-cdn.yml` wieder aktiviert, Run
+  `34348633104` dispatched. Nächste Session: landen verifizieren (`ned.json` auf
+  `ssd.jpl.nasa.gov`, Kombination der `ned_part_*.json`).
+- **IPAC-Rückfrage ist abgeschickt (2026-09-09).** Das NED-Kontaktformular
+  (Dienst-Erholung, Bulk-z, schonende Route) ist versandt; Antwort ausstehend.
+  `docs/auftrag/auftrag-ned-objdir-zugang.md` bleibt `status: pending` (Kanal
+  IPAC: gesendet). Ergebnis-Datei der Messung liegt lokal:
   `/home/johannes/Schreibtisch/auftrag-ned-objdir-zugang_results.md`
-  (NED `degradiert`, 2MRS-via-CDS `live`, IPAC-Kontakt `pending`).
+  (NED `degradiert`, 2MRS-via-CDS `live`).
+- **`docs/auftrag/auftrag-ned-objdir-zugang.md` ist committet (`6fb7d54`), aber
+  noch nicht gepusht** — der Push war zuletzt durch die Fremdlinie blockiert.
+  Die Datei war bei einem Rebase-Tanz verloren gegangen (nur als dangling
+  `5914798` übrig) und wurde daraus wiederhergestellt; nächste Session pushen.
 - **TODO.md**: die Register-Einträge dieser Session (ned/2MRS/meteo) stehen; die
   Fremdlinie editiert TODO.md parallel — nicht anfassen.
 
