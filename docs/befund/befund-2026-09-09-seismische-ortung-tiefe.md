@@ -2,12 +2,16 @@
   title: Befund — Seismische Ortung mit Tiefe (ak135, 3D-Gitter): das Epizentrum steht bei ~14,6 km, die Tiefe ist flach-bestimmt — 0–50 km ununterscheidbar, >100 km verworfen
   class: befund
   date: 2026-09-09
-  sha256: b6937e6317be2811d783817e808d10cf446cfed874152993d1ec1cfbd065e274
+  sha256: 2fbc18809e6fdf12947def72153fbae15188701307a4d08dcf32d372679b8365
   status: done
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md
 -->
 
 # Befund: die seismische Ortung mit Tiefe
+
+Prüffall: USGS `us6000tkt2` (mww 7.8, reviewed). Feld-Herkunft: die
+flach-bestimmt-Grenze ist die Feldlage — scharfe Tiefe löst das Feld über
+Tiefenphasen (pP/sP) oder Nah-Stationen, nie über ein globales Netz allein.
 
 ## Frage & Bindung
 

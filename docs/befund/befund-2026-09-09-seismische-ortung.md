@@ -2,12 +2,18 @@
   title: Befund — Seismische Ortung (P-Differenz-Inversion): der Solver ist code-seitig bewiesen, die Konstant-Nullhypothese (v_p = 5950 m/s, gerade Sehne) wird von den echten Ankünften widerlegt — der distanzabhängige Residuum-Sprung ist die Zahl
   class: befund
   date: 2026-09-09
-  sha256: 33dfa7ea9d046cdea1e8be55e61b87932ae52cabe93882c8ddf8adffc0649d32
+  sha256: 6a33942ff68f9a967626ae66f493b705c01f372e5d52a237437e07a3017c1ee0
   status: done
   see-also: docs/TODO.md docs/auftrag/auftrag-rayleigh-dispersion.md docs/auftrag/auftrag-dispersionsrelation.md
 -->
 
 # Befund: die seismische Ortung (P-Wellen-Differenz-Inversion)
+
+Prüffall: USGS `us6000tkt2` (2026-08-14T21:58:21.505Z, mww 7.8, reviewed), Katalog
+−8,3514/121,3478/10 km. Feld-Herkunft: Gittersuche über Ankunfts-Residuen =
+NonLinLoc (Lomax et al. 2000), linearisierte Variante = Geiger 1910; STA/LTA-Pick
+= Allen 1978 — Gegenüberstellung
+`docs/befund/befund-2026-09-09-feldstandard-seismik.md`.
 
 ## Frage & Bindung
 
