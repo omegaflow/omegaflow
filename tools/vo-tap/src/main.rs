@@ -10,9 +10,10 @@ fn arg(args: &[String], name: &str) -> Option<String> {
 }
 
 fn format_of(args: &[String]) -> Format {
-    arg(args, "--format")
-        .and_then(|f| Format::parse(&f))
-        .unwrap_or(Format::Csv)
+    match arg(args, "--format").and_then(|f| Format::parse(&f)) {
+        Some(f) => f,
+        None => Format::Csv,
+    }
 }
 
 fn main() {
@@ -73,12 +74,14 @@ fn main() {
                 eprintln!("async needs <root> <adql>");
                 std::process::exit(1);
             };
-            let poll: u64 = arg(&args, "--poll")
-                .and_then(|s| s.parse().ok())
-                .unwrap_or(10);
-            let timeout: u64 = arg(&args, "--timeout")
-                .and_then(|s| s.parse().ok())
-                .unwrap_or(600);
+            let poll: u64 = match arg(&args, "--poll").and_then(|s| s.parse().ok()) {
+                Some(v) => v,
+                None => 10,
+            };
+            let timeout: u64 = match arg(&args, "--timeout").and_then(|s| s.parse().ok()) {
+                Some(v) => v,
+                None => 600,
+            };
             let job = match submit_async(&root, &adql, format_of(&args)) {
                 Some(j) => j,
                 None => {
