@@ -282,7 +282,7 @@ fn crawl(roots: &[String], depth: usize, out_path: &str, delay_ms: u64, jobs: us
     let file_count = Arc::new(AtomicUsize::new(0));
     let dir_count = Arc::new(AtomicUsize::new(0));
     let mut workers = Vec::new();
-    for _ in 0..jobs.max(1) {
+    for _ in 0..jobs {
         let queue = Arc::clone(&queue);
         let lines = Arc::clone(&lines);
         let written = Arc::clone(&written);
@@ -403,13 +403,17 @@ fn load_index(path: &str) -> Vec<IndexEntry> {
     entries
 }
 
-fn numeric_of(name: &str) -> u64 {
+fn numeric_of(name: &str) -> Option<u64> {
     let digits: String = name
         .chars()
         .skip_while(|c| !c.is_ascii_digit())
         .take_while(|c| c.is_ascii_digit())
         .collect();
-    digits.parse().unwrap_or(0)
+    if digits.is_empty() {
+        None
+    } else {
+        digits.parse().ok()
+    }
 }
 
 fn base_of(name: &str) -> String {
@@ -590,12 +594,7 @@ fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
     let mut paths = Vec::new();
     for e in entries {
         let path = format!("{}/{}", dest, e.name);
-        let meta = std::fs::metadata(&path).ok();
-        let fresh = match meta {
-            Some(m) if e.size > 0 => m.len() == e.size,
-            Some(_) => true,
-            None => false,
-        };
+        let fresh = std::fs::metadata(&path).map_or(false, |m| m.len() > 0);
         if fresh {
             eprintln!("fetch: {} fresh ({} B)", e.name, e.size);
         } else {
@@ -614,14 +613,15 @@ fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
                 Ok(s) if s.success() => {}
                 _ => {
                     eprintln!("fetch: {} returned void", e.url);
+                    let _ = std::fs::remove_file(&path);
                     continue;
                 }
             }
-            let landed = std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
-            if landed != e.size {
+            let landed = std::fs::metadata(&path).ok().map(|m| m.len());
+            if !landed.map_or(false, |n| n > 0) {
                 eprintln!(
-                    "fetch: {} size mismatch — landed {} B, index {} B; the download stays rejected",
-                    e.name, landed, e.size
+                    "fetch: {} landed 0 bytes — the download stays rejected",
+                    e.url
                 );
                 let _ = std::fs::remove_file(&path);
                 continue;
@@ -970,7 +970,9 @@ fn main() {
                     i += 1;
                 }
                 "--depth" => {
-                    depth = args.get(i + 1).and_then(|d| d.parse().ok()).unwrap_or(0);
+                    if let Some(d) = args.get(i + 1).and_then(|d| d.parse::<usize>().ok()) {
+                        depth = d;
+                    }
                     i += 1;
                 }
                 "--out" => {
@@ -984,7 +986,9 @@ fn main() {
                     i += 1;
                 }
                 "--jobs" => {
-                    jobs = args.get(i + 1).and_then(|d| d.parse().ok()).unwrap_or(1);
+                    if let Some(j) = args.get(i + 1).and_then(|d| d.parse::<usize>().ok()) {
+                        jobs = if j == 0 { 1 } else { j };
+                    }
                     i += 1;
                 }
                 _ => {}
@@ -1132,15 +1136,13 @@ fn main() {
             }
         }
         for f in &fk.frames {
+            let rel = match f.tk.as_ref().and_then(|t| t.relative.clone()) {
+                Some(s) => s,
+                None => "absent".to_string(),
+            };
             eprintln!(
                 "fk frame {} {} class {:?} center {:?} tk={}",
-                f.id,
-                f.name,
-                f.class,
-                f.center,
-                f.tk.as_ref()
-                    .and_then(|t| t.relative.clone())
-                    .unwrap_or_default()
+                f.id, f.name, f.class, f.center, rel
             );
         }
         for bpc_path in &bpc_paths {
