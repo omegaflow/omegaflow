@@ -1,10 +1,11 @@
 use std::collections::{BTreeMap, HashMap};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{
-    conditional_te_stats, surrogate_stats_block, surrogate_stats_phase,
+    conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
     transfer_entropy_conditional, transfer_entropy_lag,
 };
 
@@ -18,6 +19,7 @@ const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 20;
 const BLOCK: usize = 5;
 const LAGS: [usize; 4] = [1, 3, 5, 7];
+static N_SURR_PHASE_BLOCK: AtomicUsize = AtomicUsize::new(10);
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -158,10 +160,11 @@ fn run_unconditional(y: &[f32], xs: &[f32], dname: &str) -> Vec<String> {
         return out;
     }
     out.push(format!("  {dname}: n {}", y.len()));
+    let n_surr = N_SURR_PHASE_BLOCK.load(Ordering::Relaxed);
     for &lag in &LAGS {
         let te = transfer_entropy_lag(y, xs, lag);
-        let thr_p = surrogate_stats_phase(y, xs, lag, SEED).map(|(_, _, t)| t);
-        let thr_b = surrogate_stats_block(y, xs, lag, BLOCK, SEED).map(|(_, _, t)| t);
+        let thr_p = surrogate_stats_phase_n(y, xs, lag, SEED, n_surr).map(|(_, _, t)| t);
+        let thr_b = surrogate_stats_block_n(y, xs, lag, BLOCK, SEED, n_surr).map(|(_, _, t)| t);
         let te_r = transfer_entropy_lag(xs, y, lag);
         out.push(format!(
             "    lag {lag:>2}  fwd TE {}  thrPh {}  thrBl {}  |  rev TE {}",
@@ -266,7 +269,29 @@ fn analyze(
 }
 
 fn main() {
-    let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut report_path: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--n-surr" {
+            i += 1;
+            match args.get(i).and_then(|v| v.parse::<usize>().ok()) {
+                Some(n) if n >= 2 => N_SURR_PHASE_BLOCK.store(n, Ordering::Relaxed),
+                Some(n) => {
+                    eprintln!("--n-surr carries {n} — a null needs at least 2 surrogates");
+                    std::process::exit(1);
+                }
+                None => {
+                    eprintln!("--n-surr carries no surrogate count");
+                    std::process::exit(1);
+                }
+            }
+        } else if !args[i].starts_with('-') && report_path.is_none() {
+            report_path = Some(args[i].clone());
+        }
+        i += 1;
+    }
+    let report_path = match report_path {
         Some(p) => p,
         None => "tmp/galileo_floor_external_te.txt".to_string(),
     };

@@ -1395,7 +1395,17 @@ pub fn surrogate_stats_phase(
     lag: usize,
     seed: u64,
 ) -> Option<(f64, f64, f64)> {
-    surrogate_stats_with(x, y, lag, seed, 10, &mut |v, rng| {
+    surrogate_stats_phase_n(x, y, lag, seed, 10)
+}
+
+pub fn surrogate_stats_phase_n(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<(f64, f64, f64)> {
+    surrogate_stats_with(x, y, lag, seed, n_surr, &mut |v, rng| {
         phase_randomized_surrogate(v, rng)
     })
 }
@@ -1407,7 +1417,18 @@ pub fn surrogate_stats_block(
     block: usize,
     seed: u64,
 ) -> Option<(f64, f64, f64)> {
-    surrogate_stats_with(x, y, lag, seed, 10, &mut |v, rng| {
+    surrogate_stats_block_n(x, y, lag, block, seed, 10)
+}
+
+pub fn surrogate_stats_block_n(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    block: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<(f64, f64, f64)> {
+    surrogate_stats_with(x, y, lag, seed, n_surr, &mut |v, rng| {
         block_bootstrap_surrogate(v, block, rng)
     })
 }
@@ -2939,6 +2960,26 @@ mod tests {
             ab.is_none() || ba.is_none(),
             "Kalibrier-Gate n-Floor: n=16 carries no verdict"
         );
+    }
+
+    #[test]
+    fn phase_block_null_stays_byte_identical_at_ten() {
+        let mut rng = 0x0A95_517C_C1B7_2722u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = gate_ar1(300, 0.3, &mut rng);
+        let seed = 0x9E37_79B9_7F4A_7C15;
+        for lag in [0usize, 1, 2, 3, 5] {
+            assert_eq!(
+                surrogate_stats_phase(&b, &a, lag, seed),
+                surrogate_stats_phase_n(&b, &a, lag, seed, 10),
+                "phase null: the 10-path must stay byte-identical through the _n form"
+            );
+            assert_eq!(
+                surrogate_stats_block(&b, &a, lag, 5, seed),
+                surrogate_stats_block_n(&b, &a, lag, 5, seed, 10),
+                "block null: the 10-path must stay byte-identical through the _n form"
+            );
+        }
     }
 
     fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
