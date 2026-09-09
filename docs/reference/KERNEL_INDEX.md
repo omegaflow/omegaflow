@@ -13,7 +13,7 @@ by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 ## Family inventory (322473 files, 7113875065391 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
-| bpc | 5308 | 779673811 | 1788800820
+| bpc | 5308 | 779673811 | 1788887220
 | ck | 104012 | 3573716487606 | 1788881520
 | dastcom | 7 | 258993 | 1788905700
 | dsk | 940 | 259142925193 | 1784859060
