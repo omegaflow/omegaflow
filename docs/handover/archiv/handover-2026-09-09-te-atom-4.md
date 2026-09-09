@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: 5a757c10c0e79d1cdd531a596e79e54bfdac42d9ecaf2519a250cd78ddd4ec8b
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md docs/auftrag/archiv/auftrag-betriebspunkt-sweep.md docs/concepts/te-literatur-matrix.md
+  status: archived
+  see-also: docs/handover/handover-2026-09-09-te-atom-4-folge.md docs/handover/archiv/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md docs/auftrag/archiv/auftrag-betriebspunkt-sweep.md docs/concepts/te-literatur-matrix.md
 -->
 # Thematisches Handover — TE-Atom 4
 
