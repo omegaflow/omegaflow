@@ -2087,11 +2087,13 @@ Gebaut (2026-09-06, sub-agents):
     Newcomb/IAU-1976-Präzession, Aoki-FK4→FK5, Frame-Bias, Aberration,
     Parallaxe, Espenak–Meeus-ΔT) + `neptune_apparent_chain_probe` (drei
     Formate, OBSLIST-λφh); Richtungs-Tore grün, Kalibrier-Gate exakt
-    (+40/−25 mas zurückgewonnen); in-range gemessen (URSS-TKY 32 Reihen
-    ~1″, NIK-Foto-B1950 66 Reihen −429 mas). Die volle 7289-App-Reduktion
-    wartet auf `ephemeris_neptune_c.bin`/`ephemeris_earth.bin` mit
-    J2000±180 Jahre (derzeit ±30 = 1970–2030, die Reihen liegen 1846–1969) —
-    `pending` (Ernte-Duty). Befund:
+    (+40/−25 mas über alle 7391 Reihen zurückgewonnen). Reduziert gegen die
+    breite DE441-Ephemeride (`ephemeris_neptune.bin` + `ephemeris_earth.bin`,
+    Jahr −10500…+14500) — die volle 7289-App-Reduktion steht (NIK-Foto-B1950
+    −339 mas, RMS 0.5″; URSS-TKY −1.2″); die frühen HILTON-Reihen tragen ihre
+    Datenstreuung. Ein breiter Zentrum-Komposit (`ephemeris_neptune_c.bin` mit
+    der vollen Range statt ±30 Jahre) für die mas-konsistente Zentrums-Reduktion
+    (Flagstaff-Anker) bleibt `pending` (Ernte-Duty). Befund:
     docs/befund/befund-2026-09-09-neptun-scheinbar-orts-kette.md. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
