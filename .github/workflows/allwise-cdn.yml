@@ -1,0 +1,66 @@
+name: allwise-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: allwise-cdn
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  allwise-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Auto-resume chunked AllWISE harvest (one tile span per pass)
+        run: |
+          cargo build -p omegaflow-harvest --release --bin wise_coverage_compiler --bin wise_coverage_combiner
+          total=18240
+          chunk=100
+          budget_s=5400
+          deadline=$(( $(date +%s) + budget_s ))
+          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]|select(.name|startswith("allwise_part_"))|.name' 2>/dev/null || true)
+          # harvest the next undone tile span, one chunk per compiler pass
+          lo=0
+          while [ "$lo" -lt "$total" ] && [ "$(date +%s)" -lt "$deadline" ]; do
+            hi=$(( lo + chunk - 1 ))
+            if [ "$hi" -ge "$total" ]; then hi=$(( total - 1 )); fi
+            name="allwise_part_${lo}_${hi}.fp01"
+            if echo "$parts" | grep -qx "$name"; then
+              lo=$(( hi + 1 ))
+              continue
+            fi
+            start_s=$(date +%s)
+            echo "=== harvesting tiles ${lo}..${hi} ==="
+            if ./target/release/wise_coverage_compiler --coadd-lo "${lo}" --coadd-hi "${hi}" \
+                --out "${name}" --ci-mode; then
+              echo "uploaded ${name} in $(( $(date +%s) - start_s )) s"
+              parts="${parts}"$'\n'"${name}"
+              lo=$(( hi + 1 ))
+            else
+              echo "span ${lo}..${hi} void this run — the hourly schedule retries it"
+              break
+            fi
+          done
+          # combine when every span has a part and the final asset is absent
+          state=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets 2>/dev/null || true)
+          part_count=$(printf '%s' "$state" | jq -r '[.assets[]?.name | select(startswith("allwise_part_") and endswith(".fp01"))] | length' 2>/dev/null || echo 0)
+          has_final=$(printf '%s' "$state" | jq -r '[.assets[]?.name|select(.=="allwise_coverage.fp01")]|length' 2>/dev/null || echo 0)
+          expected=$(( (total + chunk - 1) / chunk ))
+          echo "spans present: ${part_count}/${expected}; final asset present: ${has_final}"
+          if [ "$part_count" = "$expected" ] && [ "$has_final" = "0" ]; then
+            echo "=== combining ==="
+            mkdir -p parts
+            gh release download ssd.jpl.nasa.gov -p "allwise_part_*.fp01" --repo omegaflow/sources --dir parts --clobber
+            ./target/release/wise_coverage_combiner --parts-dir parts --out allwise_coverage.fp01 \
+              --expect-tiles "$total"
+            gh release upload ssd.jpl.nasa.gov allwise_coverage.fp01 --clobber --repo omegaflow/sources
+            echo "allwise_coverage.fp01 uploaded: $(stat -c%s allwise_coverage.fp01) bytes"
+          fi
