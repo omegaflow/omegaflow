@@ -2017,7 +2017,13 @@ Gebaut (2026-09-06, sub-agents):
     `neptune_center_check_probe`), eigener Workflow `neptune-c-spk-cdn.yml`,
     Ernte registriert (nep097.bsp + nep097xl-899.bsp + ephemeris_neptune_c.bin
     in phi/sources.φ); die Astrometrie-Kopplung (Neptun-Tabelle ernten und
-    gegen das Zentrum reduzieren) — `pending`. Der Horizons-Raster-
+    gegen das Zentrum reduzieren) — `pending`; Erreichbarkeit gemessen
+    (2026-09-09): Camargo 2015 (J/A+A/582/A8) ist Uranus-only („Astrometry of
+    the main satellites of Uranus", kein neptu_j), GeoAzur-Basis
+    (astrogeo/observations/base/, Neptun 1753–1995, FK4/Boss-GC) ist
+    erreichbar (200), Yunnan Neptun+Triton (Icarus 437:16625) liegt nicht in
+    VizieR — eine saubere Neptun-Planetenzentrum-Tabelle steht noch aus
+    (Source-Port über docs/SOURCE_PORT.md). Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
