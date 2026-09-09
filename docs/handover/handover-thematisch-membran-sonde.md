@@ -2,7 +2,7 @@
   title: Thematisches Handover — Membran-Sonde
   class: handover
   date: 2026-09-09
-  sha256: ab28c2699b2f807b663f6b3acec79d39cbf0e49ca2a1b8a43cd11446aeb75c3a
+  sha256: ee4b3983ff8f45be79dce3f36ab748f3ee14265112bcba23af26e1109ea73791
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
@@ -12,11 +12,16 @@ Stehendes Register der offenen Membran-/Orientierungs-Linie. Der Matrix-Fix
 ist nachgetragen, die Orientierungs-Sonde gebaut (Sub-Solar, Matrix gegen den
 analytischen Pfad, echte Bins); das Offene folgt.
 
-- **Re-Verifikation galileo_elevation_match** (full + sanity) nach dem
-  Earth-Recompile: lokal auffrischen (`data/ssd.jpl.nasa.gov/ephemeris_earth.bin`,
-  Membran-Cache löschen), dann den Kontroll-Lauf re-laufen. Hypothese: die
-  Haupttabellen unverändert, der Sanity-Sweep (Matrix-Pfad) jetzt im Einklang
-  mit dem Lehrbuch (DSS43-Peak 04:00).
+- **Re-Verifikation galileo_elevation_match** — GEBAUT (2026-09-09): full +
+  sanity re-laufen nach dem Rekompilat. sanity: DSS43-Peak jetzt ~04:00
+  (Matrix-Pfad im Einklang mit dem Lehrbuch, vorher ~117°-Shift); full
+  reproduziert den Befund exakt (Haupttabellen unverändert: st43 med_diff
+  1,828/20/5/9,688 · st63 18,827/9/4/35,304 · interior st43 1,162/19/5, st63
+  4,757/9/4).
+- **de441 mars trägt Vor-Fix-Matrizen** — gemessen (Δ Anker 6 045,3 km; der
+  Rekompilat hängt am kernel-flatten-Körperjob + am ungemessenen 18-MB-vs-
+  183-MB-Struktur-Unterschied). de440/de442/inpop/epm earth sind rekompiliert
+  und re-verifiziert (orientation_probe Δ 0,0 km) — nur mars bleibt.
 - **Getrennte CI-Lücken** (vorbestehend, nicht Matrix): TNO-Split fällt auf
   fehlendem `phi/pipeline/catalog/asteroid_gm_sb441.φ`; `--omega-g` liest
   `solar_omega_g.φ` void (beide gitignored, auf CI-Runner absent); der
