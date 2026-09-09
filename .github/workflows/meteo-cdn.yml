@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       event:
-        description: Event config (config/meteo/*.json)
+        description: Event config (phi/meteo/*.json)
         required: true
         default: tibet-flut-2026.json
 
@@ -35,5 +35,5 @@ jobs:
       - name: Fetch origin and upload cache assets to CDN
         run: |
           ./target/release/meteo_cache_manifest \
-            --event config/meteo/${{ github.event.inputs.event }} \
+            --event phi/meteo/${{ github.event.inputs.event }} \
             --out phi/pipeline/meteo_harvest --ci-mode
