@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: ea670c4400ff7c9857baeb0634b189615994cffde3202f7e03217a344fe7a108
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-ak135-tiefenphasen.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-ak135-tiefenphasen.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md
 -->
 
 # Befund: die Tiefenphasen-Diagonale

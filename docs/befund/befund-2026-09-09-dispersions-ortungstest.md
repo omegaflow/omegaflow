@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: ea94bb544eb36c1175daf1a153cbfa4f9b8a3f8aa4c8f76408d8d184c9ba3fc6
   status: done
-  see-also: docs/auftrag/archiv/auftrag-dispersions-ortungstest.md docs/auftrag/archiv/auftrag-dispersionsrelation.md docs/handover/handover-thematisch-te-atom-4.md
+  see-also: docs/auftrag/archiv/auftrag-dispersions-ortungstest.md docs/auftrag/archiv/auftrag-dispersionsrelation.md docs/handover/handover-2026-09-09-te-atom-4.md
 -->
 
 # Befund: der Dispersions-Ortungstest

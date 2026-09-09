@@ -5,7 +5,7 @@
   sha256: 7a5dc8aa312fef0701794473628d72ac362276327962fc2c05a76fbac4ea1f98
   fam-round-machine: pre-fix (verdict fam-governed, value unprinted)
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-paradigmenwechsel.md docs/handover/handover-thematisch-mechanische-reste.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-paradigmenwechsel.md docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 # The flyby proof, Path 1 — the seven cold cases
 

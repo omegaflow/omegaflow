@@ -3,7 +3,7 @@
   class: handover
   date: {date}
   status: live
-  see-also: docs/handover/handover-thematisch-mechanische-reste.md
+  see-also: docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Übergabe — Drift gemessen
@@ -32,4 +32,4 @@ Der Automat hat Drift gemessen und die Session eingefroren.
 
 ## Offene Punkte
 
-Das Register sind die thematischen Handover in docs/handover/ — die neue Session liest die jüngste Übergabe zuerst.
+Das Register sind die Handover in docs/handover/ — die neue Session liest die jüngste Übergabe zuerst.
