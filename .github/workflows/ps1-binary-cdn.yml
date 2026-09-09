@@ -1,0 +1,21 @@
+name: ps1-binary-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ps1-binary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the PS1 DR2 binary footprint mask (skycell archive-existence) once and upload to CDN
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern ps1_dr2_binary.fp01 --clobber 2>/dev/null || \
+          cargo run -p omegaflow-harvest --release --bin ps1_binary_compiler -- \
+            --out ps1_dr2_binary.fp01 --ci-mode
