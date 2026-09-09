@@ -1507,8 +1507,12 @@ ICRS-4D-Rahmen teilt:
   −27,302° vs Lehrbuch −26,853° (0,449°). Kern-Befund (gemessen, widerspricht
   handover-2026-09-09-matrix-fix-nachtrag §4): de440/de442/inpop/epm earth +
   de441 mars tragen Vor-Fix-Matrizen (~120–138°-Klasse; nur de441 earth trägt
-  den Fix). Rekompilat der fünf stale Bins mit dem fixierten Code = neuer
-  Stein im konsolidierten Follow-up. Befund
+  den Fix). Rekompilat ausgelöst (2026-09-09): de44-cdn (de440/de442,
+  run 34363451986) + inpop-epm-cdn (inpop/epm, run 34363458584) — vier Bins
+  laufen mit dem fixierten Code; Re-Verifikation (orientation_probe +
+  galileo_elevation_match) nach CI-Grün. de441 mars bleibt offen (hängt am
+  kernel-flatten-Körperjob + am ungemessenen 18-MB-vs-183-MB-Struktur-
+  Unterschied). Befund
   docs/befund/befund-2026-09-09-orientierung-stale-matrizen.md. Vorbestehend
   benannt, nicht mitgeführt: ssd-earth-Struktur-Unterschied (18 MB/36 020 vs
   183 MB/346 876, ungemessen), TNO-Split (asteroid_gm_sb441.φ absent),
