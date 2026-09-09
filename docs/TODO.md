@@ -2001,22 +2001,15 @@ Gebaut (2026-09-06, sub-agents):
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
-    phi/sources.φ); der kernel-flatten-CI-Schritt ist fixiert (Commit-Step
-    addete die gitignore-Ableitung sources_index.φ → bodies geskippt;
-    behoben + Push-Retry) und re-dispatched; der uranus-c-spk-Schritt holt
-    das DE441-Baryzentrum (ephemeris_uranus.bin) jetzt selbst vom CDN
-    (selbsttragend, unabhängig vom Flatten-Output) — die CDN-200-
-    Verifikation von ephemeris_uranus_c.bin ist in flight. Zwei gemessene
-    Flatten-Bugs als eigenes Atom `pending` (gekoppelt, nicht einzeln zu
-    schließen): (1) `download_missing` (ephemeris_compiler.rs) verwirft
-    jeden Download mit index-größe 0 — die SSD-Dateien tragen Größe 0
-    (unbekannt, nicht „0 Bytes") und werden alle verworfen, der Flatten
-    erzeugt still nichts (0-Kanon: absent ≠ 0); (2) das planets-System
-    wählt die höchste DE-Nummer — seit de442.bsp im Index (Juli 2026) wäre
-    ephemeris_uranus.bin de442-basiert statt DE441; solange (1) offen ist,
-    überschreibt der Flatten nichts, aber (1) ohne (2) zu fixen würde
-    de442 auf das CDN schieben — die DE-Version ist zu pinnen, bevor (1)
-    geschlossen wird.
+    phi/sources.φ); die Komposition lebt jetzt in `uranus-c-spk-cdn.yml`
+    (eigener Workflow, ~5 min, wie de44-cdn.yml — der kernel-flatten-Bodies-
+    Job trägt den Schritt nicht mehr, er verstopfte die Pipeline hinter dem
+    322k-Datei-Index-Crawl). CDN-200 von ephemeris_uranus_c.bin ist
+    verifiziert (4.909.264 B, 2026-09-09). Die zwei Flatten-Bugs sind von
+    der Parallel-Session registriert („de442 size 0" + „de441 Range-Request",
+    TODO unten) und werden dort getragen — das gekoppelte Atom (Größe-0 =
+    absent ≠ 0; planets-System wählt höchste DE-Nummer) bleibt bis zum
+    DE-Versions-Pin offen.
     Die alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
     Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
     Parallaxe, eine Diskrepanz besteht nicht.
