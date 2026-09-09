@@ -58,14 +58,14 @@ Bedingung), `te_compute` (WGSL), Surrogat-Schwelle mean + 2σ über zehn
 phasenrandomisierte Surrogate (f64-FFT auf der CPU, byte-identisch zum
 Nullkontroll-Protokoll), PE-Gate, `src/te.rs` als kanonische
 CPU-Referenz. Das Kanal-Ring-Urteil des Rats
-(`docs/handover/handover-thematisch-te-atom-4.md` — `solar_harvest`,
+(`docs/handover/handover-2026-09-09-te-atom-4.md` — `solar_harvest`,
 `solar_rings`, Rotor, `solar_te_*`) ist das Muster für jedes neue Blatt:
 Ernte-Thread im Archivar, Ring in der Mathematikerin, Rotor paart
 Zellen, unveränderter `te_compute`.
 
 Befund der Maschine (2026-08): Bz→304 und 304→284 silent — der
 Alfvén-Kanal trägt keinen Pfeil; der DAG schrumpfte auf EUV-304→X-Ray
-(`docs/handover/handover-thematisch-te-atom-4.md`). Die Maschine kann
+(`docs/handover/handover-2026-09-09-te-atom-4.md`). Die Maschine kann
 „kein Pfeil" antworten, und diese Antwort ist eine Messung. Ein Blatt,
 das „kein Pfeil" trägt, ist ein voll gültiges Blatt (0 honored).
 
@@ -101,7 +101,7 @@ Zahlen stehen erst da, wenn sie gemessen sind.
 - **Mess-Gates** (je Blatt): n ≥ 30 je Paar (Unterbestimmtheit = keine
   Aussage, keine Fabrikation), Mehrfachvergleichskorrektur über die
   Kanalpaare (offene Pflicht,
-  `docs/handover/handover-thematisch-te-atom-4.md`), Lag-Sweep statt
+  `docs/handover/handover-2026-09-09-te-atom-4.md`), Lag-Sweep statt
   lag 0 (offen), KDE-Bandbreiten-Sensitivität (offen),
   Fenster-Kongruenz, Nullkontrolle (mindestens ein Kanal, der keinen
   Pfeil tragen darf, läuft mit).

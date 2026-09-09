@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: f57f3c5664ecf21a97ec613a70958c8935e57a9353efa669cf1bc2881bdd2cd5
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/auftrag/archiv/auftrag-rayleigh-dispersion.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/auftrag/archiv/auftrag-rayleigh-dispersion.md
 -->
 
 # Befund: die seismische Ortung mit ak135

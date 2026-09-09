@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: c8cf8ae5329ae6dcd1446b9c34b9499cee3f4e4a2627c19ab3fe759298055f6c
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md
 -->
 
 # Befund: der Tōhoku-Prüffall (GSN)

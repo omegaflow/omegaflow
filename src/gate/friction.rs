@@ -397,7 +397,7 @@ mod tests {
     fn commit_advice_on_register_touch() {
         let f = Friction::new();
         let advice = f.commit_advice(&[
-            "docs/handover/handover-thematisch-x.md".to_string(),
+            "docs/handover/handover-2026-09-09-x.md".to_string(),
             "src/x.rs".to_string(),
         ]);
         assert!(advice.unwrap().contains("register"));
