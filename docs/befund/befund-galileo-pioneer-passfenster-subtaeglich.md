@@ -5,7 +5,7 @@
   sha256: 1927faaa27935506c65330a2a2209aa8ca198bdb7432a11ad72c677fc41ebe3a
   status: draft
   antwortet-auf: docs/befund/befund-galileo-pioneer-stationsfloor-kreuz.md
-  see-also: docs/auftrag/auftrag-subhz-drift-quiet-zone.md docs/befund/befund-galileo-floor-subtages-recurrenz.md
+  see-also: docs/auftrag/archiv/auftrag-subhz-drift-quiet-zone.md docs/befund/befund-galileo-floor-subtages-recurrenz.md
 -->
 
 # Befund: die Galileo-Floor-Lautheit ist auf gemeinsamen Station-Tagen pass-/zeitscheiben-scharf von Pioneer 10 getrennt; die eine robuste gemeinsame laut-Zelle liest laut nur im eigenen Galileo-Fenster

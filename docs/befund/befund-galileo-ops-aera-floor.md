@@ -5,7 +5,7 @@
   sha256: b92053c13348d0844365d4d84e8228407eea8684ef322afa1fcdce956ea1d0fe
   status: draft
   antwortet-auf: docs/befund/befund-galileo-receiver-floor-ursache.md docs/befund/befund-galileo-floor-4d-form-farbe.md
-  see-also: docs/handover/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/befund/befund-galileo-mode2-station-split.md
+  see-also: docs/handover/archiv/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/befund/befund-galileo-mode2-station-split.md
 -->
 
 # Befund: Galileo-Floor-Lautheit gegen die Betriebs-Ära der Bodenstationen — die dokumentierten Betriebswechsel tragen die station-gebundene Lautheit nicht als Stufen

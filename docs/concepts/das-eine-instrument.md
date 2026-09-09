@@ -5,7 +5,7 @@
   version: 2
   sha256: 6de1a87d3426b0c9085ef28aa123b2a6d392de43f51aaba205ee9c1955c16ace
   status: live
-  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, docs/TODO.md (Pioneer-Front)
+  see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, docs/handover/handover-thematisch-mechanische-reste.md (Pioneer-Front)
 -->
 
 # Das eine Instrument — warum die Pioneer-Anomalie ohne zweiten Zeugen nicht schiedsrichterlich entscheidbar ist
@@ -105,5 +105,5 @@ dokumentierter Bodenpuls.
 3. Morabito & Asmar, TDA PR 42-120 (1995); Korwar, TDA PR 42-64 (1981);
    Falin, TDA PR 42-82 (1985); Jansma, TDA PR 42-69 (1982).
 4. Turyshev & Toth, Living Rev. Relativity 13, 4 (2010) — docs/reference/pioneer-anomaly/.
-5. Die Deduktionen 17–40 — TODO.md (Pioneer-Front), tools/work/src/bin/pioneer_link_correction_probe.rs,
+5. Die Deduktionen 17–40 — docs/handover/handover-thematisch-mechanische-reste.md (Pioneer-Front), tools/work/src/bin/pioneer_link_correction_probe.rs,
    src/odf.rs, tools/work/src/bin/pioneer11_odf_compiler.rs, tools/work/src/bin/pioneer11_negative_fuzzy_probe.rs.
