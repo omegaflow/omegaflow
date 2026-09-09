@@ -23,7 +23,28 @@ const DES_DR2: FootprintBinding = FootprintBinding {
     tables: &["II/357/des_dr1", "des_dr2"],
 };
 
-const FOOTPRINTS: [FootprintBinding; 1] = [DES_DR2];
+const PS1: FootprintBinding = FootprintBinding {
+    survey: "ps1",
+    asset: "ps1_dr2_binary.fp01",
+    source_host: "ps1images.stsci.edu",
+    tables: &["II/349/ps1"],
+};
+
+const ALLWISE: FootprintBinding = FootprintBinding {
+    survey: "allwise",
+    asset: "allwise_coverage.fp01",
+    source_host: "irsa.ipac.caltech.edu",
+    tables: &["II/328/allwise", "II/365/catwise"],
+};
+
+const TWOMASS: FootprintBinding = FootprintBinding {
+    survey: "2mass",
+    asset: "2mass_binary.fp01",
+    source_host: "irsa.ipac.caltech.edu",
+    tables: &["II/281/2mass6x"],
+};
+
+const FOOTPRINTS: [FootprintBinding; 4] = [DES_DR2, PS1, ALLWISE, TWOMASS];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -111,7 +132,7 @@ fn resolve_asset(args: &[String]) -> Result<(String, String), String> {
     } else if let Some(path) = asset_arg {
         Ok((format!("asset {path}"), path))
     } else {
-        Err("usage: footprint_gate_probe (--survey des-dr2 | --asset <file.fp01>) --ra <deg> --dec <deg> --band <g|r|i|z|y|u|j|h|ks|w1|w2|w3|w4> — refused".into())
+        Err("usage: footprint_gate_probe (--survey <survey|table> | --asset <file.fp01>) --ra <deg> --dec <deg> --band <u|g|r|i|z|y|j|h|ks|w1|w2|w3|w4> — refused".into())
     }
 }
 
@@ -264,14 +285,41 @@ mod tests {
     }
 
     #[test]
-    fn footprint_binding_resolves_the_survey_and_its_bound_tables() {
-        for name in ["des-dr2", "II/357/des_dr1", "des_dr2"] {
+    fn footprint_binding_resolves_every_registered_survey_and_its_tables() {
+        let cases = [
+            ("des-dr2", "des_dr2_coverage.fp01", "datalab.noirlab.edu"),
+            (
+                "II/357/des_dr1",
+                "des_dr2_coverage.fp01",
+                "datalab.noirlab.edu",
+            ),
+            ("des_dr2", "des_dr2_coverage.fp01", "datalab.noirlab.edu"),
+            ("ps1", "ps1_dr2_binary.fp01", "ps1images.stsci.edu"),
+            ("II/349/ps1", "ps1_dr2_binary.fp01", "ps1images.stsci.edu"),
+            ("allwise", "allwise_coverage.fp01", "irsa.ipac.caltech.edu"),
+            (
+                "II/328/allwise",
+                "allwise_coverage.fp01",
+                "irsa.ipac.caltech.edu",
+            ),
+            (
+                "II/365/catwise",
+                "allwise_coverage.fp01",
+                "irsa.ipac.caltech.edu",
+            ),
+            ("2mass", "2mass_binary.fp01", "irsa.ipac.caltech.edu"),
+            (
+                "II/281/2mass6x",
+                "2mass_binary.fp01",
+                "irsa.ipac.caltech.edu",
+            ),
+        ];
+        for (name, asset, host) in cases {
             let binding = footprint_binding(name).unwrap();
-            assert_eq!(binding.survey, "des-dr2");
-            assert_eq!(binding.asset, "des_dr2_coverage.fp01");
+            assert_eq!(binding.asset, asset);
+            assert_eq!(binding.source_host, host);
         }
-        assert!(footprint_binding("ps1").is_none());
-        assert!(footprint_binding("2mass").is_none());
+        assert!(footprint_binding("sdss").is_none());
     }
 
     #[test]
