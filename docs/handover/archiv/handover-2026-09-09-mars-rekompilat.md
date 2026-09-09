@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: bb434c0e13698aa1c97ead27ab3d5218069b752382cb314c6c01cec293d87689
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-membran-sonde.md
 -->
 # Handover — de441-mars-Rekompiilat
