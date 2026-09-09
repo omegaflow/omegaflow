@@ -35,7 +35,8 @@ Header-Block mit `title/class/date/version/sha256/status/see-also`; das
 einem Befehl verglichen werden. Daten-/Maschinen-Dateien im `reference/`
 sind bewusst nicht `.md`.
 
-Einstieg: `TODO.md` (Register der offenen Arbeit) + `AGENTS.md` (Regelwerk).
+Einstieg: das Handover-Register in `docs/handover/` (die thematischen
+Handovers tragen die offene Arbeit) + `AGENTS.md` (Regelwerk).
 
 ## phi/ — Register & Arbeitsdaten
 

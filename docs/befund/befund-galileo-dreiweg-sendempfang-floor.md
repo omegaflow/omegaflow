@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: 5e343afac7361d9c7de1516cbaa1ec98aa2f1ba519fa3cf593958a4488ee4638
   status: draft
-  see-also: docs/befund/befund-galileo-receiver-je-pass-floor.md docs/befund/befund-galileo-receiver-floor-ursache.md docs/befund/befund-galileo-mode3-st43-run.md docs/befund/befund-galileo-floor-stufen-te.md docs/paper/twenty-second-band-ground-chain.md docs/paper/ground-sources-20s-band.md docs/auftrag/auftrag-bande-split.md
+  see-also: docs/befund/befund-galileo-receiver-je-pass-floor.md docs/befund/befund-galileo-receiver-floor-ursache.md docs/befund/befund-galileo-mode3-st43-run.md docs/befund/befund-galileo-floor-stufen-te.md docs/paper/twenty-second-band-ground-chain.md docs/paper/ground-sources-20s-band.md docs/auftrag/archiv/auftrag-bande-split.md
 -->
 # Befund: Galileo-Dreiweg Sende-/Empfangs-Trennung — die sendende Station ist im rohen TRK-2-25-Record nicht vorhanden (Tor-1-Verdikt), der Deduktion-27-Split bleibt auf Galileo strukturell unausführbar
 

@@ -4,8 +4,8 @@
   date: 2026-09-09
   sha256: e88a1d44003d19a7e8e57a304cf6d684ace04cf2c182044a8c66d5b556addcd7
   status: done
-  antwortet-auf: docs/auftrag/auftrag-betriebspunkt-sweep.md
-  see-also: docs/TODO.md docs/handover/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md docs/befund/befund-klassen-benchmark-pcmci.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-betriebspunkt-sweep.md
+  see-also: docs/handover/handover-thematisch-te-atom-4.md docs/handover/archiv/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md docs/befund/befund-klassen-benchmark-pcmci.md
 -->
 
 # Befund — Atom 4: Betriebspunkt-Sweep (bins, null_lag, τ, Block-Länge, n_surr)

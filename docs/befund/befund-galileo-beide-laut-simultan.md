@@ -157,5 +157,5 @@ Paare. Probe galileo_beide_laut_simultan committet (cargo check -D warnings
 ## Status
 
 `draft` (Entwurf für die Haupt-Session/Rat; die Register-Zeile in
-`docs/TODO.md` ergänzt die Haupt-Session, diese Session fasst die fremde
+`docs/handover/handover-thematisch-mechanische-reste.md` ergänzt die Haupt-Session, diese Session fasst die fremde
 TODO-Datei nicht an). Probe committet; cargo check 0 Warnungen.

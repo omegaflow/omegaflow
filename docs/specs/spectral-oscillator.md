@@ -24,8 +24,8 @@ The NCEI-SSI harvest is done (`src/hdf5.rs` reads the container,
 spectra.bin, integral ≈ 1362 W/m²). Atom C's rendering claims split by
 measurement (below): cone mode and the browser-texture path are
 descoped; the silence map lives in LOST_CONCEPTS §14–17. The one open
-code duty — the dispersion relation — sits in the register (TODO.md,
-Spektrale Achse) and the neighboring session.
+code duty — the dispersion relation — sits in the thematic handover register
+(Spektrale Achse) and the neighboring session.
 
 ## I. The objection
 
