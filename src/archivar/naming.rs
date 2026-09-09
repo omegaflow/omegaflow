@@ -102,6 +102,21 @@ pub fn source_name_from_url(url: &str) -> String {
     }
 }
 
+pub fn reference_name_from_url(url: &str) -> String {
+    let without_query = url.split(['?', '#']).next().unwrap_or(url);
+    let after_scheme = match without_query.split_once("://") {
+        Some((_, rest)) => rest,
+        None => without_query,
+    };
+    match after_scheme.split_once('/') {
+        Some((_, path)) => match path.split('/').filter(|s| !s.is_empty()).last() {
+            Some(seg) => seg.to_string(),
+            None => "reference".to_string(),
+        },
+        None => "reference".to_string(),
+    }
+}
+
 pub fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, String> {
     let mut map = HashMap::new();
     let mut seen: HashMap<String, u32> = HashMap::new();
@@ -135,4 +150,36 @@ pub fn cdn_manifest_map() -> &'static HashMap<String, String> {
             HashMap::new()
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reference_name_is_the_origin_filename() {
+        assert_eq!(
+            reference_name_from_url("https://arxiv.org/e-print/2012.08534"),
+            "2012.08534"
+        );
+        assert_eq!(
+            reference_name_from_url(
+                "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat"
+            ),
+            "Pantheon+SH0ES.dat"
+        );
+    }
+
+    #[test]
+    fn reference_name_strips_query_and_fragment() {
+        assert_eq!(
+            reference_name_from_url("https://example.org/data.csv?download=1#top"),
+            "data.csv"
+        );
+    }
+
+    #[test]
+    fn reference_name_falls_back_on_an_empty_path() {
+        assert_eq!(reference_name_from_url("https://example.org"), "reference");
+    }
 }
