@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: beeb98e41a03a2e1d74e5f792b508944299be56882fb168ae165f83f46c17c64
   status: done
-  see-also: docs/handover/handover-thematisch-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md docs/befund/befund-2026-09-09-tohoku-pegsel.md docs/befund/befund-2026-09-09-tohoku-vorhersage.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
+  see-also: docs/handover/handover-2026-09-09-tiefenphasen-flotte.md docs/befund/befund-2026-09-09-seismische-ortung.md docs/befund/befund-2026-09-09-seismische-ortung-ak135.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md docs/befund/befund-2026-09-09-tohoku-pegsel.md docs/befund/befund-2026-09-09-tohoku-vorhersage.md docs/befund/befund-2026-09-09-tohoku-gsn-geblockt.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
 
 # Befund: der Feldstandard der Seismik

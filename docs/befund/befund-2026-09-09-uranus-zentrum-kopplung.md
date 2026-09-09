@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: db0cf3d4a6f553a28a6dd0588bddd5649871fdd75cd65583ae4126baea157d2d
   status: done
-  see-also: docs/handover/archiv/handover-2026-09-09-uranus-riss-kontur.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/befund/befund-2026-09-08-uranus-diurnal-dekomposition.md docs/handover/handover-thematisch-mechanische-reste.md
+  see-also: docs/handover/archiv/handover-2026-09-09-uranus-riss-kontur.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/befund/befund-2026-09-08-uranus-diurnal-dekomposition.md docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Befund: Uranus-Zentrum-Kopplung
