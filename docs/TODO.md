@@ -1901,8 +1901,20 @@ Gebaut (2026-09-06, sub-agents):
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
     phi/sources.φ); der kernel-flatten-CI-Schritt ist fixiert (Commit-Step
     addete die gitignore-Ableitung sources_index.φ → bodies geskippt;
-    behoben + Push-Retry) und re-dispatched — die CDN-200-Verifikation von
-    ephemeris_uranus_c.bin ist in flight.
+    behoben + Push-Retry) und re-dispatched; der uranus-c-spk-Schritt holt
+    das DE441-Baryzentrum (ephemeris_uranus.bin) jetzt selbst vom CDN
+    (selbsttragend, unabhängig vom Flatten-Output) — die CDN-200-
+    Verifikation von ephemeris_uranus_c.bin ist in flight. Zwei gemessene
+    Flatten-Bugs als eigenes Atom `pending` (gekoppelt, nicht einzeln zu
+    schließen): (1) `download_missing` (ephemeris_compiler.rs) verwirft
+    jeden Download mit index-größe 0 — die SSD-Dateien tragen Größe 0
+    (unbekannt, nicht „0 Bytes") und werden alle verworfen, der Flatten
+    erzeugt still nichts (0-Kanon: absent ≠ 0); (2) das planets-System
+    wählt die höchste DE-Nummer — seit de442.bsp im Index (Juli 2026) wäre
+    ephemeris_uranus.bin de442-basiert statt DE441; solange (1) offen ist,
+    überschreibt der Flatten nichts, aber (1) ohne (2) zu fixen würde
+    de442 auf das CDN schieben — die DE-Version ist zu pinnen, bevor (1)
+    geschlossen wird.
     Die alten Zeilen „~170-mas-Boden zerlegen" und „Papier-gegen-Tabellen-
     Diskrepanz" schließen mit dem korrigierten Befund: der Boden war die
     Parallaxe, eine Diskrepanz besteht nicht.
