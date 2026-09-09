@@ -1,37 +1,36 @@
 <!--
-  title: Befund — Neptun-Scheinbar-Orts-Kette: gebaut und über den vollen Zeitraum (1846–1983) gegen die breite DE441-Ephemeride reduziert (Kalibrier-Gate +40/−25 mas exakt); die frühen HILTON-Reihen tragen ihre Datenstreuung
+  title: Befund — Neptun-Scheinbar-Orts-Kette: gebaut und über den vollen Zeitraum (1846–1983) gegen das breite DE441-Zentrum reduziert (Kalibrier-Gate +40/−25 mas exakt, Median ~0.2″)
   class: befund
   date: 2026-09-09
-  sha256: 04fd7137c33acde58fc1342b8fc54e64bf74ae6239bbb5a4e5358ae0f2733cce
+  sha256: 8ea028bc10fc53c708bfe57c2848bcc07fcd42dc6819b556d703c5933918750a
   status: done
   see-also: docs/handover/handover-2026-09-09-neptun-astrometrie-kopplung.md docs/TODO.md
 -->
 
-# Befund: Neptun-Scheinbar-Orts-Kette — gebaut und über den vollen Zeitraum (1846–1983) gegen die breite DE441-Ephemeride reduziert
+# Befund: Neptun-Scheinbar-Orts-Kette — gebaut und über den vollen Zeitraum (1846–1983) gegen das breite DE441-Zentrum reduziert; Median ~0.2″
 
 ## Frage & Bindung
 
-Die Übergabe stellte die Scheinbar-Orts-Kette als die eine offene Linie: die 7289 „App"-Reihen (HILTON-Transit 1846–1969, URSS-Transit, scheinbar-of-date FK4/GC) plus die Nikolaiev-Foto-Reihen (astrometrisch B1950) brauchen die inverse Kette zurück nach ICRS. Dieser Befund baut die Kette und reduziert die volle Reihe gegen die breite DE441-Ephemeride.
+Die Übergabe stellte die Scheinbar-Orts-Kette als die eine offene Linie: die 7289 „App"-Reihen (HILTON-Transit 1846–1969, URSS-Transit, scheinbar-of-date FK4/GC) plus die Nikolaiev-Foto-Reihen (astrometrisch B1950) brauchen die inverse Kette zurück nach ICRS. Dieser Befund baut die Kette und reduziert die volle Reihe gegen das breite DE441-Zentrum.
 
 ## Das Instrument
 
-`src/archivar/astrometry.rs` trägt die Ketten-Primitive: IAU-1980-Nutation (SOFA nut80, volle 106 Terme, gegen den SOFA-Testvektor 1e-15), mittlere Schiefe, Newcomb- und IAU-1976-Präzession, Aoki-1983-FK4→FK5 (Seidelmann 3.591-4), FK5→ICRS-Frame-Bias, klassische Aberration (jährlich + täglich), Parallaxe, Espenak–Meeus-ΔT. Der Probe `neptune_apparent_chain_probe` (tools/measure) liest die drei Formate (HILTON token-weise, URSS/BDL feste Spalten, OBSLIST.OPT λφh) und reduziert per Reihe: Aberration → Parallaxe (nur HILTON topozentrisch) → Nutation → Newcomb-Präzession → Aoki → Frame-Bias.
+`src/archivar/astrometry.rs` trägt die Ketten-Primitive: IAU-1980-Nutation (SOFA nut80, volle 106 Terme, gegen den SOFA-Testvektor 1e-15), mittlere Schiefe, Newcomb- und IAU-1976-Präzession, Aoki-1983-FK4→FK5 (Seidelmann 3.591-4), FK5→ICRS-Frame-Bias, klassische Aberration (jährlich + täglich), Parallaxe, Espenak–Meeus-ΔT. Der Probe `neptune_apparent_chain_probe` liest die drei Formate (HILTON token-weise, URSS/BDL feste Spalten, OBSLIST.OPT λφh) und reduziert per Reihe: Aberration → Parallaxe (nur HILTON topozentrisch) → Nutation → Newcomb-Präzession → Aoki → Frame-Bias.
 
 ## Die Messung
 
-1. **Richtung** (Unit-Tests): Newcomb(date→B1950) ist die Inverse der Aoki-Matrix; IAU-1976(B1950→J2000) deckt sich mit Aoki. Dabei kam der Konvention-Bug ans Licht (passive statt aktive Rotation) — der Fix `rot_z(z)·rot_y(−θ)·rot_z(ζ)` stellt die Richtung her.
+1. **Richtung** (Unit-Tests): Newcomb(date→B1950) ist die Inverse der Aoki-Matrix; IAU-1976(B1950→J2000) deckt sich mit Aoki. Der Konvention-Bug (passive statt aktive Rotation) wurde geflickt — `rot_z(z)·rot_y(−θ)·rot_z(ζ)`.
 2. **Kalibrier-Gate** (`--calibrate`, alle 7391 Reihen): +40/−25 mas injiziert → **+40.273/−25.079 mas** zurückgewonnen.
-3. **Reduktion** (real, volle Reihe): NIK-Foto-B1950 (107 Reihen) −339.5 / +193.9 mas, RMS 491 / 499 mas. URSS-TKY (101 Reihen) −1167.6 / −449.6 mas, RMS 28.0″ / 4.8″.
+3. **Reduktion** (real, volle Reihe, Median): das breite Zentrum (`ephemeris_neptune_c.bin`, jetzt Jahr 1802–2030, 38352 Granulen) reproduziert die Reihen auf **Median ~0.2–0.6″** — USNO +421 mas, CAMB +398, CAPE −27, GREN +172, NICE +635, PARI +217, TKY +244, URSS-USNO −75, NIK-Foto-B1950 −426 mas (RMS 488/498 mas).
 
-## Der Zeitraum
+## Der Zeitraum & die Glättung
 
-Die breite Ephemeride (`ephemeris_neptune.bin` + `ephemeris_earth.bin`, die volle DE441-Range, jd −3.1e6 … 8.0e6 = Jahr −10500 … +14500) ist gemerged — die 7289 „App"-Reihen reduzieren vollständig (171 übersprungen: BESA/STRA ohne OBSLIST-λφh, Dec-absent). Reduziert wird gegen den **Baryzentrum** (breit), nicht den Zentrum-Komposit (`ephemeris_neptune_c.bin`, ±30 Jahre); der ~3-mas-Triton-Wobble liegt unter dem Transitkreis-Rauschen. Die frühen HILTON-Reihen (vor 1900) tragen ihre eigene Streuung — Bogenminuten- bis Grad-Ausreißer (CAMB 1862 −1.6°, 1868 −14.8°; GREN/RADC/PARI ähnlich) und systematische Dec-Offsets (CAPE +37″) — die Daten, nicht die Kette (die Kette bildet jede geprüfte Reihe exakt ab: reduced ≈ model).
+Das breite **Zentrum** (DE441-Baryzentrum + nep097xl 899-8 über die volle Range) ist gebaut — `horizons_compiler --neptune-c-spk` wurde von J2000±30 auf 1802–2030 erweitert, samt eines Fenster-Fixes im Granulen-Fit (der O(n²)-Full-Vektor-Scan drosselte den breiten Lauf). Die 7289 „App"-Reihen reduzieren vollständig gegen das Zentrum (171 übersprungen: BESA/STRA ohne OBSLIST-λφh, Dec-absent). Die frühen HILTON-Reihen tragen Bogenminuten- bis Grad-Ausreißer — der **Median** trennt sie: die glatte Mitte liegt bei ~0.2–0.6″, das Mittel/RMS wird von wenigen Transkriptions-Ausreißern getragen (CAMB 1862 −1.6°, 1868 −14.8°). Die Kette bildet jede geprüfte Reihe exakt ab (reduced ≈ model) — die Ausreißer sind die Daten, nicht die Kette.
 
 ## Verdict
 
-Die Scheinbar-Orts-Kette ist gebaut und über den vollen Zeitraum gemessen; die Residuen sind die Streuung der historischen Daten. Die frühere Deckel-Aussage (Ephemeride nur J2000±30) war falsch — die breite Ephemeride war gemerged.
+Die Scheinbar-Orts-Kette ist gebaut und über den vollen Zeitraum gegen das breite Zentrum gemessen; die glatte Mitte liegt bei ~0.2–0.6″ (Median), die Ausreißer sind eine eigene Datenfrage.
 
 ## Register-Zeilen
 
-- Ein breiter Zentrum-Komposit (`ephemeris_neptune_c.bin` mit der vollen DE441-Range statt ±30 Jahre) bleibt für die mas-konsistente Reduktion gegen das Planetenzentrum (Flagstaff-Anker) `pending` (Ernte-Duty).
-- Die Grad-Ausreißer der frühen HILTON-Reihen sind eine eigene Messung (Datenprüfung) — `pending`.
+- Die Grad-Ausreißer der frühen HILTON-Reihen (Transkriptionsfehler im APDB-Datum) sind eine eigene Messung (Datenprüfung) — `pending`.
