@@ -5,8 +5,8 @@
   version: 2
   sha256: b3b91c16c14bc74e9e36862d863fa86deb4cba99467da58bf9009aa1a3fcbfc4
   status: done
-  antwortet-auf: docs/auftrag/auftrag-quiet-zone-uebertragung.md
-  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md
+  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-mode1-fingerabdruck.md docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/auftrag/archiv/auftrag-quiet-zone-vorfilter.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Galileo-Rausch-Kurve — Achsen-Revision (α statt ε), Plasma-Deutung unverifiziert

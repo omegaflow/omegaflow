@@ -4,7 +4,7 @@
   date: 2026-09-05
   status: done
   sha256: dcbbfe2213f508337d8f86080d45b845076c93061309cee60049cc9a9ee34f32
-  antwortet-auf: docs/auftrag/auftrag-techno-narrowband-scan.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-techno-narrowband-scan.md
 -->
 
 # Befund: der Radio/Laser-Narrowband-Kanal

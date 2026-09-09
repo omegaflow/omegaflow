@@ -4,7 +4,7 @@
   date: 2026-09-05
   status: done
   sha256: d9b87f6d94404d88d6c22449d3135c6721948e32f38e7f1f4eeaa836c418d362
-  antwortet-auf: docs/auftrag/auftrag-techno-atmosphaeren-gase.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-techno-atmosphaeren-gase.md
 -->
 
 # Befund: Atmosphären-Technosignatur

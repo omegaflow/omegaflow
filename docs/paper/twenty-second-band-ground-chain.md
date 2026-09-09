@@ -5,7 +5,7 @@
   version: 3
   sha256: a24b5754244375ed461470d9c33636d84af5d57023a0243aaeb8b844f68ebc66
   status: live
-  see-also: docs/paper/probe-front-dark-matter.md, docs/TODO.md (Pioneer-Front), docs/reference/
+  see-also: docs/paper/probe-front-dark-matter.md, docs/handover/handover-thematisch-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
 
 # The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint

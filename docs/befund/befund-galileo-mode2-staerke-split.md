@@ -5,7 +5,7 @@
   sha256: 3f9c67fdeb95bebbc3da29567254dd625be5cd8f67e43262febb153b160badb8
   status: done
   antwortet-auf: docs/befund/befund-galileo-mode2-station-split.md docs/befund/befund-galileo-mode1-fingerabdruck.md
-  see-also: docs/befund/befund-galileo-te-staerke-floor.md docs/befund/befund-galileo-inpass-staerke-rampe.md docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/TODO.md
+  see-also: docs/befund/befund-galileo-te-staerke-floor.md docs/befund/befund-galileo-inpass-staerke-rampe.md docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 # Befund: Galileo Mode-2-Stärke-Split — das ruhige Zwei-Wege-Fenster ist nicht stärkeflach; der AGC-Boden (−2560) trägt den Rausch-Term
 

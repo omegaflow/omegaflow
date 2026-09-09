@@ -4,8 +4,8 @@
   date: 2026-09-05
   sha256: b1550f4a445a56a7cc1d95bec4e734427f6e588f60fa33b449e15b7d19e1ce4b
   status: done
-  antwortet-auf: docs/auftrag/auftrag-bande-split.md
-  see-also: docs/befund/befund-galileo-banden-negativ.md docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-banden-kamm-ton.md docs/TODO.md
+  antwortet-auf: docs/auftrag/archiv/auftrag-bande-split.md
+  see-also: docs/befund/befund-galileo-banden-negativ.md docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-banden-kamm-ton.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: 20-s-Bande extern — Galileo GWE-ODR Open-Loop-Check (gezielte Ein-Pass-Stichprobe, negativ)

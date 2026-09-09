@@ -5,7 +5,7 @@
   sha256: eb0ce767198e75aed069f8ed671a5c5e39367fc1b8bfcb1fb16ddc7bdcd8a9b9
   status: done
   antwortet-auf: docs/befund/befund-galileo-rausch-kurve.md
-  see-also: docs/auftrag/auftrag-quiet-zone-uebertragung.md docs/paper/probe-front-dark-matter.md docs/befund/befund-galileo-mode1-snr-kurve.md docs/TODO.md
+  see-also: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md docs/paper/probe-front-dark-matter.md docs/befund/befund-galileo-mode1-snr-kurve.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Galileo Mode-1-Fingerabdruck — Stärke-Split: Oszillator vs. Schwachsignal-PLL

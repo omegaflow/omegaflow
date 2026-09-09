@@ -5,7 +5,7 @@
   sha256: 6d3d33a39ceb408e6aabe99ce9e6403f5c20d1703c8b1104ca4aeafac0930210
   status: draft
   antwortet-auf: docs/befund/befund-galileo-floor-subtages-recurrenz.md docs/befund/befund-galileo-receiver-floor-ursache.md
-  see-also: docs/handover/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/befund/befund-galileo-ops-aera-floor.md tools/harvest/src/bin/galileo_atdf_receiver_compiler.rs
+  see-also: docs/handover/archiv/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md docs/befund/befund-galileo-ops-aera-floor.md tools/harvest/src/bin/galileo_atdf_receiver_compiler.rs
 -->
 # Befund: Galileo-Receiver-Identität pro Pass gegen die Floor-Gipfel — die letzte je-Pass-Achse ist gemessen: keine Receiver-Konfiguration trennt laut von ruhig
 

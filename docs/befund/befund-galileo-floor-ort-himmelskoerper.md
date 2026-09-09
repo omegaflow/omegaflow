@@ -6,7 +6,7 @@
   sha256: 58ff837b04c6d91eacfa28cd59cc212380eec7d0e7cf2f4078ad668bff9c7cb1
   status: draft
   antwortet-auf: docs/befund/befund-galileo-floor-stufen-te.md
-  see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/handover/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md
+  see-also: docs/befund/befund-galileo-ops-aera-floor.md docs/befund/befund-galileo-1996-rest-kontrast.md docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/handover/archiv/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md
 -->
 # Befund: die station-gebundenen Floor-Gipfel gegen Himmels-Position, Erde–Galileo- und Galileo–Jupiter-Distanz
 
