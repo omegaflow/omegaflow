@@ -68,12 +68,6 @@ a#btn-Φ:hover {
 }
 a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 
-.pulse { animation: pulse 4s ease-in-out infinite; }
-@keyframes pulse {
-  0%, 100% { box-shadow: inherit; }
-  50% { box-shadow: 0 0 60px rgba(184,160,216,0.12), 0 0 120px rgba(184,160,216,0.04); }
-}
-
 .labels { display: flex; gap: 3rem; text-align: center; margin-bottom: 0.3rem; }
 .labels span { width: clamp(3.5rem, 8vw, 5rem); font-size: 0.6rem; color: #5a5550; }
 .labels span b { display: block; font-weight: 400; color: #8a8270; font-size: 0.7rem; }
@@ -94,12 +88,12 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 <div class="info" id="info"></div>
 
 <div class="buttons">
-  <a id="btn-φ" class="glyph" href="#" aria-label="omegaflow standalone">&phi;</a>
-  <a id="btn-Φ" class="glyph pulse" href="#" aria-label="omegaflow full">&Phi;</a>
+  <a id="btn-φ" class="glyph" href="#" aria-label="omegaflow binary">&phi;</a>
+  <a id="btn-Φ" class="glyph" href="https://github.com/omegaflow/sources" aria-label="omegaflow sources">&Phi;</a>
 </div>
 <div class="labels">
-  <span><b>standalone</b>~10 MB</span>
-  <span><b>full</b>~1.7 GB</span>
+  <span><b>binary</b>~10 MB</span>
+  <span><b>sources</b>CDN</span>
 </div>
 
 <div class="platforms" id="platforms"></div>
@@ -107,7 +101,6 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 
 <script>
 const φ = document.getElementById('btn-φ');
-const Φ = document.getElementById('btn-Φ');
 const info = document.getElementById('info');
 const platforms = document.getElementById('platforms');
 
@@ -129,13 +122,10 @@ function pick(arm) {
 
 if (isMobile) {
     φ.href = isAndroid ? base + 'omegaflow_linux_arm64' : 'https://github.com/omegaflow/omegaflow';
-    Φ.href = 'https://github.com/omegaflow/omegaflow';
     info.innerHTML = isAndroid
         ? 'Android: install Termux, then run the Linux ARM64 binary'
         : 'Ω needs a Linux host. Desktop or Android/Termux.';
-    Φ.classList.remove('pulse');
 } else {
-    Φ.href = base + 'omegaflow_sources.tar.gz';
     const uaArm = /arm|aarch/i.test(ua);
     if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
         navigator.userAgentData.getHighEntropyValues(['architecture']).then(v => {
@@ -144,6 +134,7 @@ if (isMobile) {
     } else {
         φ.href = base + pick(uaArm);
     }
+    info.innerHTML = 'φ runs standalone — ephemerides and catalogs fetch from the CDN on demand.';
 }
 
 const allLinks = [
@@ -154,27 +145,6 @@ const allLinks = [
     ['Windows (x64)', base + 'omegaflow_windows.exe'],
 ];
 platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
-
-(function probe() {
-    if (isMobile) return;
-    const start = performance.now();
-    const img = new Image();
-    img.onload = () => {
-        const kbps = (64 * 8) / ((performance.now() - start) / 1000);
-        if (kbps > 500) {
-            info.textContent = 'Φ empfohlen — binary + alle Ephemeriden';
-            Φ.classList.add('pulse');
-        } else {
-            info.textContent = 'φ empfohlen — binary only, Quellen bei Bedarf vom CDN';
-            Φ.classList.remove('pulse');
-        }
-    };
-    img.onerror = () => {
-        info.textContent = 'φ — binary only (~1 MB)';
-        Φ.classList.remove('pulse');
-    };
-    img.src = 'probe_64k.bin?' + Date.now();
-})();
 </script>
 </body>
 </html>
