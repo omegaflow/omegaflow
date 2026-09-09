@@ -45,4 +45,4 @@ that creates a job is the machine that runs it.
 
 ## License
 
-BSD-3-Clause (like pyVO). Copyright (c) 2026 omegaflow.
+BSD-3-Clause (like pyVO). Copyright (c) 2026 Johannes Tyroller.
