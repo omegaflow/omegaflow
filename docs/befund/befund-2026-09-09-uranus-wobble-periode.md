@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: aa87841e39d40e5642d8e979dfb9b40daa18b5ff4d97930ce21766b6381c46c0
   status: done
-  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/TODO.md
+  see-also: docs/befund/befund-2026-09-09-uranus-zentrum-kopplung.md docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Uranus-Wobble-Periode

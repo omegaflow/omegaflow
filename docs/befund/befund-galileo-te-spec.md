@@ -212,7 +212,7 @@ Spec-Träger in die Rauschhöhe, der über die Epoche hinaus überlebt.
 
 ## Register-Satz
 
-Register (`docs/TODO.md`, Galileo-Noise-Familie ~137–170): **Spec-Träger
+Register (`docs/handover/handover-thematisch-mechanische-reste.md`, Galileo-Noise-Familie ~137–170): **Spec-Träger
 ref_hz/mode/Kadenz → resid-Noise: entkoppelt/era-koinzident (null)** — kein
 gerichteter Pfad vom realisierten Spec-Träger in die Rauschhöhe, der über die
 Epoche hinaus überlebt. Das schließt die offenen Posten der
