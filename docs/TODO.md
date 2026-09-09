@@ -1238,10 +1238,28 @@ physikalischen Aussage — kein Blatt ohne diese:
   Folgepflicht. (c) T=600-Batteriepunkt ungemessen — PC+MCI×ksg×100 bei
   T=600 ≈ Stunden je Punkt (gemessen abgebrochen); Myzel-Duty. Der
   Probe trägt jetzt `--section 1..6` (die Sektionen laufen einzeln).
-  Zielzeile geschlossen bis X: Anker 0 → 3/30, a-set2 1 → 9/20, c-Sweep
-  bis 11/20, Anker-FPR 5,19 % — gegen das eigene Blatt, PCMCI-Parität war
-  explizit kein Kriterium; die n=1000-Null ist die nächste gemessene
-  Adresse.
+   Zielzeile geschlossen bis X: Anker 0 → 3/30, a-set2 1 → 9/20, c-Sweep
+   bis 11/20, Anker-FPR 5,19 % — gegen das eigene Blatt, PCMCI-Parität war
+   explizit kein Kriterium; die n=1000-Null ist die nächste gemessene
+   Adresse.
+- **Atom 4 — Betriebspunkt-Sweep: Maschine gebaut, die 16-Punkte-Welle ist die
+   offene Messung (2026-09-09)**: `pcmci_class_benchmark` trägt `--max-lag`
+   (τ), `--bins`, `--null-lag`, `--anchor`, `--gate`, `--r a:b`; die
+   `top_redraws`-Kopplung ist per-ri repariert (benannte Seed-Strom-Änderung —
+   das Sheet wird unter dem neuen Strom geboren, die Handover-Zahlen bleiben
+   das historische Blatt); die Zug-5-Batterie ist aus `#[cfg(test)]` in die
+   geteilte `gate_fpr_cells` gezogen (Test und Probe rufen denselben Pfad —
+   Byte-Parität per Konstruktion, Nail 7); `te-operating-point-sweep.yml`
+   fächert die 16 Punkte (τ, Block-Länge, n_surr, bins, null_lag, Shift) auf
+   freie Runner (Kappe 300 min benannt als 5-h-Kappe, `fail-fast: false`).
+   Auftrag `docs/auftrag/auftrag-betriebspunkt-sweep.md`. Offen: die Welle
+   selbst (Anker R3×S20 + Gate je Punkt), dann die arithmetische
+   Gewinner-Regel (Power primär, FPR als Nicht-Schlechter-Schranke, gepaart
+   je ri) und ggf. der OP-Umzug. Lokal gemessen vor Dispatch: Anker-Quick
+   (R1×S4) = 100 s → voller Anker ≈ 25 min, Gate-KSG ≈ 28 min — der längste
+   Punkt (n_surr=200) ≈ 1,8 h, kein Split nötig. Zug 5 Binned (Block + Shift)
+   grün, Shift-Zug-5 hält bei T=150 (FPR 3,25–4,50 % je Zelle).
+
 - **Skalar-TE-GPU-Port — gebaut, Parität gemessen (2026-09-08, geschlossen)**: der
   skalare Transfer-Entropie-Pfad der Sekunden-Matrix läuft jetzt auf der WebGPU —
   `SCALAR_TE_WGSL` (Kernel `scalar_te_compute`, 286 Threads = 2 Richtungen × 11

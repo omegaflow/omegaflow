@@ -1,0 +1,82 @@
+name: te-operating-point-sweep
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: 01-op
+            args: --anchor --gate
+          - point: 02-tau-1
+            args: --anchor --gate --max-lag 1
+          - point: 03-tau-3
+            args: --anchor --gate --max-lag 3
+          - point: 04-tau-5
+            args: --anchor --gate --max-lag 5
+          - point: 05-block-3
+            args: --anchor --gate --block 3
+          - point: 06-block-8
+            args: --anchor --gate --block 8
+          - point: 07-block-12
+            args: --anchor --gate --block 12
+          - point: 08-nsurr-50
+            args: --anchor --gate --n-surr 50
+          - point: 09-nsurr-200
+            args: --anchor --gate --n-surr 200
+          - point: 10-bins-3
+            args: --anchor --gate --est binned --bins 3
+          - point: 11-bins-4
+            args: --anchor --gate --est binned --bins 4
+          - point: 12-bins-8
+            args: --anchor --gate --est binned --bins 8
+          - point: 13-nulllag-6
+            args: --anchor --gate --null residual --null-lag 6
+          - point: 14-nulllag-12
+            args: --anchor --gate --null residual --null-lag 12
+          - point: 15-nulllag-24
+            args: --anchor --gate --null residual --null-lag 24
+          - point: 16-shift
+            args: --anchor --gate --null shift
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the sweep point
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- ${{ matrix.args }}
+          } > "report-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: point-${{ matrix.point }}
+          path: report-${{ matrix.point }}.txt
+  reduce:
+    needs: probe
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: point-*
+          merge-multiple: true
+          path: reports
+      - name: Assemble the sweep sheet
+        run: |
+          for f in reports/report-*.txt; do echo "===== ${f} ====="; cat "$f"; echo; done > sweep-sheet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sweep-sheet
+          path: sweep-sheet.txt
