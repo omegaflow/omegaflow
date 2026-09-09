@@ -1,3 +1,4 @@
+pub mod depthphase;
 pub mod h0;
 pub mod miniseed;
 pub mod noaa_coops;

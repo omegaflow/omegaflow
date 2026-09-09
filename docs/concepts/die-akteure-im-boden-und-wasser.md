@@ -2,9 +2,9 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: df0e79f7c6f284154b793034329676d1fe4e32aadf15a866e5e103bd7dca063d
+  sha256: 40f4aca0e09c5446161fc2e6e89bcf4f08bbe526bbdb544849fcf94da9b5bba2
   status: live
-  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
+  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tiefenphasen-inversionsklasse.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
 -->
 
 # DIE AKTEURE IM BODEN UND WASSER — die Seismik als Multi-Akteur-Matrix
@@ -35,9 +35,11 @@ auf die Erde.
 
 1. **Die Flotte (Ereignisse × Stationen)** — der Feldpilot trägt ein Ereignis,
    nicht die Statistik; σ und √N brauchen die Wiederholung. Offene Folge:
-   feinere Inversionsklasse (50-km-Raster in 200–250 km) und die
-   pP-Polarität an tiefer Geometrie (Flachquellen-Regel kippt: pP positiv,
-   sP negativ gemessen).
+   die pP-Polarität an tiefer Geometrie (Flachquellen-Regel kippt: pP
+   positiv, sP negativ gemessen). Die feinere Inversionsklasse ist gebaut
+   (1-km-Raste, `tools/measure/src/depthphase.rs` — Befund
+   `befund-2026-09-09-tiefenphasen-inversionsklasse.md`); vor dem Zonen-Lauf
+   bleibt die ak135-Tiefenmodell-Erweiterung über 250 km benannt.
 2. **Stationsterm / Empfänger-Korrektur** — Wiederholung zuerst (II.KIV,
    3–5 Ereignisse aus einer Ecke, stetig=Struktur, springt=Pick); das
    +5,69-s-Residuum bleibt `offen`, kein Default.
