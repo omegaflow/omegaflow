@@ -430,6 +430,7 @@ fn main() {
     }
 
     let body = out.join("\n") + "\n";
+    print!("{body}");
     if let Some(parent) = std::path::Path::new(&report_path).parent() {
         std::fs::create_dir_all(parent).ok();
     }
