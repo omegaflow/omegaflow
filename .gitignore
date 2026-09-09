@@ -48,6 +48,15 @@ phi/*
 !phi/witnesses.φ
 !phi/footprints.φ
 !phi/nrs_stations.φ
+# Flatten-Compiler-Eingaben (Katalog) sind Registrierungs-Urteile — versioniert:
+# die kernel-flatten-Körperjob-Kette braucht sie auf dem CI-Runner
+# (TNO-Split-GM + Solar-ω). Alles andere im Katalog bleibt lokale Ernte.
+!phi/pipeline/
+phi/pipeline/*
+!phi/pipeline/catalog/
+phi/pipeline/catalog/*
+!phi/pipeline/catalog/asteroid_gm_sb441.φ
+!phi/pipeline/catalog/solar_omega_g.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).
