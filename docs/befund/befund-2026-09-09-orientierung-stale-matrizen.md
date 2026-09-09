@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 62d5a9f94f979499a7f8cf052f41545db85649b209f260f0d7c300f83b21465e
   status: live
-  see-also: docs/handover/handover-2026-09-09-membran-sonde.md docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
+  see-also: docs/handover/archiv/handover-2026-09-09-membran-sonde.md docs/handover/archiv/handover-2026-09-09-matrix-fix-nachtrag.md docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
 
 # Befund: die Orientierungs-Sonde misst die Matrix-Pfade

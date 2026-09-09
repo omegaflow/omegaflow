@@ -2,9 +2,9 @@
   title: Der Kausalpfeil — drei Rätsel, drei Blätter Papier
   class: concept
   date: 2026-08-21
-  sha256: cbda9b11710ca5a87cb9b7fbf1fde5e473735f28ba20110335f792e8a16947ab
+  sha256: 8f3717229a124f9092c9e7fbb6d15894912ffa4b8e3cb0098f98754afe0ba738
   status: live
-  see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/handover-2026-09-09-te-atom-4.md phi/sources.φ
+  see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/archiv/handover-2026-09-09-te-atom-4.md phi/sources.φ
 -->
 # DER_KAUSALPFEIL — drei Rätsel, drei Blätter Papier
 
@@ -62,7 +62,7 @@ statement, Unterbestimmtheit, keine Fabrikation).
   kein Fitparameter.
 - Mehrvergleich: werden mehrere Paare/Fenster gemessen, zählen die Paare
   und die Schwelle wird mitgeführt (Register-Punkt
-  `docs/handover/handover-2026-09-09-te-atom-4.md`, Nadel Ⅲ).
+  `docs/handover/archiv/handover-2026-09-09-te-atom-4.md`, Nadel Ⅲ).
 
 ## Architektur-Anknüpfung — was bereits lebt
 
