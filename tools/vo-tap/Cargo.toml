@@ -3,7 +3,8 @@ name = "vo-tap"
 version = "0.1.0"
 edition = "2024"
 description = "Dependency-free TAP client (sync + UWS 1.1 async) for the Virtual Observatory — std-only + curl"
-repository = "https://github.com/omegaflow/omegaflow"
+authors = ["Johannes Tyroller"]
+repository = "https://github.com/ivoa/uvor"
 license = "BSD-3-Clause"
 
 [lib]
