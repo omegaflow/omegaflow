@@ -281,6 +281,12 @@ fn main() {
         "epm: {} body line(s) compiled into ephemeris_epm_<body>.bin, {} uploaded to the {} release",
         written, uploaded, CDN_TAG
     );
+    if written == 0 {
+        eprintln!(
+            "epm: no body line compiled — a kernel with supported bodies was opened; the run stays closed"
+        );
+        std::process::exit(1);
+    }
     if ci_mode && uploaded != written {
         std::process::exit(1);
     }
