@@ -19,13 +19,24 @@ struct Num {
     comma_decimal: bool,
 }
 
-#[derive(Default)]
 struct FileReport {
     nums: Vec<Num>,
     sections: Vec<String>,
     findings: Vec<String>,
     found: [usize; 6],
     r6_candidates: Vec<String>,
+}
+
+impl FileReport {
+    fn new() -> FileReport {
+        FileReport {
+            nums: Vec::new(),
+            sections: Vec::new(),
+            findings: Vec::new(),
+            found: [0; 6],
+            r6_candidates: Vec::new(),
+        }
+    }
 }
 
 fn expand_superscripts(s: &str) -> String {
@@ -160,6 +171,89 @@ fn near(a: f64, b: f64) -> bool {
     (a - b).abs() / scale <= TOL
 }
 
+fn comma_tail(tok: &str) -> Option<(usize, bool, bool)> {
+    let bytes = tok.as_bytes();
+    let mut exp_i = None;
+    let mut i = 0;
+    while i < bytes.len() {
+        if (bytes[i] == b'e' || bytes[i] == b'E')
+            && i + 1 < bytes.len()
+            && (bytes[i + 1].is_ascii_digit()
+                || ((bytes[i + 1] == b'-' || bytes[i + 1] == b'+')
+                    && i + 2 < bytes.len()
+                    && bytes[i + 2].is_ascii_digit()))
+        {
+            exp_i = Some(i);
+            break;
+        }
+        i += 1;
+    }
+    let mantissa = match exp_i {
+        Some(ei) => &tok[..ei],
+        None => tok,
+    };
+    let mb = mantissa.as_bytes();
+    let last = match mb.iter().rposition(|b| *b == b',') {
+        Some(p) => p,
+        None => return None,
+    };
+    if last == 0 || !mb[last - 1].is_ascii_digit() {
+        return None;
+    }
+    let mut digits = 0;
+    for b in &mb[last + 1..] {
+        if b.is_ascii_digit() {
+            digits += 1;
+        } else {
+            break;
+        }
+    }
+    if digits == 0 {
+        return None;
+    }
+    let multi = mb.iter().filter(|b| **b == b',').count() > 1;
+    Some((digits, exp_i.is_some(), multi))
+}
+
+const COUNT_NOUNS: [&str; 8] = [
+    "records", "rows", "samples", "objects", "bytes", "patients", "files", "pairs",
+];
+
+fn comma_is_english_thousands(tok: &str, line_lower: &str) -> bool {
+    match comma_tail(tok) {
+        Some((3, false, multi)) => multi || COUNT_NOUNS.iter().any(|n| line_lower.contains(n)),
+        _ => false,
+    }
+}
+
+fn brace_set_member(line: &str, tok: &str) -> bool {
+    if let Some(pos) = line.find(tok) {
+        let before = &line[..pos];
+        if let Some(ch) = before.chars().next_back() {
+            return ch == '{';
+        }
+    }
+    false
+}
+
+fn is_comma_locale_tok(n: &Num, lines: &[String]) -> bool {
+    if !n.comma_decimal {
+        return false;
+    }
+    let line = lines.get(n.line.saturating_sub(1)).map(|s| s.as_str());
+    let Some(line) = line else {
+        return true;
+    };
+    let line_lower = line.to_lowercase();
+    if comma_is_english_thousands(&n.raw, &line_lower) {
+        return false;
+    }
+    if brace_set_member(line, &n.raw) {
+        return false;
+    }
+    true
+}
+
 #[cfg(test)]
 fn normalize(tok: &str) -> Option<f64> {
     parse_number(tok).map(|(v, _)| v)
@@ -209,7 +303,7 @@ fn section_of(line: &str, current: &str) -> (bool, String) {
 
 fn parse_file(path: &str) -> FileReport {
     let Ok(text) = fs::read_to_string(path) else {
-        let mut rep = FileReport::default();
+        let mut rep = FileReport::new();
         rep.findings.push(format!(
             "{}: not readable — the sheet does not measure",
             path
@@ -220,7 +314,7 @@ fn parse_file(path: &str) -> FileReport {
 }
 
 fn analyze_text(path: &str, text: &str) -> FileReport {
-    let mut rep = FileReport::default();
+    let mut rep = FileReport::new();
     let mut current_section = String::from("(kopf)");
     let mut prose_nums: Vec<Num> = Vec::new();
     let mut table_nums: Vec<Num> = Vec::new();
@@ -265,13 +359,20 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
         }
     }
 
-    let table_commas = table_nums.iter().filter(|n| n.comma_decimal).count();
-    let prose_commas = prose_nums.iter().filter(|n| n.comma_decimal).count();
-    if table_commas > 0 && prose_commas > 0 {
+    let is_comma_locale = |n: &Num| is_comma_locale_tok(n, &lines_text);
+    let table_commas = table_nums.iter().filter(|n| is_comma_locale(n)).count();
+    let prose_commas = prose_nums.iter().filter(|n| is_comma_locale(n)).count();
+    let mut first_comma_line = 0usize;
+    for n in prose_nums.iter().chain(table_nums.iter()) {
+        if is_comma_locale(n) && (first_comma_line == 0 || n.line < first_comma_line) {
+            first_comma_line = n.line;
+        }
+    }
+    if first_comma_line > 0 {
         rep.found[4] += 1;
         rep.findings.push(format!(
-            "R4 {}:{} comma-locale mixed — table comma {} ×, prose comma {} × (one sheet speaks one locale)",
-            path, 0, table_commas, prose_commas
+            "R4 {}:{} comma locale — prose {prose_commas} ×, table {table_commas} ×; comma decimals mark the K-locale class (one numeric locale per sheet)",
+            path, first_comma_line
         ));
     }
 
@@ -307,14 +408,16 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
         lines_text
             .get(ln.saturating_sub(1))
             .map(|s| s.to_lowercase())
-            .unwrap_or_default()
     };
     for n in &prose_nums {
         let anchored = table_values.iter().any(|&tv| near(tv, n.value));
         let in_abstract_or_conclusion =
             n.section.contains("Abstract") || n.section.contains("Conclusion");
-        let is_count =
-            n.value.fract() == 0.0 && COUNT_KW.iter().any(|kw| line_at(n.line).contains(kw));
+        let is_count = n.value.fract() == 0.0
+            && COUNT_KW.iter().any(|kw| match line_at(n.line) {
+                Some(line) => line.contains(kw),
+                None => false,
+            });
 
         if !anchored && is_count {
             rep.found[5] += 1;
@@ -337,10 +440,9 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
 
     let mut table_claims: Vec<(String, f64, usize)> = Vec::new();
     for n in &table_nums {
-        let line_txt = lines_text
-            .get(n.line.saturating_sub(1))
-            .cloned()
-            .unwrap_or_default();
+        let Some(line_txt) = lines_text.get(n.line.saturating_sub(1)).cloned() else {
+            continue;
+        };
         let cells: Vec<&str> = line_txt.split('|').map(|c| c.trim()).collect();
 
         let mut idx = 0;
@@ -371,10 +473,9 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
 
     let mut claims: Vec<(String, f64, usize)> = Vec::new();
     for n in &prose_nums {
-        let line_txt = lines_text
-            .get(n.line.saturating_sub(1))
-            .cloned()
-            .unwrap_or_default();
+        let Some(line_txt) = lines_text.get(n.line.saturating_sub(1)).cloned() else {
+            continue;
+        };
         let toks: Vec<String> = tokenize(&line_txt);
         for (i, t) in toks.iter().enumerate() {
             let Some((v, _)) = parse_number(t) else {
@@ -497,7 +598,7 @@ fn main() {
         }
     }
 
-    println!("=== Number audit — std-only, R1–R5 hard, R6 output field ===");
+    println!("=== Number audit — std-only, R1/R3/R4/R5 hard, R2 pending, R6 output field ===");
     println!("(Tolerance {TOL:e} — the calibration fixes the line)");
     let mut totals: [usize; 6] = [0; 6];
     let mut r6_total = 0usize;
@@ -505,10 +606,10 @@ fn main() {
     for f in &files {
         let rep = parse_file(f);
         let n_find = rep.found.iter().sum::<usize>();
-        let base = Path::new(f)
-            .file_name()
-            .map(|s| s.to_string_lossy().into_owned())
-            .unwrap_or_else(|| f.clone());
+        let base = match Path::new(f).file_name() {
+            Some(s) => s.to_string_lossy().into_owned(),
+            None => f.clone(),
+        };
         println!();
         println!("## {base}");
         if rep.nums.is_empty() && rep.findings.is_empty() {
@@ -542,6 +643,11 @@ fn main() {
     ];
     for r in 1..=5 {
         println!("  {:<28} found = {}", names[r], totals[r]);
+    }
+    if totals[2] == 0 {
+        println!(
+            "  R2 §2 count<->table: no syntactic rule decides the class — a Z finding needs the archive count as ground truth, sheet text alone does not carry it (docs/specs/lauf-log.md names the class open)"
+        );
     }
     println!(
         "  {:<28} found = {} (output field, not hard)",
@@ -609,16 +715,10 @@ mod tests {
         ]
         .into_iter()
         .collect();
-        assert_eq!(dist, expect, "corpus table rows and Umfang line must agree");
+        assert_eq!(dist, expect, "corpus table rows and Umfang line agree");
         assert_eq!(total, 29, "29 verified findings, one per row");
-        let must_find = ["A", "Z", "D", "K"]
-            .iter()
-            .map(|k| dist.get(*k).copied().unwrap_or(0))
-            .sum::<usize>();
-        assert_eq!(
-            must_find, 21,
-            "number findings the audit must find = A+Z+D+K"
-        );
+        let must_find = ["A", "Z", "D", "K"].iter().map(|k| dist[*k]).sum::<usize>();
+        assert_eq!(must_find, 21, "number findings the audit finds = A+Z+D+K");
     }
 
     #[test]
@@ -627,7 +727,7 @@ mod tests {
         let rep = analyze_text("r1_fixture", text);
         assert!(
             rep.found[1] >= 1,
-            "R1 must fire on an Abstract number with no table mark"
+            "R1 fires on an Abstract number with no table mark"
         );
     }
 
@@ -637,7 +737,7 @@ mod tests {
         let rep = analyze_text("r3_fixture", text);
         assert!(
             rep.found[3] >= 1,
-            "R3 must fire on the same label with two values"
+            "R3 fires on the same label with two values"
         );
     }
 
@@ -647,7 +747,37 @@ mod tests {
         let rep = analyze_text("r4_fixture", text);
         assert!(
             rep.found[4] >= 1,
-            "R4 must fire when prose and table disagree on the comma"
+            "R4 fires when the sheet's decimals are the comma locale"
+        );
+    }
+
+    #[test]
+    fn r4_single_sheet_comma_locale_is_found() {
+        let text = "# Probe\n## Result\nthe echo reads 1,5e-1 against the upper limit r < 0,036\n";
+        let rep = analyze_text("r4_single_fixture", text);
+        assert!(
+            rep.found[4] >= 1,
+            "R4 fires when prose alone speaks the comma locale (K-class shape)"
+        );
+    }
+
+    #[test]
+    fn r4_table_comma_against_dot_prose_is_found() {
+        let text = "# Probe\n## Result\nthe delay measured 492.0 s\n## Table\n| station | delay |\n| sod | 487,7 |\n";
+        let rep = analyze_text("r4_table_fixture", text);
+        assert!(
+            rep.found[4] >= 1,
+            "R4 fires when the table speaks the comma locale against dot prose"
+        );
+    }
+
+    #[test]
+    fn r4_english_thousands_stays_silent() {
+        let text = "# Probe\n## Result\nthe sweep returned 1,033 rows over 12,074 samples\n## Table\n| lag | te |\n| 0 | 3.75e-2 |\n";
+        let rep = analyze_text("r4_thousands_fixture", text);
+        assert_eq!(
+            rep.found[4], 0,
+            "thousands grouping in a count context is not the comma locale"
         );
     }
 
@@ -655,9 +785,20 @@ mod tests {
     fn r5_unanchored_count_is_found() {
         let text = "# Probe\n## Body\nthe 862 records were measured\n";
         let rep = analyze_text("r5_fixture", text);
-        assert!(
-            rep.found[5] >= 1,
-            "R5 must fire on an unanchored count claim"
+        assert!(rep.found[5] >= 1, "R5 fires on an unanchored count claim");
+    }
+
+    #[test]
+    fn z_section_counts_are_not_a_double_count_and_r2_stays_pending() {
+        let text = "# Probe\n## Result\nthe interior covers 313 runs and the polar record 603 months, two series\n| lag | te |\n| 0 | 3.75e-2 |\n";
+        let rep = analyze_text("z_fixture", text);
+        assert_eq!(
+            rep.found[2], 0,
+            "R2 stays pending: the Z class needs the archive count as ground truth"
+        );
+        assert_eq!(
+            rep.found[3], 0,
+            "counts of distinct series are not a double counting (R3 stays silent)"
         );
     }
 
