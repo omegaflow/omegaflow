@@ -2008,8 +2008,13 @@ Gebaut (2026-09-06, sub-agents):
     inpop Zufall; Kalibrier-Gate hält (injiziert +40/−25 mas exakt
     zurückgewonnen). Befund:
     docs/befund/befund-2026-09-09-uranus-zentrum-versionenstruktur.md;
-    offen: der physikalische Ursprung der vier de441-Trägerjahre —
-    `pending` je Linie; (c) Neptun als zweiter Planet desselben
+    der physikalische Ursprung der vier de441-Trägerjahre: GEBAUT
+    (2026-09-09) — die Gewinn-Margen sind sub-σ (0.1–4.0 mas gegen
+    ⟨σ⟩ = 82.5 mas) mit gestreuten Richtungen: die Trägerjahre sind die
+    sub-σ-Kreuzungspunkte der drei Residuen-Kurven, kein großer
+    physikalischer Grund. Befund:
+    docs/befund/befund-2026-09-09-uranus-traegerjahre.md;
+    (c) Neptun als zweiter Planet desselben
     Baus — Komposition GEBAUT (2026-09-09): `horizons_compiler` trägt
     `--neptune-c-spk` (DE441-Baryzentrum + nep097xl 899−8,
     `ephemeris_neptune_c.bin`, 2-d-Granulen, 0.1-d-Abtastung), verifiziert
