@@ -2,12 +2,16 @@
   title: Befund — Tōhoku 2011 (GSN): die Ortung scheitert am Picker, nicht am Modell — STA/LTA streut die P-Picks um ±20–50 s an der langen M9.1-Quelle; das dichte Netz (Hi-net/JP) trägt Metadaten, aber die 2011-Wellenformen sind nicht offen erreichbar
   class: befund
   date: 2026-09-09
-  sha256: 3a6192f3e157e0c1d44c5d3fc59a4ad17c87f0d2245607f329ef0582d758cd3b
+  sha256: c8cf8ae5329ae6dcd1446b9c34b9499cee3f4e4a2627c19ab3fe759298055f6c
   status: done
   see-also: docs/TODO.md docs/befund/befund-2026-09-09-seismische-ortung-tiefe.md
 -->
 
 # Befund: der Tōhoku-Prüffall (GSN)
+
+Feld-Herkunft: der M9-Ersteinsatz ist emergent — das Feld ortet M9 nie über
+Ersteinsatz-Picker, sondern über W-Phase-CMT (Kanamori & Rivera 2008) / GCMT;
+STA/LTA = Allen 1978.
 
 ## Frage & Bindung
 
