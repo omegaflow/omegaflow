@@ -294,7 +294,7 @@ pub fn extract_granules(
     let segments = spk.segments();
     let relevant: Vec<_> = segments
         .iter()
-        .filter(|s| s.target == target && s.data_type == 2)
+        .filter(|s| s.target == target && (s.data_type == 2 || s.data_type == 20))
         .collect();
     if relevant.is_empty() {
         return (granules, rotations, nutation);
