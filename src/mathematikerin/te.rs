@@ -399,6 +399,108 @@ pub fn transfer_entropy_binned(x: &[f32], y: &[f32], lag: usize, bins: usize) ->
     transfer_entropy_conditional_binned_n(x, y, &[], lag, bins)
 }
 
+fn digamma(x: f64) -> f64 {
+    let mut v = x;
+    let mut acc = 0.0;
+    while v < 8.0 {
+        acc -= 1.0 / v;
+        v += 1.0;
+    }
+    let inv = 1.0 / v;
+    let inv2 = inv * inv;
+    acc + v.ln()
+        - 0.5 * inv
+        - inv2 * (1.0 / 12.0 - inv2 * (1.0 / 120.0 - inv2 * (1.0 / 252.0 - inv2 * (1.0 / 240.0))))
+}
+
+pub fn transfer_entropy_ksg_conditional_n(
+    x: &[f32],
+    y: &[f32],
+    conds: &[&[f32]],
+    lag: usize,
+    k: usize,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || y.len() < n || k == 0 {
+        return None;
+    }
+    for c in conds {
+        if c.len() < n {
+            return None;
+        }
+    }
+    if x.iter().chain(y.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    for c in conds {
+        if c.iter().any(|v| !v.is_finite()) {
+            return None;
+        }
+    }
+    let shift = if lag == 0 { 1usize } else { lag };
+    let m = n.checked_sub(shift)?;
+    if m < 8 {
+        return None;
+    }
+    let dim = 3 + conds.len();
+    let mut pts: Vec<f64> = Vec::with_capacity(m * dim);
+    for t in 0..m {
+        pts.push(x[t + shift] as f64);
+        pts.push(x[t] as f64);
+        pts.push(y[t] as f64);
+        for c in conds {
+            pts.push(c[t] as f64);
+        }
+    }
+    let k_eff = k.min(m - 1);
+    let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
+    let mut sum = 0.0f64;
+    for i in 0..m {
+        dists.clear();
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let mut d = 0.0f64;
+            for di in 0..dim {
+                let dd = (pts[j * dim + di] - pts[i * dim + di]).abs();
+                if dd > d {
+                    d = dd;
+                }
+            }
+            dists.push(d);
+        }
+        let eps = *dists
+            .select_nth_unstable_by(k_eff - 1, |a, b| a.total_cmp(b))
+            .1;
+        let mut n_xc = 0usize;
+        let mut n_xxc = 0usize;
+        let mut n_xyc = 0usize;
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let dx = (pts[j * dim + 1] - pts[i * dim + 1]).abs() < eps;
+            let dxf = (pts[j * dim] - pts[i * dim]).abs() < eps;
+            let dy = (pts[j * dim + 2] - pts[i * dim + 2]).abs() < eps;
+            let dc = (3..dim).all(|di| (pts[j * dim + di] - pts[i * dim + di]).abs() < eps);
+            let xc = dx && dc;
+            if xc {
+                n_xc += 1;
+            }
+            if dxf && xc {
+                n_xxc += 1;
+            }
+            if dy && xc {
+                n_xyc += 1;
+            }
+        }
+        sum +=
+            digamma((n_xc + 1) as f64) - digamma((n_xxc + 1) as f64) - digamma((n_xyc + 1) as f64);
+    }
+    Some(digamma(k_eff as f64) + sum / m as f64)
+}
+
 pub fn transfer_entropy_conditional_binned_n(
     x: &[f32],
     y: &[f32],
@@ -965,6 +1067,12 @@ pub enum TeNull {
     Shift,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum TeEstimator {
+    Binned,
+    Ksg,
+}
+
 pub fn block_len_from_n(n: usize) -> usize {
     (n as f64).powf(1.0 / 3.0).round() as usize
 }
@@ -980,7 +1088,20 @@ pub fn conditional_te_stats_lagged_n(
     n_surr: usize,
     null: TeNull,
 ) -> Option<(f64, f64, f64)> {
-    let vals = conditional_te_surrogates_n(x, y, conds, lag, max_lag, bins, seed, n_surr, null, 0)?;
+    let vals = conditional_te_surrogates_n(
+        x,
+        y,
+        conds,
+        lag,
+        max_lag,
+        bins,
+        seed,
+        n_surr,
+        null,
+        0,
+        TeEstimator::Binned,
+        4,
+    )?;
     let n = vals.len() as f64;
     let mean = vals.iter().sum::<f64>() / n;
     let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
@@ -999,6 +1120,8 @@ pub fn conditional_te_surrogates_n(
     n_surr: usize,
     null: TeNull,
     block: usize,
+    est: TeEstimator,
+    k: usize,
 ) -> Option<Vec<f64>> {
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
@@ -1015,7 +1138,11 @@ pub fn conditional_te_surrogates_n(
             TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
             TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
         };
-        if let Some(te) = transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins) {
+        let te = match est {
+            TeEstimator::Binned => transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins),
+            TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(x, &ys, conds, lag, k),
+        };
+        if let Some(te) = te {
             vals.push(te);
         }
     }
@@ -1056,6 +1183,8 @@ pub fn pcmci_links(
     n_surr: usize,
     null: TeNull,
     block: usize,
+    est: TeEstimator,
+    k: usize,
 ) -> Option<Vec<CausalLink>> {
     let n_chan = series.len();
     if n_chan < 2 {
@@ -1082,9 +1211,14 @@ pub fn pcmci_links(
                     }
                     tested[j].push((i, lag));
                     let conds: Vec<&[f32]> = parents[j].iter().map(|&(d, _)| series[d]).collect();
-                    let te = transfer_entropy_conditional_binned_n(
-                        series[j], series[i], &conds, lag, bins,
-                    )?;
+                    let te = match est {
+                        TeEstimator::Binned => transfer_entropy_conditional_binned_n(
+                            series[j], series[i], &conds, lag, bins,
+                        )?,
+                        TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(
+                            series[j], series[i], &conds, lag, k,
+                        )?,
+                    };
                     let surr = conditional_te_surrogates_n(
                         series[j],
                         series[i],
@@ -1098,6 +1232,8 @@ pub fn pcmci_links(
                         n_surr,
                         null,
                         block,
+                        est,
+                        k,
                     )?;
                     let mean = surr.iter().sum::<f64>() / surr.len() as f64;
                     let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>()
@@ -2653,6 +2789,7 @@ mod tests {
         trials: usize,
         null: TeNull,
         n_surr: usize,
+        est: TeEstimator,
         rng: &mut u64,
     ) -> (usize, usize) {
         let mut fp = 0usize;
@@ -2661,7 +2798,7 @@ mod tests {
             let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
             let series = gate_common_driver(150, a, 0.0, d_z, rng);
             let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
-            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0) else {
+            let Some(links) = pcmci_links(&refs, 2, 12, 4, seed, n_surr, null, 0, est, 4) else {
                 continue;
             };
             let n_chan = refs.len();
@@ -2684,9 +2821,7 @@ mod tests {
         (fp, neg)
     }
 
-    #[test]
-    fn gate_fpr_autocorrelation_block_null_n_surr_100() {
-        let null = TeNull::Block;
+    fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
         let n_surr = 100;
         let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
         let cells = [
@@ -2699,7 +2834,7 @@ mod tests {
         ];
         let mut rows: Vec<(f32, usize, f64)> = Vec::new();
         for &(a, d_z, trials) in &cells {
-            let (fp, neg) = gate_fpr_cell(a, d_z, trials, null, n_surr, &mut rng);
+            let (fp, neg) = gate_fpr_cell(a, d_z, trials, null, n_surr, est, &mut rng);
             rows.push((a, d_z, 100.0 * fp as f64 / neg as f64));
         }
         let named: String = rows
@@ -2729,6 +2864,153 @@ mod tests {
                 f9 - f0
             );
         }
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_block_null_binned_n_surr_100() {
+        gate_fpr_autocorr(TeNull::Block, TeEstimator::Binned);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_block_null_ksg_n_surr_100() {
+        gate_fpr_autocorr(TeNull::Block, TeEstimator::Ksg);
+    }
+
+    fn gate_s60_f(x: f32) -> f32 {
+        x
+    }
+
+    fn gate_s60_topology(
+        n_chan: usize,
+        rng: &mut u64,
+    ) -> (Vec<f32>, Vec<(usize, usize, usize, f32)>) {
+        let a_set = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
+        let mut links: Vec<(usize, usize, usize, f32)> = Vec::new();
+        let mut used: Vec<(usize, usize)> = Vec::new();
+        while links.len() < n_chan {
+            let driver = (gate_rng(rng) * n_chan as f64) as usize;
+            let target = (gate_rng(rng) * n_chan as f64) as usize;
+            if driver == target || used.contains(&(driver, target)) {
+                continue;
+            }
+            used.push((driver, target));
+            let lag = 1 + (gate_rng(rng) * 2.0) as usize;
+            let sign = if gate_rng(rng) < 0.5 { -1.0 } else { 1.0 };
+            links.push((driver, target, lag, sign));
+        }
+        let a: Vec<f32> = (0..n_chan)
+            .map(|_| a_set[(gate_rng(rng) * a_set.len() as f64) as usize])
+            .collect();
+        (a, links)
+    }
+
+    fn gate_s60_series(
+        n_chan: usize,
+        t: usize,
+        c: f32,
+        a: &[f32],
+        links: &[(usize, usize, usize, f32)],
+        rng: &mut u64,
+    ) -> Option<Vec<Vec<f32>>> {
+        let burn = 200;
+        let mut x = vec![vec![0f32; burn + t]; n_chan];
+        for step in 1..burn + t {
+            for j in 0..n_chan {
+                let mut v = a[j] * x[j][step - 1];
+                for &(driver, target, lag, sign) in links {
+                    if target == j && step >= lag {
+                        v += c * sign * gate_s60_f(x[driver][step - lag]);
+                    }
+                }
+                v += gate_gauss(rng);
+                x[j][step] = v;
+            }
+        }
+        let mut out = Vec::with_capacity(n_chan);
+        for j in 0..n_chan {
+            let col: Vec<f32> = x[j][burn..].to_vec();
+            for &v in &col {
+                if !v.is_finite() || v.abs() > 100.0 {
+                    return None;
+                }
+            }
+            out.push(col);
+        }
+        Some(out)
+    }
+
+    #[test]
+    fn gate_ksg_finds_anchor_links_floor() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let mut above = 0usize;
+        let mut total = 0usize;
+        for r in 0..3 {
+            let mut drawn: Option<(Vec<Vec<f32>>, Vec<(usize, usize, usize, f32)>)> = None;
+            for _ in 0..8 {
+                let (a, links) = gate_s60_topology(10, &mut rng);
+                if let Some(s) = gate_s60_series(10, 150, 0.287, &a, &links, &mut rng) {
+                    drawn = Some((s, links));
+                    break;
+                }
+            }
+            let Some((series, links)) = drawn else {
+                continue;
+            };
+            let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
+            for &(driver, target, lag, _sign) in &links {
+                let true_parents: Vec<&[f32]> = links
+                    .iter()
+                    .filter(|&&(d, t, l, _)| (d, t, l) != (driver, target, lag) && t == target)
+                    .map(|&(d, _, _, _)| refs[d])
+                    .collect();
+                total += 1;
+                let mut hits = 0usize;
+                for s in 0..20 {
+                    let seed = 0x9E37_79B9_7F4A_7C15
+                        ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+                        ^ (r as u64).wrapping_mul(0x85EB_CA6B)
+                        ^ (driver as u64).wrapping_mul(0xC2B2_AE3D);
+                    let Some(te) = transfer_entropy_ksg_conditional_n(
+                        refs[target],
+                        refs[driver],
+                        &true_parents,
+                        lag,
+                        4,
+                    ) else {
+                        continue;
+                    };
+                    let Some(surr) = conditional_te_surrogates_n(
+                        refs[target],
+                        refs[driver],
+                        &true_parents,
+                        lag,
+                        2,
+                        4,
+                        seed,
+                        100,
+                        TeNull::Block,
+                        0,
+                        TeEstimator::Ksg,
+                        4,
+                    ) else {
+                        continue;
+                    };
+                    let mean = surr.iter().sum::<f64>() / surr.len() as f64;
+                    let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>()
+                        / surr.len() as f64;
+                    if te > mean + 2.0 * var.sqrt() {
+                        hits += 1;
+                    }
+                }
+                if hits as f64 / 20.0 > 0.7 {
+                    above += 1;
+                }
+            }
+        }
+        assert!(
+            above >= 3,
+            "Zug 6: the ksg estimator finds {above}/{total} anchor links above 70% power — the estimator is broken where binned was blind"
+        );
     }
 
     #[test]
@@ -3325,6 +3607,8 @@ mod tests {
             10,
             TeNull::Residual,
             0,
+            TeEstimator::Binned,
+            4,
         )
         .expect("pcmci resolves");
         let ab = links
