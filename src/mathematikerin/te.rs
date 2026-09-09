@@ -3724,20 +3724,20 @@ mod tests {
             b[t] = if t == 0 {
                 0.3 * noise(&mut rng)
             } else {
-                0.9 * b[t - 1] + 0.6 * z[t - 1] + 0.5 * a_ind[t - 1] + 0.3 * noise(&mut rng)
+                0.9 * b[t - 1] + 0.6 * z[t - 1] + 0.6 * a[t - 1] + 0.3 * noise(&mut rng)
             };
         }
         let series: [&[f32]; 3] = [&z, &a, &b];
         let links = pcmci_links(
             &series,
-            1,
-            3,
-            3,
+            2,
+            12,
+            4,
             0x9E37_79B9_7F4A_7C15,
-            10,
-            TeNull::Residual,
-            0,
-            TeEstimator::Binned,
+            100,
+            TeNull::Block,
+            block_len_from_n(n),
+            TeEstimator::Ksg,
             4,
             2,
             0.05,
