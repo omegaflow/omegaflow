@@ -3,8 +3,8 @@
   class: auftrag
   date: 2026-09-09
   sha256: c163ca0ad5c0c576eee7548eb10420dac9c866a26e03a93d0bb5e7f03844a5f1
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/handover/archiv/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md
+  status: archived
+  see-also: docs/befund/befund-galileo-nsurr-20.md docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/handover/archiv/handover-2026-09-09-te-atome-blocknull-ksg-pcmci.md
 -->
 # Auftrag — Galileo N_SURR 20-vs-10: die Phasen-/Block-Null unter der Zählung, die das Papier dachte
 
