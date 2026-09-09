@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: 3d647deeb4db4e521d52c2987eadae05f0e915fd226b97d9e761d882d90041c3
   status: draft
-  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
 # DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
 
@@ -50,7 +50,8 @@ Nichts hier muss erst gesammelt werden. Der Webstuhl hat sein Material:
   (`s2.rs`, `S2_WGSL`, `omega.rs`).
 - **Die unabhängigen Linien:** die vier lebenden TAP-Legs (ALeRCE, SIMBAD,
   Gaia-ARI, NED), die MPC-Bahnen
-  (`mpcorb_extended.json.gz`, offener Live-Block — TODO.md:1343), die
+  (`mpcorb_extended.json.gz`, offener Live-Block —
+  `docs/handover/handover-thematisch-mechanische-reste.md`), die
   INPOP25c-Asteroidenmassen (gravity-Katalog-Route) und das solare ΩG.
 
 ## 2. Der Webstuhl — ICRS·TDB als das eine Blatt

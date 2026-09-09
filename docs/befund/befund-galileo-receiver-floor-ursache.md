@@ -5,7 +5,7 @@
   sha256: ae2a342cf8fa57738d669107455102161f6caed6e3ee4dc4c78105d92d83e387
   status: done
   antwortet-auf: docs/befund/befund-galileo-floor-4d-form-farbe.md
-  see-also: docs/handover/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md tools/harvest/src/bin/galileo_atdf_receiver_compiler.rs
+  see-also: docs/handover/archiv/handover-2026-09-05-galileo-tiefe-rotor-spin-receiver.md tools/harvest/src/bin/galileo_atdf_receiver_compiler.rs
 -->
 
 # Befund: Galileo-Floor-Ursache — die kodierte Receiver-Identität trägt die station-gebundene Floor-Lautheit nicht

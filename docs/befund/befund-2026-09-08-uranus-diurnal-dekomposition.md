@@ -4,7 +4,7 @@
   date: 2026-09-08
   sha256: 67fce571f656ef39b4b39d68ee23254798c97a0a013641cdfa323108051d130a
   status: done
-  see-also: docs/handover/handover-2026-09-08-uranus-riss-diurnal-reduktion.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/TODO.md
+  see-also: docs/handover/archiv/handover-2026-09-08-uranus-riss-diurnal-reduktion.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/handover/handover-thematisch-mechanische-reste.md
 -->
 
 # Befund: Uranus-Diurnal-Dekomposition (korrigiert)

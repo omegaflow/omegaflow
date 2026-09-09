@@ -57,16 +57,17 @@ Takens-Phasenraumzuständen (dim 3, order 3, MI-Lag, rückwärts gespiegelte
 Bedingung), `te_compute` (WGSL), Surrogat-Schwelle mean + 2σ über zehn
 phasenrandomisierte Surrogate (f64-FFT auf der CPU, byte-identisch zum
 Nullkontroll-Protokoll), PE-Gate, `src/te.rs` als kanonische
-CPU-Referenz. Das Kanal-Ring-Urteil des Rats (TODO.md:144–155 —
-`solar_harvest`, `solar_rings`, Rotor, `solar_te_*`) ist das Muster für
-jedes neue Blatt: Ernte-Thread im Archivar, Ring in der Mathematikerin,
-Rotor paart Zellen, unveränderter `te_compute`.
+CPU-Referenz. Das Kanal-Ring-Urteil des Rats
+(`docs/handover/handover-thematisch-te-atom-4.md` — `solar_harvest`,
+`solar_rings`, Rotor, `solar_te_*`) ist das Muster für jedes neue Blatt:
+Ernte-Thread im Archivar, Ring in der Mathematikerin, Rotor paart
+Zellen, unveränderter `te_compute`.
 
 Befund der Maschine (2026-08): Bz→304 und 304→284 silent — der
 Alfvén-Kanal trägt keinen Pfeil; der DAG schrumpfte auf EUV-304→X-Ray
-(TODO.md:34–36). Die Maschine kann „kein Pfeil" antworten, und diese
-Antwort ist eine Messung. Ein Blatt, das „kein Pfeil" trägt, ist ein voll
-gültiges Blatt (0 honored).
+(`docs/handover/handover-thematisch-te-atom-4.md`). Die Maschine kann
+„kein Pfeil" antworten, und diese Antwort ist eine Messung. Ein Blatt,
+das „kein Pfeil" trägt, ist ein voll gültiges Blatt (0 honored).
 
 ## Die Kanal-Lage (gemessen 2026-08-21)
 
@@ -99,10 +100,11 @@ Zahlen stehen erst da, wenn sie gemessen sind.
   positiv (`is_finite() && > 0` → Some, sonst None).
 - **Mess-Gates** (je Blatt): n ≥ 30 je Paar (Unterbestimmtheit = keine
   Aussage, keine Fabrikation), Mehrfachvergleichskorrektur über die
-  Kanalpaare (offene Pflicht, TODO.md:38–40), Lag-Sweep statt lag 0
-  (offen), KDE-Bandbreiten-Sensitivität (offen), Fenster-Kongruenz,
-  Nullkontrolle (mindestens ein Kanal, der keinen Pfeil tragen darf,
-  läuft mit).
+  Kanalpaare (offene Pflicht,
+  `docs/handover/handover-thematisch-te-atom-4.md`), Lag-Sweep statt
+  lag 0 (offen), KDE-Bandbreiten-Sensitivität (offen),
+  Fenster-Kongruenz, Nullkontrolle (mindestens ein Kanal, der keinen
+  Pfeil tragen darf, läuft mit).
 - **0-Kanon:** Ausfall = fehlt (Sample übersprungen), nie 0.0. Indizes
   tragen kein Blatt, wo der Messwert selbst existiert (MEI declined; Kp
   lebt als Feld-Ableitung aus 13 Stationen und trägt die Stationenzahl).
