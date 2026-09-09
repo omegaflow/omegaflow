@@ -3,8 +3,8 @@
   class: handover
   date: 2026-09-09
   sha256: 81267311e7e2659f7e07719926fb9690681549c04695922c11e93272983f5d93
-  status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-mars-rekompilat.md
+  status: archived
+  see-also: docs/handover/archiv/handover-2026-09-09-mars-rekompilat.md docs/handover/handover-2026-09-09-de441-pin-redispatch.md docs/befund/befund-2026-09-09-de721-planeten-selektion.md
 -->
 # Handover — de441-mars-Rekompiilat: Dispatch
 
