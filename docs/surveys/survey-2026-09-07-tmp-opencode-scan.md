@@ -2,7 +2,7 @@
   title: Survey — Scan: /tmp/opencode (was ist kanonisch zu behalten)
   class: survey
   date: 2026-09-07
-  sha256: 03b89a467a6f2abc2f482ba9d87230139a4f2cb4e591af934967009751496ab7
+  sha256: 03cb428d3f1d106d5cfe4e72b3ed3a3a20164a9ad98c03953c391747f34ac630
   status: live
   see-also: docs/concepts/docs-naming.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
@@ -38,7 +38,7 @@ keine Datei-Verschiebung.
 - `data/` = gitignored lokale Arbeitskopie finaler Datensätze, gegliedert
   `data/<netloc>/<datei>`; `cache/` = Archivar-Cache
   (`cache_root()`, `OMEGAFLOW_STATE/archivar_cache` sonst `cache/`).
-- `archive-root` (`/home/johannes/backup/archive-root/`) = externes Alt-Archiv
+- `archive-root` = externes Alt-Archiv
   (`archeology/` pre-CDN + `phi-research/`), kein Ablageort aktueller Harvests.
 
 ## 2a. Ablage-Ort der zu behaltenden Daten (Operator-Wort 2026-09-07)
