@@ -2,9 +2,9 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: 2a5244c0f648447b27fa4fb325aef8784235c305682477bda34ee486984f1524
+  sha256: df0e79f7c6f284154b793034329676d1fe4e32aadf15a866e5e103bd7dca063d
   status: live
-  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
+  see-also: docs/TODO.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/befund/befund-2026-09-09-feldstandard-seismik.md docs/befund/befund-2026-09-09-tiefenphasen-diagonale.md docs/befund/befund-2026-09-09-tiefenphasen-feld.md docs/befund/befund-2026-09-09-tsunami-eikonal.md
 -->
 
 # DIE AKTEURE IM BODEN UND WASSER — die Seismik als Multi-Akteur-Matrix
@@ -24,15 +24,20 @@ auf die Erde.
 - Seismische Ortung — ak135 + Gittersuche, Positivkontrolle bestanden (14,6 km).
 - ak135 — P + S-Modell + pP/sP-Tiefenphasen (`ak135.rs`, 14 Tests).
 - Tiefenphasen-Diagonale — der pP/sP-Lag als reines Tiefenmaß (5 Tests).
+- Tiefenphasen-Feldpilot — echtes pP/sP-Picken an einem tiefen Ereignis
+  (us10003re5, M7.5 Hindu Kush: Median 250 km gegen Katalog 231 km, +19 km,
+  außerhalb des ±10-km-Gates — Befund `befund-2026-09-09-tiefenphasen-feld.md`).
 - Tōhoku-Kette — Pegel gemessen (766 km/h), Vorhersage 4/6, Eikonal/Dijkstra
   schließt die Beugung (Adak +57→−10, Hilo +82→+7 min).
 - M9.1-Picker — gebaut, Streuung bleibt (W-Phase entschieden, offen).
 
 ## Was offen ist (die Reihenfolge)
 
-1. **Echtes pP/sP-Picken** an einem tieferen Ereignis (≥20 km, Lag ≥6 s) — die
-   Diagonale ist synthetisch bestanden, das Picken an einer Flachquelle (10 km,
-   Lag ~3 s) ist grenzwertig.
+1. **Die Flotte (Ereignisse × Stationen)** — der Feldpilot trägt ein Ereignis,
+   nicht die Statistik; σ und √N brauchen die Wiederholung. Offene Folge:
+   feinere Inversionsklasse (50-km-Raster in 200–250 km) und die
+   pP-Polarität an tiefer Geometrie (Flachquellen-Regel kippt: pP positiv,
+   sP negativ gemessen).
 2. **Stationsterm / Empfänger-Korrektur** — Wiederholung zuerst (II.KIV,
    3–5 Ereignisse aus einer Ecke, stetig=Struktur, springt=Pick); das
    +5,69-s-Residuum bleibt `offen`, kein Default.
