@@ -2082,7 +2082,17 @@ Gebaut (2026-09-06, sub-agents):
     (astrogeo/observations/base/, Neptun 1753–1995, FK4/Boss-GC) ist
     erreichbar (200), Yunnan Neptun+Triton (Icarus 437:16625) liegt nicht in
     VizieR — eine saubere Neptun-Planetenzentrum-Tabelle steht noch aus
-    (Source-Port über docs/SOURCE_PORT.md). Der Horizons-Raster-
+    (Source-Port über docs/SOURCE_PORT.md). Die Scheinbar-Orts-Kette GEBAUT
+    (2026-09-09): `src/archivar/astrometry.rs` (IAU-1980-Nutation 106 Terme,
+    Newcomb/IAU-1976-Präzession, Aoki-FK4→FK5, Frame-Bias, Aberration,
+    Parallaxe, Espenak–Meeus-ΔT) + `neptune_apparent_chain_probe` (drei
+    Formate, OBSLIST-λφh); Richtungs-Tore grün, Kalibrier-Gate exakt
+    (+40/−25 mas zurückgewonnen); in-range gemessen (URSS-TKY 32 Reihen
+    ~1″, NIK-Foto-B1950 66 Reihen −429 mas). Die volle 7289-App-Reduktion
+    wartet auf `ephemeris_neptune_c.bin`/`ephemeris_earth.bin` mit
+    J2000±180 Jahre (derzeit ±30 = 1970–2030, die Reihen liegen 1846–1969) —
+    `pending` (Ernte-Duty). Befund:
+    docs/befund/befund-2026-09-09-neptun-scheinbar-orts-kette.md. Der Horizons-Raster-
     Pfad (--planet-centers, 1-d-Raster) ist gemessen freigegeben (descoped):
     ~1 mas Mittel, 0.36″ Rand-Ausreißer — der SPK-Weg trägt mas-Niveau.
     Ernte registriert (ura111xl-799.bsp + ephemeris_uranus_c.bin in
