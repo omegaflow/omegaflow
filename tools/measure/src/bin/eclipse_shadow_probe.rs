@@ -22,13 +22,27 @@ struct LineSpec {
     earth_asset: &'static str,
 }
 
-const LINES: [LineSpec; 3] = [
+const LINES: [LineSpec; 5] = [
     LineSpec {
         word: "de441",
         netloc: "ssd.jpl.nasa.gov",
         sun_asset: "ephemeris_sun.bin",
         moon_asset: "ephemeris_moon.bin",
         earth_asset: "ephemeris_earth.bin",
+    },
+    LineSpec {
+        word: "de440",
+        netloc: "ssd.jpl.nasa.gov",
+        sun_asset: "ephemeris_de440_sun.bin",
+        moon_asset: "ephemeris_de440_moon.bin",
+        earth_asset: "ephemeris_de440_earth.bin",
+    },
+    LineSpec {
+        word: "de442",
+        netloc: "ssd.jpl.nasa.gov",
+        sun_asset: "ephemeris_de442_sun.bin",
+        moon_asset: "ephemeris_de442_moon.bin",
+        earth_asset: "ephemeris_de442_earth.bin",
     },
     LineSpec {
         word: "inpop19a",
@@ -568,9 +582,14 @@ fn main() {
     };
 
     println!("=== eclipse shadow — {} event from the raw sun/moon/earth worldlines (no eclipse catalog enters the search) ===", iso_utc(day_unix));
+    let line_desc: Vec<String> = LINES
+        .iter()
+        .map(|l| format!("{} ({})", l.word, l.netloc))
+        .collect();
     println!(
-        "event day: tdb {day_tdb:.3} s past J2000 ({}) | lines: de441 (ssd.jpl.nasa.gov), inpop19a (ftp.imcce.fr), epm2021 (ftp.iaaras.ru)",
-        iso_utc(day_unix)
+        "event day: tdb {day_tdb:.3} s past J2000 ({}) | lines: {}",
+        iso_utc(day_unix),
+        line_desc.join(", ")
     );
 
     let mut loaded: Vec<Line> = Vec::new();
@@ -594,6 +613,51 @@ fn main() {
     for line in &loaded {
         if let Some((t, lat, lon, mag)) = run_line(line, day_tdb, &lsk) {
             results.push((line.word.to_string(), t, lat, lon, mag));
+        }
+    }
+
+    let nasa_words = ["de440", "de441", "de442"];
+    if results.iter().any(|r| nasa_words.contains(&r.0.as_str())) {
+        let ref_t = results
+            .iter()
+            .find(|r| r.0 == "de441")
+            .map(|r| r.1)
+            .or_else(|| results.first().map(|r| r.1));
+        if let (Some(t_ref), true) = (ref_t, results.len() >= 2) {
+            let mut sep: Vec<(String, String, f64, f64)> = Vec::new();
+            for a in 0..nasa_words.len() {
+                for b in (a + 1)..nasa_words.len() {
+                    let (Some(la), Some(lb)) = (
+                        loaded.iter().find(|l| l.word == nasa_words[a]),
+                        loaded.iter().find(|l| l.word == nasa_words[b]),
+                    ) else {
+                        continue;
+                    };
+                    let moon_a = body_barycenter_position("moon", t_ref, &la.map);
+                    let moon_b = body_barycenter_position("moon", t_ref, &lb.map);
+                    let earth_a = body_barycenter_position("earth", t_ref, &la.map);
+                    let earth_b = body_barycenter_position("earth", t_ref, &lb.map);
+                    if let (Some(ma), Some(mb), Some(ea), Some(eb)) =
+                        (moon_a, moon_b, earth_a, earth_b)
+                    {
+                        let moon_d = vlen(vsub(vsub(ma, ea), vsub(mb, eb)));
+                        let earth_d = vlen(vsub(ea, eb));
+                        if let (Some(md), Some(ed)) = (moon_d, earth_d) {
+                            sep.push((
+                                nasa_words[a].to_string(),
+                                nasa_words[b].to_string(),
+                                md,
+                                ed,
+                            ));
+                        }
+                    }
+                }
+            }
+            for (wa, wb, md, ed) in &sep {
+                println!(
+                    "eclipse nasa {wa} vs {wb}: geocentric moon {md:.1} m, earth center {ed:.1} m at tdb {t_ref:.3}",
+                );
+            }
         }
     }
 
