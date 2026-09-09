@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: ddf5bef61246eb2255f4b9c0b041e021cc97dd18c0534eebeff82321cf5bc7a7
+  sha256: 51486e207c53bd9d3cdff55237849818a6eeedab98d75814750be3def7af1b99
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -107,6 +107,25 @@ je Linie die gemessene Stelle):
   sind als Endzweige zu lesen, nicht als Kette). Ledger-Vokabular erweitert:
   `ausstehend | verifiziert | kompiliert | void | geparkt | disponiert`.
 
+Die disjunkten Linien wurden 2026-09-09 gemessen und geschlossen (Sitzung
+`handover-2026-09-09-disjunkte-linien-dispatch.md`; der schwere TE-Lauf ging
+nach CI, Run 34400114106):
+
+- **S3-ListBucketResult-Parser** — `d41cc87`: der NOAA-NODD-`ListBucketResult`-
+  Parser gebaut (namespaced Tag-Scan, Contents/CommonPrefixes, Entity-Decode,
+  paginierter Walk mit Continuation-Tokens), 4 stille Tests grün, live 1400
+  Objekte. Die Bucket-Dispositionen je Dataset bleiben Operator-/Register-Frage.
+- **maschinen-audits R4 + Kalibrationslauf** — `eafe72d`: R4-Single-Sheet-Kommata-
+  Locale gebaut, Kalibrationslauf/Regression 14/14; R2 (§2-Zählung vs. Tabellen-n)
+  bleibt `pending`. Alt-Fabrikationen (derive(Default)/unwrap_or_default/
+  must-Diagnostik) auf dem Weg durch das Gate liquidiert.
+- **10 bestand-Korpus-Herkunft** — `e197d71`: Befund; der registrierte Pfad zeigte
+  auf die alte archive-root-Adresse, die Korpora liegen byte-identisch zweifach
+  unter /home/johannes/backup/archive/; kein Datenverlust.
+- **matrixmachine** — Suite 12/12 grün gegen HEAD (Urkunden-Zeile in
+  archive-root/vanilla-dateidocs aktualisiert); die Gesamtsuite der Core-Crate
+  (769 deklariert) gegen HEAD bleibt offen.
+
 ## vo-tap / uvor
 
 - **Crate pushen** — `ivoa/uvor` existiert (HTTP 200 gemessen); der Seed
@@ -164,10 +183,9 @@ je Linie die gemessene Stelle):
 - **gaia-dr4-iapetus** — Gaia DR4 (2.12.2026) als 4D-Feld.
 - **flyby2-addendum** — Metrik vor dem 28.09.
 - **flyby-doppler-rohdaten** — Roh-Doppler historischer Flybys (AGU-Beleg).
-- **maschinen-audits** — Nummern-Audit: R2 (§2-Zählung = Tabellen-n,
-  number_audit.rs) und R4-single-sheet-Locale ungebaut; Provenienz-Notiz-
-  Muster + Kalibrationsscore-Lauf stehen aus (Regression + Korpus committet,
-  c94d431).
+- **maschinen-audits** — R4-single-sheet-Locale gebaut + Kalibrationsscore-Lauf
+  gefahren (`eafe72d`, Regression 14/14); R2 (§2-Zählung = Tabellen-n) bleibt
+  `pending` (gemessener Grund im lauf-log). Provenienz-Notiz-Muster steht aus.
 - **sicherung-risiko-heime** — einzige-Kopie-Risiko-Heime sichern (der
   Backup-Akt selbst bleibt Operator-Sache).
 - **saubere-datenbank** — Step-5-Klasse (14 repo_tag + 3 dataset_host);
@@ -192,32 +210,36 @@ je Linie die gemessene Stelle):
   → docs/paper; datierte Konten/Berichte handover-nah; Seeds → Survey-Heimat
   (Benennung `pending`); verbrauchte Alt-Belege → archive-root. Die Bewegung
   selbst bleibt ein eigenes Atom.
-- **matrixmachine-register** — Urkunden-Zustandszeile (live, Teststand
-  428/428, 2026-08-31) liegt in archive-root/vanilla-dateidocs; matrix.rs
-  committet (letzte Berührung `9a0f623`); der Testlauf gegen heutiges HEAD +
-  Zeilen-Aktualisierung bleiben offen.
+- **matrixmachine-register** — Urkunden-Zustandszeile aktualisiert: MatrixMachine-
+  Suite 12/12 grün gegen HEAD (archive-root/vanilla-dateidocs); die Gesamtsuite
+  der Core-Crate (769 deklariert) gegen HEAD bleibt offen.
 - **Flut-2026-Linie (Rest)** — cog-quelle geschlossen (siehe oben);
   abfluss-trishuli: Seismik-/Luft-/Oberflächen-Befunde in-file (M5.2/M4.2,
-  depth 0, Landslide — gemessen), der Abfluss-Pfeil bleibt `pending` mit zwei
-  benannten Fortsetzungen (DHM-Pegel-Reihe ziehen — co-lokal, key-lose API —
-  und CEMS/S1 nächster Pass); der co-lokale Pegel trug den Peak nicht
-  (Sensor-Ausfall, gemessen). seen-kollabgebiet: GL085494 −73 % gemessen
-  (08-24); die S1/CEMS-Post-Flut-Fläche bleibt `pending` — das ~08-28/31-Fenster
-  ist geöffnet, der Abruf ist der nächste Schritt. satellitenbilder-post: eine
-  frei ladbare Nach-Aufnahme existiert (Landsat 9 26.08., wasserfrei am
-  Kollabpunkt gemessen); die robuste Flut-/Narbenfläche braucht S1-SAR +
-  CEMS-EMSR927-Delineation (Abruf offen).
+  depth 0, Landslide — gemessen), der Abfluss-Pfeil bleibt `pending`; der
+  DHM-Pegel 4913 (Bhotekoshi/Rasuwagadi) ist 2026-09-09 gezogen — der
+  keyless-Livestore trägt nur 08-25…08-26 (162 Punkte, max 2,152 m), der Peak
+  wurde nicht aufgezeichnet (Sensor-Ausfall erneut gemessen), das Pre-08-25-
+  Archiv ist aus dem keyless-Store gerollt (Entsperrung = das archivierte
+  externe CSV des 08-27-Zugs). seen-kollabgebiet: GL085494 −73 % gemessen
+  (08-24); das CEMS/S1-Fenster ist NICHT abgelaufen (re-gemessen 2026-09-09):
+  S1-Post-Szenen 08-28/08-31/09-05 verfügbar, EMSR927 trägt nur Grading-Produkte
+  (AOI01–05), auf keinem AOI ein Delineation-Produkt — die Flutflächen-
+  Delineation wurde nicht erzeugt. satellitenbilder-post: eine frei ladbare
+  Nach-Aufnahme existiert (Landsat 9 26.08., wasserfrei am Kollabpunkt
+  gemessen); CEMS-products.zip ohne Login ladbar, S1-SAR-VV-Asset mit keyless
+  SAS-Token ladbar; die robuste Flut-/Narbenfläche braucht die (nicht erzeugte)
+  Delineation oder eine eigene S1-Ableitung (Abruf offen).
 
 ## Source-Port & Katalog-Reste
 
 - Kompilat-Stufe: geschlossen, siehe oben (§4 trägt `kompiliert`).
 - Queue: 10 Untested-Korpora; 38 VizieR-Bulks; 77 Archeology-Gaps. Die 10
-  `bestand`-Korpus-Dateien des Ledger sind unter dem registrierten Pfad
-  physisch absent (gemessen 2026-09-09; der Pfad liegt außerhalb von
-  archive-root) — Herkunft klären, dann Linie schließen.
+  `bestand`-Korpus-Dateien: Herkunft geklärt und geschlossen (`e197d71`) — der
+  registrierte Pfad zeigte auf die alte archive-root-Adresse, die Korpora liegen
+  byte-identisch zweifach unter /home/johannes/backup/archive/.
 - Katalog-Lücken (RAVE DR6, APOGEE/GALAH, HyperLEDA, TGSS ADR, VLASS, AMS-02,
   GLADE+); FITS/Parquet/netCDF-4/OPeNDAP/GRIB-2-Struktur-Reader (FITS +
   netCDF-4 + CDF-1/2 gebaut; Parquet/GRIB-2/OPeNDAP offen).
 - S3-Harvester-Namespace (NOAA-NODD-Buckets): `ListBucketResult`-Parser-Gap
-  (xml_harvester, gemessen 2026-08-20); Inventar `noaa_nodd_inventory.φ`
-  steht (101 Datasets).
+  geschlossen (`d41cc87`); Inventar `noaa_nodd_inventory.φ` steht (101 Datasets);
+  die Bucket-Dispositionen je Dataset bleiben Operator-/Register-Frage.
