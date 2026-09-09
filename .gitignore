@@ -47,6 +47,7 @@ phi/*
 !phi/blocked_sources.φ
 !phi/witnesses.φ
 !phi/footprints.φ
+!phi/nrs_stations.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).

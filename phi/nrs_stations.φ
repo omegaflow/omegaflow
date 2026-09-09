@@ -1,0 +1,48 @@
+# NRS-Stationstabelle (SITE_NAME lat lon) — gemessen 2026-09-07
+# Quelle: PMEL "Ocean Noise Reference Station (NRS) Network", Deployment-Tabelle,
+#   https://www.pmel.noaa.gov/acoustics/noaanps-ocean-noise-reference-station-network
+# Referenzwert: sichtbarer Dezimalwert der Netz-Tabelle (Spalten Latitude | Longitude).
+# Mess-Anmerkungen:
+#   - Die PMEL-Seite fuehrt 13 Stationen NRS01-NRS13. NRS13 (Chumash Heritage NMS) steht
+#     in einer zweiten tbody-Zeile, deren data-sheets-Attribut noch die NRS12-Werte traegt
+#     (17.79/-64.65, Buck Island); der sichtbare Text ist NRS13 35.31 -121.59. Referenz ist
+#     der sichtbare Text. NRS11 traegt im Attribut -126.44, sichtbar -123.44 (siehe SHAPE-Kreuz).
+#   - Keine Spektren-Verankerung im Bucket fuer NRS02-10,12,13: deren Koordinaten tragen nur
+#     die Netz-Tabelle (Deployment-SHAPE pending).
+#   - Bucket noaa-passive-bioacoustic (GCS, nrs/products + nrs/audio): nur NRS01 + NRS11
+#     haben Sound-Level-Metrics-*-metadata.json mit "SHAPE": "POINT (lon lat)" (siehe Kreuz).
+#   - Format: Rust-parsebar — je Zeile 3 whitespace-getrennte Token SITE_NAME lat lon;
+#     #-Zeilen sind Kommentar. Koordinaten wie gemessen (Grad, dezimal).
+NRS01 72.44 -156.55
+NRS02 50.25 -145.13
+NRS03 47.77 -125.52
+NRS04 22.33 -157.67
+NRS05 33.9 -119.58
+NRS06 28.25 -86.83
+NRS07 29.33 -77.99
+NRS08 39.01 -67.27
+NRS09 42.4 -70.13
+NRS10 -14.27 -170.72
+NRS11 37.88 -123.44
+NRS12 17.79 -64.65
+NRS13 35.31 -121.59
+#
+# Kreuz Netz-Tabelle vs Deployment-SHAPE (Konsistenz, gemessen aus
+# storage.googleapis.com/noaa-passive-bioacoustic, nrs/products/sound_level_metrics):
+#   NRS01, Deployment 2014-10..2015-09 (NRS_01_20141015-20150916_HMD_v3-metadata.json): SHAPE POINT (-156.6 72.49)
+#   NRS01, Deployment 2015-10..2017-08 (NRS_01_20151016-20170831_HMD_v3-metadata.json): SHAPE POINT (-156.5517 72.443)
+#   NRS01, Deployment 2018-08..2020-08 (NRS_01_20180820-20200824_HMD_v3-metadata.json): SHAPE POINT (-156.579 72.454)
+#   NRS01, Deployment 2020-09..2022-09 (NRS_01_20200915-20220925_HMD_v3-metadata.json): SHAPE POINT (-156.56 72.47)
+#   NRS11, Deployment 2019-10..2021-10 (NRS_11_20191023-20211004_HMD_v3-metadata.json): SHAPE POINT (-123.45 37.88)
+#   NRS01: Netz -156.55/72.44 liegt innerhalb 0.05 deg jeder der vier Verankerungen
+#     (Lon-Spanne -156.5517..-156.6, Lat 72.443..72.49); naechste Verankerung zur 2-dezimal-
+#     Rundung ist 2015-17 (-156.5517 72.443). Abweichung bis 0.05 deg — konsistent auf
+#     Netz-Rundung, Abweichung zu 2014-15 (72.49) und 2018-20/2020-22 ist benannt, keine Null.
+#   NRS11: Netz -123.44/37.88 konsistent mit Deployment-SHAPE 2019-21 (-123.45 37.88),
+#     0.01 deg Lon-Differenz. Das Attribut -126.44 der Netz-Seite ist KEIN Fehler: das
+#     Audio-Deployment NRS_11_2015-2017 traegt DEPLOY_LON -126.43500 — NRS11 lag dort vor
+#     2019 (2015-17), danach am Cordell-Bank-Ort -123.45. Station umgesetzt, beide gemessen.
+#   Alle uebrigen Deployment-Verankerungen (nrs/audio/*/metadata/*.json, Feld DEPLOY_LAT/
+#     DEPLOY_LON) bestaetigen die Netz-Werte auf 2 Dezimalen wo vorhanden; Deployments ohne
+#     Koordinate (leer/absent): NRS04 2015-16, NRS06 2016-18, NRS08 2016-18, NRS09 2016-17,
+#     NRS10 2015-16 — dort traegt nur die Netz-Tabelle die Referenz.
