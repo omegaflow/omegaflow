@@ -799,7 +799,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        let start_jd = 2451545.0 - 30.0 * 365.25;
+        let start_jd = 2451545.0 - 180.0 * 365.25;
         let stop_jd = 2451545.0 + 30.0 * 365.25;
         let mut vectors: Vec<(f64, f64, f64, f64)> = Vec::new();
         let mut jd = start_jd;
@@ -842,11 +842,18 @@ fn main() {
         }
         let mut granules = Vec::new();
         let granule_days = 2.0;
+        let samples_per_granule = (granule_days / 0.1) as usize;
         let n = ((stop_jd - start_jd) / granule_days).ceil() as usize;
         for i in 0..n {
             let mid_jd = start_jd + (i as f64 + 0.5) * granule_days;
             let half_jd = granule_days / 2.0;
-            if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors, mid_jd, half_jd) {
+            let lo = i * samples_per_granule;
+            let hi = ((i + 1) * samples_per_granule + 1).min(vectors.len());
+            if hi <= lo {
+                continue;
+            }
+            if let Some((cx, cy, cz)) = fit_granule_from_samples(&vectors[lo..hi], mid_jd, half_jd)
+            {
                 granules.push((mid_jd, half_jd, cx, cy, cz));
             }
         }
