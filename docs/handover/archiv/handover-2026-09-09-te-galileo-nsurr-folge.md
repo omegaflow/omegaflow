@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: d836543256cb2f8ecb1fe1bb5983ae4bf19f9e30690f635c528b094afc9d8783
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-te-galileo-nsurr.md docs/befund/befund-galileo-nsurr-20.md
 -->
 # Thematisches Handover — Galileo N_SURR 20-vs-10: das Blatt steht; T-Skalierung und Bz-Hälfte in Flug
