@@ -39,12 +39,13 @@ jobs:
           SR="${NED_SR_AM:-30}"
           SLICE="${NED_SLICE:-48}"
           MAXREC="${NED_MAXREC:-2000}"
+          SPACING="${NED_SPACING:-5.0}"
           RELEASE="ssd.jpl.nasa.gov"
           REPO="omegaflow/sources"
           BIN="$(pwd)/target/release/ned_cone_compiler"
-          TOTAL="$("$BIN" --count --sr-arcmin "$SR")"
+          TOTAL="$("$BIN" --count --sr-arcmin "$SR" --spacing-deg "$SPACING")"
           NP=$(( (TOTAL + SLICE - 1) / SLICE ))
-          echo "grid total=${TOTAL} cones, slices=${NP}, slice=${SLICE} cones, sr=${SR}' maxrec=${MAXREC}"
+          echo "grid total=${TOTAL} cones, slices=${NP}, slice=${SLICE} cones, sr=${SR}' spacing=${SPACING}deg maxrec=${MAXREC}"
           deadline=$(( $(date +%s) + 2600 ))
           mkdir -p raw
           find_slice() {
@@ -80,7 +81,7 @@ jobs:
                 break
               fi
               if ! "$BIN" --index "$i" --sr-arcmin "$SR" --maxrec "$MAXREC" \
-                  --lattice 1024 --out "raw/cone_${i}.json"; then
+                  --spacing-deg "$SPACING" --lattice 1024 --out "raw/cone_${i}.json"; then
                 echo "cone ${i} void this run — slice ${next} retried next run"
                 ok=0
                 break
