@@ -21,7 +21,7 @@ jobs:
         run: |
           cargo build -p omegaflow-harvest --release --bin wise_coverage_compiler --bin wise_coverage_combiner
           total=18240
-          chunk=25
+          chunk=60
           budget_s=5400
           deadline=$(( $(date +%s) + budget_s ))
           parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
