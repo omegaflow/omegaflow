@@ -8,6 +8,9 @@
 # drei Zeugen-Arten, keine vierte Art). Record src/archivar/footprint.rs, Band-Register
 # U/G/R/I/Z/Y/J/H/Ks/W1/W2. Disposition: footprint <survey>.
 # Gate-Worte (footprint_gate): Observed | NeverObserved | BandUncovered | Pending.
+# Zwei Quellen-Klassen tragen den Footprint (zeugnis §7, beide genuegen dem Gate):
+# DES fraktional (aus der Coverage-Tafel, frac_det 0..1), PS1 binaer (aus der
+# Archiv-Existenz der Skycell-Tiles, frac=1.0 fuer beobachtet).
 
 footprint des-dr2
 url https://datalab.noirlab.edu/tap/sync
@@ -30,7 +33,16 @@ note DES-DR2 (DECam Y6A2) Survey-Coverage-Maske, NOIRLab Astro Data Lab TAP sync
 # 2MASS pending (keine Coverage-Tabelle im TAP).
 footprint ps1
 url https://ps1images.stsci.edu/rings.v3.skycell/
+asset ps1_dr2_binary.fp01
 band g r i z y
+# Binaeres Gate-Asset (Rezept A, 2026-09-09): aus der Archiv-Existenz der Skycell-Tiles
+# (ps1grid.fits-Geometrie + ps1filenames.py-Existence, ~7900 Probes) statt der vollen
+# Ebenen-Ernte. frac=1.0 fuer beobachtet (binaer, genuegt §7). Caveat: der Fehler geht
+# Richtung 'beobachtet' — der aeuszerste Suedsaum (≤1 Tile) und das ~1.6e-3 deg² Polarloch
+# koennen als beobachtet ueberzeichnet sein; Quellen dort koennten faelschlich der ehrlichen
+# Leere zugeordnet werden. Compiler tools/harvest/src/bin/ps1_binary_compiler.rs.
+# Der fraktionale Weg (stack.num -> ps1_dr2_coverage.fp01, unten) laeuft als Tiefen-Ernte
+# weiter (Autoresume, Preis ~60 TB/~100 Tage) — ein Tiefen-Asset, KEIN Gate-Asset.
 note PS1 (Pan-STARRS1) — Quelle GEFUNDEN (2026-09-08, curl-gemessen, anonym): der PS1-Image-Server rings.v3.skycell traegt je Skycell je Filter (grizy) die Belichtungs-Ebenen stack.num (per-Pixel-Anzahl beitragender Exposures) und stack.exp (Exposure-Zeit s) als FITS (HTTP 206 byte-range, {projcell}/{subcell}/rings.v3.skycell.{projcell}.{subcell}.stk.{filter}.unconv.{num|exp}.fits). Detektions-unabhaengig (IPP-Warp-Coadd-Buchhaltung, kein Detektions-Schritt) — Footprint-Litmus BESTANDEN. Semantik: count (num > 0 = beobachtet), KEINE 0..1-Fraktion → Fraction = num / Nenntiefe (je Filter, live-data-Konstante). Machine-Lookup ps1filenames.py (ra/dec/filter) + fitscut.cgi. MAST CAS bleibt refused (detektions-abgeleitet). GEBAUT (2026-09-08): Re-Grid-Kernel `src/archivar/regrid.rs` (GnomonicRegrid: FITS-TAN-WCS inkl. PC-Matrix, Pixel-Ecken-Raster je Zeile, Grenz-Pixel 16×16-Subzellen-Quadratur, Flaechengewicht (1+xi^2+eta^2)^-1.5, absent traegt nie bei, real-0 traegt Praesenz mit count 0); num-Ebenen-Codierung gemessen: Exposure-Count in den niedrigen 15 Bits (Sign-Bit gesetzt), max num == NINPUTS der Ebene. Compiler `tools/harvest/src/bin/ps1_coverage_compiler.rs` (grizy, FP01, `--limit N --ra0 --dec0 --step --ci-mode`): erntet stack.num je Skycell je Filter, dekodiert, re-gridded, kompiliert ps1_dr2_coverage.fp01. Nenntiefe: dokumentierter PS1-Full-Depth-Exposure-Count nicht verifizierbar (DEEP_STACK-NINPUTS variiert je Skycell) → empirisches max num ueber die geernteten Skycells je Filter (benannte Wahl, in den Record-Kopf nicht geschrieben); im vollen CI-Lauf ist das max ueber die volle Ernte. Enumeration: RA/Dec-Raster Schritt 0.2 deg (gemessen < Skycell-Breite ~0.43 deg, Ring-Geometrie rings.v3 unbekannt → dichte Abtastung ueber ps1filenames.py). Verifiziert (2026-09-08): cargo check --workspace 0/0, Unit-Tests gruen (Integral-Erhaltung, absent-vs-zero, deterministisch, WCS-PC); Live-Lauf --limit 2 (Skycells 1360.059 + 1360.058, dec 2, ra ~150): 10 Ebenen, 389.074.034 gemessene Pixel, FP01-Roundtrip verifiziert, 9.381 Records / 1.879 HEALPix-Pixel, g bei (150,2) frac 0.898, Nenntiefe g 22 r 30 i 26 z 17 y 21. Volles DR2-Asset: pending (Ernte ~10^6 Grid-Queries + ~10^5 Skycell-Ebenen, CI-Lauf ueber --ci-mode, CDN-Manifestation).
 
 footprint sdss
