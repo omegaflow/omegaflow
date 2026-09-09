@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: 3a9bff9911e6416645408386a68329efbe11fd5dac6ae800831966372e0c5eb1
+  sha256: acac7ca7f2526f8a9838f4bf47f5cfe91c28b4b58d5ce6dd712dba47397cbebc
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -263,3 +263,10 @@ nach CI, Run 34400114106):
   geschlossen (`d41cc87`); Inventar `noaa_nodd_inventory.φ` steht (101 Datasets);
   die Bucket-Dispositionen je Dataset bleiben Register-Frage (Litmus:
   url-line / Compiler-Lease / Konsument).
+- Korpora-Heim (Architektur-Frage, offen 2026-09-10): die ~120-MB-Katalog-
+  Korpora (gitignored, lokal) könnten in ein privates Repo, womit die
+  Discovery-Front (Lens → `--probe` → Review) CI-fähig würde — die Keys sind
+  bereits gespiegelt (GitHub-Parität, `gh secret list` gemessen 2026-09-10;
+  SOURCE_PORT.md §5 korrigiert). Unentschieden: Drittanbieter-Redistribution +
+  Quota gegen CI-Fähigkeit; die Review bleibt ohnehin in der Session (§5
+  Schritt 4). Register-Frage, kein Operator-Wort.
