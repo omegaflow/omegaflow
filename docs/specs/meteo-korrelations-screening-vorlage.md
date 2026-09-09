@@ -16,7 +16,7 @@ und Protokoll sind identisch.
 
 ## 1. Ereignis definieren
 
-`config/meteo/<ereignis-id>.json`:
+`phi/meteo/<ereignis-id>.json`:
 
 ```json
 {
@@ -51,7 +51,7 @@ unvorhergesehenen Pfeil, nicht aus der Bestätigung.
 ```bash
 cargo build -p omegaflow-tools --release --bin meteo_harvest
 ./target/release/meteo_harvest \
-  --event config/meteo/<ereignis-id>.json \
+  --event phi/meteo/<ereignis-id>.json \
   --out phi/pipeline/meteo_harvest/<ereignis-id>
 ```
 
