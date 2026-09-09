@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-08
   sha256: e24833976598472ba7f52ca64d9dedc5882a9b80cd1f155f9e1a1edc24885f84
-  status: consumed
+  status: live
   see-also: docs/handover/handover-2026-09-08-uranus-riss-schiedsspruch.md docs/befund/befund-2026-09-08-uranus-riss-schiedsspruch.md docs/concepts/die-weberin.md docs/TODO.md
 -->
 
