@@ -1,0 +1,41 @@
+name: neptune-c-spk-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '47 5 3 * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  neptune-c:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ssd.jpl.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view ssd.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --title "ssd.jpl.nasa.gov" \
+              --notes "raw JPL ephemeris bins compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Compose the DE441-consistent Neptune planet-center line and upload
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov kernels
+          curl -sSfL --retry 3 --max-time 5400 -o data/ssd.jpl.nasa.gov/ephemeris_neptune.bin \
+            https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "neptune-c-spk-cdn: ephemeris_neptune.bin returned void from the CDN" \
+                 "curl on the CDN did not reach the DE441 barycenter bin. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/nep097xl-899.bsp \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097xl-899.bsp \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "neptune-c-spk-cdn: nep097xl-899.bsp returned void" \
+                 "curl on naif.jpl.nasa.gov did not reach the SPK. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          cargo run -p omegaflow-harvest --release --bin horizons_compiler -- \
+            --neptune-c-spk kernels/nep097xl-899.bsp --ci-mode
