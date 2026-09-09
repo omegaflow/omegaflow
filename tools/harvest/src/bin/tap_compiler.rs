@@ -198,6 +198,16 @@ fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
     Some((fields, rows))
 }
 
+fn uws_phase(job: &str) -> Option<String> {
+    Command::new("curl")
+        .arg("-sS")
+        .arg(format!("{}/phase", job))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+}
+
 fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
     let base = root.replace("/tap/sync", "/tap/async");
     let out = Command::new("curl")
@@ -213,7 +223,7 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
         .arg("--data-urlencode")
         .arg("LANG=ADQL")
         .arg("--data-urlencode")
-        .arg("FORMAT=votable")
+        .arg("FORMAT=votable/td")
         .arg("--data-urlencode")
         .arg(format!("QUERY={}", adql))
         .arg(&base)
@@ -225,16 +235,22 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
         .find(|l| l.to_lowercase().starts_with("location:"))
         .map(|l| l["location:".len()..].trim().to_string())?;
     eprintln!("uws job: {}", job);
-    let mut phase = String::new();
-    for _ in 0..(poll_secs / 10 + 1) {
-        phase = Command::new("curl")
+    let mut phase = uws_phase(&job)?;
+    if phase == "PENDING" {
+        let run = Command::new("curl")
             .arg("-sS")
+            .arg("-o")
+            .arg("/dev/null")
+            .arg("-X")
+            .arg("POST")
+            .arg("--data-urlencode")
+            .arg("PHASE=RUN")
             .arg(format!("{}/phase", job))
             .output()
-            .ok()
-            .and_then(|o| String::from_utf8(o.stdout).ok())?
-            .trim()
-            .to_string();
+            .ok()?;
+        eprintln!("uws phase run posted: {}", run.status);
+    }
+    for _ in 0..(poll_secs / 10 + 1) {
         if phase == "COMPLETED" {
             break;
         }
@@ -243,6 +259,7 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
             return None;
         }
         std::thread::sleep(std::time::Duration::from_secs(10));
+        phase = uws_phase(&job)?;
     }
     if phase != "COMPLETED" {
         eprintln!("uws job phase: {} after {} s", phase, poll_secs);
