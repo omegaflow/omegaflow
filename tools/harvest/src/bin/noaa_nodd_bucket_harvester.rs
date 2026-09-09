@@ -9,7 +9,7 @@ const NETLOC: &str = "storage.googleapis.com";
 
 const DEFAULT_BUCKET: &str = "noaa-passive-bioacoustic";
 const DEFAULT_PREFIX: &str = "nrs/products/";
-const STATIONS_TABLE: &str = "data/pmel.noaa.gov/nrs_stations.Φ";
+const STATIONS_TABLE: &str = "phi/nrs_stations.φ";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

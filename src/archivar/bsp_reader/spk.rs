@@ -55,6 +55,7 @@ enum SpkPayload {
     Type3(SpkType3),
     Type9(SpkType9),
     Type13(SpkType13),
+    Type20(SpkType20),
     Unsupported,
 }
 
@@ -321,6 +322,112 @@ impl SpkType13 {
     }
 }
 
+#[derive(Clone)]
+struct SpkType20 {
+    file: DafFile,
+    dscale: f64,
+    tscale: f64,
+    epoch0_sec: f64,
+    record_len_sec: f64,
+    rsize: usize,
+    n_records: usize,
+    degree: usize,
+    start_addr: u32,
+}
+
+impl SpkType20 {
+    fn from_segment(file: &DafFile, start_addr: u32, end_addr: u32) -> Result<Self, SpkError> {
+        let trailer = file.read_doubles(end_addr - 6, end_addr)?;
+        let dscale = trailer[0];
+        let tscale = trailer[1];
+        let initjd = trailer[2];
+        let initfr = trailer[3];
+        let intlen = trailer[4];
+        let rsize = trailer[5] as usize;
+        let n_records = trailer[6] as usize;
+        if dscale <= 0.0 || tscale <= 0.0 {
+            return Err(SpkError::BadType2("DSCALE/TSCALE <= 0"));
+        }
+        if intlen <= 0.0 {
+            return Err(SpkError::BadType2("INTLEN <= 0"));
+        }
+        if rsize < 6 || (rsize - 3) % 3 != 0 {
+            return Err(SpkError::BadType2("RSIZE not 3 + 3*(DEGP+1)"));
+        }
+        let degree = rsize / 3 - 2;
+        if degree == 0 || n_records == 0 {
+            return Err(SpkError::BadType2("degree or record count == 0"));
+        }
+        let epoch0_sec = (initjd + initfr - crate::ephemeris::J2000_EPOCH) * 86400.0;
+        let record_len_sec = intlen * 86400.0;
+        Ok(SpkType20 {
+            file: file.clone(),
+            dscale,
+            tscale,
+            epoch0_sec,
+            record_len_sec,
+            rsize,
+            n_records,
+            degree,
+            start_addr,
+        })
+    }
+
+    fn evaluate(&self, et: f64) -> Result<[f64; 6], SpkError> {
+        let sec_past = (et - self.epoch0_sec) / self.record_len_sec;
+        let raw_idx = sec_past.floor() as isize;
+        let idx = raw_idx.clamp(0, self.n_records as isize - 1) as usize;
+        let rec_start = self.start_addr + (idx * self.rsize) as u32;
+        let rec_end = rec_start + self.rsize as u32 - 1;
+        let rec = self.file.doubles_native(rec_start, rec_end)?;
+
+        let mid_sec = self.epoch0_sec + (idx as f64 + 0.5) * self.record_len_sec;
+        let radius_sec = self.record_len_sec / 2.0;
+        let s = (et - mid_sec) / radius_sec;
+
+        let n = self.degree + 1;
+        let vel_scale = self.dscale / self.tscale;
+        let pos_scale = self.dscale;
+        let mut pos = [0.0; 3];
+        let mut vel = [0.0; 3];
+        let mut ts = vec![0.0_f64; n + 1];
+        let mut tz = vec![0.0_f64; n + 1];
+        ts[0] = 1.0;
+        tz[0] = 1.0;
+        if n > 0 {
+            ts[1] = s;
+        }
+        for k in 2..=n {
+            ts[k] = 2.0 * s * ts[k - 1] - ts[k - 2];
+        }
+        for k in 2..=n {
+            tz[k] = -tz[k - 2];
+        }
+        for axis in 0..3 {
+            let block = axis * self.rsize / 3;
+            let coef = &rec[block..block + n];
+            let mid_pos = rec[block + n];
+            let mut cheb_val = 0.0_f64;
+            let mut integral = 0.0_f64;
+            for (j, &c) in coef.iter().enumerate() {
+                let term = match j {
+                    0 => ts[1],
+                    1 => (s * s) / 2.0,
+                    _ => {
+                        0.5 * ((ts[j + 1] - tz[j + 1]) / (j as f64 + 1.0)
+                            - (ts[j - 1] - tz[j - 1]) / (j as f64 - 1.0))
+                    }
+                };
+                cheb_val += c * ts[j];
+                integral += c * term;
+            }
+            vel[axis] = cheb_val * vel_scale;
+            pos[axis] = mid_pos * pos_scale + radius_sec * integral * vel_scale;
+        }
+        Ok([pos[0], pos[1], pos[2], vel[0], vel[1], vel[2]])
+    }
+}
+
 fn pick_window(
     file: &DafFile,
     epochs_start: u32,
@@ -411,18 +518,18 @@ fn hermite_eval(xs: &[f64], ys: &[f64], dys: &[f64], x: f64) -> (f64, f64) {
         cur = next;
     }
     let mut val = coeffs[0];
-    let mut der = 0.0_f64;
+    let mut deriv = 0.0_f64;
     let mut prod = 1.0_f64;
     let mut dprod = 0.0_f64;
     for k in 1..m {
         let dprod_new = prod + (x - z[k - 1]) * dprod;
         let prod_new = (x - z[k - 1]) * prod;
         val += coeffs[k] * prod_new;
-        der += coeffs[k] * dprod_new;
+        deriv += coeffs[k] * dprod_new;
         prod = prod_new;
         dprod = dprod_new;
     }
-    (val, der)
+    (val, deriv)
 }
 
 #[inline]
@@ -450,7 +557,7 @@ pub(crate) fn cheby3_val_and_deriv(
         cy[0] * t_prev + cy[1] * t_curr,
         cz[0] * t_prev + cz[1] * t_curr,
     ];
-    let mut der = [cx[1] * dt_curr, cy[1] * dt_curr, cz[1] * dt_curr];
+    let mut deriv = [cx[1] * dt_curr, cy[1] * dt_curr, cz[1] * dt_curr];
     let two_s = 2.0 * s;
     for k in 2..n {
         let t_next = two_s * t_curr - t_prev;
@@ -458,15 +565,15 @@ pub(crate) fn cheby3_val_and_deriv(
         val[0] += cx[k] * t_next;
         val[1] += cy[k] * t_next;
         val[2] += cz[k] * t_next;
-        der[0] += cx[k] * dt_next;
-        der[1] += cy[k] * dt_next;
-        der[2] += cz[k] * dt_next;
+        deriv[0] += cx[k] * dt_next;
+        deriv[1] += cy[k] * dt_next;
+        deriv[2] += cz[k] * dt_next;
         t_prev = t_curr;
         t_curr = t_next;
         dt_prev = dt_curr;
         dt_curr = dt_next;
     }
-    (val, der)
+    (val, deriv)
 }
 
 #[inline]
@@ -532,6 +639,7 @@ impl SpkFile {
                 3 => SpkPayload::Type3(SpkType3::from_segment(&daf, start_addr, end_addr)?),
                 9 => SpkPayload::Type9(SpkType9::from_segment(&daf, start_addr, end_addr)?),
                 13 => SpkPayload::Type13(SpkType13::from_segment(&daf, start_addr, end_addr)?),
+                20 => SpkPayload::Type20(SpkType20::from_segment(&daf, start_addr, end_addr)?),
                 _ => SpkPayload::Unsupported,
             };
 
@@ -616,6 +724,7 @@ impl SpkFile {
             SpkPayload::Type3(t) => t.evaluate(et),
             SpkPayload::Type9(t) => t.evaluate(et),
             SpkPayload::Type13(t) => t.evaluate(et),
+            SpkPayload::Type20(t) => t.evaluate(et),
             SpkPayload::Unsupported => Err(SpkError::UnsupportedType(seg.data_type)),
         }
     }
