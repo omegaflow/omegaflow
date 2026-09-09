@@ -50,6 +50,9 @@ fn main() {
         },
         None => MIN_DEPTH_KM,
     };
+    let sp_gate = dp::arg_value(&args, "--sp-gate")
+        .and_then(|v| v.parse::<f64>().ok())
+        .filter(|g| g.is_finite() && *g > 0.0);
 
     println!("=== depth-phase fleet — many events x stations, sigma and sqrt(N) ===");
     println!("selection rule (registered before the first fetch):");
@@ -100,6 +103,9 @@ fn main() {
     let mut offsets_after_exclusion: Vec<f64> = Vec::new();
     let mut joint_offsets: Vec<f64> = Vec::new();
     let mut joint_pending: Vec<String> = Vec::new();
+    let mut dual_offsets: Vec<f64> = Vec::new();
+    let mut dual_pending: Vec<String> = Vec::new();
+    let mut fleet_sp_corrs: Vec<f64> = Vec::new();
     let mut event_scatters: Vec<f64> = Vec::new();
     let mut pending_events: Vec<String> = Vec::new();
     let mut branch_skips_total = 0usize;
@@ -310,6 +316,100 @@ fn main() {
                 ratios.join(", ")
             );
         }
+        let mut dual_deltas: Vec<f64> = Vec::new();
+        let mut dual_lags: Vec<f64> = Vec::new();
+        let mut dual_weights: Vec<f64> = Vec::new();
+        let mut dual_phases: Vec<dp::DepthPhase> = Vec::new();
+        let mut sp_legs = 0usize;
+        let mut sp_below_gate = 0usize;
+        let mut sp_sigma_absent = 0usize;
+        let mut sp_corrs: Vec<f64> = Vec::new();
+        for m in &measures {
+            if let Some(sp) = &m.s_p {
+                sp_corrs.push(sp.corr.abs());
+            }
+            if m.skip.is_some() {
+                continue;
+            }
+            if let Some(p) = &m.p_p {
+                if p.corr.abs() >= dp::SECONDARY_CORR_MIN {
+                    match m.p_p_sigma_s {
+                        Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
+                            dual_deltas.push(m.delta_deg);
+                            dual_lags.push(p.lag_s);
+                            dual_weights.push(1.0 / (sigma * sigma));
+                            dual_phases.push(dp::DepthPhase::PP);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            if let Some(sp) = &m.s_p {
+                match sp_gate {
+                    Some(g) if sp.corr.abs() >= g => match m.s_p_sigma_s {
+                        Some(sigma) if sigma.is_finite() && sigma > 0.0 => {
+                            dual_deltas.push(m.delta_deg);
+                            dual_lags.push(sp.lag_s);
+                            dual_weights.push(1.0 / (sigma * sigma));
+                            dual_phases.push(dp::DepthPhase::SP);
+                            sp_legs += 1;
+                        }
+                        _ => sp_sigma_absent += 1,
+                    },
+                    Some(_) => sp_below_gate += 1,
+                    None => {}
+                }
+            }
+        }
+        fleet_sp_corrs.extend(sp_corrs.iter().copied());
+        if !sp_corrs.is_empty() {
+            let mut sorted = sp_corrs.clone();
+            sorted.sort_by(|a, b| a.total_cmp(b));
+            let s_txt = sorted
+                .iter()
+                .map(|c| format!("{c:.2}"))
+                .collect::<Vec<_>>()
+                .join(", ");
+            println!("  sP |corr| per station (measurement, no gate): {s_txt}");
+        }
+        match sp_gate {
+            None => println!(
+                "  dual-phase fit: pending (the sP corr gate is unset — measure the sP |corr| distribution first, then set --sp-gate)"
+            ),
+            Some(_) if dual_deltas.is_empty() => println!(
+                "  dual-phase fit: pending (no leg carried a weight — sigma absent or below the correlation gates)"
+            ),
+            Some(g) => {
+                let dual =
+                    dp::invert_depth_dual(&dual_deltas, &dual_lags, &dual_weights, &dual_phases);
+                let depth_txt = match dual {
+                    dp::DepthInversion::Depth(h) => format!("{h:.0} km"),
+                    dp::DepthInversion::EdgeDiscontinuity => {
+                        "edge-clamped at the 660 km wall".to_string()
+                    }
+                    dp::DepthInversion::SaturatedBound => {
+                        "saturated at the 700 km ceiling".to_string()
+                    }
+                    dp::DepthInversion::Absent => "absent".to_string(),
+                };
+                println!(
+                    "  dual-phase fit: {sp_legs} sP legs (gate {g:.2}, {sp_below_gate} below, {sp_sigma_absent} sigma-absent), depth {depth_txt}"
+                );
+                match dual {
+                    dp::DepthInversion::Depth(h) => dual_offsets.push(h - event.depth_km),
+                    dp::DepthInversion::EdgeDiscontinuity => {
+                        dual_pending.push(format!("{} (dual clamped at the 660 wall)", event.id));
+                    }
+                    dp::DepthInversion::SaturatedBound => {
+                        dual_pending
+                            .push(format!("{} (dual saturated at the 700 ceiling)", event.id));
+                    }
+                    dp::DepthInversion::Absent => {
+                        dual_pending.push(format!("{} (dual residual never finite)", event.id));
+                    }
+                }
+            }
+        }
     }
 
     println!();
@@ -411,6 +511,45 @@ fn main() {
             "weighted joint fit pending (named, not counted): {} — {}",
             joint_pending.len(),
             joint_pending.join("; ")
+        );
+    }
+    let n_dual = dual_offsets.len();
+    if n_dual == 0 {
+        println!(
+            "dual-phase mean offset: pending (no event carried a dual depth — the sP gate may be unset)"
+        );
+    } else {
+        let mean_dual = mean(&dual_offsets).unwrap();
+        let sd_dual = sample_sd(&dual_offsets);
+        let se_dual = sd_dual.map(|s| s / (n_dual as f64).sqrt());
+        println!(
+            "dual-phase mean offset {:+.1} km over {n_dual} events; sd across events {} km, se = sd/sqrt(N) = {} km",
+            mean_dual,
+            sd_dual.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
+            se_dual.map(|v| format!("{v:.1}")).unwrap_or("pending".into())
+        );
+    }
+    if !dual_pending.is_empty() {
+        println!(
+            "dual-phase fit pending (named, not counted): {} — {}",
+            dual_pending.len(),
+            dual_pending.join("; ")
+        );
+    }
+    if !fleet_sp_corrs.is_empty() {
+        let mut sorted = fleet_sp_corrs.clone();
+        sorted.sort_by(|a, b| a.total_cmp(b));
+        let n = sorted.len();
+        let median = sorted[n / 2];
+        let p25 = sorted[n / 4];
+        let p75 = sorted[(3 * n) / 4];
+        println!(
+            "sP |corr| distribution over the fleet (measurement): n={n}, min {:.2}, p25 {:.2}, median {:.2}, p75 {:.2}, max {:.2}",
+            sorted[0],
+            p25,
+            median,
+            p75,
+            sorted[n - 1]
         );
     }
     if !pending_events.is_empty() {
