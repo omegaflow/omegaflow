@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 89fcab3381869ec44c92dd696b269539e09bb5e4ea235480a065c20d6d33563f
   status: done
-  antwortet-auf: docs/auftrag/archiv/auftrag-dunkle-materie-front-c.md (Commit 0932cae, Rausch-Räumliche Verortung) docs/handover/handover-thematisch-mechanische-reste.md (ε-Achsen-Pflicht der Pioneer-Quiet-Zone-Rezept-Blätter)
+  antwortet-auf: docs/auftrag/archiv/auftrag-dunkle-materie-front-c.md (Commit 0932cae, Rausch-Räumliche Verortung) docs/handover/handover-2026-09-09-mechanische-reste.md (ε-Achsen-Pflicht der Pioneer-Quiet-Zone-Rezept-Blätter)
   see-also: docs/befund/befund-galileo-rausch-kurve-epsilon.md docs/befund/befund-galileo-rausch-kurve.md
 -->
 

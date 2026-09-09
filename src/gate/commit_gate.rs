@@ -1551,7 +1551,7 @@ mod tests {
     fn fn_tool_canonical_homes_pass() {
         let mut g = test_gate();
         for ok in [
-            r###"{"filePath":"docs/handover/handover-thematisch-te-atom-4.md","newString":"# offen"}"###,
+            r###"{"filePath":"docs/handover/handover-2026-09-09-te-atom-4.md","newString":"# offen"}"###,
             r###"{"filePath":"docs/granit.md","newString":"## A = A"}"###,
             r###"{"filePath":"docs/befund/befund-beispiel.md","newString":"# lose"}"###,
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
