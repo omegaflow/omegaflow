@@ -494,6 +494,19 @@ pub fn s_p_lag(delta_deg: f64, depth_km: f64) -> Option<f64> {
     Some(s_p_travel(delta_deg, depth_km)? - p_travel_depth(delta_deg, depth_km)?)
 }
 
+#[derive(Clone, Copy, PartialEq)]
+pub enum DepthPhase {
+    PP,
+    SP,
+}
+
+pub fn phase_lag(phase: DepthPhase, delta_deg: f64, depth_km: f64) -> Option<f64> {
+    match phase {
+        DepthPhase::PP => p_p_lag(delta_deg, depth_km),
+        DepthPhase::SP => s_p_lag(delta_deg, depth_km),
+    }
+}
+
 fn inversion_state(best_sq: f64, best_h: f64) -> DepthInversion {
     if !best_sq.is_finite() {
         DepthInversion::Absent
@@ -538,6 +551,53 @@ pub fn invert_depth_weighted(deltas: &[f64], lags: &[f64], weights: &[f64]) -> D
                 break;
             }
             match p_p_lag(d, h) {
+                Some(pred) => {
+                    let r = lag - pred;
+                    s += r * r * w;
+                }
+                None => {
+                    ok = false;
+                    break;
+                }
+            }
+        }
+        if ok && s < best.0 {
+            best = (s, h);
+        }
+    }
+    inversion_state(best.0, best.1)
+}
+
+pub fn invert_depth_dual(
+    deltas: &[f64],
+    lags: &[f64],
+    weights: &[f64],
+    phases: &[DepthPhase],
+) -> DepthInversion {
+    if deltas.is_empty()
+        || deltas.len() != lags.len()
+        || lags.len() != weights.len()
+        || weights.len() != phases.len()
+    {
+        return DepthInversion::Absent;
+    }
+    let mut best = (f64::INFINITY, 0.0f64);
+    let n = (INVERSION_DEPTH_MAX_KM / INVERSION_DEPTH_STEP_KM) as usize;
+    for i in 0..=n {
+        let h = i as f64 * INVERSION_DEPTH_STEP_KM;
+        let mut s = 0.0;
+        let mut ok = true;
+        for (((&d, &lag), &w), &ph) in deltas
+            .iter()
+            .zip(lags.iter())
+            .zip(weights.iter())
+            .zip(phases.iter())
+        {
+            if !(w.is_finite() && w >= 0.0) {
+                ok = false;
+                break;
+            }
+            match phase_lag(ph, d, h) {
                 Some(pred) => {
                     let r = lag - pred;
                     s += r * r * w;
@@ -663,6 +723,7 @@ pub struct StationMeasure {
     pub s_p: Option<SecondaryPick>,
     pub inversion: Option<DepthInversion>,
     pub p_p_sigma_s: Option<f64>,
+    pub s_p_sigma_s: Option<f64>,
     pub p_p_lag_pred: f64,
     pub s_p_lag_pred: Option<f64>,
     pub skip: Option<String>,
@@ -678,6 +739,7 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         s_p: None,
         inversion: None,
         p_p_sigma_s: None,
+        s_p_sigma_s: None,
         p_p_lag_pred: 0.0,
         s_p_lag_pred: None,
         skip: Some(reason.to_string()),
@@ -719,6 +781,7 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
     let p_p_sigma_s = pp.as_ref().and_then(|p| peak_sigma_s(p, rate));
     let s_p_lag_pred = s_p_lag(delta, event.depth_km);
     let sp = s_p_lag_pred.and_then(|l| correlate_window(&bp, i_p, nw, rate, l));
+    let s_p_sigma_s = sp.as_ref().and_then(|p| peak_sigma_s(p, rate));
     let inversion = match &pp {
         Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => Some(invert_depth_single(delta, p.lag_s)),
         _ => None,
@@ -731,6 +794,7 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
         s_p: sp,
         inversion,
         p_p_sigma_s,
+        s_p_sigma_s,
         p_p_lag_pred,
         s_p_lag_pred,
         skip: None,
@@ -1282,5 +1346,102 @@ mod tests {
             peak_sigma_s(&pick, 40.0).is_none(),
             "an edge pick carries no sigma"
         );
+    }
+
+    #[test]
+    fn dual_without_sp_legs_reproduces_the_weighted_fit() {
+        for true_h in [10.0, 20.0, 35.0] {
+            let deltas = [20.0, 35.0, 50.0, 65.0, 80.0];
+            let lags: Vec<f64> = deltas
+                .iter()
+                .map(|&d| p_p_lag(d, true_h).unwrap())
+                .collect();
+            let weights = vec![1.0; deltas.len()];
+            let phases = vec![DepthPhase::PP; deltas.len()];
+            assert_eq!(
+                invert_depth_dual(&deltas, &lags, &weights, &phases),
+                invert_depth_weighted(&deltas, &lags, &weights),
+                "a pP-only dual must reproduce the weighted fit exactly"
+            );
+        }
+    }
+
+    #[test]
+    fn dual_recovers_the_depth_from_both_phases() {
+        for true_h in [410.0, 500.0, 600.0] {
+            let d = 45.0;
+            let deltas = [d, d];
+            let lags = [p_p_lag(d, true_h).unwrap(), s_p_lag(d, true_h).unwrap()];
+            let weights = [1.0, 1.0];
+            let phases = [DepthPhase::PP, DepthPhase::SP];
+            assert_depth(invert_depth_dual(&deltas, &lags, &weights, &phases), true_h);
+        }
+    }
+
+    #[test]
+    fn the_sp_leg_pulls_a_biased_pp_back() {
+        let true_h = 500.0;
+        let d = 45.0;
+        let pp_biased = p_p_lag(d, true_h).unwrap() + 0.8;
+        let sp_exact = s_p_lag(d, true_h).unwrap();
+        let deltas = [d, d];
+        let lags = [pp_biased, sp_exact];
+        let weights = [1.0 / (0.05 * 0.05), 1.0 / (0.05 * 0.05)];
+        let phases = [DepthPhase::PP, DepthPhase::SP];
+        let dual = invert_depth_dual(&deltas, &lags, &weights, &phases);
+        let pp_only = invert_depth_single(d, pp_biased);
+        match (dual, pp_only) {
+            (DepthInversion::Depth(hd), DepthInversion::Depth(hp)) => {
+                assert!(
+                    (hd - true_h).abs() < (hp - true_h).abs(),
+                    "the sP leg must pull the biased pP back (dual {hd} vs pP-only {hp} at true {true_h})"
+                );
+            }
+            other => panic!("dual and pP-only must both invert to Depth, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn a_wrong_sp_leg_with_a_wide_sigma_does_not_move_the_depth() {
+        let true_h = 500.0;
+        let d = 45.0;
+        let pp_exact = p_p_lag(d, true_h).unwrap();
+        let sp_wrong = s_p_lag(d, true_h).unwrap() + 1.5;
+        let deltas = [d, d];
+        let lags = [pp_exact, sp_wrong];
+        let weights = [1.0 / (0.05 * 0.05), 1.0 / (0.8 * 0.8)];
+        let phases = [DepthPhase::PP, DepthPhase::SP];
+        let dual = invert_depth_dual(&deltas, &lags, &weights, &phases);
+        let pp_only = invert_depth_single(d, pp_exact);
+        match (dual, pp_only) {
+            (DepthInversion::Depth(hd), DepthInversion::Depth(hp)) => {
+                assert!(
+                    (hd - hp).abs() <= 1.0,
+                    "a wrong sP with a wide sigma must not move the depth (dual {hd} vs pP-only {hp})"
+                );
+            }
+            other => panic!("dual and pP-only must both invert to Depth, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn dual_is_symmetric_in_leg_order() {
+        let true_h = 410.0;
+        let d = 45.0;
+        let pp = p_p_lag(d, true_h).unwrap();
+        let sp = s_p_lag(d, true_h).unwrap();
+        let a = invert_depth_dual(
+            &[d, d],
+            &[pp, sp],
+            &[1.0, 1.0],
+            &[DepthPhase::PP, DepthPhase::SP],
+        );
+        let b = invert_depth_dual(
+            &[d, d],
+            &[sp, pp],
+            &[1.0, 1.0],
+            &[DepthPhase::SP, DepthPhase::PP],
+        );
+        assert_eq!(a, b, "leg order must not change the fit");
     }
 }
