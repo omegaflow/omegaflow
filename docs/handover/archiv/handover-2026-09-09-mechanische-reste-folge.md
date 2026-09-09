@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: 0099b4407afc931363b56a84882d825419ab56a724ac1b8ef6341765aa968245
-  status: live
+  status: archived
   see-also: docs/handover/handover-thematisch-mechanische-reste.md docs/handover/archiv/
 -->
 
