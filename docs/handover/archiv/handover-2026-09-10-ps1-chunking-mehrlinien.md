@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: b6feb0a2997b9c1394fb9824cf7e9f4e978d7cbcabdbf84777dd5e6a7f812238
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-10-nicht-autonom.md, docs/handover/handover-2026-09-10-autonom.md
 -->
 # Handover — PS1-Chunking + Korpora-Heim + vier weitere Linien (2026-09-10)

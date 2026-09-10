@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: f8a9bddd8412a0c8da36fd9d5df79bbb854069c2fceca190020559c8d8062f04
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-supermag.md
 -->
 # Handover — SuperMAG merged-window grain committet
