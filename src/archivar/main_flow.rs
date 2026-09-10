@@ -2125,6 +2125,7 @@ pub fn main_flow() {
                     | "fmi_gic"
                     | "igets"
                     | "iss_lis"
+                    | "supermag_1m"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
