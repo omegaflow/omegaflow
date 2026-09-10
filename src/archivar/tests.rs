@@ -6363,3 +6363,82 @@ fn iss_lis_register_field_matches_component_name() {
     assert_eq!(fc.name, "iss_lis_flash_radiance_uj_sr_m2_um");
     assert_eq!(fc.force, 8);
 }
+
+#[test]
+fn supermag_geo_series_roundtrip_and_component_name() {
+    let recs = vec![
+        crate::geo::GeoRec {
+            t: 753_440_003.0,
+            lat: 69.66,
+            lon: 18.94,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 60.0,
+            val: -177.9,
+            comp: crate::geo::COMP_SMG_N_NEZ,
+        },
+        crate::geo::GeoRec {
+            t: 753_440_003.0,
+            lat: 69.66,
+            lon: 18.94,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 60.0,
+            val: -186.0,
+            comp: crate::geo::COMP_SMG_N_GEO,
+        },
+    ];
+    let magic =
+        crate::geo::magic_of("supermag_1m").expect("the supermag_1m format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("supermag_1m", &bytes)
+        .expect("supermag_1m bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].val, -177.9);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_SMG_N_NEZ);
+    assert_eq!(parsed[1].comp, crate::geo::COMP_SMG_N_GEO);
+    assert_eq!(
+        crate::geo::comp_max("supermag_1m"),
+        Some(crate::geo::COMP_SMG_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("supermag_1m", crate::geo::COMP_SMG_N_NEZ),
+        Some("supermag_n_nez_nt")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("supermag_1m", crate::geo::COMP_SMG_Z_GEO),
+        Some("supermag_z_geo_nt")
+    );
+}
+
+#[test]
+fn supermag_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "supermag_1m")
+        .expect("phi/sources.φ registers the supermag_1m source");
+    let names: Vec<&str> = src
+        .extracts
+        .iter()
+        .filter_map(|e| match e {
+            Extract::Field(fc) => Some(fc.name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        names,
+        vec![
+            "supermag_n_nez_nt",
+            "supermag_e_nez_nt",
+            "supermag_z_nez_nt",
+            "supermag_n_geo_nt",
+            "supermag_e_geo_nt",
+            "supermag_z_geo_nt",
+        ]
+    );
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the supermag_1m block carries a field line");
+    };
+    assert_eq!(fc.force, 0);
+}
