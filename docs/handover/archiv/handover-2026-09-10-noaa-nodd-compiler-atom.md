@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: a861133acfc1782623247cfe9705fe5d33a3784d4b7788728eb779724cab8651
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
 # Handover — NOAA-NODD-Compiler-Atom (2026-09-10)

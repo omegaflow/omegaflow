@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: 50d09c30056872399b2cbcc4bdb5335ac0a5b30179d3c55678a1c13c46e6e25c
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
 # Handover — Probe-Unit-Fix + Copernicus-Litmus (2026-09-10)

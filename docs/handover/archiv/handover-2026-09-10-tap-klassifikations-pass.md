@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: defef3b2f98ae629d59a36359b91075b40b71de18706f3f0dc7f90cb90045207
-  status: live
+  status: archived
   see-also: docs/SOURCE_PORT.md docs/handover/handover-2026-09-10-disposition-hygiene.md
 -->
 # Handover — tap-Klassifikations-Pass (2026-09-10)
