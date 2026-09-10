@@ -75,6 +75,10 @@ phi/pipeline/catalog/*
 !phi/pipeline/catalog/re3data_catalog.φ
 !phi/pipeline/catalog/zenodo_catalog.φ
 !phi/pipeline/catalog/dryad_catalog.φ
+!phi/pipeline/catalog/wdcc_catalog.φ
+!phi/pipeline/catalog/dataverse_harvard.φ
+!phi/pipeline/catalog/dataverse_borealis.φ
+!phi/pipeline/catalog/seanoe_catalog.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).
