@@ -2,7 +2,7 @@
   title: Handover — nicht-autonom: was die Kybernautin nicht selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 94a64cab0aa18a43e965574882a37b0bdc15d943e78ca83bb971eedeadca79cb
+  sha256: 5cb76b73dd6c12cf242e409831c6038ff4a625715f2433ca7559b42aa59bcbff
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -29,6 +29,9 @@ Entsperrer. Die autonomen Pflichten stehen im Gegen-Handover.
 - **IGETS-SFTP-Passwort** — Anforderungs-Mail gesendet 10.09.
   (`docs/auftrag/auftrag-igets-sftp-passwort-antrag.md`); wartet auf die Antwort
   von `igets-support@gfz.de`.
+- **TOAR-Vollzugang** — Registrierung läuft: Anfrage 18.08. → Schröder-Rückfrage
+  24.08. → Antwort mit Projektbeschreibung raus; wartet auf Jülich. Anonym schon
+  nutzbar (API v2 gemessen, Limit 5 Zeitreihen).
 - **TNO-Kette (Weberin)** — keine MPC-unabhängige Linie der 8.082-Menge
   (not-published).
 
