@@ -1,0 +1,22 @@
+# decline_lens.φ — der Maschinen-Zwilling des Oszillator-Gates (Rats-Verdikt 2026-09-10)
+# Die 9 Decline-Klassen + 3 Familien als Daten. Kein Urteil — nur lens-match.
+# Quelle: prompt.φ §FORCE-GATE + SOURCE_PORT.md §8 + Rats-Verdikt ledger.φ:937.
+# Der Match ist ein Vorentscheid; das Urteil fällt das Review in dead_sources.φ.
+# Kalibrier-Baseline (2026-09-10, gegen die 101 noaa_nodd-Urteile):
+#   FP 3 (ghcn, swpc, swdi — Titel tragen das Gate-Wort, die Messung ist echt),
+#   FN 12 (nationalbathymetry, mrms, s102, s111, wsa-enlil + Portal-/Archiv-Titel,
+#   deren Decline erst der Inhalt trägt). Gezählt, nie geglättet.
+
+class model-forecast     @ forecast forecast-system ensemble reforecast re-forecast prediction hindcast data-assimilation guidance model analysis retrospective downscal fourcastnet graphcast rapid-refresh national-blend hurricane-analysis prototype reanalysis reanalyse
+class derived-satellite  @ derived retrieval level-3 level-2 computed estimated estimator cdr climate-data-record satellite-computed
+class catalog-register   @ catalog catalogue inventory index listing archive portal directory register metadata kerchunk reference-files dataset-collection product-list data-server
+class aggregated-index   @ normals 30-year optimum-interpolation gridded mosaic climate-normals climatology thresholds
+class count              @ count counting census tally
+class reference-constant @ constant reference-value
+class text-warning       @ warning alert bulletin advisory watch
+class infrastructure     @ infrastructure boundaries administrative roads transport utilities historical-maps maps-and-charts
+class position-only      @ position-only coordinates-only ephemeris-only
+
+family a @ forecast ensemble reanalysis reanalyse reforecast re-forecast prediction hindcast data-assimilation model guidance analysis
+family b @ cdr climate-data-record derived retrieval optimum-interpolation gridded mosaic climatology normals downscal computed estimated
+family c @ bathymetry lidar imagery radar drifter mooring survey profile database observation measured detection magnetometer coronagraph sounding temperature current position satellite-data
