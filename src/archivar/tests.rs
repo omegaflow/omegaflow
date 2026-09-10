@@ -292,6 +292,8 @@ fn test_allowed_units_for_force() {
     assert!(!allowed_units_for_force(0).contains(&"k"));
     assert!(!allowed_units_for_force(2).contains(&"c"));
     assert!(!allowed_units_for_force(6).contains(&"kt"));
+    assert!(allowed_units_for_force(0).contains(&"count"));
+    assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
 #[test]
@@ -6441,6 +6443,38 @@ fn supermag_register_field_matches_component_name() {
         panic!("the supermag_1m block carries a field line");
     };
     assert_eq!(fc.force, 0);
+}
+
+#[test]
+fn galileo_odr_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "galileo_odr")
+        .expect("phi/sources.φ registers the galileo_odr source");
+    let names: Vec<&str> = src
+        .extracts
+        .iter()
+        .filter_map(|e| match e {
+            Extract::Field(fc) => Some(fc.name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        names,
+        vec![
+            "galileo_odr_ad1_count",
+            "galileo_odr_ad2_count",
+            "galileo_odr_ad3_count",
+            "galileo_odr_ad4_count",
+        ]
+    );
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the galileo_odr block carries a field line");
+    };
+    assert_eq!(fc.force, 0);
+    assert_eq!(fc.kernel, 0);
+    assert_eq!(fc.unit, "count");
 }
 
 #[test]
