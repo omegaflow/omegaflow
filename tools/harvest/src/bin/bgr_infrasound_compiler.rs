@@ -453,6 +453,7 @@ fn detection_records(file: &Hdf5File, lsk: &omegaflow::lsk::LeapSeconds) -> Vec<
                     bin_width: 0.0,
                     val,
                     comp,
+                    station: 0,
                 });
             }
         };
