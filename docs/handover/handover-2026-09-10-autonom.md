@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 781b085e3e69645c18cf7a51113d1bf155c945b063c8180d712e9df9c4b49199
+  sha256: 9a35bdd4ce0929806ce9fa61034cdfd545cfb6bf61a9b67e4ab59901e07fa1dd
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -108,12 +108,19 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   ein M1-Sprung 1995-11-30/12-01 auf der resid-Achse (echt-vs-Modell
   unbestimmt). Die Messreihe: die ~60 Sonden `tools/measure/src/bin/galileo_*`
   + `docs/paper/galileo-rotor-spin-era-floor.md`.
-- **Nächste Atome:** `galileo_odr_compiler` + `galileo-odr-cdn.yml` (10
-  ODR-Dateien lokal: `data/pds-ppi.igpp.ucla.edu/galileo_goj_odr/`);
-  `galileo_receiver.bin` per Pass (`galileo_atdf_receiver_compiler.rs` steht);
-  Jovian-Mond-Ephemeriden NAIF 501–504; All-Spin-Bus-CK Frame −77000
-  (`ck_daf_probe.rs`-Vorlage); empirische Rausch-Kurve aus TRK-2-25/2-18
-  (~6,5 GB Download); negativ-fuzzy: pscomppars `st_met`-Bio-Zeugen lesen
+- **Geleistet (2026-09-10):** `galileo_odr_compiler` + `galileo-odr-cdn.yml`
+  gebaut — die 10 ODR-Dateien zu `galileo_odr.bin` verpackt (312 272 126 B,
+  Provenance-Gate sha256 hält für alle 10, 1250 sps/Kanal, origin-verbatim).
+  Messergebnis: `70580900.ODR` trägt 13 864 Records + 880 Folgebytes (kein
+  ganzes Record-Multiple); die Folgebytes sind im Asset erhalten. Der
+  Workflow manifestiert das Asset nach dem Push auf dem CDN
+  (`pds-ppi.igpp.ucla.edu`/`galileo_odr.bin`); der Dispatch ist der
+  Folge-Schritt.
+- **Nächste Atome:** `galileo_receiver.bin` per Pass
+  (`galileo_atdf_receiver_compiler.rs` steht); Jovian-Mond-Ephemeriden
+  NAIF 501–504; All-Spin-Bus-CK Frame −77000 (`ck_daf_probe.rs`-Vorlage);
+  empirische Rausch-Kurve aus TRK-2-25/2-18 (~6,5 GB Download);
+  negativ-fuzzy: pscomppars `st_met`-Bio-Zeugen lesen
   (`disequilibrium_register_probe.rs` steht).
 
 ## Forschung — Weberin (zweite Linien)
