@@ -1,6 +1,13 @@
+use std::cmp::Ordering;
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
+use std::io::{Read, Seek, SeekFrom, Write};
+use std::path::Path;
+
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_SMG_E_GEO, COMP_SMG_E_NEZ, COMP_SMG_N_GEO, COMP_SMG_N_NEZ,
-    COMP_SMG_Z_GEO, COMP_SMG_Z_NEZ, MAGIC_SMG,
+    pack_iaga, parse_bin, smg_record_at, smg_record_bytes, write_bin, GeoRec, COMP_SMG_E_GEO,
+    COMP_SMG_E_NEZ, COMP_SMG_N_GEO, COMP_SMG_N_NEZ, COMP_SMG_Z_GEO, COMP_SMG_Z_NEZ, MAGIC_SMG,
+    SMG_REC_BYTES,
 };
 use omegaflow::archivar::{fetch_raw, jpath, parse_json, JsonVal};
 use omegaflow::cdn::upload_release;
@@ -13,6 +20,80 @@ const LOGON: &str = "omegaflow";
 const FILL_NT: f64 = 999999.0;
 const CHUNK_S: f64 = 2419200.0;
 const DAY: f64 = 86400.0;
+
+struct StationPos {
+    code: String,
+    lat: f64,
+    lon: f64,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+struct Key {
+    t: f64,
+    comp: u32,
+    station: u32,
+}
+
+impl Eq for Key {}
+
+impl PartialOrd for Key {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Key {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.t
+            .total_cmp(&other.t)
+            .then_with(|| self.comp.cmp(&other.comp))
+            .then_with(|| self.station.cmp(&other.station))
+    }
+}
+
+fn key_of(r: &GeoRec) -> Key {
+    Key {
+        t: r.t,
+        comp: r.comp,
+        station: r.station,
+    }
+}
+
+struct PartReader {
+    inner: std::io::BufReader<std::fs::File>,
+    current: GeoRec,
+}
+
+impl PartReader {
+    fn open(path: &Path) -> std::io::Result<Option<Self>> {
+        let file = std::fs::File::open(path)?;
+        let mut inner = std::io::BufReader::new(file);
+        let mut buf = [0u8; SMG_REC_BYTES];
+        match inner.read_exact(&mut buf) {
+            Ok(_) => {
+                let current = smg_record_at(&buf, 0).ok_or_else(|| {
+                    std::io::Error::new(std::io::ErrorKind::InvalidData, "short part record")
+                })?;
+                Ok(Some(Self { inner, current }))
+            }
+            Err(_) => Ok(None),
+        }
+    }
+
+    fn advance(&mut self) -> bool {
+        let mut buf = [0u8; SMG_REC_BYTES];
+        match self.inner.read_exact(&mut buf) {
+            Ok(_) => match smg_record_at(&buf, 0) {
+                Some(r) => {
+                    self.current = r;
+                    true
+                }
+                None => false,
+            },
+            Err(_) => false,
+        }
+    }
+}
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -82,22 +163,46 @@ fn num_after(s: &str, key: &str) -> Option<f64> {
     tail[..j].trim().parse().ok()
 }
 
-fn station_position(code: &str) -> Option<(f64, f64)> {
+fn all_stations() -> Option<Vec<StationPos>> {
     let text = fetch_raw(MAGSTID, None, &[], 3600)?;
-    let needle = format!("id:\"{code}\"");
-    let start = text.find(&needle)?;
-    let region = &text[start..];
-    let lat = num_after(region, "geolat:")?;
-    let lon_raw = num_after(region, "geolon:")?;
-    let lon = if lon_raw > 180.0 {
-        lon_raw - 360.0
-    } else {
-        lon_raw
-    };
-    if lat.is_finite() && lon.is_finite() {
-        Some((lat, lon))
-    } else {
+    let mut out = Vec::new();
+    let mut rest: &str = &text;
+    loop {
+        let Some(start) = rest.find("id:\"") else {
+            break;
+        };
+        let after = &rest[start + 4..];
+        let Some(end) = after.find('"') else { break };
+        let code = &after[..end];
+        let region = &rest[start..];
+        rest = &after[end..];
+        if code.len() != 3 || !code.bytes().all(|b| b.is_ascii_uppercase()) {
+            continue;
+        }
+        let Some(lat) = num_after(region, "geolat:") else {
+            continue;
+        };
+        let Some(lon_raw) = num_after(region, "geolon:") else {
+            continue;
+        };
+        let lon = if lon_raw > 180.0 {
+            lon_raw - 360.0
+        } else {
+            lon_raw
+        };
+        if !(lat.is_finite() && lon.is_finite()) {
+            continue;
+        }
+        out.push(StationPos {
+            code: code.to_string(),
+            lat,
+            lon,
+        });
+    }
+    if out.is_empty() {
         None
+    } else {
+        Some(out)
     }
 }
 
@@ -130,13 +235,9 @@ fn fetch_chunk(start: &str, extent: f64, station: &str) -> Option<Vec<JsonVal>> 
     None
 }
 
-fn compile_window(station: &str, start_unix: f64, days: f64, lsk: &LeapSeconds) -> Vec<GeoRec> {
-    let (lat, lon) = match station_position(station) {
-        Some(p) => p,
-        None => {
-            eprintln!("{station}: magstid.php carries no position — the bin stays unwritten");
-            return Vec::new();
-        }
+fn harvest_station(pos: &StationPos, start_unix: f64, days: f64, lsk: &LeapSeconds) -> Vec<GeoRec> {
+    let Some(station) = pack_iaga(&pos.code) else {
+        return Vec::new();
     };
     let mut out: Vec<GeoRec> = Vec::new();
     let mut cursor = start_unix;
@@ -144,8 +245,11 @@ fn compile_window(station: &str, start_unix: f64, days: f64, lsk: &LeapSeconds) 
     while cursor < end {
         let extent = (end - cursor).min(CHUNK_S);
         let chunk_start = iso_utc(cursor);
-        let Some(records) = fetch_chunk(&chunk_start, extent, station) else {
-            eprintln!("{station} {chunk_start}: chunk void — no records flow from the API");
+        let Some(records) = fetch_chunk(&chunk_start, extent, &pos.code) else {
+            eprintln!(
+                "{} {chunk_start}: chunk void — no records flow from the API",
+                pos.code
+            );
             cursor += extent;
             continue;
         };
@@ -179,13 +283,14 @@ fn compile_window(station: &str, start_unix: f64, days: f64, lsk: &LeapSeconds) 
                 };
                 out.push(GeoRec {
                     t: tdb,
-                    lat,
-                    lon,
+                    lat: pos.lat,
+                    lon: pos.lon,
                     alt: 0.0,
                     freq: 0.0,
                     bin_width,
                     val,
                     comp,
+                    station,
                 });
             }
         }
@@ -195,16 +300,89 @@ fn compile_window(station: &str, start_unix: f64, days: f64, lsk: &LeapSeconds) 
     out
 }
 
+fn write_part(path: &Path, records: &[GeoRec]) -> std::io::Result<()> {
+    let mut buf = Vec::with_capacity(records.len() * SMG_REC_BYTES);
+    for r in records {
+        buf.extend_from_slice(&smg_record_bytes(r));
+    }
+    std::fs::write(path, &buf)
+}
+
+fn merge_parts(parts: &[std::path::PathBuf], out: &str) -> std::io::Result<u64> {
+    let mut readers: Vec<PartReader> = Vec::new();
+    for p in parts {
+        if let Some(r) = PartReader::open(p)? {
+            readers.push(r);
+        }
+    }
+    let mut heap = BinaryHeap::new();
+    for (i, r) in readers.iter().enumerate() {
+        heap.push(Reverse((key_of(&r.current), i)));
+    }
+    let mut f = std::fs::File::create(out)?;
+    f.write_all(&MAGIC_SMG)?;
+    f.write_all(&0u32.to_le_bytes())?;
+    let mut n: u64 = 0;
+    let mut buf = Vec::with_capacity(SMG_REC_BYTES * 4096);
+    while let Some(Reverse((_, i))) = heap.pop() {
+        buf.extend_from_slice(&smg_record_bytes(&readers[i].current));
+        n += 1;
+        if readers[i].advance() {
+            heap.push(Reverse((key_of(&readers[i].current), i)));
+        }
+        if buf.len() >= SMG_REC_BYTES * 4096 {
+            f.write_all(&buf)?;
+            buf.clear();
+        }
+    }
+    f.write_all(&buf)?;
+    f.flush()?;
+    f.seek(SeekFrom::Start(4))?;
+    f.write_all(&(n as u32).to_le_bytes())?;
+    f.flush()?;
+    Ok(n)
+}
+
+fn verify_stream(out: &str, expected: u64) -> bool {
+    let Ok(mut f) = std::fs::File::open(out) else {
+        return false;
+    };
+    let mut header = [0u8; 8];
+    if f.read_exact(&mut header).is_err() || header[0..4] != MAGIC_SMG {
+        return false;
+    }
+    let n = u32::from_le_bytes(header[4..8].try_into().unwrap()) as u64;
+    if n != expected {
+        return false;
+    }
+    let mut prev: Option<Key> = None;
+    let mut buf = [0u8; SMG_REC_BYTES];
+    for _ in 0..n {
+        if f.read_exact(&mut buf).is_err() {
+            return false;
+        }
+        let Some(r) = smg_record_at(&buf, 0) else {
+            return false;
+        };
+        let k = key_of(&r);
+        if let Some(p) = prev {
+            if p > k {
+                return false;
+            }
+        }
+        prev = Some(k);
+    }
+    let mut tail = [0u8; 1];
+    f.read_exact(&mut tail).is_err()
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let station = match arg_value(&args, "--station") {
-        Some(v) => v,
-        None => {
-            eprintln!("--station (IAGA code, e.g. TRO) required");
-            std::process::exit(1);
-        }
-    };
+    let all = args.iter().any(|a| a == "--all");
+    let stations_file = arg_value(&args, "--stations");
+    let single = arg_value(&args, "--station");
+
     let start = match arg_value(&args, "--start") {
         Some(v) => v,
         None => {
@@ -244,31 +422,125 @@ fn main() {
         }
     };
 
-    let records = compile_window(&station, start_unix, days, &lsk);
-    if records.is_empty() {
-        eprintln!("{station}: no measured nT records — the bin stays unwritten (0 honored)");
+    let positions = match all_stations() {
+        Some(p) => p,
+        None => {
+            eprintln!("magstid.php carries no station list — nothing to harvest");
+            std::process::exit(1);
+        }
+    };
+
+    let mut chosen: Vec<&StationPos> = Vec::new();
+    if all {
+        chosen = positions.iter().collect();
+    } else if let Some(path) = stations_file {
+        let Ok(text) = std::fs::read_to_string(&path) else {
+            eprintln!("--stations {path} unreadable");
+            std::process::exit(1);
+        };
+        for line in text.lines() {
+            let code = line.trim();
+            if code.is_empty() || code.starts_with('#') {
+                continue;
+            }
+            match positions.iter().find(|p| p.code == code) {
+                Some(p) => chosen.push(p),
+                None => eprintln!("{code}: magstid.php carries no position — station skipped"),
+            }
+        }
+    } else if let Some(code) = single {
+        match positions.iter().find(|p| p.code == code) {
+            Some(p) => chosen.push(p),
+            None => {
+                eprintln!("{code}: magstid.php carries no position — nothing to harvest");
+                std::process::exit(1);
+            }
+        }
+    } else {
+        eprintln!("--station <IAGA>, --stations <file>, or --all required");
         std::process::exit(1);
     }
-    let bytes = write_bin(MAGIC_SMG, &records);
+
+    if chosen.is_empty() {
+        eprintln!("no stations to harvest — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
-    if std::fs::write(&out, &bytes).is_err() {
-        eprintln!("write {} returned void", out);
-        std::process::exit(1);
-    }
-    match parse_bin(MAGIC_SMG, &bytes) {
-        Some(parsed) => eprintln!(
-            "{station}: {} geo records ({:.0} d window, {} B) written, roundtrip parses",
-            parsed.len(),
-            days,
-            bytes.len()
-        ),
-        None => {
-            eprintln!("{}: roundtrip parse void — the bin stays unverified", out);
+
+    if chosen.len() == 1 {
+        let records = harvest_station(chosen[0], start_unix, days, &lsk);
+        if records.is_empty() {
+            eprintln!(
+                "{}: no measured nT records — the bin stays unwritten (0 honored)",
+                chosen[0].code
+            );
             std::process::exit(1);
         }
+        let bytes = write_bin(MAGIC_SMG, &records);
+        if std::fs::write(&out, &bytes).is_err() {
+            eprintln!("write {out} returned void");
+            std::process::exit(1);
+        }
+        match parse_bin(MAGIC_SMG, &bytes) {
+            Some(parsed) => eprintln!(
+                "{}: {} geo records ({:.0} d window, {} B) written, roundtrip parses",
+                chosen[0].code,
+                parsed.len(),
+                days,
+                bytes.len()
+            ),
+            None => {
+                eprintln!("{out}: roundtrip parse void — the bin stays unverified");
+                std::process::exit(1);
+            }
+        }
+    } else {
+        let mut parts: Vec<std::path::PathBuf> = Vec::new();
+        let mut station_count = 0usize;
+        for (i, pos) in chosen.iter().enumerate() {
+            let records = harvest_station(pos, start_unix, days, &lsk);
+            if records.is_empty() {
+                eprintln!("{}: no measured nT records — station skipped", pos.code);
+                continue;
+            }
+            let part = format!("{out}.part.{i}");
+            if let Err(e) = write_part(std::path::Path::new(&part), &records) {
+                eprintln!("write {part} returned void: {e}");
+                std::process::exit(1);
+            }
+            parts.push(std::path::PathBuf::from(part));
+            station_count += 1;
+        }
+        if parts.is_empty() {
+            eprintln!(
+                "no station carried measured nT records — the bin stays unwritten (0 honored)"
+            );
+            std::process::exit(1);
+        }
+        let n = match merge_parts(&parts, &out) {
+            Ok(n) => n,
+            Err(e) => {
+                eprintln!("merge {out} returned void: {e}");
+                std::process::exit(1);
+            }
+        };
+        for p in &parts {
+            let _ = std::fs::remove_file(p);
+        }
+        if !verify_stream(&out, n) {
+            eprintln!("{out}: stream verify void — the bin stays unverified");
+            std::process::exit(1);
+        }
+        let bytes = 8 + n * SMG_REC_BYTES as u64;
+        eprintln!(
+            "{station_count} stations: {n} geo records ({:.0} d window, {bytes} B) merged, stream verify holds",
+            days
+        );
     }
+
     if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
