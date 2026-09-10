@@ -2,7 +2,7 @@
   title: Handover — nicht-autonom: was die Kybernautin nicht selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 2fd27eb7e333b36ab1c37009f269a1b064cc14fe682bf181b349da04f66deb88
+  sha256: ec29d64c7bf33691167859f261b4376d6a8e63b7d5a531626464fc20799fb3ed
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -42,6 +42,11 @@ Entsperrer. Die autonomen Pflichten stehen im Gegen-Handover.
   3.12.2026; AGU-2013-Abstract (Anderson) menschlich zu prüfen.
 - **gaia-dr4-iapetus** — Gaia DR4 (2.12.2026) als 4D-Feld.
 - **flyby2-addendum** — Metrik vor dem 28.09.
+- **LISA Pathfinder** — die Archiv-Selbstregistrierung ist bis **15.09.2026**
+  gesperrt („Self-registration temporarily unavailable"); danach registrieren →
+  AIO-HTTP-Zugang (`aio/metadata-action`, `aio/data-action`) → Δg-Zeitreihe
+  programmatisch. Die AIO existiert — der „interactive-only"-Auftrag lag falsch,
+  der echte Blocker war Auth + Termin.
 
 ## Laufende Ernten (Check-back, kein Todo)
 
