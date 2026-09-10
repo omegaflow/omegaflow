@@ -80,6 +80,7 @@ pub const COMP_ISD_MAX: u32 = 5;
 pub const COMP_ANR_NEWEST: u32 = 1;
 pub const COMP_ANR_OLDEST: u32 = 2;
 pub const COMP_ANR_BRIGHTEST: u32 = 3;
+pub const COMP_ANR_MAX: u32 = 3;
 
 pub const MAGIC_ANR: [u8; 4] = *b"ANR1";
 pub const ANR_REC_BYTES: usize = 36;
@@ -124,6 +125,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
         "noaa_gsod" => Some(MAGIC_GSOD),
         "noaa_isd" => Some(MAGIC_ISD),
+        "antares_loci" => Some(MAGIC_ANR),
         _ => None,
     }
 }
@@ -142,13 +144,18 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
         "noaa_gsod" => Some(COMP_GSOD_MAX),
         "noaa_isd" => Some(COMP_ISD_MAX),
+        "antares_loci" => Some(COMP_ANR_MAX),
         _ => None,
     }
 }
 
 pub fn pack_iaga(code: &str) -> Option<u32> {
     let b = code.as_bytes();
-    if b.len() != 3 || !b.iter().all(|c| c.is_ascii_uppercase()) {
+    if b.len() != 3
+        || !b
+            .iter()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit())
+    {
         return None;
     }
     Some((b[0] as u32) | (b[1] as u32) << 8 | (b[2] as u32) << 16)
@@ -157,7 +164,10 @@ pub fn pack_iaga(code: &str) -> Option<u32> {
 pub fn iaga_of(station: u32) -> Option<String> {
     let c = |i: u32| ((station >> (8 * i)) & 0xff) as u8;
     let cs = [c(0), c(1), c(2)];
-    if !cs.iter().all(|x| x.is_ascii_uppercase()) {
+    if !cs
+        .iter()
+        .all(|x| x.is_ascii_uppercase() || x.is_ascii_digit())
+    {
         return None;
     }
     String::from_utf8(cs.to_vec()).ok()
@@ -446,6 +456,20 @@ mod tests {
         assert_eq!(pack_iaga("tro"), None);
         assert_eq!(pack_iaga("TROO"), None);
         assert_eq!(iaga_of(0), None);
+    }
+
+    #[test]
+    fn pack_iaga_digit_code_roundtrip() {
+        for code in ["T03", "A01", "1AB", "123", "B27", "PG5"] {
+            let packed = pack_iaga(code).expect("digit code packs");
+            assert_eq!(iaga_of(packed).as_deref(), Some(code));
+        }
+        assert_eq!(pack_iaga("t03"), None);
+        assert_eq!(pack_iaga("T0"), None);
+        assert_eq!(pack_iaga("T033"), None);
+        assert_eq!(pack_iaga("T-3"), None);
+        assert_ne!(pack_iaga("T03"), pack_iaga("TRO"));
+        assert_eq!(pack_iaga("TRO"), Some(0x4f5254));
     }
 
     #[test]
