@@ -17,6 +17,21 @@ use omegaflow::ephemeris::{
     write_binary, ASTEROID_GRANULE_DAYS, GRANULE_DAYS, J2000_EPOCH,
 };
 
+fn emit(line: &str) {
+    eprintln!("{}", line);
+    let path = std::path::Path::new("/tmp/opencode/ephemeris_compiler.log");
+    if let Some(parent) = path.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+    {
+        let _ = writeln!(f, "{}", line);
+    }
+}
+
 fn flatten_targets(kernels: &[SpkFile]) -> Vec<(i32, String, Option<i32>)> {
     let table = body_table();
     let mut by_id: BTreeMap<i32, (String, Option<i32>)> = BTreeMap::new();
@@ -596,13 +611,14 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
 fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
     let _ = std::fs::create_dir_all(dest);
     let mut paths = Vec::new();
+    let total = entries.len();
     for e in entries {
         let path = format!("{}/{}", dest, e.name);
         let fresh = std::fs::metadata(&path).map_or(false, |m| m.len() > 0);
         if fresh {
-            eprintln!("fetch: {} fresh ({} B)", e.name, e.size);
+            emit(&format!("fetch: {} fresh ({} B)", e.name, e.size));
         } else {
-            eprintln!("fetch: {} ({} B)", e.url, e.size);
+            emit(&format!("fetch: {} ({} B)", e.url, e.size));
             let status = Command::new("curl")
                 .arg("-sSfL")
                 .arg("--retry")
@@ -616,22 +632,24 @@ fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
             match status {
                 Ok(s) if s.success() => {}
                 _ => {
-                    eprintln!("fetch: {} returned void", e.url);
+                    emit(&format!("fetch: {} returned void", e.url));
                     let _ = std::fs::remove_file(&path);
                     continue;
                 }
             }
             let landed = std::fs::metadata(&path).ok().map(|m| m.len());
             if !landed.map_or(false, |n| n > 0) {
-                eprintln!(
+                emit(&format!(
                     "fetch: {} landed 0 bytes — the download stays rejected",
                     e.url
-                );
+                ));
                 let _ = std::fs::remove_file(&path);
                 continue;
             }
         }
         paths.push(path);
+        emit(&format!("progress {} / {}", paths.len(), total));
+        emit(&format!("download {} ({} B)", e.name, e.size));
     }
     paths
 }
@@ -758,8 +776,10 @@ fn flatten(
     }
     let pck_bodies: HashMap<i32, PckBody> = omegaflow::pck::parse(gm_text, pck_text);
     let targets = flatten_targets(&spk_files);
+    let target_count = targets.len();
     let mut written = Vec::new();
     let mut upload_failed = 0usize;
+    emit("phase flatten");
     for (target_id, body_name, _) in &targets {
         if small_bodies_only && *target_id < 2000000 {
             continue;
@@ -813,18 +833,20 @@ fn flatten(
             &path, body_name, &granules, &rotations, &nutation, &wgccre, og,
         ) {
             written.push(body_name.clone());
-            eprintln!(
-                "flatten {}: {} granules → {}",
+            emit(&format!("progress {} / {}", written.len(), target_count));
+            emit(&format!(
+                "flatten {}: {} granules",
                 body_name,
-                granules.len(),
-                path
-            );
+                granules.len()
+            ));
             if ci_mode && !upload_asset(&path) {
                 upload_failed += 1;
+            } else if ci_mode {
+                emit(&format!("upload {} → CDN", body_name));
             }
         }
     }
-    eprintln!("flatten done: {} bodies", written.len());
+    emit(&format!("flatten done: {} bodies", written.len()));
     if ci_mode && upload_failed > 0 {
         eprintln!(
             "upload: {} of {} assets did not reach the CDN",
@@ -1223,6 +1245,7 @@ fn main() {
         for e in &selected {
             eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
         }
+        emit("phase download");
         let paths = download_missing(&selected, &dest);
         let (kernels, bpcs, gm_text, pck_texts, fks) = classify(&paths);
         let pck_merged: String = pck_texts.concat();
