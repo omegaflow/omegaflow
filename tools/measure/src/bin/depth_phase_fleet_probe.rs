@@ -65,8 +65,7 @@ fn main() {
     );
     println!("error budget (before the run): 1 s pick scatter -> ~3.2 km per station; the per-event median");
     println!("  narrows with sqrt(n) stations, the fleet mean narrows with sqrt(N) events");
-    println!("polarity witness: free-surface R_pp is negative across the steep band (befund");
-    println!("  tiefenphasen-polaritaet) — a sign flip carries the source term, not the angle");
+    println!("polarity witness: free-surface R_pp is negative across the steep band (src/archivar/ak135.rs free_surface_pp) — a sign flip carries the source term, not the angle");
     println!(
         "Δ-restriction gate (named instrument, registered before the first fetch): a station whose"
     );

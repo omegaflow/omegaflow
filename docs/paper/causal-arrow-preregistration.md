@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: e3aeacb720c7c67e7d7693c704550087825f2d69f7e6be2a5abfc1506f5fb82e
+  sha256: 0ddee383c9a84f1f892ad5402dfca8af34a1b712540978f861a3456106c0c031
   status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/concepts/der-kausalpfeil.md
 -->
@@ -86,7 +86,7 @@ both at 12/48) reflecting the small sample and the slow stage dynamics.
 > second argument is the source, as "a→b"; `te.rs:92`).
 > The genuine Niederschlag→Pegel at Lag 24 is **TE 0.223 below its
 > threshold** and falls under conditioning on the shared synoptic driver
-> (`docs/befund/befund-grat-trishuli-konditionierung.md`). The
+> (`docs/paper/sturzflut-tibet-pfeil.md` §3.5, the conditioning runs). The
 > pre-registered direction hypothesis (Niederschlag → Abfluss) stands as
 > sealed; the verdict cell is corrected to: **no forward Niederschlag→Pegel
 > arrow at Lag 24 — the arrow falls to silence.** The short-lag forward

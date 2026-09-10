@@ -279,8 +279,7 @@ fn main() {
     both(&mut rep, "geometry at the TDB day start from galileo_daily / earth barycentric ICRS (AU = 1.495978707e11 m): r heliocentric, eps elongation at the Earth, alpha at the Sun".to_string());
     both(
         &mut rep,
-        "operational anchors (external DSN research, dated events; see the befund register):"
-            .to_string(),
+        "operational anchors (external DSN research, dated events):".to_string(),
     );
     for (name, y, m, d) in ANCHORS {
         both(&mut rep, format!("  {y:04}-{m:02}-{d:02}  {name}"));

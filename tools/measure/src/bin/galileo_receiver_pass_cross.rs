@@ -246,12 +246,10 @@ fn main() {
                 *strong_census.entry((mo, st, rx)).or_insert(0) += 1;
             }
             let day = day_key(tdb);
-            let d = buf
-                .entry((mo, st, day))
-                .or_insert_with(|| DayBuf {
-                    floor: Vec::new(),
-                    strong: Vec::new(),
-                });
+            let d = buf.entry((mo, st, day)).or_insert_with(|| DayBuf {
+                floor: Vec::new(),
+                strong: Vec::new(),
+            });
             let samp = Samp { tdb, resid, rx };
             if class == CLASS_FLOOR {
                 d.floor.push(samp);
@@ -328,7 +326,7 @@ fn main() {
 
     push(String::new());
     push("== 1. coverage ==".to_string());
-    push("register reference (resid, befund-galileo-floor-subtages-recurrenz): robust floor day-cells n>=30, loud = RMS>=1 Hz — M1 st14 62/32 st43 64/35 st63 68/34; M2 st14 38/17 st43 35/16 st63 39/22".to_string());
+    push("register reference (resid, galileo_floor_subday_clock_probe): robust floor day-cells n>=30, loud = RMS>=1 Hz — M1 st14 62/32 st43 64/35 st63 68/34; M2 st14 38/17 st43 35/16 st63 39/22".to_string());
     for mo in MODES {
         for st in TRIO {
             let mut robust = 0usize;
@@ -341,7 +339,9 @@ fn main() {
                     }
                 }
             }
-            push(format!("  receiver M{mo} st{st}: robust floor days {robust}, loud {loud}"));
+            push(format!(
+                "  receiver M{mo} st{st}: robust floor days {robust}, loud {loud}"
+            ));
         }
     }
     if resid_exists {
@@ -357,7 +357,9 @@ fn main() {
                         }
                     }
                 }
-                push(format!("  resid   M{mo} st{st}: robust floor days {robust}, loud {loud}"));
+                push(format!(
+                    "  resid   M{mo} st{st}: robust floor days {robust}, loud {loud}"
+                ));
             }
         }
     }
@@ -386,7 +388,10 @@ fn main() {
     let mut n_present_quiet = 0usize;
     let mut n_present_thin = 0usize;
     let mut n_absent = 0usize;
-    for (mo, st) in MODES.iter().flat_map(|m| TRIO.iter().map(move |s| (*m, *s))) {
+    for (mo, st) in MODES
+        .iter()
+        .flat_map(|m| TRIO.iter().map(move |s| (*m, *s)))
+    {
         if let Some(days) = resid_loud.get(&(mo, st)) {
             for day in days {
                 n_resid_loud += 1;
@@ -408,7 +413,10 @@ fn main() {
         "  template loud days (resid, M1+M2) {n_resid_loud}; loud in receiver {n_matched_loud}; present but quiet-robust {n_present_quiet}; present but thin {n_present_thin}; absent from receiver floor {n_absent}"
     ));
     let mut recv_loud_only: Vec<(i64, i64, i64)> = Vec::new();
-    for (mo, st) in MODES.iter().flat_map(|m| TRIO.iter().map(move |s| (*m, *s))) {
+    for (mo, st) in MODES
+        .iter()
+        .flat_map(|m| TRIO.iter().map(move |s| (*m, *s)))
+    {
         for (&(m2, s2, d2), &(loud, _)) in &recv_floor_day {
             if m2 == mo && s2 == st && loud {
                 let in_resid = match resid_loud.get(&(mo, st)) {
@@ -435,7 +443,10 @@ fn main() {
         recv_loud_only.len(),
         extra_str.join(" | ")
     ));
-    push("  receiver-vs-resid floor day-cell set differences (floor day-cells with n>=1):".to_string());
+    push(
+        "  receiver-vs-resid floor day-cell set differences (floor day-cells with n>=1):"
+            .to_string(),
+    );
     for mo in MODES {
         for st in TRIO {
             let mut resid_days: BTreeSet<i64> = BTreeSet::new();
@@ -641,7 +652,10 @@ fn main() {
                     )
                 })
                 .collect();
-            push(format!("M{mo} st{st} strong config spans: {}", parts.join(" | ")));
+            push(format!(
+                "M{mo} st{st} strong config spans: {}",
+                parts.join(" | ")
+            ));
         }
     }
 
