@@ -7526,3 +7526,8 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
+format spk
+at sun
+ttl 86400
