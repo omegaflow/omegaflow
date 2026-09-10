@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: 8035c41aa18c601e369b41c15cc0e4b0d7338fbebd4d011a0924b55bd1669f56
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
 # Handover — Befund-Migration (2026-09-10)
