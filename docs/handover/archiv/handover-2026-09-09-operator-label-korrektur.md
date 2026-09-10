@@ -2,9 +2,9 @@
   title: Handover — Operator-Label-Korrektur: keine Operator-Pendings gemessen
   class: handover
   date: 2026-09-09
-  sha256: 0ad3ae97eaea27f6cb70c6e546bd2f276d69f607cc7ccc9edc68efa7a8fafe24
-  status: live
-  see-also: docs/handover/handover-2026-09-09-disjunkte-linien-folge.md,
+  sha256: 852293ca3c5feceb0ff8469abcb11815158a6cf3f834fb517269d681c1c21f53
+  status: archived
+  see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md,
             docs/handover/handover-2026-09-09-mechanische-reste.md
 -->
 # Handover — Operator-Label-Korrektur: keine Operator-Pendings gemessen
@@ -33,7 +33,7 @@ keine der vier Pendings braucht ein Operator-Wort — „Operator-seitig" /
 
 ## Geändert
 
-- `docs/handover/handover-2026-09-09-disjunkte-linien-folge.md` — die vier
+- `docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md` — die vier
   Labels tragen die gemessenen Fassungen (sha256 neu gerechnet).
 - `docs/handover/handover-2026-09-09-mechanische-reste.md` — matrixmachine-Zeile,
   abfluss-Zeile, beide Bucket-Dispositions-Zeilen (sha256 neu gerechnet).
