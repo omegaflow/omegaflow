@@ -395,6 +395,7 @@ fn fitacf_bin_records(file: &Hdf5File, lsk: &omegaflow::lsk::LeapSeconds) -> Vec
             bin_width: 0.0,
             val: v,
             comp: COMP_SDARN_V,
+            station: 0,
         });
     }
     out
