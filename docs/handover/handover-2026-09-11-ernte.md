@@ -2,13 +2,15 @@
   title: Handover — Ernte & Register (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 541c26e97a24d82c833d8660e54d341dcd4dc8a743d64bdbfd0cc1fbb362233f
+  sha256: 9bffb83efb26139ac6d7a27b3ad7d0923397c18912e7e153573f005ec92e96f6
   status: live
 -->
 # Handover — Ernte & Register (2026-09-11)
 
-Dedupliziert aus den archivierten Atom-Übergaben des 2026-09-10. Jede Zeile ist
-eine Sitzungs-Arbeit; erledigt = trägt Git.
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
+viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
+ist kein Aufwand.
 
 ## Ernte (Harvest)
 
