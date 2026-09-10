@@ -5,7 +5,7 @@
   sha256: 8672e46ddb665781db3f734add096155d3a4860c7cc341ed5ad15f161716160f
   status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-dispatch.md,
-            docs/handover/handover-2026-09-09-mechanische-reste.md
+            docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 # Handover — disjunkte Linien Folge: Register-Schluss, Provenienz-Notiz, Step-5 gemessen
 
