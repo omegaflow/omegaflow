@@ -53,6 +53,8 @@ phi/*
 # (TNO-Split-GM + Solar-ω). Alles andere im Katalog bleibt lokale Ernte.
 !phi/pipeline/
 phi/pipeline/*
+# Der Maschinen-Zwilling des Oszillator-Gates ist ein Registrierungs-Urteil — versioniert.
+!phi/pipeline/decline_lens.φ
 !phi/pipeline/catalog/
 phi/pipeline/catalog/*
 !phi/pipeline/catalog/asteroid_gm_sb441.φ
