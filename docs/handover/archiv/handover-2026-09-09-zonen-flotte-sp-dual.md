@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: cab3e7bfc3464b4a609fcf01def97a772ec38f3973154f3fa6ef56662407e061
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-zonen-flotte-pick-hebel.md docs/befund/befund-2026-09-09-zonen-flotte-sp-dual.md
 -->
 # Thematisches Handover — Tiefenphasen-Flotte (Folge-Atom: die sP-duale Inversion)
