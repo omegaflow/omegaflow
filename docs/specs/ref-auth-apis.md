@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 6371d6428b97c65803bebce41e34c5ab4da1c1a57ccfb54e4e235233cdb7f1b5
+  sha256: 163a56804d265540df635d5ee139fc993476afbe8c6b922becbaa6241f351316
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -206,7 +206,7 @@ und in `phi/pipeline/interesting_domains.φ`.
 | data.icos-cp.eu | `ICOS_USER`/`ICOS_PASS` | Login | CC-BY 4.0 | https://data.icos-cp.eu/ (cpauth.icos-cp.eu — Account vorhanden) |
 | gracedb.ligo.org | ~~`GRACEDB_TOKEN`~~ | ~~Auth~~ | offen (Alerts) | ~~https://gracedb.ligo.org/~~ — refused: Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft, kein Self-Service; public superevents offen in sources.φ. |
 | mast.stsci.edu | `MAST_TOKEN` | Token | Public Domain | https://mast.stsci.edu/ (TESS/HST/JWST-Photometrie, em — Token vorhanden) |
-| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` | Login | offen | https://toar-data.fz-juelich.de/ (API v2 vorhanden — Registrierung pending 2026-08-17) |
+| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` | Login (Vollzugang) | CC-BY 4.0 | https://toar-data.fz-juelich.de/ (API v2 gemessen 10.09.: **anonym nutzbar**, Limit 5 Zeitreihen, `/database_statistics/` offen = 65,6 Mrd. Datensätze / 24.385 Stationen; Vollzugang **läuft**: Anfrage 18.08. → Schröder-Rückfrage 24.08. → Antwort mit Projektbeschreibung raus — wartet auf Jülich) |
 
 **§E.1 — integriert (live in `phi/sources.φ`):**
 
