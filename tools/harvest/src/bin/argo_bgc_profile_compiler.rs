@@ -594,6 +594,7 @@ fn bgc_rows(bytes: &[u8], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<GeoRec> {
                 bin_width: 0.0,
                 val: *v,
                 comp,
+                station: 0,
             });
         }
     }
