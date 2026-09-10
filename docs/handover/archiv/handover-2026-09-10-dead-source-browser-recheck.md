@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: f1ece36b3838652fe28ea29a17327af667b2d0d06967fa9a0ec724df1bad8767
-  status: live
+  status: archived
   see-also: docs/SOURCE_PORT.md docs/concepts/kybernaut-native-methodology.md
 -->
 # Handover — dead-sources Browser-Recheck (2026-09-10)
