@@ -57,6 +57,9 @@ phi/pipeline/*
 phi/pipeline/catalog/*
 !phi/pipeline/catalog/asteroid_gm_sb441.φ
 !phi/pipeline/catalog/solar_omega_g.φ
+# Das NOAA-NODD-Dispositions-Register ist ein Registrierungs-Urteil (Bucket-Litmus,
+# ledger.φ:937) — versioniert wie dead_sources.φ/blocked_sources.φ.
+!phi/pipeline/catalog/noaa_nodd_disposition.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).

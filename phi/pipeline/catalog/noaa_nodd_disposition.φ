@@ -1,0 +1,309 @@
+# NOAA-NODD-Disposition — Register (2026-09-10)
+#
+# Regel: Bucket-Litmus, Rats-Verdikt ledger.φ:937 (4-Fragen-Kette in fester
+# Reihenfolge: Oszillator-Gate → Form → Manifestation → Überlauf).
+# Quelle: phi/pipeline/catalog/noaa_nodd_inventory.φ (Ernte 2026-08-19).
+# Kopfwörter: compiler-lease / konsument / pending / descoped. Kein url-line
+# (Bucket ist nie url-line — Granularität: url-line = eine Messung).
+# Duplikate kollabieren auf eine Disposition je Bucket (sea-ice-concentration
+# ×2, noaa-goes16 ×2). unverifizierter Bucket-Name → pending vor Disposition
+# (Kette ungefragt). Compiler-Lease mit Compiler pending = benannte
+# Register-Duty für das Nachfolge-Atom (nichts wird hier gebaut oder geerntet).
+# 101 catalog-Zeilen, 99 Datasets nach Duplikat-Kollaps.
+
+descoped s3://noaa-oar-arl-hysplit-pds
+note Frage 1 nein — HYSPLIT-Meteorologie-Archiv (Modellfelder); Frage 4 kein benannter Konsument — descoped (Befund: ARL-Archiv trägt Modell-Meteorologie, kein Messwert).
+
+descoped s3://noaa-ocs-nationalbathymetry-pds
+note Frage 1 nein — BlueTopo-.tiff-Gitter (kompiliert), kein Survey; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Gitter; die Survey-Messung lebt in hydrodata/dcdb).
+
+descoped s3://noaa-cdr-aerosol-optical-thickness-pds
+note Frage 1 nein — AOT-CDR ist abgeleitet (Retrieval aus Radianzen); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Klima-Datenprodukt, kein Messwert).
+
+descoped s3://noaa-cdr-gridsat-b1-pds
+note Frage 1 nein — GridSat-B1-FCDR ist reprozessiert/abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes FCDR, kein Messwert).
+
+descoped s3://noaa-cdr-sea-ice-concentration-pds
+note Frage 1 nein — Sea-Ice-Concentration-CDR, abgeleitet aus passiven Mikrowellen-Radianzen; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes CDR, kein Messwert).
+
+descoped s3://noaa-cdr-leaf-area-index-fapar-pds
+note Frage 1 nein — LAI/fAPAR-CDR ist abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Klima-Datenprodukt, kein Messwert).
+
+descoped s3://noaa-cfs-pds
+note Frage 1 nein — CFS ist ein Forecast-System (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
+
+descoped s3://noaa-normals-pds
+note Frage 1 nein — Climate Normals sind 30-Jahres-Mittel (aggregiert); Frage 4 kein benannter Konsument — descoped (Befund: aggregiert/abgeleitet, kein Messwert).
+
+compiler-lease s3://noaa-nos-coastal-lidar-pds
+note Frage 1 ja — Küsten-Lidar-Messung (em); Frage 2 Bulk-Archiv (Binär/LAS); Frage 3 Compiler-Lease, Compiler noaa_nos_lidar_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-cris-hist-pds
+note Frage 1 nein — CONUS-Thresholds sind abgeleitete Schwellwerte; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitete Indizes, kein Messwert).
+
+compiler-lease s3://noaa-dcdb-bathymetry-pds
+note Frage 1 ja — Bathymetrie-Lotung (Crowdsourced, Sonar); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_dcdb_bathymetry_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-eri-pds
+note Frage 1 ja — Emergency-Response-Imagery (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_eri_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-gefs-retrospective
+note Frage 1 nein — GEFS-Re-forecast ist Reanalyse (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, kein Messwert).
+
+descoped s3://noaa-gefs-pds
+note Frage 1 nein — GEFS ist Ensemble-Forecast (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
+
+descoped s3://noaa-gestofs-pds
+note Frage 1 nein — STOFS-2D ist Operational-Forecast (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
+
+descoped s3://noaa-gfs-bdp-pds
+note Frage 1 nein — GFS ist Forecast-System (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
+
+compiler-lease s3://noaa-ghcn-pds
+note Frage 1 ja — Stationsmessung, GHCN-D Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ghcn_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-enterprise-rainrate-pds
+note Frage 1 nein — GHE/Rain-Rate ist ein Schätzer (abgeleitet aus Satellit-IR); Frage 4 kein benannter Konsument — descoped (Befund: abgeleiteter Schätzer, kein Messwert).
+
+compiler-lease s3://noaa-gk2a-pds
+note Frage 1 ja — geostationäre Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gk2a_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-gmgsi-pds
+note Frage 1 nein — GMGSI ist ein Mosaik (abgeleitet); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Mosaik, kein Messwert).
+
+compiler-lease s3://noaa-goes16
+note Frage 1 ja — GOES-ABI-Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_goes_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-gsod-pds
+note Frage 1 ja — Stationsmessung, GSOD Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gsod_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-himawari8
+note Frage 1 ja — geostationäre Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_himawari_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-nos-historicalcharts-pds
+note Frage 1 nein — historische Seekarten sind Archiv-Dokumente; Frage 4 kein benannter Konsument — descoped (Befund: historisches Archiv, kein Messwert).
+
+descoped s3://hrrrzarr
+note Frage 1 nein — HRRR ist ein Modell (Zarr-Archiv); Frage 4 kein benannter Konsument — descoped (Befund: Modell-Output, kein Messwert).
+
+compiler-lease s3://noaa-global-hourly-pds
+note Frage 1 ja — Stationsmessung, ISD stündlich; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_isd_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-jpss
+note Frage 1 ja — polar-umlaufende Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_jpss_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-j-scope-pds
+note Frage 1 nein — J-SCOPE ist eine Prediction (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Prediction, kein Messwert).
+
+descoped s3://noaa-mrms-pds
+note Frage 1 nein — gerastertes Multi-Radar-Mosaik (QPE/BREF, abgeleitet aus NEXRAD); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Mosaik; die Rohlotung lebt in unidata-nexrad-level2).
+
+descoped s3://noaa-nam-pds
+note Frage 1 nein — Vorhersage (NAM); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nbm-para-pds
+note Frage 1 nein — Vorhersage (NBM Parallel); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nbm-grib2-pds
+note Frage 1 nein — Vorhersage (NBM); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nclimgrid-daily-pds
+note Frage 1 nein — abgeleitetes Gitterklima (NClimGrid, interpoliert); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet, keine Messung).
+
+compiler-lease s3://noaa-cors-pds
+note Frage 1 ja — RINEX-GNSS-Messreihe (em), Positions-Zeitreihen seit 1994 (Bewegung in Metern); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_cors_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-ndfd-pds
+note Frage 1 nein — Vorhersage (NDFD); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+compiler-lease s3://noaa-nesdis-swfo-ccor-1-pds
+note Frage 1 ja — SWFO CCOR-1-Koronagraph-Messung (em); Frage 2 Bulk-FITS-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ccor_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://unidata-nexrad-level2
+note Frage 1 ja — NEXRAD-Radar-Messung (em); Frage 2 Bulk-Binärarchiv Level II; Frage 3 Compiler-Lease, Compiler noaa_nexrad_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-nmme-pds
+note Frage 1 nein — Ensemble-Vorhersage (NMME); Frage 4 kein benannter Konsument — descoped (Befund: Ensemble/Vorhersage, keine Messung).
+
+descoped s3://noaa-nodd-kerchunk-pds
+note Frage 1 nein — Zarr-Referenzdateien (Kerchunk-Metadaten, Katalog); Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Metadaten, keine Messung).
+
+descoped s3://noaa-nos-cora-pds
+note Frage 1 nein — Reanalyse (CORA); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, keine Messung).
+
+descoped s3://noaa-nos-eccofs-pds
+note Frage 1 nein — Vorhersage (ECCOFS); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nos-scuba-icesat2-pds
+note Frage 1 nein — berechnete Bathymetrie (SCuBA, abgeleitet aus ICESat-2); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet (computed), keine Messung).
+
+descoped s3://noaa-nos-stofs3d
+note Frage 1 nein — Vorhersage (STOFS-3D); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nwm-pds
+note Frage 1 nein — Vorhersage (NWM Short-Range); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nws-aorc-v1-1-1km
+note Frage 1 nein — retrospektive Analyse/Forcing (AORC); Frage 4 kein benannter Konsument — descoped (Befund: Analyse, keine Messung).
+
+descoped s3://noaa-nws-fourcastnetgfs-pds
+note Frage 1 nein — Vorhersage (FourCastNetGFS, AI); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nws-graphcastgfs-pds
+note Frage 1 nein — Vorhersage/Ensemble (EAGLE/GraphCast, AI); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nws-hafs-pds
+note Frage 1 nein — Vorhersage (HAFS); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nws-naqfc-pds
+note Frage 1 nein — Vorhersage (NAQFC); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-nws-wam-ipe-pds
+note Frage 1 nein — Vorhersage (WAM-IPE WFS); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+descoped s3://noaa-oar-arl-nacc-pds
+note Frage 1 nein — Vorhersage (GFS); Frage 4 kein benannter Konsument — descoped (Befund: Vorhersage, keine Messung).
+
+compiler-lease s3://noaa-oar-hourly-gdp-pds
+note Frage 1 ja — Drifter-Messung (Position, Strömung, SST); Frage 2 Bulk-netCDF-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gdp_drifter_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-oar-myrorss-pds
+note Frage 1 nein — Reanalyse (MYRORSS); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, keine Messung).
+
+compiler-lease s3://noaa-oar-keo-papa-pds
+note Frage 1 ja — Ozean-Mooring-Messung (KEO/Papa); Frage 2 Bulk-netCDF-Archiv; Frage 3 Compiler-Lease, Compiler noaa_keo_papa_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-ocs-hydrodata-pds
+note Frage 1 ja — hydrographische Vermessung (Bathymetrie); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ocs_hydrodata_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-nos-ofs-pds
+note Frage 1 nein — Operational Forecast System (OFS); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-rap-pds
+note Frage 1 nein — Forecast-Modell (RAP); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-reanalyses-pds
+note Frage 1 nein — Reanalyse-Archiv (NNJA); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, keine Messung).
+
+descoped s3://noaa-rrfs-pds
+note Frage 1 nein — Forecast-System (RRFS, Prototyp); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-rtma-pds
+note Frage 1 nein — Analyse (RTMA/URMA, abgeleitet); Frage 4 kein benannter Konsument — descoped (Befund: Analyse, abgeleitet, keine Messung).
+
+descoped s3://noaa-nws-rtofs-pds
+note Frage 1 nein — Forecast-System (Global RTOFS); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-s102-pds
+note Frage 1 nein — kompilierte .h5-Bathymetrie-Oberflächen (Edition 3.0.0), abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: abgeleitetes Gitter; die Rohlotung lebt in hydrodata/dcdb).
+
+descoped s3://noaa-s111-pds
+note Frage 1 nein — Model-Forecast-Guidance (S-111); Frage 4 kein benannter Konsument — descoped (Befund: Model-Forecast, keine Messung).
+
+compiler-lease s3://noaa-swpc-pds
+note Frage 1 ja — Messungen (json/rtsw Sonnenwind, json/goes); json/solar-cycle F1 nein (aggregierter Zähl-Index); products/ (Forecast) und text/ (Bulletins) F1 nein; Frage 2 Bulk (JSON/Text-Archiv); Frage 3 Compiler-Lease, Compiler noaa_swpc_compiler pending (Register-Duty); Frage 4 entfällt.
+
+compiler-lease s3://noaa-swdi-pds
+note Frage 1 ja — Severe-Weather-Ereignisberichte mit Magnitude (Hagelgröße in Zoll, Tornado-EF; Vorbild Erdbeben-Klasse, hail_size_inch akustisch); Frage 2 Bulk (CSV-Archiv); Frage 3 Compiler-Lease, Compiler noaa_swdi_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-ufs-coastal-pds
+note Frage 1 nein — Forecast-Modell (UFS Coastal); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-ufs-gdas-pds
+note Frage 1 nein — DA-Testdaten; Frage 4 kein benannter Konsument — descoped (Befund: Testdaten, keine Messung).
+
+pending s3://-noaa-ufs-gefsv13replay-pds
+note unverifizierter Bucket-Name — Kette ungefragt (Register-Duty: verifizieren).
+
+descoped s3://noaa-ufs-htf-pds
+note Frage 1 nein — Test-Framework (HTF); Frage 4 kein benannter Konsument — descoped (Befund: Test-Framework, kein Dataset).
+
+descoped s3://noaa-ufs-land-da-pds
+note Frage 1 nein — Data-Assimilation (Land DA, abgeleitet); Frage 4 kein benannter Konsument — descoped (Befund: Data-Assimilation, keine Messung).
+
+descoped s3://noaa-ufs-rnrmarine-pds
+note Frage 1 nein — Reanalyse (Marine 1979–2019); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, keine Messung).
+
+descoped s3://noaa-ufs-regtests-pds
+note Frage 1 nein — Regression-Testdaten; Frage 4 kein benannter Konsument — descoped (Befund: Testdaten, kein Dataset).
+
+descoped s3://noaa-ufs-prototypes-pds
+note Frage 1 nein — Forecast-Prototypen (Subseasonal-to-Seasonal); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-ufs-srw-pds
+note Frage 1 nein — Forecast-Anwendung (UFS SRW); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
+
+descoped s3://noaa-nws-uwpd-cmip5-pds
+note Frage 1 nein — Downscaling (abgeleitet aus CMIP5-Modellen); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet, keine Messung).
+
+descoped s3://noaa-nws-gefswaves-reforecast-pds
+note Frage 1 nein — Reforecast (Wellen-Ensemble); Frage 4 kein benannter Konsument — descoped (Befund: Reforecast, keine Messung).
+
+compiler-lease s3://noaa-wod-pds
+note Frage 1 ja — ozeanographische Messungen (WOD-Profile); Frage 2 Bulk (netCDF-Archiv); Frage 3 Compiler-Lease, Compiler noaa_wod_compiler pending (Register-Duty); Frage 4 entfällt.
+
+descoped s3://noaa-wsa-enlil-pds
+note Frage 1 nein — Modell/Forecast (WSA-Enlil); Frage 4 kein benannter Konsument — descoped (Befund: Modell/Forecast, keine Messung).
+
+descoped s3://noaa-cdr-sea-surface-temp-optimum-interpolation-pds
+note Frage 1 nein — abgeleitet (SST-Optimum-Interpolation); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet, keine Messung).
+
+descoped s3://noaa-cdr-sea-surface-temp-whoi-pds
+note Frage 1 nein — abgeleitet (SST-Analyse WHOI); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet, keine Messung).
+
+descoped https://www.ready.noaa.gov/archives.php
+note Frage 1 nein — Archiv-Portal (READY/HYSPLIT-Runs), keine Einzelmessung; Frage 4 kein benannter Konsument — descoped (Befund: Archiv-Portal, keine Einzelmessung).
+
+descoped https://nomads.ncep.noaa.gov/pub/data/nccf/com/hysplit/prod/
+note Frage 1 nein — Modell-Produktionsdaten (HYSPLIT-Dispersion), abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: Modell-Produkt, keine Einzelmessung).
+
+descoped https://rda.ucar.edu/datasets/ds609.2/
+note Frage 1 nein — GDAS/FNL-Analyse/Reanalyse-Archiv (Modell-assimiliert); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse-Archiv, keine Einzelmessung).
+
+descoped https://www.cpc.ncep.noaa.gov/products/wesley/reanalysis.html
+note Frage 1 nein — Reanalyse-Archiv (NCEP/CPC global); Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse-Archiv, keine Einzelmessung).
+
+descoped https://mesonet.agron.iastate.edu/archive/
+note Frage 1 nein — Archiv-Portal (NEXRAD/ASOS-Listing), keine Einzelmessung am Endpunkt; Frage 4 kein benannter Konsument — descoped (Befund: Archiv-Portal, keine Einzelmessung).
+
+descoped https://nomads.ncep.noaa.gov/
+note Frage 1 nein — Modell-Daten-Server/Katalog, keine Einzelmessung; Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Modell-Server).
+
+descoped https://rda.ucar.edu/
+note Frage 1 nein — Forschungs-Datenarchiv-Portal (RDA), Katalog; Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Archiv-Portal).
+
+descoped https://thredds.ucar.edu/thredds/catalog.html
+note Frage 1 nein — THREDDS-Daten-Server/Katalog; Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Data-Server).
+
+descoped https://weather.uwyo.edu/upperair/sounding.html
+note Frage 1 nein — Archiv-/Listing-Seite für Sondierungen, keine Live-Einzelmessung am Endpunkt; Frage 4 kein benannter Konsument — descoped (Befund: Archiv-Seite, keine Einzelmessung).
+
+descoped https://www.avl.class.noaa.gov/saa/products/welcome
+note Frage 1 nein — Satellitendaten-Archiv-Portal (CLASS), Katalog; Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Archiv-Portal).
+
+descoped https://www.cpc.ncep.noaa.gov/products/monitoring_and_data/
+note Frage 1 nein — Monitoring-/Daten-Katalog-Seite (CPC); Frage 4 kein benannter Konsument — descoped (Befund: Katalog-Seite, keine Einzelmessung).
+
+descoped https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5
+note Frage 1 nein — Reanalyse-Datensatz (ECMWF ERA5), abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: Reanalyse, keine Einzelmessung).
+
+descoped https://www.eol.ucar.edu/all-field-projects-and-deployments
+note Frage 1 nein — Feldprojekt-Daten-Portal (EOL), Katalog; Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Portal).
+
+descoped https://www.ncei.noaa.gov/products
+note Frage 1 nein — Produkt-Katalog (NCEI); Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Portal).
+
+descoped https://www.nssl.noaa.gov/projects/mrms/
+note Frage 1 nein — Projekt-Portal (MRMS-Produkte), keine Einzelmessung am Endpunkt; Frage 4 kein benannter Konsument — descoped (Befund: Projekt-Portal, keine Einzelmessung).
+
+descoped https://www.spc.noaa.gov/climo/online/
+note Frage 1 nein — Klimatologie-Archiv (SPC, abgeleitete Statistik); Frage 4 kein benannter Konsument — descoped (Befund: Klimatologie-Archiv, keine Einzelmessung).
+
+descoped https://www.unidata.ucar.edu/data/
+note Frage 1 nein — Daten-Portal/Katalog (Unidata); Frage 4 kein benannter Konsument — descoped (Befund: Katalog/Portal).
+
+descoped https://www.wpc.ncep.noaa.gov/dailywxmap/pdffiles.html
+note Frage 1 nein — PDF-Wetterkarten-Archiv (WPC); Frage 4 kein benannter Konsument — descoped (Befund: Archiv, keine Messung).
+
+descoped https://pcmdi.llnl.gov/CMIP6/
+note Frage 1 nein — Klimamodell-Ensemble-Archiv (CMIP6), Projektion/abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: Modell-Ensemble-Archiv, keine Einzelmessung).
