@@ -23,7 +23,10 @@ jobs:
             f="phi/pipeline/catalog/${name}"
             if [ -f "$f" ]; then
               asset="${name%.*}.phi"
-              gh release upload ssd.jpl.nasa.gov "$f#${asset}" --clobber --repo omegaflow/sources
+              staging="$(mktemp -d)"
+              cp "$f" "$staging/$asset"
+              gh release upload ssd.jpl.nasa.gov "$staging/$asset" --clobber --repo omegaflow/sources
+              rm -rf "$staging"
               echo "uploaded ${name} as ${asset}"
               uploaded=$((uploaded+1))
             else
