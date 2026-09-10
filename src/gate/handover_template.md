@@ -3,7 +3,7 @@
   class: handover
   date: {date}
   status: live
-  see-also: docs/handover/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Übergabe — Drift gemessen
