@@ -1,0 +1,1626 @@
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_astro_untested_30-astro.φ
+note 30 Blöcke, alte Grammatik (source-Köpfe, verify false, lat_key ra/lon_key dec) — Port-Befund 2026-08-15: gemini → decline file-inventory (dead_sources.φ), mast → dead 404 (dead_sources.φ); Rest (28): framelos/ohne Container — votable-TAP-Blöcke → tap_compiler-Route, jpl_sbdb → kepler_map (P04), oac → Einzelobjekt, splatalogue → positionslos, gaia_dr3 → Index-Positionen (cmap-Index-Keys)
+
+verifiziert
+bestand /home/johannes/projects/archive/archeology/sources/sources_earth_untested_stac-sentinel.φ
+note Port-Befund 2026-08-15: sentinel2_l2a (element84) portiert + mit Samples verifiziert (proj:centroid-Keys, 6 Kanäle eo:cloud_cover 28,4/10,2/19,5); landsatlook-Blöcke: leer unter Fixture-Datum (dokumentierter Pass), Content-Type-json-Fix in fetch_raw_probe + fetch_raw_bytes_post, Template-Substitution im Sweep für post_body
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_exotic_untested_neutrino-ligo.φ
+note 16 Blöcke ohne force → Force-Gate; --gold + Sweep, dann Disposition
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_14k_new-unchecked.φ
+note 873 Blöcke, alte Grammatik — kein URL im kanonischen Register; der Kern der offenen Queue
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_13k_230-domains.φ
+note Untested-Variante, 230 Domains — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_15k_230-domains.φ
+note Untested-Variante, 230 Domains — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_183l.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_2k.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_7k.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_candidate-staging.φ
+note Untested-Variante, candidate-staging — kein URL im kanonischen Register
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ
+note 2572 Blöcke, reichste Gold-Parameter — 1191 parse-fähig nach --gold (temp_gold_convert_check); Sweep terminiert ZERO neue Live-Quellen, offene URL-Teile verbleiben
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_recovery_pre-cdn_25k_211-domains.φ
+note 1924 Blöcke, reichste Recovery-Parameter — Migration nach Protokoll
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/sources/sources_recovery_cdn-merged_60k_lost-blocks.φ
+note 5701 Lost-URLs ohne Extract-Parameter — Join aus sources_potential_pre-cdn_9k_richest + _params
+
+ausstehend
+queue phi/pipeline/queue/sources_potential_pre-cdn_9k_richest.φ
+note Join-Quelle (reichste Extract-Parameter) für die 5701 Lost-Blocks
+
+ausstehend
+queue phi/pipeline/queue/sources_potential_pre-cdn_params.φ
+note Join-Quelle (Parameter-Sätze) für die 5701 Lost-Blocks
+
+geparkt
+kandidat https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/{id}/W/measurements.json
+note Wasserstand (gravity/advective) — Fanout-Mechanik liegt seit P09, Block-Draft steht aus
+
+geparkt
+kandidat https://geomag.usgs.gov/ws/data/
+note em — Komponenten-Timeseries XYZF (Stations-Koordinaten in metadata.intermagnet.coordinates); Extraktionsmuster offen
+
+geparkt
+kandidat https://gwosc.org/api/v2/
+note gravity — Event-Route mit FAR/Skymaps; Position nur via Skymap — Parser-Gap
+
+geparkt
+kandidat https://gracedb.ligo.org/api/
+note gravity — superevents/events; Position nur via Skymap — Parser-Gap
+
+geparkt
+kandidat https://eyes.nasa.gov/dsn/data/dsn.json
+note em — dishes{}.az/el/ws/sigs; Positionen = statische DSN-Standortkoordinaten, Keyed Object — Parser-Gap
+
+geparkt
+kandidat https://api.wolfx.jp/cenc_eqlist.json
+note seismic-body — Objekt No1..NoN, Felder latitude/longitude/magnitude/depth (Strings) — Keyed-Object-Extrakt fehlt
+
+geparkt
+kandidat https://www.jma.go.jp/bosai/quake/data/list.json
+note seismic-body — Array, Position kodiert im `cod`-String „+lat+lon+tiefe" — cod-String-Extrakt fehlt
+
+geparkt
+kandidat http://skyserver.sdss.org/dr14/SkyserverWS/SQLSearch/SQL
+note em cmap — 0.Rows beim Probe; Validierung der SQL-Syntax ausstehend
+
+ausstehend
+bestand phi/pipeline/katalog/tap_index.φ
+note TAPVizieR-Inventar 64.148 Tabellen — 39 genutzt, BZCAT5 erledigt; 38 Tabellen-Bulks offen (tap_compiler-Muster)
+
+ausstehend
+bestand phi/pipeline/katalog/tap_index_irsa.φ
+note 995 IRSA-Tabellen — Bulk-Kandidaten offen
+
+ausstehend
+bestand phi/pipeline/katalog/tap_index_gavo.φ
+note 271 GAVO-Tabellen (~130 Schemata) — gedr3dist.main erledigt (K04b); Bulk-Kandidaten offen
+
+ausstehend
+bestand phi/pipeline/katalog/tap_index_ari.φ
+note 203 ARI-Heidelberg-Tabellen — Gaia-Archiv TAP + GCNS (331.312 Sterne ≤100pc, dist-Parameter) + MWSC (3.006 Haufen); Kompilat-Kandidaten offen
+
+ausstehend
+bestand phi/pipeline/katalog/tap_index_exoarchive.φ
+note 46 Exoplanet-Archiv-Tabellen — pscomppars erledigt; weitere Bulks offen
+
+ausstehend
+bestand phi/pipeline/katalog/b2find_catalogs_index.φ
+note B2FIND-GESAMT (live 2026-08-17): 1.470.033 Datasets. Host-Umzug: b2find.dkrz.de löst DNS nicht mehr — der lebende Host ist b2find.eudat.eu (CKAN package_search, count identisch 1,47M). Voll-Crawl über science-Tags erledigt: 166.980 unique Datasets in phi/pipeline/katalog/b2find_science_catalogs.φ (1445 force-gemappte Tags aus library.φ, count≤20000). Ziel: getaggte Science-Datasets → Grind-Kandidaten ziehen. Der 1,47M-Bulk ist größtenteils per-File-Records
+
+ausstehend
+bestand phi/pipeline/katalog/esa_geomagnetic_catalog.φ
+note VirES-HAPI-Katalog: 174 Datasets (live /hapi/catalog verifiziert) — nur 63 gedraftet (grind_vires_full.φ), 111 offen. ESA jenseits VirES (Sentinel Hub, Open Access Hub, ESAC: XMM/Gaia/Herschel/Planck) nicht gecrawlt — ESA_USER/ESA_PASS liegen in .secrets.local, Login-Services können direkt geprobt werden
+
+ausstehend
+queue phi/pipeline/queue/grind_nasa_donki.φ
+note NASA-DONKI komplett disponiert: 1 accepted (CME-Block — verifiziert 2026-08-20 + eingebaut in sources.φ: map . + cmeAnalyses.0-Pfade, at sun, em km/s; live: 200, 19 Records/7 d, alle mit speed, 17 lat+lon, 2 mit lat ohne lon → diese Zeilen tragen keine Position, 0 honored; Name korrigiert zu cme_plane_of_sky_speed_km_s — der Draft trug plane_of_speed; Caveat bleibt: longitude ist plane-of-sky-Projektion, nicht heliographisch), 8 decline (SEP/GST/IPS/HSS/MPC/RBE/WSA/notifications), 1 dead (SSD 404). FLR lebt bereits in sources.φ.
+
+ausstehend
+queue phi/pipeline/queue/grind_nasa.φ
+note 26 NASA-Endpoints disponiert — offene Blöcke einbauen
+
+geparkt
+kandidat https://api.coral.tsr.lol/stations/southeast_florida/current
+note Auto-Draft fehlklassifizierte stress_level als Geschwindigkeit (ist Bleaching-Index) — Hand-Kuration: sst_min thermal, hs_90th acoustic, Korallen-Strömung advective
+
+geparkt
+kandidat https://api.waqi.info/feed/here/?token=demo
+note freier WAQI-Key — token=demo durch {WAQI_TOKEN} ersetzen; iaqi.*.v-Felder korrekt klassifizieren (pm25/co/no2 diffusion, t thermal, w advective) — Auto-Draft hatte sie als gravity m
+
+geparkt
+kandidat https://api.coral.tsr.lol/stations/{gbr_central,gbr_northern,gbr_southern,southeast_florida}/current
+note 4 Korallen-Stationen: Auto-Draft fehlklassifiziert stress_level (Bleaching-Index) als Geschwindigkeit — Hand-Kuration: sst_min/sst_max thermal, hs_90th acoustic, dhw thermal, Strömung advective
+
+verifiziert
+bestand phi/pipeline/probe_drafts.φ
+note Welle 3 (Run 31910126006, 1h2m): 5.348 Drafts, Frame-Ableitung aus der Antwort nur 7% (340 geographic + 31 celestial), 93% frame ausstehend → braucht Katalog-Kontext; Jina-Key (500 RPM) ergab 81 Treffer; 371 frame-fertige geprobt → 14 Survivors → 2 Einbauten (ArcGIS-Ozean-Temperatur+Salinität, Environment-Canada-Wind), 8 Dispositionen, 4 park
+
+verifiziert
+bestand phi/pipeline/probe_drafts_enriched.φ
+note --draft-context (Welle 3,5): 4.977 ausstehend → 123 celestial (Netloc-Set) + 21 terrestrial (Titel-Vokabel) + 4.833 bleiben ausstehend — der Katalog-Kontext existiert nur für katalog-abgeleitete Kandidaten, die Master-URLs tragen nirgends Titel; ACHTUNG: terrestrial-Frame bei Quellen ohne Daten-Position = Anker(0,0)-Verdacht → Review-Kriterium wie coral/waqi
+
+ausstehend
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalten (mag/flux/redshift/velocity/parallax/plx/period) aus der TOP-100000-Stichprobe von tap_schema.columns (Untergrenze, live 2026-08-16). Pro Katalog: tap_compiler --table + --columns + CI-Schritt (Muster bzcat5/swiftgrb). Kompiliert + eingebaut (2026-08-16): GCVS (50k, mag+period), ATNF-Pulsare (2451, p0+dm+s1400), Asiago-Supernovae (5280, z+mag), Weiße Zwerge (3115, mag+teff), LMXB (36, M1/M2 gravity+mag — GRS 1915+105 M1=10,1 M_sun verifiziert, live auf CDN), AVO-Radio (40, z+flux Jy — J123615+620946 z=1,108 verifiziert, live auf CDN) — alle mit CI-Schritt + sources.φ-Block. BERICHTIGT 2026-08-19 (S1, Titan-Archäologie): die Himmelssphäre (CELESTIAL_SPHERE_RADIUS_M=1 kpc) war Fabrikation und ist getilgt — distanzlose cmap-Zeilen fallen wieder (Titan-Skip, 0 honored: absent Distanz = absent Position); tap_compiler --crossmatch (ADQL CONTAINS-Join gegen I/355/paramp, Dedup: erste Zeile mit dist gewinnt, kein MAX-Aggregat) fügt dist_pc hinzu — lmxbdata jetzt mit Gaia-Distanz (10/36, V404 Cyg 1238 pc), die übrigen Zeilen bleiben dunkel bis ein Distanz-Kanal sie trägt. Distanzreiche Kataloge (z/dist): bzcat5/sncat/swiftgrb/frb/magnetar/exoplanets/cometels/avo_rad
+
+ausstehend
+bestand phi/pipeline/katalog/b2find_provider_map.φ
+note „jeden Katalog"-Kampagne: 37 Provider der b2find-Wissenschafts-Tags (LTER 707, PANGAEA 321, INRAE 56, GFZ 22, SEANOE 11, WDCC 10 …). Befund 2026-08-16: die Provider-Kataloge (LTER/DEIMS/PANGAEA/b2find) sind — wie CMR — Metadaten-Register: Sites tragen POINT-Koordinaten (lter_sites.φ, 1391) und Sensoren tragen Instrument-Typen (lter_sensors.φ, 83), aber KEINE Live-Daten-URL (deims.org/api/sensors/{id} → nur sensorType/observedProperty, kein Daten-Link). Live-Daten liegen in Provider-APIs (PASTA, JYU-Finnland-Seen), die gegrindet werden müssen — die Kataloge speisen die Grind-Queue mit Provider-Name + Standort, nicht mit URLs. Konsequenz: „Harvest→Probe" ist die falsche Form für diese Kataloge; die richtige Nutzung ist Kompilat (tap_compiler/pangaea_compiler für statische Messwerte) + Grind (für Live-Endpoints). Grind-Lead: LTER-Finnland-Seen (Jyväsjärvi/Konnevesi/Päijänne, „online year-round 1-min", Kontakt juha.karjalainen@jyu.fi) — Live-API beim JYU-Provider suchen
+
+ausstehend
+bestand phi/pipeline/katalog/pangaea_catalog.φ
+note PANGAEA-OAI (ws.pangaea.de/oai/provider): Voll-Harvest 2026-08-17 erledigt — 446.802 Datasets in phi/pipeline/katalog/pangaea_catalog_full.φ (DOI+titel). Befund: PANGAEA ist wie CMR/LTER/DEIMS/b2find ein Metadaten-Register — DOI+titel, KEINE Live-Daten-URL (Datenzugriff: Collection-Seite → Member → .tab). pangaea_compiler-Muster analog tap_compiler nötig — der Messwert liegt im .tab-Export, nicht in einer JSON-API
+
+ausstehend
+bestand phi/pipeline/katalog/_adapter_queue
+note FEHLENDE ADAPTER (Zugriffsmuster, verifizierte Endpoints): sparql_harvester (ICOS meta.icos-cp.eu/sparql), erddap_harvester (BCO-DMO erddap.bco-dmo.org, NOAA/PMEL), stac_harvester (Planetary Computer, Copernicus Data Space, NASA Earthdata), csw_harvester (SeaDataNet/EMODnet, INSPIRE, GEOSS), xml_harvester (re3data >3000 Repositorien, MGDS marine-geo.org). INSTANZEN (kein neuer Adapter, nur --root/--fields): TAP (ESO, CADC, MAST, SDSS, Chandra, EPN-TAP), Dataverse (Harvard 100k+, Borealis, UNC), OAI (arXiv, Dryad, institutionelle DSpace). BEWUSST NICHT (Sensor-Regel/Force-Gate): GBIF/OBIS/iNaturalist → presence-catalog decline; DKRZ/CMIP6/ERA5 → model-forecast decline
+
+verifiziert
+bestand phi/pipeline/katalog/cmr_catalog.φ
+note NASA-CMR komplett (54.944 Earthdata-Collections) via rest_harvester (jpath feed.entry). Welle 2026-08-16: gelenst (phi/pipeline/weights_cmr.txt, 54.953 ranked) — die Linse rankt korrekt (pCO2→diffusion +132, Wind→advective +116), ABER der Bestand ist archival: Collections (NOAA_NCEI-Accessions, SCAR/SCIOPS, DAACs) tragen nur Landing-Page-Links (niwa.co.nz, envidat.ch), keine Live-JSON-API; Datenzugriff ist OPeNDAP/NetCDF + Earthdata-Login → NetCDF-Reader-Gap (GLMNetCDF) + Earthdata-Auth nötig. „In die Queue gießen" erbringt Void — CMR ist keine Live-Probe-Quelle. Der Live-Wert liegt bei den Provider-Katalogen (b2find/PANGAEA/LTER), nicht bei CMR
+
+verifiziert
+bestand /home/johannes/projects/archive/phi-research/batches/
+note CI-Probe-Sweep 2026-08-15 (Run 31898215331, 11m10s): 4.485 Blöcke geladen, 120 Survivors, 4.365 Voids — Review abgeschlossen: 2 Einbauten (GeoNet-NZ-Quake, PIREP), 68 Dispositionen in dead_sources.φ (53 variant, 22+19 model-forecast, 2 catalog, 2 no-physical, 1 counts), 2 park (coral, waqi)
+
+ausstehend
+bestand phi/pipeline/library.φ
+note 746 b2find-Tags gewichtet (Ratssitzung, zweite Fassung, Wort-Grenzen) — source_scanner wendet die Linse an; Sensor-Regel jetzt in SOURCES_V2_SPEC §2; Folge-Wellen: NASA-CMR-Keywords + GBIF-Tags downloaden und einwägen, Library-Feinwägung an den Gewichtstabellen
+
+ausstehend
+bestand phi/pipeline/katalog/b2find_tags.φ
+note 9.954 Tags mit Counts (live 2026-08-15) — das Vokabular der 1,47M Datasets; Quelle der Library
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/arena/
+note batch_01–21 — API-Vorschläge als Fließtext, ungeprüft (Recherche-Schatz)
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/foundation/
+note APIs.md, collection.md, gaps.md, urls.md, sources.φ.spec (tote Grammatik) — Curation-Inventar
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/research/
+note api_potential_research.txt, NEW_APIs.md, reachable_not_loadable.tsv, VizieR-Notizen, domain_coverage — Recherche-Schatz
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/ci/
+note refresh-protected-data.yml + secrets.template + audit-source-keys.yml — I02-Vorlage (Python → Rust)
+
+verifiziert
+nachlauf phi/pipeline/research/agent_output/vires_vollprobe
+note rekonstruiert: 63 source-Blöcke in grind_vires_full.φ, Probe lief komplett (63 declined: 55 data-present, 2 non-JSON, 6 fetch-void), 174 Datasets gesamt
+
+verifiziert
+nachlauf phi/pipeline/research/agent_output/donki_familie
+note rekonstruiert: 10 Endpoints (1 accepted CME + 8 decline + 1 dead SSD-404) in grind_nasa_donki.φ
+
+ausstehend
+nachlauf kandidat Mauna-Loa-CO2 + Fireball-API
+note 4 TerraPulse-Drafts stehen; fold-Direktive lebt (mean|diff|sum, absent Halbspalte → kein Oszillator) — Mauna-Loa mean/diff entschieden; Fireball-Operator unverifiziert (Live-Verifikation offen)
+
+ausstehend
+bestand /home/johannes/projects/archive/phi-research/batches/
+note 283 Dateien alte Grammatik (gold/main_pre-cdn/live_cdn-merged/canonical-format) — ausgeschöpft, nicht ladbar (P01), read-only Historie
+
+ausstehend
+bestand /home/johannes/projects/archive/phi-research/probe_batches/
+note 242 Dateien — probe-artefakte der Korpus-Läufe, read-only (healthcheck --probe liest hier)
+
+verifiziert
+bestand /home/johannes/projects/archive/phi-research/agent_output/batch_*_accepted.φ
+note 32 Dateien, 629 Blöcke, 389 unique — alle klassifiziert, ~48 integriert, Rest redundante Varianten (ausgeschöpft)
+
+geparkt
+kandidat https://api.argovis.com
+note argovis.com trägt SNI-Fehler; korrekte Syntax auf argovis-api.colorado.edu verifiziert — kateniertes data-Array braucht Slicing (parser-gap)
+
+verifiziert
+kandidat https://data.sensor.community/airrohr/v1/
+note area-ID = filter/box={lat_min},{lon_min},{lat_max},{lon_max}; Block-Draft in recheck_b1.φ
+
+verifiziert
+kandidat https://environment.data.gov.uk
+note Readings-Struktur bestätigt — bereits in sources.φ live
+
+geparkt
+kandidat https://www.supermag.org
+note DNS absent; live host supermag.jhuapl.edu geerntet 2026-09-10 (supermag_1m-Block, data-api.php) — der supermag.org-Redirect ist damit geschlossen
+
+verifiziert
+kandidat https://woudc.org
+note Datenzugang bestätigt — bereits registriert (sources.φ)
+
+verifiziert
+kandidat https://archive.stsci.edu/tess
+note cmap-Kompilat-Urteil (grind-pro): tic_v82-CSV (ra/dec/plx/Tmag, em) — tap_compiler-Muster, Spalten-Mapping in pro_review_3.φ; Kompilat + CI-Schritt ausstehend
+
+verifiziert
+kandidat https://tidesandcurrents.noaa.gov
+note Datagetter-Route bestätigt — bereits registriert (sources.φ)
+
+verifiziert
+kandidat https://coastwatch.pfeg.noaa.gov/erddap
+note .json-Endpoints bestätigt — bereits registriert (sources.φ)
+
+verifiziert
+kandidat https://pmel.noaa.gov
+note ERDDAP-Subset lebt — bereits in sources.φ
+
+geparkt
+kandidat https://afad.gov.tr
+note tadas liefert SPA-HTML trotz Accept-Header; apiv2 404 (gap)
+
+verifiziert
+kandidat https://services.swpc.noaa.gov
+note ace_mag_1h live (665 Records) — bereits in sources.φ
+
+geparkt
+kandidat https://actris-ebas.nilu.no
+note DNS-unresolved; ACTRIS/EBAS-JSON-Routen absent (gap)
+
+geparkt
+kandidat https://gong.nso.edu
+note nur FITS-Dateibaum, keine JSON-API — acoustic-Deckung bleibt offen (gap)
+
+verifiziert
+kandidat https://data.oceannetworks.ca
+note ONC-Token-API live (locations verifiziert); /api/data-Felder pendent — Draft in recheck_b4.φ
+
+verifiziert
+kandidat https://omniweb.gsfc.nasa.gov
+note OMNI über CDAWeb-HAPI (solar wind, Units verifiziert) — Draft in recheck_b4.φ
+
+verifiziert
+kandidat https://api.safecast.org
+note measurements.json-Variante byte-identisch zur Live-Variante — bereits live
+
+verifiziert
+parser-gap P03
+note implementiert 2026-08-17: convert_to_si → Option<f64> am Anker (unconverted → Oszillator manifestiert nicht, stderr registriert), vel <key> [unit], tau_key <key> (0 schließt das Gate)
+
+verifiziert
+parser-gap P04
+note implementiert 2026-08-17: keplermap-Key-Direktiven a/e/i/om/w/ma/epoch/qr/tp verdrahtet; Ausführung über kepler.rs elements_to_icrs_state (mpcorb q→a, tp→M); Test: Erdbahn ~1 AU, ~29,78 km/s
+
+verifiziert
+parser-gap P05
+note implementiert 2026-08-17: {jd_now}/{jd_start}/{jd_end} in render_url (TDB, 6 Stellen); Live-vectors-Block bleibt Kurationsfrage (dead_sources.φ deklariert Horizons als Compiler-Eingang)
+
+verifiziert
+parser-gap P08
+note implementiert 2026-08-17: field_in wird im Parser explizit refused+registriert (--gold migriert zu field, nested Pfade via jpath); Flatten generisch: geom leer → Zeilen-Koordinaten, geom ohne "coordinates" → Wert selbst als Koordinaten-Array (mehrstufig)
+
+verifiziert
+parser-gap SignumFaltung
+note implementiert 2026-08-17: fold <op> <key_a> <key_b> <force> <unit> <tau> (mean|diff|sum, absent Halbspalte → kein Oszillator); Fireball-Operator unverifiziert
+
+verifiziert
+parser-gap PostBodyMigration
+note implementiert 2026-08-17: --gold-Konverter mappt method POST + body (auch nicht-{-Formen: JSON-Array, form-encoded) → post_body; body ohne method bleibt kernel_text-body
+
+verifiziert
+parser-gap GLMNetCDF
+note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending. Gelöst 2026-08-18: BEIDE Routen leben jetzt in sources.φ. (a) CNEOS fireball.api (ssd-api.jpl.nasa.gov, keyless) — `lat_sign`/`lon_sign` (N/S,E/W→Vorzeichen), energy = e10j (J·10¹⁰), impact-e = kt_tnt. (b) ArcGIS GOES_GLM_Bolides — detected_energy ist die GLM-L2-LCFA-Radiant-Energie in J (SI, Faktor 1; NOAA PUG Vol.5 §5.26: "units of measure ... 'joules'", scale_factor 1.52597E-15), KEINE Konvertierung zur CNEOS-Gesamtenergie ohne Bolide-Modell — verschiedene Messgrößen, nicht vergleichbar. `epoch_scale 0.001` (detected_start_time in ms), `tau_key detected_duration` (Blitzdauer).
+
+ausstehend
+kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
+note SYKE-Finnland-See (thermal, Wassertemperatur 15-min, Konnevesi/Päijänne) — grind_lter_finland.φ. Position separat (ETRS-TM35FIN N/E in Stations-HTML) → parser-def: Position-Separation + ETRS-TM35FIN→WGS84. Schwester: Wasserstand W071.txt (gravity). JYU-Stationen (Jyväsjärvi) ohne öffentliche API (paijanne.org absent)
+
+verifiziert
+kraft-kanal acoustic
+note GONG-vmt verifiziert + geerntet (2026-08-20): gong_compiler kompiliert mrvmt260505 (L 0..30, 496 Moden, rms über das 36-d-FITS-Fenster mit Gültigkeitsmaske, big-endian NOAO-IRAF-Image-HDU) → gong_modes.bin, Block in sources.φ (format gong_modes, at sun, tau 604800). Pending: L 31..200 (CI erntet --lmax 200), mparam-Eigenfrequenz/Linienbreite für freq/bin_width (absent bleibt 0.0), GOLF (Medoc curl 000 — unverifiziert, GONG trägt allein)
+
+verifiziert
+kraft-kanal electric
+note E1800 (OMNI) entfernt (2026-08-20, derived: E=−V×B, Konfounder — dead_sources.φ decline derived). Der Kanal trägt jetzt Solar-Orbiter-RPW: (a) AMDA-HAPI solo-rpw-efield10s verifiziert (Ey/Ez echt, ex=fill, Coverage 2020-06-15→2022-12-01) und als rpw_efield.bin geerntet (147148 Records, 10-min-Mediane, at solar_orbiter) — das BIA-Produkt endet produktseitig überall 2022-12-01 (CDAWeb SOLO_L3_RPW-BIA-EFIELD + -10-SECONDS tragen dieselbe Coverage, direkte /hapi/info-Zweitprüfung 2026-08-20; der einzige gepflegte BIA-Zweig ist DENSITY-10-SECONDS bis 2025-04-24, cm^-3 diffusion-Kandidat); (b) der Live-Block SOLO_L2_RPW-TDS-SURV-STAT (CDAWeb-HAPI, SN_RMS_E V/m, 16-s-Kadenz, Coverage bis 2026-03-25 — ~5 Monate Publikations-Lag, benannt; das {hour_ago}-Fenster liefert 1201-leer, bis die NASA erweitert); (c) Nachfolgemessung GEFUNDEN (Katalog-Sweep 2026-08-20): TS1/TS2_L2_EFI_EAC (V/m [2], Bonnell/SSL, 2025-08/09 → 2026-04-30, laufend gepflegt) — Block pending Ephemeriden (SPK prüfen, frame at ts1/ts2, eigenes Atom); (d) cdf_reader-Atom GESCHLOSSEN (2026-08-20): src/cdf.rs parst NASA-CDF-3 (CDR/GDR/VDR/VXR/VVR/CVVR, gzip via inflate, Encoding 1+6, EPOCH/EPOCH16/TT2000 — Huffman/Adaptive bleiben parser-gap), bia_efield_compiler erntet die LIRA-Tages-CDFs (bia-efield-10-seconds, EDC_SRF f32[3], ex=fill, db.csv-Index höchste Version) → 2022-11-25→2025-12-31 (1120 Tage, 200544 Records, 0 void, 0 Tage mit echtem ex) → gemergt mit dem AMDA-Kompilat: 347692 Records, CDN-Upload asset rpw_efield.bin. Die 2022-2026-Lücke ist geschlossen; Befund der Kongruenzfrage: AMDA-Werte ≠ LIRA-Werte (~50 %, Reprocessing — CDAWeb deckt sich mit LIRA, direkter HAPI-Abgleich 2022-11-24: ey 4,9974/4,9974, ez 5,46205/5,46203), Naht 2022-11-24T23:55 | 2022-11-25T00:05 ohne Duplikate. Altbestand: THEMIS-EFI bis 2025-01-05, MMS-EDI bis 2023, Cluster-EFW-L3 bis 2018. PSP-VSC GESCHLOSSEN (2026-08-21, Zweitprüfung live-Baum): research.ssl.berkeley.edu/data/psp/data/sci/fields/l2|l3 trägt KEIN VSC-Produkt (l2: aeb/dfb_ac|dc|dbm|wf_*/f2_100bps/mag_*/rfs_*/sc_pse/tds_wf, l3: dust/merged_scam_wf/rfs_*/sqtn_*), CDAWeb-HAPI PSP_FLD_L2_VSC → 1406, SPDF spiegelt dieselbe Menge — Verdikt „vom live-Baum verschwunden/unveröffentlicht", die pending-Registrierung ist benannt geschlossen (Befund berkeley_wind_2026-08-21.φ). GIC-Netze nicht öffentlich; GLM ist em (optisch); WWLLN-VLF bleibt Force-Gate-Frage; PSP-DFB-Spektren = em, nicht electric (Force-Gate-Urteil)
+
+verifiziert
+kraft-kanal electric wind-waves
+note E_VOLTAGE_RAD2/RAD1/TNR = „normalized receiver average voltage" V (normierte Antennen-Spannung — Force-Gate em: die Radio-Welle ist der Messwert selbst, nicht V/m) lebt in wi_h1_wav — Tages-CDFs spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/ (1994–2021; CDF 3.x auch 1994 — kein 2.6, 1-min-Kadenz, 256/256/96 Bins, ~3,58 MB/Tag). Ernte-Maschine fertig (2026-08-21): wind_waves_compiler trägt --window-start/--window-end + --jobs (Muster bia_efield_compiler, Atomic-Queue + Mutex-Sammlung), Bin magic WAV1 [t_tdb, freq_hz, bin_width_hz, val_v, receiver]; Stichproben verifiziert: 2021-01-Prototyp (31 Tage, 18848 Records) + 1994-Stichprobe (1994-11-10→1994-12-31, 52 Tage, 0 void, 31616 Records = 608 Bins/Tag, Roundtrip ✓). CI: kernel_flatten sun-Job (Timeout 240→360), Asset-Guard auf Release spdf.gsfc.nasa.gov (Asset wind_waves.bin), --ci-mode 1994-11-10→2021-12-31 --jobs 8 — offen bleibt der erste kernel_flatten-Lauf (bis dahin fehlt das CDN-Asset, fehlt nicht null). Frame at wind ERLEDIGT (2026-08-21): KEIN SPK (NAIF-PDS-Liste komplett ohne Wind; /pub/naif/archive 404; NAIF-ID −485 ohne Kern) — der Positions-Träger ist CDAWeb wind/orbit pre_or/def_or (täglich 1994–2026, GCI_POS/GCI_VEL/GSE/GSM + GCI-Sonnenvektor; spha_k0 ist Spin-Phase, keine Position; GCI≈ICRS auf Raumsonde-Maß, Frame-Bias ~0,02° benannt). Orbit-Atom geschlossen: die Tages-CDFs sind CDF 2.5 UND 2.6 (magic cdf26002 im 1994er-Baum — identisches CDR/GDR/VDR/VXR/VVR-Layout, GDRoffset autoritativ: die 1945-Zeichen-Copyright-Ära belügt RecordSize, cdflib scheitert an beiden); src/cdf25.rs parst unkomprimierte Encoding-1-Dateien (Tests gegen Real-Dateien: 2021-2.5 via cdflib-Kreuzcheck, 1994-2.6/def via cdf26ifd-Spec-Walk). wind_orbit_compiler: Jahr-Listing → neueste Version/Tag (def_or bevorzugt 1994-11→1997-12, FDF-definitiv, Layout-gleich verifiziert) → wind_orbit.bin (magic WOB1, t_tdb + GCI x/y/z + vx/vy/vz in m, m/s; 10-min-Kadenz nativ, >288/Tag stride-dezimiert; Stichproben 2021-01-01 + 1994-11-10 je 144 Records, 0 void). Loader: format orbit_bin → BodyEphemeris.orbit; body_barycenter_position interpoliert linear (2,5×Median-Stride-Gate — Lücken void, keine Extrapolation); sources.φ trägt die Blöcke orbit_bin + wind_waves (format wind_waves, force em, V, gaussian-inverse-square, tau 86400, at wind — freq/bin_width aus den WAV1-Records auf der Spektralachse). CI: kernel_flatten sun-Job, Asset-Guard auf wind_orbit.bin, --window-start 1994-08-07 --window-end 2026-08-21 --jobs 8 — offen bleibt der erste kernel_flatten-Lauf (beide Assets fehlen, fehlt nicht null). Erster Lauf (Run 32496846847) ausgewertet: Ernten grün (wind_waves 9914 Tage/5.990.624 Records, wind_orbit 11703 Tage/1.658.725 Records), Upload schlug fehl — gh release upload legt ein fehlendes Netloc-Release nicht an; Release spdf.gsfc.nasa.gov angelegt. Dabei die Pre-2.5-Lücke geschlossen (2026-08-21): ~90 frühe Tage tragen CDF release 4 (pre-2.5, VDR +128 Byte, cdflib toadd=128) — src/cdf25.rs trägt beide Layouts, Test gegen wi_or_pre_19970107_v01.cdf (2.4.13). Die 3 echten Listungs-Lücken (2023-07-17, 2023-07-30, 2025-02-04) holt der Compiler aus JPL Horizons (Wind -8, Wind_merged, geozentrisch ICRF, 10-min — tracking-rekonstruiert, Quervergleich zu pre_or sub-km nach TDB−UTC-Angleich, gleiche Genauigkeit; --fill-horizons füllt nur „listing carries no file"-Tage). Befunde wind_frame_2026-08-21.φ + berkeley_wind_2026-08-21.φ
+
+ausstehend
+kraft-kanal thermal
+note Zeitreihen-Kuration offen (NOAA-CDO-Fanout lebt; weitere Quellen grinden)
+
+ausstehend
+kraft-kanal advective
+note Zeitreihen-Kuration offen (Waterservices/OpenSky lebt; Wind-Messquelle fehlt — tm.w-Kanal verdrahtet)
+
+ausstehend
+kraft-kanal diffusion
+note Zeitreihen-Kuration offen (PurpleAir/OpenAQ/GML/OOI leben; weitere Quellen grinden)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note Crossmatch-Welle 2026-08-16 (gaia_dist): 12 distanzlose Kataloge mit tap_compiler --crossmatch gegen I/355/paramp (dist_pc) nachkompiliert; wd nutzt eigene Parallaxe (plx), evs_cat (B1950) ausgelassen. Async-Pfad trägt TOP-Limit. Pro Katalog ein Ledger-Eintrag folgt mit der Kompilierung.
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist cbdata (B/cb/cbdata): 1404 Zeilen, 281 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist merlin (B/merlin/merlin): 1688 Zeilen, 406 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist psr (B/psr/psr): 2395 Zeilen, 91 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist sb9 (B/sb9/main): 3845 Zeilen, 1684 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist corot (B/corot/Bright_star): 144 Zeilen, 76 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist wd (B/wd/catalog): 3115 Zeilen, eigene Parallaxe (plx → Distanz) — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 60644 Zeilen voll (Chunk-Merge), 31622 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 56365 pmra, 22926 rv (gaiadr3) — Farbe: 31622 gaia_teff, 56432 bpmag (gaiadr3)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist denis (B/denis/denis): 955434 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°, --limit 90000) — live auf CDN. Vorgängerstand 525260 kappte dichte Bänder still am 50k-TOP-Limit (chunk_master.py); der CI-Schritt chunk_catalogs (kernel_flatten.yml) trägt --limit 90000.
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 27112 pmra, 20875 rv (gaiadr3) — Farbe: 20883 gaia_teff, 27686 bpmag (gaiadr3)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 111820 pmra, 83429 rv (gaiadr3) — Farbe: 76482 gaia_teff, 116048 bpmag, 117277 gmag (gaiadr3)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 625556 pmra, 369006 rv (gaiadr3) — Farbe: 347856 gaia_teff, 632755 bpmag, 637980 gmag (gaiadr3)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist rave_dr5 (III/279/rave_dr5): 472845 Zeilen voll (Chunk-Merge, 24 RA-Bänder à 15°, rv-Gate HRV — jede Zeile trägt HRV) — live auf CDN. Der --async+JOIN-Weg hing auf VizieR PENDING (gemessen: >600 s in 2 CI-Läufen, >3600 s lokal) — RA-Slices sind der Weg. Eigenbewegung+RV: 453917 pmra, 472845 rv (RAVE HRV) — Farbe geerntet: 456466 bpmag, 447900 gaia_teff (Manifestation pending, TODO) — Gaia-Distanz: 272178
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist polarbase (B/polarbase/polarbase): 299 eindeutige Positionen (Polarimetrie-Katalog, viele Beobachtungen pro Stern, MAX-Dedup), 62 mit Gaia-Distanz — live auf CDN
+
+geparkt
+kandidat B/gcvs/evs_cat
+note evs_cat trägt B1950-Koordinaten (Epoche, nicht J2000) — Crossmatch gegen I/355/paramp würde fehlmatchen; Katalog ausgelassen (Gap der Crossmatch-Welle)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note Sternkinematik 2026-08-17: Crossmatch auf I/355/gaiadr3 liefert pmra/pmdec/rv (radvel) für alle 12 Sternkataloge — 3D-Raumgeschwindigkeit live auf CDN.
+
+note Sternfarbe 2026-08-18: gaiadr3-Crossmatch liefert Teff/BPmag/RPmag/Gmag für alle 12 Sternkataloge — Farbe+Temperatur+Photometrie live auf CDN (Rendering folgt).
+
+verifiziert
+bestand phi/pipeline/katalog/asteroid_gm_inpop25c.φ
+note Quelle gefunden und geerntet (2026-08-18): INPOP25c postfit Massen J/A+A/705/A189/tablea1 (MPC, massINPOP25c kg, sigma) trägt alle vier — GM = M·G in phi/pipeline/katalog/asteroid_gm_inpop25c.φ (45→4.239e8, 87→1.219e9, 90→7.034e7, 216→3.153e8 m³/s²). Zweitquelle Goffin J/A+A/565/A56 (Typ „s"=Satellit belegt Begleiter-Ursprung; Antiope-Lücke). Force-Gate: gravity. INTEGRIERT (3fea875): `dastcom_compiler --gm` füllt gm_km3_s2 wo DASTCOM 0 trägt — 45/87/90/216 tragen echte GM (Limb-Dämpfung + Hill-Sphäre greifen für alle vier).
+
+verifiziert
+bestand phi/pipeline/katalog/asteroid_diameters_neowise.φ
+note NEOWISE/AKARI-Join: Durchmesser+Albedo geerntet (asteroid_diameters_neowise.φ + asteroid_diameters_akari.φ, Format „num | diam_km | albedo"), Join-Key = Asteroidennummer. INTEGRIERT (3fea875): `dastcom_compiler --diameters` (NEOWISE primär, AKARI füllt Lücken; radius_km = diam/2 wo DASTCOM 0 trägt) — ~130k Asteroiden okkludieren mit echtem IR-Durchmesser, vorhandene Radien bleiben (0 honored, kein Ersetzen).
+
+verifiziert
+bestand phi/pipeline/research/agent_output/recheck_b5_flash.φ
+note OceanNetworks /api/scalardata lebt (token in URL, outputFormat=Object, sensorData.0.data mit sampleTime/value/qaqcFlag; 597 CTD-Stationen) — 4 Kanäle integriert in sources.φ (temperature C thermal, salinity psu diffusion, conductivity S/m electric, pressure decibar advective). Strömung (ADCP) trägt die Route nicht (0 honored).
+
+verifiziert
+bestand phi/pipeline/research/agent_output/recheck_b4.φ
+note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 7 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em, Pressure1800 nPa advective. E1800 entfernt (2026-08-20, derived — dead_sources.φ decline derived)
+
+verifiziert
+bestand phi/pipeline/research/agent_output/solar_akteure_probe.φ
+note Solar-Akteure (2026-08-20): E1800-Disposition, AMDA-RPW-Ernte (147148 Records, rpw_efield.bin), GONG-vmt-Ernte (496 Moden L 0..30, gong_modes.bin), Ω_g-BodyProperty (stype 7, solar_omega_g.φ), PSP-DFB-Force-Gate (em), GML-404, CDAWeb-capabilities-Stub, GOLF-000 — alle Befunde selbsttragend in der Datei; offene Punkte in den kraft-kanal-Noten
+
+verifiziert
+bestand docs/surveys/survey-2026-08-21-sonnen-abdeckung.md
+note GOES-XRS-Serie (2026-08-21): goes_xrs_compiler erntet NCEI science xrsf-l2-avg1m (goes08–15, 1995–2020, netCDF-4/HDF5; xrsa 0,05–0,4 nm / xrsb 0,1–0,8 nm, W/m²@1AU, flag/fill-Skips) → goes_xrs.bin (GXS1, Bucket-Mediane je Band über alle Satelliten, Default hourly) → Block format goes_xrs at sun wm2_1au. hdf5.rs: BTIN-Fix (v2-B-tree internal nodes — der AINFO-Baum der GOES-Dateien verwarf zuvor die ganze Datei). CI (sources-Repo): goes_xrs_compiler --window-start 1995-01-01 --window-end 2020-12-31 --decimate-min 60 --lsk naif0012.tls --ci-mode.
+
+verifiziert
+bestand docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
+note OMNI2-Full-Serie (2026-08-21, Atom 4 der Sonnen-Abdeckung): omni2_compiler erntet CDAWeb-HAPI OMNI2_H0_MRG1HR in Jahres-Fenstern 1963-01-01 → 2026-08-06 (HAPI-CSV ohne Header, 557485 Reihen; Fill-Skips je Parameter — B/N 999.9, T 9999999.0, V 9999.0, P 99.99 — + Plausibilitäts-Bereiche |B| ≤ 1000 nT, T ≤ 1e8 K, N ≤ 1000 cm⁻³, V ≤ 5000 km/s, P ≤ 1000 nPa, Bz = 0 ist eine Messung) → omni2_serie.bin (Magie OMN1, comps 1..7 = V/N/T/BX/BY/BZ/P in der Live-Block-Ordnung, Daily-Bucket-Mediane Default 1440 min — 139215 Records; die Stunden-Auflösung überstiege MAX_SAMPLES, --decimate-min-Knopf bleibt). Epoche = UTC-unix ohne LSK (f107-Doktrin: prä-1972 liest die Schaltsekundentabelle void, TDB−UTC ~69 s liegt unter der Tages-Bucket-Weite — benannt, keine Fabrikation). Block format omni2_serie at sun (τ=86400, die 7 Felder des Live-Blocks), Loader-Zweig in series_parse_bin/series_component_name. Überlappung mit dem Live-Fenster: der dataset-stop (2026-08-06) hält die Serie vom 7-Tage-Live-Fenster disjunkt (Reprozessierungs-Lag); wächst das Dataset nach, überschreibt der nächste CI-Lauf das CDN-Asset — die Serie gewinnt. CI (sources-Repo): omni2_compiler --window-start 1963-01-01 --window-end 2026-08-06 --decimate-min 1440 --jobs 8 --lsk naif0012.tls --ci-mode.
+
+verifiziert
+note OMNI2-Epochen-Fix (2026-08-22): die „UTC-unix ohne LSK"-Doktrin aus Atom 4 war ein Fehlschluss — sie verwechselte TDB−UTC (~69 s Schaltsekunden) mit UNIX→TDB (~30 a J2000-Offset). Die rohe UNIX-Epoche (1,78e9) ließ jede Oszillatorin im Anchor verwerfen (Granul-Lookup Jahr ~50750). omni2_compiler ruft jetzt lsk.unix_to_tdb(t) (wie rpw/goes/wind_waves); prä-1972 liest die Schaltsekundentabelle void → diese Buckets bleiben ungeerntet (0 honored). Die CI-Zeile trägt --lsk naif0012.tls. Das CDN-Asset trägt noch die UNIX-Epoche und wird mit dem nächsten CI-Lauf neu manifestiert.
+
+
+verifiziert
+bestand docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
+note Lang-Fenster-Probe (2026-08-21, Einheit 2 der Übergabe): src/bin/long_window_probe.rs liest goes_xrs.bin (GXS1) und f107_penticton.bin direkt — der F107-Parse wanderte als Schritt 0 in src/archivar/f107.rs (der Compiler teilt ihn), Tages-Zellen über das gemeinsame Fenster, TE beide Richtungen F10.7 × XRSA/XRSB, lag 0..7 d, phasenrandomisierte + naive Schwelle (broken-null-control-Rekord), n < 30 → no statement. Vor den CDN-Manifesten (beide Assets tragen am 2026-08-21 404): benannte Verweigerung, 0 honored — --goes-bin/--f107-bin tragen lokale Pfade. Die skalaren TE-Pfade (src/te.rs) blieben unberührt. CI-Verdrahtung (kernel_flatten.yml, 2026-08-21): sun trägt f107_compiler + omni2_compiler, der Job solar_xrs trägt goes_xrs_compiler (1995–2020, --decimate-min 60), der Job long_window_probe (needs: [sun, solar_xrs]) lädt beide Assets und fährt den Probe — sein Log ist das Nadel-Ⅲ-Befund-Register.
+
+verifiziert
+bestand docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
+note GOES-Ernte-Bugs (2026-08-21): der erste solar_xrs-CI-Lauf erntete 0 Reihen — die GOES-404 war kein Throttle, sondern drei Compiler-Bugs. (1) fetch() las die .nc-Binärdateien als UTF-8 (String::from_utf8 → None → stiller „fetch void“ ohne http-Fehlerzeile; der Index als HTML funktionierte, daher wirkte es wie IP-Blocking). (2) Flag-Dataset-Name: Alt-Dateien (v1-0-0, goes08–12, 1995–2009) tragen „xrsa_flags/xrsb_flags“ (Plural), neue (v2-x-x) „xrsa_flag/xrsb_flag“ (Singular) — jetzt mit Fallback. (3) Epoche: Alt-Dateien „seconds since 1970“, neue „seconds since 2000“ — der Compiler addierte fest EPOCH_UNIX (2000) und schob 1995-Daten auf 2025; die Epoche wird jetzt gegen den Dateinamen-Tag (dYYYYMMDD) disambiguiert. Verifiziert gegen beide Fixtures (goes08 1995 1390/1390, goes14 2020 188/706). Die lokale Ernte 1995–2020 schloss ab → goes_xrs.bin (8,6 MB, hourly) auf dem CDN; der Lang-Fenster-Probe lief auf den echten Serien (F10.7 × XRSA/XRSB, Tages-Zellen, n ≈ 9088/9092): alle vier Paare still unter der phasenrandomisierten Schwelle — kein kausaler Pfeil F10.7 ↔ X-Ray auf der Tages-Skala (0 honored; die Nullkontrolle hält, XRSB→F10.7 bricht nur die naive Shuffle-Schwelle). (siehe auch f107/omni2: beide lagen am 2026-08-21 direkt auf dem CDN — 2 der 3 404 waren sofort behoben.)
+
+verifiziert
+bestand phi/pipeline/research/agent_output/recheck_b5_flash.φ
+note SDSS SkyServerWS SqlSearch integriert (dr18, 200 JSON 0.Rows, cmap z→Distanz, cz/velDisp advective km/s). PhotoObj-Sibling integriert (2026-08-18): psfMag_r/g/i über specObj-Join; photoObj.z = modelMag_z (z-Band-Magnitude, keine Rotverschiebung, keine photoZ-Spalte) — die spektroskopische z trägt nur der Join. Die registrierte SearchTools/sql-Route bleibt parser-def html.
+
+ausstehend
+bestand mpcobs-katalog
+note pro_review_b5: MPC-Daten-API ist Scaffold (Root-Placeholder, Unterrouten 404); der lebende statische Bestand ist MPCOBS (MPCAT-OBS .txt.gz, astrometrische Beobachtungen ra/dec+mag, em) — Kompilat-Kandidat mit eigenem Compiler-Atom (packed-MPC-Records, kein TAP).
+
+ausstehend
+bestand tic-kompilat
+note pro_review_b5: TIC v8.2 (archive.stsci.edu/tess) — header-lose Positions-CSV + header.csv; eigener Compiler-Atom (Muster tycho2_compiler), MAST-TIC in TODO; nach Kompilation kein Parser-Gap (ra/dec/plx/Tmag indexiert).
+
+verifiziert
+bestand ndbc-konsolidierung
+note pro_review_b5: Urteil gefällt und vollzogen (2026-08-18) — 30 per-Station-Blöcke (realtime2/{station}.txt) ersetzt durch 1 FeatureServer-map-Block (services5.arcgis.com National_Data_Buoy_Center_Station_Observations, 12 Felder + GST/APD/MWD/ATMP/TIDE). Verifikation: 912 Features ohne Kappung (resultRecordCount=2000 > count; exceededTransferLimit greift nicht).
+
+parser-gap
+kandidat https://supermag.jhuapl.edu/services/data.php
+note pro_review_b5 + 2026-08-18: leading-line „OK"-Strip implementiert (src/). ABER Server-Fault REPRODUZIERT (2026-08-18): data.php UND inventory.php werfen `shell_exec: Unable to execute db-get -check logon` (db-get-Binary auf dem SuperMAG-Server nicht ausführbar). Der lebende Endpoint ist data-api.php (nicht data.php) — geerntet 2026-09-10 (supermag_compiler.rs, supermag_1m-Block); data.php bleibt ein server-faultender Endpoint, nicht der Datenweg.
+
+verifiziert
+kandidat https://argovis-api.colorado.edu/argo
+note Argovis-Port ERLEDIGT (2026-08-18): ProfileMap-Extract (directive `profile`) + Per-Level-Expansion implementiert in src/ (alt = −pressure[dbar], val = data[i][k] je Level; temperature thermal C, salinity diffusion psu). Block lebt in sources.φ (box={lon_min}/{lat_min}/{lon_max}/{lat_max}, data=temperature,salinity,pressure). Spec: phi/pipeline/research/agent_output/argovis_port.φ.
+
+ausstehend
+bestand phi/pipeline/research/agent_output/compiler_inputs.φ
+note Compiler-Eingangsformate gesichtet (2026-08-18): MPCOBS = 4 gz-Dateien (NumObs/UnnObs/CmtObs/SatObs), header-lose 80-Spalten-Festbreiten-Records (Datum Sp.16-31, RA Sp.33-44, Dec Sp.45-56 J2000, Helligkeit+Band Sp.66-71, Obs-Code Sp.78-80); TIC v8.2 = header-lose CSV, 125 Felder, 2°-Dec-Bänder tic_dec{DD}_00{S}__{DD+2}_00{S}.csv.gz (90 Bänder), ra/dec/pmRA/pmDEC/plx/Tmag. Die Compiler (src/bin/) baut die Rust-Kybernautin.
+
+parser-gap
+kandidat https://dc.actris.nilu.no/data
+note recheck_b5: Katalog-JSON lebt (324754 Reihen mit lat/lon, ohne numerische Werte); die Werte liegen in NetCDF hinter thredds.nilu.no (OPeNDAP) — NetCDF-Reader ist der offene Kanal.
+
+verifiziert
+bestand phi/pipeline/katalog/esa_geomagnetic_catalog.φ
+note ESA/Geomagnetik-Ernte (2026-08-18): Swarm keyless-HAPI — TCT-E-Feld (Ehx/Ehy/Ehz) ist ABGELEITET (E=-V×B) und der experimentelle Feed endete 2025-12-04 → decline (dead feed-ended); AOBAFAC (Grenz-Flag) + IBIATMS (Index) decline; OPER_MAGA redundant zu FAST_MAGA. Aeolus key-needed (EOX-SPA ohne /hapi), SMOS parser-def (OADS-Portal, kein JSON-REST) — beide pending. Die live-Swarm-Felder (LP_1B, FACATMS_2F, MAGA_LR_1B) stehen in sources.φ.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/arcgis_b5_batch1.φ
+note ArcGIS-Welle Batch 1 (2026-08-18, thermal/seismic/diffusion): 12 verifiziert — 5 Blöcke integriert in sources.φ (Buoy_Data + Buoy_46092 thermal C, CHPL PM2.5 μg/m3, Sheffield NO2 μg/m3, CREST-Boje Salinität+Trübung); 6 decline (2 kein-feld, 2 static, 2 duplicate). Pending Unit-Arme: F, μg/L, mg/L. ROMPLUS (39259 Erdbeben) pro-review pending — siehe separater Eintrag.
+
+ausstehend
+kandidat https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0
+note arcgis_b5 2026-08-18: 39259 Erdbeben, Route lebt (GeoJSON). Depth (Hypozentrum-Tiefe km) ist ein invertiertes, abgeleitetes Koordinaten-Attribut — kein Feldwert am Punkt (Force-Gate wie AstDyS-model-fit); Ml großteils 0, Mw-Füllrate unverifiziert. Kein Block integriert — pro-review pending: Mw (→Energie, seismic-surface wie JMA) mit verifizierter Füllrate manifestieren, oder decline.
+
+ausstehend
+kandidat https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0
+note arcgis_b5 2026-08-18: Erdbeben-Hypozentrum-Tiefe als Feld — gleiche Force-Gate-Frage wie ROMPLUS (Tiefe invertiert/abgeleitet, kein Feldwert am Punkt). Vier Kataloge tragen nur depth + dimensionslose magnitude: Worldwide_Earthquake_Data (20000), Earthquake_List (17374), Cascadia_seismicity M4 (3872) + Plattengrenze (269). Kein Block — pro-review pending: Mw-Füllrate prüfen, oder decline.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/arcgis_b5_batch2.φ
+note ArcGIS-Welle Batch 2 (2026-08-18): 12 verifiziert — 3 Blöcke integriert (WQP-Salinität psu, DMF-Temp C, DC-WQ Temp+Turbidität); 4 Erdbeben-Tiefen-Kataloge deferiert (Hypozentrum-Tiefe = abgeleitet); 5 decline (2 duplicate, 1 kein-latlon, 2 static). Pending Unit-Arm: µS/cm.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/arcgis_b5_batch3.φ
+note ArcGIS-Welle Restbatch (2026-08-18): 11 verifiziert — 2 Blöcke integriert (WQP-Wassertemperatur + USGS-Stream-Temperatur, beide thermal C); 9 decline (2 abgeleitet-tiefe, 2 unit-arm, 3 static, 1 duplicate, 1 kein-feld). WELLE KOMPLETT: 35 Kandidaten über 3 Batches — 10 Blöcke integriert, 25 decline/deferiert, 5 Erdbeben-Tiefen-Kataloge pro-review pending.
+
+verifiziert
+bestand phi/pipeline/stage/vizier_bulk_a.φ
+note VizieR/IRSA/GAVO-Grindwelle (2026-08-18, Mutter-Hyphe 3 Agentinnen, staging vizier_bulk_a/irsa_gavo_b/vizier_bulk_c): 13 Blöcke integriert (atnf-pulsar mJy, carmenes Ks-mag, cornish mJy, irasfsc/akari_fis/msxc6 Jy, rave.main teff+Jmag, ohmaser Jy, stellarhosts teff, gcvs mag, hecate HRV+W1/W2, first_radio mJy); ~20 decline. mJy/M_sun/km/s sind unit-ERLAUBT (em/gravity/advective) — die fälschlichen off-register-Ablehnungen korrigiert. Offene re-probes: allwise (timeout), bzcat5 (LogFlux), atlasgal (ICRS-Spalten), green_snr (Spalten), harris VII/202/catalog, galactic_black_hole 163/207/table1.
+
+verifiziert
+bestand phi/pipeline/stage/netcdf_a.φ
+note netCDF-Welle (2026-08-18): netcdf_reader (CDF-1/2) läuft. Einziger netcdf-live-Kandidat = Argo-Profil (data-argo.ifremer.fr, TEMP/PSAL/PRES, CDF-1) — aber Per-Profil/Vertikalprofil → Per-Level-Expansion (alt=−PRES) + netcdf-Konsum = src/ pending (Rust-Kybernautin, wie Argovis). GLODAP: kein .nc (offizieller Kanal = CSV mit G2temperature/G2salinity/G2pressure/G2tco2/G2talk/G2oxygen — Bottle-Rohwerte, CSV-Harvest-Kandidat, nicht netcdf); GLODAP-.nc-Klimatologien = derived + too-large. SOCAT/temis .nc = 404/leer. OOI-.nc = netCDF-4/HDF5 (nicht CDF-1/2) — ERDDAP-tabledap bleibt der lebende Kanal.
+
+verifiziert
+kandidat https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+note netCDF-Integration SPEC (Archivar-Auftrag, Rust-Kybernautin — netcdf.rs ist gebaut+getestet): (1) Grammatik `format netcdf` + Directives `lat LATITUDE`, `lon LONGITUDE`, `epoch JULD`, `alt PRES decibar`, `field TEMP ... thermal C`, `field PSAL ... diffusion psu`. (2) ω()-Loop-Pfad wie catalog_dastcom: fetch_raw_bytes → gunzip (omegaflow::inflate::gunzip) → NetcdfFile::parse(bytes). (3) Mapping: LATITUDE/LONGITUDE/JULD = 1D (values_f64, Länge N_PROF); PRES/TEMP/PSAL = 2D (N_PROF×N_LEVELS, values_f32 flach, Index p·N_LEVELS+k); je Profil p je Level k ein Oscillator — Position Surface(lat[p], lon[p], alt=−PRES[p,k]·1.0 dbar→m), val=TEMP[p,k] (thermal C) bzw. PSAL[p,k] (diffusion psu); epoch = (JULD[p]−7305)·86400 unix → lsk.unix_to_tdb. (4) _FillValue (attr_num) + NaN überspringen (0 honored). Live-File verifiziert: R1901843_357.nc (CDF-1, 150 KB, 3 Profile × 1009 Level; Probe-Werte TEMP 25.862 C, PSAL 35.0314 psu, PRES 1.08 dbar, LAT −15.77751, LON 57.37286). Struktur/Werte: phi/pipeline/stage/netcdf_a.φ + netcdf_b.φ.
+note vollzogen (2026-08-18, Rust-Kybernautin): `build_netcdf_channels` im Archivar, Block in sources.φ (ttl 604800 — tiefe thermische Trägheit), Tests test_netcdf_grammar_alt_decibar + test_build_netcdf_channels, attr_num in netcdf.rs.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/recheck_b1.φ
+note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).
+
+verifiziert
+bestand phi/pipeline/research/agent_output/psp_hapi_probe.φ
+note PSP-HAPI-Probe (2026-08-18): 2 Blöcke integriert in sources.φ — PSP_COHO1HR_MERGED_MAG_PLASMA (7 Felder: B/BR/BT/BN nT, ProtonSpeed, Dichte, echte K-Temperatur; Coverage 2018-01-01→2025-12-31, stündlich) + PSP_SWP_SPC_L3I (2 Felder: Dichte + thermische Geschwindigkeit — keine K-Temperatur erfunden, 0 honored; SPC misst nur <0,25 AU). at parker_solar_probe (Frame existiert, ephemeris_parker_solar_probe.bin). Register-Befund: OMNI2-Block auf time.min/time.max korrigiert (start/stop → 1400 gegen den Live-Server); Hapi-fill -1e31 wird als Messwert ingestiert (scalar_of liest fill nicht) — parser-gap offen für alle HAPI-Blöcke.
+
+geparkt
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN
+note psp_hapi_probe (2026-08-18): [3]-Vektor-Parameter psp_fld_l2_mag_RTN (~0,109 s Kadenz, Coverage bis 2025-10-31). Der Komponenten-Index (hapi <param>.<i>=<key>) IST gebaut (2026-08-20, Test test_hapi_fill_skipped_and_component_index). Der Block bleibt geparkt: 0,109-s-Kadenz über ein Wochen-Fenster ist ungeerntete Masse (Fenster-Entscheidung offen); bis dahin deckt COHO1HR die skalaren nT-Komponenten.
+
+geparkt
+kandidat https://maia.usno.navy.mil/ser7/finals.all
+note eop_finals_probe (2026-08-18): Route lebt (täglich, token-frei, MJD ab 1973, 20005 Zeilen; letzte belegte Zeile MJD 61638, danach Leer-Platzhalter). bulletina-ex-001.csv ist 404 — der dead-Eintrag bleibt wahr. `format finals`-Atom ausstehend: Zeichenposition-Spalten statt Whitespace, letzte belegte Zeile statt lastline, MJD→TDB (Versatz 40587 d), Mehr-Felder/Zeile. Feld-Linien bereit: ut1_utc s, pmx/pmy arcsec — force em (VLBI/GNSS), tau 86400, at earth.
+
+verifiziert
+kandidat https://api.alerce.online/alerts/v1/objects/{oid}/detections
+note alerce_probe (2026-08-18) + Parser-Atom (2026-08-19): detections-Route lebt (magpsf/magap, em mag, at sun, anonym). Der celestial-oid-Fanout ist gebaut — `format alerce` + `alerce <detail-url>`-Directive + build_alerce_channels (Objektliste → je oid detections → himmelsfeste StateVector-Positionen, MJD→TDB-Epoche, fanout 200 / delay 2s) + Test grün. Block integriert in sources.φ (ttl 3600, at sun, 2 em-mag-Felder).
+
+verifiziert
+bestand phi/pipeline/research/agent_output/luckystar_forcegate.φ
+note LuckyStar (2026-08-19): decline — predictions.php/occ.php tragen Vorhersagen (NIMAv6+Gaia-DR3-Modell), keine Messung; der Ergebnisse-Server (SOSB/UTFPR, 566 Events) liefert nur abgeleitete Fits (equivalent_radius/albedo/Dichte), keine Fluss-/Zeit-Werte; IOTA liegt als statisches Archiv ohne Skalar-API. Der rohe em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/onc_hydrophone_probe.φ
+note ONC-Hydrophone (2026-08-19): parser-gap — 85 Hydrophon-Stationen (lat/lon/depth) über die locations-Route; die scalardata-Route liefert nur Telemetrie (Batterie/Temperatur/Spannung); das akustische Signal lebt nur als Spektral-/Audio-Produkt (HSD-FFT, AD-audio) — die 9-Token-Grammatik trägt keine Spektren. Kein Feld erfunden (0 honored).
+
+geparkt
+kandidat https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+note ionex (2026-08-19): das `format ionex`-Atom ist gebaut + getestet (build_ionex_channels, Header/Maps/EXPONENT/H-Shell, 2 Tests grün). Der Kanal: CDDIS antwortet 302 auf Earthdata-OAuth (urs.earthdata.nasa.gov — key-needed, Account ausstehend); GFZ-GNSS 404, BKG-IGS 404, IGS-IGN 000 (19.8.2026 verifiziert). Kein Block im Register, solange keine Route anonym lebt — der Block-Entwurf (ttl 21600, field tec TECU, at earth) liegt im staging_void_ledger-Kontext bereit.
+note ionex (2026-08-22, Nachtrag): die anonyme Route lebt jetzt — ESA-GSSC-FTP (ftp://gssc.esa.int/gnss/products/ionex, COD0OPSRAP 01H/02H .gz, RINEX3 ab 2024; pre-2024 nur codg*.Z) trägt die GIMs anonym, der laic_probe erntet sie (LAIC-Blatt v3, TEC-Kanal, 336 Fenster). Außerdem: .secrets.local trägt EARTHDATA_EDL_TOKEN (gefüllt) — gegen CDDIS verifiziert (ohne Token 302→OAuth, mit Token volles Verzeichnis-Listing für 2024/001) — „Account ausstehend" ist überholt; CDDIS trägt COD0OPSFIN 01H ab 2024, pre-2024 ebenfalls kein RINEX3. Der Block-Entwurf bleibt bereit — die Aktivierung als live sources.φ-Block ist Membran-Entscheid (Wort des Operators), die URL trägt jetzt zwei Routen: ESA-GSSC (anonym) oder CDDIS (EDL-Token).
+
+geparkt
+queue gcn_einstein_probe_bloecke_master_phi_27360
+note Endpoint api/v0.1/circulars tot (404 SPA). GCN-Circulars jetzt nur SPA-Suche + /circulars/{id}.json (body Freitext, keine ra/dec). Kein Listen-Feed gefunden. SVOM-Block-Draft nicht möglich.
+
+geparkt
+queue chime_frb_catalog_total
+note Portal lebt (Umbau), Count-Extract leer. Kataloge via CANFAR-DOIs: CISTI.CANFAR/21.0007, 23.0004, 10.11570/23.0029, 25.0066 (Archiv-Records, keine API).
+
+geparkt
+kandidat https://data.nrao.edu/portal/
+note NRAO-Archiv jetzt Angular-SPA. archive-service-REST-Pfade 404. Alter TAP archive.nrao.edu bleibt parser-def votable.
+
+geparkt
+kandidat https://svom.ac.cn/
+note HTML 711 B, Zertifikat abgelaufen. GCN-Notices der wahre Datenweg, aber v0.1-API tot (siehe Eintrag 1).
+
+geparkt
+kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
+note verify_astro_probe (2026-08-19): IRSA liefert VOTable-JSON (VOTABLE-Tabelle; s_ra/s_dec nur als FIELD-Metadaten, nicht als Row-Keys) + Antwort 3,18 MB (Probe-curl -m 10 → exit 28). Parser-gap: VOTable-JSON-Atom ausstehend.
+
+geparkt
+kandidat https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+object_id,right_ascension,declination+FROM+catalogue.mer_catalogue
+note verify_astro_probe (2026-08-19): Antwortform {metadata:[{name:…}], data:[[id,ra,dec],…]} — Rows als Skalar-Arrays, Spaltennamen nur im metadata-Block. Parser-gap: Spaltennamen-aus-metadata-Zuordnung; Index-Keys unverifiziert.
+
+geparkt
+kandidat https://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+*+FROM+ivoa.ObsCore
+note verify_astro_probe (2026-08-19): Endpoint liefert echte CSV (200, text/csv, s_ra/s_dec-Spalten per curl verifiziert). Probe-probe_csv klassifiziert nur #-präfixierte Free-Text-Spalten; Standard-CSV (Header-Zeile) → void. Parser-gap: CSV-Header-Klassifikation der Probe.
+
+geparkt
+kandidat https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
+note verify_astro_probe (2026-08-19): Endpoint lebt (200 JSON {info, data:[{objName,raMean,decMean,…}]}); Probe-Env kennt {ra}/{dec}/{radius}-Marker nicht → fetch void. Probe-Limitierung, keine Endpoint-Void. Nachweis erst im Register-Lauf.
+
+nachtrag 2026-09-06 (geschlossen → dead_sources.φ decline redundant): Nachweis im Register-Lauf erbracht und disponiert. Gemessen: Table-Route HTTP 200 {info, data} — 125-Spalten-Positionszeilen, Namen nur im info-Metadata (SpaltenAusMetadata-Klasse, nicht die hier 2026-08-19 angenommene Objekt-Form — die Form war ungemessen, Probe env-void). gMeanPSFMag/r/i/z/y unit mag, absent = -999.0-Sentinel je Band (gemessen). {ra}/{dec}/{radius}-Kegel: drei Versuche, keine Bytes in 40-90 s (Kegel-Latenz gemessen); Schema via Voll-Tabellen-Fetch. Force-Gate: em-mag physisch, aber distanzlos — CelestialMap-Distanz-Gate verwirft jede Zeile, ein sources.φ-Feldblock wäre still-null (verboten). Verdikt decline redundant (Rat fuenf-funken: PS1 nicht addiert; Gaia BP/RP + sdss_photoobj-spec-z tragen die optische Farbe/distanztragende Optik). Die schmale Vor-Baseline-Referenz bedient der nadel_gate-interne ADQL-Kegel (allwise-Muster), kein Register-Source.
+
+ausstehend
+parser-gap VOTableJSON
+note verify_astro_probe (2026-08-19): IRSA-TAP liefert VOTable-serialisiertes JSON (s_ra/s_dec nur als FIELD-Metadaten, nicht als Row-Keys). Ein VOTable-JSON-Reader-Atom steht aus — kein VOTable-XML-Kollaps, das JSON ist eine eigene Serialisierung (spherex.obscore geparkt).
+
+ausstehend
+parser-gap SpaltenAusMetadata
+note verify_astro_probe (2026-08-19): Euclid/EAS-TAP antwortet {metadata:[{name:…}], data:[[…]]} — Rows als Skalar-Arrays, Spaltennamen nur im metadata-Block. Die Spaltennamen-aus-metadata-Zuordnung für cmap (oder indexierte ra/dec-Keys) steht aus (mer_catalogue geparkt).
+
+verifiziert
+parser-gap ZeilenFilter
+note implementiert 2026-08-20: `where <key> <value>` an first/last (9-Token-Form + 3-Token-Schwanz); Extract::First/Last tragen Option<(String,String)>; row_matches (String exakt, Nummer numerisch), jfirst_where/jlast_where; extract UND extract_series teilen das Prädikat; malformed where + where auf field laut refused. euvs-7-day zurück (solar_euv_flux_304/284_wm2, where line 304/284 — der mgii_index-Record ist ausgeschlossen), xrays trägt where energy 0.05-0.4nm; nobel probe erntet via extract_series (harvest_block) — live n = 10078 (X-Ray) / 10024 (EUV), Kadenz 60 s verifiziert.
+
+verifiziert
+parser-gap LastUnit
+note implementiert 2026-08-20 (Luminositäts-Atom): first/last/lastrow/objlast/path/deep/regex tragen jetzt das Unit-Token (parts[5]). Korrektur des Erstbefunds: der Anker (anchor) konvertiert seit jeher mit der Feld-Unit — die Lücke war der Einfang, nicht der Kanal; die Membran trug also nie roh, sie trug die Unit-Losigkeit der letzten Formen. Jetzt fließt das Register SI: nT→T, km/s→m/s, Mw→10^(1,5M+9,1), sfu→1e-22, neu wm2_1au (×AU²), pfu (×1e4), pfu/mev (×6.2415e16), 1e-4w/m2 (FLR X-Klasse), „1" (Kp/a_running/FAR-Identity). Benannte Grenzen: „mag"-Felder (alerce u.a.) konvertieren nicht (logarithmische Achse — pre-existing skip am Anker, pending); ppt fehlt der Tabelle (ein Feld, pre-existing); die Kanal-Bänder der Partikel-Dateien sind positionsabhängig (where-Filter pending).
+
+verifiziert
+kandidat https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+note Luminositäts-Atom (2026-08-20): die gemessene Bestrahlungsstärke (W/m² bei 1 AE) wird nicht doppelt 1/r²-gebrochen — wm2_1au schreibt value·AU² (Kernel-Konvention 1/d², KEIN 4π: mit 4πAU² läse die Erde 12,57× die Messung). Der Signalkegel ist eine Kugel um die Sonne. GOES-Partikel: count → pfu (integral) bzw. pfu/mev (differential) — Force-Gate-Urteil: der Payload trägt pfu, count nannte nichts. Benannt: die Ankerung modelliert Isotropie — abgeleitet, nicht gemessen. Gates: cargo check 0/0, cargo test 189/189, nobel probe n = 10078/10024 unverändert.
+
+geparkt
+kandidat https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
+note Kurationsanfrage 2026-08-20 (Vierer-Block: xrays/euvs-7-day, rtsw_mag/wind_1m — on earth, `path .-1`-Keys, τ 60): alle vier URLs leben bereits in sources.φ (at sun — der Sonnen-Anker trägt die Laufzeit, nicht der Geozentrum-Frame). Verdicts: euvs `.-1.flux` — der Key flux existiert nicht (Payload: time_tag/line/value; `.-1` = mgii_index, die entfernte Fabrikation); rtsw_wind `.-1.speed` — der Key existiert nicht (proton_speed, km/s; m/s-Label wäre 1000×); xrays/mag reine Duplikate ohne Band-Filter (energy positionsabhängig). Kein Block eingebaut — ein URL = eine Messung = ein Block.
+
+geparkt
+kandidat https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
+note JMA AMeDAS (Japan) — 1286 Stationen live: temp/humidity/pressure/wind/precip/visibility/snow/sun; Stations-Tabelle amedastable.json (lat/lon deg+min). STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.weather.gc.ca/collections/swob-realtime/items?limit=100
+note ECCC MSC GeoMet OGC API (Kanada) — citypageweather (844) + swob-realtime (13,6 M Items: air_temp/rel_hum/wind/stn_pres/pcpn/dewpoint). STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
+note GTMBA TAO/TRITON/PIRATA/RAMA via PMEL-ERDDAP — Wassertemperatur/Salz/Wind/Druck/Strömung an Moorings, delayed-mode täglich/stündlich. STATUS live, curl 200, JSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22
+note EMODnet Physics — 1759 Mooring-Plattformen, Katalog mit letzter Beobachtung; Parameter je Netz-Betreiber in per-Netz-Datasets. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.emso.eu/erddap/info/index.json
+note EMSO ERIC — 160 Datasets, verkabelte EU-Observatorien (OBSEA, E2M3A Adria, Azoren, Ionisches Meer), CSV/JSON/netCDF. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://gliders.ioos.us/erddap/info/index.json
+note IOOS National Glider DAC — Seaglider/Slocum/Spray: T/S/Leitfähigkeit/Druck/O2 auf Tauchprofilen. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.marine.ie/erddap/info/index.json
+note SmartBay Observatory (Marine Institute IE, Galway Bay) — CTD + ADCP + Met-Boje, 2026-Daten belegt. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=72019&countyCd=51013&siteStatus=active
+note USGS Groundwater Level Network — Brunnen-Wasserstand 72019 (neu ggü. Oberflächenwasser 00060). STATUS live, curl 200, JSON/WaterML2. Welle 2026-08-19.
+
+geparkt
+kandidat https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?active=true&returnUsed=true
+note NRCS AWDB SNOTEL+SCAN — Schneehöhe SNWD, Schneewasseräquivalent WTEQ, Bodenfeuchte SMS; data-Endpoint 200 mit stationTriplets= (Parameter geklärt). STATUS live. Welle 2026-08-19.
+
+geparkt
+kandidat https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+note IGRA (NOAA NCEI) — Radiosonden T/P/RH/Wind-Profile, täglich fortgeschrieben. STATUS live, curl 200, Text. Welle 2026-08-19.
+
+geparkt
+kandidat https://weather.uwyo.edu/wsgi/sounding?datetime={YYYY-MM-DD HH:00:00}&id={wmo_id}&src=UNKNOWN&type=TEXT:CSV
+note Wyoming Upper-Air — Sondenprofile inkl. lon/lat je Messpunkt. STATUS live, curl 200, CSV; alter /cgi-bin/-Pfad ist 404 (neuer Endpoint /wsgi/sounding). Welle 2026-08-19.
+
+geparkt
+kandidat https://mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDhhmm}
+note Iowa State Mesonet RAOB — T/P/Höhe/Taupunkt/Wind je Level. STATUS live, curl 200, JSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.v2.sondehub.org/sonde/{serial}
+note SondeHub (UKMADS) — Citizen-Radiosonden RS41-Telemetrie (temp/alt/lat/lon je Frame). STATUS live, curl 200, JSON; RH/P meist nicht im Amateur-Frame. Welle 2026-08-19.
+
+geparkt
+kandidat https://aviationweather.gov/api/data/pirep?id=KJFK&distance=300&format=json&age=6
+note NOAA AWC Aircraft Reports — PIREP/AIREP/AMDAR: T, Wind, Turbulenz, Vereisung am Flugzeugpunkt; minütlicher Cache-Feed aircraftreports.cache.csv.gz (lat/lon/alt/temp_c/wind). STATUS live, curl 200, JSON/CSV(gz). Welle 2026-08-19.
+
+geparkt
+kandidat https://api.vedur.is/quakes/events
+note IMO Skjalftalísa (Island) — Erdbebensignale (Epizentrum/Magnitude/Tiefe), SIL-Netzverdichtung Grindavik/Svartsengi seit 11/2023. STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.geonet.org.nz/quake?MMI=0
+note GeoNet (NZ) — Erdbebensignale (Ort/Zeit/Magnitude/Tiefe/MMI). STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+note Meteo LT (Litauen) — 52 Stationen: T/RH/Druck/Wind/Böen/Niederschlag/Schneehöhe (neu aufgenommen); CC BY-SA 4.0, 180 Req/min. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat noaa_nodd_inventory.φ
+note NOAA-NODD-Crawl 2026-08-20 (registry.opendata.aws/collab/noaa, 101 Datasets geerntet → phi/pipeline/katalog/noaa_nodd_inventory.φ). Linse 9. Fassung zieht: sea-ice-concentration +20 em, hourly-gdp-drifter +52 thermal, cors +12 em, dcdb-bathymetry +12 acoustic, keo-papa +4 — Parser-Gap geschlossen (d41cc87); die Bucket-Dispositionen je Dataset bleiben eine Operator-/Register-Frage.
+
+erledigt
+kandidat s3-listbucketresult-namespace
+note geschlossen (d41cc87): xml_harvester parst ListBucketResult — namespaced Tag-Scan, Contents/CommonPrefixes, Entity-Decode, paginierter Walk mit Continuation-Tokens; 4 stille Tests grün, live 1400 Objekte über echte Tokens. Die NOAA-NODD-Bucket-Dispositionen je Dataset bleiben eine Operator-/Register-Frage.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/worldbank_indicators.φ
+note WorldBank — ökonomisch/finanziell (Cross-border loans, aid loans), kein Force, nicht SI. Kopf deklarierte selbst decline. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/osm_taginfo.φ
+note OSM taginfo-Keys (building, highway, addr:*) — semantische Labels, kein Messwert, nicht SI. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/simbad_otypes.φ
+note SIMBAD-Objekt-Taxonomie — Vokabular, keine Messung (höchstens Nachschlagewerk). Nicht SI. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/ncbi_databases.φ
+note NCBI-Genom-/Sequenzdatenbanken — Sequenzen sind kein physikalisches Feld, keine SI-Einheit. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/openaire_catalog.φ
+note OpenAIRE-Publikationsgraph (237 Mio) — überwiegend Publikationen, keine Messung, nicht SI. Kopf deklarierte selbst decline. Entnommen 2026-08-20.
+
+index
+bestand phi/pipeline/katalog/re3data_catalog.φ
+note Repositorien-Registry (>3.000, xml_harvester komplett) — keine Quelle, Tür: Meta-Katalog für Adapter-Discovery (xml_harvester/csw/oai). SI-Extraktion pro Repositorium, nicht aus dem Katalog selbst.
+
+index
+bestand phi/pipeline/katalog/zenodo_catalog.φ
+note Zenodo (CERN, multidisziplinär, OAI-PMH) — keine Quelle, Tür: OAI-/Dataverse-Routen. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/dryad_catalog.φ
+note Dryad (REST datadryad.org, ~72k Datasets) — keine Quelle, Tür: OAI-/Dataverse-Routen. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/dataone_catalog.φ
+note DataONE (Solr, 3,37 Mio, Member-Nodes KNB/LTER/EDI) — keine Quelle, Tür: PASTA/ERDDAP-Routen der Member-Nodes. SI-Extraktion pro Node, nicht aus dem Aggregator.
+
+index
+bestand phi/pipeline/katalog/inrae_catalog.φ
+note INRAE (Dataverse 6.0, entrepot.recherche.data.gouv.fr) — keine Quelle, Tür: Dataverse-Route. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/icos_catalog.φ
+note ICOS Carbon Portal (sparql_harvester) — keine Quelle, Tür: SPARQL-Route zu CO₂/CH₄-Molfraktionen (diffusion, SI). SI-Extraktion pro Objekt.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_eso.φ
+note ESO-TAP (archive.eso.org/tap_obs/sync) — 59 Tabellen, --index-Ernte 2026-08-20. Fortsetzung: tap_compiler-Bulks (SOURCES_PORT §9: tap_cat-Lücke).
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_cadc.φ
+note CADC-TAP (ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync) — 21 Tabellen, --index --votable-Ernte 2026-08-20.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_mast.φ
+note MAST-VO-TAP (mast.stsci.edu/vo-tap/api/v0.1/caom/sync) — 15 Tabellen, --index-Ernte 2026-08-20.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_chandra.φ
+note Chandra-TAP (cda.cfa.harvard.edu/cxctap/sync) — 11 Tabellen, --index --votable-Ernte 2026-08-20. Braucht curl -L (303→200) — tap_compiler --index folgt Redirects jetzt (Fix 2026-08-20).
+
+erledigt
+bestand phi/pipeline/katalog/erddap_bcodmo_catalog.φ
+note BCO-DMO ERDDAP (erddap.bco-dmo.org) — 1.000 Datasets, erddap_harvester-Ernte 2026-08-20. Tür für marine Biogeochemie (SI).
+
+erledigt
+bestand phi/pipeline/katalog/erddap_noaa_pmel_catalog.φ
+note NOAA/PMEL ERDDAP (upwell.pfeg.noaa.gov) — 1.000 Datasets, erddap_harvester-Ernte 2026-08-20. Tür für Ozean-/Fischerei-Messungen (SI).
+
+ausstehend
+kandidat dataverse-harvard-borealis
+note Dataverse-Instanzen Harvard (88.741 Datasets) + Borealis (24.063) geerntet 2026-08-20 lokal (--per-page 1000). UNC: api/search 401 "Only authenticated users" — Key nötig (blocked key-needed). dataverse_harvester-Slash-Fix 2026-08-20.
+
+ausstehend
+queue phi/pipeline/queue/grind_dataverse.φ
+note Probe-Batch der positiv gewichteten Dataverse-Kandidaten (Linse 2026-08-20): Harvard 90 + Borealis 46, Gewicht ≥ 16. Probe-Befund 2026-08-20: alle 136 declined — die Dataverse-API-Metadatenroute (/api/datasets/:persistentId) trägt keine Messwerte, nur Verwaltungsmetadaten (filesize, versionNumber, uploadsAvailable). Die Messung steckt in den Dataset-Files (data.latestVersion.files[].dataFile). Korrektur nötig: Block-URLs auf die Download-URLs der SI-tragenden Dateien setzen — Folge-Curation pro Dataset.
+
+ausstehend
+kandidat oai-harvest-arxiv
+note OAI arXiv (https://oaipmh.arxiv.org/oai) — 1.300 Records geerntet 2026-08-20, dann Abbruch: resumptionToken (skip=1300) hängt bei curl -m 120 (arXiv-Set-Walk rate-limit). oai_harvester ohne Timeout-Flag — fixe Länge nötig oder --set-Partitionierung. Datei phi/pipeline/katalog/oai_arxiv.φ = Stichprobe, pending.
+
+ausstehend
+kandidat oai-dryad-endpoint
+note Dryad-OAI: datadryad.org/oai, /oai/request, /server/oai, /api/v2/records alle 404 (2026-08-20 geprüft) — Dryad trägt keinen OAI-Endpoint mehr; API-v2-Route ohne OAI-Verb. Recherche: DSpace-OAI-Adresse neu ermitteln oder Dryad über REST (api/v2) als eigene Harvester-Form.
+
+geparkt
+kandidat mgds-marine-geo.org
+note MGDS (marine-geo.org/services/search/datasets) — 12.277 data_set-Records als XML-Attribute (data_type/url/uids), xml_harvester liest Child-Tags (--record/--id/--title) → Format-Gap: Attribute statt Kind-Elemente. parser-gap (xml-Attribut-Form), FileServer-Route braucht Parameter.
+
+dead 404
+url https://skyserver.sdss.org/dr18/tap/sync
+note SDSS-TAP dr16/dr17/dr18 sync alle 404 (geprüft 2026-08-20) — skyserver.tap-Routen existieren nicht mehr; CasJobs/SDSS-SQLSearch bleibt die lebende Route (ledger kandidat). dead mit Recherche-Stand: Versionen geprüft, alle 404.
+
+ausstehend
+kandidat epn-tap-vespa
+note EPN-TAP (psws-epntap.irap.omp.eu/__system__/tap/run/tap + tapvizier B/planets) — Base liefert HTML, kein sauberer TAP-Sync; VizieR-Planets-EPN läuft über TAPVizieR (in tap_index.φ). Recherche: korrekter VESPA-TAP-Sync-Endpoint offen.
+
+erledigt
+bestand phi/pipeline/katalog/twomass/test_psc
+note 2MASS-Bulk-Kompilator (Atom 2 katalog-chunks-ernte, 2026-08-23): twomass_compiler (src/twomass.rs + src/bin/twomass_compiler.rs) — Auswahl als Parameter, nie still (jmag|decimation|declination); erste Asset-Auswahl jmag 11.0. Gemessen 2026-08-23: CDS-Bulk (viz-bin/nph-Cat txt.gz?II/246) 401 auth-gated; die offene Route ist IRSA-Allsky (92 pipe-getrennte PSC-Dateien à ~440 MB gz, 60 Spalten — Format verifiziert gegen practice/test_psc + range-Probe psc_aaa.gz). CI-Job twomass_bulk erntet einmal (Asset-Existenz = Komplett-Check) → twomass_psc.bin (Magie "2MPS", 64-B-Records ra/dec/J/H/K+msigcom, 0.0 = fehlt); Upload verweigert über MAX_SAMPLES. Feld-Lader fehlt bewusst (Titan-Skip: distanzlose Zeilen fallen) — J−K-Farb-Atom trägt Crossmatch + Lader.
+
+erledigt
+bestand docs/surveys/survey-2026-08-23-ned-chunk-vermessung.md
+note NED-Chunks (Atom 1 katalog-chunks-ernte, 2026-08-23 — Startwort erteilt): Vermessung + Live-Block + objid-Walk-Job committet. Gemessen gegen ned.ipac.caltech.edu/tap/sync: sync-Fenster hart ~60 s (Server bricht mit fataler Error-VOTABLE), COUNT jede Form > 60 s, async-Queue > 3,5 h PENDING, kein OFFSET, ra∩z-/z<X-Prädikate krank langsam; objid 1…1 122 266 156 (~1,1 Mrd. Zeilen); einzig geordneter Kanal `WHERE objid > X` + TOP (~2500–3500 Zeilen/s, Abbruch sichert den Kopf, Fortsetzung ab max(objid)+1); Kopf-z-Anteil 77,7 %. Live-Block in sources.φ (format tap, TOP 2000 z>0, ned_redshift_z, unit 1) — Befund: der first14-Live-Block trägt extract-void im refusal_ledger (ohne format tap liest der Archivar das {metadata,data}-Paket nicht). ned_chunks (kernel_flatten.yml): objid-Walk, z-Gate clientseitig, Budget-Gate MAX_SAMPLES → benannte Issue + Stillstand, kein Upload über dem Budget; die Auswahl (z-Band / n_spectra>0 / Typ / Decimation / erste N) ist das Wort des Operators.
+
+nachtrag 2026-08-23 (gleicher Tag, zweite Rat-Sitzung): das Wort ist gefallen — „Himmelsgitter". tap_compiler --lattice 1024 (Zelle aus ra/dec, rank aus der kanonischen RNG, voller Kreis; zusammen mit Band-Split verweigert); der Walk erntet die volle Tabelle über Resume-Läufe (~100+ h), der Zellen-Merge trägt vier Plätze je Zelle (sort -m + awk, objid-Dedup, Ties deterministisch); das Budget ist durch Konstruktion gebunden (1024²×4 = 2²²); der ned.json-Block lebt in sources.φ (ned_gitter_redshift_z) und wartet leer auf den Upload am Ende des Walks (spectra.bin-Muster); benannte Anisotropie: equirectangular-Zellen (Polzellen kleiner).
+
+note NCEI-SSI-Ernte erledigt (2026-08-21): vorher 404 — das CDN-Asset spectra.bin (Tag ssd.jpl.nasa.gov) existierte nicht, der sources.φ-Block (format spectral, on earth 19.82 -155.47) wartete leer. Jetzt: src/hdf5.rs liest netCDF-4/HDF5 (Superblock v0-v3, Object-Header v1/v2, Fractal-Heap, B-Tree v1/v2, Filter deflate/shuffle/fletcher32/scaleoffset, Jenkins-Prüfsummen; Tests gegen ssi_v03r00-preliminary s202604_e202606_c20260804 + s187405_e187412_c20240831 + libhdf5-Filtertestdatei in phi/pipeline/katalog/ncei_ssi/ — lokal, gitignored, Fetch-Anleitung im Test-Skip). spectral_compiler --input-nc + --month (Zeitachse wählt die Zeile: days since 1610-01-01 → Monat; benannte Verweigerung ohne Treffer). Einheit benannt und geschlossen: E_ν = E_λ·λ²/c trägt den 1e9-nm→m-Faktor. CDN-Upload: spectra.bin (2026-06, 4300 Bänder, Integral 1362,16 W/m² ≈ TSI 1362,17, byte-identisch verifiziert). Benannt: prä-1972-Epoch void (LSK), shared messages/huge-heap/virtual-dataset Leser-Lücken, SSI_UNC nicht im Kontrakt.
+
+geparkt
+kandidat https://api.antares.noirlab.edu/v1/loci?limit=20
+note antares_probe (2026-09-05, Operator-Wort "als eigene Quelle"): REST anonym offen, ZTF-Transienten-Loci mit ra/dec + attributes.properties.*_alert_magnitude (em-mag). Probe-Befund data-present (Auto-Draft findet Felder + ra/dec). Aber richtung-only ohne Distanz — CelestialMap-Distanz-Gate (extract.rs ~2121, no_distance_skipped=0) verwirft jedes Element; keine erfundene Distanz. Council 2026-09-05: Quelle IST physikalisch (alter decline 2026-08-17 korrigiert, siehe dead_sources.φ integrated); Feld-Träger pending — neues Atom (Position::Direction/Motion + WGSL-Zweig + Kugel-Index), siehe TODO. Registriert in blocked_sources.φ (parser-def json), pending bis das Richtungs-Atom existiert. Gleiche pending-Klasse wie Lasair-cmap und ALeRCE ("dark until a distance channel exists").
+
+ausstehend
+kandidat https://api.smartcitizen.me/v0/devices/
+note Netz-Kandidat der 2026-08-19-Sensor-Welle reaktiviert (war nur datacenter-geparkt). Gemessen 2026-09-06 vom Heimnetz: anonym HTTP 200, offene Devices mit publizierten Readings (last_reading_at) + location {exposure, city}. Messwert-Klasse: Luftqualität/Umwelt am Sensorpunkt (PM/diffusion, T/thermal) — echte Punktmessung, Force-Gate-beständig (nicht decline). Offener Probe-Schritt: lat/lon-Exposure an der List-API nicht im sichtbaren Device-Kopf bestätigt (city/country/exposure da) — --probe klärt den Frame (on earth) und das Feld-Schema, dann Force-Klassifikation je Sensor.
+
+ausstehend
+kandidat https://www.nmdb.eu/nest/
+note Netz-Kandidat der 2026-08-19-Sensor-Welle reaktiviert. Gemessen 2026-09-06 vom Heimnetz: nmdb.eu/NEST-Server offen (nest/ HTTP 200, keine Auth); der Daten-Endpoint-URL (nest/data.php?stations=JUNG…) war 404 = falscher Pfad, nicht Block. Messwert: Neutronenmonitor-Zählrate der sekundären kosmischen Strahlung am Punkt (echte Messung). Offen: (a) Teilchen-Kanal ist laut SOURCE_PORT eine Registry-Frage (9er-Force kennt kein Teilchen-Medium) — Force-Einordnung pending, kein erfundener em/gravity-Kanal; (b) korrekte Daten-Route + Frame per --probe. Bis beides geklärt, kein sources.φ-Eintrag.
+
+kompiliert
+queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
+note 31 Blöcke → stage converted; 2 parse-fähig, Probe 0/2 Survivors: mast caom-tap (fetch-void, {ra}/{dec}-Marker unsubstituiert → Probe-Env, ADQL-400-Klasse) + gemini jsonsummary (fetch-void, Port-Befund 08-15 decline file-inventory) — beide decken sich mit der bestehenden Disposition; Rest 29 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
+note 29 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, je Block Disposition (park/decline) Review-Sache, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
+note 4 Blöcke → stage converted, 0 parse-fähig, Probe 0/0 (keine Messung); Ledger-Stand verifiziert (sentinel2_l2a portiert, landsatlook leer) bestätigt — converted-Ausgang ohne neue Probe-Messung (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
+note 4 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
+note 16 Blöcke → stage converted, 0 parse-fähig (alle ohne force → Force-Gate, wie Ledger-Note), Probe 0/0; Rest 16 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
+note 16 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
+note 874 Blöcke → stage converted, 8 parse-fähig, Probe 0/8 Survivors: astrocats-catalog, erosita api/v1/sources + populations, adsabs (ohne Key), xrism darts×2 (non-JSON HTML), skyview×2 — je fetch-void/HTML; Rest 866 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
+note 866 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
+note 1048 Blöcke → stage converted, 8 parse-fähig, Probe 0/8: swpc solar-wind products×4 (fetch-void), gcn api/v1/events×2 (fetch-void, v0.1-Ära tot), stereo tables.shtml (fetch-void), exoarchive TAP TOP5000 (fetch-void, Probe-Fenster); Rest 1040 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
+note 1040 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
+note 1048 Blöcke, gleiche 8 parse-fähigen URLs wie 13k (Varianten-Duplikat), Probe 0/8, identische Void-Klasse; Rest 1040 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
+note 1040 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_183l.φ
+note 19 Blöcke → stage converted, 1 parse-fähig, Probe 0/1: gml co2_daily_mlo.txt — data-present (non-JSON Text, echter Messwert im Textformat → parser-def-Klasse, kein Void); Rest 18 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_183l.φ
+note 18 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_2k.φ
+note 177 Blöcke → stage converted, 0 parse-fähig, Probe 0/0 (keine Messung); Rest 177 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_2k.φ
+note 177 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_7k.φ
+note 425 Blöcke → stage converted, 6 parse-fähig, Probe 0/6 (astrocats, erosita×2, adsabs, skyview×2 — dieselbe Klasse wie 14k); Rest 419 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_7k.φ
+note 419 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+kompiliert
+queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
+note 50 Blöcke → stage converted, 8 parse-fähig, Probe 0/8, je gemessener Grund: climate-api.open-meteo (data-present, Modell-Reanalyse → decline-Kandidat model-forecast), CNEOS fireball (data-present, rows als Array → Duplikat-Kandidat, lebt in sources.φ), blitzortung (fetch-void, Pfad/Routing), satnogs (Duplikat-Kandidat), tides datagetter 8447435 ({year}{month}{day}-Marker → Probe-Env, Route lebt in sources.φ), cddis sp3/vlbi (non-JSON, Earthdata → key-needed-Kandidat), FIRMS csv (fetch-void → key-needed-Kandidat); Rest 42 ausstehend (Grind-Flash 2026-09-10)
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
+note 42 Blöcke Alt-Drafts ohne kanonische Vollständigkeit — probe-unfähig, kein gemessener Void (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+note Route lebt: aufgelöste Tabelle 200 JSON (B/psr/psr-Referenz), Fehlerkanal 400 VOTable (VII/304/catalog) — gemessen 2026-09-10 (Grind-Flash)
+
+verifiziert
+kandidat II/328/allwise
+note recheck decline probe-timeout (dead 3733) überholt: TOP-3 ohne var_flg antwortet 200, AllWISE/RAJ2000/DEJ2000/W1-W4mag lösen auf, echte Rows — live, Disposition steht aus (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat VII/274/bzcat5
+note recheck bulk_a flux-column-unverified aufgelöst: LogFlux/Type existieren NICHT (400, gemessen); Schema 200 trägt z + F143/FX/FR/FF + Rmag — Fluss-Spaltenname jetzt gemessen (F143/FX), Disposition steht aus (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat J/A+A/568/A41/atl-csc
+note recheck bulk_a position-column-unverified überholt: _RA_icrs/_DE_icrs EXISTIEREN (Schema 200) + Fint/e_Fint/Fp Jy — ICRS-Spalten gemessen, Disposition steht aus (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat VII/278/snrs
+note recheck bulk_c decline columns aufgelöst: Schema 200, Position = RAJ2000/DEJ2000 (nicht GLON/GLAT), Fluss = S(1GHz) Jy (nicht S1GHz) — Spaltennamen gemessen, Disposition steht aus (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat VII/202/catalog
+note recheck Harris-Pfad-Kandidat lebt: 200, RAJ2000/DEJ2000 + Vt/MVt mag + Vr/Vlsr km/s + [Fe/H] — korrigierter Pfad bestätigt, Disposition steht aus (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat J/ApJS/163/207/table1
+note recheck existiert 200, ABER Spalten Index/Trans/J/Eexp/E/Diff/Et — kein RAJ2000/Porb/MX: der 08-18-Kandidat (Corral-Santana-XRB) war Fehlverweis, XRB-Katalog-Pfad bleibt unaufgelöst (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat J/MNRAS/528/5703/stars
+note recheck existiert 200, ABER EBLM-Katalog (EBLM/RAJ2000/DEJ2000/FileName), nicht GALAH — der bulk_c-Pfad-Kandidat war Fehlverweis, GALAH-Pfad offen (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat J/A+A/594/A116/allsky_gal
+note recheck hi4pi-Pfad-Kandidat existiert 200, Spalten = Karten-Cube-Metadaten (WCSproj zuerst) — Map-Produkt, kein Quellenkatalog (Grind-Flash 2026-09-10)
+
+ausstehend
+bestand 38-VizieR-Bulks-Zählung
+note keine enumerated Liste auf der Platte (gemessen, Grind-Flash 2026-09-10); die konkreten offenen Kandidaten sind oben recheckt; die Zahl in Handover/Blatt trägt keinen manifestierten Umfang — Enumerierung ist die offene Registerfrage
+
+ausstehend
+queue 10-Korpora-parse-unfähiger-Rest
+note 3.184 Blöcke gesamt (29+4+16+866+1040+1040+18+177+419+42) — Alt-Drafts ohne kanonische Vollständigkeit, probe-unfähig, je Block Disposition (park/decline) ist Review-Sache, kein gemessener Void (Grind-Flash 2026-09-10)
+
+ausstehend
+queue recheckt-bewährte VizieR-Tabellen-Dispositionen
+note Recheck-Messung steht (allwise, bzcat5-F143, atlasgal, green_snr, harris); die Verdikte (accepted/decline) fallen in der Review-Sitzung — nichts disponiert (Grind-Flash 2026-09-10)
+
+verifiziert
+kandidat bucket-litmus-regel
+note Rats-Verdikt 2026-09-10 (Bucket-Litmus, NOAA-NODD-Disposition, einstimmig): Der Entscheider für jedes der 101 Datasets ist der Fluss ins Feld, nicht der Inhalt. Kette aus drei Fragen in fester Reihenfolge: (1) Oszillator-Gate — ist es eine Messung? Forecast/Reanalyse/abgeleitet/Katalog/Stationsliste/Index/position-only → Nein → Frage 4. (2) Form — Live-Abfrage per-Sample-Skalar → url-line; Bulk-Archiv (GRIB2/netCDF/Zarr/HDF5/Binär) oder Serie/Spektrum → Compiler-Lease. (3) Manifestation — url-line strahlt lebend (Archivar holt per-Sample, Netloc wird CDN-Release); Compiler-Lease hält/strahlt ein Asset (.bin mit magic) oder eine gehaltene FORM (Spektral-Record, Footprint — C1), lädt via --ci-mode; Messung ohne Compiler → Compiler-Lease mit Compiler pending (Register-Duty, nie Konsument mit leerem Leser); Spektrum/Serie (C1-Doktrin) → FORM-Asset, gehalten, nie in ω(), keine Band-Wahl, kein Skalar. (4) Überlauf — benannter Konsument liest per Pfad/Stream, nichts manifestiert → Konsument (Lesung, die nicht ins Feld fließt); kein Konsument → pending (ungeerntet, gebraucht) oder descoped (gemessene Freigabe mit Befund); nie ein erzwungenes Konsument. Bindende Präzedenz: C1-Doktrin (Spektrum = FORM, keine Band-Wahl). Randfälle geklärt: Bulk-Format trotz Skalar → Compiler-Lease; Bucket ist nie url-line (Granularität: url-line = eine Messung); bereits implementiert = entschieden (Name = Implementation, Litmus gilt nur für Datasets ohne vorhandene Implementierung); url-line/Compiler-Lease tragen Manifestations-Duty, Konsument nicht; Heterogenität (leere/Blog-Zeilen = kein Dataset, Duplikate kollabieren, unverifizierte Bucket-Namen = pending vor Disposition); drei Familien als mechanischer Vorfilter (a Forecast/Ensemble/Reanalyse → F1 Nein, b CDR/abgeleitet → F1 prüfen, c Beobachtung → F1 Ja → F2). Folgeschritt benannt (offen): die 101 NOAA-NODD-Datasets mechanisch je Eintrag disponieren — Frage 1, dann 2, dann 3, Überlauf 4 — je Dataset eine Dispositionszeile mit Begründungs-Sitz; KEINE Disposition jetzt (Register-Eintrag nur der Regel).
+
+verifiziert
+kandidat bucket-litmus-anwendung
+note Bucket-Litmus-Anwendung (2026-09-10, Rat hält das Blatt): die 101 NOAA-NODD-Datasets disponiert — 98 Datasets nach Duplikat-Kollaps (sea-ice ×2, goes16 ×2) + provider-Zeile ready.noaa.gov (ungezählt, kein Dataset); 19 Compiler-Lease (Compiler pending = benannte Register-Duty), 1 pending (unverifizierter Bucket-Name -noaa-ufs-gefsv13replay), 78 descoped, 0 Konsument, 0 url-line. Register: phi/pipeline/catalog/noaa_nodd_disposition.φ
+
+verifiziert
+kandidat bucket-litmus-werkzeug
+note bucket_litmus (tools/utils, std-only) + decline_lens.φ (Maschinen-Zwilling des Oszillator-Gates) gebaut; Kalibrier-Gate gegen die 101 Urteile: FP 3 (ghcn, swpc, swdi — Titel tragen das Gate-Wort, die Messung ist echt), FN 12 (nationalbathymetry, mrms, s102, s111, wsa-enlil + Portal-/Archiv-Titel, deren Decline erst der Inhalt trägt) — gezählt, nie geglättet
+
+verifiziert
+kandidat bucket-litmus-nachtrag
+note Pending-Bucket verifiziert (2026-09-10): der Registry-Name -noaa-ufs-gefsv13replay-pds ist ein Tippfehler — der fuehrende Bindestrich loest DNS 000, der echte Name noaa-ufs-gefsv13replay-pds antwortet HTTP 200. Kette auf dem verifizierten Namen: Frage 1 nein (UFS GEFS v13 Replay = Modell-Output; der Bucket traegt Forcing/Restart-netCDF runoff, salt_restore, interpolate_zgrid), Frage 4 kein Konsument — descoped. Disposition + Inventar korrigiert (noaa_nodd_disposition.φ, noaa_nodd_inventory.φ:83). Zaehlung jetzt: 0 pending, 79 descoped
+
+verifiziert
+compiler noaa-nodd-3-built
+note 3 Compiler gebaut (2026-09-10): noaa_ghcn_compiler (noaa-ghcn-pds, format noaa_ghcn_d), noaa_gsod_compiler (noaa-gsod-pds, format noaa_gsod), noaa_isd_compiler (noaa-global-hourly-pds, format noaa_isd). Gemeinsamer Parser src/archivar/noaa_nodd.rs, magic/comp in geo.rs, component names in extract.rs, geo-series-Routing in main_flow.rs, sources.φ-Bloecke, Tests (roundtrip + register-field-match + Parser gegen echte Bytes). Pilot-Korn je ein Station-Fenster 2025-03 (ghcn_d_USW00094728, gsod_01001099999, isd_01001099999); Manifestation via noaa-{ghcn,gsod,isd}-cdn.yml (workflow_dispatch). All-Stationen-Schleife offen (naechstes Atom).
+
+verifiziert
+kandidat noaa-nodd-2-descoped
+note swpc + swdi re-litmused descoped (Befund in noaa_nodd_disposition.φ:205/208, gemessen 2026-09-10): swpc traegt dieselben Live-Rolling-Windows wie sources.φ (kein Bulk-Archiv), swdi traegt Radar-Ableitungen ohne Boden-Magnitude (kein tornado-*/wind-*)
+
+ausstehend
+compiler noaa-nodd-14-leases
+note 14 Compiler-Lease offen (Compiler pending — benannte Register-Duty, je Lease Manifestations-Duty CDN via --ci-mode): noaa_nos_lidar_compiler (noaa-nos-coastal-lidar-pds, Kuesten-Lidar/LAS), noaa_dcdb_bathymetry_compiler (noaa-dcdb-bathymetry-pds, Crowdsourced Sonar), noaa_eri_compiler (noaa-eri-pds, Emergency-Response-Imagery), noaa_gk2a_compiler (noaa-gk2a-pds, GK-2A), noaa_goes_compiler (noaa-goes16, GOES-ABI), noaa_himawari_compiler (noaa-himawari8), noaa_jpss_compiler (noaa-jpss), noaa_cors_compiler (noaa-cors-pds, RINEX-GNSS), noaa_ccor_compiler (noaa-nesdis-swfo-ccor-1-pds, Koronagraph-FITS), noaa_nexrad_compiler (unidata-nexrad-level2, Level-II-Binaer), noaa_gdp_drifter_compiler (noaa-oar-hourly-gdp-pds, netCDF), noaa_keo_papa_compiler (noaa-oar-keo-papa-pds, Mooring netCDF), noaa_ocs_hydrodata_compiler (noaa-ocs-hydrodata-pds), noaa_wod_compiler (noaa-wod-pds, WOD-Profile netCDF)
+
+verifiziert
+kandidat copernicus-litmus
+note Bucket-Litmus über das Copernicus-Inventar (2026-09-10): copernicus_catalogues.φ re-harvestet (catalogue API v1, saubere id+title-Paare — 16 CAMS + 143 C3S; der frühere 173-C3S-Stand ist nicht in der aktuellen Antwort, nicht re-verifiziert). Vorentscheid + Review (Fragen 1–4): 159 Collections → 8 compiler-lease (insitu-observations-*, In-situ-Messarchive, Compiler pending) + 151 descoped (Q1 nein — Modell/abgeleitet/Satelliten-Retrieval/Katalog/Service). Register: phi/pipeline/catalog/copernicus_disposition.φ. Kalibrier-Gate gegen die 159 Urteile: FP 1 (igra — „archive" matcht, die Messung ist echt), FN 27 vor dem token / 26 danach (era5-land-Titel ohne „reanalysis", cmip5-Titel ohne „projection" — der Decline trägt erst der Inhalt); „projection"/„projections" in decline_lens.φ model-forecast aufgenommen (räumt 1 cmip6-FN, noaa-Baseline unverändert)
+
+ausstehend
+compiler copernicus-8-leases
+note 8 Compiler-Lease (aus copernicus-litmus, Compiler pending — benannte Register-Duty, je Lease Manifestations-Duty CDN via --ci-mode): insitu-observations-surface-marine (ICOADS, netCDF), insitu-observations-surface-land (1718–present, netCDF), insitu-observations-near-surface-temperature-us-climate-reference-network (US-CRN), insitu-observations-igra-baseline-network (IGRA/Radiosondierung), insitu-observations-woudc-ozone-total-column-and-profiles, insitu-observations-gruan-reference-network, insitu-comprehensive-upper-air-observation-network (CUON), insitu-observations-gnss (GNSS-Delay = Messwert, Wasserdampf = Retrieval — benannt)
+
+verifiziert
+parser-gap ProbeUnitAutoableitung
+note implementiert (2026-09-10, schließt den offenen Punkt aus voller-phi-lauf): hapi_draft_fields schreibt die Server-Unit verbatim in die Feld-Zeile und benennt den Konflikt + die Register-Unit im Kommentar („# unit kg/m3 not in force registry — register carries m/s"); die Guess-Unit bleibt verworfen (Heuristik ≠ Messung). Sample-Druck = erste finite Zeile (Fill-Zeilen benannt). Ursache gemessen: der VirES-HAPI-Server selbst trägt crosswind mit units kg/m3 (ESA-Handbuch m/s) — die Probe kopierte die Server-Metadaten treu; das Register trägt m/s (sources.φ:43). Tests: register_hapi_units_of_maps_short_parameter_to_field_unit + hapi_draft_names_register_unit_when_server_unit_is_off_registry
+
+verifiziert
+kandidat vier-review-fragen
+note Review (Grind-Pro 2026-09-10) — aufgelöst 2026-09-10: cddis finals2000A = EOP-Duplikat der maia finals.all → decline duplicate-eop (dead_sources.φ); supermag = gebaut (supermag_compiler.rs + supermag_1m-Block in sources.φ, Pilot TRO 2025-03); maia-finals2000A-Zweit-Datei = hält (genau eine maia-Datei, sources.φ:3836, keine zweite); ESO = offen (kein Eintrag) — Ernte + Duty (eigenes Atom)
+
+verifiziert
+kandidat step-5-byte-vergleich
+note Step-5-Folge (Grind-Flash 2026-09-10): 15 repo_tag-Releases gemessen (13 mit Assets, Bowserinator repo-tot 404, GeoNuclearData 0 Assets); 23 Assets gleich (CDN-Digest == Repo-Raw, Schnitt-Liste steht), 4 nicht schneiden (Pantheon+SH0ES_STAT+SYS.cov verschoben, ourairports 351-B-301-Stub, cossatot-gem-faults Digest == GEMScienceTools, Bowserinator einzige Kopie). Kein Schnitt ausgeführt — der destruktive Schnitt bleibt ein verifizierter Folgeschritt
+
+verifiziert
+kandidat voller-phi-lauf
+note Voller Lauf über den bereinigten phi-Bestand (2026-09-10, SOURCE_PORT §4 Schritt 1–4): Linse source_url_candidates → 30 Kandidaten (25 bekannt, 3 bare DONKI-Präfixe, 2 neu zu master_urls) → probe_sweep: 30 checked, 19 live, 0 jina-json, 15 drafted, 13 Blöcke nach Totfilter, 7 Source-Blöcke → 3 verifiziert (Survivor) + 4 declined. Review (Schritt 4): alle 7 Endpoints sind bereits in sources.φ mit korrekter Einheit registriert — Survivor CH_OPER_DNS_ACC_2_ (density, sources.φ:31), CH_OPER_WND_ACC_2_ (crosswind, sources.φ:43), GR_OPER_DNS1ACC_2_ (density, sources.φ:49); declined GO_MAG_ACAL_CORR (sources.φ:55), GF_OPER_NE__KBR_2F (sources.φ:15), CH_OPER_TEC_TMS_2F (sources.φ:37), CS_OPER_MAG (sources.φ:1). Die 2 master_urls-neuen Kandidaten stehen beide schon im Register: imag-data.bgs.ac.uk GIN-HAPI-{station}-Template (sources.φ:3823) und vires GF_OPER_NE__KBR_2F (sources.φ:15). Ergebnis: 0 neue Quellen — der Bestand trägt keine unregistrierte Quelle (0 honored: die Null ist die Wahrheit der Messung, nicht ein versäumter Fetch). Probe-Autoableitung zweier Survivor-Felder war falsch (crosswind als kg/m3 statt m/s; density Num(inf)) — die registrierten Einträge tragen bereits die korrekte Einheit; die Probe-Einheit-Autoableitung bleibt offen (Register-Duty, nicht 0.0)
+
+geparkt
+parser-gap Spektren
+note e-callisto.org (Gap 13, Grind-Pro 2026-09-10): JSON-Event-API 404 gemessen (dead_sources.φ:4077); Datenweg = Spektral-Records (45–870 MHz) — Halteform-Frage analog NRS/ONC (kein Skalar, keine Band-Wahl), ungemessen → parser-gap Spektren
+
+geparkt
+parser-gap Spektren
+note pmel.noaa.gov/acoustics/data (Gap 44, Grind-Pro 2026-09-10): Spektral-/Audio-Form wie ONC-Hydrophon (ledger.φ:544, parser-gap) und NOAA-NODD-NRS-Halteform (blocked_sources.φ:30); kein Register-Befund, pmel-Pfad ungemessen → Probe offen
+
+geparkt
+kandidat https://neo.gsfc.nasa.gov/servlet/RenderData?si=1586675&cs=rgb&format=CSV&width=360&height=180
+note Grind-Pro Gap 4 (2026-09-10): NEO-NDVI-RenderData — kein Register-Befund, Probe/Recherche fehlt; Litmus-Vorab: abgeleitetes Satelliten-Index-Produkt (auto-decline §8, Vorbild coral decline derived-satellite-index) — Review bestätigt
+
+geparkt
+kandidat https://ghrc.nsstc.nasa.gov/pub/lisdotc/
+note Grind-Pro Gap 5 (2026-09-10): LIS/OTD-Blitz-Klimatologie — keine Messung im Register; Blitz-Messung deckt GOES-GLM bereits; aggregiertes Raster/Klimatologie, positionslos → Decline-Erwartung, Review bestätigt
+
+geparkt
+kandidat http://sprite.atmos.nthu.edu.tw/
+note Grind-Pro Gap 6 (2026-09-10): ISUAL/FORMOSAT-2 — TLE/Sprites-Archiv, keine Register-Messung; Force-Frage offen (em-Optik am Punkt, transient)
+
+geparkt
+kandidat https://asim.dtu.dk/
+note Grind-Pro Gap 7 (2026-09-10): ESA-ASIM (ISS) — Zugangs-/Registrierungs-Form ungemessen; gleiche TLE-Klasse wie Gap 6
+
+geparkt
+kandidat https://developer.amentum.io/register
+note Grind-Pro Gap 8 (2026-09-10): Amentum (geomagnetisch/Strahlung/gravity, Trial) — kommerzieller Trial; decline commercial-Familie erwartet, Probe fehlt
+
+geparkt
+kandidat https://api.le-systeme-solaire.net/rest/bodies/
+note Grind-Pro Gap 9 (2026-09-10): Körper-Parameter-Katalog/Referenz-Konstanten (auto-decline §8), bearer-token; GM-Messung lebt über INPOP/JPL-SSD — Review-Entscheid
+
+geparkt
+kandidat https://healthmap.org/ai.php?v=2.0&limit=50&striphtml=0
+note Grind-Pro Gap 10 (2026-09-10): Text-Warnungs-Feed (alerts, kein SI, keine Punktmessung) — decline no-physical erwartet
+
+geparkt
+kandidat https://promedmail.org/feed/
+note Grind-Pro Gap 11 (2026-09-10): ProMED-mail — Text-Warnungs-Feed wie Gap 10, kein Force-Kanal — Review-Entscheid
+
+geparkt
+kandidat https://lgdc.uml.edu/common/DIDBGetValues
+note Grind-Pro Gap 14 (2026-09-10): GIRO-Ionosonde — keine Register-Messung; echte Messwert-API (foF2, em am Punkt), Probe/Register-Lauf ausstehend
+
+geparkt
+kandidat https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/regional_monitoring/palmer.txt
+note Grind-Pro Gap 15 (2026-09-10): Palmer-Trockenheits-Index (aggregiert, abgeleitet, kein SI) — decline-family, ungemessen
+
+geparkt
+kandidat https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+note Grind-Pro Gap 20 (2026-09-10): SWPC-Sonnenflecken-Index (aggregierter Zähl-Index, Vorbild decline N0NBH-aggregate dead_sources.φ:4167) — kein Register-Befund; Probe/Review
+
+geparkt
+kandidat https://celestrak.org/SpaceData/EOP-All.csv
+note Grind-Pro Gap 22 (2026-09-10): EOP-final-Serie lebt (maia finals.all, sources.φ:3836); Celestrak-Orbit-Routen gemessen dead/decline (dead_sources.φ:985/993); EOP-All.csv selbst ungemessen → Duplikat-Probe offen
+
+geparkt
+kandidat https://datacenter.iers.org/products/eop/rapid/daily/csv/finals.daily.iau2000.csv
+note Grind-Pro Gap 25 (2026-09-10): IERS-Datacenter-EOP-Duplikat-Familie (maia finals.all live); gemessen ist nur bulletina-404 (dead_sources.φ:1225); Kandidaten-Pfad ungemessen → Probe
+
+geparkt
+kandidat https://www.sidc.be/silso/datafiles/total-sunspot-number_daily.json
+note Grind-Pro Gap 26 (2026-09-10): Geschwister DAILY_BULLETIN 404 gemessen (dead_sources.φ:4609); dieser Pfad ungemessen; Sonnenfleckenzahl = Zähl-Index (wie Gap 20) — Review bestätigt Decline-Klasse
+
+geparkt
+kandidat https://ssd-api.jpl.nasa.gov/sentry.api
+note Grind-Pro Gap 28 (2026-09-10): ssd-api-Root decline registriert (dead_sources.φ:3645), sbdb/cad decline einzeln; Sentry = Einschlag-Risiko-Modell (model, kein Messwert) — Decline-Klasse erwartet, Einzel-Messung fehlt
+
+geparkt
+kandidat https://lambda.gsfc.nasa.gov/data/map/dr5/skymaps/5yr/raw/wmap_5yr_wmap_v1.fits
+note Grind-Pro Gap 33 (2026-09-10): FITS-Survey-Produkt (Roh-Skymap), distanzlos — lebt in der dark-until-distance-channel-Klasse (CelestialMap-Distanz-Gate); Probe fehlt
+
+geparkt
+kandidat https://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+note Grind-Pro Gap 39 (2026-09-10): Oulu-NM-Messung ist über den nmdb-Block registriert (sources.φ:1050); der direkte Host (1-min-Zählung derselben Station) ungemessen — Varianten-Probe offen, Teilchen-Kanal-Frage geteilt (Gap 38/40)
+
+geparkt
+kandidat https://cr0.izmiran.ru/mosc/main.txt
+note Grind-Pro Gap 40 (2026-09-10): Neutronenmonitor Moskau, keine Register-Messung; Teilchen-Kanal-Registry-Frage (wie Gap 38/39) — Review
+
+geparkt
+kandidat https://www.ocearch.org/tracker/
+note Grind-Pro Gap 41 (2026-09-10): Tier-Telemetrie = Presence/Position, kein Kraft-Kanal (Vorbild GBIF/OBIS presence-catalog decline); Index-Klassifikation diffusion korrekturbedürftig; Probe fehlt
+
+geparkt
+kandidat https://www.gi.alaska.edu/monitors/aurora-forecast
+note Grind-Pro Gap 46 (2026-09-10): Aurora-Vorhersage-Produkt (kein Messwert) — model-forecast-decline-Familie, ungemessen; Review
+
+geparkt
+kandidat https://acdisc.gesdisc.eosdis.nasa.gov/opendap/
+note Grind-Pro Gap 54 (2026-09-10): Earthdata-Auth + Dataset-Wahl ungemessen; CMR-Befund (ledger.φ:165-167): DAAC-Archive tragen Landing/OPeNDAP, OPeNDAP-Reader offen (netCDF-4 via hdf5.rs gebaut); Probe am konkreten Dataset ausstehend
+
+geparkt
+kandidat https://renass.unistra.fr/api/
+note Grind-Pro Gap 58 (2026-09-10): RéNaSS (FR, seismic-body), keine Register-Messung; Probe ausstehend
+
+geparkt
+kandidat https://skyview.gsfc.nasa.gov/
+note Grind-Pro Gap 61 (2026-09-10): Bild-/Mosaik-Service (FITS-cutouts, abgeleitet, distanzlos) — derived-survey-Familie; ungemessen
+
+geparkt
+kandidat https://itrf.ign.fr/
+note Grind-Pro Gap 62 (2026-09-10): ITRF = kombinierter Referenzrahmen (Referenz-Konstanten/Infrastruktur, auto-decline §8); VLBI/GNSS-Messung dahinter lebt als EOP (maia finals.all); ungemessen → Review
+
+geparkt
+kandidat https://www.cpom.ucl.ac.uk/csopr/seaice.html
+note Grind-Pro Gap 63 (2026-09-10): Meereis-Produkt (abgeleitetes Satelliten-Raster) — derived-family; ungemessen
+
+geparkt
+kandidat https://saber.gats-inc.com/
+note Grind-Pro Gap 66 (2026-09-10): SABER/TIMED-Limb-Retrieval-Profil (abgeleitetes Satellitenprodukt, kein Punkt-Skalar) — derived-family; ungemessen
+
+geparkt
+kandidat https://cdaw.gsfc.nasa.gov/CME_list/
+note Grind-Pro Gap 67 (2026-09-10): CME-Katalog (menschlich kuratiert, plane-of-sky, keine Distanz); DONKI-CME lebt at sun (sources.φ); registry/catalog-family — ungemessen
+
+geparkt
+kandidat https://stac.openlandmap.org/
+note Grind-Pro Gap 71 (2026-09-10): STAC-Boden-Karten (SoilGrids-Linie, Vorbild decline derived-model dead_sources.φ:2797); STAC-Harvester offen; ungemessen
+
+geparkt
+kandidat https://thredds.met.no/
+note Grind-Pro Gap 72 (2026-09-10): THREDDS/OPeNDAP (Modell-Output MEPS/NORA3 — model-family); OPeNDAP-Adapter offen; ungemessen
+
+geparkt
+kandidat https://thredds.silam.fmi.fi/
+note Grind-Pro Gap 73 (2026-09-10): SILAM = Dispersions-Vorhersagemodell (model-forecast-family); ungemessen
+
+geparkt
+kandidat https://kmtnet.kasi.re.kr/
+note Grind-Pro Gap 74 (2026-09-10): KMTNet-Microlensing (em); Datenform/Zugang ungemessen; Probe ausstehend
+
+ausstehend
+kandidat http://dachs.planet.fu-berlin.de/tap
+note ivo://fu-berlin.planet.hrsc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_fu_berlin_hrsc.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat http://dachs.sdc.leibniz-kis.de/tap
+note ivo://leibniz-kis/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_leibniz_kis.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat https://cdsarc.cds.unistra.fr/saadavizier.tap/tap
+note ivo://cds.vizier/obstap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_vizier_obstap.φ (8 Tabellen), Draft pending
+
+ausstehend
+kandidat http://gavo.aip.de/tap
+note ivo://aip.gavo.org/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_aip_gavo.φ (40 Tabellen), Draft pending
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/irsf
+note ivo://jvo/irsf — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/AKARI_DR1
+note ivo://jvo/isas/akari_dr1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/saga
+note ivo://jvo/saga — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/kug2000
+note ivo://jvo/kug2000 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/alma
+note ivo://jvo/alma — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari
+note ivo://jvo/isas/akari/fis_v1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://musewide.aip.de/tap
+note ivo://musewide.aip.de/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://dorotka.ufa.cas.cz/tap
+note ivo://iap/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_iap.φ (8 Tabellen), Draft pending
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/bsgc/public/image
+note ivo://jvo/isas/darts/bsgc — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://astroweb.projects.phys.ucl.ac.uk:8000/tap
+note ivo://astro.ucl.ac.uk/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_ucl.φ (10 Tabellen), Draft pending
+
+ausstehend
+kandidat https://skvo.science.upjs.sk/tap
+note ivo://astro.upjs/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_upjs.φ (40 Tabellen), Draft pending
+
+ausstehend
+kandidat https://dachs.neo.s2p.esa.int/tap
+note ivo://neocc.esa/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 502 probe tap; klassifiziert 2026-09-10: §8-Recherche (toter Endpoint) → http-Klassifikations-Linie
+
+ausstehend
+kandidat https://datacentral.org.au:443/vo/tap
+note ivo://purx/datacentral-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_datacentral.φ (486 Tabellen), Draft pending
+
+ausstehend
+kandidat https://dachs.fai.kz/tap
+note ivo://fai.kz/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://pvol2.ehu.eus:8083/tap
+note ivo://pvol/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_pvol.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat http://vo.lmd.jussieu.fr/tap
+note ivo://lmd.jussieu/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://voparis-tap-maser.obspm.fr/tap
+note ivo://padc.obspm.maser/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_maser.φ (26 Tabellen), Draft pending
+
+ausstehend
+kandidat http://osug-vo.osug.fr:8080/tap
+note ivo://osug-vo.osug/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://vo.astron.nl/tap
+note ivo://astron.nl/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_astron.φ (57 Tabellen), Draft pending
+
+ausstehend
+kandidat https://api.skymapper.nci.org.au/public/tap
+note ivo://nci.org.au/skymapper/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://vespa.ia2.inaf.it/tap
+note ivo://ia2.inaf.it/vespa/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_vespa_ia2.φ (12 Tabellen), Draft pending
+
+ausstehend
+kandidat https://registry.euro-vo.org/regtap/tap
+note ivo://esavo/registry/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: decline registry → dead_sources.φ
+
+ausstehend
+kandidat https://dachs.oca.eu/tap
+note ivo://purx/dachs/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_dachs_oca.φ (20 Tabellen), Draft pending
+
+ausstehend
+kandidat https://epntap.climso.ovgso.fr/tap
+note ivo://ov-gso/climso — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_climso.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat http://39.105.187.183:8080/tap/tap
+note ivo://einsteinprobe/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_einsteinprobe.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat https://hreda.esac.esa.int/hreda-sl-tap/tap
+note ivo://esavo/hreda/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_hreda.φ (39 Tabellen), Draft pending
+
+ausstehend
+kandidat http://archives.ia2.inaf.it:80/vo/tap/projects
+note ivo://ia2.inaf.it/tap/projects — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_ia2_projects.φ (43 Tabellen), Draft pending
+
+ausstehend
+kandidat https://userquery.linea.org.br/tap
+note ivo://linea.org.br/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://parsec-europlanet.eu:81/tap
+note ivo://aoi.amu.parsec/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_parsec.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat https://atoavo.atnf.csiro.au/tap
+note ivo://au.csiro/atoavo/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://data.csiro.au/psrdavo/tap
+note ivo://au.csiro/psrda/atnf_pulsar_data_archive — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://casda.csiro.au/casda_vo_tools/tap
+note ivo://au.csiro/casda/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://astro.ulb.ac.be:443/sbx/tap
+note ivo://astro.ulb.ac.be/sbx-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://hst.esac.esa.int/tap-server/tap
+note ivo://esavo/ehst/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_ehst.φ (49 Tabellen), Draft pending
+
+ausstehend
+kandidat http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap
+note ivo://esavo/esaskylegacy/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_esaskylegacy.φ (119 Tabellen), Draft pending
+
+ausstehend
+kandidat https://archives.esac.esa.int/hsa/whsa-tap-server/tap
+note ivo://esavo/hsa/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 503 probe http
+
+ausstehend
+kandidat https://isla.esac.esa.int/tap/tap
+note ivo://esavo/isla/obsloctap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_isla.φ (43 Tabellen), Draft pending
+
+ausstehend
+kandidat http://nida.esac.esa.int/nida-sl-tap/tap
+note ivo://esavo/iso/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://jwst.esac.esa.int/server/tap
+note ivo://esavo/jwst/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_jwst.φ (21 Tabellen), Draft pending
+
+ausstehend
+kandidat https://nxsa.esac.esa.int/tap-server/tap
+note ivo://esavo/xmm/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_xmm.φ (47 Tabellen), Draft pending
+
+ausstehend
+kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
+note ivo://ia2.inaf.it/hosted/laurino2011/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cda.harvard.edu/cxctap
+note ivo://cxc.harvard.edu/cda — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cda.cfa.harvard.edu/csctap
+note ivo://cxc.harvard.edu/csc — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cda.cfa.harvard.edu/csc1tap
+note ivo://cxc.harvard.edu/cscr1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cda.cfa.harvard.edu/csc2tap
+note ivo://cxc.harvard.edu/cscr2 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cda.cfa.harvard.edu/csc21tap
+note ivo://cxc.harvard.edu/cscr2.1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://gaia.aip.de/tap
+note ivo://gaia.aip.de/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://almascience.nao.ac.jp/tap
+note ivo://jao.alma/tap_ea — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://almascience.eso.org/tap
+note ivo://jao.alma/tap_eu — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://almascience.nrao.edu/tap
+note ivo://jao.alma/tap_na — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://machotap.asvo.nci.org.au/ncitap//tap
+note ivo://nci.org.au/macho/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://wiggleztap.asvo.nci.org.au/ncitap//tap
+note ivo://nci.org.au/wigglez/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://tools.ssdc.asi.it/TAPSSDC/tap
+note ivo://ssdc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_ssdc.φ (15 Tabellen), Draft pending
+
+ausstehend
+kandidat http://padc-tap-rcsed.obspm.fr/tap
+note ivo://padc.obspm.padc-tap-rcsed/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_rcsed.φ (15 Tabellen), Draft pending
+
+ausstehend
+kandidat http://vespa-ae.oma.be/tap
+note ivo://bira-iasb/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_vespa_ae.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat https://ws-uv.canfar.net/youcat
+note ivo://cadc.nrc.ca/youcat — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jplus-dr4
+note ivo://cefca/j-plus/j-plus-dr4 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/mudehar-dr2
+note ivo://cefca/mudehar/mudehar-dr2 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/mudehar-dr1
+note ivo://cefca/mudehar/mudehar-dr1 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jpas-edr
+note ivo://cefca/j-pas/j-pas-edr — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jnep-pdr202107
+note ivo://cefca/jnep/j-nep-pdr202107 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/minijpas-pdr201912
+note ivo://cefca/minijpas/minij-pas-pdr201912 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jplus-dr3
+note ivo://cefca/j-plus/j-plus-dr3 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jplus-dr2
+note ivo://cefca/j-plus/j-plus-dr2 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat https://archive.cefca.es/catalogues/vo/tap/jplus-dr1
+note ivo://cefca/j-plus/j-plus-dr1 — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe http
+
+ausstehend
+kandidat http://oirsa.cfa.harvard.edu:8080/tap
+note ivo://cfa.tdc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_cfa_tdc.φ (12 Tabellen), Draft pending
+
+ausstehend
+kandidat http://vo.projet.latmos.ipsl.fr/tap
+note ivo://latmos.ipsl/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_latmos.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat http://voparis-tap-he.obspm.fr/tap
+note ivo://padc.obspm.he/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_padc_he.φ (14 Tabellen), Draft pending
+
+ausstehend
+kandidat https://koa.ipac.caltech.edu/TAP
+note ivo://koa.ipac/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 404 probe tap; klassifiziert 2026-09-10: §8-Recherche (toter Endpoint) → http-Klassifikations-Linie
+
+ausstehend
+kandidat http://vogate.obs-nancay.fr/tap
+note ivo://padc.obspm.nancay/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_nancay.φ (17 Tabellen), Draft pending
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/
+note ivo://jvo/nobeyama — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://cdpp-epntap.irap.omp.eu/tap
+note ivo://cdpp/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_cdpp.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat http://193.87.1.40:8080/tap
+note ivo://lso.dc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_lso.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat https://www.plate-archive.org/tap
+note ivo://www.plate-archive.org/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://vo.lam.fr/tap
+note ivo://lam.cesam/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_lam.φ (24 Tabellen), Draft pending
+
+ausstehend
+kandidat http://voparis-rr.obspm.fr/tap
+note ivo://purx/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: decline registry → dead_sources.φ
+
+ausstehend
+kandidat https://solar-dachs.oca.eu/tap
+note ivo://purx/solar-dachs/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_solar_dachs.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat https://www.lamost.org/dr11/v2.0/voservice/tap
+note ivo://purx/lamost/dr11/v2.0/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://www.lamost.org/dr10/v2.0/voservice/tap
+note ivo://purx/lamost/dr10/v2.0/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://voparis-tap-helio.obspm.fr/tap
+note ivo://padc.obspm.helio/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_padc_helio.φ (10 Tabellen), Draft pending
+
+ausstehend
+kandidat https://mercatorvo.ster.kuleuven.be/tap
+note ivo://mercator/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_mercator.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/sxds_v1
+note ivo://jvo/subaru/sxds/v1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/hds/
+note ivo://jvo/subaru/hds — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/hitomi
+note ivo://jvo/isas/darts/hitomi/hitomaster_v1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/halca
+note ivo://jvo/isas/darts/halca/halca_vsop_correlated_data — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/halca_agn
+note ivo://jvo/isas/darts/halca/halca_vsop_survey_program_data — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/catalog/slitless_mir_psc
+note ivo://jvo/isas/darts/akari/akari-irc_spectrum_pointed_slitlessmir_psc_1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/catalog/asteroid_flux
+note ivo://jvo/isas/darts/akari/akari-irc_catalogue_allsky_astflux_1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/slitless_mir_spec
+note ivo://jvo/isas/darts/akari/akari-irc_spectrum_pointed_slitlessmir_spectrum_1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/galactic_planetary_nebulae
+note ivo://jvo/isas/darts/akari/akari-irc_spectrum_pointed_galpn_1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/diffuse_sky_patch
+note ivo://jvo/isas/darts/akari/akari-irc_spectrum_pointed_diffuseskypatch_1.0 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/irts/catalog/irts_nirs_psc_1_3
+note ivo://jvo/isas/darts/irts/irts-nirs_catalogue_1.3 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/irts/catalog/irts_mirs_psc_2_1
+note ivo://jvo/isas/darts/irts/irts-mirs_catalogue_2.1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/akari/ivoa/obscore
+note ivo://jvo/isas/darts/akari/obstap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/sdf_v1
+note ivo://jvo/subaru/sdf/v1 — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/spcam
+note ivo://jvo/subaru/spcam — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/moircs
+note ivo://jvo/subaru/moircs — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat https://idoc-dachs.ias.u-psud.fr/tap
+note ivo://idoc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_idoc.φ (12 Tabellen), Draft pending
+
+ausstehend
+kandidat http://evn-vo.jive.eu/tap
+note ivo://jive.eu/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_jive.φ (9 Tabellen), Draft pending
+
+ausstehend
+kandidat https://xcatdb.unistra.fr/xtapdb
+note ivo://xcatdb/4xmm/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_xcatdb.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat https://psa.esa.int/psa-tap/tap
+note ivo://esavo/psa/epntap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_psa.φ (50 Tabellen), Draft pending
+
+ausstehend
+kandidat https://vo-tap.oma.be/tap
+note ivo://ksb-orb.dc/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_ksb_orb.φ (35 Tabellen), Draft pending
+
+ausstehend
+kandidat http://tap.roe.ac.uk/wsa
+note ivo://wfau.roe.ac.uk/wsa-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://tap.roe.ac.uk/vsa
+note ivo://wfau.roe.ac.uk/vsa-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://tap.roe.ac.uk/osa
+note ivo://wfau.roe.ac.uk/osa-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://tap.roe.ac.uk/ssa
+note ivo://wfau.roe.ac.uk/ssa-tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://nadir.konkoly.hu:80/tap
+note ivo://konkoly.hu/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_konkoly.φ (7 Tabellen), Draft pending
+
+ausstehend
+kandidat http://voparis-tap-astro-m.obspm.fr/tap
+note ivo://padc.obspm.astro-m/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_padc_astrom.φ (13 Tabellen), Draft pending
+
+ausstehend
+kandidat http://jvo.nao.ac.jp/skynode/do/tap/agn
+note ivo://jvo/agn — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://pithia.cbk.waw.pl/tap
+note ivo://src.pas/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe http
+
+ausstehend
+kandidat http://voparis-tap-planeto.obspm.fr/tap
+note ivo://padc.obspm.planeto/tap — RegTAP-entdeckt, gewogen 2026-09-10: http 200 probe tap; klassifiziert 2026-09-10: tap-index tap_index_padc_planeto.φ (43 Tabellen), Draft pending
+
+ausstehend
+kandidat https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
+note MAST vo-tap caom/sync — Austrag aus dead_sources, Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); tap_index_mast.φ trägt 15 Tabellen (--index-Ernte 2026-08-20); klassifiziert 2026-09-10: bestand (tap_index_mast.φ)
+
+ausstehend
+kandidat https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync
+note ivo://cadc.nrc.ca/argus — RegTAP-entdeckt (access_url /argus ohne /sync, wiegt kein-http); der TAP liegt unter /argus/sync, tap_index_cadc.φ trägt 21 Tabellen (--votable-Ernte 2026-08-20); Recheck 2026-09-10: TLS-Reset vom Peer (curl 35) auf allen Pfaden — Proton-VPN-Route offen; klassifiziert 2026-09-10: bestand (tap_index_cadc.φ)
+
+ausstehend
+kandidat https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note voller-phi-lauf 2026-09-10: ArcGIS-FeatureServer (Live-Wetterstationen, rel_hum/press/air_temp/wind_spd/dewpt/rain_trace) — echte Messung, unregistriert; der Sweep lud den map-Block nicht als Source, Per-Block-Kuration
+
+ausstehend
+kandidat https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note voller-phi-lauf 2026-09-10: ArcGIS-FeatureServer (NJ-Abfluss, discharge1/7/14/30 m3/s) — echte Messung, unregistriert; map-Block nicht als Source geladen, Per-Block-Kuration
+
+ausstehend
+kandidat https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note voller-phi-lauf 2026-09-10: ArcGIS-FeatureServer (USGS-Abfluss, FLOW/STAGE) — echte Messung, unregistriert; map-Block nicht als Source geladen, Per-Block-Kuration
+
+ausstehend
+kandidat http://geodesy.unr.edu/api/velocity?network=IGS&format=json&limit=500
+note GNSS-Stationsgeschwindigkeit (Krustenbewegung, mm/a) — der JSON-Velocity-Endpoint ist 404 (retired); die Messung lebt als statische MIDAS-Textdateien. Historischer Harvest (epoch-treu), kein Live-Feed. Browser 2026-09-10.
+
+ausstehend
+kandidat https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv
+note Drifter-SST/Strömung (thermal/advective) — Dataset aus dem GCOOS-ERDDAP entfernt (404). Historischer Harvest über das AOML-GDP-Archiv, epoch-treu. Browser 2026-09-10.
+
+ausstehend
+kandidat https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+note SmartBay-Akustik SPL (acoustic, dB) — Dataset endet 2021-11-30. Historischer Harvest (epoch-treu), kein Live-Feed. Browser 2026-09-10.
+
+ausstehend
+kandidat https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time
+note Ozean-Salinität (diffusion) — Deployment 2019-03-28 bis 2020-10-22. Historischer Harvest (epoch-treu). Browser 2026-09-10.
+
+ausstehend
+kandidat https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/
+note Stündlicher Niederschlag (diffusion, mm) — statisches FTP-Archiv, 53 Stationsverzeichnisse. Historischer Harvest (epoch-treu), kein Live-Feed. Browser 2026-09-10.
+
+ausstehend
+kandidat https://mars.nasa.gov/rss/api/?feed=weather&category=insight&feedtype=json
+note InSight-Wetter (thermal/acoustic, Temperatur/Druck/Wind) — Mission beendet, Feed eingefroren. Historischer Harvest (epoch-treu); mars2020/msl stehen live in sources.φ. Browser 2026-09-10.
+
+ausstehend
+kandidat https://www.seis-insight.eu/api/v1/events?format=json&limit=500&catalog=MQS&status=confirmed
+note InSight-Marsbeben-Katalog MQS (seismic-body, Magnitude/Depth) — Endpoint /api/v1/events 404 (Site-Restrukturierung); Katalog-Ort pending. Historischer Harvest. Browser 2026-09-10.
+
