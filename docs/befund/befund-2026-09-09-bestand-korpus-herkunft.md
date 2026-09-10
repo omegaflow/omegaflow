@@ -4,7 +4,7 @@
   date: 2026-09-09
   status: done
   sha256: e70a24bb82fecdd20147ce7abe62edc30ebc74a957fc1785234f79993be83028
-  antwortet-auf: docs/handover/handover-2026-09-09-mechanische-reste.md (Source-Port & Katalog-Reste)
+  antwortet-auf: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Source-Port & Katalog-Reste)
   see-also: phi/pipeline/ledger.φ docs/SOURCE_PORT.md docs/surveys/survey-2026-09-07-tmp-opencode-scan.md
 -->
 # Befund: Herkunft der 10 bestand-Korpus-Dateien (Untested-Korpora)
