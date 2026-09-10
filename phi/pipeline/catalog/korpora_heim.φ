@@ -1,0 +1,33 @@
+# korpora_heim.φ — das Korpora-Heim-Verdikt (Registrierungs-Urteil)
+#
+# Rats-Entscheidung 2026-09-10, Operator ratifiziert („du kannst", 2026-09-10):
+# der Katalog-Korpus wandert in die CDN-Release-Assets (omegaflow/sources,
+# ssd.jpl.nasa.gov), kein privates Repo, kein LFS. Das Tor ist das Lizenzverdikt
+# je Korpus: nur `redistribute` manifestiert (korpora-cdn.yml lädt die Datei
+# hoch), `decline` bleibt lokal (benannt mit Grund), `pending` wartet auf Messung.
+# Verdikte gemessen per curl gegen die Terms-/Lizenz-Seite des Anbieters.
+#
+# Zeilenformat: <verdict> <filename> | <lizenz/evidenz> | <quelle>
+
+redistribute pangaea_catalog.φ | CC0 metadata, CC-BY data | https://www.pangaea.de/about/terms.php §6.2
+redistribute pangaea_catalog_full.φ | CC0 metadata, CC-BY data | https://www.pangaea.de/about/terms.php §6.2
+redistribute re3data_catalog.φ | CC0 (waiver auf die Datenbankeinträge) | https://www.re3data.org/about
+redistribute zenodo_catalog.φ | CC0 metadata | https://about.zenodo.org/terms/
+redistribute dryad_catalog.φ | CC0 (Datensätze/Metadaten), CC-BY 4.0 (übrige Inhalte) | https://datadryad.org/stash/terms
+
+decline b2find_catalogs_index.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte ohne Autorisierung untersagt | https://www.eudat.eu/legal-notice
+decline b2find_intermagnet_catalog.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
+decline b2find_science_catalogs.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
+decline b2find_tags.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
+decline b2find_provider_map.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
+
+pending wdcc_catalog.φ | CERA-Terms sind eine JS-SPA, per curl nicht erreichbar | https://cera-www.dkrz.de/
+pending dataverse_harvard.φ | Terms-Seite 403 (Server-Block) | https://dataverse.org/
+pending dataverse_borealis.φ | Terms-Seite 403 (Server-Block) | https://dataverse.org/
+pending cmr_catalog.φ | kein Metadaten-Lizenztext gemessen (api.nasa.gov statisch leer) | https://cmr.earthdata.nasa.gov/
+pending dataone_catalog.φ | Terms-Seite 401 (Auth-Wand) | https://www.dataone.org/
+pending seanoe_catalog.φ | Legal-Text nur über Backend-API, per curl nicht erreichbar | https://www.seanoe.org/
+
+# Die übrigen Korpora (erddap, lter, icos, inrae, oai_arxiv, tap_index*,
+# arcgis, copernicus, esa, nasa, gbif, heliocloud, bodc, cdaweb, rpw, …)
+# tragen kein gemessenes Verdikt — pending, nicht verschoben, nicht 0.0.
