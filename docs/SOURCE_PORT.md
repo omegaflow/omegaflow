@@ -28,6 +28,8 @@ registrierten Ort.
 | `phi/pipeline/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
 | `phi/pipeline/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
 | `phi/pipeline/catalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
+| `phi/pipeline/catalog/MANIFEST.φ` | Karte des Katalogs — role/state/lens je Datei, versioniert (Rats-Verdikt 2026-09-10). |
+| `phi/pipeline/decline_lens.φ` | Maschinen-Zwilling des Oszillator-Gates — 9 Decline-Klassen + 3 Familien als Daten (`bucket_litmus`), versioniert. |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
 | `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
@@ -135,6 +137,10 @@ lokal, weil die Korpora der CI fehlen und die Review (Schritt 4) in der
 Session bleibt. Der Wochen-Cron `probe-sweep.yml`, der eine 14k-URL-Ernte
 aus nichts fabrizierte, ist entfernt. Review bleibt in der Session:
 Bericht lesen → Schritt 4 → Commit.
+
+Die Linse (`source_url_candidates`) liest auch `catalog/MANIFEST.φ` und
+`decline_lens.φ` — beide tragen keine `url `/`candidate `-Zeilen, also null
+Kandidaten (A = A, kein Skip-Filter, kein Code-Pfad).
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
 URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
