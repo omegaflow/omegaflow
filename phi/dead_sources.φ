@@ -4761,3 +4761,11 @@ note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
 dead scheme-unsupported
 url s3://podaac-swot-ops-cumulus-public/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.nc.iso.xml
 note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
+
+decline registry
+url https://registry.euro-vo.org/regtap/tap
+note RegTAP-Service-Registry (ivo://esavo/registry/tap) — rr.*-Verzeichnis der TAP-Dienste, kein Messwert-Feld; der Endpoint wird als RegTAP-Quelle gelesen (vo-tap import), nicht als Datenquelle. tap-klassifikation 2026-09-10.
+
+decline registry
+url http://voparis-rr.obspm.fr/tap
+note VOParis-Resource-Registry (ivo://purx/tap) — rr.* + glots-Verzeichnis (32 Tabellen, kein Messwert-Feld, nur ivoa.obscore-View). tap-klassifikation 2026-09-10.
