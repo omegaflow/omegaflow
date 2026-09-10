@@ -6021,6 +6021,15 @@ field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
 field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
 field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odr.bin
+format galileo_odr
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/twomrs.bin
 format twomrs
 ttl 604800
