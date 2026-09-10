@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: 9ff277cedf5abbf7830680e217a9cf18461093eab747df9e985d0ba4c0a38a90
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
 # Handover — autonom (2026-09-10)
