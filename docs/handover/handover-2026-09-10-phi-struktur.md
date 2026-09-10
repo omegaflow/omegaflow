@@ -2,7 +2,7 @@
   title: Handover — phi-Struktur verfeinert + Quellen-Analyse automatisiert (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 027fb59b1149499a2ecc1d1306829c776c7e4913af3802724cee03d6a9b9ebfd
+  sha256: edbb6896d20be980b64360a55659413f8d93ca6f2a1e80f440b2446282cd42b7
   status: live
   see-also: docs/handover/handover-2026-09-10-bucket-litmus.md docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -46,5 +46,5 @@
 ## Beobachtet (nicht diese Session, uncommitted im Worktree)
 
 - `tools/harvest/src/bin/ephemeris_compiler.rs` (M), `tools/measure/src/bin/te_series_periodicity_probe.rs`
-  (??), `docs/befund/befund-te-series-periodicity.md` (??) — TE-Serie-Periodizität,
+  (??) — TE-Serie-Periodizität,
   uncommitted aus einer früheren Session; wird hier nicht angefasst.

@@ -302,7 +302,6 @@ impl Gate {
             "docs/concepts",
             "docs/surveys",
             "docs/handover",
-            "docs/befund",
             "docs/blatt",
         ] {
             let path = format!("{}/{}", root, dir);
@@ -458,7 +457,6 @@ impl Gate {
         let lower = text.to_lowercase();
         let completion = [
             "fertig",
-            "befund",
             "erledigt",
             "gelaufen",
             "abgeschlossen",
@@ -1553,7 +1551,7 @@ mod tests {
         for ok in [
             r###"{"filePath":"docs/handover/handover-2026-09-09-te-atom-4.md","newString":"# offen"}"###,
             r###"{"filePath":"docs/granit.md","newString":"## A = A"}"###,
-            r###"{"filePath":"docs/befund/befund-beispiel.md","newString":"# lose"}"###,
+            r###"{"filePath":"docs/auftrag/auftrag-beispiel.md","newString":"# lose"}"###,
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
             r###"{"filePath":"src/handover_template.md","newString":"## title"}"###,

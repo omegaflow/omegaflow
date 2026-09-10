@@ -2,7 +2,7 @@
   title: Survey — Scan: /tmp/opencode (was ist kanonisch zu behalten)
   class: survey
   date: 2026-09-07
-  sha256: 03cb428d3f1d106d5cfe4e72b3ed3a3a20164a9ad98c03953c391747f34ac630
+  sha256: 340aa4b3066ddee1b08deb13456683627bf14a0e4765c81d4f0daf7396251e3e
   status: live
   see-also: docs/concepts/docs-naming.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
@@ -112,3 +112,10 @@ Geprüft und verworfen (A = A, keine verwaisten Dateien):
 - Quell-Entscheid NOAA-NRS (→ eigener `tools/harvest`-Compiler) — `pending`.
 - Scratch-/Literaturdateien nach Sicherung nach `data/`/`docs/reference/` oder
   Löschen, sobald der Operator entscheidet.
+
+## Nachsatz (2026-09-10)
+
+Die Klasse Befund ist abgeschafft (operator word, AGENTS.md) — `docs/befund/`
+ist leer, die Befund-Migration ist committet. Die Zeilen dieses Scans, die
+`docs/befund/` als Heimat nennen, sind die Wahrheit ihres Datums, keine
+Anweisung an die Folgesession.

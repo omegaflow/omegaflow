@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 1ec90afc91ec3dc0b8b7df7178e3e0446a9b8b75a8bd63069c93e2d2e38d2f0e
+  sha256: c0e896c5caf3b1f0133bec1640797a5b5e5c12435359151186bd2a91e9edfeb1
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -21,7 +21,7 @@
 > registrierte Wert 0.265 (Lag 24) ist **Pegel→Regen**, nicht
 > Niederschlag→Pegel; die echte Niederschlag→Pegel-Richtung ist bei Lag 24
 > unter der Schwelle und fällt unter Konditionierung. Verifikation und
-> Konditionierungslauf: `docs/befund/befund-grat-trishuli-konditionierung.md`.
+> Konditionierungslauf: §3.5 dieses Blattes.
 >
 > Dasselbe Spiegelbild tragen die räumlichen Spalten in §3.3: der dort
 > gedruckte „Rasuwa → Gyirong (Lag 12–24)“ ist **Gyirong → Rasuwa**
@@ -238,7 +238,7 @@ kein Vorwärts-Pfeil am co-lokalen Gauge bei dessen betontem Lag. Die
 Vorwärts-Kopplung ist bei kurzen Lags (1–6 h, teils 12) signifikant — die
 schnelle Pegel-Antwort auf Regen —, aber unter der Konditionierung auf den
 geteilten synoptischen Treiber übersteht **keine** Vorwärts-Orientierung
-die Signifikanz (`docs/befund/befund-grat-trishuli-konditionierung.md`).
+die Signifikanz (Konditionierungslauf, §3.5).
 Der präregistrierte Vorwärts-Pfeil fällt zur Stille. Ehrliche Grenze:
 gemessen ist **Pegel** (m), nicht Abfluss (m³/s), auf dem **Vor-Flut-
 Fenster** (die Reihe bricht am Flutbeginn ab) — es misst die

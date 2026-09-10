@@ -3,7 +3,7 @@
   class: concept
   date: 2026-09-09
   version: 1
-  sha256: fca0722d86d063ac5c86ed92226e32874df2a59ec59490102710f58f4570c8bf
+  sha256: 9eab3d4e7b3938d3b333d050a98f6e633c972f906a916e4ad107a5552cafa9da
   status: live
   see-also: docs/auftrag/archiv/auftrag-maschinen-audits.md,
             docs/concepts/das-eine-instrument.md,
@@ -44,7 +44,7 @@ benennt, was dort bereits ruht — es erfindet kein Beispiel.
 
 ## Bindung
 
-- Jedes geschlossene Blatt (befund/paper/survey) trägt die drei Zeilen am Ende.
+- Jedes geschlossene Blatt (paper/survey/blatt) trägt die drei Zeilen am Ende.
 - Eine Notiz ist ein Register-Eintrag, kein Kommentar; sie wird committet wie
   das Blatt selbst.
 - Ohne gemessene Überstimmung trägt die zweite Zeile `pending` — die

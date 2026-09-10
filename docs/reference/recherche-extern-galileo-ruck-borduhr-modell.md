@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: a43dbc44b2660d8bc60220e39a0e528c18d0509920a75391c48cd5f89cfed9b5
   status: live
-  see-also: docs/befund/befund-galileo-floor-pass-episodisch.md docs/befund/befund-galileo-ruhige-basis-ruck-stufe.md docs/befund/befund-galileo-ruck-untersuchung-zeugen.md docs/befund/befund-galileo-ruck-nachmessen-f3.md
+  see-also: tools/measure/src/bin/galileo_floor_sustained_lock_state.rs tools/measure/src/bin/galileo_floor_basis_ruck.rs tools/measure/src/bin/galileo_ruck_zeugen.rs tools/measure/src/bin/galileo_ruck_nachmessen_f3.rs
 -->
 # Recherche-Befund: Galileo-S-Band-Residualsprung 1995-11-30/12-01 — Borduhr-Sprung (A) oder Bodenseite (B)?
 
