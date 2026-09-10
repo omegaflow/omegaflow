@@ -82,9 +82,9 @@ decline superseded-by-integrated
 url http://erddap.emodnet-physics.eu/erddap/rss/ArgoFloats.rss
 note EMODnet-Argo + IFREMER-ERDDAP-Argo (allDatasets.json live 200, 2026-08-19) — die Argo-Messung ist über argovis-api + data-argo.ifremer.fr DAC in sources.φ integriert — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
-dead 400
+decline literature
 url http://export.arxiv.org/api/query
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline literature
 url http://export.arxiv.org/api/query?search_query=all:physics&max_results=1
@@ -94,9 +94,9 @@ dead 5xx
 url http://fenixservices.fao.org/faostat/api/v1/en/data/QCL?area=
 note HTTP 521 — Server antwortet nicht brauchbar.
 
-dead timeout
+decline static-archive
 url http://geodesy.unr.edu/api/velocity?network=IGS&format=json&limit=500
-note curl: curl: (28) Connection timed out after 12001 milliseconds
+note JSON velocity API retired (HTTP 404); NGL velocity solutions now static MIDAS text files, no live JSON field feed.
 
 dead 404
 url http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=json&network=G
@@ -134,9 +134,9 @@ decline catalog
 url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1
 note Datensatz-Registry (Metadata), keine Messwerte.
 
-dead 400
+decline catalog
 url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url http://polly.tropos.de/api/stations?format=json
@@ -172,11 +172,11 @@ note Flugplatz-Website.
 
 dead transport
 url http://worldtimeapi.org/api/timezone/Etc/UTC
-note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt
+note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt Browser 2026-09-10: Host tot, Dienst-Nachfolger https://timeapi.world/.
 
 dead transport
 url http://worldtimeapi.org/api/timezone/Etc/UTC`
-note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt
+note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt Browser 2026-09-10: Host tot, Dienst-Nachfolger https://timeapi.world/.
 
 dead 404
 url http://wwlln.net/cgi-bin/output.cgi?format=json&type=stations&limit=100
@@ -190,9 +190,9 @@ decline imagery-tiles
 url https://9dru9gaeoh.execute-api.us-west-2.amazonaws.com/collections/MAXAR_afghanistan_earthquake22/WebMercatorQuad/tilejson.json?title=Visual+Image&assets=visual&asset_bidx=visual%7C1%2C2%2C3&minmax_zoom=8&minmax_zoom=22
 note Satellitenbild-Kachelkatalog (TileJSON).
 
-dead 400
+decline computation
 url https://aa.usno.navy.mil/api/rstt/oneday?date=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline computation
 url https://aa.usno.navy.mil/api/rstt/oneday?date=2026-08-07&coords=34.201,-118.171&tz=0
@@ -214,13 +214,13 @@ dead 404
 url https://aisstream.io/api/v1/stream/vessels?latitude=
 note HTTP 404 — Endpoint weg.
 
-dead 503
+decline catalog
 url https://alasky.u-strasbg.fr/footprints/
-note CDS-Survey-Footprint-Host (Footprint-HiPS grosser Durchmusterungen), gemessen 2026-09-06: HTTP 503 Service Unavailable fuer /footprints/ und jeden Survey-Pfad (SDSS9/2MASS/AllWISE/GALEX/ROSAT/PanSTARRS/DES/Gaia); der MOCServer-Geschwister alasky.u-strasbg.fr/MocServer/query lebt (200). Weberin §9 Stufe 5 (Survey-Footprints als eigene Assets), Recherche-Stand der Alternativen: MOCServer-Records tragen positions-abgeleitete Katalog-Coverage (CDS/P/..., z.B. CDS/II/371/des_dr2 moc_sky_fraction 0.1261, CDS/P/GALEXGR6_7/color 0.7897), nach dem Footprint-Litmus verweigert — beobachtet-nichts gegen nie-beobachtet bliebe an der Quelle (Punkt-Positionen statt Feld-/Exposure-Maske) ununterscheidbar, keine Maske; die Survey-nativen Archive (SDSS SAS data.sdss.org/sas 200, MAST/ps1images 200, IRSA data/download 200, HEASARC FTP 200, des.ncsa.illinois.edu 200, s3df.slac.stanford.edu/data/rubin 200) sind anonym erreichbar, aber an den geprueften Pfaden keine anonyme Footprint-Maske (SDSS dr18-Baum, PS1, AllWISE-Katalogteile, ROSAT-Datenbaum, Rubin sim-data sind Kataloge/Produkte ohne Coverage-Maske). Fund: keine anonyme Survey-Footprint-Maske; Recheck beim naechsten Host-Verdikt.
+note CDS-Survey-Footprint-Host (Footprint-HiPS grosser Durchmusterungen), gemessen 2026-09-06: HTTP 503 Service Unavailable fuer /footprints/ und jeden Survey-Pfad (SDSS9/2MASS/AllWISE/GALEX/ROSAT/PanSTARRS/DES/Gaia); der MOCServer-Geschwister alasky.u-strasbg.fr/MocServer/query lebt (200). Weberin §9 Stufe 5 (Survey-Footprints als eigene Assets), Recherche-Stand der Alternativen: MOCServer-Records tragen positions-abgeleitete Katalog-Coverage (CDS/P/..., z.B. CDS/II/371/des_dr2 moc_sky_fraction 0.1261, CDS/P/GALEXGR6_7/color 0.7897), nach dem Footprint-Litmus verweigert — beobachtet-nichts gegen nie-beobachtet bliebe an der Quelle (Punkt-Positionen statt Feld-/Exposure-Maske) ununterscheidbar, keine Maske; die Survey-nativen Archive (SDSS SAS data.sdss.org/sas 200, MAST/ps1images 200, IRSA data/download 200, HEASARC FTP 200, des.ncsa.illinois.edu 200, s3df.slac.stanford.edu/data/rubin 200) sind anonym erreichbar, aber an den geprueften Pfaden keine anonyme Footprint-Maske (SDSS dr18-Baum, PS1, AllWISE-Katalogteile, ROSAT-Datenbaum, Rubin sim-data sind Kataloge/Produkte ohne Coverage-Maske). Fund: keine anonyme Survey-Footprint-Maske; Recheck beim naechsten Host-Verdikt. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline catalog
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://ameriflux.lbl.gov/api/public/v2/sites?format=json&climate_zone=arctic,subarctic&data_product=FLUXNET2015&active=true
@@ -264,11 +264,11 @@ note AirQo (Kampala/Nairobi/Accra/Lagos, PM-Messung) lag auf OpenAQ — atmosphe
 
 dead dns-unresolved
 url https://api.astro-colibri.com/api/
-note AstroCOLIBRI: api.astro-colibri.com löst nicht auf.
+note AstroCOLIBRI: api.astro-colibri.com löst nicht auf. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://astro-colibri.science/apidoc.
 
-dead ssl
+decline catalog
 url https://api.astrocats.space/catalog?format=json&
-note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://api.bas.ac.uk/uk-pdc-catalogue/v1/items?format=json&category=environmental_monitoring&limit=200&region=antarctica
@@ -280,7 +280,7 @@ note HTTP 404 — Endpoint weg.
 
 dead ssl
 url https://api.blitzortung.org/v1/strikes/latest
-note curl: curl: (60) SSL certificate problem: certificate has expired
+note curl: curl: (60) SSL certificate problem: certificate has expired Browser 2026-09-10: Host tot, Dienst-Nachfolger https://docs.lightningmaps.org/.
 
 dead 404
 url https://api.boldsystems.org/v3/specimen?taxon=Lepidoptera&format=json&limit=3
@@ -294,9 +294,9 @@ decline aggregate
 url https://api.carbonintensity.org.uk/intensity
 note nationaler aggregierter CO2-Index (gCO2/kWh), skalar positionslos, keine Punkt-Messung (200).
 
-dead 400
+decline infrastructure
 url https://api.cloudflare.com/client/v4/accounts/$
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline no-physical-force
 url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
@@ -332,19 +332,19 @@ note kryptographischer Zufalls-Beacon (SHA-256), kein physikalisches Signal (200
 
 dead dns-unresolved
 url https://api.earthnetworks.com/v1/
-note curl: curl: (6) Could not resolve host: api.earthnetworks.com
+note curl: curl: (6) Could not resolve host: api.earthnetworks.com Browser 2026-09-10: Host tot, Dienst-Nachfolger https://developer.earthnetworks.com.
 
 dead dns-unresolved
 url https://api.ebeard.org/v2/data/obs/geo/recent?lat=
-note curl: curl: (6) Could not resolve host: api.ebeard.org
+note curl: curl: (6) Could not resolve host: api.ebeard.org Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
 
 dead 404
 url https://api.ebird.org/v2/data/obs/
 note HTTP 404 — Endpoint weg.
 
-dead timeout
+decline no-physical-force
 url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=DEMO_KEY
-note curl: curl: (28) Operation timed out after 12002 milliseconds with 0 bytes received
+note curl: curl: (28) Operation timed out after 12002 milliseconds with 0 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline redistribution
 url https://api.electricitymap.org/v3/carbon-intensity/latest
@@ -368,7 +368,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year=
-note curl: curl: (6) Could not resolve host: api.eurobis.org
+note curl: curl: (6) Could not resolve host: api.eurobis.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.eurobis.org.
 
 decline no-physical-force
 url https://api.europeana.eu/record/v2/search.json?query=*&qf=place
@@ -380,11 +380,11 @@ note Wechselkurs — keine physikalische Kraft.
 
 dead dns-unresolved
 url https://api.farmsense.net/v1/moonphases/
-note curl: curl: (6) Could not resolve host: api.farmsense.net
+note curl: curl: (6) Could not resolve host: api.farmsense.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.farmsense.net/api/.
 
 dead dns-unresolved
 url https://api.farmsense.net/v1/moonphases/?d=
-note curl: curl: (6) Could not resolve host: api.farmsense.net
+note curl: curl: (6) Could not resolve host: api.farmsense.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.farmsense.net/api/.
 
 decline registry
 url https://api.fbi.gov/wanted/v1/list
@@ -404,7 +404,7 @@ note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000)
 
 dead dns-unresolved
 url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
-note curl: curl: (6) Could not resolve host: api.fisheries.noaa.gov
+note curl: curl: (6) Could not resolve host: api.fisheries.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fisheries.noaa.gov.
 
 decline presence-catalog
 url https://api.gbif.org/v1/occurrence/count
@@ -426,9 +426,9 @@ decline variant
 url https://api.geonet.org.nz/quake?MMI=3
 note MMI-Schwelle 3 ist Variante der live-Quelle MMI=4 (Probe-Befund 2026-08-15).
 
-dead 400
+decline alerts
 url https://api.geonet.org.nz/volcano/alert?format=json
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline registry
 url https://api.github.com/
@@ -464,11 +464,11 @@ note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerzielle Til
 
 dead dns-unresolved
 url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames
-note curl: curl: (6) Could not resolve host: api.marinespecies.org
+note curl: curl: (6) Could not resolve host: api.marinespecies.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.marinespecies.org/rest/.
 
 dead dns-unresolved
 url https://api.mbari.org/m3/ctd?format=json&platform=MARS&limit=200&start=
-note curl: curl: (6) Could not resolve host: api.mbari.org
+note curl: curl: (6) Could not resolve host: api.mbari.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mbari-org.github.io/oni/.
 
 decline model-forecast
 url https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.10&lon=9.58
@@ -684,7 +684,7 @@ note Import-Registry (Log-Liste). Messwert-Endpoint api.safecast.org/measurement
 
 dead dns
 url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
-note SatNOGS-API — api-Subdomain DNS-tot, Jina 422; satnogs.org selbst lebt. Welle 2026-08-19.
+note SatNOGS-API — api-Subdomain DNS-tot, Jina 422; satnogs.org selbst lebt. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://db.satnogs.org/api/.
 
 decline no-physical-force
 url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
@@ -700,7 +700,7 @@ note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (T
 
 dead dns-unresolved
 url https://api.sne.space/objects?format=json
-note Open Supernova Catalog: api.sne.space löst nicht auf (konsistent über Sessions). Server down oder umgezogen.
+note Open Supernova Catalog: api.sne.space löst nicht auf (konsistent über Sessions). Server down oder umgezogen. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://github.com/astrocatalogs/supernovae.
 
 decline redistribution
 url https://api.sofarocean.com/api/devices
@@ -724,19 +724,19 @@ note abgeleiteter Sonnenstand-Kalender (Ephemeris-Produkt), kein Sensor-Messwert
 
 dead dns-unresolved
 url https://api.superdarn.ca/v1/convection/map/latest
-note curl: curl: (6) Could not resolve host: api.superdarn.ca
+note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10: Host tot, Dienst-Nachfolger https://superdarn.ca/.
 
 dead dns-unresolved
 url https://api.superdarn.ca/v1/radars/status
-note curl: curl: (6) Could not resolve host: api.superdarn.ca
+note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10: Host tot, Dienst-Nachfolger https://superdarn.ca/.
 
 decline stale-feed
 url https://api.thingspeak.com/channels/705404/feeds/last.json
 note Letzter Eintrag 2020-09-13, Felder 1–5 null — Kanal gestorben.
 
-dead 400
+decline superseded-by-integrated
 url https://api.tidesandcurrents.noaa.gov/api/prod/...`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
 decline superseded-by-integrated
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station=9414290&date=latest&time_zone=gmt&units=metric&format=json&datum=MSL
@@ -766,13 +766,13 @@ dead 404
 url https://api.weather.bom.gov.au/v1/observations/
 note HTTP 404 — Endpoint weg.
 
-dead 400
+decline registry
 url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead origin-down
 url https://api.weathersa.co.za/forecast/xml/current/
-note curl 502 (GET) / 521 (Origin down, http://api.weathersa.co.za/) — 2026-09-03 Live-Probe. SAWS Südafrika aus ref-auth-apis.md §B nachgemessen.
+note curl 502 (GET) / 521 (Origin down, http://api.weathersa.co.za/) — 2026-09-03 Live-Probe. SAWS Südafrika aus ref-auth-apis.md §B nachgemessen. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.weathersa.co.za/.
 
 decline superseded-by-ephemeris
 url https://api.wheretheiss.at/v1/satellites/25544
@@ -804,11 +804,11 @@ note GeoAdmin-Kernkraftwerke liefert f=json 200 application/json (2026-08-19), a
 
 dead dns-unresolved
 url https://apidev.uis.unesco.org/sdmx/v2/data/
-note curl: curl: (6) Could not resolve host: apidev.uis.unesco.org
+note curl: curl: (6) Could not resolve host: apidev.uis.unesco.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://api.uis.unesco.org/.
 
-dead 400
+decline registry
 url https://app.birdweather.com/api/v1/stations/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline legacy
 url https://apps.who.int/gho/athena/api/GHO/WHOSIS_000015.json
@@ -817,10 +817,6 @@ note GHO-Legacy-Dashboard.
 dead 404
 url https://aqportal.discomap.eea.europa.eu/api/observations?pollutant=NO2&
 note HTTP 404 — Endpoint weg.
-
-dead 400
-url https://aqs.epa.gov/data/api/dailyData/byBox?email=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 decline model-forecast
 url https://archive-api.open-meteo.com/v1/archive
@@ -834,13 +830,13 @@ decline file-inventory
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
 note jsonsummary liefert ein Datei-Inventar (filename, file_size, file_md5) — kein ra/dec, kein Messwert in dieser Route (Port-Befund 2026-08-15).
 
-dead retired
+decline infrastructure
 url https://archive.nrao.edu/
-note Service Decommissioned (200-HTML); Nachfolger data.nrao.edu (Angular-SPA).
+note Service Decommissioned (200-HTML); Nachfolger data.nrao.edu (Angular-SPA). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline superseded-by-integrated
 url https://argovis-api.colorado.edu/argo?center=-22.5,0&radius=100&startDate=2024-06-01&data=temperature,salinity&format=json
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
 decline superseded-by-integrated
 url https://argovis.colorado.edu/selection/api/profiles
@@ -920,7 +916,7 @@ note Katastrophen-Dashboard.
 
 dead dns-unresolved
 url https://bhuvan-panchayat.nrsc.gov.in:8080/geoserver/sde/wms
-note curl: curl: (6) Could not resolve host: bhuvan-panchayat.nrsc.gov.in
+note curl: curl: (6) Could not resolve host: bhuvan-panchayat.nrsc.gov.in Browser 2026-09-10: Host tot, Dienst-Nachfolger https://bhuvanpanchayat.nrsc.gov.in/index.html.
 
 dead 404
 url https://bhuvan.nrsc.gov.in/geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities&format=json
@@ -944,27 +940,27 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://casu.ast.cam.ac.uk/casuadc/ingarch/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+target_name,ra_j2000,dec_j2000,instrument,filter,exp_time,night,snr+FROM+weave_observations+WHERE+ra_j2000+IS+NOT+NULL+ORDER+BY+night+DESC
-note curl: curl: (7) Failed to connect to casu.ast.cam.ac.uk port 443 after 78 ms: Couldn't connect to server
+note curl: curl: (7) Failed to connect to casu.ast.cam.ac.uk port 443 after 78 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://camcead.ast.cam.ac.uk.
 
 dead dns-unresolved
 url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
-note curl: curl: (6) Could not resolve host: catalogue.clms.copernicus.eu
+note curl: curl: (6) Could not resolve host: catalogue.clms.copernicus.eu Browser 2026-09-10: Host tot, Dienst-Nachfolger https://land.copernicus.eu/en/dataset-catalog.
 
 decline catalog
 url https://catalogue.dataspace.copernicus.eu/odata/v1/Products
 note Sentinel-Produktkatalog (OData-Metadata).
 
-dead 400
+decline catalog
 url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?...`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead redirect-loop
+decline model-forecast
 url https://ccafs-climate.org/api/
-note curl: curl: (47) Maximum (50) redirects followed
+note curl: curl: (47) Maximum (50) redirects followed. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead timeout
+decline superseded-by-integrated
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 0 bytes received
+note HAPI endpoint live but stopDate 2026-08-09 (recent window empty); OMNI wind/mag already live in sources.φ.
 
 decline derived
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&parameters=E1800
@@ -990,13 +986,13 @@ dead timeout
 url https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=json
 note curl: curl: (28) Connection timed out after 12001 milliseconds
 
-dead timeout
+decline derived-orbit-fit
 url https://celestrak.org/NORAD/elements/gp.php?...&FORMAT=json
-note curl: curl: (28) Connection timed out after 12001 milliseconds
+note curl: curl: (28) Connection timed out after 12001 milliseconds Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead timeout
+decline derived-orbit-fit
 url https://celestrak.org/NORAD/elements/gp.php?...&FORMAT=json`
-note curl: curl: (28) Connection timed out after 12002 milliseconds
+note curl: curl: (28) Connection timed out after 12002 milliseconds Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline derived-orbit-fit
 url https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=JSON
@@ -1012,7 +1008,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://chain.physics.unb.ca/api/
-note curl: curl: (7) Failed to connect to chain.physics.unb.ca port 443 after 210 ms: Couldn't connect to server
+note curl: curl: (7) Failed to connect to chain.physics.unb.ca port 443 after 210 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.rspl.ca/index.php/projects/chain.
 
 decline catalog
 url https://chime-frb.ca/
@@ -1062,9 +1058,9 @@ decline catalog
 url https://cmr.earthdata.nasa.gov:443/search/granules.json?collection_concept_id=C2565414058-GES_DISC&page_size=100&sort_key=-start_date
 note NASA CMR Granul-Metadaten — Katalog.
 
-dead timeout
+decline catalog
 url https://cmr.earthdata.nasa.gov:443/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 18895778 bytes received
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 18895778 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://coast.noaa.gov/arcgis/rest/services/Hosted/OffshoreWindSpeedDirection/FeatureServer/0
@@ -1078,9 +1074,9 @@ dead 404
 url https://coastwatch.noaa.gov/erddap/`
 note HTTP 404 — Endpoint weg.
 
-dead timeout
+decline catalog
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/
-note curl: curl: (28) Operation timed out after 11141 milliseconds with 1935855 bytes received
+note curl: curl: (28) Operation timed out after 11141 milliseconds with 1935855 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://comet.nerc.ac.uk/lics-portal/api/events/?format=json&limit=200&type=eruption&status=active
@@ -1094,9 +1090,9 @@ decline no-physical-force
 url https://crates.io/api/v1/crates?per_page=1
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
-dead 400
+decline feed-ended
 url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note scalar_1202591 covers 2019-03-28 → 2020-10-22 only (historical deployment); no live salinity scalar at this dataset.
 
 decline archive-only
 url https://dasch.rc.fas.harvard.edu/
@@ -1134,9 +1130,9 @@ decline health-stats
 url https://data.cdc.gov/resource/jr58-6ysp.json
 note Gesundheitsstatistik — kein physikalisches Feld.
 
-dead 400
+decline health-stats
 url https://data.cdc.gov/resource/jr58-6ysp.json?\$limit=1
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://data.earlinet.org/api/services/
@@ -1162,9 +1158,9 @@ decline redistribution
 url https://data.lsst.cloud/api/tap
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
-dead 404
+decline computation
 url https://data.minorplanetcenter.net/comet_e.json
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://data.nasa.gov/api/views/gh4g-9sfh/rows.csv
@@ -1174,21 +1170,13 @@ decline static-archive
 url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.csv
 note grind: grind_terrapulse_b.φ
 
-dead 400
-url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
-
-dead 400
-url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
-
-dead timeout
+decline superseded-by-integrated
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 5040954 bytes received
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 5040954 bytes received Bereits integriert; dead war Duplikat/URL-Fragment.
 
-dead 400
+decline superseded-by-integrated
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
 dead 404
 url https://data.raspberryshake.org/api/v2/shake?limit=500
@@ -1204,7 +1192,7 @@ note Proteinstruktur-Daten.
 
 dead dns
 url https://data.saildrone.com/api/robots
-note Saildrone-Flotte — data.saildrone.com DNS-tot, kein CDX-Snapshot; Missionsdaten nur historisch via PMEL-ERDDAP. Welle 2026-08-19.
+note Saildrone-Flotte — data.saildrone.com DNS-tot, kein CDX-Snapshot; Missionsdaten nur historisch via PMEL-ERDDAP. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.saildrone.com/data-delivery/api.
 
 dead 404
 url https://data.sensor.community/airrohr/v1/
@@ -1292,19 +1280,19 @@ note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Su
 
 dead dns-unresolved
 url https://dods.wh.gov/opendap/jg/acoustic/aggregated/acoustic.nc.json
-note curl: curl: (6) Could not resolve host: dods.wh.gov
+note curl: curl: (6) Could not resolve host: dods.wh.gov Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
 
 dead 404
 url https://droughtmonitor.unl.edu/api/drought/briefingmaps/
 note HTTP 404 — Endpoint weg.
 
-dead 500
+decline derived-product
 url https://ds.iris.edu/spud/momenttensor
-note IRIS-SPUD-Moment-Tensor-Service (momenttensor.json Capture): HTTP 500 am 2026-09-07 (Server-Fehler); IRIS-fdsnws/event = Gone. Moment-Tensor-Messung gehoert der GCMT-Linie (globalcmt.org); die Waveform-Messung ist via service.earthscope.org (fdsn_waveform.bin) registriert.
+note IRIS-SPUD-Moment-Tensor-Service (momenttensor.json Capture): HTTP 500 am 2026-09-07 (Server-Fehler); IRIS-fdsnws/event = Gone. Moment-Tensor-Messung gehoert der GCMT-Linie (globalcmt.org); die Waveform-Messung ist via service.earthscope.org (fdsn_waveform.bin) registriert. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead dns-unresolved
 url https://dsn.jpl.nasa.gov/dsn/data/dsn.xml
-note curl: curl: (6) Could not resolve host: dsn.jpl.nasa.gov
+note curl: curl: (6) Could not resolve host: dsn.jpl.nasa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.jpl.nasa.gov/missions/dsn/.
 
 decline catalog
 url https://earth-search.aws.element84.com/v0/search
@@ -1314,9 +1302,9 @@ decline catalog-duplicate
 url https://earthquake.tmd.go.th/earthquake_json.php
 note TMD-Thailand-Erdbeben-Bulletin. Die earthquake_json.json/200.json-Captures stammen vom HTTP-404-Pfad (am 2026-09-07 gemessen); der lebende RSS (feed/rss_inside.xml) traegt lat/lon/magnitude nur im <title>-Freitext (Parser-Gap) und dupliziert den registrierten USGS-Epizentrum-Messwert-Typ.
 
-dead 400
+decline catalog
 url https://earth-search.aws.element84.com/v0/search\
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline superseded
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026nmpbnu.geojson
@@ -1484,7 +1472,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://easd.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+source_id,ra,dec,ie_mag,ye_mag,je_mag,he_mag,phz_z,phz_z_err+FROM+euclid.ero_source_catalog+WHERE+ra+IS+NOT+NULL+AND+ie_mag
-note curl: curl: (6) Could not resolve host: easd.esac.esa.int
+note curl: curl: (6) Could not resolve host: easd.esac.esa.int Browser 2026-09-10: Host tot, Dienst-Nachfolger https://eas.esac.esa.int/sas/.
 
 dead 404
 url https://ebas-data.nilu.no/api/v1/station/?format=json&parameter=NOx&
@@ -1566,9 +1554,9 @@ decline no-physical-force
 url https://epoch.ai/data/notable_ai_models.csv
 note KI-Modell-Liste.
 
-dead 400
+decline terrain
 url https://epqs.nationalmap.gov/v1/json?x=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline terrain
 url https://epqs.nationalmap.gov/v1/json?x=13.41&y=52.52&units=Meters&output=json
@@ -1576,15 +1564,15 @@ note DEM-Höhenabfrage — Terrain per Gate declined. Council-Verdikt 2026-09-07
 
 dead dns-unresolved
 url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv
-note curl: curl: (6) Could not resolve host: erddap.aodn.org.au
+note curl: curl: (6) Could not resolve host: erddap.aodn.org.au Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.aodn.org.au/.
 
-dead 400
+decline superseded-by-integrated
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
-dead timeout
+decline catalog
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/
-note curl: curl: (28) Operation timed out after 11103 milliseconds with 359917 bytes received
+note curl: curl: (28) Operation timed out after 11103 milliseconds with 359917 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D
@@ -1594,45 +1582,45 @@ dead 404
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D2026-01-01T00%3A00%3A00Z
 note HTTP 404 — Endpoint weg.
 
-dead 404
+decline dataset-removed
 url https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv
-note HTTP 404 — Endpoint weg.
+note dataset drifter_6hour_qc removed from gcoos ERDDAP (404 unknown datasetID); no drifter successor among the 189 active datasets.
 
-dead 400
+decline dataset-removed
 url https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv?...`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note dataset drifter_6hour_qc removed from gcoos ERDDAP (404 unknown datasetID); no drifter successor among the 189 active datasets.
 
-dead unreachable
+decline no-physical-force
 url https://erddap.gml.noaa.gov/erddap/tabledap/greenhouse_gases_sf6_aircraft_pfp_discrete.json?time,latitude,longitude,sf6&time
-note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server
+note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline synthetic-product
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC
 note Force-Gate decline, title/summary measured 2026-09-07: "Argo float synthetic vertical profiles : BGC data", built by ARGO_simplified_profile — an interpolated standard-depth product, not a per-level float measurement. The measured BGC parameters live per float in the GDAC netCDF profiles indexed by argo_bio-profile_index.txt.gz (data-argo.ifremer.fr, HTTP 200, format v2.2, 410088 profiles, columns file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update); the catalog-wide netCDF harvest is a register duty. ifremer raw ArgoFloats serves no BGC values (doxy null across full-suite float 1901614, doxy>0 query 404 — measured 2026-09-07).
 
-dead 400
+decline superseded-by-integrated
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
-dead ssl
+decline registry
 url https://erddap.incois.gov.in/erddap/
-note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead ssl
+decline registry
 url https://erddap.incois.gov.in/erddap/`
-note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline model-forecast
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note IMI_IRISH_SHELF_SWAN_WAVE is SWAN numerical wave-model output (forecast horizon); Oszillator-Gate model-forecast.
 
-dead timeout
+decline feed-ended
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 2129061 bytes received
+note dataset ends 2021-11-30 (spl_full 2015-10-08 → 2021-11-30); no live acoustic feed.
 
 dead dns-unresolved
 url https://erddap.saeon.ac.za/erddap/
-note curl: curl: (6) Could not resolve host: erddap.saeon.ac.za
+note curl: curl: (6) Could not resolve host: erddap.saeon.ac.za Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.saeon.ac.za/.
 
 dead 404
 url https://erosita.mpe.mpg.de/api/v1/populations?format=json&survey=eRASS4&type=AGN&flux_min=1e-14&limit=500
@@ -1640,7 +1628,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
-note curl: curl: (6) Could not resolve host: esa-sst-cci-browser.ceda.ac.uk
+note curl: curl: (6) Could not resolve host: esa-sst-cci-browser.ceda.ac.uk Browser 2026-09-10: Host tot, Dienst-Nachfolger https://climate.esa.int/en/projects/sea-surface-temperature/.
 
 dead 404
 url https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.tif
@@ -1674,9 +1662,9 @@ decline superseded-by-integrated
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=JSON&QUERY=SELECT+hostname,pl_name,pl_masse,ra,dec+FROM+ps+WHERE+pl_name%3D%27KOI-4777.01%27
 note Exoplanet-TAP live 200 application/json (2026-08-19), aber die Exoplaneten-Messung ist in sources.φ integriert (stellarhosts Z.1630, exoplanets.json Z.1229/1240, tess_lightcurves.bin Z.1259) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
-dead 
+decline presence-catalog
 url https://explore.globalmeteornetwork.org/gmn_data_store
-note grind: grind_terrapulse_a.φ
+note grind: grind_terrapulse_a.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline position-only
 url https://eyes.nasa.gov/dsn/data/dsn.json?t=1786939200
@@ -1688,11 +1676,11 @@ note XML-Variante; dsn.json ist Accept-Kandidat (TODO).
 
 dead dns-unresolved
 url https://faostat4.fao.org/api/
-note curl: curl: (6) Could not resolve host: faostat4.fao.org
+note curl: curl: (6) Could not resolve host: faostat4.fao.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fao.org/faostat/en/.
 
 dead dns-unresolved
 url https://faostat4.fao.org/api/file/Capture_Quantity.zip
-note curl: curl: (6) Could not resolve host: faostat4.fao.org
+note curl: curl: (6) Could not resolve host: faostat4.fao.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fao.org/faostat/en/.
 
 dead 5xx
 url https://fenixservices.fao.org/faostat/api/v1/en/
@@ -1742,9 +1730,9 @@ decline redistribution
 url https://gateway.api.globalfishingwatch.org/v3/
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
-dead 400
+decline presence-catalog
 url https://gateway.api.globalfishingwatch.org/v3/`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/departures
@@ -1768,11 +1756,11 @@ note Katastrophen-Warnungen (Alerts per Gate declined).
 
 dead dns-unresolved
 url https://gdp.aoml.noaa.gov/erddap/
-note curl: curl: (6) Could not resolve host: gdp.aoml.noaa.gov
+note curl: curl: (6) Could not resolve host: gdp.aoml.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.aoml.noaa.gov/phod/gdp/index.php.
 
 dead dns-unresolved
 url https://gdp.aoml.noaa.gov/erddap/...`
-note curl: curl: (6) Could not resolve host: gdp.aoml.noaa.gov
+note curl: curl: (6) Could not resolve host: gdp.aoml.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.aoml.noaa.gov/phod/gdp/index.php.
 
 dead 404
 url https://gea.esac.esa.int/archive/tap/sync
@@ -1786,17 +1774,17 @@ decline no-json-redundant
 url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=json&limit=10
 note grind: grind_b2find.φ
 
-dead 400
+decline superseded-by-integrated
 url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=json&minmagnitude=3&limit=100
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
 decline schema
 url https://geojson.org/geojson-ld/geojson-context.jsonld
 note Schema-Dokument.
 
-dead 404-route
+decline aggregate
 url https://geomag.bgs.ac.uk/data_service/data/magnetic_indices/saa/
-note Recheck b4 2026-08-18: 404 HTML — SAA-Route absent; Portal lebt. HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+note Recheck b4 2026-08-18: 404 HTML — SAA-Route absent; Portal lebt. HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline duplicate-intermagnet
 url https://geomag.usgs.gov/ws/data/
@@ -1804,7 +1792,7 @@ note USGS-Geomagnetik (data.json Capture, HTTP 200: InterMAGNET-adjusted XYZF nT
 
 dead dns-unresolved
 url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
-note curl: curl: (6) Could not resolve host: geoserver.efas.eu
+note curl: curl: (6) Could not resolve host: geoserver.efas.eu Browser 2026-09-10: Host tot, Dienst-Nachfolger https://european-flood.emergency.copernicus.eu/.
 
 decline 
 url https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Fish_Species_Distribution_FSH/FeatureServer/36
@@ -1850,13 +1838,13 @@ dead 404
 url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
 note JSON-Body: {"error":{"code":404,"message":"Service SMAP/SM_1km/MapServer not found"}} — Service entfernt.
 
-dead 400
+decline aggregate
 url https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline aggregate
 url https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://gisdata.in.gov/server/rest/services/Hosted/DAMS_DNR_WATER_IN_RO1/FeatureServer/0
@@ -1878,21 +1866,21 @@ decline infrastructure
 url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
 note Seekabel-Verläufe.
 
-dead 400
+decline derived-satellite-index
 url https://glam1.gsfc.nasa.gov/api/gettbl/v4
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 404
+decline derived-satellite-index
 url https://glam1.gsfc.nasa.gov/api/gettbl/v4`
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead dns-unresolved
 url https://global-flood-monitor.org/api/v1/forecast
-note curl: curl: (6) Could not resolve host: global-flood-monitor.org
+note curl: curl: (6) Could not resolve host: global-flood-monitor.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://globalfloodmonitor.org/.
 
 dead dns-unresolved
 url https://global-flood-monitor.org/api/v1/reservoirs?format=json
-note curl: curl: (6) Could not resolve host: global-flood-monitor.org
+note curl: curl: (6) Could not resolve host: global-flood-monitor.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://globalfloodmonitor.org/.
 
 dead 404
 url https://global-surface-water.appspot.com/api/
@@ -1900,7 +1888,7 @@ note HTTP 404 — Endpoint weg.
 
 dead transport
 url https://globalland.vgt.vito.be/geoserver/ows?SERVICE=WCS&
-note curl: curl: (60) SSL: no alternative certificate subject name matches target host name 'globalland.vgt.vito.be'
+note curl: curl: (60) SSL: no alternative certificate subject name matches target host name 'globalland.vgt.vito.be' Browser 2026-09-10: Host tot, Dienst-Nachfolger https://cgls.vito.be/.
 
 decline presence
 url https://globalplasticwatch.org/api/
@@ -1948,7 +1936,7 @@ note GTFS-RT (protobuf) — Fahrplandaten.
 
 dead dns
 url https://gtnp.net/
-note DNS absent (Jina bestätigt; gtnp.org fremdbelegt)
+note DNS absent (Jina bestätigt; gtnp.org fremdbelegt) Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.gtn-p.org/.
 
 dead 404
 url https://gwis.jrc.ec.europa.eu/api/fire
@@ -2054,10 +2042,6 @@ dead 404
 url https://imbie.org/data/greenland_mass_balance.csv
 note HTTP 404 — Endpoint weg.
 
-dead timeout
-url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 7464101 out of 8987150 bytes received
-
 decline infrastructure
 url https://inex.ie/
 note Ireland's Internet Peering Point Website, kein physikalisches Signal (200).
@@ -2066,9 +2050,9 @@ decline literature
 url https://inspirehep.net/api/literature
 note Publikations-Metadaten.
 
-dead 400
+decline literature
 url https://inspirehep.net/api/literature?q=find%20t%20proton%20decay&size=0
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://intermagnet.github.io/stations.json
@@ -2080,11 +2064,11 @@ note curl: curl: (28) Connection timed out after 12002 milliseconds
 
 dead dns-unresolved
 url https://iono4d.iri-ap.ru/api/v1/stations?region=europe&format=json&limit=200
-note curl: curl: (6) Could not resolve host: iono4d.iri-ap.ru
+note curl: curl: (6) Could not resolve host: iono4d.iri-ap.ru Browser 2026-09-10: Host tot, Dienst-Nachfolger https://irimodel.org/.
 
 dead dns
 url https://ionosonde.iap-kborn.de
-note Subdomain DNS-tot (curl 000, Jina 422); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten des Anbieters unter anderem Pfad, unverifiziert (2026-09-03).
+note Subdomain DNS-tot (curl 000, Jina 422); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten des Anbieters unter anderem Pfad, unverifiziert (2026-09-03). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.ionosonde.iap-kborn.de/.
 
 decline form
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
@@ -2112,11 +2096,11 @@ note irsa_gavo_b 2026-08-18: Eigenbewegungs-Katalog, W1/W2 redundant zu AllWISE 
 
 dead dns-unresolved
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/
-note curl: curl: (6) Could not resolve host: its-live-data.jpl.nasa.gov
+note curl: curl: (6) Could not resolve host: its-live-data.jpl.nasa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://its-live.jpl.nasa.gov/.
 
 dead dns-unresolved
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
-note curl: curl: (6) Could not resolve host: its-live-data.jpl.nasa.gov
+note curl: curl: (6) Could not resolve host: its-live-data.jpl.nasa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://its-live.jpl.nasa.gov/.
 
 dead 404
 url https://its-live-regional.s3.amazonaws.com/v02/GRE/GRE_G0240_2021.zarr/.zmetadata
@@ -2132,7 +2116,7 @@ note HTTP 404 — Endpoint weg.
 
 dead timeout
 url https://jsoc.stanford.edu/
-note Korrektur (2026-09-05): die https-URL ist per TLS-Timeout tot (000) — aber nur die TLS-Schicht. http://jsoc.stanford.edu ist erreichbar (200) und der AIA-Erntepfad (aia_compiler, http, aia.lev1_euv_12s rs_list) funktioniert; die 2026-09-03-https-Probe traf nur die defekte TLS-Schicht, nicht den Host. JSOC ist kein voller Todesfall; dieser Eintrag dokumentiert die https-Scheme-Einschränkung, der http-Pfad lebt.
+note Korrektur (2026-09-05): die https-URL ist per TLS-Timeout tot (000) — aber nur die TLS-Schicht. http://jsoc.stanford.edu ist erreichbar (200) und der AIA-Erntepfad (aia_compiler, http, aia.lev1_euv_12s rs_list) funktioniert; die 2026-09-03-https-Probe traf nur die defekte TLS-Schicht, nicht den Host. JSOC ist kein voller Todesfall; dieser Eintrag dokumentiert die https-Scheme-Einschränkung, der http-Pfad lebt. Browser 2026-09-10: Host lebt via HTTP (HTTPS-Zertifikatfehler), dead-Verdikt prüfen.
 
 dead 404
 url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
@@ -2204,19 +2188,19 @@ note curl: curl: (6) Could not resolve host: lightning.gld
 
 dead dns-unresolved
 url https://lightningwa.info/api/
-note curl: curl: (6) Could not resolve host: lightningwa.info
+note curl: curl: (6) Could not resolve host: lightningwa.info Browser 2026-09-10: Host tot, Dienst-Nachfolger https://meteologix.com/au/lightning/western-australia.
 
 dead dns-unresolved
 url https://lightningwa.info/api/`
-note curl: curl: (6) Could not resolve host: lightningwa.info
+note curl: curl: (6) Could not resolve host: lightningwa.info Browser 2026-09-10: Host tot, Dienst-Nachfolger https://meteologix.com/au/lightning/western-australia.
 
 dead timeout
 url https://lisa-ldc.lal.in2p3.fr/api/v1/sources?dataset=LDC2_sangria&type=GB&limit=2000&format=json
-note curl: curl: (28) Connection timed out after 12002 milliseconds
+note curl: curl: (28) Connection timed out after 12002 milliseconds Browser 2026-09-10: Host tot, Dienst-Nachfolger https://lisa-ldc.in2p3.fr/.
 
 dead dns-unresolved
 url https://lpa.esac.esa.int/api/v1/data?format=json&product=differential_force&start_date=
-note curl: curl: (6) Could not resolve host: lpa.esac.esa.int
+note curl: curl: (6) Could not resolve host: lpa.esac.esa.int Browser 2026-09-10: Host tot, Dienst-Nachfolger https://pla.esac.esa.int/.
 
 dead 404
 url https://macrostrat.org/api/defs/units?format=json
@@ -2236,11 +2220,11 @@ note Stratigraphie-Katalog, kein Messwert-Feed (Probe-Befund 2026-08-15).
 
 dead dns-unresolved
 url https://mangrove-atlas.sei.org/api/
-note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org
+note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mangrove-atlas.herokuapp.com/.
 
 dead dns-unresolved
 url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
-note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org
+note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mangrove-atlas.herokuapp.com/.
 
 dead 404
 url https://map.blitzortung.org/live.json
@@ -2274,29 +2258,29 @@ decline no-physical-force
 url https://marinecadastre.gov/ais/api/v1/locations?bbox=
 note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS-Bestellservice derzeit pausiert (MARINECADASTRE_KEY entfernt, .secrets.local). Verdikt 2026-08-17: Schiffspositionen sind hergestellte Objekte, kein natürlicher Feldwert; decline no-physical-force.
 
-dead mission-ended
+decline feed-ended
 url https://mars.nasa.gov/rss/api/?feed=weather&category=insight&feedtype=json
-note grind: grind_nasa.φ
+note InSight weather feed ended (mission ended).
 
-dead retired
+decline feed-ended
 url https://mars.nasa.gov/rss/api/?feed=weather&category=ms
-note InSight-Wetter-Feed eingestellt (Mission beendet); feedtype=json → 404.
+note InSight weather feed ended (mission ended); feedtype=json → 404.
 
 dead dns-unresolved
 url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
-note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org
+note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
 
 dead dns-unresolved
 url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
-note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org
+note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
 
 dead dns-unresolved
 url https://masie_web.apps.nsidc.org/pub/DATASETS/NSIDC0079MASIE-NH_r00v01/masie_4km_allyears_extent_sqkm.csv
-note curl: curl: (6) Could not resolve host: masie_web.apps.nsidc.org
+note curl: curl: (6) Could not resolve host: masie_web.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
 
-dead 400
+decline superseded-by-integrated
 url https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
 
 decline no-physical-force
 url https://mempool.space/api/v1/fees/recommended
@@ -2308,11 +2292,11 @@ note HTTP 404 — Endpoint weg.
 
 dead 
 url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.env.nm.gov/general/home/.
 
 dead 
 url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.env.nm.gov/general/home/.
 
 decline method
 url https://meri.digitraffic.fi/api/ais/v1/locations
@@ -2338,29 +2322,29 @@ decline redistribution
 url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
 note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
-dead unreachable
+decline computation
 url https://minorplanetcenter.net/data
-note grind: grind_host.φ
+note grind: grind_host.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline docs
 url https://modis.gsfc.nasa.gov/
 note MODIS-Informations-Portal (Produktbeschreibung/News/Galerie), kein Daten-Endpoint (200 via Jina).
 
-dead 400
+decline derived-satellite-index
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline derived-satellite-index
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead dns-unresolved
 url https://modisrest.ornl.gov/rst/api/v1/MOD13Q1/subset?latitud
-note curl: curl: (6) Could not resolve host: modisrest.ornl.gov
+note curl: curl: (6) Could not resolve host: modisrest.ornl.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://modis.ornl.gov/.
 
 dead dns-unresolved
 url https://modvolc.ov.ingv.it/modvolc/feed.json
-note curl: curl: (6) Could not resolve host: modvolc.ov.ingv.it
+note curl: curl: (6) Could not resolve host: modvolc.ov.ingv.it Browser 2026-09-10: Host tot, Dienst-Nachfolger https://modis-land.gsfc.nasa.gov/modvolc.html.
 
 dead 404
 url https://mrdata.usgs.gov/mrds/geo-mrds.php?format=json
@@ -2422,9 +2406,9 @@ dead 404
 url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
 note HTTP 404 — Endpoint weg.
 
-dead 400
+decline registry
 url https://nominatim.openstreetmap.org/reverse?format=json&accept-language=de,en&lat=$
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline model-forecast
 url https://nrt.cmems-du.eu/erddap/
@@ -2462,13 +2446,13 @@ decline aggregate
 url https://oceanview.pfeg.noaa.gov/erddap/tabledap/cciea_OC_PDO.html
 note PDO-Klimaindex — Aggregate-Index (positionslos).
 
-dead timeout
+decline derived-satellite-index
 url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_dhw_v1_0.csv
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 15339792 bytes received
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 15339792 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead timeout
+decline derived-satellite-index
 url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_dhw_v1_0.csv?degree_heating_week
-note curl: curl: (28) Operation timed out after 12000 milliseconds with 3102553 bytes received
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 3102553 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline catalog
 url https://odereest.rsl.wustl.edu/
@@ -2588,11 +2572,11 @@ note HTTP 404 — Endpoint weg.
 
 dead 400
 url https://overpass.openstreetmap.fr/api/interpreter
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://wiki.openstreetmap.org/wiki/Overpass_API.
 
 dead 400
 url https://overpass.openstreetmap.fr/api/interpreter?data=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://wiki.openstreetmap.org/wiki/Overpass_API.
 
 dead 404
 url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long
@@ -2614,9 +2598,9 @@ dead 333
 url https://p.pn-mt.cm/v1/lvtn
 note Azure liefert HTTP 333 (Proxy-Antwort, kein Datenendpoint).
 
-dead 400
+decline presence-catalog
 url https://paleobiodb.org/data1.2/occs/list.json
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline presence-catalog
 url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
@@ -2638,9 +2622,9 @@ decline registry
 url https://peeringdb.com/api/ix?limit=1
 note Internet-Exchange-Registry.
 
-dead 400
+decline registry
 url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline docs
 url https://physics.mcgill.ca/
@@ -2706,9 +2690,9 @@ dead 404
 url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.2026.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start=2026-08-08T00%3A00%3A00Z&time_end=2026-08-08T23%3A59%3A59Z&timeStride=1&accept=csv
 note HTTP 404 — Endpoint weg.
 
-dead 400
+decline molecular
 url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline randomness
 url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint16
@@ -2724,11 +2708,11 @@ note Quantenrechner-Registry.
 
 dead dns-unresolved
 url https://quantumrandomnumbergenerator.net/api/1.0/json
-note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net
+note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://qrng.anu.edu.au/.
 
 dead dns-unresolved
 url https://quantumrandomnumbergenerator.net/api/1.0/json`
-note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net
+note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://qrng.anu.edu.au/.
 
 decline no-physical-force
 url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX
@@ -2766,13 +2750,13 @@ decline static
 url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
 note Statische Krater-Geometrie.
 
-dead 400
+decline model-forecast
 url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline model-forecast
 url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline schedule
 url https://realtime.hsl.fi/realtime/service-alerts/v2/hsl
@@ -2782,9 +2766,9 @@ decline presence-catalog
 url https://records-ws.nbnatlas.org/
 note Biodiversitäts-Vorkommens-Register, Sensor-Regel: Klassifikation ohne physikalisches Signal (200).
 
-dead 400
+decline registry
 url https://registry.npmjs.org/-/v1/search?text=*&size=1
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://remon.jrc.ec.europa.eu/Home/Pages/DataExchange/REM-json.aspx?LonMin=-10&LonMax=30&LatMin=35&LatMax=72&DateStart=2026-08-08&DateEnd=2026-08-08&nuts=0&format=json
@@ -2824,11 +2808,11 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://rucsoundings.noaa.gov/get_soundings.cgi
-note curl: curl: (7) Failed to connect to rucsoundings.noaa.gov port 443 after 1573 ms: Couldn't connect to server
+note curl: curl: (7) Failed to connect to rucsoundings.noaa.gov port 443 after 1573 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.weather.gov/zse/ModelSounding.
 
 dead unreachable
 url https://rucsoundings.noaa.gov/get_soundings.cgi`
-note curl: curl: (7) Failed to connect to rucsoundings.noaa.gov port 443 after 3314 ms: Couldn't connect to server
+note curl: curl: (7) Failed to connect to rucsoundings.noaa.gov port 443 after 3314 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.weather.gov/zse/ModelSounding.
 
 dead 404
 url https://s3.eu-central-1.wasabisys.com/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.vrt
@@ -2852,7 +2836,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://sdc3.astronomers.skatelescope.org/api/v1/catalog?format=json&limit=1000&type=continuum&snr_min=5
-note curl: curl: (6) Could not resolve host: sdc3.astronomers.skatelescope.org
+note curl: curl: (6) Could not resolve host: sdc3.astronomers.skatelescope.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://sdc3.skao.int/.
 
 dead 404
 url https://sdmx.oecd.org/public/rest/data/OECD.ENV.EPI,DSD_PLASTIC_WASTE@DF_PLASTIC_WASTE_8,1.0/all?format=csvfilewithlabels
@@ -2862,13 +2846,13 @@ dead 404
 url https://seabass.gsfc.nasa.gov/api/v1/measurement/?limit=500
 note HTTP 404 — Endpoint weg.
 
-dead 400
+decline molecular
 url https://search.rcsb.org/rcsbsearch/v2/query?json=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead timeout
 url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
-note curl: curl: (28) Connection timed out after 12002 milliseconds
+note curl: curl: (28) Connection timed out after 12002 milliseconds Browser 2026-09-10: Host tot, Dienst-Nachfolger https://ciesin.columbia.edu/sedac.
 
 decline station-registry
 url https://seismic-api.science.unimelb.edu.au/monitoring-sites
@@ -2882,17 +2866,17 @@ dead ssl
 url https://sepem.eu/api/events/...`
 note curl: curl: (35) OpenSSL/3.0.13: error:0A00010B:SSL routines::wrong version number
 
-dead 400
+decline imagery-tiles
 url https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline imagery-tiles
 url https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead dns-unresolved
 url https://service.das.earthscope.org/fdsnws/station/1/query?level=station&format=json
-note curl: curl: (6) Could not resolve host: service.das.earthscope.org
+note curl: curl: (6) Could not resolve host: service.das.earthscope.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://data.earthscope.org/.
 
 dead 404
 url https://service.iris.edu/fdsnws/event/1/query?format=json&starttime=
@@ -2902,21 +2886,21 @@ decline catalog-duplicate
 url https://service.scedc.caltech.edu/fdsnws/event/1/query
 note SCEDC/CI-Suedkalifornien-Katalog (query.json Capture, HTTP 200, FDSN-text): Epizentrum-Katalog — regionale Vollstaendigkeit desselben Messwert-Typs wie der registrierte USGS-all_day-Feed; die text-Rows tragen keine Daten-Position in map-Form.
 
-dead 
+decline superseded-by-integrated
 url https://services-eu1.arcgis.com/BkJxImVcTMyS7LID/arcgis/rest/services/Catalogue_compilation_1901_June2020__web_v2_/FeatureServer/1
-note grind: grind_arcgis_index.φ
+note seismicity catalogue superseded by USGS fdsnws (already live in sources.φ).
 
 decline 
 url https://services-eu1.arcgis.com/YDJmfAKmZVpOnK2Q/arcgis/rest/services/Ring_Buoy_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-dead 
+decline model-forecast
 url https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 
+decline superseded-by-integrated
 url https://services.arcgis.com/4PuGhqdWG1FwH2Yk/arcgis/rest/services/Current_lightning_view/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note lightning already via blitzortung (api.blitzortung.org).
 
 decline 
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Latitudes/FeatureServer/0
@@ -3122,9 +3106,9 @@ decline no-physical-force
 url https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer
 note Basemap-Kacheln.
 
-dead 400
+decline imagery-tiles
 url https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline registry
 url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
@@ -3138,9 +3122,9 @@ decline derived
 url https://services.terrascope.be/catalogue/description.geojson?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2
 note WorldCover-Metadaten (Landbedeckung, abgeleitet).
 
-dead timeout
+decline presence-catalog
 url https://services.usanpn.org/npn_portal/observations/getObservations.json
-note curl: curl: (28) Operation timed out after 12002 milliseconds with 1 bytes received
+note curl: curl: (28) Operation timed out after 12002 milliseconds with 1 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_History_1988_2020/FeatureServer/1
@@ -3278,9 +3262,9 @@ decline model-forecast
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query
 note NOAA-Hochwasser-Outlook = Projektion/Modell.
 
-dead timeout
+decline model-forecast
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-note curl: curl: (28) Connection timed out after 12001 milliseconds
+note curl: curl: (28) Connection timed out after 12001 milliseconds Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/RSSTFall/FeatureServer/0
@@ -3422,13 +3406,13 @@ decline
 url https://services5.arcgis.com/0Q6HuHqqcg7Zo8zH/arcgis/rest/services/buoy_update/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-dead 
+decline superseded-by-integrated
 url https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/CA_Lightning_Data_Public_View/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note lightning already via blitzortung (api.blitzortung.org).
 
-dead 
+decline model
 url https://services5.arcgis.com/h1YxcBX0SJlA4Mtf/arcgis/rest/services/parameter/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note layer Ancaman_Tsunami_Padang = tsunami hazard MODEL, not a measurement.
 
 decline static
 url https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
@@ -3478,9 +3462,9 @@ decline
 url https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/4
 note grind: grind_arcgis_deep.φ
 
-dead 
+decline position-only
 url https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/2
@@ -3490,9 +3474,9 @@ decline
 url https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Radiation_Control_Permit_Facilities/FeatureServer/3
 note grind: grind_arcgis_index.φ
 
-dead 
+decline infrastructure
 url https://services6.arcgis.com/GNx0EBxfRdt2xLnK/arcgis/rest/services/WA059_1993_RD_gdb/FeatureServer/21
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://services6.arcgis.com/Qptn479QktK11k72/arcgis/rest/services/Pollen_Monitoring_in_the_East_Riding_of_Yorkshire/FeatureServer/2
@@ -3570,9 +3554,9 @@ decline
 url https://services9.arcgis.com/dvViSL029z8IVu5n/arcgis/rest/services/Streamflow_Bitter/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-dead 
+decline no-physical-force
 url https://services9.arcgis.com/IGnf2HrvTcleIY19/arcgis/rest/services/WaterLevelMonitoring_Boreholes/FeatureServer/2
-note grind: grind_arcgis_index.φ
+note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline static
 url https://services9.arcgis.com/ISxsdAFVQu7s0bli/arcgis/rest/services/Turbidity/FeatureServer/0
@@ -3624,7 +3608,7 @@ note astronomisches Objekt-Register (Identifier+Positionen), Katalog ohne Messwe
 
 dead dns-unresolved
 url https://sisal.ees.ucdavis.edu/api/v3/entities?format=json&limit=500&has_isotopes=true
-note curl: curl: (6) Could not resolve host: sisal.ees.ucdavis.edu
+note curl: curl: (6) Could not resolve host: sisal.ees.ucdavis.edu Browser 2026-09-10: Host tot, Dienst-Nachfolger https://geochem.hu/SISAL_webApp/.
 
 dead 404
 url https://sky.esa.int/esasky/api/missions
@@ -3636,11 +3620,11 @@ note Diese Route liefert HTML (Formularseite); die JSON-Route lebt beim SkyServe
 
 dead dns-unresolved
 url https://soa.smext.faa.gov/asws/api/airport/status/ATL?format=json
-note curl: curl: (6) Could not resolve host: soa.smext.faa.gov
+note curl: curl: (6) Could not resolve host: soa.smext.faa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.swim.faa.gov/home.
 
 dead dns-unresolved
 url https://soa.smext.faa.gov/asws/api/airport/status/EWR?format=json
-note curl: curl: (6) Could not resolve host: soa.smext.faa.gov
+note curl: curl: (6) Could not resolve host: soa.smext.faa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.swim.faa.gov/home.
 
 dead 404
 url https://socat.info/api/v1/data?startdate=
@@ -3650,9 +3634,9 @@ decline
 url https://ssd-api.jpl.nasa.gov
 note grind: grind_terrapulse_a.φ
 
-dead 400
+decline derived-orbit-fit
 url https://ssd-api.jpl.nasa.gov/cad.api?date-min=2026-08-08&date-max=2030-01-01&dist-max=0.05&h-max=25&fullname=1&format=json
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline orbital-catalog
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min=2000-01-01&date-max=2100-01-01&body=Earth&sort=date
@@ -3678,9 +3662,9 @@ decline schema
 url https://stac-extensions.github.io/pointcloud/v1.0.0/schema.json
 note Schema-Dokument.
 
-dead 400
+decline infrastructure
 url https://stat.ripe.net/data/announced-prefixes/data.json?resource=8.8.8.8
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://stationview.raspberryshake.org/api/stations
@@ -3700,15 +3684,15 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://surveys.coast.noaa.gov/api/products/
-note curl: curl: (6) Could not resolve host: surveys.coast.noaa.gov
+note curl: curl: (6) Could not resolve host: surveys.coast.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nauticalcharts.noaa.gov/.
 
-dead 400
+decline infrastructure
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 400
+decline infrastructure
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline path
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"
@@ -3804,19 +3788,19 @@ note HTTP 404 — Endpoint weg.
 
 dead timeout
 url https://time.nist.gov/actualtime.cgi?lzbc=siqm9b
-note curl: curl: (28) Connection timed out after 12002 milliseconds
+note curl: curl: (28) Connection timed out after 12002 milliseconds Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.time.gov/.
 
 decline no-physical-force
 url https://timeapi.io/api/Time/current/zone?timeZone=UTC
 note Uhrzeit — keine Kraft.
 
-dead 400
+decline no-physical-force
 url https://timeapi.io/api/Time/current/zone?timeZone=UTC`
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead timeout
+decline derived-orbit-fit
 url https://tle.ivanstanojevic.me/api/tle/
-note curl: curl: (28) Operation timed out after 12003 milliseconds with 0 bytes received
+note curl: curl: (28) Operation timed out after 12003 milliseconds with 0 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline derived-orbit-fit
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1
@@ -3838,9 +3822,9 @@ decline schedule
 url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
 note Fahrplan.
 
-dead ssl
+decline superseded-by-integrated
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+note tsunami/seismic events superseded by USGS fdsnws (already live in sources.φ).
 
 dead 404
 url https://unosat.org/api/v1/
@@ -3852,31 +3836,31 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://usdm.climate.gov/api/v1/statistics/StatisticsForNation
-note curl: curl: (6) Could not resolve host: usdm.climate.gov
+note curl: curl: (6) Could not resolve host: usdm.climate.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://droughtmonitor.unl.edu/.
 
 dead transport
 url https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate=
-note curl: curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)
+note curl: curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2) Browser 2026-09-10: Host tot, Dienst-Nachfolger https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx.
 
 decline derived
 url https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate=2026-01-01&enddate=2026-08-08&statisticsType=1&format=json
-note Drought-Monitor-Index (abgeleitet; 0 B Antwort).
+note Drought-Monitor-Index (abgeleitet; 0 B Antwort). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx.
 
 decline 
 url https://utility.arcgis.com/usrsvcs/servers/5be1fa37cc3a42d598bff5664e92f838/rest/services/RADIATION_WATER_32633/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-dead 
+decline superseded-by-integrated
 url https://utility.arcgis.com/usrsvcs/servers/ac9fa803d3824b66968b1d9f1b9b7ad1/rest/services/DataServices/Lightning_Recent_Features/FeatureServer/0
-note grind: grind_arcgis_index.φ
+note lightning already via blitzortung (api.blitzortung.org).
 
-dead 404
+decline no-physical-force
 url https://uvdata.arpansa.gov.au/api/uvindex/realtime
-note HTTP 404 — Endpoint weg.
+note api/uvindex/realtime is 404; the live successor api/uvlevel/?longitude=..&latitude=..&date=.. returns Measured/Forecast as UV index (dimensionless, §3.1) — no manifesting physical field.
 
-dead 404
+decline no-physical-force
 url https://uvdata.arpansa.gov.au/api/uvindex/realtime`
-note HTTP 404 — Endpoint weg.
+note api/uvindex/realtime is 404; the live successor api/uvlevel/?longitude=..&latitude=..&date=.. returns Measured/Forecast as UV index (dimensionless, §3.1) — no manifesting physical field.
 
 dead 5xx
 url https://v4.boldsystems.org/index.php/API_Public/geo?format=json
@@ -3886,17 +3870,17 @@ decline imagery
 url https://view.eumetsat.int/geoserver/wms
 note EUMETSAT-WMS-Bildkacheln.
 
-dead feed-ended
+decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
-note Swarm TII E-Feld (TCT02/16, EFIA/EFIB/EFIC) — keyless HAPI lebt, aber (1) experimentelles Produkt, stopDate 2025-12-04 (kein Live-Feed), (2) E-Feld ist ABGELEITET (E=-V×B aus Ionendrift + B-Feld), nicht direkt gemessen — die direkte Messung ist die Ionendrift (Vixh/Viy/Viz, m/s). Force-Gate: E-Feld abgeleitet + Feed beendet → kein lebender Oszillator. Die live-Swarm-elektrischen Felder (Langmuir-Probe, FAC, MAG) stehen bereits in sources.φ.
+note Swarm TII E-Feld (TCT02/16, EFIA/EFIB/EFIC) — keyless HAPI lebt, aber (1) experimentelles Produkt, stopDate 2025-12-04 (kein Live-Feed), (2) E-Feld ist ABGELEITET (E=-V×B aus Ionendrift + B-Feld), nicht direkt gemessen — die direkte Messung ist die Ionendrift (Vixh/Viy/Viz, m/s). Force-Gate: E-Feld abgeleitet + Feed beendet → kein lebender Oszillator. Die live-Swarm-elektrischen Felder (Langmuir-Probe, FAC, MAG) stehen bereits in sources.φ. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline catalog
 url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
 note Eruptions-Bulletins (Ereignis-Katalog), kein Messwert am Punkt — decline catalog (403 real, aber Quelle trägt keine Messung).
 
-dead 400
+decline alerts
 url https://volcanoes.usgs.gov/hans-public/api/notice/getNotice/
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline alerts
 url https://volcanoes.usgs.gov/hans-public/api/volcano/current
@@ -3914,9 +3898,9 @@ decline no-physical-force
 url https://waterdata.usgs.gov/blog/index.json
 note Blog-Index.
 
-dead 400
+decline superseded-by-integrated
 url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT=
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note NWIS dv already live in sources.φ (api.waterdata.usgs.gov).
 
 dead 404
 url https://wdc.bgs.ac.uk/api/
@@ -3992,7 +3976,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://world.openagritechdata.org/api/v0/product/
-note curl: curl: (6) Could not resolve host: world.openagritechdata.org
+note curl: curl: (6) Could not resolve host: world.openagritechdata.org Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
 
 decline superseded-by-api.woudc.org
 url https://woudc.org/api/
@@ -4038,9 +4022,9 @@ dead transport
 url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
 note curl: curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)
 
-dead 404-route
+decline catalog
 url https://www.astrouw.edu.pl/~jskowron/OGLE/
-note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden. Verschoben aus blocked_sources.φ 2026-08-19.
+note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 dead 404
 url https://www.bodc.ac.uk/cgi-bin/nbo/vault.pl?format=json
@@ -4124,7 +4108,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://www.frbcat.org/
-note FRBCAT: Host löst auf (ASTRON), Connect schlägt fehl. FRB-Katalog, kein Live-Messwert.
+note FRBCAT: Host löst auf (ASTRON), Connect schlägt fehl. FRB-Katalog, kein Live-Messwert. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://github.com/HeRTA/FRBSTATS.
 
 dead 404
 url https://www.fripon.org/api/events?format=json&limit=100&year=
@@ -4246,13 +4230,13 @@ dead 400
 url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&datatypeid=TMAX
 note Values/positions split resolved by P09 fanout — now live in phi/sources.φ (thermal channel). stations endpoint carries lat/lon, data endpoint carries value per {station}.
 
-dead 404-route
+decline aggregate
 url https://www.ncei.noaa.gov/access/land-based-station-data/land-based-in-situ/climate-normals/
-note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen sind in sources.φ/masternote registriert. Verschoben aus blocked_sources.φ 2026-08-19.
+note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen sind in sources.φ/masternote registriert. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead 404
+decline no-physical-force
 url https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox=
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline 
 url https://www.ncei.noaa.gov/data/global-hourly/
@@ -4266,217 +4250,217 @@ decline
 url https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
 note grind: grind_terrapulse_a.φ
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/01/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/02/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/03/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/04/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/05/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/06/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/07/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/08/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/09/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/10/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/11/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/12/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/13/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/15/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/16/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/17/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/18/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/19/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/20/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/21/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/22/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/23/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/24/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/25/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/26/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/27/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/28/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/29/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/30/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/31/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/32/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/33/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/34/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/35/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/36/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/37/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/38/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/39/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/40/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/41/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/42/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/43/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/44/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/45/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/46/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/47/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/50/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/51/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/66/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/67/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
-dead 404
+decline static-archive
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/91/
-note grind: grind_terrapulse_b.φ
+note static FTP archive (hourly_precip-3240), not a live feed.
 
 decline 
 url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/{01..91}/
@@ -4486,13 +4470,13 @@ decline
 url https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
 note grind: grind_terrapulse_a.φ
 
-dead 404
+decline registry
 url https://www.ndbc.noaa.gov/activestations.json
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-dead absent
+decline superseded-by-integrated
 url https://www.ndbc.noaa.gov/view_text_file.php?filename=15006h{prev_year}.txt.gz&dir=data/historical/stdmet/
-note NDBC 15006 (Valse, 6.000S 10.000W) — kein historisches stdmet-Jahresarchiv (0 Dateien in data/historical/stdmet/, h2021–h2025 alle 404). Station lebt nur als realtime2 (15006.txt = HTTP 200, 2026-09-03 WSPD 5.1 m/s). Der historische Block ist absent, nicht 404 — das Jahresfile wurde nie erzeugt. Der realtime2-Block (sources.φ) bleibt.
+note realtime2/15006.txt already live in sources.φ; the historical stdmet year-file was never generated (absent).
 
 decline no-physical-force
 url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
@@ -4586,13 +4570,13 @@ decline publisher
 url https://www.seanoe.org
 note grind: grind_b2find.φ
 
-dead ssl-404
+decline endpoint-retired
 url https://www.seis-insight.eu/api/v1/events?format=json&limit=5&catalog=MQS&status=confirmed
-note grind: grind_nasa.φ
+note api/v1/events route retired (404, site restructure); MQS catalogue now static download pages, no JSON event feed.
 
-dead ssl
+decline endpoint-retired
 url https://www.seis-insight.eu/api/v1/events?format=json&limit=500&catalog=MQS&status=confirmed
-note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+note api/v1/events route retired (404, site restructure); MQS catalogue now static download pages, no JSON event feed.
 
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
@@ -4660,7 +4644,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns
 url https://www.treetalker.xyz/
-note TreeTalker-Netze (Nature 4.0) — Domain tot, Jina 422, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19.
+note TreeTalker-Netze (Nature 4.0) — Domain tot, Jina 422, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.nature4.org/treetalkercyber.
 
 decline alerts
 url https://www.tsunami.gov/events/xml/PAAQAtom.xml
@@ -4682,9 +4666,9 @@ decline html-page
 url https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro?qt-science_center_objects=0#qt-science_center_objects
 note grind: grind_terrapulse_b.φ
 
-dead timeout
+decline no-physical-force
 url https://www.waterqualitydata.us/Result/search?siteType=Lake&characteristicName=Nitrate&format=json
-note curl: curl: (28) Operation timed out after 11365 milliseconds with 0 bytes received
+note curl: curl: (28) Operation timed out after 11365 milliseconds with 0 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline alerts
 url https://www.who.int/api/news/diseaseoutbreaknews
@@ -4712,11 +4696,11 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://www2.usgs.gov/cgi-bin/get_data.cgi?rdb_format=rdb&site_no=15052500,12175500,15266300&agency_cd=USGS&output=JSON&begin_date=2000-01-01&end_date=
-note curl: curl: (6) Could not resolve host: www2.usgs.gov
+note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.usgs.gov/.
 
 dead dns-unresolved
 url https://www2.usgs.gov/cgi-bin/get_data.cgi?rdb_format=rdb&site_no=15052500,12175500,15266300&agency_cd=USGS&output=JSON&begin_date=2000-01-01&end_date=2026-08-08
-note curl: curl: (6) Could not resolve host: www2.usgs.gov
+note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.usgs.gov/.
 
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
