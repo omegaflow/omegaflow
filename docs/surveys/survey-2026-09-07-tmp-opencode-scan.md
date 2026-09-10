@@ -96,7 +96,7 @@ Geprüft und verworfen (A = A, keine verwaisten Dateien):
 ## 6. Pending-Quellen aus dem Scan
 
 - NOAA-NODD passive-bioacoustic (NRS `sound_level_metrics`, `daily.nc`):
-  unregistriert, kein eigener Compiler → Register-Eintrag in `docs/handover/handover-2026-09-09-mechanische-reste.md`
+  unregistriert, kein eigener Compiler → Register-Eintrag in `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`
   (2026-09-07).
 - SuperDARN-FITACF: Compiler existiert; Quelle in `phi/sources.φ` nicht unter
   den Scan-Keywords gemessen — nicht als pending behauptet.
