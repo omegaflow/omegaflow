@@ -491,7 +491,10 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
                 .push(e.clone());
         }
         match bases.get("de441") {
-            Some(best) => out.extend(best.clone()),
+            Some(group) => match group.iter().find(|e| e.name == "de441.bsp") {
+                Some(full) => out.push(full.clone()),
+                None => out.extend(group.clone()),
+            },
             None => {
                 eprintln!(
                     "planets: de441 base absent from the index — the full de441.bsp has no carrier"
@@ -810,11 +813,18 @@ fn flatten(
             &path, body_name, &granules, &rotations, &nutation, &wgccre, og,
         ) {
             written.push(body_name.clone());
+            eprintln!(
+                "flatten {}: {} granules → {}",
+                body_name,
+                granules.len(),
+                path
+            );
             if ci_mode && !upload_asset(&path) {
                 upload_failed += 1;
             }
         }
     }
+    eprintln!("flatten done: {} bodies", written.len());
     if ci_mode && upload_failed > 0 {
         eprintln!(
             "upload: {} of {} assets did not reach the CDN",
