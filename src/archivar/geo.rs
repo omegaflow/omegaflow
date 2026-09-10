@@ -8,9 +8,13 @@ pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
+pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
+pub const MAGIC_GSOD: [u8; 4] = *b"GSD1";
+pub const MAGIC_ISD: [u8; 4] = *b"ISD1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
+pub const SMG_REC_BYTES: usize = 64;
 
 pub const COMP_BGR_AZIM: u32 = 1;
 pub const COMP_BGR_VAPP: u32 = 2;
@@ -49,6 +53,37 @@ pub const COMP_SMG_E_GEO: u32 = 5;
 pub const COMP_SMG_Z_GEO: u32 = 6;
 pub const COMP_SMG_MAX: u32 = 6;
 
+pub const COMP_GHCN_TMAX: u32 = 1;
+pub const COMP_GHCN_TMIN: u32 = 2;
+pub const COMP_GHCN_PRCP: u32 = 3;
+pub const COMP_GHCN_SNOW: u32 = 4;
+pub const COMP_GHCN_SNWD: u32 = 5;
+pub const COMP_GHCN_MAX: u32 = 5;
+
+pub const COMP_GSOD_TEMP: u32 = 1;
+pub const COMP_GSOD_DEWP: u32 = 2;
+pub const COMP_GSOD_SLP: u32 = 3;
+pub const COMP_GSOD_WDSP: u32 = 4;
+pub const COMP_GSOD_GUST: u32 = 5;
+pub const COMP_GSOD_TMAX: u32 = 6;
+pub const COMP_GSOD_TMIN: u32 = 7;
+pub const COMP_GSOD_PRCP: u32 = 8;
+pub const COMP_GSOD_MAX: u32 = 8;
+
+pub const COMP_ISD_TEMP: u32 = 1;
+pub const COMP_ISD_DEWP: u32 = 2;
+pub const COMP_ISD_SLP: u32 = 3;
+pub const COMP_ISD_WDIR: u32 = 4;
+pub const COMP_ISD_WSPD: u32 = 5;
+pub const COMP_ISD_MAX: u32 = 5;
+
+pub const COMP_ANR_NEWEST: u32 = 1;
+pub const COMP_ANR_OLDEST: u32 = 2;
+pub const COMP_ANR_BRIGHTEST: u32 = 3;
+
+pub const MAGIC_ANR: [u8; 4] = *b"ANR1";
+pub const ANR_REC_BYTES: usize = 36;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -58,12 +93,21 @@ pub struct GeoRec {
     pub bin_width: f64,
     pub val: f64,
     pub comp: u32,
+    pub station: u32,
 }
 
 pub struct GbcoRec {
     pub lat: f64,
     pub lon: f64,
     pub elev: f64,
+}
+
+pub struct AnrRec {
+    pub t: f64,
+    pub ra: f64,
+    pub dec: f64,
+    pub mag: f64,
+    pub comp: u32,
 }
 
 pub fn magic_of(format: &str) -> Option<[u8; 4]> {
@@ -77,6 +121,9 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "igets" => Some(MAGIC_IGETS),
         "iss_lis" => Some(MAGIC_ISSLIS),
         "supermag_1m" => Some(MAGIC_SMG),
+        "noaa_ghcn_d" => Some(MAGIC_GHCN),
+        "noaa_gsod" => Some(MAGIC_GSOD),
+        "noaa_isd" => Some(MAGIC_ISD),
         _ => None,
     }
 }
@@ -92,23 +139,84 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "igets" => Some(COMP_IGETS_MAX),
         "iss_lis" => Some(COMP_ISSLIS_MAX),
         "supermag_1m" => Some(COMP_SMG_MAX),
+        "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
+        "noaa_gsod" => Some(COMP_GSOD_MAX),
+        "noaa_isd" => Some(COMP_ISD_MAX),
         _ => None,
     }
 }
 
+pub fn pack_iaga(code: &str) -> Option<u32> {
+    let b = code.as_bytes();
+    if b.len() != 3 || !b.iter().all(|c| c.is_ascii_uppercase()) {
+        return None;
+    }
+    Some((b[0] as u32) | (b[1] as u32) << 8 | (b[2] as u32) << 16)
+}
+
+pub fn iaga_of(station: u32) -> Option<String> {
+    let c = |i: u32| ((station >> (8 * i)) & 0xff) as u8;
+    let cs = [c(0), c(1), c(2)];
+    if !cs.iter().all(|x| x.is_ascii_uppercase()) {
+        return None;
+    }
+    String::from_utf8(cs.to_vec()).ok()
+}
+
+pub fn smg_record_bytes(r: &GeoRec) -> [u8; SMG_REC_BYTES] {
+    let mut b = [0u8; SMG_REC_BYTES];
+    b[0..8].copy_from_slice(&r.t.to_le_bytes());
+    b[8..16].copy_from_slice(&r.lat.to_le_bytes());
+    b[16..24].copy_from_slice(&r.lon.to_le_bytes());
+    b[24..32].copy_from_slice(&r.alt.to_le_bytes());
+    b[32..40].copy_from_slice(&r.freq.to_le_bytes());
+    b[40..48].copy_from_slice(&r.bin_width.to_le_bytes());
+    b[48..56].copy_from_slice(&r.val.to_le_bytes());
+    b[56..60].copy_from_slice(&r.comp.to_le_bytes());
+    b[60..64].copy_from_slice(&r.station.to_le_bytes());
+    b
+}
+
+pub fn smg_record_at(bytes: &[u8], idx: usize) -> Option<GeoRec> {
+    let start = idx.checked_mul(SMG_REC_BYTES)?;
+    let s = bytes.get(start..start + SMG_REC_BYTES)?;
+    let f64_of = |r: std::ops::Range<usize>| {
+        s.get(r)
+            .and_then(|x| x.try_into().ok())
+            .map(f64::from_le_bytes)
+    };
+    Some(GeoRec {
+        t: f64_of(0..8)?,
+        lat: f64_of(8..16)?,
+        lon: f64_of(16..24)?,
+        alt: f64_of(24..32)?,
+        freq: f64_of(32..40)?,
+        bin_width: f64_of(40..48)?,
+        val: f64_of(48..56)?,
+        comp: u32::from_le_bytes(s.get(56..60)?.try_into().ok()?),
+        station: u32::from_le_bytes(s.get(60..64)?.try_into().ok()?),
+    })
+}
+
 pub fn write_bin(magic: [u8; 4], records: &[GeoRec]) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(8 + records.len() * REC_BYTES);
+    let smg = magic == MAGIC_SMG;
+    let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
+    let mut buf = Vec::with_capacity(8 + records.len() * rec);
     buf.extend_from_slice(&magic);
     buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
     for r in records {
-        buf.extend_from_slice(&r.t.to_le_bytes());
-        buf.extend_from_slice(&r.lat.to_le_bytes());
-        buf.extend_from_slice(&r.lon.to_le_bytes());
-        buf.extend_from_slice(&r.alt.to_le_bytes());
-        buf.extend_from_slice(&r.freq.to_le_bytes());
-        buf.extend_from_slice(&r.bin_width.to_le_bytes());
-        buf.extend_from_slice(&r.val.to_le_bytes());
-        buf.extend_from_slice(&r.comp.to_le_bytes());
+        if smg {
+            buf.extend_from_slice(&smg_record_bytes(r));
+        } else {
+            buf.extend_from_slice(&r.t.to_le_bytes());
+            buf.extend_from_slice(&r.lat.to_le_bytes());
+            buf.extend_from_slice(&r.lon.to_le_bytes());
+            buf.extend_from_slice(&r.alt.to_le_bytes());
+            buf.extend_from_slice(&r.freq.to_le_bytes());
+            buf.extend_from_slice(&r.bin_width.to_le_bytes());
+            buf.extend_from_slice(&r.val.to_le_bytes());
+            buf.extend_from_slice(&r.comp.to_le_bytes());
+        }
     }
     buf
 }
@@ -117,8 +225,10 @@ pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
     if bytes.len() < 8 || bytes[0..4] != magic {
         return None;
     }
+    let smg = magic == MAGIC_SMG;
+    let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if n > (bytes.len() - 8) / REC_BYTES {
+    if n > (bytes.len() - 8) / rec {
         return None;
     }
     let mut out = Vec::with_capacity(n);
@@ -146,6 +256,13 @@ pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
         off += 8;
         let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
         off += 4;
+        let station = if smg {
+            let s = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
+            off += 4;
+            s
+        } else {
+            0
+        };
         out.push(GeoRec {
             t,
             lat,
@@ -155,6 +272,7 @@ pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
             bin_width,
             val,
             comp,
+            station,
         });
     }
     Some(out)
@@ -203,6 +321,58 @@ pub fn parse_gbco(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(out)
 }
 
+pub fn write_anr(records: &[AnrRec]) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(8 + records.len() * ANR_REC_BYTES);
+    buf.extend_from_slice(&MAGIC_ANR);
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        buf.extend_from_slice(&r.t.to_le_bytes());
+        buf.extend_from_slice(&r.ra.to_le_bytes());
+        buf.extend_from_slice(&r.dec.to_le_bytes());
+        buf.extend_from_slice(&r.mag.to_le_bytes());
+        buf.extend_from_slice(&r.comp.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_anr(bytes: &[u8]) -> Option<Vec<AnrRec>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC_ANR {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * ANR_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let t = f64_of(off)?;
+        off += 8;
+        let ra = f64_of(off)?;
+        off += 8;
+        let dec = f64_of(off)?;
+        off += 8;
+        let mag = f64_of(off)?;
+        off += 8;
+        let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
+        off += 4;
+        out.push(AnrRec {
+            t,
+            ra,
+            dec,
+            mag,
+            comp,
+        });
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -219,6 +389,7 @@ mod tests {
                 bin_width: 0.0,
                 val: 30.45786,
                 comp: COMP_BGR_AZIM,
+                station: 0,
             },
             GeoRec {
                 t: 123456849.0,
@@ -229,6 +400,7 @@ mod tests {
                 bin_width: 0.0,
                 val: 355.75248,
                 comp: COMP_BGR_VAPP,
+                station: 0,
             },
         ];
         let bytes = write_bin(MAGIC_BGR, &records);
@@ -250,6 +422,30 @@ mod tests {
         assert!(parse_bin(MAGIC_BGR, b"X").is_none());
         assert!(parse_bin(MAGIC_BGR, b"BGR1abc").is_none());
         assert!(parse_bin(MAGIC_BGR, b"NRS1").is_none());
+    }
+
+    #[test]
+    fn supermag_station_roundtrip_and_iaga() {
+        let rec = GeoRec {
+            t: 753_440_003.0,
+            lat: 69.66,
+            lon: 18.94,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 60.0,
+            val: -177.9,
+            comp: COMP_SMG_N_NEZ,
+            station: pack_iaga("TRO").unwrap(),
+        };
+        let bytes = write_bin(MAGIC_SMG, &[rec]);
+        assert_eq!(bytes.len(), 8 + SMG_REC_BYTES);
+        let parsed = parse_bin(MAGIC_SMG, &bytes).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(iaga_of(parsed[0].station).as_deref(), Some("TRO"));
+        assert_eq!(parsed[0].val, -177.9);
+        assert_eq!(pack_iaga("tro"), None);
+        assert_eq!(pack_iaga("TROO"), None);
+        assert_eq!(iaga_of(0), None);
     }
 
     #[test]

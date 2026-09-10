@@ -2126,6 +2126,9 @@ pub fn main_flow() {
                     | "igets"
                     | "iss_lis"
                     | "supermag_1m"
+                    | "noaa_ghcn_d"
+                    | "noaa_gsod"
+                    | "noaa_isd"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
