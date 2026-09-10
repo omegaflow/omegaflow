@@ -1,0 +1,488 @@
+# Copernicus-Disposition — Register (2026-09-10)
+#
+# Regel: Bucket-Litmus (Rats-Verdikt ledger.φ:937 — 4-Fragen-Kette in fester
+# Reihenfolge: Oszillator-Gate → Form → Manifestation → Überlauf).
+# Quelle: phi/pipeline/catalog/copernicus_catalogues.φ (Re-Harvest 2026-09-10,
+# catalogue API v1, saubere id+title-Paare; 16 CAMS + 143 C3S).
+# Kopfwörter: compiler-lease / konsument / pending / descoped. Kein url-line
+# (CDS/ADS-Datasets sind Bulk-Archive; url-line = eine Messung, nie ein Datensatz).
+# 159 Collections: 8 compiler-lease (In-situ-Messarchive, Compiler pending), 151
+# descoped (Frage 1 nein — Modell/abgeleitet/Satelliten-Retrieval/Katalog/Service).
+
+descoped derived-era5-single-levels-daily-statistics
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-land
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-land-timeseries
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-ice-concentration
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-soil-moisture
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped derived-era5-pressure-levels-daily-statistics
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-pressure-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-ice-edge-type
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-single-levels-timeseries
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped sis-agrometeorological-indicators-timeseries
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped derived-utci-historical
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped sis-agrometeorological-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped derived-drought-historical-monthly
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped derived-era5-land-daily-statistics
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped sis-ecde-aggregated-climate-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-single-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-surface-temperature
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-methane
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped insitu-gridded-observations-europe
+note Frage 1 nein — gegittertes In-situ-Aggregat (abgeleitet); Frage 4 kein Konsument — descoped
+
+descoped sis-energy-global-reanalysis
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-land-monthly-means
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-pressure-levels-monthly-means
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-single-levels-monthly-means
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped seasonal-monthly-ocean
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped satellite-earth-radiation-budget
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped seasonal-original-single-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped seasonal-original-pressure-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped seasonal-monthly-pressure-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped satellite-ocean-colour
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped ecv-for-climate-change
+note Frage 1 nein — abgeleitet (ECV); Frage 4 kein Konsument — descoped
+
+descoped seasonal-monthly-single-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped seasonal-postprocessed-pressure-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped seasonal-postprocessed-single-levels
+note Frage 1 nein — Saisonale Vorhersage (Modell); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-cerra-single-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-cerra-height-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-cerra-pressure-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-cerra-model-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-snow-cover-extent
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-carra-pressure-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-carra-single-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-carra-height-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-carra-model-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-carbon-dioxide
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-upper-troposphere-humidity
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-oras5
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-greenland-ice-sheet-velocity
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped projections-cmip6
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-cerra-land
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+compiler-lease insitu-observations-surface-marine
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+descoped sis-hydrology-variables-derived-seasonal-forecast
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-ice-thickness
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-pressure-levels-timeseries
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-fire-radiative-power
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-land-surface-temperature
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-oras5-timeseries
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped satellite-ist-sst-global
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped sis-hydrology-europe-seasonal-reforecast
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-hydrology-europe-seasonal
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-energy-derived-projections
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+compiler-lease insitu-observations-surface-land
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+compiler-lease insitu-observations-near-surface-temperature-us-climate-reference-network
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+compiler-lease insitu-observations-igra-baseline-network
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+compiler-lease insitu-observations-woudc-ozone-total-column-and-profiles
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+compiler-lease insitu-observations-gruan-reference-network
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+descoped insitu-glaciers-extent
+note Frage 1 nein — Randolph-Gletscher-Inventar (Katalog); Frage 4 kein Konsument — descoped
+
+descoped sis-european-wind-storm-reanalysis
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped projections-cordex-domains-single-levels
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped satellite-precipitation-microwave-infrared
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-lake-water-temperature
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-level-global
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped derived-utci-historical-timeseries
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped sis-energy-derived-reanalysis
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped satellite-precipitation
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped multi-origin-c3s-atlas
+note Frage 1 nein — abgeleitetes Atlas-Gitter; Frage 4 kein Konsument — descoped
+
+descoped sis-biodiversity-cmip5-global
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-agroclimatic-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-heat-and-cold-spells
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-biodiversity-cmip5-regional
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-tourism-fire-danger-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-biodiversity-era5-global
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-european-risk-extreme-precipitation-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-water-level-change-timeseries-cmip6
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-ecv-cmip5-bias-corrected
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-pan-carra-means
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped sis-biodiversity-era5-regional
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-marine-properties
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-extreme-indices-cmip6
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-hydrology-meteorology-derived-projections
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-pan-carra
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped sis-ocean-wave-timeseries
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-temperature-statistics
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-water-level-change-indicators-cmip6
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-hydrology-variables-derived-seasonal-reforecast
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-ocean-wave-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-tourism-snow-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-health-vector
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-european-wind-storm-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-ecde-climate-indicators
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped satellite-snow-water-equivalent
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+compiler-lease insitu-comprehensive-upper-air-observation-network
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+compiler-lease insitu-observations-gnss
+note Frage 1 ja — In-situ-Messarchiv (Punkt/Profil-Messung); Frage 2 Bulk-Archiv (netCDF) → Compiler pending; Frage 3 CDN-Asset; Frage 4 Konsument = Membran-Feld
+
+descoped reanalysis-carra-means
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped insitu-gridded-observations-alpine-precipitation
+note Frage 1 nein — gegittertes In-situ-Aggregat (abgeleitet); Frage 4 kein Konsument — descoped
+
+descoped derived-gridded-glacier-mass-change
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped satellite-ice-sheet-elevation-change
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-terrestrial-water-storage
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-ist-sst-polar
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-cloud-properties
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-humidity-profiles
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-surface-radiation-budget
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped sis-energy-pecd
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped satellite-aerosol-properties
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-ozone-v1
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-lai-fapar
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-albedo
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-ice-drift
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-ice-sheet-mass-balance
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped insitu-gridded-observations-nordic
+note Frage 1 nein — gegittertes In-situ-Aggregat (abgeleitet); Frage 4 kein Konsument — descoped
+
+descoped satellite-lake-water-level
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-fire-burned-area
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-total-column-water-vapour-land-ocean
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-land-cover
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped insitu-gridded-observations-global-and-regional
+note Frage 1 nein — gegittertes In-situ-Aggregat (abgeleitet); Frage 4 kein Konsument — descoped
+
+descoped sis-european-wind-storm-synthetic-events
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped sis-hydrology-variables-derived-projections
+note Frage 1 nein — abgeleiteter Indikator; Frage 4 kein Konsument — descoped
+
+descoped satellite-total-column-water-vapour-ocean
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-sea-surface-temperature-ensemble-product
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped satellite-precipitation-microwave
+note Frage 1 nein — abgeleitetes Satelliten-Retrieval; Frage 4 kein Konsument — descoped
+
+descoped reanalysis-era5-complete
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped projections-climate-atlas
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped derived-reanalysis-energy-moisture-budget
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped projections-cmip6-decadal-prototype
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped derived-near-surface-meteorological-variables
+note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
+
+descoped projections-cmip5-daily-single-levels
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-uerra-europe-complete
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-uerra-europe-height-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-uerra-europe-pressure-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-uerra-europe-single-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped reanalysis-uerra-europe-soil-levels
+note Frage 1 nein — Reanalyse (Modell-Output); Frage 4 kein Konsument — descoped
+
+descoped projections-cmip5-monthly-single-levels
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped projections-cmip5-daily-pressure-levels
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped projections-cmip5-monthly-pressure-levels
+note Frage 1 nein — Klimaprojektion (Modell); Frage 4 kein Konsument — descoped
+
+descoped provider-c3s-data-rescue-without
+note Frage 1 nein — Data-Rescue-Service (kein Messwert); Frage 4 kein Konsument — descoped
+
+descoped cams-global-greenhouse-gas-forecasts
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-global-reanalysis-eac4
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-europe-air-quality-reanalyses
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-greenhouse-gas-inversion
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-europe-air-quality-forecasts-optimised-at-observation-sites
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-gridded-solar-radiation
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-fire-emissions-gfas
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-ghg-reanalysis-egg4
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-global-ghg-reanalysis-egg4-monthly
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-global-atmospheric-composition-forecasts
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-global-radiative-forcing-auxilliary-variables
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-radiative-forcings
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-emission-inventories
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-global-reanalysis-eac4-monthly
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
+descoped cams-solar-radiation-timeseries
+note Frage 1 nein — abgeleitet (CAMS-Fluss/Forcing/Emission); Frage 4 kein Konsument — descoped
+
+descoped cams-europe-air-quality-forecasts
+note Frage 1 nein — Modell (Reanalyse/Forecast); Frage 4 kein Konsument — descoped
+
