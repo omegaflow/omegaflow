@@ -21,12 +21,12 @@ decline b2find_science_catalogs.φ | EUDAT legal notice: Verbreitung/Weitergabe 
 decline b2find_tags.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
 decline b2find_provider_map.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
 
-pending wdcc_catalog.φ | CERA-Terms sind eine JS-SPA, per curl nicht erreichbar | https://cera-www.dkrz.de/
-pending dataverse_harvard.φ | Terms-Seite 403 (Server-Block) | https://dataverse.org/
-pending dataverse_borealis.φ | Terms-Seite 403 (Server-Block) | https://dataverse.org/
-pending cmr_catalog.φ | kein Metadaten-Lizenztext gemessen (api.nasa.gov statisch leer) | https://cmr.earthdata.nasa.gov/
-pending dataone_catalog.φ | Terms-Seite 401 (Auth-Wand) | https://www.dataone.org/
-pending seanoe_catalog.φ | Legal-Text nur über Backend-API, per curl nicht erreichbar | https://www.seanoe.org/
+redistribute wdcc_catalog.φ | metadata CC0 (Terms of Use §2: "defaulted under Creative Commons Zero (CC0)") | https://www.wdc-climate.de/ui/info?site=termsofuse
+redistribute dataverse_harvard.φ | datasets CC0-by-default (Community Norms §CC0 Waiver); metadata citation reusable | https://dataverse.org/best-practices/dataverse-community-norms
+redistribute dataverse_borealis.φ | datasets CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
+pending cmr_catalog.φ | NASA-Teil public domain (US-Gov), aber CMR aggregiert Partner-Metadaten; earthdata data-use-policy CloudFront-geblockt | https://www.earthdata.nasa.gov/
+pending dataone_catalog.φ | terms-of-use redirectet auf old.dataone.org (Fehler-Frame); kein Metadaten-Lizenzstatement gefunden | https://www.dataone.org/
+redistribute seanoe_catalog.φ | Datensätze CC-lizenziert (gemessen: LICENCE-Facette CC-BY/CC0/CC-BY-NC/…) | https://www.seanoe.org/
 
 # Die übrigen Korpora (erddap, lter, icos, inrae, oai_arxiv, tap_index*,
 # arcgis, copernicus, esa, nasa, gbif, heliocloud, bodc, cdaweb, rpw, …)
