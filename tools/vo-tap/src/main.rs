@@ -1,9 +1,11 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 
 use vo_tap::{
-    census, host_of, known_hosts_and_urls, query_sync, regtap_count, regtap_services, submit_async,
+    census, census_with, gewogen_note, host_of, known_hosts_and_urls, order_fruchtfolge,
+    query_sync, read_kandidat, regtap_count, regtap_services, rewrite_ledger_notes, submit_async,
     tables, today_ymd, Format,
 };
 
@@ -24,7 +26,7 @@ fn format_of(args: &[String]) -> Format {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let Some(cmd) = args.first().cloned() else {
-        eprintln!("usage: vo-tap <sync|async|tables|census|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
+        eprintln!("usage: vo-tap <sync|async|tables|census|wave|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
         std::process::exit(1);
     };
     match cmd.as_str() {
@@ -128,6 +130,41 @@ fn main() {
                 );
             }
         }
+        "wave" => {
+            let Some(ledger_path) = arg(&args, "--ledger") else {
+                eprintln!("wave needs --ledger <path>");
+                std::process::exit(1);
+            };
+            let probe_timeout: u64 = arg(&args, "--probe-timeout")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(60);
+            let pause_s: u64 = arg(&args, "--pause")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(2);
+            let entries: Vec<(String, String)> = read_kandidat(&ledger_path)
+                .into_iter()
+                .filter(|(_, n)| n.contains("ungewogen"))
+                .collect();
+            let ordered = order_fruchtfolge(entries);
+            println!("url\thttp_code\ttime_s\tfinal_url\tprobe\tdate");
+            let mut weighed: HashMap<String, String> = HashMap::new();
+            let total = ordered.len();
+            for (i, (url, note)) in ordered.iter().enumerate() {
+                let l = census_with(url, probe_timeout);
+                println!(
+                    "{}\t{}\t{}\t{}\t{}\t{}",
+                    l.url, l.http_code, l.time_s, l.final_url, l.probe, l.date
+                );
+                weighed.insert(url.clone(), gewogen_note(note, &l));
+                if i + 1 < total {
+                    std::thread::sleep(std::time::Duration::from_secs(pause_s));
+                }
+            }
+            match rewrite_ledger_notes(&ledger_path, &weighed) {
+                Ok(n) => eprintln!("wave: {} weighed, {} ledger notes rewritten", total, n),
+                Err(_) => eprintln!("wave: {} weighed, ledger rewrite returned void", total),
+            }
+        }
         "import" => {
             let Some(root) = arg(&args, "--regtap") else {
                 eprintln!("import needs --regtap <root>");
@@ -199,7 +236,7 @@ fn main() {
             }
         }
         _ => {
-            eprintln!("usage: vo-tap <sync|async|tables|census|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
+            eprintln!("usage: vo-tap <sync|async|tables|census|wave|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
             std::process::exit(1);
         }
     }
