@@ -1,0 +1,25 @@
+# verified 1 samples
+url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json
+ttl 10
+at earth
+hapi crosswind=crosswind
+# unit kg/m3 not in force registry — review
+field crosswind crosswind gaussian-inverse-square advective kg/m3 60 0.0 0.0
+# crosswind = Num(9.99e32)
+
+# verified 1 samples
+url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=density
+field density density erfc diffusion kg/m3 3600 0.0 0.0
+# density = Num(inf)
+
+# verified 1 samples
+url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=density
+field density density erfc diffusion kg/m3 3600 0.0 0.0
+# density = Num(7.94292388211952e-12)
+

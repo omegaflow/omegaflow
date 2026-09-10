@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 736a88c629ecc6f3e9ba2f383d5b352145113e0dad0aee6edd0d4e5393d3bd51
+  sha256: 781b085e3e69645c18cf7a51113d1bf155c945b063c8180d712e9df9c4b49199
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -19,9 +19,15 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   79 descoped). Maschinen-Zwilling `bucket_litmus` + `decline_lens.φ` gebaut
   (Kalibrier-Gate FP 3 / FN 12); Karte `MANIFEST.φ` geschrieben. Siehe
   `handover-2026-09-10-bucket-litmus.md` + `handover-2026-09-10-phi-struktur.md`.
-- **Voller Lauf über den phi-Bestand** — Linse (`source_url_candidates`) →
-  `probe_sweep` → Review auf der kartierten Struktur (`MANIFEST.φ`); Review
-  bleibt in der Session.
+- **Voller Lauf über den phi-Bestand** — erledigt 2026-09-10: Linse →
+  `probe_sweep` → Review auf der kartierten Struktur (`MANIFEST.φ`); 30
+  Kandidaten → 19 live → 3 Survivor + 4 declined, alle 7 bereits in `sources.φ`
+  mit korrekter Einheit registriert (0 neue Quellen); die Probe-Einheit-
+  Autoableitung bleibt offen. Siehe `handover-2026-09-10-voller-phi-lauf.md`.
+- **bucket_litmus auf weitere Inventare** — Copernicus-Inventar u.a. liegen im
+  Katalog; der Vorentscheid läuft mit `bucket_litmus
+  phi/pipeline/decline_lens.φ <inventar.φ> [--calibrate <disposition.φ>]` (aus
+  `phi-struktur` übernommen).
 - **Vier Review-Fragen** — gemessen 2026-09-10 (Grind-Pro): cddis finals2000A
   offen (kein Eintrag — Register-Duty), supermag offen (kein Eintrag), ESO offen
   (kein Eintrag), maia-Zweit-Datei hält (genau eine maia-Datei, keine zweite).
