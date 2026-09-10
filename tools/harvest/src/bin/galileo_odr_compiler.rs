@@ -10,6 +10,7 @@ const ENTRY: usize = 96;
 
 struct Source {
     name: &'static str,
+    annex_name: &'static str,
     volume: &'static str,
     sha256: &'static str,
 }
@@ -17,51 +18,61 @@ struct Source {
 const SOURCES: &[Source] = &[
     Source {
         name: "63131033.ODR",
+        annex_name: "63131033.ODR",
         volume: GOJ,
         sha256: "4f976d45f5184a3394e7ec863efdf48b1f0747538a8bdec663aa6723318e7aa1",
     },
     Source {
         name: "63131742.ODR",
+        annex_name: "63131742.ODR",
         volume: GOJ,
         sha256: "1edb63f1d5b39b7a5a80982742d382bfbcd6413d8e549eebd9ab4f7e458ad975",
     },
     Source {
         name: "63561707.ODR",
+        annex_name: "63561707.ODR",
         volume: GOJ,
         sha256: "72904a159e53265d7c1db7e8c196ceb5066ce89262c8aea0f4508843ca7f91eb",
     },
     Source {
         name: "63570045.ODR",
+        annex_name: "63570045.ODR",
         volume: GOJ,
         sha256: "7aad817520a1f83416925b3ae4c7712b02d7bec2148602da43d7a3952a793857",
     },
     Source {
         name: "70571807.ODR",
+        annex_name: "70571807.ODR",
         volume: GOJ,
         sha256: "8b91928291df989c2ab7d48cd202d43d955710c5c1911b40ff6ca2e526e34433",
     },
     Source {
         name: "70571825.ODR",
+        annex_name: "70571825.ODR",
         volume: GOJ,
         sha256: "fd319f30898dcffe0d2e61270cf298bb9adba6f4b695bf1928ea66703a64255c",
     },
     Source {
         name: "70580900.ODR",
+        annex_name: "70580900.ODR",
         volume: GOJ,
         sha256: "362d3d00d614f5c5e748d870f5a69846ed03b3e32df046976d5d8f8f08150dcd",
     },
     Source {
         name: "JS_63540659.ODR",
+        annex_name: "63540659.ODR",
         volume: GOJS,
         sha256: "aed589e47d1078296ea4f36373fb577608320722516917aa56713c513ef330c7",
     },
     Source {
         name: "JS_70561433.ODR",
+        annex_name: "70561433.ODR",
         volume: GOJS,
         sha256: "a16fa7b38d060f4b0dc53327bbf1824ab2a4cef198f09e4f57dc78d5b21772a9",
     },
     Source {
         name: "JS_70571407.ODR",
+        annex_name: "70571407.ODR",
         volume: GOJS,
         sha256: "d35f50efeada76741335c784d0f9ab417be23e91f95a9bd5959f3ccbdab531be",
     },
@@ -179,6 +190,46 @@ fn parse_odr_bin(data: &[u8]) -> Option<Vec<FileBytes>> {
     Some(out)
 }
 
+fn gate(bytes: &[u8], src: &Source) -> Result<FileBytes, String> {
+    if bytes.len() < REC {
+        return Err(format!(
+            "{}: {} bytes — shorter than one ODR record",
+            src.name,
+            bytes.len()
+        ));
+    }
+    let hex = sha256_hex(bytes);
+    if hex != src.sha256 {
+        return Err(format!(
+            "{}: sha256 {} — provenance mismatch",
+            src.name, hex
+        ));
+    }
+    let Some(sr) = sample_rate(bytes) else {
+        return Err(format!("{}: sample-rate field void", src.name));
+    };
+    let Some(sha) = hex32(src.sha256) else {
+        return Err(format!("{}: provenance hex void", src.name));
+    };
+    Ok(FileBytes {
+        name: src.name.to_string(),
+        bytes: bytes.to_vec(),
+        record_count: (bytes.len() / REC) as u32,
+        sample_rate: sr,
+        sha256: sha,
+    })
+}
+
+fn roundtrip_holds(bin: &[u8]) -> bool {
+    let Some(parsed) = parse_odr_bin(bin) else {
+        return false;
+    };
+    parsed.iter().all(|f| {
+        f.record_count as usize == f.bytes.len() / REC
+            && sha256_hex(&f.bytes) == hex_string(&f.sha256)
+    })
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -192,97 +243,61 @@ fn main() {
     for src in SOURCES {
         let bytes = match &dir {
             Some(d) => std::fs::read(format!("{d}/{}", src.name)).ok(),
-            None => fetch_raw_bytes(&format!("{BASE}{}/ODR/{}", src.volume, src.name), 604800),
+            None => fetch_raw_bytes(
+                &format!("{BASE}{}/ODR/{}", src.volume, src.annex_name),
+                604800,
+            ),
         };
         let Some(bytes) = bytes else {
             eprintln!("{}: {} read void", src.name, src.volume);
-            continue;
+            std::process::exit(1);
         };
-        if bytes.len() < REC {
-            eprintln!(
-                "{}: {} bytes — shorter than one ODR record",
-                src.name,
-                bytes.len()
-            );
-            continue;
-        }
-        let hex = sha256_hex(&bytes);
-        if hex != src.sha256 {
-            eprintln!("{}: sha256 {} — provenance mismatch", src.name, hex);
-            continue;
-        }
-        let Some(sr) = sample_rate(&bytes) else {
-            eprintln!("{}: sample-rate field void", src.name);
-            continue;
+        let f = match gate(&bytes, src) {
+            Ok(f) => f,
+            Err(e) => {
+                eprintln!("{e}");
+                std::process::exit(1);
+            }
         };
-        let record_count = (bytes.len() / REC) as u32;
-        let trailing = bytes.len() % REC;
-        let Some(sha256) = hex32(src.sha256) else {
-            eprintln!("{}: provenance hex void", src.name);
-            continue;
-        };
+        let trailing = f.bytes.len() % REC;
         if trailing == 0 {
             eprintln!(
                 "{}: {} records, {} sps, {} bytes, provenance holds",
-                src.name,
-                record_count,
-                sr,
-                bytes.len()
+                f.name,
+                f.record_count,
+                f.sample_rate,
+                f.bytes.len()
             );
         } else {
             eprintln!(
                 "{}: {} records + {} trailing bytes, {} sps, {} bytes, provenance holds",
-                src.name,
-                record_count,
+                f.name,
+                f.record_count,
                 trailing,
-                sr,
-                bytes.len()
+                f.sample_rate,
+                f.bytes.len()
             );
         }
-        files.push(FileBytes {
-            name: src.name.to_string(),
-            bytes,
-            record_count,
-            sample_rate: sr,
-            sha256,
-        });
+        files.push(f);
     }
-    if files.is_empty() {
-        eprintln!("no galileo ODR files passed the provenance gate — the asset stays unwritten (0 honored)");
-        return;
+    let bin = write_odr_bin(&files);
+    if !roundtrip_holds(&bin) {
+        eprintln!("{out}: roundtrip void — the asset stays unwritten (0 honored)");
+        std::process::exit(1);
     }
     if let Some(p) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(p);
     }
-    let bin = write_odr_bin(&files);
     if std::fs::write(&out, &bin).is_err() {
-        eprintln!("write {out} void");
-        return;
+        eprintln!("write {out} returned void");
+        std::process::exit(1);
     }
-    match parse_odr_bin(&bin) {
-        Some(parsed) => {
-            let mut all_hold = true;
-            let mut total_bytes = 0usize;
-            for f in &parsed {
-                total_bytes += f.bytes.len();
-                if f.record_count as usize != f.bytes.len() / REC {
-                    all_hold = false;
-                }
-                if sha256_hex(&f.bytes) != hex_string(&f.sha256) {
-                    all_hold = false;
-                }
-            }
-            eprintln!(
-                "{out}: {} ODR files packaged ({} bytes), roundtrip parses, fidelity {}",
-                parsed.len(),
-                total_bytes,
-                if all_hold { "holds" } else { "void" }
-            );
-        }
-        None => {
-            eprintln!("{out}: roundtrip parse void — the asset stays unverified");
-        }
-    }
+    let total_bytes: usize = files.iter().map(|f| f.bytes.len()).sum();
+    eprintln!(
+        "{out}: {} ODR files packaged ({} bytes), roundtrip holds",
+        files.len(),
+        total_bytes
+    );
     if ci_mode && !upload_release("pds-ppi.igpp.ucla.edu", &out) {
         std::process::exit(1);
     }
@@ -336,5 +351,60 @@ mod tests {
         assert_eq!(parsed[1].name, "JS_70571407.ODR");
         assert_eq!(parsed[1].bytes.len(), 5 * REC);
         assert!(parse_odr_bin(b"X").is_none());
+    }
+
+    #[test]
+    fn gate_holds_when_provenance_matches() {
+        let bytes = sample_file("63131033.ODR", 2).bytes;
+        let sha = Box::leak(sha256_hex(&bytes).into_boxed_str());
+        let src = Source {
+            name: "63131033.ODR",
+            annex_name: "63131033.ODR",
+            volume: GOJ,
+            sha256: sha,
+        };
+        let f = gate(&bytes, &src).unwrap();
+        assert_eq!(f.record_count, 2);
+        assert_eq!(f.sample_rate, 1250);
+    }
+
+    #[test]
+    fn gate_rejects_short_bytes() {
+        let src = Source {
+            name: "x.ODR",
+            annex_name: "x.ODR",
+            volume: GOJ,
+            sha256: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        };
+        assert!(gate(&[0u8; 100], &src).is_err());
+    }
+
+    #[test]
+    fn gate_rejects_provenance_mismatch() {
+        let bytes = sample_file("x.ODR", 1).bytes;
+        let src = Source {
+            name: "x.ODR",
+            annex_name: "x.ODR",
+            volume: GOJ,
+            sha256: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        };
+        assert!(gate(&bytes, &src).is_err());
+    }
+
+    #[test]
+    fn roundtrip_holds_for_valid_bin() {
+        let a = sample_file("63131033.ODR", 3);
+        let b = sample_file("JS_70571407.ODR", 5);
+        let bin = write_odr_bin(&[a, b]);
+        assert!(roundtrip_holds(&bin));
+    }
+
+    #[test]
+    fn roundtrip_voids_on_corruption() {
+        let a = sample_file("63131033.ODR", 3);
+        let mut bin = write_odr_bin(&[a]);
+        let last = bin.len() - 1;
+        bin[last] ^= 0xff;
+        assert!(!roundtrip_holds(&bin));
     }
 }
