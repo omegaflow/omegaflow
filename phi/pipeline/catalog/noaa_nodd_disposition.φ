@@ -9,7 +9,9 @@
 # ×2, noaa-goes16 ×2). unverifizierter Bucket-Name → pending vor Disposition
 # (Kette ungefragt). Compiler-Lease mit Compiler pending = benannte
 # Register-Duty für das Nachfolge-Atom (nichts wird hier gebaut oder geerntet).
-# 101 catalog-Zeilen, 99 Datasets nach Duplikat-Kollaps.
+# 101 catalog-Zeilen; 98 Datasets nach Duplikat-Kollaps (sea-ice ×2, goes16 ×2)
+# minus die `provider`-Zeile ready.noaa.gov (ungezählt — kein Dataset, ihr Inhalt
+# NOMADS/RDA/CPC ist je separat disponiert).
 
 descoped s3://noaa-oar-arl-hysplit-pds
 note Frage 1 nein — HYSPLIT-Meteorologie-Archiv (Modellfelder); Frage 4 kein benannter Konsument — descoped (Befund: ARL-Archiv trägt Modell-Meteorologie, kein Messwert).
@@ -250,9 +252,6 @@ note Frage 1 nein — abgeleitet (SST-Optimum-Interpolation); Frage 4 kein benan
 
 descoped s3://noaa-cdr-sea-surface-temp-whoi-pds
 note Frage 1 nein — abgeleitet (SST-Analyse WHOI); Frage 4 kein benannter Konsument — descoped (Befund: abgeleitet, keine Messung).
-
-descoped https://www.ready.noaa.gov/archives.php
-note Frage 1 nein — Archiv-Portal (READY/HYSPLIT-Runs), keine Einzelmessung; Frage 4 kein benannter Konsument — descoped (Befund: Archiv-Portal, keine Einzelmessung).
 
 descoped https://nomads.ncep.noaa.gov/pub/data/nccf/com/hysplit/prod/
 note Frage 1 nein — Modell-Produktionsdaten (HYSPLIT-Dispersion), abgeleitet; Frage 4 kein benannter Konsument — descoped (Befund: Modell-Produkt, keine Einzelmessung).
