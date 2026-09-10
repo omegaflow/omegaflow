@@ -6,8 +6,16 @@
 #   FP 3 (ghcn, swpc, swdi — Titel tragen das Gate-Wort, die Messung ist echt),
 #   FN 12 (nationalbathymetry, mrms, s102, s111, wsa-enlil + Portal-/Archiv-Titel,
 #   deren Decline erst der Inhalt trägt). Gezählt, nie geglättet.
+# Copernicus-Kalibrierung (2026-09-10, gegen die 159 Copernicus-Urteile):
+#   FP 1 (insitu-observations-igra-baseline-network — „archive" matcht, die Messung
+#   ist echt), FN 27 vor dem token (era5-land-Titel ohne „reanalysis", cmip5-Titel
+#   ohne „projection", inversion/forcing/emission, data-rescue — der Decline trägt
+#   erst der Inhalt). „projection"/„projections" in model-forecast aufgenommen
+#   (räumt 1 cmip6-FN, dessen Titel „climate projections" trägt; die 4 cmip5-Titel
+#   tragen das Wort nicht und bleiben FN; noaa-Baseline unverändert). Gezählt,
+#   nie geglättet.
 
-class model-forecast     @ forecast forecast-system ensemble reforecast re-forecast prediction hindcast data-assimilation guidance model analysis retrospective downscal fourcastnet graphcast rapid-refresh national-blend hurricane-analysis prototype reanalysis reanalyse
+class model-forecast     @ forecast forecast-system ensemble reforecast re-forecast prediction hindcast data-assimilation guidance model analysis retrospective downscal fourcastnet graphcast rapid-refresh national-blend hurricane-analysis prototype reanalysis reanalyse projection projections
 class derived-satellite  @ derived retrieval level-3 level-2 computed estimated estimator cdr climate-data-record satellite-computed
 class catalog-register   @ catalog catalogue inventory index listing archive portal directory register metadata kerchunk reference-files dataset-collection product-list data-server
 class aggregated-index   @ normals 30-year optimum-interpolation gridded mosaic climate-normals climatology thresholds
