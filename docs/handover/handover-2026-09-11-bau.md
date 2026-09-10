@@ -2,10 +2,15 @@
   title: Handover — Bau & Code (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: a41da0c808be6eb8287f94f2f12d46f23e8936d38e9218ece4ac7e401e066140
+  sha256: fc6833aaa5166077c390eb1817f674ded787d7b56c5e104328c1b4200f82a0bd
   status: live
 -->
 # Handover — Bau & Code (2026-09-11)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
+viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
+ist kein Aufwand.
 
 ## Compiler & Format
 
