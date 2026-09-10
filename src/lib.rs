@@ -49,6 +49,7 @@ pub use archivar::matfile;
 pub use archivar::mpcorb;
 pub use archivar::nc4;
 pub use archivar::netcdf;
+pub use archivar::noaa_nodd;
 pub use archivar::odf;
 pub use archivar::odp;
 pub use archivar::ossos;
