@@ -37,10 +37,14 @@ impl Format {
 }
 
 pub fn query_sync(root: &str, adql: &str, format: Format) -> Option<String> {
+    query_sync_timeout(root, adql, format, 300)
+}
+
+pub fn query_sync_timeout(root: &str, adql: &str, format: Format, timeout: u64) -> Option<String> {
     let out = Command::new("curl")
         .arg("-sSf")
         .arg("-m")
-        .arg("300")
+        .arg(timeout.to_string())
         .arg("-G")
         .arg("--data-urlencode")
         .arg("REQUEST=doQuery")
@@ -404,6 +408,10 @@ fn civil_from_unix(unix: i64) -> (i64, i64, i64) {
 }
 
 pub fn census(url: &str) -> CensusLine {
+    census_with(url, 300)
+}
+
+pub fn census_with(url: &str, probe_timeout: u64) -> CensusLine {
     let date = today_ymd();
     let out = Command::new("curl")
         .arg("-sS")
@@ -430,7 +438,7 @@ pub fn census(url: &str) -> CensusLine {
     };
     let probe = if http_code == "000" {
         "kein-http".to_string()
-    } else if tap_speaks(url) {
+    } else if tap_speaks(url, probe_timeout) {
         "tap".to_string()
     } else {
         "http".to_string()
@@ -470,10 +478,10 @@ fn tap_shape(body: &str) -> bool {
     }
 }
 
-fn tap_speaks(url: &str) -> bool {
+fn tap_speaks(url: &str, timeout: u64) -> bool {
     let adql = "SELECT TOP 1 * FROM tap_schema.tables";
     for c in sync_candidates(url) {
-        if let Some(body) = query_sync(&c, adql, Format::Json) {
+        if let Some(body) = query_sync_timeout(&c, adql, Format::Json, timeout) {
             if tap_shape(&body) {
                 return true;
             }
@@ -517,6 +525,116 @@ pub fn known_hosts_and_urls(paths: &[String]) -> (HashSet<String>, HashSet<Strin
         }
     }
     (hosts, urls)
+}
+
+pub fn read_kandidat(ledger: &str) -> Vec<(String, String)> {
+    let Ok(content) = fs::read_to_string(ledger) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    let mut current: Option<String> = None;
+    for line in content.lines() {
+        let t = line.trim();
+        if let Some(url) = t.strip_prefix("kandidat ") {
+            current = Some(url.trim().to_string());
+        } else if t.starts_with("note ") {
+            if let Some(u) = current.take() {
+                out.push((u, t["note ".len()..].trim().to_string()));
+            }
+        } else if t.is_empty() {
+            current = None;
+        }
+    }
+    out
+}
+
+pub fn order_fruchtfolge(entries: Vec<(String, String)>) -> Vec<(String, String)> {
+    let mut keys: Vec<String> = Vec::new();
+    let mut groups: Vec<Vec<(String, String)>> = Vec::new();
+    for e in entries {
+        let key = match host_of(&e.0) {
+            Some(h) => h,
+            None => e.0.clone(),
+        };
+        match keys.iter().position(|k| *k == key) {
+            Some(i) => groups[i].push(e),
+            None => {
+                keys.push(key);
+                groups.push(vec![e]);
+            }
+        }
+    }
+    let mut out = Vec::with_capacity(groups.iter().map(|g| g.len()).sum());
+    let mut idx = 0usize;
+    loop {
+        let mut emitted = false;
+        for g in &groups {
+            if idx < g.len() {
+                out.push(g[idx].clone());
+                emitted = true;
+            }
+        }
+        if !emitted {
+            break;
+        }
+        idx += 1;
+    }
+    out
+}
+
+pub fn gewogen_note(note: &str, l: &CensusLine) -> String {
+    let prefix = match note.split("ungewogen").next() {
+        Some(p) => p.trim_end(),
+        None => note,
+    };
+    format!(
+        "{} gewogen {}: http {} probe {}",
+        prefix, l.date, l.http_code, l.probe
+    )
+}
+
+pub fn rewrite_ledger_notes(
+    path: &str,
+    notes: &std::collections::HashMap<String, String>,
+) -> std::io::Result<usize> {
+    let content = fs::read_to_string(path)?;
+    let mut out = String::with_capacity(content.len());
+    let mut current: Option<String> = None;
+    let mut rewritten = 0usize;
+    for line in content.lines() {
+        let t = line.trim();
+        if let Some(url) = t.strip_prefix("kandidat ") {
+            current = Some(url.trim().to_string());
+            out.push_str(line);
+            out.push('\n');
+        } else if t.starts_with("note ") {
+            if let Some(u) = &current {
+                if let Some(new_note) = notes.get(u) {
+                    out.push_str("note ");
+                    out.push_str(new_note);
+                    out.push('\n');
+                    rewritten += 1;
+                } else {
+                    out.push_str(line);
+                    out.push('\n');
+                }
+            } else {
+                out.push_str(line);
+                out.push('\n');
+            }
+            current = None;
+        } else {
+            if t.is_empty() {
+                current = None;
+            }
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    let tmp = format!("{}.tmp", path);
+    fs::write(&tmp, &out)?;
+    fs::rename(&tmp, path)?;
+    Ok(rewritten)
 }
 
 const REGTAP_TAP_WHERE: &str =

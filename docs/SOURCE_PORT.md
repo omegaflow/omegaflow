@@ -561,3 +561,17 @@ RegTAP-Liste der TAP-Dienste (Roundtrip über COUNT(*), Bestand-Dedupe je Host
   (TLS-Zertifikat deckt den Host nicht — curl 60) → http, nie https.
 - Spalten heißen `rr.capability.cap_index` / `rr.interface.cap_index`
   (nicht `capability_index`); `rr.interface` trägt `access_url` + `intf_type`.
+
+### 16.3 Vollwelle — die 120 Kandidaten gewogen (2026-09-10)
+
+`vo-tap wave --ledger phi/pipeline/ledger.φ` (Host-Fruchtfolge, GET-Cap 30 s,
+Probe-Timeout 60 s, 2 s Pause) wiegt alle `ausstehend kandidat`-Blöcke und
+schreibt den Befund in die Ledger-Note zurück (`gewogen <datum>: http <code>
+probe <probe>`). Verteilung des Eigenen: **49 tap · 67 http · 4 kein-http**
+(120 Blöcke). Zwei RegTAP-Artefakte, getragen fürs Dispositions-Atom: zwei
+Blöcke mit relativer `access_url` (`/tap`, ivoid `ivo://ovgso/tap` — kein
+Host, wiegt `kein-http`) und zwei Doppel-Blöcke `https://dachs.oca.eu/tap`
+(derselbe ivoid `ivo://purx/dachs/tap` zweimal — RegTAP liefert zwei
+Interface-Zeilen, der Import dedupliziert nicht gegen die eigene Charge).
+`tap` = lebt + TAP-JSON; `http` = HTTP antwortet ohne TAP (POST-only, CSV/
+VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
