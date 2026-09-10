@@ -1,0 +1,83 @@
+# MANIFEST.φ — die Karte des Katalogs (Rats-Verdikt 2026-09-10, Atom 2).
+# Rolle je Datei. Keine url-/candidate-Zeilen — die Linse liest die Datei und
+# findet null Kandidaten (A = A, kein Skip-Filter, keine Code-Änderung).
+# Versioniert. Rollen: tap | inventory | vocabulary | asteroid | map |
+# disposition | special. state: versioned | live | local.
+
+file tap_index.φ | tap | live | visible
+file tap_index_ari.φ | tap | live | visible
+file tap_index_cadc.φ | tap | live | visible
+file tap_index_chandra.φ | tap | live | visible
+file tap_index_eso.φ | tap | live | visible
+file tap_index_exoarchive.φ | tap | live | visible
+file tap_index_gavo.φ | tap | live | visible
+file tap_index_heasarc.φ | tap | live | visible
+file tap_index_irsa.φ | tap | live | visible
+file tap_index_mast.φ | tap | live | visible
+file tapvizier_descriptions.φ | tap | live | visible
+
+file arcgis_catalog.φ | inventory | live | visible
+file b2find_catalogs_index.φ | inventory | live | visible
+file b2find_intermagnet_catalog.φ | inventory | live | visible
+file b2find_science_catalogs.φ | inventory | live | visible
+file bcodmo_catalog.φ | inventory | live | visible
+file bodc_catalog.φ | inventory | live | visible
+file cdaweb_missions.φ | inventory | live | visible
+file cmr_catalog.φ | inventory | live | visible
+file copernicus_catalog.φ | inventory | live | visible
+file copernicus_catalogues.φ | inventory | live | visible
+file dataone_catalog.φ | inventory | live | visible
+file dataverse_borealis.φ | inventory | live | visible
+file dataverse_harvard.φ | inventory | live | visible
+file dryad_catalog.φ | inventory | live | visible
+file erddap_bcodmo_catalog.φ | inventory | live | visible
+file erddap_noaa_pmel_catalog.φ | inventory | live | visible
+file esa_eogateway_data.φ | inventory | live | visible
+file esa_geomagnetic_catalog.φ | inventory | live | visible
+file gfz_igets_catalog.φ | inventory | live | visible
+file grind_arcgis_index.φ | inventory | live | visible
+file grind_eogateway_index.φ | inventory | live | visible
+file grind_vires_catalog.φ | inventory | live | visible
+file heliocloud_catalog.φ | inventory | live | visible
+file icos_catalog.φ | inventory | live | visible
+file inrae_catalog.φ | inventory | live | visible
+file lter_sensors.φ | inventory | live | visible
+file lter_sites.φ | inventory | live | visible
+file noaa_nodd_inventory.φ | inventory | live | visible
+file oai_arxiv.φ | inventory | live | visible
+file pangaea_catalog.φ | inventory | live | visible
+file pangaea_catalog_full.φ | inventory | live | visible
+file re3data_catalog.φ | inventory | live | visible
+file rpw_datacenter_catalog.φ | inventory | live | visible
+file seanoe_catalog.φ | inventory | live | visible
+file terrapulse_catalog.φ | inventory | live | visible
+file vizier_gold_catalogs.φ | inventory | live | visible
+file wdcc_catalog.φ | inventory | live | visible
+file zenodo_catalog.φ | inventory | live | visible
+
+file arcgis_tags.φ | vocabulary | live | visible
+file b2find_tags.φ | vocabulary | live | visible
+file domain_tags.φ | vocabulary | live | visible
+file gaia_swpc_vokabular.φ | vocabulary | live | visible
+file gbif_tags.φ | vocabulary | live | visible
+file gbif_vocabulary.φ | vocabulary | live | visible
+file inaturalist_vokabular.φ | vocabulary | live | visible
+file nasa_cmr_tags.φ | vocabulary | live | visible
+file nasa_cmr_vokabular.φ | vocabulary | live | visible
+file nasa_gcmd_keywords.φ | vocabulary | live | visible
+
+file asteroid_diameters_akari.φ | asteroid | live | visible
+file asteroid_diameters_neowise.φ | asteroid | live | visible
+file asteroid_gm_inpop25c.φ | asteroid | live | visible
+file asteroid_gm_sb441.φ | asteroid | versioned | visible
+
+file archeology_gaps_index.φ | map | live | visible
+file b2find_provider_map.φ | map | live | visible
+file provider_links.φ | map | live | visible
+
+file noaa_nodd_disposition.φ | disposition | versioned | visible
+file solar_omega_g.φ | special | versioned | visible
+
+dir twomass | raw-harvest | local | invisible
+dir ncei_goes_xrs | raw-harvest | local | invisible
+dir ncei_ssi | raw-harvest | local | invisible
