@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 1e507d59cd63cef3f5ade316be161cab55143fbf0db2c71526e04c1abff8c774
+  sha256: 6371d6428b97c65803bebce41e34c5ab4da1c1a57ccfb54e4e235233cdb7f1b5
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -132,7 +132,7 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 |---|---|---|---|---|---|---|
 | **NASA ADS** | `api.adsabs.harvard.edu/v1/search/query` | Bearer-Token | frei | EM | fehlt (Key vorhanden; einzelne /v1-Subendpoints dead 404) | https://ui.adsabs.harvard.edu/user/settings/token |
 | **Space-Track.org** | `www.space-track.org/basicspacedata/query/class/satcat` | Login | frei | EM | fehlt (Credentials vorhanden; Live 200, Query 401-auth) | https://www.space-track.org/auth/login |
-| **SuperMAG** | `supermag.jhuapl.edu` | Login-Name (passwortlos) | frei | EM | registriert 1.8.2026 (`omegaflow`, E-Mail `code@omegaflow.space`); **kein Passwort nötig** — das leere `SUPERMAG_PASS` ist korrekt, kein offener Auth; Live 200 | https://supermag.jhuapl.edu/mag/ |
+| **SuperMAG** | `supermag.jhuapl.edu/services/data-api.php` | `logon=<username>` (passwortlos) | frei | EM | **funktioniert** (gemessen 10.09.2026: inventory/indices/data-api liefern echte Daten; User `omegaflow`; der frühere „geht nicht"-Befund war der falsche Parameter `user`/`username` statt `logon`) | https://supermag.jhuapl.edu/mag/ |
 | **GRACE-FO / SWOT (PODAAC)** | `podaac.jpl.nasa.gov` S3-Bucket | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; S3-Scheme ungetragen) | https://urs.earthdata.nasa.gov/users/new |
 | **SMAP Bodenfeuchte** | `nsidc.org/data/smap` | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; Live 200) | https://urs.earthdata.nasa.gov/users/new |
 | **CDDIS IONEX** | `cddis.nasa.gov` | Earthdata | frei | EM | fehlt (Ionosphäre; Earthdata vorhanden; Live 200 → Earthdata-gated) | https://urs.earthdata.nasa.gov/users/new |
