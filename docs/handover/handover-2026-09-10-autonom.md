@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: a02c7e3082f6918d8ae5aa96e44cf3a109c8ecda76f900e1c43814835ee2af5c
+  sha256: 3f6368c3a47c6fa24307288c529387c53486404cf391cd3dc937e4510cd8fcfd
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -49,11 +49,15 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   `sources.φ` + `supermag_compiler.rs` (std-only + curl, JSON→Binary, `--ci-mode`
   → CDN). Aufruf:
   `services/data-api.php?fmt=json&logon=<user>&start=<ISO>&extent=<sec>&all&station=<code>`.
-- **LSST-Alerts in die Pipeline holen** — die public LSST-Alerts über die Broker
-  (ALeRCE `api.alerce.online/alerts/v1/` HTTP 200 anonym gemessen; Fink
-  `api.lsst.fink-portal.org`, ANTARES). Die Rubin-Bilder/-Kataloge (RSP) brauchen
-  Datenrechte (Antrag: `docs/auftrag/auftrag-rubin-data-rights-antrag.md`); die
-  Alerts sind offen. Zustand: verifiziert (Broker erreichbar), Compiler fehlt.
+- **Broker-Compiler + Survey-Audit** — die **9 Rubin-Broker** (7 full-stream:
+  ALeRCE/AMPEL/ANTARES/Babamul/Fink/Lasair/Pitt-Google; 2 down-stream: SNAPS/
+  POI) sind gemessen (`docs/befund/befund-broker-landschaft.md`); Compiler für
+  die anonymen (ALeRCE/ANTARES/Fink/Babamul) fehlen. **DECaPS** (Katalog,
+  g/r/i/z/Y) als Quelle registrieren; **VTSS/Mellinger** sind Bild-Surveys (kein
+  Compiler). Die **10 Katalog-Kandidaten** (eROSITA/Fermi/XMM/GALEX/DSS2/
+  Finkbeiner/SDSS9/PanSTARRS/GLIMPSE/SPITZER) sind bekannt, aber nicht disponiert.
+  Die RSP-Bilder brauchen Datenrechte (Antrag `docs/auftrag/auftrag-rubin-data-rights-antrag.md`);
+  die Alerts sind offen.
 
 ## Analyse
 
