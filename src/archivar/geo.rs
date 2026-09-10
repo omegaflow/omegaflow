@@ -7,6 +7,7 @@ pub const MAGIC_GIC: [u8; 4] = *b"GIC1";
 pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
+pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -40,6 +41,14 @@ pub const COMP_ARGO_BBP700: u32 = 4;
 pub const COMP_ARGO_PH_TOTAL: u32 = 5;
 pub const COMP_ARGO_MAX: u32 = 5;
 
+pub const COMP_SMG_N_NEZ: u32 = 1;
+pub const COMP_SMG_E_NEZ: u32 = 2;
+pub const COMP_SMG_Z_NEZ: u32 = 3;
+pub const COMP_SMG_N_GEO: u32 = 4;
+pub const COMP_SMG_E_GEO: u32 = 5;
+pub const COMP_SMG_Z_GEO: u32 = 6;
+pub const COMP_SMG_MAX: u32 = 6;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -67,6 +76,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "fmi_gic" => Some(MAGIC_GIC),
         "igets" => Some(MAGIC_IGETS),
         "iss_lis" => Some(MAGIC_ISSLIS),
+        "supermag_1m" => Some(MAGIC_SMG),
         _ => None,
     }
 }
@@ -81,6 +91,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "fmi_gic" => Some(COMP_GIC_MAX),
         "igets" => Some(COMP_IGETS_MAX),
         "iss_lis" => Some(COMP_ISSLIS_MAX),
+        "supermag_1m" => Some(COMP_SMG_MAX),
         _ => None,
     }
 }

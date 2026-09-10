@@ -6010,6 +6010,17 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_tro_2025-03.bin
+format supermag_1m
+at earth
+ttl 604800
+field supermag_n_nez_nt supermag_n_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_e_nez_nt supermag_e_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_z_nez_nt supermag_z_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
+field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
+field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/twomrs.bin
 format twomrs
 ttl 604800

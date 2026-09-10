@@ -966,6 +966,10 @@ decline derived
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&parameters=E1800
 note E1800 = −V×B (deterministische Funktion der advective-V- und em-B-Kanäle, Konfounder — TE≈1.0 wäre ein epistemisches Trugbild, keine eigene Messung). Aus dem OMNI-Block in sources.φ entfernt (2026-08-20); die Reihe bleibt in OMNI2 verfügbar, der electric-Kanal trägt jetzt den Solar-Orbiter-RPW-Feed (rpw_efield.bin).
 
+decline duplicate-eop
+url https://cddis.nasa.gov/archive/products/iers/finals2000A.daily
+note CDDIS finals2000A (IERS-EOP final): UT1-UTC + Polbewegung — dieselbe Messung wie der registrierte maia.usno.navy.mil ser7/finals.all-Block — Duplikat; der cddis-Block in blocked_sources.φ ist RINEX-GNSS (broadcast ephemeris), nicht EOP.
+
 dead 404
 url https://cdms.astro.uni-koeln.de/vamdc/tap/rest/VAMDC-TAP/sync?REQUEST=doQuery&LANG=VSS2&FORMAT=application/x-xsams+xml&QUERY=SELECT+SPECIES+WHERE+MoleculeChemicalFormula%3D%27H2O%27
 note HTTP 404 — Endpoint weg.
@@ -2292,7 +2296,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 dead 404
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
-note MAST tap-sync 404 (nginx) — der alte Pfad ist tot; der lebende TAP liegt unter https://mast.stsci.edu/portal/api/tap/sync (2026-09-06 gemessen HTTP 200 via VPN + direkt, POST FORMAT=json). Dieser Eintrag behaelt die tote URL; das Live-Ziel gehoert in sources.φ wenn ein Port es aufnimmt.
+note MAST vo-tap caom/sync — Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); die 404-nginx-Messung (2026-09-06) war ein Zeitpunkt, kein Endzustand. Der zweite MAST-TAP portal/api/tap/sync antwortet 200 POST-only (POST FORMAT=json, gemessen 2026-09-06). Beide Wege leben; der Austrag aus dead_sources und der Port gehoeren ins Dispositions-Atom.
 
 decline no-physical-force
 url https://mempool.space/api/v1/fees/recommended
@@ -3776,7 +3780,7 @@ note vizier_bulk_c 2026-08-18: Tabelle tot (TAP 400), kein tap_index-Eintrag.
 
 dead 400
 url https://tapvizier.u-strasbg.fr/TAPVizieR/tap/sync
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+note HTTP 400 — Recheck 2026-09-10: lebt, TAP-JSON antwortet (400 = braucht Query); die Browser-Historie-Diagnose war falsch. Der alte CDS-Host antwortet weiter; der kanonische Host ist tapvizier.cds.unistra.fr.
 
 dead 5xx
 url https://tapvizier.u-strasbg.fr/TAPVizieR/tap/sync`
