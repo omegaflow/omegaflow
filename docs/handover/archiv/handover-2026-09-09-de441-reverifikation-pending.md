@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: 7fea3422fe7e13b7cfba2e9a06eb935df283369de67949514554895794018f04
-  status: live
+  status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-de441-pin-redispatch.md docs/befund/befund-2026-09-09-de721-planeten-selektion.md
 -->
 # Handover — de441-mars-Rekompiilat: Re-Verifikation pending
