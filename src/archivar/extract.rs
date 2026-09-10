@@ -124,6 +124,33 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_SMG_Z_GEO => Some("supermag_z_geo_nt"),
             _ => None,
         },
+        "noaa_ghcn_d" => match comp {
+            crate::geo::COMP_GHCN_TMAX => Some("noaa_ghcn_d_tmax_c"),
+            crate::geo::COMP_GHCN_TMIN => Some("noaa_ghcn_d_tmin_c"),
+            crate::geo::COMP_GHCN_PRCP => Some("noaa_ghcn_d_prcp_mm"),
+            crate::geo::COMP_GHCN_SNOW => Some("noaa_ghcn_d_snow_mm"),
+            crate::geo::COMP_GHCN_SNWD => Some("noaa_ghcn_d_snwd_mm"),
+            _ => None,
+        },
+        "noaa_gsod" => match comp {
+            crate::geo::COMP_GSOD_TEMP => Some("noaa_gsod_temp_c"),
+            crate::geo::COMP_GSOD_DEWP => Some("noaa_gsod_dewp_c"),
+            crate::geo::COMP_GSOD_SLP => Some("noaa_gsod_slp_hpa"),
+            crate::geo::COMP_GSOD_WDSP => Some("noaa_gsod_wdsp_ms"),
+            crate::geo::COMP_GSOD_GUST => Some("noaa_gsod_gust_ms"),
+            crate::geo::COMP_GSOD_TMAX => Some("noaa_gsod_max_c"),
+            crate::geo::COMP_GSOD_TMIN => Some("noaa_gsod_min_c"),
+            crate::geo::COMP_GSOD_PRCP => Some("noaa_gsod_prcp_mm"),
+            _ => None,
+        },
+        "noaa_isd" => match comp {
+            crate::geo::COMP_ISD_TEMP => Some("noaa_isd_temp_c"),
+            crate::geo::COMP_ISD_DEWP => Some("noaa_isd_dewp_c"),
+            crate::geo::COMP_ISD_WDIR => Some("noaa_isd_wdir_deg"),
+            crate::geo::COMP_ISD_WSPD => Some("noaa_isd_wspd_ms"),
+            crate::geo::COMP_ISD_SLP => Some("noaa_isd_slp_hpa"),
+            _ => None,
+        },
         _ => None,
     }
 }

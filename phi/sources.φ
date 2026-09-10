@@ -5563,6 +5563,39 @@ on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_a fmi_gic_a gaussian-inverse-square electric A 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-ghcn-pds.s3.amazonaws.com/ghcn_d_USW00094728_2025-03.bin
+format noaa_ghcn_d
+at earth
+ttl 604800
+field noaa_ghcn_d_tmax_c noaa_ghcn_d_tmax_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_ghcn_d_tmin_c noaa_ghcn_d_tmin_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_ghcn_d_prcp_mm noaa_ghcn_d_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+field noaa_ghcn_d_snow_mm noaa_ghcn_d_snow_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+field noaa_ghcn_d_snwd_mm noaa_ghcn_d_snwd_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-global-hourly-pds.s3.amazonaws.com/isd_01001099999_2025-03.bin
+format noaa_isd
+at earth
+ttl 604800
+field noaa_isd_temp_c noaa_isd_temp_c exponential-decay thermal C 3600 0.0 0.0
+field noaa_isd_dewp_c noaa_isd_dewp_c exponential-decay thermal C 3600 0.0 0.0
+field noaa_isd_wdir_deg noaa_isd_wdir_deg gaussian-inverse-square advective deg 3600 0.0 0.0
+field noaa_isd_wspd_ms noaa_isd_wspd_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field noaa_isd_slp_hpa noaa_isd_slp_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-gsod-pds.s3.amazonaws.com/gsod_01001099999_2025-03.bin
+format noaa_gsod
+at earth
+ttl 604800
+field noaa_gsod_temp_c noaa_gsod_temp_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_gsod_dewp_c noaa_gsod_dewp_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_gsod_slp_hpa noaa_gsod_slp_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
+field noaa_gsod_wdsp_ms noaa_gsod_wdsp_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field noaa_gsod_gust_ms noaa_gsod_gust_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field noaa_gsod_max_c noaa_gsod_max_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_gsod_min_c noaa_gsod_min_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_gsod_prcp_mm noaa_gsod_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
 at sun
@@ -6020,7 +6053,7 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_tro_2025-03.bin
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03.bin
 format supermag_1m
 at earth
 ttl 604800

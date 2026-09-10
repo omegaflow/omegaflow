@@ -62,7 +62,7 @@ descoped s3://noaa-gfs-bdp-pds
 note Frage 1 nein — GFS ist Forecast-System (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
 
 compiler-lease s3://noaa-ghcn-pds
-note Frage 1 ja — Stationsmessung, GHCN-D Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ghcn_compiler pending (Register-Duty); Frage 4 entfällt.
+note Frage 1 ja — Stationsmessung, GHCN-D Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ghcn_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_ghcn_compiler, Pilot-Korn ein Station-Fenster (ghcn_d_USW00094728_2025-03.bin), Manifestation noaa-ghcn-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
 
 descoped s3://noaa-enterprise-rainrate-pds
 note Frage 1 nein — GHE/Rain-Rate ist ein Schätzer (abgeleitet aus Satellit-IR); Frage 4 kein benannter Konsument — descoped (Befund: abgeleiteter Schätzer, kein Messwert).
@@ -77,7 +77,7 @@ compiler-lease s3://noaa-goes16
 note Frage 1 ja — GOES-ABI-Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_goes_compiler pending (Register-Duty); Frage 4 entfällt.
 
 compiler-lease s3://noaa-gsod-pds
-note Frage 1 ja — Stationsmessung, GSOD Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gsod_compiler pending (Register-Duty); Frage 4 entfällt.
+note Frage 1 ja — Stationsmessung, GSOD Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gsod_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_gsod_compiler, Pilot-Korn ein Station-Fenster (gsod_01001099999_2025-03.bin), Manifestation noaa-gsod-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
 
 compiler-lease s3://noaa-himawari8
 note Frage 1 ja — geostationäre Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_himawari_compiler pending (Register-Duty); Frage 4 entfällt.
@@ -89,7 +89,7 @@ descoped s3://hrrrzarr
 note Frage 1 nein — HRRR ist ein Modell (Zarr-Archiv); Frage 4 kein benannter Konsument — descoped (Befund: Modell-Output, kein Messwert).
 
 compiler-lease s3://noaa-global-hourly-pds
-note Frage 1 ja — Stationsmessung, ISD stündlich; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_isd_compiler pending (Register-Duty); Frage 4 entfällt.
+note Frage 1 ja — Stationsmessung, ISD stündlich; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_isd_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_isd_compiler, Pilot-Korn ein Station-Fenster (isd_01001099999_2025-03.bin), Manifestation noaa-isd-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
 
 compiler-lease s3://noaa-jpss
 note Frage 1 ja — polar-umlaufende Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_jpss_compiler pending (Register-Duty); Frage 4 entfällt.
@@ -202,11 +202,11 @@ note Frage 1 nein — kompilierte .h5-Bathymetrie-Oberflächen (Edition 3.0.0), 
 descoped s3://noaa-s111-pds
 note Frage 1 nein — Model-Forecast-Guidance (S-111); Frage 4 kein benannter Konsument — descoped (Befund: Model-Forecast, keine Messung).
 
-compiler-lease s3://noaa-swpc-pds
-note Frage 1 ja — Messungen (json/rtsw Sonnenwind, json/goes); json/solar-cycle F1 nein (aggregierter Zähl-Index); products/ (Forecast) und text/ (Bulletins) F1 nein; Frage 2 Bulk (JSON/Text-Archiv); Frage 3 Compiler-Lease, Compiler noaa_swpc_compiler pending (Register-Duty); Frage 4 entfällt.
+descoped s3://noaa-swpc-pds
+note Befund (gemessen 2026-09-10): der Bucket trägt kein Bulk-Archiv über die Live-Rolling-Windows hinaus — json/goes nur primary/ (1m/7-day/latest), json/rtsw nur rtsw_mag_1m/rtsw_wind_1m, dieselben Fenster bereits live in sources.φ; products/ (Forecast) und text/ (Bulletins) F1 nein; ein Compiler duplizierte die Live-Blöcke.
 
-compiler-lease s3://noaa-swdi-pds
-note Frage 1 ja — Severe-Weather-Ereignisberichte mit Magnitude (Hagelgröße in Zoll, Tornado-EF; Vorbild Erdbeben-Klasse, hail_size_inch akustisch); Frage 2 Bulk (CSV-Archiv); Frage 3 Compiler-Lease, Compiler noaa_swdi_compiler pending (Register-Duty); Frage 4 entfällt.
+descoped s3://noaa-swdi-pds
+note Befund (gemessen 2026-09-10): der Bucket trägt keine Boden-Ereignisberichte (kein tornado-*, kein wind-*, keine EF-Magnitude), nur Radar-Ableitungen — hail MAXSIZE (Retrieval aus Reflektivität, Zoll), tvs (TVS-Delta-v-Signatur), mda (Mesozyklon-Rotation), structure (VIL/Max-Reflekt), meso/plsr/warn; Retrieval/Signatur → F1 nein (Präzedenz AOT-CDR/GridSat-B1/BlueTopo); die Rohmessung lebt im NEXRAD-Level-II (eigene Lease), die Boden-Wahrheit in NCEI stormevents (eigene Linie).
 
 descoped s3://noaa-ufs-coastal-pds
 note Frage 1 nein — Forecast-Modell (UFS Coastal); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).

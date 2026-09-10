@@ -6334,6 +6334,7 @@ fn iss_lis_geo_series_roundtrip_and_component_name() {
         bin_width: 0.0,
         val: 12.5,
         comp: crate::geo::COMP_ISSLIS_FLASH_RAD,
+        station: 0,
     }];
     let magic = crate::geo::magic_of("iss_lis").expect("the iss_lis format carries a magic");
     let bytes = crate::geo::write_bin(magic, &recs);
@@ -6378,6 +6379,7 @@ fn supermag_geo_series_roundtrip_and_component_name() {
             bin_width: 60.0,
             val: -177.9,
             comp: crate::geo::COMP_SMG_N_NEZ,
+            station: crate::geo::pack_iaga("TRO").unwrap(),
         },
         crate::geo::GeoRec {
             t: 753_440_003.0,
@@ -6388,6 +6390,7 @@ fn supermag_geo_series_roundtrip_and_component_name() {
             bin_width: 60.0,
             val: -186.0,
             comp: crate::geo::COMP_SMG_N_GEO,
+            station: crate::geo::pack_iaga("TRO").unwrap(),
         },
     ];
     let magic =
@@ -6399,6 +6402,10 @@ fn supermag_geo_series_roundtrip_and_component_name() {
     assert_eq!(parsed[0].val, -177.9);
     assert_eq!(parsed[0].comp, crate::geo::COMP_SMG_N_NEZ);
     assert_eq!(parsed[1].comp, crate::geo::COMP_SMG_N_GEO);
+    assert_eq!(
+        crate::geo::iaga_of(parsed[0].station).as_deref(),
+        Some("TRO")
+    );
     assert_eq!(
         crate::geo::comp_max("supermag_1m"),
         Some(crate::geo::COMP_SMG_MAX)
@@ -6443,6 +6450,199 @@ fn supermag_register_field_matches_component_name() {
         panic!("the supermag_1m block carries a field line");
     };
     assert_eq!(fc.force, 0);
+}
+
+#[test]
+fn noaa_nodd_geo_series_roundtrip_and_component_names() {
+    let recs = vec![
+        crate::geo::GeoRec {
+            t: 800_000_000.0,
+            lat: 40.7,
+            lon: -74.0,
+            alt: 10.0,
+            freq: 0.0,
+            bin_width: 86400.0,
+            val: 28.9,
+            comp: crate::geo::COMP_GHCN_TMAX,
+            station: 0,
+        },
+        crate::geo::GeoRec {
+            t: 800_000_000.0,
+            lat: 40.7,
+            lon: -74.0,
+            alt: 10.0,
+            freq: 0.0,
+            bin_width: 86400.0,
+            val: 5.0,
+            comp: crate::geo::COMP_GHCN_PRCP,
+            station: 0,
+        },
+    ];
+    let magic =
+        crate::geo::magic_of("noaa_ghcn_d").expect("the noaa_ghcn_d format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("noaa_ghcn_d", &bytes)
+        .expect("noaa_ghcn_d bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].val, 28.9);
+    assert_eq!(parsed[1].comp, crate::geo::COMP_GHCN_PRCP);
+    assert_eq!(
+        crate::geo::comp_max("noaa_ghcn_d"),
+        Some(crate::geo::COMP_GHCN_MAX)
+    );
+    assert_eq!(
+        crate::geo::comp_max("noaa_gsod"),
+        Some(crate::geo::COMP_GSOD_MAX)
+    );
+    assert_eq!(
+        crate::geo::comp_max("noaa_isd"),
+        Some(crate::geo::COMP_ISD_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("noaa_ghcn_d", crate::geo::COMP_GHCN_TMAX),
+        Some("noaa_ghcn_d_tmax_c")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("noaa_ghcn_d", crate::geo::COMP_GHCN_SNWD),
+        Some("noaa_ghcn_d_snwd_mm")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("noaa_gsod", crate::geo::COMP_GSOD_GUST),
+        Some("noaa_gsod_gust_ms")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("noaa_isd", crate::geo::COMP_ISD_WDIR),
+        Some("noaa_isd_wdir_deg")
+    );
+}
+
+#[test]
+fn noaa_nodd_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let names = |format: &str| -> Vec<String> {
+        let src = match srcs.iter().find(|s| s.format == format) {
+            Some(s) => s,
+            None => panic!("phi/sources.φ registers {format}"),
+        };
+        src.extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.name.clone()),
+                _ => None,
+            })
+            .collect()
+    };
+    assert_eq!(
+        names("noaa_ghcn_d"),
+        vec![
+            "noaa_ghcn_d_tmax_c",
+            "noaa_ghcn_d_tmin_c",
+            "noaa_ghcn_d_prcp_mm",
+            "noaa_ghcn_d_snow_mm",
+            "noaa_ghcn_d_snwd_mm",
+        ]
+    );
+    assert_eq!(
+        names("noaa_isd"),
+        vec![
+            "noaa_isd_temp_c",
+            "noaa_isd_dewp_c",
+            "noaa_isd_wdir_deg",
+            "noaa_isd_wspd_ms",
+            "noaa_isd_slp_hpa",
+        ]
+    );
+    assert_eq!(
+        names("noaa_gsod"),
+        vec![
+            "noaa_gsod_temp_c",
+            "noaa_gsod_dewp_c",
+            "noaa_gsod_slp_hpa",
+            "noaa_gsod_wdsp_ms",
+            "noaa_gsod_gust_ms",
+            "noaa_gsod_max_c",
+            "noaa_gsod_min_c",
+            "noaa_gsod_prcp_mm",
+        ]
+    );
+}
+
+#[test]
+fn noaa_nodd_parsers_convert_and_skip_missing() {
+    let lsk = crate::lsk::LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1_483_228_800.0)],
+    };
+
+    let ghcn = "ID,DATE,ELEMENT,DATA_VALUE,M_FLAG,Q_FLAG,S_FLAG,OBS_TIME\n\
+USW00094728,20250301,TMAX,289,,,X,\n\
+USW00094728,20250301,TMIN,-5,,,X,\n\
+USW00094728,20250301,PRCP,50,,,X,\n\
+USW00094728,20250301,PRCP,-9999,,,X,\n";
+    let recs = super::noaa_nodd::parse_ghcn(ghcn, (40.7, -74.0, 10.0), &lsk);
+    let pairs: Vec<(u32, f64)> = recs.iter().map(|r| (r.comp, r.val)).collect();
+    assert_eq!(
+        pairs,
+        vec![
+            (crate::geo::COMP_GHCN_TMAX, 28.9),
+            (crate::geo::COMP_GHCN_TMIN, -0.5),
+            (crate::geo::COMP_GHCN_PRCP, 5.0),
+        ]
+    );
+
+    let gsod = "\"STATION\",\"DATE\",\"LATITUDE\",\"LONGITUDE\",\"ELEVATION\",\"NAME\",\"TEMP\",\"DEWP\",\"SLP\",\"WDSP\",\"GUST\",\"MAX\",\"MIN\",\"PRCP\"\n\
+\"01001099999\",\"2025-01-01\",\"70.9333333\",\"-8.6666667\",\"9.0\",\"JAN MAYEN\",\"17.4\",\"10.3\",\"1014.9\",\"2.0\",\"27.2\",\"39.4\",\"9.7\",\"0.05\"\n\
+\"01001099999\",\"2025-01-02\",\"70.9333333\",\"-8.6666667\",\"9.0\",\"JAN MAYEN\",\"9999.9\",\"9999.9\",\"9999.9\",\"999.9\",\"999.9\",\"9999.9\",\"9999.9\",\"99.99\"\n";
+    let recs = super::noaa_nodd::parse_gsod(gsod, &lsk);
+    assert_eq!(recs.len(), 8);
+    let temp = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_GSOD_TEMP)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((temp - (17.4 - 32.0) * 5.0 / 9.0).abs() < 1e-9);
+    let wdsp = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_GSOD_WDSP)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((wdsp - 2.0 * 0.514_444).abs() < 1e-9);
+    let prcp = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_GSOD_PRCP)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((prcp - 0.05 * 25.4).abs() < 1e-9);
+
+    let isd = "\"STATION\",\"DATE\",\"LATITUDE\",\"LONGITUDE\",\"ELEVATION\",\"WND\",\"TMP\",\"DEW\",\"SLP\"\n\
+\"01001099999\",\"2025-01-01T00:00:00\",\"70.9333333\",\"-8.6666667\",\"9.0\",\"328,1,N,0070,1\",\"-0042,1\",\"-0084,1\",\"10119,1\"\n\
+\"01001099999\",\"2025-01-01T03:00:00\",\"70.9333333\",\"-8.6666667\",\"9.0\",\"99999,9,9,9\",\"+9999,1\",\"+9999,1\",\"99999,1\"\n";
+    let recs = super::noaa_nodd::parse_isd(isd, &lsk);
+    assert_eq!(recs.len(), 5);
+    let tmp = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_ISD_TEMP)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((tmp - -4.2).abs() < 1e-9);
+    let slp = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_ISD_SLP)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((slp - 1011.9).abs() < 1e-9);
+    let wdir = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_ISD_WDIR)
+        .map(|r| r.val)
+        .unwrap();
+    assert_eq!(wdir, 328.0);
+    let wspd = recs
+        .iter()
+        .find(|r| r.comp == crate::geo::COMP_ISD_WSPD)
+        .map(|r| r.val)
+        .unwrap();
+    assert!((wspd - 7.0).abs() < 1e-9);
 }
 
 #[test]
