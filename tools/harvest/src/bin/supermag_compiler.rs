@@ -176,7 +176,11 @@ fn all_stations() -> Option<Vec<StationPos>> {
         let code = &after[..end];
         let region = &rest[start..];
         rest = &after[end..];
-        if code.len() != 3 || !code.bytes().all(|b| b.is_ascii_uppercase()) {
+        if code.len() != 3
+            || !code
+                .bytes()
+                .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit())
+        {
             continue;
         }
         let Some(lat) = num_after(region, "geolat:") else {
