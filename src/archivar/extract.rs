@@ -115,6 +115,15 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ARGO_PH_TOTAL => Some("argo_dac_bgc_ph_total"),
             _ => None,
         },
+        "supermag_1m" => match comp {
+            crate::geo::COMP_SMG_N_NEZ => Some("supermag_n_nez_nt"),
+            crate::geo::COMP_SMG_E_NEZ => Some("supermag_e_nez_nt"),
+            crate::geo::COMP_SMG_Z_NEZ => Some("supermag_z_nez_nt"),
+            crate::geo::COMP_SMG_N_GEO => Some("supermag_n_geo_nt"),
+            crate::geo::COMP_SMG_E_GEO => Some("supermag_e_geo_nt"),
+            crate::geo::COMP_SMG_Z_GEO => Some("supermag_z_geo_nt"),
+            _ => None,
+        },
         _ => None,
     }
 }
