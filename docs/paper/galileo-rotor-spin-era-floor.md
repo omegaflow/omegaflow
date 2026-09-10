@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 345ac23dc788be3b92f9cf8bfa7be95cfa6fa2fa5adaae9fd4bf83a16051593b
   status: live
-  see-also: docs/befund/befund-galileo-rotor-spin-epoch-anchor.md docs/befund/befund-galileo-alpha-zeit-sonnenzyklus.md docs/befund/befund-galileo-banden-kamm-ton.md docs/befund/befund-galileo-te-spec.md
+  see-also: tools/measure/src/bin/ck_daf_probe.rs tools/measure/src/bin/galileo_era_cycle_probe.rs tools/measure/src/bin/galileo_band_probe.rs tools/measure/src/bin/galileo_spec_te.rs
 -->
 # Galileo rotor-spin Doppler line and the era-confounded residue floor
 

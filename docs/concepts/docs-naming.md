@@ -1,8 +1,8 @@
 <!--
   title: Docs — Benennung & Versionierung
   class: concept
-  date: 2026-09-03
-  sha256: ab707f75d53a0339c5c22d2701ea05b5d58c9e5a2943a8686640451a54c82ab7
+  date: 2026-09-10
+  sha256: 02eb4a527dd5ab81c86cf1eeeb53d036730aeab2d2e6eaf6e85693b9e7d98029
   status: live
   see-also: AGENTS.md
 -->
@@ -28,10 +28,11 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   `docs/auftrag-*.md` is drift. The repo-root `AUFTRAG.md` is the
   transient, unwritten-form order; the versioned `docs/auftrag/` copy is the
   canonical one. One order per file, dated by its own date.
-- `docs/befund/befund-<slug>.md` — a Befund (`class: befund`): the
-  self-carried verdict that answers one auftrag. It points at its order via
-  `antwortet-auf: docs/auftrag/auftrag-<slug>.md`; the slug mirrors the
-  auftrag it answers. One Befund per completed order, `status: done`.
+- `docs/befund/` — Alt-Bestand only. Befunde are abolished (operator word,
+  2026-09-10): an implementable finding is built, not filed; a real
+  measurement result is a handover line, not a document. No new Befund
+  (`class: befund` struck). The migration deleted all 111 files on
+  2026-09-10 — every deleted file stays resolvable via git history.
 - `docs/blatt/blatt-<slug>.md` — an Ein-Blatt sheet (`class: sheet`): a
   single-sheet causal-arrow pre-registration or screening verdict (the
   `blatt-papier` discipline). Sheets are not papers (a sheet is a
@@ -51,13 +52,13 @@ commit SHA addresses every state; a milestone is marked via `version:` in the
 header. True historical snapshots that must coexist move to
 `archive-root/`, never version-suffixed in place.
 
-Every prose doc (handover/survey/ref/concept/paper/auftrag/befund/blatt) opens with a header block; the
+Every prose doc (handover/survey/ref/concept/paper/auftrag/blatt) opens with a header block; the
 `sha256` covers the body **without** the header (`sed '/^<!--/,/^-->/d' <f> |
 sha256sum`), so two local copies are compared in one command:
 
     <!--
       title: …
-      class: handover | survey | ref | concept | paper | auftrag | befund | sheet
+      class: handover | survey | ref | concept | paper | auftrag | sheet
       date: YYYY-MM-DD
       version: <n>          (milestone only)
       sha256: <hex>
@@ -68,7 +69,8 @@ sha256sum`), so two local copies are compared in one command:
 The receiving session consumes a handover into code/register/commits; when
 the new handover stands, the session moves the handover it consumed into
 `docs/handover/archiv/`. Closed documents rest in the flat archive folders
-`docs/{handover,auftrag,befund,blatt}/archiv/`.
+`docs/{handover,auftrag,blatt}/archiv/` (befund is struck — the Alt-Bestand
+folder carries no archive of its own).
 Raw consultation transcripts (arena/foreign-model chats) are archived to
 `archive-root/arena/` — their distilled findings live in
 the standing concept docs.

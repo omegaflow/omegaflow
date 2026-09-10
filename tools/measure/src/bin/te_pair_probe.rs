@@ -3,12 +3,13 @@ use std::process::exit;
 
 use omegaflow::te::{surrogate_threshold_lag, transfer_entropy_lag};
 
-fn read_series(path: &str) -> Vec<f32> {
-    std::fs::read_to_string(path)
-        .unwrap_or_default()
+fn read_series(path: &str) -> Option<Vec<f32>> {
+    let text = std::fs::read_to_string(path).ok()?;
+    let series: Vec<f32> = text
         .lines()
         .filter_map(|l| l.trim().parse::<f32>().ok())
-        .collect()
+        .collect();
+    Some(series)
 }
 
 fn main() {
@@ -21,37 +22,50 @@ fn main() {
         .iter()
         .position(|a| a == "--b")
         .and_then(|i| args.get(i + 1));
-    let name_a = args
+    let name_a = match args
         .iter()
         .position(|a| a == "--name-a")
         .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "A".to_string());
-    let name_b = args
+    {
+        Some(v) => v.clone(),
+        None => "A".to_string(),
+    };
+    let name_b = match args
         .iter()
         .position(|a| a == "--name-b")
         .and_then(|i| args.get(i + 1))
-        .cloned()
-        .unwrap_or_else(|| "B".to_string());
-    let lags: Vec<usize> = args
+    {
+        Some(v) => v.clone(),
+        None => "B".to_string(),
+    };
+    let lags: Vec<usize> = match args
         .iter()
         .position(|a| a == "--lags")
         .and_then(|i| args.get(i + 1))
-        .map(|v| v.split(',').filter_map(|s| s.parse().ok()).collect())
-        .unwrap_or_else(|| vec![1, 3, 6, 12, 24]);
-    let n_surr: u64 = args
+    {
+        Some(v) => v.split(',').filter_map(|s| s.parse().ok()).collect(),
+        None => vec![1, 3, 6, 12, 24],
+    };
+    let n_surr: u64 = match args
         .iter()
         .position(|a| a == "--surrogat")
         .and_then(|i| args.get(i + 1))
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(10);
+    {
+        Some(v) => match v.parse().ok() {
+            Some(n) => n,
+            None => 10,
+        },
+        None => 10,
+    };
 
     let (Some(pa), Some(pb)) = (path_a, path_b) else {
-        eprintln!("--a <csv> --b <csv> fehlen");
+        eprintln!("--a <csv> --b <csv> required");
         exit(2);
     };
-    let a = read_series(pa);
-    let b = read_series(pb);
+    let (Some(a), Some(b)) = (read_series(pa), read_series(pb)) else {
+        eprintln!("--a/--b files unreadable");
+        exit(2);
+    };
     let n = a.len().min(b.len());
     if n < 30 {
         println!(
@@ -63,13 +77,13 @@ fn main() {
     let a = &a[..n];
     let b = &b[..n];
     println!(
-        "paar: {} <-> {} | n = {} | lags = {:?} | surrogat = {}",
+        "pair: {} <-> {} | n = {} | lags = {:?} | surrogates = {}",
         name_a, name_b, n, lags, n_surr
     );
     println!();
     println!(
         "{:>4} | {:>12} | {:>12} | {:>12} | {:>8} | {:>8}",
-        "lag", "TE(a->b)", "schwelle", "TE(b->a)", "schwelle", "befund"
+        "lag", "TE(a->b)", "threshold", "TE(b->a)", "threshold", "verdict"
     );
     for &lag in &lags {
         let te_ab = transfer_entropy_lag(b, a, lag);
@@ -83,19 +97,17 @@ fn main() {
         };
         let sig_ab = te_ab > thr_ab;
         let sig_ba = te_ba > thr_ba;
-        let befund = match (sig_ab, sig_ba) {
-            (true, true) => "beide".to_string(),
+        let verdict = match (sig_ab, sig_ba) {
+            (true, true) => "both".to_string(),
             (true, false) => format!("{} -> {}", name_a, name_b),
             (false, true) => format!("{} -> {}", name_b, name_a),
             _ => "no finding".to_string(),
         };
         println!(
             "{:>4} | {:>12.5e} | {:>12.5e} | {:>12.5e} | {:>8.4e} | {}",
-            lag, te_ab, thr_ab, te_ba, thr_ba, befund
+            lag, te_ab, thr_ab, te_ba, thr_ba, verdict
         );
     }
     println!();
-    println!(
-        "TE > Schwelle (mean+2sigma phasenrandomisiert) = signifikanter Pfeil; sonst no finding."
-    );
+    println!("TE > threshold (mean+2sigma phase-randomized) = significant arrow; else no finding.");
 }

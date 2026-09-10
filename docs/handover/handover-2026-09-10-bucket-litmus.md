@@ -2,7 +2,7 @@
   title: Handover — Bucket-Litmus-Anwendung (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: e3e6bdaa0cea10d3153b999b208995a1d604b18abbe3baefefe48f57b146bf03
+  sha256: 9b86748ed855013b7ab84dcbd65704eb5f72f299c2b580b518f1d720c809b39f
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -51,5 +51,5 @@
 ## Beobachtet (nicht diese Session, uncommitted im Worktree)
 
 - `tools/harvest/src/bin/ephemeris_compiler.rs` (M), `tools/measure/src/bin/te_series_periodicity_probe.rs`
-  (??), `docs/befund/befund-te-series-periodicity.md` (??) — TE-Serie-Periodizität,
+  (??) — TE-Serie-Periodizität,
   steht uncommitted aus einer früheren Session; dieses Atom fasst sie nicht an.
