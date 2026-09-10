@@ -2,19 +2,21 @@
   title: Handover — PS1-Chunking + Korpora-Heim + vier weitere Linien (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: bb50d314404a04ee5ed8b8f12078a7943675dacc8524514ca004d012df56b5ea
+  sha256: b6feb0a2997b9c1394fb9824cf7e9f4e978d7cbcabdbf84777dd5e6a7f812238
   status: live
-  see-also: docs/handover/handover-2026-09-10-nicht-autonom.md, docs/handover/handover-2026-09-10-autonom.md
+  see-also: docs/handover/archiv/handover-2026-09-10-nicht-autonom.md, docs/handover/handover-2026-09-10-autonom.md
 -->
 # Handover — PS1-Chunking + Korpora-Heim + vier weitere Linien (2026-09-10)
 
 Eine Session, ein Atom: die Session nahm fünf Linien der 09-10-Handover auf und
 baute nach der Operator-Ratifizierung („du kannst") das Korpora-Heim. Jede Linie
-trägt einen gebauten Stand oder eine Messung. Der Korpora-Teil wurde in fünf
-isolierten Commits auf origin/main getragen (nur der Korpora-Teil, kein Fremdes);
-der Baum trägt daneben ungecommittete Arbeit einer parallelen Session, die diese
-Session nicht angefasst und nicht committet hat. Die konsumierten Handover
-bleiben `live` — sie tragen viele unberührte Linien weiter.
+trägt einen gebauten Stand oder eine Messung. Committet (isoliert auf origin/main,
+kein Fremdes): der Korpora-Teil (dd34893…78cd619) und der Abschluss 88ae2e7
+(PS1-Chunking, ESO-TAP-Register, dieses Handover). Der Baum trägt daneben
+ungecommittete Arbeit einer parallelen Session, die diese Session nicht
+angefasst und nicht committet hat. Das konsumierte Handover
+(`handover-2026-09-10-nicht-autonom`) ist archiviert; seine offenen Posten sind
+unten getragen.
 
 ## PS1-Chunking — gebaut, verifiziert
 
@@ -31,16 +33,16 @@ bleiben `live` — sie tragen viele unberührte Linien weiter.
   0 Fehler, 0 Warnungen. `cargo test -p omegaflow-harvest --bin ps1_coverage_combiner`:
   10 passed, 0 failed (inkl. der 3 neuen Chunking-Tests).
 
-## ESO-TAP — gebaut, uncommittet, unmanifestiert
+## ESO-TAP — gebaut, committet, unmanifestiert
 
-- `.github/workflows/eso-harps-rvcat-cdn.yml` (untracked) + `phi/sources.φ`-Block
-  (`harps_rvcat.json`; Pilot `safcat.HARPS_RVCAT_V1`, 277.846 Zeilen mit rv+plx).
-  Gemessen: `tap_cat` verlangt FORMAT=json, `tap_obs` FORMAT=csv; Tabellen sind
-  schema-qualifiziert (`safcat.*`).
-- **Unmanifestiert:** das Release trägt kein `harps_rvcat.json`; das Workflow ist
-  untracked, die CI hat es nie gesehen. Der sources.φ-Block zeigt auf ein Asset,
-  das erst nach grünem Workflow-Lauf existiert — die url-Zeile ist die
-  Registrierung für die Manifestation, nicht ein Anwesend-Sein.
+- `.github/workflows/eso-harps-rvcat-cdn.yml` + `phi/sources.φ`-Block
+  (`harps_rvcat.json`; Pilot `safcat.HARPS_RVCAT_V1`, 277.846 Zeilen mit rv+plx),
+  committet in 88ae2e7. Gemessen: `tap_cat` verlangt FORMAT=json, `tap_obs`
+  FORMAT=csv; Tabellen sind schema-qualifiziert (`safcat.*`).
+- **Unmanifestiert:** das Release trägt kein `harps_rvcat.json`; der Workflow ist
+  noch nie gelaufen. Der sources.φ-Block zeigt auf ein Asset, das erst nach
+  grünem Workflow-Lauf existiert — die url-Zeile ist die Registrierung für die
+  Manifestation, nicht ein Anwesend-Sein.
 - **Lizenzverdikt offen** (CC BY 4.0 unverifiziert — nicht als Tatsache ins
   Register geschrieben). Register-Duty: das Verdikt messen oder `pending` tragen.
 
@@ -78,10 +80,21 @@ bleiben `live` — sie tragen viele unberührte Linien weiter.
   4e81143, 7b0400f, 78cd619.
 - Offen: cmr + dataone (Verdikt-Messung), der Discovery-Download-Workflow.
 
+## Getragen aus der archivierten nicht-autonom-Übergabe (offen)
+
+- Operator-Wort (extern, nicht Session-Arbeit): vo-tap/uvor-Push, SPICE-`.bc`-Kernels,
+  Desktop-Fork (GTX 970), sicherung-risiko-heime, adoption, LISA Pathfinder
+  (Selbstregistrierung ab 15.09.), Hi-net/NIED, NOIRLab Data Lab, IGETS-SFTP,
+  TOAR-Vollzugang, Rubin RSP-Datenrechte, TNO-Kette.
+- CI/Merge: papier-kleinpass (nach Merge), de441 Re-Verifikation (grüner bodies-Job).
+- Kalender: Nadel Ⅰ (Jeans-Residuum bis Gaia DR4), Nadel Ⅱ (JUICE 28./29.9. +
+  Europa Clipper 3.12.), gaia-dr4-iapetus, LISA Pathfinder.
+- Ernten (Check-back): AllWISE, ned-Crawl (1/40), ned-objdir (IPAC-Antwort ausstehend).
+
 ## Parallel-Session — benannt, nicht angefasst
 
 - Der Baum trägt ungecommittete Arbeit einer parallelen Session: `noaa_nodd.rs`
   (wurde während dieser Session aktiv editiert), supermag, vo-tap, mehrere
   Harvest-Compiler, `docs/handover/handover-2026-09-10-disposition-hygiene.md`.
   Diese Session hat keine dieser Dateien angefasst; committet wurden nur die
-  Korpora-Dateien (isoliert, siehe Korpora-Heim).
+  eigenen Dateien (Korpora-Teil + Abschluss 88ae2e7).
