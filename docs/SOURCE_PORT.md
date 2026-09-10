@@ -606,5 +606,35 @@ VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
   ist `/argus` ohne `/sync`, der TAP liegt unter `/argus/sync` und ist schon
   in `tap_index_cadc.φ` (21 Tabellen, --votable-Ernte 2026-08-20) — als
   Kandidat mit korrigierter URL zurück im Ledger (TLS-Reset 2026-09-10,
-  Proton-VPN offen). Ledger-Bestand: **48 tap + 1 mast-Austrag + 1 cadc ·
-  67 http**, kein kein-http offen.
+   Proton-VPN offen). Ledger-Bestand: **48 tap + 1 mast-Austrag + 1 cadc ·
+   67 http**, kein kein-http offen.
+
+### 16.5 tap-Klassifikations-Pass — die 50 Endpoints disponiert (2026-09-10)
+
+Die 48 tap + mast-/cadc-Austrag je Endpoint durch Bestand-Dedupe, Force-Gate
+und Schema-Discovery geführt. Zwei Werkzeug-Funde getragen:
+
+- **`vo-tap tables` war auf DaCHS-TAP kaputt** — queried den HTML-Root statt
+  `/sync` und las Rows nur als Objekte, während Standard-TAP-JSON
+  Array-of-Arrays liefert. Fix (`tools/vo-tap/src/lib.rs::tables`): läuft
+  jetzt über `sync_candidates` (wie `tap_speaks`) und parst über
+  `parse_json_rows` (beide Formen, Spalten-Case-insensitive). Verifikation:
+  alle 46 clean-tap-Endpoints liefern ein parsebares Inventar (0 void);
+  vorher `tables returned void` auf jedem DaCHS-Host.
+
+- **Bestand-Dedupe:** mast (`tap_index_mast.φ`, 15) und cadc
+  (`tap_index_cadc.φ`, 21) sind schon geerntet → bestand, kein neuer Draft.
+  Keiner der 48 RegTAP-Hosts trägt Bestand in sources.φ/tap_index.
+
+Disposition (50):
+
+| Zustand | Anzahl | Befund |
+|---|---|---|
+| bestand | 2 | mast, cadc — tap_index schon getragen |
+| decline registry | 2 | registry.euro-vo.org (RegTAP-Service-Verzeichnis), voparis-rr.obspm.fr (rr.*+glots, kein Messwert-Feld) → dead_sources.φ |
+| §8-Recherche | 2 | neocc.esa (502), koa.ipac (404) — toter Endpoint, http-Klassifikations-Linie |
+| tap-index + Draft pending | 44 | Schema-Discovery getragen, `tap_index_<label>.φ` in `phi/pipeline/catalog/` |
+
+Die 44 Überlebenden tragen ihr Inventar als `tap_index_<label>.φ`; der
+Source-Draft je Endpoint (field/force/τ nach §8) ist die nächste Bau-Linie —
+jede Ledger-Note trägt ihren tap-index-Verweis und „Draft pending".
