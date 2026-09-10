@@ -2,7 +2,7 @@
   title: Handover — nicht-autonom: was die Kybernautin nicht selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 5cb76b73dd6c12cf242e409831c6038ff4a625715f2433ca7559b42aa59bcbff
+  sha256: cd7847b0446b78c197b35d26030d947c3ef54016ef68945b808d2b413df6cb9a
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -32,6 +32,9 @@ Entsperrer. Die autonomen Pflichten stehen im Gegen-Handover.
 - **TOAR-Vollzugang** — Registrierung läuft: Anfrage 18.08. → Schröder-Rückfrage
   24.08. → Antwort mit Projektbeschreibung raus; wartet auf Jülich. Anonym schon
   nutzbar (API v2 gemessen, Limit 5 Zeitreihen).
+- **Rubin RSP-Datenrechte** — Antrag raus
+  (`docs/auftrag/auftrag-rubin-data-rights-antrag.md`); Forum-Topic pending
+  (neues Konto, Staff-Review) — wartet auf die Freigabe.
 - **TNO-Kette (Weberin)** — keine MPC-unabhängige Linie der 8.082-Menge
   (not-published).
 
