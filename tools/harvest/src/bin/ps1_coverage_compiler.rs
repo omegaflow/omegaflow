@@ -203,10 +203,11 @@ struct ProbeTotals {
 fn enumerate_full_skycells(
     proj_min: u32,
     proj_max: u32,
+    sub_min: u32,
     sub_max: u32,
 ) -> Result<(Vec<(u32, u32)>, ProbeTotals), String> {
     let n_proj = (proj_max - proj_min + 1) as u64;
-    let n_sub = (sub_max + 1) as u64;
+    let n_sub = (sub_max - sub_min + 1) as u64;
     let total = n_proj * n_sub;
     let next = AtomicU64::new(0);
     let refused = AtomicU64::new(0);
@@ -232,7 +233,7 @@ fn enumerate_full_skycells(
                 }
                 probes.fetch_add(1, Ordering::Relaxed);
                 let proj = proj_min + (idx / n_sub) as u32;
-                let sub = (idx % n_sub) as u32;
+                let sub = sub_min + (idx % n_sub) as u32;
                 match probe_g_plane(proj, sub) {
                     ProbeOutcome::Present => {
                         present.fetch_add(1, Ordering::Relaxed);
@@ -473,6 +474,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut band_max: [u64; 5] = [0; 5];
     let mut seen: HashMap<(u32, u32), ()> = HashMap::new();
     let mut finished = false;
+    let mut chunked = false;
 
     if full_mode {
         let proj_min = match u32_arg(args, "--proj-min") {
@@ -483,14 +485,24 @@ fn run(args: &[String]) -> Result<(), String> {
             Some(v) => v,
             None => scan_proj_high(PROJ_NORTH_SEED, SUBCELL_MAX),
         };
+        let sub_min = match u32_arg(args, "--sub-min") {
+            Some(v) => v,
+            None => 0,
+        };
         let sub_max = match u32_arg(args, "--sub-max") {
             Some(v) => v,
             None => SUBCELL_MAX,
         };
+        if sub_min > sub_max {
+            return Err(format!(
+                "subcell range {sub_min}..{sub_max} descends — the asset stays unwritten"
+            ));
+        }
+        chunked = sub_min > 0 || sub_max < SUBCELL_MAX;
         eprintln!(
-            "full-survey skycell grid: projcell {proj_min}..{proj_max}, subcell 0..{sub_max}"
+            "full-survey skycell grid: projcell {proj_min}..{proj_max}, subcell {sub_min}..{sub_max}"
         );
-        let (cells, totals) = enumerate_full_skycells(proj_min, proj_max, sub_max)?;
+        let (cells, totals) = enumerate_full_skycells(proj_min, proj_max, sub_min, sub_max)?;
         census.probes = totals.probes;
         census.present_probes = totals.present;
         census.absent_probes = totals.absent;
@@ -597,16 +609,18 @@ fn run(args: &[String]) -> Result<(), String> {
         total = records.len() as u64;
     }
 
-    if total == 0 {
+    if total == 0 && !chunked {
         return Err("no coverage record harvested — the asset stays unwritten (0 honored)".into());
     }
 
-    file.seek(SeekFrom::Start(5))
-        .map_err(|e| format!("seek {out_path} header returned void: {e}"))?;
-    file.write_all(&total.to_le_bytes())
-        .map_err(|e| format!("patch {out_path} header returned void: {e}"))?;
-    file.flush()
-        .map_err(|e| format!("flush {out_path} returned void: {e}"))?;
+    if total > 0 {
+        file.seek(SeekFrom::Start(5))
+            .map_err(|e| format!("seek {out_path} header returned void: {e}"))?;
+        file.write_all(&total.to_le_bytes())
+            .map_err(|e| format!("patch {out_path} header returned void: {e}"))?;
+        file.flush()
+            .map_err(|e| format!("flush {out_path} returned void: {e}"))?;
+    }
 
     let expect = HEADER_LEN as u64 + total * REC_BYTES as u64;
     let actual = std::fs::metadata(&out_path)
@@ -630,14 +644,21 @@ fn run(args: &[String]) -> Result<(), String> {
             "{out_path}: header {n_rows} rows, {total} written — the asset stays unwritten"
         ));
     }
-    let last_off = HEADER_LEN as u64 + (total - 1) * REC_BYTES as u64;
-    vf.seek(SeekFrom::Start(last_off))
-        .map_err(|e| format!("seek {out_path} tail returned void: {e}"))?;
-    let mut tail = vec![0u8; REC_BYTES];
-    vf.read_exact(&mut tail)
-        .map_err(|e| format!("read {out_path} tail returned void: {e}"))?;
-    let last =
-        decode_rec(&tail).ok_or_else(|| format!("{out_path}: the last record stays unread"))?;
+
+    if total > 0 {
+        let last_off = HEADER_LEN as u64 + (total - 1) * REC_BYTES as u64;
+        vf.seek(SeekFrom::Start(last_off))
+            .map_err(|e| format!("seek {out_path} tail returned void: {e}"))?;
+        let mut tail = vec![0u8; REC_BYTES];
+        vf.read_exact(&mut tail)
+            .map_err(|e| format!("read {out_path} tail returned void: {e}"))?;
+        let last =
+            decode_rec(&tail).ok_or_else(|| format!("{out_path}: the last record stays unread"))?;
+        eprintln!(
+            "last record: order {} band {:?} ipix {} frac {:.6}",
+            last.order, last.band, last.ipix, last.frac
+        );
+    }
 
     eprintln!(
         "{out_path}: {} records over {} skycells, header {} — roundtrip verified",
@@ -650,10 +671,6 @@ fn run(args: &[String]) -> Result<(), String> {
         band_max[band_index(FootprintBand::I)],
         band_max[band_index(FootprintBand::Z)],
         band_max[band_index(FootprintBand::Y)]
-    );
-    eprintln!(
-        "last record: order {} band {:?} ipix {} frac {:.6}",
-        last.order, last.band, last.ipix, last.frac
     );
     eprintln!(
         "census: {} grid queries, {} empty, {} probes, {} present probes, {} absent probes, {} skycells, {} planes fetched, {} absent planes, {} unreadable planes, {} empty planes, {} measured pixels, {} unmapped",
