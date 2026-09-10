@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 66c5bef7f46434d531a70d1d2c8b17147afd0070c27670ee0a38ffa30c12c12a
+  sha256: d90992f3368ce7c678e77fa52a2e8b81c0c646e4bc2e5fa542030654e607851f
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -14,10 +14,14 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 
 ## Register & Disposition
 
-- **Bucket-Litmus-Anwendung** — die 101 NOAA-NODD-Datasets
-  (`phi/pipeline/catalog/noaa_nodd_inventory.φ`) nach der verdikteten Regel
-  disponieren (url-line / Compiler-Lease / Konsument / `pending`). Die Regel
-  liegt als note im `ledger.φ`.
+- **Bucket-Litmus-Anwendung** — erledigt 2026-09-10: 99 Dispositionen in
+  `phi/pipeline/catalog/noaa_nodd_disposition.φ` (19 Compiler-Lease, 1 pending,
+  79 descoped). Maschinen-Zwilling `bucket_litmus` + `decline_lens.φ` gebaut
+  (Kalibrier-Gate FP 3 / FN 12); Karte `MANIFEST.φ` geschrieben. Siehe
+  `handover-2026-09-10-bucket-litmus.md` + `handover-2026-09-10-phi-struktur.md`.
+- **Voller Lauf über den phi-Bestand** — Linse (`source_url_candidates`) →
+  `probe_sweep` → Review auf der kartierten Struktur (`MANIFEST.φ`); Review
+  bleibt in der Session.
 - **Vier Review-Fragen** — cddis finals2000A (blocked vs EOP-Duplikat),
   supermag, ESO, maia-finals2000A-Zweit-Datei.
 - **Step-5-Folge** — je `mirror_*`-Asset der 12 lebenden repo_tag-Releases den
