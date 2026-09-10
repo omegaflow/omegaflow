@@ -6442,3 +6442,42 @@ fn supermag_register_field_matches_component_name() {
     };
     assert_eq!(fc.force, 0);
 }
+
+#[test]
+fn register_hapi_units_of_maps_short_parameter_to_field_unit() {
+    let content = "url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json\nttl 10\nat earth\nhapi crosswind=champ_thermosphere_crosswind_ms\nfield champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0\n";
+    let srcs = super::parse_sources(content);
+    let map = super::register_hapi_units_of(&srcs);
+    assert_eq!(
+        map.get(&("CH_OPER_WND_ACC_2_".to_string(), "crosswind".to_string())),
+        Some(&"m/s".to_string())
+    );
+}
+
+#[test]
+fn hapi_draft_names_register_unit_when_server_unit_is_off_registry() {
+    let url = "https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json";
+    let body = r#"{"parameters":[{"name":"Timestamp","units":"UTC"},{"name":"crosswind","units":"kg/m3"}],"data":[["2010-09-04T20:00:00.000Z",Infinity],["2010-09-04T20:00:10.000Z",12.5]]}"#;
+    let parsed = super::parse_json(body).expect("hapi fixture parses");
+    let mut fields = String::new();
+    assert!(super::hapi_draft_fields(
+        url,
+        &parsed,
+        &HashMap::new(),
+        &mut fields
+    ));
+    assert!(
+        fields.contains("# unit kg/m3 not in force registry — register carries m/s — review"),
+        "off-registry note names the register unit: {fields}"
+    );
+    assert!(
+        fields.contains(
+            "field crosswind crosswind gaussian-inverse-square advective kg/m3 60 0.0 0.0"
+        ),
+        "field line keeps the server unit verbatim: {fields}"
+    );
+    assert!(
+        fields.contains("# crosswind = 12.5 — first row server fill, first finite sample shown"),
+        "sample shows the first finite row: {fields}"
+    );
+}
