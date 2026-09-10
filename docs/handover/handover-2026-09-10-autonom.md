@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: b0c2d1ef6e99fa0dc591ba54d2862256ecbdb72b4c3f3d017543fe1916b5bf69
+  sha256: ed953e769d6b4f90b95a44ded113479451ce15c0e32a404aee0994ad3096d1a7
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -43,6 +43,12 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 - **Membran M02–M07** — die benannten Membran-Reste.
 - **TE-Baupunkte** — `cycle_phase_shift_surrogate`-Nutzung; bedingte
   Multi-Force-TE (Phasenraum).
+- **SuperMAG in die Pipeline holen** — die API ist gemessen (`data-api.php` mit
+  `logon=omegaflow`, passwortlos; inventory/indices/data liefern echte Werte).
+  Zustand `verifiziert`, nicht kompiliert/disponiert: `source`-Block in
+  `sources.φ` + `supermag_compiler.rs` (std-only + curl, JSON→Binary, `--ci-mode`
+  → CDN). Aufruf:
+  `services/data-api.php?fmt=json&logon=<user>&start=<ISO>&extent=<sec>&all&station=<code>`.
 
 ## Analyse
 
