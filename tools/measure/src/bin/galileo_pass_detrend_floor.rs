@@ -338,7 +338,7 @@ fn main() {
     }
     out.push(String::new());
 
-    out.push(format!("registers: station-day floor is the day-cell RMS median (>= 30 non-lock); the pass floor rms_all and its matched count reproduce the pass befund segmentation (600 s pass gap)"));
+    out.push(format!("registers: station-day floor is the day-cell RMS median (>= 30 non-lock); the pass floor rms_all and its matched count reproduce the measured pass segmentation (600 s pass gap)"));
 
     let body = out.join("\n") + "\n";
     println!("{body}");

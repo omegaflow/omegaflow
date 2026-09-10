@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: 6724d76986aeaec490859ba83bf871a9b9a2c6ba0fe641d108fb4f5699c9ad88
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/remove-bias.md docs/concepts/archivar-mathematikerin.md phi/pipeline/catalog/vizier_gold_catalogs.φ phi/pipeline/ledger.φ docs/befund/befund-richtungs-atom.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/remove-bias.md docs/concepts/archivar-mathematikerin.md phi/pipeline/catalog/vizier_gold_catalogs.φ phi/pipeline/ledger.φ docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md
 -->
 # ZEUGNIS — die Identitäts-Röhre: die Zeugin und ihre Zeugen
 
