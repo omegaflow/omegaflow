@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 163a56804d265540df635d5ee139fc993476afbe8c6b922becbaa6241f351316
+  sha256: 8edae9dd6e64282bf10f2c4d9eb6dbbb288edfb1cfea7518e2283dfeedea3a43
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -227,15 +227,19 @@ Daten), nicht den Echtzeit-Kafka-Stream. Kein Stream-Stub liegt in
 `.secrets.local` (der Datenweg ist REST; Stream-Keys werden nicht genutzt).
 URLs/Auth-Pfade sind NUR hier, nie in `.secrets.local`. (gemessen):
 
-| Broker | Zugangstyp | Daten lesen | Register-Status 2026-09-05 |
+| Broker | API-Basis (gemessen 2026-09-10) | Auth | Status |
 |---|---|---|---|
-| **ALeRCE** | REST `api.alerce.online/alerts/v1` | anonym offen | **pending** (Richtung-only ohne Distanz; build_alerce_channels liefert leere Channels, "dark until a distance channel exists") |
-| **ANTARES** | REST `api.antares.noirlab.edu/v1` | **anonym offen** | **pending** in blocked_sources.φ (parser-def: richtung-only ohne Distanz, kein Feld-Träger) |
-| **Fink** | REST `api.*.fink-portal.org/api/v1/*` | anonym offen | ungenutzt (kein Kandidat) |
-| **Lasair** | REST `api/query` (Token) | Token nötig | **pending** in blocked_sources.φ (parser-def 2026-09-05, aus sources.φ verschoben: richtung-only ohne Distanz) |
-| **Pitt-Google** | GCP Pub/Sub+BigQuery | GCP-Datasets | ungenutzt (Stream/BigQuery-Modus) |
-| **AMPEL** | REST `api/live/*` | Token (nur 2 offen) | ungenutzt (kein Kandidat) |
-| **Babamul** | — | — | nie entwickelt (verwaist) |
+| **ALeRCE** | `api.alerce.online/ztf/v1/` (Doku `alerceapi.readthedocs.io`) | anonym | ✓ 200 |
+| **ANTARES** | `api.antares.noirlab.edu/v2/` (**v2**, nicht v1; `/v2/helloworld/` → Hello World) | anonym | ✓ 200 |
+| **Fink** | `api.lsst.fink-portal.org/api/v1/` | anonym | ✓ 200 |
+| **Lasair** | `api.lasair.lsst.ac.uk/` (UI `lasair.lsst.ac.uk`) | Token (`LASAIR_LSST_TOKEN`/`LASAIR_TOKEN`) | ✓ 200 |
+| **AMPEL** | `ampel-ztf.zeuthen.desy.de/api/live/` | teils Token | ✓ 200 |
+| **SNAD** | `snad.space/` | anonym | ✓ 200 |
+| **Babamul** | `babamul.caltech.edu/api/` („Greetings from BOOM!"; neu, Paper arXiv:2511.00164) | OpenAPI 401 | ✓ 200 |
+| **Pitt-Google** | GCP (`mwvgroup.github.io/pittgoogle-client`, Broker-Doku `pitt-broker.rtfd.io`) | GCP-Service-Account | kein HTTP-Endpoint |
+| **MOMENT** | ? | ? | DNS-tot; in den Broker-Papieren 2506.14744/2511.00164 nicht genannt — Zustand offen |
+
+Die neun ZTF-Broker (Paper 2506.14744 „Technosignature Searches with Real-time Alert Brokers", arXiv:2506.14744). Korrekturen 2026-09-10: ANTARES ist **v2**; **Babamul** ist wieder da (`babamul.caltech.edu`, der öffentliche LSST-Broker aus arXiv:2511.00164 — die alte Zeile „nie entwickelt" war überholt); Lasair läuft auf `api.lasair.lsst.ac.uk`.
 
 **§E.2.1 — Zugangs-/Auth-Pfad je Broker (Lese- und Stream-Weg getrennt):**
 
