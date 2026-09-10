@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: deb0c33d6c9549426c8aec31273e62defb0979d38878982107803bf997efa70c
+  sha256: 2e67430789df74a56c97f501e2dbe1f12ebc6425ab5a40b922fc242bbcdb9682
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -58,13 +58,11 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   Finkbeiner/SDSS9/PanSTARRS/GLIMPSE/SPITZER) sind bekannt, aber nicht disponiert.
   Die RSP-Bilder brauchen Datenrechte (Antrag `docs/auftrag/auftrag-rubin-data-rights-antrag.md`);
   die Alerts sind offen.
-- **Befund-Pendings (versteckte Todos, gemessen 2026-09-10)** — 111 Befunde,
-  93 mit „pending", viele in keinem Handover erwähnt. Fix (Weg 2): die Handover
-  referenzieren die Befunde als Ernte; die Pendings sind **Befund-Grenzen** (was
-  der Befund nicht gemessen hat), kein Todo. Weg 1 (in die Handover konsolidieren)
-  nur für echte, umsetzbare Findings. Der Grundsatz: eine umsetzbare Erkenntnis
-  wird **umgesetzt** (nicht in einen Befund verschoben) — Verschieben ist kein
-  Zustand.
+- **Befunde abgeschafft (Regel 2026-09-10, AGENTS.md)** — 111 Befunde liegen im
+  Baum, 93 mit „pending". Migration: jeder Befund wird entweder **umgesetzt** (das
+  Finding gebaut) oder **gelöscht** (überholt/nicht umsetzbar). Kein neuer Befund.
+  Ein Handover darf **nie größer sein als das Angenommene** — kein Zuwachs durch
+  Verschieben, nur durch geleistete Arbeit.
 
 ## Analyse
 
