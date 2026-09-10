@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 7f2157bf223708147de5ae8e91523cf427722e624063fbe4fe6f17c9515ccbed
+  sha256: 9ff277cedf5abbf7830680e217a9cf18461093eab747df9e985d0ba4c0a38a90
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -114,10 +114,13 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   gebaut — die 10 ODR-Dateien zu `galileo_odr.bin` verpackt (312 272 126 B,
   Provenance-Gate sha256 hält für alle 10, 1250 sps/Kanal, origin-verbatim).
   Messergebnis: `70580900.ODR` trägt 13 864 Records + 880 Folgebytes (kein
-  ganzes Record-Multiple); die Folgebytes sind im Asset erhalten. Der
-  Workflow manifestiert das Asset nach dem Push auf dem CDN
-  (`pds-ppi.igpp.ucla.edu`/`galileo_odr.bin`); der Dispatch ist der
-  Folge-Schritt.
+  ganzes Record-Multiple); die Folgebytes sind im Asset erhalten. Dispatch
+  gelaufen: der erste Lauf manifestierte nur 7 Dateien (die JS-Annex-Namen
+  tragen kein `JS_`-Präfix → 404); repariert (Bare-Namen-Fetch + harter
+  Gate-Abbruch), der Re-Dispatch manifestierte das volle 10-Datei-Asset
+  (312 273 094 B, Roundtrip hält) — registriert in `sources.φ`
+  (`format galileo_odr`, em count, AD1..AD4). Siehe
+  `handover-2026-09-10-galileo-odr-repair.md`.
 - **Nächste Atome:** `galileo_receiver.bin` per Pass
   (`galileo_atdf_receiver_compiler.rs` steht); Jovian-Mond-Ephemeriden
   NAIF 501–504; All-Spin-Bus-CK Frame −77000 (`ck_daf_probe.rs`-Vorlage);
