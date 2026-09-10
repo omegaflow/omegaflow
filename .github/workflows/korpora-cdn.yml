@@ -22,8 +22,9 @@ jobs:
             fi
             f="phi/pipeline/catalog/${name}"
             if [ -f "$f" ]; then
-              gh release upload ssd.jpl.nasa.gov "$f" --clobber --repo omegaflow/sources
-              echo "uploaded ${name}"
+              asset="${name%.*}.phi"
+              gh release upload ssd.jpl.nasa.gov "$f#${asset}" --clobber --repo omegaflow/sources
+              echo "uploaded ${name} as ${asset}"
               uploaded=$((uploaded+1))
             else
               echo "corpus ${name} absent from the checkout — the local Ernte is not committed, nothing uploaded"
