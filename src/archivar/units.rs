@@ -9,7 +9,9 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
     }
     match unit.trim().to_lowercase().as_str() {
         "" | "m" | "s" | "k" | "kg" | "pa" | "w" | "w/m2" | "w/m²" | "t" | "hz" | "v" | "a"
-        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "v/m" | "s/m" | "ntu" | "1" => Some(value),
+        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "v/m" | "s/m" | "ntu" | "1" | "count" => {
+            Some(value)
+        }
         "wm2_1au" => Some(value * 1.495978707e11 * 1.495978707e11),
         "1e-4w/m2" => Some(value * 1e-4),
         "pfu" => Some(value * 1e4),
@@ -158,8 +160,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
             "w", "w/m2", "t", "nt", "ev", "jy", "mjy", "jy_km/s", "hz", "m", "km", "mag", "pc/cm3",
-            "erg/cm2", "crab", "cpm", "usv/h", "e10j", "kt_tnt", "sfu", "1/cm3", "1/m3", "tecu",
-            "wm2_1au", "1e-4w/m2", "1", "pfu", "pfu/mev",
+            "erg/cm2", "crab", "cpm", "count", "usv/h", "e10j", "kt_tnt", "sfu", "1/cm3", "1/m3",
+            "tecu", "wm2_1au", "1e-4w/m2", "1", "pfu", "pfu/mev",
         ],
         1 => &[
             "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
