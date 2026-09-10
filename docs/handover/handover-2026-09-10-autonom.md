@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 9a35bdd4ce0929806ce9fa61034cdfd545cfb6bf61a9b67e4ab59901e07fa1dd
+  sha256: 7f2157bf223708147de5ae8e91523cf427722e624063fbe4fe6f17c9515ccbed
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -28,9 +28,12 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   Katalog; der Vorentscheid läuft mit `bucket_litmus
   phi/pipeline/decline_lens.φ <inventar.φ> [--calibrate <disposition.φ>]` (aus
   `phi-struktur` übernommen).
-- **Vier Review-Fragen** — gemessen 2026-09-10 (Grind-Pro): cddis finals2000A
-  offen (kein Eintrag — Register-Duty), supermag offen (kein Eintrag), ESO offen
-  (kein Eintrag), maia-Zweit-Datei hält (genau eine maia-Datei, keine zweite).
+- **Vier Review-Fragen** — gemessen 2026-09-10 (Grind-Pro), aufgelöst 2026-09-10:
+  cddis finals2000A → `decline duplicate-eop` (EOP-Duplikat der maia finals.all);
+  supermag → gebaut (`supermag_compiler.rs` + `supermag_1m`-Block);
+  maia-Zweit-Datei hält (genau eine maia-Datei, keine zweite). Siehe
+  `handover-2026-09-10-supermag.md`.
+- **ESO-TAP** — offen (kein Eintrag) — Ernte + Duty (eigenes Atom).
 - **Step-5-Folge** — gemessen 2026-09-10 (Grind-Flash): 23 Assets gleich
   (Schnitt-Liste steht), 4 nicht schneiden (3 verschoben/Stub + Bowserinator
   einzige Kopie); der destruktive Schnitt bleibt ein verifizierter Folgeschritt.
@@ -49,12 +52,11 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 - **Membran M02–M07** — die benannten Membran-Reste.
 - **TE-Baupunkte** — `cycle_phase_shift_surrogate`-Nutzung; bedingte
   Multi-Force-TE (Phasenraum).
-- **SuperMAG in die Pipeline holen** — die API ist gemessen (`data-api.php` mit
-  `logon=omegaflow`, passwortlos; inventory/indices/data liefern echte Werte).
-  Zustand `verifiziert`, nicht kompiliert/disponiert: `source`-Block in
-  `sources.φ` + `supermag_compiler.rs` (std-only + curl, JSON→Binary, `--ci-mode`
-  → CDN). Aufruf:
-  `services/data-api.php?fmt=json&logon=<user>&start=<ISO>&extent=<sec>&all&station=<code>`.
+- **SuperMAG erledigt (2026-09-10)** — `supermag_compiler.rs` + `supermag_1m`-
+  GeoRec-Format + `sources.φ`-Block + `supermag-cdn.yml` gebaut (Pilot TRO
+  2025-03, 267486 GeoRecs). Pending: die CDN-Manifestation (workflow_dispatch
+  `supermag-cdn.yml`) + die Vollernte-Körnung der 194 Stationen. Siehe
+  `handover-2026-09-10-supermag.md`.
 - **Broker-Compiler + Survey-Audit** — die **9 Rubin-Broker** (7 full-stream:
   ALeRCE/AMPEL/ANTARES/Babamul/Fink/Lasair/Pitt-Google; 2 down-stream: SNAPS/
   POI) sind gemessen (Broker-Tabelle, Commit f975403); Compiler für
