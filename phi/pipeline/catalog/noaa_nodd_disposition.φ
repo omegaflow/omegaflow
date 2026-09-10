@@ -214,8 +214,8 @@ note Frage 1 nein — Forecast-Modell (UFS Coastal); Frage 4 kein benannter Kons
 descoped s3://noaa-ufs-gdas-pds
 note Frage 1 nein — DA-Testdaten; Frage 4 kein benannter Konsument — descoped (Befund: Testdaten, keine Messung).
 
-pending s3://-noaa-ufs-gefsv13replay-pds
-note unverifizierter Bucket-Name — Kette ungefragt (Register-Duty: verifizieren).
+descoped s3://noaa-ufs-gefsv13replay-pds
+note Frage 1 nein — UFS GEFS v13 Replay ist Modell-Output (Replay einer Ensemble-Vorhersage; der Bucket trägt Forcing/Restart-Felder als netCDF: runoff, salt_restore, interpolate_zgrid), kein Messwert; Frage 4 kein benannter Konsument — descoped (Befund: Modell-Replay, kein Messwert). Bucket-Name verifiziert 2026-09-10: der Registry-Name mit führendem Bindestrich ist ein Tippfehler — -noaa-… löst DNS 000, noaa-… antwortet 200.
 
 descoped s3://noaa-ufs-htf-pds
 note Frage 1 nein — Test-Framework (HTF); Frage 4 kein benannter Konsument — descoped (Befund: Test-Framework, kein Dataset).
