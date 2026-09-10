@@ -982,7 +982,45 @@ fn hapi_request_order(url: &str, meta: &[HapiMetaParam]) -> Vec<String> {
     }
 }
 
-fn hapi_draft_fields(
+fn hapi_query_id(url: &str) -> Option<String> {
+    let query = url.split_once('?').map(|(_, q)| q)?;
+    query
+        .split('&')
+        .find_map(|kv| kv.strip_prefix("id="))
+        .filter(|v| !v.is_empty())
+        .map(str::to_string)
+}
+
+pub fn register_hapi_units_of(sources: &[SourceConfig]) -> HashMap<(String, String), String> {
+    let mut out = HashMap::new();
+    for src in sources {
+        let Some(id) = hapi_query_id(&src.url) else {
+            continue;
+        };
+        let mut short_to_long: Vec<(String, String)> = Vec::new();
+        for ext in &src.extracts {
+            if let Extract::Hapi(pairs) = ext {
+                short_to_long.extend(pairs.iter().cloned());
+            }
+        }
+        for (short, long) in short_to_long {
+            for ext in &src.extracts {
+                if let Extract::Field(fc) = ext {
+                    if fc.key == long {
+                        out.insert((id.clone(), short.clone()), fc.unit.clone());
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
+fn register_hapi_units() -> HashMap<(String, String), String> {
+    register_hapi_units_of(&load_sources())
+}
+
+pub fn hapi_draft_fields(
     url: &str,
     parsed: &JsonVal,
     env: &HashMap<String, String>,
@@ -1049,11 +1087,12 @@ fn hapi_draft_fields(
     }
     fields.push_str(&hapi_line);
     fields.push('\n');
+    let register = register_hapi_units();
     for col in resolved.iter() {
         let Some(col) = col else {
             return true;
         };
-        let (force, _guess_unit, tau) = probe_classify(&col.name);
+        let (force, _, tau) = probe_classify(&col.name);
         match force {
             "UNCERTAIN" => {
                 fields.push_str(&format!(
@@ -1070,8 +1109,14 @@ fn hapi_draft_fields(
                         None => false,
                     };
                     if !in_registry {
-                        fields
-                            .push_str(&format!("# unit {} not in force registry — review\n", unit));
+                        let mut note = format!("# unit {} not in force registry", unit);
+                        if let Some(reg) =
+                            hapi_query_id(url).and_then(|id| register.get(&(id, col.name.clone())))
+                        {
+                            note.push_str(&format!(" — register carries {}", reg));
+                        }
+                        note.push_str(" — review\n");
+                        fields.push_str(&note);
                     }
                     if let Some(line) = hapi_field_line(&col.name, force, unit, tau) {
                         fields.push_str(&line);
@@ -1086,11 +1131,46 @@ fn hapi_draft_fields(
             },
         }
     }
-    if let Some(JsonVal::Arr(row)) = data.first() {
-        for (col, cell) in resolved.iter().zip(row.iter().skip(1)) {
-            if let Some(col) = col {
-                fields.push_str(&format!("# {} = {:?}\n", col.name, cell));
+    for (col_idx, col) in resolved.iter().enumerate() {
+        let Some(col) = col else {
+            continue;
+        };
+        let cell_idx = col_idx + 1;
+        let mut first: Option<f64> = None;
+        let mut finite: Option<f64> = None;
+        for row in data.iter() {
+            let JsonVal::Arr(r) = row else {
+                continue;
+            };
+            let Some(cell) = r.get(cell_idx).and_then(json_num) else {
+                continue;
+            };
+            if first.is_none() {
+                first = Some(cell);
             }
+            if cell.is_finite() {
+                finite = Some(cell);
+                break;
+            }
+        }
+        match finite {
+            Some(v) => {
+                if first.map_or(false, |f| !f.is_finite()) {
+                    fields.push_str(&format!(
+                        "# {} = {} — first row server fill, first finite sample shown\n",
+                        col.name, v
+                    ));
+                } else {
+                    fields.push_str(&format!("# {} = {}\n", col.name, v));
+                }
+            }
+            None => match first {
+                Some(f) => fields.push_str(&format!(
+                    "# {} = {} — window carries no finite sample\n",
+                    col.name, f
+                )),
+                None => fields.push_str(&format!("# {} = no sample\n", col.name)),
+            },
         }
     }
     true
