@@ -306,6 +306,7 @@ fn main() {
             bin_width: bucket_s,
             val,
             comp: COMP_GIC_A,
+            station: 0,
         });
     }
     records.sort_by(|a, b| a.t.total_cmp(&b.t));

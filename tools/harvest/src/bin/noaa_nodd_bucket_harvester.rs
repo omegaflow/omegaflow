@@ -1305,6 +1305,7 @@ fn nc_rows(
             bin_width: 0.0,
             val: spl,
             comp: COMP_NRS_PSD,
+            station: 0,
         });
     }
     out
@@ -1617,6 +1618,7 @@ NRS11 37.88 -123.44
             bin_width: 0.0,
             val: 0.0,
             comp: COMP_NRS_PSD,
+            station: 0,
         };
         let bytes = write_bin(MAGIC_NRS, &[rec]);
         let parsed = parse_bin(MAGIC_NRS, &bytes).unwrap();

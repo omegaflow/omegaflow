@@ -260,6 +260,7 @@ fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> Vec<GeoRec> {
             bin_width: 0.0,
             val: rad,
             comp: COMP_ISSLIS_FLASH_RAD,
+            station: 0,
         });
     }
     out

@@ -932,6 +932,7 @@ fn main() {
                             bin_width: 0.0,
                             val: g,
                             comp: c,
+                            station: 0,
                         });
                     }
                 }
