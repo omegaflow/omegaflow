@@ -5,7 +5,7 @@
   sha256: 1f3bb62a6801caa0b1478a3a9fa59a5b7acbccfadc07e1bd2f5ceb3897a82b95
   status: done
   antwortet-auf: docs/auftrag/archiv/auftrag-richtungs-transient-atom.md
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/docs-naming.md docs/handover/handover-2026-09-09-mechanische-reste.md phi/blocked_sources.φ phi/dead_sources.φ
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/docs-naming.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md phi/blocked_sources.φ phi/dead_sources.φ
 -->
 
 # Befund — SkyDirection: die Himmelsrichtung gehalten, nicht erfunden
@@ -43,7 +43,7 @@ den Auftrag.
   `src/lib.rs` (`pub use archivar::skydirection;`), `phi/blocked_sources.φ`
   (Lasair/ANTARES/Fink-LSST als „gehalten via skydirection_compiler,
   positions-pending" benannt), `phi/dead_sources.φ` (ALeRCE-404-Stub um den
-  Harvest-Status ergänzt), `docs/handover/handover-2026-09-09-mechanische-reste.md` (Zustand „Richtung
+  Harvest-Status ergänzt), `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md` (Zustand „Richtung
   geerntet-und-gehalten, positions-pending").
 
 ## Endpoint-Befunde der vier Quellen (gemessen 2026-09-06, curl)
@@ -116,6 +116,6 @@ Lokaler Asset-Lauf (ohne --ci-mode, nach /tmp/opencode/skydir/sky_directions.bin
 - CDN-Manifestations-Route für das Richtungs-Asset (cdn-Workflow nach dem
   Muster bayestar-cdn.yml, der den Compiler mit `--ci-mode` und der echten
   Window-/Konus-Wahl fährt) — ohne sie steht der Bestand nur lokal
-  (docs/handover/handover-2026-09-09-mechanische-reste.md).
+  (docs/handover/archiv/handover-2026-09-09-mechanische-reste.md).
 - S²-Winkel-Kernel (Winkel-Kernel, Winkel-Residuum) bleibt nach Rats-Verdikt
   deferriert — ein benanntes Zukunfts-Atom, kein aktives Pending.

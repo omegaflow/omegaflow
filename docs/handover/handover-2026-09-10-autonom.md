@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: b2662e5ab25b7fc6c2b3f8d5e537bccfff5a76df7eb4dda77a752ba6d8efb810
+  sha256: 66c5bef7f46434d531a70d1d2c8b17147afd0070c27670ee0a38ffa30c12c12a
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -22,7 +22,7 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   supermag, ESO, maia-finals2000A-Zweit-Datei.
 - **Step-5-Folge** — je `mirror_*`-Asset der 12 lebenden repo_tag-Releases den
   Byte-Vergleich CDN-Digest ↔ Repo-Raw messen, dann einzeln schneiden.
-- **R2** — die Archiv-Zählung (archive-root + `/home/johannes/backup/archive/`)
+- **R2** — die Archiv-Zählung (archive-root + das lokale Backup-Archiv)
   als Grundwahrheit in `number_audit.rs` verdrahten.
 - **docs-reference-verteilung** — die vermessene Bewegung ausführen + Referenz-
   Rewiring; Seeds → Survey-Heimat (Benennung dabei).
@@ -40,9 +40,10 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 
 ## Analyse
 
-- **abfluss-trishuli** — das archivierte CSV
-  (`/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`)
-  lesen, Abfluss-Pfeil messen.
+- **abfluss-trishuli** — das archivierte CSV des 08-27-Zugs lesen (genauer
+  Pfad im archivierten Handover
+  `docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md`),
+  Abfluss-Pfeil messen.
 - **bande-split** — Split-Ergebnis + offene Registerzeilen (f*, 1-s-Zählung,
   Amplitude); Restbestand 238 Dateien/77 Tage.
 - **gic-p-wert** — p-Wert nachlegen, dann Wing/Viljanen.
