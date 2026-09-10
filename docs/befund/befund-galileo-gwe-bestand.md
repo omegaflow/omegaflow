@@ -5,7 +5,7 @@
   sha256: 822737e8fb163705f2709f6a08fb19e2b72d751068c00745350ac9b69341babd
   status: done
   antwortet-auf: docs/auftrag/archiv/auftrag-quiet-zone-uebertragung.md
-  see-also: docs/auftrag/archiv/auftrag-quiet-zone-vorfilter.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/reference/pioneer-anomaly-lrr-2010-4.txt docs/handover/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/auftrag/archiv/auftrag-quiet-zone-vorfilter.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/reference/pioneer-anomaly-lrr-2010-4.txt docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Befund: Galileo-GWE-Bestandsaufnahme — gll.rss-ATDF vermessen + Vorfilter der eigenen Rausch-Kurve (≤5 AU)

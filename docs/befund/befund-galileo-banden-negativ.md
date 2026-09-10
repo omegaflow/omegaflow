@@ -5,7 +5,7 @@
   sha256: 96e0a68c8b65423e0a29859b571c70353f8d4c0fc688c9f9946f9b55746b6a88
   status: done
   antwortet-auf: docs/auftrag/archiv/auftrag-bande-split.md
-  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-rausch-kurve.md docs/paper/ground-sources-20s-band.md docs/handover/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/befund/befund-galileo-gwe-bestand.md docs/befund/befund-galileo-rausch-kurve.md docs/paper/ground-sources-20s-band.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Befund: 20-s-Bande Cross-Mission — Pioneer-Linienfrequenzen missions-spezifisch (negativ)
