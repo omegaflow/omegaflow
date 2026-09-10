@@ -7,7 +7,7 @@
   status: live
   see-also: docs/auftrag/archiv/auftrag-maschinen-audits.md,
             docs/concepts/das-eine-instrument.md,
-            docs/handover/handover-2026-09-09-mechanische-reste.md
+            docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Provenienz-Notiz

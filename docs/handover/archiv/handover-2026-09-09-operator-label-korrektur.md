@@ -35,7 +35,7 @@ keine der vier Pendings braucht ein Operator-Wort — „Operator-seitig" /
 
 - `docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md` — die vier
   Labels tragen die gemessenen Fassungen (sha256 neu gerechnet).
-- `docs/handover/handover-2026-09-09-mechanische-reste.md` — matrixmachine-Zeile,
+- `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md` — matrixmachine-Zeile,
   abfluss-Zeile, beide Bucket-Dispositions-Zeilen (sha256 neu gerechnet).
 
 ## An die nächste Sitzung
