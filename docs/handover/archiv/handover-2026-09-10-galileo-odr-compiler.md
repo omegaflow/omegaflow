@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: c0cd672180ff24031c5f2f84070ea8d74c631816e83b11334751de42667effae
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
 # Handover — Galileo-ODR-Compiler (2026-09-10)
