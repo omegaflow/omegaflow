@@ -4,9 +4,9 @@ use std::path::{Path, PathBuf};
 use std::process::{id, Command};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const JOB_KEYWORDS: [&str; 11] = [
+const JOB_KEYWORDS: [&str; 12] = [
     "solar", "matrix", "measure", "seconds", "galileo", "corona", "watchdog", "omega", "harvest",
-    "probe", "monitor",
+    "probe", "monitor", "compiler",
 ];
 
 const CI_REPO: &str = "omegaflow/omegaflow";
