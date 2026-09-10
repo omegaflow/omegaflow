@@ -64,6 +64,17 @@ phi/pipeline/catalog/*
 !phi/pipeline/catalog/noaa_nodd_disposition.φ
 # Die Karte des Katalogs (role/state/lens je Datei) ist ein Registrierungs-Urteil — versioniert.
 !phi/pipeline/catalog/MANIFEST.φ
+# Das Korpora-Heim-Verdikt (Lizenzverdikt je Korpus: redistribute/decline/pending)
+# ist ein Registrierungs-Urteil — versioniert; korpora-cdn.yml liest es.
+!phi/pipeline/catalog/korpora_heim.φ
+# Die redistribute-Verdikt-Korpora (CC0/CC-BY-Metadaten, korpora_heim.φ) sind
+# versioniert, damit der CI-Runner sie für die CDN-Manifestation sieht
+# (korpora-cdn.yml); nach der Manifestation ist das CDN das dauerhafte Heim.
+!phi/pipeline/catalog/pangaea_catalog.φ
+!phi/pipeline/catalog/pangaea_catalog_full.φ
+!phi/pipeline/catalog/re3data_catalog.φ
+!phi/pipeline/catalog/zenodo_catalog.φ
+!phi/pipeline/catalog/dryad_catalog.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
 !phi/bindings/
 # Scan-Koverage ist ein Registrierungs-Urteil — versioniert (die Mess-Serie gehört der Zukunft).
