@@ -46,6 +46,10 @@ decline presence-catalog
 url http://apiv3.iucnredlist.org/api/v3/getspeciesbylocation/
 note Arten-Katalog (Rote Liste), keine Messung am Punkt — decline presence-catalog.
 
+dead unreachable
+url http://arvo-registry.sci.am/tap
+note ARVO-TAP (ivo://byu.arvo/tap) — Recheck 2026-09-10: DNS löst auf (93.187.165.59), aber http und https werden nach der Anfrage vom Peer zurückgesetzt (curl 56/35, kein HTTP-Code, kein TAP-JSON); Alternativen am Netloc (/tap/sync, /) identisch. Proton-VPN-Route (§9) als offene Eskalation, bevor der Eintrag endgültig bleibt.
+
 decline model-forecast
 url http://cera-www.dkrz.de/WDCC/meta/CMIP6/CMIP6.CMIP.CCCma.CanESM5-1.historical.r15i1p1f1.Lmon.npp.gn.v20190429.json
 note CMIP6-Klimamodell-Ausgabe (Redirect auf wdc-climate.de) — Modelldaten, Force Gate.
@@ -2294,10 +2298,6 @@ dead 400
 url https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
-dead 404
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
-note MAST vo-tap caom/sync — Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); die 404-nginx-Messung (2026-09-06) war ein Zeitpunkt, kein Endzustand. Der zweite MAST-TAP portal/api/tap/sync antwortet 200 POST-only (POST FORMAT=json, gemessen 2026-09-06). Beide Wege leben; der Austrag aus dead_sources und der Port gehoeren ins Dispositions-Atom.
-
 decline no-physical-force
 url https://mempool.space/api/v1/fees/recommended
 note Bitcoin-Gebühren — keine Kraft.
@@ -3778,13 +3778,9 @@ decline path
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+JNAME,RAJ,DECJ,P0,DM,Dist+FROM+"J/A+A/678/A48/table1"
 note vizier_bulk_c 2026-08-18: Tabelle tot (TAP 400), kein tap_index-Eintrag.
 
-dead 400
+decline superseded-by-integrated
 url https://tapvizier.u-strasbg.fr/TAPVizieR/tap/sync
-note HTTP 400 — Recheck 2026-09-10: lebt, TAP-JSON antwortet (400 = braucht Query); die Browser-Historie-Diagnose war falsch. Der alte CDS-Host antwortet weiter; der kanonische Host ist tapvizier.cds.unistra.fr.
-
-dead 5xx
-url https://tapvizier.u-strasbg.fr/TAPVizieR/tap/sync`
-note HTTP 501 — Server antwortet nicht brauchbar.
+note Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); die Browser-Historie-Diagnose war falsch. Der alte CDS-Host antwortet weiter, der kanonische Host tapvizier.cds.unistra.fr trägt die TAPVizieR-Quellen in sources.φ. Der 501-Befund und der 400-Befund sind Zeitpunkte desselben Hosts — ein Eintrag trägt beide.
 
 decline derived
 url https://terrabrasilis.dpi.inpe.br/app/api/
