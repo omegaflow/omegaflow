@@ -50,5 +50,5 @@ korrigiert: „schärfen", „AE↔Dst", „byte-genau").
 
 Der Parallellauf (Tiefenphasen-Linie) hält uncommittete Dateien im Baum:
 `tools/measure/src/bin/depth_phase_fleet_probe.rs`, `tools/measure/src/depthphase.rs`,
-`docs/handover/handover-2026-09-09-mechanische-reste.md`. Diese Sitzung hat sie
+`docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`. Diese Sitzung hat sie
 nicht angefasst; der Commit dieser Sitzung trägt nur die zwei Blätter.
