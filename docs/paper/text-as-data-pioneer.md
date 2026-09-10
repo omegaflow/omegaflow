@@ -5,7 +5,7 @@
   version: 3
   sha256: 9fcb5ebf10f010a5815995dad9d4ae7dc8a9da47b6c2967eba2a73ac946332aa
   status: live
-  see-also: docs/reference/pioneer-anomaly-lrr-2010-4.txt, docs/handover/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
+  see-also: docs/reference/pioneer-anomaly-lrr-2010-4.txt, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
 
 # The text as data — the Pioneer review's numbers against the Doppler series
@@ -94,7 +94,7 @@ next step, not a finding.
    docs/reference/pioneer-anomaly-lrr-2010-4.txt.
 2. The probe: tools/measure/src/bin/pioneer_text_correlation.rs.
 3. Data: data/pioneer10_doppler_clean.bin, data/pioneer11_doppler_clean.bin
-   (NAVIO 60-s, cleaned — see docs/handover/handover-2026-09-09-mechanische-reste.md, Pioneer-Front).
+   (NAVIO 60-s, cleaned — see docs/handover/archiv/handover-2026-09-09-mechanische-reste.md, Pioneer-Front).
 4. Anderson J. D., Laing P. A., Lau E. L., Liu A. S., Nieto M. M.,
    Turyshev S. G., 2002, Study of the anomalous acceleration of Pioneer
    10 and 11, Phys. Rev. D 65, 082004.

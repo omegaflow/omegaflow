@@ -64,7 +64,7 @@ Die Weberin flicht erst bei zwei unabhängigen Linien derselben Weltlinie
 - **Raumsonden:** eine Linie (SPK, Horizons-dynamisch; Wind `orbit_bin`). Die
   Doppler-/NAVIO-abgeleitete Bahn ist `pending`.
 - **Breite TNO-Kette:** `mpcorb_extended`
-  (`docs/handover/handover-2026-09-09-mechanische-reste.md`) ist die
+  (`docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`) ist die
   erste Kepler-Linie für Tausende; die zweite `pending`.
 
 ## 3. Gemessene Anomalien + Korrekturen
