@@ -51,7 +51,7 @@ Nichts hier muss erst gesammelt werden. Der Webstuhl hat sein Material:
 - **Die unabhängigen Linien:** die vier lebenden TAP-Legs (ALeRCE, SIMBAD,
   Gaia-ARI, NED), die MPC-Bahnen
   (`mpcorb_extended.json.gz`, offener Live-Block —
-  `docs/handover/handover-2026-09-09-mechanische-reste.md`), die
+  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`), die
   INPOP25c-Asteroidenmassen (gravity-Katalog-Route) und das solare ΩG.
 
 ## 2. Der Webstuhl — ICRS·TDB als das eine Blatt

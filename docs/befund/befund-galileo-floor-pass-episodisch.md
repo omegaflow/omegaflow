@@ -367,6 +367,6 @@ der Orbital-Phase (RSSN/JPL-Anfrage).*
 `cargo check -p omegaflow-measure --bin galileo_floor_sustained_lock_state`,
 RUSTFLAGS `-D warnings`, 0/0), Report
 `/tmp/opencode/galileo_floor_sustained_lock_state_report.txt`. Blatt und Probe
-in einem Commit (pfad-beschränkt); `phi/`, `docs/handover/handover-2026-09-09-mechanische-reste.md` und fremde Dateien
+in einem Commit (pfad-beschränkt); `phi/`, `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md` und fremde Dateien
 nicht angefasst. Die Deduktionskette trägt je ✗ eine Mess-ID (Probe) und den
 Mess-Commit. AGC-Kontrolle additiv neu (`galileo_floor_agc_loud_quiet`, `cargo check` 0/0, Report `/tmp/opencode/galileo_floor_agc_loud_quiet_report.txt`), Morabito-Präzedenzfall (Abschnitt 8) und die zwei neuen extern-pending-Achsen (Abschnitt 9) in diesem Blatt-Stand.

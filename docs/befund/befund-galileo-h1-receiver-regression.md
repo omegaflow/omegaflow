@@ -263,4 +263,4 @@ sind keine Laut-Schalter.
 - Neuer Befund-Entwurf `docs/befund/befund-galileo-h1-receiver-regression.md`
   (status: draft): H1 auf der Meilenstein-Achse widerlegt; 18.09.1995-Grenze
   unbesetzt (`datendünn`); per-Pass-Geräte-Zuweisung auf diesem Asset absent.
-- Nichts an `phi/`, `docs/handover/handover-2026-09-09-mechanische-reste.md` oder fremden Dateien angefasst.
+- Nichts an `phi/`, `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md` oder fremden Dateien angefasst.
