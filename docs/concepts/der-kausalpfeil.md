@@ -86,14 +86,14 @@ statement, Unterbestimmtheit, keine Fabrikation).
   1-min, live geprüft) — lebt. INTERMAGNET: ausstehend — Queue-Draft
   `phi/pipeline/queue/sources_potential_pre-cdn_params.φ` (HAPI, ~154
   Observatorien), Register
-  `docs/handover/handover-2026-09-09-mechanische-reste.md`.
+  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`.
 - **LAIC:** Seismizität USGS/SeismicPortal/JMA/GeoNet/p2pquake
   (`phi/sources.φ:18–48, 116–122, 237–240`) — lebt. Ionosphäre: Swarm
   FAC/IRC (`:1111–1112`, electric) — lebt. CSES: ausstehend. IONEX-GIM:
   ausstehend (CDDIS-OAuth,
-  `docs/handover/handover-2026-09-09-mechanische-reste.md`). GIC direkt:
+  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`). GIC direkt:
   ausstehend (kein Feed,
-  `docs/handover/handover-2026-09-09-mechanische-reste.md`).
+  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`).
 
 ## Ethik der Messung
 

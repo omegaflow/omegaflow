@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 23d66ba64d5aca32644c6283372e08646ae69329b0fc88393360dd0af20de479
   status: live
-  see-also: docs/handover/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 # Handover — disjunkte Linien: schwerer TE-Lauf nach CI, drei Register-Schlüsse
 
