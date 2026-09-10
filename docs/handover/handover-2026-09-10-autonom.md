@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: 2e67430789df74a56c97f501e2dbe1f12ebc6425ab5a40b922fc242bbcdb9682
+  sha256: 736a88c629ecc6f3e9ba2f383d5b352145113e0dad0aee6edd0d4e5393d3bd51
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -51,18 +51,23 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
   `services/data-api.php?fmt=json&logon=<user>&start=<ISO>&extent=<sec>&all&station=<code>`.
 - **Broker-Compiler + Survey-Audit** — die **9 Rubin-Broker** (7 full-stream:
   ALeRCE/AMPEL/ANTARES/Babamul/Fink/Lasair/Pitt-Google; 2 down-stream: SNAPS/
-  POI) sind gemessen (`docs/befund/befund-broker-landschaft.md`); Compiler für
+  POI) sind gemessen (Broker-Tabelle, Commit f975403); Compiler für
   die anonymen (ALeRCE/ANTARES/Fink/Babamul) fehlen. **DECaPS** (Katalog,
   g/r/i/z/Y) als Quelle registrieren; **VTSS/Mellinger** sind Bild-Surveys (kein
   Compiler). Die **10 Katalog-Kandidaten** (eROSITA/Fermi/XMM/GALEX/DSS2/
   Finkbeiner/SDSS9/PanSTARRS/GLIMPSE/SPITZER) sind bekannt, aber nicht disponiert.
   Die RSP-Bilder brauchen Datenrechte (Antrag `docs/auftrag/auftrag-rubin-data-rights-antrag.md`);
   die Alerts sind offen.
-- **Befunde abgeschafft (Regel 2026-09-10, AGENTS.md)** — 111 Befunde liegen im
-  Baum, 93 mit „pending". Migration: jeder Befund wird entweder **umgesetzt** (das
-  Finding gebaut) oder **gelöscht** (überholt/nicht umsetzbar). Kein neuer Befund.
-  Ein Handover darf **nie größer sein als das Angenommene** — kein Zuwachs durch
-  Verschieben, nur durch geleistete Arbeit.
+- **Befund-Migration abgeschlossen (2026-09-10)** — die 111 Befunde sind
+  gegen Code/git/Register gelesen und gelöscht (108: Finding lebt im Code —
+  Sonde/Compiler mit Commit — oder überholt; kein neuer Befund; die Klasse ist
+  aus `docs-naming.md` gestrichen, `docs/befund/` ist leer). Getragen als
+  Messergebnis: Galileo-RSS-Bestand (kein PDS4-Bündel `galileo.rss`; PDS3
+  `GO-*-RSS-V1.0`: TRK-2-25 6,3 GB / TRK-2-18 0,16 GB / TRK-2-34 absent —
+  kein Volumen in den Beständen);
+  Dispersions-Ortungstest (2013-05-14: XRSA/94A/335A tragen den Sonnenursprung
+  nicht, Kreis-Schnitt leer); Pioneer 1978–82 laut ohne Sonnentreiber
+  (f107/omni2 widerlegt); Voyager-Roh-Doppler 1998–2002 ohne offene Quelle.
 
 ## Analyse
 
@@ -89,6 +94,22 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 - **Ⅻ** Urknall — Reihen-Paarung Winkelserie×z-Reihe.
 - **ⅩⅢ** Voller 48er-Zensus (18 Non-Detections); Photochemie-Re-Erklärung.
 
+## Forschung — Galileo-Floor
+
+- **Stand:** der Floor ist per-Pass-Empfangs-Zustands-Lautheit (AGC-Klemme),
+  kein Station-/Tag-Bild; keine Empfänger-Stufe (H1 widerlegt), kein Sende-
+  Stations-Feld (TRK-2-25/ODR-Köpfe leer), kein Sonnen-/Wind-Treiber; genau
+  ein M1-Sprung 1995-11-30/12-01 auf der resid-Achse (echt-vs-Modell
+  unbestimmt). Die Messreihe: die ~60 Sonden `tools/measure/src/bin/galileo_*`
+  + `docs/paper/galileo-rotor-spin-era-floor.md`.
+- **Nächste Atome:** `galileo_odr_compiler` + `galileo-odr-cdn.yml` (10
+  ODR-Dateien lokal: `data/pds-ppi.igpp.ucla.edu/galileo_goj_odr/`);
+  `galileo_receiver.bin` per Pass (`galileo_atdf_receiver_compiler.rs` steht);
+  Jovian-Mond-Ephemeriden NAIF 501–504; All-Spin-Bus-CK Frame −77000
+  (`ck_daf_probe.rs`-Vorlage); empirische Rausch-Kurve aus TRK-2-25/2-18
+  (~6,5 GB Download); negativ-fuzzy: pscomppars `st_met`-Bio-Zeugen lesen
+  (`disequilibrium_register_probe.rs` steht).
+
 ## Forschung — Weberin (zweite Linien)
 
 - Planeten/Monde zweite Abstammung (INPOP `.dat` gegen `testpo`, oder SPK-Weg).
@@ -99,7 +120,7 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 ## Forschung — TE
 
 - **n=1000-Riß** — Block-Länge n^(1/3)=10 bei n=1000 zu kurz / KSG-Dimension;
-  die Null bleibt Block (`befund-betriebspunkt-sweep.md`).
+  die Null bleibt Block (`src/mathematikerin/te.rs` `gate_fpr_cells`).
 
 ## Forschung — Tiefenphasen
 
