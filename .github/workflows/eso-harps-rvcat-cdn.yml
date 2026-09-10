@@ -1,0 +1,28 @@
+name: eso-harps-rvcat-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  eso-harps-rvcat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Compile ESO HARPS radial-velocity catalog (tap_cat) and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://archive.eso.org/tap_cat/sync \
+            --table safcat.HARPS_RVCAT_V1 \
+            --columns 'ra:ra_simbad;dec:dec_simbad;rv:drs_ccf_rvc;plx:plx_simbad' \
+            --skip-null rv \
+            --skip-null plx \
+            --limit 300000 \
+            --out harps_rvcat.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: harps_rvcat returned void" \
+                 "harps_rvcat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
