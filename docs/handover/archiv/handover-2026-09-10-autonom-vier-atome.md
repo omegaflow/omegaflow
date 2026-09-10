@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: c045e3cad6dbe0579c6171bfcfaea3f73b7a71604a41990cc73d8acf4896d462
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md, docs/handover/handover-2026-09-10-supermag-koernung.md
 -->
 # Handover — autonom: vier Atome, eine Kollision (2026-09-10)

@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: 3774caa771f553e1444f093a16047859fd8c15186f8f0e6a1953d53864128da4
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
 # Handover — SuperMAG in die Pipeline + cddis-EOP-Disposition (2026-09-10)
