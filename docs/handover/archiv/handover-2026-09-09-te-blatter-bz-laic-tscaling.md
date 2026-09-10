@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-09
   sha256: dc8d78c885c37355606c2367fbdcda9faecc979d32cc62ccd289d3c9da489110
-  status: live
+  status: archived
   see-also: docs/befund/befund-bz-laic-nsurr100.md docs/befund/befund-tscaling.md docs/befund/befund-betriebspunkt-sweep.md
 -->
 # Handover — TE-Linie: Bz/LAIC n_surr=100 und T-Skalierung geschlossen
