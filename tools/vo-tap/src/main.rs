@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -191,14 +191,23 @@ fn main() {
                     eprintln!("regtap: {} rows, COUNT(*) = {}", rows.len(), n);
                     let mut block = String::new();
                     let mut emitted = 0usize;
+                    let mut artifacts = 0usize;
+                    let mut duplicates = 0usize;
+                    let mut seen: HashSet<String> = HashSet::new();
                     for (ivoid, url) in &rows {
                         if urls.contains(url) {
                             continue;
                         }
-                        if let Some(h) = host_of(url) {
-                            if hosts.contains(&h) {
-                                continue;
-                            }
+                        let Some(h) = host_of(url) else {
+                            artifacts += 1;
+                            continue;
+                        };
+                        if hosts.contains(&h) {
+                            continue;
+                        }
+                        if !seen.insert(url.clone()) {
+                            duplicates += 1;
+                            continue;
                         }
                         let note = if ivoid.is_empty() {
                             format!("RegTAP-entdeckt, ungewogen ({})", today_ymd())
@@ -209,7 +218,10 @@ fn main() {
                         emitted += 1;
                     }
                     print!("{}", block);
-                    eprintln!("regtap: {} candidates after Bestand-Dedupe", emitted);
+                    eprintln!(
+                        "regtap: {} candidates after Bestand-Dedupe ({} relative access_url, {} batch duplicates skipped)",
+                        emitted, artifacts, duplicates
+                    );
                     if let Some(p) = ledger_path {
                         let needs_sep = fs::read_to_string(&p)
                             .map(|c| !c.is_empty() && !c.ends_with("\n\n"))

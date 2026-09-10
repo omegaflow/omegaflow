@@ -575,3 +575,36 @@ Host, wiegt `kein-http`) und zwei Doppel-Blöcke `https://dachs.oca.eu/tap`
 Interface-Zeilen, der Import dedupliziert nicht gegen die eigene Charge).
 `tap` = lebt + TAP-JSON; `http` = HTTP antwortet ohne TAP (POST-only, CSV/
 VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
+
+### 16.4 Disposition-Hygiene — Artefakte, Austräge, kein-http (2026-09-10)
+
+- **Import-Fix (`vo-tap import --regtap`):** (a) relative `access_url` (kein
+  Host) wird als Artefakt übersprungen statt als Kandidat geschrieben;
+  (b) Dedupe gegen die eigene Charge (derselbe URL aus zwei Interface-Zeilen
+  → ein Block). Verifikation gegen die live RegTAP: `0 candidates after
+  Bestand-Dedupe (2 relative access_url, 0 batch duplicates skipped)` — die
+  zwei relativen `/tap` werden übersprungen, kein Kandidat überlebt die
+  Bestand-Dedupe (alle 120 sind schon im Ledger). Die 0 batch-duplicates
+  sind korrekt: der dachs-Doppel liegt jetzt im Bestand, das Charge-Dedupe
+  schützt die nächste Ernte.
+- **Artefakte aufgelöst:** die zwei relativen `/tap`-Blöcke (ivoid
+  `ivo://ovgso/tap`, kein Host) sind aus dem Ledger getragen — der RegTAP-
+  Record trägt keine absolute `access_url`; das Geschwister `ivo://ov-gso/
+  climso` lebt unter `https://epntap.climso.ovgso.fr/tap` (gewogen tap).
+  Die zwei `https://dachs.oca.eu/tap`-Doppel sind auf einen Block verschmolzen.
+- **dead_sources-Austrag (die zwei Rechecks):** `mast.stsci.edu/vo-tap/api/
+  v0.1/caom/sync` ausgetragen und als gewogener Kandidat (HTTP 400 + TAP-JSON,
+  lebt, braucht Query) in den Ledger zurück für die tap-Klassifikation.
+  `tapvizier.u-strasbg.fr/TAPVizieR/tap/sync` → `decline superseded-by-
+  integrated` (der kanonische Host `tapvizier.cds.unistra.fr` trägt die
+  TAPVizieR-Quellen in sources.φ); der 501-Befund und der 400-Befund sind
+  Zeitpunkte desselben Hosts, ein Eintrag trägt beide.
+- **kein-http aufgelöst (4 → 0):** die zwei relativen `/tap` sind Artefakte
+  (oben). `arvo-registry.sci.am/tap` → `dead unreachable` (DNS löst auf,
+  http+https werden vom Peer zurückgesetzt; Proton-VPN-Route offen). Der
+  CADC-ARGUS (`ivo://cadc.nrc.ca/argus`) war kein Tod: die RegTAP-`access_url`
+  ist `/argus` ohne `/sync`, der TAP liegt unter `/argus/sync` und ist schon
+  in `tap_index_cadc.φ` (21 Tabellen, --votable-Ernte 2026-08-20) — als
+  Kandidat mit korrigierter URL zurück im Ledger (TLS-Reset 2026-09-10,
+  Proton-VPN offen). Ledger-Bestand: **48 tap + 1 mast-Austrag + 1 cadc ·
+  67 http**, kein kein-http offen.
