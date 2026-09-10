@@ -2,10 +2,15 @@
   title: Handover — Forschung (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 4232a2aa39d7365e05f4033b1aa557894e97c38537b512aa0118272f01072d23
+  sha256: b9b1c5cf1a0c48fe6b2f72eaddcb93ec2d04ec4794882ef636e04e6f7d992d21
   status: live
 -->
 # Handover — Forschung (2026-09-11)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
+viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
+ist kein Aufwand.
 
 ## Analyse
 
