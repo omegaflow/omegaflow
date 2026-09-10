@@ -94,10 +94,6 @@ dead 5xx
 url http://fenixservices.fao.org/faostat/api/v1/en/data/QCL?area=
 note HTTP 521 — Server antwortet nicht brauchbar.
 
-decline static-archive
-url http://geodesy.unr.edu/api/velocity?network=IGS&format=json&limit=500
-note JSON velocity API retired (HTTP 404); NGL velocity solutions now static MIDAS text files, no live JSON field feed.
-
 dead 404
 url http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=json&network=G
 note HTTP 404 — Endpoint weg.
@@ -1090,10 +1086,6 @@ decline no-physical-force
 url https://crates.io/api/v1/crates?per_page=1
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
 
-decline feed-ended
-url https://dap.oceannetworks.ca/erddap/tabledap/scalar_1202591.csv?time,latitude,longitude,salinity&time
-note scalar_1202591 covers 2019-03-28 → 2020-10-22 only (historical deployment); no live salinity scalar at this dataset.
-
 decline archive-only
 url https://dasch.rc.fas.harvard.edu/
 note DASCH Platten-Digitalisierung 2024 abgeschlossen, abgeschlossenes Archiv ohne Live-Feed; tls-expired, Jina laedt Inhalt.
@@ -1582,14 +1574,6 @@ dead 404
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D2026-01-01T00%3A00%3A00Z
 note HTTP 404 — Endpoint weg.
 
-decline dataset-removed
-url https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv
-note dataset drifter_6hour_qc removed from gcoos ERDDAP (404 unknown datasetID); no drifter successor among the 189 active datasets.
-
-decline dataset-removed
-url https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv?...`
-note dataset drifter_6hour_qc removed from gcoos ERDDAP (404 unknown datasetID); no drifter successor among the 189 active datasets.
-
 decline no-physical-force
 url https://erddap.gml.noaa.gov/erddap/tabledap/greenhouse_gases_sf6_aircraft_pfp_discrete.json?time,latitude,longitude,sf6&time
 note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
@@ -1613,10 +1597,6 @@ note curl: curl: (60) SSL certificate problem: unable to get local issuer certif
 decline model-forecast
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B
 note IMI_IRISH_SHELF_SWAN_WAVE is SWAN numerical wave-model output (forecast horizon); Oszillator-Gate model-forecast.
-
-decline feed-ended
-url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
-note dataset ends 2021-11-30 (spl_full 2015-10-08 → 2021-11-30); no live acoustic feed.
 
 dead dns-unresolved
 url https://erddap.saeon.ac.za/erddap/
@@ -2257,14 +2237,6 @@ note open-meteo Marine = Modelloutput.
 decline no-physical-force
 url https://marinecadastre.gov/ais/api/v1/locations?bbox=
 note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS-Bestellservice derzeit pausiert (MARINECADASTRE_KEY entfernt, .secrets.local). Verdikt 2026-08-17: Schiffspositionen sind hergestellte Objekte, kein natürlicher Feldwert; decline no-physical-force.
-
-decline feed-ended
-url https://mars.nasa.gov/rss/api/?feed=weather&category=insight&feedtype=json
-note InSight weather feed ended (mission ended).
-
-decline feed-ended
-url https://mars.nasa.gov/rss/api/?feed=weather&category=ms
-note InSight weather feed ended (mission ended); feedtype=json → 404.
 
 dead dns-unresolved
 url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
@@ -4250,222 +4222,6 @@ decline
 url https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
 note grind: grind_terrapulse_a.φ
 
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/01/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/02/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/03/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/04/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/05/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/06/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/07/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/08/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/09/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/10/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/11/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/12/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/13/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/15/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/16/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/17/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/18/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/19/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/20/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/21/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/22/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/23/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/24/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/25/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/26/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/27/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/28/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/29/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/30/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/31/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/32/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/33/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/34/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/35/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/36/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/37/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/38/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/39/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/40/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/41/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/42/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/43/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/44/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/45/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/46/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/47/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/50/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/51/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/66/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/67/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline static-archive
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/91/
-note static FTP archive (hourly_precip-3240), not a live feed.
-
-decline 
-url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/{01..91}/
-note grind: grind_terrapulse_a.φ
-
 decline 
 url https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
 note grind: grind_terrapulse_a.φ
@@ -4569,14 +4325,6 @@ note ScienceBase-Katalog.
 decline publisher
 url https://www.seanoe.org
 note grind: grind_b2find.φ
-
-decline endpoint-retired
-url https://www.seis-insight.eu/api/v1/events?format=json&limit=5&catalog=MQS&status=confirmed
-note api/v1/events route retired (404, site restructure); MQS catalogue now static download pages, no JSON event feed.
-
-decline endpoint-retired
-url https://www.seis-insight.eu/api/v1/events?format=json&limit=500&catalog=MQS&status=confirmed
-note api/v1/events route retired (404, site restructure); MQS catalogue now static download pages, no JSON event feed.
 
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
