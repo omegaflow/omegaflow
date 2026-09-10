@@ -89,7 +89,7 @@ fn fetch_source_range(lo: u64, hi: u64) -> Option<String> {
     }
 }
 
-fn pilot_befund(stars: &[XpStar], colors: &[Option<f64>]) {
+fn pilot_verdict(stars: &[XpStar], colors: &[Option<f64>]) {
     if stars.is_empty() {
         return;
     }
@@ -175,7 +175,7 @@ fn pilot_befund(stars: &[XpStar], colors: &[Option<f64>]) {
     };
     let top_residual = residuals.first();
     eprintln!(
-        "pilot befund: {} spectra; parallax [{:.3}, {:.3}] mas median {:.3}; color: {} measured, median BP-RP {:.2}, {} blue-side, {} red-side (>|median|+1 mag); spectral-form: {} shape outliers (rms > 0.5 vs chunk median shape){}",
+        "pilot verdict: {} spectra; parallax [{:.3}, {:.3}] mas median {:.3}; color: {} measured, median BP-RP {:.2}, {} blue-side, {} red-side (>|median|+1 mag); spectral-form: {} shape outliers (rms > 0.5 vs chunk median shape){}",
         stars.len(),
         plx[0],
         plx[plx.len() - 1],
@@ -371,7 +371,7 @@ fn main() {
         skipped_bins
     );
     if source_range.is_some() {
-        pilot_befund(&stars, &colors);
+        pilot_verdict(&stars, &colors);
     }
     if stars.is_empty() {
         eprintln!("no valid stars — the catalog stays unwritten (0 honored)");
