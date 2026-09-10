@@ -523,4 +523,41 @@ Ledger: 4 Einträge geparkt):
 12. Herschel — HSA-Umzug in §13 nachgezogen (erledigt).
 13. JWST P0–P3 — Port-Entscheid (§14) weiter offen.
 14. Zukünftige Missionen (SKAO, LISA, ELT, Athena) — im Inventar §12 registriert, Startdaten unverifiziert, kein Bestand → kein Port, bis Daten existieren.
-15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Jina/Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten geparkt (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable). Port-Arbeit der live-Kandidaten ausstehend.
+15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Jina/Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten geparkt (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable).   Port-Arbeit der live-Kandidaten ausstehend.
+
+## 16. Die fünf CDN-Tore (Speisekammer-Filter)
+
+Die Frage ist nicht „gibt es die Daten?" (dann zeigt Aladin sie), sondern:
+„frißt die Maschine sie — und muß sie eingefroren werden?" Fünf Tore, alle aus
+dem Haus selbst gelernt:
+
+| Tor | Frage |
+|---|---|
+| Frage vorher | Steht eine registrierte Frage/Frage-Sonde bereit, die diese Daten ißt? Erst die Frage, dann die Ernte. |
+| Befund-Pflicht | Landet die Zahl in einem Befund? Dann sha256-eingefroren — sonst ist der Befund nicht wiederholbar, wenn upstream sich ändert. |
+| Höflichkeit / Maßstab | Greift die Maschine stunden- oder tagelang zu? Einmal ernten, nicht poll — die NED-Lektion. |
+| Transformiert | Existiert das Kompilat nur bei uns? Dann ist es unser Produkt, keine Kopie. |
+| CI/Myzel muß fressen | Runner brauchen nackte GET-Adressen ohne Anmeldetanz. |
+
+Alles andere: durch Aladin gucken. Gucken füllt keine Speisekammer — das
+Register trägt die offenen Speisekammer-Fragen (aia2014, planck, eve, omni2,
+goes15, der gebco-Stub); dieser Filter ist die Antwortregel dafür.
+
+### 16.1 Endpoint-Zensus (der Wieger)
+
+`vo-tap census <url> …` mißt je Endpoint: HTTP-Code (nackter GET), Antwortzeit,
+Redirect-Ziel, Datum, und die Inhaltsprobe (`tap` = eine minimale DoQuery
+antwortet TAP-JSON, `http` = HTTP antwortet, aber kein TAP — z. B. POST-only
+oder CSV-only, `kein-http` = keine HTTP-Antwort). Ein 400 auf einen TAP-Root
+ist „lebt, braucht eine Query" — die Inhaltsprobe ist der Puls, nicht der
+nackte Code. `vo-tap import --regtap <root> [--ledger <pfad>]` erntet die
+RegTAP-Liste der TAP-Dienste (Roundtrip über COUNT(*), Bestand-Dedupe je Host
++ URL) und trägt Entdecktes als `ausstehend kandidat <url>` in den Ledger.
+
+### 16.2 RegTAP — gemessen (2026-09-10)
+
+- `http://reg.g-vo.org/tap/sync` spricht TAP (GET sync, FORMAT=json, 149
+  TAP-Dienste, COUNT(*)-Roundtrip 149=149). `https://reg.g-vo.org` schlägt fehl
+  (TLS-Zertifikat deckt den Host nicht — curl 60) → http, nie https.
+- Spalten heißen `rr.capability.cap_index` / `rr.interface.cap_index`
+  (nicht `capability_index`); `rr.interface` trägt `access_url` + `intf_type`.
