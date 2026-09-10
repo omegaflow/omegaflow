@@ -2,13 +2,13 @@
   title: Anfrage (extern) — IGETS: SFTP-Passwort für das Datennutzer-Konto
   class: auftrag
   date: 2026-09-10
-  sha256: eb60e91ed7c121b3a1030a535fdb938a465458056dde343c1d375d80fccca4aa
+  sha256: 247bccc250adc9691e902e340cbfeddcafac1cec80aea1e8e39879f46839c103
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
 # Anfrage — IGETS: SFTP-Passwort
 
-Entworfen 2026-09-10 (noch nicht gesendet — Operator sendet).
+Gesendet am 2026-09-10 (Operator).
 
 Der Datenweg ist SFTP-only (`igetsftp.gfz.de`, gemessen 2026-09-10: die
 data-access-Seite nennt „download is only possible via encrypted sftp"; der
