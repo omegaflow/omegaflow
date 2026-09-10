@@ -1,6 +1,11 @@
 use std::env;
+use std::fs::{self, OpenOptions};
+use std::io::Write;
 
-use vo_tap::{query_sync, submit_async, tables, Format};
+use vo_tap::{
+    census, host_of, known_hosts_and_urls, query_sync, regtap_count, regtap_services, submit_async,
+    tables, today_ymd, Format,
+};
 
 fn arg(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -19,7 +24,7 @@ fn format_of(args: &[String]) -> Format {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let Some(cmd) = args.first().cloned() else {
-        eprintln!("usage: vo-tap <sync|async|tables> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N]");
+        eprintln!("usage: vo-tap <sync|async|tables|census|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
         std::process::exit(1);
     };
     match cmd.as_str() {
@@ -108,8 +113,93 @@ fn main() {
                 }
             }
         }
+        "census" => {
+            let urls: Vec<String> = args.iter().skip(1).cloned().collect();
+            if urls.is_empty() {
+                eprintln!("census needs <url> [<url> ...]");
+                std::process::exit(1);
+            }
+            println!("url\thttp_code\ttime_s\tfinal_url\tprobe\tdate");
+            for u in &urls {
+                let l = census(u);
+                println!(
+                    "{}\t{}\t{}\t{}\t{}\t{}",
+                    l.url, l.http_code, l.time_s, l.final_url, l.probe, l.date
+                );
+            }
+        }
+        "import" => {
+            let Some(root) = arg(&args, "--regtap") else {
+                eprintln!("import needs --regtap <root>");
+                std::process::exit(1);
+            };
+            let ledger_path = arg(&args, "--ledger");
+            let mut paths = vec![
+                "phi/sources.φ".to_string(),
+                "phi/dead_sources.φ".to_string(),
+                "phi/blocked_sources.φ".to_string(),
+                "phi/witnesses.φ".to_string(),
+                "phi/footprints.φ".to_string(),
+                "phi/pipeline/ledger.φ".to_string(),
+            ];
+            if let Some(p) = &ledger_path {
+                if !paths.iter().any(|x| x == p) {
+                    paths.push(p.clone());
+                }
+            }
+            let (hosts, urls) = known_hosts_and_urls(&paths);
+            let (count, rows) = (regtap_count(&root), regtap_services(&root));
+            match (count, rows) {
+                (Some(n), Some(rows)) => {
+                    eprintln!("regtap: {} rows, COUNT(*) = {}", rows.len(), n);
+                    let mut block = String::new();
+                    let mut emitted = 0usize;
+                    for (ivoid, url) in &rows {
+                        if urls.contains(url) {
+                            continue;
+                        }
+                        if let Some(h) = host_of(url) {
+                            if hosts.contains(&h) {
+                                continue;
+                            }
+                        }
+                        let note = if ivoid.is_empty() {
+                            format!("RegTAP-entdeckt, ungewogen ({})", today_ymd())
+                        } else {
+                            format!("{} — RegTAP-entdeckt, ungewogen ({})", ivoid, today_ymd())
+                        };
+                        block.push_str(&format!("ausstehend\nkandidat {}\nnote {}\n\n", url, note));
+                        emitted += 1;
+                    }
+                    print!("{}", block);
+                    eprintln!("regtap: {} candidates after Bestand-Dedupe", emitted);
+                    if let Some(p) = ledger_path {
+                        let needs_sep = fs::read_to_string(&p)
+                            .map(|c| !c.is_empty() && !c.ends_with("\n\n"))
+                            .unwrap_or(false);
+                        match OpenOptions::new().create(true).append(true).open(&p) {
+                            Ok(mut f) => {
+                                let sep = if needs_sep { "\n" } else { "" };
+                                if f.write_all(sep.as_bytes()).is_ok()
+                                    && f.write_all(block.as_bytes()).is_ok()
+                                {
+                                    eprintln!("ledger: appended to {}", p);
+                                } else {
+                                    eprintln!("ledger: write to {} returned void", p);
+                                }
+                            }
+                            Err(_) => eprintln!("ledger: {} not writable", p),
+                        }
+                    }
+                }
+                _ => {
+                    eprintln!("regtap returned void");
+                    std::process::exit(1);
+                }
+            }
+        }
         _ => {
-            eprintln!("usage: vo-tap <sync|async|tables> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N]");
+            eprintln!("usage: vo-tap <sync|async|tables|census|import> <root> [adql] [--format csv|json|text|votable|votable/td] [--poll N] [--regtap <root>] [--ledger <path>]");
             std::process::exit(1);
         }
     }
