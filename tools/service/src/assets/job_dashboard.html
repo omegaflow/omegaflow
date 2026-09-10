@@ -5,17 +5,19 @@
 <title>ωflow · job-monitor</title>
 <style>
   :root{
-    --bg:      #171a14;   /* Mint-Schwarz mit Grünstich */
-    --panel:   #20261b;
-    --border:  #3a4630;
-    --text:    #c9d4c2;
-    --dim:     #6e7a68;
-    --green:   #87cf3e;   /* Mint-Akzent (Mint-X-Grün) */
-    --green-d: #5a8f2e;
-    --red:     #e05656;
-    --amber:   #f0c050;
-    --blue:    #6fc3e0;
-    --barbg:   #2a3324;
+    --bg:      #15171b;
+    --panel:   #1c1f24;
+    --panel2:  #22262c;
+    --border:  #2e343c;
+    --text:    #d7dee6;
+    --dim:     #7e8a97;
+    --aqua:    #5ec9d8;
+    --teal:    #3fb9a6;
+    --green:   #7bd88f;
+    --red:     #ff5f56;
+    --amber:   #f2b04a;
+    --blue:    #5aa7e8;
+    --barbg:   #262b31;
     --mono: 'JetBrains Mono','Fira Code','Cascadia Code',
             'Ubuntu Mono','DejaVu Sans Mono',monospace;
   }
@@ -26,24 +28,22 @@
     font-family:var(--mono); font-size:13.5px; line-height:1.45;
     display:flex; flex-direction:column; overflow:hidden;
   }
-  ::selection{background:var(--green); color:#141710}
+  ::selection{background:var(--aqua); color:#0d1117}
 
-  /* ── tmux-Statusbar ─────────────────────────────── */
+  /* ── Statusbar ─────────────────────────────────── */
   #bar{
-    display:flex; align-items:center; gap:0;
-    background:var(--green); color:#141710;
+    display:flex; align-items:center;
+    background:var(--aqua); color:#0d1117;
     font-weight:700; user-select:none; flex:none;
   }
   #bar.warn{background:var(--amber)}
-  #bar.err {background:var(--red);   color:#1a0f0f}
+  #bar.err {background:var(--red); color:#1a0f0f}
   #bar .seg{padding:3px 10px; white-space:nowrap}
   #bar .grow{flex:1; text-align:right}
-  #bar .btn{
-    padding:3px 8px; cursor:pointer; background:rgba(0,0,0,.12);
-  }
+  #bar .btn{padding:3px 8px; cursor:pointer; background:rgba(0,0,0,.12)}
   #bar .btn:hover{background:rgba(0,0,0,.28)}
 
-  /* ── Panels ─────────────────────────────────────── */
+  /* ── Panels ────────────────────────────────────── */
   #grid{
     flex:1; overflow:auto; padding:10px; gap:10px;
     display:grid;
@@ -65,7 +65,7 @@
   }
   .panel-body{padding:6px 10px 10px; overflow:auto; flex:1}
 
-  /* ── Job-Zeilen ─────────────────────────────────── */
+  /* ── Job-Zeilen ────────────────────────────────── */
   .job{
     display:flex; align-items:baseline; gap:8px;
     padding:2px 0; white-space:nowrap;
@@ -77,16 +77,13 @@
   .s-ok  {color:var(--green)}
   .s-fail{color:var(--red)}
   .s-pend{color:var(--dim)}
-  .s-info{color:var(--blue)}
+  .s-info{color:var(--aqua)}
   .dot-run{animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.30}}
 
-  .blocker{
-    border:1px dashed var(--red); color:var(--red);
-    padding:4px 8px; margin-top:8px;
-  }
+  .empty{color:var(--dim); padding:2px 0}
 
-  /* ── System-Balken ──────────────────────────────── */
+  /* ── System-Balken ─────────────────────────────── */
   .meter{margin:6px 0}
   .meter .lbl{display:flex; justify-content:space-between; color:var(--dim)}
   .meter .bar{
@@ -95,21 +92,21 @@
   }
   .meter .fill{
     display:flex; align-items:center; justify-content:flex-end;
-    padding-right:4px; color:#141710; font-weight:700; font-size:11px;
+    padding-right:4px; color:#0d1117; font-weight:700; font-size:11px;
     transition:width .8s ease;
   }
-  .f-ok  {background:var(--green)}
+  .f-ok  {background:var(--aqua)}
   .f-mid {background:var(--amber)}
   .f-hot {background:var(--red)}
 
-  /* ── Log ────────────────────────────────────────── */
-  .logline{display:flex; gap:8px}
+  /* ── Log ───────────────────────────────────────── */
+  .logline{display:flex; gap:8px; white-space:nowrap; overflow:hidden}
   .logline .t{color:var(--dim); flex:none}
   .logline .lvl-ok  {color:var(--green)}
   .logline .lvl-err {color:var(--red)}
-  .logline .lvl-run {color:var(--amber)}
+  .logline .lvl-run {color:var(--aqua)}
 
-  /* ── Footer / Filter-Prompt ─────────────────────── */
+  /* ── Footer / Filter ───────────────────────────── */
   #prompt{
     flex:none; display:flex; align-items:center; gap:6px;
     border-top:1px solid var(--border); padding:4px 10px;
@@ -123,7 +120,6 @@
   @keyframes blink{50%{opacity:0}}
   #legend{color:var(--dim); white-space:nowrap; padding:4px 10px; flex:none}
 
-  /* ── CRT-Option (aus, default) ──────────────────── */
   body.crt::after{
     content:''; position:fixed; inset:0; pointer-events:none;
     background:repeating-linear-gradient(
@@ -133,11 +129,10 @@
 </head>
 <body>
 
-  <!-- tmux-Statusbar: Zustand des Hauses auf einen Blick -->
-  <div id="bar" class="err">
+  <div id="bar">
     <div class="seg">ωflow · job-monitor</div>
-    <div class="seg" id="seg-myzel">MYZEL 5</div>
-    <div class="seg" id="seg-blocker">BLOCKER 1</div>
+    <div class="seg" id="seg-myzel">MYZEL 0</div>
+    <div class="seg" id="seg-blocker">BLOCKER 0</div>
     <div class="grow"></div>
     <div class="btn" id="btn-crt" title="Scanlines an/aus">crt</div>
     <div class="seg" id="seg-clock">--:--:--</div>
@@ -146,44 +141,37 @@
 
   <div id="grid">
 
-    <!-- ── SYSTEM ─────────────────────────────── -->
     <div class="panel">
       <div class="panel-title">system</div>
       <div class="panel-body">
         <div class="meter">
           <div class="lbl"><span>cpu</span><span id="cpu-pct">–</span></div>
-          <div class="bar"><div class="fill f-hot" id="cpu-fill" style="width:0%">0%</div></div>
+          <div class="bar"><div class="fill f-ok" id="cpu-fill" style="width:0%"></div></div>
         </div>
         <div class="meter">
           <div class="lbl"><span>ram</span><span id="ram-pct">–</span></div>
-          <div class="bar"><div class="fill f-ok" id="ram-fill" style="width:0%">0%</div></div>
+          <div class="bar"><div class="fill f-ok" id="ram-fill" style="width:0%"></div></div>
         </div>
-        <div style="color:var(--dim); margin-top:8px" id="sys-note">
-          3 cores aktiv · matrix-dispersion läuft
-        </div>
+        <div style="color:var(--dim); margin-top:8px" id="sys-note">–</div>
       </div>
     </div>
 
-    <!-- ── CI-QUEUE (GitHub Actions) ──────────── -->
     <div class="panel">
       <div class="panel-title">ci-queue · github actions</div>
-      <div class="panel-body" id="ci-list"><!-- job rows --></div>
+      <div class="panel-body" id="ci-list"><div class="empty">lädt …</div></div>
     </div>
 
-    <!-- ── LOKALE LÄUFE (Myzel) ───────────────── -->
     <div class="panel">
       <div class="panel-title">lokale läufe · myzel</div>
-      <div class="panel-body" id="local-list"><!-- job rows + blocker --></div>
+      <div class="panel-body" id="local-list"><div class="empty">lädt …</div></div>
     </div>
 
-    <!-- ── LOG-TAIL ───────────────────────────── -->
     <div class="panel">
       <div class="panel-title">log</div>
-      <div class="panel-body" id="log-list"><!-- log lines --></div>
+      <div class="panel-body" id="log-list"><div class="empty">lädt …</div></div>
     </div>
   </div>
 
-  <!-- Filter-Prompt im OpenCode-Stil -->
   <div id="prompt">
     <span>›</span>
     <input id="filter" placeholder="filter: alle" spellcheck="false">
@@ -192,70 +180,123 @@
   <div id="legend">● läuft&nbsp; ✓ ok&nbsp; ✗ fail&nbsp; ◌ pending&nbsp; ○ skip&nbsp;·&nbsp;A = A</div>
 
 <script>
-  // >>> HIER: echte Daten einhängen — fetch() auf deinen Monitor-Endpunkt
-  // und state = await res.json() liefern. Bis dahin: Demo-Daten aus dem Feld.
-  const state = {
-    cpu: 89, ram: 54,
-    ci: [
-      {sym:'✗', cls:'s-fail', name:'ci-check (main)',        meta:'2m 41s'},
-      {sym:'✗', cls:'s-fail', name:'ci-check (matrix-split)',meta:'18m 03s'},
-      {sym:'●', cls:'s-run',  name:'aia-dispatch 2015',      meta:'12m'},
-      {sym:'●', cls:'s-run',  name:'ps1-footprint-ernte',    meta:'41m'},
-      {sym:'✓', cls:'s-ok',   name:'register-verify',        meta:'3m 12s'},
-      {sym:'✓', cls:'s-ok',   name:'psr-cdn (atnf-dm)',      meta:'9m 55s'},
-      {sym:'◌', cls:'s-pend', name:'goes-2s-ernte',          meta:'wartet'},
-    ],
-    local: [
-      {sym:'●', cls:'s-run',  name:'dispersion_solar_probe 2014', meta:'~3h'},
-      {sym:'●', cls:'s-run',  name:'korona-repro 2013 (×3)',      meta:'6 jobs'},
-      {sym:'●', cls:'s-run',  name:'korona-repro 2015 (×3)',      meta:'6 jobs'},
-      {sym:'●', cls:'s-run',  name:'ned-cdn (ra-band-walk)',      meta:'läuft'},
-      {sym:'✓', cls:'s-ok',   name:'weberin body-verdict',        meta:'fertig'},
-    ],
-    blocker: 'GOES-2s-Ernte fehlgeschlagen — Fehler lesen, nicht raten',
-    log: [
-      {t:'22:41:07', lvl:'err', msg:'goes-ernte: timeout nach 6h — abgebrochen'},
-      {t:'22:41:12', lvl:'run', msg:'dispersion 2014: 612/986 ereignisse'},
-      {t:'22:42:33', lvl:'ok',  msg:'psr-cdn: 2166 pulsare + σ auf cdn'},
-      {t:'22:44:01', lvl:'run', msg:'ci-check main: unwrap-panic in split-reduce'},
-    ]
-  };
-
   const SYM = {run:'●', ok:'✓', fail:'✗', pend:'◌'};
 
-  function row(j){
-    return `<div class="job ${j.cls}" data-name="${j.name.toLowerCase()}">
-      <span class="sym ${j.cls==='s-run'?'dot-run':''}">${j.sym}</span>
-      <span class="name">${j.name}</span>
-      <span class="meta">${j.meta}</span></div>`;
+  function symCls(status, conclusion){
+    if (status === 'in_progress' || status === 'running') return {sym:SYM.run, cls:'s-run'};
+    if (conclusion === 'success') return {sym:SYM.ok, cls:'s-ok'};
+    if (conclusion === 'failure') return {sym:SYM.fail, cls:'s-fail'};
+    if (conclusion === 'cancelled' || conclusion === 'skipped') return {sym:'○', cls:'s-pend'};
+    return {sym:SYM.pend, cls:'s-pend'};
   }
-  function render(){
-    document.getElementById('ci-list').innerHTML =
-      state.ci.map(row).join('') +
-      `<div class="blocker">⚑ ${state.blocker}</div>`;
-    document.getElementById('local-list').innerHTML =
-      state.local.map(row).join('');
-    document.getElementById('log-list').innerHTML =
-      state.log.map(l=>`<div class="logline">
-        <span class="t">${l.t}</span>
-        <span class="lvl-${l.lvl}">${l.lvl==='err'?'✗':l.lvl==='run'?'●':'✓'}</span>
-        <span>${l.msg}</span></div>`).join('');
-    // Meter
-    const set=(id,fill,v)=>{document.getElementById(id).style.width=v+'%';
-      document.getElementById(fill).textContent=v+'%';
-      document.getElementById(fill).className=
-        'fill '+(v>80?'f-hot':v>60?'f-mid':'f-ok');};
-    set('cpu-fill','cpu-pct',state.cpu);
-    set('ram-fill','ram-pct',state.ram);
-    // Statusbar-Zustand
-    const fails = state.ci.filter(j=>j.cls==='s-fail').length;
-    const bar=document.getElementById('bar');
-    bar.className = fails? 'err' : (state.ci.some(j=>j.cls==='s-run')?'warn':'');
-    document.getElementById('seg-myzel').textContent =
-      'MYZEL ' + state.local.filter(j=>j.cls==='s-run').length;
-    document.getElementById('seg-blocker').textContent =
-      'BLOCKER ' + (state.blocker?1:0);
-    applyFilter(document.getElementById('filter').value);
+
+  function age(createdSecs, now){
+    if (!createdSecs) return '–';
+    const d = Math.max(0, now - createdSecs);
+    if (d >= 86400) return Math.floor(d/86400)+'d';
+    if (d >= 3600) return Math.floor(d/3600)+'h '+Math.floor((d%3600)/60)+'m';
+    if (d >= 60) return Math.floor(d/60)+'m';
+    return d+'s';
+  }
+
+  function fmtBytes(kb){
+    if (kb >= 1048576) return (kb/1048576).toFixed(1)+'G';
+    if (kb >= 1024) return Math.round(kb/1024)+'M';
+    return kb+'K';
+  }
+
+  function row(name, meta, s){
+    return `<div class="job ${s.cls}" data-name="${name.toLowerCase()}">
+      <span class="sym ${s.cls==='s-run'?'dot-run':''}">${s.sym}</span>
+      <span class="name">${name}</span>
+      <span class="meta">${meta}</span></div>`;
+  }
+
+  function setMeter(id, pctId, v){
+    document.getElementById(id).style.width = v + '%';
+    document.getElementById(pctId).textContent = v + '%';
+    document.getElementById(id).className =
+      'fill ' + (v>80?'f-hot':v>60?'f-mid':'f-ok');
+  }
+
+  async function fetchData(){
+    try {
+      const res = await fetch('/data', {cache:'no-store'});
+      if (!res.ok) return null;
+      return await res.json();
+    } catch { return null; }
+  }
+
+  async function render(){
+    try {
+      const d = await fetchData();
+      const now = Math.floor(Date.now()/1000);
+
+      const sys = (d && d.system) || {};
+      const loadAvg = (typeof sys.load === 'number') ? sys.load : 0;
+      const ncpu = sys.ncpu || 1;
+      const cpuPct = Math.min(100, Math.round(loadAvg/ncpu*100));
+      const memUsed = sys.mem_used_gb || 0;
+      const memTotal = sys.mem_total_gb || 1;
+      const ramPct = Math.min(100, Math.round(memUsed/memTotal*100));
+      setMeter('cpu-fill','cpu-pct', cpuPct);
+      setMeter('ram-fill','ram-pct', ramPct);
+      document.getElementById('sys-note').textContent =
+        `${ncpu} cores · load ${loadAvg.toFixed(2)} · mem ${memUsed.toFixed(1)}G/${memTotal.toFixed(1)}G`;
+
+      const runs = (d && d.runs) || [];
+      document.getElementById('ci-list').innerHTML = runs.map(r => {
+        const s = symCls(r.status, r.conclusion);
+        const meta = (r.status === 'in_progress' && r.total_steps)
+          ? `${r.done_steps ?? 0}/${r.total_steps} · ${Math.round((r.done_steps ?? 0)/r.total_steps*100)}%`
+          : `${r.conclusion || r.status} · ${age(r.created, now)}`;
+        return row(r.name, meta, s);
+      }).join('') || '<div class="empty">keine runs</div>';
+
+      const units = (d && d.units) || [];
+      const procs = (d && d.procs) || [];
+      const localRows = [];
+      for (const u of units) {
+        const meta = (u.cpu != null ? Math.round(u.cpu)+'% · ' : '') +
+          (u.etime || '') + (u.rss_kb ? ' · '+fmtBytes(u.rss_kb) : '');
+        localRows.push(row(u.name, meta, symCls('running', null)));
+      }
+      for (const p of procs) {
+        const meta = (p.cpu != null ? Math.round(p.cpu)+'% · ' : '') +
+          (p.etime || '') + (p.rss_kb ? ' · '+fmtBytes(p.rss_kb) : '');
+        localRows.push(row(p.name+' ['+p.pid+']', meta, symCls('running', null)));
+      }
+      document.getElementById('local-list').innerHTML =
+        localRows.join('') || '<div class="empty">no omegaflow jobs running</div>';
+
+      const logLines = [];
+      for (const u of units) {
+        if (u.progress && u.progress.total) {
+          logLines.push({lvl:'run', msg:`${u.name}: progress ${u.progress.done}/${u.progress.total}`});
+        } else if (u.log) {
+          logLines.push({lvl:'run', msg:`${u.name}: ${u.log}`});
+        }
+      }
+      for (const p of procs) {
+        if (p.progress && p.progress.total) {
+          logLines.push({lvl:'run', msg:`${p.name}: progress ${p.progress.done}/${p.progress.total}`});
+        } else if (p.log) {
+          logLines.push({lvl:'run', msg:`${p.name}: ${p.log}`});
+        }
+      }
+      document.getElementById('log-list').innerHTML = logLines.slice(-14).map(l =>
+        `<div class="logline"><span class="lvl-${l.lvl}">${l.lvl==='err'?'✗':'●'}</span><span>${l.msg}</span></div>`
+      ).join('') || '<div class="empty">—</div>';
+
+      const fails = runs.filter(r => r.conclusion === 'failure').length;
+      const running = runs.some(r => r.status === 'in_progress');
+      document.getElementById('bar').className = running ? 'warn' : '';
+      document.getElementById('seg-myzel').textContent = 'MYZEL ' + localRows.length;
+      document.getElementById('seg-blocker').textContent = 'BLOCKER ' + fails;
+      applyFilter(document.getElementById('filter').value);
+    } catch (e) {
+      document.getElementById('sys-note').textContent = 'data: ' + e;
+    }
   }
 
   function applyFilter(q){
@@ -267,15 +308,13 @@
   document.getElementById('filter')
     .addEventListener('input', e=>applyFilter(e.target.value));
 
-  // Uhr + Refresh (tmux-Gefühl)
   setInterval(()=>{document.getElementById('seg-clock').textContent=
     new Date().toLocaleTimeString('de-DE');},1000);
   document.getElementById('btn-crt')
     .addEventListener('click',()=>document.body.classList.toggle('crt'));
 
   render();
-  // >>> ECHTBETRIEB: setInterval(async()=>{ state = await ladeVomMonitor(); render(); }, 5000);
+  setInterval(render, 5000);
 </script>
 </body>
 </html>
-
