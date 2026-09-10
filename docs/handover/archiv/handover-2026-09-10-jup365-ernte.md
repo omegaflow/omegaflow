@@ -3,7 +3,7 @@
   class: handover
   date: 2026-09-10
   sha256: bef218ae4fd07bf10027d4c5dba15b850c09cf73bad1fa58b375717b1836e1a9
-  status: live
+  status: archived
   see-also: docs/handover/handover-2026-09-10-autonom-vier-atome.md
 -->
 # Handover — NAIF 501–504: jup365.bsp geerntet (2026-09-10)
