@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 8ea028bc10fc53c708bfe57c2848bcc07fcd42dc6819b556d703c5933918750a
   status: done
-  see-also: docs/handover/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 
 # Befund: Neptun-Scheinbar-Orts-Kette — gebaut und über den vollen Zeitraum (1846–1983) gegen das breite DE441-Zentrum reduziert; Median ~0.2″
