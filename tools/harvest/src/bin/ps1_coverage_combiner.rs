@@ -109,16 +109,41 @@ impl Ord for MergeNode {
     }
 }
 
-fn part_band(name: &str) -> Option<u32> {
-    let stem = name.strip_prefix("ps1_part_")?;
-    let digits = stem.strip_suffix(".fp01")?;
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
-        return None;
-    }
-    digits.parse().ok()
+const SUBCELL_FULL: u32 = 99;
+
+#[derive(Clone)]
+enum PartSpan {
+    Whole,
+    Chunk { start: u32, end: u32 },
 }
 
-fn list_parts(dir: &str) -> Result<Vec<(u32, String)>, String> {
+struct PartEntry {
+    name: String,
+    band: u32,
+    span: PartSpan,
+    path: String,
+}
+
+fn parse_part(name: &str) -> Option<(u32, PartSpan)> {
+    let stem = name.strip_prefix("ps1_part_")?;
+    let digits = stem.strip_suffix(".fp01")?;
+    if digits.is_empty() {
+        return None;
+    }
+    if digits.bytes().all(|b| b.is_ascii_digit()) {
+        return digits.parse().ok().map(|b| (b, PartSpan::Whole));
+    }
+    let mut seg = digits.split('_');
+    let band: u32 = seg.next()?.parse().ok()?;
+    let start: u32 = seg.next()?.parse().ok()?;
+    let end: u32 = seg.next()?.parse().ok()?;
+    if seg.next().is_some() || start > end {
+        return None;
+    }
+    Some((band, PartSpan::Chunk { start, end }))
+}
+
+fn list_parts(dir: &str) -> Result<Vec<PartEntry>, String> {
     let rd = std::fs::read_dir(dir)
         .map_err(|e| format!("read the parts directory {dir} returned void: {e}"))?;
     let mut found = Vec::new();
@@ -126,12 +151,46 @@ fn list_parts(dir: &str) -> Result<Vec<(u32, String)>, String> {
         let entry =
             entry.map_err(|e| format!("read a parts-directory entry returned void: {e}"))?;
         let name = entry.file_name().to_string_lossy().into_owned();
-        if let Some(band) = part_band(&name) {
-            found.push((band, entry.path().to_string_lossy().into_owned()));
+        if let Some((band, span)) = parse_part(&name) {
+            found.push(PartEntry {
+                name,
+                band,
+                span,
+                path: entry.path().to_string_lossy().into_owned(),
+            });
         }
     }
-    found.sort_unstable();
+    found.sort_by(|a, b| a.band.cmp(&b.band).then(a.name.cmp(&b.name)));
     Ok(found)
+}
+
+fn band_covered(band: u32, found: &[PartEntry]) -> bool {
+    let mut whole = false;
+    let mut spans: Vec<(u32, u32)> = Vec::new();
+    for entry in found.iter().filter(|e| e.band == band) {
+        match entry.span {
+            PartSpan::Whole => whole = true,
+            PartSpan::Chunk { start, end } => spans.push((start, end)),
+        }
+    }
+    if whole {
+        return true;
+    }
+    if spans.is_empty() {
+        return false;
+    }
+    spans.sort_unstable();
+    if spans[0].0 != 0 {
+        return false;
+    }
+    let mut prev_end = spans[0].1;
+    for &(start, end) in spans.iter().skip(1) {
+        if start != prev_end + 1 {
+            return false;
+        }
+        prev_end = end;
+    }
+    prev_end == SUBCELL_FULL
 }
 
 fn merge_partials(
@@ -148,34 +207,35 @@ fn merge_partials(
     let found = list_parts(parts_dir)?;
     let mut missing = Vec::new();
     for band in expect_min..=expect_max {
-        if !found.iter().any(|(b, _)| *b as u64 == band) {
+        if !band_covered(band as u32, &found) {
             missing.push(band);
         }
     }
     if !missing.is_empty() {
         return Err(format!(
-            "{} of {} projcell partials are absent ({}, ...) — the full-survey asset stays unwritten until every band is present",
+            "{} of {} projcell bands are absent or incompletely chunked ({}, ...) — the full-survey asset stays unwritten until every band is covered",
             missing.len(),
             expect_max - expect_min + 1,
             missing
                 .iter()
                 .take(5)
-                .map(|b| format!("ps1_part_{b}.fp01"))
+                .map(|b| format!("ps1_part_{b}*"))
                 .collect::<Vec<_>>()
                 .join(", ")
         ));
     }
-    for (band, _) in &found {
-        if (*band as u64) > expect_max || (*band as u64) < expect_min {
+    for entry in &found {
+        if (entry.band as u64) > expect_max || (entry.band as u64) < expect_min {
             return Err(format!(
-                "ps1_part_{band}.fp01 lies outside the expected band span {expect_min}..{expect_max} — the combine stays unwritten"
+                "{} lies outside the expected band span {expect_min}..{expect_max} — the combine stays unwritten",
+                entry.name
             ));
         }
     }
 
     let mut sources = Vec::new();
-    for (_, path) in &found {
-        let mut src = PartSource::open(path)?;
+    for entry in &found {
+        let mut src = PartSource::open(&entry.path)?;
         src.read_next()?;
         sources.push(src);
     }
@@ -524,5 +584,46 @@ mod tests {
         assert_eq!(parse_header(&bytes[..HEADER_LEN]), Some(1));
         let decoded = decode_rec(&bytes[HEADER_LEN..]).expect("the row decodes");
         assert_eq!(decoded.frac, 0.3);
+    }
+
+    #[test]
+    fn merges_a_band_split_into_subcell_chunks() {
+        let dir = TempDir::new();
+        let a = [rec(1, FootprintBand::G, 0.5)];
+        let b = [rec(3, FootprintBand::R, 0.25)];
+        write_part(&dir.file("ps1_part_637_0_49.fp01"), &a);
+        write_part(&dir.file("ps1_part_637_50_99.fp01"), &b);
+        let out = dir.file("out.fp01");
+        let total = merge_partials(&dir.file(""), &out, 637, 637).expect("merge");
+        assert_eq!(total, 2);
+        let rows = read_rows(&out);
+        assert_eq!(rows.len(), 2);
+        assert_sorted_by_ipix_and_band(&rows);
+    }
+
+    #[test]
+    fn refuses_a_band_whose_chunks_do_not_tile_the_full_subcell_range() {
+        let dir = TempDir::new();
+        let a = [rec(1, FootprintBand::G, 0.5)];
+        write_part(&dir.file("ps1_part_637_0_49.fp01"), &a);
+        let out = dir.file("out.fp01");
+        let err = merge_partials(&dir.file(""), &out, 637, 637).expect_err("untiled refused");
+        assert!(err.contains("637"));
+    }
+
+    #[test]
+    fn tolerates_an_empty_chunked_partial_among_measured_ones() {
+        let dir = TempDir::new();
+        let empty: [FootprintRecord; 0] = [];
+        let b = [rec(2, FootprintBand::I, 0.8)];
+        write_part(&dir.file("ps1_part_637_0_49.fp01"), &empty);
+        write_part(&dir.file("ps1_part_637_50_99.fp01"), &b);
+        let out = dir.file("out.fp01");
+        let total = merge_partials(&dir.file(""), &out, 637, 637).expect("merge");
+        assert_eq!(total, 1);
+        let rows = read_rows(&out);
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].ipix, 2);
+        assert_eq!(rows[0].band, FootprintBand::I);
     }
 }
