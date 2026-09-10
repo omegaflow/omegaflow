@@ -2,7 +2,7 @@
   title: Handover — autonom: was die Kybernautin selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: d90992f3368ce7c678e77fa52a2e8b81c0c646e4bc2e5fa542030654e607851f
+  sha256: b0c2d1ef6e99fa0dc591ba54d2862256ecbdb72b4c3f3d017543fe1916b5bf69
   status: live
   see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -22,10 +22,12 @@ Git. Die nicht-autonomen Pflichten stehen im Gegen-Handover.
 - **Voller Lauf über den phi-Bestand** — Linse (`source_url_candidates`) →
   `probe_sweep` → Review auf der kartierten Struktur (`MANIFEST.φ`); Review
   bleibt in der Session.
-- **Vier Review-Fragen** — cddis finals2000A (blocked vs EOP-Duplikat),
-  supermag, ESO, maia-finals2000A-Zweit-Datei.
-- **Step-5-Folge** — je `mirror_*`-Asset der 12 lebenden repo_tag-Releases den
-  Byte-Vergleich CDN-Digest ↔ Repo-Raw messen, dann einzeln schneiden.
+- **Vier Review-Fragen** — gemessen 2026-09-10 (Grind-Pro): cddis finals2000A
+  offen (kein Eintrag — Register-Duty), supermag offen (kein Eintrag), ESO offen
+  (kein Eintrag), maia-Zweit-Datei hält (genau eine maia-Datei, keine zweite).
+- **Step-5-Folge** — gemessen 2026-09-10 (Grind-Flash): 23 Assets gleich
+  (Schnitt-Liste steht), 4 nicht schneiden (3 verschoben/Stub + Bowserinator
+  einzige Kopie); der destruktive Schnitt bleibt ein verifizierter Folgeschritt.
 - **R2** — die Archiv-Zählung (archive-root + das lokale Backup-Archiv)
   als Grundwahrheit in `number_audit.rs` verdrahten.
 - **docs-reference-verteilung** — die vermessene Bewegung ausführen + Referenz-
