@@ -1,0 +1,32 @@
+name: korpora-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  korpora:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Manifest the redistribution-cleared catalog corpora to the CDN
+        run: |
+          gh release view ssd.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create ssd.jpl.nasa.gov --repo omegaflow/sources \
+                 --title ssd.jpl.nasa.gov --notes "reference dataset mirror"
+          uploaded=0
+          while read -r verdict name rest; do
+            if [ "$verdict" != "redistribute" ]; then
+              continue
+            fi
+            f="phi/pipeline/catalog/${name}"
+            if [ -f "$f" ]; then
+              gh release upload ssd.jpl.nasa.gov "$f" --clobber --repo omegaflow/sources
+              echo "uploaded ${name}"
+              uploaded=$((uploaded+1))
+            else
+              echo "corpus ${name} absent from the checkout — the local Ernte is not committed, nothing uploaded"
+            fi
+          done < <(grep -E '^(redistribute|decline|pending) ' phi/pipeline/catalog/korpora_heim.φ)
+          echo "korpora manifested: ${uploaded}"
