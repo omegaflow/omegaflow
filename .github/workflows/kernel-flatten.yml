@@ -168,9 +168,8 @@ jobs:
             --curated \
             --workdir phi/jwst_harvest \
             --budget 340 \
-            --ci-mode
-
-              --window-start 1963-01-01 --window-end 2026-08-06 --decimate-min 1440 --jobs 8
+            --ci-mode \
+            --window-start 1963-01-01 --window-end 2026-08-06 --decimate-min 1440 --jobs 8
 
   eve:
     runs-on: ubuntu-latest
