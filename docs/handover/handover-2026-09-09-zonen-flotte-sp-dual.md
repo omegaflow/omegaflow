@@ -2,7 +2,7 @@
   title: Thematisches Handover — Tiefenphasen-Flotte, Folge-Atom: die sP-duale Inversion gebaut und gemessen (Präzision 45,6 km, Genauigkeit unverändert — der Rest ist der gemeinsame Katalogtiefen-Anker; sP-Δ-Faltung ungemessen)
   class: handover
   date: 2026-09-09
-  sha256: 5488a80c4fa97dbc523451a55960fbe7e56ab4578272d400f9cbe5d836d5c4c1
+  sha256: cab3e7bfc3464b4a609fcf01def97a772ec38f3973154f3fa6ef56662407e061
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-zonen-flotte-pick-hebel.md docs/befund/befund-2026-09-09-zonen-flotte-sp-dual.md
 -->
@@ -30,6 +30,6 @@ Stehendes Register der Tiefenphasen-/Seismik-Linie nach dem sP-Dual-Atom. Die Zo
 - **Eikonal-Löser über das volle Gitter** — Dijkstra über ETOPO1; das Gitter steht, der Löser pending.
 - **Die Erde als Sender** — Kreuzbereichs-Kalibrierung (Tonga 2022) pending.
 
-Baum: eine parallele Sitzung arbeitet an eigenen Linien (Bz/LAIC, disjunkte Linien); ihre Dateien bleiben unangetastet. Mein Pick-Hebel-Commit trägt einen fremden Rename (Ganz-Index-Commit, registriert — b24cf46); die Umzüge dieses Atoms lassen eine Prosa-Pfadangabe in `handover-2026-09-09-disjunkte-linien-folge.md` auf den alten Ort zeigen (fix-as-they-touch, fremde Datei).
+Baum: eine parallele Sitzung arbeitet an eigenen Linien (Bz/LAIC, disjunkte Linien); ihre Dateien bleiben unangetastet. Mein Pick-Hebel-Commit trägt einen fremden Rename (Ganz-Index-Commit, registriert — b24cf46); die Umzüge dieses Atoms lassen eine Prosa-Pfadangabe in `docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md` auf den alten Ort zeigen (fix-as-they-touch, fremde Datei).
 
 Gemessen und geschlossen (bleibt im Befund, nicht hier): Feldstandard Seismik — jede Komponente hat ein Feld-Äquivalent; neu ist die Einbettung (ICRS, t_ref, Signal-Kegel).

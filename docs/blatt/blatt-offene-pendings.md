@@ -4,7 +4,7 @@
   date: 2026-09-10
   sha256: 663d62c0bdb81ff407022962a0c3622109d73faa9ee842d871890896a05d0f79
   status: live
-  see-also: docs/handover/handover-2026-09-09-disjunkte-linien-folge.md docs/handover/handover-2026-09-09-mechanische-reste.md docs/handover/handover-2026-09-09-operator-label-korrektur.md docs/handover/handover-2026-09-09-te-blatter-bz-laic-tscaling.md docs/handover/handover-2026-09-09-zonen-flotte-sp-dual.md docs/handover/handover-2026-09-09-de441-reverifikation-pending.md
+  see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md docs/handover/handover-2026-09-09-mechanische-reste.md docs/handover/archiv/handover-2026-09-09-operator-label-korrektur.md docs/handover/handover-2026-09-09-te-blatter-bz-laic-tscaling.md docs/handover/handover-2026-09-09-zonen-flotte-sp-dual.md docs/handover/handover-2026-09-09-de441-reverifikation-pending.md
 -->
 # BLATT — Das Register der offenen Pendings
 
