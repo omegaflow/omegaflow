@@ -27,6 +27,11 @@ struct FileReport {
     r6_candidates: Vec<String>,
 }
 
+struct ArchiveGround {
+    path: String,
+    count: usize,
+}
+
 impl FileReport {
     fn new() -> FileReport {
         FileReport {
@@ -301,7 +306,44 @@ fn section_of(line: &str, current: &str) -> (bool, String) {
     }
 }
 
-fn parse_file(path: &str) -> FileReport {
+fn count_files(path: &Path) -> Option<usize> {
+    let mut total = 0usize;
+    let rd = fs::read_dir(path).ok()?;
+    for entry in rd {
+        let entry = entry.ok()?;
+        let ft = entry.file_type().ok()?;
+        if ft.is_dir() {
+            total += count_files(&entry.path())?;
+        } else if ft.is_file() {
+            total += 1;
+        }
+    }
+    Some(total)
+}
+
+fn measure_archive(path: &str) -> Option<usize> {
+    let p = Path::new(path);
+    if p.is_dir() {
+        count_files(p)
+    } else if p.is_file() {
+        Some(1)
+    } else {
+        None
+    }
+}
+
+fn anchor_tokens(path: &str) -> Vec<String> {
+    let mut v = vec![path.to_lowercase()];
+    if let Some(name) = Path::new(path).file_name() {
+        let n = name.to_string_lossy().to_lowercase();
+        if !v.contains(&n) {
+            v.push(n);
+        }
+    }
+    v
+}
+
+fn parse_file(path: &str, ground: Option<&[ArchiveGround]>) -> FileReport {
     let Ok(text) = fs::read_to_string(path) else {
         let mut rep = FileReport::new();
         rep.findings.push(format!(
@@ -310,10 +352,10 @@ fn parse_file(path: &str) -> FileReport {
         ));
         return rep;
     };
-    analyze_text(path, &text)
+    analyze_text(path, &text, ground)
 }
 
-fn analyze_text(path: &str, text: &str) -> FileReport {
+fn analyze_text(path: &str, text: &str, ground: Option<&[ArchiveGround]>) -> FileReport {
     let mut rep = FileReport::new();
     let mut current_section = String::from("(kopf)");
     let mut prose_nums: Vec<Num> = Vec::new();
@@ -438,6 +480,41 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
 
     let _ = &prose_nums;
 
+    if let Some(ground) = ground {
+        for g in ground {
+            let anchors = anchor_tokens(&g.path);
+            for n in &prose_nums {
+                if n.value.fract() != 0.0 || n.value < 0.0 {
+                    continue;
+                }
+                let Some(line_lower) = line_at(n.line) else {
+                    continue;
+                };
+                if !anchors.iter().any(|a| line_lower.contains(a)) {
+                    continue;
+                }
+                let file_claim = tokenize(&line_lower)
+                    .iter()
+                    .any(|t| t == "file" || t == "files");
+                if !file_claim {
+                    continue;
+                }
+                let raw_lower = n.raw.to_lowercase();
+                if anchors.iter().any(|a| a.contains(&raw_lower)) {
+                    continue;
+                }
+                let stated = n.value as usize;
+                if stated != g.count {
+                    rep.found[2] += 1;
+                    rep.findings.push(format!(
+                        "R2 {}:{} [{}] archive '{}' — stated {} vs measured {}",
+                        path, n.line, n.section, g.path, stated, g.count
+                    ));
+                }
+            }
+        }
+    }
+
     let mut table_claims: Vec<(String, f64, usize)> = Vec::new();
     for n in &table_nums {
         let Some(line_txt) = lines_text.get(n.line.saturating_sub(1)).cloned() else {
@@ -553,6 +630,7 @@ fn analyze_text(path: &str, text: &str) -> FileReport {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut files: Vec<String> = Vec::new();
+    let mut archive_paths: Vec<String> = Vec::new();
     let mut i = 0;
     let mut tol_arg: Option<f64> = None;
     while i < args.len() {
@@ -560,6 +638,14 @@ fn main() {
             "--tol" => {
                 if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
                     tol_arg = Some(v);
+                    i += 2;
+                } else {
+                    i += 1;
+                }
+            }
+            "--archive-root" | "--backup-archive" => {
+                if let Some(v) = args.get(i + 1) {
+                    archive_paths.push(v.clone());
                     i += 2;
                 } else {
                     i += 1;
@@ -598,13 +684,34 @@ fn main() {
         }
     }
 
-    println!("=== Number audit — std-only, R1/R3/R4/R5 hard, R2 pending, R6 output field ===");
+    println!(
+        "=== Number audit — std-only, R1/R3/R4/R5 hard, R2 archive check, R6 output field ==="
+    );
     println!("(Tolerance {TOL:e} — the calibration fixes the line)");
     let mut totals: [usize; 6] = [0; 6];
     let mut r6_total = 0usize;
 
+    let measured: Vec<(String, Option<usize>)> = archive_paths
+        .iter()
+        .map(|p| (p.clone(), measure_archive(p)))
+        .collect();
+    let ground: Vec<ArchiveGround> = measured
+        .iter()
+        .filter_map(|(p, m)| {
+            m.map(|c| ArchiveGround {
+                path: p.clone(),
+                count: c,
+            })
+        })
+        .collect();
+    let ground_ref = if archive_paths.is_empty() {
+        None
+    } else {
+        Some(ground.as_slice())
+    };
+
     for f in &files {
-        let rep = parse_file(f);
+        let rep = parse_file(f, ground_ref);
         let n_find = rep.found.iter().sum::<usize>();
         let base = match Path::new(f).file_name() {
             Some(s) => s.to_string_lossy().into_owned(),
@@ -636,7 +743,7 @@ fn main() {
     let names = [
         "",
         "R1 abstract-number<->mark",
-        "R2 §2 count<->table",
+        "R2 archive count<->claim",
         "R3 double count",
         "R4 comma locale",
         "R5 unanchored number",
@@ -644,10 +751,19 @@ fn main() {
     for r in 1..=5 {
         println!("  {:<28} found = {}", names[r], totals[r]);
     }
-    if totals[2] == 0 {
+    if archive_paths.is_empty() {
         println!(
             "  R2 §2 count<->table: no syntactic rule decides the class — a Z finding needs the archive count as ground truth, sheet text alone does not carry it (docs/specs/lauf-log.md names the class open)"
         );
+    } else {
+        for (p, m) in &measured {
+            match m {
+                Some(c) => println!("  R2 archive '{p}': {c} files"),
+                None => println!(
+                    "  R2 archive '{p}': absent/pending — not a readable directory, not counted as 0"
+                ),
+            }
+        }
     }
     println!(
         "  {:<28} found = {} (output field, not hard)",
@@ -724,7 +840,7 @@ mod tests {
     #[test]
     fn r1_abstract_number_without_table_mark_is_found() {
         let text = "# Probe\n## Abstract\nsteepest step 5.47 to 5.57\n## Tables\n| step | slope |\n| one | 3.75 |\n";
-        let rep = analyze_text("r1_fixture", text);
+        let rep = analyze_text("r1_fixture", text, None);
         assert!(
             rep.found[1] >= 1,
             "R1 fires on an Abstract number with no table mark"
@@ -734,7 +850,7 @@ mod tests {
     #[test]
     fn r3_double_count_is_found() {
         let text = "# Probe\n## T1\n| records | 1663 |\n## T3\n| records | 1666 |\n";
-        let rep = analyze_text("r3_fixture", text);
+        let rep = analyze_text("r3_fixture", text, None);
         assert!(
             rep.found[3] >= 1,
             "R3 fires on the same label with two values"
@@ -744,7 +860,7 @@ mod tests {
     #[test]
     fn r4_comma_locale_mix_is_found() {
         let text = "# Probe\n## Result\nthe delay measured 492,0 s\n## Table\n| station | delay |\n| sod | 487,7 |\n";
-        let rep = analyze_text("r4_fixture", text);
+        let rep = analyze_text("r4_fixture", text, None);
         assert!(
             rep.found[4] >= 1,
             "R4 fires when the sheet's decimals are the comma locale"
@@ -754,7 +870,7 @@ mod tests {
     #[test]
     fn r4_single_sheet_comma_locale_is_found() {
         let text = "# Probe\n## Result\nthe echo reads 1,5e-1 against the upper limit r < 0,036\n";
-        let rep = analyze_text("r4_single_fixture", text);
+        let rep = analyze_text("r4_single_fixture", text, None);
         assert!(
             rep.found[4] >= 1,
             "R4 fires when prose alone speaks the comma locale (K-class shape)"
@@ -764,7 +880,7 @@ mod tests {
     #[test]
     fn r4_table_comma_against_dot_prose_is_found() {
         let text = "# Probe\n## Result\nthe delay measured 492.0 s\n## Table\n| station | delay |\n| sod | 487,7 |\n";
-        let rep = analyze_text("r4_table_fixture", text);
+        let rep = analyze_text("r4_table_fixture", text, None);
         assert!(
             rep.found[4] >= 1,
             "R4 fires when the table speaks the comma locale against dot prose"
@@ -774,7 +890,7 @@ mod tests {
     #[test]
     fn r4_english_thousands_stays_silent() {
         let text = "# Probe\n## Result\nthe sweep returned 1,033 rows over 12,074 samples\n## Table\n| lag | te |\n| 0 | 3.75e-2 |\n";
-        let rep = analyze_text("r4_thousands_fixture", text);
+        let rep = analyze_text("r4_thousands_fixture", text, None);
         assert_eq!(
             rep.found[4], 0,
             "thousands grouping in a count context is not the comma locale"
@@ -784,18 +900,53 @@ mod tests {
     #[test]
     fn r5_unanchored_count_is_found() {
         let text = "# Probe\n## Body\nthe 862 records were measured\n";
-        let rep = analyze_text("r5_fixture", text);
+        let rep = analyze_text("r5_fixture", text, None);
         assert!(rep.found[5] >= 1, "R5 fires on an unanchored count claim");
     }
 
     #[test]
-    fn z_section_counts_are_not_a_double_count_and_r2_stays_pending() {
-        let text = "# Probe\n## Result\nthe interior covers 313 runs and the polar record 603 months, two series\n| lag | te |\n| 0 | 3.75e-2 |\n";
-        let rep = analyze_text("z_fixture", text);
+    fn r2_archive_claim_matching_the_measured_count_stays_silent() {
+        let text = "# Probe\n## Result\nthe archive-root holds 12 files\n";
+        let ground = [ArchiveGround {
+            path: "/synthetic/archive-root".to_string(),
+            count: 12,
+        }];
+        let rep = analyze_text("r2_match_fixture", text, Some(&ground));
         assert_eq!(
             rep.found[2], 0,
-            "R2 stays pending: the Z class needs the archive count as ground truth"
+            "a claim equal to the measured archive count is silent"
         );
+    }
+
+    #[test]
+    fn r2_archive_claim_off_by_one_fires_with_stated_and_measured() {
+        let text = "# Probe\n## Result\nthe archive-root holds 11 files\n";
+        let ground = [ArchiveGround {
+            path: "/synthetic/archive-root".to_string(),
+            count: 12,
+        }];
+        let rep = analyze_text("r2_fire_fixture", text, Some(&ground));
+        assert!(
+            rep.found[2] >= 1,
+            "R2 fires when stated 11 differs from measured 12"
+        );
+        assert!(
+            rep.findings
+                .iter()
+                .any(|f| f.contains("stated 11") && f.contains("measured 12")),
+            "the R2 finding carries stated and measured"
+        );
+    }
+
+    #[test]
+    fn z_section_counts_are_not_a_double_count_and_archive_claim_is_silent() {
+        let text = "# Probe\n## Result\nthe interior covers 313 runs and the polar record 603 months, two series\n| lag | te |\n| 0 | 3.75e-2 |\n";
+        let ground = [ArchiveGround {
+            path: "/synthetic/archive-root".to_string(),
+            count: 12,
+        }];
+        let rep = analyze_text("z_fixture", text, Some(&ground));
+        assert_eq!(rep.found[2], 0, "no archive-anchored claim — R2 silent");
         assert_eq!(
             rep.found[3], 0,
             "counts of distinct series are not a double counting (R3 stays silent)"
@@ -805,7 +956,7 @@ mod tests {
     #[test]
     fn verbal_overdeclaration_stays_silent() {
         let text = "# Probe\n## Result\nthe hypothesis holds for the steepest step measured\n";
-        let rep = analyze_text("v_fixture", text);
+        let rep = analyze_text("v_fixture", text, None);
         let total: usize = rep.found.iter().sum();
         assert_eq!(
             total, 0,
