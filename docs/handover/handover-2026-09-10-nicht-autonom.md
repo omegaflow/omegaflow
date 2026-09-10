@@ -2,7 +2,7 @@
   title: Handover — nicht-autonom: was die Kybernautin nicht selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: ec29d64c7bf33691167859f261b4376d6a8e63b7d5a531626464fc20799fb3ed
+  sha256: df0e43241cddb589bf693751d222392116de766821ed336248bcf8cfb39185fd
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -22,7 +22,13 @@ Entsperrer. Die autonomen Pflichten stehen im Gegen-Handover.
   Backup-Akt selbst ist Operator-Sache.
 - **adoption** — Repo public + Drei-Mail-Block (Toth/Turyshev/Markwardt).
 - **lisa-pathfinder** — Δg-Zeitreihe anfragen; Antwort = Messung.
-- **Hi-net/NIED** — NIED verlangt Registrierung.
+- **Hi-net/NIED** — registriert 10.09.; wartet auf die Abschlussmail (Login dann
+  `omegaflow` / `Bygrf6dbW3FD`).
+- **NOIRLab Data Lab** — Registrierung eingereicht 10.09.; wartet auf die
+  menschliche Freigabe (Login `omegaflow`).
+- **IGETS-SFTP-Passwort** — Anforderungs-Mail sendfertig in
+  `docs/auftrag/auftrag-igets-sftp-passwort-antrag.md`; Operator sendet an
+  `igets-support@gfz.de`.
 - **TNO-Kette (Weberin)** — keine MPC-unabhängige Linie der 8.082-Menge
   (not-published).
 
