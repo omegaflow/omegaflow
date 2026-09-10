@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: acac7ca7f2526f8a9838f4bf47f5cfe91c28b4b58d5ce6dd712dba47397cbebc
+  sha256: f0877fecdfe6dbdcf4712c01476574615f03934caa6dfc8ddb9b6f6888c684a6
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -252,17 +252,26 @@ nach CI, Run 34400114106):
 ## Source-Port & Katalog-Reste
 
 - Kompilat-Stufe: geschlossen, siehe oben (§4 trägt `kompiliert`).
-- Queue: 10 Untested-Korpora; 38 VizieR-Bulks; 77 Archeology-Gaps. Die 10
-  `bestand`-Korpus-Dateien: Herkunft geklärt und geschlossen (`e197d71`) — der
-  registrierte Pfad zeigte auf die alte archive-root-Adresse, die Korpora liegen
-  byte-identisch zweifach unter /home/johannes/backup/archive/.
+- Queue: gemessen 2026-09-10 (Grind-Flash + Grind-Pro): die 10 Untested-Korpora
+  tragen **0 Survivors** (konvertiert → `kompiliert`, parse-fähiger Teil Probe
+  0/N, Rest `ausstehend`); die 38 VizieR-Bulks sind recheckt (12 `verifiziert`,
+  Rest offen). Die 77 Archeology-Gaps waren **bereits disponiert** — die
+  Re-Verifikation bestätigt die bestehenden Register-Einträge (voids in
+  `dead_sources.φ`, blocked in `blocked_sources.φ`, disponiert in `sources.φ`);
+  der geparkte Rest liegt im `ledger.φ` (34 `geparkt` mit benanntem Gap). Offen:
+  vier Review-Fragen (cddis finals2000A blocked-vs-EOP-Duplikat, supermag, ESO,
+  maia-finals2000A-Zweit-Datei). Die 10 `bestand`-Korpus-Dateien: Herkunft
+  geklärt und geschlossen (`e197d71`) — die Korpora liegen byte-identisch
+  zweifach unter /home/johannes/backup/archive/.
 - Katalog-Lücken (RAVE DR6, APOGEE/GALAH, HyperLEDA, TGSS ADR, VLASS, AMS-02,
   GLADE+); FITS/Parquet/netCDF-4/OPeNDAP/GRIB-2-Struktur-Reader (FITS +
   netCDF-4 + CDF-1/2 gebaut; Parquet/GRIB-2/OPeNDAP offen).
 - S3-Harvester-Namespace (NOAA-NODD-Buckets): `ListBucketResult`-Parser-Gap
-  geschlossen (`d41cc87`); Inventar `noaa_nodd_inventory.φ` steht (101 Datasets);
-  die Bucket-Dispositionen je Dataset bleiben Register-Frage (Litmus:
-  url-line / Compiler-Lease / Konsument).
+  geschlossen (`d41cc87`); Inventar `noaa_nodd_inventory.φ` steht (101 Datasets).
+  Rat 2026-09-10: **Bucket-Litmus-Regel verdiktet** (Drei-Fragen-Kette
+  Oszillator-Gate → Form → Manifestation + `pending`-Überlauf; C1-Doktrin
+  bindend) — als note im `ledger.φ`; die Disposition der 101 Datasets ist der
+  benannte Folgeschritt.
 - Korpora-Heim (Architektur-Frage, offen 2026-09-10): die ~120-MB-Katalog-
   Korpora (gitignored, lokal) könnten in ein privates Repo, womit die
   Discovery-Front (Lens → `--probe` → Review) CI-fähig würde — die Keys sind
