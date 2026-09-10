@@ -356,22 +356,35 @@ pub fn parse_json_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
 
 pub fn tables(root: &str) -> Option<Vec<(String, Option<String>, Option<String>)>> {
     let adql = "SELECT table_name, table_type, schema_name FROM tap_schema.tables".to_string();
-    let body = query_sync(root, &adql, Format::Json)?;
-    let parsed = json::parse_json(&body)?;
-    let data = match &parsed {
-        json::JsonVal::Obj(m) => m.get("data").and_then(json::as_arr)?,
-        json::JsonVal::Arr(a) => a,
-        _ => return None,
-    };
-    let mut out = Vec::new();
-    for row in data {
-        let o = json::as_obj(row)?;
-        let name = json::get_str(o, "table_name")?;
-        let typ = json::get_str(o, "table_type");
-        let schema = json::get_str(o, "schema_name");
-        out.push((name, typ, schema));
+    for c in sync_candidates(root) {
+        let Some(body) = query_sync(&c, &adql, Format::Json) else {
+            continue;
+        };
+        let Some((cols, rows)) = parse_json_rows(&body) else {
+            continue;
+        };
+        let idx = |name: &str| cols.iter().position(|x| x.eq_ignore_ascii_case(name));
+        let (Some(i_name), Some(i_type), Some(i_schema)) =
+            (idx("table_name"), idx("table_type"), idx("schema_name"))
+        else {
+            continue;
+        };
+        let mut out = Vec::new();
+        for r in rows {
+            let cell = |i: usize| {
+                r.get(i)
+                    .and_then(|s| if s.is_empty() { None } else { Some(s.clone()) })
+            };
+            let Some(name) = cell(i_name) else {
+                continue;
+            };
+            out.push((name, cell(i_type), cell(i_schema)));
+        }
+        if !out.is_empty() {
+            return Some(out);
+        }
     }
-    Some(out)
+    None
 }
 
 pub struct CensusLine {
