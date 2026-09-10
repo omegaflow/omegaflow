@@ -1,0 +1,3522 @@
+# re3data — Registry of Research Data Repositories (xml_harvester, KOMPLETT, live 2026-08-16)
+# format: <id> | <name> — >3.000 Repositorien, der Meta-Katalog für weitere Adapter-Discovery
+r3d100000001 | Odum Institute Archive Dataverse
+r3d100000002 | Access to Archival Databases
+r3d100000004 | Datenbank Gesprochenes Deutsch
+r3d100000005 | UNC Dataverse
+r3d100000006 | Archaeology Data Service
+r3d100000007 | ESO Science Archive Facility
+r3d100000011 | CEDA Archive
+r3d100000012 | Biological and Chemical Oceanography Data Management Office
+r3d100000013 | Blue Obelisk Data Repository
+r3d100000015 | California Water CyberInfrastructure
+r3d100000016 | Canadian Astronomy Data Centre
+r3d100000017 | RNA Abundance Database
+r3d100000018 | Cell Centered Database
+r3d100000019 | ESS-DIVE
+r3d100000020 | Coastal Data Information Program
+r3d100000021 | Chemical Database Service
+r3d100000022 | Comprehensive Epidemiological Data Resource
+r3d100000023 | Cell Image Library
+r3d100000027 | CiteSeerX
+r3d100000028 | The Data Hub
+r3d100000031 | Google Code Project Hosting
+r3d100000032 | Communication Portal for Accessing Social Statistics
+r3d100000033 | Forest Global Earth Observatory
+r3d100000034 | Cornell University Geospatial Information Repository
+r3d100000036 | Goddard Earth Sciences Data and Information Services Center
+r3d100000037 | Oak Ridge National Laboratory Distributed Active Archive Center for Biogeochemical Dynamics
+r3d100000038 | Australian Antarctic Data Centre
+r3d100000039 | Global Biodiversity Information Facility
+r3d100000042 | The World Bank Open Data
+r3d100000043 | DataBasin
+r3d100000044 | DRYAD
+r3d100000045 | DataONE
+r3d100000046 | European Environment Agency, Datasets
+r3d100000047 | Edinburgh DataShare
+r3d100000049 | Potsdam Carte du Ciel Plates
+r3d100010035 | Chandra Data Archive
+r3d100010050 | Geoscience Data Exchange at NSF NCAR
+r3d100010051 | Harvard Dataverse
+r3d100010052 | Encyclopedia of Astronomy and Astrophysics
+r3d100010054 | U.S. Geological Survey
+r3d100010055 | European Climate Assessment &amp; Dataset project
+r3d100010056 | CoRIS
+r3d100010057 | eCrystals
+r3d100010059 | ShareGeo Open
+r3d100010060 | OpenEI
+r3d100010061 | Atmospheric Science Data Center
+r3d100010062 | SAFER-Data
+r3d100010063 | Earth Resources Observation and Science Center
+r3d100010064 | Ecological Archives
+r3d100010065 | JEDI
+r3d100010066 | figshare
+r3d100010067 | Forschungsdatenzentrum der Rentenversicherung
+r3d100010068 | World Data Centre for Greenhouse Gases
+r3d100010069 | International Directory Network
+r3d100010070 | Nothobranchius furzeri Information Network
+r3d100010071 | DOE Joint Genome Institute Genome  Portal
+r3d100010072 | Environmental data explorer
+r3d100010073 | GeoCommons Archive
+r3d100010074 | GeoConnections - Discovery Portal
+r3d100010075 | GeoGratis
+r3d100010076 | Chesapeake Bay Environmental Observatory
+r3d100010078 | Data.gov
+r3d100010079 | High Energy Astrophysics Science Archive Research Center
+r3d100010080 | X-Ray Database
+r3d100010081 | HEPData
+r3d100010082 | CUAHSI
+r3d100010083 | HubbleSite
+r3d100010084 | Historical hydrographic data from BSH
+r3d100010085 | Inorganic Crystal Structure Database
+r3d100010086 | MIRAGE
+r3d100010087 | Aktuelle Wetter- und Klimawerte deutscher Stationen
+r3d100010088 | Ocean Biodiversity Information System
+r3d100010089 | NASA/IPAC InfraRed Science Archive
+r3d100010090 | IUBio-Archive
+r3d100010091 | JASPAR
+r3d100010092 | KNB Data Repository
+r3d100010093 | National Center for Ecological Analysis and Synthesis Data Repository
+r3d100010094 | Kujawsko-Pomorska Digital Library
+r3d100010096 | LOGKOW
+r3d100010097 | Mansfeld&#039;s World Database of Agriculture and Horticultural Crops
+r3d100010098 | World Data Centre for Precipitation Chemistry
+r3d100010100 | MolTable
+r3d100010101 | MorphoBank
+r3d100010102 | bii
+r3d100010103 | IPB MassBank
+r3d100010104 | EnvBase
+r3d100010105 | NEEShub
+r3d100010106 | Neuroscience Information Framework
+r3d100010107 | NeuroMorpho.Org
+r3d100010108 | National Forestry Database
+r3d100010109 | NASA Distributed Active Archive Center at National Snow &amp; Ice Data Center
+r3d100010110 | National Snow and Ice Data Center
+r3d100010111 | NASA Space Science Data Coordinated Archive
+r3d100010113 | ONSchallenge
+r3d100010114 | Open Research Data
+r3d100010115 | Open Context
+r3d100010116 | Oxford Text Archive
+r3d100010117 | fossilworks
+r3d100010118 | Forschungsdatenzentrum des SOEP
+r3d100010119 | Spec Patterns
+r3d100010120 | UK Polar Data Centre
+r3d100010121 | PDS
+r3d100010123 | MetaCrop
+r3d100010124 | CR-EST
+r3d100010125 | NIST XCOM
+r3d100010126 | GISAID
+r3d100010129 | PubChem
+r3d100010130 | Journal of Applied Econometrics Data Archive
+r3d100010131 | CyberCell Database
+r3d100010132 | Multimodal Learning Corpus Exchange
+r3d100010133 | UP Research Data Repository
+r3d100010134 | PANGAEA
+r3d100010135 | Karlsruhe Astrophysical Database of Nucleosynthesis in Stars
+r3d100010136 | World Data System Prototype Data Portal
+r3d100010137 | PRoteomics IDEntifications Database
+r3d100010138 | Australian Data Archive
+r3d100010139 | Hamburger Zentrum für Sprachkorpora Korpus Repositorium
+r3d100010140 | CLAPOP
+r3d100010141 | GAWSIS
+r3d100010142 | FAIRsharing
+r3d100010143 | National Space Science Data Center
+r3d100010144 | World Data Centre for Meteorology, Obninsk
+r3d100010145 | World Data Centre for Rockets, Satellite and Rotation of the Earth
+r3d100010146 | Swedish National Data Service
+r3d100010147 | Repository SAW Leipzig
+r3d100010148 | Digitale Sammlungen
+r3d100010149 | Longitudinal Aging Study Amsterdam
+r3d100010150 | LISS Panel
+r3d100010151 | PAC - Archiving Platform CINES
+r3d100010152 | Tübingen Archive of Language Resources
+r3d100010153 | VegBank
+r3d100010154 | VENUS in the Salish Sea
+r3d100010155 | The World Atlas of Language Structures
+r3d100010156 | World Data Center for Remote Sensing of the Atmosphere
+r3d100010157 | USU Institutional Repository
+r3d100010158 | Federal Reserve Economic Data
+r3d100010159 | NASA Socioeconomic Data and Applications Center
+r3d100010160 | World Data Center for Human Interactions in the Environments
+r3d100010161 | AQUiLA
+r3d100010163 | SIMBAD Astronomical Database
+r3d100010164 | SkyView
+r3d100010165 | SLGO Data Catalog
+r3d100010166 | SMOKA Science Archive
+r3d100010167 | SourceForge
+r3d100010168 | Space Physics Data Facility
+r3d100010169 | SumsDB
+r3d100010170 | TreeBASE
+r3d100010171 | SDAC
+r3d100010172 | World Data Center for Aerosols
+r3d100010173 | MIT GeoData Repository
+r3d100010174 | West African Vegetation
+r3d100010175 | WestNile.ca.gov
+r3d100010177 | World Radiation Data Centre
+r3d100010178 | CrystalEye (beta)
+r3d100010180 | 1000 Genomes
+r3d100010181 | Alberta Geological Survey
+r3d100010182 | Agency for Healthcare Research and Quality, Data &amp; Surveys
+r3d100010183 | UK-AIR
+r3d100010184 | GDP Drifter Data
+r3d100010185 | The Arabidopsis Information Resource
+r3d100010186 | ARM Data Center
+r3d100010187 | US Department of Commerce, Bureau of Economic Analysis, Interactive Data Application
+r3d100010188 | Beta Cell Biology Consortium Reagent and Data Resources
+r3d100010189 | National Geoscience Data Centre
+r3d100010190 | Forschungsdatenzentrum im Bundesinstitut für Berufsbildung
+r3d100010191 | Biological Magnetic Resonance Data Bank
+r3d100010192 | British Oceanographic Data Centre
+r3d100010193 | BRC
+r3d100010194 | Bugwood Image Database System
+r3d100010195 | CAIDA Data
+r3d100010196 | VectorSurv
+r3d100010197 | Cambridge Structural Database
+r3d100010198 | Centers for Disease Control and Prevention, Data &amp; Statistics
+r3d100010199 | Environmental Information Data Centre
+r3d100010200 | United States Census Bureau
+r3d100010201 | LMU-ifo Economics &amp; Business Data Center
+r3d100010202 | CESSDA Data Catalogue
+r3d100010203 | IAU Minor Planet Center
+r3d100010204 | National Forestry and Grassland Science Data Center
+r3d100010205 | ChemSpider
+r3d100010206 | ChemSynthesis
+r3d100010207 | Center for Integrated Earth System Information
+r3d100010208 | The SuiteSparse Matrix Collection
+r3d100010209 | CLARIN-ERIC
+r3d100010210 | Historical Climate Data Canada
+r3d100010211 | ClinicalTrials.gov
+r3d100010212 | Constrained Local UniversE Simulations
+r3d100010213 | Crystallography Open Database
+r3d100010214 | EASY
+r3d100010215 | UK Data Archive
+r3d100010216 | 4TU.ResearchData | science.engineering.design
+r3d100010217 | DataFirst
+r3d100010218 | DNA Data Bank of Japan
+r3d100010219 | DSMZ
+r3d100010220 | WorldWideMolecularMatrix
+r3d100010221 | EMBL-EBI
+r3d100010222 | Array Express
+r3d100010223 | Expression Atlas
+r3d100010224 | The Canadian National Atmospheric Chemistry Database
+r3d100010225 | HYDAT
+r3d100010226 | Alternative Fuels Data Center
+r3d100010227 | U.S. Energy Information Administration
+r3d100010228 | Ensembl
+r3d100010229 | Encyclopedia of Life
+r3d100010230 | UK Data Service
+r3d100010232 | Eumetsat
+r3d100010233 | European Social Survey
+r3d100010234 | eyeMoviePedia
+r3d100010235 | FACHPORTALpädagogik.DE
+r3d100010236 | Fachinformationssystem Geophysik
+r3d100010237 | Das Kristallstrukturdepot
+r3d100010238 | Flora von Frankfurt am Main
+r3d100010239 | Forestry Images
+r3d100010241 | RES³T
+r3d100010243 | UCSC Genome Browser
+r3d100010245 | GeoNames
+r3d100010246 | GEON
+r3d100010247 | GSA Data Repository
+r3d100010248 | GermOnline
+r3d100010249 | ALLBUS
+r3d100010250 | HISTAT
+r3d100010251 | GESIS Suche
+r3d100010252 | Global Health Data Exchange
+r3d100010253 | GO-GEO
+r3d100010254 | The Global Heat Flow Database of the International Heat Flow Commission
+r3d100010255 | Inter-university Consortium for Political and Social Research
+r3d100010256 | Data Sharing for Demographic Research
+r3d100010257 | Health and Medical Care Archive
+r3d100010259 | National Archive of Computerized Data on Aging
+r3d100010260 | National Archive of Criminal Justice Data
+r3d100010261 | National Addiction and Health Data Archive Program
+r3d100010262 | Resource Center for Minority Data
+r3d100010263 | Substance Abuse and Mental Health Data Archive
+r3d100010264 | Das Deutsche Referenzkorpus
+r3d100010266 | Mouse Genome Informatics
+r3d100010267 | International Ocean Discovery Program
+r3d100010268 | Incorporated Research Institutions for Seismology
+r3d100010269 | J. Craig Venter Institute
+r3d100010270 | State Archives of Baden-Württemberg
+r3d100010271 | OLAC
+r3d100010272 | Environmental Data Initiative Repository
+r3d100010273 | Marine Geoscience Data System
+r3d100010274 | The whole brain Atlas
+r3d100010275 | Marine Environmental Data Section
+r3d100010276 | Melanoma Molecular Map Project
+r3d100010278 | The ROSAT Mission
+r3d100010279 | Brain Biodiversity Bank
+r3d100010280 | Henry A. Murray Research Archive at IQSS, Harvard University
+r3d100010281 | NatureServe
+r3d100010282 | NCBI
+r3d100010283 | Gene Expression Omnibus
+r3d100010284 | Peptidome
+r3d100010285 | NCBI Reference Sequence Database
+r3d100010286 | NOAA National Centers  for Environmental Information - formerly: National Climatic Data Center
+r3d100010287 | NC OneMap
+r3d100010288 | The National Archives
+r3d100010289 | NERC Earth Observation Data Centre
+r3d100010290 | National Ecological Observatory Network
+r3d100010291 | The Netlib
+r3d100010292 | NOAA National Centers for Environmental Information - formerly: National Geophysical Data Center
+r3d100010293 | World Data Center for Cosmic Rays
+r3d100010294 | WDC for Ionosphere and Space Weather
+r3d100010295 | Nobeyama Radio Polarimeters
+r3d100010297 | Cold and Arid Regions Science Data Center at Lanzhou
+r3d100010299 | World Data Center for Climate
+r3d100010300 | International Geodynamics and Earth Tide Service
+r3d100010301 | World Data Centre for Geomagnetism, Copenhagen
+r3d100010303 | ISRIC - World Soil Information
+r3d100010304 | BASS2000
+r3d100010305 | NOAA National Centers for Environmental Information - World Data Service  for Oceanography
+r3d100010309 | The USGS Land Cover Institute
+r3d100010310 | World Data Center for Meteorology, Asheville
+r3d100010311 | NOAA National Centers for Environmental Information -  Paleoclimatology Data
+r3d100010312 | International Earth Rotation and Reference Systems Service
+r3d100010313 | National Earthquake Information Center
+r3d100010314 | Chemical Effects in Biological Systems
+r3d100010315 | Visible Human Project
+r3d100010316 | NMRshiftDB
+r3d100010318 | Nuclear Data Portal
+r3d100010320 | NLR Geospatial Data Science
+r3d100010321 | NLR Transforming energy - grid modernization
+r3d100010323 | European Election Database
+r3d100010324 | OECD iLibrary Statistics
+r3d100010325 | openLandscapes
+r3d100010326 | OSTI
+r3d100010327 | RCSB Protein Data Bank
+r3d100010328 | RDC at ZPID
+r3d100010329 | RAVE database
+r3d100010330 | Child Care &amp; Early Education Research Connections
+r3d100010331 | Roper Center Public Opinion Archives
+r3d100010333 | Roper Center for Public Opinion Research: Elections and Presidents
+r3d100010335 | Wellcome Trust Sanger Institute, Scientific resources
+r3d100010336 | Sloan Digital Sky Survey
+r3d100010337 | SeaDataNet
+r3d100010338 | National Biodiversity Network Atlas
+r3d100010339 | Systema Dipterorum
+r3d100010341 | The ACE Science Center
+r3d100010342 | Space Science and Engineering Center Satellite Data Services
+r3d100010344 | Global Terrorism Database
+r3d100010345 | Statistics New Zealand
+r3d100010346 | Database of Genomic Variants
+r3d100010347 | tDAR
+r3d100010348 | TESS
+r3d100010349 | Association of Religion Data Archives
+r3d100010350 | BioGRID
+r3d100010351 | Tree of Life Web Project
+r3d100010352 | CRYSTMET
+r3d100010354 | THREDDS Data Server
+r3d100010355 | Unidata Internet Data Distribution
+r3d100010356 | Unidata&#039;s RAMADDA
+r3d100010357 | UniProt
+r3d100010358 | National Virtual Observatory
+r3d100010359 | Naval Oceanography Portal
+r3d100010360 | Scientific Registry of Transplant Recipients
+r3d100010361 | United States Transuranium &amp; Uranium Registries
+r3d100010362 | The USA National Phenology Network
+r3d100010363 | Visual Arts Data Service
+r3d100010364 | Wand- und Deckenmalerei in Lübecker Häusern 1300 bis 1800
+r3d100010365 | African Plants
+r3d100010366 | Woods Hole Oceanographic Institution - Data &amp; Repositories
+r3d100010367 | World Ozone and Ultraviolet Radiation Data Centre
+r3d100010368 | FORS - Swiss Centre of Expertise in the Social Sciences
+r3d100010370 | Science Data Centre Leibniz-Institute for Solarphysics
+r3d100010371 | ZACAT
+r3d100010372 | ZINC
+r3d100010373 | Launchpad
+r3d100010374 | Canadian Space Science Data Portal
+r3d100010375 | GitHub
+r3d100010376 | Land Processes Distributed Active Archive Center
+r3d100010377 | NIDDK Central Repository
+r3d100010379 | Climate Change Knowledge Portal
+r3d100010381 | Bavarian Archive for Speech Signals
+r3d100010382 | IDS Repository
+r3d100010383 | The Language Archive
+r3d100010384 | CLARIND-UdS: Language Resources Repository at UdS
+r3d100010385 | Deutsches Textarchiv
+r3d100010386 | LINDAT/CLARIAH-CZ repository
+r3d100010387 | CLARIN-DK-UCPH Repository
+r3d100010390 | Forschungsdatenzentrum Bildung
+r3d100010392 | Geothermal Information System
+r3d100010393 | International Mouse Strain Resource
+r3d100010395 | LAUDATIO
+r3d100010398 | ARS
+r3d100010399 | ZEW Forschungsdatenzentrum
+r3d100010400 | Banco de Información para la Investigación Aplicada en Ciencias Sociales, Repositorio Institucional
+r3d100010401 | KASCADE Cosmic Ray Data Centre
+r3d100010402 | KNMI Climate Explorer
+r3d100010403 | Barbara A. Mikulski Archive for Space Telescopes
+r3d100010404 | Southeast Asian Climate Assessment &amp; Dataset
+r3d100010405 | Integrated Climate Data Center
+r3d100010406 | Wetter, Wolken, Klima
+r3d100010407 | Der Karlsruher Wolkenatlas
+r3d100010408 | The Antibody Registry
+r3d100010409 | ASTM International
+r3d100010410 | BGS GeoScenic
+r3d100010411 | Comprehensive R Archive Network
+r3d100010412 | EarthChem Library
+r3d100010413 | Ontology Lookup Service
+r3d100010414 | Molecular INTeraction Database
+r3d100010415 | NCBI Taxonomy
+r3d100010416 | Online Mendelian Inheritance in Man
+r3d100010417 | Rat Genome Database
+r3d100010418 | RunMyCode
+r3d100010419 | Saccharomyces Genome Database
+r3d100010420 | System for Earth Sample Registration
+r3d100010421 | The Zebrafish Information Network
+r3d100010422 | ThermoML
+r3d100010423 | Woods Hole Open Access Server
+r3d100010424 | WormBase
+r3d100010425 | Forschungsdatenzentrum der Bundesagentur für Arbeit im Institut für Arbeitsmarkt und Berufsforschung
+r3d100010426 | Forschungsdatenzentren der Statistischen Ämter des Bundes und der Länder
+r3d100010427 | Forschungsdatenzentrum am IQB
+r3d100010429 | Forschungsdatenzentrum des Deutschen Zentrums für Altersfragen
+r3d100010430 | Survey of Health, Ageing and Retirement in Europe
+r3d100010431 | Pairfam
+r3d100010432 | Forschungsdatenzentrum Internationale Umfrageprogramme
+r3d100010433 | Research Data Center Elections
+r3d100010434 | FDZ German Microdata Lab
+r3d100010435 | Forschungsdatenzentrum Ruhr am RWI
+r3d100010436 | Forschungsdatenzentrum  am Robert Koch Institut
+r3d100010437 | Bundeszentrale für Gesundheitliche Aufklärung Studien
+r3d100010438 | Forschungsdatenzentrum Wissenschaftsstatistik
+r3d100010439 | FDZ-BO
+r3d100010440 | International Data Service Center of the Institute of Labor Economics
+r3d100010441 | Measures of Effective Teaching Longitudinal Database
+r3d100010442 | World Data Center for Geography
+r3d100010443 | Ukrainian Geospatial Data Center
+r3d100010444 | World Data Center for Oceanography, Obninsk
+r3d100010446 | World Data Center for Solar-Terrestrial Physics, Moscow
+r3d100010447 | World Data Center for Solid Earth Physics
+r3d100010448 | World Data Center of Microorganisms
+r3d100010449 | Canada&#039;s Michael Smith Genome Sciences Centre
+r3d100010450 | EDINA
+r3d100010451 | Pacific and Regional Archive for Digital Sources in Endangered Cultures
+r3d100010454 | Data Center for Aurora in NIPR
+r3d100010455 | ICET
+r3d100010457 | World Data Centre for Glaciology, Cambridge
+r3d100010463 | DARTS
+r3d100010464 | Research Data Australia
+r3d100010465 | CEACS Data Library
+r3d100010467 | HDAP
+r3d100010468 | Zenodo
+r3d100010469 | Movebank Data Repository
+r3d100010472 | Phaidra Universität Wien
+r3d100010473 | myExperiment
+r3d100010474 | International Food Policy Research Institute Dataverse
+r3d100010475 | DataFed
+r3d100010477 | ANU Data Commons
+r3d100010478 | GigaDB
+r3d100010479 | DataBox
+r3d100010480 | COSYNA Data web portal
+r3d100010482 | GAVO Data Centre
+r3d100010483 | AUSSDA - Austrian Social Science Data Archive
+r3d100010484 | Czech Social Science Data Archive
+r3d100010485 | Estonian Social Science Data Archive
+r3d100010486 | Rigsarkivets Digital Data
+r3d100010487 | Slovenian Social Science Data Archives
+r3d100010488 | LISER
+r3d100010489 | Centro de Investigaciones Sociologicas Data Bank y Estudios
+r3d100010490 | Finnish Social Science Data Archive
+r3d100010491 | Social Data Network
+r3d100010492 | LiDA
+r3d100010493 | Sikt Research Data Archive
+r3d100010494 | Quetelet-Progedo
+r3d100010495 | UNIDATA - Bicocca Data Archive
+r3d100010496 | TARKI Data Archive
+r3d100010497 | Irish Social Science Data Archive
+r3d100010498 | Romanian Social Data Archive
+r3d100010499 | NAGRP Blast Center
+r3d100010501 | Crustal Dynamics Data Information System
+r3d100010502 | GHRC
+r3d100010503 | LAADS DAAC
+r3d100010504 | Ocean Color Web
+r3d100010505 | Physical Oceanography Distributed Active Archive Center
+r3d100010506 | Alaska Satellite Facility SAR Data Center
+r3d100010508 | International Laser Ranging Service
+r3d100010509 | Alvin Frame-Grabber System
+r3d100010510 | Jason Virtual Van
+r3d100010511 | WHOI Ship Data-Grabber System
+r3d100010512 | WHOI Argo Program
+r3d100010514 | Woods Hole Oceanographic Institution Data Library and Archives
+r3d100010515 | WHOI Seafloor Data and Observation Visualization Environment
+r3d100010516 | Seafloor Sediments Data Collection
+r3d100010517 | U.S. GLOBal Ocean ECosystems Dynamics
+r3d100010519 | OAFlux
+r3d100010520 | Upper Ocean Processes Group
+r3d100010521 | US JGOFS Data System
+r3d100010522 | Martha&#039;s Vineyard Coastal Observatory
+r3d100010524 | NASA Exoplanet Archive
+r3d100010525 | NASA/IPAC Extragalactic Database
+r3d100010526 | Keck Observatory Archive
+r3d100010527 | European Nucleotide Archive
+r3d100010528 | GenBank
+r3d100010529 | International Long Term Ecological Research
+r3d100010530 | Earthdata powered by EOSDIS
+r3d100010531 | International VLBI Service for Geodesy and Astrometry of NASA
+r3d100010532 | OceanDataPortal
+r3d100010533 | International Space Environment Service
+r3d100010537 | SOAP
+r3d100010538 | Protein Data Bank in Europe
+r3d100010539 | ChEMBL
+r3d100010541 | National Archives
+r3d100010542 | ESTHER database
+r3d100010543 | Protein Lysine Modification Database
+r3d100010544 | DrugBank
+r3d100010545 | The Dataweb Dataverse
+r3d100010546 | EcoGene
+r3d100010547 | Eurostat
+r3d100010548 | Infevers
+r3d100010549 | Greengenes
+r3d100010550 | MiCroKitS
+r3d100010551 | Nucleic Acid Database
+r3d100010552 | Mouse Phenome Database
+r3d100010553 | REFOLDdb
+r3d100010554 | South African Data Archive
+r3d100010555 | Stanford Microarray Database
+r3d100010556 | MyTardis
+r3d100010557 | Universal PBM Resource for Oligonucleotide Binding Evaluation
+r3d100010558 | NERC Data Catalogue Service
+r3d100010559 | CanGEM
+r3d100010560 | Codex Sinaiticus
+r3d100010561 | DisProt
+r3d100010562 | Electron Microscopy Data Bank
+r3d100010563 | Pseudobase
+r3d100010564 | Emage
+r3d100010565 | GWAS Central
+r3d100010566 | miRBase
+r3d100010567 | Old Bailey Proceedings Online
+r3d100010568 | Office for National Statistics
+r3d100010569 | UK Reading Experience Database
+r3d100010570 | PHI-base
+r3d100010571 | QTL Archive
+r3d100010572 | World Values Survey
+r3d100010573 | caArray
+r3d100010574 | caNanoLab
+r3d100010575 | Michigan Corpus of Academic Spoken English
+r3d100010578 | IEDA
+r3d100010579 | DATA.GOV.UK
+r3d100010580 | International GNSS Service
+r3d100010582 | Chinese Astronomical Data Center
+r3d100010583 | Plasma Physics Data Center
+r3d100010584 | Strasbourg Astronomical Data Center
+r3d100010585 | E. coli Genetic Resources at Yale
+r3d100010586 | dictybase
+r3d100010587 | EarthScope
+r3d100010588 | World Data Center for Renewable Resources and Environment
+r3d100010589 | FANTOM
+r3d100010590 | The Fish Database of Taiwan
+r3d100010591 | FlyBase
+r3d100010593 | HealthData.gov
+r3d100010594 | Herschel Science Archive
+r3d100010596 | International Service of Geomagnetic Indices
+r3d100010597 | The Infrared Space Observatory data archive
+r3d100010598 | Legacy Archive for Microwave Background Data Analysis
+r3d100010599 | DSpace@MIT
+r3d100010600 | Macaulay Library
+r3d100010601 | WDC Sunspot Index and Long-term Solar Observations
+r3d100010602 | Space Physics Interactive Data Resource
+r3d100010603 | Spitzer Heritage Archive
+r3d100010604 | STRING
+r3d100010605 | SWISS-MODEL Repository
+r3d100010606 | Tropical Ecology Assessment and Monitoring Network
+r3d100010607 | United States Health Information Knowledgebase
+r3d100010608 | World Data Center for Geomagnetism, Kyoto
+r3d100010609 | World Data Center for Geoinformatics and Sustainable Development
+r3d100010610 | ALEXA
+r3d100010611 | C. Elegans Gene Expression
+r3d100010612 | ChIP-Seq Transcription Factor Data
+r3d100010613 | Physical mapping data at Canada&#039;s Michael Smith Genome Sciences Centre - Data
+r3d100010614 | Follicular Lymphoma Genome Data at Canada&#039;s Michael Smith Genome Sciences Centre (BCGSC)
+r3d100010615 | Comparative Mammalian Brain Collections
+r3d100010616 | BRENDA
+r3d100010617 | Candida Genome Database
+r3d100010618 | DTU Bioinformatics
+r3d100010619 | cisRED
+r3d100010620 | Apollo
+r3d100010621 | CDC - Climate Data Center
+r3d100010622 | Canadas National Aquatic Biological Specimen Bank and Database
+r3d100010623 | National Pollutant Release Inventory
+r3d100010624 | Berkeley Drosophila Genome Project
+r3d100010625 | ECCAD - the GEIA database
+r3d100010626 | GeneDB
+r3d100010627 | World Glacier Monitoring Service
+r3d100010628 | Global Earth Observation Grid
+r3d100010629 | GEOMIND
+r3d100010630 | GOVDATA
+r3d100010631 | Academic Seismic Portal at UTIG
+r3d100010632 | Insect Images
+r3d100010633 | Invasive.org
+r3d100010634 | IPM Images
+r3d100010635 | World Data Centre for Space Weather
+r3d100010636 | International Mouse Phenotyping Consortium
+r3d100010637 | American Type Culture Collection
+r3d100010638 | Antarctic &amp; Southern Ocean Data Portal
+r3d100010639 | GeoPRISMS Data Portal
+r3d100010640 | Global Multi-Resolution Topography Data Portal
+r3d100010641 | MARGINS Data Collection
+r3d100010642 | NDSF Data Portal
+r3d100010643 | Ridge 2000 Data Portal
+r3d100010644 | Academic Seismic Portal at LDEO
+r3d100010645 | Mouse Atlas of Gene Expression
+r3d100010646 | Virgo Millennium Database
+r3d100010648 | Expressed Sequence Tags database
+r3d100010649 | database of Sequence Tagged Sites
+r3d100010650 | NCBI Gene
+r3d100010651 | AceView
+r3d100010652 | dbSNP
+r3d100010653 | Conserved Domain database
+r3d100010654 | National Marine Data and Information Service
+r3d100010655 | OpenTopography
+r3d100010656 | ORegAnno
+r3d100010657 | INTEGRAL data archives
+r3d100010659 | Scientific Drilling Database
+r3d100010660 | U.S. Antarctic Program Data Center
+r3d100010661 | Flanders Marine Institute
+r3d100010662 | World Data Centre for Geomagnetism, Edinburgh
+r3d100010664 | World Stress Map
+r3d100010665 | XMM-Newton Science Archive
+r3d100010666 | ASAP
+r3d100010667 | National Air Pollution Surveillance
+r3d100010668 | Met office
+r3d100010669 | IMEx data
+r3d100010670 | Database of Interacting Proteins
+r3d100010671 | IntAct
+r3d100010672 | MatrixDB
+r3d100010673 | The Microbial Protein Interaction Database
+r3d100010675 | Interologous Interaction Database
+r3d100010676 | InnateDB
+r3d100010677 | UniProtKB/Swiss-Prot
+r3d100010680 | UsefulChem
+r3d100010681 | Italian Centre for Astronomical Archive
+r3d100010683 | HomoMINT
+r3d100010684 | domino
+r3d100010685 | virus mentha
+r3d100010689 | Smithsonian Tropical Research Institute Logo - Panama
+r3d100010690 | Khazar University Institutional Repository
+r3d100010691 | Borealis
+r3d100010692 | ProteomeXchange
+r3d100010693 | NEPTUNE Canada
+r3d100010694 | &lt;odesi&gt;
+r3d100010696 | Global Catalogue of Microorganisms
+r3d100010699 | ICRISAT Dataverse
+r3d100010700 | German Centre for Cancer Registry Data
+r3d100010701 | ScholarSphere
+r3d100010703 | UCLA Dataverse
+r3d100010708 | CEPDB
+r3d100010710 | Stanford Digital Repository
+r3d100010712 | Nucastrodata.org
+r3d100010713 | SAO/NASA Astrophysics Data System Dataverse
+r3d100010714 | UK Solar System Data Centre
+r3d100010716 | CRAWDAD
+r3d100010717 | NDAR
+r3d100010718 | heidICON
+r3d100010719 | SPECTRa Project
+r3d100010720 | Loeb Music Library
+r3d100010721 | Chempound
+r3d100010724 | Atomic and Molecular Data Research Center
+r3d100010725 | Atomic and Molecular Data Information System
+r3d100010726 | ALADDIN
+r3d100010727 | OPEN-ADAS
+r3d100010728 | EUROLAS Data Center
+r3d100010729 | GAPHYOR
+r3d100010730 | Canadensys repository
+r3d100010731 | Open Data LMU
+r3d100010732 | Open Rotterdam Glaucoma Imaging Data Sets
+r3d100010734 | CSIRO Data Access Portal
+r3d100010735 | Rolling Deck to Repository
+r3d100010736 | Nationales Bildungspanel
+r3d100010739 | Sandrart.net
+r3d100010741 | Addgene
+r3d100010742 | UCD Digital Library
+r3d100010743 | WURM Project
+r3d100010744 | Animal QTLdb
+r3d100010745 | Enlighten
+r3d100010746 | PMN
+r3d100010747 | Merritt
+r3d100010748 | chemotion
+r3d100010749 | InGeoCloudS
+r3d100010750 | PUB Data Publications
+r3d100010751 | UPF Digital Repository
+r3d100010752 | QUT Research Data Finder
+r3d100010753 | Joint Evaluated Fission and Fusion File
+r3d100010754 | Thermochemical Database
+r3d100010755 | NEA Data Bank Computer Program Services
+r3d100010756 | Canadian Epigenetics, Environment and Health Research Consortium Network
+r3d100010757 | Weed Images
+r3d100010758 | Research Compendia
+r3d100010759 | US Virtual Astronomical Observatory
+r3d100010760 | The Paleobiology Database
+r3d100010761 | AmericasBarometer
+r3d100010762 | UNdata
+r3d100010764 | Southern California Earthquake Center
+r3d100010765 | American Mineralogist Crystal Structure Database
+r3d100010766 | RRUFF Project
+r3d100010767 | Reciprocal Net
+r3d100010768 | American FactFinder
+r3d100010769 | Public Geodata Repository
+r3d100010770 | Biomedical Informatics Research Network
+r3d100010772 | Online Mendelian Inheritance in Animals
+r3d100010773 | Atlantic Oceanographic and Meteorological Laboratory
+r3d100010774 | UniGene
+r3d100010775 | Sequence Read Archive
+r3d100010776 | NCBI Protein
+r3d100010777 | NCBI PopSet
+r3d100010778 | NCBI Nucleotide
+r3d100010779 | NCBI Structure
+r3d100010780 | NCBI Probe
+r3d100010781 | NCBI HomoloGene
+r3d100010782 | NCBI Epigenomics
+r3d100010783 | NCBI GSS
+r3d100010784 | NCBI Protein Clusters
+r3d100010785 | NCBI Genome
+r3d100010786 | NCBI dbVar
+r3d100010788 | NCBI dbGaP
+r3d100010789 | BioModels
+r3d100010790 | National Center for Education Statistics
+r3d100010791 | National Center for Atmospheric Research
+r3d100010794 | Minnesota Population Center
+r3d100010795 | MaizeGDB
+r3d100010796 | Ligand-Gated Ion Channel Database
+r3d100010797 | Immuno Polymorphism Database
+r3d100010798 | InterPro
+r3d100010799 | International Classification of Diseases
+r3d100010800 | NOAA&#039;s Integrated Coral Observing Network
+r3d100010801 | National Science Digital Library
+r3d100010803 | Integrated Relational Enzyme database
+r3d100010804 | IMGT/HLA Database
+r3d100010805 | The National Practitioner Data Bank
+r3d100010806 | Digital Library for Earth System Education
+r3d100010807 | DOE Data Explorer
+r3d100010808 | Genomes OnLine Database
+r3d100010809 | DEWA/GRID-Geneva
+r3d100010810 | OFA Records
+r3d100010811 | Cultural Policy and the Arts National Data Archive
+r3d100010812 | Global Health Observatory Data Repository
+r3d100010813 | Wharton Research Data Services
+r3d100010814 | Database of Genomic Variants Archive
+r3d100010815 | Mechanism and Catalytic Site Atlas
+r3d100010818 | ISPS Data Archive
+r3d100010819 | General Social Survey
+r3d100010820 | The Population Research in Sexual Minority Health Data Archive
+r3d100010821 | TeachingWithData.org
+r3d100010822 | Spectral Database for Organic Compounds
+r3d100010823 | NEW GIST Data Repository
+r3d100010824 | NCAA Student-Athlete Experiences Data Archive
+r3d100010825 | Collaborative Psychiatric Epidemiology Surveys 2001 - 2003
+r3d100010826 | Berman Jewish Data Bank
+r3d100010827 | TRY
+r3d100010828 | Speech and Language Data Repository
+r3d100010829 | India Water Portal
+r3d100010831 | CCHDO
+r3d100010832 | Spatial Data Repository
+r3d100010833 | Morphbank
+r3d100010834 | Biologic Specimen and Data Repository Information Coordinating Center
+r3d100010835 | Land Resource Information Systems Portal
+r3d100010836 | National Historical Geographic Information System
+r3d100010837 | Scholarly Database at Indiana University
+r3d100010838 | Human Mortality Database
+r3d100010839 | Comparative Agendas Project
+r3d100010840 | IAEA Nuclear Data
+r3d100010841 | AidData
+r3d100010842 | Xanthobase
+r3d100010843 | Scripps Institute of Oceanography Explorer
+r3d100010844 | Adult Blood Lead Epidemiology and Surveillance Interactive Database
+r3d100010845 | Census of Agriculture
+r3d100010846 | SoyBase
+r3d100010847 | FAOSTAT
+r3d100010848 | National Mine Map Repository
+r3d100010849 | National Atmospheric Deposition Program
+r3d100010850 | Phytozome
+r3d100010851 | American National Election Studies
+r3d100010852 | Solar Dynamics Observatory
+r3d100010853 | Pig Expression Data Explorer
+r3d100010854 | The International Research Institute for Climate and Society
+r3d100010855 | Registry of Open Data on AWS
+r3d100010856 | Gramene
+r3d100010857 | IonomicHub
+r3d100010858 | Tropical Cyclone Information System
+r3d100010859 | World Register of Marine Species
+r3d100010860 | JPL Multi-angle Imaging SpectroRadiometer
+r3d100010861 | Reactome
+r3d100010862 | Health and Retirement Study
+r3d100010863 | FLOSSmole
+r3d100010864 | Griffith University Research Data Repository
+r3d100010865 | Clouds and the Earth&#039;s Radiant Energy System
+r3d100010866 | Kenya Open Data
+r3d100010867 | Tropical Rainfall Measuring Mission
+r3d100010868 | Data.gov.au
+r3d100010869 | Open Government Canada - Open Data
+r3d100010870 | AHRI Data Repository
+r3d100010871 | IUCN Red List of Threatened Species
+r3d100010872 | NSF GAGE Facility
+r3d100010873 | National Agricultural Statistics Service
+r3d100010874 | XNAT CENTRAL
+r3d100010875 | ExPASy Bioinformatics Resource Portal
+r3d100010876 | U.S. Department of Labor, Bureau of Labor Statistics
+r3d100010877 | ROAR Isolate Database
+r3d100010878 | ComBase
+r3d100010879 | Gateway to Global Aging Data
+r3d100010880 | VectorBase
+r3d100010881 | NCBI dbMHC
+r3d100010882 | EMDataResource
+r3d100010883 | The Global Proteome Machine
+r3d100010884 | Surveillance Epidemiology and End Results
+r3d100010886 | Demographic and Health Surveys
+r3d100010887 | TalkBank
+r3d100010888 | Digital Lunar Orbiter Photographic Atlas of the Moon
+r3d100010889 | PeptideAtlas
+r3d100010890 | Protein Circular Dichroism Data Bank
+r3d100010891 | Rhea
+r3d100010892 | DMITRE Petroleum
+r3d100010894 | International Satellite Cloud Climatology Project
+r3d100010895 | Journal of Cell Biology - JCB DataViewer
+r3d100010896 | EVIA Digital Archive Project
+r3d100010897 | Agri-environmental Research Data Dataverse
+r3d100010898 | Center for Demography of Health and Aging
+r3d100010899 | Measurements Of Pollution In The Troposphere
+r3d100010900 | IRMA Portal
+r3d100010901 | HUGO Gene Nomenclature Committee
+r3d100010902 | Australian National Corpus
+r3d100010903 | Institute of Museum and Library Services Data Collection
+r3d100010904 | Informatics Research Data Repository
+r3d100010905 | NCBI Trace Archive
+r3d100010906 | NASC
+r3d100010907 | B.C. Conservation Data Centre
+r3d100010908 | Atlantic Canada Conservation Data Centre
+r3d100010909 | Canadian Biodiversity Information Facility
+r3d100010910 | PDBj
+r3d100010912 | Fishbase
+r3d100010913 | Store.Synchrotron Data Store
+r3d100010914 | Australian Ocean Data Network Portal
+r3d100010915 | History Data Service
+r3d100010916 | British Geological Survey
+r3d100010917 | Geoscience Australia
+r3d100010918 | Atlas of Living Australia
+r3d100010919 | Terrestrial Ecosystem Research Network
+r3d100010920 | OzFlux
+r3d100010921 | BeetleBase
+r3d100010922 | MozAtlas
+r3d100010923 | Australian Breast Cancer Tissue Bank
+r3d100010924 | OpenNeuro
+r3d100010925 | Hymenoptera Genome Database
+r3d100010926 | Organelle Genome Megasequencing Program
+r3d100010927 | Barcode of Life Data Systems
+r3d100010928 | British Antarctic Survey
+r3d100010929 | Fisheries and Oceans Canada  Pacific Region Data Archive
+r3d100010930 | TB Database
+r3d100010931 | The Human Protein Atlas
+r3d100010932 | Gene Expression Nervous System Atlas
+r3d100010933 | AIMS Data Repository
+r3d100010934 | State of the Salmon
+r3d100010935 | TropFlux
+r3d100010937 | MedEffect Canada - Adverse Reaction Database
+r3d100010938 | Statistics Greenland
+r3d100010939 | Foundation for Child Development Resources
+r3d100010940 | GeoBase
+r3d100010941 | National Archive of Criminal Justice Data, Terrorism and Preparedness Data Resource Center
+r3d100010942 | Western Regional Climate Center
+r3d100010943 | Protected Planet
+r3d100010944 | IRI/LDEO Climate Data Library
+r3d100010945 | NOAA National Centers for Environmental Information - formerly: National Coastal Data Development Center
+r3d100010946 | diversitydata.org
+r3d100010947 | Partnership for Interdisciplinary Studies of Coastal Oceans
+r3d100010949 | Harvard Numeric Data Services Dataverse
+r3d100010950 | Artstor
+r3d100010951 | Purdue University Research Repository
+r3d100010953 | Polar Data Catalogue
+r3d100010954 | Alaska Climate Research Center
+r3d100010955 | International Arctic Systems for Observing the Atmosphere
+r3d100010956 | Open Government Data Platform India
+r3d100010957 | National Institute  of Polar Research Science Database
+r3d100010958 | Yeast Resource Center Public Image Repository
+r3d100010959 | Social Computing Data Repository
+r3d100010960 | UC Irvine Machine Learning Repository
+r3d100010961 | NPS Gaseous Pollutant and Meteorological Data Access Page
+r3d100010962 | Alaska Ocean Observing System
+r3d100010963 | NOAA Antarctic UV Monitoring Network
+r3d100010964 | Advanced Cooperative Arctic Data and Information Service
+r3d100010965 | Integrated Fertility Survey Series
+r3d100010966 | Global Monitoring Laboratory
+r3d100010967 | Indian National Centre for Ocean Information  Services
+r3d100010968 | Prognostics Center of Excellence Data Set Repository
+r3d100010969 | Greenland Environmental Observatory at Summit Station
+r3d100010970 | Indian Genetic Disease Database
+r3d100010971 | Marine Microbial Database of India
+r3d100010972 | ACEpepDB: Peptide Database
+r3d100010973 | TBNet India
+r3d100010975 | Yeast Resource Center
+r3d100010976 | ForestPlots.net
+r3d100010977 | HIstome
+r3d100010978 | Human Protein Reference Database
+r3d100010979 | India Biodiversity Portal
+r3d100010980 | Clinical Trials Registry - India
+r3d100010981 | Canada-Nova Scotia Offshore Petroleum Board Data Management Centre
+r3d100010982 | Mutopia Project
+r3d100010983 | Export Import Data Bank
+r3d100010985 | Human Proteinpedia
+r3d100010986 | Estonian Biocentre Free Data
+r3d100010987 | Summit Station
+r3d100010988 | Indian Space Science Data Center
+r3d100010989 | Exploration and Production Data Bank
+r3d100010990 | HCUPnet
+r3d100010991 | NER Databank
+r3d100010992 | Database on Indian Economy
+r3d100010994 | Japan Space Systems
+r3d100010995 | Landsat Missions
+r3d100010996 | Comprehensive Large Array-data Stewardship System
+r3d100010997 | NCBI Clone DB
+r3d100011000 | Environment Climate Data Sweden
+r3d100011001 | Better Access to Data for Global Interdisciplinary Research
+r3d100011002 | National Weather Service, Alaska Region Headquarters
+r3d100011003 | National Weather Service, Fairbanks, Alaska Region
+r3d100011004 | NCBI Influenza Virus Resource
+r3d100011005 | NCBI Virus Variation
+r3d100011006 | World Data Centre for Geomagnetism, Mumbai
+r3d100011007 | Oral Cancer Gene Database
+r3d100011008 | Systematic Review Data Repository
+r3d100011009 | NCBI Third Party Annotation
+r3d100011010 | Greenland Climate Network
+r3d100011011 | Pakistan Petroleum Exploration &amp; Production Data Repository
+r3d100011012 | India Environment Portal
+r3d100011013 | Språkbanken Text
+r3d100011014 | Norwegian Meteorological Institute, Free Meteorological Data
+r3d100011015 | Internet Archive
+r3d100011016 | National Geothermal Data System
+r3d100011017 | Primate Life Histories database
+r3d100011018 | NARSTO
+r3d100011019 | PSLC DataShop
+r3d100011020 | Barrow Atmospheric Baseline  Observatory
+r3d100011021 | Egypt&#039;s Information Portal
+r3d100011022 | HIV &amp; AIDS Costs &amp; Use
+r3d100011023 | Databrary
+r3d100011024 | India Energy Portal
+r3d100011025 | USDA Economics, Statistics and Market Information System
+r3d100011026 | Global Pesticides Release Data
+r3d100011027 | Unified-District Information System for Education Plus
+r3d100011028 | ETH Travel Data Archive
+r3d100011029 | Barrow Area Information Database
+r3d100011030 | Center for Operational Oceanographic Products and Services
+r3d100011031 | MG-RAST
+r3d100011032 | NASA Earth Exchange
+r3d100011033 | NCBI BioSystems Database
+r3d100011034 | International Forestry Resources and Institutions
+r3d100011035 | USGS Water Data for the Nation
+r3d100011036 | National Data Archive on Child Abuse and Neglect
+r3d100011037 | SureChEMBL
+r3d100011038 | Qualitative Data Repository
+r3d100011040 | MultiDark Database
+r3d100011041 | Fungal Genetics Stock Center
+r3d100011042 | ClinicalCodes.org
+r3d100011043 | Academic Torrents
+r3d100011045 | Index to Marine &amp; Lacustrine Geological Samples
+r3d100011046 | Golm Metabolome Database
+r3d100011047 | prometheus
+r3d100011048 | Copernicus Contributing Missions Online
+r3d100011049 | STOREDB
+r3d100011052 | SABIO-RK
+r3d100011056 | CCSS Data &amp; Reproduction Archive
+r3d100011057 | Copernicus
+r3d100011058 | VertNet
+r3d100011060 | European Research Community on Flow, Turbulence and Combustion Database - Classic Collection
+r3d100011061 | Johns Hopkins Turbulence Databases
+r3d100011062 | Archiving BASIS
+r3d100011063 | Koç University Digital Collections
+r3d100011065 | Global Terrestrial Network for Permafrost
+r3d100011070 | Intermagnet
+r3d100011071 | studyforrest
+r3d100011076 | DIGITAL.CSIC
+r3d100011077 | Inspire-HEP
+r3d100011078 | Qualiservice
+r3d100011086 | CancerData.org
+r3d100011087 | doRiNA
+r3d100011089 | GenomeRNAi
+r3d100011091 | DepositOnce
+r3d100011094 | Oceans 3.0 Data Portal
+r3d100011095 | ODIN
+r3d100011098 | OpenML
+r3d100011099 | data.bris Research Data Repository
+r3d100011100 | GLUES Geoportal
+r3d100011104 | Worldwide Protein Data Bank
+r3d100011105 | European Zebrafish Resource Center
+r3d100011107 | Dartmouth Flood Observatory
+r3d100011108 | heiDATA
+r3d100011109 | Information System and Data Center for geoscientific data
+r3d100011110 | CHAMP
+r3d100011111 | GRACE ISDC
+r3d100011112 | GNSS  - ISDC
+r3d100011113 | GGSP - ISDC
+r3d100011114 | GGOS ICGEM
+r3d100011115 | GPS-PDR ISDC
+r3d100011116 | ICGEM
+r3d100011117 | TerraSAR-X TOR
+r3d100011118 | TanDEM-X ISDC
+r3d100011119 | ScholarsArchive@OSU
+r3d100011121 | cIRcle
+r3d100011122 | Hustedt Diatom Collection Database
+r3d100011123 | GeoReM
+r3d100011124 | mentha
+r3d100011125 | Science3D
+r3d100011126 | Integrated Digitized Biocollections
+r3d100011128 | National Vegetation Survey Databank
+r3d100011129 | Nanomaterial Registry
+r3d100011130 | e!DAL - electronic Data Archive Library
+r3d100011131 | Panel Study on Income Dynamics
+r3d100011132 | Social Scientific Research Documentation Centre Repository
+r3d100011135 | Integrated Public Use Microdata Series - International
+r3d100011136 | VecNet
+r3d100011137 | Open Science Framework
+r3d100011138 | National Weather Service, Climate Prediction Center
+r3d100011139 | NIST Standard Reference Data
+r3d100011140 | AgTrials database
+r3d100011141 | China Meteorological Data Service Center
+r3d100011147 | Research Data Archive
+r3d100011148 | Plants of TAIWAN
+r3d100011149 | Chinese Crop Germplasm Resources Information System
+r3d100011150 | DARECLIMED
+r3d100011153 | National Data
+r3d100011154 | China Earthquake Data Center
+r3d100011157 | Nexdata
+r3d100011158 | Data Sharing Infrastructure of Earth System Science
+r3d100011159 | Earth System Grid Federation
+r3d100011164 | Australian New Zealand Clinical Trials Registry
+r3d100011165 | Basis Set Exchange
+r3d100011166 | Benchmark Energy &amp; Geometry Database
+r3d100011169 | Bibliothèques Virtuelles Humanistes
+r3d100011170 | BioImages - Virtual Field-Guide
+r3d100011172 | CaltechLabNotes
+r3d100011173 | Cancer GenomeAtlas Data Portal
+r3d100011174 | Cancer Genomics Hub
+r3d100011175 | Chemical Carcinogenesis Research Information System
+r3d100011176 | CURATOR
+r3d100011177 | Claremont Colleges Digital Library
+r3d100011181 | Digital Case
+r3d100011182 | UA Campus Repository
+r3d100011183 | Digitale Sammlungen, Goethe-Universität Frankfurt am Main
+r3d100011188 | Digital South Asia Library
+r3d100011189 | PRISM: University of Calgary&#039;s Digital Repository
+r3d100011191 | Earth-prints Repository
+r3d100011192 | MGnify
+r3d100011193 | Wittliff Collections - Digital Collections
+r3d100011195 | Ensembl Bacteria
+r3d100011196 | Ensembl Fungi
+r3d100011197 | Ensembl Genomes
+r3d100011198 | Ensembl Metazoa
+r3d100011199 | Ensembl Plants
+r3d100011200 | Ensembl Protists
+r3d100011201 | DataverseNL
+r3d100011202 | Open Research Exeter
+r3d100011203 | Flytrap
+r3d100011206 | GEOROC
+r3d100011207 | GloPAD
+r3d100011208 | Hardin.MD
+r3d100011209 | Hazardous Substance Data Bank
+r3d100011210 | HONmedia
+r3d100011213 | ITIS
+r3d100011216 | KU ScholarWorks
+r3d100011218 | LSE Research Online
+r3d100011219 | Metropolitan Travel Survey Archive
+r3d100011220 | MINDS@UW
+r3d100011221 | Monash University Research Repository
+r3d100011222 | MycoBank
+r3d100011223 | National Trauma Data Bank
+r3d100011226 | NIST Physical reference data
+r3d100011230 | Oxford University Research Archive
+r3d100011232 | PANDIT
+r3d100011234 | Pediatric Surgery @ Brown
+r3d100011235 | PetDB
+r3d100011236 | PhysioBank Archive
+r3d100011237 | Publicdata.eu
+r3d100011239 | RIT Digital Media Library Repository
+r3d100011240 | Science Photo Library
+r3d100011241 | Catalogue of Life
+r3d100011242 | The European Genome-phenome Archive
+r3d100011243 | TROVE
+r3d100011244 | UniSave
+r3d100011245 | University of Southampton Institutional Research Repository
+r3d100011249 | York Digital Library
+r3d100011250 | Wellcome Collections - Images
+r3d100011251 | AfricaRice Dataverse
+r3d100011252 | Analysis of the Interstellar Medium of Isolated Galaxies
+r3d100011253 | AspGD
+r3d100011254 | CfA Dataverses
+r3d100011255 | ATNF Pulsar Catalogue
+r3d100011256 | Avon Longitudinal Study of Parents and Children
+r3d100011257 | Bacterial Carbohydrate Structure DataBase
+r3d100011258 | Behavioral Risk Factor Surveillance System
+r3d100011259 | BioCyc Genome Database Collection
+r3d100011260 | Breast Cancer Surveillance Consortium
+r3d100011261 | BsubCyc
+r3d100011262 | Buckeye Speech Corpus
+r3d100011263 | Canadian Opinion Research Archive
+r3d100011264 | Cancer Models Database
+r3d100011266 | CfA Library Datasets Dataverse
+r3d100011267 | CGIAR Research Program on Forests, Trees and Agroforestry Dataverse
+r3d100011268 | Child Language Data Exchange System
+r3d100011269 | Collaborative Research in Computational Neuroscience
+r3d100011270 | Computational and Information Systems Laboratory Research Data Archive
+r3d100011271 | COMPLETE Dataverse
+r3d100011272 | The Comprehensive Resource of Mammalian protein complexes
+r3d100011273 | Database of Zeolite Structures
+r3d100011274 | Deakin Research Online
+r3d100011275 | DEG
+r3d100011277 | EcoCyc Database
+r3d100011278 | English Lexicon Project
+r3d100011279 | EUROCAT
+r3d100011280 | FlowRepository
+r3d100011281 | Global Trade Analysis Project
+r3d100011282 | The Health Improvement Network
+r3d100011283 | History of Marine Animal Populations
+r3d100011284 | HILDA Survey
+r3d100011285 | Human Metabolome Database
+r3d100011286 | HumanCyc
+r3d100011287 | INTEGRALL
+r3d100011288 | ICES data portal
+r3d100011289 | International Service for the Geoid
+r3d100011290 | London Datastore
+r3d100011291 | Manitoba Population Research Data Repository
+r3d100011293 | Medical Expenditure Panel Survey
+r3d100011294 | MetaCyc
+r3d100011295 | National Center for Earth-Surface Dynamics Data Repository
+r3d100011296 | NIST Atomic Spectra Database
+r3d100011297 | Nord-Trondelag Health Study
+r3d100011298 | Nuclear Receptor Signaling Atlas
+r3d100011299 | Plant and Fungal Carbohydrate Structure Database
+r3d100011300 | Plant Organelles Database  3
+r3d100011301 | Plant Transcription Factor Database
+r3d100011302 | The Polinsky Language Sciences Lab Dataverse
+r3d100011303 | Population Services International Dataverse
+r3d100011304 | PRISM Climate Data
+r3d100011305 | Recode
+r3d100011306 | RESID Database of Protein Modifications
+r3d100011307 | Ocean and Geosciences Data Center at Scripps Institution of Oceanography
+r3d100011308 | SPT Galaxy Cluster Followup Dataverse
+r3d100011309 | Study of Health in Pomerania
+r3d100011310 | Taiwan Biodiversity Information Facility
+r3d100011311 | Taiwan Forestry Research Institute Data Catalog
+r3d100011312 | The Abdul Latif Jameel Poverty Action Lab
+r3d100011313 | U.S. Census Bureau TIGER/Line Shapefiles and TIGER/Line® Files
+r3d100011314 | UCLA Phonetics Lab Archive
+r3d100011315 | UCLA Social Science Data Archive
+r3d100011316 | UNITE
+r3d100011317 | University of Minnesota Biocatalysis/Biodegradation Database
+r3d100011318 | Washington State University Data Center Dataverse
+r3d100011319 | World Agroforestry Centre - ICRAF Dataverse
+r3d100011321 | U.S. National Archives and Records Administration Dataverse
+r3d100011322 | 1.2 Meter CO Survey Dataverse
+r3d100011323 | SILVA
+r3d100011324 | megx.net
+r3d100011326 | GEOFON
+r3d100011327 | Berkeley Drosophila Genome Project insitu
+r3d100011328 | Centre National de Ressources Textuelles et Lexicales
+r3d100011329 | Ortolang
+r3d100011330 | ModelDB
+r3d100011331 | Xenbase
+r3d100011332 | CLARIN INT Portal
+r3d100011333 | CLARIN Centre Vienna
+r3d100011334 | Meertens Instituut Collecties
+r3d100011335 | DHS Data Access
+r3d100011336 | eLaborate
+r3d100011337 | IMS Universität Stuttgart Repository
+r3d100011338 | TRAILS
+r3d100011339 | GAMS
+r3d100011340 | Network Repository
+r3d100011343 | Biological Collection Access Service for Europe
+r3d100011344 | Collaborative Climate Community Data and Processing Grid
+r3d100011345 | DARIAH-DE Repository
+r3d100011347 | Deutsches Register Klinischer Studien
+r3d100011349 | Europäische Geschichte Online
+r3d100011352 | OceanRep GEOMAR Repository
+r3d100011355 | Jülich ObservatorY for Cloud Evolution - Core Facility
+r3d100011360 | Screening Unit Berlin-Buch
+r3d100011361 | European Chemical Biology Database
+r3d100011363 | Der Bildbestand der Deutschen Kolonialgesellschaft in der Universitätsbibliothek Frankfurt am Main
+r3d100011364 | arthistoricum.net
+r3d100011365 | TextGrid Repository
+r3d100011366 | Tierstimmenarchiv - Museum für Naturkunde Berlin
+r3d100011367 | Zentrale Biomaterialbank der Charité
+r3d100011368 | Zentrum für Klinische Studien der Universität zu Köln
+r3d100011369 | South Australian Resources Information Geoserver
+r3d100011371 | TOXNET
+r3d100011372 | PhytoPath
+r3d100011373 | Virtual Fly Brain
+r3d100011375 | Columbia University Academic Commons
+r3d100011376 | plankton*net
+r3d100011378 | MatDB
+r3d100011379 | ScienceBase USGS
+r3d100011380 | National Arctic and Antarctic Data Center
+r3d100011381 | CERN Open Data
+r3d100011382 | Queen&#039;s Research Data Centre
+r3d100011384 | Duanaire
+r3d100011386 | Digital Averroes Research Environment
+r3d100011387 | Edmond
+r3d100011389 | Research Centre of the Bundesbank
+r3d100011390 | Comparative Study of Electoral Systems
+r3d100011391 | HSRC Research Output Repository
+r3d100011392 | INDEPTH Data Repository
+r3d100011393 | Data Repository for the University of Minnesota
+r3d100011394 | B2SHARE
+r3d100011395 | EUDAT
+r3d100011396 | The Content Name Collection
+r3d100011397 | AEKOS Data Portal
+r3d100011398 | B2SAFE
+r3d100011399 | MADATA - Mannheim research data repository
+r3d100011400 | Catena
+r3d100011405 | modENCODE
+r3d100011407 | ARACHNE IDAI.objects
+r3d100011413 | Wolfenbütteler Digital Library
+r3d100011414 | ZVDD
+r3d100011415 | AMBDAS Bibliographic Database
+r3d100011416 | GENIE
+r3d100011417 | NIST Atomic Spectral Line Broadening Bibliographic Database
+r3d100011418 | NIST FLYCHK
+r3d100011419 | NIST Saha Plasma Population Kinetics Modeling Database
+r3d100011420 | NIST Atomic Transition Probability Bibliographic Database
+r3d100011421 | NIST Ultraviolet Spectrum of Platinum Lamp
+r3d100011423 | Handbook of Basic Atomic Spectroscopic Data
+r3d100011424 | The NIST Reference on Constants, Units, and Uncertainty
+r3d100011426 | Robert L. Kurucz
+r3d100011427 | R. L. Kurucz atomic linelist
+r3d100011428 | European mirror of Kurucz CD-ROM 23 database
+r3d100011429 | R.L.Kelly atomic and ionic linelist
+r3d100011430 | ATOMDB
+r3d100011431 | NIST Energy Levels of Hydrogen and Deuterium
+r3d100011432 | Electron-Impact Excitation of Multicharged Ions using MEIBEL
+r3d100011433 | Electron-Impact Ionization of Multicharged Ions at ORNL
+r3d100011434 | Atomic Data for Astrophysics
+r3d100011444 | The Atomic Line List
+r3d100011446 | STARK-B
+r3d100011447 | Stark Broadening Parameters for Neutral and Singly Charged Ions
+r3d100011448 | Vienna Atomic Line Database
+r3d100011449 | MCHF/MCDHF Database
+r3d100011450 | CHIANTI
+r3d100011452 | Archives of programs and data for physics
+r3d100011454 | Portal to Los Alamos Opacity Codes
+r3d100011455 | Interface to Los Alamos Atomic Physics Codes
+r3d100011456 | CCC Data Base
+r3d100011457 | AMODS
+r3d100011460 | SPECTR-W3
+r3d100011461 | Atomic &amp; Molecular Database
+r3d100011462 | Selected constants energy levels and atomic spectra of actinides
+r3d100011464 | LXcat
+r3d100011466 | OMNIWeb
+r3d100011468 | Data Portal of the Alfred Wegener Institute
+r3d100011469 | GIS Maps Portal at AWI
+r3d100011470 | Marine Data Portal
+r3d100011471 | TERENO Data Discovery Portal
+r3d100011472 | Ocean Science Information System
+r3d100011473 | circBase
+r3d100011474 | pSILAC
+r3d100011475 | Human protein-protein interaction network database search
+r3d100011476 | Huntingtin Interaction Network
+r3d100011477 | RELMIN
+r3d100011478 | Pombase
+r3d100011479 | TriTrypDB
+r3d100011480 | The Taenia solium Genome Project
+r3d100011481 | cranach.net
+r3d100011482 | Deutsches Dokumentationszentrum für Kunstgeschichte, Bildarchiv Foto Marburg
+r3d100011483 | ASTER j-spacesystems
+r3d100011484 | GERDA
+r3d100011485 | IODP Bremen Core Repository
+r3d100011486 | Gulf Coast Repository
+r3d100011487 | Rutgers/New Jersey Geological and Water Survey Core Repository
+r3d100011488 | Kochi Core Center
+r3d100011489 | Experimental Nuclear Reaction Data
+r3d100011490 | International Network of Nuclear Reaction Data Centres
+r3d100011492 | Evaluated Nuclear Data File
+r3d100011496 | CorrDB
+r3d100011497 | Animal Genome Tracks on GBrowse
+r3d100011498 | AnimalGenome.ORG
+r3d100011503 | Global Genome Biodiversity Network
+r3d100011504 | German Federation for Biological Data
+r3d100011505 | Flora von Bayern: Wiki and Data Portal
+r3d100011506 | Fluxnet - Fluxdata
+r3d100011507 | Global Forest Change
+r3d100011509 | Geospatial Data
+r3d100011511 | DigiMorph
+r3d100011512 | EarthStat
+r3d100011514 | Community Data Portal
+r3d100011515 | NITRC
+r3d100011516 | PLEXdb
+r3d100011517 | United States Department of Agriculture, Economic Research Service, Data Products
+r3d100011518 | UniRef
+r3d100011519 | UniParc
+r3d100011520 | UniMES
+r3d100011521 | UniProtKB
+r3d100011522 | SOFIA
+r3d100011524 | GeoPlatform
+r3d100011525 | Hydra
+r3d100011527 | GlycomeDB
+r3d100011528 | TOXMAP
+r3d100011529 | Toxics Release Inventory
+r3d100011530 | Comparative Toxicogenomics Database
+r3d100011531 | Integrated Risk Information System
+r3d100011532 | Toxicology Excellence for Risk Assessment
+r3d100011533 | Carcinogenic Potency Database
+r3d100011534 | SedDB
+r3d100011536 | VentDB
+r3d100011537 | Geochron
+r3d100011538 | EarthChem Library
+r3d100011539 | NAVDAT
+r3d100011541 | Missouri Geological Survey Program
+r3d100011543 | Site Survey Data Bank
+r3d100011545 | Deutsches BioBanken-Register
+r3d100011547 | DFG Senatskommission für Ozeanographie - METEOR- und MARIA S. MERIAN-Berichte
+r3d100011548 | Halocarbons in the Ocean and Atmosphere database project
+r3d100011549 | MEMENTO
+r3d100011550 | Open PHACTS
+r3d100011551 | e-Atlas
+r3d100011552 | Ningaloo Atlas
+r3d100011553 | European Variation Archive
+r3d100011554 | Coherent X-ray Imaging Data Bank
+r3d100011555 | International Neuroimaging Data-sharing Initiative
+r3d100011556 | MetaboLights
+r3d100011557 | VEuPathDB
+r3d100011558 | Influenza Research Database
+r3d100011559 | The Cancer Imaging Archive
+r3d100011560 | Sicas Medical Image Repository
+r3d100011561 | PhysioNet
+r3d100011562 | Kinetic models of biological systems
+r3d100011563 | Panel on household finances
+r3d100011564 | eagle-i
+r3d100011565 | 1000 Functional Connectomes Project
+r3d100011566 | WASCAL Scientific Research Data Catalog
+r3d100011567 | BIGG Database
+r3d100011568 | Genome-Scale Metabolic Network DataBase
+r3d100011569 | PlasmoDB
+r3d100011570 | Kyoto Encyclopedia of Genes and Genomes
+r3d100011571 | GRIIDC
+r3d100011575 | Southern California Earthquake Data Center
+r3d100011577 | UC San Diego Library Digital Collections
+r3d100011578 | Europeana collections
+r3d100011579 | Antarctic Glaciological Data Center at NSIDC
+r3d100011580 | World Ocean Database
+r3d100011581 | NOAA National Centers for Environmental Information - formerly: National Oceanographic Data Center
+r3d100011582 | Abacus Data Network
+r3d100011583 | NOMAD
+r3d100011584 | MyTARDIS @ ANSTO
+r3d100011585 | Combined QTL Map of Dairy Cattle Traits
+r3d100011586 | Research Data Oxford
+r3d100011587 | Research Computing and Data Services
+r3d100011589 | Peking University Open Research Data
+r3d100011591 | Brain Transcriptome Database
+r3d100011592 | Russian-Ukrainian Geomagnetic Data Center
+r3d100011593 | HJ Andrews Experimental Forest
+r3d100011594 | The Monarch Initiative
+r3d100011596 | PhenoGen Informatics
+r3d100011597 | LEDAS
+r3d100011598 | Canadian Research Data Centre Network
+r3d100011601 | SBGrid Data Bank
+r3d100011602 | EELS Data Base
+r3d100011604 | Astronomical Data Archives Center
+r3d100011609 | PLANTS Database
+r3d100011611 | Stanford Network Analysis Project
+r3d100011612 | KONECT
+r3d100011623 | TROLLing
+r3d100011625 | International Aid Transparency Initiative
+r3d100011626 | ETH Data Archive
+r3d100011627 | Polar Rock Repository Database
+r3d100011630 | Australian Drosophila Ecology and Evolution Resource
+r3d100011631 | UniSA Research Data Access Portal
+r3d100011632 | OAGR
+r3d100011633 | IMAS Data Portal
+r3d100011634 | Boola Boola Forest bird study
+r3d100011635 | EarthByte
+r3d100011636 | dharmae
+r3d100011637 | cropPAL
+r3d100011638 | University of Southern Queensland research data collection
+r3d100011639 | Australian Waterbird Surveys
+r3d100011640 | UniSC Research Bank research data
+r3d100011643 | Polar Geospatial Center
+r3d100011646 | EchoBase
+r3d100011647 | IPK Gatersleben
+r3d100011648 | AHEAD
+r3d100011650 | International Argo Project
+r3d100011651 | Freshwater Biodiversity Data Portal
+r3d100011652 | Boundary Layer Late Afternoon and Sunset Turbulence
+r3d100011653 | DataBank, Bodleian Libraries, University of Oxford
+r3d100011654 | Brown Digital Repository
+r3d100011655 | California Coastal Atlas
+r3d100011656 | Common Cold Project Data Sets
+r3d100011657 | ChArMEx database
+r3d100011658 | CITK
+r3d100011659 | Satellite Application Facility on Climate Monitoring
+r3d100011660 | Collaborative Research Centre 806 Database
+r3d100011661 | M-TROPICS
+r3d100011662 | Manaaki Whenua - Landcare Research DataStore
+r3d100011663 | EOL
+r3d100011664 | Geoportal der BFG
+r3d100011665 | GLOBE
+r3d100011667 | HyMeX
+r3d100011668 | IDEALS
+r3d100011669 | Illinois State Water Survey
+r3d100011670 | INTREPID bioinformatics
+r3d100011671 | MERMeX
+r3d100011672 | Microstructure Database
+r3d100011673 | MISTRALS database
+r3d100011674 | My Geo Hub
+r3d100011675 | Natural History Museum Data Portal
+r3d100011676 | NGEE Arctic
+r3d100011678 | NIRD Research Data Archive
+r3d100011679 | Northern California Earthquake Data Center
+r3d100011680 | Ozone Mapping and Profiler Suite
+r3d100011681 | Precipitation Processing System
+r3d100011682 | Scholar&#039;s Bank
+r3d100011683 | SeaBASS
+r3d100011684 | SHARE Geonetwork
+r3d100011686 | TerMEx
+r3d100011687 | Global Precipitation Climatology Centre
+r3d100011688 | Collaborative Research Centre Transregio 32 Database
+r3d100011690 | UCSD Signaling gateway
+r3d100011691 | ACTRIS Data Centre
+r3d100011692 | USGODAE Argo GDAC Data Browser
+r3d100011693 | Avian Knowledge Network
+r3d100011694 | AVISO+
+r3d100011696 | biodiversity.aq
+r3d100011697 | BioVel
+r3d100011698 | Birdata
+r3d100011699 | Bolin Centre Database
+r3d100011700 | WRMC-BSRN
+r3d100011701 | COSMIC Data Analysis and Archive Center
+r3d100011702 | CDAWeb
+r3d100011703 | Chesapeake Bay Data Hub
+r3d100011704 | Climate Data Online
+r3d100011705 | Coupled Model Intercomparison Project
+r3d100011707 | Genomic Observatories MetaDatabase
+r3d100011708 | ASTER JPL
+r3d100011709 | Complete Genomics
+r3d100011710 | Coriolis
+r3d100011713 | DBpedia
+r3d100011714 | Earth Orientation Center
+r3d100011716 | eartH2Observe
+r3d100011717 | EDGAR
+r3d100011718 | EIDA
+r3d100011719 | eKlima
+r3d100011720 | EMEP
+r3d100011721 | Environmental Change Network
+r3d100011722 | ERDDAP
+r3d100011723 | Environmental Dataset Gateway
+r3d100011724 | EUREF Permanent GNSS Network
+r3d100011725 | Eurobarometer
+r3d100011726 | European Centre for Medium-Range Weather Forecasts
+r3d100011728 | European Union Open Data Portal
+r3d100011729 | European-Mediterranean Seismological Centre
+r3d100011730 | Federal Land Manager Environmental database
+r3d100011732 | Galaxy Zoo
+r3d100011733 | GENCODE
+r3d100011734 | GEOSS Portal
+r3d100011738 | GIS Data Depot
+r3d100011739 | GISTEMP
+r3d100011740 | Global Land Cover Facility
+r3d100011741 | Global carbon atlas
+r3d100011742 | AERONET
+r3d100011743 | GOES Space Environment Monitor
+r3d100011747 | iNaturalist.org
+r3d100011748 | Tropicos®
+r3d100011749 | Integrated Marine Observing System Ocean Data Portal
+r3d100011750 | Italian National Biodiversity Network
+r3d100011751 | JGI MycoCosm
+r3d100011752 | European Soil Data Centre
+r3d100011753 | Junar
+r3d100011754 | Knoema
+r3d100011756 | Meteoritical bulletin database
+r3d100011757 | Moderate Resolution Imaging Spectroradiometer
+r3d100011758 | NASA Data Portal
+r3d100011759 | National Weather Service, National Centers for Environmental Prediction
+r3d100011760 | NCEP/NCAR Reanalysis Project
+r3d100011761 | Neotoma Paleoecology Database
+r3d100011763 | PSD Climate and Weather Data
+r3d100011764 | NOAA&#039;s climate data record program
+r3d100011765 | Web Soil Survey
+r3d100011767 | Open Tree of Life
+r3d100011768 | OpenWorm
+r3d100011769 | Prompt Assessment of Global Earthquakes for Response
+r3d100011772 | IMPACT
+r3d100011773 | Remote Sensing Systems
+r3d100011774 | data.eaufrance.fr
+r3d100011775 | RESA
+r3d100011776 | Swedish Meteorological and Hydrological Institute  open data
+r3d100011777 | Open Data by Socrata
+r3d100011778 | Solar and Heliospheric Observatory
+r3d100011780 | SuperDARN
+r3d100011781 | SURFRAD
+r3d100011782 | The National Map
+r3d100011783 | Madrigal Database
+r3d100011784 | THEMIS
+r3d100011785 | Tropical Atmosphere Ocean Project
+r3d100011786 | TurtleSAT
+r3d100011788 | IOOS®
+r3d100011790 | WATCH
+r3d100011791 | WorldClim - Global Climate Data
+r3d100011792 | XSEDE
+r3d100011793 | ASTER Volcano Archive
+r3d100011795 | euHCVdb
+r3d100011796 | Strong Motion Virtual Data Center
+r3d100011797 | Center for Engineering Strong Motion Data
+r3d100011798 | NeuroElectro
+r3d100011800 | LSHTM Data Compass
+r3d100011801 | National Centers for Environmental Information
+r3d100011802 | CLARIN-PL
+r3d100011803 | CIMMYT Research Data &amp; Software Repository Network
+r3d100011804 | RU-IIEc
+r3d100011805 | Digital Repository of Ireland
+r3d100011806 | SLUB Sammlungen
+r3d100011807 | Kielipankki
+r3d100011808 | nanoHUB
+r3d100011810 | Socio Cognitive Processes Lab data
+r3d100011811 | Nordicana D
+r3d100011812 | 45 and Up Study
+r3d100011813 | Aberdeen Birth Cohorts
+r3d100011815 | NBIS DOI repository
+r3d100011817 | BioDare2
+r3d100011818 | Born in Bradford
+r3d100011819 | Cancer Cell Line Encyclopedia
+r3d100011820 | CaPSURE
+r3d100011821 | Chickpea Transcriptome Database
+r3d100011822 | Cognitive Function and Ageing Study
+r3d100011823 | Dallas Heart Study
+r3d100011824 | Danish National Birth Cohort
+r3d100011825 | Diabetes Study of Northern California
+r3d100011826 | Drosophila Genetic Reference Panel 2
+r3d100011827 | DSPR
+r3d100011828 | Future of Families and Child Wellbeing Study
+r3d100011829 | Gazel
+r3d100011830 | Studie zur Gesundheit von Kindern und Jugendlichen in Deutschland
+r3d100011831 | GerManC project
+r3d100011832 | Growing Up Today Study
+r3d100011833 | Harvard Medical School, Library of Integrated Network-Based Cellular Signatures Database
+r3d100011834 | InCHIANTI
+r3d100011835 | International HapMap Project
+r3d100011836 | Johns Hopkins Research Data Repository
+r3d100011838 | Malaria Atlas Project
+r3d100011839 | MassBank Europe
+r3d100011840 | Mexican Health and Aging Study
+r3d100011841 | MRC National Survey of Health and Development
+r3d100011843 | OsteoArthritis Initiative
+r3d100011844 | Pacific Islands Families Study
+r3d100011845 | Project Achilles
+r3d100011846 | Reality Commons
+r3d100011847 | REasons for Geographic and Racial Differences in Stroke Study
+r3d100011848 | Romani Morpho-Syntax Database
+r3d100011849 | Stemformatics
+r3d100011850 | Swiss HIV Cohort Study &amp; Swiss Mother and Child HIV Cohort Study
+r3d100011851 | TwinsUK
+r3d100011852 | UQ eSpace, Research Data Collections
+r3d100011853 | West of Scotland Twenty-07 Study
+r3d100011854 | Whitehall II Study
+r3d100011855 | Work Histories Italian Panel
+r3d100011856 | World Contraceptive Use
+r3d100011857 | MindBigData
+r3d100011858 | PATRIC
+r3d100011859 | National Cancer Data Base
+r3d100011860 | TheDataWeb
+r3d100011861 | National Sleep Research Resource
+r3d100011864 | OpenKIM
+r3d100011865 | Astrophysics Source Code Library
+r3d100011867 | SEANOE
+r3d100011868 | Mendeley Data
+r3d100011869 | Permanent Service for Mean Sea Level
+r3d100011870 | IndExs – Index of Exsiccatae
+r3d100011871 | HAGR
+r3d100011872 | LIAS
+r3d100011873 | Staatliche Naturwissenschaftliche Sammlungen Bayerns
+r3d100011874 | RefractiveIndex.INFO
+r3d100011876 | Plant Genomics and Phenomics Research Data Repository
+r3d100011879 | KNMI Data Platform
+r3d100011880 | CIAT Dataverse
+r3d100011883 | Open Exoplanet Catalogue
+r3d100011890 | Ag Data Commons
+r3d100011891 | Lancaster University Research Directory
+r3d100011894 | Synapse
+r3d100011896 | THEREDA
+r3d100011898 | UWA Profiles and Research Repository
+r3d100011900 | Research Data Center PIAAC at GESIS
+r3d100011901 | Forschungsdatenzentrum des Deutschen Jugendinstituts
+r3d100011902 | SFB 882 Forschungsdatenzentrum
+r3d100011903 | RepOD
+r3d100011904 | Allele Frequency Net Database
+r3d100011905 | Leiden Open Variation Database
+r3d100011906 | FungiDB
+r3d100011907 | Mouse Models of Human Cancer database
+r3d100011908 | Scientific Data Repository
+r3d100011909 | Sheffield Hallam University Research Data Archive
+r3d100011910 | Magnetics Information Consortium
+r3d100011913 | PAIN repository
+r3d100011914 | IDEAS
+r3d100011915 | Geothermal Data Repository
+r3d100011922 | CLARIN.SI repository
+r3d100011923 | VRP-REP
+r3d100011924 | WorldWide Antimalarial Resistance Network
+r3d100011927 | ECHO – Cultural Heritage Online
+r3d100011928 | FAIRDOMHub
+r3d100011929 | AfDB Statistical Data Portal
+r3d100011931 | Virus Pathogen Resource
+r3d100011932 | Pathogen Portal
+r3d100011933 | Kinsources.net
+r3d100011934 | Natural Resources Conservation Service Soils
+r3d100011936 | DEPOD
+r3d100011937 | PPBio Data Repository
+r3d100011939 | Openresearchdata,  Platform Switzerland
+r3d100011940 | Linguistic Data Consortium
+r3d100011941 | Estonian Language Data Infrastructure
+r3d100011942 | Palynological Database
+r3d100011943 | META-SHARE
+r3d100011945 | Research Data Leeds Repository
+r3d100011947 | University of Bath Research Data Archive
+r3d100011948 | Project Tycho: Data for Health
+r3d100011950 | Virtual Liver Network
+r3d100011951 | Morph·D·Base
+r3d100011956 | CARIBIC
+r3d100011957 | Network for the Detection of Atmospheric Composition Change
+r3d100011958 | HALO database
+r3d100011959 | TAMBORA
+r3d100011961 | POES Space Environment Monitor
+r3d100011962 | DataSTORRE
+r3d100011965 | Imperial College Research Computing Service Data Repository
+r3d100011966 | coastDat
+r3d100011967 | Ancient Sundials
+r3d100011968 | Motion Capture Database HDM05
+r3d100011969 | EPIC study
+r3d100011971 | UBIRA eData
+r3d100011972 | University of Liverpool Research Data Catalogue
+r3d100011973 | NSF Arctic Data Center
+r3d100011975 | Research Institute for Sustainable Humanosphere databases
+r3d100011977 | Babylonian Diaries
+r3d100011978 | Cylinder Seals
+r3d100011979 | Digital Pantheon
+r3d100011980 | Medieval Diagrams
+r3d100011981 | Canadian Environmental Sustainability Indicators
+r3d100011982 | Canine Inherited Disorders Database
+r3d100011983 | National Biodiversity Data Centre - Biodiversity Maps
+r3d100011984 | Canadian Ice Service Archive
+r3d100011985 | Great Lakes Precipitation Network
+r3d100011986 | Experimental Lakes Area
+r3d100011987 | Landmap
+r3d100011989 | USGS Earthquake Hazards Program Catalog
+r3d100011990 | Geoscience Data Repository for Geophysical Data
+r3d100011991 | GRIN-CA Taxonomy
+r3d100011992 | The National Soil DataBase
+r3d100011993 | CDC WONDER
+r3d100011994 | Atmospheric Chemistry Experiment
+r3d100011995 | RADARSAT-1
+r3d100011996 | Canadian Poisonous Plants Information System
+r3d100011997 | National Earthquake DataBase
+r3d100011999 | National Harvest Survey
+r3d100012000 | Water Survey of Canada
+r3d100012001 | Illinois Data Bank
+r3d100012002 | International Plant Names Index
+r3d100012003 | University Hospital Medical Information Network Individual Case Data Repository
+r3d100012005 | IDEADB
+r3d100012008 | Mindboggle-101
+r3d100012009 | Huygens ING
+r3d100012010 | Australian SuperSite Network Data Portal
+r3d100012011 | Consortium of Pacific Herbaria
+r3d100012013 | TERN Data Discovery Portal
+r3d100012014 | HyperLeda
+r3d100012015 | GeneCards
+r3d100012016 | volare
+r3d100012017 | LifeMap Discovery
+r3d100012018 | MalaCards
+r3d100012019 | UCLanData
+r3d100012020 | CLARINO Bergen  Centre
+r3d100012021 | CoCoON
+r3d100012023 | PathCards
+r3d100012025 | VMF Data Server
+r3d100012029 | Environmental Monitoring System
+r3d100012030 | FactSage
+r3d100012031 | National Contaminants Information System
+r3d100012032 | OGSEarth
+r3d100012033 | Digital Porous Media Portal
+r3d100012034 | Natural Heritage Information Centre
+r3d100012036 | Controlled Fusion Atomic Data Center
+r3d100012037 | North American Breeding Bird Survey
+r3d100012038 | Androgen Receptor Mutations Database
+r3d100012039 | Bedford Institute of Oceanography - Oceanographic Databases
+r3d100012040 | CASRdb
+r3d100012041 | Canadian Disaster Database
+r3d100012043 | Statistics Canada Data Tables
+r3d100012044 | Immigration, Refugees and Citizenship Canada Research and Statistics
+r3d100012045 | Databank of Official Statistics on Quebec
+r3d100012046 | ESA Earth Online
+r3d100012051 | Repositorio Institucional USIL
+r3d100012052 | The Cancer Immunome Atlas
+r3d100012053 | UiT Open Research Data Dataverse
+r3d100012054 | CLARIN service center of the Zentrum Sprache at the BBAW
+r3d100012058 | Biodiversity Exploratories Information System
+r3d100012059 | LabKey Open Research Portal
+r3d100012060 | Wilson Center Digital Archive
+r3d100012061 | Genomic Data Commons
+r3d100012062 | Secondary Analysis to Generate Evidence (SAGE) Dataverse
+r3d100012064 | University of Reading Research Data Archive
+r3d100012065 | Clinical data repository
+r3d100012066 | Shuttle Radar Topography Mission
+r3d100012067 | AlgaeBase
+r3d100012068 | Cranfield Online Research Data
+r3d100012069 | Top Down Proteomics Repository
+r3d100012071 | Open Core Data
+r3d100012072 | ILL Data Portal
+r3d100012074 | BindingDB
+r3d100012075 | D-PLACE
+r3d100012076 | The MaxQuant DataBase
+r3d100012077 | Citrination
+r3d100012078 | SOL Genomics Network
+r3d100012079 | Clinical Proteomic Tumor Analysis Consortium Data Portal
+r3d100012080 | Materials Data Facility
+r3d100012081 | GOBASE
+r3d100012083 | Ocean Tracking Network
+r3d100012084 | Phenylalanine Hydroxylase Locus Knowledgebase
+r3d100012085 | Protist EST Program Database
+r3d100012086 | Pseudomonas Genome DB
+r3d100012087 | UNESCO Institute for Statistics, Data Centre
+r3d100012088 | Viral Bioinformatics Resource Center
+r3d100012089 | Canadian Centre for Climate Modelling and Analysis
+r3d100012090 | Canadian Climate Data and Scenarios
+r3d100012092 | Autism Chromosome Rearrangement Database
+r3d100012093 | Cystic Fibrosis Mutation Database
+r3d100012094 | Adjusted and Homogenized Canadian Climate Data
+r3d100012095 | RAM Legacy Stock Assessment Database
+r3d100012097 | Canadian Wildland Fire Information System
+r3d100012100 | Water use data
+r3d100012101 | University Information System RUSSIA
+r3d100012102 | NAKALA
+r3d100012103 | NCCOR
+r3d100012104 | Signature Bank
+r3d100012108 | mdw Repository
+r3d100012109 | Amsterdam Cohort Studies on HIV infection and AIDS
+r3d100012110 | University of Auckland Data Repository
+r3d100012112 | Cellular Phenotype database
+r3d100012113 | Climate Hazards Center Data Archive
+r3d100012114 | Chapman University Digital Commons Datasets
+r3d100012115 | Meereis Portal
+r3d100012116 | Comparative Welfare Entitlements Project Dataset
+r3d100012117 | BrainMaps.org
+r3d100012118 | eBird
+r3d100012119 | Trinity River Restoration Program DataPort
+r3d100012120 | Allen Brain Map
+r3d100012121 | Square Kilometre Array Telescope
+r3d100012122 | ExAC Browser
+r3d100012123 | Monash Bridges
+r3d100012124 | ORDA - The University of Sheffield Research Data Catalogue and Repository
+r3d100012125 | Water Isotope System for Data Analysis, Visualization and Electronic Retrieval
+r3d100012129 | Pain Genes Database
+r3d100012131 | Northern Ontario Plant Database
+r3d100012132 | Ontario Reptile and Amphibian Atlas
+r3d100012133 | Fungal Mitochondrial Genome Project
+r3d100012135 | The Lafora Progressive Myoclonus Epilepsy Mutation and Polymorphism Database
+r3d100012136 | The Chromosome 7 Annotation Project
+r3d100012138 | TERRA
+r3d100012139 | The Centre for Applied Genomics Databases
+r3d100012140 | Brunel figshare
+r3d100012141 | climate4impact
+r3d100012143 | Loughborough Research Repository
+r3d100012144 | University of Salford Data Repository
+r3d100012145 | University of Melbourne data repository
+r3d100012146 | St. Edward&#039;s University  institutional repository
+r3d100012147 | Stockholm University Figshare Repository
+r3d100012148 | Bath Spa University figshare
+r3d100012149 | DataHub
+r3d100012151 | Grouplens Datasets
+r3d100012152 | FooDB
+r3d100012153 | Exposome-Explorer
+r3d100012155 | ACU Research Bank
+r3d100012156 | Open Research Data Online
+r3d100012157 | Fairdata IDA Research Data Storage Service
+r3d100012158 | Etsin Research Data Finder
+r3d100012160 | ChemBio Hub
+r3d100012161 | Gran Telescopio CANARIAS Public Archive
+r3d100012162 | LibraData
+r3d100012163 | Precipitation Measurement Missions
+r3d100012164 | Global Precipitation Measurement
+r3d100012165 | STITCH
+r3d100012166 | Database for Hydrological Time Series of Inland Waters
+r3d100012167 | Sound and Vision
+r3d100012168 | PROFILES Registry
+r3d100012169 | NONCODE
+r3d100012171 | REBASE
+r3d100012173 | FlyCircuit
+r3d100012174 | GeoPortal.rlp
+r3d100012176 | iDog
+r3d100012177 | JenAge Ageing Factor Database
+r3d100012178 | Cancer Genome Anatomy Project
+r3d100012179 | Ag-Analytics
+r3d100012181 | Brain-CODE
+r3d100012182 | OASIS
+r3d100012183 | CMU Graphics Lab Motion Capture Database
+r3d100012184 | KIT Whole-Body Human Motion Database
+r3d100012185 | Birkbeck Research Data
+r3d100012186 | SilkPathDB
+r3d100012187 | SilkDB 3.0
+r3d100012188 | Research Data Exchange Platform - Johanna Mestorf Academy
+r3d100012189 | T3DB
+r3d100012190 | ZBW Journal Data Archive
+r3d100012191 | Grand Challenge Data Collection
+r3d100012192 | SARS-CoV-2 Data Hub
+r3d100012193 | GUDMAP
+r3d100012194 | CKAN @ IoT Lab
+r3d100012195 | SuperTarget
+r3d100012196 | ibeetle
+r3d100012197 | Phenol-Explorer
+r3d100012198 | ScienceData
+r3d100012199 | European Data Portal
+r3d100012200 | IBICT Cariniana Dataverse Network
+r3d100012201 | Historical Atlas of Sydney
+r3d100012203 | ICOS Carbon Portal
+r3d100012204 | FlyReactome
+r3d100012205 | HITRAN online
+r3d100012206 | ICTWSS database
+r3d100012207 | JaLTER MetaCat Service
+r3d100012208 | Korean Labor &amp; Income Panel Study
+r3d100012211 | City of Sydney - Research and statistics
+r3d100012212 | City of Sydney - Historians and archivists
+r3d100012213 | freeBIRD
+r3d100012214 | Mammalian Transcriptomic Database
+r3d100012215 | PRO-ACT
+r3d100012216 | Cornell Activity Datasets: CAD-60 &amp; CAD-120
+r3d100012217 | WDC for Geophysics, Beijing
+r3d100012218 | Global Change Research Data Publishing and Repository
+r3d100012220 | USGS Alaska Science Center
+r3d100012221 | Cross-National Time-Series Data Archive
+r3d100012222 | EPOS-FRANCE Seismological Data Center
+r3d100012223 | MatDat.com
+r3d100012224 | MorphoSource
+r3d100012225 | EPPO Global Database
+r3d100012226 | EM-DAT
+r3d100012227 | ResearchGate Data
+r3d100012228 | The USH1C mutations database
+r3d100012230 | GallusReactome
+r3d100012231 | Quality of Government Institute&#039;s Data
+r3d100012232 | Surrey Research Insight
+r3d100012233 | County-level measure of social capital
+r3d100012234 | Worldpop
+r3d100012235 | Yale University Open Data Access Project
+r3d100012236 | Agricultural and Environmental Data Archive
+r3d100012238 | Maddison Project
+r3d100012239 | Supreme Court Database
+r3d100012240 | World Christian Database
+r3d100012241 | World Religion Database
+r3d100012242 | Worldwide Governance Indicators Project
+r3d100012244 | OHSU Digital Commons
+r3d100012246 | Penn World Table
+r3d100012247 | J-Global
+r3d100012248 | Comparative Political Data Set
+r3d100012249 | Constituency-Level Elections Archive
+r3d100012250 | Correlates of War Project
+r3d100012251 | RAMEDIS
+r3d100012252 | Forschungsdaten- und Servicezentrum der Bundesbank
+r3d100012253 | Forschungsdatenzentrum IWH
+r3d100012254 | CLARIN-LT
+r3d100012256 | National Library of Norway | Språkbanken
+r3d100012257 | PolMine
+r3d100012258 | Spanish CLARIN K-Centre
+r3d100012259 | Repository CLARIN-D Centre CEDIFOR
+r3d100012260 | Tekstlaboratoriet
+r3d100012262 | ILC-CNR for CLARIN-IT repository
+r3d100012263 | Faces Of Fungi database
+r3d100012265 | CryptoDB
+r3d100012266 | ToxoDB
+r3d100012267 | Cross-national Equivalent File
+r3d100012268 | Curtin University Research Data Collection
+r3d100012269 | Integrated Resource for Reproducibility in Macromolecular Crystallography
+r3d100012270 | Land Information New Zealand Data Service
+r3d100012273 | SASBDB
+r3d100012274 | Smithsonian Research Online
+r3d100012275 | Biogeographic Information and Observation System
+r3d100012276 | RUresearch Data Portal
+r3d100012277 | SWATHAtlas
+r3d100012278 | MORPHYLL
+r3d100012281 | UWE Research Data Repository
+r3d100012282 | 4DGenome
+r3d100012284 | CARMEN
+r3d100012285 | Aston Data Explorer
+r3d100012287 | BowPed TRPS Data
+r3d100012288 | CCCA Data Server
+r3d100012290 | Media Repository Humboldt-Universität zu Berlin
+r3d100012291 | Norwegian Polar Data Centre
+r3d100012295 | Alaska Native Language Archive
+r3d100012296 | Research Data Repository FDAT
+r3d100012297 | GESDB
+r3d100012298 | Chorotree
+r3d100012300 | ErythronDB
+r3d100012302 | Physical Sciences Data-Science Service
+r3d100012304 | Dipòsit Digital de la Universitat de Barcelona Dades
+r3d100012305 | Centre for Environmental Data Analysis
+r3d100012307 | RADAR Luke
+r3d100012308 | DesignSafe Data Depot Repository
+r3d100012309 | Knowledge Commons Works
+r3d100012310 | Humanities Data Centre
+r3d100012311 | Metlin
+r3d100012313 | mzCloud
+r3d100012314 | UCSD Metabolomics Workbench
+r3d100012315 | LIPID MAPS
+r3d100012316 | e-cienciaDatos
+r3d100012318 | MoNA
+r3d100012319 | Forenames_histHub
+r3d100012320 | Sammlung Schweizerischer Rechtsquellen online
+r3d100012321 | Carbohydrate-Active enZYmes Database
+r3d100012322 | eCommons - Cornell&#039;s digital repository
+r3d100012325 | PharmGKB
+r3d100012326 | SowiDataNet
+r3d100012327 | SIP-Archiv
+r3d100012328 | NMDB
+r3d100012329 | STRENDA DB
+r3d100012330 | RADAR
+r3d100012332 | Clinical Genomic Database
+r3d100012333 | DATADOI
+r3d100012335 | GFZ Data Services
+r3d100012336 | EBAS
+r3d100012338 | Data Buoy Cooperation Panel
+r3d100012339 | APID
+r3d100012340 | SAHFOS
+r3d100012341 | Codex
+r3d100012342 | Genome Sequence Archive
+r3d100012343 | Service Centre of the Federal Government for Geo-Information and Geodesy - Open Data
+r3d100012344 | BioPortal
+r3d100012345 | SAMD
+r3d100012347 | intRechtDok
+r3d100012348 | ANPERSANA
+r3d100012349 | jPOSTrepo
+r3d100012350 | FORSbase
+r3d100012351 | Hardwood Genomics Project
+r3d100012352 | TreeGenes
+r3d100012353 | Centre for Astronomical Data of the Institute of Astronomy of the Russian Academy of Sciences
+r3d100012354 | DNASU plasmid repository
+r3d100012355 | PeanutBase
+r3d100012356 | Electron Microscopy Public Image Archive
+r3d100012358 | National Marine Mammal Data Portal
+r3d100012359 | Human Intermediate Filament Database
+r3d100012360 | eFish
+r3d100012361 | IANUS Datenportal
+r3d100012362 | VIPERdb
+r3d100012363 | GrainGenes
+r3d100012366 | Comparative RNA Web
+r3d100012368 | Life Science Database Archive
+r3d100012369 | Code Ocean
+r3d100012372 | RDP
+r3d100012374 | DaSCH - Swiss National Data and Service Center for the Humanities
+r3d100012375 | CosmoSim
+r3d100012376 | UNISA Institutional Repository
+r3d100012377 | B2FIND
+r3d100012378 | Analysis and Policy Observatory
+r3d100012379 | Senckenberg (meta)data portal
+r3d100012380 | Integrated Interactions Database
+r3d100012381 | Host - Pathogen Interaction Database
+r3d100012383 | OceanSITES
+r3d100012384 | CaltechDATA
+r3d100012385 | Texas Data Repository
+r3d100012386 | SIOR
+r3d100012388 | GlyTouCan
+r3d100012389 | Ancient Steelyards
+r3d100012390 | Architectural Fragments from Magnesia on the Maeander
+r3d100012391 | Hagia Sophia 3D
+r3d100012392 | Inscriptiones Christianae Graecae
+r3d100012393 | Rock Paintings in Indonesia
+r3d100012394 | ISTA Research Explorer
+r3d100012396 | Triticeae Toolbox
+r3d100012397 | brainlife
+r3d100012398 | The Neolithic in the Nile Delta
+r3d100012399 | Digibug: Repositorio Institucional de la Universidad de Granada
+r3d100012400 | Ancient Columns
+r3d100012402 | BioGPS
+r3d100012403 | TCCON Data Archive
+r3d100012404 | FDZ-DZHW
+r3d100012405 | Research Data at Essex
+r3d100012406 | Spiral
+r3d100012407 | Lincoln repository
+r3d100012408 | NCL Data
+r3d100012409 | Nottingham Research Data Management Repository
+r3d100012410 | QMU eData Repository
+r3d100012411 | St Andrews Research portal - Research Data
+r3d100012412 | University of Strathclyde KnowledgeBase Datasets
+r3d100012413 | UAL Research Online
+r3d100012414 | UEL Research Repository
+r3d100012415 | WRAP
+r3d100012417 | UCL Discovery
+r3d100012418 | DART Data
+r3d100012419 | DIAS
+r3d100012420 | SeedMe
+r3d100012421 | LINCS Data Portal
+r3d100012422 | TOAR Surface Observation Database
+r3d100012426 | OMICtools
+r3d100012427 | AgBase
+r3d100012429 | Birdbase
+r3d100012430 | AIRS/Aqua Observations of Gravity Waves
+r3d100012431 | Atmospheric Infrared Sounder
+r3d100012432 | GabiPD
+r3d100012433 | Human Genetic Variation Repository
+r3d100012435 | Image Data Resource
+r3d100012436 | Biobank of blood donors
+r3d100012437 | German National Cohort
+r3d100012438 | Historic Environment Scotland
+r3d100012439 | GIN
+r3d100012440 | DR-NTU (Data)
+r3d100012441 | Alzheimer Disease &amp; Frontotemporal Dementia Mutation Database
+r3d100012442 | Environmental Information Platform
+r3d100012443 | Open IFC Model Repository
+r3d100012444 | Psi Open Data
+r3d100012445 | Rotterdam Ophthalmic Data Repository
+r3d100012447 | MIDAS
+r3d100012448 | MPDS
+r3d100012449 | MIPAS/Envisat Observations of Polar Stratospheric Clouds
+r3d100012451 | ISER Centres and Surveys
+r3d100012455 | clarin:el Central inventory of language resources and services
+r3d100012457 | AmoebaDB
+r3d100012458 | GiardiaDB
+r3d100012459 | MicrosporidiaDB
+r3d100012460 | PiroplasmaDB
+r3d100012461 | TrichDB
+r3d100012462 | OrthoMCL
+r3d100012463 | ADS
+r3d100012464 | GeneWeaver.org
+r3d100012465 | ESA Planetary Science Archive
+r3d100012467 | OpenAgrar
+r3d100012468 | Digital Collections ULB Düsseldorf
+r3d100012469 | Verbund Forschungsdaten Bildung
+r3d100012470 | Edition Topoi  Repository
+r3d100012471 | data.world
+r3d100012473 | Map collection Charles University Faculty of Science
+r3d100012474 | Parkinson Disease Mutation Database
+r3d100012476 | Biogrid Australia
+r3d100012477 | Biosearch
+r3d100012478 | Institut d&#039;Astronomie et d&#039;Astrophysique Databases
+r3d100012479 | JPL OurOcean Portal
+r3d100012480 | NASA Life Sciences Portal
+r3d100012481 | National Database for Clinical Trials Related to Mental Illness
+r3d100012482 | National Genomic Resources Repository
+r3d100012483 | National Park Service Geographic Information Systems
+r3d100012485 | Natural Resources Canada Earth Sciences Data
+r3d100012486 | SimTK
+r3d100012487 | South African Environmental Observation Network Open Data Platform
+r3d100012488 | WBG Open Finances
+r3d100012489 | Open Data Portal Russia
+r3d100012490 | Cloud-Aerosol Lidar and Infrared Pathfinder Satellite Observations
+r3d100012491 | NASA GEWEX Surface Radiation Budget
+r3d100012492 | National Center for Health Statistics
+r3d100012493 | Project on Human Development in Chicago Neighborhoods
+r3d100012494 | Tropospheric Emission Spectrometer
+r3d100012495 | Liverpool John Moores University Research Data Repository
+r3d100012496 | GESIS Data Archive
+r3d100012497 | EOS-EarthData
+r3d100012498 | CESM Experiments
+r3d100012499 | NCAR Climate Analysis Section Data Catalog
+r3d100012500 | NCAR UCAR Climate Data Guide
+r3d100012501 | Visible earth
+r3d100012502 | Gateway to Astronaut Photography of earth
+r3d100012503 | NASA Image and Video Library
+r3d100012504 | OpenAltimetry
+r3d100012505 | ORDaR
+r3d100012506 | DURAARK datasets
+r3d100012509 | GEISHA
+r3d100012511 | Monitor of Settlement and Open Space Development
+r3d100012512 | SFU Radar
+r3d100012513 | DataSpace
+r3d100012514 | MetPetDB
+r3d100012515 | ResearchWorks Archive University of Washington
+r3d100012516 | PlasmID
+r3d100012517 | Animal Genome Size Database
+r3d100012518 | AmphibiaWeb
+r3d100012519 | Avibase
+r3d100012521 | HunCLARIN
+r3d100012522 | CLARIN-UK
+r3d100012523 | ARCHE
+r3d100012525 | Lund University Humanities Lab Archive
+r3d100012526 | Maison méditerranéenne des sciences de l&#039;homme, Phonothèque
+r3d100012527 | Phonogrammarchiv
+r3d100012528 | Canadian Open Genetics Repository
+r3d100012529 | ImmPort
+r3d100012530 | University of Amsterdam / Amsterdam University of Applied Sciences figshare
+r3d100012531 | University of Adelaide figshare
+r3d100012532 | kilthub figshare
+r3d100012534 | IMGT/LIGM-DBI
+r3d100012535 | IMGT/PRIMER-DB
+r3d100012536 | IMGT/GENE-DB
+r3d100012537 | Dash
+r3d100012538 | DataverseNO
+r3d100012539 | IMGT/3Dstructure-DB and IMGT/2Dstructure-DB
+r3d100012540 | IMGT/mAb-DB
+r3d100012542 | Research Catalogue -  Society for Artistic Research
+r3d100012543 | Antarctic Marine Geology Research Facility
+r3d100012544 | Community Surface Dynamics Modeling System
+r3d100012545 | Critical Zone Observatories data
+r3d100012547 | Lamont-Doherty Core Repository
+r3d100012548 | LEPR - Library of Experimental Phase Relations
+r3d100012549 | MediaBank
+r3d100012550 | Bigelow National Center for Algae and Microbiota
+r3d100012553 | ioChem-BD
+r3d100012554 | National River Flow Archive
+r3d100012555 | MO|RE data
+r3d100012557 | ETH Zürich Research Collection
+r3d100012558 | NetPath
+r3d100012561 | DEEMY
+r3d100012562 | Fishnet2
+r3d100012563 | Human Autophagy Database
+r3d100012564 | ScholarBank@NUS
+r3d100012565 | Autophagy Database
+r3d100012567 | SWE-CLARIN
+r3d100012568 | The Adaptive Evolution Database
+r3d100012569 | IEEE DataPort
+r3d100012570 | Sammlungsportal Georg-August-Universität Göttingen
+r3d100012571 | CIARD Ring
+r3d100012574 | Energy Data eXchange
+r3d100012575 | Vega
+r3d100012576 | data.public.lu
+r3d100012578 | KITopen
+r3d100012580 | ISIDORE
+r3d100012581 | ICSSR Data Service: Social Science Data Repository
+r3d100012582 | Base de Dados  Científicos da Universidade Federal do Paraná
+r3d100012585 | Climate Data Gateway at NCAR
+r3d100012586 | International Clinical Trials Registry Platform
+r3d100012587 | EnviDat
+r3d100012588 | Frozen Zoo®
+r3d100012592 | VAMDC Portal
+r3d100012593 | JRC Data Catalogue
+r3d100012594 | Temperate Reef Base
+r3d100012596 | Digitale Bibliothek Thüringen
+r3d100012600 | Alberta Food Composition Database
+r3d100012601 | Virginia Tech Data Repository
+r3d100012603 | SwissLipids
+r3d100012604 | AMS Acta
+r3d100012607 | UPCommons - Research Data
+r3d100012611 | Materials Cloud Archive
+r3d100012613 | RADAM database portal
+r3d100012617 | LOAR
+r3d100012621 | Database of Individual Seismogenic Sources
+r3d100012622 | The European Database of Seismogenic Faults
+r3d100012623 | Yoda - Utrecht University
+r3d100012625 | HydroShare
+r3d100012626 | ChEBI
+r3d100012627 | BioStudies
+r3d100012628 | Biosamples
+r3d100012629 | CATH
+r3d100012630 | arrayMap
+r3d100012633 | ZivaHub
+r3d100012634 | KRISHI - Knowledge based Resources Information Systems Hub for Innovations in Agriculture
+r3d100012636 | Digital Repository NM EPSCoR
+r3d100012638 | IndiaVotes
+r3d100012639 | Lok Dhaba
+r3d100012641 | European VLBI Network Data Archive
+r3d100012643 | Deep Blue Data
+r3d100012644 | European Mouse Mutant Cell Repository
+r3d100012645 | HeRBi
+r3d100012646 | Federated Research Data Repository
+r3d100012647 | GnpIS
+r3d100012648 | coastMap
+r3d100012650 | National Biomedical Imaging Archive
+r3d100012652 | Health Atlas
+r3d100012653 | National Institute of Mental Health Data Archive
+r3d100012654 | Research Domain Criteria Database
+r3d100012655 | Pediatric MRI Data Repository
+r3d100012656 | ABCD Data Repository
+r3d100012657 | CCF
+r3d100012661 | Telangana Open Data Portal
+r3d100012662 | Open Government Data Portal of Sikkim
+r3d100012663 | Open Data DK
+r3d100012664 | B-Clear
+r3d100012665 | Migration data portal
+r3d100012666 | Conservation Genome Resource Bank for Korean Wildlife
+r3d100012667 | Cotton EST database
+r3d100012668 | CottonGen
+r3d100012669 | Cotton Functional Genomics Database
+r3d100012670 | National Cotton Database
+r3d100012671 | ICAC World Cotton Database
+r3d100012672 | Wolfram Data Repository
+r3d100012673 | Data INRAE
+r3d100012674 | NODC Italian Oceanographic Data Centre
+r3d100012676 | CSISA Data Repository
+r3d100012677 | Censusindia
+r3d100012678 | Survey of India
+r3d100012679 | Open Government Data Portal of Surat City
+r3d100012680 | Maharashtra State Data Bank
+r3d100012681 | Pune Datastore
+r3d100012682 | Open Government Data Portal of Tamil Nadu
+r3d100012683 | National Data Repository
+r3d100012684 | Open Government Data Portal of Odisha
+r3d100012685 | Cotton Database
+r3d100012687 | JKU Magnetic Oxides Data Repository
+r3d100012688 | NCBI Assembly
+r3d100012689 | Japanese Genotype-phenotype Archive
+r3d100012690 | Network Data Exchange
+r3d100012691 | Tilburg University Dataverse
+r3d100012692 | Scholars&#039; Mine
+r3d100012693 | openICPSR
+r3d100012694 | ALSGENE
+r3d100012695 | ALSoD
+r3d100012696 | DataShare: the Open Data Repository of Iowa State University
+r3d100012698 | Repositorio Institucional UCASAL
+r3d100012700 | ALlele FREquency Database
+r3d100012701 | Donders Repository
+r3d100012702 | Immune Epitope Database
+r3d100012704 | Arquivo.pt - the Portuguese web-archive
+r3d100012705 | Kaggle
+r3d100012708 | Land Portal
+r3d100012712 | Epidat
+r3d100012713 | Alzforum
+r3d100012714 | W.A.D.I. Wadi Abu Dom Investigations
+r3d100012715 | enviPath
+r3d100012716 | Portal de datos de Biodiversidad
+r3d100012717 | Portal de Datos del Mar - SNDM
+r3d100012718 | UvaDOC - Fonda Antiguo
+r3d100012721 | TopFIND
+r3d100012722 | PhenoM
+r3d100012723 | Database for Bacterial Group II Introns
+r3d100012724 | BacMap
+r3d100012725 | iRefWeb
+r3d100012726 | Bacteriome.org
+r3d100012727 | Comprehensive Antibiotic Resistance Database
+r3d100012728 | OrtholugeDB
+r3d100012729 | CLAE
+r3d100012730 | SCRIPDB
+r3d100012731 | Pathway Commons
+r3d100012732 | iReceptor
+r3d100012733 | The Yeast Metabolome Database
+r3d100012747 | Gemma
+r3d100012752 | BenchSCI
+r3d100012753 | Small Molecule Pathway Database
+r3d100012754 | Health Canada Drug Product Database
+r3d100012755 | BACTIBASE
+r3d100012756 | The Chemical Probes Portal
+r3d100012757 | RODARE
+r3d100012760 | CEDAP Research Data Repository - research data
+r3d100012761 | The Book of Caverns in Theban Tomb 33: Arbeitsphotos
+r3d100012762 | Roman Water Law
+r3d100012763 | OpenStreetMap
+r3d100012765 | Ecosounds
+r3d100012766 | NetSlim
+r3d100012768 | Wissenschaftliche Sammlungen
+r3d100012769 | Banque de données du CDSP
+r3d100012770 | CIRAD Dataverse
+r3d100012771 | CIFOR Harvested Dataverse
+r3d100012773 | DataSpace@HKUST
+r3d100012775 | Fudan University Social Science Data Repository
+r3d100012777 | RIN Data Repository
+r3d100012778 | Maine Dataverse Network
+r3d100012783 | MEROPS
+r3d100012785 | New York Brain Bank
+r3d100012786 | Language Archive Cologne
+r3d100012787 | Greo Dataverse
+r3d100012788 | ArkDB
+r3d100012789 | Wiki-Pi
+r3d100012790 | Future Network &amp; Communication Repository
+r3d100012791 | SIDER
+r3d100012793 | Brock University Dataverse
+r3d100012794 | Carleton University Dataverse Collection
+r3d100012795 | Lakehead University Dataverse
+r3d100012796 | Laurentian University Dataverse
+r3d100012797 | McMaster University Dataverse
+r3d100012800 | Queen&#039;s University Dataverse
+r3d100012801 | Toronto Metropolitan University Dataverse
+r3d100012802 | Trent University Dataverse
+r3d100012803 | University of Guelph Research Data Repositories
+r3d100012805 | University of Ottawa Dataverse
+r3d100012806 | University of Toronto Dataverse
+r3d100012807 | University of Windsor Dataverse
+r3d100012808 | University of Waterloo Dataverse
+r3d100012809 | Western University Dataverse
+r3d100012810 | Wilfrid Laurier University Dataverse
+r3d100012811 | University of Regina Dataverse
+r3d100012812 | York University Dataverse
+r3d100012813 | Dalhousie University Dataverse @ Borealis
+r3d100012814 | University of Alberta Dataverse
+r3d100012815 | UNB Libraries Dataverse Research Data Repository
+r3d100012816 | University of Manitoba Dataverse
+r3d100012818 | Spectrum Research Repository
+r3d100012820 | Progenetix
+r3d100012822 | ConsensusPathDB
+r3d100012823 | Vivli
+r3d100012824 | Repositorio de datos del Ministerio de Educación del Perú
+r3d100012825 | Forschungsdaten-Repositorium der LUH
+r3d100012827 | BEI Resource
+r3d100012828 | BioSample
+r3d100012832 | Community Coordinated Modeling Center
+r3d100012834 | Deep Carbon Observatory Data Portal
+r3d100012835 | Seamount Catalog
+r3d100012836 | EyeGENE
+r3d100012837 | Federal Interagency Traumatic Brain Injury Research Informatics System
+r3d100012840 | Laboratory of Neuroimaging Image &amp; Data Archive
+r3d100012841 | New Mexico Bureau of Geology &amp; Mineral Resources Data Repository
+r3d100012842 | NeuroVault
+r3d100012845 | NIDDK Information Network
+r3d100012848 | Parkinson&#039;s Disease Biomarkers Program Data Management Resource
+r3d100012849 | Cardiovascular Research Grid
+r3d100012850 | Pfam Protein Families
+r3d100012851 | Radiation Belt Storm Probes Ion Composition Experiment
+r3d100012857 | Medienarchiv der Zürcher Hochschule der Künste
+r3d100012858 | Mass Spectrometry Interactive Virtual Environment
+r3d100012860 | Eurac Research CLARIN Centre
+r3d100012861 | Virtuelles Skriptorium St. Matthias
+r3d100012862 | Carbohydrate Structure Database
+r3d100012863 | hPSCreg
+r3d100012864 | KBase
+r3d100012866 | CU Scholar
+r3d100012867 | EBiSC catalogue
+r3d100012868 | Roman Villa of Capo di Sorrento
+r3d100012869 | Maya Image Archive
+r3d100012870 | EarthWorks
+r3d100012871 | Portal de Datos Genómicos del SNDG
+r3d100012872 | USN Research Data Archive
+r3d100012873 | Norwegian Marine Data Center
+r3d100012874 | Continental Scientific Drilling Facility
+r3d100012875 | RESPECT
+r3d100012879 | Research Data JCU
+r3d100012880 | LacCore
+r3d100012882 | DIAMM
+r3d100012883 | International Institute of Tropical Agriculture datasets
+r3d100012884 | Kinder Institute Urban Data Platform
+r3d100012888 | O2 Repositori UOC - Dades
+r3d100012889 | edoc-Server  - Forschungsdaten
+r3d100012890 | World Ocean Atlas
+r3d100012891 | APPLAUSE
+r3d100012892 | BAOBAB
+r3d100012893 | vegetweb
+r3d100012894 | LinkedEarth Wiki
+r3d100012898 | eHOMD
+r3d100012899 | MODES
+r3d100012900 | Biofilm-active AMPs database
+r3d100012901 | Antimicrobial Peptide Database
+r3d100012902 | ArachnoServer
+r3d100012903 | Antimicrobial Combination Networks
+r3d100012909 | Bjerknes Climate Data Centre
+r3d100012910 | DEIMS-SDR
+r3d100012911 | RWTH Publications Research Data
+r3d100012912 | National Coronial Information System
+r3d100012915 | Data and Specimen Hub
+r3d100012917 | CNGBdb
+r3d100012918 | KWTRP Research Data Repository Dataverse
+r3d100012920 | Water Quality Portal
+r3d100012922 | eLabour
+r3d100012923 | Data Publication Server Forschungszentrum Jülich
+r3d100012924 | Cancer in Young People in Canada
+r3d100012925 | Arch
+r3d100012926 | Korea Polar Data Center
+r3d100012927 | datacommons@psu
+r3d100012928 | MicroScope
+r3d100012929 | Oxford Brookes University: RADAR
+r3d100012930 | SinMin
+r3d100012931 | IISH Dataverse
+r3d100012932 | IIASA DARE
+r3d100012934 | DWB BioCASe Data Publication pipeline and RDF service
+r3d100012935 | EURO-CORDEX 1989-2018 using TerrSysMP
+r3d100012936 | IOWDB
+r3d100012937 | IOW Data Portal
+r3d100012938 | Nova Scotia Government&#039;s Open Data Portal
+r3d100012939 | Prince Edward Island Government Open Data Portal
+r3d100012940 | Newfoundland and Labrador Open Data
+r3d100012941 | Données Québec
+r3d100012943 | Ontario Open Government Data
+r3d100012944 | Government of Alberta Open Datasets
+r3d100012945 | DataBC
+r3d100012946 | BAliBASE
+r3d100012948 | Halifax Open Data
+r3d100012949 | City of Toronto Open Data Portal
+r3d100012950 | Open Data Ottawa
+r3d100012951 | Montréal Portail Donnees Ouvertes
+r3d100012952 | City of Winnipeg Open Data Portal
+r3d100012953 | City of Regina Open Data
+r3d100012954 | Edmonton Open Data
+r3d100012955 | Research Data Unipd
+r3d100012961 | CancerModels.Org
+r3d100012962 | PHAIDRA - University of Padua
+r3d100012965 | IFREMER-SISMER Portail de données marines
+r3d100012966 | OPARA
+r3d100012967 | City of Victoria Open Data Portal
+r3d100012968 | Open Calgary
+r3d100012969 | Open Hamilton
+r3d100012970 | Kitchener GeoHub
+r3d100012971 | Region of Waterloo - Open Data
+r3d100012972 | Open Data Kingston Hub
+r3d100012973 | City of Barrie Open GIS Data Portal
+r3d100012974 | Guelph Open Data Portal
+r3d100012975 | The City of Saint John Open Data
+r3d100012976 | Open Data Catalogue - City of Lethbridge
+r3d100012977 | Open Data Portal - City of Kelowna
+r3d100012978 | City of Burlington&#039;s Open Data Catalogue
+r3d100012979 | City of Greater Sudbury Open Data Portal
+r3d100012980 | City of Oshawa Open Data
+r3d100012981 | Niagara Open Data
+r3d100012986 | City of Cambridge GeoHub
+r3d100012987 | City of Surrey Open Data
+r3d100012989 | City of Brantford Open Data Catalogue
+r3d100012990 | Nanaimo Data Catalogue
+r3d100012991 | Open Data Prince George
+r3d100012992 | City of Grand Prairie Open Data Catalogue
+r3d100012993 | City of Kamloops Open Data Catalog
+r3d100012994 | Dataverse UNIMI
+r3d100012997 | Strathcona County&#039;s Open Data
+r3d100012998 | City of Brandon Open Data
+r3d100012999 | Town of Oakville Open Data
+r3d100013000 | New Westminster Open Data
+r3d100013001 | York Region Open Data
+r3d100013002 | Niagara Falls Open Data
+r3d100013003 | City of Brampton Open Data
+r3d100013004 | Township of Langley Open Data Portal
+r3d100013005 | Town of Canmore Open Data
+r3d100013006 | County of Grande Prairie Open Data
+r3d100013007 | Squamish Open Data
+r3d100013008 | Town of Huntsville Open Data
+r3d100013009 | Grey County Open Data
+r3d100013010 | Haldimand County Open Data
+r3d100013011 | Town of Ajax Open Data
+r3d100013012 | SENSOR
+r3d100013014 | Share_it
+r3d100013015 | Project Data Sphere
+r3d100013016 | West Parry Sound Geography Network
+r3d100013017 | City of Airdrie Open Data
+r3d100013018 | Alberta Geological Survey Open Data Portal
+r3d100013019 | Sunshine Coast Regional District Open Data
+r3d100013020 | District of Peachland Open Data
+r3d100013021 | Westbank First Nation Open Data
+r3d100013022 | Central Lake Ontario Conservation Open Data Portal
+r3d100013023 | Quinte West Open GIS Data Portal
+r3d100013025 | East Hants Open Data
+r3d100013027 | Dementias Platform UK Data Portal
+r3d100013028 | BBMRI-ERIC Directory
+r3d100013029 | TUdatalib
+r3d100013030 | RiuNet
+r3d100013031 | AIDA Data Hub
+r3d100013033 | Copernicus&#039; Heliograph
+r3d100013034 | Construction Drawings
+r3d100013035 | Corpus Musicae Ottomanicae Editions and Catalogue
+r3d100013036 | LIVIVO
+r3d100013037 | Phaidra Vetmeduni Vienna
+r3d100013039 | Toronto Police Service Public Safety Data Portal
+r3d100013040 | Employment Ontario Geo Hub
+r3d100013043 | UN Data Catalog
+r3d100013044 | ILOSTAT
+r3d100013045 | Czech National Corpus
+r3d100013046 | PORTULAN CLARIN repository
+r3d100013047 | South African Centre for Digital Language Resources
+r3d100013048 | CLARIN Knowledge Centre for the Languages of Sweden
+r3d100013049 | PermaSense High-Alpine Permafrost Data
+r3d100013050 | Tree Atlas Project
+r3d100013051 | ENCODE
+r3d100013052 | data.enanomapper
+r3d100013053 | ZFDM repository
+r3d100013057 | SUITS Data Repository
+r3d100013058 | Gendered Innovation Open Data Repository
+r3d100013060 | BacDive
+r3d100013062 | Data Univ Gustave Eiffel
+r3d100013064 | ESS SciCat
+r3d100013068 | Freshwater Research and Environmental Database
+r3d100013071 | NCI Data Portal
+r3d100013072 | NIST Data Discovery
+r3d100013073 | GTS AI Data Collection
+r3d100013076 | TUHH Open Research - Research Data TUHH
+r3d100013077 | The Kreisgraben-Phenomenon
+r3d100013078 | Atlas of Innovations
+r3d100013079 | ISRIC Soil Data Hub
+r3d100013080 | DataStream
+r3d100013082 | Research Data On Gender Relations In Academia
+r3d100013083 | Fox Insight Date Exploration Network
+r3d100013084 | SURF Data Repository
+r3d100013086 | Survey Research Data Archive
+r3d100013090 | UCL Research Data Repository
+r3d100013095 | Informationssystem Graffiti in Deutschland (INGRID)
+r3d100013100 | Shared Platform for Antibiotic Research and Knowledge
+r3d100013102 | mediaTUM
+r3d100013103 | SiB Colombia Portal de Datos
+r3d100013106 | e-Depot of the National Archives of the Netherlands
+r3d100013107 | PsychArchives
+r3d100013108 | Repositorio de Datos de Investigación de la Universidad de Chile
+r3d100013111 | Collaborative Research Centre 1211 Database
+r3d100013113 | PTB-OAR
+r3d100013116 | University of Hertfordshire Research Archive
+r3d100013118 | B2SHARE Server Forschungszentrum Jülich
+r3d100013120 | INPTDAT
+r3d100013121 | DMU Figshare
+r3d100013130 | PhenoCam
+r3d100013132 | China Seismic Array Data Management Center
+r3d100013133 | Portal de Datos Abiertos de la Pontificia Universidad Católica del Perú
+r3d100013134 | DataSuds
+r3d100013135 | Fordatis
+r3d100013138 | Chemical composition of ancient ceramics
+r3d100013139 | Berlin Waterclock Project
+r3d100013140 | Architectural Fragments of Myus
+r3d100013141 | LiVES Collection of Osteological Anthropometry Digest
+r3d100013142 | Pyramids of the Steppe / Kazakhstan, Land of Seven Rivers
+r3d100013143 | Portable X-Ray fluorescence analysis of Late Bronze Age glass from Amarna
+r3d100013144 | The Uruk-Warka Survey
+r3d100013148 | Pennsieve Discover
+r3d100013152 | Perdigao Field Experiment
+r3d100013153 | Australian Bureau of Meteorology data catalogue
+r3d100013154 | Duke Research Data Repository
+r3d100013155 | ROSA P
+r3d100013156 | Paths through Rome
+r3d100013157 | The Textile Revolution
+r3d100013158 | Climate Models
+r3d100013159 | Digitale Sammlungen der Württembergischen Landesbibliothek
+r3d100013160 | BioGRID ORCS
+r3d100013162 | Digitale Historische Bibliothek Erfurt/Gotha
+r3d100013164 | Geoscience Data Exchange
+r3d100013165 | SUNScholarData
+r3d100013166 | Forschungsdatenzentrum im Kraftfahrt-Bundesamt
+r3d100013167 | WSI-Datenzentrum
+r3d100013168 | DeZIM Research Data Center
+r3d100013169 | European XFEL Data Portal
+r3d100013171 | DaRUS
+r3d100013173 | DataRepositoriUM
+r3d100013176 | burckhardtsource.org
+r3d100013177 | ScienceDB
+r3d100013178 | GNPS: Global Natural Products Social Molecular Networking
+r3d100013179 | CERIC Data Portal
+r3d100013180 | UK Government Web Archive
+r3d100013182 | GIGA Research Data
+r3d100013187 | Genomic Expression Archive
+r3d100013188 | Marine Data Archive
+r3d100013189 | Database of Religious History
+r3d100013190 | Répertoire International des Sources Musicales (RISM)
+r3d100013193 | Humanitarian Data Exchange
+r3d100013195 | ZBW Digital Long-Term Archive
+r3d100013198 | National Data Archive: An Online Microdata Library
+r3d100013199 | Population Health Data Archive
+r3d100013200 | PRISM Data
+r3d100013201 | Reanalysis Tropopause Data Repository
+r3d100013202 | Primate Cell Type Database
+r3d100013204 | University of Victoria Dataverse
+r3d100013205 | Université de Montréal – Dataverse
+r3d100013207 | Litterbase
+r3d100013208 | depositar
+r3d100013209 | ELRA Catalogue of Language Resources
+r3d100013210 | Sprachatlas Baden-Württemberg
+r3d100013212 | Repositorio de datos de investigación de la Universidad del Rosario
+r3d100013213 | KORD Repository
+r3d100013215 | eData: the STFC Research Data Repository
+r3d100013216 | RDPCIDAT
+r3d100013217 | ESRF Portal
+r3d100013218 | California Digital Library
+r3d100013219 | European Vitis Database
+r3d100013220 | Deutsche Genbank Reben
+r3d100013221 | Vitis International Variety Catalogue
+r3d100013223 | Brainlife
+r3d100013224 | Broad GDAC Firehose
+r3d100013225 | Digital Repository at the University of Maryland
+r3d100013226 | The Earthbound Planet Search
+r3d100013227 | Hakai Data
+r3d100013228 | immuneACCESS
+r3d100013230 | Million Song Dataset
+r3d100013232 | CMCC Data Portal
+r3d100013233 | Pitt Quantum Repository
+r3d100013235 | RTU research data repository
+r3d100013236 | Social Science Japan Data Archive
+r3d100013237 | ICTS SOCIB Data Repository
+r3d100013238 | Bioconductor
+r3d100013239 | University of Prince Edward Island Data (Beta)
+r3d100013240 | UTM-CSIC Data Centre
+r3d100013241 | University of York Research Database Datasets
+r3d100013242 | Repositorio Institucional Universidad de Antioquia
+r3d100013243 | Smithsonian Open Access
+r3d100013248 | Migrant Integration Policy Index
+r3d100013257 | Historical Data Centre Saxony-Anhalt
+r3d100013258 | Open Research Data @PUC-Rio
+r3d100013260 | AmeriFlux
+r3d100013261 | Smithsonian figshare
+r3d100013262 | Repositorio Digital UTB
+r3d100013263 | FaceBase
+r3d100013265 | SupraBank
+r3d100013266 | Open Science OVGU
+r3d100013268 | COVID-19 Interactive Map
+r3d100013271 | data.sciencespo
+r3d100013272 | ReefTEMPS
+r3d100013273 | RosDok
+r3d100013275 | GRO.data
+r3d100013276 | Arctic Permafrost Geospatial Centre
+r3d100013280 | Living Atlas of the World
+r3d100013283 | FactGrid
+r3d100013285 | National Tibetan Plateau/Third Pole Environment Data Center
+r3d100013286 | BLB Digitale Sammlungen
+r3d100013287 | KTISIS
+r3d100013291 | MOSES Data Discovery Portal
+r3d100013292 | COVID-19 Data Portal
+r3d100013293 | Cellosaurus
+r3d100013294 | Chinese Clinical Trial Register
+r3d100013295 | Complex Portal
+r3d100013297 | ERG-Science Center
+r3d100013298 | Coronavirus Antiviral Research Database
+r3d100013299 | Liverpool COVID-19 Drug Interactions
+r3d100013300 | COVID-19 Research Collaborations
+r3d100013301 | DisGeNET
+r3d100013302 | EU Clinical Trial Register
+r3d100013303 | Risklayer Explorer
+r3d100013304 | European Centre for Disease Prevention and Control
+r3d100013305 | Facebook Data for Good
+r3d100013307 | ISRCTN Registry
+r3d100013308 | IUPHAR/BPS Guide to Pharmacology
+r3d100013309 | The Lens
+r3d100013311 | Dutch Trial Register
+r3d100013312 | Novartis Clinical Trial Results Database
+r3d100013313 | Surveillance Epidemiology of Coronavirus (COVID19) Under Research Exclusion
+r3d100013314 | ViralZone
+r3d100013315 | VirHostNet
+r3d100013316 | WikiPathways
+r3d100013317 | OpenHeritage 3D
+r3d100013319 | COEMS Open Data
+r3d100013320 | Materials Project
+r3d100013322 | Portal de Datos Abiertos UNAM, Colecciones Universitarias
+r3d100013323 | WorldData.AI
+r3d100013325 | EBRAINS
+r3d100013328 | Software Heritage Archive
+r3d100013329 | NanoCommons Knowledge Base
+r3d100013330 | BioProject
+r3d100013331 | ClinVar
+r3d100013333 | BIRD
+r3d100013336 | Regionaal Archief Zutphen (part of Gemeente Zutphen)
+r3d100013337 | Paris Astronomical Data Centre
+r3d100013339 | Datanator
+r3d100013342 | USTP Phaidra
+r3d100013343 | ReDATA
+r3d100013344 | Peek
+r3d100013347 | SciLifeLab Data Repository
+r3d100013348 | Humadoc repositorio
+r3d100013351 | DASSH
+r3d100013352 | Bilkent University Institutional Repository
+r3d100013353 | TIB Digital Long-Term Archive
+r3d100013354 | Open Power System Data
+r3d100013355 | GePaRD
+r3d100013356 | Data Center - SAFE
+r3d100013358 | Infectious Diseases Data Observatory
+r3d100013359 | KORDS
+r3d100013361 | BioSimulations
+r3d100013362 | Mountain Scholar
+r3d100013364 | Open Access Power-Grid Frequency Database
+r3d100013365 | IAGOS Data Centre
+r3d100013366 | Most Wiedzy Open Research Data Catalog
+r3d100013369 | Repositório de Dados Científicos
+r3d100013370 | Pedestrian Dynamics Data Archive
+r3d100013372 | OpenLandMap.org
+r3d100013374 | Rhodes University Research Data
+r3d100013377 | open_UMR
+r3d100013378 | Alzheimer&#039;s Disease Neuroimaging Initiative Image and Data Archive
+r3d100013382 | intellectum
+r3d100013383 | IsoArcH
+r3d100013385 | HKU DataHub
+r3d100013386 | ACEnano
+r3d100013387 | Argovis
+r3d100013391 | The University of Pittsburgh English Language Institute Corpus
+r3d100013392 | Geoscientific Data &amp; Discovery Publishing Center
+r3d100013393 | Mitelman Database of Chromosome Aberrations and Gene Fusions in Cancer
+r3d100013394 | LeoPARD - TU Braunschweig Publications And Research Data
+r3d100013395 | Dados Abertos De Pesquisas
+r3d100013399 | Repositorio Institucional Universidad Santo Tomás
+r3d100013400 | Tethys RDR
+r3d100013404 | Copernicus Marine Environment Monitoring Service
+r3d100013405 | Gaia@AIP
+r3d100013407 | CosmoHub
+r3d100013408 | ProteomicsDB
+r3d100013413 | Sciflection
+r3d100013414 | Germania Sacra Online
+r3d100013415 | Stockholm University Library Dataverse
+r3d100013418 | FAPESP COVID-19 Data Sharing/BR
+r3d100013419 | ROCEEH Out of Africa Database
+r3d100013420 | APIS
+r3d100013421 | ERIC/open
+r3d100013422 | National COVID Cohort Collaborative
+r3d100013423 | Yareta
+r3d100013425 | DAIS
+r3d100013426 | Autonomous University of Bucaramanga Repository
+r3d100013427 | Repositorio Institucional de la Universidad de Burgos
+r3d100013428 | Genome Warehouse
+r3d100013429 | Astromaterials Data System
+r3d100013430 | HPDE.io
+r3d100013431 | NASA Heliophysics Data Portal
+r3d100013432 | BioSimulators
+r3d100013433 | Bicocca Open Archive Research Data
+r3d100013438 | Repositori Institucional Universitat Rovira i Virgili
+r3d100013439 | DataON Repository
+r3d100013440 | Cassavabase
+r3d100013441 | Repository of Psychological Instruments in Serbian
+r3d100013442 | Producción Académica UCC
+r3d100013444 | Aperta Turkey Open Archive
+r3d100013445 | SEDICI
+r3d100013449 | Freedom on the Move
+r3d100013450 | Repositorio Institucional-Universidad Autónoma de Manizales
+r3d100013451 | QsarDB
+r3d100013453 | CLARIN-IS
+r3d100013455 | Worldviews
+r3d100013456 | Open Forest Data
+r3d100013458 | UBC Dataverse Collection
+r3d100013459 | IMK/IAA generated MIPAS/Envisat data
+r3d100013461 | Canadian Open Neuroscience Platform Portal
+r3d100013465 | Dipòsit Digital de Documents de la UAB
+r3d100013466 | RADAR4KIT
+r3d100013468 | ASU Library Research Data Repository
+r3d100013469 | EarthEnv
+r3d100013470 | BonaRes Repository
+r3d100013471 | Transparenzportal der Stadt Karlsruhe
+r3d100013475 | Bioinformatics.org
+r3d100013478 | Bitbucket
+r3d100013484 | Washington University Research Data
+r3d100013486 | Coronavirus Government Response Tracker
+r3d100013487 | Polish Platform of Medical Research
+r3d100013488 | DTU Data
+r3d100013494 | DATICE
+r3d100013497 | eSango
+r3d100013499 | Materials Data Repository
+r3d100013500 | OLOS
+r3d100013503 | arthistoricum.net@heiDATA
+r3d100013504 | PSI Open Data Provider
+r3d100013505 | Health Data Research Innovation Gateway
+r3d100013506 | Center for Remote Sensing and Integrated Systems
+r3d100013507 | Propylaeum@heiDATA
+r3d100013508 | DASS-BiH
+r3d100013510 | DABAR
+r3d100013511 | Repositorio de Activos Digitales
+r3d100013512 | Open Energy Platform
+r3d100013513 | Kiezdeutschkorpus KiDKo
+r3d100013514 | Bach digital
+r3d100013516 | Digitale Mozart-Edition
+r3d100013517 | International Music Score Library Project
+r3d100013518 | Social Sciences and Digital Humanities Archive
+r3d100013519 | Refubium
+r3d100013520 | TRR170-DB
+r3d100013522 | Theater und Musik in Weimar 1754 - 1990
+r3d100013523 | PUBLISSO-Fachrepositorium Lebenswissenschaften
+r3d100013524 | SMU Research Data Repository
+r3d100013525 | Data@Lincoln
+r3d100013526 | UrMEL
+r3d100013527 | St. Jude Cloud
+r3d100013528 | e-codices
+r3d100013529 | FULIR Data
+r3d100013531 | Yale-NUS Dataverse
+r3d100013532 | IOS Regensburg Research Data Respository
+r3d100013533 | Kikapu
+r3d100013535 | Bureau Central de Magnétisme Terrestre
+r3d100013536 | Collaborative Research Centre Transregio 228 Database
+r3d100013537 | UCREA
+r3d100013538 | Jurisdictional Ocean Information Sharing System
+r3d100013539 | RETOPEA
+r3d100013541 | Harmonia Universalis
+r3d100013542 | National Microbiome Data Collaborative
+r3d100013544 | ZFMK Biodiversity Data Center
+r3d100013546 | ScholarWorks@UMassAmherst
+r3d100013547 | LiceBase
+r3d100013548 | CLARIN-LV repository
+r3d100013549 | MUSE-Wide
+r3d100013550 | Riga Stradins University  dataverse
+r3d100013553 | DNBLab
+r3d100013555 | Finnish Biodiversity Information Facility
+r3d100013556 | Jülich DATA
+r3d100013557 | TU Wien Research Data
+r3d100013559 | CORA. Repositori de Dades de Recerca
+r3d100013562 | Movebank
+r3d100013563 | Marine Scotland Data
+r3d100013564 | JACQ - Virtual Herbaria
+r3d100013565 | TU Graz Repository
+r3d100013567 | Digitales Deutsches Frauenarchiv
+r3d100013569 | Social Data Repository (RDS)
+r3d100013570 | MD-SOAR
+r3d100013571 | NF Data Portal
+r3d100013574 | Macromolecular Xtallography Raw Data Repository
+r3d100013575 | OPAL
+r3d100013576 | Archaeological Map of the Czech Republic
+r3d100013577 | Diamond data catalogue
+r3d100013578 | European Mouse Mutant Archive
+r3d100013579 | Linguistic Linked Open Data
+r3d100013580 | Brandeis ScholarWorks
+r3d100013582 | METIS
+r3d100013583 | Endangered Languages Archive
+r3d100013584 | aviDa
+r3d100013585 | Forschungsdatenzentrum des Bundesamtes für Migration und Flüchtlinge
+r3d100013586 | ACSS Dataverse
+r3d100013589 | National Library of Scotland
+r3d100013590 | University of Manchester figshare
+r3d100013591 | National Ecosystem Data Bank
+r3d100013592 | IDOC-DATA
+r3d100013594 | Cary Institute of Ecosystem Studies figshare
+r3d100013596 | Health Study Hub
+r3d100013602 | University of Tasmania Research Data Portal
+r3d100013603 | Depository Trust &amp; Clearing Corporation Data Services
+r3d100013604 | Bloomberg
+r3d100013606 | Pôle National de Données de Biodiversité
+r3d100013607 | Radboud Data Repository
+r3d100013608 | DaKS
+r3d100013609 | National Library of the Netherlands  e-depot
+r3d100013612 | Atmosphere to Electrons, Data Archive and Portal
+r3d100013613 | Joint Genome Institute Data Portal
+r3d100013615 | AlphaFold
+r3d100013617 | New Zealand&#039;s Biological Heritage National Science Challenge Data Repository
+r3d100013623 | MHKDR
+r3d100013624 | NAWI Water DAMS
+r3d100013625 | OEDI
+r3d100013626 | ArkeoGIS
+r3d100013628 | GNS Science Dataset Catalogue
+r3d100013630 | Discovery
+r3d100013631 | Varieties of Democracy
+r3d100013633 | Scholar@UC
+r3d100013634 | Oak Ridge Leadership Computing Facility Constellation Portal
+r3d100013635 | NREL Data Catalog
+r3d100013636 | NGEE Tropics
+r3d100013637 | Addis Ababa University Research Data Repository
+r3d100013638 | DANDI
+r3d100013639 | Buildings Data Platform
+r3d100013640 | Panel Data Research Center at Keio University Data
+r3d100013641 | International Soil Carbon Network
+r3d100013642 | HepSim
+r3d100013645 | TemplateFlow
+r3d100013646 | Brain Analysis Library of Spatial maps and Atlases
+r3d100013647 | CloudFlame
+r3d100013648 | Radiocarbon Palaeolithic Europe Database
+r3d100013649 | WOVOdat
+r3d100013650 | Signaling Pathways Project
+r3d100013652 | correspSearch - Search scholarly editions of letters
+r3d100013656 | IIT Dataverse
+r3d100013658 | SciELO Data
+r3d100013660 | Middlesex University Research Data Repository
+r3d100013661 | CUHK Research Data Repository
+r3d100013663 | Clinical Research Metadata Repository
+r3d100013664 | Forschungsdaten­zentrum der Bundesanstalt für Arbeitsschutz und Arbeitsmedizin
+r3d100013665 | UdG Digital Repository
+r3d100013666 | neuGRID
+r3d100013667 | GeneCorner Plasmid Collection
+r3d100013668 | bio.tools
+r3d100013670 | GovInfo
+r3d100013671 | TreeSource
+r3d100013672 | AUBScholarWorks
+r3d100013673 | Cefas Data Portal
+r3d100013674 | Datenrechercheportal UFZ
+r3d100013676 | BORIS Portal
+r3d100013677 | J-STAGE Data
+r3d100013678 | St. Francis Xavier University Dataverse
+r3d100013679 | Discover
+r3d100013680 | Open Science Data Repository
+r3d100013681 | KonDATA
+r3d100013683 | Netherlands Polar Data Center
+r3d100013688 | DOREL
+r3d100013689 | RIULL
+r3d100013691 | IPGP Data Center
+r3d100013693 | Luleå University of Technology research data in the university&#039;s publication database DiVA
+r3d100013696 | DRA
+r3d100013698 | Pandora
+r3d100013701 | PubData
+r3d100013702 | OCTOPUS database
+r3d100013704 | Regionaal Archief Tilburg
+r3d100013705 | protocols.io
+r3d100013707 | Open Health Data Dataverse
+r3d100013708 | NORPERM
+r3d100013711 | RIKEN Bioresource Research Center
+r3d100013713 | CHERRY
+r3d100013715 | Mutant Mouse Resource &amp; Research Centers
+r3d100013717 | CEU Institutional Repository
+r3d100013719 | SPARC Portal
+r3d100013720 | European Xenopus Resource Center
+r3d100013722 | Repositorio Abierto de la Universidad Internacional de Andalucía
+r3d100013727 | ATCC Genome Portal
+r3d100013732 | Biofilms Structural Database
+r3d100013733 | UNESP Institutional Repository
+r3d100013735 | LegionellaDB
+r3d100013736 | The Perovskite Database Project
+r3d100013737 | NIH 3D Print Exchange
+r3d100013738 | JOAD Dataverse
+r3d100013739 | Savannah
+r3d100013740 | MetabolomeXchange
+r3d100013741 | Mappa
+r3d100013743 | National Genomics Data Center
+r3d100013744 | DadosIPB
+r3d100013745 | SLAPIS
+r3d100013746 | SWISSUbase
+r3d100013747 | National Microbiology Data Center
+r3d100013748 | National Earth Observation Data Center
+r3d100013750 | DEMel
+r3d100013752 | National Materials Corrosion and Protection Data Center
+r3d100013753 | OSF - Vrije Universiteit Amsterdam
+r3d100013754 | National Cryosphere Desert Data Center
+r3d100013755 | National Wild Seed Resource Center
+r3d100013756 | Organic Synthesis Search
+r3d100013757 | China Tropical Crop Germplasm Resources Information Network
+r3d100013758 | National Omics Data Encyclopedia
+r3d100013759 | ScienceRepository
+r3d100013762 | National Center for Forestry and Grassland Genetic Resources
+r3d100013763 | National Aquatic Biological Resource Center
+r3d100013764 | National Marine Aquatic Germplasm Resource Bank
+r3d100013765 | National Freshwater Genetic Resource Center
+r3d100013766 | The Plastics-Active Enzymes Database
+r3d100013770 | Research data repository of the Universität Innsbruck
+r3d100013771 | National Parasite Resource Center
+r3d100013772 | National Microbial Resource Platform
+r3d100013775 | National Human Brain Bank for Development and Function
+r3d100013776 | AgroSpace
+r3d100013777 | BCCM/ITM Mycobacteria Collection
+r3d100013778 | National Health and Disease Human Brain Tissue Resource Center
+r3d100013779 | ULC Cyanobacteria Collection
+r3d100013780 | National Stem Cell Resource Bank
+r3d100013781 | National Stem Cell Translational Resource Center
+r3d100013782 | IHEM Fungi Collection: Human &amp; Animal Health
+r3d100013783 | MUCL Agro-food &amp; Environmental Fungal Collection
+r3d100013784 | BCCM/DCG Diatoms Collection
+r3d100013785 | LMG Bacteria Collection
+r3d100013787 | Chinese Virtual Herbarium
+r3d100013789 | Science Direct Repository Koszalin University of Technology
+r3d100013791 | eLibrary of Microbial Systematics and Genomics
+r3d100013792 | National Infrastructure of Mineral Rock and Fossil Resources for Science and Technology
+r3d100013793 | National Sharing Platform for Reference Materials
+r3d100013794 | National Infrastructure of Cell line Resources BMCR
+r3d100013799 | National Collection of Authenticated Cell Cultures
+r3d100013800 | National Rodent Laboratory Animal Resource Bank
+r3d100013802 | Pacific Northwest National Laboratory DataHub: Scientific Data Repository
+r3d100013804 | Debreceni Egyetem Adattár
+r3d100013805 | National Non-Human Primate Laboratory Animal Resource Bank
+r3d100013806 | National Avian Laboratory Animal Resource Bank
+r3d100013808 | Veterinar - Electronic Repository of Research and Scientific Papers
+r3d100013809 | RIVeC
+r3d100013811 | CeR – Central Repository ICTM
+r3d100013812 | GEOROC Data Repository
+r3d100013814 | Repositorio de Acceso Abierto BUAP
+r3d100013815 | FishSounds
+r3d100013816 | Portal of Medical Data Models
+r3d100013817 | RENAG-DC
+r3d100013818 | National Canine Laboratory Animal Resource Center
+r3d100013819 | Model Animal Resource Information Platform
+r3d100013820 | National Human Disease Animal Model Resource Center
+r3d100013821 | Lexique
+r3d100013822 | Smithsonian National Museum of Natural History
+r3d100013824 | KU Leuven RDR
+r3d100013827 | Open-source Scientific Software and Service Repository
+r3d100013830 | HELIX DATA
+r3d100013831 | UNSWorks
+r3d100013832 | ROHub
+r3d100013833 | osnaData
+r3d100013834 | EUR Data Repository
+r3d100013835 | Macquarie University Research Data Repository
+r3d100013836 | Netherlands Cancer Registry
+r3d100013837 | HilData
+r3d100013843 | Repositorio Institucional del ITESO
+r3d100013844 | Maenduar
+r3d100013881 | East China Normal University Social Data Sharing Platform
+r3d100013882 | Department of Statistical Sciences Data Repository - Unipd
+r3d100013884 | REDU - Unicamp Institutional Research Data Repository
+r3d100013885 | Work With Data
+r3d100013886 | Mousebytes
+r3d100013887 | Canadian Watershed Information Network
+r3d100013888 | Cape Breton University Dataverse
+r3d100013889 | ELI ERIC Open Data Repository
+r3d100013890 | zbMATH Open
+r3d100013891 | HilReDa
+r3d100013892 | City of Vancouver Open Data Portal
+r3d100013893 | Concordia University Dataverse
+r3d100013894 | Yukon Open Data
+r3d100013895 | Dataverse de l&#039;Institut national de la recherche scientifique
+r3d100013896 | Université Laval - Borealis
+r3d100013897 | IZTECH GCRIS
+r3d100013898 | Dataverse de l&#039;Université TÉLUQ
+r3d100013899 | Dataverse de l&#039;Université du Québec à Chicoutimi
+r3d100013900 | UQAM - Dataverse
+r3d100013901 | Université du Québec à Trois-Rivières - Borealis
+r3d100013902 | HEC Montréal Dataverse
+r3d100013903 | MacEwan University Data Repository
+r3d100013904 | Arca Dados
+r3d100013905 | McGill University Dataverse
+r3d100013906 | Memorial University Dataverse
+r3d100013907 | Mount Royal University Dataverse
+r3d100013908 | Saint Mary&#039;s University Dataverse
+r3d100013909 | University of Northern British Columbia Dataverse
+r3d100013910 | University of Winnipeg Research Data Repository
+r3d100013911 | Vancouver Island University Dataverse
+r3d100013913 | Altalis
+r3d100013914 | Canadian Integrated Ocean Observing System Data Catalogue
+r3d100013916 | Jean Paul – Sämtliche Briefe digital
+r3d100013917 | BORN Ontario
+r3d100013918 | DNAmod
+r3d100013919 | Fly-FISH
+r3d100013920 | Satellog
+r3d100013921 | Canada&#039;s National Forest Inventory
+r3d100013922 | South African Weather Service
+r3d100013924 | Canadia Blood Services Data4Research Program
+r3d100013925 | TB Portals
+r3d100013927 | Canadian Institute for Health Information Repository
+r3d100013928 | Canadian Laboratory Initiative on Pediatric Reference Intervals
+r3d100013929 | Pennington/Louisiana NORC Biorepository
+r3d100013931 | Recherche Data Gouv
+r3d100013932 | eSHODHMANTHAN
+r3d100013933 | CanPath Portal
+r3d100013935 | Community Data Program
+r3d100013936 | ICARUS
+r3d100013938 | REPOSIT
+r3d100013939 | Repositorio Institucional de la Universidad Distrital Francisco José de Caldas
+r3d100013940 | Health Data Nova Scotia
+r3d100013942 | Wildlife Management Information System
+r3d100013943 | NB Institute for Research, Data and Training
+r3d100013944 | Toronto and Region Conservation Authority Open Data
+r3d100013945 | NEMAR
+r3d100013946 | Open Data New Brunswick
+r3d100013947 | Population Data BC
+r3d100013948 | BCCDC Data
+r3d100013949 | BioImage Archive
+r3d100013950 | BigBrain Database
+r3d100013951 | DDE Data Publisher &amp; Repository
+r3d100013952 | Open Archive for Miscellaneous Data
+r3d100013953 | Rothamsted Long-term Experiments Electronic Archive
+r3d100013955 | Canadian VirusSeq Data Portal
+r3d100013956 | Brain Image Library
+r3d100013957 | CANJEM
+r3d100013959 | PSnpBind
+r3d100013960 | Repositorio de Datos Académicos Universidad Nacional de Rosario
+r3d100013961 | National Biodiversity Information System of Mexico
+r3d100013962 | Sextant
+r3d100013963 | Canue Data Portal
+r3d100013965 | Marlin Metadata Catalogue
+r3d100013966 | Mediateca INAH
+r3d100013967 | The Cell Vision
+r3d100013968 | CHILDdb
+r3d100013969 | Canadian Longitudinal Study on Aging
+r3d100013970 | The Cell Map
+r3d100013971 | CIS-BP
+r3d100013972 | Climate Action Plan Explorer
+r3d100013973 | Data Access Support Hub
+r3d100013975 | ScholarWorks Boise State University
+r3d100013977 | citaREA
+r3d100013978 | GeneMANIA
+r3d100013979 | BOSCORF
+r3d100013980 | Redape
+r3d100013981 | INFRA-ART Spectral Library
+r3d100013982 | Repositorio Institucional Universidad Nacional de Colombia
+r3d100013983 | INGV Open Data Registry
+r3d100013984 | Discuss Data
+r3d100013986 | DUnAs
+r3d100013987 | GEUS Dataverse
+r3d100013989 | INESC TEC Research Data Repository
+r3d100013991 | IHEC Data Portal
+r3d100013992 | ICES Data Repository
+r3d100013993 | Prospered Project
+r3d100013995 | Maelstrom Catalogue
+r3d100013996 | BC Oil and Gas Commission Open Data Portal
+r3d100013997 | Repositori de la Universitat Jaume I
+r3d100013998 | NSF Ocean Observatories Initiative Data
+r3d100014000 | AuScope EarthBank Platform
+r3d100014001 | Pacific Climate Impacts Consortium Data Portal
+r3d100014002 | Port Moody&#039;s Open Data Portal
+r3d100014003 | Marine Data BC
+r3d100014004 | District of North Vancouver’s Open Data portal
+r3d100014005 | DANS Data Station Archaeology
+r3d100014006 | Burnaby&#039;s Open Data Portal
+r3d100014007 | Regional District of North Okanagan GIS Open Data Site
+r3d100014008 | Kadi4Mat
+r3d100014009 | Tools for Second Language Speech Research and Teaching
+r3d100014010 | RADAR4Chem
+r3d100014011 | RADAR4Culture
+r3d100014012 | White Rock Open Data Portal
+r3d100014013 | Coquitlam Open Data
+r3d100014014 | Maple Ridge Open Government Portal
+r3d100014015 | Open Penticton
+r3d100014016 | City of Abbotsford&#039;s Open Data Hub
+r3d100014017 | LidarBC
+r3d100014018 | Open Data Areas Alberta
+r3d100014019 | Alberta Biodiversity Monitoring Institute Data &amp; Analytics Portal
+r3d100014020 | Wildtrax
+r3d100014021 | Data MB
+r3d100014022 | Manitoba Collaborative Data Portal
+r3d100014023 | GeoNB
+r3d100014024 | Digitale Sammlungen der GWLB Hannover
+r3d100014025 | Geo Big Data Open Platform
+r3d100014027 | Fredericton Open Data
+r3d100014028 | Open Data Moncton
+r3d100014029 | Newfoundland and Labrador Fisheries, Forestry and Agriculture GeoHub
+r3d100014030 | NWT Centre for Geomatics
+r3d100014031 | Northwest Territories Geological Survey Open Data
+r3d100014032 | ASEP Repository
+r3d100014033 | NWT Discovery Portal
+r3d100014034 | Ontario GeoHub
+r3d100014035 | NWT Species Infobase
+r3d100014036 | Public Health Ontario Open Data
+r3d100014037 | Essex County Open Data
+r3d100014038 | Navigate Newmarket
+r3d100014039 | Open Data Region of Durham
+r3d100014040 | San Raffaele Open Research Data Repository
+r3d100014041 | FILER: Functional genomics repository
+r3d100014042 | Conservation Ontario Open Data Hub
+r3d100014043 | City of London Open Data
+r3d100014045 | City of Pickering Open Data Portal
+r3d100014046 | Huron County Open Data
+r3d100014047 | Region of Peel Data Portal
+r3d100014048 | City of Mississauga Open Data Catalogue
+r3d100014049 | City of Peterborough Open Data Portal
+r3d100014050 | Alcohol and Gaming Commission of Ontario Data Inventory
+r3d100014051 | Thunder Bay Open Data Portal
+r3d100014052 | Bureau Central Sismologique Français - Réseau National de Surveillance Sismique
+r3d100014053 | SITES Data Portal
+r3d100014054 | Open Data Markham
+r3d100014055 | Conservation Halton Open Data Hub
+r3d100014060 | Ottawa Riverkeeper Open Data
+r3d100014061 | Whitby GeoHub
+r3d100014062 | Saskatchewan GeoHub
+r3d100014063 | Saskatchewan Conservation Data Centre
+r3d100014064 | City of Saskatoon Open Data Catalogue
+r3d100014065 | Concordia&#039;s Open Data
+r3d100014066 | Hydro-Québec Open Data
+r3d100014067 | Élections Québec&#039;s Open Data
+r3d100014068 | Biobanque québécoise de la COVID-19
+r3d100014069 | The Neuro C-BIG Repository Data Portal (Beta)
+r3d100014070 | NORMAN Substance Database
+r3d100014071 | Open Data Commons for Spinal Cord Injury
+r3d100014072 | COViMS
+r3d100014073 | NYCU Dataverse
+r3d100014074 | NCI Imaging Data Commons
+r3d100014075 | BAW-Datenrepository
+r3d100014076 | ClimateData.ca
+r3d100014078 | Open Science and Data Platform
+r3d100014079 | Open data and information Portal Canadian Space Agency
+r3d100014080 | Environment and Climate Change Canada Data Catalogue
+r3d100014081 | Environment Canada Data Catalogue
+r3d100014082 | BioChem database
+r3d100014083 | Canadian Tides and Water Levels Data Archive
+r3d100014084 | Forest Change Data Catalogue
+r3d100014085 | Canadian Centre for Energy Information
+r3d100014086 | Canadian Database of Geochemical Surveys
+r3d100014087 | Groundwater Information Network
+r3d100014088 | National 3D Data Repository
+r3d100014089 | Permafrost Information Network
+r3d100014090 | Canadian Coast Guard Data Catalogue
+r3d100014091 | Statistics Canada Biobank
+r3d100014092 | OpenAQ
+r3d100014093 | eMaapõu
+r3d100014095 | Royal Roads University Dataverse
+r3d100014097 | Loyalist Migrations
+r3d100014099 | Repository of the Faculty of Science
+r3d100014100 | Bacterial and Viral Bioinformatics Resource Center
+r3d100014101 | Portal Zarządzania Wiedzą UJ CM
+r3d100014102 | RADaR - Digital Repository of Archived Publications of the Institute for Biological Research “Siniša Stanković”
+r3d100014103 | ResearchDataGov.org
+r3d100014104 | eBiltegia
+r3d100014109 | ARP Research Data Repository
+r3d100014110 | Australian Urban Research Infrastructure Network
+r3d100014111 | Angewandte Repository
+r3d100014112 | Earth Engine Data Catalog
+r3d100014113 | DOOR
+r3d100014114 | Global Record of Stocks and Fisheries
+r3d100014115 | ISIS DataGateway
+r3d100014116 | HI HOPES
+r3d100014118 | UK Hydrographic Office
+r3d100014119 | Regionaal Archief Alkmaar
+r3d100014120 | Regionaal Archief Nijmegen (Gemeente Nijmegen)
+r3d100014121 | Thai National Research Repository
+r3d100014123 | Emporion
+r3d100014124 | Open Data Commons for Traumatic Brain Injury
+r3d100014127 | BIH / Charité Virtual Research Environment
+r3d100014129 | edoc server der Berlin-Brandenburgischen Akademie der Wissenschaften
+r3d100014130 | Dataverse de Polytechnique Montréal
+r3d100014131 | MorpheusML model repository
+r3d100014132 | VinaR - Repository of the Vinča Nuclear Institute
+r3d100014135 | Brabants Historisch Informatie Centrum
+r3d100014136 | idUS
+r3d100014138 | HHU ResearchData
+r3d100014139 | Open Data LMU - Physics
+r3d100014140 | NIE Data Repository
+r3d100014141 | OEDataRep
+r3d100014142 | FID move
+r3d100014143 | data.InDoRES
+r3d100014148 | National Eye Institute Data Commons
+r3d100014150 | Canadian Urban Data Repository
+r3d100014151 | Society of American Archivists Dataverse
+r3d100014155 | Wordbank
+r3d100014156 | Tecnológico de Monterrey Data Hub
+r3d100014160 | LDbase
+r3d100014161 | RODBUK Cracow Open Research Data Repository
+r3d100014165 | Gene Ontology
+r3d100014169 | HCDC datasearch
+r3d100014172 | George Mason University Dataverse
+r3d100014173 | CardiacAI Data Repository
+r3d100014174 | GlobeData
+r3d100014175 | SISSA Open Data
+r3d100014176 | Forschungsdatenrepositorium der Otto-Friedrich-Universität Bamberg
+r3d100014177 | National Nuclear Data Center
+r3d100014178 | opendata@uni-kiel
+r3d100014179 | digital Upper Austrian Regional Library
+r3d100014184 | Sistema de Información de Biodiversidad de Ecuador SiB-Ec
+r3d100014185 | UMCG Research Data Catalogue
+r3d100014186 | TUL Open Research Data Repository
+r3d100014187 | RIVMdata
+r3d100014188 | Repozytorium IFJ PAN
+r3d100014189 | Repository of the Jan Kochanowski University
+r3d100014190 | Institutional Repository of IMDEA Nanociencia
+r3d100014191 | Repositorio de datos de investigación de la Universidad del Pacífico
+r3d100014193 | RepoMed
+r3d100014194 | TalTech Data
+r3d100014195 | DANS Data Station Social Sciences and Humanities
+r3d100014197 | Yabelana
+r3d100014199 | Scotland&#039;s Rural College Research Data Repository
+r3d100014203 | CNRS Research Data
+r3d100014208 | RIUMA
+r3d100014209 | GWAS Catalog
+r3d100014211 | nmrXiv
+r3d100014212 | Preclinical Image DAtaset Repository
+r3d100014214 | Repositorio de Datos de Investigación Universidad Andrés Bello
+r3d100014216 | e-space
+r3d100014218 | Teesside University Research Data Repository
+r3d100014219 | Papyrus
+r3d100014220 | Repositorio de Datos de Investigación Universidad de Santiago de Chile
+r3d100014221 | MathRepo
+r3d100014222 | bonndata
+r3d100014225 | Repositorio ANID
+r3d100014226 | AuScope Discovery Portal
+r3d100014227 | Hellenic Academic Research Data Repository
+r3d100014228 | Leibniz Data Manager
+r3d100014229 | UltraViolet
+r3d100014231 | Marine Information Management System (MIMS)
+r3d100014234 | IMAGINE
+r3d100014235 | Open Science Resource Atlas 2.0 (AZON)
+r3d100014236 | Repozytorium Uniwersytetu Łódzkiego
+r3d100014238 | Aleia
+r3d100014239 | Repositorio de datos - UdeC
+r3d100014240 | WueData
+r3d100014241 | Research Data Universidad Simón Bolívar
+r3d100014244 | Repozytorium Uniwersytetu Przyrodniczego we Wrocławiu
+r3d100014247 | CrossAsia Open Access Repository
+r3d100014249 | Energy Data Centre
+r3d100014250 | Repository of University of Wroclaw
+r3d100014251 | Arias Montano
+r3d100014252 | SIPAM
+r3d100014253 | Repository of the University of Life Sciences in Lublin
+r3d100014254 | CESA | Repositorio de datos académicos
+r3d100014255 | University of Warsaw Research Data Repository
+r3d100014256 | UFS Figshare
+r3d100014257 | Nightingale Open Science
+r3d100014262 | Central Neuroimaging Data Archive
+r3d100014264 | Université du Québec à Rimouski - Borealis
+r3d100014267 | The Forensic Linguistic Databank
+r3d100014269 | Base of Scientific Achievements University of Agriculture in Krakow
+r3d100014270 | EaSy Data
+r3d100014271 | Repositorio de Datos de Investigación de la Universidad Nacional de La Plata
+r3d100014272 | NOAA Institutional Repository
+r3d100014273 | Deposita Dados
+r3d100014274 | CLOSER Discovery
+r3d100014275 | SSHADE
+r3d100014276 | Integrated Neurodegenerative Disease Database
+r3d100014277 | IRIS
+r3d100014280 | PlutoF
+r3d100014283 | Medical Imaging and Data Research Center
+r3d100014286 | FRIS
+r3d100014288 | InTOR - Electronic Repository of Research and Scientific Papers
+r3d100014291 | Integrierter Katalog (InK) der Mediathek HGK Basel FHNW
+r3d100014298 | NCBI Datasets
+r3d100014299 | Université Côte d&#039;Azur - espace institutionnel Entrepôt Recherche Data Gouv
+r3d100014304 | DANS Data Station Life Sciences
+r3d100014306 | Covid-19 Immunity Task Force Databank
+r3d100014308 | The Hive
+r3d100014310 | ARAMOB - Mobilizing Spider Data for Research
+r3d100014312 | Lingnan Data Repository
+r3d100014314 | AMU Research Portal
+r3d100014317 | National High Energy Physics Science Data Center
+r3d100014318 | Collections-Online - Sammlungsportal der Staatlichen Museen zu Berlin
+r3d100014320 | FID Media Publish
+r3d100014321 | ColabFit Exchange
+r3d100014322 | NCBI Virus
+r3d100014324 | INCOD
+r3d100014328 | datastore by Universität Münster
+r3d100014333 | Domus Dados: repositório de dados de pesquisa da Unifesp
+r3d100014335 | Coscine
+r3d100014336 | TechnoRep - Electronic Repository of Research and Scientific Papers
+r3d100014340 | FreiData
+r3d100014344 | IGS PAS Data Portal
+r3d100014345 | DaYta Ya Rona
+r3d100014346 | GéOsuna
+r3d100014351 | FAIRequest - transfer unit for data and biomaterials
+r3d100014353 | GenBase
+r3d100014355 | Austrian NeuroCloud
+r3d100014356 | Weizenbaum Library
+r3d100014357 | ReSpecTh
+r3d100014358 | ERDDAP of the W1M3A research facility
+r3d100014359 | Goethe University Data Repository - GUDe
+r3d100014360 | Repository of BIRA-IASB
+r3d100014363 | AuScope Data Repository
+r3d100014365 | Geodatenkatalog
+r3d100014366 | Repositorio de Datos de Investigación CONICET
+r3d100014367 | Repozytorium Danych Badawczych Uniwersytetu Rzeszowskiego
+r3d100014368 | GALENOS Data Repository
+r3d100014369 | GeoSphere Austria Data Hub
+r3d100014370 | ISIMIP Repository
+r3d100014372 | Federation.figshare
+r3d100014373 | e-Biblioteka Prawnicza
+r3d100014374 | Data Archive for Social Sciences in Italy
+r3d100014375 | National Health Research and Studies Portal
+r3d100014377 | Forschungsdatenzentrum des LIfBi
+r3d100014378 | Research Data Centre of the Research Institute Social Cohesion
+r3d100014379 | ioerDATA
+r3d100014380 | Redata
+r3d100014382 | DACyTAr
+r3d100014383 | Observatorio Medioambiental La Plata
+r3d100014384 | INTA Digital - Repositorio institucional
+r3d100014385 | Suelos de Córdoba
+r3d100014387 | Repositorio Institucional Olavide
+r3d100014388 | Repositorio Institucional UCA
+r3d100014389 | Archivio Storico Macrosismico Italiano
+r3d100014390 | BULERIA
+r3d100014392 | ATTO data portal
+r3d100014394 | IG PAS Data Portal
+r3d100014396 | repOS : The Open Science Repository of the HCU
+r3d100014397 | Didómena
+r3d100014398 | Redivis
+r3d100014401 | Italian National Database of Monovarietal Extra Virgin Olive Oils
+r3d100014402 | Mediterranean Germplasm Database (MGD)
+r3d100014403 | DALIA
+r3d100014404 | BioMemory
+r3d100014405 | Digitales Depot Deutsches Schifffahrtsmuseum
+r3d100014406 | HAL
+r3d100014407 | STS Infrastructure
+r3d100014409 | IDB Open Data Catalog
+r3d100014410 | eCUDO.pl
+r3d100014411 | Arctic Data Centre
+r3d100014412 | Mount Saint Vincent University Dataverse @ Borealis
+r3d100014413 | ACTRIS-ARES Data Portal
+r3d100014414 | DroughtCentral
+r3d100014415 | CARS
+r3d100014417 | BioDeep Database
+r3d100014419 | TUDOdata
+r3d100014420 | DataGURU
+r3d100014421 | opendata.swiss portal
+r3d100014423 | M3G - Metadata Management and Distribution System for Multiple GNSS Networks
+r3d100014425 | PolyU Research Data Repository
+r3d100014428 | Ulster University Research Portal
+r3d100014429 | UVaDOC
+r3d100014432 | SAH digital
+r3d100014435 | Repository of the University of Warmia and Mazury in Olsztyn
+r3d100014437 | OPGC Data warehouse
+r3d100014438 | Global Runoff Data Centre Data Portal
+r3d100014441 | Wyoming Data Repository
+r3d100014442 | SciELO México Dataverse
+r3d100014443 | Repositorio de datos de Investigación UdeA
+r3d100014444 | German Portal for Medical Research Data
+r3d100014445 | Italian Arctic Data Center
+r3d100014446 | National Antarctic Data Centre
+r3d100014447 | Warsaw University of Technology Data Repository
+r3d100014452 | DAT’AMU
+r3d100014453 | United Nations Population Divison Data
+r3d100014454 | Open Government Data of Kerala
+r3d100014455 | Karnataka Open Data Portal
+r3d100014456 | Open Government Data Portal of Andhra Pradesh
+r3d100014457 | Open Government Data Portal of Punjab
+r3d100014458 | Kerala State Spatial Data Infrastructure
+r3d100014465 | India Migration Data Portal
+r3d100014467 | Kerala Migration Survey
+r3d100014468 | National Summary Data
+r3d100014470 | Open Budgets India
+r3d100014471 | OpenCity-Urban Data Portal
+r3d100014476 | Indian Biological Data Centre
+r3d100014477 | Corporate Data Management
+r3d100014478 | India Data Portal
+r3d100014481 | DAKSH High Court Data Portal
+r3d100014482 | Meteorological &amp; Oceanographic Satellite Data Archival Centre
+r3d100014483 | Bhoonidhi
+r3d100014484 | Bhuvan Data
+r3d100014486 | Open Data Platform: India Smart Cities
+r3d100014488 | Repositorio Digital Institucional Universidad Nacional del Comahue
+r3d100014489 | Repositorio Digital Institucional de Acceso Abierto de la Universidad Nacional de Luján
+r3d100014490 | Nülan - Repositorio Digital de la FCEyS-UNMDP
+r3d100014492 | RUA
+r3d100014493 | SEGEMAR
+r3d100014494 | Repositorio Digital UNC
+r3d100014497 | RODIN
+r3d100014502 | The Sand Atlas
+r3d100014506 | Data Observatory
+r3d100014507 | Open Biomedical Imaging Archive
+r3d100014509 | Nucleic Acid Knowledgebase
+r3d100014511 | aCQUIRe
+r3d100014512 | Spatial Transcript Omics DataBase
+r3d100014513 | RADAR4Memory
+r3d100014515 | archeoViz Portal
+r3d100014516 | GREDOS
+r3d100014517 | COCONUT
+r3d100014518 | Bialystok University of Technology Data Repository
+r3d100014519 | Université de Sherbrooke - Dataverse
+r3d100014520 | Repositório Institucional da UFSCar
+r3d100014521 | JSTOR Images
+r3d100014522 | The Cologne Database for Molecular Spectroscopy
+r3d100014525 | DIGITUM
+r3d100014526 | Open Universiteit research portal
+r3d100014528 | VU Yoda
+r3d100014529 | ITINERIS HUB
+r3d100014531 | NatureCounts
+r3d100014532 | Motus Wildlife Tracking System
+r3d100014534 | Theses and Research Data Repository
+r3d100014536 | MGIMO University repository
+r3d100014537 | GWFNet
+r3d100014538 | StrainInfo
+r3d100014539 | Datathek
+r3d100014540 | PhageDive
+r3d100014541 | QualiBi
+r3d100014542 | NewPsy4U
+r3d100014543 | Digitale Sammlung der HMTM
+r3d100014545 | GWOSC
+r3d100014546 | ROCK Repository of Open Collections and Knowledge
+r3d100014552 | FIU Research Data Portal
+r3d100014553 | Swedish Biodiversity Data Infrastructure
+r3d100014554 | ALBA Data Portal
+r3d100014555 | Polish Polar Data Base
+r3d100014557 | Digital Commons Data@Becker
+r3d100014558 | Unisanté Data Repository
+r3d100014560 | Saxony-Anhalt’s Data Archive and Repository
+r3d100014561 | World Bank Reproducible Research Repository
+r3d100014562 | National Neighborhood Data Archive
+r3d100014563 | German Human Genome-Phenome Archive
+r3d100014564 | ESA Space Data Preservation Archive
+r3d100014565 | Health Data Lab
+r3d100014567 | Smithsonian Tropical Data Portal
+r3d100014568 | Repositorio TECdatos
+r3d100014569 | AgroPortal
+r3d100014570 | The algebraic phylogenetics database
+r3d100014571 | NIST Digital Library of Mathematical Functions
+r3d100014572 | The On-Line Encyclopedia of Integer Sequences
+r3d100014573 | swMATH
+r3d100014574 | Malaysia Open Science Platform
+r3d100014575 | 4DMED-Sea
+r3d100014578 | IncluSet
+r3d100014583 | FfE Open Data Portal
+r3d100014584 | Digital Commons Data - Babeș-Bolyai University
+r3d100014586 | Universiti Teknologi MARA Research Data Repository
+r3d100014587 | DANS Data Station Physical and Technical Sciences
+r3d100014588 | Post45 Data Collective
+r3d100014590 | Knowledge Base of the University of Gdańsk
+r3d100014593 | IT-IOOS
+r3d100014594 | IDIA Public Data Archive
+r3d100014595 | Queen&#039;s University Belfast Research Data Repository
+r3d100014596 | Bgee
+r3d100014597 | Perspectivia.net
+r3d100014600 | QED - Quellen und Editionen - Max Weber Stiftung
+r3d100014604 | Repositorium der Herzog August Bibliothek
+r3d100014605 | LinguRep
+r3d100014606 | CARLA - Conservatory Archive Records Leipzig with Additions
+r3d100014607 | Indigeo
+r3d100014614 | Fairdata Services
+r3d100014616 | UFZ Spatial Data Catalog
+r3d100014617 | Repisalud
+r3d100014618 | Acadia University Dataverse
+r3d100014619 | Nineteenth-Century Data Collective
+r3d100014620 | CGSpace
+r3d100014621 | ULiège Dataverse
+r3d100014622 | IDEM
+r3d100014624 | IU DataCORE
+r3d100014625 | Repositorio institucional de datos de Investigación
+r3d100014627 | PAINT
+r3d100014628 | Athabasca University Dataverse
+r3d100014629 | Concordia University of Edmonton Dataverse
+r3d100014631 | Mount Allison University Dataverse
+r3d100014632 | Health Data Nexus
+r3d100014633 | FoDaSi
+r3d100014634 | Ontario Tech University Dataverse
+r3d100014636 | REFODAT
+r3d100014637 | University of Lethbridge Dataverse
+r3d100014638 | Trinity Western University Dataverse
+r3d100014640 | Dataverse de l&#039;Université du Québec en Outaouais
+r3d100014641 | Dataverse de l&#039;Université de Saint-Boniface
+r3d100014642 | Dataverse de l&#039;École de technologie supérieure
+r3d100014643 | Dataverse de l&#039;École nationale d&#039;administration publique
+r3d100014645 | Hugging Face Hub
+r3d100014646 | Columbia Basin Water Hub
+r3d100014648 | Unisa Research Data Repository
+r3d100014649 | MorphoMuseuM
+r3d100014650 | EarthPortal
+r3d100014654 | Korea Social Science Data Archive
+r3d100014655 | DataverseLV
+r3d100014656 | Blue-Cloud Resource Catalogue
+r3d100014657 | Tigray Regional Data Management Center for Health repository
+r3d100014658 | PKRxiv
+r3d100014660 | ODISSEI Portal
+r3d100014661 | University of Johannesburg Data Repository
+r3d100014662 | RMIT Research Repository
+r3d100014663 | Kasetsart University Knowledge Repository
+r3d100014664 | Gaia Blu Cruise Inventory
+r3d100014665 | LTER-Italy Dataset Asset Registry
+r3d100014668 | Repo4Cat
+r3d100014669 | E-depot of Erfgoed Leiden en Omstreken (part of Gemeente Leiden)
+r3d100014671 | ScholarlyCommons
+r3d100014673 | Researchdata.se
+r3d100014674 | Marine Data Exchange
+r3d100014675 | TSpace: University of Toronto Research Repository
+r3d100014676 | IOWMETA
+r3d100014680 | NIAID Data Ecosystem Discovery Portal
+r3d100014682 | Open-archeOcsean
+r3d100014684 | Patient-Centered Outcomes Data Repository
+r3d100014686 | University of Opole Knowledge Base
+r3d100014687 | Bharat Genome Database
+r3d100014690 | LAPaL
+r3d100014691 | DMPortal BioData.pt
+r3d100014692 | CNR-ISAC - Archive Data Center
+r3d100014693 | The Preserve: Lehigh Library Digital Collections
+r3d100014695 | Digital Commons Data UniCatt
+r3d100014696 | DARWIN
+r3d100014699 | NASA Physical Science Informatics
+r3d100014701 | EcoBank
+r3d100014703 | deadtrees.earth
+r3d100014704 | Micelio, plataforma para la investigación UCA
+r3d100014712 | CRC/TRR 247
+r3d100014717 | WegenerNet Data Portal
+r3d100014719 | OpenData@USM
+r3d100014720 | CLARIAH-IATEXT
+r3d100014722 | O2A REGISTRY
+r3d100014724 | Maastricht University Library Digital Collections
+r3d100014725 | JLUpub
+r3d100014727 | OstData
+r3d100014731 | KI Data Repository
+r3d100014734 | Edaphobase
+r3d100014736 | Datarepository Unive
+r3d100014737 | Cambium
+r3d100014738 | MetaNetX
+r3d100014739 | Croatian Social Science Data Archive
+r3d100014740 | International Soil Moisture Network
+r3d100014741 | GRANTS Data
+r3d100014742 | Dataverse Telkom University
+r3d100014743 | Thünen Atlas
+r3d100014744 | Plant Biotechnology Information Primary Database
+r3d100014746 | Open Data Repository of the National Academy of Sciences of Ukraine
+r3d100014747 | Repository of the John Paul II Catholic University of Lublin
+r3d100014749 | TierSeuchenInformationsSystem
+r3d100014752 | RAKIP-Web Model Repository
+r3d100014753 | Deutscher Wetterdienst Open Data Server
+r3d100014754 | Hidrográfico+
+r3d100014757 | Gutenberg Open Science
+r3d100014758 | SEDOO
+r3d100014761 | ZB MED Digital Long-Term Archive
+r3d100014762 | DIRENO
+r3d100014764 | Nefeli
+r3d100014765 | MyRiceBase
+r3d100014766 | PapayaNetBase
+r3d100014770 | ReSeeD
+r3d100014774 | Repositorio de Datos del Ministerio de las Culturas, las Artes y los Saberes
+r3d100014776 | DataPB
+r3d100014777 | ELIXIR Luxembourg Data Sustainability Service
+r3d100014779 | CLARIAH-HiTZ
+r3d100014780 | Kyoto University Research Information Repository
+r3d100014782 | RADAR-BB
+r3d100014783 | Taalmaterialen
+r3d100014785 | BioTime
+r3d100014786 | European Ocean Biodiversity Information System
+r3d100014787 | KTH data repository
+r3d100014792 | University of Aruba Open Knowledge Repository
+r3d100014794 | WU Vienna Research
+r3d100014797 | CryoSeek
+r3d100014798 | Public-data DESY
+r3d100014799 | RADOGOST
+r3d100014803 | Digital repository of Slovenian research organizations
+r3d100014804 | umwelt.info
+r3d100014805 | LORE
+r3d100014810 | Datamap
+r3d100014811 | Ocean Data Platform
+r3d100014822 | Open Causal
+r3d100014827 | POLEN DataHub
+r3d100014829 | data.THM
+r3d100014833 | Slovak Archive of Social Data
+r3d100014834 | GERY
+r3d100014835 | Korea Sequence Read Archive
+r3d100014837 | Plant Adaptation Hub
+r3d100014843 | CUPIDON
+r3d100014844 | FID4SA@heiDATA
+r3d100014849 | RODERIC
+r3d100014850 | MaRDI4NFDI Portal
+r3d100014860 | Repositório de Dados de Pesquisa UFG
+r3d100014864 | NODC-PT
+r3d100014866 | Indian Crop Phenome Database
+r3d100014869 | BioData Catalyst
+r3d100014875 | Armlifebank
+r3d100014877 | Digitale Bibliothek der Erzbischöflichen Diözesan- und Dombibliothek Köln
+r3d100014879 | ARChive
+r3d100014880 | AMRDC Data Repository
+r3d100014884 | TIB AV-Portal
+r3d100014886 | Swinburne Figshare
+r3d100014893 | Archiv &quot;Deutsches Gedächtnis&quot;
+r3d100014895 | LifeWatch ERIC Metadata Catalogue
+r3d100014896 | EcoPortal
+r3d100014897 | Scientific Data Center of CAS Data Repository
+r3d100014898 | RADAR4ING
+r3d100014899 | ArchaeoVault
+r3d100014900 | MBLWHOI Library Dataverse
+r3d100014901 | Research Vessel Observation Database
+r3d100014904 | NODC IEO Data Catalogue
+r3d100014906 | FDM@DHBW
+r3d100014907 | Historisch Centrum Limburg
