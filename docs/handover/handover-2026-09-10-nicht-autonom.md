@@ -2,7 +2,7 @@
   title: Handover — nicht-autonom: was die Kybernautin nicht selbstständig ausführt (Stand 2026-09-10)
   class: handover
   date: 2026-09-10
-  sha256: df0e43241cddb589bf693751d222392116de766821ed336248bcf8cfb39185fd
+  sha256: 94a64cab0aa18a43e965574882a37b0bdc15d943e78ca83bb971eedeadca79cb
   status: live
   see-also: docs/handover/handover-2026-09-10-autonom.md
 -->
@@ -26,9 +26,9 @@ Entsperrer. Die autonomen Pflichten stehen im Gegen-Handover.
   `omegaflow` / `Bygrf6dbW3FD`).
 - **NOIRLab Data Lab** — Registrierung eingereicht 10.09.; wartet auf die
   menschliche Freigabe (Login `omegaflow`).
-- **IGETS-SFTP-Passwort** — Anforderungs-Mail sendfertig in
-  `docs/auftrag/auftrag-igets-sftp-passwort-antrag.md`; Operator sendet an
-  `igets-support@gfz.de`.
+- **IGETS-SFTP-Passwort** — Anforderungs-Mail gesendet 10.09.
+  (`docs/auftrag/auftrag-igets-sftp-passwort-antrag.md`); wartet auf die Antwort
+  von `igets-support@gfz.de`.
 - **TNO-Kette (Weberin)** — keine MPC-unabhängige Linie der 8.082-Menge
   (not-published).
 
