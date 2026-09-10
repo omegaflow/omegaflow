@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 8edae9dd6e64282bf10f2c4d9eb6dbbb288edfb1cfea7518e2283dfeedea3a43
+  sha256: 7be676eba25ad03857f57b95ddf8b9d366c1e9eb09edd2b7ad772bf067315bea
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -227,17 +227,19 @@ Daten), nicht den Echtzeit-Kafka-Stream. Kein Stream-Stub liegt in
 `.secrets.local` (der Datenweg ist REST; Stream-Keys werden nicht genutzt).
 URLs/Auth-Pfade sind NUR hier, nie in `.secrets.local`. (gemessen):
 
-| Broker | API-Basis (gemessen 2026-09-10) | Auth | Status |
-|---|---|---|---|
-| **ALeRCE** | `api.alerce.online/ztf/v1/` (Doku `alerceapi.readthedocs.io`) | anonym | ✓ 200 |
-| **ANTARES** | `api.antares.noirlab.edu/v2/` (**v2**, nicht v1; `/v2/helloworld/` → Hello World) | anonym | ✓ 200 |
-| **Fink** | `api.lsst.fink-portal.org/api/v1/` | anonym | ✓ 200 |
-| **Lasair** | `api.lasair.lsst.ac.uk/` (UI `lasair.lsst.ac.uk`) | Token (`LASAIR_LSST_TOKEN`/`LASAIR_TOKEN`) | ✓ 200 |
-| **AMPEL** | `ampel-ztf.zeuthen.desy.de/api/live/` | teils Token | ✓ 200 |
-| **SNAD** | `snad.space/` | anonym | ✓ 200 |
-| **Babamul** | `babamul.caltech.edu/api/` („Greetings from BOOM!"; neu, Paper arXiv:2511.00164) | OpenAPI 401 | ✓ 200 |
-| **Pitt-Google** | GCP (`mwvgroup.github.io/pittgoogle-client`, Broker-Doku `pitt-broker.rtfd.io`) | GCP-Service-Account | kein HTTP-Endpoint |
-| **MOMENT** | ? | ? | DNS-tot; in den Broker-Papieren 2506.14744/2511.00164 nicht genannt — Zustand offen |
+| # | Broker | Art | UI / API (gemessen 2026-09-10) | Auth | Status |
+|---|---|---|---|---|---|
+| 1 | **ALeRCE** | full | `science.alerce.online` · `api.alerce.online/ztf/v1/` (Doku `alerceapi.readthedocs.io`) | anonym | ✓ 200 |
+| 2 | **AMPEL** | full | `ampelproject.github.io` · `ampel-ztf.zeuthen.desy.de/api/live/` | teils Token | ✓ 200 |
+| 3 | **ANTARES** | full | `antares.noirlab.edu` · `api.antares.noirlab.edu/v2/` (**v2**, nicht v1; `/v2/helloworld/` → Hello World) | anonym | ✓ 200 |
+| 4 | **Babamul** | full | `babamul.caltech.edu` · `babamul.caltech.edu/api/` („Greetings from BOOM!"; neu, arXiv:2511.00164) | OpenAPI 401 | ✓ 200 |
+| 5 | **Fink** | full | `fink-broker.org` · `lsst.fink-portal.org` · `api.lsst.fink-portal.org/api/v1/` | anonym | ✓ 200 |
+| 6 | **Lasair** | full | `lasair.lsst.ac.uk` · `api.lasair.lsst.ac.uk/` | Token (`LASAIR_LSST_TOKEN`/`LASAIR_TOKEN`) | ✓ 200 |
+| 7 | **Pitt-Google** | full | `pitt-broker.readthedocs.io` · GCP (`mwvgroup.github.io/pittgoogle-client`) | GCP-Service-Account | ✓ Doku |
+| 8 | **SNAPS** | down | `snaps.nau.edu` (Solar System; Trilling et al. 2023) | ? | ✓ 200 |
+| 9 | **POI Broker** | down | `poibroker.uantof.cl` (variable stars) | ? | ✓ 200 |
+
+**Die neun** (offizielle Rubin-Seite `rubinobservatory.org/for-scientists/data-products/alerts-and-brokers`, gemessen 2026-09-10): **7 full-stream** (ALeRCE, AMPEL, ANTARES, Babamul, Fink, Lasair, Pitt-Google) + **2 down-stream** (SNAPS, POI Broker). Die **Alerts sind world public, kein proprietäres Fenster** — die Broker-Daten sind offen, nur die RSP (Bilder/Kataloge) braucht Datenrechte. Korrekturen: ANTARES ist **v2**; **Babamul** ist wieder da (`babamul.caltech.edu`, arXiv:2511.00164 — die alte Zeile „nie entwickelt" war überholt); MOMENT/SNAD sind **nicht** in der offiziellen Neuner-Liste (MOMENT DNS-tot).
 
 Die neun ZTF-Broker (Paper 2506.14744 „Technosignature Searches with Real-time Alert Brokers", arXiv:2506.14744). Korrekturen 2026-09-10: ANTARES ist **v2**; **Babamul** ist wieder da (`babamul.caltech.edu`, der öffentliche LSST-Broker aus arXiv:2511.00164 — die alte Zeile „nie entwickelt" war überholt); Lasair läuft auf `api.lasair.lsst.ac.uk`.
 
