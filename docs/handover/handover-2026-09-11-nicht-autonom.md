@@ -2,10 +2,13 @@
   title: Handover — Nicht-autonom (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 3ad47b150dc796fff9e32d8a1a6560c00c1086146f2abcb8d39c683567495a8c
+  sha256: 76c0a0c7b691bb56036dda978a7af02fb500d93fcb550053382de92d9f653e85
   status: live
 -->
 # Handover — Nicht-autonom (2026-09-11)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde.
 
 Keine Session-Arbeit — jedes Item wartet auf Operator-Wort, CI oder Kalender.
 
