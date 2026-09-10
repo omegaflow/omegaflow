@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 21f37dbc31d7ea750d3f44b8d5c50e59555f9f7e90aa60fa4ddbef7d599a08c3
   status: live
-  see-also: docs/handover/archiv/handover-2026-09-09-mars-rekompilat.md docs/handover/handover-2026-09-09-mars-rekompilat-dispatch.md
+  see-also: docs/handover/archiv/handover-2026-09-09-mars-rekompilat.md docs/handover/archiv/handover-2026-09-09-mars-rekompilat-dispatch.md
 -->
 
 # Befund: die Planeten-Selektion nahm die Kurzform
