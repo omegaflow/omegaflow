@@ -1,4 +1,9 @@
 name: te-n1000-shift
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
 permissions:

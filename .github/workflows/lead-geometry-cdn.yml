@@ -1,5 +1,9 @@
 name: lead-geometry-cdn
 
+concurrency:
+  group: mitdb-arrhythmia
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
 
