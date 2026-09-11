@@ -13,6 +13,10 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
         eprintln!("upload {}: GH_TOKEN absent", path);
         return false;
     }
+    if !ensure_release(tag) {
+        eprintln!("upload {}: release {} not created", path, tag);
+        return false;
+    }
     let out = Command::new("gh")
         .arg("release")
         .arg("upload")
