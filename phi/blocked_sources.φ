@@ -26,7 +26,7 @@ note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. 
 
 pending
 url https://cds.climate.copernicus.eu/datasets/insitu-observations-near-surface-temperature-us-climate-reference-network
-note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): Form weiterhin geschlossen; die CC-BY-Lizenz ist angenommen, die USCRN-Datenpolitik nicht (der Accept-Klick greift am geschlossenen Formular nicht). Kein Parser-Gap.
+note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): CC-BY-Lizenz und USCRN-Datenpolitik sind angenommen, die Form bleibt provider-seitig geschlossen (`Submit form` disabled) — nur die Form-Closure fehlt; kein Parser-Gap.
 
 pending
 url https://des.ncsa.illinois.edu/releases/dr2/dr2-files/
