@@ -10,29 +10,29 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (322633 files, 7122076816201 B)
+## Family inventory (322716 files, 7123380915849 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
-| bpc | 5312 | 779673811 | 1788887220
-| ck | 104079 | 3577628393910 | 1788958200
-| dastcom | 7 | 258993 | 1788977700
+| bpc | 5315 | 779673811 | 1789060020
+| ck | 104115 | 3578247722422 | 1789052280
+| dastcom | 7 | 258993 | 1789085700
 | dsk | 940 | 259142925193 | 1784859060
 | fk | 1213 | 775801179 | 1787913180
 | gm | 11 | 438272 | 1783549920
 | ik | 1246 | 31117804 | 1787153580
 | lsk | 259 | 2622222 | 1784249340
-| misc | 179974 | 2902150432063 | 1788977700
-| mk | 11649 | 486719067 | 1788946800
+| misc | 179994 | 2902354618345 | 1789085700
+| mk | 11666 | 486815323 | 1789043100
 | pck-text | 1022 | 220823811 | 1787125260
 | sclk | 3980 | 129122991 | 1788844200
-| spk | 12509 | 345011459598 | 1788947460
+| spk | 12516 | 345491948196 | 1789044480
 | spk-planets | 83 | 2241091584 | 1784078700
 | spk-satellites | 349 | 33475935703 | 1783940280
 
 ## System resolution (flattener selection)
 | System | SPK | PCK |
 |---|---|---|
-| planets | de441_part-2.bsp | pck00011.tpc |
+| planets | de441.bsp | pck00011.tpc |
 | asteroids | de441.bsp | — |
 | jupiter | jup365.bsp | pck.jup365.tpc |
 | saturn | sat441.bsp | pck.sat441.tpc |
