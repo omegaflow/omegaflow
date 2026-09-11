@@ -27,8 +27,11 @@ jobs:
           chunk=10
           budget_s=5400
           deadline=$(( $(date +%s) + budget_s ))
-          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets --jq '.assets[]|select(.name|startswith("ps1_part_"))|.name' 2>/dev/null || true)
+          if ! parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --json assets --jq '.assets[]|select(.name|startswith("ps1_part_"))|.name' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           finished_all=1
           # harvest from the south edge upward; each band splits into subcell chunks,
           # one undone chunk per step, the deadline checked between chunks
@@ -70,8 +73,11 @@ jobs:
             P=$((P+1))
           done
           # combine when the whole span is covered and the final asset is absent
-          has_final=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets --jq '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/dev/null || echo 0)
+          if ! has_final=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --json assets --jq '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           if [ "$finished_all" = "1" ] && [ "$has_final" = "0" ]; then
             echo "=== combining ==="
             mkdir -p parts
