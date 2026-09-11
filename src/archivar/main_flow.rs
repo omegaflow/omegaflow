@@ -1201,6 +1201,86 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "opendap" {
+                let src_clone = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let url = src_clone.url.clone();
+                    let base = match [".dds", ".das", ".dods"]
+                        .iter()
+                        .find(|s| url.ends_with(**s))
+                    {
+                        Some(s) => url[..url.len() - s.len()].to_string(),
+                        None => url.clone(),
+                    };
+                    let name = base.rsplit('/').next().unwrap_or("opendap").to_string();
+                    let dds_url = format!("{base}.dds");
+                    let das_url = format!("{base}.das");
+                    let dods_url = format!("{base}.dods");
+                    let dds = match fetch_raw(&dds_url, None, &[], src_ttl) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!("opendap {}: dds fetch void — retry in ttl/Φ·2ⁿ", dds_url);
+                            let _ = ftx.send(empty(false));
+                            return;
+                        }
+                    };
+                    let das_doc = match fetch_raw(&das_url, None, &[], src_ttl) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!(
+                                "opendap {}: das_doc fetch void — retry in ttl/Φ·2ⁿ",
+                                das_url
+                            );
+                            let _ = ftx.send(empty(false));
+                            return;
+                        }
+                    };
+                    let dods = match fetch_raw_bytes(&dods_url, src_ttl) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!("opendap {}: dods fetch void — retry in ttl/Φ·2ⁿ", dods_url);
+                            let _ = ftx.send(empty(false));
+                            return;
+                        }
+                    };
+                    let file = match opendap::decode(&dds, &das_doc, &dods) {
+                        Ok(f) => f,
+                        Err(note) => {
+                            eprintln!("opendap {}: {:?}", base, note);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let channels = build_opendap_channels(&src_clone, &file, &lsk_c);
+                    eprintln!("\r\x1b[Kopendap {}: {} samples", name, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                    });
+                });
+                continue;
+            }
             let fmt = archive.sources[i].format.clone();
             if fmt == "finals" || fmt == "ionex" || fmt == "rinex" {
                 let url = archive.sources[i].url.clone();
