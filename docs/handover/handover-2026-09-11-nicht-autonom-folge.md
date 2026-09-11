@@ -1,6 +1,6 @@
 <!--
   title: Handover — Nicht-autonom-Folge (Stand 2026-09-11)
-  session: Nicht-autonom-Folge
+  session: Entscheid
   class: handover
   date: 2026-09-11
   sha256: 5eb898e736c93c82a125fa9ea8eecf1f8c7b8671b5fa890cdda2085e5b1366ef
