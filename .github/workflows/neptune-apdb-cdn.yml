@@ -1,0 +1,31 @@
+name: neptune-apdb-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * 3'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  neptune-apdb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the www.geoazur.fr release exists on the CDN
+        run: |
+          if ! gh release view www.geoazur.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.geoazur.fr --repo omegaflow/sources \
+              --title "www.geoazur.fr" \
+              --notes "raw INPOP Astrometric Planetary Data Base (APDB) Neptune observations mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Manifest the GeoAzur APDB Neptune astrometry (23 fixed-width text files) to the CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin neptune_apdb_manifestor -- --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "neptune-apdb manifestor returned void" \
+                 "the manifestor did not reach the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
