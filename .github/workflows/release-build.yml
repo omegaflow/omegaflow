@@ -3,6 +3,9 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
@@ -68,6 +71,7 @@ jobs:
         cd dist
         sha256sum omegaflow_linux omegaflow_linux_arm64 omegaflow_macos_intel omegaflow_macos_arm64 omegaflow_windows.exe > SHA256SUMS.txt
     - run: |
+        gh release view "$TAG" --repo omegaflow/omegaflow >/dev/null 2>&1 || \
         gh release create "$TAG" \
           dist/omegaflow_linux \
           dist/omegaflow_linux_arm64 \
