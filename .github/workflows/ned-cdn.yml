@@ -20,7 +20,7 @@ permissions:
   contents: write
 concurrency:
   group: ned-cdn
-  cancel-in-progress: true
+  cancel-in-progress: false
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
