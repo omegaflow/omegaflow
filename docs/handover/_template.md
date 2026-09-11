@@ -1,5 +1,6 @@
 <!--
   title: Handover — <Titel> (Stand {date})
+  session: <Sitzungstitel — wie die Session heißt, die diese Linie fährt>
   class: handover
   date: {date}
   sha256: <hex — über den Body ohne Header: sed '/^<!--/,/^-->/d' <f> | sha256sum>
