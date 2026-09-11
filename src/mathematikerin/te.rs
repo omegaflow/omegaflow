@@ -1065,6 +1065,7 @@ pub enum TeNull {
     Residual,
     Block,
     Shift,
+    Phase,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -1137,6 +1138,7 @@ pub fn conditional_te_surrogates_n(
             }
             TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
             TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
+            TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
         };
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins),
@@ -3085,6 +3087,13 @@ mod tests {
     }
 
     #[test]
+    fn gate_fpr_autocorrelation_phase_null_binned_n_1000() {
+        let cells =
+            gate_fpr_coarse_cells(1000, TeNull::Phase, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
     fn gate_fpr_autocorrelation_block_null_ksg_n_surr_100() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Ksg);
     }
@@ -3101,7 +3110,8 @@ mod tests {
 
     #[test]
     fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
-        let cells = gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        let cells =
+            gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Binned, 2, 12, 4, 0, 100);
         gate_fpr_autocorr_assert(&cells);
     }
 
