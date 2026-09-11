@@ -1,9 +1,9 @@
 <!--
   title: Armstrong 1998 — abstract record (radio wave phase scintillation & precision Doppler tracking)
-  class: reference
+  class: paper
   date: 2026-09-04
   status: abstract-only (full text paywalled; JPL preprint handle down)
-  see-also: docs/reference/Radio Science - 2005 - Asmar - ...md
+  see-also: docs/paper/Radio Science - 2005 - Asmar - ...md
 -->
 
 # Armstrong 1998 — abstract record
