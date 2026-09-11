@@ -2,7 +2,7 @@
   title: Handover — Ernte & Register (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 1308701a989136ed6c5e8f0622ab2d045c2257a94c63e55f67b7bbd1d237fe97
+  sha256: ef9def6050c671ebcd0828f151be46a7bf312b239d971a18353e23466114d97e
   status: live
 -->
 # Handover — Ernte & Register (2026-09-11)
@@ -21,6 +21,17 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 - IGETS/GGP — Vollernte läuft (igets-cdn.yml, run 34571077129); Asset
   `igets.bin` am CDN verifizieren. Compiler `igets_compiler` gebaut, Katalog
   `gfz_igets_catalog.φ`.
+- Hi-net/NIED WIN32-Ernte — Zugang entsperrt und Selbstbedienungsweg verifiziert
+  (Login `omegaflow`, Ablauf 2027-03-31, gemessen 2026-09-11): `POST /auth/` →
+  Session, Stationen registrieren über `select_check.cgi` → `select_confirm.php`
+  (Region oder Stationscodes), Download über
+  `cont_request.php?org1=&org2=&year=&month=&day=&hour=&min=&span=&arc=&size=&LANG=en&volc=&rn=`
+  → WIN32 `.cnt` (Messung 1 min, 2026-01-01, 18624 KB, Datei
+  `2026010100000101VM.cnt`); Status `cont_status.php`; Compiler + WIN32-Reader
+  offen. Vor-2004-Bestand ist kein Selbstbedienungs-Download, sondern ein Antrag
+  (`form past` → `POST request_check.php`; Region oder Stationscodes,
+  tar.Z/tar.gz/zip/lzh, <10 Tage, <1 GB, Prüfung Mo–Fr 9–17:30 JST) — Hi-net ab
+  Okt 2000, Event-Wellenformen ab 2002-06-03, F-net vollständig ab April 2003.
 
 ## CDN-Manifestation (Duty)
 
