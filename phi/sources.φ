@@ -5527,14 +5527,6 @@ dist sy_dist
 dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/api.antares.noirlab.edu/antares_loci.bin
-format antares_loci
-at sun
-ttl 604800
-field newest antares_loci_newest_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field oldest antares_loci_oldest_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field brightest antares_loci_brightest_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 format bl_narrowband
 on earth 38.4331409 -79.8397246 0
