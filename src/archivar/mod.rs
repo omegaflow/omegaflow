@@ -87,6 +87,7 @@ pub mod thermochem;
 pub mod tns;
 pub mod twomass;
 pub mod twomrs;
+pub mod win32;
 pub mod wind;
 pub mod wind_orbit;
 pub mod wso_polar;
