@@ -11,6 +11,12 @@ const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const LAG_MIN: usize = 1;
 const LAG_MAX: usize = 3;
 const SURROGATES: usize = 10;
+const MIN_CLUSTERS_PER_CELL: usize = 2;
+const CLUSTER_CHANNELS: [(&str, &str, &str); 3] = [
+    ("MCXC", "tapvizier.cds.unistra.fr", "mcxc_clusters.json"),
+    ("PSZ2", "tapvizier.cds.unistra.fr", "psz2_clusters.json"),
+    ("Abell", "tapvizier.cds.unistra.fr", "abell_clusters.json"),
+];
 
 fn fetch_cached(name: &str, release: &str) -> Option<Vec<u8>> {
     let path = omegaflow::archivar::cache_root().join(name);
@@ -78,6 +84,33 @@ fn load_velocities() -> Option<(Vec<f64>, Vec<u64>)> {
         total += 1;
     }
     eprintln!("velocities: {total} assigned into {ncells} cells");
+    Some((sum, n))
+}
+
+fn load_clusters(asset: &str, release: &str) -> Option<(Vec<f64>, Vec<u64>)> {
+    let bytes = fetch_cached(asset, release)?;
+    let parsed = parse_json(std::str::from_utf8(&bytes).ok()?)?;
+    let arr = as_arr(&parsed)?;
+    let ncells = (12 * NSIDE_CELL * NSIDE_CELL) as usize;
+    let mut sum = vec![0.0f64; ncells];
+    let mut n = vec![0u64; ncells];
+    let mut total = 0u64;
+    for row in arr {
+        let ra = jnum(row, "ra")?;
+        let dec = jnum(row, "dec")?;
+        let z = jnum(row, "z")?;
+        if !ra.is_finite() || !dec.is_finite() || !z.is_finite() {
+            continue;
+        }
+        let (theta, phi) = icrs_to_galactic(ra, dec);
+        let Some(cell) = ang2pix_nest(NSIDE_CELL, theta, phi) else {
+            continue;
+        };
+        sum[cell as usize] += z;
+        n[cell as usize] += 1;
+        total += 1;
+    }
+    eprintln!("clusters {asset}: {total} assigned into {ncells} cells");
     Some((sum, n))
 }
 
@@ -173,6 +206,53 @@ fn main() {
         println!(
             "  lag {lag}: TE(CMB→v) {fwd:.4e}  TE(v→CMB) {rev:.4e}  thr {thr:.4e}  asym {asym:+.4e}  | {word}"
         );
+    }
+
+    println!("\n=== cluster channels — TE(CMB δT → cluster-z) (Nside {NSIDE_CELL}) ===");
+    for (label, release, asset) in CLUSTER_CHANNELS {
+        let Some((csum, cn)) = load_clusters(asset, release) else {
+            println!("  {label}: {asset} absent — the cluster crossing stays pending (0 honored)");
+            continue;
+        };
+        let mut xc: Vec<f32> = Vec::new();
+        let mut zc: Vec<f32> = Vec::new();
+        for c in 0..ncells {
+            if cn[c] < MIN_CLUSTERS_PER_CELL as u64 {
+                continue;
+            }
+            let mut csum_cmb = 0.0f64;
+            for p in 0..ppc {
+                csum_cmb += cmb[c * ppc + p] as f64;
+            }
+            xc.push((csum_cmb / ppc as f64) as f32);
+            zc.push((csum[c] / cn[c] as f64) as f32);
+        }
+        if xc.len() < 24 {
+            println!(
+                "  {label}: {} cells — series too short, no statement",
+                xc.len()
+            );
+            continue;
+        }
+        for lag in LAG_MIN..=LAG_MAX {
+            let Some((fwd, rev, thr, s, asym)) = pair_te(&xc, &zc, lag) else {
+                println!("  {label} lag {lag}: TE void");
+                continue;
+            };
+            if s > fam {
+                fam = s;
+            }
+            let word = if fwd > fam {
+                "fam-carrying"
+            } else if fwd > thr {
+                "over own threshold"
+            } else {
+                "still"
+            };
+            println!(
+                "  {label} lag {lag}: TE(CMB→z) {fwd:.4e}  TE(z→CMB) {rev:.4e}  thr {thr:.4e}  asym {asym:+.4e}  | {word}"
+            );
+        }
     }
     println!("fam (multiple comparison) = {fam:.4e}");
 
