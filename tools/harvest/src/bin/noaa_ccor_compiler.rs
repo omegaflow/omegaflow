@@ -1,11 +1,10 @@
+use omegaflow::archivar::ccor::{parse_bin, write_bin, COMP_INTENSITY};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{rice_decompress, FitsHeader, FitsTable};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
 
 const NETLOC: &str = "noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com";
-const MAGIC_CCOR: [u8; 4] = *b"CCR1";
-const COMP_CCOR_INTENSITY: u32 = 1;
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -128,37 +127,6 @@ fn frame_mean(bytes: &[u8], lsk: &LeapSeconds) -> Option<(f64, f64)> {
     Some((tdb, sum / n as f64))
 }
 
-fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(8 + records.len() * 20);
-    buf.extend_from_slice(&MAGIC_CCOR);
-    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
-    for (t, v, c) in records {
-        buf.extend_from_slice(&t.to_le_bytes());
-        buf.extend_from_slice(&v.to_le_bytes());
-        buf.extend_from_slice(&c.to_le_bytes());
-    }
-    buf
-}
-
-fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
-    if bytes.len() < 8 || bytes[0..4] != MAGIC_CCOR {
-        return None;
-    }
-    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if bytes.len() != 8 + n * 20 {
-        return None;
-    }
-    let mut out = Vec::with_capacity(n);
-    for i in 0..n {
-        let o = 8 + i * 20;
-        let t = f64::from_le_bytes(bytes[o..o + 8].try_into().ok()?);
-        let v = f64::from_le_bytes(bytes[o + 8..o + 16].try_into().ok()?);
-        let c = u32::from_le_bytes(bytes[o + 16..o + 20].try_into().ok()?);
-        out.push((t, v, c));
-    }
-    Some(out)
-}
-
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -200,7 +168,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let records = vec![(tdb, mean, COMP_CCOR_INTENSITY)];
+    let records = vec![(tdb, mean, COMP_INTENSITY)];
     let bin = write_bin(&records);
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);

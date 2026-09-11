@@ -20,6 +20,7 @@ pub mod bison_velocity;
 pub mod bl_narrowband;
 pub mod bpc;
 pub mod bsp_reader;
+pub mod ccor;
 pub mod cdf;
 pub mod cdf25;
 pub mod cdn;

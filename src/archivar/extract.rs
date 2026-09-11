@@ -9,6 +9,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
         "ltmm" => movement_monitoring::parse_bin(bytes),
+        "noaa_ccor" => ccor::parse_bin(bytes),
         _ => None,
     }
 }
@@ -67,6 +68,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             movement_monitoring::COMP_YAW => Some("ltmm_yaw_rate"),
             movement_monitoring::COMP_PITCH => Some("ltmm_pitch_rate"),
             movement_monitoring::COMP_ROLL => Some("ltmm_roll_rate"),
+            _ => None,
+        },
+        "noaa_ccor" => match comp {
+            ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
             _ => None,
         },
         _ => None,

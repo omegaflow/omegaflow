@@ -275,6 +275,10 @@ url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1`
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline registry/katalog
+url http://osug-vo.osug.fr:8080/tap
+note sshade_bandlist.epn_core + sshade_spectra.epn_core — EPNCore-Discovery (SSHADE-Laborspektren), kein skalares Messwert-Feld am Punkt.
+
+decline registry/katalog
 url http://parsec-europlanet.eu:81/tap
 note nur parsec.epn_core — Discovery.
 
@@ -401,6 +405,10 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host
 dead 404
 url https://ameriflux.lbl.gov/api/public/v2/sites?format=json&climate_zone=arctic,subarctic&data_product=FLUXNET2015&active=true
 note HTTP 404 — Endpoint weg.
+
+decline image
+url https://ams02.space/
+note AMS-02-Flusstabellen existieren nur als Papier-Abbildung (PNG/PDF, z. B. PhysRevLett.117.231102.Fig3_.png); kein maschinenlesbarer Flux-Endpoint (.txt/.csv/.dat/.root/.h5/.fits/.json absent; https://ams02.space/ und /physics/* 200, 2026-09-11). Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) ist ein Teilchen-Kanal — die 9er-Force-Registry trägt kein CR/ν-Medium (§12.6 Registry-Frage pending).
 
 integrated
 url https://antares.noirlab.edu/api/v1/
@@ -1062,6 +1070,10 @@ decline presence
 url https://artenfinder.net/api/v2/sichtbeobachtungen/55423273?format=xml
 note Arten-Sichtbeobachtungen (Presence).
 
+dead unreachable
+url https://arvo-registry.sci.am/tap
+note ARVO-TAP (https) — Proton0-Ausgang 2026-09-11: http rc=56 reset by peer (000), https rc=35 reset by peer (~19,5 s); r.jina.ai 422 (page.goto timeout); Wayback-CDX trägt nur historische 2022/2024-Snapshots.
+
 dead 404
 url https://astro.ulb.ac.be:443/sbx/tap
 note SBX (ULB) — 404 (2026-09-11); Sibling-/Pfad-Recherche offen.
@@ -1277,6 +1289,10 @@ note Studien-Registry.
 decline registry
 url https://clinicaltrials.gov/api/v2/studies?query.cond=
 note Studien-Registry.
+
+decline superseded-by-integrated
+url https://cmr.earthdata.nasa.gov/search/collections.json
+note Common Metadata Repository (CMR) = Metadaten-Register (concept-id + Titel + räumlich/zeitlich), kein Mess-Feed; 45454 Collections, data_center gemischt (ENVIDAT neben NASA-DAACs, AU_AADC, AMD_KOPRI, FEDEO, CEOS_EXTRA, MLHUB, NOAA_NCEI, USGS_LTA). Die Mess-Feeds sind direkt in sources.φ (cdaweb HAPI, firms, aeronet, cddis, ssd ephemerides).
 
 decline metadata-registry
 url https://cmr.earthdata.nasa.gov/search/collections.json?page_size=1
