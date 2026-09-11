@@ -5533,6 +5533,33 @@ on earth 38.4331409 -79.8397246 0
 ttl 604800
 field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cds.climate.copernicus.eu/copernicus_cuon_2020-01-01.bin
+ttl 604800
+format copernicus_cdm_obs
+at earth
+field copernicus_air_dewpoint copernicus_air_dewpoint exponential-decay thermal K 3600 0.0 0.0
+field copernicus_air_temperature copernicus_air_temperature exponential-decay thermal K 3600 0.0 0.0
+field copernicus_dew_point_depression copernicus_dew_point_depression exponential-decay thermal K 3600 0.0 0.0
+field copernicus_eastward_wind_speed copernicus_eastward_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
+field copernicus_geopotential_height copernicus_geopotential_height inverse-square gravity m 3600 0.0 0.0
+field copernicus_northward_wind_speed copernicus_northward_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
+field copernicus_relative_humidity copernicus_relative_humidity gaussian-inverse-square diffusion % 3600 0.0 0.0
+field copernicus_specific_humidity copernicus_specific_humidity gaussian-inverse-square diffusion kg/kg 3600 0.0 0.0
+field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inverse-square advective deg 3600 0.0 0.0
+field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cds.climate.copernicus.eu/copernicus_icoads_2020-01-01.bin
+ttl 604800
+format copernicus_cdm_obs
+at earth
+field copernicus_air_pressure_at_sea_level copernicus_air_pressure_at_sea_level gaussian-inverse-square acoustic Pa 21600 0.0 0.0
+field copernicus_air_temperature copernicus_air_temperature exponential-decay thermal K 21600 0.0 0.0
+field copernicus_dew_point_temperature copernicus_dew_point_temperature exponential-decay thermal K 21600 0.0 0.0
+field copernicus_water_temperature copernicus_water_temperature exponential-decay thermal K 21600 0.0 0.0
+field copernicus_wet_bulb_temperature copernicus_wet_bulb_temperature exponential-decay thermal K 21600 0.0 0.0
+field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inverse-square advective deg 21600 0.0 0.0
+field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 21600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
 format argo_bgc
 on earth 0 0 0
@@ -5593,6 +5620,12 @@ format lightcurve
 ttl 604800
 at sun
 
+url https://github.com/omegaflow/sources/releases/download/noaa-dcdb-bathymetry-pds.s3.amazonaws.com/dcdb_csb_2017-04-25.bin
+ttl 604800
+format noaa_dcdb_bathymetry
+at earth
+field noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square acoustic m 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/noaa-ghcn-pds.s3.amazonaws.com/ghcn_d_USW00094728_2025-03.bin
 format noaa_ghcn_d
 at earth
@@ -5625,6 +5658,15 @@ field noaa_gsod_gust_ms noaa_gsod_gust_ms gaussian-inverse-square advective m/s 
 field noaa_gsod_max_c noaa_gsod_max_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_min_c noaa_gsod_min_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_prcp_mm noaa_gsod_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-oar-keo-papa-pds.s3.amazonaws.com/keo_OS_KEO_200406_M_TSVMBP_32N145E_dy.bin
+ttl 604800
+format noaa_keo_papa
+at earth
+field noaa_keo_temp_c noaa_keo_temp_c exponential-decay thermal C 86400 0.0 0.0
+field noaa_keo_psal_psu noaa_keo_psal_psu gaussian-inverse-square diffusion psu 86400 0.0 0.0
+field noaa_keo_ucur_ms noaa_keo_ucur_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field noaa_keo_vcur_ms noaa_keo_vcur_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odr.bin
 format galileo_odr
@@ -6202,6 +6244,38 @@ dec dec
 z z
 field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
 field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
+ttl 604800
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Teff apogee_dr17_teff_rv gaussian-inverse-square thermal K 604800 0.0 0.0
+field Jmag apogee_dr17_jmag gaussian-inverse-square em mag 604800 0.0 0.0
+field Hmag apogee_dr17_hmag gaussian-inverse-square em mag 604800 0.0 0.0
+field Ksmag apogee_dr17_ksmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
+ttl 604800
+format asu-tsv
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+radvel HRV
+field Teffs rave_dr6_teffs_sparv gaussian-inverse-square thermal K 604800 0.0 0.0
+field Teffir rave_dr6_teff_irfm gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/598/A78&-out.max=623604&-out.all
+ttl 604800
+format asu-tsv
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Stotal tgss_adr1_stotal_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+field Speak tgss_adr1_speak_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 ttl 31536000

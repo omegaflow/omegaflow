@@ -6,6 +6,14 @@ decline no-physical-force
 url http://127.0.0.1:8080/schumann.json
 note Bild-Datei (superDARN-Banner), kein Messwert.
 
+decline registry/katalog
+url http://193.87.1.40:8080/tap
+note nur lso.epn_core — Discovery.
+
+decline registry/katalog
+url http://39.105.187.183:8080/tap/tap
+note ivoa.obscore + ivoa.obsplan + ivoa.artifacts — Beobachtungs-Metadaten, kein Fluss-/Messwert-Feld.
+
 decline atlas
 url http://api.brain-map.org/api/v2/data/query.json?criteria=model::SectionDataSet,rma::criteria
 note Anatomie-Atlas (Bild-/Struktur-Registry), kein Messwert-Feld.
@@ -50,6 +58,10 @@ dead unreachable
 url http://arvo-registry.sci.am/tap
 note ARVO-TAP (ivo://byu.arvo/tap) — Recheck 2026-09-10: DNS löst auf (93.187.165.59), aber http und https werden nach der Anfrage vom Peer zurückgesetzt (curl 56/35, kein HTTP-Code, kein TAP-JSON); Alternativen am Netloc (/tap/sync, /) identisch. Proton-VPN-Route (§9) als offene Eskalation, bevor der Eintrag endgültig bleibt.
 
+decline registry/katalog
+url http://astroweb.projects.phys.ucl.ac.uk:8000/tap
+note mdisc.epn_core + jasmin.epn_core + ivoa.obscore — Discovery-Metadaten.
+
 decline model-forecast
 url http://cera-www.dkrz.de/WDCC/meta/CMIP6/CMIP6.CMIP.CCCma.CanESM5-1.historical.r15i1p1f1.Lmon.npp.gn.v20190429.json
 note CMIP6-Klimamodell-Ausgabe (Redirect auf wdc-climate.de) — Modelldaten, Force Gate.
@@ -57,6 +69,14 @@ note CMIP6-Klimamodell-Ausgabe (Redirect auf wdc-climate.de) — Modelldaten, Fo
 decline model-forecast
 url http://cera-www.dkrz.de/WDCC/meta/CMIP6/CMIP6.CMIP.CCCma.CanESM5-1.historical.r15i1p2f1.Lmon.gpp.gn.v20190429.json
 note CMIP6-Modellausgabe (Redirect auf wdc-climate.de).
+
+decline registry/katalog
+url http://dachs.planet.fu-berlin.de/tap
+note hrsc3nd.epn_core + ivoa.obscore — EPNCore/ObsCore-Metadaten.
+
+decline registry/katalog
+url http://dachs.sdc.leibniz-kis.de/tap
+note lars/gris/chrotel epn_core — Discovery.
 
 decline no-physical-force
 url http://data.gdeltproject.org/normfiles/daily.csv
@@ -70,6 +90,10 @@ dead 404
 url http://data.neonscience.org/api/v0/documents/NEON.DP1.10081\_20086\_20141.001.variables.20180306T000000Z.csv
 note HTTP 404 — Endpoint weg.
 
+decline registry/katalog
+url http://dorotka.ufa.cas.cz/tap
+note cpstasm.epn_core + thmsm.epn_core — EPNCore-Discovery.
+
 decline no-physical-force
 url http://dsimap.mnhn.fr/biocase/pywrapper.cgi?dsa=cbnbp
 note Force Gate failed: stock price is an economic abstraction. Biosphere ETF Brazil.
@@ -81,6 +105,10 @@ note Stations-Registry; Readings-Endpoint (id/stations/{id}/readings.json) träg
 decline superseded-by-integrated
 url http://erddap.emodnet-physics.eu/erddap/rss/ArgoFloats.rss
 note EMODnet-Argo + IFREMER-ERDDAP-Argo (allDatasets.json live 200, 2026-08-19) — die Argo-Messung ist über argovis-api + data-argo.ifremer.fr DAC in sources.φ integriert — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline registry/katalog
+url http://evn-vo.jive.eu/tap
+note evn.main + obscore_radio — VLBI-Beobachtungs-Metadaten, kein Fluss-Feld am Punkt.
 
 decline literature
 url http://export.arxiv.org/api/query
@@ -114,6 +142,106 @@ decline model-computation
 url http://icgem.gfz-potsdam.de/calcgrid?model=EIGEN-6C4&lat=0&lon=0&height=0&functional=gravity_cl&format=json
 note ICGEM-Gravity-Berechnung aus Modell (calcgrid) — Modellrechnung, kein Messwert.
 
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/AKARI_DR1
+note AKARI DR1 — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/agn
+note JVO-AGN — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari
+note AKARI FIS — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/catalog/asteroid_flux
+note AKARI asteroid flux — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/catalog/slitless_mir_psc
+note AKARI slitless-MIR PSC — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/ivoa/obscore
+note AKARI ObsTAP — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/diffuse_sky_patch
+note AKARI diffuse sky — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/galactic_planetary_nebulae
+note AKARI galPN — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/slitless_mir_spec
+note AKARI slitless-MIR spec — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/alma
+note JVO-ALMA-Mirror — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/bsgc/public/image
+note BSGC — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/halca
+note HALCA VSOP correlated — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/halca_agn
+note HALCA VSOP survey — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/hds/
+note Subaru HDS — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/hitomi
+note Hitomi — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/irsf
+note JVO-Skynode leitet auf /maintenance/index.html (200). Die ganze jvo.nao.ac.jp-Familie ist im Wartungs-/Umbau-Zustand — §8: Status-Seite der NAOJ-VO prüfen, bevor endgültig.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/irts/catalog/irts_mirs_psc_2_1
+note IRTS MIRS — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/irts/catalog/irts_nirs_psc_1_3
+note IRTS NIRS — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/kug2000
+note KUG2000 — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/moircs
+note Subaru MOIRCS — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/
+note Nobeyama — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/saga
+note SAGA — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/sdf_v1
+note Subaru SDF — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/spcam
+note Subaru SPCAM — JVO-Wartung.
+
+dead redirect-maintenance
+url http://jvo.nao.ac.jp/skynode/do/tap/sxds_v1
+note Subaru XDDS — JVO-Wartung.
+
 dead unreachable
 url http://localhost:5000/api/compute
 note curl: curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
@@ -121,6 +249,18 @@ note curl: curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn
 dead 404
 url http://maxi.riken.jp/alert/novae/json/novae_list.json
 note HTTP 404 — Endpoint weg.
+
+decline registry/katalog
+url http://nadir.konkoly.hu:80/tap
+note nur sbnaf.epn_core — Discovery.
+
+decline registry/katalog
+url http://nida.esac.esa.int/nida-sl-tap/tap
+note ISO-Archiv (Infrared Space Observatory) — nida-TAP trägt Beobachtungs-Metadaten, kein Messwert-Feld.
+
+decline registry/katalog
+url http://oirsa.cfa.harvard.edu:8080/tap
+note data_public-Views + ivoa.obscore — Spektren-Metadaten, kein Messwert-Feld in der Zeile.
 
 decline model-reanalysis
 url http://opendap.nccs.nasa.gov/dods
@@ -134,9 +274,17 @@ decline catalog
 url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1`
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline registry/katalog
+url http://parsec-europlanet.eu:81/tap
+note nur parsec.epn_core — Discovery.
+
 dead 404
 url http://polly.tropos.de/api/stations?format=json
 note HTTP 404 — Endpoint weg.
+
+decline registry/katalog
+url http://pvol2.ehu.eus:8083/tap
+note nur pvol.epn_core — Discovery.
 
 dead 404
 url http://reg.bom.gov.au/fwo/IDD60901/IDD60901.95765.json
@@ -161,6 +309,38 @@ note HTTP 404 — Endpoint weg.
 decline molecular
 url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
 note DNA-Barcode-Daten.
+
+decline registry/katalog
+url http://vespa-ae.oma.be/tap
+note soir/nomad/gem_mars epn_core — Discovery.
+
+decline registry/katalog
+url http://vespa.ia2.inaf.it/tap
+note sw/swihy/artecs/ndcs/swear/sweare epn_core — Discovery.
+
+decline registry/katalog
+url http://vo.projet.latmos.ipsl.fr/tap
+note nur spicam.epn_core — Discovery.
+
+decline registry/katalog
+url http://vogate.obs-nancay.fr/tap
+note nrh/nda/orfees/nenusun/nnd epn_core + fr606.pulsar + solar_nenufar_ml — überwiegend epn_core-Discovery.
+
+decline registry/katalog
+url http://voparis-tap-he.obspm.fr/tap
+note hess_dr.obscore + ctao_sdc/isdc.obscore + vhe_redshifts — obscore-Metadaten bzw. nur Rotverschiebung.
+
+decline registry/katalog
+url http://voparis-tap-helio.obspm.fr/tap
+note hfc1*/bass2000 epn_core — Sonnen-Discovery-Metadaten.
+
+decline registry/katalog
+url http://voparis-tap-maser.obspm.fr/tap
+note juno_waves/wind_waves/stereo_waves/cassini_rpws/voyager_pra + tfcat — epn_core-Radio-Ereigniskataloge (Discovery, kein Roh-Messwert am Punkt).
+
+decline registry/katalog
+url http://voparis-tap-planeto.obspm.fr/tap
+note craters/spectro_*/vvex/vims_satellites + gaia_asteroids — epn_core-Discovery; gaia_asteroids.gaia_source ist Gaia-Bestand (schon in sources.φ).
 
 decline no-physical-force
 url http://websmart66.net/cgi-bin/p/w66p-home.cgi?d=winchester-aviation-services
@@ -822,6 +1002,42 @@ decline model-forecast
 url https://archive-api.open-meteo.com/v1/archive?latitude=
 note open-meteo Archiv = Modell/Reanalyse.
 
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jnep-pdr202107
+note J-NEP PDR — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jpas-edr
+note J-PAS EDR — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jplus-dr1
+note J-PLUS DR1 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jplus-dr2
+note J-PLUS DR2 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jplus-dr3
+note J-PLUS DR3 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/jplus-dr4
+note J-PLUS DR4 — cefca-404-Familie (2026-09-11 gemessen, alle 9). §8: archive.cefca.es lebt (Root), der /catalogues/vo/tap/-Pfad antwortet 404 — Pfad-Umzug prüfen; J-PLUS/J-PAS-Daten liegen auch in den CEFCA-DR-Portalen.
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/minijpas-pdr201912
+note miniJPAS PDR — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/mudehar-dr1
+note MudeHar DR1 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
+dead 404
+url https://archive.cefca.es/catalogues/vo/tap/mudehar-dr2
+note MudeHar DR2 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
+
 decline file-inventory
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
 note jsonsummary liefert ein Datei-Inventar (filename, file_size, file_md5) — kein ra/dec, kein Messwert in dieser Route (Port-Befund 2026-08-15).
@@ -829,6 +1045,10 @@ note jsonsummary liefert ein Datei-Inventar (filename, file_size, file_md5) — 
 decline infrastructure
 url https://archive.nrao.edu/
 note Service Decommissioned (200-HTML); Nachfolger data.nrao.edu (Angular-SPA). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+dead 503
+url https://archives.esac.esa.int/hsa/whsa-tap-server/tap
+note Herschel Science Archive TAP — 503 (2026-09-11). §13: HSA-Umzug läuft (archives.esac.esa.int/hsa, HAIO /hsa/aio); der TAP-Server ist im Umbau.
 
 decline superseded-by-integrated
 url https://argovis-api.colorado.edu/argo?center=-22.5,0&radius=100&startDate=2024-06-01&data=temperature,salinity&format=json
@@ -841,6 +1061,10 @@ note Argovis-Profil-Route live (200 lokal, 2026-08-19), aber Argo ist in sources
 decline presence
 url https://artenfinder.net/api/v2/sichtbeobachtungen/55423273?format=xml
 note Arten-Sichtbeobachtungen (Presence).
+
+dead 404
+url https://astro.ulb.ac.be:443/sbx/tap
+note SBX (ULB) — 404 (2026-09-11); Sibling-/Pfad-Recherche offen.
 
 dead 404
 url https://astroarchive.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,instrument,obs_id+FROM+ivoa.obscore+WHERE+CONTAINS
@@ -974,9 +1198,17 @@ decline infrastructure
 url https://cdn.rawgit.com/OGCMetOceanDWG/wmo-ra/master/wmo-ra.geojson
 note WMO-Regionsgrenzen — geografische Infrastruktur.
 
+decline registry/katalog
+url https://cdpp-epntap.irap.omp.eu/tap
+note nur epn_core (amdadb/illu67p/transplanet) — EPNCore-Discovery-Tabelle, kein skalares Messwert-Feld; Zugriff auf Datenprodukte, nicht auf die Messung.
+
 decline method
 url https://cds.climate.copernicus.eu/api/
 note HTTP 202 — Endpoint verlangt anderen Interaktionsmodus.
+
+decline registry/katalog
+url https://cdsarc.cds.unistra.fr/saadavizier.tap/tap
+note ivoa.obscore/obscore2/epn_core — Metadaten-Views, kein Messwert-Feld.
 
 dead timeout
 url https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=json
@@ -1085,6 +1317,10 @@ note HTTP 404 — Endpoint weg.
 decline no-physical-force
 url https://crates.io/api/v1/crates?per_page=1
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (ref-auth-apis.md §E).
+
+dead 502
+url https://dachs.neo.s2p.esa.int/tap
+note neocc.esa (NEOCC S2P-TAP) — 502 (2026-09-11 gemessen). §8: dachs.neo.s2p.esa.int antwortet 502, kein TAP-JSON; Sibling-/Root-Prüfung offen.
 
 decline archive-only
 url https://dasch.rc.fas.harvard.edu/
@@ -1542,6 +1778,10 @@ dead 404
 url https://epncb.eu/json/stationlist.json
 note HTTP 404 — Endpoint weg.
 
+decline registry/katalog
+url https://epntap.climso.ovgso.fr/tap
+note nur climso.epn_core — Discovery-Tabelle, kein Messwert.
+
 decline no-physical-force
 url https://epoch.ai/data/notable_ai_models.csv
 note KI-Modell-Liste.
@@ -1846,6 +2086,10 @@ decline infrastructure
 url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
 note Seekabel-Verläufe.
 
+decline derived-product
+url https://glade.elte.hu/
+note kompiliertes Cross-Match aus 6 bereits registrierten Surveys; direkte Messgrößen (B/K/W1-Magnituden) sind 2MASS/WISE-Daten, die neuen Spalten (Sternmasse, BNS-Merger-Rate) modell-abgeleitet — keine eigene direkte Messung. Statischer Download, kein API, 200 erreichbar.
+
 decline derived-satellite-index
 url https://glam1.gsfc.nasa.gov/api/gettbl/v4
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
@@ -1958,6 +2202,10 @@ decline duplicate-eop
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
 note IERS-EOP (bulletinb.json/eopc04.json/eopc04.1962-now.json CDN-Captures, HTTP 200): UT1-UTC + Polbewegung — dieselbe Messung wie der registrierte maia.usno.navy.mil ser7/finals.all-Block (ut1_utc/pmx/pmy) — Duplikat.
 
+decline registry/katalog
+url https://hreda.esac.esa.int/hreda-sl-tap/tap
+note experiment/mission/team/affiliation/v_* — reine Archiv-/Organisations-Metadaten, kein Messwert.
+
 dead 404
 url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=
 note HTTP 404 — Endpoint weg.
@@ -1965,6 +2213,10 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=2026-08-08
 note HTTP 404 — Endpoint weg.
+
+decline registry/katalog
+url https://hst.esac.esa.int/tap-server/tap
+note caom2/ObsCore/hsc.* — Archiv-Metadaten (Proposal/Plane/Artifact); hsc.hubble_sc trägt nur entfernungsfreie Photometrie (Gate-Referenz, kein Oszillator).
 
 decline registry
 url https://hub.docker.com/v2/repositories/library/alpine
@@ -2001,6 +2253,10 @@ note HTTP 404 — Endpoint weg.
 decline model
 url https://icgem.gfz-potsdam.de
 note grind: grind_b2find.φ
+
+decline registry/katalog
+url https://idoc-dachs.ias.u-psud.fr/tap
+note eit_syn/synopticmaps/omega_*/currents_epn/gaia_dem — lauter epn_core, Discovery-Metadaten.
 
 decline registry
 url https://ies-ows.jrc.ec.europa.eu/
@@ -2098,9 +2354,17 @@ dead timeout
 url https://jsoc.stanford.edu/
 note Korrektur (2026-09-05): die https-URL ist per TLS-Timeout tot (000) — aber nur die TLS-Schicht. http://jsoc.stanford.edu ist erreichbar (200) und der AIA-Erntepfad (aia_compiler, http, aia.lev1_euv_12s rs_list) funktioniert; die 2026-09-03-https-Probe traf nur die defekte TLS-Schicht, nicht den Host. JSOC ist kein voller Todesfall; dieser Eintrag dokumentiert die https-Scheme-Einschränkung, der http-Pfad lebt. Browser 2026-09-10: Host lebt via HTTP (HTTPS-Zertifikatfehler), dead-Verdikt prüfen.
 
+decline registry/katalog
+url https://jwst.esac.esa.int/server/tap
+note obscore/observation/plane/artifact — CAOM2-Archiv-Metadaten, kein Messwert.
+
 dead 404
 url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
 note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://koa.ipac.caltech.edu/TAP
+note Keck Observatory Archive TAP — 404 (2026-09-11 gemessen). §8: koa.ipac.caltech.edu lebt (Root), der /TAP-Pfad 404; KOA-Datenzugang via IRSA/KOA-Portal prüfen.
 
 dead 5xx
 url https://kp.gfz-potsdam.de/app/json/?start=1932-01-01T00:00:00Z&end=2026-08-08T00:00:00Z&index=Kp,Ap&status=def&format=JSON
@@ -2161,6 +2425,10 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv
 note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url https://leda.univ-lyon1.fr/
+note direkter curl 000 + Jina 422 (networkidle-Timeout) — Server antwortet nicht; Wayback 429 (Session-Rate-Limit, nicht abschließend). Alternativen geprüft: VizieR VII/237 (LEDA-2003-Snapshot) als Spiegel, HyperLEDA-Daten fließen in GLADE+ und NED ein. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition ruht auf dem Erreichbarkeits-Befund.
 
 dead dns-unresolved
 url https://lightning.gld/v1/rates/global
@@ -2269,6 +2537,10 @@ note grind: grind_arcgis_index.φ Browser 2026-09-10: Host tot, Dienst-Nachfolge
 dead 
 url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
 note grind: grind_arcgis_index.φ Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.env.nm.gov/general/home/.
+
+decline registry/katalog
+url https://mercatorvo.ster.kuleuven.be/tap
+note hermes.data (View) — Spektren-Metadaten.
 
 decline method
 url https://meri.digitraffic.fi/api/ais/v1/locations
@@ -2650,6 +2922,10 @@ decline redistribution
 url https://pro.weatherxm.com/docs
 note WeatherXM (DePIN, 9500+ Stationen, Expansion) — Free-Tier-API-Key; Daten-Endpunkte ohne Key 404. Kommerziell — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
 
+decline registry/katalog
+url https://psa.esa.int/psa-tap/tap
+note psa.epn_core + v_*/product_ui_* — Archiv-/Produkt-Metadaten, kein Messwert.
+
 dead 404
 url https://pskreporter.info/cgi-bin/lastspots.cgi?last=24
 note HTTP 404 — Endpoint weg.
@@ -2870,9 +3146,9 @@ decline model-forecast
 url https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
 note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline superseded-by-integrated
+decline no-physical-force
 url https://services.arcgis.com/4PuGhqdWG1FwH2Yk/arcgis/rest/services/Current_lightning_view/FeatureServer/0
-note lightning already via blitzortung (api.blitzortung.org).
+note generisches (Parameter-Name,Wert)-Paar ohne peak_current-/Einheit-Feld, 0 Features zum Messzeitpunkt (gemessen 2026-09-11) — kein benannter physikalischer Messwert; lightning lebt via blitzortung (api.blitzortung.org).
 
 decline 
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Latitudes/FeatureServer/0
@@ -3382,9 +3658,9 @@ decline superseded-by-integrated
 url https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/CA_Lightning_Data_Public_View/FeatureServer/0
 note lightning already via blitzortung (api.blitzortung.org).
 
-decline model
+decline derived-model
 url https://services5.arcgis.com/h1YxcBX0SJlA4Mtf/arcgis/rest/services/parameter/FeatureServer/0
-note layer Ancaman_Tsunami_Padang = tsunami hazard MODEL, not a measurement.
+note abgeleitete Tsunami-Gefährdungs-Zonenkarte (Kelas/Ktg/Skor/Bobot/Distanz, 0 Features, gemessen 2026-09-11) — kein Kraft-/Einheitenfeld, kein Messwert.
 
 decline static
 url https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
@@ -3606,6 +3882,10 @@ dead 404
 url https://socat.info/api/v1/data?startdate=
 note HTTP 404 — Endpoint weg.
 
+decline registry/katalog
+url https://solar-dachs.oca.eu/tap
+note nur meteospace.epn_core (View) — Discovery.
+
 decline 
 url https://ssd-api.jpl.nasa.gov
 note grind: grind_terrapulse_a.φ
@@ -3800,7 +4080,7 @@ note Fahrplan.
 
 decline superseded-by-integrated
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note tsunami/seismic events superseded by USGS fdsnws (already live in sources.φ).
+note tsunamigenes Erdbeben-Ereigniskatalog (13 Ereignisse/90 Tage, MAGNITUDE/LAT/LON/DEPTH je Event, gemessen 2026-09-11), keine Tide-Gauge-Messreihe — superseded by USGS fdsnws (live in sources.φ).
 
 dead 404
 url https://unosat.org/api/v1/
@@ -3849,6 +4129,14 @@ note EUMETSAT-WMS-Bildkacheln.
 decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
 note Swarm TII E-Feld (TCT02/16, EFIA/EFIB/EFIC) — keyless HAPI lebt, aber (1) experimentelles Produkt, stopDate 2025-12-04 (kein Live-Feed), (2) E-Feld ist ABGELEITET (E=-V×B aus Ionendrift + B-Feld), nicht direkt gemessen — die direkte Messung ist die Ionendrift (Vixh/Viy/Viz, m/s). Force-Gate: E-Feld abgeleitet + Feed beendet → kein lebender Oszillator. Die live-Swarm-elektrischen Felder (Langmuir-Probe, FAC, MAG) stehen bereits in sources.φ. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+decline registry/katalog
+url https://vo-tap.oma.be/tap
+note sidc_flare/sidc_cme/sidc_geomagnetic_*/uset_*/rob_spoca_ch — epn_core-Ereigniskataloge (Klassifikation/Prognose, kein Roh-Messwert-Feld).
+
+decline registry/katalog
+url https://vo.lam.fr/tap
+note vipers_dr2.spectra / vuds_dr1.spectra / muse_wide_dr1.spectra (Views) + ivoa.obscore + aspic_*/el_cosmos — Spektren-/Beobachtungs-Metadaten, kein Messwert-Feld am Punkt.
 
 decline catalog
 url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
@@ -3957,6 +4245,10 @@ note curl: curl: (6) Could not resolve host: world.openagritechdata.org Browser 
 decline superseded-by-api.woudc.org
 url https://woudc.org/api/
 note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integriert (atmosphere_woudc_total_ozone, master.φ Z.10813) — diese HTML-Landing war nur der alte Einstieg. Verschoben aus blocked_sources.φ 2026-08-19.
+
+dead tls-reset
+url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus
+note CADC-ARGUS — 000/Peer-Reset (2026-09-11; §16.4: TLS-Reset 2026-09-10). TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; Proton-VPN-Recheck offen.
 
 decline metadata-registry
 url https://ws.pangaea.de/oai/provider
@@ -4305,6 +4597,10 @@ note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-1
 decline registry
 url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
 note Stations-Registry; gehört als stations_url zum Accept-Kandidaten measurements.json (TODO).
+
+decline registry/katalog
+url https://www.plate-archive.org/tap
+note Photoplatten-Archiv — Metadaten digitalisierter Platten, kein Messwert am Punkt.
 
 dead 404
 url https://www.pmel.noaa.gov/gt/dart/dart_map.json
