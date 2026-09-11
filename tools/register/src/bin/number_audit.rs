@@ -3,6 +3,8 @@ use std::fs;
 use std::path::Path;
 
 const TOL: f64 = 3.5e-4;
+const ARCHIVE_ROOT: &str = "/home/johannes/backup/archive-root";
+const LOCAL_BACKUP: &str = "/home/johannes/backup/archive";
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Kind {
@@ -481,36 +483,45 @@ fn analyze_text(path: &str, text: &str, ground: Option<&[ArchiveGround]>) -> Fil
     let _ = &prose_nums;
 
     if let Some(ground) = ground {
-        for g in ground {
+        for n in &prose_nums {
+            if n.value.fract() != 0.0 || n.value < 0.0 {
+                continue;
+            }
+            let Some(line_lower) = line_at(n.line) else {
+                continue;
+            };
+            let file_claim = tokenize(&line_lower)
+                .iter()
+                .any(|t| t == "file" || t == "files");
+            if !file_claim {
+                continue;
+            }
+            let best = ground
+                .iter()
+                .filter_map(|g| {
+                    let len = anchor_tokens(&g.path)
+                        .iter()
+                        .filter(|a| line_lower.contains(a.as_str()))
+                        .map(|a| a.len())
+                        .max()?;
+                    Some((len, g))
+                })
+                .max_by_key(|(len, _)| *len);
+            let Some((_, g)) = best else {
+                continue;
+            };
             let anchors = anchor_tokens(&g.path);
-            for n in &prose_nums {
-                if n.value.fract() != 0.0 || n.value < 0.0 {
-                    continue;
-                }
-                let Some(line_lower) = line_at(n.line) else {
-                    continue;
-                };
-                if !anchors.iter().any(|a| line_lower.contains(a)) {
-                    continue;
-                }
-                let file_claim = tokenize(&line_lower)
-                    .iter()
-                    .any(|t| t == "file" || t == "files");
-                if !file_claim {
-                    continue;
-                }
-                let raw_lower = n.raw.to_lowercase();
-                if anchors.iter().any(|a| a.contains(&raw_lower)) {
-                    continue;
-                }
-                let stated = n.value as usize;
-                if stated != g.count {
-                    rep.found[2] += 1;
-                    rep.findings.push(format!(
-                        "R2 {}:{} [{}] archive '{}' — stated {} vs measured {}",
-                        path, n.line, n.section, g.path, stated, g.count
-                    ));
-                }
+            let raw_lower = n.raw.to_lowercase();
+            if anchors.iter().any(|a| a.contains(&raw_lower)) {
+                continue;
+            }
+            let stated = n.value as usize;
+            if stated != g.count {
+                rep.found[2] += 1;
+                rep.findings.push(format!(
+                    "R2 {}:{} [{}] archive '{}' — stated {} vs measured {}",
+                    path, n.line, n.section, g.path, stated, g.count
+                ));
             }
         }
     }
@@ -671,6 +682,11 @@ fn main() {
         let _ = t;
     }
 
+    if archive_paths.is_empty() {
+        archive_paths.push(ARCHIVE_ROOT.to_string());
+        archive_paths.push(LOCAL_BACKUP.to_string());
+    }
+
     if files.is_empty() {
         let dir = Path::new("docs/paper");
         if let Ok(rd) = fs::read_dir(dir) {
@@ -751,18 +767,12 @@ fn main() {
     for r in 1..=5 {
         println!("  {:<28} found = {}", names[r], totals[r]);
     }
-    if archive_paths.is_empty() {
-        println!(
-            "  R2 §2 count<->table: no syntactic rule decides the class — a Z finding needs the archive count as ground truth, sheet text alone does not carry it (docs/specs/lauf-log.md names the class open)"
-        );
-    } else {
-        for (p, m) in &measured {
-            match m {
-                Some(c) => println!("  R2 archive '{p}': {c} files"),
-                None => println!(
-                    "  R2 archive '{p}': absent/pending — not a readable directory, not counted as 0"
-                ),
-            }
+    for (p, m) in &measured {
+        match m {
+            Some(c) => println!("  R2 archive '{p}': {c} files"),
+            None => println!(
+                "  R2 archive '{p}': absent/pending — not a readable directory, not counted as 0"
+            ),
         }
     }
     println!(

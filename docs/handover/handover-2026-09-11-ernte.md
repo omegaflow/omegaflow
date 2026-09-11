@@ -2,7 +2,7 @@
   title: Handover — Ernte & Register (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: ef9def6050c671ebcd0828f151be46a7bf312b239d971a18353e23466114d97e
+  sha256: e1b4de87ad33a85bc1aa0835bfa69048d131708e2482fa20c6b1102a58b50812
   status: live
 -->
 # Handover — Ernte & Register (2026-09-11)
@@ -18,60 +18,67 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 - Discovery-Download-Workflow (Korpora).
 - Pioneer-10-ATDF-Restbestand — 238 Dateien / 77 Tage ernten (SPDF
   `ATDF_Data-Files_CMarkwardt_Readable`).
-- IGETS/GGP — Vollernte läuft (igets-cdn.yml, run 34571077129); Asset
-  `igets.bin` am CDN verifizieren. Compiler `igets_compiler` gebaut, Katalog
-  `gfz_igets_catalog.φ`.
-- Hi-net/NIED WIN32-Ernte — Zugang entsperrt und Selbstbedienungsweg verifiziert
-  (Login `omegaflow`, Ablauf 2027-03-31, gemessen 2026-09-11): `POST /auth/` →
-  Session, Stationen registrieren über `select_check.cgi` → `select_confirm.php`
-  (Region oder Stationscodes), Download über
+- IGETS/GGP — `igets.bin` absent am CDN (gemessen 2026-09-11: Release
+  `igetsftp.gfz.de` nicht angelegt; run 34571077129). CI-Status prüfen,
+  redispatch.
+- Hi-net/NIED WIN32-Ernte — Zugang entsperrt (Login `omegaflow`, Ablauf
+  2027-03-31, gemessen 2026-09-11): `POST /auth/` → Session, Stationen
+  registrieren über `select_check.cgi` → `select_confirm.php`, Download über
   `cont_request.php?org1=&org2=&year=&month=&day=&hour=&min=&span=&arc=&size=&LANG=en&volc=&rn=`
-  → WIN32 `.cnt` (Messung 1 min, 2026-01-01, 18624 KB, Datei
-  `2026010100000101VM.cnt`); Status `cont_status.php`; Compiler + WIN32-Reader
-  offen. Vor-2004-Bestand ist kein Selbstbedienungs-Download, sondern ein Antrag
-  (`form past` → `POST request_check.php`; Region oder Stationscodes,
-  tar.Z/tar.gz/zip/lzh, <10 Tage, <1 GB, Prüfung Mo–Fr 9–17:30 JST) — Hi-net ab
-  Okt 2000, Event-Wellenformen ab 2002-06-03, F-net vollständig ab April 2003.
+  → WIN32 `.cnt`; Status `cont_status.php`. Compiler + WIN32-Reader offen.
+  Vor-2004-Bestand ist ein Antrag (`form past` → `POST request_check.php`).
 
 ## CDN-Manifestation (Duty)
 
-- jup365 — kernel-flatten bodies-Job bricht weiter (8× failure). Gemessen
-  2026-09-11 (run 34551994683): 103/103 Downloads, dann „The operation was
-  canceled" im Flatten-Schritt (9m39s), nach den großen Satelliten-Kernels
-  (jup365/ura184/nep097/plu060). Ursache (Memory vs. Disk) ungemessen — lokale
-  Reproduktion oder df/mem-Probe vor dem Flatten. Wächter offen.
-- Dispatched 2026-09-11: supermag-magstid, noaa-ghcn/gsod/isd-allstations,
-  noaa-dcdb, noaa-keo-papa, copernicus-icoads/cuon — Asset-Landung am CDN
-  verifizieren.
+- jup365 — Ursache gemessen 2026-09-11: Memory (der Flatten hält alle SPK-Kernel
+  via `std::fs::read` im RAM, ~6,4 GB Subtotal > 7 GB Runner → OOM; Flatten
+  „canceled" bei ~9m39s). Der Per-System-Loop ist gemessen unsicher
+  (`flatten_targets` kennt kein System-Filter; der Mond verliert die Libration —
+  `moon_pa_de440`/`moon_de440` hängen nur an `select_system("planets")`).
+  Einziger Pfad: der DafFile-mmap-Fix (`daf.rs:92` pread statt `fs::read`;
+  `from_data` bleibt Byte-Paritäts-Referenz) als nächstes Atom mit Toren. Offen:
+  der Dispatch mit Wächter (`gh workflow run kernel-flatten.yml`; Erfolg:
+  bodies-Job grün + jup365-Release am CDN).
+- Dispatch-Verifikation (gemessen 2026-09-11): gelandet — supermag (20
+  Stationen), noaa-ghcn (≥1000), noaa-gsod (381), noaa-isd (167),
+  copernicus-cuon. Absent am CDN: `igets.bin`, noaa-dcdb, noaa-keo-papa,
+  copernicus-icoads (CI-Status ungemessen — in-flight oder fehlgeschlagen).
 
-## TAP-Klassifikation (Rest)
+## TAP-Klassifikation (Bau-Linie)
 
-- 12 TAP-Source-Drafts — Spalten-Namen Best-Effort unverifiziert; Verifikation
-  gegen `tap_schema.columns` je Endpoint, dann sources.φ (Verweis
-  `phi/pipeline/research/agent_output/tap_klassifikation_2026-09-11.φ`,
-  Abschnitt A „Draft").
-- 26 live-with-query — Query-Probe (FORMAT=json) → Klassifikation.
+- 39 Endpoints disponiert (2026-09-11): 13 accept → sources.φ, 18 parser-def
+  votable → blocked_sources.φ, 1 decline → dead_sources.φ, 7 ausstehend
+  (Backend down am Probe-Zeitpunkt: dachs.fai.kz, vo.lmd.jussieu.fr,
+  tap.roe.ac.uk/{wsa,vsa,osa,ssa}, pithia.cbk.waw.pl). Nächste Bau-Linie:
+  DaCHS-Dialekt (6 accept liefern `columns` statt `metadata` → tap_to_json void
+  bis ein DaCHS-Arm steht); Distanz-Key (9 der 13 Drafts ohne plx/dist/z →
+  cmap rows continue); Spalten-Namen best-effort unverifiziert (Verifikation
+  gegen `tap_schema.columns` je Endpoint).
 
-## Parser-Pending (Compiler gebaut, Granularität offen)
+## Parser-Pending
 
-- AMS-02 — Endpoint pending (Site 200, Fluss-Tabellen-URL unverifiziert);
-  field-Block erst nach URL-Probe.
-- noaa-ccor — Render-Pfad für Skalar-Frame-Bin (MAGIC_CCOR) pending; Compiler
-  steht.
-- noaa-jpss — Produkt wählen (VIIRS-SDR oder OMPS-SDR), dann Hdf5File-Reader.
+- noaa-ccor — Render-Pfad (MAGIC_CCOR) gebaut; offen: der sources.φ-Block —
+  Quell-URL liegt in `noaa-ccor-cdn.yml` (CCOR-1 dm_science FITS-Granule im
+  `noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com`-Bucket).
+- noaa-jpss — OMPS-SDR-Reader gebaut (`noaa_jpss_compiler.rs`, Magic `OMP1`);
+  offen: Datenzugang (anonymes S3-GET liefert CLASS-HTML, kein HDF5) → Render-
+  Verdrahtung + sources.φ-Block nach Zugang.
 
 ## Register
 
-- bucket_litmus auf weitere Inventare (Copernicus u. a.).
 - Step-5-Folge — destruktiver Schnitt (verifiziert).
-- R2 — Archiv-Zählung (archive-root + lokales Backup) als Grundwahrheit in
-  `number_audit.rs` verdrahten.
 - docs-reference-verteilung — Bewegung + Referenz-Rewiring, Seeds → Survey-Heimat.
-- Probe-Einheit-Autoableitung.
-- Korpora-Verdikt cmr + dataone messen (CMR aggregiert Partner-Metadaten;
-  dataone terms-Seite broken).
 
 ## Speisekammer / Nachlese
 
 - Speisekammer-Fragen — aia2014, planck, eve, omni2, goes15, gebco.
-- Proton-VPN-Recheck — arvo-registry (endgültiges dead), cadc.argus (TLS-Reset).
+- dataone — terms-Seite 401 (gemessen 2026-09-11: www.dataone.org/terms → 302
+  old.dataone.org/terms → HTTP 401); Lizenzstatement unlesbar, Redistribution offen.
+- cadc.argus — NICHT tot (TCP offen, TLS-Reset ~19,5 s Peer-/Exit-seitig;
+  r.jina.ai erreicht `/argus/sync` mit HTTP 400 = lebt). Ernte über anderen Exit
+  oder Jina-Roh-Fetch offen.
+
+## Abschluss
+
+Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
+Abschluss-Check (`/abschluss`).
