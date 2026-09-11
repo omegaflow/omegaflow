@@ -3,7 +3,7 @@
   session: Quellen-Browser
   class: handover
   date: 2026-09-11
-  sha256: 289345a3187c420a6cd021cfec8b21f2c4910b924890d9bbc9f743a4c679648b
+  sha256: 299951181e328281d0134422c05ab457562beb888e79d23477754b7559de7848
   status: live
 -->
 # Handover — CDS-Lizenzen + NOIRLab-TAP (2026-09-11)
@@ -38,13 +38,14 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - **Keine Ernte heute** (Rat, einmütig): Tor 1 — keine registrierte Frage
   frisst reine Photometrie; das 44-Byte-Sternfeld verlangt plx>0 + endliches
   rv, LS DR10/DECaPS tragen rv nicht (rv=0.0 wäre Fabrication).
-- **Die Frage benennen** — „Frisst das Feld die tiefe Photometrie zwischen den
-  Gaia-Sternen — als Richtungs-Stern mit Farbe (Distanz absent) und als
-  3D-Stern, wo der Gaia-Crossmatch die Distanz trägt?" Konsument = eine
-  photometrische Record-Klasse (Richtung + mag/Flux + Farbe,
-  Distanz-Präsenz-Bit, niemals rv=0.0) plus die plx>0-Teilmenge als
-  Sternproben-Erweiterung. Wer die Zeile annimmt: Klasse bauen oder gemessen
-  freigeben (descoped mit Befund), nie ein Regal.
+- **Die Frage benennen** — „Braucht die Weberin die tiefe Photometrie als
+  Zeugin (S²-Richtung mit Farbe, Distanz absent) für eine Nadel?" Gemessen:
+  Nadel Ⅴ (Technosignatur) frisst Lichtkurven + 10–60-μm-IR-Exzess, nicht die
+  statischen Kataloge; Biosignatur frisst JWST-Spektren; dunkle Materie hat
+  keinen photometrischen Kanal. Kein gebauter Konsument. Kandidat: ein
+  Farbe-Exzess-Zeuge der Nadel-Ⅴ-Chromatizität oder ein Mikrolensing-/Photo-z-
+  Kanal. Wer die Zeile annimmt: den Konsumenten benennen + Klasse bauen oder
+  gemessen freigeben (descoped mit Befund), nie ein Regal.
 
 ## Abschluss
 
