@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-11
-  sha256: bc07ec7599bd272a2f08c98528a0554daf54d617d52441ec3f43516f1fb82aa4
+  sha256: f0e9cb845140a9419942d620e59ea09ecc3f249c916118fddffde6fecd84ebdd
   status: live
 -->
 # Handover — Bau & Code (2026-09-11, Bau5)
@@ -23,12 +23,13 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
   = das --out-Asset skydirections_zchunk.bin, Resume über den CDN-Download);
   skydirection-cdn.yml erntet bedingungslos (kein download||harvest-Kurzschluss,
   --antares = Vollbestand); sky-crossmatch-cdn.yml lädt den zchunk-Checkpoint
-  und fährt den Join mit --out --ci-mode. Der Commit ist nicht gepusht — der
-  Baum ist nicht ruhig (3 fremde Commits vor origin/main + aktive fremde
-  Arbeitsdateien: ernte/forschung/jup365). Offen: push, dispatch
-  skydirection-cdn.yml, dispatch sky-crossmatch-cdn.yml, witnesses.φ-Verdikt aus
-  dem Log (die 2026-09-07-Zählung — 10 Loci, 0 mit Distanz — steht noch im
-  Register).
+  und fährt den Join mit --out --ci-mode. Der Commit ist nicht gepusht —
+  origin/main..HEAD trägt neben meinen zwei Commits (316d226, 39c6127) fremde
+  Commits (ernte/Entscheid/Bau4/jup365/forschung); git status ist leer, aber
+  die fremden Commits liegen vor und nach meinen, ein Push trüge sie alle.
+  Offen: push, dispatch skydirection-cdn.yml, dispatch sky-crossmatch-cdn.yml,
+  witnesses.φ-Verdikt aus dem Log (die 2026-09-07-Zählung — 10 Loci, 0 mit
+  Distanz — steht noch im Register).
 
 ## Membran
 
