@@ -63,6 +63,16 @@ jobs:
             done
             return 1
           }
+          # carried void cones from earlier runs (timed-out cones, recorded not fatal)
+          VOID_FILE="ned_void.json"
+          gh release download "$RELEASE" --repo "$REPO" --pattern "$VOID_FILE" --dir . --clobber 2>/dev/null || true
+          if [ -f "$VOID_FILE" ]; then
+            VOIDS=$(jq -r '.[]?' "$VOID_FILE" 2>/dev/null | tr '\n' ' ')
+          else
+            VOIDS=""
+          fi
+          echo "void cones carried: ${VOIDS:-none}"
+
           # harvest undone slices, one after another, until the wall budget
           while [ "$(date +%s)" -lt "$deadline" ]; do
             if ! next=$(find_slice); then
@@ -82,9 +92,9 @@ jobs:
               fi
               if ! "$BIN" --index "$i" --sr-arcmin "$SR" --maxrec "$MAXREC" \
                   --spacing-deg "$SPACING" --lattice 1024 --out "raw/cone_${i}.json"; then
-                echo "cone ${i} void this run — slice ${next} retried next run"
-                ok=0
-                break
+                echo "cone ${i} void — recorded, slice ${next} continues"
+                echo '[]' > "raw/cone_${i}.json"
+                VOIDS=$(printf '%s %s' "$VOIDS" "$i" | tr ' ' '\n' | grep -v '^$' | sort -un | tr '\n' ' ')
               fi
             done
             [ "$ok" = 0 ] && break
@@ -94,6 +104,12 @@ jobs:
             gh release upload "$RELEASE" "$part" --clobber --repo "$REPO"
             echo "uploaded ${part}"
           done
+
+          # persist the void-cone list so a later run can retry them
+          printf '%s\n' $VOIDS | grep -v '^$' | sort -un | jq -R 'tonumber' | jq -s . > "$VOID_FILE"
+          gh release upload "$RELEASE" "$VOID_FILE" --clobber --repo "$REPO"
+          echo "void cones recorded: $(jq -c . "$VOID_FILE")"
+
           # combine when every slice part is present and ned.json is absent
           present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
             --jq '[.assets[].name | select(startswith("ned_part_"))] | length' 2>/dev/null || true)
