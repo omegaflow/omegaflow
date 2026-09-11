@@ -13,6 +13,7 @@ omegaflow.wasm
 !.opencode/command/abschluss.md
 !.opencode/command/commit.md
 !.opencode/command/start.md
+!.opencode/command/latest.md
 *.pdb
 phi/health.json
 phi/kernels/
