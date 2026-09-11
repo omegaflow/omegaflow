@@ -9,12 +9,13 @@ note AQS Data Mart API — Schadstoff-Konzentration (diffusion), Messung echt; b
 reg https://aqs.epa.gov/aqsweb/documents/data_api.html
 
 blocked account
-url https://doi.org/10.5880/igets.au.l1.001
-note IGETS/GGP supraleitende Gravimeter (gravity, nm/s²). Die 25 Stations-DOIs (10.5880/igets.<st>.l1.001, au…zu) loesen zu dataservices.gfz.de-Landingpages auf, die NUR Metadaten tragen (props `files:[]`, `available_formats:[]`, kein .ggp/.zip). Der Datenweg ist heute der ISDC-SFTP-only-Kanal, messbar (2026-09-07): die Website isdc.gfz.de trägt keine Dateien (data-access-Seite: „The data download is only possible via encrypted sftp on igetsftp.gfz.de"; klassisches FTP seit 2026-03 abgeschaltet); der SFTP-Dienst `igetsftp.gfz.de:22` LEBT (Port offen, Banner SSH-2.0-mod_sftp, Loginname laut ISDC-Bestaetigung johannes.tyroller_at_proton.me) — der tote-Server-Grund der Vorgaengernote ist widerlegt. Das hinterlegte isdc.gfz.de-Website-Passwort (IGETS_USER/IGETS_PASS in .secrets.local) ist nicht das SFTP-Passwort: authentifizierter sftp-Versuch (Loginname + intaktes Passwort, 23 Zeichen verifiziert) antwortet „Permission denied (publickey,password)". SFTP-Passwort pending (gesondert von GFZ/igets-support anzufordern, nicht das Website-Login). reg https://isdc.gfz.de/igets-data-base/registration-for-data-users/. Re-probe, sobald das SFTP-Passwort steht oder GFZ eine offene Route benennt.
+url https://babamul.caltech.edu/api/
+note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-11 (curl, anonym): /api/ antwortet HTTP 200 ("Greetings from BOOM!"); /openapi.json liefert die SPA-Index-HTML (kein OpenAPI-Spec); die Daten-Endpunkte /api/alerts und /api/objects antworten HTTP 401 (Auth-Wall). Messung (Transienten-Alerts, em) echt, Zugang gatet — kein anonymes Daten-JSON.
+reg https://babamul.caltech.edu/
 
 blocked account
 url https://datalab.noirlab.edu/query
-note NOIRLab Astro Data Lab LS-DR10-Katalog-Query (query.json Capture, HTTP 200): der queryManager antwortet anonym nur mit der "Hello World"-Banner-Zeile (38 B, kein Daten-Satz); echte Katalog-Queries brauchen ein Datalab-Konto/API-Token (Dokumentation). Messung (Legacy-Survey-Photometrie ra/dec/mag/z) echt, Zugang gatet.
+note NOIRLab Astro Data Lab LS-DR10-Katalog-Query (query.json Capture, HTTP 200): der queryManager antwortet anonym nur mit der "Hello World"-Banner-Zeile (38 B, kein Daten-Satz); echte Katalog-Queries brauchen ein Datalab-Konto/API-Token (Dokumentation). Messung (Legacy-Survey-Photometrie ra/dec/mag/z) echt, Zugang gatet. DECaPS (DECam Plane Survey, g/r/i/z/Y): derselbe Datalab-Zugang — tap/sync antwortet 200 (gemessen 2026-09-11), Katalog-Queries gatet.
 reg https://datalab.noirlab.edu/
 
 pending
