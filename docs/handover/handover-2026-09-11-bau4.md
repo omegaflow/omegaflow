@@ -1,5 +1,6 @@
 <!--
   title: Handover — Bau & Code (Stand 2026-09-11, Bau4)
+  session: Bau-Folge
   class: handover
   date: 2026-09-11
   sha256: c006f49c5c3ee79fe36d258b8464b66412181aabf627221105de4b76ee6e7ac9
