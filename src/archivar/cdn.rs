@@ -103,6 +103,17 @@ pub fn ensure_release(tag: &str) -> bool {
             true
         }
         Ok(o) => {
+            let re = Command::new("gh")
+                .arg("release")
+                .arg("view")
+                .arg(tag)
+                .arg("--repo")
+                .arg(CDN_REPO)
+                .output();
+            if re.map(|r| r.status.success()).unwrap_or(false) {
+                mark_release_verified(tag);
+                return true;
+            }
             eprintln!(
                 "ensure release {}: gh returned void: {}",
                 tag,

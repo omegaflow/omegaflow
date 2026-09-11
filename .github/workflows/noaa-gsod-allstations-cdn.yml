@@ -1,4 +1,9 @@
 name: noaa-gsod-allstations-cdn
+
+concurrency:
+  group: noaa-gsod-assets
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
     inputs:

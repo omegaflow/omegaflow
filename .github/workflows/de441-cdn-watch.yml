@@ -1,4 +1,9 @@
 name: de441-cdn-watch
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
   schedule:
