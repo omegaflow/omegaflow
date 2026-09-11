@@ -428,7 +428,7 @@ pub fn main_flow() {
     let refusal_ledger = Arc::new(Mutex::new(RefusalLedger::new(
         "phi/pipeline/refusal_ledger.φ",
     )));
-    let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, f64)>>();
+    let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, Option<f64>)>>();
     let consent = Arc::new(AtomicBool::new(false));
     eprintln!("record consent: silent until the operator speaks (browser Y/N relay pending)");
     let serial_tx = sensor_tx.clone();
@@ -531,9 +531,17 @@ pub fn main_flow() {
     if !hidden {
         let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
         if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
-            kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
-                &port,
-            )));
+            match serialport::new(&port, 115_200)
+                .timeout(std::time::Duration::from_millis(50))
+                .open()
+            {
+                Ok(p) => kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
+                    Box::new(p),
+                ))),
+                Err(_) => eprintln!(
+                    "seismic oscillator: {port} unreachable — the oscillator stays silent"
+                ),
+            }
         }
         thread::spawn(move || {
             while let Ok(frame) = seismic_rx.recv() {
@@ -602,7 +610,12 @@ pub fn main_flow() {
         }
     }
     if !hidden {
-        let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx);
+        let writer = if std::io::stdout().is_terminal() {
+            None
+        } else {
+            Some(Box::new(std::io::stdout()) as Box<dyn std::io::Write + Send>)
+        };
+        let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx, writer);
     }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
@@ -886,8 +899,11 @@ pub fn main_flow() {
                 let Some(bs) = sensor_config(&name) else {
                     continue;
                 };
-                let effective_tau = if tau > 0.0 {
-                    tau
+                let Some(wire_tau) = tau else {
+                    continue;
+                };
+                let effective_tau = if wire_tau > 0.0 {
+                    wire_tau
                 } else {
                     continue;
                 };
@@ -902,7 +918,7 @@ pub fn main_flow() {
                     tau: effective_tau,
                     absorption: 0.0,
                     advection: 0.0,
-                    unit: String::new(),
+                    unit: bs.unit.clone(),
                     fold: None,
                 };
                 let channel = Channel {
