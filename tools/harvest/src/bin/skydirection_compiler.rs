@@ -12,6 +12,7 @@ const FINK_CONE: &str = "https://api.lsst.fink-portal.org/api/v1/conesearch";
 const HTTP_RETRY: usize = 3;
 const RATE_LIMIT_BACKOFF_MS: u64 = 3000;
 const LAS_LIMIT: usize = 1000;
+const ANTARES_PAGE: usize = 1000;
 
 fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
@@ -218,88 +219,119 @@ fn lasair_window(lsk: &LeapSeconds, jd_start: f64) -> Vec<SkyDirection> {
     out
 }
 
-fn antares_loci(lsk: &LeapSeconds, limit: usize) -> Vec<SkyDirection> {
-    let url = format!("{ANTARES_LOCI}?limit={limit}");
-    let Some((code, body)) = curl_get(&url, None) else {
-        println!(
-            "skydirection: ANTARES loci (limit {limit}) did not answer (measured stall) — the listing stays pending"
-        );
-        return Vec::new();
-    };
-    if code != "200" {
-        println!(
-            "skydirection: ANTARES loci (limit {limit}) answered HTTP {code} — the listing stays pending"
-        );
-        return Vec::new();
-    }
-    let Ok(text) = std::str::from_utf8(&body) else {
-        println!("skydirection: ANTARES loci body is not UTF-8 — the parser stays pending");
-        return Vec::new();
-    };
-    let Some(JsonVal::Obj(root)) = parse_json(text) else {
-        println!(
-            "skydirection: ANTARES loci body is not the measured JSON:API object — the parser stays pending"
-        );
-        return Vec::new();
-    };
-    let Some(JsonVal::Arr(loci)) = root.get("data") else {
-        println!(
-            "skydirection: ANTARES loci body carries no data array — the parser stays pending"
-        );
-        return Vec::new();
-    };
-    let mut out = Vec::new();
+fn antares_loci(lsk: &LeapSeconds, cap: Option<usize>) -> Vec<SkyDirection> {
+    let cap = cap.unwrap_or(usize::MAX);
+    let mut out: Vec<SkyDirection> = Vec::new();
+    let mut offset = 0usize;
+    let mut measured_total: Option<usize> = None;
     let mut refused = 0usize;
     let mut magnitude_samples = 0usize;
-    for item in loci {
-        let (Some(name), Some(ra), Some(dec)) = (
-            jstr(item, "id"),
-            jnum(item, "attributes.ra"),
-            jnum(item, "attributes.dec"),
-        ) else {
-            refused += 1;
-            continue;
+    loop {
+        if out.len() >= cap {
+            break;
+        }
+        let url =
+            format!("{ANTARES_LOCI}?page%5Blimit%5D={ANTARES_PAGE}&page%5Boffset%5D={offset}");
+        let Some((code, body)) = curl_get(&url, None) else {
+            println!(
+                "skydirection: ANTARES loci (offset {offset}) did not answer (measured stall) — the listing stays pending from this page on"
+            );
+            break;
         };
-        if !ra_dec_plausible(ra, dec) {
-            refused += 1;
-            continue;
+        if code != "200" {
+            println!(
+                "skydirection: ANTARES loci (offset {offset}) answered HTTP {code} — the listing stays pending from this page on"
+            );
+            break;
         }
-        let mag_epochs = [
-            ("newest_alert_magnitude", "newest_alert_observation_time"),
-            ("oldest_alert_magnitude", "oldest_alert_observation_time"),
-            (
-                "brightest_alert_magnitude",
-                "brightest_alert_observation_time",
-            ),
-        ];
-        let mut samples: Vec<SkySample> = Vec::new();
-        for (mag_key, time_key) in mag_epochs {
-            let mag_path = format!("attributes.properties.{mag_key}");
-            let time_path = format!("attributes.properties.{time_key}");
-            let (Some(mag), Some(mjd)) = (jnum(item, &mag_path), jnum(item, &time_path)) else {
-                continue;
-            };
-            if !mag.is_finite() || !mjd.is_finite() {
-                continue;
-            }
-            let Some(tdb) = mjd_to_tdb(lsk, mjd) else {
-                continue;
-            };
-            let dup = samples.iter().any(|s| s.tdb == tdb && s.mag == mag);
-            if !dup {
-                samples.push(SkySample { tdb, mag });
+        let Ok(text) = std::str::from_utf8(&body) else {
+            println!(
+                "skydirection: ANTARES loci (offset {offset}) body is not UTF-8 — the parser stays pending"
+            );
+            break;
+        };
+        let Some(JsonVal::Obj(root)) = parse_json(text) else {
+            println!(
+                "skydirection: ANTARES loci (offset {offset}) body is not the measured JSON:API object — the parser stays pending"
+            );
+            break;
+        };
+        if let Some(JsonVal::Obj(meta)) = root.get("meta") {
+            if let Some(JsonVal::Num(count)) = meta.get("count") {
+                if count.is_finite() && *count >= 0.0 {
+                    measured_total = Some(*count as usize);
+                }
             }
         }
-        let mut d = empty_direction(name, ra, dec);
-        if !samples.is_empty() {
-            magnitude_samples += samples.len();
-            d.bands.push(unbanded_series(samples));
+        let Some(JsonVal::Arr(loci)) = root.get("data") else {
+            println!(
+                "skydirection: ANTARES loci (offset {offset}) body carries no data array — the parser stays pending"
+            );
+            break;
+        };
+        let page_len = loci.len();
+        for item in loci {
+            if out.len() >= cap {
+                break;
+            }
+            let (Some(name), Some(ra), Some(dec)) = (
+                jstr(item, "id"),
+                jnum(item, "attributes.ra"),
+                jnum(item, "attributes.dec"),
+            ) else {
+                refused += 1;
+                continue;
+            };
+            if !ra_dec_plausible(ra, dec) {
+                refused += 1;
+                continue;
+            }
+            let mag_epochs = [
+                ("newest_alert_magnitude", "newest_alert_observation_time"),
+                ("oldest_alert_magnitude", "oldest_alert_observation_time"),
+                (
+                    "brightest_alert_magnitude",
+                    "brightest_alert_observation_time",
+                ),
+            ];
+            let mut samples: Vec<SkySample> = Vec::new();
+            for (mag_key, time_key) in mag_epochs {
+                let mag_path = format!("attributes.properties.{mag_key}");
+                let time_path = format!("attributes.properties.{time_key}");
+                let (Some(mag), Some(mjd)) = (jnum(item, &mag_path), jnum(item, &time_path)) else {
+                    continue;
+                };
+                if !mag.is_finite() || !mjd.is_finite() {
+                    continue;
+                }
+                let Some(tdb) = mjd_to_tdb(lsk, mjd) else {
+                    continue;
+                };
+                let dup = samples.iter().any(|s| s.tdb == tdb && s.mag == mag);
+                if !dup {
+                    samples.push(SkySample { tdb, mag });
+                }
+            }
+            let mut d = empty_direction(name, ra, dec);
+            if !samples.is_empty() {
+                magnitude_samples += samples.len();
+                d.bands.push(unbanded_series(samples));
+            }
+            out.push(d);
         }
-        out.push(d);
+        if page_len < ANTARES_PAGE {
+            break;
+        }
+        offset += page_len;
+        if let Some(total) = measured_total {
+            if offset >= total {
+                break;
+            }
+        }
     }
     let n = out.len();
     println!(
-        "skydirection: ANTARES loci (limit {limit}) — HTTP {code}, {n} locus/loci held as directions; {magnitude_samples} delivered alert-magnitude sample(s) held unbanded (the loci listing delivers no passband), epoch-anchored by the delivered observation times; {refused} locus/loci refused (no id/position or out of the ICRS gate)"
+        "skydirection: ANTARES loci — measured stock {measured_total:?}, {n} locus/loci held as directions; {magnitude_samples} delivered alert-magnitude sample(s) held unbanded (the loci listing delivers no passband), epoch-anchored by the delivered observation times; {refused} locus/loci refused (no id/position or out of the ICRS gate); the pagination runs page[limit]={ANTARES_PAGE} page[offset]={offset} to the measured stock end"
     );
     out
 }
@@ -423,7 +455,8 @@ fn main() {
     let mut out_path: Option<String> = None;
     let mut ci = false;
     let mut lasair_jd: Option<f64> = None;
-    let mut antares_limit: Option<usize> = None;
+    let mut antares = false;
+    let mut antares_cap: Option<usize> = None;
     let mut cones: Vec<(f64, f64, f64)> = Vec::new();
     let mut alerce = false;
     let mut i = 1;
@@ -446,12 +479,15 @@ fn main() {
                 }
                 i += 1;
             }
-            "--antares" => antares_limit = Some(20),
+            "--antares" => antares = true,
             "--antares-limit" => {
                 let v = args.get(i + 1).and_then(|s| s.parse::<usize>().ok());
                 match v {
-                    Some(n) if n > 0 => antares_limit = Some(n),
-                    _ => println!("skydirection: --antares-limit carries no positive count — the listing stays closed"),
+                    Some(n) if n > 0 => {
+                        antares = true;
+                        antares_cap = Some(n);
+                    }
+                    _ => println!("skydirection: --antares-limit carries no positive count — the cap stays closed"),
                 }
                 i += 1;
             }
@@ -486,7 +522,8 @@ fn main() {
                     "skydirection_compiler: unknown argument {other} — refused. usage:\n  \
                      --out <sky_directions.bin> [--ci-mode]\n  \
                      --lasair-window <jd_start>   Lasair-ZTF objects window (LASAIR_TOKEN)\n  \
-                     --antares [--antares-limit N] ANTARES ZTF locus listing (anonymous)\n  \
+                     --antares                    ANTARES ZTF loci listing, full measured stock (anonymous)\n  \
+                     --antares-limit <N>          cap the ANTARES harvest at N held loci\n  \
                      --fink-cone <ra> <dec> <radius-arcsec>  Fink-LSST diaObject cone (anonymous, repeatable)\n  \
                      --alerce                     read api.alerce.online/objects and name the measured code"
                 );
@@ -502,7 +539,7 @@ fn main() {
     if alerce {
         alerce_probe();
     }
-    let harvests_epochs = lasair_jd.is_some() || antares_limit.is_some();
+    let harvests_epochs = lasair_jd.is_some() || antares;
     let harvests_any = harvests_epochs || !cones.is_empty();
     if !harvests_any {
         println!("skydirection_compiler: no harvest source selected (--lasair-window | --antares | --fink-cone) — the probe runs, the asset stays unwritten");
@@ -515,8 +552,8 @@ fn main() {
                 let added = push_unique(&mut directions, lasair_window(&lsk, jd_start));
                 println!("skydirection: Lasair-ZTF window added {added} new direction(s)");
             }
-            if let Some(limit) = antares_limit {
-                let added = push_unique(&mut directions, antares_loci(&lsk, limit));
+            if antares {
+                let added = push_unique(&mut directions, antares_loci(&lsk, antares_cap));
                 println!("skydirection: ANTARES added {added} new direction(s)");
             }
         } else {
