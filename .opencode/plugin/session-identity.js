@@ -27,6 +27,9 @@ export const SessionIdentity = async ({ client }) => {
       injected.add(id);
       const title = await titleOf(id);
       output.parts.push({
+        id: `session-identity-${id}`,
+        sessionID: output.message.sessionID,
+        messageID: output.message.id,
         type: "text",
         text: `Session: ${id}${title ? ` — Titel: ${title}` : ""}`,
         synthetic: true,
