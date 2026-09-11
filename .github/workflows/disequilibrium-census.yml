@@ -1,0 +1,73 @@
+name: disequilibrium-census
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      floor:
+        description: detection threshold floor (mixing ratio)
+        required: false
+        default: "1.0e-6"
+      trials:
+        description: catalog-null permutation draws
+        required: false
+        default: "10000"
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the pscomppars host rows from the NExScI TAP
+        run: |
+          curl -sSf -m 180 -G "https://exoplanetarchive.ipac.caltech.edu/TAP/sync" \
+            --data-urlencode "REQUEST=doQuery" \
+            --data-urlencode "LANG=ADQL" \
+            --data-urlencode "FORMAT=json" \
+            --data-urlencode "QUERY=SELECT hostname,pl_name,st_teff,st_rad,pl_orbsmax,st_met,st_rotp,st_vsin FROM pscomppars" \
+            -o pscomppars.json
+      - name: Run the 48-host disequilibrium register census
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin disequilibrium_register_probe -- \
+              --seed docs/reference/jwst_detection_seed.json \
+              --params pscomppars.json \
+              --witness docs/reference/co_rhk_witness_seed.json \
+              --census docs/reference/jwst_host_census.json \
+              --floor "${{ inputs.floor }}" \
+              --trials "${{ inputs.trials }}" \
+              --out disequilibrium_census.txt
+          } 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: disequilibrium-census
+          path: disequilibrium_census.txt
+  xuv-witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the XUV L_X/F_X witness harvest
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin xuv_lx_harvest_probe -- \
+              --seed docs/reference/co_rhk_witness_seed.json \
+              --out xuv_lx_harvest.txt
+          } 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xuv-lx-harvest
+          path: xuv_lx_harvest.txt

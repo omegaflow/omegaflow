@@ -1,0 +1,38 @@
+name: dark-flow-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dark-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the CMB and peculiar-velocity channels from the CDN
+        run: |
+          mkdir -p cache
+          gh release download irsa.ipac.caltech.edu --repo omegaflow/sources \
+            --pattern cmb_planck_smica_n64.json --clobber --dir cache
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern cosmicflows_cf4.json --clobber --dir cache
+      - name: Run the dark-flow TE (CMB x peculiar velocity; Haufen channels pending)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin dark_flow_probe
+          } > dark-flow.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dark-flow
+          path: dark-flow.txt

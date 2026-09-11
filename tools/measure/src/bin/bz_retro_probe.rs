@@ -17,6 +17,7 @@ const FIRST_YEAR: i64 = 1994;
 const DEFAULT_STATION: &str = "ABK";
 const DEFAULT_HOUR_START: &str = "2024-01-01";
 const DEFAULT_HOUR_END: &str = "2024-12-31";
+const J2000_UNIX_OFFSET: f64 = 946728000.0;
 
 fn now_unix() -> Option<f64> {
     SystemTime::now()
@@ -473,20 +474,20 @@ fn run_hourly(
     let omni_bz: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_BZ)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     let omni_speed: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_V1800)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     let omni_density: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_N1800)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     println!(
-        "omni2_serie_1h.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (60-min-Buckets, 1994→2026)",
+        "omni2_serie_1h.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (60-min-Buckets, 1994→2026, TDB→unix)",
         omni_bz.len(),
         omni_speed.len(),
         omni_density.len()
@@ -709,20 +710,20 @@ fn main() {
     let omni_bz: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_BZ)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     let omni_speed: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_V1800)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     let omni_density: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_N1800)
-        .map(|&(t, v, _)| (t, v))
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     println!(
-        "omni2_serie.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (daily decimation 1440 min, 1963→2026)",
+        "omni2_serie.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (daily decimation 1440 min, 1963→2026, TDB→unix)",
         omni_bz.len(),
         omni_speed.len(),
         omni_density.len()

@@ -24,8 +24,6 @@ pub enum EikonalNote {
     Parse,
     AbsentZ,
     TypeZ,
-    AbsentScale,
-    AbsentOffset,
     AbsentCoord,
     Shape,
     RawZ,
@@ -321,7 +319,10 @@ pub fn dijkstra_times_boundary(grid: &DepthGrid, source: usize) -> (Vec<f32>, Ve
                 if nt < times[v] {
                     times[v] = nt;
                     touched[v] = touched[u] || grid.is_boundary(v);
-                    heap.push(QueueEntry { t: nt, idx: v as u32 });
+                    heap.push(QueueEntry {
+                        t: nt,
+                        idx: v as u32,
+                    });
                 }
             }
         }
@@ -383,17 +384,22 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     };
     let file = NetcdfFile::parse(data).map_err(|_| EikonalNote::Parse)?;
     let z = file.var("z").ok_or(EikonalNote::AbsentZ)?;
-    if z.nc_type != NetcdfType::Short {
-        return Err(EikonalNote::TypeZ);
-    }
-    let scale = var_attr(&file, z, "scale_factor").ok_or(EikonalNote::AbsentScale)?;
-    let offset = var_attr(&file, z, "add_offset").ok_or(EikonalNote::AbsentOffset)?;
+    let scale = match var_attr(&file, z, "scale_factor") {
+        Some(s) => s,
+        None => 1.0,
+    };
+    let offset = match var_attr(&file, z, "add_offset") {
+        Some(o) => o,
+        None => 0.0,
+    };
     let shape = file.var_shape(z).map_err(|_| EikonalNote::Shape)?;
     if shape.len() != 2 {
         return Err(EikonalNote::Shape);
     }
-    let xv = coord_values(&file, data, &["x", "lon", "longitude"]).ok_or(EikonalNote::AbsentCoord)?;
-    let yv = coord_values(&file, data, &["y", "lat", "latitude"]).ok_or(EikonalNote::AbsentCoord)?;
+    let xv =
+        coord_values(&file, data, &["x", "lon", "longitude"]).ok_or(EikonalNote::AbsentCoord)?;
+    let yv =
+        coord_values(&file, data, &["y", "lat", "latitude"]).ok_or(EikonalNote::AbsentCoord)?;
     let nlon = xv.len();
     let nlat = yv.len();
     let (s0, s1) = (shape[0] as usize, shape[1] as usize);
@@ -404,15 +410,32 @@ pub fn decode_etopo1(bytes: &[u8]) -> Result<DepthGrid, EikonalNote> {
     } else {
         return Err(EikonalNote::Shape);
     };
-    let raw = file.values_i16(data, "z").ok_or(EikonalNote::RawZ)?;
+    let raw: Vec<f64> = match z.nc_type {
+        NetcdfType::Short => file
+            .values_i16(data, "z")
+            .map(|v| v.into_iter().map(|x| x as f64).collect()),
+        NetcdfType::Int => file
+            .values_i32(data, "z")
+            .map(|v| v.into_iter().map(|x| x as f64).collect()),
+        NetcdfType::Float => file
+            .values_f32(data, "z")
+            .map(|v| v.into_iter().map(|x| x as f64).collect()),
+        NetcdfType::Double => file.values_f64(data, "z"),
+        _ => return Err(EikonalNote::TypeZ),
+    }
+    .ok_or(EikonalNote::RawZ)?;
     if raw.len() != nlat * nlon {
         return Err(EikonalNote::Shape);
     }
     let mut depths = Vec::with_capacity(nlat * nlon);
     for i in 0..nlat {
         for j in 0..nlon {
-            let k = if lat_major { i * nlon + j } else { j * nlat + i };
-            let elevation = raw[k] as f64 * scale + offset;
+            let k = if lat_major {
+                i * nlon + j
+            } else {
+                j * nlat + i
+            };
+            let elevation = raw[k] * scale + offset;
             depths.push((-elevation) as f32);
         }
     }
@@ -461,8 +484,8 @@ mod tests {
             let lat_mid = (i as f64 + 0.5) * 0.01;
             let dlat = 0.01f64.to_radians();
             let dlon = 0.01f64.to_radians();
-            let arc = EARTH_RADIUS_M
-                * (dlat * dlat + (lat_mid.to_radians().cos() * dlon).powi(2)).sqrt();
+            let arc =
+                EARTH_RADIUS_M * (dlat * dlat + (lat_mid.to_radians().cos() * dlon).powi(2)).sqrt();
             path += arc / (G * 4000.0).sqrt();
         }
         assert!(
@@ -544,7 +567,10 @@ mod tests {
         for i in 0..4 {
             flat += edge_seconds(&grid, i * n + 1, (i + 1) * n + 1).unwrap() as f64;
         }
-        assert!(t < flat, "deep channel {t} s against flat straight {flat} s");
+        assert!(
+            t < flat,
+            "deep channel {t} s against flat straight {flat} s"
+        );
         let mut deep_bound = 0.0;
         for i in 0..4 {
             deep_bound += edge_seconds(&grid, i * n, (i + 1) * n).unwrap() as f64;
@@ -746,9 +772,7 @@ mod tests {
             let dlat_rad = dlat.to_radians();
             let dlon_rad = dlon.to_radians();
             let arc = EARTH_RADIUS_M
-                * (dlat_rad * dlat_rad
-                    + (lat_mid.to_radians().cos() * dlon_rad).powi(2))
-                .sqrt();
+                * (dlat_rad * dlat_rad + (lat_mid.to_radians().cos() * dlon_rad).powi(2)).sqrt();
             expected += arc / (G * depth).sqrt();
         }
         assert!(
