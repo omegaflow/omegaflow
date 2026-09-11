@@ -2,7 +2,7 @@
   title: Handover — Forschung (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: c4b9bf3ba0334d8da218b16d0c6553882d41246e97bec3c1007e23f69123fb2b
+  sha256: def842409f5a4b58a0708893dad5ea26ef3533926b544c61b8da0c6f90a3821a
   status: live
 -->
 # Handover — Forschung (2026-09-11)
@@ -10,7 +10,7 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
 viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand.
+ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
 ## Analyse
 
