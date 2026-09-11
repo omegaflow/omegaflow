@@ -1,0 +1,86 @@
+name: noaa-ghcn-allstations-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: harvest year
+        required: true
+        type: string
+        default: "2025"
+      month:
+        description: harvest month (blank = whole year)
+        required: false
+        type: string
+        default: ""
+      budget_minutes:
+        description: wall-clock budget per shard (job cap 360)
+        required: true
+        type: string
+        default: "300"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the GHCN-D compiler
+        run: cargo build -p omegaflow-harvest --release --bin noaa_ghcn_compiler
+      - name: Harvest the GHCN-D all-stations window and upload to CDN
+        run: |
+          set -u
+          YEAR="${{ inputs.year }}"
+          MONTH="${{ inputs.month }}"
+          SHARD=${{ matrix.shard }}
+          SHARDS=16
+          BUDGET=$(( ${{ inputs.budget_minutes }} * 60 ))
+          RELEASE="noaa-ghcn-pds.s3.amazonaws.com"
+          REPO="omegaflow/sources"
+          BUCKET="https://noaa-ghcn-pds.s3.amazonaws.com"
+          BIN="$(pwd)/target/release/noaa_ghcn_compiler"
+
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+
+          # station source: ghcnd-stations.txt, the same bucket file the compiler reads for anchors
+          curl -sSfL --retry 3 --max-time 120 -o stations.txt \
+            "$BUCKET/ghcnd-stations.txt" || { echo "station list void"; exit 1; }
+          cut -c1-11 stations.txt | sed 's/[[:space:]]*$//' | grep -v '^$' \
+            | awk -v s="$SHARD" -v n="$SHARDS" '(NR-1) % n == s' > shard_stations.txt
+          echo "shard ${SHARD}/${SHARDS}: $(wc -l < shard_stations.txt) of $(wc -l < stations.txt) stations"
+
+          # idempotence: the assets already on the CDN release are skipped
+          gh release view "$RELEASE" --repo "$REPO" --json assets \
+            --jq '.assets[].name' 2>/dev/null > assets.txt || true
+
+          if [ -n "$MONTH" ]; then suffix="${YEAR}-${MONTH}"; else suffix="${YEAR}"; fi
+          deadline=$(( $(date +%s) + BUDGET ))
+          done=0; skipped=0; void=0
+          while read -r station; do
+            [ -z "$station" ] && continue
+            asset="ghcn_d_${station}_${suffix}.bin"
+            if grep -qxF "$asset" assets.txt; then skipped=$((skipped+1)); continue; fi
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "wall budget reached — the shard resumes next dispatch"; break
+            fi
+            extra=()
+            [ -n "$MONTH" ] && extra=(--month "$MONTH")
+            if "$BIN" --station "$station" --year "$YEAR" "${extra[@]}" \
+                 --out "$asset" --lsk kernels/naif0012.tls --ci-mode; then
+              echo "$asset" >> assets.txt
+              done=$((done+1))
+            else
+              void=$((void+1))
+            fi
+          done < shard_stations.txt
+          echo "shard ${SHARD}: manifest ${done}, present ${skipped}, void ${void}"
