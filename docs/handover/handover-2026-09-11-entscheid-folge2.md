@@ -3,7 +3,7 @@
   session: Entscheid-Folge II
   class: handover
   date: 2026-09-11
-  sha256: 3ec58ddbd3ae0d37ea2487e306cf420b6c82519f16d751026ba88f2054608a6b
+  sha256: bdfee87d8a9264f908a38e2fe1de8615cbbb0c787c508f9fc71cace2028c7550
   status: live
 -->
 # Handover — Entscheid-Folge II (2026-09-11)
@@ -18,12 +18,9 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 Jede Zeile trägt ihr Wiedervorlage-Datum — vor dem Datum wird sie nicht erwähnt;
 nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
 
-## Wartet auf Operator-Wort (sofort machbar, kein Datum)
-
-- Desktop-Fork (GTX 970): 30-Jahres-Lauf.
-
 ## Wiedervorlage
 
+- 2026-09-14 — Desktop-Fork (GTX 970): 30-Jahres-Lauf.
 - 2026-09-14 — de441 Re-Verifikation: der jup365-OOM-Fix (DafFile `pread`) liegt
   auf `main` (f67b14d); der nächste `kernel-flatten`-Dispatch verifiziert
   (bodies-Job grün + jup365-Release am CDN).
