@@ -1,0 +1,37 @@
+name: bz-retro-probe
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  hourly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: abk-2024
+            args: --hourly --station ABK
+          - point: abk-2025
+            args: --hourly --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31
+          - point: sod-2024
+            args: --hourly --station SOD
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the GIC Bz-to-dBdt hourly measurement
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin bz_retro_probe -- ${{ matrix.args }}
+          } > "bz-retro-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-retro-${{ matrix.point }}
+          path: bz-retro-${{ matrix.point }}.txt
