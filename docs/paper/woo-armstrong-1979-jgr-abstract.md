@@ -1,9 +1,9 @@
 <!--
   title: Woo & Armstrong 1979 — abstract record (solar-wind electron density power spectrum)
-  class: reference
+  class: paper
   date: 2026-09-04
   status: abstract-only (full text paywalled)
-  see-also: docs/reference/armstrong-woo-estabrook-1979-interplanetary-scintillation.txt
+  see-also: docs/paper/armstrong-woo-estabrook-1979-interplanetary-scintillation.txt
 -->
 
 # Woo & Armstrong 1979 — abstract record
