@@ -2,7 +2,7 @@
   title: Handover — Bau & Code (Stand 2026-09-11, Bau2)
   class: handover
   date: 2026-09-11
-  sha256: 777fb51bfe4615a795fb0ee18bf8d91ae910311a93c723ac0df1c33a8cc672a9
+  sha256: b014ae9d0070b4b4668329666a17b06dc0e527a110e52c0027ff8e00b92e50a0
   status: live
 -->
 # Handover — Bau & Code (2026-09-11, Bau2)
@@ -31,6 +31,7 @@ ist kein Aufwand.
 ## CDN
 
 - OPeNDAP-3-Dokument-Manifestation offen (in fetch.rs/port.rs-Skiplisten benannt).
+- antares_loci + xp_pilot: url-Zeilen registriert, Manifestationsweg offen — die Compiler tragen keinen --ci-mode-Pfad für diese Assets, kein Workflow-Job deckt sie, die Release-Tags fehlen.
 
 ## Ledger
 
