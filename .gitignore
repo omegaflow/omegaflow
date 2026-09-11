@@ -15,6 +15,9 @@ omegaflow.wasm
 !.opencode/command/start.md
 !.opencode/command/latest.md
 !.opencode/command/ablauf.md
+!.opencode/plugin/
+.opencode/plugin/*
+!.opencode/plugin/session-identity.js
 *.pdb
 phi/health.json
 phi/kernels/
