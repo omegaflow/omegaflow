@@ -14,6 +14,31 @@ note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-11 (curl,
 reg https://babamul.caltech.edu/
 
 blocked account
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-gnss
+note GNSS troposphärischer Zenit-Delay / Gesamtwasserdampf (network_type igs_daily/epn_repro2/igs_repro3), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem GNSS-Compiler.
+reg https://cds.climate.copernicus.eu/datasets/insitu-observations-gnss?tab=download#manage-licences
+
+blocked account
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-gruan-reference-network
+note GRUAN Referenz-Radiosonden (Punkt/Profil), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Profil-Compiler.
+reg https://cds.climate.copernicus.eu/datasets/insitu-observations-gruan-reference-network?tab=download#manage-licences
+
+blocked account
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-igra-baseline-network
+note IGRA/RHARM Radiosonden-Profile (archive radiosounding_harmonization_dataset_version_1 oder integrated_global_radiosonde_archive_version_2), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Profil-Compiler.
+reg https://cds.climate.copernicus.eu/datasets/insitu-observations-igra-baseline-network?tab=download#manage-licences
+
+blocked account
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-surface-land
+note In-situ-Bodenmessarchiv (Punkt/Profil), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate: das Konto trägt nur cc-by, data-protection-privacy-statement, terms-of-use-cds — die datensatzspezifische Lizenz fehlt. Betreiber nimmt sie auf der download-Seite an; danach greift copernicus_cdm_obs mit einem Boden-Compiler.
+reg https://cds.climate.copernicus.eu/datasets/insitu-observations-surface-land?tab=download#manage-licences
+
+blocked account
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-woudc-ozone-total-column-and-profiles
+note WOUDC Ozon-Gesamtsäule und -Profile (observation_type total_column/vertical_profile), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Ozon-Compiler.
+reg https://cds.climate.copernicus.eu/datasets/insitu-observations-woudc-ozone-total-column-and-profiles?tab=download#manage-licences
+
+blocked account
 url https://datalab.noirlab.edu/query
 note NOIRLab Astro Data Lab LS-DR10-Katalog-Query (query.json Capture, HTTP 200): der queryManager antwortet anonym nur mit der "Hello World"-Banner-Zeile (38 B, kein Daten-Satz); echte Katalog-Queries brauchen ein Datalab-Konto/API-Token (Dokumentation). Messung (Legacy-Survey-Photometrie ra/dec/mag/z) echt, Zugang gatet. DECaPS (DECam Plane Survey, g/r/i/z/Y): derselbe Datalab-Zugang — tap/sync antwortet 200 (gemessen 2026-09-11), Katalog-Queries gatet.
 reg https://datalab.noirlab.edu/
@@ -28,6 +53,10 @@ note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. 
   at earth
   field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
   (Der Block ist in phi/sources.φ eingetragen. {yday} existiert im renderer; das brdc-Daily trägt Publikations-Lag — heute liegt die gestrige Datei; bis die heutige landet, ist der Lauf fetch-void und retry, 0 honored.)
+
+pending
+url https://cds.climate.copernicus.eu/datasets/insitu-observations-near-surface-temperature-us-climate-reference-network
+note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist zur Messzeit geschlossen (403, Detail "Download form temporarily closed."). Re-Check zu einem späteren Zeitpunkt; kein Parser-Gap.
 
 pending
 url https://des.ncsa.illinois.edu/releases/dr2/dr2-files/
@@ -50,3 +79,71 @@ note COSMIC-2 FORMOSAT-7 (level3.json CDN-Capture; live gemessen 2026-09-07, HTT
 blocked parser-def mat5
 url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
 note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung (Schalldruck-Spektraldichte, acoustic) echt — Gap: MATLAB-v5-`.mat`-Parser; danach Bin-Geometrie am ersten echten Run messen.
+
+blocked parser-def votable
+url https://almascience.eso.org/tap
+note ALMA-TAP (EU) — VOTable-only; FORMAT=csv/json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://almascience.nao.ac.jp/tap
+note ALMA-TAP (EA) — VOTable-only; FORMAT=csv/json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://almascience.nrao.edu/tap
+note ALMA-TAP (NA) — VOTable-only; FORMAT=csv/json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def csv-header
+url http://archive.eso.org/tap_cat
+note ESO tap_cat — echte CSV, aber die Probe klassifiziert Header-CSV nicht. Gap: CSV-Header-Parser.
+
+blocked parser-def csv-header
+url https://archive.eso.org/tap_obs
+note ESO tap_obs — sync-Antwort CSV mit Header. Gap: CSV-Header-Parser.
+
+blocked parser-def fits
+url https://cirada.ca/catalogues
+note VLASS-Komponentenkatalog (em Radiokontinuum) als Bulk-FITS/CSV im CADC-Vault; kein JSON/TAP-json-Kanal. QL-Katalog trägt ~15 % Fluss-Unterzeichnung. Gap: FITS-Struktur-Reader.
+
+blocked parser-def columns-from-metadata
+url https://eas.esac.esa.int/tap-server/tap
+note Euclid-TAP — Antwortform {metadata:[{name}], data:[[…]]} (Rows als Skalar-Arrays). Gap: Spaltennamen-aus-metadata-Parser.
+
+blocked parser-def rinex2
+url s3://noaa-cors-pds
+note RINEX-2.11-Observation: PRN nur auf der Epoch-Zeile (parse_rinex_obs ist RINEX-3-geformt); zusätzlich Hatanaka (.YYd/.YY_), SBF und Trimble-Container ohne Reader. Messwert (GNSS em) echt.
+
+blocked parser-def tiff
+url s3://noaa-eri-pds
+note Emergency-Response-Imagery (em) als JPEG-komprimierte GeoTIFF-Kacheln; kein TIFF/GeoTIFF-Reader (inkl. JPEG-in-TIFF und Georeferenzierung).
+
+blocked parser-def hdf5-navigation
+url s3://noaa-gk2a-pds
+note GK2A AMI L1B: HDF5-Superblock-v0 parst (47 Datasets), Messfeld image_pixel_values [5500,5500] int16; KEIN lat/lon-Gitter. Position entsteht erst aus geostationärer Projektion (projection_type GEOS, sub_longitude, nominal_satellite_height) und GSICS-Kalibrierung — beide Schichten fehlen.
+
+blocked parser-def hdf5-navigation
+url s3://noaa-goes16
+note GOES-16 ABI L1b: HDF5-Superblock-v2; hdf5.rs bricht am B-tree-v1-Knoten ab (Checksum). Zusätzlich Scan-Winkel-Raster ohne lat/lon — geostationäre Projektion (goes_imager_projection) fehlt.
+
+blocked parser-def bzip2-hsd
+url s3://noaa-himawari8
+note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9); kein bzip2-Dekoder und kein HSD-Block-Parser. Messwert (AHI geostationäre em-Messung) echt.
+
+blocked parser-def las-laz
+url s3://noaa-nos-coastal-lidar-pds
+note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip-DEFLATE) und abgeleitetes DEM-GeoTIFF; kein LAS/LAZ- und kein TIFF-Reader.
+
+blocked parser-def parquet-blosc
+url s3://noaa-oar-hourly-gdp-pds
+note GDP-Drifter: netCDF-4/HDF5 monolithisch 15,7 GB (hdf5.rs lädt den ganzen Byte-Strom, kein Range-/Chunk-Streaming) + .parquet (PAR1, kein Reader) + .zarr (blosc/lz4, kein Decoder).
+
+blocked parser-def geotiff-gpkg
+url s3://noaa-ocs-hydrodata-pds
+note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). Gap: GeoTIFF + GeoPackage/SQLite-Reader.
+
+blocked parser-def netcdf4
+url s3://noaa-wod-pds
+note WOD netCDF-4/HDF5 (Superblock v2) durchgehend; hdf5.rs liefert auf 1903/wod_mbt_1903.nc EndAtByte{off:47261}; ragged arrays (casts, z_obs, Temperature_row_size) und Gruppen-Layout nicht konsumiert.
+
+blocked parser-def bzip2-ar2v
+url s3://unidata-nexrad-level2
+note NEXRAD Level II (AR2V0008.907 + bzip2 BZh9 ab Offset 24); kein Level-II-Reader und kein bzip2-Dekoder. Messwert (Radar-Reflektivität em) echt.
