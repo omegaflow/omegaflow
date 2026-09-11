@@ -1,0 +1,26 @@
+name: pioneer-atdf-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pioneer-atdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view spdf.gsfc.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "pioneer10_skyfreq.bin"; then
+            echo "asset pioneer10_skyfreq.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset pioneer10_skyfreq.bin missing — compiling and manifesting"
+      - name: Compile the full Pioneer-10 ATDF sky-frequency set and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin pioneer_atdf_compiler -- --ci-mode
