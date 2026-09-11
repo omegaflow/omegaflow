@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Entscheid-Folge (Stand 2026-09-11)
-  session: Entscheid-Folge
+  title: Handover — Entscheid-Folge II (Stand 2026-09-11)
+  session: Entscheid-Folge II
   class: handover
   date: 2026-09-11
-  sha256: 4ebcb3733f9996c61a5fea88d422fe1ffded53ecd8c92deaee596c138d1b5c61
+  sha256: 3ec58ddbd3ae0d37ea2487e306cf420b6c82519f16d751026ba88f2054608a6b
   status: live
 -->
-# Handover — Entscheid-Folge (2026-09-11)
+# Handover — Entscheid-Folge II (2026-09-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -34,6 +34,19 @@ nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
   API-gemessen 2026-09-11: `push:true` auf `omegaflow/sources`, Bucket frisch
   4999/5000). Der nächste `kernel-flatten`-Dispatch verifiziert (grün + kein
   Rate-Limit-Hit).
+- 2026-09-14 — CI-Dedup (Endzustand der Concurrency-Arbeit, Commit 5d80061):
+  `lead-geometry-cdn` soll das CDN-Asset `physionet.org/mitdb_arrhythmia.bin`
+  konsumieren (`body_url`) statt es neu zu bauen; NOAA-Einzelstation
+  (`noaa-ghcn/gsod/isd-cdn`) messen, ob sie in den 16 Shards der `-allstations`
+  liegt — ja: falten, nein: Asset-Namen trennen (Namensverletzung). Bis dahin
+  tragen die Namespace-Gruppen `mitdb-arrhythmia` / `noaa-*-assets`.
+- 2026-09-14 — CI-Pending-Scans: Upload-Ziele der Probe-Workflows (`te-*`,
+  `eikonal-tohoku`, …) lagen nicht im Contention-Scan — unverifiziert; die
+  `17 5 1 * *`-Überlappung `kernel-flatten`/`signal-cone-audit` ist nur unter
+  der unverifizierten Annahme „Audit liest nur" benannt.
+- 2026-09-15 — CI-Sättigung messen: `ps1-cdn` + `allwise-cdn` (je ~180 min,
+  stündlicher Cron) — Kadenz gegen Actions-Minuten/Rate-Limit messen; bewusst
+  kein Per-Tag-Gate für `ssd.jpl.nasa.gov` (Drain 415 min/h verhungert).
 - 2026-09-15 — LISA Pathfinder: Selbstregistrierung ab 15.09.
 - 2026-09-16 — ned-objdir: IPAC-Auto-Bestätigung 2026-09-09, Antwort offen.
 - 2026-09-18 — NOIRLab Data Lab: `jtyroller` registriert 2026-09-11, wartet auf
