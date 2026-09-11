@@ -1,6 +1,6 @@
 <!--
   title: Recherche-Befund (extern) — Galileo-S-Band-Residualsprung 1995-11-30/12-01: Borduhr-Sprung (A) oder Bodenseite (B)?
-  class: reference
+  class: concept
   date: 2026-09-06
   sha256: a43dbc44b2660d8bc60220e39a0e528c18d0509920a75391c48cd5f89cfed9b5
   status: live
