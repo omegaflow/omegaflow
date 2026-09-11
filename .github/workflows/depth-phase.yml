@@ -1,0 +1,30 @@
+name: depth-phase
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  depth-phase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the depth-phase diagonal (pP/sP lag vs source depth, ak135)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin depth_phase_probe
+          } > depth-phase.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: depth-phase
+          path: depth-phase.txt

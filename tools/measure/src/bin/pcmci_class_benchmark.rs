@@ -32,6 +32,7 @@ fn null_model() -> TeNull {
     match NULL_MODEL.load(Ordering::Relaxed) {
         0 => TeNull::Residual,
         2 => TeNull::Shift,
+        3 => TeNull::Phase,
         _ => TeNull::Block,
     }
 }
@@ -515,8 +516,9 @@ fn main() {
         Some("residual") => NULL_MODEL.store(0, Ordering::Relaxed),
         Some("block") => NULL_MODEL.store(1, Ordering::Relaxed),
         Some("shift") => NULL_MODEL.store(2, Ordering::Relaxed),
+        Some("phase") => NULL_MODEL.store(3, Ordering::Relaxed),
         Some(other) => {
-            eprintln!("--null carries {other} — the probe builds residual, block, shift");
+            eprintln!("--null carries {other} — the probe builds residual, block, shift, phase");
             std::process::exit(1);
         }
     }
@@ -703,6 +705,7 @@ fn main() {
             TeNull::Residual => "residual",
             TeNull::Block => "block",
             TeNull::Shift => "shift",
+            TeNull::Phase => "phase",
         },
         BLOCK.load(Ordering::Relaxed),
         match estimator() {
