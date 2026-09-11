@@ -17,23 +17,29 @@ pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
+pub fn acoustic_sample(frame: &PresenceFrame) -> f32 {
+    frame.omega.iter().sum()
+}
+
 pub struct AcousticOscillator {
     pub _thread: Option<thread::JoinHandle<()>>,
 }
 
 impl AcousticOscillator {
-    pub fn new(rx: mpsc::Receiver<PresenceFrame>) -> Self {
-        let emit = !std::io::stdout().is_terminal();
+    pub fn new(
+        rx: mpsc::Receiver<PresenceFrame>,
+        writer: Option<Box<dyn std::io::Write + Send>>,
+    ) -> Self {
         let handle = thread::spawn(move || {
-            let mut out = std::io::stdout();
+            let Some(mut out) = writer else {
+                return;
+            };
             while let Ok(frame) = rx.recv() {
-                if emit {
-                    let intensity: f32 = frame.omega.iter().sum();
-                    if std::io::Write::write_all(&mut out, &intensity.to_le_bytes()).is_err()
-                        || std::io::Write::flush(&mut out).is_err()
-                    {
-                        break;
-                    }
+                let bytes = acoustic_sample(&frame).to_le_bytes();
+                if std::io::Write::write_all(&mut out, &bytes).is_err()
+                    || std::io::Write::flush(&mut out).is_err()
+                {
+                    break;
                 }
             }
         });
@@ -44,22 +50,12 @@ impl AcousticOscillator {
 }
 
 pub struct SeismicOscillator {
-    pub port: Option<Box<dyn serialport::SerialPort>>,
+    pub port: Option<Box<dyn std::io::Write + Send>>,
 }
 
 impl SeismicOscillator {
-    pub fn new(path: &str) -> Self {
-        let port = serialport::new(path, 115_200)
-            .timeout(std::time::Duration::from_millis(50))
-            .open()
-            .ok();
-        if port.is_none() {
-            eprintln!(
-                "seismic oscillator: {} unreachable — the oscillator stays silent",
-                path
-            );
-        }
-        Self { port }
+    pub fn new(writer: Box<dyn std::io::Write + Send>) -> Self {
+        Self { port: Some(writer) }
     }
 }
 
@@ -68,8 +64,8 @@ impl KineticRadiator for SeismicOscillator {
         let Some(port) = self.port.as_mut() else {
             return;
         };
-        let intensity: f32 = frame.omega.iter().sum();
-        if std::io::Write::write_all(port, &intensity.to_le_bytes()).is_err() {
+        let bytes = acoustic_sample(frame).to_le_bytes();
+        if std::io::Write::write_all(port, &bytes).is_err() {
             self.port = None;
         }
     }
@@ -332,5 +328,65 @@ mod tests {
         let (field, meta) = pack_one(1.0, 2.0, 2.0);
         let e = color_emission(&field, &meta);
         assert_eq!(e[3], 0.0, "gravity carries no color of its own");
+    }
+
+    #[test]
+    fn the_audio_law_is_linear_without_saturation() {
+        let frame = PresenceFrame {
+            omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
+        };
+        let base = acoustic_sample(&frame) as f64;
+        assert_ne!(base, 0.0);
+        for lambda in [0.5f64, 2.0, 1e4] {
+            let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
+            let got = acoustic_sample(&PresenceFrame { omega: scaled }) as f64;
+            let want = base * lambda;
+            let rel = (got - want).abs() / want.abs();
+            assert!(
+                rel < 1e-6,
+                "lambda {lambda}: {got} vs {want} — the law shapes or saturates"
+            );
+        }
+    }
+
+    struct Sink(std::sync::Arc<std::sync::Mutex<Vec<u8>>>);
+
+    impl std::io::Write for Sink {
+        fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+            self.0.lock().expect("sink lock").extend_from_slice(buf);
+            Ok(buf.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn the_seismic_wire_carries_the_raw_sum() {
+        let bytes = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let mut osc = SeismicOscillator::new(Box::new(Sink(bytes.clone())));
+        let frame = PresenceFrame {
+            omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+        };
+        osc.vibrate(&frame);
+        let got = bytes.lock().expect("sink lock").clone();
+        assert_eq!(got, acoustic_sample(&frame).to_le_bytes());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn the_acoustic_wire_carries_one_raw_sample_per_frame() {
+        let (writer, mut reader) = std::os::unix::net::UnixStream::pair().expect("pipe pair");
+        let (tx, rx) = mpsc::channel::<PresenceFrame>();
+        let _osc = AcousticOscillator::new(rx, Some(Box::new(writer)));
+        let frame = PresenceFrame {
+            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+        };
+        let expected = acoustic_sample(&frame).to_le_bytes();
+        tx.send(frame).expect("frame reaches the oscillator");
+        let mut got = [0u8; 4];
+        std::io::Read::read_exact(&mut reader, &mut got).expect("one sample on the wire");
+        assert_eq!(got, expected, "one frame is one raw Σω sample");
+        drop(tx);
     }
 }

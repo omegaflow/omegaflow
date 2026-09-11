@@ -170,7 +170,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         2 => &["pa", "hpa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db"],
         3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
-        5 => &["k", "c", "w/m2", "w", "j", "mw"],
+        5 => &["k", "c", "w/m2", "w", "j", "mw", "%"],
         6 => &[
             "ppm",
             "ppb",
@@ -195,7 +195,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
             "npa",
         ],
-        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s"],
+        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1"],
         _ => &[],
     }
 }
