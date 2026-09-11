@@ -29,12 +29,7 @@ fn main() {
         i += 1;
     }
     if registers.is_empty() {
-        registers = vec![
-            PathBuf::from("docs/handover/handover-2026-09-09-tiefenphasen-flotte.md"),
-            PathBuf::from("docs/handover/handover-2026-09-09-te-atom-4.md"),
-            PathBuf::from("docs/handover/handover-2026-09-09-membran-sonde.md"),
-            PathBuf::from("docs/handover/handover-2026-09-09-mechanische-reste.md"),
-        ];
+        registers = live_handovers(&root);
     }
 
     let mut reports: Vec<Report> = Vec::new();
@@ -101,6 +96,21 @@ fn main() {
         );
         std::process::exit(1);
     }
+}
+
+fn live_handovers(root: &Path) -> Vec<PathBuf> {
+    let dir = root.join("docs/handover");
+    let mut out = Vec::new();
+    if let Ok(entries) = std::fs::read_dir(&dir) {
+        for e in entries.flatten() {
+            let p = e.path();
+            if p.is_file() && p.extension().is_some_and(|x| x == "md") {
+                out.push(p.strip_prefix(root).unwrap_or(&p).to_path_buf());
+            }
+        }
+    }
+    out.sort();
+    out
 }
 
 fn scan_register(root: &Path, text: &str, out: &mut Vec<Report>) {
