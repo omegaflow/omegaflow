@@ -365,6 +365,11 @@ fn family_bound(pairs: &[(&str, &str, &[f32], &[f32])], lags: &[usize]) -> f64 {
     fam
 }
 
+fn surrogate_p_value(obs: f64, surrs: &[f64]) -> f64 {
+    let exceed = surrs.iter().filter(|&&v| v >= obs).count() as f64;
+    (exceed + 1.0) / (surrs.len() as f64 + 1.0)
+}
+
 fn row(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &[usize], fam: f64, unit: &str) {
     let mut best: Option<(usize, f64)> = None;
     for &lag in lags {
@@ -576,6 +581,35 @@ fn run_hourly(
     println!("fam = {fam:.4e}");
     for (from, to, to_s, from_s) in pairs.iter() {
         row(from, to, to_s, from_s, &lags, fam, "h");
+    }
+
+    println!();
+    println!("=== Bz arrow p-value (surrogate null rank) ===");
+    let mut bz_best: Option<(usize, f64)> = None;
+    for &lag in &lags {
+        if let Some(te) = transfer_entropy_lag(&dbdt_bz, &bz_dbdt, lag) {
+            if bz_best.map_or(true, |(_, b)| te > b) {
+                bz_best = Some((lag, te));
+            }
+        }
+    }
+    if let Some((lag, obs)) = bz_best {
+        let per_lag = surrogate_te_values(&dbdt_bz, &bz_dbdt, lag, SURROGATE_SEED);
+        let per_p = surrogate_p_value(obs, &per_lag);
+        let per_exceed = per_lag.iter().filter(|&&v| v >= obs).count();
+        let mut pool: Vec<f64> = Vec::new();
+        for (_, _, to, from) in pairs.iter() {
+            for &l in &lags {
+                pool.extend(surrogate_te_values(to, from, l, SURROGATE_SEED));
+            }
+        }
+        let fam_exceed = pool.iter().filter(|&&v| v >= obs).count();
+        let fam_p = surrogate_p_value(obs, &pool);
+        println!(
+            "Bz → dB/dt | lag {lag} h | TE {obs:.4e} | per-lag p = {per_p:.4e} ({per_exceed} of {} surrogates ≥ observed) | family p = {fam_p:.4e} ({fam_exceed} of {} surrogates ≥ observed)",
+            per_lag.len(),
+            pool.len()
+        );
     }
 
     println!();
