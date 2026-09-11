@@ -3,7 +3,7 @@
   session: Entscheid-Folge
   class: handover
   date: 2026-09-11
-  sha256: 09165cfef6ee0507a11fe339718e999062124867b1be688015064aac1823be22
+  sha256: d5a728030279bf7319359fdb9518e6b9f60ae9635da87c971ca5e8ff2d687011
   status: live
 -->
 # Handover — Entscheid-Folge (2026-09-11)
@@ -21,10 +21,6 @@ nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
 ## Wartet auf Operator-Wort (sofort machbar, kein Datum)
 
 - Desktop-Fork (GTX 970): 30-Jahres-Lauf.
-- Token-Pfad: `OMEGAFLOW_TOKEN` ist ein Konto-Token — GitHub zählt 5000/h **pro
-  Konto** (gemessen 2026-09-11: 3637/5000 genutzt); ~91 Workflows teilen es.
-  Bot-Konto-PAT oder GitHub App; ein neuer PAT auf `omegaflow` bringt nichts
-  (gleiches Kontingent).
 
 ## Wiedervorlage
 
@@ -33,6 +29,13 @@ nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
   (bodies-Job grün + jup365-Release am CDN).
 - 2026-09-14 — ned-Crawl: Void-Kegel-Fix + Listing-Void-Abbruch auf `main`; CDN
   1/40 Slices (gemessen 2026-09-11), nächster Cron-Lauf.
+- 2026-09-15 — Token-Tausch verifizieren: `OMEGAFLOW_TOKEN` ersetzt durch einen
+  PAT von `johannestyroller` (eigenes 5.000/h-Bucket pro Konto, gemessen
+  2026-09-11; App bringt bei 2 Repos nichts — gleiches Mindestkontingent).
+  Operator-Schritte: Collaborator-write auf `omegaflow/sources` + PAT
+  (Contents-write) + Secret tauschen. Nächster `kernel-flatten`-Dispatch
+  verifiziert (grün + kein Rate-Limit-Hit). johannestyrollers eigene
+  Bucket-Nutzung ist vor dem Tausch ungemessen.
 - 2026-09-15 — LISA Pathfinder: Selbstregistrierung ab 15.09.
 - 2026-09-16 — ned-objdir: IPAC-Auto-Bestätigung 2026-09-09, Antwort offen.
 - 2026-09-18 — NOIRLab Data Lab: `jtyroller` registriert 2026-09-11, wartet auf
