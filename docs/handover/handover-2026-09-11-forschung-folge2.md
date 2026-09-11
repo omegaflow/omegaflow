@@ -3,7 +3,7 @@
   session: Forschung-Folge II
   class: handover
   date: 2026-09-11
-  sha256: 50f8a4beca00da97197580780946698f00e840a1671c995127dcda5cfb0c7f8f
+  sha256: 8ecae841be4746747000f0af6639ee1725297071e039f9872dd59e51fa585b4c
   status: live
 -->
 # Handover — Forschung-Folge II (2026-09-11)
@@ -17,18 +17,17 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 ## Analyse
 
-- gic-p-Wert — der bz-retro-Lauf (34587298538) landete „success", trägt aber
-  `common hourly window: absent` (Bz 0/Speed 0/Density 0): `load_omni2` las nur
-  die lokale Cache, nie das CDN-Asset. Fix steht in `bz_retro_probe.rs`
-  (CDN-Fetch bei read-/parse-void, uncommitted). Folge: Fix committen + pushen
-  → bz-retro-probe neu dispatcht → p-Wert landet → Papier → Wing/Viljanen.
+- gic-p-Wert — der CDN-Fetch-Fix steht auf main (ee76a66); bz-retro-probe neu
+  dispatcht (34618724899). Folge: p-Wert nach Landung verifizieren → Papier →
+  Wing/Viljanen.
 - Flut-Satellit — robuste Flut-/Narbenfläche aus S1.
 
 ## Nadeln
 
-- Ⅲ TIAW vs Nanoflares — 613er-Satz fehlt der `aia_ladder_probe` (Matrix nur
-  2013/2015); Register-Lücke (keine url-Line für die aia-Volljahr-Bins).
-  Folge: 613er-Satz ernten, Matrix-Asset, registrieren, dispatcht.
+- Ⅲ TIAW vs Nanoflares — Register-Lücke geschlossen (38 url-Lines
+  `jsoc.stanford.edu`: aia2013/2015-Volljahr + 36 Monats-Bins, committet);
+  Matrix trägt 2013/2015. Offen: `aia2014_fullyear.bin` lokal ohne CDN-Asset
+  (Manifestations-Duty); aia-ladder-Probe dispatcht.
 - Ⅳ LAIC — CSES, TEC retro pre-2024, Instrument A, KDE-h (gemessen: scheduled).
 - Ⅴ LSST-Live-Scan — Probe gebaut, kein Workflow; Positivkontrolle (RR-Lyrae/
   EB-Kegel) + IR-Exzess-Achse 10–60 μm.
@@ -43,26 +42,23 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 ## Galileo-Floor
 
-- Volle CK-Ernte jenseits der vier Tage — `gll-ck-cdn.yml` manifestiert nur
-  1990-CK + 8 Rotor-CKs; `ck_daf_probe` auf den vollen Satz erweitern.
+- Volle CK-Ernte jenseits der vier Tage — `ck_daf_probe` auf den vollen Satz
+  erweitern.
 - Rausch-Kurve TRK-2-25/2-18 (~6,5 GB) — ungebaut.
 
 ## Weberin
 
-- INPOP `.dat` vs `testpo` — Probe gebaut (`inpop_testpo_probe`, 2b8e9ed), kein
-  Workflow; Workflow (testpo + INPOP SPK, `--ci-mode`) + dispatcht.
+- INPOP `.dat` vs `testpo` — Probe gebaut (`inpop_testpo_probe`), kein Workflow;
+  Workflow (testpo + INPOP SPK, `--ci-mode`) + dispatcht.
 - Raumsonden-Doppler Zweitlinie (VLBI-Winkel + Range) — VLBI-Winkel-Probe
   ungebaut; PRIDE/EVN-Datensatz lokalisieren.
-- Neptun-Planetenzentrum — Register steht (23 url-Lines `www.geoazur.fr` APDB in
-  `phi/sources.φ`, uncommitted). Residual: `neptune_apparent_chain_probe` liest
-  APDB nur lokal (kein CDN-Fallback).
 
 ## TE
 
-- n=1000-Gate-Batterie — Punkte 17–20 wurden nie gemessen: sweep #2
-  (34588877733) lief auf SHA fe1f06e, vor 5688e3f (der die Punkte 17–20 und den
-  Benchmark-Bin selbst änderte); das Sheet trägt nur 01–16. Re-dispatcht
-  (34603020727) auf main. Folge: Punkte 17–20 nach Landung verifizieren.
+- n=1000-Gate-Batterie — Punkte 17–20 gelandet (Run 34603020727, SHA c0a54c1),
+  alle 20 Punkte im Sheet; 17–20 (n1000 block/shift × binned/ksg) tragen GATE
+  FAIL: FPR-Anstieg 2.86–6.90pp bei a=0.9/D_Z=4 übersteigt das 2pp-Kriterium.
+  Gemessen; der Umgang (Betriebspunkt vs. Kriterium) ist offen.
 
 ## Tiefenphasen
 
@@ -73,6 +69,7 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - Quell-Strahlungsterm (CMT) — ungebaut.
 - W-Phase-CMT als M9-Nachfolger — ungebaut.
 - Stromboli als Vulkan-Lehrer — ungebaut.
-- Eikonal gegen ETOPO1 — dispatcht (34603024168); Artefakt verifizieren;
+- Eikonal gegen ETOPO1 — dispatcht (34603024168); Report trägt 3 Zeilen, kein
+  Feld, `decode note: TypeZ`. Folge: Feld-Ausgabe des Probes verifizieren;
   Nachfolger: Vollkugel-Löser, Fast Marching.
 - Die Erde als Sender (Tonga 2022) — ungebaut.

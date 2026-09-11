@@ -7902,3 +7902,193 @@ format noaa_ccor
 at sun
 ttl 86400
 field noaa_ccor_intensity_dn noaa_ccor_intensity_dn inverse-square em 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_01.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_02.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_03.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_04.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_05.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_06.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_07.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_08.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_09.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_10.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_11.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_12.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_fullyear.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_01.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_02.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_03.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_04.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_05.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_06.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_07.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_08.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_09.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_10.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_11.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_12.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_01.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_02.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_03.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_04.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_05.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_06.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_07.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_08.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_09.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_10.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_11.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_12.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_fullyear.bin
+format aia
+at sun
+ttl 86400
