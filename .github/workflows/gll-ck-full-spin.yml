@@ -1,0 +1,31 @@
+name: gll-ck-full-spin
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  full-spin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the full Galileo -77000 rotor CK series and decode the spin history
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin ck_daf_probe -- --harvest
+          } > gll-ck-full-spin.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gll-ck-full-spin
+          path: gll-ck-full-spin.txt
