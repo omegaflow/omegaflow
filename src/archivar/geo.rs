@@ -11,6 +11,10 @@ pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
 pub const MAGIC_GSOD: [u8; 4] = *b"GSD1";
 pub const MAGIC_ISD: [u8; 4] = *b"ISD1";
+pub const MAGIC_CDM: [u8; 4] = *b"CDM1";
+pub const MAGIC_DCDB: [u8; 4] = *b"DCD1";
+pub const MAGIC_KEO: [u8; 4] = *b"KEO1";
+pub const MAGIC_WOD: [u8; 4] = *b"WOD1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -77,6 +81,22 @@ pub const COMP_ISD_WDIR: u32 = 4;
 pub const COMP_ISD_WSPD: u32 = 5;
 pub const COMP_ISD_MAX: u32 = 5;
 
+pub const COMP_CDM_MAX: u32 = crate::copernicus::VARIABLE_COUNT;
+
+pub const COMP_DCDB_DEPTH: u32 = 1;
+pub const COMP_DCDB_MAX: u32 = 1;
+
+pub const COMP_KEO_TEMP: u32 = 1;
+pub const COMP_KEO_PSAL: u32 = 2;
+pub const COMP_KEO_UCUR: u32 = 3;
+pub const COMP_KEO_VCUR: u32 = 4;
+pub const COMP_KEO_MAX: u32 = 4;
+
+pub const COMP_WOD_TEMP: u32 = 1;
+pub const COMP_WOD_PSAL: u32 = 2;
+pub const COMP_WOD_DOXY: u32 = 3;
+pub const COMP_WOD_MAX: u32 = 3;
+
 pub const COMP_ANR_NEWEST: u32 = 1;
 pub const COMP_ANR_OLDEST: u32 = 2;
 pub const COMP_ANR_BRIGHTEST: u32 = 3;
@@ -125,6 +145,10 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
         "noaa_gsod" => Some(MAGIC_GSOD),
         "noaa_isd" => Some(MAGIC_ISD),
+        "copernicus_cdm_obs" => Some(MAGIC_CDM),
+        "noaa_dcdb_bathymetry" => Some(MAGIC_DCDB),
+        "noaa_keo_papa" => Some(MAGIC_KEO),
+        "noaa_wod" => Some(MAGIC_WOD),
         "antares_loci" => Some(MAGIC_ANR),
         _ => None,
     }
@@ -144,6 +168,10 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
         "noaa_gsod" => Some(COMP_GSOD_MAX),
         "noaa_isd" => Some(COMP_ISD_MAX),
+        "copernicus_cdm_obs" => Some(COMP_CDM_MAX),
+        "noaa_dcdb_bathymetry" => Some(COMP_DCDB_MAX),
+        "noaa_keo_papa" => Some(COMP_KEO_MAX),
+        "noaa_wod" => Some(COMP_WOD_MAX),
         "antares_loci" => Some(COMP_ANR_MAX),
         _ => None,
     }
