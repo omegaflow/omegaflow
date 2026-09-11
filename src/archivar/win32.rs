@@ -251,6 +251,40 @@ pub fn station_of(chan: u16) -> u32 {
     chan as u32
 }
 
+pub struct WinSensitivity {
+    pub gain: f64,
+    pub preamp_db: f64,
+    pub lsb_value: f64,
+}
+
+impl WinSensitivity {
+    pub fn new(gain: f64, preamp_db: f64, lsb_value: f64) -> Option<Self> {
+        if !gain.is_finite() || gain <= 0.0 {
+            return None;
+        }
+        if !lsb_value.is_finite() || lsb_value <= 0.0 {
+            return None;
+        }
+        if !preamp_db.is_finite() {
+            return None;
+        }
+        Some(Self {
+            gain,
+            preamp_db,
+            lsb_value,
+        })
+    }
+}
+
+pub fn velocity_m_s(count: i32, s: &WinSensitivity) -> Option<f64> {
+    let amp = 10.0f64.powf(s.preamp_db / 20.0);
+    let counts_per_m_s = s.gain * amp / s.lsb_value;
+    if !counts_per_m_s.is_finite() || counts_per_m_s <= 0.0 {
+        return None;
+    }
+    Some(count as f64 / counts_per_m_s)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -370,5 +404,32 @@ mod tests {
         for c in [0u16, 1, 0x0101, 0xFFFF] {
             assert_eq!(chan_of(station_of(c)), c);
         }
+    }
+
+    #[test]
+    fn sensitivity_rejects_non_positive_fields() {
+        assert!(WinSensitivity::new(0.0, 0.0, 1e-7).is_none());
+        assert!(WinSensitivity::new(175.6, 0.0, 0.0).is_none());
+        assert!(WinSensitivity::new(f64::NAN, 0.0, 1e-7).is_none());
+        assert!(WinSensitivity::new(175.6, f64::INFINITY, 1e-7).is_none());
+        assert!(WinSensitivity::new(175.6, 0.0, 1e-7).is_some());
+    }
+
+    #[test]
+    fn counts_convert_to_m_per_s() {
+        let s = WinSensitivity::new(175.6, 0.0, 1.023e-7).expect("sensitivity parses");
+        let v = velocity_m_s(1000, &s).expect("velocity converts");
+        assert!((v - 1000.0 * 1.023e-7 / 175.6).abs() < 1e-30);
+        assert_eq!(velocity_m_s(0, &s), Some(0.0));
+        assert_eq!(velocity_m_s(-1000, &s), Some(-1000.0 * 1.023e-7 / 175.6));
+    }
+
+    #[test]
+    fn preamplification_scales_counts() {
+        let s0 = WinSensitivity::new(175.6, 0.0, 1.0).unwrap();
+        let s20 = WinSensitivity::new(175.6, 20.0, 1.0).unwrap();
+        let v0 = velocity_m_s(1000, &s0).unwrap();
+        let v20 = velocity_m_s(1000, &s20).unwrap();
+        assert!((v20 * 10.0 - v0).abs() < 1e-9);
     }
 }
