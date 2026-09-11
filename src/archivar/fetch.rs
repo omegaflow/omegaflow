@@ -102,6 +102,31 @@ pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
+pub fn fetch_raw_bytes_headers(
+    url: &str,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<Vec<u8>> {
+    let mut cmd = curl_base(ttl, 0);
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        Some(output.stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "\r\x1b[Kfetch_bytes_headers returned ({}): {} {}",
+            output.status,
+            url,
+            stderr.trim()
+        );
+        None
+    }
+}
+
 pub fn fetch_raw_probe(
     url: &str,
     body: Option<&str>,
