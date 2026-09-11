@@ -8,6 +8,9 @@
 # (CDS/ADS-Datasets sind Bulk-Archive; url-line = eine Messung, nie ein Datensatz).
 # 159 Collections: 8 compiler-lease (In-situ-Messarchive, Compiler pending), 151
 # descoped (Frage 1 nein — Modell/abgeleitet/Satelliten-Retrieval/Katalog/Service).
+# Lizenzen angenommen 2026-09-11 (Browser, ECMWF-Konto code@omegaflow.space): die 5
+# In-situ-Datasets (GNSS, GRUAN, IGRA, surface-land, WOUDC) sind zugangsbereit —
+# Compiler bauen. US-CRN: Formular provider-seitig geschlossen (bleibt pending).
 
 descoped derived-era5-single-levels-daily-statistics
 note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped
