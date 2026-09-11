@@ -2,7 +2,7 @@
   title: Handover — Forschung (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: b9b1c5cf1a0c48fe6b2f72eaddcb93ec2d04ec4794882ef636e04e6f7d992d21
+  sha256: c4b9bf3ba0334d8da218b16d0c6553882d41246e97bec3c1007e23f69123fb2b
   status: live
 -->
 # Handover — Forschung (2026-09-11)
@@ -14,8 +14,6 @@ ist kein Aufwand.
 
 ## Analyse
 
-- abfluss-trishuli — archiviertes CSV des 08-27-Zugs lesen, Abfluss-Pfeil messen.
-- bande-split — Split-Ergebnis + offene Registerzeilen; Restbestand 238 Dateien/77 Tage.
 - gic-p-wert — p-Wert nachlegen, dann Wing/Viljanen.
 - Flut-Satellit — robuste Flut-/Narbenfläche aus S1.
 
@@ -23,7 +21,7 @@ ist kein Aufwand.
 
 - Ⅲ TIAW vs Nanoflares (613-Ereignis-Satz, `aia_ladder_probe`).
 - Ⅳ LAIC — CSES, TEC retro pre-2024, Instrument A, KDE-h.
-- Ⅴ LSST-Live-Scan — läuft, Check-back.
+- Ⅴ LSST-Live-Scan — kein laufender Prozess (pgrep leer, 2026-09-11); die Probe ist ein One-Shot-CLI, kein Loop. Coverage-Register letzter Stand 2026-09-05 (3 Fink-Kegel void, 1 ANTARES-Pass, 0 Kandidaten), seit 2026-09-09 nichts Neues. Offen: Positivkontrolle (RR-Lyrae/EB-Mehrband-Kegel) + IR-Exzess-Achse 10–60 μm.
 - Ⅷ Dunkler Fluss — Haufen-Kanäle benennen.
 - Ⅸ/Ⅹ FRB / Kugelblitz — Kanal-Lage.
 - Ⅺ Placebo — Paar-EEG, fam-Schwelle, Nullkontrolle, bedingte TE.
@@ -32,8 +30,6 @@ ist kein Aufwand.
 
 ## Galileo-Floor
 
-- `galileo_receiver.bin` per Pass (`galileo_atdf_receiver_compiler.rs` steht).
-- Jovian-Mond-Ephemeriden NAIF 501–504.
 - All-Spin-Bus-CK Frame −77000 (`ck_daf_probe.rs`-Vorlage).
 - Empirische Rausch-Kurve aus TRK-2-25/2-18 (~6,5 GB Download).
 - negativ-fuzzy: pscomppars `st_met`-Bio-Zeugen lesen
