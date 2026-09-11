@@ -5,19 +5,19 @@
 <title>ωflow · job-monitor</title>
 <style>
   :root{
-    --bg:      #15171b;
-    --panel:   #1c1f24;
-    --panel2:  #22262c;
-    --border:  #2e343c;
-    --text:    #d7dee6;
-    --dim:     #7e8a97;
-    --aqua:    #5ec9d8;
-    --teal:    #3fb9a6;
-    --green:   #7bd88f;
-    --red:     #ff5f56;
-    --amber:   #f2b04a;
-    --blue:    #5aa7e8;
-    --barbg:   #262b31;
+    --bg:      #0e1520;
+    --panel:   #141d2c;
+    --panel2:  #1b2536;
+    --border:  #303f58;
+    --text:    #eaeef4;
+    --dim:     #8a94aa;
+    --aqua:    #8fa8dc;
+    --teal:    #6aa88c;
+    --green:   #8fbca0;
+    --red:     #d05a48;
+    --amber:   #d0905b;
+    --blue:    #6f8fd0;
+    --barbg:   #222e42;
     --mono: 'JetBrains Mono','Fira Code','Cascadia Code',
             'Ubuntu Mono','DejaVu Sans Mono',monospace;
   }
@@ -28,16 +28,16 @@
     font-family:var(--mono); font-size:13.5px; line-height:1.45;
     display:flex; flex-direction:column; overflow:hidden;
   }
-  ::selection{background:var(--aqua); color:#0d1117}
+  ::selection{background:var(--aqua); color:#0e1520}
 
   /* ── Statusbar ─────────────────────────────────── */
   #bar{
     display:flex; align-items:center;
-    background:var(--aqua); color:#0d1117;
+    background:var(--aqua); color:#0e1520;
     font-weight:700; user-select:none; flex:none;
   }
   #bar.warn{background:var(--amber)}
-  #bar.err {background:var(--red); color:#1a0f0f}
+  #bar.err {background:var(--red); color:#0e1520}
   #bar .seg{padding:3px 10px; white-space:nowrap}
   #bar .grow{flex:1; text-align:right}
   #bar .btn{padding:3px 8px; cursor:pointer; background:rgba(0,0,0,.12)}
@@ -92,7 +92,7 @@
   }
   .meter .fill{
     display:flex; align-items:center; justify-content:flex-end;
-    padding-right:4px; color:#0d1117; font-weight:700; font-size:11px;
+    padding-right:4px; color:#0e1520; font-weight:700; font-size:11px;
     transition:width .8s ease;
   }
   .f-ok  {background:var(--aqua)}
