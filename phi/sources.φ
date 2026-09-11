@@ -1880,6 +1880,121 @@ on earth 19.82 -155.47 4142.6
 ttl 86400
 field irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_hilton_type.instr
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_ccd_flgs
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_jpl_nptsobs
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_photo_nik
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_besa
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_camb
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_cape
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_golo
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_gren
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_gtok
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_nice
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_nik
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_pari
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_radc
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_stra
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_tky
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_toul
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_uccl
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_usno
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_usno_urss
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_obslist.opt
+format apdb
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_ref_opt.txt
+format apdb
+at sun
+ttl 86400
+
 url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
 ttl 86400
 on earth 71.29 -156.57 0
