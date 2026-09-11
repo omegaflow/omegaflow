@@ -330,6 +330,127 @@ pub fn build_netcdf_channels(
     channels
 }
 
+pub fn build_opendap_channels(
+    src: &SourceConfig,
+    file: &crate::archivar::opendap::DapFile,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = file.values_numeric(lat_key) else {
+            continue;
+        };
+        let Some(lon_v) = file.values_numeric(lon_key) else {
+            continue;
+        };
+        let Some(juld_v) = file.values_numeric(epoch_key) else {
+            continue;
+        };
+        let Some(pres_v) = file.values_numeric(pressure_var) else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match file.var(pressure_var) {
+            Some(v) => match file.var_shape(v).get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = file
+            .var(pressure_var)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let lat_fill = file
+            .var(lat_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let lon_fill = file
+            .var(lon_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        let juld_fill = file
+            .var(epoch_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| file.attr_num(a));
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || lat_fill.map_or(false, |f| lat == f)
+                || lon_fill.map_or(false, |f| lon == f)
+                || juld_fill.map_or(false, |f| juld == f)
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = file.values_numeric(&fc.key) else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = file
+                    .var(&fc.key)
+                    .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                    .and_then(|a| file.attr_num(a));
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || fill.map_or(false, |f| val == f)
+                        || pres_fill.map_or(false, |f| pres == f)
+                    {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat,
+                        lon,
+                        alt: -pres * pressure_scale,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            name: fc.name.clone(),
+                            value: val,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
 pub fn build_finals_channels(
     src: &SourceConfig,
     text: &str,

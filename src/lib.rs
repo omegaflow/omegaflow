@@ -31,6 +31,7 @@ pub use archivar::ephemeris;
 pub use archivar::fits;
 pub use archivar::fk;
 pub use archivar::gaia_sso;
+pub use archivar::galileo_odr;
 pub use archivar::geo;
 pub use archivar::gong;
 pub use archivar::gong_series;
