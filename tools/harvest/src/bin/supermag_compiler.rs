@@ -387,6 +387,18 @@ fn main() {
     let stations_file = arg_value(&args, "--stations");
     let single = arg_value(&args, "--station");
 
+    if args.iter().any(|a| a == "--list-stations") {
+        let Some(mut positions) = all_stations() else {
+            eprintln!("magstid.php carries no station list — nothing to list");
+            std::process::exit(1);
+        };
+        positions.sort_by(|a, b| a.code.cmp(&b.code));
+        for p in &positions {
+            println!("{}", p.code);
+        }
+        return;
+    }
+
     let start = match arg_value(&args, "--start") {
         Some(v) => v,
         None => {
