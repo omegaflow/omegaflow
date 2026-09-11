@@ -35,6 +35,7 @@ pub use archivar::galileo_odr;
 pub use archivar::geo;
 pub use archivar::gong;
 pub use archivar::gong_series;
+pub use archivar::grib2;
 pub use archivar::hdf5;
 pub use archivar::hmi_polar;
 pub use archivar::inflate;
@@ -55,6 +56,7 @@ pub use archivar::noaa_nodd;
 pub use archivar::odf;
 pub use archivar::odp;
 pub use archivar::ossos;
+pub use archivar::parquet;
 pub use archivar::pck;
 pub use archivar::pioneer_telemetry;
 #[cfg(feature = "browser_relay")]
