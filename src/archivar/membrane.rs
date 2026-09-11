@@ -388,68 +388,68 @@ pub fn wire_extent(extent: f64) -> f64 {
 
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
-    let (force, kernel, ttl) = if kl.contains("temperature")
+    let (force, kernel, ttl, unit) = if kl.contains("temperature")
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, 3, 60.0)
+        (5, 3, 60.0, "")
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, 3, 60.0)
+        (6, 3, 60.0, "")
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, 3, 300.0)
+        (5, 3, 300.0, "")
     } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
     {
-        (6, 3, 10.0)
+        (6, 3, 10.0, "")
     } else if (kl.contains("wind") && kl.contains("dir"))
         || kl == "winddirection"
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, 3, 10.0)
+        (6, 3, 10.0, "")
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
         || kl.contains("noise")
         || kl == "spl"
     {
-        (2, 1, 0.01)
+        (2, 1, 0.01, "")
     } else if kl.contains("light")
         || kl.contains("lux")
         || kl.contains("lumin")
         || kl.contains("irradiance")
     {
-        (0, 0, 10.0)
+        (0, 0, 10.0, "")
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (5, 3, 60.0)
+        (5, 3, 60.0, "%")
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, 5, 60.0)
+        (8, 5, 60.0, "v")
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, 5, 10.0)
+        (8, 5, 10.0, "a")
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
         || kl.contains("pm10")
         || kl.contains("gas")
     {
-        (5, 3, 300.0)
+        (5, 3, 300.0, "")
     } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
-        (0, 0, 10.0)
+        (0, 0, 10.0, "")
     } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
-        (3, 1, 1.0)
+        (3, 1, 1.0, "")
     } else if kl.contains("gyro") {
-        (3, 1, 1.0)
+        (3, 1, 1.0, "")
     } else if kl.contains("gravity") {
-        (1, 0, 10.0)
+        (1, 0, 10.0, "")
     } else if kl.contains("camera") || kl.contains("video") {
-        (0, 0, 1.0 / 30.0)
+        (0, 0, 1.0 / 30.0, "")
     } else if kl.contains("battery") && kl.contains("charging") {
-        (8, 5, 60.0)
+        (8, 5, 60.0, "1")
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else if kl.starts_with("event.") {
-        (0, 0, 10.0)
+        (0, 0, 10.0, "")
     } else {
         return None;
     };
@@ -458,5 +458,25 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         force,
         kernel,
         ttl,
+        unit: unit.into(),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_declared_unit_names_what_the_sender_carries() {
+        assert_eq!(sensor_config("battery.voltage").expect("sensor").unit, "v");
+        assert_eq!(sensor_config("battery.current").expect("sensor").unit, "a");
+        assert_eq!(sensor_config("battery.level").expect("sensor").unit, "%");
+        assert_eq!(sensor_config("battery.charging").expect("sensor").unit, "1");
+    }
+
+    #[test]
+    fn the_undeclared_wire_unit_stays_absent() {
+        assert_eq!(sensor_config("temperature").expect("sensor").unit, "");
+        assert_eq!(sensor_config("wind.speed").expect("sensor").unit, "");
+    }
 }

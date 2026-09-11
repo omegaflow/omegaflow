@@ -14,7 +14,13 @@ pub fn serial_ports() -> Vec<String> {
     out
 }
 
-pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
+pub fn parse_serial_sample(line: &str) -> Option<(String, f64)> {
+    let (k, v) = line.split_once('=')?;
+    let val = v.trim().parse::<f64>().ok()?;
+    Some((k.trim().to_string(), val))
+}
+
+pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
     loop {
         for name in serial_ports() {
             let mut port = match serialport::new(&name, 115_200)
@@ -26,7 +32,7 @@ pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
             };
             let mut line = String::new();
             let mut buf = [0u8; 256];
-            let mut batch: Vec<(String, f64, f64)> = Vec::new();
+            let mut batch: Vec<(String, f64, Option<f64>)> = Vec::new();
             loop {
                 let n = match port.read(&mut buf) {
                     Ok(n) if n > 0 => n,
@@ -34,10 +40,8 @@ pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
                 };
                 for b in &buf[..n] {
                     if *b == b'\n' {
-                        if let Some((k, v)) = line.split_once('=') {
-                            if let Ok(val) = v.trim().parse::<f64>() {
-                                batch.push((k.trim().to_string(), val, 0.0));
-                            }
+                        if let Some((k, v)) = parse_serial_sample(&line) {
+                            batch.push((k, v, None));
                         }
                         line.clear();
                         if batch.len() >= 64 {
@@ -46,7 +50,6 @@ pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
                         }
                     } else {
                         line.push(*b as char);
-                        line.clear();
                     }
                 }
             }
@@ -58,9 +61,9 @@ pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
     }
 }
 
-pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
+pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
     loop {
-        let mut batch: Vec<(String, f64, f64)> = Vec::new();
+        let mut batch: Vec<(String, f64, Option<f64>)> = Vec::new();
         if let Ok(entries) = std::fs::read_dir("/sys/class/power_supply") {
             for entry in entries.flatten() {
                 let path = entry.path();
@@ -72,18 +75,18 @@ pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
                 let capacity = read_num("capacity");
                 let voltage = read_num("voltage_now").map(|v| v / 1e6);
                 let current = read_num("current_now").map(|a| a / 1e6);
-                let status = std::fs::read_to_string(path.join("status")).unwrap_or_default();
+                let status = std::fs::read_to_string(path.join("status")).ok();
                 if let Some(c) = capacity {
-                    batch.push(("battery.level".to_string(), c, 60.0));
+                    batch.push(("battery.level".to_string(), c, Some(60.0)));
                 }
                 if let Some(v) = voltage {
-                    batch.push(("battery.voltage".to_string(), v, 60.0));
+                    batch.push(("battery.voltage".to_string(), v, Some(60.0)));
                 }
                 if let Some(a) = current {
-                    batch.push(("battery.current".to_string(), a, 10.0));
+                    batch.push(("battery.current".to_string(), a, Some(10.0)));
                 }
-                if status.trim() == "Charging" {
-                    batch.push(("battery.charging".to_string(), 1.0, 60.0));
+                if status.as_deref().map(str::trim) == Some("Charging") {
+                    batch.push(("battery.charging".to_string(), 1.0, Some(60.0)));
                 }
             }
         }
@@ -91,5 +94,36 @@ pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
             let _ = tx.send(batch);
         }
         thread::sleep(std::time::Duration::from_secs(5));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_serial_line_parses_key_and_value() {
+        assert_eq!(
+            parse_serial_sample("temperature=23.5"),
+            Some(("temperature".to_string(), 23.5))
+        );
+    }
+
+    #[test]
+    fn the_serial_line_without_separator_is_absent() {
+        assert_eq!(parse_serial_sample("noise"), None);
+    }
+
+    #[test]
+    fn the_serial_line_without_number_is_absent() {
+        assert_eq!(parse_serial_sample("pressure=abc"), None);
+    }
+
+    #[test]
+    fn the_serial_line_trims_key_and_value() {
+        assert_eq!(
+            parse_serial_sample("  wind.speed = 4.2 \n"),
+            Some(("wind.speed".to_string(), 4.2))
+        );
     }
 }

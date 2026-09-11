@@ -35,7 +35,6 @@ pub use scalar_te_gpu::*;
 pub use shaders::*;
 
 pub(crate) use crate::force::kernel_id_for_force;
-pub(crate) use std::io::IsTerminal;
 pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
 pub(crate) use std::sync::{mpsc, Arc, Mutex, RwLock};
 pub(crate) use std::thread;
