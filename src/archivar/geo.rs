@@ -97,14 +97,6 @@ pub const COMP_WOD_PSAL: u32 = 2;
 pub const COMP_WOD_DOXY: u32 = 3;
 pub const COMP_WOD_MAX: u32 = 3;
 
-pub const COMP_ANR_NEWEST: u32 = 1;
-pub const COMP_ANR_OLDEST: u32 = 2;
-pub const COMP_ANR_BRIGHTEST: u32 = 3;
-pub const COMP_ANR_MAX: u32 = 3;
-
-pub const MAGIC_ANR: [u8; 4] = *b"ANR1";
-pub const ANR_REC_BYTES: usize = 36;
-
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -121,14 +113,6 @@ pub struct GbcoRec {
     pub lat: f64,
     pub lon: f64,
     pub elev: f64,
-}
-
-pub struct AnrRec {
-    pub t: f64,
-    pub ra: f64,
-    pub dec: f64,
-    pub mag: f64,
-    pub comp: u32,
 }
 
 pub fn magic_of(format: &str) -> Option<[u8; 4]> {
@@ -149,7 +133,6 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "noaa_dcdb_bathymetry" => Some(MAGIC_DCDB),
         "noaa_keo_papa" => Some(MAGIC_KEO),
         "noaa_wod" => Some(MAGIC_WOD),
-        "antares_loci" => Some(MAGIC_ANR),
         _ => None,
     }
 }
@@ -172,7 +155,6 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "noaa_dcdb_bathymetry" => Some(COMP_DCDB_MAX),
         "noaa_keo_papa" => Some(COMP_KEO_MAX),
         "noaa_wod" => Some(COMP_WOD_MAX),
-        "antares_loci" => Some(COMP_ANR_MAX),
         _ => None,
     }
 }
@@ -355,58 +337,6 @@ pub fn parse_gbco(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
             return None;
         }
         out.push(GbcoRec { lat, lon, elev });
-    }
-    Some(out)
-}
-
-pub fn write_anr(records: &[AnrRec]) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(8 + records.len() * ANR_REC_BYTES);
-    buf.extend_from_slice(&MAGIC_ANR);
-    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
-    for r in records {
-        buf.extend_from_slice(&r.t.to_le_bytes());
-        buf.extend_from_slice(&r.ra.to_le_bytes());
-        buf.extend_from_slice(&r.dec.to_le_bytes());
-        buf.extend_from_slice(&r.mag.to_le_bytes());
-        buf.extend_from_slice(&r.comp.to_le_bytes());
-    }
-    buf
-}
-
-pub fn parse_anr(bytes: &[u8]) -> Option<Vec<AnrRec>> {
-    if bytes.len() < 8 || bytes[0..4] != MAGIC_ANR {
-        return None;
-    }
-    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if bytes.len() != 8 + n * ANR_REC_BYTES {
-        return None;
-    }
-    let mut out = Vec::with_capacity(n);
-    let mut off = 8usize;
-    for _ in 0..n {
-        let f64_of = |off: usize| {
-            bytes
-                .get(off..off + 8)
-                .and_then(|b| b.try_into().ok())
-                .map(f64::from_le_bytes)
-        };
-        let t = f64_of(off)?;
-        off += 8;
-        let ra = f64_of(off)?;
-        off += 8;
-        let dec = f64_of(off)?;
-        off += 8;
-        let mag = f64_of(off)?;
-        off += 8;
-        let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
-        off += 4;
-        out.push(AnrRec {
-            t,
-            ra,
-            dec,
-            mag,
-            comp,
-        });
     }
     Some(out)
 }
