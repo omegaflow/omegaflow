@@ -1,0 +1,26 @@
+name: xp-pilot-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  xp-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the Gaia XP pilot (healpix pixel k=6144) and upload to dc.g-vo.org
+        run: |
+          # The pilot is one order-12 nested healpix pixel: k=6144. Gaia source_id
+          # carries the pixel in its top bits (source_id >> 35 == 6144), so the pixel
+          # is a source-id band [6144 << 35, 6145 << 35) = [211106232532992, 211109667860480),
+          # under the ~20000-row sync cap. epoch_tdb 504921600 = J2016.0 (Gaia DR3
+          # reference epoch), seconds since J2000.
+          cargo run -p omegaflow-harvest --release --bin gaia_xp_compiler -- \
+            --source-range 211106232532992 211109667860480 \
+            --epoch-tdb 504921600 --out xp_pilot_p6144.bin \
+            --release-tag dc.g-vo.org --ci-mode
