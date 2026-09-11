@@ -19,8 +19,10 @@ jobs:
             --pattern skydirections.bin --pattern dr3_stars.bin --clobber
           cargo run -p omegaflow-measure --release --bin direction_distance_join -- \
             --stars dr3_stars.bin --radius 5 --directions skydirections.bin 2>&1 | tee sky_crossmatch_verdict.log
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern skydirections_zchunk.bin --clobber 2>/dev/null || true
           cargo run -p omegaflow-measure --release --bin direction_z_join -- \
-            --radius 30 --directions skydirections.bin 2>&1 | tee -a sky_crossmatch_verdict.log
+            --radius 30 --directions skydirections.bin --out skydirections_zchunk.bin --ci-mode 2>&1 | tee -a sky_crossmatch_verdict.log
       - name: Persist the crossmatch verdict log to the CDN (ssd.jpl.nasa.gov)
         if: always()
         continue-on-error: true

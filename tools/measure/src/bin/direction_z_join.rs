@@ -7,6 +7,7 @@ use std::process::Command;
 
 const NED_TAP: &str = "https://ned.ipac.caltech.edu/tap/sync";
 const UA: &str = "omegaflow-direction-z-join/1.0";
+const CHUNK: usize = 512;
 
 struct Transient {
     id: Option<String>,
@@ -75,7 +76,12 @@ fn parse_rows(text: &str) -> Option<Vec<ZSource>> {
         }
         let z = cell_f64(cells, i_z).filter(|v| v.is_finite());
         let name = i_name.and_then(|i| cell_str(cells, i));
-        out.push(ZSource { ra_deg: ra, dec_deg: dec, z, name });
+        out.push(ZSource {
+            ra_deg: ra,
+            dec_deg: dec,
+            z,
+            name,
+        });
     }
     Some(out)
 }
@@ -129,7 +135,9 @@ fn ned_cone(ra: f64, dec: f64, radius_as: f64) -> ConeResult {
             match std::str::from_utf8(&body) {
                 Ok(text) => match parse_rows(text) {
                     Some(rows) => ConeResult::Rows(rows),
-                    None => ConeResult::Unanswered("a body that is not the measured TAP JSON".to_string()),
+                    None => ConeResult::Unanswered(
+                        "a body that is not the measured TAP JSON".to_string(),
+                    ),
                 },
                 Err(_) => ConeResult::Unanswered("a body that is not UTF-8".to_string()),
             }
@@ -139,14 +147,8 @@ fn ned_cone(ra: f64, dec: f64, radius_as: f64) -> ConeResult {
 
 #[derive(Debug)]
 enum Verdict {
-    Placed {
-        idx: usize,
-        sep: f64,
-        within: usize,
-    },
-    Absent {
-        within: usize,
-    },
+    Placed { idx: usize, sep: f64, within: usize },
+    Absent { within: usize },
     DirectionOnly,
 }
 
@@ -259,25 +261,32 @@ fn run_probe(t: &Transient, radius_as: f64, tally: &mut Tally) -> Option<f64> {
     }
 }
 
-fn join_directions(dirs: &[SkyDirection], radius_as: f64, tally: &mut Tally) -> Vec<SkyDirection> {
-    let mut next = Vec::with_capacity(dirs.len());
-    for d in dirs {
-        tally.n += 1;
-        let t = Transient {
-            id: Some(d.name.clone()),
-            ra_deg: d.ra_deg,
-            dec_deg: d.dec_deg,
-        };
-        match run_probe(&t, radius_as, tally) {
-            Some(z) => {
-                let mut placed = d.clone();
-                placed.redshift = Some(z);
-                next.push(placed);
+fn checkpoint(out_path: &Option<String>, working: &[SkyDirection], ci_mode: bool) {
+    let Some(out) = out_path else {
+        return;
+    };
+    match write_bin(working) {
+        Some(bytes) => {
+            if std::fs::write(out, &bytes).is_err() {
+                eprintln!(
+                    "write {out} returned void — the redshift-bearing directions stay in memory"
+                );
+                return;
             }
-            None => next.push(d.clone()),
+            let placed = working.iter().filter(|d| d.redshift.is_some()).count();
+            println!(
+                "Direction-redshift join: {out} checkpointed with {placed} direction(s) carrying a measured redshift; the redshift-less stay redshift-less (0 honored)"
+            );
+            if ci_mode && !upload_asset(out) {
+                eprintln!(
+                    "direction_z_join: {out} did not reach the CDN release ssd.jpl.nasa.gov — the joined asset stands local, the manifest is pending"
+                );
+            }
+        }
+        None => {
+            eprintln!("write {out} returned void — a placed direction is not serializable");
         }
     }
-    next
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -361,9 +370,7 @@ fn main() {
             let bytes = match std::fs::read(&directions_path) {
                 Ok(b) => b,
                 Err(e) => {
-                    eprintln!(
-                        "read {directions_path} returned void: {e} — the asset stays unread"
-                    );
+                    eprintln!("read {directions_path} returned void: {e} — the asset stays unread");
                     return;
                 }
             };
@@ -374,32 +381,51 @@ fn main() {
                 return;
             };
             let out_path = arg_value(&args, "--out");
-            let next = join_directions(&dirs, radius_as, &mut tally);
-            if let Some(out) = out_path {
-                match write_bin(&next) {
-                    Some(bytes) => {
-                        if std::fs::write(&out, &bytes).is_err() {
-                            eprintln!(
-                                "write {out} returned void — the redshift-bearing directions stay in memory"
-                            );
-                        } else {
-                            let placed = next.iter().filter(|d| d.redshift.is_some()).count();
-                            println!(
-                                "Direction-redshift join: {out} written with {placed} direction(s) carrying a measured redshift; the redshift-less stay redshift-less (0 honored)"
-                            );
-                            if ci_mode && !upload_asset(&out) {
-                                eprintln!(
-                                    "direction_z_join: {out} did not reach the CDN release ssd.jpl.nasa.gov — the joined asset stands local, the manifest is pending"
+            let mut working = dirs.clone();
+            let mut done = vec![false; working.len()];
+            let mut resumed = 0usize;
+            if let Some(out) = &out_path {
+                if let Ok(prior_bytes) = std::fs::read(out) {
+                    if let Some(prior) = parse_bin(&prior_bytes) {
+                        if prior.len() == working.len() {
+                            for (i, d) in prior.iter().enumerate() {
+                                if let Some(z) = d.redshift {
+                                    working[i].redshift = Some(z);
+                                    done[i] = true;
+                                    resumed += 1;
+                                }
+                            }
+                            if resumed > 0 {
+                                println!(
+                                    "Direction-redshift join: {out} resumed with {resumed} direction(s) already carrying a measured redshift — those stay placed, never re-queried"
                                 );
                             }
                         }
                     }
-                    None => {
-                        eprintln!(
-                            "write {out} returned void — a placed direction is not serializable"
-                        );
-                    }
                 }
+            }
+            let mut since_checkpoint = 0usize;
+            for i in 0..working.len() {
+                if done[i] {
+                    continue;
+                }
+                tally.n += 1;
+                let t = Transient {
+                    id: Some(working[i].name.clone()),
+                    ra_deg: working[i].ra_deg,
+                    dec_deg: working[i].dec_deg,
+                };
+                if let Some(z) = run_probe(&t, radius_as, &mut tally) {
+                    working[i].redshift = Some(z);
+                }
+                since_checkpoint += 1;
+                if since_checkpoint >= CHUNK {
+                    checkpoint(&out_path, &working, ci_mode);
+                    since_checkpoint = 0;
+                }
+            }
+            if since_checkpoint > 0 {
+                checkpoint(&out_path, &working, ci_mode);
             }
         }
         (None, None) => {
