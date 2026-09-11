@@ -203,7 +203,7 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let mut seed = "docs/reference/jwst_detection_seed.json".to_string();
+    let mut seed = "docs/surveys/survey-jwst-detection-seed.json".to_string();
     let mut registry = "jwst_detection_registry.json".to_string();
     let mut params = String::new();
     let mut out = "tmp/techno_gas_register_verdict.txt".to_string();

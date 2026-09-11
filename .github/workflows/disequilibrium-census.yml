@@ -39,10 +39,10 @@ jobs:
           {
             echo "SHA $(git rev-parse HEAD)"
             cargo run --release -p omegaflow-measure --bin disequilibrium_register_probe -- \
-              --seed docs/reference/jwst_detection_seed.json \
+              --seed docs/surveys/survey-jwst-detection-seed.json \
               --params pscomppars.json \
-              --witness docs/reference/co_rhk_witness_seed.json \
-              --census docs/reference/jwst_host_census.json \
+              --witness docs/surveys/survey-co-rhk-witness-seed.json \
+              --census docs/surveys/survey-jwst-host-census.json \
               --floor "${{ inputs.floor }}" \
               --trials "${{ inputs.trials }}" \
               --out disequilibrium_census.txt
@@ -63,7 +63,7 @@ jobs:
           {
             echo "SHA $(git rev-parse HEAD)"
             cargo run --release -p omegaflow-measure --bin xuv_lx_harvest_probe -- \
-              --seed docs/reference/co_rhk_witness_seed.json \
+              --seed docs/surveys/survey-co-rhk-witness-seed.json \
               --out xuv_lx_harvest.txt
           } 2>&1
       - uses: actions/upload-artifact@v4
