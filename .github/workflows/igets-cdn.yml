@@ -10,6 +10,9 @@ jobs:
   igets:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    concurrency:
+      group: igets-harvest
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -21,6 +24,12 @@ jobs:
             exit 0
           fi
           echo "asset igets.bin missing — compiling and manifesting"
+      - name: Restore harvest cache (resume the .ggp download across runs)
+        uses: actions/cache@v4
+        with:
+          path: data/igetsftp.gfz.de
+          key: igets-ggp-v1
+          save-always: true
       - name: Compile IGETS/GGP gravity series and upload to CDN
         env:
           IGETS_USER: ${{ secrets.IGETS_USER }}
@@ -31,4 +40,4 @@ jobs:
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           cargo run -p omegaflow-harvest --release --bin igets_compiler -- \
             --out-bin igets.bin --lsk kernels/naif0012.tls \
-            --level 2 --bucket-min 60 --stream --ci-mode
+            --cache data/igetsftp.gfz.de --level 2 --bucket-min 60 --ci-mode
