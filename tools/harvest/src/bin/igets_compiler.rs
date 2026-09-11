@@ -355,18 +355,39 @@ fn walk_sftp(
 }
 
 fn download(sftp: &Sftp, remote: &[(String, Option<u64>)], cache: &Path, files: &mut Vec<PathBuf>) {
-    for (rel, _) in remote {
+    for (rel, size) in remote {
         let local = cache.join(rel);
-        if !local.exists() {
-            let Some(bytes) = sftp.fetch(rel) else {
-                continue;
-            };
-            if let Some(parent) = local.parent() {
-                let _ = std::fs::create_dir_all(parent);
+        if local.exists() {
+            if let (Some(want), Ok(meta)) = (size, std::fs::metadata(&local)) {
+                if meta.len() == *want {
+                    files.push(local);
+                    continue;
+                }
+                let _ = std::fs::remove_file(&local);
             }
-            if std::fs::write(&local, &bytes).is_err() {
+        }
+        let Some(bytes) = sftp.fetch(rel) else {
+            continue;
+        };
+        if let Some(want) = size {
+            if bytes.len() as u64 != *want {
+                eprintln!(
+                    "{rel}: {} B fetched, {want} B listed — file skipped",
+                    bytes.len()
+                );
                 continue;
             }
+        }
+        if let Some(parent) = local.parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+        let tmp = local.with_extension("part");
+        if std::fs::write(&tmp, &bytes).is_err() {
+            continue;
+        }
+        if std::fs::rename(&tmp, &local).is_err() {
+            let _ = std::fs::remove_file(&tmp);
+            continue;
         }
         files.push(local);
     }
