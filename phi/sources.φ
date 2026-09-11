@@ -5454,6 +5454,11 @@ format reference
 sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
 ttl 86400
 
+url https://zenodo.org/records/10794666/files/2007_10_10_Gallagher%20et%20al_DAP%202.0_ESE-RFC-004v1.2.pdf
+format reference
+sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
+ttl 86400
+
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
 ttl 604800
 on earth 19.48 -155.6 0
