@@ -3,7 +3,7 @@
   session: Quellen-Browser
   class: handover
   date: 2026-09-11
-  sha256: 299951181e328281d0134422c05ab457562beb888e79d23477754b7559de7848
+  sha256: 7ffec77aacc90af51e2fc59902a08b7b023437c81587bba11b26efb66ff21fa7
   status: live
 -->
 # Handover — CDS-Lizenzen + NOIRLab-TAP (2026-09-11)
@@ -46,6 +46,10 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   Farbe-Exzess-Zeuge der Nadel-Ⅴ-Chromatizität oder ein Mikrolensing-/Photo-z-
   Kanal. Wer die Zeile annimmt: den Konsumenten benennen + Klasse bauen oder
   gemessen freigeben (descoped mit Befund), nie ein Regal.
+- 2026-12-02 (Gaia DR4) — die Frage neu wiegen: trägt DR4 die astrometrischen
+  Binaries, RVS und Epoch-Photometrie selbst, ist die dunkle-Materie-/Photo-z-
+  Linie descoped und nur die Tiefe-/Plane-Nische (DECaPS-Y, LS-DR10-z) bliebe
+  als Konsument; dann bauen oder gemessen freigeben.
 
 ## Abschluss
 
