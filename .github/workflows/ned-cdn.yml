@@ -50,8 +50,11 @@ jobs:
           mkdir -p raw
           find_slice() {
             local assets p
-            assets=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
-              --jq '.assets[].name' 2>/dev/null || true)
+            if ! assets=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+                --jq '.assets[].name' 2>/tmp/gh_listing.err); then
+              printf 'LISTING_FAILED\n'
+              return 0
+            fi
             p=0
             while [ "$p" -lt "$NP" ]; do
               fname=$(printf 'ned_part_%05d.json' "$p")
@@ -75,7 +78,12 @@ jobs:
 
           # harvest undone slices, one after another, until the wall budget
           while [ "$(date +%s)" -lt "$deadline" ]; do
-            if ! next=$(find_slice); then
+            if next=$(find_slice); then
+              if [ "$next" = "LISTING_FAILED" ]; then
+                echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+                exit 1
+              fi
+            else
               echo "every slice present"
               break
             fi
@@ -111,10 +119,16 @@ jobs:
           echo "void cones recorded: $(jq -c . "$VOID_FILE")"
 
           # combine when every slice part is present and ned.json is absent
-          present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
-            --jq '[.assets[].name | select(startswith("ned_part_"))] | length' 2>/dev/null || true)
-          has_ned=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
-            --jq '[.assets[].name | select(.=="ned.json")] | length' 2>/dev/null || true)
+          if ! present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(startswith("ned_part_"))] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          if ! has_ned=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(.=="ned.json")] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           echo "slices present: ${present}/${NP}, ned.json present: ${has_ned}"
           if [ "${present:-0}" -eq "$NP" ] && [ "${has_ned:-0}" = 0 ]; then
             echo "=== combining ==="

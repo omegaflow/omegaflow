@@ -24,8 +24,11 @@ jobs:
           chunk=60
           budget_s=5400
           deadline=$(( $(date +%s) + budget_s ))
-          parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets --jq '.assets[]|select(.name|startswith("allwise_part_"))|.name' 2>/dev/null || true)
+          if ! parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --json assets --jq '.assets[]|select(.name|startswith("allwise_part_"))|.name' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           # harvest the next undone tile span, one chunk per compiler pass
           lo=0
           while [ "$lo" -lt "$total" ] && [ "$(date +%s)" -lt "$deadline" ]; do
@@ -49,8 +52,11 @@ jobs:
             fi
           done
           # combine when every span has a part and the final asset is absent
-          state=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-            --json assets 2>/dev/null || true)
+          if ! state=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --json assets 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           part_count=$(printf '%s' "$state" | jq -r '[.assets[]?.name | select(startswith("allwise_part_") and endswith(".fp01"))] | length' 2>/dev/null || echo 0)
           has_final=$(printf '%s' "$state" | jq -r '[.assets[]?.name|select(.=="allwise_coverage.fp01")]|length' 2>/dev/null || echo 0)
           expected=$(( (total + chunk - 1) / chunk ))
