@@ -1,6 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
+use omegaflow::galileo_odr::{header, record, split_records, HEADER_BYTES};
 
 const BASE: &str = "https://pds-ppi.igpp.ucla.edu/annex/";
 const GOJ: &str = "GO-J-RSS-1-ODR-V1.0";
@@ -233,6 +234,7 @@ fn roundtrip_holds(bin: &[u8]) -> bool {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let probe = args.iter().any(|a| a == "--probe");
     let out = match arg_value(&args, "--out") {
         Some(path) => path,
         None => "data/pds-ppi.igpp.ucla.edu/galileo_odr.bin".to_string(),
@@ -259,6 +261,41 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        if probe {
+            if let Some(r) = record(&f.bytes) {
+                let h = r.header;
+                eprintln!(
+                    "{}: record #{} words {} sc {} spc {} {}-{:03} tt {} ms rate {} sps | first AD1..AD4 = {},{},{},{}",
+                    f.name,
+                    h.record_number,
+                    h.record_words,
+                    h.spacecraft,
+                    h.spc,
+                    h.year,
+                    h.doy,
+                    h.time_tag_ms,
+                    h.sample_rate,
+                    r.ad[0][0],
+                    r.ad[0][1],
+                    r.ad[0][2],
+                    r.ad[0][3],
+                );
+            }
+            let (n, t) = split_records(f.bytes.len());
+            if t > 0 {
+                let h = header(&f.bytes[n * REC..]);
+                match h {
+                    Some(h) => eprintln!(
+                        "{}: {} trailing bytes = partial record #{} (header + {} data bytes)",
+                        f.name,
+                        t,
+                        h.record_number,
+                        t - HEADER_BYTES
+                    ),
+                    None => eprintln!("{}: {} trailing bytes (header void)", f.name, t),
+                }
+            }
+        }
         let trailing = f.bytes.len() % REC;
         if trailing == 0 {
             eprintln!(
