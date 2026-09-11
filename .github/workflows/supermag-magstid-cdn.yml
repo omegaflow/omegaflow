@@ -48,8 +48,11 @@ jobs:
             exit 1
           fi
           echo "${#stations[@]} stations in the magstid network"
-          gh release view supermag.jhuapl.edu --repo omegaflow/sources \
-            --json assets --jq '.assets[]?.name' 2>/dev/null > /tmp/present.txt || true
+          if ! gh release view supermag.jhuapl.edu --repo omegaflow/sources \
+              --json assets --jq '.assets[]?.name' 2>/tmp/gh_listing.err > /tmp/present.txt; then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
           harvested=0
           for code in "${stations[@]}"; do
             if [ "$harvested" -ge "$budget" ]; then
