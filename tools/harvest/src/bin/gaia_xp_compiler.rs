@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::{upload_asset, upload_release};
 use omegaflow::spectral::{
     parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array, XpStar, XP_GRID_SAMPLES,
 };
@@ -89,7 +89,7 @@ fn fetch_source_range(lo: u64, hi: u64) -> Option<String> {
     }
 }
 
-fn pilot_verdict(stars: &[XpStar], colors: &[Option<f64>]) {
+fn archive_verdict(stars: &[XpStar], colors: &[Option<f64>]) {
     if stars.is_empty() {
         return;
     }
@@ -175,7 +175,7 @@ fn pilot_verdict(stars: &[XpStar], colors: &[Option<f64>]) {
     };
     let top_residual = residuals.first();
     eprintln!(
-        "pilot verdict: {} spectra; parallax [{:.3}, {:.3}] mas median {:.3}; color: {} measured, median BP-RP {:.2}, {} blue-side, {} red-side (>|median|+1 mag); spectral-form: {} shape outliers (rms > 0.5 vs chunk median shape){}",
+        "archive verdict: {} spectra; parallax [{:.3}, {:.3}] mas median {:.3}; color: {} measured, median BP-RP {:.2}, {} blue-side, {} red-side (>|median|+1 mag); spectral-form: {} shape outliers (rms > 0.5 vs chunk median shape){}",
         stars.len(),
         plx[0],
         plx[plx.len() - 1],
@@ -219,6 +219,7 @@ fn main() {
             std::process::exit(1);
         }
     };
+    let release_tag = arg_value(&args, "--release-tag");
     let (label, text) = match source_range {
         Some((lo, hi)) => match fetch_source_range(lo, hi) {
             Some(t) => (format!("source_id[{}, {})", lo, hi), t),
@@ -370,13 +371,11 @@ fn main() {
         skipped_plx,
         skipped_bins
     );
-    if source_range.is_some() {
-        pilot_verdict(&stars, &colors);
-    }
     if stars.is_empty() {
         eprintln!("no valid stars — the catalog stays unwritten (0 honored)");
         std::process::exit(1);
     }
+    archive_verdict(&stars, &colors);
     let bytes = write_xp_spectra_bin(epoch_tdb, &stars);
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {} returned void", out);
@@ -384,13 +383,30 @@ fn main() {
     }
     match parse_xp_spectra_bin(&bytes) {
         Some((epoch, parsed)) => {
+            let lossless = write_xp_spectra_bin(epoch, &parsed) == bytes;
             eprintln!(
-                "{}: {} stars, epoch_tdb {} — roundtrip parses ({} B)",
+                "{}: {} stars, epoch_tdb {} — the archive parses; re-serialization {} ({} B)",
                 out,
                 parsed.len(),
                 epoch,
+                if lossless {
+                    "byte-identical"
+                } else {
+                    "drifted"
+                },
                 bytes.len()
             );
+            if parsed.len() != stars.len() || epoch != epoch_tdb || !lossless {
+                eprintln!(
+                    "{}: content verdict void ({} of {} stars, epoch {}, re-serialization {}) — the catalog stays unverified",
+                    out,
+                    parsed.len(),
+                    stars.len(),
+                    epoch,
+                    if lossless { "byte-identical" } else { "drifted" }
+                );
+                std::process::exit(1);
+            }
         }
         None => {
             eprintln!(
@@ -400,7 +416,13 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
-        std::process::exit(1);
+    if ci_mode {
+        let reached = match release_tag.as_deref() {
+            Some(tag) => upload_release(tag, &out),
+            None => upload_asset(&out),
+        };
+        if !reached {
+            std::process::exit(1);
+        }
     }
 }
