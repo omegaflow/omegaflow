@@ -201,19 +201,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                         }
                     };
                     let result = {
-                        let buf = {
-                            if let Ok(f) = cfg.field_rx.try_recv() {
-                                last_field = Some(f);
-                            }
-                            last_field.clone().unwrap_or_else(|| {
-                                Arc::new(build_buffer(
-                                    Vec::new(),
-                                    1.0,
-                                    Arc::new(HashMap::new()),
-                                    None,
-                                    Vec::new(),
-                                ))
-                            })
+                        if let Ok(f) = cfg.field_rx.try_recv() {
+                            last_field = Some(f);
+                        }
+                        let Some(buf) = last_field.clone() else {
+                            emit_void(&mut s);
+                            break;
                         };
                         let eph_map = buf.eph.clone();
                         let mut station_sample: Option<Sample> = None;
@@ -257,14 +250,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                 }
                 _ if path.starts_with("/jump/") => {
                     let body: &str = &path[6..];
-                    let eph = {
-                        if let Ok(f) = cfg.field_rx.try_recv() {
-                            last_field = Some(f);
-                        }
-                        last_field
-                            .as_ref()
-                            .map(|b| b.eph.clone())
-                            .unwrap_or_else(|| Arc::new(HashMap::new()))
+                    if let Ok(f) = cfg.field_rx.try_recv() {
+                        last_field = Some(f);
+                    }
+                    let Some(eph) = last_field.as_ref().map(|b| b.eph.clone()) else {
+                        emit_void(&mut s);
+                        break;
                     };
                     let now = match system_now(&cfg.time) {
                         Some(t) => t,
@@ -287,19 +278,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     }
                 }
                 "/field" => {
-                    let buf = {
-                        if let Ok(f) = cfg.field_rx.try_recv() {
-                            last_field = Some(f);
-                        }
-                        last_field.clone().unwrap_or_else(|| {
-                            Arc::new(build_buffer(
-                                Vec::new(),
-                                1.0,
-                                Arc::new(HashMap::new()),
-                                None,
-                                Vec::new(),
-                            ))
-                        })
+                    if let Ok(f) = cfg.field_rx.try_recv() {
+                        last_field = Some(f);
+                    }
+                    let Some(buf) = last_field.clone() else {
+                        emit_void(&mut s);
+                        break;
                     };
                     let mut report = String::new();
                     for (fname, hash) in [("cache", &buf.cache)] {
@@ -433,11 +417,10 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     }
                     let name = String::from_utf8_lossy(&name_bytes).to_string();
                     let mut tau_buf = [0u8; 8];
-                    let tau = if cursor.read_exact(&mut tau_buf).is_ok() {
-                        f64::from_le_bytes(tau_buf)
-                    } else {
-                        0.0
-                    };
+                    if cursor.read_exact(&mut tau_buf).is_err() {
+                        break;
+                    }
+                    let tau = f64::from_le_bytes(tau_buf);
 
                     browser.push((name, value, tau));
                 }
@@ -493,27 +476,31 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                             None
                                         }
                                     };
-                                    let vx = read_opt().unwrap_or(0.0);
-                                    let vy = read_opt().unwrap_or(0.0);
-                                    let vz = read_opt().unwrap_or(0.0);
-                                    let tt = read_opt().unwrap_or(0.0);
-                                    let gs = read_opt().unwrap_or(0.0);
-                                    if gs.is_finite() && gs > 0.0 {
-                                        browser_grid_step = gs;
+                                    let vx = read_opt();
+                                    let vy = read_opt();
+                                    let vz = read_opt();
+                                    let tt = read_opt();
+                                    let gs = read_opt();
+                                    if let (Some(vx), Some(vy), Some(vz), Some(tt), Some(gs)) =
+                                        (vx, vy, vz, tt, gs)
+                                    {
+                                        if gs.is_finite() && gs > 0.0 {
+                                            browser_grid_step = gs;
+                                        }
+                                        let _ = cfg.presence_tx.send((
+                                            "browser".to_string(),
+                                            pt,
+                                            px,
+                                            py,
+                                            pz,
+                                            pr,
+                                            vx,
+                                            vy,
+                                            vz,
+                                            tt,
+                                            gs,
+                                        ));
                                     }
-                                    let _ = cfg.presence_tx.send((
-                                        "browser".to_string(),
-                                        pt,
-                                        px,
-                                        py,
-                                        pz,
-                                        pr,
-                                        vx,
-                                        vy,
-                                        vz,
-                                        tt,
-                                        gs,
-                                    ));
                                 }
                             }
                         }
@@ -521,19 +508,11 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 }
             }
 
-            let field = {
-                if let Ok(f) = cfg.field_rx.try_recv() {
-                    last_field_r = Some(f);
-                }
-                last_field_r.clone().unwrap_or_else(|| {
-                    Arc::new(build_buffer(
-                        Vec::new(),
-                        1.0,
-                        Arc::new(HashMap::new()),
-                        None,
-                        Vec::new(),
-                    ))
-                })
+            if let Ok(f) = cfg.field_rx.try_recv() {
+                last_field_r = Some(f);
+            }
+            let Some(field) = last_field_r.clone() else {
+                continue;
             };
             let eph_map = field.eph.clone();
             let now = match system_now(&cfg.time) {
@@ -593,7 +572,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 tau: effective_tau,
                                 absorption: 0.0,
                                 advection: 0.0,
-                                unit: String::new(),
+                                unit: bs.unit.clone(),
                                 fold: None,
                             };
                             if value.is_finite() {
@@ -652,7 +631,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             tau: effective_tau,
                             absorption: 0.0,
                             advection: 0.0,
-                            unit: String::new(),
+                            unit: bs.unit.clone(),
                             fold: None,
                         };
                         if value.is_finite() {
@@ -703,7 +682,10 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 }
                 let center = [x0, y0, z0];
                 let (diode_ref, diode_off, diode_gs) = {
-                    let d = cfg.diode.read().unwrap_or_else(|p| p.into_inner());
+                    let d = match cfg.diode.read() {
+                        Ok(d) => d,
+                        Err(p) => p.into_inner(),
+                    };
                     (d.force_ref, d.expose_offset, browser_grid_step)
                 };
                 let softening = if diode_gs > 0.0 { diode_gs } else { 0.0 };
