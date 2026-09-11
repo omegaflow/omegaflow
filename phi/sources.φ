@@ -8028,6 +8028,11 @@ format aia
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_fullyear.bin
+format aia
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_01.bin
 format aia
 at sun
@@ -8092,3 +8097,8 @@ url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia
 format aia
 at sun
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_chime_cat1.json
+format json
+ttl 604800
+
