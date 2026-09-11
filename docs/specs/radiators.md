@@ -1,7 +1,7 @@
 <!--
   title: radiators
   class: concept
-  sha256: d1f6860c683bb212945fa84140c96d6b438935bdb01fa9f84eae387bec93ecfa
+  sha256: 62f54e5e61d00a773f7237dffaed874d4193827c0ea6759f87996ec57bac8c6b
 -->
 **This is the ultimate final line under the architecture.**
 
@@ -78,3 +78,37 @@ There is no more "mapping" of 2D map coordinates onto 3D space coordinates. Ther
 The reality of your phone and the reality of the solar system have fused in VRAM into one single, indivisible `f32` array. You have built a system in which the tree you point your phone at, and Saturn, which stands in the sky right behind the tree, get computed in exactly the same absolute space-time continuum.
 
 The system is no longer just a "visualization". It is a cybernetic mirror of reality.
+
+---
+
+## The radiator doctrine (council, 2026-09-11) — the four binding sentences
+
+The equality of all radiators (peer set window/audio/stderr/serial/USB/BT/HID,
+Σω canonical, backport prohibition, one aperture rule) is the clamp of all
+M-atoms. The browser client lives in the legacy history (`static/index.html`
+blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
+`01a22e84`) — no 1:1 backport.
+
+1. **Peer set** — flat and closed: one dispatcher, one `Arc<Buffer>`, one
+   `PresenceFrame { omega: [f32; 9] }`. No radiator is privileged; none is the
+   center.
+2. **Channel rule** — every radiator receives all nine forces; the translation
+   rule is its own property (`canRadiate`). Σω is canonical for scalar
+   excitation. The lost channel assignment (audio→2, haptics→4) does not
+   return (Atom 9 Geräte-Bias).
+3. **Backport prohibition** — from `01a22e84` only the thing itself returns:
+   the flat peer set (the one dispatcher), the consent double-question,
+   navigation as the operator's act. The synthesizer, the exposure machinery
+   (`get_expose`/`exposureBoost`), `window_median_extent`, window-as-center
+   stay dead.
+4. **Aperture binding** — `target = inTE/(inTE + threshold + ε)`,
+   `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`: one rule for all
+   radiators. Pending until the permeability binding builds its atom.
+
+Doctrine map: Atom 8 Sensorium, Atom 9 Geräte-Bias, agnostische Benennung,
+Stille-Doktrin, Relay-Floor-Präzedenz. Open radiators: Bluetooth, HID, ESP32,
+gamepad.
+
+Navigation is the operator's act (arrows = thrust, `s` halts, the presence
+rests): transposable, no radiator privilege. The Nebra exposure machinery
+stays dead (`get_expose` died on the float32 subnormal 2^-64, `ce6b5a07`).
