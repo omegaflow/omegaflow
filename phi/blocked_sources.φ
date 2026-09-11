@@ -157,6 +157,10 @@ url https://ws-uv.canfar.net/youcat
 note CADC youcat-TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
 
 blocked parser-def votable
+url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync
+note CADC-ARGUS TAP (argus/sync) — VOTable-only (FORMAT=json → HTTP 400 "unknown format: json"); FORMAT=csv/votable antworten HTTP 200 (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
 url https://www.lamost.org/dr10/v2.0/voservice/tap
 note LAMOST DR10-TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
 
