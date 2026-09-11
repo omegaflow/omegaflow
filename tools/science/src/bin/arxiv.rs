@@ -289,7 +289,7 @@ const RELEVANCE_KEYWORDS: [&str; 6] = [
 ];
 const RANK_CUTOFF: usize = 6;
 const SEARCH_MAX: usize = 60;
-const CENSUS_PATH: &str = "docs/reference/transmission_host_census.json";
+const CENSUS_PATH: &str = "docs/surveys/survey-transmission-host-census.json";
 
 fn bibcode_year(bibcode: &str) -> Option<i32> {
     let head = bibcode.get(..4)?;
@@ -807,7 +807,7 @@ mod tests {
     #[test]
     fn census_reference_drives_the_score() {
         let census = format!(
-            "{}/../../docs/reference/transmission_host_census.json",
+            "{}/../../docs/surveys/survey-transmission-host-census.json",
             env!("CARGO_MANIFEST_DIR")
         );
         let hosts = read_census_hosts(&census).unwrap();
