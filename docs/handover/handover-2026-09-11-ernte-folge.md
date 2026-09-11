@@ -1,11 +1,12 @@
 <!--
-  title: Handover — Ernte & Register (Stand 2026-09-11)
+  title: Handover — Ernte & Register (Folge, Stand 2026-09-11)
+  session: Ernte-Folge
   class: handover
   date: 2026-09-11
-  sha256: e1b4de87ad33a85bc1aa0835bfa69048d131708e2482fa20c6b1102a58b50812
+  sha256: 849c6ae24b8347077d7d41d81357fb87d66619badbcfc0e20fb40dfc7db43e5c
   status: live
 -->
-# Handover — Ernte & Register (2026-09-11)
+# Handover — Ernte & Register (Folge, 2026-09-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -44,16 +45,26 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
   copernicus-cuon. Absent am CDN: `igets.bin`, noaa-dcdb, noaa-keo-papa,
   copernicus-icoads (CI-Status ungemessen — in-flight oder fehlgeschlagen).
 
-## TAP-Klassifikation (Bau-Linie)
+## TAP-Klassifikation
 
 - 39 Endpoints disponiert (2026-09-11): 13 accept → sources.φ, 18 parser-def
   votable → blocked_sources.φ, 1 decline → dead_sources.φ, 7 ausstehend
   (Backend down am Probe-Zeitpunkt: dachs.fai.kz, vo.lmd.jussieu.fr,
-  tap.roe.ac.uk/{wsa,vsa,osa,ssa}, pithia.cbk.waw.pl). Nächste Bau-Linie:
-  DaCHS-Dialekt (6 accept liefern `columns` statt `metadata` → tap_to_json void
-  bis ein DaCHS-Arm steht); Distanz-Key (9 der 13 Drafts ohne plx/dist/z →
-  cmap rows continue); Spalten-Namen best-effort unverifiziert (Verifikation
-  gegen `tap_schema.columns` je Endpoint).
+  tap.roe.ac.uk/{wsa,vsa,osa,ssa}, pithia.cbk.waw.pl). 0 dead — down ist nicht
+  tot; die Vollwelle wird ein Wartungs-Inventar, kein Friedhof.
+- Die drei Arme wohnen in vo-tap (das öffentliche Crate, eigenes Repo, gepusht):
+  (1) DaCHS-Zweig — zweiter Leseweg für `columns`/`data` (6 der 13 Accept, live
+  gemessen an gavo.aip.de); (2) VOTable-Zweig — nachfrage-getrieben,
+  blocked_sources.φ ist Queue, nicht Schuld, kein Parser ohne Frage; (3)
+  tap_schema-Selbstabfrage ersetzt das Best-Effort-Raten der Spaltennamen. Die
+  Haus-Seite (unser Votap-Parser, tap_to_json extract.rs:895) bleibt schlank und
+  ißt nur — vo-tap und der Haus-Parser teilen Mechanik, sind aber zwei Dinge.
+- Distance-Keys (9/13 ohne plx/dist/z): Quellen-Kuratierung (welche Tabelle
+  trägt das Feld), kein Client-Problem; das cmap-`continue` bleibt ehrlich.
+- Die 7 Pending: fremde Zustände — warten, nicht bauen; ein Re-Probe-Takt
+  (Zensus-Welle) reicht.
+- Sequenz: die Zensus-Welle (HTTP-Code + Zeit, format-blind) läuft jetzt; die
+  Ernte-Welle (Endpunkte → Compiler → φ) wartet auf die Arme in vo-tap.
 
 ## Parser-Pending
 
