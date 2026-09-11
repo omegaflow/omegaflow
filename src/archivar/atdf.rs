@@ -459,6 +459,10 @@ pub fn reduce_skyfreq(
         kept += 1;
     }
     n = kept;
+    if n < 2 {
+        eprintln!("{name}: {n} timestamped records — too short");
+        return None;
+    }
     t.truncate(n);
     dcnt.truncate(n);
     ref_hz.truncate(n);
