@@ -13,36 +13,6 @@ url https://babamul.caltech.edu/api/
 note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-11 (curl, anonym): /api/ antwortet HTTP 200 ("Greetings from BOOM!"); /openapi.json liefert die SPA-Index-HTML (kein OpenAPI-Spec); die Daten-Endpunkte /api/alerts und /api/objects antworten HTTP 401 (Auth-Wall). Messung (Transienten-Alerts, em) echt, Zugang gatet — kein anonymes Daten-JSON.
 reg https://babamul.caltech.edu/
 
-blocked account
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-gnss
-note GNSS troposphärischer Zenit-Delay / Gesamtwasserdampf (network_type igs_daily/epn_repro2/igs_repro3), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem GNSS-Compiler.
-reg https://cds.climate.copernicus.eu/datasets/insitu-observations-gnss?tab=download#manage-licences
-
-blocked account
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-gruan-reference-network
-note GRUAN Referenz-Radiosonden (Punkt/Profil), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Profil-Compiler.
-reg https://cds.climate.copernicus.eu/datasets/insitu-observations-gruan-reference-network?tab=download#manage-licences
-
-blocked account
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-igra-baseline-network
-note IGRA/RHARM Radiosonden-Profile (archive radiosounding_harmonization_dataset_version_1 oder integrated_global_radiosonde_archive_version_2), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Profil-Compiler.
-reg https://cds.climate.copernicus.eu/datasets/insitu-observations-igra-baseline-network?tab=download#manage-licences
-
-blocked account
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-surface-land
-note In-situ-Bodenmessarchiv (Punkt/Profil), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate: das Konto trägt nur cc-by, data-protection-privacy-statement, terms-of-use-cds — die datensatzspezifische Lizenz fehlt. Betreiber nimmt sie auf der download-Seite an; danach greift copernicus_cdm_obs mit einem Boden-Compiler.
-reg https://cds.climate.copernicus.eu/datasets/insitu-observations-surface-land?tab=download#manage-licences
-
-blocked account
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-woudc-ozone-total-column-and-profiles
-note WOUDC Ozon-Gesamtsäule und -Profile (observation_type total_column/vertical_profile), cdm-obs-CSV via CDS-Retrieve; Zugang am Lizenz-Gate (datensatzspezifische Lizenz im Konto nicht angenommen). Betreiber nimmt sie auf der download-Seite an; danach copernicus_cdm_obs mit einem Ozon-Compiler.
-reg https://cds.climate.copernicus.eu/datasets/insitu-observations-woudc-ozone-total-column-and-profiles?tab=download#manage-licences
-
-blocked account
-url https://datalab.noirlab.edu/query
-note NOIRLab Astro Data Lab LS-DR10-Katalog-Query (query.json Capture, HTTP 200): der queryManager antwortet anonym nur mit der "Hello World"-Banner-Zeile (38 B, kein Daten-Satz); echte Katalog-Queries brauchen ein Datalab-Konto/API-Token (Dokumentation). Messung (Legacy-Survey-Photometrie ra/dec/mag/z) echt, Zugang gatet. DECaPS (DECam Plane Survey, g/r/i/z/Y): derselbe Datalab-Zugang — tap/sync antwortet 200 (gemessen 2026-09-11), Katalog-Queries gatet.
-reg https://datalab.noirlab.edu/
-
 pending
 url https://cddis.nasa.gov/archive/
 note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. Gemessen 2026-09-07: der Zugang IST offen — `EARTHDATA_EDL_TOKEN` (aus .secrets.local, gültig ~22 d) öffnet die brdc-Datei: anonym 302 → urs.earthdata.nasa.gov-OAuth, "Authorization: <token>" ohne Bearer → 302, mit Bearer → HTTP 200 (gemessen, BRDC00IGS_R_20262490000_01D_MN.rnx.gz, 1,27 MB gz → 11,3 MB RINEX 3.04 multi-GNSS). reg https://urs.earthdata.nasa.gov/users/new. Der RINEX-Parser ist GEBAUT und VERDRAHTET (2026-09-07): src/archivar/rinex.rs — parse_rinex_header, parse_rinex_nav_gps (RINEX 2.11), parse_rinex_nav_gps3 (RINEX 3.04 GPS), parse_rinex_obs, build_rinex_channels (NAV: a0/a1/…, OBS: obs-Typ-Feld + ECEF→geodätisch); 4 Tests, cargo check --workspace 0/0; format-Dispatch in main_flow.rs ("rinex" mit gzip-Entpacken + Bearer-Wrap des Authorization-Headers), fetch.rs-Formatliste. Der parser-def-Gap ist geschlossen. Registrierung READY (sources.φ-Block, wartet auf die Parallel-Session-Grenze §3):
@@ -56,7 +26,7 @@ note NASA Earthdata GNSS/geodaetische Produkte. Messwert (RINEX GNSS, em) echt. 
 
 pending
 url https://cds.climate.copernicus.eu/datasets/insitu-observations-near-surface-temperature-us-climate-reference-network
-note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist zur Messzeit geschlossen (403, Detail "Download form temporarily closed."). Re-Check zu einem späteren Zeitpunkt; kein Parser-Gap.
+note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): Form weiterhin geschlossen; die CC-BY-Lizenz ist angenommen, die USCRN-Datenpolitik nicht (der Accept-Klick greift am geschlossenen Formular nicht). Kein Parser-Gap.
 
 pending
 url https://des.ncsa.illinois.edu/releases/dr2/dr2-files/
@@ -65,6 +35,10 @@ note DES-DR2 (DECam-Durchmusterung, Y6A2), Footprint-Asset der Weberin §9 Stufe
 pending spectral
 url https://registry.opendata.aws/noaa-nodd/ noaa-passive-bioacoustic nrs/products/
 note NOAA-NODD passive-bioacoustic NRS (Ocean Noise Reference Station Network, PMEL+AFSC/NMFS, DOI 10.25921/tr4q-xa94; 2026-09-07 gemessen, HTTP 200): daily.nc als daily.nc-Probe, Datasets /frequency (1195), /psd (1439 min × 1195 freq), /time, /effort, /quality_flag; Sound-Level-Metrics-Spektraldichte 10-2000 Hz (Good), 0-9 Hz und 2001-2500 Hz Unusable (0 honored). Medium acoustic (id 2) existiert, Messung echt — kein channel-ohne-medium-Fall. Position absent aus daily.nc (nur SITE_NAME "01", Plattform Mooring) — lat/lon nur ueber Stationstabelle → positions-pending. Das Spektrum (1195 Bins) ist ein Spektral-Record, kein Skalar (der Wire traegt eine freq/bin_width-Slot, keine 1195er-Serie) — Reduktion auf einen Wert waere Band-Wahl = Fabrikationsrisiko. Identity: magic_identity(NRS1)=Pending — kein Wesen: die Serie ist eine FORM (gehalten, keine Band-Wahl, nie in ω()); der `noaa_nrs_psd`-Feldblock in sources.φ wurde als Oszillator gestrichen (c3f33f6, Council C1) — das CDN-Asset `noaa_nrs_psd.bin` bleibt als Spektral-Record, vom Archivar gelesen; der Riss bleibt offen, sein Sitz ist dieser Eintrag. Zustand: Rekord gehalten, KEIN eigener noaa_passive_bioacoustic_compiler (Council-Verdikt 2026-09-07); der generische noaa_nodd_bucket_harvester (DEFAULT_BUCKET noaa-passive-bioacoustic) deckt den Bucket. Halteform entschieden (Rat 2026-09-07): das Spektrum bleibt als Ganzes (Serie), keine Band-Wahl, kein Skalar. Stationstabelle geerntet (2026-09-07, phi/nrs_stations.φ, PMEL-NRS-Seite NRS01–NRS13) + Positions-Anbindung im Harvester gebaut (SHAPE dann Tabellen-Fallback, 0 honored). Re-Emitt verifiziert (2026-09-07, --emit-bin --days 1 ueber alle 5 Deployments): 3.260.056 Records, roundtrip-parses, SHAPE-Position + gemessene Tiefe (alt −500/−420 m). Der Tabellen-Fallback ist DORMANT — der sound_level_metrics-Prefix traegt nur 5 Deployments (4× NRS01, 1× NRS11), alle mit SHAPE; NRS02–10/12/13 haben keine Spektren-Verankerung (nur die Netz-Tabelle traegt ihre Koordinaten). Der Fallback bleibt korrekt-gebaut (Unit-Tests), sein Verbrauch wartet auf eine SHAPE-lose Station. Die Stationstabelle ist jetzt versioniert (phi/nrs_stations.φ, Gitignore-Ausnahme) — der CI-Manifestator (noaa-nrs-psd-cdn.yml) traegt sie nach dem Checkout, der `STATIONS_TABLE`-Default zeigt darauf.
+
+blocked parser-def csv-header
+url https://datalab.noirlab.edu/tap/sync
+note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Data-Lab-Registrierung wurde abgelehnt (Robert Nikutta, NOIRLab: das Projekt sei „mostly an engineering one … we decided to decline your request"), aber derselbe Bescheid: „our TAP service is public and does not require an account … Our LS DR10 and DECaPS catalogs are not gated, but part of the open access." Anonym gemessen (2026-09-11, webfetch): ls_dr10.tractor TOP 1 → HTTP 200 CSV (167 Spalten, ra/dec/flux_g/r/i/z/w1..w4/mag_*), decaps_dr2.object TOP 1 → HTTP 200 CSV (ra/dec/mean_mag_g/r/i/z/y, epochmean); TAP_SCHEMA zeigt decaps_dr1/dr2. FORMAT=json → HTTP 200 VOTable-Fehler „unknown format: json" (csv/votable-only). Gap: CSV-Header-Parser (derselbe wie ESO tap_obs/tap_cat). Messung (Legacy-Survey-Photometrie em) echt. NOIRLab behält sich IP-Sperre bei exzessiver Rate vor.
 
 blocked parser-def quakeml
 url https://www.isc.ac.uk/cgi-bin/web-db-run
