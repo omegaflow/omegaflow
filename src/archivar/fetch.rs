@@ -608,6 +608,7 @@ pub fn live_sweep(
                 | "orbit_bin"
                 | "catalog_dastcom"
                 | "netcdf"
+                | "opendap"
                 | "finals"
                 | "ionex"
                 | "rinex"
