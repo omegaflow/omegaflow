@@ -2,9 +2,9 @@
   title: Anfrage (extern) — IGETS: SFTP-Passwort für das Datennutzer-Konto
   class: auftrag
   date: 2026-09-10
-  sha256: 247bccc250adc9691e902e340cbfeddcafac1cec80aea1e8e39879f46839c103
-  status: live
-  see-also: docs/handover/handover-2026-09-10-nicht-autonom.md
+  sha256: 6b251f51e3e9d76a3770e7bedd533fdcaea22a7b1f32d8f638146fdf687ab45c
+  status: done
+  see-also: docs/handover/handover-2026-09-11-ernte.md
 -->
 # Anfrage — IGETS: SFTP-Passwort
 
@@ -52,9 +52,22 @@ My account details:
 With thanks,
 Johannes Tyroller
 
+## Ausgang (gemessen 2026-09-11)
+
+Die GFZ-Antwort (2026-09-10, Nico Stolarczuk) riet zu Delete/Neu-Registrierung,
+weil das SFTP-Passwort nicht abrufbar sei. Die einzige Registrierungs-Mail des
+Operators („Your profile was confirmed and successfully created.", SFTP-Link
+`sftp://johannes.tyroller_at_proton.me@igetsftp.gfz.de`) trägt keinen
+Delete-Link — die Route ist so nicht gangbar.
+
+Die Messung 2026-09-11 zeigt: der SFTP-Zugang funktioniert mit dem hinterlegten
+Passwort (`IGETS_USER`/`IGETS_PASS` in `.secrets.local`, 23 Zeichen).
+`curl -u johannes.tyroller_at_proton.me:<pw> sftp://igetsftp.gfz.de/` listet die
+Stations-Ordner (40+). Der „Permission denied" der Messung 2026-09-07 traf die
+noch unbestätigte Registrierung; nach der GFZ-Bestätigung authentifiziert
+dasselbe Passwort. Kein neues Passwort, kein neues Konto nötig.
+
 ## Register-Pflicht
 
-Die Antwort (SFTP-Passwort oder SSH-Key-Route) ist die Messung. Bis dahin bleibt
-der Kanal `blocked account` (kein offener Datenweg). Nach Erhalt: SFTP-Zugang
-messen (Port 22, Loginname + Passwort), dann die 25 Stations-DOIs über
-`igetsftp.gfz.de` ernten.
+Erledigt: der Kanal ist offen. Der Eintrag in `phi/blocked_sources.φ` ist
+gestrichen; die Ernte steht in `docs/handover/handover-2026-09-11-ernte.md`.

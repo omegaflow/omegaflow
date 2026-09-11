@@ -2,7 +2,7 @@
   title: Handover — Nicht-autonom (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 76c0a0c7b691bb56036dda978a7af02fb500d93fcb550053382de92d9f653e85
+  sha256: 89282c17b01c8d4563f842f3d8bf38d4147ed6ee6a9bf4dc2e90b9d3c8e28a8d
   status: live
 -->
 # Handover — Nicht-autonom (2026-09-11)
@@ -22,7 +22,6 @@ Keine Session-Arbeit — jedes Item wartet auf Operator-Wort, CI oder Kalender.
 - LISA Pathfinder (Selbstregistrierung ab 15.09.)
 - Hi-net/NIED
 - NOIRLab Data Lab
-- IGETS-SFTP
 - TOAR-Vollzugang
 - Rubin RSP-Datenrechte
 - TNO-Kette
