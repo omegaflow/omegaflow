@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Forschung-Folge II (Stand 2026-09-11)
-  session: Forschung-Folge II
+  title: Handover — Forschung-Folge III (Stand 2026-09-11)
+  session: Forschung-Folge III
   class: handover
   date: 2026-09-11
-  sha256: 8ecae841be4746747000f0af6639ee1725297071e039f9872dd59e51fa585b4c
+  sha256: f2f8a496e50f2802cc7543d7950990021948af259550e454e222624b0cf01806
   status: live
 -->
-# Handover — Forschung-Folge II (2026-09-11)
+# Handover — Forschung-Folge III (2026-09-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
