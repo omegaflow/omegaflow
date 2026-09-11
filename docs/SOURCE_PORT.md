@@ -545,12 +545,12 @@ goes15, der gebco-Stub); dieser Filter ist die Antwortregel dafür.
 
 ### 16.1 Endpoint-Zensus (der Wieger)
 
-`vo-tap census <url> …` mißt je Endpoint: HTTP-Code (nackter GET), Antwortzeit,
+Der Endpoint-Zensus mißt je Endpoint: HTTP-Code (nackter GET), Antwortzeit,
 Redirect-Ziel, Datum, und die Inhaltsprobe (`tap` = eine minimale DoQuery
 antwortet TAP-JSON, `http` = HTTP antwortet, aber kein TAP — z. B. POST-only
 oder CSV-only, `kein-http` = keine HTTP-Antwort). Ein 400 auf einen TAP-Root
 ist „lebt, braucht eine Query" — die Inhaltsprobe ist der Puls, nicht der
-nackte Code. `vo-tap import --regtap <root> [--ledger <pfad>]` erntet die
+nackte Code. `regtap_census import --regtap <root> [--ledger <pfad>]` erntet die
 RegTAP-Liste der TAP-Dienste (Roundtrip über COUNT(*), Bestand-Dedupe je Host
 + URL) und trägt Entdecktes als `ausstehend kandidat <url>` in den Ledger.
 
@@ -564,7 +564,7 @@ RegTAP-Liste der TAP-Dienste (Roundtrip über COUNT(*), Bestand-Dedupe je Host
 
 ### 16.3 Vollwelle — die 120 Kandidaten gewogen (2026-09-10)
 
-`vo-tap wave --ledger phi/pipeline/ledger.φ` (Host-Fruchtfolge, GET-Cap 30 s,
+`regtap_census wave --ledger phi/pipeline/ledger.φ` (Host-Fruchtfolge, GET-Cap 30 s,
 Probe-Timeout 60 s, 2 s Pause) wiegt alle `ausstehend kandidat`-Blöcke und
 schreibt den Befund in die Ledger-Note zurück (`gewogen <datum>: http <code>
 probe <probe>`). Verteilung des Eigenen: **49 tap · 67 http · 4 kein-http**
@@ -578,7 +578,7 @@ VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
 
 ### 16.4 Disposition-Hygiene — Artefakte, Austräge, kein-http (2026-09-10)
 
-- **Import-Fix (`vo-tap import --regtap`):** (a) relative `access_url` (kein
+- **Import-Fix (`regtap_census import --regtap`):** (a) relative `access_url` (kein
   Host) wird als Artefakt übersprungen statt als Kandidat geschrieben;
   (b) Dedupe gegen die eigene Charge (derselbe URL aus zwei Interface-Zeilen
   → ein Block). Verifikation gegen die live RegTAP: `0 candidates after
@@ -614,9 +614,9 @@ VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
 Die 48 tap + mast-/cadc-Austrag je Endpoint durch Bestand-Dedupe, Force-Gate
 und Schema-Discovery geführt. Zwei Werkzeug-Funde getragen:
 
-- **`vo-tap tables` war auf DaCHS-TAP kaputt** — queried den HTML-Root statt
+- **das Tabellen-Inventar war auf DaCHS-TAP kaputt** — queried den HTML-Root statt
   `/sync` und las Rows nur als Objekte, während Standard-TAP-JSON
-  Array-of-Arrays liefert. Fix (`tools/vo-tap/src/lib.rs::tables`): läuft
+  Array-of-Arrays liefert. Fix: läuft
   jetzt über `sync_candidates` (wie `tap_speaks`) und parst über
   `parse_json_rows` (beide Formen, Spalten-Case-insensitive). Verifikation:
   alle 46 clean-tap-Endpoints liefern ein parsebares Inventar (0 void);
