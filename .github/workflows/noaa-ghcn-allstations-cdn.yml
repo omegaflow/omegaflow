@@ -1,4 +1,9 @@
 name: noaa-ghcn-allstations-cdn
+
+concurrency:
+  group: noaa-ghcn-assets
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
     inputs:
