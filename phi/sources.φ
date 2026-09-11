@@ -7896,3 +7896,9 @@ format igets
 at earth
 ttl 604800
 field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
+format noaa_ccor
+at sun
+ttl 86400
+field noaa_ccor_intensity_dn noaa_ccor_intensity_dn inverse-square em 1 86400 0.0 0.0
