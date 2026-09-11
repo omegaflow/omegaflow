@@ -2,7 +2,7 @@
   title: Handover — Ernte & Register (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 04d8cdee98bd4195d7c86ad0a2c8fb6db5861faae8fc54addc8eecd99f0f2737
+  sha256: 222158883f21d24150c780fd6c7e4a1b9deff2072537c6ca7d7ff334573a8bcb
   status: live
 -->
 # Handover — Ernte & Register (2026-09-11)
@@ -10,7 +10,7 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
 viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand.
+ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
 ## Ernte (Harvest)
 
