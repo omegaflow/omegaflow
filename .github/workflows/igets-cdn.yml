@@ -31,4 +31,4 @@ jobs:
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           cargo run -p omegaflow-harvest --release --bin igets_compiler -- \
             --out-bin igets.bin --lsk kernels/naif0012.tls \
-            --level 2 --bucket-min 60 --ci-mode
+            --level 2 --bucket-min 60 --stream --ci-mode
