@@ -3,7 +3,7 @@
   session: Quellen-Browser
   class: handover
   date: 2026-09-11
-  sha256: 5545f3e3679fcf753b5d56e3dbbd4b5c7554f07014076d976b7572d24717ca5b
+  sha256: 44ff5e11c356542b21e3fd87b4bbd5827cf94b393d56d1c2a3d19418c1761412
   status: live
 -->
 # Handover — CDS-Lizenzen + NOIRLab-TAP (2026-09-11)
@@ -25,8 +25,9 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   `insitu-comprehensive-upper-air-observation-network` (alle `compiler-lease`
   in `phi/pipeline/catalog/copernicus_disposition.φ`, Compiler pending).
 - US-CRN (`insitu-observations-near-surface-temperature-us-climate-reference-network`):
-  Download-Form weiterhin geschlossen (Re-Check 2026-09-11); CC-BY angenommen,
-  USCRN-Datenpolitik nicht. Bleibt `pending` in `phi/blocked_sources.φ`.
+  Download-Form provider-seitig geschlossen (Re-Check 2026-09-11: CC-BY +
+  USCRN-Datenpolitik angenommen, `Submit form` disabled). Bleibt `pending` in
+  `phi/blocked_sources.φ`; nur die Form-Closure offen.
 
 ## NOIRLab Astro Data Lab — Parser
 
