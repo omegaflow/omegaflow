@@ -2,7 +2,7 @@
   title: Handover — Forschung (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: 90d916abb9b5692eed960b0523d80cd72499827fd361b28705ebcf87e8a967b7
+  sha256: 11a518c9c82e820feb9077db3d8867edde94a43f9ff89ac0a64e4a2350e8aba8
   status: live
 -->
 # Handover — Forschung (2026-09-11)
@@ -46,8 +46,10 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 
 - n=1000-Riß — Block-Länge n^(1/3)=10 bei n=1000 zu kurz / KSG-Dimension; die
   Null bleibt Block; die Gate-Messung läuft in der CI-Welle (`te-n1000-shift.yml`,
-  `te-operating-point-sweep.yml`), nicht lokal — der n=1000-Gate-Punkt muss noch
-  in die Welle verdrahtet werden (`src/mathematikerin/te.rs` `gate_fpr_cells`).
+  `te-operating-point-sweep.yml`), nicht lokal — dispatcht 2026-09-11
+  (`te-operating-point-sweep #2`, `te-n1000-shift #2`); der n=1000-Gate-Punkt
+  läuft bisher nur über `ci-check` (`cargo test --release`), noch nicht als
+  eigener Matrix-Punkt (`src/mathematikerin/te.rs` `gate_fpr_cells`).
 
 ## Tiefenphasen
 
