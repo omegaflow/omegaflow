@@ -11,6 +11,8 @@ const MINUTE: f64 = 60.0;
 const HOUR: f64 = 3600.0;
 const DAY: f64 = 86400.0;
 const OMNI2_BIN: &str = "omni2_serie.bin";
+const OMNI2_CDN_BASE: &str =
+    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov";
 const FIRST_YEAR: i64 = 1994;
 const DEFAULT_STATION: &str = "ABK";
 const DEFAULT_HOUR_START: &str = "2024-01-01";
@@ -119,16 +121,31 @@ fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
 }
 
 fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
-    match std::fs::read(path) {
-        Ok(bytes) => match parse_bin(&bytes) {
-            Some(recs) => recs,
-            None => {
-                eprintln!("{path} parses void — the top series stays unmeasured");
-                Vec::new()
-            }
-        },
-        Err(_) => {
-            eprintln!("{path} reads void — the top series stays unmeasured");
+    if let Ok(bytes) = std::fs::read(path) {
+        if let Some(recs) = parse_bin(&bytes) {
+            return recs;
+        }
+        eprintln!("{path} parses void — fetching the CDN asset");
+    } else {
+        eprintln!("{path} reads void — fetching the CDN asset");
+    }
+    let name = match std::path::Path::new(path).file_name() {
+        Some(n) => n.to_string_lossy().into_owned(),
+        None => {
+            eprintln!("{path} carries no asset name — the CDN fetch stays pending");
+            return Vec::new();
+        }
+    };
+    let url = format!("{OMNI2_CDN_BASE}/{name}");
+    let Some(bytes) = fetch_raw_bytes(&url, 3600) else {
+        eprintln!("{url} fetch stays pending — the top series stays unmeasured");
+        return Vec::new();
+    };
+    let _ = std::fs::write(path, &bytes);
+    match parse_bin(&bytes) {
+        Some(recs) => recs,
+        None => {
+            eprintln!("{path} parses void after fetch — the top series stays unmeasured");
             Vec::new()
         }
     }
