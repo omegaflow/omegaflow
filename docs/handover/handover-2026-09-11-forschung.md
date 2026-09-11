@@ -45,11 +45,12 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 ## TE
 
 - n=1000-Riß — Block-Länge n^(1/3)=10 bei n=1000 zu kurz / KSG-Dimension; die
-  Null bleibt Block; die Gate-Messung läuft in der CI-Welle (`te-n1000-shift.yml`,
-  `te-operating-point-sweep.yml`), nicht lokal — dispatcht 2026-09-11
-  (`te-operating-point-sweep #2`, `te-n1000-shift #2`); der n=1000-Gate-Punkt
-  läuft bisher nur über `ci-check` (`cargo test --release`), noch nicht als
-  eigener Matrix-Punkt (`src/mathematikerin/te.rs` `gate_fpr_cells`).
+  Null bleibt Block. Der n=1000-Gate-Punkt ist jetzt eigener Matrix-Punkt
+  (`--gate-n 1000 --block 10` in `pcmci_class_benchmark`, Sweep-Punkte 17–20
+  null block/shift × binned/ksg); die Gate-Messung läuft in der CI-Welle
+  (`te-n1000-shift.yml`, `te-operating-point-sweep.yml`), nicht lokal —
+  dispatcht 2026-09-11 (`te-operating-point-sweep #2`, `te-n1000-shift #2`);
+  das Ergebnis der n=1000-Gate-Batterie (Punkte 17–20) ist zu verifizieren.
 
 ## Tiefenphasen
 
@@ -60,5 +61,9 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 - Quell-Strahlungsterm (CMT).
 - W-Phase-CMT als M9-Nachfolger-Atom.
 - Stromboli als Vulkan-Lehrer.
-- Eikonal-Löser über das volle Gitter (Dijkstra über ETOPO1).
+- Eikonal-Löser über das volle Gitter (Dijkstra über ETOPO1) — gebaut
+  (`tools/measure/src/eikonal.rs` + `tohoku_eikonal_probe` +
+  `.github/workflows/eikonal-tohoku.yml`); der Lauf gegen das echte Gitter ist
+  CI-Duty (dispatch + Ergebnis verifizieren); Vollkugel/Fast-Marching benannte
+  Folgen.
 - Die Erde als Sender — Kreuzbereichs-Kalibrierung (Tonga 2022).
