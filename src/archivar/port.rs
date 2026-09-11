@@ -1757,6 +1757,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             || src.format == "catalog_dastcom"
             || src.format == "csv_zip"
             || src.format == "kernel_text"
+            || src.format == "opendap"
         {
             continue;
         }
