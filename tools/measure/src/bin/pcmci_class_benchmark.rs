@@ -447,6 +447,7 @@ fn cell_fpr(cells: &[GateCell], a: f32, d_z: usize) -> Option<f64> {
 
 fn gate_battery() {
     let cells = gate_fpr_cells(
+        150,
         null_model(),
         estimator(),
         MAX_LAG.load(Ordering::Relaxed),
