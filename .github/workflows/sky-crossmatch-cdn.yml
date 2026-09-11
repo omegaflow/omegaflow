@@ -1,0 +1,29 @@
+name: sky-crossmatch-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  crossmatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Join the full held sky-direction set to Gaia DR3 parallax and NED objdir
+        run: |
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern skydirections.bin --pattern dr3_stars.bin --clobber
+          cargo run -p omegaflow-measure --release --bin direction_distance_join -- \
+            --stars dr3_stars.bin --radius 5 --directions skydirections.bin 2>&1 | tee sky_crossmatch_verdict.log
+          cargo run -p omegaflow-measure --release --bin direction_z_join -- \
+            --radius 30 --directions skydirections.bin 2>&1 | tee -a sky_crossmatch_verdict.log
+      - name: Persist the crossmatch verdict log to the CDN (ssd.jpl.nasa.gov)
+        if: always()
+        continue-on-error: true
+        run: |
+          gh release upload ssd.jpl.nasa.gov sky_crossmatch_verdict.log --clobber --repo omegaflow/sources \
+            || { echo "log upload void — the local log is the artifact"; exit 0; }
