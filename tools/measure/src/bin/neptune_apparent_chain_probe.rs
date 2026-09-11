@@ -493,10 +493,17 @@ fn main() {
     let mut earth_map = HashMap::new();
     earth_map.insert("earth".to_string(), earth);
 
-    let obslist_text = match std::fs::read("data/www.geoazur.fr/apdb_obslist.opt") {
-        Ok(b) => String::from_utf8_lossy(&b).to_string(),
-        Err(e) => {
-            eprintln!("neptune-apparent-chain: obslist reads void — {e}");
+    let obslist_text = match ensure_bin(
+        "data/www.geoazur.fr/apdb_obslist.opt",
+        "www.geoazur.fr",
+        "apdb_obslist.opt",
+        BIN_TTL_S,
+    ) {
+        Some(b) => String::from_utf8_lossy(&b).to_string(),
+        None => {
+            eprintln!(
+                "neptune-apparent-chain: apdb_obslist.opt reads void — local cache and CDN asset both absent"
+            );
             return;
         }
     };
@@ -597,7 +604,21 @@ fn main() {
     let mut total_skipped = 0usize;
 
     for s in &series {
-        let text = match std::fs::read_to_string(s.path) {
+        let asset = match s.path.strip_prefix("data/www.geoazur.fr/") {
+            Some(a) => a,
+            None => {
+                eprintln!(
+                    "neptune-apparent-chain: {} series path carries no www.geoazur.fr netloc",
+                    s.name
+                );
+                continue;
+            }
+        };
+        let Some(bytes) = ensure_bin(s.path, "www.geoazur.fr", asset, BIN_TTL_S) else {
+            println!("{:<18} absent", s.name);
+            continue;
+        };
+        let text = match String::from_utf8(bytes) {
             Ok(t) => t,
             Err(_) => {
                 println!("{:<18} absent", s.name);
