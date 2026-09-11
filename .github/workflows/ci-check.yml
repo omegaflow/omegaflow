@@ -11,7 +11,7 @@ permissions:
   issues: write
 concurrency:
   group: ci-check-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
