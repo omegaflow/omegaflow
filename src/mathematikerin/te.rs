@@ -2232,7 +2232,9 @@ pub struct GateCell {
     pub neg: usize,
 }
 
-pub fn gate_fpr_cells(
+fn gate_fpr_cells_from(
+    n: usize,
+    cells: &[(f32, usize, usize)],
     null: TeNull,
     est: TeEstimator,
     max_lag: usize,
@@ -2241,22 +2243,14 @@ pub fn gate_fpr_cells(
     block: usize,
     n_surr: usize,
 ) -> Vec<GateCell> {
-    let cells = [
-        (0.0f32, 0usize, 100usize),
-        (0.5f32, 0usize, 100usize),
-        (0.9f32, 0usize, 100usize),
-        (0.0f32, 4usize, 7usize),
-        (0.5f32, 4usize, 7usize),
-        (0.9f32, 4usize, 7usize),
-    ];
     let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
-    let mut out = Vec::with_capacity(6);
-    for &(a, d_z, trials) in &cells {
+    let mut out = Vec::with_capacity(cells.len());
+    for &(a, d_z, trials) in cells {
         let mut fp = 0usize;
         let mut neg = 0usize;
         for t in 0..trials {
             let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-            let series = gate_common_driver(150, a, 0.0, d_z, &mut rng);
+            let series = gate_common_driver(n, a, 0.0, d_z, &mut rng);
             let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
             let Some(links) = pcmci_links(
                 &refs, max_lag, null_lag, bins, seed, n_surr, null, block, est, 4, 2, 0.05,
@@ -2283,6 +2277,46 @@ pub fn gate_fpr_cells(
         out.push(GateCell { a, d_z, fp, neg });
     }
     out
+}
+
+pub fn gate_fpr_cells(
+    n: usize,
+    null: TeNull,
+    est: TeEstimator,
+    max_lag: usize,
+    null_lag: usize,
+    bins: usize,
+    block: usize,
+    n_surr: usize,
+) -> Vec<GateCell> {
+    let cells = [
+        (0.0f32, 0usize, 100usize),
+        (0.5f32, 0usize, 100usize),
+        (0.9f32, 0usize, 100usize),
+        (0.0f32, 4usize, 7usize),
+        (0.5f32, 4usize, 7usize),
+        (0.9f32, 4usize, 7usize),
+    ];
+    gate_fpr_cells_from(n, &cells, null, est, max_lag, null_lag, bins, block, n_surr)
+}
+
+#[cfg(test)]
+fn gate_fpr_coarse_cells(
+    n: usize,
+    null: TeNull,
+    est: TeEstimator,
+    max_lag: usize,
+    null_lag: usize,
+    bins: usize,
+    block: usize,
+    n_surr: usize,
+) -> Vec<GateCell> {
+    let cells = [
+        (0.0f32, 4usize, 7usize),
+        (0.5f32, 4usize, 7usize),
+        (0.9f32, 4usize, 7usize),
+    ];
+    gate_fpr_cells_from(n, &cells, null, est, max_lag, null_lag, bins, block, n_surr)
 }
 
 #[cfg(test)]
@@ -2982,49 +3016,67 @@ mod tests {
         }
     }
 
-    fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
-        let cells = gate_fpr_cells(null, est, 2, 12, 4, 0, 100);
-        let rows: Vec<(f32, usize, f64)> = cells
+    fn gate_fpr_autocorr_assert(cells: &[GateCell]) {
+        let rows: Vec<(f32, usize, Option<f64>)> = cells
             .iter()
             .map(|c| {
                 (
                     c.a,
                     c.d_z,
-                    if c.neg > 0 {
-                        100.0 * c.fp as f64 / c.neg as f64
-                    } else {
-                        0.0
-                    },
+                    (c.neg > 0).then(|| 100.0 * c.fp as f64 / c.neg as f64),
                 )
             })
             .collect();
         let named: String = rows
             .iter()
-            .map(|&(a, d_z, fpr)| format!("a={a} D_Z={d_z}: {fpr:.2}% "))
+            .map(|&(a, d_z, fpr)| match fpr {
+                Some(fpr) => format!("a={a} D_Z={d_z}: {fpr:.2}% "),
+                None => format!("a={a} D_Z={d_z}: unmeasured "),
+            })
             .collect();
+        let unmeasured: Vec<(f32, usize)> = rows
+            .iter()
+            .filter(|&&(_, _, fpr)| fpr.is_none())
+            .map(|&(a, d_z, _)| (a, d_z))
+            .collect();
+        assert!(
+            unmeasured.is_empty(),
+            "Zug 5: cells {unmeasured:?} carry neg=0 — unmeasured, never a passing zero ({named})"
+        );
         for &(a, d_z, fpr) in &rows {
+            let fpr = fpr.expect("Zug 5: cell measured (neg=0 absent)");
             assert!(
                 fpr <= 8.0,
                 "Zug 5: FPR {fpr:.2}% at a={a} D_Z={d_z} exceeds 8% — the null does not hold under autocorrelation ({named})"
             );
         }
-        for d_z in [0usize, 4usize] {
+        let mut d_zs: Vec<usize> = rows.iter().map(|&(_, d_z, _)| d_z).collect();
+        d_zs.sort_unstable();
+        d_zs.dedup();
+        for d_z in d_zs {
             let f0 = rows
                 .iter()
                 .find(|&&(a, d, _)| a == 0.0 && d == d_z)
                 .expect("Zug 5: a=0 cell measured")
-                .2;
+                .2
+                .expect("Zug 5: a=0 cell carries neg>0");
             let f9 = rows
                 .iter()
                 .find(|&&(a, d, _)| a == 0.9 && d == d_z)
                 .expect("Zug 5: a=0.9 cell measured")
-                .2;
+                .2
+                .expect("Zug 5: a=0.9 cell carries neg>0");
             assert!(
                 f9 - f0 <= 2.0,
                 "Zug 5: FPR rise {:.2}pp over a at D_Z={d_z} exceeds 2pp — the null leaks autocorrelation into the FPR ({named})",
                 f9 - f0
             );
         }
+    }
+
+    fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
+        let cells = gate_fpr_cells(150, null, est, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
@@ -3045,6 +3097,12 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_100() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Ksg);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
+        let cells = gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
     }
 
     fn gate_s60_f(x: f32) -> f32 {
