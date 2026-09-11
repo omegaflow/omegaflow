@@ -1,0 +1,46 @@
+name: inpop-testpo
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  inpop-testpo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the INPOP19a spice kernel and the IMCCE testpo reference
+        run: |
+          curl -sfL -o inpop19a_spice.tar.gz https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "inpop-testpo: the inpop19a spice tar returned void" \
+                 "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          tar -xzf inpop19a_spice.tar.gz
+          curl -sfL -o testpo.INPOP19A_TDB https://ftp.imcce.fr/pub/ephem/planets/inpop19a/testpo.INPOP19A_TDB \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "inpop-testpo: the IMCCE testpo reference returned void" \
+                 "curl on ftp.imcce.fr did not reach the testpo. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Measure the INPOP19a SPK against the IMCCE testpo reference
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin inpop_testpo_probe -- \
+              --bsp inpop19a_TDB_m100_p100_spice.bsp \
+              --testpo testpo.INPOP19A_TDB
+          } > inpop-testpo.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inpop-testpo
+          path: inpop-testpo.txt

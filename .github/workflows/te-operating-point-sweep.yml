@@ -58,6 +58,10 @@ jobs:
             args: --anchor --gate --gate-n 1000 --block 10 --null shift --est binned
           - point: 20-n1000-shift-ksg
             args: --anchor --gate --gate-n 1000 --block 10 --null shift --est ksg
+          - point: 21-n1000-phase-binned
+            args: --anchor --gate --gate-n 1000 --null phase --est binned
+          - point: 22-n1000-phase-ksg
+            args: --anchor --gate --gate-n 1000 --null phase --est ksg
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
