@@ -2,7 +2,7 @@
   title: Handover — Forschung (Stand 2026-09-11)
   class: handover
   date: 2026-09-11
-  sha256: def842409f5a4b58a0708893dad5ea26ef3533926b544c61b8da0c6f90a3821a
+  sha256: 90d916abb9b5692eed960b0523d80cd72499827fd361b28705ebcf87e8a967b7
   status: live
 -->
 # Handover — Forschung (2026-09-11)
@@ -14,7 +14,9 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 
 ## Analyse
 
-- gic-p-wert — p-Wert nachlegen, dann Wing/Viljanen.
+- gic-p-wert — p-Wert läuft in CI `bz-retro-probe.yml` (Run 34587298538,
+  Matrix ABK-2024 / ABK-2025 / SOD-2024); Artefakte `bz-retro-<point>.txt`;
+  p-Wert → Papier nach Landung, dann Wing/Viljanen.
 - Flut-Satellit — robuste Flut-/Narbenfläche aus S1.
 
 ## Nadeln
@@ -30,10 +32,9 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 
 ## Galileo-Floor
 
-- All-Spin-Bus-CK Frame −77000 (`ck_daf_probe.rs`-Vorlage).
+- All-Spin-Bus-CK Frame −77000 — EGA-1-Fenster gemessen (`ck_daf_probe.rs`,
+  Papier); die volle CK-Ernte jenseits der vier Tage bleibt pending.
 - Empirische Rausch-Kurve aus TRK-2-25/2-18 (~6,5 GB Download).
-- negativ-fuzzy: pscomppars `st_met`-Bio-Zeugen lesen
-  (`disequilibrium_register_probe.rs` steht).
 
 ## Weberin
 
@@ -44,7 +45,9 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks
 ## TE
 
 - n=1000-Riß — Block-Länge n^(1/3)=10 bei n=1000 zu kurz / KSG-Dimension; die
-  Null bleibt Block (`src/mathematikerin/te.rs` `gate_fpr_cells`).
+  Null bleibt Block; die Gate-Messung läuft in der CI-Welle (`te-n1000-shift.yml`,
+  `te-operating-point-sweep.yml`), nicht lokal — der n=1000-Gate-Punkt muss noch
+  in die Welle verdrahtet werden (`src/mathematikerin/te.rs` `gate_fpr_cells`).
 
 ## Tiefenphasen
 
