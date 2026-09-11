@@ -1,0 +1,42 @@
+name: noaa-ccor-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: CCOR-1 dm_science FITS granule URL
+        required: true
+        type: string
+        default: https://noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/SWFO/GOES-19/CCOR-1/ccor1-dm_science/2025/02/sci_ccor1-dm_g19_s20250201T000000Z_e20250201T235959Z_p20260105T170334Z_pub.fits
+      asset:
+        description: output asset name on the CDN (netloc noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com)
+        required: true
+        type: string
+        default: ccor1_intensity_20250201.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noaa-ccor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile the CCOR-1 corona frame mean and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin noaa_ccor_compiler -- \
+            --url "${{ inputs.url }}" --out "${{ inputs.asset }}" \
+            --lsk kernels/naif0012.tls --ci-mode

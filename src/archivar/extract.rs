@@ -151,6 +151,7 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ISD_SLP => Some("noaa_isd_slp_hpa"),
             _ => None,
         },
+        "copernicus_cdm_obs" => crate::copernicus::component_name(comp),
         _ => None,
     }
 }
