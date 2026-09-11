@@ -2,15 +2,33 @@ use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::atdf::{parse_bin, reduce_skyfreq, write_bin, S_BAND_REF_HI, S_BAND_REF_LO};
 use omegaflow::cdn::upload_release;
 
-const BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data";
-const FILES: &[&str] = &[
-    "ATDF_Data-Files_CMarkwardt_Readable/SC23-87361172500-88078042912.TDF",
-    "ATDF_Data-Files_CMarkwardt_Readable/SC23-88063171500-88169011500.TDF",
-    "ATDF_Data-Files_CMarkwardt_Readable/SC23-88168163000-88263042950.TDF",
-    "ATDF_Data-Files_CMarkwardt_Readable/SC23-88334163000-88337043000.TDF",
-    "ATDF_Data-Files_CMarkwardt_Readable/pioneer10.fl1",
-    "ATDF_Data-Files_CMarkwardt_Readable/pioneer10.fl2",
-];
+const LISTING: &str = "https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/";
+const NETLOC: &str = "spdf.gsfc.nasa.gov";
+
+fn listing_files(html: &[u8]) -> Vec<String> {
+    let text = String::from_utf8_lossy(html);
+    let mut names: Vec<String> = Vec::new();
+    let mut rest = text.as_ref();
+    while let Some(pos) = rest.find("href=\"") {
+        rest = &rest[pos + 6..];
+        let Some(end) = rest.find('"') else { break };
+        let href = &rest[..end];
+        rest = &rest[end + 1..];
+        if href.is_empty()
+            || href.starts_with('?')
+            || href.starts_with('#')
+            || href.starts_with('/')
+            || href.ends_with('/')
+            || href == "SHA1SUM"
+        {
+            continue;
+        }
+        names.push(href.to_string());
+    }
+    names.sort();
+    names.dedup();
+    names
+}
 
 fn jd_date(tdb_s: f64) -> String {
     let jd = 2451545.0 + tdb_s / 86400.0;
@@ -24,19 +42,36 @@ fn jd_date(tdb_s: f64) -> String {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let list_mode = args.iter().any(|a| a == "--list");
+    let Some(index) = fetch_raw_bytes(LISTING, 86400) else {
+        eprintln!("{LISTING}: fetch void — the series stays unwritten (0 honored)");
+        return;
+    };
+    let files = listing_files(&index);
+    if files.is_empty() {
+        eprintln!("{LISTING}: no ATDF files in listing — the series stays unwritten (0 honored)");
+        return;
+    }
+    if list_mode {
+        eprintln!("{LISTING}: {} ATDF files", files.len());
+        for name in &files {
+            eprintln!("  {name}");
+        }
+        return;
+    }
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
     let mut merged: Vec<[f64; 14]> = Vec::new();
-    for (fid, rel) in FILES.iter().enumerate() {
-        let url = format!("{BASE}/{rel}");
+    for (fid, name) in files.iter().enumerate() {
+        let url = format!("{LISTING}{name}");
         let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
-            eprintln!("{rel}: fetch void ({url})");
+            eprintln!("{name}: fetch void ({url})");
             continue;
         };
         if let Some(samples) =
-            reduce_skyfreq(rel, fid as f64, &bytes, &lsk, S_BAND_REF_LO, S_BAND_REF_HI)
+            reduce_skyfreq(name, fid as f64, &bytes, &lsk, S_BAND_REF_LO, S_BAND_REF_HI)
         {
             merged.extend(samples);
         }
@@ -75,7 +110,7 @@ fn main() {
             eprintln!("{out}: roundtrip parse void — the series stays unverified");
         }
     }
-    if ci_mode && !upload_release("spdf.gsfc.nasa.gov", out) {
+    if ci_mode && !upload_release(NETLOC, out) {
         std::process::exit(1);
     }
 }
