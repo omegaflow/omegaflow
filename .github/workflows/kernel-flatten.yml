@@ -1,5 +1,9 @@
 name: kernel-flatten
 
+concurrency:
+  group: kernel-flatten
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
   schedule:
