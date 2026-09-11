@@ -18,7 +18,6 @@ members = [
     "tools/science",
     "tools/service",
     "tools/utils",
-    "tools/vo-tap",
 ]
 default-members = ["."]
 
