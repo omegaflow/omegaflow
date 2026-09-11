@@ -21,6 +21,7 @@ static ANCHOR_ONLY: AtomicBool = AtomicBool::new(false);
 static GATE_ONLY: AtomicBool = AtomicBool::new(false);
 static T600_ONLY: AtomicBool = AtomicBool::new(false);
 static TSCALE_ONLY: AtomicBool = AtomicBool::new(false);
+static GATE_N: AtomicUsize = AtomicUsize::new(150);
 
 fn section(n: usize) -> bool {
     let s = SECTION.load(Ordering::Relaxed);
@@ -447,7 +448,7 @@ fn cell_fpr(cells: &[GateCell], a: f32, d_z: usize) -> Option<f64> {
 
 fn gate_battery() {
     let cells = gate_fpr_cells(
-        150,
+        GATE_N.load(Ordering::Relaxed),
         null_model(),
         estimator(),
         MAX_LAG.load(Ordering::Relaxed),
@@ -547,6 +548,24 @@ fn main() {
             Ok(n) => BLOCK.store(n, Ordering::Relaxed),
             Err(_) => {
                 eprintln!("--block carries {v} — not a block length");
+                std::process::exit(1);
+            }
+        }
+    }
+    let gate_n_arg = args
+        .iter()
+        .position(|a| a == "--gate-n")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = gate_n_arg {
+        match v.parse::<usize>() {
+            Ok(n) if n >= 2 => GATE_N.store(n, Ordering::Relaxed),
+            Ok(n) => {
+                eprintln!("--gate-n carries {n} — the gate battery needs at least 2 samples");
+                std::process::exit(1);
+            }
+            Err(_) => {
+                eprintln!("--gate-n carries {v} — not a sample count");
                 std::process::exit(1);
             }
         }
@@ -674,9 +693,10 @@ fn main() {
     let top = |r: usize| if quick { 1 } else { r };
     let bins = BINS.load(Ordering::Relaxed);
     let max_lag = MAX_LAG.load(Ordering::Relaxed);
+    let gate_n = GATE_N.load(Ordering::Relaxed);
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} t600={} tscale={} r={}..={}",
+        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} gate_n {gate_n} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} t600={} tscale={} r={}..={}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
