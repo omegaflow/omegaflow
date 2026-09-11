@@ -613,7 +613,6 @@ pub fn live_sweep(
                 | "ionex"
                 | "rinex"
                 | "alerce"
-                | "antares_loci"
                 | "catalog_tycho"
                 | "spectral"
                 | "xp_spectra"
