@@ -459,7 +459,10 @@ mod tests {
             template: Vec::new(),
         };
         assert_eq!(rep(2).packing_name(), Some("complex packing"));
-        assert_eq!(rep(3).packing_name(), Some("complex packing & spatial differencing"));
+        assert_eq!(
+            rep(3).packing_name(),
+            Some("complex packing & spatial differencing")
+        );
         assert_eq!(rep(40000).packing_name(), Some("JPEG2000"));
         assert_eq!(rep(40010).packing_name(), Some("PNG"));
         assert_eq!(rep(40020).packing_name(), Some("CCITT-G4"));
