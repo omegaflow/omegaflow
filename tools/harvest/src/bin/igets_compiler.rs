@@ -372,6 +372,30 @@ fn download(sftp: &Sftp, remote: &[(String, Option<u64>)], cache: &Path, files: 
     }
 }
 
+enum Source {
+    Local(PathBuf),
+    Remote(String),
+}
+
+impl Source {
+    fn label(&self) -> String {
+        match self {
+            Source::Local(p) => p.display().to_string(),
+            Source::Remote(r) => r.clone(),
+        }
+    }
+}
+
+fn source_text(src: &Source, sftp: &Option<Sftp>) -> Option<String> {
+    match src {
+        Source::Local(p) => std::fs::read_to_string(p).ok(),
+        Source::Remote(r) => {
+            let bytes = sftp.as_ref()?.fetch(r)?;
+            String::from_utf8(bytes).ok()
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -381,9 +405,14 @@ fn main() {
     let level = arg_value(&args, "--level");
     let limit: Option<usize> = arg_value(&args, "--limit-files").and_then(|v| v.parse().ok());
 
-    let mut files: Vec<PathBuf> = Vec::new();
+    let stream = args.iter().any(|a| a == "--stream");
+    let sources: Vec<Source>;
+    let mut sftp_holder: Option<Sftp> = None;
     if let Some(dir) = arg_value(&args, "--in") {
+        let mut files: Vec<PathBuf> = Vec::new();
         walk_local(Path::new(&dir), &mut files);
+        files.sort();
+        sources = files.into_iter().map(Source::Local).collect();
     } else {
         let Some(login) = login_name() else {
             eprintln!("IGETS_USER absent — no login name (SFTP stays unread)");
@@ -411,27 +440,33 @@ fn main() {
             eprintln!("{} .ggp files, {} B on the SFTP tree", remote.len(), total);
             return;
         }
-        download(&sftp, &remote, Path::new(&cache), &mut files);
+        if stream {
+            sources = remote.into_iter().map(|(r, _)| Source::Remote(r)).collect();
+        } else {
+            let mut files: Vec<PathBuf> = Vec::new();
+            download(&sftp, &remote, Path::new(&cache), &mut files);
+            files.sort();
+            sources = files.into_iter().map(Source::Local).collect();
+        }
+        sftp_holder = Some(sftp);
     }
-    files.sort();
 
-    if files.is_empty() {
+    if sources.is_empty() {
         eprintln!("igets: no .ggp files flow — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     }
 
     if probe {
-        for path in &files {
-            let Ok(text) = std::fs::read_to_string(path) else {
+        for src in &sources {
+            let Some(text) = source_text(src, &sftp_holder) else {
                 continue;
             };
-            let head: Vec<&str> = text.lines().take(10).collect();
-            println!("=== {} ===", path.display());
-            for l in head {
+            println!("=== {} ===", src.label());
+            for l in text.lines().take(10) {
                 println!("{l}");
             }
         }
-        eprintln!("{} .ggp files flow from the tree", files.len());
+        eprintln!("{} .ggp files flow from the tree", sources.len());
         return;
     }
 
@@ -467,16 +502,16 @@ fn main() {
 
     let mut records: Vec<GeoRec> = Vec::new();
     let mut parsed = 0usize;
-    for path in &files {
-        let Ok(text) = std::fs::read_to_string(path) else {
-            eprintln!("{}: unreadable — file skipped", path.display());
+    for src in &sources {
+        let Some(text) = source_text(src, &sftp_holder) else {
+            eprintln!("{}: unreadable — file skipped", src.label());
             continue;
         };
         let n = compile_file(&text, &lsk, bucket_s, &mut records);
         if n == 0 {
             eprintln!(
                 "{}: carries no measured gravity samples — file skipped",
-                path.display()
+                src.label()
             );
             continue;
         }
