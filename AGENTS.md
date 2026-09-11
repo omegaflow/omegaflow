@@ -69,6 +69,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 
 - The machine asks before it radiates, as the sensors ask before they record. The operator is never penetrated unasked — visually, acoustically, tactilely, via relay — never.
 - Background work runs unlimited: headless, silent, invisible. Tests run silent: no test may open a window, emit audio (PCM/stdout), vibrate hardware (serial), or push to relays; GPU-requiring tests request a compute-only device (`compatible_surface: None`) and report a named skip without an adapter.
+- Heavy compute is a foreground penetration: probes, gate batteries, and hours-long tests run in CI, never on the operator's machine — a local run that paralyses it is not silent. Local runs are `cargo check`, quick tests, and short measurements only; a session never polls in loops — it finishes and commits, so the line frees up.
 - The foreground asks twice: first a question, then the operator's answer — never a question followed by an unconfirmed start. Where the full ω-loop is the measurement, the hidden run (`OMEGAFLOW_HIDDEN=1` — windowless, soundless, still: it silences every radiator, not only the window) is the named way; a visible or radiating run happens only on the operator's explicit word.
 
 ### The presence is agnostic
