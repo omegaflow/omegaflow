@@ -3590,6 +3590,10 @@ decline superseded-by-skyServerWS
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
 note Diese Route liefert HTML (Formularseite); die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch) und ist in sources.φ integriert (sdss_photoobj 2026-08-18). psfMag-Spalten liegen in photoObj; photoObj.z ist modelMag_z (z-Band-Magnitude, KEINE Rotverschiebung) — die spektroskopische z trägt nur der specObj-Join. Verschoben aus blocked_sources.φ 2026-08-19.
 
+decline image-survey
+url https://skyview.gsfc.nasa.gov/current/cgi/query.pl
+note SkyView-Bild-Cutout-Dienst (VTSS H-Alpha, Mellinger, DSS2) — Bild-Survey, FITS/JPEG-Pixel-Cutouts ohne Punkt-Messwert; Force-Gate: ein Bild ist kein Skalar an einem Punkt (Oszillator-Gate decline). Gemessen 2026-09-11: query.pl 200 (170 KB Form); runquery.pl?Survey=VTSS+H-Alpha&Return=JSON 500 (Param-Form, kein Daten-JSON). Kein Compiler — Bild-Surveys tragen keine Messwert-Serie.
+
 dead dns-unresolved
 url https://soa.smext.faa.gov/asws/api/airport/status/ATL?format=json
 note curl: curl: (6) Could not resolve host: soa.smext.faa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.swim.faa.gov/home.
@@ -4472,7 +4476,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
-note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert; api.alerce.online = 404-Stub (alle Pfade); tap.alerce.online = 502 (TAP-Backend down). ALeRCE migriert auf TAP („Direct database access is being retired"). Recheck: tap.alerce.online/vo/tap/sync sobald TAP wieder 200 liefert. Richtungs-Harvest-Status (2026-09-06): api.alerce.online/objects erneut HTTP 404 gemessen (skydirection_compiler, --alerce) — als unreachable benannt, nie ein Negativ, kein Oszillator; die Richtungs-Klasse wird ueber Lasair/ANTARES/Fink gehalten (auftrag-richtungs-transient-atom, befund-richtungs-atom).
+note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert. Recheck 2026-09-11 (curl-gemessen, anonym): api.alerce.online/alerts/v1/objects antwortet HTTP 200 mit echten ZTF-Objekten (oid/meanra/meandec) — der Compiler-Pfad sources.φ:848 (format alerce) ist live; die fruehere 404-Stub-Messung (2026-08-15/09-06) war der uebergangsweise TAP-Umzug (tap.alerce.online 502). ztf.alerce.online bleibt DNS-tot (dieser Eintrag); der Compiler liest heute ueber api.alerce.online, nie ueber ztf.alerce.online.
 
 dead scheme-unsupported
 url s3://lp-prod-protected/GEDI02_A.002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002.cmr.xml

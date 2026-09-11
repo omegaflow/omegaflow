@@ -164,12 +164,40 @@ pub fn ang2pix_nest(nside: i64, theta: f64, phi: f64) -> Option<i64> {
     }
 }
 
+pub fn gaia_source_pixel(source_id: u64) -> u32 {
+    (source_id >> 35) as u32
+}
+
+pub fn ang2pix_nest_deg(order: u32, ra_deg: f64, dec_deg: f64) -> Option<u64> {
+    if order > 29
+        || !ra_deg.is_finite()
+        || !dec_deg.is_finite()
+        || !(-90.0..=90.0).contains(&dec_deg)
+    {
+        return None;
+    }
+    let nside = 1i64 << order;
+    let theta = (90.0 - dec_deg).to_radians();
+    let phi = ra_deg.rem_euclid(360.0).to_radians();
+    ang2pix_nest(nside, theta, phi).map(|p| p as u64)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn near(a: f64, b: f64, tol: f64) -> bool {
         (a - b).abs() < tol
+    }
+
+    fn ang_dist_deg(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+        let (sd1, cd1) = dec1.to_radians().sin_cos();
+        let (sd2, cd2) = dec2.to_radians().sin_cos();
+        let d_ra = (ra1 - ra2).to_radians();
+        (sd1 * sd2 + cd1 * cd2 * d_ra.cos())
+            .clamp(-1.0, 1.0)
+            .acos()
+            .to_degrees()
     }
 
     #[test]
@@ -253,5 +281,87 @@ mod tests {
             let back = ang2pix_nest(n, theta, phi).unwrap();
             assert_eq!(back, p);
         }
+    }
+
+    #[test]
+    fn gaia_source_pixel_is_the_level12_shift() {
+        assert_eq!(gaia_source_pixel(3458764518117813632), 0x06000000);
+        assert_eq!(gaia_source_pixel(0), 0);
+        assert_eq!(gaia_source_pixel(u64::MAX), 0x1FFF_FFFF);
+    }
+
+    #[test]
+    fn ang2pix_nest_deg_matches_the_radians_form() {
+        let cases: [(u32, f64, f64); 5] = [
+            (12, 179.9981321957186, -41.805256049950145),
+            (12, 0.0, 90.0),
+            (12, 0.0, -90.0),
+            (12, 40.0, -30.0),
+            (12, 200.0, 85.0),
+        ];
+        for &(order, ra, dec) in &cases {
+            let nside = 1i64 << order;
+            let theta = (90.0 - dec).to_radians();
+            let phi = ra.rem_euclid(360.0).to_radians();
+            let from_deg = ang2pix_nest_deg(order, ra, dec).unwrap();
+            let from_rad = ang2pix_nest(nside, theta, phi).unwrap() as u64;
+            assert_eq!(from_deg, from_rad, "order {order} ra {ra} dec {dec}");
+        }
+        assert!(ang2pix_nest_deg(12, f64::NAN, 0.0).is_none());
+        assert!(ang2pix_nest_deg(12, 0.0, 91.0).is_none());
+        assert!(ang2pix_nest_deg(30, 0.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn gaia_source_pixel_agrees_with_position() {
+        let path = std::path::Path::new("data/dc.g-vo.org/xp_pilot_p6144.bin");
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("{} absent — position agreement skipped", path.display());
+                return;
+            }
+        };
+        let Some((_epoch, stars)) = crate::spectral::parse_xp_spectra_bin(&bytes) else {
+            eprintln!("{} parse void — position agreement skipped", path.display());
+            return;
+        };
+        let mut missing_pos = 0usize;
+        let mut disagree = 0usize;
+        for s in &stars {
+            let shift = gaia_source_pixel(s.source_id) as u64;
+            match ang2pix_nest_deg(12, s.ra, s.dec) {
+                Some(pos) if pos == shift => {}
+                Some(pos) => {
+                    disagree += 1;
+                    let (ts, ps) = pix2ang_nest(4096, shift as i64).unwrap();
+                    let (tp, pp) = pix2ang_nest(4096, pos as i64).unwrap();
+                    let d_shift =
+                        ang_dist_deg(s.ra, s.dec, ps.to_degrees(), 90.0 - ts.to_degrees());
+                    let d_pos = ang_dist_deg(s.ra, s.dec, pp.to_degrees(), 90.0 - tp.to_degrees());
+                    assert!(
+                        d_shift < 0.05 && d_pos < 0.05,
+                        "a disagreement beyond one-pixel adjacency: ra={} dec={}",
+                        s.ra,
+                        s.dec
+                    );
+                }
+                None => missing_pos += 1,
+            }
+        }
+        assert_eq!(
+            missing_pos,
+            0,
+            "{} stars: {} position-miss",
+            stars.len(),
+            missing_pos
+        );
+        assert!(
+            disagree * 200 <= stars.len(),
+            "{} of {} stars disagree ({:.4} %): the shift is the binding, the residual is boundary rounding",
+            disagree,
+            stars.len(),
+            disagree as f64 * 100.0 / stars.len() as f64
+        );
     }
 }
