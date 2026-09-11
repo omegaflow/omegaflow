@@ -1,3 +1,4 @@
+use omegaflow::archivar::{fetch_raw, fetch_raw_bytes};
 use omegaflow::bsp_reader::daf::{DafError, DafFile, Summary, DOUBLE_BYTES, RECORD_BYTES};
 use std::collections::HashMap;
 
@@ -5,6 +6,9 @@ const EGA_LO: f64 = -286_200_000.0;
 const EGA_HI: f64 = -285_854_400.0;
 const JD_J2000: f64 = 2451545.0;
 const JD_1970: f64 = 2440587.5;
+const NAIF_RTR: &str =
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/";
+const NAIF_SCLK: &str = "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/sclk/mk00062a.tsc";
 
 fn civil_from_days(z: i64) -> (i64, u32, u32) {
     let z = z + 719_468;
@@ -103,9 +107,6 @@ fn be_i32(b: &[u8]) -> i32 {
     i32::from_be_bytes(a)
 }
 
-// BIG-IEEE DAF reader: the daily GLL CK products are big-endian (idword
-// "NAIF/DAF"), while the crate DafFile reads LTL-IEEE only.  The record and
-// summary layout mirrors daf.rs with the file's native byte order swapped.
 struct BigDaf {
     data: Vec<u8>,
     nd: u32,
@@ -126,7 +127,12 @@ impl BigDaf {
         let nd = u32::from_be_bytes([data[8], data[9], data[10], data[11]]);
         let ni = u32::from_be_bytes([data[12], data[13], data[14], data[15]]);
         let fward = u32::from_be_bytes([data[76], data[77], data[78], data[79]]);
-        Ok(BigDaf { data, nd, ni, fward })
+        Ok(BigDaf {
+            data,
+            nd,
+            ni,
+            fward,
+        })
     }
 
     fn idword(&self) -> [u8; 8] {
@@ -285,9 +291,17 @@ struct RotorSeg {
     seg_dt: f64,
 }
 
-fn decode_rotor_segment(daf: &BigDaf, idx: usize, s: &Summary, brk: &[(f64, f64)]) -> Option<RotorSeg> {
+fn decode_rotor_segment(
+    daf: &BigDaf,
+    idx: usize,
+    s: &Summary,
+    brk: &[(f64, f64)],
+) -> Option<RotorSeg> {
     if s.integers.len() < 6 {
-        println!("  seg [{idx}] descriptor carries {} integers, needs 6", s.integers.len());
+        println!(
+            "  seg [{idx}] descriptor carries {} integers, needs 6",
+            s.integers.len()
+        );
         return None;
     }
     let frame = s.integers[0];
@@ -312,7 +326,9 @@ fn decode_rotor_segment(daf: &BigDaf, idx: usize, s: &Summary, brk: &[(f64, f64)
     let last = dbls[total - 1];
     let np = last.round() as i64;
     if np < 2 || (last - np as f64).abs() > 1e-6 {
-        println!("  seg [{idx}] no layout: trailing value {last:.6e} is not a pointing-instance count");
+        println!(
+            "  seg [{idx}] no layout: trailing value {last:.6e} is not a pointing-instance count"
+        );
         return None;
     }
     let npu = np as usize;
@@ -342,7 +358,12 @@ fn decode_rotor_segment(daf: &BigDaf, idx: usize, s: &Summary, brk: &[(f64, f64)
     }
     if reclen == 0 {
         let head: Vec<String> = dbls.iter().take(6).map(|x| format!("{x:.4e}")).collect();
-        let tail: Vec<String> = dbls.iter().rev().take(4).map(|x| format!("{x:.4e}")).collect();
+        let tail: Vec<String> = dbls
+            .iter()
+            .rev()
+            .take(4)
+            .map(|x| format!("{x:.4e}"))
+            .collect();
         println!(
             "  seg [{idx}] dtype {dtype} geometry unresolved: total {total} np {npu}; head [{}] tail [{}]",
             head.join(", "),
@@ -399,7 +420,7 @@ fn decode_rotor_segment(daf: &BigDaf, idx: usize, s: &Summary, brk: &[(f64, f64)
             + q[i][1] * q[i + 1][1]
             + q[i][2] * q[i + 1][2]
             + q[i][3] * q[i + 1][3])
-        .abs();
+            .abs();
         let th = 2.0 * dot.min(1.0).acos();
         if th < 1e-9 || th > std::f64::consts::PI - 0.05 {
             continue;
@@ -496,8 +517,15 @@ fn rotor_main(cks: &[String], tsc: Option<&str>) {
                 println!("coverage {} .. {}", et_to_date(min_et), et_to_date(max_et));
             }
         }
-        let rotor_total = summaries.iter().filter(|s| s.integers.first() == Some(&-77000)).count();
-        println!("ROTOR frame -77000 carried by {} of {} segments", rotor_total, summaries.len());
+        let rotor_total = summaries
+            .iter()
+            .filter(|s| s.integers.first() == Some(&-77000))
+            .count();
+        println!(
+            "ROTOR frame -77000 carried by {} of {} segments",
+            rotor_total,
+            summaries.len()
+        );
         let mut f_segs = 0usize;
         let mut f_np = 0usize;
         let mut f_theta = 0.0f64;
@@ -544,7 +572,7 @@ fn rotor_main(cks: &[String], tsc: Option<&str>) {
             println!("FILE_SPIN no decodable -77000 type-1/3 segment in this file");
         }
     }
-    println!("\n=== window across {} daily rotor CKs ===", cks.len());
+    println!("\n=== series across {} rotor CKs ===", cks.len());
     if w_dt > 0.0 && w_theta > 0.0 {
         let rate = w_theta / w_dt;
         let period = std::f64::consts::TAU / rate;
@@ -554,7 +582,9 @@ fn rotor_main(cks: &[String], tsc: Option<&str>) {
             "WINDOW_SPIN segs={w_segs} np={w_np} sumdt={w_dt:.3}s sumtheta={w_theta:.3}rad revs={:.1}",
             w_theta / std::f64::consts::TAU
         );
-        println!("WINDOW_SPIN rate={rate:.9} rad/s  period={period:.6} s  rpm={rpm:.6}  mhz={mhz:.6}");
+        println!(
+            "WINDOW_SPIN rate={rate:.9} rad/s  period={period:.6} s  rpm={rpm:.6}  mhz={mhz:.6}"
+        );
         println!(
             "WINDOW_SPIN vs tone 19.10 s: ratio {:.6}, delta {:.4} s",
             period / 19.10,
@@ -565,17 +595,100 @@ fn rotor_main(cks: &[String], tsc: Option<&str>) {
             mhz / 52.39,
             mhz - 52.39
         );
-        println!(
-            "WINDOW_SPIN vs nominal 3.15 rpm: ratio {:.6}",
-            rpm / 3.15
-        );
+        println!("WINDOW_SPIN vs nominal 3.15 rpm: ratio {:.6}", rpm / 3.15);
     } else {
         println!("WINDOW_SPIN none");
     }
 }
 
+fn harvest_names() -> Vec<String> {
+    let Some(html) = fetch_raw(NAIF_RTR, None, &[], 3600) else {
+        eprintln!("rtr index fetch void: {NAIF_RTR}");
+        return Vec::new();
+    };
+    let mut names: Vec<String> = Vec::new();
+    let mut rest: &str = &html;
+    while let Some(h) = rest.find("href=\"") {
+        rest = &rest[h + 6..];
+        let Some(e) = rest.find('"') else { break };
+        let name = &rest[..e];
+        if name.ends_with("_rtr.bc") {
+            names.push(name.to_string());
+        }
+        rest = &rest[e + 1..];
+    }
+    names.sort();
+    names.dedup();
+    names
+}
+
+fn harvest_main(tsc_arg: Option<&str>) {
+    let names = harvest_names();
+    println!("rtr series: {} rotor CK products", names.len());
+    if names.is_empty() {
+        return;
+    }
+    let dir = std::env::temp_dir().join("ck_daf_harvest");
+    let _ = std::fs::create_dir_all(&dir);
+    let mut paths: Vec<String> = Vec::new();
+    for name in &names {
+        let path = dir.join(name);
+        if !path.is_file() {
+            let url = format!("{NAIF_RTR}{name}");
+            match fetch_raw_bytes(&url, 3600) {
+                Some(bytes) => {
+                    if std::fs::write(&path, &bytes).is_err() {
+                        eprintln!("{name}: write void");
+                        continue;
+                    }
+                }
+                None => {
+                    eprintln!("{name}: fetch void ({url})");
+                    continue;
+                }
+            }
+        }
+        paths.push(path.to_string_lossy().into_owned());
+    }
+    println!(
+        "fetched {} of {} rotor CK products",
+        paths.len(),
+        names.len()
+    );
+    let tsc_path: Option<String> = match tsc_arg {
+        Some(p) => Some(p.to_string()),
+        None => {
+            let p = dir.join("mk00062a.tsc");
+            if !p.is_file() {
+                match fetch_raw_bytes(NAIF_SCLK, 3600) {
+                    Some(b) => {
+                        if std::fs::write(&p, &b).is_err() {
+                            eprintln!("sclk write void");
+                            return;
+                        }
+                    }
+                    None => {
+                        eprintln!("sclk fetch void: {NAIF_SCLK}");
+                        return;
+                    }
+                }
+            }
+            Some(p.to_string_lossy().into_owned())
+        }
+    };
+    rotor_main(&paths, tsc_path.as_deref());
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--harvest") {
+        let tsc_arg = args
+            .iter()
+            .find(|a| a.ends_with(".tsc"))
+            .map(String::as_str);
+        harvest_main(tsc_arg);
+        return;
+    }
     let mut cks: Vec<String> = Vec::new();
     let mut tsc_path: Option<String> = None;
     for a in args {
@@ -621,7 +734,11 @@ fn main() {
 
     let brk = tsc_path.as_deref().and_then(load_sclk_breaks);
     match &brk {
-        Some(b) => println!("sclk breakpoints loaded: {} (tsc={})", b.len(), tsc_path.as_deref().unwrap_or("")),
+        Some(b) => println!(
+            "sclk breakpoints loaded: {} (tsc={})",
+            b.len(),
+            tsc_path.as_deref().unwrap_or("")
+        ),
         None => println!("sclk breakpoints: none (coverage dates not decodable)"),
     }
     if brk.is_none() {
@@ -706,7 +823,10 @@ fn main() {
     if ega.is_empty() {
         println!("verdict: NO summary overlaps EGA-1 window 1990-12-07 00:00 .. 1990-12-11 00:00 (et [{EGA_LO:.0},{EGA_HI:.0}])");
     } else {
-        println!("verdict: {} summary/summaries overlap EGA-1 window:", ega.len());
+        println!(
+            "verdict: {} summary/summaries overlap EGA-1 window:",
+            ega.len()
+        );
         for &i in &ega {
             let s = &summaries[i];
             let e0 = tick_to_et(s.doubles[0], brk);
@@ -727,7 +847,11 @@ fn main() {
             match peek {
                 Ok(v) => {
                     let vals: Vec<String> = v.iter().map(|x| format!("{x:.6e}")).collect();
-                    println!("     payload addr {a0}..{a1} ({n} doubles), first {}: [{}]", v.len(), vals.join(", "));
+                    println!(
+                        "     payload addr {a0}..{a1} ({n} doubles), first {}: [{}]",
+                        v.len(),
+                        vals.join(", ")
+                    );
                 }
                 Err(e) => println!("     payload read error: {e}"),
             }

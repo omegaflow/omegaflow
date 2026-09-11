@@ -1,0 +1,30 @@
+name: depth-phase-fleet
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  depth-phase-fleet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the depth-phase fleet (events x stations, pP/sP legs)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin depth_phase_fleet_probe -- --max-events 8
+          } > depth-phase-fleet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: depth-phase-fleet
+          path: depth-phase-fleet.txt
