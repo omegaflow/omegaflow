@@ -326,10 +326,10 @@ fn read_planet_rows(path: &str) -> Result<HashMap<String, Vec<PlanetRow>>, Strin
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let mut seed = "docs/reference/jwst_detection_seed.json".to_string();
+    let mut seed = "docs/surveys/survey-jwst-detection-seed.json".to_string();
     let mut params = String::new();
-    let mut witness = "docs/reference/co_rhk_witness_seed.json".to_string();
-    let mut census = "docs/reference/jwst_host_census.json".to_string();
+    let mut witness = "docs/surveys/survey-co-rhk-witness-seed.json".to_string();
+    let mut census = "docs/surveys/survey-jwst-host-census.json".to_string();
     let mut out = "tmp/disequilibrium_register_verdict.txt".to_string();
     let mut floor = DEFAULT_FLOOR;
     let mut trials = DEFAULT_TRIALS;
