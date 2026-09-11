@@ -15,6 +15,7 @@ pub const MAGIC_CDM: [u8; 4] = *b"CDM1";
 pub const MAGIC_DCDB: [u8; 4] = *b"DCD1";
 pub const MAGIC_KEO: [u8; 4] = *b"KEO1";
 pub const MAGIC_WOD: [u8; 4] = *b"WOD1";
+pub const MAGIC_HINET: [u8; 4] = *b"HNT1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -96,6 +97,10 @@ pub const COMP_WOD_TEMP: u32 = 1;
 pub const COMP_WOD_PSAL: u32 = 2;
 pub const COMP_WOD_DOXY: u32 = 3;
 pub const COMP_WOD_MAX: u32 = 3;
+
+pub const COMP_HINET_U: u32 = 1;
+pub const COMP_HINET_E: u32 = 2;
+pub const COMP_HINET_N: u32 = 3;
 
 pub struct GeoRec {
     pub t: f64,
