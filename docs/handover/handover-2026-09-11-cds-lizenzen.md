@@ -3,7 +3,7 @@
   session: Quellen-Browser
   class: handover
   date: 2026-09-11
-  sha256: 44ff5e11c356542b21e3fd87b4bbd5827cf94b393d56d1c2a3d19418c1761412
+  sha256: 289345a3187c420a6cd021cfec8b21f2c4910b924890d9bbc9f743a4c679648b
   status: live
 -->
 # Handover — CDS-Lizenzen + NOIRLab-TAP (2026-09-11)
@@ -29,13 +29,22 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   USCRN-Datenpolitik angenommen, `Submit form` disabled). Bleibt `pending` in
   `phi/blocked_sources.φ`; nur die Form-Closure offen.
 
-## NOIRLab Astro Data Lab — Parser
+## NOIRLab Astro Data Lab — Frage (Rat 2026-09-11)
 
 - Registrierung abgelehnt (Nikutta 2026-09-11), aber TAP public + LS DR10 +
   DECaPS offen: anonym gemessen (`ls_dr10.tractor`, `decaps_dr2.object`,
   FORMAT=csv). `phi/blocked_sources.φ`: `blocked account` → `blocked parser-def
-  csv-header`. Offen: CSV-Header-Parser (derselbe Gap wie ESO `tap_obs`/
-  `tap_cat`) oder ein dedizierter Compiler wie `des_coverage_compiler`.
+  csv-header`, mit der Frage-Referenz im Eintrag.
+- **Keine Ernte heute** (Rat, einmütig): Tor 1 — keine registrierte Frage
+  frisst reine Photometrie; das 44-Byte-Sternfeld verlangt plx>0 + endliches
+  rv, LS DR10/DECaPS tragen rv nicht (rv=0.0 wäre Fabrication).
+- **Die Frage benennen** — „Frisst das Feld die tiefe Photometrie zwischen den
+  Gaia-Sternen — als Richtungs-Stern mit Farbe (Distanz absent) und als
+  3D-Stern, wo der Gaia-Crossmatch die Distanz trägt?" Konsument = eine
+  photometrische Record-Klasse (Richtung + mag/Flux + Farbe,
+  Distanz-Präsenz-Bit, niemals rv=0.0) plus die plx>0-Teilmenge als
+  Sternproben-Erweiterung. Wer die Zeile annimmt: Klasse bauen oder gemessen
+  freigeben (descoped mit Befund), nie ein Regal.
 
 ## Abschluss
 
