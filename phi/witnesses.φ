@@ -8,10 +8,10 @@
 # Disposition: witness s2-direction | witness gestalt | witness presence. Sortiert nach Art, dann URL.
 
 witness s2-direction
-url https://api.antares.noirlab.edu/v1/loci?limit=20
+url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
 record skydirection
 force em
-note ANTARES-REST anonym offen (2026-09-06 gemessen HTTP 200), ZTF-Transienten-Loci mit attributes.ra/attributes.dec + attributes.properties.{newest,brightest,oldest}_alert_magnitude (echte em-mag-Messwerte, Band absent — unbanded gehalten). Zeugen-Art S²-Richtung (distanzlos, τ=0), gehalten via skydirection_compiler (SkyDirection-Records). Crossmatch gemessen (2026-09-07, direction_distance_join/Gaia DR3 im 5-arcsec-Kegel + direction_z_join/NED-objdir im 30-arcsec-Kegel, ueber das gehaltene Asset skydirections.bin): 0 der 10 gehaltenen Loci tragen eine gemessene Distanz - kein Gaia-Parallax-Record und kein NED-z im Kegel; die 10 bleiben ehrlich DirectionOnly, die Abwesenheit der Distanz ist gemessen, kein positions-pending mehr (0 honored). Distanz kommt nur durch den Join, nie erraten.
+note ANTARES-REST anonym offen (2026-09-06 gemessen HTTP 200), ZTF-Transienten-Loci mit attributes.ra/attributes.dec + attributes.properties.{newest,brightest,oldest}_alert_magnitude (echte em-mag-Messwerte, Band absent — unbanded gehalten). Zeugen-Art S²-Richtung (distanzlos, τ=0), gehalten via skydirection_compiler (SkyDirection-Records). Bestand gemessen (2026-09-11): meta.count = 10000 Loci; die Pagination läuft page[limit]/page[offset] (gemessen geehrt bis page[limit]=10000), der bare limit-Parameter ist tot (ignoriert) — der Harvest hält den vollen Bestand über page[limit]=1000-Seiten. Crossmatch gemessen (2026-09-07, direction_distance_join/Gaia DR3 im 5-arcsec-Kegel + direction_z_join/NED-objdir im 30-arcsec-Kegel, ueber das gehaltene Asset skydirections.bin): 0 der 10 gehaltenen Loci tragen eine gemessene Distanz - kein Gaia-Parallax-Record und kein NED-z im Kegel; die 10 bleiben ehrlich DirectionOnly, die Abwesenheit der Distanz ist gemessen, kein positions-pending mehr (0 honored). Distanz kommt nur durch den Join, nie erraten.
 
 witness s2-direction
 url https://api.lsst.fink-portal.org/api/v1/conesearch
