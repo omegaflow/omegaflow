@@ -14,7 +14,11 @@ jobs:
       - name: Compile 2MASS PSC J-band selection and upload to CDN
         run: |
           mkdir -p kernels
-          if gh release view irsa.ipac.caltech.edu --repo omegaflow/sources --json assets 2>/dev/null | grep -q twomass_psc.bin; then
+          if ! gh release view irsa.ipac.caltech.edu --repo omegaflow/sources --json assets 2>/tmp/gh_listing.err > /tmp/twomass_assets.json; then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          if grep -q twomass_psc.bin /tmp/twomass_assets.json; then
             echo "twomass_psc.bin present — harvest stands"
             exit 0
           fi
