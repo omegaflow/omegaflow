@@ -199,7 +199,7 @@ registered for manifestation (or the operator names the pending explicitly).
 
 ## Stack
 
-Rust `std`-only + `curl`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files. The complete intelligence lives under omegaflow's name — an internal tool is self-contained (own fetch, own parse, own logic) and never depends on omegaflow's own external release; an external tool (vo-tap, the IVOA TAP client) is a separate project that carries none of it out.
+Rust `std`-only + `curl`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files. The complete intelligence lives under omegaflow's name — an internal tool is self-contained (own fetch, own parse, own logic) and never depends on omegaflow's own external release; an external tool is a separate project that carries none of it out.
 
 
 
