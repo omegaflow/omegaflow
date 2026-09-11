@@ -4,7 +4,7 @@
   class: handover
   date: 2026-09-11
   sha256: 0eb8ba2a69324b661bd40558e3b9aa8f33979bb977648388703302750e9c90eb
-  status: live
+  status: archived
 -->
 # Handover — Forschung-Folge (2026-09-11)
 
