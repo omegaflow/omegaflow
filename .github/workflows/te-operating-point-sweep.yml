@@ -45,6 +45,14 @@ jobs:
             args: --anchor --gate --null residual --null-lag 24
           - point: 16-shift
             args: --anchor --gate --null shift
+          - point: 17-n1000-block-binned
+            args: --anchor --gate --gate-n 1000 --block 10 --null block --est binned
+          - point: 18-n1000-block-ksg
+            args: --anchor --gate --gate-n 1000 --block 10 --null block --est ksg
+          - point: 19-n1000-shift-binned
+            args: --anchor --gate --gate-n 1000 --block 10 --null shift --est binned
+          - point: 20-n1000-shift-ksg
+            args: --anchor --gate --gate-n 1000 --block 10 --null shift --est ksg
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
