@@ -4,7 +4,7 @@
   class: handover
   date: 2026-09-11
   sha256: 34b43a4adebcde15cf85fe0db3c18b23903102122c91b6af42476f6aaa33979f
-  status: live
+  status: archived
 -->
 # Handover — Bau & Code (2026-09-11, Bau7)
 
