@@ -23,6 +23,7 @@ pub use archivar::cdf;
 pub use archivar::cdf25;
 pub use archivar::cdn;
 pub use archivar::cif;
+pub use archivar::copernicus;
 pub use archivar::dastcom;
 pub use archivar::demeter;
 pub use archivar::des_y6;
