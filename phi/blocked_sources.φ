@@ -92,6 +92,78 @@ blocked parser-def votable
 url https://almascience.nrao.edu/tap
 note ALMA-TAP (NA) — VOTable-only; FORMAT=csv/json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
 
+blocked parser-def votable
+url https://api.skymapper.nci.org.au/public/tap
+note SkyMapper-TAP (NCI, CASDA-Envelope) — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://atoavo.atnf.csiro.au/tap
+note ATNF ATOAVO-TAP — VOTable-only (CASDA); FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://casda.csiro.au/casda_vo_tools/tap
+note CASDA-TAP (ATCA/ASKAP/Parkes) — VOTable-only (CASDA); FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://cda.cfa.harvard.edu/csc1tap
+note Chandra Source Catalog r1 TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://cda.cfa.harvard.edu/csc21tap
+note Chandra Source Catalog r2.1 TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://cda.cfa.harvard.edu/csc2tap
+note Chandra Source Catalog r2 TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://cda.cfa.harvard.edu/csctap
+note Chandra Source Catalog TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://cda.harvard.edu/cxctap
+note Chandra CDA TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://data.csiro.au/psrdavo/tap
+note ATNF-Pulsar-Archiv (PSRDA) TAP — VOTable-only (CASDA); FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://gaia.aip.de/tap
+note Gaia-Mirror (AIP DaCHS) — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gaia-Bestand via dr3_stars.bin in sources.φ. Gap: VOTable-Parser.
+
+blocked parser-def votable
+url http://ia2-tap.oats.inaf.it:8080/wgetap
+note WGE-SDSS (Laurino 2011) TAP — VOTable-only (unknown format: json); FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url http://machotap.asvo.nci.org.au/ncitap//tap
+note MACHO-TAP (NCI, CASDA-Envelope) — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://musewide.aip.de/tap
+note MUSE-Wide-TAP (AIP DaCHS) — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://userquery.linea.org.br/tap
+note LIneA (DES) userquery-TAP — VOTable-only (json 400); FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url http://wiggleztap.asvo.nci.org.au/ncitap//tap
+note WiggleZ-TAP (NCI, CASDA-Envelope) — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://ws-uv.canfar.net/youcat
+note CADC youcat-TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://www.lamost.org/dr10/v2.0/voservice/tap
+note LAMOST DR10-TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
+blocked parser-def votable
+url https://www.lamost.org/dr11/v2.0/voservice/tap
+note LAMOST DR11-TAP — VOTable-only; FORMAT=json nicht konsumierbar (gemessen 2026-09-11). Gap: VOTable-Parser.
+
 blocked parser-def csv-header
 url http://archive.eso.org/tap_cat
 note ESO tap_cat — echte CSV, aber die Probe klassifiziert Header-CSV nicht. Gap: CSV-Header-Parser.
