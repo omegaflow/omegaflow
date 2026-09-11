@@ -3,7 +3,7 @@
   session: Entscheid-Folge
   class: handover
   date: 2026-09-11
-  sha256: d5a728030279bf7319359fdb9518e6b9f60ae9635da87c971ca5e8ff2d687011
+  sha256: 4ebcb3733f9996c61a5fea88d422fe1ffded53ecd8c92deaee596c138d1b5c61
   status: live
 -->
 # Handover — Entscheid-Folge (2026-09-11)
@@ -29,13 +29,11 @@ nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
   (bodies-Job grün + jup365-Release am CDN).
 - 2026-09-14 — ned-Crawl: Void-Kegel-Fix + Listing-Void-Abbruch auf `main`; CDN
   1/40 Slices (gemessen 2026-09-11), nächster Cron-Lauf.
-- 2026-09-15 — Token-Tausch verifizieren: `OMEGAFLOW_TOKEN` ersetzt durch einen
-  PAT von `johannestyroller` (eigenes 5.000/h-Bucket pro Konto, gemessen
-  2026-09-11; App bringt bei 2 Repos nichts — gleiches Mindestkontingent).
-  Operator-Schritte: Collaborator-write auf `omegaflow/sources` + PAT
-  (Contents-write) + Secret tauschen. Nächster `kernel-flatten`-Dispatch
-  verifiziert (grün + kein Rate-Limit-Hit). johannestyrollers eigene
-  Bucket-Nutzung ist vor dem Tausch ungemessen.
+- 2026-09-14 — Token-Tausch verifizieren: `OMEGAFLOW_TOKEN` trägt jetzt einen
+  classic PAT von `johannestyroller` (`public_repo`, eigenes 5.000/h-Bucket;
+  API-gemessen 2026-09-11: `push:true` auf `omegaflow/sources`, Bucket frisch
+  4999/5000). Der nächste `kernel-flatten`-Dispatch verifiziert (grün + kein
+  Rate-Limit-Hit).
 - 2026-09-15 — LISA Pathfinder: Selbstregistrierung ab 15.09.
 - 2026-09-16 — ned-objdir: IPAC-Auto-Bestätigung 2026-09-09, Antwort offen.
 - 2026-09-18 — NOIRLab Data Lab: `jtyroller` registriert 2026-09-11, wartet auf
