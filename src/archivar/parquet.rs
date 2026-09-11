@@ -232,7 +232,8 @@ impl<'a> Compact<'a> {
         let id = if delta == 0 {
             self.i16()?
         } else {
-            last.checked_add(delta).ok_or(ParquetNote::FieldId { off })?
+            last.checked_add(delta)
+                .ok_or(ParquetNote::FieldId { off })?
         };
         Ok((ctype, id))
     }
@@ -324,7 +325,10 @@ impl<'a> Compact<'a> {
     ) -> Result<Vec<T>, ParquetNote> {
         let (etype, size) = self.list_header()?;
         if etype != CT_STRUCT {
-            return Err(ParquetNote::Type { tag: etype, off: self.pos });
+            return Err(ParquetNote::Type {
+                tag: etype,
+                off: self.pos,
+            });
         }
         let mut out = Vec::new();
         for _ in 0..size {
@@ -336,7 +340,10 @@ impl<'a> Compact<'a> {
     fn i32_list(&mut self) -> Result<Vec<i32>, ParquetNote> {
         let (etype, size) = self.list_header()?;
         if etype != CT_I32 {
-            return Err(ParquetNote::Type { tag: etype, off: self.pos });
+            return Err(ParquetNote::Type {
+                tag: etype,
+                off: self.pos,
+            });
         }
         let mut out = Vec::new();
         for _ in 0..size {
@@ -348,7 +355,10 @@ impl<'a> Compact<'a> {
     fn string_list(&mut self) -> Result<Vec<String>, ParquetNote> {
         let (etype, size) = self.list_header()?;
         if etype != CT_BINARY {
-            return Err(ParquetNote::Type { tag: etype, off: self.pos });
+            return Err(ParquetNote::Type {
+                tag: etype,
+                off: self.pos,
+            });
         }
         let mut out = Vec::new();
         for _ in 0..size {
