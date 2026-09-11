@@ -2,7 +2,7 @@
   title: Handover — Bau & Code (Stand 2026-09-11, Bau2)
   class: handover
   date: 2026-09-11
-  sha256: b014ae9d0070b4b4668329666a17b06dc0e527a110e52c0027ff8e00b92e50a0
+  sha256: 6b0c35e16fd4661973e437f57450d11292c09eb4e27f8235cce3f906d676f76b
   status: live
 -->
 # Handover — Bau & Code (2026-09-11, Bau2)
@@ -10,7 +10,7 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
 viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand.
+ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
 ## Compiler & Format
 
