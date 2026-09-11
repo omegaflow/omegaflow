@@ -2,7 +2,7 @@
   title: Galileo rotor-spin Doppler line and the era-confounded residue floor
   class: paper
   date: 2026-09-05
-  sha256: 345ac23dc788be3b92f9cf8bfa7be95cfa6fa2fa5adaae9fd4bf83a16051593b
+  sha256: 539a2486a947f2e339ab4f78172c8841477f05503f739f4872be2b42114c4021
   status: live
   see-also: tools/measure/src/bin/ck_daf_probe.rs tools/measure/src/bin/galileo_era_cycle_probe.rs tools/measure/src/bin/galileo_band_probe.rs tools/measure/src/bin/galileo_spec_te.rs
 -->
@@ -106,6 +106,21 @@ together are the complete attitude statement: the low-gain antennas on the
 spinning rotor see the 52.39 mHz rotation during the Earth-encounter window, the
 despun platform does not.
 
+**Local-holdings decode.** The rotor rate above is reproduced from the files in
+local holdings. The eight prime-mission rotor products `ck90341a_rtr.bc`,
+`ck90341b_rtr.bc`, `ck90342a_rtr.bc`, `ck90342b_rtr.bc`, `ck90343a_rtr.bc`,
+`ck90343b_rtr.bc`, `ck90344a_rtr.bc`, `ck90344b_rtr.bc` decode to 494 segments
+and 489 953 pointing records; the SCLK kernel is local (`mk00062a.tsc`, partition
+77, 110 breakpoints). The window across the eight files is 1990-12-07 ~00:55 to
+1990-12-11 ~00:06 - the EGA-1 window, the only rotor-CK window in local holdings.
+The WINDOW_SPIN is rate 0.329176431 rad/s, period 19.087592 s, 3.143403 rpm,
+52.390056 mHz: against the 19.10 s label the ratio is 0.999350 (delta -0.0124 s),
+against 52.39 mHz it is 1.000001, against the 3.15 rpm nominal it is 0.997906. The
+local platform product `ck90342a_plt.bc` carries frame -77001 in all 65 segments
+and no -77000 segment; the large `gll_plt_rec_1990_tav_v00.bc` is LTL-IEEE and
+the boxed BIG-IEEE reader does not read it - it is the despun platform (frame
+-77001), so it carries no rotor spin.
+
 **The noise floor is era-confounded, not plasma-elongation-driven.** The coherent
 modes are quiet at conjunction and loud at opposition:
 
@@ -195,6 +210,11 @@ or cadence fields (directed transfer entropy null; same-day association null),
 and not a surviving geometry law of the measured magnitude (era control collapses
 the 70x/17x contrast to 1.9x/2.4x). The floor is era/solar-cycle/distance-
 confounded and decoupled from the recorded fields.
+
+**Pending.** The full frame -77000 all-spin-bus CK series beyond the four-day
+EGA-1 window (1990-12-07 to 1990-12-11) is not harvested; the local holdings
+carry only that window. The spin history of the remaining mission epochs is a
+register duty, not a measured value.
 
 ## 5. References
 
