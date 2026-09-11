@@ -4500,7 +4500,7 @@ note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
 
 decline registry
 url https://registry.euro-vo.org/regtap/tap
-note RegTAP-Service-Registry (ivo://esavo/registry/tap) — rr.*-Verzeichnis der TAP-Dienste, kein Messwert-Feld; der Endpoint wird als RegTAP-Quelle gelesen (vo-tap import), nicht als Datenquelle. tap-klassifikation 2026-09-10.
+note RegTAP-Service-Registry (ivo://esavo/registry/tap) — rr.*-Verzeichnis der TAP-Dienste, kein Messwert-Feld; der Endpoint wird als RegTAP-Quelle gelesen (regtap_census import), nicht als Datenquelle. tap-klassifikation 2026-09-10.
 
 decline registry
 url http://voparis-rr.obspm.fr/tap
