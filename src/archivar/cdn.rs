@@ -1,8 +1,29 @@
+use std::collections::HashSet;
 use std::process::Command;
+use std::sync::{Mutex, OnceLock};
 
 pub const CDN_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
+
+static VERIFIED_RELEASES: OnceLock<Mutex<HashSet<String>>> = OnceLock::new();
+
+fn verified_releases() -> &'static Mutex<HashSet<String>> {
+    VERIFIED_RELEASES.get_or_init(|| Mutex::new(HashSet::new()))
+}
+
+fn release_verified(tag: &str) -> bool {
+    verified_releases()
+        .lock()
+        .map(|set| set.contains(tag))
+        .unwrap_or(false)
+}
+
+fn mark_release_verified(tag: &str) {
+    if let Ok(mut set) = verified_releases().lock() {
+        set.insert(tag.to_string());
+    }
+}
 
 pub fn upload_asset(path: &str) -> bool {
     upload_release(CDN_RELEASE, path)
@@ -51,6 +72,9 @@ pub fn ensure_release(tag: &str) -> bool {
     if std::env::var("GH_TOKEN").is_err() {
         return false;
     }
+    if release_verified(tag) {
+        return true;
+    }
     let view = Command::new("gh")
         .arg("release")
         .arg("view")
@@ -59,6 +83,7 @@ pub fn ensure_release(tag: &str) -> bool {
         .arg(CDN_REPO)
         .output();
     if view.map(|o| o.status.success()).unwrap_or(false) {
+        mark_release_verified(tag);
         return true;
     }
     let out = Command::new("gh")
@@ -73,7 +98,10 @@ pub fn ensure_release(tag: &str) -> bool {
         .arg("reference dataset mirror")
         .output();
     match out {
-        Ok(o) if o.status.success() => true,
+        Ok(o) if o.status.success() => {
+            mark_release_verified(tag);
+            true
+        }
         Ok(o) => {
             eprintln!(
                 "ensure release {}: gh returned void: {}",

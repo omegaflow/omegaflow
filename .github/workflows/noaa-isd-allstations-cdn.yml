@@ -78,8 +78,11 @@ jobs:
           echo "shard ${SHARD}/${SHARDS}: $(wc -l < shard_stations.txt) of $(wc -l < stations.txt) stations"
 
           # idempotence: the assets already on the CDN release are skipped
-          gh release view "$RELEASE" --repo "$REPO" --json assets \
-            --jq '.assets[].name' 2>/dev/null > assets.txt || true
+          if ! gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '.assets[].name' 2>/tmp/gh_listing.err > assets.txt; then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
 
           if [ -n "$MONTH" ]; then suffix="${YEAR}-${MONTH}"; else suffix="${YEAR}"; fi
           deadline=$(( $(date +%s) + BUDGET ))
