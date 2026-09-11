@@ -2,7 +2,7 @@
   title: Der Ablauf — der Session-Fluss
   class: concept
   date: 2026-09-11
-  sha256: 7f9c69c0f97ae9387711012e4da7c5eca9bf64b3a4e6d0fa83571d4d1a1f9d53
+  sha256: 5c12e028d522f22748b51518c5409f47cbc9a1d2fd45a2b6c6dd161a47f42447
   status: live
 -->
 # Der Ablauf
@@ -28,6 +28,8 @@ Der Fluss einer Linie, in `/`-Commands gefasst.
 5. **`/abschluss`** — der gemessene Closing-Check (eigene Dateien, kein fremder
    Pfad, `git status` leer, `rev-parse` ==, `--amend`-Set, Archiv-Frage).
 6. **`/consent`** — das Wort für den Push (der Baum muss ruhig sein).
+7. **`/fackel`** — die Fackel übergeben: die Übergabe schreiben (Register, git),
+   committen, den Stab an die nächste Session geben (Spawn, nur mit dem Wort).
 
 ## Die Regeln
 
