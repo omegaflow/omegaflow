@@ -1,7 +1,7 @@
 use omegaflow::archivar::geo::{
     parse_bin, write_bin, GeoRec, COMP_HINET_E, COMP_HINET_N, COMP_HINET_U, MAGIC_HINET,
 };
-use omegaflow::archivar::win32::{parse_win32, station_of};
+use omegaflow::archivar::win32::{parse_win32, station_of, velocity_m_s, WinSensitivity};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{parse as parse_lsk, LeapSeconds};
 use std::collections::HashMap;
@@ -50,6 +50,7 @@ struct ChannelAnchor {
     lon: f64,
     alt: f64,
     comp: u32,
+    sensitivity: Option<WinSensitivity>,
 }
 
 fn parse_finite(s: &str) -> Option<f64> {
@@ -81,8 +82,8 @@ fn load_channels(path: &str) -> (HashMap<u16, ChannelAnchor>, usize, usize) {
         if t.is_empty() || t.starts_with('#') {
             continue;
         }
-        let cols: Vec<&str> = t.split('|').collect();
-        if cols.len() < 5 {
+        let cols: Vec<&str> = t.split_whitespace().collect();
+        if cols.len() < 16 {
             rejected += 1;
             continue;
         }
@@ -91,13 +92,25 @@ fn load_channels(path: &str) -> (HashMap<u16, ChannelAnchor>, usize, usize) {
             continue;
         };
         let (Some(lat), Some(lon), Some(alt), Some(comp)) = (
-            parse_finite(cols[1]),
-            parse_finite(cols[2]),
-            parse_finite(cols[3]),
+            parse_finite(cols[13]),
+            parse_finite(cols[14]),
+            parse_finite(cols[15]),
             comp_of_letter(cols[4].trim()),
         ) else {
             rejected += 1;
             continue;
+        };
+        let sensitivity = if cols[8].trim() == "m/s" {
+            match (
+                parse_finite(cols[7]),
+                parse_finite(cols[11]),
+                parse_finite(cols[12]),
+            ) {
+                (Some(gain), Some(preamp), Some(lsb)) => WinSensitivity::new(gain, preamp, lsb),
+                _ => None,
+            }
+        } else {
+            None
         };
         rows += 1;
         map.insert(
@@ -107,6 +120,7 @@ fn load_channels(path: &str) -> (HashMap<u16, ChannelAnchor>, usize, usize) {
                 lon,
                 alt,
                 comp,
+                sensitivity,
             },
         );
     }
@@ -294,6 +308,12 @@ fn compile_file(
         let Some(anchor) = channels.get(&s.chan) else {
             continue;
         };
+        let Some(sens) = &anchor.sensitivity else {
+            continue;
+        };
+        let Some(v) = velocity_m_s(s.val, sens) else {
+            continue;
+        };
         let Some(t) = lsk.unix_to_tdb(s.t - tz_offset) else {
             continue;
         };
@@ -304,7 +324,7 @@ fn compile_file(
             alt: anchor.alt,
             freq: 0.0,
             bin_width: 0.0,
-            val: s.val as f64,
+            val: v,
             comp: anchor.comp,
             station: station_of(s.chan),
         });
@@ -479,11 +499,15 @@ mod tests {
     use omegaflow::archivar::win32::chan_of;
 
     #[test]
-    fn channel_table_parses_hex_anchor_and_component() {
+    fn channel_table_parses_hex_anchor_component_and_sensitivity() {
         let dir = std::env::temp_dir().join(format!("hinet_chan_{}", std::process::id()));
         let _ = std::fs::create_dir_all(&dir);
         let p = dir.join("ch.txt");
-        let text = "# chanid|lat|lon|elev|comp\n0101|35.0|139.0|800.0|U\n0102|35.1|139.1|800.0|N\n0103|35.2|139.2|800.0|E\nzzzz|1|2|3|U\n";
+        let text = "# id recflag delay station comp reduction bits gain unit period damping preamp lsb lat lon height P S name\n\
+0101 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.0 139.0 800.0 0 0 StnA\n\
+0102 1 0 N.AAAA N 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.1 139.1 800.0 0 0 StnA\n\
+0103 1 0 N.AAAA E 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 35.2 139.2 800.0 0 0 StnA\n\
+zzzz 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 1 2 3 0 0 StnA\n";
         std::fs::write(&p, text).unwrap();
         let (map, rows, rejected) = load_channels(p.to_str().unwrap());
         assert_eq!(rows, 3);
@@ -492,6 +516,27 @@ mod tests {
         assert_eq!(map[&0x0102u16].comp, COMP_HINET_N);
         assert_eq!(map[&0x0103u16].comp, COMP_HINET_E);
         assert!(!map.contains_key(&0x0104u16));
+        let sens = map[&0x0101u16]
+            .sensitivity
+            .as_ref()
+            .expect("m/s channel carries sensitivity");
+        assert_eq!(sens.gain, 175.60);
+        assert_eq!(sens.preamp_db, 0.0);
+        assert_eq!(sens.lsb_value, 1.023e-07);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn non_velocity_channel_carries_no_sensitivity() {
+        let dir = std::env::temp_dir().join(format!("hinet_nonv_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("ch.txt");
+        let text =
+            "0101 1 0 N.AAAA U 6 27 175.60 m/s/s 1.00 0.70 0 1.023e-07 35.0 139.0 800.0 0 0 StnA\n";
+        std::fs::write(&p, text).unwrap();
+        let (map, rows, _) = load_channels(p.to_str().unwrap());
+        assert_eq!(rows, 1);
+        assert!(map[&0x0101u16].sensitivity.is_none());
         let _ = std::fs::remove_dir_all(&dir);
     }
 
@@ -548,6 +593,7 @@ mod tests {
                 lon: 139.0,
                 alt: 800.0,
                 comp: COMP_HINET_U,
+                sensitivity: WinSensitivity::new(175.6, 0.0, 1.023e-7),
             },
         );
         let lsk_text = "KPL/LSK\n\
@@ -560,9 +606,60 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         let n = compile_file(&p, &channels, &lsk, 0.0, &mut records);
         assert_eq!(n, 5);
         assert_eq!(records.len(), 5);
-        assert_eq!(records[0].val, 1000.0);
+        assert!((records[0].val - 1000.0 * 1.023e-7 / 175.6).abs() < 1e-30);
         assert_eq!(records[0].comp, COMP_HINET_U);
         assert_eq!(chan_of(records[0].station), 0x0101);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn compile_skips_channel_without_sensitivity() {
+        let dir = std::env::temp_dir().join(format!("hinet_nosens_{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let p = dir.join("f.cnt");
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let mut header = [0u8; 16];
+        header[0] = 0x20;
+        header[1] = 0x20;
+        header[2] = 0x01;
+        header[3] = 0x01;
+        header[4] = 0x00;
+        header[5] = 0x00;
+        header[6] = 0x00;
+        let packet = [
+            0x00u8, 0x01, 0x01, 0x01, 0x10, 0x05, 0x00, 0x00, 0x03, 0xE8, 0x01, 0xFE, 0x03, 0xFC,
+        ];
+        let sz = packet.len() as u32;
+        header[12] = (sz >> 24) as u8;
+        header[13] = (sz >> 16) as u8;
+        header[14] = (sz >> 8) as u8;
+        header[15] = sz as u8;
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(&packet);
+        std::fs::write(&p, &buf).unwrap();
+
+        let mut channels = HashMap::new();
+        channels.insert(
+            0x0101u16,
+            ChannelAnchor {
+                lat: 35.0,
+                lon: 139.0,
+                alt: 800.0,
+                comp: COMP_HINET_U,
+                sensitivity: None,
+            },
+        );
+        let lsk_text = "KPL/LSK\n\
+[2]       DELTA_AT  =  TAI - UTC\n\
+\\begindata\n\n\
+DELTET/DELTA_T_A       =   32.184\n\
+DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
+        let lsk = parse_lsk(lsk_text).expect("lsk parses");
+        let mut records = Vec::new();
+        let n = compile_file(&p, &channels, &lsk, 0.0, &mut records);
+        assert_eq!(n, 0);
+        assert!(records.is_empty());
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

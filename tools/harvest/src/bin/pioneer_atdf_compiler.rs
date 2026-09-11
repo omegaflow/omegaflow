@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::atdf::{parse_bin, reduce_skyfreq, write_bin, S_BAND_REF_HI, S_BAND_REF_LO};
 use omegaflow::cdn::upload_release;
@@ -64,12 +67,19 @@ fn main() {
         return;
     };
     let mut merged: Vec<[f64; 14]> = Vec::new();
+    let mut seen: HashMap<String, String> = HashMap::new();
     for (fid, name) in files.iter().enumerate() {
         let url = format!("{LISTING}{name}");
         let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };
+        let digest = sha256_hex(&bytes);
+        if let Some(first) = seen.get(&digest) {
+            eprintln!("{name}: sha256 {digest} — alias of {first} (counted once)");
+            continue;
+        }
+        seen.insert(digest, name.clone());
         if let Some(samples) =
             reduce_skyfreq(name, fid as f64, &bytes, &lsk, S_BAND_REF_LO, S_BAND_REF_HI)
         {
