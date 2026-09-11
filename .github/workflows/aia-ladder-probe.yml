@@ -1,0 +1,39 @@
+name: aia-ladder-probe
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ladder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - year: 2013
+            asset: aia2013_fullyear.bin
+          - year: 2015
+            asset: aia2015_fullyear.bin
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the AIA line series from the CDN
+        run: |
+          gh release download jsoc.stanford.edu --repo omegaflow/sources \
+            --pattern "${{ matrix.asset }}" --clobber
+      - name: Run the AIA temperature-ladder TE (AIA-304 trigger)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "YEAR ${{ matrix.year }}"
+            cargo run --release -p omegaflow-measure --bin aia_ladder_probe -- --aia "${{ matrix.asset }}"
+          } > "aia-ladder-${{ matrix.year }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aia-ladder-${{ matrix.year }}
+          path: aia-ladder-${{ matrix.year }}.txt
