@@ -1995,7 +1995,13 @@ pub fn main_flow() {
             }
             if matches!(
                 archive.sources[i].format.as_str(),
-                "rpw_efield" | "goes_xrs" | "omni2_serie" | "mitdb" | "circor" | "ltmm"
+                "rpw_efield"
+                    | "goes_xrs"
+                    | "omni2_serie"
+                    | "mitdb"
+                    | "circor"
+                    | "ltmm"
+                    | "noaa_ccor"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

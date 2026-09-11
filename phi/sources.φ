@@ -5464,6 +5464,24 @@ ttl 604800
 on earth 19.48 -155.6 0
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
 
+url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux planck_ercsc_857ghz_flux_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://dachs.oca.eu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,abs_mag,diameter+FROM+mp3c_main.best+WHERE+abs_mag+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field abs_mag mp3c_asteroid_abs_mag inverse-square em mag 604800 0.0 0.0
+
 url https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
 ttl 604800
 on earth 0 0 0
@@ -5490,6 +5508,17 @@ epoch JULD
 alt PRES decibar
 field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
 field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
+
+url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra_dr2
+dec dec_dr2
+plx parallax
+field teff galah_dr3_effective_temp_k erfc thermal K 604800 0.0 0.0
+field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
 ttl 604800
@@ -5522,6 +5551,16 @@ dist Dist
 dist_scale 3.085677581e22
 field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
 
+url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+plx plx
+field mag_v hipparcos_v_mag inverse-square em mag 604800 0.0 0.0
+
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 ttl 604800
 at sun
@@ -5531,6 +5570,17 @@ dec dec
 dist sy_dist
 dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra radeg
+dec dedeg
+plx plx
+field hrv rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
+field teff rave_dr4_effective_temp_k erfc thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 format bl_narrowband
@@ -6201,6 +6251,15 @@ field fnu_25 iras_fsc_flux_25um_jy inverse-square em Jy 604800 0.0 0.0
 field fnu_60 iras_fsc_flux_60um_jy inverse-square em Jy 604800 0.0 0.0
 field fnu_100 iras_fsc_flux_100um_jy inverse-square em Jy 604800 0.0 0.0
 
+url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux integral_source_flux_mcrab inverse-square em mCrab 604800 0.0 0.0
+
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 format kernel_text
 body naif0012
@@ -6221,6 +6280,26 @@ format kernel_text
 body pck00010
 ttl 604800
 
+url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field ep_flux xmm_epic_flux_wm2 inverse-square em W/m2 604800 0.0 0.0
+
+url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field gmag rcsed_g_fiber_mag inverse-square em mag 604800 0.0 0.0
+field rmag rcsed_r_fiber_mag inverse-square em mag 604800 0.0 0.0
+
 url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 604800
 at earth
@@ -6228,6 +6307,15 @@ map features
 lat properties.lat
 lon properties.long
 field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0
+
+url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag ogle_variable_mag inverse-square em mag 604800 0.0 0.0
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
 ttl 604800
@@ -6261,6 +6349,15 @@ field Jmag apogee_dr17_jmag gaussian-inverse-square em mag 604800 0.0 0.0
 field Hmag apogee_dr17_hmag gaussian-inverse-square em mag 604800 0.0 0.0
 field Ksmag apogee_dr17_ksmag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+catalogs.mmc_bzcat5th+WHERE+flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux bzcat5th_flux inverse-square em mJy 604800 0.0 0.0
+
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 ttl 604800
 format asu-tsv
@@ -6281,6 +6378,35 @@ ra RAJ2000
 dec DEJ2000
 field Stotal tgss_adr1_stotal_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 field Speak tgss_adr1_speak_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
+url https://vo.astron.nl/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux,peak_flux+FROM+lotss_dr2.main_sources+WHERE+total_flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field total_flux lotss_dr2_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field peak_flux lotss_dr2_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra al2000
+dec de2000
+field v hyperleda_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
+field bmag hyperleda_b_mag inverse-square em mag 604800 0.0 0.0
+
+url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 ttl 31536000
