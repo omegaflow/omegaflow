@@ -1,8 +1,8 @@
 use crate::geo::{
-    GeoRec, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX, COMP_GHCN_TMIN,
-    COMP_GSOD_DEWP, COMP_GSOD_GUST, COMP_GSOD_PRCP, COMP_GSOD_SLP, COMP_GSOD_TEMP, COMP_GSOD_TMAX,
-    COMP_GSOD_TMIN, COMP_GSOD_WDSP, COMP_ISD_DEWP, COMP_ISD_SLP, COMP_ISD_TEMP, COMP_ISD_WDIR,
-    COMP_ISD_WSPD,
+    GeoRec, COMP_DCDB_DEPTH, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX,
+    COMP_GHCN_TMIN, COMP_GSOD_DEWP, COMP_GSOD_GUST, COMP_GSOD_PRCP, COMP_GSOD_SLP, COMP_GSOD_TEMP,
+    COMP_GSOD_TMAX, COMP_GSOD_TMIN, COMP_GSOD_WDSP, COMP_ISD_DEWP, COMP_ISD_SLP, COMP_ISD_TEMP,
+    COMP_ISD_WDIR, COMP_ISD_WSPD,
 };
 use crate::lsk::LeapSeconds;
 use std::collections::HashMap;
@@ -383,6 +383,65 @@ pub fn parse_isd(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
                     }
                 }
             }
+        }
+    }
+    out
+}
+
+fn unix_of_iso(date: &str) -> Option<f64> {
+    let s = date.trim().trim_matches('"');
+    let s = s.strip_suffix('Z').unwrap_or(s);
+    let (dstr, tstr) = s.split_once('T')?;
+    let (y, m, d) = ymd_of(dstr)?;
+    let mut tp = tstr.split(':');
+    let hh: f64 = tp.next()?.parse().ok()?;
+    let mm: f64 = tp.next()?.parse().ok()?;
+    let ss: f64 = match tp.next() {
+        Some(v) => v.parse().ok()?,
+        None => 0.0,
+    };
+    unix_of_civil(y, m, d, hh * 3600.0 + mm * 60.0 + ss)
+}
+
+pub fn parse_dcdb(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
+    let mut lines = text.lines();
+    let Some(header) = lines.next() else {
+        return Vec::new();
+    };
+    let h = csv_fields(header);
+    let idx = |name: &str| h.iter().position(|c| c.trim_matches('"') == name);
+    let (Some(i_lon), Some(i_lat), Some(i_depth), Some(i_time)) =
+        (idx("LON"), idx("LAT"), idx("DEPTH"), idx("TIME"))
+    else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for line in lines {
+        if line.trim().is_empty() {
+            continue;
+        }
+        let f = csv_fields(line);
+        let (Some(lat), Some(lon), Some(depth)) = (
+            f.get(i_lat).and_then(|s| num(s)),
+            f.get(i_lon).and_then(|s| num(s)),
+            f.get(i_depth).and_then(|s| num(s)),
+        ) else {
+            continue;
+        };
+        if !(depth.is_finite() && depth >= 0.0) {
+            continue;
+        }
+        let Some(date) = f.get(i_time) else {
+            continue;
+        };
+        let Some(unix) = unix_of_iso(date) else {
+            continue;
+        };
+        let Some(tdb) = tdb_of(unix, lsk) else {
+            continue;
+        };
+        if let Some(r) = rec(tdb, lat, lon, -depth, 0.0, depth, COMP_DCDB_DEPTH) {
+            out.push(r);
         }
     }
     out

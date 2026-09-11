@@ -1,0 +1,61 @@
+name: copernicus-cuon-cdn
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: harvest year
+        required: true
+        type: string
+        default: "2020"
+      month:
+        description: harvest month (blank = whole year)
+        required: false
+        type: string
+        default: "01"
+      day:
+        description: harvest day (blank = whole month)
+        required: false
+        type: string
+        default: "01"
+      area:
+        description: bounding box north,west,south,east
+        required: true
+        type: string
+        default: "50,0,40,10"
+      asset:
+        description: output asset name on the CDN (netloc cds.climate.copernicus.eu)
+        required: true
+        type: string
+        default: copernicus_cuon_2020-01-01.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  CDS_API_KEY: ${{ secrets.CDS_API_KEY }}
+  RUSTFLAGS: -D warnings
+jobs:
+  copernicus-cuon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view cds.climate.copernicus.eu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile the CUON upper-air profiles and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          extra=()
+          if [ -n "${{ inputs.month }}" ]; then extra+=(--month "${{ inputs.month }}"); fi
+          if [ -n "${{ inputs.day }}" ]; then extra+=(--day "${{ inputs.day }}"); fi
+          cargo run -p omegaflow-harvest --release --bin copernicus_cuon_compiler -- \
+            --year "${{ inputs.year }}" "${extra[@]}" --area "${{ inputs.area }}" \
+            --out "${{ inputs.asset }}" --lsk kernels/naif0012.tls --ci-mode
