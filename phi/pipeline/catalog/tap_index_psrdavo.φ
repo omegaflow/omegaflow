@@ -1,0 +1,7 @@
+# tap inventory https://data.csiro.au/psrdavo/tap/sync
+catalog TAP_SCHEMA.keys TAP_SCHEMA table
+catalog TAP_SCHEMA.key_columns TAP_SCHEMA table
+catalog TAP_SCHEMA.columns TAP_SCHEMA table
+catalog TAP_SCHEMA.schemas TAP_SCHEMA table
+catalog TAP_SCHEMA.tables TAP_SCHEMA table
+catalog psrda.pulsar_obs psrda table
