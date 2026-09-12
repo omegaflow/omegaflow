@@ -2,9 +2,8 @@ use omegaflow::ak135::{
     free_surface_pp, free_surface_sp, p_p_rayparam, p_travel, surface_incidence_deg,
     surface_p_velocity, surface_s_velocity,
 };
-use omegaflow::archivar::fetch_raw;
+use omegaflow::archivar::ndk;
 use omegaflow_measure::iasp91;
-use omegaflow_measure::ndk;
 
 const PILOT_DEPTH_KM: f64 = 231.0;
 const PILOT_DELTA_DEG: f64 = 30.7;
@@ -114,11 +113,10 @@ fn main() {
 
     println!();
     println!("=== the CMT source term — the pP sign mix read from the focal mechanism ===");
-    let Some(ndk_body) = fetch_raw(GCMT_NDK_URL, None, &[], 3600) else {
+    let Some(events) = ndk::fetch_events(GCMT_NDK_URL, 3600) else {
         println!("no GCMT NDK body — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)");
         return;
     };
-    let events = ndk::parse_ndk(&ndk_body);
     let pilot = events
         .iter()
         .filter(|e| e.year == PILOT_YEAR && e.month == PILOT_MONTH && e.day == PILOT_DAY)
