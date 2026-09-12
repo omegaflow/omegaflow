@@ -7,30 +7,67 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
-  igets:
+  gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
-    concurrency:
-      group: igets-harvest
-      cancel-in-progress: false
+    outputs:
+      present: ${{ steps.check.outputs.present }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: check
         run: |
           if gh release view igetsftp.gfz.de --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "igets.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset igets.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset igets.bin missing — compiling and manifesting"
           fi
-          echo "asset igets.bin missing — compiling and manifesting"
+  stations:
+    needs: gate
+    if: needs.gate.outputs.present != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      stations: ${{ steps.list.outputs.stations }}
+      count: ${{ steps.list.outputs.count }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: List stations carrying a Level2 tree
+        id: list
+        env:
+          IGETS_USER: ${{ secrets.IGETS_USER }}
+          IGETS_PASS: ${{ secrets.IGETS_PASS }}
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin igets_compiler -- --list-stations > stations.txt
+          test -s stations.txt
+          jq -R -s -c 'split("\n") | map(select(length > 0))' stations.txt > stations.json
+          echo "stations=$(cat stations.json)" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq 'length' stations.json)" >> "$GITHUB_OUTPUT"
+  compile:
+    needs: stations
+    if: needs.stations.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        station: ${{ fromJSON(needs.stations.outputs.stations) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Restore harvest cache (resume the .ggp download across runs)
         uses: actions/cache@v4
         with:
           path: data/igetsftp.gfz.de
-          key: igets-ggp-v1
+          key: igets-ggp-v1-${{ matrix.station }}
           save-always: true
-      - name: Compile IGETS/GGP gravity series and upload to CDN
+      - name: Compile station gravity series
         env:
           IGETS_USER: ${{ secrets.IGETS_USER }}
           IGETS_PASS: ${{ secrets.IGETS_PASS }}
@@ -39,5 +76,31 @@ jobs:
           curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           cargo run -p omegaflow-harvest --release --bin igets_compiler -- \
-            --out-bin igets.bin --lsk kernels/naif0012.tls \
-            --cache data/igetsftp.gfz.de --level 2 --bucket-min 60 --ci-mode
+            --station ${{ matrix.station }} --level 2 --bucket-min 60 \
+            --out-bin igets-${{ matrix.station }}.bin --lsk kernels/naif0012.tls \
+            --cache data/igetsftp.gfz.de
+      - uses: actions/upload-artifact@v4
+        with:
+          name: igets-${{ matrix.station }}
+          path: igets-${{ matrix.station }}.bin
+  merge:
+    needs: [stations, compile]
+    if: needs.compile.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Collect station shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: igets-*
+          path: shards
+          merge-multiple: true
+      - name: Merge shards and upload to CDN
+        env:
+          IGETS_STATIONS: ${{ needs.stations.outputs.stations }}
+        run: |
+          cargo run -p omegaflow-harvest --release --bin igets_merge -- \
+            --in shards --stations ${{ needs.stations.outputs.count }} \
+            --out-bin igets.bin --ci-mode
