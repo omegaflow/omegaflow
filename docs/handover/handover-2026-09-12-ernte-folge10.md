@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 33a2b4ef60bbc8138232a45304106d3f2acaef130133c8517c72eb51515aa099
+  sha256: 0438cb20374547e076be6edc5019a7bb54841eaffe8bc5c010a9f515922d2ad9
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -56,6 +56,11 @@ gehen über den opencode-Browser an den Operator.
   (`blatt-h0-linien-register.md`).
 - de441 mars: Vor-Fix-Matrizen (Δ 6045,3 km) — kernel-flatten-Run 34348392827
   endete `failure` (`handover-thematisch-membran-sonde.md`).
+- de441 earth/moon/sun: aus der einen Stimme gedriftet — Erdmitte 116 km von
+  de440/de442, größte Finsternis 42,5 km / −90,5 s (2017) und +10,1 s (2024);
+  de440/de442/epm2021 bleiben eine Stimme (4,8 km / +4,9 s). Re-Ernte
+  (de_compiler) + `eclipse_shadow_probe` + Kalibrier-Gate neu laufen lassen
+  (`eclipse-clock-worldlines.md`).
 
 ## Abschluss
 
