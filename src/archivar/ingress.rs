@@ -77,16 +77,16 @@ pub fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
                 let current = read_num("current_now").map(|a| a / 1e6);
                 let status = std::fs::read_to_string(path.join("status")).ok();
                 if let Some(c) = capacity {
-                    batch.push(("battery.level".to_string(), c, Some(60.0)));
+                    batch.push(("battery.level".to_string(), c, None));
                 }
                 if let Some(v) = voltage {
-                    batch.push(("battery.voltage".to_string(), v, Some(60.0)));
+                    batch.push(("battery.voltage".to_string(), v, None));
                 }
                 if let Some(a) = current {
-                    batch.push(("battery.current".to_string(), a, Some(10.0)));
+                    batch.push(("battery.current".to_string(), a, None));
                 }
                 if status.as_deref().map(str::trim) == Some("Charging") {
-                    batch.push(("battery.charging".to_string(), 1.0, Some(60.0)));
+                    batch.push(("battery.charging".to_string(), 1.0, None));
                 }
             }
         }

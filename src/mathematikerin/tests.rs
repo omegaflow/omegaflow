@@ -540,6 +540,35 @@ fn force_ref_snaps_on_first_sight() {
 }
 
 #[test]
+fn the_frame_carries_the_field_permeability_as_aperture() {
+    let mut app = OmegaLoop {
+        field_permeability: 0.42,
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(Mutex::new(None)),
+            Arc::new(AtomicBool::new(false)),
+            Arc::new(AtomicBool::new(false)),
+            mpsc::channel().0,
+            mpsc::channel().0,
+            mpsc::channel().1,
+            mpsc::channel().1,
+            Arc::new(RwLock::new(PresenceState::rest())),
+            Arc::new(RwLock::new(DiodeState {
+                force_ref: [0.0; 9],
+                expose_offset: EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
+            })),
+        )
+    };
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let frame = app.presence_frame();
+    assert_eq!(frame.aperture, 0.42);
+    assert_eq!(frame.omega, app.probe_omega);
+}
+
+#[test]
 fn aberration_shifts_toward_apex_and_stays_unit() {
     fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
         let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];
