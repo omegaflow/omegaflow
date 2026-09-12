@@ -3,7 +3,7 @@
   session: Entscheid-Folge II
   class: handover
   date: 2026-09-11
-  sha256: bdfee87d8a9264f908a38e2fe1de8615cbbb0c787c508f9fc71cace2028c7550
+  sha256: b722362804cb8d3f055021fefa689f828f54d4b8cc73e9fc2b159158e8fc1b1d
   status: live
 -->
 # Handover — Entscheid-Folge II (2026-09-11)
@@ -17,6 +17,34 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 Jede Zeile trägt ihr Wiedervorlage-Datum — vor dem Datum wird sie nicht erwähnt;
 nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
+
+## GitHub-Konto (Kern der Session 2026-09-12)
+
+- Sicherheit — der im Chat exponierte Token `ghp_KHhu…` ist zu widerrufen
+  (https://github.com/settings/tokens). Falls er der aktive `gh`-Token ist,
+  vorher einen frischen anlegen und `gh auth login -h github.com --with-token`
+  damit; sonst bricht der Push.
+- `ivoa` — `omegaflow` ist kein Mitglied mehr (beim Umwandlungsversuch
+  entfernt). Markus-Brief (Re-Invite `johannestyroller`/`omegaflow`) ist raus,
+  Antwort offen.
+- ToS / User→Org — self-serve blockiert: GitHub retired beim Rename die alten
+  Repo-Namen (`omegaflow/omegaflow`, `omegaflow/sources`,
+  `omegaflow/omegaflow-legacy`; Transfer → HTTP 422). Support-Text ist
+  formuliert → senden. Fallback: zwei Personenkonten (`omegaflow` Owner,
+  `johannestyroller` privat) bewusst führen.
+- Zustand verifiziert (2026-09-12): `gh` = `omegaflow` (Token-Weg, Scopes
+  `admin:org, repo, workflow`), volle Rechte auf allen drei Repos, lokales Repo
+  sauber (`HEAD == origin/main`), `git push --dry-run` grün. Org `omegaflow-tmp`
+  (Rest des Fehlversuchs) ist gelöscht.
+
+## Votable-TAP
+
+- Die 22 `blocked parser-def votable` sind als **ein** `pending`-Eintrag in
+  `phi/blocked_sources.φ` konsolidiert (Commit a5d9384; Messung 2026-09-11:
+  TABLEDATA via `<root>/sync` + `FORMAT=votable`, Haus-Parser `votable_rows`
+  konsumiert; LIneA = Schema-Name, CADC-ARGUS = `votable` ja/`votable/td` nein).
+  Offen: Ernte-Welle — je Katalog Feldblock (TAP_SCHEMA-Durchgang) + Compiler +
+  CDN-Manifestation; Eintritt in `sources.φ` erst mit gemessenem Feldblock.
 
 ## Wiedervorlage
 
