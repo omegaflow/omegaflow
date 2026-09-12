@@ -1,13 +1,19 @@
+use omegaflow::ak135::{free_surface_pp, p_p_rayparam};
 use omegaflow::archivar::fetch_raw;
+use omegaflow::archivar::ndk;
 use omegaflow_measure::depthphase as dp;
 use omegaflow_measure::depthphase::{
     CATALOG_URL, DEPTH_MATCH_GATE_KM, MAX_DIST_DEG, MAX_STATIONS, MIN_DEPTH_KM, MIN_DIST_DEG,
     MIN_MAG, P_WINDOW_AFTER_ORIGIN_S, REGION, SEARCH_START, SNR_GATE, STATION_URL,
 };
+use omegaflow_measure::iasp91;
 use omegaflow_measure::stats::{mean, sample_sd};
 use std::env;
 use std::thread;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
+const GCMT_NDK_URL: &str =
+    "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
@@ -53,6 +59,7 @@ fn main() {
     let sp_gate = dp::arg_value(&args, "--sp-gate")
         .and_then(|v| v.parse::<f64>().ok())
         .filter(|g| g.is_finite() && *g > 0.0);
+    let kalibrier = args.iter().any(|a| a == "--kalibrier");
 
     println!("=== depth-phase fleet — many events x stations, sigma and sqrt(N) ===");
     println!("selection rule (registered before the first fetch):");
@@ -63,7 +70,7 @@ fn main() {
     println!(
         "  station band {MIN_DIST_DEG}..{MAX_DIST_DEG} deg, SNR gate >= {SNR_GATE}, up to {max_events} events (orderby magnitude)"
     );
-    println!("error budget (before the run): 1 s pick scatter -> ~3.2 km per station; the per-event median");
+    println!("uncertainty budget (before the run): 1 s pick scatter -> ~3.2 km per station; the per-event median");
     println!("  narrows with sqrt(n) stations, the fleet mean narrows with sqrt(N) events");
     println!("polarity witness: free-surface R_pp is negative across the steep band (src/archivar/ak135.rs free_surface_pp) — a sign flip carries the source term, not the angle");
     println!(
@@ -97,6 +104,25 @@ fn main() {
         "{} registered deep events in the box; measuring the top {measured}",
         events.len()
     );
+    let ndk_events = if kalibrier {
+        match ndk::fetch_events(GCMT_NDK_URL, 3600) {
+            Some(cents) => {
+                println!(
+                    "kalibrier-gate: {} GCMT centroids loaded from the NDK body — the source term is wired",
+                    cents.len()
+                );
+                Some(cents)
+            }
+            None => {
+                println!(
+                    "kalibrier-gate: no GCMT NDK body — the per-station source prediction stays absent (never fabricated)"
+                );
+                None
+            }
+        }
+    } else {
+        None
+    };
 
     let mut offsets_with_clamp: Vec<f64> = Vec::new();
     let mut offsets_after_exclusion: Vec<f64> = Vec::new();
@@ -179,6 +205,9 @@ fn main() {
             measures.push(m);
         }
         branch_skips_total += branch_unstable;
+        if kalibrier {
+            emit_kalibrier(event, &stations, &measures, ndk_events.as_deref());
+        }
 
         let carried = depths.len() + edge_clamped + saturated;
         if carried == 0 {
@@ -556,5 +585,204 @@ fn main() {
             "pending (not smoothed, not counted): {}",
             pending_events.join("; ")
         );
+    }
+}
+
+fn initial_azimuth_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> Option<f64> {
+    if !(lat1.is_finite() && lon1.is_finite() && lat2.is_finite() && lon2.is_finite()) {
+        return None;
+    }
+    let p1 = lat1.to_radians();
+    let p2 = lat2.to_radians();
+    let dl = (lon2 - lon1).to_radians();
+    let y = dl.sin() * p2.cos();
+    let x = p1.cos() * p2.sin() - p1.sin() * p2.cos() * dl.cos();
+    if !(y.is_finite() && x.is_finite()) {
+        return None;
+    }
+    Some(y.atan2(x).to_degrees().rem_euclid(360.0))
+}
+
+fn upgoing_radiation(m: &[f64; 6], takeoff_up_deg: f64) -> (f64, f64, Vec<f64>) {
+    let mut nodal = Vec::new();
+    let mut prev: Option<f64> = None;
+    let mut prev_az = 0.0f64;
+    let mut rp_min = f64::INFINITY;
+    let mut rp_max = f64::NEG_INFINITY;
+    for az in 0..360 {
+        let a = az as f64;
+        let r = ndk::ray_direction(takeoff_up_deg, a, true);
+        let v = ndk::rp(m, &r);
+        rp_min = rp_min.min(v);
+        rp_max = rp_max.max(v);
+        if let Some(p) = prev {
+            if (p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0) {
+                let frac = p / (p - v);
+                nodal.push(prev_az + frac);
+            }
+        }
+        prev = Some(v);
+        prev_az = a;
+    }
+    (rp_min, rp_max, nodal)
+}
+
+fn recorded_sign(source_rp: f64, free_surface_rp: f64) -> f64 {
+    source_rp.signum() * free_surface_rp.signum()
+}
+
+fn sign_mark(v: f64) -> String {
+    if v < 0.0 {
+        "-".to_string()
+    } else {
+        "+".to_string()
+    }
+}
+
+fn emit_kalibrier(
+    event: &dp::Event,
+    stations: &[dp::Station],
+    measures: &[dp::StationMeasure],
+    ndk_events: Option<&[ndk::NdkEvent]>,
+) {
+    println!("  kalibrier-gate — the NDK source term at the measured station azimuths:");
+    let Some(cents) = ndk_events else {
+        println!("    the GCMT NDK body stays absent — the per-station source polarity is pending, never fabricated");
+        return;
+    };
+    let date = dp::unix_to_iso(event.t0);
+    let matched = cents
+        .iter()
+        .filter(|e| date.starts_with(&format!("{:04}-{:02}-{:02}", e.year, e.month, e.day)))
+        .filter(|e| (e.hyp_lat - event.lat).abs() < 2.0 && (e.hyp_lon - event.lon).abs() < 2.0)
+        .min_by(|a, b| {
+            let da = (a.hyp_lat - event.lat).powi(2) + (a.hyp_lon - event.lon).powi(2);
+            let db = (b.hyp_lat - event.lat).powi(2) + (b.hyp_lon - event.lon).powi(2);
+            da.total_cmp(&db)
+        });
+    let Some(ev) = matched else {
+        println!(
+            "    no GCMT centroid in the event window — the source term stays absent (0 honored)"
+        );
+        return;
+    };
+    let m = ndk::dc_moment_tensor(ev.strike, ev.dip, ev.rake);
+    println!(
+        "    GCMT centroid {} ({:04}/{:02}/{:02}) strike/dip/rake {:.0}/{:.0}/{:.0}, centroid depth {:.1} km",
+        ev.name, ev.year, ev.month, ev.day, ev.strike, ev.dip, ev.rake, ev.centroid_depth_km
+    );
+    let Some(reference) = measures.iter().find(|ms| ms.skip.is_none()) else {
+        println!("    no station cleared the gates — the azimuth register stays empty (0 honored)");
+        return;
+    };
+    let Some(i_ref) = iasp91::takeoff_angle_deg(reference.delta_deg, ev.centroid_depth_km, true)
+    else {
+        println!("    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent");
+        return;
+    };
+    let (rp_min, rp_max, nodal) = upgoing_radiation(&m, i_ref);
+    let nodal_txt = nodal
+        .iter()
+        .map(|n| format!("{n:.1}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    println!(
+        "    upgoing P radiation R_P spans [{rp_min:+.2}, {rp_max:+.2}] (unit M) at the reference delta {:.1} deg; nodal azimuths {}",
+        reference.delta_deg,
+        if nodal.is_empty() {
+            "none in the 1-deg sweep".to_string()
+        } else {
+            nodal_txt
+        }
+    );
+    let mut agree = 0usize;
+    let mut oppose = 0usize;
+    let mut pending = 0usize;
+    for (st, meas) in stations.iter().zip(measures.iter()) {
+        let Some(az) = initial_azimuth_deg(event.lat, event.lon, st.lat, st.lon) else {
+            println!(
+                "    {}.{} azimuth unread — absent, never a fabricated bearing",
+                st.net, st.sta
+            );
+            continue;
+        };
+        let source = iasp91::takeoff_angle_deg(meas.delta_deg, ev.centroid_depth_km, true)
+            .map(|i_up| ndk::rp(&m, &ndk::ray_direction(i_up, az, true)));
+        let r_pp = p_p_rayparam(meas.delta_deg, ev.centroid_depth_km).and_then(free_surface_pp);
+        let predicted = match (source, r_pp) {
+            (Some(s), Some(r)) => Some(recorded_sign(s, r)),
+            _ => None,
+        };
+        let measured = meas
+            .p_p
+            .as_ref()
+            .map(|p| if p.inverted { -1.0 } else { 1.0 });
+        let verdict = match (predicted, measured) {
+            (Some(a), Some(b)) => {
+                if a * b > 0.0 {
+                    agree += 1;
+                    "agrees"
+                } else {
+                    oppose += 1;
+                    "opposes"
+                }
+            }
+            _ => {
+                pending += 1;
+                "pending"
+            }
+        };
+        let source_txt = source
+            .map(|v| format!("{v:+.3}"))
+            .unwrap_or("absent".into());
+        let rpp_txt = r_pp.map(|v| format!("{v:+.3}")).unwrap_or("absent".into());
+        let pred_txt = predicted.map(sign_mark).unwrap_or("absent".into());
+        let meas_txt = measured.map(sign_mark).unwrap_or("absent".into());
+        println!(
+            "    {}.{} delta {:.1} deg az {az:.1} deg R_P_up={source_txt} R_pp={rpp_txt} predicted pP {pred_txt} measured pP {meas_txt} — {verdict}",
+            st.net, st.sta, meas.delta_deg
+        );
+    }
+    println!(
+        "    kalibrier-gate: {agree} stations agree, {oppose} oppose, {pending} pending (measured pP sign vs the NDK source term times the free-surface sign)"
+    );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn initial_azimuth_reads_the_cardinal_bearings() {
+        assert!((initial_azimuth_deg(0.0, 0.0, 1.0, 0.0).unwrap() - 0.0).abs() < 1e-9);
+        assert!((initial_azimuth_deg(0.0, 0.0, 0.0, 1.0).unwrap() - 90.0).abs() < 1e-9);
+        assert!((initial_azimuth_deg(0.0, 0.0, -1.0, 0.0).unwrap() - 180.0).abs() < 1e-9);
+        assert!((initial_azimuth_deg(0.0, 0.0, 0.0, -1.0).unwrap() - 270.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn initial_azimuth_is_absent_for_a_non_finite_coordinate() {
+        assert!(initial_azimuth_deg(f64::NAN, 0.0, 1.0, 0.0).is_none());
+        assert!(initial_azimuth_deg(0.0, 0.0, f64::INFINITY, 0.0).is_none());
+    }
+
+    #[test]
+    fn a_vertical_upgoing_ray_reads_the_thrust_compressional() {
+        let m = ndk::dc_moment_tensor(0.0, 45.0, 90.0);
+        let (rp_min, rp_max, nodal) = upgoing_radiation(&m, 0.0);
+        assert!((rp_min - 1.0).abs() < 1e-12);
+        assert!((rp_max - 1.0).abs() < 1e-12);
+        assert!(
+            nodal.is_empty(),
+            "a constant pattern carries no nodal azimuth"
+        );
+    }
+
+    #[test]
+    fn the_recorded_sign_is_the_source_sign_times_the_free_surface_sign() {
+        assert_eq!(recorded_sign(1.0, -1.0), -1.0);
+        assert_eq!(recorded_sign(-1.0, -1.0), 1.0);
+        assert_eq!(recorded_sign(1.0, 1.0), 1.0);
+        assert_eq!(recorded_sign(-1.0, 1.0), -1.0);
     }
 }

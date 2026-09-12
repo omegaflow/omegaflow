@@ -1,0 +1,47 @@
+name: cmt-ndk-fleet
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe-lauf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the CMT polarity probe against the GCMT NDK body
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin depth_phase_polarity_probe
+          } > cmt-ndk-polarity.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cmt-ndk-polarity
+          path: cmt-ndk-polarity.txt
+  feld-neulauf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Recover the pilot station azimuths (us10003re5) with the NDK source term
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin depth_phase_fleet_probe -- --region 34,38,68,74 --mindepth 200 --max-events 1 --kalibrier
+          } > cmt-ndk-fleet.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cmt-ndk-fleet
+          path: cmt-ndk-fleet.txt
