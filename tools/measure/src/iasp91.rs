@@ -336,6 +336,89 @@ pub fn delta_sweep() -> Vec<(f64, f64, f64)> {
     out
 }
 
+pub fn vp_at_depth(depth_km: f64) -> Option<f64> {
+    if !depth_km.is_finite() || depth_km < 0.0 {
+        return None;
+    }
+    let nodes = p_nodes();
+    let r = R_EARTH_KM - depth_km;
+    if r < nodes[nodes.len() - 1].0 {
+        return None;
+    }
+    Some(vp_at(&nodes, r))
+}
+
+fn source_legs(p: f64, depth_km: f64) -> Option<(f64, f64, f64, f64)> {
+    let nodes = p_nodes();
+    let r_source = R_EARTH_KM - depth_km;
+    let rt = turning_radius(&nodes, p)?;
+    if rt >= r_source {
+        return None;
+    }
+    let (d_ts, t_ts) = leg(&nodes, p, rt)?;
+    let (d_ss, t_ss) = leg(&nodes, p, r_source)?;
+    let up_d = d_ss + 2.0 * d_ts;
+    let up_t = t_ss + 2.0 * t_ts;
+    let down_d = 2.0 * d_ts - d_ss;
+    let down_t = 2.0 * t_ts - t_ss;
+    Some((up_d, up_t, down_d, down_t))
+}
+
+pub fn source_rayparam_s(delta_deg: f64, depth_km: f64, upgoing: bool) -> Option<f64> {
+    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+        return None;
+    }
+    if !depth_km.is_finite() || depth_km < 0.0 {
+        return None;
+    }
+    let delta_rad = delta_deg * DEG_TO_RAD;
+    let nodes = p_nodes();
+    let r_source = R_EARTH_KM - depth_km;
+    let deepest = nodes[nodes.len() - 1].0;
+    if r_source < deepest {
+        return None;
+    }
+    let v_source = vp_at(&nodes, r_source);
+    let p_min = deepest / nodes[nodes.len() - 1].1 * 1.0001;
+    let p_max = r_source / v_source;
+    let dist = |p: f64| match source_legs(p, depth_km) {
+        Some((up_d, _, down_d, _)) => {
+            if upgoing {
+                up_d
+            } else {
+                down_d
+            }
+        }
+        None => 0.0,
+    };
+    if !(delta_rad > 0.0 && delta_rad <= dist(p_min)) {
+        return None;
+    }
+    let mut lo = p_min;
+    let mut hi = p_max;
+    for _ in 0..64 {
+        let mid = 0.5 * (lo + hi);
+        if dist(mid) > delta_rad {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    Some(0.5 * (lo + hi))
+}
+
+pub fn takeoff_angle_deg(delta_deg: f64, depth_km: f64, upgoing: bool) -> Option<f64> {
+    let p = source_rayparam_s(delta_deg, depth_km, upgoing)?;
+    let nodes = p_nodes();
+    let r_source = R_EARTH_KM - depth_km;
+    let v_source = vp_at(&nodes, r_source);
+    let s = p * v_source / r_source;
+    if !s.is_finite() || s <= 0.0 || s >= 1.0 {
+        return None;
+    }
+    Some(s.asin().to_degrees())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -388,6 +471,44 @@ mod tests {
         assert!((p_travel(0.0).unwrap() - 0.0).abs() < 1e-9);
         for d in [10.0, 30.0, 60.0, 90.0] {
             assert!(p_travel(d).unwrap() > 0.0);
+        }
+    }
+
+    #[test]
+    fn vp_at_depth_reads_the_published_table() {
+        assert!((vp_at_depth(0.0).unwrap() - 5.80).abs() < 1e-9);
+        assert!((vp_at_depth(120.0).unwrap() - 8.05).abs() < 1e-9);
+        assert!((vp_at_depth(260.0).unwrap() - 8.4825).abs() < 1e-9);
+        assert!(vp_at_depth(2900.0).is_none());
+    }
+
+    #[test]
+    fn surface_takeoff_matches_between_legs_and_steepens_with_distance() {
+        for d in [30.0, 60.0, 90.0] {
+            let up = takeoff_angle_deg(d, 0.0, true).unwrap();
+            let down = takeoff_angle_deg(d, 0.0, false).unwrap();
+            assert!(
+                (up - down).abs() < 0.05,
+                "surface source: up {up} vs down {down}"
+            );
+        }
+        for h in [0.0, 231.0, 500.0] {
+            let i30 = takeoff_angle_deg(30.0, h, false).unwrap();
+            let i90 = takeoff_angle_deg(90.0, h, false).unwrap();
+            assert!(i90 < i30, "h={h}: take-off must steepen with distance");
+        }
+    }
+
+    #[test]
+    fn deep_source_takeoff_is_a_finite_angle() {
+        for h in [231.0, 410.0, 600.0] {
+            for upgoing in [false, true] {
+                let i = takeoff_angle_deg(30.7, h, upgoing).unwrap();
+                assert!(
+                    i.is_finite() && i > 0.0 && i < 90.0,
+                    "h={h} up={upgoing}: {i}"
+                );
+            }
         }
     }
 }

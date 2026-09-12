@@ -12,6 +12,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const ROUTE: &str = "https://service.earthscope.org/fdsnws/dataselect/1/query";
 const STATION_ROUTE: &str = "https://service.earthscope.org/fdsnws/station/1/query";
 const NETLOC: &str = "service.earthscope.org";
+const INGV_ROUTE: &str = "https://webservices.ingv.it/fdsnws/dataselect/1/query";
+const INGV_STATION_ROUTE: &str = "https://webservices.ingv.it/fdsnws/station/1/query";
+const INGV_NETLOC: &str = "webservices.ingv.it";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -246,10 +249,10 @@ fn parse_response_text(body: &str) -> Response {
     Response { rows }
 }
 
-fn station_response_url(net: &str, sta: &str, cha: &str, loc: &str) -> String {
+fn station_response_url(station_route: &str, net: &str, sta: &str, cha: &str, loc: &str) -> String {
     let mut url = format!(
         "{}?network={}&station={}&channel={}&level=channel&format=text",
-        STATION_ROUTE, net, sta, cha
+        station_route, net, sta, cha
     );
     if !loc.is_empty() {
         url.push_str("&location=");
@@ -259,6 +262,7 @@ fn station_response_url(net: &str, sta: &str, cha: &str, loc: &str) -> String {
 }
 
 fn load_response(
+    station_route: &str,
     cache: &mut HashMap<(String, String, String), Response>,
     net: &str,
     sta: &str,
@@ -267,7 +271,7 @@ fn load_response(
 ) -> Response {
     let key = (net.to_string(), sta.to_string(), cha.to_string());
     if !cache.contains_key(&key) {
-        let url = station_response_url(net, sta, cha, loc);
+        let url = station_response_url(station_route, net, sta, cha, loc);
         let (code, body) = curl_bytes(&url);
         eprintln!(
             "fdsnwf: station channel {}·{}·{} HTTP {}",
@@ -637,6 +641,15 @@ fn main() {
     };
     let start = arg_value(&args, "--start");
     let end = arg_value(&args, "--end");
+    let route_arg = match arg_value(&args, "--route") {
+        Some(v) => v,
+        None => "earthscope".to_string(),
+    };
+    let (route, station_route, netloc) = if route_arg == "ingv" {
+        (INGV_ROUTE, INGV_STATION_ROUTE, INGV_NETLOC)
+    } else {
+        (ROUTE, STATION_ROUTE, NETLOC)
+    };
     let (Some(start), Some(end)) = (start, end) else {
         eprintln!("fdsnwf: --start and --end are the required window");
         std::process::exit(1);
@@ -648,7 +661,7 @@ fn main() {
 
     let mut url = format!(
         "{}?network={}&station={}&starttime={}&endtime={}&format=miniseed",
-        ROUTE, network, station, start, end
+        route, network, station, start, end
     );
     if !channel.is_empty() {
         url.push_str("&channel=");
@@ -857,7 +870,7 @@ fn main() {
         };
 
         let t0 = decoded[0].0;
-        let resp = load_response(&mut responses, net, sta, &cha_hdr, &loc_hdr);
+        let resp = load_response(station_route, &mut responses, net, sta, &cha_hdr, &loc_hdr);
         let row = resp.row_at(t0);
         let gain = match row {
             Some(rw) if rw.units == "m/s" && rw.scale.is_finite() && rw.scale > 0.0 => {
@@ -966,7 +979,7 @@ fn main() {
                 std::process::exit(1);
             }
         }
-        if ci_mode && !upload_release(NETLOC, path) {
+        if ci_mode && !upload_release(netloc, path) {
             std::process::exit(1);
         }
     }
