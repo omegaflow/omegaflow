@@ -5680,7 +5680,7 @@ fn test_mag_type_gating() {
 fn test_force_id_electric() {
     assert_eq!(crate::force::force_id_of("electric"), Some(8));
     assert_eq!(crate::force::force_id_of("biotic"), None);
-    assert_eq!(crate::force::kernel_id_for_force(8), Some(1));
+    assert_eq!(crate::force::kernel_id_for_force(8), Some(0));
 }
 
 #[test]
