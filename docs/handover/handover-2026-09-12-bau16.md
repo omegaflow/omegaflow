@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 96ec3d0ea28e32ba057c9ece0b701d46d3f528310a344e2060ca4fd8f5dacd31
+  sha256: 73e8c99ed6dfed924d079c381667d2f2fd4db0df868c83b2e4712aa6873c6085
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau16)
@@ -17,13 +17,15 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 ## Membran — die offenen M-Punkte
 
-- **Flashen + Live-Messen (nn-Strom)** — der Binär baut: die Xtensa-Toolchain
-  liegt in `~/.rustup/toolchains/esp/` (Linker `xtensa-esp32s3-elf-gcc` vorhanden),
-  `cargo build --release` gelingt mit gesourctem `export-esp.sh`. Offen ist der
-  Draht zum Gerät: kein ESP32 ist enumeriert (`lsusb` ohne Espressif/CP210x/FTDI,
-  `/dev/ttyACM*` und `/dev/ttyUSB*` leer) und `espflash` (der Runner) ist nicht
-  installiert. Flashen braucht das angesteckte Gerät + `espflash`; dann läuft der
-  nn-Strom als `nn=<ms>` am ttyACM.
+- **ESP32-Modul — on hold** (Operator-Wort, 2026-09-13): das Gerät und sein
+  Flash kommen zuletzt — zuerst laufen Software und Membranen. Der Binär baut
+  (Xtensa-Toolchain in `~/.rustup/toolchains/esp/`, Linker `xtensa-esp32s3-elf-gcc`
+  vorhanden; `cargo build --release` mit gesourctem `export-esp.sh`). Offen, wenn
+  das Modul an der Reihe ist: `espflash` installieren und das Gerät anstecken
+  (heute kein ESP32 enumeriert — `lsusb` ohne Espressif/CP210x/FTDI); dann läuft
+  der nn-Strom als `nn=<ms>` am ttyACM. Die kuratierte BOM
+  (`docs/specs/mantis-shrimp-bom.md`) und der AliExpress-Warenkorb (45 Artikel)
+  stehen bereit.
 
 ## Eclipse-Schattenortung — offene Code-Punkte
 
