@@ -1,6 +1,6 @@
 # ============================================================
 # omegaflow_sense_hardware.yaml
-# STATUS: PLAN (Phase 10) — NOT YET IMPLEMENTED
+# STATUS: PLAN (Phase 10) — NOT YET IMPLEMENTED. Part 5 corrected 2026-09-12 (Radiator-Doktrin).
 # PURPOSE: The single source of truth for the physical
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
@@ -21,7 +21,7 @@ meta:
   firmware_language: "Rust no_std (esp-idf-hal)"
   interface: "WebSerial (CDC-ACM)"
   total_cost_eur: 139.00
-  protocol: "flow <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
+  protocol: "PresenceFrame — raw intensity (Σω); ESP32 as a peer among seven (radiators.md:84-106)"
 
 # ============================================================
 # PART 1: SENSING SURFACES (canSense) (The Eyes, Ears and Noses)
@@ -348,24 +348,11 @@ esp32_pin_map:
 # ============================================================
 
 protocol:
-  format: "flow <channel> <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>"
-  examples:
-    - "flow light ws2812 hsv 210,255,64 - 500 1719187234.1 48.12 11.56 520"
-    - "flow heat pad pwm 0.35 - 2000 1719187236.1 48.12 11.56 520"
-    - "flow haptic erm pwm 0.80 - 120 1719187236.3 48.12 11.56 520"
-
-  browser_integration: |
-    async function flowToSenseModule(channel, mode, value, unit, duration_ms) {
-      const t = live['server.time'] || Date.now() / 1000;
-      const x = live['geolocation.latitude'] || 0;
-      const y = live['geolocation.longitude'] || 0;
-      const z = live['geolocation.altitude'] || 0;
-      const cmd = `actuate ${channel} ${mode} ${value} ${unit} ${duration_ms} ${t} ${x} ${y} ${z}\n`;
-      const encoder = new TextEncoder();
-      const writer = port.writable.getWriter();
-      await writer.write(encoder.encode(cmd));
-      writer.releaseLock();
-    }
+  frame: "PresenceFrame { omega: [f32; 9] } from the dispatcher"
+  translation: "raw intensity (Σω) — canRadiate, as SeismicOscillator"
+  wire: "no modulation command exists"
+  reason: "replaced by raw intensity (Radiator-Doktrin, radiators.md:84-106 — the synthesizer stays dead)"
+  firmware: "pending (no_std, hardware)"
 
 # ============================================================
 # PART 6: SAFETY MATRIX
