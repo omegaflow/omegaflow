@@ -157,7 +157,10 @@ fn curl_get(url: &str, jar: &Option<PathBuf>) -> Option<Vec<u8>> {
     if out.status.success() {
         Some(out.stdout)
     } else {
-        eprintln!("hinet: {url} returned void");
+        eprintln!(
+            "hinet: {url} returned void: {}",
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
         None
     }
 }
@@ -191,6 +194,7 @@ fn auth(jar: &Path) -> bool {
         return false;
     };
     let url = format!("{HINET_BASE}/auth/?LANG=en");
+    let _ = curl_get(&url, &Some(jar.to_path_buf()));
     let form = vec![
         ("auth_un".to_string(), HINET_USER.to_string()),
         ("auth_pw".to_string(), pass),
@@ -207,27 +211,7 @@ fn auth(jar: &Path) -> bool {
     }
 }
 
-fn select_stations(jar: &Path, stations: &[String]) -> bool {
-    let check = format!("{HINET_BASE}/select_check.cgi?LANG=en");
-    let form: Vec<(String, String)> = stations
-        .iter()
-        .map(|s| ("station".to_string(), s.clone()))
-        .collect();
-    if curl_form(&check, jar, &form).is_none() {
-        eprintln!("hinet: station selection stayed unread at {check}");
-        return false;
-    }
-    let confirm = format!("{HINET_BASE}/select_confirm.php?LANG=en");
-    if curl_get(&confirm, &Some(jar.to_path_buf())).is_none() {
-        eprintln!("hinet: station confirm stayed unread at {confirm}");
-        return false;
-    }
-    eprintln!(
-        "hinet: {} stations registered through the select flow",
-        stations.len()
-    );
-    true
-}
+const CONT_BASE: &str = "https://hinetwww11.bosai.go.jp/auth/download/cont";
 
 struct Window {
     year: i32,
@@ -266,20 +250,136 @@ fn parse_window(s: &str) -> Option<Window> {
     })
 }
 
-fn request_waveform(jar: &Path, w: &Window, span_min: u32) -> Option<Vec<u8>> {
-    let url = format!(
-        "{HINET_BASE}/cont_request.php?org1=&org2=&year={}&month={}&day={}&hour={}&min={}&span={}&arc=&size=&LANG=en&volc=&rn=",
-        w.year, w.month, w.day, w.hour, w.min, span_min
-    );
-    let body = curl_get(&url, &Some(jar.to_path_buf()))?;
-    eprintln!("hinet: cont request placed at {url}");
-    Some(body)
+fn cont_search(jar: &Path, w: &Window, span_min: u32) -> Option<String> {
+    let url = format!("{CONT_BASE}/");
+    let form = vec![
+        ("org".to_string(), String::new()),
+        ("net".to_string(), String::new()),
+        ("volc".to_string(), String::new()),
+        ("year".to_string(), w.year.to_string()),
+        ("month".to_string(), w.month.to_string()),
+        ("day".to_string(), w.day.to_string()),
+        ("hour".to_string(), w.hour.to_string()),
+        ("min".to_string(), w.min.to_string()),
+        ("span".to_string(), span_min.to_string()),
+        ("LANG".to_string(), "en".to_string()),
+        ("search_btn".to_string(), "Search".to_string()),
+    ];
+    curl_form(&url, jar, &form).map(|b| String::from_utf8_lossy(&b).to_string())
 }
 
-fn poll_status(jar: &Path, rn: &str) -> Option<String> {
-    let url = format!("{HINET_BASE}/cont_status.php?LANG=en&rn={rn}");
-    let body = curl_get(&url, &Some(jar.to_path_buf()))?;
-    Some(String::from_utf8_lossy(&body).to_string())
+fn parse_open_request(html: &str) -> Option<(String, String, String)> {
+    let idx = html.find("openRequest(")?;
+    let tail = &html[idx + "openRequest(".len()..];
+    let close = tail.find(')')?;
+    let args: Vec<String> = tail[..close]
+        .split(',')
+        .map(|s| s.trim().trim_matches('\'').to_string())
+        .collect();
+    if args.len() >= 9 {
+        Some((args[0].clone(), args[1].clone(), args[8].clone()))
+    } else {
+        None
+    }
+}
+
+fn submit_request(
+    jar: &Path,
+    org1: &str,
+    org2: &str,
+    size: &str,
+    w: &Window,
+    span_min: u32,
+) -> bool {
+    let rn = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_millis(),
+        Err(_) => return false,
+    };
+    let url = format!(
+        "{CONT_BASE}/cont_request.php?org1={org1}&org2={org2}&year={}&month={}&day={}&hour={}&min={}&span={span_min}&arc=ZIP&size={size}&LANG=en&volc=0&rn={rn}",
+        w.year, w.month, w.day, w.hour, w.min
+    );
+    curl_get(&url, &Some(jar.to_path_buf())).is_some()
+}
+
+fn available_id(html: &str, w: &Window) -> Option<String> {
+    let token = format!(
+        "{}{:02}{:02}{:02}{:02}",
+        w.year, w.month, w.day, w.hour, w.min
+    );
+    let pos = html.find(&token)?;
+    let tail = &html[pos..];
+    let avail = tail.find("Available")?;
+    let after = &tail[avail..];
+    let od = after.find("openDownload('")?;
+    let start = od + "openDownload('".len();
+    let end = after[start..].find('\'')?;
+    Some(after[start..start + end].to_string())
+}
+
+fn poll_server_id(jar: &Path, w: &Window, wait_secs: u64) -> Option<String> {
+    let url = format!("{CONT_BASE}/cont_status.php?LANG=en");
+    for _ in 0..(wait_secs / 5 + 1) {
+        let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        };
+        let html = String::from_utf8_lossy(&body);
+        if let Some(id) = available_id(&html, w) {
+            return Some(id);
+        }
+        std::thread::sleep(std::time::Duration::from_secs(5));
+    }
+    None
+}
+
+fn looks_like_zip(bytes: &[u8]) -> bool {
+    bytes.starts_with(b"PK\x03\x04") && bytes.windows(4).any(|w| w == b"PK\x05\x06")
+}
+
+fn download_wave(jar: &Path, id: &str, dest: &Path) -> Option<PathBuf> {
+    let url = format!("{CONT_BASE}/cont_download.php?id={id}&LANG=en");
+    for attempt in 0..6 {
+        let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+            eprintln!("hinet: cont download attempt {attempt} fetch void — retrying");
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        };
+        if !looks_like_zip(&body) {
+            eprintln!(
+                "hinet: cont download attempt {attempt} carried {} B, not a ZIP — retrying",
+                body.len()
+            );
+            std::thread::sleep(std::time::Duration::from_secs(5));
+            continue;
+        }
+        let zip_path = dest.join("wave.zip");
+        if std::fs::write(&zip_path, &body).is_ok() {
+            return Some(zip_path);
+        }
+    }
+    None
+}
+
+fn unzip_into(zip_path: &Path, dest: &Path) -> Option<Vec<PathBuf>> {
+    let out = Command::new("unzip")
+        .arg("-o")
+        .arg(zip_path)
+        .arg("-d")
+        .arg(dest)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        eprintln!(
+            "hinet: unzip returned void: {}",
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        return None;
+    }
+    let mut files = Vec::new();
+    walk_local(dest, &mut files);
+    files.sort();
+    Some(files)
 }
 
 fn compile_file(
@@ -337,7 +437,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_bin = arg_value(&args, "--out-bin");
-    let channels_path = arg_value(&args, "--channels");
+    let mut channels_path = arg_value(&args, "--channels");
     let tz_offset: f64 = match arg_value(&args, "--tz-offset") {
         None => 0.0,
         Some(v) => match v.parse::<f64>() {
@@ -368,17 +468,24 @@ fn main() {
         if !auth(&jar) {
             std::process::exit(1);
         }
-        let station_csv = match arg_value(&args, "--stations") {
-            Some(v) => v,
-            None => String::new(),
-        };
-        let stations: Vec<String> = station_csv
-            .split(',')
-            .filter(|s| !s.trim().is_empty())
-            .map(|s| s.trim().to_string())
-            .collect();
-        if !stations.is_empty() && !select_stations(&jar, &stations) {
-            std::process::exit(1);
+        if channels_path.is_none() {
+            let ch_url = format!("{HINET_BASE}/auth/channel/dlDialogue.php");
+            match curl_get(&ch_url, &Some(jar.to_path_buf())) {
+                Some(body) => {
+                    let ch_file = cache_path.join("channels.txt");
+                    if std::fs::write(&ch_file, &body).is_err() {
+                        eprintln!(
+                            "hinet: channel table write returned void — the join stays unread"
+                        );
+                        std::process::exit(1);
+                    }
+                    channels_path = Some(ch_file.to_string_lossy().into_owned());
+                }
+                None => {
+                    eprintln!("hinet: channel table fetch returned void — the join stays unread");
+                    std::process::exit(1);
+                }
+            }
         }
         let span_min: u32 = match arg_value(&args, "--span") {
             Some(v) => match v.parse() {
@@ -394,27 +501,43 @@ fn main() {
             eprintln!("hinet: --start YYYY-MM-DDTHH:MM names the request window");
             std::process::exit(1);
         };
-        let rn = match arg_value(&args, "--rn") {
-            Some(v) => v,
-            None => "1".to_string(),
-        };
-        let Some(body) = request_waveform(&jar, &w, span_min) else {
-            eprintln!("hinet: cont request returned void — no .cnt to fetch");
+        let Some(results) = cont_search(&jar, &w, span_min) else {
+            eprintln!("hinet: cont search returned void — the request stays unplaced");
             std::process::exit(1);
         };
-        let cnt_path = cache_path.join(format!("{rn}.cnt"));
-        if std::fs::write(&cnt_path, &body).is_err() {
-            eprintln!("hinet: write {} returned void", cnt_path.display());
+        let Some((org1, org2, size)) = parse_open_request(&results) else {
+            eprintln!("hinet: cont search carried no openRequest — the request stays unplaced");
+            std::process::exit(1);
+        };
+        if !submit_request(&jar, &org1, &org2, &size, &w, span_min) {
+            eprintln!("hinet: cont request returned void — the request stays unplaced");
             std::process::exit(1);
         }
-        sources.push(cnt_path);
-        let status = match poll_status(&jar, &rn) {
-            Some(s) => s,
-            None => String::new(),
+        let Some(id) = poll_server_id(&jar, &w, 300) else {
+            eprintln!("hinet: cont status never read Available — the request stays unfetched");
+            std::process::exit(1);
         };
+        let Some(zip_path) = download_wave(&jar, &id, &cache_path) else {
+            eprintln!("hinet: cont download returned void — the .cnt tree stays unfetched");
+            std::process::exit(1);
+        };
+        let Some(files) = unzip_into(&zip_path, &cache_path) else {
+            eprintln!("hinet: cont archive unzips void — the .cnt tree stays unfetched");
+            std::process::exit(1);
+        };
+        if files.is_empty() {
+            eprintln!("hinet: cont archive carried no .cnt — the bin stays unwritten (0 honored)");
+            std::process::exit(1);
+        }
+        sources = files;
         eprintln!(
-            "hinet: request {rn} window {}-{:02}-{:02}T{:02}:{:02} span {span_min} min — status {} bytes",
-            w.year, w.month, w.day, w.hour, w.min, status.len()
+            "hinet: window {}-{:02}-{:02}T{:02}:{:02} span {span_min} min — {} .cnt files flow",
+            w.year,
+            w.month,
+            w.day,
+            w.hour,
+            w.min,
+            sources.len()
         );
     }
 
