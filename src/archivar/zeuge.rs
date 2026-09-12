@@ -16,7 +16,7 @@ pub enum FeldIdentitaet {
 pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
     match &magic {
         b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" => Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)),
-        b"GBCO" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)),
+        b"GBCO" | b"GL30" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)),
         b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" => {
@@ -106,6 +106,14 @@ mod tests {
     fn gebco_is_gestalt() {
         assert_eq!(
             magic_identity(*b"GBCO"),
+            Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+        );
+    }
+
+    #[test]
+    fn gl30_is_gestalt() {
+        assert_eq!(
+            magic_identity(*b"GL30"),
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
         );
     }
