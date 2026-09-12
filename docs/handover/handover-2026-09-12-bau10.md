@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 557ea51ade1e4fb1fb5b9ee7d686a107df71a8dba9591b117301ac406caaf95e
+  sha256: cea1732a5daf85ad771563525482022f82c0c69724336dbb552e80085e7fcdfe
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau10)
@@ -34,4 +34,4 @@ die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 ## Abschluss
 
 Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
-Abschluss-Check (`/abschluss`).
+Abschluss-Check mit Commit und Push (`/commit`).
