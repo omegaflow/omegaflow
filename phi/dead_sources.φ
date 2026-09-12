@@ -4817,3 +4817,27 @@ note RegTAP-Service-Registry (ivo://esavo/registry/tap) — rr.*-Verzeichnis der
 decline registry
 url http://voparis-rr.obspm.fr/tap
 note VOParis-Resource-Registry (ivo://purx/tap) — rr.* + glots-Verzeichnis (32 Tabellen, kein Messwert-Feld, nur ivoa.obscore-View). tap-klassifikation 2026-09-10.
+
+decline commercial
+url https://www.marinetraffic.com/en/ais-api-services
+note MarineTraffic AIS-API jetzt unter Kpler — kommerziell/paid, ToS erlaubt keine CDN-Redistribution. Descope 2026-09-12.
+
+decline commercial
+url https://www.earthnetworks.com/
+note Earth Networks (Wetter-/Blitz-Messnetz) — kommerziell/paid, kein Redistributionsrecht. Descope 2026-09-12.
+
+decline commercial
+url https://thingspeak.com/
+note ThingSpeak (MathWorks) — kommerziell; Registrierung account/create antwortet 404. Descope 2026-09-12.
+
+decline commercial
+url https://portal.opentopography.org/
+note OpenTopography — Non-Academic-Abo (OT+); Datenlizenzen je Dataset variabel, Redistribution unklar. Descope 2026-09-12.
+
+decline redistribution
+url https://sws-data.sws.bom.gov.au/
+note BOM Space Weather API (Australian Bureau of Meteorology) — Copyright, keine ausdrueckliche Redistributions-Erlaubnis. Descope 2026-09-12.
+
+decline redistribution
+url https://nucleus.iaea.org/wiser/
+note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026-09-12.
