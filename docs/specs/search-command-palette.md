@@ -1,7 +1,7 @@
 <!--
   title: Command Palette Terminal
   class: concept
-  sha256: f8072395d19cf92d0bbf173a7878ea978b835d59e3959bd773b756f9ce4becbc
+  sha256: 1b544bf7c4a118a5a87fd7352c0c48d64357db2e3cd203dc51a87573b226baa2
 -->
 STATUS: DESCOPED (2026-09-12) — kein autonomer Bauweg: das Substrat (`load_sources` + SIMBAD) lebt, aber der Wirt fehlt (kein Client). Geht in den Client-Wirt auf.
 
@@ -39,11 +39,9 @@ Three namespaces in one input:
 
 ## Implementation
 
-Client-side only. No server changes.
-
 - **Fuse.js** or similar for fuzzy matching
 - **SIMBAD TAP** for object name → coordinates
-- **Source index** built from existing `load_sources()` → served as JSON endpoint
+- **Source index** served by the relay as `/sources` (name + body from the loaded register — one truth, no client copy)
 - **Keyboard**: ⌘K or Ctrl+Shift+P
 
 ## Phases
