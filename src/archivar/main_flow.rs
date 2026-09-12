@@ -2259,6 +2259,7 @@ pub fn main_flow() {
                     | "fdsn_waveform"
                     | "fmi_gic"
                     | "igets"
+                    | "hinet"
                     | "iss_lis"
                     | "supermag_1m"
                     | "noaa_ghcn_d"
