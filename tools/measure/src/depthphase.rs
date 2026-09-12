@@ -715,6 +715,22 @@ pub fn fetch_station_body(
     decode_body(&body)
 }
 
+#[derive(Clone)]
+pub struct StationTerm {
+    pub key: String,
+    pub lag_s: f64,
+    pub mad_s: Option<f64>,
+    pub n: usize,
+}
+
+pub fn apply_station_term(term: Option<&StationTerm>, lag_s: f64) -> Option<f64> {
+    match term {
+        Some(t) if t.lag_s.is_finite() => Some(lag_s - t.lag_s),
+        Some(_) => None,
+        None => Some(lag_s),
+    }
+}
+
 pub struct StationMeasure {
     pub key: String,
     pub delta_deg: f64,
@@ -726,6 +742,8 @@ pub struct StationMeasure {
     pub s_p_sigma_s: Option<f64>,
     pub p_p_lag_pred: f64,
     pub s_p_lag_pred: Option<f64>,
+    pub station_term: Option<StationTerm>,
+    pub p_p_lag_corrected: Option<f64>,
     pub skip: Option<String>,
     pub branch_unstable: bool,
 }
@@ -742,12 +760,20 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         s_p_sigma_s: None,
         p_p_lag_pred: 0.0,
         s_p_lag_pred: None,
+        station_term: None,
+        p_p_lag_corrected: None,
         skip: Some(reason.to_string()),
         branch_unstable: false,
     }
 }
 
-pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str) -> StationMeasure {
+pub fn measure_station(
+    event: &Event,
+    station: &Station,
+    start: &str,
+    end: &str,
+    station_term: Option<&StationTerm>,
+) -> StationMeasure {
     let key = format!("{}.{}", station.net, station.sta);
     let delta = arc_deg(event.lat, event.lon, station.lat, station.lon);
     if delta_branch(delta, event.depth_km).unstable {
@@ -782,8 +808,12 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
     let s_p_lag_pred = s_p_lag(delta, event.depth_km);
     let sp = s_p_lag_pred.and_then(|l| correlate_window(&bp, i_p, nw, rate, l));
     let s_p_sigma_s = sp.as_ref().and_then(|p| peak_sigma_s(p, rate));
-    let inversion = match &pp {
-        Some(p) if p.corr.abs() >= SECONDARY_CORR_MIN => Some(invert_depth_single(delta, p.lag_s)),
+    let term = station_term.filter(|t| t.key == key);
+    let p_p_lag_corrected = pp.as_ref().and_then(|p| apply_station_term(term, p.lag_s));
+    let inversion = match (&pp, p_p_lag_corrected) {
+        (Some(p), Some(lag)) if p.corr.abs() >= SECONDARY_CORR_MIN => {
+            Some(invert_depth_single(delta, lag))
+        }
         _ => None,
     };
     StationMeasure {
@@ -797,6 +827,8 @@ pub fn measure_station(event: &Event, station: &Station, start: &str, end: &str)
         s_p_sigma_s,
         p_p_lag_pred,
         s_p_lag_pred,
+        station_term: term.cloned(),
+        p_p_lag_corrected,
         skip: None,
         branch_unstable: false,
     }
@@ -1443,5 +1475,32 @@ mod tests {
             &[DepthPhase::SP, DepthPhase::PP],
         );
         assert_eq!(a, b, "leg order must not change the fit");
+    }
+
+    #[test]
+    fn a_null_stromboli_station_term_is_absent_never_a_zero_correction() {
+        let stromboli: Option<StationTerm> = None;
+        let observed_lag = 6.0;
+        let corrected = apply_station_term(stromboli.as_ref(), observed_lag)
+            .expect("an absent term leaves the measured lag itself");
+        assert_eq!(
+            corrected, observed_lag,
+            "the null Stromboli section carries no term — the lag stays the measured lag, never a zero correction"
+        );
+    }
+
+    #[test]
+    fn a_present_station_term_shifts_the_corrected_lag() {
+        let term = StationTerm {
+            key: "IV.STR1".to_string(),
+            lag_s: 0.4,
+            mad_s: Some(0.1),
+            n: 6,
+        };
+        assert_eq!(
+            apply_station_term(Some(&term), 6.0),
+            Some(5.6),
+            "a measured station term is removed from the observed pP lag"
+        );
     }
 }
