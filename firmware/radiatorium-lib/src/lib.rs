@@ -3,4 +3,5 @@
 pub mod frame;
 pub mod max30102;
 pub mod mux;
+pub mod nn;
 pub mod pwm;
