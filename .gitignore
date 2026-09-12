@@ -65,6 +65,8 @@ phi/pipeline/*
 !phi/pipeline/decline_lens.φ
 !phi/pipeline/catalog/
 phi/pipeline/catalog/*
+# Das TAP-Adressbuch der Weberin (tap_index_*.φ) ist ein Katalog-Inventar — versioniert wie MANIFEST.φ.
+!phi/pipeline/catalog/tap_index*.φ
 !phi/pipeline/catalog/asteroid_gm_sb441.φ
 !phi/pipeline/catalog/solar_omega_g.φ
 # Das NOAA-NODD-Dispositions-Register ist ein Registrierungs-Urteil (Bucket-Litmus,
