@@ -117,3 +117,7 @@ cloudflare/cloudflared-config.yml
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv
 omegaflow-pruefdatei.csv
+
+# Firmware (eigener Workspace, Build im CI) — lokale target/ und Lockfiles nicht ins Repo
+firmware/*/target/
+firmware/*/Cargo.lock
