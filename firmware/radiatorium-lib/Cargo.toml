@@ -1,0 +1,10 @@
+[package]
+name = "radiatorium-lib"
+version = "0.1.0"
+edition = "2024"
+license-file = "../../docs/LICENSE"
+description = "the ESP32-S3 radiatorium peer — pure logic (frame, Σω duty, mux, MAX30102)"
+
+[workspace]
+
+[dependencies]
