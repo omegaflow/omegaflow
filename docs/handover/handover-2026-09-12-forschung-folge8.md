@@ -3,7 +3,7 @@
   session: Forschung-Folge VIII
   class: handover
   date: 2026-09-12
-  sha256: b5a2007aba3ee784a16ae9667eb40f71b32235083293890d936f614f7631fba0
+  sha256: 415820ae463ab33e590b966b6171d926ebdbc3d367511706fee4df9dc7643235
   status: live
 -->
 # Handover — Forschung-Folge VIII (2026-09-12)
@@ -14,6 +14,11 @@ viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+
+Die nächste Session schließt alle offenen Punkte dieser Linie ab — nicht
+weiterschieben. Braucht sie Unterstützung, nimmt sie das Gremium (Rat) oder die
+Taucher (Sub-Agenten, eigener Kontext). Fragen, die einen Webzugriff brauchen,
+gehen über den opencode-Browser an den Operator.
 
 ## Sitzungs-Stand
 
@@ -80,6 +85,21 @@ S1-Incidence-Band (inc aus annotation/iw-vv.xml, MAGIC S1SR→S1S2), DEM-Compile
   neutral).
 - Die Erde als Sender (Tonga 2022) — Kreuz-Abgleich-Probe gebaut; die
   Roh-Druckwellenform bleibt blockiert (CTBTO-vDEC 403), nicht descoped.
+
+## Noch offene Pendings
+
+- H₀: der Schlichter (dritter Faden ≲1–2 %) — kein Forst-Zeuge bindet beide
+  Bäume (`blatt-h0-linien-register.md`).
+- Echo-Tiefe: pP-Mehrdeutigkeit bei Δ≈30° — besseres Picken / Coda-Verriegelung
+  (`depth-phase-echo-fleet.md`).
+- Uranus: Absolut-Offset/Aberrations-Zerlegung + Neptun-Bau-Linie — benannt,
+  ungebaut (`uranus-rift-ephemerides.md`).
+- Solar: konditionale Prüfung 211A→193A — der Schlichtungsfall, die konditionale
+  Sonde arbitriert (`blatt-solar-seconds-matrix.md`).
+- Broken-Null: max-T-Korrektur, Lag-Sweep, Bandbreite, Fenster-Drift, FN-Rest
+  n=300 — benannte Methoden-Grenzen (`broken-null-control.md`).
+- Erd-Eigenmoden („die Glocke") — registrierte Frage: erst Frage → Messung →
+  Paper (`die-akteure` Punkt 8).
 
 ## Abschluss
 
