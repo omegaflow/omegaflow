@@ -581,6 +581,21 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
 }
 
 #[test]
+fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
+    assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
+    let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 1.0, 0.0]);
+    assert!((pan.unwrap() - 2.0).abs() < 1e-6);
+    assert!((tilt.unwrap() - 1.5).abs() < 1e-6);
+    let (pan, tilt) = aim_pulse_ms([0.0, 0.0, 1.0]);
+    assert!((pan.unwrap() - 1.5).abs() < 1e-6);
+    assert!((tilt.unwrap() - 2.0).abs() < 1e-6);
+    assert_eq!(aim_pulse_ms([THRUST_AIM_MIN * 0.5, 0.0, 0.0]), (None, None));
+}
+
+#[test]
 fn aberration_shifts_toward_apex_and_stays_unit() {
     fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
         let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];

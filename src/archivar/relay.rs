@@ -994,12 +994,29 @@ fn sha1(data: &[u8]) -> [u8; 20] {
     r
 }
 fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
-    let mut out = Vec::with_capacity(3 + 10 * 4);
-    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG]);
+    let pan = frame.pan_ms.filter(|v| v.is_finite());
+    let tilt = frame.tilt_ms.filter(|v| v.is_finite());
+    let mut mask = 0x01u8;
+    if pan.is_some() {
+        mask |= 0x02;
+    }
+    if tilt.is_some() {
+        mask |= 0x04;
+    }
+    let mut out = Vec::with_capacity(
+        4 + 10 * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
+    );
+    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, mask]);
     for v in &frame.omega {
         out.extend_from_slice(&v.to_le_bytes());
     }
     out.extend_from_slice(&frame.aperture.to_le_bytes());
+    if let Some(p) = pan {
+        out.extend_from_slice(&p.to_le_bytes());
+    }
+    if let Some(t) = tilt {
+        out.extend_from_slice(&t.to_le_bytes());
+    }
     out
 }
 
