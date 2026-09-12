@@ -114,8 +114,8 @@ async function toggle() {
   readLoop();
 }
 
-export function onFrame(omega, aperture) {
-  frame.onFrame(omega, aperture);
+export function onFrame(omega, aperture, pan, tilt) {
+  frame.onFrame(omega, aperture, pan, tilt);
 }
 
 button.addEventListener("click", toggle);

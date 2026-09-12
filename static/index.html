@@ -337,7 +337,7 @@ function connect() {
     if (tag === KINETIC_TAG) {
       if (serial) {
         const k = parseKinetic(bytes);
-        serial.onFrame(k.omega, k.aperture);
+        serial.onFrame(k.omega, k.aperture, k.pan, k.tilt);
       }
       return;
     }
