@@ -2,7 +2,7 @@
   title: The eclipse clock — greatest eclipse from five ephemeris worldlines
   class: paper
   date: 2026-09-13
-  sha256: 08c1016eefe1d881b7ec63cbf709ce0f63f81d3e89c10f4cd135d9bfd0c77ebc
+  sha256: d81aa16b5fdd7e3f4c8b539b656badba4634e4b879ae017c3ef00a3d5c69e560
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
@@ -41,7 +41,7 @@ Two channels carry the two residual numbers, and they do not mix. The +4.9 s ins
 
 - The de441 line has drifted from the one voice: on the current bins it places greatest eclipse at 42.5 km / −90.5 s (2017) and +10.1 s (2024), and its Earth centre sits 116 km from de440/de442. This is a data-state defect named for re-verification (register duty), not a physics claim.
 - The body_fixed_to_icrs matrix path defect stands as fixed (2026-09-09: Rz(90+α)·Rx(90−δ)·Rz(W), pole read from column 2); de441 mars still carries pre-fix matrices (Δ anchor 6045.3 km) and is the named remaining stone.
-- The calibration gate is data-bound: point < 15 km, magnitude < 0.002. It holds on the one-voice line (4.8 km, +0.0009). Against the drifted de441 bins it would read 42.5 km; the gate test still names LINES[0]=de441 and carries a silent early-return when data/ is absent, so its read of the drift is pending the de441 re-verification.
+- The calibration gate is data-bound: point < 15 km, magnitude < 0.002. It holds on the one-voice line de440 (4.8 km, +0.0009); against the drifted de441 bins it would read 42.5 km, and its de441 read is pending the de441 re-verification. Where the data bins sit absent, the gate names its skip and stays unrun — never a silent no-op.
 
 ## References
 
