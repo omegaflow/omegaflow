@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>omegaflow</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system-ui, monospace; overflow: hidden; }
+#surface { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#status {
+  position: fixed; left: 12px; bottom: 10px; font-size: 12px; letter-spacing: 0.05em;
+  color: #6b6256; pointer-events: none; user-select: none;
+}
+#consent {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.86); z-index: 10;
+}
+#consent .card {
+  border: 1px solid #2a2622; padding: 2rem 2.4rem; max-width: 30rem;
+  background: #0a0908;
+}
+#consent h2 { font-weight: 300; letter-spacing: 0.12em; color: #f0e8d8; margin-bottom: 1rem; font-size: 1.2rem; }
+#consent p { font-size: 0.85rem; line-height: 1.5; color: #9c9284; margin-bottom: 1.4rem; }
+#consent .row { display: flex; gap: 1rem; }
+#consent button {
+  flex: 1; padding: 0.7rem 0; background: none; border: 1px solid #3a352e;
+  color: #e8ddc8; font-family: inherit; font-size: 0.9rem; cursor: pointer; letter-spacing: 0.1em;
+}
+#consent button:hover { border-color: #c4a45a; color: #f0e8d8; }
+#consent .state { font-size: 0.75rem; color: #6b6256; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<canvas id="surface"></canvas>
+<div id="status"></div>
+<div id="consent">
+  <div class="card">
+    <h2>record consent</h2>
+    <p>The machine asks before it records. The browser sensors push raw oscillators into the field only after the operator answers. Silence until then.</p>
+    <div class="row">
+      <button id="consent-ja">Ja — record</button>
+      <button id="consent-nein">Nein — silent</button>
+    </div>
+    <div class="state" id="consent-state"></div>
+  </div>
+</div>
+<script type="module">
+import { syncFrame, parseRecords } from "./constants.js";
+
+const canvas = document.getElementById("surface");
+const statusEl = document.getElementById("status");
+const consentEl = document.getElementById("consent");
+const consentStateEl = document.getElementById("consent-state");
+
+const GRID_INIT = 2147483648.0;
+
+const state = {
+  px: 0, py: 0, pz: 0,
+  vx: 0, vy: 0, vz: 0,
+  scale: GRID_INIT,
+  range: 1280.0 * GRID_INIT * 2.0,
+  lvlOffset: 0,
+  lvl: 1.0,
+  t: 0,
+  t0: 0,
+  tStart: performance.now(),
+  id: 0,
+  consented: false,
+};
+
+const held = new Set();
+
+function thrust() {
+  return state.scale;
+}
+
+function status(text) {
+  statusEl.textContent = text;
+}
+
+async function fetchText(path) {
+  const r = await fetch(path);
+  if (!r.ok) {
+    return null;
+  }
+  return r.text();
+}
+
+async function askConsent(word) {
+  const text = await fetchText("/consent?" + word);
+  if (text === null) {
+    return;
+  }
+  const v = text.trim() === "1";
+  state.consented = v;
+  consentStateEl.textContent = "consent: " + (v ? "1 (record)" : "0 (silent)");
+  if (v) {
+    consentEl.style.display = "none";
+  }
+}
+
+document.getElementById("consent-ja").addEventListener("click", () => askConsent("ja"));
+document.getElementById("consent-nein").addEventListener("click", () => askConsent("nein"));
+
+async function readConsent() {
+  const text = await fetchText("/consent");
+  if (text === null) {
+    return;
+  }
+  const v = text.trim() === "1";
+  state.consented = v;
+  consentStateEl.textContent = "consent: " + (v ? "1 (record)" : "0 (silent)");
+  if (v) {
+    consentEl.style.display = "none";
+  }
+}
+
+const fieldShader = `
+struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
+@group(0) @binding(0) var<storage, read> field: array<vec4f>;
+@group(0) @binding(1) var<storage, read> props: array<vec4f>;
+@group(0) @binding(2) var<uniform> vp: VP;
+struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @location(1) color: vec4f };
+@vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
+    let count = u32(vp.surface.z);
+    var out: VOut;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.local_uv = vec2f(0.0);
+    out.color = vec4f(0.0);
+    if (count == 0u) { return out; }
+    let id = i / 6u;
+    if (id >= count) { return out; }
+    let vid = i % 6u;
+    var quad = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    let m = field[id * 3];
+    let d = m.xyz;
+    let val = m.w;
+    let extent = props[id * 4].x;
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let scale = vp.surface.w;
+    let x = dot(d, vp.right.xyz);
+    let y = dot(d, vp.up.xyz);
+    var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
+    let point_size_px = clamp(extent / scale, 2.0, 128.0);
+    clip.x += (quad[vid].x * point_size_px) / w * 2.0;
+    clip.y += (quad[vid].y * point_size_px) / h * 2.0;
+    out.pos = vec4f(clip, 0.0, 1.0);
+    out.local_uv = quad[vid];
+    let lvl = vp.expose.x;
+    if (lvl <= 0.0) { return out; }
+    let aw = abs(val);
+    let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
+    let t2s = t2 * t2 * (3.0 - 2.0 * t2);
+    let c1 = mix(vec3f(0.0, 0.0, 0.0), vec3f(0.0, 0.15, 0.4), clamp(t2s * 4.0, 0.0, 1.0));
+    let c2 = mix(c1, vec3f(0.1, 0.5, 0.9), clamp((t2s - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(0.8, 0.6, 0.2), clamp((t2s - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 0.95, 0.9), clamp((t2s - 0.75) * 4.0, 0.0, 1.0));
+    out.color = vec4f(c4, 1.0);
+    return out;
+}
+@fragment fn fs(in: VOut) -> @location(0) vec4f {
+    let dist = length(in.local_uv);
+    if (dist > 1.0) {
+        discard;
+    }
+    let intensity = exp(-dist * dist * 4.0);
+    return vec4f(in.color.rgb * intensity * in.color.a, intensity * in.color.a);
+}
+`;
+
+let device = null;
+let context = null;
+let fieldBuf = null;
+let propsBuf = null;
+let vpBuf = null;
+let fieldCap = 0;
+let pipeline = null;
+let bindGroup = null;
+const vpData = new Float32Array(16);
+
+async function initGPU() {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) {
+    status("no adapter");
+    return false;
+  }
+  device = await adapter.requestDevice();
+  context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format, alphaMode: "premultiplied" });
+
+  const module = device.createShaderModule({ code: fieldShader });
+  const layout = device.createBindGroupLayout({ entries: [
+    { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+    { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+    { binding: 2, visibility: GPUShaderStage.VERTEX, buffer: { type: "uniform" } },
+  ] });
+
+  ensureBuffers(4096);
+  vpBuf = device.createBuffer({ size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+
+  pipeline = device.createRenderPipeline({
+    layout: device.createPipelineLayout({ bindGroupLayouts: [layout] }),
+    vertex: { module, entryPoint: "vs" },
+    fragment: {
+      module, entryPoint: "fs",
+      targets: [{
+        format,
+        blend: {
+          color: { srcFactor: "one", dstFactor: "one", operation: "add" },
+          alpha: { srcFactor: "one", dstFactor: "one", operation: "add" },
+        },
+      }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  bindGroup = device.createBindGroup({
+    layout,
+    entries: [
+      { binding: 0, resource: { buffer: fieldBuf } },
+      { binding: 1, resource: { buffer: propsBuf } },
+      { binding: 2, resource: { buffer: vpBuf } },
+    ],
+  });
+  return true;
+}
+
+function ensureBuffers(count) {
+  if (count <= fieldCap) {
+    return;
+  }
+  fieldCap = count * 2;
+  const f = device.createBuffer({ size: fieldCap * 12 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  const p = device.createBuffer({ size: fieldCap * 16 * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  fieldBuf = f;
+  propsBuf = p;
+  if (bindGroup) {
+    bindGroup = device.createBindGroup({
+      layout: bindGroup.layout,
+      entries: [
+        { binding: 0, resource: { buffer: fieldBuf } },
+        { binding: 1, resource: { buffer: propsBuf } },
+        { binding: 2, resource: { buffer: vpBuf } },
+      ],
+    });
+  }
+}
+
+function render(record) {
+  if (!device) {
+    return;
+  }
+  ensureBuffers(record.count);
+  const field = record.field;
+  for (let j = 0; j < record.count; j++) {
+    field[j * 12] -= state.px;
+    field[j * 12 + 1] -= state.py;
+    field[j * 12 + 2] -= state.pz;
+  }
+  device.queue.writeBuffer(fieldBuf, 0, field, 0, record.count * 12);
+  device.queue.writeBuffer(propsBuf, 0, record.meta, 0, record.count * 16);
+
+  const w = canvas.width;
+  const h = canvas.height;
+  vpData[0] = w;
+  vpData[1] = h;
+  vpData[2] = record.count;
+  vpData[3] = state.scale;
+  vpData[4] = 1; vpData[5] = 0; vpData[6] = 0; vpData[7] = 0;
+  vpData[8] = 0; vpData[9] = 1; vpData[10] = 0; vpData[11] = 0;
+  vpData[12] = state.lvl * Math.pow(2, state.lvlOffset);
+  device.queue.writeBuffer(vpBuf, 0, vpData);
+
+  const pass = device.createCommandEncoder();
+  const rp = pass.beginRenderPass({
+    colorAttachments: [{
+      view: context.getCurrentTexture().createView(),
+      loadOp: "clear",
+      storeOp: "store",
+      clearValue: { r: 0, g: 0, b: 0, a: 0 },
+    }],
+  });
+  rp.setPipeline(pipeline);
+  rp.setBindGroup(0, bindGroup);
+  rp.draw(record.count * 6);
+  rp.end();
+  device.queue.submit([pass.finish()]);
+}
+
+function updateLvl(record) {
+  let maxAbs = 0;
+  for (let j = 0; j < record.count; j++) {
+    const a = Math.abs(record.field[j * 12 + 3]);
+    if (a > maxAbs) {
+      maxAbs = a;
+    }
+  }
+  if (maxAbs > 0) {
+    const alpha = 1 - Math.exp(-1 / 8);
+    state.lvl = state.lvl + (maxAbs - state.lvl) * alpha;
+  }
+}
+
+function queries() {
+  const w = canvas.width;
+  const h = canvas.height;
+  const hw = w * state.scale * 0.5;
+  const hh = h * state.scale * 0.5;
+  const t = state.t;
+  return [
+    [t, state.px, state.py, state.pz],
+    [t, state.px - hw, state.py - hh, state.pz],
+    [t, state.px + hw, state.py - hh, state.pz],
+    [t, state.px - hw, state.py + hh, state.pz],
+    [t, state.px + hw, state.py + hh, state.pz],
+  ];
+}
+
+let ws = null;
+let pendingInputs = [];
+
+function connect() {
+  ws = new WebSocket("ws://" + location.host);
+  ws.binaryType = "arraybuffer";
+  ws.onmessage = (ev) => {
+    const bytes = ev.data;
+    if (bytes.byteLength < 3 || new DataView(bytes).getUint8(2) !== 9) {
+      return;
+    }
+    const record = parseRecords(bytes);
+    updateLvl(record);
+    render(record);
+  };
+  ws.onclose = () => {
+    status("relay closed");
+    setTimeout(connect, 1000);
+  };
+  ws.onerror = () => {
+    status("relay unreachable");
+  };
+}
+
+function sendFrame() {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    return;
+  }
+  const inputs = pendingInputs;
+  pendingInputs = [];
+  state.id += 1;
+  const presence = {
+    x: state.px, y: state.py, z: state.pz,
+    t: state.t,
+    range: state.range,
+    cacheInterval: 0,
+    vx: state.vx, vy: state.vy, vz: state.vz,
+    thrustT: 0,
+    gridStep: state.scale,
+  };
+  const buf = syncFrame(state.id, inputs, queries(), presence);
+  ws.send(buf);
+}
+
+function recordSample(name, value, tau) {
+  if (!state.consented) {
+    return;
+  }
+  pendingInputs.push({ name, value, tau });
+}
+
+function jumpTo(x, y, z) {
+  state.px = x;
+  state.py = y;
+  state.pz = z;
+}
+
+async function jumpBody(body) {
+  const text = await fetchText("/jump/" + encodeURIComponent(body));
+  if (text === null) {
+    status("body " + body + " absent");
+    return;
+  }
+  const parts = text.trim().split(/\s+/).map(Number);
+  if (parts.length >= 3 && parts.every(Number.isFinite)) {
+    jumpTo(parts[0], parts[1], parts[2]);
+    status("presence at " + body);
+  }
+}
+
+window.omegaflow = { recordSample, jumpTo, jumpBody, consent: () => state.consented };
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+  canvas.height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+}
+window.addEventListener("resize", resize);
+
+window.addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
+    return;
+  }
+  if (e.key === "s" || e.key === "S") {
+    held.clear();
+    state.vx = 0; state.vy = 0; state.vz = 0;
+    return;
+  }
+  if (e.key === "e") {
+    state.lvlOffset += 1;
+    return;
+  }
+  if (e.key === "E") {
+    state.lvlOffset -= 1;
+    return;
+  }
+  if (e.key === "=" || e.key === "+") {
+    state.scale *= 0.5;
+    return;
+  }
+  if (e.key === "-" || e.key === "_") {
+    state.scale *= 2.0;
+    return;
+  }
+  held.add(e.key);
+});
+
+window.addEventListener("keyup", (e) => {
+  held.delete(e.key);
+});
+
+window.addEventListener("wheel", (e) => {
+  state.scale *= Math.pow(2, e.deltaY * 0.001);
+});
+
+function integrate(dt) {
+  let vx = 0, vy = 0, vz = 0;
+  const t = thrust();
+  if (held.has("ArrowLeft")) { vx -= t; }
+  if (held.has("ArrowRight")) { vx += t; }
+  if (held.has("ArrowUp")) { vy += t; }
+  if (held.has("ArrowDown")) { vy -= t; }
+  if (held.has(".")) { vz += t; }
+  if (held.has(",")) { vz -= t; }
+  state.vx = vx;
+  state.vy = vy;
+  state.vz = vz;
+  state.px += vx * dt;
+  state.py += vy * dt;
+  state.pz += vz * dt;
+}
+
+async function boot() {
+  resize();
+  readConsent();
+  const timeText = await fetchText("/time");
+  if (timeText === null) {
+    status("time absent");
+    return;
+  }
+  state.t0 = Number(timeText.trim());
+  if (!Number.isFinite(state.t0)) {
+    status("time absent");
+    return;
+  }
+  state.t = state.t0;
+  const ok = await initGPU();
+  if (!ok) {
+    return;
+  }
+  connect();
+  status("arrows thrust · s halt · e/E light · -/= zoom");
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = (now - last) / 1000;
+  last = now;
+  state.t = state.t0 + (now - state.tStart) / 1000;
+  integrate(dt);
+  sendFrame();
+  requestAnimationFrame(loop);
+}
+
+try {
+  await import("./palette.js");
+} catch {}
+try {
+  await import("./webserial.js");
+} catch {}
+
+boot();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
