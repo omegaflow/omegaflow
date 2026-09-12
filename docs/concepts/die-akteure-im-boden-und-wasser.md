@@ -2,7 +2,7 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: 7528719d4a6d4a48a0706ffb4d48194b9811e34cdef8ffdea440942a53f65989
+  sha256: fd40b5ba6d6de20d10d91fdf6061ca6cfcbb23256affd048bd7bd0fc3c2e8e03
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
@@ -34,7 +34,9 @@ auf die Erde.
 - Die Flotte — 16 Ereignisse × Stationen, unverzerrt (+1,7 km, se 4,7 km),
   Streuung dominiert das Gate — `depth_phase_fleet_probe.rs`.
 - Tōhoku-Kette — Pegel gemessen (766 km/h), Vorhersage 4/6, Eikonal/Dijkstra
-  schließt die Beugung (Adak +57→−10, Hilo +82→+7 min).
+  schließt die Beugung (Adak +57→−10, Hilo +82→+7 min). Wächter: Eikonal-CI-
+  Run 34718368835 (queued 2026-09-12) — der grüne Lauf gegen ETOPO1
+  verifiziert die Schließung in CI.
 - M9.1-Picker — gebaut, Streuung bleibt (W-Phase entschieden, offen).
 
 ## Was offen ist (die Reihenfolge)
@@ -46,9 +48,11 @@ auf die Erde.
    senken (besseres Picken / der mehrdeutige pP-Zweig bei Δ≈30°) und der
    Quell-Strahlungsterm (CMT-Lösung, `pending`). Die feinere Inversionsklasse
    ist gebaut (1-km-Raste, `tools/measure/src/depthphase.rs`); die pP/sP-Polarität
-   ist abgeleitet (R_pp negativ im Pilotband, R_sp ≈ −1, `ak135.rs`
-   `free_surface_pp`); vor dem Zonen-Lauf bleibt
-   die ak135-Tiefenmodell-Erweiterung über 250 km benannt.
+    ist abgeleitet (R_pp negativ im Pilotband, R_sp ≈ −1, `ak135.rs`
+    `free_surface_pp`); die Tiefenmodell-Erweiterung über 250 km ist
+    geschlossen (2026-09-09: `MAX_DEPTH_KM` 250 → 700, `DEPTH_KM`-Raster
+    bis 700 km, Inversion bis 700 km; das Modell `ak135.dat` trägt bis
+    6371 km).
 2. **Stationsterm / Empfänger-Korrektur** — Wiederholung zuerst (II.KIV,
    3–5 Ereignisse aus einer Ecke, stetig=Struktur, springt=Pick); das
    +5,69-s-Residuum bleibt `offen`, kein Default.
@@ -59,6 +63,9 @@ auf die Erde.
 5. **Stromboli** — Vulkan-Lehrer.
 6. **CDN-Manifestation** des ETOPO1-Gitters (395 MB).
 7. **MiniSEED-Dopplung** — `laic_probe.rs` → `miniseed.rs` konsolidieren.
+8. **Erd-Eigenmoden („die Glocke")** — registrierte Frage (Rat): freie
+   Eigenmoden nach Großbeben, Meßkette miniSEED/ak135/Flotten-Stationen;
+   erst Frage → Messung → Paper — kein Titel ohne Messung.
 
 ## Die Akteure (was im Boden und Wasser steckt und sich bewegt)
 
