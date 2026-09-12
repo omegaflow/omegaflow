@@ -430,7 +430,7 @@ pub fn main_flow() {
     )));
     let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, Option<f64>)>>();
     let consent = Arc::new(AtomicBool::new(false));
-    eprintln!("record consent: silent until the operator speaks (browser Y/N relay pending)");
+    eprintln!("record consent: silent until the operator speaks (/consent)");
     let serial_tx = sensor_tx.clone();
     thread::spawn(move || serial_ingress(serial_tx));
     let battery_tx = sensor_tx.clone();
@@ -605,6 +605,7 @@ pub fn main_flow() {
                 time.clone(),
                 consent.clone(),
                 diode.clone(),
+                Arc::new(archive.sources.clone()),
             );
             radiators.push(Box::new(sr));
         }
