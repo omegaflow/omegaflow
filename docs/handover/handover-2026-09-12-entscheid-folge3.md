@@ -3,15 +3,15 @@
   session: Entscheid-Folge III
   class: handover
   date: 2026-09-12
-  sha256: a7d7b7d0e8d42fb3f11cc472ac5cfb5e206ca06b9655f4aa4dd0414eab3ad63b
+  sha256: 94f4b4a219b339f62942eba74b84d81090fa7afff9b22363c1a4f7890a153d0b
   status: live
 -->
 # Handover — Entscheid-Folge III (2026-09-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
-viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
+viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
+macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
