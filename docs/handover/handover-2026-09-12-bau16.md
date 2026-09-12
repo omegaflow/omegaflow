@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 651719b94c1d36ef5122d497909caa4f65c775d13c38f27ae8db421fae5dc1e8
+  sha256: 96ec3d0ea28e32ba057c9ece0b701d46d3f528310a344e2060ca4fd8f5dacd31
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau16)
@@ -24,6 +24,15 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   `/dev/ttyACM*` und `/dev/ttyUSB*` leer) und `espflash` (der Runner) ist nicht
   installiert. Flashen braucht das angesteckte Gerät + `espflash`; dann läuft der
   nn-Strom als `nn=<ms>` am ttyACM.
+
+## Eclipse-Schattenortung — offene Code-Punkte
+
+- **Kalibrier-Gate-Test** (`eclipse_shadow_probe.rs`): trägt noch `LINES[0]`
+  (=de441, gedriftet → läse 42,5 km) und eine stille Early-Return bei fehlendem
+  `data/` (`cargo test` läuft aus der Crate-Root → No-op). Gehört zur
+  de441-Re-Ernte.
+- **2024-Kanon-Punkt:** Katalogzeile 09561 trägt den Punkt gerundet (25N 104W);
+  ein präziser Punkt käme aus der TSE2024-Detailseite (nur wenn gewollt).
 
 ## Abschluss
 
