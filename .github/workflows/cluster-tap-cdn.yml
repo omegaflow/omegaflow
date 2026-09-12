@@ -1,0 +1,91 @@
+name: cluster-tap-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  clusters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if all cluster assets already exist on the CDN
+        run: |
+          missing=0
+          for asset in mcxc_clusters.json psz2_clusters.json abell_clusters.json; do
+            if gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$asset"; then
+              echo "asset $asset already present"
+            else
+              echo "asset $asset missing"
+              missing=$((missing+1))
+            fi
+          done
+          if [ "$missing" -eq 0 ]; then
+            echo "all cluster assets present — manifest skipped"
+            exit 0
+          fi
+      - name: Ensure the tapvizier.cds.unistra.fr release exists on the CDN
+        run: |
+          if ! gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create tapvizier.cds.unistra.fr --repo omegaflow/sources \
+              --title "tapvizier.cds.unistra.fr" \
+              --notes "cluster catalogs compiled to omegaflow JSON assets (CDN tag = netloc)"
+          fi
+      - name: Compile MCXC cluster catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "J/A+A/534/A109/mcxc" \
+            --columns 'name:MCXC;ra:RAJ2000;dec:DEJ2000;z:z' \
+            --skip-null z \
+            --out mcxc_clusters.json \
+            --release-tag tapvizier.cds.unistra.fr \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: mcxc_clusters returned void" \
+                 "mcxc_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile PSZ2 cluster catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "J/A+A/594/A27/psz2" \
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z' \
+            --where '"z" > 0' \
+            --out psz2_clusters.json \
+            --release-tag tapvizier.cds.unistra.fr \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: psz2_clusters returned void" \
+                 "psz2_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile Abell (ACO northern + southern) and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VII/110A/table3" \
+            --columns 'name:ACO;ra:_RA.icrs;dec:_DE.icrs;z:z' \
+            --skip-null z \
+            --out abell_north.json
+          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VII/110A/table4" \
+            --columns 'name:ACO;ra:_RA.icrs;dec:_DE.icrs;z:z' \
+            --skip-null z \
+            --out abell_south.json
+          jq -s add abell_north.json abell_south.json > abell_clusters.json
+          gh release upload tapvizier.cds.unistra.fr abell_clusters.json --clobber --repo omegaflow/sources \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: abell_clusters returned void" \
+                 "abell_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
