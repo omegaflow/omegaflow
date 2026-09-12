@@ -392,20 +392,20 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, 3, 60.0, "", None)
+        (5, 3, 60.0, "", Some(3600.0))
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, 3, 60.0, "", None)
+        (6, 3, 60.0, "", Some(3600.0))
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, 3, 300.0, "", None)
+        (5, 3, 300.0, "", Some(3600.0))
     } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
     {
-        (6, 3, 10.0, "", None)
+        (6, 3, 10.0, "", Some(3600.0))
     } else if (kl.contains("wind") && kl.contains("dir"))
         || kl == "winddirection"
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, 3, 10.0, "", None)
+        (6, 3, 10.0, "", Some(3600.0))
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
@@ -422,11 +422,11 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (8, 5, 60.0, "%", Some(60.0))
+        (8, 0, 60.0, "%", Some(60.0))
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, 5, 60.0, "v", Some(60.0))
+        (8, 0, 60.0, "v", Some(60.0))
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, 5, 10.0, "a", Some(10.0))
+        (8, 0, 10.0, "a", Some(10.0))
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
@@ -445,7 +445,7 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     } else if kl.contains("camera") || kl.contains("video") {
         (0, 0, 1.0 / 30.0, "", None)
     } else if kl.contains("battery") && kl.contains("charging") {
-        (8, 5, 60.0, "1", Some(60.0))
+        (8, 0, 60.0, "1", Some(60.0))
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else if kl.starts_with("event.") {
@@ -484,6 +484,32 @@ mod tests {
     }
 
     #[test]
+    fn the_electric_force_carries_the_inverse_square_kernel() {
+        assert_eq!(sensor_config("battery.level").expect("sensor").kernel, 0);
+        assert_eq!(sensor_config("battery.voltage").expect("sensor").kernel, 0);
+        assert_eq!(sensor_config("battery.current").expect("sensor").kernel, 0);
+        assert_eq!(sensor_config("battery.charging").expect("sensor").kernel, 0);
+    }
+
+    #[test]
+    fn the_meteo_series_carry_the_hourly_relaxation() {
+        assert_eq!(
+            sensor_config("temperature").expect("sensor").tau,
+            Some(3600.0)
+        );
+        assert_eq!(sensor_config("pressure").expect("sensor").tau, Some(3600.0));
+        assert_eq!(sensor_config("humidity").expect("sensor").tau, Some(3600.0));
+        assert_eq!(
+            sensor_config("wind.speed").expect("sensor").tau,
+            Some(3600.0)
+        );
+        assert_eq!(
+            sensor_config("wind.direction").expect("sensor").tau,
+            Some(3600.0)
+        );
+    }
+
+    #[test]
     fn the_battery_tau_lives_in_the_registry_not_the_wire() {
         assert_eq!(
             sensor_config("battery.level").expect("sensor").tau,
@@ -501,7 +527,10 @@ mod tests {
             sensor_config("battery.charging").expect("sensor").tau,
             Some(60.0)
         );
-        assert_eq!(sensor_config("temperature").expect("sensor").tau, None);
+        assert_eq!(
+            sensor_config("temperature").expect("sensor").tau,
+            Some(3600.0)
+        );
     }
 
     #[test]
