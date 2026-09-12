@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::{upload_asset, upload_release};
 use omegaflow::json::{parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
@@ -653,6 +653,7 @@ fn main() {
     let mut csv_flag = false;
     let mut text_flag = false;
     let mut lattice: Option<i64> = None;
+    let mut release_tag: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -784,6 +785,10 @@ fn main() {
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
+            "--release-tag" => {
+                release_tag = args.get(i + 1).cloned();
+                i += 1;
+            }
             "--probe" => {
                 probe = args.get(i + 1).cloned();
                 i += 1;
@@ -1605,9 +1610,15 @@ fn main() {
             let part_path = format!("{}.part{:.4}", out_path_band, a);
             let _ = std::fs::remove_file(&part_path);
         }
-        if ci_mode && !out_path_band.is_empty() && !upload_asset(&out_path_band) {
-            eprintln!("upload: {} did not reach the CDN", out_path_band);
-            std::process::exit(1);
+        if ci_mode && !out_path_band.is_empty() {
+            let reached = match release_tag.as_deref() {
+                Some(tag) => upload_release(tag, &out_path_band),
+                None => upload_asset(&out_path_band),
+            };
+            if !reached {
+                eprintln!("upload: {} did not reach the CDN", out_path_band);
+                std::process::exit(1);
+            }
         }
         return;
     }
@@ -1705,9 +1716,15 @@ fn main() {
         out_path,
         buf.len()
     );
-    if ci_mode && !upload_asset(&out_path) {
-        eprintln!("upload: {} did not reach the CDN", out_path);
-        std::process::exit(1);
+    if ci_mode {
+        let reached = match release_tag.as_deref() {
+            Some(tag) => upload_release(tag, &out_path),
+            None => upload_asset(&out_path),
+        };
+        if !reached {
+            eprintln!("upload: {} did not reach the CDN", out_path);
+            std::process::exit(1);
+        }
     }
 }
 
