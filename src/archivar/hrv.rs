@@ -2,6 +2,18 @@ pub const NN_MIN_MS: f64 = 250.0;
 pub const NN_MAX_MS: f64 = 2000.0;
 pub const RMSSD_MIN_DIFFS: usize = 2;
 pub const TONE_FLOOR: usize = 10;
+pub const TONE_ABSENT: u8 = 0;
+pub const TONE_CALM: u8 = 1;
+pub const TONE_STRESSED: u8 = 2;
+pub const NN_WINDOW: usize = 30;
+
+pub fn tone_code(tone: Option<Tone>) -> u8 {
+    match tone {
+        None => TONE_ABSENT,
+        Some(Tone::Calm) => TONE_CALM,
+        Some(Tone::Stressed) => TONE_STRESSED,
+    }
+}
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Tone {
@@ -146,5 +158,12 @@ mod tests {
         assert_eq!(g.feed(f64::NAN), None);
         assert_eq!(g.feed(0.0), None);
         assert_eq!(g.feed(-1.0), None);
+    }
+
+    #[test]
+    fn tone_code_maps_absent_calm_stressed() {
+        assert_eq!(tone_code(None), TONE_ABSENT);
+        assert_eq!(tone_code(Some(Tone::Calm)), TONE_CALM);
+        assert_eq!(tone_code(Some(Tone::Stressed)), TONE_STRESSED);
     }
 }
