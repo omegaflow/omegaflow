@@ -3,6 +3,10 @@
 # blocked account (Konto/Login), blocked parser-def <typ> (Format-Luecke, Messung echt)
 # und pending (Identität nicht entschieden oder Ernte ungebaut — Register-Duty).
 
+pending
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
+note Pioneer-10 ATDF Sky-Frequency (S-Band-Doppler ~2,3 GHz). Asset liegt auf dem CDN (release spdf.gsfc.nasa.gov, pioneer-atdf-cdn.yml); der atdf-Parser existiert (src/archivar/atdf.rs: reduce_skyfreq, parse_skyfreq_bin — 14-Feld-Records). Konsumenten: ausschließlich measure-Probes (pioneer_link_correction_probe, pioneer_doppler_moyer, pioneer_drift_te_probe, pioneer_atdf_residuum, pioneer_residue_diagnose, pioneer_odp), die data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin direkt als lokalen Mess-Datensatz lesen. Kein Membran-Konsument (kein ω()/main_flow-Feld-Evaluator greift die Serie) — die 14-Feld-Doppler-Serie ist kein Skalar-Feld-Oszillator (0-Kanon: eine 14-Feld-Serie trägt keinen ehrlichen field-Block). pending (Tor 1: kein gebauter Membran-Konsument).
+
 blocked key
 url https://aqs.epa.gov/data/api/dailyData/byBox?email=
 note AQS Data Mart API — Schadstoff-Konzentration (diffusion), Messung echt; braucht email + api_key (frei registrierbar). Der 400 war ein Browser-Historien-Fragment ohne email/key, kein toter Endpoint.
@@ -87,13 +91,13 @@ note VOTable-Parser-Gap widerlegt (2026-09-11) und TAP_SCHEMA-Pass getragen (202
     WiggleZ (redshift) → z-Kanal gebaut (ned_redshift_z), aber BAO ist keine Nadel (Nadel Ⅷ: z≳10).
     CADC youcat Wallaby (HI, freq Hz) → alfalfa_hi_flux ist lokal; Wallaby extragalaktisch, kein Voxelnetz.
 
-blocked parser-def csv-header
+pending
 url http://archive.eso.org/tap_cat
-note ESO tap_cat — echte CSV, aber die Probe klassifiziert Header-CSV nicht. Gap: CSV-Header-Parser.
+note ESO tap_cat — CSV-Header-Gap geschlossen (tap_compiler --csv); HARPS rvcat geerntet → sources.φ 6052. Verbleibende statische Mehrband-Kataloge (VHS/VIKING-Photometrie, em) ohne gebauten Konsument (Tor 1) — pending.
 
-blocked parser-def csv-header
+pending
 url https://archive.eso.org/tap_obs
-note ESO tap_obs — sync-Antwort CSV mit Header. Gap: CSV-Header-Parser.
+note ESO tap_obs — CSV-Header-Gap geschlossen (tap_compiler --csv). Gemessen 2026-09-12 (curl, TAP_SCHEMA): ist.*-Rohdaten-Tabellen (je Instrument), ivoa.ObsCore (reduzierte Produkt-Metadaten), phase3v2 (Datei-/Provenance-Verwaltung), util. Die ObsCore-Spalten sind Beobachtungs-Discovery-Metadaten (s_ra/s_dec, em_min/em_max Wellenlängen-Grenzen, t_exptime, snr, abmaglim = Grenzhelligkeit stat.max) — kein Skalar-Feld-Oszillator; die physikalische Messung (Spektren/Bilder/Fluss) liegt in den FITS-Dateien hinter access_url, nicht in TAP-Spalten. Kein gemessener Feld-Kandidat (Spalte + Kraft + Konsument) → pending, kein Feldblock fabriziert.
 
 blocked parser-def fits
 url https://cirada.ca/catalogues
