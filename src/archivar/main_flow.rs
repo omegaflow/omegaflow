@@ -899,13 +899,13 @@ pub fn main_flow() {
                 let Some(bs) = sensor_config(&name) else {
                     continue;
                 };
-                let Some(wire_tau) = tau else {
-                    continue;
-                };
-                let effective_tau = if wire_tau > 0.0 {
-                    wire_tau
-                } else {
-                    continue;
+                let effective_tau = match tau {
+                    Some(wire_tau) if wire_tau > 0.0 => wire_tau,
+                    Some(_) => continue,
+                    None => match bs.tau {
+                        Some(t) if t > 0.0 => t,
+                        _ => continue,
+                    },
                 };
                 if !value.is_finite() {
                     continue;
