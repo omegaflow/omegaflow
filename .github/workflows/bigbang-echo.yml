@@ -1,0 +1,38 @@
+name: bigbang-echo
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bigbang-echo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the CMB and galaxy channels from the CDN
+        run: |
+          mkdir -p data/irsa.ipac.caltech.edu data/tapvizier.cds.unistra.fr
+          gh release download irsa.ipac.caltech.edu --repo omegaflow/sources \
+            --pattern cmb_planck_smica_n64.json --clobber --dir data/irsa.ipac.caltech.edu
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern cosmicflows_cf4.json --clobber --dir data/tapvizier.cds.unistra.fr
+      - name: Run the big-bang echo TE (CMB x galaxy density; CMB x mean depth)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin bigbang_echo_probe
+          } > bigbang-echo.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bigbang-echo
+          path: bigbang-echo.txt
