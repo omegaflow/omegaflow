@@ -1,0 +1,14 @@
+# tap-inventar http://oirsa.cfa.harvard.edu:8080/tap
+
+catalog hectospec.data_public hectospec view
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog ivoa.obscore ivoa view
+catalog hectochelle.data_public hectochelle view
+catalog echelle.data_public echelle view
+catalog fast.data_public fast view
+catalog m31_proj.m31 m31_proj table
