@@ -1,0 +1,13 @@
+# tap-inventar http://vespa.ia2.inaf.it/tap
+catalog sw.epn_core sw table
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog swihy.epn_core swihy table
+catalog artecs.epn_core artecs table
+catalog ndcs.epn_core ndcs table
+catalog tap_schema.groups tap_schema table
+catalog swear.epn_core swear table
+catalog sweare.epn_core sweare table
