@@ -55,38 +55,28 @@ url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token
 note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung (Schalldruck-Spektraldichte, acoustic) echt — Gap: MATLAB-v5-`.mat`-Parser; danach Bin-Geometrie am ersten echten Run messen.
 
 pending
-note VOTable-Parser-Gap widerlegt (2026-09-11, zweite Sonde `-L` Redirect-Follow + `/sync`-Endpunkt):
+note VOTable-Parser-Gap widerlegt (2026-09-11) und TAP_SCHEMA-Pass getragen (2026-09-12):
   die 22 ehemals `blocked parser-def votable` sind offene TAP-Kataloge — anonym, HTTP 200,
   `FORMAT=votable` liefert TABLEDATA, vom Haus-Parser `votable_rows`
-  (tools/harvest/src/bin/tap_compiler.rs:278) konsumiert. Die alte Note maß die UI-Wurzel (HTML)
-  mit `FORMAT=json` — wahre Messung eines falschen Ortes. Kein Gate, kein Format-Gap; ungebaut ist
-  nur die Ernte (Register-Duty). Landeregel: Eintritt in sources.φ erst mit gemessenem Feldblock
-  (TAP_SCHEMA-Durchgang) + Compiler + CDN-Manifestation — nie die bloße Adresse. Per-Katalog-Descope
-  (Kandidat Gaia-AIP, redundant zu dr3_stars.bin) in den TAP-Klassifikations-Durchgang der Welle.
-  Bei großen Antworten kann BINARY2 kommen — der Paginierungs-Durchgang je Katalog verifiziert das.
-  22 Endpunkte (`/sync`-Form; *gemessen* = Vollkörper an ALMA EU, *erschlossen* = `<TD>`-gemessen):
-    https://almascience.eso.org/tap/sync                    [ALMA EU *gemessen*]
-    https://almascience.nao.ac.jp/tap/sync                  [ALMA EA]
-    https://almascience.nrao.edu/tap/sync                   [ALMA NA]
-    https://api.skymapper.nci.org.au/public/tap/sync        [SkyMapper]
-    https://atoavo.atnf.csiro.au/tap/sync                   [ATOAVO]
-    https://casda.csiro.au/casda_vo_tools/tap/sync          [CASDA]
-    https://cda.cfa.harvard.edu/csc1tap/sync                [Chandra CSC1]
-    https://cda.cfa.harvard.edu/csc21tap/sync               [Chandra CSC2.1]
-    https://cda.cfa.harvard.edu/csc2tap/sync                [Chandra CSC2]
-    https://cda.cfa.harvard.edu/csctap/sync                 [Chandra CSC]
-    https://cda.harvard.edu/cxctap/sync                     [Chandra CDA]
-    https://data.csiro.au/psrdavo/tap/sync                  [PSRDAVO]
-    https://gaia.aip.de/tap/sync                            [Gaia-AIP]
-    http://ia2-tap.oats.inaf.it:8080/wgetap/sync            [WGE-SDSS]
-    http://machotap.asvo.nci.org.au/ncitap//tap/sync        [MACHO]
-    https://musewide.aip.de/tap/sync                        [MUSE-Wide]
-    https://userquery.linea.org.br/tap/sync                 [LIneA — Schema-Name ≠ `tables`, kein Format-Gap]
-    http://wiggleztap.asvo.nci.org.au/ncitap//tap/sync      [WiggleZ]
-    https://ws-uv.canfar.net/youcat/sync                    [CADC youcat]
-    https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync  [CADC ARGUS — `votable` ja, `votable/td` abgelehnt]
-    https://www.lamost.org/dr10/v2.0/voservice/tap/sync     [LAMOST DR10]
-    https://www.lamost.org/dr11/v2.0/voservice/tap/sync     [LAMOST DR11]
+  (tools/harvest/src/bin/tap_compiler.rs:278) konsumiert. Der Pass (`tap_compiler --votable --index`)
+  ist gelaufen: 18 Inventare liegen als `phi/pipeline/catalog/tap_index_<label>.φ` (versioniert,
+  `.gitignore` trägt `!phi/pipeline/catalog/tap_index*.φ`, MANIFEST.φ die 18 Zeilen); 2 Endpunkte
+  schlugen gemessen fehl. Landeregel unverändert: Eintritt in sources.φ erst mit gemessenem Feldblock
+  + Compiler + CDN-Manifestation — nie die bloße Adresse. BINARY2-Risiko je Katalog im
+  Paginierungs-Durchgang prüfen. CADC ARGUS + Chandra CDA (cxctap) waren schon inventarisiert.
+  Descope (gemessen, Redundanz oder kein Messwert-Feld):
+    Chandra CSC1/2/2.1/CSC (cda.cfa.harvard.edu) → redundant zu chandra_csc.json (VizieR IX/70/csc21mas).
+    Gaia-AIP (gaia.aip.de, 219 Tafeln) → Gaia-Mirror, redundant zum Gaia-Bestand.
+    ALMA EA (nao.ac.jp) + NA (nrao.edu) → Spiegel von ALMA EU.
+    ATOAVO (atoavo.atnf.csiro.au) → nur ivoa.obscore, kein Katalog, kein Messwert-Feld.
+    PSRDAVO (psrdavo) → psrda.pulsar_obs-Archiv; Pulsar-Werte liegen über VizieR psrcat (sources.φ).
+    LAMOST DR10 → von DR11 abgelöst.
+  Fehlschlag (gemessen, kein fabriziertes Inventar):
+    WGE-SDSS (ia2-tap.oats.inaf.it:8080/wgetap) → QUERY_STATUS=ERROR IllegalArgument (Schema-Abfrage abgelehnt).
+    LIneA (userquery.linea.org.br) → QUERY_STATUS=ERROR (Schema-Name ≠ tap_schema).
+  Offen (Compiler-Tranche, Feldblock je Katalog): ALMA EU (sourcecatalogue.source_cone_search),
+    SkyMapper, CASDA, MACHO, MUSE-Wide (photometric_catalog/emline_table), WiggleZ (wigcat5),
+    CADC youcat (77 Tafeln, Aggregator), LAMOST DR11.
 
 blocked parser-def csv-header
 url http://archive.eso.org/tap_cat
