@@ -71,12 +71,21 @@ note VOTable-Parser-Gap widerlegt (2026-09-11) und TAP_SCHEMA-Pass getragen (202
     ATOAVO (atoavo.atnf.csiro.au) → nur ivoa.obscore, kein Katalog, kein Messwert-Feld.
     PSRDAVO (psrdavo) → psrda.pulsar_obs-Archiv; Pulsar-Werte liegen über VizieR psrcat (sources.φ).
     LAMOST DR10 → von DR11 abgelöst.
-  Fehlschlag (gemessen, kein fabriziertes Inventar):
-    WGE-SDSS (ia2-tap.oats.inaf.it:8080/wgetap) → QUERY_STATUS=ERROR IllegalArgument (Schema-Abfrage abgelehnt).
-    LIneA (userquery.linea.org.br) → QUERY_STATUS=ERROR (Schema-Name ≠ tap_schema).
-  Offen (Compiler-Tranche, Feldblock je Katalog): ALMA EU (sourcecatalogue.source_cone_search),
-    SkyMapper, CASDA, MACHO, MUSE-Wide (photometric_catalog/emline_table), WiggleZ (wigcat5),
-    CADC youcat (77 Tafeln, Aggregator), LAMOST DR11.
+  Re-Messung 2026-09-12 (die zwei Pass-Fehlschläge sprechen TAP):
+    WGE-SDSS (ia2-tap.oats.inaf.it:8080/wgetap) → Endpoint spricht TAP; der IllegalArgument war die
+      nicht-standard Schema-Abfrage. Daten-Schema wgesdss, Metadaten wge_tap_schema; --table-Ernte
+      gemessen 200. Einheit absent (unit="" durchgehend) — pending, nicht fabriziert.
+    LIneA (userquery.linea.org.br) → Endpoint spricht TAP (tap_schema.schemas: des_dr2, des_y6_gold),
+      aber tap_schema.tables/columns antworten „not found" — Tabellennamen über TAP_SCHEMA nicht
+      entdeckbar, kein --table benennbar (0 honored).
+  Offen (Compiler-Tranche; Feldblock gemessen, Tor 1 — kein gebauter Konsument → pending):
+    ALMA EU (m_flux Jy) → Radio-Kontinuum; frb_compiler frißt Ereignisse (epoch/DM), kein Kontinuum.
+    CASDA RACS (total_flux mJy) → Radio-Kontinuum; kein Konsument.
+    SkyMapper / WGE-SDSS / MUSE-Wide → statische Photometrie; kein Kanal (NOIRLab-Präzedenz).
+    MACHO varstar (magave/period/amp) → VSX-Kegel frißt Type+Period, aber varstar_view ohne Klassen-Spalte.
+    LAMOST DR11 (teff/rv) → equilibrium::teq frißt Wirts-teff, aber ohne Parallaxe-/Planeten-Link.
+    WiggleZ (redshift) → z-Kanal gebaut (ned_redshift_z), aber BAO ist keine Nadel (Nadel Ⅷ: z≳10).
+    CADC youcat Wallaby (HI, freq Hz) → alfalfa_hi_flux ist lokal; Wallaby extragalaktisch, kein Voxelnetz.
 
 blocked parser-def csv-header
 url http://archive.eso.org/tap_cat
