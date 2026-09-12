@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 19a77d1697bcd955d12b1db7f7b1600f7b3fc1171a7b78b9d34ce19d283db1dc
+  sha256: 557ea51ade1e4fb1fb5b9ee7d686a107df71a8dba9591b117301ac406caaf95e
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau10)
@@ -30,17 +30,6 @@ die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
   `compatible_surface: None`). M07 (Palette) und M01 (WebSerial) sind descoped
   und gehen hier auf: sobald der Client steht, sind beide kleine Aufsätze. Die
   Renderfrage ist gemessen entschieden (Punktwolke live, per-Pixel-Legacy tot).
-
-## Descoped (gemessen)
-
-- M07 ⌘K-Palette — kein autonomer Bauweg: Substrat (`load_sources` + SIMBAD)
-  lebt, aber das Zuhause fehlt (kein Client, kein Endpoint, keine Fenster-
-  Schicht). Geht in den Client-Wirt auf; die drei Suchfunktionen leben in
-  CLI-Proben.
-- M01 WebSerial-flow-Protokoll — das Kanal-Textprotokoll (Spec A) gehört zur
-  toten per-Pixel-/Kanal-Ära (Backport-Verbot, radiators.md §3); die gebaute
-  Wire ist Σω-Rohintensität (`actuators.rs`). Offen bleibt nur der Client-Wirt,
-  kein Protokoll.
 
 ## Abschluss
 
