@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: a12ed2e3233e9896ee1298ba152517af41382c6e04e3ba42475f339923e9724e
+  sha256: 753c5f9046b56faa44cec3c26ecb16fdd88be642339794c556bc10f284b577d8
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau15)
@@ -14,6 +14,11 @@ viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+
+Die nächste Session schließt alle offenen Punkte dieser Linie ab — nicht
+weiterschieben. Braucht sie Unterstützung, nimmt sie das Gremium (Rat) oder die
+Taucher (Sub-Agenten, eigener Kontext). Fragen, die einen Webzugriff brauchen,
+gehen über den opencode-Browser an den Operator.
 
 ## Membran — die offenen M-Punkte
 
