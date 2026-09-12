@@ -74,7 +74,10 @@ pub fn parse_set_header(text: &str) -> Option<EeglabSet> {
                 "pnts" => pnts = Some(value.parse::<usize>().ok().filter(|n| *n > 0)?),
                 "trials" => trials = Some(value.parse::<usize>().ok().filter(|n| *n > 0)?),
                 "srate" => {
-                    srate = value.parse::<f64>().ok().filter(|v| v.is_finite() && *v > 0.0);
+                    srate = value
+                        .parse::<f64>()
+                        .ok()
+                        .filter(|v| v.is_finite() && *v > 0.0);
                 }
                 "datatype" => datatype = Some(value.to_ascii_lowercase()),
                 _ => {}
@@ -154,6 +157,90 @@ pub fn open_set(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
     Some((set, samples))
 }
 
+fn field_double(fields: &[omegaflow::matfile::MatField], name: &str) -> Option<f64> {
+    fields
+        .iter()
+        .find(|f| f.name == name)
+        .and_then(|f| f.values.first())
+        .and_then(|v| match &v.data {
+            omegaflow::matfile::MatData::Double(d) => d.first().copied(),
+            _ => None,
+        })
+}
+
+fn field_usize(fields: &[omegaflow::matfile::MatField], name: &str) -> Option<usize> {
+    let v = field_double(fields, name)?;
+    if !v.is_finite() || v < 0.0 || v.fract() != 0.0 {
+        return None;
+    }
+    Some(v as usize)
+}
+
+fn chanlocs_labels(fields: &[omegaflow::matfile::MatField]) -> Option<Vec<String>> {
+    let chanlocs = fields.iter().find(|f| f.name == "chanlocs")?;
+    let omegaflow::matfile::MatData::Struct(label_fields) = &chanlocs.values.first()?.data else {
+        return None;
+    };
+    let labels = label_fields.iter().find(|f| f.name == "labels")?;
+    labels
+        .values
+        .iter()
+        .map(|v| match &v.data {
+            omegaflow::matfile::MatData::Char(c) => {
+                let s = String::from_utf8_lossy(c)
+                    .trim_end_matches('\0')
+                    .trim()
+                    .to_string();
+                if s.is_empty() {
+                    None
+                } else {
+                    Some(s)
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+pub fn eeg_from_mat(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
+    let arrays = omegaflow::matfile::parse_mat(bytes)?;
+    let eeg = arrays.iter().find(|a| a.name == "EEG")?;
+    let omegaflow::matfile::MatData::Struct(fields) = &eeg.data else {
+        return None;
+    };
+    let nbchan = field_usize(fields, "nbchan")?;
+    let pnts = field_usize(fields, "pnts")?;
+    let trials = field_usize(fields, "trials").unwrap_or(1);
+    let srate = field_double(fields, "srate").filter(|v| v.is_finite() && *v > 0.0);
+    let labels = chanlocs_labels(fields)?;
+    let samples = fields
+        .iter()
+        .find(|f| f.name == "data")
+        .and_then(|f| f.values.first())
+        .and_then(|v| match &v.data {
+            omegaflow::matfile::MatData::Single(s) => Some(s.clone()),
+            _ => None,
+        })?;
+    let total = nbchan.checked_mul(pnts)?.checked_mul(trials)?;
+    if samples.len() != total || samples.iter().any(|s| !s.is_finite()) {
+        return None;
+    }
+    let set = EeglabSet {
+        datfile: String::new(),
+        nbchan,
+        pnts,
+        trials,
+        srate,
+        labels,
+    };
+    Some((set, samples))
+}
+
+pub fn open_set_mat(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
+    let bytes = std::fs::read(path).ok()?;
+    eeg_from_mat(&bytes)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -193,10 +280,12 @@ mod tests {
         assert!(parse_set_header("").is_none());
         assert!(parse_set_header("nbchan = 2\npnts = 3\ndatatype = float32\n").is_none());
         assert!(
-            parse_set_header("datfile = a.fdt\nnbchan = 0\npnts = 3\ndatatype = float32\n").is_none()
+            parse_set_header("datfile = a.fdt\nnbchan = 0\npnts = 3\ndatatype = float32\n")
+                .is_none()
         );
         assert!(
-            parse_set_header("datfile = a.fdt\nnbchan = 2\npnts = 3\ndatatype = 'int16'\n").is_none()
+            parse_set_header("datfile = a.fdt\nnbchan = 2\npnts = 3\ndatatype = 'int16'\n")
+                .is_none()
         );
     }
 
@@ -222,7 +311,10 @@ mod tests {
             bytes.extend_from_slice(&v.to_le_bytes());
         }
         let samples = read_fdt(&bytes, &set).expect("the fdt unpacks");
-        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 2.0, 3.0, 4.0]));
+        assert_eq!(
+            channel_series(&samples, &set, 0),
+            Some(vec![1.0, 2.0, 3.0, 4.0])
+        );
         assert!(read_fdt(&bytes[..8], &set).is_none());
         let mut bad = bytes.clone();
         bad[0..4].copy_from_slice(&f32::NAN.to_le_bytes());
@@ -237,5 +329,197 @@ mod tests {
         assert_eq!(resolve_channel(&set, "Fp2"), Some(1));
         assert_eq!(resolve_channel(&set, "3"), None);
         assert_eq!(resolve_channel(&set, "Cz"), None);
+    }
+
+    fn align8(p: usize) -> usize {
+        (p + 7) & !7
+    }
+
+    fn mi_matrix(body: &[u8]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(&14u32.to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        out.extend_from_slice(body);
+        out
+    }
+
+    fn name_tag(name: &str) -> Vec<u8> {
+        let mut b = Vec::new();
+        let len = align8(name.len());
+        b.extend_from_slice(&1u32.to_le_bytes());
+        b.extend_from_slice(&(len as u32).to_le_bytes());
+        b.extend_from_slice(name.as_bytes());
+        for _ in name.len()..len {
+            b.push(0);
+        }
+        b
+    }
+
+    fn flags_dims_double(class: u32, name: &str, dims: &[i32], values: &[f64]) -> Vec<u8> {
+        let mut body = Vec::new();
+        body.extend_from_slice(&6u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&class.to_le_bytes());
+        body.extend_from_slice(&0u32.to_le_bytes());
+        body.extend_from_slice(&5u32.to_le_bytes());
+        body.extend_from_slice(&((dims.len() * 4) as u32).to_le_bytes());
+        for &d in dims {
+            body.extend_from_slice(&d.to_le_bytes());
+        }
+        body.extend_from_slice(&name_tag(name));
+        body.extend_from_slice(&9u32.to_le_bytes());
+        body.extend_from_slice(&((values.len() * 8) as u32).to_le_bytes());
+        for &v in values {
+            body.extend_from_slice(&v.to_le_bytes());
+        }
+        mi_matrix(&body)
+    }
+
+    fn single_matrix(name: &str, dims: &[i32], values: &[f32]) -> Vec<u8> {
+        let mut body = Vec::new();
+        body.extend_from_slice(&6u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&7u32.to_le_bytes());
+        body.extend_from_slice(&0u32.to_le_bytes());
+        body.extend_from_slice(&5u32.to_le_bytes());
+        body.extend_from_slice(&((dims.len() * 4) as u32).to_le_bytes());
+        for &d in dims {
+            body.extend_from_slice(&d.to_le_bytes());
+        }
+        body.extend_from_slice(&name_tag(name));
+        body.extend_from_slice(&7u32.to_le_bytes());
+        body.extend_from_slice(&((values.len() * 4) as u32).to_le_bytes());
+        for &v in values {
+            body.extend_from_slice(&v.to_le_bytes());
+        }
+        pad_body(&mut body);
+        mi_matrix(&body)
+    }
+
+    fn char_matrix(name: &str, text: &[u8]) -> Vec<u8> {
+        let mut body = Vec::new();
+        body.extend_from_slice(&6u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&4u32.to_le_bytes());
+        body.extend_from_slice(&0u32.to_le_bytes());
+        body.extend_from_slice(&5u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&1i32.to_le_bytes());
+        body.extend_from_slice(&(text.len() as i32).to_le_bytes());
+        body.extend_from_slice(&name_tag(name));
+        body.extend_from_slice(&1u32.to_le_bytes());
+        body.extend_from_slice(&(text.len() as u32).to_le_bytes());
+        body.extend_from_slice(text);
+        pad_body(&mut body);
+        mi_matrix(&body)
+    }
+
+    fn pad_body(body: &mut Vec<u8>) {
+        while body.len() % 8 != 0 {
+            body.push(0);
+        }
+    }
+
+    fn struct_matrix(name: &str, dims: &[i32], fields: &[(&str, Vec<Vec<u8>>)]) -> Vec<u8> {
+        let mut body = Vec::new();
+        body.extend_from_slice(&6u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&2u32.to_le_bytes());
+        body.extend_from_slice(&0u32.to_le_bytes());
+        body.extend_from_slice(&5u32.to_le_bytes());
+        body.extend_from_slice(&((dims.len() * 4) as u32).to_le_bytes());
+        for &d in dims {
+            body.extend_from_slice(&d.to_le_bytes());
+        }
+        body.extend_from_slice(&name_tag(name));
+        let mut table = Vec::new();
+        for (f, _) in fields {
+            table.extend_from_slice(f.as_bytes());
+            table.push(0);
+        }
+        let field_len = table.len();
+        body.extend_from_slice(&5u16.to_le_bytes());
+        body.extend_from_slice(&4u16.to_le_bytes());
+        body.extend_from_slice(&(field_len as u32).to_le_bytes());
+        let table_len = align8(field_len);
+        body.extend_from_slice(&1u32.to_le_bytes());
+        body.extend_from_slice(&(table_len as u32).to_le_bytes());
+        body.extend_from_slice(&table);
+        for _ in field_len..table_len {
+            body.push(0);
+        }
+        for (_, values) in fields {
+            for v in values {
+                body.extend_from_slice(v);
+            }
+        }
+        mi_matrix(&body)
+    }
+
+    fn eeg_fixture() -> Vec<u8> {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[(
+                "labels",
+                vec![char_matrix("labels", b"Fp1"), char_matrix("labels", b"Fp2")],
+            )],
+        );
+        let eeg = struct_matrix(
+            "EEG",
+            &[1, 1],
+            &[
+                (
+                    "nbchan",
+                    vec![flags_dims_double(6, "nbchan", &[1, 1], &[2.0])],
+                ),
+                ("pnts", vec![flags_dims_double(6, "pnts", &[1, 1], &[3.0])]),
+                (
+                    "srate",
+                    vec![flags_dims_double(6, "srate", &[1, 1], &[100.0])],
+                ),
+                (
+                    "data",
+                    vec![single_matrix(
+                        "data",
+                        &[2, 3],
+                        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+                    )],
+                ),
+                ("chanlocs", vec![chanlocs]),
+            ],
+        );
+        let mut bytes = vec![0u8; 128];
+        let text = b"MATLAB 5.0 MAT-file";
+        bytes[..text.len()].copy_from_slice(text);
+        bytes[124] = 0x00;
+        bytes[125] = 0x01;
+        bytes[126] = b'I';
+        bytes[127] = b'M';
+        bytes.extend_from_slice(&eeg);
+        bytes
+    }
+
+    #[test]
+    fn a_mat_v5_eeg_struct_maps_onto_the_set_and_series() {
+        let bytes = eeg_fixture();
+        let (set, samples) = eeg_from_mat(&bytes).expect("the EEG struct maps");
+        assert_eq!(set.nbchan, 2);
+        assert_eq!(set.pnts, 3);
+        assert_eq!(set.trials, 1);
+        assert_eq!(set.srate, Some(100.0));
+        assert_eq!(set.labels, vec!["Fp1".to_string(), "Fp2".to_string()]);
+        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
+        assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
+        assert_eq!(resolve_channel(&set, "Fp2"), Some(1));
+    }
+
+    #[test]
+    fn an_absent_mat_eeg_struct_reads_absent() {
+        assert!(eeg_from_mat(&[]).is_none());
+        assert!(eeg_from_mat(&[0u8; 64]).is_none());
+        let mut bytes = eeg_fixture();
+        bytes[125] = 0x02;
+        assert!(eeg_from_mat(&bytes).is_none());
     }
 }
