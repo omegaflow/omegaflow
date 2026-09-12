@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Bau & Code (Stand 2026-09-12, Bau9)
+  title: Handover — Bau & Code (Stand 2026-09-12, Bau10)
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: f769acc1fdcaabc838eb448fb86e3a1de817c3f768972123643ca6b1f0c5015c
+  sha256: 73c58154ccedf4af8ba7f5e90b04f9ca013ee3889199820ea04c3740843b0fb2
   status: live
 -->
-# Handover — Bau & Code (2026-09-12, Bau9)
+# Handover — Bau & Code (2026-09-12, Bau10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -31,24 +31,17 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   erst, wenn die Architekturfrage per-Pixel-Membran (Legacy) vs heutige
   Punktwolke gemessen werden kann.
 
-## Serien-τ — der verbliebene Registrierungs-Dienst
+## Electric — die offene Re-Kuratierung
 
-Die τ-Spalte lebt jetzt in der Registry (`sensor_config`), getrennt vom ttl;
-der Draht trägt τ weiter als `Option` (absent bleibt absent); battery trägt
-ihr τ (level/voltage/charging 60.0, current 10.0) aus der Registry — ein Ort,
-ein Gesetz. Die Nicht-Battery-Serien-Sensoren (temperature, pressure,
-humidity, wind, …) tragen noch kein τ → nicht feldfähig, pending: die
-gemessene Relaxation fehlt (Registrierungs-Dienst, keine Fabrication).
+Die eine elektrische Wahrheit ist jetzt inverse-square (kernel 0):
+`kernel_id_for_force(8) = 0` (C_VACUUM-Gesetz, wie em), die battery-Familie
+trägt kernel 0, `default_kernel_for("electric")` trägt
+`inverse-square`. Gemessen bleibt:
 
-## Benannte Eigenschaften — nicht gebaut (dieses Atom)
-
-- **Kernel-Konfund electric** — die electric-Familie (force 8) trägt in
-  `sensor_config` kernel 5 (Linien-Zuordnung), die Kraft-Tabelle kennt
-  `kernel_id_for_force(8) = 1` (Feld-Erzeuger) und `default_kernel_for("electric")
-  = None`. Zwei elektrische Wahrheiten im Baum; benannt, nicht umgebaut.
-- **Seismische Apertur-Mitführung** — `acoustic_sample` speist acoustic und
-  seismic; die Apertur dämpft beide Strahler. Ein Feld, eine Permeabilität,
-  zwei Strahler — der Name trägt jetzt zwei Kanäle. Benannt, nicht umbenannt.
+- 8 Feldzeilen in `phi/sources.φ` deklarieren noch explizit
+  `gaussian-inverse-square electric` (kernel 1); 3 swarm-Zeilen tragen schon
+  `inverse-square`. Re-Kuratierung der 8 Zeilen auf den einen Kern
+  (Registrierungs-Dienst, Source-Pfad über `docs/SOURCE_PORT.md`).
 
 ## Abschluss
 

@@ -30,8 +30,8 @@ pub fn force_name_of(id: u8) -> Option<&'static str> {
 
 pub fn kernel_id_for_force(force: u8) -> Option<u8> {
     match force {
-        0 | 1 => Some(0),
-        2 | 3 | 4 | 7 | 8 => Some(1),
+        0 | 1 | 8 => Some(0),
+        2 | 3 | 4 | 7 => Some(1),
         5 | 6 => Some(3),
         _ => None,
     }
@@ -62,6 +62,7 @@ pub fn default_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
         "thermal" => Some(("exponential-decay", "thermal")),
         "diffusion" => Some(("gaussian-inverse-square", "diffusion")),
         "advective" => Some(("patch-levy", "advective")),
+        "electric" => Some(("inverse-square", "electric")),
         _ => None,
     }
 }
@@ -197,7 +198,7 @@ mod tests {
 
     #[test]
     fn test_kernel_ids() {
-        assert_eq!(kernel_id_for_force(8), Some(1));
+        assert_eq!(kernel_id_for_force(8), Some(0));
         assert_eq!(kernel_id_for_force(0), Some(0));
         assert_eq!(kernel_id_for_force(5), Some(3));
         assert_eq!(kernel_id_for_force(9), None);

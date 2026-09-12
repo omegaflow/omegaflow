@@ -18,7 +18,7 @@ pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
-pub fn acoustic_sample(frame: &PresenceFrame) -> f32 {
+pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
     frame.omega.iter().sum::<f32>() * frame.aperture
 }
 
@@ -36,7 +36,7 @@ impl AcousticOscillator {
                 return;
             };
             while let Ok(frame) = rx.recv() {
-                let bytes = acoustic_sample(&frame).to_le_bytes();
+                let bytes = kinetic_sample(&frame).to_le_bytes();
                 if std::io::Write::write_all(&mut out, &bytes).is_err()
                     || std::io::Write::flush(&mut out).is_err()
                 {
@@ -65,7 +65,7 @@ impl KineticRadiator for SeismicOscillator {
         let Some(port) = self.port.as_mut() else {
             return;
         };
-        let bytes = acoustic_sample(frame).to_le_bytes();
+        let bytes = kinetic_sample(frame).to_le_bytes();
         if std::io::Write::write_all(port, &bytes).is_err() {
             self.port = None;
         }
@@ -337,11 +337,11 @@ mod tests {
             omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
             aperture: 1.0,
         };
-        let base = acoustic_sample(&frame) as f64;
+        let base = kinetic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
         for lambda in [0.5f64, 2.0, 1e4] {
             let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
-            let got = acoustic_sample(&PresenceFrame {
+            let got = kinetic_sample(&PresenceFrame {
                 omega: scaled,
                 aperture: 1.0,
             }) as f64;
@@ -360,7 +360,7 @@ mod tests {
         let raw = omega.iter().sum::<f32>();
         assert_ne!(raw, 0.0);
         for aperture in [1.0f32, 0.5, 0.0, f32::EPSILON] {
-            let got = acoustic_sample(&PresenceFrame { omega, aperture });
+            let got = kinetic_sample(&PresenceFrame { omega, aperture });
             assert_eq!(got, raw * aperture, "aperture {aperture}");
         }
     }
@@ -372,7 +372,7 @@ mod tests {
             omega,
             aperture: 1.0,
         };
-        assert_eq!(acoustic_sample(&frame), omega.iter().sum::<f32>());
+        assert_eq!(kinetic_sample(&frame), omega.iter().sum::<f32>());
     }
 
     struct Sink(std::sync::Arc<std::sync::Mutex<Vec<u8>>>);
@@ -397,7 +397,7 @@ mod tests {
         };
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
-        assert_eq!(got, acoustic_sample(&frame).to_le_bytes());
+        assert_eq!(got, kinetic_sample(&frame).to_le_bytes());
     }
 
     #[cfg(unix)]
@@ -410,7 +410,7 @@ mod tests {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
             aperture: 1.0,
         };
-        let expected = acoustic_sample(&frame).to_le_bytes();
+        let expected = kinetic_sample(&frame).to_le_bytes();
         tx.send(frame).expect("frame reaches the oscillator");
         let mut got = [0u8; 4];
         std::io::Read::read_exact(&mut reader, &mut got).expect("one sample on the wire");
