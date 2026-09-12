@@ -123,40 +123,62 @@ struct Ggp {
     samples: Vec<(f64, f64)>,
 }
 
+#[derive(Clone, Copy)]
+enum GravCol {
+    Fil,
+    NmPerS2,
+    Volts,
+    Millivolts,
+}
+
+fn norm_key(k: &str) -> String {
+    k.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
 fn first_num(v: &str) -> Option<f64> {
     v.split_whitespace().next()?.parse().ok()
 }
 
-fn parse_ggp(text: &str) -> Option<Ggp> {
+fn parse_ggp(text: &str) -> Result<Ggp, &'static str> {
     let mut lat = None;
     let mut lon = None;
     let mut alt = None;
-    let mut gcal = None;
-    let mut grav_col: Option<(usize, bool)> = None;
-    let mut samples = Vec::new();
+    let mut gcal_v = None;
+    let mut gcal_mv = None;
+    let mut grav_col: Option<(usize, GravCol)> = None;
+    let mut samples: Vec<(f64, f64)> = Vec::new();
     for line in text.lines() {
         if grav_col.is_none() {
             if let Some((k, v)) = line.split_once(':') {
-                match k.trim() {
+                match norm_key(k).as_str() {
                     "N Latitude (deg)" => lat = first_num(v),
                     "E Longitude (deg)" => lon = first_num(v),
                     "Height (m)" | "Elevation MSL (m)" | "Geoid Height (m)" => alt = first_num(v),
-                    "Gravity Cal (nm.s-2/V)" => gcal = first_num(v),
+                    "Gravity Cal (nm.s-2/V)" => gcal_v = first_num(v),
+                    "Grav.Cal (nm.S-2/mV)" => gcal_mv = first_num(v),
                     _ => {}
                 }
                 continue;
             }
             let parts: Vec<&str> = line.split_whitespace().collect();
             if parts.first() == Some(&"yyyymmdd") {
+                let mut found = None;
                 for (i, p) in parts.iter().enumerate() {
-                    if *p == "g_fil" {
-                        grav_col = Some((i, false));
-                    } else if *p == "gravity(V)" {
-                        grav_col = Some((i, true));
-                    } else if p.starts_with("gravity(") {
-                        grav_col = Some((i, false));
+                    let col = match *p {
+                        "g_fil" => Some(GravCol::Fil),
+                        "gravity(nm/s**2)" => Some(GravCol::NmPerS2),
+                        "gravity(V)" => Some(GravCol::Volts),
+                        "gravity(mV)" => Some(GravCol::Millivolts),
+                        _ if p.starts_with("gravity(") => {
+                            return Err("unrecognized gravity column");
+                        }
+                        _ => None,
+                    };
+                    if let Some(c) = col {
+                        found = Some((i, c));
                     }
                 }
+                grav_col = found;
             }
             continue;
         }
@@ -203,24 +225,35 @@ fn parse_ggp(text: &str) -> Option<Ggp> {
         let unix = days as f64 * 86400.0 + hh as f64 * 3600.0 + mm as f64 * 60.0 + ss as f64;
         samples.push((unix, raw));
     }
-    let (lat, lon, alt) = (lat?, lon?, alt?);
+    let (lat, lon, alt) = match (lat, lon, alt) {
+        (Some(la), Some(lo), Some(al)) => (la, lo, al),
+        _ => return Err("station coordinates absent"),
+    };
     if !(lat.is_finite() && lon.is_finite() && alt.is_finite()) {
-        return None;
+        return Err("station coordinates non-finite");
     }
     if samples.is_empty() {
-        return None;
+        return Err("no sample rows carry a measured gravity value");
     }
-    let (_, is_volts) = grav_col?;
-    let scale = if is_volts {
-        let g = gcal?;
-        if !g.is_finite() {
-            return None;
+    let (_, col) = grav_col.ok_or("gravity column absent")?;
+    let scale = match col {
+        GravCol::Fil | GravCol::NmPerS2 => 1.0,
+        GravCol::Volts => {
+            let g = gcal_v.ok_or("calibration absent for gravity(V)")?;
+            if !g.is_finite() {
+                return Err("calibration non-finite for gravity(V)");
+            }
+            g
         }
-        g
-    } else {
-        1.0
+        GravCol::Millivolts => {
+            let g = gcal_mv.ok_or("calibration absent for gravity(mV)")?;
+            if !g.is_finite() {
+                return Err("calibration non-finite for gravity(mV)");
+            }
+            g
+        }
     };
-    Some(Ggp {
+    Ok(Ggp {
         lat,
         lon,
         alt,
@@ -244,10 +277,13 @@ fn median_interval(samples: &[(f64, f64)]) -> f64 {
     diffs[diffs.len() / 2]
 }
 
-fn compile_file(text: &str, lsk: &LeapSeconds, bucket_s: f64, records: &mut Vec<GeoRec>) -> usize {
-    let Some(ggp) = parse_ggp(text) else {
-        return 0;
-    };
+fn compile_file(
+    text: &str,
+    lsk: &LeapSeconds,
+    bucket_s: f64,
+    records: &mut Vec<GeoRec>,
+) -> Result<usize, &'static str> {
+    let ggp = parse_ggp(text)?;
     let raw_width = median_interval(&ggp.samples);
     let mut series: Vec<(f64, f64)> = Vec::new();
     if bucket_s > 0.0 {
@@ -286,7 +322,7 @@ fn compile_file(text: &str, lsk: &LeapSeconds, bucket_s: f64, records: &mut Vec<
         });
         n += 1;
     }
-    n
+    Ok(n)
 }
 
 fn walk_local(dir: &Path, out: &mut Vec<PathBuf>) {
@@ -601,14 +637,14 @@ fn main() {
             continue;
         };
         let n = compile_file(&text, &lsk, bucket_s, &mut records);
-        if n == 0 {
-            eprintln!(
-                "{}: carries no measured gravity samples — file skipped",
+        match n {
+            Ok(0) => eprintln!(
+                "{}: no measured samples convert — file skipped",
                 src.label()
-            );
-            continue;
+            ),
+            Ok(_) => parsed += 1,
+            Err(reason) => eprintln!("{}: {} — file skipped", src.label(), reason),
         }
-        parsed += 1;
     }
 
     if records.is_empty() {
@@ -693,6 +729,53 @@ mod tests {
                     Elevation MSL (m)    : 250.0         0.1    measured\n\
                     yyyymmdd hhmmss gravity(V) pressure(V)\n\
                     20210101 000000 -6.335938  2.930177\n";
-        assert!(parse_ggp(text).is_none());
+        assert!(parse_ggp(text).is_err());
+    }
+
+    #[test]
+    fn parses_double_space_latitude() {
+        let text = "N Latitude  (deg)     :  39.1333    0.00010\n\
+                    E Longitude (deg)    :  141.1334   0.00010\n\
+                    Height (m)           :  105.0000   1.00000\n\
+                    yyyymmdd hhmmss g_fil p_fil\n\
+                    20160501 000100 -1788.305 983.872\n";
+        let ggp = parse_ggp(text).expect("double-space latitude parses");
+        assert_eq!(ggp.scale, 1.0);
+        assert_eq!(ggp.samples.len(), 1);
+    }
+
+    #[test]
+    fn parses_millivolts_with_calibration() {
+        let text = "N Latitude  (deg)      :  39.1333    0.00010\n\
+                    E Longitude (deg)      :  141.1334   0.00010\n\
+                    Height (m)             :  105.0000   1.00000\n\
+                    Grav.Cal (nm.S-2/mV)   :  -0.5608    0.00029\n\
+                    yyyymmdd hhmmss gravity(mV) pressure(hpa)\n\
+                    20160501 000100  3820.214  1005.886\n";
+        let ggp = parse_ggp(text).expect("mV column parses");
+        assert_eq!(ggp.samples.len(), 1);
+        assert!((ggp.scale - -0.5608).abs() < 1e-9);
+        let val = ggp.samples[0].1 * ggp.scale;
+        assert!((val - (3820.214 * -0.5608)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn rejects_uncalibrated_millivolts() {
+        let text = "N Latitude (deg)    :  39.1333\n\
+                    E Longitude (deg)   :  141.1334\n\
+                    Height (m)          :  105.0000\n\
+                    yyyymmdd hhmmss gravity(mV) pressure(hpa)\n\
+                    20160501 000100  3820.214  1005.886\n";
+        assert!(parse_ggp(text).is_err());
+    }
+
+    #[test]
+    fn rejects_unknown_gravity_column() {
+        let text = "N Latitude (deg)    :  39.1333\n\
+                    E Longitude (deg)   :  141.1334\n\
+                    Height (m)          :  105.0000\n\
+                    yyyymmdd hhmmss gravity(uGal) pressure(hpa)\n\
+                    20160501 000100  3820.214  1005.886\n";
+        assert!(parse_ggp(text).is_err());
     }
 }
