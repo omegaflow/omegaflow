@@ -26,6 +26,13 @@ pub fn servo_ticks(period_ticks: u16, pulse_ms: f32, period_ms: f32) -> Option<u
     Some((period_ticks as f32 * duty + 0.5) as u16)
 }
 
+pub fn servo_ms(ms: f32) -> Option<f32> {
+    if !ms.is_finite() || !(0.0..=SERVO_PERIOD_MS).contains(&ms) {
+        return None;
+    }
+    Some(ms)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -91,5 +98,34 @@ mod tests {
         assert_eq!(servo_ticks(19_999, 1.5, 0.0), None);
         assert_eq!(servo_ticks(19_999, -1.0, 20.0), None);
         assert_eq!(servo_ticks(19_999, 30.0, 20.0), None);
+    }
+
+    #[test]
+    fn servo_ms_accepts_the_valid_range() {
+        assert_eq!(servo_ms(1.5), Some(1.5));
+        assert_eq!(servo_ms(2.0), Some(2.0));
+    }
+
+    #[test]
+    fn servo_ms_zero_is_a_real_direction() {
+        assert_eq!(servo_ms(0.0), Some(0.0));
+    }
+
+    #[test]
+    fn servo_ms_accepts_the_full_period() {
+        assert_eq!(servo_ms(20.0), Some(20.0));
+    }
+
+    #[test]
+    fn servo_ms_rejects_out_of_range() {
+        assert_eq!(servo_ms(20.1), None);
+        assert_eq!(servo_ms(25.0), None);
+    }
+
+    #[test]
+    fn servo_ms_rejects_non_finite() {
+        assert_eq!(servo_ms(f32::NAN), None);
+        assert_eq!(servo_ms(f32::INFINITY), None);
+        assert_eq!(servo_ms(f32::NEG_INFINITY), None);
     }
 }
