@@ -1031,6 +1031,11 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/eve_lines_2011.bin
+format eve
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
 format rpw_efield
 at solar_orbiter
