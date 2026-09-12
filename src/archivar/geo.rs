@@ -101,6 +101,7 @@ pub const COMP_WOD_MAX: u32 = 3;
 pub const COMP_HINET_U: u32 = 1;
 pub const COMP_HINET_E: u32 = 2;
 pub const COMP_HINET_N: u32 = 3;
+pub const COMP_HINET_MAX: u32 = 3;
 
 pub struct GeoRec {
     pub t: f64,
@@ -129,6 +130,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "fdsn_waveform" => Some(MAGIC_FDSN),
         "fmi_gic" => Some(MAGIC_GIC),
         "igets" => Some(MAGIC_IGETS),
+        "hinet" => Some(MAGIC_HINET),
         "iss_lis" => Some(MAGIC_ISSLIS),
         "supermag_1m" => Some(MAGIC_SMG),
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
@@ -151,6 +153,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "igets" => Some(COMP_IGETS_MAX),
+        "hinet" => Some(COMP_HINET_MAX),
         "iss_lis" => Some(COMP_ISSLIS_MAX),
         "supermag_1m" => Some(COMP_SMG_MAX),
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
