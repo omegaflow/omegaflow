@@ -187,6 +187,21 @@ pub fn parse_ndk(text: &str) -> Vec<NdkEvent> {
     out
 }
 
+pub fn fetch_events(url: &str, ttl: u64) -> Option<Vec<NdkEvent>> {
+    let name = url.rsplit('/').next().unwrap_or("catalog");
+    let path = super::content_cache(&format!("omegaflow_ndk_{name}"));
+    if super::cache_fresh(&path, ttl) {
+        let text = std::fs::read_to_string(&path).ok()?;
+        return Some(parse_ndk(&text));
+    }
+    let bytes = super::fetch_raw_bytes(url, ttl)?;
+    if std::fs::write(&path, &bytes).is_err() {
+        eprintln!("cache {path}: write void — refetch next cycle");
+    }
+    Some(parse_ndk(&String::from_utf8_lossy(&bytes)))
+}
+
+
 pub fn dc_moment_tensor(strike_deg: f64, dip_deg: f64, rake_deg: f64) -> [f64; 6] {
     let s = strike_deg.to_radians();
     let d = dip_deg.to_radians();
@@ -231,6 +246,12 @@ pub fn ray_direction(takeoff_deg: f64, azimuth_deg: f64, upgoing: bool) -> [f64;
 mod tests {
     use super::*;
 
+    const ONE_EVENT: &str = "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
+M010176A B: 0 0 0 S: 0 0 0 M: 12 30 135 CMT: 1 BOXHD: 9.4\n\
+CENTROID: 13.8 0.2 -29.25 0.02 -176.96 0.01 47.8 0.6 FREE O-00000000000000\n\
+26 7.680 0.090 0.090 0.060 -7.770 0.070 1.390 0.160 4.520 0.160 -3.260 0.060\n\
+V10 8.940 75 283 1.260 2 19 -10.190 15 110 9.560 202 30 93 18 60 88";
+
     const SAMPLE: &str =
         "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
 M010176A B: 0 0 0 S: 0 0 0 M: 12 30 135 CMT: 1 BOXHD: 9.4\n\
@@ -242,6 +263,18 @@ C010576A B: 6 14 45 S: 0 0 0 M: 5 8 135 CMT: 1 BOXHD: 1.6\n\
 CENTROID: 8.4 0.4 -13.42 0.07 -75.14 0.06 85.4 3.2 FREE O-00000000000000\n\
 24 -1.780 0.210 -0.590 0.280 2.370 0.280 -1.280 0.150 1.970 0.150 -2.900 0.220\n\
 V10 4.970 19 238 -2.350 14 143 -2.620 66 20 3.790 350 28 -60 137 66 -105";
+
+    #[test]
+    fn parses_a_single_five_line_event() {
+        let events = parse_ndk(ONE_EVENT);
+        assert_eq!(events.len(), 1);
+        let e = &events[0];
+        assert_eq!(e.name, "M010176A");
+        assert_eq!((e.year, e.month, e.day), (1976, 1, 1));
+        assert!((e.hyp_lat - -28.61).abs() < 1e-9);
+        assert!((e.hyp_lon - -177.64).abs() < 1e-9);
+        assert!((e.hyp_depth_km - 59.0).abs() < 1e-9);
+    }
 
     #[test]
     fn parses_two_measured_events() {
@@ -279,6 +312,21 @@ V10 4.970 19 238 -2.350 14 143 -2.620 66 20 3.790 350 28 -60 137 66 -105";
         assert!((e1.dip - 28.0).abs() < 1e-9);
         assert!((e1.rake - -60.0).abs() < 1e-9);
         assert!((e1.centroid_depth_km - 85.4).abs() < 1e-9);
+    }
+
+    #[test]
+    fn the_fixture_reparses_identically() {
+        let first = parse_ndk(SAMPLE);
+        let second = parse_ndk(SAMPLE);
+        assert_eq!(first.len(), second.len());
+        for (a, b) in first.iter().zip(second.iter()) {
+            assert_eq!(a.name, b.name);
+            assert_eq!((a.year, a.month, a.day), (b.year, b.month, b.day));
+            assert_eq!(a.exponent, b.exponent);
+            assert_eq!(a.m0, b.m0);
+            assert_eq!(a.m_rr, b.m_rr);
+            assert_eq!(a.m_tp, b.m_tp);
+        }
     }
 
     #[test]
