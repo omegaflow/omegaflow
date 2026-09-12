@@ -3,7 +3,7 @@
   session: Ernte-Folge X
   class: handover
   date: 2026-09-12
-  sha256: d7cd00d7c874d71acfd5ce75e17ca29192a8172764782883a16efbaa0f4a24d3
+  sha256: 30b32dd073a2791da58c22ba5ea352a8c82d360cdfd556e37ca327f33c7dd8ad
   status: live
 -->
 # Handover — Ernte-Folge X (2026-09-12)
@@ -11,6 +11,11 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; gepusht wird erst, wenn der Baum ruhig ist.
+
+Die nächste Session schließt alle offenen Punkte dieser Linie ab — nicht
+weiterschieben. Braucht sie Unterstützung, nimmt sie das Gremium (Rat) oder die
+Taucher (Sub-Agenten, eigener Kontext). Fragen, die einen Webzugriff brauchen,
+gehen über den opencode-Browser an den Operator.
 
 ## CDN-Manifestation (Duty)
 
