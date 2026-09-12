@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 3
-  sha256: 9fcb5ebf10f010a5815995dad9d4ae7dc8a9da47b6c2967eba2a73ac946332aa
+  sha256: 0aee298459fa27813f6430d03abb9770a735673e5fc6f3feadee637cba13861b
   status: live
   see-also: docs/paper/pioneer-anomaly-lrr-2010-4.txt, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
