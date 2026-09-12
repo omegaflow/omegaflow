@@ -1,13 +1,23 @@
 use crate::archivar::SampleRecord;
 use crate::archivar::*;
 use crate::mathematikerin::DiodeState;
-use std::collections::HashMap;
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Mutex, RwLock};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
+
+fn relay_tau(wire: f64, line: Option<f64>) -> Option<f64> {
+    if wire > 0.0 {
+        return Some(wire);
+    }
+    match line {
+        Some(t) if t > 0.0 => Some(t),
+        _ => None,
+    }
+}
+
 struct WsConfig {
     bodies: Arc<Vec<String>>,
     index_html: Vec<u8>,
@@ -559,9 +569,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     for (name, value, tau) in &field_values {
                         if let Some(bs) = sensor_config(name) {
                             let sensor_ttl = bs.ttl;
-                            let effective_tau = if *tau > 0.0 {
-                                *tau
-                            } else {
+                            let Some(effective_tau) = relay_tau(*tau, bs.tau) else {
                                 continue;
                             };
                             let fc = FieldConfig {
@@ -618,9 +626,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 for (name, value, tau) in &field_values {
                     if let Some(bs) = sensor_config(name) {
                         let sensor_ttl = bs.ttl;
-                        let effective_tau = if *tau > 0.0 {
-                            *tau
-                        } else {
+                        let Some(effective_tau) = relay_tau(*tau, bs.tau) else {
                             continue;
                         };
                         let fc = FieldConfig {
@@ -934,4 +940,29 @@ fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) -> std::io::Result<()> {
     }
     stream.write_all(data)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_wire_tau_wins_when_positive() {
+        assert_eq!(relay_tau(30.0, Some(60.0)), Some(30.0));
+        assert_eq!(relay_tau(30.0, None), Some(30.0));
+    }
+
+    #[test]
+    fn the_absent_wire_tau_falls_back_to_the_line() {
+        assert_eq!(relay_tau(0.0, Some(60.0)), Some(60.0));
+        assert_eq!(relay_tau(-1.0, Some(60.0)), Some(60.0));
+        assert_eq!(relay_tau(f64::NAN, Some(60.0)), Some(60.0));
+    }
+
+    #[test]
+    fn the_line_without_tau_stays_absent() {
+        assert_eq!(relay_tau(0.0, None), None);
+        assert_eq!(relay_tau(0.0, Some(0.0)), None);
+        assert_eq!(relay_tau(0.0, Some(-1.0)), None);
+    }
 }

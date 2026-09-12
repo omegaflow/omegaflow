@@ -289,6 +289,13 @@ impl OmegaLoop {
         )
     }
 
+    pub fn presence_frame(&self) -> PresenceFrame {
+        PresenceFrame {
+            omega: self.probe_omega,
+            aperture: self.field_permeability,
+        }
+    }
+
     pub fn read_presence(&mut self) {
         if let Ok(pres) = self.presence.read() {
             self.p = pres.p;
@@ -1296,9 +1303,7 @@ impl OmegaLoop {
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             }
             self.sky_tick();
-            let frame = PresenceFrame {
-                omega: self.probe_omega,
-            };
+            let frame = self.presence_frame();
             if !self.silent {
                 let _ = self.acoustic_tx.send(frame);
                 let _ = self.seismic_tx.send(frame);

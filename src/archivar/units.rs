@@ -195,7 +195,9 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
             "npa",
         ],
-        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1"],
+        8 => &[
+            "v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
+        ],
         _ => &[],
     }
 }
