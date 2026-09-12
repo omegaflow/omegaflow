@@ -2,6 +2,8 @@ use super::*;
 
 const FRAME_TAG: u8 = 0x02;
 const MASK_INTENSITY: u8 = 0x01;
+const MASK_PAN: u8 = 0x02;
+const MASK_TILT: u8 = 0x04;
 
 pub type Record = SampleRecord;
 
@@ -15,6 +17,8 @@ pub struct PackedWindow {
 pub struct PresenceFrame {
     pub omega: [f32; 9],
     pub aperture: f32,
+    pub pan_ms: Option<f32>,
+    pub tilt_ms: Option<f32>,
 }
 
 pub trait KineticRadiator: Send + 'static {
@@ -23,6 +27,30 @@ pub trait KineticRadiator: Send + 'static {
 
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
     frame.omega.iter().sum::<f32>() * frame.aperture
+}
+
+pub fn frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
+    let pan = frame.pan_ms.filter(|v| v.is_finite());
+    let tilt = frame.tilt_ms.filter(|v| v.is_finite());
+    let mut mask = MASK_INTENSITY;
+    if pan.is_some() {
+        mask |= MASK_PAN;
+    }
+    if tilt.is_some() {
+        mask |= MASK_TILT;
+    }
+    let mut out =
+        Vec::with_capacity(2 + 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4);
+    out.push(FRAME_TAG);
+    out.push(mask);
+    out.extend_from_slice(&kinetic_sample(frame).to_le_bytes());
+    if let Some(p) = pan {
+        out.extend_from_slice(&p.to_le_bytes());
+    }
+    if let Some(t) = tilt {
+        out.extend_from_slice(&t.to_le_bytes());
+    }
+    out
 }
 
 pub struct AcousticOscillator {
@@ -39,10 +67,7 @@ impl AcousticOscillator {
                 return;
             };
             while let Ok(frame) = rx.recv() {
-                let mut bytes = [0u8; 6];
-                bytes[0] = FRAME_TAG;
-                bytes[1] = MASK_INTENSITY;
-                bytes[2..6].copy_from_slice(&kinetic_sample(&frame).to_le_bytes());
+                let bytes = frame_bytes(&frame);
                 if std::io::Write::write_all(&mut out, &bytes).is_err()
                     || std::io::Write::flush(&mut out).is_err()
                 {
@@ -71,10 +96,7 @@ impl KineticRadiator for SeismicOscillator {
         let Some(port) = self.port.as_mut() else {
             return;
         };
-        let mut bytes = [0u8; 6];
-        bytes[0] = FRAME_TAG;
-        bytes[1] = MASK_INTENSITY;
-        bytes[2..6].copy_from_slice(&kinetic_sample(frame).to_le_bytes());
+        let bytes = frame_bytes(frame);
         if std::io::Write::write_all(port, &bytes).is_err() {
             self.port = None;
         }
@@ -345,6 +367,8 @@ mod tests {
         let frame = PresenceFrame {
             omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
             aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
         };
         let base = kinetic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
@@ -353,6 +377,8 @@ mod tests {
             let got = kinetic_sample(&PresenceFrame {
                 omega: scaled,
                 aperture: 1.0,
+                pan_ms: None,
+                tilt_ms: None,
             }) as f64;
             let want = base * lambda;
             let rel = (got - want).abs() / want.abs();
@@ -369,7 +395,12 @@ mod tests {
         let raw = omega.iter().sum::<f32>();
         assert_ne!(raw, 0.0);
         for aperture in [1.0f32, 0.5, 0.0, f32::EPSILON] {
-            let got = kinetic_sample(&PresenceFrame { omega, aperture });
+            let got = kinetic_sample(&PresenceFrame {
+                omega,
+                aperture,
+                pan_ms: None,
+                tilt_ms: None,
+            });
             assert_eq!(got, raw * aperture, "aperture {aperture}");
         }
     }
@@ -380,6 +411,8 @@ mod tests {
         let frame = PresenceFrame {
             omega,
             aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
         };
         assert_eq!(kinetic_sample(&frame), omega.iter().sum::<f32>());
     }
@@ -403,6 +436,8 @@ mod tests {
         let frame = PresenceFrame {
             omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
             aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
         };
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
@@ -422,6 +457,8 @@ mod tests {
         let frame = PresenceFrame {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
             aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
         };
         let expected = kinetic_sample(&frame).to_le_bytes();
         tx.send(frame).expect("frame reaches the oscillator");
@@ -433,5 +470,55 @@ mod tests {
         want[2..6].copy_from_slice(&expected);
         assert_eq!(got, want, "one frame is one tagged Σω sample");
         drop(tx);
+    }
+
+    #[test]
+    fn a_frame_with_pan_and_tilt_emits_the_full_mask_and_three_payloads() {
+        let frame = PresenceFrame {
+            omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+            aperture: 1.0,
+            pan_ms: Some(1.5),
+            tilt_ms: Some(1.25),
+        };
+        let bytes = frame_bytes(&frame);
+        assert_eq!(bytes[0], 0x02);
+        assert_eq!(bytes[1], 0x07);
+        assert_eq!(
+            bytes.len(),
+            14,
+            "tag, mask, then Σω, pan, tilt in bit order"
+        );
+        let intensity = f32::from_le_bytes(bytes[2..6].try_into().expect("intensity"));
+        assert_eq!(intensity, kinetic_sample(&frame));
+        let pan = f32::from_le_bytes(bytes[6..10].try_into().expect("pan"));
+        assert_eq!(pan, 1.5);
+        let tilt = f32::from_le_bytes(bytes[10..14].try_into().expect("tilt"));
+        assert_eq!(tilt, 1.25);
+    }
+
+    #[test]
+    fn a_present_but_non_finite_pan_clears_its_bit() {
+        let frame = PresenceFrame {
+            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            aperture: 1.0,
+            pan_ms: Some(f32::NAN),
+            tilt_ms: None,
+        };
+        let bytes = frame_bytes(&frame);
+        assert_eq!(bytes[1], 0x01, "non-finite pan is absence, not a value");
+        assert_eq!(bytes.len(), 6, "no pan bytes ride the wire");
+    }
+
+    #[test]
+    fn a_frame_without_pan_or_tilt_carries_one_payload() {
+        let frame = PresenceFrame {
+            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+        };
+        let bytes = frame_bytes(&frame);
+        assert_eq!(bytes[1], 0x01);
+        assert_eq!(bytes.len(), 6);
     }
 }

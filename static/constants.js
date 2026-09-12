@@ -152,7 +152,18 @@ export function parseRecords(bytes) {
 
 export function parseKinetic(bytes) {
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + 3, 9);
-  const aperture = dv.getFloat32(3 + 9 * 4, true);
-  return { omega, aperture };
+  const mask = dv.getUint8(3);
+  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + 4, 9);
+  const aperture = dv.getFloat32(4 + 9 * 4, true);
+  let pan = null;
+  let tilt = null;
+  let o = 4 + 9 * 4 + 4;
+  if (mask & 0x02) {
+    pan = dv.getFloat32(o, true);
+    o += 4;
+  }
+  if (mask & 0x04) {
+    tilt = dv.getFloat32(o, true);
+  }
+  return { omega, aperture, pan, tilt };
 }
