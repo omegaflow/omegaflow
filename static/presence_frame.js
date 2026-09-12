@@ -1,7 +1,11 @@
 // The radiatorium's write law, pure: the membrane's PresenceFrame (9 omegas +
-// aperture) becomes one raw-intensity word (Σω · aperture, f32-LE, 4 B). No DOM,
-// no window — the CDC interface enters as an argument, so the law is testable
-// against a simulated port. Absent means null (0-Kanon): NaN/Inf is never a value.
+// aperture) becomes one tagged frame — [0x02, 0x01, Σω·aperture as f32-LE] (6 B).
+// No DOM, no window — the CDC interface enters as an argument, so the law is
+// testable against a simulated port. Absent means null (0-Kanon): NaN/Inf is
+// never a value.
+
+const FRAME_TAG = 0x02;
+const MASK_INTENSITY = 0x01;
 
 export function encodeFrame(omega, aperture) {
   if (!omega || !Number.isFinite(aperture)) {
@@ -15,8 +19,10 @@ export function encodeFrame(omega, aperture) {
     }
     sum += value;
   }
-  const bytes = new Uint8Array(4);
-  new DataView(bytes.buffer).setFloat32(0, sum * aperture, true);
+  const bytes = new Uint8Array(6);
+  bytes[0] = FRAME_TAG;
+  bytes[1] = MASK_INTENSITY;
+  new DataView(bytes.buffer).setFloat32(2, sum * aperture, true);
   return bytes;
 }
 
