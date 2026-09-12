@@ -1,9 +1,9 @@
 <!--
   title: Command Palette Terminal
   class: concept
-  sha256: 7cf83aecbd69dd39fe782ecb181d70803bb29acf825145b988544745920153f0
+  sha256: f8072395d19cf92d0bbf173a7878ea978b835d59e3959bd773b756f9ce4becbc
 -->
-STATUS: PLANNED
+STATUS: DESCOPED (2026-09-12) — kein autonomer Bauweg: das Substrat (`load_sources` + SIMBAD) lebt, aber der Wirt fehlt (kein Client). Geht in den Client-Wirt auf.
 
 # Command Palette Terminal
 
