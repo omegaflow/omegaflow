@@ -1,6 +1,11 @@
 # ============================================================
 # omegaflow_sense_hardware.yaml
-# STATUS: PLAN (Phase 10) — NOT YET IMPLEMENTED. Part 5 corrected 2026-09-12 (Radiator-Doktrin).
+# STATUS: PLAN (Phase 10) — CORE BUILT. The ESP32-S3 core (MOSFET bank M1-M8,
+#         pan/tilt servo, I2C + TCA9548A, MAX30102 pulse stream, USB-CDC) lives
+#         in firmware/radiatorium/ and follows this pin map exactly; the full
+#         34-module sense array remains plan. Part 5 corrected 2026-09-12
+#         (Radiator-Doktrin). Pin conflict resolved 2026-09-13: SPI display dc
+#         moved GPIO9 -> GPIO13 (I2C scl keeps GPIO9); DS18B20 (GPIO7) added.
 # PURPOSE: The single source of truth for the physical
 #          omegaflow sense module. The 100% Mantis-Shrimp Config.
 #          Sensors (receivers), Actuators (senders), Infrastructure.
@@ -20,7 +25,7 @@ meta:
   hardware_brain: "ESP32-S3 DevKit (N8R2/N16R8)"
   firmware_language: "Rust no_std (esp-hal)"
   interface: "WebSerial (CDC-ACM)"
-  total_cost_eur: 139.00
+  total_cost_eur: 140.50
   protocol: "PresenceFrame — raw intensity (Σω); ESP32 as a peer among seven (radiators.md:84-106)"
 
 # ============================================================
@@ -53,6 +58,11 @@ sensing_surfaces:
       interface: "I2C (via TCA9548A)"
       cost_eur: 3.50
       url: "https://www.aliexpress.com/wholesale?SearchText=MLX90614+IR+temperature"
+    ds18b20:
+      sense: "Contact temperature / heater cutoff (Safety-Matrix, mandatory)"
+      interface: "1-Wire (GPIO)"
+      cost_eur: 1.50
+      url: "https://www.aliexpress.com/wholesale?SearchText=DS18B20+waterproof+temperature"
 
   magnetic:
     qmc5883l:
@@ -320,6 +330,9 @@ esp32_pin_map:
     sda: "GPIO8"
     scl: "GPIO9"
     note: "TCA9548A #1 at 0x70, TCA9548A #2 at 0x71"
+  one_wire:
+    ds18b20: "GPIO7"
+    note: "Heater/Peltier temperature feedback (Safety-Matrix, mandatory)"
   i2s_audio:
     bclk: "GPIO4"
     lrck: "GPIO5"
@@ -328,7 +341,7 @@ esp32_pin_map:
     sclk: "GPIO12"
     mosi: "GPIO11"
     cs: "GPIO10"
-    dc: "GPIO9"
+    dc: "GPIO13"
     rst: "GPIO14"
   mosfet_bank:
     m1_led: "GPIO48"
@@ -370,3 +383,51 @@ safety:
   water_electrodes: "Low impedance only. Never on mains. Galvanic isolation."
   plant_stimulation: "Max 30mV, max 1mA. Plant is a living system."
   general: "Active care. Who suffers? Include plant, fungus, animal."
+
+# ============================================================
+# PART 7: OUTDOOR VARIANT
+# The stationary observatory, weathered. Adds the boundaries the
+# indoor config does not carry: weatherproofing, UV/IR-transparent
+# windows, off-grid power, moisture control, ESD/lightning care.
+# ============================================================
+
+outdoor_variant:
+  swaps:
+    enclosure_ip65:
+      to: "IP67 PC/ASA junction box, UV-stable, mounting flanges"
+      reason: "IP65 is splash-proof; outdoors needs dust/immersion (IP67) and UV stability."
+    power_supply_12v_5a:
+      to: "Solar 6V/5W panel + LiFePO4 18650 + MPPT/TP4056-BMS"
+      reason: "No mains outdoors; buffer for Peltier/pump peaks and night."
+  additions:
+    quartz_window:
+      purpose: "UV-transparent window over VEML6075/AS7341"
+      reason: "Plastic blocks UV-A/UV-B; the UV/spectral senses go blind behind it."
+      url: "https://www.aliexpress.com/wholesale?SearchText=quartz+glass+window+disc"
+    ir_window:
+      purpose: "IR-transparent window over MLX90614"
+      reason: "Plastic and ordinary glass attenuate 5-14 um; the thermal sense needs an IR window."
+      url: "https://www.aliexpress.com/wholesale?SearchText=IR+transparent+window+ZnSe"
+    solar_panel:
+      purpose: "Off-grid power"
+      url: "https://www.aliexpress.com/wholesale?SearchText=solar+panel+6V+5W"
+    lifepo4_battery:
+      purpose: "Energy buffer (Peltier/pump peaks, night)"
+      url: "https://www.aliexpress.com/wholesale?SearchText=LiFePO4+18650+TP4056+BMS"
+    desiccant:
+      purpose: "Moisture control inside the enclosure"
+      url: "https://www.aliexpress.com/wholesale?SearchText=silica+gel+desiccant+pack"
+    conformal_coating:
+      purpose: "PCB moisture protection"
+      url: "https://www.aliexpress.com/wholesale?SearchText=silicone+conformal+coating+pcb"
+    tvs_esd:
+      purpose: "ESD/lightning-induced surge protection on exposed lines"
+      url: "https://www.aliexpress.com/wholesale?SearchText=TVS+diode+ESD+protection"
+    grounding_lug:
+      purpose: "Earth the enclosure/mast"
+      url: "https://www.aliexpress.com/wholesale?SearchText=grounding+lug+stainless"
+  safety_outdoor:
+    - "Water parts (pump, mist maker) only with galvanic isolation + IP68 connectors."
+    - "UV/IR windows are not to be looked through; the safety matrix holds outdoors."
+    - "DS18B20 cutoff (<80 C) is mandatory; add a second sensor on the electromagnet if it runs >2 A."
+    - "Ventilation with insect mesh; keep condensation off the optics."
