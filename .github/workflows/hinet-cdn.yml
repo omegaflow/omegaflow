@@ -11,6 +11,11 @@ on:
         required: false
         default: '60'
         type: string
+      station-count:
+        description: 'number of stations to harvest (0 = full network)'
+        required: false
+        default: '200'
+        type: string
 permissions:
   contents: write
 env:
@@ -33,4 +38,5 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin hinet_win32_compiler -- \
             --start "${{ inputs.start }}" --span "${{ inputs.span }}" \
+            --station-count "${{ inputs.station-count }}" \
             --out-bin hinet.bin --lsk kernels/naif0012.tls --ci-mode
