@@ -1,0 +1,52 @@
+name: esp32-firmware
+
+concurrency:
+  group: esp32-firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    paths:
+      - 'firmware/**'
+      - '.github/workflows/esp32-firmware.yml'
+  pull_request:
+    paths:
+      - 'firmware/**'
+      - '.github/workflows/esp32-firmware.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  radiatorium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Host logic tests (radiatorium-lib, no_std, no window/audio/port)
+      env:
+        RUSTFLAGS: -D warnings
+      run: cargo test --manifest-path firmware/radiatorium-lib/Cargo.toml
+    - name: Install the Xtensa Rust toolchain (espup)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cargo install espup --locked
+        espup install
+    - name: Build the esp-hal firmware for xtensa-esp32s3-none-elf
+      run: |
+        . $HOME/export-esp.sh
+        cargo build --release --manifest-path firmware/radiatorium/Cargo.toml
+    - name: Wrap the ELF into a Wokwi-ready merged image
+      run: |
+        cargo install espflash --locked
+        espflash save-image --chip esp32s3 --merge \
+          firmware/radiatorium/target/xtensa-esp32s3-none-elf/release/radiatorium \
+          firmware/radiatorium/target/xtensa-esp32s3-none-elf/release/radiatorium.bin
+    - uses: actions/upload-artifact@v4
+      with:
+        name: radiatorium-esp32s3
+        path: |
+          firmware/radiatorium/target/xtensa-esp32s3-none-elf/release/radiatorium
+          firmware/radiatorium/target/xtensa-esp32s3-none-elf/release/radiatorium.bin
+        if-no-files-found: error
