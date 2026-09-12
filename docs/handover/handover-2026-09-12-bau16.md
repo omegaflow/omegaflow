@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 5361f540bb1eaffb6fdd8f8892ab39801607c5f24678f1fdbdd2c53eb2bf0947
+  sha256: 651719b94c1d36ef5122d497909caa4f65c775d13c38f27ae8db421fae5dc1e8
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau16)
@@ -17,20 +17,13 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 ## Membran — die offenen M-Punkte
 
-- **Flashen + Live-Messen (nn-Strom)** — der Sensor-Strom ist gebaut und
-  lib-getestet (53 Tests), der Binär typgeprüft (`cargo check --release` sauber);
-  der Xtensa-Linker `xtensa-esp32s3-elf-gcc` fehlt lokal (`~/.espressif` abwesend),
-  also kein Binär, kein Flash, kein Live-Messen. CI (`esp32-firmware.yml`) baut
-  beim Push. Pending auf die Toolchain.
-
-- **Feld→pan/tilt-Ableitungsgesetz** — das Schema (getaggtes Frame, pan/tilt
-  absent-fähig) steht, die Firmware behandelt pan/tilt-Frames (Bit klar = Position
-  halten, nie 0.0); die Host-Ableitung (Feld → pan/tilt-Winkel) ist pending — ein
-  Skalar Σω trägt zwei Achsen nicht, abgeleitete tilt wäre Fabrikation. Bis das
-  Gesetz steht senden die Schreiber nur bit0 (Intensität).
-
-- **Physik-Gap** — reale Aktoren (Peltier/EM/Piezo) nicht simulierbar; die
-  testbare Hälfte (Mock-CDC-Host-Pfad, presence_frame.test.mjs) ist gebaut.
+- **Flashen + Live-Messen (nn-Strom)** — der Binär baut: die Xtensa-Toolchain
+  liegt in `~/.rustup/toolchains/esp/` (Linker `xtensa-esp32s3-elf-gcc` vorhanden),
+  `cargo build --release` gelingt mit gesourctem `export-esp.sh`. Offen ist der
+  Draht zum Gerät: kein ESP32 ist enumeriert (`lsusb` ohne Espressif/CP210x/FTDI,
+  `/dev/ttyACM*` und `/dev/ttyUSB*` leer) und `espflash` (der Runner) ist nicht
+  installiert. Flashen braucht das angesteckte Gerät + `espflash`; dann läuft der
+  nn-Strom als `nn=<ms>` am ttyACM.
 
 ## Abschluss
 
