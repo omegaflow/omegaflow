@@ -1,5 +1,8 @@
 use super::*;
 
+const FRAME_TAG: u8 = 0x02;
+const MASK_INTENSITY: u8 = 0x01;
+
 pub type Record = SampleRecord;
 
 pub struct PackedWindow {
@@ -36,7 +39,10 @@ impl AcousticOscillator {
                 return;
             };
             while let Ok(frame) = rx.recv() {
-                let bytes = kinetic_sample(&frame).to_le_bytes();
+                let mut bytes = [0u8; 6];
+                bytes[0] = FRAME_TAG;
+                bytes[1] = MASK_INTENSITY;
+                bytes[2..6].copy_from_slice(&kinetic_sample(&frame).to_le_bytes());
                 if std::io::Write::write_all(&mut out, &bytes).is_err()
                     || std::io::Write::flush(&mut out).is_err()
                 {
@@ -65,7 +71,10 @@ impl KineticRadiator for SeismicOscillator {
         let Some(port) = self.port.as_mut() else {
             return;
         };
-        let bytes = kinetic_sample(frame).to_le_bytes();
+        let mut bytes = [0u8; 6];
+        bytes[0] = FRAME_TAG;
+        bytes[1] = MASK_INTENSITY;
+        bytes[2..6].copy_from_slice(&kinetic_sample(frame).to_le_bytes());
         if std::io::Write::write_all(port, &bytes).is_err() {
             self.port = None;
         }
@@ -397,7 +406,11 @@ mod tests {
         };
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
-        assert_eq!(got, kinetic_sample(&frame).to_le_bytes());
+        let mut expected = [0u8; 6];
+        expected[0] = 0x02;
+        expected[1] = 0x01;
+        expected[2..6].copy_from_slice(&kinetic_sample(&frame).to_le_bytes());
+        assert_eq!(got, expected);
     }
 
     #[cfg(unix)]
@@ -412,9 +425,13 @@ mod tests {
         };
         let expected = kinetic_sample(&frame).to_le_bytes();
         tx.send(frame).expect("frame reaches the oscillator");
-        let mut got = [0u8; 4];
+        let mut got = [0u8; 6];
         std::io::Read::read_exact(&mut reader, &mut got).expect("one sample on the wire");
-        assert_eq!(got, expected, "one frame is one raw Σω sample");
+        let mut want = [0u8; 6];
+        want[0] = 0x02;
+        want[1] = 0x01;
+        want[2..6].copy_from_slice(&expected);
+        assert_eq!(got, want, "one frame is one tagged Σω sample");
         drop(tx);
     }
 }

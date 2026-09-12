@@ -95,16 +95,31 @@ fn main() -> ! {
     loop {
         let n = usb_rx.drain_rx_fifo(&mut rx);
         for &byte in &rx[..n] {
-            let Some(intensity) = parser.push(byte) else {
+            let Some(frame) = parser.push(byte) else {
                 continue;
             };
-            let Some(percent) = pwm::duty_percent(intensity) else {
-                continue;
-            };
-            for ch in [
-                &mut c0, &mut c1, &mut c2, &mut c3, &mut c4, &mut c5, &mut c6, &mut c7,
-            ] {
-                ch.set_duty(percent).unwrap();
+            if let Some(intensity) = frame.intensity {
+                if let Some(percent) = pwm::duty_percent(intensity) {
+                    for ch in [
+                        &mut c0, &mut c1, &mut c2, &mut c3, &mut c4, &mut c5, &mut c6, &mut c7,
+                    ] {
+                        ch.set_duty(percent).unwrap();
+                    }
+                }
+            }
+            if let Some(pan_ms) = frame.pan_ms {
+                if let Some(ticks) =
+                    pwm::servo_ticks(SERVO_TIMER_PERIOD_TICKS, pan_ms, pwm::SERVO_PERIOD_MS)
+                {
+                    pan.set_timestamp(ticks);
+                }
+            }
+            if let Some(tilt_ms) = frame.tilt_ms {
+                if let Some(ticks) =
+                    pwm::servo_ticks(SERVO_TIMER_PERIOD_TICKS, tilt_ms, pwm::SERVO_PERIOD_MS)
+                {
+                    tilt.set_timestamp(ticks);
+                }
             }
         }
     }
