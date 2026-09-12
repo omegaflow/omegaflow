@@ -793,7 +793,7 @@ fanout 8
 fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
-field value oceannetworks_ctd_conductivity_sm gaussian-inverse-square electric S/m 1800 0.0 0.0
+field value oceannetworks_ctd_conductivity_sm inverse-square electric S/m 1800 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
 ttl 1800
@@ -932,7 +932,7 @@ url https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min
 ttl 3600
 at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
-field solo_rpw_e_rms_vm solo_rpw_e_rms_vm gaussian-inverse-square electric V/m 3600 0.0 0.0
+field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 ttl 3600
@@ -1040,8 +1040,8 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_
 format rpw_efield
 at solar_orbiter
 ttl 3600
-field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
-field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
+field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
+field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
@@ -1412,7 +1412,6 @@ url https://github.com/omegaflow/sources/releases/download/physionet.org/bidslee
 format bidsleep
 on earth 42.6334 -71.3162 0
 ttl 86400
-field bidsleep_ihr_bpm bidsleep_ihr_bpm gaussian-inverse-square electric bpm 86400 0.0 0.0
 field bidsleep_mx_ms2 bidsleep_mx_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 field bidsleep_my_ms2 bidsleep_my_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 field bidsleep_mz_ms2 bidsleep_mz_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
@@ -5764,7 +5763,7 @@ url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis
 format iss_lis
 on earth 0 0 0
 ttl 604800
-field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um gaussian-inverse-square electric uJ/sr/m2/um 3600 0.0 0.0
+field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 ttl 604800
@@ -5856,7 +5855,7 @@ url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.
 format fmi_gic
 on earth 60.6 25.2 0
 ttl 604800
-field fmi_gic_a fmi_gic_a gaussian-inverse-square electric A 3600 0.0 0.0
+field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
@@ -6360,7 +6359,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_
 format superdarn_fitacf
 on earth 0 0 0
 ttl 604800
-field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms gaussian-inverse-square electric m/s 600 0.0 0.0
+field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square em m/s 600 0.0 0.0
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
 ttl 604800

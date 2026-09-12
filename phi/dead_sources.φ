@@ -6,6 +6,10 @@ decline no-physical-force
 url http://127.0.0.1:8080/schumann.json
 note Bild-Datei (superDARN-Banner), kein Messwert.
 
+decline no-physical-force
+url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
+note bidsleep_ihr_bpm (Herzfrequenz, Inter-Beat-Intervall, bpm) — skalarer physiologischer Ratewert aus dem EKG, kein propagierendes Feld: die Rate (1/Zeit) ist keine Feldstärke, kein nicht-menschlicher Sensor evolviert ein Organ für einen Herzraten-Skalar. Das Feld wurde aus sources.φ gestrichen (keine ehrliche Kraft); die drei Beschleunigungs-Komponenten (mx/my/mz, advective) bleiben im Block.
+
 decline registry/katalog
 url http://193.87.1.40:8080/tap
 note nur lso.epn_core — Discovery.
