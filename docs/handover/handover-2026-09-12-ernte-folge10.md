@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 5373237159fddaca712209c16bf050e6567f408466db6dba698bda53f5c771fd
+  sha256: 545fedb815c04effc7f3a348c30967bbbf634c2c3ffc333a39cad5141a45a9f0
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -42,6 +42,14 @@ gehen über den opencode-Browser an den Operator.
 
 - Hi-net — `HINET_PASS` weiter absent; der Operator nannte Browser-Registrierung,
   die Browser-Extension ist nicht verbunden — Operator.
+
+## Noch offene Pendings
+
+- H₀: Gaia-TAP-Crossmatch der 75 SH0ES-Cepheiden — die 75er-Tabelle trägt keine
+  ID-Spalte, die per-source-Identität des Cepheiden-Ankers fehlt
+  (`blatt-h0-linien-register.md`).
+- de441 mars: Vor-Fix-Matrizen (Δ 6045,3 km) — kernel-flatten-Run 34348392827
+  endete `failure` (`handover-thematisch-membran-sonde.md`).
 
 ## Abschluss
 
