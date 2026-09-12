@@ -3,7 +3,7 @@
   session: Forschung-Folge IX
   class: handover
   date: 2026-09-12
-  sha256: cab1b4b4f9f392d7ecb5984b3e09e00e3935e8ccc19fc7b4dca8879f9986970d
+  sha256: 2f4d39e406718caf34526f1cdabad21c9e8b6b70a298976a10614a5ce2091d35
   status: live
 -->
 # Handover — Forschung-Folge IX (2026-09-12)
@@ -58,6 +58,10 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   gemessen, neutral); ein nicht-nuller Term braucht Daten → heavy fetch/CI.
 - Tonga 2022 — Kreuz-Abgleich-Probe gebaut; die Roh-Druckwellenform bleibt
   blockiert (CTBTO-vDEC 403), nicht descoped.
+- Positive Maske — Treiber einer nach dem anderen (DEM, Magnetfeld, Slab2,
+  3D-Modell) in die bedingte TE legen und messen, ob die 36-km-Streuung
+  schrumpft; schrumpft sie, war der Faden ein echter Treiber, bleibt sie, war
+  er irrelevant. Die Treiber erntet die Ernte-Linie.
 
 ## Abschluss
 
