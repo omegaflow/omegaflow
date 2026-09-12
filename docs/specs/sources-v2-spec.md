@@ -209,9 +209,15 @@ carrier mechanism during curation.
 
 | Force | Default kernel |
 |-------|----------------|
-| em, gravity | inverse-square |
-| acoustic, seismic-body, seismic-surface, advective, electric | gaussian-inverse-square |
-| thermal, diffusion | erfc |
+| em | inverse-square |
+| gravity | inverse-square |
+| acoustic | gaussian-inverse-square |
+| seismic-body | gaussian-inverse-square |
+| seismic-surface | erfc |
+| thermal | exponential-decay |
+| diffusion | gaussian-inverse-square |
+| advective | patch-levy |
+| electric | inverse-square |
 
 Kernel names accepted by the 6-token `field` form: `inverse-square`,
 `gaussian-inverse-square`, `gaussian-inverse`, `erfc`, `exponential-decay`,
