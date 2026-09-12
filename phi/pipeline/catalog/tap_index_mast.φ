@@ -1,0 +1,16 @@
+# tap-inventar https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog dbo.allpointing dbo view
+catalog dbo.calpointing dbo view
+catalog dbo.caomartifact dbo table
+catalog dbo.caommembers dbo table
+catalog dbo.caomobservation dbo table
+catalog dbo.caomplane dbo table
+catalog dbo.mastlinks dbo table
+catalog dbo.mastproductdescription dbo table
+catalog ivoa.obscore ivoa view
+catalog dbo.obspointing dbo view

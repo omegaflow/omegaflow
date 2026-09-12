@@ -1,0 +1,11 @@
+# tap-inventar https://cdpp-epntap.irap.omp.eu/tap
+
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog amdadb.epn_core amdadb table
+catalog illu67p.epn_core illu67p table
+catalog transplanet.epn_core transplanet table
