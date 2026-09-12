@@ -1,3 +1,10 @@
+<!--
+  title: Spacecraft Doppler tracking — noise budget and precision radio science
+  class: paper
+  date: 2005-03-15
+  sha256: fb3f83a4467bc1e8157793e2f43efcd60d47b9ae55f57fbf037c1e9a79c3a123
+  status: live
+-->
 # Spacecraft Doppler tracking: Noise budget and accuracy achievable in precision radio science observations
 
 S. W. Asmar and J. W. Armstrong
