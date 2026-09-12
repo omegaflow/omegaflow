@@ -46,7 +46,7 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
   </div>
 </div>
 <script type="module">
-import { syncFrame, parseRecords } from "./constants.js";
+import { syncFrame, parseRecords, parseKinetic, PROTOCOL_VERSION, KINETIC_TAG } from "./constants.js";
 
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
@@ -330,7 +330,18 @@ function connect() {
   ws.binaryType = "arraybuffer";
   ws.onmessage = (ev) => {
     const bytes = ev.data;
-    if (bytes.byteLength < 3 || new DataView(bytes).getUint8(2) !== 9) {
+    if (bytes.byteLength < 3) {
+      return;
+    }
+    const tag = new DataView(bytes).getUint8(2);
+    if (tag === KINETIC_TAG) {
+      if (serial) {
+        const k = parseKinetic(bytes);
+        serial.onFrame(k.omega, k.aperture);
+      }
+      return;
+    }
+    if (tag !== PROTOCOL_VERSION) {
       return;
     }
     const record = parseRecords(bytes);
@@ -486,11 +497,12 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
+let serial = null;
 try {
   await import("./palette.js");
 } catch {}
 try {
-  await import("./webserial.js");
+  serial = await import("./webserial.js");
 } catch {}
 
 boot();

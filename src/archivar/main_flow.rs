@@ -528,6 +528,9 @@ pub fn main_flow() {
         }));
     let (acoustic_tx, acoustic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
     let (seismic_tx, seismic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
+    #[cfg(feature = "browser_relay")]
+    let (relay_kinetic_tx, relay_kinetic_rx) =
+        mpsc::channel::<crate::mathematikerin::PresenceFrame>();
     if !hidden {
         let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
         if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
@@ -582,6 +585,10 @@ pub fn main_flow() {
             consent.clone(),
             acoustic_tx,
             seismic_tx,
+            #[cfg(feature = "browser_relay")]
+            Some(relay_kinetic_tx),
+            #[cfg(not(feature = "browser_relay"))]
+            None,
             solar_rx,
             machine_rx,
             presence_slot.clone(),
@@ -602,6 +609,7 @@ pub fn main_flow() {
                 constants_js.clone(),
                 sample_tx.clone(),
                 presence_relay_tx,
+                relay_kinetic_rx,
                 time.clone(),
                 consent.clone(),
                 diode.clone(),

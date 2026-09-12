@@ -1,7 +1,9 @@
-// WebSerial path to the ESP32 radiatorium (CDC-ACM). The firmware is pending
-// (M02, no_std/hardware): this module carries the plumbing only. Raw bytes are
-// raw intensity (Σω) — no flow, no hsv/pwm/duration. The stream speaks only
-// while window.omegaflow.consent() is true.
+// WebSerial path to the ESP32 radiatorium (CDC-ACM). The device firmware is
+// pending (M02, no_std/hardware); this module carries the host half. Read: raw
+// bytes are raw intensity (Σω) — no flow, no hsv/pwm/duration. Write: the
+// membrane's PresenceFrame (9 omegas + aperture) translates to raw intensity
+// (Σω · aperture, f32-LE, 4 B/frame) — the peer's own law, as SeismicOscillator.
+// Both directions speak only while window.omegaflow.consent() is true.
 
 const panel = document.createElement("div");
 panel.style.cssText =
@@ -26,6 +28,7 @@ document.body.append(panel);
 
 let port = null;
 let reader = null;
+let writer = null;
 let reading = false;
 
 function note(text) {
@@ -74,7 +77,19 @@ async function readLoop() {
 async function toggle() {
   if (reading) {
     reading = false;
-    await reader.cancel();
+    try {
+      await reader.cancel();
+    } catch {}
+    try {
+      writer.releaseLock();
+    } catch {}
+    try {
+      await port.close();
+    } catch {}
+    reader = null;
+    writer = null;
+    port = null;
+    note("closed");
     return;
   }
   if (!("serial" in navigator)) {
@@ -85,13 +100,29 @@ async function toggle() {
     try {
       port = await navigator.serial.requestPort();
       await port.open({ baudRate: 115200 });
+      writer = port.writable.getWriter();
     } catch {
       port = null;
+      writer = null;
       note("no port");
       return;
     }
   }
   readLoop();
+}
+
+export function onFrame(omega, aperture) {
+  if (!consented() || !writer) {
+    return;
+  }
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += omega[i];
+  }
+  const intensity = sum * aperture;
+  const bytes = new Uint8Array(4);
+  new DataView(bytes.buffer).setFloat32(0, intensity, true);
+  writer.write(bytes).catch(() => {});
 }
 
 button.addEventListener("click", toggle);
