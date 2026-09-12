@@ -2,8 +2,8 @@
   title: BLATT PAPIER — Kreuz-Screening im Kollab-Fenster (Trishuli 2026-08-26)
   class: sheet
   date: 2026-08-30
-  sha256: be3226063bd4fe8b3e23e3bb9e7ab1781aff68389ad3a5b7df219c9c25e31584
-  status: pending
+  sha256: aba57be7dfb426ac7f3a150c9393c54ed3067f362727d8cc576d14720d6d3f02
+  status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/paper/causal-arrow-preregistration.md
 -->
 
@@ -24,7 +24,9 @@
 > kollab→gyirong); der räumliche lag-12-Pfeil zwischen den Kollab- und
 > Rasuwa-Niederschlagsreihen ist über den geteilten Treiber hinaus **nicht
 > isolierbar** (Aussage B → siehe §3.4). Genaue cTE-Werte der überlebenden
-> gyirong-Pfeile in §3.4 ausstehend (`pending`), nicht fabriziert.
+> gyirong-Pfeile (lag 12, gemessen 2026-09-12, `cross_te_screen`, 20
+> Surrogate): gyirong→rasuwa 0.1983 > 0.1815; gyirong→kollab 0.1602 >
+> 0.1568; kollab→gyirong 0.1584 > 0.1538.
 
 # BLATT PAPIER — Kreuz-Screening der Serien im Kollab-Fenster
 
@@ -94,12 +96,13 @@ drei Stationen (gyirong, kollab, rasuwa) mit zwei Variablen je Station
      Instrument ist die süd→nord-Richtung **nicht isolierbar**; das ist eine
      gestützte Stille mit drei Kontrollen, keine offene Frage. (Keine
      physische Negation — siehe §3.3 G2-Grenze.)
-   - **Aussage B (marginal, pending):** Der nord→süd-lag-12-Pfeil überlebt
+   - **Aussage B (marginal; durch den Power-Test §3.4 beantwortet):** Der
+     nord→süd-lag-12-Pfeil überlebt
      alle drei Konditionierungen, aber knapp (Margen 2–3 % über Schwelle).
-     *Dieser* Pfeil ist zu Recht pending: marginal, unter Vorbehalt, mit der
+     *Dieser* Pfeil war zu Recht pending: marginal, unter Vorbehalt, mit der
      physikalischen Lesart (Flutwellen-Laufzeit ~12 h) als Hypothese, nicht
-     als Befund. Die Frage zu B ist offen und braucht mehr Power, nicht mehr
-     Konfundierungskontrolle.
+     als Befund. Die Frage zu B beantwortet der Power-Test §3.4: im vollen
+     Fenster nicht isolierbar über den geteilten Treiber hinaus.
 
 ---
 
@@ -216,8 +219,11 @@ gyirong/kollab/rasuwa precipitation + gyirong pressure_msl), Fenster
   rasuwa_precip` **fällt aus der Signifikanz** (kollab→rasuwa erscheint
   nicht unter den konditionierten Befunden). Konditioniert überleben
   räumliche Niederschlags-Pfeile mit gyirong als Quelle bzw. Ziel:
-  gyirong→rasuwa, gyirong→kollab, kollab→gyirong. (Genaue cTE-Werte
-  dieser drei Pfeile: `pending`, nicht fabriziert.)
+   gyirong→rasuwa, gyirong→kollab, kollab→gyirong. (cTE-Werte lag 12,
+   gemessen 2026-09-12, `cross_te_screen`, 20 Surrogate: gyirong→rasuwa
+   0.1983 > 0.1815; gyirong→kollab 0.1602 > 0.1568; kollab→gyirong 0.1584 >
+   0.1538. Zusatz des Re-Laufs (lags 1,6,12,24): rasuwa→kollab lag 6 cTE
+   0.2099 > 0.2097 — Margin 0.0002, benannt, nicht versteckt.)
 
 **Lesart:** Mehr Power (n 240 → 1392) bestätigt den unbedingten
 nord→süd-lag-12-Pfeil, löst ihn aber nicht von der Konfundierung durch
