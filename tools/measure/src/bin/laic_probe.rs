@@ -62,6 +62,11 @@ const GPS_WINDOW_S: f64 = 7776000.0;
 const GPS_CELL_S: f64 = 86400.0;
 const GPS_N_CELLS: usize = 90;
 const GPS_LAG_MAX_H: usize = 30;
+const DST_FINAL_TEMPLATE: &str =
+    "https://wdc.kugi.kyoto-u.ac.jp/dst_final/{yyyymm}/dst{yymm}.for.request";
+const DST_PROVISIONAL_TEMPLATE: &str =
+    "https://wdc.kugi.kyoto-u.ac.jp/dst_provisional/{yyyymm}/dst{yymm}.for.request";
+const DST_MISSING: i64 = 9999;
 const WGS84_A: f64 = 6378137.0;
 const WGS84_B: f64 = 6356752.314245;
 
@@ -120,6 +125,7 @@ struct WindowData {
     radon: Vec<(f64, f64)>,
     weather: Vec<(f64, f64)>,
     gps: Vec<(f64, f64)>,
+    dst: Vec<(f64, f64)>,
 }
 
 struct WindowStat {
@@ -150,6 +156,8 @@ struct WindowStat {
     radon_env_n_cells: usize,
     gps_radon_excess: [Option<f64>; 2],
     gps_radon_n_cells: usize,
+    dst_excess: [Option<f64>; 2],
+    dst_n_cells: usize,
     global_rate_excess: [Option<f64>; 2],
     global_rate_n_cells: usize,
 }
@@ -942,6 +950,112 @@ fn harvest_gps(dir: &str, t0: f64, lat: f64, lon: f64) -> (String, Vec<(f64, f64
     (sta.id.clone(), tenv3_series(&body, t_start, t0))
 }
 
+fn dst_day(line: &str) -> Option<(f64, Vec<(usize, f64)>)> {
+    let b = line.as_bytes();
+    if b.len() < 120 || &b[0..3] != b"DST" || b[7] != b'*' {
+        return None;
+    }
+    let field = |a: usize, z: usize| -> Option<&str> { std::str::from_utf8(b.get(a..z)?).ok() };
+    let year_yy: i64 = field(3, 5)?.trim().parse().ok()?;
+    let month: u32 = field(5, 7)?.trim().parse().ok()?;
+    let day: u32 = field(8, 10)?.trim().parse().ok()?;
+    let year_hi: Option<i64> = field(14, 16)?.trim().parse().ok();
+    let year = match year_hi {
+        Some(hi) if hi > 0 => hi * 100 + year_yy,
+        _ => {
+            if year_yy >= 57 {
+                1900 + year_yy
+            } else {
+                2000 + year_yy
+            }
+        }
+    };
+    let days = ymd_to_days(year, month, day)? as f64;
+    let base: i64 = field(16, 20)?.trim().parse().ok()?;
+    if base == DST_MISSING {
+        return None;
+    }
+    let mut hours = Vec::new();
+    for h in 0..24 {
+        let a = 20 + 4 * h;
+        let raw: i64 = match field(a, a + 4).and_then(|s| s.trim().parse().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        if raw == DST_MISSING {
+            continue;
+        }
+        hours.push((h, (base * 100 + raw) as f64));
+    }
+    Some((days * 86400.0, hours))
+}
+
+fn dst_series(body: &str, t_start: f64, t0: f64) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    for line in body.lines() {
+        let Some((day0, hours)) = dst_day(line) else {
+            continue;
+        };
+        for (h, v) in hours {
+            let t = day0 + h as f64 * 3600.0;
+            if t < t_start || t > t0 || !v.is_finite() {
+                continue;
+            }
+            out.push((t, v));
+        }
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
+fn dst_month_urls(year: i64, month: u32) -> (String, String) {
+    let yyyymm = format!("{year:04}{month:02}");
+    let yymm = format!("{:02}{:02}", year.rem_euclid(100), month);
+    let final_url = DST_FINAL_TEMPLATE
+        .replace("{yyyymm}", &yyyymm)
+        .replace("{yymm}", &yymm);
+    let provisional_url = DST_PROVISIONAL_TEMPLATE
+        .replace("{yyyymm}", &yyyymm)
+        .replace("{yymm}", &yymm);
+    (final_url, provisional_url)
+}
+
+fn harvest_dst(dir: &str, t0: f64) -> Vec<(f64, f64)> {
+    let t_start = t0 - WINDOW_S;
+    let cache_dir = format!("{dir}/dst");
+    let _ = std::fs::create_dir_all(&cache_dir);
+    let mut out = Vec::new();
+    let mut day = t_start.div_euclid(86400.0) as i64;
+    let end_day = t0.div_euclid(86400.0) as i64;
+    let mut month_done: Option<(i64, u32)> = None;
+    while day <= end_day {
+        let (y, m, _) = days_to_ymd(day);
+        if month_done == Some((y, m)) {
+            day += 1;
+            continue;
+        }
+        month_done = Some((y, m));
+        let path = format!("{cache_dir}/{y:04}{m:02}.txt");
+        let body = match std::fs::read_to_string(&path) {
+            Ok(b) => Some(b),
+            Err(_) => {
+                let (final_url, provisional_url) = dst_month_urls(y, m);
+                let fetched = fetch_text(&final_url).or_else(|| fetch_text(&provisional_url));
+                if let Some(b) = &fetched {
+                    let _ = std::fs::write(&path, b);
+                }
+                fetched
+            }
+        };
+        if let Some(body) = body {
+            out.extend(dst_series(&body, t_start, t0));
+        }
+        day += 1;
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
 struct GpsStation {
     id: String,
     lat: f64,
@@ -1356,6 +1470,8 @@ fn window_stat(
         radon_env_n_cells: 0,
         gps_radon_excess: [None, None],
         gps_radon_n_cells: 0,
+        dst_excess: [None, None],
+        dst_n_cells: 0,
         global_rate_excess: [None, None],
         global_rate_n_cells: 0,
     };
@@ -1544,6 +1660,20 @@ fn window_stat(
         stat.gps_radon_excess = ex;
         stat.gps_radon_n_cells = n;
     }
+    if !data.dst.is_empty() {
+        let (ex, n) = pair_excess(
+            &data.dst,
+            &data.f,
+            t_start,
+            cell_s,
+            n_cells,
+            cells_per_lag,
+            MAX_LAG_H,
+            factor,
+        );
+        stat.dst_excess = ex;
+        stat.dst_n_cells = n;
+    }
     if !global_rate.is_empty() {
         let g_t_start = data.t0 - GPS_WINDOW_S;
         let gr_cells = bin_mean(global_rate, g_t_start, GPS_CELL_S, GPS_N_CELLS);
@@ -1696,6 +1826,7 @@ fn parse_window_file(body: &str) -> Option<WindowData> {
         radon: Vec::new(),
         weather: Vec::new(),
         gps: Vec::new(),
+        dst: Vec::new(),
     };
     if let Some(JsonVal::Arr(rows)) = root.get("f") {
         for row in rows {
@@ -1880,6 +2011,7 @@ fn harvest_window(
         radon: Vec::new(),
         weather: Vec::new(),
         gps: Vec::new(),
+        dst: Vec::new(),
     };
     let t_start = t0 - WINDOW_S;
     let start_iso = unix_to_iso(t_start);
@@ -2053,6 +2185,7 @@ fn r_window(c: &mut Cursor, has_env: bool) -> Option<(u8, WindowData)> {
         radon: Vec::new(),
         weather: Vec::new(),
         gps: Vec::new(),
+        dst: Vec::new(),
     };
     let n = c.u32()? as usize;
     for _ in 0..n {
@@ -2224,7 +2357,7 @@ fn harvest_main(args: &[String]) {
         Some(d) => d,
         None => {
             println!(
-                "usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M] [--era-start YYYY-MM-DD] [--era-end YYYY-MM-DD] [--tec-events N] [--tec-null N] [--tec-era YYYY-MM-DD] [--champ-events N] [--champ-null N] [--mseed-events N] [--mseed-null N] [--radon-events N] [--radon-null N] [--weather-events N] [--weather-null N] [--gps-events N] [--gps-null N] [--global-rate]"
+                "usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M] [--era-start YYYY-MM-DD] [--era-end YYYY-MM-DD] [--tec-events N] [--tec-null N] [--tec-era YYYY-MM-DD] [--champ-events N] [--champ-null N] [--mseed-events N] [--mseed-null N] [--radon-events N] [--radon-null N] [--weather-events N] [--weather-null N] [--gps-events N] [--gps-null N] [--dst-events N] [--dst-null N] [--global-rate]"
             );
             println!(
                 "       laic_probe --analyze DIR [--radius KM] [--cell-min MIN] [--kde-scale K] [--max-events N] [--null N] [--bin PATH] [--cdn NAME]"
@@ -2302,6 +2435,14 @@ fn harvest_main(args: &[String]) {
         None => 0,
     };
     let gps_null = match usize_arg("--gps-null") {
+        Some(v) => v,
+        None => 0,
+    };
+    let dst_events = match usize_arg("--dst-events") {
+        Some(v) => v,
+        None => 0,
+    };
+    let dst_null = match usize_arg("--dst-null") {
         Some(v) => v,
         None => 0,
     };
@@ -2821,6 +2962,60 @@ fn harvest_main(args: &[String]) {
             std::fs::write(&path, series_json(&series)).expect("gps sidecar");
         }
     }
+    let dst_n_events = dst_events.min(events.len());
+    if dst_n_events > 0 {
+        println!();
+        println!(
+            "=== Dst harvest (WDC Kyoto hourly Dst, global index, final 1957–2020 then provisional, 120-byte fixed-width monthly records) ==="
+        );
+        for i in 0..dst_n_events {
+            let ev = &events[i];
+            let path = format!("{dir}/dst_e{i:04}.json");
+            if std::path::Path::new(&path).exists() {
+                println!("dst e{i:>4} | already harvested");
+                continue;
+            }
+            let series = harvest_dst(&dir, ev.t0);
+            if series.is_empty() {
+                println!(
+                    "dst e{i:>4} | {:<19} | Dst absent for the window months (0 honored)",
+                    unix_to_iso(ev.t0)
+                );
+            } else {
+                println!(
+                    "dst e{i:>4} | {:<19} | cells {}",
+                    unix_to_iso(ev.t0),
+                    series.len()
+                );
+            }
+            std::fs::write(&path, series_json(&series)).expect("dst sidecar");
+        }
+    }
+    let dst_n_null = dst_null.min(null_windows.len());
+    if dst_n_null > 0 {
+        for i in 0..dst_n_null {
+            let path = format!("{dir}/dst_n{i:04}.json");
+            if std::path::Path::new(&path).exists() {
+                println!("dst null {i:>4} | already harvested");
+                continue;
+            }
+            let (t0, _, _) = null_windows[i];
+            let series = harvest_dst(&dir, t0);
+            if series.is_empty() {
+                println!(
+                    "dst null {i:>4} | {:<19} | Dst absent for the window months (0 honored)",
+                    unix_to_iso(t0)
+                );
+            } else {
+                println!(
+                    "dst null {i:>4} | {:<19} | cells {}",
+                    unix_to_iso(t0),
+                    series.len()
+                );
+            }
+            std::fs::write(&path, series_json(&series)).expect("dst sidecar");
+        }
+    }
     if args.iter().any(|a| a == "--global-rate") {
         println!();
         println!(
@@ -2903,6 +3098,9 @@ fn analyze_main(args: &[String]) {
     );
     println!(
         "Instrument A — global event-rate (where global_rate.json exists): daily USGS-FDSN count (M ≥ {GLOBAL_RATE_MAG:.1}) over a 90-day window × daily F, sweep 0…{GPS_LAG_MAX_H} days; INTERMAGNET-F activity stays pending (no measured endpoint)."
+    );
+    println!(
+        "Dst channel (where sidecars exist): WDC Kyoto hourly Dst (final 1957–2020 then provisional), 120-byte fixed-width monthly records, Dst pair on the window cells, sweep 0…{MAX_LAG_H} h (m ≥ {MIN_M})."
     );
 
     let mut events: Vec<(f64, f64, f64, f64)> = Vec::new();
@@ -3057,6 +3255,7 @@ fn analyze_main(args: &[String]) {
             data.radon = load_series_sidecar(&dir, "radon", "e", i);
             data.weather = load_series_sidecar(&dir, "weather", "e", i);
             data.gps = load_series_sidecar(&dir, "gps", "e", i);
+            data.dst = load_series_sidecar(&dir, "dst", "e", i);
         }
         let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         if data.station.is_empty() || data.f.is_empty() {
@@ -3118,6 +3317,7 @@ fn analyze_main(args: &[String]) {
             data.radon = load_series_sidecar(&dir, "radon", "n", i);
             data.weather = load_series_sidecar(&dir, "weather", "n", i);
             data.gps = load_series_sidecar(&dir, "gps", "n", i);
+            data.dst = load_series_sidecar(&dir, "dst", "n", i);
         }
         let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         println!(
@@ -3366,6 +3566,16 @@ fn analyze_main(args: &[String]) {
         .iter()
         .filter_map(|s| s.global_rate_excess[1])
         .collect();
+    let ev_dst_f: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.dst_excess[0])
+        .collect();
+    let ev_f_dst: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.dst_excess[1])
+        .collect();
+    let nu_dst_f: Vec<f64> = null_stats.iter().filter_map(|s| s.dst_excess[0]).collect();
+    let nu_f_dst: Vec<f64> = null_stats.iter().filter_map(|s| s.dst_excess[1]).collect();
 
     let s_li = stack_stat(&ev_li);
     let n_li = stack_stat(&nu_li);
@@ -3417,6 +3627,10 @@ fn analyze_main(args: &[String]) {
     let n_gr_f = stack_stat(&nu_gr_f);
     let s_f_gr = stack_stat(&ev_f_gr);
     let n_f_gr = stack_stat(&nu_f_gr);
+    let s_dst_f = stack_stat(&ev_dst_f);
+    let n_dst_f = stack_stat(&nu_dst_f);
+    let s_f_dst = stack_stat(&ev_f_dst);
+    let n_f_dst = stack_stat(&nu_f_dst);
 
     println!();
     println!("=== stack verdict ===");
@@ -3462,6 +3676,8 @@ fn analyze_main(args: &[String]) {
     verdict_line("TE(Radon → GPS)", &s_radon_gps, &n_radon_gps, z_main);
     verdict_line("TE(Global rate → Ionosphere)", &s_gr_f, &n_gr_f, z_main);
     verdict_line("TE(Ionosphere → Global rate)", &s_f_gr, &n_f_gr, z_main);
+    verdict_line("TE(Dst → Ionosphere)", &s_dst_f, &n_dst_f, z_main);
+    verdict_line("TE(Ionosphere → Dst)", &s_f_dst, &n_f_dst, z_main);
     verdict_line(
         "TE(Lithosphere → CHAMP density)",
         &s_champ_li,
@@ -3659,6 +3875,18 @@ fn analyze_main(args: &[String]) {
         n_f_gr.mean + 2.0 * n_f_gr.sd
     );
     println!(
+        "TE(Dst → Ionosphere) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e}; WDC Kyoto hourly Dst, final then provisional)",
+        s_dst_f.mean,
+        s_dst_f.n,
+        n_dst_f.mean + 2.0 * n_dst_f.sd
+    );
+    println!(
+        "TE(Ionosphere → Dst) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
+        s_f_dst.mean,
+        s_f_dst.n,
+        n_f_dst.mean + 2.0 * n_f_dst.sd
+    );
+    println!(
         "Lag                          = {} (largest mean excess, Litho → Iono; {} for the reverse direction) — sweep 0…{MAX_LAG_H} h in 1-h steps, m ≥ {MIN_M} cells",
         lag_li.0.map_or("pending".to_string(), |l| format!("{l} h")),
         lag_il.0.map_or("pending".to_string(), |l| format!("{l} h"))
@@ -3852,6 +4080,48 @@ mod tests {
         assert!((back[1].1 - 4.5).abs() < 1e-12);
     }
 
+    fn dst_fixture_line(
+        yy: i64,
+        mm: u32,
+        dd: u32,
+        version: u32,
+        base: i64,
+        hours: &[i64],
+    ) -> String {
+        let mut s = format!("DST{yy:02}{mm:02}*{dd:02}  X{version}20{base:>4}");
+        for h in hours {
+            s.push_str(&format!("{h:>4}"));
+        }
+        s.push_str(&format!("{:>4}", 0));
+        s
+    }
+
+    #[test]
+    fn dst_series_reads_fixed_width_and_honors_missing() {
+        let mut h1 = vec![-4i64, 1, 3, DST_MISSING, 5];
+        h1.resize(24, 0);
+        let mut h2 = vec![42i64];
+        h2.resize(24, 0);
+        let body = format!(
+            "[Created at ...]\n{}\n{}\n",
+            dst_fixture_line(25, 1, 1, 2, 0, &h1),
+            dst_fixture_line(25, 1, 2, 2, -2, &h2)
+        );
+        let t_start = iso_to_unix("2025-01-01T00:00:00").unwrap();
+        let t0a = iso_to_unix("2025-01-01T06:00:00").unwrap();
+        let a = dst_series(&body, t_start, t0a);
+        assert_eq!(a.len(), 6, "hour 3 of day 1 is 9999 → absent");
+        assert_eq!(a[0].0, t_start);
+        assert!((a[0].1 + 4.0).abs() < 1e-12);
+        let t_start_b = iso_to_unix("2025-01-02T00:00:00").unwrap();
+        let t0b = iso_to_unix("2025-01-02T06:00:00").unwrap();
+        let b = dst_series(&body, t_start_b, t0b);
+        assert_eq!(b.len(), 7);
+        assert!((b[0].1 + 158.0).abs() < 1e-12, "base -2 × 100 + 42 = -158");
+        assert!(dst_series("", t_start, t0a).is_empty());
+        assert!(dst_series("no table here\n", t_start, t0a).is_empty());
+    }
+
     #[test]
     fn gim_parser_reads_synthetic_tec_map() {
         let mut body = String::new();
@@ -3900,6 +4170,7 @@ mod tests {
             radon: Vec::new(),
             weather: Vec::new(),
             gps: Vec::new(),
+            dst: Vec::new(),
         };
         let windows = vec![
             (0u8, d),
@@ -3922,6 +4193,7 @@ mod tests {
                     radon: Vec::new(),
                     weather: Vec::new(),
                     gps: Vec::new(),
+                    dst: Vec::new(),
                 },
             ),
         ];

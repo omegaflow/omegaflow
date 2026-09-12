@@ -8115,3 +8115,12 @@ field dm frb_chime_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
 field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
+format ndk
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/copernicus-dem-30m.s3.amazonaws.com/copernicus_dem_30m_N50_E010.bin
+format gl30
+at earth
+ttl 31536000
