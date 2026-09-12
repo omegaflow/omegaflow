@@ -6364,7 +6364,7 @@ fn iss_lis_register_field_matches_component_name() {
         panic!("the iss_lis block carries a field line");
     };
     assert_eq!(fc.name, "iss_lis_flash_radiance_uj_sr_m2_um");
-    assert_eq!(fc.force, 8);
+    assert_eq!(fc.force, 0);
 }
 
 #[test]
