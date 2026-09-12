@@ -2,7 +2,7 @@
 #![no_main]
 
 use esp_backtrace as _;
-use esp_hal::gpio::DriveMode;
+use esp_hal::gpio::{DriveMode, Pin};
 use esp_hal::ledc::{
     channel::{self, ChannelIFace},
     timer::{self, TimerIFace},
@@ -21,7 +21,8 @@ esp_bootloader_esp_idf::esp_app_desc!();
 fn main() -> ! {
     let peripherals = esp_hal::init(esp_hal::Config::default());
 
-    let mut usb = UsbSerialJtag::new(peripherals.USB_DEVICE);
+    let usb = UsbSerialJtag::new(peripherals.USB_DEVICE);
+    let (mut usb_rx, _usb_tx) = usb.split();
 
     let mut ledc = Ledc::new(peripherals.LEDC);
     ledc.set_global_slow_clock(LSGlobalClkSource::APBClk);
@@ -59,7 +60,7 @@ fn main() -> ! {
     let mut rx = [0u8; 64];
 
     loop {
-        let n = usb.drain_rx_fifo(&mut rx);
+        let n = usb_rx.drain_rx_fifo(&mut rx);
         for &byte in &rx[..n] {
             let Some(intensity) = parser.push(byte) else {
                 continue;
