@@ -5,7 +5,7 @@ use omegaflow::te::{
     conditional_te_stats_lagged_n, surrogate_stats_phase_n, transfer_entropy_conditional_binned_n,
     transfer_entropy_lag, TeNull,
 };
-use omegaflow_measure::eeglab::{channel_series, open_set, resolve_channel};
+use omegaflow_measure::eeglab::{channel_series, open_set, open_set_mat, resolve_channel};
 
 const DEFAULT_LAG_MAX: usize = 24;
 const DEFAULT_SURROGATES: usize = 100;
@@ -71,8 +71,10 @@ fn usage() {
          plus conditional TE against a named common-cause channel (bedingte TE):\n\
          \x20 placebo_pair_eeg_probe --set <subject.set> [--a <chan_a>] [--b <chan_b>] [--c <chan_c>]\n\
          \x20              [--lags <n>] [--surrogates <n>] [--bins <n>] [--seed <n>]\n\
-         the .set text header names its .fdt (datfile) and declares nbchan/pnts/trials/datatype;\n\
-         samples unpack as interleaved little-endian f32 [channel][sample] (channel fastest).\n\
+         the .set reads either as a text header naming its .fdt (datfile, nbchan/pnts/trials/\n\
+         datatype) or as a MATLAB-5 MAT-v5 EEG struct (nbchan/pnts/trials/srate/chanlocs labels,\n\
+         data embedded); samples unpack as interleaved little-endian f32 [channel][sample]\n\
+         (channel fastest). an absent data field reads absent, never a fabricated 0.\n\
          the verum/sham sibling is found by swapping verum<->sham in the path; channels are\n\
          1-based indices or labels from the channel-location block.\n\
          legacy: --a <eeg_a> --b <eeg_b> [--c <common_cause>] reads whitespace-separated finite\n\
@@ -105,7 +107,7 @@ fn condition_pair(
     sel_b: &str,
     sel_c: Option<&str>,
 ) -> Option<(String, Vec<f32>, Vec<f32>, Option<Vec<f32>>)> {
-    let (set, samples) = open_set(path)?;
+    let (set, samples) = open_set(path).or_else(|| open_set_mat(path))?;
     let chan_a = resolve_channel(&set, sel_a)?;
     let chan_b = resolve_channel(&set, sel_b)?;
     let a = channel_series(&samples, &set, chan_a)?;
@@ -467,7 +469,7 @@ mod tests {
             surrogate_stats_phase_n(&b, &a, delay, lag_seed, 50).expect("the null is measurable");
         assert!(
             te > fam,
-            "the driven direction must break fam-Schwelle: TE {te} vs fam {fam}"
+            "the driven direction breaks fam-Schwelle: TE {te} vs fam {fam}"
         );
     }
 
@@ -503,7 +505,7 @@ mod tests {
         .expect("the conditional null is measurable");
         assert!(
             te > fam,
-            "the direct arrow must survive an irrelevant condition: TE {te} vs fam {fam}"
+            "the direct arrow survives an irrelevant condition: TE {te} vs fam {fam}"
         );
     }
 }
