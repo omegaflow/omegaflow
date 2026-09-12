@@ -5,8 +5,8 @@ at earth
 hapi Distance=Distance Absolute_Ne=Absolute_Ne
 # uncertain field Distance — force/unit undetermined, review
 # uncertain field Absolute_Ne — force/unit undetermined, review
-# Distance = Num(198011.56180372142)
-# Absolute_Ne = Num(170021612319.32416)
+# Distance = 198011.56180372142
+# Absolute_Ne = 170021612319.32416
 
 # declined: data-present (container array has rows but extract yielded nothing)
 url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
@@ -14,7 +14,7 @@ ttl 16
 at earth
 hapi F=F
 # uncertain field F — force/unit undetermined, review
-# F = Num(21553.4266725314)
+# F = 21553.4266725314
 
 # declined: data-present (container array has rows but extract yielded nothing)
 url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
@@ -22,7 +22,7 @@ ttl 10
 at earth
 hapi Absolute_VTEC=Absolute_VTEC
 # uncertain field Absolute_VTEC — force/unit undetermined, review
-# Absolute_VTEC = Num(7.413650821702525)
+# Absolute_VTEC = 7.413650821702525
 
 # declined: data-present (container array has rows but extract yielded nothing)
 url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
@@ -30,5 +30,5 @@ ttl 4
 at earth
 hapi F=F
 # uncertain field F — force/unit undetermined, review
-# F = Num(NaN)
+# F = 41836.79382560771 — first row server fill, first finite sample shown
 
