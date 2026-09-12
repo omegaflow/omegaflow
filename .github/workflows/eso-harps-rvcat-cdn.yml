@@ -20,6 +20,7 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
             --root https://archive.eso.org/tap_cat/sync \
+            --csv \
             --table safcat.HARPS_RVCAT_V1 \
             --columns 'ra:ra_simbad;dec:dec_simbad;rv:drs_ccf_rvc;plx:plx_simbad' \
             --skip-null rv \
