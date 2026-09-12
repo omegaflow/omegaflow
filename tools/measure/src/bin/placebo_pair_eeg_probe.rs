@@ -5,6 +5,7 @@ use omegaflow::te::{
     conditional_te_stats_lagged_n, surrogate_stats_phase_n, transfer_entropy_conditional_binned_n,
     transfer_entropy_lag, TeNull,
 };
+use omegaflow_measure::eeglab::{channel_series, open_set, resolve_channel};
 
 const DEFAULT_LAG_MAX: usize = 24;
 const DEFAULT_SURROGATES: usize = 100;
@@ -68,11 +69,15 @@ fn usage() {
         "placebo_pair_eeg_probe — the placebo control for needle XI (Placebo):\n\
          pair-EEG transfer entropy with a phase-randomized null (fam-Schwelle = mean + 2 sigma),\n\
          plus conditional TE against a named common-cause channel (bedingte TE):\n\
-         \x20 placebo_pair_eeg_probe --a <eeg_a> --b <eeg_b> [--c <common_cause>] [--lags <n>]\n\
-         \x20              [--surrogates <n>] [--bins <n>] [--seed <n>]\n\
-         each series is whitespace-separated finite f32 values, one index per time step.\n\
-         the paired-EEG substrate is not yet harvested; the probe reads named inputs, and an\n\
-         absent file is reported as pending, never as 0 (0 honored, absent stays absent)."
+         \x20 placebo_pair_eeg_probe --set <subject.set> [--a <chan_a>] [--b <chan_b>] [--c <chan_c>]\n\
+         \x20              [--lags <n>] [--surrogates <n>] [--bins <n>] [--seed <n>]\n\
+         the .set text header names its .fdt (datfile) and declares nbchan/pnts/trials/datatype;\n\
+         samples unpack as interleaved little-endian f32 [channel][sample] (channel fastest).\n\
+         the verum/sham sibling is found by swapping verum<->sham in the path; channels are\n\
+         1-based indices or labels from the channel-location block.\n\
+         legacy: --a <eeg_a> --b <eeg_b> [--c <common_cause>] reads whitespace-separated finite\n\
+         f32 values, one index per time step. an absent file is reported as pending, never as 0\n\
+         (0 honored, absent stays absent)."
     );
 }
 
@@ -84,76 +89,114 @@ fn fmt_opt(v: Option<f64>) -> String {
     }
 }
 
-fn main() {
-    let args: Vec<String> = env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--help" || a == "-h") {
-        usage();
-        return;
+fn sibling_path(path: &str) -> Option<String> {
+    if path.contains("verum") {
+        Some(path.replace("verum", "sham"))
+    } else if path.contains("sham") {
+        Some(path.replace("sham", "verum"))
+    } else {
+        None
     }
-    let (Some(pa), Some(pb)) = (arg_value(&args, "--a"), arg_value(&args, "--b")) else {
-        eprintln!("--a <eeg_a> --b <eeg_b> required (see --help)");
-        exit(2);
-    };
-    let pc = arg_value(&args, "--c");
-    let lag_max: usize = arg_value(&args, "--lags")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_LAG_MAX);
-    let n_surr: usize = arg_value(&args, "--surrogates")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_SURROGATES);
-    let bins: usize = arg_value(&args, "--bins")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_BINS);
-    let seed: u64 = arg_value(&args, "--seed")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(SEED);
+}
 
-    let (Some(a), Some(b)) = (read_series(&pa), read_series(&pb)) else {
-        println!(
-            "pending — the paired-EEG substrate is absent: {} / {} carries no finite series (0 honored, absent stays absent)",
-            pa, pb
-        );
-        return;
-    };
-    let mut n = a.len().min(b.len());
-    let mut c: Option<Vec<f32>> = None;
-    if let Some(pc) = &pc {
-        match read_series(pc) {
-            Some(series) => {
-                n = n.min(series.len());
-                c = Some(series);
-            }
-            None => {
-                println!(
-                    "pending — the common-cause channel is absent at {} (0 honored, absent stays absent); bivariate pair-EEG still runs",
-                    pc
-                );
-            }
+fn condition_pair(
+    path: &str,
+    sel_a: &str,
+    sel_b: &str,
+    sel_c: Option<&str>,
+) -> Option<(String, Vec<f32>, Vec<f32>, Option<Vec<f32>>)> {
+    let (set, samples) = open_set(path)?;
+    let chan_a = resolve_channel(&set, sel_a)?;
+    let chan_b = resolve_channel(&set, sel_b)?;
+    let a = channel_series(&samples, &set, chan_a)?;
+    let b = channel_series(&samples, &set, chan_b)?;
+    let c = match sel_c {
+        Some(sel) => {
+            let chan_c = resolve_channel(&set, sel)?;
+            Some(channel_series(&samples, &set, chan_c)?)
         }
+        None => None,
+    };
+    Some((format!("{path} [{sel_a} ↔ {sel_b}]"), a, b, c))
+}
+
+fn run_eeglab(
+    args: &[String],
+    set_path: &str,
+    lag_max: usize,
+    n_surr: usize,
+    bins: usize,
+    seed: u64,
+) {
+    let sel_a = arg_value(args, "--a");
+    let sel_b = arg_value(args, "--b");
+    let sel_c = arg_value(args, "--c");
+
+    let (sel_a, sel_b) = match (sel_a, sel_b) {
+        (Some(a), Some(b)) => (a, b),
+        _ => {
+            println!(
+                "pending — the channel pair is unnamed: --a and --b name the channels (0 honored, absent stays absent)"
+            );
+            return;
+        }
+    };
+
+    match condition_pair(set_path, &sel_a, &sel_b, sel_c.as_deref()) {
+        Some((tag, a, b, c)) => run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed),
+        None => println!(
+            "pending — the EEGLAB .set/.fdt pair is absent or unreadable at {set_path} (0 honored, absent stays absent)"
+        ),
+    }
+
+    match sibling_path(set_path) {
+        Some(sibling) => match condition_pair(&sibling, &sel_a, &sel_b, sel_c.as_deref()) {
+            Some((tag, a, b, c)) => run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed),
+            None => println!(
+                "pending — the sibling condition is absent or unreadable at {sibling} (0 honored, absent stays absent)"
+            ),
+        },
+        None => println!("pending — no verum/sham sibling is nameable from {set_path} (0 honored)"),
+    }
+}
+
+fn run_pair(
+    tag: &str,
+    a: &[f32],
+    b: &[f32],
+    c: Option<Vec<f32>>,
+    lag_max: usize,
+    n_surr: usize,
+    bins: usize,
+    seed: u64,
+) {
+    let mut n = a.len().min(b.len());
+    if let Some(series) = &c {
+        n = n.min(series.len());
     }
     let a = &a[..n];
     let b = &b[..n];
-    let c = c.map(|mut s| {
-        s.truncate(n);
-        s
+    let c = c.map(|mut series| {
+        series.truncate(n);
+        series
     });
     if n < MIN_N {
-        println!("n = {n} < {MIN_N} -> no finding (underdetermination, no fabrication)");
+        println!("{tag}: n = {n} < {MIN_N} -> no finding (underdetermination, no fabrication)");
         return;
     }
 
     let lag_max = lag_max.min(n.saturating_sub(8));
     if lag_max == 0 {
-        println!("n = {n} leaves no lag sweep (0 honored)");
+        println!("{tag}: n = {n} leaves no lag sweep (0 honored)");
         return;
     }
 
     println!(
-        "pair-EEG placebo control: {} ↔ {} | n = {} | lags 1..={} | surrogates = {} | bins = {}",
-        pa, pb, n, lag_max, n_surr, bins
+        "pair-EEG placebo control [{tag}]: n = {} | lags 1..={} | surrogates = {} | bins = {}",
+        n, lag_max, n_surr, bins
     );
-    match &pc {
-        Some(p) => println!("common-cause channel (bedingte TE): {p}"),
+    match &c {
+        Some(_) => println!("common-cause channel (bedingte TE): named"),
         None => println!("common-cause channel (bedingte TE): absent -> pending (0 honored)"),
     }
     println!();
@@ -309,6 +352,67 @@ fn main() {
     }
 }
 
+fn main() {
+    let args: Vec<String> = env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--help" || a == "-h") {
+        usage();
+        return;
+    }
+    let lag_max: usize = arg_value(&args, "--lags")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(DEFAULT_LAG_MAX);
+    let n_surr: usize = arg_value(&args, "--surrogates")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(DEFAULT_SURROGATES);
+    let bins: usize = arg_value(&args, "--bins")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(DEFAULT_BINS);
+    let seed: u64 = arg_value(&args, "--seed")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(SEED);
+
+    if let Some(set_path) = arg_value(&args, "--set") {
+        run_eeglab(&args, &set_path, lag_max, n_surr, bins, seed);
+        return;
+    }
+
+    let (Some(pa), Some(pb)) = (arg_value(&args, "--a"), arg_value(&args, "--b")) else {
+        eprintln!("--set <subject.set> or --a <eeg_a> --b <eeg_b> required (see --help)");
+        exit(2);
+    };
+    let pc = arg_value(&args, "--c");
+    let (Some(a), Some(b)) = (read_series(&pa), read_series(&pb)) else {
+        println!(
+            "pending — the paired-EEG substrate is absent: {} / {} carries no finite series (0 honored, absent stays absent)",
+            pa, pb
+        );
+        return;
+    };
+    let c = match &pc {
+        Some(pc) => match read_series(pc) {
+            Some(series) => Some(series),
+            None => {
+                println!(
+                    "pending — the common-cause channel is absent at {} (0 honored, absent stays absent); bivariate pair-EEG still runs",
+                    pc
+                );
+                None
+            }
+        },
+        None => None,
+    };
+    run_pair(
+        &format!("{pa} ↔ {pb}"),
+        &a,
+        &b,
+        c,
+        lag_max,
+        n_surr,
+        bins,
+        seed,
+    );
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -331,6 +435,16 @@ mod tests {
         assert_eq!(v, vec![1.0f32, -2.5, 3.25, 40.0]);
         assert!(parse_series("NaN\ninf\n").is_none());
         assert!(parse_series("").is_none());
+    }
+
+    #[test]
+    fn sibling_swaps_verum_and_sham() {
+        let v = "sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.set";
+        assert_eq!(
+            sibling_path(v),
+            Some("sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.set".to_string())
+        );
+        assert!(sibling_path("sub-02_task-rest_eeg.set").is_none());
     }
 
     #[test]
