@@ -160,7 +160,7 @@ fn main() {
                 thread::sleep(Duration::from_millis(1000));
             }
             first = false;
-            let m = dp::measure_station(event, st, &start, &end);
+            let m = dp::measure_station(event, st, &start, &end, None);
             if m.branch_unstable {
                 branch_unstable += 1;
             }
