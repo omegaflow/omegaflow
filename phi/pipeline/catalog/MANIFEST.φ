@@ -76,6 +76,10 @@ file tap_index_psrdavo.φ | tap | live | visible
 file tap_index_skymapper.φ | tap | live | visible
 file tap_index_wigglez.φ | tap | live | visible
 file tap_index_youcat.φ | tap | live | visible
+file tap_index_osa.φ | tap | live | visible
+file tap_index_ssa.φ | tap | live | visible
+file tap_index_vsa.φ | tap | live | visible
+file tap_index_wsa.φ | tap | live | visible
 file tapvizier_descriptions.φ | tap | live | visible
 
 file arcgis_catalog.φ | inventory | live | visible
@@ -142,6 +146,6 @@ file copernicus_disposition.φ | disposition | versioned | visible
 file korpora_heim.φ | disposition | versioned | visible
 file solar_omega_g.φ | special | versioned | visible
 
-dir twomass | raw-harvest | local | invisible
-dir ncei_goes_xrs | raw-harvest | local | invisible
-dir ncei_ssi | raw-harvest | local | invisible
+dir twomass | fixture | local | invisible
+dir ncei_goes_xrs | fixture | local | invisible
+dir ncei_ssi | fixture | local | invisible
