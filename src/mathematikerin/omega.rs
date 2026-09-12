@@ -87,6 +87,7 @@ pub struct OmegaLoop {
     pub consent: Arc<AtomicBool>,
     pub acoustic_tx: mpsc::Sender<PresenceFrame>,
     pub seismic_tx: mpsc::Sender<PresenceFrame>,
+    pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
     pub silent: bool,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
@@ -177,6 +178,7 @@ impl OmegaLoop {
         consent: Arc<AtomicBool>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
+        relay_tx: Option<mpsc::Sender<PresenceFrame>>,
         solar_rx: mpsc::Receiver<SolarCell>,
         machine_rx: mpsc::Receiver<(
             crate::archivar::Frame,
@@ -195,6 +197,7 @@ impl OmegaLoop {
             consent,
             acoustic_tx,
             seismic_tx,
+            relay_tx,
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
             presence,
             diode,
@@ -1307,6 +1310,9 @@ impl OmegaLoop {
             if !self.silent {
                 let _ = self.acoustic_tx.send(frame);
                 let _ = self.seismic_tx.send(frame);
+                if let Some(tx) = &self.relay_tx {
+                    let _ = tx.send(frame);
+                }
             }
             let rec = if self.consent.load(Ordering::SeqCst) {
                 "on"
@@ -1405,6 +1411,7 @@ pub fn run_loop(
     consent: Arc<AtomicBool>,
     acoustic_tx: mpsc::Sender<PresenceFrame>,
     seismic_tx: mpsc::Sender<PresenceFrame>,
+    relay_tx: Option<mpsc::Sender<PresenceFrame>>,
     solar_rx: mpsc::Receiver<SolarCell>,
     machine_rx: mpsc::Receiver<(
         crate::archivar::Frame,
@@ -1422,6 +1429,7 @@ pub fn run_loop(
         consent,
         acoustic_tx,
         seismic_tx,
+        relay_tx,
         solar_rx,
         machine_rx,
         presence,
@@ -1450,6 +1458,7 @@ impl LoopRadiator {
         consent: Arc<AtomicBool>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
+        relay_tx: Option<mpsc::Sender<PresenceFrame>>,
         solar_rx: mpsc::Receiver<SolarCell>,
         machine_rx: mpsc::Receiver<(
             crate::archivar::Frame,
@@ -1547,6 +1556,7 @@ impl LoopRadiator {
                 consent,
                 acoustic_tx,
                 seismic_tx,
+                relay_tx,
                 solar_rx,
                 machine_rx,
                 presence,
