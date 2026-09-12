@@ -47,20 +47,39 @@ pub fn orbit_record(words: &[u32; 9]) -> Option<OdOrbit> {
     if words[0] < 0x400000 {
         return None;
     }
+    let fmt = bits(words, 129, 131);
     let t_int = words[0] as i64;
-    let t_frac = bits(words, 33, 42);
     let observable = twos(words[2] as i64, 32) as f64 + twos(words[3] as i64, 32) as f64 / 1.0e9;
     let dss_rx = bits(words, 132, 138);
     let dss_tx = bits(words, 139, 145);
-    let data_type = bits(words, 148, 153);
-    let downlink_band = bits(words, 154, 155);
-    let uplink_band = bits(words, 156, 157);
-    let valid = bits(words, 160, 160) == 0;
-    let scid = bits(words, 168, 177);
-    let ref_mhz = bits(words, 179, 224);
-    let compression = bits(words, 245, 266);
+    let (t_frac, t_div, data_type, downlink_band, uplink_band, valid, scid, ref_hz, compression) =
+        if fmt == 1 {
+            (
+                bits(words, 33, 64),
+                1.0e9,
+                bits(words, 150, 155),
+                bits(words, 148, 149),
+                bits(words, 187, 188),
+                bits(words, 200, 200) == 0,
+                bits(words, 161, 167),
+                bits(words, 225, 256) as f64 * 10.0 + bits(words, 257, 264) as f64 * 0.1,
+                bits(words, 201, 224) as f64 / 100.0,
+            )
+        } else {
+            (
+                bits(words, 33, 42),
+                1.0e10,
+                bits(words, 148, 153),
+                bits(words, 154, 155),
+                bits(words, 156, 157),
+                bits(words, 160, 160) == 0,
+                bits(words, 168, 177),
+                bits(words, 179, 224) as f64 / 1000.0,
+                bits(words, 245, 266) as f64 / 100.0,
+            )
+        };
     Some(OdOrbit {
-        t_since_1950: t_int as f64 + t_frac as f64 / 1.0e10,
+        t_since_1950: t_int as f64 + t_frac as f64 / t_div,
         observable_hz: observable,
         dss_rx,
         dss_tx,
@@ -69,8 +88,8 @@ pub fn orbit_record(words: &[u32; 9]) -> Option<OdOrbit> {
         uplink_band,
         valid,
         scid,
-        ref_hz: ref_mhz as f64 / 1000.0,
-        compression_s: compression as f64 / 100.0,
+        ref_hz,
+        compression_s: compression,
     })
 }
 
@@ -205,6 +224,44 @@ mod tests {
         let first = recs[0];
         assert!((first.t_since_1950 - 1812103240.0).abs() < 1.0e-9);
         assert_eq!(first.data_type, 11);
+    }
+
+    fn set_bits(words: &mut [u32; 9], first: usize, last: usize, value: i64) {
+        let width = last - first + 1;
+        for b in 0..width {
+            let bitpos = first + b;
+            let word = (bitpos - 1) / 32;
+            let wbit = (bitpos - 1) % 32;
+            let mask = 1u32 << (31 - wbit);
+            if (value >> (width - 1 - b)) & 1 == 1 {
+                words[word] |= mask;
+            } else {
+                words[word] &= !mask;
+            }
+        }
+    }
+
+    #[test]
+    fn format_1_record_decodes_from_the_1988_sis_layout() {
+        let mut w = [0u32; 9];
+        w[0] = 0x6C028048;
+        set_bits(&mut w, 129, 131, 1);
+        set_bits(&mut w, 150, 155, 12);
+        set_bits(&mut w, 148, 149, 1);
+        set_bits(&mut w, 187, 188, 1);
+        set_bits(&mut w, 200, 200, 0);
+        set_bits(&mut w, 161, 167, 77);
+        set_bits(&mut w, 225, 256, 229_981_241);
+        set_bits(&mut w, 257, 264, 7);
+        set_bits(&mut w, 201, 224, 6000);
+        let r = orbit_record(&w).unwrap();
+        assert_eq!(r.data_type, 12);
+        assert_eq!(r.downlink_band, 1);
+        assert_eq!(r.uplink_band, 1);
+        assert!(r.valid);
+        assert_eq!(r.scid, 77);
+        assert!((r.ref_hz - 2299812410.7).abs() < 1.0e-6);
+        assert!((r.compression_s - 60.0).abs() < 1.0e-9);
     }
 
     #[test]

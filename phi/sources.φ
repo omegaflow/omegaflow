@@ -6367,48 +6367,6 @@ on earth 0 0 0
 ttl 604800
 field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square em m/s 600 0.0 0.0
 
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-field a msxc6_flux_band_a_jy inverse-square em Jy 604800 0.0 0.0
-field c msxc6_flux_band_c_jy inverse-square em Jy 604800 0.0 0.0
-field d msxc6_flux_band_d_jy inverse-square em Jy 604800 0.0 0.0
-field e msxc6_flux_band_e_jy inverse-square em Jy 604800 0.0 0.0
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+objname,ra,dec,flux65,flux90,flux140,flux160+FROM+akari_fis+WHERE+flux90+IS+NOT+NULL
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-field flux65 akari_fis_flux_65um_jy inverse-square em Jy 604800 0.0 0.0
-field flux90 akari_fis_flux_90um_jy inverse-square em Jy 604800 0.0 0.0
-field flux140 akari_fis_flux_140um_jy inverse-square em Jy 604800 0.0 0.0
-field flux160 akari_fis_flux_160um_jy inverse-square em Jy 604800 0.0 0.0
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+objname,ra,dec,flux09,flux18+FROM+akari_irc+WHERE+flux09+IS+NOT+NULL
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-field flux09 akari_irc_flux_09um_jy inverse-square em Jy 604800 0.0 0.0
-field flux18 akari_irc_flux_18um_jy inverse-square em Jy 604800 0.0 0.0
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-field fnu_12 iras_fsc_flux_12um_jy inverse-square em Jy 604800 0.0 0.0
-field fnu_25 iras_fsc_flux_25um_jy inverse-square em Jy 604800 0.0 0.0
-field fnu_60 iras_fsc_flux_60um_jy inverse-square em Jy 604800 0.0 0.0
-field fnu_100 iras_fsc_flux_100um_jy inverse-square em Jy 604800 0.0 0.0
-
 url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
 format tap
 ttl 604800
