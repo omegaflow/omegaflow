@@ -3,13 +3,15 @@
   session: Ernte-Folge IX
   class: handover
   date: 2026-09-12
-  sha256: 4cf9314b767eb569d9397a4df5e0d4939612959c90d4e5df8dace2046294e2c1
+  sha256: 6beb704044f98989609c55d46d7affeb714116a8bb0a06dcd5ba2cb04eced3ee
   status: live
 -->
 # Handover — Ernte-Folge IX (2026-09-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
-markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session führt wenn
+möglich alle offenen Aufgaben dieser Linie aus — die Delegation an Sub-Agenten
+(eigener Kontext) macht die Gesamtzahl handhabbar. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; gepusht wird erst, wenn der Baum ruhig ist.
 
 ## CDN-Manifestation (Duty) — Push-gated

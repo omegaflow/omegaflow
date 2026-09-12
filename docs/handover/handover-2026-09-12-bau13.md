@@ -3,17 +3,18 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: d5181b14e0ae3c61bd914f10ba745ed5c53a3b2008fd4af99d7701e3375ef198
+  sha256: c0edc9a7b7f2ae718eacb10756df326615d7f7f7a2e94f0ef40f322c45e6c393
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau13)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
-markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
-viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
-macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
-Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
-überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session führt wenn
+möglich alle offenen Aufgaben dieser Linie aus — die Delegation an Sub-Agenten
+(eigener Kontext) macht die Gesamtzahl handhabbar. Nur eigene Arbeit: bei geteilten
+Dateien nur die eigenen Hunks — committet wird nur der eigene Teil, fremde
+uncommittete Arbeit wird nie überschrieben; gepusht wird erst, wenn der Baum
+ruhig ist.
 
 ## Membran — die offenen M-Punkte
 
