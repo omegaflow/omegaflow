@@ -3,7 +3,7 @@
   session: Entscheid-Folge III
   class: handover
   date: 2026-09-12
-  sha256: b7f768c902063d117031e3df3354758defa3754d8f76b6635db71160d26591c8
+  sha256: a7d7b7d0e8d42fb3f11cc472ac5cfb5e206ca06b9655f4aa4dd0414eab3ad63b
   status: live
 -->
 # Handover — Entscheid-Folge III (2026-09-12)
@@ -42,4 +42,4 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 ## Abschluss
 
 Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
-Abschluss-Check (`/abschluss`).
+Abschluss-Check mit Commit und Push (`/commit`).
