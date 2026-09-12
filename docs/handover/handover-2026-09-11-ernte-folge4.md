@@ -3,7 +3,7 @@
   session: Ernte-Folge IV
   class: handover
   date: 2026-09-11
-  sha256: e834631af518917e79ed6e3ef86c91f268a2852a46c402903ee80ab83bd04924
+  sha256: 8fc48058c702b8d7229462382a1b2e962cb529969185aafde6c48d6f55812549
   status: live
 -->
 # Handover — Ernte-Folge IV (2026-09-11)
@@ -40,7 +40,7 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   Stewardship System"), kein HDF5; der Reader ist end-to-end verdrahtet (--url
   → curl → HDF5 → OMP1-bin). Offen: CLASS- oder EDL-Zugang beschaffen, dann
   --url auf ein echtes Granule.
-- ESO-TAP + Discovery-Download (Korpora) — warten auf die vo-tap-Arme.
+- ESO-TAP + Discovery-Download (Korpora) — vo-tap-Arme gebaut; offen: Feldblöcke + Compiler.
 
 ## Step-5-Schnitt — Nachlese (aus dem Schnitt)
 
