@@ -3,7 +3,7 @@
   session: Forschung-Folge V
   class: handover
   date: 2026-09-12
-  sha256: 52aeaf6a11713f9a13d59ff9e3e720cae97a173d54faa013378ad43c8977e5a2
+  sha256: 2981bb1a20caf11f0b141a639ba3a12c11002a042ef13a1935e7e7c2b98df296
   status: live
 -->
 # Handover — Forschung-Folge V (2026-09-12)
@@ -62,14 +62,6 @@ ci-check-Lauf misst die Behoben-Frage.
   (physionet trägt nur ECG/mitdb, kein Paar-EEG).
 - Ⅻ Urknall — bigbang-echo.yml gebaut + dispatcht (Winkelserie×z-Paarung
   eingebaut); Resultat pending.
-
-## Descoped (gemessen)
-
-- CSES (Nadel Ⅳ) — kein anonymer Zugang (leos.ac.cn 000, SMS-CN-Login, kein
-  DOI); der In-situ-E-Feld-Kanal ist über DEMETER/CDPP + CHAMP/GFZ-ISDC gebaut.
-- Ⅹ Kugelblitz — keine Datenbasis (kein anonymes Multi-Force-Archiv eines
-  Tatorts, das Concept trägt den Befund selbst), kein Konsument; strukturell
-  durch Ⅳ (Multi-Force-TE am Punkt) und Ⅸ (Burst-em) getragen.
 
 ## Galileo-Floor
 
