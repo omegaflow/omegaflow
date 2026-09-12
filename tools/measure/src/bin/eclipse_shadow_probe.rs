@@ -88,8 +88,8 @@ const CANONS: [Canon; 2] = [
         event_unix: EVENT_2024_UNIX,
         greatest_td_s: 18.0 * 3600.0 + 18.0 * 60.0 + 29.0,
         dt_s: 74.0,
-        lat: None,
-        lon: None,
+        lat: Some(25.2900),
+        lon: Some(-104.1383),
         mag: Some(1.0566),
     },
 ];
@@ -943,26 +943,32 @@ mod tests {
     }
 
     #[test]
-    fn kalibrier_gate_de441_places_the_2017_greatest_eclipse_at_the_canon_point() {
-        let spec = &LINES[0];
+    fn kalibrier_gate_de440_places_the_2017_greatest_eclipse_at_the_canon_point() {
+        let spec = &LINES[1];
         if !local_bins_present(
             "data",
             spec.netloc,
             &[spec.sun_asset, spec.moon_asset, spec.earth_asset],
         ) {
+            println!("kalibrier gate: the de440 bins sit absent from data/ — named skip, the gate stays unrun");
             return;
         }
         let Some(line) = load_line(spec, "data") else {
+            println!(
+                "kalibrier gate: the de440 line is not read — named skip, the gate stays unrun"
+            );
             return;
         };
         let Some(lsk) = embedded_lsk() else {
+            println!("kalibrier gate: the embedded LSK carries no naif0012 table — named skip, the gate stays unrun");
             return;
         };
         let Some(day_tdb) = lsk.unix_to_tdb(EVENT_UNIX) else {
+            println!("kalibrier gate: the event date reads void on the leap table — named skip, the gate stays unrun");
             return;
         };
         let Some((t_great, lat, lon, mag)) = run_line(&line, day_tdb, &lsk) else {
-            panic!("kalibrier gate: the de441 line produced no greatest eclipse");
+            panic!("kalibrier gate: the de440 line produced no greatest eclipse");
         };
         let _ = t_great;
         let canon_lat = 36.9667;
@@ -970,11 +976,11 @@ mod tests {
         let km = arc_km(lat, lon, canon_lat, canon_lon);
         assert!(
             km < 15.0,
-            "kalibrier gate: the de441 greatest-eclipse point lies {km:.1} km from the canon point"
+            "kalibrier gate: the de440 greatest-eclipse point lies {km:.1} km from the canon point"
         );
         assert!(
             (mag - 1.0306).abs() < 0.002,
-            "kalibrier gate: the de441 magnitude {mag:.5} drifts from the canon 1.0306"
+            "kalibrier gate: the de440 magnitude {mag:.5} drifts from the canon 1.0306"
         );
     }
 }
