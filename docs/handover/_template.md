@@ -10,8 +10,8 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
-viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
+viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
+macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
