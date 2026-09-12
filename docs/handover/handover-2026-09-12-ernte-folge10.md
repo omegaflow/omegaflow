@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 545fedb815c04effc7f3a348c30967bbbf634c2c3ffc333a39cad5141a45a9f0
+  sha256: 33a2b4ef60bbc8138232a45304106d3f2acaef130133c8517c72eb51515aa099
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -40,8 +40,14 @@ gehen über den opencode-Browser an den Operator.
 
 ## Ernte
 
-- Hi-net — `HINET_PASS` weiter absent; der Operator nannte Browser-Registrierung,
-  die Browser-Extension ist nicht verbunden — Operator.
+- Hi-net — `HINET_PASS` steht in `.secrets.local`, Login verifiziert (Ablauf
+  2027-03-31). Harvest-Verdrahtung gebaut: Compiler-Fetch auf den echten Fluss
+  (auth GET→POST, Channel-Tabelle via `dlDialogue.php`, cont-Suche→Request→Poll
+  →Download→Unzip), Format `hinet` im Archivar, `hinet-cdn.yml`,
+  sources.φ-Registrierung. Gemessen: `cont_download.php` schneidet jede Antwort
+  bei ~36 s (~11 MB) — ein 1-min-Gesamtnetz-Fenster (~15 MB) vollständet nie
+  (kein Range/Resume). Offen: Fenster auf eine Station/Teilmenge verkleinern
+  oder batchen, damit der Download unter die ~36-s-Grenze fällt.
 
 ## Noch offene Pendings
 
