@@ -981,7 +981,7 @@ pub fn main_flow() {
             if archive.sources[i].format == "kernel_text" {
                 continue;
             }
-            if archive.sources[i].format == "reference" {
+            if archive.sources[i].format == "reference" || archive.sources[i].format == "ndk" {
                 continue;
             }
             if archive.origins.values().filter(|o| o.in_flight).count() >= FETCH_BUDGET {

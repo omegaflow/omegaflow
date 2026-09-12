@@ -1,9 +1,9 @@
 pub mod depthphase;
+pub mod eeglab;
 pub mod eikonal;
 pub mod h0;
 pub mod iasp91;
 pub mod miniseed;
-pub mod ndk;
 pub mod noaa_coops;
 pub mod stats;
 pub mod weberin;
