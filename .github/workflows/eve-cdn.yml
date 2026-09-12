@@ -23,10 +23,10 @@ on:
         type: string
         default: "130"
       asset:
-        description: output asset name on the CDN (netloc lasp.colorado.edu)
+        description: output asset name on the CDN (netloc ssd.jpl.nasa.gov)
         required: true
         type: string
-        default: eve2011_lines.bin
+        default: eve_lines_2011.bin
 permissions:
   contents: write
 env:
@@ -41,7 +41,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
         run: |
-          if gh release view lasp.colorado.edu --repo omegaflow/sources \
+          if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
             echo "asset ${{ inputs.asset }} already present — manifest skipped"
             exit 0
