@@ -6332,6 +6332,30 @@ ttl 604800
 at sun
 field cz twomrs_cz_kms gaussian-inverse-square em km/s 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/mcxc_clusters.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psz2_clusters.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_fitacf.bin
 format superdarn_fitacf
 on earth 0 0 0
@@ -6408,6 +6432,11 @@ cmap .
 ra ra
 dec dec
 field ep_flux xmm_epic_flux_wm2 inverse-square em W/m2 604800 0.0 0.0
+
+url https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/MEX-M-MRS-1-2-3-CR1-0009-V1.0/DATA/LEVEL1A/CLOSED_LOOP/DSN/TNF/M15TNF0L1A_TNF_032000724_00.DAT
+format reference
+at mars
+ttl 604800
 
 url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
 format tap
