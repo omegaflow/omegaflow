@@ -388,68 +388,68 @@ pub fn wire_extent(extent: f64) -> f64 {
 
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
-    let (force, kernel, ttl, unit) = if kl.contains("temperature")
+    let (force, kernel, ttl, unit, tau) = if kl.contains("temperature")
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, 3, 60.0, "")
+        (5, 3, 60.0, "", None)
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, 3, 60.0, "")
+        (6, 3, 60.0, "", None)
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, 3, 300.0, "")
+        (5, 3, 300.0, "", None)
     } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
     {
-        (6, 3, 10.0, "")
+        (6, 3, 10.0, "", None)
     } else if (kl.contains("wind") && kl.contains("dir"))
         || kl == "winddirection"
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, 3, 10.0, "")
+        (6, 3, 10.0, "", None)
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
         || kl.contains("noise")
         || kl == "spl"
     {
-        (2, 1, 0.01, "")
+        (2, 1, 0.01, "", None)
     } else if kl.contains("light")
         || kl.contains("lux")
         || kl.contains("lumin")
         || kl.contains("irradiance")
     {
-        (0, 0, 10.0, "")
+        (0, 0, 10.0, "", None)
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (5, 3, 60.0, "%")
+        (8, 5, 60.0, "%", Some(60.0))
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, 5, 60.0, "v")
+        (8, 5, 60.0, "v", Some(60.0))
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, 5, 10.0, "a")
+        (8, 5, 10.0, "a", Some(10.0))
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
         || kl.contains("pm10")
         || kl.contains("gas")
     {
-        (5, 3, 300.0, "")
+        (5, 3, 300.0, "", None)
     } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
-        (0, 0, 10.0, "")
+        (0, 0, 10.0, "", None)
     } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
-        (3, 1, 1.0, "")
+        (3, 1, 1.0, "", None)
     } else if kl.contains("gyro") {
-        (3, 1, 1.0, "")
+        (3, 1, 1.0, "", None)
     } else if kl.contains("gravity") {
-        (1, 0, 10.0, "")
+        (1, 0, 10.0, "", None)
     } else if kl.contains("camera") || kl.contains("video") {
-        (0, 0, 1.0 / 30.0, "")
+        (0, 0, 1.0 / 30.0, "", None)
     } else if kl.contains("battery") && kl.contains("charging") {
-        (8, 5, 60.0, "1")
+        (8, 5, 60.0, "1", Some(60.0))
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else if kl.starts_with("event.") {
-        (0, 0, 10.0, "")
+        (0, 0, 10.0, "", None)
     } else {
         return None;
     };
@@ -458,6 +458,7 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         force,
         kernel,
         ttl,
+        tau,
         unit: unit.into(),
     })
 }
@@ -472,6 +473,35 @@ mod tests {
         assert_eq!(sensor_config("battery.current").expect("sensor").unit, "a");
         assert_eq!(sensor_config("battery.level").expect("sensor").unit, "%");
         assert_eq!(sensor_config("battery.charging").expect("sensor").unit, "1");
+    }
+
+    #[test]
+    fn the_battery_family_carries_the_electric_force() {
+        assert_eq!(sensor_config("battery.level").expect("sensor").force, 8);
+        assert_eq!(sensor_config("battery.voltage").expect("sensor").force, 8);
+        assert_eq!(sensor_config("battery.current").expect("sensor").force, 8);
+        assert_eq!(sensor_config("battery.charging").expect("sensor").force, 8);
+    }
+
+    #[test]
+    fn the_battery_tau_lives_in_the_registry_not_the_wire() {
+        assert_eq!(
+            sensor_config("battery.level").expect("sensor").tau,
+            Some(60.0)
+        );
+        assert_eq!(
+            sensor_config("battery.voltage").expect("sensor").tau,
+            Some(60.0)
+        );
+        assert_eq!(
+            sensor_config("battery.current").expect("sensor").tau,
+            Some(10.0)
+        );
+        assert_eq!(
+            sensor_config("battery.charging").expect("sensor").tau,
+            Some(60.0)
+        );
+        assert_eq!(sensor_config("temperature").expect("sensor").tau, None);
     }
 
     #[test]

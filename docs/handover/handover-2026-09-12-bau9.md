@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Bau & Code (Stand 2026-09-11, Bau8)
+  title: Handover — Bau & Code (Stand 2026-09-12, Bau9)
   session: Bau-Folge
   class: handover
-  date: 2026-09-11
-  sha256: cf3fb8605479207f8f699f014313ce360c16edb048dd1c919c9aa0c29965fda3
+  date: 2026-09-12
+  sha256: f769acc1fdcaabc838eb448fb86e3a1de817c3f768972123643ca6b1f0c5015c
   status: live
 -->
-# Handover — Bau & Code (2026-09-11, Bau8)
+# Handover — Bau & Code (2026-09-12, Bau9)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -15,16 +15,8 @@ ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
-## Membran — die M-Punkte unter der Radiator-Gleichwertigkeit
+## Membran — die offenen M-Punkte
 
-Die vier Gremium-Sätze + Doktrin-Karte + M04 stehen jetzt in
-`docs/specs/radiators.md` (git trägt den Text). Offen bleibt:
-
-- **Apertur-Bindung** — `target = inTE/(inTE + threshold + ε)`,
-  `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`: pending, bis die
-  Permeabilitäts-Bindung ihr Atom baut. Der Browser-Audio-Radiator wartet auf
-  die Apertur: das Gesetz steht (Σω, ein Frame = ein Sample), der Radiator
-  folgt dem `AcousticOscillator`-Gesetz oder wartet.
 - **M07 ⌘K-Palette (fuzzy)** — Spec PLANNED (`docs/specs/search-command-palette.md`),
   nie gebaut; Substrat lebt (`load_sources`, 782 sources, SIMBAD-Probe). Im
   Baum gibt es keinen Browser-Client (`static/index.html` fehlt; nur
@@ -39,15 +31,24 @@ Die vier Gremium-Sätze + Doktrin-Karte + M04 stehen jetzt in
   erst, wenn die Architekturfrage per-Pixel-Membran (Legacy) vs heutige
   Punktwolke gemessen werden kann.
 
-## Die zwei Carry-outs des Rats (2026-09-11, M05/M06-Atom)
+## Serien-τ — der verbliebene Registrierungs-Dienst
 
-- **Serien-Aktivierung:** das `sensor_config`-Namens-Matching läuft live für
-  Serien-Linien. Das Serien-τ bleibt echt absent (kein τ auf dem Draht): eine
-  pending Protokoll-Frage — soll der Draht ein τ tragen?
-- **battery.level-Kraft-5-Frage:** die `"%"`-Deklaration ist ehrlich im
-  fragwürdigen Slot — `battery.level` liegt unter Kraft 5 (thermal,
-  Namensraten-Erbe). In diesem Atom nicht umgebaut; die Kraft-Zuordnungs-Frage
-  trägt diese Zeile.
+Die τ-Spalte lebt jetzt in der Registry (`sensor_config`), getrennt vom ttl;
+der Draht trägt τ weiter als `Option` (absent bleibt absent); battery trägt
+ihr τ (level/voltage/charging 60.0, current 10.0) aus der Registry — ein Ort,
+ein Gesetz. Die Nicht-Battery-Serien-Sensoren (temperature, pressure,
+humidity, wind, …) tragen noch kein τ → nicht feldfähig, pending: die
+gemessene Relaxation fehlt (Registrierungs-Dienst, keine Fabrication).
+
+## Benannte Eigenschaften — nicht gebaut (dieses Atom)
+
+- **Kernel-Konfund electric** — die electric-Familie (force 8) trägt in
+  `sensor_config` kernel 5 (Linien-Zuordnung), die Kraft-Tabelle kennt
+  `kernel_id_for_force(8) = 1` (Feld-Erzeuger) und `default_kernel_for("electric")
+  = None`. Zwei elektrische Wahrheiten im Baum; benannt, nicht umgebaut.
+- **Seismische Apertur-Mitführung** — `acoustic_sample` speist acoustic und
+  seismic; die Apertur dämpft beide Strahler. Ein Feld, eine Permeabilität,
+  zwei Strahler — der Name trägt jetzt zwei Kanäle. Benannt, nicht umbenannt.
 
 ## Abschluss
 

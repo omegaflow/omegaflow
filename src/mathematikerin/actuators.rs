@@ -11,6 +11,7 @@ pub struct PackedWindow {
 #[derive(Clone, Copy)]
 pub struct PresenceFrame {
     pub omega: [f32; 9],
+    pub aperture: f32,
 }
 
 pub trait KineticRadiator: Send + 'static {
@@ -18,7 +19,7 @@ pub trait KineticRadiator: Send + 'static {
 }
 
 pub fn acoustic_sample(frame: &PresenceFrame) -> f32 {
-    frame.omega.iter().sum()
+    frame.omega.iter().sum::<f32>() * frame.aperture
 }
 
 pub struct AcousticOscillator {
@@ -334,12 +335,16 @@ mod tests {
     fn the_audio_law_is_linear_without_saturation() {
         let frame = PresenceFrame {
             omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
+            aperture: 1.0,
         };
         let base = acoustic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
         for lambda in [0.5f64, 2.0, 1e4] {
             let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
-            let got = acoustic_sample(&PresenceFrame { omega: scaled }) as f64;
+            let got = acoustic_sample(&PresenceFrame {
+                omega: scaled,
+                aperture: 1.0,
+            }) as f64;
             let want = base * lambda;
             let rel = (got - want).abs() / want.abs();
             assert!(
@@ -347,6 +352,27 @@ mod tests {
                 "lambda {lambda}: {got} vs {want} — the law shapes or saturates"
             );
         }
+    }
+
+    #[test]
+    fn the_aperture_attenuates_the_raw_sum() {
+        let omega = [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0];
+        let raw = omega.iter().sum::<f32>();
+        assert_ne!(raw, 0.0);
+        for aperture in [1.0f32, 0.5, 0.0, f32::EPSILON] {
+            let got = acoustic_sample(&PresenceFrame { omega, aperture });
+            assert_eq!(got, raw * aperture, "aperture {aperture}");
+        }
+    }
+
+    #[test]
+    fn an_open_aperture_passes_the_raw_sum_untouched() {
+        let omega = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+        let frame = PresenceFrame {
+            omega,
+            aperture: 1.0,
+        };
+        assert_eq!(acoustic_sample(&frame), omega.iter().sum::<f32>());
     }
 
     struct Sink(std::sync::Arc<std::sync::Mutex<Vec<u8>>>);
@@ -367,6 +393,7 @@ mod tests {
         let mut osc = SeismicOscillator::new(Box::new(Sink(bytes.clone())));
         let frame = PresenceFrame {
             omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+            aperture: 1.0,
         };
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
@@ -381,6 +408,7 @@ mod tests {
         let _osc = AcousticOscillator::new(rx, Some(Box::new(writer)));
         let frame = PresenceFrame {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            aperture: 1.0,
         };
         let expected = acoustic_sample(&frame).to_le_bytes();
         tx.send(frame).expect("frame reaches the oscillator");
