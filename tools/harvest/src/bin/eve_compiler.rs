@@ -5,7 +5,7 @@ use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::inflate::gunzip;
 use omegaflow::lsk::days_from_civil;
 
-const CDN_TAG: &str = "lasp.colorado.edu";
+const CDN_TAG: &str = "ssd.jpl.nasa.gov";
 
 const BASE: &str = "https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2";
 const MAGIC: [u8; 4] = *b"EVL1";
@@ -136,13 +136,20 @@ fn extract_hour(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "eve_lines.bin".to_string());
-    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let out = match arg_value(&args, "--out") {
+        Some(o) => o,
+        None => {
+            eprintln!("--out absent");
+            std::process::exit(1);
+        }
+    };
+    let cache_dir = match arg_value(&args, "--cache-dir") {
+        Some(d) => d,
+        None => omegaflow::archivar::cache_root()
             .join("omegaflow_eve_cache")
             .to_string_lossy()
-            .into_owned()
-    });
+            .into_owned(),
+    };
     let start_doy: i64 = arg_value(&args, "--start-doy")
         .and_then(|v| v.parse().ok())
         .unwrap_or(60);
