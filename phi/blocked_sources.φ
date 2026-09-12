@@ -99,6 +99,22 @@ pending
 url https://archive.eso.org/tap_obs
 note ESO tap_obs — CSV-Header-Gap geschlossen (tap_compiler --csv). Gemessen 2026-09-12 (curl, TAP_SCHEMA): ist.*-Rohdaten-Tabellen (je Instrument), ivoa.ObsCore (reduzierte Produkt-Metadaten), phase3v2 (Datei-/Provenance-Verwaltung), util. Die ObsCore-Spalten sind Beobachtungs-Discovery-Metadaten (s_ra/s_dec, em_min/em_max Wellenlängen-Grenzen, t_exptime, snr, abmaglim = Grenzhelligkeit stat.max) — kein Skalar-Feld-Oszillator; die physikalische Messung (Spektren/Bilder/Fluss) liegt in den FITS-Dateien hinter access_url, nicht in TAP-Spalten. Kein gemessener Feld-Kandidat (Spalte + Kraft + Konsument) → pending, kein Feldblock fabriziert.
 
+pending
+url http://tap.roe.ac.uk/osa/sync
+note WFAU OSA TAP (ATLAS DR1). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500 (INTERNAL SERVER ERROR); TAP_SCHEMA 200 (799 Tabellen, tap_index_osa.φ); ATLASDR1.atlasSource → 200 (ra,dec,gAperMag3 — -9.9999949E8 = absent-Marker). Probe: void (data-present, non-JSON body). Messung (gAperMag3 mag + ra/dec, em) echt, Format konsumierbar (votable_rows / tap_compiler --csv); statische Mehrband-Photometrie ohne gebauten Konsument (NOIRLab-/SkyMapper-Präzedenz) → pending (Tor 1).
+
+pending
+url http://tap.roe.ac.uk/ssa/sync
+note WFAU SSA TAP (SuperCOSMOS). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (652 Tabellen, tap_index_ssa.φ); SSA.Source → 200 (ra,dec,classMagB mag, muAcosD/muD mas/yr Eigenbewegung). Probe: void (data-present, non-JSON body). Messung (classMagB mag + ra/dec + pm, em) echt, Format konsumierbar; statische Photometrie ohne gebauten Konsument → pending (Tor 1).
+
+pending
+url http://tap.roe.ac.uk/vsa/sync
+note WFAU VSA TAP (VISTA/VVV). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (2990 Tabellen, tap_index_vsa.φ); Daten-Tabelle VVVDR1.vvvSource → HTTP 500 „The server principal tapuser is not able to access the database VVVDR1" (PostgreSQL-Permission — Daten-Backend down). Probe: void (fetch returned void). Messung (jAperMag3 mag + ra/dec, em) echt, Format konsumierbar; statische Photometrie ohne Konsument + Backend down → pending (Tor 1).
+
+pending
+url http://tap.roe.ac.uk/wsa/sync
+note WFAU WSA TAP (UKIDSS DR10+). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (2267 Tabellen, tap_index_wsa.φ); Daten-Tabelle UKIDSSDR10PLUS.dxsSource → HTTP 500 „The server principal tapuser is not able to access the database UKIDSSDR10PLUS" (PostgreSQL-Permission — Daten-Backend down). Probe: void (fetch returned void). Messung (jAperMag3 mag + ra/dec, em) echt, Format konsumierbar; statische Photometrie ohne Konsument + Backend down → pending (Tor 1).
+
 blocked parser-def fits
 url https://cirada.ca/catalogues
 note VLASS-Komponentenkatalog (em Radiokontinuum) als Bulk-FITS/CSV im CADC-Vault; kein JSON/TAP-json-Kanal. QL-Katalog trägt ~15 % Fluss-Unterzeichnung. Gap: FITS-Struktur-Reader.
