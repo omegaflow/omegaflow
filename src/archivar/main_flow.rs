@@ -577,12 +577,16 @@ pub fn main_flow() {
             rest.grid_step,
         ));
     }
+    let tone_code = std::sync::Arc::new(std::sync::atomic::AtomicU8::new(
+        crate::archivar::hrv::TONE_ABSENT,
+    ));
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
         let em = crate::mathematikerin::LoopRadiator::new(
             time.clone(),
             consent.clone(),
+            tone_code.clone(),
             acoustic_tx,
             seismic_tx,
             #[cfg(feature = "browser_relay")]
@@ -643,6 +647,8 @@ pub fn main_flow() {
     );
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
+    let mut vagus = crate::archivar::hrv::VagusTone::new();
+    let mut nn_buf: Vec<f64> = Vec::new();
     loop {
         tick += 1;
         if em_shutdown.load(Ordering::SeqCst) {
@@ -898,6 +904,24 @@ pub fn main_flow() {
             fetched_samples.extend(samples);
         }
         while let Ok(samples) = sensor_rx.try_recv() {
+            for (name, value, _tau) in &samples {
+                if name == "nn" && value.is_finite() {
+                    nn_buf.push(*value);
+                    if nn_buf.len() > crate::archivar::hrv::NN_WINDOW {
+                        nn_buf.remove(0);
+                    }
+                    if nn_buf.len() >= 3 {
+                        if let Some(r) = crate::archivar::hrv::rmssd(&nn_buf) {
+                            if let Some(tone) = vagus.feed(r) {
+                                tone_code.store(
+                                    crate::archivar::hrv::tone_code(Some(tone)),
+                                    std::sync::atomic::Ordering::SeqCst,
+                                );
+                            }
+                        }
+                    }
+                }
+            }
             if !consent.load(Ordering::SeqCst) {
                 continue;
             }
