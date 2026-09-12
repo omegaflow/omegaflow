@@ -1,9 +1,9 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::cif::{Crystal, parse_cif};
-use omegaflow::matfile::{MatData, parse_mat};
+use omegaflow::cif::{parse_cif, Crystal};
+use omegaflow::matfile::{parse_mat, MatData};
 use omegaflow::rixs::{
-    MEV_TO_HZ, SpinBin, SpinOscillator, SpinSpectrumBin, charge_oscillators, encode_spin_bin,
-    parse_rixs_mev, parse_sw_spin, spin_oscillators,
+    charge_oscillators, encode_spin_bin, parse_rixs_mev, parse_sw_spin, spin_oscillators, SpinBin,
+    SpinOscillator, SpinSpectrumBin, MEV_TO_HZ,
 };
 use std::process::Command;
 
@@ -213,17 +213,17 @@ fn encode_charge_bin(
 
 const EELS_VERSION: u8 = 0x04;
 
-fn median_gap(v: &[f64]) -> f64 {
-    if v.len() < 2 {
-        return 0.0;
-    }
+fn median_gap(v: &[f64]) -> Option<f64> {
     let mut gaps: Vec<f64> = v
         .windows(2)
         .map(|w| (w[1] - w[0]).abs())
         .filter(|&g| g > 0.0 && g.is_finite())
         .collect();
+    if gaps.is_empty() {
+        return None;
+    }
     gaps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    gaps.get(gaps.len() / 2).copied().unwrap_or(0.0)
+    gaps.get(gaps.len() / 2).copied()
 }
 
 fn harvest_eels(path: &str) -> Vec<(u32, Vec<SpinOscillator>)> {
@@ -262,7 +262,13 @@ fn harvest_eels(path: &str) -> Vec<(u32, Vec<SpinOscillator>)> {
     }
     let n_rows = dims[0];
     let n_cols = dims[1];
-    let bin_width = median_gap(ene) * MEV_TO_HZ;
+    let Some(bin_width) = median_gap(ene).map(|g| g * MEV_TO_HZ) else {
+        eprintln!(
+            "crystal_compiler: --eels {} carries no positive energy gap — the bin width stays absent",
+            path
+        );
+        return Vec::new();
+    };
     let mut out = Vec::new();
     for i in 0..n_rows {
         let mut osc = Vec::new();
@@ -321,6 +327,8 @@ fn mat_dump(path: &str) {
             MatData::Single(v) => ("single", v.len()),
             MatData::Int32(v) => ("int32", v.len()),
             MatData::Char(v) => ("char", v.len()),
+            MatData::Struct(f) => ("struct", f.len()),
+            MatData::Cell(c) => ("cell", c.len()),
             MatData::Empty => ("empty", 0),
         };
         eprintln!("mat: {} dims {:?} {} len {}", a.name, a.dims, kind, len);
