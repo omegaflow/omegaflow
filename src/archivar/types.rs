@@ -264,6 +264,7 @@ pub struct BrowserSensor {
     pub force: u8,
     pub kernel: u8,
     pub ttl: f64,
+    pub tau: Option<f64>,
     pub unit: String,
 }
 
