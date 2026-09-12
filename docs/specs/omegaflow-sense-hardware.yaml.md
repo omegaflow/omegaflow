@@ -18,7 +18,7 @@ meta:
     It is a stationary observatory (a local universe) connected via WebSerial.
     To manage 35 modules on a single ESP32-S3, I2C multiplexers are used.
   hardware_brain: "ESP32-S3 DevKit (N8R2/N16R8)"
-  firmware_language: "Rust no_std (esp-idf-hal)"
+  firmware_language: "Rust no_std (esp-hal)"
   interface: "WebSerial (CDC-ACM)"
   total_cost_eur: 139.00
   protocol: "PresenceFrame — raw intensity (Σω); ESP32 as a peer among seven (radiators.md:84-106)"
@@ -352,7 +352,7 @@ protocol:
   translation: "raw intensity (Σω) — canRadiate, as SeismicOscillator"
   wire: "no modulation command exists"
   reason: "replaced by raw intensity (Radiator-Doktrin, radiators.md:84-106 — the synthesizer stays dead)"
-  firmware: "pending (no_std, hardware)"
+  firmware: "no_std esp-hal (firmware/radiatorium/), build in CI"
 
 # ============================================================
 # PART 6: SAFETY MATRIX

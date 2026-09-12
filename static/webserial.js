@@ -1,9 +1,12 @@
-// WebSerial path to the ESP32 radiatorium (CDC-ACM). The device firmware is
-// pending (M02, no_std/hardware); this module carries the host half. Read: raw
+// WebSerial path to the ESP32 radiatorium (CDC-ACM). The device firmware
+// (M02, no_std esp-hal) lives in firmware/radiatorium; this module carries the
+// host half. Read: raw
 // bytes are raw intensity (Σω) — no flow, no hsv/pwm/duration. Write: the
 // membrane's PresenceFrame (9 omegas + aperture) translates to raw intensity
 // (Σω · aperture, f32-LE, 4 B/frame) — the peer's own law, as SeismicOscillator.
 // Both directions speak only while window.omegaflow.consent() is true.
+
+import { encodeFrame, consented, makeWriter } from "./presence_frame.js";
 
 const panel = document.createElement("div");
 panel.style.cssText =
@@ -31,18 +34,18 @@ let reader = null;
 let writer = null;
 let reading = false;
 
+const frame = makeWriter(
+  () => writer,
+  () => consented(window.omegaflow)
+);
+
 function note(text) {
   stateEl.textContent = text;
 }
 
-function consented() {
-  const api = window.omegaflow;
-  return Boolean(api && api.consent && api.consent());
-}
-
 function emit(bytes) {
   const name = nameInput.value.trim();
-  if (name === "" || !consented()) {
+  if (name === "" || !consented(window.omegaflow)) {
     return;
   }
   const tau = Number(tauInput.value);
@@ -112,17 +115,7 @@ async function toggle() {
 }
 
 export function onFrame(omega, aperture) {
-  if (!consented() || !writer) {
-    return;
-  }
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += omega[i];
-  }
-  const intensity = sum * aperture;
-  const bytes = new Uint8Array(4);
-  new DataView(bytes.buffer).setFloat32(0, intensity, true);
-  writer.write(bytes).catch(() => {});
+  frame.onFrame(omega, aperture);
 }
 
 button.addEventListener("click", toggle);
