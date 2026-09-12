@@ -1,8 +1,11 @@
 #![no_std]
 #![no_main]
 
+use core::fmt::Write as _;
+
 use esp_backtrace as _;
 use esp_hal::gpio::{DriveMode, Pin};
+use esp_hal::i2c::master::{Config as I2cConfig, I2c};
 use esp_hal::ledc::{
     channel::{self, ChannelIFace},
     timer::{self, TimerIFace},
@@ -15,9 +18,13 @@ use esp_hal::usb::usb_serial_jtag::UsbSerialJtag;
 
 use radiatorium_lib::frame::FrameParser;
 use radiatorium_lib::pwm;
+use radiatorium_lib::{max30102, mux, nn};
 
 const SERVO_TIMER_PERIOD_TICKS: u16 = 19_999;
 const SERVO_TIMER_PRESCALER: u8 = 159;
+const SAMPLE_RATE_HZ: f64 = 100.0;
+const WINDOW_LEN: usize = 256;
+const FIFO_SAMPLES: usize = 32;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
@@ -26,7 +33,7 @@ fn main() -> ! {
     let peripherals = esp_hal::init(esp_hal::Config::default());
 
     let usb = UsbSerialJtag::new(peripherals.USB_DEVICE);
-    let (mut usb_rx, _usb_tx) = usb.split();
+    let (mut usb_rx, mut usb_tx) = usb.split();
 
     let mut ledc = Ledc::new(peripherals.LEDC);
     ledc.set_global_slow_clock(LSGlobalClkSource::APBClk);
@@ -92,6 +99,53 @@ fn main() -> ! {
     pan.set_timestamp(neutral);
     tilt.set_timestamp(neutral);
 
+    let mut i2c = I2c::new(
+        peripherals.I2C0,
+        I2cConfig::default().with_frequency(Rate::from_khz(400)),
+    )
+    .unwrap()
+    .with_sda(peripherals.GPIO8)
+    .with_scl(peripherals.GPIO9);
+
+    let (mux_addr, control) = mux::select(0).expect("way 0");
+    let _ = i2c.write(mux_addr, &[control]);
+
+    let _ = i2c.write(
+        max30102::I2C_ADDR,
+        &[
+            max30102::REG_SPO2_CONFIG,
+            max30102::spo2_config_100hz_18bit_411us(),
+        ],
+    );
+    let _ = i2c.write(
+        max30102::I2C_ADDR,
+        &[max30102::REG_LED1_PA, max30102::LED1_PA_DEFAULT],
+    );
+    let _ = i2c.write(
+        max30102::I2C_ADDR,
+        &[max30102::REG_LED2_PA, max30102::LED2_PA_DEFAULT],
+    );
+    let _ = i2c.write(
+        max30102::I2C_ADDR,
+        &[max30102::REG_FIFO_CONFIG, max30102::fifo_config_avg1()],
+    );
+    let _ = i2c.write(
+        max30102::I2C_ADDR,
+        &[max30102::REG_MODE_CONFIG, max30102::mode_config_spo2()],
+    );
+
+    let min_gap_samples = (nn::NN_MIN_MS / 1000.0 * SAMPLE_RATE_HZ) as usize;
+
+    let mut window = [0u32; WINDOW_LEN];
+    let mut window_len: usize = 0;
+    let mut base_index: usize = 0;
+    let mut last_emitted: usize = 0;
+
+    let mut fifo_buf = [0u8; FIFO_SAMPLES * max30102::SAMPLE_BYTES];
+    let mut peak_buf = [0usize; WINDOW_LEN];
+    let mut interval_buf = [0.0f64; WINDOW_LEN];
+    let mut line = [0u8; 16];
+
     loop {
         let n = usb_rx.drain_rx_fifo(&mut rx);
         for &byte in &rx[..n] {
@@ -122,5 +176,99 @@ fn main() -> ! {
                 }
             }
         }
+
+        let mut rd_buf = [0u8; 1];
+        let mut wr_buf = [0u8; 1];
+        let pointers_ok = i2c
+            .write_read(
+                max30102::I2C_ADDR,
+                &[max30102::REG_FIFO_RD_PTR],
+                &mut rd_buf,
+            )
+            .is_ok()
+            && i2c
+                .write_read(
+                    max30102::I2C_ADDR,
+                    &[max30102::REG_FIFO_WR_PTR],
+                    &mut wr_buf,
+                )
+                .is_ok();
+        if pointers_ok {
+            let rd = (rd_buf[0] & 0x1F) as usize;
+            let wr = (wr_buf[0] & 0x1F) as usize;
+            let avail = (wr.wrapping_sub(rd)) & 0x1F;
+            if avail > 0 {
+                let nbytes = avail * max30102::SAMPLE_BYTES;
+                if i2c
+                    .write_read(
+                        max30102::I2C_ADDR,
+                        &[max30102::REG_FIFO_DATA],
+                        &mut fifo_buf[..nbytes],
+                    )
+                    .is_ok()
+                {
+                    for (_red, ir) in max30102::Fifo::new(&fifo_buf[..nbytes]) {
+                        if window_len < WINDOW_LEN {
+                            window[window_len] = ir;
+                            window_len += 1;
+                        } else {
+                            window.copy_within(1.., 0);
+                            window[WINDOW_LEN - 1] = ir;
+                            base_index += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        let n_peaks = nn::peaks_into(&window[..window_len], min_gap_samples, &mut peak_buf);
+        let n_int = nn::intervals_ms_into(&peak_buf[..n_peaks], SAMPLE_RATE_HZ, &mut interval_buf);
+
+        let mut emitted = 0usize;
+        for k in 1..n_peaks {
+            let start = base_index + peak_buf[k - 1];
+            let end = base_index + peak_buf[k];
+            let dt_ms = (end - start) as f64 * 1000.0 / SAMPLE_RATE_HZ;
+            if dt_ms < nn::NN_MIN_MS || dt_ms > nn::NN_MAX_MS {
+                continue;
+            }
+            if emitted >= n_int {
+                break;
+            }
+            let value = interval_buf[emitted];
+            emitted += 1;
+            if start < last_emitted {
+                continue;
+            }
+            let len = write_nn_line(&mut line, value);
+            let _ = usb_tx.write(&line[..len]);
+            last_emitted = end;
+        }
     }
+}
+
+struct LineWriter<'a> {
+    buf: &'a mut [u8],
+    len: usize,
+}
+
+impl core::fmt::Write for LineWriter<'_> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        let end = self.len + s.len();
+        if end > self.buf.len() {
+            return Err(core::fmt::Error);
+        }
+        self.buf[self.len..end].copy_from_slice(s.as_bytes());
+        self.len = end;
+        Ok(())
+    }
+}
+
+fn write_nn_line(line: &mut [u8], ms: f64) -> usize {
+    let mut w = LineWriter { buf: line, len: 0 };
+    let tenths = (ms * 10.0 + 0.5) as i32;
+    let whole = tenths / 10;
+    let frac = tenths % 10;
+    let _ = write!(w, "nn={}.{}\n", whole, frac);
+    w.len
 }
