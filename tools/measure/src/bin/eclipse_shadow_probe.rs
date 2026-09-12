@@ -1,6 +1,8 @@
+use omegaflow::archivar::astrometry::delta_t_espenak_meeus;
 use omegaflow::archivar::{
     body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, parse_ephemeris_binary, BodyEphemeris, LeapSeconds,
+    light_time_worldline, orientation_angles_at, parse_ephemeris_binary, BodyEphemeris,
+    LeapSeconds,
 };
 use omegaflow::cdn::CDN_BASE;
 use std::collections::HashMap;
@@ -10,6 +12,7 @@ const DAY_S: f64 = 86400.0;
 const RAD_DEG: f64 = 180.0 / std::f64::consts::PI;
 const EARTH_MEAN_RADIUS_M: f64 = 6371.0e3;
 const EVENT_UNIX: f64 = 1503273600.0;
+const EVENT_2024_UNIX: f64 = 1712534400.0;
 const SEARCH_COARSE_S: f64 = 60.0;
 const SEARCH_FINE_S: f64 = 0.01;
 const BIN_TTL_S: u64 = 604800;
@@ -57,6 +60,37 @@ const LINES: [LineSpec; 5] = [
         sun_asset: "ephemeris_epm_sun.bin",
         moon_asset: "ephemeris_epm_moon.bin",
         earth_asset: "ephemeris_epm_earth.bin",
+    },
+];
+
+struct Canon {
+    word: &'static str,
+    event_unix: f64,
+    greatest_td_s: f64,
+    dt_s: f64,
+    lat: Option<f64>,
+    lon: Option<f64>,
+    mag: Option<f64>,
+}
+
+const CANONS: [Canon; 2] = [
+    Canon {
+        word: "2017-08-21",
+        event_unix: EVENT_UNIX,
+        greatest_td_s: 18.0 * 3600.0 + 26.0 * 60.0 + 40.0,
+        dt_s: 70.0,
+        lat: Some(36.9667),
+        lon: Some(-87.6717),
+        mag: Some(1.0306),
+    },
+    Canon {
+        word: "2024-04-08",
+        event_unix: EVENT_2024_UNIX,
+        greatest_td_s: 18.0 * 3600.0 + 18.0 * 60.0 + 29.0,
+        dt_s: 74.0,
+        lat: None,
+        lon: None,
+        mag: Some(1.0566),
     },
 ];
 
@@ -215,6 +249,70 @@ fn axis_unit(sun: [f64; 3], moon: [f64; 3]) -> Option<[f64; 3]> {
 fn axis_geocenter_miss(geo: [f64; 3], sun: [f64; 3], moon: [f64; 3]) -> Option<f64> {
     let u = axis_unit(sun, moon)?;
     vlen(vcross(vsub(geo, moon), u))
+}
+
+fn hhmmss(day_s: f64) -> String {
+    let hh = (day_s / 3600.0) as i64;
+    let mm = ((day_s - hh as f64 * 3600.0) / 60.0) as i64;
+    let ss = day_s - hh as f64 * 3600.0 - mm as f64 * 60.0;
+    format!("{hh:02}:{mm:02}:{ss:04.1}")
+}
+
+fn jd_year(jd: f64) -> f64 {
+    2000.0 + (jd - 2451545.0) / 365.25
+}
+
+fn print_rotation_audit(line: &Line, t_great: f64, pierce_lat: f64) {
+    let Some(props) = line.map.get("earth").and_then(|e| e.props.as_ref()) else {
+        println!(
+            "eclipse {} rotation audit: the earth bin carries no BodyProperties",
+            line.word
+        );
+        return;
+    };
+    let jd_tdb = t_great / 86400.0 + 2451545.0;
+    let dt = delta_t_espenak_meeus(jd_year(jd_tdb));
+    let jd_ut1 = jd_tdb - dt / 86400.0;
+    let w_tdb = orientation_angles_at(props, jd_tdb).2;
+    let w_ut1 = orientation_angles_at(props, jd_ut1).2;
+    let dw = (w_tdb - w_ut1).rem_euclid(360.0);
+    let dw = if dw > 180.0 { dw - 360.0 } else { dw };
+    let lon_km = dw.abs() * 111.32 * pierce_lat.to_radians().cos();
+    let rate = (w_tdb - w_ut1) * 86400.0 / dt;
+    println!(
+        "eclipse {} rotation audit: model w(jd_tdb) {:.5}° vs w(jd_ut1) {:.5}° — the TDB-fed rotation leads by {:.4}° = {:.1} km of longitude (ΔT {:.1} s, recovered rate {:.8}°/day)",
+        line.word, w_tdb, w_ut1, dw, lon_km, dt, rate
+    );
+}
+
+fn print_curvature(line: &Line, t_great: f64) {
+    let mut vals: Vec<(f64, f64)> = Vec::new();
+    for s in -10..=10 {
+        let t = t_great + s as f64;
+        if let Some((g, sun, moon)) = axis_state(line, t) {
+            if let Some(h) = axis_geocenter_miss(g, sun, moon) {
+                vals.push((s as f64, h));
+            }
+        }
+    }
+    let Some(h0) = vals.iter().find(|(s, _)| *s == 0.0).map(|(_, h)| *h) else {
+        return;
+    };
+    let hm = vals.iter().find(|(s, _)| *s == -1.0).map(|(_, h)| *h);
+    let hp = vals.iter().find(|(s, _)| *s == 1.0).map(|(_, h)| *h);
+    let (Some(hm), Some(hp)) = (hm, hp) else {
+        return;
+    };
+    let hpp = hp - 2.0 * h0 + hm;
+    let half_width_s = if hpp > 0.0 {
+        (2.0 * 1000.0 / hpp).sqrt()
+    } else {
+        f64::NAN
+    };
+    println!(
+        "eclipse {} axis-miss curvature at the minimum: h(0) {:.1} m, h'' {:.3e} m/s² — a 1 km axis displacement shifts the instant by {:.1} s (the flat minimum)",
+        line.word, h0, hpp, half_width_s
+    );
 }
 
 fn angular_radius(body_radius_m: f64, dist_m: f64) -> Option<f64> {
@@ -551,6 +649,12 @@ fn run_line(line: &Line, day_tdb: f64, lsk: &LeapSeconds) -> Option<(f64, f64, f
         cov.fraction,
         ratio_cov
     );
+    println!(
+        "eclipse {} stage deltas: greatest − syzygy {:+.2} s, greatest − coverage {:+.2} s",
+        line.word,
+        t_great - t_syz,
+        t_great - cov.t
+    );
     Some((t_great, pierce.lat, pierce.lon, ratio_p))
 }
 
@@ -568,8 +672,6 @@ fn main() {
         Some(u) if u.is_finite() && u > 0.0 => u,
         _ => EVENT_UNIX,
     };
-    let is_2017 = (day_unix - EVENT_UNIX).abs() < 1.0;
-
     let Some(lsk) = embedded_lsk() else {
         eprintln!(
             "eclipse: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
@@ -697,37 +799,57 @@ fn main() {
     }
 
     println!();
-    if !is_2017 {
-        println!("=== verdict — the canon constants below describe the 2017 event only; this run is another date, the canon is not laid beside ===");
-    } else {
-        println!("=== verdict — the catalog laid beside the computation (never inside it) ===");
-    }
-    let canon_unix = EVENT_UNIX + 18.0 * 3600.0 + 26.0 * 60.0 + 40.0;
-    let canon_lat = 36.9667;
-    let canon_lon = -87.6717;
-    let canon_mag = 1.0306;
-    if is_2017 {
-        println!(
-            "canon (Espenak greatest eclipse 2017): {} lat {canon_lat} lon {canon_lon} magnitude {canon_mag}",
-            iso_utc(canon_unix)
-        );
-    }
-    for (word, t, lat, lon, mag) in &results {
-        if !is_2017 {
-            break;
+    println!("eclipse stage4 — rotation audit and the flat minimum:");
+    for line in &loaded {
+        if let Some((_, t, lat, _, _)) = results.iter().find(|r| r.0 == line.word) {
+            print_rotation_audit(line, *t, *lat);
+            print_curvature(line, *t);
         }
-        match lsk.tdb_to_unix(*t) {
-            Some(u) => println!(
-                "canon delta {word}: time {} ({:+.1} s) point {:.1} km magnitude {:+.4}",
-                iso_utc(u),
-                u - canon_unix,
-                arc_km(*lat, *lon, canon_lat, canon_lon),
-                mag - canon_mag
-            ),
-            None => println!(
-                "canon delta {word}: the tdb-to-unix conversion reads absent — the delta is not computed"
-            ),
+    }
+
+    println!();
+    let matched = CANONS
+        .iter()
+        .find(|c| (day_unix - c.event_unix).abs() < 1.0);
+    match matched {
+        Some(canon) => {
+            println!("=== verdict — the catalog laid beside the computation (never inside it) ===");
+            let canon_utc_unix = canon.event_unix + canon.greatest_td_s - canon.dt_s;
+            println!(
+                "canon (Espenak greatest eclipse {}): TD {} = {} (ΔT {:.0} s from the catalog row)",
+                canon.word,
+                hhmmss(canon.greatest_td_s),
+                iso_utc(canon_utc_unix),
+                canon.dt_s
+            );
+            for (word, t, lat, lon, mag) in &results {
+                match lsk.tdb_to_unix(*t) {
+                    Some(u) => {
+                        let point = match (canon.lat, canon.lon) {
+                            (Some(cl), Some(cn)) => {
+                                format!("point {:.1} km", arc_km(*lat, *lon, cl, cn))
+                            }
+                            _ => format!("point lat {lat:.4} lon {lon:.4} (canon point is catalog-rounded)"),
+                        };
+                        let magstr = match canon.mag {
+                            Some(m) => format!("magnitude {:+.4}", mag - m),
+                            None => String::new(),
+                        };
+                        println!(
+                            "canon delta {word}: time {} ({:+.1} s) {point} {magstr}",
+                            iso_utc(u),
+                            u - canon_utc_unix,
+                        );
+                    }
+                    None => println!(
+                        "canon delta {word}: the tdb-to-unix conversion reads absent — the delta is not computed"
+                    ),
+                }
+            }
         }
+        None => println!(
+            "=== verdict — the canon constants describe the 2017-08-21 and 2024-04-08 events only; this run is another date, the canon is not laid beside ==="
+        ),
     }
 }
 
