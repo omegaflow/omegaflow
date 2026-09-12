@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 96d00dcbce86db02041f14be1d2e86b14cfd610971afa5eaa170cb77dd1f8da2
+  sha256: 5373237159fddaca712209c16bf050e6567f408466db6dba698bda53f5c771fd
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -24,8 +24,9 @@ gehen über den opencode-Browser an den Operator.
   Tiefer gemessen: auch `--votable` hätte still bei MAXREC=20000 gekappt
   (`OVERFLOW`, nur 20000 von 289843 Zeilen). Behoben: `tap_query_votable` trägt
   jetzt `MAXREC=<limit>`; verifiziert (25000 Zeilen fließen, alle Tests grün).
-  `--votable` steht bereits auf main. Fix (tap_compiler.rs) committet — push +
-  Redispatch offen, der Wächter misst.
+  `--votable` steht bereits auf main. Fix (tap_compiler.rs) committet + gepusht
+  (a764f2d). Redispatch 34718761177 (21:01Z) — der Wächter misst das Asset im
+  Release ssd.jpl.nasa.gov.
 - igets.bin — Wächter: Lauf 34716901099 trägt 3 void Stationen (Mizusawa,
   Brasimone, Esashi) → merge wird geskippt. Gemessen: `parse_ggp` las
   `N Latitude  (deg)` (Doppel-Leerzeichen) nicht und ließ `gravity(mV)` ohne
@@ -33,8 +34,9 @@ gehen über den opencode-Browser an den Operator.
   Schlüssel, exakte Spalten-Zuordnung (g_fil, gravity(nm/s**2), gravity(V),
   gravity(mV)), mV-Kalibrierung `Grav.Cal (nm.S-2/mV)`, unbekannte
   Spalte/fehlende Kalibrierung → benannter Skip; verifiziert (Mizusawa → 720
-  Records, alle Tests grün). Fix (igets_compiler.rs) committet — push +
-  Redispatch offen, der Wächter misst.
+  Records, alle Tests grün). Fix (igets_compiler.rs) committet + gepusht (a764f2d).
+  Redispatch 34718762450 (21:01Z) — der Wächter misst das Asset im Release
+  igetsftp.gfz.de.
 
 ## Ernte
 
@@ -45,6 +47,6 @@ gehen über den opencode-Browser an den Operator.
 
 - Baum beim Sessionsstart: HEAD == origin/main == b054e9d (Refs gemessen). Der
   Baum trägt fremde Sessionsarbeit (uncommitted — unberührt). Eigene Hunks:
-  tap_compiler.rs, igets_compiler.rs, dieses Handover. Push + Redispatch
-  (eso-harps-rvcat-cdn, igets-cdn) stehen auf das Wort des Operators; der Baum
-  ist für die eigenen Dateien still.
+  tap_compiler.rs, igets_compiler.rs, dieses Handover. Gepusht: a764f2d (clean
+  fast-forward). Redispatches: 34718761177 (eso-harps-rvcat-cdn), 34718762450
+  (igets-cdn).
