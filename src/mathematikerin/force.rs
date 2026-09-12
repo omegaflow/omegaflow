@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn force_id_of(name: &str) -> Option<u8> {
     match name {
         "em" => Some(0),
@@ -71,6 +73,7 @@ pub struct TagWeight {
     pub weight: i32,
     pub force: Option<String>,
     pub tag: String,
+    pub norm: String,
 }
 
 pub struct GateWeight {
@@ -99,7 +102,13 @@ pub fn parse_library(content: &str) -> Vec<TagWeight> {
         if tag.is_empty() {
             continue;
         }
-        lib.push(TagWeight { weight, force, tag });
+        let norm = tag.to_lowercase().replace('-', " ");
+        lib.push(TagWeight {
+            weight,
+            force,
+            tag,
+            norm,
+        });
     }
     lib
 }
@@ -136,17 +145,56 @@ fn tag_matches(hay: &str, tag: &str) -> bool {
     }
 }
 
+pub struct WeighIndex {
+    single: HashMap<String, Vec<usize>>,
+    special: Vec<usize>,
+}
+
+pub fn build_weigh_index(library: &[TagWeight]) -> WeighIndex {
+    let mut single: HashMap<String, Vec<usize>> = HashMap::new();
+    let mut special: Vec<usize> = Vec::new();
+    for (i, tw) in library.iter().enumerate() {
+        if tw.norm.is_empty() {
+            continue;
+        }
+        if tw.norm.contains(' ') || tw.norm.contains('_') || tw.norm.contains('.') {
+            special.push(i);
+        } else {
+            single.entry(tw.norm.clone()).or_default().push(i);
+        }
+    }
+    WeighIndex { single, special }
+}
+
 pub fn gate_weigh(text: &str, library: &[TagWeight]) -> GateWeight {
+    let idx = build_weigh_index(library);
+    gate_weigh_indexed(text, library, &idx)
+}
+
+pub fn gate_weigh_indexed(text: &str, library: &[TagWeight], idx: &WeighIndex) -> GateWeight {
     let t = text.to_lowercase().replace('-', " ");
+    let mut hits: Vec<usize> = Vec::new();
+    for w in t.split(|c: char| !c.is_ascii_alphanumeric()) {
+        if w.is_empty() {
+            continue;
+        }
+        if let Some(ixs) = idx.single.get(w) {
+            hits.extend_from_slice(ixs);
+        }
+    }
+    for &i in &idx.special {
+        if tag_matches(&t, &library[i].norm) {
+            hits.push(i);
+        }
+    }
+    hits.sort_unstable();
+    hits.dedup();
     let mut weight: i32 = 0;
     let mut matched: Vec<String> = Vec::new();
     let mut force_hits: Vec<(u8, i32)> = Vec::new();
     let mut has_position = false;
-    for tw in library {
-        let tag = tw.tag.to_lowercase().replace('-', " ");
-        if tag.is_empty() || !tag_matches(&t, &tag) {
-            continue;
-        }
+    for i in hits {
+        let tw = &library[i];
         weight += tw.weight;
         matched.push(tw.tag.clone());
         if tw.weight > 0 && tw.force.is_none() {
