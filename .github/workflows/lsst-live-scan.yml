@@ -1,0 +1,41 @@
+name: lsst-live-scan
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  lsst-live-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the LSST live scan (Fink/LSST anonymous cone) and the RR Lyrae / EB positive-control layer
+        run: |
+          mkdir -p tmp
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin lsst_anomaly_probe -- --cone 148.84,2.55,260,24
+            BIN=tmp/lsst_lightcurves_cone_148.84000_2.55000_260.bin
+            MAP=tmp/lsst_cone_object_map_148.84000_2.55000_260.csv
+            if [ -f "$BIN" ] && [ -f "$MAP" ]; then
+              cargo run --release -p omegaflow-measure --bin lsst_color_coupling_probe -- "$BIN" "$MAP"
+            else
+              echo "lsst_color_coupling_probe: no LSS1 asset produced by the live cone — the positive-control layer stays void (0 honored)"
+            fi
+          } > lsst-live-scan.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lsst-live-scan
+          path: |
+            lsst-live-scan.txt
+            tmp/lsst_lightcurves_cone_*.bin
+            tmp/lsst_cone_object_map_*.csv

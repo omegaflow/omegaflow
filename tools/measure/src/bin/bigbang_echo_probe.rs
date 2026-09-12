@@ -195,6 +195,32 @@ fn main() {
     }
     println!("fam (multiple comparison) = {fam:.4e}");
 
+    println!(
+        "\n=== The z pairing — TE(CMB δT → mean depth) over the angular series (Nside {NSIDE_CELL}) ==="
+    );
+    let mut fam_depth = f64::NEG_INFINITY;
+    for lag in LAG_MIN..=LAG_MAX {
+        let Some((fwd, rev, thr, s)) = pair_te(&x, &depth, lag) else {
+            println!("  lag {lag}: TE void");
+            continue;
+        };
+        if s > fam_depth {
+            fam_depth = s;
+        }
+        let word = if fwd > fam_depth {
+            "fam-carrying"
+        } else if fwd > thr {
+            "over own threshold"
+        } else {
+            "still"
+        };
+        println!(
+            "  lag {lag}: TE(CMB→depth) {fwd:.4e}  TE(depth→CMB) {rev:.4e}  thr {thr:.4e}  asym {:+.4e}  | {word}",
+            fwd - rev
+        );
+    }
+    println!("fam (multiple comparison) = {fam_depth:.4e}");
+
     println!("\n=== The z series — the depth is the time axis of creation ===");
     let bw = DEPTH_MAX_MPC / DEPTH_BINS as f64;
     let mut bin_n = vec![0u64; DEPTH_BINS];

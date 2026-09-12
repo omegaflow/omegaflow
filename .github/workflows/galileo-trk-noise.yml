@@ -1,0 +1,60 @@
+name: galileo-trk-noise
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noise-curve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Lay the asset directories
+        run: mkdir -p data/pds-ppi.igpp.ucla.edu data/ssd.jpl.nasa.gov
+      - name: Harvest the TRK-2-25 ATDF residuum if the CDN asset is missing
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_resid.bin"; then
+            echo "galileo_resid.bin already present — harvest skipped"
+          else
+            cargo run --release -p omegaflow-harvest --bin galileo_atdf_compiler -- --ci-mode
+          fi
+      - name: Harvest the TRK-2-18 ODF doppler if the CDN asset is missing
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_odf.bin"; then
+            echo "galileo_odf.bin already present — harvest skipped"
+          else
+            cargo run --release -p omegaflow-harvest --bin galileo_odf_compiler -- --ci-mode
+          fi
+      - name: Fetch the residuum, ODF and ephemeris assets from the CDN
+        run: |
+          mkdir -p data/pds-ppi.igpp.ucla.edu data/ssd.jpl.nasa.gov
+          gh release download pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+            --pattern galileo_resid.bin --dir data/pds-ppi.igpp.ucla.edu
+          gh release download pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+            --pattern galileo_odf.bin --dir data/pds-ppi.igpp.ucla.edu
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern ephemeris_earth.bin --dir data/ssd.jpl.nasa.gov
+          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+            --pattern ephemeris_galileo_daily.bin --dir data/ssd.jpl.nasa.gov
+      - name: Draw the TRK-2-25/2-18 empirical noise curve
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin galileo_trk_noise_curve
+          } > galileo-trk-noise-curve.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: galileo-trk-noise-curve
+          path: galileo-trk-noise-curve.txt
