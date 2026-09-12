@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Ernte-Folge X (Stand 2026-09-12)
-  session: Ernte-Folge X
+  title: Handover — Ernte-Folge 10 (Stand 2026-09-12)
+  session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 30b32dd073a2791da58c22ba5ea352a8c82d360cdfd556e37ca327f33c7dd8ad
+  sha256: 96d00dcbce86db02041f14be1d2e86b14cfd610971afa5eaa170cb77dd1f8da2
   status: live
 -->
-# Handover — Ernte-Folge X (2026-09-12)
+# Handover — Ernte-Folge 10 (2026-09-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
@@ -19,24 +19,32 @@ gehen über den opencode-Browser an den Operator.
 
 ## CDN-Manifestation (Duty)
 
-- igets.bin — Wächter: Release `igetsftp.gfz.de` liest 404 (gemessen). Laufender
-  Dispatch 34716901099 (20:22Z, cd4e963a). Der Vorgänger 34715203286 endet ohne
-  Asset: compile(Vienna) scheiterte (exit 1, keine rustc-Annotationen — Script-Ebene),
-  merge wird geskippt. Wächter misst die nächste Session.
-- harps_rvcat.json — Wächter: Release `ssd.jpl.nasa.gov` liest 404 (304 Assets,
-  keins harps). Void-Ursache gemessen (Job-Log 34715204877): `FORMAT=csv` ist dem
-  ESO-TAP fremd → HTTP 400. Tabelle `safcat.HARPS_RVCAT_V1` + Spalten
-  ra_simbad/dec_simbad/drs_ccf_rvc/plx_simbad mit `FORMAT=votable` verifiziert
-  (QUERY_STATUS OK, Zeilen). Fix getragen: Workflow `--csv` → `--votable`;
-  Redispatch 34717041472 (20:25Z, cd4e963a). Wächter misst die nächste Session.
+- harps_rvcat.json — Wächter: der Redispatch 34717041472 war void — er lief auf
+  cd4e963a (noch `--csv`, HTTP 400; der Void-Guard maskierte es als „success").
+  Tiefer gemessen: auch `--votable` hätte still bei MAXREC=20000 gekappt
+  (`OVERFLOW`, nur 20000 von 289843 Zeilen). Behoben: `tap_query_votable` trägt
+  jetzt `MAXREC=<limit>`; verifiziert (25000 Zeilen fließen, alle Tests grün).
+  `--votable` steht bereits auf main. Fix (tap_compiler.rs) committet — push +
+  Redispatch offen, der Wächter misst.
+- igets.bin — Wächter: Lauf 34716901099 trägt 3 void Stationen (Mizusawa,
+  Brasimone, Esashi) → merge wird geskippt. Gemessen: `parse_ggp` las
+  `N Latitude  (deg)` (Doppel-Leerzeichen) nicht und ließ `gravity(mV)` ohne
+  Kalibrierung als scale 1.0 durch (falscher Wert). Behoben: normierte
+  Schlüssel, exakte Spalten-Zuordnung (g_fil, gravity(nm/s**2), gravity(V),
+  gravity(mV)), mV-Kalibrierung `Grav.Cal (nm.S-2/mV)`, unbekannte
+  Spalte/fehlende Kalibrierung → benannter Skip; verifiziert (Mizusawa → 720
+  Records, alle Tests grün). Fix (igets_compiler.rs) committet — push +
+  Redispatch offen, der Wächter misst.
 
 ## Ernte
 
-- Hi-net — `HINET_PASS` weiter absent (.secrets.local gemessen) — Operator.
+- Hi-net — `HINET_PASS` weiter absent; der Operator nannte Browser-Registrierung,
+  die Browser-Extension ist nicht verbunden — Operator.
 
 ## Abschluss
 
-- Baum beim Sessionsstart: HEAD == origin/main == cd4e963a (Refs gemessen). Der
-  Baum trägt parallele Sessionsarbeit (uncommitted, fremd — unberührt). Dispatch
-  getragen: 34716901099 (igets), 34717041472 (eso-harps). Nur eigene Dateien
-  committet (.github/workflows/eso-harps-rvcat-cdn.yml + dieses Handover).
+- Baum beim Sessionsstart: HEAD == origin/main == b054e9d (Refs gemessen). Der
+  Baum trägt fremde Sessionsarbeit (uncommitted — unberührt). Eigene Hunks:
+  tap_compiler.rs, igets_compiler.rs, dieses Handover. Push + Redispatch
+  (eso-harps-rvcat-cdn, igets-cdn) stehen auf das Wort des Operators; der Baum
+  ist für die eigenen Dateien still.
