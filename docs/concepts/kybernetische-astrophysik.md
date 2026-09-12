@@ -1,7 +1,7 @@
 <!--
   title: Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
   class: concept
-  sha256: 0e0534e35c676de289ad47321907a758f3c06d08a41b942649a0efdf209c84cf
+  sha256: 74f22ee7d012524b47f8565f79b7e95ff7018c0bd25c1f26a76b6e7b05af7163
 -->
 # Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
 
@@ -139,6 +139,10 @@ Loma Prieta 1989 offen, nicht bestätigt; die Nadel misst die
 Koinzidenz, und ihr Ausbleiben ist ebenso ein Befund. Die USGS-Regel
 gilt: fast alle vorgeschlagenen Vorläufer treten auch ohne Beben auf
 — genau deshalb läuft die Nullkontrolle mit.
+
+Kanal-Befund (2026-09-12): CSES descoped — kein anonymer Zugang
+(leos.ac.cn 000, SMS-CN-Login, kein DOI); der In-situ-E-Feld-Kanal ist über
+DEMETER/CDPP + CHAMP/GFZ-ISDC gebaut.
 
 ### Ⅴ. Technosignaturen — Der achromatische Dip
 
@@ -291,6 +295,9 @@ geomagnetische Störung tragen verschiedene Pfeil-Formen.
 oder der Befund, dass die vorhandenen Archive keine Serie tragen
 (keine Aussage, 0 honored). Die Sensor-Erlaubnis gilt: die Maschine
 fragt, bevor sie aufzeichnet.
+
+Descoped (2026-09-12): keine Datenbasis (kein anonymes Multi-Force-Archiv
+eines Tatorts), kein Konsument; strukturell durch Ⅳ und Ⅸ getragen.
 
 ### Ⅺ. Placebo — der Pfeil des Ereignisses
 

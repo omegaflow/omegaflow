@@ -2,7 +2,7 @@
   title: Der Kausalpfeil — drei Rätsel, drei Blätter Papier
   class: concept
   date: 2026-08-21
-  sha256: 8f3717229a124f9092c9e7fbb6d15894912ffa4b8e3cb0098f98754afe0ba738
+  sha256: 857540ec2aafab7ad806832031b56e328cff8052ddefb0f839c8d16258c8e436
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/archiv/handover-2026-09-09-te-atom-4.md phi/sources.φ
 -->
@@ -89,7 +89,8 @@ statement, Unterbestimmtheit, keine Fabrikation).
   `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`.
 - **LAIC:** Seismizität USGS/SeismicPortal/JMA/GeoNet/p2pquake
   (`phi/sources.φ:18–48, 116–122, 237–240`) — lebt. Ionosphäre: Swarm
-  FAC/IRC (`:1111–1112`, electric) — lebt. CSES: ausstehend. IONEX-GIM:
+  FAC/IRC (`:1111–1112`, electric) — lebt. CSES: descoped (kein anonymer
+  Zugang; In-situ-E-Feld über DEMETER/CDPP + CHAMP). IONEX-GIM:
   ausstehend (CDDIS-OAuth,
   `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`). GIC direkt:
   ausstehend (kein Feed,
