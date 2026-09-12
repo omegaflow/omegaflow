@@ -1,0 +1,14 @@
+[package]
+name = "radiatorium"
+version = "0.1.0"
+edition = "2024"
+license-file = "../../docs/LICENSE"
+description = "the ESP32-S3 radiatorium peer firmware (no_std esp-hal)"
+
+[workspace]
+
+[dependencies]
+esp-hal = { version = "1.2.1", features = ["esp32s3"] }
+esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32s3"] }
+esp-backtrace = { version = "0.20.0", features = ["esp32s3", "panic-handler"] }
+radiatorium-lib = { path = "../radiatorium-lib" }
