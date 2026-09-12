@@ -1,0 +1,14 @@
+# tap-inventar https://idoc-dachs.ias.u-psud.fr/tap
+
+catalog tap_schema.schemas tap_schema table
+catalog eit_syn.epn_core eit_syn table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog synopticmaps.epn_core synopticmaps table
+catalog omega_cubes.epn_core omega_cubes table
+catalog currents_epn.epn_core currents_epn table
+catalog gaia_dem.epn_core gaia_dem table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog omega_maps.epn_core omega_maps table
