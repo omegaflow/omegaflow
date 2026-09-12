@@ -92,7 +92,7 @@ compiler-lease s3://noaa-global-hourly-pds
 note Frage 1 ja — Stationsmessung, ISD stündlich; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_isd_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_isd_compiler, Pilot-Korn ein Station-Fenster (isd_01001099999_2025-03.bin), Manifestation noaa-isd-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
 
 compiler-lease s3://noaa-jpss
-note Frage 1 ja — polar-umlaufende Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_jpss_compiler pending (Register-Duty); Frage 4 entfällt.
+note Frage 1 ja — polar-umlaufende Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_jpss_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-11: noaa_jpss_compiler, Pilot-Korn ein Granule (OMPS-SDR, MAGIC OMP1); Manifestation noaa-jpss-cdn.yml pending (workflow_dispatch); Granule-Schleife offen.
 
 descoped s3://noaa-j-scope-pds
 note Frage 1 nein — J-SCOPE ist eine Prediction (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Prediction, kein Messwert).

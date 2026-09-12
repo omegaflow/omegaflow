@@ -303,6 +303,51 @@ pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
     Some(out)
 }
 
+pub fn verify_bin(magic: [u8; 4], bytes: &[u8]) -> Option<usize> {
+    if bytes.len() < 8 || bytes[0..4] != magic {
+        return None;
+    }
+    let smg = magic == MAGIC_SMG;
+    let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if n > (bytes.len() - 8) / rec {
+        return None;
+    }
+    let mut prev_t: Option<f64> = None;
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let t = f64_of(off)?;
+        off += 8;
+        off += 8;
+        off += 8;
+        off += 8;
+        off += 8;
+        off += 8;
+        let val = f64_of(off)?;
+        off += 8;
+        off += 4;
+        if smg {
+            off += 4;
+        }
+        if !t.is_finite() || !val.is_finite() {
+            return None;
+        }
+        if let Some(p) = prev_t {
+            if t < p {
+                return None;
+            }
+        }
+        prev_t = Some(t);
+    }
+    Some(n)
+}
+
 pub fn write_gbco(records: &[GbcoRec]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * GBCO_REC_BYTES);
     buf.extend_from_slice(&MAGIC_GBCO);
@@ -485,5 +530,61 @@ mod tests {
             elev: f64::NAN,
         }]);
         assert!(parse_gbco(&nan).is_none());
+    }
+
+    #[test]
+    fn verify_bin_streams_count_and_rejects_disorder() {
+        let records = vec![
+            GeoRec {
+                t: 1.0,
+                lat: 1.0,
+                lon: 2.0,
+                alt: 3.0,
+                freq: 0.0,
+                bin_width: 60.0,
+                val: 9.81,
+                comp: COMP_IGETS_G,
+                station: 0,
+            },
+            GeoRec {
+                t: 2.0,
+                lat: 1.0,
+                lon: 2.0,
+                alt: 3.0,
+                freq: 0.0,
+                bin_width: 60.0,
+                val: 9.82,
+                comp: COMP_IGETS_G,
+                station: 0,
+            },
+        ];
+        let bytes = write_bin(MAGIC_IGETS, &records);
+        assert_eq!(verify_bin(MAGIC_IGETS, &bytes), Some(2));
+        assert!(verify_bin(MAGIC_IGETS, b"IGT1").is_none());
+        assert!(verify_bin(MAGIC_BGR, &bytes).is_none());
+        let mut disorder = records;
+        disorder[1].t = 0.5;
+        let bytes = write_bin(MAGIC_IGETS, &disorder);
+        assert!(verify_bin(MAGIC_IGETS, &bytes).is_none());
+    }
+
+    #[test]
+    fn verify_bin_rejects_non_finite_time_and_value() {
+        let mut records = vec![GeoRec {
+            t: 1.0,
+            lat: 1.0,
+            lon: 2.0,
+            alt: 3.0,
+            freq: 0.0,
+            bin_width: 60.0,
+            val: 9.81,
+            comp: COMP_IGETS_G,
+            station: 0,
+        }];
+        records[0].t = f64::NAN;
+        assert!(verify_bin(MAGIC_IGETS, &write_bin(MAGIC_IGETS, &records)).is_none());
+        records[0].t = 1.0;
+        records[0].val = f64::INFINITY;
+        assert!(verify_bin(MAGIC_IGETS, &write_bin(MAGIC_IGETS, &records)).is_none());
     }
 }
