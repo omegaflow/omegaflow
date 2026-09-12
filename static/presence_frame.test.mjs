@@ -42,6 +42,40 @@ test("encodeFrame: missing omega is absent", () => {
   assert.equal(encodeFrame([1, 2, 3], 1), null);
 });
 
+test("encodeFrame: intensity+pan+tilt emit mask 0x07 in bit order", () => {
+  const bytes = encodeFrame(OMEGA, 1, 1.5, 1.25);
+  assert.deepEqual(Array.from(bytes), [
+    0x02, 0x07,
+    0x00, 0x00, 0x34, 0x42, // Σω = 45
+    0x00, 0x00, 0xc0, 0x3f, // pan 1.5
+    0x00, 0x00, 0xa0, 0x3f, // tilt 1.25
+  ]);
+});
+
+test("encodeFrame: pan only emits mask 0x03", () => {
+  const bytes = encodeFrame(OMEGA, 1, 2.0);
+  assert.deepEqual(Array.from(bytes), [
+    0x02, 0x03,
+    0x00, 0x00, 0x34, 0x42,
+    0x00, 0x00, 0x00, 0x40, // pan 2.0
+  ]);
+});
+
+test("encodeFrame: tilt only emits mask 0x05", () => {
+  const bytes = encodeFrame(OMEGA, 1, undefined, 1.0);
+  assert.deepEqual(Array.from(bytes), [
+    0x02, 0x05,
+    0x00, 0x00, 0x34, 0x42,
+    0x00, 0x00, 0x80, 0x3f, // tilt 1.0
+  ]);
+});
+
+test("encodeFrame: a non-finite pan clears its bit", () => {
+  const bytes = encodeFrame(OMEGA, 1, NaN);
+  assert.deepEqual(Array.from(bytes), [0x02, 0x01, 0x00, 0x00, 0x34, 0x42]);
+  assert.equal(encodeFrame(OMEGA, 1, Infinity).length, 6);
+});
+
 test("consented: reads the api's consent gate", () => {
   assert.equal(consented({ consent: () => true }), true);
   assert.equal(consented({ consent: () => false }), false);
@@ -61,6 +95,15 @@ test("makeWriter: consented writes one 6-byte frame to the simulated CDC", () =>
   assert.equal(writes.length, 1);
   assert.equal(writes[0].length, 6);
   assert.deepEqual(Array.from(writes[0]), Array.from(encodeFrame(OMEGA, 1)));
+});
+
+test("makeWriter: pan and tilt pass through to the wire", () => {
+  const writes = [];
+  const port = { write(bytes) { writes.push(bytes); } };
+  makeWriter(port, true).onFrame(OMEGA, 1, 1.5, 1.25);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].length, 14);
+  assert.deepEqual(Array.from(writes[0]), Array.from(encodeFrame(OMEGA, 1, 1.5, 1.25)));
 });
 
 test("makeWriter: withheld consent writes nothing", () => {
