@@ -1,12 +1,13 @@
 use crate::archivar::SampleRecord;
 use crate::archivar::*;
-use crate::mathematikerin::DiodeState;
+use crate::mathematikerin::{DiodeState, PresenceFrame};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Mutex, RwLock};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
+const KINETIC_TAG: u8 = 10;
 
 fn relay_tau(wire: f64, line: Option<f64>) -> Option<f64> {
     if wire > 0.0 {
@@ -23,6 +24,7 @@ struct WsConfig {
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
+    kinetic_rx: mpsc::Receiver<PresenceFrame>,
     sample_tx: mpsc::Sender<Vec<Sample>>,
     presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -45,6 +47,7 @@ impl TcpRadiator {
         constants_js: Vec<u8>,
         sample_tx: mpsc::Sender<Vec<Sample>>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+        kinetic_rx: mpsc::Receiver<PresenceFrame>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
         diode: Arc<RwLock<DiodeState>>,
@@ -72,7 +75,9 @@ impl TcpRadiator {
         let shutdown_clone = shutdown.clone();
         let handle = thread::spawn(move || {
             let mut field_txs: Vec<mpsc::SyncSender<Arc<Buffer>>> = Vec::new();
+            let mut kinetic_txs: Vec<mpsc::SyncSender<PresenceFrame>> = Vec::new();
             let mut latest: Arc<Buffer> = initial_field;
+            let mut kinetic_open = true;
             loop {
                 if shutdown_clone.load(Ordering::Relaxed) {
                     break;
@@ -85,11 +90,14 @@ impl TcpRadiator {
                         );
                     }
                     field_txs.push(ftx);
+                    let (ktx, krx) = mpsc::sync_channel::<PresenceFrame>(2);
+                    kinetic_txs.push(ktx);
                     let cfg = WsConfig {
                         bodies: bodies.clone(),
                         index_html: index_html.clone(),
                         constants_js: constants_js.clone(),
                         field_rx: frx,
+                        kinetic_rx: krx,
                         sample_tx: sample_tx.clone(),
                         presence_tx: presence_tx.clone(),
                         time: time.clone(),
@@ -110,6 +118,20 @@ impl TcpRadiator {
                     }
                     Err(mpsc::RecvTimeoutError::Timeout) => {}
                     Err(mpsc::RecvTimeoutError::Disconnected) => break,
+                }
+                if kinetic_open {
+                    match kinetic_rx.recv_timeout(std::time::Duration::from_secs_f64(2f64.powi(-8)))
+                    {
+                        Ok(frame) => {
+                            kinetic_txs.retain(|tx| match tx.try_send(frame) {
+                                Ok(_) => true,
+                                Err(mpsc::TrySendError::Full(_)) => true,
+                                Err(mpsc::TrySendError::Disconnected(_)) => false,
+                            });
+                        }
+                        Err(mpsc::RecvTimeoutError::Timeout) => {}
+                        Err(mpsc::RecvTimeoutError::Disconnected) => kinetic_open = false,
+                    }
                 }
             }
         });
@@ -411,6 +433,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
     ));
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
     let mut last_field_r: Option<Arc<Buffer>> = None;
+    let mut last_kinetic: Option<PresenceFrame> = None;
     let _ = stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode == 0x8 {
@@ -558,6 +581,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
 
             if let Ok(f) = cfg.field_rx.try_recv() {
                 last_field_r = Some(f);
+            }
+            while let Ok(f) = cfg.kinetic_rx.try_recv() {
+                last_kinetic = Some(f);
             }
             let Some(field) = last_field_r.clone() else {
                 continue;
@@ -827,6 +853,15 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 );
                 return;
             }
+            if let Some(frame) = last_kinetic {
+                if let Err(e) = write_ws_binary(&mut stream, &kinetic_frame_bytes(&frame)) {
+                    eprintln!(
+                        "ws kinetic write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
+            }
         }
     }
 }
@@ -958,6 +993,16 @@ fn sha1(data: &[u8]) -> [u8; 20] {
     }
     r
 }
+fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
+    let mut out = Vec::with_capacity(3 + 10 * 4);
+    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG]);
+    for v in &frame.omega {
+        out.extend_from_slice(&v.to_le_bytes());
+    }
+    out.extend_from_slice(&frame.aperture.to_le_bytes());
+    out
+}
+
 fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) -> std::io::Result<()> {
     let mut h = [0u8; 10];
     h[0] = 0x82;
