@@ -32,7 +32,7 @@ fn tap_query(root: &str, adql: &str) -> Option<String> {
     }
 }
 
-fn tap_query_votable(root: &str, adql: &str, td: bool) -> Option<String> {
+fn tap_query_votable(root: &str, adql: &str, td: bool, maxrec: usize) -> Option<String> {
     let format = if td { "votable/td" } else { "votable" };
     let out = Command::new("curl")
         .arg("-sSf")
@@ -45,6 +45,8 @@ fn tap_query_votable(root: &str, adql: &str, td: bool) -> Option<String> {
         .arg("LANG=ADQL")
         .arg("--data-urlencode")
         .arg(format!("FORMAT={}", format))
+        .arg("--data-urlencode")
+        .arg(format!("MAXREC={}", maxrec))
         .arg("--data-urlencode")
         .arg(format!("QUERY={}", adql))
         .arg(root)
@@ -1173,7 +1175,7 @@ fn main() {
         if let Some(o) = &order_by {
             q.push_str(&format!(" ORDER BY \"{}\"", o));
         }
-        let Some(body) = tap_query_votable(&root, &q, votable_td) else {
+        let Some(body) = tap_query_votable(&root, &q, votable_td, limit) else {
             eprintln!("query returned void");
             std::process::exit(1);
         };
