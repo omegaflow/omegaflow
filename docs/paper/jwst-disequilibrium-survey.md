@@ -2,7 +2,7 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: 84910e5b0eef0b7949914cb4c8c87797ec58ad7ed6f54fed4a3351280284a5ed
+  sha256: f011e1cf8fa06867442356e8a476895fe5e4053ad6f9ceb81872d416e11be1c0
   status: live
   see-also: 
 -->
@@ -12,7 +12,7 @@
 
 A life-bearing atmosphere departs from thermochemical equilibrium: it carries
 species whose coexistence a dead chemistry cannot reproduce. We measure that
-departure as a co-indexed fact on the species axis. For 48 curated JWST
+departure as a co-indexed fact. For 48 curated JWST
 transmission-spectroscopy targets we collect the species that the literature
 reports as detected, and ask whether thermochemical equilibrium at each
 planet's temperature reproduces them. The equilibrium is a gas Gibbs
@@ -21,7 +21,7 @@ from JANAF data. Sixteen hosts carry at least one species below the
 equilibrium floor, including photochemical SO2 on WASP-39 b and WASP-107 b
 and CO2 on K2-18 b, each many orders of magnitude above equilibrium. A
 permutation null over the catalog gives P of 0.94: the individual
-disequilibrium detections are real, but the catalog as a whole does not
+disequilibrium detections are real, but the catalog does not
 exceed chance pairing of species onto planet temperature. The claim that
 these atmospheres collectively break the field does not stand; the individual
 photochemical detections do. A second cleaning step reads the reservoir
