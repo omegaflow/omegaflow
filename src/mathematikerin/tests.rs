@@ -474,6 +474,9 @@ fn force_ref_medians_holds_reference_on_absence() {
             Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
             Arc::new(AtomicBool::new(false)),
+            Arc::new(std::sync::atomic::AtomicU8::new(
+                crate::archivar::hrv::TONE_ABSENT,
+            )),
             mpsc::channel().0,
             mpsc::channel().0,
             None,
@@ -521,6 +524,9 @@ fn force_ref_snaps_on_first_sight() {
             Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
             Arc::new(AtomicBool::new(false)),
+            Arc::new(std::sync::atomic::AtomicU8::new(
+                crate::archivar::hrv::TONE_ABSENT,
+            )),
             mpsc::channel().0,
             mpsc::channel().0,
             None,
@@ -552,6 +558,9 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
             Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
             Arc::new(AtomicBool::new(false)),
+            Arc::new(std::sync::atomic::AtomicU8::new(
+                crate::archivar::hrv::TONE_ABSENT,
+            )),
             mpsc::channel().0,
             mpsc::channel().0,
             None,
@@ -892,6 +901,9 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
             Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
             Arc::new(AtomicBool::new(false)),
+            Arc::new(std::sync::atomic::AtomicU8::new(
+                crate::archivar::hrv::TONE_ABSENT,
+            )),
             mpsc::channel().0,
             mpsc::channel().0,
             None,

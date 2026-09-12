@@ -1,4 +1,5 @@
 use super::*;
+use std::sync::atomic::AtomicU8;
 
 pub const Φ: f64 = 1.618033988749895;
 
@@ -9,6 +10,8 @@ pub const GRID_INIT: f64 = 2147483648.0;
 pub const JUMP_GRID: f64 = 268435456.0;
 
 pub const PERM_GROUND: f32 = f32::EPSILON;
+
+pub const TONE_FLOOR_SCALE: f32 = 0.25;
 
 pub const FORCE_NAME: [&str; 9] = [
     "em",
@@ -85,6 +88,7 @@ pub struct OmegaLoop {
     pub time: Arc<Mutex<Option<LeapSeconds>>>,
     pub shutdown: Arc<AtomicBool>,
     pub consent: Arc<AtomicBool>,
+    pub tone_code: Arc<AtomicU8>,
     pub acoustic_tx: mpsc::Sender<PresenceFrame>,
     pub seismic_tx: mpsc::Sender<PresenceFrame>,
     pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
@@ -158,6 +162,7 @@ pub struct OmegaLoop {
     pub matrix: MatrixMachine,
     pub te_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
     pub field_permeability: f32,
+    pub tone_scale: f32,
     pub prev_omega_sum: f32,
     pub prev_delta: f32,
     pub prev_in_te: f64,
@@ -176,6 +181,7 @@ impl OmegaLoop {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
+        tone_code: Arc<AtomicU8>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
         relay_tx: Option<mpsc::Sender<PresenceFrame>>,
@@ -195,6 +201,7 @@ impl OmegaLoop {
             time,
             shutdown,
             consent,
+            tone_code,
             acoustic_tx,
             seismic_tx,
             relay_tx,
@@ -265,6 +272,7 @@ impl OmegaLoop {
             matrix: MatrixMachine::new(machine_rx),
             te_topology: None,
             field_permeability: 0.0,
+            tone_scale: 1.0,
             prev_omega_sum: 0.0,
             prev_delta: 0.0,
             prev_in_te: 0.0,
@@ -295,7 +303,7 @@ impl OmegaLoop {
     pub fn presence_frame(&self) -> PresenceFrame {
         PresenceFrame {
             omega: self.probe_omega,
-            aperture: self.field_permeability,
+            aperture: self.field_permeability * self.tone_scale,
         }
     }
 
@@ -1305,6 +1313,15 @@ impl OmegaLoop {
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             }
+            let tone_target = if self.tone_code.load(std::sync::atomic::Ordering::SeqCst)
+                == crate::archivar::hrv::TONE_STRESSED
+            {
+                TONE_FLOOR_SCALE
+            } else {
+                1.0
+            };
+            let tone_alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
+            self.tone_scale += (tone_target - self.tone_scale) * tone_alpha;
             self.sky_tick();
             let frame = self.presence_frame();
             if !self.silent {
@@ -1409,6 +1426,7 @@ pub fn run_loop(
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
     consent: Arc<AtomicBool>,
+    tone_code: Arc<AtomicU8>,
     acoustic_tx: mpsc::Sender<PresenceFrame>,
     seismic_tx: mpsc::Sender<PresenceFrame>,
     relay_tx: Option<mpsc::Sender<PresenceFrame>>,
@@ -1427,6 +1445,7 @@ pub fn run_loop(
         time,
         shutdown.clone(),
         consent,
+        tone_code,
         acoustic_tx,
         seismic_tx,
         relay_tx,
@@ -1456,6 +1475,7 @@ impl LoopRadiator {
     pub fn new(
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
+        tone_code: Arc<AtomicU8>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
         relay_tx: Option<mpsc::Sender<PresenceFrame>>,
@@ -1554,6 +1574,7 @@ impl LoopRadiator {
                 time,
                 shutdown_clone,
                 consent,
+                tone_code,
                 acoustic_tx,
                 seismic_tx,
                 relay_tx,
