@@ -3,7 +3,7 @@
   session: Forschung-Folge V
   class: handover
   date: 2026-09-12
-  sha256: 81bc1641a62a67512ea19f240c63d0767396f6f55acf6654e2610f6650d1426b
+  sha256: 311d613977199bd85800949192f999b450fed188d620a1c14f5e0f9e8c8242f9
   status: live
 -->
 # Handover — Forschung-Folge V (2026-09-12)
@@ -14,6 +14,11 @@ viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
 ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+
+Dies ist die Forschung-Linie: hier steht nur, was diese Linie autonom trägt —
+Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
+überführt. Wiedervorlage gilt nur für Termine; „Warten auf Rückmeldung" trägt
+kein Datum.
 
 ## Sitzungs-Stand
 
