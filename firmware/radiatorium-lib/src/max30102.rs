@@ -15,6 +15,21 @@ pub const REG_LED2_PA: u8 = 0x0D;
 pub const SAMPLE_BYTES: usize = 6;
 pub const SAMPLE_MASK: u32 = 0x3FFFF;
 
+pub const LED1_PA_DEFAULT: u8 = 0x24;
+pub const LED2_PA_DEFAULT: u8 = 0x24;
+
+pub fn mode_config_spo2() -> u8 {
+    0x03
+}
+
+pub fn spo2_config_100hz_18bit_411us() -> u8 {
+    0x07
+}
+
+pub fn fifo_config_avg1() -> u8 {
+    0x00
+}
+
 pub fn parse_sample(bytes: &[u8]) -> Option<(u32, u32)> {
     if bytes.len() < SAMPLE_BYTES {
         return None;
@@ -75,5 +90,26 @@ mod tests {
         ];
         let samples: Vec<(u32, u32)> = Fifo::new(&bytes).collect();
         assert_eq!(samples, vec![(1, 2), (3, 4)]);
+    }
+
+    #[test]
+    fn mode_config_byte_is_spo2() {
+        assert_eq!(mode_config_spo2(), 0x03);
+    }
+
+    #[test]
+    fn spo2_config_byte_is_100hz_18bit_411us() {
+        assert_eq!(spo2_config_100hz_18bit_411us(), 0x07);
+    }
+
+    #[test]
+    fn led_pa_bytes_are_the_named_constants() {
+        assert_eq!(LED1_PA_DEFAULT, 0x24);
+        assert_eq!(LED2_PA_DEFAULT, 0x24);
+    }
+
+    #[test]
+    fn fifo_config_byte_is_avg1_no_rollover() {
+        assert_eq!(fifo_config_avg1(), 0x00);
     }
 }
