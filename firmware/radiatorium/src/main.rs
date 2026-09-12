@@ -9,11 +9,15 @@ use esp_hal::ledc::{
     LSGlobalClkSource, Ledc, LowSpeed,
 };
 use esp_hal::main;
+use esp_hal::mcpwm::{operator::PwmPinConfig, timer::PwmWorkingMode, McPwm, PeripheralClockConfig};
 use esp_hal::time::Rate;
 use esp_hal::usb::usb_serial_jtag::UsbSerialJtag;
 
 use radiatorium_lib::frame::FrameParser;
 use radiatorium_lib::pwm;
+
+const SERVO_TIMER_PERIOD_TICKS: u16 = 19_999;
+const SERVO_TIMER_PRESCALER: u8 = 159;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
@@ -58,6 +62,35 @@ fn main() -> ! {
 
     let mut parser = FrameParser::new();
     let mut rx = [0u8; 64];
+
+    let mcpwm_clock = PeripheralClockConfig::with_prescaler(0);
+    let mut mcpwm = McPwm::new(peripherals.MCPWM0, mcpwm_clock);
+
+    mcpwm.operator0.set_timer(&mcpwm.timer0);
+    mcpwm.operator1.set_timer(&mcpwm.timer0);
+
+    let mut pan = mcpwm
+        .operator0
+        .with_pin_a(peripherals.GPIO15, PwmPinConfig::UP_ACTIVE_HIGH);
+    let mut tilt = mcpwm
+        .operator1
+        .with_pin_a(peripherals.GPIO16, PwmPinConfig::UP_ACTIVE_HIGH);
+
+    let servo_timer = mcpwm_clock.timer_clock_with_prescaler(
+        SERVO_TIMER_PERIOD_TICKS,
+        PwmWorkingMode::Increase,
+        SERVO_TIMER_PRESCALER,
+    );
+    mcpwm.timer0.start(servo_timer);
+
+    let neutral = pwm::servo_ticks(
+        SERVO_TIMER_PERIOD_TICKS,
+        pwm::SERVO_NEUTRAL_MS,
+        pwm::SERVO_PERIOD_MS,
+    )
+    .unwrap();
+    pan.set_timestamp(neutral);
+    tilt.set_timestamp(neutral);
 
     loop {
         let n = usb_rx.drain_rx_fifo(&mut rx);
