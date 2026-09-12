@@ -119,3 +119,16 @@ jobs:
               gh release upload naif.jpl.nasa.gov "$f" --clobber --repo omegaflow/sources
             fi
           done
+
+  gll-1990-rtr-full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    needs: gll-1990-rtr-ck
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Manifest the full Galileo -77000 rotor CK series (570 products + mk00062a.tsc) to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin gll_ck_manifestor -- --ci-mode

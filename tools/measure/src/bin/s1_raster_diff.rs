@@ -1,14 +1,43 @@
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
-fn type_size(typ: u16) -> usize {
-    match typ {
+#[derive(Clone, Copy, PartialEq)]
+enum Surf {
+    Out,
+    Unreliable,
+    Speckle,
+    Water,
+    Scar,
+    Unchanged,
+}
+
+fn surf_char(s: Surf) -> char {
+    match s {
+        Surf::Out => '.',
+        Surf::Unreliable => '?',
+        Surf::Speckle => '~',
+        Surf::Water => 'W',
+        Surf::Scar => 'S',
+        Surf::Unchanged => '=',
+    }
+}
+
+fn percentile(sorted: &[f64], p: f64) -> f64 {
+    if sorted.is_empty() {
+        return f64::NAN;
+    }
+    let idx = ((sorted.len() - 1) as f64 * p).round() as usize;
+    sorted[idx.min(sorted.len() - 1)]
+}
+
+fn type_size(typ: u16) -> Option<usize> {
+    Some(match typ {
         1 | 2 | 6 | 7 => 1,
         3 | 8 => 2,
         4 | 9 | 11 => 4,
         5 | 10 | 12 => 8,
-        _ => 0,
-    }
+        _ => return None,
+    })
 }
 
 struct Cog {
@@ -75,7 +104,7 @@ fn tag_u32s(
     if cnt == 0 {
         return Ok(vec![]);
     }
-    let sz = type_size(typ);
+    let sz = type_size(typ).ok_or_else(|| format!("{path}: Tag {tag} type {typ} unknown"))?;
     let mut f = std::fs::File::open(path).map_err(|e| format!("open {path}: {e}"))?;
     let mut out = Vec::with_capacity(cnt as usize);
     for k in 0..cnt as usize {
@@ -89,7 +118,7 @@ fn tag_u32s(
             1 => b[0] as u32,
             2 => u16::from_le_bytes([b[0], b[1]]) as u32,
             4 => u32::from_le_bytes(b),
-            _ => 0,
+            other => return Err(format!("{path}: Tag {tag} type size {other} not a u32")),
         };
         out.push(v);
     }
@@ -102,7 +131,7 @@ fn tag_f64s(
     tag: u16,
 ) -> Result<Vec<f64>, String> {
     let (typ, cnt, off) = *tags.get(&tag).ok_or(format!("{path}: Tag {tag} absent"))?;
-    let sz = type_size(typ);
+    let sz = type_size(typ).ok_or_else(|| format!("{path}: Tag {tag} type {typ} unknown"))?;
     let mut f = std::fs::File::open(path).map_err(|e| format!("open {path}: {e}"))?;
     let mut out = Vec::with_capacity(cnt as usize);
     for k in 0..cnt as usize {
@@ -166,12 +195,15 @@ impl Cog {
                 geo.len() / 6
             ));
         }
-        if width > 0 && gx.last().copied().unwrap_or(0.0) as usize + 1 != width {
-            eprintln!(
-                "{path}: gx-max {} != width {} (toleriert)",
-                gx.last().copied().unwrap_or(0.0) as usize,
-                width
-            );
+        if width > 0 {
+            if let Some(&gx_max) = gx.last() {
+                if gx_max as usize + 1 != width {
+                    eprintln!(
+                        "{path}: gx-max {} != width {} (tolerated)",
+                        gx_max as usize, width
+                    );
+                }
+            }
         }
         let across = (width + tw - 1) / tw;
         Ok(Cog {
@@ -437,6 +469,13 @@ fn main() {
     let nx = ((lon1 - lon0) / step).round() as usize + 1;
     let ny = ((lat1 - lat0) / step).round() as usize + 1;
 
+    let (cp_lon, cp_lat) = (85.515, 28.271);
+    let db_dark = 4.0;
+    let db_bright = 4.0;
+
+    let mut cells: Vec<Vec<Option<(f64, f64, f64)>>> = Vec::with_capacity(ny);
+    let mut post_amps: Vec<f64> = Vec::new();
+    let mut vor_amps: Vec<f64> = Vec::new();
     let mut n_valid = 0usize;
     let mut sum_db = 0.0f64;
     let mut sum_vp = 0.0f64;
@@ -448,7 +487,6 @@ fn main() {
     let mut dark_min_lat = f64::MAX;
     let mut dark_max_lat = f64::MIN;
     let mut near_collapse_dark = 0usize;
-    let (cp_lon, cp_lat) = (85.515, 28.271);
     let mut post_hit = 0usize;
     let mut vor_hit = 0usize;
     let mut perr = 0usize;
@@ -456,7 +494,7 @@ fn main() {
 
     for j in 0..ny {
         let lat = lat0 + j as f64 * step;
-        let mut row_chars: Vec<char> = Vec::with_capacity(nx);
+        let mut row: Vec<Option<(f64, f64, f64)>> = Vec::with_capacity(nx);
         for i in 0..nx {
             let lon = lon0 + i as f64 * step;
             let xp = post.inverse(lon, lat);
@@ -467,7 +505,7 @@ fn main() {
             if xv.is_some() {
                 vor_hit += 1;
             }
-            let mut ch = '.';
+            let mut cell = None;
             if let (Some((px, py)), Some((vx, vy))) = (xp, xv) {
                 if px >= 0.0
                     && py >= 0.0
@@ -497,11 +535,14 @@ fn main() {
                     };
                     if vp > 0.0 && vv > 0.0 {
                         let db = 20.0 * (vp / vv).log10();
+                        post_amps.push(vp);
+                        vor_amps.push(vv);
+                        cell = Some((vp, vv, db));
                         n_valid += 1;
                         sum_db += db;
                         sum_vp += vp;
                         sum_vv += vv;
-                        if db < -4.0 {
+                        if db < -db_dark {
                             n_dark += 1;
                             dark_min_lon = dark_min_lon.min(lon);
                             dark_max_lon = dark_max_lon.max(lon);
@@ -510,20 +551,48 @@ fn main() {
                             if (lon - cp_lon).abs() < 0.02 && (lat - cp_lat).abs() < 0.02 {
                                 near_collapse_dark += 1;
                             }
-                            ch = 'D';
-                        } else if db > 4.0 {
+                        } else if db > db_bright {
                             n_bright += 1;
-                            ch = 'B';
-                        } else {
-                            ch = '=';
                         }
                     }
                 }
             }
-            row_chars.push(ch);
+            row.push(cell);
         }
-        println!("  {}", row_chars.iter().collect::<String>());
+        cells.push(row);
     }
+
+    if n_valid == 0 {
+        println!("no valid pixels in window — bbox outside both scenes?");
+        std::process::exit(0);
+    }
+    let mean_db = sum_db / n_valid as f64;
+    let mean_vp = sum_vp / n_valid as f64;
+    let mean_vv = sum_vv / n_valid as f64;
+    println!(
+        "valid pixels: {n_valid}  ({:.1}% of window)",
+        100.0 * n_valid as f64 / (nx * ny) as f64
+    );
+    println!("post-amplitude mean: {mean_vp:.1}");
+    println!("pre-amplitude  mean: {mean_vv:.1}");
+    println!("mean dB change: {mean_db:+.2} dB");
+    println!("darkening (raw dB < -{db_dark}): {n_dark} pixels");
+    if n_dark > 0 {
+        println!("   of which near collapse point (±0.02°): {near_collapse_dark}");
+        println!(
+            "   darkened extent: lon {:.4}..{:.4}, lat {:.4}..{:.4}",
+            dark_min_lon, dark_max_lon, dark_min_lat, dark_max_lat
+        );
+        let w_km = (dark_max_lon - dark_min_lon) * 111.32 * (cp_lat.to_radians().cos());
+        let h_km = (dark_max_lat - dark_min_lat) * 111.32;
+        println!("   ~footprint: {w_km:.1} km (W-E) x {h_km:.1} km (N-S)");
+    }
+    println!("brightening (raw dB > +{db_bright}): {n_bright} pixels");
+    println!(
+        "post.inverse hits: {post_hit}/{}, vor.inverse hits: {vor_hit}/{} (post-err {perr}, vor-err {verr})",
+        nx * ny,
+        nx * ny
+    );
 
     println!("\n=== Befund ===");
     for (tag, lon, lat) in [
@@ -557,36 +626,117 @@ fn main() {
             },
         );
     }
+
+    let mut post_sorted = post_amps.clone();
+    post_sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let mut vor_sorted = vor_amps.clone();
+    vor_sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+    let noise_floor_vor = percentile(&vor_sorted, 0.02);
+    let dark_post = percentile(&post_sorted, 0.10);
+    let bright_post = percentile(&post_sorted, 0.90);
+
+    println!("\n=== Robust flood/scar surface ===");
     println!(
-        "post.inverse hits: {post_hit}/{}, vor.inverse hits: {vor_hit}/{} (post-err {perr}, vor-err {verr})",
-        nx * ny,
-        nx * ny
+        "data-derived gates: pre noise floor {noise_floor_vor:.1}, post dark {dark_post:.1}, post bright {bright_post:.1}"
     );
-    if n_valid == 0 {
-        println!("no valid pixels in window — bbox outside both scenes?");
-        std::process::exit(0);
+
+    let mut surf: Vec<Vec<Surf>> = Vec::with_capacity(ny);
+    for j in 0..ny {
+        let mut row = Vec::with_capacity(nx);
+        for i in 0..nx {
+            let s = match cells[j][i] {
+                Some((p, v, d)) => {
+                    if v <= noise_floor_vor {
+                        Surf::Unreliable
+                    } else if d < -db_dark && p < dark_post {
+                        Surf::Water
+                    } else if d > db_bright && p > bright_post {
+                        Surf::Scar
+                    } else {
+                        Surf::Unchanged
+                    }
+                }
+                None => Surf::Out,
+            };
+            row.push(s);
+        }
+        surf.push(row);
     }
-    let mean_db = sum_db / n_valid as f64;
-    let mean_vp = sum_vp / n_valid as f64;
-    let mean_vv = sum_vv / n_valid as f64;
-    println!(
-        "valid pixels: {n_valid}  ({:.1}% of window)",
-        100.0 * n_valid as f64 / (nx * ny) as f64
-    );
-    println!("post-amplitude mean: {mean_vp:.1}");
-    println!("pre-amplitude  mean: {mean_vv:.1}");
-    println!("mean dB change: {mean_db:+.2} dB");
-    println!("darkening (dB < -4, new water/flat surface): {n_dark} pixels");
-    if n_dark > 0 {
-        println!("   of which near collapse point (±0.02°): {near_collapse_dark}");
+
+    let mut final_surf = surf.clone();
+    for j in 0..ny {
+        for i in 0..nx {
+            let s = surf[j][i];
+            if s != Surf::Water && s != Surf::Scar {
+                continue;
+            }
+            let mut support = 0usize;
+            for dj in -1isize..=1 {
+                for di in -1isize..=1 {
+                    if di == 0 && dj == 0 {
+                        continue;
+                    }
+                    let (nj, ni) = (j as isize + dj, i as isize + di);
+                    if nj < 0 || ni < 0 || nj >= ny as isize || ni >= nx as isize {
+                        continue;
+                    }
+                    if surf[nj as usize][ni as usize] == s {
+                        support += 1;
+                    }
+                }
+            }
+            if support == 0 {
+                final_surf[j][i] = Surf::Speckle;
+            }
+        }
+    }
+
+    let mut n_water = 0usize;
+    let mut n_scar = 0usize;
+    let mut n_speckle = 0usize;
+    let mut n_unreliable = 0usize;
+    let mut n_unchanged = 0usize;
+    let mut w_min_lon = f64::MAX;
+    let mut w_max_lon = f64::MIN;
+    let mut w_min_lat = f64::MAX;
+    let mut w_max_lat = f64::MIN;
+    for j in 0..ny {
+        let mut row_chars: Vec<char> = Vec::with_capacity(nx);
+        for i in 0..nx {
+            let s = final_surf[j][i];
+            match s {
+                Surf::Water => {
+                    n_water += 1;
+                    let lon = lon0 + i as f64 * step;
+                    let lat = lat0 + j as f64 * step;
+                    w_min_lon = w_min_lon.min(lon);
+                    w_max_lon = w_max_lon.max(lon);
+                    w_min_lat = w_min_lat.min(lat);
+                    w_max_lat = w_max_lat.max(lat);
+                }
+                Surf::Scar => n_scar += 1,
+                Surf::Speckle => n_speckle += 1,
+                Surf::Unreliable => n_unreliable += 1,
+                Surf::Unchanged => n_unchanged += 1,
+                Surf::Out => {}
+            }
+            row_chars.push(surf_char(s));
+        }
+        println!("  {}", row_chars.iter().collect::<String>());
+    }
+    println!("water (flood surface): {n_water} pixels");
+    if n_water > 0 {
+        let w_km = (w_max_lon - w_min_lon) * 111.32 * (cp_lat.to_radians().cos());
+        let h_km = (w_max_lat - w_min_lat) * 111.32;
         println!(
-            "   darkened extent: lon {:.4}..{:.4}, lat {:.4}..{:.4}",
-            dark_min_lon, dark_max_lon, dark_min_lat, dark_max_lat
+            "   water extent: lon {:.4}..{:.4}, lat {:.4}..{:.4}  (~{w_km:.1} km W-E x {h_km:.1} km N-S)",
+            w_min_lon, w_max_lon, w_min_lat, w_max_lat
         );
-        let w_km = (dark_max_lon - dark_min_lon) * 111.32 * (cp_lat.to_radians().cos());
-        let h_km = (dark_max_lat - dark_min_lat) * 111.32;
-        println!("   ~footprint: {w_km:.1} km (W-E) x {h_km:.1} km (N-S)");
     }
-    println!("brightening (dB > +4, bare/Bar-Scar): {n_bright} pixels");
-    println!("Legend: D=darkening B=brightening ==unchanged .=outside/nodata");
+    println!("scar (bare/debris surface): {n_scar} pixels");
+    println!("speckle (isolated, demoted): {n_speckle} pixels");
+    println!("unreliable (pre <= noise floor): {n_unreliable} pixels");
+    println!("unchanged: {n_unchanged} pixels");
+    println!("Legend: W=water S=scar ~=speckle ?=unreliable ==unchanged .=outside/nodata");
 }
