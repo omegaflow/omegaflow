@@ -22,4 +22,4 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 ## Abschluss
 
 Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
-Abschluss-Check (`/abschluss`).
+Abschluss-Check mit Commit und Push (`/commit`).
