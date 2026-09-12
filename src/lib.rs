@@ -51,6 +51,7 @@ pub use archivar::lzw;
 pub use archivar::matfile;
 pub use archivar::mpcorb;
 pub use archivar::nc4;
+pub use archivar::ndk;
 pub use archivar::netcdf;
 pub use archivar::noaa_nodd;
 pub use archivar::odf;

@@ -47,9 +47,6 @@ note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Da
 blocked parser-def quakeml
 url https://www.isc.ac.uk/cgi-bin/web-db-run
 note ISC (International Seismological Centre) defintives globales Bulletin (web-db-run.json/query.json CDN-Captures): live gemessen 2026-09-07 — web-db-run?request=COMPREHENSIVE&out_format=QuakeML antwortet HTTP 200 mit echtem QuakeML (122 KB, ISC/bulletin inkl. Phasen); fdsnws/event query lief in den Timeout. Messung (Hypozentrum + Phasen-Ankuenfte) echt, Format QuakeML unkonsumierbar — Gap: QuakeML-Parser.
-blocked parser-def ndk
-url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form
-note Global-CMT (form.json CDN-Capture; qcmt.ndk live gemessen 2026-09-07, HTTP 200): Centroid-Moment-Tensor-Katalog (M0/Mw, centroid lat/lon/depth, strike/dip/rake) — ein eigener physikalischer Messwert-Typ (nicht Epizentrum-Katalog). Die CMT5-Form antwortet HTML, der Katalog liegt als NDK-Text (qcmt.ndk, mehrzeilige Events) — Gap: NDK-Parser.
 blocked parser-def netcdf
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
 note COSMIC-2 FORMOSAT-7 (level3.json CDN-Capture; live gemessen 2026-09-07, HTTP 200): NRT-Level-3-Radio-Okkultations-Profile als netCDF-Granulate unter dem Verzeichnis-Index (kein Skalar-Punkt-Feed). Messung (Brechungsindex/Bending-Angle-Profile, em) echt, Format netCDF-Granulat-Enumeration unkonsumierbar — Gap: COSMIC2-Granulat-Profil-Parser.
