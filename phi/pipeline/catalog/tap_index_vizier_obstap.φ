@@ -1,0 +1,9 @@
+# tap-inventar https://cdsarc.cds.unistra.fr/saadavizier.tap/tap
+catalog TAP_SCHEMA.columns TAP_SCHEMA table
+catalog TAP_SCHEMA.keys TAP_SCHEMA table
+catalog TAP_SCHEMA.tables TAP_SCHEMA table
+catalog TAP_SCHEMA.schemas TAP_SCHEMA table
+catalog TAP_SCHEMA.key_columns TAP_SCHEMA table
+catalog ivoa.obscore ivoa table
+catalog ivoa.obscore2 ivoa view
+catalog ivoa.epn_core ivoa table

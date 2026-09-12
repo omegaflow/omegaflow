@@ -1,0 +1,17 @@
+# tap-inventar https://tools.ssdc.asi.it/TAPSSDC/tap
+
+catalog TAP_SCHEMA.schemas TAP_SCHEMA table
+catalog TAP_SCHEMA.tables TAP_SCHEMA table
+catalog TAP_SCHEMA.columns TAP_SCHEMA table
+catalog TAP_SCHEMA.keys TAP_SCHEMA table
+catalog TAP_SCHEMA.key_columns TAP_SCHEMA table
+catalog neorocks_phys.epn_core neorocks_phys view
+catalog neorocks_obs.epn_core neorocks_obs view
+catalog catalogs.mmc_sedentary catalogs table
+catalog catalogs.mmc_aglgrd1cat catalogs table
+catalog catalogs.mmc_bzcat5th catalogs table
+catalog catalogs.mmc_3egcat catalogs table
+catalog catalogs.mmc_nublazar catalogs table
+catalog catalogs.mmc_hgoodsdr1 catalogs table
+catalog ivoa.obscore ivoa table
+catalog ivoa.obscore_hea ivoa table
