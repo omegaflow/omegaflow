@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Surf {
     Out,
     Unreliable,
@@ -20,6 +20,61 @@ fn surf_char(s: Surf) -> char {
         Surf::Scar => 'S',
         Surf::Unchanged => '=',
     }
+}
+
+fn classify_cell(
+    cell: Option<(f64, f64, f64)>,
+    noise_floor_vor: f64,
+    dark_post: f64,
+    bright_post: f64,
+    db_dark: f64,
+    db_bright: f64,
+) -> Surf {
+    match cell {
+        Some((p, v, d)) => {
+            if v <= noise_floor_vor {
+                Surf::Unreliable
+            } else if d < -db_dark && p < dark_post {
+                Surf::Water
+            } else if d > db_bright && p > bright_post {
+                Surf::Scar
+            } else {
+                Surf::Unchanged
+            }
+        }
+        None => Surf::Out,
+    }
+}
+
+fn demote_speckle(surf: &[Vec<Surf>], ny: usize, nx: usize) -> Vec<Vec<Surf>> {
+    let mut out = surf.to_vec();
+    for j in 0..ny {
+        for i in 0..nx {
+            let s = surf[j][i];
+            if s != Surf::Water && s != Surf::Scar {
+                continue;
+            }
+            let mut support = 0usize;
+            for dj in -1isize..=1 {
+                for di in -1isize..=1 {
+                    if di == 0 && dj == 0 {
+                        continue;
+                    }
+                    let (nj, ni) = (j as isize + dj, i as isize + di);
+                    if nj < 0 || ni < 0 || nj >= ny as isize || ni >= nx as isize {
+                        continue;
+                    }
+                    if surf[nj as usize][ni as usize] == s {
+                        support += 1;
+                    }
+                }
+            }
+            if support == 0 {
+                out[j][i] = Surf::Speckle;
+            }
+        }
+    }
+    out
 }
 
 fn percentile(sorted: &[f64], p: f64) -> f64 {
@@ -645,52 +700,19 @@ fn main() {
     for j in 0..ny {
         let mut row = Vec::with_capacity(nx);
         for i in 0..nx {
-            let s = match cells[j][i] {
-                Some((p, v, d)) => {
-                    if v <= noise_floor_vor {
-                        Surf::Unreliable
-                    } else if d < -db_dark && p < dark_post {
-                        Surf::Water
-                    } else if d > db_bright && p > bright_post {
-                        Surf::Scar
-                    } else {
-                        Surf::Unchanged
-                    }
-                }
-                None => Surf::Out,
-            };
-            row.push(s);
+            row.push(classify_cell(
+                cells[j][i],
+                noise_floor_vor,
+                dark_post,
+                bright_post,
+                db_dark,
+                db_bright,
+            ));
         }
         surf.push(row);
     }
 
-    let mut final_surf = surf.clone();
-    for j in 0..ny {
-        for i in 0..nx {
-            let s = surf[j][i];
-            if s != Surf::Water && s != Surf::Scar {
-                continue;
-            }
-            let mut support = 0usize;
-            for dj in -1isize..=1 {
-                for di in -1isize..=1 {
-                    if di == 0 && dj == 0 {
-                        continue;
-                    }
-                    let (nj, ni) = (j as isize + dj, i as isize + di);
-                    if nj < 0 || ni < 0 || nj >= ny as isize || ni >= nx as isize {
-                        continue;
-                    }
-                    if surf[nj as usize][ni as usize] == s {
-                        support += 1;
-                    }
-                }
-            }
-            if support == 0 {
-                final_surf[j][i] = Surf::Speckle;
-            }
-        }
-    }
+    let final_surf = demote_speckle(&surf, ny, nx);
 
     let mut n_water = 0usize;
     let mut n_scar = 0usize;
@@ -739,4 +761,144 @@ fn main() {
     println!("unreliable (pre <= noise floor): {n_unreliable} pixels");
     println!("unchanged: {n_unchanged} pixels");
     println!("Legend: W=water S=scar ~=speckle ?=unreliable ==unchanged .=outside/nodata");
+
+    println!("\n=== Surface-artifact pass ===");
+    println!("layover/shadow: pending — no gridded DEM registered in phi/sources.φ (gebco_bathymetry_compiler is a point-query Gestalt witness, not a raster DEM)");
+    println!("incidence-out-of-band: absent — the S1-GRD COG carries backscatter amplitude only (assets vv/vh; no incidence band, sat:incidence_angle absent in STAC)");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn gates() -> (f64, f64, f64, f64, f64) {
+        (10.0, 20.0, 400.0, 4.0, 4.0)
+    }
+
+    #[test]
+    fn calibration_fp_neutral_cells_stay_unchanged() {
+        let (nf, dark, bright, db_dark, db_bright) = gates();
+        let mut fp = 0usize;
+        for p in [dark + 1.0, (dark + bright) / 2.0, bright - 1.0] {
+            for v in [nf + 1.0, 200.0, 1000.0] {
+                for d in [-1.0, 0.0, 1.0] {
+                    let s = classify_cell(Some((p, v, d)), nf, dark, bright, db_dark, db_bright);
+                    if s == Surf::Water || s == Surf::Scar {
+                        fp += 1;
+                    }
+                }
+            }
+        }
+        assert_eq!(
+            fp, 0,
+            "Kalibrier-Gate FP: {fp} neutral cells read Water/Scar — the null does not hold"
+        );
+    }
+
+    #[test]
+    fn calibration_fp_conjunction_blocks_dark_and_bright() {
+        let (nf, dark, bright, db_dark, db_bright) = gates();
+        let s_dark = classify_cell(
+            Some((dark + 1.0, 200.0, -8.0)),
+            nf,
+            dark,
+            bright,
+            db_dark,
+            db_bright,
+        );
+        assert_ne!(
+            s_dark,
+            Surf::Water,
+            "darkening without low post amplitude must not read Water"
+        );
+        let s_bright = classify_cell(
+            Some((bright - 1.0, 200.0, 8.0)),
+            nf,
+            dark,
+            bright,
+            db_dark,
+            db_bright,
+        );
+        assert_ne!(
+            s_bright,
+            Surf::Scar,
+            "brightening without high post amplitude must not read Scar"
+        );
+    }
+
+    #[test]
+    fn calibration_fn_true_water_and_scar_are_found() {
+        let (nf, dark, bright, db_dark, db_bright) = gates();
+        let mut found = 0usize;
+        for (p, d, want) in [
+            (dark - 1.0, -8.0, Surf::Water),
+            (dark - 5.0, -12.0, Surf::Water),
+            (bright + 1.0, 8.0, Surf::Scar),
+            (bright + 5.0, 12.0, Surf::Scar),
+        ] {
+            let s = classify_cell(Some((p, 200.0, d)), nf, dark, bright, db_dark, db_bright);
+            if s == want {
+                found += 1;
+            }
+        }
+        assert_eq!(
+            found, 4,
+            "Kalibrier-Gate FN: {found}/4 true surfaces found — the gate overlooks the surface"
+        );
+    }
+
+    #[test]
+    fn calibration_symmetry_classification_is_deterministic() {
+        let (nf, dark, bright, db_dark, db_bright) = gates();
+        let cell = Some((50.0, 200.0, -2.0));
+        let a = classify_cell(cell, nf, dark, bright, db_dark, db_bright);
+        let b = classify_cell(cell, nf, dark, bright, db_dark, db_bright);
+        assert_eq!(a, b, "Kalibrier-Gate symmetry: a=a classifies unequally");
+    }
+
+    #[test]
+    fn calibration_floor_below_noise_reads_unreliable() {
+        let (nf, dark, bright, db_dark, db_bright) = gates();
+        let mut non_unreliable = 0usize;
+        for v in [nf - 1.0, nf, 0.0] {
+            for d in [-12.0, -8.0, 0.0, 8.0, 12.0] {
+                let s = classify_cell(Some((1.0, v, d)), nf, dark, bright, db_dark, db_bright);
+                if s != Surf::Unreliable {
+                    non_unreliable += 1;
+                }
+            }
+        }
+        assert_eq!(
+            non_unreliable, 0,
+            "Kalibrier-Gate floor: {non_unreliable} cells at/below the noise floor read beyond Unreliable"
+        );
+    }
+
+    #[test]
+    fn calibration_speckle_floor_isolated_water_is_demoted() {
+        let n = 5usize;
+        let mut surf = vec![vec![Surf::Unchanged; n]; n];
+        surf[2][2] = Surf::Water;
+        let out = demote_speckle(&surf, n, n);
+        assert_eq!(
+            out[2][2],
+            Surf::Speckle,
+            "isolated water must demote to Speckle"
+        );
+
+        let mut surf2 = vec![vec![Surf::Unchanged; n]; n];
+        surf2[2][2] = Surf::Water;
+        surf2[2][3] = Surf::Water;
+        let out2 = demote_speckle(&surf2, n, n);
+        assert_eq!(
+            out2[2][2],
+            Surf::Water,
+            "supported water must survive demotion"
+        );
+        assert_eq!(
+            out2[2][3],
+            Surf::Water,
+            "supported water must survive demotion"
+        );
+    }
 }

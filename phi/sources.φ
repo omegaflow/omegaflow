@@ -5842,6 +5842,12 @@ field noaa_keo_psal_psu noaa_keo_psal_psu gaussian-inverse-square diffusion psu 
 field noaa_keo_ucur_ms noaa_keo_ucur_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 field noaa_keo_vcur_ms noaa_keo_vcur_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
+format galileo_odf
+at earth
+ttl 604800
+field observable_hz galileo_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odr.bin
 format galileo_odr
 at earth
@@ -6382,6 +6388,15 @@ field flux65 akari_fis_flux_65um_jy inverse-square em Jy 604800 0.0 0.0
 field flux90 akari_fis_flux_90um_jy inverse-square em Jy 604800 0.0 0.0
 field flux140 akari_fis_flux_140um_jy inverse-square em Jy 604800 0.0 0.0
 field flux160 akari_fis_flux_160um_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+objname,ra,dec,flux09,flux18+FROM+akari_irc+WHERE+flux09+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux09 akari_irc_flux_09um_jy inverse-square em Jy 604800 0.0 0.0
+field flux18 akari_irc_flux_18um_jy inverse-square em Jy 604800 0.0 0.0
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
 ttl 604800
@@ -8134,4 +8149,11 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_chime_cat1.json
 format json
 ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field dm frb_chime_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
+field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 
