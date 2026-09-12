@@ -1,4 +1,4 @@
-use omegaflow::force::{force_name_of, gate_weigh, parse_library};
+use omegaflow::force::{build_weigh_index, force_name_of, gate_weigh_indexed, parse_library};
 use std::io::Write;
 
 fn main() {
@@ -14,6 +14,7 @@ fn main() {
             std::process::exit(1);
         }
     };
+    let index = build_weigh_index(&library);
     let content = match std::fs::read_to_string(&args[2]) {
         Ok(c) => c,
         Err(_) => {
@@ -31,7 +32,18 @@ fn main() {
         Some(p) => p.clone(),
         None => format!("phi/pipeline/weights_{}.txt", base),
     };
-    let mut out = String::new();
+    let mut out = match std::fs::File::create(&out_path) {
+        Ok(f) => std::io::BufWriter::new(f),
+        Err(_) => {
+            eprintln!("source_scanner: output unwritable: {}", out_path);
+            std::process::exit(1);
+        }
+    };
+    if writeln!(out, "# {} tags in the library", library.len()).is_err() {
+        eprintln!("source_scanner: output unwritable: {}", out_path);
+        std::process::exit(1);
+    }
+    let mut written = 0usize;
     for line in content.lines() {
         let t = line.trim();
         if t.is_empty() || t.starts_with('#') && !t.starts_with("# dataset ") {
@@ -48,26 +60,23 @@ fn main() {
         } else {
             t.to_string()
         };
-        let g = gate_weigh(&text, &library);
+        let g = gate_weigh_indexed(&text, &library, &index);
         let force_name = g.force.and_then(force_name_of).unwrap_or("-");
-        out.push_str(&format!("{} | {} | {}\n", g.weight, force_name, text));
-    }
-    match std::fs::File::create(&out_path).and_then(|mut f| {
-        f.write_all(format!("# {} tags in the library\n", library.len()).as_bytes())
-            .and(f.write_all(out.as_bytes()))
-    }) {
-        Ok(()) => {
-            eprintln!(
-                "source_scanner: {} records → {}",
-                count_records(&content),
-                out_path
-            );
-        }
-        Err(_) => {
+        if writeln!(out, "{} | {} | {}", g.weight, force_name, text).is_err() {
             eprintln!("source_scanner: output unwritable: {}", out_path);
             std::process::exit(1);
         }
+        written += 1;
+        if written % 10_000 == 0 {
+            let _ = out.flush();
+        }
     }
+    let _ = out.flush();
+    eprintln!(
+        "source_scanner: {} records → {}",
+        count_records(&content),
+        out_path
+    );
 }
 
 fn count_records(content: &str) -> usize {
