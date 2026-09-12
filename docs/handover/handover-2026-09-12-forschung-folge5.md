@@ -3,7 +3,7 @@
   session: Forschung-Folge V
   class: handover
   date: 2026-09-12
-  sha256: 476d3356ec50b6fb108a06d4a3a6c6949b5c16c16b230ce7442ecf0c9b7b32d8
+  sha256: 81bc1641a62a67512ea19f240c63d0767396f6f55acf6654e2610f6650d1426b
   status: live
 -->
 # Handover — Forschung-Folge V (2026-09-12)
@@ -32,6 +32,10 @@ ci-check-Lauf misst die Behoben-Frage.
 
 ## Nadeln
 
+- Ⅰ Jeans-Residuum bis Gaia DR4 (Wiedervorlage 2026-12-02).
+- Ⅱ JUICE-Flyby 28./29.9. (Wiedervorlage 2026-09-28) · Europa Clipper 3.12.
+  (Wiedervorlage 2026-12-03).
+- gaia-dr4-iapetus (Wiedervorlage 2026-12-02).
 - Ⅳ LAIC — CSES, TEC retro pre-2024, Instrument A, KDE-h — ungebaut.
 - Ⅴ LSST — Workflow gebaut + dispatcht; IR-Exzess-Achse 10–60 μm ungebaut
   (nur der AllWISE W1-W2-Keil 3.4/4.6 μm existiert).
