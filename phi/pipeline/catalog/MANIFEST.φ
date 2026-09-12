@@ -58,6 +58,24 @@ file tap_index_vespa_ia2.φ | tap | live | visible
 file tap_index_vizier_obstap.φ | tap | live | visible
 file tap_index_xcatdb.φ | tap | live | visible
 file tap_index_xmm.φ | tap | live | visible
+file tap_index_alma_ea.φ | tap | live | visible
+file tap_index_alma_eu.φ | tap | live | visible
+file tap_index_alma_na.φ | tap | live | visible
+file tap_index_atoavo.φ | tap | live | visible
+file tap_index_casda.φ | tap | live | visible
+file tap_index_chandra_csc.φ | tap | live | visible
+file tap_index_chandra_csc1.φ | tap | live | visible
+file tap_index_chandra_csc2.φ | tap | live | visible
+file tap_index_chandra_csc21.φ | tap | live | visible
+file tap_index_gaia_aip.φ | tap | live | visible
+file tap_index_lamost_dr10.φ | tap | live | visible
+file tap_index_lamost_dr11.φ | tap | live | visible
+file tap_index_macho.φ | tap | live | visible
+file tap_index_musewide.φ | tap | live | visible
+file tap_index_psrdavo.φ | tap | live | visible
+file tap_index_skymapper.φ | tap | live | visible
+file tap_index_wigglez.φ | tap | live | visible
+file tap_index_youcat.φ | tap | live | visible
 file tapvizier_descriptions.φ | tap | live | visible
 
 file arcgis_catalog.φ | inventory | live | visible

@@ -4,7 +4,7 @@
   class: handover
   date: 2026-09-11
   sha256: b722362804cb8d3f055021fefa689f828f54d4b8cc73e9fc2b159158e8fc1b1d
-  status: live
+  status: archived
 -->
 # Handover — Entscheid-Folge II (2026-09-11)
 
