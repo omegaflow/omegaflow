@@ -1,4 +1,5 @@
 export const PROTOCOL_VERSION = 9;
+export const KINETIC_TAG = 10;
 export const RECORD_BYTES = 208;
 export const FRAME_HEADER = 19;
 
@@ -147,4 +148,11 @@ export function parseRecords(bytes) {
     meta[m + 15] = 0;
   }
   return { epoch, id, count, field, meta };
+}
+
+export function parseKinetic(bytes) {
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + 3, 9);
+  const aperture = dv.getFloat32(3 + 9 * 4, true);
+  return { omega, aperture };
 }
