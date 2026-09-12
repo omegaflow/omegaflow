@@ -1,0 +1,11 @@
+# tap-inventar http://astroweb.projects.phys.ucl.ac.uk:8000/tap
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog ivoa.obscore ivoa view
+catalog ivoa.emptyobscore ivoa table
+catalog mdisc.epn_core mdisc table
+catalog jasmin.epn_core jasmin table
