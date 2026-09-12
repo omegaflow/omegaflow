@@ -45,7 +45,11 @@ struct Sftp {
 
 impl Sftp {
     fn list(&self, rel: &str) -> Option<Vec<(String, bool, Option<u64>)>> {
-        let url = format!("{SFTP_HOST}/{rel}/");
+        let url = if rel.is_empty() {
+            format!("{SFTP_HOST}/")
+        } else {
+            format!("{SFTP_HOST}/{rel}/")
+        };
         let out = Command::new("curl")
             .arg("-sS")
             .arg("--insecure")
@@ -321,11 +325,12 @@ fn walk_sftp(
     rel: &str,
     station: &Option<String>,
     level: &Option<String>,
-    remote: &mut Vec<(String, Option<u64>)>,
+    emit: &mut dyn FnMut(&str, Option<u64>),
     limit: Option<usize>,
+    emitted: &mut usize,
 ) {
     if let Some(cap) = limit {
-        if remote.len() >= cap {
+        if *emitted >= cap {
             return;
         }
     }
@@ -341,12 +346,13 @@ fn walk_sftp(
         };
         if is_dir {
             if path_allowed(&child, station, level) {
-                walk_sftp(sftp, &child, station, level, remote, limit);
+                walk_sftp(sftp, &child, station, level, emit, limit, emitted);
             }
         } else if name.ends_with(".ggp") && path_allowed(&child, station, level) {
-            remote.push((child, size));
+            emit(&child, size);
+            *emitted += 1;
             if let Some(cap) = limit {
-                if remote.len() >= cap {
+                if *emitted >= cap {
                     return;
                 }
             }
@@ -422,6 +428,7 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let probe = args.iter().any(|a| a == "--probe");
     let list_only = args.iter().any(|a| a == "--list");
+    let list_stations = args.iter().any(|a| a == "--list-stations");
     let station = arg_value(&args, "--station");
     let level = arg_value(&args, "--level");
     let limit: Option<usize> = arg_value(&args, "--limit-files").and_then(|v| v.parse().ok());
@@ -448,19 +455,84 @@ fn main() {
             None => "data/igetsftp.gfz.de".to_string(),
         };
         let sftp = Sftp { login, password };
-        let mut remote = Vec::new();
-        walk_sftp(&sftp, "", &station, &level, &mut remote, limit);
-        if list_only {
-            let total: u64 = remote.iter().filter_map(|(_, s)| *s).sum();
-            for (rel, size) in &remote {
-                match size {
-                    Some(s) => println!("{s}\t{rel}"),
-                    None => println!("?\t{rel}"),
+        if list_stations {
+            let Some(root) = sftp.list("") else {
+                eprintln!("root listing void — no station flows");
+                std::process::exit(1);
+            };
+            let mut names: Vec<String> = Vec::new();
+            for (name, is_dir, _) in root {
+                if !is_dir {
+                    continue;
+                }
+                let Some(entries) = sftp.list(&name) else {
+                    eprintln!("{name}: listing void — station skipped");
+                    continue;
+                };
+                let mut carries = entries
+                    .iter()
+                    .any(|(n, d, _)| *d && n.eq_ignore_ascii_case("Level2"));
+                if !carries {
+                    for (code, code_dir, _) in &entries {
+                        if !*code_dir {
+                            continue;
+                        }
+                        let Some(sub) = sftp.list(&format!("{name}/{code}")) else {
+                            continue;
+                        };
+                        if sub
+                            .iter()
+                            .any(|(n, d, _)| *d && n.eq_ignore_ascii_case("Level2"))
+                        {
+                            carries = true;
+                            break;
+                        }
+                    }
+                }
+                if carries {
+                    println!("{name}");
+                    let _ = std::io::Write::flush(&mut std::io::stdout());
+                    names.push(name);
                 }
             }
-            eprintln!("{} .ggp files, {} B on the SFTP tree", remote.len(), total);
+            eprintln!("{} stations carry Level2: {}", names.len(), names.join(" "));
             return;
         }
+        if list_only {
+            let mut count = 0usize;
+            let mut total = 0u64;
+            walk_sftp(
+                &sftp,
+                "",
+                &station,
+                &level,
+                &mut |rel, size| {
+                    count += 1;
+                    if let Some(s) = size {
+                        total += s;
+                    }
+                    match size {
+                        Some(s) => println!("{s}\t{rel}"),
+                        None => println!("?\t{rel}"),
+                    }
+                    let _ = std::io::Write::flush(&mut std::io::stdout());
+                },
+                limit,
+                &mut 0usize,
+            );
+            eprintln!("{count} .ggp files, {total} B on the SFTP tree");
+            return;
+        }
+        let mut remote = Vec::new();
+        walk_sftp(
+            &sftp,
+            "",
+            &station,
+            &level,
+            &mut |rel, size| remote.push((rel.to_string(), size)),
+            limit,
+            &mut 0usize,
+        );
         if stream {
             sources = remote.into_iter().map(|(r, _)| Source::Remote(r)).collect();
         } else {

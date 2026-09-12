@@ -162,3 +162,7 @@ note WOD netCDF-4/HDF5 (Superblock v2) durchgehend; hdf5.rs liefert auf 1903/wod
 blocked parser-def bzip2-ar2v
 url s3://unidata-nexrad-level2
 note NEXRAD Level II (AR2V0008.907 + bzip2 BZh9 ab Offset 24); kein Level-II-Reader und kein bzip2-Dekoder. Messwert (Radar-Reflektivität em) echt.
+
+blocked parser-def headerless-ascii
+url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
+note MAXI (JAXA/Riken) GSC-Röntgenlichtkurve — headerless, leerzeichengetrennter ASCII (MJD + 2–20-keV-Fluss + err + 3 Teilbänder 2–4/4–10/10–20 keV; Format top/lc_readme.txt). Gemessen 2026-09-12 (curl): HTTP 200, live (Daten bis ~2 d). Gap: headerless (keine Headerzeile) — lastrow/text_last_col braucht eine Headerzeile, rows-numeric-extract ist surface-frame-gated (extract.rs Frame::Surface). Messwert (Röntgenfluss, em) echt.
