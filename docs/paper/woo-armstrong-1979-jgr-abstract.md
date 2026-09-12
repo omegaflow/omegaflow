@@ -1,12 +1,13 @@
 <!--
-  title: Woo & Armstrong 1979 — abstract record (solar-wind electron density power spectrum)
+  title: Woo & Armstrong 1979 — solar-wind electron density spectrum
   class: paper
   date: 2026-09-04
+  sha256: 2d234be78b290423144d071f0ef41cf88b110068a4fbe6c5375737f58b3ec21a
   status: abstract-only (full text paywalled)
   see-also: docs/paper/armstrong-woo-estabrook-1979-interplanetary-scintillation.txt
 -->
 
-# Woo & Armstrong 1979 — abstract record
+# Woo & Armstrong 1979 — solar-wind electron density spectrum
 
 - Authors: Richard Woo; J. W. Armstrong (Jet Propulsion Laboratory, Caltech, Pasadena, CA).
 - Journal of Geophysical Research, Vol. 84 (A12), pp. 7288–7296, December 1979.
