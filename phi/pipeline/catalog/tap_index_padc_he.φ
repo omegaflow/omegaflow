@@ -1,0 +1,16 @@
+# tap-inventar http://voparis-tap-he.obspm.fr/tap
+
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog hess_dr.obscore_sdc hess_dr table
+catalog ivoa.obscore ivoa view
+catalog vhe_redshifts.main vhe_redshifts table
+catalog hess_dr.obscore hess_dr table
+catalog ctao_sdc.obscore ctao_sdc table
+catalog ctao_isdc.obscore ctao_isdc table
+catalog hess_dr_hea.obscore hess_dr_hea table
+catalog hess_dr_hea.obscore_hea hess_dr_hea table

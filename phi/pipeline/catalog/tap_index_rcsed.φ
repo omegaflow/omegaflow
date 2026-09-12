@@ -1,0 +1,17 @@
+# tap-inventar http://padc-tap-rcsed.obspm.fr/tap
+
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog specphot.rcsed specphot table
+catalog specphot.rcsed_fibermags specphot table
+catalog specphot.rcsed_gasmet specphot table
+catalog specphot.rcsed_lines_gauss specphot table
+catalog specphot.rcsed_lines_nonpar specphot table
+catalog specphot.rcsed_lines_nonpar_reg specphot table
+catalog specphot.galaxyzoo specphot table
+catalog specphot.simard_table2 specphot table
+catalog specphot.simard_table3 specphot table
