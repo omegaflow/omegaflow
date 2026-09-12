@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 0438cb20374547e076be6edc5019a7bb54841eaffe8bc5c010a9f515922d2ad9
+  sha256: 9493ed6b803c12856df77e15dddea8a71a46f147bb994dd5fee5c55f9d8ff1a6
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -48,6 +48,9 @@ gehen über den opencode-Browser an den Operator.
   bei ~36 s (~11 MB) — ein 1-min-Gesamtnetz-Fenster (~15 MB) vollständet nie
   (kein Range/Resume). Offen: Fenster auf eine Station/Teilmenge verkleinern
   oder batchen, damit der Download unter die ~36-s-Grenze fällt.
+- Positive Maske — Treiber ernten: Slab2 (USGS Slab-Geometrie, Endpoint
+  ungemessen) und 3D-Geschwindigkeitsmodelle (Tomografie, heavy Fetch → CI)
+  sind in keinem Register — Endpoint messen, dann sources.φ-Zeile + Compiler.
 
 ## Noch offene Pendings
 
