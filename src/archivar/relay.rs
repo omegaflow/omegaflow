@@ -28,6 +28,7 @@ struct WsConfig {
     time: Arc<Mutex<Option<LeapSeconds>>>,
     consent: Arc<AtomicBool>,
     diode: Arc<RwLock<DiodeState>>,
+    sources: Arc<Vec<SourceConfig>>,
 }
 pub struct TcpRadiator {
     shutdown: Arc<AtomicBool>,
@@ -47,6 +48,7 @@ impl TcpRadiator {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
         diode: Arc<RwLock<DiodeState>>,
+        sources: Arc<Vec<SourceConfig>>,
     ) -> Self {
         let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
         let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
@@ -93,6 +95,7 @@ impl TcpRadiator {
                         time: time.clone(),
                         consent: consent.clone(),
                         diode: diode.clone(),
+                        sources: sources.clone(),
                     };
                     thread::spawn(move || handle_ingress(stream, cfg));
                 }
@@ -350,6 +353,41 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                 "/crash" => {
                     emit(&mut s, "200 OK", "text/plain", &[]);
                     break;
+                }
+                _ if path == "/consent" || path.starts_with("/consent?") => {
+                    let word = path.strip_prefix("/consent?").unwrap_or("");
+                    match word {
+                        "ja" => cfg.consent.store(true, Ordering::SeqCst),
+                        "nein" => cfg.consent.store(false, Ordering::SeqCst),
+                        _ => {}
+                    }
+                    let state = if cfg.consent.load(Ordering::SeqCst) {
+                        "1\n"
+                    } else {
+                        "0\n"
+                    };
+                    emit(&mut s, "200 OK", "text/plain", state.as_bytes());
+                }
+                "/sources" => {
+                    let mut json = String::from("[");
+                    let mut first = true;
+                    for src in cfg.sources.iter() {
+                        let Some(body) = &src.body else {
+                            continue;
+                        };
+                        let name = source_name_from_url(&src.url);
+                        if !first {
+                            json.push(',');
+                        }
+                        first = false;
+                        json.push_str(&format!(
+                            "{{\"name\":\"{}\",\"body\":\"{}\"}}",
+                            name.replace('\\', "\\\\").replace('"', "\\\""),
+                            body.replace('\\', "\\\\").replace('"', "\\\"")
+                        ));
+                    }
+                    json.push(']');
+                    emit(&mut s, "200 OK", "application/json", json.as_bytes());
                 }
                 _ => {
                     emit_void(&mut s);
