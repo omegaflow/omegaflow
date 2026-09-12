@@ -3,7 +3,7 @@
   session: Ernte-Folge VI
   class: handover
   date: 2026-09-12
-  sha256: e51d528d0db34630cb3eb8251ed817ddaa73c8eb4c00f40fade8e70a3e88ba83
+  sha256: cf3de39aa1251d1ad347291bd4e0280ac46d3b4eebb84b415a2c4717735ce839
   status: live
 -->
 # Handover — Ernte-Folge VI (2026-09-12)
@@ -46,6 +46,10 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - data/-Bug-Familie — pioneer_doppler_compiler.rs:126, galileo_atdf_compiler.rs:94,
   pioneer11_odf_compiler.rs:163 schreiben data/spdf…, legen aber nur data/ an (dieselbe
   ENOENT-Klasse wie der pioneer-atdf-Fix c08d15b). Fremde Linien, benannt.
+- electric Re-Kuratierung (aus Bau überführt) — 8 Feldzeilen in `phi/sources.φ`
+  deklarieren noch `gaussian-inverse-square electric` (kernel 1); der Code trägt
+  kernel 0 (inverse-square). Re-Kuratierung der 8 Zeilen (Source-Pfad
+  `docs/SOURCE_PORT.md`).
 
 ## Votable-TAP (aus Entscheid-Folge III überführt)
 

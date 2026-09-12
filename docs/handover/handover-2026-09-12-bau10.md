@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-12
-  sha256: 73c58154ccedf4af8ba7f5e90b04f9ca013ee3889199820ea04c3740843b0fb2
+  sha256: 53965022d6905256b9004bb13c28a00100210a86b2c3952c9e35f10db08a37df
   status: live
 -->
 # Handover — Bau & Code (2026-09-12, Bau10)
@@ -14,6 +14,10 @@ viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
 ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+
+Dies ist die Bau-Linie: hier steht nur, was diese Linie autonom trägt — Tasks,
+die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
+überführt. Wiedervorlage gilt nur für Termine; „Pausiert" trägt kein Datum.
 
 ## Membran — die offenen M-Punkte
 
@@ -30,18 +34,6 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   wurden nie gebaut; die Wire-Wahrheit ist die rohe Intensität. Auflösung
   erst, wenn die Architekturfrage per-Pixel-Membran (Legacy) vs heutige
   Punktwolke gemessen werden kann.
-
-## Electric — die offene Re-Kuratierung
-
-Die eine elektrische Wahrheit ist jetzt inverse-square (kernel 0):
-`kernel_id_for_force(8) = 0` (C_VACUUM-Gesetz, wie em), die battery-Familie
-trägt kernel 0, `default_kernel_for("electric")` trägt
-`inverse-square`. Gemessen bleibt:
-
-- 8 Feldzeilen in `phi/sources.φ` deklarieren noch explizit
-  `gaussian-inverse-square electric` (kernel 1); 3 swarm-Zeilen tragen schon
-  `inverse-square`. Re-Kuratierung der 8 Zeilen auf den einen Kern
-  (Registrierungs-Dienst, Source-Pfad über `docs/SOURCE_PORT.md`).
 
 ## Abschluss
 
