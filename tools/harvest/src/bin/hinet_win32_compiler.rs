@@ -4,7 +4,7 @@ use omegaflow::archivar::geo::{
 use omegaflow::archivar::win32::{parse_win32, station_of, velocity_m_s, WinSensitivity};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{parse as parse_lsk, LeapSeconds};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -302,22 +302,56 @@ fn submit_request(
     curl_get(&url, &Some(jar.to_path_buf())).is_some()
 }
 
-fn available_id(html: &str, w: &Window) -> Option<String> {
+fn available_id(html: &str, w: &Window, before: &HashSet<String>) -> Option<String> {
     let token = format!(
         "{}{:02}{:02}{:02}{:02}",
         w.year, w.month, w.day, w.hour, w.min
     );
-    let pos = html.find(&token)?;
-    let tail = &html[pos..];
-    let avail = tail.find("Available")?;
-    let after = &tail[avail..];
-    let od = after.find("openDownload('")?;
-    let start = od + "openDownload('".len();
-    let end = after[start..].find('\'')?;
-    Some(after[start..start + end].to_string())
+    for row in html.split("<tr>") {
+        if !row.contains(&token) || !row.contains("Available") {
+            continue;
+        }
+        let Some(p) = row.find("openDownload('") else {
+            continue;
+        };
+        let start = p + "openDownload('".len();
+        let Some(end) = row[start..].find('\'') else {
+            continue;
+        };
+        let id = row[start..start + end].to_string();
+        if !before.contains(&id) {
+            return Some(id);
+        }
+    }
+    None
 }
 
-fn poll_server_id(jar: &Path, w: &Window, wait_secs: u64) -> Option<String> {
+fn existing_ids(jar: &Path) -> HashSet<String> {
+    let url = format!("{CONT_BASE}/cont_status.php?LANG=en");
+    let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
+        return HashSet::new();
+    };
+    let html = String::from_utf8_lossy(&body);
+    let mut ids = HashSet::new();
+    let mut rest: &str = &html;
+    while let Some(p) = rest.find("openDownload('") {
+        let start = p + "openDownload('".len();
+        let tail = &rest[start..];
+        let Some(end) = tail.find('\'') else {
+            break;
+        };
+        ids.insert(tail[..end].to_string());
+        rest = &tail[end..];
+    }
+    ids
+}
+
+fn poll_server_id(
+    jar: &Path,
+    w: &Window,
+    before: &HashSet<String>,
+    wait_secs: u64,
+) -> Option<String> {
     let url = format!("{CONT_BASE}/cont_status.php?LANG=en");
     for _ in 0..(wait_secs / 5 + 1) {
         let Some(body) = curl_get(&url, &Some(jar.to_path_buf())) else {
@@ -325,7 +359,7 @@ fn poll_server_id(jar: &Path, w: &Window, wait_secs: u64) -> Option<String> {
             continue;
         };
         let html = String::from_utf8_lossy(&body);
-        if let Some(id) = available_id(&html, w) {
+        if let Some(id) = available_id(&html, w, before) {
             return Some(id);
         }
         std::thread::sleep(std::time::Duration::from_secs(5));
@@ -380,6 +414,43 @@ fn unzip_into(zip_path: &Path, dest: &Path) -> Option<Vec<PathBuf>> {
     walk_local(dest, &mut files);
     files.sort();
     Some(files)
+}
+
+fn station_codes(path: &str, count: usize) -> Vec<String> {
+    let Ok(body) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
+    let mut codes: Vec<String> = Vec::new();
+    for line in body.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = t.split_whitespace().collect();
+        if cols.len() < 4 {
+            continue;
+        }
+        let code = cols[3].to_string();
+        if !codes.iter().any(|c| c == &code) {
+            codes.push(code);
+            if codes.len() >= count {
+                break;
+            }
+        }
+    }
+    codes
+}
+
+fn select_stations(jar: &Path, codes: &[String]) -> bool {
+    let url = format!("{CONT_BASE}/select_confirm.php?LANG=en");
+    let form = vec![
+        ("stcds".to_string(), codes.join(":")),
+        ("mode".to_string(), "1".to_string()),
+        ("net".to_string(), "0101".to_string()),
+        ("area".to_string(), String::new()),
+        ("LANG".to_string(), "en".to_string()),
+    ];
+    curl_form(&url, jar, &form).is_some()
 }
 
 fn compile_file(
@@ -497,6 +568,34 @@ fn main() {
             },
             None => 60,
         };
+        let station_count: Option<usize> = match arg_value(&args, "--station-count") {
+            Some(v) => match v.parse() {
+                Ok(x) => Some(x),
+                Err(_) => {
+                    eprintln!("hinet: --station-count {v} carries no measured count");
+                    std::process::exit(1);
+                }
+            },
+            None => None,
+        };
+        if let Some(station_count) = station_count {
+            let Some(ch_path) = channels_path.as_ref() else {
+                eprintln!("hinet: --station-count needs the channel table — the join stays unread");
+                std::process::exit(1);
+            };
+            let codes = station_codes(ch_path, station_count);
+            if codes.is_empty() {
+                eprintln!(
+                    "hinet: channel table carries no station codes — the selection stays unread"
+                );
+                std::process::exit(1);
+            }
+            if !select_stations(&jar, &codes) {
+                eprintln!("hinet: station selection stayed unread — the request stays unplaced");
+                std::process::exit(1);
+            }
+            eprintln!("hinet: {} stations selected for the window", codes.len());
+        }
         let Some(w) = arg_value(&args, "--start").and_then(|s| parse_window(&s)) else {
             eprintln!("hinet: --start YYYY-MM-DDTHH:MM names the request window");
             std::process::exit(1);
@@ -509,11 +608,26 @@ fn main() {
             eprintln!("hinet: cont search carried no openRequest — the request stays unplaced");
             std::process::exit(1);
         };
-        if !submit_request(&jar, &org1, &org2, &size, &w, span_min) {
-            eprintln!("hinet: cont request returned void — the request stays unplaced");
-            std::process::exit(1);
+        let before = existing_ids(&jar);
+        let mut id: Option<String> = None;
+        for attempt in 0..5 {
+            if !submit_request(&jar, &org1, &org2, &size, &w, span_min) {
+                eprintln!("hinet: cont request returned void — the request stays unplaced");
+                std::process::exit(1);
+            }
+            match poll_server_id(&jar, &w, &before, 60) {
+                Some(found) => {
+                    id = Some(found);
+                    break;
+                }
+                None => {
+                    eprintln!(
+                        "hinet: cont request attempt {attempt} stayed unready — re-requesting"
+                    );
+                }
+            }
         }
-        let Some(id) = poll_server_id(&jar, &w, 300) else {
+        let Some(id) = id else {
             eprintln!("hinet: cont status never read Available — the request stays unfetched");
             std::process::exit(1);
         };

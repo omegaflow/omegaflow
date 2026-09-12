@@ -3,7 +3,7 @@
   session: Ernte-Folge 10
   class: handover
   date: 2026-09-12
-  sha256: 9493ed6b803c12856df77e15dddea8a71a46f147bb994dd5fee5c55f9d8ff1a6
+  sha256: f961b76e4e19bf6575e89302a74280902b92d7811c7f941e6574c4c9af198219
   status: live
 -->
 # Handover — Ernte-Folge 10 (2026-09-12)
@@ -40,14 +40,19 @@ gehen über den opencode-Browser an den Operator.
 
 ## Ernte
 
-- Hi-net — `HINET_PASS` steht in `.secrets.local`, Login verifiziert (Ablauf
-  2027-03-31). Harvest-Verdrahtung gebaut: Compiler-Fetch auf den echten Fluss
-  (auth GET→POST, Channel-Tabelle via `dlDialogue.php`, cont-Suche→Request→Poll
-  →Download→Unzip), Format `hinet` im Archivar, `hinet-cdn.yml`,
-  sources.φ-Registrierung. Gemessen: `cont_download.php` schneidet jede Antwort
-  bei ~36 s (~11 MB) — ein 1-min-Gesamtnetz-Fenster (~15 MB) vollständet nie
-  (kein Range/Resume). Offen: Fenster auf eine Station/Teilmenge verkleinern
-  oder batchen, damit der Download unter die ~36-s-Grenze fällt.
+- Hi-net — `HINET_PASS` steht, Login verifiziert (Ablauf 2027-03-31).
+  Harvest-Verdrahtung gebaut: Compiler-Fetch auf den echten Fluss (auth
+  GET→POST, Channel-Tabelle via `dlDialogue.php`, cont-Suche→Request→Poll→
+  Download→Unzip, `--station-count` Stations-Auswahl via `select_confirm.php`),
+  Format `hinet` im Archivar, `hinet-cdn.yml`, sources.φ-Registrierung. Gemessen
+  (serverseitig, nicht client-seitig): (a) `cont_download.php` schneidet jede
+  Antwort bei ~36 s (~11 MB, kein Range/Resume) — das 1-min-Gesamtnetz (~15 MB)
+  vollständet nie, Browser und Downloader ebenso; (b) die Daten-Vorbereitung
+  bricht ab (`Failed in the data preparation`) — auch 200 Stationen (~4,8 MB)
+  und 5 Stationen erreichten kein `Available`; (c) Requests sind serialisiert
+  (`While the data is being created, you cannot be new request`). Der
+  Continuous-Download ist damit serverseitig nicht verlässlich erntbar; die
+  Pipeline ist korrekt, der Server blockiert.
 - Positive Maske — Treiber ernten: Slab2 (USGS Slab-Geometrie, Endpoint
   ungemessen) und 3D-Geschwindigkeitsmodelle (Tomografie, heavy Fetch → CI)
   sind in keinem Register — Endpoint messen, dann sources.φ-Zeile + Compiler.
