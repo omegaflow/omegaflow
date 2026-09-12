@@ -3,7 +3,8 @@ use omegaflow::archivar::{
 };
 use omegaflow::cdn::{upload_asset, CDN_BASE, CDN_RELEASE};
 use omegaflow::inflate::{gunzip, unzip};
-use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::lzw::uncompress_z;
+use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag_h};
 use omegaflow_measure::miniseed::decode_body;
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -15,6 +16,7 @@ const MIN_M: usize = 30;
 const MIN_N_WINDOWS: usize = 30;
 const M_MIN_EVENT: f64 = 6.0;
 const M_MIN_REGION: f64 = 2.0;
+const GLOBAL_RATE_MAG: f64 = 5.0;
 const HARVEST_RADIUS_KM: f64 = 2000.0;
 const STATION_MAX_KM: f64 = 3000.0;
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -36,6 +38,8 @@ const SWARM_SATS: [&str; 3] = [
 ];
 const SWARM_HAPI_TEMPLATE: &str = "https://vires.services/hapi/data?id={sat}&start={start}Z&stop={stop}Z&parameters=Latitude,Longitude,FAC&format=json";
 const GIM_TEMPLATE: &str = "ftp://gssc.esa.int/gnss/products/ionex/{year}/{doy}/COD0OPSRAP_{year}{doy}0000_01D_01H_GIM.INX.gz";
+const GIM_RETRO_TEMPLATE: &str =
+    "ftp://gssc.esa.int/gnss/products/ionex/{year}/{doy}/codg{doy}0.{yy}i.Z";
 const GIM_EXPONENT: f64 = -1.0;
 const TEC_CELL_S: f64 = 3600.0;
 const TEC_N_CELLS: usize = 72;
@@ -146,6 +150,8 @@ struct WindowStat {
     radon_env_n_cells: usize,
     gps_radon_excess: [Option<f64>; 2],
     gps_radon_n_cells: usize,
+    global_rate_excess: [Option<f64>; 2],
+    global_rate_n_cells: usize,
 }
 
 struct StackStat {
@@ -413,6 +419,7 @@ fn harvest_tec(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64)> {
     while day <= end_day {
         let (y, doy) = day_of_year(day as f64 * 86400.0);
         let stamp = format!("{y:04}{doy:03}");
+        let mut text: Option<String> = None;
         let path = format!("{cache_dir}/{stamp}.gz");
         let mut bytes: Option<Vec<u8>> = std::fs::read(&path).ok();
         if bytes.is_none() {
@@ -425,18 +432,84 @@ fn harvest_tec(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64)> {
             }
         }
         if let Some(b) = bytes {
-            if let Some(text) = gunzip(&b) {
-                let text = String::from_utf8_lossy(&text).to_string();
-                for &(t, v) in &gim_tec_series(&text, lat, lon) {
-                    if t >= t_start && t <= t0 {
-                        out.push((t, v));
-                    }
+            if let Some(dec) = gunzip(&b) {
+                text = Some(String::from_utf8_lossy(&dec).to_string());
+            }
+        }
+        if text.is_none() {
+            let rpath = format!("{cache_dir}/{stamp}.Z");
+            let mut rb = std::fs::read(&rpath).ok();
+            if rb.is_none() {
+                let yy = format!("{:02}", y % 100);
+                let url = GIM_RETRO_TEMPLATE
+                    .replace("{year}", &format!("{y:04}"))
+                    .replace("{doy}", &format!("{doy:03}"))
+                    .replace("{yy}", &yy);
+                rb = fetch_raw_bytes(&url, 86400);
+                if let Some(b) = &rb {
+                    let _ = std::fs::write(&rpath, b);
+                }
+            }
+            if let Some(b) = rb {
+                if let Some(dec) = uncompress_z(&b) {
+                    text = Some(String::from_utf8_lossy(&dec).to_string());
+                }
+            }
+        }
+        if let Some(text) = text {
+            for &(t, v) in &gim_tec_series(&text, lat, lon) {
+                if t >= t_start && t <= t0 {
+                    out.push((t, v));
                 }
             }
         }
         day += 1;
     }
     out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
+fn harvest_global_rate(dir: &str, era_start: f64, era_end: f64) -> Vec<(f64, f64)> {
+    let cache = format!("{dir}/global_rate.json");
+    if let Ok(body) = std::fs::read_to_string(&cache) {
+        return parse_series_array(&body);
+    }
+    let mut counts: HashMap<i64, u32> = HashMap::new();
+    let first_day = era_start.div_euclid(86400.0) as i64;
+    let last_day = era_end.div_euclid(86400.0) as i64;
+    let last_year = days_to_ymd(last_day).0;
+    let mut y = days_to_ymd(first_day).0;
+    while y <= last_year {
+        let y_start = (ymd_to_days(y, 1, 1).unwrap() as f64 * 86400.0).max(era_start);
+        let y_end = if y == last_year {
+            era_end
+        } else {
+            ymd_to_days(y + 1, 1, 1).unwrap() as f64 * 86400.0
+        };
+        if y_end > y_start {
+            let url = FDSN_CATALOG_TEMPLATE
+                .replace("{start}", &unix_to_iso(y_start))
+                .replace("{stop}", &unix_to_iso(y_end))
+                .replace("{mag}", &format!("{GLOBAL_RATE_MAG:.1}"))
+                .replace("{limit}", &FDSN_LIMIT.to_string());
+            if let Some(body) = fetch_text(&url) {
+                for ev in catalog_events(&body, GLOBAL_RATE_MAG) {
+                    let day = ev.t0.div_euclid(86400.0) as i64;
+                    *counts.entry(day).or_insert(0) += 1;
+                }
+            }
+        }
+        y += 1;
+    }
+    let mut out: Vec<(f64, f64)> = Vec::with_capacity((last_day - first_day + 1) as usize);
+    for day in first_day..=last_day {
+        let c = match counts.get(&day).copied() {
+            Some(v) => v,
+            None => 0,
+        };
+        out.push((day as f64 * 86400.0, c as f64));
+    }
+    std::fs::write(&cache, series_json(&out)).ok();
     out
 }
 
@@ -1150,16 +1223,38 @@ fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     (xs, ys)
 }
 
+fn surrogate_stats_phase_h(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    factor: f64,
+    seed: u64,
+) -> Option<(f64, f64, f64)> {
+    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    for _ in 0..10 {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(te) = transfer_entropy_lag_h(x, &ys, lag, factor) {
+            vals.push(te);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let n = vals.len() as f64;
+    let mean = vals.iter().sum::<f64>() / n;
+    let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
+    Some((mean, var.sqrt(), mean + 2.0 * var.sqrt()))
+}
+
 fn sweep_excess(
     xs: &[f32],
     ys: &[f32],
     lag_h_max: usize,
     cells_per_lag: usize,
-    kde_scale: f32,
+    factor: f64,
 ) -> (Vec<Option<f64>>, Option<f64>, usize) {
     let n = xs.len();
-    let xs: Vec<f32> = xs.iter().map(|v| v * kde_scale).collect();
-    let ys: Vec<f32> = ys.iter().map(|v| v * kde_scale).collect();
     let mut curve = vec![None; lag_h_max + 1];
     let mut best: Option<f64> = None;
     let mut computed = 0usize;
@@ -1169,11 +1264,11 @@ fn sweep_excess(
             continue;
         }
         let seed = SURROGATE_SEED ^ (lag_h as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
-        let te = match transfer_entropy_lag(&xs, &ys, cell_lag) {
+        let te = match transfer_entropy_lag_h(xs, ys, cell_lag, factor) {
             Some(t) => t,
             None => continue,
         };
-        let thr = match surrogate_stats_phase(&xs, &ys, cell_lag, seed) {
+        let thr = match surrogate_stats_phase_h(xs, ys, cell_lag, factor, seed) {
             Some((_, _, t)) => t,
             None => continue,
         };
@@ -1193,7 +1288,7 @@ fn pair_excess(
     n_cells: usize,
     cells_per_lag: usize,
     lag_h_max: usize,
-    kde_scale: f32,
+    factor: f64,
 ) -> ([Option<f64>; 2], usize) {
     let d_cells = bin_mean(driver, t_start, cell_s, n_cells);
     let t_cells = bin_mean(target, t_start, cell_s, n_cells);
@@ -1202,8 +1297,8 @@ fn pair_excess(
     if n < MIN_M {
         return ([None, None], n);
     }
-    let (_, d_to_t, _) = sweep_excess(&t_fs, &d_fs, lag_h_max, cells_per_lag, kde_scale);
-    let (_, t_to_d, _) = sweep_excess(&d_fs, &t_fs, lag_h_max, cells_per_lag, kde_scale);
+    let (_, d_to_t, _) = sweep_excess(&t_fs, &d_fs, lag_h_max, cells_per_lag, factor);
+    let (_, t_to_d, _) = sweep_excess(&d_fs, &t_fs, lag_h_max, cells_per_lag, factor);
     ([d_to_t, t_to_d], n)
 }
 
@@ -1224,7 +1319,13 @@ fn norm_quantile(p: f64) -> f64 {
     }
 }
 
-fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -> WindowStat {
+fn window_stat(
+    data: &WindowData,
+    radius_km: f64,
+    cell_s: f64,
+    factor: f64,
+    global_rate: &[(f64, f64)],
+) -> WindowStat {
     let n_cells = (WINDOW_S / cell_s) as usize;
     let t_start = data.t0 - WINDOW_S;
     let mut stat = WindowStat {
@@ -1255,6 +1356,8 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         radon_env_n_cells: 0,
         gps_radon_excess: [None, None],
         gps_radon_n_cells: 0,
+        global_rate_excess: [None, None],
+        global_rate_n_cells: 0,
     };
     let rate_epochs: Vec<f64> = data
         .region
@@ -1271,15 +1374,15 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
     stat.n_cells = fs.len();
 
     let cells_per_lag = (3600.0 / cell_s).max(1.0) as usize;
-    let (curve_li, best_li, _) = sweep_excess(&fs, &rs, MAX_LAG_H, cells_per_lag, kde_scale);
-    let (curve_il, best_il, _) = sweep_excess(&rs, &fs, MAX_LAG_H, cells_per_lag, kde_scale);
+    let (curve_li, best_li, _) = sweep_excess(&fs, &rs, MAX_LAG_H, cells_per_lag, factor);
+    let (curve_il, best_il, _) = sweep_excess(&rs, &fs, MAX_LAG_H, cells_per_lag, factor);
     stat.curve = [curve_li, curve_il];
     stat.excess = [best_li, best_il];
 
     let f_h = bin_mean(&data.f, t_start, 3600.0, (WINDOW_S / 3600.0) as usize);
     let bz_h = bin_mean(&data.bz, t_start, 3600.0, (WINDOW_S / 3600.0) as usize);
     let (fh, bh) = pair_cells(&f_h, &bz_h);
-    let (control_curve, control_best, _) = sweep_excess(&fh, &bh, 48, 1, kde_scale);
+    let (control_curve, control_best, _) = sweep_excess(&fh, &bh, 48, 1, factor);
     stat.control_curve = control_curve;
     stat.control_excess = control_best;
 
@@ -1298,9 +1401,9 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         let (fac_fs, fac_rs) = pair_cells(&fac_cells, &rate_cells);
         if fac_fs.len() >= MIN_M {
             let (_, best_fac_li, _) =
-                sweep_excess(&fac_fs, &fac_rs, MAX_LAG_H, cells_per_lag, kde_scale);
+                sweep_excess(&fac_fs, &fac_rs, MAX_LAG_H, cells_per_lag, factor);
             let (_, best_fac_il, _) =
-                sweep_excess(&fac_rs, &fac_fs, MAX_LAG_H, cells_per_lag, kde_scale);
+                sweep_excess(&fac_rs, &fac_fs, MAX_LAG_H, cells_per_lag, factor);
             stat.fac_excess = [best_fac_li, best_fac_il];
         }
     }
@@ -1310,13 +1413,13 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         let (tec_fs, tec_rs) = pair_cells(&tec_cells, &rate_cells_h);
         stat.tec_n_cells = tec_fs.len();
         if tec_fs.len() >= MIN_M {
-            let (_, best_tl, _) = sweep_excess(&tec_fs, &tec_rs, MAX_LAG_H, 1, kde_scale);
-            let (_, best_lt, _) = sweep_excess(&tec_rs, &tec_fs, MAX_LAG_H, 1, kde_scale);
+            let (_, best_tl, _) = sweep_excess(&tec_fs, &tec_rs, MAX_LAG_H, 1, factor);
+            let (_, best_lt, _) = sweep_excess(&tec_rs, &tec_fs, MAX_LAG_H, 1, factor);
             stat.tec_excess = [best_tl, best_lt];
         }
         let (tec_fh, bz_th) = pair_cells(&tec_cells, &bz_h);
         if tec_fh.len() >= MIN_M {
-            let (_, best_ctrl, _) = sweep_excess(&tec_fh, &bz_th, 48, 1, kde_scale);
+            let (_, best_ctrl, _) = sweep_excess(&tec_fh, &bz_th, 48, 1, factor);
             stat.tec_control_excess = best_ctrl;
         }
     }
@@ -1354,9 +1457,9 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         let (champ_fs, champ_rs) = pair_cells(&champ_cells, &rate_cells);
         if champ_fs.len() >= MIN_M {
             let (_, best_cl, _) =
-                sweep_excess(&champ_fs, &champ_rs, MAX_LAG_H, cells_per_lag, kde_scale);
+                sweep_excess(&champ_fs, &champ_rs, MAX_LAG_H, cells_per_lag, factor);
             let (_, best_lc, _) =
-                sweep_excess(&champ_rs, &champ_fs, MAX_LAG_H, cells_per_lag, kde_scale);
+                sweep_excess(&champ_rs, &champ_fs, MAX_LAG_H, cells_per_lag, factor);
             stat.champ_excess = [best_cl, best_lc];
         }
     }
@@ -1365,10 +1468,8 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
         let (env_fs, env_rs) = pair_cells(&env_cells, &f_cells);
         stat.env_n_cells = env_fs.len();
         if env_fs.len() >= MIN_M {
-            let (_, best_ef, _) =
-                sweep_excess(&env_rs, &env_fs, MAX_LAG_H, cells_per_lag, kde_scale);
-            let (_, best_fe, _) =
-                sweep_excess(&env_fs, &env_rs, MAX_LAG_H, cells_per_lag, kde_scale);
+            let (_, best_ef, _) = sweep_excess(&env_rs, &env_fs, MAX_LAG_H, cells_per_lag, factor);
+            let (_, best_fe, _) = sweep_excess(&env_fs, &env_rs, MAX_LAG_H, cells_per_lag, factor);
             stat.env_excess = [best_ef, best_fe];
         }
     }
@@ -1381,7 +1482,7 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             n_cells,
             cells_per_lag,
             MAX_LAG_H,
-            kde_scale,
+            factor,
         );
         stat.weather_excess = ex;
         stat.weather_n_cells = n;
@@ -1395,7 +1496,7 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             n_cells,
             cells_per_lag,
             MAX_LAG_H,
-            kde_scale,
+            factor,
         );
         stat.radon_excess = ex;
         stat.radon_n_cells = n;
@@ -1409,7 +1510,7 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             n_cells,
             cells_per_lag,
             MAX_LAG_H,
-            kde_scale,
+            factor,
         );
         stat.radon_weather_excess = ex;
         stat.radon_weather_n_cells = n;
@@ -1423,7 +1524,7 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             n_cells,
             cells_per_lag,
             MAX_LAG_H,
-            kde_scale,
+            factor,
         );
         stat.radon_env_excess = ex;
         stat.radon_env_n_cells = n;
@@ -1438,10 +1539,22 @@ fn window_stat(data: &WindowData, radius_km: f64, cell_s: f64, kde_scale: f32) -
             GPS_N_CELLS,
             1,
             GPS_LAG_MAX_H,
-            kde_scale,
+            factor,
         );
         stat.gps_radon_excess = ex;
         stat.gps_radon_n_cells = n;
+    }
+    if !global_rate.is_empty() {
+        let g_t_start = data.t0 - GPS_WINDOW_S;
+        let gr_cells = bin_mean(global_rate, g_t_start, GPS_CELL_S, GPS_N_CELLS);
+        let f_daily = bin_mean(&data.f, g_t_start, GPS_CELL_S, GPS_N_CELLS);
+        let (gr_fs, f_fs) = pair_cells(&gr_cells, &f_daily);
+        stat.global_rate_n_cells = gr_fs.len();
+        if gr_fs.len() >= MIN_M {
+            let (_, best_gr_f, _) = sweep_excess(&gr_fs, &f_fs, GPS_LAG_MAX_H, 1, factor);
+            let (_, best_f_gr, _) = sweep_excess(&f_fs, &gr_fs, GPS_LAG_MAX_H, 1, factor);
+            stat.global_rate_excess = [best_gr_f, best_f_gr];
+        }
     }
     stat
 }
@@ -2111,7 +2224,7 @@ fn harvest_main(args: &[String]) {
         Some(d) => d,
         None => {
             println!(
-                "usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M] [--era-start YYYY-MM-DD] [--era-end YYYY-MM-DD] [--tec-events N] [--tec-null N] [--tec-era YYYY-MM-DD] [--champ-events N] [--champ-null N] [--mseed-events N] [--mseed-null N] [--radon-events N] [--radon-null N] [--weather-events N] [--weather-null N] [--gps-events N] [--gps-null N]"
+                "usage: laic_probe --harvest DIR [--max-events N] [--null N] [--swarm-limit N] [--swarm-null N] [--mag M] [--era-start YYYY-MM-DD] [--era-end YYYY-MM-DD] [--tec-events N] [--tec-null N] [--tec-era YYYY-MM-DD] [--champ-events N] [--champ-null N] [--mseed-events N] [--mseed-null N] [--radon-events N] [--radon-null N] [--weather-events N] [--weather-null N] [--gps-events N] [--gps-null N] [--global-rate]"
             );
             println!(
                 "       laic_probe --analyze DIR [--radius KM] [--cell-min MIN] [--kde-scale K] [--max-events N] [--null N] [--bin PATH] [--cdn NAME]"
@@ -2708,6 +2821,20 @@ fn harvest_main(args: &[String]) {
             std::fs::write(&path, series_json(&series)).expect("gps sidecar");
         }
     }
+    if args.iter().any(|a| a == "--global-rate") {
+        println!();
+        println!(
+            "=== Instrument A — global event-rate harvest (USGS-FDSN daily count, M ≥ {GLOBAL_RATE_MAG:.1}, {}) ===",
+            unix_to_iso(era_start)
+        );
+        let series = harvest_global_rate(&dir, era_start, era_end);
+        let total = series.iter().map(|&(_, c)| c).sum::<f64>() as u64;
+        println!(
+            "global rate: {} daily cells, {} events; INTERMAGNET-F activity stays pending (no measured endpoint)",
+            series.len(),
+            total
+        );
+    }
     println!("harvest complete. Exit 0.");
 }
 
@@ -2722,8 +2849,8 @@ fn analyze_main(args: &[String]) {
     let cell_min = arg_value(args, "--cell-min")
         .and_then(|v| v.parse::<f64>().ok())
         .unwrap_or(30.0);
-    let kde_scale = arg_value(args, "--kde-scale")
-        .and_then(|v| v.parse::<f32>().ok())
+    let factor = arg_value(args, "--kde-scale")
+        .and_then(|v| v.parse::<f64>().ok())
         .unwrap_or(1.0);
     let max_events = match arg_value(args, "--max-events").and_then(|v| v.parse::<usize>().ok()) {
         Some(v) => v,
@@ -2760,10 +2887,10 @@ fn analyze_main(args: &[String]) {
         "=== Nadel-IV analysis: the LAIC direction, event-centered 72-h windows against the random-window null ensemble ==="
     );
     println!(
-        "harvest {dir}; analysis knobs: radius {radius_km:.0} km, cells {cell_min:.0} min (n = {n_cells}), kde scale {kde_scale} (both series scaled → both Silverman bandwidths scaled);"
+        "harvest {dir}; analysis knobs: radius {radius_km:.0} km, cells {cell_min:.0} min (n = {n_cells}), KDE bandwidth factor {factor} (transfer_entropy_lag_h — the bandwidth is scaled, not the series);"
     );
     println!(
-        "TE per window on the scalar path (transfer_entropy_lag), threshold per lag = mean + 2σ of ten phase-randomized surrogates per series; lag sweep 0…{MAX_LAG_H} h in 1-h steps, lags with m < {MIN_M} cells underdetermined;"
+        "TE per window on the KDE-h path (transfer_entropy_lag_h), threshold per lag = mean + 2σ of ten phase-randomized surrogates per series (same factor); lag sweep 0…{MAX_LAG_H} h in 1-h steps, lags with m < {MIN_M} cells underdetermined;"
     );
     println!(
         "window statistic per direction = max excess over the sweep; stack = mean over event windows; arrow ⇔ stack > null mean + 2σ; the null windows carry the same max-over-lag statistic (structural multiple-comparison correction), a Bonferroni-adjusted threshold is printed per lag;"
@@ -2772,9 +2899,11 @@ fn analyze_main(args: &[String]) {
         "control: TE(Solar Bz → F) on 1-h cells, sweep 0…48 h; the LAIC arrow must carry while the control stays silent;"
     );
     println!(
-        "TEC channel (where sidecars exist): COD 1-h rapid GIMs (ESA GSSC FTP, bilinear at the epicenter), TEC pair on 1-h cells, sweep 0…{MAX_LAG_H} h (m ≥ {MIN_M}), control TE(Solar Bz → TEC);"
+        "TEC channel (where sidecars exist): COD 1-h GIMs (ESA GSSC FTP, bilinear at the epicenter; rapid COD0OPSRAP gzip, pre-2024 retro codg*.Z LZW), TEC pair on 1-h cells, sweep 0…{MAX_LAG_H} h (m ≥ {MIN_M}), control TE(Solar Bz → TEC);"
     );
-    println!("registered alternative A — event-rate — remains unbuilt (register).");
+    println!(
+        "Instrument A — global event-rate (where global_rate.json exists): daily USGS-FDSN count (M ≥ {GLOBAL_RATE_MAG:.1}) over a 90-day window × daily F, sweep 0…{GPS_LAG_MAX_H} days; INTERMAGNET-F activity stays pending (no measured endpoint)."
+    );
 
     let mut events: Vec<(f64, f64, f64, f64)> = Vec::new();
     let mut null_windows: Vec<(f64, f64, f64)> = Vec::new();
@@ -2887,6 +3016,26 @@ fn analyze_main(args: &[String]) {
         parse_window_file(&body)
     };
 
+    let global_rate: Vec<(f64, f64)> = if bin_path.is_none() {
+        match std::fs::read_to_string(format!("{dir}/global_rate.json")) {
+            Ok(body) => parse_series_array(&body),
+            Err(_) => Vec::new(),
+        }
+    } else {
+        Vec::new()
+    };
+    if global_rate.is_empty() {
+        println!(
+            "global_rate.json absent — Instrument A stays unmeasured for this holding (0 honored)"
+        );
+    } else {
+        println!(
+            "global event-rate series: {} daily cells (M ≥ {GLOBAL_RATE_MAG:.1}), total {} events",
+            global_rate.len(),
+            global_rate.iter().map(|&(_, c)| c).sum::<f64>() as u64
+        );
+    }
+
     let mut event_stats: Vec<(usize, WindowStat)> = Vec::new();
     let mut bgs_void = 0usize;
     let mut region_void = 0usize;
@@ -2909,7 +3058,7 @@ fn analyze_main(args: &[String]) {
             data.weather = load_series_sidecar(&dir, "weather", "e", i);
             data.gps = load_series_sidecar(&dir, "gps", "e", i);
         }
-        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         if data.station.is_empty() || data.f.is_empty() {
             bgs_void += 1;
         }
@@ -2920,7 +3069,7 @@ fn analyze_main(args: &[String]) {
             region_void += 1;
         }
         println!(
-            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e} | tec {} {}/{} {} | champ {} {}/{}",
+            "{i:>4} | {:<19} | M {:.1} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} gaps {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | fac {:>+.3e}/{:>+.3e} | tec {} {}/{} {} | champ {} {}/{} | gr {} {}/{}",
             unix_to_iso(t0),
             mag,
             lat,
@@ -2941,7 +3090,10 @@ fn analyze_main(args: &[String]) {
                 .map_or("-".to_string(), |v| format!("{:+.3e}", v)),
             stat.champ_n_cells,
             stat.champ_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
-            stat.champ_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v))
+            stat.champ_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.global_rate_n_cells,
+            stat.global_rate_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.global_rate_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v))
         );
         event_stats.push((i, stat));
     }
@@ -2967,9 +3119,9 @@ fn analyze_main(args: &[String]) {
             data.weather = load_series_sidecar(&dir, "weather", "n", i);
             data.gps = load_series_sidecar(&dir, "gps", "n", i);
         }
-        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         println!(
-            "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | tec {} {}/{} {}",
+            "null {i:>4} | {:<19} | {:>7.2} {:>8.2} | {:<3} | cells {:<3} rate {} | LI {:>+.3e} | IL {:>+.3e} | ctrl {:>+.3e} | tec {} {}/{} {} | gr {} {}/{}",
             unix_to_iso(t0),
             lat,
             lon,
@@ -2983,7 +3135,10 @@ fn analyze_main(args: &[String]) {
             stat.tec_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
             stat.tec_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
             stat.tec_control_excess
-                .map_or("-".to_string(), |v| format!("{:+.3e}", v))
+                .map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.global_rate_n_cells,
+            stat.global_rate_excess[0].map_or("-".to_string(), |v| format!("{:+.3e}", v)),
+            stat.global_rate_excess[1].map_or("-".to_string(), |v| format!("{:+.3e}", v))
         );
         null_stats.push(stat);
     }
@@ -2997,7 +3152,7 @@ fn analyze_main(args: &[String]) {
         if bin_path.is_none() {
             data.tec = load_tec_sidecar(&dir, "tcn", i);
         }
-        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         println!(
             "tec null {i:>4} | {:<19} | {:>7.2} {:>8.2} | rate {} | tec {} {}/{} {}",
             unix_to_iso(data.t0),
@@ -3022,7 +3177,7 @@ fn analyze_main(args: &[String]) {
         if bin_path.is_none() {
             data.champ = load_champ_sidecar(&dir, "chn", i);
         }
-        let stat = window_stat(&data, radius_km, cell_s, kde_scale);
+        let stat = window_stat(&data, radius_km, cell_s, factor, &global_rate);
         println!(
             "champ null {i:>4} | {:<19} | {:>7.2} {:>8.2} | rate {} | champ {} {}/{}",
             unix_to_iso(data.t0),
@@ -3195,6 +3350,22 @@ fn analyze_main(args: &[String]) {
         .iter()
         .filter_map(|s| s.gps_radon_excess[1])
         .collect();
+    let ev_gr_f: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.global_rate_excess[0])
+        .collect();
+    let ev_f_gr: Vec<f64> = event_stats
+        .iter()
+        .filter_map(|(_, s)| s.global_rate_excess[1])
+        .collect();
+    let nu_gr_f: Vec<f64> = null_stats
+        .iter()
+        .filter_map(|s| s.global_rate_excess[0])
+        .collect();
+    let nu_f_gr: Vec<f64> = null_stats
+        .iter()
+        .filter_map(|s| s.global_rate_excess[1])
+        .collect();
 
     let s_li = stack_stat(&ev_li);
     let n_li = stack_stat(&nu_li);
@@ -3242,6 +3413,10 @@ fn analyze_main(args: &[String]) {
     let n_gps_radon = stack_stat(&nu_gps_radon);
     let s_radon_gps = stack_stat(&ev_radon_gps);
     let n_radon_gps = stack_stat(&nu_radon_gps);
+    let s_gr_f = stack_stat(&ev_gr_f);
+    let n_gr_f = stack_stat(&nu_gr_f);
+    let s_f_gr = stack_stat(&ev_f_gr);
+    let n_f_gr = stack_stat(&nu_f_gr);
 
     println!();
     println!("=== stack verdict ===");
@@ -3285,6 +3460,8 @@ fn analyze_main(args: &[String]) {
     verdict_line("TE(Envelope → Radon)", &s_env_radon, &n_env_radon, z_main);
     verdict_line("TE(GPS → Radon)", &s_gps_radon, &n_gps_radon, z_main);
     verdict_line("TE(Radon → GPS)", &s_radon_gps, &n_radon_gps, z_main);
+    verdict_line("TE(Global rate → Ionosphere)", &s_gr_f, &n_gr_f, z_main);
+    verdict_line("TE(Ionosphere → Global rate)", &s_f_gr, &n_f_gr, z_main);
     verdict_line(
         "TE(Lithosphere → CHAMP density)",
         &s_champ_li,
@@ -3468,6 +3645,18 @@ fn analyze_main(args: &[String]) {
         s_env_fe.mean,
         s_env_fe.n,
         n_env_fe.mean + 2.0 * n_env_fe.sd
+    );
+    println!(
+        "TE(Global rate → Ionosphere) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e}; daily count × daily F, 90-day window)",
+        s_gr_f.mean,
+        s_gr_f.n,
+        n_gr_f.mean + 2.0 * n_gr_f.sd
+    );
+    println!(
+        "TE(Ionosphere → Global rate) = {:.4e}   (stack mean excess, n = {}, null mean + 2σ = {:.4e})",
+        s_f_gr.mean,
+        s_f_gr.n,
+        n_f_gr.mean + 2.0 * n_f_gr.sd
     );
     println!(
         "Lag                          = {} (largest mean excess, Litho → Iono; {} for the reverse direction) — sweep 0…{MAX_LAG_H} h in 1-h steps, m ≥ {MIN_M} cells",
@@ -3767,6 +3956,32 @@ mod tests {
         assert!(
             !series.is_empty(),
             "gim_tec_series on the real COD file must yield maps"
+        );
+        let v = series[0].1;
+        assert!(
+            v > 0.0 && v < 300.0,
+            "TECU value out of plausible range: {}",
+            v
+        );
+    }
+
+    #[test]
+    fn gim_retro_lzw_reads_real_codg_file_when_present() {
+        let bytes = match std::fs::read("/tmp/opencode/codg0010.19i.Z") {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("codg retro test skipped: /tmp/opencode/codg0010.19i.Z absent");
+                return;
+            }
+        };
+        let Some(dec) = uncompress_z(&bytes) else {
+            panic!("uncompress_z returned None on the real codg LZW file");
+        };
+        let text = String::from_utf8_lossy(&dec).to_string();
+        let series = gim_tec_series(&text, 0.0, 0.0);
+        assert!(
+            !series.is_empty(),
+            "gim_tec_series on the decompressed codg file must yield maps"
         );
         let v = series[0].1;
         assert!(

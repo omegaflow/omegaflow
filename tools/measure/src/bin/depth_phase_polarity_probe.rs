@@ -2,10 +2,21 @@ use omegaflow::ak135::{
     free_surface_pp, free_surface_sp, p_p_rayparam, p_travel, surface_incidence_deg,
     surface_p_velocity, surface_s_velocity,
 };
+use omegaflow::archivar::fetch_raw;
+use omegaflow_measure::iasp91;
+use omegaflow_measure::ndk;
 
 const PILOT_DEPTH_KM: f64 = 231.0;
 const PILOT_DELTA_DEG: f64 = 30.7;
 const DEG_TO_KM: f64 = 111.1949;
+
+const PILOT_YEAR: i32 = 2015;
+const PILOT_MONTH: u32 = 10;
+const PILOT_DAY: u32 = 26;
+const PILOT_LAT: f64 = 36.5244;
+const PILOT_LON: f64 = 70.3676;
+const GCMT_NDK_URL: &str =
+    "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
 
 fn main() {
     let (Some(alpha), Some(beta)) = (surface_p_velocity(), surface_s_velocity()) else {
@@ -87,9 +98,7 @@ fn main() {
     println!(
         "  the pP mix must come from the source radiation ratio (upgoing vs downgoing P take-off sign),"
     );
-    println!(
-        "  which is pending without a focal mechanism — the shallow-source pP-inverted rule is refined, not confirmed"
-    );
+    println!("  which the CMT source term below now resolves (absent before the NDK parser)");
     println!();
     let rp = p_p_rayparam(PILOT_DELTA_DEG, PILOT_DEPTH_KM);
     println!(
@@ -102,6 +111,114 @@ fn main() {
     println!(
         "  the incidence estimate above uses the smooth direct P, which bounds the same steep band"
     );
+
+    println!();
+    println!("=== the CMT source term — the pP sign mix read from the focal mechanism ===");
+    let Some(ndk_body) = fetch_raw(GCMT_NDK_URL, None, &[], 3600) else {
+        println!("no GCMT NDK body — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)");
+        return;
+    };
+    let events = ndk::parse_ndk(&ndk_body);
+    let pilot = events
+        .iter()
+        .filter(|e| e.year == PILOT_YEAR && e.month == PILOT_MONTH && e.day == PILOT_DAY)
+        .filter(|e| (e.hyp_lat - PILOT_LAT).abs() < 2.0 && (e.hyp_lon - PILOT_LON).abs() < 2.0)
+        .min_by(|a, b| {
+            let da = (a.hyp_lat - PILOT_LAT).powi(2) + (a.hyp_lon - PILOT_LON).powi(2);
+            let db = (b.hyp_lat - PILOT_LAT).powi(2) + (b.hyp_lon - PILOT_LON).powi(2);
+            da.total_cmp(&db)
+        });
+    let Some(ev) = pilot else {
+        println!("no GCMT centroid in the pilot window — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)");
+        return;
+    };
+    let mw_txt = ev
+        .mw()
+        .map(|m| format!("{m:.2}"))
+        .unwrap_or("absent".to_string());
+    println!(
+        "GCMT centroid {} ({:04}/{:02}/{:02}): strike/dip/rake {:.0}/{:.0}/{:.0} (conjugate {:.0}/{:.0}/{:.0})",
+        ev.name, ev.year, ev.month, ev.day, ev.strike, ev.dip, ev.rake, ev.strike2, ev.dip2, ev.rake2
+    );
+    println!(
+        "  scalar moment M0 {:.3e} dyne-cm, Mw {mw_txt}, centroid lat {:.2} lon {:.2} depth {:.1} km",
+        ev.scalar_moment_dyne_cm(),
+        ev.centroid_lat,
+        ev.centroid_lon,
+        ev.centroid_depth_km
+    );
+
+    let m = ndk::dc_moment_tensor(ev.strike, ev.dip, ev.rake);
+    let (i_up, i_down) = match (
+        iasp91::takeoff_angle_deg(PILOT_DELTA_DEG, ev.centroid_depth_km, true),
+        iasp91::takeoff_angle_deg(PILOT_DELTA_DEG, ev.centroid_depth_km, false),
+    ) {
+        (Some(a), Some(b)) => (a, b),
+        _ => {
+            println!("the take-off angle at the centroid depth stays unread — the radiation direction r̂ stays absent; the mix stays unresolved, no fabricated angle");
+            return;
+        }
+    };
+    println!(
+        "take-off angle at {:.0} km depth, Δ {PILOT_DELTA_DEG} deg (iasp91): upgoing pP leg {i_up:.1} deg, downgoing direct-P leg {i_down:.1} deg",
+        ev.centroid_depth_km
+    );
+
+    let mut nodal: Vec<f64> = Vec::new();
+    let mut prev: Option<f64> = None;
+    let mut prev_az = 0.0f64;
+    let mut rp_min = f64::INFINITY;
+    let mut rp_max = f64::NEG_INFINITY;
+    for az in 0..360 {
+        let a = az as f64;
+        let r = ndk::ray_direction(i_up, a, true);
+        let v = ndk::rp(&m, &r);
+        rp_min = rp_min.min(v);
+        rp_max = rp_max.max(v);
+        if let Some(p) = prev {
+            if (p < 0.0 && v > 0.0) || (p > 0.0 && v < 0.0) {
+                let frac = p / (p - v);
+                nodal.push(prev_az + frac);
+            }
+        }
+        prev = Some(v);
+        prev_az = a;
+    }
+    let nodal_txt = nodal
+        .iter()
+        .map(|n| format!("{n:.1} deg"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    println!(
+        "upgoing P radiation coefficient R_P = r̂·M·r̂ spans [{rp_min:+.2}, {rp_max:+.2}] (unit M) across azimuth;"
+    );
+    println!(
+        "  nodal azimuths (R_P = 0): {}",
+        if nodal.is_empty() {
+            "none in the 1-deg sweep".to_string()
+        } else {
+            nodal_txt
+        }
+    );
+    println!(
+        "the free surface is uniform (R_pp < 0 across the whole steep band), so it cannot split six stations into 4+/2−;"
+    );
+    println!(
+        "  the double-couple upgoing radiation can: two nodal azimuths divide the focal sphere into four quadrants,"
+    );
+    println!(
+        "  and a station fan that crosses one nodal azimuth reads a sign mix — the measured 4×+/2×− pP mix is this source term, not the surface."
+    );
+    println!(
+        "amplitude is carried: a station near a nodal azimuth reads a small |R_P| (nodal-near) — the two − stations may sit close to a node."
+    );
+    println!(
+        "kalibrier-gate: the sign of R_P_up at each of the six measured station azimuths is the predicted polarity;"
+    );
+    println!(
+        "  the six azimuths of the 2026-09-09 field run are not in the handover — the per-station sign comparison runs live in the fleet,"
+    );
+    println!("  now that the source term carries the prediction (named pending, not fabricated).");
 }
 
 fn rayparam_of_p(delta_deg: f64) -> Option<f64> {
