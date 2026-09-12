@@ -1,0 +1,26 @@
+# tap-inventar https://vo.lam.fr/tap
+
+catalog vipers_dr2.spectra vipers_dr2 view
+catalog tap_schema.schemas tap_schema table
+catalog tap_schema.tables tap_schema table
+catalog tap_schema.columns tap_schema table
+catalog tap_schema.keys tap_schema table
+catalog tap_schema.key_columns tap_schema table
+catalog tap_schema.groups tap_schema table
+catalog aspic_6df.main aspic_6df table
+catalog aspic_gama.g02 aspic_gama table
+catalog aspic_gama.g09g12g15 aspic_gama table
+catalog el_cosmos_dr1.catalogue el_cosmos_dr1 table
+catalog zcosmos_20k.spectra zcosmos_20k view
+catalog ivoa.obscore ivoa view
+catalog vuds_dr1.spectra vuds_dr1 view
+catalog gama_dr3.spectra gama_dr3 view
+catalog aspic_vuds.cosmos aspic_vuds table
+catalog aspic_vuds.ecdfs aspic_vuds table
+catalog aspic_muse_wide.main aspic_muse_wide table
+catalog aspic_vipers.w1 aspic_vipers table
+catalog aspic_vipers.w1_video aspic_vipers table
+catalog aspic_vipers.w4 aspic_vipers table
+catalog sides.bolshoi2022 sides table
+catalog muse_wide_dr1.spectra muse_wide_dr1 view
+catalog el_cosmos_dr1.spectra el_cosmos_dr1 view
