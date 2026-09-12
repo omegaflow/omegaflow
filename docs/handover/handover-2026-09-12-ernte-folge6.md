@@ -3,7 +3,7 @@
   session: Ernte-Folge VI
   class: handover
   date: 2026-09-12
-  sha256: dff56d6b5a3296dcd72406ccebb049a429cc05bd5f2f643af88cdda8ba3a3d0b
+  sha256: e51d528d0db34630cb3eb8251ed817ddaa73c8eb4c00f40fade8e70a3e88ba83
   status: live
 -->
 # Handover — Ernte-Folge VI (2026-09-12)
@@ -46,6 +46,19 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - data/-Bug-Familie — pioneer_doppler_compiler.rs:126, galileo_atdf_compiler.rs:94,
   pioneer11_odf_compiler.rs:163 schreiben data/spdf…, legen aber nur data/ an (dieselbe
   ENOENT-Klasse wie der pioneer-atdf-Fix c08d15b). Fremde Linien, benannt.
+
+## Votable-TAP (aus Entscheid-Folge III überführt)
+
+- Compiler-Tranche für die 8 überlebenden Votable-Kataloge — je Katalog Feldblock
+  (TAP_SCHEMA-Spalten) + `<name>-cdn.yml` + CDN-Manifestation + sources.φ-Eintrag
+  erst mit gemessenem Feldblock: ALMA EU, SkyMapper, CASDA, MACHO, MUSE-Wide,
+  WiggleZ, CADC youcat, LAMOST DR11. Die Disposition und die 18 Inventare
+  (`tap_index_<label>.φ`) stehen in `phi/blocked_sources.φ` / `phi/pipeline/catalog/`.
+- Zwei Fehlschläge nachmessen: WGE-SDSS (`ia2-tap.oats.inaf.it:8080/wgetap`,
+  QUERY_STATUS=ERROR IllegalArgument) und LIneA (`userquery.linea.org.br`,
+  Schema-Name ≠ tap_schema).
+- Die 54 älteren `tap_index_*.φ` (Pass 2026-09-10) sind untracked, aber in
+  `MANIFEST.φ` `visible` — mitcommitten oder die MANIFEST-Zeilen revidieren.
 
 ## Abschluss
 
