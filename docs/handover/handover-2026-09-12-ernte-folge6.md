@@ -3,15 +3,15 @@
   session: Ernte-Folge VI
   class: handover
   date: 2026-09-12
-  sha256: cf3de39aa1251d1ad347291bd4e0280ac46d3b4eebb84b415a2c4717735ce839
+  sha256: 5bcc5451f54069871de7f938fbd3a03069ecaac266ed11dd7722472db4f2d6e9
   status: live
 -->
 # Handover — Ernte-Folge VI (2026-09-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
-viele Punkte ab, wie sie kann — Sub-Agenten tragen eigenen Kontext, die Anzahl
-ist kein Aufwand. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
+viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
+macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
