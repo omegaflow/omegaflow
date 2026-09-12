@@ -3,7 +3,7 @@
   session: Forschung-Folge V
   class: handover
   date: 2026-09-12
-  sha256: 311d613977199bd85800949192f999b450fed188d620a1c14f5e0f9e8c8242f9
+  sha256: 52aeaf6a11713f9a13d59ff9e3e720cae97a173d54faa013378ad43c8977e5a2
   status: live
 -->
 # Handover — Forschung-Folge V (2026-09-12)
@@ -41,17 +41,35 @@ ci-check-Lauf misst die Behoben-Frage.
 - Ⅱ JUICE-Flyby 28./29.9. (Wiedervorlage 2026-09-28) · Europa Clipper 3.12.
   (Wiedervorlage 2026-12-03).
 - gaia-dr4-iapetus (Wiedervorlage 2026-12-02).
-- Ⅳ LAIC — CSES, TEC retro pre-2024, Instrument A, KDE-h — ungebaut.
-- Ⅴ LSST — Workflow gebaut + dispatcht; IR-Exzess-Achse 10–60 μm ungebaut
-  (nur der AllWISE W1-W2-Keil 3.4/4.6 μm existiert).
+- Ⅳ LAIC — drei Bau-Linien gemessen (CSES descoped): (a) TEC retro pre-2024 —
+  `codg*.Z` vom ESA-GSSC-FTP (anonym, 226) laden, `omegaflow::lzw::uncompress_z`
+  + `omegaflow::ionex`-Parser (beide gebaut) in `laic_probe` verdrahten;
+  (b) Instrument A — globaler Event-Rate-Stack (USGS-FDSN + INTERMAGNET-F) in
+  `laic_probe`; (c) KDE-h — `transfer_entropy_lag_h` (gebaut, te.rs:142) statt
+  `kde_scale` verdrahten.
+- Ⅴ LSST — IR-Exzess-Achse 10–60 μm: keine Quelle fehlt (IRAS FSC 12/25/60,
+  MSX 12/14.7/21.3, AllWISE W3/W4 liegen anonym in IRSA-TAP); offen ist der
+  Achsen-Compiler — `akari_irc` (flux09/18) registrieren, `infrared_excess_compiler`
+  über W3−W4 hinaus erweitern, Workflow + CDN-Asset, Achse in `nadel_gate.rs`
+  neben den W1-W2-Keil hängen.
 - Ⅷ Dunkler Fluss — cluster-tap-cdn gebaut + dispatcht (mcxc/psz2/abell →
   CDN tapvizier.cds.unistra.fr); die Kanäle bleiben pending bis die Assets
   landen und dark-flow re-dispatcht ist.
-- Ⅸ/Ⅹ Kugelblitz — ungebaut.
+- Ⅸ FRB — Bau-Linie: `frb_chime_cat1.json` (sources.φ Z.8135) trägt nur eine
+  nackte url-Zeile; Feld-Semantik füllen (`at`, `cmap`, `field dm`/`freq`/
+  `bin_width`) — Probe `frb_blatt_probe` steht.
 - Ⅺ Placebo — placebo_pair_eeg_probe gebaut; EEG-Datensubstrat pending
   (physionet trägt nur ECG/mitdb, kein Paar-EEG).
 - Ⅻ Urknall — bigbang-echo.yml gebaut + dispatcht (Winkelserie×z-Paarung
   eingebaut); Resultat pending.
+
+## Descoped (gemessen)
+
+- CSES (Nadel Ⅳ) — kein anonymer Zugang (leos.ac.cn 000, SMS-CN-Login, kein
+  DOI); der In-situ-E-Feld-Kanal ist über DEMETER/CDPP + CHAMP/GFZ-ISDC gebaut.
+- Ⅹ Kugelblitz — keine Datenbasis (kein anonymes Multi-Force-Archiv eines
+  Tatorts, das Concept trägt den Befund selbst), kein Konsument; strukturell
+  durch Ⅳ (Multi-Force-TE am Punkt) und Ⅸ (Burst-em) getragen.
 
 ## Galileo-Floor
 
@@ -79,10 +97,20 @@ ci-check-Lauf misst die Behoben-Frage.
 - Externe Referenz — iasp91.rs gebaut (KEB95-Mantel, P-Triplikation 410:
   Δ 14.08–21.43°, 660: Δ 17.67–28.09°) + headwave_gate_probe. Wiring zu den
   depth-phase-Probes pending (kein gemessener P-Slowness-Handoff).
-- Quell-Strahlungsterm (CMT) — ungebaut.
-- W-Phase-CMT als M9-Nachfolger — ungebaut.
-- Stromboli als Vulkan-Lehrer — ungebaut.
-- Die Erde als Sender (Tonga 2022) — ungebaut.
+- Quell-Strahlungsterm (CMT) — Bau-Linie: GCMT-NDK-Parser (`blocked_sources.φ`
+  „parser-def ndk", `jan76_dec25.ndk` anonym 200) + CMT-Quellterm-Probe
+  (strike/dip/rake → M-Tensor → P-Abgangs-Vorzeichen), verdrahtet in
+  `depth_phase_polarity_probe.rs` (löst die pP-Vorzeichen-Mischung).
+- W-Phase-CMT (M9-Nachfolger) — Bau-Linie: USGS FDSN `moment-tensor`/`mww`
+  (anonym 200) statt des M9.1-Pickers, Zentroid-Inversion; GCMT trägt kein
+  W-Phase-Produkt (USGS/PTWC ist der Träger).
+- Stromboli als Vulkan-Lehrer — Bau-Linie: INGV FDSN (`webservices.ingv.it`,
+  anonym 200, HHZ/HNZ) + INGV-Route im `fdsn_waveform_compiler` +
+  `stromboli_station_term_probe` (Wiederholung aus fester Kratersektion).
+- Die Erde als Sender (Tonga 2022) — Bau-Linie: `bgr_infrasound_compiler
+  --year 2022` (BGR-Detektion, Compiler gebaut) + Kreuz-Abgleich-Probe
+  (Ankunftszeit/Rückazimut gegen Lamb-Laufzeit + Wasser-Startzeit); die Roh-
+  Druckwellenform bleibt blockiert (CTBTO-vDEC 403), nicht descoped.
 
 ## Abschluss
 
