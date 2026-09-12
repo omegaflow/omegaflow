@@ -63,7 +63,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 
 - The machine asks before it records; the native path records through the gate.
 - An unasked sensor is a violation — of beings that cannot speak as well.
-- The ethical filter — the human's pulse/HRV throttles the radiatorium's radiation — is registered as `pending`; the binding holds.
+- The ethical filter — the human's pulse/HRV throttles the radiatorium's radiation: the RMSSD/tone gate stands in `src/archivar/hrv.rs`; the binding (pulse arrival via the ESP32 firmware → the radiation path) is `pending`; the binding holds.
 
 ### Consent of the operator — silence in the foreground
 
