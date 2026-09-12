@@ -46,6 +46,7 @@ pub mod gong_series;
 pub mod grib2;
 pub mod hdf5;
 pub mod hmi_polar;
+pub mod hrv;
 pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
