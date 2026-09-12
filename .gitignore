@@ -113,3 +113,7 @@ cloudflare/cloudflared-config.yml
 
 # Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
 /state/
+
+# Login-/Konto-Prüflisten (persönlich — nie ins Repo)
+markiert.csv
+omegaflow-pruefdatei.csv
