@@ -2204,7 +2204,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/
-note HTTP 404 — Endpoint weg.
+note HTTP 404 am Root-Pfad — der Xamin-TAP lebt unter /xamin/vo/tap/sync (200, text/xml VOTable; FORMAT=json/csv „Unsupported format"), gemessen 2026-09-12: VOTable konsumierbar (votable_rows), kein JSON/CSV.
 
 dead 404
 url https://heatflow.world/api/v1/sites?lat=47&lon=8&radius=100
