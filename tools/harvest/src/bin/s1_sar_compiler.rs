@@ -9,7 +9,7 @@ const BBOX: (f64, f64, f64, f64) = (85.40, 28.15, 85.60, 28.40);
 const CP_LON: f64 = 85.515;
 const CP_LAT: f64 = 28.271;
 const CDN_RELEASE: &str = "sentinel1euwest.blob.core.windows.net";
-const MAGIC: [u8; 4] = *b"S1SR";
+const MAGIC: [u8; 4] = *b"S1S2";
 
 #[derive(Clone, Copy)]
 struct Pixel {
@@ -18,6 +18,7 @@ struct Pixel {
     post: f64,
     vor: f64,
     db: f64,
+    inc: Option<f64>,
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -58,7 +59,7 @@ fn sas_token(collection: &str) -> Option<String> {
     }
 }
 
-fn scan_features(body: &str) -> Vec<(String, String, String)> {
+fn scan_features(body: &str) -> Vec<(String, String, String, String)> {
     let mut out = Vec::new();
     let mut rest = body;
     while let Some(i) = rest.find("\"id\":\"S1") {
@@ -76,7 +77,13 @@ fn scan_features(body: &str) -> Vec<(String, String, String)> {
             .and_then(|s| s.split('"').next())
             .unwrap_or("")
             .to_string();
-        out.push((id, href, dt));
+        let ann = rest
+            .split("\"schema-product-vv\":{\"href\":\"")
+            .nth(1)
+            .and_then(|s| s.split('"').next())
+            .unwrap_or("")
+            .to_string();
+        out.push((id, href, ann, dt));
         rest = &rest[6..];
     }
     out
@@ -87,7 +94,7 @@ fn search(
     dt_range: &str,
     sortby: &str,
     limit: u32,
-) -> Vec<(String, String, String)> {
+) -> Vec<(String, String, String, String)> {
     let url = format!(
         "https://planetarycomputer.microsoft.com/api/stac/v1/search?collections=sentinel-1-grd&bbox={},{},{},{}&datetime={}&sortby={}&limit={}",
         bbox.0, bbox.1, bbox.2, bbox.3, dt_range, sortby, limit
@@ -98,7 +105,7 @@ fn search(
     }
 }
 
-fn find_post() -> Option<(String, String, String)> {
+fn find_post() -> Option<(String, String, String, String)> {
     let feats = search(
         &BBOX,
         &format!("{EVENT_EPOCH}/2030-01-01T00:00:00Z"),
@@ -107,7 +114,7 @@ fn find_post() -> Option<(String, String, String)> {
     );
     feats
         .into_iter()
-        .find(|(_, _, dt)| dt.as_str() > EVENT_EPOCH)
+        .find(|(_, _, _, dt)| dt.as_str() > EVENT_EPOCH)
 }
 
 fn find_vor(post_id: &str) -> Option<(String, String, String)> {
@@ -119,7 +126,139 @@ fn find_vor(post_id: &str) -> Option<(String, String, String)> {
     );
     feats
         .into_iter()
-        .find(|(id, _, dt)| id != post_id && dt.as_str() < EVENT_EPOCH)
+        .find(|(id, _, _, dt)| id != post_id && dt.as_str() < EVENT_EPOCH)
+        .map(|(id, href, _, dt)| (id, href, dt))
+}
+
+fn product_annotation_href(product_asset: &str) -> String {
+    if let Some((dir, file)) = product_asset.rsplit_once('/') {
+        if let Some(rest) = file.strip_prefix("rfi-") {
+            let parent = dir.strip_suffix("/rfi").unwrap_or(dir);
+            return format!("{parent}/{rest}");
+        }
+    }
+    product_asset.to_string()
+}
+
+fn fetch_annotation(asset_href: &str, tok: &str) -> Option<String> {
+    let ann = product_annotation_href(asset_href);
+    let bytes = curl(&format!("{ann}?{tok}"))?;
+    let xml = String::from_utf8_lossy(&bytes).into_owned();
+    if xml.contains("<geolocationGridPoint>") && xml.contains("<incidenceAngle>") {
+        Some(xml)
+    } else {
+        None
+    }
+}
+
+#[derive(Clone, Copy)]
+struct GeoPoint {
+    line: f64,
+    pixel: f64,
+    inc: f64,
+}
+
+struct IncGrid {
+    lines: Vec<f64>,
+    pixels: Vec<f64>,
+    values: Vec<Option<f64>>,
+}
+
+fn tag_value(block: &str, tag: &str) -> Option<f64> {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let i = block.find(&open)? + open.len();
+    let rest = &block[i..];
+    let j = rest.find(&close)?;
+    rest[..j].trim().parse::<f64>().ok()
+}
+
+fn build_inc_grid(points: &[GeoPoint]) -> IncGrid {
+    let mut lines: Vec<f64> = Vec::new();
+    let mut pixels: Vec<f64> = Vec::new();
+    for p in points {
+        if !lines.contains(&p.line) {
+            lines.push(p.line);
+        }
+        if !pixels.contains(&p.pixel) {
+            pixels.push(p.pixel);
+        }
+    }
+    lines.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    pixels.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let mut values = vec![None; lines.len() * pixels.len()];
+    for p in points {
+        let li = lines.iter().position(|&l| l == p.line);
+        let pi = pixels.iter().position(|&q| q == p.pixel);
+        if let (Some(li), Some(pi)) = (li, pi) {
+            values[li * pixels.len() + pi] = Some(p.inc);
+        }
+    }
+    IncGrid {
+        lines,
+        pixels,
+        values,
+    }
+}
+
+fn parse_incidence_xml(xml: &str) -> IncGrid {
+    let mut points = Vec::new();
+    let mut rest = xml;
+    while let Some(i) = rest.find("<geolocationGridPoint>") {
+        rest = &rest[i + "<geolocationGridPoint>".len()..];
+        let end = match rest.find("</geolocationGridPoint>") {
+            Some(e) => e,
+            None => break,
+        };
+        let block = &rest[..end];
+        if let (Some(line), Some(pixel), Some(inc)) = (
+            tag_value(block, "line"),
+            tag_value(block, "pixel"),
+            tag_value(block, "incidenceAngle"),
+        ) {
+            if line.is_finite() && pixel.is_finite() && inc.is_finite() && inc > 0.0 {
+                points.push(GeoPoint { line, pixel, inc });
+            }
+        }
+        rest = &rest[end..];
+    }
+    build_inc_grid(&points)
+}
+
+fn bracket(arr: &[f64], x: f64) -> Option<usize> {
+    if arr.len() < 2 {
+        return None;
+    }
+    for i in 0..arr.len() - 1 {
+        if x >= arr[i] && x <= arr[i + 1] {
+            return Some(i);
+        }
+    }
+    None
+}
+
+impl IncGrid {
+    fn inc_at(&self, line: f64, pixel: f64) -> Option<f64> {
+        if self.lines.len() < 2 || self.pixels.len() < 2 {
+            return None;
+        }
+        let li = bracket(&self.lines, line)?;
+        let pi = bracket(&self.pixels, pixel)?;
+        let u = (line - self.lines[li]) / (self.lines[li + 1] - self.lines[li]);
+        let v = (pixel - self.pixels[pi]) / (self.pixels[pi + 1] - self.pixels[pi]);
+        let np = self.pixels.len();
+        let g = |a: usize, b: usize| self.values[a * np + b];
+        let q00 = g(li, pi)?;
+        let q10 = g(li + 1, pi)?;
+        let q01 = g(li, pi + 1)?;
+        let q11 = g(li + 1, pi + 1)?;
+        Some(
+            (1.0 - u) * (1.0 - v) * q00
+                + u * (1.0 - v) * q10
+                + (1.0 - u) * v * q01
+                + u * v * q11,
+        )
+    }
 }
 
 fn download(url: &str, path: &str) -> bool {
@@ -504,11 +643,15 @@ impl Cog {
 }
 
 fn write_bin(pixels: &[Pixel]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(8 + pixels.len() * 40);
+    let mut out = Vec::with_capacity(8 + pixels.len() * 56);
     out.extend_from_slice(&MAGIC);
     out.extend_from_slice(&(pixels.len() as u32).to_le_bytes());
     for p in pixels {
-        for v in [p.lon, p.lat, p.post, p.vor, p.db] {
+        let (inc, present) = match p.inc {
+            Some(v) if v.is_finite() && v > 0.0 => (v, 1.0),
+            _ => (0.0, 0.0),
+        };
+        for v in [p.lon, p.lat, p.post, p.vor, p.db, inc, present] {
             out.extend_from_slice(&v.to_le_bytes());
         }
     }
@@ -520,24 +663,26 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<Pixel>> {
         return None;
     }
     let count = u32::from_le_bytes([bytes[4], bytes[5], bytes[6], bytes[7]]) as usize;
-    if bytes.len() != 8 + count * 40 {
+    if bytes.len() != 8 + count * 56 {
         return None;
     }
     let mut out = Vec::with_capacity(count);
     for k in 0..count {
-        let o = 8 + k * 40;
-        let r = &bytes[o..o + 40];
-        let mut vals = [0.0f64; 5];
+        let o = 8 + k * 56;
+        let r = &bytes[o..o + 56];
+        let mut vals = [0.0f64; 7];
         for (i, v) in vals.iter_mut().enumerate() {
             let b = &r[i * 8..i * 8 + 8];
             *v = f64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
         }
+        let inc = if vals[6] == 1.0 { Some(vals[5]) } else { None };
         out.push(Pixel {
             lon: vals[0],
             lat: vals[1],
             post: vals[2],
             vor: vals[3],
             db: vals[4],
+            inc,
         });
     }
     Some(out)
@@ -574,6 +719,7 @@ fn main() {
 
     let mut post_path = arg_value(&args, "--post-cog");
     let mut vor_path = arg_value(&args, "--vor-cog");
+    let mut ann_path = arg_value(&args, "--ann-xml");
 
     if post_path.is_none() || vor_path.is_none() {
         eprintln!("=== S1-SAR-COG-Beschaffung (CI) ===");
@@ -587,7 +733,7 @@ fn main() {
         let dir = "tmp/s1sar";
         std::fs::create_dir_all(dir).ok();
         if post_path.is_none() {
-            let (id, href, dt) = match find_post() {
+            let (id, href, ann_href, dt) = match find_post() {
                 Some(x) => x,
                 None => {
                     eprintln!(
@@ -603,6 +749,23 @@ fn main() {
                 std::process::exit(1);
             }
             post_path = Some(path);
+            if ann_path.is_none() {
+                match fetch_annotation(&ann_href, &tok) {
+                    Some(xml) => {
+                        let p = format!("{dir}/post_ann.xml");
+                        match std::fs::write(&p, xml.as_bytes()) {
+                            Ok(()) => {
+                                eprintln!("Annotation: {p}");
+                                ann_path = Some(p);
+                            }
+                            Err(e) => eprintln!("annotation write void: {e} — inc absent"),
+                        }
+                    }
+                    None => {
+                        eprintln!("annotation XML absent — inc band stays absent (0 honored)")
+                    }
+                }
+            }
         }
         if vor_path.is_none() {
             let post_id = post_path
@@ -645,6 +808,17 @@ fn main() {
         }
     };
 
+    let post_inc = match ann_path.as_deref() {
+        Some(p) => match std::fs::read_to_string(p) {
+            Ok(xml) => Some(parse_incidence_xml(&xml)),
+            Err(e) => {
+                eprintln!("annotation {p}: {e} — inc band stays absent (0 honored)");
+                None
+            }
+        },
+        None => None,
+    };
+
     let nx = ((lon1 - lon0) / step).round() as usize + 1;
     let ny = ((lat1 - lat0) / step).round() as usize + 1;
 
@@ -655,6 +829,7 @@ fn main() {
     let mut sum_vv = 0.0f64;
     let mut n_dark = 0usize;
     let mut n_bright = 0usize;
+    let mut n_inc = 0usize;
     let mut dark_min_lon = f64::MAX;
     let mut dark_max_lon = f64::MIN;
     let mut dark_min_lat = f64::MAX;
@@ -707,12 +882,17 @@ fn main() {
                     };
                     if vp > 0.0 && vv > 0.0 {
                         let db = 20.0 * (vp / vv).log10();
+                        let inc = post_inc.as_ref().and_then(|g| g.inc_at(py, px));
+                        if inc.is_some() {
+                            n_inc += 1;
+                        }
                         pixels.push(Pixel {
                             lon,
                             lat,
                             post: vp,
                             vor: vv,
                             db,
+                            inc,
                         });
                         n_valid += 1;
                         sum_db += db;
@@ -759,6 +939,7 @@ fn main() {
         eprintln!("   ~Footprint: {w_km:.1} km (W-O) x {h_km:.1} km (N-S)");
     }
     eprintln!("Aufhellung (dB > +4): {n_bright} Pixel");
+    eprintln!("incidence band (inc): {n_inc} pixels");
 
     let bytes = write_bin(&pixels);
     if std::fs::write(&out, &bytes).is_err() {
@@ -787,6 +968,18 @@ fn main() {
 mod tests {
     use super::*;
 
+    const CAL_FIXTURE: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
+<product>
+  <geolocationGrid>
+    <geolocationGridPointList count="4">
+      <geolocationGridPoint><azimuthTime>t0</azimuthTime><line>0</line><pixel>0</pixel><latitude>27.5</latitude><longitude>85.4</longitude><incidenceAngle>30.0</incidenceAngle></geolocationGridPoint>
+      <geolocationGridPoint><azimuthTime>t0</azimuthTime><line>0</line><pixel>200</pixel><latitude>27.5</latitude><longitude>85.6</longitude><incidenceAngle>40.0</incidenceAngle></geolocationGridPoint>
+      <geolocationGridPoint><azimuthTime>t1</azimuthTime><line>100</line><pixel>0</pixel><latitude>28.4</latitude><longitude>85.4</longitude><incidenceAngle>50.0</incidenceAngle></geolocationGridPoint>
+      <geolocationGridPoint><azimuthTime>t1</azimuthTime><line>100</line><pixel>200</pixel><latitude>28.4</latitude><longitude>85.6</longitude><incidenceAngle>60.0</incidenceAngle></geolocationGridPoint>
+    </geolocationGridPointList>
+  </geolocationGrid>
+</product>"#;
+
     #[test]
     fn bin_roundtrip() {
         let px = vec![
@@ -796,6 +989,7 @@ mod tests {
                 post: 1234.5,
                 vor: 1200.0,
                 db: 0.246,
+                inc: Some(34.5),
             },
             Pixel {
                 lon: 85.6,
@@ -803,6 +997,7 @@ mod tests {
                 post: 1.0,
                 vor: 2.0,
                 db: -6.0206,
+                inc: None,
             },
         ];
         let bytes = write_bin(&px);
@@ -811,12 +1006,35 @@ mod tests {
         for (a, b) in parsed.iter().zip(px.iter()) {
             assert!((a.lon - b.lon).abs() < 1e-9);
             assert!((a.db - b.db).abs() < 1e-6);
+            assert_eq!(a.inc.is_some(), b.inc.is_some());
+            if let (Some(x), Some(y)) = (a.inc, b.inc) {
+                assert!((x - y).abs() < 1e-9);
+            }
         }
     }
 
     #[test]
     fn bin_rejects_junk() {
         assert!(parse_bin(b"xxxx").is_none());
+        assert!(parse_bin(b"S1S2\x01\x00\x00\x00").is_none());
         assert!(parse_bin(b"S1SR\x01\x00\x00\x00").is_none());
+    }
+
+    #[test]
+    fn incidence_band_parses_and_fills() {
+        let grid = parse_incidence_xml(CAL_FIXTURE);
+        assert_eq!(grid.lines.len(), 2);
+        assert_eq!(grid.pixels.len(), 2);
+        assert!((grid.inc_at(0.0, 0.0).unwrap() - 30.0).abs() < 1e-9);
+        assert!((grid.inc_at(100.0, 200.0).unwrap() - 60.0).abs() < 1e-9);
+        assert!((grid.inc_at(50.0, 100.0).unwrap() - 45.0).abs() < 1e-9);
+        assert!(grid.inc_at(200.0, 100.0).is_none());
+    }
+
+    #[test]
+    fn incidence_absent_stays_absent() {
+        let grid = parse_incidence_xml("<product></product>");
+        assert!(grid.lines.is_empty());
+        assert!(grid.inc_at(0.0, 0.0).is_none());
     }
 }

@@ -1,4 +1,6 @@
-use omegaflow_measure::depthphase::{arc_deg, arg_value, bandpass, median, unix_to_iso};
+use omegaflow_measure::depthphase::{
+    arc_deg, arg_value, bandpass, median, unix_to_iso, StationTerm,
+};
 use omegaflow_measure::miniseed::decode_body;
 use std::env;
 use std::fs;
@@ -416,6 +418,7 @@ fn main() {
         }
     }
 
+    let mut coherent_section = false;
     if rows.len() >= 2 {
         let num = rows.iter().map(|r| r.1 * r.2).sum::<f64>();
         let den = rows.iter().map(|r| r.1 * r.1).sum::<f64>();
@@ -423,6 +426,7 @@ fn main() {
             let slope = num / den;
             println!();
             if slope > 0.0 && slope.is_finite() {
+                coherent_section = true;
                 let v = 1.0 / slope;
                 println!(
                     "apparent phase velocity across the section: {:.2} km/s (lag grows {:.3} s per km from the reference)",
@@ -435,8 +439,27 @@ fn main() {
             }
         }
     }
+    let section_terms: Vec<StationTerm> = if coherent_section {
+        rows.iter()
+            .map(|(key, _dist_km, term, mad, n)| StationTerm {
+                key: key.clone(),
+                lag_s: *term,
+                mad_s: *mad,
+                n: *n,
+            })
+            .collect()
+    } else {
+        Vec::new()
+    };
     println!();
-    println!(
-        "wiring: pending — the terms read the site/path bias of a fixed crater source; the handoff to the depth-phase station correction stays unbuilt"
-    );
+    if section_terms.is_empty() {
+        println!(
+            "wiring: built — depthphase::StationTerm carries a section term into depthphase::measure_station, where the pP lag is corrected before inversion; this run measured no coherent crater source, so the section carries no station term (absent, never a zero correction) and the depth-phase lag stays uncorrected (0 honored)"
+        );
+    } else {
+        println!(
+            "wiring: built — depthphase::StationTerm carries {} section term(s) into depthphase::measure_station, where the pP lag is corrected before inversion",
+            section_terms.len()
+        );
+    }
 }

@@ -63,6 +63,7 @@ pub mod mitdb;
 pub mod movement_monitoring;
 pub mod mpcorb;
 pub mod nc4;
+pub mod ndk;
 pub mod netcdf;
 pub mod noaa_nodd;
 pub mod odf;
