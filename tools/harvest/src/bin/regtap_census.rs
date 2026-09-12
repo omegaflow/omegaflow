@@ -38,7 +38,7 @@ fn arg(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let Some(cmd) = args.first().cloned() else {
-        eprintln!("usage: regtap_census <wave|import> [--ledger <path>] [--regtap <root>]");
+        eprintln!("usage: regtap_census <wave|import|recheck> [--ledger <path>] [--regtap <root>]");
         std::process::exit(1);
     };
     match cmd.as_str() {
@@ -75,6 +75,41 @@ fn main() {
             match rewrite_ledger_notes(&ledger_path, &weighed) {
                 Ok(n) => eprintln!("wave: {} weighed, {} ledger notes rewritten", total, n),
                 Err(_) => eprintln!("wave: {} weighed, ledger rewrite returned void", total),
+            }
+        }
+        "recheck" => {
+            let Some(ledger_path) = arg(&args, "--ledger") else {
+                eprintln!("recheck needs --ledger <path>");
+                std::process::exit(1);
+            };
+            let probe_timeout: u64 = arg(&args, "--probe-timeout")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(60);
+            let pause_s: u64 = arg(&args, "--pause")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(2);
+            let entries: Vec<(String, String)> = read_kandidat(&ledger_path)
+                .into_iter()
+                .filter(|(_, n)| n.contains("absent bis recherchiert"))
+                .collect();
+            let ordered = order_fruchtfolge(entries);
+            println!("url\thttp_code\ttime_s\tfinal_url\tprobe\tdate");
+            let mut rechecked: HashMap<String, String> = HashMap::new();
+            let total = ordered.len();
+            for (i, (url, note)) in ordered.iter().enumerate() {
+                let l = census_with(url, probe_timeout);
+                println!(
+                    "{}\t{}\t{}\t{}\t{}\t{}",
+                    l.url, l.http_code, l.time_s, l.final_url, l.probe, l.date
+                );
+                rechecked.insert(url.clone(), recheck_note(note, &l));
+                if i + 1 < total {
+                    std::thread::sleep(std::time::Duration::from_secs(pause_s));
+                }
+            }
+            match rewrite_ledger_notes(&ledger_path, &rechecked) {
+                Ok(n) => eprintln!("recheck: {} weighed, {} ledger notes rewritten", total, n),
+                Err(_) => eprintln!("recheck: {} weighed, ledger rewrite returned void", total),
             }
         }
         "import" => {
@@ -160,7 +195,9 @@ fn main() {
             }
         }
         _ => {
-            eprintln!("usage: regtap_census <wave|import> [--ledger <path>] [--regtap <root>]");
+            eprintln!(
+                "usage: regtap_census <wave|import|recheck> [--ledger <path>] [--regtap <root>]"
+            );
             std::process::exit(1);
         }
     }
@@ -276,6 +313,24 @@ fn gewogen_note(note: &str, l: &CensusLine) -> String {
         "{} gewogen {}: http {} probe {}",
         prefix, l.date, l.http_code, l.probe
     )
+}
+
+fn recheck_note(note: &str, l: &CensusLine) -> String {
+    let prefix = match note.split("gewogen").next() {
+        Some(p) => p.trim_end().trim_end_matches('-').trim_end(),
+        None => note,
+    };
+    if l.probe == "tap" {
+        format!(
+            "{} gewogen {}: sync-GET tap (http {})",
+            prefix, l.date, l.http_code
+        )
+    } else {
+        format!(
+            "{} gewogen {}: sync-GET {} (http {})",
+            prefix, l.date, l.probe, l.http_code
+        )
+    }
 }
 
 fn rewrite_ledger_notes(path: &str, notes: &HashMap<String, String>) -> std::io::Result<usize> {
