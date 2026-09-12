@@ -13,6 +13,12 @@ pub const PERM_GROUND: f32 = f32::EPSILON;
 
 pub const TONE_FLOOR_SCALE: f32 = 0.25;
 
+pub const AIM_HALF_SWEEP_RAD: f32 = std::f32::consts::FRAC_PI_2;
+
+pub const THRUST_AIM_MIN: f64 = 1e-6;
+
+pub const SERVO_NEUTRAL_MS: f32 = 1.5;
+
 pub const FORCE_NAME: [&str; 9] = [
     "em",
     "gravity",
@@ -34,6 +40,22 @@ pub const OFFSET_RELAX: f32 = 0.03125;
 pub const REF_RELAX: f32 = 0.0625;
 
 pub const LOOP_TICK_MS: u64 = 16;
+
+fn pulse_ms(angle: f32) -> f32 {
+    SERVO_NEUTRAL_MS + (angle / AIM_HALF_SWEEP_RAD) * 0.5
+}
+
+pub fn aim_pulse_ms(v: [f64; 3]) -> (Option<f32>, Option<f32>) {
+    let vmag = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+    if vmag < THRUST_AIM_MIN {
+        return (None, None);
+    }
+    let azimuth = v[1].atan2(v[0]);
+    let elevation = v[2].atan2(v[0].hypot(v[1]));
+    let pan_ms = Some(pulse_ms(azimuth as f32).clamp(1.0, 2.0));
+    let tilt_ms = Some(pulse_ms(elevation as f32));
+    (pan_ms, tilt_ms)
+}
 
 pub fn storage_entry(
     read_only: bool,
@@ -301,9 +323,12 @@ impl OmegaLoop {
     }
 
     pub fn presence_frame(&self) -> PresenceFrame {
+        let (pan_ms, tilt_ms) = aim_pulse_ms(self.v);
         PresenceFrame {
             omega: self.probe_omega,
             aperture: self.field_permeability * self.tone_scale,
+            pan_ms,
+            tilt_ms,
         }
     }
 
