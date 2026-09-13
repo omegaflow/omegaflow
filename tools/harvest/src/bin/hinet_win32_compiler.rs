@@ -610,12 +610,12 @@ fn main() {
         };
         let before = existing_ids(&jar);
         let mut id: Option<String> = None;
-        for attempt in 0..5 {
+        for attempt in 0..8 {
             if !submit_request(&jar, &org1, &org2, &size, &w, span_min) {
                 eprintln!("hinet: cont request returned void — the request stays unplaced");
                 std::process::exit(1);
             }
-            match poll_server_id(&jar, &w, &before, 60) {
+            match poll_server_id(&jar, &w, &before, 240) {
                 Some(found) => {
                     id = Some(found);
                     break;
