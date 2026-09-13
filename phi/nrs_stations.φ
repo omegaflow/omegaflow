@@ -1,31 +1,50 @@
-# NRS-Stationstabelle (SITE_NAME lat lon) — gemessen 2026-09-07
-# Quelle: PMEL "Ocean Noise Reference Station (NRS) Network", Deployment-Tabelle,
+# NRS-Stationstabelle (SITE_NAME lat lon water_depth_m auh_depth_m)
+#   Koordinaten gemessen 2026-09-07, Tiefen gemessen 2026-09-13.
+# Quelle (Koordinaten UND Tiefen): PMEL "Ocean Noise Reference Station (NRS) Network",
+#   Deployment-Tabelle,
 #   https://www.pmel.noaa.gov/acoustics/noaanps-ocean-noise-reference-station-network
-# Referenzwert: sichtbarer Dezimalwert der Netz-Tabelle (Spalten Latitude | Longitude).
+# Referenzwert: sichtbarer Dezimalwert der Netz-Tabelle (Spalten Latitude | Longitude |
+#   Water depth [m] | AUH depth [m]). Einheit beider Tiefenspalten: Meter (SI).
+# Tiefen-Definition:
+#   water_depth_m = Wassertiefe am Verankerungsort (Bathymetrie, Spalte "Water depth [m]").
+#   auh_depth_m   = Instrumenten-Tiefe der AUH = Sensor-Deployment-Tiefe
+#                   (Spalte "AUH depth [m]"). NRS01 kreuzbestaetigt: die Kalibrier-xlsx
+#                   traegt Depth_m = 500.
 # Mess-Anmerkungen:
 #   - Die PMEL-Seite fuehrt 13 Stationen NRS01-NRS13. NRS13 (Chumash Heritage NMS) steht
 #     in einer zweiten tbody-Zeile, deren data-sheets-Attribut noch die NRS12-Werte traegt
-#     (17.79/-64.65, Buck Island); der sichtbare Text ist NRS13 35.31 -121.59. Referenz ist
-#     der sichtbare Text. NRS11 traegt im Attribut -126.44, sichtbar -123.44 (siehe SHAPE-Kreuz).
+#     (17.79/-64.65, Buck Island; Tiefen 40/40); der sichtbare Text ist NRS13 35.31 -121.59,
+#     913 / 850. Referenz ist der sichtbare Text. NRS11 traegt im Attribut -126.44, sichtbar
+#     -123.44 (siehe SHAPE-Kreuz); die Wassertiefe traegt sichtbar 550, im Attribut 534 —
+#     Referenz sichtbar 550, AUH 500.
 #   - Keine Spektren-Verankerung im Bucket fuer NRS02-10,12,13: deren Koordinaten tragen nur
 #     die Netz-Tabelle (Deployment-SHAPE pending).
 #   - Bucket noaa-passive-bioacoustic (GCS, nrs/products + nrs/audio): nur NRS01 + NRS11
-#     haben Sound-Level-Metrics-*-metadata.json mit "SHAPE": "POINT (lon lat)" (siehe Kreuz).
-#   - Format: Rust-parsebar — je Zeile 3 whitespace-getrennte Token SITE_NAME lat lon;
-#     #-Zeilen sind Kommentar. Koordinaten wie gemessen (Grad, dezimal).
-NRS01 72.44 -156.55
-NRS02 50.25 -145.13
-NRS03 47.77 -125.52
-NRS04 22.33 -157.67
-NRS05 33.9 -119.58
-NRS06 28.25 -86.83
-NRS07 29.33 -77.99
-NRS08 39.01 -67.27
-NRS09 42.4 -70.13
-NRS10 -14.27 -170.72
-NRS11 37.88 -123.44
-NRS12 17.79 -64.65
-NRS13 35.31 -121.59
+#     haben Sound-Level-Metrics-*-metadata.json mit "SHAPE": "POINT (lon lat)" (siehe Kreuz);
+#     diese metadata.json traegt KEINE Tiefe, nur SHAPE — die Netz-Tabelle ist die Tiefen-Quelle.
+#   - Genaeherte Wassertiefe (Quelltext "~"): NRS04 "~4,900" -> ~4900, NRS08 "~3,550" -> ~3550.
+#     Die Tilde ist uebernommen; auh_depth_m ist bei allen 13 exakt.
+#   - Keine Station ist bei einer Tiefe absent: alle 13 tragen beide Spalten gemessen.
+#     Kein 0.0-Pad, keine Fabrikation.
+#   - Format: Rust-parsebar — je Zeile 5 whitespace-getrennte Token
+#     SITE_NAME lat lon water_depth_m auh_depth_m; #-Zeilen sind Kommentar. Koordinaten wie
+#     gemessen (Grad, dezimal). Der bestehende Parser
+#     (noaa_nodd_bucket_harvester.rs parse_station_table) liest die ersten 3 Token und
+#     ignoriert die Tiefen-Token — die Erweiterung bricht ihn nicht. Ein fuehrendes "~" im
+#     water_depth_m-Token markiert den genaeherten Quellwert (nur NRS04, NRS08).
+NRS01 72.44 -156.55 1000 500
+NRS02 50.25 -145.13 4250 500
+NRS03 47.77 -125.52 936 488
+NRS04 22.33 -157.67 ~4900 900
+NRS05 33.9 -119.58 1000 900
+NRS06 28.25 -86.83 1230 900
+NRS07 29.33 -77.99 870 900
+NRS08 39.01 -67.27 ~3550 900
+NRS09 42.4 -70.13 79 79
+NRS10 -14.27 -170.72 33 33
+NRS11 37.88 -123.44 550 500
+NRS12 17.79 -64.65 40 40
+NRS13 35.31 -121.59 913 850
 #
 # Kreuz Netz-Tabelle vs Deployment-SHAPE (Konsistenz, gemessen aus
 # storage.googleapis.com/noaa-passive-bioacoustic, nrs/products/sound_level_metrics):

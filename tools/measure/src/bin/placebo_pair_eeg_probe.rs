@@ -6,7 +6,8 @@ use omegaflow::te::{
     TeNull,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, open_set, open_set_bin, open_set_mat, resolve_channel, EeglabSet,
+    chanlocs_positions, channel_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+    EeglabSet,
 };
 
 const DEFAULT_LAG_MAX: usize = 24;
