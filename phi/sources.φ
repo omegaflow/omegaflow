@@ -4057,6 +4057,11 @@ field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
 field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
 field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
 
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
+format tap
+ttl 604800
+at sun
+
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
 ttl 86400
 at sun
