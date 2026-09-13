@@ -56,6 +56,7 @@ pub mod jwst;
 pub mod jwst_equilibrium;
 pub mod kbo;
 pub mod kepler;
+pub mod las;
 pub mod lsk;
 pub mod lzw;
 pub mod matfile;
