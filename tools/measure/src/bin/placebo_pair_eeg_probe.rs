@@ -2,8 +2,8 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    conditional_te_stats_lagged_n, surrogate_stats_phase_n, transfer_entropy_conditional_binned_n,
-    transfer_entropy_lag, TeNull,
+    conditional_te_stats_lagged_n, transfer_entropy_binned, transfer_entropy_conditional_binned_n,
+    TeNull,
 };
 use omegaflow_measure::eeglab::{channel_series, open_set, open_set_mat, resolve_channel};
 
@@ -213,10 +213,16 @@ fn run_pair(
     let mut arrow_ba = 0usize;
     for lag in 1..=lag_max {
         let lag_seed = seed ^ (lag as u64).wrapping_mul(LAG_SEED_MIX);
-        let te_ab = transfer_entropy_lag(b, a, lag);
-        let fam_ab = surrogate_stats_phase_n(b, a, lag, lag_seed, n_surr).map(|(_, _, thr)| thr);
-        let te_ba = transfer_entropy_lag(a, b, lag);
-        let fam_ba = surrogate_stats_phase_n(a, b, lag, lag_seed, n_surr).map(|(_, _, thr)| thr);
+        let te_ab = transfer_entropy_binned(b, a, lag, bins);
+        let fam_ab = conditional_te_stats_lagged_n(
+            b, a, &[], lag, lag, bins, lag_seed, n_surr, TeNull::Phase,
+        )
+        .map(|(_, _, thr)| thr);
+        let te_ba = transfer_entropy_binned(a, b, lag, bins);
+        let fam_ba = conditional_te_stats_lagged_n(
+            a, b, &[], lag, lag, bins, lag_seed, n_surr, TeNull::Phase,
+        )
+        .map(|(_, _, thr)| thr);
         let v_ab = match (te_ab, fam_ab) {
             (Some(t), Some(f)) => {
                 if t > f {
@@ -464,9 +470,19 @@ mod tests {
             };
         }
         let lag_seed = SEED ^ (delay as u64).wrapping_mul(LAG_SEED_MIX);
-        let te = transfer_entropy_lag(&b, &a, delay).expect("the coupled TE is measurable");
-        let (_, _, fam) =
-            surrogate_stats_phase_n(&b, &a, delay, lag_seed, 50).expect("the null is measurable");
+        let te = transfer_entropy_binned(&b, &a, delay, 4).expect("the coupled TE is measurable");
+        let (_, _, fam) = conditional_te_stats_lagged_n(
+            &b,
+            &a,
+            &[],
+            delay,
+            delay,
+            4,
+            lag_seed,
+            50,
+            TeNull::Phase,
+        )
+        .expect("the null is measurable");
         assert!(
             te > fam,
             "the driven direction breaks fam-Schwelle: TE {te} vs fam {fam}"

@@ -1,6 +1,9 @@
 use crate::inflate::inflate;
 
 const MI_INT8: u32 = 1;
+const MI_UINT8: u32 = 2;
+const MI_INT16: u32 = 3;
+const MI_UINT16: u32 = 4;
 const MI_INT32: u32 = 5;
 const MI_UINT32: u32 = 6;
 const MI_SINGLE: u32 = 7;
@@ -79,7 +82,9 @@ fn parse_stream(bytes: &[u8], mut pos: usize, out: &mut Vec<MatArray>) -> Option
                 pos = end;
             }
             MI_MATRIX => {
-                out.push(parse_matrix(&bytes[pos..end])?);
+                if let Some(matrix) = parse_matrix(&bytes[pos..end]) {
+                    out.push(matrix);
+                }
                 pos = align8(end);
             }
             _ => {
@@ -151,12 +156,17 @@ fn parse_matrix(bytes: &[u8]) -> Option<MatArray> {
         parse_struct_fields(&bytes[pos..], dims.iter().product())?
     } else if cls == MX_CELL_CLASS {
         parse_cell(&bytes[pos..], dims.iter().product())?
+    } else if let Some((t, s, align)) = read_tag(bytes, &mut pos) {
+        if pos + s > bytes.len() {
+            MatData::Empty
+        } else {
+            let body = &bytes[pos..pos + s];
+            pos = align_to(pos + s, align);
+            let mut body_pos = 0usize;
+            read_data(body, &mut body_pos, t, s, cls).unwrap_or(MatData::Empty)
+        }
     } else {
-        let (t, s, align) = read_tag(bytes, &mut pos)?;
-        let body = &bytes[pos..pos + s];
-        pos = align_to(pos + s, align);
-        let mut body_pos = 0usize;
-        read_data(body, &mut body_pos, t, s, cls)?
+        MatData::Empty
     };
 
     if complex {
@@ -164,6 +174,50 @@ fn parse_matrix(bytes: &[u8]) -> Option<MatArray> {
     }
 
     Some(MatArray { name, dims, data })
+}
+
+fn read_int32(
+    body: &[u8],
+    pos: &mut usize,
+    s: usize,
+    width: usize,
+    signed: bool,
+) -> Option<MatData> {
+    let n = s / width;
+    let mut v = Vec::with_capacity(n);
+    for i in 0..n {
+        let at = *pos + i * width;
+        let value = match width {
+            1 => {
+                let b = body[at];
+                if signed {
+                    b as i8 as i32
+                } else {
+                    b as i32
+                }
+            }
+            2 => {
+                let b = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
+                if signed {
+                    b as i16 as i32
+                } else {
+                    b as i32
+                }
+            }
+            4 => {
+                let b = u32::from_le_bytes(body[at..at + 4].try_into().ok()?);
+                if signed {
+                    b as i32
+                } else {
+                    i32::try_from(b).ok()?
+                }
+            }
+            _ => return None,
+        };
+        v.push(value);
+    }
+    *pos = align8(*pos + s);
+    Some(MatData::Int32(v))
 }
 
 fn read_data(body: &[u8], pos: &mut usize, t: u32, s: usize, cls: u32) -> Option<MatData> {
@@ -188,41 +242,78 @@ fn read_data(body: &[u8], pos: &mut usize, t: u32, s: usize, cls: u32) -> Option
             *pos = align8(*pos + s);
             Some(MatData::Single(v))
         }
-        (_, MI_INT32) => {
-            let n = s / 4;
-            let mut v = Vec::with_capacity(n);
-            for i in 0..n {
-                let at = *pos + i * 4;
-                v.push(i32::from_le_bytes(body[at..at + 4].try_into().ok()?));
-            }
-            *pos = align8(*pos + s);
-            Some(MatData::Int32(v))
-        }
         (MX_CHAR, MI_INT8) => {
             let v = body[*pos..*pos + s].to_vec();
             *pos = align8(*pos + s);
             Some(MatData::Char(v))
         }
+        (MX_CHAR, MI_UINT16) => {
+            let n = s / 2;
+            let mut v = Vec::with_capacity(n);
+            for i in 0..n {
+                let at = *pos + i * 2;
+                let u = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
+                if let Some(c) = char::from_u32(u as u32) {
+                    let mut buf = [0u8; 4];
+                    v.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
+                }
+            }
+            *pos = align8(*pos + s);
+            Some(MatData::Char(v))
+        }
+        (_, MI_INT8) => read_int32(body, pos, s, 1, true),
+        (_, MI_UINT8) => read_int32(body, pos, s, 1, false),
+        (_, MI_INT16) => read_int32(body, pos, s, 2, true),
+        (_, MI_UINT16) => read_int32(body, pos, s, 2, false),
+        (_, MI_INT32) => read_int32(body, pos, s, 4, true),
+        (_, MI_UINT32) => read_int32(body, pos, s, 4, false),
         _ => Some(MatData::Empty),
     }
 }
 
-fn read_nested_matrix(body: &[u8], pos: &mut usize) -> Option<MatArray> {
-    let (t, s, _) = read_tag(body, pos)?;
-    let inner = &body[*pos..*pos + s];
-    *pos = align8(*pos + s);
+fn empty_array() -> MatArray {
+    MatArray {
+        name: String::new(),
+        dims: Vec::new(),
+        data: MatData::Empty,
+    }
+}
+
+fn read_nested_matrix(body: &[u8], pos: &mut usize) -> MatArray {
+    let Some((t, s, _)) = read_tag(body, pos) else {
+        return empty_array();
+    };
+    let Some(end) = (*pos).checked_add(s) else {
+        *pos = body.len();
+        return empty_array();
+    };
+    if end > body.len() {
+        *pos = body.len();
+        return empty_array();
+    }
+    let inner = &body[*pos..end];
+    *pos = align8(end);
     match t {
-        MI_MATRIX => parse_matrix(inner),
+        MI_MATRIX => match parse_matrix(inner) {
+            Some(m) => m,
+            None => empty_array(),
+        },
         MI_COMPRESSED => {
-            let uncomp = zlib_inflate(inner)?;
+            let Some(uncomp) = zlib_inflate(inner) else {
+                return empty_array();
+            };
             let mut upos = 0usize;
-            let (mt, ms, _) = read_tag(&uncomp, &mut upos)?;
-            if mt != MI_MATRIX {
-                return None;
+            match read_tag(&uncomp, &mut upos) {
+                Some((mt, ms, _)) if mt == MI_MATRIX && upos + ms <= uncomp.len() => {
+                    match parse_matrix(&uncomp[upos..upos + ms]) {
+                        Some(m) => m,
+                        None => empty_array(),
+                    }
+                }
+                _ => empty_array(),
             }
-            parse_matrix(&uncomp[upos..upos + ms])
         }
-        _ => None,
+        _ => empty_array(),
     }
 }
 
@@ -241,16 +332,17 @@ fn parse_struct_fields(body: &[u8], n_elements: usize) -> Option<MatData> {
         .collect();
     pos = align8(pos + s);
 
-    let mut fields = Vec::with_capacity(names.len());
-    for name in &names {
-        let mut values = Vec::with_capacity(n_elements);
-        for _ in 0..n_elements {
-            values.push(read_nested_matrix(body, &mut pos)?);
-        }
-        fields.push(MatField {
+    let mut fields: Vec<MatField> = names
+        .iter()
+        .map(|name| MatField {
             name: name.clone(),
-            values,
-        });
+            values: Vec::with_capacity(n_elements),
+        })
+        .collect();
+    for _ in 0..n_elements {
+        for field in &mut fields {
+            field.values.push(read_nested_matrix(body, &mut pos));
+        }
     }
     Some(MatData::Struct(fields))
 }
@@ -259,7 +351,7 @@ fn parse_cell(body: &[u8], n_elements: usize) -> Option<MatData> {
     let mut pos = 0usize;
     let mut cells = Vec::with_capacity(n_elements);
     for _ in 0..n_elements {
-        cells.push(read_nested_matrix(body, &mut pos)?);
+        cells.push(read_nested_matrix(body, &mut pos));
     }
     Some(MatData::Cell(cells))
 }
@@ -420,9 +512,10 @@ mod tests {
         for _ in field_len..table_len {
             body.push(0);
         }
-        for (_, values) in fields {
-            for v in values {
-                body.extend_from_slice(v);
+        let n_elements = dims.iter().product::<i32>() as usize;
+        for i in 0..n_elements {
+            for (_, values) in fields {
+                body.extend_from_slice(&values[i]);
             }
         }
         let mut out = Vec::new();
@@ -590,6 +683,125 @@ mod tests {
         match &cells[1].data {
             MatData::Double(v) => assert_eq!(v, &vec![2.0]),
             _ => panic!("not double cell element"),
+        }
+    }
+
+    fn empty_matrix(name: &str) -> Vec<u8> {
+        let mut body = flags_class(MX_CHAR);
+        body.extend_from_slice(&dims_tag(&[0, 0]));
+        body.extend_from_slice(&name_tag(name));
+        let mut out = Vec::new();
+        out.extend_from_slice(&MI_MATRIX.to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        out.extend_from_slice(&body);
+        out
+    }
+
+    #[test]
+    fn a_struct_array_with_an_empty_field_carries_its_values() {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[
+                (
+                    "labels",
+                    vec![
+                        char_matrix("labels", b"E1", &[1, 2]),
+                        char_matrix("labels", b"E2", &[1, 2]),
+                    ],
+                ),
+                ("type", vec![empty_matrix("type"), empty_matrix("type")]),
+            ],
+        );
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&chanlocs);
+        let arrays = parse_mat(&bytes).unwrap();
+        let MatData::Struct(fields) = &arrays[0].data else {
+            panic!("not struct");
+        };
+        let labels = fields.iter().find(|f| f.name == "labels").unwrap();
+        assert_eq!(labels.values.len(), 2);
+        match &labels.values[1].data {
+            MatData::Char(c) => assert_eq!(c, b"E2"),
+            _ => panic!("not char label"),
+        }
+        let type_field = fields.iter().find(|f| f.name == "type").unwrap();
+        assert_eq!(type_field.values.len(), 2);
+        assert!(matches!(type_field.values[0].data, MatData::Empty));
+        assert!(matches!(type_field.values[1].data, MatData::Empty));
+    }
+
+    #[test]
+    fn a_cell_with_an_empty_element_carries_the_rest() {
+        let mut body = flags_class(MX_CELL_CLASS);
+        body.extend_from_slice(&dims_tag(&[1, 3]));
+        body.extend_from_slice(&name_tag("c"));
+        body.extend_from_slice(&matrix("a", &[1.0], &[1, 1]));
+        body.extend_from_slice(&empty_matrix("b"));
+        body.extend_from_slice(&matrix("c", &[3.0], &[1, 1]));
+        let mut out = Vec::new();
+        out.extend_from_slice(&MI_MATRIX.to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        out.extend_from_slice(&body);
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&out);
+        let arrays = parse_mat(&bytes).unwrap();
+        let MatData::Cell(cells) = &arrays[0].data else {
+            panic!("not cell");
+        };
+        assert_eq!(cells.len(), 3);
+        match &cells[0].data {
+            MatData::Double(v) => assert_eq!(v, &vec![1.0]),
+            _ => panic!("not double cell element"),
+        }
+        assert!(matches!(cells[1].data, MatData::Empty));
+        match &cells[2].data {
+            MatData::Double(v) => assert_eq!(v, &vec![3.0]),
+            _ => panic!("not double cell element"),
+        }
+    }
+
+    #[test]
+    fn an_empty_top_level_matrix_stays_absent_while_the_file_parses() {
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&empty_matrix("icaact"));
+        bytes.extend_from_slice(&matrix("a", &[1.0, 2.0], &[1, 2]));
+        let arrays = parse_mat(&bytes).unwrap();
+        assert_eq!(arrays.len(), 2);
+        assert_eq!(arrays[0].name, "icaact");
+        assert!(matches!(arrays[0].data, MatData::Empty));
+        match &arrays[1].data {
+            MatData::Double(v) => assert_eq!(v, &vec![1.0, 2.0]),
+            _ => panic!("not double"),
+        }
+    }
+
+    fn uint16_char_matrix(name: &str, text: &str) -> Vec<u8> {
+        let mut body = flags_class(MX_CHAR);
+        body.extend_from_slice(&dims_tag(&[1, text.chars().count() as i32]));
+        body.extend_from_slice(&name_tag(name));
+        let utf16: Vec<u16> = text.encode_utf16().collect();
+        body.extend_from_slice(&MI_UINT16.to_le_bytes());
+        body.extend_from_slice(&((utf16.len() * 2) as u32).to_le_bytes());
+        for u in &utf16 {
+            body.extend_from_slice(&u.to_le_bytes());
+        }
+        pad_body(&mut body);
+        let mut out = Vec::new();
+        out.extend_from_slice(&MI_MATRIX.to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        out.extend_from_slice(&body);
+        out
+    }
+
+    #[test]
+    fn a_uint16_char_matrix_decodes_to_utf8() {
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&uint16_char_matrix("labels", "E1"));
+        let arrays = parse_mat(&bytes).unwrap();
+        match &arrays[0].data {
+            MatData::Char(c) => assert_eq!(c, b"E1"),
+            _ => panic!("not char"),
         }
     }
 }
