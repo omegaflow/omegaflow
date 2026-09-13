@@ -52,7 +52,9 @@ fn main() {
         let mut kept = 0usize;
         let mut skipped = 0usize;
         for r in &recs {
-            if !r.valid || !(11..=14).contains(&r.data_type) {
+            let delta_dor = matches!(r.data_type, 1 | 3 | 5 | 6);
+            let doppler = (11..=14).contains(&r.data_type);
+            if !r.valid || !(delta_dor || doppler) {
                 skipped += 1;
                 continue;
             }
@@ -80,7 +82,7 @@ fn main() {
         );
     }
     if merged.is_empty() {
-        eprintln!("no galileo ODF doppler samples — the series stays unwritten (0 honored)");
+        eprintln!("no galileo ODF orbit samples — the series stays unwritten (0 honored)");
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
@@ -102,7 +104,7 @@ fn main() {
             dts.sort_unstable();
             dts.dedup();
             eprintln!(
-                "{out}: {} doppler samples (tdb {}..{}), stations {stations:?}, data_type {dts:?}, {} B — roundtrip parses",
+                "{out}: {} orbit samples (tdb {}..{}), stations {stations:?}, data_type {dts:?}, {} B — roundtrip parses",
                 parsed.len(),
                 d0[0],
                 d1[0],
