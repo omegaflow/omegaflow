@@ -101,20 +101,20 @@ impl ObjectScanner {
 
 struct Counts {
     objects: usize,
-    distant: usize,
+    kept: usize,
     emitted: usize,
     json_void: usize,
     rec_void: usize,
 }
 
-fn compile_catalog(input: &str, out_path: &str) -> Counts {
+fn compile_catalog(input: &str, out_path: &str, distant_only: bool) -> Counts {
     let packed = match std::fs::read(input) {
         Ok(bytes) => bytes,
         Err(e) => panic!("read {}: {}", input, e),
     };
     let mut counts = Counts {
         objects: 0,
-        distant: 0,
+        kept: 0,
         emitted: 0,
         json_void: 0,
         rec_void: 0,
@@ -130,10 +130,10 @@ fn compile_catalog(input: &str, out_path: &str) -> Counts {
                 counts.json_void += 1;
                 continue;
             };
-            if !is_distant_object(&json) {
+            if distant_only && !is_distant_object(&json) {
                 continue;
             }
-            counts.distant += 1;
+            counts.kept += 1;
             match rec_from_object(&json) {
                 Some(rec) => {
                     encode_record(&rec, &mut buf);
@@ -152,9 +152,9 @@ fn compile_catalog(input: &str, out_path: &str) -> Counts {
         Err(e) => panic!("write {}: {}", out_path, e),
     }
     eprintln!(
-        "mpcorb: objects {}, distant {}, emitted {} records, {} B -> {}",
+        "mpcorb: objects {}, kept {}, emitted {} records, {} B -> {}",
         counts.objects,
-        counts.distant,
+        counts.kept,
         counts.emitted,
         buf.len(),
         out_path
@@ -170,12 +170,13 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!(
-            "usage: mpcorb_compiler --input <mpcorb_extended.json.gz> --out <mpcorb_distant.bin> [--ci-mode]"
+            "usage: mpcorb_compiler --input <mpcorb_extended.json.gz> --out <mpcorb.bin> [--distant] [--ci-mode]"
         );
         std::process::exit(1);
     }
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;
+    let mut distant_only = false;
     let mut ci_mode = false;
     let mut i = 1;
     while i < args.len() {
@@ -188,6 +189,7 @@ fn main() {
                 out = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--distant" => distant_only = true,
             "--ci-mode" => ci_mode = true,
             _ => {}
         }
@@ -207,7 +209,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    compile_catalog(&input, &out_path);
+    compile_catalog(&input, &out_path, distant_only);
     if ci_mode && !upload_asset(&out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
@@ -265,5 +267,66 @@ mod tests {
         let obj = sc.top_object().unwrap();
         assert!(String::from_utf8_lossy(&obj).contains("\\\"x"));
         assert!(sc.top_object().is_none());
+    }
+
+    fn crc32(data: &[u8]) -> u32 {
+        let mut crc = 0xFFFF_FFFFu32;
+        for &byte in data {
+            crc ^= byte as u32;
+            for _ in 0..8 {
+                if crc & 1 != 0 {
+                    crc = 0xEDB8_8320 ^ (crc >> 1);
+                } else {
+                    crc >>= 1;
+                }
+            }
+        }
+        crc ^ 0xFFFF_FFFF
+    }
+
+    fn gzip_stored(content: &[u8]) -> Vec<u8> {
+        let mut gz = vec![0x1f, 0x8b, 8, 0, 0, 0, 0, 0, 0, 0xff];
+        let len = content.len() as u16;
+        gz.push(0x01);
+        gz.extend_from_slice(&len.to_le_bytes());
+        gz.extend_from_slice(&(!len).to_le_bytes());
+        gz.extend_from_slice(content);
+        gz.extend_from_slice(&crc32(content).to_le_bytes());
+        gz.extend_from_slice(&(content.len() as u32).to_le_bytes());
+        gz
+    }
+
+    #[test]
+    fn full_catalog_emits_every_elliptical_orbit() {
+        let body = concat!(
+            "[\n",
+            "{\"Number\":\"(1)\",\"Name\":\"Ceres\",\"Principal_desig\":\"A801 AA\",\"Epoch\":2461200.5,\"M\":274.41935,\"Peri\":73.2942,\"Node\":80.24863,\"i\":10.58803,\"e\":0.0796923,\"a\":2.7655526,\"H\":3.34,\"G\":0.15,\"Orbit_type\":\"MBA\"},\n",
+            "{\"Number\":\"(90377)\",\"Principal_desig\":\"2003 VB12\",\"Epoch\":2461200.5,\"M\":358.596,\"Peri\":311.099,\"Node\":144.506,\"i\":11.925,\"e\":0.85988,\"a\":543.7195,\"H\":1.5,\"G\":0.15,\"Orbit_type\":\"Distant Object\"}\n",
+            "]\n"
+        );
+        let gz = gzip_stored(body.as_bytes());
+        let dir = std::env::temp_dir().join(format!("mpcorb_compiler_test_{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let in_path = dir.join("mpcorb_extended.json.gz");
+        std::fs::write(&in_path, &gz).unwrap();
+        let full_out = dir.join("mpcorb.bin");
+        let distant_out = dir.join("mpcorb_distant.bin");
+        let full = compile_catalog(in_path.to_str().unwrap(), full_out.to_str().unwrap(), false);
+        let distant = compile_catalog(
+            in_path.to_str().unwrap(),
+            distant_out.to_str().unwrap(),
+            true,
+        );
+        assert_eq!(full.kept, 2, "full catalog keeps every elliptical orbit");
+        assert_eq!(full.emitted, 2, "full catalog emits every elliptical orbit");
+        assert_eq!(
+            distant.kept, 1,
+            "distant mode keeps only the distant object"
+        );
+        assert_eq!(
+            distant.emitted, 1,
+            "distant mode emits only the distant object"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }
