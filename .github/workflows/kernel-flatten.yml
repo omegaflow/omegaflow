@@ -28,6 +28,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- --index \
             --root https://ssd.jpl.nasa.gov/ftp/ \
             --root https://naif.jpl.nasa.gov/pub/ \
+            --root https://spiftp.esac.esa.int/data/SPICE/JUICE/ \
             --out phi/sources_index.φ \
             --jobs 4 \
             --delay-ms 50
@@ -74,7 +75,7 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
             --fetch-from phi/sources_index.φ \
-            --systems planets,jupiter,saturn,mars,uranus,neptune,pluto \
+            --systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice \
             --dest kernels \
             --ci-mode \
             --omega-g phi/pipeline/catalog/solar_omega_g.φ \
