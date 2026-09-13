@@ -258,7 +258,34 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (`LASAIR_TOKEN` in `.secrets.local`), `data.lsst.cloud` 200 —
   erreichbar; `rubinobservatory.org` scheitert am TLS-Handshake
   (SSL_ERROR_SYSCALL) auch mit Tunnel oben — VPN öffnet nicht jede Tür,
-  der Eintrag bleibt bis ein Verdikt steht.
+  der Eintrag bleibt bis ein Verdikt steht. Gemessen 2026-09-13 (Exit
+  `proton-us`, US-FREE#81): `rubinobservatory.org` **200**, `data.lsst.cloud`
+  **200**, CADC (`cadc-ccda.hia-iha.nrc-cnrc.gc.ca`) **200**, NED **200** —
+  der US-Exit öffnet Rubin, das am alten Tunnel scheiterte; `arvo.byu.edu`
+  bleibt 000 (DNS NXDOMAIN, kein Geo-Block).
+- **Länder-Exits (free plan, gemessen 2026-09-13)**: Der `protonvpn`-CLI
+  wählt im Free-Plan **kein Land** („Location selection is not available on
+  the free plan") — `protonvpn connect` nimmt den schnellsten freien Server.
+  Länder-Exits laufen über **WireGuard-Configs**: auf
+  `account.protonvpn.com/downloads` je Land (JP CA MX NL NO PL RO CH SG US)
+  eine kostenlose Server-Config herunterladen → `~/.config/wireguard/proton-<cc>.conf`
+  (z. B. `proton-us.conf`; `$PROTON_WG_DIR` überschreibt) → `bin/proton-exit.sh <cc>`
+  (bringt `wg-quick up`, meldet die Exit-IP; `off`/`list`/`status`). Alle Proton-
+  Configs teilen `Address = 10.2.0.2/32` → es läuft **ein Exit zugleich**, der
+  Helper nimmt die anderen vorher runter. Damit ist die Leiter nicht auf
+  einen Tunnel festgelegt — pro Geo-Block ein anderes Land (US, NL, CH …).
+  `wg`/`wg-quick` und der `protonvpn`-CLI sind installiert (Login
+  `johannes.tyroller`); `dnsforge.de` ändert die Exit-IP nicht und trägt
+  gegen Geo-/IP-Blocks nichts bei. **Gemessen 2026-09-13** (je Exit ein Test):
+  `proton-us` (146.70.230.100), `proton-nl` (185.184.195.146) und `proton-ch`
+  (149.88.27.156) öffnen alle Rubin/LSST/CADC/NED — **NL und CH sind schneller
+  als US** (Rubin ~0,5–0,6 s vs ~2 s; CH: GAVO 0,45 s, CERN 0,42 s, ESA 0,20 s).
+  Die `--verdict`-Leiter liest die aktiven `proton*`-Interfaces aus
+  `/sys/class/net` und probiert sie in Stage 2 (nicht mehr fest `proton0`).
+  `proton-jp` (149.88.103.44): JAXA/JMA 200, Kyoshin 302, Hi-net
+  `www.hinet.bosai.go.jp` 200 (`hinetwww11.bosai.go.jp` nur 403, der
+  `www.`-Vorsatz löst nicht auf). `proton-ca` (195.242.214.197): CADC 200,
+  CANFAR 200. Fünf freie Länder-Exits (US NL CH JP CA), alle gemessen.
 - **Toter Endpoint → Recherche-Rezept**: (1) Status-/Docs-Seite des Anbieters
   prüfen (Umzug, API-Version), (2) Sibling-Endpoints desselben Netloc,
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
