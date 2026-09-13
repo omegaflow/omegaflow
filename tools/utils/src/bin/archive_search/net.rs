@@ -1039,6 +1039,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "openalex" => crate::openalex::openalex_lines(query, max),
+        "supermag" => crate::supermag::supermag_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
