@@ -16,6 +16,10 @@ mod ntfs;
 mod pdf;
 #[path = "archive_search/zenodo.rs"]
 mod zenodo;
+#[path = "archive_search/isc.rs"]
+mod isc;
+#[path = "archive_search/openalex.rs"]
+mod openalex;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/secrets.rs"]
@@ -170,6 +174,8 @@ fn main() {
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
             "--zenodo" => mode = Mode::Net("zenodo"),
+            "--isc" => mode = Mode::Net("isc"),
+            "--openalex" => mode = Mode::Net("openalex"),
             "--kind" => {
                 i += 1;
                 if let Some(v) = args.get(i) {
@@ -345,7 +351,7 @@ fn usage() {
         "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
     );
     eprintln!(
-        "       archive_search --verdict <url> | --sniff <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches; --sniff reports magic bytes + sha256)"
+        "       archive_search --verdict <url> | --sniff <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches; --sniff reports magic bytes + sha256; --isc takes key=value: start/end/minmag/minlat/maxlat/minlon/maxlon)"
     );
     eprintln!(
         "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
