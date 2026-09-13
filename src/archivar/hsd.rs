@@ -92,6 +92,87 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
     })
 }
 
+pub const MAGIC_AHI: [u8; 4] = *b"AHI1";
+const AHI_HEADER_BYTES: usize = 24;
+
+pub struct AhiSegment {
+    pub columns: u16,
+    pub lines: u16,
+    pub bits_per_pixel: u16,
+    pub band: u8,
+    pub segment: u8,
+    pub satellite: u8,
+    pub resolution_m: u16,
+    pub obs_sec: f64,
+    pub obs_present: u8,
+    pub counts: Vec<u16>,
+}
+
+pub fn write_segment(seg: &AhiSegment) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(AHI_HEADER_BYTES + seg.counts.len() * 2);
+    buf.extend_from_slice(&MAGIC_AHI);
+    buf.extend_from_slice(&seg.columns.to_le_bytes());
+    buf.extend_from_slice(&seg.lines.to_le_bytes());
+    buf.extend_from_slice(&seg.bits_per_pixel.to_le_bytes());
+    buf.push(seg.band);
+    buf.push(seg.segment);
+    buf.push(seg.satellite);
+    buf.extend_from_slice(&seg.resolution_m.to_le_bytes());
+    buf.push(seg.obs_present);
+    buf.extend_from_slice(&seg.obs_sec.to_le_bytes());
+    for &c in &seg.counts {
+        buf.extend_from_slice(&c.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_segment(bytes: &[u8]) -> Option<AhiSegment> {
+    if bytes.len() < AHI_HEADER_BYTES || bytes[0..4] != MAGIC_AHI {
+        return None;
+    }
+    let columns = u16::from_le_bytes(bytes.get(4..6)?.try_into().ok()?);
+    let lines = u16::from_le_bytes(bytes.get(6..8)?.try_into().ok()?);
+    let bits_per_pixel = u16::from_le_bytes(bytes.get(8..10)?.try_into().ok()?);
+    let band = *bytes.get(10)?;
+    let segment = *bytes.get(11)?;
+    let satellite = *bytes.get(12)?;
+    let resolution_m = u16::from_le_bytes(bytes.get(13..15)?.try_into().ok()?);
+    let obs_present = *bytes.get(15)?;
+    let obs_sec = f64::from_le_bytes(bytes.get(16..24)?.try_into().ok()?);
+    if columns == 0 || lines == 0 {
+        return None;
+    }
+    if obs_present > 1 {
+        return None;
+    }
+    if obs_present == 1 && !obs_sec.is_finite() {
+        return None;
+    }
+    let count = columns as usize * lines as usize;
+    if bytes.len() != AHI_HEADER_BYTES + count * 2 {
+        return None;
+    }
+    let mut counts = Vec::with_capacity(count);
+    for i in 0..count {
+        let off = AHI_HEADER_BYTES + i * 2;
+        counts.push(u16::from_le_bytes(
+            bytes.get(off..off + 2)?.try_into().ok()?,
+        ));
+    }
+    Some(AhiSegment {
+        columns,
+        lines,
+        bits_per_pixel,
+        band,
+        segment,
+        satellite,
+        resolution_m,
+        obs_sec,
+        obs_present,
+        counts,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -172,5 +253,73 @@ mod tests {
     fn rejects_truncated_pixels() {
         let data = build_fixture(4, 3, &[1, 2, 3, 4, 5, 6]);
         assert!(parse_hsd(&data).is_none());
+    }
+
+    fn segment_fixture() -> AhiSegment {
+        AhiSegment {
+            columns: 4,
+            lines: 3,
+            bits_per_pixel: 16,
+            band: 1,
+            segment: 1,
+            satellite: 8,
+            resolution_m: 1000,
+            obs_sec: 1436234400.0,
+            obs_present: 1,
+            counts: vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        }
+    }
+
+    #[test]
+    fn segment_roundtrip() {
+        let seg = segment_fixture();
+        let bytes = write_segment(&seg);
+        let parsed = parse_segment(&bytes).unwrap();
+        assert_eq!(parsed.columns, 4);
+        assert_eq!(parsed.lines, 3);
+        assert_eq!(parsed.bits_per_pixel, 16);
+        assert_eq!(parsed.band, 1);
+        assert_eq!(parsed.segment, 1);
+        assert_eq!(parsed.satellite, 8);
+        assert_eq!(parsed.resolution_m, 1000);
+        assert_eq!(parsed.obs_present, 1);
+        assert_eq!(parsed.obs_sec, 1436234400.0);
+        assert_eq!(parsed.counts, seg.counts);
+    }
+
+    #[test]
+    fn segment_absent_observation_roundtrip() {
+        let mut seg = segment_fixture();
+        seg.obs_present = 0;
+        seg.obs_sec = 0.0;
+        let bytes = write_segment(&seg);
+        let parsed = parse_segment(&bytes).unwrap();
+        assert_eq!(parsed.obs_present, 0);
+        assert_eq!(parsed.counts, seg.counts);
+    }
+
+    #[test]
+    fn segment_rejects_foreign_and_malformed() {
+        assert!(parse_segment(b"").is_none());
+        assert!(parse_segment(b"AHI1").is_none());
+        assert!(parse_segment(b"AHI2").is_none());
+        assert!(parse_segment(b"GXS1abcd").is_none());
+
+        let bytes = write_segment(&segment_fixture());
+        let short = bytes[..bytes.len() - 1].to_vec();
+        assert!(parse_segment(&short).is_none());
+
+        let mut bad_obs = bytes.clone();
+        bad_obs[15] = 2;
+        assert!(parse_segment(&bad_obs).is_none());
+
+        let mut nan_obs = bytes.clone();
+        nan_obs[15] = 1;
+        nan_obs[16..24].copy_from_slice(&f64::NAN.to_le_bytes());
+        assert!(parse_segment(&nan_obs).is_none());
+
+        let mut zero_cols = bytes.clone();
+        zero_cols[4..6].copy_from_slice(&0u16.to_le_bytes());
+        assert!(parse_segment(&zero_cols).is_none());
     }
 }

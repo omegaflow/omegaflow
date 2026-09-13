@@ -1,0 +1,43 @@
+name: noaa-ocs-hydrodata-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      survey:
+        description: OCS survey id under the Qualified STAC collection (e.g. DD10045)
+        required: true
+        type: string
+        default: "DD10045"
+      asset:
+        description: output asset name on the CDN (netloc noaa-ocs-hydrodata-pds.s3.amazonaws.com)
+        required: true
+        type: string
+        default: "ocs_hydro_dd10045.bin"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noaa-ocs-hydrodata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view noaa-ocs-hydrodata-pds.s3.amazonaws.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Walk the OCS HydroData STAC catalog, compile the survey soundings, and upload
+        run: |
+          cargo run -p omegaflow-harvest --release --bin noaa_ocs_hydrodata_compiler -- \
+            --survey "${{ inputs.survey }}" --out "${{ inputs.asset }}" --ci-mode

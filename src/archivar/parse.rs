@@ -357,6 +357,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::First(fc, filter));
@@ -379,6 +381,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Last(fc, filter));
@@ -397,6 +401,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: String::new(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 }));
             }
@@ -414,6 +420,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::LastRow(fc));
@@ -443,6 +451,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::ObjLast(fc));
@@ -493,6 +503,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Path(fc));
@@ -511,6 +523,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Deep(fc));
@@ -529,6 +543,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Regex(fc));
@@ -690,6 +706,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
@@ -748,6 +766,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
@@ -831,6 +851,22 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
+                let mut freq = 0.0;
+                if let Some(s) = parts.get(9) {
+                    if let Ok(v) = s.parse::<f64>() {
+                        if v.is_finite() && v > 0.0 {
+                            freq = v;
+                        }
+                    }
+                }
+                let mut bin_width = 0.0;
+                if let Some(s) = parts.get(10) {
+                    if let Ok(v) = s.parse::<f64>() {
+                        if v.is_finite() && v > 0.0 {
+                            bin_width = v;
+                        }
+                    }
+                }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
@@ -841,6 +877,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
+                    freq,
+                    bin_width,
                     fold: None,
                 };
                 if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
@@ -1090,6 +1128,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit,
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: Some((op, parts[3].to_string())),
                 };
                 let holder = match cur_extracts.last_mut() {
