@@ -122,7 +122,7 @@ pub fn spawn_ephemeris_bootstrap(
             continue;
         };
         let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
-        if cache_fresh(&tmp_path, s.ttl) {
+        if cache_fresh_cdn(&tmp_path, s.ttl, &s.url) {
             fresh_items.push((i, s.clone(), tmp_path));
         } else if anchor_uses.contains_key(body) {
             anchor_items.push((i, s.clone(), tmp_path));
@@ -236,9 +236,11 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         }
     };
     if output.status.success() {
-        for (_, part, tmp_path) in &pending {
+        for (i, part, tmp_path) in &pending {
             if std::fs::rename(part, tmp_path).is_err() {
                 let _ = std::fs::remove_file(part);
+            } else {
+                write_cdn_stamp(tmp_path, &items[*i].1.url);
             }
         }
     } else {
@@ -2184,7 +2186,7 @@ pub fn main_flow() {
                     };
                     let name = url.rsplit('/').next().unwrap_or("gebco").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
-                    if !cache_fresh(&tmp_path, src_ttl) {
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
@@ -2198,6 +2200,7 @@ pub fn main_flow() {
                             let _ = ftx.send(empty(true));
                             return;
                         }
+                        write_cdn_stamp(&tmp_path, &url);
                     }
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
@@ -2212,6 +2215,97 @@ pub fn main_flow() {
                         None => {
                             eprintln!(
                                 "{} {}: bin reads void — {} B carry no GBCO depth-thread contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    if body_name.is_empty() {
+                        eprintln!("{} {}: frame body absent — depth threads unheld", fmt, url);
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let threads = gbco_threads(&body_name, &recs);
+                    let gestalt = gestalt_surface_threads(&recs, &body_name);
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} depth threads held as stations (no field radiation)",
+                        fmt,
+                        url,
+                        threads.len()
+                    );
+                    eprint!("{}", station_view(&threads));
+                    eprintln!(
+                        "{} {}: {} gestalt surface threads held for projection (no field radiation)",
+                        fmt,
+                        url,
+                        gestalt.len()
+                    );
+                    if let Ok(mut held) = gestalt_held.lock() {
+                        *held = gestalt;
+                    }
+                    if let Ok(mut held) = held.lock() {
+                        *held = threads;
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
+            if archive.sources[i].format == "slab2_depth" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                let body_name = frame_body_name(&src.frame);
+                let held = archive.stations.clone();
+                let gestalt_held = archive.gestalt_surface_threads.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("slab2").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                        write_cdn_stamp(&tmp_path, &url);
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let recs = match crate::geo::parse_slab2(&bytes) {
+                        Some(r) => r,
+                        None => {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no SLB2 depth-thread contract",
                                 fmt,
                                 url,
                                 bytes.len()
@@ -2286,7 +2380,7 @@ pub fn main_flow() {
                     };
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
-                    if !cache_fresh(&tmp_path, src_ttl) {
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
@@ -2300,6 +2394,7 @@ pub fn main_flow() {
                             let _ = ftx.send(empty(true));
                             return;
                         }
+                        write_cdn_stamp(&tmp_path, &url);
                     }
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
