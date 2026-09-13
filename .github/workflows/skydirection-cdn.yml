@@ -19,9 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the compiled Gaia-Alerts asset from the CDN (best-effort)
+        run: |
+          gh release download gsaweb.ast.cam.ac.uk --repo omegaflow/sources \
+            --pattern gaia_alerts.bin --clobber 2>/dev/null || true
       - name: Harvest the S2 sky-direction set and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin skydirection_compiler -- \
             --out skydirections.bin --lasair-window 2460500 \
             --antares \
-            --fink-cone 148.8746 2.5208 60 --ci-mode
+            --fink-cone 148.8746 2.5208 60 \
+            --gaia-alerts gaia_alerts.bin --ci-mode
