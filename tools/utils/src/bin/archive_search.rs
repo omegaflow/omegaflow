@@ -336,10 +336,10 @@ fn usage() {
         "usage: archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary]"
     );
     eprintln!(
-        "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]"
+        "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
     );
     eprintln!(
-        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query>"
+        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query>   (--ntrs: a bare citation id resolves via the citation path, any other query searches)"
     );
     eprintln!(
         "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
