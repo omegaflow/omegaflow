@@ -460,18 +460,19 @@ fn deepest_pierce(line: &Line, t: f64, seed: Option<(f64, f64)>) -> Option<Surfa
             score: 0.0,
         },
     };
-    let (mut half, mut step) = match seed {
-        Some(_) => (0.25, 0.05),
-        None => (90.0, 5.0),
+    let (mut half_lat, mut half_lon, mut step) = match seed {
+        Some(_) => (0.25, 0.25, 0.05),
+        None => (90.0, 180.0, 5.0),
     };
     loop {
-        if let Some(nb) = best_in_box(line, t, geo, b.lat, b.lon, half, half, step) {
+        if let Some(nb) = best_in_box(line, t, geo, b.lat, b.lon, half_lat, half_lon, step) {
             b = nb;
         }
         if step <= 0.002 {
             break;
         }
-        half = step;
+        half_lat = step;
+        half_lon = step;
         step = step / 5.0;
     }
     Some(b)
