@@ -256,8 +256,10 @@ its git behaviour.
 
 - **No sub-agent touches git destructively.** `git reset`, `git checkout -- .` /
   `git checkout -- <path>`, `git clean`, `git rebase`, `git stash`, `git restore`
-  are forbidden to sub-agents — and denied in `opencode.jsonc`. A sub-agent may
-  run `git add` / `commit` / `status` / `diff` / `mv` only when the session names
+  are forbidden to sub-agents — denied in the global
+  `~/.config/opencode/opencode.jsonc` (the repo `opencode.json` carries only
+  `git *: allow`, so the deny lives outside the repo). A sub-agent may run
+  `git add` / `commit` / `status` / `diff` / `mv` only when the session names
   the exact scope in the delegation.
 - **Only DeepSeek writes.** Agents on a free model (GLM et al.) are read-only:
   no `edit`, no `bash` — they read and research. The writing agents (`build`,
