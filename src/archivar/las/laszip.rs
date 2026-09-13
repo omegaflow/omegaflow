@@ -16,6 +16,7 @@ const LASZIP_GPSTIME_MULTI_TOTAL: u32 =
 const LASZIP_COMPRESSOR_POINTWISE_CHUNKED: u16 = 2;
 const LASZIP_COMPRESSOR_LAYERED_CHUNKED: u16 = 3;
 
+const ITEM_BYTE: u16 = 0;
 const ITEM_POINT10: u16 = 6;
 const ITEM_GPSTIME11: u16 = 7;
 const ITEM_RGB12: u16 = 8;
@@ -1655,6 +1656,38 @@ impl Wavepacket13Reader {
     }
 }
 
+struct ByteReader {
+    m_byte: Vec<SymbolModel>,
+    last_item: Vec<u8>,
+    number: usize,
+}
+
+impl ByteReader {
+    fn new(number: usize) -> Self {
+        ByteReader {
+            m_byte: (0..number).map(|_| SymbolModel::new(256)).collect(),
+            last_item: vec![0; number],
+            number,
+        }
+    }
+
+    fn init(&mut self, item: &[u8]) {
+        for m in &mut self.m_byte {
+            m.init();
+        }
+        self.last_item.copy_from_slice(item);
+    }
+
+    fn read(&mut self, dec: &mut AcDecoder, out: &mut [u8]) -> Result<(), LasNote> {
+        for i in 0..self.number {
+            let v = self.last_item[i] as i32 + dec.decode_symbol(&mut self.m_byte[i])? as i32;
+            out[i] = u8_fold(v);
+            self.last_item[i] = out[i];
+        }
+        Ok(())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct LaszipItem {
     pub item_type: u16,
@@ -2600,6 +2633,7 @@ enum PointwiseItem {
     GpsTime11(GpsTime11Reader),
     Rgb12(Rgb12Reader),
     Wavepacket13(Wavepacket13Reader),
+    Byte(ByteReader),
 }
 
 impl PointwiseItem {
@@ -2621,6 +2655,7 @@ impl PointwiseItem {
                 let v = r.read(dec)?;
                 out[0..29].copy_from_slice(&v);
             }
+            PointwiseItem::Byte(r) => r.read(dec, out)?,
         }
         Ok(())
     }
@@ -2704,6 +2739,16 @@ fn decode_chunk_pointwise(
                 let mut r = Wavepacket13Reader::new();
                 r.init(&a);
                 PointwiseItem::Wavepacket13(r)
+            }
+            ITEM_BYTE => {
+                if size == 0 {
+                    return Err(LasNote::LazItem {
+                        item: item.item_type,
+                    });
+                }
+                let mut r = ByteReader::new(size);
+                r.init(&raw_first[off..off + size]);
+                PointwiseItem::Byte(r)
             }
             _ => {
                 return Err(LasNote::LazItem {
