@@ -90,6 +90,7 @@ pub mod rinex;
 pub mod rixs;
 pub mod rpw;
 pub mod s2event;
+pub mod session;
 pub mod sexagesimal;
 pub mod sha256;
 pub mod skydirection;
@@ -104,6 +105,7 @@ pub mod win32;
 pub mod wind;
 pub mod wind_orbit;
 pub mod wso_polar;
+pub mod zarr;
 pub mod zeuge;
 pub mod ztf;
 
