@@ -16,7 +16,6 @@ const MSG_ATTRIBUTE: u8 = 0x0c;
 const MSG_CONT: u8 = 0x10;
 const MSG_SYMBOL_TABLE: u8 = 0x11;
 const MSG_AINFO: u8 = 0x15;
-const MSG_SHARED: u8 = 0x18;
 
 const MSG_FLAG_SHARED: u8 = 0x02;
 
@@ -155,6 +154,7 @@ pub struct Hdf5Object {
     pub fill: Vec<u8>,
     pub attrs: Vec<Hdf5Attribute>,
     pub links: Vec<Hdf5Link>,
+    pub committed_datatype: Option<u64>,
 }
 
 pub struct Hdf5File<'a> {
@@ -313,6 +313,39 @@ fn check_checksum(body: &[u8], stored: &[u8]) -> Result<(), Hdf5Note> {
 
 struct Superblock {
     root: u64,
+    offset_size: usize,
+    length_size: usize,
+}
+
+const SHARE_TYPE_COMMITTED: u8 = 2;
+
+struct SharedRef {
+    share_type: u8,
+    addr: u64,
+}
+
+fn parse_shared_ref(
+    data: &[u8],
+    offset_size: usize,
+    length_size: usize,
+) -> Result<SharedRef, Hdf5Note> {
+    let version = *data.first().ok_or(Hdf5Note::EndAtByte { off: 0 })?;
+    if version > 2 {
+        return Err(Hdf5Note::ObjectHeaderVersion { v: version });
+    }
+    let mut p = 1usize;
+    let share_type = if version >= 1 {
+        let t = *data.get(p).ok_or(Hdf5Note::EndAtByte { off: p })?;
+        p += 1;
+        t
+    } else {
+        SHARE_TYPE_COMMITTED
+    };
+    if version == 0 {
+        p = 8 + length_size;
+    }
+    let addr = limited_uint(data, p, offset_size).ok_or(Hdf5Note::EndAtByte { off: p })?;
+    Ok(SharedRef { share_type, addr })
 }
 
 fn parse_superblock(buf: &[u8]) -> Result<Superblock, Hdf5Note> {
@@ -365,6 +398,8 @@ fn parse_superblock(buf: &[u8]) -> Result<Superblock, Hdf5Note> {
     }
     Ok(Superblock {
         root: root.ok_or(Hdf5Note::Address { off: 0 })?,
+        offset_size: offset_size as usize,
+        length_size: length_size as usize,
     })
 }
 
@@ -1830,6 +1865,8 @@ fn decode_numeric(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Result<f64, Hdf5No
 impl<'a> Hdf5File<'a> {
     pub fn parse(buf: &'a [u8]) -> Result<Hdf5File<'a>, Hdf5Note> {
         let sb = parse_superblock(buf)?;
+        let offset_size = sb.offset_size;
+        let length_size = sb.length_size;
         let mut objects: HashMap<u64, Hdf5Object> = HashMap::new();
         let mut stack = vec![sb.root];
         while let Some(addr) = stack.pop() {
@@ -1846,8 +1883,18 @@ impl<'a> Hdf5File<'a> {
             let mut fill_old: Option<RawMessage> = None;
             let mut fill_new: Option<RawMessage> = None;
             for m in &msgs {
-                if m.flags & MSG_FLAG_SHARED != 0 && m.typ != MSG_SHARED {
-                    return Err(Hdf5Note::SharedMessage);
+                if m.flags & MSG_FLAG_SHARED != 0 {
+                    let shared = parse_shared_ref(&m.data, offset_size, length_size)?;
+                    match (m.typ, shared.share_type) {
+                        (MSG_DATATYPE, SHARE_TYPE_COMMITTED) => {
+                            obj.committed_datatype = Some(shared.addr);
+                            stack.push(shared.addr);
+                        }
+                        _ => {
+                            return Err(Hdf5Note::SharedMessage);
+                        }
+                    }
+                    continue;
                 }
                 match m.typ {
                     MSG_DATASPACE => {
@@ -1907,6 +1954,18 @@ impl<'a> Hdf5File<'a> {
             }
             obj.links = links;
             objects.insert(addr, obj);
+        }
+        let committed: Vec<(u64, u64)> = objects
+            .iter()
+            .filter_map(|(&a, o)| o.committed_datatype.map(|c| (a, c)))
+            .collect();
+        for (obj_addr, committed_addr) in committed {
+            let dt = objects
+                .get(&committed_addr)
+                .and_then(|o| o.datatype.clone());
+            if let Some(o) = objects.get_mut(&obj_addr) {
+                o.datatype = dt;
+            }
         }
         Ok(Hdf5File {
             buf,
@@ -2566,6 +2625,133 @@ mod tests {
                 idx += 1;
             }
         }
+    }
+
+    #[test]
+    fn committed_datatype_shared_message_resolves() {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn message_flags(typ: u8, flags: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, flags];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_i32() -> Vec<u8> {
+            vec![
+                0x10, 0x08, 0x00, 0x00, 0x04, 0, 0, 0, 0x00, 0x00, 0x20, 0x00,
+            ]
+        }
+        fn layout(addr: u64, size: u64) -> Vec<u8> {
+            let mut d = vec![3u8, 1];
+            d.extend_from_slice(&addr.to_le_bytes());
+            d.extend_from_slice(&size.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+        fn shared_datatype(addr: u64) -> Vec<u8> {
+            let mut data = vec![2u8, SHARE_TYPE_COMMITTED];
+            data.extend_from_slice(&addr.to_le_bytes());
+            data
+        }
+
+        let root_len = 27usize;
+        let var_len = 63usize;
+        let dt_len = 27usize;
+        let var_addr = (48 + root_len) as u64;
+        let dt_addr = (48 + root_len + var_len) as u64;
+        let payload_addr = (48 + root_len + var_len + dt_len) as u64;
+
+        let root_header = header(vec![message(MSG_LINK, link("v", var_addr))]);
+        assert_eq!(root_header.len(), root_len);
+        let var_header = header(vec![
+            message(MSG_DATASPACE, dataspace(&[4])),
+            message_flags(MSG_DATATYPE, MSG_FLAG_SHARED, shared_datatype(dt_addr)),
+            message(MSG_LAYOUT, layout(payload_addr, 16)),
+        ]);
+        assert_eq!(var_header.len(), var_len);
+        let dt_header = header(vec![message(MSG_DATATYPE, datatype_i32())]);
+        assert_eq!(dt_header.len(), dt_len);
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&48u64.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        assert_eq!(buf.len(), 48);
+        buf.extend_from_slice(&root_header);
+        buf.extend_from_slice(&var_header);
+        buf.extend_from_slice(&dt_header);
+        let payload: Vec<u8> = [10i32, 20, 30, 40]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        buf.extend_from_slice(&payload);
+
+        let file = Hdf5File::parse(&buf).unwrap();
+        let (_, ds, dt) = file.dataset("v").unwrap();
+        assert_eq!(ds.dims, vec![4]);
+        assert_eq!(dt.class, 0);
+        assert_eq!(dt.size, 4);
+        let data = file.read_dataset("v").unwrap();
+        assert_eq!(data, payload);
+        let vals = file.read_f64_dataset("v").unwrap();
+        assert_eq!(vals, vec![10.0, 20.0, 30.0, 40.0]);
+    }
+
+    #[test]
+    fn real_wod_ragged_temperature_profiles() {
+        const WOD_MBT: &str = "phi/pipeline/catalog/noaa_wod/wod_mbt_1903.nc";
+        if !Path::new(WOD_MBT).exists() {
+            eprintln!(
+                "skipped (fixture absent): wod — fetch from noaa-wod-pds.s3.amazonaws.com/1903/wod_mbt_1903.nc"
+            );
+            return;
+        }
+        let bytes = std::fs::read(WOD_MBT).expect("fixture read");
+        let file = Hdf5File::parse(&bytes).unwrap();
+        let root = file.root().unwrap();
+        assert!(root.links.iter().any(|l| l.name == "Temperature"));
+        assert!(root.links.iter().any(|l| l.name == "Temperature_row_size"));
+        let group = crate::netcdf::nc4_group(&file, "").unwrap();
+        assert!(group.variables.iter().any(|v| v.name == "Temperature"));
+        let flat = file.read_f64_dataset("Temperature").unwrap();
+        let profiles =
+            crate::netcdf::nc4_ragged_f64(&file, "Temperature", "Temperature_row_size").unwrap();
+        assert_eq!(profiles.len(), 1);
+        let total: usize = profiles.iter().map(|p| p.len()).sum();
+        assert_eq!(total, flat.len());
     }
 
     #[test]
