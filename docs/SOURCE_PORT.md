@@ -260,9 +260,13 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (SSL_ERROR_SYSCALL) auch mit Tunnel oben — VPN öffnet nicht jede Tür,
   der Eintrag bleibt bis ein Verdikt steht. Gemessen 2026-09-13 (Exit
   `proton-us`, US-FREE#81): `rubinobservatory.org` **200**, `data.lsst.cloud`
-  **200**, CADC (`cadc-ccda.hia-iha.nrc-cnrc.gc.ca`) **200**, NED **200** —
-  der US-Exit öffnet Rubin, das am alten Tunnel scheiterte; `arvo.byu.edu`
-  bleibt 000 (DNS NXDOMAIN, kein Geo-Block).
+  **200**, CADC (`ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca`, TAP `/argus/sync`)
+  **200**, NED **200** — der US-Exit öffnet Rubin, das am alten Tunnel
+  scheiterte. Hostnamen korrigiert (gemessen 2026-09-13): `cadc-ccda.…` (ohne
+  `ws.`) ist NXDOMAIN, `www.cadc-ccda.…` trägt die Site (200), der TAP läuft
+  auf `ws.cadc-ccda.…` (400 ohne Query = lebt); `www.rubinobservatory.org`
+  resettet TLS, `rubinobservatory.org` (ohne www) ist 200; `arvo.byu.edu` ist
+  NXDOMAIN (tot) — der ARVO-TAP ist `arvo-registry.sci.am` (000, reset by peer).
 - **Länder-Exits (free plan, gemessen 2026-09-13)**: Der `protonvpn`-CLI
   wählt im Free-Plan **kein Land** („Location selection is not available on
   the free plan") — `protonvpn connect` nimmt den schnellsten freien Server.
@@ -286,6 +290,17 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   `www.hinet.bosai.go.jp` 200 (`hinetwww11.bosai.go.jp` nur 403, der
   `www.`-Vorsatz löst nicht auf). `proton-ca` (195.242.214.197): CADC 200,
   CANFAR 200. Fünf freie Länder-Exits (US NL CH JP CA), alle gemessen.
+- **Userspace-Exit ohne root (gemessen 2026-09-13)**: Die 110 Free-Server
+  liegen als WireGuard-Configs in `~/.config/wireguard/proton-free/*.conf`
+  (aus der `logicals`-API; ein registriertes Client-Zertifikat gilt für alle
+  Server). `bin/proton-wg.sh <server|cc>` startet `wireproxy` (userspace
+  WireGuard → SOCKS5, kein sudo) und druckt `socks5h://127.0.0.1:25344`. Da
+  `fetch.rs` curl ohne `--proxy`/`.env_clear()` spawnt, routet
+  `ALL_PROXY=socks5h://127.0.0.1:25344` jeden Archivar-Fetch über den Exit
+  (zero code). Gemessen je ein Exit pro Land (CA/CH/JP/MX/NL/NO/PL/RO/SG/US):
+  alle öffnen `data.lsst.cloud`, `rubinobservatory.org` und
+  `www.hinet.bosai.go.jp` mit 200 — auch dort, wo der lokale Exit TLS resettet
+  oder Tor-Exits geblockt sind.
 - **Toter Endpoint → Recherche-Rezept**: (1) Status-/Docs-Seite des Anbieters
   prüfen (Umzug, API-Version), (2) Sibling-Endpoints desselben Netloc,
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
