@@ -80,6 +80,13 @@ jobs:
             --ci-mode \
             --omega-g phi/pipeline/catalog/solar_omega_g.φ \
             --index phi/sources_index.φ
+      - name: Compile JUICE CoG attitude-referenced ephemeris and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
+            --fetch-from phi/sources_index.φ \
+            --juice-cog \
+            --dest kernels \
+            --ci-mode
       - name: Flatten asteroid longbow and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin ephemeris_compiler -- \
