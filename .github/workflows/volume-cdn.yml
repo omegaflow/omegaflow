@@ -179,3 +179,45 @@ jobs:
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
             LLNL_G3D_JPS.nc \
             --out LLNL_G3D_JPS.volume.bin --ci-mode --tag media.githubusercontent.com
+
+  afrp20:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "AFRP20-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "asset AFRP20-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset AFRP20-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile AFRP20-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc -o AFRP20-MASK-3D.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            AFRP20-MASK-3D.r0.0-n4c.nc \
+            --out AFRP20-MASK-3D.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  afrp22:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "AFRP22-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "asset AFRP22-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset AFRP22-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile AFRP22-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP22-MASK-3D.r0.0-n4c.nc -o AFRP22-MASK-3D.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            AFRP22-MASK-3D.r0.0-n4c.nc \
+            --out AFRP22-MASK-3D.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
