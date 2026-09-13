@@ -138,6 +138,24 @@ pub fn channel_series(samples: &[f32], set: &EeglabSet, channel: usize) -> Optio
     Some(out)
 }
 
+pub fn common_average_series(samples: &[f32], set: &EeglabSet) -> Option<Vec<f32>> {
+    let total = set.nbchan.checked_mul(set.pnts)?.checked_mul(set.trials)?;
+    if samples.len() < total {
+        return None;
+    }
+    let points = set.pnts.checked_mul(set.trials)?;
+    let mut out = Vec::with_capacity(points);
+    for point in 0..points {
+        let base = point * set.nbchan;
+        let mut sum = 0.0f64;
+        for channel in 0..set.nbchan {
+            sum += samples[base + channel] as f64;
+        }
+        out.push((sum / set.nbchan as f64) as f32);
+    }
+    Some(out)
+}
+
 pub fn resolve_channel(set: &EeglabSet, selector: &str) -> Option<usize> {
     if let Ok(n) = selector.parse::<usize>() {
         if n >= 1 && n <= set.nbchan {
@@ -214,29 +232,6 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
             _ => None,
         })
         .collect()
-}
-
-fn chanlocs_positions(source: &EegSource) -> Option<Vec<(f64, f64, f64)>> {
-    let chanlocs = source.array("chanlocs")?;
-    let omegaflow::matfile::MatData::Struct(field_fields) = &chanlocs.data else {
-        return None;
-    };
-    let positions = field_fields
-        .iter()
-        .filter(|f| f.name == "pos" || f.name == "xyz" || f.name == "coordinates")
-        .next()?;
-    let mut out: Vec<(f64, f64, f64)> = Vec::new();
-    for val in &positions.values {
-        match &val.data {
-            omegaflow::matfile::MatData::Double(d) => {
-                if d.len() == 3 {
-                    out.push((d[0], d[1], d[2]));
-                }
-            }
-            _ => return None,
-        }
-    }
-    Some(out)
 }
 
 fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
