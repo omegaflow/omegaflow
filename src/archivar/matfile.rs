@@ -37,6 +37,7 @@ pub struct MatArray {
     pub name: String,
     pub dims: Vec<usize>,
     pub data: MatData,
+    pub span: Option<(usize, usize)>,
 }
 
 fn align8(p: usize) -> usize {
@@ -62,11 +63,16 @@ pub fn parse_mat(bytes: &[u8]) -> Option<Vec<MatArray>> {
         return None;
     }
     let mut out = Vec::new();
-    parse_stream(bytes, 128, &mut out)?;
+    parse_stream(bytes, 128, &mut out, Some(0))?;
     Some(out)
 }
 
-fn parse_stream(bytes: &[u8], mut pos: usize, out: &mut Vec<MatArray>) -> Option<()> {
+fn parse_stream(
+    bytes: &[u8],
+    mut pos: usize,
+    out: &mut Vec<MatArray>,
+    base: Option<usize>,
+) -> Option<()> {
     while pos + 8 <= bytes.len() {
         let tag_type = u32::from_le_bytes(bytes[pos..pos + 4].try_into().ok()?);
         let tag_size = u32::from_le_bytes(bytes[pos + 4..pos + 8].try_into().ok()?) as usize;
@@ -78,11 +84,11 @@ fn parse_stream(bytes: &[u8], mut pos: usize, out: &mut Vec<MatArray>) -> Option
         match tag_type {
             MI_COMPRESSED => {
                 let uncomp = zlib_inflate(&bytes[pos..end])?;
-                parse_stream(&uncomp, 0, out)?;
+                parse_stream(&uncomp, 0, out, None)?;
                 pos = end;
             }
             MI_MATRIX => {
-                if let Some(matrix) = parse_matrix(&bytes[pos..end]) {
+                if let Some(matrix) = parse_matrix(&bytes[pos..end], base.map(|b| b + pos)) {
                     out.push(matrix);
                 }
                 pos = align8(end);
@@ -120,7 +126,7 @@ fn read_tag(bytes: &[u8], pos: &mut usize) -> Option<(u32, usize, usize)> {
     }
 }
 
-fn parse_matrix(bytes: &[u8]) -> Option<MatArray> {
+fn parse_matrix(bytes: &[u8], base: Option<usize>) -> Option<MatArray> {
     let mut pos = 0usize;
     let (t, s, align) = read_tag(bytes, &mut pos)?;
     if t != MI_UINT32 || s < 8 {
@@ -153,9 +159,9 @@ fn parse_matrix(bytes: &[u8]) -> Option<MatArray> {
     pos = align_to(pos + s, align);
 
     let data = if cls == MX_STRUCT_CLASS {
-        parse_struct_fields(&bytes[pos..], dims.iter().product())?
+        parse_struct_fields(&bytes[pos..], dims.iter().product(), base.map(|b| b + pos))?
     } else if cls == MX_CELL_CLASS {
-        parse_cell(&bytes[pos..], dims.iter().product())?
+        parse_cell(&bytes[pos..], dims.iter().product(), base.map(|b| b + pos))?
     } else if let Some((t, s, align)) = read_tag(bytes, &mut pos) {
         if pos + s > bytes.len() {
             MatData::Empty
@@ -173,7 +179,13 @@ fn parse_matrix(bytes: &[u8]) -> Option<MatArray> {
         read_tag(bytes, &mut pos)?;
     }
 
-    Some(MatArray { name, dims, data })
+    let span = base.map(|b| (b.wrapping_sub(8), align8(b + bytes.len())));
+    Some(MatArray {
+        name,
+        dims,
+        data,
+        span,
+    })
 }
 
 fn read_int32(
@@ -276,13 +288,27 @@ fn empty_array() -> MatArray {
         name: String::new(),
         dims: Vec::new(),
         data: MatData::Empty,
+        span: None,
     }
 }
 
-fn read_nested_matrix(body: &[u8], pos: &mut usize) -> MatArray {
+pub fn parse_element(bytes: &[u8]) -> Option<MatArray> {
+    let mut pos = 0usize;
+    let (t, s, _) = read_tag(bytes, &mut pos)?;
+    if t != MI_MATRIX {
+        return None;
+    }
+    if pos + s > bytes.len() {
+        return None;
+    }
+    parse_matrix(&bytes[pos..pos + s], None)
+}
+
+fn read_nested_matrix(body: &[u8], pos: &mut usize, base: Option<usize>) -> MatArray {
     let Some((t, s, _)) = read_tag(body, pos) else {
         return empty_array();
     };
+    let body_start = *pos;
     let Some(end) = (*pos).checked_add(s) else {
         *pos = body.len();
         return empty_array();
@@ -291,10 +317,10 @@ fn read_nested_matrix(body: &[u8], pos: &mut usize) -> MatArray {
         *pos = body.len();
         return empty_array();
     }
-    let inner = &body[*pos..end];
+    let inner = &body[body_start..end];
     *pos = align8(end);
     match t {
-        MI_MATRIX => match parse_matrix(inner) {
+        MI_MATRIX => match parse_matrix(inner, base.map(|b| b + body_start)) {
             Some(m) => m,
             None => empty_array(),
         },
@@ -305,7 +331,7 @@ fn read_nested_matrix(body: &[u8], pos: &mut usize) -> MatArray {
             let mut upos = 0usize;
             match read_tag(&uncomp, &mut upos) {
                 Some((mt, ms, _)) if mt == MI_MATRIX && upos + ms <= uncomp.len() => {
-                    match parse_matrix(&uncomp[upos..upos + ms]) {
+                    match parse_matrix(&uncomp[upos..upos + ms], None) {
                         Some(m) => m,
                         None => empty_array(),
                     }
@@ -317,7 +343,7 @@ fn read_nested_matrix(body: &[u8], pos: &mut usize) -> MatArray {
     }
 }
 
-fn parse_struct_fields(body: &[u8], n_elements: usize) -> Option<MatData> {
+fn parse_struct_fields(body: &[u8], n_elements: usize, base: Option<usize>) -> Option<MatData> {
     let mut pos = 0usize;
     let (_, s, _) = read_tag(body, &mut pos)?;
     pos = align8(pos + s);
@@ -341,17 +367,17 @@ fn parse_struct_fields(body: &[u8], n_elements: usize) -> Option<MatData> {
         .collect();
     for _ in 0..n_elements {
         for field in &mut fields {
-            field.values.push(read_nested_matrix(body, &mut pos));
+            field.values.push(read_nested_matrix(body, &mut pos, base));
         }
     }
     Some(MatData::Struct(fields))
 }
 
-fn parse_cell(body: &[u8], n_elements: usize) -> Option<MatData> {
+fn parse_cell(body: &[u8], n_elements: usize, base: Option<usize>) -> Option<MatData> {
     let mut pos = 0usize;
     let mut cells = Vec::with_capacity(n_elements);
     for _ in 0..n_elements {
-        cells.push(read_nested_matrix(body, &mut pos));
+        cells.push(read_nested_matrix(body, &mut pos, base));
     }
     Some(MatData::Cell(cells))
 }
@@ -421,6 +447,27 @@ mod tests {
         let mut bytes = build_header();
         bytes[125] = 0x02;
         assert!(parse_mat(&bytes).is_none());
+    }
+
+    #[test]
+    fn nested_matrix_spans_point_at_parseable_elements() {
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&eeg_struct());
+        let arrays = parse_mat(&bytes).unwrap();
+        let eeg = &arrays[0];
+        assert_eq!(eeg.span, Some((128, bytes.len())));
+        let MatData::Struct(fields) = &eeg.data else {
+            panic!("not struct");
+        };
+        let data = fields
+            .iter()
+            .find(|f| f.name == "data")
+            .and_then(|f| f.values.first())
+            .expect("the data field carries a value");
+        let (start, end) = data.span.expect("the nested data matrix carries a span");
+        let reparsed = parse_element(&bytes[start..end]).expect("the element re-parses");
+        assert_eq!(reparsed.name, "data");
+        assert!(matches!(reparsed.data, MatData::Single(_)));
     }
 
     fn flags_class(class: u32) -> Vec<u8> {

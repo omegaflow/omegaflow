@@ -8137,3 +8137,13 @@ url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/s
 format slab2_depth
 at earth
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin
+format openneuro_eeg
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-sham_task-rest_eeg.bin
+format openneuro_eeg
+at earth
+ttl 86400

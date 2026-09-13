@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — eclipse-clock-worldlines
   class: survey
   date: 2026-09-13
-  sha256: 258f8383c7fc993654cb86a9571ec056385fcb395ade8c1fb718720bda05d2a6
+  sha256: fd5dea2f28f3a12628ed95ff041bb9a788853d9bef9c06a5e3e31fad2a90984c
   status: live
   see-also: docs/paper/eclipse-clock-worldlines.md
 -->
@@ -21,8 +21,10 @@ Abstract 159/200, 207 Zahlen ok, sha ok — Export-Gate grün).
 - 4,8 km / +0,0009 mag (1,03147) — 1:1 aus dem frischen Lauf (2026-09-13).
 - Rotations-Audit gemessen: TDB-gefilterte Rotation führt um 0,2939° =
   26,1 km (2017, ΔT 70,3 s aus dem Espenak–Meeus-Polynom; Katalog rundet 70 s);
-  der Piercing-Rest 4,8 km ≠ 26,1 km — wo der restliche ΔT absorbiert wird,
-  ist pending (w0-Anker nicht aus dem Bin gelesen). h'' ≈ 0,35–0,59 m/s² →
+  der Piercing-Rest 4,8 km ≠ 26,1 km — w0-Anker aus dem Bin gelesen
+  (190,1470°, PCK BODY399_PM, absorbiert null ΔT); die 21,3 km absorbiert der
+  neu-abgeleitete Pierce (+4,9 s Zeitkanal), die exakte Sweep-Rate bleibt
+  ungemessen. h'' ≈ 0,35–0,59 m/s² →
   1 km Achsenversatz ⇒ ~58–75 s Instant (Löffel, quantifiziert); 4,9 s ⇔
   ~65–85 m Achsenversatz (Zeit-Kanal getrennt vom Rotations-Kanal).
 - de441 ist aus der einen Stimme gedriftet: 42,5 km / −90,5 s (2017),
