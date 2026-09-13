@@ -96,7 +96,7 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
         assert_eq!(sources.len(), 1);
         let ExtractResult::Measurements(channels) = extract(&sources[0], NDBC_BODY, 0.0, &lsk)
         else {
-            panic!("rows block must measure");
+            panic!("rows block measures not");
         };
         let wspd: Vec<(f64, f64)> = channels
             .iter()
@@ -133,7 +133,7 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
         let sources = load_sources_from(BUOY_BLOCK);
         let ExtractResult::Measurements(channels) = extract(&sources[0], NDBC_BODY, 0.0, &lsk)
         else {
-            panic!("rows block must measure");
+            panic!("rows block measures not");
         };
         let wvht: Vec<f64> = channels
             .iter()
@@ -365,6 +365,7 @@ mod matrix_rebuild_tests {
             eph: Arc::new(eph),
             curves: None,
             spectral: Vec::new(),
+            volumes: Vec::new(),
         };
         let (_tx, rx) = mpsc::channel();
         let mut m = MatrixMachine::new(rx);
@@ -402,7 +403,7 @@ mod matrix_rebuild_tests {
         let moon_sin = &m.rings["eph_moon_lon_sin"];
         assert_ne!(
             earth_sin[0].1, moon_sin[0].1,
-            "earth and moon longitudes must differ"
+            "earth and moon longitudes differ"
         );
     }
 }
