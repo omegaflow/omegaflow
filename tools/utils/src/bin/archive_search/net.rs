@@ -407,7 +407,38 @@ pub fn ads_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     }
 }
 
+fn ntrs_id_form(query: &str) -> bool {
+    let t = query.trim();
+    t.len() >= 6 && t.chars().all(|c| c.is_ascii_digit())
+}
+
 pub fn ntrs_lines(query: &str, max: usize) -> Vec<String> {
+    if ntrs_id_form(query) {
+        let id = query.trim();
+        let url = format!("https://ntrs.nasa.gov/api/citations/{}", id);
+        return match get(&url, &[], "40") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => {
+                    let title = v.get("title").and_then(|t| t.as_str()).unwrap_or("");
+                    let rid = match v.get("id").and_then(|i| i.as_scalar_string()) {
+                        Some(s) => s,
+                        None => id.to_string(),
+                    };
+                    vec![format!(
+                        "url https://ntrs.nasa.gov/citations/{}\ttitle: {}",
+                        rid, title
+                    )]
+                }
+                None => vec!["pending — the NTRS response carries no JSON".to_string()],
+            },
+            Some(f) if f.status == Some(404) => vec![format!(
+                "absent — the NTRS register carries no entry: {}",
+                query
+            )],
+            Some(f) => vec![format!("pending — NTRS HTTP {}", f.status_text())],
+            None => vec!["pending — no network".to_string()],
+        };
+    }
     let url = format!(
         "https://ntrs.nasa.gov/api/citations/search?q={}&page.size={}",
         urlencode(query),
@@ -419,9 +450,11 @@ pub fn ntrs_lines(query: &str, max: usize) -> Vec<String> {
                 let mut out = Vec::new();
                 if let Some(results) = v.get("results").and_then(|r| r.as_arr()) {
                     for doc in results {
-                        let id = doc.get("id").and_then(|i| i.as_str()).unwrap_or("");
-                        let title = doc.get("title").and_then(|t| t.as_str()).unwrap_or("");
-                        if !id.is_empty() {
+                        if let Some(id) = doc.get("id").and_then(|i| i.as_scalar_string()) {
+                            if id.is_empty() {
+                                continue;
+                            }
+                            let title = doc.get("title").and_then(|t| t.as_str()).unwrap_or("");
                             out.push(format!(
                                 "url https://ntrs.nasa.gov/citations/{}\ttitle: {}",
                                 id, title
