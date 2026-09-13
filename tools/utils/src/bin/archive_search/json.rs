@@ -31,6 +31,14 @@ impl Json {
             _ => None,
         }
     }
+
+    pub fn as_scalar_string(&self) -> Option<String> {
+        match self {
+            Json::Str(s) => Some(s.clone()),
+            Json::Num(n) if n.is_finite() && n.fract() == 0.0 => Some(format!("{}", *n as i64)),
+            _ => None,
+        }
+    }
 }
 
 pub fn parse(text: &str) -> Option<Json> {
@@ -252,6 +260,19 @@ mod tests {
     fn parses_string_escapes_and_unicode() {
         let v = parse(r#""a\"b\n\u0041""#).unwrap();
         assert_eq!(v.as_str(), Some("a\"b\nA"));
+    }
+
+    #[test]
+    fn renders_numeric_ids_and_strings() {
+        let v = parse(r#"{"id":20210005208,"bib":"2021AJ....161..105P"}"#).unwrap();
+        assert_eq!(
+            v.get("id").and_then(|i| i.as_scalar_string()),
+            Some("20210005208".to_string())
+        );
+        assert_eq!(
+            v.get("bib").and_then(|i| i.as_scalar_string()),
+            Some("2021AJ....161..105P".to_string())
+        );
     }
 
     #[test]
