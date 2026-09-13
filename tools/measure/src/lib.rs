@@ -6,5 +6,6 @@ pub mod iasp91;
 pub mod miniseed;
 pub mod mww;
 pub mod noaa_coops;
+pub mod rest;
 pub mod stats;
 pub mod weberin;
