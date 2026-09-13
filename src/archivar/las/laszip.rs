@@ -13,9 +13,18 @@ const LASZIP_GPSTIME_MULTI_CODE_FULL: i32 = LASZIP_GPSTIME_MULTI - LASZIP_GPSTIM
 const LASZIP_GPSTIME_MULTI_TOTAL: u32 =
     (LASZIP_GPSTIME_MULTI - LASZIP_GPSTIME_MULTI_MINUS + 5) as u32;
 
+const LASZIP_COMPRESSOR_POINTWISE_CHUNKED: u16 = 2;
 const LASZIP_COMPRESSOR_LAYERED_CHUNKED: u16 = 3;
 
+const ITEM_POINT10: u16 = 6;
+const ITEM_GPSTIME11: u16 = 7;
+const ITEM_RGB12: u16 = 8;
+const ITEM_WAVEPACKET13: u16 = 9;
 const ITEM_POINT14: u16 = 10;
+const ITEM_RGB14: u16 = 11;
+const ITEM_RGBNIR14: u16 = 12;
+const ITEM_WAVEPACKET14: u16 = 13;
+const ITEM_BYTE14: u16 = 14;
 
 const LASZIP_VLR_RECORD_ID: u16 = 22204;
 
@@ -295,6 +304,12 @@ impl AcDecoder {
         let hi = self.read_short()?;
         Ok((hi << 16) | lo)
     }
+
+    fn read_int64(&mut self) -> Result<u64, LasNote> {
+        let lower = self.read_int()? as u64;
+        let upper = self.read_int()? as u64;
+        Ok((upper << 32) | lower)
+    }
 }
 
 struct IntegerCompressor {
@@ -511,6 +526,28 @@ const NUMBER_RETURN_LEVEL_8CTX: [[u8; 16]; 16] = [
     [7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 5, 4, 3, 2, 1, 0],
 ];
 
+const NUMBER_RETURN_MAP_3BIT: [[u8; 8]; 8] = [
+    [15, 14, 13, 12, 11, 10, 9, 8],
+    [14, 0, 1, 3, 6, 10, 10, 9],
+    [13, 1, 2, 4, 7, 11, 11, 10],
+    [12, 3, 4, 5, 8, 12, 12, 11],
+    [11, 6, 7, 8, 9, 13, 13, 12],
+    [10, 10, 11, 12, 13, 14, 14, 13],
+    [9, 10, 11, 12, 13, 14, 15, 14],
+    [8, 9, 10, 11, 12, 13, 14, 15],
+];
+
+const NUMBER_RETURN_LEVEL_3BIT: [[u8; 8]; 8] = [
+    [0, 1, 2, 3, 4, 5, 6, 7],
+    [1, 0, 1, 2, 3, 4, 5, 6],
+    [2, 1, 0, 1, 2, 3, 4, 5],
+    [3, 2, 1, 0, 1, 2, 3, 4],
+    [4, 3, 2, 1, 0, 1, 2, 3],
+    [5, 4, 3, 2, 1, 0, 1, 2],
+    [6, 5, 4, 3, 2, 1, 0, 1],
+    [7, 6, 5, 4, 3, 2, 1, 0],
+];
+
 #[derive(Clone, Copy)]
 struct Point14State {
     x: i32,
@@ -550,9 +587,8 @@ impl Point14State {
     }
 }
 
-fn read_raw_point14(cur: &mut Cursor) -> Result<Point14State, LasNote> {
-    let b = cur.read_bytes(30)?;
-    Ok(Point14State {
+fn point14_from_raw(b: &[u8]) -> Point14State {
+    Point14State {
         x: i32::from_le_bytes([b[0], b[1], b[2], b[3]]),
         y: i32::from_le_bytes([b[4], b[5], b[6], b[7]]),
         z: i32::from_le_bytes([b[8], b[9], b[10], b[11]]),
@@ -569,7 +605,7 @@ fn read_raw_point14(cur: &mut Cursor) -> Result<Point14State, LasNote> {
         point_source_id: u16::from_le_bytes([b[20], b[21]]),
         gps_time: f64::from_le_bytes([b[22], b[23], b[24], b[25], b[26], b[27], b[28], b[29]]),
         gps_time_change: false,
-    })
+    }
 }
 
 struct Point14Context {
@@ -1044,6 +1080,581 @@ impl Point14Reader {
     }
 }
 
+fn u8_fold(v: i32) -> u8 {
+    if v < 0 {
+        (v + 256) as u8
+    } else if v > 255 {
+        (v - 256) as u8
+    } else {
+        v as u8
+    }
+}
+
+fn u8_clamp(v: i32) -> u8 {
+    if v <= 0 {
+        0
+    } else if v >= 255 {
+        255
+    } else {
+        v as u8
+    }
+}
+
+const GPSTIME11_MULTI: i32 = 500;
+const GPSTIME11_MULTI_MINUS: i32 = -10;
+const GPSTIME11_MULTI_UNCHANGED: i32 = GPSTIME11_MULTI - GPSTIME11_MULTI_MINUS + 1;
+const GPSTIME11_MULTI_CODE_FULL: i32 = GPSTIME11_MULTI - GPSTIME11_MULTI_MINUS + 2;
+const GPSTIME11_MULTI_TOTAL: u32 = (GPSTIME11_MULTI - GPSTIME11_MULTI_MINUS + 6) as u32;
+
+struct Point10Reader {
+    last_item: [u8; 20],
+    last_intensity: [u16; 16],
+    last_x_diff_median5: [StreamingMedian5; 16],
+    last_y_diff_median5: [StreamingMedian5; 16],
+    last_height: [i32; 8],
+    m_changed_values: SymbolModel,
+    ic_intensity: IntegerCompressor,
+    m_scan_angle_rank: [SymbolModel; 2],
+    ic_point_source_id: IntegerCompressor,
+    m_bit_byte: Vec<Option<SymbolModel>>,
+    m_classification: Vec<Option<SymbolModel>>,
+    m_user_data: Vec<Option<SymbolModel>>,
+    ic_dx: IntegerCompressor,
+    ic_dy: IntegerCompressor,
+    ic_z: IntegerCompressor,
+}
+
+impl Point10Reader {
+    fn new() -> Self {
+        Point10Reader {
+            last_item: [0; 20],
+            last_intensity: [0; 16],
+            last_x_diff_median5: [StreamingMedian5::new(); 16],
+            last_y_diff_median5: [StreamingMedian5::new(); 16],
+            last_height: [0; 8],
+            m_changed_values: SymbolModel::new(64),
+            ic_intensity: IntegerCompressor::new(16, 4, 8),
+            m_scan_angle_rank: [SymbolModel::new(256), SymbolModel::new(256)],
+            ic_point_source_id: IntegerCompressor::new(16, 1, 8),
+            m_bit_byte: (0..256).map(|_| None).collect(),
+            m_classification: (0..256).map(|_| None).collect(),
+            m_user_data: (0..256).map(|_| None).collect(),
+            ic_dx: IntegerCompressor::new(32, 2, 8),
+            ic_dy: IntegerCompressor::new(32, 22, 8),
+            ic_z: IntegerCompressor::new(32, 20, 8),
+        }
+    }
+
+    fn init(&mut self, item: &[u8; 20]) {
+        for m in &mut self.last_x_diff_median5 {
+            m.init();
+        }
+        for m in &mut self.last_y_diff_median5 {
+            m.init();
+        }
+        self.last_intensity = [0; 16];
+        self.last_height = [0; 8];
+        self.m_changed_values.init();
+        self.ic_intensity.init();
+        self.m_scan_angle_rank[0].init();
+        self.m_scan_angle_rank[1].init();
+        self.ic_point_source_id.init();
+        for m in self.m_bit_byte.iter_mut().flatten() {
+            m.init();
+        }
+        for m in self.m_classification.iter_mut().flatten() {
+            m.init();
+        }
+        for m in self.m_user_data.iter_mut().flatten() {
+            m.init();
+        }
+        self.ic_dx.init();
+        self.ic_dy.init();
+        self.ic_z.init();
+        self.last_item = *item;
+        self.last_item[12] = 0;
+        self.last_item[13] = 0;
+    }
+
+    fn read(&mut self, dec: &mut AcDecoder) -> Result<[u8; 20], LasNote> {
+        let changed = dec.decode_symbol(&mut self.m_changed_values)?;
+
+        let (m, l) = if changed != 0 {
+            if changed & 32 != 0 {
+                let idx = self.last_item[14] as usize;
+                if self.m_bit_byte[idx].is_none() {
+                    self.m_bit_byte[idx] = Some(SymbolModel::new(256));
+                    self.m_bit_byte[idx].as_mut().unwrap().init();
+                }
+                let sym = dec.decode_symbol(self.m_bit_byte[idx].as_mut().unwrap())?;
+                self.last_item[14] = sym as u8;
+            }
+            let r = (self.last_item[14] & 0x07) as usize;
+            let n = ((self.last_item[14] >> 3) & 0x07) as usize;
+            let m = NUMBER_RETURN_MAP_3BIT[n][r] as usize;
+            let l = NUMBER_RETURN_LEVEL_3BIT[n][r] as usize;
+
+            if changed & 16 != 0 {
+                let ctx = if m < 3 { m as u32 } else { 3 };
+                let v = self
+                    .ic_intensity
+                    .decompress(dec, self.last_intensity[m] as i32, ctx)?
+                    as u16;
+                self.last_item[12] = (v & 0xFF) as u8;
+                self.last_item[13] = (v >> 8) as u8;
+                self.last_intensity[m] = v;
+            } else {
+                let v = self.last_intensity[m];
+                self.last_item[12] = (v & 0xFF) as u8;
+                self.last_item[13] = (v >> 8) as u8;
+            }
+
+            if changed & 8 != 0 {
+                let idx = self.last_item[15] as usize;
+                if self.m_classification[idx].is_none() {
+                    self.m_classification[idx] = Some(SymbolModel::new(256));
+                    self.m_classification[idx].as_mut().unwrap().init();
+                }
+                let sym = dec.decode_symbol(self.m_classification[idx].as_mut().unwrap())?;
+                self.last_item[15] = sym as u8;
+            }
+
+            if changed & 4 != 0 {
+                let scan_dir = (self.last_item[14] >> 6) & 1;
+                let sym = dec.decode_symbol(&mut self.m_scan_angle_rank[scan_dir as usize])? as i32;
+                self.last_item[16] = u8_fold(sym + self.last_item[16] as i32);
+            }
+
+            if changed & 2 != 0 {
+                let idx = self.last_item[17] as usize;
+                if self.m_user_data[idx].is_none() {
+                    self.m_user_data[idx] = Some(SymbolModel::new(256));
+                    self.m_user_data[idx].as_mut().unwrap().init();
+                }
+                let sym = dec.decode_symbol(self.m_user_data[idx].as_mut().unwrap())?;
+                self.last_item[17] = sym as u8;
+            }
+
+            if changed & 1 != 0 {
+                let pred = u16::from_le_bytes([self.last_item[18], self.last_item[19]]);
+                let v = self.ic_point_source_id.decompress(dec, pred as i32, 0)? as u16;
+                self.last_item[18] = (v & 0xFF) as u8;
+                self.last_item[19] = (v >> 8) as u8;
+            }
+            (m, l)
+        } else {
+            let r = (self.last_item[14] & 0x07) as usize;
+            let n = ((self.last_item[14] >> 3) & 0x07) as usize;
+            (
+                NUMBER_RETURN_MAP_3BIT[n][r] as usize,
+                NUMBER_RETURN_LEVEL_3BIT[n][r] as usize,
+            )
+        };
+
+        let n = ((self.last_item[14] >> 3) & 0x07) as usize;
+
+        let median = self.last_x_diff_median5[m].get();
+        let diff = self.ic_dx.decompress(dec, median, (n == 1) as u32)?;
+        let x = i32::from_le_bytes([
+            self.last_item[0],
+            self.last_item[1],
+            self.last_item[2],
+            self.last_item[3],
+        ])
+        .wrapping_add(diff);
+        self.last_item[0..4].copy_from_slice(&x.to_le_bytes());
+        self.last_x_diff_median5[m].add(diff);
+
+        let median = self.last_y_diff_median5[m].get();
+        let k_bits = self.ic_dx.get_k();
+        let ctx = (n == 1) as u32 + if k_bits < 20 { zero_bit_0(k_bits) } else { 20 };
+        let diff = self.ic_dy.decompress(dec, median, ctx)?;
+        let y = i32::from_le_bytes([
+            self.last_item[4],
+            self.last_item[5],
+            self.last_item[6],
+            self.last_item[7],
+        ])
+        .wrapping_add(diff);
+        self.last_item[4..8].copy_from_slice(&y.to_le_bytes());
+        self.last_y_diff_median5[m].add(diff);
+
+        let k_bits = (self.ic_dx.get_k() + self.ic_dy.get_k()) / 2;
+        let ctx = (n == 1) as u32 + if k_bits < 18 { zero_bit_0(k_bits) } else { 18 };
+        let z = self.ic_z.decompress(dec, self.last_height[l], ctx)?;
+        self.last_height[l] = z;
+        self.last_item[8..12].copy_from_slice(&z.to_le_bytes());
+
+        Ok(self.last_item)
+    }
+}
+
+struct GpsTime11Reader {
+    last: u32,
+    next: u32,
+    last_gpstime: [i64; 4],
+    last_gpstime_diff: [i32; 4],
+    multi_extreme_counter: [i32; 4],
+    m_gpstime_multi: SymbolModel,
+    m_gpstime_0diff: SymbolModel,
+    ic_gpstime: IntegerCompressor,
+}
+
+impl GpsTime11Reader {
+    fn new() -> Self {
+        GpsTime11Reader {
+            last: 0,
+            next: 0,
+            last_gpstime: [0; 4],
+            last_gpstime_diff: [0; 4],
+            multi_extreme_counter: [0; 4],
+            m_gpstime_multi: SymbolModel::new(GPSTIME11_MULTI_TOTAL),
+            m_gpstime_0diff: SymbolModel::new(6),
+            ic_gpstime: IntegerCompressor::new(32, 9, 8),
+        }
+    }
+
+    fn init(&mut self, item: &[u8; 8]) {
+        self.last = 0;
+        self.next = 0;
+        self.last_gpstime_diff = [0; 4];
+        self.multi_extreme_counter = [0; 4];
+        self.m_gpstime_multi.init();
+        self.m_gpstime_0diff.init();
+        self.ic_gpstime.init();
+        self.last_gpstime[0] = i64::from_le_bytes(*item);
+        self.last_gpstime[1] = 0;
+        self.last_gpstime[2] = 0;
+        self.last_gpstime[3] = 0;
+    }
+
+    fn read(&mut self, dec: &mut AcDecoder) -> Result<i64, LasNote> {
+        loop {
+            if self.last_gpstime_diff[self.last as usize] == 0 {
+                let multi = dec.decode_symbol(&mut self.m_gpstime_0diff)? as i32;
+                if multi == 1 {
+                    let diff = self.ic_gpstime.decompress(dec, 0, 0)?;
+                    self.last_gpstime_diff[self.last as usize] = diff;
+                    self.last_gpstime[self.last as usize] += diff as i64;
+                    self.multi_extreme_counter[self.last as usize] = 0;
+                } else if multi == 2 {
+                    self.next = (self.next + 1) & 3;
+                    let high = self.ic_gpstime.decompress(
+                        dec,
+                        (self.last_gpstime[self.last as usize] as u64 >> 32) as i32,
+                        8,
+                    )?;
+                    let low = dec.read_int()?;
+                    self.last_gpstime[self.next as usize] =
+                        (((high as u64) << 32) | low as u64) as i64;
+                    self.last = self.next;
+                    self.last_gpstime_diff[self.last as usize] = 0;
+                    self.multi_extreme_counter[self.last as usize] = 0;
+                } else {
+                    self.last = (self.last + multi as u32 - 2) & 3;
+                    continue;
+                }
+            } else {
+                let multi = dec.decode_symbol(&mut self.m_gpstime_multi)? as i32;
+                if multi == 1 {
+                    let diff = self.ic_gpstime.decompress(
+                        dec,
+                        self.last_gpstime_diff[self.last as usize],
+                        1,
+                    )?;
+                    self.last_gpstime[self.last as usize] += diff as i64;
+                    self.multi_extreme_counter[self.last as usize] = 0;
+                } else if multi < GPSTIME11_MULTI_UNCHANGED {
+                    let gpstime_diff;
+                    if multi == 0 {
+                        gpstime_diff = self.ic_gpstime.decompress(dec, 0, 7)?;
+                        self.multi_extreme_counter[self.last as usize] += 1;
+                        if self.multi_extreme_counter[self.last as usize] > 3 {
+                            self.last_gpstime_diff[self.last as usize] = gpstime_diff;
+                            self.multi_extreme_counter[self.last as usize] = 0;
+                        }
+                    } else if multi < GPSTIME11_MULTI {
+                        if multi < 10 {
+                            gpstime_diff = self.ic_gpstime.decompress(
+                                dec,
+                                multi.wrapping_mul(self.last_gpstime_diff[self.last as usize]),
+                                2,
+                            )?;
+                        } else {
+                            gpstime_diff = self.ic_gpstime.decompress(
+                                dec,
+                                multi.wrapping_mul(self.last_gpstime_diff[self.last as usize]),
+                                3,
+                            )?;
+                        }
+                    } else if multi == GPSTIME11_MULTI {
+                        gpstime_diff = self.ic_gpstime.decompress(
+                            dec,
+                            GPSTIME11_MULTI
+                                .wrapping_mul(self.last_gpstime_diff[self.last as usize]),
+                            4,
+                        )?;
+                        self.multi_extreme_counter[self.last as usize] += 1;
+                        if self.multi_extreme_counter[self.last as usize] > 3 {
+                            self.last_gpstime_diff[self.last as usize] = gpstime_diff;
+                            self.multi_extreme_counter[self.last as usize] = 0;
+                        }
+                    } else {
+                        let m = GPSTIME11_MULTI - multi;
+                        if m > GPSTIME11_MULTI_MINUS {
+                            gpstime_diff = self.ic_gpstime.decompress(
+                                dec,
+                                m.wrapping_mul(self.last_gpstime_diff[self.last as usize]),
+                                5,
+                            )?;
+                        } else {
+                            gpstime_diff = self.ic_gpstime.decompress(
+                                dec,
+                                GPSTIME11_MULTI_MINUS
+                                    .wrapping_mul(self.last_gpstime_diff[self.last as usize]),
+                                6,
+                            )?;
+                            self.multi_extreme_counter[self.last as usize] += 1;
+                            if self.multi_extreme_counter[self.last as usize] > 3 {
+                                self.last_gpstime_diff[self.last as usize] = gpstime_diff;
+                                self.multi_extreme_counter[self.last as usize] = 0;
+                            }
+                        }
+                    }
+                    self.last_gpstime[self.last as usize] += gpstime_diff as i64;
+                } else if multi == GPSTIME11_MULTI_CODE_FULL {
+                    self.next = (self.next + 1) & 3;
+                    let high = self.ic_gpstime.decompress(
+                        dec,
+                        (self.last_gpstime[self.last as usize] as u64 >> 32) as i32,
+                        8,
+                    )?;
+                    let low = dec.read_int()?;
+                    self.last_gpstime[self.next as usize] =
+                        (((high as u64) << 32) | low as u64) as i64;
+                    self.last = self.next;
+                    self.last_gpstime_diff[self.last as usize] = 0;
+                    self.multi_extreme_counter[self.last as usize] = 0;
+                } else {
+                    self.last = (self.last + multi as u32 - GPSTIME11_MULTI_CODE_FULL as u32) & 3;
+                    continue;
+                }
+            }
+            break;
+        }
+        Ok(self.last_gpstime[self.last as usize])
+    }
+}
+
+struct Rgb12Reader {
+    last_item: [u16; 3],
+    m_byte_used: SymbolModel,
+    m_rgb_diff: [SymbolModel; 6],
+}
+
+impl Rgb12Reader {
+    fn new() -> Self {
+        Rgb12Reader {
+            last_item: [0; 3],
+            m_byte_used: SymbolModel::new(128),
+            m_rgb_diff: [
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+            ],
+        }
+    }
+
+    fn init(&mut self, item: &[u8; 6]) {
+        self.m_byte_used.init();
+        for m in &mut self.m_rgb_diff {
+            m.init();
+        }
+        self.last_item = [
+            u16::from_le_bytes([item[0], item[1]]),
+            u16::from_le_bytes([item[2], item[3]]),
+            u16::from_le_bytes([item[4], item[5]]),
+        ];
+    }
+
+    fn read(&mut self, dec: &mut AcDecoder) -> Result<[u16; 3], LasNote> {
+        let sym = dec.decode_symbol(&mut self.m_byte_used)?;
+        let mut item = [0u16; 3];
+        if sym & (1 << 0) != 0 {
+            let corr = dec.decode_symbol(&mut self.m_rgb_diff[0])? as i32;
+            item[0] = u8_fold(corr + (self.last_item[0] & 255) as i32) as u16;
+        } else {
+            item[0] = self.last_item[0] & 0xFF;
+        }
+        if sym & (1 << 1) != 0 {
+            let corr = dec.decode_symbol(&mut self.m_rgb_diff[1])? as i32;
+            item[0] |= (u8_fold(corr + (self.last_item[0] >> 8) as i32) as u16) << 8;
+        } else {
+            item[0] |= self.last_item[0] & 0xFF00;
+        }
+        if sym & (1 << 6) != 0 {
+            let mut diff = (item[0] & 0x00FF) as i32 - (self.last_item[0] & 0x00FF) as i32;
+            if sym & (1 << 2) != 0 {
+                let corr = dec.decode_symbol(&mut self.m_rgb_diff[2])? as i32;
+                item[1] =
+                    u8_fold(corr + u8_clamp(diff + (self.last_item[1] & 255) as i32) as i32) as u16;
+            } else {
+                item[1] = self.last_item[1] & 0xFF;
+            }
+            if sym & (1 << 4) != 0 {
+                let corr = dec.decode_symbol(&mut self.m_rgb_diff[4])? as i32;
+                diff =
+                    (diff + ((item[1] & 0x00FF) as i32 - (self.last_item[1] & 0x00FF) as i32)) / 2;
+                item[2] =
+                    u8_fold(corr + u8_clamp(diff + (self.last_item[2] & 255) as i32) as i32) as u16;
+            } else {
+                item[2] = self.last_item[2] & 0xFF;
+            }
+            diff = (item[0] >> 8) as i32 - (self.last_item[0] >> 8) as i32;
+            if sym & (1 << 3) != 0 {
+                let corr = dec.decode_symbol(&mut self.m_rgb_diff[3])? as i32;
+                item[1] |= (u8_fold(corr + u8_clamp(diff + (self.last_item[1] >> 8) as i32) as i32)
+                    as u16)
+                    << 8;
+            } else {
+                item[1] |= self.last_item[1] & 0xFF00;
+            }
+            if sym & (1 << 5) != 0 {
+                let corr = dec.decode_symbol(&mut self.m_rgb_diff[5])? as i32;
+                diff = (diff + ((item[1] >> 8) as i32 - (self.last_item[1] >> 8) as i32)) / 2;
+                item[2] |= (u8_fold(corr + u8_clamp(diff + (self.last_item[2] >> 8) as i32) as i32)
+                    as u16)
+                    << 8;
+            } else {
+                item[2] |= self.last_item[2] & 0xFF00;
+            }
+        } else {
+            item[1] = item[0];
+            item[2] = item[0];
+        }
+        self.last_item = item;
+        Ok(item)
+    }
+}
+
+#[derive(Clone, Copy)]
+struct WavePacket13 {
+    offset: u64,
+    packet_size: u32,
+    return_point: i32,
+    x: i32,
+    y: i32,
+    z: i32,
+}
+
+fn wavepacket13_unpack(b: &[u8]) -> WavePacket13 {
+    WavePacket13 {
+        offset: u64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]),
+        packet_size: u32::from_le_bytes([b[8], b[9], b[10], b[11]]),
+        return_point: i32::from_le_bytes([b[12], b[13], b[14], b[15]]),
+        x: i32::from_le_bytes([b[16], b[17], b[18], b[19]]),
+        y: i32::from_le_bytes([b[20], b[21], b[22], b[23]]),
+        z: i32::from_le_bytes([b[24], b[25], b[26], b[27]]),
+    }
+}
+
+fn wavepacket13_pack(w: &WavePacket13, out: &mut [u8]) {
+    out[0..8].copy_from_slice(&w.offset.to_le_bytes());
+    out[8..12].copy_from_slice(&w.packet_size.to_le_bytes());
+    out[12..16].copy_from_slice(&w.return_point.to_le_bytes());
+    out[16..20].copy_from_slice(&w.x.to_le_bytes());
+    out[20..24].copy_from_slice(&w.y.to_le_bytes());
+    out[24..28].copy_from_slice(&w.z.to_le_bytes());
+}
+
+struct Wavepacket13Reader {
+    last_item: [u8; 28],
+    last_diff_32: i32,
+    sym_last_offset_diff: u32,
+    m_packet_index: SymbolModel,
+    m_offset_diff: [SymbolModel; 4],
+    ic_offset_diff: IntegerCompressor,
+    ic_packet_size: IntegerCompressor,
+    ic_return_point: IntegerCompressor,
+    ic_xyz: IntegerCompressor,
+}
+
+impl Wavepacket13Reader {
+    fn new() -> Self {
+        Wavepacket13Reader {
+            last_item: [0; 28],
+            last_diff_32: 0,
+            sym_last_offset_diff: 0,
+            m_packet_index: SymbolModel::new(256),
+            m_offset_diff: [
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+            ],
+            ic_offset_diff: IntegerCompressor::new(32, 1, 8),
+            ic_packet_size: IntegerCompressor::new(32, 1, 8),
+            ic_return_point: IntegerCompressor::new(32, 1, 8),
+            ic_xyz: IntegerCompressor::new(32, 3, 8),
+        }
+    }
+
+    fn init(&mut self, item: &[u8; 29]) {
+        self.last_diff_32 = 0;
+        self.sym_last_offset_diff = 0;
+        self.m_packet_index.init();
+        for m in &mut self.m_offset_diff {
+            m.init();
+        }
+        self.ic_offset_diff.init();
+        self.ic_packet_size.init();
+        self.ic_return_point.init();
+        self.ic_xyz.init();
+        self.last_item.copy_from_slice(&item[1..29]);
+    }
+
+    fn read(&mut self, dec: &mut AcDecoder) -> Result<[u8; 29], LasNote> {
+        let mut out = [0u8; 29];
+        out[0] = dec.decode_symbol(&mut self.m_packet_index)? as u8;
+        let last_m = wavepacket13_unpack(&self.last_item);
+        let mut this_m = WavePacket13 {
+            offset: 0,
+            packet_size: 0,
+            return_point: 0,
+            x: 0,
+            y: 0,
+            z: 0,
+        };
+        self.sym_last_offset_diff =
+            dec.decode_symbol(&mut self.m_offset_diff[self.sym_last_offset_diff as usize])?;
+        match self.sym_last_offset_diff {
+            0 => this_m.offset = last_m.offset,
+            1 => this_m.offset = last_m.offset + last_m.packet_size as u64,
+            2 => {
+                self.last_diff_32 = self.ic_offset_diff.decompress(dec, self.last_diff_32, 0)?;
+                this_m.offset =
+                    (last_m.offset as i64).wrapping_add(self.last_diff_32 as i64) as u64;
+            }
+            _ => this_m.offset = dec.read_int64()?,
+        }
+        this_m.packet_size = self
+            .ic_packet_size
+            .decompress(dec, last_m.packet_size as i32, 0)? as u32;
+        this_m.return_point = self
+            .ic_return_point
+            .decompress(dec, last_m.return_point, 0)?;
+        this_m.x = self.ic_xyz.decompress(dec, last_m.x, 0)?;
+        this_m.y = self.ic_xyz.decompress(dec, last_m.y, 1)?;
+        this_m.z = self.ic_xyz.decompress(dec, last_m.z, 2)?;
+        wavepacket13_pack(&this_m, &mut out[1..29]);
+        self.last_item.copy_from_slice(&out[1..29]);
+        Ok(out)
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct LaszipItem {
     pub item_type: u16,
@@ -1184,24 +1795,570 @@ fn read_chunk_table(
     Ok((chunk_starts, chunk_totals, layout.chunk_size))
 }
 
+fn decode_rgb(
+    dec: &mut AcDecoder,
+    last: [u16; 3],
+    m_byte_used: &mut SymbolModel,
+    m_rgb_diff: &mut [SymbolModel; 6],
+) -> Result<[u16; 3], LasNote> {
+    let sym = dec.decode_symbol(m_byte_used)?;
+    let mut item = [0u16; 3];
+    if sym & (1 << 0) != 0 {
+        let corr = dec.decode_symbol(&mut m_rgb_diff[0])? as i32;
+        item[0] = u8_fold(corr + (last[0] & 255) as i32) as u16;
+    } else {
+        item[0] = last[0] & 0xFF;
+    }
+    if sym & (1 << 1) != 0 {
+        let corr = dec.decode_symbol(&mut m_rgb_diff[1])? as i32;
+        item[0] |= (u8_fold(corr + (last[0] >> 8) as i32) as u16) << 8;
+    } else {
+        item[0] |= last[0] & 0xFF00;
+    }
+    if sym & (1 << 6) != 0 {
+        let mut diff = (item[0] & 0x00FF) as i32 - (last[0] & 0x00FF) as i32;
+        if sym & (1 << 2) != 0 {
+            let corr = dec.decode_symbol(&mut m_rgb_diff[2])? as i32;
+            item[1] = u8_fold(corr + u8_clamp(diff + (last[1] & 255) as i32) as i32) as u16;
+        } else {
+            item[1] = last[1] & 0xFF;
+        }
+        if sym & (1 << 4) != 0 {
+            let corr = dec.decode_symbol(&mut m_rgb_diff[4])? as i32;
+            diff = (diff + ((item[1] & 0x00FF) as i32 - (last[1] & 0x00FF) as i32)) / 2;
+            item[2] = u8_fold(corr + u8_clamp(diff + (last[2] & 255) as i32) as i32) as u16;
+        } else {
+            item[2] = last[2] & 0xFF;
+        }
+        diff = (item[0] >> 8) as i32 - (last[0] >> 8) as i32;
+        if sym & (1 << 3) != 0 {
+            let corr = dec.decode_symbol(&mut m_rgb_diff[3])? as i32;
+            item[1] |= (u8_fold(corr + u8_clamp(diff + (last[1] >> 8) as i32) as i32) as u16) << 8;
+        } else {
+            item[1] |= last[1] & 0xFF00;
+        }
+        if sym & (1 << 5) != 0 {
+            let corr = dec.decode_symbol(&mut m_rgb_diff[5])? as i32;
+            diff = (diff + ((item[1] >> 8) as i32 - (last[1] >> 8) as i32)) / 2;
+            item[2] |= (u8_fold(corr + u8_clamp(diff + (last[2] >> 8) as i32) as i32) as u16) << 8;
+        } else {
+            item[2] |= last[2] & 0xFF00;
+        }
+    } else {
+        item[1] = item[0];
+        item[2] = item[0];
+    }
+    Ok(item)
+}
+
+fn u16x3_bytes(v: [u16; 3]) -> [u8; 6] {
+    [
+        (v[0] & 0xFF) as u8,
+        (v[0] >> 8) as u8,
+        (v[1] & 0xFF) as u8,
+        (v[1] >> 8) as u8,
+        (v[2] & 0xFF) as u8,
+        (v[2] >> 8) as u8,
+    ]
+}
+
+struct Rgb14Context {
+    unused: bool,
+    last_item: [u16; 3],
+    m_byte_used: SymbolModel,
+    m_rgb_diff: [SymbolModel; 6],
+}
+
+impl Rgb14Context {
+    fn new() -> Self {
+        Rgb14Context {
+            unused: true,
+            last_item: [0; 3],
+            m_byte_used: SymbolModel::new(128),
+            m_rgb_diff: [
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+            ],
+        }
+    }
+
+    fn init(&mut self, last: [u16; 3]) {
+        self.m_byte_used.init();
+        for m in &mut self.m_rgb_diff {
+            m.init();
+        }
+        self.last_item = last;
+        self.unused = false;
+    }
+}
+
+struct Rgb14Reader {
+    contexts: [Rgb14Context; 4],
+    current_context: usize,
+}
+
+impl Rgb14Reader {
+    fn new() -> Self {
+        Rgb14Reader {
+            contexts: [
+                Rgb14Context::new(),
+                Rgb14Context::new(),
+                Rgb14Context::new(),
+                Rgb14Context::new(),
+            ],
+            current_context: 0,
+        }
+    }
+
+    fn init(&mut self, context: usize, item: &[u8]) {
+        for c in &mut self.contexts {
+            c.unused = true;
+        }
+        self.current_context = context;
+        let last = [
+            u16::from_le_bytes([item[0], item[1]]),
+            u16::from_le_bytes([item[2], item[3]]),
+            u16::from_le_bytes([item[4], item[5]]),
+        ];
+        self.contexts[context].init(last);
+    }
+
+    fn read(
+        &mut self,
+        dec: Option<&mut AcDecoder>,
+        context: usize,
+        out: &mut [u8],
+    ) -> Result<(), LasNote> {
+        if self.current_context != context {
+            let prev = self.contexts[self.current_context].last_item;
+            self.current_context = context;
+            if self.contexts[context].unused {
+                self.contexts[context].init(prev);
+            }
+        }
+        let ctx = &mut self.contexts[self.current_context];
+        match dec {
+            Some(d) => {
+                let item = decode_rgb(d, ctx.last_item, &mut ctx.m_byte_used, &mut ctx.m_rgb_diff)?;
+                ctx.last_item = item;
+                out[0..6].copy_from_slice(&u16x3_bytes(item));
+            }
+            None => out[0..6].copy_from_slice(&u16x3_bytes(ctx.last_item)),
+        }
+        Ok(())
+    }
+}
+
+struct RgbNir14Context {
+    unused: bool,
+    last_item: [u16; 4],
+    m_rgb_bytes_used: SymbolModel,
+    m_rgb_diff: [SymbolModel; 6],
+    m_nir_bytes_used: SymbolModel,
+    m_nir_diff: [SymbolModel; 2],
+}
+
+impl RgbNir14Context {
+    fn new() -> Self {
+        RgbNir14Context {
+            unused: true,
+            last_item: [0; 4],
+            m_rgb_bytes_used: SymbolModel::new(128),
+            m_rgb_diff: [
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+                SymbolModel::new(256),
+            ],
+            m_nir_bytes_used: SymbolModel::new(4),
+            m_nir_diff: [SymbolModel::new(256), SymbolModel::new(256)],
+        }
+    }
+
+    fn init(&mut self, last: [u16; 4]) {
+        self.m_rgb_bytes_used.init();
+        for m in &mut self.m_rgb_diff {
+            m.init();
+        }
+        self.m_nir_bytes_used.init();
+        for m in &mut self.m_nir_diff {
+            m.init();
+        }
+        self.last_item = last;
+        self.unused = false;
+    }
+}
+
+struct RgbNir14Reader {
+    contexts: [RgbNir14Context; 4],
+    current_context: usize,
+}
+
+impl RgbNir14Reader {
+    fn new() -> Self {
+        RgbNir14Reader {
+            contexts: [
+                RgbNir14Context::new(),
+                RgbNir14Context::new(),
+                RgbNir14Context::new(),
+                RgbNir14Context::new(),
+            ],
+            current_context: 0,
+        }
+    }
+
+    fn init(&mut self, context: usize, item: &[u8]) {
+        for c in &mut self.contexts {
+            c.unused = true;
+        }
+        self.current_context = context;
+        let last = [
+            u16::from_le_bytes([item[0], item[1]]),
+            u16::from_le_bytes([item[2], item[3]]),
+            u16::from_le_bytes([item[4], item[5]]),
+            u16::from_le_bytes([item[6], item[7]]),
+        ];
+        self.contexts[context].init(last);
+    }
+
+    fn read(
+        &mut self,
+        dec_rgb: Option<&mut AcDecoder>,
+        dec_nir: Option<&mut AcDecoder>,
+        context: usize,
+        out: &mut [u8],
+    ) -> Result<(), LasNote> {
+        if self.current_context != context {
+            let prev = self.contexts[self.current_context].last_item;
+            self.current_context = context;
+            if self.contexts[context].unused {
+                self.contexts[context].init(prev);
+            }
+        }
+        let ctx = &mut self.contexts[self.current_context];
+        match dec_rgb {
+            Some(d) => {
+                let last3 = [ctx.last_item[0], ctx.last_item[1], ctx.last_item[2]];
+                let item = decode_rgb(d, last3, &mut ctx.m_rgb_bytes_used, &mut ctx.m_rgb_diff)?;
+                ctx.last_item[0] = item[0];
+                ctx.last_item[1] = item[1];
+                ctx.last_item[2] = item[2];
+                out[0..2].copy_from_slice(&item[0].to_le_bytes());
+                out[2..4].copy_from_slice(&item[1].to_le_bytes());
+                out[4..6].copy_from_slice(&item[2].to_le_bytes());
+            }
+            None => {
+                out[0..2].copy_from_slice(&ctx.last_item[0].to_le_bytes());
+                out[2..4].copy_from_slice(&ctx.last_item[1].to_le_bytes());
+                out[4..6].copy_from_slice(&ctx.last_item[2].to_le_bytes());
+            }
+        }
+        match dec_nir {
+            Some(d) => {
+                let sym = d.decode_symbol(&mut ctx.m_nir_bytes_used)?;
+                let mut nir;
+                if sym & (1 << 0) != 0 {
+                    let corr = d.decode_symbol(&mut ctx.m_nir_diff[0])? as i32;
+                    nir = u8_fold(corr + (ctx.last_item[3] & 255) as i32) as u16;
+                } else {
+                    nir = ctx.last_item[3] & 0xFF;
+                }
+                if sym & (1 << 1) != 0 {
+                    let corr = d.decode_symbol(&mut ctx.m_nir_diff[1])? as i32;
+                    nir |= (u8_fold(corr + (ctx.last_item[3] >> 8) as i32) as u16) << 8;
+                } else {
+                    nir |= ctx.last_item[3] & 0xFF00;
+                }
+                ctx.last_item[3] = nir;
+                out[6..8].copy_from_slice(&nir.to_le_bytes());
+            }
+            None => out[6..8].copy_from_slice(&ctx.last_item[3].to_le_bytes()),
+        }
+        Ok(())
+    }
+}
+
+struct Wavepacket14Context {
+    unused: bool,
+    last_item: [u8; 29],
+    last_diff_32: i32,
+    sym_last_offset_diff: u32,
+    m_packet_index: SymbolModel,
+    m_offset_diff: [SymbolModel; 4],
+    ic_offset_diff: IntegerCompressor,
+    ic_packet_size: IntegerCompressor,
+    ic_return_point: IntegerCompressor,
+    ic_xyz: IntegerCompressor,
+}
+
+impl Wavepacket14Context {
+    fn new() -> Self {
+        Wavepacket14Context {
+            unused: true,
+            last_item: [0; 29],
+            last_diff_32: 0,
+            sym_last_offset_diff: 0,
+            m_packet_index: SymbolModel::new(256),
+            m_offset_diff: [
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+                SymbolModel::new(4),
+            ],
+            ic_offset_diff: IntegerCompressor::new(32, 1, 8),
+            ic_packet_size: IntegerCompressor::new(32, 1, 8),
+            ic_return_point: IntegerCompressor::new(32, 1, 8),
+            ic_xyz: IntegerCompressor::new(32, 3, 8),
+        }
+    }
+
+    fn init(&mut self, item: &[u8]) {
+        self.m_packet_index.init();
+        for m in &mut self.m_offset_diff {
+            m.init();
+        }
+        self.ic_offset_diff.init();
+        self.ic_packet_size.init();
+        self.ic_return_point.init();
+        self.ic_xyz.init();
+        self.last_diff_32 = 0;
+        self.sym_last_offset_diff = 0;
+        self.last_item.copy_from_slice(item);
+        self.unused = false;
+    }
+}
+
+struct Wavepacket14Reader {
+    contexts: [Wavepacket14Context; 4],
+    current_context: usize,
+}
+
+impl Wavepacket14Reader {
+    fn new() -> Self {
+        Wavepacket14Reader {
+            contexts: [
+                Wavepacket14Context::new(),
+                Wavepacket14Context::new(),
+                Wavepacket14Context::new(),
+                Wavepacket14Context::new(),
+            ],
+            current_context: 0,
+        }
+    }
+
+    fn init(&mut self, context: usize, item: &[u8]) {
+        for c in &mut self.contexts {
+            c.unused = true;
+        }
+        self.current_context = context;
+        self.contexts[context].init(item);
+    }
+
+    fn read(
+        &mut self,
+        dec: Option<&mut AcDecoder>,
+        context: usize,
+        out: &mut [u8],
+    ) -> Result<(), LasNote> {
+        if self.current_context != context {
+            let prev = self.contexts[self.current_context].last_item;
+            self.current_context = context;
+            if self.contexts[context].unused {
+                self.contexts[context].init(&prev);
+            }
+        }
+        if let Some(dec) = dec {
+            let ctx = &mut self.contexts[self.current_context];
+            out[0] = dec.decode_symbol(&mut ctx.m_packet_index)? as u8;
+            let last_m = wavepacket13_unpack(&ctx.last_item[1..29]);
+            let mut this_m = WavePacket13 {
+                offset: 0,
+                packet_size: 0,
+                return_point: 0,
+                x: 0,
+                y: 0,
+                z: 0,
+            };
+            ctx.sym_last_offset_diff =
+                dec.decode_symbol(&mut ctx.m_offset_diff[ctx.sym_last_offset_diff as usize])?;
+            match ctx.sym_last_offset_diff {
+                0 => this_m.offset = last_m.offset,
+                1 => this_m.offset = last_m.offset + last_m.packet_size as u64,
+                2 => {
+                    ctx.last_diff_32 = ctx.ic_offset_diff.decompress(dec, ctx.last_diff_32, 0)?;
+                    this_m.offset =
+                        (last_m.offset as i64).wrapping_add(ctx.last_diff_32 as i64) as u64;
+                }
+                _ => this_m.offset = dec.read_int64()?,
+            }
+            this_m.packet_size =
+                ctx.ic_packet_size
+                    .decompress(dec, last_m.packet_size as i32, 0)? as u32;
+            this_m.return_point = ctx
+                .ic_return_point
+                .decompress(dec, last_m.return_point, 0)?;
+            this_m.x = ctx.ic_xyz.decompress(dec, last_m.x, 0)?;
+            this_m.y = ctx.ic_xyz.decompress(dec, last_m.y, 1)?;
+            this_m.z = ctx.ic_xyz.decompress(dec, last_m.z, 2)?;
+            wavepacket13_pack(&this_m, &mut out[1..29]);
+            ctx.last_item.copy_from_slice(&out[0..29]);
+        }
+        Ok(())
+    }
+}
+
+struct Byte14Context {
+    unused: bool,
+    last_item: Vec<u8>,
+    m_bytes: Vec<SymbolModel>,
+}
+
+impl Byte14Context {
+    fn new(number: usize) -> Self {
+        Byte14Context {
+            unused: true,
+            last_item: vec![0; number],
+            m_bytes: (0..number).map(|_| SymbolModel::new(256)).collect(),
+        }
+    }
+
+    fn init(&mut self, item: &[u8]) {
+        for m in &mut self.m_bytes {
+            m.init();
+        }
+        self.last_item.copy_from_slice(item);
+        self.unused = false;
+    }
+}
+
+struct Byte14Reader {
+    contexts: Vec<Byte14Context>,
+    current_context: usize,
+    number: usize,
+}
+
+impl Byte14Reader {
+    fn new(number: usize) -> Self {
+        Byte14Reader {
+            contexts: (0..4).map(|_| Byte14Context::new(number)).collect(),
+            current_context: 0,
+            number,
+        }
+    }
+
+    fn init(&mut self, context: usize, item: &[u8]) {
+        for c in &mut self.contexts {
+            c.unused = true;
+        }
+        self.current_context = context;
+        self.contexts[context].init(item);
+    }
+
+    fn read(
+        &mut self,
+        decs: &mut [Option<AcDecoder>],
+        context: usize,
+        out: &mut [u8],
+    ) -> Result<(), LasNote> {
+        if self.current_context != context {
+            let prev = self.contexts[self.current_context].last_item.clone();
+            self.current_context = context;
+            if self.contexts[context].unused {
+                self.contexts[context].init(&prev);
+            }
+        }
+        for i in 0..self.number {
+            match decs[i].as_mut() {
+                Some(d) => {
+                    let ctx = &mut self.contexts[self.current_context];
+                    let value =
+                        ctx.last_item[i] as i32 + d.decode_symbol(&mut ctx.m_bytes[i])? as i32;
+                    out[i] = u8_fold(value);
+                    ctx.last_item[i] = out[i];
+                }
+                None => {
+                    let ctx = &self.contexts[self.current_context];
+                    out[i] = ctx.last_item[i];
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 fn decode_chunk(
     header: &LasHeader,
     bytes: &[u8],
     start: usize,
     end: usize,
     layout: &LaszipLayout,
+    point_count: u64,
 ) -> Result<Vec<LasPoint>, LasNote> {
     if start >= end || end > bytes.len() {
         return Err(LasNote::LazChunkOverrun { off: end });
     }
-    if layout.compressor != LASZIP_COMPRESSOR_LAYERED_CHUNKED {
-        return Err(LasNote::LazItem {
+    match layout.compressor {
+        LASZIP_COMPRESSOR_LAYERED_CHUNKED => {
+            decode_chunk_layered(header, bytes, start, end, layout)
+        }
+        LASZIP_COMPRESSOR_POINTWISE_CHUNKED => {
+            decode_chunk_pointwise(header, bytes, start, end, layout, point_count)
+        }
+        _ => Err(LasNote::LazItem {
             item: layout.compressor,
-        });
+        }),
     }
-    let Some(first) = layout.items.first() else {
-        return Err(LasNote::LazAbsent);
-    };
+}
+
+enum LayeredExtra {
+    Rgb14 {
+        reader: Rgb14Reader,
+        dec: Option<AcDecoder>,
+    },
+    RgbNir14 {
+        reader: RgbNir14Reader,
+        dec_rgb: Option<AcDecoder>,
+        dec_nir: Option<AcDecoder>,
+    },
+    Wavepacket14 {
+        reader: Wavepacket14Reader,
+        dec: Option<AcDecoder>,
+    },
+    Byte14 {
+        reader: Byte14Reader,
+        decs: Vec<Option<AcDecoder>>,
+    },
+}
+
+impl LayeredExtra {
+    fn read(&mut self, context: usize, out: &mut [u8]) -> Result<(), LasNote> {
+        match self {
+            LayeredExtra::Rgb14 { reader, dec } => reader.read(dec.as_mut(), context, out),
+            LayeredExtra::RgbNir14 {
+                reader,
+                dec_rgb,
+                dec_nir,
+            } => reader.read(dec_rgb.as_mut(), dec_nir.as_mut(), context, out),
+            LayeredExtra::Wavepacket14 { reader, dec } => reader.read(dec.as_mut(), context, out),
+            LayeredExtra::Byte14 { reader, decs } => reader.read(decs, context, out),
+        }
+    }
+}
+
+fn decode_chunk_layered(
+    header: &LasHeader,
+    bytes: &[u8],
+    start: usize,
+    end: usize,
+    layout: &LaszipLayout,
+) -> Result<Vec<LasPoint>, LasNote> {
+    let first = layout.items.first().ok_or(LasNote::LazAbsent)?;
     if first.item_type != ITEM_POINT14 {
         return Err(LasNote::LazItem {
             item: first.item_type,
@@ -1212,15 +2369,37 @@ fn decode_chunk(
             item: layout.items[0].version,
         });
     }
-    if layout.items.len() > 1 {
-        return Err(LasNote::LazItem {
-            item: layout.items[1].item_type,
-        });
+    for item in &layout.items[1..] {
+        let ok = matches!(
+            item.item_type,
+            ITEM_RGB14 | ITEM_RGBNIR14 | ITEM_WAVEPACKET14 | ITEM_BYTE14
+        ) && (item.version == 2 || item.version == 3);
+        if !ok {
+            return Err(LasNote::LazItem {
+                item: item.item_type,
+            });
+        }
+    }
+
+    let point_length = header.point_length as usize;
+    let mut offsets = Vec::with_capacity(layout.items.len());
+    let mut total = 0usize;
+    for item in &layout.items {
+        offsets.push(total);
+        total += item.size as usize;
+    }
+    if total > point_length {
+        return Err(LasNote::LazChunkOverrun { off: start });
     }
 
     let mut cur = Cursor::new(&bytes[start..end], start);
+    let mut raw_first = vec![0u8; point_length];
+    for (i, item) in layout.items.iter().enumerate() {
+        let b = cur.read_bytes(item.size as usize)?;
+        raw_first[offsets[i]..offsets[i] + item.size as usize].copy_from_slice(b);
+    }
 
-    let first = read_raw_point14(&mut cur)?;
+    let first_state = point14_from_raw(&raw_first[0..30]);
 
     let count = cur.read_u32()? as usize;
 
@@ -1233,6 +2412,26 @@ fn decode_chunk(
     let n_user_data = cur.read_u32()? as usize;
     let n_point_source = cur.read_u32()? as usize;
     let n_gps_time = cur.read_u32()? as usize;
+
+    let mut extra_sizes: Vec<Vec<usize>> = Vec::with_capacity(layout.items.len() - 1);
+    for item in &layout.items[1..] {
+        let n_layers = match item.item_type {
+            ITEM_RGB14 => 1,
+            ITEM_RGBNIR14 => 2,
+            ITEM_WAVEPACKET14 => 1,
+            ITEM_BYTE14 => item.size as usize,
+            _ => {
+                return Err(LasNote::LazItem {
+                    item: item.item_type,
+                })
+            }
+        };
+        let mut sizes = Vec::with_capacity(n_layers);
+        for _ in 0..n_layers {
+            sizes.push(cur.read_u32()? as usize);
+        }
+        extra_sizes.push(sizes);
+    }
 
     let layer_base = start + cur.pos;
 
@@ -1254,6 +2453,95 @@ fn decode_chunk(
     let dec_user_data = take_layer(&mut cur, n_user_data, layer_base + offset, &mut offset)?;
     let dec_point_source = take_layer(&mut cur, n_point_source, layer_base + offset, &mut offset)?;
     let dec_gps_time = take_layer(&mut cur, n_gps_time, layer_base + offset, &mut offset)?;
+
+    let scanner = first_state.scanner_channel as usize;
+    let mut extras: Vec<(usize, usize, LayeredExtra)> = Vec::with_capacity(layout.items.len() - 1);
+    for (i, item) in layout.items[1..].iter().enumerate() {
+        let sizes = &extra_sizes[i];
+        let item_off = offsets[i + 1];
+        let size = item.size as usize;
+        let extra = match item.item_type {
+            ITEM_RGB14 => {
+                let n = sizes[0];
+                let mut reader = Rgb14Reader::new();
+                let dec = if n > 0 {
+                    let data = cur.read_bytes(n)?;
+                    let d = AcDecoder::init(data, layer_base + offset)?;
+                    offset += n;
+                    Some(d)
+                } else {
+                    None
+                };
+                reader.init(scanner, &raw_first[item_off..item_off + size]);
+                LayeredExtra::Rgb14 { reader, dec }
+            }
+            ITEM_RGBNIR14 => {
+                let n_rgb = sizes[0];
+                let n_nir = sizes[1];
+                let mut reader = RgbNir14Reader::new();
+                let dec_rgb = if n_rgb > 0 {
+                    let data = cur.read_bytes(n_rgb)?;
+                    let d = AcDecoder::init(data, layer_base + offset)?;
+                    offset += n_rgb;
+                    Some(d)
+                } else {
+                    None
+                };
+                let dec_nir = if n_nir > 0 {
+                    let data = cur.read_bytes(n_nir)?;
+                    let d = AcDecoder::init(data, layer_base + offset)?;
+                    offset += n_nir;
+                    Some(d)
+                } else {
+                    None
+                };
+                reader.init(scanner, &raw_first[item_off..item_off + size]);
+                LayeredExtra::RgbNir14 {
+                    reader,
+                    dec_rgb,
+                    dec_nir,
+                }
+            }
+            ITEM_WAVEPACKET14 => {
+                let n = sizes[0];
+                let mut reader = Wavepacket14Reader::new();
+                let dec = if n > 0 {
+                    let data = cur.read_bytes(n)?;
+                    let d = AcDecoder::init(data, layer_base + offset)?;
+                    offset += n;
+                    Some(d)
+                } else {
+                    None
+                };
+                reader.init(scanner, &raw_first[item_off..item_off + size]);
+                LayeredExtra::Wavepacket14 { reader, dec }
+            }
+            ITEM_BYTE14 => {
+                let number = size;
+                let mut reader = Byte14Reader::new(number);
+                let mut decs = Vec::with_capacity(number);
+                for j in 0..number {
+                    let n = sizes[j];
+                    if n > 0 {
+                        let data = cur.read_bytes(n)?;
+                        let d = AcDecoder::init(data, layer_base + offset)?;
+                        offset += n;
+                        decs.push(Some(d));
+                    } else {
+                        decs.push(None);
+                    }
+                }
+                reader.init(scanner, &raw_first[item_off..item_off + number]);
+                LayeredExtra::Byte14 { reader, decs }
+            }
+            _ => {
+                return Err(LasNote::LazItem {
+                    item: item.item_type,
+                })
+            }
+        };
+        extras.push((item_off, size, extra));
+    }
 
     let mut decoders = Point14Decoders {
         dec_xy,
@@ -1287,26 +2575,158 @@ fn decode_chunk(
         ],
         current_context: 0,
     };
-    reader.current_context = first.scanner_channel as usize;
-    reader.contexts[reader.current_context].init(&first);
+    reader.current_context = first_state.scanner_channel as usize;
+    reader.contexts[reader.current_context].init(&first_state);
 
-    let point_length = header.point_length as usize;
     let mut out = Vec::with_capacity(count);
-    let mut raw = vec![0u8; point_length];
-
-    let mut push_point = |p: &Point14State| -> Result<LasPoint, LasNote> {
-        if point_length < 30 {
-            return Err(LasNote::LazChunkOverrun { off: start });
-        }
-        p.to_raw(&mut raw[0..30]);
-        decode_point(header, &raw, 0)
-    };
-
-    out.push(push_point(&first)?);
+    let mut raw = raw_first;
+    out.push(decode_point(header, &raw, 0)?);
 
     for _ in 1..count {
         let p = reader.read(&mut decoders, &changed)?;
-        out.push(push_point(&p)?);
+        let context = reader.current_context;
+        p.to_raw(&mut raw[0..30]);
+        for (off, size, extra) in extras.iter_mut() {
+            extra.read(context, &mut raw[*off..*off + *size])?;
+        }
+        out.push(decode_point(header, &raw, 0)?);
+    }
+
+    Ok(out)
+}
+
+enum PointwiseItem {
+    Point10(Point10Reader),
+    GpsTime11(GpsTime11Reader),
+    Rgb12(Rgb12Reader),
+    Wavepacket13(Wavepacket13Reader),
+}
+
+impl PointwiseItem {
+    fn read(&mut self, dec: &mut AcDecoder, out: &mut [u8]) -> Result<(), LasNote> {
+        match self {
+            PointwiseItem::Point10(r) => {
+                let v = r.read(dec)?;
+                out[0..20].copy_from_slice(&v);
+            }
+            PointwiseItem::GpsTime11(r) => {
+                let v = r.read(dec)?;
+                out[0..8].copy_from_slice(&v.to_le_bytes());
+            }
+            PointwiseItem::Rgb12(r) => {
+                let v = r.read(dec)?;
+                out[0..6].copy_from_slice(&u16x3_bytes(v));
+            }
+            PointwiseItem::Wavepacket13(r) => {
+                let v = r.read(dec)?;
+                out[0..29].copy_from_slice(&v);
+            }
+        }
+        Ok(())
+    }
+}
+
+fn decode_chunk_pointwise(
+    header: &LasHeader,
+    bytes: &[u8],
+    start: usize,
+    end: usize,
+    layout: &LaszipLayout,
+    point_count: u64,
+) -> Result<Vec<LasPoint>, LasNote> {
+    let point_length = header.point_length as usize;
+    let mut offsets = Vec::with_capacity(layout.items.len());
+    let mut total = 0usize;
+    for item in &layout.items {
+        offsets.push(total);
+        total += item.size as usize;
+    }
+    if total > point_length {
+        return Err(LasNote::LazChunkOverrun { off: start });
+    }
+
+    let mut cur = Cursor::new(&bytes[start..end], start);
+    let mut raw_first = vec![0u8; point_length];
+    for (i, item) in layout.items.iter().enumerate() {
+        let b = cur.read_bytes(item.size as usize)?;
+        raw_first[offsets[i]..offsets[i] + item.size as usize].copy_from_slice(b);
+    }
+
+    let mut items: Vec<(usize, usize, PointwiseItem)> = Vec::with_capacity(layout.items.len());
+    for (i, item) in layout.items.iter().enumerate() {
+        let off = offsets[i];
+        let size = item.size as usize;
+        let reader = match item.item_type {
+            ITEM_POINT10 => {
+                if size != 20 {
+                    return Err(LasNote::LazItem {
+                        item: item.item_type,
+                    });
+                }
+                let mut a = [0u8; 20];
+                a.copy_from_slice(&raw_first[off..off + 20]);
+                let mut r = Point10Reader::new();
+                r.init(&a);
+                PointwiseItem::Point10(r)
+            }
+            ITEM_GPSTIME11 => {
+                if size != 8 {
+                    return Err(LasNote::LazItem {
+                        item: item.item_type,
+                    });
+                }
+                let mut a = [0u8; 8];
+                a.copy_from_slice(&raw_first[off..off + 8]);
+                let mut r = GpsTime11Reader::new();
+                r.init(&a);
+                PointwiseItem::GpsTime11(r)
+            }
+            ITEM_RGB12 => {
+                if size != 6 {
+                    return Err(LasNote::LazItem {
+                        item: item.item_type,
+                    });
+                }
+                let mut a = [0u8; 6];
+                a.copy_from_slice(&raw_first[off..off + 6]);
+                let mut r = Rgb12Reader::new();
+                r.init(&a);
+                PointwiseItem::Rgb12(r)
+            }
+            ITEM_WAVEPACKET13 => {
+                if size != 29 {
+                    return Err(LasNote::LazItem {
+                        item: item.item_type,
+                    });
+                }
+                let mut a = [0u8; 29];
+                a.copy_from_slice(&raw_first[off..off + 29]);
+                let mut r = Wavepacket13Reader::new();
+                r.init(&a);
+                PointwiseItem::Wavepacket13(r)
+            }
+            _ => {
+                return Err(LasNote::LazItem {
+                    item: item.item_type,
+                })
+            }
+        };
+        items.push((off, size, reader));
+    }
+
+    let stream_start = start + cur.pos;
+    let mut dec = AcDecoder::init(&bytes[stream_start..end], stream_start)?;
+
+    let count = point_count as usize;
+    let mut out = Vec::with_capacity(count);
+    out.push(decode_point(header, &raw_first, 0)?);
+
+    let mut raw = raw_first;
+    for _ in 1..count {
+        for (off, size, item) in items.iter_mut() {
+            item.read(&mut dec, &mut raw[*off..*off + *size])?;
+        }
+        out.push(decode_point(header, &raw, 0)?);
     }
 
     Ok(out)
@@ -1347,7 +2767,7 @@ impl<'a> LazDecoder<'a> {
     }
 
     pub fn point_at(&mut self, index: u64) -> Result<LasPoint, LasNote> {
-        let (chunk_idx, within) = match &self.chunk_totals {
+        let (chunk_idx, within, point_count) = match &self.chunk_totals {
             Some(totals) => {
                 let n = totals.len() - 1;
                 if n == 0 {
@@ -1365,14 +2785,18 @@ impl<'a> LazDecoder<'a> {
                 }
                 let chunk_idx = lo;
                 let within = index - totals[chunk_idx];
-                (chunk_idx, within)
+                let point_count = totals[chunk_idx + 1] - totals[chunk_idx];
+                (chunk_idx, within, point_count)
             }
             None => {
                 let cs = self.fixed_chunk_size as u64;
                 if cs == 0 {
                     return Err(LasNote::LazChunkTable { off: 0 });
                 }
-                ((index / cs) as usize, index % cs)
+                let chunk_idx = (index / cs) as usize;
+                let within = index % cs;
+                let point_count = (self.header.point_count - chunk_idx as u64 * cs).min(cs);
+                (chunk_idx, within, point_count)
             }
         };
 
@@ -1385,7 +2809,14 @@ impl<'a> LazDecoder<'a> {
             _ => {
                 let start = self.chunk_starts[chunk_idx] as usize;
                 let end = self.chunk_starts[chunk_idx + 1] as usize;
-                let pts = decode_chunk(self.header, self.bytes, start, end, &self.layout)?;
+                let pts = decode_chunk(
+                    self.header,
+                    self.bytes,
+                    start,
+                    end,
+                    &self.layout,
+                    point_count,
+                )?;
                 self.cache = Some((chunk_idx, pts));
                 &self.cache.as_ref().unwrap().1
             }
