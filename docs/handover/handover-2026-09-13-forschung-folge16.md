@@ -3,7 +3,7 @@
   session: Forschung-Folge XVI
   class: handover
   date: 2026-09-13
-  sha256: 6d29e86574dc301c9f4027e5e5f550dc68f75138a9ddaa3e3618206e66bb6567
+  sha256: 6f0520d6987d75c10fa79389211b815065f33f0633b9c720dc8015a8418f01e8
   status: live
 -->
 # Handover — Forschung-Folge XVI (2026-09-13)
@@ -23,23 +23,22 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - gaia-dr4-iapetus (Wiedervorlage 2026-12-02).
 - Ⅺ Placebo — AVE-Neumessung läuft in CI (placebo-ave-cdn); der Verdict landet im
   openneuro.org-Release. REST: Lead-Field + benannte Regularisierung gebaut
-  (λ = λ_max(G)·2⁻ᵏ, k = 32 solver-stabil; die alte 1e-6-Toleranz hielt kein
-  solver-stabiles k — per Messung neu benannt, relativ 1e-4). Pending: das
-  BEM/Cortex-Mesh (MNI/ICBM-Template — ein Datensatz, kein Code) und die
-  Fiducial-Basis.
+  (λ = λ_max(G)·2⁻ᵏ, k = 32 solver-stabil), das BEM/Cortex-Mesh geerntet und
+  registriert (standard_bem.mat, colin27/MNI, drei Schalen). Pending: die
+  Fiducial-Basis — die Co-Registrierung des Kopfmodells auf die Elektroden-Montage
+  (nasion/inion/preauricular).
 
 ## Weberin
 
-- VLBI-Winkel-Probe — re-gemessen (curl, 2026-09-13): archive.jive.nl/scripts/portal.php
-  = 200, listarch.php = HTML-Suchformular (Experiment-Sortierung) — astrophysikalisches
-  EVN-VLBI, kein PRIDE-ΔDOR. Eine offene maschinenlesbare Raumsonde-Plane-of-Sky-Datenlinie
-  bleibt pending; die mutierbare Suchoberfläche trägt keine pinbare Einzel-Datei (kein
-  A=A-Register-Eintrag).
 - Kernel 000113+ bei ESA nach Erscheinen (Wiedervorlage 2026-09-28).
 
 ## Tiefenphasen
 
-- Positive Maske — misst das 36-km-Schrumpfen, sobald die Treiber stehen.
+- Positive Maske — die Treiber stehen jetzt: Plattentektonik (Slab2, 27 Regionen,
+  sciencebase, registriert), Magnetfeld (INTERMAGNET/Swarm, registriert),
+  3D-Modelle (LLNL_G3D_JPS + EarthScope-Volumina, registriert). Nächster Bau: die
+  bedingte-TE-Sonde, die das Tiefenphasen-Echo auf einen Treiber bedingt und den
+  36-km-Riss vorher/nachher misst (GLO-30-DEM-CDN-Dispatch noch offen).
 
 ## Abschluss
 
