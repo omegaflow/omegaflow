@@ -256,6 +256,8 @@ pub struct FieldConfig {
     pub absorption: f64,
     pub advection: f64,
     pub unit: String,
+    pub freq: f64,
+    pub bin_width: f64,
     pub fold: Option<(u8, String)>,
 }
 
