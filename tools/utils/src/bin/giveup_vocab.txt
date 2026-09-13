@@ -1,0 +1,24 @@
+# giveup_scan vocabulary — the register's giving-up words, one per line: word<TAB>class.
+# The words are German because the register's counter-slope is German; the code stays English.
+ehrlich	honest-face
+honest	honest-face
+ehrlichkeit	honest-face
+nicht veröffentlicht	unpublished
+unveröffentlicht	unpublished
+nicht publiziert	unpublished
+unpublished	unpublished
+not published	unpublished
+nicht öffentlich	not-public
+not public	not-public
+request-only	request-only
+paywall	paywall
+gated	gated
+ungebaut	unbuilt
+not built	unbuilt
+kein zugang	no-access
+keine credential	no-access
+unzugänglich	no-access
+nicht erreichbar	no-access
+nicht zugänglich	no-access
+descoped	descoped
+decline	declined
