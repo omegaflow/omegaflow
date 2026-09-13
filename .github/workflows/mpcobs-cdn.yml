@@ -1,0 +1,53 @@
+name: mpcobs-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  mpcobs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the minorplanetcenter.net release exists on the CDN
+        run: |
+          if ! gh release view minorplanetcenter.net --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create minorplanetcenter.net --repo omegaflow/sources \
+              --title "minorplanetcenter.net" \
+              --notes "MPC OBS80 astrometric observations compiled to a 49-byte/record bin. Record stride: epoch JD (f64 LE), RA deg (f64 LE), Dec deg (f64 LE), mag (f32 LE), packed number (u32 LE), band (u8), obs code (3 ASCII), reference (6 ASCII), designation (7 ASCII). Obs code is the MPC observatory code; band is the photometric band letter (0 when absent)."
+          fi
+      - name: Fetch the MPC comet and natural-satellite observation archives
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/CmtObs.txt.gz \
+            https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/CmtObs.txt.gz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mpcobs-cdn: CmtObs.txt.gz returned void" \
+                 "curl on minorplanetcenter.net did not reach CmtObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sSfL --retry 3 --max-time 600 -o kernels/SatObs.txt.gz \
+            https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/SatObs.txt.gz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mpcobs-cdn: SatObs.txt.gz returned void" \
+                 "curl on minorplanetcenter.net did not reach SatObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the MPC observation records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin mpcobs_compiler -- \
+            --input kernels/CmtObs.txt.gz \
+            --input kernels/SatObs.txt.gz \
+            --out mpcobs.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mpcobs-cdn: mpcobs.bin returned void" \
+                 "mpcobs compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
