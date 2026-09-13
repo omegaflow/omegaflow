@@ -30,7 +30,7 @@ note DES-DR2 (DECam Y6A2) Survey-Coverage-Maske, NOIRLab Astro Data Lab TAP sync
 # je Survey einzeln begutachtet (grind-pro, jede Route curl-gemessen, nicht geraten):
 # PS1 und AllWISE tragen per-Pixel-Coverage-Bilder (Quelle GEFUNDEN, Compiler pending),
 # SDSS absent (die Quelle traegt keinen per-Pixel-Flaechen-Wert, gemessen unten),
-# 2MASS pending (keine Coverage-Tabelle im TAP).
+# 2MASS Coverage gemessen 2026-09-14 (Party): XSC-Fractional-Coverage FITS (24 Quadranten) + Depth-of-Coverage-Cube je Atlas Image (max 7 / typisch 6 Samples); kein TAP, FITS-Images (irsa.ipac.caltech.edu/data/2MASS/docs/releases/allsky/doc/figures/secii6ff3.fits …).
 footprint ps1
 url https://ps1images.stsci.edu/rings.v3.skycell/
 asset ps1_dr2_binary.fp01
