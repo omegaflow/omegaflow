@@ -8132,3 +8132,8 @@ url https://github.com/omegaflow/sources/releases/download/copernicus-dem-30m.s3
 format gl30
 at earth
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
+format slab2_depth
+at earth
+ttl 31536000
