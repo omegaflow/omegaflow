@@ -132,7 +132,52 @@ enum GravCol {
 }
 
 fn norm_key(k: &str) -> String {
-    k.split_whitespace().collect::<Vec<_>>().join(" ")
+    let mut out = String::with_capacity(k.len());
+    let mut gap = false;
+    for c in k.chars() {
+        if c.is_alphanumeric() {
+            if gap && !out.is_empty() {
+                out.push(' ');
+            }
+            out.push(c.to_ascii_lowercase());
+            gap = false;
+        } else {
+            gap = true;
+        }
+    }
+    out
+}
+
+fn gravity_col(token: &str) -> Option<(GravCol, f64)> {
+    if token == "g_fil" {
+        return Some((GravCol::Fil, 1.0));
+    }
+    if token == "gravity" {
+        return Some((GravCol::NmPerS2, 1.0));
+    }
+    let unit = token.strip_prefix("gravity(")?.strip_suffix(')')?;
+    let lower = unit.to_ascii_lowercase();
+    match lower.as_str() {
+        "nm/s**2" | "nm/s2" | "nm/s^2" | "nm.s-2" => Some((GravCol::NmPerS2, 1.0)),
+        "v" => Some((GravCol::Volts, 1.0)),
+        "mv" => Some((GravCol::Millivolts, 1.0)),
+        _ => {
+            let stem = lower.strip_suffix("gal")?;
+            let prefix = stem
+                .trim()
+                .trim_end_matches(|c: char| c == 'µ' || c == 'μ' || c == 'u');
+            let mult: f64 = if prefix.is_empty() {
+                1.0
+            } else {
+                prefix.parse().ok()?
+            };
+            if mult.is_finite() && mult > 0.0 {
+                Some((GravCol::NmPerS2, mult * 10.0))
+            } else {
+                None
+            }
+        }
+    }
 }
 
 fn first_num(v: &str) -> Option<f64> {
@@ -145,18 +190,42 @@ fn parse_ggp(text: &str) -> Result<Ggp, &'static str> {
     let mut alt = None;
     let mut gcal_v = None;
     let mut gcal_mv = None;
-    let mut grav_col: Option<(usize, GravCol)> = None;
+    let mut grav_col: Option<(usize, GravCol, f64)> = None;
     let mut samples: Vec<(f64, f64)> = Vec::new();
     for line in text.lines() {
         if grav_col.is_none() {
             if let Some((k, v)) = line.split_once(':') {
-                match norm_key(k).as_str() {
-                    "N Latitude (deg)" => lat = first_num(v),
-                    "E Longitude (deg)" => lon = first_num(v),
-                    "Height (m)" | "Elevation MSL (m)" | "Geoid Height (m)" => alt = first_num(v),
-                    "Gravity Cal (nm.s-2/V)" => gcal_v = first_num(v),
-                    "Grav.Cal (nm.S-2/mV)" => gcal_mv = first_num(v),
-                    _ => {}
+                let nk = norm_key(k);
+                if nk.starts_with("n latitude") && lat.is_none() {
+                    lat = first_num(v);
+                } else if nk.starts_with("e longitude") && lon.is_none() {
+                    lon = first_num(v);
+                } else if (nk.starts_with("height")
+                    || nk.starts_with("elevation")
+                    || nk.starts_with("geoid"))
+                    && alt.is_none()
+                {
+                    alt = first_num(v);
+                } else if nk.contains("grav") && nk.contains("cal") {
+                    let unit_mult = if nk.contains("gal") {
+                        10.0
+                    } else if nk.contains("nm") {
+                        1.0
+                    } else {
+                        0.0
+                    };
+                    if unit_mult > 0.0 {
+                        if let Some(val) = first_num(v) {
+                            if val.is_finite() {
+                                let scaled = val * unit_mult;
+                                if nk.contains("mv") {
+                                    gcal_mv = Some(scaled);
+                                } else {
+                                    gcal_v = Some(scaled);
+                                }
+                            }
+                        }
+                    }
                 }
                 continue;
             }
@@ -164,18 +233,8 @@ fn parse_ggp(text: &str) -> Result<Ggp, &'static str> {
             if parts.first() == Some(&"yyyymmdd") {
                 let mut found = None;
                 for (i, p) in parts.iter().enumerate() {
-                    let col = match *p {
-                        "g_fil" => Some(GravCol::Fil),
-                        "gravity(nm/s**2)" => Some(GravCol::NmPerS2),
-                        "gravity(V)" => Some(GravCol::Volts),
-                        "gravity(mV)" => Some(GravCol::Millivolts),
-                        _ if p.starts_with("gravity(") => {
-                            return Err("unrecognized gravity column");
-                        }
-                        _ => None,
-                    };
-                    if let Some(c) = col {
-                        found = Some((i, c));
+                    if let Some((col, mult)) = gravity_col(p) {
+                        found = Some((i, col, mult));
                     }
                 }
                 grav_col = found;
@@ -235,24 +294,25 @@ fn parse_ggp(text: &str) -> Result<Ggp, &'static str> {
     if samples.is_empty() {
         return Err("no sample rows carry a measured gravity value");
     }
-    let (_, col) = grav_col.ok_or("gravity column absent")?;
-    let scale = match col {
-        GravCol::Fil | GravCol::NmPerS2 => 1.0,
-        GravCol::Volts => {
-            let g = gcal_v.ok_or("calibration absent for gravity(V)")?;
-            if !g.is_finite() {
-                return Err("calibration non-finite for gravity(V)");
+    let (_, col, col_mult) = grav_col.ok_or("gravity column absent")?;
+    let scale = col_mult
+        * match col {
+            GravCol::Fil | GravCol::NmPerS2 => 1.0,
+            GravCol::Volts => {
+                let g = gcal_v.ok_or("calibration absent for gravity(V)")?;
+                if !g.is_finite() {
+                    return Err("calibration non-finite for gravity(V)");
+                }
+                g
             }
-            g
-        }
-        GravCol::Millivolts => {
-            let g = gcal_mv.ok_or("calibration absent for gravity(mV)")?;
-            if !g.is_finite() {
-                return Err("calibration non-finite for gravity(mV)");
+            GravCol::Millivolts => {
+                let g = gcal_mv.ok_or("calibration absent for gravity(mV)")?;
+                if !g.is_finite() {
+                    return Err("calibration non-finite for gravity(mV)");
+                }
+                g
             }
-            g
-        }
-    };
+        };
     Ok(Ggp {
         lat,
         lon,
@@ -449,12 +509,19 @@ impl Source {
     }
 }
 
+fn decode(bytes: Vec<u8>) -> String {
+    match String::from_utf8(bytes) {
+        Ok(s) => s,
+        Err(e) => e.into_bytes().into_iter().map(|b| b as char).collect(),
+    }
+}
+
 fn source_text(src: &Source, sftp: &Option<Sftp>) -> Option<String> {
     match src {
-        Source::Local(p) => std::fs::read_to_string(p).ok(),
+        Source::Local(p) => std::fs::read(p).ok().map(decode),
         Source::Remote(r) => {
             let bytes = sftp.as_ref()?.fetch(r)?;
-            String::from_utf8(bytes).ok()
+            Some(decode(bytes))
         }
     }
 }
@@ -648,8 +715,7 @@ fn main() {
     }
 
     if records.is_empty() {
-        eprintln!("igets: no measured gravity samples — the bin stays unwritten (0 honored)");
-        std::process::exit(1);
+        eprintln!("{out_bin}: 0 geo records — the empty shard flows (absent, 0 honored)");
     }
     records.sort_by(|a, b| a.t.total_cmp(&b.t));
 
@@ -774,8 +840,82 @@ mod tests {
         let text = "N Latitude (deg)    :  39.1333\n\
                     E Longitude (deg)   :  141.1334\n\
                     Height (m)          :  105.0000\n\
-                    yyyymmdd hhmmss gravity(uGal) pressure(hpa)\n\
+                    yyyymmdd hhmmss gravity(mGal) pressure(hpa)\n\
                     20160501 000100  3820.214  1005.886\n";
         assert!(parse_ggp(text).is_err());
+    }
+
+    #[test]
+    fn parses_ugal_per_volt_calibration() {
+        let text = "N Latitude (deg)     :  -6.8964\n\
+                    E Longitude (deg)    : 107.6317\n\
+                    Height (m)           :   713.00\n\
+                    Gravity Cal (ugal/V) : -52.1500\n\
+                    yyyymmdd hhmmss gravity(V) pressure(hPa)\n\
+                    19980301 000100  0.3000  1005.0\n";
+        let ggp = parse_ggp(text).expect("ugal/V calibration parses");
+        assert!((ggp.scale - (-521.5)).abs() < 1e-9);
+    }
+
+    #[test]
+    fn parses_period_coordinates() {
+        let text = "N. Latitude (deg)    :  48.32940   0.00001 measured\n\
+                    E. Longitude (deg)   :   8.32841   0.00002 measured\n\
+                    Elevation MSL (m)    :   589.400     0.010 measured\n\
+                    Calibration          :  -800.060 &     1.000 from 20091001 to 20190131\n\
+                    yyyymmdd hhmmss g_fil p_fil\n\
+                    20170601 000100 -1788.305 983.872\n";
+        let ggp = parse_ggp(text).expect("period coordinates parse");
+        assert_eq!(ggp.samples.len(), 1);
+    }
+
+    #[test]
+    fn parses_compact_coordinates_and_0_1_ugal_column() {
+        let text = "N.Latitude(deg)       :   30.5159\n\
+                    E.Longitude(deg)      :  114.4898\n\
+                    Height(m)             :   80.00\n\
+                    Gravity Cal(ugal/V)   :  -84.6550\n\
+                    yyyymmdd hhmmss gravity(0.1ugal) pressure(mbar)\n\
+                    20051101 000000  461.268  1003.458\n";
+        let ggp = parse_ggp(text).expect("compact coordinates and 0.1ugal column parse");
+        assert!((ggp.scale - 1.0).abs() < 1e-9);
+        assert!((ggp.samples[0].1 - 461.268).abs() < 1e-9);
+    }
+
+    #[test]
+    fn parses_bare_gravity_column() {
+        let text = "N Latitude             :   44.1235\n\
+                    E Longitude            :   11.1183\n\
+                    Height m               :  890.00000\n\
+                    Gravity cal (nm.s-2/V) : -649.000\n\
+                    yyyymmdd hhmmss  gravity   pressure\n\
+                    19990430 000100  5422.170   914.809\n";
+        let ggp = parse_ggp(text).expect("bare gravity column parses");
+        assert!((ggp.scale - 1.0).abs() < 1e-9);
+        assert!((ggp.samples[0].1 - 5422.170).abs() < 1e-9);
+    }
+
+    #[test]
+    fn parses_lowercase_mv_column() {
+        let text = "N. Latitude (deg)    :  26.8956\n\
+                    E. Longitude (deg)   : 100.2323\n\
+                    Elevation MSL(m)     : 2435.00\n\
+                    Grav.Cal (nm.S-2/mV) : -0.7467\n\
+                    yyyymmdd hhmmss gravity(mv) pressure(hpa)\n\
+                    20170501 000100  3820.214  1005.886\n";
+        let ggp = parse_ggp(text).expect("lowercase mv column parses");
+        assert!((ggp.scale - -0.7467).abs() < 1e-9);
+    }
+
+    #[test]
+    fn parses_latin1_header_bytes() {
+        let raw = b"N Latitude (deg)    :  39.1333\n\
+                    E Longitude (deg)   : 141.1334\n\
+                    Height (m)          : 105.0000\n\
+                    Station             : K\xf6nig\n\
+                    yyyymmdd hhmmss g_fil p_fil\n\
+                    20160501 000100 -1788.305 983.872\n";
+        let ggp = parse_ggp(&decode(raw.to_vec())).expect("latin1 header parses");
+        assert_eq!(ggp.samples.len(), 1);
     }
 }
