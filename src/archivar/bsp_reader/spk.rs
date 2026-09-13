@@ -790,3 +790,98 @@ impl SpkFile {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::bsp_reader::daf::{DOUBLE_BYTES, RECORD_BYTES};
+
+    fn synthetic_type9_daf(n_states: usize) -> Vec<u8> {
+        let n_dir = (n_states - 1) / 100;
+        let start_addr: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;
+        let end_addr: u32 =
+            start_addr + (6 * n_states) as u32 + n_states as u32 + n_dir as u32 + 2 - 1;
+        let mut buf = vec![0u8; end_addr as usize * DOUBLE_BYTES];
+
+        buf[0..8].copy_from_slice(b"DAF/SPK ");
+        let nd: u32 = 2;
+        let ni: u32 = 6;
+        buf[8..12].copy_from_slice(&nd.to_le_bytes());
+        buf[12..16].copy_from_slice(&ni.to_le_bytes());
+        let fward: u32 = 2;
+        buf[76..80].copy_from_slice(&fward.to_le_bytes());
+        buf[88..96].copy_from_slice(b"LTL-IEEE");
+
+        let sum_rec = RECORD_BYTES;
+        let nsum: f64 = 1.0;
+        buf[sum_rec + 16..sum_rec + 24].copy_from_slice(&nsum.to_le_bytes());
+        let start_et: f64 = 0.0;
+        let end_et: f64 = (n_states as f64 - 1.0) * 60.0;
+        buf[sum_rec + 24..sum_rec + 32].copy_from_slice(&start_et.to_le_bytes());
+        buf[sum_rec + 32..sum_rec + 40].copy_from_slice(&end_et.to_le_bytes());
+        let ints: [i32; 6] = [-28, 0, 1, 9, start_addr as i32, end_addr as i32];
+        for (k, v) in ints.iter().enumerate() {
+            let off = sum_rec + 24 + nd as usize * DOUBLE_BYTES + k * 4;
+            buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
+        }
+
+        let name_rec = 2 * RECORD_BYTES;
+        buf[name_rec..name_rec + 4].copy_from_slice(b"TEST");
+
+        let base = (start_addr as usize - 1) * DOUBLE_BYTES;
+        for i in 0..6 * n_states {
+            let off = base + i * DOUBLE_BYTES;
+            buf[off..off + DOUBLE_BYTES].copy_from_slice(&((i + 1) as f64).to_le_bytes());
+        }
+        let epochs_off = base + 6 * n_states * DOUBLE_BYTES;
+        for i in 0..n_states {
+            let off = epochs_off + i * DOUBLE_BYTES;
+            buf[off..off + DOUBLE_BYTES].copy_from_slice(&(i as f64 * 60.0).to_le_bytes());
+        }
+        let trailer_off = base + (7 * n_states + n_dir) * DOUBLE_BYTES;
+        let window_or_degree: f64 = 5.0;
+        buf[trailer_off..trailer_off + 8].copy_from_slice(&window_or_degree.to_le_bytes());
+        buf[trailer_off + 8..trailer_off + 16].copy_from_slice(&(n_states as f64).to_le_bytes());
+
+        buf
+    }
+
+    fn discrete_meta_for(n_states: usize) -> DiscreteMeta {
+        let data = synthetic_type9_daf(n_states);
+        let daf = DafFile::from_data(data).expect("synthetic DAF parses");
+        let summaries = daf.summaries().expect("summary parses");
+        assert_eq!(summaries.len(), 1);
+        let start_addr = summaries[0].integers[4] as u32;
+        let end_addr = summaries[0].integers[5] as u32;
+        DiscreteMeta::from_segment(&daf, start_addr, end_addr)
+            .expect("segment size matches trailer")
+    }
+
+    #[test]
+    fn type9_n_states_100_has_zero_directory_doubles() {
+        let meta = discrete_meta_for(100);
+        assert_eq!(meta.n_states, 100);
+        assert_eq!(meta.window_or_degree, 5);
+    }
+
+    #[test]
+    fn type9_n_states_200_has_one_directory_double() {
+        let meta = discrete_meta_for(200);
+        assert_eq!(meta.n_states, 200);
+    }
+
+    #[test]
+    fn type9_n_states_1000_has_nine_directory_doubles() {
+        let meta = discrete_meta_for(1000);
+        assert_eq!(meta.n_states, 1000);
+    }
+
+    #[test]
+    fn type9_from_daf_parses_multiple_of_100() {
+        let data = synthetic_type9_daf(100);
+        let daf = DafFile::from_data(data).expect("synthetic DAF parses");
+        let spk = SpkFile::from_daf(daf).expect("type 9 segment parses");
+        assert_eq!(spk.segments().len(), 1);
+        assert_eq!(spk.segments()[0].data_type, 9);
+    }
+}
