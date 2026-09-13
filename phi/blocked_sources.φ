@@ -142,7 +142,11 @@ note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9); kein bzip2-Dekoder und kein HSD-Block-Par
 
 blocked parser-def las-laz
 url s3://noaa-nos-coastal-lidar-pds
-note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip-DEFLATE) und abgeleitetes DEM-GeoTIFF; kein LAS/LAZ- und kein TIFF-Reader.
+note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip) + DEM-GeoTIFF. GEBAUT (2026-09-13): las.rs liest Header/VLRs/COPC-Info+Hierarchie (127733 Pkt / 4 Knoten, 19961009ATM2_143020JR.copc.laz) + ept.json. Offen: LASzip-Chunk-Dekoder (Arithmetic-Coder + Chunk-Tabelle) — die Punktdaten bleiben LAZ; kein TIFF-Reader.
+
+blocked parser-def las-laz
+url s3://usgs-lidar-public.s3.amazonaws.com
+note USGS 3DEP EPT (ept.json + ept-data/*.laz, dataType laszip). GEBAUT (2026-09-13): ept.json-Layout gelesen (AK_BrooksCamp_2012, 529285317 Pkt). Offen: LASzip-Chunk-Dekoder — die .laz-Kacheln bleiben komprimiert.
 
 blocked parser-def parquet-blosc
 url s3://noaa-oar-hourly-gdp-pds

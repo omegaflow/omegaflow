@@ -1,0 +1,49 @@
+name: copernicus-dem-90m-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      lat:
+        description: tile southwest corner latitude (integer degrees, -89..89)
+        required: true
+        type: string
+        default: "50"
+      lon:
+        description: tile southwest corner longitude (integer degrees, -179..179)
+        required: true
+        type: string
+        default: "10"
+      asset:
+        description: output asset name on the CDN (netloc copernicus-dem-90m.s3.amazonaws.com)
+        required: true
+        type: string
+        default: copernicus_dem_90m_N50_E010.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  copernicus-dem-90m:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view copernicus-dem-90m.s3.amazonaws.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile the Copernicus GLO-90 tile and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin copernicus_dem_90m_compiler -- \
+            --lat "${{ inputs.lat }}" --lon "${{ inputs.lon }}" \
+            --out "${{ inputs.asset }}" --ci-mode
