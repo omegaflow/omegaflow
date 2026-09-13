@@ -8263,6 +8263,15 @@ format openneuro_eeg
 at earth
 ttl 86400
 
+url https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/headmodel/standard_bem.mat
+format reference
+sha256 299454de329124f941688b67d59aee456a6e4118fd83a194c58fec8fcb322b19
+ttl 86400
+
+url https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
+format reference
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin
 format volume
 at earth
