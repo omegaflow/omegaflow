@@ -2964,6 +2964,88 @@ fn test_restored_extract_variants() {
 }
 
 #[test]
+fn test_text_last_col_headerless_numeric_index() {
+    let lc = "55051.500000 3.774494 0.186457 2.214435 0.147425\n55053.500000 3.597870 0.091686 2.025944 0.071018\n";
+    assert_eq!(super::text_last_col(lc, "1"), Some(3.597870));
+    assert_eq!(super::text_last_col(lc, "0"), Some(55053.5));
+    assert_eq!(super::text_last_col(lc, "3"), Some(2.025944));
+}
+
+#[test]
+fn test_rows_headerless_text_barycenter_frame() {
+    let body = "55051.500000 3.774494 0.186457\n55053.500000 3.597870 0.091686\n";
+    let mut fc = field_fixture("maxi_flux", 0.0);
+    fc.key = "1".into();
+    let src = source_fixture(
+        "text",
+        vec![Extract::Rows {
+            last_line: true,
+            fields: vec![fc],
+            tau_key: String::new(),
+            epoch_cols: vec![],
+            gates: vec![],
+            bin_s: 0,
+            name_prefix: String::new(),
+        }],
+    );
+    let lsk = fixture_lsk();
+    let now = 8.0e8;
+    match extract(&src, body, now, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            let (c, _fc) = &channels[0];
+            assert_eq!(c.name, "maxi_flux");
+            assert!((c.value - 3.597870).abs() < 1e-12);
+            assert!(matches!(c.position, super::Position::Barycenter { .. }));
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+}
+
+#[test]
+fn test_rinex2_obs_epoch_line_satellites() {
+    let mut s = String::new();
+    s.push_str(
+        "     2.11           OBSERVATION DATA    M (MIXED)           RINEX VERSION / TYPE\n",
+    );
+    s.push_str(
+        "                                                            END OF HEADER       \n",
+    );
+    s.push_str(&format!(
+        "{:>3}{:>3}{:>3}{:>3}{:>3}{:>11.7}{:>3}{:>3}G01G02R03\n",
+        26i64, 1i64, 1i64, 0i64, 0i64, 0.0, 0i64, 3i64
+    ));
+    let cell = |v: Option<f64>| -> String {
+        match v {
+            Some(x) => format!("{x:>14.3}  "),
+            None => "                ".to_string(),
+        }
+    };
+    for (c1, l1) in [
+        (21345678.123, -12345678.123),
+        (21345679.123, -12345679.123),
+        (21345680.123, -12345680.123),
+    ] {
+        s.push_str(&format!(
+            "{}{}{}{}\n",
+            cell(Some(c1)),
+            cell(Some(l1)),
+            cell(None),
+            cell(Some(1234.567))
+        ));
+    }
+    let epochs = super::parse_rinex_obs(&s, 4);
+    assert_eq!(epochs.len(), 1);
+    let e = &epochs[0];
+    assert_eq!(e.sats.len(), 3);
+    assert_eq!(e.sats[0].sat, "G01");
+    assert_eq!(e.sats[1].sat, "G02");
+    assert_eq!(e.sats[2].sat, "R03");
+    assert!((e.sats[0].values[0].unwrap() - 21345678.123).abs() < 1e-3);
+    assert!(e.sats[0].values[2].is_none(), "blank S1 stays absent");
+}
+
+#[test]
 fn test_anchor_body_agnostic() {
     use std::collections::HashMap;
     let frame = super::Frame::Surface {
@@ -6727,4 +6809,82 @@ fn hapi_draft_names_register_unit_when_server_unit_is_off_registry() {
         fields.contains("# crosswind = 12.5 — first row server fill, first finite sample shown"),
         "sample shows the first finite row: {fields}"
     );
+}
+
+fn fits_card(kw: &str, value: &str) -> [u8; 80] {
+    let mut card = [b' '; 80];
+    let k = kw.as_bytes();
+    card[..k.len().min(8)].copy_from_slice(&k[..k.len().min(8)]);
+    card[8] = b'=';
+    let v = value.as_bytes();
+    card[10..10 + v.len().min(20)].copy_from_slice(&v[..v.len().min(20)]);
+    card
+}
+
+fn fits_bintable_fixture() -> Vec<u8> {
+    let mut buf = Vec::new();
+    let mut header: Vec<u8> = Vec::new();
+    header.extend_from_slice(&fits_card("SIMPLE", "T"));
+    header.extend_from_slice(&fits_card("BITPIX", "8"));
+    header.extend_from_slice(&fits_card("NAXIS", "0"));
+    header.extend_from_slice(&fits_card("END", ""));
+    while header.len() % 2880 != 0 {
+        header.extend_from_slice(&[b' '; 80]);
+    }
+    buf.extend_from_slice(&header);
+
+    let mut ext: Vec<u8> = Vec::new();
+    ext.extend_from_slice(&fits_card("XTENSION", "'BINTABLE'"));
+    ext.extend_from_slice(&fits_card("BITPIX", "8"));
+    ext.extend_from_slice(&fits_card("NAXIS", "2"));
+    ext.extend_from_slice(&fits_card("NAXIS1", "17"));
+    ext.extend_from_slice(&fits_card("NAXIS2", "1"));
+    ext.extend_from_slice(&fits_card("PCOUNT", "0"));
+    ext.extend_from_slice(&fits_card("GCOUNT", "1"));
+    ext.extend_from_slice(&fits_card("TFIELDS", "4"));
+    ext.extend_from_slice(&fits_card("TTYPE1", "'FLUX'"));
+    ext.extend_from_slice(&fits_card("TFORM1", "D"));
+    ext.extend_from_slice(&fits_card("TTYPE2", "'ID'"));
+    ext.extend_from_slice(&fits_card("TFORM2", "J"));
+    ext.extend_from_slice(&fits_card("TTYPE3", "'NAME'"));
+    ext.extend_from_slice(&fits_card("TFORM3", "4A"));
+    ext.extend_from_slice(&fits_card("TTYPE4", "'OK'"));
+    ext.extend_from_slice(&fits_card("TFORM4", "L"));
+    ext.extend_from_slice(&fits_card("END", ""));
+    while ext.len() % 2880 != 0 {
+        ext.extend_from_slice(&[b' '; 80]);
+    }
+    buf.extend_from_slice(&ext);
+
+    let mut row = Vec::new();
+    row.extend_from_slice(&42.5f64.to_be_bytes());
+    row.extend_from_slice(&7i32.to_be_bytes());
+    row.extend_from_slice(b"AB  ");
+    row.push(b'T');
+    buf.extend_from_slice(&row);
+    while buf.len() % 2880 != 0 {
+        buf.push(0);
+    }
+    buf
+}
+
+#[test]
+fn fits_bintable_roundtrips_typed_row() {
+    let buf = fits_bintable_fixture();
+    let (t, _next) = fits::FitsTable::parse(&buf, 2880).unwrap();
+    assert_eq!(t.n_rows, 1);
+    assert_eq!(t.row_bytes, 17);
+    let cols: Vec<&str> = t.columns.iter().map(|c| c.name.as_str()).collect();
+    assert_eq!(cols, vec!["FLUX", "ID", "NAME", "OK"]);
+    let row = t.row(&buf, 0).unwrap();
+    assert_eq!(
+        row,
+        vec![
+            fits::FitsValue::Float(42.5),
+            fits::FitsValue::Int(7),
+            fits::FitsValue::Str("AB".to_string()),
+            fits::FitsValue::Bool(true),
+        ]
+    );
+    assert!(t.row(&buf, 1).is_none());
 }
