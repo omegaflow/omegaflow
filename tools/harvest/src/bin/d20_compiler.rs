@@ -49,17 +49,11 @@ fn main() {
             match omegaflow::archivar::fetch_raw(&url, None, &[], 60) {
                 Some(b) => b,
                 None => {
-                    let jina = format!("https://r.jina.ai/{}", cw);
-                    eprintln!("d20 direct fetch void — cascade via r.jina.ai reader");
-                    match omegaflow::archivar::fetch_raw(
-                        &jina,
-                        None,
-                        &[("X-Return-Format".to_string(), "text".to_string())],
-                        120,
-                    ) {
+                    eprintln!("d20 direct fetch void — falling back to the CoastWatch mirror");
+                    match omegaflow::archivar::fetch_raw(&cw, None, &[], 120) {
                         Some(b) => b,
                         None => {
-                            eprintln!("d20 cascade fetch from {} returned void", jina);
+                            eprintln!("d20 fetch from {} returned void", cw);
                             std::process::exit(1);
                         }
                     }

@@ -159,19 +159,9 @@ fn first_snapshot(body: &str) -> Option<String> {
     Some(format!("https://web.archive.org/web/{}/{}", ts, original))
 }
 
-pub fn verdict_lines(url: &str, jina_key: &str) -> Vec<String> {
+pub fn verdict_lines(url: &str) -> Vec<String> {
     let mut lines = Vec::new();
-    lines.push(format!("verdict {} — five-stage ladder", url));
-    let mut jina_extra: Vec<&str> = Vec::new();
-    let auth = if jina_key.is_empty() {
-        String::new()
-    } else {
-        format!("Authorization: Bearer {}", jina_key)
-    };
-    if !auth.is_empty() {
-        jina_extra.push("-H");
-        jina_extra.push(auth.as_str());
-    }
+    lines.push(format!("verdict {} — three-stage ladder", url));
     stage(&mut lines, 1, "direct", url, get(url, &[], "30"));
     let ifaces = proton_interfaces();
     if ifaces.is_empty() {
@@ -184,11 +174,6 @@ pub fn verdict_lines(url: &str, jina_key: &str) -> Vec<String> {
             }
         }
     }
-    let jina = format!("https://r.jina.ai/{}", url);
-    match get(&jina, &jina_extra, "40") {
-        Some(f) => stage_result(&mut lines, 3, "r.jina.ai", url, f),
-        None => lines.push("  stage 3 r.jina.ai: pending — no response".to_string()),
-    }
     let cdx = format!(
         "https://web.archive.org/cdx/search/cdx?url={}&output=json&limit=1",
         urlencode(url)
@@ -197,23 +182,18 @@ pub fn verdict_lines(url: &str, jina_key: &str) -> Vec<String> {
         Some(f) => match first_snapshot(&f.body) {
             Some(snapshot) => {
                 lines.push(format!(
-                    "  stage 4 wayback: HTTP {} — snapshot {}",
+                    "  stage 3 wayback: HTTP {} — snapshot {}",
                     f.status_text(),
                     snapshot
                 ));
                 lines.push(format!("url {}", snapshot));
             }
             None => lines.push(format!(
-                "  stage 4 wayback: HTTP {} — the CDX register carries no snapshot",
+                "  stage 3 wayback: HTTP {} — the CDX register carries no snapshot",
                 f.status_text()
             )),
         },
-        None => lines.push("  stage 4 wayback: pending — no response".to_string()),
-    }
-    let sjina = format!("https://s.jina.ai/{}", urlencode(url));
-    match get(&sjina, &jina_extra, "40") {
-        Some(f) => stage_result(&mut lines, 5, "s.jina.ai", url, f),
-        None => lines.push("  stage 5 s.jina.ai: pending — no response".to_string()),
+        None => lines.push("  stage 3 wayback: pending — no response".to_string()),
     }
     lines.push(format!("measurement {}", today()));
     lines
@@ -813,13 +793,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
             );
             brave_lines(query, &token, max)
         }
-        "verdict" => {
-            let key = resolve_secret(
-                env.get("JINA_API_KEY").map(String::as_str).unwrap_or(""),
-                env,
-            );
-            verdict_lines(query, &key)
-        }
+        "verdict" => verdict_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
     }
 }
