@@ -43,7 +43,7 @@ fn main() {
         }
     }
 
-    let mut code = url_probe_mode(&candidates, &env, false, true);
+    let mut code = url_probe_mode(&candidates, &env, false);
     if code != 0 {
         eprintln!("probe_sweep: urls stage stopped");
         std::process::exit(code);
