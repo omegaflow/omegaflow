@@ -4090,6 +4090,10 @@ decline station-registry
 url https://toar-data.fz-juelich.de/api/v2/stationmeta/?limit=100
 note grind: grind_b2find.φ
 
+decline kein-latlon
+url https://transmission.bpa.gov/business/operations/gic/gic.txt
+note BPA-GIC (2026-09-13 gemessen HTTP 200, 87 799 B): Transformer-GIC an 11 benannten Umspannwerken (Eugene OR, Spokane WA, The Dalles OR, Lewiston ID, Kalispell MT, Monroe WA, Wilsonville OR, Vancouver WA, Ellensburg WA, Bothell WA, Moses Lake WA), 5-Minuten-Werte in Ampere, 4-Tage-Rollfenster. Kraft-Gate bestanden (electric A — GIC-Strom; Vorbild fmi_gic sources.φ:5904). Positionslos: die TSV trägt nur Stationsnamen, keine lat/lon — Punktmessung ohne Punkt, ein Surface-Anker wäre fabriziert; die Kombination kontinuierlich + Stationskoordinaten bleibt not-published.
+
 decline schedule
 url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
 note Fahrplan (Zeitplan, keine Messung).
@@ -4793,6 +4797,18 @@ note HTTP 404 — Endpoint weg.
 dead 400
 url https://zenodo.org/api/records/?communities=iodp&size=100
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+decline analysis-dataset
+url https://zenodo.org/records/8401262
+note Super-Kamiokande — atmosphärische Neutrino-Oszillations-Analyse SK I–V (DOI 10.5281/zenodo.8401262): Analyse-Datensatz (gebinnete Ereignis-Raten/Spektren, data/MC-Ratios, Δm²/θ-Konturen) ohne Roh-Messkanal; per-Event-S²-Richtung ungemessen. Teilchen-Kanal pending (kein particle-Medium). Zenodo zum Messzeitpunkt 504 (site-weit).
+
+decline single-event
+url https://zenodo.org/records/8427755
+note Telescope Array — Amaterasu (DOI 10.5281/zenodo.8427755): ein einzelnes UHE-CR-Ereignis, keine Serie, kein τ — kein Feld (ein Punkt ohne Reihe). Der Teilchen-Kanal ist pending (kein particle-Medium in der 9-Kräfte-Registratur); Teilchen ist Abstammung, keine zehnte Kraft. Zenodo war zum Messzeitpunkt 504 (site-weit).
+
+decline model
+url https://zenodo.org/records/10594301
+note GIC-Zenodo Alberta 2023 (DOI 10.5281/zenodo.10594301; DataCite gemessen HTTP 200, 10 002 B; Zenodo-API 504 zum Messzeitpunkt): die Dateien sind Mag_Data.zip / Magnetotelluric_Data.zip / Network_Data.xlsx — die GIC sind MODELLIERT (aus MT + Netzwerk), kein netCDF-Messwert, statisches Archiv (Oszillator-Gate: Modell-Ausgabe). Die geomagnetische Mag_Data.zip trägt echte em-Messung (Magnetometer, nT) als gezippter IAGA-Text — parser-def/pending falls je ein ZIP+IAGA-Reader gebaut wird.
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json

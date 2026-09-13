@@ -134,54 +134,169 @@ impl LineScanner {
     }
 }
 
-fn emit_line<W: Write>(line_bytes: &[u8], out: &mut W, written: &mut usize, skipped: &mut usize) {
+fn record_line(line_bytes: &[u8]) -> Option<(u32, Vec<u8>)> {
     let text = String::from_utf8_lossy(line_bytes);
     let text = text.trim_end_matches('\r');
-    match record_bytes(text) {
-        Some(rec) => {
-            out.write_all(&rec).expect("write record");
-            *written += 1;
-        }
-        None => {
-            *skipped += 1;
-        }
-    }
+    let rec = record_bytes(text)?;
+    let number = u32::from_le_bytes(rec[29..33].try_into().unwrap());
+    Some((number, rec))
 }
 
-fn compile_into<W: Write>(input: &str, out: &mut W) -> (usize, usize) {
+fn stream_lines<F: FnMut(&[u8])>(input: &str, mut f: F) {
     let file = match File::open(input) {
         Ok(f) => f,
         Err(e) => panic!("read {}: {}", input, e),
     };
-    let mut written = 0usize;
-    let mut skipped = 0usize;
     let mut scanner = LineScanner::new();
     let total = gunzip_stream(file, |chunk| {
         scanner.feed(chunk);
         while let Some(line_bytes) = scanner.next_line() {
-            emit_line(&line_bytes, out, &mut written, &mut skipped);
+            f(&line_bytes);
         }
     });
     if let Some(line_bytes) = scanner.finish() {
-        emit_line(&line_bytes, out, &mut written, &mut skipped);
+        f(&line_bytes);
     }
     match total {
         Ok(n) => eprintln!("decompressed {} bytes", n),
         Err(e) => panic!("gunzip {}: {}", input, e),
     }
+}
+
+fn compile_into<W: Write>(input: &str, out: &mut W) -> (usize, usize) {
+    let mut written = 0usize;
+    let mut skipped = 0usize;
+    stream_lines(input, |line_bytes| match record_line(line_bytes) {
+        Some((_, rec)) => {
+            out.write_all(&rec).expect("write record");
+            written += 1;
+        }
+        None => skipped += 1,
+    });
     (written, skipped)
+}
+
+const SHARD_BUDGET: usize = 1 << 30;
+
+fn shard_name(prefix: &str, lo: u32, hi: u32) -> String {
+    format!("{}-{}-{}.bin", prefix, lo, hi)
+}
+
+fn should_split(number: u32, last: u32, bytes: usize, rec_len: usize, budget: usize) -> bool {
+    number != last && bytes + rec_len > budget
+}
+
+struct ShardAccum {
+    lo: u32,
+    last: u32,
+    bytes: usize,
+    out: BufWriter<File>,
+    tmp: String,
+}
+
+impl ShardAccum {
+    fn open(prefix: &str, lo: u32, id: usize) -> Option<ShardAccum> {
+        let tmp = format!("{}.{}.tmp", prefix, id);
+        let file = File::create(&tmp).ok()?;
+        Some(ShardAccum {
+            lo,
+            last: lo,
+            bytes: 0,
+            out: BufWriter::new(file),
+            tmp,
+        })
+    }
+
+    fn seal(self, prefix: &str, hi: u32) -> Option<String> {
+        let ShardAccum { lo, out, tmp, .. } = self;
+        let mut out = out;
+        out.flush().ok()?;
+        drop(out);
+        let name = shard_name(prefix, lo, hi);
+        std::fs::rename(&tmp, &name).ok()?;
+        Some(name)
+    }
+}
+
+struct ShardSet {
+    prefix: String,
+    budget: usize,
+    cur: Option<ShardAccum>,
+    done: Vec<String>,
+    written: usize,
+    skipped: usize,
+}
+
+impl ShardSet {
+    fn new(prefix: String) -> ShardSet {
+        ShardSet {
+            prefix,
+            budget: SHARD_BUDGET,
+            cur: None,
+            done: Vec::new(),
+            written: 0,
+            skipped: 0,
+        }
+    }
+
+    fn push(&mut self, number: u32, rec: &[u8]) {
+        let split = match self.cur.as_ref() {
+            Some(cur) => should_split(number, cur.last, cur.bytes, rec.len(), self.budget),
+            None => false,
+        };
+        if split {
+            let hi = number;
+            if let Some(cur) = self.cur.take() {
+                if let Some(name) = cur.seal(&self.prefix, hi) {
+                    self.done.push(name);
+                }
+            }
+        }
+        if self.cur.is_none() {
+            let id = self.done.len();
+            match ShardAccum::open(&self.prefix, number, id) {
+                Some(acc) => self.cur = Some(acc),
+                None => {
+                    self.skipped += 1;
+                    return;
+                }
+            }
+        }
+        let cur = self.cur.as_mut().unwrap();
+        cur.out.write_all(rec).expect("write shard record");
+        cur.bytes += rec.len();
+        cur.last = number;
+        self.written += 1;
+    }
+
+    fn finish(&mut self) {
+        if let Some(cur) = self.cur.take() {
+            let hi = cur.last.wrapping_add(1);
+            if let Some(name) = cur.seal(&self.prefix, hi) {
+                self.done.push(name);
+            }
+        }
+    }
+}
+
+fn compile_sharded(input: &str, set: &mut ShardSet) {
+    stream_lines(input, |line_bytes| match record_line(line_bytes) {
+        Some((number, rec)) => set.push(number, &rec),
+        None => set.skipped += 1,
+    });
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!(
-            "usage: mpcobs_compiler --input <observations.txt.gz> [--input ...] --out <mpcobs.bin> [--ci-mode]"
+            "usage: mpcobs_compiler --input <observations.txt.gz> [--input ...] --out <mpcobs.bin> [--ci-mode]\n       mpcobs_compiler --input <obs.txt.gz> [--input ...] --shard <prefix> [--ci-mode]"
         );
         std::process::exit(1);
     }
     let mut inputs: Vec<String> = Vec::new();
     let mut out: Option<String> = None;
+    let mut shard: Option<String> = None;
     let mut ci_mode = false;
     let mut i = 1;
     while i < args.len() {
@@ -194,6 +309,10 @@ fn main() {
                 out = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--shard" => {
+                shard = args.get(i + 1).cloned();
+                i += 1;
+            }
             "--ci-mode" => ci_mode = true,
             _ => {}
         }
@@ -202,6 +321,30 @@ fn main() {
     if inputs.is_empty() {
         eprintln!("--input absent");
         std::process::exit(1);
+    }
+    if let Some(prefix) = shard {
+        let mut set = ShardSet::new(prefix);
+        for input in &inputs {
+            compile_sharded(input, &mut set);
+        }
+        set.finish();
+        let bytes = set.written * MPCOBS_RECORD_STRIDE;
+        eprintln!(
+            "mpcobs: {} records, {} skipped, {} B in {} shards",
+            set.written,
+            set.skipped,
+            bytes,
+            set.done.len()
+        );
+        if ci_mode {
+            for name in &set.done {
+                if !upload_release("minorplanetcenter.net", name) {
+                    eprintln!("upload: {} did not reach the CDN", name);
+                    std::process::exit(1);
+                }
+            }
+        }
+        return;
     }
     let out_path = match out {
         Some(p) => p,
@@ -354,5 +497,16 @@ mod tests {
         assert_eq!(skipped, 0);
         assert_eq!(out.len(), 2 * MPCOBS_RECORD_STRIDE);
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn shard_split_boundary_and_naming() {
+        assert!(should_split(2, 1, 100, 50, 120));
+        assert!(!should_split(1, 1, 100, 50, 120));
+        assert!(!should_split(2, 1, 70, 50, 120));
+        assert_eq!(
+            shard_name("mpcobs-numobs", 0, 10000),
+            "mpcobs-numobs-0-10000.bin"
+        );
     }
 }

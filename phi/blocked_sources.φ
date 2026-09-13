@@ -150,3 +150,7 @@ pending
 url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
 note MAXI (JAXA/Riken) GSC-Röntgenlichtkurve — headerless, leerzeichengetrennter ASCII (MJD + 2–20-keV-Fluss + err + 3 Teilbänder 2–4/4–10/10–20 keV; Format top/lc_readme.txt). Gemessen 2026-09-12 (curl): HTTP 200, live (Daten bis ~2 d). Gap: headerless (keine Headerzeile) — lastrow/text_last_col braucht eine Headerzeile, rows-numeric-extract ist surface-frame-gated (extract.rs Frame::Surface). Messwert (Röntgenfluss, em) echt.
 
+blocked parser-def token-form
+url https://superdarn.ca/ascii-call
+note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET — der Archivar trägt keinen Session-Fetcher für die Zwei-Schritt-Form. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf) — die Direktroute bleibt form-gegatet: nicht tot, nicht declined.
+
