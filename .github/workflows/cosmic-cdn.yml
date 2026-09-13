@@ -1,0 +1,44 @@
+name: cosmic-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cosmic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.cosmic.ucar.edu release exists on the CDN
+        run: |
+          if ! gh release view data.cosmic.ucar.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.cosmic.ucar.edu --repo omegaflow/sources \
+              --title "data.cosmic.ucar.edu" \
+              --notes "COSMIC-2 (FORMOSAT-7) GNSS radio-occultation NRT profiles compiled to a geo oscillator record (medium em). Record stride 60 B LE: t (f64, unix epoch seconds of the occultation), lat (f64 deg), lon (f64 deg), alt (f64, MSL_alt m), freq (f64), bin_width (f64), val (f64), comp (u32; 1=Ref refractivity, 2=Temp K, 3=Pres hPa). Magic CSM1."
+          fi
+      - name: Fetch the COSMIC-2 wetPrf daily tarball
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 3600 -o kernels/wetPf2.tar.gz \
+            https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/2026/251/wetPf2_nrt_2026_251.tar.gz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "cosmic-cdn: wetPf2_nrt_2026_251.tar.gz returned void" \
+                 "curl on data.cosmic.ucar.edu did not reach the wetPf2 tarball. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the temperature profile and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin cosmic_ro_compiler -- \
+            --out-bin --tarball kernels/wetPf2.tar.gz --var Temp --out cosmic_ro_temp.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "cosmic-cdn: cosmic_ro_temp.bin returned void" \
+                 "cosmic_ro compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

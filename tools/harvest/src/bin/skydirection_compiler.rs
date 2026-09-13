@@ -1,7 +1,7 @@
 use omegaflow::archivar::{embedded_lsk, LeapSeconds};
 use omegaflow::cdn::upload_asset;
 use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
-use omegaflow::skydirection::{write_bin, SkyBandSeries, SkyDirection, SkySample};
+use omegaflow::skydirection::{parse_bin, write_bin, SkyBandSeries, SkyDirection, SkySample};
 use std::process::Command;
 
 const UA: &str = "omegaflow-skydirection-compiler/1.0";
@@ -459,6 +459,7 @@ fn main() {
     let mut antares_cap: Option<usize> = None;
     let mut cones: Vec<(f64, f64, f64)> = Vec::new();
     let mut alerce = false;
+    let mut gaia_alerts: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -517,6 +518,10 @@ fn main() {
                 i = j - 1;
             }
             "--alerce" => alerce = true,
+            "--gaia-alerts" => {
+                gaia_alerts = args.get(i + 1).cloned();
+                i += 1;
+            }
             other => {
                 println!(
                     "skydirection_compiler: unknown argument {other} — refused. usage:\n  \
@@ -525,6 +530,7 @@ fn main() {
                      --antares                    ANTARES ZTF loci listing, full measured stock (anonymous)\n  \
                      --antares-limit <N>          cap the ANTARES harvest at N held loci\n  \
                      --fink-cone <ra> <dec> <radius-arcsec>  Fink-LSST diaObject cone (anonymous, repeatable)\n  \
+                     --gaia-alerts <gaia_alerts.bin>  merge a compiled SKD1 Gaia-Alerts asset into the set\n  \
                      --alerce                     read api.alerce.online/objects and name the measured code"
                 );
                 return;
@@ -540,9 +546,9 @@ fn main() {
         alerce_probe();
     }
     let harvests_epochs = lasair_jd.is_some() || antares;
-    let harvests_any = harvests_epochs || !cones.is_empty();
+    let harvests_any = harvests_epochs || !cones.is_empty() || gaia_alerts.is_some();
     if !harvests_any {
-        println!("skydirection_compiler: no harvest source selected (--lasair-window | --antares | --fink-cone) — the probe runs, the asset stays unwritten");
+        println!("skydirection_compiler: no harvest source selected (--lasair-window | --antares | --fink-cone | --gaia-alerts) — the probe runs, the asset stays unwritten");
         return;
     }
     let mut directions: Vec<SkyDirection> = Vec::new();
@@ -563,6 +569,18 @@ fn main() {
     for (ra, dec, radius_as) in cones {
         let added = push_unique(&mut directions, fink_cone(ra, dec, radius_as));
         println!("skydirection: Fink/LSST cone added {added} new direction(s)");
+    }
+    if let Some(path) = gaia_alerts {
+        match std::fs::read(&path) {
+            Ok(bytes) => match parse_bin(&bytes) {
+                Some(incoming) => {
+                    let added = push_unique(&mut directions, incoming);
+                    println!("skydirection: Gaia-Alerts added {added} new direction(s) from {path}");
+                }
+                None => println!("skydirection: Gaia-Alerts {path} does not read back as SKD1 — the merge stays closed (0 honored)"),
+            },
+            Err(_) => println!("skydirection: Gaia-Alerts {path} read returned void — the merge stays closed"),
+        }
     }
     if directions.is_empty() {
         println!(

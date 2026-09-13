@@ -1,0 +1,37 @@
+name: gdp-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gdp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the noaa-oar-hourly-gdp-pds.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view noaa-oar-hourly-gdp-pds.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create noaa-oar-hourly-gdp-pds.s3.amazonaws.com --repo omegaflow/sources \
+              --title "noaa-oar-hourly-gdp-pds.s3.amazonaws.com" \
+              --notes "NOAA Global Drifter Program hourly drifting-buoy trajectories (zarr gdp-v2.01.1, blosc/lz4) compiled to a drifter position/SST asset. Record stride: id (u64 LE, buoy id), time (f64 LE, seconds since 1970-01-01), lon (f64 LE, degrees_east), lat (f64 LE, degrees_north), sst (f32 LE, Kelvin), sst_present (u8), pad (3). Magic GDPT."
+          fi
+      - name: Compile one drifter trajectory partition and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gdp_drifter_compiler -- \
+            --out gdp_drifter.bin \
+            --index 0 \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gdp-cdn: gdp_drifter.bin returned void" \
+                 "gdp drifter compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

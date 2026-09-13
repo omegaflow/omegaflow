@@ -933,6 +933,8 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             },
         ));
@@ -958,6 +960,8 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             },
         ));
