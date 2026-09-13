@@ -1,0 +1,46 @@
+name: mpcobs-shard-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  unnobs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the minorplanetcenter.net release exists on the CDN
+        run: |
+          if ! gh release view minorplanetcenter.net --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create minorplanetcenter.net --repo omegaflow/sources \
+              --title "minorplanetcenter.net" \
+              --notes "MPC OBS80 astrometric observations compiled to a 50-byte/record bin, sharded by packed-number range (2^30 B/shard)."
+          fi
+      - name: Fetch the MPC unnumbered observation archive (455 MB)
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 3600 -o kernels/UnnObs.txt.gz \
+            https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/UnnObs.txt.gz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mpcobs-shard-cdn: UnnObs.txt.gz returned void" \
+                 "curl on minorplanetcenter.net did not reach UnnObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the unnumbered observations into packed-number shards (measured step)
+        run: |
+          /usr/bin/time -v cargo run -p omegaflow-harvest --release --bin mpcobs_compiler -- \
+            --input kernels/UnnObs.txt.gz \
+            --shard mpcobs-unnobs \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mpcobs-shard-cdn: UnnObs shard compile returned void" \
+                 "mpcobs shard compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
