@@ -20,6 +20,24 @@ force em
 note Fink-LSST cone (2026-09-06 gemessen HTTP 200, anonym): POST ra/dec/radius antwortet die r:diaObjectId-Array-Zeilen mit r:ra, r:dec, r:nDiaSources — die Konus-Zeilen tragen KEINE em-Photometrie, die Per-Objekt-Lichtkurven (/api/v1/sources, /api/v1/fp) bleiben ein benanntes Pending. Zeugen-Art S²-Richtung (Richtung ohne Magnitude — ehrlich absent, 0 honored), gehalten via skydirection_compiler. Crossmatch gemessen (2026-09-07, direction_z_join/NED-objdir im 30-arcsec-Kegel ueber das gehaltene Asset skydirections.bin): 53 der 61 gehaltenen Konus-Richtungen tragen eine gemessene Rotverschiebung (Hubble-Distanz 0.45-4210.10 Mpc gemessen), keine eine Gaia-Parallax-Distanz; 8 bleiben ehrlich DirectionOnly (0 honored). Successor von api.fink-portal.org (dead_sources.φ, dead unreachable). Die Scanner (mycelium_fan_navigator, lsst_anomaly_probe, broker_difference_probe) lesen den Konus als natural-class identity gate, nie als Feld-Wert.
 
 witness s2-direction
+url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
+record sky1
+force em
+note 1LHAASO-Gammaquellen-Katalog (2026-09-13 gemessen HTTP 200, 16 456 B): table.csv mit Ra/Dec (J2000, deg) + N0 (Fluss-Normalisierung bei 1 TeV) — echte, positions-tragende Gamma-Messungen ohne Distanz (kein plx/dist/z, 0 honored). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma (KIND_GAMMA), gemessen durch em (Wasser-Cherenkov). Kompiliert als lhaaso_sky1.sky1 (144 Quellen, value = N0) via lhaaso_compiler (tools/harvest, SKY1), CDN live (Release casdc.china-vo.org).
+
+witness s2-direction
+url https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
+record sky1
+force em
+note HAWC-2HWC-Quellenkatalog (Abeysekara et al. 2017, ApJ 843, 40; 2026-09-13 gemessen HTTP 200, 18 588 B, TLS-Kette unvollstaendig — curl -k): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_2hwc.sky1 (40 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. Eine Quelle ohne Fluss bleibt ausgelassen, nie als 0.0 fabriziert.
+
+witness s2-direction
+url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
+record sky1
+force em
+note HAWC-3HWC-Quellenkatalog (arXiv 2007.08582; 2026-09-13 gemessen HTTP 200, 51 833 B, TLS-Kette unvollstaendig — curl -k): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_3hwc.sky1 (64 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. 3HWC J0659+147 traegt keinen flux measurements-Block (Fluss absent) — Record ausgelassen, nie als 0.0 fabriziert.
+
+witness s2-direction
 url https://dataverse.harvard.edu/api/access/datafile/7502710
 record s2e1 sky1
 force em
@@ -36,6 +54,12 @@ url https://gracedb.ligo.org/api/superevents/S250207bg/files/
 record sky1
 force gravity
 note GraceDB-Superevent-Datei-Route (2026-09-07 gemessen, anonym, HTTP 200): bayestar.multiorder.fits (S250207bg = GW250207_115645, reale CBC; 777600 B, content-type image/fits, OBJECT G553034). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gravity (KIND_GRAVITY=4), gemessen durch gravity. Kompiliert als gw250207_115645.sky1 via gw_skymap_compiler, CDN live (Sky-Integral = 1.0, Wahrscheinlichkeitsmasse erhalten, multiorder as-is). Die direction-lose Superevent-Liste bleibt als Skalar in sources.φ (gravity_wave_far). Per-Ereignis-Workflow (ein Superevent), kein allgemeiner GW-Zeuge; die Spitze der Liste trägt (2026-09-07 gemessen) category MDC (Mock-Daten), der Compile-Lauf braucht ein echtes Superevent (gracedb_id).
+
+witness s2-direction
+url https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
+record skydirection
+force em
+note Gaia-DR3-Alerts-Index (2026-09-13 gemessen HTTP 200, 10 601 266 B): je Alert RA/Dec (ICRS, deg) + eine G-Band-Magnitude mit obstime (Epochen-Photometrie, Klassifikationen). Zeugen-Art S²-Richtung (distanzlos, τ=0), gemessen durch em. Kompiliert als gaia_alerts.bin (SKD1) via gaia_alerts_compiler (tools/harvest). Der Merge des Assets in skydirections.bin (das eine Asset, das der S²-Sinn liest) steht aus — pending; SKD1-magic absent in zeuge.rs magic_identity (Zeugen-Gate pending).
 
 witness s2-direction
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
