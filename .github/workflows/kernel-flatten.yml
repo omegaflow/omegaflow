@@ -129,14 +129,19 @@ jobs:
             --out kbo_elements.json \
             --etno \
             --ci-mode
-      - name: Compile MPC extended distant elements and upload to CDN
+      - name: Compile MPC extended catalog and upload to CDN
         run: |
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 3600 -o kernels/mpcorb_extended.json.gz \
             https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
           cargo run -p omegaflow-harvest --release --bin mpcorb_compiler -- \
             --input kernels/mpcorb_extended.json.gz \
+            --out mpcorb.bin \
+            --ci-mode
+          cargo run -p omegaflow-harvest --release --bin mpcorb_compiler -- \
+            --input kernels/mpcorb_extended.json.gz \
             --out mpcorb_distant.bin \
+            --distant \
             --ci-mode
       - name: Report bodies void
         if: failure()
