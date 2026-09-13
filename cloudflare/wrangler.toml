@@ -1,6 +1,10 @@
 name = "omegaflow-email-recv"
 main = "email_worker.js"
 compatibility_date = "2026-08-25"
+account_id = "b2891b7064691de2ef3891cfaf17190b"
+
+[vars]
+FORWARD_TO = "[redacted-email]"
 
 [observability]
 enabled = true
