@@ -2,28 +2,45 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://zenodo.org/api/records?q={}&size={}",
-        urlencode(query),
-        max
-    );
-    match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
-            let out = parse_zenodo(&f.body);
-            if out.is_empty() {
-                vec![format!("absent — zenodo carries no entry: {}", query)]
-            } else {
-                out
-            }
+    let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |page| {
+        let url = format!(
+            "https://zenodo.org/api/records?q={}&size={}&page={}",
+            urlencode(query),
+            max,
+            page + 1
+        );
+        match get(&url, &[], "40") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => {
+                    let out = parse_zenodo(&f.body);
+                    let has_more = match v
+                        .get("hits")
+                        .and_then(|h| h.get("total"))
+                        .and_then(|t| t.as_scalar_string())
+                        .and_then(|t| t.parse::<usize>().ok())
+                    {
+                        Some(total) => (page + 1) * max < total,
+                        None => false,
+                    };
+                    (out, has_more)
+                }
+                None => (
+                    vec!["pending — the zenodo response carries no JSON".to_string()],
+                    false,
+                ),
+            },
+            Some(f) => (
+                vec![format!("pending — zenodo HTTP {}", f.status_text())],
+                false,
+            ),
+            None => (vec!["pending — no network".to_string()], false),
         }
-        Some(f) => {
-            let code = match f.status {
-                Some(s) => s.to_string(),
-                None => "absent".to_string(),
-            };
-            vec![format!("pending — zenodo HTTP {}", code)]
-        }
-        None => vec!["pending — no network".to_string()],
+    });
+    if lines.is_empty() {
+        vec![format!("absent — zenodo carries no entry: {}", query)]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 

@@ -180,7 +180,20 @@ impl<'a> Parser<'a> {
                         b't' => out.push('\t'),
                         b'u' => {
                             let cp = self.hex4()?;
-                            out.push(char::from_u32(cp as u32)?);
+                            if (0xD800..=0xDBFF).contains(&cp) {
+                                if self.b.get(self.i) != Some(&b'\\')
+                                    || self.b.get(self.i + 1) != Some(&b'u')
+                                {
+                                    return None;
+                                }
+                                self.i += 2;
+                                let lo = self.hex4()?;
+                                let combined =
+                                    0x10000 + ((cp as u32 - 0xD800) << 10) + (lo as u32 - 0xDC00);
+                                out.push(char::from_u32(combined)?);
+                            } else {
+                                out.push(char::from_u32(cp as u32)?);
+                            }
                         }
                         _ => return None,
                     }
@@ -260,6 +273,12 @@ mod tests {
     fn parses_string_escapes_and_unicode() {
         let v = parse(r#""a\"b\n\u0041""#).unwrap();
         assert_eq!(v.as_str(), Some("a\"b\nA"));
+    }
+
+    #[test]
+    fn parses_surrogate_pairs() {
+        let v = parse(r#""\ud83d\ude00""#).unwrap();
+        assert_eq!(v.as_str(), Some("\u{1f600}"));
     }
 
     #[test]

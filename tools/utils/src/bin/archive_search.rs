@@ -20,6 +20,10 @@ mod zenodo;
 mod isc;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
+#[path = "archive_search/paged.rs"]
+mod paged;
+#[path = "archive_search/token.rs"]
+mod token;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/secrets.rs"]
