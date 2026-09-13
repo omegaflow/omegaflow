@@ -1,13 +1,19 @@
+#[path = "archive_search/datacite.rs"]
+mod datacite;
 #[path = "archive_search/git.rs"]
 mod git;
 #[path = "archive_search/index.rs"]
 mod index;
 #[path = "archive_search/json.rs"]
 mod json;
+#[path = "archive_search/magic.rs"]
+mod magic;
 #[path = "archive_search/net.rs"]
 mod net;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
+#[path = "archive_search/pdf.rs"]
+mod pdf;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/secrets.rs"]
@@ -159,6 +165,8 @@ fn main() {
             "--crates" => mode = Mode::Net("crates"),
             "--librs" => mode = Mode::Net("librs"),
             "--brave" => mode = Mode::Net("brave"),
+            "--datacite" => mode = Mode::Net("datacite"),
+            "--sniff" => mode = Mode::Net("sniff"),
             "--kind" => {
                 i += 1;
                 if let Some(v) = args.get(i) {
@@ -334,7 +342,7 @@ fn usage() {
         "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
     );
     eprintln!(
-        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches)"
+        "       archive_search --verdict <url> | --sniff <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches; --sniff reports magic bytes + sha256)"
     );
     eprintln!(
         "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
@@ -926,10 +934,10 @@ fn scan_leads_file(
     if bytes.len() > max_mb as usize * 1024 * 1024 {
         return;
     }
-    if is_binary(&bytes) {
-        return;
-    }
-    let text = String::from_utf8_lossy(&bytes);
+    let text = match readable_text(&bytes, false) {
+        Some(t) => t,
+        None => return,
+    };
     for (idx, line) in text.lines().enumerate() {
         if !line_matches(line, needle) {
             continue;
@@ -1011,10 +1019,10 @@ fn search_file(
     if bytes.len() > max_mb as usize * 1024 * 1024 {
         return None;
     }
-    if !include_binary && is_binary(&bytes) {
-        return None;
-    }
-    let text = String::from_utf8_lossy(&bytes);
+    let text = match readable_text(&bytes, include_binary) {
+        Some(t) => t,
+        None => return None,
+    };
     let mut count = 0usize;
     let mut hits: Vec<String> = Vec::new();
     for (idx, line) in text.lines().enumerate() {
@@ -1044,6 +1052,14 @@ fn line_matches(line: &str, needle: &[String]) -> bool {
 
 fn is_binary(bytes: &[u8]) -> bool {
     bytes[..bytes.len().min(8192)].contains(&0u8)
+}
+
+fn readable_text(bytes: &[u8], include_binary: bool) -> Option<String> {
+    match magic::magic_identity(bytes) {
+        magic::Magic::Pdf => pdf::pdf_text(bytes),
+        _ if is_binary(bytes) && !include_binary => None,
+        _ => Some(String::from_utf8_lossy(bytes).to_string()),
+    }
 }
 
 fn truncate(s: &str, max: usize) -> String {
