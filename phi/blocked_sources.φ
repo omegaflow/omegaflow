@@ -29,9 +29,6 @@ pending
 url https://datalab.noirlab.edu/tap/sync
 note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Data-Lab-Registrierung wurde abgelehnt (Robert Nikutta, NOIRLab: das Projekt sei „mostly an engineering one … we decided to decline your request"), aber derselbe Bescheid: „our TAP service is public and does not require an account … Our LS DR10 and DECaPS catalogs are not gated, but part of the open access." Anonym gemessen (2026-09-11, webfetch): ls_dr10.tractor TOP 1 → HTTP 200 CSV (167 Spalten, ra/dec/flux_g/r/i/z/w1..w4/mag_*), decaps_dr2.object TOP 1 → HTTP 200 CSV (ra/dec/mean_mag_g/r/i/z/y, epochmean); TAP_SCHEMA zeigt decaps_dr1/dr2. FORMAT=json → HTTP 200 VOTable-Fehler „unknown format: json" (csv/votable-only). Gap: CSV-Header-Parser (derselbe wie ESO tap_obs/tap_cat). Messung (Legacy-Survey-Photometrie em) echt. NOIRLab behält sich IP-Sperre bei exzessiver Rate vor. Speisekammer-Frage (Rat 2026-09-11 einmütig + Operator-Nachschärfung 2026-09-11): braucht die Weberin die tiefe Photometrie als Zeugin — eine S²-Richtung mit Farbe (Distanz absent) — für eine Nadel? Gemessen: Nadel Ⅴ (Technosignatur) frisst Lichtkurven + 10–60-μm-IR-Exzess, nicht die statischen Kataloge; Biosignatur frisst JWST-Spektren (Gaia-Wirtssterne); dunkle Materie hat keinen photometrischen Kanal. Kein gebauter Konsument — die Frage bleibt offen, bis eine Nadel die statische Mehrband-Farbe als Zeugen-Eigenschaft benennt. Konsument-Kandidat: Farbe-Exzess-Zeuge der Nadel-Ⅴ-Chromatizität oder ein Mikrolensing-/Photo-z-Kanal. Keine Ernte, bis der Konsument gebaut ist (Tor 1). Wiedervorlage 2026-12-02 (Gaia DR4): trägt DR4 die astrometrischen Binaries/RVS/Epoch-Photometrie selbst, ist die dunkle-Materie-/Photo-z-Linie descoped, nur die Tiefe-/Plane-Nische (DECaPS-Y, LS-DR10-z) bliebe als Konsument.
 
-blocked parser-def quakeml
-url https://www.isc.ac.uk/cgi-bin/web-db-run
-note ISC (International Seismological Centre) defintives globales Bulletin (web-db-run.json/query.json CDN-Captures): live gemessen 2026-09-07 — web-db-run?request=COMPREHENSIVE&out_format=QuakeML antwortet HTTP 200 mit echtem QuakeML (122 KB, ISC/bulletin inkl. Phasen); fdsnws/event query lief in den Timeout. Messung (Hypozentrum + Phasen-Ankuenfte) echt, Format QuakeML unkonsumierbar — Gap: QuakeML-Parser.
 blocked parser-def netcdf
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
 note COSMIC-2 FORMOSAT-7 (level3.json CDN-Capture; live gemessen 2026-09-07, HTTP 200): NRT-Level-3-Radio-Okkultations-Profile als netCDF-Granulate unter dem Verzeichnis-Index (kein Skalar-Punkt-Feed). Messung (Brechungsindex/Bending-Angle-Profile, em) echt, Format netCDF-Granulat-Enumeration unkonsumierbar — Gap: COSMIC2-Granulat-Profil-Parser.
@@ -113,13 +110,13 @@ blocked parser-def tiff
 url s3://noaa-eri-pds
 note Emergency-Response-Imagery (em) als JPEG-komprimierte GeoTIFF-Kacheln; kein TIFF/GeoTIFF-Reader (inkl. JPEG-in-TIFF und Georeferenzierung).
 
-blocked parser-def hdf5-navigation
+pending
 url s3://noaa-gk2a-pds
-note GK2A AMI L1B: HDF5-Superblock-v0 parst (47 Datasets), Messfeld image_pixel_values [5500,5500] int16; KEIN lat/lon-Gitter. Position entsteht erst aus geostationärer Projektion (projection_type GEOS, sub_longitude, nominal_satellite_height) und GSICS-Kalibrierung — beide Schichten fehlen.
+note GK2A AMI L1B: Navigation GEBAUT (2026-09-13) — hdf5.rs liest projection_type GEOS / sub_longitude (2,2375 rad = 128,2°E) / nominal_satellite_height (42 164 000 m geozentrisch) und rechnet das lat/lon-Gitter aus den x/y-Scan-Winkeln (geostationary_lat_lon, WGS-84). Messfeld image_pixel_values [5500,5500] int16 parst (47 Datasets). Offen: GSICS-Kalibrierung (Counts → Radianz) und Ernte/Compiler + CDN-Manifestation (Register-Duty).
 
-blocked parser-def hdf5-navigation
+pending
 url s3://noaa-goes16
-note GOES-16 ABI L1b: HDF5-Superblock-v2; hdf5.rs bricht am B-tree-v1-Knoten ab (Checksum). Zusätzlich Scan-Winkel-Raster ohne lat/lon — geostationäre Projektion (goes_imager_projection) fehlt.
+note GOES-16 ABI L1b: GEBAUT (2026-09-13) — hdf5.rs parst Superblock-v2 mit STORE_TIMES-Objekt-Headern und navigiert die B-tree-v2-Knoten (Link-Name-Index); 53 Root-Datasets enumeriert, Rad [3000,5000] int16 gelesen (RadC). goes_imager_projection (longitude_of_projection_origin −75,2°, perspective_point_height 35 786 023 m) → lat/lon-Gitter aus x/y-Scan-Winkeln (skaliert int16). Kein offener HDF5-Gap; Ernte/Compiler + CDN-Manifestation bleibt Register-Duty.
 
 blocked parser-def bzip2-hsd
 url s3://noaa-himawari8
