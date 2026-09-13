@@ -956,6 +956,8 @@ pub fn main_flow() {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: bs.unit.clone(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 };
                 let channel = Channel {

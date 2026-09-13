@@ -645,6 +645,8 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 absorption: 0.0,
                                 advection: 0.0,
                                 unit: bs.unit.clone(),
+                                freq: 0.0,
+                                bin_width: 0.0,
                                 fold: None,
                             };
                             if value.is_finite() {
@@ -702,6 +704,8 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             absorption: 0.0,
                             advection: 0.0,
                             unit: bs.unit.clone(),
+                            freq: 0.0,
+                            bin_width: 0.0,
                             fold: None,
                         };
                         if value.is_finite() {
