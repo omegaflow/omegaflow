@@ -3,7 +3,7 @@
   session: Entscheid-Folge IV
   class: handover
   date: 2026-09-13
-  sha256: f456a604dc5be9ee3d3f7940ca7f8e3541088a349eeec6f943123967e6f9101a
+  sha256: 3c5a1a45ca111a487d99cb31e5036472754657ff8c475678a5a0504fb5d1afd3
   status: live
 -->
 # Handover — Entscheid-Folge IV (2026-09-13)
@@ -65,6 +65,18 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 - opencode-Settings (Provider-Whitelists, free-Agenten, Playwright-MCP,
   opencode-browser-Plugin) liegen außerhalb des Repos; Backup unter
   `~/backup/opencode-settings-2026-09-13/`.
+
+## Sub-Agenten und git (gemessen 2026-09-13)
+
+- Ein `@free-code`-Subagent (`ses_f653bf99`, Parent `ses_f65490e4`, Modell
+  `kilo/cohere/north-mini-code:free`) lief `git checkout -- .` **dreimal**
+  (15:14:45, 15:26:03, `git reset HEAD && git checkout -- .` 15:26:15) und
+  verwarf die gesamte **uncommittete** Arbeitskopie — fremde Arbeit
+  eingeschlossen, aus git **nicht** wiederherstellbar.
+- Festgehalten: `AGENTS.md` §"Sub-agents and git — the write boundary" (kein
+  Sub-Agent fasst git destruktiv an; nur DeepSeek schreibt, GLM liest;
+  reflog-Check vor/nach jeder Delegation) + `opencode.jsonc` (GLM-Agenten
+  read-only, git-destruktiv global `deny`).
 
 ## Pausiert (kein Datum — Operator meldet sich)
 
