@@ -687,7 +687,7 @@ pub fn delta_branch(delta_deg: f64, depth_km: f64) -> DeltaBranch {
     let metric = p_p_branch_fold_metric(delta_deg, depth_km);
     let smooth = smooth_p_p_lag_gradient_s_per_deg(depth_km);
     let unstable = match (metric, smooth) {
-        (Some(m), Some(s)) => m > s * FOLD_GATE_OVER_SMOOTH_FACTOR,
+        (Some(m), Some(s)) => m >= s * FOLD_GATE_OVER_SMOOTH_FACTOR,
         _ => false,
     };
     DeltaBranch {
@@ -1126,7 +1126,7 @@ mod tests {
                 "a station at Δ={delta}° for {h} km sits in the folded pP family — branch-unstable (metric {metric:.2} vs smooth {smooth:.2} s/deg)"
             );
             assert!(
-                metric > smooth * FOLD_GATE_OVER_SMOOTH_FACTOR,
+                metric >= smooth * FOLD_GATE_OVER_SMOOTH_FACTOR,
                 "the fold metric {metric:.2} must clear the smooth threshold {}",
                 smooth * FOLD_GATE_OVER_SMOOTH_FACTOR
             );

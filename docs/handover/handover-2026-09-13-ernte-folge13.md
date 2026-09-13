@@ -17,9 +17,6 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 
 ## CDN-Manifestation (Duty)
 
-- igets.bin — Wächter: Redispatch Run 34745661504 (2026-09-13T07:36Z) in Flug; die
-  neun zuvor fehlgeschlagenen Station-Compiles tragen jetzt den Compiler-Fix.
-  Erfolg: merge-Job grün + `igets.bin` im Release `igetsftp.gfz.de` (omegaflow/sources).
 - hinet.bin — Wächter: Run 34746164903 (2026-09-13T07:49Z) in Flug; der
   Status-Token-Fix wirkt (Build/Auth/Stationswahl grün), der Patience-Fix
   (cont-Poll 8×240s) trägt die gemessene Upstream-Varianz (Prep einmal 40–90s,
