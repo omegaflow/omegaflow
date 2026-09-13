@@ -4268,7 +4268,7 @@ note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integrier
 
 dead tls-reset
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus
-note CADC-ARGUS — 000/Peer-Reset (2026-09-11; §16.4: TLS-Reset 2026-09-10). TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; Proton-VPN-Recheck offen.
+note CADC-ARGUS — Re-Messung 2026-09-13 (Split-Routing, 9 Proton-Exits): HTTP 200 direkt — lebt; der 000/Peer-Reset war transient, kein Geo-Block. TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; dead-Verdikt prüfen (lebt = re-weigh als Live-Kandidat).
 
 decline metadata-registry
 url https://ws.pangaea.de/oai/provider
