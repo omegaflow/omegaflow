@@ -1350,7 +1350,7 @@ impl GpsTime11Reader {
                     self.last = self.next;
                     self.last_gpstime_diff[self.last as usize] = 0;
                     self.multi_extreme_counter[self.last as usize] = 0;
-                } else {
+                } else if multi > 2 {
                     self.last = (self.last + multi as u32 - 2) & 3;
                     continue;
                 }
@@ -1435,7 +1435,7 @@ impl GpsTime11Reader {
                     self.last = self.next;
                     self.last_gpstime_diff[self.last as usize] = 0;
                     self.multi_extreme_counter[self.last as usize] = 0;
-                } else {
+                } else if multi >= GPSTIME11_MULTI_CODE_FULL {
                     self.last = (self.last + multi as u32 - GPSTIME11_MULTI_CODE_FULL as u32) & 3;
                     continue;
                 }
