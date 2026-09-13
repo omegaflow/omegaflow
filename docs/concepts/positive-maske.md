@@ -2,7 +2,7 @@
   title: Die positive Maske — Treiber hinzufügen statt Rauschen abziehen
   class: concept
   date: 2026-09-12
-  sha256: 8fb94e1d071b23bcd0ff50f3e88a6ddf4aefd55b6130114300b5be2b6c90cd17
+  sha256: da870a45af903711424e6cbcac2e7c060208881b80c218992c9706701540cc12
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -18,13 +18,24 @@ entfernt, die positive bindet.
 
 ## Das Instrument
 
-Die bedingte TE steht (`src/mathematikerin/te.rs`:
-`transfer_entropy_conditional`, `_2`, `_stats_lagged*`, residuale Surrogate).
-Sie fährt bereits auf anderen Linien: die Tibet-Sturzflut (der geteilte Treiber
-Luftdruck löst das Scheinsignal auf), `corona_conditional_probe`,
-`galileo_floor_external_te`. Das Fahrzeug ist CPU + CI — kein GPU-Pfad: die
-Probe ist klein (16 Ereignisse × wenige Treiber) und offline; der GPU-Pfad
-(`te_compute`) gehört der Live-Topologie der Membran, nicht dieser Messung.
+Zwei Instrumente, gestuft nach der Ereigniszahl:
+
+- **n ≈ 16 — σ-Reduktion mit Permutations-Null** (der Tiefenphasen-Riss):
+  `tools/measure/src/bin/depth_phase_driver_scatter_probe.rs` +
+  `tools/measure/src/driver_scatter.rs`. σ₀ = Stichproben-Standardabweichung
+  der Flotten-Tiefenoffsets, frisch aus depthphase.rs gemessen; pro Treiber
+  einzeln eine OLS-Regression des Offsets auf den Treiberwert, σ₁ =
+  Rest-Standardabweichung, ρ = σ₁/σ₀. Die Null: ≥ 1000 Permutationen der
+  Treiber↔Ereignis-Paarung; der Reduktionsanspruch trägt nur, wenn das wahre ρ
+  jenseits von mean ± 2σ der ρ_null-Verteilung liegt.
+- **n ≥ 32 — bedingte TE**: `src/mathematikerin/te.rs`
+  (`transfer_entropy_conditional`, `_2`, `_stats_lagged*`, residuale
+  Surrogate). Der Boden ist 32, eine benannte Zweierpotenz. Sie fährt bereits
+  auf anderen Linien: die Tibet-Sturzflut (der geteilte Treiber Luftdruck löst
+  das Scheinsignal auf), `corona_conditional_probe`,
+  `galileo_floor_external_te`. Das Fahrzeug ist CPU + CI — kein GPU-Pfad: die
+  Proben sind klein und offline; der GPU-Pfad (`te_compute`) gehört der
+  Live-Topologie der Membran, nicht diesen Messungen.
 
 ## Das Protokoll (simpelst)
 
