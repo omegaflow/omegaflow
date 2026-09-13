@@ -2,7 +2,7 @@
   title: The eclipse clock — greatest eclipse from five ephemeris worldlines
   class: paper
   date: 2026-09-13
-  sha256: 40f635413bb3552314bd72cc6a01aed61cb86fc1e0c64b5c8277769e0d0a9786
+  sha256: 3319612855ca09fe7b509634c353cc8cda8802bfc73a23eeeb6c08bd5c1468ca
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
@@ -35,7 +35,7 @@ The one voice across de440, de442 and epm2021: geocentric Moon 0.3 m apart, Eart
 
 The earlier handover carried the instant as "65 s before the canon". The verdict laid the canon constant on the UTC axis (canon_unix = EVENT_UNIX + 18:26:40); the catalog's greatest-eclipse column is TD, ΔT 70 s on the same row. 65 s = −70 s (TD→UT) + ~+5 s (the true residual). 2024 reproduces the same shape: 71 s = −74 s (ΔT 74 s) + ~+3 s — +2.6 s on de440/de442/epm2021, +5.6 s on inpop19a, +10.1 s on de441.
 
-Two channels carry the two residual numbers, and they do not mix. The +4.9 s instant is geocentric geometry — rotation does not enter the axis-nearest-geocentre search — and is the flat-minimum amplification of a small axis difference between Espenak's Meeus algorithm and the raw worldlines: h'' ≈ 0.35–0.59 m/s² at the minimum, so 4.9 s corresponds to a ~65–85 m axis displacement. The 4.8 km point is the rotation channel: body_fixed_to_icrs_smooth feeds the Earth rotation angle with TDB, not UT1; the TDB-fed rotation leads the UT1-fed rotation by 0.2939° = 26.1 km of longitude (ΔT 70.3 s from the Espenak–Meeus polynomial delta_t_espenak_meeus in astrometry.rs; the catalog row rounds it to 70 s). The measured pierce sits 4.8 km from the canon, not 26.1 km — where the remaining ΔT is absorbed is a pending measurement, the w0 anchor's provenance not yet read from the bin.
+Two channels carry the two residual numbers, and they do not mix. The +4.9 s instant is geocentric geometry — rotation does not enter the axis-nearest-geocentre search — and is the flat-minimum amplification of a small axis difference between Espenak's Meeus algorithm and the raw worldlines: h'' ≈ 0.35–0.59 m/s² at the minimum, so 4.9 s corresponds to a ~65–85 m axis displacement. The 4.8 km point is the rotation channel: body_fixed_to_icrs_smooth feeds the Earth rotation angle with TDB, not UT1; the TDB-fed rotation leads the UT1-fed rotation by 0.2939° = 26.1 km of longitude (ΔT 70.3 s from the Espenak–Meeus polynomial delta_t_espenak_meeus in astrometry.rs; the catalog row rounds it to 70 s). The measured pierce sits 4.8 km from the canon, not 26.1 km. The w0 anchor's provenance is read: w0 = 190.1470° (the IAU prime-meridian angle W at J2000), identical across all five earth bins, sourced from PCK `BODY399_PM` coefficient 1 in pck00010.tpc/pck00011.tpc (NAIF), written as slot 4 (`w0_deg` = `wgccre.pm_deg`) in the ephemeris bin. w0 is a fixed IAU constant at J2000 and absorbs zero ΔT: no UT1 correction, no ΔT subtraction, no separate ΔT term sits anywhere in body_fixed_to_icrs_smooth / orientation_angles_at / iau_rotate_to_icrs; ΔT enters the rotation chain at exactly one point, the time-axis argument jd = tdb / 86400.0 + J2000_EPOCH. The rotation audit measures the full ΔT effect 0.2939° = 26.1 km (ΔT 70.3 s); the pierce lands 4.8 km from the canon because it is re-searched (deepest_pierce sweeps the full surface at the TDB greatest-eclipse instant, +4.9 s time-channel), so the 26.1 − 4.8 = 21.3 km residual is absorbed by the re-derived instant/point. The exact sub-point sweep-rate over that +4.9 s interval remains unmeasured.
 
 ## The form
 
