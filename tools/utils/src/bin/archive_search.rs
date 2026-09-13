@@ -8,6 +8,8 @@ mod json;
 mod net;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
+#[path = "archive_search/playwright.rs"]
+mod playwright;
 #[path = "archive_search/secrets.rs"]
 mod secrets;
 #[path = "archive_search/server.rs"]
@@ -83,6 +85,7 @@ enum Mode {
     Serve,
     Git,
     Verdict,
+    Playwright,
     Net(&'static str),
 }
 
@@ -102,6 +105,7 @@ fn main() {
     let mut mft_path: Option<String> = None;
     let mut serve_addr: Option<String> = None;
     let mut verdict_url: Option<String> = None;
+    let mut playwright_input: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -132,6 +136,13 @@ fn main() {
                 }
                 mode = Mode::Verdict;
             }
+            "--playwright" => {
+                i += 1;
+                if let Some(u) = args.get(i) {
+                    playwright_input = Some(u.clone());
+                }
+                mode = Mode::Playwright;
+            }
             "--arxiv" => mode = Mode::Net("arxiv"),
             "--ads" => mode = Mode::Net("ads"),
             "--ntrs" => mode = Mode::Net("ntrs"),
@@ -141,6 +152,7 @@ fn main() {
             "--github" => mode = Mode::Net("github"),
             "--crates" => mode = Mode::Net("crates"),
             "--librs" => mode = Mode::Net("librs"),
+            "--brave" => mode = Mode::Net("brave"),
             "--kind" => {
                 i += 1;
                 if let Some(v) = args.get(i) {
@@ -296,6 +308,17 @@ fn main() {
             let lines = net::verdict_lines(&url, &jina_key);
             print_lines(&lines);
         }
+        Mode::Playwright => {
+            let input = match playwright_input {
+                Some(u) => u,
+                None => {
+                    eprintln!("archive_search --playwright: the mode carries no url");
+                    std::process::exit(2);
+                }
+            };
+            let lines = playwright::run_lines(&input);
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -316,7 +339,10 @@ fn usage() {
         "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]"
     );
     eprintln!(
-        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs <query>"
+        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query>"
+    );
+    eprintln!(
+        "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
     );
     eprintln!(
         "       archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"

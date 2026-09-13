@@ -3,6 +3,12 @@ export default {
     const from = message.from || "";
     const to = Array.isArray(message.to) ? message.to.join(", ") : (message.to || "");
     const subject = (message.headers && message.headers.get("subject")) || "";
+
+    const forwardTo = env.FORWARD_TO || "";
+    if (forwardTo) {
+      await message.forward(forwardTo);
+    }
+
     let rawText = "";
     try {
       if (message.raw && typeof message.raw === "object" && typeof message.raw.getReader === "function") {
@@ -23,13 +29,16 @@ export default {
     } catch (_) {
       rawText = "";
     }
-    const payload = JSON.stringify({ from, to, subject, text: rawText });
-    const base = (env.WEBHOOK_URL || "").replace(/\/+$/, "");
-    const token = env.WEBHOOK_TOKEN || "";
+
+    const base = (env.WEBHOOK_URL || "").replace(/\/+$/);
     if (!base) return;
-    const url = base + "/mail";
+    const payload = JSON.stringify({ from, to, subject, text: rawText });
     const headers = { "Content-Type": "application/json" };
-    if (token) headers["Authorization"] = "Bearer " + token;
-    await fetch(url, { method: "POST", headers, body: payload });
+    if (env.WEBHOOK_TOKEN) headers["Authorization"] = "Bearer " + env.WEBHOOK_TOKEN;
+    try {
+      await fetch(base + "/mail", { method: "POST", headers, body: payload });
+    } catch (e) {
+      console.log("webhook absent: " + String(e));
+    }
   },
 };
