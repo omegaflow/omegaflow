@@ -379,9 +379,12 @@ Kandidat in `phi/pipeline/queue/master.φ` · ⛔ in `blocked_sources.φ` ·
 Schritt ist Probe/Klassifikation am vorliegenden Befund, keine neue
 Adress-Recherche (0 honored). Oszillator-Gate-Schnellurteil: alle
 elektromagnetischen Teleskope messen `em`; GW-Detektoren `gravity`;
-CR/ν-Detektoren (Auger, TA, IceCube, KM3NeT, Super-K/JUNO) — Teilchen-
-Kanal: Registry-Frage, `pending` (die 9er-Force-Registry kennt kein
-Teilchen-Medium; hier nicht entschieden).
+CR/ν-Detektoren (Auger, TA, IceCube, KM3NeT, Super-K/JUNO) — Teilchen
+ist Abstammung, nicht Kraft (die-weberin.md:104-109): gemessen wird das
+em-Schauer-/Cherenkov-Licht (`em`); die Teilchen-Art (Proton, Neutrino,
+Gamma) ist die Wurzel im Abstammungs-Feld, keine zehnte Kraft — ein
+„particle"-Bit wäre Fabrication. Die 9er-Force-Registry trägt kein
+Teilchen-Medium.
 
 ### 12.1 Weltraum — Röntgen/Gamma
 
