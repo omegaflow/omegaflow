@@ -6,9 +6,17 @@ use omegaflow::te::{
     TeNull,
 };
 use omegaflow_measure::eeglab::{
-    chanlocs_positions, channel_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+    channel_series, common_average_series, open_set, open_set_bin, open_set_mat, resolve_channel,
     EeglabSet,
 };
+
+fn subtract_reference(mut series: Vec<f32>, reference: &[f32]) -> Vec<f32> {
+    let n = series.len().min(reference.len());
+    for i in 0..n {
+        series[i] -= reference[i];
+    }
+    series
+}
 
 const DEFAULT_LAG_MAX: usize = 24;
 const DEFAULT_SURROGATES: usize = 100;
@@ -123,7 +131,7 @@ fn condition_pair(
     sel_a: &str,
     sel_b: &str,
     sel_c: Option<&str>,
-) -> Option<(String, Vec<f32>, Vec<f32>, Option<Vec<f32>>)> {
+) -> Option<(String, Vec<f32>, Vec<f32>, Option<Vec<f32>>, String)> {
     let (set, samples) = open_set(path)
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
@@ -149,12 +157,26 @@ fn condition_pair(
             None => (None, String::new()),
         },
     };
+    let (a_re, b_re, c_re, ref_note) = match common_average_series(&samples, &set) {
+        Some(reference) => (
+            subtract_reference(a, &reference),
+            subtract_reference(b, &reference),
+            c.map(|c| subtract_reference(c, &reference)),
+            "AVE (common average reference, Cz removed)".to_string(),
+        ),
+        None => (
+            a,
+            b,
+            c,
+            "Cz (recorded reference, common average absent)".to_string(),
+        ),
+    };
     let tag = if c_note.is_empty() {
         format!("{path} [{sel_a} ↔ {sel_b}]")
     } else {
         format!("{path} [{sel_a} ↔ {sel_b}] C={c_note}")
     };
-    Some((tag, a, b, c))
+    Some((tag, a_re, b_re, c_re, ref_note))
 }
 
 fn run_eeglab(
@@ -180,7 +202,10 @@ fn run_eeglab(
     };
 
     match condition_pair(set_path, &sel_a, &sel_b, sel_c.as_deref()) {
-        Some((tag, a, b, c)) => run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed),
+        Some((tag, a, b, c, ref_note)) => {
+            println!("{tag}: re-reference {ref_note}");
+            run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed);
+        }
         None => println!(
             "pending — the EEGLAB .set/.fdt pair is absent or unreadable at {set_path} (0 honored, absent stays absent)"
         ),
@@ -188,7 +213,10 @@ fn run_eeglab(
 
     match sibling_path(set_path) {
         Some(sibling) => match condition_pair(&sibling, &sel_a, &sel_b, sel_c.as_deref()) {
-            Some((tag, a, b, c)) => run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed),
+            Some((tag, a, b, c, ref_note)) => {
+                println!("{tag}: re-reference {ref_note}");
+                run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed);
+            }
             None => println!(
                 "pending — the sibling condition is absent or unreadable at {sibling} (0 honored, absent stays absent)"
             ),
