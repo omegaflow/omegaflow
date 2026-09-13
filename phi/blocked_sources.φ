@@ -9,17 +9,17 @@ note Pioneer-10 ATDF Sky-Frequency (S-Band-Doppler ~2,3 GHz). Asset liegt auf de
 
 blocked key
 url https://aqs.epa.gov/data/api/dailyData/byBox?email=
-note AQS Data Mart API — Schadstoff-Konzentration (diffusion), Messung echt; braucht email + api_key (frei registrierbar). Der 400 war ein Browser-Historien-Fragment ohne email/key, kein toter Endpoint.
+note AQS Data Mart API — Schadstoff-Konzentration (diffusion), Messung echt; braucht email + api_key (frei registrierbar). Der 400 war ein Browser-Historien-Fragment ohne email/key, kein toter Endpoint. Party-Messung 2026-09-14: AQS selbst key-pflichtig; keylose Alternativen gemessen — OpenAQ-S3-Bulk (openaq.org/developers) + Apify epa-aqs-scraper (kein Key).
 reg https://aqs.epa.gov/aqsweb/documents/data_api.html
 
 blocked account
 url https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-11 (curl, anonym): /api/ antwortet HTTP 200 ("Greetings from BOOM!"); /openapi.json liefert die SPA-Index-HTML (kein OpenAPI-Spec); die Daten-Endpunkte /api/alerts und /api/objects antworten HTTP 401 (Auth-Wall). Messung (Transienten-Alerts, em) echt, Zugang gatet — kein anonymes Daten-JSON.
+note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-11 (curl, anonym): /api/ antwortet HTTP 200 ("Greetings from BOOM!"); /openapi.json liefert die SPA-Index-HTML (kein OpenAPI-Spec); die Daten-Endpunkte /api/alerts und /api/objects antworten HTTP 401 (Auth-Wall). Messung (Transienten-Alerts, em) echt, Zugang gatet — kein anonymes Daten-JSON. Party-Messung 2026-09-14: /signup offen (Email-Aktivierungscode); anonymer Zugang bleibt 401; Credentials via BABAMUL_API_TOKEN + BABAMUL_KAFKA_USERNAME/PASSWORD.
 reg https://babamul.caltech.edu/
 
 pending
 url https://cds.climate.copernicus.eu/datasets/insitu-observations-near-surface-temperature-us-climate-reference-network
-note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): CC-BY-Lizenz und USCRN-Datenpolitik sind angenommen, die Form bleibt provider-seitig geschlossen (`Submit form` disabled) — nur die Form-Closure fehlt; kein Parser-Gap.
+note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): CC-BY-Lizenz und USCRN-Datenpolitik sind angenommen, die Form bleibt provider-seitig geschlossen (`Submit form` disabled) — nur die Form-Closure fehlt; kein Parser-Gap. Party-Messung 2026-09-14: offener Direktdownload gemessen — https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/ (HTTP 200).
 
 pending spectral
 url https://registry.opendata.aws/noaa-nodd/ noaa-passive-bioacoustic nrs/products/
@@ -96,15 +96,11 @@ note WFAU WSA TAP (UKIDSS DR10+). Gemessen 2026-09-12 (curl): FORMAT=votable/csv
 
 pending
 url https://cirada.ca/catalogues
-note VLASS-Komponentenkatalog (em Radiokontinuum) als Bulk-FITS/CSV im CADC-Vault; kein JSON/TAP-json-Kanal. QL-Katalog trägt ~15 % Fluss-Unterzeichnung. Gap: FITS-Struktur-Reader.
-
-pending
-url https://eas.esac.esa.int/tap-server/tap
-note Euclid-TAP (Q1/TPDR). Parser-Gap geschlossen 2026-09-13: der json-Pfad des tap_compiler liest die Spaltennamen aus metadata[].name (json_metadata_rows — {metadata:[{name,…}], data:[[…]]}, Rows als Skalar-Arrays); benannte Feld-Auswahl (--columns name:Col) greift. Gemessen 2026-09-13 (curl, anonym): TAP_SCHEMA.tables/columns → HTTP 200, application/json, exakt die {metadata,data}-Form; Daten-Tabelle ivoa.obscore trägt s_ra/s_dec (pos.eq.ra/dec, deg) — TOP 2 → HTTP 200 {metadata:[{name,datatype,ucd,…}], data:[[53.233597,-29.70548535,"sedm"],…]}; catalogue.mer_catalogue (200+ Photometrie-Spalten) trägt kein nacktes ra/dec. Messung (Photometrie/Spektroskopie, em) echt, Format konsumierbar. Kein gebauter Konsument/Harvest (Tor 1) → pending.
+note VLASS-Komponentenkatalog (em Radiokontinuum) als Bulk-FITS/CSV im CADC-Vault; kein JSON/TAP-json-Kanal. QL-Katalog trägt ~15 % Fluss-Unterzeichnung. Gap: FITS-Struktur-Reader. Party-Messung 2026-09-14: FITS-Reader gefunden (fitparser 0.11.0 / fits-header 0.4.3 / seiza-fits 0.2.2); alternativer TAP CADC youcat, Tabelle cirada.VCSS (https://cirada.ca/vcsscatalogue).
 
 pending
 url s3://noaa-cors-pds
-note RINEX-2.11-Observation: PRN nur auf der Epoch-Zeile (parse_rinex_obs ist RINEX-3-geformt); zusätzlich Hatanaka (.YYd/.YY_), SBF und Trimble-Container ohne Reader. Messwert (GNSS em) echt.
+note RINEX-2.11-Observation: PRN nur auf der Epoch-Zeile (parse_rinex_obs ist RINEX-3-geformt); zusätzlich Hatanaka (.YYd/.YY_), SBF und Trimble-Container ohne Reader. Messwert (GNSS em) echt. Party-Messung 2026-09-14: rinex 0.22.0 (Hatanaka/CRINEX-Modul), crx2rnx 2.7.0, gsof_protocol 0.1.23 (Trimble); SBF-Zuordnung (Septentrio) unverifiziert.
 
 pending
 url s3://noaa-eri-pds
@@ -116,11 +112,11 @@ note GK2A AMI L1B: Navigation GEBAUT (2026-09-13) — hdf5.rs liest projection_t
 
 pending
 url s3://noaa-goes16
-note GOES-16 ABI L1b: GEBAUT (2026-09-13) — hdf5.rs parst Superblock-v2 mit STORE_TIMES-Objekt-Headern und navigiert die B-tree-v2-Knoten (Link-Name-Index); 53 Root-Datasets enumeriert, Rad [3000,5000] int16 gelesen (RadC). goes_imager_projection (longitude_of_projection_origin −75,2°, perspective_point_height 35 786 023 m) → lat/lon-Gitter aus x/y-Scan-Winkeln (skaliert int16). Kein offener HDF5-Gap; Ernte/Compiler + CDN-Manifestation bleibt Register-Duty.
+note GOES-16 ABI L1b: Compiler GEBAUT (2026-09-14) — goes_abi_compiler.rs liest Rad [3000,5000] int16 (scale_factor 0,8121064, add_offset −25,936647, _Unsigned) → Radianz W m-2 sr-1 um-1 (gemessen: Band 1 0,4700 µm, mean 8,72, max 217,7, 14 811 327 von 15 000 000 Pixeln gültig), plus DQF, esun, kappa0, band_id, band_wavelength, t (J2000 s), goes_imager_projection; emittiert einen 56-B-Record je Granule + goes-cdn.yml. GSICS-Interkalibrierung pending (Koeffizienten nicht im Granule, kein verifizierter Endpoint) — der Record trägt CALIB_GSICS_PENDING = 1.
 
 pending
 url s3://noaa-himawari8
-note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9, konkatenierte Ströme); HSD-Block-Parser GEBAUT (2026-09-13, src/archivar/hsd.rs, parse_hsd → HsdFile: Blockfolge 1–11, columns/lines, image_pixel_values u16; gemessen an HS_H08_20150707_0200_B01, 5500×5500). Offen: Kalibrierung (Counts → Radianz) und Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (AHI geostationäre em-Messung) echt.
+note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9). Benennung gemessen: AHI-L1b-FLDK/{JJJJ}/{MM}/{TT}/{HHMM}/HS_H{08|09}_{JJJJMMTT}_{HHMM}_B{BB}_FLDK_R{rr}_S{nn}{gg}.DAT.bz2 (R05/R10/R20 = 0,5/1/2 km; S{nn}{gg} = Segment nn von gg — 2015 S0101 = Volldisk 5500×5500, ab Betrieb S0110…S1010). HSD-Block-Parser GEBAUT (2026-09-13, src/archivar/hsd.rs, parse_hsd → HsdFile: Blockfolge 1–11, columns/lines, pixel_values u16 Counts). Ernte/Compiler + CDN-Manifestation GEBAUT (2026-09-14, tools/harvest/src/bin/himawari_hsd_compiler.rs → AHI1-Segment-Bin, Roh-Counts u16 + .github/workflows/himawari-cdn.yml). Offen: Kalibrierung (Counts → Radianz, HSD-Block 5 bleibt undekodiert). Messwert (AHI geostationäre em-Messung) echt.
 
 blocked parser-def las-laz
 url s3://noaa-nos-coastal-lidar-pds
@@ -136,21 +132,17 @@ note GDP-Drifter: netCDF-4/HDF5 monolithisch 15,7 GB. Range-/Chunk-Streaming GEB
 
 pending
 url s3://noaa-ocs-hydrodata-pds
-note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). GEBAUT (2026-09-13): GeoTIFF-Reader (src/archivar/tiff.rs) + GeoPackage/SQLite-Reader (src/archivar/gpkg.rs, soundings 3027 gemessen); offen: STAC-Konsument + Ernte.
+note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). GEBAUT (2026-09-14): STAC-Konsument noaa_ocs_hydrodata_compiler (catalog.json → Qualified/collection.json → Item → .gpkg-Asset → soundings-Tabelle [fid, geom, X, Y, Elevation, Uncertainty, EPSG:6347 UTM18N] → GRS80-inverse-Transversal-Mercator → OCS1-Gestaltzeuge lat/lon/depth, MAGIC_OCS in geo.rs, magic_identity Gestalt); gemessen an DD10045 (3027 Lotungen, Roundtrip parse). Manifestation noaa-ocs-hydrodata-cdn.yml (workflow_dispatch, Pilot-Survey). Offen: All-Survey-Ernte (350 Qualified-Surveys), .tif-LZW-Dekoder (Compression 5, float32, 2 Bänder).
 
 pending
 url s3://noaa-wod-pds
-note WOD netCDF-4/HDF5 (Superblock v2): GEBAUT (2026-09-13) — hdf5.rs löst Shared-Message-/Committed-Datatype-Referenzen auf (H5O_shared_t v3, Typ COMMITTED) und enumeriert die WOD-Gruppe: 1903/wod_mbt_1903.nc (25 587 B, 26 Variablen) und 1903/wod_osd_1903.nc (25 628 660 B, 73 Variablen, 7 903 Casts, 1 benannter Typ `biodata` [Compound, 28 Member]) parsen durch. Ragged-Array-Lesen (Temperature + Temperature_row_size, flat + row_size) über netcdf.rs `nc4_ragged_f64`; erstes OSD-Profil (lat 55,30° lon 12,78°, 4 Niveaus) gelesen. Offen: SOHM-Heap-Shared-Messages (im WOD-Satz unbenutzt), Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Temperatur-/Salinitätsprofil, em) echt.
+note WOD netCDF-4/HDF5 (Superblock v2): GEBAUT (2026-09-13) — hdf5.rs löst Shared-Message-/Committed-Datatype-Referenzen auf (H5O_shared_t v3, Typ COMMITTED) und enumeriert die WOD-Gruppe: 1903/wod_mbt_1903.nc (25 587 B, 26 Variablen) und 1903/wod_osd_1903.nc (25 628 660 B, 73 Variablen, 7 903 Casts, 1 benannter Typ `biodata` [Compound, 28 Member]) parsen durch. Ragged-Array-Lesen (Temperature + Temperature_row_size, flat + row_size) über netcdf.rs `nc4_ragged_f64`. GEBAUT (2026-09-14) — Ragged-Compiler `tools/harvest/src/bin/wod_compiler.rs` (MAGIC_WOD "WOD1", comp 1 Temperatur / 2 Salinität / 3 Sauerstoff; Zeit = "days since 1770-01-01" → TDB via lsk; Casts vor 1972 sind TDB-void und werden übersprungen — 1903/wod_osd_1903.nc liefert daher 0 Zeilen, gemessen), Workflow `wod-cdn.yml`, sources.φ-Eintrag `format noaa_wod`. Gemessen: 2000/wod_gld_2000.nc → 717 Zeilen (36 Casts), 2000/wod_drb_2000.nc → 115 032 Zeilen (19 246 Casts, Temperatur+Salinität). Offen: SOHM-Heap-Shared-Messages (im WOD-Satz unbenutzt). Messwert (Temperatur-/Salinitätsprofil, em) echt.
 
 pending
 url s3://unidata-nexrad-level2
-note NEXRAD Level II (AR2V0006.549, bzip2 BZh9 ab Offset 24); Level-II-Reader GEBAUT (2026-09-13, src/archivar/nexrad.rs, parse_nexrad → NexradVolume: Message-31-VOL, REF-Moment + Gate-Geometrie; gemessen an KTLX20240101_000004_V06, 6480 Radiale). Offen: Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Radar-Reflektivität em) echt.
-
-pending
-url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
-note MAXI (JAXA/Riken) GSC-Röntgenlichtkurve — headerless, leerzeichengetrennter ASCII (MJD + 2–20-keV-Fluss + err + 3 Teilbänder 2–4/4–10/10–20 keV; Format top/lc_readme.txt). Gemessen 2026-09-12 (curl): HTTP 200, live (Daten bis ~2 d). Gap: headerless (keine Headerzeile) — lastrow/text_last_col braucht eine Headerzeile, rows-numeric-extract ist surface-frame-gated (extract.rs Frame::Surface). Messwert (Röntgenfluss, em) echt.
+note NEXRAD Level II (AR2V0006.549, bzip2 BZh9 ab Offset 24); Level-II-Reader GEBAUT (2026-09-13, src/archivar/nexrad.rs, parse_nexrad → NexradVolume: Message-31-VOL, REF-Moment + Gate-Geometrie; gemessen an KTLX20240101_000004_V06, 6480 Radiale). Compiler + CDN-Workflow GEBAUT (2026-09-14, tools/harvest/src/bin/nexrad_level2_compiler.rs → nexrad_level2.bin [NXR1, 44-B-Record t/az/el/range/value/kind], .github/workflows/nexrad-cdn.yml; Quelle registriert in sources.φ als format nexrad_level2). Offen: Feld-System-Reader (format nexrad_level2 → Radial/Azimut/Range-Samples) + erster CI-Manifest-Lauf. Messwert (Radar-Reflektivität em) echt.
 
 pending
 url https://superdarn.ca/ascii-call
-note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET. GEBAUT (2026-09-13) — der Session-Fetcher für die Zwei-Schritt-Form steht in src/archivar/session.rs: fetch_token_form POSTet /ascii-call mit Content-Type application/json und JSON-Body {radar,startDate,startTime,endDate,endTime,beam,ftype,fields}, die Antwort ist der nackte Token-Pfad im Body (z. B. /../website_updating_tools/ascii_files/…), der GET läuft auf https://sdc-serv.usask.ca + Pfad innerhalb der TTL; extract_token_path/join_token_path als reine Funktionen, Unit-Tests decken Token-Extraktion und URL-Join. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf). Offen: Ernte/Compiler der Direktroute + CDN-Manifestation (Register-Duty).
+note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET. GEBAUT (2026-09-13) — der Session-Fetcher für die Zwei-Schritt-Form steht in src/archivar/session.rs: fetch_token_form POSTet /ascii-call mit Content-Type application/json und JSON-Body {radar,startDate,startTime,endDate,endTime,beam,ftype,fields}, die Antwort ist der nackte Token-Pfad im Body (z. B. /../website_updating_tools/ascii_files/…), der GET läuft auf https://sdc-serv.usask.ca + Pfad innerhalb der TTL; extract_token_path/join_token_path als reine Funktionen, Unit-Tests decken Token-Extraktion und URL-Join. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf). Offen war: Ernte/Compiler der Direktroute + CDN-Manifestation (Register-Duty). GEBAUT (2026-09-14) — der Direktroute-Compiler tools/harvest/src/bin/superdarn_compiler.rs (POST /ascii-call mit startDate YYYY-MM-DD, startTime HH:MM, beam all|0..15, ftype json; Felder v/bmazm/frang/rsep/slist/elv kommen als String-Listen, die Zellenposition wird aus hdw.dat-Site + bmazm + Elevation auf der Kugel gerechnet; emittiert GeoRec superdarn_fitacf [SDN1, COMP_SDARN_V] über session.rs), CDN-Workflow .github/workflows/superdarn-cdn.yml, Quelle registriert in sources.φ (Release superdarn.ca/superdarn_fitacf.bin). Gemessen: 2026-08-20 18:00–20:00 sas all → 18048 Zellen (lat/lon/tdb/v plausibel, Roundtrip parst). Offen: erster CI-Manifest-Lauf (Workflow-Dispatch).
 

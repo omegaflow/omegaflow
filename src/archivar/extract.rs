@@ -96,6 +96,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_NRS_PSD => Some("noaa_nrs_psd_db"),
             _ => None,
         },
+        "onc_hydrophone_psd" => match comp {
+            crate::geo::COMP_ONC_PSD => Some("onc_hydrophone_psd_db"),
+            _ => None,
+        },
         "superdarn_fitacf" => match comp {
             crate::geo::COMP_SDARN_V => Some("superdarn_fitacf_los_velocity_ms"),
             _ => None,
@@ -128,6 +132,12 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ARGO_CHLA => Some("argo_dac_bgc_chla_mg_m3"),
             crate::geo::COMP_ARGO_BBP700 => Some("argo_dac_bgc_bbp700_m1"),
             crate::geo::COMP_ARGO_PH_TOTAL => Some("argo_dac_bgc_ph_total"),
+            _ => None,
+        },
+        "noaa_wod" => match comp {
+            crate::geo::COMP_WOD_TEMP => Some("wod_temperature_degc"),
+            crate::geo::COMP_WOD_PSAL => Some("wod_salinity_psu"),
+            crate::geo::COMP_WOD_DOXY => Some("wod_oxygen_ml_l"),
             _ => None,
         },
         "supermag_1m" => match comp {
@@ -389,6 +399,8 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     absorption: *absorption,
                     advection: *advection,
                     unit: "Mw".to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 },
                 FieldConfig {
@@ -400,6 +412,8 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     absorption: *absorption,
                     advection: *advection,
                     unit: String::new(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: None,
                 },
             ]
@@ -529,6 +543,8 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             });
         }
@@ -542,6 +558,8 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             });
         }
@@ -555,6 +573,8 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             });
         }
@@ -591,6 +611,8 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             });
         }
@@ -604,6 +626,8 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             });
         }
@@ -1514,8 +1538,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     channels.push((
                                         Channel {
                                             z: 0.0,
-                                            freq: 0.0,
-                                            bin_width: 0.0,
+                                            freq: fc.freq,
+                                            bin_width: fc.bin_width,
                                             epoch,
                                             position,
                                             name: fc.name.clone(),
@@ -2471,6 +2495,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                                         absorption: *absorption,
                                                         advection: *advection,
                                                         unit: "Mw".to_string(),
+                                                        freq: 0.0,
+                                                        bin_width: 0.0,
                                                         fold: None,
                                                     },
                                                 ));
@@ -2498,6 +2524,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                                         absorption: *absorption,
                                                         advection: *advection,
                                                         unit: String::new(),
+                                                        freq: 0.0,
+                                                        bin_width: 0.0,
                                                         fold: None,
                                                     },
                                                 ));

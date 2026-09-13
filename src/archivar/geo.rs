@@ -7,6 +7,7 @@ pub const MAGIC_GIC: [u8; 4] = *b"GIC1";
 pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
 pub const MAGIC_SLB2: [u8; 4] = *b"SLB2";
+pub const MAGIC_OCS: [u8; 4] = *b"OCS1";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
@@ -17,6 +18,8 @@ pub const MAGIC_DCDB: [u8; 4] = *b"DCD1";
 pub const MAGIC_KEO: [u8; 4] = *b"KEO1";
 pub const MAGIC_WOD: [u8; 4] = *b"WOD1";
 pub const MAGIC_HINET: [u8; 4] = *b"HNT1";
+pub const MAGIC_COSMIC: [u8; 4] = *b"CSM1";
+pub const MAGIC_ONC: [u8; 4] = *b"ONC1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -104,6 +107,13 @@ pub const COMP_HINET_E: u32 = 2;
 pub const COMP_HINET_N: u32 = 3;
 pub const COMP_HINET_MAX: u32 = 3;
 
+pub const COMP_COSMIC_REFRACT: u32 = 1;
+pub const COMP_COSMIC_TEMP: u32 = 2;
+pub const COMP_COSMIC_PRES: u32 = 3;
+pub const COMP_COSMIC_MAX: u32 = 3;
+pub const COMP_ONC_PSD: u32 = 1;
+pub const COMP_ONC_MAX: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -141,6 +151,8 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "noaa_dcdb_bathymetry" => Some(MAGIC_DCDB),
         "noaa_keo_papa" => Some(MAGIC_KEO),
         "noaa_wod" => Some(MAGIC_WOD),
+        "cosmic_ro" => Some(MAGIC_COSMIC),
+        "onc_hydrophone_psd" => Some(MAGIC_ONC),
         _ => None,
     }
 }
@@ -164,6 +176,8 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "noaa_dcdb_bathymetry" => Some(COMP_DCDB_MAX),
         "noaa_keo_papa" => Some(COMP_KEO_MAX),
         "noaa_wod" => Some(COMP_WOD_MAX),
+        "cosmic_ro" => Some(COMP_COSMIC_MAX),
+        "onc_hydrophone_psd" => Some(COMP_ONC_MAX),
         _ => None,
     }
 }
@@ -426,6 +440,49 @@ pub fn parse_slab2(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(out)
 }
 
+pub fn write_ocs(records: &[GbcoRec]) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(8 + records.len() * GBCO_REC_BYTES);
+    buf.extend_from_slice(&MAGIC_OCS);
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        buf.extend_from_slice(&r.lat.to_le_bytes());
+        buf.extend_from_slice(&r.lon.to_le_bytes());
+        buf.extend_from_slice(&r.elev.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_ocs(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC_OCS {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * GBCO_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let lat = f64_of(off)?;
+        off += 8;
+        let lon = f64_of(off)?;
+        off += 8;
+        let elev = f64_of(off)?;
+        off += 8;
+        if !lat.is_finite() || !lon.is_finite() || !elev.is_finite() {
+            return None;
+        }
+        out.push(GbcoRec { lat, lon, elev });
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -544,6 +601,24 @@ mod tests {
         assert!(parse_gbco(b"X").is_none());
         assert!(parse_gbco(b"GBCOabc").is_none());
         assert!(parse_gbco(b"BGR1").is_none());
+    }
+
+    #[test]
+    fn ocs_roundtrip_and_rejections() {
+        let records = vec![GbcoRec {
+            lat: 39.2059,
+            lon: -76.5178,
+            elev: -10.363,
+        }];
+        let bytes = write_ocs(&records);
+        let parsed = parse_ocs(&bytes).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].lat, 39.2059);
+        assert_eq!(parsed[0].lon, -76.5178);
+        assert_eq!(parsed[0].elev, -10.363);
+        assert!(parse_ocs(b"X").is_none());
+        assert!(parse_ocs(b"OCS1abc").is_none());
+        assert!(parse_ocs(&write_gbco(&records)).is_none());
     }
 
     #[test]

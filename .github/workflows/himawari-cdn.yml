@@ -1,0 +1,47 @@
+name: himawari-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  himawari:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the noaa-himawari8 release exists on the CDN
+        run: |
+          if ! gh release view noaa-himawari8.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create noaa-himawari8.s3.amazonaws.com --repo omegaflow/sources \
+              --title "noaa-himawari8.s3.amazonaws.com" \
+              --notes "AHI L1b HSD segment compiled to raw counts (digital number, u16). Calibration (counts -> radiance) stays pending; the record carries counts, never a fabricated radiance. Record layout: magic AHI1, columns (u16 LE), lines (u16 LE), bits_per_pixel (u16 LE), band (u8), segment (u8), satellite (u8), resolution_m (u16 LE), obs_present (u8), obs_sec (f64 LE, unix seconds), counts ([u16 LE; columns*lines])."
+          fi
+      - name: Fetch one AHI L1b HSD segment
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 \
+            -o kernels/HS_H08_20150707_0200_B01_FLDK_R20_S0101.DAT.bz2 \
+            https://noaa-himawari8.s3.amazonaws.com/AHI-L1b-FLDK/2015/07/07/0200/HS_H08_20150707_0200_B01_FLDK_R20_S0101.DAT.bz2 \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "himawari-cdn: the AHI L1b segment returned void" \
+                 "curl on noaa-himawari8 did not reach the HS_H08 segment. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the AHI raw-counts record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin himawari_hsd_compiler -- \
+            --in kernels/HS_H08_20150707_0200_B01_FLDK_R20_S0101.DAT.bz2 \
+            --out himawari_ahi_counts.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "himawari-cdn: himawari_ahi_counts.bin returned void" \
+                 "himawari_hsd_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

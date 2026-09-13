@@ -174,6 +174,8 @@ mod matrix_record_tests {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "m/s".to_string(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             },
         )
@@ -350,6 +352,8 @@ mod matrix_rebuild_tests {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "K".to_string(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             },
         )
