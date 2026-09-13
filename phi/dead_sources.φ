@@ -412,7 +412,7 @@ note HTTP 404 — Endpoint weg.
 
 decline image
 url https://ams02.space/
-note AMS-02-Flusstabellen existieren nur als Papier-Abbildung (PNG/PDF, z. B. PhysRevLett.117.231102.Fig3_.png); kein maschinenlesbarer Flux-Endpoint (.txt/.csv/.dat/.root/.h5/.fits/.json absent; https://ams02.space/ und /physics/* 200, 2026-09-11). Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) ist ein Teilchen-Kanal — die 9er-Force-Registry trägt kein CR/ν-Medium (Teilchen ist Abstammung, nicht Kraft — die-weberin.md:104-109; SOURCE_PORT.md §12.6 ausgerichtet). Party-Messung 2026-09-14: maschinenlesbarer Fluss — HEASARC AMS02SPEC + AMS02RATES (FITS/TDAT).
+note AMS-02-Flusstabellen existieren nur als Papier-Abbildung (PNG/PDF, z. B. PhysRevLett.117.231102.Fig3_.png); kein maschinenlesbarer Flux-Endpoint (.txt/.csv/.dat/.root/.h5/.fits/.json absent; https://ams02.space/ und /physics/* 200, 2026-09-11). Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) ist ein Teilchen-Kanal — die 9er-Force-Registry trägt kein CR/ν-Medium (Teilchen ist Abstammung, nicht Kraft — die-weberin.md:104-109; SOURCE_PORT.md §12.6 ausgerichtet). Party-Messung 2026-09-14: maschinenlesbarer Fluss — HEASARC AMS02SPEC + AMS02RATES (FITS/TDAT), exakt: `heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/w3query.pl?tablehead=name%3Dams02spec&ResultMax=0&displaymode=FitsDisplay` (image/x-fits, SIMPLE-Header) + `/FTP/heasarc/dbase/tdat_files/heasarc_ams02spec.tdat.gz` (gzip-ASCII) — die Behauptung „kein maschinenlesbarer Flux-Endpoint" ist widerlegt.
 
 integrated
 url https://antares.noirlab.edu/api/v1/
@@ -4844,27 +4844,27 @@ note VOParis-Resource-Registry (ivo://purx/tap) — rr.* + glots-Verzeichnis (32
 
 decline commercial
 url https://www.marinetraffic.com/en/ais-api-services
-note MarineTraffic AIS-API jetzt unter Kpler — kommerziell/paid, ToS erlaubt keine CDN-Redistribution. Descope 2026-09-12.
+note MarineTraffic AIS-API jetzt unter Kpler — kommerziell/paid, ToS erlaubt keine CDN-Redistribution. Descope 2026-09-12. Party-Messung 2026-09-14: offener AIS-Weg gemessen — NOAA MarineCadastre vessel-traffic-Archiv CC0 (hub.marinecadastre.gov/pages/vesseltraffic, historisch; Live-NAIS-Feed bleibt ausgeschlossen).
 
 decline commercial
 url https://www.earthnetworks.com/
-note Earth Networks (Wetter-/Blitz-Messnetz) — kommerziell/paid, kein Redistributionsrecht. Descope 2026-09-12.
+note Earth Networks (Wetter-/Blitz-Messnetz) — kommerziell/paid, kein Redistributionsrecht. Descope 2026-09-12. Party-Messung 2026-09-14: frei via NOAA GLM — noaa-goes16.s3.amazonaws.com GLM-L2-LCFA (Blitz), NCEI lightning-products.
 
 decline commercial
 url https://thingspeak.com/
-note ThingSpeak (MathWorks) — kommerziell; Registrierung account/create antwortet 404. Descope 2026-09-12.
+note ThingSpeak (MathWorks) — kommerziell; Registrierung account/create antwortet 404. Descope 2026-09-12. Party-Messung 2026-09-14: öffentliche Channels anonym lesbar — api.thingspeak.com/channels/<id>/feeds.json + /channels/public.json, kein Key.
 
 decline commercial
 url https://portal.opentopography.org/
-note OpenTopography — Non-Academic-Abo (OT+); Datenlizenzen je Dataset variabel, Redistribution unklar. Descope 2026-09-12.
+note OpenTopography — Non-Academic-Abo (OT+); Datenlizenzen je Dataset variabel, Redistribution unklar. Descope 2026-09-12. Party-Messung 2026-09-14: freier Academic-Key (200 calls/24h, Selbstregistrierung); COP30/COP90 (GLO-30) via API.
 
 decline redistribution
 url https://sws-data.sws.bom.gov.au/
-note BOM Space Weather API (Australian Bureau of Meteorology) — Copyright, keine ausdrueckliche Redistributions-Erlaubnis. Descope 2026-09-12.
+note BOM Space Weather API (Australian Bureau of Meteorology) — Copyright, keine ausdrueckliche Redistributions-Erlaubnis. Descope 2026-09-12. Party-Messung 2026-09-14: freie Key-Registrierung (sws-data.sws.bom.gov.au/register, CAPTCHA), kostenlos; Redistribution bleibt ungeklärt (decline redistribution hält).
 
 decline redistribution
 url https://nucleus.iaea.org/wiser/
-note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026-09-12.
+note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026-09-12. Party-Messung 2026-09-14: WISER SSO-Wand (VPN-neutral), aber GNIP public domain via data.mendeley.com/datasets/75tsccprd2/1 (1961–2023) + waterisotopesDB.org.
 
 decline metadata-portal
 url https://orfeus-eu.org/submachine/
