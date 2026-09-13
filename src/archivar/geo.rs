@@ -6,6 +6,7 @@ pub const MAGIC_FDSN: [u8; 4] = *b"FDS1";
 pub const MAGIC_GIC: [u8; 4] = *b"GIC1";
 pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
+pub const MAGIC_SLB2: [u8; 4] = *b"SLB2";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
@@ -394,6 +395,37 @@ pub fn parse_gbco(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(out)
 }
 
+pub fn parse_slab2(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC_SLB2 {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * GBCO_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let lat = f64_of(off)?;
+        off += 8;
+        let lon = f64_of(off)?;
+        off += 8;
+        let elev = f64_of(off)?;
+        off += 8;
+        if !lat.is_finite() || !lon.is_finite() || !elev.is_finite() {
+            return None;
+        }
+        out.push(GbcoRec { lat, lon, elev });
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -512,6 +544,41 @@ mod tests {
         assert!(parse_gbco(b"X").is_none());
         assert!(parse_gbco(b"GBCOabc").is_none());
         assert!(parse_gbco(b"BGR1").is_none());
+    }
+
+    #[test]
+    fn slab2_roundtrip_and_rejections() {
+        fn enc(recs: &[(f64, f64, f64)]) -> Vec<u8> {
+            let mut buf = Vec::with_capacity(8 + recs.len() * GBCO_REC_BYTES);
+            buf.extend_from_slice(&MAGIC_SLB2);
+            buf.extend_from_slice(&(recs.len() as u32).to_le_bytes());
+            for (lat, lon, elev) in recs {
+                buf.extend_from_slice(&lat.to_le_bytes());
+                buf.extend_from_slice(&lon.to_le_bytes());
+                buf.extend_from_slice(&elev.to_le_bytes());
+            }
+            buf
+        }
+        let bytes = enc(&[(68.0, 161.05, -10500.0), (50.0, 10.0, -30000.0)]);
+        let parsed = parse_slab2(&bytes).unwrap();
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed[0].lat, 68.0);
+        assert_eq!(parsed[0].lon, 161.05);
+        assert_eq!(parsed[0].elev, -10500.0);
+        assert_eq!(parsed[1].elev, -30000.0);
+
+        assert!(parse_slab2(b"X").is_none());
+        assert!(parse_slab2(b"SLB2abc").is_none());
+        let gbco = write_gbco(&[GbcoRec {
+            lat: 1.0,
+            lon: 2.0,
+            elev: 3.0,
+        }]);
+        assert!(parse_slab2(&gbco).is_none());
+        let short = bytes[..bytes.len() - 1].to_vec();
+        assert!(parse_slab2(&short).is_none());
+        let nan = enc(&[(68.0, 161.05, f64::NAN)]);
+        assert!(parse_slab2(&nan).is_none());
     }
 
     #[test]

@@ -3,7 +3,7 @@
   session: Ernte-Folge 11
   class: handover
   date: 2026-09-13
-  sha256: 092a360667a4efab4f0fd049f3b7371722a31338ce08aeb9c352625d69d6de3d
+  sha256: b9ae8136d68e7ab985dc4f127710b24e204dd0824ad8fe7cafcb303fb0463bae
   status: live
 -->
 # Handover — Ernte-Folge 11 (2026-09-13)
@@ -37,6 +37,20 @@ geteilten Dateien nur die eigenen Hunks; gepusht wird erst, wenn der Baum ruhig 
   serverseitigen Blocks (36-s-Cut/Prep-Abbruch, gemessen 2026-09-12) steht aus;
   Portal-Routen erreichbar (HTTP 200). Die Registrierung (sources.φ,
   hinet-cdn.yml, hinet-Compiler) steht als Socket.
+
+## Weberin — offene Fäden (Ernte)
+
+- Innenplaneten/Monde-Zweitlinie — INPOP/EPM-Kernel für Merkur…Mars + die
+  Monde ernten (zweite unabhängige Abstammung; die Eisriesen tragen sie schon).
+- WWLLN — offener Thunder-Hour-Host (Nachfolger des toten GHRC-ERDDAP), Format
+  + Auflösung; Realtime-Roh ist `not-published` (Mitgliedschaft).
+- NRS-Hydrophon — Position/Identität: NRS02–10/12/13-Koordinaten aus der
+  Netz-Tabelle, Spektren-Anker (nur NRS01/11 tragen SHAPE).
+- INPOP25c-Asteroidenmassen — gravity-Katalogroute (`die-weberin` §1).
+- MPC-Orbits — unabhängige zweite Körper-Linie (`mpcobs_compiler` steht, Route
+  live).
+- Broker-/GW-Positionen — Lasair/ANTARES/Fink loci + bayestar-Sky-Maps:
+  positions-pending (die Richtung trägt der Compiler, die Position fehlt).
 
 ## Offene Pendings
 
