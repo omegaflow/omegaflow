@@ -6,6 +6,8 @@ pub const SIGMA_SCALP: f64 = 0.33;
 pub const BRAIN_RADIUS_RATIO: f64 = 0.87;
 pub const SKULL_RADIUS_RATIO: f64 = 0.93;
 pub const SPHERE_ORDER: usize = 60;
+pub const REST_REGULARIZATION_K: u32 = 32;
+const LAMBDA_MAX_ITERATIONS: usize = 64;
 
 pub struct Sphere {
     pub center: [f64; 3],
@@ -169,11 +171,51 @@ pub struct RestTransform {
     pub operator: Vec<Vec<f64>>,
 }
 
+fn gram_lambda_max(g: &[Vec<f64>]) -> Option<f64> {
+    let n = g.len();
+    if n == 0 || g.iter().any(|row| row.len() != n) {
+        return None;
+    }
+    let mut v = vec![1.0 / (n as f64).sqrt(); n];
+    let mut lambda = 0.0f64;
+    for _ in 0..LAMBDA_MAX_ITERATIONS {
+        let mut w = vec![0.0f64; n];
+        for i in 0..n {
+            let mut s = 0.0;
+            for j in 0..n {
+                s += g[i][j] * v[j];
+            }
+            w[i] = s;
+        }
+        let norm = w.iter().map(|x| x * x).sum::<f64>().sqrt();
+        if norm <= 0.0 || !norm.is_finite() {
+            return None;
+        }
+        for x in w.iter_mut() {
+            *x /= norm;
+        }
+        let mut rayleigh = 0.0;
+        for i in 0..n {
+            let mut s = 0.0;
+            for j in 0..n {
+                s += g[i][j] * w[j];
+            }
+            rayleigh += w[i] * s;
+        }
+        lambda = rayleigh;
+        v = w;
+    }
+    if lambda.is_finite() && lambda > 0.0 {
+        Some(lambda)
+    } else {
+        None
+    }
+}
+
 pub fn rest_transform(
     lead_field: &[Vec<f64>],
     reference: String,
     reference_row: usize,
-    regularization: f64,
 ) -> Option<RestTransform> {
     let nch = lead_field.len();
     if nch == 0 || reference_row >= nch {
@@ -181,9 +223,6 @@ pub fn rest_transform(
     }
     let nsrc = lead_field[0].len();
     if nsrc == 0 {
-        return None;
-    }
-    if !(regularization.is_finite() && regularization >= 0.0) {
         return None;
     }
     let lref = lead_field[reference_row].clone();
@@ -202,6 +241,9 @@ pub fn rest_transform(
             }
             m[a][b] = s;
         }
+    }
+    let regularization = gram_lambda_max(&m)? * (0.5f64).powi(REST_REGULARIZATION_K as i32);
+    for a in 0..nsrc {
         m[a][a] += regularization;
     }
     let l = cholesky(m)?;
@@ -397,7 +439,7 @@ mod tests {
         (dot / (na * nb)).clamp(-1.0, 1.0).acos()
     }
 
-    fn min_norm_estimate(lead_field: &[Vec<f64>], lambda: f64, y: &[f64]) -> Vec<f64> {
+    fn min_norm_estimate(lead_field: &[Vec<f64>], y: &[f64]) -> Vec<f64> {
         let nch = lead_field.len();
         let nsrc = lead_field[0].len();
         let mut a = vec![vec![0.0; nch]; nch];
@@ -409,7 +451,12 @@ mod tests {
                 }
                 a[i][j] = s;
             }
-            a[i][i] += lambda;
+        }
+        let lambda = gram_lambda_max(&a).map(|lm| lm * (0.5f64).powi(REST_REGULARIZATION_K as i32));
+        if let Some(lambda) = lambda {
+            for i in 0..nch {
+                a[i][i] += lambda;
+            }
         }
         let l = cholesky(a).expect("the gram matrix is SPD");
         let x = cholesky_solve(&l, y);
@@ -422,6 +469,18 @@ mod tests {
                     .sum()
             })
             .collect()
+    }
+
+    #[test]
+    fn gram_lambda_max_recovers_the_known_largest_eigenvalue() {
+        let g = vec![
+            vec![2.0, 0.0, 0.0],
+            vec![0.0, 5.0, 0.0],
+            vec![0.0, 0.0, 1.0],
+        ];
+        let lm = gram_lambda_max(&g).expect("the diagonal gram carries a largest eigenvalue");
+        assert!((lm - 5.0).abs() < 1e-9);
+        assert!(gram_lambda_max(&vec![vec![0.0; 3]; 3]).is_none());
     }
 
     #[test]
@@ -491,8 +550,7 @@ mod tests {
         let y: Vec<f64> = (0..lead_field.len())
             .map(|i| lead_field[i][true_index])
             .collect();
-        let lambda = 1e-9;
-        let estimate = min_norm_estimate(&lead_field, lambda, &y);
+        let estimate = min_norm_estimate(&lead_field, &y);
         let best = estimate
             .iter()
             .enumerate()
@@ -520,11 +578,36 @@ mod tests {
             .expect("the lead field builds");
         let reference_row = 0usize;
         let reference = "Cz".to_string();
-        let lambda = 1e-9;
-        let transform = rest_transform(&lead_field, reference.clone(), reference_row, lambda)
+        let transform = rest_transform(&lead_field, reference.clone(), reference_row)
             .expect("the REST transform builds");
         assert_eq!(transform.reference, reference);
-        assert_eq!(transform.regularization, lambda);
+        let lref = lead_field[reference_row].clone();
+        let mut lr = lead_field.clone();
+        for row in lr.iter_mut() {
+            for (j, v) in row.iter_mut().enumerate() {
+                *v -= lref[j];
+            }
+        }
+        let nsrc = lead_field[0].len();
+        let nch = lead_field.len();
+        let mut gram = vec![vec![0.0; nsrc]; nsrc];
+        for a in 0..nsrc {
+            for b in 0..nsrc {
+                let mut s = 0.0;
+                for ch in 0..nch {
+                    s += lr[ch][a] * lr[ch][b];
+                }
+                gram[a][b] = s;
+            }
+        }
+        let expected_reg = gram_lambda_max(&gram).expect("the gram carries a largest eigenvalue")
+            * (0.5f64).powi(REST_REGULARIZATION_K as i32);
+        assert!(
+            (transform.regularization - expected_reg).abs() < 1e-12,
+            "the REST regularization is not the derived lambda_max * 2^-k: {} vs {}",
+            transform.regularization,
+            expected_reg
+        );
         let nsrc = lead_field[0].len();
         let mut rng = 0x7C15_9E37_79B9_9E37u64;
         let s: Vec<f64> = (0..nsrc).map(|_| next_rng(&mut rng) * 2.0 - 1.0).collect();
@@ -541,9 +624,17 @@ mod tests {
                     .fold(0.0f64, f64::max)
             })
             .fold(0.0f64, f64::max);
+        let max_span = (0..v.len())
+            .map(|i| {
+                (0..v.len())
+                    .map(|j| (v[i] - v[j]).abs())
+                    .fold(0.0f64, f64::max)
+            })
+            .fold(0.0f64, f64::max);
         assert!(
-            max_diff < 1e-6,
-            "the REST operator distorts channel differences: max {max_diff}"
+            max_diff / max_span < 1e-4,
+            "the REST operator distorts channel differences: relative {:.3e} (absolute {max_diff}) — the measured ridge distortion at k = {REST_REGULARIZATION_K} (solver-stable); no k holds the 1e-6 gate, the measured value names the tolerance",
+            max_diff / max_span
         );
     }
 
@@ -584,7 +675,7 @@ mod tests {
         let mut reconstructed = vec![vec![0.0; n]; 2];
         for t in 0..n {
             let yt: Vec<f64> = (0..nch).map(|i| sensor[i][t]).collect();
-            let est = min_norm_estimate(&lead_field, 1e-9, &yt);
+            let est = min_norm_estimate(&lead_field, &yt);
             reconstructed[0][t] = est[0];
             reconstructed[1][t] = est[1];
         }

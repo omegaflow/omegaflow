@@ -556,6 +556,12 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         }) {
             out.push(e.clone());
         }
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk-satellites" && base_of(&e.name) == "jup365")
+        {
+            out.push(e.clone());
+        }
         out.sort_by(|a, b| a.name.cmp(&b.name));
         return out;
     }
@@ -904,6 +910,8 @@ const JUICE_SWITCH_FRAME: i32 = -28000;
 const JUICE_COG_BODY: i32 = -28;
 const JUICE_COG_OFFSET_M: [f64; 3] = [0.0, 0.0, -1.5322];
 const JUICE_COG_GRANULE_DAYS: f64 = 0.25;
+const JUICE_COG_REFINE_THRESHOLD_SCALE: u32 = 3;
+const JUICE_COG_REFINE_DEPTH: u32 = 3;
 
 fn matvec(m: &[f64; 9], v: &[f64; 3]) -> [f64; 3] {
     [
@@ -961,6 +969,179 @@ fn juice_center_coverage(spk_files: &[SpkFile]) -> Option<(f64, f64)> {
     }
 }
 
+fn juice_cog_position(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    et: f64,
+) -> Option<[f64; 3]> {
+    let center = state_ssb_multi(spk_files, JUICE_COG_BODY, et)?;
+    let attitude = switch_attitude_at(ck_files, sclk_files, aligned, et)?;
+    let off = matvec(&attitude, &JUICE_COG_OFFSET_M);
+    Some([
+        center[0] * 1000.0 + off[0],
+        center[1] * 1000.0 + off[1],
+        center[2] * 1000.0 + off[2],
+    ])
+}
+
+fn fit_cog_granule(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    let mid_et = (mid_jd - J2000_EPOCH) * 86400.0;
+    let half_sec = half_jd * 86400.0;
+    let mut sx = Vec::with_capacity(nodes.len());
+    let mut sy = Vec::with_capacity(nodes.len());
+    let mut sz = Vec::with_capacity(nodes.len());
+    for tau in nodes {
+        let et = mid_et + tau * half_sec;
+        let p = juice_cog_position(spk_files, ck_files, sclk_files, aligned, et)?;
+        sx.push(p[0]);
+        sy.push(p[1]);
+        sz.push(p[2]);
+    }
+    let combined: Vec<(f64, f64, f64)> = (0..sx.len()).map(|k| (sx[k], sy[k], sz[k])).collect();
+    chebyshev_fit(&combined, CHEBYSHEV_DEGREE)
+}
+
+fn cog_granule_roundtrip(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+    cx: &[f64],
+    cy: &[f64],
+    cz: &[f64],
+) -> f64 {
+    let mid_et = (mid_jd - J2000_EPOCH) * 86400.0;
+    let half_sec = half_jd * 86400.0;
+    let mut cxa = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    let mut cya = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    let mut cza = [0.0f64; omegaflow::archivar::CHEBYSHEV_N];
+    for k in 0..cxa.len().min(cx.len()) {
+        cxa[k] = cx[k];
+        cya[k] = cy[k];
+        cza[k] = cz[k];
+    }
+    let mut max_err = 0.0f64;
+    for tau in nodes {
+        let et = mid_et + tau * half_sec;
+        let Some(p) = juice_cog_position(spk_files, ck_files, sclk_files, aligned, et) else {
+            continue;
+        };
+        let dx = omegaflow::archivar::chebyshev_evaluate(&cxa, *tau) - p[0];
+        let dy = omegaflow::archivar::chebyshev_evaluate(&cya, *tau) - p[1];
+        let dz = omegaflow::archivar::chebyshev_evaluate(&cza, *tau) - p[2];
+        let e = (dx * dx + dy * dy + dz * dz).sqrt();
+        if e > max_err {
+            max_err = e;
+        }
+    }
+    max_err
+}
+
+fn split_cog_granule(
+    spk_files: &[SpkFile],
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    fit_nodes: &[f64],
+    probe_nodes: &[f64],
+    mid_jd: f64,
+    half_jd: f64,
+    depth: u32,
+    threshold: f64,
+    cx: &[f64],
+    cy: &[f64],
+    cz: &[f64],
+    out: &mut Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
+) {
+    let err = cog_granule_roundtrip(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        probe_nodes,
+        mid_jd,
+        half_jd,
+        cx,
+        cy,
+        cz,
+    );
+    if err <= threshold || depth >= JUICE_COG_REFINE_DEPTH {
+        out.push((mid_jd, half_jd, cx.to_vec(), cy.to_vec(), cz.to_vec()));
+        return;
+    }
+    let child_half = half_jd / 2.0;
+    let left = fit_cog_granule(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        fit_nodes,
+        mid_jd - child_half,
+        child_half,
+    );
+    let right = fit_cog_granule(
+        spk_files,
+        ck_files,
+        sclk_files,
+        aligned,
+        fit_nodes,
+        mid_jd + child_half,
+        child_half,
+    );
+    match (left, right) {
+        (Some((lcx, lcy, lcz)), Some((rcx, rcy, rcz))) => {
+            split_cog_granule(
+                spk_files,
+                ck_files,
+                sclk_files,
+                aligned,
+                fit_nodes,
+                probe_nodes,
+                mid_jd - child_half,
+                child_half,
+                depth + 1,
+                threshold,
+                &lcx,
+                &lcy,
+                &lcz,
+                out,
+            );
+            split_cog_granule(
+                spk_files,
+                ck_files,
+                sclk_files,
+                aligned,
+                fit_nodes,
+                probe_nodes,
+                mid_jd + child_half,
+                child_half,
+                depth + 1,
+                threshold,
+                &rcx,
+                &rcy,
+                &rcz,
+                out,
+            );
+        }
+        _ => {
+            out.push((mid_jd, half_jd, cx.to_vec(), cy.to_vec(), cz.to_vec()));
+        }
+    }
+}
+
 fn flatten_juice_cog(
     spk_files: &[SpkFile],
     fk: &FkFile,
@@ -1015,55 +1196,101 @@ fn flatten_juice_cog(
         }
     }
     let granule_days = JUICE_COG_GRANULE_DAYS;
-    let granule_half_sec = granule_days * 86400.0 / 2.0;
+    let half_jd = granule_days / 2.0;
     let n_granules = ((max_et - min_et) / (granule_days * 86400.0)).ceil() as usize;
-    let cheb_nodes = chebyshev_nodes(N_SAMPLES);
-    let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+    let fit_nodes = chebyshev_nodes(N_SAMPLES);
+    let probe_nodes = chebyshev_nodes(2 * N_SAMPLES);
+    let mut coarse: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
     for i in 0..n_granules {
         let mid_et = min_et + (i as f64 + 0.5) * granule_days * 86400.0;
         let mid_jd = mid_et / 86400.0 + J2000_EPOCH;
-        let half_jd = granule_days / 2.0;
-        let mut sx = Vec::with_capacity(N_SAMPLES);
-        let mut sy = Vec::with_capacity(N_SAMPLES);
-        let mut sz = Vec::with_capacity(N_SAMPLES);
-        let mut valid = true;
-        for tau in &cheb_nodes {
-            let et = mid_et + tau * granule_half_sec;
-            let center = match state_ssb_multi(spk_files, JUICE_COG_BODY, et) {
-                Some(c) => c,
-                None => {
-                    valid = false;
-                    break;
-                }
-            };
-            let attitude = match switch_attitude_at(ck_files, sclk_files, &aligned, et) {
-                Some(m) => m,
-                None => {
-                    valid = false;
-                    break;
-                }
-            };
-            let off = matvec(&attitude, &JUICE_COG_OFFSET_M);
-            sx.push(center[0] * 1000.0 + off[0]);
-            sy.push(center[1] * 1000.0 + off[1]);
-            sz.push(center[2] * 1000.0 + off[2]);
-        }
-        if !valid {
-            continue;
-        }
-        let combined: Vec<(f64, f64, f64)> =
-            (0..N_SAMPLES).map(|k| (sx[k], sy[k], sz[k])).collect();
-        if let Some((cx, cy, cz)) = chebyshev_fit(&combined, CHEBYSHEV_DEGREE) {
-            granules.push((mid_jd, half_jd, cx, cy, cz));
+        if let Some((cx, cy, cz)) = fit_cog_granule(
+            spk_files, ck_files, sclk_files, &aligned, &fit_nodes, mid_jd, half_jd,
+        ) {
+            coarse.push((mid_jd, half_jd, cx, cy, cz));
         }
     }
+    let mut coarse_errs: Vec<f64> = coarse
+        .iter()
+        .map(|(t0, h, cx, cy, cz)| {
+            cog_granule_roundtrip(
+                spk_files,
+                ck_files,
+                sclk_files,
+                &aligned,
+                &probe_nodes,
+                *t0,
+                *h,
+                cx,
+                cy,
+                cz,
+            )
+        })
+        .collect();
+    coarse_errs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let p99_uniform = if coarse_errs.is_empty() {
+        0.0
+    } else {
+        let idx = ((coarse_errs.len() as f64) * 0.99) as usize;
+        coarse_errs[idx.min(coarse_errs.len() - 1)]
+    };
+    let threshold = p99_uniform * (2.0f64).powi(JUICE_COG_REFINE_THRESHOLD_SCALE as i32);
+    let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+    for (mid_jd, h, cx, cy, cz) in coarse {
+        split_cog_granule(
+            spk_files,
+            ck_files,
+            sclk_files,
+            &aligned,
+            &fit_nodes,
+            &probe_nodes,
+            mid_jd,
+            h,
+            0,
+            threshold,
+            &cx,
+            &cy,
+            &cz,
+            &mut granules,
+        );
+    }
     granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    let final_errs: Vec<f64> = granules
+        .iter()
+        .map(|(t0, h, cx, cy, cz)| {
+            cog_granule_roundtrip(
+                spk_files,
+                ck_files,
+                sclk_files,
+                &aligned,
+                &probe_nodes,
+                *t0,
+                *h,
+                cx,
+                cy,
+                cz,
+            )
+        })
+        .collect();
+    let final_max = final_errs.iter().cloned().fold(0.0f64, f64::max);
+    let mut sorted_errs = final_errs.clone();
+    sorted_errs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let final_p99 = if sorted_errs.is_empty() {
+        0.0
+    } else {
+        let idx = ((sorted_errs.len() as f64) * 0.99) as usize;
+        sorted_errs[idx.min(sorted_errs.len() - 1)]
+    };
     emit(&format!(
-        "juice_cog: switch resolved to {:?}, center coverage [{:.3}, {:.3}] et, {} granules",
+        "juice_cog: switch resolved to {:?}, center coverage [{:.3}, {:.3}] et, {} granules (coarse p99 {:.2} m, threshold {:.2} m, roundtrip max {:.2} m, p99 {:.2} m)",
         aligned.iter().map(|f| f.id).collect::<Vec<_>>(),
         min_et,
         max_et,
-        granules.len()
+        granules.len(),
+        p99_uniform,
+        threshold,
+        final_max,
+        final_p99
     ));
     let absent = PckBody::absent();
     let written = write_binary(
@@ -1075,8 +1302,18 @@ fn flatten_juice_cog(
         &absent,
         None,
     );
-    if written && ci_mode && !upload_asset("ephemeris_juice_cog.bin") {
-        emit("juice_cog: upload returned void");
+    let mut reached_cdn = false;
+    if written && ci_mode {
+        if upload_asset("ephemeris_juice_cog.bin") {
+            reached_cdn = true;
+            emit("upload ephemeris_juice_cog.bin → CDN");
+        } else {
+            emit("juice_cog: upload returned void");
+        }
+    }
+    if ci_mode && !reached_cdn {
+        eprintln!("juice_cog: ephemeris_juice_cog.bin did not reach the CDN");
+        std::process::exit(1);
     }
     written
 }
@@ -1099,7 +1336,7 @@ fn select_juice_cog(entries: &[IndexEntry]) -> Vec<IndexEntry> {
     }
     for e in entries
         .iter()
-        .filter(|e| e.family == "spk" && e.name.starts_with("jup365_"))
+        .filter(|e| e.family == "spk-satellites" && base_of(&e.name) == "jup365")
     {
         out.push(e.clone());
     }
@@ -1587,12 +1824,19 @@ fn main() {
             return;
         }
         let mut selected = Vec::new();
+        let mut seen = HashSet::new();
         for sys in &systems {
-            selected.extend(select_system(&entries, sys));
+            for e in select_system(&entries, sys) {
+                if seen.insert(e.name.clone()) {
+                    selected.push(e);
+                }
+            }
         }
         for name in &extras {
             if let Some(e) = entries.iter().find(|e| &e.name == name) {
-                selected.push(e.clone());
+                if seen.insert(e.name.clone()) {
+                    selected.push(e.clone());
+                }
             }
         }
         if selected.is_empty() {
