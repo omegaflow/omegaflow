@@ -412,7 +412,7 @@ note HTTP 404 — Endpoint weg.
 
 decline image
 url https://ams02.space/
-note AMS-02-Flusstabellen existieren nur als Papier-Abbildung (PNG/PDF, z. B. PhysRevLett.117.231102.Fig3_.png); kein maschinenlesbarer Flux-Endpoint (.txt/.csv/.dat/.root/.h5/.fits/.json absent; https://ams02.space/ und /physics/* 200, 2026-09-11). Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) ist ein Teilchen-Kanal — die 9er-Force-Registry trägt kein CR/ν-Medium (§12.6 Registry-Frage pending).
+note AMS-02-Flusstabellen existieren nur als Papier-Abbildung (PNG/PDF, z. B. PhysRevLett.117.231102.Fig3_.png); kein maschinenlesbarer Flux-Endpoint (.txt/.csv/.dat/.root/.h5/.fits/.json absent; https://ams02.space/ und /physics/* 200, 2026-09-11). Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) ist ein Teilchen-Kanal — die 9er-Force-Registry trägt kein CR/ν-Medium (Teilchen ist Abstammung, nicht Kraft — die-weberin.md:104-109; SOURCE_PORT.md §12.6 ausgerichtet). Party-Messung 2026-09-14: maschinenlesbarer Fluss — HEASARC AMS02SPEC + AMS02RATES (FITS/TDAT).
 
 integrated
 url https://antares.noirlab.edu/api/v1/
@@ -2336,7 +2336,7 @@ note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a
 
 decline redundant
 url https://irsa.ipac.caltech.edu/TAP/sync
-note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS). 2026-09-06 (scanner route): the AllWISE cone on this TAP (nadel_gate.rs allwise_cone/allwise_witness, table allsky_4band_p3as_psd, columns ra/dec/w1mpro-w4mpro/w1sigmpro, FORMAT=csv, anonymous, curl-verified HTTP 200) stays decline redundant as a FIELD source — static photometry without distance (holdings verdict dead_sources.φ, W1/W2 redundant to the AllWISE CDN asset). The gate reads it only as identity_join crossmatch reference for the natural-class decision (W1-W2 AGN wedge, Stern et al. 2012), never as an oscillator value — the decline covers the scanner route; no silent source entry in sources.φ.
+note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS). Party-Messung 2026-09-14: kein keyless JSON/CSV-Fluss; nur FITS-Pfad (SIA2 COLLECTION=spherex_qr2). 2026-09-06 (scanner route): the AllWISE cone on this TAP (nadel_gate.rs allwise_cone/allwise_witness, table allsky_4band_p3as_psd, columns ra/dec/w1mpro-w4mpro/w1sigmpro, FORMAT=csv, anonymous, curl-verified HTTP 200) stays decline redundant as a FIELD source — static photometry without distance (holdings verdict dead_sources.φ, W1/W2 redundant to the AllWISE CDN asset). The gate reads it only as identity_join crossmatch reference for the natural-class decision (W1-W2 AGN wedge, Stern et al. 2012), never as an oscillator value — the decline covers the scanner route; no silent source entry in sources.φ.
 
 decline redundant
 url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
@@ -4808,7 +4808,7 @@ note Telescope Array — Amaterasu (DOI 10.5281/zenodo.8427755): ein einzelnes U
 
 decline model
 url https://zenodo.org/records/10594301
-note GIC-Zenodo Alberta 2023 (DOI 10.5281/zenodo.10594301; DataCite gemessen HTTP 200, 10 002 B; Zenodo-API 504 zum Messzeitpunkt): die Dateien sind Mag_Data.zip / Magnetotelluric_Data.zip / Network_Data.xlsx — die GIC sind MODELLIERT (aus MT + Netzwerk), kein netCDF-Messwert, statisches Archiv (Oszillator-Gate: Modell-Ausgabe). Die geomagnetische Mag_Data.zip trägt echte em-Messung (Magnetometer, nT) als gezippter IAGA-Text — parser-def/pending falls je ein ZIP+IAGA-Reader gebaut wird.
+note GIC-Zenodo Alberta 2023 (DOI 10.5281/zenodo.10594301; DataCite gemessen HTTP 200, 10 002 B; Zenodo-API 504 zum Messzeitpunkt): die Dateien sind Mag_Data.zip / Magnetotelluric_Data.zip / Network_Data.xlsx — die GIC sind MODELLIERT (aus MT + Netzwerk), kein netCDF-Messwert, statisches Archiv (Oszillator-Gate: Modell-Ausgabe). Die geomagnetische Mag_Data.zip trägt echte em-Messung (Magnetometer, nT) als gezippter IAGA-Text — parser-def/pending falls je ein ZIP+IAGA-Reader gebaut wird. Party-Messung 2026-09-14: kiagateway (crates.io) + INTERMAGNET (intermagnet.org HTTP 200); kein dediziertes Rust-IAGA2002-Crate.
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
