@@ -26,21 +26,19 @@ jobs:
             exit 0
           fi
           echo "asset d20_thermocline.csv missing — compiling and manifesting"
-      - name: Cascade-harvest the d20 source from the runner (curl → r.jina.ai reader)
+      - name: Harvest the d20 source from the runner (curl, pmel with a CoastWatch mirror)
         run: |
           d_end=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00Z)
           d_start=$(date -u -d '127 days ago' +%Y-%m-%dT00:00:00Z)
           direct="https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv?time,longitude,latitude,station,ISO_6,QI_5006&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>=${d_start}&time<=${d_end}"
           mirror="https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyIso.csv?time%2Clongitude%2Clatitude%2Cstation%2CISO_6%2CQI_5006&latitude%3E=-2&latitude%3C=2&longitude%3E=200&longitude%3C=280&time%3E=${d_start}&time%3C=${d_end}"
-          curl -sSL -m 30 -o /dev/null -w 'direct_route_http=%{http_code}\n' "$direct" || \
-            echo "direct route refused from the runner — cascade via the r.jina.ai reader"
-          if ! curl -sSL -m 180 -H 'X-Return-Format: text' -o d20_thermocline_raw.csv "https://r.jina.ai/${mirror}"; then
-            echo "cascade fetch returned void from the runner (r.jina.ai or coastwatch refused)"
-            exit 1
+          if ! curl -sSL -m 120 -o d20_thermocline_raw.csv "$direct"; then
+            echo "pmel direct route refused from the runner — falling back to the CoastWatch mirror"
+            curl -sSL -m 180 -o d20_thermocline_raw.csv "$mirror"
           fi
           test "$(wc -c < d20_thermocline_raw.csv)" -gt 50000
           head -1 d20_thermocline_raw.csv | grep -qx 'time,longitude,latitude,station,ISO_6,QI_5006'
-          echo "cascade harvest measured: $(wc -c < d20_thermocline_raw.csv) bytes from the runner route"
+          echo "harvest measured: $(wc -c < d20_thermocline_raw.csv) bytes from the runner route"
       - name: Ensure the data.pmel.noaa.gov release exists on the CDN
         run: |
           if ! gh release view data.pmel.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then

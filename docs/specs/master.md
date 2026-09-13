@@ -5,7 +5,7 @@
 -->
 STATUS: LIVE
 
-Here is the consolidated master document for OMEGAFLOW. It serves as architectural manifest, status report, and blueprint at once. It unites your vision, the hardware-specific reality, the software architecture, and the recently completed system updates (like Jina AI and the deletion of non-physical data).
+Here is the consolidated master document for OMEGAFLOW. It serves as architectural manifest, status report, and blueprint at once. It unites your vision, the hardware-specific reality, the software architecture, and the recently completed system updates (like the userspace Proton exit and the deletion of non-physical data).
 
 ***
 
@@ -24,12 +24,12 @@ The system was realized on an 8-year-old ultrabook (XPS 13 2016, i5, 8GB RAM, In
 *   **Mathematikerin (browser/WebGPU):** uses the browser sandbox exclusively for what it was built for: WebGPU, WebSerial, WebXR, and sensors.
 *   **The pipeline:** Rust parses raw APIs/CDNs into flat, binary little-endian arrays (`φ(x,y,z,t)`) and pushes these via WebSocket directly into the VRAM of the GPU. No JSON parsing in the frontend. No latency.
 
-## 3. The data pipeline: CI, CDN & Jina AI
+## 3. The data pipeline: CI, CDN & the Proton exit
 Data acquisition is strictly separated in latency and preprocessing, so the local Archivar is never blocked:
 
 *   **CI pipeline (CDN, TTL >= 300s):** heavy SPICE kernels and complex APIs get preprocessed in GitHub Actions, normalized, and placed as static, timestamped `.json` or `.bin` files on a CDN. The Archivar only loads flat, lightning-fast files.
 *   **Live data (TTL < 300s):** get fetched directly by Rust via `curl`.
-*   **The Jina AI gateway (universal flattener):** by prefixing `https://r.jina.ai/`, the whole internet (HTML, XML, RSS) becomes flat text/JSON. Jina acts as a semantic IO filter that removes the noise (tags, scripts) and even delivers provenance metadata. Rust jumps via `find('{')` directly to the core of the data.
+*   **The Proton exit (network escalation):** `bin/proton-wg.sh <cc>` brings up a userspace Proton WireGuard exit (wireproxy, no root); `ALL_PROXY` routes the Archivar's `curl` fetches through it, so geo- and datacenter-IP blocks are bypassed without any code change. Direct curl stays the baseline; the exit opens the blocked remainder.
 *   **The data cut (A = A):** 118 non-physical data sources (biodiversity, global statistics, PDG constants) were radically deleted. The system now shows the pure, geophysical shell of the Earth (buoys, earthquakes, currents, solar winds). No categorical strings, only scalar forces.
 
 ## 4. The physics engine (Rust & WGSL)
@@ -54,7 +54,7 @@ The logical continuation of the WebGPU interface. An ESP32-S3 acts as a physical
 | **Rust zero-dependency server** | ✅ Live | TCP/WS/HTTP/JSON/SHA1 written completely in `std`. |
 | **ICRS / TDB spacetime** | ✅ Live | Earth and Sun dethroned, pure barycentric coordinates. |
 | **CDN pipeline (CI)** | ✅ Live | GitHub Actions flatten SPICE/APIs into static files. |
-| **Jina AI integration** | ✅ Live | universal proxy and HTML/XML flattener for `sources.φ`. |
+| **Proton exit (userspace)** | ✅ Live | `bin/proton-wg.sh` + wireproxy; `ALL_PROXY` routes the Archivar fetches. |
 | **Causality prefilter** | ✅ Live | `motion.at()` early exit for spacelike samples. |
 | **Vertex-shader point cloud** | ✅ Live | discrete oscillators, scale-invariant, additive blending. |
 | **ESP32 hardware prototype** | 🟡 Plan | YAML spec stands, firmware `no_std` in Rust outstanding. |
@@ -63,4 +63,4 @@ The logical continuation of the WebGPU interface. An ESP32-S3 acts as a physical
 | **`kepler_map` parser** | ⚠️ Open | inline parsing of MPC asteroid data in Rust (currently bypassed via CDN). |
 
 ## 7. Conclusion
-OmegaFlow is the absolute best-of-breed solution for the intuitive, unembellished manifestation of physical reality on minimized hardware. Through the radical separation of semantics (Jina), preprocessing (CI), local cache (Rust RAM), and manifestation (WebGPU VRAM), a system was created that unites scientific reproducibility with cybernetic art. It is no tool, it is a sensorium.
+OmegaFlow is the absolute best-of-breed solution for the intuitive, unembellished manifestation of physical reality on minimized hardware. Through the radical separation of preprocessing (CI), local cache (Rust RAM), and manifestation (WebGPU VRAM), a system was created that unites scientific reproducibility with cybernetic art. It is no tool, it is a sensorium.

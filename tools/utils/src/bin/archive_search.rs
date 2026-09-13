@@ -294,18 +294,7 @@ fn main() {
                     std::process::exit(2);
                 }
             };
-            let env_map = match find_repo_root() {
-                Some(repo) => secrets::load_env(&repo),
-                None => env::vars().collect(),
-            };
-            let jina_key = secrets::resolve_secret(
-                env_map
-                    .get("JINA_API_KEY")
-                    .map(String::as_str)
-                    .unwrap_or(""),
-                &env_map,
-            );
-            let lines = net::verdict_lines(&url, &jina_key);
+            let lines = net::verdict_lines(&url);
             print_lines(&lines);
         }
         Mode::Playwright => {
