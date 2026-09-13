@@ -238,16 +238,15 @@ pub fn parse_rinex_header(body: &str) -> Option<RinexHeader> {
                 approx_pos_xyz = Some((x, y, z));
             }
         } else if label.ends_with("# / TYPES OF OBSERV") {
-            if let Some(n) = rinex_num(slice(line, 0, 6).unwrap_or("")).map(|v| v as usize) {
-                for k in 0..n {
-                    let at = 6 + 6 * k;
-                    if let Some(w) = slice(line, at, at + 6) {
-                        let w = w.trim();
-                        if !w.is_empty() {
-                            obs_types.push(w.to_string());
-                        }
+            let mut at = 6usize;
+            while at + 6 <= 60 {
+                if let Some(w) = slice(line, at, at + 6) {
+                    let w = w.trim();
+                    if !w.is_empty() {
+                        obs_types.push(w.to_string());
                     }
                 }
+                at += 6;
             }
         } else if label == "INTERVAL" {
             interval_s = rinex_num(slice(line, 0, 10).unwrap_or(""));
@@ -491,12 +490,12 @@ pub struct RinexObsEpoch {
 }
 
 fn obs_epoch_unix(line: &str) -> Option<f64> {
-    let y = slice(line, 3, 5)?.trim().parse::<i64>().ok()?;
-    let mo = slice(line, 6, 8)?.trim().parse::<u32>().ok()?;
-    let d = slice(line, 9, 11)?.trim().parse::<u32>().ok()?;
-    let h = slice(line, 12, 14)?.trim().parse::<u32>().ok()?;
-    let mi = slice(line, 15, 17)?.trim().parse::<u32>().ok()?;
-    let se = rinex_num(slice(line, 18, 29).unwrap_or(""))?;
+    let y = slice(line, 0, 3)?.trim().parse::<i64>().ok()?;
+    let mo = slice(line, 3, 6)?.trim().parse::<u32>().ok()?;
+    let d = slice(line, 6, 9)?.trim().parse::<u32>().ok()?;
+    let h = slice(line, 9, 12)?.trim().parse::<u32>().ok()?;
+    let mi = slice(line, 12, 15)?.trim().parse::<u32>().ok()?;
+    let se = rinex_num(slice(line, 15, 26).unwrap_or(""))?;
     civil_unix(two_digit_year(y), mo, d, h, mi, se)
 }
 
@@ -510,7 +509,7 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
     i += 1;
     while i < lines.len() {
         let line = lines[i];
-        if line.len() < 29 {
+        if line.len() < 32 {
             i += 1;
             continue;
         }
@@ -518,14 +517,14 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
             i += 1;
             continue;
         };
-        let flag = match slice(line, 30, 32).and_then(|s| s.trim().parse::<u32>().ok()) {
+        let flag = match slice(line, 26, 29).and_then(|s| s.trim().parse::<u32>().ok()) {
             Some(v) => v,
             None => {
                 i += 1;
                 continue;
             }
         };
-        let n_sat = match slice(line, 32, 35).and_then(|s| s.trim().parse::<usize>().ok()) {
+        let n_sat = match slice(line, 29, 32).and_then(|s| s.trim().parse::<usize>().ok()) {
             Some(v) => v,
             None => {
                 i += 1;
@@ -536,31 +535,52 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
             i += 1;
             continue;
         }
+        let mut sats: Vec<String> = Vec::with_capacity(n_sat);
+        let mut cur = line;
+        loop {
+            let mut at = 32usize;
+            while at + 3 <= cur.len() && sats.len() < n_sat {
+                let sat = cur.get(at..at + 3).unwrap_or("").trim().to_string();
+                if !sat.is_empty() {
+                    sats.push(sat);
+                }
+                at += 3;
+            }
+            if sats.len() >= n_sat || i + 1 >= lines.len() {
+                break;
+            }
+            i += 1;
+            cur = lines[i];
+        }
         i += 1;
+        let lines_per_sat = (n_obs + 4) / 5;
         let mut epoch = RinexObsEpoch {
             epoch_unix,
             epoch_flag: flag,
             sats: Vec::new(),
         };
-        for _ in 0..n_sat {
+        for sat in sats {
             if i >= lines.len() {
                 break;
             }
-            let sat_line = lines[i];
-            let sat = sat_line.get(0..3).unwrap_or("").trim().to_string();
-            if sat.is_empty() {
-                break;
-            }
-            i += 1;
-            let mut values = Vec::new();
-            let mut at = 3usize;
-            for _ in 0..n_obs {
-                if sat_line.len() < at + 14 {
+            let mut values = Vec::with_capacity(n_obs);
+            for _ in 0..lines_per_sat {
+                if i >= lines.len() {
                     break;
                 }
-                let v = rinex_num(&sat_line[at..at + 14]);
-                values.push(v);
-                at += 16;
+                let rec_line = lines[i];
+                let mut at = 0usize;
+                for _ in 0..5 {
+                    if values.len() >= n_obs {
+                        break;
+                    }
+                    if rec_line.len() < at + 14 {
+                        break;
+                    }
+                    values.push(rinex_num(&rec_line[at..at + 14]));
+                    at += 16;
+                }
+                i += 1;
             }
             if !values.is_empty() {
                 epoch.sats.push(RinexObsSat { sat, values });
@@ -679,22 +699,33 @@ mod tests {
             "                                                            END OF HEADER       \n",
         );
         let epoch = format!(
-            "{:>2} {:02} {:>2} {:>2} {:>2} {:>2} {:>11.7} {:>2}{:>3}",
-            0u32, 24u32, 1u32, 4u32, 0u32, 0u32, 0.0, 0u32, 2u32
+            "{:>3}{:>3}{:>3}{:>3}{:>3}{:>11.7}{:>3}{:>3}G01G02",
+            24i64, 1i64, 4i64, 0i64, 0i64, 0.0, 0i64, 2i64
         );
         s.push_str(&epoch);
         s.push('\n');
-        let sat1 = format!(
-            "G01{:>14.3}  {:>14.3}  {:>14}  {:>14.3}",
-            21345678.123f64, -12345678.123f64, "", 1234.567f64
-        );
-        let sat2 = format!(
-            "G02{:>14.3}  {:>14.3}  {:>14}  {:>14.3}",
-            21345679.123f64, -12345679.123f64, "", 1234.567f64
-        );
-        s.push_str(&sat1);
+        let cell = |v: Option<f64>| -> String {
+            match v {
+                Some(x) => format!("{x:>14.3}  "),
+                None => "                ".to_string(),
+            }
+        };
+        let rec = |c1: Option<f64>, l1: Option<f64>, s1: Option<f64>, d1: Option<f64>| {
+            format!("{}{}{}{}", cell(c1), cell(l1), cell(s1), cell(d1))
+        };
+        s.push_str(&rec(
+            Some(21345678.123),
+            Some(-12345678.123),
+            None,
+            Some(1234.567),
+        ));
         s.push('\n');
-        s.push_str(&sat2);
+        s.push_str(&rec(
+            Some(21345679.123),
+            Some(-12345679.123),
+            None,
+            Some(1234.567),
+        ));
         s.push('\n');
         s
     }
@@ -732,8 +763,12 @@ mod tests {
         let epochs = parse_rinex_obs(&obs_file(), 4);
         assert_eq!(epochs.len(), 1);
         let e = &epochs[0];
+        assert_eq!(e.epoch_flag, 0);
+        let expected = civil_unix(2024, 1, 4, 0, 0, 0.0).unwrap();
+        assert!((e.epoch_unix - expected).abs() < 1e-9);
         assert_eq!(e.sats.len(), 2);
         assert_eq!(e.sats[0].sat, "G01");
+        assert_eq!(e.sats[1].sat, "G02");
         assert_eq!(e.sats[0].values.len(), 4);
         assert!((e.sats[0].values[0].unwrap() - 21345678.123).abs() < 1e-3);
         assert!(e.sats[0].values[2].is_none(), "blank S1 stays absent");

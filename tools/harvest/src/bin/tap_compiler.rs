@@ -345,9 +345,8 @@ fn cell_num(c: &JsonVal) -> Option<f64> {
     }
 }
 
-fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
-    let body = tap_query(root, adql)?;
-    let parsed = parse_json(&body)?;
+fn json_metadata_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let parsed = parse_json(body)?;
     let (meta_opt, data) = match &parsed {
         JsonVal::Obj(m) => (
             m.get("metadata")
@@ -398,6 +397,11 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
         rows.push(cells);
     }
     Some((col_names, rows))
+}
+
+fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query(root, adql)?;
+    json_metadata_rows(&body)
 }
 
 const STAR_BIN_STRIDE: usize = 44;
@@ -1740,7 +1744,7 @@ fn row_str(j: &JsonVal) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::dedup_crossmatch;
+    use super::{dedup_crossmatch, json_metadata_rows};
 
     fn row(ra: &str, dec: &str, dist: &str) -> Vec<String> {
         vec![ra.to_string(), dec.to_string(), dist.to_string()]
@@ -1798,5 +1802,38 @@ mod tests {
     fn dedup_empty_rows_is_empty() {
         let out = dedup_crossmatch(Vec::new(), 0, 1, Some(2));
         assert!(out.is_empty());
+    }
+
+    #[test]
+    fn json_metadata_rows_resolve_named_column() {
+        let fixture = r#"{
+            "metadata": [
+                {"name": "s_ra", "datatype": "double", "ucd": "pos.eq.ra"},
+                {"name": "s_dec", "datatype": "double", "ucd": "pos.eq.dec"},
+                {"name": "obs_collection", "datatype": "char", "ucd": "meta.id"}
+            ],
+            "data": [
+                [53.233597, -29.70548535, "sedm"],
+                [null, -47.09244499, "sedm"]
+            ]
+        }"#;
+        let (cols, rows) = json_metadata_rows(fixture).expect("metadata rows resolve");
+        assert_eq!(
+            cols,
+            vec![
+                "s_ra".to_string(),
+                "s_dec".to_string(),
+                "obs_collection".to_string()
+            ]
+        );
+        assert_eq!(rows.len(), 2);
+        let ra_i = cols.iter().position(|c| c == "s_ra").unwrap();
+        let dec_i = cols.iter().position(|c| c == "s_dec").unwrap();
+        let col_i = cols.iter().position(|c| c == "obs_collection").unwrap();
+        assert_eq!(rows[0][ra_i], "53.233597");
+        assert_eq!(rows[0][dec_i], "-29.70548535");
+        assert_eq!(rows[0][col_i], "sedm");
+        assert_eq!(rows[1][ra_i], "");
+        assert_eq!(rows[1][col_i], "sedm");
     }
 }
