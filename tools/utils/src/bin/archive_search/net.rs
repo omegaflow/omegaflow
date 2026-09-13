@@ -33,6 +33,7 @@ const DEFAULT_RETRY_AFTER_SECS: u64 = 2;
 fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Option<Fetch> {
     let mut args: Vec<String> = vec![
         "-sL".to_string(),
+        "-g".to_string(),
         "--max-time".to_string(),
         timeout.to_string(),
     ];
@@ -933,6 +934,36 @@ pub fn librs_lines(query: &str) -> Vec<String> {
     }
 }
 
+fn magic_label(magic: crate::magic::Magic) -> &'static str {
+    match magic {
+        crate::magic::Magic::Pdf => "pdf",
+        crate::magic::Magic::Zip => "zip",
+        crate::magic::Magic::Fits => "fits",
+        crate::magic::Magic::Png => "png",
+        crate::magic::Magic::Gzip => "gzip",
+        crate::magic::Magic::Hdf5 => "hdf5",
+        crate::magic::Magic::NetCdf => "netcdf",
+        crate::magic::Magic::Tiff => "tiff",
+        crate::magic::Magic::Unrecognized => "unrecognized",
+    }
+}
+
+pub fn sniff_lines(url: &str) -> Vec<String> {
+    match get(url, &[], "40") {
+        Some(f) => {
+            let bytes = f.body.as_bytes();
+            vec![
+                format!("url {}", url),
+                format!("status {}", f.status_text()),
+                format!("bytes {}", bytes.len()),
+                format!("magic {}", magic_label(crate::magic::magic_identity(bytes))),
+                format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes)),
+            ]
+        }
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<String> {
     let max = 10usize;
     match mode {
@@ -964,6 +995,8 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
             );
             brave_lines(query, &token, max)
         }
+        "datacite" => crate::datacite::datacite_lines(query, max),
+        "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
     }
