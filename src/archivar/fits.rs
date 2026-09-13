@@ -891,6 +891,79 @@ fn decode_int_bytes(bytes: &[u8], bytepix: usize, nvals: usize) -> Option<Vec<i6
     Some(out)
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum FitsValue {
+    Int(i64),
+    Float(f64),
+    Str(String),
+    Bool(bool),
+    Ints(Vec<i64>),
+    Floats(Vec<f64>),
+    Unhandled(String),
+}
+
+impl FitsTable {
+    pub fn cell_value(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<FitsValue> {
+        let off = self.cell_offset(row, col)?;
+        match col.code {
+            'A' => {
+                let raw = buf.get(off..off + col.width)?;
+                let s = from_utf8(raw)
+                    .ok()?
+                    .trim_end_matches(|c| c == ' ' || c == '\0')
+                    .to_string();
+                Some(FitsValue::Str(s))
+            }
+            'L' => {
+                let raw = buf.get(off..off + col.width)?;
+                if col.repeat != 1 {
+                    return Some(FitsValue::Unhandled("logical array".to_string()));
+                }
+                match raw[0] {
+                    b'T' | b't' | b'1' => Some(FitsValue::Bool(true)),
+                    b'F' | b'f' | b'0' => Some(FitsValue::Bool(false)),
+                    _ => None,
+                }
+            }
+            'P' | 'Q' => Some(FitsValue::Unhandled(format!(
+                "variable-length array '{}'",
+                col.code
+            ))),
+            'I' | 'J' | 'K' | 'B' => {
+                if col.repeat == 1 {
+                    if col.tscal == 1.0 && col.tzero == 0.0 {
+                        Some(FitsValue::Int(self.cell_i64(buf, row, col)?))
+                    } else {
+                        Some(FitsValue::Float(self.cell_f64(buf, row, col)?))
+                    }
+                } else if col.tscal == 1.0 && col.tzero == 0.0 {
+                    Some(FitsValue::Ints(self.cell_array_i64(buf, row, col)?))
+                } else {
+                    Some(FitsValue::Floats(self.cell_array_f64(buf, row, col)?))
+                }
+            }
+            'E' | 'D' => {
+                if col.repeat == 1 {
+                    Some(FitsValue::Float(self.cell_f64(buf, row, col)?))
+                } else {
+                    Some(FitsValue::Floats(self.cell_array_f64(buf, row, col)?))
+                }
+            }
+            _ => Some(FitsValue::Unhandled(format!("format code '{}'", col.code))),
+        }
+    }
+
+    pub fn row(&self, buf: &[u8], i: usize) -> Option<Vec<FitsValue>> {
+        if i >= self.n_rows {
+            return None;
+        }
+        self.columns
+            .iter()
+            .map(|c| self.cell_value(buf, i, c))
+            .collect()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{FitsHeader, FitsImage, FitsTable, FitsWcs, WcsProjection};
