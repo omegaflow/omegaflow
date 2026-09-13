@@ -234,6 +234,62 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
         .collect()
 }
 
+fn chanlocs_positions(source: &EegSource) -> Option<Vec<Option<(f64, f64, f64)>>> {
+    let chanlocs = source.array("chanlocs")?;
+    let omegaflow::matfile::MatData::Struct(fields) = &chanlocs.data else {
+        return None;
+    };
+    let coord = |name: &str| -> Option<Vec<Option<f64>>> {
+        let field = fields.iter().find(|f| f.name == name)?;
+        Some(
+            field
+                .values
+                .iter()
+                .map(|v| match &v.data {
+                    omegaflow::matfile::MatData::Double(d) => {
+                        d.first().copied().filter(|x| x.is_finite())
+                    }
+                    _ => None,
+                })
+                .collect(),
+        )
+    };
+    let xs = coord("X")?;
+    let ys = coord("Y")?;
+    let zs = coord("Z")?;
+    if xs.len() != ys.len() || xs.len() != zs.len() {
+        return None;
+    }
+    Some(
+        xs.into_iter()
+            .zip(ys)
+            .zip(zs)
+            .map(|((x, y), z)| match (x, y, z) {
+                (Some(x), Some(y), Some(z)) => Some((x, y, z)),
+                _ => None,
+            })
+            .collect(),
+    )
+}
+
+pub fn open_set_chanlocs(path: &str) -> Option<Vec<(String, Option<(f64, f64, f64)>)>> {
+    let bytes = std::fs::read(path).ok()?;
+    let arrays = omegaflow::matfile::parse_mat(&bytes)?;
+    let source = match arrays.iter().find(|a| a.name == "EEG") {
+        Some(eeg) => match &eeg.data {
+            omegaflow::matfile::MatData::Struct(fields) => EegSource::Struct(fields),
+            _ => return None,
+        },
+        None => EegSource::Flat(&arrays),
+    };
+    let labels = chanlocs_labels(&source)?;
+    let positions = match chanlocs_positions(&source) {
+        Some(p) if p.len() == labels.len() => p,
+        _ => return None,
+    };
+    Some(labels.into_iter().zip(positions).collect())
+}
+
 fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
     let nbchan = field_usize(source, "nbchan")?;
     let pnts = field_usize(source, "pnts")?;
