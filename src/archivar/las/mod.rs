@@ -19,6 +19,9 @@ fn le_i32(b: &[u8]) -> i32 {
 fn le_f64(b: &[u8]) -> f64 {
     f64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]])
 }
+fn le_f32(b: &[u8]) -> f32 {
+    f32::from_le_bytes([b[0], b[1], b[2], b[3]])
+}
 
 #[derive(Clone, Copy, Debug)]
 pub enum LasNote {
@@ -216,6 +219,17 @@ pub struct LasVlr {
 }
 
 #[derive(Clone, Copy, Debug)]
+pub struct WavePacket {
+    pub descriptor_index: u8,
+    pub offset: u64,
+    pub packet_size: u32,
+    pub return_point: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+#[derive(Clone, Copy, Debug)]
 pub struct LasPoint {
     pub x: f64,
     pub y: f64,
@@ -229,6 +243,7 @@ pub struct LasPoint {
     pub green: Option<u16>,
     pub blue: Option<u16>,
     pub nir: Option<u16>,
+    pub waveform: Option<WavePacket>,
 }
 
 fn scaled(header: &LasHeader, raw: i32, axis: usize) -> f64 {
@@ -298,6 +313,22 @@ fn decode_point(header: &LasHeader, bytes: &[u8], off: usize) -> Result<LasPoint
         };
         (rn, nr, cls, gps, rgb, nir)
     };
+    let wp_off = match format {
+        4 => Some(28usize),
+        5 => Some(34usize),
+        9 => Some(30usize),
+        10 => Some(38usize),
+        _ => None,
+    };
+    let waveform = wp_off.map(|o| WavePacket {
+        descriptor_index: rec[o],
+        offset: le_u64(&rec[o + 1..o + 9]),
+        packet_size: le_u32(&rec[o + 9..o + 13]),
+        return_point: le_f32(&rec[o + 13..o + 17]),
+        x: le_f32(&rec[o + 17..o + 21]),
+        y: le_f32(&rec[o + 21..o + 25]),
+        z: le_f32(&rec[o + 25..o + 29]),
+    });
     Ok(LasPoint {
         x,
         y,
@@ -311,6 +342,7 @@ fn decode_point(header: &LasHeader, bytes: &[u8], off: usize) -> Result<LasPoint
         green: rgb.map(|r| r[1]),
         blue: rgb.map(|r| r[2]),
         nir,
+        waveform,
     })
 }
 
