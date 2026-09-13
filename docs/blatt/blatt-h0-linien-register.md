@@ -31,14 +31,14 @@ sitzt.
 Neun Spalten: Zeuge · Jahr · Referenz · Methode · Wert (km/s/Mpc) · Fehler
 (km/s/Mpc) · Wurzel-Kette · Trennstufe · Route. Eine Zeile ist eine Messung
 (ein Zeuge). `gewogen` = diese Session misst die Wurzel selbst; `zitiert` =
-die Wurzel ist eine zitierte Klasse. Route: `[c]` curl · `[j]` Jina · `[w]`
+die Wurzel ist eine zitierte Klasse. Route: `[c]` curl · `[p]` Proton-Exit · `[w]`
 WebArchive · `[s]` Websuche · `[a]` absent-benannt.
 
 ### Leiter
 
 | Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
 |---|---|---|---|---|---|---|---|---|
-| SH0ES — Riess et al. | 2022 | ApJ 934, L7 · arXiv:2112.04510 | Leiter · Cepheid | 73.04 | ±1.04 | N4258-Maser + LMC-DEB + 75 Gaia-EDR3-Cepheiden + 8 WFC3-Scanning (gewogen); SN Pantheon+ 42 Kal. + 277 Fluss (gewogen); Parallaxe Gaia EDR3 (L20b) | früh | [j][c] |
+| SH0ES — Riess et al. | 2022 | ApJ 934, L7 · arXiv:2112.04510 | Leiter · Cepheid | 73.04 | ±1.04 | N4258-Maser + LMC-DEB + 75 Gaia-EDR3-Cepheiden + 8 WFC3-Scanning (gewogen); SN Pantheon+ 42 Kal. + 277 Fluss (gewogen); Parallaxe Gaia EDR3 (L20b) | früh | [c] |
 | Riess et al. (R21, MW-Kalibration) | 2021 | ApJ 908, L6 · arXiv:2012.08534 | Leiter · Cepheid | 73.0 (MW allein) | ±1.4 | 75 MW-Cepheiden, Gaia EDR3 (gewogen) | früh | [c] |
 | Freedman et al. | 2021 | ApJ 919, 16 · arXiv:2106.15656 | Leiter · TRGB | 69.8 | ±0.6 stat ±1.6 sys | TRGB-Kal. (LMC-DEB, N4258, ω-Cen) gewogen; SN CSP (gewogen); Gaia nur 5 %-Check | früh | [c] |
 | CCHP (Freedman, Madore, Hoyt) | 2020 | arXiv:2002.01550 | Leiter · TRGB | 69.6 | ±0.8 stat ±1.7 sys | LMC-DEB gewogen; SN CSP | früh | [c] |
@@ -504,11 +504,11 @@ Gaia-Parallaxe, ihre π_EDR3 bleibt absent (0 honored).
 
 ## Der Anhang
 
-**Route-Kaskade** (docs/SOURCE_PORT.md §Agenten-Rezept): direkter curl → Jina-
-Reader (`r.jina.ai/`) → WebArchive (Wayback + CDX) → Websuche (`s.jina.ai/`);
+**Route-Kaskade** (docs/SOURCE_PORT.md §Agenten-Rezept): direkter curl → Proton-
+Exit (`bin/proton-wg.sh`) → WebArchive (Wayback + CDX) → Websuche;
 erst nach leerer Kaskade `absent`. Befund: 20 `quelle`-Links, 9 `kontext`-Links,
 0 unreachable. ADS-UI antwortet 405 (Records via ADS-API), OUP/APS 403 (über
-Crossref/Jina/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record).
+Crossref/Wayback), IOP hinter Radware-CAPTCHA (Crossref/Wayback/ADS-Record).
 
 **Korrekturen (gemessen, nicht übernommen):**
 - PRD 110.123518 ist nicht eine eigenständige „33er-Kompilation", sondern
