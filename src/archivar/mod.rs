@@ -94,6 +94,7 @@ pub mod sha256;
 pub mod skydirection;
 pub mod suprastrom;
 pub mod thermochem;
+pub mod tiff;
 pub mod tns;
 pub mod twomass;
 pub mod twomrs;
