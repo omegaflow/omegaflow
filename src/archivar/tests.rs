@@ -765,6 +765,72 @@ fn test_post_body_rendering() {
 }
 
 #[test]
+fn test_csv_zip_post_body_resolves_secret() {
+    let src = SourceConfig {
+        ttl: 100,
+        url: "https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip"
+            .into(),
+        frame: super::Frame::Surface {
+            body_name: "body_test".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        },
+        format: "csv_zip".into(),
+        extracts: vec![],
+        headers: vec![("user-agent".into(), "{TNS_UA}".into())],
+        post_body: Some("api_key={TNS_API_KEY}".into()),
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+        hapi_fill: HashMap::new(),
+    };
+    let mut env = HashMap::new();
+    env.insert("TNS_API_KEY".to_string(), "secret123".to_string());
+    env.insert(
+        "TNS_UA".to_string(),
+        "tns_marker{\"tns_id\":1,\"type\":\"bot\",\"name\":\"probe\"}".to_string(),
+    );
+    let fixture_lsk = super::LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    };
+    let body = render_source_body(
+        &src,
+        0.0,
+        0.0,
+        0.0,
+        8.0e8,
+        0.0,
+        &HashMap::new(),
+        &fixture_lsk,
+    )
+    .map(|b| super::resolve_secret(&b, &env));
+    assert_eq!(body.as_deref(), Some("api_key=secret123"));
+    let headers = render_headers(&src.headers, &env);
+    assert_eq!(
+        headers[0].1,
+        "tns_marker{\"tns_id\":1,\"type\":\"bot\",\"name\":\"probe\"}"
+    );
+}
+
+#[test]
 fn test_csv_to_json_tns_shape() {
     let csv = "2026-08-13 00:00:00 - 23:59:59\n\"objid\",\"ra\",\"declination\",\"redshift\",\"discoverymag\"\n\"1\",\"89.8\",\"53.6\",\"0.027\",\"19.8\"\n\"2\",\"35.0\",\"-24.4\",\"\",\"19.4\"\n";
     let j = csv_to_json(csv).unwrap();
