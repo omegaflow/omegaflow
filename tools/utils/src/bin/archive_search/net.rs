@@ -996,6 +996,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
             brave_lines(query, &token, max)
         }
         "datacite" => crate::datacite::datacite_lines(query, max),
+        "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
