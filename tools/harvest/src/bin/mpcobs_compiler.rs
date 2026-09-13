@@ -1,7 +1,9 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::inflate::gunzip;
+use omegaflow::inflate::gunzip_stream;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
+use std::fs::File;
+use std::io::{BufWriter, Write};
 
 const MPCOBS_RECORD_STRIDE: usize = 50;
 const UNNUMBERED: u32 = 0;
@@ -88,29 +90,84 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn compile_into(input: &str, buf: &mut Vec<u8>) -> (usize, usize) {
-    let packed = match std::fs::read(input) {
-        Ok(p) => p,
-        Err(e) => panic!("read {}: {}", input, e),
-    };
-    let bytes = match gunzip(&packed) {
-        Some(b) => b,
-        None => panic!("gunzip {}", input),
-    };
-    let text = String::from_utf8_lossy(&bytes);
-    let mut written = 0usize;
-    let mut skipped = 0usize;
-    for line in text.split('\n') {
-        let line = line.trim_end_matches('\r');
-        match record_bytes(line) {
-            Some(rec) => {
-                buf.extend_from_slice(&rec);
-                written += 1;
+struct LineScanner {
+    hold: Vec<u8>,
+    start: usize,
+}
+
+impl LineScanner {
+    fn new() -> LineScanner {
+        LineScanner {
+            hold: Vec::new(),
+            start: 0,
+        }
+    }
+
+    fn feed(&mut self, chunk: &[u8]) {
+        self.hold.extend_from_slice(chunk);
+    }
+
+    fn next_line(&mut self) -> Option<Vec<u8>> {
+        let d = &self.hold[self.start..];
+        match d.iter().position(|&b| b == b'\n') {
+            Some(pos) => {
+                let line = d[..pos].to_vec();
+                self.start += pos + 1;
+                Some(line)
             }
             None => {
-                skipped += 1;
+                self.hold.drain(..self.start);
+                self.start = 0;
+                None
             }
         }
+    }
+
+    fn finish(&mut self) -> Option<Vec<u8>> {
+        if self.start < self.hold.len() {
+            let rest = self.hold[self.start..].to_vec();
+            self.start = self.hold.len();
+            Some(rest)
+        } else {
+            None
+        }
+    }
+}
+
+fn emit_line<W: Write>(line_bytes: &[u8], out: &mut W, written: &mut usize, skipped: &mut usize) {
+    let text = String::from_utf8_lossy(line_bytes);
+    let text = text.trim_end_matches('\r');
+    match record_bytes(text) {
+        Some(rec) => {
+            out.write_all(&rec).expect("write record");
+            *written += 1;
+        }
+        None => {
+            *skipped += 1;
+        }
+    }
+}
+
+fn compile_into<W: Write>(input: &str, out: &mut W) -> (usize, usize) {
+    let file = match File::open(input) {
+        Ok(f) => f,
+        Err(e) => panic!("read {}: {}", input, e),
+    };
+    let mut written = 0usize;
+    let mut skipped = 0usize;
+    let mut scanner = LineScanner::new();
+    let total = gunzip_stream(file, |chunk| {
+        scanner.feed(chunk);
+        while let Some(line_bytes) = scanner.next_line() {
+            emit_line(&line_bytes, out, &mut written, &mut skipped);
+        }
+    });
+    if let Some(line_bytes) = scanner.finish() {
+        emit_line(&line_bytes, out, &mut written, &mut skipped);
+    }
+    match total {
+        Ok(n) => eprintln!("decompressed {} bytes", n),
+        Err(e) => panic!("gunzip {}: {}", input, e),
     }
     (written, skipped)
 }
@@ -153,24 +210,26 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let mut buf = Vec::new();
+    let out_file = match File::create(&out_path) {
+        Ok(f) => f,
+        Err(e) => panic!("write {}: {}", out_path, e),
+    };
+    let mut out = BufWriter::new(out_file);
     let mut total_written = 0usize;
     let mut total_skipped = 0usize;
     for input in &inputs {
-        let (written, skipped) = compile_into(input, &mut buf);
+        let (written, skipped) = compile_into(input, &mut out);
         total_written += written;
         total_skipped += skipped;
     }
-    match std::fs::write(&out_path, &buf) {
+    match out.flush() {
         Ok(()) => {}
-        Err(e) => panic!("write {}: {}", out_path, e),
+        Err(e) => panic!("flush {}: {}", out_path, e),
     }
+    let bytes = total_written * MPCOBS_RECORD_STRIDE;
     eprintln!(
         "mpcobs: {} records, {} skipped, {} B -> {}",
-        total_written,
-        total_skipped,
-        buf.len(),
-        out_path
+        total_written, total_skipped, bytes, out_path
     );
     if ci_mode && !upload_release("minorplanetcenter.net", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
@@ -236,5 +295,64 @@ mod tests {
         assert_eq!(&rec[34..37], b"095");
         let mag = f32::from_le_bytes(rec[24..28].try_into().unwrap());
         assert!((mag - 15.5).abs() < 1e-3);
+    }
+
+    #[test]
+    fn line_scanner_splits_across_chunks() {
+        let mut sc = LineScanner::new();
+        sc.feed(b"line one\nline t");
+        assert_eq!(sc.next_line().as_deref(), Some(&b"line one"[..]));
+        assert!(sc.next_line().is_none());
+        sc.feed(b"wo\nline three");
+        assert_eq!(sc.next_line().as_deref(), Some(&b"line two"[..]));
+        assert!(sc.next_line().is_none());
+        assert_eq!(sc.finish().as_deref(), Some(&b"line three"[..]));
+        assert!(sc.finish().is_none());
+    }
+
+    fn crc32(data: &[u8]) -> u32 {
+        let mut crc = 0xFFFF_FFFFu32;
+        for &byte in data {
+            crc ^= byte as u32;
+            for _ in 0..8 {
+                if crc & 1 != 0 {
+                    crc = 0xEDB8_8320 ^ (crc >> 1);
+                } else {
+                    crc >>= 1;
+                }
+            }
+        }
+        crc ^ 0xFFFF_FFFF
+    }
+
+    fn gzip_stored(content: &[u8]) -> Vec<u8> {
+        let mut gz = vec![0x1f, 0x8b, 8, 0, 0, 0, 0, 0, 0, 0xff];
+        let len = content.len() as u16;
+        gz.push(0x01);
+        gz.extend_from_slice(&len.to_le_bytes());
+        gz.extend_from_slice(&(!len).to_le_bytes());
+        gz.extend_from_slice(content);
+        gz.extend_from_slice(&crc32(content).to_le_bytes());
+        gz.extend_from_slice(&(content.len() as u32).to_le_bytes());
+        gz
+    }
+
+    #[test]
+    fn compile_streams_through_a_gzip_file() {
+        let body = concat!(
+            "00001         C2000 04 06.31600 12 21 58.174+15 23 45.06          5.96Jli0331G91\n",
+            "00001         C2000 04 06.31600 12 21 58.174+15 23 45.06          5.96Jli0331G91"
+        );
+        let gz = gzip_stored(body.as_bytes());
+        let dir = std::env::temp_dir().join(format!("mpcobs_stream_test_{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let in_path = dir.join("obs.txt.gz");
+        std::fs::write(&in_path, &gz).unwrap();
+        let mut out = Vec::new();
+        let (written, skipped) = compile_into(in_path.to_str().unwrap(), &mut out);
+        assert_eq!(written, 2);
+        assert_eq!(skipped, 0);
+        assert_eq!(out.len(), 2 * MPCOBS_RECORD_STRIDE);
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }
