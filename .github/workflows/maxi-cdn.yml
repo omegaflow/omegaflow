@@ -1,0 +1,48 @@
+name: maxi-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  maxi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the maxi.riken.jp release exists on the CDN
+        run: |
+          if ! gh release view maxi.riken.jp --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create maxi.riken.jp --repo omegaflow/sources \
+              --title "maxi.riken.jp" \
+              --notes "MAXI (JAXA/Riken) GSC X-ray light curve compiled to a MAX1 band series. Record stride: magic MAX1, curve count (u32 LE), per curve: ra_deg (f64 LE), dec_deg (f64 LE), band (u32 LE: 0=2-20, 1=2-4, 2=4-10, 3=10-20 keV), freq_hz (f64 LE), bin_width_hz (f64 LE), sample count (u32 LE), per sample: t_tdb (f64 LE), flux (f32 LE, ph/s/cm2), err (f32 LE)."
+          fi
+      - name: Fetch the MAXI 1-day light curve
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/J0006+202_g_lc_1day_all.dat \
+            https://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "maxi-cdn: J0006+202_g_lc_1day_all.dat returned void" \
+                 "curl on maxi.riken.jp did not reach J0006+202_g_lc_1day_all.dat. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the MAXI light curve and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin maxi_compiler -- \
+            --input kernels/J0006+202_g_lc_1day_all.dat \
+            --out maxi_J0006+202.max1 \
+            --ra 1.5814 \
+            --dec 20.2029 \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "maxi-cdn: maxi_J0006+202.max1 returned void" \
+                 "maxi compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

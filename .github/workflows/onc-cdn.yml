@@ -1,0 +1,75 @@
+name: onc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
+jobs:
+  onc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.oceannetworks.ca release exists on the CDN
+        run: |
+          if ! gh release view data.oceannetworks.ca --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.oceannetworks.ca --repo omegaflow/sources \
+              --title "data.oceannetworks.ca" \
+              --notes "ONC hydrophone spectral data (HSD, LPF-spect.mat) compiled to a geo spectral record (S² witness, kind acoustic). Record stride: t (f64 TDB seconds), lat (f64 deg), lon (f64 deg), alt (f64 m, negative depth), freq (f64 Hz bin center), bin_width (f64 Hz), val (f64 PSD dB re 1 uPa^2/Hz), comp (u32, 1 = PSD)."
+          fi
+      - name: Resolve one hydrophone archive file and the station position
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 180 \
+            "https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token=${OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD" \
+            -o kernels/archive.json \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "onc-cdn: archivefiles returned void" \
+                 "The ONC archivefiles list did not resolve for BACNH.H1. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          FILE=$(jq -r '.files[] | select(endswith("-LPF-spect.mat"))' kernels/archive.json | head -n1)
+          echo "file=$FILE"
+          [ -n "$FILE" ] || { echo "no LPF-spect.mat file in the listing"; exit 1; }
+          curl -sSfL --retry 3 --max-time 180 \
+            "https://data.oceannetworks.ca/api/archivefile/download?filename=${FILE}&token=${OCEANNETWORKS_TOKEN}" \
+            -o kernels/spect.mat \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "onc-cdn: ${FILE} returned void" \
+                 "The ONC archivefile download did not resolve ${FILE}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sSfL --retry 3 --max-time 120 \
+            "https://data.oceannetworks.ca/api/locations?token=${OCEANNETWORKS_TOKEN}&deviceCategoryCode=HYDROPHONE" \
+            -o kernels/locations.json \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "onc-cdn: locations returned void" \
+                 "The ONC locations list did not resolve. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          read -r LAT LON ALT < <(jq -r '.[] | select(.locationCode=="BACNH.H1") | "\(.lat) \(.lon) \(-.depth)"' kernels/locations.json)
+          echo "position lat=$LAT lon=$LON alt=$ALT"
+          [ -n "$LAT" ] || { echo "BACNH.H1 absent from the locations list"; exit 1; }
+          echo "LAT=$LAT" >> "$GITHUB_ENV"
+          echo "LON=$LON" >> "$GITHUB_ENV"
+          echo "ALT=$ALT" >> "$GITHUB_ENV"
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+      - name: Compile the ONC hydrophone spectral records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin onc_hydrophone_compiler -- \
+            --input kernels/spect.mat \
+            --lat "$LAT" --lon "$LON" --alt "$ALT" \
+            --lsk kernels/naif0012.tls \
+            --out onc_hydrophone_psd.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "onc-cdn: onc_hydrophone_psd.bin returned void" \
+                 "onc_hydrophone compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

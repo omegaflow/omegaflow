@@ -1,0 +1,42 @@
+name: superdarn-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  superdarn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the superdarn.ca release exists on the CDN
+        run: |
+          if ! gh release view superdarn.ca --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create superdarn.ca --repo omegaflow/sources \
+              --title "superdarn.ca" \
+              --notes "SuperDARN FITACF line-of-sight velocity compiled from the ascii-call direct route to a geo-series (superdarn_fitacf). Record: t (f64 TDB s, LE), lat (f64 deg), lon (f64 deg), alt (f64 km), freq (f64), bin_width (f64), val (f64 m/s), comp (u32 = 1)."
+          fi
+      - name: Fetch and compile the FITACF window, then upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin superdarn_compiler -- \
+            --radar sas \
+            --start 2026-08-20 \
+            --start-time 18:00 \
+            --end 2026-08-20 \
+            --end-time 20:00 \
+            --beam all \
+            --out superdarn_fitacf.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "superdarn-cdn: superdarn_fitacf.bin returned void" \
+                 "superdarn compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
