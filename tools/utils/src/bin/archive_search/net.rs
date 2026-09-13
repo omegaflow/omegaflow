@@ -1,7 +1,10 @@
 use crate::json::{self, Json};
 use crate::secrets::resolve_secret;
 use std::collections::HashMap;
+use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
+use std::sync::OnceLock;
+use std::time::Duration;
 
 pub struct Fetch {
     pub status: Option<i32>,
@@ -17,12 +20,22 @@ impl Fetch {
     }
 }
 
+static CA_BUNDLE: OnceLock<String> = OnceLock::new();
+
+pub fn set_ca_bundle(path: &str) {
+    let _ = CA_BUNDLE.set(path.to_string());
+}
+
 pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let mut args: Vec<String> = vec![
         "-sL".to_string(),
         "--max-time".to_string(),
         timeout.to_string(),
     ];
+    if let Some(ca) = CA_BUNDLE.get() {
+        args.push("--cacert".to_string());
+        args.push(ca.clone());
+    }
     for e in extra {
         args.push((*e).to_string());
     }
@@ -42,6 +55,10 @@ fn get_iface(url: &str, iface: &str, timeout: &str) -> Option<Fetch> {
     get(url, &["--interface", iface], timeout)
 }
 
+fn get_proxy(url: &str, proxy: &str, timeout: &str) -> Option<Fetch> {
+    get(url, &["--proxy", proxy], timeout)
+}
+
 fn proton_interfaces() -> Vec<String> {
     let mut out = Vec::new();
     if let Ok(entries) = std::fs::read_dir("/sys/class/net") {
@@ -54,6 +71,31 @@ fn proton_interfaces() -> Vec<String> {
     }
     out.sort();
     out
+}
+
+fn socks_bind(conf: &str) -> Option<String> {
+    conf.lines()
+        .find_map(|line| line.trim().strip_prefix("BindAddress"))
+        .map(|rest| rest.trim_start_matches([' ', '=']).trim().to_string())
+        .filter(|addr| !addr.is_empty())
+}
+
+fn proton_socks() -> Option<String> {
+    let runtime = match std::env::var("XDG_RUNTIME_DIR") {
+        Ok(dir) => dir,
+        Err(_) => "/tmp".to_string(),
+    };
+    let dir = std::path::Path::new(&runtime).join("proton-wg");
+    let pid = std::fs::read_to_string(dir.join("wireproxy.pid")).ok()?;
+    let pid = pid.trim();
+    if pid.is_empty() || !std::path::Path::new(&format!("/proc/{pid}")).exists() {
+        return None;
+    }
+    let conf = std::fs::read_to_string(dir.join("active.conf")).ok()?;
+    let addr = socks_bind(&conf)?;
+    let sock: SocketAddr = addr.parse().ok()?;
+    TcpStream::connect_timeout(&sock, Duration::from_millis(500)).ok()?;
+    Some(format!("socks5h://{addr}"))
 }
 
 pub fn urlencode(s: &str) -> String {
@@ -164,13 +206,20 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
     lines.push(format!("verdict {} — three-stage ladder", url));
     stage(&mut lines, 1, "direct", url, get(url, &[], "30"));
     let ifaces = proton_interfaces();
-    if ifaces.is_empty() {
-        lines.push("  stage 2 proton: absent — no proton interface is up".to_string());
+    let socks = proton_socks();
+    if ifaces.is_empty() && socks.is_none() {
+        lines.push("  stage 2 proton: absent — no proton transport is up".to_string());
     } else {
         for iface in &ifaces {
             match get_iface(url, iface, "30") {
                 Some(f) => stage_result(&mut lines, 2, iface, url, f),
                 None => lines.push(format!("  stage 2 {}: pending — no response", iface)),
+            }
+        }
+        if let Some(socks) = &socks {
+            match get_proxy(url, socks, "30") {
+                Some(f) => stage_result(&mut lines, 2, socks, url, f),
+                None => lines.push(format!("  stage 2 {}: pending — no response", socks)),
             }
         }
     }
@@ -853,5 +902,14 @@ mod tests {
     fn href_extraction_dedups() {
         let html = "<a href=\"/crates/serde\">x</a><a href=\"/crates/serde\">y</a>";
         assert_eq!(extract_hrefs(html), vec!["/crates/serde".to_string()]);
+    }
+
+    #[test]
+    fn socks_bind_reads_the_wireproxy_inbound() {
+        assert_eq!(
+            socks_bind("[Socks5]\nBindAddress = 127.0.0.1:25344\n").as_deref(),
+            Some("127.0.0.1:25344")
+        );
+        assert!(socks_bind("[Interface]\nPrivateKey = x\n").is_none());
     }
 }
