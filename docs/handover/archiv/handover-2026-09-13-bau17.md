@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-13
-  sha256: b0035094a8356e188c8c203166868b012702e77775b0d6f641b18f29c3abd6bc
+  sha256: e1f2efa83c3bab58be011e3074dd4185d2b5237ef6203278b286154ef4306d89
   status: live
 -->
 # Handover — Bau & Code (2026-09-13, Bau17)
@@ -86,6 +86,28 @@ Checkbox-Leiste) + `--arxiv` (ATOM-Parser, Muster `tools/science/arxiv.rs`) +
 
 Verifikation: `cargo check` 0/0, stille Tests (Fixtures, keine Netz-Pflicht in
 der Default-Suite), ein manueller `--verdict`-Lauf als Messung.
+
+## DSM/Topo — Bau-Linie (Crawl gemessen 2026-09-13)
+
+- GLO-90-Compiler — zweiter anonymer Gestalt-Zeuge neben GL30:
+  `copernicus-dem-90m.s3.amazonaws.com` (Prefix `COG_30`, TIFF-Magic `II*\0`,
+  anonymes Listing 200); kleiner Compiler neben `copernicus_dem_compiler` +
+  `--ci-mode`-Upload.
+- 3D-Tomographie-Modelle registrieren — Positive-Maske-Treiber jetzt anonym
+  erreichbar: LITHO1.0/TX2019slab/GyPSuM via
+  `data.earthscope.org/.../products/emc/netcdf/<file>`; S40RTS/LLNL-G3D-JPS via
+  `media.githubusercontent.com/media/tom-new/tomography-models/main/`; plus
+  `*-MASK-3D`-Dateien. Compiler + `sources.φ`-Zeile + `--ci-mode`-Upload
+  (CDN-Duty).
+- LAS/LAZ-Reader — Parser-Gap (`parser-def las-laz` in blocked_sources.φ)
+  erschließt anonyme EPT/COPC: USGS 3DEP (`usgs-lidar-public.s3.amazonaws.com`,
+  `ept.json` + `ept-data/*.laz`), NOAA coastal LiDAR
+  (`noaa-nos-coastal-lidar-pds`, `*.copc.laz`, Magic `LASF`).
+- DEM-Re-Dispatch — der `copernicus_dem_compiler`-Tile-Fix (`N50_00_E010_00`,
+  lokal 200 + 2400×3600-Grid verifiziert) liegt; der `--ci-mode`-Manifest-Lauf
+  (Run 34726993789 war failure, Tile 404) muss neu dispatcht werden.
+- OpenNeuro-EEGB-Upload — Compiler + Reader + `sources.φ`-Zeilen stehen; der
+  `--ci-mode`-Upload des EEGB-Assets ans CDN steht aus.
 
 ## Abschluss
 
