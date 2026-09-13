@@ -2,7 +2,7 @@
   title: The H₀ lines register — roots instead of witnesses
   class: paper
   date: 2026-09-12
-  sha256: 6e1087d08b3433fca3a79089d59ca3bed86457aea00263a53c36cb2b88c441d3
+  sha256: 8b2ce1e17f4329360b47a7073e1163515685c18086a177d67512a8c56043e6e8
   status: live
   see-also: docs/blatt/blatt-h0-linien-register.md
 -->
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-The register weighs ~40 published H₀ measurements into ten root families plus a compilation ridge, counting shared roots rather than witnesses. Two trees stand on separate ground: the distance-ladder root (geometric anchors: NGC 4258 maser, LMC DEB, Gaia parallaxes) and the CMB root (the sound horizon r_d/θ*). They share no root; the common root is absent. Planck 2018 gives 67.36 ± 0.54 km/s/Mpc; the ladder gives 73.04 ± 1.04 (SH0ES), about 5σ apart. The asymmetry: the ladder's Cepheid class is weighed in-house through a Gaia TAP query of gaiadr3.vari_cepheid, type_best_classification = 'DCEP', N = 1606, inverse-variance weighted parallax mean 0.2619 ± 0.0004 mas; the CMB likelihood is cited, not recomputed. No third thread carries ≲1–2% precision, so no arbiter is possible yet. The ladder side is weighed end-to-end in-house: H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance); the own 75-source crossmatch is pending.
+The register weighs ~40 published H₀ measurements into ten root families plus a compilation ridge, counting shared roots rather than witnesses. Two trees stand on separate ground: the distance-ladder root (geometric anchors: NGC 4258 maser, LMC DEB, Gaia parallaxes) and the CMB root (the sound horizon r_d/θ*). They share no root; the common root is absent. Planck 2018 gives 67.36 ± 0.54 km/s/Mpc; the ladder gives 73.04 ± 1.04 (SH0ES), about 5σ apart. The asymmetry: the ladder's Cepheid class is weighed in-house through a Gaia TAP query of gaiadr3.vari_cepheid, type_best_classification = 'DCEP', N = 1606, inverse-variance weighted parallax mean 0.2619 ± 0.0004 mas; the CMB likelihood is cited, not recomputed. No third thread carries ≲1–2% precision, so no arbiter is possible yet. The ladder side is weighed end-to-end in-house: H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance); the own 75-source crossmatch stands — all 74 table rows carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas).
 
 ## The measurement
 
@@ -49,16 +49,16 @@ The register weighs data from NASA missions: the Hubble Space Telescope (HST Key
 
 **The verdict.** Two trees, common root `absent`. No third thread carries ≲1–2%, so no arbiter is possible yet; the young forest's uncertainties (GW sirens ±9–15 km/s, megamaser ±3.0, FRB-DM model spread 51–77) are compatible with both roots. The arbiter is `pending` — the measurement exists, the sharpness does not. The ridge carries the consequence: the tension is not a clean early-vs-late gradient but ladder (72.8) against all others (69.0), KS p = 0.0001.
 
-**The pending that keeps the weigh honest.** The own Gaia-TAP crossmatch of the 75 SH0ES Cepheids — the per-source identity of the ladder's Cepheid anchor — is named `pending` (the 75-table carries no coordinate/ID column), so the weigh does not overstate itself. The 2012.08534 table carries 74 full data rows (the prose cites 75); 7 rows are `absent` in π_EDR3 and are skipped and counted. The DCEP class weigh (N = 1606, 0.2619 ± 0.0004 mas) is the class field, not the ladder H₀; the ladder H₀ is the end-to-end weigh above.
+**The identity that keeps the weigh honest.** The own Gaia-TAP crossmatch of the 75 SH0ES Cepheids stands (2026-09-13): all 74 rows of the 2012.08534 table are resolved through SIMBAD ident→basic into RA/Dec and carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas; 7 rows are `absent` in π_EDR3 and are skipped and counted). The per-source identity lives in the blatt register (`blatt-h0-linien-register.md`, §"Per-Source-Identität — Gaia DR3 source_id"); the weigh does not overstate itself. The DCEP class weigh (N = 1606, 0.2619 ± 0.0004 mas) is the class field, not the ladder H₀; the ladder H₀ is the end-to-end weigh above.
 
 ## The form
 
-- **The Gaia TAP leg.** `https://gea.esac.esa.int/tap-server/tap/sync` (`GAIA_TAP_SYNC`, `src/archivar/gaia_sso.rs`), with the DCEP filter: `type_best_classification ∈ {DCEP, T2CEP, ACEP}` in `gaiadr3.vari_cepheid`; the filter narrows to `'DCEP'`, the classical Cepheid subset the SH0ES calibration draws on.
+- **The Gaia TAP leg.** `https://gea.esac.esa.int/tap-server/tap/sync` (`GAIA_TAP_SYNC`, `src/archivar/gaia_sso.rs`), with the DCEP filter: `type_best_classification ∈ {DCEP, T2CEP, ACEP}` in `gaiadr3.vari_cepheid`; the filter narrows to `'DCEP'`, the classical Cepheid subset the SH0ES calibration draws on. Measured 2026-09-13: the ESA host answered 000 from this machine; the ARI mirror `gaia.ari.uni-heidelberg.de/tap/sync` carried the crossmatch probe.
 - **The weighing discipline.** A source fetched beats a citation. The Riess 2021 table (arXiv:2012.08534) is not in VizieR — TAPVizieR answers 400 for `J/ApJ/908/L6`; the table lives in the arXiv source package (`bigtable_redux3.tex`). The BBN route's r_d origin is quasar D/H (Cooke, Pettini & Steidel 2018), not CMB-borrowed; that is a measured route, not an assumption.
 - **A named measurement without registration.** The living TAP leg materializes no asset (pure measurement, stdout); precedent `cepheid_parallax_weigh`. The frame-less `format reference` seat in `phi/sources.φ` carries byte streams, not a live TAP leg; the leg stays a named measurement.
 - **0 honored.** Absence is a realized property: the PTA parallax row, the "BAO alone" row, and the chronometer rows carry `absent`, named. What the harvest did not reach is `pending`, not zero.
 - **The NASA binding.** HST (NASA/ESA) and JWST (NASA/ESA/CSA) data are weighed through the published HST Key Project, SH0ES, and CCHP/Freedman 2025 rows; the NASA Astrophysics Data System is the bibliographic archive named for the record route.
-- **Named pending points.** (1) the own Gaia-TAP crossmatch of the 75 SH0ES Cepheids; (2) the CMB likelihood remains cited; (3) a third thread with ≲1–2% precision (the arbiter); (4) the live TAP leg is a named measurement without an asset.
+- **Named pending points.** (1) the CMB likelihood remains cited; (2) a third thread with ≲1–2% precision (the arbiter); (3) the live TAP leg is a named measurement without an asset.
 
 ## References
 
