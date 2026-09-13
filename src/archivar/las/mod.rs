@@ -28,6 +28,11 @@ pub enum LasNote {
     PointFormat { format: u8 },
     PointLength { format: u8, length: u16 },
     PointDataAt { off: usize },
+    LazAbsent,
+    LazItem { item: u16 },
+    LazChunkTable { off: usize },
+    LazChunkOverrun { off: usize },
+    LazCoderStall { off: usize },
 }
 
 pub fn point_format_len(format: u8) -> Option<u16> {
@@ -471,6 +476,9 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
         schema,
     })
 }
+
+pub mod laszip;
+pub use laszip::{has_laszip_vlr, LazDecoder};
 
 pub fn ept_key_decode(key: &str) -> Option<(i32, i32, i32, i32)> {
     let mut parts = key.split('-');

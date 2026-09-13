@@ -46,11 +46,50 @@ fn collect_paths(file: &Hdf5File) -> Vec<String> {
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    let Some(path) = args.first() else {
-        eprintln!("usage: volume_builder <file.n4c.nc>");
+    let mut path: Option<String> = None;
+    let mut out_override: Option<String> = None;
+    let mut ci_mode = false;
+    let mut tag: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                i += 1;
+                match args.get(i) {
+                    Some(v) => out_override = Some(v.clone()),
+                    None => {
+                        eprintln!("volume_builder: --out needs a path");
+                        return;
+                    }
+                }
+            }
+            "--ci-mode" => ci_mode = true,
+            "--tag" => {
+                i += 1;
+                match args.get(i) {
+                    Some(v) => tag = Some(v.clone()),
+                    None => {
+                        eprintln!("volume_builder: --tag needs a netloc");
+                        return;
+                    }
+                }
+            }
+            other => {
+                if path.is_none() {
+                    path = Some(other.to_string());
+                } else {
+                    eprintln!("volume_builder: unexpected argument {other}");
+                    return;
+                }
+            }
+        }
+        i += 1;
+    }
+    let Some(path) = path else {
+        eprintln!("usage: volume_builder <file.nc> [--out <path>] [--ci-mode --tag <netloc>]");
         return;
     };
-    let bytes = match fs::read(path) {
+    let bytes = match fs::read(&path) {
         Ok(b) => b,
         Err(e) => {
             eprintln!("volume_builder: file does not open: {path}: {e}");
@@ -216,7 +255,10 @@ fn main() {
         .next()
         .unwrap_or(path.as_str())
         .trim_end_matches(".nc");
-    let out_path = format!("data/{stem}.volume.bin");
+    let out_path = match &out_override {
+        Some(p) => p.clone(),
+        None => format!("data/{stem}.volume.bin"),
+    };
     if let Err(e) = fs::write(&out_path, &bin) {
         eprintln!("volume_builder: {out_path} writes not: {e}");
         return;
@@ -230,4 +272,14 @@ fn main() {
         mask_dims[2],
         bin.len()
     );
+    if ci_mode {
+        let Some(tag) = tag else {
+            eprintln!("volume_builder: --ci-mode needs --tag <netloc>");
+            std::process::exit(2);
+        };
+        if !omegaflow::cdn::upload_release(&tag, &out_path) {
+            eprintln!("volume_builder: {out_path} to {tag} manifests not");
+            std::process::exit(1);
+        }
+    }
 }

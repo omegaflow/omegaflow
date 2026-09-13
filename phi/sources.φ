@@ -8246,3 +8246,51 @@ url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_
 format openneuro_eeg
 at earth
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 a3fe6dc3a049ed4717bea420f59f781cd238af895d9bd5d729fd7a3cc82587fa
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMP_kmps.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 797151fab00f3619ec59ba5a3455bb115d8590041f4eef27d064db1a1a234a40
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMS_kmps.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 15dc651057e21b8ae8bb9758fe942290c5f81b71e90669af46fba408c2a999a8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUM_percent.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 f34444584aa993e7b2eceecbb1dbc3dd1dfed4c1b83a20abca22883f7dfe4bcb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/BBNAP19-MASK-3D.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 88f3552d574b2f8117a3c9f5e913f223ae34c1a1535c25a7014f264dcd38a0e3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 46a7b7e8c2aa348f2b47c05d0e2492589d42052de1c74cf76fcb37397bde980c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/S40RTS.volume.bin
+format volume
+at earth
+sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
+format volume
+at earth
+sha256 59dedd86e22721f9c5e2845560acbc16e6ccbc77f9d3159be836ef5591990092
+ttl 31536000
