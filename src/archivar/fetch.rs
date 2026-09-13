@@ -940,6 +940,77 @@ pub fn write_epoch_stamp(path: &str, epoch: f64) {
     }
 }
 
+fn cdn_release_asset(url: &str) -> Option<(String, String)> {
+    const MARKER: &str = "/releases/download/";
+    let pos = url.find(MARKER)?;
+    let repo = url[..pos].strip_prefix("https://github.com/")?;
+    let rest = &url[pos + MARKER.len()..];
+    let mut seg = rest.split('/');
+    let netloc = seg.next()?;
+    let asset = seg.next_back()?;
+    if repo.is_empty() || netloc.is_empty() || asset.is_empty() {
+        return None;
+    }
+    let api = format!("https://api.github.com/repos/{repo}/releases/tags/{netloc}");
+    Some((api, asset.to_string()))
+}
+
+fn cdn_asset_updated_at_from_body(body: &str, asset: &str) -> Option<String> {
+    let json = parse_json(body)?;
+    let assets = match &json {
+        JsonVal::Obj(map) => map.get("assets")?,
+        _ => return None,
+    };
+    let arr = match assets {
+        JsonVal::Arr(a) => a,
+        _ => return None,
+    };
+    for a in arr {
+        let Some(name) = jstr(a, "name") else {
+            continue;
+        };
+        if name == asset {
+            return jstr(a, "updated_at");
+        }
+    }
+    None
+}
+
+fn cdn_asset_updated_at(url: &str) -> Option<String> {
+    let (api, asset) = cdn_release_asset(url)?;
+    let body = fetch_raw_probe(&api, None, &[])?;
+    cdn_asset_updated_at_from_body(&body, &asset)
+}
+
+fn cdn_stamp_path(path: &str) -> String {
+    format!("{path}.cdn")
+}
+
+pub fn write_cdn_stamp(path: &str, url: &str) {
+    let Some(updated) = cdn_asset_updated_at(url) else {
+        return;
+    };
+    if std::fs::write(cdn_stamp_path(path), updated).is_err() {
+        eprintln!("cache {}: cdn stamp write void — recheck next cycle", path);
+    }
+}
+
+pub fn cache_fresh_cdn(path: &str, ttl: u64, url: &str) -> bool {
+    if !cache_fresh(path, ttl) {
+        return false;
+    }
+    if cdn_release_asset(url).is_none() {
+        return true;
+    }
+    let Some(current) = cdn_asset_updated_at(url) else {
+        return true;
+    };
+    match std::fs::read_to_string(cdn_stamp_path(path)) {
+        Ok(stamp) => stamp.trim() == current.trim(),
+        Err(_) => false,
+    }
+}
+
 pub fn machine_now_tdb() -> Option<f64> {
     embedded_lsk().and_then(|l| l.system_now_tdb())
 }
@@ -1106,5 +1177,65 @@ mod cache_root_tests {
         unsafe {
             std::env::remove_var("OMEGAFLOW_STATE");
         }
+    }
+}
+
+#[cfg(test)]
+mod cdn_cache_tests {
+    use super::*;
+
+    #[test]
+    fn cdn_release_asset_parses_the_release_shape() {
+        let url =
+            "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
+        let (api, asset) = cdn_release_asset(url).unwrap();
+        assert_eq!(
+            api,
+            "https://api.github.com/repos/omegaflow/sources/releases/tags/www.sciencebase.gov"
+        );
+        assert_eq!(asset, "slab2_depth.bin");
+        assert!(cdn_release_asset("https://example.com/plain.bin").is_none());
+        assert!(
+            cdn_release_asset("https://github.com/omegaflow/sources/releases/download/").is_none()
+        );
+    }
+
+    #[test]
+    fn cdn_asset_updated_at_reads_only_the_matching_asset() {
+        let body = r#"{"assets":[
+            {"name":"igets.bin","updated_at":"2026-09-11T10:00:00Z"},
+            {"name":"slab2_depth.bin","updated_at":"2026-09-13T04:47:00Z"}
+        ]}"#;
+        assert_eq!(
+            cdn_asset_updated_at_from_body(body, "slab2_depth.bin").as_deref(),
+            Some("2026-09-13T04:47:00Z")
+        );
+        assert_eq!(
+            cdn_asset_updated_at_from_body(body, "igets.bin").as_deref(),
+            Some("2026-09-11T10:00:00Z")
+        );
+        assert!(cdn_asset_updated_at_from_body(body, "hinet.bin").is_none());
+        assert!(cdn_asset_updated_at_from_body(r#"{"assets":[]}"#, "x.bin").is_none());
+        assert!(cdn_asset_updated_at_from_body("not json", "x.bin").is_none());
+    }
+
+    #[test]
+    fn cache_fresh_cdn_falls_back_to_mtime_for_non_cdn_urls() {
+        let path = "/tmp/opencode/omegaflow_cdn_fallback_test.bin";
+        let _ = std::fs::remove_file(&path);
+        assert!(
+            !cache_fresh_cdn(path, 3600, "https://example.com/plain.bin"),
+            "an absent cache is not fresh"
+        );
+        std::fs::write(&path, b"bytes").unwrap();
+        assert!(
+            cache_fresh_cdn(path, 3600, "https://example.com/plain.bin"),
+            "a freshly written non-cdn cache serves within ttl"
+        );
+        assert!(
+            !cache_fresh_cdn(path, 0, "https://example.com/plain.bin"),
+            "a zero ttl closes the gate"
+        );
+        let _ = std::fs::remove_file(&path);
     }
 }
