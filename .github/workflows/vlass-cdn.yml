@@ -1,0 +1,46 @@
+name: vlass-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  vlass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the CADC vault release exists on the CDN
+        run: |
+          if ! gh release view ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca --repo omegaflow/sources \
+              --title "ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca" \
+              --notes "VLASS single-epoch source catalogue compiled to a source binary (em radio continuum, S-band 2-4 GHz). Header: magic VLAS (4), count (u32 LE), freq_hz (f64 LE, 3.0e9). Record stride 32 B: ra_deg (f64 LE), dec_deg (f64 LE), flux_mjy (f64 LE, integrated flux density), e_flux_mjy (f64 LE)."
+          fi
+      - name: Fetch the VLASS single-epoch source catalogue from the CADC vault
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/sources_se.fits \
+            https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/vlass_data/sources_se.fits \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-cdn: sources_se.fits returned void" \
+                 "curl on the CADC vault did not reach sources_se.fits (signed-redirect void). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the VLASS source records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin vlass_compiler -- \
+            --input kernels/sources_se.fits \
+            --out vlass_sources_se.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-cdn: vlass_sources_se.bin returned void" \
+                 "vlass compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

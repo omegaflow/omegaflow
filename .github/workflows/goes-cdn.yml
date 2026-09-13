@@ -1,0 +1,46 @@
+name: goes-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  goes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the noaa-goes16.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view noaa-goes16.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create noaa-goes16.s3.amazonaws.com --repo omegaflow/sources \
+              --title "noaa-goes16.s3.amazonaws.com" \
+              --notes "GOES-16 ABI L1b Rad (CONUS, band 1) compiled to a per-granule radiance record. Record stride 56 B LE: t (f64, J2000 s), band_id (u8), calib (u8, 1 = L1b operational radiance, GSICS pending), pad (2), band_wavelength (f32, um), esun (f32, W m-2 um-1), kappa0 (f32, (W m-2 um-1)-1), sub_lon (f32, deg), persp_h (f32, m), rad_mean (f32), rad_std (f32), rad_min (f32), rad_max (f32, W m-2 sr-1 um-1), valid (u32), total (u32)."
+          fi
+      - name: Fetch one GOES-16 ABI L1b Rad granule
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/rad.nc \
+            https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "goes-cdn: the ABI L1b Rad granule returned void" \
+                 "curl on noaa-goes16.s3.amazonaws.com did not reach the granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the ABI radiance record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin goes_abi_compiler -- \
+            --input kernels/rad.nc \
+            --out goes_abi_rad.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "goes-cdn: goes_abi_rad.bin returned void" \
+                 "goes_abi compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

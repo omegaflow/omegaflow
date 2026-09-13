@@ -65,6 +65,32 @@ impl SqliteDb {
         Some(rows)
     }
 
+    pub fn table_schema(&self, name: &str) -> Option<String> {
+        for row in self.master_rows() {
+            if row.len() < 5 {
+                continue;
+            }
+            let type_col = match &row[0] {
+                SqliteValue::Text(t) => t.as_str(),
+                _ => continue,
+            };
+            if type_col != "table" {
+                continue;
+            }
+            let name_col = match &row[1] {
+                SqliteValue::Text(n) => n.as_str(),
+                _ => continue,
+            };
+            if name_col != name {
+                continue;
+            }
+            if let SqliteValue::Text(sql) = &row[4] {
+                return Some(sql.clone());
+            }
+        }
+        None
+    }
+
     fn page(&self, num: u32) -> Option<&[u8]> {
         if num == 0 || num > self.page_count {
             return None;
