@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-09
-  sha256: 8acde6ab9257432bde6b2797b33f6a4a18e6f420bc6ca9d5e120cc7954754b8e
+  sha256: ec72dd36b2d67599ae32e83d0e12317cbcc5c59bc7529126ae25fbb01a143b26
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -135,7 +135,7 @@ Die zwei Wurzeln stehen nicht gleich da:
   genagelte Zahl; bei Abweichung: erst die eigene Kette wiegen — Einheiten →
   Parser → Fit —, dann der publizierte Wert). Die Cepheiden-Anker-Wurzel ist
   transkribiert: die 75er-Tabelle trägt keine Koordinaten-/ID-Spalte, das
-  eigene Gaia-TAP-Crossmatch der 75 bleibt `pending`. Der Probe
+  eigene Gaia-TAP-Crossmatch der 74 ist gewogen (74/74 `source_id`, s. u.). Der Probe
   `cepheid_parallax_weigh` bleibt das Klassen-Feld (N = 1606, 0.2619 mas,
   Query im Anhang). Der H₀-tragende Anker ist gewogen, nicht zitiert.
 - **CMB-Wurzel: zitiert.** Die Planck-Likelihood (θ*, r_d, das CMB-Leistungs-
@@ -414,6 +414,93 @@ Gemessene Zustände, benannt nicht geglättet:
   frame-lose Sitz `format reference` (gebaut 2026-09-09) trägt nur
   Byte-Strömungen, keine lebendige TAP-Leg; die bleibt eine benannte
   Messung ohne Registratur.
+
+### Per-Source-Identität — Gaia DR3 source_id (gewogen 2026-09-13)
+
+Der Crossmatch läuft über Gaia-ARI (`https://gaia.ari.uni-heidelberg.de/tap/sync`,
+`gaiadr3.gaia_source`); der ESA-TAP `gea.esac.esa.int` antwortet aus dieser
+Sitzung nicht (HTTP 000, 0 Bytes, GET und POST gemessen). Je Cepheide: der
+Tabelle-Name, der SIMBAD-Hauptname, die Gaia-`source_id`, die Gaia-Parallaxe
+mit Fehler, die Separation und die `vari_cepheid`-Klasse. Die 74 Zeilen tragen
+die per-source-Identität des Cepheiden-Ankers; die 7 `\nd`-Sterne tragen ihre
+Gaia-Parallaxe, ihre π_EDR3 bleibt absent (0 honored).
+
+| Cepheide | SIMBAD | Gaia source_id | π_Gaia (mas) | σ_π (mas) | Sep (″) | vari_cepheid |
+|---|---|---|---|---|---|---|
+| AA-GEM | V* AA Gem | 3430067092837622272 | 0.274911 | 0.017681 | 0.011 | DCEP |
+| AD-PUP | V* AD Pup | 5614312705966204288 | 0.233082 | 0.016544 | 0.062 | DCEP |
+| AQ-CAR | V* AQ Car | 5254662177677566464 | 0.350468 | 0.015537 | 0.119 | DCEP |
+| AQ-PUP | V* AQ Pup | 5597379741549105280 | 0.275097 | 0.022584 | 0.060 | DCEP |
+| BK-AUR | V* BK Aur | 261548119462093568 | 0.392738 | 0.014951 | 0.028 | DCEP |
+| BN-PUP | V* BN Pup | 5596601154188852352 | 0.281126 | 0.014658 | 0.046 | DCEP |
+| CD-CYG | V* CD Cyg | 2058374144759464064 | 0.366522 | 0.016361 | 0.095 | DCEP |
+| CP-CEP | V* CP Cep | 2198162651499971200 | 0.253433 | 0.020417 | 0.082 | DCEP |
+| CR-CAR | V* CR Car | 5351423049186195328 | 0.179373 | 0.014860 | 0.104 | DCEP |
+| CY-AUR$^*$ | V* CY Aur | 206577210999441536 | 0.231575 | 0.020790 | 0.005 | DCEP |
+| DD-CAS | V* DD Cas | 2013029941628292352 | 0.322125 | 0.013070 | 0.036 | DCEP |
+| DL-CAS$^*$ | V* DL Cas | 428620663657823232 | 0.552838 | 0.027384 | 0.047 | DCEP |
+| DR-VEL | V* DR Vel | 5313887130948758016 | 0.504740 | 0.013408 | 0.110 | DCEP |
+| GQ-ORI | V* GQ Ori | 3329849043206545920 | 0.375586 | 0.020807 | 0.017 | DCEP |
+| HW-CAR | V* HW Car | 5254097093074642944 | 0.385481 | 0.012196 | 0.106 | DCEP |
+| KK-CEN | V* KK Cen | 5336389564126521728 | 0.135675 | 0.015247 | 0.106 | DCEP |
+| KN-CEN | V* KN Cen | 5864135319959353600 | 0.227229 | 0.018278 | 0.113 | DCEP |
+| RW-CAM$^*$ | V* RW Cam | 473043922712140928 | 0.713330 | 0.137096 | 0.019 | DCEP |
+| RW-CAS | V* RW Cas | 508915489570374272 | 0.304689 | 0.018854 | 0.021 | DCEP |
+| RY-CAS | V* RY Cas | 1999252442448732288 | 0.329708 | 0.014925 | 0.052 | DCEP |
+| RY-SCO | V* RY Sco | 4041690364529590144 | 0.727937 | 0.032087 | 0.033 | DCEP |
+| RY-VEL | V* RY Vel | 5355057622307185280 | 0.364866 | 0.020608 | 0.124 | DCEP |
+| S-NOR | V* S Nor | 5835124087174043136 | 1.077423 | 0.021940 | 0.043 | DCEP |
+| S-VUL$^*$$^*$ | V* S Vul | 2027971514401523456 | 0.205141 | 0.020155 | 0.111 | DCEP |
+| SS-CMA | V* SS CMa | 5616601820448126336 | 0.286500 | 0.012745 | 0.195 | DCEP |
+| SV-PER$^*$ | V* SV Per | 203496585576324224 | 0.162686 | 0.212251 | 0.051 | DCEP |
+| SV-VEL | V* SV Vel | 5351331755370445056 | 0.421065 | 0.017516 | 0.126 | DCEP |
+| SV-VUL$^*$$^*$ | V* SV Vul | 2027951173435143680 | 0.372932 | 0.021149 | 0.101 | DCEP |
+| SY-NOR$^*$ | V* SY Nor | 5884729035255064064 | 0.230038 | 0.026798 | 0.045 | DCEP |
+| SZ-CYG | V* SZ Cyg | 2071433765909167232 | 0.418640 | 0.012402 | 0.096 | DCEP |
+| T-MON | V* T Mon | 3324535073449061504 | 0.714066 | 0.051743 | 0.050 | absent |
+| U-CAR | V* U Car | 5338359442320395904 | 0.553047 | 0.022608 | 0.103 | DCEP |
+| UU-MUS | V* UU Mus | 5332375453374624640 | 0.291540 | 0.012110 | 0.096 | DCEP |
+| V-339-CEN | V* V339 Cen | 5854560115494081024 | 0.548922 | 0.021113 | 0.138 | DCEP |
+| V-340-ARA | V* V340 Ara | 5937099633141128448 | 0.206227 | 0.019656 | 0.116 | DCEP |
+| VW-CEN | V* VW Cen | 5864955727424819200 | 0.238607 | 0.015769 | 0.098 | DCEP |
+| VX-PER | V* VX Per | 506779550797525760 | 0.363568 | 0.016823 | 0.021 | DCEP |
+| VY-CAR | V* VY Car | 5351161399793209984 | 0.553481 | 0.016717 | 0.109 | DCEP |
+| VZ-PUP | V* VZ Pup | 5600052040150252800 | 0.201098 | 0.014700 | 0.041 | DCEP |
+| WX-PUP | V* WX Pup | 5613972681993587200 | 0.368479 | 0.015003 | 0.054 | DCEP |
+| WZ-SGR | V* WZ Sgr | 4094784475310672128 | 0.574203 | 0.027734 | 0.016 | DCEP |
+| X-CYG | V* X Cyg | 1870258975238302208 | 0.884239 | 0.019928 | 0.134 | DCEP |
+| X-PUP | V* X Pup | 5620098679741674496 | 0.376271 | 0.020086 | 0.035 | DCEP |
+| XX-CAR | V* XX Car | 5238808628736339584 | 0.292520 | 0.014487 | 0.099 | DCEP |
+| XY-CAR | V* XY Car | 5240441472232302848 | 0.377875 | 0.013625 | 0.100 | DCEP |
+| XZ-CAR | V* XZ Car | 5338036117182452096 | 0.460478 | 0.017988 | 0.124 | DCEP |
+| YZ-CAR | V* YZ Car | 5255254711361371520 | 0.346360 | 0.017870 | 0.113 | DCEP |
+| YZ-SGR | V* YZ Sgr | 4099189015819292800 | 0.823523 | 0.024237 | 0.054 | DCEP |
+| Z-LAC | V* Z Lac | 2007201567928631296 | 0.486594 | 0.020831 | 0.077 | DCEP |
+| AG-CRU | V* AG Cru | 6059635702888301952 | 0.742163 | 0.019866 | 0.077 | DCEP |
+| AP-PUP | V* AP Pup | 5537743094157581568 | 0.911032 | 0.019895 | 0.118 | DCEP |
+| AP-SGR | *  12 Sgr | 4066429066901946368 | 1.181491 | 0.024037 | 0.061 | absent |
+| BF-OPH | V* BF Oph | 4111834567779557376 | 1.153767 | 0.024090 | 0.008 | DCEP |
+| BG-VEL | V* BG Vel | 5324034867356093056 | 1.036207 | 0.016882 | 0.190 | DCEP |
+| ER-CAR | V* ER Car | 5339394082770287232 | 0.858683 | 0.014970 | 0.160 | DCEP |
+| R-CRU | V* R Cru | 6054935874795049216 | 1.062196 | 0.028123 | 0.162 | DCEP |
+| R-MUS | V* R Mus | 5855468247702904704 | 1.065607 | 0.017528 | 0.077 | DCEP |
+| R-TRA | V* R TrA | 5824464493705913472 | 1.543183 | 0.016095 | 0.157 | DCEP |
+| RV-SCO | V* RV Sco | 6026412893938675712 | 1.223984 | 0.020576 | 0.105 | DCEP |
+| RX-CAM$^*$ | V* RX Cam | 470361114339849472 | 0.631287 | 0.042985 | 0.008 | DCEP |
+| RY-CMA | V* RY CMa | 3046774762417915136 | 0.800598 | 0.029132 | 0.051 | DCEP |
+| S-CRU$^e$ | V* S Cru | 6060173364074372352 | 1.324519 | 0.023646 | 0.166 | DCEP |
+| S-TRA | V* S TrA | 5823134325151372032 | 1.101427 | 0.021513 | 0.060 | DCEP |
+| SS-SCT | V* SS Sct | 4251917636212432384 | 0.898490 | 0.022722 | 0.037 | DCEP |
+| T-VEL | V* T Vel | 5521459979795304320 | 0.930919 | 0.015925 | 0.126 | DCEP |
+| TX-CYG | V* TX Cyg | 2161786374436607616 | 0.795426 | 0.018621 | 0.039 | DCEP |
+| U-AQL$^*$ | V* U Aql | 4207681367143932800 | 1.729983 | 0.087489 | 0.192 | DCEP |
+| U-SGR | V* U Sgr | 4092905375639902464 | 1.569308 | 0.022430 | 0.102 | absent |
+| V-CAR | V* V Car | 5302258008774271488 | 0.792662 | 0.013880 | 0.076 | DCEP |
+| V-VEL | V* V Vel | 5309930194773990400 | 0.944961 | 0.017378 | 0.277 | DCEP |
+| V0386-CYG | V* V386 Cyg | 1968971582984827136 | 0.863760 | 0.012505 | 0.039 | DCEP |
+| V0482-SCO | V* V482 Sco | 4054440301294394624 | 0.960100 | 0.025053 | 0.046 | DCEP |
+| V0636-SCO | V* V636 Sco | 5952775576537356544 | 1.151073 | 0.033516 | 0.062 | absent |
+| W-GEM | V* W Gem | 3356940155020790656 | 0.972321 | 0.028200 | 0.041 | DCEP |
 
 ## Der Anhang
 
