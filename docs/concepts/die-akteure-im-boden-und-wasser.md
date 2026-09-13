@@ -2,7 +2,7 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: fd40b5ba6d6de20d10d91fdf6061ca6cfcbb23256affd048bd7bd0fc3c2e8e03
+  sha256: 3f8d2ee3488ec70099284746d3f6344cd09d790159b3db9f0da9a234363f7f42
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
@@ -35,8 +35,8 @@ auf die Erde.
   Streuung dominiert das Gate — `depth_phase_fleet_probe.rs`.
 - Tōhoku-Kette — Pegel gemessen (766 km/h), Vorhersage 4/6, Eikonal/Dijkstra
   schließt die Beugung (Adak +57→−10, Hilo +82→+7 min). Wächter: Eikonal-CI-
-  Run 34718368835 (queued 2026-09-12) — der grüne Lauf gegen ETOPO1
-  verifiziert die Schließung in CI.
+  Run 34718368835 (completed, success, 2026-09-12) — die Schließung trägt
+  die CI-Verifikation gegen ETOPO1.
 - M9.1-Picker — gebaut, Streuung bleibt (W-Phase entschieden, offen).
 
 ## Was offen ist (die Reihenfolge)
