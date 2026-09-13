@@ -120,7 +120,7 @@ note GOES-16 ABI L1b: GEBAUT (2026-09-13) — hdf5.rs parst Superblock-v2 mit ST
 
 blocked parser-def bzip2-hsd
 url s3://noaa-himawari8
-note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9); kein bzip2-Dekoder und kein HSD-Block-Parser. Messwert (AHI geostationäre em-Messung) echt.
+note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9); bzip2-Dekoder GEBAUT (src/archivar/bzip2.rs); offen: HSD-Block-Parser. Messwert (AHI geostationäre em-Messung) echt.
 
 blocked parser-def las-laz
 url s3://noaa-nos-coastal-lidar-pds
@@ -144,7 +144,7 @@ note WOD netCDF-4/HDF5 (Superblock v2) durchgehend; hdf5.rs liefert auf 1903/wod
 
 blocked parser-def bzip2-ar2v
 url s3://unidata-nexrad-level2
-note NEXRAD Level II (AR2V0008.907 + bzip2 BZh9 ab Offset 24); kein Level-II-Reader und kein bzip2-Dekoder. Messwert (Radar-Reflektivität em) echt.
+note NEXRAD Level II (AR2V0008.907 + bzip2 BZh9 ab Offset 24); bzip2-Dekoder GEBAUT (src/archivar/bzip2.rs); offen: Level-II-Reader. Messwert (Radar-Reflektivität em) echt.
 
 pending
 url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
