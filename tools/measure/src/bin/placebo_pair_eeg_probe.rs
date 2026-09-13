@@ -6,8 +6,8 @@ use omegaflow::te::{
     TeNull,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, common_average_series, open_set, open_set_bin, open_set_mat, resolve_channel,
-    EeglabSet,
+    channel_series, common_average_series, open_set, open_set_bin, open_set_chanlocs, open_set_mat,
+    resolve_channel, EeglabSet,
 };
 
 fn subtract_reference(mut series: Vec<f32>, reference: &[f32]) -> Vec<f32> {
@@ -179,6 +179,21 @@ fn condition_pair(
     Some((tag, a_re, b_re, c_re, ref_note))
 }
 
+fn report_chanlocs(path: &str) {
+    match open_set_chanlocs(path) {
+        Some(entries) => {
+            println!("chanlocs at {path}:");
+            for (label, pos) in entries {
+                match pos {
+                    Some((x, y, z)) => println!("  [{label}] x={x:.6} y={y:.6} z={z:.6}"),
+                    None => println!("  [{label}] absent"),
+                }
+            }
+        }
+        None => println!("chanlocs at {path}: absent (the .set carries no chanlocs positions)"),
+    }
+}
+
 fn run_eeglab(
     args: &[String],
     set_path: &str,
@@ -201,6 +216,8 @@ fn run_eeglab(
         }
     };
 
+    report_chanlocs(set_path);
+
     match condition_pair(set_path, &sel_a, &sel_b, sel_c.as_deref()) {
         Some((tag, a, b, c, ref_note)) => {
             println!("{tag}: re-reference {ref_note}");
@@ -212,15 +229,18 @@ fn run_eeglab(
     }
 
     match sibling_path(set_path) {
-        Some(sibling) => match condition_pair(&sibling, &sel_a, &sel_b, sel_c.as_deref()) {
-            Some((tag, a, b, c, ref_note)) => {
-                println!("{tag}: re-reference {ref_note}");
-                run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed);
+        Some(sibling) => {
+            report_chanlocs(&sibling);
+            match condition_pair(&sibling, &sel_a, &sel_b, sel_c.as_deref()) {
+                Some((tag, a, b, c, ref_note)) => {
+                    println!("{tag}: re-reference {ref_note}");
+                    run_pair(&tag, &a, &b, c, lag_max, n_surr, bins, seed);
+                }
+                None => println!(
+                    "pending — the sibling condition is absent or unreadable at {sibling} (0 honored, absent stays absent)"
+                ),
             }
-            None => println!(
-                "pending — the sibling condition is absent or unreadable at {sibling} (0 honored, absent stays absent)"
-            ),
-        },
+        }
         None => println!("pending — no verum/sham sibling is nameable from {set_path} (0 honored)"),
     }
 }
