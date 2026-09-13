@@ -99,7 +99,7 @@ fn list_arg(args: &[String], flag: &str) -> Vec<usize> {
                 .filter_map(|t| t.trim().parse::<usize>().ok())
                 .collect()
         })
-        .unwrap_or_default()
+        .unwrap_or(Vec::new())
 }
 
 fn format_name(f: &NetcdfFile) -> &'static str {
@@ -125,12 +125,11 @@ fn struktur(f: &NetcdfFile) {
     }
     println!("Globale Attribute: {}", f.gattrs.len());
     for a in &f.gattrs {
-        println!(
-            "  {}: {} [{}]",
-            a.name,
-            a.nc_type.name(),
-            a.raw.len() / a.nc_type.size().max(1)
-        );
+        let count = match a.nc_type.size() {
+            0 => "variable".to_string(),
+            s => (a.raw.len() / s).to_string(),
+        };
+        println!("  {}: {} [{}]", a.name, a.nc_type.name(), count);
     }
     println!("Variablen:");
     for v in &f.vars {
@@ -141,7 +140,7 @@ fn struktur(f: &NetcdfFile) {
                 f.dims
                     .get(id)
                     .map(|d| d.name.clone())
-                    .unwrap_or_else(|| id.to_string())
+                    .unwrap_or(id.to_string())
             })
             .collect();
         let record = if f.record_var(v) { " (record)" } else { "" };
@@ -246,6 +245,7 @@ fn note_text(note: &NetcdfNote) -> String {
             bytes[0], bytes[1], bytes[2], bytes[3]
         ),
         NetcdfNote::Cdf5 => "format is CDF-5 — pending, its own atom".to_string(),
+        NetcdfNote::Hdf5 => "format is netCDF-4/HDF5 — read with hdf5_reader".to_string(),
         NetcdfNote::EndAtByte { off } => format!("file ends at byte {}", off),
         NetcdfNote::Type { tag, off } => format!("nc_type {} at byte {}", tag, off),
         NetcdfNote::Tag { tag, off } => format!("list tag 0x{:02X} at byte {}", tag, off),
