@@ -838,21 +838,19 @@ mod tests {
 
     #[test]
     fn fullwave_format10_rgb_nir_waveform_fixture_digest() {
-        let bytes = include_bytes!("fixtures/fullwave.laz");
-        let h = LasHeader::parse(bytes).unwrap();
+        let laz = include_bytes!("fixtures/fullwave.laz");
+        let las = include_bytes!("fixtures/fullwave.las");
+        let h = LasHeader::parse(laz).unwrap();
         assert_eq!(h.point_format, 10);
         assert_eq!(h.point_count, 10750);
-        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let mut dec = LazDecoder::new(&h, laz).unwrap();
         let first = dec.point_at(0).unwrap();
         assert!(first.red.is_some());
         assert!(first.green.is_some());
         assert!(first.blue.is_some());
         assert!(first.nir.is_some());
         assert!(first.waveform.is_some());
-        assert_eq!(
-            decoded_digest(bytes),
-            "b73692f864fd2598a8893e5526c446bc807f531226591a8ee63a6e78934228c9"
-        );
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 
     #[test]
@@ -974,6 +972,20 @@ mod tests {
         let mut dec = LazDecoder::new(&h, laz).unwrap();
         let first = dec.point_at(0).unwrap();
         assert!(first.gps_time.is_some());
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
+    }
+
+    #[test]
+    fn format7_layered_rgb_matches_uncompressed_las_reference() {
+        let laz = include_bytes!("fixtures/autzen_trim_7.laz");
+        let las = include_bytes!("fixtures/autzen_trim_7.las");
+        let h = LasHeader::parse(laz).unwrap();
+        assert_eq!(h.point_format, 7);
+        let mut dec = LazDecoder::new(&h, laz).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.red.is_some());
+        assert!(first.green.is_some());
+        assert!(first.blue.is_some());
         assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 }
