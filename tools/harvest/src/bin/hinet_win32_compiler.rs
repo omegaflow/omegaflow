@@ -307,7 +307,7 @@ fn available_id(html: &str, w: &Window, before: &HashSet<String>) -> Option<Stri
         "{}/{:02}/{:02} {:02}:{:02}",
         w.year, w.month, w.day, w.hour, w.min
     );
-    for row in html.split("<tr>") {
+    for row in html.split("<tr") {
         if !row.contains(&token) || !row.contains("Available") {
             continue;
         }
@@ -793,6 +793,18 @@ zzzz 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 1 2 3 0 0 StnA\n";
         assert!(parse_window("2024-13-04T13:05").is_none());
         assert!(parse_window("2024-05-04T25:00").is_none());
         assert!(parse_window("garbage").is_none());
+    }
+
+    #[test]
+    fn available_id_isolates_the_row_carrying_the_window_token() {
+        let html = "<table>\
+<tr><td>ID</td><td>Status</td></tr>\
+<tr class=\"bglist4\"><td>0001</td><td>2025/01/15 00:00 2025011500000101VM.cnt</td><td>Available</td><td><input onClick=\"openDownload('0001')\"></td></tr>\
+<tr class=\"bglist2\"><td>0002</td><td>2025/01/15 00:00 2025011500000101VM.cnt</td><td>Available</td><td><input onClick=\"openDownload('0002')\"></td></tr>\
+</table>";
+        let w = parse_window("2025-01-15T00:00").expect("window parses");
+        let before: HashSet<String> = ["0001".to_string()].into_iter().collect();
+        assert_eq!(available_id(html, &w, &before), Some("0002".to_string()));
     }
 
     #[test]
