@@ -3,12 +3,13 @@ use crate::secrets::resolve_secret;
 use std::collections::HashMap;
 use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
-use std::sync::OnceLock;
-use std::time::Duration;
+use std::sync::{Mutex, OnceLock};
+use std::time::{Duration, Instant};
 
 pub struct Fetch {
     pub status: Option<i32>,
     pub body: String,
+    pub retry_after: Option<u64>,
 }
 
 impl Fetch {
@@ -26,7 +27,10 @@ pub fn set_ca_bundle(path: &str) {
     let _ = CA_BUNDLE.set(path.to_string());
 }
 
-pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
+const DEFAULT_MIN_INTERVAL_MS: u64 = 1100;
+const DEFAULT_RETRY_AFTER_SECS: u64 = 2;
+
+fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Option<Fetch> {
     let mut args: Vec<String> = vec![
         "-sL".to_string(),
         "--max-time".to_string(),
@@ -39,24 +43,50 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     for e in extra {
         args.push((*e).to_string());
     }
+    for t in transport {
+        args.push(t.clone());
+    }
     args.push("-w".to_string());
-    args.push("\n%{http_code}".to_string());
+    args.push("\n%{http_code}\n%header{retry-after}".to_string());
     args.push(url.to_string());
     let out = Command::new("curl").args(&args).output().ok()?;
     let raw = String::from_utf8_lossy(&out.stdout).to_string();
-    let (body, code) = match raw.rsplit_once('\n') {
-        Some((b, c)) => (b.to_string(), c.trim().parse::<i32>().ok()),
-        None => (raw, None),
-    };
-    Some(Fetch { status: code, body })
+    let (rest, retry) = raw.rsplit_once('\n')?;
+    let (body, code) = rest.rsplit_once('\n')?;
+    Some(Fetch {
+        status: code.trim().parse::<i32>().ok(),
+        body: body.to_string(),
+        retry_after: retry.trim().parse::<u64>().ok(),
+    })
 }
 
-fn get_iface(url: &str, iface: &str, timeout: &str) -> Option<Fetch> {
-    get(url, &["--interface", iface], timeout)
+#[derive(Clone)]
+pub(crate) enum Exit {
+    Direct,
+    Iface(String),
+    Socks(String),
 }
 
-fn get_proxy(url: &str, proxy: &str, timeout: &str) -> Option<Fetch> {
-    get(url, &["--proxy", proxy], timeout)
+impl Exit {
+    fn transport_args(&self) -> Vec<String> {
+        match self {
+            Exit::Direct => Vec::new(),
+            Exit::Iface(name) => vec!["--interface".to_string(), name.clone()],
+            Exit::Socks(url) => vec!["--proxy".to_string(), url.clone()],
+        }
+    }
+
+    fn label(&self) -> String {
+        match self {
+            Exit::Direct => "direct".to_string(),
+            Exit::Iface(name) => name.clone(),
+            Exit::Socks(url) => url.clone(),
+        }
+    }
+}
+
+fn get_once(url: &str, extra: &[&str], timeout: &str, exit: &Exit) -> Option<Fetch> {
+    curl_fetch(url, extra, timeout, &exit.transport_args())
 }
 
 fn proton_interfaces() -> Vec<String> {
@@ -96,6 +126,95 @@ fn proton_socks() -> Option<String> {
     let sock: SocketAddr = addr.parse().ok()?;
     TcpStream::connect_timeout(&sock, Duration::from_millis(500)).ok()?;
     Some(format!("socks5h://{addr}"))
+}
+
+fn exits() -> Vec<Exit> {
+    let mut out = vec![Exit::Direct];
+    for name in proton_interfaces() {
+        out.push(Exit::Iface(name));
+    }
+    if let Some(socks) = proton_socks() {
+        out.push(Exit::Socks(socks));
+    }
+    out
+}
+
+fn is_block(status: Option<i32>) -> bool {
+    matches!(status, None | Some(0) | Some(403) | Some(429))
+}
+
+fn first_answer<F: Fn(&Exit) -> Option<Fetch>>(ladder: &[Exit], attempt: F) -> Option<Fetch> {
+    let mut last = None;
+    for exit in ladder {
+        if let Some(f) = attempt(exit) {
+            if !is_block(f.status) {
+                return Some(f);
+            }
+            last = Some(f);
+        }
+    }
+    last
+}
+
+fn url_host(url: &str) -> String {
+    let rest = url.split("://").nth(1).unwrap_or(url);
+    rest.split(['/', '?', '#']).next().unwrap_or("").to_string()
+}
+
+struct RateGate {
+    next_allowed: HashMap<String, Instant>,
+    interval: Duration,
+}
+
+impl RateGate {
+    fn new() -> Self {
+        let ms = std::env::var("ARCHIVE_SEARCH_MIN_INTERVAL_MS")
+            .ok()
+            .and_then(|v| v.parse::<u64>().ok())
+            .unwrap_or(DEFAULT_MIN_INTERVAL_MS);
+        RateGate {
+            next_allowed: HashMap::new(),
+            interval: Duration::from_millis(ms),
+        }
+    }
+
+    fn wait(&mut self, host: &str) {
+        let now = Instant::now();
+        if let Some(until) = self.next_allowed.get(host).copied() {
+            if until > now {
+                std::thread::sleep(until - now);
+            }
+        }
+        self.next_allowed
+            .insert(host.to_string(), Instant::now() + self.interval);
+    }
+
+    fn back_off(&mut self, host: &str, secs: u64) {
+        self.next_allowed
+            .insert(host.to_string(), Instant::now() + Duration::from_secs(secs));
+    }
+}
+
+static RATE_GATE: OnceLock<Mutex<RateGate>> = OnceLock::new();
+
+pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
+    let host = url_host(url);
+    let gate = RATE_GATE.get_or_init(|| Mutex::new(RateGate::new()));
+    let ladder = exits();
+    first_answer(&ladder, |exit| {
+        if let Ok(mut g) = gate.lock() {
+            g.wait(&host);
+        }
+        let result = get_once(url, extra, timeout, exit);
+        if let Some(f) = &result {
+            if f.status == Some(429) {
+                if let Ok(mut g) = gate.lock() {
+                    g.back_off(&host, f.retry_after.unwrap_or(DEFAULT_RETRY_AFTER_SECS));
+                }
+            }
+        }
+        result
+    })
 }
 
 pub fn urlencode(s: &str) -> String {
@@ -204,22 +323,25 @@ fn first_snapshot(body: &str) -> Option<String> {
 pub fn verdict_lines(url: &str) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — three-stage ladder", url));
-    stage(&mut lines, 1, "direct", url, get(url, &[], "30"));
-    let ifaces = proton_interfaces();
-    let socks = proton_socks();
-    if ifaces.is_empty() && socks.is_none() {
+    stage(
+        &mut lines,
+        1,
+        "direct",
+        url,
+        get_once(url, &[], "30", &Exit::Direct),
+    );
+    let proxies: Vec<Exit> = exits()
+        .into_iter()
+        .filter(|exit| !matches!(exit, Exit::Direct))
+        .collect();
+    if proxies.is_empty() {
         lines.push("  stage 2 proton: absent — no proton transport is up".to_string());
     } else {
-        for iface in &ifaces {
-            match get_iface(url, iface, "30") {
-                Some(f) => stage_result(&mut lines, 2, iface, url, f),
-                None => lines.push(format!("  stage 2 {}: pending — no response", iface)),
-            }
-        }
-        if let Some(socks) = &socks {
-            match get_proxy(url, socks, "30") {
-                Some(f) => stage_result(&mut lines, 2, socks, url, f),
-                None => lines.push(format!("  stage 2 {}: pending — no response", socks)),
+        for exit in &proxies {
+            let label = exit.label();
+            match get_once(url, &[], "30", exit) {
+                Some(f) => stage_result(&mut lines, 2, &label, url, f),
+                None => lines.push(format!("  stage 2 {}: pending — no response", label)),
             }
         }
     }
@@ -911,5 +1033,92 @@ mod tests {
             Some("127.0.0.1:25344")
         );
         assert!(socks_bind("[Interface]\nPrivateKey = x\n").is_none());
+    }
+
+    fn answer(status: Option<i32>) -> Option<Fetch> {
+        Some(Fetch {
+            status,
+            body: String::new(),
+            retry_after: None,
+        })
+    }
+
+    #[test]
+    fn is_block_names_the_walls_not_the_end() {
+        assert!(is_block(None));
+        assert!(is_block(Some(0)));
+        assert!(is_block(Some(403)));
+        assert!(is_block(Some(429)));
+        assert!(!is_block(Some(404)));
+        assert!(!is_block(Some(200)));
+        assert!(!is_block(Some(500)));
+    }
+
+    #[test]
+    fn ladder_rolls_on_block_and_stops_at_the_first_answer() {
+        let ladder = vec![
+            Exit::Direct,
+            Exit::Iface("proton0".to_string()),
+            Exit::Socks("socks5h://127.0.0.1:25344".to_string()),
+        ];
+        let seen = std::cell::RefCell::new(Vec::new());
+        let result = first_answer(&ladder, |exit| {
+            seen.borrow_mut().push(exit.label());
+            match exit.label().as_str() {
+                "direct" => answer(Some(403)),
+                "proton0" => answer(Some(429)),
+                _ => answer(Some(200)),
+            }
+        });
+        assert_eq!(result.unwrap().status, Some(200));
+        assert_eq!(
+            *seen.borrow(),
+            vec![
+                "direct".to_string(),
+                "proton0".to_string(),
+                "socks5h://127.0.0.1:25344".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn ladder_exhausted_returns_the_last_block_truth() {
+        let ladder = vec![Exit::Direct, Exit::Iface("proton0".to_string())];
+        let result = first_answer(&ladder, |_| answer(Some(403)));
+        assert_eq!(result.unwrap().status, Some(403));
+    }
+
+    #[test]
+    fn ladder_stops_on_a_plain_absent() {
+        let ladder = vec![Exit::Direct, Exit::Iface("proton0".to_string())];
+        let calls = std::cell::Cell::new(0usize);
+        let result = first_answer(&ladder, |_| {
+            calls.set(calls.get() + 1);
+            answer(Some(404))
+        });
+        assert_eq!(result.unwrap().status, Some(404));
+        assert_eq!(calls.get(), 1);
+    }
+
+    #[test]
+    fn url_host_reads_the_authority() {
+        assert_eq!(url_host("https://example.com/path?q=1"), "example.com");
+        assert_eq!(
+            url_host("http://api.adsabs.harvard.edu/v1/x"),
+            "api.adsabs.harvard.edu"
+        );
+        assert_eq!(url_host("s3://bucket/key"), "bucket");
+    }
+
+    #[test]
+    fn rate_gate_backs_off_the_host() {
+        let mut gate = RateGate {
+            next_allowed: HashMap::new(),
+            interval: Duration::from_millis(0),
+        };
+        gate.back_off("example.com", 5);
+        let until = gate.next_allowed.get("example.com").copied();
+        assert!(until.is_some());
+        assert!(until.unwrap() > Instant::now());
     }
 }
