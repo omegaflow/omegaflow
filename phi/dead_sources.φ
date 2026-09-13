@@ -4845,3 +4845,7 @@ note BOM Space Weather API (Australian Bureau of Meteorology) — Copyright, kei
 decline redistribution
 url https://nucleus.iaea.org/wiser/
 note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026-09-12.
+
+decline metadata-portal
+url https://orfeus-eu.org/submachine/
+note SubMachine/ORFEUS-Portal (HTTP 200, Beta): Web-Oberflaeche zum Erkunden/Visualisieren/Herunterladen von 3D-Tomographie-Modellen, kein direkter Grid-Download-Endpoint (gemessen 2026-09-13); die Modell-Inhalte selbst sind als format reference in sources.φ registriert (EMC-NetCDF + tom-new-Mirror) — das Portal traegt keine eigene Messwert-Route.
