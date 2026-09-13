@@ -446,18 +446,6 @@ fn full_fixture_lsk() -> super::LeapSeconds {
 }
 
 #[test]
-fn test_parse_json_skips_jina_header() {
-    let s = "Title: \n\n\nURL Source: http://api.wheretheiss.at/v1/satellites/25544\n\n\nMarkdown Content:\n{\"name\":\"iss\",\"id\":25544,\"latitude\":-39.79}";
-    let v = parse_json(s).unwrap();
-    let obj = match v {
-        super::JsonVal::Obj(m) => m,
-        other => panic!("root is {:?}", other),
-    };
-    assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
-    assert!(matches!(obj.get("id"), Some(super::JsonVal::Num(n)) if (n - 25544.0).abs() < 1e-9));
-}
-
-#[test]
 fn test_render_source_url_substitutions() {
     let src = SourceConfig {
         ttl: 100,
@@ -4546,7 +4534,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
     }
 
     let oulu_body = match super::fetch_raw(
-        "https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0",
+        "https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0",
         None,
         &[],
         3600,
@@ -4561,7 +4549,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
         oulu_body.lines().any(|l| l.starts_with("20")),
         "oulu body must carry data lines"
     );
-    let oulu_block = "url https://r.jina.ai/https://www.nmdb.eu/nest/draw_graph.php
+    let oulu_block = "url https://www.nmdb.eu/nest/draw_graph.php
 ttl 3600
 format text
 on earth 65.06 25.47 0
