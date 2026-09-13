@@ -56,7 +56,7 @@ Code-gelesen (Archivar/Compiler lesen sie direkt):
 | `pipeline/catalog/*.φ` | Katalog-Korpora (source_scanner, --draft-context) | source_scanner.rs |
 
 Code-geschrieben (transiente Arbeitsausgaben, teils gitignored): probe_survivors.φ,
-probe_void.txt, probe_live.txt, probe_url_void.txt, probe_jina.txt, probe_drafts.φ,
+probe_void.txt, probe_live.txt, probe_url_void.txt, probe_drafts.φ,
 probe_drafts_enriched.φ, frame_registry.φ, library_gate_delta.φ.
 
 Arbeitsfläche des Source-Ports (Register/Agent, kein Code-Leser): ledger.φ

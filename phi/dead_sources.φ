@@ -268,7 +268,7 @@ note data_public-Views + ivoa.obscore — Spektren-Metadaten, kein Messwert-Feld
 
 decline model-reanalysis
 url http://opendap.nccs.nasa.gov/dods
-note GMAO GEOS-5/merra2 = Modell/Reanalyse, kein Sensor-Messwert; Datacenter-Reset, Jina 200.
+note GMAO GEOS-5/merra2 = Modell/Reanalyse, kein Sensor-Messwert; Datacenter-Reset.
 
 decline catalog
 url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1
@@ -872,7 +872,7 @@ note Import-Registry (Log-Liste). Messwert-Endpoint api.safecast.org/measurement
 
 dead dns
 url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
-note SatNOGS-API — api-Subdomain DNS-tot, Jina 422; satnogs.org selbst lebt. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://db.satnogs.org/api/.
+note SatNOGS-API — api-Subdomain DNS-tot; satnogs.org selbst lebt. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://db.satnogs.org/api/.
 
 decline no-physical-force
 url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
@@ -940,7 +940,7 @@ note HTTP 404 — Endpoint weg.
 
 decline aggregate
 url https://api.waqi.info/
-note aggregierter AQI-Index (dimensionslos), Token-pflichtig; timeout/HTTP2-stream/Jina 422 (2026-09-03).
+note aggregierter AQI-Index (dimensionslos), Token-pflichtig; timeout/HTTP2-stream (2026-09-03).
 
 dead 400
 url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&api_key=DEMO_KEY&bbox=
@@ -1076,7 +1076,7 @@ note Arten-Sichtbeobachtungen (Presence).
 
 dead unreachable
 url https://arvo-registry.sci.am/tap
-note ARVO-TAP (https) — Proton0-Ausgang 2026-09-11: http rc=56 reset by peer (000), https rc=35 reset by peer (~19,5 s); r.jina.ai 422 (page.goto timeout); Wayback-CDX trägt nur historische 2022/2024-Snapshots.
+note ARVO-TAP (https) — Proton0-Ausgang 2026-09-11: http rc=56 reset by peer (000), https rc=35 reset by peer (~19,5 s); Wayback-CDX trägt nur historische 2022/2024-Snapshots.
 
 dead 404
 url https://astro.ulb.ac.be:443/sbx/tap
@@ -1344,7 +1344,7 @@ note neocc.esa (NEOCC S2P-TAP) — 502 (2026-09-11 gemessen). §8: dachs.neo.s2p
 
 decline archive-only
 url https://dasch.rc.fas.harvard.edu/
-note DASCH Platten-Digitalisierung 2024 abgeschlossen, abgeschlossenes Archiv ohne Live-Feed; tls-expired, Jina laedt Inhalt.
+note DASCH Platten-Digitalisierung 2024 abgeschlossen, abgeschlossenes Archiv ohne Live-Feed; tls-expired.
 
 decline derived-product
 url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year
@@ -2180,7 +2180,7 @@ note GTFS-RT (protobuf) — Fahrplandaten.
 
 dead dns
 url https://gtnp.net/
-note DNS absent (Jina bestätigt; gtnp.org fremdbelegt) Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.gtn-p.org/.
+note DNS absent (gtnp.org fremdbelegt) Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.gtn-p.org/.
 
 dead 404
 url https://gwis.jrc.ec.europa.eu/api/fire
@@ -2324,7 +2324,7 @@ note curl: curl: (6) Could not resolve host: iono4d.iri-ap.ru Browser 2026-09-10
 
 dead dns
 url https://ionosonde.iap-kborn.de
-note Subdomain DNS-tot (curl 000, Jina 422); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten des Anbieters unter anderem Pfad, unverifiziert (2026-09-03). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.ionosonde.iap-kborn.de/.
+note Subdomain DNS-tot (curl 000); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten des Anbieters unter anderem Pfad, unverifiziert (2026-09-03). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.ionosonde.iap-kborn.de/.
 
 decline form
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
@@ -2448,7 +2448,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://leda.univ-lyon1.fr/
-note direkter curl 000 + Jina 422 (networkidle-Timeout) — Server antwortet nicht; Wayback 429 (Session-Rate-Limit, nicht abschließend). Alternativen geprüft: VizieR VII/237 (LEDA-2003-Snapshot) als Spiegel, HyperLEDA-Daten fließen in GLADE+ und NED ein. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition ruht auf dem Erreichbarkeits-Befund.
+note direkter curl 000 — Server antwortet nicht; Wayback 429 (Session-Rate-Limit, nicht abschließend). Alternativen geprüft: VizieR VII/237 (LEDA-2003-Snapshot) als Spiegel, HyperLEDA-Daten fließen in GLADE+ und NED ein. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition ruht auf dem Erreichbarkeits-Befund.
 
 dead dns-unresolved
 url https://lightning.gld/v1/rates/global
@@ -2592,7 +2592,7 @@ note grind: grind_host.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt
 
 decline docs
 url https://modis.gsfc.nasa.gov/
-note MODIS-Informations-Portal (Produktbeschreibung/News/Galerie), kein Daten-Endpoint (200 via Jina).
+note MODIS-Informations-Portal (Produktbeschreibung/News/Galerie), kein Daten-Endpoint (200).
 
 decline derived-satellite-index
 url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset
@@ -2664,7 +2664,7 @@ note Bild-Sammlungs-Registry.
 
 decline model-fit
 url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
-note pro_review_b5 2026-08-18: Orbital-Elemente (a,e,i) sind Modell-Fits, kein Messwert am Punkt; JSON-Route hinter Anubis-PoW (Jina liefert Markdown statt JSON). H/V-Helligkeit (em) läge nur als Markdown-Text vor — kein Feld überlebt Force-Gate + Zugang.
+note pro_review_b5 2026-08-18: Orbital-Elemente (a,e,i) sind Modell-Fits, kein Messwert am Punkt; JSON-Route hinter Anubis-PoW. H/V-Helligkeit (em) läge nur als Markdown-Text vor — kein Feld überlebt Force-Gate + Zugang.
 
 dead 404
 url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
@@ -4712,7 +4712,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns
 url https://www.treetalker.xyz/
-note TreeTalker-Netze (Nature 4.0) — Domain tot, Jina 422, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.nature4.org/treetalkercyber.
+note TreeTalker-Netze (Nature 4.0) — Domain tot, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.nature4.org/treetalkercyber.
 
 decline alerts
 url https://www.tsunami.gov/events/xml/PAAQAtom.xml
@@ -4772,7 +4772,7 @@ note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: H
 
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
-note MBARI LOBO-Datenroute ohne öffentlichen Zugang (403 lokal/corsproxy/Jina/Browser, 2026-08-19); die Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) fließen in CeNCOOS (data.cencoos.org, ERDDAP, 200) — der IOOS-Regionalverbund ist der Port-Kanal (→ queue grind_cencoos.φ). Die Tiefsee-/AUV-/ROV-Daten liegen in STOQS (stoqs.mbari.org, REST-API je Kampagne, 200 lokal + via r.jina.ai 2026-08-19 — der frühere 000 war ein Timeout des langsamen Servers, kein Block) → queue grind_stoqs.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+note MBARI LOBO-Datenroute ohne öffentlichen Zugang (403 lokal/corsproxy/Browser, 2026-08-19); die Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) fließen in CeNCOOS (data.cencoos.org, ERDDAP, 200) — der IOOS-Regionalverbund ist der Port-Kanal (→ queue grind_cencoos.φ). Die Tiefsee-/AUV-/ROV-Daten liegen in STOQS (stoqs.mbari.org, REST-API je Kampagne, 200 lokal 2026-08-19 — der frühere 000 war ein Timeout des langsamen Servers, kein Block) → queue grind_stoqs.φ. Verschoben aus blocked_sources.φ 2026-08-19.
 
 dead 404
 url https://xeno-canto.org/api/2/recordings?query=corvus+corax
