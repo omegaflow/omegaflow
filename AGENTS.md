@@ -248,3 +248,24 @@ The context window is finite. Large tool outputs bypass compaction and permanent
 - **Tool output caps apply.** `tool_output.max_lines: 80, max_bytes: 4096` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
 - **Stray files.** Identical to the template = delete; differing = commit. Never leave them ownerless.
 - **Browser reads content, not pixels.** Reading a page runs through `browser_snapshot` / `browser_get_text` / `browser_get_html` (CDP content) — the accessibility snapshot *is* the page content. `browser_screenshot` is reserved for visual verification only. Clicks and typing run through snapshot refs, never screenshot coordinates. The browser never grabs focus: open tabs without focus (`focus: false`), and activate/bring-to-foreground only when the operator explicitly asks to see the browser.
+
+### Sub-agents and git — the write boundary
+
+A sub-agent is the session's own hand, not a free actor; the session answers for
+its git behaviour.
+
+- **No sub-agent touches git destructively.** `git reset`, `git checkout -- .` /
+  `git checkout -- <path>`, `git clean`, `git rebase`, `git stash`, `git restore`
+  are forbidden to sub-agents — and denied in `opencode.jsonc`. A sub-agent may
+  run `git add` / `commit` / `status` / `diff` / `mv` only when the session names
+  the exact scope in the delegation.
+- **Only DeepSeek writes.** Agents on a free model (GLM et al.) are read-only:
+  no `edit`, no `bash` — they read and research. The writing agents (`build`,
+  `grind-flash`, `grind-pro`) run DeepSeek. The free-tier coding agent is struck:
+  on 2026-09-13 a `kilo/cohere/north-mini-code:free` sub-agent ran
+  `git checkout -- .` three times and discarded the whole uncommitted working
+  copy — foreign work included, unrecoverable from git (a `reset --hard`/`clean`
+  leaves nothing in the reflog or `fsck`).
+- **Verify the reflog around a delegation.** Before and after delegating, the
+  session measures `git reflog` and `git status`; an unexpected reset is the
+  signal, and the session owns it.
