@@ -201,6 +201,13 @@ mod tests {
         ]
     }
 
+    fn galileo_delta_dor_words() -> [u32; 9] {
+        [
+            0x578AF474, 0x00000000, 0x000010CD, 0x10877FE6, 0x23802830, 0x9A000FC0, 0x00015F90,
+            0x0DADE373, 0x1300000B,
+        ]
+    }
+
     #[test]
     fn golden_record_unpacks() {
         let r = orbit_record(&example_words()).unwrap();
@@ -224,6 +231,22 @@ mod tests {
         let first = recs[0];
         assert!((first.t_since_1950 - 1812103240.0).abs() < 1.0e-9);
         assert_eq!(first.data_type, 11);
+    }
+
+    #[test]
+    fn real_galileo_delta_dor_record_decodes() {
+        let r = orbit_record(&galileo_delta_dor_words()).unwrap();
+        assert!((r.t_since_1950 - 1468724340.0).abs() < 1.0e-9);
+        assert!((r.observable_hz - 4301.277315558).abs() < 1.0e-6);
+        assert_eq!(r.dss_rx, 14);
+        assert_eq!(r.dss_tx, 0);
+        assert_eq!(r.data_type, 1);
+        assert_eq!(r.downlink_band, 1);
+        assert_eq!(r.uplink_band, 0);
+        assert!(r.valid);
+        assert_eq!(r.scid, 77);
+        assert!((r.ref_hz - 2294997631.9).abs() < 1.0e-6);
+        assert!((r.compression_s - 900.0).abs() < 1.0e-9);
     }
 
     fn set_bits(words: &mut [u32; 9], first: usize, last: usize, value: i64) {
