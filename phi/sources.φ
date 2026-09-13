@@ -1624,6 +1624,16 @@ format ephemeris_binary
 at juno
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juice.bin
+format ephemeris_binary
+at juice
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juice_cog.bin
+format ephemeris_binary
+at juice_cog
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
 format ephemeris_binary
 at jupiter
@@ -3956,9 +3966,14 @@ format spk
 at sun
 ttl 86400
 
+url https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.bsp
+format reference
+sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
+ttl 86400
+
 url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_cog_000112_230416_260919_v01.bsp
-format spk
-at sun
+format reference
+sha256 254c612ee36d21edbc17e1769dd45f9a746d255f17ed4df162123fafb74fb56c
 ttl 86400
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
