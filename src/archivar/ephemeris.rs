@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::bpc::BpcFile;
 use crate::bsp_reader::spk::SpkFile;
@@ -41,13 +41,6 @@ pub fn body_table() -> HashMap<i32, BodyId> {
         table.insert(id, BodyId { name, parent });
     }
     table
-}
-
-pub fn parent_of(body: i32) -> Option<i32> {
-    body_table()
-        .get(&body)
-        .and_then(|b| b.parent)
-        .or_else(|| spacecraft_table().get(&body).and_then(|b| b.parent))
 }
 
 pub fn spacecraft_table() -> HashMap<i32, BodyId> {
@@ -145,29 +138,76 @@ pub fn chebyshev_fit(
 }
 
 pub fn state_ssb_multi(kernels: &[SpkFile], target: i32, et: f64) -> Option<[f64; 6]> {
+    let mut visited = HashSet::new();
+    visited.insert(target);
+    resolve_to_ssb(kernels, target, et, &visited, 0)
+}
+
+fn resolve_to_ssb(
+    kernels: &[SpkFile],
+    cur: i32,
+    et: f64,
+    visited: &HashSet<i32>,
+    depth: usize,
+) -> Option<[f64; 6]> {
+    if cur == 0 {
+        return Some([0.0; 6]);
+    }
+    if depth >= 32 {
+        return None;
+    }
+    if let Some(s) = state_wrt(kernels, cur, 0, et) {
+        return Some(s);
+    }
+    let mut candidates: Vec<i32> = Vec::new();
     for spk in kernels {
-        if let Ok(s) = spk.state(target, 0, et) {
+        for seg in spk.segments() {
+            if seg.target == cur
+                && matches!(seg.data_type, 2 | 3 | 9 | 13 | 20)
+                && et >= seg.start_et
+                && et <= seg.end_et
+            {
+                if !candidates.contains(&seg.center) {
+                    candidates.push(seg.center);
+                }
+            }
+        }
+    }
+    for c in candidates {
+        if visited.contains(&c) {
+            continue;
+        }
+        let delta = match state_wrt(kernels, cur, c, et) {
+            Some(d) => d,
+            None => continue,
+        };
+        let mut next_visited = visited.clone();
+        next_visited.insert(c);
+        if let Some(rest) = resolve_to_ssb(kernels, c, et, &next_visited, depth + 1) {
+            return Some(add_state(delta, rest));
+        }
+    }
+    None
+}
+
+fn state_wrt(kernels: &[SpkFile], target: i32, center: i32, et: f64) -> Option<[f64; 6]> {
+    for spk in kernels {
+        if let Ok(s) = spk.state(target, center, et) {
             return Some(s);
         }
     }
-    let parent = parent_of(target)?;
-    let mut moon_state = None;
-    for spk in kernels {
-        if let Ok(s) = spk.state(target, parent, et) {
-            moon_state = Some(s);
-            break;
-        }
-    }
-    let moon_state = moon_state?;
-    let planet_state = state_ssb_multi(kernels, parent, et)?;
-    Some([
-        moon_state[0] + planet_state[0],
-        moon_state[1] + planet_state[1],
-        moon_state[2] + planet_state[2],
-        moon_state[3] + planet_state[3],
-        moon_state[4] + planet_state[4],
-        moon_state[5] + planet_state[5],
-    ])
+    None
+}
+
+fn add_state(a: [f64; 6], b: [f64; 6]) -> [f64; 6] {
+    [
+        a[0] + b[0],
+        a[1] + b[1],
+        a[2] + b[2],
+        a[3] + b[3],
+        a[4] + b[4],
+        a[5] + b[5],
+    ]
 }
 
 pub fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 9] {
@@ -519,5 +559,157 @@ pub fn write_binary(
             eprintln!("write {}: {}", path, e);
             false
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::archivar::bsp_reader::daf::{DafFile, DOUBLE_BYTES, RECORD_BYTES};
+    use crate::archivar::bsp_reader::spk::SpkFile;
+
+    const DATA_START_ADDR: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;
+    const SUMMARY_SIZE: usize = 2 * DOUBLE_BYTES + 6 * 4;
+
+    struct SegSpec {
+        target: i32,
+        center: i32,
+        state: [f64; 6],
+    }
+
+    fn synthetic_spk(segs: &[SegSpec]) -> SpkFile {
+        let mut addrs = Vec::with_capacity(segs.len());
+        let mut cursor = DATA_START_ADDR;
+        for _ in segs {
+            let start = cursor;
+            let end = start + 8;
+            addrs.push((start, end));
+            cursor = end + 1;
+        }
+        let end_addr = cursor - 1;
+        let mut buf = vec![0u8; end_addr as usize * DOUBLE_BYTES];
+
+        buf[0..8].copy_from_slice(b"DAF/SPK ");
+        let nd: u32 = 2;
+        let ni: u32 = 6;
+        buf[8..12].copy_from_slice(&nd.to_le_bytes());
+        buf[12..16].copy_from_slice(&ni.to_le_bytes());
+        let fward: u32 = 2;
+        buf[76..80].copy_from_slice(&fward.to_le_bytes());
+        buf[88..96].copy_from_slice(b"LTL-IEEE");
+
+        let sum_rec = RECORD_BYTES;
+        let nsum: f64 = segs.len() as f64;
+        buf[sum_rec + 16..sum_rec + 24].copy_from_slice(&nsum.to_le_bytes());
+        for (i, seg) in segs.iter().enumerate() {
+            let soff = sum_rec + 24 + i * SUMMARY_SIZE;
+            buf[soff..soff + 8].copy_from_slice(&0.0_f64.to_le_bytes());
+            buf[soff + 8..soff + 16].copy_from_slice(&1.0e12_f64.to_le_bytes());
+            let (sa, ea) = addrs[i];
+            let ints: [i32; 6] = [seg.target, seg.center, 1, 9, sa as i32, ea as i32];
+            for (k, v) in ints.iter().enumerate() {
+                let off = soff + 16 + k * 4;
+                buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
+            }
+        }
+
+        let name_rec = 2 * RECORD_BYTES;
+        for (i, _) in segs.iter().enumerate() {
+            let noff = name_rec + i * SUMMARY_SIZE;
+            let name = format!("S{i}");
+            buf[noff..noff + name.len()].copy_from_slice(name.as_bytes());
+        }
+
+        for (i, seg) in segs.iter().enumerate() {
+            let (sa, _) = addrs[i];
+            let base = (sa as usize - 1) * DOUBLE_BYTES;
+            for k in 0..6 {
+                let off = base + k * DOUBLE_BYTES;
+                buf[off..off + DOUBLE_BYTES].copy_from_slice(&seg.state[k].to_le_bytes());
+            }
+            let eoff = base + 6 * DOUBLE_BYTES;
+            buf[eoff..eoff + DOUBLE_BYTES].copy_from_slice(&0.0_f64.to_le_bytes());
+            let toff = base + 7 * DOUBLE_BYTES;
+            buf[toff..toff + DOUBLE_BYTES].copy_from_slice(&0.0_f64.to_le_bytes());
+            buf[toff + DOUBLE_BYTES..toff + 2 * DOUBLE_BYTES]
+                .copy_from_slice(&1.0_f64.to_le_bytes());
+        }
+
+        let daf = DafFile::from_data(buf).expect("synthetic DAF parses");
+        SpkFile::from_daf(daf).expect("synthetic SPK parses")
+    }
+
+    #[test]
+    fn chain_moon_planet_ssb() {
+        let spk = synthetic_spk(&[
+            SegSpec {
+                target: 301,
+                center: 399,
+                state: [1.0, 2.0, 3.0, 0.0, 0.0, 0.0],
+            },
+            SegSpec {
+                target: 399,
+                center: 0,
+                state: [10.0, 20.0, 30.0, 0.0, 0.0, 0.0],
+            },
+        ]);
+        let kernels = [spk];
+        let s = state_ssb_multi(&kernels, 301, 100.0).expect("resolves");
+        assert_eq!(s, [11.0, 22.0, 33.0, 0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn juice_cross_kernel_chain() {
+        let a = synthetic_spk(&[
+            SegSpec {
+                target: -28,
+                center: 599,
+                state: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+            SegSpec {
+                target: -28,
+                center: 10,
+                state: [7.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+        ]);
+        let b = synthetic_spk(&[
+            SegSpec {
+                target: 599,
+                center: 0,
+                state: [10.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+            SegSpec {
+                target: 10,
+                center: 0,
+                state: [70.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+        ]);
+        let kernels = [a, b];
+        let s = state_ssb_multi(&kernels, -28, 100.0).expect("resolves");
+        assert_eq!(s, [11.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn flyby_overlap_backtracking() {
+        let a = synthetic_spk(&[
+            SegSpec {
+                target: -28,
+                center: 7,
+                state: [9.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+            SegSpec {
+                target: -28,
+                center: 599,
+                state: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+        ]);
+        let b = synthetic_spk(&[SegSpec {
+            target: 599,
+            center: 0,
+            state: [10.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        }]);
+        let kernels = [a, b];
+        let s = state_ssb_multi(&kernels, -28, 100.0).expect("resolves");
+        assert_eq!(s, [11.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
     }
 }
