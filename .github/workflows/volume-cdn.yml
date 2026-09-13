@@ -1,0 +1,181 @@
+name: volume-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  tx2019slab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "TX2019slab_percent.r0.0-n4c.volume.bin"; then
+            echo "asset TX2019slab_percent.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset TX2019slab_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile TX2019slab_percent.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc -o TX2019slab_percent.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            TX2019slab_percent.r0.0-n4c.nc \
+            --out TX2019slab_percent.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  gypsump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUMP_kmps.r0.0-n4c.volume.bin"; then
+            echo "asset GYPSUMP_kmps.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset GYPSUMP_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile GYPSUMP_kmps.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMP_kmps.r0.0-n4c.nc -o GYPSUMP_kmps.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            GYPSUMP_kmps.r0.0-n4c.nc \
+            --out GYPSUMP_kmps.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  gypsums:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUMS_kmps.r0.0-n4c.volume.bin"; then
+            echo "asset GYPSUMS_kmps.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset GYPSUMS_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile GYPSUMS_kmps.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMS_kmps.r0.0-n4c.nc -o GYPSUMS_kmps.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            GYPSUMS_kmps.r0.0-n4c.nc \
+            --out GYPSUMS_kmps.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  gypsum_percent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUM_percent.r0.0-n4c.volume.bin"; then
+            echo "asset GYPSUM_percent.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset GYPSUM_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile GYPSUM_percent.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUM_percent.r0.0-n4c.nc -o GYPSUM_percent.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            GYPSUM_percent.r0.0-n4c.nc \
+            --out GYPSUM_percent.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  bbnap19:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "BBNAP19-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "asset BBNAP19-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset BBNAP19-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile BBNAP19-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/BBNAP19-MASK-3D.r0.0-n4c.nc -o BBNAP19-MASK-3D.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            BBNAP19-MASK-3D.r0.0-n4c.nc \
+            --out BBNAP19-MASK-3D.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  cap22:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view data.earthscope.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin"; then
+            echo "asset CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
+      - name: Compile CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/CAP22-MASK-5deg-3D.r0.0-n4c.nc -o CAP22-MASK-5deg-3D.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            CAP22-MASK-5deg-3D.r0.0-n4c.nc \
+            --out CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+
+  s40rts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view media.githubusercontent.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "S40RTS.volume.bin"; then
+            echo "asset S40RTS.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset S40RTS.volume.bin missing — compiling and manifesting"
+      - name: Compile S40RTS.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc -o S40RTS.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            S40RTS.nc \
+            --out S40RTS.volume.bin --ci-mode --tag media.githubusercontent.com
+
+  llnl_g3d_jps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view media.githubusercontent.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "LLNL_G3D_JPS.volume.bin"; then
+            echo "asset LLNL_G3D_JPS.volume.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset LLNL_G3D_JPS.volume.bin missing — compiling and manifesting"
+      - name: Compile LLNL_G3D_JPS.volume.bin and upload to CDN
+        run: |
+          curl -sSfL https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc -o LLNL_G3D_JPS.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            LLNL_G3D_JPS.nc \
+            --out LLNL_G3D_JPS.volume.bin --ci-mode --tag media.githubusercontent.com
