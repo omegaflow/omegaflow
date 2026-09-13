@@ -4278,6 +4278,10 @@ decline
 url https://wspr.live
 note grind: grind_terrapulse_a.φ
 
+decline aggregated-index
+url https://wwlln.net/climate/th_yr/data/WWLLN_th_YYYY.nc.zip
+note Jahres-Stunden-Gitter (Thunder-Hour-Klimatologie) — Zählwert ohne Ereignis-Records, Ereignisse not-published. Oszillator-Gate: aggregierter Index, keine Zweitlinie zu LIS/GLM (andere physikalische Dimension). Council-Urteil 2026-09-13. Endpoint lebt (HTTP 200, gemessen 2026-09-13); Liveness ändert die Identität nicht.
+
 dead 404
 url https://www.aavso.org/api/v2/alerts/?format=json&limit=100&ordering=-created
 note HTTP 404 — Endpoint weg.

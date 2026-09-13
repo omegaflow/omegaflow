@@ -1393,6 +1393,16 @@ format ephemeris_inpop
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_deimos.bin
+format ephemeris_noe4
+at deimos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_phobos.bin
+format ephemeris_noe4
+at phobos
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
 format catalog_gaia_sso
 at sun
@@ -7944,6 +7954,11 @@ ttl 604800
 field hinet_velocity_u_ms hinet_velocity_u_ms erfc seismic-surface m/s 60.0 0.0 0.0
 field hinet_velocity_e_ms hinet_velocity_e_ms erfc seismic-surface m/s 60.0 0.0 0.0
 field hinet_velocity_n_ms hinet_velocity_n_ms erfc seismic-surface m/s 60.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs.bin
+format mpcobs
+at earth
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
 format noaa_ccor
