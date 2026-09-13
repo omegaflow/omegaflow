@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 7be676eba25ad03857f57b95ddf8b9d366c1e9eb09edd2b7ad772bf067315bea
+  sha256: 71147731a6a6a00167d7fd81e3b103b60ae7a872d6597a5414ec63eedcdf27c8
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -188,25 +188,26 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 
 ## E. Offene Registrierungen (key-needed ohne Secret)
 
-Stand 2026-08-17 — aus `phi/blocked_sources.φ` (key-needed) gegen `.secrets.local`
-abgeglichen. Leere Stubs liegen in `.secrets.local`.
+Stand 2026-08-17, nachgeprüft 2026-09-13 — aus `phi/blocked_sources.φ` (key-needed)
+gegen `.secrets.local` abgeglichen. Nachgeprüft: CEDA/ICOS/MAST tragen ihre
+Secrets inzwischen (nicht mehr leer); TOAR ist descoped (redundant, s. u.).
 
 **Grundsatz CDN-Redistribution:** Alle Messwerte werden auf das CDN (GitHub
 Releases) manifestiert und öffentlich redistribuiert. Es kommen NUR APIs infrage,
 deren Lizenz/ToS Redistribution erlauben (Public Domain, CC0, CC-BY, OGL/NLOD).
 Kommerzielle/proprietäre APIs und solche mit Redistributionsverbot sind entfernt.
 Das Urteil ist im Register vollzogen: die Hosts stehen in
-`phi/dead_sources.φ` / `phi/pipeline/blocked_sources.φ` als
+`phi/dead_sources.φ` / `phi/blocked_sources.φ` als
 `decline redistribution` / `decline no-physical-force` (mit Verdikt-Note)
 und in `phi/pipeline/interesting_domains.φ`.
 
 | Host | Secret (Stub) | Auth | Lizenz | Registrierung |
 |---|---|---|---|---|
-| archive.opensearch.ceda.ac.uk | `CEDA_USER`/`CEDA_PASS` | Login (OpenID) | OGL/CC (UK) | https://archive.ceda.ac.uk/ (Token-API: services.ceda.ac.uk/api/token/create/) |
+| archive.opensearch.ceda.ac.uk | `CEDA_USER`/`CEDA_PASS` | Login (OpenID) | OGL/CC (UK) | https://archive.ceda.ac.uk/ (Token-API: services.ceda.ac.uk/api/token/create/) — Account + Token vorhanden (`.secrets.local` gefüllt, gemessen 2026-09-13) |
 | data.icos-cp.eu | `ICOS_USER`/`ICOS_PASS` | Login | CC-BY 4.0 | https://data.icos-cp.eu/ (cpauth.icos-cp.eu — Account vorhanden) |
 | gracedb.ligo.org | ~~`GRACEDB_TOKEN`~~ | ~~Auth~~ | offen (Alerts) | ~~https://gracedb.ligo.org/~~ — refused: Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft, kein Self-Service; public superevents offen in sources.φ. |
 | mast.stsci.edu | `MAST_TOKEN` | Token | Public Domain | https://mast.stsci.edu/ (TESS/HST/JWST-Photometrie, em — Token vorhanden) |
-| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` | Login (Vollzugang) | CC-BY 4.0 | https://toar-data.fz-juelich.de/ (API v2 gemessen 10.09.: **anonym nutzbar**, Limit 5 Zeitreihen, `/database_statistics/` offen = 65,6 Mrd. Datensätze / 24.385 Stationen; Vollzugang **läuft**: Anfrage 18.08. → Schröder-Rückfrage 24.08. → Antwort mit Projektbeschreibung raus — wartet auf Jülich) |
+| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` (leer) | Login (Vollzugang) | CC-BY 4.0 | https://toar-data.fz-juelich.de/ (API v2 gemessen 10.09.: **anonym nutzbar**, Limit 5 Zeitreihen, `/database_statistics/` offen = 65,6 Mrd. Datensätze / 24.385 Stationen). **Registrierung nicht nötig** — TOAR ist die Aggregation derselben WMO-Stationsdaten, die WOUDC liefert (`atmosphere_woudc_total_ozone` integriert; Verdikt 2026-08-19 in `dead_sources.φ`). Die parallele Anfrage lief weiter: Schröder-Antwort 2026-08-25, Projektbeschreibung/CC-BY angefragt. |
 
 **§E.1 — integriert (live in `phi/sources.φ`):**
 
