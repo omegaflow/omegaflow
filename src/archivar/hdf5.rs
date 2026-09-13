@@ -446,8 +446,15 @@ fn gather_messages(buf: &[u8], addr: u64) -> Result<Vec<RawMessage>, Hdf5Note> {
         return Err(Hdf5Note::ObjectHeaderVersion { v: version });
     }
     let flags = buf[off + 5];
+    let mut extra = 0usize;
+    if flags & 0x20 != 0 {
+        extra += 16;
+    }
+    if flags & 0x10 != 0 {
+        extra += 4;
+    }
     let size_len = 1usize << (flags & 0x03);
-    let chunk0_off = off + 6 + size_len;
+    let chunk0_off = off + 6 + extra + size_len;
     let chunk0_size = match flags & 0x03 {
         0 => buf[chunk0_off - 1] as usize,
         1 => le_u16(buf, chunk0_off - 2) as usize,
@@ -1178,11 +1185,11 @@ fn link_info_of(msg: &RawMessage) -> Option<(Option<u64>, Option<u64>, Option<u6
         fh = le_u64(&msg.data, p);
         p += 8;
     }
-    if flags & 0x02 != 0 && p + 8 <= msg.data.len() {
+    if p + 8 <= msg.data.len() {
         name_bt = le_u64(&msg.data, p);
         p += 8;
     }
-    if flags & 0x04 != 0 && p + 8 <= msg.data.len() {
+    if flags & 0x02 != 0 && p + 8 <= msg.data.len() {
         co_bt = le_u64(&msg.data, p);
     }
     Some((
@@ -1705,6 +1712,121 @@ fn chunk_records(
     Ok(out)
 }
 
+const WGS84_EQUATORIAL_M: f64 = 6_378_137.0;
+const WGS84_POLAR_M: f64 = 6_356_752.314_245;
+
+#[derive(Clone, Debug)]
+pub struct GeostationaryProjection {
+    pub sub_longitude_deg: f64,
+    pub perspective_height_m: f64,
+    pub sweep_angle_axis: Option<String>,
+}
+
+pub fn geostationary_lat_lon(
+    x_rad: f64,
+    y_rad: f64,
+    sub_longitude_deg: f64,
+    perspective_height_m: f64,
+) -> (f64, f64) {
+    let h = perspective_height_m + WGS84_EQUATORIAL_M;
+    let ratio = WGS84_EQUATORIAL_M / WGS84_POLAR_M;
+    let cosx = x_rad.cos();
+    let cosy = y_rad.cos();
+    let sinx = x_rad.sin();
+    let siny = y_rad.sin();
+    let a = sinx * sinx + cosx * cosx * (cosy * cosy + ratio * ratio * siny * siny);
+    let b = -2.0 * h * cosx * cosy;
+    let c = h * h - WGS84_EQUATORIAL_M * WGS84_EQUATORIAL_M;
+    let r_s = (-b - (b * b - 4.0 * a * c).sqrt()) / (2.0 * a);
+    let s_x = r_s * cosx * cosy;
+    let s_y = -r_s * sinx;
+    let s_z = r_s * cosx * siny;
+    let lat = (ratio * ratio * s_z / ((h - s_x).powi(2) + s_y * s_y).sqrt()).atan();
+    let lon = sub_longitude_deg.to_radians() - (s_y / (h - s_x)).atan();
+    (lat.to_degrees(), lon.to_degrees())
+}
+
+pub fn geostationary_lat_lon_grid(
+    x_scan: &[f64],
+    y_scan: &[f64],
+    sub_longitude_deg: f64,
+    perspective_height_m: f64,
+) -> (Vec<f64>, Vec<f64>) {
+    let mut lats = Vec::with_capacity(x_scan.len() * y_scan.len());
+    let mut lons = Vec::with_capacity(x_scan.len() * y_scan.len());
+    for &y in y_scan {
+        for &x in x_scan {
+            let (lat, lon) = geostationary_lat_lon(x, y, sub_longitude_deg, perspective_height_m);
+            lats.push(lat);
+            lons.push(lon);
+        }
+    }
+    (lats, lons)
+}
+
+fn attr_number(a: &Hdf5Attribute) -> Option<f64> {
+    match a.datatype.class {
+        1 => match a.datatype.size {
+            4 => decode_f32(&a.data, 0, a.datatype.endian).map(|v| v as f64),
+            8 => decode_f64(&a.data, 0, a.datatype.endian),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+fn decode_numeric(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Result<f64, Hdf5Note> {
+    let off = i * dt.size;
+    match dt.class {
+        0 => {
+            let v = if dt.signed {
+                match dt.size {
+                    1 => raw.get(off).map(|&b| b as i8 as f64),
+                    2 => raw
+                        .get(off..off + 2)
+                        .and_then(|s| Some(i16::from_le_bytes(s.try_into().ok()?) as f64)),
+                    4 => raw
+                        .get(off..off + 4)
+                        .and_then(|s| Some(i32::from_le_bytes(s.try_into().ok()?) as f64)),
+                    8 => raw
+                        .get(off..off + 8)
+                        .and_then(|s| Some(i64::from_le_bytes(s.try_into().ok()?) as f64)),
+                    _ => None,
+                }
+            } else {
+                match dt.size {
+                    1 => raw.get(off).map(|&b| b as f64),
+                    2 => raw
+                        .get(off..off + 2)
+                        .and_then(|s| Some(u16::from_le_bytes(s.try_into().ok()?) as f64)),
+                    4 => raw
+                        .get(off..off + 4)
+                        .and_then(|s| Some(u32::from_le_bytes(s.try_into().ok()?) as f64)),
+                    8 => raw
+                        .get(off..off + 8)
+                        .and_then(|s| Some(u64::from_le_bytes(s.try_into().ok()?) as f64)),
+                    _ => None,
+                }
+            };
+            v.ok_or(Hdf5Note::EndAtByte { off })
+        }
+        1 => match dt.size {
+            4 => decode_f32(raw, off, dt.endian)
+                .map(|v| v as f64)
+                .ok_or(Hdf5Note::EndAtByte { off }),
+            8 => decode_f64(raw, off, dt.endian).ok_or(Hdf5Note::EndAtByte { off }),
+            _ => Err(Hdf5Note::Datatype {
+                class: dt.class,
+                off,
+            }),
+        },
+        _ => Err(Hdf5Note::Datatype {
+            class: dt.class,
+            off,
+        }),
+    }
+}
+
 impl<'a> Hdf5File<'a> {
     pub fn parse(buf: &'a [u8]) -> Result<Hdf5File<'a>, Hdf5Note> {
         let sb = parse_superblock(buf)?;
@@ -1971,6 +2093,90 @@ impl<'a> Hdf5File<'a> {
             }),
         }
     }
+
+    pub fn read_f64_dataset(&self, name: &str) -> Result<Vec<f64>, Hdf5Note> {
+        let (obj, ds, dt) = self.dataset(name)?;
+        let raw = self.read_dataset(name)?;
+        let count: usize = ds.dims.iter().fold(1usize, |a, d| a * (*d as usize));
+        let mut out = Vec::with_capacity(count);
+        for i in 0..count {
+            out.push(decode_numeric(&raw, i, dt)?);
+        }
+        let scale = obj
+            .attrs
+            .iter()
+            .find(|a| a.name == "scale_factor")
+            .and_then(attr_number);
+        if let Some(scale) = scale {
+            let offset = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "add_offset")
+                .and_then(attr_number);
+            for v in out.iter_mut() {
+                *v = match offset {
+                    Some(o) => *v * scale + o,
+                    None => *v * scale,
+                };
+            }
+        }
+        Ok(out)
+    }
+
+    pub fn geostationary_projection(&self) -> Result<GeostationaryProjection, Hdf5Note> {
+        if let Ok(proj) = self.resolve("goes_imager_projection") {
+            let sub_lon = proj
+                .attrs
+                .iter()
+                .find(|a| a.name == "longitude_of_projection_origin")
+                .and_then(attr_number);
+            let height = proj
+                .attrs
+                .iter()
+                .find(|a| a.name == "perspective_point_height")
+                .and_then(attr_number);
+            if let (Some(sub_lon), Some(height)) = (sub_lon, height) {
+                return Ok(GeostationaryProjection {
+                    sub_longitude_deg: sub_lon,
+                    perspective_height_m: height,
+                    sweep_angle_axis: proj
+                        .attrs
+                        .iter()
+                        .find(|a| a.name == "sweep_angle_axis")
+                        .map(|a| byte_str(&a.data)),
+                });
+            }
+        }
+        for path in ["image_pixel_values", ""] {
+            let Ok(obj) = self.resolve(path) else {
+                continue;
+            };
+            let sub_lon = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "sub_longitude")
+                .and_then(attr_number);
+            let height = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "nominal_satellite_height")
+                .and_then(attr_number);
+            if let (Some(sub_lon), Some(height)) = (sub_lon, height) {
+                return Ok(GeostationaryProjection {
+                    sub_longitude_deg: sub_lon.to_degrees(),
+                    perspective_height_m: height - WGS84_EQUATORIAL_M,
+                    sweep_angle_axis: obj
+                        .attrs
+                        .iter()
+                        .find(|a| a.name == "sweep_angle_axis")
+                        .map(|a| byte_str(&a.data)),
+                });
+            }
+        }
+        Err(Hdf5Note::AbsentObject {
+            name: "geostationary_projection".to_string(),
+        })
+    }
 }
 
 #[cfg(test)]
@@ -1985,6 +2191,9 @@ mod tests {
     const FILTERS: &str = "phi/pipeline/catalog/ncei_ssi/filters.h5";
     const GOES_XRS: &str =
         "phi/pipeline/catalog/ncei_goes_xrs/sci_xrsf-l2-avg1m_g14_d20200101_v2-2-1.nc";
+    const GOES16_ABI: &str = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
+    const GK2A_AMI: &str =
+        "phi/pipeline/catalog/noaa_gk2a/gk2a_ami_le1b_ir087_fd020ge_202302160000.nc";
 
     fn read_fixture(name: &str, path: &str) -> Option<Vec<u8>> {
         if !Path::new(path).exists() {
@@ -2319,5 +2528,92 @@ mod tests {
         let unalloc = file.read_dataset("u").unwrap();
         assert_eq!(unalloc.len(), 16);
         assert_eq!(unalloc, vec![0u8; 16]);
+    }
+
+    #[test]
+    fn geostationary_sub_satellite_maps_to_origin() {
+        let sub_lon = -75.0_f64;
+        let height = 35_786_023.0_f64;
+        let (lat, lon) = geostationary_lat_lon(0.0, 0.0, sub_lon, height);
+        assert!(lat.abs() < 1e-9, "lat {}", lat);
+        assert!((lon - sub_lon).abs() < 1e-9, "lon {}", lon);
+        let (lat_e, lon_e) = geostationary_lat_lon(0.1, 0.0, sub_lon, height);
+        assert!(lon_e > sub_lon, "eastward scan must increase longitude");
+        assert!(lat_e.abs() < 1e-6, "y=0 stays on the equator");
+        let (lat_n, lon_n) = geostationary_lat_lon(0.0, 0.1, sub_lon, height);
+        assert!(lat_n > 0.0, "northward scan must increase latitude");
+        assert!(
+            (lon_n - sub_lon).abs() < 1e-9,
+            "x=0 stays on the sub-satellite meridian"
+        );
+    }
+
+    #[test]
+    fn geostationary_grid_matches_pointwise() {
+        let xs = vec![-0.1_f64, 0.0, 0.1];
+        let ys = vec![-0.05_f64, 0.05];
+        let sub_lon = 128.2_f64;
+        let height = 35_785_864.0_f64;
+        let (lats, lons) = geostationary_lat_lon_grid(&xs, &ys, sub_lon, height);
+        assert_eq!(lats.len(), 6);
+        assert_eq!(lons.len(), 6);
+        let mut idx = 0;
+        for &y in &ys {
+            for &x in &xs {
+                let (lat, lon) = geostationary_lat_lon(x, y, sub_lon, height);
+                assert_eq!(lats[idx], lat);
+                assert_eq!(lons[idx], lon);
+                idx += 1;
+            }
+        }
+    }
+
+    #[test]
+    fn real_goes16_abi_and_gk2a_navigation() {
+        let goes = Path::new(GOES16_ABI);
+        let gk2a = Path::new(GK2A_AMI);
+        if !goes.exists() && !gk2a.exists() {
+            eprintln!(
+                "skipped (fixtures absent): goes16/gk2a — fetch from noaa-goes16 / noaa-gk2a-pds S3 buckets"
+            );
+            return;
+        }
+        if goes.exists() {
+            let bytes = std::fs::read(GOES16_ABI).expect("fixture read");
+            let file = Hdf5File::parse(&bytes).unwrap();
+            let root = file.root().unwrap();
+            assert!(root.links.len() >= 50, "root links {}", root.links.len());
+            assert!(root
+                .links
+                .iter()
+                .any(|l| l.name == "goes_imager_projection"));
+            assert!(root.links.iter().any(|l| l.name == "x"));
+            assert!(root.links.iter().any(|l| l.name == "y"));
+            let proj = file.geostationary_projection().unwrap();
+            assert!((proj.sub_longitude_deg - (-75.2)).abs() < 1.0);
+            assert!(proj.perspective_height_m > 35_000_000.0);
+            let x = file.read_f64_dataset("x").unwrap();
+            let y = file.read_f64_dataset("y").unwrap();
+            assert!(!x.is_empty() && !y.is_empty());
+            let (lats, lons) = geostationary_lat_lon_grid(
+                &x[..x.len().min(64)],
+                &y[..y.len().min(64)],
+                proj.sub_longitude_deg,
+                proj.perspective_height_m,
+            );
+            assert_eq!(lats.len(), 64 * 64);
+            assert_eq!(lons.len(), 64 * 64);
+        }
+        if gk2a.exists() {
+            let bytes = std::fs::read(GK2A_AMI).expect("fixture read");
+            let file = Hdf5File::parse(&bytes).unwrap();
+            let (_, ds, dt) = file.dataset("image_pixel_values").unwrap();
+            assert_eq!(ds.dims, vec![5500, 5500]);
+            assert_eq!(dt.class, 0);
+            assert_eq!(dt.size, 2);
+            let proj = file.geostationary_projection().unwrap();
+            assert!((proj.sub_longitude_deg - 128.2).abs() < 1.0);
+            assert!(proj.perspective_height_m > 35_000_000.0);
+        }
     }
 }
