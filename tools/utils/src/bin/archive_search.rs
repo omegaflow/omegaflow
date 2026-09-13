@@ -95,7 +95,6 @@ fn main() {
     let mut skip = 0usize;
     let mut binary = false;
     let mut content = false;
-    let mut refresh = false;
     let mut kind = index::Kind::Any;
     let mut sort = index::Sort::Name;
     let mut keywords: Vec<String> = Vec::new();
@@ -194,7 +193,6 @@ fn main() {
             }
             "--binary" => binary = true,
             "--content" => content = true,
-            "--refresh" => refresh = true,
             other => keywords.push(other.to_string()),
         }
         i += 1;
@@ -263,7 +261,7 @@ fn main() {
             print_lines(&lines);
         }
         Mode::Index => {
-            let lines = run_index(&roots, &keywords, max_files, refresh, kind, sort);
+            let lines = run_index(&roots, &keywords, max_files, kind, sort);
             print_lines(&lines);
         }
         Mode::Serve => run_serve(serve_addr, &roots, mft_path),
@@ -284,7 +282,18 @@ fn main() {
                     std::process::exit(2);
                 }
             };
-            let lines = net::verdict_lines(&url);
+            let env_map = match find_repo_root() {
+                Some(repo) => secrets::load_env(&repo),
+                None => env::vars().collect(),
+            };
+            let jina_key = secrets::resolve_secret(
+                env_map
+                    .get("JINA_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                &env_map,
+            );
+            let lines = net::verdict_lines(&url, &jina_key);
             print_lines(&lines);
         }
         Mode::Net(name) => {
@@ -643,28 +652,10 @@ fn dir_mtime(dir: &Path) -> Option<i64> {
     }
 }
 
-fn cache_fresh(cached: &index::Index, roots_given: &[String], repo: &Path) -> bool {
-    let roots: Vec<PathBuf> = if roots_given.is_empty() {
-        vec![repo.to_path_buf()]
-    } else {
-        roots_given.iter().map(PathBuf::from).collect()
-    };
-    roots.iter().all(|root| {
-        if !root.is_dir() {
-            return true;
-        }
-        match dir_mtime(root) {
-            Some(m) => m <= cached.scanned_at,
-            None => false,
-        }
-    })
-}
-
 fn run_index(
     roots_given: &[String],
     keywords: &[String],
     max_files: usize,
-    refresh: bool,
     kind: index::Kind,
     sort: index::Sort,
 ) -> Vec<String> {
@@ -672,23 +663,7 @@ fn run_index(
         Some(r) => r,
         None => PathBuf::from("."),
     };
-    let cache_path = repo.join("state").join("archive_search.index");
-    let cached = if refresh {
-        None
-    } else {
-        match index::load_cache(&cache_path) {
-            Ok(cached) if cache_fresh(&cached, roots_given, &repo) => Some(cached),
-            _ => None,
-        }
-    };
-    let idx = match cached {
-        Some(cached) => cached,
-        None => {
-            let built = build_index(roots_given, &repo);
-            let _ = index::save_cache(&cache_path, &built);
-            built
-        }
-    };
+    let idx = build_index(roots_given, &repo);
     let query = index::Query {
         text: keywords.join(" "),
         ci: true,
