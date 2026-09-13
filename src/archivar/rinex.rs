@@ -1,7 +1,7 @@
 use super::*;
 use crate::lsk::days_from_civil;
 
-fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> Option<(f64, f64, f64)> {
+pub fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> Option<(f64, f64, f64)> {
     const A: f64 = 6378137.0;
     const E2: f64 = 6.69437999014e-3;
     let b = A * (1.0 - E2).sqrt();

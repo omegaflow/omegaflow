@@ -12,6 +12,8 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     }
 }
@@ -228,6 +230,8 @@ fn test_convert_to_si() {
     close(convert_to_si(1.0, "mV/m"), 1e-3);
     close(convert_to_si(1.0, "nPa"), 1e-9);
     close(convert_to_si(1.0, "sfu"), 1e-22);
+    close(convert_to_si(2.0, "W/m^2/nm"), 2.0e9);
+    close(convert_to_si(3.0, "microMoleQuanta/m^2/sec"), 3.0e-6);
     assert!(convert_to_si(9.0, "weird").is_none());
     assert!(convert_to_si(7.2, "M").is_none());
     assert!(convert_to_si(5.0, "mag").is_none());
@@ -886,6 +890,8 @@ fn test_celestial_map_redshift_distance() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -976,6 +982,8 @@ fn test_extract_csv_zip_end_to_end() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -1033,6 +1041,39 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     match &sources[0].extracts[0] {
         Extract::CelestialMap { dist_scale, .. } => {
             assert!((dist_scale - 3.085677581e19).abs() < 1e6);
+        }
+        _ => panic!("expected CelestialMap extract"),
+    }
+}
+
+#[test]
+fn test_parse_euclid_tap_block() {
+    let phi = "url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL\n\
+format tap\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra right_ascension\n\
+dec declination\n\
+field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.0 0.0\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].format, "tap");
+    match &sources[0].extracts[0] {
+        Extract::CelestialMap {
+            ra_key,
+            dec_key,
+            fields,
+            ..
+        } => {
+            assert_eq!(ra_key, "right_ascension");
+            assert_eq!(dec_key, "declination");
+            assert_eq!(fields.len(), 1);
+            assert_eq!(fields[0].key, "flux_detection_total");
+            assert_eq!(fields[0].name, "euclid_detection_flux");
+            assert_eq!(fields[0].unit, "uJy");
+            assert_eq!(fields[0].force, 0);
+            assert_eq!(fields[0].kernel, 0);
         }
         _ => panic!("expected CelestialMap extract"),
     }
@@ -1122,6 +1163,8 @@ fn test_extract_cmap_dist_scale_kpc() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -1205,6 +1248,8 @@ fn test_extract_cmap_pm_radvel_plx() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -1318,6 +1363,8 @@ fn test_extract_cmap_no_distance_skipped() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -1390,6 +1437,8 @@ fn test_extract_cmap_null_dist_skipped() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -1464,6 +1513,8 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -2417,6 +2468,8 @@ fn test_erddap_argo_map_extract() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: None,
@@ -3134,6 +3187,8 @@ fn test_anchor_body_agnostic() {
             absorption: 0.0,
             advection: 0.0,
             unit: String::new(),
+            freq: 0.0,
+            bin_width: 0.0,
             fold: None,
         })],
         headers: vec![],
@@ -3182,6 +3237,8 @@ fn test_anchor_body_agnostic() {
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
@@ -3324,6 +3381,8 @@ fn test_anchor_applies_declared_unit() {
         absorption: 0.0,
         advection: 0.0,
         unit: "nT".into(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
@@ -3799,6 +3858,8 @@ fn test_fetch_dispatch_gate_admits_em_source() {
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
@@ -3836,6 +3897,8 @@ fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
@@ -4098,6 +4161,8 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     assert!(
@@ -4169,6 +4234,8 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         absorption: 0.0,
         advection: 400000.0,
         unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
@@ -4376,6 +4443,8 @@ fn test_query_admits_surface_sample_within_window() {
         absorption: 0.0,
         advection: 0.0,
         unit: "C".into(),
+        freq: 0.0,
+        bin_width: 0.0,
         fold: None,
     };
     let frame = Frame::Surface {
@@ -4880,6 +4949,8 @@ fn test_diagnose_no_samples() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: None,
@@ -4987,6 +5058,8 @@ fn test_map_single_object_alt_scale_epoch_default() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: None,
@@ -5077,6 +5150,8 @@ fn test_map_vel_unit_and_tau_key_override() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: None,
@@ -5290,6 +5365,8 @@ fn test_fold_directive_parse_and_extract() {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: "ppm".into(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: Some((1, "sh".into())),
                 },
                 FieldConfig {
@@ -5301,6 +5378,8 @@ fn test_fold_directive_parse_and_extract() {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: "ppm".into(),
+                    freq: 0.0,
+                    bin_width: 0.0,
                     fold: Some((2, "sh".into())),
                 },
             ],
@@ -5415,6 +5494,8 @@ fn test_keplermap_elements_to_icrs() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
         }],
@@ -5519,6 +5600,8 @@ fn test_field_in_nested_port_and_flatten_generic() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
         }],
@@ -5606,6 +5689,8 @@ fn test_flux_from_mag_manifests() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "mag".into(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             tau_key: String::new(),
@@ -5683,6 +5768,8 @@ fn test_map_lat_sign_lon_sign() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "e10j".into(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: Some("4".into()),
@@ -5786,6 +5873,8 @@ fn test_mag_type_gating() {
                 absorption: 0.0,
                 advection: 0.0,
                 unit: "Mw".into(),
+                freq: 0.0,
+                bin_width: 0.0,
                 fold: None,
             }],
             lat_sign: None,
