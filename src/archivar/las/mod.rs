@@ -889,11 +889,17 @@ mod tests {
     }
 
     #[test]
-    fn pdrf4_pointwise_byte_extra_item_refused() {
-        let bytes = include_bytes!("fixtures/pdrf4-1.3.laz");
-        let h = LasHeader::parse(bytes).unwrap();
-        let mut dec = LazDecoder::new(&h, bytes).unwrap();
-        assert!(matches!(dec.point_at(0), Err(LasNote::LazItem { item: 0 })));
+    fn pdrf4_pointwise_byte_wavepacket13_fixture_digest() {
+        let laz = include_bytes!("fixtures/pdrf4-1.3.laz");
+        let las = include_bytes!("fixtures/pdrf4-1.3.las");
+        let h = LasHeader::parse(laz).unwrap();
+        assert_eq!(h.point_format, 4);
+        assert_eq!(h.point_count, 1024);
+        let mut dec = LazDecoder::new(&h, laz).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.waveform.is_some());
+        assert!(first.gps_time.is_some());
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 
     #[test]
@@ -957,5 +963,17 @@ mod tests {
             decoded_digest(bytes),
             "c4265a4210696d66a65d97b05d237e80bf7bb06788dbd8677010699be5385ab1"
         );
+    }
+
+    #[test]
+    fn format6_layered_matches_uncompressed_las_reference() {
+        let laz = include_bytes!("fixtures/1_4_w_evlr.laz");
+        let las = include_bytes!("fixtures/1_4_w_evlr.las");
+        let h = LasHeader::parse(laz).unwrap();
+        assert_eq!(h.point_format, 6);
+        let mut dec = LazDecoder::new(&h, laz).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.gps_time.is_some());
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
 }
