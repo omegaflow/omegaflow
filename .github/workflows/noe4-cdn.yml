@@ -1,0 +1,53 @@
+name: noe4-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '53 5 3 * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noe4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ftp.imcce.fr release exists on the CDN
+        run: |
+          if ! gh release view ftp.imcce.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ftp.imcce.fr --repo omegaflow/sources \
+              --title "ftp.imcce.fr" \
+              --notes "raw IMCCE ephemeris bins compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Fetch the NOE-4-2020 Mars-satellite kernel
+        run: |
+          curl -sfL -o NOE-4-2020.bsp https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.bsp \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "noe4-cdn: the NOE-4-2020 bsp returned void" \
+                 "curl on ftp.imcce.fr did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sfL -o NOE-4-2020.tpc https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "noe4-cdn: the NOE-4-2020 tpc returned void" \
+                 "curl on ftp.imcce.fr did not reach the tpc. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sfL -o de440s.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "noe4-cdn: the de440s bsp returned void" \
+                 "curl on naif.jpl.nasa.gov did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          echo "NOE-4-2020.bsp sha256: $(sha256sum NOE-4-2020.bsp | cut -d' ' -f1)"
+          echo "NOE-4-2020.bsp bytes: $(stat -c%s NOE-4-2020.bsp)"
+          test "$(sha256sum NOE-4-2020.bsp | cut -d' ' -f1)" = "bd05fc94f3f2c873b26bfc420759bc82df306593c1ed4173716b8472b115ab9b"
+      - name: Compile the NOE-4 Phobos/Deimos bins and upload
+        run: |
+          cargo run -p omegaflow-harvest --release --bin noe4_compiler -- \
+            NOE-4-2020.bsp --gm NOE-4-2020.tpc --chain de440s.bsp --ci-mode
