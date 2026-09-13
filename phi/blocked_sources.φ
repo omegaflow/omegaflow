@@ -150,7 +150,7 @@ pending
 url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
 note MAXI (JAXA/Riken) GSC-Röntgenlichtkurve — headerless, leerzeichengetrennter ASCII (MJD + 2–20-keV-Fluss + err + 3 Teilbänder 2–4/4–10/10–20 keV; Format top/lc_readme.txt). Gemessen 2026-09-12 (curl): HTTP 200, live (Daten bis ~2 d). Gap: headerless (keine Headerzeile) — lastrow/text_last_col braucht eine Headerzeile, rows-numeric-extract ist surface-frame-gated (extract.rs Frame::Surface). Messwert (Röntgenfluss, em) echt.
 
-blocked parser-def token-form
+pending
 url https://superdarn.ca/ascii-call
-note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET — der Archivar trägt keinen Session-Fetcher für die Zwei-Schritt-Form. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf) — die Direktroute bleibt form-gegatet: nicht tot, nicht declined.
+note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET. GEBAUT (2026-09-13) — der Session-Fetcher für die Zwei-Schritt-Form steht in src/archivar/session.rs: fetch_token_form POSTet /ascii-call mit Content-Type application/json und JSON-Body {radar,startDate,startTime,endDate,endTime,beam,ftype,fields}, die Antwort ist der nackte Token-Pfad im Body (z. B. /../website_updating_tools/ascii_files/…), der GET läuft auf https://sdc-serv.usask.ca + Pfad innerhalb der TTL; extract_token_path/join_token_path als reine Funktionen, Unit-Tests decken Token-Extraktion und URL-Join. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf). Offen: Ernte/Compiler der Direktroute + CDN-Manifestation (Register-Duty).
 
