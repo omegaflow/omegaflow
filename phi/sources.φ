@@ -1849,6 +1849,11 @@ format ephemeris_binary
 at voyager2
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mpcorb.bin
+format catalog_mpcorb
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mpcorb_distant.bin
 format catalog_mpcorb
 at sun
@@ -8072,6 +8077,11 @@ at sun
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_fullyear.bin
+format aia
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_lines.bin
 format aia
 at sun
 ttl 86400
