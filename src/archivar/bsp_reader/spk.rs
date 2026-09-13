@@ -205,7 +205,7 @@ impl DiscreteMeta {
         if n_states == 0 {
             return Err(SpkError::BadType2("empty discrete-state segment"));
         }
-        let n_dir = n_states / 100;
+        let n_dir = (n_states - 1) / 100;
         let states_start = start_addr;
         let epochs_start = start_addr + (6 * n_states) as u32;
         let expected_end = epochs_start + n_states as u32 + n_dir as u32 + 2 - 1;
