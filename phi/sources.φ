@@ -8201,6 +8201,7 @@ url https://data.earthscope.org/archive/seismology/products/emc/netcdf/LITHO1.0.
 format reference
 sha256 ba13dfe1b7685d7ab07aa201590568f48b79fd3109e7ba17c01dded2892c375f
 ttl 86400
+note volume descoped (gemessen 2026-09-13): LITHO1.0 ist ein geschichtetes 2D-Lithosphärenmodell — 171 lat×lon-Gitter [180,360] für Schichtgrenzen-Eigenschaften (Vp/Vs/Dichte/Q/eta je Schicht-Ober-/Unterkante) plus latitude[180]/longitude[360]. Kein rank-3-Feld; der volume.bin-Kontrakt (depth×lat×lon-Skalarfeld) trägt nur Schichtgrenzen, keine Tiefenachse — ein Tiefen-Volumen wäre Interpolation, nicht Messung. Keine volume.bin-Zeile.
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc
 format reference
@@ -8308,4 +8309,16 @@ url https://github.com/omegaflow/sources/releases/download/media.githubuserconte
 format volume
 at earth
 sha256 59dedd86e22721f9c5e2845560acbc16e6ccbc77f9d3159be836ef5591990092
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP20-MASK-3D.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 0e1c632fa49ddab28647205324a5c6f7558ebf71e0898048f2c8b5b56b6edee8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP22-MASK-3D.r0.0-n4c.volume.bin
+format volume
+at earth
+sha256 5d3f2d304365364cd99c45817bb9bda4e89582baf20d874db3c64b64735de1a7
 ttl 31536000
