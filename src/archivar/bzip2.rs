@@ -359,43 +359,55 @@ const fn build_crc_table() -> [u32; 256] {
 }
 
 pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
-    if data.len() < 4 || &data[0..3] != b"BZh" {
-        return None;
-    }
-    if !(b'1'..=b'9').contains(&data[3]) {
-        return None;
-    }
-    let mut bits = Bits::new(&data[4..]);
     let mut out = Vec::new();
-    let mut combined_crc = 0u32;
+    let mut stream_start = 0usize;
     loop {
-        let magic = bits.read(48)?;
-        if magic == 0x177245385090 {
-            let stored_combined = bits.read(32)? as u32;
-            if stored_combined != combined_crc {
-                return None;
-            }
+        let stream = data.get(stream_start..)?;
+        if stream.len() < 4 || &stream[0..3] != b"BZh" {
             break;
         }
-        if magic != 0x314159265359 {
-            return None;
+        if !(b'1'..=b'9').contains(&stream[3]) {
+            break;
         }
-        let stored_block_crc = bits.read(32)? as u32;
-        let randomised = bits.read(1)?;
-        if randomised != 0 {
-            return None;
+        let mut bits = Bits::new(&stream[4..]);
+        let mut combined_crc = 0u32;
+        loop {
+            let magic = bits.read(48)?;
+            if magic == 0x177245385090 {
+                let stored_combined = bits.read(32)? as u32;
+                if stored_combined != combined_crc {
+                    return None;
+                }
+                break;
+            }
+            if magic != 0x314159265359 {
+                return None;
+            }
+            let stored_block_crc = bits.read(32)? as u32;
+            let randomised = bits.read(1)?;
+            if randomised != 0 {
+                return None;
+            }
+            let orig_ptr = bits.read(24)? as usize;
+            let block = decode_block(&mut bits, orig_ptr)?;
+            let crc = crc32(&block);
+            if crc != stored_block_crc {
+                return None;
+            }
+            combined_crc = (combined_crc << 1) | (combined_crc >> 31);
+            combined_crc ^= stored_block_crc;
+            out.extend_from_slice(&block);
         }
-        let orig_ptr = bits.read(24)? as usize;
-        let block = decode_block(&mut bits, orig_ptr)?;
-        let crc = crc32(&block);
-        if crc != stored_block_crc {
-            return None;
+        stream_start += 4 + bits.pos;
+        if bits.pos == 0 {
+            break;
         }
-        combined_crc = (combined_crc << 1) | (combined_crc >> 31);
-        combined_crc ^= stored_block_crc;
-        out.extend_from_slice(&block);
     }
-    Some(out)
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 #[cfg(test)]
