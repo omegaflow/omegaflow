@@ -7,6 +7,7 @@ use omegaflow_measure::depthphase::{
     MIN_MAG, P_WINDOW_AFTER_ORIGIN_S, REGION, SEARCH_START, SNR_GATE, STATION_URL,
 };
 use omegaflow_measure::iasp91;
+use omegaflow_measure::mww;
 use omegaflow_measure::stats::{mean, sample_sd};
 use std::env;
 use std::thread;
@@ -14,6 +15,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 const GCMT_NDK_URL: &str =
     "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
+const KM_PER_DEG: f64 = 111.195;
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
@@ -60,6 +62,7 @@ fn main() {
         .and_then(|v| v.parse::<f64>().ok())
         .filter(|g| g.is_finite() && *g > 0.0);
     let kalibrier = args.iter().any(|a| a == "--kalibrier");
+    let mww = args.iter().any(|a| a == "--mww");
 
     println!("=== depth-phase fleet — many events x stations, sigma and sqrt(N) ===");
     println!("selection rule (registered before the first fetch):");
@@ -154,11 +157,26 @@ fn main() {
             }
         }
 
-        let start = dp::unix_to_iso(event.t0);
-        let end = dp::unix_to_iso(event.t0 + P_WINDOW_AFTER_ORIGIN_S);
+        let mww_record = if mww {
+            let url = format!(
+                "{CATALOG_URL}?eventid={}&format=quakeml&magnitudetype=mww",
+                event.id
+            );
+            fetch_raw(&url, None, &[], 3600).and_then(|xml| mww::parse_quakeml(&xml))
+        } else {
+            None
+        };
+        let anchor = if mww {
+            anchor_register(event, mww_record.as_ref())
+        } else {
+            event.clone()
+        };
+
+        let start = dp::unix_to_iso(anchor.t0);
+        let end = dp::unix_to_iso(anchor.t0 + P_WINDOW_AFTER_ORIGIN_S);
         let st_url = format!(
             "{STATION_URL}?format=text&level=channel&latitude={:.4}&longitude={:.4}&minradius={MIN_DIST_DEG}&maxradius={MAX_DIST_DEG}&channel=BHZ&starttime={start}&endtime={end}&includerestricted=false",
-            event.lat, event.lon
+            anchor.lat, anchor.lon
         );
         let Some(st_body) = fetch_raw(&st_url, None, &[], 86400) else {
             pending_events.push(format!("{} (station query void)", event.id));
@@ -168,8 +186,8 @@ fn main() {
         let mut seen = std::collections::HashSet::new();
         stations.retain(|s| seen.insert(format!("{}.{}", s.net, s.sta)));
         stations.sort_by(|a, b| {
-            let da = dp::arc_deg(event.lat, event.lon, a.lat, a.lon);
-            let db = dp::arc_deg(event.lat, event.lon, b.lat, b.lon);
+            let da = dp::arc_deg(anchor.lat, anchor.lon, a.lat, a.lon);
+            let db = dp::arc_deg(anchor.lat, anchor.lon, b.lat, b.lon);
             da.total_cmp(&db)
         });
         stations.truncate(MAX_STATIONS);
@@ -186,7 +204,7 @@ fn main() {
                 thread::sleep(Duration::from_millis(1000));
             }
             first = false;
-            let m = dp::measure_station(event, st, &start, &end, None);
+            let m = dp::measure_station(&anchor, st, &start, &end, None);
             if m.branch_unstable {
                 branch_unstable += 1;
             }
@@ -208,6 +226,9 @@ fn main() {
         if kalibrier {
             emit_kalibrier(event, &stations, &measures, ndk_events.as_deref());
         }
+        if mww {
+            emit_mww(&anchor, &stations, &measures, mww_record.as_ref());
+        }
 
         let carried = depths.len() + edge_clamped + saturated;
         if carried == 0 {
@@ -227,10 +248,10 @@ fn main() {
                 stations.len()
             );
         }
-        if let Some(smooth_grad) = dp::smooth_p_p_lag_gradient_s_per_deg(event.depth_km) {
+        if let Some(smooth_grad) = dp::smooth_p_p_lag_gradient_s_per_deg(anchor.depth_km) {
             println!(
                 "  Δ-gate reference at {:.0} km: smooth pP-lag gradient {smooth_grad:.2} s/deg, fold gate {:.2} s/deg (×{})",
-                event.depth_km,
+                anchor.depth_km,
                 smooth_grad * dp::FOLD_GATE_OVER_SMOOTH_FACTOR,
                 dp::FOLD_GATE_OVER_SMOOTH_FACTOR
             );
@@ -588,6 +609,193 @@ fn main() {
     }
 }
 
+fn anchor_register(catalog: &dp::Event, record: Option<&mww::MwwRecord>) -> dp::Event {
+    println!("  anchor register (which place and clock center the pP windows):");
+    match record {
+        None => {
+            println!(
+                "    anchor: catalog hypocentral lat {:.4}, lon {:.4}, depth {:.1} km, origin {} — no USGS mww record stands; the source term stays absent, never an NDK substitution",
+                catalog.lat,
+                catalog.lon,
+                catalog.depth_km,
+                dp::unix_to_iso(catalog.t0)
+            );
+            catalog.clone()
+        }
+        Some(r) => {
+            let c = &r.centroid;
+            match (c.lat, c.lon, c.depth_m, c.time_unix) {
+                (Some(lat), Some(lon), Some(depth_m), Some(time_unix)) => {
+                    let depth_km = depth_m / 1000.0;
+                    let offset_deg = dp::arc_deg(catalog.lat, catalog.lon, lat, lon);
+                    println!(
+                        "    anchor: USGS mww centroid lat {lat:.4}, lon {lon:.4}, depth {depth_km:.1} km, time {} — all four fields present; catalog offset {offset_deg:.3} deg ({:.1} km), depth difference {:+.1} km; the pP windows center on the centroid clock",
+                        dp::unix_to_iso(time_unix),
+                        offset_deg * KM_PER_DEG,
+                        depth_km - catalog.depth_km
+                    );
+                    dp::Event {
+                        id: catalog.id.clone(),
+                        t0: time_unix,
+                        mag: catalog.mag,
+                        lat,
+                        lon,
+                        depth_km,
+                    }
+                }
+                _ => {
+                    let mut missing: Vec<&str> = Vec::new();
+                    if c.lat.is_none() {
+                        missing.push("lat");
+                    }
+                    if c.lon.is_none() {
+                        missing.push("lon");
+                    }
+                    if c.depth_m.is_none() {
+                        missing.push("depth");
+                    }
+                    if c.time_unix.is_none() {
+                        missing.push("time");
+                    }
+                    println!(
+                        "    anchor: catalog hypocentral lat {:.4}, lon {:.4}, depth {:.1} km, origin {} — the mww record stands but {} absent; a hybrid anchor names no measured location, so the hypocentral anchor stands",
+                        catalog.lat,
+                        catalog.lon,
+                        catalog.depth_km,
+                        dp::unix_to_iso(catalog.t0),
+                        missing.join(" and ")
+                    );
+                    catalog.clone()
+                }
+            }
+        }
+    }
+}
+
+fn emit_mww(
+    anchor: &dp::Event,
+    stations: &[dp::Station],
+    measures: &[dp::StationMeasure],
+    record: Option<&mww::MwwRecord>,
+) {
+    println!("  mww-gate — the USGS moment-tensor source term at the measured station azimuths:");
+    let Some(rec) = record else {
+        println!(
+            "    no USGS mww record stands — the source term stays absent, never an NDK substitution"
+        );
+        return;
+    };
+    let Some(tensor) = moment_tensor_six(&rec.moment_tensor) else {
+        println!(
+            "    the mww moment tensor carries an absent component — the source term stays absent (0 honored)"
+        );
+        return;
+    };
+    println!(
+        "    USGS mww anchor depth {:.1} km, magnitude {} {}, doubleCouple {}",
+        anchor.depth_km,
+        rec.magnitude
+            .map(|m| format!("{m:.3}"))
+            .unwrap_or("absent".into()),
+        rec.magnitude_type.as_deref().unwrap_or("absent"),
+        rec.moment_tensor
+            .double_couple
+            .map(|d| format!("{d:.4}"))
+            .unwrap_or("absent".into())
+    );
+    println!(
+        "    nodal planes (witness, not the source term): np1 strike/dip/rake {}/{}/{}, np2 {}/{}/{}",
+        human_opt(rec.np1.strike),
+        human_opt(rec.np1.dip),
+        human_opt(rec.np1.rake),
+        human_opt(rec.np2.strike),
+        human_opt(rec.np2.dip),
+        human_opt(rec.np2.rake)
+    );
+    let Some(reference) = measures.iter().find(|ms| ms.skip.is_none()) else {
+        println!("    no station cleared the gates — the azimuth register stays empty (0 honored)");
+        return;
+    };
+    let Some(i_ref) = iasp91::takeoff_angle_deg(reference.delta_deg, anchor.depth_km, true) else {
+        println!("    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent");
+        return;
+    };
+    let (rp_min, rp_max, nodal) = upgoing_radiation(&tensor, i_ref);
+    let nodal_txt = nodal
+        .iter()
+        .map(|n| format!("{n:.1}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    println!(
+        "    upgoing P radiation R_P spans [{rp_min:+.3e}, {rp_max:+.3e}] N m at the reference delta {:.1} deg; nodal azimuths {}",
+        reference.delta_deg,
+        if nodal.is_empty() {
+            "none in the 1-deg sweep".to_string()
+        } else {
+            nodal_txt
+        }
+    );
+    let mut agree = 0usize;
+    let mut oppose = 0usize;
+    let mut pending = 0usize;
+    for (st, meas) in stations.iter().zip(measures.iter()) {
+        let Some(az) = initial_azimuth_deg(anchor.lat, anchor.lon, st.lat, st.lon) else {
+            println!(
+                "    {}.{} azimuth unread — absent, never a fabricated bearing",
+                st.net, st.sta
+            );
+            continue;
+        };
+        let source = iasp91::takeoff_angle_deg(meas.delta_deg, anchor.depth_km, true)
+            .map(|i_up| ndk::rp(&tensor, &ndk::ray_direction(i_up, az, true)));
+        let r_pp = p_p_rayparam(meas.delta_deg, anchor.depth_km).and_then(free_surface_pp);
+        let predicted = match (source, r_pp) {
+            (Some(s), Some(r)) => Some(recorded_sign(s, r)),
+            _ => None,
+        };
+        let measured = meas
+            .p_p
+            .as_ref()
+            .map(|p| if p.inverted { -1.0 } else { 1.0 });
+        let verdict = match (predicted, measured) {
+            (Some(a), Some(b)) => {
+                if a * b > 0.0 {
+                    agree += 1;
+                    "agrees"
+                } else {
+                    oppose += 1;
+                    "opposes"
+                }
+            }
+            _ => {
+                pending += 1;
+                "pending"
+            }
+        };
+        let source_txt = source
+            .map(|v| format!("{v:+.3e}"))
+            .unwrap_or("absent".into());
+        let rpp_txt = r_pp.map(|v| format!("{v:+.3}")).unwrap_or("absent".into());
+        let pred_txt = predicted.map(sign_mark).unwrap_or("absent".into());
+        let meas_txt = measured.map(sign_mark).unwrap_or("absent".into());
+        println!(
+            "    {}.{} delta {:.1} deg az {az:.1} deg R_P_up={source_txt} N m R_pp={rpp_txt} predicted pP {pred_txt} measured pP {meas_txt} — {verdict}",
+            st.net, st.sta, meas.delta_deg
+        );
+    }
+    println!(
+        "    mww-gate: {agree} stations agree, {oppose} oppose, {pending} pending (measured pP sign vs the raw USGS moment-tensor source term times the free-surface sign)"
+    );
+}
+
+fn moment_tensor_six(mt: &mww::MomentTensor) -> Option<[f64; 6]> {
+    Some([mt.mrr?, mt.mtt?, mt.mpp?, mt.mrt?, mt.mrp?, mt.mtp?])
+}
+
+fn human_opt(v: Option<f64>) -> String {
+    v.map(|x| format!("{x:.2}")).unwrap_or("absent".into())
+}
+
 fn initial_azimuth_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> Option<f64> {
     if !(lat1.is_finite() && lon1.is_finite() && lat2.is_finite() && lon2.is_finite()) {
         return None;
@@ -784,5 +992,31 @@ mod tests {
         assert_eq!(recorded_sign(-1.0, -1.0), 1.0);
         assert_eq!(recorded_sign(1.0, 1.0), 1.0);
         assert_eq!(recorded_sign(-1.0, 1.0), -1.0);
+    }
+
+    #[test]
+    fn the_six_tensor_components_flow_in_the_rp_order() {
+        let mt = mww::MomentTensor {
+            mrr: Some(1.0),
+            mtt: Some(2.0),
+            mpp: Some(3.0),
+            mrt: Some(4.0),
+            mrp: Some(5.0),
+            mtp: Some(6.0),
+            scalar_moment_nm: None,
+            double_couple: None,
+        };
+        assert_eq!(moment_tensor_six(&mt), Some([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]));
+        let absent = mww::MomentTensor {
+            mrr: Some(1.0),
+            mtt: None,
+            mpp: Some(3.0),
+            mrt: Some(4.0),
+            mrp: Some(5.0),
+            mtp: Some(6.0),
+            scalar_moment_nm: None,
+            double_couple: None,
+        };
+        assert!(moment_tensor_six(&absent).is_none());
     }
 }
