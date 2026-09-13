@@ -1515,7 +1515,14 @@ fn test_star_samples_diode() {
     let d = 10.0 * PARSEC_M;
     assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let buf = build_buffer(samples, 1.0, Arc::new(eph.clone()), None, Vec::new());
+    let buf = build_buffer(
+        samples,
+        1.0,
+        Arc::new(eph.clone()),
+        None,
+        Vec::new(),
+        Vec::new(),
+    );
     let query = |floor: [f64; 9], forward: [f64; 3]| {
         let mut out: Vec<SampleRecord> = Vec::new();
         query_hash(
@@ -1652,7 +1659,14 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     let anchor_p0 = gm.anchor_p0;
 
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let buf = build_buffer(samples, 1.0, Arc::new(eph.clone()), None, Vec::new());
+    let buf = build_buffer(
+        samples,
+        1.0,
+        Arc::new(eph.clone()),
+        None,
+        Vec::new(),
+        Vec::new(),
+    );
     let mut records: Vec<SampleRecord> = Vec::new();
     query_hash(
         &buf.cache,
@@ -2572,6 +2586,16 @@ fn test_wgccre_roundtrip() {
             super::icrs_to_body_surface(p[0], p[1], p[2], tdb, "mars", &map).unwrap();
         assert!((lat2 - lat).abs() < 1e-6, "lat {} vs {}", lat2, lat);
         assert!((lon2 - lon).abs() < 1e-6, "lon {} vs {}", lon2, lon);
+        let (lat3, lon3, depth) =
+            super::icrs_to_body_geodetic(p[0], p[1], p[2], tdb, "mars", &map).unwrap();
+        assert!((lat3 - lat).abs() < 1e-6, "geo lat {} vs {}", lat3, lat);
+        assert!((lon3 - lon).abs() < 1e-6, "geo lon {} vs {}", lon3, lon);
+        assert!(
+            (depth - (-alt / 1000.0)).abs() < 1e-2,
+            "depth {} vs {}",
+            depth,
+            -alt / 1000.0
+        );
     }
 }
 
@@ -3405,6 +3429,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         eph: Arc::new(eph),
         curves: None,
         spectral: Vec::new(),
+        volumes: Vec::new(),
     };
     let mut records: Vec<super::SampleRecord> = Vec::new();
     super::sense_membrane(

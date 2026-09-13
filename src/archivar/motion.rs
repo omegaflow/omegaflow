@@ -307,20 +307,20 @@ pub fn body_fixed_to_icrs_smooth(
     Some([xi + bx, yi + by, zi + bz])
 }
 
-pub fn icrs_to_body_surface(
+fn icrs_to_body_fixed(
     x: f64,
     y: f64,
     z: f64,
     tdb_secs: f64,
     body_name: &str,
     eph: &HashMap<String, BodyEphemeris>,
-) -> Option<(f64, f64)> {
+) -> Option<(f64, f64, f64)> {
     let e = eph.get(body_name)?;
     let [bx, by, bz] = body_barycenter_position(body_name, tdb_secs, eph)?;
     let rx = x - bx;
     let ry = y - by;
     let rz = z - bz;
-    let (xb, yb, zb) = if !e.rotation_matrices.is_empty() {
+    if !e.rotation_matrices.is_empty() {
         let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
         let (rot_m, mt) = e
@@ -333,7 +333,7 @@ pub fn icrs_to_body_surface(
         let xt = rot_m[0] * ux + rot_m[3] * uy + rot_m[6] * uz;
         let yt = rot_m[1] * ux + rot_m[4] * uy + rot_m[7] * uz;
         let zt = rot_m[2] * ux + rot_m[5] * uy + rot_m[8] * uz;
-        (xt, yt, zt)
+        Some((xt, yt, zt))
     } else {
         let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
@@ -350,9 +350,20 @@ pub fn icrs_to_body_surface(
         let z2 = -y1 * sd + rz * cd;
         let xb = x1 * cw + y2 * sw;
         let yb = -x1 * sw + y2 * cw;
-        (xb, yb, z2)
-    };
-    let bp = e.props.as_ref()?;
+        Some((xb, yb, z2))
+    }
+}
+
+pub fn icrs_to_body_surface(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64)> {
+    let bp = eph.get(body_name)?.props.as_ref()?;
+    let (xb, yb, zb) = icrs_to_body_fixed(x, y, z, tdb_secs, body_name, eph)?;
     let lon = yb.atan2(xb);
     let p = (xb * xb + yb * yb).sqrt();
     let f = bp.flattening?;
@@ -366,6 +377,33 @@ pub fn icrs_to_body_surface(
         lat = zb.atan2(p * (1.0 - e2 * n / (n + h)));
     }
     Some((lat.to_degrees(), lon.to_degrees()))
+}
+
+pub fn icrs_to_body_geodetic(
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64, f64)> {
+    let bp = eph.get(body_name)?.props.as_ref()?;
+    let (xb, yb, zb) = icrs_to_body_fixed(x, y, z, tdb_secs, body_name, eph)?;
+    let lon = yb.atan2(xb);
+    let p = (xb * xb + yb * yb).sqrt();
+    let f = bp.flattening?;
+    let e2 = f * (2.0 - f);
+    let r = bp.radius_m;
+    let mut lat = zb.atan2(p * (1.0 - e2));
+    let mut h = 0.0;
+    for _ in 0..3 {
+        let sl = lat.sin();
+        let n = r / (1.0 - e2 * sl * sl).sqrt();
+        h = p / lat.cos() - n;
+        lat = zb.atan2(p * (1.0 - e2 * n / (n + h)));
+    }
+    let depth_km = -h / 1000.0;
+    Some((lat.to_degrees(), lon.to_degrees(), depth_km))
 }
 
 pub fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {

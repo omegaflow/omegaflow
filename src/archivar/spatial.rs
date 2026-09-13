@@ -32,6 +32,7 @@ pub struct Buffer {
     pub eph: Arc<HashMap<String, BodyEphemeris>>,
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
+    pub volumes: Vec<crate::archivar::volume::Volume>,
 }
 
 #[derive(Clone)]
@@ -154,12 +155,14 @@ pub fn build_buffer(
     eph: Arc<HashMap<String, BodyEphemeris>>,
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
+    volumes: Vec<crate::archivar::volume::Volume>,
 ) -> Buffer {
     Buffer {
         cache: build_spatial_hash(samples, cadence),
         eph,
         curves,
         spectral,
+        volumes,
     }
 }
 

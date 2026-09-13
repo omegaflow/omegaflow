@@ -66,7 +66,7 @@ fn main() {
     };
 
     let mut mask: Option<(String, [u64; 3])> = None;
-    let mut rank1: Vec<(String, usize, u64, Endian)> = Vec::new();
+    let mut rank1: Vec<(String, usize, u64, Endian, usize)> = Vec::new();
     for name in collect_paths(&file) {
         let Ok((_, ds, dt)) = file.dataset(&name) else {
             continue;
@@ -78,9 +78,9 @@ fn main() {
             if mask.is_none() {
                 mask = Some((name, [ds.dims[0], ds.dims[1], ds.dims[2]]));
             }
-        } else if ds.dims.len() == 1 && dt.size == 8 {
+        } else if ds.dims.len() == 1 && (dt.size == 4 || dt.size == 8) {
             let slot = axis_slot(&name).unwrap_or(usize::MAX);
-            rank1.push((name, slot, ds.dims[0], dt.endian));
+            rank1.push((name, slot, ds.dims[0], dt.endian, dt.size));
         }
     }
     let Some((mask_name, mask_dims)) = mask else {
@@ -90,7 +90,7 @@ fn main() {
 
     let mut slot_of_dim: [Option<usize>; 3] = [None, None, None];
     for d in 0..3 {
-        for (_, slot, len, _) in &rank1 {
+        for (_, slot, len, _, _) in &rank1 {
             if *slot < 3 && *len == mask_dims[d] {
                 if slot_of_dim[d].is_some() {
                     eprintln!("volume_builder: axis {d} matches more than one coordinate variable");
@@ -110,7 +110,7 @@ fn main() {
     }
 
     let mut axes: [Option<Axis>; 3] = [None, None, None];
-    for (name, slot, len, endian) in &rank1 {
+    for (name, slot, len, endian, size) in &rank1 {
         if *slot >= 3 {
             continue;
         }
@@ -123,12 +123,21 @@ fn main() {
         };
         let mut values = Vec::with_capacity(*len as usize);
         for i in 0..*len as usize {
-            let v = match decode_f64(&data, i * 8, *endian) {
-                Some(v) if v.is_finite() => v,
-                _ => {
-                    eprintln!("volume_builder: {name} carries a non-finite value at {i}");
-                    return;
-                }
+            let v = match *size {
+                8 => match decode_f64(&data, i * 8, *endian) {
+                    Some(v) if v.is_finite() => v,
+                    _ => {
+                        eprintln!("volume_builder: {name} carries a non-finite value at {i}");
+                        return;
+                    }
+                },
+                _ => match decode_f32(&data, i * 4, *endian) {
+                    Some(v) if v.is_finite() => v as f64,
+                    _ => {
+                        eprintln!("volume_builder: {name} carries a non-finite value at {i}");
+                        return;
+                    }
+                },
             };
             values.push(v);
         }

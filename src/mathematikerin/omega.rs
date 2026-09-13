@@ -128,6 +128,11 @@ pub struct OmegaLoop {
     pub vp_buf: Option<wgpu::Buffer>,
     pub probe_buf: Option<wgpu::Buffer>,
     pub probe_read: Option<wgpu::Buffer>,
+    pub vol_head_buf: Option<wgpu::Buffer>,
+    pub vol_axis_buf: Option<wgpu::Buffer>,
+    pub vol_cell_buf: Option<wgpu::Buffer>,
+    pub vol_u_buf: Option<wgpu::Buffer>,
+    pub vol_fingerprint: Option<(usize, usize)>,
     pub prep_param_buf: Option<wgpu::Buffer>,
     pub te_pipe: Option<wgpu::ComputePipeline>,
     pub te_bind: Option<wgpu::BindGroup>,
@@ -240,6 +245,11 @@ impl OmegaLoop {
             vp_buf: None,
             probe_buf: None,
             probe_read: None,
+            vol_head_buf: None,
+            vol_axis_buf: None,
+            vol_cell_buf: None,
+            vol_u_buf: None,
+            vol_fingerprint: None,
             prep_param_buf: None,
             te_pipe: None,
             te_bind: None,
@@ -555,6 +565,18 @@ impl OmegaLoop {
         let Some(prep_param_buf) = self.prep_param_buf.clone() else {
             return;
         };
+        let Some(vol_head_buf) = self.vol_head_buf.clone() else {
+            return;
+        };
+        let Some(vol_axis_buf) = self.vol_axis_buf.clone() else {
+            return;
+        };
+        let Some(vol_cell_buf) = self.vol_cell_buf.clone() else {
+            return;
+        };
+        let Some(vol_u_buf) = self.vol_u_buf.clone() else {
+            return;
+        };
         for sel in 0..2 {
             let Some(field_buf) = self.field_bufs[sel].clone() else {
                 continue;
@@ -585,6 +607,22 @@ impl OmegaLoop {
                     wgpu::BindGroupEntry {
                         binding: 4,
                         resource: prep_param_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: vol_head_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: vol_axis_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 7,
+                        resource: vol_cell_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 8,
+                        resource: vol_u_buf.as_entire_binding(),
                     },
                 ],
             }));
@@ -639,6 +677,103 @@ impl OmegaLoop {
         self.rebuild_binds();
     }
 
+    pub fn ensure_volumes(&mut self, volumes: &[crate::archivar::volume::Volume]) {
+        let fp = (
+            volumes.len(),
+            volumes.iter().map(|v| v.data.len()).sum::<usize>(),
+        );
+        if self.vol_fingerprint == Some(fp) {
+            return;
+        }
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let mut head: Vec<u32> = Vec::with_capacity(volumes.len() * 10);
+        let mut axis: Vec<f32> = Vec::new();
+        let mut cell: Vec<f32> = Vec::new();
+        for v in volumes {
+            let data_off = cell.len() as u32;
+            let mut kinds = [0u32; 3];
+            let mut offs = [0u32; 3];
+            for i in 0..3 {
+                kinds[i] = match v.axes[i].kind {
+                    crate::archivar::volume::AxisKind::Uniform => 0,
+                    crate::archivar::volume::AxisKind::Explicit => 1,
+                };
+                offs[i] = axis.len() as u32;
+                for &val in &v.axes[i].values {
+                    axis.push(val as f32);
+                }
+            }
+            head.extend_from_slice(&[
+                data_off, v.dims[0], v.dims[1], v.dims[2], kinds[0], kinds[1], kinds[2], offs[0],
+                offs[1], offs[2],
+            ]);
+            cell.extend_from_slice(&v.data);
+        }
+        let mut head_bytes = Vec::with_capacity(head.len() * 4);
+        for &w in &head {
+            head_bytes.extend_from_slice(&w.to_le_bytes());
+        }
+        let axis_bytes = le_bytes_f32(&axis);
+        let cell_bytes = le_bytes_f32(&cell);
+        let mk = |size: u64| {
+            device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: size.max(4),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            })
+        };
+        let head_buf = mk(head_bytes.len() as u64);
+        let axis_buf = mk(axis_bytes.len() as u64);
+        let cell_buf = mk(cell_bytes.len() as u64);
+        queue.write_buffer(&head_buf, 0, &head_bytes);
+        queue.write_buffer(&axis_buf, 0, &axis_bytes);
+        queue.write_buffer(&cell_buf, 0, &cell_bytes);
+        self.vol_head_buf = Some(head_buf);
+        self.vol_axis_buf = Some(axis_buf);
+        self.vol_cell_buf = Some(cell_buf);
+        self.vol_fingerprint = Some(fp);
+        self.rebuild_binds();
+    }
+
+    pub fn upload_volumes(&mut self) {
+        let Some(field) = self.latest_field.clone() else {
+            return;
+        };
+        self.ensure_volumes(&field.volumes);
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(vol_u_buf) = self.vol_u_buf.clone() else {
+            return;
+        };
+        let p = self.pos();
+        let geo = crate::archivar::icrs_to_body_geodetic(
+            p[0],
+            p[1],
+            p[2],
+            self.t_presence,
+            "earth",
+            &field.eph,
+        );
+        let (depth, lat, lon, valid) = match geo {
+            Some((la, lo, d)) => (d as f32, la as f32, lo as f32, 1.0f32),
+            None => (0.0, 0.0, 0.0, 0.0),
+        };
+        let count = field.volumes.len() as f32;
+        let vals = [depth, lat, lon, valid, count, 0.0f32, 0.0f32, 0.0f32];
+        let mut bytes = [0u8; 32];
+        for (i, x) in vals.iter().enumerate() {
+            bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(&vol_u_buf, 0, &bytes);
+    }
+
     pub fn probe(&mut self) {
         let Some(device) = self.device.clone() else {
             return;
@@ -667,6 +802,7 @@ impl OmegaLoop {
             return;
         };
         queue.write_buffer(vp_buf, 0, &bytes);
+        self.upload_volumes();
         let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
         {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
@@ -986,6 +1122,31 @@ impl OmegaLoop {
                     e.binding = 4;
                     e
                 },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 5;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 6;
+                    e
+                },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 7;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 8,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
             ],
         });
         let probe_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -1017,6 +1178,30 @@ impl OmegaLoop {
             label: None,
             size: 48,
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_head_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_axis_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_cell_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let vol_u_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 32,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
         let te_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -1216,6 +1401,10 @@ impl OmegaLoop {
         self.vp_buf = Some(vp_buf);
         self.probe_buf = Some(probe_buf);
         self.probe_read = Some(probe_read);
+        self.vol_head_buf = Some(vol_head_buf);
+        self.vol_axis_buf = Some(vol_axis_buf);
+        self.vol_cell_buf = Some(vol_cell_buf);
+        self.vol_u_buf = Some(vol_u_buf);
         self.te_pipe = Some(te_pipe.clone());
         self.te_bind = Some(te_bind);
         self.te_series_buf = Some(te_series_buf);
