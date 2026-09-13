@@ -127,25 +127,33 @@ fn main() {
         return;
     };
 
-    let mut slot_of_dim: [Option<usize>; 3] = [None, None, None];
-    for d in 0..3 {
-        for (_, slot, len, _, _) in &rank1 {
-            if *slot < 3 && *len == mask_dims[d] {
-                if slot_of_dim[d].is_some() {
-                    eprintln!("volume_builder: axis {d} matches more than one coordinate variable");
-                    return;
-                }
-                slot_of_dim[d] = Some(*slot);
+    let mut axis_var: [Option<(&str, u64, Endian, usize)>; 3] = [None, None, None];
+    for (name, slot, len, endian, size) in &rank1 {
+        if *slot >= 3 {
+            continue;
+        }
+        match axis_var[*slot] {
+            Some((prior, _, _, _)) => {
+                eprintln!(
+                    "volume_builder: axis slot {slot} carries {prior} and {name} — two coordinate variables name the axis; refused"
+                );
+                return;
             }
+            None => axis_var[*slot] = Some((name, *len, *endian, *size)),
         }
     }
-    let ordered = slot_of_dim == [Some(0), Some(1), Some(2)];
-    if !ordered {
-        eprintln!(
-            "volume_builder: axis order is not depth,lat,lon — measured slots {:?}; refused",
-            slot_of_dim
-        );
-        return;
+    for d in 0..3 {
+        let Some((name, len, _, _)) = axis_var[d] else {
+            eprintln!("volume_builder: axis slot {d} carries no coordinate variable");
+            return;
+        };
+        if len != mask_dims[d] {
+            eprintln!(
+                "volume_builder: axis order is not depth,lat,lon — {name} length {len} vs mask dim {d} length {}; refused",
+                mask_dims[d]
+            );
+            return;
+        }
     }
 
     let mut axes: [Option<Axis>; 3] = [None, None, None];
