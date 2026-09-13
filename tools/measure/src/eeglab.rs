@@ -216,6 +216,29 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
         .collect()
 }
 
+fn chanlocs_positions(source: &EegSource) -> Option<Vec<(f64, f64, f64)>> {
+    let chanlocs = source.array("chanlocs")?;
+    let omegaflow::matfile::MatData::Struct(field_fields) = &chanlocs.data else {
+        return None;
+    };
+    let positions = field_fields
+        .iter()
+        .filter(|f| f.name == "pos" || f.name == "xyz" || f.name == "coordinates")
+        .next()?;
+    let mut out: Vec<(f64, f64, f64)> = Vec::new();
+    for val in &positions.values {
+        match &val.data {
+            omegaflow::matfile::MatData::Double(d) => {
+                if d.len() == 3 {
+                    out.push((d[0], d[1], d[2]));
+                }
+            }
+            _ => return None,
+        }
+    }
+    Some(out)
+}
+
 fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
     let nbchan = field_usize(source, "nbchan")?;
     let pnts = field_usize(source, "pnts")?;
