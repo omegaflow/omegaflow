@@ -15,6 +15,7 @@ pub const N_SAMPLES: usize = 25;
 pub const J2000_EPOCH: f64 = 2451545.0;
 pub const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x02, 0x00];
 const NAIF_ID_TABLE: &str = include_str!("kernels/naif_body_ids.tsv");
+const NAIF_SPACECRAFT_ID_TABLE: &str = include_str!("kernels/naif_spacecraft_ids.tsv");
 
 pub struct BodyId {
     pub name: String,
@@ -43,7 +44,31 @@ pub fn body_table() -> HashMap<i32, BodyId> {
 }
 
 pub fn parent_of(body: i32) -> Option<i32> {
-    body_table().get(&body).and_then(|b| b.parent)
+    body_table()
+        .get(&body)
+        .and_then(|b| b.parent)
+        .or_else(|| spacecraft_table().get(&body).and_then(|b| b.parent))
+}
+
+pub fn spacecraft_table() -> HashMap<i32, BodyId> {
+    let mut table = HashMap::new();
+    for line in NAIF_SPACECRAFT_ID_TABLE.lines() {
+        if line.starts_with('#') {
+            continue;
+        }
+        let mut parts = line.split_whitespace();
+        let id: i32 = match parts.next().and_then(|p| p.parse().ok()) {
+            Some(id) => id,
+            None => continue,
+        };
+        let name = match parts.next() {
+            Some(n) => n.to_string(),
+            None => continue,
+        };
+        let parent = parts.next().and_then(|p| p.parse().ok());
+        table.insert(id, BodyId { name, parent });
+    }
+    table
 }
 
 pub fn pck_id_of(target: i32) -> i32 {
@@ -286,7 +311,7 @@ pub fn extract_granules(
     let segments = spk.segments();
     let relevant: Vec<_> = segments
         .iter()
-        .filter(|s| s.target == target && (s.data_type == 2 || s.data_type == 20))
+        .filter(|s| s.target == target && matches!(s.data_type, 2 | 3 | 9 | 13 | 20))
         .collect();
     if relevant.is_empty() {
         return (granules, rotations, nutation);

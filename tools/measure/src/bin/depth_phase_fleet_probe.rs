@@ -185,12 +185,14 @@ fn main() {
         let mut stations = dp::parse_stations_text(&st_body);
         let mut seen = std::collections::HashSet::new();
         stations.retain(|s| seen.insert(format!("{}.{}", s.net, s.sta)));
-        stations.sort_by(|a, b| {
-            let da = dp::arc_deg(anchor.lat, anchor.lon, a.lat, a.lon);
-            let db = dp::arc_deg(anchor.lat, anchor.lon, b.lat, b.lon);
-            da.total_cmp(&db)
-        });
-        stations.truncate(MAX_STATIONS);
+        stations = select_spread_stations(
+            &stations,
+            anchor.lat,
+            anchor.lon,
+            MIN_DIST_DEG,
+            MAX_DIST_DEG,
+            MAX_STATIONS,
+        );
 
         let mut depths: Vec<f64> = Vec::new();
         let mut edge_clamped = 0usize;
@@ -956,6 +958,36 @@ fn emit_kalibrier(
     );
 }
 
+fn select_spread_stations(
+    stations: &[dp::Station],
+    anchor_lat: f64,
+    anchor_lon: f64,
+    min_dist: f64,
+    max_dist: f64,
+    cap: usize,
+) -> Vec<dp::Station> {
+    let band = max_dist - min_dist;
+    let mut farthest: Vec<Option<dp::Station>> = vec![None; cap];
+    for s in stations {
+        let d = dp::arc_deg(anchor_lat, anchor_lon, s.lat, s.lon);
+        if !d.is_finite() || d < min_dist || d > max_dist {
+            continue;
+        }
+        let bin = (((d - min_dist) / band) * (cap as f64)).floor() as usize;
+        let bin = bin.min(cap - 1);
+        match &farthest[bin] {
+            None => farthest[bin] = Some(s.clone()),
+            Some(cur) => {
+                let cur_d = dp::arc_deg(anchor_lat, anchor_lon, cur.lat, cur.lon);
+                if d > cur_d {
+                    farthest[bin] = Some(s.clone());
+                }
+            }
+        }
+    }
+    farthest.into_iter().flatten().collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1018,5 +1050,46 @@ mod tests {
             double_couple: None,
         };
         assert!(moment_tensor_six(&absent).is_none());
+    }
+
+    #[test]
+    fn spread_selection_keeps_the_outermost_station_of_each_bin() {
+        let mk = |lat: f64| dp::Station {
+            net: "N".to_string(),
+            sta: format!("S{lat}"),
+            lat,
+            lon: 0.0,
+        };
+        let stations = vec![mk(40.0), mk(45.0), mk(60.0), mk(80.0), mk(85.0)];
+        let picked = select_spread_stations(&stations, 0.0, 0.0, 30.0, 90.0, 3);
+        let lats: Vec<f64> = picked.iter().map(|s| s.lat).collect();
+        assert!(
+            lats.contains(&85.0),
+            "the outer bin keeps its outermost station"
+        );
+        assert!(
+            lats.contains(&45.0),
+            "the inner bin keeps its outermost station"
+        );
+        assert!(
+            !lats.contains(&40.0),
+            "the inner bin drops its inner station"
+        );
+        assert!(picked.len() <= 3);
+    }
+
+    #[test]
+    fn spread_selection_never_exceeds_the_cap() {
+        let mut stations = Vec::new();
+        for lat in (30..90).step_by(2) {
+            stations.push(dp::Station {
+                net: "N".to_string(),
+                sta: format!("S{lat}"),
+                lat: lat as f64,
+                lon: 0.0,
+            });
+        }
+        let picked = select_spread_stations(&stations, 0.0, 0.0, 30.0, 90.0, 12);
+        assert_eq!(picked.len(), 12);
     }
 }
