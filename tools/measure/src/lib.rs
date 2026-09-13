@@ -1,6 +1,8 @@
 pub mod depthphase;
+pub mod driver_scatter;
 pub mod eeglab;
 pub mod eikonal;
+pub mod fiducial;
 pub mod h0;
 pub mod iasp91;
 pub mod miniseed;
