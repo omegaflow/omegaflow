@@ -17,7 +17,7 @@ impl Fetch {
     }
 }
 
-fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
+pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let mut args: Vec<String> = vec![
         "-sL".to_string(),
         "--max-time".to_string(),
@@ -42,6 +42,20 @@ fn get_iface(url: &str, iface: &str, timeout: &str) -> Option<Fetch> {
     get(url, &["--interface", iface], timeout)
 }
 
+fn proton_interfaces() -> Vec<String> {
+    let mut out = Vec::new();
+    if let Ok(entries) = std::fs::read_dir("/sys/class/net") {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("proton") {
+                out.push(name);
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
 pub fn urlencode(s: &str) -> String {
     let mut out = String::new();
     for b in s.bytes() {
@@ -55,7 +69,7 @@ pub fn urlencode(s: &str) -> String {
     out
 }
 
-fn today() -> String {
+pub(crate) fn today() -> String {
     let secs = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
         Ok(d) => d.as_secs() as i64,
         Err(neg) => -(neg.duration().as_secs() as i64),
@@ -159,10 +173,15 @@ pub fn verdict_lines(url: &str, jina_key: &str) -> Vec<String> {
         jina_extra.push(auth.as_str());
     }
     stage(&mut lines, 1, "direct", url, get(url, &[], "30"));
-    match get_iface(url, "proton0", "30") {
-        Some(f) => stage_result(&mut lines, 2, "proton0", url, f),
-        None => {
-            lines.push("  stage 2 proton0: absent — the interface carries no route".to_string())
+    let ifaces = proton_interfaces();
+    if ifaces.is_empty() {
+        lines.push("  stage 2 proton: absent — no proton interface is up".to_string());
+    } else {
+        for iface in &ifaces {
+            match get_iface(url, iface, "30") {
+                Some(f) => stage_result(&mut lines, 2, iface, url, f),
+                None => lines.push(format!("  stage 2 {}: pending — no response", iface)),
+            }
         }
     }
     let jina = format!("https://r.jina.ai/{}", url);
@@ -649,6 +668,58 @@ fn extract_hrefs(html: &str) -> Vec<String> {
     out
 }
 
+pub fn brave_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — BRAVE_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let url = format!(
+        "https://api.search.brave.com/res/v1/web/search?q={}&count={}",
+        urlencode(query),
+        max
+    );
+    let auth = format!("X-Subscription-Token: {}", token);
+    let extra = ["-H", auth.as_str(), "-H", "Accept: application/json"];
+    match get(&url, &extra, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = Vec::new();
+                if let Some(results) = v
+                    .get("web")
+                    .and_then(|w| w.get("results"))
+                    .and_then(|r| r.as_arr())
+                {
+                    for r in results {
+                        let title = r.get("title").and_then(|t| t.as_str()).unwrap_or("");
+                        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+                        let desc = r
+                            .get("description")
+                            .and_then(|d| d.as_str())
+                            .map(|d| flatten(&strip_tags(d)));
+                        if link.is_empty() {
+                            continue;
+                        }
+                        let mut line = format!("url {}\ttitle: {}", link, title);
+                        if let Some(desc) = &desc {
+                            if !desc.is_empty() {
+                                line.push_str(&format!("\tdescription: {}", desc));
+                            }
+                        }
+                        out.push(line);
+                    }
+                }
+                if out.is_empty() {
+                    vec![format!("absent — Brave carries no entry: {}", query)]
+                } else {
+                    out
+                }
+            }
+            None => vec!["pending — the Brave response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Brave HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 pub fn librs_lines(query: &str) -> Vec<String> {
     let url = format!("https://lib.rs/search?q={}", urlencode(query));
     match get(&url, &[], "40") {
@@ -702,6 +773,13 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         }
         "crates" => crates_lines(query, max),
         "librs" => librs_lines(query),
+        "brave" => {
+            let token = resolve_secret(
+                env.get("BRAVE_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            brave_lines(query, &token, max)
+        }
         "verdict" => {
             let key = resolve_secret(
                 env.get("JINA_API_KEY").map(String::as_str).unwrap_or(""),
