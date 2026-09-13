@@ -8133,10 +8133,70 @@ format gl30
 at earth
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/copernicus-dem-90m.s3.amazonaws.com/copernicus_dem_90m_N50_E010.bin
+format gl90
+at earth
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
 format slab2_depth
 at earth
 ttl 31536000
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/LITHO1.0.r0.0-n4c.nc
+format reference
+sha256 ba13dfe1b7685d7ab07aa201590568f48b79fd3109e7ba17c01dded2892c375f
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc
+format reference
+sha256 b962cead63aad83227774c63509e2483cb555adb6601cc77ae0ade57e9745645
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMP_kmps.r0.0-n4c.nc
+format reference
+sha256 93af180a953d992b04b4348157f6950034bff252ec8b425e1eebb74c6cf47ffe
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMS_kmps.r0.0-n4c.nc
+format reference
+sha256 acb1e8d9563dfdeffb016ededdbba9890ceab0efefb0139554856d4c97799cc5
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUM_percent.r0.0-n4c.nc
+format reference
+sha256 a6cbe31d1fc52535173b775d477b34044d6b11c481d91ccf972a7dc50ddd36b0
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc
+format reference
+sha256 1f3131b38fa4e94ad6d5a997ff91d1eeac46034b99ae7b316ba4f4b4e767f5c3
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP22-MASK-3D.r0.0-n4c.nc
+format reference
+sha256 2cf72b83526f36283bd4fa14141f9873a3799eba0084a726ae9a0769af069c2c
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/BBNAP19-MASK-3D.r0.0-n4c.nc
+format reference
+sha256 d2c7a7bd165037caf311d82b478733dec83b1b5807fada51aec449acddd7e1d7
+ttl 86400
+
+url https://data.earthscope.org/archive/seismology/products/emc/netcdf/CAP22-MASK-5deg-3D.r0.0-n4c.nc
+format reference
+sha256 44fd2db35424c71782f106b7ceee12234cb62506bdba74409e078e9339735dc7
+ttl 86400
+
+url https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc
+format reference
+sha256 50eb365114ab1fe977701790b7df2951e96388096d92e3a16aea88821a110a65
+ttl 86400
+
+url https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc
+format reference
+sha256 2f48f84fbd674054281bb6e294174f65e42219dd14713a052948257eabe482f2
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin
 format openneuro_eeg

@@ -2,7 +2,7 @@
   title: The Uranus rift — ephemeris divergence at the planet centre
   class: paper
   date: 2026-09-12
-  sha256: e6c7361504db23d99dec3f45e10aa67599ebe9019349c8534245d7fe324a919c
+  sha256: bd50d132d0e3d368f4c5346b4008c42f2a4f7edf56867794a9181577d529b5a1
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-uranus-riss-kontur.md docs/handover/archiv/handover-2026-09-08-uranus-riss-diurnal-reduktion.md
 -->
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-Three independent planetary ephemeris families — JPL DE, IMCCE INPOP, and IA RAS EPM — are read in one frame at the centre of Uranus. Pairwise divergences are DE−INPOP 32.1, DE−EPM 39.5, and INPOP−EPM 47.0 mas (standard error ~1.3 mas). A topocentric diurnal reduction removes the parallax/aberration confound: the fitted parallax coefficient is c_par 0.94–0.95 and the diurnal aberration coefficient c_aber ≈ 0, and the residual RMS falls from 242.9/222.6/228.9 mas to 77.5/73.6/73.3 mas — under the observational mean uncertainty ⟨σ⟩ = 87.8 mas. The observations do not adjudicate the rift. At the planet centre the spread is 0.36–1.57e6 m (0.048″ median); two editions of one house, DE441 and DE442, diverge by 1.57e6 m, against the 1.59e6 m Weberin rift. The absolute-offset/aberration decomposition is measured: the absolute satellite residual per line is |c0| = 11.8 mas (EPM2021), 14.1 mas (DE441), 35.9 mas (INPOP19a) — EPM2021 lies closest to zero. The Neptune build line remains pending.
+Three independent planetary ephemeris families — JPL DE, IMCCE INPOP, and IA RAS EPM — are read in one frame at the centre of Uranus. Pairwise divergences are DE−INPOP 32.1, DE−EPM 39.5, and INPOP−EPM 47.0 mas (standard error ~1.3 mas). A topocentric diurnal reduction removes the parallax/aberration confound: the fitted parallax coefficient is c_par 0.94–0.95 and the diurnal aberration coefficient c_aber ≈ 0, and the residual RMS falls from 242.9/222.6/228.9 mas to 77.5/73.6/73.3 mas — under the observational mean uncertainty ⟨σ⟩ = 87.8 mas. The observations do not adjudicate the rift. At the planet centre the spread is 0.36–1.57e6 m (0.048″ median); two editions of one house, DE441 and DE442, diverge by 1.57e6 m, against the 1.59e6 m Weberin rift. The absolute-offset/aberration decomposition is measured: the absolute satellite residual per line is |c0| = 11.8 mas (EPM2021), 14.1 mas (DE441), 35.9 mas (INPOP19a) — EPM2021 lies closest to zero.
 
 ## The measurement
 
@@ -34,7 +34,6 @@ Verdict: the observations do not adjudicate the rift. After the diurnal reductio
 
 - **What the reduction removed.** The topocentric parallax (c_par 0.94–0.95) and the diurnal aberration (c_aber ≈ 0) — the common-mode ~170-mas floor. The pairwise rift is invariant under the reduction (32/39/47 mas); a rift that moved would name the reduction as the artifact, not the measurement.
 - **The absolute decomposition (measured).** The absolute-offset/aberration decomposition: which line carries the observations closest to zero in the absolute residual, once the diurnal term is gone. The ~20″ aberration and ~0.45″ parallax split must isolate the diurnal share rather than the whole. Measured: the absolute residual per line is |c0| = 11.8 mas (EPM2021), 14.1 mas (DE441), 35.9 mas (INPOP19a) — EPM2021 lies closest to zero. The tables carry ~0.94–0.97 of the ~0.45″ diurnal parallax (~190 mas) and essentially none of the ~20″ annual aberration (c_ann ≈ −0.001…−0.003, −18…−56 mas, 0.1–0.3 %), confirming topocentric astrometric. Pairwise rift after the annual-aberration reduction: DE−INPOP 33.5 mas, DE−EPM 13.9 mas, INPOP−EPM 44.8 mas.
-- **What remains pending (build line).** Neptune as the second planet of the same composition (`--uranus-c-spk` style, registration in `phi/sources.φ`, step in the kernel-flatten job). Named pending.
 - **Inner-planet contrast.** The two sources read carry no inner-planet comparison; the contrast is not carried by these data. Named absent.
 - **The moon-model level.** ura111 and ura184_part-3 agree at 5–25 mas (grind-pro); the initial suspicion about ura111 was measured false. The rift is not the moon model.
 

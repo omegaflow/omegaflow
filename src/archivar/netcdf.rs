@@ -1,4 +1,5 @@
 const MAGIC: [u8; 3] = [b'C', b'D', b'F'];
+const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
 const STREAMING: u32 = 0xFFFF_FFFF;
 const TAG_DIMENSION: u32 = 0x0A;
 const TAG_VARIABLE: u32 = 0x0B;
@@ -90,6 +91,7 @@ pub struct NetcdfFile {
 pub enum NetcdfNote {
     Magic { bytes: [u8; 4] },
     Cdf5,
+    Hdf5,
     EndAtByte { off: usize },
     Type { tag: u32, off: usize },
     Tag { tag: u32, off: usize },
@@ -198,6 +200,9 @@ impl NetcdfFile {
     pub fn parse(bytes: &[u8]) -> Result<NetcdfFile, NetcdfNote> {
         if bytes.len() < 4 {
             return Err(NetcdfNote::EndAtByte { off: bytes.len() });
+        }
+        if bytes.starts_with(&HDF5_MAGIC) {
+            return Err(NetcdfNote::Hdf5);
         }
         let mut mag = [0u8; 4];
         mag.copy_from_slice(&bytes[0..4]);
@@ -857,6 +862,12 @@ mod tests {
     fn cdf5_is_pending() {
         let b = [0x43, 0x44, 0x46, 0x05];
         assert!(matches!(NetcdfFile::parse(&b), Err(NetcdfNote::Cdf5)));
+    }
+
+    #[test]
+    fn hdf5_is_pending() {
+        let b = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
+        assert!(matches!(NetcdfFile::parse(&b), Err(NetcdfNote::Hdf5)));
     }
 
     #[test]
