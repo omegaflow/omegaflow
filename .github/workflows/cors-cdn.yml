@@ -1,0 +1,65 @@
+name: cors-cdn
+
+concurrency:
+  group: cors-assets
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: CORS station marker (4 chars, lowercase, e.g. 1lsu)
+        required: true
+        type: string
+        default: 1lsu
+      year:
+        description: harvest year (4 digits)
+        required: true
+        type: string
+        default: "2024"
+      doy:
+        description: day of year (3 digits)
+        required: true
+        type: string
+        default: "001"
+      asset:
+        description: output asset name on the CDN (netloc noaa-cors-pds.s3.amazonaws.com)
+        required: true
+        type: string
+        default: cors_1lsu_2024001.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view noaa-cors-pds.s3.amazonaws.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+      - name: Compile the CORS RINEX observation series and upload to CDN
+        run: |
+          mkdir -p kernels
+          [ -s kernels/naif0012.tls ] || curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          yy="${{ inputs.year }}"; yy="${yy: -2}"
+          url="https://noaa-cors-pds.s3.amazonaws.com/rinex/${{ inputs.year }}/${{ inputs.doy }}/${{ inputs.station }}/${{ inputs.station }}${{ inputs.doy }}0.${yy}o.gz"
+          cargo run -p omegaflow-harvest --release --bin cors_rinex_compiler -- \
+            --url "$url" \
+            --out "${{ inputs.asset }}" \
+            --lsk kernels/naif0012.tls \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "cors-cdn: ${{ inputs.asset }} returned void" \
+                 "cors compile returned void for $url. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
