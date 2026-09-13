@@ -68,6 +68,7 @@ pub struct Archive {
     pub gestalt_surface_threads: Arc<Mutex<Vec<Motion>>>,
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
+    pub volumes: Arc<Mutex<Vec<(String, crate::archivar::volume::Volume)>>>,
     pub pending_channels: Vec<(Channel, FieldConfig, u32)>,
     pub fetch_durations: [f64; FETCH_DURATION_RING],
     pub fetch_duration_len: usize,
@@ -484,6 +485,7 @@ pub fn main_flow() {
             body_ephemerides.clone(),
             None,
             Vec::new(),
+            Vec::new(),
         )),
         presence: HashMap::new(),
         jump_epoch: None,
@@ -497,6 +499,7 @@ pub fn main_flow() {
         gestalt_surface_threads: Arc::new(Mutex::new(Vec::new())),
         curves: None,
         spectral: Vec::new(),
+        volumes: Arc::new(Mutex::new(Vec::new())),
         pending_channels: Vec::new(),
         fetch_durations: [0.0; FETCH_DURATION_RING],
         fetch_duration_len: 0,
@@ -2344,6 +2347,70 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "volume" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                let held = archive.volumes.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("volume").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_volume_{name}"));
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                        write_cdn_stamp(&tmp_path, &url);
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let Some(volume) = crate::archivar::volume::Volume::read_bin(&bytes) else {
+                        eprintln!(
+                            "{} {}: volume-bin reads void — {} B carry no grid contract",
+                            fmt,
+                            url,
+                            bytes.len()
+                        );
+                        let _ = ftx.send(empty(false));
+                        return;
+                    };
+                    if let Ok(mut held) = held.lock() {
+                        held.retain(|(n, _)| n != &name);
+                        held.push((name, volume));
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if matches!(
                 archive.sources[i].format.as_str(),
                 "bgr_infrasound"
@@ -3054,12 +3121,21 @@ pub fn main_flow() {
             }
             let mut field_samples = static_catalog;
             field_samples.append(&mut temporal);
+            let volumes = match archive.volumes.lock() {
+                Ok(v) => v.iter().map(|(_, vol)| vol.clone()).collect(),
+                Err(poisoned) => poisoned
+                    .into_inner()
+                    .iter()
+                    .map(|(_, vol)| vol.clone())
+                    .collect(),
+            };
             archive.field = Arc::new(build_buffer(
                 field_samples,
                 cadence,
                 archive.body_ephemerides.clone(),
                 archive.curves.clone(),
                 archive.spectral.clone(),
+                volumes,
             ));
         }
         let f = archive.field.clone();
