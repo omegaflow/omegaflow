@@ -56,6 +56,7 @@ pub use archivar::netcdf;
 pub use archivar::noaa_nodd;
 pub use archivar::odf;
 pub use archivar::odp;
+pub use archivar::openneuro_eeg;
 pub use archivar::ossos;
 pub use archivar::parquet;
 pub use archivar::pck;
