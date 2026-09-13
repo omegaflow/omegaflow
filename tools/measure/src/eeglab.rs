@@ -258,6 +258,36 @@ pub fn open_set_mat(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
     eeg_from_mat(&bytes)
 }
 
+pub fn eeg_from_bin(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
+    let omegaflow::openneuro_eeg::OpenNeuroEeg {
+        nbchan,
+        pnts,
+        trials,
+        srate,
+        labels,
+        samples,
+        ..
+    } = omegaflow::openneuro_eeg::parse_bin(bytes)?;
+    let samples = match samples {
+        omegaflow::openneuro_eeg::Samples::Single(s) => s,
+        omegaflow::openneuro_eeg::Samples::Double(_) => return None,
+    };
+    let set = EeglabSet {
+        datfile: String::new(),
+        nbchan: usize::try_from(nbchan).ok()?,
+        pnts: usize::try_from(pnts).ok()?,
+        trials: usize::try_from(trials).ok()?,
+        srate,
+        labels,
+    };
+    Some((set, samples))
+}
+
+pub fn open_set_bin(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
+    let bytes = std::fs::read(path).ok()?;
+    eeg_from_bin(&bytes)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -581,5 +611,50 @@ mod tests {
         assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
         assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
         assert_eq!(resolve_channel(&set, "E2"), Some(1));
+    }
+
+    #[test]
+    fn a_compact_bin_maps_onto_the_set_and_series() {
+        let eeg = omegaflow::openneuro_eeg::OpenNeuroEeg {
+            nbchan: 2,
+            pnts: 3,
+            trials: 1,
+            srate: Some(100.0),
+            sha256: [0u8; 32],
+            snapshot_tag: String::new(),
+            hexsha: String::new(),
+            origin_url: String::new(),
+            labels: vec!["Fp1".to_string(), "Fp2".to_string()],
+            events: None,
+            samples: omegaflow::openneuro_eeg::Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]),
+        };
+        let bytes = omegaflow::openneuro_eeg::write_bin(&eeg);
+        let (set, samples) = eeg_from_bin(&bytes).expect("the compact bin maps");
+        assert_eq!(set.nbchan, 2);
+        assert_eq!(set.pnts, 3);
+        assert_eq!(set.trials, 1);
+        assert_eq!(set.srate, Some(100.0));
+        assert_eq!(set.labels, vec!["Fp1".to_string(), "Fp2".to_string()]);
+        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
+        assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
+    }
+
+    #[test]
+    fn a_double_precision_bin_reads_absent_in_the_f32_reader() {
+        let eeg = omegaflow::openneuro_eeg::OpenNeuroEeg {
+            nbchan: 1,
+            pnts: 1,
+            trials: 1,
+            srate: None,
+            sha256: [0u8; 32],
+            snapshot_tag: String::new(),
+            hexsha: String::new(),
+            origin_url: String::new(),
+            labels: vec!["Cz".to_string()],
+            events: None,
+            samples: omegaflow::openneuro_eeg::Samples::Double(vec![1.0]),
+        };
+        let bytes = omegaflow::openneuro_eeg::write_bin(&eeg);
+        assert!(eeg_from_bin(&bytes).is_none());
     }
 }

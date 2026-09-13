@@ -5,7 +5,9 @@ use omegaflow::te::{
     conditional_te_stats_lagged_n, transfer_entropy_binned, transfer_entropy_conditional_binned_n,
     TeNull,
 };
-use omegaflow_measure::eeglab::{channel_series, open_set, open_set_mat, resolve_channel};
+use omegaflow_measure::eeglab::{
+    channel_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+};
 
 const DEFAULT_LAG_MAX: usize = 24;
 const DEFAULT_SURROGATES: usize = 100;
@@ -34,6 +36,10 @@ fn verdict(te: f64, threshold: f64) -> Verdict {
     } else {
         Verdict::Still
     }
+}
+
+fn monotonic_non_decreasing(series: &[Option<f64>]) -> bool {
+    series.iter().all(Option::is_some) && series.windows(2).all(|w| w[0] <= w[1])
 }
 
 fn parse_series(text: &str) -> Option<Vec<f32>> {
@@ -107,7 +113,9 @@ fn condition_pair(
     sel_b: &str,
     sel_c: Option<&str>,
 ) -> Option<(String, Vec<f32>, Vec<f32>, Option<Vec<f32>>)> {
-    let (set, samples) = open_set(path).or_else(|| open_set_mat(path))?;
+    let (set, samples) = open_set(path)
+        .or_else(|| open_set_mat(path))
+        .or_else(|| open_set_bin(path))?;
     let chan_a = resolve_channel(&set, sel_a)?;
     let chan_b = resolve_channel(&set, sel_b)?;
     let a = channel_series(&samples, &set, chan_a)?;
@@ -211,16 +219,36 @@ fn run_pair(
     let mut best_ba: Option<(usize, f64)> = None;
     let mut arrow_ab = 0usize;
     let mut arrow_ba = 0usize;
+    let mut te_ab_series: Vec<Option<f64>> = Vec::with_capacity(lag_max);
+    let mut te_ba_series: Vec<Option<f64>> = Vec::with_capacity(lag_max);
     for lag in 1..=lag_max {
         let lag_seed = seed ^ (lag as u64).wrapping_mul(LAG_SEED_MIX);
         let te_ab = transfer_entropy_binned(b, a, lag, bins);
+        te_ab_series.push(te_ab);
         let fam_ab = conditional_te_stats_lagged_n(
-            b, a, &[], lag, lag, bins, lag_seed, n_surr, TeNull::Phase,
+            b,
+            a,
+            &[],
+            lag,
+            lag,
+            bins,
+            lag_seed,
+            n_surr,
+            TeNull::Phase,
         )
         .map(|(_, _, thr)| thr);
         let te_ba = transfer_entropy_binned(a, b, lag, bins);
+        te_ba_series.push(te_ba);
         let fam_ba = conditional_te_stats_lagged_n(
-            a, b, &[], lag, lag, bins, lag_seed, n_surr, TeNull::Phase,
+            a,
+            b,
+            &[],
+            lag,
+            lag,
+            bins,
+            lag_seed,
+            n_surr,
+            TeNull::Phase,
         )
         .map(|(_, _, thr)| thr);
         let v_ab = match (te_ab, fam_ab) {
@@ -270,9 +298,24 @@ fn run_pair(
         "bivariate: {} arrow(s) a→b, {} arrow(s) b→a over fam-Schwelle.",
         arrow_ab, arrow_ba
     );
-    for (dir, best) in [("a→b", best_ab), ("b→a", best_ba)] {
+    for (dir, best, series) in [
+        ("a→b", best_ab, te_ab_series.as_slice()),
+        ("b→a", best_ba, te_ba_series.as_slice()),
+    ] {
         match best {
-            Some((lag, te)) => println!("  honest lag ({dir}) = {lag} steps at TE {te:.4e}"),
+            Some((lag, te)) => {
+                if lag == lag_max && monotonic_non_decreasing(series) {
+                    println!(
+                        "  honest lag ({dir}) = {lag} steps at TE {te:.4e} — the argmax sits at the sweep boundary (lag_max = {lag_max}) and the TE grows monotonically across the sweep; this is the sweep bound, not a lag coupling"
+                    );
+                } else if lag == lag_max {
+                    println!(
+                        "  honest lag ({dir}) = {lag} steps at TE {te:.4e} — the argmax sits at the sweep boundary (lag_max = {lag_max}); a lower bound, not a lag coupling"
+                    );
+                } else {
+                    println!("  honest lag ({dir}) = {lag} steps at TE {te:.4e}");
+                }
+            }
             None => println!("  honest lag ({dir}) = absent (no TE carried by the sweep)"),
         }
     }
@@ -453,6 +496,18 @@ mod tests {
             Some("sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.set".to_string())
         );
         assert!(sibling_path("sub-02_task-rest_eeg.set").is_none());
+    }
+
+    #[test]
+    fn monotonic_reads_rising_series_and_gaps_break_it() {
+        assert!(monotonic_non_decreasing(&[Some(1.0), Some(2.0), Some(3.0)]));
+        assert!(monotonic_non_decreasing(&[Some(1.0), Some(1.0)]));
+        assert!(!monotonic_non_decreasing(&[
+            Some(1.0),
+            Some(2.0),
+            Some(1.5)
+        ]));
+        assert!(!monotonic_non_decreasing(&[Some(1.0), None, Some(3.0)]));
     }
 
     #[test]

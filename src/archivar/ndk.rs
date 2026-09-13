@@ -201,7 +201,6 @@ pub fn fetch_events(url: &str, ttl: u64) -> Option<Vec<NdkEvent>> {
     Some(parse_ndk(&String::from_utf8_lossy(&bytes)))
 }
 
-
 pub fn dc_moment_tensor(strike_deg: f64, dip_deg: f64, rake_deg: f64) -> [f64; 6] {
     let s = strike_deg.to_radians();
     let d = dip_deg.to_radians();
@@ -246,7 +245,8 @@ pub fn ray_direction(takeoff_deg: f64, azimuth_deg: f64, upgoing: bool) -> [f64;
 mod tests {
     use super::*;
 
-    const ONE_EVENT: &str = "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
+    const ONE_EVENT: &str =
+        "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
 M010176A B: 0 0 0 S: 0 0 0 M: 12 30 135 CMT: 1 BOXHD: 9.4\n\
 CENTROID: 13.8 0.2 -29.25 0.02 -176.96 0.01 47.8 0.6 FREE O-00000000000000\n\
 26 7.680 0.090 0.090 0.060 -7.770 0.070 1.390 0.160 4.520 0.160 -3.260 0.060\n\
