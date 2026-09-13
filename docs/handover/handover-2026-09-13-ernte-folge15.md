@@ -3,7 +3,7 @@
   session: Ernte-Folge 15
   class: handover
   date: 2026-09-13
-  sha256: 4a0d58ec6e6a092aa633460b9e00368835c8f56dca241092619852aef83cb4f6
+  sha256: 7f65823f6a66f8970910955d3a358ca13fe58310adc659e2f5e182462fea4710
   status: live
 -->
 # Handover — Ernte-Folge 15 (2026-09-13)
@@ -21,6 +21,13 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   34757634879 (main 26e7c07, --start 2025-01-15T00:00 --span 30 --station-count 10)
   läuft; die Conclusion ist zu lesen — grün → hinet.bin manifestiert, rot → die
   Log-Zeile ist der nächste Schritt. Kein weiterer Dispatch, bis der Lauf gelesen ist.
+- aia2014_lines.bin — Register-Schuld: der AIA-Linien-Korpus (~90 MB,
+  jsoc.stanford.edu) ist laut auftrag-korona-aia-fam.md manifestiert, trägt aber
+  keine `url`-Zeile in `phi/sources.φ`. Namenslage uneindeutig
+  (`kernel-flatten.yml:207` kompiliert `aia_lines.bin`, `aia-cdn.yml:29` defaultet
+  `aia2014_lines.bin`). Erster Schritt: echtes CDN-Asset messen (`gh release view
+  jsoc.stanford.edu --repo omegaflow/sources --json assets`), dann die passende
+  `url`-Zeile (`format aia`, `at sun`, `ttl 86400`) eintragen — kein 404-`url`.
 
 ## Weberin — offene Fäden (Ernte)
 
@@ -41,6 +48,10 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - Broker/GW-Positionen — antares.noirlab.edu abgelehnt (credential-gated, nur
   Counts/Position); api.fink-portal.org tot (DNS ok, Connect 000); bayestar: keine
   neuen Positions-Hosts. Der Compiler trägt nur die Richtung → pending (Positions-Ernte).
+- Split-Routing-Verifikation (Wieger) — `Table = off` + DNS aus stehen in den
+  5 Proton-Configs; offen: `./bin/proton-exit.sh ca` neu hochfahren +
+  direct↔tunnel + die 8 `000`-Hosts je Exit nachmessen (geo-block oder echt tot).
+  sudo/Netz auf der Operator-Maschine.
 
 ## Abschluss
 
