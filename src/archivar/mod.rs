@@ -85,6 +85,7 @@ pub mod phonocardiogram;
 pub mod pioneer_telemetry;
 pub mod quakeml;
 pub mod radio;
+pub mod range;
 pub mod regrid;
 pub mod rinex;
 pub mod rixs;
