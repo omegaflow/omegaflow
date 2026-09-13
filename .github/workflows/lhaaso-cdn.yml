@@ -1,0 +1,46 @@
+name: lhaaso-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  lhaaso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the casdc.china-vo.org release exists on the CDN
+        run: |
+          if ! gh release view casdc.china-vo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create casdc.china-vo.org --repo omegaflow/sources \
+              --title "casdc.china-vo.org" \
+              --notes "1LHAASO gamma-ray source catalog compiled to a SKY1 skymap (S² direction witness, kind gamma). Record stride: order (u8), kind (u8), pad (2), ipix (u32 LE), ra_deg (f32 LE), dec_deg (f32 LE), value (f32 LE, N0 flux normalization at 1 TeV)."
+          fi
+      - name: Fetch the LHAASO gamma-ray source catalog
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/table.csv \
+            https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "lhaaso-cdn: table.csv returned void" \
+                 "curl on casdc.china-vo.org did not reach table.csv. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the LHAASO source records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin lhaaso_compiler -- \
+            --input kernels/table.csv \
+            --out lhaaso_sky1.sky1 \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "lhaaso-cdn: lhaaso_sky1.sky1 returned void" \
+                 "lhaaso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
