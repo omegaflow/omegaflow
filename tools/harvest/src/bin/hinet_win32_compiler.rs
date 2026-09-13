@@ -250,17 +250,27 @@ fn parse_window(s: &str) -> Option<Window> {
     })
 }
 
+fn window_date(w: &Window) -> (String, String, String, String) {
+    (
+        format!("{:02}", w.month),
+        format!("{:02}", w.day),
+        format!("{:02}", w.hour),
+        format!("{:02}", w.min),
+    )
+}
+
 fn cont_search(jar: &Path, w: &Window, span_min: u32) -> Option<String> {
+    let (month, day, hour, min) = window_date(w);
     let url = format!("{CONT_BASE}/");
     let form = vec![
         ("org".to_string(), String::new()),
         ("net".to_string(), String::new()),
         ("volc".to_string(), String::new()),
         ("year".to_string(), w.year.to_string()),
-        ("month".to_string(), w.month.to_string()),
-        ("day".to_string(), w.day.to_string()),
-        ("hour".to_string(), w.hour.to_string()),
-        ("min".to_string(), w.min.to_string()),
+        ("month".to_string(), month),
+        ("day".to_string(), day),
+        ("hour".to_string(), hour),
+        ("min".to_string(), min),
         ("span".to_string(), span_min.to_string()),
         ("LANG".to_string(), "en".to_string()),
         ("search_btn".to_string(), "Search".to_string()),
@@ -295,9 +305,10 @@ fn submit_request(
         Ok(d) => d.as_millis(),
         Err(_) => return false,
     };
+    let (month, day, hour, min) = window_date(w);
     let url = format!(
-        "{CONT_BASE}/cont_request.php?org1={org1}&org2={org2}&year={}&month={}&day={}&hour={}&min={}&span={span_min}&arc=ZIP&size={size}&LANG=en&volc=0&rn={rn}",
-        w.year, w.month, w.day, w.hour, w.min
+        "{CONT_BASE}/cont_request.php?org1={org1}&org2={org2}&year={}&month={month}&day={day}&hour={hour}&min={min}&span={span_min}&arc=ZIP&size={size}&LANG=en&volc=0&rn={rn}",
+        w.year
     );
     curl_get(&url, &Some(jar.to_path_buf())).is_some()
 }
@@ -793,6 +804,30 @@ zzzz 1 0 N.AAAA U 6 27 175.60 m/s 1.00 0.70 0 1.023e-07 1 2 3 0 0 StnA\n";
         assert!(parse_window("2024-13-04T13:05").is_none());
         assert!(parse_window("2024-05-04T25:00").is_none());
         assert!(parse_window("garbage").is_none());
+    }
+
+    #[test]
+    fn window_date_pads_single_digit_components() {
+        let w = parse_window("2025-01-15T00:00").expect("window parses");
+        assert_eq!(
+            window_date(&w),
+            (
+                "01".to_string(),
+                "15".to_string(),
+                "00".to_string(),
+                "00".to_string()
+            )
+        );
+        let w2 = parse_window("2025-12-03T05:07").expect("window parses");
+        assert_eq!(
+            window_date(&w2),
+            (
+                "12".to_string(),
+                "03".to_string(),
+                "05".to_string(),
+                "07".to_string()
+            )
+        );
     }
 
     #[test]
