@@ -304,7 +304,7 @@ fn submit_request(
 
 fn available_id(html: &str, w: &Window, before: &HashSet<String>) -> Option<String> {
     let token = format!(
-        "{}{:02}{:02}{:02}{:02}",
+        "{}/{:02}/{:02} {:02}:{:02}",
         w.year, w.month, w.day, w.hour, w.min
     );
     for row in html.split("<tr>") {
