@@ -29,13 +29,13 @@ pending
 url https://datalab.noirlab.edu/tap/sync
 note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Data-Lab-Registrierung wurde abgelehnt (Robert Nikutta, NOIRLab: das Projekt sei „mostly an engineering one … we decided to decline your request"), aber derselbe Bescheid: „our TAP service is public and does not require an account … Our LS DR10 and DECaPS catalogs are not gated, but part of the open access." Anonym gemessen (2026-09-11, webfetch): ls_dr10.tractor TOP 1 → HTTP 200 CSV (167 Spalten, ra/dec/flux_g/r/i/z/w1..w4/mag_*), decaps_dr2.object TOP 1 → HTTP 200 CSV (ra/dec/mean_mag_g/r/i/z/y, epochmean); TAP_SCHEMA zeigt decaps_dr1/dr2. FORMAT=json → HTTP 200 VOTable-Fehler „unknown format: json" (csv/votable-only). Gap: CSV-Header-Parser (derselbe wie ESO tap_obs/tap_cat). Messung (Legacy-Survey-Photometrie em) echt. NOIRLab behält sich IP-Sperre bei exzessiver Rate vor. Speisekammer-Frage (Rat 2026-09-11 einmütig + Operator-Nachschärfung 2026-09-11): braucht die Weberin die tiefe Photometrie als Zeugin — eine S²-Richtung mit Farbe (Distanz absent) — für eine Nadel? Gemessen: Nadel Ⅴ (Technosignatur) frisst Lichtkurven + 10–60-μm-IR-Exzess, nicht die statischen Kataloge; Biosignatur frisst JWST-Spektren (Gaia-Wirtssterne); dunkle Materie hat keinen photometrischen Kanal. Kein gebauter Konsument — die Frage bleibt offen, bis eine Nadel die statische Mehrband-Farbe als Zeugen-Eigenschaft benennt. Konsument-Kandidat: Farbe-Exzess-Zeuge der Nadel-Ⅴ-Chromatizität oder ein Mikrolensing-/Photo-z-Kanal. Keine Ernte, bis der Konsument gebaut ist (Tor 1). Wiedervorlage 2026-12-02 (Gaia DR4): trägt DR4 die astrometrischen Binaries/RVS/Epoch-Photometrie selbst, ist die dunkle-Materie-/Photo-z-Linie descoped, nur die Tiefe-/Plane-Nische (DECaPS-Y, LS-DR10-z) bliebe als Konsument.
 
-blocked parser-def netcdf
+pending
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
-note COSMIC-2 FORMOSAT-7 (level3.json CDN-Capture; live gemessen 2026-09-07, HTTP 200): NRT-Level-3-Radio-Okkultations-Profile als netCDF-Granulate unter dem Verzeichnis-Index (kein Skalar-Punkt-Feed). Messung (Brechungsindex/Bending-Angle-Profile, em) echt, Format netCDF-Granulat-Enumeration unkonsumierbar — Gap: COSMIC2-Granulat-Profil-Parser.
+note COSMIC-2 FORMOSAT-7 (NRT): GEBAUT (2026-09-13) — Verzeichnis-Index-Enumeration (netcdf.rs `html_hrefs`/`netcdf_granule_urls`, nginx-HTML + JSON-Array) und netCDF-4-Profil-Lesen über hdf5.rs (Shared-Message/Committed-Datatype); netCDF-3-Profil-Lesen lag vor (NetcdfFile). Gemessen: level3/ führt nur Ionosphären-Szintillation (bub/alc JSON), level2/2026/251/ trägt die RO-Profile als Tages-Tarballs (atmPrf 2 070 847 616 B, bfrPrf 10 982 090 B); ein echtes COSMIC-1-wetPrf-Granulat (netCDF-3 CDF\x01, MSL_alt/Temp/Pres, 15 180 B) gelesen. Die RO-Granulate liegen nicht als einzelne .nc-Dateien, sondern in .tar.gz. Offen: Tarball-Entpackung zur Einzel-Granulat-Enumeration, Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Brechungsindex/Bending-Angle-Profile, em) echt.
 
-blocked parser-def mat5
+pending
 url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung (Schalldruck-Spektraldichte, acoustic) echt — Gap: MATLAB-v5-`.mat`-Parser; danach Bin-Geometrie am ersten echten Run messen.
+note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung (Schalldruck-Spektraldichte, acoustic) echt — MATLAB-v5-Parser GEBAUT (src/archivar/mat5.rs, parse_mat5 → Vec<MatVar>; miDOUBLE/miSINGLE/miINT*/miUINT*/miUTF8/miCOMPRESSED). Offen: Bin-Geometrie am ersten echten Run messen; danach Ernte/Compiler + CDN-Manifestation (Register-Duty).
 
 pending
 note VOTable-Parser-Gap widerlegt (2026-09-11) und TAP_SCHEMA-Pass getragen (2026-09-12):
@@ -118,9 +118,9 @@ pending
 url s3://noaa-goes16
 note GOES-16 ABI L1b: GEBAUT (2026-09-13) — hdf5.rs parst Superblock-v2 mit STORE_TIMES-Objekt-Headern und navigiert die B-tree-v2-Knoten (Link-Name-Index); 53 Root-Datasets enumeriert, Rad [3000,5000] int16 gelesen (RadC). goes_imager_projection (longitude_of_projection_origin −75,2°, perspective_point_height 35 786 023 m) → lat/lon-Gitter aus x/y-Scan-Winkeln (skaliert int16). Kein offener HDF5-Gap; Ernte/Compiler + CDN-Manifestation bleibt Register-Duty.
 
-blocked parser-def bzip2-hsd
+pending
 url s3://noaa-himawari8
-note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9); bzip2-Dekoder GEBAUT (src/archivar/bzip2.rs); offen: HSD-Block-Parser. Messwert (AHI geostationäre em-Messung) echt.
+note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9, konkatenierte Ströme); HSD-Block-Parser GEBAUT (2026-09-13, src/archivar/hsd.rs, parse_hsd → HsdFile: Blockfolge 1–11, columns/lines, image_pixel_values u16; gemessen an HS_H08_20150707_0200_B01, 5500×5500). Offen: Kalibrierung (Counts → Radianz) und Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (AHI geostationäre em-Messung) echt.
 
 blocked parser-def las-laz
 url s3://noaa-nos-coastal-lidar-pds
@@ -138,13 +138,13 @@ blocked parser-def geotiff-gpkg
 url s3://noaa-ocs-hydrodata-pds
 note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). Gap: GeoTIFF + GeoPackage/SQLite-Reader.
 
-blocked parser-def netcdf4
+pending
 url s3://noaa-wod-pds
-note WOD netCDF-4/HDF5 (Superblock v2) durchgehend; hdf5.rs liefert auf 1903/wod_mbt_1903.nc EndAtByte{off:47261}; ragged arrays (casts, z_obs, Temperature_row_size) und Gruppen-Layout nicht konsumiert.
+note WOD netCDF-4/HDF5 (Superblock v2): GEBAUT (2026-09-13) — hdf5.rs löst Shared-Message-/Committed-Datatype-Referenzen auf (H5O_shared_t v3, Typ COMMITTED) und enumeriert die WOD-Gruppe: 1903/wod_mbt_1903.nc (25 587 B, 26 Variablen) und 1903/wod_osd_1903.nc (25 628 660 B, 73 Variablen, 7 903 Casts, 1 benannter Typ `biodata` [Compound, 28 Member]) parsen durch. Ragged-Array-Lesen (Temperature + Temperature_row_size, flat + row_size) über netcdf.rs `nc4_ragged_f64`; erstes OSD-Profil (lat 55,30° lon 12,78°, 4 Niveaus) gelesen. Offen: SOHM-Heap-Shared-Messages (im WOD-Satz unbenutzt), Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Temperatur-/Salinitätsprofil, em) echt.
 
-blocked parser-def bzip2-ar2v
+pending
 url s3://unidata-nexrad-level2
-note NEXRAD Level II (AR2V0008.907 + bzip2 BZh9 ab Offset 24); bzip2-Dekoder GEBAUT (src/archivar/bzip2.rs); offen: Level-II-Reader. Messwert (Radar-Reflektivität em) echt.
+note NEXRAD Level II (AR2V0006.549, bzip2 BZh9 ab Offset 24); Level-II-Reader GEBAUT (2026-09-13, src/archivar/nexrad.rs, parse_nexrad → NexradVolume: Message-31-VOL, REF-Moment + Gate-Geometrie; gemessen an KTLX20240101_000004_V06, 6480 Radiale). Offen: Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Radar-Reflektivität em) echt.
 
 pending
 url https://maxi.riken.jp/star_data/{src}/{src}_g_lc_1day_all.dat
