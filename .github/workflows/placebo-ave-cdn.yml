@@ -1,0 +1,48 @@
+name: placebo-ave-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      a:
+        description: 'channel a (chanlocs label or 1-based index)'
+        required: true
+        type: string
+        default: 'E1'
+      b:
+        description: 'channel b (chanlocs label or 1-based index)'
+        required: true
+        type: string
+        default: 'E2'
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  placebo-ave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Land the OpenNeuro ds005034 EEG pair (.set working copies)
+        run: |
+          cargo run -p omegaflow-harvest --release --bin openneuro_compiler -- \
+            --subject sub-02 --task rest --ci-mode
+      - name: Run the AVE re-measurement (verum/sham, bivariate + conditional, 100 surrogates x 24 lags)
+        run: |
+          cargo run -p omegaflow-measure --release --bin placebo_pair_eeg_probe -- \
+            --set data/openneuro.org/ds005034/sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.set \
+            --a "${{ inputs.a }}" --b "${{ inputs.b }}" \
+            > placebo_ave_verdict.txt 2> placebo_ave_sweep.log
+          echo "--- probe diagnostics (stderr) ---"
+          cat placebo_ave_sweep.log
+      - name: Upload the AVE verdict to the CDN
+        continue-on-error: true
+        run: |
+          gh release upload openneuro.org --repo omegaflow/sources \
+            placebo_ave_verdict.txt --clobber
