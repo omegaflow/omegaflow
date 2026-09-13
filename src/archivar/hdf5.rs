@@ -1747,6 +1747,25 @@ fn chunk_records(
     Ok(out)
 }
 
+fn scaled_to_coords(scaled: &[u64], chunk_dims: &[u32], v1_index: bool) -> Option<Vec<u64>> {
+    if scaled.len() != chunk_dims.len() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(scaled.len());
+    for (s, c) in scaled.iter().zip(chunk_dims.iter()) {
+        if v1_index {
+            let c = *c as u64;
+            if c == 0 || s % c != 0 {
+                return None;
+            }
+            out.push(s / c);
+        } else {
+            out.push(*s);
+        }
+    }
+    Some(out)
+}
+
 const WGS84_EQUATORIAL_M: f64 = 6_378_137.0;
 const WGS84_POLAR_M: f64 = 6_356_752.314_245;
 
@@ -2182,6 +2201,131 @@ impl<'a> Hdf5File<'a> {
         Ok(out)
     }
 
+    fn chunk_records_of(
+        &self,
+        obj: &Hdf5Object,
+        rank: usize,
+    ) -> Result<(Vec<ChunkRec>, bool), Hdf5Note> {
+        let btree = match obj.layout.as_ref() {
+            Some(Hdf5Layout::Chunked { btree, .. }) => *btree,
+            _ => {
+                return Err(Hdf5Note::AbsentObject {
+                    name: String::new(),
+                })
+            }
+        };
+        let filtered = !obj.filters.is_empty();
+        if self.buf.get(btree as usize..btree as usize + 4) == Some(b"BTHD") {
+            let (typ, hdr) = parse_btree_header(self.buf, btree)?;
+            if typ != 10 && typ != 11 {
+                return Err(Hdf5Note::Btree {
+                    typ,
+                    off: btree as usize,
+                });
+            }
+            Ok((chunk_records(self.buf, &hdr, rank, filtered)?, false))
+        } else {
+            Ok((v1_chunk_records(self.buf, btree, rank)?, true))
+        }
+    }
+
+    pub fn chunk_index(&self, dataset: &str) -> Option<Vec<(Vec<u64>, u64)>> {
+        let (obj, ds, _dt) = self.dataset(dataset).ok()?;
+        let rank = ds.dims.len();
+        if rank == 0 {
+            return None;
+        }
+        let chunk_dims = match obj.layout.as_ref()? {
+            Hdf5Layout::Chunked { chunk_dims, .. } => chunk_dims,
+            _ => return None,
+        };
+        let (recs, v1_index) = self.chunk_records_of(obj, rank).ok()?;
+        let mut out = Vec::with_capacity(recs.len());
+        for rec in recs {
+            let coords = match scaled_to_coords(&rec.scaled, chunk_dims, v1_index) {
+                Some(c) => c,
+                None => continue,
+            };
+            out.push((coords, rec.addr));
+        }
+        Some(out)
+    }
+
+    pub fn read_chunk(
+        &self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl Fn(u64, u64) -> Option<Vec<u8>>,
+    ) -> Option<Vec<f64>> {
+        let (obj, ds, dt) = self.dataset(dataset).ok()?;
+        if dt.class == 9 {
+            return None;
+        }
+        let elem_size = dt.size;
+        let rank = ds.dims.len();
+        if rank == 0 || coords.len() != rank {
+            return None;
+        }
+        let chunk_dims = match obj.layout.as_ref()? {
+            Hdf5Layout::Chunked {
+                chunk_dims,
+                elem_size: declared,
+                ..
+            } => {
+                if *declared as usize != elem_size {
+                    return None;
+                }
+                chunk_dims.clone()
+            }
+            _ => return None,
+        };
+        let (recs, v1_index) = self.chunk_records_of(obj, rank).ok()?;
+        let rec = recs.into_iter().find(|r| {
+            scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords)
+        })?;
+        let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
+        let stored_len = if rec.size > 0 {
+            rec.size
+        } else {
+            chunk_elems * elem_size
+        };
+        let mut raw = fetch(rec.addr, stored_len as u64)?;
+        if !obj.filters.is_empty() {
+            apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).ok()?;
+        }
+        let mut actual_elems = 1usize;
+        for d in 0..rank {
+            let start = coords[d].checked_mul(chunk_dims[d] as u64)?;
+            let avail = ds.dims[d].saturating_sub(start);
+            actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
+        }
+        let raw_elems = raw.len() / elem_size;
+        let n = raw_elems.min(actual_elems);
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            out.push(decode_numeric(&raw, i, dt).ok()?);
+        }
+        let scale = obj
+            .attrs
+            .iter()
+            .find(|a| a.name == "scale_factor")
+            .and_then(attr_number);
+        if let Some(scale) = scale {
+            let offset = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "add_offset")
+                .and_then(attr_number);
+            for v in out.iter_mut() {
+                *v = match offset {
+                    Some(o) => *v * scale + o,
+                    None => *v * scale,
+                };
+            }
+        }
+        Some(out)
+    }
+
     pub fn geostationary_projection(&self) -> Result<GeostationaryProjection, Hdf5Note> {
         if let Ok(proj) = self.resolve("goes_imager_projection") {
             let sub_lon = proj
@@ -2340,6 +2484,135 @@ mod tests {
     }
 
     #[test]
+    fn scaled_offsets_to_chunk_coordinates() {
+        let dims = [2u32, 3];
+        assert_eq!(scaled_to_coords(&[4, 9], &dims, true).unwrap(), vec![2, 3]);
+        assert_eq!(scaled_to_coords(&[4, 9], &dims, false).unwrap(), vec![4, 9]);
+        assert_eq!(scaled_to_coords(&[5, 9], &dims, true), None);
+        assert_eq!(scaled_to_coords(&[4], &dims, true), None);
+        assert_eq!(scaled_to_coords(&[0, 0], &[0, 3], true), None);
+    }
+
+    #[test]
+    fn chunked_layout_chunk_index_and_stream() {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_f64() -> Vec<u8> {
+            let mut d = vec![
+                0x11, 0x00, 0x00, 0x00, 0x08, 0, 0, 0, 0x00, 0x00, 0x40, 0x00,
+            ];
+            d.extend_from_slice(&[0u8; 8]);
+            d
+        }
+        fn layout_chunked(btree: u64, chunk: u32, elem: u32) -> Vec<u8> {
+            let mut d = vec![3u8, 2, 2];
+            d.extend_from_slice(&btree.to_le_bytes());
+            d.extend_from_slice(&chunk.to_le_bytes());
+            d.extend_from_slice(&elem.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+        fn chunk_node(entries: &[(u64, u64)]) -> Vec<u8> {
+            let mut node = vec![b'T', b'R', b'E', b'E', 1u8, 0u8, entries.len() as u8, 0u8];
+            node.extend_from_slice(&[0u8; 16]);
+            for (scaled, addr) in entries {
+                node.extend_from_slice(&0u32.to_le_bytes());
+                node.extend_from_slice(&0u32.to_le_bytes());
+                node.extend_from_slice(&scaled.to_le_bytes());
+                node.extend_from_slice(&scaled.to_le_bytes());
+                node.extend_from_slice(&addr.to_le_bytes());
+            }
+            node
+        }
+
+        let root_proto = header(vec![message(MSG_LINK, link("d", 0))]);
+        let d_proto = header(vec![
+            message(MSG_DATASPACE, dataspace(&[4])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(0, 2, 8)),
+        ]);
+        let root_addr = 48u64;
+        let d_addr = root_addr + root_proto.len() as u64;
+        let btree_addr = d_addr + d_proto.len() as u64;
+        let chunk0_addr = btree_addr + 88u64;
+        let chunk1_addr = chunk0_addr + 16u64;
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&root_addr.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        assert_eq!(buf.len(), 48);
+        buf.extend_from_slice(&header(vec![message(MSG_LINK, link("d", d_addr))]));
+        buf.extend_from_slice(&header(vec![
+            message(MSG_DATASPACE, dataspace(&[4])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(btree_addr, 2, 8)),
+        ]));
+        buf.extend_from_slice(&chunk_node(&[(0, chunk0_addr), (2, chunk1_addr)]));
+        buf.extend_from_slice(&1.0f64.to_le_bytes());
+        buf.extend_from_slice(&2.0f64.to_le_bytes());
+        buf.extend_from_slice(&3.0f64.to_le_bytes());
+        buf.extend_from_slice(&4.0f64.to_le_bytes());
+
+        let file = Hdf5File::parse(&buf).unwrap();
+        let (_, ds, dt) = file.dataset("d").unwrap();
+        assert_eq!(ds.dims, vec![4]);
+        assert_eq!(dt.class, 1);
+        assert_eq!(dt.size, 8);
+
+        let mut index = file.chunk_index("d").unwrap();
+        assert_eq!(index.len(), 2);
+        index.sort();
+        assert_eq!(index[0], (vec![0], chunk0_addr));
+        assert_eq!(index[1], (vec![1], chunk1_addr));
+
+        let fetch = |off: u64, len: u64| {
+            buf.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+        assert_eq!(file.read_chunk("d", &[0], fetch).unwrap(), vec![1.0, 2.0]);
+        assert_eq!(file.read_chunk("d", &[1], fetch).unwrap(), vec![3.0, 4.0]);
+        assert!(file.read_chunk("d", &[2], fetch).is_none());
+        assert_eq!(
+            file.read_f64_dataset("d").unwrap(),
+            vec![1.0, 2.0, 3.0, 4.0]
+        );
+    }
+
+    #[test]
     fn real_ssi_2026_structure_and_values() {
         let Some(bytes) = read_fixture("ssi-2026", SSI_2026) else {
             return;
@@ -2370,6 +2643,45 @@ mod tests {
         let units = file.attribute("SSI", "units").unwrap();
         assert_eq!(units.datatype.class, 3);
         assert_eq!(byte_str(&units.data), "W m-2 nm-1");
+    }
+
+    #[test]
+    fn real_ssi_chunk_stream_matches_whole_read() {
+        let Some(bytes) = read_fixture("ssi-2026", SSI_2026) else {
+            return;
+        };
+        let file = Hdf5File::parse(&bytes).unwrap();
+        let index = file.chunk_index("SSI").unwrap();
+        assert!(!index.is_empty());
+        for (_coords, off) in &index {
+            assert!((*off as usize) < bytes.len());
+        }
+        let (obj, ds, _) = file.dataset("SSI").unwrap();
+        let rank = ds.dims.len();
+        let chunk_dims = match obj.layout.as_ref().unwrap() {
+            Hdf5Layout::Chunked { chunk_dims, .. } => chunk_dims,
+            _ => panic!("SSI is not chunked"),
+        };
+        let full = file.read_f64_dataset("SSI").unwrap();
+        let mut stride = vec![1usize; rank];
+        for d in (0..rank.saturating_sub(1)).rev() {
+            stride[d] = stride[d + 1] * ds.dims[d + 1] as usize;
+        }
+        let fetch = |off: u64, len: u64| {
+            bytes
+                .get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+        for (coords, _off) in index.iter().take(3) {
+            let chunk = file.read_chunk("SSI", coords, fetch).unwrap();
+            assert!(!chunk.is_empty());
+            assert!(chunk.iter().all(|v| v.is_finite()));
+            let mut flat = 0usize;
+            for d in 0..rank {
+                flat += (coords[d] * chunk_dims[d] as u64) as usize * stride[d];
+            }
+            assert_eq!(chunk[0], full[flat]);
+        }
     }
 
     #[test]
