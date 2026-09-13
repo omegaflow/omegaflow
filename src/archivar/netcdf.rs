@@ -1,3 +1,5 @@
+use crate::hdf5::{Hdf5File, Hdf5Note};
+
 const MAGIC: [u8; 3] = [b'C', b'D', b'F'];
 const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
 const STREAMING: u32 = 0xFFFF_FFFF;
@@ -560,6 +562,142 @@ fn dim_list(cur: &mut Kur) -> Result<Vec<NetcdfDim>, NetcdfNote> {
     }
 }
 
+pub struct Nc4Variable {
+    pub name: String,
+    pub dims: Vec<u64>,
+    pub datatype_class: Option<u8>,
+    pub datatype_size: Option<usize>,
+}
+
+pub struct Nc4Group {
+    pub name: String,
+    pub variables: Vec<Nc4Variable>,
+    pub groups: Vec<String>,
+    pub named_types: Vec<String>,
+}
+
+fn join_path(parent: &str, name: &str) -> String {
+    if parent.is_empty() {
+        name.to_string()
+    } else {
+        format!("{parent}/{name}")
+    }
+}
+
+fn leaf_name(path: &str) -> String {
+    match path.rsplit('/').next() {
+        Some(n) if !n.is_empty() => n.to_string(),
+        _ => "/".to_string(),
+    }
+}
+
+pub fn nc4_group(file: &Hdf5File, path: &str) -> Result<Nc4Group, Hdf5Note> {
+    let obj = file.resolve(path)?;
+    let mut variables = Vec::new();
+    let mut groups = Vec::new();
+    let mut named_types = Vec::new();
+    for link in &obj.links {
+        if link.addr == u64::MAX {
+            continue;
+        }
+        let child_path = join_path(path, &link.name);
+        let child = file.resolve(&child_path)?;
+        if child.is_group {
+            groups.push(link.name.clone());
+            continue;
+        }
+        match &child.dataspace {
+            Some(ds) => variables.push(Nc4Variable {
+                name: link.name.clone(),
+                dims: ds.dims.clone(),
+                datatype_class: child.datatype.as_ref().map(|d| d.class),
+                datatype_size: child.datatype.as_ref().map(|d| d.size),
+            }),
+            None => named_types.push(link.name.clone()),
+        }
+    }
+    Ok(Nc4Group {
+        name: leaf_name(path),
+        variables,
+        groups,
+        named_types,
+    })
+}
+
+pub fn split_rows(flat: &[f64], sizes: &[f64]) -> Option<Vec<Vec<f64>>> {
+    let mut out = Vec::with_capacity(sizes.len());
+    let mut off = 0usize;
+    for &s in sizes {
+        if s < 0.0 {
+            return None;
+        }
+        let n = s as usize;
+        let end = off.checked_add(n)?;
+        let row = flat.get(off..end)?.to_vec();
+        out.push(row);
+        off = end;
+    }
+    Some(out)
+}
+
+pub fn nc4_ragged_f64(
+    file: &Hdf5File,
+    values_path: &str,
+    row_size_path: &str,
+) -> Result<Vec<Vec<f64>>, Hdf5Note> {
+    let flat = file.read_f64_dataset(values_path)?;
+    let sizes = file.read_f64_dataset(row_size_path)?;
+    split_rows(&flat, &sizes).ok_or(Hdf5Note::EndAtByte { off: flat.len() })
+}
+
+pub fn html_hrefs(body: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(idx) = rest.find("href=\"") {
+        rest = &rest[idx + 6..];
+        let Some(end) = rest.find('"') else {
+            break;
+        };
+        out.push(rest[..end].to_string());
+        rest = &rest[end + 1..];
+    }
+    out
+}
+
+pub fn json_strings(body: &str) -> Vec<String> {
+    let Some(json) = crate::json::parse_json(body) else {
+        return Vec::new();
+    };
+    match json {
+        crate::json::JsonVal::Arr(items) => items
+            .into_iter()
+            .filter_map(|v| match v {
+                crate::json::JsonVal::Str(s) => Some(s),
+                _ => None,
+            })
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+pub fn directory_links(body: &str) -> Vec<String> {
+    let html = html_hrefs(body);
+    if !html.is_empty() {
+        html
+    } else {
+        json_strings(body)
+    }
+}
+
+pub fn netcdf_granule_urls(body: &str, base_url: &str) -> Vec<String> {
+    let base = base_url.trim_end_matches('/');
+    directory_links(body)
+        .into_iter()
+        .filter(|n| n.ends_with(".nc") || n.ends_with(".nc.gz"))
+        .map(|n| format!("{base}/{n}"))
+        .collect()
+}
+
 fn var_list(cur: &mut Kur, format: NetcdfFormat) -> Result<Vec<NetcdfVar>, NetcdfNote> {
     let off = cur.pos;
     let tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
@@ -931,5 +1069,87 @@ mod tests {
             NetcdfFile::parse(&b),
             Err(NetcdfNote::Type { tag: 9, .. })
         ));
+    }
+
+    #[test]
+    fn split_rows_slices_flat_array() {
+        let flat = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+        let sizes = vec![2.0, 4.0];
+        let rows = split_rows(&flat, &sizes).unwrap();
+        assert_eq!(rows, vec![vec![1.0, 2.0], vec![3.0, 4.0, 5.0, 6.0]]);
+    }
+
+    #[test]
+    fn split_rows_rejects_overrun() {
+        let flat = vec![1.0, 2.0];
+        let sizes = vec![3.0];
+        assert_eq!(split_rows(&flat, &sizes), None);
+    }
+
+    #[test]
+    fn split_rows_rejects_negative_size() {
+        let flat = vec![1.0];
+        let sizes = vec![-1.0];
+        assert_eq!(split_rows(&flat, &sizes), None);
+    }
+
+    #[test]
+    fn html_hrefs_extracts_links() {
+        let html = r#"<html><body><pre><a href="../">../</a>
+<a href="2025/">2025/</a>
+<a href="alcDat_2026.251.18.00.0060.json">alcDat</a>
+</pre></body></html>"#;
+        assert_eq!(
+            html_hrefs(html),
+            vec!["../", "2025/", "alcDat_2026.251.18.00.0060.json"]
+        );
+    }
+
+    #[test]
+    fn json_strings_extracts_array() {
+        let body = r#"["a.nc", "b.nc", "c.txt"]"#;
+        assert_eq!(json_strings(body), vec!["a.nc", "b.nc", "c.txt"]);
+    }
+
+    #[test]
+    fn json_strings_empty_for_object() {
+        let body = r#"{"files": ["a.nc"]}"#;
+        assert_eq!(json_strings(body), Vec::<String>::new());
+    }
+
+    #[test]
+    fn netcdf_granule_urls_joins_base() {
+        let html = r#"<a href="w.nc">w</a><a href="x.nc.gz">x</a><a href="y.png">y</a>"#;
+        assert_eq!(
+            netcdf_granule_urls(html, "https://example.test/dir/"),
+            vec![
+                "https://example.test/dir/w.nc".to_string(),
+                "https://example.test/dir/x.nc.gz".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn real_cosmic_wetprf_profile_reads() {
+        use std::path::Path;
+        const COSMIC_WETPRF: &str =
+            "phi/pipeline/catalog/cosmic_wetprf/wetPrf_C001.2014.121.00.02.G27_2014.2860_nc";
+        if !Path::new(COSMIC_WETPRF).exists() {
+            eprintln!(
+                "skipped (fixture absent): cosmic wetPrf — fetch from data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/2014/121/wetPrf_postProc_2014_121.tar.gz"
+            );
+            return;
+        }
+        let bytes = std::fs::read(COSMIC_WETPRF).expect("fixture read");
+        let file = NetcdfFile::parse(&bytes).unwrap();
+        assert_eq!(file.format, NetcdfFormat::Cdf1);
+        let var = file.var("MSL_alt").expect("MSL_alt variable");
+        assert_eq!(var.nc_type, NetcdfType::Float);
+        let alt = file.values_f32(&bytes, "MSL_alt").unwrap();
+        assert!(!alt.is_empty());
+        let temp = file.var("Temp").expect("Temp variable");
+        assert_eq!(temp.nc_type, NetcdfType::Float);
+        let temps = file.values_f32(&bytes, "Temp").unwrap();
+        assert_eq!(temps.len(), alt.len());
     }
 }
