@@ -1,4 +1,7 @@
-use omegaflow::las::{copc_hierarchy, copc_info, ept_json, point_format_name, LasHeader, LasNote};
+use omegaflow::las::{
+    copc_hierarchy, copc_info, ept_json, has_laszip_vlr, point_format_name, LasHeader, LasNote,
+    LazDecoder,
+};
 use std::process::Command;
 
 fn main() {
@@ -157,6 +160,36 @@ fn print_copc(bytes: &[u8], info: &omegaflow::las::CopcInfo) {
 
 fn dump_points(h: &LasHeader, bytes: &[u8], n: u64) {
     let count = h.point_count.min(n);
+    let laz = h.vlrs(bytes).map(|v| has_laszip_vlr(&v)).unwrap_or(false);
+    if laz {
+        let mut dec = match LazDecoder::new(h, bytes) {
+            Ok(d) => d,
+            Err(note) => {
+                println!("{}", note_text(&note));
+                return;
+            }
+        };
+        for i in 0..count {
+            match dec.point_at(i) {
+                Ok(p) => println!(
+                    "{} {:.3} {:.3} {:.3} i={} cls={} rn={}/{}",
+                    i,
+                    p.x,
+                    p.y,
+                    p.z,
+                    p.intensity,
+                    p.classification,
+                    p.return_number,
+                    p.number_of_returns
+                ),
+                Err(note) => {
+                    println!("{}", note_text(&note));
+                    return;
+                }
+            }
+        }
+        return;
+    }
     for i in 0..count {
         match h.point_at(bytes, i) {
             Ok(p) => println!(
@@ -226,5 +259,10 @@ fn note_text(note: &LasNote) -> String {
             format, length
         ),
         LasNote::PointDataAt { off } => format!("point data overruns the bytes at {}", off),
+        LasNote::LazAbsent => "the file carries no laszip encoded VLR".to_string(),
+        LasNote::LazItem { item } => format!("laszip item type {item} stays undecoded"),
+        LasNote::LazChunkTable { off } => format!("chunk table absent at byte {off}"),
+        LasNote::LazChunkOverrun { off } => format!("chunk overruns at byte {off}"),
+        LasNote::LazCoderStall { off } => format!("coder stalls at byte {off}"),
     }
 }
