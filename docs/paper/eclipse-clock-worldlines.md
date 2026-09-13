@@ -2,7 +2,7 @@
   title: The eclipse clock — greatest eclipse from five ephemeris worldlines
   class: paper
   date: 2026-09-13
-  sha256: d81aa16b5fdd7e3f4c8b539b656badba4634e4b879ae017c3ef00a3d5c69e560
+  sha256: 40f635413bb3552314bd72cc6a01aed61cb86fc1e0c64b5c8277769e0d0a9786
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
@@ -11,7 +11,7 @@
 
 ## Abstract
 
-The greatest eclipse of 2017-08-21 is located from five independent Sun/Moon/Earth worldlines alone; no eclipse catalog enters the computation. The probe runs five stages — geocentric syzygy, shadow-axis nearest to the geocentre, deepest ground coverage, the pairwise rift, and the rotation/curvature audit — and maps each instant to the rotating surface through body_fixed_to_icrs_smooth; magnitude is the ratio of apparent diameters. On the one-voice line de440/de442/epm2021 greatest eclipse stands at 36.9664N 87.6176W, 4.8 km from the Espenak canon point 36.9667N 87.6717W, magnitude 1.03147 (+0.0009 from the canon 1.0306), at 18:25:34.9Z — +4.9 s after the canon's UTC instant 18:25:30Z (the canon carries TD 18:26:40, ΔT 70 s on the catalog row). The earlier "65 s before the canon" was the canon's dynamical-time scale laid on the UTC axis, not a physics claim. The house rift is inpop19a (3.05 s / 1.7 km); de441 has drifted from the one voice to 42.5 km / −90.5 s and is named for re-verification.
+The greatest eclipse of 2017-08-21 is located from five independent Sun/Moon/Earth worldlines alone; no eclipse catalog enters the computation. The probe runs five stages — geocentric syzygy, shadow-axis nearest to the geocentre, deepest ground coverage, the pairwise rift, and the rotation/curvature audit — and maps each instant to the rotating surface through body_fixed_to_icrs_smooth; magnitude is the ratio of apparent diameters. On the one-voice line de440/de442/epm2021 greatest eclipse stands at 36.9664N 87.6176W, 4.8 km from the Espenak canon point 36.9667N 87.6717W, magnitude 1.03147 (+0.0009 from the canon 1.0306), at 18:25:34.9Z — +4.9 s after the canon's UTC instant 18:25:30Z (the canon carries TD 18:26:40, ΔT 70 s on the catalog row). The earlier "65 s before the canon" was the canon's dynamical-time scale laid on the UTC axis, not a physics claim. The house rift is inpop19a (3.05 s / 1.7 km); the de441 42.5 km / −90.5 s reading was a stale local 19-MB earth bin (2026-09-09) — on the 2026-09-11 CDN asset the de441 line re-verified into the one voice (2026-09-13), see The form.
 
 ## The measurement
 
@@ -39,9 +39,10 @@ Two channels carry the two residual numbers, and they do not mix. The +4.9 s ins
 
 ## The form
 
-- The de441 line has drifted from the one voice: on the current bins it places greatest eclipse at 42.5 km / −90.5 s (2017) and +10.1 s (2024), and its Earth centre sits 116 km from de440/de442. This is a data-state defect named for re-verification (register duty), not a physics claim.
-- The body_fixed_to_icrs matrix path defect stands as fixed (2026-09-09: Rz(90+α)·Rx(90−δ)·Rz(W), pole read from column 2); de441 mars still carries pre-fix matrices (Δ anchor 6045.3 km) and is the named remaining stone.
-- The calibration gate is data-bound: point < 15 km, magnitude < 0.002. It holds on the one-voice line de440 (4.8 km, +0.0009); against the drifted de441 bins it would read 42.5 km, and its de441 read is pending the de441 re-verification. Where the data bins sit absent, the gate names its skip and stays unrun — never a silent no-op.
+- The de441 line re-verified into the one voice (2026-09-13, probe + gate on the 2026-09-11 CDN asset): greatest eclipse 4.8 km / +4.9 s (2017) and +2.7 s (2024), Earth centre 0.0 m from de440 and 191.3 m from de442 — the 42.5 km / −90.5 s / +10.1 s drift was a stale local 19-MB earth bin (2026-09-09 15:52Z) that the ttl-served cache carried past the CDN regeneration, not a defect of the de441 data.
+- The body_fixed_to_icrs matrix path defect stands as fixed (2026-09-09: Rz(90+α)·Rx(90−δ)·Rz(W), pole read from column 2); de441 mars re-verified 2026-09-13 on the 2026-09-11 asset: anchor Δ 0.0 km (the pre-fix 6045.3 km reading is closed).
+- The calibration gate is data-bound: point < 15 km, magnitude < 0.002. It holds on the one-voice line de440 (4.8 km, +0.0009); the de441 re-verification read 4.8 km / +0.0009 — the same numbers. Where the data bins sit absent, the gate names its skip and stays unrun — never a silent no-op.
+- The 2024 canon point Δ reads 793.3 km on every line alike (de440/de442/de441/epm2021/inpop) — a probe-vs-canon point definition, not an ephemeris drift; the point definition is `pending`.
 
 ## References
 

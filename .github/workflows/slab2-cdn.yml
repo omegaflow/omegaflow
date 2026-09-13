@@ -1,0 +1,32 @@
+name: slab2-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  slab2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view www.sciencebase.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "slab2_depth.bin"; then
+            echo "asset slab2_depth.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset slab2_depth.bin missing — compiling and manifesting"
+      - name: Compile the USGS Slab2 depth witnesses and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin slab2_compiler -- \
+            --out slab2_depth.bin --ci-mode
