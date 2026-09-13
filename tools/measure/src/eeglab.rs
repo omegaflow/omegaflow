@@ -157,28 +157,42 @@ pub fn open_set(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
     Some((set, samples))
 }
 
-fn field_double(fields: &[omegaflow::matfile::MatField], name: &str) -> Option<f64> {
-    fields
-        .iter()
-        .find(|f| f.name == name)
-        .and_then(|f| f.values.first())
-        .and_then(|v| match &v.data {
-            omegaflow::matfile::MatData::Double(d) => d.first().copied(),
-            _ => None,
-        })
+enum EegSource<'a> {
+    Struct(&'a [omegaflow::matfile::MatField]),
+    Flat(&'a [omegaflow::matfile::MatArray]),
 }
 
-fn field_usize(fields: &[omegaflow::matfile::MatField], name: &str) -> Option<usize> {
-    let v = field_double(fields, name)?;
+impl<'a> EegSource<'a> {
+    fn array(&self, name: &str) -> Option<&'a omegaflow::matfile::MatArray> {
+        match self {
+            EegSource::Struct(fields) => fields
+                .iter()
+                .find(|f| f.name == name)
+                .and_then(|f| f.values.first()),
+            EegSource::Flat(arrays) => arrays.iter().find(|a| a.name == name),
+        }
+    }
+}
+
+fn field_double(source: &EegSource, name: &str) -> Option<f64> {
+    match &source.array(name)?.data {
+        omegaflow::matfile::MatData::Double(d) => d.first().copied(),
+        omegaflow::matfile::MatData::Int32(v) => v.first().map(|x| *x as f64),
+        _ => None,
+    }
+}
+
+fn field_usize(source: &EegSource, name: &str) -> Option<usize> {
+    let v = field_double(source, name)?;
     if !v.is_finite() || v < 0.0 || v.fract() != 0.0 {
         return None;
     }
     Some(v as usize)
 }
 
-fn chanlocs_labels(fields: &[omegaflow::matfile::MatField]) -> Option<Vec<String>> {
-    let chanlocs = fields.iter().find(|f| f.name == "chanlocs")?;
-    let omegaflow::matfile::MatData::Struct(label_fields) = &chanlocs.values.first()?.data else {
+fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
+    let chanlocs = source.array("chanlocs")?;
+    let omegaflow::matfile::MatData::Struct(label_fields) = &chanlocs.data else {
         return None;
     };
     let labels = label_fields.iter().find(|f| f.name == "labels")?;
@@ -202,25 +216,16 @@ fn chanlocs_labels(fields: &[omegaflow::matfile::MatField]) -> Option<Vec<String
         .collect()
 }
 
-pub fn eeg_from_mat(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
-    let arrays = omegaflow::matfile::parse_mat(bytes)?;
-    let eeg = arrays.iter().find(|a| a.name == "EEG")?;
-    let omegaflow::matfile::MatData::Struct(fields) = &eeg.data else {
-        return None;
+fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
+    let nbchan = field_usize(source, "nbchan")?;
+    let pnts = field_usize(source, "pnts")?;
+    let trials = field_usize(source, "trials").unwrap_or(1);
+    let srate = field_double(source, "srate").filter(|v| v.is_finite() && *v > 0.0);
+    let labels = chanlocs_labels(source)?;
+    let samples = match &source.array("data")?.data {
+        omegaflow::matfile::MatData::Single(s) => s.clone(),
+        _ => return None,
     };
-    let nbchan = field_usize(fields, "nbchan")?;
-    let pnts = field_usize(fields, "pnts")?;
-    let trials = field_usize(fields, "trials").unwrap_or(1);
-    let srate = field_double(fields, "srate").filter(|v| v.is_finite() && *v > 0.0);
-    let labels = chanlocs_labels(fields)?;
-    let samples = fields
-        .iter()
-        .find(|f| f.name == "data")
-        .and_then(|f| f.values.first())
-        .and_then(|v| match &v.data {
-            omegaflow::matfile::MatData::Single(s) => Some(s.clone()),
-            _ => None,
-        })?;
     let total = nbchan.checked_mul(pnts)?.checked_mul(trials)?;
     if samples.len() != total || samples.iter().any(|s| !s.is_finite()) {
         return None;
@@ -234,6 +239,18 @@ pub fn eeg_from_mat(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
         labels,
     };
     Some((set, samples))
+}
+
+pub fn eeg_from_mat(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
+    let arrays = omegaflow::matfile::parse_mat(bytes)?;
+    let source = match arrays.iter().find(|a| a.name == "EEG") {
+        Some(eeg) => match &eeg.data {
+            omegaflow::matfile::MatData::Struct(fields) => EegSource::Struct(fields),
+            _ => return None,
+        },
+        None => EegSource::Flat(&arrays),
+    };
+    eeg_from_source(&source)
 }
 
 pub fn open_set_mat(path: &str) -> Option<(EeglabSet, Vec<f32>)> {
@@ -448,9 +465,10 @@ mod tests {
         for _ in field_len..table_len {
             body.push(0);
         }
-        for (_, values) in fields {
-            for v in values {
-                body.extend_from_slice(v);
+        let n_elements = dims.iter().product::<i32>() as usize;
+        for i in 0..n_elements {
+            for (_, values) in fields {
+                body.extend_from_slice(&values[i]);
             }
         }
         mi_matrix(&body)
@@ -521,5 +539,47 @@ mod tests {
         let mut bytes = eeg_fixture();
         bytes[125] = 0x02;
         assert!(eeg_from_mat(&bytes).is_none());
+    }
+
+    fn flattened_eeg_fixture() -> Vec<u8> {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[(
+                "labels",
+                vec![char_matrix("labels", b"E1"), char_matrix("labels", b"E2")],
+            )],
+        );
+        let mut bytes = vec![0u8; 128];
+        let text = b"MATLAB 5.0 MAT-file";
+        bytes[..text.len()].copy_from_slice(text);
+        bytes[124] = 0x00;
+        bytes[125] = 0x01;
+        bytes[126] = b'I';
+        bytes[127] = b'M';
+        bytes.extend_from_slice(&flags_dims_double(6, "nbchan", &[1, 1], &[2.0]));
+        bytes.extend_from_slice(&flags_dims_double(6, "pnts", &[1, 1], &[3.0]));
+        bytes.extend_from_slice(&flags_dims_double(6, "srate", &[1, 1], &[100.0]));
+        bytes.extend_from_slice(&single_matrix(
+            "data",
+            &[2, 3],
+            &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+        ));
+        bytes.extend_from_slice(&chanlocs);
+        bytes
+    }
+
+    #[test]
+    fn a_flattened_mat_v5_eeg_maps_onto_the_set_and_series() {
+        let bytes = flattened_eeg_fixture();
+        let (set, samples) = eeg_from_mat(&bytes).expect("the flattened EEG maps");
+        assert_eq!(set.nbchan, 2);
+        assert_eq!(set.pnts, 3);
+        assert_eq!(set.trials, 1);
+        assert_eq!(set.srate, Some(100.0));
+        assert_eq!(set.labels, vec!["E1".to_string(), "E2".to_string()]);
+        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
+        assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
+        assert_eq!(resolve_channel(&set, "E2"), Some(1));
     }
 }
