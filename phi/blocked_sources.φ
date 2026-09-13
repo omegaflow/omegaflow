@@ -134,9 +134,9 @@ blocked parser-def parquet-blosc
 url s3://noaa-oar-hourly-gdp-pds
 note GDP-Drifter: netCDF-4/HDF5 monolithisch 15,7 GB (hdf5.rs lädt den ganzen Byte-Strom, kein Range-/Chunk-Streaming) + .zarr (blosc/lz4, kein Decoder). Parquet GEBAUT (2026-09-13, src/archivar/parquet.rs, parse_parquet → Vec<ParquetColumn>): PAR1-Magic, Footer-Länge, Thrift-Compact FileMetaData; Page-Header (DATA_PAGE/DICTIONARY_PAGE, V2 benannt unverarbeitet); PLAIN (BOOLEAN/INT32/INT64/FLOAT/DOUBLE/BYTE_ARRAY/FIXED_LEN_BYTE_ARRAY) + RLE_DICTIONARY/PLAIN_DICTIONARY (Dictionary-Seite + varint-Hybrid-Indizes); Definition-/Repetition-Level-Übersprung; Snappy/Gzip/INT96 als unverarbeitet benannt. Gemessen an alltypes_plain.parquet (apache/parquet-testing, HTTP 200, 1851 B): 11 Spalten × 8 Zeilen dekodiert (id [4,5,6,7,2,3,0,1], float_col [0.0,1.1,…], string_col [0,1,…]). Messwert (Drifter-Trajektorie, em) echt.
 
-blocked parser-def geotiff-gpkg
+pending
 url s3://noaa-ocs-hydrodata-pds
-note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). Gap: GeoTIFF + GeoPackage/SQLite-Reader.
+note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). GEBAUT (2026-09-13): GeoTIFF-Reader (src/archivar/tiff.rs) + GeoPackage/SQLite-Reader (src/archivar/gpkg.rs, soundings 3027 gemessen); offen: STAC-Konsument + Ernte.
 
 pending
 url s3://noaa-wod-pds
