@@ -6,7 +6,7 @@ use omegaflow::te::{
     TeNull,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+    channel_series, open_set, open_set_bin, open_set_mat, resolve_channel, EeglabSet,
 };
 
 const DEFAULT_LAG_MAX: usize = 24;
@@ -82,7 +82,9 @@ fn usage() {
          data embedded); samples unpack as interleaved little-endian f32 [channel][sample]\n\
          (channel fastest). an absent data field reads absent, never a fabricated 0.\n\
          the verum/sham sibling is found by swapping verum<->sham in the path; channels are\n\
-         1-based indices or labels from the channel-location block.\n\
+         1-based indices or labels from the channel-location block. without --c, the reader\n\
+         names the conditioning channel itself: the first channel of the chanlocs order that is\n\
+         neither the reference (Cz) nor E1/E2; no such channel -> the --c line stands absent.\n\
          legacy: --a <eeg_a> --b <eeg_b> [--c <common_cause>] reads whitespace-separated finite\n\
          f32 values, one index per time step. an absent file is reported as pending, never as 0\n\
          (0 honored, absent stays absent)."
@@ -107,6 +109,14 @@ fn sibling_path(path: &str) -> Option<String> {
     }
 }
 
+fn auto_condition_channel(set: &EeglabSet, chan_a: usize, chan_b: usize) -> Option<String> {
+    set.labels
+        .iter()
+        .enumerate()
+        .find(|(i, label)| *i != chan_a && *i != chan_b && label.as_str() != "Cz")
+        .map(|(_, label)| label.clone())
+}
+
 fn condition_pair(
     path: &str,
     sel_a: &str,
@@ -120,14 +130,30 @@ fn condition_pair(
     let chan_b = resolve_channel(&set, sel_b)?;
     let a = channel_series(&samples, &set, chan_a)?;
     let b = channel_series(&samples, &set, chan_b)?;
-    let c = match sel_c {
+    let (c, c_note) = match sel_c {
         Some(sel) => {
             let chan_c = resolve_channel(&set, sel)?;
-            Some(channel_series(&samples, &set, chan_c)?)
+            let series = channel_series(&samples, &set, chan_c)?;
+            (Some(series), format!("[{sel}]"))
         }
-        None => None,
+        None => match auto_condition_channel(&set, chan_a, chan_b) {
+            Some(label) => {
+                let chan_c = resolve_channel(&set, &label)?;
+                let series = channel_series(&samples, &set, chan_c)?;
+                (
+                    Some(series),
+                    format!("[{label}] — chanlocs order, not reference (Cz), not E1/E2"),
+                )
+            }
+            None => (None, String::new()),
+        },
     };
-    Some((format!("{path} [{sel_a} ↔ {sel_b}]"), a, b, c))
+    let tag = if c_note.is_empty() {
+        format!("{path} [{sel_a} ↔ {sel_b}]")
+    } else {
+        format!("{path} [{sel_a} ↔ {sel_b}] C={c_note}")
+    };
+    Some((tag, a, b, c))
 }
 
 fn run_eeglab(
@@ -496,6 +522,33 @@ mod tests {
             Some("sub-02/ses-sham/eeg/sub-02_ses-sham_task-rest_eeg.set".to_string())
         );
         assert!(sibling_path("sub-02_task-rest_eeg.set").is_none());
+    }
+
+    #[test]
+    fn auto_condition_names_the_first_non_reference_non_pair_channel() {
+        let set = EeglabSet {
+            datfile: String::new(),
+            nbchan: 4,
+            pnts: 100,
+            trials: 1,
+            srate: Some(250.0),
+            labels: vec![
+                "Cz".to_string(),
+                "E1".to_string(),
+                "E2".to_string(),
+                "Fz".to_string(),
+            ],
+        };
+        assert_eq!(auto_condition_channel(&set, 1, 2), Some("Fz".to_string()));
+        let only_ref = EeglabSet {
+            datfile: String::new(),
+            nbchan: 3,
+            pnts: 100,
+            trials: 1,
+            srate: Some(250.0),
+            labels: vec!["Cz".to_string(), "E1".to_string(), "E2".to_string()],
+        };
+        assert_eq!(auto_condition_channel(&only_ref, 1, 2), None);
     }
 
     #[test]
