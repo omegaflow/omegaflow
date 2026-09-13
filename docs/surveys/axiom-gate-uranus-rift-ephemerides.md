@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — uranus-rift-ephemerides
   class: survey
   date: 2026-09-12
-  sha256: fbb08a1865f99673c25243ffd0e6bf16925e114117a10303c95720168a40205c
+  sha256: 4b01f27415f5b028ee0e443c70fb29aeddec3fdfe73023c9e3a7e641ae490190
   status: live
   see-also: docs/paper/uranus-rift-ephemerides.md
 -->
@@ -21,8 +21,8 @@ Abstract 130/200, 119 Zahlen ok, sha ok — Export-Gate grün).
 
 - Der Innenplanet-Kontrast fehlt in beiden Quellen-Handovers — im Paper
   `absent` benannt, nicht fabriziert.
-- Die Absolut-Offset/Aberrations-Zerlegung und die Neptun-Bau-Linie sind
-  `pending` benannt.
+- Die Absolut-Offset/Aberrations-Zerlegung ist gemessen (EPM2021 am nächsten
+  bei Null, |c0| 11,8 mas); die Neptun-Bau-Linie bleibt `pending` benannt.
 
 ## Pfad
 

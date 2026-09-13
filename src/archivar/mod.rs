@@ -70,6 +70,7 @@ pub mod odf;
 pub mod odp;
 pub mod omni2;
 pub mod opendap;
+pub mod openneuro_eeg;
 pub mod ossos;
 pub mod parquet;
 pub mod pck;
