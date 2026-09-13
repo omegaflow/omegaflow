@@ -4,6 +4,7 @@ pub mod eikonal;
 pub mod h0;
 pub mod iasp91;
 pub mod miniseed;
+pub mod mww;
 pub mod noaa_coops;
 pub mod stats;
 pub mod weberin;
