@@ -13,7 +13,7 @@ pub struct Fetch {
 }
 
 impl Fetch {
-    fn status_text(&self) -> String {
+    pub fn status_text(&self) -> String {
         match self.status {
             Some(s) => s.to_string(),
             None => "absent".to_string(),
@@ -202,7 +202,7 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let host = url_host(url);
     let gate = RATE_GATE.get_or_init(|| Mutex::new(RateGate::new()));
     let ladder = exits();
-    first_answer(&ladder, |exit| {
+    let result = first_answer(&ladder, |exit| {
         if let Ok(mut g) = gate.lock() {
             g.wait(&host);
         }
@@ -215,7 +215,24 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
             }
         }
         result
-    })
+    });
+    if let Some(f) = &result {
+        if crate::token::is_unauthorized(f.status) && crate::token::is_earthdata_host(&host) {
+            if let Some(token) = crate::token::earthdata_token() {
+                let auth = format!("Authorization: Bearer {}", token);
+                let mut merged: Vec<&str> = extra.to_vec();
+                merged.push("-H");
+                merged.push(auth.as_str());
+                if let Ok(mut g) = gate.lock() {
+                    g.wait(&host);
+                }
+                if let Some(retried) = get_once(url, &merged, timeout, &Exit::Direct) {
+                    return Some(retried);
+                }
+            }
+        }
+    }
+    result
 }
 
 pub fn urlencode(s: &str) -> String {
@@ -683,41 +700,64 @@ pub fn wayback_lines(query: &str, max: usize) -> Vec<String> {
 }
 
 pub fn crossref_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://api.crossref.org/works?query={}&rows={}&select=DOI,title,issued",
-        urlencode(query),
-        max
-    );
-    match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = Vec::new();
-                if let Some(items) = v
-                    .get("message")
-                    .and_then(|m| m.get("items"))
-                    .and_then(|i| i.as_arr())
-                {
-                    for item in items {
-                        let doi = item.get("DOI").and_then(|d| d.as_str()).unwrap_or("");
-                        if !doi.is_empty() {
-                            out.push(format!(
-                                "url https://doi.org/{}\ttitle: {}",
-                                doi,
-                                doc_title(item)
-                            ));
+    let mut cursor: Option<String> = None;
+    let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
+        let mut url = format!(
+            "https://api.crossref.org/works?query={}&rows={}&select=DOI,title,issued",
+            urlencode(query),
+            max
+        );
+        if let Some(c) = &cursor {
+            url.push_str("&cursor=");
+            url.push_str(&urlencode(c));
+        }
+        match get(&url, &[], "40") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => {
+                    let mut out = Vec::new();
+                    if let Some(items) = v
+                        .get("message")
+                        .and_then(|m| m.get("items"))
+                        .and_then(|i| i.as_arr())
+                    {
+                        for item in items {
+                            let doi = item.get("DOI").and_then(|d| d.as_str()).unwrap_or("");
+                            if !doi.is_empty() {
+                                out.push(format!(
+                                    "url https://doi.org/{}\ttitle: {}",
+                                    doi,
+                                    doc_title(item)
+                                ));
+                            }
                         }
                     }
+                    let next = v
+                        .get("message")
+                        .and_then(|m| m.get("next-cursor"))
+                        .and_then(|c| c.as_str())
+                        .filter(|c| !c.is_empty())
+                        .map(str::to_string);
+                    let has_more = next.is_some();
+                    cursor = next;
+                    (out, has_more)
                 }
-                if out.is_empty() {
-                    vec![format!("absent — crossref carries no entry: {}", query)]
-                } else {
-                    out
-                }
-            }
-            None => vec!["pending — the crossref response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!("pending — crossref HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+                None => (
+                    vec!["pending — the crossref response carries no JSON".to_string()],
+                    false,
+                ),
+            },
+            Some(f) => (
+                vec![format!("pending — crossref HTTP {}", f.status_text())],
+                false,
+            ),
+            None => (vec!["pending — no network".to_string()], false),
+        }
+    });
+    if lines.is_empty() {
+        vec![format!("absent — crossref carries no entry: {}", query)]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 

@@ -2,28 +2,48 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://api.openalex.org/works?search={}&per-page={}",
-        urlencode(query),
-        max
-    );
-    match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
-            let out = parse_openalex(&f.body);
-            if out.is_empty() {
-                vec![format!("absent — openalex carries no entry: {}", query)]
-            } else {
-                out
-            }
+    let mut cursor: Option<String> = Some("*".to_string());
+    let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
+        let mut url = format!(
+            "https://api.openalex.org/works?search={}&per-page={}",
+            urlencode(query),
+            max
+        );
+        if let Some(c) = &cursor {
+            url.push_str("&cursor=");
+            url.push_str(&urlencode(c));
         }
-        Some(f) => {
-            let code = match f.status {
-                Some(s) => s.to_string(),
-                None => "absent".to_string(),
-            };
-            vec![format!("pending — openalex HTTP {}", code)]
+        match get(&url, &[], "40") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => {
+                    let out = parse_openalex(&f.body);
+                    let next = v
+                        .get("meta")
+                        .and_then(|m| m.get("next_cursor"))
+                        .and_then(|c| c.as_str())
+                        .filter(|c| !c.is_empty())
+                        .map(str::to_string);
+                    let has_more = next.is_some();
+                    cursor = next;
+                    (out, has_more)
+                }
+                None => (
+                    vec!["pending — the openalex response carries no JSON".to_string()],
+                    false,
+                ),
+            },
+            Some(f) => (
+                vec![format!("pending — openalex HTTP {}", f.status_text())],
+                false,
+            ),
+            None => (vec!["pending — no network".to_string()], false),
         }
-        None => vec!["pending — no network".to_string()],
+    });
+    if lines.is_empty() {
+        vec![format!("absent — openalex carries no entry: {}", query)]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 
