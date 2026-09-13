@@ -136,6 +136,12 @@ fn main() {
                 }
                 mode = Mode::Verdict;
             }
+            "--cacert" => {
+                i += 1;
+                if let Some(p) = args.get(i) {
+                    net::set_ca_bundle(p);
+                }
+            }
             "--playwright" => {
                 i += 1;
                 if let Some(u) = args.get(i) {
@@ -328,7 +334,7 @@ fn usage() {
         "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
     );
     eprintln!(
-        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query>   (--ntrs: a bare citation id resolves via the citation path, any other query searches)"
+        "       archive_search --verdict <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches)"
     );
     eprintln!(
         "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"

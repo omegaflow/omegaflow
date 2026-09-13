@@ -2781,8 +2781,16 @@ pub fn main_flow() {
                     let tmp_path = content_cache(&format!("omegaflow_csv_{src_idx}.zip"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
-                        let bytes = match fetch_raw_bytes_post(&url, None, &headers, src_clone.ttl)
-                        {
+                        let body = render_source_body(
+                            &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &lsk_c,
+                        )
+                        .map(|b| resolve_secret(&b, &e));
+                        let bytes = match fetch_raw_bytes_post(
+                            &url,
+                            body.as_deref(),
+                            &headers,
+                            src_clone.ttl,
+                        ) {
                             Some(b) => b,
                             None => {
                                 eprintln!("csv_zip {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
