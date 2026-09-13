@@ -5,7 +5,7 @@ use omegaflow_measure::h0::{normalize_name, parse_cepheids};
 
 const ARXIV_EPRINT: &str = "https://arxiv.org/e-print/2012.08534";
 const SIMBAD_TAP: &str = "https://simbad.cds.unistra.fr/simbad/sim-tap/sync";
-const GAIA_TAP: &str = "https://gea.esac.esa.int/tap-server/tap/sync";
+const GAIA_TAP: &str = "https://gaia.ari.uni-heidelberg.de/tap/sync";
 const UA: &str = "omegaflow-h0-gaia-crossmatch/1.0";
 const CONE_RADIUS_DEG: f64 = 3.0 / 3600.0;
 const IDENTITY_MAX_SEP_ARCSEC: f64 = 2.0;
@@ -431,6 +431,18 @@ fn main() {
                     Some(c) => c.clone(),
                     None => "absent".to_string(),
                 };
+                let plx = match g.parallax {
+                    Some(p) => format!("{p:.6}"),
+                    None => String::new(),
+                };
+                let plx_err = match g.parallax_error {
+                    Some(e) => format!("{e:.6}"),
+                    None => String::new(),
+                };
+                println!(
+                    "h0_gaia_crossmatch_tsv: {}\t{}\t{}\t{}\t{}\t{:.3}\t{}",
+                    s.name, r.main_id, g.source_id, plx, plx_err, d, class
+                );
                 let gaia_word = match g.parallax {
                     Some(p) => match g.parallax_error {
                         Some(e) => format!("{p:.3} ± {e:.3} mas"),
