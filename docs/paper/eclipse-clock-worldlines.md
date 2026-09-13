@@ -2,7 +2,7 @@
   title: The eclipse clock — greatest eclipse from five ephemeris worldlines
   class: paper
   date: 2026-09-13
-  sha256: 3319612855ca09fe7b509634c353cc8cda8802bfc73a23eeeb6c08bd5c1468ca
+  sha256: 774e6d92c8b54834f313973ce565a360112149667d52592c218f86de73892e20
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
@@ -42,7 +42,7 @@ Two channels carry the two residual numbers, and they do not mix. The +4.9 s ins
 - The de441 line re-verified into the one voice (2026-09-13, probe + gate on the 2026-09-11 CDN asset): greatest eclipse 4.8 km / +4.9 s (2017) and +2.7 s (2024), Earth centre 0.0 m from de440 and 191.3 m from de442 — the 42.5 km / −90.5 s / +10.1 s drift was a stale local 19-MB earth bin (2026-09-09 15:52Z) that the ttl-served cache carried past the CDN regeneration, not a defect of the de441 data.
 - The body_fixed_to_icrs matrix path defect stands as fixed (2026-09-09: Rz(90+α)·Rx(90−δ)·Rz(W), pole read from column 2); de441 mars re-verified 2026-09-13 on the 2026-09-11 asset: anchor Δ 0.0 km (the pre-fix 6045.3 km reading is closed).
 - The calibration gate is data-bound: point < 15 km, magnitude < 0.002. It holds on the one-voice line de440 (4.8 km, +0.0009); the de441 re-verification read 4.8 km / +0.0009 — the same numbers. Where the data bins sit absent, the gate names its skip and stays unrun — never a silent no-op.
-- The 2024 canon point Δ reads 793.3 km on every line alike (de440/de442/de441/epm2021/inpop) — a probe-vs-canon point definition, not an ephemeris drift; the point definition is `pending`.
+- The 2024 canon point Δ reads 793.3 km on every line alike (de440/de442/de441/epm2021/inpop) — and it is a search-box boundary, not a point definition and not an ephemeris drift. The unseeded deepest_pierce that sets the stage-2a point passes the same half-range (90°) to latitude and longitude, so its first sweep spans longitude [−90°, +90°] around lon 0° (latitude needs ±90°, longitude needs ±180° to close the circle); the shrinking refinement (5° → 1° → 0.2° → 0.04° → 0.008°) then drifts at most 5+1+0.2+0.04+0.008 = 6.248° past the box edge and terminates at −96.248°W (= −90° − 6.248°, the printed value, on all five lines). The 2024 greatest-eclipse point lies at 25.3°N 104.1°W (NASA SEdata, catalog row 09561; the probe's canon constant −104.1383°) — 14.138° beyond 90°W — and is never reached; the 7.89° longitude gap at 25.26°N is the 793.3 km. The 2017 point (87.67°W) sits inside [−90°, +90°], so the same search lands 4.8 km from the canon. Stage 2b's seeded walk tracks the axis across the window and reads the pierce: fraction 1.02874 = (1 + 1.05748)/2, the θ = 0 axis magnitude, at 104.62°W — the axis, not the definition, is what stage 2a fails to reach. The probe now sweeps the unseeded deepest_pierce with half_lon 180° and half_lat 90° (longitude closes the circle, latitude needs only ±90°); the 2024 re-verification of the stage-2a point against the canon is pending the compiled tree.
 
 ## References
 
@@ -51,3 +51,4 @@ Two channels carry the two residual numbers, and they do not mix. The +4.9 s ins
 3. Park, R. S., Folkner, W. M., Williams, J. G., & Boggs, D. H. 2021, "The JPL Planetary and Lunar Ephemerides DE440 and DE441", AJ, 161, 105. [DOI 10.3847/1538-3881/abd414; ADS 2021AJ....161..105P — standard literature, not carried by the sources]
 4. Fienga, A., Deram, P., Viswanathan, V., et al. 2019, "INPOP19a planetary ephemerides", Notes Scientifiques et Techniques de l'IMCCE, S109. [ADS 2019NSTIM.109.....F — resolved via ADS API 2026-09-12]
 5. Pitjeva, E. V., & Pitjev, N. P. 2014, "Development of planetary ephemerides EPM and their applications", Celest. Mech. Dyn. Astron., 119, 237. [DOI 10.1007/s10569-014-9569-0]
+6. NASA GSFC, "Total Solar Eclipse of 2024 April 08 — Besselian Elements", SEdata, eclipse.gsfc.nasa.gov/SEsearch/SEdata.php?Ecl=20240408 (retrieved 2026-09-13): greatest eclipse 18:18:29 TDT = 18:17:15 UT, γ 0.3431, magnitude 1.0566, ΔT 74 s, circumstances 25.3°N 104.1°W.
