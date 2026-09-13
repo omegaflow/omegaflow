@@ -1,5 +1,7 @@
 use omegaflow::archivar::geo::{parse_bin, COMP_BGR_AZIM, MAGIC_BGR};
-use omegaflow::archivar::{angular_distance_deg, embedded_lsk};
+use omegaflow::archivar::{angular_distance_deg, embedded_lsk, fetch_raw_bytes};
+use omegaflow::inflate::inflate;
+use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::civil_from_days;
 
 const TONGA_LAT: f64 = -20.536;
@@ -8,6 +10,146 @@ const LAMB_SPEED_KM_S: f64 = 0.306;
 const EARTH_RADIUS_KM: f64 = 6371.0;
 const WATER_START_UNIX: f64 = 1642220085.0;
 const DEFAULT_BIN: &str = "data/download.bgr.de/bgr_infrasound_IS52_2022.bin";
+const KYOTO_LAT: f64 = 35.02938;
+const KYOTO_LON: f64 = 135.78347;
+const JST_OFFSET_S: f64 = 32400.0;
+const KYOTO_DAY_MEMBER: &str = "220115.txt";
+const ZENODO_ARCHIVE_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/zenodo.org/data.zip";
+const ZENODO_ARCHIVE_LIVE: &str = "https://zenodo.org/records/8098323/files/data.zip";
+
+struct PressureSample {
+    unix: f64,
+    hpa: f64,
+}
+
+fn load_pressure_archive() -> Option<Vec<u8>> {
+    fetch_raw_bytes(ZENODO_ARCHIVE_CDN, 86400)
+        .or_else(|| fetch_raw_bytes(ZENODO_ARCHIVE_LIVE, 86400))
+}
+
+fn zip_member(data: &[u8], member: &str) -> Option<Vec<u8>> {
+    let mut i = 0usize;
+    while i + 30 <= data.len() {
+        if &data[i..i + 4] != b"PK\x03\x04" {
+            i += 1;
+            continue;
+        }
+        let flags = u16::from_le_bytes([data[i + 6], data[i + 7]]);
+        let method = u16::from_le_bytes([data[i + 8], data[i + 9]]);
+        let comp_size =
+            u32::from_le_bytes([data[i + 18], data[i + 19], data[i + 20], data[i + 21]]) as usize;
+        let name_len = u16::from_le_bytes([data[i + 26], data[i + 27]]) as usize;
+        let extra_len = u16::from_le_bytes([data[i + 28], data[i + 29]]) as usize;
+        let name_start = i + 30;
+        if name_start + name_len > data.len() {
+            return None;
+        }
+        let name = String::from_utf8_lossy(&data[name_start..name_start + name_len]);
+        let start = name_start + name_len + extra_len;
+        if start > data.len() {
+            return None;
+        }
+        if name == member {
+            let payload = if comp_size == 0 {
+                &data[start..]
+            } else {
+                if start + comp_size > data.len() {
+                    return None;
+                }
+                &data[start..start + comp_size]
+            };
+            return match method {
+                0 => Some(payload.to_vec()),
+                8 => inflate(payload),
+                _ => None,
+            };
+        }
+        if flags & 0x08 != 0 || comp_size == 0 || start + comp_size > data.len() {
+            return None;
+        }
+        i = start + comp_size;
+    }
+    None
+}
+
+fn parse_pressure(text: &str) -> Vec<PressureSample> {
+    let mut samples = Vec::new();
+    for line in text.lines() {
+        let cols: Vec<&str> = line.split_whitespace().collect();
+        if cols.len() < 8 {
+            continue;
+        }
+        let (Ok(year), Ok(month), Ok(day), Ok(hour), Ok(minute), Ok(second), Ok(hpa)) = (
+            cols[0].parse::<i64>(),
+            cols[1].parse::<i64>(),
+            cols[2].parse::<i64>(),
+            cols[3].parse::<i64>(),
+            cols[4].parse::<i64>(),
+            cols[5].parse::<f64>(),
+            cols[7].parse::<f64>(),
+        ) else {
+            continue;
+        };
+        let Some(days) = days_from_civil(year, month, day) else {
+            continue;
+        };
+        let unix = days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second
+            - JST_OFFSET_S;
+        samples.push(PressureSample { unix, hpa });
+    }
+    samples
+}
+
+fn kyoto_pressure_section() {
+    let Some(archive) = load_pressure_archive() else {
+        println!("raw pressure waveform: Zenodo 8098323 route absent (CDN mirror + live both void) — cross-check pending");
+        println!();
+        return;
+    };
+    let Some(bytes) = zip_member(&archive, KYOTO_DAY_MEMBER) else {
+        println!("raw pressure waveform: {KYOTO_DAY_MEMBER} absent from the Zenodo archive — cross-check pending");
+        println!();
+        return;
+    };
+    let text = String::from_utf8_lossy(&bytes);
+    let samples = parse_pressure(&text);
+    if samples.is_empty() {
+        println!("raw pressure waveform: {KYOTO_DAY_MEMBER} carries no parseable pressure rows (0 honored)");
+        println!();
+        return;
+    }
+    let d = distance_km(KYOTO_LAT, KYOTO_LON, TONGA_LAT, TONGA_LON);
+    let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
+    let min = samples.iter().min_by(|a, b| a.hpa.total_cmp(&b.hpa));
+    let max = samples.iter().max_by(|a, b| a.hpa.total_cmp(&b.hpa));
+    println!("Kyoto-A 1-Hz surface pressure (Zenodo 8098323, Kazama 2023, {KYOTO_DAY_MEMBER}):");
+    println!(
+        "station: lat {KYOTO_LAT}, lon {KYOTO_LON} ({} samples)",
+        samples.len()
+    );
+    println!("great-circle distance to the source: {d:.1} km");
+    println!("predicted Lamb arrival (direct): {}", utc_str(predicted));
+    if let Some(min) = min {
+        println!(
+            "measured pressure minimum: {:.2} hPa at {}",
+            min.hpa,
+            utc_str(min.unix)
+        );
+    }
+    if let Some(max) = max {
+        println!(
+            "measured pressure maximum: {:.2} hPa at {}",
+            max.hpa,
+            utc_str(max.unix)
+        );
+        println!(
+            "measured − predicted (maximum): {:.0} s",
+            max.unix - predicted
+        );
+    }
+    println!();
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -59,8 +201,9 @@ fn main() {
         utc_str(WATER_START_UNIX)
     );
     println!("Lamb wave speed: {LAMB_SPEED_KM_S} km/s (atmospheric Lamb phase speed)");
-    println!("raw pressure waveform: blocked (CTBTO-vDEC HTTP 403) — this probe reads only the BGR detection bin");
     println!();
+
+    kyoto_pressure_section();
 
     let Ok(bytes) = std::fs::read(&bin_path) else {
         println!("cross-check pending: BGR detection bin absent ({bin_path})");
