@@ -19,6 +19,12 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 @group(0) @binding(4) var<storage, read_write> pp: array<vec4f>;
+@group(0) @binding(5) var<storage, read> vol_head: array<u32>;
+@group(0) @binding(6) var<storage, read> vol_axis: array<f32>;
+@group(0) @binding(7) var<storage, read> vol_cell: array<f32>;
+@group(0) @binding(8) var<uniform> vol_u: VolUniform;
+
+struct VolUniform { geo: vec4f, count: vec4f };
 
 fn erfc(x: f32) -> f32 {
     let xa = abs(x);
@@ -163,6 +169,108 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     return g;
 }
 
+fn vol_axis_val(kind: u32, axis_off: u32, i: u32) -> f32 {
+    if (kind == 0u) {
+        return vol_axis[axis_off] + f32(i) * vol_axis[axis_off + 1u];
+    }
+    return vol_axis[axis_off + i];
+}
+
+fn vol_frac(kind: u32, axis_off: u32, n: u32, coord: f32) -> f32 {
+    if (n == 0u) {
+        return -1.0;
+    }
+    let first = vol_axis_val(kind, axis_off, 0u);
+    let last = vol_axis_val(kind, axis_off, n - 1u);
+    let lo = min(first, last);
+    let hi = max(first, last);
+    if (coord < lo || coord > hi) {
+        return -1.0;
+    }
+    if (kind == 0u) {
+        return (coord - first) / vol_axis[axis_off + 1u];
+    }
+    let ascending = first <= last;
+    var lo_i = 0u;
+    var hi_i = n - 1u;
+    while (hi_i - lo_i > 1u) {
+        let mid = (lo_i + hi_i) / 2u;
+        let v = vol_axis[axis_off + mid];
+        let before = select(v >= coord, v <= coord, ascending);
+        if (before) {
+            lo_i = mid;
+        } else {
+            hi_i = mid;
+        }
+    }
+    let v0 = vol_axis[axis_off + lo_i];
+    let v1 = vol_axis[axis_off + hi_i];
+    let denom = v1 - v0;
+    if (abs(denom) < 1e-12) {
+        return f32(lo_i);
+    }
+    return f32(lo_i) + (coord - v0) / denom;
+}
+
+fn vol_bracket3(f: f32, n: u32) -> vec3f {
+    if (n <= 1u) {
+        return vec3f(0.0, 0.0, 0.0);
+    }
+    let fc = clamp(f, 0.0, f32(n - 1u));
+    let i = u32(floor(fc));
+    if (i >= n - 1u) {
+        return vec3f(f32(n - 1u), f32(n - 1u), 0.0);
+    }
+    return vec3f(f32(i), f32(i + 1u), fc - f32(i));
+}
+
+fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> f32 {
+    let h0 = vol * 10u;
+    let data_off = vol_head[h0];
+    let nd = vol_head[h0 + 1u];
+    let nlat = vol_head[h0 + 2u];
+    let nlon = vol_head[h0 + 3u];
+    let f0 = vol_frac(vol_head[h0 + 4u], vol_head[h0 + 7u], nd, depth);
+    if (f0 < 0.0) {
+        return 0.0;
+    }
+    let f1 = vol_frac(vol_head[h0 + 5u], vol_head[h0 + 8u], nlat, lat);
+    if (f1 < 0.0) {
+        return 0.0;
+    }
+    let f2 = vol_frac(vol_head[h0 + 6u], vol_head[h0 + 9u], nlon, lon);
+    if (f2 < 0.0) {
+        return 0.0;
+    }
+    let b0 = vol_bracket3(f0, nd);
+    let b1 = vol_bracket3(f1, nlat);
+    let b2 = vol_bracket3(f2, nlon);
+    let i0 = u32(b0.x);
+    let i1 = u32(b0.y);
+    let t0 = b0.z;
+    let j0 = u32(b1.x);
+    let j1 = u32(b1.y);
+    let t1 = b1.z;
+    let k0 = u32(b2.x);
+    let k1 = u32(b2.y);
+    let t2 = b2.z;
+    let c000 = vol_cell[data_off + (i0 * nlat + j0) * nlon + k0];
+    let c001 = vol_cell[data_off + (i0 * nlat + j0) * nlon + k1];
+    let c010 = vol_cell[data_off + (i0 * nlat + j1) * nlon + k0];
+    let c011 = vol_cell[data_off + (i0 * nlat + j1) * nlon + k1];
+    let c100 = vol_cell[data_off + (i1 * nlat + j0) * nlon + k0];
+    let c101 = vol_cell[data_off + (i1 * nlat + j0) * nlon + k1];
+    let c110 = vol_cell[data_off + (i1 * nlat + j1) * nlon + k0];
+    let c111 = vol_cell[data_off + (i1 * nlat + j1) * nlon + k1];
+    let c00 = c000 + (c100 - c000) * t0;
+    let c01 = c001 + (c101 - c001) * t0;
+    let c10 = c010 + (c110 - c010) * t0;
+    let c11 = c011 + (c111 - c011) * t0;
+    let c0 = c00 + (c10 - c00) * t1;
+    let c1 = c01 + (c11 - c01) * t1;
+    return c0 + (c1 - c0) * t2;
+}
+
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
@@ -191,6 +299,15 @@ fn presence_probe() {
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
+    }
+    let vcount = u32(vol_u.count.x);
+    if (vol_u.geo.w > 0.5 && vcount > 0u) {
+        let depth = vol_u.geo.x;
+        let lat = vol_u.geo.y;
+        let lon = vol_u.geo.z;
+        for (var v = 0u; v < vcount; v = v + 1u) {
+            omegas[3] += sample_volume(v, depth, lat, lon);
+        }
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[9] = flow.x;
