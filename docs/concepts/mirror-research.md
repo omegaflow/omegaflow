@@ -17,7 +17,7 @@ stay on GitHub raw — either because the GitHub repo IS the original
 ## Methodology
 Each original domain was tested:
 1. Direct HTTPS call (from local IP, Germany)
-2. Via r.jina.ai proxy (US IP, simulates GitHub Actions runner)
+2. Via the Proton exit (`bin/proton-wg.sh`, userspace wireproxy, non-local IP)
 3. Check for machine-readable formats (JSON/CSV, not HTML)
 
 ## Results table

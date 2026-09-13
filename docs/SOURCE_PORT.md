@@ -123,7 +123,7 @@ Stufen schreiben relativ nach `phi/pipeline/`):
   Quelle. Messung: 30 Kandidaten (25 bekannt, 5 neu) statt der fabrizierten 14k.
 - `cargo run -p omegaflow-utils --bin probe_sweep [--candidates <datei>]` —
   die Kette: Linse (übersprungen bei `--candidates`) → `url_probe_mode`
-  (Reachability, Jina) → `draft` → `draft-context` → Rust-Totfilter (Blöcke
+  (Reachability) → `draft` → `draft-context` → Rust-Totfilter (Blöcke
   mit `# frame: frame pending` fallen) → `probe`. Überlebende nach
   `phi/pipeline/probe_survivors.φ`, Diagnosen nach `phi/pipeline/probe_void.txt`;
   der Review-Bericht wird nach `phi/reports/probe_sweep_survivors.φ` +
@@ -240,20 +240,10 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   `{MARKER}` in `url`/`header` referenzieren; `resolve_secret`/`render_headers`
   lösen ihn auf. Kein Code nötig. Kommerzielle/private Keys bleiben declined.
   Re-review-Kandidaten stehen in `phi/pipeline/review_kandidaten.txt`.
-- **Jina-Reader ist eingebaut**: URL mit `https://r.jina.ai/` präfixen — der
-  Reader umgeht Netzwerk-/Git-Blocks (raw.githubusercontent, Geo-Blockierung,
-  Datacenter-IP-Sperren), anonym nutzbar (kein Key nötig — der Bearer-Key
-  lieferte 2026-08-19 402, siehe §13),
-  und `parse_json` überspringt den Jina-Header (`Title/URL Source/Markdown
-  Content`) bereits (Test `test_parse_json_skips_jina_header`). `dead
-  dns-unresolved/timeout/unreachable/ssl`-Einträge über das `r.jina.ai/`-
-  Präfix erneut prüfen, bevor sie endgültig bleiben.
-- **Proton-VPN ist die Netz-Ebene der Eskalation**: wenn der Archivar eine
-  Probe-Quelle direkt (curl, Roh-/Protokoll-Asset) holen muss und der
-  Jina-Reader sie nicht transportiert (Reader liefert Markdown, kein
-  Roh-Asset), re-routet der Tunnel `proton0` (UP, 10.2.0.2) die eigene
-  Exit-IP gegen Geo-/ip-Block. Reihenfolge: direkte Route → Tunnel-Exit-IP
-  (`proton0`) → Jina-Reader → WebArchive → Websuche. Gemessen 2026-09-05
+- **Der Proton-Exit ist die Netz-Ebene der Eskalation** (seit 2026-09-13 auch
+  userspace ohne root, siehe unten): re-routet die eigene Exit-IP gegen
+  Geo-/IP-Block. Reihenfolge: direkte Route → Proton-Exit → WebArchive.
+  Gemessen 2026-09-05
   (Tunnel oben): Lasair `lasair.lsst.ac.uk` 200, API 401 = Token-gate
   (`LASAIR_TOKEN` in `.secrets.local`), `data.lsst.cloud` 200 —
   erreichbar; `rubinobservatory.org` scheitert am TLS-Handshake
@@ -304,7 +294,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
 - **Toter Endpoint → Recherche-Rezept**: (1) Status-/Docs-Seite des Anbieters
   prüfen (Umzug, API-Version), (2) Sibling-Endpoints desselben Netloc,
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
-  Provider-Namen, (5) Jina-Präfix für Netzwerk-Blocks. Nur wenn all das leer
+  Provider-Namen, (5) Proton-Exit für Netzwerk-Blocks. Nur wenn all das leer
   bleibt → `dead` mit `note`, die den Recherche-Stand nennt.
 - Der `--port`-Konverter übernimmt: `url/format/header/target/catalog/
   flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
@@ -315,7 +305,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (tau = ttl/10). **Fällt**: `source`, `method`, `body` (POST), `pos`,
   unbekannte Direktiven — solche Blöcke sind `park/`-Kandidaten mit
   Gap-Verweis (post_body-Migration ist offene Arbeit).
-- **Session 2026-08-19 — Teleskop-Endpoints (Jina + Wayback + curl verifiziert,
+- **Session 2026-08-19 — Teleskop-Endpoints (Wayback + curl verifiziert,
   volle Log §13):** `nhsa.esac.esa.int` tot → Herschel-Archiv lebt unter
   `archives.esac.esa.int/hsa` (HAIO: `/hsa/aio`); `svom.nscs.ac.cn` tot →
   Datenzugang `svom.ac.cn` (HTML, Zertifikat abgelaufen), GRB-Notices via GCN;
@@ -376,7 +366,7 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
   in dead_sources.φ. `parser-def` trägt immer den Dateityp
   (html/json/xml/csv), nie nackt. Sortierung: blocked (key, account,
   ip-blocked) dann parser-def, jeweils alphabetisch nach URL.
-  Kaskaden-200 (r.jina.ai/corsproxy) = entblockt → der Eintrag verlässt
+  Kaskaden-200 (Proton-Exit/Wayback) = entblockt → der Eintrag verlässt
   blocked_sources.φ und wird queue-Grind-Draft (grind_*.φ); die Kaskade
   ist Grind-Werkzeug, kein Archivar-Code.
 
@@ -472,40 +462,24 @@ CHEOPS), Euclid-TAP, ESO-TAP, ALMA-TAP, MeerKAT-TAP, Rubin-TAP,
 Pan-STARRS-Katalog-API, ATLAS-Forced-Photometrie, Keck-TAP, LAMOST DR11.
 Stale Register-Einträge: NRAO-TAP (retired), CHIME-FRB-API (retired).
 
-## 13. Jina-Verifikation (Session 2026-08-19)
+## 13. Web-Archive-Verifikation (Session 2026-08-19)
 
-Auftrag: nicht erreichbare Adressen mit Jina (Key in `.secrets.local`)
-oder Web-Archive-Recherche prüfen. Methode: in der Session war kein
-Bash-Tool verfügbar → anonyme `https://r.jina.ai/<url>`-Route via Fetch
-(der Bearer-Header konnte nicht mitgeschickt werden; das eingebaute
-`--probe`-Rezept mit Key steht in §9). 422 = Domain auch bei Jina
-unauflösbar. Wayback-Fallbacks: `web.archive.org/web/2026/<url>` (404 =
-kein Snapshot → Websearch löste die Domänen-Frage). Key:
-  `.secrets.local:46` (`JINA_API_KEY`); Muster: `src/main.rs:11405-11421`.
+Auftrag: nicht erreichbare Adressen mit Web-Archive-Recherche prüfen.
+Wayback-Fallbacks: `web.archive.org/web/2026/<url>` (404 = kein Snapshot →
+Websearch löste die Domänen-Frage).
 
 ### Agenten-Rezept (ab Welle 2026-08-19, verbindlich)
 
 Jeder Recherche-Agent erhält: (1) den Pfad zur Secret-Datei
 `.secrets.local` (Key dort lesen, nie ausgeben), (2) die Anweisung,
-JEDE unklare Route VIERstufig zu prüfen — direkt curl → Jina-Reader
-(`https://r.jina.ai/<url>`; die ANONYME Route ist der funktionierende
-Kanal — 200 für ip-blocked-Routen am 2026-08-19 (Rate-Limit ~20/min);
-der Bearer-Key aus `.secrets.local` lieferte 402 Payment Required
-(Guthaben/Plan offen, Stand 2026-08-19). Die Kaskade umgeht
-Geo-Blockierung (403 AWS AccessDenied), Datacenter-IP-Sperren und
-Rate-Limits (429); 422 = Domain auch bei Jina unauflösbar) →
-WebArchive
+JEDE unklare Route VIERstufig zu prüfen — direkt curl → Proton-Exit
+(`bin/proton-wg.sh <cc>`; userspace wireproxy, kein root; `ALL_PROXY`
+setzt die Route; die Kaskade umgeht Geo-Blockierung, Datacenter-IP-Sperren
+und Rate-Limits) → WebArchive
 (`http://archive.org/wayback/available?url=<domain>`, CDX-Fallback;
 curl mit `-L` — http→https-Redirect) →
-Websuche (`https://s.jina.ai/<query>`, anonym; alternativ
-das Websearch-Tool der Session) — erst nach leerer Kaskade `dead`,
-weitere Kanäle (Proxy-Matrix getestet 2026-08-19): corsproxy.io
-(`?url=<encoded>`) — Sekundärkanal, 200 für Timeout-Ziele
-(Meteomatics), bei AWS-403-Zielen 403-spiegelnd; codetabs (000) und
-thingproxy (000) tot; cors.x2u.in 308 (Redirect, mit -L rechecken);
-proxy.cors.sh 403 ohne Key (free nur für öffentliche GitHub-Projekte);
-Tor nicht installiert; allorigins unzuverlässig (500/520/522) —,
-(3) die Taxonomie **tot** (existiert nicht mehr; DNS-tot, Jina 422,
+Websuche (das Websearch-Tool der Session) — erst nach leerer Kaskade `dead`,
+(3) die Taxonomie **tot** (existiert nicht mehr; DNS-tot,
 kein Snapshot) / **declined** (lebt, aber keine physikalische Messung
 am Punkt — Modell, Vorhersage, Katalog, Archiv ohne Live-Feed) /
 **blocked** (lebt, Zugang gesperrt — Auth/CAPTCHA/Login/IP-Sperre;
@@ -565,7 +539,7 @@ Ledger: 4 Einträge geparkt):
 12. Herschel — HSA-Umzug in §13 nachgezogen (erledigt).
 13. JWST P0–P3 — Port-Entscheid (§14) weiter offen.
 14. Zukünftige Missionen (SKAO, LISA, ELT, Athena) — im Inventar §12 registriert, Startdaten unverifiziert, kein Bestand → kein Port, bis Daten existieren.
-15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Jina/Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten geparkt (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable).   Port-Arbeit der live-Kandidaten ausstehend.
+15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten geparkt (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable).   Port-Arbeit der live-Kandidaten ausstehend.
 
 ## 16. Die fünf CDN-Tore (Speisekammer-Filter)
 

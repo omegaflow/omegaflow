@@ -221,7 +221,7 @@ CI workflow `laic_cdn.yml` harvests + compiles + uploads monthly.
 - Channel open items: CSES — standardized probe cadence run
   (SOURCE_PORT §13, four-stage; finding
   `phi/pipeline/research/agent_output/cses_kanal_2026-08-22.φ`): portal
-  leos.ac.cn from here 000, via Jina 200 (login-gated SPA); the
+  leos.ac.cn from here 000 (host unreachable; the login-gated SPA stays pending); the
   Zhangheng-1 holding lives at data.earthquake.cn (96 TB, 2019–2023;
   no registered DOI in the global handle register), procurement 离线获取
   (application) — the registration requires a Chinese mobile number
