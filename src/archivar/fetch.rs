@@ -1,5 +1,13 @@
 use super::*;
 
+fn append_ca(cmd: &mut Command) {
+    let path = match std::env::var("OMEGAFLOW_CA_BUNDLE") {
+        Ok(p) if !p.is_empty() && std::path::Path::new(&p).is_file() => p,
+        _ => return,
+    };
+    cmd.arg("--cacert").arg(path);
+}
+
 pub const FETCH_BUDGET: usize = 1 << 3;
 
 pub const FETCH_VOID_CAP: u32 = 1 << 2;
@@ -42,6 +50,7 @@ pub fn fetch_raw(
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
+    append_ca(&mut cmd);
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
@@ -81,6 +90,7 @@ pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
         .arg(max_t.to_string())
         .arg("--connect-timeout")
         .arg(connect_t.to_string());
+    append_ca(&mut cmd);
     cmd
 }
 
@@ -158,6 +168,7 @@ pub fn fetch_raw_probe(
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
+    append_ca(&mut cmd);
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
@@ -200,6 +211,7 @@ pub fn fetch_raw_bytes_post(
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
+    append_ca(&mut cmd);
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
@@ -765,6 +777,7 @@ pub fn http_code(url: &str, headers: &[(String, String)]) -> Option<u16> {
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
+    append_ca(&mut cmd);
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if !output.status.success() {
@@ -782,8 +795,9 @@ pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
         .arg("-I")
         .arg("-L")
         .arg("-m")
-        .arg(connect_t.to_string())
-        .arg(cdn_url);
+        .arg(connect_t.to_string());
+    append_ca(&mut cmd);
+    cmd.arg(cdn_url);
     let output = match cmd.output() {
         Ok(o) => o,
         Err(_) => return false,
@@ -1237,5 +1251,36 @@ mod cdn_cache_tests {
             "a zero ttl closes the gate"
         );
         let _ = std::fs::remove_file(&path);
+    }
+}
+
+#[cfg(test)]
+mod ca_bundle_tests {
+    use super::*;
+
+    #[test]
+    fn append_ca_reads_the_configured_bundle() {
+        let path = "/tmp/opencode/omegaflow_ca_bundle_test.pem";
+        std::fs::write(path, b"-----BEGIN CERTIFICATE-----\n").unwrap();
+        unsafe {
+            std::env::set_var("OMEGAFLOW_CA_BUNDLE", path);
+        }
+        let mut cmd = Command::new("curl");
+        append_ca(&mut cmd);
+        let args: Vec<String> = cmd
+            .get_args()
+            .map(|a| a.to_string_lossy().into_owned())
+            .collect();
+        assert_eq!(args, vec!["--cacert".to_string(), path.to_string()]);
+        unsafe {
+            std::env::set_var("OMEGAFLOW_CA_BUNDLE", "/nonexistent/bundle.pem");
+        }
+        let mut cmd = Command::new("curl");
+        append_ca(&mut cmd);
+        assert_eq!(cmd.get_args().count(), 0);
+        unsafe {
+            std::env::remove_var("OMEGAFLOW_CA_BUNDLE");
+        }
+        let _ = std::fs::remove_file(path);
     }
 }
