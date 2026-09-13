@@ -1,0 +1,56 @@
+# friction_scan vocabulary — the register's friction words, one per line: word<TAB>class.
+# friction = the language of deferral, concealment, low-prio, fear-of-ignorance, uncertainty.
+# The words are German because the register's counter-slope is German; the code stays English.
+wiedervorlage	deferral
+aufschieben	deferral
+aufgeschoben	deferral
+verschieben	deferral
+verschoben	deferral
+zurückstellen	deferral
+zurückgestellt	deferral
+geparkt	deferral
+parken	deferral
+parkplatz	deferral
+später	deferral
+späterer	deferral
+erst einmal	deferral
+zunächst	deferral
+noch nicht	deferral
+bleibt offen	deferral
+offen bleibt	deferral
+offen lassen	deferral
+nicht jetzt	deferral
+auf die lange bank	deferral
+nächstes atom	deferral
+nächste session	deferral
+nächster bau	deferral
+kann warten	deferral
+pausiert	deferral
+pausieren	deferral
+abwarten	deferral
+warten auf	deferral
+nebenbei	concealment
+am rande	concealment
+übrigens	concealment
+siehe oben	concealment
+niedrige prio	low-prio
+niedrige priorität	low-prio
+nice-to-have	low-prio
+optional	low-prio
+unkritisch	low-prio
+nicht kritisch	low-prio
+ehrlich	fear-honest
+ehrlichkeit	fear-honest
+nicht fabriziert	fear-honest
+nicht erfinden	fear-honest
+nicht behauptet	fear-honest
+gemessen nicht behauptet	fear-honest
+nicht geraten	fear-honest
+vielleicht	uncertainty
+unklar	uncertainty
+unsicher	uncertainty
+nicht sicher	uncertainty
+schwierig	uncertainty
+komplex	uncertainty
+weiss nicht	uncertainty
+keine ahnung	uncertainty
