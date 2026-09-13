@@ -370,8 +370,7 @@ pub fn main_flow() {
                 }
             };
             let fetchone = args.iter().any(|a| a == "--fetchone");
-            let jina = args.iter().any(|a| a == "--jina");
-            std::process::exit(url_probe_mode(path, &env, fetchone, jina));
+            std::process::exit(url_probe_mode(path, &env, fetchone));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
