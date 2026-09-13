@@ -805,6 +805,15 @@ mod tests {
         crate::archivar::sha256::sha256_hex(&buf)
     }
 
+    fn uncompressed_digest(bytes: &[u8]) -> String {
+        let h = LasHeader::parse(bytes).unwrap();
+        let mut buf = Vec::with_capacity(h.point_count as usize * 64);
+        for i in 0..h.point_count {
+            point_digest_bytes(&h.point_at(bytes, i).unwrap(), &mut buf);
+        }
+        crate::archivar::sha256::sha256_hex(&buf)
+    }
+
     #[test]
     fn simple_format3_rgb_fixture_digest() {
         let bytes = include_bytes!("fixtures/simple.laz");
@@ -862,6 +871,91 @@ mod tests {
         assert_eq!(
             decoded_digest(bytes),
             "ecad0830b38100e0627865ab01b837e90019a2b52131b7c059011dfce46853c9"
+        );
+    }
+
+    #[test]
+    fn simple_laz_matches_uncompressed_las_reference() {
+        let laz = include_bytes!("fixtures/simple.laz");
+        let las = include_bytes!("fixtures/simple.las");
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
+    }
+
+    #[test]
+    fn autzen_trim_laz_matches_uncompressed_las_reference() {
+        let laz = include_bytes!("fixtures/autzen_trim.laz");
+        let las = include_bytes!("fixtures/autzen_trim.las");
+        assert_eq!(decoded_digest(laz), uncompressed_digest(las));
+    }
+
+    #[test]
+    fn pdrf4_pointwise_byte_extra_item_refused() {
+        let bytes = include_bytes!("fixtures/pdrf4-1.3.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        assert!(matches!(dec.point_at(0), Err(LasNote::LazItem { item: 0 })));
+    }
+
+    #[test]
+    fn pdrf4_uncompressed_format4_waveform_fixture_digest() {
+        let bytes = include_bytes!("fixtures/pdrf4-1.3.las");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 4);
+        assert_eq!(h.point_count, 1024);
+        let first = h.point_at(bytes, 0).unwrap();
+        assert!(first.waveform.is_some());
+        assert!(first.gps_time.is_some());
+        assert_eq!(
+            uncompressed_digest(bytes),
+            "f0fa10aa6b31ec91babdb1c615cd0b371d7b9183c19e4fed46c4ed274bf5281b"
+        );
+    }
+
+    #[test]
+    fn rgb14_format7_standalone_fixture_digest() {
+        let bytes = include_bytes!("fixtures/1.2-with-color.copc.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 7);
+        assert_eq!(h.point_count, 1065);
+        assert_eq!(
+            decoded_digest(bytes),
+            "ecde10ad6cac9fddb9fd306ba9bc50e9cbc4e7afae867bfed3b34389ae1a8778"
+        );
+    }
+
+    #[test]
+    fn byte14_extra_bytes_fixture_digest() {
+        let bytes = include_bytes!("fixtures/2019_saipan_waveform.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 6);
+        assert_eq!(h.point_count, 5198);
+        assert_eq!(
+            decoded_digest(bytes),
+            "85f7001a81cef22bd43ba4ca63d76243554d02cb6d2780100c06861f43523f23"
+        );
+    }
+
+    #[test]
+    fn point10_format0_pointwise_fixture_digest() {
+        let bytes = include_bytes!("fixtures/point10.las.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 0);
+        assert_eq!(h.point_count, 1065);
+        assert_eq!(
+            decoded_digest(bytes),
+            "a236aeedce414ef4bf70d12ffc448ea8fb1cc559affd0ca5f794bb015c4e26dc"
+        );
+    }
+
+    #[test]
+    fn point10_rgb12_format2_pointwise_fixture_digest() {
+        let bytes = include_bytes!("fixtures/point-color.las.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 2);
+        assert_eq!(h.point_count, 1065);
+        assert_eq!(
+            decoded_digest(bytes),
+            "c4265a4210696d66a65d97b05d237e80bf7bb06788dbd8677010699be5385ab1"
         );
     }
 }
