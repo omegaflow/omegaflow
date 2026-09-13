@@ -145,9 +145,19 @@ fn first_snapshot(body: &str) -> Option<String> {
     Some(format!("https://web.archive.org/web/{}/{}", ts, original))
 }
 
-pub fn verdict_lines(url: &str) -> Vec<String> {
+pub fn verdict_lines(url: &str, jina_key: &str) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — five-stage ladder", url));
+    let mut jina_extra: Vec<&str> = Vec::new();
+    let auth = if jina_key.is_empty() {
+        String::new()
+    } else {
+        format!("Authorization: Bearer {}", jina_key)
+    };
+    if !auth.is_empty() {
+        jina_extra.push("-H");
+        jina_extra.push(auth.as_str());
+    }
     stage(&mut lines, 1, "direct", url, get(url, &[], "30"));
     match get_iface(url, "proton0", "30") {
         Some(f) => stage_result(&mut lines, 2, "proton0", url, f),
@@ -156,7 +166,7 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
         }
     }
     let jina = format!("https://r.jina.ai/{}", url);
-    match get(&jina, &[], "40") {
+    match get(&jina, &jina_extra, "40") {
         Some(f) => stage_result(&mut lines, 3, "r.jina.ai", url, f),
         None => lines.push("  stage 3 r.jina.ai: pending — no response".to_string()),
     }
@@ -182,7 +192,7 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
         None => lines.push("  stage 4 wayback: pending — no response".to_string()),
     }
     let sjina = format!("https://s.jina.ai/{}", urlencode(url));
-    match get(&sjina, &[], "40") {
+    match get(&sjina, &jina_extra, "40") {
         Some(f) => stage_result(&mut lines, 5, "s.jina.ai", url, f),
         None => lines.push("  stage 5 s.jina.ai: pending — no response".to_string()),
     }
@@ -692,7 +702,13 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         }
         "crates" => crates_lines(query, max),
         "librs" => librs_lines(query),
-        "verdict" => verdict_lines(query),
+        "verdict" => {
+            let key = resolve_secret(
+                env.get("JINA_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            verdict_lines(query, &key)
+        }
         other => vec![format!("absent — no mode named {}", other)],
     }
 }
