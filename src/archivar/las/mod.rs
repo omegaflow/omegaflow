@@ -746,4 +746,122 @@ mod tests {
         assert_eq!(ept_key_decode("3-4-5-6"), Some((3, 4, 5, 6)));
         assert_eq!(ept_key_decode("3-4-5"), None);
     }
+
+    fn push_opt_f64(out: &mut Vec<u8>, v: Option<f64>) {
+        match v {
+            Some(x) => {
+                out.push(1);
+                out.extend_from_slice(&x.to_bits().to_le_bytes());
+            }
+            None => out.push(0),
+        }
+    }
+
+    fn push_opt_u16(out: &mut Vec<u8>, v: Option<u16>) {
+        match v {
+            Some(x) => {
+                out.push(1);
+                out.extend_from_slice(&x.to_le_bytes());
+            }
+            None => out.push(0),
+        }
+    }
+
+    fn point_digest_bytes(p: &LasPoint, out: &mut Vec<u8>) {
+        out.extend_from_slice(&p.x.to_bits().to_le_bytes());
+        out.extend_from_slice(&p.y.to_bits().to_le_bytes());
+        out.extend_from_slice(&p.z.to_bits().to_le_bytes());
+        out.extend_from_slice(&p.intensity.to_le_bytes());
+        out.push(p.return_number);
+        out.push(p.number_of_returns);
+        out.push(p.classification);
+        push_opt_f64(out, p.gps_time);
+        push_opt_u16(out, p.red);
+        push_opt_u16(out, p.green);
+        push_opt_u16(out, p.blue);
+        push_opt_u16(out, p.nir);
+        match &p.waveform {
+            Some(w) => {
+                out.push(1);
+                out.push(w.descriptor_index);
+                out.extend_from_slice(&w.offset.to_le_bytes());
+                out.extend_from_slice(&w.packet_size.to_le_bytes());
+                out.extend_from_slice(&w.return_point.to_bits().to_le_bytes());
+                out.extend_from_slice(&w.x.to_bits().to_le_bytes());
+                out.extend_from_slice(&w.y.to_bits().to_le_bytes());
+                out.extend_from_slice(&w.z.to_bits().to_le_bytes());
+            }
+            None => out.push(0),
+        }
+    }
+
+    fn decoded_digest(bytes: &[u8]) -> String {
+        let h = LasHeader::parse(bytes).unwrap();
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let mut buf = Vec::with_capacity(h.point_count as usize * 64);
+        for i in 0..h.point_count {
+            point_digest_bytes(&dec.point_at(i).unwrap(), &mut buf);
+        }
+        crate::archivar::sha256::sha256_hex(&buf)
+    }
+
+    #[test]
+    fn simple_format3_rgb_fixture_digest() {
+        let bytes = include_bytes!("fixtures/simple.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 3);
+        assert_eq!(h.point_count, 1065);
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.x >= h.min[0] && first.x <= h.max[0]);
+        assert!(first.y >= h.min[1] && first.y <= h.max[1]);
+        assert!(first.z >= h.min[2] && first.z <= h.max[2]);
+        assert!(first.red.unwrap() > 0);
+        assert!(first.green.unwrap() > 0);
+        assert!(first.blue.unwrap() > 0);
+        assert!(first.nir.is_none());
+        assert!(first.waveform.is_none());
+        assert_eq!(
+            decoded_digest(bytes),
+            "1d2a6da4511abcb1e122a18b062346dfb8f1fa85d56118703a49afe34560e1c7"
+        );
+    }
+
+    #[test]
+    fn fullwave_format10_rgb_nir_waveform_fixture_digest() {
+        let bytes = include_bytes!("fixtures/fullwave.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 10);
+        assert_eq!(h.point_count, 10750);
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.red.is_some());
+        assert!(first.green.is_some());
+        assert!(first.blue.is_some());
+        assert!(first.nir.is_some());
+        assert!(first.waveform.is_some());
+        assert_eq!(
+            decoded_digest(bytes),
+            "b73692f864fd2598a8893e5526c446bc807f531226591a8ee63a6e78934228c9"
+        );
+    }
+
+    #[test]
+    fn autzen_format3_gpstime_unchanged_selector_digest() {
+        let bytes = include_bytes!("fixtures/autzen_trim.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.point_format, 3);
+        assert_eq!(h.point_count, 110000);
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.x >= h.min[0] && first.x <= h.max[0]);
+        assert!(first.red.unwrap() > 0);
+        assert!(first.green.unwrap() > 0);
+        assert!(first.blue.unwrap() > 0);
+        assert!(first.gps_time.is_some());
+        assert_eq!(
+            decoded_digest(bytes),
+            "ecad0830b38100e0627865ab01b837e90019a2b52131b7c059011dfce46853c9"
+        );
+    }
 }
