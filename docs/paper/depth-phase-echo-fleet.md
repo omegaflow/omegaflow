@@ -2,7 +2,7 @@
   title: The echo depth — pP/sP depth phases across a 16-event fleet
   class: paper
   date: 2026-09-12
-  sha256: ef362e34168a4924100b1d7d6b240d5de0b9b82870358919d2e9b78a12a601bf
+  sha256: 2a1378fc8271afcce39a66674590fa3f2b2f90d249261bfd09bf8ac8a228f608
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-Free-surface depth phases pP and sP lag the direct P by a time that ak135 maps to source depth. Across a 16-event fleet in the Hindu Kush box (M6.2–7.5, catalog depth 107.7–231.0 km), the per-event median depths are unbiased: mean offset +1.7 km, standard error 4.7 km, against the ±10-km match gate. The scatter is the finding: 19 km across events and 36 km across stations dominate the gate, so the fleet is a measured series, not a tight depth estimator. The field pilot us10003re5 (M7.5 Hindu Kush) reads median 250 km against catalog 231 km, +19 km, outside the gate. The positive control locates M7.8 Indonesia at 14.6 km offset with rms 1.887 s, ak135 P+S verified against TauP to < 0.15 s. The free-surface reflection R_pp is negative across the pilot band (zero crossing 53.9°) and R_sp ≈ −1. The CMT source radiation term and the calibration gate stay pending; the ak135 depth-model extension above 250 km is closed (2026-09-09: inversion to 700 km).
+Free-surface depth phases pP and sP lag the direct P by a time that ak135 maps to source depth. Across a 16-event fleet in the Hindu Kush box (M6.2–7.5, catalog depth 107.7–231.0 km), the per-event median depths are unbiased: mean offset +1.7 km, standard error 4.7 km, against the ±10-km match gate. The scatter is the finding: 19 km across events and 36 km across stations dominate the gate, so the fleet is a measured series, not a tight depth estimator. The field pilot us10003re5 (M7.5 Hindu Kush) reads median 250 km against catalog 231 km, +19 km, outside the gate. The positive control locates M7.8 Indonesia at 14.6 km offset with rms 1.887 s, ak135 P+S verified against TauP to < 0.15 s. The free-surface reflection R_pp is negative across the pilot band (zero crossing 53.9°) and R_sp ≈ −1. The mww/NDK source-term comparison is measured (depth-identical; polarity 5/4 vs 4/5); the full CMT radiation term and the calibration gate stay pending; the ak135 depth-model extension above 250 km is closed (2026-09-09: inversion to 700 km).
 
 ## The measurement
 
@@ -34,7 +34,7 @@ Over the 16 events the per-event offsets (median − catalog) are [+11, −3, +1
 
 Named limits and pendings:
 
-- The CMT source radiation term is pending. The pP polarity is mixed (four stations +0.63…+0.91, two −0.68, −0.97; sP throughout negative). The free surface alone carries the sP sign; the pP sign mix needs the source radiation term from a CMT solution, which is not fetched.
+- The source radiation term: the USGS mww centroid and the GCMT/NDK term were compared on the pilot (depth-phase-mww vs cmt-ndk-fleet, 2026-09-13). The depth inversion is source-term-independent — per-station depths are byte-identical (median 230 km, sd 35.6 km, offset −1.0 km), the term feeding only the polarity gate and the pP-window anchor (the mww centroid depth 231.0 km equals the catalog anchor). The polarity gate favors mww (5 agree / 4 oppose / 3 pending) over NDK (4 / 5 / 3), a single-station flip (CB.NJ2, mww + / NDK −). The sP sign is carried by the free surface alone; the full CMT radiation shape stays unfetched.
 - The calibration gate is pending: the field pilot's six station azimuths are in no register.
 - The ak135 depth-model extension above 250 km is closed (2026-09-09): MAX_DEPTH_KM 250 → 700, DEPTH_KM raster to 700 km, inversion to 700 km; the model file carries depth rows to 6371 km.
 - The ambiguous pP branch at Δ ≈ 30° (triplication) and the coda locking of the correlation are the measured bottleneck; the Δ-gate skips branch-unstable stations by name, never feeding an ambiguous pick into the inversion.

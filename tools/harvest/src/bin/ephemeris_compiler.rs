@@ -1,3 +1,4 @@
+use omegaflow::archivar::ck::{switch_resolution, CkFile, CkFrameRef, SclkFile};
 use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::{body_url, upload_asset};
@@ -13,8 +14,9 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use omegaflow::ephemeris::{
-    body_table, extract_granules, iau_angles_from_matrix, libration_matrix, pck_id_of,
-    spacecraft_table, write_binary, ASTEROID_GRANULE_DAYS, GRANULE_DAYS, J2000_EPOCH,
+    body_table, chebyshev_fit, chebyshev_nodes, extract_granules, iau_angles_from_matrix,
+    libration_matrix, pck_id_of, spacecraft_table, state_ssb_multi, write_binary,
+    ASTEROID_GRANULE_DAYS, CHEBYSHEV_DEGREE, GRANULE_DAYS, J2000_EPOCH, N_SAMPLES,
 };
 
 fn emit(line: &str) {
@@ -677,10 +679,14 @@ fn classify(
     Option<String>,
     Vec<String>,
     Vec<String>,
+    Vec<String>,
+    Vec<String>,
 ) {
     let mut kernels = Vec::new();
     let mut bpcs = Vec::new();
     let mut fks = Vec::new();
+    let mut cks = Vec::new();
+    let mut sclks = Vec::new();
     let mut gm_text = String::new();
     let mut pck_text = String::new();
     for p in paths {
@@ -703,6 +709,14 @@ fn classify(
             }
             "fk" => {
                 fks.push(p.clone());
+                None
+            }
+            "ck" => {
+                cks.push(p.clone());
+                None
+            }
+            "sclk" => {
+                sclks.push(p.clone());
                 None
             }
             family => {
@@ -732,7 +746,7 @@ fn classify(
     } else {
         Some(gm_text)
     };
-    (kernels, bpcs, gm, vec![pck_text], fks)
+    (kernels, bpcs, gm, vec![pck_text], fks, cks, sclks)
 }
 
 fn update_index_bodies(index_path: &str, bodies: &[String]) {
@@ -884,6 +898,290 @@ fn flatten(
         std::process::exit(1);
     }
     written
+}
+
+const JUICE_SWITCH_FRAME: i32 = -28000;
+const JUICE_COG_BODY: i32 = -28;
+const JUICE_COG_OFFSET_M: [f64; 3] = [0.0, 0.0, -1.5322];
+const JUICE_COG_GRANULE_DAYS: f64 = 0.25;
+
+fn matvec(m: &[f64; 9], v: &[f64; 3]) -> [f64; 3] {
+    [
+        m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+        m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+        m[6] * v[0] + m[7] * v[1] + m[8] * v[2],
+    ]
+}
+
+fn ck_attitude_at(
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    frame_id: i32,
+    sclk_id: i32,
+    et: f64,
+) -> Option<[f64; 9]> {
+    let tick = sclk_files.iter().find_map(|s| s.et_to_tick(sclk_id, et))?;
+    for ck in ck_files {
+        if let Ok(state) = ck.attitude(frame_id, 1, tick) {
+            return Some(state.matrix);
+        }
+    }
+    None
+}
+
+fn switch_attitude_at(
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    aligned: &[CkFrameRef],
+    et: f64,
+) -> Option<[f64; 9]> {
+    for frame in aligned.iter().rev() {
+        if let Some(m) = ck_attitude_at(ck_files, sclk_files, frame.id, frame.sclk_id, et) {
+            return Some(m);
+        }
+    }
+    None
+}
+
+fn juice_center_coverage(spk_files: &[SpkFile]) -> Option<(f64, f64)> {
+    let mut min_et = f64::MAX;
+    let mut max_et = f64::MIN;
+    for spk in spk_files {
+        for seg in spk.segments() {
+            if seg.target == JUICE_COG_BODY && matches!(seg.data_type, 2 | 3 | 9 | 13 | 20) {
+                min_et = min_et.min(seg.start_et);
+                max_et = max_et.max(seg.end_et);
+            }
+        }
+    }
+    if max_et <= min_et {
+        None
+    } else {
+        Some((min_et, max_et))
+    }
+}
+
+fn flatten_juice_cog(
+    spk_files: &[SpkFile],
+    fk: &FkFile,
+    ck_files: &[CkFile],
+    sclk_files: &[SclkFile],
+    ci_mode: bool,
+) -> bool {
+    let aligned = match switch_resolution(fk, JUICE_SWITCH_FRAME) {
+        Some(a) => a,
+        None => {
+            emit("juice_cog: switch -28000 not resolved from the FK");
+            return false;
+        }
+    };
+    let (min_et, max_et) = match juice_center_coverage(spk_files) {
+        Some(r) => r,
+        None => {
+            emit("juice_cog: center -28 carries no position segments in any kernel");
+            return false;
+        }
+    };
+    for frame in &aligned {
+        let mut ck_min = f64::MAX;
+        let mut ck_max = f64::MIN;
+        for ck in ck_files {
+            for seg in ck.segments() {
+                if seg.instrument != frame.id || seg.reference != 1 {
+                    continue;
+                }
+                let lo = sclk_files
+                    .iter()
+                    .find_map(|s| s.tick_to_et(frame.sclk_id, seg.start_tick));
+                let hi = sclk_files
+                    .iter()
+                    .find_map(|s| s.tick_to_et(frame.sclk_id, seg.end_tick));
+                if let (Some(lo), Some(hi)) = (lo, hi) {
+                    ck_min = ck_min.min(lo);
+                    ck_max = ck_max.max(hi);
+                }
+            }
+        }
+        if ck_max < ck_min {
+            emit(&format!(
+                "juice_cog: frame {} sclk {} carries no attitude segments in the loaded CK",
+                frame.id, frame.sclk_id
+            ));
+        } else {
+            emit(&format!(
+                "juice_cog: frame {} sclk {} ck et coverage [{:.3}, {:.3}]",
+                frame.id, frame.sclk_id, ck_min, ck_max
+            ));
+        }
+    }
+    let granule_days = JUICE_COG_GRANULE_DAYS;
+    let granule_half_sec = granule_days * 86400.0 / 2.0;
+    let n_granules = ((max_et - min_et) / (granule_days * 86400.0)).ceil() as usize;
+    let cheb_nodes = chebyshev_nodes(N_SAMPLES);
+    let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+    for i in 0..n_granules {
+        let mid_et = min_et + (i as f64 + 0.5) * granule_days * 86400.0;
+        let mid_jd = mid_et / 86400.0 + J2000_EPOCH;
+        let half_jd = granule_days / 2.0;
+        let mut sx = Vec::with_capacity(N_SAMPLES);
+        let mut sy = Vec::with_capacity(N_SAMPLES);
+        let mut sz = Vec::with_capacity(N_SAMPLES);
+        let mut valid = true;
+        for tau in &cheb_nodes {
+            let et = mid_et + tau * granule_half_sec;
+            let center = match state_ssb_multi(spk_files, JUICE_COG_BODY, et) {
+                Some(c) => c,
+                None => {
+                    valid = false;
+                    break;
+                }
+            };
+            let attitude = match switch_attitude_at(ck_files, sclk_files, &aligned, et) {
+                Some(m) => m,
+                None => {
+                    valid = false;
+                    break;
+                }
+            };
+            let off = matvec(&attitude, &JUICE_COG_OFFSET_M);
+            sx.push(center[0] * 1000.0 + off[0]);
+            sy.push(center[1] * 1000.0 + off[1]);
+            sz.push(center[2] * 1000.0 + off[2]);
+        }
+        if !valid {
+            continue;
+        }
+        let combined: Vec<(f64, f64, f64)> =
+            (0..N_SAMPLES).map(|k| (sx[k], sy[k], sz[k])).collect();
+        if let Some((cx, cy, cz)) = chebyshev_fit(&combined, CHEBYSHEV_DEGREE) {
+            granules.push((mid_jd, half_jd, cx, cy, cz));
+        }
+    }
+    granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    emit(&format!(
+        "juice_cog: switch resolved to {:?}, center coverage [{:.3}, {:.3}] et, {} granules",
+        aligned.iter().map(|f| f.id).collect::<Vec<_>>(),
+        min_et,
+        max_et,
+        granules.len()
+    ));
+    let absent = PckBody::absent();
+    let written = write_binary(
+        "ephemeris_juice_cog.bin",
+        "juice_cog",
+        &granules,
+        &[],
+        &[],
+        &absent,
+        None,
+    );
+    if written && ci_mode && !upload_asset("ephemeris_juice_cog.bin") {
+        emit("juice_cog: upload returned void");
+    }
+    written
+}
+
+fn select_juice_cog(entries: &[IndexEntry]) -> Vec<IndexEntry> {
+    let mut out = Vec::new();
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "spk" && e.name.starts_with("juice_crema_5_2_"))
+    {
+        out.push(e.clone());
+    }
+    let de440s: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "spk-planets" && base_of(&e.name) == "de440s")
+        .cloned()
+        .collect();
+    if let Some(d) = pick_spk(&de440s) {
+        out.push(d);
+    }
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "spk" && e.name.starts_with("jup365_"))
+    {
+        out.push(e.clone());
+    }
+    let mut fks: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "fk" && e.name.starts_with("juice_v"))
+        .cloned()
+        .collect();
+    fks.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(fk) = fks.into_iter().next_back() {
+        out.push(fk);
+    }
+    let mut steps: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "sclk" && e.name.starts_with("juice_step_"))
+        .cloned()
+        .collect();
+    steps.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(step) = steps.into_iter().next_back() {
+        out.push(step);
+    }
+    let mut ficts: Vec<IndexEntry> = entries
+        .iter()
+        .filter(|e| e.family == "sclk" && e.name.starts_with("juice_fict_"))
+        .cloned()
+        .collect();
+    ficts.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+    if let Some(fict) = ficts.into_iter().next_back() {
+        out.push(fict);
+    }
+    for e in entries
+        .iter()
+        .filter(|e| e.family == "ck" && e.name.starts_with("juice_sc_crema_5_2_"))
+    {
+        out.push(e.clone());
+    }
+    out
+}
+
+fn run_juice_cog(
+    spk_paths: &[String],
+    fk_paths: &[String],
+    ck_paths: &[String],
+    sclk_paths: &[String],
+    ci_mode: bool,
+) -> bool {
+    let mut spk_files = Vec::new();
+    for p in spk_paths {
+        match SpkFile::open(p) {
+            Ok(s) => spk_files.push(s),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for p in fk_paths {
+        match FkFile::open(p) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+        }
+    }
+    let mut ck_files = Vec::new();
+    for p in ck_paths {
+        match CkFile::open(p) {
+            Ok(c) => ck_files.push(c),
+            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+        }
+    }
+    let mut sclk_files = Vec::new();
+    for p in sclk_paths {
+        match SclkFile::open(p) {
+            Ok(s) => sclk_files.push(s),
+            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+        }
+    }
+    if spk_files.is_empty() || ck_files.is_empty() || sclk_files.is_empty() {
+        emit("juice_cog: a kernel class is absent — the chain does not close");
+        return false;
+    }
+    flatten_juice_cog(&spk_files, &fk, &ck_files, &sclk_files, ci_mode)
 }
 
 fn summarize(index_path: &str, out_path: &str) {
@@ -1086,6 +1384,9 @@ fn main() {
     let mut pck_paths: Vec<String> = Vec::new();
     let mut bpc_paths: Vec<String> = Vec::new();
     let mut fk_paths: Vec<String> = Vec::new();
+    let mut ck_paths: Vec<String> = Vec::new();
+    let mut sclk_paths: Vec<String> = Vec::new();
+    let mut juice_cog = false;
     let mut probe_jd: Option<f64> = None;
     let mut ci_mode = false;
     let mut index_path: Option<String> = None;
@@ -1123,6 +1424,19 @@ fn main() {
                 }
                 i += 1;
             }
+            "--ck" => {
+                if let Some(p) = args.get(i + 1) {
+                    ck_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--sclk" => {
+                if let Some(p) = args.get(i + 1) {
+                    sclk_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--juice-cog" => juice_cog = true,
             "--probe" => {
                 probe_jd = args.get(i + 1).and_then(|s| s.parse().ok());
                 i += 1;
@@ -1257,6 +1571,21 @@ fn main() {
             index_path = Some(index_file.clone());
         }
         let entries = load_index(index_file);
+        if juice_cog {
+            let selected = select_juice_cog(&entries);
+            if selected.is_empty() {
+                eprintln!("--juice-cog: the index carries no JUICE center/attitude kernels");
+                std::process::exit(1);
+            }
+            for e in &selected {
+                eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
+            }
+            emit("phase download");
+            let paths = download_missing(&selected, &dest);
+            let (kernels, _bpcs, _gm, _pck, fks, cks, sclks) = classify(&paths);
+            run_juice_cog(&kernels, &fks, &cks, &sclks, ci_mode);
+            return;
+        }
         let mut selected = Vec::new();
         for sys in &systems {
             selected.extend(select_system(&entries, sys));
@@ -1275,7 +1604,7 @@ fn main() {
         }
         emit("phase download");
         let paths = download_missing(&selected, &dest);
-        let (kernels, bpcs, gm_text, pck_texts, fks) = classify(&paths);
+        let (kernels, bpcs, gm_text, pck_texts, fks, _cks, _sclks) = classify(&paths);
         let pck_merged: String = pck_texts.concat();
         let pck = if pck_merged.is_empty() {
             None
@@ -1302,6 +1631,10 @@ fn main() {
     if kernel_paths.is_empty() {
         eprintln!("no kernel paths given");
         std::process::exit(1);
+    }
+    if juice_cog {
+        run_juice_cog(&kernel_paths, &fk_paths, &ck_paths, &sclk_paths, ci_mode);
+        return;
     }
     let gm_text = gm_path.and_then(|p| std::fs::read_to_string(p).ok());
     let mut pck_merged = String::new();
