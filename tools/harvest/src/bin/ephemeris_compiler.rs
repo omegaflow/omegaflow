@@ -14,7 +14,7 @@ use std::time::Duration;
 
 use omegaflow::ephemeris::{
     body_table, extract_granules, iau_angles_from_matrix, libration_matrix, pck_id_of,
-    write_binary, ASTEROID_GRANULE_DAYS, GRANULE_DAYS, J2000_EPOCH,
+    spacecraft_table, write_binary, ASTEROID_GRANULE_DAYS, GRANULE_DAYS, J2000_EPOCH,
 };
 
 fn emit(line: &str) {
@@ -32,23 +32,28 @@ fn emit(line: &str) {
     }
 }
 
-fn flatten_targets(kernels: &[SpkFile]) -> Vec<(i32, String, Option<i32>)> {
+fn flatten_targets(kernels: &[SpkFile]) -> Vec<(i32, String, Option<i32>, bool)> {
     let table = body_table();
-    let mut by_id: BTreeMap<i32, (String, Option<i32>)> = BTreeMap::new();
+    let spacecraft = spacecraft_table();
+    let mut by_id: BTreeMap<i32, (String, Option<i32>, bool)> = BTreeMap::new();
     for spk in kernels {
         for seg in spk.segments() {
             if let Some(b) = table.get(&seg.target) {
                 by_id
                     .entry(seg.target)
-                    .or_insert_with(|| (b.name.clone(), b.parent));
+                    .or_insert_with(|| (b.name.clone(), b.parent, false));
+            } else if let Some(s) = spacecraft.get(&seg.target) {
+                by_id
+                    .entry(seg.target)
+                    .or_insert_with(|| (s.name.clone(), s.parent, true));
             }
         }
     }
     let mut seen = HashSet::new();
     by_id
         .into_iter()
-        .filter(|(_, (name, _))| seen.insert(name.clone()))
-        .map(|(id, (name, parent))| (id, name, parent))
+        .filter(|(_, (name, _, _))| seen.insert(name.clone()))
+        .map(|(id, (name, parent, is_spacecraft))| (id, name, parent, is_spacecraft))
         .collect()
 }
 
@@ -542,6 +547,16 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         out.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
         return out;
     }
+    if system == "juice" {
+        for e in entries.iter().filter(|e| {
+            e.family == "spk"
+                && (e.name.starts_with("juice_cog") || e.name.starts_with("juice_crema"))
+        }) {
+            out.push(e.clone());
+        }
+        out.sort_by(|a, b| a.name.cmp(&b.name));
+        return out;
+    }
     let prefix = match system {
         "jupiter" => "jup",
         "saturn" => "sat",
@@ -780,17 +795,30 @@ fn flatten(
     let mut written = Vec::new();
     let mut upload_failed = 0usize;
     emit("phase flatten");
-    for (target_id, body_name, _) in &targets {
+    let absent_pck = PckBody::absent();
+    for (target_id, body_name, _, is_spacecraft) in &targets {
         if small_bodies_only && *target_id < 2000000 {
             continue;
         }
         let wgccre = match pck_bodies.get(&pck_id_of(*target_id)) {
             Some(w) => w,
+            None if *is_spacecraft => &absent_pck,
             None => {
                 eprintln!("  SKIP {}: no PCK params", body_name);
                 continue;
             }
         };
+        if *is_spacecraft {
+            let non_inertial = spk_files
+                .iter()
+                .flat_map(|spk| spk.segments().iter())
+                .find(|s| s.target == *target_id && s.frame != 1)
+                .map(|s| s.frame);
+            if let Some(frame) = non_inertial {
+                eprintln!("  SKIP {}: frame {} non-inertial", body_name, frame);
+                continue;
+            }
+        }
         let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
         let mut rotations: Vec<(f64, [f64; 9])> = Vec::new();
         let mut nutation: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();

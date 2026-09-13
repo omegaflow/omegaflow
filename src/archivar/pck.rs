@@ -36,6 +36,24 @@ impl PckBody {
         }
     }
 
+    pub fn absent() -> Self {
+        PckBody {
+            naif_id: 0,
+            gm_m3_s2: None,
+            pole_ra_deg: None,
+            pole_ra_rate_deg_per_century: None,
+            pole_dec_deg: None,
+            pole_dec_rate_deg_per_century: None,
+            pm_deg: None,
+            pm_rate_deg_per_day: None,
+            radii_m: None,
+            j2: None,
+            j4: None,
+            nut_ra: None,
+            nut_dec: None,
+        }
+    }
+
     pub fn pole_ra_at(&self, centuries: f64) -> Option<f64> {
         let base = self.pole_ra_deg? + self.pole_ra_rate_deg_per_century? * centuries;
         match &self.nut_ra {
