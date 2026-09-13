@@ -1,4 +1,4 @@
-pub fn sha256_hex(data: &[u8]) -> String {
+fn sha256_words(data: &[u8]) -> [u32; 8] {
     let mut digest = [0u32; 8];
     digest[0] = 0x6a09e667;
     digest[1] = 0xbb67ae85;
@@ -84,9 +84,21 @@ pub fn sha256_hex(data: &[u8]) -> String {
         digest[6] = digest[6].wrapping_add(g);
         digest[7] = digest[7].wrapping_add(h);
     }
+    digest
+}
+
+pub fn sha256_hex(data: &[u8]) -> String {
     let mut out = String::with_capacity(64);
-    for v in digest {
+    for v in sha256_words(data) {
         out.push_str(&format!("{:08x}", v));
+    }
+    out
+}
+
+pub fn sha256_raw(data: &[u8]) -> [u8; 32] {
+    let mut out = [0u8; 32];
+    for (i, v) in sha256_words(data).iter().enumerate() {
+        out[i * 4..i * 4 + 4].copy_from_slice(&v.to_be_bytes());
     }
     out
 }
