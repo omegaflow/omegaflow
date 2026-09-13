@@ -588,6 +588,442 @@ impl FileMetaData {
     }
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum ParquetValue {
+    Bool(bool),
+    I32(i32),
+    I64(i64),
+    Float(f32),
+    Double(f64),
+    Bytes(Vec<u8>),
+    Unhandled(String),
+}
+
+#[derive(Clone, Debug)]
+pub struct ParquetColumn {
+    pub name: String,
+    pub values: Vec<ParquetValue>,
+}
+
+struct PageHeaderInfo {
+    page_type: i32,
+    compressed_page_size: i32,
+    num_values: Option<i32>,
+    data_encoding: Option<i32>,
+    dict_num_values: Option<i32>,
+    data_page_v2: bool,
+}
+
+impl<'a> Compact<'a> {
+    fn page_header(&mut self) -> Result<PageHeaderInfo, ParquetNote> {
+        let mut page_type = None;
+        let mut compressed = None;
+        let mut num_values = None;
+        let mut data_encoding = None;
+        let mut dict_num_values = None;
+        let mut data_page_v2 = false;
+        let mut last = 0i16;
+        loop {
+            let (ctype, id) = self.field(last)?;
+            if ctype == CT_STOP {
+                break;
+            }
+            last = id;
+            match id {
+                1 => page_type = Some(self.i32()?),
+                2 | 4 => self.skip(ctype)?,
+                3 => compressed = Some(self.i32()?),
+                5 => {
+                    let mut l = 0i16;
+                    loop {
+                        let (ct, i) = self.field(l)?;
+                        if ct == CT_STOP {
+                            break;
+                        }
+                        l = i;
+                        match i {
+                            1 => num_values = Some(self.i32()?),
+                            2 => data_encoding = Some(self.i32()?),
+                            _ => self.skip(ct)?,
+                        }
+                    }
+                }
+                7 => {
+                    let mut l = 0i16;
+                    loop {
+                        let (ct, i) = self.field(l)?;
+                        if ct == CT_STOP {
+                            break;
+                        }
+                        l = i;
+                        match i {
+                            1 => dict_num_values = Some(self.i32()?),
+                            2 => {
+                                self.i32()?;
+                            }
+                            _ => self.skip(ct)?,
+                        }
+                    }
+                }
+                8 => {
+                    data_page_v2 = true;
+                    self.skip(ctype)?;
+                }
+                _ => self.skip(ctype)?,
+            }
+        }
+        Ok(PageHeaderInfo {
+            page_type: page_type.ok_or(ParquetNote::AbsentField { id: 1 })?,
+            compressed_page_size: compressed.ok_or(ParquetNote::AbsentField { id: 3 })?,
+            num_values,
+            data_encoding,
+            dict_num_values,
+            data_page_v2,
+        })
+    }
+}
+
+fn slice_at(data: &[u8], start: usize, len: usize) -> Result<&[u8], ParquetNote> {
+    let end = start
+        .checked_add(len)
+        .ok_or(ParquetNote::Truncated { off: start })?;
+    if end > data.len() {
+        return Err(ParquetNote::Truncated { off: start });
+    }
+    Ok(&data[start..end])
+}
+
+struct Bits<'a> {
+    data: &'a [u8],
+    bit_pos: usize,
+}
+
+impl<'a> Bits<'a> {
+    fn read(&mut self, width: u8) -> Result<u32, ParquetNote> {
+        let mut val = 0u64;
+        for i in 0..width as usize {
+            let bit_index = self.bit_pos + i;
+            let byte = self.data[bit_index / 8];
+            val |= (((byte >> (bit_index % 8)) & 1) as u64) << i;
+        }
+        self.bit_pos += width as usize;
+        Ok(val as u32)
+    }
+}
+
+fn uvarint_at(data: &[u8], pos: usize) -> Result<(u64, usize), ParquetNote> {
+    let mut result = 0u64;
+    let mut shift = 0u32;
+    let mut i = pos;
+    loop {
+        let b = *data.get(i).ok_or(ParquetNote::Truncated { off: i })?;
+        result |= ((b & 0x7f) as u64) << shift;
+        i += 1;
+        if b & 0x80 == 0 {
+            return Ok((result, i - pos));
+        }
+        shift += 7;
+        if shift >= 64 {
+            return Err(ParquetNote::Truncated { off: i });
+        }
+    }
+}
+
+fn rle_bitpacked(data: &[u8], bit_width: u8, target: usize) -> Result<Vec<u32>, ParquetNote> {
+    let mut out = Vec::with_capacity(target);
+    let bytes_per_val = (bit_width as usize + 7) / 8;
+    let mut pos = 0usize;
+    while out.len() < target {
+        let (header, used) = uvarint_at(data, pos)?;
+        pos += used;
+        let run = (header >> 1) as usize;
+        if header & 1 == 1 {
+            let bytes_needed = run
+                .checked_mul(bit_width as usize)
+                .ok_or(ParquetNote::Truncated { off: pos })?;
+            let body = slice_at(data, pos, bytes_needed)?;
+            let mut bits = Bits {
+                data: body,
+                bit_pos: 0,
+            };
+            for _ in 0..(run * 8) {
+                if out.len() >= target {
+                    break;
+                }
+                out.push(bits.read(bit_width)?);
+            }
+            pos += bytes_needed;
+        } else {
+            let body = slice_at(data, pos, bytes_per_val)?;
+            let mut val = 0u32;
+            for (k, byte) in body.iter().enumerate() {
+                val |= (*byte as u32) << (8 * k);
+            }
+            pos += bytes_per_val;
+            for _ in 0..run {
+                if out.len() >= target {
+                    break;
+                }
+                out.push(val);
+            }
+        }
+    }
+    Ok(out)
+}
+
+fn decode_plain(
+    data: &[u8],
+    type_tag: i32,
+    type_length: Option<i32>,
+    count: usize,
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    let mut out = Vec::with_capacity(count);
+    match type_tag {
+        0 => {
+            let body = slice_at(data, 0, (count + 7) / 8)?;
+            for i in 0..count {
+                out.push(ParquetValue::Bool((body[i / 8] >> (i % 8)) & 1 == 1));
+            }
+        }
+        1 => {
+            let body = slice_at(data, 0, count * 4)?;
+            for i in 0..count {
+                let o = i * 4;
+                out.push(ParquetValue::I32(i32::from_le_bytes([
+                    body[o],
+                    body[o + 1],
+                    body[o + 2],
+                    body[o + 3],
+                ])));
+            }
+        }
+        2 => {
+            let body = slice_at(data, 0, count * 8)?;
+            for i in 0..count {
+                let o = i * 8;
+                out.push(ParquetValue::I64(i64::from_le_bytes([
+                    body[o],
+                    body[o + 1],
+                    body[o + 2],
+                    body[o + 3],
+                    body[o + 4],
+                    body[o + 5],
+                    body[o + 6],
+                    body[o + 7],
+                ])));
+            }
+        }
+        4 => {
+            let body = slice_at(data, 0, count * 4)?;
+            for i in 0..count {
+                let o = i * 4;
+                out.push(ParquetValue::Float(f32::from_le_bytes([
+                    body[o],
+                    body[o + 1],
+                    body[o + 2],
+                    body[o + 3],
+                ])));
+            }
+        }
+        5 => {
+            let body = slice_at(data, 0, count * 8)?;
+            for i in 0..count {
+                let o = i * 8;
+                out.push(ParquetValue::Double(f64::from_le_bytes([
+                    body[o],
+                    body[o + 1],
+                    body[o + 2],
+                    body[o + 3],
+                    body[o + 4],
+                    body[o + 5],
+                    body[o + 6],
+                    body[o + 7],
+                ])));
+            }
+        }
+        6 => {
+            let mut pos = 0usize;
+            for _ in 0..count {
+                let lb = slice_at(data, pos, 4)?;
+                let len = u32::from_le_bytes([lb[0], lb[1], lb[2], lb[3]]) as usize;
+                pos += 4;
+                let body = slice_at(data, pos, len)?;
+                out.push(ParquetValue::Bytes(body.to_vec()));
+                pos += len;
+            }
+        }
+        7 => {
+            let len = type_length.ok_or(ParquetNote::AbsentField { id: 2 })? as usize;
+            let body = slice_at(data, 0, count * len)?;
+            for i in 0..count {
+                out.push(ParquetValue::Bytes(body[i * len..(i + 1) * len].to_vec()));
+            }
+        }
+        tag => {
+            return Ok(vec![ParquetValue::Unhandled(format!("type {}", tag))]);
+        }
+    }
+    Ok(out)
+}
+
+fn decode_dict(
+    data: &[u8],
+    dictionary: &[ParquetValue],
+    count: usize,
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    if data.is_empty() {
+        return Err(ParquetNote::Truncated { off: 0 });
+    }
+    let bit_width = data[0];
+    let mut out = Vec::with_capacity(count);
+    if bit_width == 0 {
+        for _ in 0..count {
+            match dictionary.first() {
+                Some(v) => out.push(v.clone()),
+                None => out.push(ParquetValue::Unhandled("dict index 0".to_string())),
+            }
+        }
+        return Ok(out);
+    }
+    let indices = rle_bitpacked(&data[1..], bit_width, count)?;
+    for idx in indices {
+        match dictionary.get(idx as usize) {
+            Some(v) => out.push(v.clone()),
+            None => out.push(ParquetValue::Unhandled(format!("dict index {}", idx))),
+        }
+    }
+    Ok(out)
+}
+
+fn read_page_header(data: &[u8], off: usize) -> Result<(PageHeaderInfo, usize), ParquetNote> {
+    if off >= data.len() {
+        return Err(ParquetNote::Truncated { off });
+    }
+    let mut cur = Compact::new(&data[off..]);
+    let hdr = cur.page_header()?;
+    Ok((hdr, cur.pos))
+}
+
+fn skip_levels(body: &[u8], max_rep: usize, max_def: usize) -> Result<&[u8], ParquetNote> {
+    let mut pos = 0usize;
+    if max_rep > 0 {
+        let lb = slice_at(body, pos, 4)?;
+        let len = u32::from_le_bytes([lb[0], lb[1], lb[2], lb[3]]) as usize;
+        pos += 4 + len;
+    }
+    if max_def > 0 {
+        let lb = slice_at(body, pos, 4)?;
+        let len = u32::from_le_bytes([lb[0], lb[1], lb[2], lb[3]]) as usize;
+        pos += 4 + len;
+    }
+    Ok(&body[pos..])
+}
+
+fn decode_column(
+    cm: &ColumnMetaData,
+    leaf: &SchemaElement,
+    data: &[u8],
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    if cm.codec != 0 {
+        return Ok(vec![ParquetValue::Unhandled(format!("codec {}", cm.codec))]);
+    }
+    let type_tag = leaf.type_tag.ok_or(ParquetNote::AbsentField { id: 1 })?;
+    let type_length = leaf.type_length;
+    let (max_rep, max_def) = match leaf.repetition_type {
+        Some(0) => (0usize, 0usize),
+        Some(1) => (0usize, 1usize),
+        Some(2) => (1usize, 1usize),
+        _ => (0usize, 0usize),
+    };
+    let mut dictionary: Vec<ParquetValue> = Vec::new();
+    if let Some(dict_off) = cm.dictionary_page_offset {
+        let (hdr, hlen) = read_page_header(data, dict_off as usize)?;
+        let n = hdr
+            .dict_num_values
+            .ok_or(ParquetNote::AbsentField { id: 1 })? as usize;
+        let body = slice_at(
+            data,
+            dict_off as usize + hlen,
+            hdr.compressed_page_size as usize,
+        )?;
+        dictionary = decode_plain(body, type_tag, type_length, n)?;
+    }
+    let mut out = Vec::new();
+    let mut off = cm.data_page_offset as usize;
+    let mut remaining = cm.num_values;
+    while remaining > 0 {
+        let (hdr, hlen) = read_page_header(data, off)?;
+        let body = slice_at(data, off + hlen, hdr.compressed_page_size as usize)?;
+        if hdr.data_page_v2 {
+            out.push(ParquetValue::Unhandled("data_page_v2".to_string()));
+            break;
+        }
+        if hdr.page_type != 0 {
+            out.push(ParquetValue::Unhandled(format!(
+                "page_type {}",
+                hdr.page_type
+            )));
+            break;
+        }
+        let n = hdr.num_values.ok_or(ParquetNote::AbsentField { id: 1 })? as usize;
+        let enc = hdr
+            .data_encoding
+            .ok_or(ParquetNote::AbsentField { id: 2 })?;
+        let values_body = skip_levels(body, max_rep, max_def)?;
+        let vals = match enc {
+            0 => decode_plain(values_body, type_tag, type_length, n)?,
+            2 | 8 => decode_dict(values_body, &dictionary, n)?,
+            e => vec![ParquetValue::Unhandled(format!("encoding {}", e))],
+        };
+        out.extend(vals);
+        remaining -= n as i64;
+        off += hlen + hdr.compressed_page_size as usize;
+    }
+    Ok(out)
+}
+
+fn leaf_columns(schema: &[SchemaElement]) -> Vec<SchemaElement> {
+    schema
+        .iter()
+        .filter(|e| e.num_children.is_none() && e.type_tag.is_some())
+        .cloned()
+        .collect()
+}
+
+pub fn parse_parquet(data: &[u8]) -> Option<Vec<ParquetColumn>> {
+    let meta = FileMetaData::parse(data).ok()?;
+    let leaves = leaf_columns(&meta.schema);
+    let mut columns: Vec<ParquetColumn> = leaves
+        .iter()
+        .map(|l| ParquetColumn {
+            name: l.name.clone(),
+            values: Vec::new(),
+        })
+        .collect();
+    for rg in &meta.row_groups {
+        for (i, chunk) in rg.columns.iter().enumerate() {
+            let leaf = leaves.get(i)?;
+            let cm = match &chunk.meta_data {
+                Some(cm) => cm,
+                None => {
+                    columns[i]
+                        .values
+                        .push(ParquetValue::Unhandled("meta_data absent".to_string()));
+                    continue;
+                }
+            };
+            columns[i].name = if cm.path_in_schema.is_empty() {
+                leaf.name.clone()
+            } else {
+                cm.path_in_schema.join(".")
+            };
+            let values = decode_column(cm, leaf, data).ok()?;
+            columns[i].values.extend(values);
+        }
+    }
+    Some(columns)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -868,5 +1304,238 @@ mod tests {
             FileMetaData::parse(&bytes),
             Err(ParquetNote::AbsentField { id: 1 })
         ));
+    }
+
+    fn file_metadata_footer(schema: &[Vec<u8>], row_groups: &[Vec<u8>]) -> Vec<u8> {
+        let mut fm = Enc::new();
+        fm.i32(1, 1);
+        fm.list_struct(2, schema);
+        fm.i64(3, 3);
+        fm.list_struct(4, row_groups);
+        fm.binary(6, b"omegaflow-test");
+        fm.stop();
+        fm.buf
+    }
+
+    fn schema_root_bytes() -> Vec<u8> {
+        let mut e = Enc::new();
+        e.binary(4, b"schema");
+        e.i32(5, 1);
+        e.stop();
+        e.buf
+    }
+
+    fn plain_int32_file() -> Vec<u8> {
+        let mut ph = Enc::new();
+        ph.i32(1, 0);
+        ph.i32(2, 12);
+        ph.i32(3, 12);
+        ph.field(5, CT_STRUCT);
+        {
+            let mut d = Enc::new();
+            d.i32(1, 3);
+            d.i32(2, 0);
+            d.i32(3, 3);
+            d.i32(4, 3);
+            d.stop();
+            ph.buf.extend(d.buf);
+        }
+        ph.stop();
+        let page_header = ph.buf;
+
+        let mut body = Vec::new();
+        for v in [1i32, 2, 3] {
+            body.extend(v.to_le_bytes());
+        }
+        let total = (page_header.len() + body.len()) as i64;
+        let data_page_offset = 4usize;
+
+        let mut leaf = Enc::new();
+        leaf.i32(1, 1);
+        leaf.i32(3, 0);
+        leaf.binary(4, b"col");
+        leaf.stop();
+
+        let mut cm = Enc::new();
+        cm.i32(1, 1);
+        cm.field(2, CT_LIST);
+        cm.buf.push((1 << 4) | CT_I32);
+        cm.buf.extend(zigzag(0));
+        cm.field(3, CT_LIST);
+        cm.buf.push((1 << 4) | CT_BINARY);
+        cm.buf.extend(uvarint(3));
+        cm.buf.extend(b"col");
+        cm.i32(4, 0);
+        cm.i64(5, 3);
+        cm.i64(6, total);
+        cm.i64(7, total);
+        cm.i64(9, data_page_offset as i64);
+        cm.stop();
+
+        let mut cc = Enc::new();
+        cc.i64(2, data_page_offset as i64);
+        cc.field(3, CT_STRUCT);
+        cc.buf.extend(cm.buf);
+        cc.stop();
+
+        let mut rg = Enc::new();
+        rg.list_struct(1, &[cc.buf]);
+        rg.i64(2, total);
+        rg.i64(3, 3);
+        rg.stop();
+
+        let footer = file_metadata_footer(&[schema_root_bytes(), leaf.buf], &[rg.buf]);
+
+        let mut file = Vec::new();
+        file.extend(b"PAR1");
+        file.extend(&page_header);
+        file.extend(&body);
+        file.extend(&footer);
+        file.extend((footer.len() as u32).to_le_bytes());
+        file.extend(b"PAR1");
+        file
+    }
+
+    fn dictionary_byte_array_file(codec: i32) -> Vec<u8> {
+        let mut dh = Enc::new();
+        dh.i32(1, 2);
+        dh.i32(2, 13);
+        dh.i32(3, 13);
+        dh.field(7, CT_STRUCT);
+        {
+            let mut d = Enc::new();
+            d.i32(1, 2);
+            d.i32(2, 0);
+            d.stop();
+            dh.buf.extend(d.buf);
+        }
+        dh.stop();
+        let dict_header = dh.buf;
+
+        let mut dict_body = Vec::new();
+        dict_body.extend(2u32.to_le_bytes());
+        dict_body.extend(b"aa");
+        dict_body.extend(3u32.to_le_bytes());
+        dict_body.extend(b"bbb");
+
+        let mut ph = Enc::new();
+        ph.i32(1, 0);
+        ph.i32(2, 16);
+        ph.i32(3, 16);
+        ph.field(5, CT_STRUCT);
+        {
+            let mut d = Enc::new();
+            d.i32(1, 3);
+            d.i32(2, 8);
+            d.i32(3, 3);
+            d.i32(4, 3);
+            d.stop();
+            ph.buf.extend(d.buf);
+        }
+        ph.stop();
+        let data_header = ph.buf;
+
+        let mut data_body = vec![0x01u8];
+        for v in [0u8, 1u8, 0u8] {
+            data_body.push(0x02u8);
+            data_body.push(v);
+        }
+
+        let dict_offset = 4usize;
+        let data_offset = dict_offset + dict_header.len() + dict_body.len();
+        let total =
+            (dict_header.len() + dict_body.len() + data_header.len() + data_body.len()) as i64;
+
+        let mut leaf = Enc::new();
+        leaf.i32(1, 6);
+        leaf.i32(3, 0);
+        leaf.binary(4, b"col");
+        leaf.stop();
+
+        let mut cm = Enc::new();
+        cm.i32(1, 6);
+        cm.field(2, CT_LIST);
+        cm.buf.push((1 << 4) | CT_I32);
+        cm.buf.extend(zigzag(8));
+        cm.field(3, CT_LIST);
+        cm.buf.push((1 << 4) | CT_BINARY);
+        cm.buf.extend(uvarint(3));
+        cm.buf.extend(b"col");
+        cm.i32(4, codec);
+        cm.i64(5, 3);
+        cm.i64(6, total);
+        cm.i64(7, total);
+        cm.i64(9, data_offset as i64);
+        cm.i64(11, dict_offset as i64);
+        cm.stop();
+
+        let mut cc = Enc::new();
+        cc.i64(2, dict_offset as i64);
+        cc.field(3, CT_STRUCT);
+        cc.buf.extend(cm.buf);
+        cc.stop();
+
+        let mut rg = Enc::new();
+        rg.list_struct(1, &[cc.buf]);
+        rg.i64(2, total);
+        rg.i64(3, 3);
+        rg.stop();
+
+        let footer = file_metadata_footer(&[schema_root_bytes(), leaf.buf], &[rg.buf]);
+
+        let mut file = Vec::new();
+        file.extend(b"PAR1");
+        file.extend(&dict_header);
+        file.extend(&dict_body);
+        file.extend(&data_header);
+        file.extend(&data_body);
+        file.extend(&footer);
+        file.extend((footer.len() as u32).to_le_bytes());
+        file.extend(b"PAR1");
+        file
+    }
+
+    #[test]
+    fn parquet_reads_plain_int32_column() {
+        let bytes = plain_int32_file();
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![
+                ParquetValue::I32(1),
+                ParquetValue::I32(2),
+                ParquetValue::I32(3),
+            ]
+        );
+    }
+
+    #[test]
+    fn parquet_reads_rle_dictionary_byte_array_column() {
+        let bytes = dictionary_byte_array_file(0);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"aa".to_vec()),
+            ]
+        );
+    }
+
+    #[test]
+    fn parquet_names_compressed_codec_unhandled() {
+        let bytes = dictionary_byte_array_file(1);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![ParquetValue::Unhandled("codec 1".to_string())]
+        );
     }
 }
