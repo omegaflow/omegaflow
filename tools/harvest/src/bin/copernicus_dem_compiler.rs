@@ -60,7 +60,7 @@ fn tile_id(lat: i32, lon: i32) -> String {
     } else {
         format!("W{:03}", -lon)
     };
-    format!("{ns}_{ew}")
+    format!("{ns}_00_{ew}_00")
 }
 
 fn tile_url(tile: &str) -> String {
@@ -794,16 +794,16 @@ mod tests {
 
     #[test]
     fn tile_id_carries_hemisphere_signs() {
-        assert_eq!(tile_id(50, 10), "N50_E010");
-        assert_eq!(tile_id(-34, 138), "S34_E138");
-        assert_eq!(tile_id(0, -120), "N00_W120");
+        assert_eq!(tile_id(50, 10), "N50_00_E010_00");
+        assert_eq!(tile_id(-34, 138), "S34_00_E138_00");
+        assert_eq!(tile_id(0, -120), "N00_00_W120_00");
     }
 
     #[test]
     fn tile_url_reads_the_witness_template() {
         assert_eq!(
-            tile_url("N50_E010"),
-            "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N50_E010_DEM/Copernicus_DSM_COG_10_N50_E010_DEM.tif"
+            tile_url("N50_00_E010_00"),
+            "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N50_00_E010_00_DEM/Copernicus_DSM_COG_10_N50_00_E010_00_DEM.tif"
         );
     }
 }
