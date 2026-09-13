@@ -706,6 +706,24 @@ pub fn j2d_last_row(json: &JsonVal, col: &str) -> Option<f64> {
 }
 
 pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
+    if let Ok(idx) = col.parse::<usize>() {
+        for line in data.lines().rev() {
+            let trimmed = line.trim();
+            if trimmed.is_empty()
+                || trimmed.starts_with('#')
+                || trimmed.chars().next().is_some_and(|c| c.is_alphabetic())
+            {
+                continue;
+            }
+            let cols = split_data_line(trimmed);
+            if let Some(v) = cols.get(idx) {
+                if let Ok(f) = v.trim_matches('"').parse::<f64>() {
+                    return Some(f);
+                }
+            }
+        }
+        return None;
+    }
     let mut header_idx: Option<usize> = None;
     for line in data.lines() {
         let trimmed = line.trim();
@@ -1802,224 +1820,228 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 bin_s,
                 name_prefix,
             } => {
-                if let Frame::Surface { lat, lon, alt, .. } = src.frame {
-                    let position = Position::Surface {
+                let position = match &src.frame {
+                    Frame::Surface { lat, lon, alt, .. } => Position::Surface {
                         body_name: frame_body_name(&src.frame),
-                        lat,
-                        lon,
-                        alt,
-                    };
-                    let resolve_col = |key: &str| -> Option<usize> {
-                        if let Ok(idx) = key.parse::<usize>() {
-                            return Some(idx);
-                        }
-                        let lines: Vec<&str> = body
-                            .lines()
-                            .filter(|l| {
-                                let t = l.trim();
-                                !t.is_empty()
-                            })
-                            .collect();
-                        let exact = lines.iter().find_map(|line| {
-                            let s = line
-                                .strip_prefix('#')
-                                .map(|x| x.trim_start())
-                                .unwrap_or(line.trim());
-                            split_data_line(s)
-                                .iter()
-                                .position(|c| c.eq_ignore_ascii_case(key))
-                        });
-                        if exact.is_some() {
-                            return exact;
-                        }
-                        lines.iter().find_map(|line| {
-                            let s = line
-                                .strip_prefix('#')
-                                .map(|x| x.trim_start())
-                                .unwrap_or(line.trim());
-                            split_data_line(s).iter().position(|c| c.starts_with(key))
-                        })
-                    };
-                    let col_fcs: Vec<(usize, Option<usize>, &FieldConfig)> = fields
-                        .iter()
-                        .filter_map(|fc| {
-                            let idx = resolve_col(&fc.key)?;
-                            let idx_b = match &fc.fold {
-                                Some((_, kb)) => Some(resolve_col(kb)?),
-                                None => None,
-                            };
-                            Some((idx, idx_b, fc))
+                        lat: *lat,
+                        lon: *lon,
+                        alt: *alt,
+                    },
+                    Frame::Barycenter { body_name, scale } => Position::Barycenter {
+                        body_name: body_name.clone(),
+                        scale: *scale,
+                    },
+                    Frame::Manifest => Position::Source,
+                };
+                let resolve_col = |key: &str| -> Option<usize> {
+                    if let Ok(idx) = key.parse::<usize>() {
+                        return Some(idx);
+                    }
+                    let lines: Vec<&str> = body
+                        .lines()
+                        .filter(|l| {
+                            let t = l.trim();
+                            !t.is_empty()
                         })
                         .collect();
-                    let tau_col = if tau_key.is_empty() {
-                        None
-                    } else {
-                        resolve_col(&tau_key)
-                    };
-                    let epoch_idxs: Option<Vec<Option<usize>>> = if epoch_cols.is_empty() {
-                        None
-                    } else {
-                        let resolved: Vec<Option<usize>> = epoch_cols
+                    let exact = lines.iter().find_map(|line| {
+                        let s = line
+                            .strip_prefix('#')
+                            .map(|x| x.trim_start())
+                            .unwrap_or(line.trim());
+                        split_data_line(s)
                             .iter()
-                            .enumerate()
-                            .map(|(k, c)| {
-                                if k >= 3 && c == "0" {
-                                    None
-                                } else {
-                                    resolve_col(c)
-                                }
-                            })
-                            .collect();
-                        if resolved[..resolved.len().min(3)]
-                            .iter()
-                            .any(|i| i.is_none())
-                        {
-                            eprintln!("rows epoch cols unresolved in {} — rows skipped", src.url);
-                            return ExtractResult::Measurements(Vec::new());
-                        }
-                        Some(resolved)
-                    };
-                    let epoch_iso: Option<usize> = if epoch_cols.len() == 1 {
-                        resolve_col(&epoch_cols[0])
-                    } else {
-                        None
-                    };
-                    let lines: Vec<&str> = if *last_line {
-                        body.lines()
-                            .rev()
-                            .find(|l| {
-                                let t = l.trim();
-                                !t.is_empty() && !t.starts_with('#')
-                            })
-                            .into_iter()
-                            .collect()
-                    } else {
-                        body.lines()
-                            .filter(|l| {
-                                let t = l.trim();
-                                !t.is_empty() && !t.starts_with('#')
-                            })
-                            .collect()
-                    };
-                    let row_vals = |line: &str| -> (Option<f64>, Vec<(usize, f64)>) {
-                        let cols = split_data_line(line.trim());
-                        let epoch: Option<f64> = match &epoch_idxs {
-                            Some(idxs) => {
-                                let mut n = [0i64; 5];
-                                let mut read = true;
-                                for (k, i) in idxs.iter().enumerate() {
-                                    match i {
-                                        Some(idx) => {
-                                            match cols
-                                                .get(*idx)
-                                                .and_then(|s| s.trim().parse::<i64>().ok())
-                                            {
-                                                Some(v) => n[k] = v,
-                                                None => {
-                                                    read = false;
-                                                    break;
-                                                }
+                            .position(|c| c.eq_ignore_ascii_case(key))
+                    });
+                    if exact.is_some() {
+                        return exact;
+                    }
+                    lines.iter().find_map(|line| {
+                        let s = line
+                            .strip_prefix('#')
+                            .map(|x| x.trim_start())
+                            .unwrap_or(line.trim());
+                        split_data_line(s).iter().position(|c| c.starts_with(key))
+                    })
+                };
+                let col_fcs: Vec<(usize, Option<usize>, &FieldConfig)> = fields
+                    .iter()
+                    .filter_map(|fc| {
+                        let idx = resolve_col(&fc.key)?;
+                        let idx_b = match &fc.fold {
+                            Some((_, kb)) => Some(resolve_col(kb)?),
+                            None => None,
+                        };
+                        Some((idx, idx_b, fc))
+                    })
+                    .collect();
+                let tau_col = if tau_key.is_empty() {
+                    None
+                } else {
+                    resolve_col(&tau_key)
+                };
+                let epoch_idxs: Option<Vec<Option<usize>>> = if epoch_cols.is_empty() {
+                    None
+                } else {
+                    let resolved: Vec<Option<usize>> = epoch_cols
+                        .iter()
+                        .enumerate()
+                        .map(|(k, c)| {
+                            if k >= 3 && c == "0" {
+                                None
+                            } else {
+                                resolve_col(c)
+                            }
+                        })
+                        .collect();
+                    if resolved[..resolved.len().min(3)]
+                        .iter()
+                        .any(|i| i.is_none())
+                    {
+                        eprintln!("rows epoch cols unresolved in {} — rows skipped", src.url);
+                        return ExtractResult::Measurements(Vec::new());
+                    }
+                    Some(resolved)
+                };
+                let epoch_iso: Option<usize> = if epoch_cols.len() == 1 {
+                    resolve_col(&epoch_cols[0])
+                } else {
+                    None
+                };
+                let lines: Vec<&str> = if *last_line {
+                    body.lines()
+                        .rev()
+                        .find(|l| {
+                            let t = l.trim();
+                            !t.is_empty() && !t.starts_with('#')
+                        })
+                        .into_iter()
+                        .collect()
+                } else {
+                    body.lines()
+                        .filter(|l| {
+                            let t = l.trim();
+                            !t.is_empty() && !t.starts_with('#')
+                        })
+                        .collect()
+                };
+                let row_vals = |line: &str| -> (Option<f64>, Vec<(usize, f64)>) {
+                    let cols = split_data_line(line.trim());
+                    let epoch: Option<f64> = match &epoch_idxs {
+                        Some(idxs) => {
+                            let mut n = [0i64; 5];
+                            let mut read = true;
+                            for (k, i) in idxs.iter().enumerate() {
+                                match i {
+                                    Some(idx) => {
+                                        match cols
+                                            .get(*idx)
+                                            .and_then(|s| s.trim().parse::<i64>().ok())
+                                        {
+                                            Some(v) => n[k] = v,
+                                            None => {
+                                                read = false;
+                                                break;
                                             }
                                         }
-                                        None => n[k] = 0,
                                     }
-                                }
-                                if !read {
-                                    None
-                                } else {
-                                    match crate::lsk::days_from_civil(n[0], n[1], n[2]) {
-                                        Some(days) => {
-                                            let unix = days as f64 * 86400.0
-                                                + n[3] as f64 * 3600.0
-                                                + n[4] as f64 * 60.0;
-                                            lsk.unix_to_tdb(unix)
-                                        }
-                                        None => None,
-                                    }
+                                    None => n[k] = 0,
                                 }
                             }
-                            None => match epoch_iso {
-                                Some(idx) => {
-                                    cols.get(idx).and_then(|s| parse_iso_tdb(s.trim(), lsk))
+                            if !read {
+                                None
+                            } else {
+                                match crate::lsk::days_from_civil(n[0], n[1], n[2]) {
+                                    Some(days) => {
+                                        let unix = days as f64 * 86400.0
+                                            + n[3] as f64 * 3600.0
+                                            + n[4] as f64 * 60.0;
+                                        lsk.unix_to_tdb(unix)
+                                    }
+                                    None => None,
                                 }
-                                None => Some(now),
-                            },
+                            }
+                        }
+                        None => match epoch_iso {
+                            Some(idx) => cols.get(idx).and_then(|s| parse_iso_tdb(s.trim(), lsk)),
+                            None => Some(now),
+                        },
+                    };
+                    let mut vals = Vec::new();
+                    for (fi, (idx, idx_b, fc)) in col_fcs.iter().enumerate() {
+                        let raw = cols
+                            .get(*idx)
+                            .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok());
+                        let val = match (&fc.fold, idx_b) {
+                            (Some((op, _)), Some(bi)) => fold_value(
+                                raw,
+                                cols.get(*bi)
+                                    .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok()),
+                                *op,
+                            ),
+                            _ => raw,
                         };
-                        let mut vals = Vec::new();
-                        for (fi, (idx, idx_b, fc)) in col_fcs.iter().enumerate() {
-                            let raw = cols
-                                .get(*idx)
-                                .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok());
-                            let val = match (&fc.fold, idx_b) {
-                                (Some((op, _)), Some(bi)) => fold_value(
-                                    raw,
-                                    cols.get(*bi).and_then(|s| {
-                                        s.trim().trim_matches('"').parse::<f64>().ok()
-                                    }),
-                                    *op,
-                                ),
-                                _ => raw,
-                            };
-                            let val = match val {
-                                Some(v) => v,
-                                None => continue,
-                            };
-                            if let Some((_, lo, hi)) = gates.iter().find(|(k, _, _)| *k == fc.key) {
-                                if !(val >= *lo && val < *hi) {
-                                    continue;
-                                }
-                            }
-                            if !val.is_finite() {
+                        let val = match val {
+                            Some(v) => v,
+                            None => continue,
+                        };
+                        if let Some((_, lo, hi)) = gates.iter().find(|(k, _, _)| *k == fc.key) {
+                            if !(val >= *lo && val < *hi) {
                                 continue;
                             }
-                            vals.push((fi, val));
                         }
-                        (epoch, vals)
-                    };
-                    let series_name = |fc: &FieldConfig| -> String {
-                        if name_prefix.is_empty() {
-                            fc.name.clone()
-                        } else {
-                            format!("{}_{}", name_prefix, fc.name)
+                        if !val.is_finite() {
+                            continue;
                         }
-                    };
-                    if *bin_s > 0 {
-                        let dt = *bin_s as f64;
-                        let mut sums: Vec<std::collections::BTreeMap<i64, (f64, u32)>> = col_fcs
-                            .iter()
-                            .map(|_| std::collections::BTreeMap::new())
-                            .collect();
-                        for line in lines {
-                            let (epoch, vals) = row_vals(line);
-                            let Some(epoch) = epoch else { continue };
-                            let bin_i = (epoch / dt).floor() as i64;
-                            for (fi, v) in vals {
-                                let e = sums[fi].entry(bin_i).or_insert((0.0, 0));
-                                e.0 += v;
-                                e.1 += 1;
-                            }
-                        }
-                        for (fi, (_, _, fc)) in col_fcs.iter().enumerate() {
-                            for (bin_i, (s, c)) in &sums[fi] {
-                                channels.push((
-                                    Channel {
-                                        z: 0.0,
-                                        freq: 0.0,
-                                        bin_width: 0.0,
-                                        epoch: *bin_i as f64 * dt,
-                                        position: position.clone(),
-                                        name: series_name(fc),
-                                        value: s / *c as f64,
-                                    },
-                                    (*fc).clone(),
-                                ));
-                            }
-                        }
+                        vals.push((fi, val));
+                    }
+                    (epoch, vals)
+                };
+                let series_name = |fc: &FieldConfig| -> String {
+                    if name_prefix.is_empty() {
+                        fc.name.clone()
                     } else {
-                        for line in lines {
-                            let (epoch, vals) = row_vals(line);
-                            let Some(epoch) = epoch else { continue };
-                            let row_tau: Option<f64> = match tau_col {
+                        format!("{}_{}", name_prefix, fc.name)
+                    }
+                };
+                if *bin_s > 0 {
+                    let dt = *bin_s as f64;
+                    let mut sums: Vec<std::collections::BTreeMap<i64, (f64, u32)>> = col_fcs
+                        .iter()
+                        .map(|_| std::collections::BTreeMap::new())
+                        .collect();
+                    for line in lines {
+                        let (epoch, vals) = row_vals(line);
+                        let Some(epoch) = epoch else { continue };
+                        let bin_i = (epoch / dt).floor() as i64;
+                        for (fi, v) in vals {
+                            let e = sums[fi].entry(bin_i).or_insert((0.0, 0));
+                            e.0 += v;
+                            e.1 += 1;
+                        }
+                    }
+                    for (fi, (_, _, fc)) in col_fcs.iter().enumerate() {
+                        for (bin_i, (s, c)) in &sums[fi] {
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch: *bin_i as f64 * dt,
+                                    position: position.clone(),
+                                    name: series_name(fc),
+                                    value: s / *c as f64,
+                                },
+                                (*fc).clone(),
+                            ));
+                        }
+                    }
+                } else {
+                    for line in lines {
+                        let (epoch, vals) = row_vals(line);
+                        let Some(epoch) = epoch else { continue };
+                        let row_tau: Option<f64> =
+                            match tau_col {
                                 None => None,
                                 Some(idx) => {
                                     match line.trim().split_whitespace().nth(idx).and_then(|s| {
@@ -2031,25 +2053,24 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     }
                                 }
                             };
-                            for (fi, val) in vals {
-                                let (_, _, fc) = col_fcs[fi];
-                                let mut eff_fc = (*fc).clone();
-                                if let Some(t) = row_tau {
-                                    eff_fc.tau = t;
-                                }
-                                channels.push((
-                                    Channel {
-                                        z: 0.0,
-                                        freq: 0.0,
-                                        bin_width: 0.0,
-                                        epoch,
-                                        position: position.clone(),
-                                        name: series_name(fc),
-                                        value: val,
-                                    },
-                                    eff_fc,
-                                ));
+                        for (fi, val) in vals {
+                            let (_, _, fc) = col_fcs[fi];
+                            let mut eff_fc = (*fc).clone();
+                            if let Some(t) = row_tau {
+                                eff_fc.tau = t;
                             }
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch,
+                                    position: position.clone(),
+                                    name: series_name(fc),
+                                    value: val,
+                                },
+                                eff_fc,
+                            ));
                         }
                     }
                 }
