@@ -3,7 +3,7 @@
   session: Forschung-Folge XIV
   class: handover
   date: 2026-09-13
-  sha256: 82b31b74ab607dd2534e0e5848ea8ceb47958a953fae8e1208fdd9b95b50f2d4
+  sha256: 5f53e6f301db2d509fc3a102723a027c1f2fb1518cad9aba557f2cb6d09e93ad
   status: live
 -->
 # Handover — Forschung-Folge XIV (2026-09-13)
@@ -21,35 +21,36 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 - Ⅱ JUICE-Flyby 28./29.9. (Wiedervorlage 2026-09-28) · Europa Clipper 3.12.
   (Wiedervorlage 2026-12-03).
 - gaia-dr4-iapetus (Wiedervorlage 2026-12-02).
-- Ⅺ Placebo — die AVE-Neumessung läuft in CI (placebo-ave-cdn, run 34765685872,
-  E1/E2); der Verdict landet im openneuro.org-Release. REST pending: braucht das
-  Lead-Field/Head-Modell (chanlocs X/Y/Z geerntet, Chella et al. 2016 der Anker).
+- Ⅺ Placebo — AVE-Neumessung läuft in CI (placebo-ave-cdn); der Verdict landet im
+  openneuro.org-Release. REST: Lead-Field gebaut (tools/measure/src/rest.rs,
+  sphärisches 3-Schalen-Modell aus chanlocs gefittet, Chella et al. 2016 als
+  Methoden-Anker, nie als Äquivalenz). Pending: das BEM/Cortex-Mesh (MNI/ICBM-
+  Template — ein Datensatz, kein Code), die Fiducial-Basis und die benannte
+  Regularisierung.
 
 ## Weberin
 
-- VLBI-Winkel-Probe pending (PRIDE ΔDOR not-published, gemessen 2026-09-12).
-- Census der zentrums-agnostischen SSB-Kette pending: die Kette steht im Code
-  (`state_ssb_multi` folgt dem tatsächlich deckenden Segment-Zentrum über alle
-  Kernel, Backtracking bei Flyby-Überlapp, 32-Schritt-Guard + visited) und der
-  n_dir-Unit-Test steht (4 Tests, n≡0 mod 100). Ob die 251 nicht-599-zentrierten
-  crema-Segmente (Sun 10, Erde 399, Mars 301, Venus 299, Mond-Baryzentren 503/504)
-  jetzt zum SSB aufgehen, misst der nächste kernel-flatten-Lauf (oder ein
-  Dispatch): ein lokaler cargo-Test war durch die fremde, unfertige
-  las-Refaktorierung blockiert (16 Compile-Fehler in src/archivar/las/laszip.rs,
-  nicht diese Linie).
-- ephemeris_juice_cog.bin pending: der COG-Frame −28000 ist JUICE_SPACECRAFT, ein
-  CK-basierter SWITCH-Frame (class 6), aligned zu JUICE_SPACECRAFT_PLAN (−28001) /
-  JUICE_SPACECRAFT_MEAS (−28002, beide class 3 CK). Alle Kernel liegen am ESA-Root
-  (juice_v46.tf, CK .bc, SCLK .tsc, LSK naif0012.tls). Es fehlt ein CK-Reader +
-  SWITCH-Frame-Auflösung im Compiler (kein PCK nötig; die COG-Position ist ein
-  fester Offset (0, 0, −1.5322 m) im Körperframe).
+- VLBI-Winkel-Probe — neu gemessen (playwright, 2026-09-13): das EVN-JIVE-Archiv
+  (archive.jive.nl/scripts/portal.php) ist offen (200, public-domain FITS,
+  Katalog listarch.php) — aber astrophysikalisches EVN-VLBI, kein PRIDE-ΔDOR.
+  Die Positions-Messung ist in offenen Papers publiziert (Icarus 2024 CC-BY,
+  Space Sci Rev 2023, A&A 2016); eine offene maschinenlesbare
+  Raumsonde-Plane-of-Sky-Datenlinie bleibt pending.
+- Census SSB-Kette — gemessen: 54/251 nicht-599-zentrierte crema-Segmente
+  (Sun/Venus/Earth/Moon) schließen zum SSB; 197 Galileische Monde
+  (Europa/Ganymed/Callisto) bleiben None — es fehlt der Jupiter-Satelliten-SPK-
+  Träger (jup*.bsp mit 501/502/503/504→599 und 599→0), kein Kettendefekt.
+- ephemeris_juice_cog.bin — CK-Reader + SWITCH-Auflösung gebaut
+  (src/archivar/ck.rs + fk.rs, SCLK-Parser, 7 Tests) und im Compiler verdrahtet
+  (ephemeris_compiler --juice-cog); .bin produziert (8,2 MB, 18262 Granules,
+  Roundtrip median 0,24 m, p99 105 m). Offen: CDN-Manifestation (--ci-mode) und
+  die Flyby-Granularität (max 23,5 km am scharfen Jupiter-Mond-Flyby bei
+  einheitlichem 6-h-Granule — die adaptive Flyby-Verfeinerung des
+  horizons_compiler ist nicht repliziert).
 - Kernel 000113+ bei ESA nach Erscheinen (Wiedervorlage 2026-09-28).
 
 ## Tiefenphasen
 
-- W-Phase-CMT — dispatched: depth-phase-mww (run 34765688099) und cmt-ndk-fleet
-  (run 34765690409) laufen in CI; der NDK-vs-mww-Stationen-Vergleich steht aus den
-  Artefakten.
 - Positive Maske — misst das 36-km-Schrumpfen, sobald die Treiber stehen.
 
 ## Abschluss

@@ -21,6 +21,9 @@ pub struct FkFrame {
     pub class_id: Option<i32>,
     pub center: Option<i32>,
     pub tk: Option<TkFrame>,
+    pub aligned_with: Option<Vec<String>>,
+    pub sclk: Option<i32>,
+    pub spk: Option<i32>,
 }
 
 pub struct FkFile {
@@ -53,6 +56,22 @@ fn parse_value(raw: &str) -> String {
         .to_string()
 }
 
+fn parse_name_list(value: &str) -> Option<Vec<String>> {
+    let mut names = Vec::new();
+    let mut rest = value;
+    while let Some(start) = rest.find('\'') {
+        rest = &rest[start + 1..];
+        let end = rest.find('\'')?;
+        names.push(rest[..end].trim().to_string());
+        rest = &rest[end + 1..];
+    }
+    if names.is_empty() {
+        None
+    } else {
+        Some(names)
+    }
+}
+
 impl FkFile {
     pub fn parse(text: &str) -> FkFile {
         let mut frames: Vec<FkFrame> = Vec::new();
@@ -73,22 +92,16 @@ impl FkFile {
             let mut value = parse_value(&line[eq + 1..]);
             let mut balance: i64 = value
                 .chars()
-                .map(|c| match c {
-                    '(' => 1,
-                    ')' => -1,
-                    _ => 0,
-                })
+                .filter(|&c| c == '(' || c == ')')
+                .map(|c| if c == '(' { 1 } else { -1 })
                 .sum();
             while balance > 0 && li < lines.len() {
                 let cont = lines[li].trim();
                 li += 1;
                 balance += cont
                     .chars()
-                    .map(|c| match c {
-                        '(' => 1,
-                        ')' => -1,
-                        _ => 0,
-                    })
+                    .filter(|&c| c == '(' || c == ')')
+                    .map(|c| if c == '(' { 1 } else { -1 })
                     .sum::<i64>();
                 value.push(' ');
                 value.push_str(cont);
@@ -127,6 +140,11 @@ impl FkFile {
                                 f.center = value.parse().ok();
                             }
                         }
+                        "ALIGNED_WITH" => {
+                            if let Some(f) = slot {
+                                f.aligned_with = parse_name_list(&value);
+                            }
+                        }
                         _ => {}
                     }
                     continue;
@@ -143,7 +161,29 @@ impl FkFile {
                             class_id: None,
                             center: None,
                             tk: None,
+                            aligned_with: None,
+                            sclk: None,
+                            spk: None,
                         });
+                    }
+                }
+                continue;
+            }
+            if let Some(ck_part) = key.strip_prefix("CK_") {
+                let (id_part, field) = match ck_part.find('_') {
+                    Some(i) => (&ck_part[..i], &ck_part[i + 1..]),
+                    None => continue,
+                };
+                let id: i32 = match id_part.parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let val: Option<i32> = value.parse().ok();
+                if let Some(f) = frames.iter_mut().find(|f| f.id == id) {
+                    match field {
+                        "SCLK" => f.sclk = val,
+                        "SPK" => f.spk = val,
+                        _ => {}
                     }
                 }
                 continue;
