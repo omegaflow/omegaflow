@@ -1,0 +1,43 @@
+# bloat vocabulary — the register's language of lulling and effort-exaggeration, one per line: word<TAB>class.
+# lulling = complexity that distracts the uninitiated reader; the threats exaggerate the actual effort.
+# The words are German because the register's counter-slope is German; the code stays English.
+jahre	temporal-threat
+jahrzehnte	temporal-threat
+jahrhundert	temporal-threat
+generationen	temporal-threat
+äonen	temporal-threat
+monate	temporal-threat
+wochen	temporal-threat
+sphären	spatial-threat
+dimensionen	spatial-threat
+welten	spatial-threat
+grundfesten	spatial-threat
+weiten	spatial-threat
+architektur	structural-threat
+fundament	structural-threat
+säule	structural-threat
+pfeiler	structural-threat
+gerüst	structural-threat
+bauwerk	structural-threat
+kathedrale	structural-threat
+massiv	effort-exaggeration
+enorm	effort-exaggeration
+gewaltig	effort-exaggeration
+riesig	effort-exaggeration
+umfassend	effort-exaggeration
+tiefgreifend	effort-exaggeration
+fundamental	effort-exaggeration
+grundlegend	effort-exaggeration
+monumental	effort-exaggeration
+systemisch	effort-exaggeration
+ganzheitlich	effort-exaggeration
+mehrdimensional	effort-exaggeration
+selbstverständlich	lulling
+wie bekannt	lulling
+im folgenden	lulling
+es versteht sich	lulling
+selbstredend	lulling
+naturgemäß	lulling
+gewissermaßen	lulling
+gleichsam	lulling
+sozusagen	lulling
