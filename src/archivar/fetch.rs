@@ -26,6 +26,13 @@ pub fn fetch_raw(
     headers: &[(String, String)],
     ttl: u64,
 ) -> Option<String> {
+    if url.starts_with("s3://") {
+        if body.is_some() {
+            return None;
+        }
+        return super::range::fetch_s3_whole(url, ttl)
+            .map(|b| String::from_utf8_lossy(&b).into_owned());
+    }
     let connect_t = CONNECT_BOUND_S;
     let max_t = transfer_timeout_s(ttl);
     let mut cmd = Command::new("curl");
@@ -95,6 +102,9 @@ pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
 }
 
 pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
+    if url.starts_with("s3://") {
+        return super::range::fetch_s3_whole(url, ttl);
+    }
     let mut cmd = curl_base(ttl, 0);
     cmd.arg(url);
     let output = cmd.output().ok()?;
@@ -117,6 +127,9 @@ pub fn fetch_raw_bytes_headers(
     headers: &[(String, String)],
     ttl: u64,
 ) -> Option<Vec<u8>> {
+    if url.starts_with("s3://") {
+        return super::range::fetch_s3_whole(url, ttl);
+    }
     let mut cmd = curl_base(ttl, 0);
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
