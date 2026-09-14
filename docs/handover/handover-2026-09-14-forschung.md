@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: a428529a739214b7ec0d6086d608fbd52bb3b3d305678f3bceb3c5149d477f64
+  sha256: 593f9ffab616f80b9b8908736dc39b46753d6dbc1bee209cb81c39445744c715
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -22,6 +22,16 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
+## Bande-Split (20-s-Bande)
+
+- **Bande-Split (20-s-Bande)** — Segment-Check gemessen: three-way existiert; die
+  1-s-Klasse, die die starken Linien trägt, ist three-way-only (two-way 0/0/25 an
+  Stationen 14/43/63, Deduktion 27). Der Split ist der Parser, nicht die Mail.
+  (Schritt: CDN-Asset `https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin`
+  → `data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin` holen + Ramp-Record-Join für
+  den Uplink-Sender — der ATDF-Parser extrahiert bisher nur die Empfangsstation
+  TKFORM[9], nicht den Sender.)
+
 ## Zwei externe Anfragen stehen (kein anonymer Pfad, request-only)
 
 Drei Taucherrunden (grind-flash + grind-pro, Godmode, rollierende Proton-VPNs,
@@ -36,8 +46,10 @@ Brave, Playwright) haben die Warteliste gemessen; zwei Punkte halten.
   YBCO (Haug et al., *New J. Phys.* 12, 105006 (2010), TRISP/MLZ). Kein Deposit:
   arXiv `e-print/1008.4298` = nur TeX + 8 Figuren; IOP-Suppdata hinter
   Radware-Bot-Manager; iMPULSE `record/2120` nur Metadaten + toter Volltext-Link.
-  Die Keimer/MPI-FKF-Anfrage hält. (Schritt: Antwort von B. Keimer; Teilroute
-  Paper-Fig. 5b digitalisieren.)
+  Die Teilroute „Paper-Fig. 5b digitalisieren" ist gemessen descoped — Fig 5b
+  trägt Γ(T) (quasielastische HWHM vs Temperatur), nicht I(q,t); das Paper
+  publiziert I(q,t) nirgends. Die Keimer/MPI-FKF-Anfrage ist der einzige Pfad.
+  (Schritt: Antwort von B. Keimer.)
 
 ## Abschluss
 
