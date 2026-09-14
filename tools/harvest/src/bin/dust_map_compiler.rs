@@ -1,14 +1,6 @@
-// COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits (IRSA Planck release_2):
-// BINTABLE, NSIDE 2048, NESTED, TFIELDS 4 — columns
-// AV_DL/AV_DL_UNC/AV_RQ/AV_RQ_UNC, all TFORM 'E' (f32), header BAD_DATA
-// -1.63750E+30, R_V 3.1. Column three is read by default (--column): the
-// native measured AV_RQ (mag) flows unmodified — no E(B-V) conversion, and
-// AV_DL stays unread. Geometry: a single 2D foreground shell carried as
-// --screen-pc distance (dist, never the redshift z), degrade to NSIDE 512
-// by default (pixel 0.11 deg ≤ σ/2 of the GD-1 12 arcmin stream width).
 use omegaflow::fits::FitsHeader;
 use omegaflow::healpix::{galactic_to_icrs, pix2ang_nest};
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 
 const NSIDE_DEFAULT: i64 = 512;
 const COLUMN_DEFAULT: usize = 3;
@@ -48,11 +40,15 @@ fn read_table(bytes: &[u8], column: usize) -> Option<(Table, String)> {
         );
         return None;
     }
-    let ordering = h.str_unescaped("ORDERING").unwrap_or_default();
-    if !ordering.trim().eq_ignore_ascii_case("NESTED") {
+    let ordering = h.str_unescaped("ORDERING");
+    let nested = ordering
+        .as_deref()
+        .map(|s| s.trim().eq_ignore_ascii_case("NESTED"))
+        .unwrap_or(false);
+    if !nested {
         eprintln!(
             "ORDERING '{}': the compiler reads NESTED only — the map stays unwritten",
-            ordering
+            ordering.as_deref().unwrap_or("")
         );
         return None;
     }
@@ -65,9 +61,8 @@ fn read_table(bytes: &[u8], column: usize) -> Option<(Table, String)> {
         return None;
     }
     let width = h.int("NAXIS1")? as usize;
-    let tform = h
-        .str_unescaped(&format!("TFORM{column}"))
-        .unwrap_or_default();
+    let tform = h.str_unescaped(&format!("TFORM{column}"));
+    let tform = tform.as_deref().unwrap_or("");
     let col_width = if tform.contains('D') {
         8
     } else if tform.contains('E') {
@@ -86,14 +81,10 @@ fn read_table(bytes: &[u8], column: usize) -> Option<(Table, String)> {
         );
         return None;
     }
-    let ttype = h
-        .str_unescaped(&format!("TTYPE{column}"))
-        .unwrap_or_default();
-    let ttype = ttype.trim();
-    let tunit = h
-        .str_unescaped(&format!("TUNIT{column}"))
-        .unwrap_or_default();
-    let tunit = tunit.trim();
+    let ttype = h.str_unescaped(&format!("TTYPE{column}"));
+    let ttype = ttype.as_deref().unwrap_or("").trim();
+    let tunit = h.str_unescaped(&format!("TUNIT{column}"));
+    let tunit = tunit.as_deref().unwrap_or("").trim();
     let bad = h.f64("BAD_DATA");
     if data_start + npix * width > bytes.len() {
         eprintln!("table exceeds the fetched bytes — the map stays unwritten");
@@ -260,8 +251,10 @@ fn run(args: &[String]) -> Result<(), String> {
             table.nside
         ));
     }
-    let out = arg_value(args, "--out")
-        .unwrap_or_else(|| format!("planck_dust_{}_n{}.json", table.key, nside_out));
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => format!("planck_dust_{}_n{}.json", table.key, nside_out),
+    };
     eprintln!(
         "NSIDE {} ({} pixels), column {col}, ORDERING NESTED, screen {screen_pc} pc, degrade to NSIDE {}",
         table.nside, table.npix, nside_out

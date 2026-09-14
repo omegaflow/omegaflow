@@ -92,7 +92,6 @@ fn fixed_effects_1(
     Some((a, resid, epoch, offset))
 }
 
-
 fn uplink_rate(
     t2: f64,
     r_sc2: [f64; 3],
@@ -414,8 +413,7 @@ fn main() {
         }
         let mut rate = rdown;
         if let Some((tx_lat, tx_lon, tx_alt)) = tx_ll {
-            let Some((r_sc2, t2)) =
-                light_time_worldline(r_rx, t3, &|t| sc(t).map(|(p, _)| p))
+            let Some((r_sc2, t2)) = light_time_worldline(r_rx, t3, &|t| sc(t).map(|(p, _)| p))
             else {
                 no_model += 1;
                 continue;

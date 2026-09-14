@@ -1,9 +1,9 @@
-use omegaflow::archivar::spatial::{star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, star_stride};
 use omegaflow::healpix::icrs_to_galactic;
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use omegaflow_measure::weberin::deredden::{
-    abs_mag, build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
-    BACKGROUND_PC_MIN, WANG_GBP_FACTOR, WANG_G_FACTOR,
+    BACKGROUND_PC_MIN, DustMap, StarIndex, WANG_G_FACTOR, WANG_GBP_FACTOR, abs_mag,
+    build_star_index, dwarf_color_type, intrinsic_of, type_label,
 };
 
 const VALID_B_MIN_DEG: f64 = 20.0;
@@ -90,11 +90,7 @@ fn parse_transient_file(path: &str) -> Option<Vec<Transient>> {
             mag,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 struct MatchStar {
@@ -192,21 +188,37 @@ fn report_object(
                 let bp_rp0 = s.color_index - e_bprp;
                 let (t0, mg0) = type_word(bp_rp0);
                 let itr = intrinsic_of(s, d.av);
-                println!("---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc",
-                    m.star_idx, s.ra_deg, s.dec_deg, m.sep_arcsec, m.b_deg.abs(), s.plx_mas, m.d_pc);
+                println!(
+                    "---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc",
+                    m.star_idx,
+                    s.ra_deg,
+                    s.dec_deg,
+                    m.sep_arcsec,
+                    m.b_deg.abs(),
+                    s.plx_mas,
+                    m.d_pc
+                );
                 println!(
                     "   dust column (Bayestar19, 3D, truncated at the parallax distance): A_V {:.3} mag (E(BP-RP) {e_bprp:.3}), full line-of-sight A_V {:.3} | converged {} | map DM window [{:.2}, {:.2}]",
                     d.av, d.av_full, d.converged, d.dm_min, d.dm_max
                 );
                 println!(
                     "   OBSERVED  (dust in):  G {:.3}  BP-RP {:.3}  -> dwarf-seq type {} (M_G dwarf expectation {:.2})",
-                    s.mag, s.color_index, type_label(col_type), col_mg
+                    s.mag,
+                    s.color_index,
+                    type_label(col_type),
+                    col_mg
                 );
                 let m_g0 = itr.map(|i| i.m_g0).unwrap_or(f64::NAN);
                 let lum_delta = m_g0 - mg0;
                 println!(
                     "   DEREDDENED (G0, BP-RP0): G0 {:.3}  BP-RP0 {:.3}  -> dwarf-seq type {} (M_G dwarf expectation {:.2}) | M_G0 measured {:.2} (delta to dwarf {:.2})",
-                    g0, bp_rp0, type_label(t0), mg0, m_g0, lum_delta
+                    g0,
+                    bp_rp0,
+                    type_label(t0),
+                    mg0,
+                    m_g0,
+                    lum_delta
                 );
                 let m_g_obs = abs_mag(s.mag, s.plx_mas);
                 println!(
@@ -226,12 +238,30 @@ fn report_object(
                 );
             }
             Some(d) if !(d.av.is_finite() && d.av > 0.0) => {
-                println!("---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc | A_V at that distance: {:.3} mag (measured zero or non-positive — the star sits in front of the dust column)",
-                    m.star_idx, s.ra_deg, s.dec_deg, m.sep_arcsec, m.b_deg.abs(), s.plx_mas, m.d_pc, d.av);
+                println!(
+                    "---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc | A_V at that distance: {:.3} mag (measured zero or non-positive — the star sits in front of the dust column)",
+                    m.star_idx,
+                    s.ra_deg,
+                    s.dec_deg,
+                    m.sep_arcsec,
+                    m.b_deg.abs(),
+                    s.plx_mas,
+                    m.d_pc,
+                    d.av
+                );
             }
             _ => {
-                println!("---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc | A_V at that distance: unmeasured ({})",
-                    m.star_idx, s.ra_deg, s.dec_deg, m.sep_arcsec, m.b_deg.abs(), s.plx_mas, m.d_pc, m.dust_refused);
+                println!(
+                    "---- counterpart candidate (dr3 record {}) ra {:.6} dec {:.6} | separation {:.2} arcsec | |b| {:.2} deg | plx {:.3} mas -> d {:.0} pc | A_V at that distance: unmeasured ({})",
+                    m.star_idx,
+                    s.ra_deg,
+                    s.dec_deg,
+                    m.sep_arcsec,
+                    m.b_deg.abs(),
+                    s.plx_mas,
+                    m.d_pc,
+                    m.dust_refused
+                );
             }
         }
     }
@@ -382,7 +412,9 @@ fn main() {
                     );
                 }
             }
-            println!("\nverdict: {passes} transient-to-star crossmatch case(s) carry a background star behind A_V >= {min_av:.2} mag within {radius_as:.0} arcsec");
+            println!(
+                "\nverdict: {passes} transient-to-star crossmatch case(s) carry a background star behind A_V >= {min_av:.2} mag within {radius_as:.0} arcsec"
+            );
             if passes == 0 {
                 println!(
                     "no case meets the gate at this radius/A_V — raise --radius, lower --min-av, or feed more transients (0 honored; the field A_V and parallax distances are measured, not fabricated)"

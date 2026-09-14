@@ -1,15 +1,15 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, embedded_lsk, fetch_raw_bytes,
-    parse_ephemeris_binary, BodyEphemeris, LeapSeconds,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root,
+    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2};
 use omegaflow::ztf::{ZTF_G_LAMBDA_NM, ZTF_I_LAMBDA_NM, ZTF_R_LAMBDA_NM};
 use omegaflow_measure::weberin::deredden::{
-    build_star_index, dwarf_color_type, intrinsic_of, type_label, DustMap, StarIndex,
-    BACKGROUND_PC_MIN,
+    BACKGROUND_PC_MIN, DustMap, StarIndex, build_star_index, dwarf_color_type, intrinsic_of,
+    type_label,
 };
 use omegaflow_measure::weberin::nadel_gate::*;
 use std::collections::{HashMap, HashSet};
@@ -1373,13 +1373,7 @@ fn report_intrinsic_counterpart(field: &mut DustField, ra_deg: f64, dec_deg: f64
         let (intr_word, mg0) = type_word(itr.bp_rp0);
         println!(
             "  Nadel V (dust round): {who} — Gaia DR3 counterpart dr3[{k}] {sep:.2} arcsec, d {d_pc:.0} pc | A_V(truncated) {:.3} mag | OBSERVED reddened G {:.3} BP-RP {:.3} -> dwarf-seq {} | DEREDDENED G0 {:.3} BP-RP0 {:.3} -> dwarf-seq {}",
-            hit.av,
-            s.mag,
-            s.color_index,
-            obs_word,
-            itr.g0,
-            itr.bp_rp0,
-            intr_word
+            hit.av, s.mag, s.color_index, obs_word, itr.g0, itr.bp_rp0, intr_word
         );
         println!(
             "     intrinsic reading (M_G0 {:.2} vs the {:.2} dwarf expectation at that color): {}",
@@ -2521,8 +2515,7 @@ fn antares_scan(max_loci: usize, wise: bool) {
     let spa = http_code(ANTA_SPA, None);
     println!(
         "ANTARES web root  {ANTA_SPA}: HTTP {} — the Vue SPA shell carries no data itself (measured)",
-        spa.as_deref()
-            .unwrap_or("no response (connection stalled)")
+        spa.as_deref().unwrap_or("no response (connection stalled)")
     );
     let cfg_body = curl_bytes(ANTA_CONFIG, None);
     match &cfg_body {
@@ -3210,7 +3203,9 @@ fn fink_fp_scan_sample(path: &str) {
         return;
     }
     let Some(id) = extract_dia_ids(&body).first().cloned() else {
-        println!("Fink/LSST FP: the sample at {path} carries no r:diaObjectId — the re-scan stays void (absent)");
+        println!(
+            "Fink/LSST FP: the sample at {path} carries no r:diaObjectId — the re-scan stays void (absent)"
+        );
         return;
     };
     println!("Fink/LSST FP re-scan of the saved real sample: {path} — parsed object {id}");

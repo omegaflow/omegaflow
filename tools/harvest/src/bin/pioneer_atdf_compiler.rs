@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
-use omegaflow::atdf::{parse_bin, reduce_skyfreq, write_bin, S_BAND_REF_HI, S_BAND_REF_LO};
+use omegaflow::atdf::{S_BAND_REF_HI, S_BAND_REF_LO, parse_bin, reduce_skyfreq, write_bin};
 use omegaflow::cdn::upload_release;
 
 const LISTING: &str = "https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/";

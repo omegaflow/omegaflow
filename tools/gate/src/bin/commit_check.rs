@@ -1,4 +1,4 @@
-use omegaflow::commit_gate::{json_write, Gate};
+use omegaflow::commit_gate::{Gate, json_write};
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
 use std::process::Command;

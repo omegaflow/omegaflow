@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::geo::{parse_slab2, GbcoRec};
+use omegaflow::archivar::geo::{GbcoRec, parse_slab2};
 use omegaflow::te::{conditional_te_stats_lagged, transfer_entropy_conditional};
 use omegaflow::volume::Volume;
 use omegaflow_measure::depthphase as dp;

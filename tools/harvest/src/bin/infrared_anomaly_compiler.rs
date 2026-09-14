@@ -1,9 +1,9 @@
-use omegaflow::archivar::double::{crossmatch, ConeCatalog};
+use omegaflow::archivar::double::{ConeCatalog, crossmatch};
 use omegaflow::archivar::exclude::parse_bin as parse_excl;
 use omegaflow::archivar::ir::parse_bin as parse_ir;
 use omegaflow::archivar::radio::parse_bin as parse_radio;
-use omegaflow::archivar::spatial::parse_star_record;
 use omegaflow::archivar::spatial::STAR_RECORD_BYTES;
+use omegaflow::archivar::spatial::parse_star_record;
 use omegaflow::archivar::tns::parse_bin as parse_tns;
 use std::path::Path;
 

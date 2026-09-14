@@ -1,8 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec};
+use omegaflow::archivar::geo::{GeoRec, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File, Hdf5Object};
-use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
+use omegaflow::hdf5::{Endian, Hdf5File, Hdf5Object, decode_f32, decode_f64};
+use omegaflow::lsk::{LeapSeconds, days_from_civil, parse as parse_lsk};
 use std::env;
 use std::fs;
 
@@ -206,7 +206,9 @@ fn emit(bytes: &[u8], granule_name: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
         return Vec::new();
     };
     let Some(tdb) = lsk.unix_to_tdb(unix) else {
-        eprintln!("{granule_name}: the granule epoch stays outside the leap-second table — the bin stays unwritten");
+        eprintln!(
+            "{granule_name}: the granule epoch stays outside the leap-second table — the bin stays unwritten"
+        );
         return Vec::new();
     };
     let mut out = Vec::with_capacity(n);

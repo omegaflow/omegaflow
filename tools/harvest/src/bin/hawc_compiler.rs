@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::skymap::{
-    decode_rec, encode_rec, parse_header, write_header, SkymapRecord, HEADER_LEN, KIND_GAMMA,
-    REC_BYTES,
+    HEADER_LEN, KIND_GAMMA, REC_BYTES, SkymapRecord, decode_rec, encode_rec, parse_header,
+    write_header,
 };
 use std::io::{BufWriter, Write};
 

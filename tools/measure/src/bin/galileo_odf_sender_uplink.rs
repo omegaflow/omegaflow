@@ -124,7 +124,10 @@ struct RawO {
 
 fn parse_odf_file(name: &str, bytes: &[u8]) -> Vec<RawO> {
     if bytes.len() % 36 != 0 {
-        eprintln!("{name}: {0} bytes not a multiple of 36 (0 honored)", bytes.len());
+        eprintln!(
+            "{name}: {0} bytes not a multiple of 36 (0 honored)",
+            bytes.len()
+        );
         return Vec::new();
     }
     let mut raw: Vec<RawO> = Vec::new();
@@ -265,7 +268,10 @@ fn read_resid_cells() -> BTreeMap<(i64, i64, i64), CellStat> {
             continue;
         }
         let day = unix_day(r[0]);
-        cells.entry((mode, station, day)).or_insert_with(CellStat::new).push(resid);
+        cells
+            .entry((mode, station, day))
+            .or_insert_with(CellStat::new)
+            .push(resid);
     }
     cells
 }
@@ -295,7 +301,7 @@ fn main() {
     let mut total_robust = 0usize;
     let mut total_loud = 0usize;
     let mut keys: Vec<_> = robust_series.iter_mut().collect();
-    keys.sort_by(|a, b| (a.0 .0, a.0 .1).cmp(&(b.0 .0, b.0 .1)));
+    keys.sort_by(|a, b| (a.0.0, a.0.1).cmp(&(b.0.0, b.0.1)));
     for ((station, mode), rows) in keys {
         rows.sort_by(|a, b| a.0.cmp(&b.0));
         let loud = rows.iter().filter(|(_, rms, _)| *rms >= LOUD_HZ).count();
@@ -437,7 +443,10 @@ fn main() {
         };
         let raw = parse_odf_file(name, &bytes);
         let runs = doppler_runs(&raw, &lsk);
-        println!("  ODF-RUNS {name}: {} doppler runs (rx tx dt n t0 t1)", runs.len());
+        println!(
+            "  ODF-RUNS {name}: {} doppler runs (rx tx dt n t0 t1)",
+            runs.len()
+        );
         for r in &runs {
             println!(
                 "    rx {} tx {} dt {} n {} {} .. {}",
@@ -452,7 +461,10 @@ fn main() {
         runs_all.extend(runs);
     }
     let three_runs: Vec<&Run> = runs_all.iter().filter(|r| is_odf_threeway(r.dt)).collect();
-    println!("three-way ODF runs over fetched files: {}", three_runs.len());
+    println!(
+        "three-way ODF runs over fetched files: {}",
+        three_runs.len()
+    );
     for r in &three_runs {
         println!(
             "    rx {} tx {} dt {} n {} {} .. {}",
@@ -513,9 +525,9 @@ fn main() {
         if !in_trio(station) || !is_resid_threeway(mode) {
             continue;
         }
-        let hit = three_runs.iter().find(|run| {
-            run.rx == station && r[0] >= run.t0 - 60.0 && r[0] <= run.t1 + 60.0
-        });
+        let hit = three_runs
+            .iter()
+            .find(|run| run.rx == station && r[0] >= run.t0 - 60.0 && r[0] <= run.t1 + 60.0);
         match hit {
             Some(run) => {
                 split
@@ -531,7 +543,9 @@ fn main() {
             }
         }
     }
-    println!("(receiving x transmitting) robust floor cells over ODF-covered mode-3 samples (day rx tx mode dt n rms class):");
+    println!(
+        "(receiving x transmitting) robust floor cells over ODF-covered mode-3 samples (day rx tx mode dt n rms class):"
+    );
     let mut sk: Vec<_> = split.into_iter().collect();
     sk.sort_by(|a, b| a.0.cmp(&b.0));
     let mut tx_agg: BTreeMap<(i64, i64, i64, i64), (usize, usize)> = BTreeMap::new();
@@ -561,7 +575,9 @@ fn main() {
     }
     println!("robust loud cells and floor samples per (rx, tx, mode, dt):");
     for ((rx, tx, mode, dt), (loud_cells, n)) in tx_agg {
-        println!("  rx {rx} tx {tx} mode {mode} dt {dt}: loud cells {loud_cells}, floor samples {n}");
+        println!(
+            "  rx {rx} tx {tx} mode {mode} dt {dt}: loud cells {loud_cells}, floor samples {n}"
+        );
     }
     println!(
         "mode-3 floor samples inside ODF-covered three-way windows but not matched to a run: {} (day, rx, mode) cells",

@@ -180,11 +180,7 @@ pub fn read_sqlite(path: &str) -> Option<SqliteDb> {
 }
 
 fn base_of(num: u32) -> usize {
-    if num == 1 {
-        100
-    } else {
-        0
-    }
+    if num == 1 { 100 } else { 0 }
 }
 
 fn leaf_rows(page: &[u8], base: usize) -> Option<Vec<Vec<SqliteValue>>> {

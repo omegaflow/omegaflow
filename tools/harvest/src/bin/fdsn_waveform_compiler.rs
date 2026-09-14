@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch::civil_date;
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_FDSN_BHZ, MAGIC_FDSN};
+use omegaflow::archivar::geo::{COMP_FDSN_BHZ, GeoRec, MAGIC_FDSN, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::collections::HashMap;
@@ -314,11 +314,7 @@ fn parse_finite(s: &str) -> Option<f64> {
         return None;
     }
     let v = t.parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn sign_extend(v: u32, bits: u32) -> i64 {
@@ -734,7 +730,9 @@ fn main() {
             let text = match arg_value(&args, "--lsk").and_then(|p| fs::read_to_string(p).ok()) {
                 Some(t) => t,
                 None => {
-                    eprintln!("fdsnwf: --emit-bin needs --lsk <naif0012.tls> — the TDB clock stays unread");
+                    eprintln!(
+                        "fdsnwf: --emit-bin needs --lsk <naif0012.tls> — the TDB clock stays unread"
+                    );
                     std::process::exit(1);
                 }
             };

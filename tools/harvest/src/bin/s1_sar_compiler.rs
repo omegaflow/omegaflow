@@ -52,11 +52,7 @@ fn sas_token(collection: &str) -> Option<String> {
     let key = "\"token\":\"";
     let i = body.find(key)? + key.len();
     let tok = body[i..].split('"').next()?.to_string();
-    if tok.is_empty() {
-        None
-    } else {
-        Some(tok)
-    }
+    if tok.is_empty() { None } else { Some(tok) }
 }
 
 fn scan_features(body: &str) -> Vec<(String, String, String, String)> {
@@ -252,12 +248,7 @@ impl IncGrid {
         let q10 = g(li + 1, pi)?;
         let q01 = g(li, pi + 1)?;
         let q11 = g(li + 1, pi + 1)?;
-        Some(
-            (1.0 - u) * (1.0 - v) * q00
-                + u * (1.0 - v) * q10
-                + (1.0 - u) * v * q01
-                + u * v * q11,
-        )
+        Some((1.0 - u) * (1.0 - v) * q00 + u * (1.0 - v) * q10 + (1.0 - u) * v * q01 + u * v * q11)
     }
 }
 

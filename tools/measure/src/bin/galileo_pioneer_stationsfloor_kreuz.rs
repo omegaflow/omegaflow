@@ -130,11 +130,7 @@ struct PC {
     rms: f64,
 }
 
-fn quad_detrend_cells(
-    ts: &[f64],
-    vs: &[f64],
-    rx: &[i64],
-) -> (Vec<f64>, Vec<f64>, Vec<i64>) {
+fn quad_detrend_cells(ts: &[f64], vs: &[f64], rx: &[i64]) -> (Vec<f64>, Vec<f64>, Vec<i64>) {
     let mut dts = Vec::new();
     let mut dvs = Vec::new();
     let mut drx = Vec::new();
@@ -251,10 +247,8 @@ fn pioneer_floor_cells(
         e.0 += v.len();
         e.1 += 1;
     }
-    let mut stv: Vec<(i64, usize, usize)> = st_tot
-        .iter()
-        .map(|(rx, (n, nd))| (*rx, *n, *nd))
-        .collect();
+    let mut stv: Vec<(i64, usize, usize)> =
+        st_tot.iter().map(|(rx, (n, nd))| (*rx, *n, *nd)).collect();
     stv.sort_by_key(|x| x.0);
     Some((n_det, t0, t1, stv))
 }
@@ -262,7 +256,6 @@ fn pioneer_floor_cells(
 fn fmt3(v: f64) -> String {
     format!("{v:.3}")
 }
-
 
 fn pioneer_at<'a>(
     p: &'a BTreeMap<i64, Vec<(String, i64, usize, f64, f64)>>,
@@ -339,7 +332,10 @@ fn main() {
                 continue;
             }
             n_win += 1;
-            pdiary.entry(c.rx).or_default().push((probe.clone(), c.day, c.n, c.med, c.rms));
+            pdiary
+                .entry(c.rx)
+                .or_default()
+                .push((probe.clone(), c.day, c.n, c.med, c.rms));
         }
         let _ = n_win;
     }
@@ -354,7 +350,11 @@ fn main() {
     for st in TRIO {
         if let Some(v) = pdiary.get(&st) {
             for (probe, day, n, med, r) in v {
-                let mut band = if med.abs() > QUIET_HZ { "LOUD" } else { "quiet" };
+                let mut band = if med.abs() > QUIET_HZ {
+                    "LOUD"
+                } else {
+                    "quiet"
+                };
                 if *n < MIN_CELL {
                     band = "thin";
                 }
@@ -475,16 +475,19 @@ fn main() {
     push("chronological window floor rows (per day+station, cells of each mode):".to_string());
     let mut st_day: BTreeMap<(i64, i64), Vec<String>> = BTreeMap::new();
     for c in &gcells {
-        st_day
-            .entry((c.day, c.st))
-            .or_default()
-            .push(format!(
-                "m{} {} Hz (n{}, {})",
-                c.mode,
-                fmt3(c.rms),
-                c.n,
-                if c.thin { "thin" } else if c.loud { "LOUD" } else { "quiet" }
-            ));
+        st_day.entry((c.day, c.st)).or_default().push(format!(
+            "m{} {} Hz (n{}, {})",
+            c.mode,
+            fmt3(c.rms),
+            c.n,
+            if c.thin {
+                "thin"
+            } else if c.loud {
+                "LOUD"
+            } else {
+                "quiet"
+            }
+        ));
     }
     let mut all_keys: Vec<(i64, i64)> = st_day.keys().copied().collect();
     all_keys.sort();
@@ -507,44 +510,58 @@ fn main() {
     let mut g_rms_joint: Vec<f64> = Vec::new();
     let mut p_rms_joint: Vec<f64> = Vec::new();
     for (day, st) in &all_keys {
-        let pv: Vec<&(String, i64, usize, f64, f64)> =
-            pioneer_at(&pdiary, *st, *day);
+        let pv: Vec<&(String, i64, usize, f64, f64)> = pioneer_at(&pdiary, *st, *day);
         if pv.is_empty() {
             continue;
         }
         joint_cells += 1;
-        let gld: Vec<&GC> = gcells.iter().filter(|c| c.day == *day && c.st == *st).collect();
+        let gld: Vec<&GC> = gcells
+            .iter()
+            .filter(|c| c.day == *day && c.st == *st)
+            .collect();
         let any_g_loud = gld.iter().any(|c| c.loud && !c.thin);
         let any_p_loud = pv.iter().any(|x| x.2 >= MIN_CELL && x.3.abs() > QUIET_HZ);
         if any_g_loud && any_p_loud {
             joint_loud_both += 1;
         }
-        let gs: Vec<String> = gld.iter().map(|c| {
-            format!(
-                "m{} {} n{} {}",
-                c.mode,
-                fmt3(c.rms),
-                c.n,
-                if c.thin { "thin" } else if c.loud { "LOUD" } else { "quiet" }
-            )
-        }).collect();
-        let ps: Vec<String> = pv.iter().map(|x| {
-            let band = if x.2 < MIN_CELL {
-                "thin".to_string()
-            } else if x.3.abs() > QUIET_HZ {
-                "LOUD".to_string()
-            } else {
-                "quiet".to_string()
-            };
-            format!(
-                "{} n{} med{} {} rms{}",
-                x.0,
-                x.2,
-                fmt3(x.3),
-                band,
-                fmt3(x.4)
-            )
-        }).collect();
+        let gs: Vec<String> = gld
+            .iter()
+            .map(|c| {
+                format!(
+                    "m{} {} n{} {}",
+                    c.mode,
+                    fmt3(c.rms),
+                    c.n,
+                    if c.thin {
+                        "thin"
+                    } else if c.loud {
+                        "LOUD"
+                    } else {
+                        "quiet"
+                    }
+                )
+            })
+            .collect();
+        let ps: Vec<String> = pv
+            .iter()
+            .map(|x| {
+                let band = if x.2 < MIN_CELL {
+                    "thin".to_string()
+                } else if x.3.abs() > QUIET_HZ {
+                    "LOUD".to_string()
+                } else {
+                    "quiet".to_string()
+                };
+                format!(
+                    "{} n{} med{} {} rms{}",
+                    x.0,
+                    x.2,
+                    fmt3(x.3),
+                    band,
+                    fmt3(x.4)
+                )
+            })
+            .collect();
         push(format!(
             "  joint {} st{st}: Galileo [{}] | Pioneer [{}]",
             date_of(*day),
@@ -591,17 +608,14 @@ fn main() {
     push("Galileo loud (station, day) cells in window (robust n >= 30):".to_string());
     for st in TRIO {
         let loud_days = gal_loud.iter().filter(|(_, s)| *s == st).count();
-        push(format!(
-            "  st{st}: {loud_days} loud days"
-        ));
+        push(format!("  st{st}: {loud_days} loud days"));
     }
     let mut g_loud_p_any = 0usize;
     let mut g_loud_p_present = 0usize;
     let mut g_loud_p_loud = 0usize;
     let mut g_loud_p_quiet = 0usize;
     for (day, st) in &gal_loud {
-        let pv: Vec<&(String, i64, usize, f64, f64)> =
-            pioneer_at(&pdiary, *st, *day);
+        let pv: Vec<&(String, i64, usize, f64, f64)> = pioneer_at(&pdiary, *st, *day);
         if pv.is_empty() {
             continue;
         }
@@ -622,7 +636,10 @@ fn main() {
     for (probe, v) in &pcells {
         for c in v {
             if TRIO.contains(&c.rx) && c.n >= MIN_CELL && c.med.abs() > QUIET_HZ {
-                p_loud_st.entry(c.rx).or_default().push((probe.clone(), c.day));
+                p_loud_st
+                    .entry(c.rx)
+                    .or_default()
+                    .push((probe.clone(), c.day));
             }
         }
     }

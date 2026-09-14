@@ -2211,7 +2211,7 @@ impl<'a> Hdf5File<'a> {
             _ => {
                 return Err(Hdf5Note::AbsentObject {
                     name: String::new(),
-                })
+                });
             }
         };
         let filtered = !obj.filters.is_empty();
@@ -3081,10 +3081,11 @@ mod tests {
             let file = Hdf5File::parse(&bytes).unwrap();
             let root = file.root().unwrap();
             assert!(root.links.len() >= 50, "root links {}", root.links.len());
-            assert!(root
-                .links
-                .iter()
-                .any(|l| l.name == "goes_imager_projection"));
+            assert!(
+                root.links
+                    .iter()
+                    .any(|l| l.name == "goes_imager_projection")
+            );
             assert!(root.links.iter().any(|l| l.name == "x"));
             assert!(root.links.iter().any(|l| l.name == "y"));
             let proj = file.geostationary_projection().unwrap();

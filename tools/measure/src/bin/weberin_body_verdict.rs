@@ -2,18 +2,17 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, extract, fetch_raw_bytes, load_sources,
-    parse_ephemeris_binary, system_now, BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig,
-    J2000_EPOCH,
+    BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
+    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{
-    parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
+    AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    classify, separation_m, three_way_fold, Agreement, BodyOutcome, ThreeWayVerdict, TriadFold,
-    Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES,
-    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
+    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES,
+    PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed,
+    classify, separation_m, three_way_fold,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -151,7 +150,9 @@ fn main() {
             match system_now(&time) {
                 Some(tdb) => tdb / 86400.0 + J2000_EPOCH,
                 None => {
-                    eprintln!("weberin: the system TDB epoch reads void (naif0012 leap table) — give --epoch <jd>");
+                    eprintln!(
+                        "weberin: the system TDB epoch reads void (naif0012 leap table) — give --epoch <jd>"
+                    );
                     return;
                 }
             }
@@ -167,7 +168,9 @@ fn main() {
     ) {
         Some(b) => b,
         None => {
-            eprintln!("weberin: {dastcom_path} bin void — absent on disk and the CDN fetch returned non-200 — the second body line stays unread");
+            eprintln!(
+                "weberin: {dastcom_path} bin void — absent on disk and the CDN fetch returned non-200 — the second body line stays unread"
+            );
             return;
         }
     };
@@ -195,8 +198,8 @@ fn main() {
             .collect(),
         None => {
             println!(
-                    "weberin: {dcom5_path} bin void — absent on disk and the CDN fetch returned non-200 — the comet second line stays unread"
-                );
+                "weberin: {dcom5_path} bin void — absent on disk and the CDN fetch returned non-200 — the comet second line stays unread"
+            );
             Vec::new()
         }
     };
@@ -207,7 +210,9 @@ fn main() {
         );
     }
 
-    println!("=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP + EPM SPK planets/moon) against the JPL SPK ephemeris points ===");
+    println!(
+        "=== weberin — the second body line (dastcom/MPC Keplerian elements, INPOP + EPM SPK planets/moon) against the JPL SPK ephemeris points ==="
+    );
 
     let sources = load_sources();
     let mut bodies: Vec<(String, SourceConfig)> = sources
@@ -217,10 +222,19 @@ fn main() {
         .collect();
     bodies.sort_by(|a, b| a.0.cmp(&b.0));
     if bodies.is_empty() {
-        println!("weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void");
+        println!(
+            "weberin: phi/sources.φ carries no ephemeris_binary/orbit_bin body — the body chain is void"
+        );
         return;
     }
-    println!("dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map", recs.len(), comets.len(), bodies.len(), BODY_NUMBER.len(), BODY_COMET.len());
+    println!(
+        "dastcom {dastcom_path}: {} numbered-asteroid record(s) read | dcom5 {dcom5_path}: {} comet record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m (ephemeris-vs-kepler line) + {PLANET_WEBERIN_TOL_M:.3e} m (de-vs-inpop/de-vs-epm/inpop-vs-epm lines) | {} registered body worldline(s) from phi/sources.φ | the body set is the union of the registered SPK/orbit bodies, the {}-body dastcom table and the {}-comet dcom5 map",
+        recs.len(),
+        comets.len(),
+        bodies.len(),
+        BODY_NUMBER.len(),
+        BODY_COMET.len()
+    );
 
     let Some(lsk) = embedded_lsk() else {
         println!(
@@ -241,7 +255,9 @@ fn main() {
         };
         let path = format!("{eph_dir}/{netloc}/{asset}");
         if ensure_bin(&path, &netloc, &asset, BIN_TTL_S).is_none() {
-            println!("weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200");
+            println!(
+                "weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200"
+            );
             continue;
         }
         match extract(src, &path, tdb, &lsk) {
@@ -256,7 +272,9 @@ fn main() {
         }
     }
     if sun_map.is_empty() {
-        println!("weberin: the sun reference is void — the heliocentric dastcom line cannot fold to the barycentric frame");
+        println!(
+            "weberin: the sun reference is void — the heliocentric dastcom line cannot fold to the barycentric frame"
+        );
         return;
     }
 
@@ -267,7 +285,9 @@ fn main() {
         let asset = format!("ephemeris_inpop_{}.bin", name);
         let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset, BIN_TTL_S) else {
-            println!("weberin {name} inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP line stays unread");
+            println!(
+                "weberin {name} inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP line stays unread"
+            );
             continue;
         };
         match parse_ephemeris_binary(&bytes) {
@@ -286,7 +306,9 @@ fn main() {
         let asset = format!("ephemeris_epm_{}.bin", name);
         let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset, BIN_TTL_S) else {
-            println!("weberin {name} epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM line stays unread");
+            println!(
+                "weberin {name} epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM line stays unread"
+            );
             continue;
         };
         match parse_ephemeris_binary(&bytes) {
@@ -307,9 +329,7 @@ fn main() {
                 Some(e) => {
                     sun_inpop.insert("sun".to_string(), e);
                 }
-                None => println!(
-                    "weberin sun: {path} reads but does not parse to a BodyEphemeris"
-                ),
+                None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
             },
             None => println!(
                 "weberin sun inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP sun line stays unread"
@@ -325,9 +345,7 @@ fn main() {
                 Some(e) => {
                     sun_epm.insert("sun".to_string(), e);
                 }
-                None => println!(
-                    "weberin sun: {path} reads but does not parse to a BodyEphemeris"
-                ),
+                None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
             },
             None => println!(
                 "weberin sun epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM sun line stays unread"

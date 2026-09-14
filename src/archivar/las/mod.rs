@@ -114,12 +114,12 @@ impl LasHeader {
                 return Err(LasNote::PointLength {
                     format: point_format,
                     length: point_length,
-                })
+                });
             }
             None => {
                 return Err(LasNote::PointFormat {
                     format: point_format,
-                })
+                });
             }
         }
         let legacy_count = le_u32(&bytes[107..111]);
@@ -510,7 +510,7 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
 }
 
 pub mod laszip;
-pub use laszip::{has_laszip_vlr, LazDecoder};
+pub use laszip::{LazDecoder, has_laszip_vlr};
 
 pub fn ept_key_decode(key: &str) -> Option<(i32, i32, i32, i32)> {
     let mut parts = key.split('-');

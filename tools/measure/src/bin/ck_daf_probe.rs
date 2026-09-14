@@ -1,5 +1,5 @@
 use omegaflow::archivar::{fetch_raw, fetch_raw_bytes};
-use omegaflow::bsp_reader::daf::{DafError, DafFile, Summary, DOUBLE_BYTES, RECORD_BYTES};
+use omegaflow::bsp_reader::daf::{DOUBLE_BYTES, DafError, DafFile, RECORD_BYTES, Summary};
 use std::collections::HashMap;
 
 const EGA_LO: f64 = -286_200_000.0;
@@ -65,11 +65,7 @@ fn load_sclk_breaks(path: &str) -> Option<Vec<(f64, f64)>> {
         brk.push((c[0], c[1]));
     }
     brk.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-    if brk.len() >= 2 {
-        Some(brk)
-    } else {
-        None
-    }
+    if brk.len() >= 2 { Some(brk) } else { None }
 }
 
 fn tick_to_et(t: f64, brk: &[(f64, f64)]) -> f64 {
@@ -821,7 +817,9 @@ fn main() {
     }
 
     if ega.is_empty() {
-        println!("verdict: NO summary overlaps EGA-1 window 1990-12-07 00:00 .. 1990-12-11 00:00 (et [{EGA_LO:.0},{EGA_HI:.0}])");
+        println!(
+            "verdict: NO summary overlaps EGA-1 window 1990-12-07 00:00 .. 1990-12-11 00:00 (et [{EGA_LO:.0},{EGA_HI:.0}])"
+        );
     } else {
         println!(
             "verdict: {} summary/summaries overlap EGA-1 window:",

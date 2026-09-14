@@ -1,5 +1,5 @@
 use omegaflow::archivar::{
-    convert_to_si, fetch_raw, load_sources, parse_json, scalar_of, Extract, JsonVal, SourceConfig,
+    Extract, JsonVal, SourceConfig, convert_to_si, fetch_raw, load_sources, parse_json, scalar_of,
 };
 use omegaflow::te::{
     permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,

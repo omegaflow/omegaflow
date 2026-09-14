@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
@@ -83,11 +83,7 @@ fn tar_octal(field: &[u8]) -> Option<usize> {
         v = v * 8 + (b - b'0') as usize;
         any = true;
     }
-    if any {
-        Some(v)
-    } else {
-        None
-    }
+    if any { Some(v) } else { None }
 }
 
 fn tar_name(header: &[u8]) -> String {

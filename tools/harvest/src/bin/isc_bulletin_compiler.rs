@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch::fetch_raw;
-use omegaflow::archivar::quakeml::{parse_quakeml, QuakeMlEvent};
+use omegaflow::archivar::quakeml::{QuakeMlEvent, parse_quakeml};
 use omegaflow::cdn::upload_release;
 
 const ROUTE: &str = "https://www.isc.ac.uk/fdsnws/event/1/query";
@@ -210,12 +210,12 @@ fn run(args: &[String]) -> Result<(), String> {
             Some(_) => {
                 return Err(format!(
                     "{url}: HTTP 200 with an empty body — no events present"
-                ))
+                ));
             }
             None => {
                 return Err(format!(
                     "{url}: the route carried no body — fetch returned void"
-                ))
+                ));
             }
         }
     };

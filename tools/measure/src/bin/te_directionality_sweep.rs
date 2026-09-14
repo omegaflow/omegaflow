@@ -39,7 +39,9 @@ fn main() {
         "TE(X->Y) forward, TE(Y->X) reverse; surrogate thr = phase-randomized ({}), mean+2sigma.",
         N_SURR
     );
-    println!("X drives Y via x_n in the y map (coupling c). Reverse arrow = a real reverse TE above its own null.");
+    println!(
+        "X drives Y via x_n in the y map (coupling c). Reverse arrow = a real reverse TE above its own null."
+    );
     println!();
     println!(
         "{:>6} {:>7} | {:>12} {:>12} {:>6} | {:>11} {:>11} | {:>6} {:>6}",
@@ -97,6 +99,10 @@ fn main() {
         }
     }
     println!();
-    println!("rev crosses its own thr/fam -> look at whether that crossing c moves with n (bias) or not (asymmetry).");
-    println!("c = 0 anchors the uncoupled control: a reverse arrow there is a false-arrow bias that n scaling must not carry.");
+    println!(
+        "rev crosses its own thr/fam -> look at whether that crossing c moves with n (bias) or not (asymmetry)."
+    );
+    println!(
+        "c = 0 anchors the uncoupled control: a reverse arrow there is a false-arrow bias that n scaling must not carry."
+    );
 }

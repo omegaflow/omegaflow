@@ -1,5 +1,5 @@
 use omegaflow::cdn::{upload_asset, upload_release};
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use std::io::Write;
 use std::process::Command;
 
@@ -187,11 +187,7 @@ fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
             .split('|')
             .map(|s| {
                 let c = s.trim().to_string();
-                if c == "null" {
-                    String::new()
-                } else {
-                    c
-                }
+                if c == "null" { String::new() } else { c }
             })
             .collect();
         rows.push(cells);
@@ -1236,13 +1232,7 @@ fn main() {
             .map(|(_, lo, hi, step)| (*lo, *hi, *step))
             .or(mag_bands);
         let is_xm = crossmatch_spec.is_some() || crossmatch_z_spec.is_some();
-        let band_qual = |c: &str| -> String {
-            if is_xm {
-                format!("t.{}", xq(c))
-            } else {
-                xq(c)
-            }
-        };
+        let band_qual = |c: &str| -> String { if is_xm { format!("t.{}", xq(c)) } else { xq(c) } };
         let left_from = if is_xm {
             format!("{} AS t", table_ref)
         } else {

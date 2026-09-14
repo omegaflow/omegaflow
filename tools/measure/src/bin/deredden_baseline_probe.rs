@@ -1,6 +1,6 @@
-use omegaflow::archivar::spatial::{star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, star_stride};
 use omegaflow_measure::weberin::deredden::{
-    build_star_index, dwarf_color_type, type_label, DustMap, StarIndex, WANG_GBP_FACTOR,
+    DustMap, StarIndex, WANG_GBP_FACTOR, build_star_index, dwarf_color_type, type_label,
 };
 
 const DEFAULT_RADIUS_DEG: f64 = 0.25;
@@ -376,7 +376,9 @@ fn main() {
                 let side = if dev > 0.0 { "above" } else { "below" };
                 println!(
                     "    local baseline over the other {} measured member(s): median {c:.3}, MAD-sigma {sg:.3} | BP-RP0 sits {:.2} sigma {side} the median -> {}",
-                    m.neighbors, sig, m.verdict.word()
+                    m.neighbors,
+                    sig,
+                    m.verdict.word()
                 );
             }
             _ => {
@@ -422,7 +424,7 @@ fn main() {
 mod tests {
     use super::*;
     use omegaflow::bayestar::{
-        encode_rec, write_header, Be19Row, MapHeader, BE19_BINS, BE19_DMU, BE19_MU0, REC_BYTES,
+        BE19_BINS, BE19_DMU, BE19_MU0, Be19Row, MapHeader, REC_BYTES, encode_rec, write_header,
     };
     use omegaflow::healpix::{ang2pix_nest, galactic_to_icrs, icrs_to_galactic, pix2ang_nest};
 

@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::ndk;
-use omegaflow_measure::depthphase::{arc_deg, arg_value, CATALOG_URL};
-use omegaflow_measure::mww::{iso_ymd, parse_quakeml, MwwRecord, NodalPlane};
+use omegaflow_measure::depthphase::{CATALOG_URL, arc_deg, arg_value};
+use omegaflow_measure::mww::{MwwRecord, NodalPlane, iso_ymd, parse_quakeml};
 
 const GCMT_NDK_URL: &str =
     "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
@@ -114,16 +114,22 @@ fn gcmt_crosscheck(record: &MwwRecord) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(eventid) = arg_value(&args, "--eventid") else {
-        println!("usgs_mww_centroid_probe: --eventid <id> absent — the centroid record stays absent");
+        println!(
+            "usgs_mww_centroid_probe: --eventid <id> absent — the centroid record stays absent"
+        );
         return;
     };
     let url = format!("{CATALOG_URL}?eventid={eventid}&format=quakeml&magnitudetype=mww");
     let Some(xml) = fetch_raw(&url, None, &[], QUERY_TTL_S) else {
-        println!("usgs_mww_centroid_probe: {url} carries no body — the centroid record stays absent");
+        println!(
+            "usgs_mww_centroid_probe: {url} carries no body — the centroid record stays absent"
+        );
         return;
     };
     let Some(record) = parse_quakeml(&xml) else {
-        println!("usgs_mww_centroid_probe: {eventid} carries no moment tensor — the centroid record stays absent");
+        println!(
+            "usgs_mww_centroid_probe: {eventid} carries no moment tensor — the centroid record stays absent"
+        );
         return;
     };
 
@@ -180,7 +186,12 @@ fn main() {
     let picker_lon = arg_value(&args, "--picker-lon")
         .and_then(|s| s.parse::<f64>().ok())
         .filter(|v| v.is_finite());
-    match (picker_lat, picker_lon, record.centroid.lat, record.centroid.lon) {
+    match (
+        picker_lat,
+        picker_lon,
+        record.centroid.lat,
+        record.centroid.lon,
+    ) {
         (Some(plat), Some(plon), Some(clat), Some(clon)) => {
             let deg = arc_deg(clat, clon, plat, plon);
             println!(

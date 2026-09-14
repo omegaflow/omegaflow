@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::json::{jpath_val, jstr, parse_json, JsonVal};
-use omegaflow::matfile::{parse_mat, MatArray, MatData, MatField};
-use omegaflow::openneuro_eeg::{parse_bin, write_bin, EegEvent, Events, OpenNeuroEeg, Samples};
+use omegaflow::json::{JsonVal, jpath_val, jstr, parse_json};
+use omegaflow::matfile::{MatArray, MatData, MatField, parse_mat};
+use omegaflow::openneuro_eeg::{EegEvent, Events, OpenNeuroEeg, Samples, parse_bin, write_bin};
 use std::process::Command;
 
 const DATASET: &str = "ds005034";
@@ -201,11 +201,7 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
                     .trim_end_matches('\0')
                     .trim()
                     .to_string();
-                if s.is_empty() {
-                    None
-                } else {
-                    Some(s)
-                }
+                if s.is_empty() { None } else { Some(s) }
             }
             _ => None,
         })
@@ -805,9 +801,11 @@ mod tests {
             files[0].0,
             "sub-02/ses-verum/eeg/sub-02_ses-verum_task-rest_eeg.set"
         );
-        assert!(files[0]
-            .1
-            .starts_with("https://s3.amazonaws.com/openneuro.org/"));
+        assert!(
+            files[0]
+                .1
+                .starts_with("https://s3.amazonaws.com/openneuro.org/")
+        );
     }
 
     #[test]

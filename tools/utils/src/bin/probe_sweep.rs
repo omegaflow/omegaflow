@@ -1,7 +1,7 @@
 use omegaflow::archivar::{
     draft_context_mode, draft_url_mode, load_env, probe_mode, url_probe_mode,
 };
-use omegaflow_utils::discovery::{source_url_candidates_run, CANDIDATES_PATH};
+use omegaflow_utils::discovery::{CANDIDATES_PATH, source_url_candidates_run};
 
 const LIVE_PATH: &str = "phi/pipeline/probe_live.txt";
 const DRAFTS_PATH: &str = "phi/pipeline/probe_drafts.φ";

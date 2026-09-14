@@ -13,10 +13,24 @@ struct Post {
     ausrede: f32,
 }
 
+#[derive(Clone, Copy)]
+enum Series {
+    Len,
+    Words,
+    Nums,
+    Commit,
+    Leistung,
+    Offen,
+    Ausrede,
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let mut db = PathBuf::from(match env::var("HOME") {
+        Ok(h) => h,
+        Err(_) => String::new(),
+    })
+    .join(".local/share/opencode/opencode.db");
     let mut surrogate = "phase";
     let mut i = 1;
     while i < args.len() {
@@ -44,7 +58,10 @@ fn main() {
     let out = match out {
         Ok(o) if o.status.success() => o,
         Ok(o) => {
-            eprintln!("session_te: sqlite3: {}", String::from_utf8_lossy(&o.stderr));
+            eprintln!(
+                "session_te: sqlite3: {}",
+                String::from_utf8_lossy(&o.stderr)
+            );
             std::process::exit(1);
         }
         Err(e) => {
@@ -62,7 +79,7 @@ fn main() {
         let mut parts = line.splitn(4, '\x1f');
         let agent = parts.next().unwrap_or("").to_string();
         let model = parts.next().unwrap_or("").to_string();
-        let time: i64 = parts.next().unwrap_or("0").parse().unwrap_or(0);
+        let time = parts.next().and_then(|s| s.parse::<i64>().ok());
         let body = parts.next().unwrap_or("").to_string();
         let _ = time;
         let p = Post {
@@ -82,7 +99,7 @@ fn main() {
                     "gelaufen",
                     "gebaut",
                     "getestet",
-                    "geprüft",
+                    "verified",
                     "gelesen",
                 ],
             ) as f32,
@@ -103,7 +120,6 @@ fn main() {
                     "wahrscheinlich",
                     "irgendwann",
                     "muesste",
-                    "müsste",
                 ],
             ) as f32,
         };
@@ -129,13 +145,13 @@ fn main() {
 
 fn report(label: &str, posts: &[Post], surrogate: &str) {
     println!("\n== {} | {} posts ==", label, posts.len());
-    let x = subsample(&series(posts, "len"));
-    let w = subsample(&series(posts, "words"));
-    let n = subsample(&series(posts, "nums"));
-    let c = subsample(&series(posts, "commit"));
-    let l = subsample(&series(posts, "leistung"));
-    let o = subsample(&series(posts, "offen"));
-    let a = subsample(&series(posts, "ausrede"));
+    let x = subsample(&series(posts, Series::Len));
+    let w = subsample(&series(posts, Series::Words));
+    let n = subsample(&series(posts, Series::Nums));
+    let c = subsample(&series(posts, Series::Commit));
+    let l = subsample(&series(posts, Series::Leistung));
+    let o = subsample(&series(posts, Series::Offen));
+    let a = subsample(&series(posts, Series::Ausrede));
     let props = [
         ("len", &x),
         ("words", &w),
@@ -203,18 +219,17 @@ fn subsample_to(v: &[f32], max: usize) -> Vec<f32> {
     out
 }
 
-fn series(posts: &[Post], which: &str) -> Vec<f32> {
+fn series(posts: &[Post], which: Series) -> Vec<f32> {
     posts
         .iter()
         .map(|p| match which {
-            "len" => p.len,
-            "words" => p.words,
-            "nums" => p.nums,
-            "commit" => p.commit,
-            "leistung" => p.leistung,
-            "offen" => p.offen,
-            "ausrede" => p.ausrede,
-            _ => 0.0,
+            Series::Len => p.len,
+            Series::Words => p.words,
+            Series::Nums => p.nums,
+            Series::Commit => p.commit,
+            Series::Leistung => p.leistung,
+            Series::Offen => p.offen,
+            Series::Ausrede => p.ausrede,
         })
         .collect()
 }

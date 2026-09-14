@@ -1,15 +1,12 @@
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-use omegaflow_measure::h0::{parse_cepheids, Cepheid};
+use omegaflow_measure::h0::{Cepheid, parse_cepheids};
 
 const ARXIV_EPRINT: &str = "https://arxiv.org/e-print/2012.08534";
-const PANTHEON_DAT: &str =
-    "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat";
-const PANTHEON_COV_STATSYS: &str =
-    "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STAT+SYS.cov";
-const PANTHEON_COV_STATONLY: &str =
-    "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STATONLY.cov";
+const PANTHEON_DAT: &str = "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat";
+const PANTHEON_COV_STATSYS: &str = "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STAT+SYS.cov";
+const PANTHEON_COV_STATONLY: &str = "https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STATONLY.cov";
 
 const C_KM_S: f64 = 299792.458;
 const LN10: f64 = std::f64::consts::LN_10;
@@ -734,10 +731,15 @@ fn main() {
         .map(|&i| rows[i].zhd)
         .fold(f64::NEG_INFINITY, f64::max);
 
-    println!("h0_ladder_weigh: arXiv 2012.08534 sha256={tarball_sha} | Pantheon+SH0ES.dat sha256={dat_sha} | STAT+SYS.cov sha256={cov_sha}");
+    println!(
+        "h0_ladder_weigh: arXiv 2012.08534 sha256={tarball_sha} | Pantheon+SH0ES.dat sha256={dat_sha} | STAT+SYS.cov sha256={cov_sha}"
+    );
     println!(
         "h0_ladder_weigh: Cepheid table N={} rows (prose cites 75), {} π_EDR3 absent, {} fitted, {} footnote-marked",
-        stars.len(), absent, n_fit, n_marked
+        stars.len(),
+        absent,
+        n_fit,
+        n_marked
     );
     println!(
         "h0_ladder_weigh: π_EDR3 absent stars: {} | footnote-marked stars: {}",
@@ -754,7 +756,16 @@ fn main() {
     );
     println!(
         "h0_ladder_weigh: anchor 4-param M_W1={:.3} ± {:.3} | b_W={:.2} ± {:.2} | Z_W={:.2} ± {:.2} | zp={:.0} ± {:.0} µas | χ²/ndf={:.1}/{} | published b_W={PUB_BW_4} ± {PUB_BW_4_ERR}, Z_W={PUB_ZW_4} ± {PUB_ZW_4_ERR}",
-        fit4.mw1, fit4.sig_mw1, fit4.bw, fit4.sig_bw, fit4.zw, fit4.sig_zw, fit4.zp, fit4.sig_zp, fit4.chisq, fit4.ndf
+        fit4.mw1,
+        fit4.sig_mw1,
+        fit4.bw,
+        fit4.sig_bw,
+        fit4.zw,
+        fit4.sig_zw,
+        fit4.zp,
+        fit4.sig_zp,
+        fit4.chisq,
+        fit4.ndf
     );
     println!(
         "h0_ladder_weigh: anchor shift Δ = M_W1 − ({PUB_MW1}) = {:.3} ± {:.3} mag",
@@ -762,11 +773,22 @@ fn main() {
     );
     println!(
         "h0_ladder_weigh: calibrators N={} ({} unique CIDs, paper cites 42) | M_B={:.4} ± {:.4} mag (covariance) | diagonal checkpoint M_B={:.4} ± {:.4}",
-        cal_idx.len(), unique_cal.len(), gls.mb, gls.sig_mb, mb_diag_mean, mb_diag_err
+        cal_idx.len(),
+        unique_cal.len(),
+        gls.mb,
+        gls.sig_mb,
+        mb_diag_mean,
+        mb_diag_err
     );
     println!(
         "h0_ladder_weigh: Hubble flow N={}, zHD {:.5}..{:.5} | a_B={:.4} ± {:.4} (covariance, flat ΛCDM Ωm={OM_M}) | diagonal checkpoint a_B={:.4} ± {:.4}",
-        hf_idx.len(), zmin, zmax, gls.ab, gls.sig_ab, ab_diag_mean, ab_diag_err
+        hf_idx.len(),
+        zmin,
+        zmax,
+        gls.ab,
+        gls.sig_ab,
+        ab_diag_mean,
+        ab_diag_err
     );
     println!(
         "h0_ladder_weigh: H₀ = {:.2} ± {:.2} km/s/Mpc (covariance) | diagonal H₀ = {:.2} ± {:.2} | published {PUB_H0} ± {PUB_H0_ERR}",
@@ -821,7 +843,12 @@ fn main() {
             let sigma = (g.own_err * g.own_err + g.published_err * g.published_err).sqrt();
             println!(
                 "h0_ladder_weigh: reproduction gate RIFT — {} own {:.4} ± {:.4} vs published {:.4} ± {:.4} ({}σ) — the deviation is the finding, registered, not hidden",
-                g.name, g.own, g.own_err, g.published, g.published_err, delta / sigma
+                g.name,
+                g.own,
+                g.own_err,
+                g.published,
+                g.published_err,
+                delta / sigma
             );
         }
         println!(

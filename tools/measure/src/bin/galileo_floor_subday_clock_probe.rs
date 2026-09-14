@@ -216,7 +216,10 @@ fn main() {
     }
     rows.sort_by_key(|r| (r.1, r.0, r.2));
 
-    push("\n== 0. reproduction: per (mode, station) robust day series, loud cells, flips ==".to_string());
+    push(
+        "\n== 0. reproduction: per (mode, station) robust day series, loud cells, flips =="
+            .to_string(),
+    );
     let mut n_robust_all = 0usize;
     let mut n_loud_all = 0usize;
     let mut n_flip_all = 0usize;
@@ -248,7 +251,10 @@ fn main() {
             ));
             series_map.insert(
                 (mo, st),
-                srows.iter().map(|r| (r.2, r.3)).collect::<Vec<(i64, f64)>>(),
+                srows
+                    .iter()
+                    .map(|r| (r.2, r.3))
+                    .collect::<Vec<(i64, f64)>>(),
             );
         }
     }
@@ -266,8 +272,7 @@ fn main() {
         loud_cells.len()
     ));
 
-    let loud_keys: BTreeSet<(i64, i64, i64)> =
-        loud_cells.iter().map(|r| (r.0, r.1, r.2)).collect();
+    let loud_keys: BTreeSet<(i64, i64, i64)> = loud_cells.iter().map(|r| (r.0, r.1, r.2)).collect();
     let quiet_cells: Vec<(i64, i64, i64)> = rows
         .iter()
         .filter(|r| r.5 >= ROBUST_N && r.3 < LOUD_HZ)
@@ -379,12 +384,17 @@ fn main() {
                     n_cells_with_loud += 1;
                     let st_h = samples[0].0;
                     loud_onset_min_after_start.push((tl - st_h) / 60.0);
-                    per_series_onset.entry((mo, st)).or_default().push(hour_of_day(tl));
+                    per_series_onset
+                        .entry((mo, st))
+                        .or_default()
+                        .push(hour_of_day(tl));
                 }
                 let cell_start = samples[0].0;
                 cell_first_hours.push(hour_of_day(cell_start));
                 let loud_w = match (first_loud_tdb, last_loud_tdb) {
-                    (Some(t0), Some(t1)) => format!("{:.2}..{:.2}", hour_of_day(t0), hour_of_day(t1)),
+                    (Some(t0), Some(t1)) => {
+                        format!("{:.2}..{:.2}", hour_of_day(t0), hour_of_day(t1))
+                    }
                     _ => "none".to_string(),
                 };
                 push(format!(
@@ -404,7 +414,10 @@ fn main() {
     let mut n_frac_lt10 = 0usize;
     let mut n_single_pass = 0usize;
     let mut n_multi_pass = 0usize;
-    for (mo, st) in MODES.iter().flat_map(|m| STATIONS.iter().map(move |s| (*m, *s))) {
+    for (mo, st) in MODES
+        .iter()
+        .flat_map(|m| STATIONS.iter().map(move |s| (*m, *s)))
+    {
         for rc in loud_cells.iter().filter(|r| r.1 == mo && r.0 == st) {
             let key = (rc.0, rc.1, rc.2);
             let Some(samples) = loud_samples.get(&key) else {
@@ -454,7 +467,10 @@ fn main() {
     push(format!(
         "loud-onset UTC hour (first loud sample per loud cell): n {n1} mean {m1:.2} R {r1:.3} rayleigh p {p1:.3e}"
     ));
-    push(format!("  1h bins (n per bin): {}", fmt_bins(&bin24(&loud_onset_hours))));
+    push(format!(
+        "  1h bins (n per bin): {}",
+        fmt_bins(&bin24(&loud_onset_hours))
+    ));
     let (n2, m2, r2, p2) = circ_stats(&run_start_hours);
     push(format!(
         "pass-run start UTC hour (all runs of loud cells): n {n2} mean {m2:.2} R {r2:.3} rayleigh p {p2:.3e}"
@@ -547,9 +563,15 @@ fn main() {
     push(format!(
         "control: quiet robust cell first floor-sample hour: n {nq} mean {mq:.2} R {rq:.3} rayleigh p {pq:.3e}"
     ));
-    push(format!("  1h bins: {}", fmt_bins(&bin24(&quiet_first_hours))));
+    push(format!(
+        "  1h bins: {}",
+        fmt_bins(&bin24(&quiet_first_hours))
+    ));
 
-    push("\n== C. inter-episode intervals and Lomb-Scargle over the robust day series ==".to_string());
+    push(
+        "\n== C. inter-episode intervals and Lomb-Scargle over the robust day series =="
+            .to_string(),
+    );
     for mo in MODES {
         for st in STATIONS {
             let Some(series) = series_map.get(&(mo, st)) else {
@@ -612,7 +634,9 @@ fn main() {
                         1.0 / bf
                     ));
                 } else {
-                    push(format!("  LS: span {span:.0} d too short for period search (pmax {pmax:.1} <= pmin {pmin})"));
+                    push(format!(
+                        "  LS: span {span:.0} d too short for period search (pmax {pmax:.1} <= pmin {pmin})"
+                    ));
                 }
             }
         }
@@ -705,7 +729,9 @@ fn main() {
             mstr.push_str(&row.join(" "));
             mstr.push_str(" | ");
         }
-        push(format!("mode {mo}: loudest-station day transitions n {ntrans}: {mstr}"));
+        push(format!(
+            "mode {mo}: loudest-station day transitions n {ntrans}: {mstr}"
+        ));
     }
 
     push("\n== E. summary ==".to_string());

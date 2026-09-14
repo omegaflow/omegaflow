@@ -349,7 +349,9 @@ fn main() {
         "the gaiadr3.vari_cepheid classification did not answer",
     );
 
-    println!("h0_gaia_crossmatch: arXiv 2012.08534 sha256={tarball_sha} | SIMBAD sim-tap + Gaia DR3 tap live");
+    println!(
+        "h0_gaia_crossmatch: arXiv 2012.08534 sha256={tarball_sha} | SIMBAD sim-tap + Gaia DR3 tap live"
+    );
     println!(
         "h0_gaia_crossmatch: Cepheid table N={} rows, {} π_EDR3 absent, {} fitted",
         stars.len(),
@@ -502,7 +504,9 @@ fn main() {
             "h0_gaia_crossmatch: identity gate PASS — every table name resolves to a unique Gaia DR3 source within {IDENTITY_MAX_SEP_ARCSEC} arcsec"
         );
     } else {
-        println!("h0_gaia_crossmatch: identity gate RIFT — the deviations above are the finding, registered, not hidden");
+        println!(
+            "h0_gaia_crossmatch: identity gate RIFT — the deviations above are the finding, registered, not hidden"
+        );
     }
 }
 

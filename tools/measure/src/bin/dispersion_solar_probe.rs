@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{
     benjamini_hochberg, conditional_te_stats_lagged, permutation_entropy,
     transfer_entropy_conditional_h,
@@ -808,7 +808,9 @@ fn main() {
     }
 
     println!();
-    println!("pair      | lag | mean D_freq | TE f_hi->f_lo | TE f_lo->f_hi | fwd/events | rev/events | fwd_gated | rev_gated");
+    println!(
+        "pair      | lag | mean D_freq | TE f_hi->f_lo | TE f_lo->f_hi | fwd/events | rev/events | fwd_gated | rev_gated"
+    );
     let mut p = 0usize;
     for hi in 0..n_bands {
         for lo in hi + 1..n_bands {
@@ -897,13 +899,20 @@ fn main() {
         Some(c) => format!("{:.3e}", c),
         None => "void".to_string(),
     };
-    println!("direction gate: per-event asymmetry fwd-rev, two-sided exact binomial, FDR level {} over {} tests, cutoff {}", FDR_LEVEL, fdr_vals.len(), cutoff_str);
+    println!(
+        "direction gate: per-event asymmetry fwd-rev, two-sided exact binomial, FDR level {} over {} tests, cutoff {}",
+        FDR_LEVEL,
+        fdr_vals.len(),
+        cutoff_str
+    );
     println!(
         "medium ceiling: dtau_medium(pair) = {} s * {} pc/cm3 * (nu_lo_GHz^-2 - nu_hi_GHz^-2)",
         DISPERSION_S, DM_SPALTE_PCCM3
     );
     println!();
-    println!("band_pair | f_hi_hz | f_lo_hz | p_dir_min | dtau_medium_s | tau*_mode_s | tau*_mean_s | tau*_sd_s | state");
+    println!(
+        "band_pair | f_hi_hz | f_lo_hz | p_dir_min | dtau_medium_s | tau*_mode_s | tau*_mean_s | tau*_sd_s | state"
+    );
     let mut p = 0usize;
     for hi in 0..n_bands {
         for lo in hi + 1..n_bands {

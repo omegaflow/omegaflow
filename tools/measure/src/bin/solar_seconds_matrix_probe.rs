@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::scalar_te_gpu::ScalarTeGpu;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 use std::sync::Mutex;
@@ -524,7 +524,9 @@ fn main() {
     );
     println!(
         "fam = strongest surrogate stacked D over the 72 directed pairs x {} lags x {} surrogates; lag in 24-s cells (0 .. {} s).",
-        LAG_MAX + 1, N_SURR, LAG_MAX * 24
+        LAG_MAX + 1,
+        N_SURR,
+        LAG_MAX * 24
     );
     println!();
 

@@ -623,11 +623,7 @@ pub fn switch_resolution(fk: &FkFile, switch_frame: i32) -> Option<Vec<CkFrameRe
             spk_id,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn upper_bound(n: usize, pred: impl Fn(usize) -> bool) -> usize {

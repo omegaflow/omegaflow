@@ -59,11 +59,7 @@ fn mean_log10(vals: &[f64]) -> Option<f64> {
             n += 1;
         }
     }
-    if n > 0 {
-        Some(acc / n as f64)
-    } else {
-        None
-    }
+    if n > 0 { Some(acc / n as f64) } else { None }
 }
 
 fn ln_choose(n: f64, k: f64) -> f64 {
@@ -348,10 +344,18 @@ fn main() {
                 sub.len(),
                 loud,
                 modes_s.join(" "),
-                if sub.is_empty() { 0.0 } else { loud as f64 / sub.len() as f64 },
+                if sub.is_empty() {
+                    0.0
+                } else {
+                    loud as f64 / sub.len() as f64
+                },
                 days.len(),
                 loud_days,
-                if days.is_empty() { 0.0 } else { loud_days as f64 / days.len() as f64 }
+                if days.is_empty() {
+                    0.0
+                } else {
+                    loud_days as f64 / days.len() as f64
+                }
             ));
         }
         m += 1;
@@ -363,7 +367,9 @@ fn main() {
 
     push(String::new());
     push("== 2. milestone before/after regression on the robust series ==".to_string());
-    push(format!("per (mode, station) cell split at each milestone daycell: pre = day < milestone, post = day >= milestone; loud frac = loud cells / robust cells (a series has at most one robust cell per day, so the series cell loud-frac equals its loud-day fraction); fisher = exact two-sided test on (loud, quiet) x (pre, post); p printed only when both sides have >= {MIN_SIDE} robust cells, a smaller side is data-thin and named absent"));
+    push(format!(
+        "per (mode, station) cell split at each milestone daycell: pre = day < milestone, post = day >= milestone; loud frac = loud cells / robust cells (a series has at most one robust cell per day, so the series cell loud-frac equals its loud-day fraction); fisher = exact two-sided test on (loud, quiet) x (pre, post); p printed only when both sides have >= {MIN_SIDE} robust cells, a smaller side is data-thin and named absent"
+    ));
     for ms in &milestones {
         push(String::new());
         push(format!(
@@ -390,13 +396,8 @@ fn main() {
                 } else {
                     "thin".to_string()
                 };
-                let frac = |l: usize, n: usize| -> f64 {
-                    if n == 0 {
-                        0.0
-                    } else {
-                        l as f64 / n as f64
-                    }
-                };
+                let frac =
+                    |l: usize, n: usize| -> f64 { if n == 0 { 0.0 } else { l as f64 / n as f64 } };
                 push(format!(
                     "  M{mode} st{st}: pre n {} loud {pre_l} frac {:.3} | post n {} loud {post_l} frac {:.3} | diff {:+.3} | fisher p {p}",
                     pre.len(),
@@ -508,7 +509,9 @@ fn main() {
         "== 2c. per-series data-driven best split inside the whole floor era, robust series =="
             .to_string(),
     );
-    push(format!("split point between consecutive robust days, both sides >= {MIN_SIDE} cells; the gap = |loud frac right - loud frac left|; nearest tested milestone given"));
+    push(format!(
+        "split point between consecutive robust days, both sides >= {MIN_SIDE} cells; the gap = |loud frac right - loud frac left|; nearest tested milestone given"
+    ));
     for mode in modes {
         for st in trio {
             let sub: Vec<&Cell> = cells_sorted
