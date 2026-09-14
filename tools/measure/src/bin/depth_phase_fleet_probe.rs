@@ -24,7 +24,9 @@ fn main() {
         None => match SystemTime::now().duration_since(UNIX_EPOCH) {
             Ok(d) => dp::unix_to_iso(d.as_secs_f64()),
             Err(_) => {
-                eprintln!("depth-phase fleet: the system clock precedes the epoch — no end time, no fabricated zero");
+                eprintln!(
+                    "depth-phase fleet: the system clock precedes the epoch — no end time, no fabricated zero"
+                );
                 return;
             }
         },
@@ -73,9 +75,13 @@ fn main() {
     println!(
         "  station band {MIN_DIST_DEG}..{MAX_DIST_DEG} deg, SNR gate >= {SNR_GATE}, up to {max_events} events (orderby magnitude)"
     );
-    println!("uncertainty budget (before the run): 1 s pick scatter -> ~3.2 km per station; the per-event median");
+    println!(
+        "uncertainty budget (before the run): 1 s pick scatter -> ~3.2 km per station; the per-event median"
+    );
     println!("  narrows with sqrt(n) stations, the fleet mean narrows with sqrt(N) events");
-    println!("polarity witness: free-surface R_pp is negative across the steep band (src/archivar/ak135.rs free_surface_pp) — a sign flip carries the source term, not the angle");
+    println!(
+        "polarity witness: free-surface R_pp is negative across the steep band (src/archivar/ak135.rs free_surface_pp) — a sign flip carries the source term, not the angle"
+    );
     println!(
         "Δ-restriction gate (named instrument, registered before the first fetch): a station whose"
     );
@@ -199,6 +205,7 @@ fn main() {
         let mut saturated = 0usize;
         let mut skips: Vec<String> = Vec::new();
         let mut branch_unstable = 0usize;
+        let mut fold = 0usize;
         let mut first = true;
         let mut measures: Vec<dp::StationMeasure> = Vec::new();
         for st in &stations {
@@ -207,8 +214,10 @@ fn main() {
             }
             first = false;
             let m = dp::measure_station(&anchor, st, &start, &end, None);
-            if m.branch_unstable {
-                branch_unstable += 1;
+            match m.branch {
+                dp::PPBranch::BranchUnstable => branch_unstable += 1,
+                dp::PPBranch::Fold => fold += 1,
+                dp::PPBranch::Clear => {}
             }
             match &m.skip {
                 Some(reason) => skips.push(format!("{} ({reason})", m.key)),
@@ -224,7 +233,7 @@ fn main() {
             }
             measures.push(m);
         }
-        branch_skips_total += branch_unstable;
+        branch_skips_total += branch_unstable + fold;
         if kalibrier {
             emit_kalibrier(event, &stations, &measures, ndk_events.as_deref());
         }
@@ -244,9 +253,9 @@ fn main() {
         println!(
             "  {edge_clamped} of {carried} stations edge-clamped at 660; {saturated} of {carried} saturated at 700"
         );
-        if branch_unstable > 0 {
+        if branch_unstable > 0 || fold > 0 {
             println!(
-                "  the Δ-gate skipped {branch_unstable} of {} branch-unstable stations (pP fold band)",
+                "  the Δ-gate skipped {branch_unstable} branch-unstable and {fold} fold stations of {} (pP fold band)",
                 stations.len()
             );
         }
@@ -264,7 +273,9 @@ fn main() {
         let with_clamp_median = dp::median(&mut combined);
         let offset_wc = with_clamp_median - event.depth_km;
         if depths.is_empty() {
-            println!("  after-exclusion depth: absent (no station measured a depth — all {carried} carried a clamp at the model bounds, never 0)");
+            println!(
+                "  after-exclusion depth: absent (no station measured a depth — all {carried} carried a clamp at the model bounds, never 0)"
+            );
         } else {
             let median_depth = dp::median(&mut depths.clone());
             let offset_ae = median_depth - event.depth_km;
@@ -467,7 +478,7 @@ fn main() {
     println!("=== fleet summary ===");
     if branch_skips_total > 0 {
         println!(
-            "the Δ-gate skipped {branch_skips_total} stations fleet-wide as branch-unstable (pP fold band)"
+            "the Δ-gate skipped {branch_skips_total} stations fleet-wide as branch-unstable or fold (pP fold band)"
         );
     } else {
         println!("the Δ-gate skipped no station (no measured station sat in a pP fold band)");
@@ -488,12 +499,8 @@ fn main() {
             println!(
                 "with-clamp mean offset {:+.1} km over {n_wc} events (edge-clamped counted as 660, saturated as 700); sd across events {} km, se = sd/sqrt(N) = {} km",
                 mean_wc,
-                sd_wc
-                    .map(|v| format!("{v:.1}"))
-                    .unwrap_or("pending".into()),
-                se_wc
-                    .map(|v| format!("{v:.1}"))
-                    .unwrap_or("pending".into())
+                sd_wc.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
+                se_wc.map(|v| format!("{v:.1}")).unwrap_or("pending".into())
             );
         }
         if n_ae == 0 {
@@ -507,7 +514,10 @@ fn main() {
                 .map(|o| format!("{:+.0}", o))
                 .collect::<Vec<_>>()
                 .join(", ");
-            println!("after-exclusion mean offset {:+.1} km over {n_ae} events; per-event offsets [{offsets_txt}] km", mean_ae);
+            println!(
+                "after-exclusion mean offset {:+.1} km over {n_ae} events; per-event offsets [{offsets_txt}] km",
+                mean_ae
+            );
             println!(
                 "after-exclusion sd across events {} km, se = sd/sqrt(N) = {} km",
                 sd_ae.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
@@ -576,8 +586,12 @@ fn main() {
         println!(
             "dual-phase mean offset {:+.1} km over {n_dual} events; sd across events {} km, se = sd/sqrt(N) = {} km",
             mean_dual,
-            sd_dual.map(|v| format!("{v:.1}")).unwrap_or("pending".into()),
-            se_dual.map(|v| format!("{v:.1}")).unwrap_or("pending".into())
+            sd_dual
+                .map(|v| format!("{v:.1}"))
+                .unwrap_or("pending".into()),
+            se_dual
+                .map(|v| format!("{v:.1}"))
+                .unwrap_or("pending".into())
         );
     }
     if !dual_pending.is_empty() {
@@ -719,7 +733,9 @@ fn emit_mww(
         return;
     };
     let Some(i_ref) = iasp91::takeoff_angle_deg(reference.delta_deg, anchor.depth_km, true) else {
-        println!("    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent");
+        println!(
+            "    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent"
+        );
         return;
     };
     let (rp_min, rp_max, nodal) = upgoing_radiation(&tensor, i_ref);
@@ -857,7 +873,9 @@ fn emit_kalibrier(
 ) {
     println!("  kalibrier-gate — the NDK source term at the measured station azimuths:");
     let Some(cents) = ndk_events else {
-        println!("    the GCMT NDK body stays absent — the per-station source polarity is pending, never fabricated");
+        println!(
+            "    the GCMT NDK body stays absent — the per-station source polarity is pending, never fabricated"
+        );
         return;
     };
     let date = dp::unix_to_iso(event.t0);
@@ -887,7 +905,9 @@ fn emit_kalibrier(
     };
     let Some(i_ref) = iasp91::takeoff_angle_deg(reference.delta_deg, ev.centroid_depth_km, true)
     else {
-        println!("    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent");
+        println!(
+            "    the upgoing take-off at the reference station stays unread — the radiation pattern stays absent"
+        );
         return;
     };
     let (rp_min, rp_max, nodal) = upgoing_radiation(&m, i_ref);
