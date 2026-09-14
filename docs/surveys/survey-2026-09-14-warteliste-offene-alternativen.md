@@ -2,15 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: c2628cc9064fdba3fa2dd1cdfe1b11d8f4b91ba3d09b3c6534f0edaa40f0a3ca
-  status: live
-  see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
--->
-<!--
-  title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
-  class: survey
-  date: 2026-09-14
-  sha256: 34ff7ec903e53e7bf25245cbd35d30ab2bd9277e0247054fc6dc2128d57bae49
+  sha256: f45248d0bb76787370782d92714d0256c7bde98e06c931ef2a549e308de9deb1
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -66,7 +58,7 @@ Zwei `grind-pro`-Taucher (Runde 3) bestätigen die zwei Restoffenen mit Messung.
 | Warte | Befund (Runde 3, gemessen) | nächster Schritt |
 |---|---|---|
 | Voyager Roh-Doppler (closed-loop) | Voyager closed-loop wurde als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben — öffentlich überlebt nur die open-loop ODR-Okkultation. PDS-PPI/Voyager trägt nur PWS + RSS-Doku; NAIF nur SPICE (`spk/lsk/pck`); die closed-loop-Holdings von PDS-Geosciences (LRO/Magellan/MGS) führen Voyager nicht; NSSDC-Datasets sind alle Occultation. Einzige nicht-anonyme Ablage: NSSDC `PSNO-00007` (SDDPT, "archive, not distribution") | JPL/DSN-Anfrage hält (request-only) |
-| NSE/Haug (Rohdaten) | kein Deposit: arXiv `e-print/1008.4298` = nur TeX + 8 Figuren (null Datendateien); IOP-Suppdata nicht auflösbar (Radware-Bot-Manager); iMPULSE `record/2120` nur Metadaten + toter Volltext-OpenURL; MPG Edmond / Zenodo / Dataverse ohne Datensatz; DataCite ohne DOI | Keimer/MPI-FKF-Anfrage hält; Paper-Fig. 5b digitalisieren als Teilroute |
+| NSE/Haug (Rohdaten) | kein Deposit: arXiv `e-print/1008.4298` = nur TeX + 8 Figuren (null Datendateien); IOP-Suppdata nicht auflösbar (Radware-Bot-Manager); iMPULSE `record/2120` nur Metadaten + toter Volltext-OpenURL; MPG Edmond / Zenodo / Dataverse ohne Datensatz; DataCite ohne DOI | Keimer/MPI-FKF-Anfrage hält; Teilroute Fig 5b gemessen descoped (trägt Γ(T), nicht I(q,t)) |
 
 ## Register-Disposition
 
