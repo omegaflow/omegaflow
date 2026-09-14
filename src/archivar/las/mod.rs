@@ -988,4 +988,55 @@ mod tests {
         assert!(first.blue.is_some());
         assert_eq!(decoded_digest(laz), uncompressed_digest(las));
     }
+
+    #[test]
+    fn noaa_copc_f6_variable_chunks_fixture_digest() {
+        let bytes = include_bytes!("fixtures/noaa_copc_f6_variable.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.version_major, 1);
+        assert_eq!(h.version_minor, 4);
+        assert_eq!(h.point_format, 6);
+        assert_eq!(h.point_count, 157710);
+        let vlrs = h.vlrs(bytes).unwrap();
+        let layout = laszip::laszip_vlr(&vlrs).unwrap();
+        assert_eq!(layout.compressor, 3);
+        assert_eq!(layout.chunk_size, u32::MAX);
+        assert_eq!(layout.items.len(), 1);
+        assert_eq!(layout.items[0].item_type, 10);
+        assert!(copc_info(&vlrs).is_some());
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.x >= h.min[0] && first.x <= h.max[0]);
+        assert!(first.gps_time.is_some());
+        assert_eq!(
+            decoded_digest(bytes),
+            "bc9db7851cd49411b9cb6b8b40a2517fd2f49e8c8949d98a84b75f1ee8b4093f"
+        );
+    }
+
+    #[test]
+    fn usgs_ept_f1_pointwise_extra_bytes_fixture_digest() {
+        let bytes = include_bytes!("fixtures/usgs_ept_f1_pointwise.laz");
+        let h = LasHeader::parse(bytes).unwrap();
+        assert_eq!(h.version_major, 1);
+        assert_eq!(h.version_minor, 2);
+        assert_eq!(h.point_format, 1);
+        assert_eq!(h.point_length, 32);
+        assert_eq!(h.point_count, 19873);
+        let vlrs = h.vlrs(bytes).unwrap();
+        let layout = laszip::laszip_vlr(&vlrs).unwrap();
+        assert_eq!(layout.compressor, 2);
+        assert_eq!(layout.chunk_size, 50000);
+        assert_eq!(layout.items.len(), 3);
+        assert_eq!(layout.items[0].item_type, 6);
+        assert_eq!(layout.items[1].item_type, 7);
+        assert_eq!(layout.items[2].item_type, 0);
+        let mut dec = LazDecoder::new(&h, bytes).unwrap();
+        let first = dec.point_at(0).unwrap();
+        assert!(first.gps_time.is_some());
+        assert_eq!(
+            decoded_digest(bytes),
+            "2dba6b460195398ac97c5aa969c7fc8b8cf6f9cc3a4f6e086adf0139979bab9e"
+        );
+    }
 }

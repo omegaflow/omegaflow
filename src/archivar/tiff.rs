@@ -117,6 +117,11 @@ fn entry_double_vec(data: &[u8], e: &Entry, little: bool) -> Option<Vec<f64>> {
     Some(out)
 }
 
+fn entry_raw(data: &[u8], e: &Entry, little: bool) -> Option<Vec<u8>> {
+    let base = entry_base(data, e, little, 1)?;
+    data.get(base..base + e.count as usize).map(|s| s.to_vec())
+}
+
 fn geotransform(
     pixel_scale: Option<Vec<f64>>,
     tiepoint: Option<Vec<f64>>,
@@ -291,6 +296,641 @@ fn decode_lzw_strip(data: &[u8], expected: usize) -> Option<Vec<u8>> {
     Some(out)
 }
 
+const ZIGZAG: [usize; 64] = [
+    0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20,
+    13, 6, 7, 14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59,
+    52, 45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63,
+];
+
+#[derive(Clone)]
+struct HuffTable {
+    min_code: [i32; 16],
+    max_code: [i32; 16],
+    val_ptr: [usize; 16],
+    values: Vec<u8>,
+}
+
+#[derive(Clone, Copy)]
+struct JpegComponent {
+    id: u8,
+    h: u8,
+    v: u8,
+    qt_id: u8,
+}
+
+struct JpegFrame {
+    width: u16,
+    height: u16,
+    components: Vec<JpegComponent>,
+}
+
+struct JpegImage {
+    width: usize,
+    height: usize,
+    components: usize,
+    pixels: Vec<u8>,
+}
+
+struct JpegDecoder {
+    quant: [Option<[u16; 64]>; 4],
+    dc: [Option<HuffTable>; 4],
+    ac: [Option<HuffTable>; 4],
+    frame: Option<JpegFrame>,
+    scan: Vec<(u8, u8, u8)>,
+    restart_interval: u16,
+}
+
+fn be16(b: &[u8], off: usize) -> Option<u16> {
+    let v: [u8; 2] = b.get(off..off + 2)?.try_into().ok()?;
+    Some(u16::from_be_bytes(v))
+}
+
+fn build_huffman(counts: &[u8; 16], values: &[u8]) -> Option<HuffTable> {
+    let total: usize = counts.iter().map(|&c| c as usize).sum();
+    if total != values.len() {
+        return None;
+    }
+    let mut min_code = [0i32; 16];
+    let mut max_code = [0i32; 16];
+    let mut val_ptr = [0usize; 16];
+    let mut code = 0i32;
+    let mut ptr = 0usize;
+    for i in 0..16 {
+        min_code[i] = code;
+        val_ptr[i] = ptr;
+        code += counts[i] as i32;
+        max_code[i] = code - 1;
+        ptr += counts[i] as usize;
+        code <<= 1;
+    }
+    Some(HuffTable {
+        min_code,
+        max_code,
+        val_ptr,
+        values: values.to_vec(),
+    })
+}
+
+struct BitReader<'a> {
+    data: &'a [u8],
+    pos: usize,
+    cur: u8,
+    bitpos: u8,
+}
+
+impl<'a> BitReader<'a> {
+    fn new(data: &'a [u8]) -> Self {
+        BitReader {
+            data,
+            pos: 0,
+            cur: 0,
+            bitpos: 8,
+        }
+    }
+
+    fn next_byte(&mut self) -> Option<u8> {
+        let b = *self.data.get(self.pos)?;
+        self.pos += 1;
+        if b == 0xFF {
+            let n = *self.data.get(self.pos)?;
+            if n == 0x00 {
+                self.pos += 1;
+                return Some(0xFF);
+            }
+            self.pos -= 1;
+            return None;
+        }
+        Some(b)
+    }
+
+    fn read_bit(&mut self) -> Option<u32> {
+        if self.bitpos == 8 {
+            self.cur = self.next_byte()?;
+            self.bitpos = 0;
+        }
+        let bit = (self.cur >> (7 - self.bitpos)) & 1;
+        self.bitpos += 1;
+        Some(bit as u32)
+    }
+
+    fn read_bits(&mut self, n: u32) -> Option<u32> {
+        let mut v = 0u32;
+        for _ in 0..n {
+            v = (v << 1) | self.read_bit()?;
+        }
+        Some(v)
+    }
+
+    fn align_byte(&mut self) {
+        self.bitpos = 8;
+    }
+
+    fn read_raw(&mut self) -> Option<u8> {
+        let b = *self.data.get(self.pos)?;
+        self.pos += 1;
+        Some(b)
+    }
+}
+
+fn huff_decode(bits: &mut BitReader, table: &HuffTable) -> Option<u8> {
+    let mut code = 0i32;
+    for i in 0..16 {
+        let b = bits.read_bit()? as i32;
+        code = (code << 1) | b;
+        if code <= table.max_code[i] {
+            let idx = table.val_ptr[i] + (code - table.min_code[i]) as usize;
+            return table.values.get(idx).copied();
+        }
+    }
+    None
+}
+
+fn receive_extend(bits: &mut BitReader, s: u32) -> Option<i32> {
+    if s == 0 {
+        return Some(0);
+    }
+    let v = bits.read_bits(s)? as i32;
+    let half = 1i32 << (s - 1);
+    Some(if v < half { v - (1 << s) + 1 } else { v })
+}
+
+fn idct1d(p: &mut [f64]) {
+    let mut tmp = [0.0f64; 8];
+    for x in 0..8 {
+        let mut sum = 0.0;
+        for u in 0..8 {
+            let cu = if u == 0 { 0.707_106_781_186_547_6 } else { 1.0 };
+            let angle = (2.0 * x as f64 + 1.0) * u as f64 * std::f64::consts::PI / 16.0;
+            sum += cu * p[u] * angle.cos();
+        }
+        tmp[x] = sum * 0.5;
+    }
+    p.copy_from_slice(&tmp);
+}
+
+fn idct2d(block: &mut [f64; 64]) {
+    for i in 0..8 {
+        idct1d(&mut block[i * 8..i * 8 + 8]);
+    }
+    let mut col = [0.0f64; 8];
+    for j in 0..8 {
+        for i in 0..8 {
+            col[i] = block[i * 8 + j];
+        }
+        idct1d(&mut col);
+        for i in 0..8 {
+            block[i * 8 + j] = col[i];
+        }
+    }
+}
+
+fn decode_block(
+    bits: &mut BitReader,
+    dc_t: &HuffTable,
+    ac_t: &HuffTable,
+    qt: &[u16; 64],
+    pred: &mut i32,
+) -> Option<[u8; 64]> {
+    let mut zz = [0i32; 64];
+    let t = huff_decode(bits, dc_t)? as i32;
+    let diff = if t == 0 {
+        0
+    } else {
+        receive_extend(bits, t as u32)?
+    };
+    *pred += diff;
+    zz[0] = *pred;
+    let mut k = 1;
+    while k < 64 {
+        let rs = huff_decode(bits, ac_t)?;
+        if rs == 0x00 {
+            break;
+        }
+        let r = (rs >> 4) as usize;
+        let s = (rs & 0x0F) as u32;
+        if s == 0 {
+            if r == 15 {
+                k += 16;
+                continue;
+            }
+            return None;
+        }
+        k += r;
+        if k >= 64 {
+            return None;
+        }
+        zz[k] = receive_extend(bits, s)?;
+        k += 1;
+    }
+    let mut natural = [0.0f64; 64];
+    for i in 0..64 {
+        natural[ZIGZAG[i]] = zz[i] as f64 * qt[i] as f64;
+    }
+    idct2d(&mut natural);
+    let mut out = [0u8; 64];
+    for i in 0..64 {
+        out[i] = (natural[i] + 128.0).clamp(0.0, 255.0).round() as u8;
+    }
+    Some(out)
+}
+
+impl JpegDecoder {
+    fn parse_sof(&mut self, seg: &[u8]) -> Option<()> {
+        if *seg.first()? != 8 {
+            return None;
+        }
+        let height = be16(seg, 1)?;
+        let width = be16(seg, 3)?;
+        let n = *seg.get(5)? as usize;
+        let mut components = Vec::with_capacity(n);
+        for i in 0..n {
+            let off = 6 + i * 3;
+            let id = *seg.get(off)?;
+            let hv = *seg.get(off + 1)?;
+            let qt_id = *seg.get(off + 2)?;
+            let h = hv >> 4;
+            let v = hv & 0x0F;
+            if h == 0 || v == 0 {
+                return None;
+            }
+            components.push(JpegComponent { id, h, v, qt_id });
+        }
+        self.frame = Some(JpegFrame {
+            width,
+            height,
+            components,
+        });
+        Some(())
+    }
+
+    fn parse_dqt(&mut self, seg: &[u8]) -> Option<()> {
+        let mut pos = 0usize;
+        while pos < seg.len() {
+            let info = *seg.get(pos)?;
+            pos += 1;
+            let precision = info >> 4;
+            let id = (info & 0x0F) as usize;
+            if id >= 4 {
+                return None;
+            }
+            let mut table = [0u16; 64];
+            if precision == 0 {
+                for v in table.iter_mut() {
+                    *v = *seg.get(pos)? as u16;
+                    pos += 1;
+                }
+            } else {
+                for v in table.iter_mut() {
+                    *v = be16(seg, pos)?;
+                    pos += 2;
+                }
+            }
+            self.quant[id] = Some(table);
+        }
+        Some(())
+    }
+
+    fn parse_dht(&mut self, seg: &[u8]) -> Option<()> {
+        let mut pos = 0usize;
+        while pos < seg.len() {
+            let info = *seg.get(pos)?;
+            pos += 1;
+            let class = info >> 4;
+            let id = (info & 0x0F) as usize;
+            if class > 1 || id >= 4 {
+                return None;
+            }
+            let mut counts = [0u8; 16];
+            for c in counts.iter_mut() {
+                *c = *seg.get(pos)?;
+                pos += 1;
+            }
+            let total: usize = counts.iter().map(|&c| c as usize).sum();
+            let values = seg.get(pos..pos + total)?.to_vec();
+            pos += total;
+            let table = build_huffman(&counts, &values)?;
+            if class == 0 {
+                self.dc[id] = Some(table);
+            } else {
+                self.ac[id] = Some(table);
+            }
+        }
+        Some(())
+    }
+}
+
+fn parse_sos(dec: &mut JpegDecoder, data: &[u8], pos: usize) -> Option<usize> {
+    let len = be16(data, pos)? as usize;
+    if len < 2 {
+        return None;
+    }
+    let seg_end = pos + len;
+    let mut p = pos + 2;
+    let ns = *data.get(p)? as usize;
+    p += 1;
+    if ns == 0 || ns > 4 {
+        return None;
+    }
+    let mut scan = Vec::with_capacity(ns);
+    for _ in 0..ns {
+        let id = *data.get(p)?;
+        let t = *data.get(p + 1)?;
+        p += 2;
+        scan.push((id, t >> 4, t & 0x0F));
+    }
+    let ss = *data.get(p)?;
+    let se = *data.get(p + 1)?;
+    let ahal = *data.get(p + 2)?;
+    if ss != 0 || se != 63 || ahal != 0 {
+        return None;
+    }
+    dec.scan = scan;
+    Some(seg_end)
+}
+
+struct Plane {
+    width: usize,
+    height: usize,
+    data: Vec<u8>,
+}
+
+fn to_interleaved(planes: &[Plane], width: usize, height: usize, ids: &[u8]) -> Option<Vec<u8>> {
+    if planes.len() == 1 {
+        let p = &planes[0];
+        let mut out = vec![0u8; width * height];
+        for y in 0..height {
+            let sy = y * p.height / height;
+            for x in 0..width {
+                let sx = x * p.width / width;
+                out[y * width + x] = p.data[sy * p.width + sx];
+            }
+        }
+        return Some(out);
+    }
+    if planes.len() != 3 {
+        return None;
+    }
+    let is_ycbcr = ids == [1, 2, 3].as_slice();
+    let mut out = vec![0u8; width * height * 3];
+    for y in 0..height {
+        for x in 0..width {
+            let sample = |ci: usize| -> u8 {
+                let p = &planes[ci];
+                let sx = x * p.width / width;
+                let sy = y * p.height / height;
+                p.data[sy * p.width + sx]
+            };
+            let c0 = sample(0) as f64;
+            let c1 = sample(1) as f64;
+            let c2 = sample(2) as f64;
+            let (r, g, b) = if is_ycbcr {
+                (
+                    c0 + 1.402 * (c2 - 128.0),
+                    c0 - 0.344_136 * (c1 - 128.0) - 0.714_136 * (c2 - 128.0),
+                    c0 + 1.772 * (c1 - 128.0),
+                )
+            } else {
+                (c0, c1, c2)
+            };
+            let clamp = |v: f64| -> u8 {
+                if v < 0.0 {
+                    0
+                } else if v > 255.0 {
+                    255
+                } else {
+                    v.round() as u8
+                }
+            };
+            let o = (y * width + x) * 3;
+            out[o] = clamp(r);
+            out[o + 1] = clamp(g);
+            out[o + 2] = clamp(b);
+        }
+    }
+    Some(out)
+}
+
+fn decode_scan(dec: &JpegDecoder, data: &[u8], start: usize) -> Option<JpegImage> {
+    let frame = dec.frame.as_ref()?;
+    let max_h = frame.components.iter().map(|c| c.h).max()? as usize;
+    let max_v = frame.components.iter().map(|c| c.v).max()? as usize;
+    let mcus_x = (frame.width as usize).div_ceil(8 * max_h);
+    let mcus_y = (frame.height as usize).div_ceil(8 * max_v);
+
+    let mut scan_info: Vec<(usize, JpegComponent, u8, u8)> = Vec::with_capacity(dec.scan.len());
+    for &(id, dc_id, ac_id) in &dec.scan {
+        let frame_idx = frame.components.iter().position(|c| c.id == id)?;
+        let comp = frame.components[frame_idx];
+        scan_info.push((frame_idx, comp, dc_id, ac_id));
+    }
+    let n = scan_info.len();
+
+    let mut planes: Vec<Plane> = frame
+        .components
+        .iter()
+        .map(|c| {
+            let w = mcus_x * c.h as usize * 8;
+            let h = mcus_y * c.v as usize * 8;
+            Plane {
+                width: w,
+                height: h,
+                data: vec![0u8; w * h],
+            }
+        })
+        .collect();
+
+    let mut dc_pred = vec![0i32; n];
+    let mut bits = BitReader::new(&data[start..]);
+    let mut mcu_count = 0usize;
+
+    for mcu_y in 0..mcus_y {
+        for mcu_x in 0..mcus_x {
+            if dec.restart_interval > 0
+                && mcu_count > 0
+                && mcu_count % dec.restart_interval as usize == 0
+            {
+                bits.align_byte();
+                if bits.read_raw()? != 0xFF {
+                    return None;
+                }
+                let m = bits.read_raw()?;
+                if !(0xD0..=0xD7).contains(&m) {
+                    return None;
+                }
+                for p in dc_pred.iter_mut() {
+                    *p = 0;
+                }
+            }
+            mcu_count += 1;
+            for si in 0..n {
+                let (frame_idx, comp, dc_id, ac_id) = scan_info[si];
+                let dc_t = dec.dc[dc_id as usize].as_ref()?;
+                let ac_t = dec.ac[ac_id as usize].as_ref()?;
+                let qt = dec.quant[comp.qt_id as usize].as_ref()?;
+                for by in 0..comp.v as usize {
+                    for bx in 0..comp.h as usize {
+                        let block = decode_block(&mut bits, dc_t, ac_t, qt, &mut dc_pred[si])?;
+                        let gx = mcu_x * comp.h as usize + bx;
+                        let gy = mcu_y * comp.v as usize + by;
+                        let plane = &mut planes[frame_idx];
+                        for i in 0..8 {
+                            let src = i * 8;
+                            let dst = (gy * 8 + i) * plane.width + gx * 8;
+                            plane.data[dst..dst + 8].copy_from_slice(&block[src..src + 8]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let width = frame.width as usize;
+    let height = frame.height as usize;
+    let comp_ids: Vec<u8> = frame.components.iter().map(|c| c.id).collect();
+    let pixels = to_interleaved(&planes, width, height, &comp_ids)?;
+    Some(JpegImage {
+        width,
+        height,
+        components: planes.len(),
+        pixels,
+    })
+}
+
+fn decode_jpeg(data: &[u8]) -> Option<JpegImage> {
+    let mut dec = JpegDecoder {
+        quant: [None, None, None, None],
+        dc: [None, None, None, None],
+        ac: [None, None, None, None],
+        frame: None,
+        scan: Vec::new(),
+        restart_interval: 0,
+    };
+    let mut pos = 0usize;
+    loop {
+        if *data.get(pos)? != 0xFF {
+            return None;
+        }
+        while *data.get(pos)? == 0xFF {
+            pos += 1;
+        }
+        let marker = *data.get(pos)?;
+        pos += 1;
+        match marker {
+            0xD8 | 0xD9 => continue,
+            0xDA => {
+                let scan_start = parse_sos(&mut dec, data, pos)?;
+                return decode_scan(&dec, data, scan_start);
+            }
+            _ if (0xD0..=0xD7).contains(&marker) => continue,
+            _ => {
+                let len = be16(data, pos)? as usize;
+                pos += 2;
+                if len < 2 {
+                    return None;
+                }
+                let seg_end = pos + len - 2;
+                let seg = data.get(pos..seg_end)?;
+                match marker {
+                    0xDB => dec.parse_dqt(seg)?,
+                    0xC4 => dec.parse_dht(seg)?,
+                    0xC0 | 0xC1 => dec.parse_sof(seg)?,
+                    0xDD => {
+                        if seg.len() >= 2 {
+                            dec.restart_interval = be16(seg, 0)?;
+                        }
+                    }
+                    _ => {}
+                }
+                pos = seg_end;
+            }
+        }
+    }
+}
+
+fn decode_jpeg_with_tables(block: &[u8], tables: Option<&[u8]>) -> Option<JpegImage> {
+    match tables {
+        Some(t) if !t.is_empty() => {
+            let mut combined = Vec::with_capacity(t.len() + block.len());
+            combined.extend_from_slice(t);
+            combined.extend_from_slice(block);
+            decode_jpeg(&combined)
+        }
+        _ => decode_jpeg(block),
+    }
+}
+
+fn jpeg_bytes_per_pixel(bits_per_sample: &[u16], samples_per_pixel: u16) -> Option<usize> {
+    if bits_per_sample.is_empty() {
+        return Some(samples_per_pixel as usize);
+    }
+    let mut bpp = 0usize;
+    for &b in bits_per_sample {
+        if b != 8 {
+            return None;
+        }
+        bpp += 1;
+    }
+    if bpp == 0 { None } else { Some(bpp) }
+}
+
+fn assemble_jpeg(
+    data: &[u8],
+    width: u32,
+    height: u32,
+    bpp: usize,
+    jpeg_tables: Option<&[u8]>,
+    offsets: &[u32],
+    counts: &[u32],
+    tiled: bool,
+    block_w: u32,
+    block_h: u32,
+) -> Option<Vec<u8>> {
+    let w = width as usize;
+    let h = height as usize;
+    let mut out = vec![0u8; w * h * bpp];
+    let blocks_across = if tiled {
+        w.div_ceil(block_w as usize)
+    } else {
+        1
+    };
+    let mut row = 0usize;
+    for i in 0..offsets.len() {
+        if row >= h {
+            break;
+        }
+        let off = *offsets.get(i)? as usize;
+        let cnt = *counts.get(i)? as usize;
+        let block = data.get(off..off.checked_add(cnt)?)?;
+        let img = decode_jpeg_with_tables(block, jpeg_tables)?;
+        if img.components != bpp {
+            return None;
+        }
+        let (bx, by) = if tiled {
+            let tx = i % blocks_across;
+            let ty = i / blocks_across;
+            (tx * block_w as usize, ty * block_h as usize)
+        } else {
+            (0, row)
+        };
+        let iw = img.width;
+        let ih = img.height;
+        if bx >= w || by >= h {
+            return None;
+        }
+        let copy_w = iw.min(w - bx);
+        let copy_h = ih.min(h - by);
+        for r in 0..copy_h {
+            let src = r * iw * bpp;
+            let dst = (by + r) * w * bpp + bx * bpp;
+            out[dst..dst + copy_w * bpp].copy_from_slice(&img.pixels[src..src + copy_w * bpp]);
+        }
+        if !tiled {
+            row += ih;
+        }
+    }
+    Some(out)
+}
+
 pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
     let header = data.get(0..8)?;
     let little = match &header[0..2] {
@@ -333,6 +973,11 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
     let mut model_tiepoint = None;
     let mut model_transformation = None;
     let mut geo_keys = None;
+    let mut tile_width = None;
+    let mut tile_length = None;
+    let mut tile_offsets = None;
+    let mut tile_byte_counts = None;
+    let mut jpeg_tables = None;
 
     for e in &entries {
         match e.tag {
@@ -346,6 +991,11 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
             278 => rows_per_strip = entry_scalar(data, e, little),
             279 => strip_byte_counts = entry_offsets(data, e, little),
             284 => planar_configuration = entry_scalar(data, e, little).map(|v| v as u16),
+            322 => tile_width = entry_scalar(data, e, little),
+            323 => tile_length = entry_scalar(data, e, little),
+            324 => tile_offsets = entry_offsets(data, e, little),
+            325 => tile_byte_counts = entry_offsets(data, e, little),
+            347 => jpeg_tables = entry_raw(data, e, little),
             33550 => model_pixel_scale = entry_double_vec(data, e, little),
             33922 => model_tiepoint = entry_double_vec(data, e, little),
             34264 => model_transformation = entry_double_vec(data, e, little),
@@ -376,28 +1026,69 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
             Some(v) => v,
             None => &[],
         };
-        let decoded = match compression {
-            1 => decode_strips(
-                data,
-                width,
-                height,
-                &bits_per_sample,
-                rows_per_strip,
-                offsets,
-                counts,
-                raw_strip,
-            ),
-            5 => decode_strips(
-                data,
-                width,
-                height,
-                &bits_per_sample,
-                rows_per_strip,
-                offsets,
-                counts,
-                decode_lzw_strip,
-            ),
-            _ => None,
+        let decoded = if compression == 7 {
+            let bpp = match jpeg_bytes_per_pixel(&bits_per_sample, samples_per_pixel) {
+                Some(b) => b,
+                None => 0,
+            };
+            if bpp == 0 {
+                None
+            } else if let (Some(tw), Some(tl), Some(to), Some(tc)) = (
+                tile_width,
+                tile_length,
+                tile_offsets.as_deref(),
+                tile_byte_counts.as_deref(),
+            ) {
+                assemble_jpeg(
+                    data,
+                    width,
+                    height,
+                    bpp,
+                    jpeg_tables.as_deref(),
+                    to,
+                    tc,
+                    true,
+                    tw,
+                    tl,
+                )
+            } else {
+                assemble_jpeg(
+                    data,
+                    width,
+                    height,
+                    bpp,
+                    jpeg_tables.as_deref(),
+                    offsets,
+                    counts,
+                    false,
+                    width,
+                    rows_per_strip,
+                )
+            }
+        } else {
+            match compression {
+                1 => decode_strips(
+                    data,
+                    width,
+                    height,
+                    &bits_per_sample,
+                    rows_per_strip,
+                    offsets,
+                    counts,
+                    raw_strip,
+                ),
+                5 => decode_strips(
+                    data,
+                    width,
+                    height,
+                    &bits_per_sample,
+                    rows_per_strip,
+                    offsets,
+                    counts,
+                    decode_lzw_strip,
+                ),
+                _ => None,
+            }
         };
         match decoded {
             Some(v) => v,
@@ -667,5 +1358,174 @@ mod tests {
         assert!(parse_tiff(b"PK\x03\x04").is_none());
         assert!(parse_tiff(b"II\x00\x00").is_none());
         assert!(parse_tiff(b"MM\x00\x2a\x00\x00\x00\x08").is_none());
+    }
+
+    fn build_jpeg(
+        width: u16,
+        height: u16,
+        components: &[(u8, u8, u8)],
+        dc_counts: [u8; 16],
+        dc_symbols: &[u8],
+        entropy_bits: &[u8],
+    ) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(&[0xFF, 0xD8]);
+        out.extend_from_slice(&[0xFF, 0xDB, 0x00, 0x43, 0x00]);
+        out.extend_from_slice(&[1u8; 64]);
+        let n = components.len() as u8;
+        out.extend_from_slice(&[0xFF, 0xC0]);
+        out.extend_from_slice(&((8 + 3 * n as usize) as u16).to_be_bytes());
+        out.push(8);
+        out.extend_from_slice(&height.to_be_bytes());
+        out.extend_from_slice(&width.to_be_bytes());
+        out.push(n);
+        for &(id, h, v) in components {
+            out.push(id);
+            out.push((h << 4) | v);
+            out.push(0);
+        }
+        out.extend_from_slice(&[0xFF, 0xC4]);
+        out.extend_from_slice(&((19 + dc_symbols.len()) as u16).to_be_bytes());
+        out.push(0x00);
+        out.extend_from_slice(&dc_counts);
+        out.extend_from_slice(dc_symbols);
+        out.extend_from_slice(&[0xFF, 0xC4, 0x00, 0x14, 0x10]);
+        out.extend_from_slice(&[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        out.push(0x00);
+        out.extend_from_slice(&[0xFF, 0xDA]);
+        out.extend_from_slice(&((6 + 2 * n as usize) as u16).to_be_bytes());
+        out.push(n);
+        for &(id, _, _) in components {
+            out.push(id);
+            out.push(0x00);
+        }
+        out.extend_from_slice(&[0x00, 0x3F, 0x00]);
+        let total = entropy_bits.len().div_ceil(8) * 8;
+        let mut byte = 0u8;
+        let mut nbits = 0usize;
+        for i in 0..total {
+            let bit = if i < entropy_bits.len() {
+                entropy_bits[i] & 1
+            } else {
+                1
+            };
+            byte = (byte << 1) | bit;
+            nbits += 1;
+            if nbits == 8 {
+                out.push(byte);
+                byte = 0;
+                nbits = 0;
+            }
+        }
+        out.extend_from_slice(&[0xFF, 0xD9]);
+        out
+    }
+
+    fn build_tiled_tiff(width: u32, height: u32, tile: &[u8]) -> Vec<u8> {
+        let n = 11u16;
+        let tile_offset = (8 + 2 + n as usize * 12 + 4) as u32;
+        let mut out = Vec::new();
+        out.extend_from_slice(b"II");
+        out.extend_from_slice(&42u16.to_le_bytes());
+        out.extend_from_slice(&8u32.to_le_bytes());
+        out.extend_from_slice(&n.to_le_bytes());
+        ifd_entry(&mut out, 256, 4, 1, width);
+        ifd_entry(&mut out, 257, 4, 1, height);
+        ifd_entry(&mut out, 258, 3, 1, 8);
+        ifd_entry(&mut out, 259, 3, 1, 7);
+        ifd_entry(&mut out, 262, 3, 1, 1);
+        ifd_entry(&mut out, 277, 3, 1, 1);
+        ifd_entry(&mut out, 284, 3, 1, 1);
+        ifd_entry(&mut out, 322, 4, 1, 16);
+        ifd_entry(&mut out, 323, 4, 1, 16);
+        ifd_entry(&mut out, 324, 4, 1, tile_offset);
+        ifd_entry(&mut out, 325, 4, 1, tile.len() as u32);
+        out.extend_from_slice(&0u32.to_le_bytes());
+        out.extend_from_slice(tile);
+        out
+    }
+
+    #[test]
+    fn decodes_baseline_jpeg_grayscale() {
+        let jpeg = build_jpeg(
+            8,
+            8,
+            &[(1, 1, 1)],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            &[0],
+            &[0, 0],
+        );
+        let img = decode_jpeg(&jpeg).unwrap();
+        assert_eq!(img.width, 8);
+        assert_eq!(img.height, 8);
+        assert_eq!(img.components, 1);
+        assert_eq!(img.pixels.len(), 64);
+        assert!(img.pixels.iter().all(|&b| b == 128));
+    }
+
+    #[test]
+    fn decodes_baseline_jpeg_rgb_passthrough() {
+        let comps = [(82u8, 1u8, 1u8), (71, 1, 1), (66, 1, 1)];
+        let jpeg = build_jpeg(
+            8,
+            8,
+            &comps,
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            &[0],
+            &[0; 6],
+        );
+        let img = decode_jpeg(&jpeg).unwrap();
+        assert_eq!(img.components, 3);
+        assert_eq!(img.pixels.len(), 8 * 8 * 3);
+        assert!(img.pixels.chunks(3).all(|px| px == [128, 128, 128]));
+    }
+
+    #[test]
+    fn decodes_ycbcr_to_rgb() {
+        let comps = [(1u8, 1u8, 1u8), (2, 1, 1), (3, 1, 1)];
+        let dc_counts = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let dc_symbols = [0x00u8, 0x04];
+        let bits = [0u8, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0];
+        let jpeg = build_jpeg(8, 8, &comps, dc_counts, &dc_symbols, &bits);
+        let img = decode_jpeg(&jpeg).unwrap();
+        assert_eq!(img.components, 3);
+        assert!(img.pixels.chunks(3).all(|px| px == [129, 127, 128]));
+    }
+
+    #[test]
+    fn parses_tiled_jpeg_tiff() {
+        let jpeg = build_jpeg(
+            16,
+            16,
+            &[(1, 1, 1)],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            &[0],
+            &[0; 8],
+        );
+        let data = build_tiled_tiff(16, 16, &jpeg);
+        let img = parse_tiff(&data).unwrap();
+        assert_eq!(img.width, 16);
+        assert_eq!(img.height, 16);
+        assert_eq!(img.compression, 7);
+        assert_eq!(img.pixels.len(), 16 * 16);
+        assert!(img.pixels.iter().all(|&b| b == 128));
+    }
+
+    #[test]
+    fn crops_edge_tile() {
+        let jpeg = build_jpeg(
+            16,
+            16,
+            &[(1, 1, 1)],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            &[0],
+            &[0; 8],
+        );
+        let data = build_tiled_tiff(8, 8, &jpeg);
+        let img = parse_tiff(&data).unwrap();
+        assert_eq!(img.width, 8);
+        assert_eq!(img.height, 8);
+        assert_eq!(img.pixels.len(), 64);
+        assert!(img.pixels.iter().all(|&b| b == 128));
     }
 }
