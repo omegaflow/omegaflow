@@ -348,6 +348,68 @@ pub fn unzip(data: &[u8]) -> Option<Vec<u8>> {
     None
 }
 
+pub struct TarMember {
+    pub name: String,
+    pub start: usize,
+    pub end: usize,
+}
+
+fn tar_octal(field: &[u8]) -> Option<usize> {
+    let mut value = 0usize;
+    let mut any = false;
+    for &b in field {
+        if b == 0 || b == b' ' {
+            break;
+        }
+        if !(b'0'..=b'7').contains(&b) {
+            return None;
+        }
+        value = value * 8 + (b - b'0') as usize;
+        any = true;
+    }
+    if any { Some(value) } else { None }
+}
+
+fn tar_text(field: &[u8]) -> String {
+    let end = field.iter().position(|&b| b == 0).unwrap_or(field.len());
+    String::from_utf8_lossy(&field[..end]).to_string()
+}
+
+pub fn tar_members(tar: &[u8]) -> Option<Vec<TarMember>> {
+    let mut out = Vec::new();
+    let mut off = 0usize;
+    let mut long_name: Option<String> = None;
+    loop {
+        let header = tar.get(off..off.checked_add(512)?)?;
+        if header.iter().all(|&b| b == 0) {
+            return Some(out);
+        }
+        let size = tar_octal(&header[124..136])?;
+        let typeflag = header[156];
+        let data_off = off + 512;
+        let data_end = data_off.checked_add(size)?;
+        if data_end > tar.len() {
+            return None;
+        }
+        match typeflag {
+            b'L' => long_name = Some(tar_text(tar.get(data_off..data_end)?)),
+            b'0' | 0 => {
+                let name = match long_name.take() {
+                    Some(n) => n,
+                    None => tar_text(&header[..100]),
+                };
+                out.push(TarMember {
+                    name,
+                    start: data_off,
+                    end: data_end,
+                });
+            }
+            _ => long_name = None,
+        }
+        off = data_end.checked_add((512 - size % 512) % 512)?;
+    }
+}
+
 pub fn gunzip_stream<R: std::io::Read>(src: R, mut sink: impl FnMut(&[u8])) -> Result<u64, String> {
     let mut z = ZStream {
         src,
@@ -903,5 +965,77 @@ mod tests {
         let last = gz.len() - 1;
         gz[last] ^= 0x01;
         assert!(gunzip_stream(&gz[..], |_| {}).is_err());
+    }
+
+    fn tar_header(name: &str, size: usize, typeflag: u8) -> [u8; 512] {
+        let mut h = [0u8; 512];
+        h[..name.len()].copy_from_slice(name.as_bytes());
+        let octal = format!("{size:011o}");
+        h[124..135].copy_from_slice(octal.as_bytes());
+        h[156] = typeflag;
+        h[257..262].copy_from_slice(b"ustar");
+        h[148..156].fill(b' ');
+        let sum: u32 = h.iter().map(|&b| b as u32).sum();
+        let checksum = format!("{sum:06o}");
+        h[148..154].copy_from_slice(checksum.as_bytes());
+        h[154] = 0;
+        h[155] = b' ';
+        h
+    }
+
+    fn pad_to_block(out: &mut Vec<u8>) {
+        out.resize(out.len().div_ceil(512) * 512, 0);
+    }
+
+    #[test]
+    fn tar_members_reads_regular_entries_and_long_names() {
+        let long = "a/very/long/member/name/that/exceeds/the/one-hundred/byte/field/limit_of/the_tar_header_nc";
+        let mut tar = Vec::new();
+        tar.extend_from_slice(&tar_header("short.txt", 3, b'0'));
+        tar.extend_from_slice(b"abc");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&tar_header("././@LongLink", long.len(), b'L'));
+        tar.extend_from_slice(long.as_bytes());
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&tar_header("long_nc", 2, b'0'));
+        tar.extend_from_slice(b"hi");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&[0u8; 1024]);
+
+        let members = tar_members(&tar).expect("the tar enumerates");
+        assert_eq!(members.len(), 2);
+        assert_eq!(members[0].name, "short.txt");
+        assert_eq!(&tar[members[0].start..members[0].end], b"abc");
+        assert_eq!(members[1].name, long);
+        assert_eq!(&tar[members[1].start..members[1].end], b"hi");
+    }
+
+    #[test]
+    fn tar_members_rejects_truncated_header() {
+        assert!(tar_members(b"not a tar").is_none());
+        let mut tar = Vec::new();
+        tar.extend_from_slice(&tar_header("x", 10, b'0'));
+        assert!(tar_members(&tar).is_none());
+    }
+
+    #[test]
+    #[ignore = "reads the tarball named by OMEGAFLOW_COSMIC_TARBALL"]
+    fn real_cosmic_tarball_enumerates_granules() {
+        let path = std::env::var("OMEGAFLOW_COSMIC_TARBALL")
+            .expect("OMEGAFLOW_COSMIC_TARBALL names a .tar.gz on disk");
+        let gz = std::fs::read(&path).expect("read the COSMIC tarball");
+        let tar = gunzip(&gz).expect("the gzip stream decodes");
+        let members = tar_members(&tar).expect("the tar stream enumerates");
+        assert!(members.len() > 1, "the tarball carries many granules");
+        assert!(
+            members.iter().all(|m| m.name.ends_with("_nc")),
+            "every COSMIC granule name carries the _nc suffix"
+        );
+        let first = &members[0];
+        let magic = &tar[first.start..first.start + 4];
+        assert!(
+            magic == b"CDF\x01" || magic == b"CDF\x02",
+            "the first granule carries a CDF magic"
+        );
     }
 }
