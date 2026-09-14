@@ -1042,9 +1042,28 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
     }
 }
 
+const GODMODE_MODES: &[&str] = &[
+    "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs", "brave",
+    "datacite", "zenodo", "wayback",
+];
+
+fn godmode_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
+    let mut out = Vec::new();
+    for mode in GODMODE_MODES {
+        out.push(format!("=== {} ===", mode));
+        let mut lines = run_lines(mode, query, env);
+        lines.truncate(5);
+        out.extend(lines);
+    }
+    out
+}
+
 pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<String> {
     crate::token::set_secrets(env.clone());
     let max = 10usize;
+    if mode == "all" {
+        return godmode_lines(query, env);
+    }
     match mode {
         "arxiv" => arxiv_lines(query, max),
         "ads" => {
@@ -1094,6 +1113,21 @@ mod tests {
     fn urlencode_escapes_reserved_bytes() {
         assert_eq!(urlencode("a b/c?d=e"), "a%20b%2Fc%3Fd%3De");
         assert_eq!(urlencode("safe-._~"), "safe-._~");
+    }
+
+    #[test]
+    fn godmode_mode_list_is_unique_and_covers_the_research_modes() {
+        let mut seen = std::collections::HashSet::new();
+        for mode in GODMODE_MODES {
+            assert!(seen.insert(*mode), "duplicate godmode mode: {}", mode);
+        }
+        for required in ["openalex", "arxiv", "crossref", "ads", "brave", "zenodo"] {
+            assert!(
+                GODMODE_MODES.contains(&required),
+                "godmode lacks {}",
+                required
+            );
+        }
     }
 
     #[test]
