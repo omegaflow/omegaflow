@@ -56,14 +56,14 @@ gewollt, nicht tot.
 
 ## 4. Zustandsmaschine + ledger.φ
 
-Zustände: `ausstehend | verifiziert | kompiliert | void | geparkt | disponiert`.
+Zustände: `ausstehend | verifiziert | kompiliert | void | parser-gap | disponiert`.
 
 - `ausstehend` — unberührt, offene Arbeit (entdeckt, noch nicht angefasst)
 - `verifiziert` — Sweep lief, Samples extrahiert, Merge in die Register steht aus
 - `kompiliert` — Kompilat gebaut (Struktur-Reader/Compiler lief, Asset erzeugt);
   die Disposition in die Register steht aus
 - `void` — Sweep lief, alle URLs void (diagnostiziert) — Korpus ist erschöpft
-- `geparkt` — Kandidat wartet auf einen Parser-Gap (Gap im Eintrag benannt)
+- `parser-gap` — Kandidat wartet auf einen benannten Parser-Gap (kein Parkplatz; der Parkplatz wurde 2026-09-08 geschlossen)
 - `disponiert` — in `sources.φ` / `dead_sources.φ` / `blocked_sources.φ` eingegangen; Eintrag wird entfernt (Git trägt ihn)
 
 Ledger-Format (wie dead_sources.φ, φ-Textformat):
@@ -324,7 +324,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   → 404 Remix-SPA. Circulars jetzt nur SPA-Suche + `/circulars/{id}.json`
   (JSON mit body-Freitext, KEINE ra/dec). Kein Listen-Feed gefunden — die
   `gcn_einstein_probe_*`-Blöcke in master.φ:27360-27385 sind stale
-  (Ledger: geparkt). TAP-Formen (verifiziert): ESO `archive.eso.org/tap_obs/sync`
+  (Ledger: parser-gap). TAP-Formen (verifiziert): ESO `archive.eso.org/tap_obs/sync`
   (nicht `/tap_obs/tap/sync` — 404) → csv; ESA-TAP-Server nur unter
   `eas.esac.esa.int/tap-server/tap` (AMA `archives.esac.esa.int/tap-server/tap`
   → 404); SARAO `/tap/sync` → Portal-HTML (kein TAP); ALMA TAP lebt
@@ -526,23 +526,23 @@ Port-Arbeit an den vorliegenden Befunden — Block-Drafts, `--probe`,
 Disposition — keine erneute Adress-Recherche. Stand 2026-08-19 nach
 Agenten-Durchlauf (Drafts: `phi/pipeline/queue/grind_astro_tap_2026-08-19.φ`,
 Befunde: `phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ`,
-Ledger: 4 Einträge geparkt):
+Ledger: 4 Einträge parser-gap):
 
-1. SPHEREx IRSA-TAP — Draft gebaut + Probe: void — IRSA liefert VOTable-JSON (s_ra/s_dec nur FIELD-Metadaten) + 3,18-MB-Antwort → geparkt (Parser-gap: VOTable-JSON).
+1. SPHEREx IRSA-TAP — Draft gebaut + Probe: void — IRSA liefert VOTable-JSON (s_ra/s_dec nur FIELD-Metadaten) + 3,18-MB-Antwort → parser-gap (Parser-gap: VOTable-JSON).
 2. eROSITA DR2 — HTML-Landing `erosita.mpe.mpg.de/dr2/`, kein API-Befund → pending.
 3. ESA-AMA-TAP — Basis 404; nur EAS/Euclid-TAP lebt → offen (richtiger AMA-Pfad ungefunden).
-4. Euclid-TAP — Draft gebaut + Probe: void — Antwortform `{metadata:[{name:…}], data:[[…]]}` (Rows als Skalar-Arrays) → geparkt (Parser-gap: Spaltennamen-aus-metadata).
-5. ESO-TAP — Draft gebaut + Probe: void — echte CSV (s_ra/s_dec verifiziert), aber Probe klassifiziert Header-CSV nicht → geparkt (Parser-gap: CSV-Header).
-6. ALMA-TAP parser-def bestätigt (VOTable-only, bleibt blocked); MeerKAT-TAP tot (Portal-Catch-all); Rubin-TAP 401 bestätigt (OAuth); Pan-STARRS — Draft gebaut (dr1 mean, 5 mag-Felder, `{ra}/{dec}/{radius}`) + Probe: void nur wegen Probe-Env-Marker (Endpoint lebt) → geparkt, Nachweis im Register-Lauf offen; ATLAS-Forced = Formularseite mit Token (key-needed-Kandidat); Keck/KOA — keine URL im Bestand → offen; LAMOST — `dr11.lamost.org` dns-tot, `www.lamost.org/dr11/` HTML-Portal.
-7. NRAO — Befund: Angular-SPA `data.nrao.edu/portal/`, REST-Pfade 404 (Ledger: geparkt).
-8. CHIME — Befund: Portal lebt, Count-Extract leer, Kataloge via CANFAR-DOIs (Ledger: geparkt).
-9. SVOM — GCN-v0.1-API tot, kein Listen-Feed → Block-Draft nicht möglich (Ledger: geparkt).
+4. Euclid-TAP — Draft gebaut + Probe: void — Antwortform `{metadata:[{name:…}], data:[[…]]}` (Rows als Skalar-Arrays) → parser-gap (Parser-gap: Spaltennamen-aus-metadata).
+5. ESO-TAP — Draft gebaut + Probe: void — echte CSV (s_ra/s_dec verifiziert), aber Probe klassifiziert Header-CSV nicht → parser-gap (Parser-gap: CSV-Header).
+6. ALMA-TAP parser-def bestätigt (VOTable-only, bleibt blocked); MeerKAT-TAP tot (Portal-Catch-all); Rubin-TAP 401 bestätigt (OAuth); Pan-STARRS — Draft gebaut (dr1 mean, 5 mag-Felder, `{ra}/{dec}/{radius}`) + Probe: void nur wegen Probe-Env-Marker (Endpoint lebt) → parser-gap, Nachweis im Register-Lauf offen; ATLAS-Forced = Formularseite mit Token (key-needed-Kandidat); Keck/KOA — keine URL im Bestand → offen; LAMOST — `dr11.lamost.org` dns-tot, `www.lamost.org/dr11/` HTML-Portal.
+7. NRAO — Befund: Angular-SPA `data.nrao.edu/portal/`, REST-Pfade 404 (Ledger: parser-gap).
+8. CHIME — Befund: Portal lebt, Count-Extract leer, Kataloge via CANFAR-DOIs (Ledger: parser-gap).
+9. SVOM — GCN-v0.1-API tot, kein Listen-Feed → Block-Draft nicht möglich (Ledger: parser-gap).
 10. LHAASO — Klassifikation vollzogen: `/lhaaso/pdl` = News-Seite 2021, kein Datenzugang → Decline als Datenquelle.
 11. MAGIC/HAWC — HTML+FITS-Portale (TLS-Ketten unvollständig, `-k` nötig) — FITS nicht konsumierbar → pending/parser-def.
 12. Herschel — HSA-Umzug in §13 nachgezogen (erledigt).
 13. JWST P0–P3 — Port-Entscheid (§14) weiter offen.
 14. Zukünftige Missionen (SKAO, LISA, ELT, Athena) — im Inventar §12 registriert, Startdaten unverifiziert, kein Bestand → kein Port, bis Daten existieren.
-15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten geparkt (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable).   Port-Arbeit der live-Kandidaten ausstehend.
+15. Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten, Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen, Labore, Unterwasser, Sonstiges) + 1 Nachprüf-Agent (Wayback) — Befunde: `phi/pipeline/research/agent_output/{satellites,aircraft,drones,space_stations,radiosondes,buoys,weather_stations,laboratories,underwater,misc}_2026-08-19.φ` + `terrestrial_{atmo,geo}_2026-08-19.φ` + `classify_2026-08-19.φ`. Ergebnis nach Taxonomie tot/declined/blocked/live/angekündigt: 18 live-Kandidaten parser-gap (ledger.φ: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO, IOOS-Glider, SmartBay, USGS-GW, NRCS-AWDB, IGRA, Wyoming, Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt); 14 blocked (blocked_sources.φ: EUMETSAT, GOSAT-GW, Airplanes.live, WeatherXM, AirQo, Sofar, IMD, KMA, SaveEcoBot, Meteomatics, CelesTrak, MeteoSwiss-Pollen, Météo-France, CTBTO — davon 3 ip-blocked, lokal nachprüfen); 5 dead/declined (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne, IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1, Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF, ITER, SPARC, DUNE, EMSO-SMART-Cable).   Port-Arbeit der live-Kandidaten ausstehend.
 
 ## 16. Die fünf CDN-Tore (Speisekammer-Filter)
 
