@@ -899,6 +899,7 @@ pub enum FitsValue {
     Bool(bool),
     Ints(Vec<i64>),
     Floats(Vec<f64>),
+    VarBytes(Vec<u8>),
     Unhandled(String),
 }
 
@@ -925,10 +926,9 @@ impl FitsTable {
                     _ => None,
                 }
             }
-            'P' | 'Q' => Some(FitsValue::Unhandled(format!(
-                "variable-length array '{}'",
-                col.code
-            ))),
+            'P' | 'Q' => Some(FitsValue::VarBytes(
+                self.cell_varlen(buf, row, col)?.to_vec(),
+            )),
             'I' | 'J' | 'K' | 'B' => {
                 if col.repeat == 1 {
                     if col.tscal == 1.0 && col.tzero == 0.0 {
@@ -966,7 +966,7 @@ impl FitsTable {
 
 #[cfg(test)]
 mod tests {
-    use super::{FitsHeader, FitsImage, FitsTable, FitsWcs, WcsProjection};
+    use super::{FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection};
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -1539,6 +1539,129 @@ mod tests {
         let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
         let flux = t.column("FLUX").unwrap();
         assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 5.0);
+    }
+
+    fn synth_varlen_p() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "5"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'DATA'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "'1PB'"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&3u32.to_be_bytes());
+        buf.extend_from_slice(&0u32.to_be_bytes());
+        buf.extend_from_slice(&2u32.to_be_bytes());
+        buf.extend_from_slice(&3u32.to_be_bytes());
+        buf.extend_from_slice(&[1, 2, 3, 4, 5]);
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn synth_varlen_q() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "16"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "2"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "4"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'DATA'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "'1QB'"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&4i64.to_be_bytes());
+        buf.extend_from_slice(&0i64.to_be_bytes());
+        buf.extend_from_slice(&1i64.to_be_bytes());
+        buf.extend_from_slice(&3i64.to_be_bytes());
+        buf.extend_from_slice(&[9, 8, 7, 6]);
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn bintable_reads_variable_length_p_column() {
+        let buf = synth_varlen_p();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        assert_eq!(t.row_bytes, 8);
+        assert_eq!(t.heap_bytes, 5);
+        let data = t.column("DATA").unwrap();
+        assert_eq!(data.code, 'P');
+        assert_eq!(data.width, 8);
+        assert_eq!(t.cell_varlen(&buf, 0, data).unwrap(), &[1, 2, 3]);
+        assert_eq!(t.cell_varlen(&buf, 1, data).unwrap(), &[4, 5]);
+        assert_eq!(
+            t.row(&buf, 0).unwrap(),
+            vec![FitsValue::VarBytes(vec![1, 2, 3])]
+        );
+        assert_eq!(
+            t.row(&buf, 1).unwrap(),
+            vec![FitsValue::VarBytes(vec![4, 5])]
+        );
+    }
+
+    #[test]
+    fn bintable_reads_variable_length_q_column() {
+        let buf = synth_varlen_q();
+        let (t, _next) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.n_rows, 2);
+        assert_eq!(t.row_bytes, 16);
+        assert_eq!(t.heap_bytes, 4);
+        let data = t.column("DATA").unwrap();
+        assert_eq!(data.code, 'Q');
+        assert_eq!(data.width, 16);
+        assert_eq!(t.cell_varlen(&buf, 0, data).unwrap(), &[9, 8, 7, 6]);
+        assert_eq!(t.cell_varlen(&buf, 1, data).unwrap(), &[6]);
+        assert_eq!(
+            t.row(&buf, 0).unwrap(),
+            vec![FitsValue::VarBytes(vec![9, 8, 7, 6])]
+        );
+        assert_eq!(t.row(&buf, 1).unwrap(), vec![FitsValue::VarBytes(vec![6])]);
     }
 
     #[test]
