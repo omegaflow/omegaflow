@@ -1259,7 +1259,8 @@ mod ca_bundle_tests {
 
     #[test]
     fn append_ca_reads_the_configured_bundle() {
-        let path = "/tmp/opencode/omegaflow_ca_bundle_test.pem";
+        let path = std::env::temp_dir().join("omegaflow_ca_bundle_test.pem");
+        let path = path.to_str().unwrap();
         std::fs::write(path, b"-----BEGIN CERTIFICATE-----\n").unwrap();
         unsafe {
             std::env::set_var("OMEGAFLOW_CA_BUNDLE", path);
