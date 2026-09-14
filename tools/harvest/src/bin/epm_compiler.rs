@@ -5,11 +5,12 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
+use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
 const CDN_TAG: &str = "ftp.iaaras.ru";
+const OUT_DIR: &str = "data/ftp.iaaras.ru";
 const EPM2021_BSP: &str = "https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp";
 const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
 const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
@@ -54,7 +55,11 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() { None } else { Some(text) }
+    if text.is_empty() {
+        None
+    } else {
+        Some(text)
+    }
 }
 
 fn fetch_bsp(url: &str) -> Option<PathBuf> {
@@ -133,7 +138,7 @@ fn main() {
         eprintln!(
             "  downloads https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp when no path is given"
         );
-        eprintln!("  emits ephemeris_epm_<body>.bin in the current directory");
+        eprintln!("  emits data/ftp.iaaras.ru/ephemeris_epm_<body>.bin");
         eprintln!(
             "  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched"
         );
@@ -214,6 +219,10 @@ fn main() {
     let in_scope = |name: &str| name == "sun" || woven.contains(&name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
+    if let Err(e) = std::fs::create_dir_all(OUT_DIR) {
+        eprintln!("epm: create {}: {}", OUT_DIR, e);
+        std::process::exit(1);
+    }
     for (target, name) in resolved_bodies(&bsps) {
         if !in_scope(&name) {
             eprintln!(
@@ -251,7 +260,7 @@ fn main() {
             );
             continue;
         }
-        let path = format!("ephemeris_epm_{}.bin", name);
+        let path = format!("{OUT_DIR}/ephemeris_epm_{}.bin", name);
         if !write_binary(
             &path, &name, &granules, &rotations, &nutation, &wgccre, None,
         ) {
@@ -278,7 +287,7 @@ fn main() {
         }
     }
     eprintln!(
-        "epm: {} body line(s) compiled into ephemeris_epm_<body>.bin, {} uploaded to the {} release",
+        "epm: {} body line(s) compiled into {OUT_DIR}/ephemeris_epm_<body>.bin, {} uploaded to the {} release",
         written, uploaded, CDN_TAG
     );
     if written == 0 {
