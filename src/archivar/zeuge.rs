@@ -21,6 +21,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
         b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
         }
+        b"ISCB" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Presence)),
         b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" => {
@@ -143,6 +144,18 @@ mod tests {
         assert_eq!(
             magic_identity(*b"OCS1"),
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+        );
+    }
+
+    #[test]
+    fn iscb_is_presence() {
+        assert_eq!(
+            magic_identity(*b"ISCB"),
+            Some(FeldIdentitaet::Zeuge(ZeugeArt::Presence))
+        );
+        assert_eq!(
+            zeugen_gate(Some(*b"ISCB"), Some(ZeugeArt::Presence), true),
+            ZeugeVerdict::Holds(ZeugeArt::Presence)
         );
     }
 
