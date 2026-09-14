@@ -1,8 +1,27 @@
 use crate::json;
+use std::collections::HashMap;
 use std::process::Command;
+use std::sync::OnceLock;
+
+static SECRETS: OnceLock<HashMap<String, String>> = OnceLock::new();
+
+pub fn set_secrets(env: HashMap<String, String>) {
+    let _ = SECRETS.set(env);
+}
+
+fn secret(name: &str) -> Option<String> {
+    if let Some(map) = SECRETS.get() {
+        if let Some(value) = map.get(name) {
+            if !value.is_empty() {
+                return Some(value.clone());
+            }
+        }
+    }
+    std::env::var(name).ok().filter(|v| !v.is_empty())
+}
 
 pub fn is_unauthorized(status: Option<i32>) -> bool {
-    status == Some(401)
+    matches!(status, Some(401) | Some(403) | Some(307))
 }
 
 pub fn is_earthdata_host(host: &str) -> bool {
@@ -18,8 +37,11 @@ fn parse_token(body: &str) -> Option<String> {
 }
 
 pub fn earthdata_token() -> Option<String> {
-    let user = std::env::var("EARTHDATA_USER").ok()?;
-    let pass = std::env::var("EARTHDATA_PASS").ok()?;
+    if let Some(token) = secret("EARTHDATA_EDL_TOKEN") {
+        return Some(token);
+    }
+    let user = secret("EARTHDATA_USER")?;
+    let pass = secret("EARTHDATA_PASS")?;
     let credentials = format!("{}:{}", user, pass);
     let out = Command::new("curl")
         .args([
@@ -40,10 +62,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn unauthorized_is_only_the_401() {
+    fn unauthorized_reads_the_earthdata_codes() {
         assert!(!is_unauthorized(None));
         assert!(is_unauthorized(Some(401)));
-        assert!(!is_unauthorized(Some(403)));
+        assert!(is_unauthorized(Some(403)));
+        assert!(is_unauthorized(Some(307)));
         assert!(!is_unauthorized(Some(200)));
     }
 
