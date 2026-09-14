@@ -244,7 +244,7 @@ fn gsics_lookup(table: &GsicsTable, band_id: u8) -> Option<(f64, f64)> {
 fn parse_gsics_txt(text: &str) -> GsicsTable {
     let mut table: GsicsTable = [None; 16];
     let mut goes16_first = false;
-    for line in text.lines() {
+    for line in text.replace('\r', "\n").lines() {
         if !goes16_first {
             if let (Some(i16), Some(i18)) = (line.find("GOES-16"), line.find("GOES-18")) {
                 if i16 < i18 {
@@ -707,10 +707,10 @@ mod tests {
 
     #[test]
     fn parse_gsics_txt_reads_goes16_slope_offset() {
-        let text = "GOES-16\t\tGOES-18\t\tGOES-19\n\
-Channel\tA\t B \tA\t B \tA\t B\n\
-1\t0.0000\t0.9078\t0.0000\t0.9765\t0.0000\t1.0230\n\
-16\t-0.2504\t1.0000\t0.2135\t1.0000\t-0.9346\t1.0000\n";
+        let text = "GOES-16\t\tGOES-18\t\tGOES-19\r\
+Channel\tA\t B \tA\t B \tA\t B\r\
+1\t0.0000\t0.9078\t0.0000\t0.9765\t0.0000\t1.0230\r\
+16\t-0.2504\t1.0000\t0.2135\t1.0000\t-0.9346\t1.0000\r";
         let table = parse_gsics_txt(text);
         assert_eq!(gsics_lookup(&table, 1), Some((0.9078, 0.0)));
         assert_eq!(gsics_lookup(&table, 16), Some((1.0000, -0.2504)));
