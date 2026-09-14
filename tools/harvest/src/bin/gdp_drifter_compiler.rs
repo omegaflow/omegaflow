@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::zarr::{blosc_decompress, Blosc};
-use omegaflow::archivar::{jpath_val, json_num, jstr, parse_json, JsonVal};
+use omegaflow::archivar::zarr::{Blosc, blosc_decompress};
+use omegaflow::archivar::{JsonVal, jpath_val, json_num, jstr, parse_json};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};
@@ -364,7 +364,10 @@ fn gather(base: &str, select: &Select) -> Result<Vec<DrifterRecord>, String> {
         Outcome::Measured(traj) => {
             eprintln!(
                 "gdp: trajectory {t} buoy {}, {} observations, {} records, {} observations skipped (absent/implausible position or clock)",
-                traj.id, traj.count, traj.records.len(), traj.skipped
+                traj.id,
+                traj.count,
+                traj.records.len(),
+                traj.skipped
             );
             Ok(traj.records)
         }
@@ -495,8 +498,7 @@ fn sst_label(r: &DrifterRecord) -> String {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage =
-        "usage: gdp_drifter_compiler --out <path> [--index <n> | --id <buoy-id> | --all] [--ci-mode]";
+    let usage = "usage: gdp_drifter_compiler --out <path> [--index <n> | --id <buoy-id> | --all] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
