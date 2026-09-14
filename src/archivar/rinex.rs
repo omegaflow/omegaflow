@@ -197,7 +197,11 @@ fn rinex_num(s: &str) -> Option<f64> {
     }
     let e = t.replace('D', "E").replace('d', "E");
     let v = e.parse::<f64>().ok()?;
-    if v.is_finite() { Some(v) } else { None }
+    if v.is_finite() {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn slice(s: &str, a: usize, b: usize) -> Option<&str> {
@@ -318,7 +322,11 @@ pub struct RinexNavGps {
 }
 
 fn two_digit_year(y: i64) -> i64 {
-    if y < 80 { y + 2000 } else { y + 1900 }
+    if y < 80 {
+        y + 2000
+    } else {
+        y + 1900
+    }
 }
 
 fn nav_epoch_unix(l0: &str) -> Option<f64> {
