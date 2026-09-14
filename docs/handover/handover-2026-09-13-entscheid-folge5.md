@@ -3,7 +3,7 @@
   session: Entscheid-Folge V
   class: handover
   date: 2026-09-13
-  sha256: 3511370a11455886d668f1be1a527ca6204e9cf1cf454c1add50ef8dd328da33
+  sha256: 94f5db14a043a34c03d7ce123d8e6e5318164be5848db0e70dabc1aa14469c98
   status: live
 -->
 # Handover — Entscheid-Folge V (2026-09-13)
@@ -57,6 +57,20 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 
 - 2026-09-15 — LISA Pathfinder: Selbstregistrierung ab 15.09.
 - 2026-12-02 — NOIRLab Speisekammer-Frage (Gaia DR4).
+
+## Reibung — Sprache & Toolkit (Session 2026-09-14)
+
+- Vokabular-Korrektur (Rat #5): `tools/utils/src/bin/friction_vocab.txt` —
+  `wiedervorlage`→`calendar`, `pausiert`→`paused`, `warten auf rückmeldung`→
+  `external-wait` (die datierte Wiedervorlage ist Kalender-Struktur, keine Reibung).
+  Schritt: Vokabular editieren, `giveup_scan --vocab friction_vocab.txt --root docs
+  --summary`.
+- Die fear-honest-Grabstellen (135) — Seed des Lookup-Index: jede Stelle bekommt
+  ihren nächsten Schritt. Schritt: `giveup_scan --vocab friction_vocab.txt --root
+  docs --class fear-honest`, je Stelle den Pfad benennen.
+- Toolkit-Praxis: `giveup_scan`/`bloat_scan`/`register_lookup` bei Session-Start
+  bzw. `register_lookup <term>` als erste Bewegung beim Unbekannten. Schritt: die
+  nächste Session führt die AGENTS.md-Friction-Regel aus.
 
 ## Abschluss
 

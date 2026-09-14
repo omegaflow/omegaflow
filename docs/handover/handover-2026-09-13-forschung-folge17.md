@@ -3,7 +3,7 @@
   session: Forschung-Folge XVII
   class: handover
   date: 2026-09-13
-  sha256: ba38366d28a04c65ac6db538dfcd03e7c9fc7fe62ea85833f6b12d5d03e631d6
+  sha256: 2bc73974c5dc0a07612ccd9b635eb57ec27b569ceff0f90af1322f15ac3b59d2
   status: live
 -->
 # Handover — Forschung-Folge XVII (2026-09-13)
@@ -44,6 +44,15 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   Per-Station-Pfadbedingung über einen Ray-Tracer (der Within-Event-36-km-Riss)
   und bedingte TE ab n ≥ 32 (Zweierpotenz-Boden). Der Gestalt-Treiber
   (GLO-30-DEM-CDN-Dispatch) steht noch offen.
+
+## AMS-02 — Endpoint offen, Konsument fehlt (Session 2026-09-14)
+
+- `phi/dead_sources.φ:415` ist widerlegt: HEASARC `ams02spec`/`ams02rates` offen
+  als FITS (`.../W3Browse/w3query.pl?tablehead=name%3Dams02spec&displaymode=FitsDisplay`)
+  und TDAT (`/FTP/heasarc/dbase/tdat_files/heasarc_ams02spec.tdat.gz`); der Reader
+  steht (`omegaflow::fits`, ASCII-TABLE + BINTABLE). Offen: der **Konsument** —
+  Teilchen ist Abstammung, kein Feld; frisst eine Nadel den Fluss als Zeuge/
+  Provenienz? Schritt: den Konsumenten entscheiden, dann Compiler.
 
 ## Abschluss
 

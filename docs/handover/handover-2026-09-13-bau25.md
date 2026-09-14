@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-13
-  sha256: 3726edcb3d674d46c1bd8c70c3cdb72ed644626cd173d1b7ecdfdd240e124f7a
+  sha256: 2ff8302b9475cccec88ba875f0e0c6f83e9c4b33e62c525a083045b7222b3192
   status: live
 -->
 # Handover — Bau & Code (2026-09-13, Bau25)
@@ -25,6 +25,24 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
   Espressif/CP210x/FTDI); dann läuft der nn-Strom als `nn=<ms>` am ttyACM. Die
   kuratierte BOM (`docs/specs/mantis-shrimp-bom.md`) und der AliExpress-Warenkorb
   (45 Artikel) stehen bereit.
+
+## archive_search — die Werkzeug-Naht (Session 2026-09-14)
+
+- Gebaut (gepusht): Exit-Leiter (direct→proton*→socks, on-block) + Rate-Gate;
+  `magic`-Sniffer; PDF-Stripper; `--datacite`; `--sniff` (magic+sha256); `--zenodo`;
+  `--isc` (FDSN); `--openalex`; Auto-Pagination (crossref/zenodo/openalex);
+  EarthData-Token-Hook (401, einmal); `--supermag`; `--heasarc`. Offen: der
+  Token-Hook ist live unverifiziert — Schritt: `EARTHDATA_USER`/`EARTHDATA_PASS`
+  setzen, `--sniff`/`--isc` gegen eine EarthData-URL proben. ISC-EHB-Grammatik
+  (`web-db-v4` `out_format`) bleibt offen/HTML — Schritt: das Format wiegen.
+
+## S3-Reader — die größte Werkzeug-Lücke
+
+- EarthData-Ports (GRACE-FO/SWOT PODAAC, SMAP, CDDIS IONEX) sind token-gated
+  (403/307); GES-DISC `/data/` + AppEEARS `/api/product` sind anonym 200. Fehlt:
+  `s3://`→HTTPS-Mapping + EDL→S3-Credentials-Exchange (`.../s3credentials`) + SigV4
+  in `src/archivar/range.rs`, Header-Injektion in `xml_harvester`. Schritt:
+  `range.rs` erweitern, Test gegen `podaac-ops-cumulus-public`.
 
 ## Abschluss
 
