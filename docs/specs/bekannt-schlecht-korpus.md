@@ -52,7 +52,6 @@ geprüft ist; ein Fund ist bestanden, wenn das Binary die Diskrepanz findet.
 | lead-geometry `3cf9c99f` | A | „100%/99%" | Abstract FP 100%→6,7%; §2.2 FP 99%, FN 90% |
 | lead-geometry `3cf9c99f` | V | 24→27 Pfeile | 24-Pfeil-Befund retracted; jetzt 27 |
 | lead-geometry `3cf9c99f` | N | Patient 201/202 | im Paper nicht auffindbar |
-| sonden-front `e1bdb8e0` | A | f* 50,73 vs. 50,71 | Z.266 „f*=50,73" vs. Z.283 „50,71 mHz" |
 | text-als-daten `01b1b4d1` | A | 24 Shuffles | Z.42 |
 | planet-nine-kbo-residue | D | Doppel-Zählung gestreut | 1663/1663/1666 (Tab1/Tab3) |
 | planet-nine-kbo-residue | D | Doppel-Zählung klassisch | 2884/2854 (Tab1/Tab3) |
@@ -60,8 +59,8 @@ geprüft ist; ein Fund ist bestanden, wenn das Binary die Diskrepanz findet.
 
 ## Umfang
 
-29 verifizierte Zeilen (Klasse A 14, Z 3, D 3, K 1, N 3, V 5). Klasse A/Z/D/K
-sind die Nummern-Funde, die das Binary finden **muss** (21); Klasse N sind
+28 verifizierte Zeilen (Klasse A 13, Z 3, D 3, K 1, N 3, V 5). Klasse A/Z/D/K
+sind die Nummern-Funde, die das Binary finden **muss** (20); Klasse N sind
 die unverankerten Zahlen (3); Klasse V (5) sind Struktur-Überdeklarationen,
 die das Nummern-Binary erwartungsgemäß **nicht** findet — sie zählen als
 „verpasst" in der Kalibration und markieren die Grenze des Werkzeugs.
