@@ -14,10 +14,11 @@ concurrency:
   cancel-in-progress: true
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -38,6 +39,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -48,4 +51,17 @@ jobs:
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
           "health: cargo test returned void" \
           "Test job failed on ${{ github.sha }}" \
+          health
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo clippy --all-targets -- -D clippy::unreachable -D clippy::todo -D clippy::unimplemented
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: cargo clippy returned void" \
+          "Clippy job failed on ${{ github.sha }}" \
           health
