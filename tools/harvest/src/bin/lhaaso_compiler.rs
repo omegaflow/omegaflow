@@ -1,17 +1,13 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::skymap::{
-    decode_rec, encode_rec, parse_header, write_header, SkymapRecord, HEADER_LEN, KIND_GAMMA,
-    REC_BYTES,
+    HEADER_LEN, KIND_GAMMA, REC_BYTES, SkymapRecord, decode_rec, encode_rec, parse_header,
+    write_header,
 };
 use std::io::{BufWriter, Write};
 
 fn parse_f64(cell: &str) -> Option<f64> {
     let v: f64 = cell.trim().parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn col_index(header: &str, name: &str) -> Option<usize> {

@@ -4,8 +4,8 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800, COMP_V1800};
 use omegaflow::archivar::{
-    body_barycenter_position, parse_ephemeris_binary, signal_reach, BodyEphemeris, C_LIGHT,
-    DIFFUSIVITY_MOLECULAR,
+    BodyEphemeris, C_LIGHT, DIFFUSIVITY_MOLECULAR, body_barycenter_position,
+    parse_ephemeris_binary, signal_reach,
 };
 use omegaflow::te::{permutation_entropy, phase_randomized_surrogate, transfer_entropy_lag};
 use omegaflow::wind::{self, RECEIVER_RAD1, RECEIVER_RAD2, RECEIVER_TNR};
@@ -808,12 +808,14 @@ fn main() {
             continue;
         };
         let tau_s = v.best_lag as f64 * DAY;
-        if series[v.from].force == FORCE_ADVECTIVE && wind_median_ms.is_none() {
-            absent_arrows.push((series[v.from].name, series[v.to].name, "v_force absent"));
-            continue;
-        }
         let advection = if series[v.from].force == FORCE_ADVECTIVE {
-            wind_median_ms.unwrap_or(0.0)
+            match wind_median_ms {
+                Some(v) => v,
+                None => {
+                    absent_arrows.push((series[v.from].name, series[v.to].name, "v_force absent"));
+                    continue;
+                }
+            }
         } else {
             0.0
         };
@@ -839,15 +841,15 @@ fn main() {
         );
     } else {
         for r in &audit_rows {
-            let min_tau = cone_min_tau(
-                series[r.from].force,
-                if series[r.from].force == FORCE_ADVECTIVE {
-                    wind_median_ms.unwrap_or(0.0)
-                } else {
-                    0.0
-                },
-                r.d,
-            );
+            let advection = if series[r.from].force == FORCE_ADVECTIVE {
+                match wind_median_ms {
+                    Some(v) => v,
+                    None => continue,
+                }
+            } else {
+                0.0
+            };
+            let min_tau = cone_min_tau(series[r.from].force, advection, r.d);
             let min_word = match min_tau {
                 Some(m) => format!("{:.3e} s", m),
                 None => "absent".to_string(),

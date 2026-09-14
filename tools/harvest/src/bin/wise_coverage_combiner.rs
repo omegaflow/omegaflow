@@ -1,6 +1,6 @@
 use omegaflow::archivar::footprint::{
-    band_code, decode_rec, encode_rec, parse_header, write_header, FootprintRecord, HEADER_LEN,
-    REC_BYTES,
+    FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec, parse_header,
+    write_header,
 };
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
@@ -306,7 +306,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let expect_tiles = match u64_arg(args, "--expect-tiles") {
         Some(v) => v,
         None => {
-            return Err("--expect-tiles names the survey tile count the parts must tile".into())
+            return Err("--expect-tiles names the survey tile count the parts must tile".into());
         }
     };
     let total = merge_partials(&parts_dir, &out_path, expect_tiles)?;

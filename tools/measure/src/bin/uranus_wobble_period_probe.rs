@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -63,11 +63,7 @@ fn parse_f64s(args: &[String], key: &str, count: usize) -> Option<Vec<f64>> {
             _ => return None,
         }
     }
-    if v.len() == count {
-        Some(v)
-    } else {
-        None
-    }
+    if v.len() == count { Some(v) } else { None }
 }
 
 fn vec_sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
@@ -173,7 +169,9 @@ fn report_peaks(out: &mut String, label: &str, series: &[(f64, f64)], p_min: f64
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus wobble period — the periodicity of the planet-center − system-barycenter offset (DE441).");
+    println!(
+        "Uranus wobble period — the periodicity of the planet-center − system-barycenter offset (DE441)."
+    );
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
@@ -194,7 +192,9 @@ fn main() {
         .unwrap_or(40.0);
 
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("uranus-wobble: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
+        eprintln!(
+            "uranus-wobble: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
+        );
         return;
     };
 

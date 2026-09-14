@@ -1,4 +1,4 @@
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use std::env;
 use std::fs;
 use std::io::Write;
@@ -402,11 +402,7 @@ fn tap_compiler_path(chunk_root: &Path) -> Option<PathBuf> {
         return Some(sibling);
     }
     let debug = chunk_root.join("target/debug/tap_compiler");
-    if debug.exists() {
-        Some(debug)
-    } else {
-        None
-    }
+    if debug.exists() { Some(debug) } else { None }
 }
 
 fn main() {

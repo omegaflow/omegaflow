@@ -599,14 +599,7 @@ fn main() {
             };
             println!(
                 "{} -> {}  lag {} in window {}..{}, TE {} > threshold {}; separation light time {} s",
-                d.driver,
-                d.target,
-                lag,
-                win.0,
-                win.1,
-                te,
-                thr,
-                lt
+                d.driver, d.target, lag, win.0, win.1, te, thr, lt
             );
         }
     }

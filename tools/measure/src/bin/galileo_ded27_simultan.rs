@@ -128,8 +128,13 @@ fn main() {
     let mut out: Vec<String> = Vec::new();
     out.push("galileo simultaneity two-station test (Ded-27) over the floor-era resid".to_string());
     out.push(format!("floor trio non-lock AGC samples kept: {kept}"));
-    out.push("floor sample = strength == -2560, |resid| <= 1000 Hz, station in {14,43,63}, mode 1..4".to_string());
-    out.push("run = maximal sample run within one (mode, station) with tdb gap <= 600 s".to_string());
+    out.push(
+        "floor sample = strength == -2560, |resid| <= 1000 Hz, station in {14,43,63}, mode 1..4"
+            .to_string(),
+    );
+    out.push(
+        "run = maximal sample run within one (mode, station) with tdb gap <= 600 s".to_string(),
+    );
     out.push("simultaneous cell = tdb overlap of one run at station A and one run at station B in the SAME mode".to_string());
     out.push("cell n = samples of that station inside the overlap window; cell RMS about the cell mean (reference loudness, loud >= 1 Hz)".to_string());
 
@@ -151,13 +156,21 @@ fn main() {
                         if hi <= lo {
                             continue;
                         }
-                        let mut aa = Acc { n: 0, sum: 0.0, sumsq: 0.0 };
+                        let mut aa = Acc {
+                            n: 0,
+                            sum: 0.0,
+                            sumsq: 0.0,
+                        };
                         for i in sa..=ea {
                             if va[i].0 >= lo && va[i].0 <= hi {
                                 aa.push(va[i].1);
                             }
                         }
-                        let mut bb = Acc { n: 0, sum: 0.0, sumsq: 0.0 };
+                        let mut bb = Acc {
+                            n: 0,
+                            sum: 0.0,
+                            sumsq: 0.0,
+                        };
                         for i in sb..=eb {
                             if vb[i].0 >= lo && vb[i].0 <= hi {
                                 bb.push(vb[i].1);
@@ -185,7 +198,10 @@ fn main() {
         .iter()
         .filter(|c| c.5 >= MIN_CELL && c.6 >= MIN_CELL)
         .collect();
-    out.push(format!("robust simultaneous cells (nA >= {MIN_CELL} AND nB >= {MIN_CELL}): {}", robust.len()));
+    out.push(format!(
+        "robust simultaneous cells (nA >= {MIN_CELL} AND nB >= {MIN_CELL}): {}",
+        robust.len()
+    ));
     for mode in 1..=4i64 {
         let cm: Vec<&(i64, i64, i64, f64, f64, usize, usize, f64, f64)> =
             cells.iter().filter(|c| c.0 == mode).collect();
@@ -238,17 +254,25 @@ fn main() {
             "  mode {mode}: both-loud {both} | A-loud-B-quiet {a_only} | A-quiet-B-loud {b_only} | both-quiet {none}"
         ));
     }
-    let both = robust.iter().filter(|c| c.7 >= LOUD_HZ && c.8 >= LOUD_HZ).count();
+    let both = robust
+        .iter()
+        .filter(|c| c.7 >= LOUD_HZ && c.8 >= LOUD_HZ)
+        .count();
     let one = robust
         .iter()
         .filter(|c| (c.7 >= LOUD_HZ) != (c.8 >= LOUD_HZ))
         .count();
-    let none = robust.iter().filter(|c| c.7 < LOUD_HZ && c.8 < LOUD_HZ).count();
+    let none = robust
+        .iter()
+        .filter(|c| c.7 < LOUD_HZ && c.8 < LOUD_HZ)
+        .count();
     out.push(format!(
         "robust totals: both-loud {both} | one-loud {one} | both-quiet {none}"
     ));
 
-    out.push(format!("\nanchor 1995-11-24 (day {ANCHOR_DAY}) simultaneous cells (all n):"));
+    out.push(format!(
+        "\nanchor 1995-11-24 (day {ANCHOR_DAY}) simultaneous cells (all n):"
+    ));
     let anc: Vec<&(i64, i64, i64, f64, f64, usize, usize, f64, f64)> = cells
         .iter()
         .filter(|c| unix_day((c.3 + c.4) * 0.5) == ANCHOR_DAY)

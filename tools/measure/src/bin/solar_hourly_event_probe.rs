@@ -2,7 +2,7 @@ use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800};
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const GOES_CDN: &str =
@@ -37,7 +37,6 @@ const AIA_BANDS: [(u32, &str); 7] = [
     (0, "94A"),
 ];
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
-
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -215,7 +214,10 @@ fn goes_b_flux(path: &str) -> Vec<(f64, f64)> {
 
 fn fold_b_flux_dir(best: &mut [Option<f32>], dir: &str) {
     let Ok(entries) = std::fs::read_dir(dir) else {
-        eprintln!("{} reads void — that year's flare record stays unmeasured", dir);
+        eprintln!(
+            "{} reads void — that year's flare record stays unmeasured",
+            dir
+        );
         return;
     };
     for entry in entries.flatten() {
@@ -381,11 +383,7 @@ fn row_for(
     let mut best_cells = f64::NAN;
     for &lag in LAGS_HOUR.iter() {
         let (sum, pos, tot, cell_sum) = stack_pass(&windows, lag, false, 0);
-        let d = if tot > 0 {
-            sum / tot as f64
-        } else {
-            f64::NAN
-        };
+        let d = if tot > 0 { sum / tot as f64 } else { f64::NAN };
         let mut surr_vals: Vec<f64> = Vec::new();
         for s in 1..=N_SURR {
             let seed = SURROGATE_SEED
@@ -479,9 +477,7 @@ fn main() {
     let min_cells = MIN_N.min(window_cells);
     let n_cells = ((WINDOW_HI - WINDOW_LO) / HOUR).floor() as usize;
 
-    println!(
-        "=== Hourly event-wise all-actor solar TE matrix over 2013-2015 ==="
-    );
+    println!("=== Hourly event-wise all-actor solar TE matrix over 2013-2015 ===");
     println!(
         "Window (unix {:.0}..{:.0}): {} hourly cells over 2013 + 2014 + 2015.",
         WINDOW_LO, WINDOW_HI, n_cells
@@ -498,7 +494,9 @@ fn main() {
         "Event window: peak hour ±{} h ({} hourly cells); an event feeds a pair when >= {} of its window cells carry both actors (MIN_N = {} at the default ±{} h window).",
         window_hours, window_cells, min_cells, MIN_N, window_hours
     );
-    println!("Direction 'A -> B' reads 'A drives B': per-event D = (TE(A->B) - TE(B->A)) / (|TE(A->B)| + |TE(B->A)|); the pair stacks the mean of per-event D over events; pos counts events with D > 0.");
+    println!(
+        "Direction 'A -> B' reads 'A drives B': per-event D = (TE(A->B) - TE(B->A)) / (|TE(A->B)| + |TE(B->A)|); the pair stacks the mean of per-event D over events; pos counts events with D > 0."
+    );
     println!(
         "Verdicts: ARROW (stacked D > fam) | family bound (stacked D > own mean+2sigma over {} surrogates, <= fam) | still | no-statement ({} < {} events, the MIN_N event gate).",
         N_SURR, "events", min_events
@@ -663,7 +661,9 @@ fn main() {
                 scope.spawn(move || {
                     chunk_pairs
                         .iter()
-                        .map(|&(fi, ti)| row_for(cells_ref, events_ref, fi, ti, window_hours, min_cells))
+                        .map(|&(fi, ti)| {
+                            row_for(cells_ref, events_ref, fi, ti, window_hours, min_cells)
+                        })
                         .collect::<Vec<_>>()
                 })
             })
@@ -718,7 +718,11 @@ fn main() {
         };
         let cross = if actors[r.from].kind != actors[r.to].kind {
             if cross_fam.is_finite() {
-                let cw = if r.d > cross_fam { "cb-arrow" } else { "cb-still" };
+                let cw = if r.d > cross_fam {
+                    "cb-arrow"
+                } else {
+                    "cb-still"
+                };
                 format!(" [{}]", cw)
             } else {
                 String::new()
@@ -742,19 +746,19 @@ fn main() {
         );
     }
     println!();
-    let arrows: Vec<&Row> = rows.iter().filter(|r| r.d > fam && r.n_ev >= min_events).collect();
+    let arrows: Vec<&Row> = rows
+        .iter()
+        .filter(|r| r.d > fam && r.n_ev >= min_events)
+        .collect();
     if arrows.is_empty() {
-        println!("No event-wise stacked D clears the full-round family bound fam — silence is a finding (0 honored).");
+        println!(
+            "No event-wise stacked D clears the full-round family bound fam — silence is a finding (0 honored)."
+        );
     } else {
         for r in arrows {
             println!(
                 "{} -> {} (lag {} h, D {:.4e} > fam {:.4e}, {} events)",
-                actors[r.from].name,
-                actors[r.to].name,
-                r.best_lag,
-                r.d,
-                fam,
-                r.n_ev
+                actors[r.from].name, actors[r.to].name, r.best_lag, r.d, fam, r.n_ev
             );
         }
     }

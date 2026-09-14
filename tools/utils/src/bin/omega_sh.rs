@@ -130,11 +130,7 @@ fn state_dir() -> PathBuf {
 }
 
 fn jwst_verdict(status: &str) -> &'static str {
-    if status == "200" {
-        "DA"
-    } else {
-        "absent"
-    }
+    if status == "200" { "DA" } else { "absent" }
 }
 
 #[cfg(test)]

@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-use omegaflow::atdf::{extract, field_of, full_year, strip_markers, LOGICAL_RECORD, TKFORM};
+use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, full_year, strip_markers};
 fn civil_days(y: i64, m: i64, d: i64) -> i64 {
     let yy = if m <= 2 { y - 1 } else { y };
     let era = if yy >= 0 { yy } else { yy - 399 } / 400;
@@ -11,7 +11,6 @@ fn civil_days(y: i64, m: i64, d: i64) -> i64 {
     let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
     era * 146097 + doe - 719468
 }
-
 
 const CACHES: &[&str] = &[
     "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
@@ -31,8 +30,7 @@ fn rec_utc(rec: &[u8]) -> f64 {
     let minute = extract(rec, field_of(TKFORM, 6).unwrap());
     let second = extract(rec, field_of(TKFORM, 7).unwrap());
     let base = civil_days(year, 1, 1) as f64 * 86400.0;
-    base + (day - 1) as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0
-        + second as f64
+    base + (day - 1) as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second as f64
 }
 
 fn main() {
@@ -41,7 +39,9 @@ fn main() {
         None => "tmp/galileo_ded27_tdf_sender_report.txt".to_string(),
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo TRK-2-25 raw TDF sender-field census over the four floor-era caches".to_string());
+    out.push(
+        "galileo TRK-2-25 raw TDF sender-field census over the four floor-era caches".to_string(),
+    );
     out.push("record fields decoded with src/archivar/atdf.rs TKFORM (canonical map docs/reference/trk-2-25-atdf.txt)".to_string());
     out.push("item 10 = station number (the recording station); item 12 data type 6 = ramp record; item 13 ground mode 3/4 = three-way; item 64 = uplink frequency band / source id".to_string());
     out.push("question 1: does any field of a doppler tracking record carry a station-like value (11..99) besides item 10?".to_string());
@@ -112,8 +112,12 @@ fn main() {
         out.push(format!(
             "{cache}: logical {nlog} | data_type census {dtype_hist:?} | three-way doppler {threeway} | ramp {ramp}"
         ));
-        out.push(format!("  three-way receiving station census: {threeway_station:?}"));
-        out.push(format!("  three-way (station, uplink band) census: {threeway_band:?}"));
+        out.push(format!(
+            "  three-way receiving station census: {threeway_station:?}"
+        ));
+        out.push(format!(
+            "  three-way (station, uplink band) census: {threeway_band:?}"
+        ));
         out.push(format!(
             "  three-way (station, item-26 transmitter on/off) census: {threeway_xmtr_on:?}"
         ));
@@ -123,7 +127,9 @@ fn main() {
         if station_like_hits.is_empty() {
             out.push("  station-like second value (11..99 != item-10 station) across identity items of three-way doppler records: none".to_string());
         } else {
-            out.push(format!("  station-like second value items: {station_like_hits:?}"));
+            out.push(format!(
+                "  station-like second value items: {station_like_hits:?}"
+            ));
         }
         if threeway_samples.is_empty() {
             out.push("  no three-way doppler samples (0 honored)".to_string());

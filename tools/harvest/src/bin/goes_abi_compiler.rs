@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File,
+    Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
@@ -435,7 +435,9 @@ fn main() {
             }
         },
         (None, None) => {
-            eprintln!("usage: goes_abi_compiler (--input <granule.nc> | --url <https url>) --out <goes_abi_rad.bin> [--ci-mode]");
+            eprintln!(
+                "usage: goes_abi_compiler (--input <granule.nc> | --url <https url>) --out <goes_abi_rad.bin> [--ci-mode]"
+            );
             std::process::exit(1);
         }
     };
@@ -579,7 +581,9 @@ mod tests {
     fn real_goes16_abi_granule_compiles() {
         let path = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
         if !std::path::Path::new(path).exists() {
-            eprintln!("skipped (fixture absent): goes16 abi — fetch from noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/");
+            eprintln!(
+                "skipped (fixture absent): goes16 abi — fetch from noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/"
+            );
             return;
         }
         let bytes = std::fs::read(path).expect("fixture read");

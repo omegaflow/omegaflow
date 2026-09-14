@@ -565,7 +565,7 @@ pub fn write_binary(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::bsp_reader::daf::{DafFile, DOUBLE_BYTES, RECORD_BYTES};
+    use crate::archivar::bsp_reader::daf::{DOUBLE_BYTES, DafFile, RECORD_BYTES};
     use crate::archivar::bsp_reader::spk::SpkFile;
 
     const DATA_START_ADDR: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;

@@ -155,11 +155,14 @@ fn best_cut(levels: &[f64]) -> Option<BestCut> {
             };
             best_jump = j;
             let df = (l.len() + r.len() - 2) as f64;
-            let sp = (((l.len() - 1) as f64 * sl * sl + (r.len() - 1) as f64 * sr * sr)
-                / df)
-            .sqrt();
+            let sp =
+                (((l.len() - 1) as f64 * sl * sl + (r.len() - 1) as f64 * sr * sr) / df).sqrt();
             let denom = sp * (1.0 / l.len() as f64 + 1.0 / r.len() as f64).sqrt();
-            let t = if denom > 0.0 { (mr - ml) / denom } else { f64::INFINITY };
+            let t = if denom > 0.0 {
+                (mr - ml) / denom
+            } else {
+                f64::INFINITY
+            };
             best = Some(BestCut {
                 c,
                 nl: l.len(),
@@ -255,13 +258,22 @@ fn runs_of(rows: &[Row]) -> Vec<(usize, usize)> {
     let mut runs: Vec<(usize, usize)> = Vec::new();
     for rid in 0..n_runs {
         let start = rows.iter().position(|r| r.run == rid).expect("run present");
-        let end = rows.iter().rposition(|r| r.run == rid).expect("run present");
+        let end = rows
+            .iter()
+            .rposition(|r| r.run == rid)
+            .expect("run present");
         runs.push((start, end - start + 1));
     }
     runs
 }
 
-fn series_block(out: &mut Vec<String>, mode: i64, st: i64, rows: &[Row], era0: i64) -> Option<String> {
+fn series_block(
+    out: &mut Vec<String>,
+    mode: i64,
+    st: i64,
+    rows: &[Row],
+    era0: i64,
+) -> Option<String> {
     let n = rows.len();
     if n < 6 {
         rec(
@@ -386,9 +398,7 @@ fn series_block(out: &mut Vec<String>, mode: i64, st: i64, rows: &[Row], era0: i
         None => {
             rec(
                 out,
-                format!(
-                    "single step scan: {n} days < 2*{MIN_SEG} — no cut feasible (0 honored)"
-                ),
+                format!("single step scan: {n} days < 2*{MIN_SEG} — no cut feasible (0 honored)"),
             );
             return None;
         }
@@ -450,10 +460,16 @@ fn series_block(out: &mut Vec<String>, mode: i64, st: i64, rows: &[Row], era0: i
     }
     let offs: Vec<&Row> = rows.iter().filter(|r| r.med.abs() >= 1.0).collect();
     if offs.is_empty() {
-        rec(out, "coherent-offset days (|daily-median| >= 1 Hz at quiet RMS): none".to_string());
+        rec(
+            out,
+            "coherent-offset days (|daily-median| >= 1 Hz at quiet RMS): none".to_string(),
+        );
     }
     for o in &offs {
-        let idx = rows.iter().position(|r| r.day == o.day).expect("offset row found");
+        let idx = rows
+            .iter()
+            .position(|r| r.day == o.day)
+            .expect("offset row found");
         let lo = idx.saturating_sub(4);
         let hi = (idx + 5).min(rows.len());
         rec(
@@ -481,7 +497,13 @@ fn series_block(out: &mut Vec<String>, mode: i64, st: i64, rows: &[Row], era0: i
                 out,
                 format!(
                     "   {} {:10} | med {:+.4} | mean {:+.4} | rms {:.4} | {tag}",
-                    if k < idx { "prev" } else if k > idx { "next" } else { "===" },
+                    if k < idx {
+                        "prev"
+                    } else if k > idx {
+                        "next"
+                    } else {
+                        "==="
+                    },
                     civil_str(r.day),
                     r.med,
                     r.mean,
@@ -563,11 +585,14 @@ fn main() {
         &mut out,
         format!("galileo floor quiet-basis step/ruck probe — {path}"),
     );
-    rec(&mut out, format!(
-        "floor era {} .. {} (daycells {era0}..{era1}); floor = strength == {FLOOR} (AGC clamp); robust cell = (mode, station, day) n >= {MIN_CELL} over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; quiet = cell RMS < {LOUD_HZ:.0} Hz, loud = >= {LOUD_HZ:.0} Hz (out-of-lock ground noise, held separate); day = round-of-tdb civil day; day level = daily median / daily mean of the cell resid (level axis, not RMS); step scan = single-cut two-segment piecewise-constant model on the quiet-day level series, cut between sequence indices, min {MIN_SEG} days per segment; permutation null = the level blocks (runs of consecutive quiet days) are reshuffled in time (1999 draws), statistic = max |segment-mean jump|",
-        civil_str(era0),
-        civil_str(era1),
-    ));
+    rec(
+        &mut out,
+        format!(
+            "floor era {} .. {} (daycells {era0}..{era1}); floor = strength == {FLOOR} (AGC clamp); robust cell = (mode, station, day) n >= {MIN_CELL} over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; quiet = cell RMS < {LOUD_HZ:.0} Hz, loud = >= {LOUD_HZ:.0} Hz (out-of-lock ground noise, held separate); day = round-of-tdb civil day; day level = daily median / daily mean of the cell resid (level axis, not RMS); step scan = single-cut two-segment piecewise-constant model on the quiet-day level series, cut between sequence indices, min {MIN_SEG} days per segment; permutation null = the level blocks (runs of consecutive quiet days) are reshuffled in time (1999 draws), statistic = max |segment-mean jump|",
+            civil_str(era0),
+            civil_str(era1),
+        ),
+    );
 
     let mut tot_rob = 0usize;
     let mut tot_loud = 0usize;

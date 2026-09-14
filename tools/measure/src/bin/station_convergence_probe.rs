@@ -1,6 +1,6 @@
 use omegaflow::archivar::{
-    angular_distance_deg, cache_root, fetch_raw, load_sources, parse_json, source_name_from_url,
-    Extract, JsonVal, SourceConfig,
+    Extract, JsonVal, SourceConfig, angular_distance_deg, cache_root, fetch_raw, load_sources,
+    parse_json, source_name_from_url,
 };
 use omegaflow::intermagnet;
 use std::path::PathBuf;
@@ -124,8 +124,12 @@ fn arg_f64(args: &[String], name: &str) -> Option<f64> {
 }
 
 fn usage() {
-    println!("usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--grammar]");
-    println!("default: offline over the flowing fanout-ring caches under the archivar cache dir; --live fetches the two HAPI lines (INTERMAGNET ground xyzf, SWARM scalar F with Latitude/Longitude).");
+    println!(
+        "usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--grammar]"
+    );
+    println!(
+        "default: offline over the flowing fanout-ring caches under the archivar cache dir; --live fetches the two HAPI lines (INTERMAGNET ground xyzf, SWARM scalar F with Latitude/Longitude)."
+    );
 }
 
 fn mean(xs: &[f64]) -> Option<f64> {
@@ -724,7 +728,9 @@ fn main() {
     if let Some(note) = load_ground_derived_bin(&station, &data_dir) {
         println!("line 1 register note: {note}");
     }
-    println!("encounter bound: overflight capture {radius} deg; tolerance from the two lines' measured variability (2σ) or an operator --tolerance-nT");
+    println!(
+        "encounter bound: overflight capture {radius} deg; tolerance from the two lines' measured variability (2σ) or an operator --tolerance-nT"
+    );
 
     let enc = if ground_present && swarm_present && swarm_geometry {
         encounter(&ground_rows, &swarm_rows, st_lat, st_lon, radius)
@@ -768,7 +774,9 @@ fn main() {
             );
         }
     }
-    println!("Verdict vocabulary: Placed = two independent lines agree (zwirn); Absent = fewer than two carry a value at the point; Riss = two present but refuse to converge — never smoothed.");
+    println!(
+        "Verdict vocabulary: Placed = two independent lines agree (zwirn); Absent = fewer than two carry a value at the point; Riss = two present but refuse to converge — never smoothed."
+    );
 }
 
 #[cfg(test)]

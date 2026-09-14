@@ -1,4 +1,4 @@
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use std::collections::{BTreeSet, HashMap};
 use std::process::Command;
 use std::thread::sleep;

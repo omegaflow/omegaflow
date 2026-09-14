@@ -236,11 +236,7 @@ pub fn arrival_at(grid: &DepthGrid, times: &[f32], lat: f64, lon: f64) -> Option
         return None;
     }
     let t = *times.get(idx)?;
-    if t.is_finite() {
-        Some(t)
-    } else {
-        None
-    }
+    if t.is_finite() { Some(t) } else { None }
 }
 
 struct QueueEntry {

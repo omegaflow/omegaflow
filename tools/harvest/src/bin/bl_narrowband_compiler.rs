@@ -1,4 +1,4 @@
-use omegaflow::bl_narrowband::{parse_bin, write_bin, BlNarrowbandEvent};
+use omegaflow::bl_narrowband::{BlNarrowbandEvent, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::fs::File;

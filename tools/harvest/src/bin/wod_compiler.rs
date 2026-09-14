@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, MAGIC_WOD,
+    COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, GeoRec, MAGIC_WOD, parse_bin, write_bin,
 };
 use omegaflow::archivar::lsk::{self, days_from_civil};
 use omegaflow::cdn::upload_release;

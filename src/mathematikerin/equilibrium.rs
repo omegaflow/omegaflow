@@ -16,11 +16,7 @@ pub fn teq(teff_k: f64, r_star_m: f64, a_m: f64, albedo: f64) -> Option<f64> {
         return None;
     }
     let t = teff_k * (r_star_m / (2.0 * a_m)).sqrt() * (1.0 - albedo).powf(0.25);
-    if t.is_finite() {
-        Some(t)
-    } else {
-        None
-    }
+    if t.is_finite() { Some(t) } else { None }
 }
 
 #[cfg(test)]

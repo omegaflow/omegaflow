@@ -1,12 +1,12 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::geo::{
-    parse_bin, write_bin, GeoRec, COMP_COSMIC_PRES, COMP_COSMIC_REFRACT, COMP_COSMIC_TEMP,
-    MAGIC_COSMIC,
+    COMP_COSMIC_PRES, COMP_COSMIC_REFRACT, COMP_COSMIC_TEMP, GeoRec, MAGIC_COSMIC, parse_bin,
+    write_bin,
 };
-use omegaflow::hdf5::{decode_f32, decode_f64, Hdf5File};
+use omegaflow::hdf5::{Hdf5File, decode_f32, decode_f64};
 use omegaflow::inflate::gunzip;
-use omegaflow::netcdf::{directory_links, nc4_group, NetcdfFile, NetcdfFormat, NetcdfType};
+use omegaflow::netcdf::{NetcdfFile, NetcdfFormat, NetcdfType, directory_links, nc4_group};
 
 const NETLOC: &str = "data.cosmic.ucar.edu";
 const ROOT: &str = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt";
@@ -62,7 +62,9 @@ fn naming_scheme() {
         "    {{product}}_nrt_{{year}}_{{doy:03}}.tar.gz  (example {})",
         level3_tarball_url("bubJL1", 2026, 251)
     );
-    eprintln!("  granule: {{product}}_{{sat}}.{{year}}.{{doy}}.{{hh}}.{{mm}}.{{occ}}_{{year}}.{{secs}}_nc");
+    eprintln!(
+        "  granule: {{product}}_{{sat}}.{{year}}.{{doy}}.{{hh}}.{{mm}}.{{occ}}_{{year}}.{{secs}}_nc"
+    );
 }
 
 fn list_links(body: &str) -> Vec<String> {
@@ -110,11 +112,7 @@ fn tar_octal(field: &[u8]) -> Option<usize> {
         v = v * 8 + (b - b'0') as usize;
         any = true;
     }
-    if any {
-        Some(v)
-    } else {
-        None
-    }
+    if any { Some(v) } else { None }
 }
 
 fn tar_name(header: &[u8]) -> String {
@@ -204,11 +202,7 @@ fn apply_scale(
                 Some(b) => s + b,
                 None => s,
             };
-            if y.is_finite() {
-                y
-            } else {
-                f64::NAN
-            }
+            if y.is_finite() { y } else { f64::NAN }
         })
         .collect()
 }
@@ -643,7 +637,9 @@ fn main() {
         eprintln!("usage: cosmic_ro_compiler <mode>");
         eprintln!("  --list [--year YYYY] [--doy DDD]");
         eprintln!("  --probe --granule <file.nc> | --tarball <url|file.tar.gz> [--max-granules N]");
-        eprintln!("  --out-bin --tarball <url|file.tar.gz> [--granule <file.nc>] [--var Ref|Temp|Pres] [--out <path>] [--max-granules N] [--ci-mode]");
+        eprintln!(
+            "  --out-bin --tarball <url|file.tar.gz> [--granule <file.nc>] [--var Ref|Temp|Pres] [--out <path>] [--max-granules N] [--ci-mode]"
+        );
         std::process::exit(1);
     }
     let result = if args.iter().any(|a| a == "--out-bin") {

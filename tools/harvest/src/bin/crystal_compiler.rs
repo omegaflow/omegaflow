@@ -1,9 +1,9 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::cif::{parse_cif, Crystal};
-use omegaflow::matfile::{parse_mat, MatData};
+use omegaflow::cif::{Crystal, parse_cif};
+use omegaflow::matfile::{MatData, parse_mat};
 use omegaflow::rixs::{
-    charge_oscillators, encode_spin_bin, parse_rixs_mev, parse_sw_spin, spin_oscillators, SpinBin,
-    SpinOscillator, SpinSpectrumBin, MEV_TO_HZ,
+    MEV_TO_HZ, SpinBin, SpinOscillator, SpinSpectrumBin, charge_oscillators, encode_spin_bin,
+    parse_rixs_mev, parse_sw_spin, spin_oscillators,
 };
 use std::process::Command;
 

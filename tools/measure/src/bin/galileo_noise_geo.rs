@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 
 const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
@@ -184,7 +184,9 @@ fn main() {
             n = v.len(),
         );
     }
-    eprintln!("galileo: per-day resid-RMS by solar elongation band (angle at Earth, deg), mode-split (n >= 10):");
+    eprintln!(
+        "galileo: per-day resid-RMS by solar elongation band (angle at Earth, deg), mode-split (n >= 10):"
+    );
     for ((mode, band), v) in &elong_bands {
         if v.len() < 10 {
             continue;

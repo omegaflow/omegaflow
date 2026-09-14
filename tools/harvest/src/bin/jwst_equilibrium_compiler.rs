@@ -1,11 +1,11 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
-use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
-use omegaflow::jwst::{parse_jwst_bin, JwstSpectrum};
+use omegaflow::equilibrium::{AU_M, SUN_RADIUS_M, teq};
+use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
+use omegaflow::jwst::{JwstSpectrum, parse_jwst_bin};
 use omegaflow::jwst_equilibrium::{
-    parse_equilibrium_bin, write_equilibrium_bin, EquilibriumRecord, EQUILIBRIUM_NSPECIES,
+    EQUILIBRIUM_NSPECIES, EquilibriumRecord, parse_equilibrium_bin, write_equilibrium_bin,
 };
-use omegaflow::thermochem::{equilibrium_concentrations, solar, P0_PA};
+use omegaflow::thermochem::{P0_PA, equilibrium_concentrations, solar};
 use std::collections::{HashMap, HashSet};
 use std::process::Command;
 

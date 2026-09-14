@@ -394,7 +394,7 @@ fn cholesky_solve(l: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::te::{conditional_te_stats_lagged_n, transfer_entropy_binned, TeNull};
+    use omegaflow::te::{TeNull, conditional_te_stats_lagged_n, transfer_entropy_binned};
 
     fn next_rng(rng: &mut u64) -> f64 {
         *rng = rng

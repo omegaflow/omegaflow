@@ -76,7 +76,9 @@ fn main() {
         .map(|a| a.to_lowercase())
         .collect();
     if terms.is_empty() {
-        eprintln!("usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)");
+        eprintln!(
+            "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)"
+        );
         std::process::exit(2);
     }
 

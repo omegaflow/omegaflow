@@ -763,8 +763,12 @@ fn main() {
     println!("Legend: W=water S=scar ~=speckle ?=unreliable ==unchanged .=outside/nodata");
 
     println!("\n=== Surface-artifact pass ===");
-    println!("layover/shadow: pending — no gridded DEM registered in phi/sources.φ (gebco_bathymetry_compiler is a point-query Gestalt witness, not a raster DEM)");
-    println!("incidence-out-of-band: absent — the S1-GRD COG carries backscatter amplitude only (assets vv/vh; no incidence band, sat:incidence_angle absent in STAC)");
+    println!(
+        "layover/shadow: pending — no gridded DEM registered in phi/sources.φ (gebco_bathymetry_compiler is a point-query Gestalt witness, not a raster DEM)"
+    );
+    println!(
+        "incidence-out-of-band: absent — the S1-GRD COG carries backscatter amplitude only (assets vv/vh; no incidence band, sat:incidence_angle absent in STAC)"
+    );
 }
 
 #[cfg(test)]

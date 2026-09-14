@@ -224,7 +224,9 @@ fn main() {
         "Window: (unix {:.0}..{:.0}), {} cells.",
         window_lo, window_hi, n_cells
     );
-    println!("Direction: 'A -> B' reads 'A drives B' (TE computed with B's cells as target, A as driver).");
+    println!(
+        "Direction: 'A -> B' reads 'A drives B' (TE computed with B's cells as target, A as driver)."
+    );
     println!(
         "fam = max surrogate TE over all directed pairs x {} lags x {} surrogates.",
         lags.len(),

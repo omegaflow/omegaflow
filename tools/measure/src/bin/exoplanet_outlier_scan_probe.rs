@@ -29,13 +29,48 @@ struct Axis {
 }
 
 const AXES: [Axis; 7] = [
-    Axis { col: 0, name: "radius", unit: "R_E", log: true },
-    Axis { col: 1, name: "mass", unit: "M_E", log: true },
-    Axis { col: 2, name: "period", unit: "d", log: true },
-    Axis { col: 5, name: "density", unit: "g/cm3", log: true },
-    Axis { col: 4, name: "teq", unit: "K", log: true },
-    Axis { col: 3, name: "ecc", unit: "", log: false },
-    Axis { col: 7, name: "host_teff", unit: "K", log: true },
+    Axis {
+        col: 0,
+        name: "radius",
+        unit: "R_E",
+        log: true,
+    },
+    Axis {
+        col: 1,
+        name: "mass",
+        unit: "M_E",
+        log: true,
+    },
+    Axis {
+        col: 2,
+        name: "period",
+        unit: "d",
+        log: true,
+    },
+    Axis {
+        col: 5,
+        name: "density",
+        unit: "g/cm3",
+        log: true,
+    },
+    Axis {
+        col: 4,
+        name: "teq",
+        unit: "K",
+        log: true,
+    },
+    Axis {
+        col: 3,
+        name: "ecc",
+        unit: "",
+        log: false,
+    },
+    Axis {
+        col: 7,
+        name: "host_teff",
+        unit: "K",
+        log: true,
+    },
 ];
 
 struct Planet {
@@ -100,7 +135,9 @@ fn fetch_csv() -> Result<String, String> {
         .iter()
         .rposition(|&b| b == b'\n')
         .ok_or_else(|| "curl reply without newline".to_string())?;
-    let code = String::from_utf8_lossy(&stdout[idx + 1..]).trim().to_string();
+    let code = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
     let body = String::from_utf8_lossy(&stdout[..idx]).to_string();
     if code != "200" {
         return Err(format!("TAP HTTP {code}"));
@@ -146,11 +183,7 @@ fn parse_cell(cell: &str) -> Option<f64> {
         Ok(v) => v,
         Err(_) => return None,
     };
-    if value.is_finite() {
-        Some(value)
-    } else {
-        None
-    }
+    if value.is_finite() { Some(value) } else { None }
 }
 
 fn parse_rows(text: &str) -> Result<(Vec<Planet>, usize), String> {
@@ -210,11 +243,7 @@ fn parse_rows(text: &str) -> Result<(Vec<Planet>, usize), String> {
 fn transform(planet: &Planet, col: usize, log: bool) -> Option<f64> {
     let raw = planet.vals[col]?;
     if log {
-        if raw > 0.0 {
-            Some(raw.log10())
-        } else {
-            None
-        }
+        if raw > 0.0 { Some(raw.log10()) } else { None }
     } else {
         Some(raw)
     }
@@ -392,7 +421,10 @@ fn rho_of_pairs(pairs: &[(f64, f64)]) -> Option<f64> {
 
 fn build_report(planets: &[Planet], skipped: usize) -> String {
     let total = planets.len();
-    let reads: Vec<AxisRead> = AXES.iter().filter_map(|ax| axis_read(planets, ax)).collect();
+    let reads: Vec<AxisRead> = AXES
+        .iter()
+        .filter_map(|ax| axis_read(planets, ax))
+        .collect();
     let mut report = String::new();
     report.push_str(
         "EXOPLANET OUTLIER SCAN — hypothesis-free structure scan of the archive exoplanet population\n",
@@ -475,7 +507,10 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
         MIN_AXES,
         total
     ));
-    report.push_str(&format!("TOP {} SINGLE-CASE OUTLIERS (rms robust z)\n", TOP_OUTLIERS));
+    report.push_str(&format!(
+        "TOP {} SINGLE-CASE OUTLIERS (rms robust z)\n",
+        TOP_OUTLIERS
+    ));
     let shown = scored.len().min(TOP_OUTLIERS);
     for (rank, row) in scored.iter().take(shown).enumerate() {
         let p = &planets[row.index];
@@ -519,13 +554,7 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
         let q95 = q_at(sorted, 0.95);
         let q10 = q_at(sorted, 0.10);
         let q90 = q_at(sorted, 0.90);
-        let nat = |x: f64| -> f64 {
-            if read.log {
-                10f64.powf(x)
-            } else {
-                x
-            }
-        };
+        let nat = |x: f64| -> f64 { if read.log { 10f64.powf(x) } else { x } };
         let zp_pct = pct(read.zero_pile, read.n);
         let med_nat = nat(read.center);
         let band = {
@@ -627,7 +656,8 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
         }
     }
     if bullets.is_empty() {
-        report.push_str("  no interior band exceeds 20x the median neighbour spacing on any axis\n");
+        report
+            .push_str("  no interior band exceeds 20x the median neighbour spacing on any axis\n");
     } else {
         report.push_str("  interior bands exceeding 20x the median neighbour spacing:\n");
         for b in &bullets {
@@ -685,7 +715,10 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
         report.push_str("  none measured\n");
     } else {
         for c in &near_zero {
-            report.push_str(&format!("  {} x {} rho {:+.3} n {}\n", c.a, c.b, c.rho, c.n));
+            report.push_str(&format!(
+                "  {} x {} rho {:+.3} n {}\n",
+                c.a, c.b, c.rho, c.n
+            ));
         }
     }
 
@@ -700,8 +733,8 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
             let b_is_mass = c.b == NUM_COLS[1];
             let a_is_dist = c.a == NUM_COLS[9];
             let b_is_dist = c.b == NUM_COLS[9];
-            let density_link = (a_is_dens && (b_is_rad || b_is_mass))
-                || (b_is_dens && (a_is_rad || a_is_mass));
+            let density_link =
+                (a_is_dens && (b_is_rad || b_is_mass)) || (b_is_dens && (a_is_rad || a_is_mass));
             let dist_link = a_is_dist || b_is_dist;
             !density_link && !dist_link
         })
@@ -709,7 +742,10 @@ fn build_report(planets: &[Planet], skipped: usize) -> String {
         .collect();
     report.push_str("\nstrongest measured associations without a density/algebraic or distance/selection link:\n");
     for c in &independent {
-        report.push_str(&format!("  {} x {} rho {:+.3} n {}\n", c.a, c.b, c.rho, c.n));
+        report.push_str(&format!(
+            "  {} x {} rho {:+.3} n {}\n",
+            c.a, c.b, c.rho, c.n
+        ));
     }
 
     report.push_str("\nHONEST LIMITS\n");
@@ -775,8 +811,7 @@ fn main() {
 
 fn run(csv_path: &Option<String>, out_path: &str) -> Result<(), String> {
     let text = match csv_path {
-        Some(path) => std::fs::read_to_string(path)
-            .map_err(|e| format!("read {path}: {e}"))?,
+        Some(path) => std::fs::read_to_string(path).map_err(|e| format!("read {path}: {e}"))?,
         None => fetch_csv()?,
     };
     let (planets, skipped) = parse_rows(&text)?;

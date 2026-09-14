@@ -1,6 +1,6 @@
 use omegaflow::archivar::membrane::MAX_SAMPLES;
 use omegaflow::cdn::upload_release;
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::twomrs::{read_bin, record, row_record, write_bin};
 use std::process::Command;
 

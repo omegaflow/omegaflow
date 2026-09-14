@@ -446,7 +446,7 @@ fn cmd_rank(host: &str, bibcode: &str, max: usize, top: usize) -> i32 {
     0
 }
 
-use omegaflow::json::{jstr, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jstr, parse_json};
 
 struct CensusHost {
     hostname: String,

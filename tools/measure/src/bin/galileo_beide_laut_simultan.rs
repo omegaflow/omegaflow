@@ -89,7 +89,9 @@ fn load() -> Option<(BTreeMap<(i64, i64), Vec<Sample>>, usize)> {
         if r[7] as i64 != FLOOR_AGC {
             continue;
         }
-        per.entry((mode, st)).or_insert_with(Vec::new).push(Sample { t: r[0], resid });
+        per.entry((mode, st))
+            .or_insert_with(Vec::new)
+            .push(Sample { t: r[0], resid });
         kept += 1;
     }
     for v in per.values_mut() {
@@ -164,7 +166,12 @@ fn match_pairs(a: &[Sample], b: &[Sample], tol: f64) -> Vec<Pair> {
         }
         if let Some((j, _)) = best {
             used[j] = true;
-            out.push(Pair { ta: a[j].t, tb: sb.t, ra: a[j].resid, rb: sb.resid });
+            out.push(Pair {
+                ta: a[j].t,
+                tb: sb.t,
+                ra: a[j].resid,
+                rb: sb.resid,
+            });
         }
     }
     out.sort_by(|x, y| x.ta.total_cmp(&y.ta));
@@ -243,13 +250,23 @@ fn main() {
         return;
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo both-loud simultaneous (station,station) cells: common-cause or independent test".to_string());
+    out.push(
+        "galileo both-loud simultaneous (station,station) cells: common-cause or independent test"
+            .to_string(),
+    );
     out.push(format!("floor trio non-lock AGC samples kept: {kept}"));
-    out.push("binding: floor strength == -2560, |resid| <= 1000 Hz, station in {14,43,63}, mode 1..4".to_string());
-    out.push("run = maximal sample run within one (mode, station) with tdb gap <= 600 s".to_string());
+    out.push(
+        "binding: floor strength == -2560, |resid| <= 1000 Hz, station in {14,43,63}, mode 1..4"
+            .to_string(),
+    );
+    out.push(
+        "run = maximal sample run within one (mode, station) with tdb gap <= 600 s".to_string(),
+    );
     out.push("simultaneous cell = tdb overlap of one run at station A and one run at station B in the SAME mode".to_string());
     out.push("cell RMS about the cell mean (reference loudness threshold 1 Hz); robust = nA >= 30 AND nB >= 30".to_string());
-    out.push("alignment: cadence 1.000 s at both stations; grid + matched pairs tol 0.75 s".to_string());
+    out.push(
+        "alignment: cadence 1.000 s at both stations; grid + matched pairs tol 0.75 s".to_string(),
+    );
 
     let mut cells: Vec<Cell> = Vec::new();
     for mode in 1..=4i64 {
@@ -269,8 +286,16 @@ fn main() {
                         if hi <= lo {
                             continue;
                         }
-                        let wa: Vec<Sample> = va[sa..=ea].iter().copied().filter(|x| x.t >= lo && x.t <= hi).collect();
-                        let wb: Vec<Sample> = vb[sb..=eb].iter().copied().filter(|x| x.t >= lo && x.t <= hi).collect();
+                        let wa: Vec<Sample> = va[sa..=ea]
+                            .iter()
+                            .copied()
+                            .filter(|x| x.t >= lo && x.t <= hi)
+                            .collect();
+                        let wb: Vec<Sample> = vb[sb..=eb]
+                            .iter()
+                            .copied()
+                            .filter(|x| x.t >= lo && x.t <= hi)
+                            .collect();
                         if wa.is_empty() || wb.is_empty() {
                             continue;
                         }
@@ -278,7 +303,17 @@ fn main() {
                         let nb = wb.len();
                         let rmsa = rms_about_mean(&wa, mean_of(&wa));
                         let rmsb = rms_about_mean(&wb, mean_of(&wb));
-                        cells.push(Cell { mode, a, b, lo, hi, na, nb, rmsa, rmsb });
+                        cells.push(Cell {
+                            mode,
+                            a,
+                            b,
+                            lo,
+                            hi,
+                            na,
+                            nb,
+                            rmsa,
+                            rmsb,
+                        });
                     }
                 }
             }
@@ -362,8 +397,16 @@ fn main() {
         let (Some(pa), Some(pb)) = (per.get(&(c.mode, c.a)), per.get(&(c.mode, c.b))) else {
             continue;
         };
-        let va: Vec<Sample> = pa.iter().copied().filter(|x| x.t >= c.lo && x.t <= c.hi).collect();
-        let vb: Vec<Sample> = pb.iter().copied().filter(|x| x.t >= c.lo && x.t <= c.hi).collect();
+        let va: Vec<Sample> = pa
+            .iter()
+            .copied()
+            .filter(|x| x.t >= c.lo && x.t <= c.hi)
+            .collect();
+        let vb: Vec<Sample> = pb
+            .iter()
+            .copied()
+            .filter(|x| x.t >= c.lo && x.t <= c.hi)
+            .collect();
         out.push(format!(
             "\n=== both-loud cell {}: mode {} st{} vs st{} civil {} | {} .. {} UTC | robust {}",
             i + 1,
@@ -411,8 +454,16 @@ fn main() {
         for qn in 0..QUART {
             let qlo = c.lo + (c.hi - c.lo) * qn as f64 / QUART as f64;
             let qhi = c.lo + (c.hi - c.lo) * (qn + 1) as f64 / QUART as f64;
-            let qa: Vec<Sample> = va.iter().copied().filter(|x| x.t >= qlo && x.t < qhi).collect();
-            let qb: Vec<Sample> = vb.iter().copied().filter(|x| x.t >= qlo && x.t < qhi).collect();
+            let qa: Vec<Sample> = va
+                .iter()
+                .copied()
+                .filter(|x| x.t >= qlo && x.t < qhi)
+                .collect();
+            let qb: Vec<Sample> = vb
+                .iter()
+                .copied()
+                .filter(|x| x.t >= qlo && x.t < qhi)
+                .collect();
             out.push(format!(
                 "  quart {qn}: t {}..{} | st{} n{} rmsAboutCell {:.3} | st{} n{} rmsAboutCell {:.3}",
                 fmt_utc(qlo),
@@ -452,7 +503,11 @@ fn main() {
             (None, Some(y)) => y,
             (None, None) => 1.0,
         };
-        let step = if step > 0.0 && step.is_finite() { step } else { 1.0 };
+        let step = if step > 0.0 && step.is_finite() {
+            step
+        } else {
+            1.0
+        };
         let nc = ((c.hi - c.lo) / step).ceil() as usize + 1;
 
         let mut grid_a: Vec<Option<(f64, f64)>> = vec![None; nc];
@@ -501,7 +556,11 @@ fn main() {
                     ys.push(y);
                 }
             }
-            let rl = if xs.len() > 1 { pearson(&xs, &ys) } else { f64::NAN };
+            let rl = if xs.len() > 1 {
+                pearson(&xs, &ys)
+            } else {
+                f64::NAN
+            };
             scan.push((lag, rl, xs.len()));
         }
         out.push(format!(
@@ -530,7 +589,9 @@ fn main() {
                 dy.push(pairs[k].rb - pairs[k - 1].rb);
             }
             let rd = pearson(&dx, &dy);
-            out.push(format!("  matched pair pearson raw {rp:.4} | first-difference pearson {rd:.4}"));
+            out.push(format!(
+                "  matched pair pearson raw {rp:.4} | first-difference pearson {rd:.4}"
+            ));
 
             for q in [0.9f64, 0.99f64] {
                 let mabsa: Vec<f64> = va.iter().map(|x| (x.resid - ma).abs()).collect();
@@ -548,7 +609,9 @@ fn main() {
                 let b_only = la.iter().zip(&lb).filter(|(x, y)| !**x && **y).count();
                 let n_la = la.iter().filter(|x| **x).count();
                 let n_lb = lb.iter().filter(|x| **x).count();
-                let expected = np as f64 * (n_la_all as f64 / va.len() as f64) * (n_lb_all as f64 / vb.len() as f64);
+                let expected = np as f64
+                    * (n_la_all as f64 / va.len() as f64)
+                    * (n_lb_all as f64 / vb.len() as f64);
                 out.push(format!(
                     "  q{q:.2}: loudA {n_la} loudB {n_lb} in {np} matched pairs | same-sample both-loud {both} (independence expected {expected:.1}) | A-only {a_only} B-only {b_only}"
                 ));

@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::astrometry::{
-    aberration_apply, delta_t_espenak_meeus, diurnal_velocity_icrs, fk4_b1950_to_fk5_j2000,
-    frame_bias_fk5_to_icrs, mat3_transpose, mat3_vec, nutation_matrix, parallax_geo_to_topo,
-    parallax_topo_to_geo, precession_newcomb_to_b1950, vec3_norm_u, JD_J2000,
+    JD_J2000, aberration_apply, delta_t_espenak_meeus, diurnal_velocity_icrs,
+    fk4_b1950_to_fk5_j2000, frame_bias_fk5_to_icrs, mat3_transpose, mat3_vec, nutation_matrix,
+    parallax_geo_to_topo, parallax_topo_to_geo, precession_newcomb_to_b1950, vec3_norm_u,
 };
 use omegaflow::archivar::{
-    body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs, light_time_worldline,
-    parse_ephemeris_binary, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs,
+    light_time_worldline, parse_ephemeris_binary,
 };
 
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
@@ -69,11 +69,7 @@ fn col(line: &str, a: usize, b: usize) -> Option<f64> {
     }
     let s = std::str::from_utf8(&bytes[a..b]).ok()?.trim();
     let v: f64 = s.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn col_str(line: &str, a: usize, b: usize) -> Option<&str> {
@@ -476,7 +472,9 @@ fn main() {
         .and_then(|i| args.get(i + 1))
         .and_then(|v| v.parse().ok())
         .filter(|n| *n > 0.0);
-    println!("Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune center.");
+    println!(
+        "Neptune apparent-place chain — the 7289 App rows and the Nikolaiev B1950 rows reduced against the wide DE441 Neptune center."
+    );
 
     let Some(neptune_eph) = load("ephemeris_neptune_c.bin") else {
         eprintln!(
@@ -748,7 +746,17 @@ fn main() {
         let md_dec = if n_dec > 0 { median(&ddec) } else { f64::NAN };
         println!(
             "{:<18} {} rows, dec-absent {}, reduced {} RA / {} Dec, mean ΔRA·cosδ {:+.1}, mean ΔDec {:+.1}, median {:+.1} / {:+.1}, RMS {:+.1} / {:+.1}",
-            s.name, obs.len(), dec_absent, n_ra, n_dec, m_ra, m_dec, md_ra, md_dec, rms(&dra), r_dec
+            s.name,
+            obs.len(),
+            dec_absent,
+            n_ra,
+            n_dec,
+            m_ra,
+            m_dec,
+            md_ra,
+            md_dec,
+            rms(&dra),
+            r_dec
         );
         if let Some(nsig) = report {
             let robust_sigma = |v: &[f64]| -> Option<f64> {
@@ -835,12 +843,21 @@ fn main() {
     };
     println!(
         "TOTAL: {} parsed, {} dec-absent, {} skipped | mean ΔRA·cosδ {:+.1} mas, mean ΔDec {:+.1} mas, median {:+.1} / {:+.1} mas, RMS {:+.1} / {:+.1} mas",
-        total_parsed, total_dec_absent, total_skipped, mean(&total_dra), mean(&total_ddec), median(&total_dra), median(&total_ddec), rms(&total_dra), rms(&total_ddec)
+        total_parsed,
+        total_dec_absent,
+        total_skipped,
+        mean(&total_dra),
+        mean(&total_ddec),
+        median(&total_dra),
+        median(&total_ddec),
+        rms(&total_dra),
+        rms(&total_ddec)
     );
     if calibrate {
         println!(
             "calibration gate: injected +40 mas RA / -25 mas Dec; recovered mean {:+.3} / {:+.3} mas",
-            mean(&total_dra), mean(&total_ddec)
+            mean(&total_dra),
+            mean(&total_ddec)
         );
     }
 }

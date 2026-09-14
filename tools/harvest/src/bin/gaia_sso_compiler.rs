@@ -1,7 +1,7 @@
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::cdn::upload_release;
 use omegaflow::gaia_sso::{
-    parse_bin, parse_observation_csv, write_bin, GaiaBody, GAIA_SSO_TABLE, GAIA_TAP_SYNC, TNO_NAME,
+    GAIA_SSO_TABLE, GAIA_TAP_SYNC, GaiaBody, TNO_NAME, parse_bin, parse_observation_csv, write_bin,
 };
 use std::process::Command;
 const CDN_RELEASE: &str = "gea.esac.esa.int";
@@ -71,7 +71,9 @@ fn main() {
         i += 1;
     }
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("gaia_sso: the embedded leap-second table reads void — the transit epochs stay unconverted");
+        eprintln!(
+            "gaia_sso: the embedded leap-second table reads void — the transit epochs stay unconverted"
+        );
         std::process::exit(1);
     };
     let mut all: Vec<GaiaBody> = Vec::new();
@@ -80,17 +82,23 @@ fn main() {
     for (name, number_mp) in TNO_NAME {
         let adql = observation_adql(*number_mp);
         let Some((code, body)) = tap_csv(&adql) else {
-            println!("gaia_sso {name} ({number_mp}): the TAP query did not answer (measured stall) — the harvest stays pending");
+            println!(
+                "gaia_sso {name} ({number_mp}): the TAP query did not answer (measured stall) — the harvest stays pending"
+            );
             std::process::exit(1);
         };
         if code != "200" {
-            println!("gaia_sso {name} ({number_mp}): the TAP endpoint answered HTTP {code} — the harvest stays pending");
+            println!(
+                "gaia_sso {name} ({number_mp}): the TAP endpoint answered HTTP {code} — the harvest stays pending"
+            );
             std::process::exit(1);
         }
         let text = match std::str::from_utf8(&body) {
             Ok(t) => t,
             Err(_) => {
-                println!("gaia_sso {name} ({number_mp}): the HTTP 200 body is not UTF-8 — the harvest stays pending");
+                println!(
+                    "gaia_sso {name} ({number_mp}): the HTTP 200 body is not UTF-8 — the harvest stays pending"
+                );
                 std::process::exit(1);
             }
         };

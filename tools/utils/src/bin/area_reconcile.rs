@@ -1,4 +1,4 @@
-use omegaflow::archivar::{jpath_val, jstr, load_sources_from, parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, jpath_val, jstr, load_sources_from, parse_json};
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;
 use std::fs;
@@ -128,7 +128,9 @@ fn usage() -> ! {
     eprintln!(
         "usage: area_reconcile [--root <dir>] [--sources <path>] [--json] [--full] [--limit <n>]"
     );
-    eprintln!("       reconciles the four asset areas: CDN (omegaflow/sources), data/, cache/, phi/sources.φ");
+    eprintln!(
+        "       reconciles the four asset areas: CDN (omegaflow/sources), data/, cache/, phi/sources.φ"
+    );
     eprintln!("       --json emits the whole reconciliation as one JSON object");
     eprintln!(
         "       --full lists every name of the large classes; --limit caps the default lists"
@@ -696,9 +698,9 @@ mod tests {
         assert!(
             cdn_line_parts("https://github.com/omegaflow/sources/releases/download/").is_none()
         );
-        assert!(cdn_line_parts(
-            "https://github.com/omegaflow/sources/releases/download/x.y/a/b.bin"
-        )
-        .is_none());
+        assert!(
+            cdn_line_parts("https://github.com/omegaflow/sources/releases/download/x.y/a/b.bin")
+                .is_none()
+        );
     }
 }

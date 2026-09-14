@@ -1,6 +1,6 @@
 use omegaflow::archivar::footprint::{
-    band_code, decode_rec, encode_rec, parse_header, write_header, FootprintRecord, HEADER_LEN,
-    REC_BYTES,
+    FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec, parse_header,
+    write_header,
 };
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
