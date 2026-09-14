@@ -3083,6 +3083,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_phase_null_binned_n_1000() {
         let cells =
             gate_fpr_coarse_cells(1000, TeNull::Phase, TeEstimator::Binned, 2, 12, 4, 0, 100);
@@ -3105,6 +3106,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
         let cells =
             gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Binned, 2, 12, 4, 0, 100);
