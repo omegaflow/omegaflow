@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: f45248d0bb76787370782d92714d0256c7bde98e06c931ef2a549e308de9deb1
+  sha256: 0255a45b88ac716a4643687cfc71e434dd511a48c9393cf8a11e8fa9b6b0f93a
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -57,7 +57,7 @@ Zwei `grind-pro`-Taucher (Runde 3) bestätigen die zwei Restoffenen mit Messung.
 
 | Warte | Befund (Runde 3, gemessen) | nächster Schritt |
 |---|---|---|
-| Voyager Roh-Doppler (closed-loop) | Voyager closed-loop wurde als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben — öffentlich überlebt nur die open-loop ODR-Okkultation. PDS-PPI/Voyager trägt nur PWS + RSS-Doku; NAIF nur SPICE (`spk/lsk/pck`); die closed-loop-Holdings von PDS-Geosciences (LRO/Magellan/MGS) führen Voyager nicht; NSSDC-Datasets sind alle Occultation. Einzige nicht-anonyme Ablage: NSSDC `PSNO-00007` (SDDPT, "archive, not distribution") | JPL/DSN-Anfrage hält (request-only) |
+| Voyager Roh-Doppler (closed-loop) | Voyager closed-loop wurde als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben — offen überleben die open-loop ODR-Okkultation UND die Saturn-Encounter-Daten (UNIVAC-1108-Binär, closed-loop Doppler+Range: V1 `PSPA-00049`, V2 `PSPA-00123`, SPDF 200). PDS-PPI/Voyager trägt nur PWS + RSS-Doku; NAIF nur SPICE (`spk/lsk/pck`); natives ATDF/ODF/TRK-2-34 und das Cruise-/Post-Saturn-Fenster fehlen. Einzige nicht-anonyme Ablage dafür: NSSDC `PSNO-00007` (SDDPT, "archive, not distribution") | JPL/DSN-Anfrage (Cruise) hält (request-only); UNIVAC-1108-Parser für die Saturn-TARs offen |
 | NSE/Haug (Rohdaten) | kein Deposit: arXiv `e-print/1008.4298` = nur TeX + 8 Figuren (null Datendateien); IOP-Suppdata nicht auflösbar (Radware-Bot-Manager); iMPULSE `record/2120` nur Metadaten + toter Volltext-OpenURL; MPG Edmond / Zenodo / Dataverse ohne Datensatz; DataCite ohne DOI | Keimer/MPI-FKF-Anfrage hält; Teilroute Fig 5b gemessen descoped (trägt Γ(T), nicht I(q,t)) |
 
 ## Register-Disposition
