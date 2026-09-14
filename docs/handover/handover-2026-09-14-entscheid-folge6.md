@@ -3,7 +3,7 @@
   session: Entscheid-Folge VI
   class: handover
   date: 2026-09-14
-  sha256: c060b00b9e2cea41d29833c4fd65054f0bc605a390b8ba6255cc25d5af7bfc07
+  sha256: 6f08de54372e3ee537f826398cc81e962b47aa846e9c55f5a78ae45b85e9b593
   status: live
 -->
 # Handover — Entscheid-Folge VI (2026-09-14)
@@ -52,8 +52,8 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
   - Copernicus Data Space — Verify-Mail neu angefordert (2026-09-13, Ledger);
     der Link lebt nur im Postfach `code@omegaflow.space` → dort bestätigen.
   - ICIMOD RDS — alter Verify-Link abgelaufen; Reset-Link für `omegaflow` neu
-    angefordert (2026-09-13); Login bis Email-Verify blockiert → Link im
-    Postfach bestätigen.
+    angefordert (2026-09-13), aber keine Reset-Mail im Ledger (gemessen) →
+    Reset-Link erneut anfordern; Login bis Email-Verify blockiert.
 - BiSON/Broomhall, CSES-Limadou, NSE/Haug — Anfragen raus, Antwort offen.
 
 ## Pausiert (kein Datum — Operator meldet sich)
