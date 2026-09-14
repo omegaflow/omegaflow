@@ -49,11 +49,13 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
   Der Code `F34K-3J2N` liegt im Ledger (2026-09-13); die Code-Schritt-Seite
   (`.../co_petitions/start/coef:6/efwid:2`) rendert im Addon-Browser leer.
 - Account-Verifikationen (Ledger `state/mail/mail_ledger.φ`):
-  - Copernicus Data Space — Verify-Mail neu angefordert (2026-09-13, Ledger);
-    der Link lebt nur im Postfach `code@omegaflow.space` → dort bestätigen.
-  - ICIMOD RDS — alter Verify-Link abgelaufen; Reset-Link für `omegaflow` neu
-    angefordert (2026-09-13), aber keine Reset-Mail im Ledger (gemessen) →
-    Reset-Link erneut anfordern; Login bis Email-Verify blockiert.
+  - Copernicus Data Space — Verify-Mail kam 2026-09-13 (2×, Ledger Z.166–167,
+    Body leer: HTML-only-Link); der Link lebt nur im Proton-Postfach → dort
+    bestätigen.
+  - ICIMOD RDS — alter Verify-Link abgelaufen; Reset-Mail `RDS — reset your
+    password` ist im Proton-Postfach (2026-09-13), der Ledger-Abzug hat sie
+    verpasst (Webhook-Lücke). Schritt: Reset-Link im Proton-Postfach klicken;
+    Login bis Email-Verify blockiert.
 - BiSON/Broomhall, CSES-Limadou, NSE/Haug — Anfragen raus, Antwort offen.
 
 ## Pausiert (kein Datum — Operator meldet sich)
