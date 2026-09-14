@@ -1,6 +1,6 @@
 use crate::weberin::borrowed_sense::{
-    class_reads_natural, fink_object_witness, row_verdict, simbad_otype_known, BrokerVerdict,
-    FINK_LSST_CLASS_ABSENT, FINK_LSST_SIMBAD_ABSENT,
+    BrokerVerdict, FINK_LSST_CLASS_ABSENT, FINK_LSST_SIMBAD_ABSENT, class_reads_natural,
+    fink_object_witness, row_verdict, simbad_otype_known,
 };
 use std::process::Command;
 
@@ -42,11 +42,7 @@ pub fn csv_num(f: &[&str], k: usize) -> Option<f64> {
         return None;
     }
     let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 pub fn mag_num(f: &[&str], k: usize) -> Option<f64> {

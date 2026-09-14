@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_SDARN_V, MAGIC_SDARN};
+use omegaflow::archivar::geo::{COMP_SDARN_V, GeoRec, MAGIC_SDARN, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File};
 use omegaflow::inflate::inflate;

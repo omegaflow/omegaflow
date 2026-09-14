@@ -45,13 +45,48 @@ struct Anchor {
 
 fn anchors() -> Vec<Anchor> {
     vec![
-        Anchor { mode: 1, station: 14, day: days_from_civil(1995, 11, 24).unwrap(), name: "M1 st14 1995-11-24 (25.85 Hz)" },
-        Anchor { mode: 2, station: 14, day: days_from_civil(1995, 11, 24).unwrap(), name: "M2 st14 1995-11-24 (31.77 Hz)" },
-        Anchor { mode: 1, station: 63, day: days_from_civil(1996, 6, 26).unwrap(), name: "M1 st63 1996-06-26 (20.64 Hz)" },
-        Anchor { mode: 3, station: 43, day: days_from_civil(1995, 12, 4).unwrap(), name: "M3 st43 1995-12-04 (10.52 Hz)" },
-        Anchor { mode: 3, station: 14, day: days_from_civil(1995, 12, 5).unwrap(), name: "M3 st14 1995-12-05 (52.92 Hz)" },
-        Anchor { mode: 3, station: 63, day: days_from_civil(1995, 11, 27).unwrap(), name: "M3 st63 1995-11-27 (186.5 Hz)" },
-        Anchor { mode: 1, station: 43, day: days_from_civil(1996, 11, 4).unwrap(), name: "M1 st43 1996-11-04 (23.1 Hz)" },
+        Anchor {
+            mode: 1,
+            station: 14,
+            day: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M1 st14 1995-11-24 (25.85 Hz)",
+        },
+        Anchor {
+            mode: 2,
+            station: 14,
+            day: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M2 st14 1995-11-24 (31.77 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 63,
+            day: days_from_civil(1996, 6, 26).unwrap(),
+            name: "M1 st63 1996-06-26 (20.64 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 43,
+            day: days_from_civil(1995, 12, 4).unwrap(),
+            name: "M3 st43 1995-12-04 (10.52 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 14,
+            day: days_from_civil(1995, 12, 5).unwrap(),
+            name: "M3 st14 1995-12-05 (52.92 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 63,
+            day: days_from_civil(1995, 11, 27).unwrap(),
+            name: "M3 st63 1995-11-27 (186.5 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 43,
+            day: days_from_civil(1996, 11, 4).unwrap(),
+            name: "M1 st43 1996-11-04 (23.1 Hz)",
+        },
     ]
 }
 
@@ -74,7 +109,12 @@ fn load_all() -> Option<Vec<(f64, f64, i64, i64)>> {
     Some(outv)
 }
 
-fn load_floor(all: &[(f64, f64, i64, i64)], mode: i64, station: i64, day: i64) -> Option<Vec<(f64, f64)>> {
+fn load_floor(
+    all: &[(f64, f64, i64, i64)],
+    mode: i64,
+    station: i64,
+    day: i64,
+) -> Option<Vec<(f64, f64)>> {
     let mut outv: Vec<(f64, f64)> = Vec::new();
     for (t, r, m, s) in all {
         if *m != mode || *s != station {
@@ -210,7 +250,11 @@ fn main() {
             let wmean = wr.iter().sum::<f64>() / wr.len() as f64;
             let wvar = wr.iter().map(|r| (r - wmean) * (r - wmean)).sum::<f64>() / wr.len() as f64;
             let cv = wvar.sqrt() / wmean.max(1e-9);
-            let frac_loud = if win.is_empty() { 0.0 } else { loud_win.len() as f64 / win.len() as f64 };
+            let frac_loud = if win.is_empty() {
+                0.0
+            } else {
+                loud_win.len() as f64 / win.len() as f64
+            };
             let t20 = t0 + 0.2 * span;
             let mut en = 0.0f64;
             let mut en20 = 0.0f64;

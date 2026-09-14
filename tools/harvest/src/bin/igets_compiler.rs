@@ -1,6 +1,6 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_IGETS_G, MAGIC_IGETS};
+use omegaflow::archivar::geo::{COMP_IGETS_G, GeoRec, MAGIC_IGETS, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
-use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, days_from_civil, parse as parse_lsk};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;

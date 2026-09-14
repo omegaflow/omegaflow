@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 
 fn load(path: &str, name: &str) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = std::fs::read(path).ok()?;
@@ -93,5 +93,8 @@ fn main() {
         "  wobble (center − barycenter): mean {:.0} m, max {:.0} m",
         mean_w, wobble_max
     );
-    println!("  composition reproduction (composed − DE441+899−8): mean {:.2} m, RMS {:.2} m, max {:.2} m", mean_r, rms_r, repro_max);
+    println!(
+        "  composition reproduction (composed − DE441+899−8): mean {:.2} m, RMS {:.2} m, max {:.2} m",
+        mean_r, rms_r, repro_max
+    );
 }

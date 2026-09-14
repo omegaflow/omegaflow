@@ -1,9 +1,9 @@
 use omegaflow::archivar::footprint::{
-    band_code, decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord,
-    HEADER_LEN, REC_BYTES,
+    FootprintBand, FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use omegaflow::cdn::upload_asset;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet};
+use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 

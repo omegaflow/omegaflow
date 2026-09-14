@@ -1,9 +1,9 @@
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_HINET_E, COMP_HINET_N, COMP_HINET_U, MAGIC_HINET,
+    COMP_HINET_E, COMP_HINET_N, COMP_HINET_U, GeoRec, MAGIC_HINET, parse_bin, write_bin,
 };
-use omegaflow::archivar::win32::{parse_win32, station_of, velocity_m_s, WinSensitivity};
+use omegaflow::archivar::win32::{WinSensitivity, parse_win32, station_of, velocity_m_s};
 use omegaflow::cdn::upload_release;
-use omegaflow::lsk::{parse as parse_lsk, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -59,11 +59,7 @@ fn parse_finite(s: &str) -> Option<f64> {
         return None;
     }
     let v = t.parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn load_channels(path: &str) -> (HashMap<u16, ChannelAnchor>, usize, usize) {

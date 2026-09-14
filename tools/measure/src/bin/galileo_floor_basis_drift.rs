@@ -486,20 +486,30 @@ fn main() {
         &mut out,
         format!("galileo floor quiet-basis drift probe — {path}"),
     );
-    rec(&mut out, format!(
-        "floor era {} .. {} (daycells {}..{}); floor = strength == {FLOOR} (AGC clamp); floor cell = (mode, station, day) over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; robust = cell n >= {MIN_CELL}; loud = cell RMS >= {LOUD_HZ:.0} Hz, quiet = RMS < {LOUD_HZ:.0} Hz; day = round-of-tdb civil day (register convention); day-level resid value = daily mean / daily median of the cell resid (level, not scatter); day-level RMS = scatter about the cell mean; trend fit: OLS of the day value vs days since era0, SE from the residual variance, p from Student-t (two-sided, n-2 df) and from 1999 y-permutations; x spans the calendar gaps as empty days (0 honored)",
-        civil_str(era0),
-        civil_str(era1),
-        era0,
-        era1
-    ));
+    rec(
+        &mut out,
+        format!(
+            "floor era {} .. {} (daycells {}..{}); floor = strength == {FLOOR} (AGC clamp); floor cell = (mode, station, day) over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; robust = cell n >= {MIN_CELL}; loud = cell RMS >= {LOUD_HZ:.0} Hz, quiet = RMS < {LOUD_HZ:.0} Hz; day = round-of-tdb civil day (register convention); day-level resid value = daily mean / daily median of the cell resid (level, not scatter); day-level RMS = scatter about the cell mean; trend fit: OLS of the day value vs days since era0, SE from the residual variance, p from Student-t (two-sided, n-2 df) and from 1999 y-permutations; x spans the calendar gaps as empty days (0 honored)",
+            civil_str(era0),
+            civil_str(era1),
+            era0,
+            era1
+        ),
+    );
 
     rec(&mut out, String::new());
-    rec(&mut out, format!(
-        "sample census: floor in-track samples (st 14/43/63, mode 1..3, era) {n_floor_sample}; lock samples excluded {n_lock}; months with any floor sample {}; empty month spans: {}",
-        month_presence.len(),
-        if holes.is_empty() { "none".to_string() } else { holes.join("; ") }
-    ));
+    rec(
+        &mut out,
+        format!(
+            "sample census: floor in-track samples (st 14/43/63, mode 1..3, era) {n_floor_sample}; lock samples excluded {n_lock}; months with any floor sample {}; empty month spans: {}",
+            month_presence.len(),
+            if holes.is_empty() {
+                "none".to_string()
+            } else {
+                holes.join("; ")
+            }
+        ),
+    );
 
     rec(&mut out, String::new());
     rec(
@@ -595,7 +605,9 @@ fn main() {
         if n_co > 0 {
             rec(
                 &mut out,
-                format!("M{mode} st{st} quiet: coherent-offset days (|daily-median| >= 1 Hz, day-RMS < 1 Hz) {n_co}"),
+                format!(
+                    "M{mode} st{st} quiet: coherent-offset days (|daily-median| >= 1 Hz, day-RMS < 1 Hz) {n_co}"
+                ),
             );
         }
     }

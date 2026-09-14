@@ -170,10 +170,10 @@ fn pioneer_floor_samples() -> Option<BTreeMap<(i64, i64), Vec<PSample>>> {
     for i in 0..dts.len() {
         let dc = daycell(dts[i]);
         let centered = dvs[i] - off[&drs[i]];
-        samp
-            .entry((drs[i], dc))
-            .or_default()
-            .push(PSample { tdb: dts[i], val: centered });
+        samp.entry((drs[i], dc)).or_default().push(PSample {
+            tdb: dts[i],
+            val: centered,
+        });
     }
     for v in samp.values_mut() {
         v.sort_by(|a, b| a.tdb.total_cmp(&b.tdb));
@@ -469,7 +469,9 @@ fn main() {
                         wi = j;
                     }
                 }
-                _ => push(format!("    Galileo floor m{mode}: no floor samples (0 honored)")),
+                _ => push(format!(
+                    "    Galileo floor m{mode}: no floor samples (0 honored)"
+                )),
             }
         }
     }
@@ -486,7 +488,11 @@ fn main() {
             .filter_map(|m| g_win.get(&(*m, *st, *dc)))
             .flat_map(|v| v.iter().map(|x| x.0))
             .collect();
-        let gspan = g_all.iter().min_by(|a, b| a.total_cmp(b)).zip(g_all.iter().max_by(|a, b| a.total_cmp(b))).map(|(a, b)| (*a, *b));
+        let gspan = g_all
+            .iter()
+            .min_by(|a, b| a.total_cmp(b))
+            .zip(g_all.iter().max_by(|a, b| a.total_cmp(b)))
+            .map(|(a, b)| (*a, *b));
         let p_str = match pspan {
             Some((a, b)) => format!("{:.2}-{:.2}h", hour_of_day(a), hour_of_day(b)),
             None => "absent".to_string(),
@@ -513,7 +519,10 @@ fn main() {
     }
 
     push(String::new());
-    push("== S4 loud anchor days: intra-day pass structure of the loudest robust floor cells ==".to_string());
+    push(
+        "== S4 loud anchor days: intra-day pass structure of the loudest robust floor cells =="
+            .to_string(),
+    );
     let mut loud: Vec<(i64, i64, i64, f64, usize)> = cell_acc
         .iter()
         .filter(|&(&(m, s, dc), &(_sum, _sum2, n))| {
@@ -577,7 +586,6 @@ fn main() {
         }
     }
 
-
     push(String::new());
     push("== S5 loud-day = loud-pass? aggregate over robust loud floor day-cells ==".to_string());
     push(format!(
@@ -595,7 +603,10 @@ fn main() {
         })
         .map(|(&(m, s, dc), _)| (m, s, dc))
         .collect();
-    push(format!("robust loud floor day-cells in window: {}", loud_cells.len()));
+    push(format!(
+        "robust loud floor day-cells in window: {}",
+        loud_cells.len()
+    ));
     let mut n_single = 0usize;
     let mut n_multi_all_loud = 0usize;
     let mut n_multi_mixed = 0usize;
@@ -612,7 +623,10 @@ fn main() {
                 if j - wi >= MIN_CELL {
                     let wvals: Vec<f64> = v[wi..j].iter().map(|x| x.1).collect();
                     let r = rms_about_mean(&wvals);
-                    wins.push(match r { Some(x) => x >= LOUD_HZ, None => false });
+                    wins.push(match r {
+                        Some(x) => x >= LOUD_HZ,
+                        None => false,
+                    });
                 }
                 wi = j;
             }
@@ -639,10 +653,7 @@ fn main() {
         let n = loud_day_st.iter().filter(|((s, _), _)| *s == st).count();
         push(format!("  loud (station, day) st{st}: {n}"));
     }
-    push(format!(
-        "loud (station, day) total: {}",
-        loud_day_st.len()
-    ));
+    push(format!("loud (station, day) total: {}", loud_day_st.len()));
 
     let _ = std::fs::write(&report_path, out.join("\n") + "\n");
     eprintln!("report written to {report_path}");

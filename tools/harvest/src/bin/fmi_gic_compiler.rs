@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_GIC_A, MAGIC_GIC};
+use omegaflow::archivar::geo::{COMP_GIC_A, GeoRec, MAGIC_GIC, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -334,7 +334,10 @@ fn main() {
             bytes.len() as f64
         ),
         None => {
-            eprintln!("{}: roundtrip parse void — the bin stays unverified", out_bin);
+            eprintln!(
+                "{}: roundtrip parse void — the bin stays unverified",
+                out_bin
+            );
             std::process::exit(1);
         }
     }

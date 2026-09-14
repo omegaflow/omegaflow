@@ -1316,9 +1316,11 @@ fn test_empty_data_anomaly() {
     let _ = take_anomalies();
     check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
     let anomalies = take_anomalies();
-    assert!(anomalies
-        .iter()
-        .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
+    assert!(
+        anomalies
+            .iter()
+            .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e")
+    );
     check_empty_data(
         src,
         r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
@@ -1710,11 +1712,13 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     assert!(amax > 0.0 && amax.is_finite());
     let mut unbound = rec;
     unbound.e = 1.5;
-    assert!(Motion::Kepler {
-        rec: Arc::new(unbound)
-    }
-    .at(0.0, 0.0, &eph)
-    .is_none());
+    assert!(
+        Motion::Kepler {
+            rec: Arc::new(unbound)
+        }
+        .at(0.0, 0.0, &eph)
+        .is_none()
+    );
 }
 
 #[test]

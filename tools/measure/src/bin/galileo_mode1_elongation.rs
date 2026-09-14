@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -101,7 +101,9 @@ fn main() {
     let mut out: Vec<String> = Vec::new();
     out.push("galileo mode-1 solar-elongation split (correct solar axis)".to_string());
     out.push("alpha = angle at the Sun (the Rausch-Kurve 'SEP'); elong = angle at Earth (the solar elongation)".to_string());
-    out.push("noise = pooled per-day RMS (Rausch-Kurve metric); day cell >= 30 samples".to_string());
+    out.push(
+        "noise = pooled per-day RMS (Rausch-Kurve metric); day cell >= 30 samples".to_string(),
+    );
 
     let band: Vec<(f64, f64, &str)> = vec![
         (0.0, 10.0, "elong 0-10"),

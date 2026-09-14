@@ -1,15 +1,15 @@
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::cdn::upload_asset;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::s2event::{
-    decode_rec as s2e_decode, encode_rec as s2e_encode, parse_header as s2e_parse_header,
-    write_header as s2e_write_header, S2EventRecord, REC_BYTES as S2E_REC, ROOT_NEUTRINO,
+    REC_BYTES as S2E_REC, ROOT_NEUTRINO, S2EventRecord, decode_rec as s2e_decode,
+    encode_rec as s2e_encode, parse_header as s2e_parse_header, write_header as s2e_write_header,
 };
 use omegaflow::skymap::{
-    decode_rec as sky_decode, encode_rec as sky_encode, parse_header as sky_parse_header,
-    write_header as sky_write_header, SkymapRecord, KIND_NEUTRINO, REC_BYTES as SKY_REC,
+    KIND_NEUTRINO, REC_BYTES as SKY_REC, SkymapRecord, decode_rec as sky_decode,
+    encode_rec as sky_encode, parse_header as sky_parse_header, write_header as sky_write_header,
 };
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::collections::BTreeMap;
 use std::io::{Read, Seek, SeekFrom};
 
@@ -38,11 +38,7 @@ fn unquoted(cell: &str) -> &str {
 
 fn parse_f64(cell: &str) -> Option<f64> {
     let v: f64 = unquoted(cell).parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn opt_f64(v: Option<f64>) -> String {
@@ -231,7 +227,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let out_path = match arg_value(args, "--out") {
         Some(v) => v,
         None => {
-            return Err("--out <threads.s2e1>: the asset path is never silent — refused".into())
+            return Err("--out <threads.s2e1>: the asset path is never silent — refused".into());
         }
     };
     let out_map = match arg_value(args, "--out-map") {
@@ -239,7 +235,7 @@ fn run(args: &[String]) -> Result<(), String> {
         None => {
             return Err(
                 "--out-map <projection.sky1>: the asset path is never silent — refused".into(),
-            )
+            );
         }
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

@@ -2,8 +2,12 @@
 mod datacite;
 #[path = "archive_search/git.rs"]
 mod git;
+#[path = "archive_search/heasarc.rs"]
+mod heasarc;
 #[path = "archive_search/index.rs"]
 mod index;
+#[path = "archive_search/isc.rs"]
+mod isc;
 #[path = "archive_search/json.rs"]
 mod json;
 #[path = "archive_search/magic.rs"]
@@ -12,30 +16,26 @@ mod magic;
 mod net;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
-#[path = "archive_search/pdf.rs"]
-mod pdf;
-#[path = "archive_search/zenodo.rs"]
-mod zenodo;
-#[path = "archive_search/isc.rs"]
-mod isc;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
 #[path = "archive_search/paged.rs"]
 mod paged;
-#[path = "archive_search/token.rs"]
-mod token;
-#[path = "archive_search/supermag.rs"]
-mod supermag;
-#[path = "archive_search/heasarc.rs"]
-mod heasarc;
+#[path = "archive_search/pdf.rs"]
+mod pdf;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/secrets.rs"]
 mod secrets;
 #[path = "archive_search/server.rs"]
 mod server;
+#[path = "archive_search/supermag.rs"]
+mod supermag;
+#[path = "archive_search/token.rs"]
+mod token;
 #[path = "archive_search/web.rs"]
 mod web;
+#[path = "archive_search/zenodo.rs"]
+mod zenodo;
 
 use std::collections::{HashMap, HashSet};
 use std::env;
@@ -898,11 +898,7 @@ fn host_of(after_scheme: &str) -> Option<String> {
         return None;
     }
     let host = raw.trim_end_matches('.').to_lowercase();
-    if host.is_empty() {
-        None
-    } else {
-        Some(host)
-    }
+    if host.is_empty() { None } else { Some(host) }
 }
 
 fn walk_leads(

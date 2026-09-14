@@ -147,11 +147,7 @@ fn cell_f64(cells: &[&str], k: usize) -> Option<f64> {
         return None;
     }
     let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 pub struct GaiaCsvCounts {

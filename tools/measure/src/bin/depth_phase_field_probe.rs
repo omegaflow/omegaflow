@@ -16,7 +16,9 @@ fn main() {
         None => match SystemTime::now().duration_since(UNIX_EPOCH) {
             Ok(d) => dp::unix_to_iso(d.as_secs_f64()),
             Err(_) => {
-                eprintln!("depth-phase field probe: the system clock precedes the epoch — no end time, no fabricated zero");
+                eprintln!(
+                    "depth-phase field probe: the system clock precedes the epoch — no end time, no fabricated zero"
+                );
                 return;
             }
         },
@@ -202,7 +204,9 @@ fn main() {
     }
     println!();
     if depths.is_empty() {
-        println!("no station carried a pP above the correlation gate — no depth inverted (0 honored, two readings: phase too weak or the catalog depth is off by > 30%)");
+        println!(
+            "no station carried a pP above the correlation gate — no depth inverted (0 honored, two readings: phase too weak or the catalog depth is off by > 30%)"
+        );
         return;
     }
     let median_depth = dp::median(&mut depths);
@@ -220,6 +224,8 @@ fn main() {
     );
     let edge_flags = rows.iter().filter(|r| r.contains("edge=true")).count();
     if edge_flags > 0 {
-        println!("edge flag (pP pick at the window edge — the catalog depth may itself be off): {edge_flags} stations");
+        println!(
+            "edge flag (pP pick at the window edge — the catalog depth may itself be off): {edge_flags} stations"
+        );
     }
 }

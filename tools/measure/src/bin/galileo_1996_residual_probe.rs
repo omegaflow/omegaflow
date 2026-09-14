@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -53,11 +53,7 @@ fn rms_drop_k(vals: &[f64], k: usize) -> Option<f64> {
     let kept: Vec<f64> = idx[..vals.len() - k].iter().map(|i| vals[*i]).collect();
     let mm = kept.iter().sum::<f64>() / kept.len() as f64;
     let rr = (kept.iter().map(|v| (v - mm) * (v - mm)).sum::<f64>() / kept.len() as f64).sqrt();
-    if rr.is_finite() {
-        Some(rr)
-    } else {
-        None
-    }
+    if rr.is_finite() { Some(rr) } else { None }
 }
 fn median_trim_top(vals: &[f64], k: usize) -> Option<f64> {
     if vals.len() <= k {
@@ -261,11 +257,7 @@ fn main() {
         *all_pass_count.entry((mode, station)).or_insert(0) += 1;
         let pass_rms = if xs.len() >= MIN_CELL {
             let rr = rms(&xs);
-            if rr.is_finite() {
-                Some(rr)
-            } else {
-                None
-            }
+            if rr.is_finite() { Some(rr) } else { None }
         } else {
             None
         };

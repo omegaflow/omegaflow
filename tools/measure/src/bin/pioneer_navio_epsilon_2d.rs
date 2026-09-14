@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::odp::dsn_station;
 use omegaflow::archivar::spectral::civil_from_days;
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::odf::parse_p11r_bin;
 
 const DAY_S: f64 = 86400.0;
@@ -53,7 +53,10 @@ fn year_of(tdb: f64) -> i64 {
 }
 
 fn median(v: &[f64]) -> f64 {
-    assert!(!v.is_empty(), "median of an empty series is a fabricated value");
+    assert!(
+        !v.is_empty(),
+        "median of an empty series is a fabricated value"
+    );
     let mut s = v.to_vec();
     s.sort_by(f64::total_cmp);
     s[s.len() / 2]
@@ -148,13 +151,8 @@ fn run(probe: &str, sc_body: &str) {
             .acos()
             .to_degrees();
         let m = a.vals.iter().sum::<f64>() / a.vals.len() as f64;
-        let rms = (a
-            .vals
-            .iter()
-            .map(|v| (v - m) * (v - m))
-            .sum::<f64>()
-            / a.vals.len() as f64)
-            .sqrt();
+        let rms =
+            (a.vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / a.vals.len() as f64).sqrt();
         rows.push(DayRow {
             t,
             au: r_probe / AU,
@@ -180,14 +178,23 @@ fn run(probe: &str, sc_body: &str) {
     );
 
     let band_med = |lo: f64, hi: f64, f: &dyn Fn(&DayRow) -> f64| -> Option<(usize, f64)> {
-        let v: Vec<f64> = rows.iter().filter(|r| f(r) >= lo && f(r) < hi).map(|r| r.rms).collect();
+        let v: Vec<f64> = rows
+            .iter()
+            .filter(|r| f(r) >= lo && f(r) < hi)
+            .map(|r| r.rms)
+            .collect();
         if v.is_empty() {
             None
         } else {
             Some((v.len(), median(&v)))
         }
     };
-    for (lo, hi, axis) in [(0.0, 10.0, "eps"), (10.0, 20.0, "eps"), (0.0, 5.0, "dist"), (5.0, 10.0, "dist")] {
+    for (lo, hi, axis) in [
+        (0.0, 10.0, "eps"),
+        (10.0, 20.0, "eps"),
+        (0.0, 5.0, "dist"),
+        (5.0, 10.0, "dist"),
+    ] {
         let g = match axis {
             "eps" => |r: &DayRow| r.eps,
             _ => |r: &DayRow| r.au,
@@ -197,8 +204,16 @@ fn run(probe: &str, sc_body: &str) {
         }
     }
 
-    let conj_idx: Vec<usize> = rows.iter().enumerate().filter(|(_, r)| r.eps < 10.0).map(|(i, _)| i).collect();
-    eprintln!("{probe}: elongation 0-10 (conjunction) days n={}", conj_idx.len());
+    let conj_idx: Vec<usize> = rows
+        .iter()
+        .enumerate()
+        .filter(|(_, r)| r.eps < 10.0)
+        .map(|(i, _)| i)
+        .collect();
+    eprintln!(
+        "{probe}: elongation 0-10 (conjunction) days n={}",
+        conj_idx.len()
+    );
     let mut by_year: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
     let mut by_au: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
     for &i in &conj_idx {
@@ -207,10 +222,23 @@ fn run(probe: &str, sc_body: &str) {
         by_au.entry(r.au.floor() as i64).or_default().push(r.rms);
     }
     for (y, v) in &by_year {
-        eprintln!("  era {y}: n={} rms med {:.0} ({:.0}..{:.0}) Hz", v.len(), median(v), v.iter().cloned().fold(f64::INFINITY, f64::min), v.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+        eprintln!(
+            "  era {y}: n={} rms med {:.0} ({:.0}..{:.0}) Hz",
+            v.len(),
+            median(v),
+            v.iter().cloned().fold(f64::INFINITY, f64::min),
+            v.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+        );
     }
     for (a, v) in &by_au {
-        eprintln!("  dist {a}-{} AU: n={} rms med {:.0} ({:.0}..{:.0}) Hz", a + 1, v.len(), median(v), v.iter().cloned().fold(f64::INFINITY, f64::min), v.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+        eprintln!(
+            "  dist {a}-{} AU: n={} rms med {:.0} ({:.0}..{:.0}) Hz",
+            a + 1,
+            v.len(),
+            median(v),
+            v.iter().cloned().fold(f64::INFINITY, f64::min),
+            v.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+        );
     }
     if conj_idx.len() <= 70 {
         eprintln!("  ledger (date year distAU eps rmsHz nSamp stations threeWayShare):");
@@ -230,7 +258,10 @@ fn run(probe: &str, sc_body: &str) {
             );
         }
     }
-    for (tol, epsmin, label) in [(1.0, 10.0, "loose +-1AU eps>=10"), (0.4, 30.0, "strict +-0.4AU eps>=30")] {
+    for (tol, epsmin, label) in [
+        (1.0, 10.0, "loose +-1AU eps>=10"),
+        (0.4, 30.0, "strict +-0.4AU eps>=30"),
+    ] {
         let mut pools = Vec::new();
         let mut diffs = Vec::new();
         let mut thin = 0usize;
@@ -239,9 +270,7 @@ fn run(probe: &str, sc_body: &str) {
             let y = year_of(c.t);
             let pool: Vec<f64> = rows
                 .iter()
-                .filter(|r| {
-                    r.eps >= epsmin && year_of(r.t) == y && (r.au - c.au).abs() <= tol
-                })
+                .filter(|r| r.eps >= epsmin && year_of(r.t) == y && (r.au - c.au).abs() <= tol)
                 .map(|r| r.rms)
                 .collect();
             if pool.len() < 3 {
@@ -254,8 +283,7 @@ fn run(probe: &str, sc_body: &str) {
         }
         if !diffs.is_empty() {
             let louder = diffs.iter().filter(|d| **d > 0.0).count();
-            let cmed =
-                median(&conj_idx.iter().map(|&i| rows[i].rms).collect::<Vec<f64>>());
+            let cmed = median(&conj_idx.iter().map(|&i| rows[i].rms).collect::<Vec<f64>>());
             eprintln!(
                 "  2D control {label}: {}/{} conj days have >= 3 non-conj same-year days ({thin} thin); conj med {cmed:.0} Hz vs matched non-conj med {:.0} Hz; matched diff (conj - nonconj) med {:.0} Hz; conj louder than own pool {louder}/{}",
                 diffs.len(),
@@ -265,26 +293,36 @@ fn run(probe: &str, sc_body: &str) {
                 diffs.len()
             );
         } else {
-            eprintln!("  2D control {label}: {thin} conj days, none with a >= 3-day non-conj same-year pool — the era x distance cell is data-thin (0 honored)");
+            eprintln!(
+                "  2D control {label}: {thin} conj days, none with a >= 3-day non-conj same-year pool — the era x distance cell is data-thin (0 honored)"
+            );
         }
     }
-        eprintln!("{probe}: annual geometry + era profile (all tracked days by year):");
-        for y in 1971..=2003 {
-            let yr: Vec<&DayRow> = rows.iter().filter(|r| year_of(r.t) == y).collect();
-            if yr.is_empty() {
-                continue;
-            }
-            let mine = yr.iter().map(|r| r.eps).fold(f64::INFINITY, f64::min);
-            let nconj = yr.iter().filter(|r| r.eps < 10.0).count();
-            let rmsv: Vec<f64> = yr.iter().map(|r| r.rms).collect();
-            eprintln!("    {y}: n={} minEps {mine:.1} deg conj<10 {nconj} medRMS {:.0} (lo {:.0}..hi {:.0}) Hz", yr.len(), median(&rmsv), rmsv.iter().cloned().fold(f64::INFINITY, f64::min), rmsv.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+    eprintln!("{probe}: annual geometry + era profile (all tracked days by year):");
+    for y in 1971..=2003 {
+        let yr: Vec<&DayRow> = rows.iter().filter(|r| year_of(r.t) == y).collect();
+        if yr.is_empty() {
+            continue;
         }
+        let mine = yr.iter().map(|r| r.eps).fold(f64::INFINITY, f64::min);
+        let nconj = yr.iter().filter(|r| r.eps < 10.0).count();
+        let rmsv: Vec<f64> = yr.iter().map(|r| r.rms).collect();
+        eprintln!(
+            "    {y}: n={} minEps {mine:.1} deg conj<10 {nconj} medRMS {:.0} (lo {:.0}..hi {:.0}) Hz",
+            yr.len(),
+            median(&rmsv),
+            rmsv.iter().cloned().fold(f64::INFINITY, f64::min),
+            rmsv.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
+        );
+    }
     if sc_body.contains("11") {
         eprintln!("{probe}: resid-RMS by 0.5-AU heliocentric band (whole mission, 0-13 AU):");
         let mut au5: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
         for r in &rows {
             if r.au < 13.0 {
-                au5.entry((r.au * 2.0).floor() as i64).or_default().push(r.rms);
+                au5.entry((r.au * 2.0).floor() as i64)
+                    .or_default()
+                    .push(r.rms);
             }
         }
         for (k, v) in &au5 {
@@ -300,7 +338,10 @@ fn run(probe: &str, sc_body: &str) {
         }
         let mut conj_years: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
         for &i in &conj_idx {
-            conj_years.entry(year_of(rows[i].t)).or_default().push(rows[i].au);
+            conj_years
+                .entry(year_of(rows[i].t))
+                .or_default()
+                .push(rows[i].au);
         }
         for (y, aus) in &conj_years {
             let lo = aus.iter().cloned().fold(f64::INFINITY, f64::min) - 0.7;
@@ -321,7 +362,11 @@ fn run(probe: &str, sc_body: &str) {
                 let v: Vec<f64> = rows
                     .iter()
                     .filter(|r| {
-                        year_of(r.t) == *y && r.au >= lo && r.au <= hi && r.eps >= blo && r.eps < bhi
+                        year_of(r.t) == *y
+                            && r.au >= lo
+                            && r.au <= hi
+                            && r.eps >= blo
+                            && r.eps < bhi
                     })
                     .map(|r| r.rms)
                     .collect();

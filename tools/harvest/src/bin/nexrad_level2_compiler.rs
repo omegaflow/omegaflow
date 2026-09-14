@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::nexrad::{parse_nexrad, NexradMoment, NexradVolume};
+use omegaflow::archivar::nexrad::{NexradMoment, NexradVolume, parse_nexrad};
 use omegaflow::cdn::upload_release;
 use std::io::{BufWriter, Write};
 
@@ -48,11 +48,7 @@ fn physical_value(raw: u16, moment: &NexradMoment) -> Option<f64> {
         return None;
     }
     let v = (raw as f64 - moment.offset as f64) / moment.scale as f64;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn collect(volume: &NexradVolume) -> Result<Vec<NexradSample>, String> {
@@ -272,8 +268,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage =
-        "usage: nexrad_level2_compiler --input <volume> | --url <s3-object-url> --out <path> [--ci-mode]";
+    let usage = "usage: nexrad_level2_compiler --input <volume> | --url <s3-object-url> --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
@@ -336,7 +331,9 @@ fn main() {
     let written = match std::fs::read(&out_path) {
         Ok(v) => v,
         Err(_) => {
-            eprintln!("nexrad_level2_compiler: {out_path} read returned void — the roundtrip stays unverified");
+            eprintln!(
+                "nexrad_level2_compiler: {out_path} read returned void — the roundtrip stays unverified"
+            );
             std::process::exit(1);
         }
     };

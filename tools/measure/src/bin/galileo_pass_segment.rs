@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::atdf::parse_resid_bin;
 use omegaflow::spectral::civil_from_days;
 
@@ -647,11 +647,7 @@ fn main() {
                                 return None;
                             }
                             let eps = elong_deg_at(*day as f64 * DAY_S, &eph)?;
-                            if eps >= lo && eps < hi {
-                                c.rms()
-                            } else {
-                                None
-                            }
+                            if eps >= lo && eps < hi { c.rms() } else { None }
                         })
                         .filter(|r| r.is_finite())
                         .collect();

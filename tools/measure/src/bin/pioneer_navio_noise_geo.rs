@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 
 const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
@@ -167,7 +167,9 @@ fn run(probe: &str, sc_body: &str) {
         s.sort_by(f64::total_cmp);
         s[s.len() / 2]
     };
-    eprintln!("{probe}: overall median resid-RMS {far_med:.0} Hz — the far-out (quiet, low-plasma) zone is the best floor for a drift-only measurement");
+    eprintln!(
+        "{probe}: overall median resid-RMS {far_med:.0} Hz — the far-out (quiet, low-plasma) zone is the best floor for a drift-only measurement"
+    );
 }
 
 fn main() {

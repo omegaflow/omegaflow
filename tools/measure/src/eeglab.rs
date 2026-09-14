@@ -223,11 +223,7 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
                     .trim_end_matches('\0')
                     .trim()
                     .to_string();
-                if s.is_empty() {
-                    None
-                } else {
-                    Some(s)
-                }
+                if s.is_empty() { None } else { Some(s) }
             }
             _ => None,
         })

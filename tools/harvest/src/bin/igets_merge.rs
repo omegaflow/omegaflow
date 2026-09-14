@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{verify_bin, GeoRec, MAGIC_IGETS, REC_BYTES};
+use omegaflow::archivar::geo::{GeoRec, MAGIC_IGETS, REC_BYTES, verify_bin};
 use omegaflow::cdn::upload_release;
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
@@ -158,7 +158,8 @@ fn main() {
         eprintln!("--in <dir> required");
         std::process::exit(1);
     };
-    let Some(stations) = arg_value(&args, "--stations").and_then(|v| v.parse::<usize>().ok()) else {
+    let Some(stations) = arg_value(&args, "--stations").and_then(|v| v.parse::<usize>().ok())
+    else {
         eprintln!("--stations <n> required");
         std::process::exit(1);
     };
@@ -193,7 +194,10 @@ fn main() {
     let mut total = 0usize;
     for path in &files {
         let Some((shard, count)) = Shard::open(path) else {
-            eprintln!("{}: header void — the merge stays unwritten", path.display());
+            eprintln!(
+                "{}: header void — the merge stays unwritten",
+                path.display()
+            );
             std::process::exit(1);
         };
         total += count;
@@ -227,7 +231,8 @@ fn main() {
         std::process::exit(1);
     };
     let mut out = BufWriter::new(file);
-    if out.write_all(&MAGIC_IGETS).is_err() || out.write_all(&(total as u32).to_le_bytes()).is_err() {
+    if out.write_all(&MAGIC_IGETS).is_err() || out.write_all(&(total as u32).to_le_bytes()).is_err()
+    {
         eprintln!("write {out_bin} returned void");
         std::process::exit(1);
     }

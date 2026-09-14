@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -228,11 +228,7 @@ fn main() {
             return None;
         }
         let r = rms(v);
-        if r.is_finite() {
-            Some(r)
-        } else {
-            None
-        }
+        if r.is_finite() { Some(r) } else { None }
     };
 
     let pooled_all: Vec<(i64, f64)> = day_cells
@@ -346,18 +342,18 @@ fn main() {
         let ncell_all: Vec<f64> = cells_all.iter().map(|c| c.2 as f64).collect();
         let ndays_all: usize = cells_all
             .iter()
-            .map(|c| c.0 .0)
+            .map(|c| c.0.0)
             .collect::<BTreeSet<i64>>()
             .len();
         let cells_conj: Vec<((i64, i64), f64, usize)> = cells_all
             .iter()
-            .filter(|c| quiet_elong.contains(&c.0 .0))
+            .filter(|c| quiet_elong.contains(&c.0.0))
             .copied()
             .collect();
         let rms_conj: Vec<f64> = cells_conj.iter().map(|c| c.1).collect();
         let ndays_conj: usize = cells_conj
             .iter()
-            .map(|c| c.0 .0)
+            .map(|c| c.0.0)
             .collect::<BTreeSet<i64>>()
             .len();
         out.push(format!(

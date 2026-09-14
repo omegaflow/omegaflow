@@ -1,8 +1,7 @@
 use omegaflow::archivar::astrometry::delta_t_espenak_meeus;
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, orientation_angles_at, parse_ephemeris_binary, BodyEphemeris,
-    LeapSeconds,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk,
+    fetch_raw_bytes, light_time_worldline, orientation_angles_at, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 use std::collections::HashMap;
@@ -330,11 +329,7 @@ fn magnitude_at(line: &Line, t: f64, obs: [f64; 3]) -> Option<f64> {
     let rs = angular_radius(sun_r, vlen(vsub(sun, obs))?)?;
     let rm = angular_radius(moon_r, vlen(vsub(moon, obs))?)?;
     let out = (rs + rm - theta) / (2.0 * rs);
-    if out.is_finite() {
-        Some(out)
-    } else {
-        None
-    }
+    if out.is_finite() { Some(out) } else { None }
 }
 
 fn sunlit(line: &Line, t: f64, obs: [f64; 3], geo: [f64; 3]) -> bool {
@@ -684,7 +679,10 @@ fn main() {
         return;
     };
 
-    println!("=== eclipse shadow — {} event from the raw sun/moon/earth worldlines (no eclipse catalog enters the search) ===", iso_utc(day_unix));
+    println!(
+        "=== eclipse shadow — {} event from the raw sun/moon/earth worldlines (no eclipse catalog enters the search) ===",
+        iso_utc(day_unix)
+    );
     let line_desc: Vec<String> = LINES
         .iter()
         .map(|l| format!("{} ({})", l.word, l.netloc))
@@ -830,7 +828,9 @@ fn main() {
                             (Some(cl), Some(cn)) => {
                                 format!("point {:.1} km", arc_km(*lat, *lon, cl, cn))
                             }
-                            _ => format!("point lat {lat:.4} lon {lon:.4} (canon point is catalog-rounded)"),
+                            _ => format!(
+                                "point lat {lat:.4} lon {lon:.4} (canon point is catalog-rounded)"
+                            ),
                         };
                         let magstr = match canon.mag {
                             Some(m) => format!("magnitude {:+.4}", mag - m),
@@ -951,7 +951,9 @@ mod tests {
             spec.netloc,
             &[spec.sun_asset, spec.moon_asset, spec.earth_asset],
         ) {
-            println!("kalibrier gate: the de440 bins sit absent from data/ — named skip, the gate stays unrun");
+            println!(
+                "kalibrier gate: the de440 bins sit absent from data/ — named skip, the gate stays unrun"
+            );
             return;
         }
         let Some(line) = load_line(spec, "data") else {
@@ -961,11 +963,15 @@ mod tests {
             return;
         };
         let Some(lsk) = embedded_lsk() else {
-            println!("kalibrier gate: the embedded LSK carries no naif0012 table — named skip, the gate stays unrun");
+            println!(
+                "kalibrier gate: the embedded LSK carries no naif0012 table — named skip, the gate stays unrun"
+            );
             return;
         };
         let Some(day_tdb) = lsk.unix_to_tdb(EVENT_UNIX) else {
-            println!("kalibrier gate: the event date reads void on the leap table — named skip, the gate stays unrun");
+            println!(
+                "kalibrier gate: the event date reads void on the leap table — named skip, the gate stays unrun"
+            );
             return;
         };
         let Some((t_great, lat, lon, mag)) = run_line(&line, day_tdb, &lsk) else {

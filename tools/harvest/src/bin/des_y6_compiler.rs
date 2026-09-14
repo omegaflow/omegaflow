@@ -1,4 +1,4 @@
-use omegaflow::archivar::des_y6::{encode_record, DesY6Rec, AU_M, AU_YR_TO_M_S, DES_Y6_EPOCH_JD};
+use omegaflow::archivar::des_y6::{AU_M, AU_YR_TO_M_S, DES_Y6_EPOCH_JD, DesY6Rec, encode_record};
 use omegaflow::cdn::upload_release;
 
 const CDN_TAG: &str = "cdsarc.cds.unistra.fr";

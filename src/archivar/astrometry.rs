@@ -301,11 +301,7 @@ pub fn nutation_matrix(jd_tt: f64, forward: bool) -> [f64; 9] {
     let (dpsi, deps) = nutation_iau80(jd_tt);
     let eps = mean_obliquity_iau80(jd_tt);
     let m = mat3_mul(&rot_x(eps + deps), &mat3_mul(&rot_z(dpsi), &rot_x(-eps)));
-    if forward {
-        m
-    } else {
-        mat3_transpose(&m)
-    }
+    if forward { m } else { mat3_transpose(&m) }
 }
 
 pub fn aberration_apply(u: [f64; 3], v: [f64; 3], forward: bool) -> Option<[f64; 3]> {

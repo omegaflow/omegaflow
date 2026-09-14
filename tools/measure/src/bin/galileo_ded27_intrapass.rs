@@ -33,13 +33,62 @@ struct Anchor {
 
 fn anchors() -> Vec<Anchor> {
     vec![
-        Anchor { mode: 1, station: 14, year: 1995, month: 11, day: 24, name: "M1 st14 1995-11-24 (ref 25.85 Hz)" },
-        Anchor { mode: 2, station: 14, year: 1995, month: 11, day: 24, name: "M2 st14 1995-11-24 (ref 31.77 Hz)" },
-        Anchor { mode: 3, station: 14, year: 1995, month: 12, day: 5, name: "M3 st14 1995-12-05 (ref 52.9 Hz)" },
-        Anchor { mode: 3, station: 63, year: 1995, month: 11, day: 27, name: "M3 st63 1995-11-27 (ref 186.5 Hz)" },
-        Anchor { mode: 1, station: 63, year: 1996, month: 6, day: 26, name: "M1 st63 1996-06-26 (ref 20.64 Hz)" },
-        Anchor { mode: 1, station: 43, year: 1996, month: 11, day: 4, name: "M1 st43 1996-11-04 (ref 23.1 Hz)" },
-        Anchor { mode: 3, station: 43, year: 1995, month: 12, day: 4, name: "M3 st43 1995-12-04 (ref 10.5 Hz)" },
+        Anchor {
+            mode: 1,
+            station: 14,
+            year: 1995,
+            month: 11,
+            day: 24,
+            name: "M1 st14 1995-11-24 (ref 25.85 Hz)",
+        },
+        Anchor {
+            mode: 2,
+            station: 14,
+            year: 1995,
+            month: 11,
+            day: 24,
+            name: "M2 st14 1995-11-24 (ref 31.77 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 14,
+            year: 1995,
+            month: 12,
+            day: 5,
+            name: "M3 st14 1995-12-05 (ref 52.9 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 63,
+            year: 1995,
+            month: 11,
+            day: 27,
+            name: "M3 st63 1995-11-27 (ref 186.5 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 63,
+            year: 1996,
+            month: 6,
+            day: 26,
+            name: "M1 st63 1996-06-26 (ref 20.64 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 43,
+            year: 1996,
+            month: 11,
+            day: 4,
+            name: "M1 st43 1996-11-04 (ref 23.1 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 43,
+            year: 1995,
+            month: 12,
+            day: 4,
+            name: "M3 st43 1995-12-04 (ref 10.5 Hz)",
+        },
     ]
 }
 
@@ -77,10 +126,15 @@ fn main() {
         None => "tmp/galileo_ded27_intrapass_report.txt".to_string(),
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo intra-pass structure of loud floor runs over tdb (Ded-27, H2 vs H3)".to_string());
+    out.push(
+        "galileo intra-pass structure of loud floor runs over tdb (Ded-27, H2 vs H3)".to_string(),
+    );
     out.push("binding: floor = strength -2560, |resid| <= 1000 Hz, run = gap <= 600 s".to_string());
     out.push("reference day cell = samples whose floor(tdb/86400) == unix_day_of_date - 10958 (midday-to-midday window of the reference series)".to_string());
-    out.push("run RMS and day RMS are about the respective mean (reference loudness threshold 1 Hz)".to_string());
+    out.push(
+        "run RMS and day RMS are about the respective mean (reference loudness threshold 1 Hz)"
+            .to_string(),
+    );
     out.push("structure per loud run: 12 equal-time windows (window mean + internal RMS about the window mean), drift/noise split, front-20% energy share, |resid| quantiles".to_string());
 
     let anc = anchors();
@@ -135,13 +189,21 @@ fn main() {
 
     for (i, a) in anc.iter().enumerate() {
         let v = &series[i];
-    if v.is_empty() {
-        out.push("  0 floor samples in the reference day cell (0 honored)".to_string());
-        continue;
-    }
-        out.push(format!("\nANCHOR {} mode {} st{} ({})", a.name, a.mode, a.station, civil_day(civil_days(a.year, a.month, a.day))));
+        if v.is_empty() {
+            out.push("  0 floor samples in the reference day cell (0 honored)".to_string());
+            continue;
+        }
+        out.push(format!(
+            "\nANCHOR {} mode {} st{} ({})",
+            a.name,
+            a.mode,
+            a.station,
+            civil_day(civil_days(a.year, a.month, a.day))
+        ));
         let (n_cell, m_cell, rms_cell) = stats_of(v, 0, v.len());
-        out.push(format!("  reference day cell: n {n_cell} mean {m_cell:.3} Hz RMS {rms_cell:.4} Hz"));
+        out.push(format!(
+            "  reference day cell: n {n_cell} mean {m_cell:.3} Hz RMS {rms_cell:.4} Hz"
+        ));
         if n_cell < MIN_CELL {
             out.push("  day n < 30 (0 honored)".to_string());
             continue;
@@ -163,7 +225,10 @@ fn main() {
             .filter(|(lo, hi)| hi - lo >= MIN_CELL && stats_of(v, *lo, *hi).2 >= LOUD_HZ)
             .collect();
         if loud.is_empty() {
-            out.push("  no run with n >= 30 and run RMS >= 1 Hz inside the day cell (0 honored)".to_string());
+            out.push(
+                "  no run with n >= 30 and run RMS >= 1 Hz inside the day cell (0 honored)"
+                    .to_string(),
+            );
             continue;
         }
         out.push(format!("  loud runs inside the day cell: {}", loud.len()));

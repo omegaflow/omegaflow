@@ -1,13 +1,13 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::geo::{parse_slab2, GbcoRec};
+use omegaflow::archivar::geo::{GbcoRec, parse_slab2};
 use omegaflow::volume::Volume;
 use omegaflow_measure::depthphase as dp;
 use omegaflow_measure::depthphase::{
     CATALOG_URL, MAX_DIST_DEG, MAX_STATIONS, MIN_DEPTH_KM, MIN_DIST_DEG, MIN_MAG,
     P_WINDOW_AFTER_ORIGIN_S, REGION, SEARCH_START, STATION_URL,
 };
-use omegaflow_measure::driver_scatter::{scatter, ScatterResult, MIN_N};
+use omegaflow_measure::driver_scatter::{MIN_N, ScatterResult, scatter};
 use omegaflow_measure::stats::sample_sd;
 use std::env;
 use std::thread;
@@ -16,8 +16,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 const SLAB2_CDN_URL: &str =
     "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
 const SLAB2_LOCAL_PATH: &str = "data/www.sciencebase.gov/slab2_depth.bin";
-const VOLUME_CDN_URL: &str =
-    "https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin";
+const VOLUME_CDN_URL: &str = "https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin";
 const VOLUME_LOCAL_PATH: &str = "data/LLNL_G3D_JPS.volume.bin";
 const SLAB_NEAR_RADIUS_DEG: f64 = 0.5;
 const N_PERMS_DEFAULT: usize = 1000;
@@ -29,7 +28,9 @@ fn main() {
         None => match SystemTime::now().duration_since(UNIX_EPOCH) {
             Ok(d) => dp::unix_to_iso(d.as_secs_f64()),
             Err(_) => {
-                eprintln!("depth-phase driver scatter: the system clock precedes the epoch — no end time, no fabricated zero");
+                eprintln!(
+                    "depth-phase driver scatter: the system clock precedes the epoch — no end time, no fabricated zero"
+                );
                 return;
             }
         },
@@ -78,15 +79,25 @@ fn main() {
 
     println!("=== depth-phase driver scatter — per-driver sigma reduction, permutation null ===");
     println!("instrument (registered before the first fetch):");
-    println!("  sigma0 = sample standard deviation of the fleet per-event depth offset (offset = measured depth - catalog depth),");
+    println!(
+        "  sigma0 = sample standard deviation of the fleet per-event depth offset (offset = measured depth - catalog depth),"
+    );
     println!(
         "  re-measured fresh from depthphase.rs — the audit's 19 km is a citation, not an input"
     );
-    println!("  per driver, separately: OLS of offset on the driver -> sigma1 = residual sample sd; rho = sigma1/sigma0");
-    println!("  null = {n_perms} permutations of the driver<->event pairing -> the rho_null distribution;");
-    println!("  the test is two-sided (rho beyond mean +/- 2 sd of rho_null); the mask question (reduction) is answered by the lower tail alone");
-    println!("selection rule: depth >= {min_depth_km} km, magnitude >= {MIN_MAG}, box lat {}..{} lon {}..{}, up to {max_events} events",
-        region[0], region[1], region[2], region[3]);
+    println!(
+        "  per driver, separately: OLS of offset on the driver -> sigma1 = residual sample sd; rho = sigma1/sigma0"
+    );
+    println!(
+        "  null = {n_perms} permutations of the driver<->event pairing -> the rho_null distribution;"
+    );
+    println!(
+        "  the test is two-sided (rho beyond mean +/- 2 sd of rho_null); the mask question (reduction) is answered by the lower tail alone"
+    );
+    println!(
+        "selection rule: depth >= {min_depth_km} km, magnitude >= {MIN_MAG}, box lat {}..{} lon {}..{}, up to {max_events} events",
+        region[0], region[1], region[2], region[3]
+    );
     println!();
 
     let cat_url = format!(
@@ -160,8 +171,12 @@ fn main() {
 
     println!();
     println!("=== driver 1: slab2 depth at the epicenter ===");
-    println!("AUDIT: slab2 depths and the catalog depth may share ancestry (slab-constrained catalogs) — the circularity stands, never smoothed");
-    println!("slab2 record: elev carries the negative interface depth in meters (SLB2 grid); slab depth km = -elev/1000");
+    println!(
+        "AUDIT: slab2 depths and the catalog depth may share ancestry (slab-constrained catalogs) — the circularity stands, never smoothed"
+    );
+    println!(
+        "slab2 record: elev carries the negative interface depth in meters (SLB2 grid); slab depth km = -elev/1000"
+    );
     match &slab_records {
         Some(records) => {
             let pairs: Vec<(f64, f64)> = fleet
@@ -173,13 +188,19 @@ fn main() {
                 .collect();
             emit_driver("slab2 depth at the epicenter (km)", &pairs, n_perms);
         }
-        None => println!("  slab2 driver: absent (no SLB2 record stands) — the scatter stays unmeasured (0 honored)"),
+        None => println!(
+            "  slab2 driver: absent (no SLB2 record stands) — the scatter stays unmeasured (0 honored)"
+        ),
     }
 
     println!();
     println!("=== driver 2: LLNL_G3D_JPS velocity column ===");
-    println!("velocity driver statistic: thickness-weighted column mean of dlnVp — the trapezoidal integral of dlnVp(z)");
-    println!("  at the epicenter (lat, lon) over the model depth levels from the surface (shallowest model level) down to the catalog depth,");
+    println!(
+        "velocity driver statistic: thickness-weighted column mean of dlnVp — the trapezoidal integral of dlnVp(z)"
+    );
+    println!(
+        "  at the epicenter (lat, lon) over the model depth levels from the surface (shallowest model level) down to the catalog depth,"
+    );
     println!(
         "  divided by the catalog depth; the single estimated-depth point is never sampled alone"
     );
@@ -192,9 +213,15 @@ fn main() {
                     Some((d, *off))
                 })
                 .collect();
-            emit_driver("column mean dlnVp (surface -> catalog depth)", &pairs, n_perms);
+            emit_driver(
+                "column mean dlnVp (surface -> catalog depth)",
+                &pairs,
+                n_perms,
+            );
         }
-        None => println!("  velocity driver: absent (no volume contract stands) — the scatter stays unmeasured (0 honored)"),
+        None => println!(
+            "  velocity driver: absent (no volume contract stands) — the scatter stays unmeasured (0 honored)"
+        ),
     }
 
     if !pending_events.is_empty() {
@@ -415,7 +442,9 @@ fn load_bytes(local: &str, cdn: &str) -> Option<Vec<u8>> {
                 Some(bytes)
             }
             None => {
-                println!("{local}: absent locally and the CDN returned void — the driver stays absent (0 honored)");
+                println!(
+                    "{local}: absent locally and the CDN returned void — the driver stays absent (0 honored)"
+                );
                 None
             }
         },

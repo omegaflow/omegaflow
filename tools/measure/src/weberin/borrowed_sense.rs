@@ -1,4 +1,4 @@
-use crate::weberin::nadel_gate::{sep_arcsec, UA};
+use crate::weberin::nadel_gate::{UA, sep_arcsec};
 use std::collections::HashMap;
 use std::process::Command;
 

@@ -99,11 +99,7 @@ pub fn lambda_inv2_m2(lambda_m: f64) -> Option<f64> {
     let v = lambda_m;
     if v.is_finite() && v > 0.0 {
         let inv2 = 1.0 / (v * v);
-        if inv2.is_finite() {
-            Some(inv2)
-        } else {
-            None
-        }
+        if inv2.is_finite() { Some(inv2) } else { None }
     } else {
         None
     }

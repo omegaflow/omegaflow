@@ -3,8 +3,8 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::atdf::{extract, field_of, full_year, strip_markers, LOGICAL_RECORD, TKFORM};
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, full_year, strip_markers};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -34,13 +34,48 @@ struct Anchor {
 
 fn anchors() -> Vec<Anchor> {
     vec![
-        Anchor { mode: 1, station: 14, day_unix: days_from_civil(1995, 11, 24).unwrap(), name: "M1 st14 1995-11-24 (25.85 Hz)" },
-        Anchor { mode: 2, station: 14, day_unix: days_from_civil(1995, 11, 24).unwrap(), name: "M2 st14 1995-11-24 (31.77 Hz)" },
-        Anchor { mode: 1, station: 63, day_unix: days_from_civil(1996, 6, 26).unwrap(), name: "M1 st63 1996-06-26 (20.64 Hz)" },
-        Anchor { mode: 3, station: 43, day_unix: days_from_civil(1995, 12, 4).unwrap(), name: "M3 st43 1995-12-04 (10.52 Hz)" },
-        Anchor { mode: 3, station: 14, day_unix: days_from_civil(1995, 12, 5).unwrap(), name: "M3 st14 1995-12-05 (52.92 Hz)" },
-        Anchor { mode: 3, station: 63, day_unix: days_from_civil(1995, 11, 27).unwrap(), name: "M3 st63 1995-11-27 (186.5 Hz)" },
-        Anchor { mode: 1, station: 43, day_unix: days_from_civil(1996, 11, 4).unwrap(), name: "M1 st43 1996-11-04 (23.1 Hz)" },
+        Anchor {
+            mode: 1,
+            station: 14,
+            day_unix: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M1 st14 1995-11-24 (25.85 Hz)",
+        },
+        Anchor {
+            mode: 2,
+            station: 14,
+            day_unix: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M2 st14 1995-11-24 (31.77 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 63,
+            day_unix: days_from_civil(1996, 6, 26).unwrap(),
+            name: "M1 st63 1996-06-26 (20.64 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 43,
+            day_unix: days_from_civil(1995, 12, 4).unwrap(),
+            name: "M3 st43 1995-12-04 (10.52 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 14,
+            day_unix: days_from_civil(1995, 12, 5).unwrap(),
+            name: "M3 st14 1995-12-05 (52.92 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 63,
+            day_unix: days_from_civil(1995, 11, 27).unwrap(),
+            name: "M3 st63 1995-11-27 (186.5 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 43,
+            day_unix: days_from_civil(1996, 11, 4).unwrap(),
+            name: "M1 st43 1996-11-04 (23.1 Hz)",
+        },
     ]
 }
 
@@ -213,7 +248,9 @@ fn main() {
         None => "tmp/galileo_cycle_slip_discipline_report.txt".to_string(),
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo loud-pass transient lock/cycle-boundary discipline (direction CS)".to_string());
+    out.push(
+        "galileo loud-pass transient lock/cycle-boundary discipline (direction CS)".to_string(),
+    );
     out.push("binding: floor sample = strength == -2560 AND |resid| <= 1000 Hz; |resid| > 1000 Hz samples are the lock-cut markers (excluded from the floor set)".to_string());
     out.push("loud run = maximal floor-sample run (gap <= 600 s) with n >= 30 and run RMS about the run mean >= 1 Hz".to_string());
     out.push("transient event = cluster of floor samples with |resid| >= 100 Hz, merged when the gap between consecutive event samples <= 60 s".to_string());
@@ -224,11 +261,19 @@ fn main() {
         println!("resid parse void");
         return;
     };
-    out.push(format!("resid.bin records in the seven (mode, station, day) day cells: {kept}"));
+    out.push(format!(
+        "resid.bin records in the seven (mode, station, day) day cells: {kept}"
+    ));
 
     let anc = anchors();
     for (i, a) in anc.iter().enumerate() {
-        out.push(format!("\nANCHOR {} mode {} st{} ({})", a.name, a.mode, a.station, civil(a.day_unix)));
+        out.push(format!(
+            "\nANCHOR {} mode {} st{} ({})",
+            a.name,
+            a.mode,
+            a.station,
+            civil(a.day_unix)
+        ));
         let v = &per[i];
         if v.is_empty() {
             out.push("  no (mode, station, day) samples in resid.bin (0 honored)".to_string());
@@ -290,7 +335,9 @@ fn main() {
                 markers_near.len(),
                 markers_near.len() - markers_before - markers_after
             ));
-            let trans_idx: Vec<usize> = (*lo..*hi).filter(|k| floor[*k].1.abs() >= TRANS_HZ).collect();
+            let trans_idx: Vec<usize> = (*lo..*hi)
+                .filter(|k| floor[*k].1.abs() >= TRANS_HZ)
+                .collect();
             let mut events: Vec<(usize, usize)> = Vec::new();
             if !trans_idx.is_empty() {
                 let mut s = 0usize;
@@ -328,9 +375,18 @@ fn main() {
                     "    raw-cache flag census (n {}): RCVR_LOCK0 {lock_hist:?} | DOPPLER_GOOD0 {good_hist:?} | DOPPLER_TOL0 {tol_hist:?} | SLIPPED_CYCLE {slip_hist:?}",
                     flagged_all.len()
                 ));
-                let small: Vec<&Flagged> = flagged_all.iter().filter(|x| x.resid.abs() <= 100.0).collect();
-                let big: Vec<&Flagged> = flagged_all.iter().filter(|x| x.resid.abs() > 100.0 && x.resid.abs() <= LOCK_HZ).collect();
-                let huge: Vec<&Flagged> = flagged_all.iter().filter(|x| x.resid.abs() > LOCK_HZ).collect();
+                let small: Vec<&Flagged> = flagged_all
+                    .iter()
+                    .filter(|x| x.resid.abs() <= 100.0)
+                    .collect();
+                let big: Vec<&Flagged> = flagged_all
+                    .iter()
+                    .filter(|x| x.resid.abs() > 100.0 && x.resid.abs() <= LOCK_HZ)
+                    .collect();
+                let huge: Vec<&Flagged> = flagged_all
+                    .iter()
+                    .filter(|x| x.resid.abs() > LOCK_HZ)
+                    .collect();
                 let sm_lock = small.iter().filter(|x| x.lock0 != 0).count();
                 let bg_lock = big.iter().filter(|x| x.lock0 != 0).count();
                 let hu_lock = huge.iter().filter(|x| x.lock0 != 0).count();
@@ -371,7 +427,9 @@ fn main() {
                 floor_flag.len()
             ));
             if events.is_empty() {
-                out.push("    no transient events above the 100 Hz threshold (0 honored)".to_string());
+                out.push(
+                    "    no transient events above the 100 Hz threshold (0 honored)".to_string(),
+                );
             }
             for (e_lo, e_hi) in &events {
                 let ev0 = floor[*e_lo].0;
@@ -403,8 +461,14 @@ fn main() {
                 let n_tol_out = flag_ev.iter().filter(|f| f.tol0 != 0).count();
                 let n_slipped = flag_ev.iter().filter(|f| f.slipped != 0).count();
                 let flag_any = n_lock_bad + n_good_bad + n_tol_out + n_slipped;
-                let resid_min = flag_ev.iter().map(|f| f.resid.abs()).fold(f64::INFINITY, f64::min);
-                let resid_max = flag_ev.iter().map(|f| f.resid.abs()).fold(f64::NEG_INFINITY, f64::max);
+                let resid_min = flag_ev
+                    .iter()
+                    .map(|f| f.resid.abs())
+                    .fold(f64::INFINITY, f64::min);
+                let resid_max = flag_ev
+                    .iter()
+                    .map(|f| f.resid.abs())
+                    .fold(f64::NEG_INFINITY, f64::max);
                 let xmtr_off = flag_ev.iter().filter(|f| f.xmtr_on0 != 0).count();
                 let xmtr_on = flag_ev.iter().filter(|f| f.xmtr_on0 == 0).count();
                 let strength_min = flag_ev.iter().map(|f| f.strength).min();

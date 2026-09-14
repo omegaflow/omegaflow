@@ -1,7 +1,7 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    body_barycenter_position, cache_root, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
-    BodyEphemeris, LeapSeconds,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, cache_root, embedded_lsk,
+    fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::AU_M;
@@ -136,11 +136,7 @@ fn roemer_term_s(
     }
     let n = sightline_unit(ra_deg, dec_deg);
     let tau = vec_dot(n, vec_sub(observer, reference)) / C_LIGHT;
-    if tau.is_finite() {
-        Some(tau)
-    } else {
-        None
-    }
+    if tau.is_finite() { Some(tau) } else { None }
 }
 
 fn emitted_fold(

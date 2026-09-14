@@ -1,4 +1,4 @@
-use omegaflow::te::{gate_fpr_cells, pcmci_links, GateCell, TeEstimator, TeNull};
+use omegaflow::te::{GateCell, TeEstimator, TeNull, gate_fpr_cells, pcmci_links};
 use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -785,8 +785,12 @@ fn main() {
     let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
     let set2 = [0.6f32, 0.8, 0.9, 0.95];
     if section(1) {
-        println!("[1] Sci. Adv. 5, eaau4996 (arXiv:1702.07007v2), SM Eq. (S60) — random lagged VAR, T=150, tau in {{1,2}}:");
-        println!("    published text anchors: FP around/below 5% (Fig. 4C, all N); PCMCI: 99% of links with power > 70% at N=10; FullCI power 80% (N=5) -> 40% (N=20)");
+        println!(
+            "[1] Sci. Adv. 5, eaau4996 (arXiv:1702.07007v2), SM Eq. (S60) — random lagged VAR, T=150, tau in {{1,2}}:"
+        );
+        println!(
+            "    published text anchors: FP around/below 5% (Fig. 4C, all N); PCMCI: 99% of links with power > 70% at N=10; FullCI power 80% (N=5) -> 40% (N=20)"
+        );
         for n_chan in [2usize, 5, 10] {
             s60_point(
                 n_chan,
@@ -881,7 +885,9 @@ fn main() {
     println!();
     if section(2) {
         println!("[2] Sci. Adv. same model, nonlinear mix 50% f1 / 25% f2 / 25% f3:");
-        println!("    published text anchors: PCMCI highest power; slight FP inflation at large N (Fig. 5A/B)");
+        println!(
+            "    published text anchors: PCMCI highest power; slight FP inflation at large N (Fig. 5A/B)"
+        );
         for n_chan in [5usize, 10] {
             s60_point(
                 n_chan,
@@ -902,9 +908,11 @@ fn main() {
     println!();
     if section(3) {
         println!(
-        "[3] Chaos 28, 075310 (2018) §VII.A, Eqs. (36)/(37) — coupled logistic maps, r=4, n=150:"
-    );
-        println!("    published text anchors: plain PCMCI almost no power at sigma=0; PCMCI0 rate 0.8 at sigma=0; power peak at sigma=0.2; PCMCI FP ~0.05");
+            "[3] Chaos 28, 075310 (2018) §VII.A, Eqs. (36)/(37) — coupled logistic maps, r=4, n=150:"
+        );
+        println!(
+            "    published text anchors: plain PCMCI almost no power at sigma=0; PCMCI0 rate 0.8 at sigma=0; power peak at sigma=0.2; PCMCI FP ~0.05"
+        );
         for sigma in [0.0f32, 0.2, 0.4] {
             let s = div(50);
             let mut zx = 0usize;
@@ -938,14 +946,20 @@ fn main() {
             } else {
                 0.0
             };
-            println!("    sigma={sigma}: Z->X {zx}/{s} Z->Y {zy}/{s} FP={fp} FPR={fpr:.2}% (neg={neg}) void={void}");
+            println!(
+                "    sigma={sigma}: Z->X {zx}/{s} Z->Y {zy}/{s} FP={fp} FPR={fpr:.2}% (neg={neg}) void={void}"
+            );
         }
     }
 
     println!();
     if section(4) {
-        println!("[4] Chaos 28, 075310 (2018) §VII.B — linear autocorrelation + common drivers, n=150, b=0.5, sigma_z=0.25:");
-        println!("    published text anchors: PCMCI FP well-controlled (~0.05) with TP levels constant across autocorrelation a; the published b(D_Z,a) calibration is figure-only, the probe sets b/sigma_z explicitly");
+        println!(
+            "[4] Chaos 28, 075310 (2018) §VII.B — linear autocorrelation + common drivers, n=150, b=0.5, sigma_z=0.25:"
+        );
+        println!(
+            "    published text anchors: PCMCI FP well-controlled (~0.05) with TP levels constant across autocorrelation a; the published b(D_Z,a) calibration is figure-only, the probe sets b/sigma_z explicitly"
+        );
         for d_z in [0usize, 4] {
             for a in [0.0f32, 0.5, 0.9] {
                 let s = div(20);
@@ -996,18 +1010,20 @@ fn main() {
                     0.0
                 };
                 println!(
-                "    D_Z={d_z} a={a}: c=0 FPR={fpr:.2}% (neg={neg}) c=0.3 TPR={hit}/{realized} void={void}"
-            );
+                    "    D_Z={d_z} a={a}: c=0 FPR={fpr:.2}% (neg={neg}) c=0.3 TPR={hit}/{realized} void={void}"
+                );
             }
         }
     }
 
     println!();
     if section(5) {
-        println!("[5] IDTxl MuTE network (Wollstadt et al. 2019, JOSS 10.21105/joss.01081; idtxl/data.py:849) — n=1000, max_lag 3:");
         println!(
-        "    published recovery numbers: none (generator only) — the machine's sheet stands alone"
-    );
+            "[5] IDTxl MuTE network (Wollstadt et al. 2019, JOSS 10.21105/joss.01081; idtxl/data.py:849) — n=1000, max_lag 3:"
+        );
+        println!(
+            "    published recovery numbers: none (generator only) — the machine's sheet stands alone"
+        );
         {
             let s = div(5);
             let true_links = [
@@ -1043,16 +1059,20 @@ fn main() {
                 0.0
             };
             println!(
-            "    x0->x1 lag2 {}/{}  x0->x2 lag3 {}/{}  x0->x3 lag2 {}/{}  x3->x4 lag1 {}/{}  x4->x3 lag1 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
-            hits[0], s, hits[1], s, hits[2], s, hits[3], s, hits[4], s
-        );
+                "    x0->x1 lag2 {}/{}  x0->x2 lag3 {}/{}  x0->x3 lag2 {}/{}  x3->x4 lag1 {}/{}  x4->x3 lag1 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
+                hits[0], s, hits[1], s, hits[2], s, hits[3], s, hits[4], s
+            );
         }
     }
 
     println!();
     if section(6) {
-        println!("[6] Tigramite overview linear model (tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb) — n=1000, max_lag 3:");
-        println!("    published recovery numbers: none (single-run tutorial) — the machine's sheet stands alone");
+        println!(
+            "[6] Tigramite overview linear model (tutorials/causal_discovery/tigramite_tutorial_causal_discovery_overview.ipynb) — n=1000, max_lag 3:"
+        );
+        println!(
+            "    published recovery numbers: none (single-run tutorial) — the machine's sheet stands alone"
+        );
         {
             let s = div(5);
             let true_links = [(1usize, 0usize, 1usize), (3, 1, 1), (1, 2, 2), (3, 2, 3)];
@@ -1082,9 +1102,9 @@ fn main() {
                 0.0
             };
             println!(
-            "    x1->x0 lag1 {}/{}  x3->x1 lag1 {}/{}  x1->x2 lag2 {}/{}  x3->x2 lag3 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
-            hits[0], s, hits[1], s, hits[2], s, hits[3], s
-        );
+                "    x1->x0 lag1 {}/{}  x3->x1 lag1 {}/{}  x1->x2 lag2 {}/{}  x3->x2 lag3 {}/{}  FPR={fpr:.2}% (neg={neg}) void={void}",
+                hits[0], s, hits[1], s, hits[2], s, hits[3], s
+            );
         }
     }
 }

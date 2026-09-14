@@ -4,18 +4,18 @@ const TE_SEED: u64 = 0x5031_3037;
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth, embedded_lsk,
-    light_time_worldline,
-    omni2::{parse_bin as parse_omni2, COMP_N1800},
-    parse_ephemeris_binary, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
+    embedded_lsk, light_time_worldline,
+    omni2::{COMP_N1800, parse_bin as parse_omni2},
+    parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_bin;
 use omegaflow::doppler::parse_bin as parse_pdpl;
 use omegaflow::inflate::gunzip;
-use omegaflow::ionex::{parse_gim, tec_at, TecGrid};
+use omegaflow::ionex::{TecGrid, parse_gim, tec_at};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::odp::{
-    downlink_rate_core, dsn_station, interp, propagate_accel, station_velocity, sun_accel, C, EARTH,
+    C, EARTH, downlink_rate_core, dsn_station, interp, propagate_accel, station_velocity, sun_accel,
 };
 
 const SC_BODY: &str = "pioneer10_daily";
@@ -74,11 +74,7 @@ fn rms_w(resid: &[f64], w: &[f64]) -> f64 {
         sq += w[i] * resid[i] * resid[i];
         sw += w[i];
     }
-    if sw > 0.0 {
-        (sq / sw).sqrt()
-    } else {
-        f64::NAN
-    }
+    if sw > 0.0 { (sq / sw).sqrt() } else { f64::NAN }
 }
 
 fn lin_fit(xs: &[f64], ys: &[f64]) -> (f64, f64) {
@@ -873,7 +869,6 @@ fn recoil_telem_accel(
     [-a * r[0] / rn, -a * r[1] / rn, -a * r[2] / rn]
 }
 
-
 fn subset_rms(covered: &[bool], resid: &[f64]) -> Option<f64> {
     let mut s = 0.0f64;
     let mut n = 0usize;
@@ -1170,8 +1165,7 @@ fn main() {
             no_model += 1;
             continue;
         }
-        let Some((r3, t3)) =
-            light_time_worldline(rs, t1, &|t| granule_sc(t).map(|(p, _)| p))
+        let Some((r3, t3)) = light_time_worldline(rs, t1, &|t| granule_sc(t).map(|(p, _)| p))
         else {
             no_model += 1;
             continue;
@@ -5088,9 +5082,7 @@ fn navio_chain(
             no_model += 1;
             continue;
         }
-        let Some((r3, t3)) =
-            light_time_worldline(rs, r[0], &|t| sc(t).map(|(p, _)| p))
-        else {
+        let Some((r3, t3)) = light_time_worldline(rs, r[0], &|t| sc(t).map(|(p, _)| p)) else {
             no_model += 1;
             continue;
         };
