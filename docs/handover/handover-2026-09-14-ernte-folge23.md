@@ -3,7 +3,7 @@
   session: Ernte-Folge 23
   class: handover
   date: 2026-09-14
-  sha256: 5bfd8c275662e9eecc00c366de0ed01851b4dd76d4766d42ed8c8ddcf4f59884
+  sha256: f6e2beeef3870840306394aaf486401c8b4030b89e03140d919f7edb590a2292
   status: live
 -->
 # Handover — Ernte-Folge 23 (2026-09-14)
@@ -59,6 +59,17 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 - FITS: `P`-Format (variable-length) dekodiert jetzt (`fits.rs`); die
   Rice-Dekompression der komprimierten Bild-Nutzlast fehlt (nur nötig, wenn ein
   Konsument Pixel braucht).
+
+## Netz-Census (Instrument steht, Ernte offen)
+
+- `source_latency_census` (tools/measure) + `source-census.yml` gebaut: ein
+  resolved-URL Range-GET je Quelle, dns/connect/tls/ttfb als Option (absent
+  bleibt absent), Report `phi/reports/source_latency_census.φ`, langsamer Tail
+  als eigener p90 je Host-Familie. Offen: erster CI-Dispatch
+  (`gh workflow run source-census.yml`) + die Alternativen-Recherche für den
+  langsamen Tail (SOURCE_PORT §9: Sibling-Endpoints, Proton-Exit, Wayback).
+  Council-Restpunkt (späteres Atom): curl-`-sS`-stderr könnte die aufgelöste
+  URL in den CI-Log schreiben.
 
 ## Bau-Gaps (Inventur)
 
