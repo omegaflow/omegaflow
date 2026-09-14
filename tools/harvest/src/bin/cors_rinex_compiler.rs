@@ -1,10 +1,10 @@
 use omegaflow::archivar::cors::{
-    pack_station, parse_bin, satellite_of, station_of, write_bin, CorsRecord, PRES_POSITION,
+    CorsRecord, PRES_POSITION, pack_station, parse_bin, satellite_of, station_of, write_bin,
 };
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::rinex::{
-    ecef_to_geodetic, parse_rinex_header, parse_rinex_nav_gps, parse_rinex_nav_gps3,
-    parse_rinex_obs, RinexFileType,
+    RinexFileType, ecef_to_geodetic, parse_rinex_header, parse_rinex_nav_gps, parse_rinex_nav_gps3,
+    parse_rinex_obs,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
@@ -267,8 +267,7 @@ mod tests {
         let plain =
             "     2.11           OBSERVATION DATA    G (GPS)             RINEX VERSION / TYPE\n";
         assert!(!hatanaka_marker(plain));
-        let compact =
-            "     2.11           COMPACT RINEX FORMAT                    RINEX VERSION / TYPE\n\
+        let compact = "     2.11           COMPACT RINEX FORMAT                    RINEX VERSION / TYPE\n\
 CRINEX VERS   3.02  COMPACT RINEX FORMAT                    CRINEX VERS   / TYPE\n";
         assert!(hatanaka_marker(compact));
     }

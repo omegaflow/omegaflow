@@ -1,6 +1,6 @@
 use omegaflow::archivar::bzip2;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::hsd::{parse_hsd, parse_segment, write_segment, AhiSegment, HsdFile};
+use omegaflow::archivar::hsd::{AhiSegment, HsdFile, parse_hsd, parse_segment, write_segment};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::geostationary_lat_lon;
 use omegaflow::lsk::days_from_civil;
