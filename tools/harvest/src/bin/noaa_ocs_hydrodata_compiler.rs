@@ -1,10 +1,10 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::geo::{GbcoRec, MAGIC_OCS, parse_ocs, write_ocs};
+use omegaflow::archivar::geo::{parse_ocs, write_ocs, GbcoRec, MAGIC_OCS};
 use omegaflow::archivar::gpkg::{SqliteDb, SqliteValue};
-use omegaflow::archivar::json::{JsonVal, jpath_val, jstr, parse_json};
+use omegaflow::archivar::json::{jpath_val, jstr, parse_json, JsonVal};
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 
 const NETLOC: &str = "noaa-ocs-hydrodata-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-ocs-hydrodata-pds.s3.amazonaws.com";
@@ -114,7 +114,11 @@ fn first_ident(segment: &str) -> Option<String> {
         .chars()
         .take_while(|c| c.is_alphanumeric() || *c == '_')
         .collect();
-    if word.is_empty() { None } else { Some(word) }
+    if word.is_empty() {
+        None
+    } else {
+        Some(word)
+    }
 }
 
 fn columns_from_create_sql(sql: &str) -> Option<Vec<String>> {
@@ -242,6 +246,35 @@ fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
     soundings_from_gpkg(&bytes)
 }
 
+fn survey_id(href: &str) -> Option<&str> {
+    let trimmed = href.trim_start_matches("./");
+    let mut parts = trimmed.split('/');
+    let first = parts.next()?;
+    match parts.next() {
+        Some(_) => Some(first),
+        None => None,
+    }
+}
+
+fn write_records(out: &str, records: &[GbcoRec]) -> Result<usize, String> {
+    if let Some(parent) = std::path::Path::new(out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    let bytes = write_ocs(records);
+    std::fs::write(out, &bytes).map_err(|e| format!("write {out} returned void: {e}"))?;
+    match parse_ocs(&bytes) {
+        Some(parsed) if parsed.len() == records.len() => Ok(parsed.len()),
+        Some(parsed) => Err(format!(
+            "{out}: {} parsed vs {} written — the asset stays unverified",
+            parsed.len(),
+            records.len()
+        )),
+        None => Err(format!(
+            "{out}: roundtrip parse void — the asset stays unverified"
+        )),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     witness_gestalt_identity(MAGIC_OCS)?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -250,6 +283,12 @@ fn run(args: &[String]) -> Result<(), String> {
         None => format!("data/{NETLOC}/ocs_hydro_depth.bin"),
     };
     let max_surveys = arg_value(args, "--max-surveys").and_then(|v| v.parse::<usize>().ok());
+    let all = args.iter().any(|a| a == "--all");
+    if all && (arg_value(args, "--survey").is_some() || max_surveys.is_some()) {
+        return Err(
+            "--all declares every survey; --survey/--max-surveys contradict it".to_string(),
+        );
+    }
 
     let mut records: Vec<GbcoRec> = Vec::new();
 
@@ -279,6 +318,56 @@ fn run(args: &[String]) -> Result<(), String> {
         }
         item_hrefs.sort();
         item_hrefs.dedup();
+
+        if all {
+            let out_dir = match arg_value(args, "--out-dir") {
+                Some(v) => v,
+                None => format!("data/{NETLOC}/ocs_all"),
+            };
+            let mut written = 0usize;
+            for href in &item_hrefs {
+                let item_url = resolve(&collection_url, href);
+                let Some(id) = survey_id(href) else {
+                    eprintln!(
+                        "{item_url}: no survey id in the href — the survey stays unharvested"
+                    );
+                    continue;
+                };
+                match harvest_survey(&item_url) {
+                    Some(mut recs) if !recs.is_empty() => {
+                        recs.sort_by(|a, b| {
+                            a.lat
+                                .total_cmp(&b.lat)
+                                .then(a.lon.total_cmp(&b.lon))
+                                .then(a.elev.total_cmp(&b.elev))
+                        });
+                        let path = format!("{out_dir}/{id}.bin");
+                        match write_records(&path, &recs) {
+                            Ok(n) => {
+                                eprintln!("{item_url}: {n} depth records written to {path}");
+                                if ci_mode && !upload_release(NETLOC, &path) {
+                                    return Err(format!("{path}: CDN upload returned void"));
+                                }
+                                written += 1;
+                            }
+                            Err(msg) => eprintln!("{item_url}: {msg}"),
+                        }
+                    }
+                    Some(_) => eprintln!(
+                        "{item_url}: soundings read empty — the survey stays unharvested (0 honored)"
+                    ),
+                    None => {
+                        eprintln!("{item_url}: soundings void — the survey stays unharvested")
+                    }
+                }
+            }
+            if written == 0 {
+                return Err(format!(
+                    "{collection_url}: no survey carried measured soundings — the asset stays unwritten (0 honored)"
+                ));
+            }
+            return Ok(());
+        }
 
         let mut surveys = 0usize;
         for href in &item_hrefs {
