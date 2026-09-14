@@ -384,19 +384,26 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                         fields,
                         ..
                     } => {
-                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
-                            if !arr.is_empty() {
-                                arr_has_rows = true;
+                        let first = match jpath_val(&j, arr_path) {
+                            Some(JsonVal::Arr(arr)) => {
+                                if !arr.is_empty() {
+                                    arr_has_rows = true;
+                                }
+                                arr.first()
                             }
-                        }
-                        for fk in [lat_key.as_str(), lon_key.as_str()] {
-                            if jpath_val(&j, fk).is_some() {
-                                key_found = true;
+                            Some(obj @ JsonVal::Obj(_)) => Some(obj),
+                            _ => None,
+                        };
+                        if let Some(row) = first {
+                            for fk in [lat_key.as_str(), lon_key.as_str()] {
+                                if jpath_val(row, fk).is_some() {
+                                    key_found = true;
+                                }
                             }
-                        }
-                        for fc in fields {
-                            if jpath_val(&j, &fc.key).is_some() {
-                                key_found = true;
+                            for fc in fields {
+                                if jpath_val(row, &fc.key).is_some() {
+                                    key_found = true;
+                                }
                             }
                         }
                     }
@@ -635,6 +642,8 @@ pub fn live_sweep(
                 | "goes_xrs"
                 | "wind_waves"
                 | "gong_modes"
+                | "spk"
+                | "reference"
         ) {
             continue;
         }
