@@ -1,5 +1,5 @@
 use omegaflow::archivar::copernicus::{parse_cdm_obs, retrieve};
-use omegaflow::archivar::geo::{parse_bin, write_bin, MAGIC_CDM};
+use omegaflow::archivar::geo::{MAGIC_CDM, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 

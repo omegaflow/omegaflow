@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
-use omegaflow::galileo_odr::{header, record, split_records, HEADER_BYTES};
+use omegaflow::galileo_odr::{HEADER_BYTES, header, record, split_records};
 
 const BASE: &str = "https://pds-ppi.igpp.ucla.edu/annex/";
 const GOJ: &str = "GO-J-RSS-1-ODR-V1.0";

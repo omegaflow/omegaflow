@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
 const DT: f64 = 24.0;
@@ -344,7 +344,9 @@ fn main() {
     let year_cells = ((YEAR_UNIX[1] - YEAR_UNIX[0]) / DT) as usize;
     let n_cells = 3 * year_cells;
 
-    println!("=== XRSA outlier probe: three channels (XRSA/94A/335A), rise profile at 25/50/75% of the excursion, conditioned on the XRSB peak ===");
+    println!(
+        "=== XRSA outlier probe: three channels (XRSA/94A/335A), rise profile at 25/50/75% of the excursion, conditioned on the XRSB peak ==="
+    );
     println!(
         "grid: {} x 24-s cells over {} .. {} (unix); window +-40 min; the 94A candidate inventory (year median + {:.0} sigma, refractory {} cells)",
         n_cells, WINDOW_LO, WINDOW_HI, ONSET_SIGMA, REFRACTORY
@@ -471,7 +473,9 @@ fn main() {
 
     if timings.is_empty() {
         println!();
-        println!("no event carries a clean rise at all three fractions in all three channels — the outlier probe stays unmeasured (0 honored)");
+        println!(
+            "no event carries a clean rise at all three fractions in all three channels — the outlier probe stays unmeasured (0 honored)"
+        );
         return;
     }
 
@@ -481,7 +485,9 @@ fn main() {
         timings.len()
     );
     println!();
-    println!("per event: leads of each channel's rise relative to the XRSB peak (negative = before the peak), seconds:");
+    println!(
+        "per event: leads of each channel's rise relative to the XRSB peak (negative = before the peak), seconds:"
+    );
     println!(
         "{:>19} | {:>9} | XRSA 25/50/75 | 94A 25/50/75 | 335A 25/50/75",
         "event", "XRSB peak"
@@ -526,7 +532,9 @@ fn main() {
     }
 
     println!();
-    println!("the decisive comparison: the XRSA lead against 94A at the early fraction (25%) vs the midpoint (50%):");
+    println!(
+        "the decisive comparison: the XRSA lead against 94A at the early fraction (25%) vs the midpoint (50%):"
+    );
     let xrsa_94_25: Vec<f64> = timings
         .iter()
         .filter_map(|t| match (t.rise_unix[0][0], t.rise_unix[1][0]) {
@@ -600,22 +608,19 @@ fn main() {
         (Some(early_lead), Some(mid_lead)) if early_lead >= 0.6 * mid_lead && mid_lead > 24.0 => {
             println!(
                 "quell-seitig (source-time-structure): the XRSA rise leads 94A already at the early fraction (25%: {:.0} s), not only at the midpoint (50%: {:.0} s) — the XRSA channel responds earlier in the flare, the -240 s outlier of the Ortungs-Test is the source speaking, not a channel-timing artifact",
-                early_lead,
-                mid_lead
+                early_lead, mid_lead
             );
         }
         (Some(early_lead), Some(mid_lead)) if mid_lead > 24.0 && early_lead < 0.6 * mid_lead => {
             println!(
                 "kanal-taktung (marker/shape): the XRSA lead appears only at the midpoint (50%: {:.0} s) while the early fraction is synchronized (25%: {:.0} s) — the midpoint marker is steeper for XRSA, the -240 s is the onset marker's shape, not an earlier source response",
-                mid_lead,
-                early_lead
+                mid_lead, early_lead
             );
         }
         (Some(early_lead), Some(mid_lead)) => {
             println!(
                 "no early lead: the XRSA and 94A rises are synchronized within the cell (25% lead {:.0} s, 50% lead {:.0} s) — the single-event -240 s does not repeat across the corpus; the outlier is event-local",
-                early_lead,
-                mid_lead
+                early_lead, mid_lead
             );
         }
         _ => println!("the lead stays unmeasured — the median carries no value (0 honored)"),

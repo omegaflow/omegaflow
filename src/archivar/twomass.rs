@@ -2,6 +2,7 @@ pub const MAGIC: [u8; 4] = *b"2MPS";
 pub const RECORD_BYTES: usize = 64;
 pub const PSC_FIELDS: usize = 60;
 pub const PSC_FILE_COUNT: usize = 92;
+pub const ABSENT_MAG: f64 = 0.0;
 
 pub struct PscRow {
     pub ra_deg: f64,
@@ -16,11 +17,7 @@ pub struct PscRow {
 
 fn coord_field(v: Option<&str>) -> Option<f64> {
     let x: f64 = v?.trim().parse().ok()?;
-    if x.is_finite() {
-        Some(x)
-    } else {
-        None
-    }
+    if x.is_finite() { Some(x) } else { None }
 }
 
 fn mag_field(v: Option<&str>) -> Option<f64> {
@@ -34,11 +31,7 @@ fn mag_field(v: Option<&str>) -> Option<f64> {
 
 fn err_field(v: Option<&str>) -> Option<f64> {
     let x = mag_field(v)?;
-    if x <= 8.0 {
-        Some(x)
-    } else {
-        None
-    }
+    if x <= 8.0 { Some(x) } else { None }
 }
 
 fn band_detected(rd_flg: &[u8], band: usize) -> bool {
@@ -123,12 +116,12 @@ pub fn row_record(row: &PscRow) -> [f64; 8] {
     [
         row.ra_deg,
         row.dec_deg,
-        row.jmag.unwrap_or(0.0),
-        row.e_jmag.unwrap_or(0.0),
-        row.hmag.unwrap_or(0.0),
-        row.e_hmag.unwrap_or(0.0),
-        row.kmag.unwrap_or(0.0),
-        row.e_kmag.unwrap_or(0.0),
+        row.jmag.unwrap_or(ABSENT_MAG),
+        row.e_jmag.unwrap_or(ABSENT_MAG),
+        row.hmag.unwrap_or(ABSENT_MAG),
+        row.e_hmag.unwrap_or(ABSENT_MAG),
+        row.kmag.unwrap_or(ABSENT_MAG),
+        row.e_kmag.unwrap_or(ABSENT_MAG),
     ]
 }
 

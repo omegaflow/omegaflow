@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_KEO_PSAL, COMP_KEO_TEMP, COMP_KEO_UCUR, COMP_KEO_VCUR,
-    MAGIC_KEO,
+    COMP_KEO_PSAL, COMP_KEO_TEMP, COMP_KEO_UCUR, COMP_KEO_VCUR, GeoRec, MAGIC_KEO, parse_bin,
+    write_bin,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::Hdf5File;

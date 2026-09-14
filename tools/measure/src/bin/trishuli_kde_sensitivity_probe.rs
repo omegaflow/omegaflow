@@ -7,25 +7,27 @@ const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const MIN_N: usize = 30;
 const FACTORS: [f64; 2] = [1.0, 2.0];
 
-fn read_series(path: &Path) -> Vec<f32> {
-    let body = std::fs::read_to_string(path).unwrap_or_default();
+fn read_series(path: &Path) -> Option<Vec<f32>> {
+    let body = std::fs::read_to_string(path).ok()?;
     if path.extension().and_then(|s| s.to_str()) == Some("json") {
-        return json_values(&body);
+        return Some(json_values(&body));
     }
-    body.lines()
-        .filter_map(|l| {
-            let l = l.trim();
-            if l.is_empty() || l.starts_with('#') {
-                return None;
-            }
-            let v = if let Some((_, rhs)) = l.split_once(',') {
-                rhs.trim()
-            } else {
-                l
-            };
-            v.parse::<f32>().ok()
-        })
-        .collect()
+    Some(
+        body.lines()
+            .filter_map(|l| {
+                let l = l.trim();
+                if l.is_empty() || l.starts_with('#') {
+                    return None;
+                }
+                let v = if let Some((_, rhs)) = l.split_once(',') {
+                    rhs.trim()
+                } else {
+                    l
+                };
+                v.parse::<f32>().ok()
+            })
+            .collect(),
+    )
 }
 
 fn json_values(body: &str) -> Vec<f32> {
@@ -211,11 +213,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn print_cell(
-    label: &str,
-    te: Option<f64>,
-    null: Option<(f64, f64, f64)>,
-) -> String {
+fn print_cell(label: &str, te: Option<f64>, null: Option<(f64, f64, f64)>) -> String {
     match (te, null) {
         (Some(te), Some((_, sd, thr))) => {
             let verdict = if te > thr { "survives" } else { "falls" };
@@ -223,7 +221,10 @@ fn print_cell(
                 "{label:>24} | cTE {te:>10.6} | null mean+2σ {thr:>10.6} | sd {sd:>9.6} | {verdict}"
             )
         }
-        _ => format!("{label:>24} | cTE       void | null mean+2σ        void | {:<9} | void", "void"),
+        _ => format!(
+            "{label:>24} | cTE       void | null mean+2σ        void | {:<9} | void",
+            "void"
+        ),
     }
 }
 
@@ -237,9 +238,12 @@ fn main() {
         eprintln!("--cond <conditioning series name> absent");
         std::process::exit(2);
     };
-    let lags: Vec<usize> = arg_value(&args, "--lags")
+    let lags: Vec<usize> = match arg_value(&args, "--lags")
         .map(|v| v.split(',').filter_map(|s| s.parse().ok()).collect())
-        .unwrap_or_else(|| vec![24, 48]);
+    {
+        Some(v) => v,
+        None => vec![24, 48],
+    };
     let n_surr: usize = arg_value(&args, "--surrogate")
         .and_then(|v| v.parse().ok())
         .unwrap_or(20);
@@ -261,7 +265,10 @@ fn main() {
             Some("csv") | Some("txt") | Some("json") => {}
             _ => continue,
         }
-        let vals = read_series(p);
+        let Some(vals) = read_series(p) else {
+            eprintln!("{}: read void — the series stays unread", stem(p));
+            continue;
+        };
         if vals.len() < MIN_N {
             eprintln!(
                 "{}: n = {} < {MIN_N} -> skipped (underdetermined, no finding)",
@@ -275,14 +282,10 @@ fn main() {
             vals,
         });
     }
-    let cond = series
-        .iter()
-        .find(|s| s.name == cond_name)
-        .cloned()
-        .unwrap_or_else(|| {
-            eprintln!("--cond series '{cond_name}' not found among loaded series");
-            std::process::exit(2);
-        });
+    let Some(cond) = series.iter().find(|s| s.name == cond_name).cloned() else {
+        eprintln!("--cond series '{cond_name}' not found among loaded series");
+        std::process::exit(2);
+    };
 
     println!(
         "=== Trishuli conditioned TE, Silverman bandwidth × factor (residual-surrogate null mean + 2σ, n_surr = {n_surr}) ==="
@@ -337,25 +340,11 @@ fn main() {
             println!("--- lag {lag} h ---");
             for &factor in &FACTORS {
                 let te_ab = conditional_te_h(bv, av, cv, lag, factor);
-                let null_ab = conditional_null_stats_h(
-                    bv,
-                    av,
-                    cv,
-                    lag,
-                    seed_ab ^ lag as u64,
-                    n_surr,
-                    factor,
-                );
+                let null_ab =
+                    conditional_null_stats_h(bv, av, cv, lag, seed_ab ^ lag as u64, n_surr, factor);
                 let te_ba = conditional_te_h(av, bv, cv, lag, factor);
-                let null_ba = conditional_null_stats_h(
-                    av,
-                    bv,
-                    cv,
-                    lag,
-                    seed_ba ^ lag as u64,
-                    n_surr,
-                    factor,
-                );
+                let null_ba =
+                    conditional_null_stats_h(av, bv, cv, lag, seed_ba ^ lag as u64, n_surr, factor);
                 let arrow_ab = format!("{} -> {}", a.name, b.name);
                 let arrow_ba = format!("{} -> {}", b.name, a.name);
                 println!("h × {factor:.1}:");

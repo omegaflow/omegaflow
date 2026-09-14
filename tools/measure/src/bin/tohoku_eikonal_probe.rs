@@ -63,7 +63,9 @@ fn main() {
         global.nlon, global.nlat, global.lon0, global.lat0, global.dlon, global.dlat
     );
     let Some(grid) = unwrap_window(&global, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX) else {
-        println!("window lon [{LON_MIN},{LON_MAX}] lat [{LAT_MIN},{LAT_MAX}] absent from the global grid");
+        println!(
+            "window lon [{LON_MIN},{LON_MAX}] lat [{LAT_MIN},{LAT_MAX}] absent from the global grid"
+        );
         return;
     };
     drop(global);

@@ -1,7 +1,7 @@
-use omegaflow::archivar::{embedded_lsk, LeapSeconds};
+use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_asset;
-use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
-use omegaflow::skydirection::{parse_bin, write_bin, SkyBandSeries, SkyDirection, SkySample};
+use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
+use omegaflow::skydirection::{SkyBandSeries, SkyDirection, SkySample, parse_bin, write_bin};
 use std::process::Command;
 
 const UA: &str = "omegaflow-skydirection-compiler/1.0";
@@ -476,7 +476,9 @@ fn main() {
                 if let Some(jd) = v {
                     lasair_jd = Some(jd);
                 } else {
-                    println!("skydirection: --lasair-window carries no finite JD — the window stays closed");
+                    println!(
+                        "skydirection: --lasair-window carries no finite JD — the window stays closed"
+                    );
                 }
                 i += 1;
             }
@@ -488,7 +490,9 @@ fn main() {
                         antares = true;
                         antares_cap = Some(n);
                     }
-                    _ => println!("skydirection: --antares-limit carries no positive count — the cap stays closed"),
+                    _ => println!(
+                        "skydirection: --antares-limit carries no positive count — the cap stays closed"
+                    ),
                 }
                 i += 1;
             }
@@ -513,7 +517,9 @@ fn main() {
                 if let Some(c) = ra_dec_r {
                     cones.push(c);
                 } else {
-                    println!("skydirection: --fink-cone needs ra dec radius-arcsec — the cone stays closed");
+                    println!(
+                        "skydirection: --fink-cone needs ra dec radius-arcsec — the cone stays closed"
+                    );
                 }
                 i = j - 1;
             }
@@ -548,7 +554,9 @@ fn main() {
     let harvests_epochs = lasair_jd.is_some() || antares;
     let harvests_any = harvests_epochs || !cones.is_empty() || gaia_alerts.is_some();
     if !harvests_any {
-        println!("skydirection_compiler: no harvest source selected (--lasair-window | --antares | --fink-cone | --gaia-alerts) — the probe runs, the asset stays unwritten");
+        println!(
+            "skydirection_compiler: no harvest source selected (--lasair-window | --antares | --fink-cone | --gaia-alerts) — the probe runs, the asset stays unwritten"
+        );
         return;
     }
     let mut directions: Vec<SkyDirection> = Vec::new();
@@ -563,7 +571,9 @@ fn main() {
                 println!("skydirection: ANTARES added {added} new direction(s)");
             }
         } else {
-            println!("skydirection: the embedded naif0012.tls leap table is absent — no sample epoch folds to the TDB clock; the epoch-bearing harvests stay unrun (0 honored, pending)");
+            println!(
+                "skydirection: the embedded naif0012.tls leap table is absent — no sample epoch folds to the TDB clock; the epoch-bearing harvests stay unrun (0 honored, pending)"
+            );
         }
     }
     for (ra, dec, radius_as) in cones {
@@ -575,11 +585,17 @@ fn main() {
             Ok(bytes) => match parse_bin(&bytes) {
                 Some(incoming) => {
                     let added = push_unique(&mut directions, incoming);
-                    println!("skydirection: Gaia-Alerts added {added} new direction(s) from {path}");
+                    println!(
+                        "skydirection: Gaia-Alerts added {added} new direction(s) from {path}"
+                    );
                 }
-                None => println!("skydirection: Gaia-Alerts {path} does not read back as SKD1 — the merge stays closed (0 honored)"),
+                None => println!(
+                    "skydirection: Gaia-Alerts {path} does not read back as SKD1 — the merge stays closed (0 honored)"
+                ),
             },
-            Err(_) => println!("skydirection: Gaia-Alerts {path} read returned void — the merge stays closed"),
+            Err(_) => println!(
+                "skydirection: Gaia-Alerts {path} read returned void — the merge stays closed"
+            ),
         }
     }
     if directions.is_empty() {
@@ -589,7 +605,9 @@ fn main() {
         return;
     }
     let Some(bytes) = write_bin(&directions) else {
-        println!("skydirection_compiler: a held direction is not finite or not serializable — the asset stays unwritten (0 honored)");
+        println!(
+            "skydirection_compiler: a held direction is not finite or not serializable — the asset stays unwritten (0 honored)"
+        );
         return;
     };
     match omegaflow::skydirection::parse_bin(&bytes) {
@@ -603,7 +621,9 @@ fn main() {
             );
         }
         _ => {
-            println!("skydirection_compiler: the roundtrip does not read back — the asset stays unwritten");
+            println!(
+                "skydirection_compiler: the roundtrip does not read back — the asset stays unwritten"
+            );
             return;
         }
     }
@@ -612,6 +632,8 @@ fn main() {
         return;
     }
     if ci && !upload_asset(&out) {
-        println!("skydirection_compiler: {out} did not reach the CDN — the local asset stands, the manifest is pending");
+        println!(
+            "skydirection_compiler: {out} did not reach the CDN — the local asset stands, the manifest is pending"
+        );
     }
 }

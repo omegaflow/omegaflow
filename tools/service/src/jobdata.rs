@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::{id, Command};
+use std::process::{Command, id};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const JOB_KEYWORDS: [&str; 12] = [
@@ -645,11 +645,7 @@ fn parse_rfc3339(s: &str) -> Option<u64> {
     };
     let days = days_from_civil(year, month, day);
     let epoch = days * 86400 + hour * 3600 + minute * 60 + second - offset;
-    if epoch < 0 {
-        None
-    } else {
-        Some(epoch as u64)
-    }
+    if epoch < 0 { None } else { Some(epoch as u64) }
 }
 
 fn parse_offset(s: &str) -> Option<i64> {

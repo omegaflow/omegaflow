@@ -1,6 +1,6 @@
 use omegaflow::archivar::{
-    body_barycenter_position, download_ephemeris_batch, fetch_raw_bytes, load_sources,
-    parse_ephemeris_binary, BodyEphemeris, SourceConfig, J2000_EPOCH,
+    BodyEphemeris, J2000_EPOCH, SourceConfig, body_barycenter_position, download_ephemeris_batch,
+    fetch_raw_bytes, load_sources, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
@@ -245,11 +245,7 @@ fn compute_residue(
         }
         prev_a_res = Some(a_res);
     }
-    if out.days.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.days.is_empty() { None } else { Some(out) }
 }
 
 fn print_summary(name: &str, res: &Residue) {
@@ -464,11 +460,7 @@ fn log_pair(a: &[f32], b: &[f32]) -> Option<(Vec<f32>, Vec<f32>)> {
             lb.push(y.ln() as f32);
         }
     }
-    if la.len() < 24 {
-        None
-    } else {
-        Some((la, lb))
-    }
+    if la.len() < 24 { None } else { Some((la, lb)) }
 }
 
 fn load_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {

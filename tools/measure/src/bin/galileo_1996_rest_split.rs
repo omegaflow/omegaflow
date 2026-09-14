@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -40,11 +40,7 @@ fn rms(vals: &[f64]) -> Option<f64> {
     let n = vals.len() as f64;
     let m = vals.iter().sum::<f64>() / n;
     let v = (vals.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / n).sqrt();
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 fn median(vals: &[f64]) -> Option<f64> {
     if vals.is_empty() {
@@ -82,11 +78,7 @@ fn dt_str(t: f64) -> String {
     let frac = t - day as f64 * DAY_S;
     let mins = (frac * 1440.0).round() as i64;
     match civil(day) {
-        Some((y, mo, d)) => format!(
-            "{y:04}-{mo:02}-{d:02} {:02}:{:02}",
-            mins / 60,
-            mins % 60
-        ),
+        Some((y, mo, d)) => format!("{y:04}-{mo:02}-{d:02} {:02}:{:02}", mins / 60, mins % 60),
         None => format!("tdb {t:.0}"),
     }
 }
@@ -286,13 +278,10 @@ fn main() {
         .map(|(d, _)| *d)
         .collect();
 
-    let nearest_opp = |day: i64| -> Option<i64> {
-        opp_days.iter().map(|d| (*d - day).abs()).min()
-    };
+    let nearest_opp = |day: i64| -> Option<i64> { opp_days.iter().map(|d| (*d - day).abs()).min() };
 
     sel.sort_by(|a, b| {
-        a[3]
-            .total_cmp(&b[3])
+        a[3].total_cmp(&b[3])
             .then(a[2].total_cmp(&b[2]))
             .then(a[0].total_cmp(&b[0]))
     });
@@ -339,7 +328,10 @@ fn main() {
                     e.t0 = r[0];
                 }
                 if opp_days.contains(&day) {
-                    stday_opp.entry((mode, station, day)).or_default().push(r[1]);
+                    stday_opp
+                        .entry((mode, station, day))
+                        .or_default()
+                        .push(r[1]);
                 }
                 xs.push(r[1]);
             }
@@ -404,9 +396,17 @@ fn main() {
         conj_dates.join(", ")
     ));
     for mode in [1i64, 2, 3] {
-        let sts: BTreeSet<i64> = rows.iter().filter(|r| r.mode == mode).map(|r| r.station).collect();
+        let sts: BTreeSet<i64> = rows
+            .iter()
+            .filter(|r| r.mode == mode)
+            .map(|r| r.station)
+            .collect();
         let nc = rows.iter().filter(|r| r.mode == mode).count();
-        let dset: BTreeSet<i64> = rows.iter().filter(|r| r.mode == mode).map(|r| r.day).collect();
+        let dset: BTreeSet<i64> = rows
+            .iter()
+            .filter(|r| r.mode == mode)
+            .map(|r| r.day)
+            .collect();
         out.push(format!(
             "  mode {mode}: {nc} (mode, station, day) cells n>={MIN_CELL}, {} distinct days, stations {}",
             dset.len(),
@@ -449,7 +449,9 @@ fn main() {
         let opp = byreg.get("OPP").and_then(|v| median(v));
         let conj = byreg.get("CONJ").and_then(|v| median(v));
         let ratio = match (opp, conj) {
-            (Some(o), Some(c)) if c > 0.0 => format!("  mode {mode} ratio OPP/CONJ med = {:.2}x", o / c),
+            (Some(o), Some(c)) if c > 0.0 => {
+                format!("  mode {mode} ratio OPP/CONJ med = {:.2}x", o / c)
+            }
             _ => "  ratio: one side without n".to_string(),
         };
         out.push(ratio);
@@ -458,8 +460,14 @@ fn main() {
     out.push(String::new());
     out.push("B. per (mode, station, day) cells on OPP record days — full listing ('*' below the 30-sample cell minimum)".to_string());
     for mode in [1i64, 2, 3] {
-        let has = rows.iter().any(|r| r.mode == mode && opp_days.contains(&r.day));
-        if !has && !stday.iter().any(|((m, _, d), _)| *m == mode && opp_days.contains(d)) {
+        let has = rows
+            .iter()
+            .any(|r| r.mode == mode && opp_days.contains(&r.day));
+        if !has
+            && !stday
+                .iter()
+                .any(|((m, _, d), _)| *m == mode && opp_days.contains(d))
+        {
             out.push(format!("  mode {mode}: no OPP-day records in {YEAR}"));
             continue;
         }
@@ -503,9 +511,16 @@ fn main() {
 
     out.push(String::new());
     out.push("C. per (mode, station) 1996 medians over (mode, station, day) cell RMS (cells n >= 30); non-OPP floor = CONJ+MID cells of the same station; opp/conj and opp/nonopp ratios".to_string());
-    out.push("   mode st: opp_med(nc/nd)  conj_med(nc/nd)  nonopp_med(nc/nd)  opp:conj  opp:nonopp".to_string());
+    out.push(
+        "   mode st: opp_med(nc/nd)  conj_med(nc/nd)  nonopp_med(nc/nd)  opp:conj  opp:nonopp"
+            .to_string(),
+    );
     for mode in [1i64, 2, 3] {
-        let mut sts: BTreeSet<i64> = rows.iter().filter(|r| r.mode == mode).map(|r| r.station).collect();
+        let mut sts: BTreeSet<i64> = rows
+            .iter()
+            .filter(|r| r.mode == mode)
+            .map(|r| r.station)
+            .collect();
         for (&(m, st, _), _) in &stday {
             if m == mode {
                 sts.insert(st);
@@ -636,7 +651,9 @@ fn main() {
 
     out.push(String::new());
     out.push("E. pass resolution over the OPP window (whole-pass non-lock RMS, n >= 30; quartile RMS needs n >= 120)".to_string());
-    out.push("   mode st: t0 .. t1  dur_min  n  rms  q1 q2 q3 q4  drop1pct  max|resid|".to_string());
+    out.push(
+        "   mode st: t0 .. t1  dur_min  n  rms  q1 q2 q3 q4  drop1pct  max|resid|".to_string(),
+    );
     pass_win.sort_by(|a, b| {
         a.mode
             .cmp(&b.mode)
@@ -661,11 +678,11 @@ fn main() {
                 }
             })
             .collect();
-        let drop1pct = fmt_o2(rms_drop_k(
-            &p.xs,
-            (nn as f64 * 0.01).ceil() as usize,
-        ));
-        let mabs = p.xs.iter().map(|x| x.abs()).fold(f64::NEG_INFINITY, f64::max);
+        let drop1pct = fmt_o2(rms_drop_k(&p.xs, (nn as f64 * 0.01).ceil() as usize));
+        let mabs =
+            p.xs.iter()
+                .map(|x| x.abs())
+                .fold(f64::NEG_INFINITY, f64::max);
         out.push(format!(
             "   m{m} st {st:>2}: {} .. {}  {dur:7.1}  n {nn:>6}  {rr:8.2}  {q}  {drop1pct}  {mabs:8.2}",
             dt_str(p.t0),
@@ -677,8 +694,14 @@ fn main() {
     }
 
     out.push(String::new());
-    out.push("F. outlier load inside loud OPP (mode, station, day) cells (cell RMS >= 3 Hz, n >= 30)".to_string());
-    out.push("   mode st day: n  rms  drop1  drop3  drop1pct  max|dev|  max|dev|/rms  cnt|dev|>3rms".to_string());
+    out.push(
+        "F. outlier load inside loud OPP (mode, station, day) cells (cell RMS >= 3 Hz, n >= 30)"
+            .to_string(),
+    );
+    out.push(
+        "   mode st day: n  rms  drop1  drop3  drop1pct  max|dev|  max|dev|/rms  cnt|dev|>3rms"
+            .to_string(),
+    );
     for (&(mode, station, day), v) in &stday_opp {
         if v.len() < MIN_CELL {
             continue;
@@ -690,7 +713,10 @@ fn main() {
             continue;
         }
         let m = v.iter().sum::<f64>() / v.len() as f64;
-        let maxdev = v.iter().map(|x| (x - m).abs()).fold(f64::NEG_INFINITY, f64::max);
+        let maxdev = v
+            .iter()
+            .map(|x| (x - m).abs())
+            .fold(f64::NEG_INFINITY, f64::max);
         let cnt3 = v.iter().filter(|x| (*x - m).abs() > 3.0 * rr).count();
         out.push(format!(
             "   m{mode} st {station:>2} {date}: n {n:>5}  rms {rr:9.2}  drop1 {drop1}  drop3 {drop3}  drop1pct {drop1p}  maxdev {maxdev:9.2}  ratio {ratio:.1}  cnt3 {cnt3}",
@@ -704,7 +730,10 @@ fn main() {
     }
 
     out.push(String::new());
-    out.push("G. same-station same-era non-OPP floor vs the OPP window (0 honored where a bin has no n)".to_string());
+    out.push(
+        "G. same-station same-era non-OPP floor vs the OPP window (0 honored where a bin has no n)"
+            .to_string(),
+    );
     out.push(format!(
         "   (mode, station, day) cells n >= {MIN_CELL}; near = day within {NEAR_DAYS} days of an OPP day"
     ));
@@ -777,7 +806,11 @@ fn main() {
     out.push(String::new());
     out.push("H. direction consistency of the rest contrast (cells n >= 30) — the coherent case ran loud-opposition".to_string());
     for mode in [1i64, 2, 3] {
-        let sts: BTreeSet<i64> = rows.iter().filter(|r| r.mode == mode).map(|r| r.station).collect();
+        let sts: BTreeSet<i64> = rows
+            .iter()
+            .filter(|r| r.mode == mode)
+            .map(|r| r.station)
+            .collect();
         for st in &sts {
             let mut opp: Vec<f64> = Vec::new();
             let mut nonopp: Vec<f64> = Vec::new();
@@ -810,7 +843,10 @@ fn main() {
             ));
         }
     }
-    out.push("   spearman of log10 cell RMS vs eps over all 1996 (mode, station, day) cells n >= 30:".to_string());
+    out.push(
+        "   spearman of log10 cell RMS vs eps over all 1996 (mode, station, day) cells n >= 30:"
+            .to_string(),
+    );
     for mode in [1i64, 2, 3] {
         let mut xs = Vec::new();
         let mut ys = Vec::new();
@@ -850,12 +886,22 @@ fn main() {
         if per_day.is_empty() {
             continue;
         }
-        out.push(format!("  mode {mode}: {}", per_day.iter().map(|(d, c)| format!("{}: {} cells", date_of_day(*d), c)).collect::<Vec<String>>().join(" | ")));
+        out.push(format!(
+            "  mode {mode}: {}",
+            per_day
+                .iter()
+                .map(|(d, c)| format!("{}: {} cells", date_of_day(*d), c))
+                .collect::<Vec<String>>()
+                .join(" | ")
+        ));
     }
 
     let body = out.join("\n") + "\n";
     match std::fs::write(OUT, &body) {
-        Ok(()) => eprintln!("galileo: 1996 rest split report written to {OUT} ({} lines)", out.len()),
+        Ok(()) => eprintln!(
+            "galileo: 1996 rest split report written to {OUT} ({} lines)",
+            out.len()
+        ),
         Err(_) => eprintln!("galileo: write {OUT} void"),
     }
 }

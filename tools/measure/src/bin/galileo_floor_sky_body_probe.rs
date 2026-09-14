@@ -234,11 +234,7 @@ fn sky_stat(us: &[[f64; 3]]) -> Option<SkyStat> {
 fn ra_dec(u: [f64; 3]) -> (f64, f64) {
     let ra = {
         let r = u[1].atan2(u[0]).to_degrees();
-        if r < 0.0 {
-            r + 360.0
-        } else {
-            r
-        }
+        if r < 0.0 { r + 360.0 } else { r }
     };
     let dec = u[2].clamp(-1.0, 1.0).asin().to_degrees();
     (ra, dec)
@@ -348,11 +344,7 @@ fn main() {
     let mut state: BTreeMap<(i64, i64, i64), u8> = BTreeMap::new();
     for c in &rows {
         let s = if c.n >= ROBUST_N {
-            if c.rms >= LOUD_HZ {
-                3u8
-            } else {
-                2u8
-            }
+            if c.rms >= LOUD_HZ { 3u8 } else { 2u8 }
         } else {
             1u8
         };
@@ -453,10 +445,20 @@ fn main() {
     }
 
     for (m, st, srows) in &series_data {
-        let loud_days: Vec<i64> = srows.iter().filter(|x| x.1 >= LOUD_HZ).map(|x| x.0).collect();
-        let quiet_days: Vec<i64> = srows.iter().filter(|x| x.1 < LOUD_HZ).map(|x| x.0).collect();
+        let loud_days: Vec<i64> = srows
+            .iter()
+            .filter(|x| x.1 >= LOUD_HZ)
+            .map(|x| x.0)
+            .collect();
+        let quiet_days: Vec<i64> = srows
+            .iter()
+            .filter(|x| x.1 < LOUD_HZ)
+            .map(|x| x.0)
+            .collect();
         push(String::new());
-        push(format!("== mode {m} st{st}: loud vs quiet day sky + distance =="));
+        push(format!(
+            "== mode {m} st{st}: loud vs quiet day sky + distance =="
+        ));
         let lus: Vec<[f64; 3]> = loud_days
             .iter()
             .filter_map(|d| day_geo.get(d).and_then(|g| g.u))
@@ -495,7 +497,9 @@ fn main() {
             "  loud/quiet centroid separation: {} deg",
             fmt_opt(sep, 8, 1)
         ));
-        let med_lo_hi = |days: &[i64], sel: fn(&DayGeo) -> Option<f64>| -> (usize, Option<f64>, Option<(f64, f64)>) {
+        let med_lo_hi = |days: &[i64],
+                         sel: fn(&DayGeo) -> Option<f64>|
+         -> (usize, Option<f64>, Option<(f64, f64)>) {
             let vals: Vec<f64> = days
                 .iter()
                 .filter_map(|d| day_geo.get(d).and_then(|g| sel(g)))
@@ -598,7 +602,10 @@ fn main() {
             .map(|((y, m), n)| format!("{y:04}-{m:02}:{n}"))
             .collect();
         push(format!("  loud day months (era cells): {}", mh.join(" ")));
-        push(format!("  loud day geometry rows ({} days):", loud_days.len()));
+        push(format!(
+            "  loud day geometry rows ({} days):",
+            loud_days.len()
+        ));
         for d in &loud_days {
             let g = day_geo.get(d);
             let (r_e_s, ra_s, dec_s, j_s) = match g {
@@ -608,7 +615,12 @@ fn main() {
                     fmt_opt(gg.dec, 7, 1),
                     fmt_opt(gg.jrj, 9, 1),
                 ),
-                None => ("-".to_string(), "-".to_string(), "-".to_string(), "-".to_string()),
+                None => (
+                    "-".to_string(),
+                    "-".to_string(),
+                    "-".to_string(),
+                    "-".to_string(),
+                ),
             };
             push(format!(
                 "    {} rE {} AU RA {} Dec {} J {} RJ",
@@ -652,7 +664,10 @@ fn main() {
             }
         }
         let max_of = |v: &[f64]| -> Option<f64> {
-            v.iter().copied().fold(None, |a: Option<f64>, x| match a { Some(m) => Some(m.max(x)), None => Some(x) })
+            v.iter().copied().fold(None, |a: Option<f64>, x| match a {
+                Some(m) => Some(m.max(x)),
+                None => Some(x),
+            })
         };
         push(format!(
             "  flip count {nflip}; sky step deg med {} max {}; |d rE| AU med {} max {}; |d J| RJ med {} max {}",
@@ -712,7 +727,10 @@ fn main() {
         }
     }
     let max_of = |v: &[f64]| -> Option<f64> {
-        v.iter().copied().fold(None, |a: Option<f64>, x| match a { Some(m) => Some(m.max(x)), None => Some(x) })
+        v.iter().copied().fold(None, |a: Option<f64>, x| match a {
+            Some(m) => Some(m.max(x)),
+            None => Some(x),
+        })
     };
     push(format!(
         "flips total {all_count}; sky step deg med {} max {} (<1 deg {lt1}, <2 deg {lt2}, <5 deg {lt5}); |d rE| AU med {}; |d J| RJ med {}",
@@ -723,7 +741,9 @@ fn main() {
     ));
 
     push(String::new());
-    push("== same-day station contrast (one geometry shared by all stations per day) ==".to_string());
+    push(
+        "== same-day station contrast (one geometry shared by all stations per day) ==".to_string(),
+    );
     for m in modes {
         let mut all_loud = 0usize;
         let mut all_quiet = 0usize;
@@ -871,7 +891,9 @@ fn main() {
     }
 
     push(String::new());
-    push("== loud day union across series: unique dates, geometry, loud-series list ==".to_string());
+    push(
+        "== loud day union across series: unique dates, geometry, loud-series list ==".to_string(),
+    );
     let mut by_day: BTreeMap<i64, Vec<(i64, i64)>> = BTreeMap::new();
     for (m, st, srows) in &series_data {
         for (day, rms_v) in srows {

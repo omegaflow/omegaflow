@@ -1,4 +1,4 @@
-use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
 use omegaflow::healpix::{ang2pix_nest, galactic_to_icrs, icrs_to_galactic};
 
 const NSIDE_DUST: i64 = 512;
@@ -729,7 +729,9 @@ fn collect_cone(
         });
     }
     if members.is_empty() {
-        eprintln!("no behind-screen star carries a plausible A_V and color — the cone stays unmeasured (0 honored)");
+        eprintln!(
+            "no behind-screen star carries a plausible A_V and color — the cone stays unmeasured (0 honored)"
+        );
         std::process::exit(1);
     }
     ConeSample {
@@ -818,7 +820,9 @@ fn run_full_field(dust: &DustMap, stars: &[Star], slice_lo: f64, slice_hi: f64) 
         fc.color_refused
     );
     if fc.members.is_empty() {
-        eprintln!("no behind-screen star carries a plausible A_V and color in the valid region — the full-field correction stays unmeasured (0 honored)");
+        eprintln!(
+            "no behind-screen star carries a plausible A_V and color in the valid region — the full-field correction stays unmeasured (0 honored)"
+        );
         std::process::exit(1);
     }
 
@@ -828,13 +832,17 @@ fn run_full_field(dust: &DustMap, stars: &[Star], slice_lo: f64, slice_hi: f64) 
         .filter(|m| m.m_abs >= slice_lo && m.m_abs <= slice_hi && m.g <= MAG_CLEAN_MAX)
         .collect();
     if slice_members.is_empty() {
-        eprintln!("no behind-screen star in the abs-G slice — the global slope stays unmeasured (0 honored)");
+        eprintln!(
+            "no behind-screen star in the abs-G slice — the global slope stays unmeasured (0 honored)"
+        );
         std::process::exit(1);
     }
     let sx: Vec<f64> = slice_members.iter().map(|m| m.av).collect();
     let sy: Vec<f64> = slice_members.iter().map(|m| m.color).collect();
     let Some(reg) = ols(&sx, &sy) else {
-        eprintln!("the global color regression carries no A_V variance — the slope stays unmeasured (0 honored)");
+        eprintln!(
+            "the global color regression carries no A_V variance — the slope stays unmeasured (0 honored)"
+        );
         std::process::exit(1);
     };
     println!("\n=== measured global reddening slope (step 4) ===");
@@ -1001,7 +1009,9 @@ fn median(v: &[f64]) -> Option<f64> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(dust_path) = arg_value(&args, "--dust") else {
-        eprintln!("usage: dust_cleaning_probe --dust <planck_dust_av_rq_n512.json> --stars <dr3_stars.bin> (--full-field | --cone <ra> <dec> | --cone-gal <l> <b>) [--radius <deg>] [--slice <m_lo> <m_hi>]");
+        eprintln!(
+            "usage: dust_cleaning_probe --dust <planck_dust_av_rq_n512.json> --stars <dr3_stars.bin> (--full-field | --cone <ra> <dec> | --cone-gal <l> <b>) [--radius <deg>] [--slice <m_lo> <m_hi>]"
+        );
         std::process::exit(1);
     };
     let Some(stars_path) = arg_value(&args, "--stars") else {
@@ -1011,7 +1021,9 @@ fn main() {
     let full_field = args.iter().any(|a| a == "--full-field");
     let cone_requested = args.iter().any(|a| a == "--cone" || a == "--cone-gal");
     if full_field && (cone_requested || args.iter().any(|a| a == "--radius")) {
-        eprintln!("--full-field processes the whole sky; it does not combine with --cone, --cone-gal, or --radius");
+        eprintln!(
+            "--full-field processes the whole sky; it does not combine with --cone, --cone-gal, or --radius"
+        );
         std::process::exit(1);
     }
     let radius_deg = if full_field {
@@ -1037,7 +1049,9 @@ fn main() {
     };
 
     if full_field {
-        println!("=== dust_cleaning_probe --full-field — Planck DL07 AV_RQ screen subtraction over the whole Gaia DR3 field ===");
+        println!(
+            "=== dust_cleaning_probe --full-field — Planck DL07 AV_RQ screen subtraction over the whole Gaia DR3 field ==="
+        );
         println!(
             "dust map {dust_path} | stars {stars_path} | abs-G regression slice [{slice_lo}, {slice_hi}]"
         );
@@ -1148,7 +1162,9 @@ fn main() {
         .filter(|m| m.m_abs >= slice_lo && m.m_abs <= slice_hi && m.g <= MAG_CLEAN_MAX)
         .collect();
     if slice_members.is_empty() {
-        eprintln!("no behind-screen star in the abs-G slice — the regression stays unmeasured (0 honored)");
+        eprintln!(
+            "no behind-screen star in the abs-G slice — the regression stays unmeasured (0 honored)"
+        );
         std::process::exit(1);
     }
 

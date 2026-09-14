@@ -405,13 +405,17 @@ fn main() {
     let mut out: Vec<String> = Vec::new();
     rec(
         &mut out,
-        "galileo floor quiet-basis ruck F3 nachmessen — the four sharpening measurements".to_string(),
+        "galileo floor quiet-basis ruck F3 nachmessen — the four sharpening measurements"
+            .to_string(),
     );
-    rec(&mut out, format!(
-        "binding: floor era {} .. {} (day labels {era0}..{era1}); floor = strength == {FLOOR} (AGC clamp); robust cell = (mode, station, day) n >= {MIN_CELL} over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; quiet = cell RMS < {LOUD_HZ:.0} Hz, loud = >= {LOUD_HZ:.0} Hz; day = round-of-tdb civil day; day level = daily median of the cell resid; the day label D spans UTC D-1 12:00..D 12:00",
-        civil_str(era0),
-        civil_str(era1),
-    ));
+    rec(
+        &mut out,
+        format!(
+            "binding: floor era {} .. {} (day labels {era0}..{era1}); floor = strength == {FLOOR} (AGC clamp); robust cell = (mode, station, day) n >= {MIN_CELL} over in-track (finite, |resid| <= {LOCK_HZ:.0} Hz) floor samples; quiet = cell RMS < {LOUD_HZ:.0} Hz, loud = >= {LOUD_HZ:.0} Hz; day = round-of-tdb civil day; day level = daily median of the cell resid; the day label D spans UTC D-1 12:00..D 12:00",
+            civil_str(era0),
+            civil_str(era1),
+        ),
+    );
 
     rec(&mut out, String::new());
     rec(&mut out, "== census (era reproduction) ==".to_string());
@@ -449,7 +453,8 @@ fn main() {
     rec(&mut out, String::new());
     rec(
         &mut out,
-        "== Q1: mode-1 quiet level after the 1995-11-30/12-01 step — near 0 or +0.75 kept? ==".to_string(),
+        "== Q1: mode-1 quiet level after the 1995-11-30/12-01 step — near 0 or +0.75 kept? =="
+            .to_string(),
     );
     for &st in &STATIONS {
         let rows = series_rows(&cells, 1, st);
@@ -458,7 +463,11 @@ fn main() {
             .filter(|r| r.day <= plat_end && r.rms > 0.0)
             .cloned()
             .collect();
-        let post: Vec<Row> = rows.iter().filter(|r| r.day >= post_start).cloned().collect();
+        let post: Vec<Row> = rows
+            .iter()
+            .filter(|r| r.day >= post_start)
+            .cloned()
+            .collect();
         let dec95: Vec<Row> = post
             .iter()
             .filter(|r| r.day <= days_from_civil(1995, 12, 31))
@@ -468,15 +477,26 @@ fn main() {
         rec(&mut out, String::new());
         rec(
             &mut out,
-            format!("M1 st{st}: quiet days total {} (zero-spread days in the pre-region excluded from the plateau median: {zero_days})", rows.len()),
+            format!(
+                "M1 st{st}: quiet days total {} (zero-spread days in the pre-region excluded from the plateau median: {zero_days})",
+                rows.len()
+            ),
         );
         rec(
             &mut out,
-            format!("  plateau (pre-step, <= {}) : {}", civil_str(plat_end), desc_block(&plateau)),
+            format!(
+                "  plateau (pre-step, <= {}) : {}",
+                civil_str(plat_end),
+                desc_block(&plateau)
+            ),
         );
         rec(
             &mut out,
-            format!("  post-step (>= {})       : {}", civil_str(post_start), desc_block(&post)),
+            format!(
+                "  post-step (>= {})       : {}",
+                civil_str(post_start),
+                desc_block(&post)
+            ),
         );
         rec(
             &mut out,
@@ -527,14 +547,17 @@ fn main() {
     rec(&mut out, String::new());
     rec(
         &mut out,
-        "== Q2: modes 2/3 coverage at the transition window 1995-11-28 .. 1995-12-03 ==".to_string(),
+        "== Q2: modes 2/3 coverage at the transition window 1995-11-28 .. 1995-12-03 =="
+            .to_string(),
     );
     for &mode in &[1i64, 2, 3] {
         for &st in &STATIONS {
             rec(&mut out, String::new());
             rec(
                 &mut out,
-                format!("M{mode} st{st} window cells (n | level-med Hz | rms Hz | class; class quiet = robust n>=30 & rms<1, loud = robust & rms>=1, thin = 1..29 samples, empty = no floor sample):"),
+                format!(
+                    "M{mode} st{st} window cells (n | level-med Hz | rms Hz | class; class quiet = robust n>=30 & rms<1, loud = robust & rms>=1, thin = 1..29 samples, empty = no floor sample):"
+                ),
             );
             let mut d = w0;
             while d <= w1 {
@@ -569,8 +592,14 @@ fn main() {
                 d += 1;
             }
             let srows = series_rows(&cells, mode, st);
-            let pre: Vec<&Row> = srows.iter().filter(|r| r.day <= plat_end && r.day >= w0).collect();
-            let pos: Vec<&Row> = srows.iter().filter(|r| r.day >= post_start && r.day <= w1).collect();
+            let pre: Vec<&Row> = srows
+                .iter()
+                .filter(|r| r.day <= plat_end && r.day >= w0)
+                .collect();
+            let pos: Vec<&Row> = srows
+                .iter()
+                .filter(|r| r.day >= post_start && r.day <= w1)
+                .collect();
             let left = pre
                 .iter()
                 .max_by_key(|r| r.day)
@@ -701,7 +730,8 @@ fn main() {
                 .collect();
             rec(
                 &mut out,
-                "  plateau-day jackknife (drop one opening-quiet day, rescan whole era):".to_string(),
+                "  plateau-day jackknife (drop one opening-quiet day, rescan whole era):"
+                    .to_string(),
             );
             for p in &plateau {
                 let trimmed: Vec<Row> = rows.iter().filter(|r| r.day != p.day).cloned().collect();
@@ -728,7 +758,10 @@ fn main() {
                 "  the three stations are measured independently (separate resid series); the same date reproduces when the whole-era scan runs on each of st14/st43/st63".to_string(),
             );
         } else {
-            rec(&mut out, "  whole-era scan void (too few quiet days)".to_string());
+            rec(
+                &mut out,
+                "  whole-era scan void (too few quiet days)".to_string(),
+            );
         }
     }
 
@@ -745,9 +778,7 @@ fn main() {
         let m1n = month_m1[m];
         rec(
             &mut out,
-            format!(
-                "  {m}: all-modes in-track floor samples {n_all} | mode-1-only {m1n}"
-            ),
+            format!("  {m}: all-modes in-track floor samples {n_all} | mode-1-only {m1n}"),
         );
     }
     for &st in &STATIONS {
@@ -803,7 +834,10 @@ fn main() {
                     fp.day as f64 - dgt as f64
                 ),
             ),
-            _ => rec(&mut out, "  no quiet day on one side of 1996-05-23 (0 honored)".to_string()),
+            _ => rec(
+                &mut out,
+                "  no quiet day on one side of 1996-05-23 (0 honored)".to_string(),
+            ),
         }
         let win: Vec<Row> = rows.iter().filter(|r| r.day >= dgt - 90).cloned().collect();
         if let Some((bc, ld, rd)) = best_cut_on(&win) {
@@ -816,7 +850,11 @@ fn main() {
                     civil_str(ld),
                     civil_str(rd),
                     bc.mr - bc.ml,
-                    if near { "yes".to_string() } else { "no".to_string() }
+                    if near {
+                        "yes".to_string()
+                    } else {
+                        "no".to_string()
+                    }
                 ),
             );
         } else {

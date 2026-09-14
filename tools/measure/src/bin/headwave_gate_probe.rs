@@ -79,6 +79,8 @@ fn main() {
     println!(
         "  is a property of the direct-P curve, so a station inside the bracket is the gate target"
     );
-    println!("  once a probe emits the measured P slowness at its delta. Until then the gate self-measures");
+    println!(
+        "  once a probe emits the measured P slowness at its delta. Until then the gate self-measures"
+    );
     println!("  the model triplication (above) and the wiring stays named, not wired.");
 }
