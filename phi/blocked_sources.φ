@@ -171,3 +171,108 @@ note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwor
 blocked account
 url https://ghrc.earthdata.nasa.gov/
 note Weberin-Re-Run 2026-09-14: GHRC-DAAC (LIS/OTD Blitz) — freie Earthdata-Registrierung nötig.
+
+blocked key
+url https://www.ncdc.noaa.gov/cdo-web/api/v2/
+note CDO-API verlangt api_key-Token (400 anonym); Host lebt.
+reg https://www.ncdc.noaa.gov/cdo-web/token
+
+blocked key
+url s3://lp-prod-protected/GEDI02_A.002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002/GEDI02_A_2025188131609_O37201_01_T03282_02_004_02_V002.cmr.xml
+note S3-Bucket AccessDenied (403) — Earthdata-EDL-Key nötig.
+reg https://urs.earthdata.nasa.gov/
+
+blocked key
+url s3://nsidc-cumulus-prod-public/ATLAS/ATL03/007/2026/05/18/ATL03_20260518020328_09753112_007_01.iso.xml
+note S3-Bucket privat/Auth (403 Objekt + List) — Earthdata-EDL-Key nötig.
+reg https://urs.earthdata.nasa.gov/
+
+blocked key
+url s3://podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.met.json
+note S3 SigV4 — s3credentials 401 (client_id fehlt).
+reg https://urs.earthdata.nasa.gov/
+
+blocked key
+url s3://podaac-swot-ops-cumulus-public/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.nc.iso.xml
+note S3 SigV4 — s3credentials 401 (client_id fehlt).
+reg https://urs.earthdata.nasa.gov/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/akari
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/catalog/asteroid_flux
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/spectrum/slitless_mir_spec
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/alma
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/hitomi
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/irsf
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url http://jvo.nao.ac.jp/skynode/do/tap/saga
+note JVO skynode-TAP hinter HTTP-Auth (/skynode/ 401); do/tap-Pfad 404.
+reg http://jvo.nao.ac.jp/skynode/
+
+blocked account
+url https://services.sentinel-hub.com/api/v1/catalog/collections
+note OAuth-Account nötig (503 anonym, /oauth/token POST 400).
+reg https://www.sentinel-hub.com/
+
+blocked account
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+note AMS-Login-Wall (200 HTML statt JSON).
+reg https://www.amsmeteors.org/members/
+
+blocked ip-blocked
+url http://worldtimeapi.org/api/timezone/Etc/UTC
+note connection reset by peer (curl 56); DNS ok, Proton NL SSL_ERROR_SYSCALL.
+reg https://timeapi.world/
+
+blocked ip-blocked
+url https://api.gdeltproject.org/api/v2/doc/doc
+note Rate-Limit 429 (IP-Throttle); Host root 200.
+reg https://www.gdeltproject.org/
+
+blocked ip-blocked
+url https://api.ioda.caida.org/v2/outages/asn/
+note kein HTTP über drei Routen (Timeout/SSL_ERROR_SYSCALL).
+reg https://ioda.caida.org/
+
+blocked ip-blocked
+url https://ioda.caida.org/api/v1/outages
+note Timeout 20 s lokal + Proton; kein HTTP.
+reg https://ioda.caida.org/
+
+blocked ip-blocked
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
+note Timeout 20 s (Datacenter-IP-Sperre), Proton SSL_ERROR_SYSCALL.
+reg https://ciesin.columbia.edu/sedac
+
+blocked ip-blocked
+url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
+note HTTP/2 INTERNAL_ERROR lokal + Proton nl 000 — Host antwortet nicht.
+reg https://www.arpansa.gov.au/our-services/monitoring/ultraviolet-radiation-monitoring/ultraviolet-radiation-data-information-developers
