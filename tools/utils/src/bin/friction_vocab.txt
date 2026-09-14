@@ -8,7 +8,6 @@ verschieben	deferral
 verschoben	deferral
 zurückstellen	deferral
 zurückgestellt	deferral
-geparkt	deferral
 parken	deferral
 parkplatz	deferral
 später	deferral
