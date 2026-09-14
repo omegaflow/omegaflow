@@ -1,6 +1,6 @@
 use crate::miniseed::decode_body;
 use omegaflow::ak135::{p_p_travel, p_travel_depth, s_p_travel};
-use omegaflow::archivar::{fetch_raw, fetch_raw_bytes, parse_json, scalar_of, JsonVal};
+use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::json::jpath;
 
 pub const DATASELECT_ROUTE: &str = "https://service.earthscope.org/fdsnws/dataselect/1/query";
@@ -214,11 +214,7 @@ pub fn gebco_elevation(lat: f64, lon: f64) -> Option<f64> {
     let body = fetch_raw(&url, None, &[], 86400)?;
     let json = parse_json(&body)?;
     let v = jpath(&json, "results.0.elevation")?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn median_abs(xs: &[f64]) -> f64 {
@@ -697,6 +693,53 @@ pub fn delta_branch(delta_deg: f64, depth_km: f64) -> DeltaBranch {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum PPBranch {
+    Clear,
+    BranchUnstable,
+    Fold,
+}
+
+pub const P_P_FOLD_SKIP: &str = "pP Δ-branch fold (caustic)";
+const FOLD_SWEEP_HALF_WIDTHS_DEG: [f64; 3] = [0.5, 1.0, 1.5];
+const FOLD_SWEEP_STEP_DEG: f64 = 0.25;
+
+fn p_p_lag_decreases_in_window(delta_deg: f64, depth_km: f64, half_width_deg: f64) -> Option<bool> {
+    let mut prev: Option<f64> = None;
+    let mut n = 0usize;
+    let mut d = delta_deg - half_width_deg;
+    while d <= delta_deg + half_width_deg {
+        if let Some(lag) = p_p_lag(d, depth_km) {
+            if let Some(p) = prev {
+                if lag < p - 1e-9 {
+                    return Some(true);
+                }
+            }
+            prev = Some(lag);
+            n += 1;
+        }
+        d += FOLD_SWEEP_STEP_DEG;
+    }
+    if n < 2 { None } else { Some(false) }
+}
+
+pub fn p_p_lag_folds(delta_deg: f64, depth_km: f64) -> bool {
+    FOLD_SWEEP_HALF_WIDTHS_DEG
+        .iter()
+        .filter_map(|&w| p_p_lag_decreases_in_window(delta_deg, depth_km, w))
+        .any(|d| d)
+}
+
+pub fn p_p_branch(delta_deg: f64, depth_km: f64) -> PPBranch {
+    if p_p_lag_folds(delta_deg, depth_km) {
+        PPBranch::Fold
+    } else if delta_branch(delta_deg, depth_km).unstable {
+        PPBranch::BranchUnstable
+    } else {
+        PPBranch::Clear
+    }
+}
+
 pub fn median(xs: &mut [f64]) -> f64 {
     xs.sort_by(|a, b| a.total_cmp(b));
     xs[xs.len() / 2]
@@ -745,7 +788,7 @@ pub struct StationMeasure {
     pub station_term: Option<StationTerm>,
     pub p_p_lag_corrected: Option<f64>,
     pub skip: Option<String>,
-    pub branch_unstable: bool,
+    pub branch: PPBranch,
 }
 
 fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
@@ -763,7 +806,7 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         station_term: None,
         p_p_lag_corrected: None,
         skip: Some(reason.to_string()),
-        branch_unstable: false,
+        branch: PPBranch::Clear,
     }
 }
 
@@ -776,10 +819,18 @@ pub fn measure_station(
 ) -> StationMeasure {
     let key = format!("{}.{}", station.net, station.sta);
     let delta = arc_deg(event.lat, event.lon, station.lat, station.lon);
-    if delta_branch(delta, event.depth_km).unstable {
-        let mut m = skipped(key, delta, BRANCH_UNSTABLE_SKIP);
-        m.branch_unstable = true;
-        return m;
+    match p_p_branch(delta, event.depth_km) {
+        PPBranch::Fold => {
+            let mut m = skipped(key, delta, P_P_FOLD_SKIP);
+            m.branch = PPBranch::Fold;
+            return m;
+        }
+        PPBranch::BranchUnstable => {
+            let mut m = skipped(key, delta, BRANCH_UNSTABLE_SKIP);
+            m.branch = PPBranch::BranchUnstable;
+            return m;
+        }
+        PPBranch::Clear => {}
     }
     let Some((samples, rate)) = fetch_station_body(station, start, end) else {
         return skipped(key, delta, "no decodable record");
@@ -830,7 +881,7 @@ pub fn measure_station(
         station_term: term.cloned(),
         p_p_lag_corrected,
         skip: None,
-        branch_unstable: false,
+        branch: PPBranch::Clear,
     }
 }
 
@@ -887,6 +938,77 @@ mod tests {
                 "inverted {v} km vs true {true_h} km"
             ),
             other => panic!("depth {true_h} km inverted to {other:?}"),
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_positive_mask_folds_the_caustic_interior() {
+        for (delta, h) in [(33.0, 410.0), (34.0, 500.0), (37.0, 600.0)] {
+            assert_eq!(
+                p_p_branch(delta, h),
+                PPBranch::Fold,
+                "a station at Δ={delta}° for {h} km sits inside the pP caustic — the ray folds (multi-valued), never Clear or merely branch-unstable"
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_positive_mask_marks_the_steep_monotonic_approach() {
+        assert_eq!(
+            p_p_branch(32.0, 500.0),
+            PPBranch::BranchUnstable,
+            "a station at Δ=32° for 500 km sits on the steep but still monotonic approach to the caustic — branch-unstable, not yet folded"
+        );
+    }
+
+    #[test]
+    fn kalibrier_gate_positive_mask_never_calls_the_fold_band_clear() {
+        for (delta, h) in [
+            (31.0, 410.0),
+            (32.0, 410.0),
+            (33.0, 410.0),
+            (32.0, 450.0),
+            (33.0, 450.0),
+            (34.0, 500.0),
+            (35.0, 550.0),
+            (37.0, 600.0),
+        ] {
+            let b = p_p_branch(delta, h);
+            assert_ne!(
+                b,
+                PPBranch::Clear,
+                "a station at Δ={delta}° for {h} km sits in the pP fold band — never Clear, got {b:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_positive_mask_clears_the_single_branch_band() {
+        for (delta, h) in [
+            (45.0, 410.0),
+            (45.0, 450.0),
+            (45.0, 500.0),
+            (45.0, 550.0),
+            (45.0, 600.0),
+            (60.0, 450.0),
+            (60.0, 600.0),
+        ] {
+            assert_eq!(
+                p_p_branch(delta, h),
+                PPBranch::Clear,
+                "a station at Δ={delta}° for {h} km sits on the single-branch band — Clear"
+            );
+        }
+    }
+
+    #[test]
+    fn kalibrier_gate_positive_mask_660_stays_clear() {
+        for delta in [30.0, 35.0, 40.0, 44.0, 46.0] {
+            assert_eq!(
+                p_p_branch(delta, 660.0),
+                PPBranch::Clear,
+                "the 660 km pP geometry carries no fold up to Δ≈46° — Δ={delta}° must stay Clear"
+            );
         }
     }
 
