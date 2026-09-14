@@ -1,5 +1,5 @@
 use omegaflow::cdn::{upload_asset, upload_release};
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
 
@@ -187,7 +187,11 @@ fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
             .split('|')
             .map(|s| {
                 let c = s.trim().to_string();
-                if c == "null" { String::new() } else { c }
+                if c == "null" {
+                    String::new()
+                } else {
+                    c
+                }
             })
             .collect();
         rows.push(cells);
@@ -623,6 +627,14 @@ fn dedup_crossmatch(
     keep
 }
 
+fn join_from(table_ref: &str, join_table: &str, join_col: &str, left: bool) -> String {
+    let kind = if left { "LEFT JOIN" } else { "JOIN" };
+    format!(
+        "{} AS t {} {} AS j ON t.{} = j.{}",
+        table_ref, kind, join_table, join_col, join_col
+    )
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut root: Option<String> = None;
@@ -640,6 +652,7 @@ fn main() {
     let mut order_by: Option<String> = None;
     let mut where_clause: Option<String> = None;
     let mut join_spec: Option<(String, String)> = None;
+    let mut join_left = false;
     let mut crossmatch_spec: Option<String> = None;
     let mut crossmatch_z_spec: Option<String> = None;
     let mut crossmatch_pm: Option<String> = None;
@@ -702,6 +715,20 @@ fn main() {
                         None => String::new(),
                     },
                 ));
+                i += 2;
+            }
+            "--join-left" => {
+                join_spec = Some((
+                    match args.get(i + 1) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                    match args.get(i + 2) {
+                        Some(a) => a.clone(),
+                        None => String::new(),
+                    },
+                ));
+                join_left = true;
                 i += 2;
             }
             "--crossmatch" => {
@@ -1137,9 +1164,7 @@ fn main() {
                     .join(",")
             };
             let fc = match &join_spec {
-                Some((jt, oc)) => {
-                    format!("{} AS t JOIN {} AS j ON t.{} = j.{}", table_ref, jt, oc, oc)
-                }
+                Some((jt, oc)) => join_from(&table_ref, jt, oc, join_left),
                 None => table_ref.clone(),
             };
             (cs, fc)
@@ -1232,7 +1257,13 @@ fn main() {
             .map(|(_, lo, hi, step)| (*lo, *hi, *step))
             .or(mag_bands);
         let is_xm = crossmatch_spec.is_some() || crossmatch_z_spec.is_some();
-        let band_qual = |c: &str| -> String { if is_xm { format!("t.{}", xq(c)) } else { xq(c) } };
+        let band_qual = |c: &str| -> String {
+            if is_xm {
+                format!("t.{}", xq(c))
+            } else {
+                xq(c)
+            }
+        };
         let left_from = if is_xm {
             format!("{} AS t", table_ref)
         } else {
@@ -1734,7 +1765,7 @@ fn row_str(j: &JsonVal) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{dedup_crossmatch, json_metadata_rows};
+    use super::{dedup_crossmatch, join_from, json_metadata_rows};
 
     fn row(ra: &str, dec: &str, dist: &str) -> Vec<String> {
         vec![ra.to_string(), dec.to_string(), dist.to_string()]
@@ -1792,6 +1823,34 @@ mod tests {
     fn dedup_empty_rows_is_empty() {
         let out = dedup_crossmatch(Vec::new(), 0, 1, Some(2));
         assert!(out.is_empty());
+    }
+
+    #[test]
+    fn join_from_builds_inner_equi_join() {
+        let fc = join_from(
+            "catalogue.mer_catalogue",
+            "q1.phz_physical_parameters",
+            "object_id",
+            false,
+        );
+        assert_eq!(
+            fc,
+            "catalogue.mer_catalogue AS t JOIN q1.phz_physical_parameters AS j ON t.object_id = j.object_id"
+        );
+    }
+
+    #[test]
+    fn join_from_builds_left_join() {
+        let fc = join_from(
+            "catalogue.mer_catalogue",
+            "q1.phz_physical_parameters",
+            "object_id",
+            true,
+        );
+        assert_eq!(
+            fc,
+            "catalogue.mer_catalogue AS t LEFT JOIN q1.phz_physical_parameters AS j ON t.object_id = j.object_id"
+        );
     }
 
     #[test]

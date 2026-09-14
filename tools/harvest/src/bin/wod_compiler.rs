@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
-    COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, GeoRec, MAGIC_WOD, parse_bin, write_bin,
+    parse_bin, write_bin, GeoRec, COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, MAGIC_WOD,
 };
 use omegaflow::archivar::lsk::{self, days_from_civil};
 use omegaflow::cdn::upload_release;
@@ -8,6 +8,10 @@ use omegaflow::hdf5::Hdf5File;
 use omegaflow::netcdf::{nc4_group, nc4_ragged_f64};
 
 const NETLOC: &str = "noaa-wod-pds.s3.amazonaws.com";
+
+const WOD_INSTRUMENTS: &[&str] = &[
+    "ctd", "drb", "gld", "mbt", "mrb", "osd", "pfl", "uor", "xbt",
+];
 
 const LEVEL_VARS: &[(&str, u32)] = &[
     ("Temperature", COMP_WOD_TEMP),
@@ -293,6 +297,102 @@ fn load_bytes(args: &[String]) -> Option<(Vec<u8>, String)> {
     bytes.map(|b| (b, path))
 }
 
+fn current_year() -> Option<i64> {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_secs() as i64;
+    let days = secs.div_euclid(86400);
+    let mut year = 1970 + days / 365;
+    loop {
+        let start = days_from_civil(year, 1, 1)?;
+        if start > days {
+            year -= 1;
+            continue;
+        }
+        let next = days_from_civil(year + 1, 1, 1)?;
+        if days < next {
+            return Some(year);
+        }
+        year += 1;
+    }
+}
+
+fn run_loop(args: &[String]) -> i32 {
+    let Some(lsk_text) = arg_value(args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok())
+    else {
+        eprintln!("wod: --lsk <naif0012.tls> stays unread — the TDB clock stays unread");
+        return 1;
+    };
+    let Some(lsk) = lsk::parse(&lsk_text) else {
+        eprintln!("wod: --lsk parses void");
+        return 1;
+    };
+    let start_year: i64 = arg_value(args, "--start-year")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(2000);
+    let end_year: i64 = arg_value(args, "--end-year")
+        .and_then(|v| v.parse().ok())
+        .or_else(current_year)
+        .unwrap_or(2026);
+    let instruments: Vec<String> = match arg_value(args, "--instruments") {
+        Some(v) => v
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        None => WOD_INSTRUMENTS.iter().map(|s| s.to_string()).collect(),
+    };
+    let out_dir = match arg_value(args, "--out-dir") {
+        Some(v) => v,
+        None => ".".to_string(),
+    };
+    let ci_mode = flag(args, "--ci-mode");
+    let _ = std::fs::create_dir_all(&out_dir);
+    let mut compiled = 0usize;
+    let mut absent = 0usize;
+    let mut void = 0usize;
+    for year in start_year..=end_year {
+        for instrument in &instruments {
+            let url =
+                format!("https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc");
+            let Some(bytes) = fetch_raw_bytes(&url, 3600) else {
+                absent += 1;
+                continue;
+            };
+            let records = match compile_file(&bytes, &lsk) {
+                Ok(r) => r,
+                Err(e) => {
+                    eprintln!("wod: {instrument} {year}: {e}");
+                    void += 1;
+                    continue;
+                }
+            };
+            let out_path = format!("{out_dir}/noaa_wod_{year}_{instrument}.bin");
+            let bytes_out = write_bin(MAGIC_WOD, &records);
+            if std::fs::write(&out_path, &bytes_out).is_err() {
+                eprintln!("wod: write {out_path} returned void");
+                void += 1;
+                continue;
+            }
+            if ci_mode && !upload_release(NETLOC, &out_path) {
+                void += 1;
+                continue;
+            }
+            compiled += 1;
+        }
+    }
+    eprintln!(
+        "wod loop {start_year}..={end_year} x {} instruments: {compiled} assets compiled, {absent} granules absent, {void} granules void",
+        instruments.len()
+    );
+    if compiled == 0 {
+        1
+    } else {
+        0
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if flag(&args, "--probe") {
@@ -303,9 +403,12 @@ fn main() {
         eprintln!("wod_compiler: --probe needs a readable <file>");
         std::process::exit(1);
     }
+    if flag(&args, "--loop") {
+        std::process::exit(run_loop(&args));
+    }
     let Some((bytes, name)) = load_bytes(&args) else {
         eprintln!(
-            "usage: wod_compiler --probe <file>  |  --input <file|url> --out <asset> --lsk <naif0012.tls> [--ci-mode]"
+            "usage: wod_compiler --probe <file>  |  --input <file|url> --out <asset> --lsk <naif0012.tls> [--ci-mode]  |  --loop --lsk <naif0012.tls> [--start-year YYYY] [--end-year YYYY] [--instruments ctd,osd,...] [--out-dir <dir>] [--ci-mode]"
         );
         std::process::exit(1);
     };
@@ -372,5 +475,11 @@ mod tests {
         assert_eq!(valid_level(f64::NAN, None), None);
         assert_eq!(valid_level(f64::INFINITY, None), None);
         assert_eq!(valid_level(0.0, None), Some(0.0));
+    }
+
+    #[test]
+    fn current_year_reads_the_system_clock() {
+        let y = current_year().expect("system clock reads");
+        assert!((2000..=2100).contains(&y), "clock year {y}");
     }
 }
