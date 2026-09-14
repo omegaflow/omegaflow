@@ -282,7 +282,7 @@ fn decode_lzw_strip(data: &[u8], expected: usize) -> Option<Vec<u8>> {
                 prefix[free as usize] = p;
                 suffix[free as usize] = entry[0];
                 free += 1;
-                if free == (1u16 << width) && width < 12 {
+                if free == (1u16 << width) - 1 && width < 12 {
                     width += 1;
                 }
             }
@@ -1248,7 +1248,7 @@ mod tests {
                 if (free as usize) < LZW_TABLE_MAX {
                     dict.insert(wk, free);
                     free += 1;
-                    if free == (1u16 << width) && width < 12 {
+                    if free == (1u16 << width) - 1 && width < 12 {
                         width += 1;
                     }
                 }
@@ -1527,5 +1527,45 @@ mod tests {
         assert_eq!(img.height, 8);
         assert_eq!(img.pixels.len(), 64);
         assert!(img.pixels.iter().all(|&b| b == 128));
+    }
+
+    #[test]
+    #[ignore = "reads the GeoTIFF named by OMEGAFLOW_OCS_TIFF"]
+    fn real_ocs_float32_lzw_geotiff_decodes() {
+        let path = std::env::var("OMEGAFLOW_OCS_TIFF")
+            .expect("OMEGAFLOW_OCS_TIFF names a GeoTIFF on disk");
+        let bytes = std::fs::read(&path).expect("read the OCS GeoTIFF");
+        let img = parse_tiff(&bytes).expect("the GeoTIFF parses");
+        assert_eq!(img.compression, 5);
+        assert_eq!(img.samples_per_pixel, 2);
+        assert_eq!(img.bits_per_sample, vec![32, 32]);
+        assert_eq!(
+            img.pixels.len(),
+            img.width as usize * img.height as usize * 8,
+            "two float32 bands per pixel"
+        );
+        let floats: Vec<f32> = img
+            .pixels
+            .chunks_exact(4)
+            .map(|b| f32::from_le_bytes([b[0], b[1], b[2], b[3]]))
+            .collect();
+        assert!(
+            floats.iter().any(|v| v.is_finite()),
+            "the decoded float32 band carries a real value"
+        );
+        fn min_valid(band: &[f32]) -> f32 {
+            band.iter()
+                .copied()
+                .filter(|v| v.is_finite() && *v != f32::MAX)
+                .fold(f32::INFINITY, f32::min)
+        }
+        let band0: Vec<f32> = floats.iter().step_by(2).copied().collect();
+        let band1: Vec<f32> = floats.iter().skip(1).step_by(2).copied().collect();
+        assert_eq!(min_valid(&band0), -15.8500003814697, "Elevation floor");
+        assert_eq!(min_valid(&band1), 1.103639960289, "Uncertainty floor");
+        assert!(
+            floats.contains(&f32::MAX),
+            "the GDAL_NODATA 3.4028235e38 sentinel decodes"
+        );
     }
 }
