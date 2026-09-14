@@ -33,7 +33,7 @@ library_gate_delta.φ.
 ## Arbeitsfläche des Source-Ports (Register/Agent, kein Code-Leser)
 
 ledger.φ (Zustands-Register), index.φ, prompt.φ (Port-Vorlage),
-queue/grind_*.φ (Drafts), park/ (geparkt), stage/*_converted.φ
+queue/grind_*.φ (Drafts), park/ (parser-gap), stage/*_converted.φ
 (Konvertierungs-Ausgänge).
 
 ## Eingefroren
