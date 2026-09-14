@@ -1,9 +1,9 @@
-use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::session::fetch_superdarn_ascii;
 use omegaflow::archivar::units::ymd_to_days;
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::cdn::upload_release;
-use omegaflow::geo::{COMP_SDARN_V, GeoRec, MAGIC_SDARN, parse_bin, write_bin};
-use omegaflow::json::{JsonVal, parse_json, scalar_of};
+use omegaflow::geo::{parse_bin, write_bin, GeoRec, COMP_SDARN_V, MAGIC_SDARN};
+use omegaflow::json::{parse_json, scalar_of, JsonVal};
 use std::process::Command;
 
 const NETLOC: &str = "superdarn.ca";
@@ -13,7 +13,11 @@ const RST_HDW_RAW: &str =
 
 const EARTH_RADIUS_KM: f64 = 6371.0;
 
-const FIELD_LIST: &str = "\"v\",\"bmazm\",\"frang\",\"rsep\",\"slist\",\"elv\"";
+const FIELD_LIST: &str = "\"v\",\"bmazm\",\"frang\",\"rsep\",\"slist\"";
+
+const CHISHAM_A: [f64; 3] = [108.974, 384.416, 1098.28];
+const CHISHAM_B: [f64; 3] = [0.0191271, -0.178640, -0.354557];
+const CHISHAM_C: [f64; 3] = [6.68283e-5, 1.81405e-4, 9.39961e-5];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -155,17 +159,37 @@ fn time_unix(obj: &JsonVal) -> Option<f64> {
     )
 }
 
-fn slant_to_ground_km(slant_km: f64, elev_deg: f64) -> Option<f64> {
-    if !slant_km.is_finite() || !elev_deg.is_finite() || slant_km <= 0.0 {
+fn chisham_virtual_height_km(slant_km: f64) -> Option<f64> {
+    if !slant_km.is_finite() || slant_km <= 0.0 {
         return None;
     }
-    let elv = elev_deg.to_radians();
-    let x = slant_km * elv.cos();
-    let h = slant_km * elv.sin();
-    let theta = x.atan2(EARTH_RADIUS_KM + h);
-    let rg = EARTH_RADIUS_KM * theta;
-    if rg.is_finite() && rg >= 0.0 {
-        Some(rg)
+    let h = if slant_km < 115.0 {
+        (slant_km / 115.0) * 112.0
+    } else if slant_km < 787.5 {
+        CHISHAM_A[0] + CHISHAM_B[0] * slant_km + CHISHAM_C[0] * slant_km * slant_km
+    } else if slant_km <= 2137.5 {
+        CHISHAM_A[1] + CHISHAM_B[1] * slant_km + CHISHAM_C[1] * slant_km * slant_km
+    } else {
+        CHISHAM_A[2] + CHISHAM_B[2] * slant_km + CHISHAM_C[2] * slant_km * slant_km
+    };
+    if h.is_finite() && h > 0.0 {
+        Some(h)
+    } else {
+        None
+    }
+}
+
+fn chisham_ground_km(slant_km: f64) -> Option<f64> {
+    let h = chisham_virtual_height_km(slant_km)?;
+    let re = EARTH_RADIUS_KM;
+    let rp = re + h;
+    let cos_theta = (re * re + rp * rp - slant_km * slant_km) / (2.0 * re * rp);
+    if !cos_theta.is_finite() || !(-1.0..=1.0).contains(&cos_theta) {
+        return None;
+    }
+    let ground = re * cos_theta.acos();
+    if ground.is_finite() && ground >= 0.0 {
+        Some(ground)
     } else {
         None
     }
@@ -200,11 +224,7 @@ fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>
     let mut records = Vec::new();
     let mut skipped = 0usize;
     for row in rows {
-        let (Some(gates), Some(vels), Some(elvs)) = (
-            list_of(&row, "slist"),
-            list_of(&row, "v"),
-            list_of(&row, "elv"),
-        ) else {
+        let (Some(gates), Some(vels)) = (list_of(&row, "slist"), list_of(&row, "v")) else {
             skipped += 1;
             continue;
         };
@@ -223,8 +243,7 @@ fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>
         }
         let bearing = site.boresight_deg + bmazm;
         for i in 0..gates.len() {
-            let (Some(&gate), Some(&v), Some(&elv)) = (gates.get(i), vels.get(i), elvs.get(i))
-            else {
+            let (Some(&gate), Some(&v)) = (gates.get(i), vels.get(i)) else {
                 skipped += 1;
                 continue;
             };
@@ -233,7 +252,7 @@ fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>
                 continue;
             }
             let slant_km = frang + gate * rsep;
-            let Some(ground_km) = slant_to_ground_km(slant_km, elv) else {
+            let Some(ground_km) = chisham_ground_km(slant_km) else {
                 skipped += 1;
                 continue;
             };
@@ -412,13 +431,31 @@ mod tests {
     }
 
     #[test]
-    fn slant_to_ground_maps_a_high_elevation_echo_to_a_short_arc() {
-        let ground = slant_to_ground_km(180.0, 34.82).expect("finite echo");
-        assert!((ground - 147.0).abs() < 2.0, "got {ground}");
-        let ground_horizon = slant_to_ground_km(180.0, 0.0).expect("finite echo");
-        assert!((ground_horizon - 180.0).abs() < 2.0);
-        assert!(slant_to_ground_km(-1.0, 20.0).is_none());
-        assert!(slant_to_ground_km(180.0, f64::NAN).is_none());
+    fn chisham_virtual_height_matches_the_published_regions() {
+        let near = chisham_virtual_height_km(100.0).expect("finite");
+        assert!((near - 97.391).abs() < 1e-3, "near height {near}");
+        let e_region = chisham_virtual_height_km(300.0).expect("finite");
+        assert!(
+            (e_region - 120.73).abs() < 1.0,
+            "e-region height {e_region}"
+        );
+        let f_region = chisham_virtual_height_km(1500.0).expect("finite");
+        assert!(
+            (f_region - 524.66).abs() < 2.0,
+            "f-region height {f_region}"
+        );
+        assert!(chisham_virtual_height_km(-1.0).is_none());
+        assert!(chisham_virtual_height_km(f64::NAN).is_none());
+    }
+
+    #[test]
+    fn chisham_ground_range_is_shorter_than_slant_range() {
+        let ground = chisham_ground_km(180.0).expect("finite");
+        assert!(ground > 0.0 && ground < 180.0, "ground {ground}");
+        let far = chisham_ground_km(1500.0).expect("finite");
+        assert!(far > 0.0 && far < 1500.0, "far ground {far}");
+        assert!(chisham_ground_km(-1.0).is_none());
+        assert!(chisham_ground_km(f64::NAN).is_none());
     }
 
     #[test]
@@ -446,7 +483,7 @@ mod tests {
         assert!(body.contains("\"startDate\":\"2026-08-20\""));
         assert!(body.contains("\"beam\":\"all\""));
         assert!(body.contains("\"ftype\":\"json\""));
-        assert!(body.contains("\"fields\":[\"v\",\"bmazm\",\"frang\",\"rsep\",\"slist\",\"elv\"]"));
+        assert!(body.contains("\"fields\":[\"v\",\"bmazm\",\"frang\",\"rsep\",\"slist\"]"));
     }
 
     #[test]

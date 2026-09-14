@@ -1,14 +1,16 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
-use omegaflow::fits::{FitsHeader, FitsTable};
+use omegaflow::fits::{FitsColumn, FitsHeader, FitsTable};
 
 const URL: &str = "https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/vlass_data/sources_se.fits";
 const CDN_TAG: &str = "ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca";
 
 const MAGIC: [u8; 4] = *b"VLAS";
+const MAGIC_COMP: [u8; 4] = *b"VLAC";
 const VLASS_FREQ_HZ: f64 = 3.0e9;
 const HEADER_BYTES: usize = 16;
 const REC_BYTES: usize = 32;
+const COMP_REC_BYTES: usize = 72;
 
 #[derive(Clone, Copy, Debug)]
 struct VlassSource {
@@ -16,6 +18,19 @@ struct VlassSource {
     dec_deg: f64,
     flux_mjy: f64,
     e_flux_mjy: f64,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct VlassComponent {
+    ra_deg: f64,
+    dec_deg: f64,
+    total_flux_mjy: f64,
+    e_total_flux_mjy: f64,
+    peak_flux_mjy: f64,
+    e_peak_flux_mjy: f64,
+    maj_arcsec: f64,
+    min_arcsec: f64,
+    pa_deg: f64,
 }
 
 fn write_bin(records: &[VlassSource]) -> Vec<u8> {
@@ -62,6 +77,75 @@ fn read_bin(data: &[u8]) -> Option<Vec<VlassSource>> {
             dec_deg,
             flux_mjy,
             e_flux_mjy,
+        });
+    }
+    Some(out)
+}
+
+fn write_component_bin(records: &[VlassComponent]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(HEADER_BYTES + records.len() * COMP_REC_BYTES);
+    out.extend_from_slice(&MAGIC_COMP);
+    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    out.extend_from_slice(&VLASS_FREQ_HZ.to_le_bytes());
+    for r in records {
+        out.extend_from_slice(&r.ra_deg.to_le_bytes());
+        out.extend_from_slice(&r.dec_deg.to_le_bytes());
+        out.extend_from_slice(&r.total_flux_mjy.to_le_bytes());
+        out.extend_from_slice(&r.e_total_flux_mjy.to_le_bytes());
+        out.extend_from_slice(&r.peak_flux_mjy.to_le_bytes());
+        out.extend_from_slice(&r.e_peak_flux_mjy.to_le_bytes());
+        out.extend_from_slice(&r.maj_arcsec.to_le_bytes());
+        out.extend_from_slice(&r.min_arcsec.to_le_bytes());
+        out.extend_from_slice(&r.pa_deg.to_le_bytes());
+    }
+    out
+}
+
+fn read_component_bin(data: &[u8]) -> Option<Vec<VlassComponent>> {
+    if data.len() < HEADER_BYTES || data[0..4] != MAGIC_COMP {
+        return None;
+    }
+    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    if data.len() != HEADER_BYTES + count * COMP_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = HEADER_BYTES + i * COMP_REC_BYTES;
+        let f64_at = |o: usize| -> Option<f64> {
+            Some(f64::from_le_bytes(data.get(o..o + 8)?.try_into().ok()?))
+        };
+        let ra_deg = f64_at(base)?;
+        let dec_deg = f64_at(base + 8)?;
+        let total_flux_mjy = f64_at(base + 16)?;
+        let e_total_flux_mjy = f64_at(base + 24)?;
+        let peak_flux_mjy = f64_at(base + 32)?;
+        let e_peak_flux_mjy = f64_at(base + 40)?;
+        let maj_arcsec = f64_at(base + 48)?;
+        let min_arcsec = f64_at(base + 56)?;
+        let pa_deg = f64_at(base + 64)?;
+        if !ra_deg.is_finite()
+            || !dec_deg.is_finite()
+            || !total_flux_mjy.is_finite()
+            || !e_total_flux_mjy.is_finite()
+            || !peak_flux_mjy.is_finite()
+            || !e_peak_flux_mjy.is_finite()
+            || !maj_arcsec.is_finite()
+            || !min_arcsec.is_finite()
+            || !pa_deg.is_finite()
+        {
+            return None;
+        }
+        out.push(VlassComponent {
+            ra_deg,
+            dec_deg,
+            total_flux_mjy,
+            e_total_flux_mjy,
+            peak_flux_mjy,
+            e_peak_flux_mjy,
+            maj_arcsec,
+            min_arcsec,
+            pa_deg,
         });
     }
     Some(out)
@@ -118,17 +202,120 @@ fn gather(bytes: &[u8]) -> Option<Vec<VlassSource>> {
     Some(records)
 }
 
+fn col<'a>(table: &'a FitsTable, names: &[&str]) -> Option<&'a FitsColumn> {
+    names.iter().find_map(|n| table.column(*n))
+}
+
+fn gather_component(bytes: &[u8]) -> Option<Vec<VlassComponent>> {
+    let (_, off) = FitsHeader::parse(bytes, 0)?;
+    let (table, _next) = FitsTable::parse(bytes, off)?;
+    let ra = col(&table, &["RA", "Component_RA", "RA_Component"])?;
+    let dec = col(&table, &["DEC", "Component_DEC", "DEC_Component"])?;
+    let total = col(&table, &["Total_flux", "Total_flux_component", "Flux"])?;
+    let e_total = col(
+        &table,
+        &["E_Total_flux", "E_Total_flux_component", "E_Flux"],
+    )?;
+    let peak = col(&table, &["Peak_flux", "Peak_flux_component"])?;
+    let e_peak = col(&table, &["E_Peak_flux", "E_Peak_flux_component"])?;
+    let maj = col(&table, &["Maj", "Maj_component"])?;
+    let min = col(&table, &["Min", "Min_component"])?;
+    let pa = col(&table, &["PA", "PA_component"])?;
+
+    eprintln!(
+        "vlass component: {} rows, {} columns",
+        table.n_rows,
+        table.columns.len()
+    );
+
+    let mut records = Vec::with_capacity(table.n_rows);
+    let mut skipped = 0usize;
+    for row in 0..table.n_rows {
+        let (
+            Some(r),
+            Some(d),
+            Some(f),
+            Some(ef),
+            Some(p),
+            Some(ep),
+            Some(maj_v),
+            Some(min_v),
+            Some(pa_v),
+        ) = (
+            table.cell_f64(bytes, row, ra),
+            table.cell_f64(bytes, row, dec),
+            table.cell_f64(bytes, row, total),
+            table.cell_f64(bytes, row, e_total),
+            table.cell_f64(bytes, row, peak),
+            table.cell_f64(bytes, row, e_peak),
+            table.cell_f64(bytes, row, maj),
+            table.cell_f64(bytes, row, min),
+            table.cell_f64(bytes, row, pa),
+        )
+        else {
+            skipped += 1;
+            continue;
+        };
+        if !(0.0..360.0).contains(&r)
+            || !(-90.0..=90.0).contains(&d)
+            || !(f > 0.0)
+            || !(ef > 0.0)
+            || !(p > 0.0)
+            || !(ep > 0.0)
+            || !(maj_v >= 0.0)
+            || !(min_v >= 0.0)
+        {
+            skipped += 1;
+            continue;
+        }
+        records.push(VlassComponent {
+            ra_deg: r,
+            dec_deg: d,
+            total_flux_mjy: f,
+            e_total_flux_mjy: ef,
+            peak_flux_mjy: p,
+            e_peak_flux_mjy: ep,
+            maj_arcsec: maj_v,
+            min_arcsec: min_v,
+            pa_deg: pa_v,
+        });
+    }
+    if records.is_empty() {
+        eprintln!("vlass component: no valid component — the asset stays unwritten (0 honored)");
+        return None;
+    }
+    eprintln!(
+        "vlass component: {} components, {} rows skipped",
+        records.len(),
+        skipped
+    );
+    Some(records)
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: vlass_compiler [--input <sources_se.fits>] --out <vlass_sources_se.bin> [--ci-mode]";
+    let usage = "usage: vlass_compiler [--kind source|component] [--input <file.fits>] [--url <route>] --out <bin> [--ci-mode]";
     let mut input: Option<String> = None;
     let mut out_path: Option<String> = None;
+    let mut url: Option<String> = None;
+    let mut kind = String::from("source");
     let mut ci_mode = false;
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
             "--input" => {
                 input = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--url" => {
+                url = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--kind" => {
+                kind = match args.get(i + 1) {
+                    Some(k) => k.clone(),
+                    None => "source".to_string(),
+                };
                 i += 1;
             }
             "--out" => {
@@ -147,6 +334,10 @@ fn main() {
             std::process::exit(1);
         }
     };
+    let fetch_url = match url {
+        Some(v) => v,
+        None => URL.to_string(),
+    };
     let bytes = match input {
         Some(path) => match std::fs::read(&path) {
             Ok(b) => b,
@@ -155,42 +346,75 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        None => match fetch_raw_bytes(URL, 604800) {
+        None => match fetch_raw_bytes(&fetch_url, 604800) {
             Some(b) => b,
             None => {
-                eprintln!("vlass_compiler: fetch void ({URL})");
+                eprintln!("vlass_compiler: fetch void ({fetch_url})");
                 std::process::exit(1);
             }
         },
     };
-    let records = match gather(&bytes) {
-        Some(r) => r,
-        None => std::process::exit(1),
-    };
-    let bin = write_bin(&records);
-    if std::fs::write(&out_path, &bin).is_err() {
-        eprintln!("vlass_compiler: write {out_path} void");
-        std::process::exit(1);
-    }
-    match read_bin(&bin) {
-        Some(parsed) => {
-            let mut fmax = 0.0f64;
-            for r in &parsed {
-                if r.flux_mjy > fmax {
-                    fmax = r.flux_mjy;
-                }
-            }
-            eprintln!(
-                "vlass: {} sources, flux_mjy bis {fmax:.3e}, {} B -> {out_path} (roundtrip parses)",
-                parsed.len(),
-                bin.len()
-            );
-        }
-        None => {
-            eprintln!(
-                "vlass_compiler: {out_path}: roundtrip parse void — the asset stays unverified"
-            );
+    if kind == "component" {
+        let records = match gather_component(&bytes) {
+            Some(r) => r,
+            None => std::process::exit(1),
+        };
+        let bin = write_component_bin(&records);
+        if std::fs::write(&out_path, &bin).is_err() {
+            eprintln!("vlass_compiler: write {out_path} void");
             std::process::exit(1);
+        }
+        match read_component_bin(&bin) {
+            Some(parsed) => {
+                let mut fmax = 0.0f64;
+                for r in &parsed {
+                    if r.total_flux_mjy > fmax {
+                        fmax = r.total_flux_mjy;
+                    }
+                }
+                eprintln!(
+                    "vlass component: {} records, total_flux_mjy bis {fmax:.3e}, {} B -> {out_path} (roundtrip parses)",
+                    parsed.len(),
+                    bin.len()
+                );
+            }
+            None => {
+                eprintln!(
+                    "vlass_compiler: {out_path}: roundtrip parse void — the asset stays unverified"
+                );
+                std::process::exit(1);
+            }
+        }
+    } else {
+        let records = match gather(&bytes) {
+            Some(r) => r,
+            None => std::process::exit(1),
+        };
+        let bin = write_bin(&records);
+        if std::fs::write(&out_path, &bin).is_err() {
+            eprintln!("vlass_compiler: write {out_path} void");
+            std::process::exit(1);
+        }
+        match read_bin(&bin) {
+            Some(parsed) => {
+                let mut fmax = 0.0f64;
+                for r in &parsed {
+                    if r.flux_mjy > fmax {
+                        fmax = r.flux_mjy;
+                    }
+                }
+                eprintln!(
+                    "vlass: {} sources, flux_mjy bis {fmax:.3e}, {} B -> {out_path} (roundtrip parses)",
+                    parsed.len(),
+                    bin.len()
+                );
+            }
+            None => {
+                eprintln!(
+                    "vlass_compiler: {out_path}: roundtrip parse void — the asset stays unverified"
+                );
+                std::process::exit(1);
+            }
         }
     }
     if ci_mode && !upload_release(CDN_TAG, &out_path) {
@@ -244,5 +468,56 @@ mod tests {
     fn bin_rejects_truncation() {
         let bytes = write_bin(&sample());
         assert!(read_bin(&bytes[..bytes.len() - 1]).is_none());
+    }
+
+    fn sample_component() -> Vec<VlassComponent> {
+        vec![
+            VlassComponent {
+                ra_deg: 120.0817,
+                dec_deg: 2.3533,
+                total_flux_mjy: 25.7,
+                e_total_flux_mjy: 0.4,
+                peak_flux_mjy: 20.1,
+                e_peak_flux_mjy: 0.3,
+                maj_arcsec: 1.5,
+                min_arcsec: 0.8,
+                pa_deg: 45.0,
+            },
+            VlassComponent {
+                ra_deg: 314.9519,
+                dec_deg: -0.1425,
+                total_flux_mjy: 399.2,
+                e_total_flux_mjy: 1.1,
+                peak_flux_mjy: 350.0,
+                e_peak_flux_mjy: 0.9,
+                maj_arcsec: 0.0,
+                min_arcsec: 0.0,
+                pa_deg: 0.0,
+            },
+        ]
+    }
+
+    #[test]
+    fn component_bin_roundtrip() {
+        let comps = sample_component();
+        let bytes = write_component_bin(&comps);
+        let parsed = read_component_bin(&bytes).expect("parse");
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed[0].ra_deg, comps[0].ra_deg);
+        assert_eq!(parsed[0].peak_flux_mjy, comps[0].peak_flux_mjy);
+        assert_eq!(parsed[1].pa_deg, comps[1].pa_deg);
+        assert_eq!(parsed[1].maj_arcsec, 0.0);
+    }
+
+    #[test]
+    fn component_bin_rejects_source_magic() {
+        assert!(read_component_bin(&write_bin(&sample())).is_none());
+        assert!(read_bin(&write_component_bin(&sample_component())).is_none());
+    }
+
+    #[test]
+    fn component_bin_rejects_truncation() {
+        let bytes = write_component_bin(&sample_component());
+        assert!(read_component_bin(&bytes[..bytes.len() - 1]).is_none());
     }
 }

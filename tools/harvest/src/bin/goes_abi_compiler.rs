@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64,
+    decode_f32, decode_f64, Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
@@ -12,11 +12,13 @@ const HDR_LEN: usize = 12;
 const REC_BYTES: usize = 56;
 const CALIB_L1B: u8 = 0;
 const CALIB_GSICS_PENDING: u8 = 1;
+const CALIB_GSICS: u8 = 2;
 
 #[derive(Clone, Debug)]
 struct Granule {
     t: f64,
     band_id: u8,
+    calib: u8,
     band_wavelength: f32,
     esun: f32,
     kappa0: f32,
@@ -39,6 +41,15 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn has_flag(args: &[String], name: &str) -> bool {
     args.iter().any(|a| a == name)
+}
+
+fn calib_name(calib: u8) -> &'static str {
+    match calib {
+        CALIB_L1B => "L1b",
+        CALIB_GSICS => "gsics",
+        CALIB_GSICS_PENDING => "gsics-pending",
+        _ => "unknown",
+    }
 }
 
 fn curl_bytes(url: &str) -> Option<Vec<u8>> {
@@ -200,6 +211,25 @@ fn scalar_u8(file: &Hdf5File, name: &str) -> Option<u8> {
     file.read_dataset(name).ok()?.first().copied()
 }
 
+fn harmonization_coeff(file: &Hdf5File, name: &str) -> Option<f64> {
+    let (obj, _ds, _dt) = file.dataset(name).ok()?;
+    let fill = attr_number(&obj.attrs, "_FillValue");
+    let v = file.read_f64_dataset(name).ok()?.first().copied()?;
+    if !v.is_finite() {
+        return None;
+    }
+    match fill {
+        Some(f) if f.is_finite() && (v - f).abs() < 1e-6 => None,
+        _ => Some(v),
+    }
+}
+
+fn gsics_slope_offset(file: &Hdf5File) -> Option<(f64, f64)> {
+    let slope = harmonization_coeff(file, "a_h_NRTH")?;
+    let offset = harmonization_coeff(file, "b_h_NRTH")?;
+    Some((slope, offset))
+}
+
 fn stats_of(
     raw: &[u8],
     dt: &Hdf5Datatype,
@@ -285,9 +315,24 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
         );
     }
     let n = valid as f64;
-    let mean = sum / n;
+    let mut mean = sum / n;
     let variance = (sumsq - sum * sum / n) / n;
-    let std = if variance > 0.0 { variance.sqrt() } else { 0.0 };
+    let mut std = if variance > 0.0 { variance.sqrt() } else { 0.0 };
+    let mut min = min;
+    let mut max = max;
+    let calib = match gsics_slope_offset(&file) {
+        Some((slope, offset)) => {
+            mean = slope * mean + offset;
+            std = slope.abs() * std;
+            let lo = slope * min + offset;
+            let hi = slope * max + offset;
+            let (lo, hi) = if lo <= hi { (lo, hi) } else { (hi, lo) };
+            min = lo;
+            max = hi;
+            CALIB_GSICS
+        }
+        None => CALIB_GSICS_PENDING,
+    };
     let t = scalar_f64(&file, "t").ok_or_else(|| "t absent or void".to_string())?;
     let band_id = scalar_u8(&file, "band_id").ok_or_else(|| "band_id absent".to_string())?;
     let band_wavelength = scalar_f64(&file, "band_wavelength")
@@ -302,6 +347,7 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
     Ok(Granule {
         t,
         band_id,
+        calib,
         band_wavelength,
         esun,
         kappa0,
@@ -319,7 +365,7 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
 fn encode_rec(buf: &mut [u8], g: &Granule) {
     buf[0..8].copy_from_slice(&g.t.to_le_bytes());
     buf[8] = g.band_id;
-    buf[9] = CALIB_GSICS_PENDING;
+    buf[9] = g.calib;
     buf[10] = 0;
     buf[11] = 0;
     buf[12..16].copy_from_slice(&g.band_wavelength.to_le_bytes());
@@ -340,12 +386,13 @@ fn decode_rec(buf: &[u8]) -> Option<Granule> {
         return None;
     }
     let calib = buf[9];
-    if calib != CALIB_L1B && calib != CALIB_GSICS_PENDING {
+    if calib != CALIB_L1B && calib != CALIB_GSICS_PENDING && calib != CALIB_GSICS {
         return None;
     }
     Some(Granule {
         t: f64::from_le_bytes(buf[0..8].try_into().ok()?),
         band_id: buf[8],
+        calib,
         band_wavelength: f32::from_le_bytes(buf[12..16].try_into().ok()?),
         esun: f32::from_le_bytes(buf[16..20].try_into().ok()?),
         kappa0: f32::from_le_bytes(buf[20..24].try_into().ok()?),
@@ -449,8 +496,13 @@ fn main() {
         }
     };
     eprintln!(
-        "granule: band {} wavelength {:.4} um t {:.1} (J2000 s) sub_lon {:.2} deg persp_h {:.0} m",
-        granule.band_id, granule.band_wavelength, granule.t, granule.sub_lon, granule.persp_h
+        "granule: band {} wavelength {:.4} um t {:.1} (J2000 s) sub_lon {:.2} deg persp_h {:.0} m calib {}",
+        granule.band_id,
+        granule.band_wavelength,
+        granule.t,
+        granule.sub_lon,
+        granule.persp_h,
+        calib_name(granule.calib)
     );
     eprintln!(
         "radiance: mean {:.4} std {:.4} min {:.4} max {:.4} W m-2 sr-1 um-1, {} valid / {} pixels, esun {:.4} W m-2 um-1, kappa0 {:.6} (W m-2 um-1)-1",
@@ -493,6 +545,7 @@ mod tests {
         let g = Granule {
             t: 758368477.5,
             band_id: 1,
+            calib: CALIB_GSICS,
             band_wavelength: 0.4700,
             esun: 2024.0,
             kappa0: 0.000157,
@@ -510,6 +563,7 @@ mod tests {
         let back = decode_rec(&rec).unwrap();
         assert_eq!(back.t, g.t);
         assert_eq!(back.band_id, g.band_id);
+        assert_eq!(back.calib, g.calib);
         assert_eq!(back.band_wavelength, g.band_wavelength);
         assert_eq!(back.esun, g.esun);
         assert_eq!(back.kappa0, g.kappa0);
