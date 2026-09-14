@@ -493,6 +493,9 @@ fn collect_leads(
     if let Some(text) = optional_text(&repo.join("phi").join("dead_sources.\u{3c6}")) {
         register_docs.push(text);
     }
+    if let Some(text) = optional_text(&repo.join("phi").join("declined_sources.\u{3c6}")) {
+        register_docs.push(text);
+    }
     if let Some(text) = optional_text(&repo.join("phi").join("witnesses.\u{3c6}")) {
         register_docs.push(text);
     }
