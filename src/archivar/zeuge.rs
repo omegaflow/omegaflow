@@ -24,9 +24,8 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
         b"ISCB" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Presence)),
         b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
-        b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" => {
-            Some(FeldIdentitaet::Oszillator)
-        }
+        b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" | b"MAX1"
+        | b"NXR1" | b"USC1" => Some(FeldIdentitaet::Oszillator),
         _ => None,
     }
 }
@@ -181,6 +180,7 @@ mod tests {
     fn oscillator_magics_are_oscillators() {
         for m in [
             *b"BGR1", *b"ARG1", *b"FDS1", *b"GIC1", *b"IGT1", *b"SDN1", *b"CSM1", *b"CRX1",
+            *b"MAX1", *b"NXR1",
         ] {
             assert_eq!(magic_identity(m), Some(FeldIdentitaet::Oszillator));
         }
