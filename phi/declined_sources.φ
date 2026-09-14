@@ -2904,10 +2904,6 @@ decline variant
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
 note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
 
-decline reachable-2026-09-14
-url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
-note curl: curl: (28) Operation timed out after 12001 milliseconds with 712691 bytes received
-
 decline no-physical-force
 url https://whale.fm/api/v1/sounds/recent
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Zooniverse-Klassifikationen (whale.fm ist ein Zooniverse-Projekt) sind keine Messung — decline no-physical-force.
