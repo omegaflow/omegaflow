@@ -256,6 +256,10 @@ decline superseded-by-openaq
 url https://api.airqo.net/api/v2/devices/measurements/latest
 note AirQo (Kampala/Nairobi/Accra/Lagos, PM-Messung) lag auf OpenAQ — atmosphere_openaq_latest bereits in master.φ integriert (api.openaq.org/v2/latest?coordinates=, Z.4019); AirQo ist OpenAQ-Partner. Aktivierungsregistrierung war überflüssig. REAKTIVIERT 2026-08-20: AIRQO_KEY in .secrets.local (E6B3NPX6MBHMN6MU), live 200 application/json auf /api/v2/devices/measurements/grids/{grid_id}?token= (58 Messungen/Grid, 2026-08-20) → queue grind_jsonkanal.φ (19. Kandidat); AirQo-direkt ist die Originalquelle (Grid-Auflösung + Zeitreihen), OpenAQ-Latest bleibt der Aggregator-Kanal.
 
+decline superseded-by-openaq
+url https://openaq-data-archive.s3.amazonaws.com/
+note OpenAQ S3 Bulk-Archiv (keylos, HTTP 200). Messung 2026-09-14 (curl): trägt records/csv.gz/locationid={id}/year={year}/month={month}/location-{id}-{date}.csv.gz im OpenAQ-Schema location_id,sensors_id,location,datetime,lat,lon,parameter,units,value (Probe: „1,1,JTC - Jamestown-1,…,pm25,µg/m³,104.8") — OpenAQs eigenes Archiv (csv.gz, kein parquet, kein AQS-Rohdatenbestand). Derselbe Skalar (pm25 µg/m³ diffusion) ist live integriert (sources.φ openaq_pm25_ugm3, Z.1228); ein Bulk-Compiler darauf trüge kein neues Feld → superseded-by-openaq.
+
 decline catalog
 url https://api.astrocats.space/catalog?format=json&
 note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
