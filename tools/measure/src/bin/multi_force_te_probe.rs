@@ -3,8 +3,8 @@ use std::process::exit;
 
 use omegaflow::force::force_name_of;
 use omegaflow::te::{
-    benjamini_hochberg, conditional_te_stats_lagged_n, hilbert_instantaneous_phase,
-    transfer_entropy_conditional_binned_n, TeNull,
+    TeNull, benjamini_hochberg, conditional_te_stats_lagged_n, hilbert_instantaneous_phase,
+    transfer_entropy_conditional_binned_n,
 };
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -47,11 +47,7 @@ fn normal_cdf(x: f64) -> f64 {
     let poly = t
         * (0.319381530
             + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    if x >= 0.0 {
-        1.0 - d * poly
-    } else {
-        d * poly
-    }
+    if x >= 0.0 { 1.0 - d * poly } else { d * poly }
 }
 
 fn conditional_link(

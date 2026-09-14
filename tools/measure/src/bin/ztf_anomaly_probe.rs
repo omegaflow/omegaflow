@@ -1,5 +1,5 @@
 use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
-use omegaflow::ztf::{parse_ztf_bin, ZtfCurve};
+use omegaflow::ztf::{ZtfCurve, parse_ztf_bin};
 
 const COINCIDENCE_S: f64 = 1800.0;
 const N_MIN: usize = 24;

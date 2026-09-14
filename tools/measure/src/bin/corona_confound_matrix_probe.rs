@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{surrogate_stats_phase, transfer_entropy_lag};
 
 const MAGIC: [u8; 4] = *b"AIA1";

@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::skymap::{
-    decode_rec, encode_rec, parse_header, write_header, SkymapRecord, HEADER_LEN, KIND_GAMMA,
-    KIND_GENERIC, REC_BYTES,
+    HEADER_LEN, KIND_GAMMA, KIND_GENERIC, REC_BYTES, SkymapRecord, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 
@@ -15,11 +15,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn parse_f64(cell: &str) -> Option<f64> {
     let t = cell.trim();
     let v: f64 = t.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn run(args: &[String]) -> Result<(), String> {
@@ -43,7 +39,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let value_col = match arg_value(args, "--value") {
         Some(v) => v,
         None => {
-            return Err("--value <col>: the scalar column name is never silent — refused".into())
+            return Err("--value <col>: the scalar column name is never silent — refused".into());
         }
     };
     let kind = match arg_value(args, "--kind").and_then(|k| k.parse::<u8>().ok()) {

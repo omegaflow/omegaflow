@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::atdf::{extract, field_of, full_year, strip_markers, LOGICAL_RECORD, TKFORM};
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, full_year, strip_markers};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -35,13 +35,48 @@ struct Anchor {
 
 fn anchors() -> Vec<Anchor> {
     vec![
-        Anchor { mode: 1, station: 14, day_unix: days_from_civil(1995, 11, 24).unwrap(), name: "M1 st14 1995-11-24 (25.85 Hz)" },
-        Anchor { mode: 2, station: 14, day_unix: days_from_civil(1995, 11, 24).unwrap(), name: "M2 st14 1995-11-24 (31.77 Hz)" },
-        Anchor { mode: 1, station: 63, day_unix: days_from_civil(1996, 6, 26).unwrap(), name: "M1 st63 1996-06-26 (20.64 Hz)" },
-        Anchor { mode: 3, station: 43, day_unix: days_from_civil(1995, 12, 4).unwrap(), name: "M3 st43 1995-12-04 (10.52 Hz)" },
-        Anchor { mode: 3, station: 14, day_unix: days_from_civil(1995, 12, 5).unwrap(), name: "M3 st14 1995-12-05 (52.92 Hz)" },
-        Anchor { mode: 3, station: 63, day_unix: days_from_civil(1995, 11, 27).unwrap(), name: "M3 st63 1995-11-27 (186.5 Hz)" },
-        Anchor { mode: 1, station: 43, day_unix: days_from_civil(1996, 11, 4).unwrap(), name: "M1 st43 1996-11-04 (23.1 Hz)" },
+        Anchor {
+            mode: 1,
+            station: 14,
+            day_unix: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M1 st14 1995-11-24 (25.85 Hz)",
+        },
+        Anchor {
+            mode: 2,
+            station: 14,
+            day_unix: days_from_civil(1995, 11, 24).unwrap(),
+            name: "M2 st14 1995-11-24 (31.77 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 63,
+            day_unix: days_from_civil(1996, 6, 26).unwrap(),
+            name: "M1 st63 1996-06-26 (20.64 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 43,
+            day_unix: days_from_civil(1995, 12, 4).unwrap(),
+            name: "M3 st43 1995-12-04 (10.52 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 14,
+            day_unix: days_from_civil(1995, 12, 5).unwrap(),
+            name: "M3 st14 1995-12-05 (52.92 Hz)",
+        },
+        Anchor {
+            mode: 3,
+            station: 63,
+            day_unix: days_from_civil(1995, 11, 27).unwrap(),
+            name: "M3 st63 1995-11-27 (186.5 Hz)",
+        },
+        Anchor {
+            mode: 1,
+            station: 43,
+            day_unix: days_from_civil(1996, 11, 4).unwrap(),
+            name: "M1 st43 1996-11-04 (23.1 Hz)",
+        },
     ]
 }
 
@@ -230,13 +265,23 @@ fn episodes_on(times: &[f64], resids: &[f64], gap_s: f64) -> Vec<Episode> {
             }
         } else if let Some((s, e, pk)) = open {
             if times[i] - times[e] > gap_s {
-                out.push(Episode { t0: times[s], t1: times[e], n: e - s + 1, peak: pk });
+                out.push(Episode {
+                    t0: times[s],
+                    t1: times[e],
+                    n: e - s + 1,
+                    peak: pk,
+                });
                 open = None;
             }
         }
     }
     if let Some((s, e, pk)) = open {
-        out.push(Episode { t0: times[s], t1: times[e], n: e - s + 1, peak: pk });
+        out.push(Episode {
+            t0: times[s],
+            t1: times[e],
+            n: e - s + 1,
+            peak: pk,
+        });
     }
     out
 }
@@ -247,7 +292,9 @@ fn main() {
         None => "/tmp/opencode/galileo_floor_sustained_lock_state_report.txt".to_string(),
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo loud-pass sustained-episode lock-state crossing (Klarstellung A)".to_string());
+    out.push(
+        "galileo loud-pass sustained-episode lock-state crossing (Klarstellung A)".to_string(),
+    );
     out.push("binding: floor sample = strength == -2560 AND |resid| <= 1000 Hz (loud run = gap <= 600 s, n >= 30, run RMS about run mean >= 1 Hz)".to_string());
     out.push("episode = connected |resid| > 10 Hz floor samples of the loud run, merged across a gap <= 30 s (elevation canonical T 10 Hz / gap 30 s)".to_string());
     out.push("sustained episode = episode with span (last - first) >= 60 s (minutes class); transient = span < 60 s (the <2 s sub-class is reported separately)".to_string());
@@ -259,7 +306,9 @@ fn main() {
         println!("resid parse void");
         return;
     };
-    out.push(format!("resid.bin records in the seven (mode, station, day) day cells: {kept}"));
+    out.push(format!(
+        "resid.bin records in the seven (mode, station, day) day cells: {kept}"
+    ));
 
     let anc = anchors();
     let mut sust_total = 0usize;
@@ -273,7 +322,13 @@ fn main() {
     let mut short_total = 0usize;
 
     for (i, a) in anc.iter().enumerate() {
-        out.push(format!("\nANCHOR {} mode {} st{} ({})", a.name, a.mode, a.station, civil(a.day_unix)));
+        out.push(format!(
+            "\nANCHOR {} mode {} st{} ({})",
+            a.name,
+            a.mode,
+            a.station,
+            civil(a.day_unix)
+        ));
         let v = &per[i];
         if v.is_empty() {
             out.push("  no (mode, station, day) samples in resid.bin (0 honored)".to_string());
@@ -399,7 +454,9 @@ fn main() {
                 let slip_c = win.iter().filter(|f| f.slipped > 0).count();
                 let markers: Vec<&Flagged> = flagged
                     .iter()
-                    .filter(|f| f.resid.abs() > LOCK_HZ && f.tdb >= e.t0 - ADJ_S && f.tdb <= e.t1 + ADJ_S)
+                    .filter(|f| {
+                        f.resid.abs() > LOCK_HZ && f.tdb >= e.t0 - ADJ_S && f.tdb <= e.t1 + ADJ_S
+                    })
                     .collect();
                 let m_before = markers.iter().filter(|f| f.tdb < e.t0).count();
                 let m_after = markers.iter().filter(|f| f.tdb > e.t1).count();

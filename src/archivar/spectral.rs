@@ -588,12 +588,16 @@ mod tests {
         assert_eq!(table.len(), 781);
         assert_eq!(table[0].0, 320.0);
         assert_eq!(table[table.len() - 1].0, 1100.0);
-        assert!(table
-            .iter()
-            .all(|&(l, b, r)| l.is_finite() && b.is_finite() && r.is_finite()));
-        assert!(table
-            .iter()
-            .all(|&(_, b, r)| b >= 0.0 && b < 99.0 && r >= 0.0 && r < 99.0));
+        assert!(
+            table
+                .iter()
+                .all(|&(l, b, r)| l.is_finite() && b.is_finite() && r.is_finite())
+        );
+        assert!(
+            table
+                .iter()
+                .all(|&(_, b, r)| b >= 0.0 && b < 99.0 && r >= 0.0 && r < 99.0)
+        );
     }
 
     #[test]
@@ -730,11 +734,7 @@ mod tests {
             return 0.0;
         }
         let b = 2.0 * H * nu.powi(3) / (C_LIGHT * C_LIGHT) * 1.0 / (x.exp() - 1.0);
-        if b.is_finite() {
-            b
-        } else {
-            0.0
-        }
+        if b.is_finite() { b } else { 0.0 }
     }
 
     fn blackbody_bins(t: f64) -> Vec<(f64, f64, f64)> {

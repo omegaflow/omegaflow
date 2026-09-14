@@ -53,7 +53,11 @@ pub fn pdf_text(bytes: &[u8]) -> Option<String> {
         search = end + b"endstream".len();
     }
     let joined = pages.join("\n");
-    if joined.is_empty() { None } else { Some(joined) }
+    if joined.is_empty() {
+        None
+    } else {
+        Some(joined)
+    }
 }
 
 fn is_pdf(bytes: &[u8]) -> bool {
@@ -72,7 +76,9 @@ fn rfind(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     if needle.is_empty() || haystack.len() < needle.len() {
         return None;
     }
-    (0..=haystack.len() - needle.len()).rev().find(|&i| &haystack[i..i + needle.len()] == needle)
+    (0..=haystack.len() - needle.len())
+        .rev()
+        .find(|&i| &haystack[i..i + needle.len()] == needle)
 }
 
 fn is_ws(b: u8) -> bool {
@@ -304,7 +310,10 @@ mod tests {
 
     #[test]
     fn skips_unknown_filter() {
-        let pdf = pdf_with_stream("<< /Length 22 /Filter /ASCII85Decode >>", b"BT (Hello World) Tj ET");
+        let pdf = pdf_with_stream(
+            "<< /Length 22 /Filter /ASCII85Decode >>",
+            b"BT (Hello World) Tj ET",
+        );
         assert_eq!(pdf_text(&pdf), None);
     }
 }

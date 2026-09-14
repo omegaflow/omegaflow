@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use omegaflow::archivar::lsk::days_from_civil;
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 use omegaflow::te::{
     conditional_te_stats, surrogate_stats_block_n, surrogate_stats_phase_n,
@@ -435,7 +435,9 @@ fn main() {
     }
     drop(eph);
 
-    println!("## Runs per (station, mode) — floor day cells n >= {MIN_CELL} samples, consecutive TDB days\n");
+    println!(
+        "## Runs per (station, mode) — floor day cells n >= {MIN_CELL} samples, consecutive TDB days\n"
+    );
     for s in &series {
         let runs = s.runs();
         let mut parts: Vec<String> = Vec::new();
@@ -602,7 +604,9 @@ fn main() {
                     );
                 }
             }
-            println!("      -> steps (persistent boundary, both sides >= {K_LEVEL} d) {steps}; short segments (< {K_LEVEL} d) {short}\n");
+            println!(
+                "      -> steps (persistent boundary, both sides >= {K_LEVEL} d) {steps}; short segments (< {K_LEVEL} d) {short}\n"
+            );
         }
 
         let mut all: Vec<f64> = s.vals.iter().map(|v| v.rms).collect();
@@ -651,7 +655,9 @@ fn main() {
 
         levels.sort_by(f64::total_cmp);
         if levels.is_empty() {
-            println!("  persistent level classes: none (no run reached {MIN_RUN_SEG} d or no segment >= {K_LEVEL} d)");
+            println!(
+                "  persistent level classes: none (no run reached {MIN_RUN_SEG} d or no segment >= {K_LEVEL} d)"
+            );
         } else {
             let mut classes: Vec<(String, Vec<(f64, String)>)> = Vec::new();
             for (lvl, when) in &levels_days {
@@ -673,7 +679,10 @@ fn main() {
                     classes.len()
                 );
             } else {
-                println!("  occupied level classes (0.5 decade, segments >= {K_LEVEL} d): {} | recurring classes (>= 2 segments):", classes.len());
+                println!(
+                    "  occupied level classes (0.5 decade, segments >= {K_LEVEL} d): {} | recurring classes (>= 2 segments):",
+                    classes.len()
+                );
                 for (label, v) in recurring {
                     let ls: Vec<String> = v.iter().map(|(l, _)| format!("{l:.4}")).collect();
                     println!("      {label}: n {} levels [{}]", v.len(), ls.join(", "));
@@ -785,7 +794,9 @@ fn main() {
 
     println!("############################################################");
     println!("## Measurement 3 — candidate drivers -> floor (Tages-RMS, log10) on the TE runs");
-    println!("## driver eps = solar elongation (deg) at the Earth per floor day cell (measured geometry);");
+    println!(
+        "## driver eps = solar elongation (deg) at the Earth per floor day cell (measured geometry);"
+    );
     println!("## constructed step drivers are marked 'constructed' (not a measured asset);");
     println!("## direction D->F = driver state on day t predicts floor on day t+lag past floor_t");
     println!("############################################################\n");
@@ -853,7 +864,9 @@ fn main() {
                     fmt_opt(median(&quiet_eps))
                 );
                 if hi - lo < 5.0 {
-                    println!("    restriction: eps span < 5 deg in this window — the smooth-driver test is weak here (named)");
+                    println!(
+                        "    restriction: eps span < 5 deg in this window — the smooth-driver test is weak here (named)"
+                    );
                 }
                 let mut e: Vec<f32> = Vec::with_capacity(nrun);
                 for i in a..=b {

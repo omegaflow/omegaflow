@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, body_barycenter_velocity, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, body_barycenter_velocity, embedded_lsk,
+    fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -226,11 +226,7 @@ fn rms_of(group: &Group) -> Option<f64> {
         sum += row.dra * row.dra + row.ddec * row.ddec;
     }
     let r = (sum / group.rows.len() as f64).sqrt();
-    if r.is_finite() {
-        Some(r)
-    } else {
-        None
-    }
+    if r.is_finite() { Some(r) } else { None }
 }
 
 fn rms_reduced(group: &Group, x: &[f64; 5]) -> Option<f64> {
@@ -245,11 +241,7 @@ fn rms_reduced(group: &Group, x: &[f64; 5]) -> Option<f64> {
         sum += rra * rra + rdec * rdec;
     }
     let r = (sum / group.rows.len() as f64).sqrt();
-    if r.is_finite() {
-        Some(r)
-    } else {
-        None
-    }
+    if r.is_finite() { Some(r) } else { None }
 }
 
 fn swing_of(rows: &[EpochRow], f: &dyn Fn(&EpochRow) -> (f64, f64)) -> Option<(f64, f64)> {
@@ -352,7 +344,9 @@ fn load_line(
     for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset, BIN_TTL_S) else {
-            println!("uranus-absolute {word}: {path} bin void — absent on disk and the CDN fetch returned non-200");
+            println!(
+                "uranus-absolute {word}: {path} bin void — absent on disk and the CDN fetch returned non-200"
+            );
             return Line { word, map: None };
         };
         let Some(eph) = parse_ephemeris_binary(&bytes) else {
@@ -437,7 +431,9 @@ fn carries_word(c: f64, sigma: f64) -> &'static str {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus absolute-offset/aberration decomposition — the annual aberration (~20\") separated from the diurnal parallax (~0.45\") in the absolute satellite residual.");
+    println!(
+        "Uranus absolute-offset/aberration decomposition — the annual aberration (~20\") separated from the diurnal parallax (~0.45\") in the absolute satellite residual."
+    );
 
     let tsv_dir =
         arg_token(&args, "--tsv-dir").unwrap_or("data/vizier.cfa.harvard.edu".to_string());
@@ -447,7 +443,9 @@ fn main() {
     let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
 
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("uranus-absolute: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
+        eprintln!(
+            "uranus-absolute: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
+        );
         return;
     };
 

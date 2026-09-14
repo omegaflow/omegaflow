@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{parse_bin, COMP_BGR_AZIM, MAGIC_BGR};
+use omegaflow::archivar::geo::{COMP_BGR_AZIM, MAGIC_BGR, parse_bin};
 use omegaflow::archivar::{angular_distance_deg, embedded_lsk, fetch_raw_bytes};
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::days_from_civil;
@@ -103,19 +103,25 @@ fn parse_pressure(text: &str) -> Vec<PressureSample> {
 
 fn kyoto_pressure_section() {
     let Some(archive) = load_pressure_archive() else {
-        println!("raw pressure waveform: Zenodo 8098323 route absent (CDN mirror + live both void) — cross-check pending");
+        println!(
+            "raw pressure waveform: Zenodo 8098323 route absent (CDN mirror + live both void) — cross-check pending"
+        );
         println!();
         return;
     };
     let Some(bytes) = zip_member(&archive, KYOTO_DAY_MEMBER) else {
-        println!("raw pressure waveform: {KYOTO_DAY_MEMBER} absent from the Zenodo archive — cross-check pending");
+        println!(
+            "raw pressure waveform: {KYOTO_DAY_MEMBER} absent from the Zenodo archive — cross-check pending"
+        );
         println!();
         return;
     };
     let text = String::from_utf8_lossy(&bytes);
     let samples = parse_pressure(&text);
     if samples.is_empty() {
-        println!("raw pressure waveform: {KYOTO_DAY_MEMBER} carries no parseable pressure rows (0 honored)");
+        println!(
+            "raw pressure waveform: {KYOTO_DAY_MEMBER} carries no parseable pressure rows (0 honored)"
+        );
         println!();
         return;
     }
@@ -195,7 +201,9 @@ fn main() {
         None => DEFAULT_BIN.to_string(),
     };
 
-    println!("=== Tonga 2022 Lamb-wave cross-check — BGR detection vs Lamb travel time + water start time ===");
+    println!(
+        "=== Tonga 2022 Lamb-wave cross-check — BGR detection vs Lamb travel time + water start time ==="
+    );
     println!(
         "source: Hunga Tonga-Hunga Ha'apai (lat {TONGA_LAT}, lon {TONGA_LON}), water start {} UTC",
         utc_str(WATER_START_UNIX)
@@ -207,7 +215,9 @@ fn main() {
 
     let Ok(bytes) = std::fs::read(&bin_path) else {
         println!("cross-check pending: BGR detection bin absent ({bin_path})");
-        println!("  harvest first: bgr_infrasound_compiler --year 2022 --out-bin <bin> --lsk <naif0012.tls>");
+        println!(
+            "  harvest first: bgr_infrasound_compiler --year 2022 --out-bin <bin> --lsk <naif0012.tls>"
+        );
         return;
     };
     let Some(records) = parse_bin(MAGIC_BGR, &bytes) else {

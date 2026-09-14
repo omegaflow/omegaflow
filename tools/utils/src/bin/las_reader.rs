@@ -1,6 +1,6 @@
 use omegaflow::las::{
-    copc_hierarchy, copc_info, ept_json, has_laszip_vlr, point_format_name, LasHeader, LasNote,
-    LazDecoder,
+    LasHeader, LasNote, LazDecoder, copc_hierarchy, copc_info, ept_json, has_laszip_vlr,
+    point_format_name,
 };
 use std::process::Command;
 

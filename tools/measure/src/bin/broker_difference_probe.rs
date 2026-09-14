@@ -1,4 +1,4 @@
-use omegaflow::json::{parse_json, JsonVal};
+use omegaflow::json::{JsonVal, parse_json};
 use std::collections::HashMap;
 use std::process::Command;
 
@@ -12,8 +12,7 @@ const LAS_TUNNEL_IFACE: &str = "proton0";
 const STALL_WORD: &str = "no response (connection stalled)";
 const UA: &str = "omegaflow-broker-difference-probe/1.0";
 const STATE_SAMPLE_DIR: &str = "tmp";
-const ALERCE_RETIRE_NOTE: &str =
-    "api.alerce.online is the retired direct-database stub (dead_sources.φ: Direct database \
+const ALERCE_RETIRE_NOTE: &str = "api.alerce.online is the retired direct-database stub (dead_sources.φ: Direct database \
      access is being retired) — a non-200 read is no negative, excluded from the verdict";
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -263,7 +262,9 @@ fn fink_membership(ra: f64, dec: f64) -> BrokerLine {
             broker: "fink",
             code,
             read: Read::Excluded,
-            note: format!("the 200 body is not the measured conesearch row array (r:diaObjectId per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"),
+            note: format!(
+                "the 200 body is not the measured conesearch row array (r:diaObjectId per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"
+            ),
         },
     }
 }
@@ -330,7 +331,9 @@ fn lasair_cone_line(
             broker: "lasair",
             code: code.to_string(),
             read: Read::Excluded,
-            note: format!("{route_lead}the 200 body is not the measured cone row array (object per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"),
+            note: format!(
+                "{route_lead}the 200 body is not the measured cone row array (object per row) — the membership read stays pending a real schema; excluded from the verdict (never a negative); sample {path}"
+            ),
         },
     }
 }
@@ -443,7 +446,9 @@ fn alerce_membership(ra: f64, dec: f64) -> BrokerLine {
             broker: "alerce",
             code,
             read: Read::Excluded,
-            note: format!("the 200 body is not UTF-8 — the membership read stays pending; excluded from the verdict (never a negative); sample {path}"),
+            note: format!(
+                "the 200 body is not UTF-8 — the membership read stays pending; excluded from the verdict (never a negative); sample {path}"
+            ),
         };
     };
     let shape = top_level_shape(text);
@@ -891,9 +896,10 @@ mod tests {
         let line = lasair_membership_core(0.5, 1.5, None, |_| false, probe);
         assert_eq!(line.read, Read::Excluded);
         assert_eq!(line.code, "000");
-        assert!(line
-            .note
-            .contains("tunnel interface is not present (ip link)"));
+        assert!(
+            line.note
+                .contains("tunnel interface is not present (ip link)")
+        );
         assert!(line.note.contains("no tunnel retry exists"));
     }
 

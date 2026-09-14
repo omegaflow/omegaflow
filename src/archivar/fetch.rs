@@ -1200,8 +1200,7 @@ mod cdn_cache_tests {
 
     #[test]
     fn cdn_release_asset_parses_the_release_shape() {
-        let url =
-            "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
+        let url = "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
         let (api, asset) = cdn_release_asset(url).unwrap();
         assert_eq!(
             api,

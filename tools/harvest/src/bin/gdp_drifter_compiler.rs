@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::zarr::{blosc_decompress, Blosc};
-use omegaflow::archivar::{jpath_val, json_num, jstr, parse_json, JsonVal};
+use omegaflow::archivar::zarr::{Blosc, blosc_decompress};
+use omegaflow::archivar::{JsonVal, jpath_val, json_num, jstr, parse_json};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};
@@ -459,7 +459,9 @@ fn main() {
     let written = match std::fs::read(&out_path) {
         Ok(v) => v,
         Err(_) => {
-            eprintln!("gdp_drifter_compiler: {out_path} read returned void — the roundtrip stays unverified");
+            eprintln!(
+                "gdp_drifter_compiler: {out_path} read returned void — the roundtrip stays unverified"
+            );
             std::process::exit(1);
         }
     };

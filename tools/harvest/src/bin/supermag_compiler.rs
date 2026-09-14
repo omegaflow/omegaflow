@@ -5,13 +5,13 @@ use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
 use omegaflow::archivar::geo::{
-    pack_iaga, parse_bin, smg_record_at, smg_record_bytes, write_bin, GeoRec, COMP_SMG_E_GEO,
-    COMP_SMG_E_NEZ, COMP_SMG_N_GEO, COMP_SMG_N_NEZ, COMP_SMG_Z_GEO, COMP_SMG_Z_NEZ, MAGIC_SMG,
-    SMG_REC_BYTES,
+    COMP_SMG_E_GEO, COMP_SMG_E_NEZ, COMP_SMG_N_GEO, COMP_SMG_N_NEZ, COMP_SMG_Z_GEO, COMP_SMG_Z_NEZ,
+    GeoRec, MAGIC_SMG, SMG_REC_BYTES, pack_iaga, parse_bin, smg_record_at, smg_record_bytes,
+    write_bin,
 };
-use omegaflow::archivar::{fetch_raw, jpath, parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, fetch_raw, jpath, parse_json};
 use omegaflow::cdn::upload_release;
-use omegaflow::lsk::{parse as parse_lsk, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
 
 const NETLOC: &str = "supermag.jhuapl.edu";
 const DATA_API: &str = "https://supermag.jhuapl.edu/services/data-api.php";
@@ -203,11 +203,7 @@ fn all_stations() -> Option<Vec<StationPos>> {
             lon,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn component_value(record: &JsonVal, path: &str) -> Option<f64> {

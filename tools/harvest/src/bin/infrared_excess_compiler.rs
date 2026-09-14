@@ -1,4 +1,4 @@
-use omegaflow::archivar::ir::{write_bin, IrSource, IR_EXCESS_THRESHOLD_MAG};
+use omegaflow::archivar::ir::{IR_EXCESS_THRESHOLD_MAG, IrSource, write_bin};
 use omegaflow::cdn::upload_asset;
 use std::process::Command;
 
@@ -60,11 +60,7 @@ fn harvest(limit: usize) -> Vec<IrSource> {
         }
         let parse = |s: &str| -> Option<f64> {
             let v: f64 = s.trim().parse().ok()?;
-            if v.is_finite() {
-                Some(v)
-            } else {
-                None
-            }
+            if v.is_finite() { Some(v) } else { None }
         };
         let (Some(ra), Some(dec), Some(w1), Some(w2), Some(w3), Some(w4)) = (
             parse(cols[0]),

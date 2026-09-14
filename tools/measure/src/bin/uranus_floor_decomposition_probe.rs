@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, fetch_raw_bytes, light_time_worldline,
-    parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, fetch_raw_bytes,
+    light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -228,11 +228,7 @@ fn rms_of(group: &Group) -> Option<f64> {
         sum += row.dra * row.dra + row.ddec * row.ddec;
     }
     let r = (sum / group.rows.len() as f64).sqrt();
-    if r.is_finite() {
-        Some(r)
-    } else {
-        None
-    }
+    if r.is_finite() { Some(r) } else { None }
 }
 
 fn rms_reduced(group: &Group, x: &[f64; 5]) -> Option<f64> {
@@ -247,11 +243,7 @@ fn rms_reduced(group: &Group, x: &[f64; 5]) -> Option<f64> {
         sum += rra * rra + rdec * rdec;
     }
     let r = (sum / group.rows.len() as f64).sqrt();
-    if r.is_finite() {
-        Some(r)
-    } else {
-        None
-    }
+    if r.is_finite() { Some(r) } else { None }
 }
 
 fn swing_of(rows: &[EpochRow], f: &dyn Fn(&EpochRow) -> (f64, f64)) -> Option<(f64, f64)> {
@@ -337,7 +329,6 @@ fn dot3(a: [f64; 3], b: [f64; 3]) -> f64 {
     a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 }
 
-
 fn sat_worldline(
     sat: &SatSpk,
     spk: &SpkFile,
@@ -364,7 +355,9 @@ fn load_line(
     for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset, BIN_TTL_S) else {
-            println!("uranus-floor {word}: {path} bin void — absent on disk and the CDN fetch returned non-200");
+            println!(
+                "uranus-floor {word}: {path} bin void — absent on disk and the CDN fetch returned non-200"
+            );
             return Line { word, map: None };
         };
         let Some(eph) = parse_ephemeris_binary(&bytes) else {
@@ -540,16 +533,14 @@ fn dcr_amp(rows: &[EpochRow], x: &[f64; 5]) -> Option<f64> {
         sum += a * a + b * b;
     }
     let r = (sum / rows.len() as f64).sqrt();
-    if r.is_finite() {
-        Some(r)
-    } else {
-        None
-    }
+    if r.is_finite() { Some(r) } else { None }
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus floor decomposition — the residual floor after the diurnal terms: the zenith/refraction signature and the night structure.");
+    println!(
+        "Uranus floor decomposition — the residual floor after the diurnal terms: the zenith/refraction signature and the night structure."
+    );
 
     let tsv_dir =
         arg_token(&args, "--tsv-dir").unwrap_or("data/vizier.cfa.harvard.edu".to_string());
@@ -559,7 +550,9 @@ fn main() {
     let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
 
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("uranus-floor: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
+        eprintln!(
+            "uranus-floor: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
+        );
         return;
     };
 

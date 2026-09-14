@@ -202,10 +202,15 @@ fn main() {
         let ref_hz = r[5];
         n_floor_m1_trio += 1;
         if day >= era0 && day <= era1 {
-            cells.entry((day, st)).or_insert_with(CellAgg::new).push(r[0], resid, ref_hz);
+            cells
+                .entry((day, st))
+                .or_insert_with(CellAgg::new)
+                .push(r[0], resid, ref_hz);
         }
         if day >= w0 && day <= w1 {
-            win.entry((day, st)).or_insert_with(CellAgg::new).push(r[0], resid, ref_hz);
+            win.entry((day, st))
+                .or_insert_with(CellAgg::new)
+                .push(r[0], resid, ref_hz);
         }
     }
     drop(recs);
@@ -267,7 +272,9 @@ fn main() {
         rec(&mut out, String::new());
         rec(
             &mut out,
-            format!("M1 st{st}: {quiet} quiet robust days (n >= {MIN_CELL}, rms < {LOUD_HZ} Hz) — date | n | resid-med | resid-mean | resid-rms | ref-med Hz | ref min..max Hz"),
+            format!(
+                "M1 st{st}: {quiet} quiet robust days (n >= {MIN_CELL}, rms < {LOUD_HZ} Hz) — date | n | resid-med | resid-mean | resid-rms | ref-med Hz | ref min..max Hz"
+            ),
         );
         for r in &rows {
             rec(
@@ -301,8 +308,14 @@ fn main() {
             rd.sort_by(f64::total_cmp);
             let mut rf: Vec<f64> = ref_adj.iter().map(|x| x.0).collect();
             rf.sort_by(f64::total_cmp);
-            let mxr = resid_adj.iter().max_by(|a, b| a.0.total_cmp(&b.0)).expect("non-empty");
-            let mxf = ref_adj.iter().max_by(|a, b| a.0.total_cmp(&b.0)).expect("non-empty");
+            let mxr = resid_adj
+                .iter()
+                .max_by(|a, b| a.0.total_cmp(&b.0))
+                .expect("non-empty");
+            let mxf = ref_adj
+                .iter()
+                .max_by(|a, b| a.0.total_cmp(&b.0))
+                .expect("non-empty");
             rec(
                 &mut out,
                 format!(
@@ -362,7 +375,6 @@ fn main() {
         }
     }
 
-
     rec(
         &mut out,
         "  ruck boundary pair (last plateau quiet cell -> first low quiet cell), resid and ref deltas:".to_string(),
@@ -402,7 +414,14 @@ fn main() {
         "== C: sub-day structure across the transition (mode-1 floor samples, in-track segments gap > 300 s) ==".to_string(),
     );
     for st in TRIO {
-        rec(&mut out, format!("  --- M1 st{st} segments {} .. {} ---", civil_str(b0), civil_str(b1)));
+        rec(
+            &mut out,
+            format!(
+                "  --- M1 st{st} segments {} .. {} ---",
+                civil_str(b0),
+                civil_str(b1)
+            ),
+        );
         let mut seg: Option<Seg> = None;
         let flush = |out: &mut Vec<String>, st: i64, s: &mut Option<Seg>, tag: &str| {
             if let Some(sg) = s.take() {
@@ -441,7 +460,10 @@ fn main() {
         "  per-day-segment above is a rough pass view; hourly medians for the two boundary days follow".to_string(),
     );
     for st in TRIO {
-        rec(&mut out, format!("  --- M1 st{st} hourly median resid, true-UTC 1995-11-30 and 1995-12-01 ---"));
+        rec(
+            &mut out,
+            format!("  --- M1 st{st} hourly median resid, true-UTC 1995-11-30 and 1995-12-01 ---"),
+        );
         for dd in [days_from_civil(1995, 11, 30), days_from_civil(1995, 12, 1)] {
             let mut hrs: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
             for ((_, s), c) in &win {
@@ -451,14 +473,20 @@ fn main() {
                 for (i, &t) in c.tdbs.iter().enumerate() {
                     let (ud, tod) = utc_day_tod(t);
                     if ud == dd {
-                        hrs.entry((tod / 3600.0) as i64).or_default().push(c.vals[i]);
+                        hrs.entry((tod / 3600.0) as i64)
+                            .or_default()
+                            .push(c.vals[i]);
                     }
                 }
             }
             let mut line = format!("  {}:", civil_str(dd));
             for (h, v) in &hrs {
                 if v.len() >= 15 {
-                    line.push_str(&format!(" h{h:02} n{} {:+.3}", v.len(), median(v).expect("med")));
+                    line.push_str(&format!(
+                        " h{h:02} n{} {:+.3}",
+                        v.len(),
+                        median(v).expect("med")
+                    ));
                 } else {
                     line.push_str(&format!(" h{h:02} n{}", v.len()));
                 }
@@ -501,8 +529,12 @@ fn main() {
                         stset
                     ),
                 );
-                if daymin <= days_from_civil(1995, 12, 1) && daymax >= days_from_civil(1995, 11, 30) {
-                    rec(&mut out, "  the transition days carry skyfreq samples".to_string());
+                if daymin <= days_from_civil(1995, 12, 1) && daymax >= days_from_civil(1995, 11, 30)
+                {
+                    rec(
+                        &mut out,
+                        "  the transition days carry skyfreq samples".to_string(),
+                    );
                 } else {
                     rec(
                         &mut out,
@@ -510,25 +542,41 @@ fn main() {
                     );
                 }
             } else {
-                rec(&mut out, "galileo_skyfreq.bin: GASF length mismatch (0 honored)".to_string());
+                rec(
+                    &mut out,
+                    "galileo_skyfreq.bin: GASF length mismatch (0 honored)".to_string(),
+                );
             }
         } else {
-            rec(&mut out, "galileo_skyfreq.bin: no GASF magic (0 honored)".to_string());
+            rec(
+                &mut out,
+                "galileo_skyfreq.bin: no GASF magic (0 honored)".to_string(),
+            );
         }
     } else {
-        rec(&mut out, "galileo_skyfreq.bin: void (0 honored)".to_string());
+        rec(
+            &mut out,
+            "galileo_skyfreq.bin: void (0 honored)".to_string(),
+        );
     }
 
     rec(&mut out, String::new());
     rec(
         &mut out,
-        "== E: pioneer residuum coverage of the boundary window (per day and station) ==".to_string(),
+        "== E: pioneer residuum coverage of the boundary window (per day and station) =="
+            .to_string(),
     );
     let pwin0 = days_from_civil(1995, 11, 15);
     let pwin1 = days_from_civil(1995, 12, 20);
     for (name, ppath) in [
-        ("pioneer10", "data/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin"),
-        ("pioneer11", "data/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin"),
+        (
+            "pioneer10",
+            "data/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin",
+        ),
+        (
+            "pioneer11",
+            "data/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin",
+        ),
     ] {
         rec(&mut out, format!("  --- {name} ---"));
         let Ok(pb) = fs::read(ppath) else {
@@ -554,7 +602,11 @@ fn main() {
             if !resid.is_finite() {
                 continue;
             }
-            pday.entry(day).or_default().entry(rx).or_default().push(resid);
+            pday.entry(day)
+                .or_default()
+                .entry(rx)
+                .or_default()
+                .push(resid);
             let mode = p[7] as i64;
             *stmode.entry((day, rx, mode)).or_default() += 1;
         }
@@ -577,17 +629,19 @@ fn main() {
             }
             rec(
                 &mut out,
-                format!("  {name} {}: {}",
-                    civil_str(*day),
-                    cells.join(" | ")
-                ),
+                format!("  {name} {}: {}", civil_str(*day), cells.join(" | ")),
             );
             rowc += 1;
         }
         if rowc == 0 {
-            rec(&mut out, format!("  {name}: no trio-station samples in window (0 honored)"));
+            rec(
+                &mut out,
+                format!("  {name}: no trio-station samples in window (0 honored)"),
+            );
         }
-        let nd30 = pday.get(&days_from_civil(1995, 11, 30)).map_or(0usize, |m| m.len());
+        let nd30 = pday
+            .get(&days_from_civil(1995, 11, 30))
+            .map_or(0usize, |m| m.len());
         rec(
             &mut out,
             format!(
@@ -597,10 +651,7 @@ fn main() {
     }
 
     rec(&mut out, String::new());
-    rec(
-        &mut out,
-        "== verdict numbers ==".to_string(),
-    );
+    rec(&mut out, "== verdict numbers ==".to_string());
     for st in TRIO {
         let mut plat: Vec<f64> = Vec::new();
         let mut post: Vec<f64> = Vec::new();

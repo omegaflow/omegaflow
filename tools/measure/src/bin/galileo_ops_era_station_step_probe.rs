@@ -58,11 +58,7 @@ fn mean_log10(vals: &[f64]) -> Option<f64> {
             n += 1;
         }
     }
-    if n > 0 {
-        Some(acc / n as f64)
-    } else {
-        None
-    }
+    if n > 0 { Some(acc / n as f64) } else { None }
 }
 
 fn spearman(x: &[f64], y: &[f64]) -> Option<f64> {
@@ -312,11 +308,14 @@ fn main() {
                 body_barycenter_position("earth", t, &eph),
             ) {
                 if let (Some(ep), Some(al)) = (angle(sub([0.0; 3], e), sub(p, e)), angle(e, p)) {
-                    geo.insert(d, Geo {
-                        r: norm(p) / AU_M,
-                        eps: ep,
-                        alpha: al,
-                    });
+                    geo.insert(
+                        d,
+                        Geo {
+                            r: norm(p) / AU_M,
+                            eps: ep,
+                            alpha: al,
+                        },
+                    );
                 }
             }
         }
@@ -419,7 +418,8 @@ fn main() {
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).min_by(f64::total_cmp)),
                     fmt_opt_t0(ssub.iter().map(|c| c.t0).max_by(f64::total_cmp)),
                     median(&srms).unwrap_or(f64::NAN),
-                    median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>()).unwrap_or(f64::NAN) as usize
+                    median(&ssub.iter().map(|c| c.n as f64).collect::<Vec<f64>>())
+                        .unwrap_or(f64::NAN) as usize
                 ));
             }
         }
@@ -427,7 +427,9 @@ fn main() {
 
     for mode in [1i64, 2] {
         push(String::new());
-        push(format!("== mode {mode} floor day cells by sample-count bucket, per station =="));
+        push(format!(
+            "== mode {mode} floor day cells by sample-count bucket, per station =="
+        ));
         push("  bucket n<30 / 30..<100 / 100..<1000 / >=1000: cells, loud cells; thin cells carry a RMS over few samples".to_string());
         let stations: BTreeSet<i64> = rows
             .iter()
@@ -440,14 +442,15 @@ fn main() {
                 .filter(|c| c.mode == mode && c.floor && c.st == *st)
                 .collect();
             let mut line = format!("  st{st}:");
-            for (lo, hi) in [(0usize, 30usize), (30, 100), (100, 1000), (1000, usize::MAX)] {
+            for (lo, hi) in [
+                (0usize, 30usize),
+                (30, 100),
+                (100, 1000),
+                (1000, usize::MAX),
+            ] {
                 let cells: Vec<&&Cell> = sub.iter().filter(|c| c.n >= lo && c.n < hi).collect();
                 let loud = cells.iter().filter(|c| c.rms >= LOUD_HZ).count();
-                line.push_str(&format!(
-                    " n{lo}..<{hi} {}c/{}l |",
-                    cells.len(),
-                    loud
-                ));
+                line.push_str(&format!(" n{lo}..<{hi} {}c/{}l |", cells.len(), loud));
             }
             let n30: Vec<&Cell> = sub.iter().filter(|c| c.n >= 30).copied().collect();
             let loud30 = n30.iter().filter(|c| c.rms >= LOUD_HZ).count();
@@ -464,14 +467,18 @@ fn main() {
 
     for mode in [1i64, 2] {
         push(String::new());
-        push(format!("== mode {mode} floor day rows, per station chronological =="));
+        push(format!(
+            "== mode {mode} floor day rows, per station chronological =="
+        ));
         let stations: BTreeSet<i64> = rows
             .iter()
             .filter(|c| c.mode == mode && c.floor)
             .map(|c| c.st)
             .collect();
         for st in &stations {
-            push(format!("  --- st{st} floor (loud = RMS >= {LOUD_HZ} Hz) ---"));
+            push(format!(
+                "  --- st{st} floor (loud = RMS >= {LOUD_HZ} Hz) ---"
+            ));
             let srows: Vec<&Cell> = rows
                 .iter()
                 .filter(|c| c.mode == mode && c.floor && c.st == *st)
@@ -497,7 +504,9 @@ fn main() {
     let trio = [14i64, 43, 63];
     for mode in [1i64, 2] {
         push(String::new());
-        push(format!("== mode {mode} floor calendar runs, stations 14/43/63 =="));
+        push(format!(
+            "== mode {mode} floor calendar runs, stations 14/43/63 =="
+        ));
         for st in trio {
             let srows: Vec<&Cell> = rows
                 .iter()
@@ -541,8 +550,7 @@ fn main() {
                     let gap = nd - d1 - 1;
                     push(format!(
                         "      gap to next run: {} days ({} absent)",
-                        gap,
-                        gap
+                        gap, gap
                     ));
                 }
             }
@@ -550,8 +558,12 @@ fn main() {
     }
 
     push(String::new());
-    push(format!("== ops-anchor segmentation, floor, stations 14/43/63, window +/- {ANCHOR_WIN_D} d =="));
-    push(format!("  each anchor: floor day cells before (A-W .. A) and after (A .. A+W); med RMS, mean log10 RMS, loud frac; a side below {MIN_WIN_N} cells stays absent"));
+    push(format!(
+        "== ops-anchor segmentation, floor, stations 14/43/63, window +/- {ANCHOR_WIN_D} d =="
+    ));
+    push(format!(
+        "  each anchor: floor day cells before (A-W .. A) and after (A .. A+W); med RMS, mean log10 RMS, loud frac; a side below {MIN_WIN_N} cells stays absent"
+    ));
     for (name, a) in &anchors {
         for mode in [1i64, 2] {
             for st in trio {
@@ -573,7 +585,9 @@ fn main() {
                         "n {} med {} dB {}",
                         pre.len(),
                         fmt_med(&pre),
-                        mean_log10(&pre).map(|m| format!("{m:+.2}")).unwrap_or("-".to_string())
+                        mean_log10(&pre)
+                            .map(|m| format!("{m:+.2}"))
+                            .unwrap_or("-".to_string())
                     )
                 } else {
                     format!("n {} absent", pre.len())
@@ -583,7 +597,9 @@ fn main() {
                         "n {} med {} dB {}",
                         post.len(),
                         fmt_med(&post),
-                        mean_log10(&post).map(|m| format!("{m:+.2}")).unwrap_or("-".to_string())
+                        mean_log10(&post)
+                            .map(|m| format!("{m:+.2}"))
+                            .unwrap_or("-".to_string())
                     )
                 } else {
                     format!("n {} absent", post.len())
@@ -615,18 +631,18 @@ fn main() {
                 let lb = b.rms >= LOUD_HZ;
                 if la != lb {
                     flips += 1;
-                    let (from, to) = if la { ("LOUD", "quiet") } else { ("quiet", "LOUD") };
+                    let (from, to) = if la {
+                        ("LOUD", "quiet")
+                    } else {
+                        ("quiet", "LOUD")
+                    };
                     let nearest = nearest_anchor(a.day, b.day, &anchors);
                     let ga = geo.get(&a.day);
                     let gb = geo.get(&b.day);
                     let geo_s = match (ga, gb) {
-                        (Some(x), Some(y)) => format!(
-                            "eps {:.2}->{:.2} r {:.3}->{:.3}",
-                            x.eps,
-                            y.eps,
-                            x.r,
-                            y.r
-                        ),
+                        (Some(x), Some(y)) => {
+                            format!("eps {:.2}->{:.2} r {:.3}->{:.3}", x.eps, y.eps, x.r, y.r)
+                        }
                         _ => "geometry --".to_string(),
                     };
                     lines.push(format!(
@@ -656,7 +672,10 @@ fn main() {
                 .filter(|c| c.mode == mode && c.floor && c.st == st)
                 .collect();
             if srows.len() < 4 {
-                push(format!("  mode {mode} st{st}: only {} floor cells, no split scan", srows.len()));
+                push(format!(
+                    "  mode {mode} st{st}: only {} floor cells, no split scan",
+                    srows.len()
+                ));
                 continue;
             }
             let mut best: Option<(f64, usize, &Cell)> = None;
@@ -701,10 +720,7 @@ fn main() {
     push("== anchor-day decomposition 1995-11-24 and 1996-06-26, all (mode, station, class) cells ==".to_string());
     for anchor_civil in [(1995i64, 11i64, 24i64), (1996, 6, 26)] {
         let a = anchor_daycell(anchor_civil.0, anchor_civil.1, anchor_civil.2);
-        push(format!(
-            "  == {} (daycell {a}) ==",
-            fmt_daycell(a)
-        ));
+        push(format!("  == {} (daycell {a}) ==", fmt_daycell(a)));
         let same: Vec<&Cell> = rows.iter().filter(|c| c.day == a).collect();
         if same.is_empty() {
             push("    no classed cells on this day (0 honored)".to_string());
@@ -757,7 +773,9 @@ fn main() {
             }
             let rho = |x: &Vec<f64>, y: &Vec<f64>| -> String {
                 if x.len() == y.len() && x.len() >= 8 {
-                    spearman(x, y).map(|v| format!("{v:+.2}")).unwrap_or("-".to_string())
+                    spearman(x, y)
+                        .map(|v| format!("{v:+.2}"))
+                        .unwrap_or("-".to_string())
                 } else if x.len() == y.len() {
                     format!("n{}<8", x.len())
                 } else {
@@ -776,7 +794,9 @@ fn main() {
     }
 
     push(String::new());
-    push(format!("== geometry control: floor at eps < {CONJ_EPS:.0} deg across the two conjunctions (1995-12 vs 1997-01), stations 14/43/63 =="));
+    push(format!(
+        "== geometry control: floor at eps < {CONJ_EPS:.0} deg across the two conjunctions (1995-12 vs 1997-01), stations 14/43/63 =="
+    ));
     for mode in [1i64, 2] {
         for st in trio {
             let mut c95: Vec<f64> = Vec::new();
@@ -785,7 +805,10 @@ fn main() {
             let b95 = anchor_daycell(1996, 1, 31);
             let a97 = anchor_daycell(1997, 1, 1);
             let b97 = anchor_daycell(1997, 2, 28);
-            for c in rows.iter().filter(|c| c.mode == mode && c.floor && c.st == st) {
+            for c in rows
+                .iter()
+                .filter(|c| c.mode == mode && c.floor && c.st == st)
+            {
                 let g = match geo.get(&c.day) {
                     Some(g) => g,
                     None => continue,

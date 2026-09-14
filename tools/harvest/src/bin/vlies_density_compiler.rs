@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
-use omegaflow::cdn::{upload_asset, CDN_BASE};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
+use omegaflow::cdn::{CDN_BASE, upload_asset};
 use omegaflow::mathematikerin::healpix::ang2pix_nest;
 
 const NSIDE: i64 = 128;

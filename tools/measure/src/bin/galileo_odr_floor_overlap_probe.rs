@@ -82,11 +82,19 @@ fn main() {
             continue;
         }
         let (y, mo, d) = (ymd[0], ymd[1], ymd[2]);
-        let Ok(station) = f[2].parse::<i64>() else { continue };
+        let Ok(station) = f[2].parse::<i64>() else {
+            continue;
+        };
         let (Some(h0), Some(h1)) = (parse_hhmm(f[3]), parse_hhmm(f[4])) else {
             continue;
         };
-        wins.push(OdrWin { label: format!("{} {}", f[0], f[1]), day: days_from_civil(y, mo, d), station, h0, h1 });
+        wins.push(OdrWin {
+            label: format!("{} {}", f[0], f[1]),
+            day: days_from_civil(y, mo, d),
+            station,
+            h0,
+            h1,
+        });
     }
     wins.sort_by_key(|w| (w.day, w.station));
 
@@ -140,7 +148,10 @@ fn main() {
     }
 
     push(String::new());
-    push("odr-window | register floor cell (mode, day, station) | class | in-window floor samples".to_string());
+    push(
+        "odr-window | register floor cell (mode, day, station) | class | in-window floor samples"
+            .to_string(),
+    );
     for w in &wins {
         for mode in 1..=3 {
             let key = (mode, w.station, w.day);
@@ -151,19 +162,38 @@ fn main() {
                 let m = su / n as f64;
                 ((su2 / n as f64 - m * m).max(0.0)).sqrt()
             };
-            let class = if n >= 30 && rms >= LOUD_HZ { "LOUD" } else if n >= 30 { "quiet" } else { "thin" };
+            let class = if n >= 30 && rms >= LOUD_HZ {
+                "LOUD"
+            } else if n >= 30 {
+                "quiet"
+            } else {
+                "thin"
+            };
             let Some(hs) = hours.get(&key) else {
                 continue;
             };
-            let in_win = hs.iter().filter(|h| **h >= w.h0 - 1e-6 && **h <= w.h1 + 1e-6).count();
+            let in_win = hs
+                .iter()
+                .filter(|h| **h >= w.h0 - 1e-6 && **h <= w.h1 + 1e-6)
+                .count();
             let lo = hs.iter().cloned().fold(f64::INFINITY, f64::min);
             let hi = hs.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
             let date = match omegaflow::spectral::civil_from_days(w.day) {
                 Some((y, m, d)) => format!("{y:04}-{m:02}-{d:02}"),
                 None => "-".to_string(),
             };
-            let span = if hs.is_empty() { "-".into() } else { format!("{lo:.1}-{hi:.1}") };
-            let iw_key = (mode, w.station, w.day, (w.h0 * 100.0) as u32, (w.h1 * 100.0) as u32);
+            let span = if hs.is_empty() {
+                "-".into()
+            } else {
+                format!("{lo:.1}-{hi:.1}")
+            };
+            let iw_key = (
+                mode,
+                w.station,
+                w.day,
+                (w.h0 * 100.0) as u32,
+                (w.h1 * 100.0) as u32,
+            );
             let iwr = match cell_inwin.get(&iw_key) {
                 Some(&(su, su2, ni)) => {
                     let m = su / ni as f64;

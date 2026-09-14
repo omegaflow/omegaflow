@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, fetch_raw_bytes, light_time_worldline,
-    parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, fetch_raw_bytes,
+    light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -262,7 +262,9 @@ fn year_bin(jd_utc: f64) -> i64 {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus carrier years — the per-year residual vector of de441 against the other two houses.");
+    println!(
+        "Uranus carrier years — the per-year residual vector of de441 against the other two houses."
+    );
 
     let tsv_dir =
         arg_token(&args, "--tsv-dir").unwrap_or("data/vizier.cfa.harvard.edu".to_string());

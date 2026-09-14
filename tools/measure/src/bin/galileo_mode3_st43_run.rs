@@ -208,7 +208,10 @@ fn members(grid: &[(f64, f64)], floor: f64, gate: f64) -> Vec<(f64, f64)> {
 fn spec_scan(label: &str, ts: &[f64], vs: &[f64]) {
     let (dts, dvs) = detrend_blocks(ts, vs);
     if dts.len() < MIN_SEG {
-        println!("spec {label}: no detrendable block >= {MIN_SEG} samples (kept {}) -> no LS scan (0 honored)", dts.len());
+        println!(
+            "spec {label}: no detrendable block >= {MIN_SEG} samples (kept {}) -> no LS scan (0 honored)",
+            dts.len()
+        );
         return;
     }
     let grid = ls_grid(&dts, &dvs, FLO, FHI, STEP);
@@ -353,7 +356,9 @@ fn main() {
     alldays.sort_unstable();
     alldays.dedup();
     println!();
-    println!("per-day noise: med = median|resid|, rms = sqrt(mean resid^2), n = cleaned samples of that mode at st{ST}");
+    println!(
+        "per-day noise: med = median|resid|, rms = sqrt(mean resid^2), n = cleaned samples of that mode at st{ST}"
+    );
     println!(
         "{:>5} | {:>7} {:>10} {:>10} | {:>7} {:>10} {:>10} | {:>7} {:>7}",
         "day",

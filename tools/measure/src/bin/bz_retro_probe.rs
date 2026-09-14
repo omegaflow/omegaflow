@@ -1,5 +1,5 @@
-use omegaflow::archivar::omni2::{parse_bin, COMP_BZ, COMP_N1800, COMP_V1800};
-use omegaflow::archivar::{fetch_raw, fetch_raw_bytes, parse_json, scalar_of, JsonVal};
+use omegaflow::archivar::omni2::{COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
+use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -107,11 +107,7 @@ fn shared_window(
         Some(c) => a1.min(b1).min(c),
         None => a1.min(b1),
     };
-    if hi <= lo {
-        None
-    } else {
-        Some((lo, hi))
-    }
+    if hi <= lo { None } else { Some((lo, hi)) }
 }
 
 fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {

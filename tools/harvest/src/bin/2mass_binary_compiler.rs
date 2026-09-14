@@ -1,10 +1,10 @@
 use omegaflow::archivar::footprint::{
-    decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord, HEADER_LEN,
-    MAGIC, REC_BYTES,
+    FootprintBand, FootprintRecord, HEADER_LEN, MAGIC, REC_BYTES, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::healpix::pix2ang_nest;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet};
+use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
@@ -391,7 +391,9 @@ fn run(args: &[String]) -> Result<(), String> {
         "record shape: order {} band {:?} ipix {} frac {:.3}",
         last.order, last.band, last.ipix, last.frac
     );
-    eprintln!("bands: j h ks share the one 2MASS scan footprint (simultaneous observation), frac 1.0 for observed");
+    eprintln!(
+        "bands: j h ks share the one 2MASS scan footprint (simultaneous observation), frac 1.0 for observed"
+    );
     if ci_mode && !upload_asset(&out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }

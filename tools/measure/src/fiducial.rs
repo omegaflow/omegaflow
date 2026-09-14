@@ -1,4 +1,4 @@
-use omegaflow::matfile::{parse_mat, MatArray, MatData, MatField};
+use omegaflow::matfile::{MatArray, MatData, MatField, parse_mat};
 
 #[derive(Clone, Copy, Debug)]
 pub struct RigidTransform {
@@ -381,11 +381,7 @@ fn char_text(m: &MatArray) -> Option<String> {
                 .trim_end_matches('\0')
                 .trim()
                 .to_string();
-            if s.is_empty() {
-                None
-            } else {
-                Some(s)
-            }
+            if s.is_empty() { None } else { Some(s) }
         }
         _ => None,
     }
@@ -467,11 +463,7 @@ pub fn montage_fiducials(bytes: &[u8]) -> Option<Vec<(Option<String>, [f64; 3])>
             .or_else(|| char_text(labels.values.get(i)?));
         out.push((label, [x, y, z]));
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 #[cfg(test)]
