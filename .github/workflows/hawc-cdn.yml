@@ -15,6 +15,8 @@ jobs:
   hawc:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    env:
+      OMEGAFLOW_CA_BUNDLE: ${{ secrets.OMEGAFLOW_CA_BUNDLE }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -28,13 +30,15 @@ jobs:
       - name: Fetch the HAWC 2HWC and 3HWC source catalogs
         run: |
           mkdir -p kernels
-          curl -ksSfL --retry 3 --max-time 600 -o kernels/2HWC.yaml \
+          caflags=""
+          [ -n "$OMEGAFLOW_CA_BUNDLE" ] && caflags="--cacert $OMEGAFLOW_CA_BUNDLE"
+          curl -sSfL $caflags --retry 3 --max-time 600 -o kernels/2HWC.yaml \
             https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml \
             || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: 2HWC.yaml returned void" \
                  "curl on data.hawc-observatory.org did not reach 2HWC.yaml. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
-          curl -ksSfL --retry 3 --max-time 600 -o kernels/3HWC.yaml \
+          curl -sSfL $caflags --retry 3 --max-time 600 -o kernels/3HWC.yaml \
             https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml \
             || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: 3HWC.yaml returned void" \

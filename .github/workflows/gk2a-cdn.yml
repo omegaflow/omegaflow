@@ -1,0 +1,46 @@
+name: gk2a-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gk2a:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the noaa-gk2a-pds.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view noaa-gk2a-pds.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create noaa-gk2a-pds.s3.amazonaws.com --repo omegaflow/sources \
+              --title "noaa-gk2a-pds.s3.amazonaws.com" \
+              --notes "GK2A AMI L1b (FD, IR087) compiled to a per-granule radiance record. Calibration: GSICS coefficients in-granule (gsics_coeff_intercept/slope/quadratic -> radiance W m-2 sr-1 um-1); the source carries no scale_factor/add_offset. Record stride 56 B LE: t (f64, J2000 s), band_id (u8, channel digits), calib (u8, 2 = GSICS, 0 = L1b linear, 1 = GSICS pending), pad (2), band_wavelength (f32, um), esun (f32, W m-2 um-1, 0 = not carried by the source), kappa0 (f32, (W m-2 um-1)-1, 0 = not carried by the source), center_lat (f32, deg), center_lon (f32, deg), rad_mean (f32), rad_std (f32), rad_min (f32), rad_max (f32, W m-2 sr-1 um-1), valid (u32), total (u32)."
+          fi
+      - name: Fetch one GK2A AMI L1b granule
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/gk2a.nc \
+            https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/202302/16/00/gk2a_ami_le1b_ir087_fd020ge_202302160000.nc \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gk2a-cdn: the AMI L1b granule returned void" \
+                 "curl on noaa-gk2a-pds.s3.amazonaws.com did not reach the granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the AMI radiance record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gk2a_ami_compiler -- \
+            --input kernels/gk2a.nc \
+            --out gk2a_ami_rad.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gk2a-cdn: gk2a_ami_rad.bin returned void" \
+                 "gk2a_ami_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

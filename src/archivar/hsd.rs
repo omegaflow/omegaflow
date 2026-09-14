@@ -7,6 +7,7 @@ pub struct HsdFile {
     pub bits_per_pixel: Option<u16>,
     pub pixel_values: Vec<u16>,
     pub calibration: Vec<CalibrationBand>,
+    pub update: Vec<CalibrationBand>,
 }
 
 pub struct CalibrationBand {
@@ -59,6 +60,7 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
     let mut bits_per_pixel = None;
     let mut total_header_length = None;
     let mut calibration = Vec::new();
+    let mut update = Vec::new();
 
     let mut offset = 0usize;
     loop {
@@ -87,6 +89,11 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
             5 => {
                 if let Some(cal) = parse_calibration(content) {
                     calibration.push(cal);
+                }
+            }
+            6 => {
+                if let Some(cal) = parse_calibration(content) {
+                    update.push(cal);
                 }
             }
             _ => {}
@@ -124,11 +131,12 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
         bits_per_pixel,
         pixel_values,
         calibration,
+        update,
     })
 }
 
 pub const MAGIC_AHI: [u8; 4] = *b"AHI1";
-const AHI_HEADER_BYTES: usize = 24;
+const AHI_HEADER_BYTES: usize = 29;
 
 pub struct AhiSegment {
     pub columns: u16,
@@ -140,11 +148,20 @@ pub struct AhiSegment {
     pub resolution_m: u16,
     pub obs_sec: f64,
     pub obs_present: u8,
+    pub calib_present: u8,
+    pub error_pixels: u16,
+    pub outside_scan_pixels: u16,
     pub counts: Vec<u16>,
+    pub radiance: Vec<f32>,
 }
 
 pub fn write_segment(seg: &AhiSegment) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(AHI_HEADER_BYTES + seg.counts.len() * 2);
+    let payload_bytes = if seg.calib_present == 1 {
+        seg.radiance.len() * 4
+    } else {
+        seg.counts.len() * 2
+    };
+    let mut buf = Vec::with_capacity(AHI_HEADER_BYTES + payload_bytes);
     buf.extend_from_slice(&MAGIC_AHI);
     buf.extend_from_slice(&seg.columns.to_le_bytes());
     buf.extend_from_slice(&seg.lines.to_le_bytes());
@@ -155,8 +172,17 @@ pub fn write_segment(seg: &AhiSegment) -> Vec<u8> {
     buf.extend_from_slice(&seg.resolution_m.to_le_bytes());
     buf.push(seg.obs_present);
     buf.extend_from_slice(&seg.obs_sec.to_le_bytes());
-    for &c in &seg.counts {
-        buf.extend_from_slice(&c.to_le_bytes());
+    buf.push(seg.calib_present);
+    buf.extend_from_slice(&seg.error_pixels.to_le_bytes());
+    buf.extend_from_slice(&seg.outside_scan_pixels.to_le_bytes());
+    if seg.calib_present == 1 {
+        for &r in &seg.radiance {
+            buf.extend_from_slice(&r.to_le_bytes());
+        }
+    } else {
+        for &c in &seg.counts {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
     }
     buf
 }
@@ -174,6 +200,9 @@ pub fn parse_segment(bytes: &[u8]) -> Option<AhiSegment> {
     let resolution_m = u16::from_le_bytes(bytes.get(13..15)?.try_into().ok()?);
     let obs_present = *bytes.get(15)?;
     let obs_sec = f64::from_le_bytes(bytes.get(16..24)?.try_into().ok()?);
+    let calib_present = *bytes.get(24)?;
+    let error_pixels = u16::from_le_bytes(bytes.get(25..27)?.try_into().ok()?);
+    let outside_scan_pixels = u16::from_le_bytes(bytes.get(27..29)?.try_into().ok()?);
     if columns == 0 || lines == 0 {
         return None;
     }
@@ -183,16 +212,30 @@ pub fn parse_segment(bytes: &[u8]) -> Option<AhiSegment> {
     if obs_present == 1 && !obs_sec.is_finite() {
         return None;
     }
+    if calib_present > 1 {
+        return None;
+    }
     let count = columns as usize * lines as usize;
-    if bytes.len() != AHI_HEADER_BYTES + count * 2 {
+    let stride = if calib_present == 1 { 4 } else { 2 };
+    if bytes.len() != AHI_HEADER_BYTES + count * stride {
         return None;
     }
     let mut counts = Vec::with_capacity(count);
-    for i in 0..count {
-        let off = AHI_HEADER_BYTES + i * 2;
-        counts.push(u16::from_le_bytes(
-            bytes.get(off..off + 2)?.try_into().ok()?,
-        ));
+    let mut radiance = Vec::with_capacity(count);
+    if calib_present == 1 {
+        for i in 0..count {
+            let off = AHI_HEADER_BYTES + i * 4;
+            radiance.push(f32::from_le_bytes(
+                bytes.get(off..off + 4)?.try_into().ok()?,
+            ));
+        }
+    } else {
+        for i in 0..count {
+            let off = AHI_HEADER_BYTES + i * 2;
+            counts.push(u16::from_le_bytes(
+                bytes.get(off..off + 2)?.try_into().ok()?,
+            ));
+        }
     }
     Some(AhiSegment {
         columns,
@@ -204,7 +247,11 @@ pub fn parse_segment(bytes: &[u8]) -> Option<AhiSegment> {
         resolution_m,
         obs_sec,
         obs_present,
+        calib_present,
+        error_pixels,
+        outside_scan_pixels,
         counts,
+        radiance,
     })
 }
 
@@ -319,6 +366,61 @@ mod tests {
         assert!(hsd.calibration.is_empty());
     }
 
+    fn build_fixture_with_update(
+        columns: u16,
+        lines: u16,
+        pixels: &[u16],
+        update: &[u8],
+    ) -> Vec<u8> {
+        let mut out = Vec::new();
+
+        out.push(1u8);
+        out.extend_from_slice(&282u16.to_le_bytes());
+        let mut b1 = vec![0u8; 279];
+        b1[0..2].copy_from_slice(&11u16.to_le_bytes());
+        let update_block_len = 3 + update.len();
+        let header_len = (282 + 50 + update_block_len + 259) as u32;
+        b1[67..71].copy_from_slice(&header_len.to_le_bytes());
+        out.extend_from_slice(&b1);
+
+        out.push(2u8);
+        out.extend_from_slice(&50u16.to_le_bytes());
+        let mut b2 = vec![0u8; 47];
+        b2[0..2].copy_from_slice(&16u16.to_le_bytes());
+        b2[2..4].copy_from_slice(&columns.to_le_bytes());
+        b2[4..6].copy_from_slice(&lines.to_le_bytes());
+        out.extend_from_slice(&b2);
+
+        out.push(6u8);
+        out.extend_from_slice(&(update_block_len as u16).to_le_bytes());
+        out.extend_from_slice(update);
+
+        out.push(11u8);
+        out.extend_from_slice(&259u16.to_le_bytes());
+        out.extend_from_slice(&vec![0u8; 256]);
+
+        for &p in pixels {
+            out.extend_from_slice(&p.to_le_bytes());
+        }
+        out
+    }
+
+    #[test]
+    fn decodes_calibration_block_6() {
+        let pixels = [1u16, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        let gain = 0.02;
+        let offset = -0.1;
+        let update = calibration_content(2, gain, offset);
+        let data = build_fixture_with_update(4, 3, &pixels, &update);
+        let hsd = parse_hsd(&data).unwrap();
+        assert!(hsd.calibration.is_empty());
+        assert_eq!(hsd.update.len(), 1);
+        let u = &hsd.update[0];
+        assert_eq!(u.band, 2);
+        assert!((u.gain.unwrap() - gain).abs() < 1e-12);
+        assert!((u.offset.unwrap() - offset).abs() < 1e-12);
+    }
+
     #[test]
     fn parses_structure() {
         let pixels = [1u16, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -379,7 +481,32 @@ mod tests {
             resolution_m: 1000,
             obs_sec: 1436234400.0,
             obs_present: 1,
+            calib_present: 0,
+            error_pixels: 0,
+            outside_scan_pixels: 0,
             counts: vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            radiance: Vec::new(),
+        }
+    }
+
+    fn radiance_fixture() -> AhiSegment {
+        AhiSegment {
+            columns: 4,
+            lines: 3,
+            bits_per_pixel: 16,
+            band: 1,
+            segment: 1,
+            satellite: 8,
+            resolution_m: 1000,
+            obs_sec: 1436234400.0,
+            obs_present: 1,
+            calib_present: 1,
+            error_pixels: 65535,
+            outside_scan_pixels: 65534,
+            counts: Vec::new(),
+            radiance: vec![
+                1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 65535.0,
+            ],
         }
     }
 
@@ -409,6 +536,26 @@ mod tests {
         let parsed = parse_segment(&bytes).unwrap();
         assert_eq!(parsed.obs_present, 0);
         assert_eq!(parsed.counts, seg.counts);
+    }
+
+    #[test]
+    fn segment_radiance_roundtrip() {
+        let seg = radiance_fixture();
+        let bytes = write_segment(&seg);
+        let parsed = parse_segment(&bytes).unwrap();
+        assert_eq!(parsed.calib_present, 1);
+        assert_eq!(parsed.error_pixels, 65535);
+        assert_eq!(parsed.outside_scan_pixels, 65534);
+        assert!(parsed.counts.is_empty());
+        assert_eq!(parsed.radiance, seg.radiance);
+    }
+
+    #[test]
+    fn segment_rejects_calib_present_above_one() {
+        let mut seg = radiance_fixture();
+        seg.calib_present = 2;
+        let bytes = write_segment(&seg);
+        assert!(parse_segment(&bytes).is_none());
     }
 
     #[test]
