@@ -483,7 +483,7 @@ fn parse_atom_entries(xml: &str) -> Vec<AtomEntry> {
 
 pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!(
-        "http://export.arxiv.org/api/query?search_query=all:{}&max_results={}",
+        "https://export.arxiv.org/api/query?search_query=all:{}&max_results={}",
         urlencode(query),
         max
     );
