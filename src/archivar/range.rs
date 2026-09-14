@@ -14,7 +14,9 @@ const RANGE_RETRY: u64 = 3;
 pub const S3_REGION: &str = "us-west-2";
 pub const S3_ENDPOINT: &str = "s3.us-west-2.amazonaws.com";
 const S3_SERVICE: &str = "s3";
-const S3_CREDENTIALS_URL: &str = "https://urs.earthdata.nasa.gov/api/users/s3credentials";
+const NSIDC_S3_CREDENTIALS_URL: &str = "https://data.nsidc.earthdatacloud.nasa.gov/s3credentials";
+const PODAAC_S3_CREDENTIALS_URL: &str = "https://archive.podaac.earthdata.nasa.gov/s3credentials";
+const LPDAAC_S3_CREDENTIALS_URL: &str = "https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials";
 const AWS4_EMPTY_SHA256: &str = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
 fn offset_end(offset: u64, len: u64) -> Option<(u64, u64)> {
@@ -200,7 +202,32 @@ pub struct S3Credentials {
     pub session_token: String,
 }
 
-pub fn edl_s3_credentials(edl_token: &str) -> Option<S3Credentials> {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum S3CredentialRoute {
+    Bearer(&'static str),
+    OAuth,
+}
+
+pub fn s3_credential_route(bucket: &str) -> Option<S3CredentialRoute> {
+    let bucket = bucket.strip_prefix("s3://").unwrap_or(bucket);
+    let bucket = bucket.split('/').next().unwrap_or(bucket);
+    if bucket.starts_with("podaac-") {
+        Some(S3CredentialRoute::Bearer(PODAAC_S3_CREDENTIALS_URL))
+    } else if bucket.starts_with("nsidc-") {
+        Some(S3CredentialRoute::Bearer(NSIDC_S3_CREDENTIALS_URL))
+    } else if bucket.starts_with("lp-prod-") {
+        Some(S3CredentialRoute::Bearer(LPDAAC_S3_CREDENTIALS_URL))
+    } else if bucket.starts_with("gesdisc")
+        || bucket.starts_with("goldsmr5")
+        || bucket.starts_with("goldsmr2")
+    {
+        Some(S3CredentialRoute::OAuth)
+    } else {
+        None
+    }
+}
+
+fn edl_bearer_credentials(url: &str, edl_token: &str) -> Option<S3Credentials> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
@@ -210,7 +237,7 @@ pub fn edl_s3_credentials(edl_token: &str) -> Option<S3Credentials> {
         .arg("-m")
         .arg(RANGE_MAX_TIME_S.to_string());
     append_ca(&mut cmd);
-    cmd.arg(S3_CREDENTIALS_URL);
+    cmd.arg(url);
     let output = cmd.output().ok()?;
     if !output.status.success() {
         return None;
@@ -228,6 +255,14 @@ pub fn edl_s3_credentials(edl_token: &str) -> Option<S3Credentials> {
         secret_key,
         session_token,
     })
+}
+
+pub fn edl_s3_credentials_for(bucket: &str, edl_token: &str) -> Option<S3Credentials> {
+    let route = s3_credential_route(bucket)?;
+    match route {
+        S3CredentialRoute::Bearer(url) => edl_bearer_credentials(url, edl_token),
+        S3CredentialRoute::OAuth => None,
+    }
 }
 
 pub fn fetch_s3_range(
@@ -319,6 +354,27 @@ mod tests {
         assert_eq!(
             auth,
             "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request, SignedHeaders=host;range;x-amz-content-sha256;x-amz-date, Signature=f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41"
+        );
+    }
+
+    #[test]
+    fn s3_credential_route_maps_bucket_to_daac_endpoint() {
+        assert_eq!(
+            s3_credential_route("podaac-swot-ops-cumulus-public"),
+            Some(S3CredentialRoute::Bearer(PODAAC_S3_CREDENTIALS_URL))
+        );
+        assert_eq!(
+            s3_credential_route("nsidc-cumulus-prod-public"),
+            Some(S3CredentialRoute::Bearer(NSIDC_S3_CREDENTIALS_URL))
+        );
+        assert_eq!(s3_credential_route("noaa-goes16"), None);
+        assert_eq!(
+            s3_credential_route("goldsmr5"),
+            Some(S3CredentialRoute::OAuth)
+        );
+        assert_eq!(
+            s3_credential_route("s3://lp-prod-protected/key"),
+            Some(S3CredentialRoute::Bearer(LPDAAC_S3_CREDENTIALS_URL))
         );
     }
 

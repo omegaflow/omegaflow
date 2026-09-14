@@ -10,6 +10,15 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "circor" => phonocardiogram::parse_bin(bytes),
         "ltmm" => movement_monitoring::parse_bin(bytes),
         "noaa_ccor" => ccor::parse_bin(bytes),
+        "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
+            let mut out = Vec::new();
+            for c in curves {
+                for s in c.samples {
+                    out.push((s.t_tdb, s.flux as f64, c.band));
+                }
+            }
+            out
+        }),
         _ => None,
     }
 }
@@ -72,6 +81,13 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "noaa_ccor" => match comp {
             ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
+            _ => None,
+        },
+        "maxi" => match comp {
+            crate::maxi::BAND_2_20 => Some("maxi_2_20kev_flux_ph_s_cm2"),
+            crate::maxi::BAND_2_4 => Some("maxi_2_4kev_flux_ph_s_cm2"),
+            crate::maxi::BAND_4_10 => Some("maxi_4_10kev_flux_ph_s_cm2"),
+            crate::maxi::BAND_10_20 => Some("maxi_10_20kev_flux_ph_s_cm2"),
             _ => None,
         },
         _ => None,
@@ -176,7 +192,156 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ISD_SLP => Some("noaa_isd_slp_hpa"),
             _ => None,
         },
+        "us_crn_hourly" => match comp {
+            crate::geo::COMP_USCRN_TEMP => Some("us_crn_hourly_temp_c"),
+            _ => None,
+        },
         "copernicus_cdm_obs" => crate::copernicus::component_name(comp),
+        "cosmic_ro" => match comp {
+            crate::geo::COMP_COSMIC_REFRACT => Some("cosmic_ro_refractivity_n_units"),
+            crate::geo::COMP_COSMIC_TEMP => Some("cosmic_ro_temperature_k"),
+            crate::geo::COMP_COSMIC_PRES => Some("cosmic_ro_pressure_hpa"),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+pub struct IscEvent {
+    pub time: f64,
+    pub lat: f64,
+    pub lon: f64,
+    pub depth_km: f64,
+    pub magnitude: Option<f64>,
+    pub mag_type: Option<String>,
+}
+
+pub fn parse_iscb_bin(bytes: &[u8]) -> Option<Vec<IscEvent>> {
+    const MAGIC: [u8; 4] = *b"ISCB";
+    const VERSION: u8 = 1;
+    const HEADER_LEN: usize = 13;
+    const REC_BYTES: usize = 56;
+    const PRES_MAG: u8 = 0x01;
+    const PRES_MAGTYPE: u8 = 0x02;
+    const MAG_TYPE_LEN: usize = 8;
+    if bytes.len() < HEADER_LEN || bytes[0..4] != MAGIC || bytes[4] != VERSION {
+        return None;
+    }
+    let n = u64::from_le_bytes(bytes[5..13].try_into().ok()?) as usize;
+    if bytes.len() != HEADER_LEN + n * REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    for i in 0..n {
+        let rec = bytes.get(HEADER_LEN + i * REC_BYTES..HEADER_LEN + (i + 1) * REC_BYTES)?;
+        let f64_of = |r: std::ops::Range<usize>| {
+            rec.get(r)
+                .and_then(|x| x.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let time = f64_of(8..16)?;
+        let lat = f64_of(16..24)?;
+        let lon = f64_of(24..32)?;
+        let depth_km = f64_of(32..40)?;
+        if !time.is_finite() || !lat.is_finite() || !lon.is_finite() || !depth_km.is_finite() {
+            return None;
+        }
+        if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
+            return None;
+        }
+        let present = rec[0];
+        let magnitude = if present & PRES_MAG != 0 {
+            let v = f64_of(40..48)?;
+            if v.is_finite() {
+                Some(v)
+            } else {
+                return None;
+            }
+        } else {
+            None
+        };
+        let mag_type = if present & PRES_MAGTYPE != 0 {
+            let field = &rec[48..48 + MAG_TYPE_LEN];
+            let end = field.iter().position(|&c| c == 0).unwrap_or(MAG_TYPE_LEN);
+            let raw = &field[..end];
+            if raw.is_empty() || !raw.iter().all(|c| c.is_ascii_graphic() || *c == b' ') {
+                return None;
+            }
+            Some(String::from_utf8_lossy(raw).into_owned())
+        } else {
+            None
+        };
+        out.push(IscEvent {
+            time,
+            lat,
+            lon,
+            depth_km,
+            magnitude,
+            mag_type,
+        });
+    }
+    Some(out)
+}
+
+pub struct NexradRadialSample {
+    pub t: f64,
+    pub az_deg: f64,
+    pub el_deg: f64,
+    pub range_km: f64,
+    pub value: f64,
+    pub kind: u32,
+}
+
+pub fn parse_nexrad_level2_bin(bytes: &[u8]) -> Option<Vec<NexradRadialSample>> {
+    const REC_BYTES: usize = 44;
+    if bytes.len() < 8 || bytes[0..4] != crate::geo::MAGIC_NXR {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let s = bytes.get(off..off + REC_BYTES)?;
+        let f64_of = |r: std::ops::Range<usize>| {
+            s.get(r)
+                .and_then(|x| x.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let t = f64_of(0..8)?;
+        let az_deg = f64_of(8..16)?;
+        let el_deg = f64_of(16..24)?;
+        let range_km = f64_of(24..32)?;
+        let value = f64_of(32..40)?;
+        let kind = u32::from_le_bytes(s.get(40..44)?.try_into().ok()?);
+        if !t.is_finite()
+            || !az_deg.is_finite()
+            || !el_deg.is_finite()
+            || !range_km.is_finite()
+            || !value.is_finite()
+        {
+            return None;
+        }
+        out.push(NexradRadialSample {
+            t,
+            az_deg,
+            el_deg,
+            range_km,
+            value,
+            kind,
+        });
+        off += REC_BYTES;
+    }
+    Some(out)
+}
+
+pub fn nexrad_component_name(kind: u32) -> Option<&'static str> {
+    match kind {
+        crate::geo::COMP_NXR_REF => Some("nexrad_level2_ref_dbz"),
+        crate::geo::COMP_NXR_VEL => Some("nexrad_level2_vel_ms"),
+        crate::geo::COMP_NXR_SW => Some("nexrad_level2_sw_ms"),
         _ => None,
     }
 }
@@ -902,7 +1067,11 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
             return None;
         }
         let cols: Vec<String> = stripped.split_whitespace().map(|s| s.to_string()).collect();
-        if cols.len() > 5 { Some(cols) } else { None }
+        if cols.len() > 5 {
+            Some(cols)
+        } else {
+            None
+        }
     })?;
     let data = text.lines().find_map(|line| {
         let t = line.trim();

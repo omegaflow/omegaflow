@@ -1,8 +1,8 @@
 use crate::geo::{
-    COMP_DCDB_DEPTH, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX,
+    GeoRec, COMP_DCDB_DEPTH, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX,
     COMP_GHCN_TMIN, COMP_GSOD_DEWP, COMP_GSOD_GUST, COMP_GSOD_PRCP, COMP_GSOD_SLP, COMP_GSOD_TEMP,
     COMP_GSOD_TMAX, COMP_GSOD_TMIN, COMP_GSOD_WDSP, COMP_ISD_DEWP, COMP_ISD_SLP, COMP_ISD_TEMP,
-    COMP_ISD_WDIR, COMP_ISD_WSPD, GeoRec,
+    COMP_ISD_WDIR, COMP_ISD_WSPD, COMP_USCRN_TEMP,
 };
 use crate::lsk::LeapSeconds;
 use std::collections::HashMap;
@@ -441,6 +441,86 @@ pub fn parse_dcdb(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
             continue;
         };
         if let Some(r) = rec(tdb, lat, lon, -depth, 0.0, depth, COMP_DCDB_DEPTH) {
+            out.push(r);
+        }
+    }
+    out
+}
+
+const FOOT_TO_M: f64 = 0.3048;
+
+pub fn parse_uscrn_stations(text: &str) -> HashMap<String, (f64, f64, f64)> {
+    let mut out = HashMap::new();
+    for line in text.lines().skip(1) {
+        let f: Vec<&str> = line.split('\t').collect();
+        if f.len() < 9 {
+            continue;
+        }
+        let wban = f[0].trim();
+        let lat = f[6].trim().parse::<f64>();
+        let lon = f[7].trim().parse::<f64>();
+        let elev_ft = f[8].trim().parse::<f64>();
+        let (Ok(lat), Ok(lon), Ok(elev_ft)) = (lat, lon, elev_ft) else {
+            continue;
+        };
+        let elev = elev_ft * FOOT_TO_M;
+        if wban.is_empty() || !lat.is_finite() || !lon.is_finite() || !elev.is_finite() {
+            continue;
+        }
+        out.insert(wban.to_string(), (lat, lon, elev));
+    }
+    out
+}
+
+pub fn uscrn_wban(text: &str) -> Option<String> {
+    let first = text.lines().next()?.split_whitespace().next()?;
+    if first.is_empty() || !first.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    Some(first.to_string())
+}
+
+pub fn parse_uscrn(text: &str, alt: f64, lsk: &LeapSeconds) -> Vec<GeoRec> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let f: Vec<&str> = line.split_whitespace().collect();
+        if f.len() < 9 {
+            continue;
+        }
+        let date = f[1];
+        if date.len() != 8 {
+            continue;
+        }
+        let (Ok(y), Ok(m), Ok(d)) = (
+            date[0..4].parse::<i64>(),
+            date[4..6].parse::<i64>(),
+            date[6..8].parse::<i64>(),
+        ) else {
+            continue;
+        };
+        let time = f[2];
+        if time.len() != 4 {
+            continue;
+        }
+        let (Ok(hh), Ok(mi)) = (time[0..2].parse::<i64>(), time[2..4].parse::<i64>()) else {
+            continue;
+        };
+        let Some(unix) = unix_of_civil(y, m, d, hh as f64 * 3600.0 + mi as f64 * 60.0) else {
+            continue;
+        };
+        let Some(tdb) = tdb_of(unix, lsk) else {
+            continue;
+        };
+        let (Some(lon), Some(lat)) = (num(f[6]), num(f[7])) else {
+            continue;
+        };
+        let Some(raw) = num(f[8]) else {
+            continue;
+        };
+        if (raw + 9999.0).abs() < 0.5 {
+            continue;
+        }
+        if let Some(r) = rec(tdb, lat, lon, alt, HOUR_S, raw, COMP_USCRN_TEMP) {
             out.push(r);
         }
     }
