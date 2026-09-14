@@ -3128,6 +3128,21 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_shift_null_binned_n_1000() {
+        let cells =
+            gate_fpr_coarse_cells(1000, TeNull::Shift, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_shift_null_ksg_n_1000() {
+        let cells = gate_fpr_coarse_cells(1000, TeNull::Shift, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
     #[ignore = "block sweep for the n=1000 gate fix — runs in te-gate.yml"]
     fn block_sweep_n1000() {
         for block in [10usize, 16, 24, 32, 48] {
@@ -3171,6 +3186,32 @@ mod tests {
             for c in &cells {
                 println!(
                     "null={null_name} a={} d_z={} fpr={:.2}%",
+                    c.a,
+                    c.d_z,
+                    100.0 * c.fp as f64 / c.neg as f64
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "shift sweep for the n=1000 gate — runs in te-gate.yml"]
+    fn shift_sweep_n1000() {
+        for (est_name, est) in [("binned", TeEstimator::Binned), ("ksg", TeEstimator::Ksg)] {
+            let cells = gate_fpr_cells_from(
+                1000,
+                &[(0.0f32, 4usize, 7usize), (0.5f32, 4, 7), (0.9f32, 4, 7)],
+                TeNull::Shift,
+                est,
+                2,
+                12,
+                4,
+                0,
+                100,
+            );
+            for c in &cells {
+                println!(
+                    "est={est_name} a={} d_z={} fpr={:.2}%",
                     c.a,
                     c.d_z,
                     100.0 * c.fp as f64 / c.neg as f64
