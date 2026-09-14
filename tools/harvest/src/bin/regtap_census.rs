@@ -5,7 +5,7 @@ use std::io::Write;
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use omegaflow::archivar::json::{JsonVal, parse_json};
+use omegaflow::archivar::json::{parse_json, JsonVal};
 
 fn as_arr(v: &JsonVal) -> Option<&Vec<JsonVal>> {
     match v {
@@ -121,6 +121,7 @@ fn main() {
             let mut paths = vec![
                 "phi/sources.φ".to_string(),
                 "phi/dead_sources.φ".to_string(),
+                "phi/declined_sources.φ".to_string(),
                 "phi/blocked_sources.φ".to_string(),
                 "phi/witnesses.φ".to_string(),
                 "phi/footprints.φ".to_string(),
