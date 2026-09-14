@@ -2,7 +2,7 @@
   title: The eclipse clock — greatest eclipse from five ephemeris worldlines
   class: paper
   date: 2026-09-13
-  sha256: 774e6d92c8b54834f313973ce565a360112149667d52592c218f86de73892e20
+  sha256: 476e4b7fef27949e17a1be867ee94d24fbee2def9f2f998d3ee63cfcc9f7c0e2
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-finsternis-schattenortung.md
 -->
