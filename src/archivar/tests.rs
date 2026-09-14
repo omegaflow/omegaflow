@@ -4755,7 +4755,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
     }
 
     let oulu_body = match super::fetch_raw(
-        "https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0",
+        "https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0",
         None,
         &[],
         3600,
