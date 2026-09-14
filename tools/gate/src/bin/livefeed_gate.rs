@@ -126,7 +126,7 @@ fn force_type(art: &str) -> Option<&'static str> {
     let m = |xs: &[&str]| xs.iter().any(|k| a.contains(k));
     if m(&[
         "flut",
-        "überschwemmung",
+        "\u{00FC}berschwemmung",
         "hochwasser",
         "schlammlawine",
         "erdrutsch",
@@ -141,7 +141,7 @@ fn force_type(art: &str) -> Option<&'static str> {
         Some("thermodynamik")
     } else if m(&["flare", "sonnensturm", "geomagnet"]) {
         Some("elektromagnetisch")
-    } else if m(&["hitze", "kaelte", "dürre", "durre"]) {
+    } else if m(&["hitze", "kaelte", "d\u{00FC}rre", "durre"]) {
         Some("thermodynamik")
     } else {
         None
@@ -422,13 +422,13 @@ fn eonet_events(cat: &str, limit: usize) -> Vec<EonetEvent> {
         if !ctitle_l.contains(&cat_l) {
             continue;
         }
-        let title = json_key_str(chunk, "title").unwrap_or_default();
-        let date = json_key_str(chunk, "date").unwrap_or_default();
+        let title = json_key_str(chunk, "title").unwrap_or(String::new());
+        let date = json_key_str(chunk, "date").unwrap_or(String::new());
         let coords = json_array_f64(chunk, "coordinates");
         let lon = coords.first().copied();
         let lat = coords.get(1).copied();
         let mag = json_num_after(chunk, "magnitudeValue");
-        let unit = json_key_str(chunk, "magnitudeUnit").unwrap_or_default();
+        let unit = json_key_str(chunk, "magnitudeUnit").unwrap_or(String::new());
         out.push(EonetEvent {
             title,
             cat: ctitle,
@@ -570,14 +570,14 @@ fn wikidata_facts(
         if extract.is_none() || missing {
             return None;
         }
-        let t = json_key_str(page, "title").unwrap_or_else(|| fallback_title.to_string());
+        let t = json_key_str(page, "title").unwrap_or(fallback_title.to_string());
         let url = format!("https://en.wikipedia.org/wiki/{}", t.replace(' ', "_"));
         let qid = json_key_str(page, "wikibase_item");
         let structured = qid.as_deref().and_then(wikidata_claims);
         Some((
             t,
             url,
-            extract.unwrap_or_default(),
+            extract.unwrap_or(String::new()),
             json_num_after(page, "lat"),
             json_num_after(page, "lon"),
             qid,
@@ -795,7 +795,7 @@ fn run_event(e: &Event, root: &str, out: &str) {
             j,
             TAI_UTC_LEAP + TT_TAI_OFFSET
         ))
-        .unwrap_or_else(|| "pending".to_string())
+        .unwrap_or("pending".to_string())
     );
     let ort = e.ort.as_deref().unwrap_or("pending");
     println!("location            : {}", ort);
@@ -804,7 +804,7 @@ fn run_event(e: &Event, root: &str, out: &str) {
         "location (geo)      : {}",
         coord
             .map(|(lat, lon)| format!("lat {lat:.6}, lon {lon:.6}"))
-            .unwrap_or_else(|| "pending".to_string())
+            .unwrap_or("pending".to_string())
     );
     let icrs = e.icrs;
     println!(
@@ -815,7 +815,7 @@ fn run_event(e: &Event, root: &str, out: &str) {
             (ra - ra.floor()) * 60.0,
             dec
         ))
-        .unwrap_or_else(|| "pending".to_string())
+        .unwrap_or("pending".to_string())
     );
     if let (Some((la, lo)), Some(jd_utc)) = (
         coord,
@@ -996,7 +996,7 @@ fn parse_dhm_stage(body: &str, station_id: u32) -> Option<(String, Vec<(String, 
             .split("\"name\":\"")
             .nth(1)
             .map(|n| n.split('"').next().unwrap_or("").to_string())
-            .unwrap_or_default();
+            .unwrap_or(String::new());
         let ts = seg.split("\"timeSeries\":[").nth(1)?;
         let mut out = Vec::new();
         for m in ts.split(",[") {
@@ -1034,42 +1034,42 @@ fn parse_dhm_stations(body: &str) -> Vec<(String, u32, f64, f64, u32)> {
         let Some(id) = seg.split("\"id\":").nth(1) else {
             continue;
         };
-        let id: u32 = id
+        let id: u32 = match id
             .split(|c: char| !c.is_ascii_digit())
             .next()
             .unwrap_or("")
             .parse()
-            .unwrap_or(0);
-        let lat = seg
-            .split("\"latitude\":")
-            .nth(1)
-            .and_then(|s| {
-                s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
-                    .next()?
-                    .parse::<f64>()
-                    .ok()
-            })
-            .unwrap_or(0.0);
-        let lon = seg
-            .split("\"longitude\":")
-            .nth(1)
-            .and_then(|s| {
-                s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
-                    .next()?
-                    .parse::<f64>()
-                    .ok()
-            })
-            .unwrap_or(0.0);
-        let series = seg
-            .split("\"series_id\":")
-            .nth(1)
-            .and_then(|s| {
-                s.split(|c: char| !c.is_ascii_digit())
-                    .next()?
-                    .parse::<u32>()
-                    .ok()
-            })
-            .unwrap_or(0);
+        {
+            Ok(v) => v,
+            Err(_) => 0,
+        };
+        let lat = match seg.split("\"latitude\":").nth(1).and_then(|s| {
+            s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
+                .next()?
+                .parse::<f64>()
+                .ok()
+        }) {
+            Some(v) => v,
+            None => 0.0,
+        };
+        let lon = match seg.split("\"longitude\":").nth(1).and_then(|s| {
+            s.split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
+                .next()?
+                .parse::<f64>()
+                .ok()
+        }) {
+            Some(v) => v,
+            None => 0.0,
+        };
+        let series = match seg.split("\"series_id\":").nth(1).and_then(|s| {
+            s.split(|c: char| !c.is_ascii_digit())
+                .next()?
+                .parse::<u32>()
+                .ok()
+        }) {
+            Some(v) => v,
+            None => 0,
+        };
         if id != 0 {
             out.push((name, id, lat, lon, series));
         }
@@ -1174,6 +1174,17 @@ fn tiff_tag_vec(
     Ok(Some(out))
 }
 
+fn tiff_tag_first_or(
+    f: &mut std::fs::File,
+    tags: &std::collections::HashMap<u16, (u16, u32, u32)>,
+    tag: u16,
+    absent: u32,
+) -> Result<u32, String> {
+    Ok(tiff_tag_vec(f, tags, tag)?
+        .and_then(|v| v.first().copied())
+        .unwrap_or(absent))
+}
+
 fn tiff_band_window_u16(
     path: &str,
     row_off: usize,
@@ -1212,48 +1223,22 @@ fn tiff_band_window_u16(
         cur += 12;
     }
     let tags: std::collections::HashMap<u16, (u16, u32, u32)> = tags;
-    let iw = tiff_tag_vec(&mut f, &tags, 256)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as usize;
-    let ih = tiff_tag_vec(&mut f, &tags, 257)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as usize;
-    let bps = tiff_tag_vec(&mut f, &tags, 258)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as u16;
-    let comp = tiff_tag_vec(&mut f, &tags, 259)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as u16;
-    let phot = tiff_tag_vec(&mut f, &tags, 262)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as u16;
-    let predict = tiff_tag_vec(&mut f, &tags, 317)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(1);
-    let tw = tiff_tag_vec(&mut f, &tags, 322)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as usize;
-    let th = tiff_tag_vec(&mut f, &tags, 323)?
-        .unwrap_or_default()
-        .first()
-        .copied()
-        .unwrap_or(0) as usize;
-    let offs = tiff_tag_vec(&mut f, &tags, 324)?.unwrap_or_default();
-    let bcnts = tiff_tag_vec(&mut f, &tags, 325)?.unwrap_or_default();
+    let iw = tiff_tag_first_or(&mut f, &tags, 256, 0)? as usize;
+    let ih = tiff_tag_first_or(&mut f, &tags, 257, 0)? as usize;
+    let bps = tiff_tag_first_or(&mut f, &tags, 258, 0)? as u16;
+    let comp = tiff_tag_first_or(&mut f, &tags, 259, 0)? as u16;
+    let phot = tiff_tag_first_or(&mut f, &tags, 262, 0)? as u16;
+    let predict = tiff_tag_first_or(&mut f, &tags, 317, 1)?;
+    let tw = tiff_tag_first_or(&mut f, &tags, 322, 0)? as usize;
+    let th = tiff_tag_first_or(&mut f, &tags, 323, 0)? as usize;
+    let offs = match tiff_tag_vec(&mut f, &tags, 324)? {
+        Some(v) => v,
+        None => Vec::new(),
+    };
+    let bcnts = match tiff_tag_vec(&mut f, &tags, 325)? {
+        Some(v) => v,
+        None => Vec::new(),
+    };
     if bps != 15 && bps != 16 {
         return Err(format!("bits_per_sample={bps}, expected 15 or 16"));
     }
@@ -1284,7 +1269,10 @@ fn tiff_band_window_u16(
         for tx in tx0..=tx1 {
             let ci = ty * across + tx;
             let off = offs[ci] as u64;
-            let len = bcnts.get(ci).copied().unwrap_or(0) as usize;
+            let len = match bcnts.get(ci).copied() {
+                Some(v) => v as usize,
+                None => 0,
+            };
             let mut raw = vec![0u8; len];
             f.seek(SeekFrom::Start(off))
                 .map_err(|e| format!("seek {e}"))?;
@@ -1376,7 +1364,10 @@ fn cog_index_window(
     };
     let (xl, yl) = (lon - radius_deg, lat - radius_deg);
     let (xr, yr) = (lon + radius_deg, lat + radius_deg);
-    let epsg = g_a.epsg().unwrap_or(0);
+    let epsg = match g_a.epsg() {
+        Some(v) => v,
+        None => 0,
+    };
     let (p_tl, p_br) = if epsg == 4326 {
         (
             g_a.geo_to_pixel(xl, yl)
@@ -1527,11 +1518,15 @@ fn epoch_of(iso: &str) -> Option<f64> {
     if ymd.len() != 3 || hms.is_empty() {
         return None;
     }
-    let (h, mi, se) = (
-        hms.first().copied().unwrap_or(0.0),
-        hms.get(1).copied().unwrap_or(0.0),
-        hms.get(2).copied().unwrap_or(0.0),
-    );
+    let h = hms[0];
+    let mi = match hms.get(1) {
+        Some(&v) => v,
+        None => 0.0,
+    };
+    let se = match hms.get(2) {
+        Some(&v) => v,
+        None => 0.0,
+    };
     iso_epoch(ymd[0], ymd[1], ymd[2], h, mi, se)
 }
 
@@ -1566,8 +1561,21 @@ fn geo_to_icrs_km(lat_deg: f64, lon_deg: f64, jd_utc: f64) -> (f64, f64, f64) {
 fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> String {
     let mut s = String::new();
     s.push_str(&format!(
-        "<!--\n  title: Untersuchungsauftrag — {}\n  class: auftrag\n  date: 2026-08-27\n  status: pending\n  see-also: granit.md docs/\n-->\n\n# Untersuchungsorder: {}\n\nDieses Ereignis wird zur Messung übergeben. Der Nachrichtenfluss ist\nMessfluss — das Ereignis trägt dieselben Felder wie jede Messung. Fehlende\nFelder sind pending, nie erfunden.\n\n## Ereignis\n\n- titel: {}\n- meldung: {}\n\n## Gemessene Felder\n\n- quelle: {}\n- quelle-url: {}\n",
-        e.titel, e.titel, e.titel, e.meldung, if e.quelle.is_empty() { "pending" } else { &e.quelle }, if e.quelle_url.is_empty() { "pending" } else { &e.quelle_url }
+        include_str!("auftrag_header.md"),
+        e.titel,
+        e.titel,
+        e.titel,
+        e.meldung,
+        if e.quelle.is_empty() {
+            "pending"
+        } else {
+            &e.quelle
+        },
+        if e.quelle_url.is_empty() {
+            "pending"
+        } else {
+            &e.quelle_url
+        }
     ));
     s.push_str(&format!(
         "- zeit: {}\n- zeit (JD TDB): {}\n",
@@ -1576,7 +1584,7 @@ fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> 
             "{j:.6} (TT−UTC = {} s; TDB−TT sub-ms, pending)",
             TAI_UTC_LEAP + TT_TAI_OFFSET
         ))
-        .unwrap_or_else(|| "pending".to_string())
+        .unwrap_or("pending".to_string())
     ));
     let icrs = e.icrs.map(|(ra, dec)| {
         format!(
@@ -1591,7 +1599,7 @@ fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> 
         e.ort.as_deref().unwrap_or("pending"),
         e.coord
             .map(|(la, lo)| format!("lat {la:.6}, lon {lo:.6}"))
-            .unwrap_or_else(|| "pending".to_string()),
+            .unwrap_or("pending".to_string()),
         icrs.as_deref().unwrap_or("pending"),
         if e.art.is_empty() { "pending" } else { &e.art },
         kraft.as_deref().unwrap_or("pending")
@@ -1612,10 +1620,7 @@ fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> 
             s.push_str(&format!("- {claim}  <-  {src}\n"));
         }
     }
-    s.push_str(&format!(
-        "\n## Auftrag\n\n1. Prüfe die Ereignis-Aussagen gegen die gemessenen Quellen (A = A).\n2. Bringe die fehlenden Felder aus weiteren gemessenen Quellen (Datum, Ort,\n   Schaden), oder lasse sie pending.\n3. Führe die physische Kraft (force_type) gegen die Ursachenkette.\n4. Schreibe das Ergebnis zurück; 0 honored für jede Lücke.\n\n## Auftrag\n\n- name: {}\n- marker: {}\n",
-        name, name
-    ));
+    s.push_str(&format!(include_str!("auftrag_body.md"), name, name));
     s
 }
 
@@ -1698,7 +1703,10 @@ fn top_checklist(e: &Event) {
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    let root = env::var("OMEGAFLOW_ROOT").unwrap_or_else(|_| ".".to_string());
+    let root = match env::var("OMEGAFLOW_ROOT") {
+        Ok(v) => v,
+        Err(_) => ".".to_string(),
+    };
 
     if let Some(i) = args.iter().position(|a| a == "--verify") {
         if let Some(u) = args.get(i + 1) {
@@ -1837,11 +1845,10 @@ fn main() {
     }
 
     if let Some(i) = args.iter().position(|a| a == "--dhm") {
-        let id: u32 = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0);
-        if id == 0 {
+        let Some(id) = args.get(i + 1).and_then(|s| s.parse::<u32>().ok()) else {
             eprintln!("--dhm <station_id> — z. B. 4913 (Bhotekoshi at Rasuwagadi)");
             return;
-        }
+        };
         let url = "https://www.dhm.gov.np/hydrology/river-watch";
         match curl(url) {
             Some(body) => match parse_dhm_stage(&body, id) {
@@ -1857,8 +1864,11 @@ fn main() {
                     }
                     let csv = format!("dhm_{id}_stage.csv");
                     std::fs::write(&csv, lines.join("\n")).ok();
-                    let first = rows.first().map(|(d, _)| d.clone()).unwrap_or_default();
-                    let last = rows.last().map(|(d, _)| d.clone()).unwrap_or_default();
+                    let first = rows
+                        .first()
+                        .map(|(d, _)| d.clone())
+                        .unwrap_or(String::new());
+                    let last = rows.last().map(|(d, _)| d.clone()).unwrap_or(String::new());
                     println!("=== DHM Pegel (open, keyless) ===");
                     println!("station: {name} (id {id}) | punkte: {n} | 10-min");
                     println!("range: {first} .. {last} (UTC)");
@@ -1873,19 +1883,19 @@ fn main() {
     }
 
     if let Some(i) = args.iter().position(|a| a == "--dahiti") {
-        let id = args.get(i + 1).cloned().unwrap_or_default();
+        let id = args.get(i + 1).cloned().unwrap_or(String::new());
         let key = args
             .iter()
             .position(|a| a == "--api-key")
             .and_then(|j| args.get(j + 1).cloned())
             .or_else(|| std::env::var("DAHITI_API_KEY").ok())
             .or_else(|| secret_local("DAHITI_API_KEY"))
-            .unwrap_or_default();
+            .unwrap_or(String::new());
         let fmt = args
             .iter()
             .position(|a| a == "--dahiti-format")
             .and_then(|j| args.get(j + 1).cloned())
-            .unwrap_or_else(|| "json".to_string());
+            .unwrap_or("json".to_string());
         if id.is_empty() || key.is_empty() {
             eprintln!("--dahiti <dahiti_id> needs --api-key <key> (or env DAHITI_API_KEY)");
             eprintln!("Key: https://dahiti.dgfi.tum.de/en/register/ — free, retrievable");
@@ -1912,8 +1922,11 @@ fn main() {
                         min = min.min(*wse);
                         max = max.max(*wse);
                     }
-                    let first = rows.first().map(|(d, _)| d.clone()).unwrap_or_default();
-                    let last = rows.last().map(|(d, _)| d.clone()).unwrap_or_default();
+                    let first = rows
+                        .first()
+                        .map(|(d, _)| d.clone())
+                        .unwrap_or(String::new());
+                    let last = rows.last().map(|(d, _)| d.clone()).unwrap_or(String::new());
                     let csv = format!("wse_{id}.csv");
                     std::fs::write(&csv, lines.join("\n")).ok();
                     println!("=== DAHITI water level (altimetry) ===");
@@ -2056,7 +2069,7 @@ fn main() {
         }
     } else if let Some(u) = &url_mode {
         if let Some(html) = curl(u) {
-            input = extract_title(&html).unwrap_or_else(|| "pending".to_string());
+            input = extract_title(&html).unwrap_or("pending".to_string());
             if title.is_empty() {
                 title = input.clone();
             }
@@ -2073,7 +2086,10 @@ fn main() {
         }
     }
 
-    let mut e = parse_event(&args).unwrap_or_else(Event::new);
+    let mut e = match parse_event(&args) {
+        Some(e) => e,
+        None => Event::new(),
+    };
 
     if let Some(term) = &wikidata {
         if let Some((t, url, extract, lat, lon, qid, structured)) = wikidata_facts(term) {
@@ -2263,10 +2279,7 @@ mod tests {
 
     #[test]
     fn force_type_of_flut() {
-        assert_eq!(
-            force_type("Sturzflut und Schlammlawine"),
-            Some("gravitation")
-        );
+        assert_eq!(force_type("Sturzflut, Schlammlawine"), Some("gravitation"));
         assert_eq!(force_type("Erdbeben"), Some("elastizitaet"));
         assert_eq!(force_type("Orkan"), Some("aerodynamik"));
         assert_eq!(force_type("Sonnenflares"), Some("elektromagnetisch"));
@@ -2358,7 +2371,7 @@ mod tests {
 
     #[test]
     fn numbers_extracted_with_units() {
-        let n = numbers_in("177 Tote in Nepal und 3 in China");
+        let n = numbers_in("177 Tote in Nepal, 3 in China");
         assert!(n.iter().any(|x| x.starts_with("177 ")));
         assert!(n.iter().any(|x| x.starts_with("3 ")));
     }
