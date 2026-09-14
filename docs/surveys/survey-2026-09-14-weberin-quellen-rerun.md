@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 0f9de1e425e3086bfdecd74558ae371c3803ab1152a88c4fed14a838dfbd7c07
+  sha256: d126ff4cc905f69b9cc131ac4bb4d4daf77855940744384c1e46f839c6560f79
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
@@ -117,3 +117,42 @@ maschinenlesbarer Weg nach abgeschlossener Suche.
 - **Harte Reste:** HAWC-TLS-Kette (10.1/10.2) · GIC kontinuierlich + Stationskoordinaten · TA-Vollkatalog · Fink/ALeRCE-Persistenz.
 
 Kein Wert ist fabriziert; jeder ungemessene Punkt bleibt `pending`.
+
+## Batch-Re-Run durch den Godmode (`--all`, 2026-09-14)
+
+Die zwei früheren Such-Batches (die „Wand-Party" und „ehrlich benannt") wurden als
+Rezepte rekonstruiert und je Subject durch den neuen Godmode `archive_search --all`
+gefahren (eine Query durch alle 13 Modi: openalex, arxiv, crossref, ads, ntrs, wiki,
+github, crates, librs, brave, datacite, zenodo, wayback).
+
+### Batch 2 — „Wand-Party" (commercial/redistribution-Declines, 10)
+
+| Subject | offene Route |
+|---|---|
+| Scopus | `dev.elsevier.com` (freier Non-Commercial-Key) |
+| Dimensions | `dimensions.ai/metricssignup` |
+| MarineTraffic/Kpler | `marinecadastre.gov/accessais` (CC0) |
+| Google Dataset Search | **keine offene Route** (ABSENT) |
+| BOM SWS | `sws-data.sws.bom.gov.au/register` (freier Key) |
+| OpenTopography | `opentopography.org/developers` (Academic-Key) |
+| Semantic Scholar | Apify-Scraper (keyless Felder) |
+| ThingSpeak | `mathworks.com/help/thingspeak/readdata` (öffentliche Channels) |
+| Earth Networks | NOAA-Blitz-Detektion (GLM-Route) |
+| IAEA WISER | `iaea.org/services/networks/gnip` (GNIP public domain) |
+
+### Batch 1 — „ehrlich benannt" (Sonden-Rohdaten/Paywall/gated, 13)
+
+| Subject | offene Route |
+|---|---|
+| Voyager ODF | `pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS` |
+| New Horizons REX | `pdssbn.astro.umd.edu/…/pds4-nh_documents:rex-v2.0` |
+| Galileo RSS | `pds-ppi.igpp.ucla.edu/archive1/GOMW_5002/…/RSS.PDF` |
+| LISA Pathfinder | `lpf.esac.esa.int/lpfsa` (Science Archive) |
+| GRACE-FO | `podaac.jpl.nasa.gov/dataset/GRACEFO_L1B_ASCII_GRAV_JPL_RL04` |
+| SuperMAG | `supermag.jhuapl.edu/mag` |
+| AMS-02 | `heasarc.gsfc.nasa.gov/W3Browse/ams-02/ams02spec.html` |
+| Woo/Armstrong 1979 | Semantic-Scholar-Paper |
+| JPL/DSN ODF · Juno EDR · Super-K · Telescope Array · CSES | Doku-/Info-Routen (kein offener Roh-Daten-Endpoint) |
+
+**Kernbefund:** fast jede „Mauer" war keine; nur **Google Dataset Search** ist ehrlich
+ABSENT — die DSN/JPL-ODF und die Paywall-Volltexte bleiben echte Absenzen.
