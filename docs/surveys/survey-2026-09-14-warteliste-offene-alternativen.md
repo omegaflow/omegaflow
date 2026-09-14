@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: f2188370d0225a20268fcf50bd44186eefc1d92ae494a441e64acd6d8197bc86
+  sha256: 34ff7ec903e53e7bf25245cbd35d30ab2bd9277e0247054fc6dc2128d57bae49
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -13,6 +13,21 @@ Proton-VPNs, Brave-Suche, Playwright) haben für die extern gebundenen
 Wartepunkte (Handover `entscheid-folge6`, §Warten auf Rückmeldung) offene
 Datenquellen gesucht und gemessen (curl HTTP-Code, 2026-09-14). Ziel: das
 Warten hinfällig machen. Kein Befund — die gemessenen Routen und ihr Verdikt.
+
+## Schon lokal gedeckt (`.secrets.local`, Repo-Root, gitignored)
+
+Ein Taucher, der `.secrets.local` nicht liest, misst 403 und hält den Punkt
+fälschlich für offen. Die folgenden Wartepunkte tragen ihren Schlüssel bereits
+lokal — der Zugang existiert, es ist kein Warten.
+
+| Warte | lokaler Schlüssel | gebaute Route |
+|---|---|---|
+| DAHITI (volle Serie) | `DAHITI_API_KEY` | `livefeed_gate --dahiti <id> --api-key <key>` liest `.secrets.local` (`secret_local`, `tools/gate/src/bin/livefeed_gate.rs:223`); `docs/specs/livefeed-gate.md:111` |
+| ICIMOD RDS | `ICIMOD_USERNAME` / `ICIMOD_PASSWORD` / `ICIMOD_KNOX_TOKEN` | Zugang lokal |
+| CSES-Limadou | `SSDC_USER` / `SSDC_PASS` (ASI SSDC) | Zugang lokal |
+| Lasair / Rubin-Alerts | `LASAIR_TOKEN` / `LASAIR_LSST_TOKEN` | Zugang lokal |
+| NASA ADS | `NASA_ADS_TOKEN` | `archive_search --ads` |
+| Zenodo | `ZENODO_TOKEN` | `archive_search --zenodo` |
 
 ## Hinfällig gemacht (offene Route gemessen, anonym)
 
@@ -34,7 +49,6 @@ Warten hinfällig machen. Kein Befund — die gemessenen Routen und ihr Verdikt.
 | Warte | gemessene Teilroute | was fehlt |
 |---|---|---|
 | Voyager Roh-Doppler | PDS-Rings `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/` — rohe **ODR** (Open-Loop, Okkultation): VG1 Jupiter, VG2 Jupiter, VG2 Uranus/PODR, anonym | closed-loop DSN-Doppler ODF/TRK-2-34/TNF — nur Cassini/Maven/DART tragen TRK-2-34-Bundles, nicht Voyager |
-| DAHITI | Zenodo `records/17928117` (Fluss-WSE), `records/21291632` (Aserbaidschan-Pegel) — cc-by-4.0, anonym | die volle DAHITI-Serie bleibt hinter `api_key` (`dahiti.dgfi.tum.de/api/v2/...` 403) |
 | NSE/Haug | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-garching.de/record/2120` | die rohen/reduzierten TRISP-NSE-Dateien bleiben bei MPI-FKF (kein ILL/MLZ/MPG-DOI) |
 
 ## Bleibt offen (keine offene Route gemessen)
@@ -42,9 +56,7 @@ Warten hinfällig machen. Kein Befund — die gemessenen Routen und ihr Verdikt.
 | Warte | Befund | nächster Schritt |
 |---|---|---|
 | Voyager Roh-Doppler (closed-loop) | kein öffentliches ODF/TRK-2-34 für Voyager gemessen | JPL/DSN-Anfrage hält (nur für closed-loop) |
-| CSES-Limadou | kein anonymer Pfad; `cses.space` 000, CDPP-Archiv nur DEMETER + Registrierung | ASI SSDC `limadou.ssdc.asi.it` selbst registrieren (keine CN-Mobilnummer nötig) |
 | NSE/Haug (Rohdaten) | kein maschinenlesbares Deposit (2010 vor Open-Data-Politik) | Diss.-Volltext `impulse.mlz-garching.de/record/2120` holen / Fig. 5b digitalisieren |
-| DAHITI (volle Serie) | `dahiti.dgfi.tum.de` API 403 ohne `api_key` | Registrierung oder Per-Station-DOI |
 
 ## Register-Disposition
 
