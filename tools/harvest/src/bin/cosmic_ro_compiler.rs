@@ -1,12 +1,13 @@
-use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::cdn::upload_release;
 use omegaflow::geo::{
-    COMP_COSMIC_PRES, COMP_COSMIC_REFRACT, COMP_COSMIC_TEMP, GeoRec, MAGIC_COSMIC, parse_bin,
-    write_bin,
+    parse_bin, write_bin, GeoRec, COMP_COSMIC_PRES, COMP_COSMIC_REFRACT, COMP_COSMIC_TEMP,
+    MAGIC_COSMIC,
 };
-use omegaflow::hdf5::{Hdf5File, decode_f32, decode_f64};
+use omegaflow::hdf5::{decode_f32, decode_f64, Hdf5File};
 use omegaflow::inflate::gunzip;
-use omegaflow::netcdf::{NetcdfFile, NetcdfFormat, NetcdfType, directory_links, nc4_group};
+use omegaflow::lsk::LeapSeconds;
+use omegaflow::netcdf::{directory_links, nc4_group, NetcdfFile, NetcdfFormat, NetcdfType};
 
 const NETLOC: &str = "data.cosmic.ucar.edu";
 const ROOT: &str = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt";
@@ -112,7 +113,11 @@ fn tar_octal(field: &[u8]) -> Option<usize> {
         v = v * 8 + (b - b'0') as usize;
         any = true;
     }
-    if any { Some(v) } else { None }
+    if any {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn tar_name(header: &[u8]) -> String {
@@ -202,7 +207,11 @@ fn apply_scale(
                 Some(b) => s + b,
                 None => s,
             };
-            if y.is_finite() { y } else { f64::NAN }
+            if y.is_finite() {
+                y
+            } else {
+                f64::NAN
+            }
         })
         .collect()
 }
@@ -474,7 +483,13 @@ fn probe_granule(bytes: &[u8], name: &str) {
     eprintln!("{name}: unknown byte stream — neither CDF nor HDF5");
 }
 
-fn harvest_granule(bytes: &[u8], name: &str, comp: u32, var_names: &[&str]) -> Vec<GeoRec> {
+fn harvest_granule(
+    bytes: &[u8],
+    name: &str,
+    comp: u32,
+    var_names: &[&str],
+    lsk: &LeapSeconds,
+) -> Vec<GeoRec> {
     let (lat, lon, alt, val) = if bytes.starts_with(b"CDF") {
         let Ok(nc) = NetcdfFile::parse(bytes) else {
             return Vec::new();
@@ -502,7 +517,10 @@ fn harvest_granule(bytes: &[u8], name: &str, comp: u32, var_names: &[&str]) -> V
     } else {
         return Vec::new();
     };
-    let (Some(lat), Some(lon), Some(t)) = (lat, lon, granule_time(name)) else {
+    let (Some(lat), Some(lon), Some(t_unix)) = (lat, lon, granule_time(name)) else {
+        return Vec::new();
+    };
+    let Some(t) = lsk.unix_to_tdb(t_unix) else {
         return Vec::new();
     };
     if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) || !t.is_finite() {
@@ -567,11 +585,14 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let max = arg_usize(args, "--max-granules");
+    let Some(lsk) = embedded_lsk() else {
+        return Err("naif0012 table void — the TDB epoch stays void (no fabricated epoch)".into());
+    };
 
     let mut records: Vec<GeoRec> = Vec::new();
     if let Some(path) = arg_value(args, "--granule") {
         let bytes = std::fs::read(&path).map_err(|e| format!("read {path} returned void: {e}"))?;
-        records = harvest_granule(&bytes, &path, comp, &var_names);
+        records = harvest_granule(&bytes, &path, comp, &var_names, &lsk);
     } else if let Some(tarball) = arg_value(args, "--tarball") {
         let tar = load_tar(&tarball)?;
         let members = tar_members(&tar);
@@ -586,7 +607,7 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
                 }
             }
             read += 1;
-            let recs = harvest_granule(&tar[m.start..m.end], &m.name, comp, &var_names);
+            let recs = harvest_granule(&tar[m.start..m.end], &m.name, comp, &var_names, &lsk);
             if recs.is_empty() {
                 eprintln!("{tarball}: {} carries no {var} level rows", m.name);
             } else {
@@ -729,6 +750,25 @@ mod tests {
         let day0 = omegaflow::lsk::days_from_civil(2026, 1, 1).unwrap() as f64 * 86400.0;
         assert!((t - (day0 + 250.0 * 86400.0 + 3210.0)).abs() < 1e-6);
         assert_eq!(granule_time("not_a_granule.txt"), None);
+    }
+
+    #[test]
+    fn granule_unix_binds_through_the_leap_second_table() {
+        let lsk = embedded_lsk().expect("embedded naif0012 parses");
+        let t_unix = granule_time("atmPrf_C2E1.2026.251.00.02.G06_2026.3210_nc").unwrap();
+        let tdb = lsk
+            .unix_to_tdb(t_unix)
+            .expect("a 2026 occultation carries a TDB epoch");
+        let j2000 = 946728000.0f64;
+        assert!(tdb.is_finite());
+        assert!(
+            tdb > t_unix - j2000 - 1.0 && tdb < t_unix - j2000 + 100.0,
+            "the occultation TDB lands in the J2000 domain, was {tdb}"
+        );
+        assert!(
+            lsk.unix_to_tdb(-40_000_000.0).is_none(),
+            "pre-1972 the leap table reads void — no fabricated epoch"
+        );
     }
 
     #[test]

@@ -7,6 +7,10 @@ pending
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
 note Pioneer-10 ATDF Sky-Frequency (S-Band-Doppler ~2,3 GHz). Asset liegt auf dem CDN (release spdf.gsfc.nasa.gov, pioneer-atdf-cdn.yml); der atdf-Parser existiert (src/archivar/atdf.rs: reduce_skyfreq, parse_skyfreq_bin — 14-Feld-Records). Konsumenten: ausschließlich measure-Probes (pioneer_link_correction_probe, pioneer_doppler_moyer, pioneer_drift_te_probe, pioneer_atdf_residuum, pioneer_residue_diagnose, pioneer_odp), die data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin direkt als lokalen Mess-Datensatz lesen. Kein Membran-Konsument (kein ω()/main_flow-Feld-Evaluator greift die Serie) — die 14-Feld-Doppler-Serie ist kein Skalar-Feld-Oszillator (0-Kanon: eine 14-Feld-Serie trägt keinen ehrlichen field-Block). pending (Tor 1: kein gebauter Membran-Konsument).
 
+pending
+url https://hub.marinecadastre.gov/pages/vesseltraffic
+note NOAA MarineCadastre AIS-vessel-traffic-Archiv (CC0, historisch). Messung echt: AIS-Telemetrie je Vessel (lat/lon, SOG, COG, Zeit) — advective/em, analog zum akzeptierten ADS-B-Oszillator (api.adsb.lol). Nur das historische CC0-Archiv ist offen (Live-NAIS-Feed ausgeschlossen — MarineTraffic/Kpler decline commercial, dead_sources.φ); statisches Archiv, kein Live-ω()-Feld. Kein Konsument im Haus (keine Nadel frißt marine Vessel-Tracks). Tor 1: kein gebauter Konsument → pending, kein sources.φ-Block.
+
 blocked key
 url https://aqs.epa.gov/data/api/dailyData/byBox?email=
 note AQS Data Mart API — Schadstoff-Konzentration (diffusion), Messung echt; braucht email + api_key (frei registrierbar). Der 400 war ein Browser-Historien-Fragment ohne email/key, kein toter Endpoint. Party-Messung 2026-09-14: AQS selbst key-pflichtig; keylose Alternativen gemessen — OpenAQ-S3-Bulk (openaq.org/developers) + Apify epa-aqs-scraper (kein Key).
@@ -32,6 +36,10 @@ note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Da
 pending
 url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
 note COSMIC-2 FORMOSAT-7 (NRT): GEBAUT (2026-09-13) — Verzeichnis-Index-Enumeration (netcdf.rs `html_hrefs`/`netcdf_granule_urls`, nginx-HTML + JSON-Array) und netCDF-4-Profil-Lesen über hdf5.rs (Shared-Message/Committed-Datatype); netCDF-3-Profil-Lesen lag vor (NetcdfFile). Gemessen: level3/ führt nur Ionosphären-Szintillation (bub/alc JSON), level2/2026/251/ trägt die RO-Profile als Tages-Tarballs (atmPrf 2 070 847 616 B, bfrPrf 10 982 090 B); ein echtes COSMIC-1-wetPrf-Granulat (netCDF-3 CDF\x01, MSL_alt/Temp/Pres, 15 180 B) gelesen. Die RO-Granulate liegen nicht als einzelne .nc-Dateien, sondern in .tar.gz. Offen: Tarball-Entpackung zur Einzel-Granulat-Enumeration, Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Brechungsindex/Bending-Angle-Profile, em) echt.
+
+pending
+url https://data.mendeley.com/datasets/75tsccprd2/1
+note GNIP (Global Network of Isotopes in Precipitation) via Mendeley-Dataset 75tsccprd2 (1961–2023, CC0) + waterisotopesDB.org. Messung echt: δ18O/δ2H (‰, diffusion water-chemistry) des Niederschlags an Stationen mit lat/lon/Datum. Historischer Stationsdatensatz, kein Live-ω()-Feld; kein Konsument im Haus (keine Nadel frißt Niederschlags-Isotope). WISER-Route bleibt decline redistribution (SSO-gated, dead_sources.φ). Tor 1: kein gebauter Konsument → pending, kein sources.φ-Block.
 
 pending
 url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
@@ -112,7 +120,7 @@ note GK2A AMI L1B: Navigation GEBAUT (2026-09-13) — hdf5.rs liest projection_t
 
 pending
 url s3://noaa-goes16
-note GOES-16 ABI L1b: Compiler GEBAUT (2026-09-14) — goes_abi_compiler.rs liest Rad [3000,5000] int16 (scale_factor 0,8121064, add_offset −25,936647, _Unsigned) → Radianz W m-2 sr-1 um-1 (gemessen: Band 1 0,4700 µm, mean 8,72, max 217,7, 14 811 327 von 15 000 000 Pixeln gültig), plus DQF, esun, kappa0, band_id, band_wavelength, t (J2000 s), goes_imager_projection; emittiert einen 56-B-Record je Granule + goes-cdn.yml. GSICS-Interkalibrierung pending (Koeffizienten nicht im Granule, kein verifizierter Endpoint) — der Record trägt CALIB_GSICS_PENDING = 1.
+note GOES-16 ABI L1b: Compiler GEBAUT (2026-09-14) — goes_abi_compiler.rs liest Rad [3000,5000] int16 (scale_factor 0,8121064, add_offset −25,936647, _Unsigned) → Radianz W m-2 sr-1 um-1 (gemessen: Band 1 0,4700 µm, mean 8,72, max 217,7, 14 811 327 von 15 000 000 Pixeln gültig), plus DQF, esun, kappa0, band_id, band_wavelength, t (J2000 s), goes_imager_projection; emittiert einen 56-B-Record je Granule + goes-cdn.yml. GSICS-Interkalibrierung pending (Koeffizienten nicht im Granule, kein verifizierter Endpoint) — der Record trägt CALIB_GSICS_PENDING = 1. GLM-L2-LCFA (Blitz, em J, netCDF) ist das Sibling-Produkt im selben Bucket — Bolides-Teilmenge bereits integriert (sources.φ glm_bolide_radiant_energy_j); ein GLM-Compiler wäre das Sibling zu goes_abi_compiler. Kein Nadel-Konsument (Tor 1) → pending.
 
 pending
 url s3://noaa-himawari8
