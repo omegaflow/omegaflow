@@ -3,7 +3,7 @@
   class: paper
   date: 2026-08-21
   version: 4
-  sha256: 03f77dd871b1b9cd8feeeb5d1904f67ab7f6691bc1023dd73ed73f249feafc07
+  sha256: 9ccd8d4dd52d963315522fb61f7ef6ee3c67da1f354fab6fec05490842712194
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md
 -->

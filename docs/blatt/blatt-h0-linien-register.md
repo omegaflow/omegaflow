@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-09
-  sha256: ec72dd36b2d67599ae32e83d0e12317cbcc5c59bc7529126ae25fbb01a143b26
+  sha256: 3409a03e835b952aa1d411bf138a12ce058fc85f7e255a1f6ce41c525ac38193
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
