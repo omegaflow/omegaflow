@@ -1,11 +1,13 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64,
+    decode_f32, decode_f64, Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
 
 const CDN_TAG: &str = "noaa-goes16.s3.amazonaws.com";
+const GSICS_DEFAULT_URL: &str =
+    "https://www.star.nesdis.noaa.gov/GOESCal/images/GSICS/GSICS_Harmonization_release_May2025_current.txt";
 const MAGIC: [u8; 4] = *b"GAB1";
 const VERSION: u8 = 1;
 const HDR_LEN: usize = 12;
@@ -13,6 +15,8 @@ const REC_BYTES: usize = 56;
 const CALIB_L1B: u8 = 0;
 const CALIB_GSICS_PENDING: u8 = 1;
 const CALIB_GSICS: u8 = 2;
+
+type GsicsTable = [Option<(f64, f64)>; 16];
 
 #[derive(Clone, Debug)]
 struct Granule {
@@ -225,9 +229,65 @@ fn harmonization_coeff(file: &Hdf5File, name: &str) -> Option<f64> {
 }
 
 fn gsics_slope_offset(file: &Hdf5File) -> Option<(f64, f64)> {
-    let slope = harmonization_coeff(file, "a_h_NRTH")?;
-    let offset = harmonization_coeff(file, "b_h_NRTH")?;
+    let offset = harmonization_coeff(file, "a_h_NRTH")?;
+    let slope = harmonization_coeff(file, "b_h_NRTH")?;
     Some((slope, offset))
+}
+
+fn gsics_lookup(table: &GsicsTable, band_id: u8) -> Option<(f64, f64)> {
+    if band_id == 0 {
+        return None;
+    }
+    table.get((band_id as usize) - 1).copied().flatten()
+}
+
+fn parse_gsics_txt(text: &str) -> GsicsTable {
+    let mut table: GsicsTable = [None; 16];
+    let mut goes16_first = false;
+    for line in text.lines() {
+        if !goes16_first {
+            if let (Some(i16), Some(i18)) = (line.find("GOES-16"), line.find("GOES-18")) {
+                if i16 < i18 {
+                    goes16_first = true;
+                } else {
+                    return table;
+                }
+            }
+            continue;
+        }
+        let cols: Vec<&str> = line.split('\t').map(|c| c.trim()).collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let Ok(channel) = cols[0].parse::<usize>() else {
+            continue;
+        };
+        if channel < 1 || channel > 16 {
+            continue;
+        }
+        let Some(offset) = cols[1].parse::<f64>().ok().filter(|v| v.is_finite()) else {
+            continue;
+        };
+        let Some(slope) = cols[2].parse::<f64>().ok().filter(|v| v.is_finite()) else {
+            continue;
+        };
+        table[channel - 1] = Some((slope, offset));
+    }
+    table
+}
+
+fn read_gsics_source(src: &str) -> Option<String> {
+    if src.starts_with("http://") || src.starts_with("https://") {
+        curl_bytes(src).and_then(|b| String::from_utf8(b).ok())
+    } else {
+        match std::fs::read_to_string(src) {
+            Ok(s) => Some(s),
+            Err(e) => {
+                eprintln!("{src}: read void: {e}");
+                None
+            }
+        }
+    }
 }
 
 fn stats_of(
@@ -276,7 +336,7 @@ fn stats_of(
     (sum, sumsq, min, max, valid)
 }
 
-fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
+fn parse_granule(bytes: &[u8], gsics: Option<&GsicsTable>) -> Result<Granule, String> {
     let file = Hdf5File::parse(bytes).map_err(|n| format!("hdf5 parse: {n:?}"))?;
     let (rad_obj, ds, dt) = file
         .dataset("Rad")
@@ -320,7 +380,9 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
     let mut std = if variance > 0.0 { variance.sqrt() } else { 0.0 };
     let mut min = min;
     let mut max = max;
-    let calib = match gsics_slope_offset(&file) {
+    let band_id = scalar_u8(&file, "band_id").ok_or_else(|| "band_id absent".to_string())?;
+    let external = gsics.and_then(|t| gsics_lookup(t, band_id));
+    let calib = match external.or_else(|| gsics_slope_offset(&file)) {
         Some((slope, offset)) => {
             mean = slope * mean + offset;
             std = slope.abs() * std;
@@ -334,7 +396,6 @@ fn parse_granule(bytes: &[u8]) -> Result<Granule, String> {
         None => CALIB_GSICS_PENDING,
     };
     let t = scalar_f64(&file, "t").ok_or_else(|| "t absent or void".to_string())?;
-    let band_id = scalar_u8(&file, "band_id").ok_or_else(|| "band_id absent".to_string())?;
     let band_wavelength = scalar_f64(&file, "band_wavelength")
         .ok_or_else(|| "band_wavelength absent or void".to_string())?
         as f32;
@@ -466,6 +527,7 @@ fn main() {
     };
     let input = arg_value(&args, "--input");
     let url = arg_value(&args, "--url");
+    let gsics_src = arg_value(&args, "--gsics");
     let bytes = match (input, url) {
         (Some(path), _) => match std::fs::read(&path) {
             Ok(b) => b,
@@ -483,18 +545,30 @@ fn main() {
         },
         (None, None) => {
             eprintln!(
-                "usage: goes_abi_compiler (--input <granule.nc> | --url <https url>) --out <goes_abi_rad.bin> [--ci-mode]"
+                "usage: goes_abi_compiler (--input <granule.nc> | --url <https url>) --out <goes_abi_rad.bin> [--ci-mode] [--gsics <txt url-or-file>]"
             );
             std::process::exit(1);
         }
     };
-    let granule = match parse_granule(&bytes) {
+    let gsics_text = match gsics_src {
+        Some(src) => read_gsics_source(&src),
+        None if ci_mode => curl_bytes(GSICS_DEFAULT_URL).and_then(|b| String::from_utf8(b).ok()),
+        None => None,
+    };
+    let gsics_table = gsics_text.as_deref().map(parse_gsics_txt);
+    let granule = match parse_granule(&bytes, gsics_table.as_ref()) {
         Ok(g) => g,
         Err(e) => {
             eprintln!("goes_abi_compiler: {e}");
             std::process::exit(1);
         }
     };
+    if gsics_text.is_some() && granule.calib == CALIB_GSICS_PENDING {
+        eprintln!(
+            "gsics: band {} has no GOES-16 coefficient in the txt — calib stays gsics-pending",
+            granule.band_id
+        );
+    }
     eprintln!(
         "granule: band {} wavelength {:.4} um t {:.1} (J2000 s) sub_lon {:.2} deg persp_h {:.0} m calib {}",
         granule.band_id,
@@ -632,6 +706,19 @@ mod tests {
     }
 
     #[test]
+    fn parse_gsics_txt_reads_goes16_slope_offset() {
+        let text = "GOES-16\t\tGOES-18\t\tGOES-19\n\
+Channel\tA\t B \tA\t B \tA\t B\n\
+1\t0.0000\t0.9078\t0.0000\t0.9765\t0.0000\t1.0230\n\
+16\t-0.2504\t1.0000\t0.2135\t1.0000\t-0.9346\t1.0000\n";
+        let table = parse_gsics_txt(text);
+        assert_eq!(gsics_lookup(&table, 1), Some((0.9078, 0.0)));
+        assert_eq!(gsics_lookup(&table, 16), Some((1.0000, -0.2504)));
+        assert_eq!(gsics_lookup(&table, 17), None);
+        assert_eq!(gsics_lookup(&table, 0), None);
+    }
+
+    #[test]
     fn real_goes16_abi_granule_compiles() {
         let path = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
         if !std::path::Path::new(path).exists() {
@@ -641,7 +728,7 @@ mod tests {
             return;
         }
         let bytes = std::fs::read(path).expect("fixture read");
-        let g = parse_granule(&bytes).expect("granule parses");
+        let g = parse_granule(&bytes, None).expect("granule parses");
         assert_eq!(g.band_id, 1);
         assert!(g.total == 15_000_000);
         assert!(g.valid > 0 && g.valid <= g.total);
