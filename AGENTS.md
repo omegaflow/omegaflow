@@ -186,7 +186,7 @@ workflow procedure, reference map and path map. Work surface: `phi/pipeline/`
 (`queue/master.φ` the one master file + `queue/grind_*` drafts, `stage/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
-`phi/dead_sources.φ`. Harvested data that stays belongs on the local machine in `data/` (final
+`phi/dead_sources.φ` + `phi/declined_sources.φ`. Harvested data that stays belongs on the local machine in `data/` (final
 datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
 `cache/`; its durable home is the CDN asset registered as a `url`-line in
 `phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
