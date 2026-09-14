@@ -3272,3 +3272,35 @@ decline metadata-portal
 url https://orfeus-eu.org/submachine/
 note SubMachine/ORFEUS-Portal (HTTP 200, Beta): Web-Oberflaeche zum Erkunden/Visualisieren/Herunterladen von 3D-Tomographie-Modellen, kein direkter Grid-Download-Endpoint (gemessen 2026-09-13); die Modell-Inhalte selbst sind als format reference in sources.φ registriert (EMC-NetCDF + tom-new-Mirror) — das Portal traegt keine eigene Messwert-Route.
 
+
+decline presence-catalog
+url https://datasetsearch.research.google.com/
+note Weberin-Re-Run 2026-09-14: Google Dataset Search — kein offener maschinenlesbarer Weg (Client-SPA, schema.org-Crawl, bezahlte Dritt-Scraper). ABSENT.
+
+decline no-measurement
+url https://data.superdarn.ca/
+note Weberin-Re-Run 2026-09-14: DNS-tot (not-published), ersetzt durch superdarn.ca/frdr.
+
+decline presence-catalog
+url https://gsaweb.ast.cam.ac.uk/alerts
+note Weberin-Re-Run 2026-09-14: Gaia Alerts HTML-Portal (kein maschinenlesbarer Kanal).
+
+decline no-measurement
+url https://polarwatch.noaa.gov/erddap/index.json
+note Weberin-Re-Run 2026-09-14: kein BGC-Argo-Kanal (0 Argo-Treffer).
+
+decline no-measurement
+url https://vdec.ctbto.org/
+note Weberin-Re-Run 2026-09-14: 404 (not-published); Rohwellenform bleibt account (vDEC).
+
+decline position-only
+url https://www-sk.icrr.u-tokyo.ac.jp/sk/lowe/
+note Weberin-Re-Run 2026-09-14: Super-K Solar-ν-Rate, kein S²-Katalog (position-only).
+
+decline literature
+url https://essd.copernicus.org/articles/14/4201/2022/
+note Weberin-Re-Run 2026-09-14: Belegpaper (BGR-Infraschall), keine Datenquelle.
+
+decline literature
+url https://www.mathworks.com/help/thingspeak/readdata.html
+note Weberin-Re-Run 2026-09-14: ThingSpeak-Doku (die Datenroute ist api.thingspeak.com, öffentliche Channels).
