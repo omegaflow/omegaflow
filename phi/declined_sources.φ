@@ -3216,6 +3216,10 @@ decline no-physical-force
 url https://www.worldpop.org/rest/data/pop/wpgp
 note Bevölkerungsgrid — abgeleitetes Raster.
 
+decline model
+url https://www.worldpop.org/rest/data/pop/wpgp?iso3=BRA,CHN,IND,USA,NGA,IDN,PAK&year=2024&format=json
+note WorldPop = Modell/Populationsschätzung, kein Live-Feed (wpgp 500, /rest/data/pop 200).
+
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
 note MBARI LOBO-Datenroute ohne öffentlichen Zugang (403 lokal/corsproxy/Browser, 2026-08-19); die Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) fließen in CeNCOOS (data.cencoos.org, ERDDAP, 200) — der IOOS-Regionalverbund ist der Port-Kanal (→ queue grind_cencoos.φ). Die Tiefsee-/AUV-/ROV-Daten liegen in STOQS (stoqs.mbari.org, REST-API je Kampagne, 200 lokal 2026-08-19 — der frühere 000 war ein Timeout des langsamen Servers, kein Block) → queue grind_stoqs.φ. Verschoben aus blocked_sources.φ 2026-08-19.
