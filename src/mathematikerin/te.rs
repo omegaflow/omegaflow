@@ -1160,7 +1160,11 @@ fn normal_cdf(x: f64) -> f64 {
     let poly = t
         * (0.319381530
             + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    if x >= 0.0 { 1.0 - d * poly } else { d * poly }
+    if x >= 0.0 {
+        1.0 - d * poly
+    } else {
+        d * poly
+    }
 }
 
 pub struct CausalLink {
@@ -3106,6 +3110,11 @@ mod tests {
     }
 
     #[test]
+    fn gate_fpr_autocorrelation_residual_null_ksg_n_surr_100() {
+        gate_fpr_autocorr(TeNull::Residual, TeEstimator::Ksg);
+    }
+
+    #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
         let cells =
@@ -3139,6 +3148,14 @@ mod tests {
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_shift_null_ksg_n_1000() {
         let cells = gate_fpr_coarse_cells(1000, TeNull::Shift, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_residual_null_ksg_n_1000() {
+        let cells =
+            gate_fpr_coarse_cells(1000, TeNull::Residual, TeEstimator::Ksg, 2, 12, 4, 0, 100);
         gate_fpr_autocorr_assert(&cells);
     }
 
@@ -3216,6 +3233,50 @@ mod tests {
                     c.d_z,
                     100.0 * c.fp as f64 / c.neg as f64
                 );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "residual sweep for the n=1000 gate — runs in te-gate.yml"]
+    fn residual_sweep_n1000() {
+        let mut ols_rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+        for a in [0.0f32, 0.5, 0.9] {
+            let mut ols_resolved = 0usize;
+            let mut ols_total = 0usize;
+            for _ in 0..100 {
+                let series = gate_common_driver(1000, a, 0.0, 4, &mut ols_rng);
+                for j in 0..series.len() {
+                    let conds: Vec<&[f32]> = (0..series.len())
+                        .filter(|&i| i != j)
+                        .map(|i| series[i].as_slice())
+                        .collect();
+                    ols_total += 1;
+                    if ols_fit_lagged_n(&series[j], &conds, 12).is_some() {
+                        ols_resolved += 1;
+                    }
+                }
+            }
+            for (est_name, est) in [("ksg", TeEstimator::Ksg)] {
+                let cells = gate_fpr_cells_from(
+                    1000,
+                    &[(a, 4usize, 7usize)],
+                    TeNull::Residual,
+                    est,
+                    2,
+                    12,
+                    4,
+                    0,
+                    100,
+                );
+                for c in &cells {
+                    println!(
+                        "est={est_name} a={} d_z={} fpr={:.2}% ols_resolved={ols_resolved}/{ols_total}",
+                        c.a,
+                        c.d_z,
+                        100.0 * c.fp as f64 / c.neg as f64
+                    );
+                }
             }
         }
     }
