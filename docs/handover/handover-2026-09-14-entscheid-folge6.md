@@ -3,7 +3,7 @@
   session: Entscheid-Folge VI
   class: handover
   date: 2026-09-14
-  sha256: 6f08de54372e3ee537f826398cc81e962b47aa846e9c55f5a78ae45b85e9b593
+  sha256: 4de3a752e6cfca9e4741ae731b133806eebfea0acd201dacd6dd05186d0ae3ec
   status: live
 -->
 # Handover — Entscheid-Folge VI (2026-09-14)
@@ -39,24 +39,9 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
   (angelegt 2026-09-09). Der Operator-Browser ist als `omegaflow` eingeloggt —
   für `johannestyroller` muss das GitHub-Konto gewechselt werden. (b)
   vo-tap-Crate-Push hängt an der Mitgliedschaft.
-- ned-objdir — Bulk-z angefragt, IPAC-Auto-Bestätigung 2026-09-09, inhaltliche
-  Antwort offen; der öffentliche TAP lebt.
 - NOIRLab Data Lab — abgelehnt (Nikutta); TAP anonym offen. Offen bleibt nur
   die Speisekammer-Frage (Wiedervorlage 2026-12-02, Gaia DR4).
-- Rubin RSP-Datenrechte — Konto registriert (CILogon/GitHub `omegaflow`). Die
-  Registry meldet (gemessen 2026-09-13) „request for enrollment is still being
-  processed" — die Petition ist eingereicht und wartet auf die Rubin-Freigabe.
-  Der Code `F34K-3J2N` liegt im Ledger (2026-09-13); die Code-Schritt-Seite
-  (`.../co_petitions/start/coef:6/efwid:2`) rendert im Addon-Browser leer.
-- Account-Verifikationen (Ledger `state/mail/mail_ledger.φ`):
-  - Copernicus Data Space — Verify-Mail kam 2026-09-13 (2×, Ledger Z.166–167,
-    Body leer: HTML-only-Link); der Link lebt nur im Proton-Postfach → dort
-    bestätigen.
-  - ICIMOD RDS — alter Verify-Link abgelaufen; Reset-Mail `RDS — reset your
-    password` ist im Proton-Postfach (2026-09-13), der Ledger-Abzug hat sie
-    verpasst (Webhook-Lücke). Schritt: Reset-Link im Proton-Postfach klicken;
-    Login bis Email-Verify blockiert.
-- BiSON/Broomhall, CSES-Limadou, NSE/Haug — Anfragen raus, Antwort offen.
+- NSE/Haug — Anfrage raus, Antwort offen (Teilroute Paper-Fig. 5b digitalisieren).
 
 ## Pausiert (kein Datum — Operator meldet sich)
 
@@ -64,7 +49,6 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 
 ## Termine (Wiedervorlage)
 
-- 2026-09-15 — LISA Pathfinder: Selbstregistrierung ab 15.09.
 - 2026-12-02 — NOIRLab Speisekammer-Frage (Gaia DR4).
 
 ## Abschluss
