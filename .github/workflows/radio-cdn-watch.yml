@@ -34,12 +34,12 @@ jobs:
           done
           if [ -z "$missing" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "radio-cdn: die drei Radio-Kataloge liegen auf dem CDN — Ernte entblockt" \
-              "nvss.json, first14.json und chandra_csc.json tragen 200 auf dem CDN (ssd.jpl.nasa.gov). Fortsetzung: den TODO-Posten „Katalog-CDN-Ernte NVSS/FIRST/Chandra“ abtragen und handover-2026-08-23-katalog-cdn-ernte.md nach archive/handover/ verschieben." \
+              "radio-cdn: the three radio catalogues are on the CDN — harvest unblocked" \
+              "nvss.json, first14.json and chandra_csc.json carry 200 on the CDN (ssd.jpl.nasa.gov). Follow-up: strike the TODO item 'catalogue CDN harvest NVSS/FIRST/Chandra' and move handover-2026-08-23-katalog-cdn-ernte.md to archive/handover/." \
               health
           elif [ -n "$loaded" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "radio-cdn: Teilladung der Radio-Kataloge" \
-              "Teilladung auf dem CDN (ssd.jpl.nasa.gov): geladen$loaded; fehlt noch$missing. Der nächste kernel-flatten-Lauf versucht die fehlenden Assets erneut (continue-on-error)." \
+              "radio-cdn: partial load of the radio catalogues" \
+              "Partial load on the CDN (ssd.jpl.nasa.gov): loaded$loaded; still missing$missing. The next kernel-flatten run retries the missing assets (continue-on-error)." \
               health
           fi
