@@ -4,7 +4,8 @@ use std::path::{Path, PathBuf};
 
 const REGISTER: &[(&str, &str)] = &[
     ("phi/sources.\u{3c6}", "live"),
-    ("phi/dead_sources.\u{3c6}", "declined"),
+    ("phi/dead_sources.\u{3c6}", "dead"),
+    ("phi/declined_sources.\u{3c6}", "declined"),
     ("phi/blocked_sources.\u{3c6}", "blocked"),
     ("phi/witnesses.\u{3c6}", "witness"),
     ("phi/pipeline/ledger.\u{3c6}", "ledger"),
