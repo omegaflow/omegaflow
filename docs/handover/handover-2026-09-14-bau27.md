@@ -3,7 +3,7 @@
   session: Bau-Folge 27
   class: handover
   date: 2026-09-14
-  sha256: ddd4ab8fa9068b7ece2f5b4a8812c46049e43d438934d28c69f120956b62a7a2
+  sha256: c04154a400f56b8c7ff11ebdb977140ce8eabb43011fb86b1264ba2963e0941c
   status: live
 -->
 # Handover — Gate & CI (2026-09-14)
@@ -41,6 +41,17 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   im selben Atom mitmessen. **Schritt:** `te-n1000-shift.yml` neu fahren,
   sobald der neue Default steht.
 
+## Clippy — gemessen, keine Decke
+
+- `cargo clippy --all-targets -- -D warnings` ergibt 612 Funde; `unwrap_used` +
+  `cast_precision_loss` ergeben 105. `cast_precision_loss` trifft legitime
+  i64/usize→f64-Casts (Zeitstempel, Zählungen — Kern des Feldsystems); die
+  Default-Lints widersprechen dem 0-Kanon (`match can be simplified with
+  .unwrap_or_default()` schlägt genau die Fabrikation vor, die der commit_gate
+  verbietet). Schritt: `cargo clippy --all-targets -- -D clippy::unwrap_used`
+  einzeln zählen, kuratierte Deny-Liste festlegen, dann Zeile in `ci-check.yml`
+  — nie `-D warnings` als Decke.
+
 ## CI-Issues — was noch offen ist
 
 - `reference_verify` prüft arXiv jetzt über `arxiv.org/abs` (0,12 s statt
@@ -67,6 +78,14 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 
 - ESP32-Modul — on hold (Operator-Wort, 2026-09-13): das Gerät und sein Flash
   kommen zuletzt. BOM: `docs/specs/mantis-shrimp-bom.md`.
+
+## Mail-Fang — Deployment offen (Operator-Wort)
+
+- Der Webhook-Verlust-Fix (Retry + KV-Puffer + Cron-Drain in
+  `cloudflare/email_worker.js` + `wrangler.toml`; Dedup über `seen_ids.φ` in
+  `tools/service/src/bin/smail_recv.rs`) ist gebaut, nicht deployed. Schritt:
+  `wrangler kv namespace create MAIL_QUEUE` → Id in `wrangler.toml` eintragen →
+  `wrangler deploy`; `WEBHOOK_URL`/`WEBHOOK_TOKEN` prüfen.
 
 ## Abschluss
 

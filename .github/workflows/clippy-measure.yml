@@ -1,0 +1,16 @@
+name: clippy-measure
+on:
+  workflow_dispatch:
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: probe fabrication-prevention lints
+      run: |
+        for lint in unwrap_used expect_used panic unreachable todo unimplemented indexing_slicing float_cmp dbg_macro; do
+          n=$(cargo clippy --all-targets --message-format=json -- -A warnings -D "clippy::$lint" 2>/dev/null \
+            | rg -c '"code":\{"code":"clippy::'"$lint"'"' || true)
+          echo "clippy::$lint findings: $n"
+        done
