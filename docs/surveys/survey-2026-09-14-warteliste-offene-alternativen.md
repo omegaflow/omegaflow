@@ -2,13 +2,21 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
+  sha256: c2628cc9064fdba3fa2dd1cdfe1b11d8f4b91ba3d09b3c6534f0edaa40f0a3ca
+  status: live
+  see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
+-->
+<!--
+  title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
+  class: survey
+  date: 2026-09-14
   sha256: 34ff7ec903e53e7bf25245cbd35d30ab2bd9277e0247054fc6dc2128d57bae49
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
 # Warteliste — offene Alternativen (Stand 2026-09-14, Runde 2)
 
-Zwei Runden günstiger Taucher (grind-flash, token-limitiert; rollierende
+Drei Runden Taucher (grind-flash + grind-pro, token-limitiert; rollierende
 Proton-VPNs, Brave-Suche, Playwright) haben für die extern gebundenen
 Wartepunkte (Handover `entscheid-folge6`, §Warten auf Rückmeldung) offene
 Datenquellen gesucht und gemessen (curl HTTP-Code, 2026-09-14). Ziel: das
@@ -53,10 +61,12 @@ lokal — der Zugang existiert, es ist kein Warten.
 
 ## Bleibt offen (keine offene Route gemessen)
 
-| Warte | Befund | nächster Schritt |
+Zwei `grind-pro`-Taucher (Runde 3) bestätigen die zwei Restoffenen mit Messung.
+
+| Warte | Befund (Runde 3, gemessen) | nächster Schritt |
 |---|---|---|
-| Voyager Roh-Doppler (closed-loop) | kein öffentliches ODF/TRK-2-34 für Voyager gemessen | JPL/DSN-Anfrage hält (nur für closed-loop) |
-| NSE/Haug (Rohdaten) | kein maschinenlesbares Deposit (2010 vor Open-Data-Politik) | Diss.-Volltext `impulse.mlz-garching.de/record/2120` holen / Fig. 5b digitalisieren |
+| Voyager Roh-Doppler (closed-loop) | Voyager closed-loop wurde als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben — öffentlich überlebt nur die open-loop ODR-Okkultation. PDS-PPI/Voyager trägt nur PWS + RSS-Doku; NAIF nur SPICE (`spk/lsk/pck`); die closed-loop-Holdings von PDS-Geosciences (LRO/Magellan/MGS) führen Voyager nicht; NSSDC-Datasets sind alle Occultation. Einzige nicht-anonyme Ablage: NSSDC `PSNO-00007` (SDDPT, "archive, not distribution") | JPL/DSN-Anfrage hält (request-only) |
+| NSE/Haug (Rohdaten) | kein Deposit: arXiv `e-print/1008.4298` = nur TeX + 8 Figuren (null Datendateien); IOP-Suppdata nicht auflösbar (Radware-Bot-Manager); iMPULSE `record/2120` nur Metadaten + toter Volltext-OpenURL; MPG Edmond / Zenodo / Dataverse ohne Datensatz; DataCite ohne DOI | Keimer/MPI-FKF-Anfrage hält; Paper-Fig. 5b digitalisieren als Teilroute |
 
 ## Register-Disposition
 
