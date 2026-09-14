@@ -64,10 +64,10 @@ jobs:
           phi/pipeline/stage/recheck_live.φ
     - if: always()
       run: |
-        if grep -qE " (drift-void|kaputt) " reverify.txt; then
+        if grep -qE " (drift-void|broken) " reverify.txt; then
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-            "health: recheck-live trägt drift/kaputt-Befunde" \
-            "Der Re-Verifikations-Sweep meldet drift-void/kaputt-Befunde. Artifact: reverify (reverify.txt + recheck_live.φ)." \
+            "health: recheck-live carries drift/broken findings" \
+            "The re-verification sweep reports drift-void/broken findings. Artifact: reverify (reverify.txt + recheck_live.φ)." \
             health
         fi
 

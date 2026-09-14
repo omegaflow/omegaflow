@@ -33,8 +33,8 @@ jobs:
           echo "sha256 $got"
           if [ "$got" != "$want" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "gll-ck-cdn: sha256 der frischen NAIF-CK weicht ab" \
-              "Die CK gll_plt_rec_1990_tav_v00.bc lieferte $got statt $want — kein Upload (0 honored, der Hash ist das Tor). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              "gll-ck-cdn: sha256 of the fresh NAIF CK differs" \
+              "The CK gll_plt_rec_1990_tav_v00.bc delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               health
             exit 1
           fi
@@ -98,8 +98,8 @@ jobs:
             echo "sha256 $f $got"
             if [ "$got" != "$want" ]; then
               bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                "gll-ck-cdn: sha256 der frischen Rotor-CK weicht ab" \
-                "Die Rotor-CK $f lieferte $got statt $want — kein Upload (0 honored, der Hash ist das Tor). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                "gll-ck-cdn: sha256 of the fresh rotor CK differs" \
+                "The rotor CK $f delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                 health
               exit 1
             fi
