@@ -3,7 +3,7 @@
   session: Ernte-Folge 21
   class: handover
   date: 2026-09-13
-  sha256: d00ddd9e3a4297ee78a576d03d775ac1a868dc10c1efb29ea15f72f6adc192b1
+  sha256: 314d2362cd2c555caefe554375eddc5e3f86dbc18e97ff839efd85153d5f80ea
   status: live
 -->
 # Handover — Ernte-Folge 21 (2026-09-13)
@@ -71,6 +71,24 @@ himawari, nexrad, onc, wod, cosmic, noaa-ocs-hydrodata, gdp, superdarn.
 - AQS EPA: Key-Mail fehlt; `smail_recv` läuft (Webhook 127.0.0.1:1619) — erneut
   auslösen.
 - Babamul: Credentials fehlen.
+
+## Wand-Party — offene Wege (Session 2026-09-14)
+
+- FOUND, ohne Ernte/Konsument: Scopus (free non-commercial API-Key,
+  `dev.elsevier.com`), Dimensions (freie Metrics-API, `metricssignup`), NOAA
+  MarineCadastre AIS (CC0, historisch), NOAA GLM (Blitz, `noaa-goes16` S3),
+  ThingSpeak (öffentliche Channels anonym), GNIP (Mendeley `75tsccprd2` +
+  `waterisotopesDB.org`), Semantic Scholar (keyless + `influentialCitationCount`/
+  `tldr`). Schritt: je Quelle die Speisekammer-Tore + ein benannter Konsument, dann
+  `phi/sources.φ`.
+
+## Parser-Lücken — gemessene Crates
+
+- LASzip (`laz 0.13.0` pure Rust + `laszip-sys`), JPEG-in-TIFF (`oxiarc-tiff`/
+  `oxideav-tiff`), RINEX-2.11/Hatanaka (`rinex 0.22.0`, `crx2rnx`), GSICS
+  (netCDF-GPRC + JMA-CSV), GLO-30 (geotiff-reader/cloudtiff; AWS
+  `copernicus-dem-30m`). Schritt: je Gap den Reader gegen den gemessenen Endpoint
+  bauen.
 
 ## Abschluss
 
