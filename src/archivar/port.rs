@@ -408,7 +408,11 @@ pub fn probe_one(
         Some(r) => {
             let declared_ok = match extract(src, r, now, lsk_ref) {
                 ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
-                    if v.is_empty() { None } else { Some(v.len()) }
+                    if v.is_empty() {
+                        None
+                    } else {
+                        Some(v.len())
+                    }
                 }
             };
             match declared_ok {
@@ -568,32 +572,30 @@ pub fn probe_mode(
             let workers = 8.min(non_kernel.len());
             std::thread::scope(|scope| {
                 for _ in 0..workers {
-                    scope.spawn(|| {
-                        loop {
-                            let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                            if i >= non_kernel.len() {
-                                break;
-                            }
-                            let (ok, text) = probe_one(
-                                non_kernel[i],
-                                now,
-                                lsk_ref,
-                                &void_eph,
-                                env,
-                                fetchone,
-                                precise,
-                                lat,
-                                lon,
-                            );
-                            if ok {
-                                accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                                out_lock.lock().unwrap().push_str(&text);
-                            } else {
-                                declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                                dead_lock.lock().unwrap().push_str(&text);
-                            }
-                            std::thread::sleep(std::time::Duration::from_millis(300));
+                    scope.spawn(|| loop {
+                        let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        if i >= non_kernel.len() {
+                            break;
                         }
+                        let (ok, text) = probe_one(
+                            non_kernel[i],
+                            now,
+                            lsk_ref,
+                            &void_eph,
+                            env,
+                            fetchone,
+                            precise,
+                            lat,
+                            lon,
+                        );
+                        if ok {
+                            accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            out_lock.lock().unwrap().push_str(&text);
+                        } else {
+                            declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            dead_lock.lock().unwrap().push_str(&text);
+                        }
+                        std::thread::sleep(std::time::Duration::from_millis(300));
                     });
                 }
             });
@@ -939,7 +941,11 @@ fn hapi_meta_params(parsed: &JsonVal) -> Option<Vec<HapiMetaParam>> {
             unit,
         });
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 fn hapi_meta_for(
@@ -1273,7 +1279,11 @@ pub fn probe_csv(raw: &str) -> Option<String> {
             }
         }
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 pub fn probe_classify(key: &str) -> (&str, &str, f64) {
@@ -2183,84 +2193,82 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
-            scope.spawn(|| {
-                loop {
-                    let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                    if i >= total {
-                        break;
-                    }
-                    let url = resolve_secret(&urls[i], env);
-                    let raw = if fetchone {
-                        fetch_one(&url, None, &[], 3600, machine_now_tdb())
-                    } else {
-                        fetch_raw_probe(&url, None, &[])
-                    };
-                    if let Some(body) = raw {
-                        if let Some(parsed) = parse_json(&body) {
-                            let tap_flat = tap_to_json(&parsed);
-                            let effective = match tap_flat.as_ref() {
-                                Some(flat) => flat,
-                                None => &parsed,
-                            };
-                            let mut fields = String::new();
-                            let mut coords = String::new();
-                            let mut map_path: Option<String> = None;
-                            let mut budget = 48usize;
-                            if !hapi_draft_fields(&url, effective, env, &mut fields) {
-                                walk_json_probe(
-                                    effective,
-                                    "",
-                                    &mut fields,
-                                    &mut coords,
-                                    &mut map_path,
-                                    &mut budget,
-                                );
-                            }
-                            let ttl = derive_ttl(&url, &body, env);
-                            let (frame, reason) = derive_frame(effective, &coords);
-                            if !frame.is_empty() {
-                                if let Some(rk) = route_key(&urls[i]) {
-                                    learned_lock
-                                        .lock()
-                                        .unwrap()
-                                        .entry(rk)
-                                        .or_insert_with(|| frame.trim_end().to_string());
-                                }
-                            }
-                            let mut block = format!("url {}\n", urls[i]);
-                            if let Some(t) = ttl {
-                                block.push_str(&format!("ttl {}\n", t));
-                            }
-                            if tap_flat.is_some() {
-                                block.push_str("format tap\n");
-                            }
-                            block.push_str(&frame);
-                            if let Some(ref mp) = map_path {
-                                if !coords.is_empty() {
-                                    let container =
-                                        if coords.contains("ra ") || coords.contains("dec ") {
-                                            "cmap"
-                                        } else {
-                                            "map"
-                                        };
-                                    block.push_str(&format!("{} {}\n", container, mp));
-                                }
-                            }
-                            if !coords.is_empty() {
-                                block.push_str(&coords);
-                            }
-                            if !fields.is_empty() {
-                                block.push_str(&fields);
-                            }
-                            let mut out = format!("# frame: {}\n", reason);
-                            out.push_str(&block);
-                            out.push('\n');
-                            out_lock.lock().unwrap().push_str(&out);
-                            drafted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                        }
-                    }
-                    std::thread::sleep(std::time::Duration::from_millis(300));
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
                 }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                if let Some(body) = raw {
+                    if let Some(parsed) = parse_json(&body) {
+                        let tap_flat = tap_to_json(&parsed);
+                        let effective = match tap_flat.as_ref() {
+                            Some(flat) => flat,
+                            None => &parsed,
+                        };
+                        let mut fields = String::new();
+                        let mut coords = String::new();
+                        let mut map_path: Option<String> = None;
+                        let mut budget = 48usize;
+                        if !hapi_draft_fields(&url, effective, env, &mut fields) {
+                            walk_json_probe(
+                                effective,
+                                "",
+                                &mut fields,
+                                &mut coords,
+                                &mut map_path,
+                                &mut budget,
+                            );
+                        }
+                        let ttl = derive_ttl(&url, &body, env);
+                        let (frame, reason) = derive_frame(effective, &coords);
+                        if !frame.is_empty() {
+                            if let Some(rk) = route_key(&urls[i]) {
+                                learned_lock
+                                    .lock()
+                                    .unwrap()
+                                    .entry(rk)
+                                    .or_insert_with(|| frame.trim_end().to_string());
+                            }
+                        }
+                        let mut block = format!("url {}\n", urls[i]);
+                        if let Some(t) = ttl {
+                            block.push_str(&format!("ttl {}\n", t));
+                        }
+                        if tap_flat.is_some() {
+                            block.push_str("format tap\n");
+                        }
+                        block.push_str(&frame);
+                        if let Some(ref mp) = map_path {
+                            if !coords.is_empty() {
+                                let container = if coords.contains("ra ") || coords.contains("dec ")
+                                {
+                                    "cmap"
+                                } else {
+                                    "map"
+                                };
+                                block.push_str(&format!("{} {}\n", container, mp));
+                            }
+                        }
+                        if !coords.is_empty() {
+                            block.push_str(&coords);
+                        }
+                        if !fields.is_empty() {
+                            block.push_str(&fields);
+                        }
+                        let mut out = format!("# frame: {}\n", reason);
+                        out.push_str(&block);
+                        out.push('\n');
+                        out_lock.lock().unwrap().push_str(&out);
+                        drafted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
             });
         }
     });
@@ -2429,6 +2437,18 @@ pub fn gate_learn_mode() -> i32 {
             }
         }
     }
+    if let Ok(content) = std::fs::read_to_string("phi/declined_sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("-{}", nl)) {
+                        delta.push((-4, "-".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
     if let Ok(content) = std::fs::read_to_string("phi/blocked_sources.φ") {
         for line in content.lines() {
             let t = line.trim();
@@ -2547,43 +2567,41 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
-            scope.spawn(|| {
-                loop {
-                    let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                    if i >= total {
-                        break;
-                    }
-                    let url = resolve_secret(&urls[i], env);
-                    let raw = if fetchone {
-                        fetch_one(&url, None, &[], 3600, machine_now_tdb())
-                    } else {
-                        fetch_raw_probe(&url, None, &[])
-                    };
-                    match raw {
-                        Some(body) => {
-                            let kind = if parse_json(&body).is_some() {
-                                "json"
-                            } else if body.trim_start().starts_with('<') {
-                                "html"
-                            } else {
-                                "text"
-                            };
-                            live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                            live_lock
-                                .lock()
-                                .unwrap()
-                                .push_str(&format!("live {} | {}\n", kind, urls[i]));
-                        }
-                        None => {
-                            void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                            void_lock
-                                .lock()
-                                .unwrap()
-                                .push_str(&format!("void {}\n", urls[i]));
-                        }
-                    }
-                    std::thread::sleep(std::time::Duration::from_millis(300));
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
                 }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                match raw {
+                    Some(body) => {
+                        let kind = if parse_json(&body).is_some() {
+                            "json"
+                        } else if body.trim_start().starts_with('<') {
+                            "html"
+                        } else {
+                            "text"
+                        };
+                        live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        live_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("live {} | {}\n", kind, urls[i]));
+                    }
+                    None => {
+                        void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        void_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("void {}\n", urls[i]));
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
             });
         }
     });
