@@ -624,7 +624,7 @@ decline legacy
 url https://apps.who.int/gho/athena/api/GHO/WHOSIS_000015.json
 note GHO-Legacy-Dashboard.
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://aqportal.discomap.eea.europa.eu/api/observations?pollutant=NO2&
 note HTTP 404 — Endpoint weg.
 
@@ -1360,7 +1360,7 @@ decline derived-product
 url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
 note pro_review_b5 2026-08-18: SMAP-L3-SoilMoisture ist Modell-Inversion aus Brightness-Temperatur — die Messung des Sensors ist TB (em), nicht die invertierte Bodenfeuchte; Raster-Tiles ohne Zeilen-Werte. Litmus scheitert.
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
 note JSON-Body: {"error":{"code":404,"message":"Service SMAP/SM_1km/MapServer not found"}} — Service entfernt.
 
@@ -2916,7 +2916,7 @@ decline superseded-by-api.woudc.org
 url https://woudc.org/api/
 note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integriert (atmosphere_woudc_total_ozone, master.φ Z.10813) — diese HTML-Landing war nur der alte Einstieg. Verschoben aus blocked_sources.φ 2026-08-19.
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus
 note CADC-ARGUS — Re-Messung 2026-09-13 (Split-Routing, 9 Proton-Exits): HTTP 200 direkt — lebt; der 000/Peer-Reset war transient, kein Geo-Block. TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; dead-Verdikt prüfen (lebt = re-weigh als Live-Kandidat).
 
@@ -2936,7 +2936,7 @@ decline html
 url https://www.aavso.org/vsx/
 note HTML-Formular; der Katalog ist über den CDN-Pfad bereits registriert
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://www.amsmeteors.org/members/api/open_api
 note grind: grind_terrapulse_b.φ
 
@@ -3096,11 +3096,11 @@ decline
 url https://www.nmdb.eu/nest/
 note grind: grind_terrapulse_a.φ
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://www.nmdb.eu/nest/api/get_data.php?stations=OULU&start=
 note HTTP 404 — Endpoint weg.
 
-decline reachable-2026-09-14
+decline no-measurement-2026-09-14
 url https://www.nmdb.eu/nest/data.json
 note HTTP 404 — Endpoint weg.
 

@@ -1,13 +1,13 @@
 <!--
-  title: Handover — Warteliste-Suchlauf (Stand 2026-09-14)
-  session: Warteliste-Suchlauf
+  title: Handover — Forschung (Stand 2026-09-14)
+  session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: bf1f3fdad8425a21bcfbabb4c617c3d233b48d58155e54779986a201ba705777
+  sha256: a428529a739214b7ec0d6086d608fbd52bb3b3d305678f3bceb3c5149d477f64
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
-# Handover — Warteliste-Suchlauf (2026-09-14)
+# Handover — Forschung (2026-09-14)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -38,35 +38,6 @@ Brave, Playwright) haben die Warteliste gemessen; zwei Punkte halten.
   Radware-Bot-Manager; iMPULSE `record/2120` nur Metadaten + toter Volltext-Link.
   Die Keimer/MPI-FKF-Anfrage hält. (Schritt: Antwort von B. Keimer; Teilroute
   Paper-Fig. 5b digitalisieren.)
-
-## Register-Disposition — Kandidaten ungeprüft
-
-- 28 Weberin-Routen + 9 Auferstehungen liegen als `ausstehend kandidat` in
-  `phi/pipeline/ledger.φ` (Runtime-Zustand, gitignored) — **nicht** durch `--probe`
-  gezogen. (Schritt: `cargo run -p omegaflow-utils --bin archive_search -- --probe
-  <url>` je Kandidat.)
-- 6 Stub-URLs tragen `decline reachable-2026-09-14`; auf
-  `decline no-measurement-2026-09-14` schärfen. (Schritt: `phi/declined_sources.φ`
-  editieren.)
-
-## Warteliste der Entscheid-Linie — hinfällige streichen
-
-Der Survey `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md`
-trägt die gemessenen Alternativen: 8 hinfällig, 2 teilweise (Voyager ODR,
-NSE/Haug), 2 offen, 6 lokal gedeckt (`.secrets.local`: DAHITI, ICIMOD,
-SSDC/CSES-Limadou, Lasair, NASA ADS, Zenodo). Die Wartepunkte selbst leben in
-`docs/handover/handover-2026-09-14-entscheid-folge6.md` §Warten auf Rückmeldung —
-die hinfälligen gehören dort gestrichen. (Schritt: Entscheid-Linie, oder die
-Zeilen hierher übernehmen.)
-
-## Carry-over der konsumierten Linie (Register-Suchlauf)
-
-- Himawari-8 AHI Block 6 + Kalibrierung anwenden (`himawari_hsd_compiler.rs`);
-  GK2A/GOES-16 GSICS-Kalibrierung (`CALIB_GSICS_PENDING`). (Schritt: Compiler.)
-- Tor-1: MACHO (keine Klassen-Spalte), LAMOST DR11 (Konsument PAST II
-  `10.3847/1538-3881/ac0f08`), NOIRLab (Wiedervorlage Gaia DR4 2026-12-02); AQS
-  keylos; Babamul 401; ONC CI-Lauf. (Schritt: je Register-Notiz in
-  `phi/blocked_sources.φ`.)
 
 ## Abschluss
 
