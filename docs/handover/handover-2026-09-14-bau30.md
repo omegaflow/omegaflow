@@ -3,7 +3,7 @@
   session: Bau-Folge 30
   class: handover
   date: 2026-09-14
-  sha256: 46581ab3030517cbd6c4a74db0edc478fdac4833d9cc5f9fa20ad7f57460429a
+  sha256: ea498db3d7cd98d9df8b88b237bdf4a2422c35bf0327df48b2acd32f3eec8a40
   status: live
 -->
 # Handover — Bau & Code (2026-09-14, Bau30)
@@ -32,7 +32,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `residual_sweep_n1000` (KSG-FPR + OLS-Fallback-Zähler — ob `ols_fit_lagged_n`
   je auf `shuffle_series` fällt). Der residual+binned ist gemessen-falsifiziert
   (n=150, 2,85pp Anstieg bei D_Z=4) — gestrichen, nicht getragen. (Schritt:
-  pushen wenn der Baum ruhig ist → `gh workflow run te-gate.yml` → `residual_sweep_n1000`
+  Lauf 34896734026 ist angestoßen (main) → `residual_sweep_n1000`
   + `gate_fpr_autocorrelation_residual_null_ksg_n_1000` lesen; hält (FPR ≤ 8 %,
   Anstieg ≤ 2pp, ols_resolved = 600/600) → das n=1000-Gate auf residual+KSG
   verankern, die block/phase/shift-n=1000-Gates streichen (git trägt ihr
