@@ -30,3 +30,5 @@ jobs:
                  health
       - name: Run the n=1000 block sweep (the block-length fix measurement)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
+      - name: Run the n=1000 KSG sweep (the estimator-switch measurement)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_sweep_n1000
