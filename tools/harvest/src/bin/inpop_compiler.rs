@@ -5,11 +5,12 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
+use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
 const CDN_TAG: &str = "ftp.imcce.fr";
+const OUT_DIR: &str = "data/ftp.imcce.fr";
 const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
 const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
 
@@ -53,7 +54,11 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() { None } else { Some(text) }
+    if text.is_empty() {
+        None
+    } else {
+        Some(text)
+    }
 }
 
 fn resolve_inputs(paths: &[String]) -> (Vec<PathBuf>, Option<PathBuf>) {
@@ -132,7 +137,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!("usage: inpop_compiler <bsp|spice.tar.gz>... [--pck <body.tpc>]... [--ci-mode]");
-        eprintln!("  emits ephemeris_inpop_<body>.bin in the current directory");
+        eprintln!("  emits data/ftp.imcce.fr/ephemeris_inpop_<body>.bin");
         eprintln!(
             "  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched"
         );
@@ -200,6 +205,10 @@ fn main() {
     let in_scope = |name: &str| name == "sun" || woven.contains(&name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
+    if let Err(e) = std::fs::create_dir_all(OUT_DIR) {
+        eprintln!("inpop: create {}: {}", OUT_DIR, e);
+        std::process::exit(1);
+    }
     for (target, name) in resolved_bodies(&bsps) {
         if !in_scope(&name) {
             eprintln!(
@@ -237,7 +246,7 @@ fn main() {
             );
             continue;
         }
-        let path = format!("ephemeris_inpop_{}.bin", name);
+        let path = format!("{OUT_DIR}/ephemeris_inpop_{}.bin", name);
         if !write_binary(
             &path, &name, &granules, &rotations, &nutation, &wgccre, None,
         ) {
@@ -264,7 +273,7 @@ fn main() {
         }
     }
     eprintln!(
-        "inpop: {} body line(s) compiled into ephemeris_inpop_<body>.bin, {} uploaded to the {} release",
+        "inpop: {} body line(s) compiled into {OUT_DIR}/ephemeris_inpop_<body>.bin, {} uploaded to the {} release",
         written, uploaded, CDN_TAG
     );
     if written == 0 {
