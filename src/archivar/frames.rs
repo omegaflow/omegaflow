@@ -96,6 +96,7 @@ pub fn build_frame_registry() -> HashMap<String, String> {
     for path in [
         "phi/sources.φ",
         "phi/dead_sources.φ",
+        "phi/declined_sources.φ",
         "phi/blocked_sources.φ",
         "phi/witnesses.φ",
     ] {
