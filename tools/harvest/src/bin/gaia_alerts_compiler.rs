@@ -1,8 +1,8 @@
-use omegaflow::archivar::{embedded_lsk, LeapSeconds};
+use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
-use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::lsk::days_from_civil;
-use omegaflow::skydirection::{parse_bin, write_bin, SkyBandSeries, SkyDirection, SkySample};
+use omegaflow::skydirection::{SkyBandSeries, SkyDirection, SkySample, parse_bin, write_bin};
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -184,7 +184,9 @@ fn main() {
         return;
     }
     let Some(bytes) = write_bin(&directions) else {
-        eprintln!("gaia_alerts: a held direction is not finite or not serializable — the asset stays unwritten (0 honored)");
+        eprintln!(
+            "gaia_alerts: a held direction is not finite or not serializable — the asset stays unwritten (0 honored)"
+        );
         return;
     };
     match parse_bin(&bytes) {

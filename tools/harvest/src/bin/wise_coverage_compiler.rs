@@ -1,12 +1,12 @@
 use omegaflow::archivar::fits::{FitsHeader, FitsImage, FitsWcs, WcsProjection};
 use omegaflow::archivar::footprint::{
-    band_code, decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord,
-    HEADER_LEN, REC_BYTES,
+    FootprintBand, FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet};
+use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -133,11 +133,7 @@ fn enumerate_coadds() -> Option<Vec<String>> {
     let adql = format!("SELECT coadd_id FROM {TAP_TABLE} GROUP BY coadd_id");
     let body = tap_csv(&adql, 20000)?;
     let ids = parse_coadd_csv(&body);
-    if ids.is_empty() {
-        None
-    } else {
-        Some(ids)
-    }
+    if ids.is_empty() { None } else { Some(ids) }
 }
 
 fn nominal_depth_per_band() -> Option<[f64; BAND_COUNT]> {

@@ -1,6 +1,6 @@
 use omegaflow::bayestar::{
-    build_index, decode_rec, ebv_at, index_add, index_sort, leaf_record, mu_of_r_pc, parse_header,
-    Be19Row, ASSET_HEADER_LEN, BE19_BINS, REC_BYTES,
+    ASSET_HEADER_LEN, BE19_BINS, Be19Row, REC_BYTES, build_index, decode_rec, ebv_at, index_add,
+    index_sort, leaf_record, mu_of_r_pc, parse_header,
 };
 use omegaflow::healpix::{galactic_to_icrs, pix2ang_nest};
 use std::io::{Read, Seek, SeekFrom};

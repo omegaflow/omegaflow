@@ -89,7 +89,11 @@ struct ClassStat {
     floor_share_med: Option<f64>,
 }
 
-fn class_stat<'a>(rows: impl Iterator<Item = &'a Row>, comp: &BTreeMap<(i64, i64, i64), Comp>, want_loud: bool) -> ClassStat {
+fn class_stat<'a>(
+    rows: impl Iterator<Item = &'a Row>,
+    comp: &BTreeMap<(i64, i64, i64), Comp>,
+    want_loud: bool,
+) -> ClassStat {
     let mut st = ClassStat {
         cells: 0,
         samples: 0,
@@ -247,7 +251,10 @@ fn main() {
     push("series | robust | loud | quiet | adjacent-day flips".to_string());
     for mode in 1..=3i64 {
         for st in TRIO {
-            let sub: Vec<&Row> = floor_rows.iter().filter(|c| c.mode == mode && c.st == st).collect();
+            let sub: Vec<&Row> = floor_rows
+                .iter()
+                .filter(|c| c.mode == mode && c.st == st)
+                .collect();
             let loud = sub.iter().filter(|c| c.rms >= LOUD_HZ).count();
             let mut flips = 0usize;
             for w in sub.windows(2) {
@@ -278,7 +285,10 @@ fn main() {
     push("each floor-cell sample is by definition strength == FLOOR; the census measures the member strength span (min..max) per class to confirm the loud/quiet partition lives entirely on the single AGC register value".to_string());
     for mode in 1..=3i64 {
         for st in TRIO {
-            let sub: Vec<&Row> = floor_rows.iter().filter(|c| c.mode == mode && c.st == st).collect();
+            let sub: Vec<&Row> = floor_rows
+                .iter()
+                .filter(|c| c.mode == mode && c.st == st)
+                .collect();
             for want_loud in [true, false] {
                 let cs = class_stat(sub.iter().copied(), &comp, want_loud);
                 let tag = if want_loud { "loud " } else { "quiet" };
@@ -302,7 +312,10 @@ fn main() {
     push("class | series | cells | med RMS Hz | full-clamp days | strong-excursion days | med distinct values | med floor share".to_string());
     for mode in 1..=3i64 {
         for st in TRIO {
-            let sub: Vec<&Row> = floor_rows.iter().filter(|c| c.mode == mode && c.st == st).collect();
+            let sub: Vec<&Row> = floor_rows
+                .iter()
+                .filter(|c| c.mode == mode && c.st == st)
+                .collect();
             for want_loud in [true, false] {
                 let cs = class_stat(sub.iter().copied(), &comp, want_loud);
                 let tag = if want_loud { "loud " } else { "quiet" };
@@ -347,7 +360,10 @@ fn main() {
     }
 
     push(String::new());
-    push("== 3. strong-cell census (strength >= STRONG_MIN, same era/station/mode frame) ==".to_string());
+    push(
+        "== 3. strong-cell census (strength >= STRONG_MIN, same era/station/mode frame) =="
+            .to_string(),
+    );
     let mut strong_rows: Vec<Row> = Vec::new();
     for (&(mode, day, st), &(sum, sum2, n)) in &strong {
         if n == 0 {

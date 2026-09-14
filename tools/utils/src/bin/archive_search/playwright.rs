@@ -234,7 +234,9 @@ mod tests {
         assert!(lines[0].starts_with("url https://example.com/\ttitle: Example Domain"));
         assert!(lines.contains(&"status 200".to_string()));
         assert!(lines.contains(&"heading: h1: Example Domain".to_string()));
-        assert!(lines.contains(&"link: Learn more -> https://iana.org/domains/example".to_string()));
+        assert!(
+            lines.contains(&"link: Learn more -> https://iana.org/domains/example".to_string())
+        );
         assert!(lines.iter().any(|l| l.starts_with("measurement ")));
     }
 

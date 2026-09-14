@@ -91,7 +91,7 @@ pub fn elements_to_icrs_state(
 #[cfg(test)]
 mod tests {
     use super::{
-        elements_to_icrs, elements_to_icrs_state, solve_kepler_ecc, AU_M, GM_SUN_M3_S2, TAU,
+        AU_M, GM_SUN_M3_S2, TAU, elements_to_icrs, elements_to_icrs_state, solve_kepler_ecc,
     };
 
     const J2000: f64 = 2451545.0;

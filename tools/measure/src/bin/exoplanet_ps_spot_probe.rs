@@ -3,8 +3,7 @@ use std::process::Command;
 
 const UA: &str = "omegaflow-measure-exoplanet-ps-spot/1.0";
 const TAP_SYNC: &str = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-const TAP_QUERY: &str =
-    "SELECT pl_name,discoverymethod,pl_rade,pl_bmasse,pl_orbper,pl_orbeccen,pl_dens,pl_eqt,st_met,st_teff FROM ps WHERE default_flag=1 AND pl_name IS NOT NULL ORDER BY pl_name";
+const TAP_QUERY: &str = "SELECT pl_name,discoverymethod,pl_rade,pl_bmasse,pl_orbper,pl_orbeccen,pl_dens,pl_eqt,st_met,st_teff FROM ps WHERE default_flag=1 AND pl_name IS NOT NULL ORDER BY pl_name";
 const NAME_COL: &str = "pl_name";
 const METHOD_COL: &str = "discoverymethod";
 const NUMERIC: [(&str, &str); 8] = [

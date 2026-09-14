@@ -4,10 +4,10 @@ use std::io::{BufReader, Read};
 
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::atdf::{
-    extract, field_of, full_year, strip_markers, tracking_record, IDFORM, LOGICAL_RECORD,
-    TKFORM, Tracking, XPFORM,
+    IDFORM, LOGICAL_RECORD, TKFORM, Tracking, XPFORM, extract, field_of, full_year, strip_markers,
+    tracking_record,
 };
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 
 const BASE: &str = "https://pds-ppi.igpp.ucla.edu/annex/";
 
@@ -239,7 +239,9 @@ fn main() {
             if is_threeway(mode) {
                 n_three += 1;
                 target_days.insert(day);
-                let r = runs.entry((day, station)).or_insert((0, 0, f64::NEG_INFINITY));
+                let r = runs
+                    .entry((day, station))
+                    .or_insert((0, 0, f64::NEG_INFINITY));
                 r.0 += 1;
                 if tdb - r.2 > 600.0 {
                     r.1 += 1;
@@ -283,9 +285,7 @@ fn main() {
         }
 
         println!("FILE {name} url {url} logical {nlog}");
-        println!(
-            "  header: year {fyear} day {fday} hour {fhour} sc {sc} xponder {xpon:.3e} Hz"
-        );
+        println!("  header: year {fyear} day {fday} hour {fhour} sc {sc} xponder {xpon:.3e} Hz");
         println!("  doppler records {n_dop}, three-way records {n_three}");
         let mut sm: Vec<_> = station_mode.into_iter().collect();
         sm.sort();
@@ -417,15 +417,7 @@ fn main() {
                     if let Some(b) = bi.take() {
                         blocks.push(b);
                     }
-                    bi = Some((
-                        r.2,
-                        day,
-                        station,
-                        r.0,
-                        r.0,
-                        1,
-                        if r.3 != 0 { 1 } else { 0 },
-                    ));
+                    bi = Some((r.2, day, station, r.0, r.0, 1, if r.3 != 0 { 1 } else { 0 }));
                 }
             }
             if let Some(b) = bi.take() {
@@ -531,7 +523,10 @@ fn floor_report(target_days: &BTreeSet<i64>) {
         }
         let day = unix_day(r[0]);
         if is_threeway(mode) {
-            era_m3.entry((mode, station, day)).or_insert_with(CellStat::new).push(resid);
+            era_m3
+                .entry((mode, station, day))
+                .or_insert_with(CellStat::new)
+                .push(resid);
         }
         if target_days.contains(&day) {
             target_cell
@@ -554,7 +549,11 @@ fn floor_report(target_days: &BTreeSet<i64>) {
                 day,
                 if rms >= 1.0 { "LOUD" } else { "quiet" }
             ),
-            None => println!("    mode {mode} station {station} date {} day {} n {n} rms void", civil(day), day),
+            None => println!(
+                "    mode {mode} station {station} date {} day {} n {n} rms void",
+                civil(day),
+                day
+            ),
         }
     }
 

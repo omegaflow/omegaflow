@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::CDN_BASE;
 use omegaflow::healpix::{ang2pix_nest, icrs_to_galactic};
-use omegaflow::json::{jnum, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jnum, parse_json};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const NSIDE_CELL: i64 = 8;

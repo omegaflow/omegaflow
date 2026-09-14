@@ -1,6 +1,6 @@
-use omegaflow::archivar::goes::{parse_bin, write_bin, COMP_XRSA, COMP_XRSB};
+use omegaflow::archivar::goes::{COMP_XRSA, COMP_XRSB, parse_bin, write_bin};
 use omegaflow::cdn::upload_asset;
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::collections::HashMap;
 use std::process::Command;
@@ -83,7 +83,10 @@ fn parse_nc(bytes: &[u8], buckets: &Mutex<HashMap<(u32, u64), Vec<f64>>>) -> (us
         return (0, 0);
     }
     let mut kept = 0usize;
-    let mut guard = buckets.lock().unwrap_or_else(|e| e.into_inner());
+    let mut guard = match buckets.lock() {
+        Ok(g) => g,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     for i in 0..n {
         let Some(t) = decode_f64(&time_raw, i * 8, Endian::Le) else {
             continue;
@@ -190,16 +193,23 @@ fn harvest_day(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "goes_r_xrs.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => {
+            eprintln!("--out absent");
+            std::process::exit(1);
+        }
+    };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
-    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let cache_dir = match arg_value(&args, "--cache-dir") {
+        Some(v) => v,
+        None => omegaflow::archivar::cache_root()
             .join("omegaflow_goes_r_cache")
             .to_string_lossy()
-            .into_owned()
-    });
+            .into_owned(),
+    };
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{cache_dir}: cache dir stays uncreatable");
         std::process::exit(1);
@@ -251,14 +261,16 @@ fn main() {
         let total_rows = Arc::clone(&total_rows);
         let total_kept = Arc::clone(&total_kept);
         let cache_dir = cache_dir.clone();
-        workers.push(std::thread::spawn(move || loop {
-            let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
-            let Some((sat, y, m, d)) = units.get(idx).copied() else {
-                break;
-            };
-            let (rows, kept) = harvest_day(sat, y, m, d, &cache_dir, &buckets);
-            total_rows.fetch_add(rows as i64, Ordering::SeqCst);
-            total_kept.fetch_add(kept as i64, Ordering::SeqCst);
+        workers.push(std::thread::spawn(move || {
+            loop {
+                let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
+                let Some((sat, y, m, d)) = units.get(idx).copied() else {
+                    break;
+                };
+                let (rows, kept) = harvest_day(sat, y, m, d, &cache_dir, &buckets);
+                total_rows.fetch_add(rows as i64, Ordering::SeqCst);
+                total_kept.fetch_add(kept as i64, Ordering::SeqCst);
+            }
         }));
     }
     for w in workers {
@@ -270,10 +282,16 @@ fn main() {
         total_rows.load(Ordering::SeqCst),
         total_kept.load(Ordering::SeqCst)
     );
-    let buckets_guard = Arc::try_unwrap(buckets)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let buckets_guard = match Arc::try_unwrap(buckets) {
+        Ok(mutex) => match mutex.into_inner() {
+            Ok(map) => map,
+            Err(poisoned) => poisoned.into_inner(),
+        },
+        Err(_) => {
+            eprintln!("the bucket map stays shared after join — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     let mut raw: Vec<(f64, f64, u32)> = Vec::new();
     for ((comp, bucket), mut vals) in buckets_guard {
         if vals.is_empty() {

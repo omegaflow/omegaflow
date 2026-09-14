@@ -1,7 +1,7 @@
-use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
-use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
+use omegaflow::equilibrium::{AU_M, SUN_RADIUS_M, teq};
+use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::thermochem::{
-    equilibrium_composition_halogen, halogen_gas_names, halogen_solar, P0_PA, SOLAR_CL, SOLAR_F,
+    P0_PA, SOLAR_CL, SOLAR_F, equilibrium_composition_halogen, halogen_gas_names, halogen_solar,
 };
 use std::collections::HashMap;
 

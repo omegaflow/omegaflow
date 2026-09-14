@@ -1,6 +1,6 @@
 use omegaflow::cdn::{upload_asset, upload_release};
 use omegaflow::spectral::{
-    parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array, XpStar, XP_GRID_SAMPLES,
+    XP_GRID_SAMPLES, XpStar, parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array,
 };
 
 const SYNC_CAP_GUARD: usize = 20_000;
@@ -403,7 +403,11 @@ fn main() {
                     parsed.len(),
                     stars.len(),
                     epoch,
-                    if lossless { "byte-identical" } else { "drifted" }
+                    if lossless {
+                        "byte-identical"
+                    } else {
+                        "drifted"
+                    }
                 );
                 std::process::exit(1);
             }

@@ -178,8 +178,23 @@ fn row3(label: &str, drv: &[f32], tgt: &[f32], era: &[f32]) {
         distinct_count(drv, 1.0),
         distinct_count(era, 1.0),
         fmt(transfer_entropy_lag(tgt, drv, 3)),
-        fmt(surrogate_stats_phase_n(tgt, drv, 3, SEED0, N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)).map(|(_, _, t)| t)),
-        fmt(surrogate_stats_block_n(tgt, drv, 3, BLOCK, SEED0, N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)).map(|(_, _, t)| t)),
+        fmt(surrogate_stats_phase_n(
+            tgt,
+            drv,
+            3,
+            SEED0,
+            N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)
+        )
+        .map(|(_, _, t)| t)),
+        fmt(surrogate_stats_block_n(
+            tgt,
+            drv,
+            3,
+            BLOCK,
+            SEED0,
+            N_SURR_PHASE_BLOCK.load(Ordering::Relaxed)
+        )
+        .map(|(_, _, t)| t)),
         fmt(transfer_entropy_conditional(tgt, drv, era, 3)),
         fmt(conditional_te_stats(tgt, drv, era, 3, SEED0, N_SURR).map(|(_, _, t)| t)),
     );
@@ -367,7 +382,9 @@ fn main() {
     }
 
     println!();
-    println!("=== (A) Mission Mode-3 structure (qualifying day: some (day,station,mode) bin has >= {MIN_SAMP} cleaned samples; dom = dominant qualifying mode-bin of the day)");
+    println!(
+        "=== (A) Mission Mode-3 structure (qualifying day: some (day,station,mode) bin has >= {MIN_SAMP} cleaned samples; dom = dominant qualifying mode-bin of the day)"
+    );
     let mut all_dom3 = 0usize;
     let mut best_dom3: Option<(i64, i64, usize, i64)> = None;
     let mut best_cap3: Option<(i64, i64, usize, i64)> = None;
@@ -471,7 +488,9 @@ fn main() {
         return;
     };
     println!();
-    println!("=== (B) station 63 qualifying-day structure around the isolate (day: dom | m1/m2/m3 cleaned counts; '-' = not a qualifying day)");
+    println!(
+        "=== (B) station 63 qualifying-day structure around the isolate (day: dom | m1/m2/m3 cleaned counts; '-' = not a qualifying day)"
+    );
     for day in 9856..=9914 {
         match r63.iter().find(|r| r.day == day) {
             Some(r) => println!(

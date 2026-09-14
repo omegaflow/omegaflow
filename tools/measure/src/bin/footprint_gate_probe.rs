@@ -1,6 +1,6 @@
 use omegaflow::archivar::footprint::{
-    decode_rec, footprint_gate, parse_header, FootprintBand, FootprintRecord, FootprintVerdict,
-    HEADER_LEN, REC_BYTES,
+    FootprintBand, FootprintRecord, FootprintVerdict, HEADER_LEN, REC_BYTES, decode_rec,
+    footprint_gate, parse_header,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use std::fs::File;

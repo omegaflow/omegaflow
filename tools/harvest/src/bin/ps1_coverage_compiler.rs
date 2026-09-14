@@ -1,11 +1,11 @@
 use omegaflow::archivar::fits::{FitsCompressedImage, FitsHeader, FitsWcs};
 use omegaflow::archivar::footprint::{
-    band_code, decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord,
-    HEADER_LEN, NSIDE, REC_BYTES,
+    FootprintBand, FootprintRecord, HEADER_LEN, NSIDE, REC_BYTES, band_code, decode_rec,
+    encode_rec, parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
 use omegaflow::cdn::upload_asset;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet};
+use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -223,27 +223,29 @@ fn enumerate_full_skycells(
             let present = &present;
             let absent = &absent;
             let probes = &probes;
-            s.spawn(move || loop {
-                if refused.load(Ordering::Relaxed) > 0 {
-                    break;
-                }
-                let idx = next.fetch_add(1, Ordering::Relaxed);
-                if idx >= total {
-                    break;
-                }
-                probes.fetch_add(1, Ordering::Relaxed);
-                let proj = proj_min + (idx / n_sub) as u32;
-                let sub = sub_min + (idx % n_sub) as u32;
-                match probe_g_plane(proj, sub) {
-                    ProbeOutcome::Present => {
-                        present.fetch_add(1, Ordering::Relaxed);
-                        let _ = tx.send((proj, sub));
+            s.spawn(move || {
+                loop {
+                    if refused.load(Ordering::Relaxed) > 0 {
+                        break;
                     }
-                    ProbeOutcome::Absent => {
-                        absent.fetch_add(1, Ordering::Relaxed);
+                    let idx = next.fetch_add(1, Ordering::Relaxed);
+                    if idx >= total {
+                        break;
                     }
-                    ProbeOutcome::Refused => {
-                        refused.fetch_add(1, Ordering::Relaxed);
+                    probes.fetch_add(1, Ordering::Relaxed);
+                    let proj = proj_min + (idx / n_sub) as u32;
+                    let sub = sub_min + (idx % n_sub) as u32;
+                    match probe_g_plane(proj, sub) {
+                        ProbeOutcome::Present => {
+                            present.fetch_add(1, Ordering::Relaxed);
+                            let _ = tx.send((proj, sub));
+                        }
+                        ProbeOutcome::Absent => {
+                            absent.fetch_add(1, Ordering::Relaxed);
+                        }
+                        ProbeOutcome::Refused => {
+                            refused.fetch_add(1, Ordering::Relaxed);
+                        }
                     }
                 }
             });
@@ -291,11 +293,7 @@ fn query_skycell(ra_deg: f64, dec_deg: f64) -> Option<Vec<(u32, u32)>> {
                 };
                 cells.push((proj, sub));
             }
-            if cells.is_empty() {
-                None
-            } else {
-                Some(cells)
-            }
+            if cells.is_empty() { None } else { Some(cells) }
         }
         FetchOutcome::Missing | FetchOutcome::Refused(_) => None,
     }

@@ -4,7 +4,7 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
+use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
@@ -60,11 +60,7 @@ fn body_pck_text() -> Option<String> {
             None => eprintln!("noe4: pck fetch of {} returned void", url),
         }
     }
-    if text.is_empty() {
-        None
-    } else {
-        Some(text)
-    }
+    if text.is_empty() { None } else { Some(text) }
 }
 
 fn resolved_bodies(spk: &SpkFile) -> BTreeMap<i32, String> {

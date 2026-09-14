@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
-    light_time_worldline, parse_ephemeris_binary, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
+    light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::doppler::parse_pnav_bin;
-use omegaflow::odp::{downlink_rate_core, dsn_station, station_velocity, C, EARTH};
+use omegaflow::odp::{C, EARTH, downlink_rate_core, dsn_station, station_velocity};
 
 const SC_BODIES: &[&str] = &["pioneer10_daily", "pioneer11_daily"];
 const SC_KEY: [&str; 2] = ["pioneer10", "pioneer11"];
@@ -93,7 +93,6 @@ fn fixed_effects_1(
     }
     Some((a, resid, epoch, offset))
 }
-
 
 fn uplink_rate(
     t2: f64,
@@ -299,7 +298,9 @@ fn ruck_scan(times: &[f64], vals: &[f64]) {
         n = flags.len()
     );
     if flags.is_empty() {
-        eprintln!("  Ruck: no step exceeds the gate — the daily residuum is still over the transit band (0 honored, a limit is a verdict)");
+        eprintln!(
+            "  Ruck: no step exceeds the gate — the daily residuum is still over the transit band (0 honored, a limit is a verdict)"
+        );
         return;
     }
     for (t, r, sigma) in flags.iter().take(12) {
@@ -388,9 +389,7 @@ fn run(name: &str, sc_body: &str) {
         if !rdown.is_finite() {
             continue;
         }
-        let Some((r_sc2, t2)) =
-            light_time_worldline(r_rcv, t3, &|t| sc(t).map(|(p, _)| p))
-        else {
+        let Some((r_sc2, t2)) = light_time_worldline(r_rcv, t3, &|t| sc(t).map(|(p, _)| p)) else {
             continue;
         };
         let Some((_, v_sc2)) = sc(t2) else {
