@@ -1,5 +1,5 @@
-use omegaflow::archivar::json::{jnum, jstr, parse_json, JsonVal};
-use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::json::{JsonVal, jnum, jstr, parse_json};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
 use omegaflow_measure::weberin::deredden::build_star_index;
 use std::collections::HashSet;
 
@@ -80,7 +80,12 @@ fn classify(
     alert: &Alert,
     radius_as: f64,
 ) -> (ClassTally, Option<Hit>) {
-    let mut t = ClassTally { background_nearest: 0, foreground_nearest: 0, no_match: 0, background_any: 0 };
+    let mut t = ClassTally {
+        background_nearest: 0,
+        foreground_nearest: 0,
+        no_match: 0,
+        background_any: 0,
+    };
     let r_deg = radius_as / 3600.0;
     let found = idx.within(alert.ra_deg, alert.dec_deg, r_deg);
     if found.is_empty() {
@@ -175,8 +180,16 @@ fn report_table(
         println!("{window_label} radius {radius_as:.0} arcsec: no alert measured (0 honored)");
         return;
     }
-    let mut tally = ClassTally { background_nearest: 0, foreground_nearest: 0, no_match: 0, background_any: 0 };
-    let mut dt = DistTally { background_pc: Vec::new(), background_sep_le1: 0 };
+    let mut tally = ClassTally {
+        background_nearest: 0,
+        foreground_nearest: 0,
+        no_match: 0,
+        background_any: 0,
+    };
+    let mut dt = DistTally {
+        background_pc: Vec::new(),
+        background_sep_le1: 0,
+    };
     for a in alerts {
         let (t, hit) = classify(idx, a, radius_as);
         tally.background_nearest += t.background_nearest;
@@ -228,7 +241,9 @@ fn report_table(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(stars_path) = arg_after(&args, "--stars") else {
-        eprintln!("usage: transient_distance_fraction --stars <dr3_stars.bin> --objects <alerts.json> [--objects <more.json> ...] --radius <arcsec> [--radius <arcsec> ...]");
+        eprintln!(
+            "usage: transient_distance_fraction --stars <dr3_stars.bin> --objects <alerts.json> [--objects <more.json> ...] --radius <arcsec> [--radius <arcsec> ...]"
+        );
         return;
     };
     let object_files = field_list(&args, "--objects");
@@ -238,7 +253,9 @@ fn main() {
     }
     let radius_words = each_after(&args, "--radius");
     if radius_words.is_empty() {
-        eprintln!("--radius <arcsec>: the search radius is the operator's decision — name it before the measurement");
+        eprintln!(
+            "--radius <arcsec>: the search radius is the operator's decision — name it before the measurement"
+        );
         return;
     }
     let mut radii: Vec<f64> = Vec::with_capacity(radius_words.len());
@@ -291,7 +308,11 @@ fn main() {
     let density = idx.stars.len() as f64 / DEG2_PER_SR;
     println!(
         "catalog {stars_path}: {n_records} records | parsed + indexed {} (positive-parallax, finite) | unparsed {} ({} plx <= 0, {} plx non-finite, {} other non-finite field)",
-        parsed, n_records - parsed, plx_nonpositive, plx_nonfinite, other_skip
+        parsed,
+        n_records - parsed,
+        plx_nonpositive,
+        plx_nonfinite,
+        other_skip
     );
 
     let mut alerts: Vec<Alert> = Vec::new();

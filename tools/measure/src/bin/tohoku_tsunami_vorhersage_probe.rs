@@ -1,4 +1,4 @@
-use omegaflow::archivar::{jnum, parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, jnum, parse_json};
 use omegaflow_measure::noaa_coops::{curl_text, fmt_hhmm, haversine_km, measure_station};
 
 const BEGIN: &str = "20110311";
@@ -86,7 +86,9 @@ fn travel_time_min(depths: &[f64], total_km: f64) -> f64 {
 
 fn main() {
     println!("=== tohoku 2011 vorhersage — GEBCO depth integration vs measured pegsel ===");
-    println!("source 38.297 N 142.373 E (catalog) | speed sqrt(g·d) per segment, depth floor 200 m (shelf convention)");
+    println!(
+        "source 38.297 N 142.373 E (catalog) | speed sqrt(g·d) per segment, depth floor 200 m (shelf convention)"
+    );
     println!();
     println!(
         "{:<14} {:>8} {:>11} {:>11} {:>9} {:>8} {:>7} {:>11}",

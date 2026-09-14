@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use omegaflow::archivar::{parse_ephemeris_binary, BodyEphemeris};
-use omegaflow::dastcom::{parse_record, AsteroidRec, RECORD_STRIDE};
-use omegaflow::gaia_sso::{parse_bin, GaiaBody};
+use omegaflow::archivar::{BodyEphemeris, parse_ephemeris_binary};
+use omegaflow::dastcom::{AsteroidRec, RECORD_STRIDE, parse_record};
+use omegaflow::gaia_sso::{GaiaBody, parse_bin};
 use omegaflow::weberin::{GaiaFold, Weberin};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -103,7 +103,9 @@ fn main() {
         return;
     }
     let transits_all: usize = gaia_bodies.iter().map(|b| b.transits.len()).sum();
-    println!("=== the second body line — MPC Kepler (dastcom elements) against the Gaia DR3 SSO measured astrometry (angular, no distance fabricated) ===");
+    println!(
+        "=== the second body line — MPC Kepler (dastcom elements) against the Gaia DR3 SSO measured astrometry (angular, no distance fabricated) ==="
+    );
     let mut placed = 0usize;
     let mut riss = 0usize;
     let mut absent = 0usize;

@@ -1,5 +1,5 @@
 use crate::geo::GeoRec;
-use crate::lsk::{days_from_civil, LeapSeconds};
+use crate::lsk::{LeapSeconds, days_from_civil};
 
 const DAY_S: f64 = 86400.0;
 

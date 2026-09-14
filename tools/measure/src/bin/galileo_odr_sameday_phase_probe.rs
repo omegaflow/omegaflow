@@ -39,7 +39,9 @@ fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.len() % 6 != 0 {
-        eprintln!("galileo ODR same-day phase probe: <odr> <label> <YYYY-MM-DD> <station> <h0> <h1> [...] (6 tokens per window)");
+        eprintln!(
+            "galileo ODR same-day phase probe: <odr> <label> <YYYY-MM-DD> <station> <h0> <h1> [...] (6 tokens per window)"
+        );
         return;
     }
     let Ok(bytes) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
@@ -69,12 +71,17 @@ fn main() {
         resid_floor.push((st, day_key(tdb), hour_of_day(tdb), resid));
     }
 
-    println!("galileo GO-J/GO-JS ODR same-day phase split: 300-s sub-windows of the ODR stream are tagged by the coincident closed-loop floor loudness (floor-class resid RMS of the same station and civil day, >= 8 samples in the sub-window); tone = AD1 carrier-line segsnr median over the 8192-sample segments inside each 300-s sub-window");
+    println!(
+        "galileo GO-J/GO-JS ODR same-day phase split: 300-s sub-windows of the ODR stream are tagged by the coincident closed-loop floor loudness (floor-class resid RMS of the same station and civil day, >= 8 samples in the sub-window); tone = AD1 carrier-line segsnr median over the 8192-sample segments inside each 300-s sub-window"
+    );
     let mut i = 0;
     while i < args.len() {
         let path = &args[i];
         let label = &args[i + 1];
-        let ymd: Vec<i64> = args[i + 2].split('-').filter_map(|x| x.parse().ok()).collect();
+        let ymd: Vec<i64> = args[i + 2]
+            .split('-')
+            .filter_map(|x| x.parse().ok())
+            .collect();
         if ymd.len() != 3 {
             println!("{label}: date parse void");
             i += 6;
@@ -101,7 +108,15 @@ fn main() {
     }
 }
 
-fn measure(path: &str, label: &str, day: i64, station: i64, h0: f64, h1: f64, resid_floor: &[(i64, i64, f64, f64)]) {
+fn measure(
+    path: &str,
+    label: &str,
+    day: i64,
+    station: i64,
+    h0: f64,
+    h1: f64,
+    resid_floor: &[(i64, i64, f64, f64)],
+) {
     let Ok(bytes) = fs::read(path) else {
         println!("{label}: read void");
         return;
@@ -157,7 +172,8 @@ fn measure(path: &str, label: &str, day: i64, station: i64, h0: f64, h1: f64, re
         .collect();
 
     let first_ms = segs[0].0;
-    let bin_count = ((segs.last().unwrap().0 + SEG_MS - first_ms) / (BIN_S * 1000.0)).ceil() as usize;
+    let bin_count =
+        ((segs.last().unwrap().0 + SEG_MS - first_ms) / (BIN_S * 1000.0)).ceil() as usize;
     let mut loud_tone: Vec<f64> = Vec::new();
     let mut quiet_tone: Vec<f64> = Vec::new();
     let mut no_floor_bins = 0usize;
@@ -203,8 +219,14 @@ fn measure(path: &str, label: &str, day: i64, station: i64, h0: f64, h1: f64, re
     println!(
         "{label}: {n_in} records in-window, {} full segments, {bin_count} 300-s bins over the file span; loud-phase bins n {} (bin tone med {:.1}, p10-p90 {:.1}-{:.1}); quiet-phase bins n {} (bin tone med {:.1}, p10-p90 {:.1}-{:.1}); bins without >={} floor samples {no_floor_bins}",
         segs.len(),
-        ln, lmed, l10, l90,
-        qn, qmed, q10, q90,
+        ln,
+        lmed,
+        l10,
+        l90,
+        qn,
+        qmed,
+        q10,
+        q90,
         MIN_FLOOR
     );
     if ln > 0 && qn > 0 {
@@ -225,11 +247,7 @@ fn segment_snr(x: &[f64]) -> f64 {
     let m = seg_spec(x);
     let nf = median(&m);
     let pk = m.iter().cloned().fold(f64::MIN, f64::max);
-    if nf > 0.0 {
-        pk / nf
-    } else {
-        0.0
-    }
+    if nf > 0.0 { pk / nf } else { 0.0 }
 }
 
 fn seg_spec(x: &[f64]) -> Vec<f64> {

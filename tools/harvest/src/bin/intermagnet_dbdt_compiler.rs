@@ -1,4 +1,4 @@
-use omegaflow::archivar::{cache_root, fetch_raw, parse_json, scalar_of, JsonVal};
+use omegaflow::archivar::{JsonVal, cache_root, fetch_raw, parse_json, scalar_of};
 use omegaflow::cdn::upload_release;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -12,10 +12,10 @@ const DAY: f64 = 86400.0;
 const MAGIC: &[u8; 4] = b"IMDT";
 
 fn now_unix() -> f64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs_f64())
-        .unwrap_or(0.0)
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(e) => -e.duration().as_secs_f64(),
+    }
 }
 
 fn iso_to_unix(s: &str) -> Option<f64> {
@@ -93,10 +93,19 @@ fn harvest_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<(f64, f6
         };
         let start = format!("{year:04}-{month:02}-01T00:00:00Z");
         let mut stop = format!("{ny:04}-{nm:02}-01T00:00:00Z");
-        if iso_to_unix(&stop).unwrap_or(0.0) > now - 2.0 * HOUR {
+        let Some(stop_unix) = iso_to_unix(&stop) else {
+            continue;
+        };
+        if stop_unix > now - 2.0 * HOUR {
             stop = iso_utc(now - 2.0 * HOUR);
         }
-        if iso_to_unix(&stop).unwrap_or(0.0) <= iso_to_unix(&start).unwrap_or(0.0) {
+        let Some(stop_unix) = iso_to_unix(&stop) else {
+            continue;
+        };
+        let Some(start_unix) = iso_to_unix(&start) else {
+            continue;
+        };
+        if stop_unix <= start_unix {
             continue;
         }
         let url = format!(
@@ -222,11 +231,14 @@ fn parse_bin(data: &[u8]) -> Option<Vec<(f64, f64)>> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let station = arg_value(&args, "--station").unwrap_or_else(|| {
+    let Some(station) = arg_value(&args, "--station") else {
         eprintln!("--station (INTERMAGNET code, e.g. ABK) required");
         std::process::exit(1);
-    });
-    let grain = arg_value(&args, "--grain").unwrap_or_else(|| "hourly".to_string());
+    };
+    let grain = match arg_value(&args, "--grain") {
+        Some(v) => v,
+        None => "hourly".to_string(),
+    };
     let bucket_s = match grain.as_str() {
         "hourly" => HOUR,
         "daily" => DAY,
@@ -238,9 +250,9 @@ fn main() {
     let sy: i64 = arg_value(&args, "--start")
         .and_then(|v| v.parse().ok())
         .unwrap_or(1994);
-    let ey: i64 = arg_value(&args, "--end")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or_else(|| {
+    let ey: i64 = match arg_value(&args, "--end").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => {
             let n = now_unix();
             let total = (n / DAY).floor() as i64;
             let z = total + 719468;
@@ -248,9 +260,12 @@ fn main() {
             let doe = z - era * 146097;
             let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
             yoe + era * 400
-        });
-    let out = arg_value(&args, "--out")
-        .unwrap_or_else(|| format!("{}_dbdt_{grain}.bin", station.to_lowercase()));
+        }
+    };
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => format!("{}_dbdt_{grain}.bin", station.to_lowercase()),
+    };
 
     let mut all: Vec<(f64, f64)> = Vec::new();
     for year in sy..=ey {

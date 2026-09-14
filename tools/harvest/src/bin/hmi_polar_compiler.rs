@@ -2,7 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
 use omegaflow::hmi_polar::{parse_bin, write_bin};
-use omegaflow::json::{jnum, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jnum, parse_json};
 use omegaflow::lsk::days_from_civil;
 
 const JSOC_INFO: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info";
@@ -109,11 +109,7 @@ fn list_rotations() -> Option<Vec<(i64, String)>> {
         };
         out.push((car_rot, ts.clone()));
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn record_car_rot(rec: &str) -> Option<i64> {
@@ -194,8 +190,10 @@ fn export_chunk(
         tasks.push((car_rot, fname));
     }
     let dl_base = format!("{}{}/", JSOC_DL, dir);
-    let jobs = jobs.max(1);
-    let per = tasks.len().div_ceil(jobs).max(1);
+    if tasks.is_empty() {
+        return Vec::new();
+    }
+    let per = tasks.len().div_ceil(jobs);
     let cache_owned = cache_dir.to_string();
     let mut out: Vec<(i64, Option<Vec<u8>>)> = Vec::with_capacity(tasks.len());
     std::thread::scope(|scope| {
@@ -223,7 +221,13 @@ fn export_chunk(
             }));
         }
         for h in handles {
-            out.extend(h.join().unwrap_or_default());
+            match h.join() {
+                Ok(rows) => out.extend(rows),
+                Err(_) => {
+                    eprintln!("an export worker panicked — its chunk stays unwritten");
+                    std::process::exit(1);
+                }
+            }
         }
     });
     out
@@ -233,9 +237,12 @@ fn polar_means(bytes: &[u8]) -> Option<(f64, f64)> {
     let (_, hdu2) = FitsHeader::parse(bytes, 0)?;
     let (header, _) = FitsHeader::parse(bytes, hdu2)?;
     let bscale = header.f64("BSCALE").unwrap_or(1.0);
-    let bzero = header.f64("BZERO").unwrap_or(0.0);
+    let bzero = match header.f64("BZERO") {
+        Some(v) => v,
+        None => 0.0,
+    };
     let cdelt2 = header.f64("CDELT2")?;
-    let crval2 = header.f64("CRVAL2").unwrap_or(0.0);
+    let crval2 = header.f64("CRVAL2")?;
     let crpix2 = header.f64("CRPIX2")?;
     let (img, _) = FitsCompressedImage::parse(bytes, hdu2)?;
     let blank = img.blank;
@@ -285,16 +292,24 @@ fn polar_means(bytes: &[u8]) -> Option<(f64, f64)> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = has_flag(&args, "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "hmi_polar.bin".to_string());
-    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "hmi_polar.bin".to_string(),
+    };
+    let cache_dir = match arg_value(&args, "--cache-dir") {
+        Some(v) => v,
+        None => omegaflow::archivar::cache_root()
             .join("omegaflow_hmi_cache")
             .to_string_lossy()
-            .into_owned()
-    });
+            .into_owned(),
+    };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(8);
+    if jobs == 0 {
+        eprintln!("--jobs 0 carries no worker thread");
+        std::process::exit(1);
+    }
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{}: cache dir stays uncreatable", cache_dir);
         std::process::exit(1);

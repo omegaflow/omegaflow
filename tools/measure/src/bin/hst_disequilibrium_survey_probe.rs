@@ -1,8 +1,8 @@
-use omegaflow::equilibrium::{teq, AU_M, SUN_RADIUS_M};
-use omegaflow::json::{jnum, jstr, parse_json, JsonVal};
+use omegaflow::equilibrium::{AU_M, SUN_RADIUS_M, teq};
+use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::thermochem::{
-    equilibrium_composition_condensed, equilibrium_composition_sulfur, sulfur_gas_names, COOL_T_MIN,
-    P0_PA,
+    COOL_T_MIN, P0_PA, equilibrium_composition_condensed, equilibrium_composition_sulfur,
+    sulfur_gas_names,
 };
 use std::collections::HashMap;
 
@@ -197,10 +197,7 @@ fn main() {
                 continue;
             }
         };
-        let mut named: Vec<&str> = dets
-            .iter()
-            .filter_map(|d| d.pl_name.as_deref())
-            .collect();
+        let mut named: Vec<&str> = dets.iter().filter_map(|d| d.pl_name.as_deref()).collect();
         named.sort();
         named.dedup();
         let target: Option<&PlanetRow> = if named.len() == 1 {
@@ -220,7 +217,10 @@ fn main() {
         };
         let t_eq = match p.pl_eqt {
             Some(e) => {
-                teq_sources.push(format!("{host} {}: pl_eqt {e:.1} K (pscomppars)", p.pl_name));
+                teq_sources.push(format!(
+                    "{host} {}: pl_eqt {e:.1} K (pscomppars)",
+                    p.pl_name
+                ));
                 e
             }
             None => {

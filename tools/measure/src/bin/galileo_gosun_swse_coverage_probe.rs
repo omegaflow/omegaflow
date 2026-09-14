@@ -59,12 +59,8 @@ fn main() {
     ));
 
     let mut anchor: Vec<(i64, String)> = Vec::new();
-    let anchors: [(i64, i64, i64); 4] = [
-        (1995, 11, 24),
-        (1995, 12, 4),
-        (1995, 12, 5),
-        (1995, 12, 6),
-    ];
+    let anchors: [(i64, i64, i64); 4] =
+        [(1995, 11, 24), (1995, 12, 4), (1995, 12, 5), (1995, 12, 6)];
     for (y, m, d) in anchors {
         anchor.push((civil_to_doy(y, m, d), format!("{y}-{m:02}-{d:02}")));
     }
@@ -82,7 +78,12 @@ fn main() {
             continue;
         }
         let (y, m, d) = (ymd[0], ymd[1], ymd[2]);
-        if y < 1995 || (y == 1995 && m < 11) || (y == 1995 && m == 11 && d < 20) || (y == 1996 && m == 1 && d > 20) || y > 1996 {
+        if y < 1995
+            || (y == 1995 && m < 11)
+            || (y == 1995 && m == 11 && d < 20)
+            || (y == 1996 && m == 1 && d > 20)
+            || y > 1996
+        {
             continue;
         }
         let doy = civil_to_doy(y, m, d);
@@ -114,7 +115,9 @@ fn main() {
             rows[idx][1], rows[idx][2]
         ));
     }
-    out.push(format!("SWS4-era daily file counts (1995-11-20 .. 1996-01-20):"));
+    out.push(format!(
+        "SWS4-era daily file counts (1995-11-20 .. 1996-01-20):"
+    ));
     for (doy, idxs) in &per_day {
         let mut names: Vec<String> = Vec::new();
         for idx in idxs {

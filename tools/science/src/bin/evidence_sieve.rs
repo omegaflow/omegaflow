@@ -1,4 +1,4 @@
-use omegaflow::json::{jstr, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jstr, parse_json};
 use std::collections::HashMap;
 use std::env;
 use std::fs;
@@ -704,9 +704,11 @@ mod tests {
     fn tags_and_wrapping_are_stripped() {
         let text = "<p>The H2O detection stands.\n</p><p>No CH4.</p>";
         let lines = evidence_lines(text, &[]);
-        assert!(lines
-            .iter()
-            .any(|l| l.starts_with("The H2O detection stands.")));
+        assert!(
+            lines
+                .iter()
+                .any(|l| l.starts_with("The H2O detection stands."))
+        );
         assert!(lines.iter().any(|l| l.starts_with("No CH4.")));
     }
 

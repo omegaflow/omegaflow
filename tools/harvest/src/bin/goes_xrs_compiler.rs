@@ -1,6 +1,6 @@
-use omegaflow::archivar::goes::{parse_bin, write_bin, COMP_XRSA, COMP_XRSB};
+use omegaflow::archivar::goes::{COMP_XRSA, COMP_XRSB, parse_bin, write_bin};
 use omegaflow::cdn::upload_asset;
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::process::Command;
 use std::sync::atomic::{AtomicI64, Ordering};
@@ -136,7 +136,10 @@ fn parse_nc(
     }
     let mut kept_a = 0usize;
     let mut kept_b = 0usize;
-    let mut guard = buckets.lock().unwrap_or_else(|e| e.into_inner());
+    let mut guard = match buckets.lock() {
+        Ok(g) => g,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     for i in 0..n {
         let t = match decode_f64(&time_raw, i * 8, Endian::Le) {
             Some(v) => v,
@@ -240,7 +243,13 @@ fn harvest_unit(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "goes_xrs.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => {
+            eprintln!("--out absent");
+            std::process::exit(1);
+        }
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(60.0);
@@ -255,12 +264,13 @@ fn main() {
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
-    let cache_dir = arg_value(&args, "--cache-dir").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let cache_dir = match arg_value(&args, "--cache-dir") {
+        Some(v) => v,
+        None => omegaflow::archivar::cache_root()
             .join("omegaflow_goes_xrs_cache")
             .to_string_lossy()
-            .into_owned()
-    });
+            .into_owned(),
+    };
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{}: cache dir stays uncreatable", cache_dir);
         std::process::exit(1);
@@ -270,20 +280,26 @@ fn main() {
         .and_then(parse_days)
     {
         Some(d) => d,
-        None => parse_days("1995-01-01").unwrap_or_else(|| {
-            eprintln!("--window-start undeclared and the dataset start parses void");
-            std::process::exit(1);
-        }),
+        None => match parse_days("1995-01-01") {
+            Some(d) => d,
+            None => {
+                eprintln!("--window-start undeclared and the dataset start parses void");
+                std::process::exit(1);
+            }
+        },
     };
     let end_day = match arg_value(&args, "--window-end")
         .as_deref()
         .and_then(parse_days)
     {
         Some(d) => d,
-        None => parse_days("2020-12-31").unwrap_or_else(|| {
-            eprintln!("--window-end undeclared and the dataset end parses void");
-            std::process::exit(1);
-        }),
+        None => match parse_days("2020-12-31") {
+            Some(d) => d,
+            None => {
+                eprintln!("--window-end undeclared and the dataset end parses void");
+                std::process::exit(1);
+            }
+        },
     };
     let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
         Some(t) => t,
@@ -340,16 +356,18 @@ fn main() {
             let total_rows = Arc::clone(&total_rows);
             let total_voids = Arc::clone(&total_voids);
             let cache_dir = cache_dir.clone();
-            workers.push(std::thread::spawn(move || loop {
-                let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
-                let Some((sat, y, m)) = units.get(idx).cloned() else {
-                    break;
-                };
-                let (rows, voids) = harvest_unit(
-                    &sat, y, m, &cache_dir, start_day, end_day, decimate_s, &buckets,
-                );
-                total_rows.fetch_add(rows as i64, Ordering::SeqCst);
-                total_voids.fetch_add(voids as i64, Ordering::SeqCst);
+            workers.push(std::thread::spawn(move || {
+                loop {
+                    let idx = next.fetch_add(1, Ordering::SeqCst) as usize;
+                    let Some((sat, y, m)) = units.get(idx).cloned() else {
+                        break;
+                    };
+                    let (rows, voids) = harvest_unit(
+                        &sat, y, m, &cache_dir, start_day, end_day, decimate_s, &buckets,
+                    );
+                    total_rows.fetch_add(rows as i64, Ordering::SeqCst);
+                    total_voids.fetch_add(voids as i64, Ordering::SeqCst);
+                }
             }));
         }
         for w in workers {
@@ -362,10 +380,16 @@ fn main() {
             total_voids.load(Ordering::SeqCst)
         );
     }
-    let buckets_guard = Arc::try_unwrap(buckets)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let buckets_guard = match Arc::try_unwrap(buckets) {
+        Ok(mutex) => match mutex.into_inner() {
+            Ok(map) => map,
+            Err(poisoned) => poisoned.into_inner(),
+        },
+        Err(_) => {
+            eprintln!("the bucket map stays shared after join — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     let mut raw: Vec<(f64, f64, u32)> = Vec::new();
     for ((comp, bucket), mut vals) in buckets_guard {
         if vals.is_empty() {

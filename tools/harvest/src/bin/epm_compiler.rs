@@ -5,7 +5,7 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
+use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
@@ -54,11 +54,7 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() {
-        None
-    } else {
-        Some(text)
-    }
+    if text.is_empty() { None } else { Some(text) }
 }
 
 fn fetch_bsp(url: &str) -> Option<PathBuf> {
@@ -134,9 +130,13 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!("usage: epm_compiler [<epm2021.bsp|url>]... [--pck <body.tpc>]... [--ci-mode]");
-        eprintln!("  downloads https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp when no path is given");
+        eprintln!(
+            "  downloads https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp when no path is given"
+        );
         eprintln!("  emits ephemeris_epm_<body>.bin in the current directory");
-        eprintln!("  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched");
+        eprintln!(
+            "  --pck passes a NAIF body PCK text (POLE/RADII); absent, pck00010+pck00011 are fetched"
+        );
         eprintln!(
             "  --ci-mode uploads each asset to the {} CDN release",
             CDN_TAG

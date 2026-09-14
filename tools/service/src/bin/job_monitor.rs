@@ -1,15 +1,15 @@
 use std::collections::BTreeSet;
 use std::env;
-use std::io::{stdin, stdout, IsTerminal, Write};
+use std::io::{IsTerminal, Write, stdin, stdout};
 use std::process::Command;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use omegaflow_service::jobdata::{
-    ci_runs, clean_unit, job_keys, loadavg, log_hint, mem_frac, n_cpus, proc_metrics, ps_jobs,
-    systemd_jobs, term_width, truncate, unix_now_secs, CiRun, ProcJob, UnitJob,
+    CiRun, ProcJob, UnitJob, ci_runs, clean_unit, job_keys, loadavg, log_hint, mem_frac, n_cpus,
+    proc_metrics, ps_jobs, systemd_jobs, term_width, truncate, unix_now_secs,
 };
 
 fn main() {

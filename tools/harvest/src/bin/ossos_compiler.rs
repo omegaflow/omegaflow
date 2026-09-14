@@ -1,4 +1,4 @@
-use omegaflow::archivar::ossos::{encode_record, OssosRec, MJD_TO_JD};
+use omegaflow::archivar::ossos::{MJD_TO_JD, OssosRec, encode_record};
 use omegaflow::cdn::upload_release;
 
 const CDN_TAG: &str = "cdsarc.cds.unistra.fr";

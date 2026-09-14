@@ -18,11 +18,7 @@ fn num_cell(s: &str) -> Option<f64> {
         return None;
     }
     let v = t.parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 struct StationEpoch {
@@ -160,9 +156,6 @@ fn main() {
             Some(v) => v.to_string(),
             None => String::new(),
         };
-        eprintln!(
-            "  {}|{}|{}|{}|{}|{}",
-            r.net, r.sta, lat, lon, elev, r.site
-        );
+        eprintln!("  {}|{}|{}|{}|{}|{}", r.net, r.sta, lat, lon, elev, r.site);
     }
 }

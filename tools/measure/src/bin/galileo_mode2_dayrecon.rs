@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -215,11 +215,7 @@ fn main() {
         .filter_map(|d| {
             let v = day_nl.get(d)?;
             let r = rms(v);
-            if r.is_finite() {
-                Some((*d, r))
-            } else {
-                None
-            }
+            if r.is_finite() { Some((*d, r)) } else { None }
         })
         .collect();
     let mut real_sorted = real.clone();

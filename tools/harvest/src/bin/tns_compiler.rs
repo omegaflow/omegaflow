@@ -1,4 +1,4 @@
-use omegaflow::archivar::tns::{write_bin, TnsObject, NAME_LEN};
+use omegaflow::archivar::tns::{NAME_LEN, TnsObject, write_bin};
 use omegaflow::cdn::upload_asset;
 use std::process::Command;
 

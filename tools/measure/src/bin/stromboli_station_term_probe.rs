@@ -1,5 +1,5 @@
 use omegaflow_measure::depthphase::{
-    arc_deg, arg_value, bandpass, median, unix_to_iso, StationTerm,
+    StationTerm, arc_deg, arg_value, bandpass, median, unix_to_iso,
 };
 use omegaflow_measure::miniseed::decode_body;
 use std::env;
@@ -201,11 +201,7 @@ fn envelope_peak_index(bp: &[f64], rate: f64) -> Option<usize> {
             best_i = i;
         }
     }
-    if best_v <= 1e-12 {
-        None
-    } else {
-        Some(best_i)
-    }
+    if best_v <= 1e-12 { None } else { Some(best_i) }
 }
 
 fn main() {

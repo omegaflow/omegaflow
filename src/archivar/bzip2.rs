@@ -403,11 +403,7 @@ pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
             break;
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 #[cfg(test)]

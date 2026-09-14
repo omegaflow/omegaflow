@@ -1,10 +1,10 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_ARGO_BBP700, COMP_ARGO_CHLA, COMP_ARGO_DOXY,
-    COMP_ARGO_NITRATE, COMP_ARGO_PH_TOTAL, MAGIC_ARGO,
+    COMP_ARGO_BBP700, COMP_ARGO_CHLA, COMP_ARGO_DOXY, COMP_ARGO_NITRATE, COMP_ARGO_PH_TOTAL,
+    GeoRec, MAGIC_ARGO, parse_bin, write_bin,
 };
 use omegaflow::cdn::upload_release;
-use omegaflow::hdf5::{decode_f32, decode_f64, Hdf5File};
+use omegaflow::hdf5::{Hdf5File, decode_f32, decode_f64};
 use omegaflow::inflate::gunzip;
 use omegaflow::lsk::parse as parse_lsk;
 use omegaflow::netcdf::{NetcdfFile, NetcdfType};
@@ -126,11 +126,7 @@ fn wmo_of(file: &str) -> Option<String> {
 
 fn parse_f64(cell: &str) -> Option<f64> {
     let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn parse_index(text: &str) -> (usize, usize, Vec<IndexRow>) {
