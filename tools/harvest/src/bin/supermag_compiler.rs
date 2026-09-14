@@ -15,7 +15,7 @@ use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
 
 const NETLOC: &str = "supermag.jhuapl.edu";
 const DATA_API: &str = "https://supermag.jhuapl.edu/services/data-api.php";
-const MAGSTID: &str = "https://supermag.jhuapl.edu/lib/php/magstid.php";
+const MAGSTID: &str = "https://supermag.jhuapl.edu/lib/php/magstid.php?logon=omegaflow";
 const LOGON: &str = "omegaflow";
 const FILL_NT: f64 = 999999.0;
 const CHUNK_S: f64 = 2419200.0;
@@ -163,8 +163,26 @@ fn num_after(s: &str, key: &str) -> Option<f64> {
     tail[..j].trim().parse().ok()
 }
 
+fn station_list_body() -> Option<String> {
+    for attempt in 0..6 {
+        if attempt > 0 {
+            std::thread::sleep(std::time::Duration::from_secs(10));
+        }
+        if let Some(text) = fetch_raw(MAGSTID, None, &[], 3600) {
+            if text.contains("id:\"") {
+                return Some(text);
+            }
+            eprintln!(
+                "magstid.php returned no station list (attempt {})",
+                attempt + 1
+            );
+        }
+    }
+    None
+}
+
 fn all_stations() -> Option<Vec<StationPos>> {
-    let text = fetch_raw(MAGSTID, None, &[], 3600)?;
+    let text = station_list_body()?;
     let mut out = Vec::new();
     let mut rest: &str = &text;
     loop {

@@ -6397,7 +6397,18 @@ at sun
 ttl 604800
 field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03.bin
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03a.bin
+format supermag_1m
+at earth
+ttl 604800
+field supermag_n_nez_nt supermag_n_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_e_nez_nt supermag_e_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_z_nez_nt supermag_z_nez_nt inverse-square em nT 86400 0.0 0.0
+field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
+field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
+field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03b.bin
 format supermag_1m
 at earth
 ttl 604800
