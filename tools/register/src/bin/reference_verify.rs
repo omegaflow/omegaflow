@@ -2,14 +2,12 @@ use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use std::thread;
-use std::time::Duration;
 
 fn fetch(url: &str) -> Option<String> {
     let out = Command::new("curl")
         .arg("-sL")
         .arg("--max-time")
-        .arg("40")
+        .arg("20")
         .arg(&url)
         .output()
         .ok()?;
@@ -24,25 +22,6 @@ fn extract_between<'a>(s: &'a str, open: &str, close: &str) -> Option<&'a str> {
     let rest = &s[start..];
     let end = rest.find(close)?;
     Some(&rest[..end])
-}
-
-fn strip_tags(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    let mut in_tag = false;
-    for c in s.chars() {
-        if in_tag {
-            if c == '>' {
-                in_tag = false;
-            }
-            continue;
-        }
-        if c == '<' {
-            in_tag = true;
-            continue;
-        }
-        out.push(c);
-    }
-    out
 }
 
 fn extract_arxiv_ids(body: &str) -> Vec<String> {
@@ -142,28 +121,30 @@ fn extract_dois(body: &str) -> Vec<String> {
 }
 
 fn verify_arxiv(id: &str) -> (String, String, String) {
-    let url = format!("http://export.arxiv.org/api/query?id_list={}", id);
+    let url = format!("https://arxiv.org/abs/{}", id);
     match fetch(&url) {
         None => ("pending".to_string(), String::new(), String::new()),
-        Some(xml) => {
-            if let Some(entry) = extract_between(&xml, "<entry>", "</entry>") {
-                let title = extract_between(entry, "<title>", "</title>")
-                    .map(|t| strip_tags(t).trim().to_string())
-                    .unwrap_or_default();
-                let mut names = Vec::new();
-                let mut rest = entry;
-                while let Some(n) = extract_between(rest, "<name>", "</name>") {
-                    names.push(strip_tags(n).trim().to_string());
-                    let off = rest.find("<name>").unwrap() + 6;
-                    rest = &rest[off..];
-                    if names.len() >= 4 {
-                        break;
-                    }
-                }
-                ("resolved".to_string(), title, names.join("; "))
-            } else {
-                ("absent".to_string(), String::new(), String::new())
+        Some(html) => {
+            let Some(raw) = extract_between(&html, "name=\"citation_title\" content=\"", "\"")
+            else {
+                return ("absent".to_string(), String::new(), String::new());
+            };
+            let title = raw.trim().to_string();
+            if title.is_empty() {
+                return ("absent".to_string(), String::new(), String::new());
             }
+            const AUTHOR: &str = "name=\"citation_author\" content=\"";
+            let mut names = Vec::new();
+            let mut rest = html.as_str();
+            while let Some(n) = extract_between(rest, AUTHOR, "\"") {
+                names.push(n.trim().to_string());
+                let off = rest.find(AUTHOR).unwrap() + AUTHOR.len();
+                rest = &rest[off..];
+                if names.len() >= 4 {
+                    break;
+                }
+            }
+            ("resolved".to_string(), title, names.join("; "))
         }
     }
 }
@@ -177,14 +158,22 @@ fn verify_doi(doi: &str) -> (String, String) {
         .arg("-w")
         .arg("%{http_code}")
         .arg("--max-time")
-        .arg("40")
+        .arg("20")
         .arg(&url)
         .output();
     let code = match out {
         Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).to_string(),
-        _ => String::from("pending"),
+        _ => return ("pending".to_string(), "no network / timeout".to_string()),
     };
-    let c = code.trim().parse::<u16>().unwrap_or(0);
+    let c: u16 = match code.trim().parse() {
+        Ok(v) => v,
+        Err(_) => {
+            return (
+                "pending".to_string(),
+                "doi.org carried no status".to_string(),
+            );
+        }
+    };
     match c {
         200 | 201 | 202 | 301 | 302 | 303 | 307 | 308 => {
             ("resolved".to_string(), format!("doi.org http={}", c))
@@ -193,13 +182,12 @@ fn verify_doi(doi: &str) -> (String, String) {
             "absent".to_string(),
             format!("doi.org http={} — not in the global handle register", c),
         ),
-        0 => ("pending".to_string(), "no network / timeout".to_string()),
         _ => ("pending".to_string(), format!("doi.org http={}", c)),
     }
 }
 
-fn paper_body(md_path: &Path) -> String {
-    let src = fs::read_to_string(md_path).unwrap_or_default();
+fn paper_body(md_path: &Path) -> Option<String> {
+    let src = fs::read_to_string(md_path).ok()?;
 
     if let Some(start) = src.find("<!--") {
         if let Some(end) = src[start + 4..].find("-->") {
@@ -209,10 +197,10 @@ fn paper_body(md_path: &Path) -> String {
             } else if src[rest..].starts_with('\n') {
                 rest += 1;
             }
-            return src[rest..].to_string();
+            return Some(src[rest..].to_string());
         }
     }
-    src
+    Some(src)
 }
 
 fn main() {
@@ -238,7 +226,10 @@ fn main() {
             continue;
         }
         let slug = p.file_stem().unwrap().to_string_lossy().to_string();
-        let body = paper_body(p);
+        let Some(body) = paper_body(p) else {
+            eprintln!("{} unreadable — the paper stays unverified", arg);
+            continue;
+        };
         let arxiv_ids = extract_arxiv_ids(&body);
         let dois = extract_dois(&body);
 
@@ -256,7 +247,6 @@ fn main() {
                 any_absent = true;
             }
             println!("\tarXiv:{}\t{}\t{}\t{}", id, status, title, authors);
-            thread::sleep(Duration::from_secs(3));
         }
         for doi in &dois {
             let (status, note) = verify_doi(doi);
