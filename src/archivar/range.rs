@@ -113,23 +113,27 @@ fn sigv4_signing_key(secret_key: &str, date_stamp: &str, region: &str) -> [u8; 3
     hmac_sha256(&k_service, b"aws4_request")
 }
 
-pub fn sigv4_get_headers(
+fn sigv4_headers(
     access_key: &str,
     secret_key: &str,
     region: &str,
     host: &str,
     canonical_uri: &str,
-    range: &str,
+    range: Option<&str>,
     amz_date: &str,
     date_stamp: &str,
     session_token: Option<&str>,
 ) -> Vec<(String, String)> {
     let mut canonical_headers = String::new();
     canonical_headers.push_str(&format!("host:{}\n", host));
-    canonical_headers.push_str(&format!("range:{}\n", range));
+    let mut signed_headers = String::from("host");
+    if let Some(range) = range {
+        canonical_headers.push_str(&format!("range:{}\n", range));
+        signed_headers.push_str(";range");
+    }
     canonical_headers.push_str(&format!("x-amz-content-sha256:{}\n", AWS4_EMPTY_SHA256));
     canonical_headers.push_str(&format!("x-amz-date:{}\n", amz_date));
-    let mut signed_headers = String::from("host;range;x-amz-content-sha256;x-amz-date");
+    signed_headers.push_str(";x-amz-content-sha256;x-amz-date");
     if let Some(token) = session_token {
         canonical_headers.push_str(&format!("x-amz-security-token:{}\n", token));
         signed_headers.push_str(";x-amz-security-token");
@@ -162,6 +166,53 @@ pub fn sigv4_get_headers(
     }
     out.push(("Authorization".to_string(), authorization));
     out
+}
+
+pub fn sigv4_get_headers(
+    access_key: &str,
+    secret_key: &str,
+    region: &str,
+    host: &str,
+    canonical_uri: &str,
+    range: &str,
+    amz_date: &str,
+    date_stamp: &str,
+    session_token: Option<&str>,
+) -> Vec<(String, String)> {
+    sigv4_headers(
+        access_key,
+        secret_key,
+        region,
+        host,
+        canonical_uri,
+        Some(range),
+        amz_date,
+        date_stamp,
+        session_token,
+    )
+}
+
+pub fn sigv4_whole_headers(
+    access_key: &str,
+    secret_key: &str,
+    region: &str,
+    host: &str,
+    canonical_uri: &str,
+    amz_date: &str,
+    date_stamp: &str,
+    session_token: Option<&str>,
+) -> Vec<(String, String)> {
+    sigv4_headers(
+        access_key,
+        secret_key,
+        region,
+        host,
+        canonical_uri,
+        None,
+        amz_date,
+        date_stamp,
+        session_token,
+    )
 }
 
 pub fn uri_encode_path(path: &str) -> String {
@@ -298,6 +349,80 @@ pub fn fetch_s3_range(
     fetch_range(&https_url, offset, len, &headers)
 }
 
+fn fetch_whole(url: &str, ttl: u64, headers: &[(String, String)]) -> Option<Vec<u8>> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("-g")
+        .arg("--retry")
+        .arg(RANGE_RETRY.to_string())
+        .arg("--retry-all-errors")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("-m")
+        .arg(transfer_timeout_s(ttl).to_string())
+        .arg("--connect-timeout")
+        .arg(CONNECT_BOUND_S.to_string());
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    append_ca(&mut cmd);
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        Some(output.stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "\r\x1b[Ks3 returned ({}): {} {}",
+            output.status,
+            url,
+            stderr.trim()
+        );
+        None
+    }
+}
+
+fn public_s3_https_url(bucket: &str, key: &str) -> String {
+    format!(
+        "https://{}.s3.amazonaws.com/{}",
+        bucket,
+        uri_encode_path(key)
+    )
+}
+
+pub fn fetch_s3_whole(s3_url: &str, ttl: u64) -> Option<Vec<u8>> {
+    let (bucket, key) = s3_parts(s3_url)?;
+    match s3_credential_route(&bucket) {
+        Some(S3CredentialRoute::Bearer(url)) => {
+            let token = std::env::var("EARTHDATA_EDL_TOKEN")
+                .ok()
+                .filter(|t| !t.is_empty())?;
+            let creds = edl_bearer_credentials(url, &token)?;
+            let canonical_uri = format!("/{}/{}", bucket, uri_encode_path(&key));
+            let https_url = format!("https://{}{}", S3_ENDPOINT, canonical_uri);
+            let unix = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
+            let date_stamp = date_str(unix).replace('-', "");
+            let amz_date = hour_str(unix).replace('-', "").replace(':', "");
+            let headers = sigv4_whole_headers(
+                &creds.access_key,
+                &creds.secret_key,
+                S3_REGION,
+                S3_ENDPOINT,
+                &canonical_uri,
+                &amz_date,
+                &date_stamp,
+                Some(&creds.session_token),
+            );
+            fetch_whole(&https_url, ttl, &headers)
+        }
+        Some(S3CredentialRoute::OAuth) => None,
+        None => fetch_whole(&public_s3_https_url(&bucket, &key), ttl, &[]),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -354,6 +479,42 @@ mod tests {
         assert_eq!(
             auth,
             "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request, SignedHeaders=host;range;x-amz-content-sha256;x-amz-date, Signature=f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41"
+        );
+    }
+
+    #[test]
+    fn sigv4_whole_headers_omit_the_range_header() {
+        let headers = sigv4_whole_headers(
+            "AKIAIOSFODNN7EXAMPLE",
+            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            "us-east-1",
+            "examplebucket.s3.amazonaws.com",
+            "/test.txt",
+            "20130524T000000Z",
+            "20130524",
+            None,
+        );
+        assert!(headers.iter().all(|(k, _)| k != "range"));
+        let auth = headers
+            .iter()
+            .find(|(k, _)| k == "Authorization")
+            .map(|(_, v)| v.as_str())
+            .unwrap();
+        assert!(
+            auth.contains("SignedHeaders=host;x-amz-content-sha256;x-amz-date"),
+            "the whole-object signature carries no range header"
+        );
+    }
+
+    #[test]
+    fn public_s3_url_uses_virtual_host_style() {
+        assert_eq!(
+            public_s3_https_url("noaa-goes16", "ABI-L1b-RadF/2020/001/00/foo.nc"),
+            "https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadF/2020/001/00/foo.nc"
+        );
+        assert_eq!(
+            public_s3_https_url("bucket", "a b.nc"),
+            "https://bucket.s3.amazonaws.com/a%20b.nc"
         );
     }
 
