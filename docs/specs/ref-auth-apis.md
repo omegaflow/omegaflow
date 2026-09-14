@@ -130,14 +130,14 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 
 | API | Endpoint | Auth | Kosten | Force | Status | Registrierung |
 |---|---|---|---|---|---|---|
-| **NASA ADS** | `api.adsabs.harvard.edu/v1/search/query` | Bearer-Token | frei | EM | fehlt (Key vorhanden; einzelne /v1-Subendpoints dead 404) | https://ui.adsabs.harvard.edu/user/settings/token |
-| **Space-Track.org** | `www.space-track.org/basicspacedata/query/class/satcat` | Login | frei | EM | fehlt (Credentials vorhanden; Live 200, Query 401-auth) | https://www.space-track.org/auth/login |
+| **NASA ADS** | `api.adsabs.harvard.edu/v1/search/query` | Bearer-Token | frei | EM | offen (gemessen 2026-09-14: /v1/search/query = 200 mit Key; die 404 betreffen nur /v1/ und /v1/export/bibtex/) | https://ui.adsabs.harvard.edu/user/settings/token |
+| **Space-Track.org** | `www.space-track.org/basicspacedata/query/class/satcat` | Login | frei | EM | offen (gemessen 2026-09-14: ajaxauth-Login 200 + satcat-Query 200 mit Credentials; früherer Query-401 war Cookie-/Param-Fehler) | https://www.space-track.org/auth/login |
 | **SuperMAG** | `supermag.jhuapl.edu/services/data-api.php` | `logon=<username>` (passwortlos) | frei | EM | **funktioniert** (gemessen 10.09.2026: inventory/indices/data-api liefern echte Daten; User `omegaflow`; der frühere „geht nicht"-Befund war der falsche Parameter `user`/`username` statt `logon`) | https://supermag.jhuapl.edu/mag/ |
-| **GRACE-FO / SWOT (PODAAC)** | `podaac.jpl.nasa.gov` S3-Bucket | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; S3-Scheme ungetragen) | https://urs.earthdata.nasa.gov/users/new |
-| **SMAP Bodenfeuchte** | `nsidc.org/data/smap` | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; Live 200) | https://urs.earthdata.nasa.gov/users/new |
-| **CDDIS IONEX** | `cddis.nasa.gov` | Earthdata | frei | EM | fehlt (Ionosphäre; Earthdata vorhanden; Live 200 → Earthdata-gated) | https://urs.earthdata.nasa.gov/users/new |
-| **GES DISC (GPM/MODIS)** | `gesdisc.eosdis.nasa.gov` | Earthdata | frei | EM/Thermal | fehlt (griddap dead 404; GLDAS = Modell-decline) | https://urs.earthdata.nasa.gov/users/new |
-| **NASA AppEEARS** | `appeears.earthdatacloud.nasa.gov` | Earthdata | frei | Thermal | fehlt (Earthdata vorhanden; Live 200) | https://urs.earthdata.nasa.gov/users/new |
+| **GRACE-FO / SWOT (PODAAC)** | `podaac.jpl.nasa.gov` S3-Bucket | Earthdata | frei | Gravity | Scheme getragen (546d39e SigV4); weiter offen: s3credentials 401 ‚required client id missing' (Token gültig, legacy User-Token ohne client_id) | https://urs.earthdata.nasa.gov/users/new |
+| **SMAP Bodenfeuchte** | `nsidc.org/data/smap` | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; Live 200; on-prem n5eil01u.ecs.nsidc.org unerreichbar (deprecated)) | https://urs.earthdata.nasa.gov/users/new |
+| **CDDIS IONEX** | `cddis.nasa.gov` | Earthdata | frei | EM | fehlt (Earthdata-gated bestätigt; Datei mit Token = 404 (client_id-Block)) | https://urs.earthdata.nasa.gov/users/new |
+| **GES DISC (GPM/MODIS)** | `gesdisc.eosdis.nasa.gov` | Earthdata | frei | EM/Thermal | fehlt (griddap weiter 404; neuer earthdatacloud-OPeNDAP-Base + EDL offen) | https://urs.earthdata.nasa.gov/users/new |
+| **NASA AppEEARS** | `appeears.earthdatacloud.nasa.gov` | Earthdata | frei | Thermal | fehlt (/api/ 200, /api/product mit Token 403 (EDL client_id)) | https://urs.earthdata.nasa.gov/users/new |
 
 ## B. Mittel — erweitert vorhandene Daten
 
