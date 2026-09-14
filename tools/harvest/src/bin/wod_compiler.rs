@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
-    parse_bin, write_bin, GeoRec, COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, MAGIC_WOD,
+    COMP_WOD_DOXY, COMP_WOD_PSAL, COMP_WOD_TEMP, GeoRec, MAGIC_WOD, parse_bin, write_bin,
 };
 use omegaflow::archivar::lsk::{self, days_from_civil};
 use omegaflow::cdn::upload_release;
@@ -386,11 +386,7 @@ fn run_loop(args: &[String]) -> i32 {
         "wod loop {start_year}..={end_year} x {} instruments: {compiled} assets compiled, {absent} granules absent, {void} granules void",
         instruments.len()
     );
-    if compiled == 0 {
-        1
-    } else {
-        0
-    }
+    if compiled == 0 { 1 } else { 0 }
 }
 
 fn main() {
