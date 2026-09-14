@@ -139,13 +139,13 @@ pending
 url s3://noaa-himawari8
 note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9). Benennung gemessen: AHI-L1b-FLDK/{JJJJ}/{MM}/{TT}/{HHMM}/HS_H{08|09}_{JJJJMMTT}_{HHMM}_B{BB}_FLDK_R{rr}_S{nn}{gg}.DAT.bz2 (R05/R10/R20 = 0,5/1/2 km; S{nn}{gg} = Segment nn von gg — 2015 S0101 = Volldisk 5500×5500, ab Betrieb S0110…S1010). HSD-Block-Parser GEBAUT (2026-09-13, src/archivar/hsd.rs, parse_hsd → HsdFile: Blockfolge 1–11, columns/lines, pixel_values u16 Counts). Ernte/Compiler + CDN-Manifestation GEBAUT (2026-09-14, tools/harvest/src/bin/himawari_hsd_compiler.rs → AHI1-Segment-Bin, Roh-Counts u16 + .github/workflows/himawari-cdn.yml). HSD-Block 5 (nominal) dekodiert (2026-09-14, hsd.rs CalibrationBand, an echtem Granulat HS_H08_20220101_0000_B01_FLDK_R10_S0110 verifiziert: B01 gain 0.3773583529411764, offset -7.547167058823528). Offen: Kalibrierung im Compiler anwenden (Counts → Radianz) + Block 6 (Update). Route 2026-09-14 (archive_search --brave): JMA HSD-User-Guide v1.2 + Calibration-Update 2019 (Block 5/6, D-Koeffizient) + satpy ahi_hsd (calib_mode nominal/update). Messwert (AHI geostationäre em-Messung) echt.
 
-blocked parser-def las-laz
+pending
 url s3://noaa-nos-coastal-lidar-pds
-note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip) + DEM-GeoTIFF. GEBAUT (2026-09-13): las.rs liest Header/VLRs/COPC-Info+Hierarchie (127733 Pkt / 4 Knoten, 19961009ATM2_143020JR.copc.laz) + ept.json. Offen: LASzip-Chunk-Dekoder (Arithmetic-Coder + Chunk-Tabelle) — die Punktdaten bleiben LAZ; kein TIFF-Reader. Route 2026-09-14 (archive_search --crates): laz-rs (laz 0.13.0, copc-reader 0.9.0) als Referenz für den std-only LASzip-Chunk-Dekoder.
+note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip) + DEM-GeoTIFF. GEBAUT + GEMESSEN (2026-09-14): las.rs/laszip.rs liest Header/VLRs/COPC-Info+Hierarchie + den LASzip-Chunk-Dekoder (std-only Arithmetic-Coder + Chunk-Tabelle); verifiziert an den echten Granulaten 20210211_294000e_2682500n.copc.laz (Format 6, variable Chunk-Tabelle, 157 710 Punkte) und 19961009ATM2_143020JR.copc.laz (0 Dekode-Fehler). Der TIFF-Reader (tiff.rs) deckt nun Compression 1/5/7. Einziger Konsument: tools/utils/src/bin/las_reader.rs (Lese-Werkzeug); kein Nadel-Kanal, kein Membran-Evaluator frißt die Wolke. Der Draht trägt einen Skalar je Oszillator — ein Punkt je Oszillator wäre eine 157 710-Record-Flut je Frame, eine Zahl je Granulat wäre Band-Wahl (Fabrikationsrisiko, NRS-Präzedenz). Öffnungsbedingung (Rat 2026-09-14, einmütig): nur eine Nadel, die eine Gelände-Skalar-Serie benennt (z. B. eine Überflug-Wiederholungs-Differenz als advective-m-Serie), öffnet die Fassung. pending (Tor 1: kein gebauter Konsument).
 
-blocked parser-def las-laz
+pending
 url s3://usgs-lidar-public.s3.amazonaws.com
-note USGS 3DEP EPT (ept.json + ept-data/*.laz, dataType laszip). GEBAUT (2026-09-13): ept.json-Layout gelesen (AK_BrooksCamp_2012, 529285317 Pkt). Offen: LASzip-Chunk-Dekoder — die .laz-Kacheln bleiben komprimiert. Route 2026-09-14 (archive_search --crates): laz-rs (laz 0.13.0) als Referenz.
+note USGS 3DEP EPT (ept.json + ept-data/*.laz, dataType laszip). GEBAUT + GEMESSEN (2026-09-14): ept.json-Layout gelesen (AK_BrooksCamp_2012, 529285317 Pkt) + LASzip-Dekoder verifiziert am echten Granulat AK_BrooksCamp_2012/ept-data/0-0-0-0.laz (Format 1, pointwise, Extra-Bytes, 19 873 Punkte, 0 Dekode-Fehler). Kein Konsument (Tor 1) — pending, kein sources.φ-Block.
 
 pending
 url s3://noaa-oar-hourly-gdp-pds
