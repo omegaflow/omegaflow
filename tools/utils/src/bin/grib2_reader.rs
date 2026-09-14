@@ -175,7 +175,10 @@ fn note_text(note: &Grib2Note) -> String {
         ),
         Grib2Note::Edition { edition } => format!("edition {} — not 2", edition),
         Grib2Note::Length { total, bytes } => {
-            format!("message length {} exceeds the {} bytes present", total, bytes)
+            format!(
+                "message length {} exceeds the {} bytes present",
+                total, bytes
+            )
         }
         Grib2Note::SectionLength { number, off } => {
             format!("section {} at byte {} overruns the message", number, off)

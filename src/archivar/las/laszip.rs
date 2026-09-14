@@ -1,4 +1,4 @@
-use super::{decode_point, LasHeader, LasNote, LasPoint, LasVlr};
+use super::{LasHeader, LasNote, LasPoint, LasVlr, decode_point};
 
 const BM_LENGTH_SHIFT: u32 = 13;
 const DM_LENGTH_SHIFT: u32 = 15;
@@ -2456,7 +2456,7 @@ fn decode_chunk_layered(
             _ => {
                 return Err(LasNote::LazItem {
                     item: item.item_type,
-                })
+                });
             }
         };
         let mut sizes = Vec::with_capacity(n_layers);
@@ -2570,7 +2570,7 @@ fn decode_chunk_layered(
             _ => {
                 return Err(LasNote::LazItem {
                     item: item.item_type,
-                })
+                });
             }
         };
         extras.push((item_off, size, extra));
@@ -2753,7 +2753,7 @@ fn decode_chunk_pointwise(
             _ => {
                 return Err(LasNote::LazItem {
                     item: item.item_type,
-                })
+                });
             }
         };
         items.push((off, size, reader));

@@ -1,4 +1,4 @@
-use crate::json::{jpath_val, json_num, jstr, parse_json, JsonVal};
+use crate::json::{JsonVal, jpath_val, json_num, jstr, parse_json};
 
 pub struct ZarrArray {
     pub shape: Vec<usize>,

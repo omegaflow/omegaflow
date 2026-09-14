@@ -561,7 +561,9 @@ impl<R: std::io::Read> ZStream<'_, R> {
                     match self.read_raw(&mut hdr) {
                         Ok(4) => {}
                         _ => {
-                            return Err("deflate stored block header is shorter than 4 bytes".into())
+                            return Err(
+                                "deflate stored block header is shorter than 4 bytes".into()
+                            );
                         }
                     }
                     let len = hdr[0] as usize | ((hdr[1] as usize) << 8);
@@ -578,7 +580,7 @@ impl<R: std::io::Read> ZStream<'_, R> {
                             _ => {
                                 return Err(
                                     "deflate stored block data is shorter than its length".into()
-                                )
+                                );
                             }
                         }
                         self.push(b[0]);

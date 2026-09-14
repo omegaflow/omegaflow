@@ -58,7 +58,14 @@ impl Time {
         let h = num(11, 13)?;
         let mi = num(14, 16)?;
         let sec = num(17, 19)?;
-        Some(Time { y, mo, d, h, mi, s: sec })
+        Some(Time {
+            y,
+            mo,
+            d,
+            h,
+            mi,
+            s: sec,
+        })
     }
 
     fn daycount(&self) -> i64 {
@@ -100,7 +107,10 @@ fn parse_index(path: &str) -> Option<Vec<Seg>> {
         if sp.epoch() < st.epoch() {
             continue;
         }
-        segs.push(Seg { start: st, stop: sp });
+        segs.push(Seg {
+            start: st,
+            stop: sp,
+        });
     }
     Some(segs)
 }
@@ -307,7 +317,9 @@ fn main() {
     match et {
         Some(d) => {
             let gap = d + J2000_UNIX_D - last_day;
-            push(format!("calendar gap from last ODR day to earliest trio floor day: {gap} days"));
+            push(format!(
+                "calendar gap from last ODR day to earliest trio floor day: {gap} days"
+            ));
         }
         None => push("trio floor days: none".to_string()),
     }
@@ -323,17 +335,26 @@ fn main() {
     ));
 
     push(String::new());
-    push("robust trio floor census (n >= 30): cells and loud (rms >= 1 Hz) per (mode, station)".to_string());
+    push(
+        "robust trio floor census (n >= 30): cells and loud (rms >= 1 Hz) per (mode, station)"
+            .to_string(),
+    );
     let mut sum_robust = 0usize;
     let mut sum_loud = 0usize;
     for mode in 1..=3 {
         for st in TRIO {
-            let sub: Vec<&(i64, i64, i64, usize, f64)> =
-                robust_trio.iter().filter(|c| c.0 == mode && c.1 == st).copied().collect();
+            let sub: Vec<&(i64, i64, i64, usize, f64)> = robust_trio
+                .iter()
+                .filter(|c| c.0 == mode && c.1 == st)
+                .copied()
+                .collect();
             let loud = sub.iter().filter(|c| c.4 >= LOUD_HZ).count();
             sum_robust += sub.len();
             sum_loud += loud;
-            push(format!("  mode {mode} st{st}: {} robust cells, {loud} loud", sub.len()));
+            push(format!(
+                "  mode {mode} st{st}: {} robust cells, {loud} loud",
+                sub.len()
+            ));
         }
     }
     push(format!(
@@ -341,7 +362,10 @@ fn main() {
     ));
 
     push(String::new());
-    push("closed-loop resid samples inside ODR window per station (modes 1..=3, locked excluded):".to_string());
+    push(
+        "closed-loop resid samples inside ODR window per station (modes 1..=3, locked excluded):"
+            .to_string(),
+    );
     let mut act: Vec<(i64, usize)> = win_activity.iter().map(|(k, v)| (*k, *v)).collect();
     act.sort();
     let mut trio_act = 0usize;

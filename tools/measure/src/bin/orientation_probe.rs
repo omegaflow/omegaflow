@@ -4,11 +4,11 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs, embedded_lsk, fetch_raw_bytes,
-    icrs_to_body_surface, light_time_worldline, parse_ephemeris_binary, BodyEphemeris, J2000_EPOCH,
+    BodyEphemeris, J2000_EPOCH, body_barycenter_position, body_fixed_to_icrs, embedded_lsk,
+    fetch_raw_bytes, icrs_to_body_surface, light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
-use omegaflow::odp::{dsn_station, EARTH};
+use omegaflow::odp::{EARTH, dsn_station};
 
 const DAY_S: f64 = 86400.0;
 const RAD_DEG: f64 = 180.0 / std::f64::consts::PI;
@@ -284,14 +284,18 @@ fn main() {
         None => "data".to_string(),
     };
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("orientation: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
+        eprintln!(
+            "orientation: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
+        );
         return;
     };
     let Some(t_anchor) = lsk.unix_to_tdb(ANCHOR_UNIX) else {
         eprintln!("orientation: the anchor date reads void on the leap table");
         return;
     };
-    println!("=== orientation — sub-solar point on the matrix path against the analytic IAU path, real bins ===");
+    println!(
+        "=== orientation — sub-solar point on the matrix path against the analytic IAU path, real bins ==="
+    );
     println!("anchor 2017-08-21T18:26:40Z (tdb {t_anchor:.3} s past J2000)");
 
     for spec in &LINES {
@@ -406,10 +410,10 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::archivar::{BodyProperties, ChebyshevGranule, CHEBYSHEV_N};
+    use omegaflow::archivar::{BodyProperties, CHEBYSHEV_N, ChebyshevGranule};
     use omegaflow::ephemeris::rotation_matrix_from_angles;
-    use std::sync::atomic::AtomicUsize;
     use std::sync::Arc;
+    use std::sync::atomic::AtomicUsize;
 
     const GATE_ELEVATION_DEG: f64 = 1.0;
 

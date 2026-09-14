@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::json::{jpath, parse_json};
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
@@ -31,11 +31,7 @@ fn fetch_depth(lat: f64, lon: f64) -> Option<f64> {
     let body = String::from_utf8_lossy(&out.stdout);
     let json = parse_json(&body)?;
     let v = jpath(&json, "results.0.elevation")?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn parse_locations(spec: &str) -> Vec<(f64, f64)> {

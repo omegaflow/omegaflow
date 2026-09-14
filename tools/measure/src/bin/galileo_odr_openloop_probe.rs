@@ -113,13 +113,23 @@ fn segment_snr(x: &[f64]) -> SegStat {
         i += SEG;
     }
     if snrs.is_empty() {
-        return SegStat { n_seg: 0, med_snr: 0.0, p10: 0.0, p90: 0.0 };
+        return SegStat {
+            n_seg: 0,
+            med_snr: 0.0,
+            p10: 0.0,
+            p90: 0.0,
+        };
     }
     snrs.sort_by(|a, b| a.total_cmp(b));
     let med = snrs[snrs.len() / 2];
     let p10 = snrs[(snrs.len() as f64 * 0.10) as usize];
     let p90 = snrs[((snrs.len() as f64 * 0.90) as usize).min(snrs.len() - 1)];
-    SegStat { n_seg: snrs.len(), med_snr: med, p10, p90 }
+    SegStat {
+        n_seg: snrs.len(),
+        med_snr: med,
+        p10,
+        p90,
+    }
 }
 
 fn seg_spec(x: &[f64]) -> Vec<f64> {

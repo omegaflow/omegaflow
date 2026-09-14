@@ -1,5 +1,5 @@
-use omegaflow::archivar::json::{jstr, parse_json, JsonVal};
-use omegaflow::archivar::skydirection::{parse_bin, write_bin, SkyDirection};
+use omegaflow::archivar::json::{JsonVal, jstr, parse_json};
+use omegaflow::archivar::skydirection::{SkyDirection, parse_bin, write_bin};
 use omegaflow::archivar::{C_LIGHT, HUBBLE_H0, PARSEC_M};
 use omegaflow::cdn::upload_asset;
 use omegaflow_measure::weberin::deredden::ang_sep_arcsec;
@@ -226,7 +226,9 @@ fn report(rows: &[ZSource], t: &Transient, radius_as: f64, tally: &mut Tally) ->
             };
             println!(
                 "direction_z_join: {subj} | {id_s} at ra {:.5} dec {:.5} | separation {sep:.3} arcsec | measured redshift z {z:.6} -> Hubble distance {:.2} Mpc | placed",
-                r.ra_deg, r.dec_deg, hubble_mpc(z)
+                r.ra_deg,
+                r.dec_deg,
+                hubble_mpc(z)
             );
             Some(z)
         }

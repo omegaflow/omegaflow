@@ -8,7 +8,9 @@ const TRIO: [u8; 7] = [14, 42, 43, 61, 63, 65, 85];
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.len() < 3 || (args.len() - 1) % 2 != 0 {
-        eprintln!("galileo ODR header census probe: <report path> then <odr> <station> [...] (2 tokens per file)");
+        eprintln!(
+            "galileo ODR header census probe: <report path> then <odr> <station> [...] (2 tokens per file)"
+        );
         return;
     }
     let report_path = &args[0];
@@ -40,7 +42,11 @@ fn census(out: &mut Vec<String>, path: &str, station: u8) {
         return;
     }
     let mut dist: Vec<[u8; 32]> = vec![[0u8; 32]; HDR];
-    let step = if nrec > MAX_SAMPLE { nrec / MAX_SAMPLE } else { 1 };
+    let step = if nrec > MAX_SAMPLE {
+        nrec / MAX_SAMPLE
+    } else {
+        1
+    };
     let mut sampled = 0usize;
     let mut k = 0usize;
     while k < nrec {
@@ -78,7 +84,9 @@ fn census(out: &mut Vec<String>, path: &str, station: u8) {
         rec0[50], rec0[51]
     ));
     let sr = (rec0[158] as u16) << 8 | rec0[159] as u16;
-    out.push(format!("  word 80 bytes 158-159 (A-D sample rate): {sr} sps"));
+    out.push(format!(
+        "  word 80 bytes 158-159 (A-D sample rate): {sr} sps"
+    ));
 
     let mut consts: Vec<String> = Vec::new();
     let mut varying_trio: Vec<String> = Vec::new();
@@ -135,17 +143,24 @@ fn census(out: &mut Vec<String>, path: &str, station: u8) {
             "  constant station-like byte distinct from the receiver: none (no second/transmitting station field)".to_string(),
         );
     } else {
-        out.push(format!("  constant station-like byte distinct from the receiver: {second_const:?}"));
+        out.push(format!(
+            "  constant station-like byte distinct from the receiver: {second_const:?}"
+        ));
     }
     if mode_like.is_empty() {
         out.push("  no varying byte is restricted to {1,2,3}".to_string());
     } else {
-        out.push(format!("  varying bytes restricted to {{1,2,3}}: {mode_like:?}"));
+        out.push(format!(
+            "  varying bytes restricted to {{1,2,3}}: {mode_like:?}"
+        ));
     }
     if varying_trio.is_empty() {
         out.push("  no varying byte carries trio-looking values".to_string());
     } else {
-        out.push("  varying bytes carrying trio-looking values (spurious coincidences expected):".to_string());
+        out.push(
+            "  varying bytes carrying trio-looking values (spurious coincidences expected):"
+                .to_string(),
+        );
         for s in &varying_trio {
             out.push(format!("    {s}"));
         }

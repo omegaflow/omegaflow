@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-use omegaflow::atdf::{extract, field_of, strip_markers, LOGICAL_RECORD, TKFORM};
+use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, strip_markers};
 
 const CACHES: &[&str] = &[
     "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
@@ -10,9 +10,7 @@ const CACHES: &[&str] = &[
     "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_6177179A.TDF",
 ];
 
-const IDENTITY_ITEMS: &[u32] = &[
-    9, 11, 26, 28, 64, 69, 70, 71, 92, 94, 95, 96, 98, 116,
-];
+const IDENTITY_ITEMS: &[u32] = &[9, 11, 26, 28, 64, 69, 70, 71, 92, 94, 95, 96, 98, 116];
 
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
@@ -77,7 +75,9 @@ fn main() {
         ));
         out.push(format!("  station word census: {station_word:?}"));
         if !threeway.is_empty() {
-            out.push(format!("  three-way (station, ground_mode) records: {threeway:?}"));
+            out.push(format!(
+                "  three-way (station, ground_mode) records: {threeway:?}"
+            ));
         }
         if station_like_hits.is_empty() {
             out.push("  station-like second value (11..99 != item-10 station) across identity items: none".to_string());

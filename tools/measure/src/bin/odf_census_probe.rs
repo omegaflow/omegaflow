@@ -14,7 +14,10 @@ fn civil(secs_1950: f64) -> String {
 
 fn main() {
     let arg = std::env::args().skip(1).find(|a| !a.starts_with('-'));
-    let path = arg.unwrap_or_else(|| "src/archivar/kernels/odf07155.dat".to_string());
+    let Some(path) = arg else {
+        eprintln!("odf-census: --file absent — no ODF to count");
+        return;
+    };
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("odf-census: read void ({path})");
         return;
@@ -40,8 +43,14 @@ fn main() {
     txs.dedup();
     let mut omin = f64::INFINITY;
     let mut omax = f64::NEG_INFINITY;
-    let tmin = valid.iter().map(|r| r.t_since_1950).fold(f64::INFINITY, f64::min);
-    let tmax = valid.iter().map(|r| r.t_since_1950).fold(f64::NEG_INFINITY, f64::max);
+    let tmin = valid
+        .iter()
+        .map(|r| r.t_since_1950)
+        .fold(f64::INFINITY, f64::min);
+    let tmax = valid
+        .iter()
+        .map(|r| r.t_since_1950)
+        .fold(f64::NEG_INFINITY, f64::max);
     for r in &valid {
         if r.observable_hz < omin {
             omin = r.observable_hz;

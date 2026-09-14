@@ -1,6 +1,6 @@
 use omegaflow::parquet::{
-    codec_name, converted_type_name, encoding_name, parquet_type_name, repetition_name, ColumnChunk,
-    FileMetaData, ParquetNote,
+    ColumnChunk, FileMetaData, ParquetNote, codec_name, converted_type_name, encoding_name,
+    parquet_type_name, repetition_name,
 };
 use std::process::Command;
 
@@ -54,7 +54,10 @@ fn note_text(note: &ParquetNote) -> String {
             bytes[0], bytes[1], bytes[2], bytes[3]
         ),
         ParquetNote::FooterLength { len, file } => {
-            format!("footer length {} reaches past the file end at byte {}", len, file)
+            format!(
+                "footer length {} reaches past the file end at byte {}",
+                len, file
+            )
         }
         ParquetNote::Truncated { off } => format!("footer ends at byte {} — truncated footer", off),
         ParquetNote::Type { tag, off } => format!("compact type {} at byte {} unread", tag, off),

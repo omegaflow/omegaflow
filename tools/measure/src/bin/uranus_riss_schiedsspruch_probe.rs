@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::{
-    body_barycenter_position, body_barycenter_velocity, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, parse_ephemeris_binary, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, embedded_lsk,
+    fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 
@@ -139,11 +139,7 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
     let nb = vec_len(b)?;
     let c = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / (na * nb);
     let s = c.clamp(-1.0, 1.0).acos();
-    if s.is_finite() {
-        Some(s)
-    } else {
-        None
-    }
+    if s.is_finite() { Some(s) } else { None }
 }
 
 fn load_line(
@@ -157,7 +153,9 @@ fn load_line(
     for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset, BIN_TTL_S) else {
-            println!("uranus-riss {word}: {path} bin void — absent on disk and the CDN fetch returned non-200");
+            println!(
+                "uranus-riss {word}: {path} bin void — absent on disk and the CDN fetch returned non-200"
+            );
             return Line { word, map: None };
         };
         let Some(eph) = parse_ephemeris_binary(&bytes) else {
@@ -257,7 +255,9 @@ fn usage() {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Uranus-Riss-Schiedsspruch — DE441/INPOP19a/EPM2021 against the Camargo+2015 Uranus astrometry (geocentric, ICRS, TDB).");
+    println!(
+        "Uranus-Riss-Schiedsspruch — DE441/INPOP19a/EPM2021 against the Camargo+2015 Uranus astrometry (geocentric, ICRS, TDB)."
+    );
 
     let tsv_path = arg_token(&args, "--tsv")
         .unwrap_or("data/vizier.cfa.harvard.edu/camargo_uranu_j.tsv".to_string());
@@ -265,7 +265,9 @@ fn main() {
     let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
 
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("uranus-riss: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted");
+        eprintln!(
+            "uranus-riss: the embedded LSK carries no naif0012 table — the TDB axis stays unconverted"
+        );
         return;
     };
 

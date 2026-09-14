@@ -54,11 +54,7 @@ fn query(field: &DensityField, ra_deg: f64, dec_deg: f64) -> Option<(i64, u64)> 
 fn direction_of(args: &[String], name: &str) -> Option<f64> {
     let v = arg_value(args, name)?;
     let n: f64 = v.parse().ok()?;
-    if n.is_finite() {
-        Some(n)
-    } else {
-        None
-    }
+    if n.is_finite() { Some(n) } else { None }
 }
 
 fn usage() {
@@ -107,7 +103,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::archivar::spatial::{parse_star_record, STAR_RECORD_BYTES};
+    use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record};
 
     fn star_rec(ra: f64, dec: f64, plx: f32) -> Vec<u8> {
         let mut b = Vec::with_capacity(STAR_RECORD_BYTES);

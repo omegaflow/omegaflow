@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const MAGIC: [u8; 4] = *b"AIA1";
@@ -157,12 +157,15 @@ fn stack_pair(
     shuffle: bool,
     seed: u64,
 ) -> (f64, usize, usize) {
+    if events.is_empty() {
+        return (f64::NAN, 0, 0);
+    }
     let n_threads = std::thread::available_parallelism()
         .map(|n| n.get())
         .unwrap_or(4)
         .min(16)
-        .min(events.len().max(1));
-    let chunk_len = events.len().div_ceil(n_threads).max(1);
+        .min(events.len());
+    let chunk_len = events.len().div_ceil(n_threads);
     std::thread::scope(|scope| {
         let handles: Vec<_> = events
             .chunks(chunk_len)
@@ -212,7 +215,10 @@ fn stack_pair(
                 tot += t;
             }
         }
-        (sum / tot.max(1) as f64, pos, tot)
+        if tot == 0 {
+            return (f64::NAN, 0, 0);
+        }
+        (sum / tot as f64, pos, tot)
     })
 }
 
@@ -372,16 +378,20 @@ fn main() {
     println!();
     let out_path = arg_value(&args, "--out");
     let done_pairs: Vec<String> = match &out_path {
-        Some(p) => std::fs::read_to_string(p)
-            .unwrap_or_default()
-            .lines()
-            .filter_map(|l| {
-                l.split(" | ")
-                    .next()
-                    .map(|f| f.trim().to_string())
-                    .filter(|f| f.contains('→'))
-            })
-            .collect(),
+        Some(p) => {
+            let Ok(text) = std::fs::read_to_string(p) else {
+                eprintln!("{p}: resume read void — the done-pair ledger stays unread");
+                std::process::exit(1);
+            };
+            text.lines()
+                .filter_map(|l| {
+                    l.split(" | ")
+                        .next()
+                        .map(|f| f.trim().to_string())
+                        .filter(|f| f.contains('→'))
+                })
+                .collect()
+        }
         None => Vec::new(),
     };
     let n_pairs = LADDER.len() - 1;
@@ -420,9 +430,10 @@ fn main() {
             let sig = if d > fam { "*" } else { " " };
             cells.push(format!("{:>8.2e}{}", d, sig));
         }
-        let peak_s = peak
-            .map(|(l, d)| format!("peak at lag {} ({} s) = {:.2e}", l, l * 24, d))
-            .unwrap_or_default();
+        let peak_s = match peak {
+            Some((l, d)) => format!("peak at lag {} ({} s) = {:.2e}", l, l * 24, d),
+            None => String::new(),
+        };
         let line_a = format!(
             "{:>12} | lag:    0       2       4       6       8      10      12 | {}",
             pair, peak_s
@@ -455,9 +466,7 @@ fn main() {
     println!();
     println!(
         "fam = {:.4e} — the strongest surrogate D of the whole round ({} pairs × 13 lags × {} surrogates).",
-        fam,
-        n_pairs,
-        N_SURR
+        fam, n_pairs, N_SURR
     );
     println!("lag in 24-s cells (0..288 s); * = D over the full-round family bound fam.");
 }

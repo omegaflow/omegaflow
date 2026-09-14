@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use omegaflow::archivar::odp::dsn_station;
 use omegaflow::archivar::{
-    body_barycenter_position, fetch_raw_bytes, light_time_worldline, parse_ephemeris_binary,
-    BodyEphemeris, Motion,
+    BodyEphemeris, Motion, body_barycenter_position, fetch_raw_bytes, light_time_worldline,
+    parse_ephemeris_binary,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 
@@ -95,11 +95,7 @@ fn vec_sub(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
 
 fn vec_len(v: [f64; 3]) -> Option<f64> {
     let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-    if n.is_finite() {
-        Some(n)
-    } else {
-        None
-    }
+    if n.is_finite() { Some(n) } else { None }
 }
 
 fn toward_unit(from: [f64; 3], to: [f64; 3]) -> Option<[f64; 3]> {
@@ -139,11 +135,7 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
     }
     let c = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / (na * nb);
     let s = c.clamp(-1.0, 1.0).acos();
-    if s.is_finite() {
-        Some(s)
-    } else {
-        None
-    }
+    if s.is_finite() { Some(s) } else { None }
 }
 
 fn to_fold(station: [f64; 3], tdb: f64, pos: [f64; 3], emitted_tdb: f64) -> Option<Fold> {
@@ -216,11 +208,7 @@ fn arg_token(args: &[String], key: &str) -> Option<String> {
 fn arg_f64(args: &[String], key: &str) -> Option<f64> {
     let token = arg_token(args, key)?;
     let v = token.parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn resolve_station(
@@ -315,7 +303,12 @@ fn report_target(tdb: f64, label: &str, wl: &Worldline, icrs_list: &[Option<[f64
                         if let Some((ra, dec)) = unit_to_icrs_deg(*u) {
                             println!(
                                 "  sightline {}: topocentric ICRS direction ra {:.6}° dec {:.6}°  (unit [{:.9}, {:.9}, {:.9}])",
-                                i + 1, ra, dec, u[0], u[1], u[2]
+                                i + 1,
+                                ra,
+                                dec,
+                                u[0],
+                                u[1],
+                                u[2]
                             );
                         }
                         println!(
@@ -326,7 +319,12 @@ fn report_target(tdb: f64, label: &str, wl: &Worldline, icrs_list: &[Option<[f64
                         if let Some((ra, dec)) = unit_to_icrs_deg(*u) {
                             println!(
                                 "  sightline {}: topocentric ICRS direction ra {:.6}° dec {:.6}°  (unit [{:.9}, {:.9}, {:.9}])",
-                                i + 1, ra, dec, u[0], u[1], u[2]
+                                i + 1,
+                                ra,
+                                dec,
+                                u[0],
+                                u[1],
+                                u[2]
                             );
                         }
                         println!(

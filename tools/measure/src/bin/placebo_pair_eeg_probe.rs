@@ -2,12 +2,12 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    conditional_te_stats_lagged_n, transfer_entropy_binned, transfer_entropy_conditional_binned_n,
-    TeNull,
+    TeNull, conditional_te_stats_lagged_n, transfer_entropy_binned,
+    transfer_entropy_conditional_binned_n,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, common_average_series, open_set, open_set_bin, open_set_chanlocs, open_set_mat,
-    resolve_channel, EeglabSet,
+    EeglabSet, channel_series, common_average_series, open_set, open_set_bin, open_set_chanlocs,
+    open_set_mat, resolve_channel,
 };
 
 fn subtract_reference(mut series: Vec<f32>, reference: &[f32]) -> Vec<f32> {
@@ -60,11 +60,7 @@ fn parse_series(text: &str) -> Option<Vec<f32>> {
             }
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn read_series(path: &str) -> Option<Vec<f32>> {
@@ -467,14 +463,22 @@ fn run_pair(
             cond_arrow_ab, cond_arrow_ba
         );
         if arrow_ab + arrow_ba == 0 {
-            println!("Stille: no bivariate arrow breaks fam-Schwelle — the placebo holds (the silence is the finding).");
+            println!(
+                "Stille: no bivariate arrow breaks fam-Schwelle — the placebo holds (the silence is the finding)."
+            );
         } else if cond_arrow_ab + cond_arrow_ba == 0 {
-            println!("the bivariate arrow does not survive the common cause C — C carries the arrow (no unexplained carrier).");
+            println!(
+                "the bivariate arrow does not survive the common cause C — C carries the arrow (no unexplained carrier)."
+            );
         } else {
-            println!("an arrow survives the common cause C — the form is named, the carrier is unexplained (never a word the force gate refuses).");
+            println!(
+                "an arrow survives the common cause C — the form is named, the carrier is unexplained (never a word the force gate refuses)."
+            );
         }
     } else {
-        println!("bedingte TE: pending — no common-cause channel named (--c); no exclusion without a measured channel (0 honored).");
+        println!(
+            "bedingte TE: pending — no common-cause channel named (--c); no exclusion without a measured channel (0 honored)."
+        );
     }
 }
 

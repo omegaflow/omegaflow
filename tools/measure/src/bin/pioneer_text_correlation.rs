@@ -82,11 +82,7 @@ fn corr(a: &[f64], b: &[f64], lag: usize) -> f64 {
         db += y * y;
     }
     let den = (da * db).sqrt();
-    if den == 0.0 {
-        0.0
-    } else {
-        num / den
-    }
+    if den == 0.0 { 0.0 } else { num / den }
 }
 
 fn i1000_series(vals: &[f64]) -> Vec<f64> {

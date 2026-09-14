@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{
     conditional_te_stats_lagged, conditional_te_stats_lagged_2, transfer_entropy_conditional_2,
     transfer_entropy_conditional_h,

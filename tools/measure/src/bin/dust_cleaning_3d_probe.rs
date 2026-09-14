@@ -1,7 +1,7 @@
-use omegaflow::archivar::spatial::{parse_star_record, star_stride, STAR_RECORD_BYTES};
+use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
 use omegaflow::bayestar::{
-    build_index, decode_rec, ebv_at, index_add, index_sort, leaf_record, mu_of_r_pc, parse_header,
-    Be19Row, ASSET_HEADER_LEN, BE19_BINS, BE19_DMU, BE19_MU0, REC_BYTES,
+    ASSET_HEADER_LEN, BE19_BINS, BE19_DMU, BE19_MU0, Be19Row, REC_BYTES, build_index, decode_rec,
+    ebv_at, index_add, index_sort, leaf_record, mu_of_r_pc, parse_header,
 };
 use omegaflow::healpix::{ang2pix_nest, icrs_to_galactic};
 use std::io::{Read, Seek, SeekFrom};
@@ -634,15 +634,15 @@ fn report_controls(
     slice_hi: f64,
 ) {
     match report_injection(sample, slice_lo, slice_hi) {
-        Some(real_slope) => {
-            match cells {
-                Some(cells) => report_crossmap(sample, cells, real_slope),
-                None => {
-                    println!("\n=== control 2 — cross-map x-consistency ===");
-                    println!("no --planck map given — the cross-map comparison stays unmeasured (0 honored)");
-                }
+        Some(real_slope) => match cells {
+            Some(cells) => report_crossmap(sample, cells, real_slope),
+            None => {
+                println!("\n=== control 2 — cross-map x-consistency ===");
+                println!(
+                    "no --planck map given — the cross-map comparison stays unmeasured (0 honored)"
+                );
             }
-        }
+        },
         None => {
             println!("\n=== control 1 ===");
             println!(
@@ -691,7 +691,9 @@ fn print_missing_bin(lo: f64, hi: f64, n: u64) {
 }
 
 fn report_absg_grid(sample: &[GridStar]) {
-    println!("\n=== resolving measurement — d(BP-RP)/dA_V per abs-G bin (spectral-type population scan) ===");
+    println!(
+        "\n=== resolving measurement — d(BP-RP)/dA_V per abs-G bin (spectral-type population scan) ==="
+    );
     println!(
         "sample: the same behind-dust |b| >= {VALID_B_MIN_DEG} deg, G <= {MAG_CLEAN_MAX} population as the main fit; x = the 3D distance-truncated A_V at each parallax distance, y = observed BP-RP (color window [{COLOR_MIN}, {COLOR_MAX}])"
     );
@@ -727,7 +729,9 @@ fn report_absg_grid(sample: &[GridStar]) {
 }
 
 fn report_absg_shells(sample: &[GridStar], slice_lo: f64, slice_hi: f64) {
-    println!("\n=== resolving measurement — the abs-G [{slice_lo}, {slice_hi}] slice split by parallax distance shell ===");
+    println!(
+        "\n=== resolving measurement — the abs-G [{slice_lo}, {slice_hi}] slice split by parallax distance shell ==="
+    );
     println!(
         "sample: the same {slice_lo} <= abs-G <= {slice_hi}, G <= {MAG_CLEAN_MAX}, |b| >= {VALID_B_MIN_DEG} stars; a shell change in the slope names a distance/mix (selection) effect inside the slice"
     );
@@ -913,7 +917,9 @@ fn main() {
     let control = has_arg(&args, "--control");
     let planck_path = arg_value(&args, "--planck");
     let Some(map_path) = arg_value(&args, "--map") else {
-        eprintln!("usage: dust_cleaning_3d_probe --map <bayestar.be19> --stars <dr3_stars.bin> [--slice <m_lo> <m_hi>] [--control [--planck <planck_dust_av_rq_n512.json>]]");
+        eprintln!(
+            "usage: dust_cleaning_3d_probe --map <bayestar.be19> --stars <dr3_stars.bin> [--slice <m_lo> <m_hi>] [--control [--planck <planck_dust_av_rq_n512.json>]]"
+        );
         std::process::exit(1);
     };
     let Some(stars_path) = arg_value(&args, "--stars") else {
@@ -934,7 +940,9 @@ fn main() {
         _ => (SLICE_LO_DEFAULT, SLICE_HI_DEFAULT),
     };
 
-    println!("=== dust_cleaning_3d_probe — Bayestar19 per-distance E(B-V) subtraction over the full Gaia DR3 field ===");
+    println!(
+        "=== dust_cleaning_3d_probe — Bayestar19 per-distance E(B-V) subtraction over the full Gaia DR3 field ==="
+    );
     println!(
         "map {map_path} | stars {stars_path} | regression slice abs-G [{slice_lo}, {slice_hi}], apparent G <= {MAG_CLEAN_MAX}, |b| >= {VALID_B_MIN_DEG} deg"
     );
@@ -1154,7 +1162,9 @@ fn main() {
     let (slope, intercept, rms, pearson, x_mean, x_sd) = match s.reg_slope.reg() {
         Some(r) => r,
         None => {
-            eprintln!("the color regression carries no A_V variance — the slope stays unmeasured (0 honored)");
+            eprintln!(
+                "the color regression carries no A_V variance — the slope stays unmeasured (0 honored)"
+            );
             std::process::exit(1);
         }
     };
@@ -1207,7 +1217,9 @@ fn main() {
             "slope = {rs:.4} mag/mag | residual scatter rms = {rr:.4} mag | Pearson r = {rp:.4} | A_V mean {rxm:.4}, sd {rxs:.4} | slope se {rse:.4}"
         );
     } else {
-        println!("\nno reliable-distance-window variance — the sub-regression stays unmeasured (0 honored)");
+        println!(
+            "\nno reliable-distance-window variance — the sub-regression stays unmeasured (0 honored)"
+        );
     }
 
     if let Some(cs) = s.ctrl.as_ref() {

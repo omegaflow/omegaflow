@@ -1,4 +1,4 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
 const MAGIC: [u8; 4] = *b"AIA1";
@@ -452,9 +452,7 @@ fn main() {
     println!();
     println!(
         "fam = {:.4e} — the strongest surrogate D of the whole round ({} pairs × 13 lags × {} surrogates).",
-        fam,
-        n_pairs,
-        N_SURR
+        fam, n_pairs, N_SURR
     );
     println!("lag in 24-s cells (0..288 s); * = D over the full-round family bound fam.");
 }
