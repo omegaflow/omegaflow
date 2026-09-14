@@ -149,7 +149,14 @@ fn geotransform(
     None
 }
 
-fn decode_chunky(
+fn raw_strip(strip: &[u8], need: usize) -> Option<Vec<u8>> {
+    if strip.len() < need {
+        return None;
+    }
+    Some(strip[..need].to_vec())
+}
+
+fn decode_strips(
     data: &[u8],
     width: u32,
     height: u32,
@@ -157,6 +164,7 @@ fn decode_chunky(
     rows_per_strip: u32,
     strip_offsets: &[u32],
     strip_byte_counts: &[u32],
+    strip_decode: fn(&[u8], usize) -> Option<Vec<u8>>,
 ) -> Option<Vec<u8>> {
     let mut bytes_per_pixel = 0usize;
     for &b in bits_per_sample {
@@ -183,13 +191,101 @@ fn decode_chunky(
         let remaining = height as usize - row;
         let rows = (rows_per_strip as usize).min(remaining);
         let need = rows.checked_mul(row_bytes)?;
-        if strip.len() < need {
+        let decoded = strip_decode(strip, need)?;
+        if decoded.len() != need {
             return None;
         }
-        out.extend_from_slice(&strip[..need]);
+        out.extend_from_slice(&decoded);
         row += rows;
     }
     if out.len() != total {
+        return None;
+    }
+    Some(out)
+}
+
+const LZW_CLEAR: u16 = 256;
+const LZW_EOI: u16 = 257;
+const LZW_FIRST: u16 = 258;
+const LZW_TABLE_MAX: usize = 4096;
+
+fn read_lzw_code(data: &[u8], bit_pos: &mut usize, width: u32) -> Option<u16> {
+    let mut code = 0u32;
+    for _ in 0..width {
+        let byte = *data.get(*bit_pos >> 3)?;
+        let bit = (byte >> (7 - (*bit_pos & 7))) & 1;
+        code = (code << 1) | (bit as u32);
+        *bit_pos += 1;
+    }
+    Some(code as u16)
+}
+
+fn decode_lzw_strip(data: &[u8], expected: usize) -> Option<Vec<u8>> {
+    let mut prefix = vec![0u16; LZW_TABLE_MAX];
+    let mut suffix = vec![0u8; LZW_TABLE_MAX];
+    for i in 0..256u16 {
+        suffix[i as usize] = i as u8;
+    }
+    let mut out = Vec::with_capacity(expected);
+    let mut bit_pos = 0usize;
+    let mut width = 9u32;
+    let mut free = LZW_FIRST;
+    let mut prev: Option<u16> = None;
+    let mut prev_str: Vec<u8> = Vec::new();
+
+    loop {
+        let code = read_lzw_code(data, &mut bit_pos, width)?;
+        if code == LZW_EOI {
+            break;
+        }
+        if code == LZW_CLEAR {
+            width = 9;
+            free = LZW_FIRST;
+            prev = None;
+            prev_str.clear();
+            continue;
+        }
+        let entry: Vec<u8> = if code < free {
+            let mut chain: Vec<u8> = Vec::new();
+            let mut c = code;
+            while c >= 256 {
+                if (c as usize) >= free as usize {
+                    return None;
+                }
+                chain.push(suffix[c as usize]);
+                c = prefix[c as usize];
+            }
+            chain.push(c as u8);
+            chain.reverse();
+            chain
+        } else if code == free {
+            match prev {
+                Some(_) => {
+                    let mut s = prev_str.clone();
+                    let first = *s.first()?;
+                    s.push(first);
+                    s
+                }
+                None => return None,
+            }
+        } else {
+            return None;
+        };
+        out.extend_from_slice(&entry);
+        if let Some(p) = prev {
+            if (free as usize) < LZW_TABLE_MAX {
+                prefix[free as usize] = p;
+                suffix[free as usize] = entry[0];
+                free += 1;
+                if free == (1u16 << width) && width < 12 {
+                    width += 1;
+                }
+            }
+        }
+        prev = Some(code);
+        prev_str = entry;
+    }
+    if out.len() != expected {
         return None;
     }
     Some(out)
@@ -271,7 +367,7 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
 
     let geo = geotransform(model_pixel_scale, model_tiepoint, model_transformation);
 
-    let pixels = if compression == 1 && planar_configuration == 1 {
+    let pixels = if planar_configuration == 1 {
         let offsets: &[u32] = match &strip_offsets {
             Some(v) => v,
             None => &[],
@@ -280,15 +376,30 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
             Some(v) => v,
             None => &[],
         };
-        match decode_chunky(
-            data,
-            width,
-            height,
-            &bits_per_sample,
-            rows_per_strip,
-            offsets,
-            counts,
-        ) {
+        let decoded = match compression {
+            1 => decode_strips(
+                data,
+                width,
+                height,
+                &bits_per_sample,
+                rows_per_strip,
+                offsets,
+                counts,
+                raw_strip,
+            ),
+            5 => decode_strips(
+                data,
+                width,
+                height,
+                &bits_per_sample,
+                rows_per_strip,
+                offsets,
+                counts,
+                decode_lzw_strip,
+            ),
+            _ => None,
+        };
+        match decoded {
             Some(v) => v,
             None => Vec::new(),
         }
@@ -403,6 +514,83 @@ mod tests {
         let img = parse_tiff(&data).unwrap();
         assert_eq!(img.compression, 7);
         assert!(img.pixels.is_empty());
+    }
+
+    #[test]
+    fn decodes_lzw_compressed_strip() {
+        let lzw = [0x80u8, 0x18, 0x4C, 0x50, 0x10];
+        let data = build_tiff(2, 1, 5, &lzw, None, None);
+        let img = parse_tiff(&data).unwrap();
+        assert_eq!(img.compression, 5);
+        assert_eq!(img.pixels, vec![0x61, 0x62]);
+    }
+
+    #[test]
+    fn lzw_roundtrip_through_encoder() {
+        let input: Vec<u8> = (0..64u32)
+            .flat_map(|i| [i as u8, (i.wrapping_mul(3)) as u8])
+            .collect();
+        let lzw = lzw_encode(&input);
+        let data = build_tiff(input.len() as u32, 1, 5, &lzw, None, None);
+        let img = parse_tiff(&data).unwrap();
+        assert_eq!(img.pixels, input);
+    }
+
+    fn lzw_encode(input: &[u8]) -> Vec<u8> {
+        use std::collections::HashMap;
+        let mut dict: HashMap<Vec<u8>, u16> = HashMap::new();
+        for i in 0..256u16 {
+            dict.insert(vec![i as u8], i);
+        }
+        let mut free = LZW_FIRST;
+        let mut width = 9u32;
+        let mut encoded: Vec<(u16, u32)> = Vec::new();
+        encoded.push((LZW_CLEAR, width));
+        let mut w: Vec<u8> = Vec::new();
+        for &k in input {
+            let mut wk = w.clone();
+            wk.push(k);
+            if dict.contains_key(&wk) {
+                w = wk;
+            } else {
+                encoded.push((dict[&w], width));
+                if (free as usize) < LZW_TABLE_MAX {
+                    dict.insert(wk, free);
+                    free += 1;
+                    if free == (1u16 << width) && width < 12 {
+                        width += 1;
+                    }
+                }
+                w = vec![k];
+            }
+        }
+        encoded.push((dict[&w], width));
+        encoded.push((LZW_EOI, width));
+        let mut out: Vec<u8> = Vec::new();
+        let mut acc = 0u32;
+        let mut nbits = 0u32;
+        for (code, w) in encoded {
+            acc = (acc << w) | (code as u32);
+            nbits += w;
+            while nbits >= 8 {
+                nbits -= 8;
+                out.push((acc >> nbits) as u8);
+                acc &= (1 << nbits) - 1;
+            }
+        }
+        if nbits > 0 {
+            out.push((acc << (8 - nbits)) as u8);
+        }
+        out
+    }
+
+    #[test]
+    fn lzw_kwkwk_path_decodes() {
+        let input = b"abababab".to_vec();
+        let lzw = lzw_encode(&input);
+        let data = build_tiff(input.len() as u32, 1, 5, &lzw, None, None);
+        let img = parse_tiff(&data).unwrap();
+        assert_eq!(img.pixels, input);
     }
 
     #[test]
