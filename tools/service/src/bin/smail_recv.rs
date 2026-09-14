@@ -2,13 +2,15 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
 
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 
 fn main() {
     let port: u16 = env_u64("OMEGAFLOW_MAIL_PORT", 1619) as u16;
     let token = env_str("OMEGAFLOW_MAIL_TOKEN", "");
     let default_ledger = state_dir().join("mail/mail_ledger.φ");
     let ledger = env_str("OMEGAFLOW_MAIL_LEDGER", &default_ledger.to_string_lossy());
+    let default_seen = state_dir().join("mail/seen_ids.φ");
+    let seen = env_str("OMEGAFLOW_MAIL_SEEN", &default_seen.to_string_lossy());
     let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
         Ok(l) => l,
         Err(e) => {
@@ -25,6 +27,7 @@ fn main() {
     for conn in listener.incoming() {
         let Ok(mut stream) = conn else { continue };
         let ledger = ledger.clone();
+        let seen = seen.clone();
         let token = token.clone();
         std::thread::spawn(move || {
             stream.set_read_timeout(Some(Duration::from_secs(10))).ok();
@@ -54,28 +57,30 @@ fn main() {
                 return;
             }
             let text = String::from_utf8_lossy(&body).to_string();
-            let line = match record_line(&text) {
-                Some(l) => l,
-                None => {
-                    let _ = stream.write_all(
-                        b"HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
-                    );
-                    return;
-                }
+            let Some((line, message_id)) = record_line(&text) else {
+                let _ = stream.write_all(
+                    b"HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                );
+                return;
             };
-            let appended = append_ledger(&ledger, &line);
-            match appended {
-                true => {
-                    let _ = stream.write_all(
-                        b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
-                    );
-                }
-                false => {
-                    let _ = stream.write_all(
-                        b"HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
-                    );
-                }
+            if !message_id.is_empty() && seen_contains(&seen, &message_id) {
+                let _ = stream.write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 4\r\nConnection: close\r\n\r\nseen",
+                );
+                return;
             }
+            if !append_ledger(&ledger, &line) {
+                let _ = stream.write_all(
+                    b"HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                );
+                return;
+            }
+            if !message_id.is_empty() {
+                let _ = append_ledger(&seen, &message_id);
+            }
+            let _ = stream.write_all(
+                b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
+            );
         });
     }
 }
@@ -147,12 +152,13 @@ fn json_str(v: &JsonVal, key: &str) -> String {
     }
 }
 
-fn record_line(text: &str) -> Option<String> {
+fn record_line(text: &str) -> Option<(String, String)> {
     let parsed = parse_json(text)?;
     let from = json_str(&parsed, "from");
     let to = json_str(&parsed, "to");
     let subject = json_str(&parsed, "subject");
     let raw = json_str(&parsed, "text");
+    let message_id = json_str(&parsed, "messageId");
     if from.is_empty() || to.is_empty() {
         return None;
     }
@@ -168,9 +174,12 @@ fn record_line(text: &str) -> Option<String> {
         .replace('\r', "")
         .replace('\t', " ")
         .replace('\n', " ");
-    Some(format!(
-        "mail\t{}\t{}\t{}\t{}\t{}",
-        ts, from, to, subject_clean, body_clean
+    Some((
+        format!(
+            "mail\t{}\t{}\t{}\t{}\t{}\t{}",
+            ts, from, to, subject_clean, body_clean, message_id
+        ),
+        message_id,
     ))
 }
 
@@ -318,6 +327,13 @@ fn append_ledger(path: &str, line: &str) -> bool {
     }
 }
 
+fn seen_contains(path: &str, id: &str) -> bool {
+    match std::fs::read_to_string(path) {
+        Ok(s) => s.lines().any(|l| l == id),
+        Err(_) => false,
+    }
+}
+
 fn env_u64(name: &str, default: u64) -> u64 {
     std::env::var(name)
         .ok()
@@ -345,15 +361,17 @@ mod tests {
 
     #[test]
     fn record_line_from_payload() {
-        let text = r#"{"from":"a@x.io","to":"code@omegaflow.space","subject":"hi","text":"Content-Type: text/plain\r\n\r\nbody"}"#;
-        let line = record_line(text).unwrap();
+        let text = r#"{"from":"a@x.io","to":"code@omegaflow.space","subject":"hi","text":"Content-Type: text/plain\r\n\r\nbody","messageId":"<id-1@x.io>"}"#;
+        let (line, message_id) = record_line(text).unwrap();
         let parts: Vec<&str> = line.split('\t').collect();
-        assert_eq!(parts.len(), 6);
+        assert_eq!(parts.len(), 7);
         assert_eq!(parts[0], "mail");
         assert_eq!(parts[2], "a@x.io");
         assert_eq!(parts[3], "code@omegaflow.space");
         assert_eq!(parts[4], "hi");
         assert_eq!(parts[5], "body");
+        assert_eq!(parts[6], "<id-1@x.io>");
+        assert_eq!(message_id, "<id-1@x.io>");
     }
 
     #[test]
@@ -365,15 +383,39 @@ mod tests {
     #[test]
     fn record_line_subject_newlines_collapsed() {
         let text = r#"{"from":"a@x.io","to":"b@x.io","subject":"a\nb","text":"c"}"#;
-        let line = record_line(text).unwrap();
+        let (line, _) = record_line(text).unwrap();
         assert!(!line.contains('\n'));
     }
 
     #[test]
     fn record_line_carriage_returns_stripped() {
         let text = r#"{"from":"a@x.io","to":"b@x.io","subject":"s","text":"Content-Type: text/plain\r\n\r\nline1\r\nline2"}"#;
-        let line = record_line(text).unwrap();
+        let (line, _) = record_line(text).unwrap();
         assert!(!line.contains('\r'));
+    }
+
+    #[test]
+    fn record_line_without_message_id_has_empty_slot() {
+        let text = r#"{"from":"a@x.io","to":"b@x.io","subject":"s","text":"c"}"#;
+        let (line, message_id) = record_line(text).unwrap();
+        let parts: Vec<&str> = line.split('\t').collect();
+        assert_eq!(parts.len(), 7);
+        assert_eq!(parts[6], "");
+        assert_eq!(message_id, "");
+    }
+
+    #[test]
+    fn seen_contains_finds_id_and_misses_absent_file() {
+        let path =
+            std::env::temp_dir().join(format!("omegaflow_seen_test_{}.φ", std::process::id()));
+        let _ = std::fs::write(&path, "<id-1@x.io>\n<id-2@x.io>\n");
+        assert!(seen_contains(&path.to_string_lossy(), "<id-1@x.io>"));
+        assert!(!seen_contains(&path.to_string_lossy(), "<id-3@x.io>"));
+        assert!(!seen_contains(
+            "/nonexistent/omegaflow_seen_absent.φ",
+            "<id-1@x.io>"
+        ));
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]
