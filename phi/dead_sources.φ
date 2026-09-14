@@ -1,3 +1,20 @@
+# dead_sources.φ — das Register der nicht-in-Gebrauch-Quellen (Klasse "declined").
+# Drei Keywords: dead <klasse> (URL unerreichbar — nur hier handelt es von Erreichbarkeit),
+# decline <klasse> (lebt, aber keine Messung am Punkt), integrated (lebt, anderswo integriert).
+# Die lebenden Endpunkte sind die decline/integrated-Einträge — bewusst nicht geführt.
+#
+# Re-Messung 2026-09-14 (Toten-Re-Check, 1221 URLs, Shell-Loop, 0 Tokens):
+#   631×200 · 286×404 · 114×0 · 86×400 (malformte Templates) · 58×403/401 · 20×5xx · 7×429 · Rest 301/406/410.
+#   Von den 631 lebenden sind 583 decline/integrated (lebende Basis-Endpunkte, keine Auferstehung).
+#   Echte Auferstehungen (dead-Klasse, jetzt 200, Body trägt Messung):
+#     archives.esac.esa.int/hsa/whsa-tap-server/tap (dead 503 → TAP-Home) ·
+#     webservices.volcano.si.edu/…/GVP-VOTW/…Holocene_Eruptions (dead timeout → GeoJSON).
+#   Korrigierte Routen (alte URL Stub/SPA/Fehler, echte Route gemessen):
+#     ANTARES → api.antares.noirlab.edu/v1/loci · EEA-AQ → eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls ·
+#     SERVIR-SMAP → gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer ·
+#     AMS → ssd-api.jpl.nasa.gov/fireball.api · CADC-ARGUS → ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync ·
+#     NMDB → www.nmdb.eu/rt/realtime.txt (nur via Proton-VPN; nmdb.eu lehnt direkte Verbindungen ab).
+
 dead absent
 url ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json
 note curl: curl: (78) The file does not exist
@@ -1006,7 +1023,7 @@ decline legacy
 url https://apps.who.int/gho/athena/api/GHO/WHOSIS_000015.json
 note GHO-Legacy-Dashboard.
 
-dead 404
+decline reachable-2026-09-14
 url https://aqportal.discomap.eea.europa.eu/api/observations?pollutant=NO2&
 note HTTP 404 — Endpoint weg.
 
@@ -2082,7 +2099,7 @@ decline derived-product
 url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
 note pro_review_b5 2026-08-18: SMAP-L3-SoilMoisture ist Modell-Inversion aus Brightness-Temperatur — die Messung des Sensors ist TB (em), nicht die invertierte Bodenfeuchte; Raster-Tiles ohne Zeilen-Werte. Litmus scheitert.
 
-dead 404
+decline reachable-2026-09-14
 url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
 note JSON-Body: {"error":{"code":404,"message":"Service SMAP/SM_1km/MapServer not found"}} — Service entfernt.
 
@@ -4242,7 +4259,7 @@ decline variant
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
 note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
 
-dead timeout
+decline reachable-2026-09-14
 url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
 note curl: curl: (28) Operation timed out after 12001 milliseconds with 712691 bytes received
 
@@ -4278,7 +4295,7 @@ decline superseded-by-api.woudc.org
 url https://woudc.org/api/
 note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integriert (atmosphere_woudc_total_ozone, master.φ Z.10813) — diese HTML-Landing war nur der alte Einstieg. Verschoben aus blocked_sources.φ 2026-08-19.
 
-dead tls-reset
+decline reachable-2026-09-14
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus
 note CADC-ARGUS — Re-Messung 2026-09-13 (Split-Routing, 9 Proton-Exits): HTTP 200 direkt — lebt; der 000/Peer-Reset war transient, kein Geo-Block. TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; dead-Verdikt prüfen (lebt = re-weigh als Live-Kandidat).
 
@@ -4314,7 +4331,7 @@ dead login-wall
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
 note Login-Mauer (HTML, nicht JSON) — Route verlangt AMS-Login, kein öffentlicher JSON-Kanal (Spot-Check 2026-08-18). AMS-Meldungen sind menschliche Sichtbeobachtungen (indirekter Count, kein SI-Energiewert) — Force-Gate ohnehin unterschritten; die sensorbasierten Feuerkugel-Daten (CNEOS fireball.api + GOES GLM Bolides) tragen die em-Messung bereits in sources.φ.
 
-dead 404
+decline reachable-2026-09-14
 url https://www.amsmeteors.org/members/api/open_api
 note grind: grind_terrapulse_b.φ
 
@@ -4594,11 +4611,11 @@ decline
 url https://www.nmdb.eu/nest/
 note grind: grind_terrapulse_a.φ
 
-dead 404
+decline reachable-2026-09-14
 url https://www.nmdb.eu/nest/api/get_data.php?stations=OULU&start=
 note HTTP 404 — Endpoint weg.
 
-dead 404
+decline reachable-2026-09-14
 url https://www.nmdb.eu/nest/data.json
 note HTTP 404 — Endpoint weg.
 
