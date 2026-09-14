@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: d126ff4cc905f69b9cc131ac4bb4d4daf77855940744384c1e46f839c6560f79
+  sha256: 5ca10a6c90fb5676702e69f023599570b0f75e3605a4d736fed5a5a5c194cb0f
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
@@ -156,3 +156,37 @@ github, crates, librs, brave, datacite, zenodo, wayback).
 
 **Kernbefund:** fast jede „Mauer" war keine; nur **Google Dataset Search** ist ehrlich
 ABSENT — die DSN/JPL-ODF und die Paywall-Volltexte bleiben echte Absenzen.
+
+## Pro-Grind — die drei echten Absenzen (2026-09-14)
+
+### Google Dataset Search — ABSENT bestätigt
+Kein offener maschinenlesbarer Weg (kein API, kein Dump, kein Index):
+`datasetsearch.research.google.com` ist eine Client-SPA (Playwright → nur die JS-Hülle,
+Login-Prompt); Google **crawlt** schema.org/Dataset-Markup, kein Query-Endpoint. Die
+„API"-Treffer sind bezahlte Dritt-Scraper (DataForSEO, anakin.io). Offene Alternativen
+(HTTP 200, gemessen): DataCite `api.datacite.org/dois` · OpenAIRE
+`api.openaire.eu/search/datasets` · B2FIND (CKAN `b2find.eudat.eu/api/3/action/package_search`) ·
+re3data `re3data.org/api/v1/repositories` (1 023 770 B Registry-XML) · DataCite Commons
+(GraphQL `api.datacite.org/graphql`). Sie tragen die Topic-Suche über DOI-/Metadaten-Register —
+nur der webweite schema.org-Crawl fehlt.
+
+### DSN/JPL-ODF (Erd-Vorbeiflüge) — request-only bestätigt
+Kein offener ODF/TRK-2-34-Bestand der Erd-Encounter (Galileo, NEAR, Cassini, Juno).
+PDS-Search-API (`pds.nasa.gov/api/search/1/products`, facet `ref_lid_instrument →
+ref_lid_target`): Galileo/Cassini nur Jupiter-/Saturn-System; **Juno TRK-2-34 erst
+2022-02-25 → 2024-12-27** (Jupiter-Phase; Flyby 2013-10-09 fehlt, 0 Treffer „2013");
+NEAR `earth` nur auf Mission-Bundle-Ebene. NSSDCA `PSPG-00721`: NEAR-ODF für
+Mathilde/Eros — **nicht** den Erd-Vorbeiflug 1998-01-23. NAIF/SPICE nur Geometrie-Kernels.
+Das **Format** ist offen (Juno TNF, NEAR ODF); die Erd-Encounter-Rohdaten liegen bei JPL/DSN.
+
+### Paywall-Volltexte — 4/5 bestätigt, Hinson 1997 offen
+| Paper | DOI | Verdikt |
+|---|---|---|
+| Woo & Armstrong 1979 | `10.1029/JA084iA12p07288` | Paywall (`is_oa:false`; NTRS abstract-only) |
+| Armstrong 1998 | `10.1029/98RS02317` | Paywall (`is_oa:false`) |
+| Wohlmuth 1997 | `10.1007/978-94-015-8790-7_41` | Paywall (CiteSeerX-Lead tot: 429/404) |
+| Haw 1997 | `10.2514/2.3240` | Paywall (`is_oa:false`) |
+| **Hinson 1997** | `10.1029/97GL01608` | **offen (bronze OA, Wiley `doi/pdfdirect`)** — der 403 ist Cloudflare-Bot-Schutz, keine Paywall; Zahlen zudem aus offenen PDS-Daten re-derivierbar (`GO-J-RSS-1-ODF-V1.0`, `galileo_odf_compiler.rs`) |
+
+**Fazit:** Die drei Absenzen halten. Nur Hinson 1997 kippt — offener Bronze-OA-Volltext
+plus der offene PDS-Datenweg; der Paywall ist für die Borduhr-Sprung-Frage irrelevant.
