@@ -8,3 +8,10 @@ FORWARD_TO = "[redacted-email]"
 
 [observability]
 enabled = true
+
+[[kv_namespaces]]
+binding = "MAIL_QUEUE"
+id = "REPLACE_WITH_WRANGLER_KV_NAMESPACE_ID"
+
+[triggers]
+crons = ["*/5 * * * *"]
