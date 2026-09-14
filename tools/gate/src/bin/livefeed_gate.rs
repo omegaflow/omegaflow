@@ -319,11 +319,7 @@ fn json_key_str(text: &str, key: &str) -> Option<String> {
             c => out.push(c),
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn json_num_after(text: &str, key: &str) -> Option<f64> {
@@ -669,11 +665,7 @@ fn rss_items(xml: &str) -> Vec<RssItem> {
             link: get("<link>"),
             date: {
                 let d = get("<dc:date>");
-                if d.is_empty() {
-                    get("<pubDate>")
-                } else {
-                    d
-                }
+                if d.is_empty() { get("<pubDate>") } else { d }
             },
         });
     }
