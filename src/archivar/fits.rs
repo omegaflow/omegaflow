@@ -1540,4 +1540,35 @@ mod tests {
         let flux = t.column("FLUX").unwrap();
         assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 5.0);
     }
+
+    #[test]
+    #[ignore = "reads the FITS named by OMEGAFLOW_FITS_SAMPLE"]
+    fn real_fits_data_section_decodes() {
+        let path = std::env::var("OMEGAFLOW_FITS_SAMPLE")
+            .expect("OMEGAFLOW_FITS_SAMPLE names a FITS file on disk");
+        let buf = std::fs::read(&path).expect("read the FITS sample");
+        let (_, first_end) = FitsHeader::parse(&buf, 0).expect("primary header");
+        match FitsTable::parse(&buf, first_end) {
+            Some((table, _)) => {
+                assert!(table.n_rows > 0, "the table carries rows");
+                assert!(!table.columns.is_empty(), "the table carries columns");
+                let row = table.row(&buf, 0).expect("the first row decodes");
+                assert_eq!(row.len(), table.columns.len());
+                for (col, value) in table.columns.iter().zip(&row) {
+                    assert!(
+                        !matches!(value, super::FitsValue::Unhandled(_)),
+                        "column '{}' (TFORM {}{}) decodes",
+                        col.name,
+                        col.repeat,
+                        col.code
+                    );
+                }
+            }
+            None => {
+                let (image, _) = FitsImage::parse(&buf, 0).expect("primary array");
+                let value = image.value_f64(&buf, [0, 0, 0]).expect("first pixel");
+                assert!(value.is_finite(), "the first pixel is a real value");
+            }
+        }
+    }
 }
