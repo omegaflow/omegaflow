@@ -20,11 +20,11 @@ jobs:
       - uses: actions/checkout@v7
       - name: Watch the full-de441 bins (size is the measurement)
         run: |
-          # S14-Entblock: die CDN-Bins tragen die metergenaue Generation —
-          # das volle de441.bsp kompiliert zu ~183 MB (die trunkierte
-          # Generation war 13,8 MB). Die Größe ist die Messung (0 honored):
-          # ein bloßes 200 genügt nicht, und der manuelle Upload ist genauso
-          # gültig wie ein grüner CI-Lauf.
+          # S14 unblock: the CDN bins carry the metre-accurate generation —
+          # the full de441.bsp compiles to ~183 MB (the truncated
+          # generation was 13.8 MB). The size is the measurement (0 honored):
+          # a bare 200 does not suffice, and the manual upload is just as
+          # valid as a green CI run.
           base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov
           ok=1
           for b in sun earth; do
@@ -34,9 +34,9 @@ jobs:
           done
           if [ "$ok" = "1" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "de441-cdn: die vollen Bins liegen — S14 entblockt" \
-              "ephemeris_sun.bin + ephemeris_earth.bin tragen die metergenaue 183-MB-Generation (volles de441.bsp) auf dem CDN. Fortsetzung: den TODO-Posten „metergenaue CDN-Bins“ abtragen; die Leitstelle räumt die S14-Zeile." \
+              "de441-cdn: the full bins are present — S14 unblocked" \
+              "ephemeris_sun.bin + ephemeris_earth.bin carry the metre-accurate 183 MB generation (full de441.bsp) on the CDN. Follow-up: strike the TODO item 'metre-accurate CDN bins'; the control room clears the S14 line." \
               health
           else
-            echo "die Bins tragen die metergenaue Generation noch nicht — still"
+            echo "the bins do not yet carry the metre-accurate generation — still"
           fi
