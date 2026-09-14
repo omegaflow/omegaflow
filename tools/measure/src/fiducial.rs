@@ -513,11 +513,7 @@ pub fn parse_elc(bytes: &[u8]) -> Option<Vec<(Option<String>, [f64; 3])>> {
         };
         out.push((label, xyz));
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn elc_mni_fiducials(bytes: &[u8]) -> Option<MniFiducials> {
