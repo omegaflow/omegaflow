@@ -4,7 +4,7 @@
   date: 2026-09-10
   sha256: ad5773f07f36fd21cbe5dbda356ce7e32975b3626f26e9921a11624ed002f659
   status: live
-  see-also: docs/SOURCE_PORT.md docs/handover/handover-2026-09-10-autonom.md docs/handover/handover-2026-09-10-nicht-autonom.md
+  see-also: docs/SOURCE_PORT.md docs/handover/archiv/handover-2026-09-10-autonom.md docs/handover/archiv/handover-2026-09-10-nicht-autonom.md
 -->
 # GitHub-Pipeline — der Kreislauf
 

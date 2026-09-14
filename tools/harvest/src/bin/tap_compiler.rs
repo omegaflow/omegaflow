@@ -1167,7 +1167,7 @@ fn main() {
         }
     };
     let mut cells_rows: Vec<Vec<String>>;
-    if async_mode.is_some() {
+    if let Some(poll) = async_mode {
         let mut adql = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
         if let Some(w) = &where_clause {
             adql.push_str(&format!(" WHERE {}", w));
@@ -1175,9 +1175,6 @@ fn main() {
         if let Some(o) = &order_by {
             adql.push_str(&format!(" ORDER BY \"{}\"", o));
         }
-        let Some(poll) = async_mode else {
-            unreachable!()
-        };
         let Some(body) = tap_async(&root, &adql, poll) else {
             eprintln!("async returned void");
             std::process::exit(1);
