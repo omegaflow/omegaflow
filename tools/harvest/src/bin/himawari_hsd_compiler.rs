@@ -1,6 +1,6 @@
 use omegaflow::archivar::bzip2;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::hsd::{AhiSegment, HsdFile, parse_hsd, parse_segment, write_segment};
+use omegaflow::archivar::hsd::{parse_hsd, parse_segment, write_segment, AhiSegment, HsdFile};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::geostationary_lat_lon;
 use omegaflow::lsk::days_from_civil;
@@ -155,6 +155,18 @@ fn calibration_block(blocks: &[(u8, Vec<u8>)]) -> Option<CalibrationBlock> {
     })
 }
 
+fn apply_calibration(counts: &[u16], cal: &CalibrationBlock) -> Vec<f32> {
+    let mut radiance = Vec::with_capacity(counts.len());
+    for &count in counts {
+        if count == cal.error_pixels || count == cal.outside_scan_pixels {
+            radiance.push(count as f32);
+        } else {
+            radiance.push((cal.gain * count as f64 + cal.offset) as f32);
+        }
+    }
+    radiance
+}
+
 fn radiance_stats(counts: &[u16], cal: &CalibrationBlock) -> RadianceStats {
     let mut min = f64::INFINITY;
     let mut max = f64::NEG_INFINITY;
@@ -307,12 +319,8 @@ fn filename_meta(name: &str) -> FilenameMeta {
     meta
 }
 
-fn report_decoded(name: &str, bytes: &[u8], hsd: &HsdFile) {
-    let Some(blocks) = block_contents(bytes) else {
-        println!("{name}: block enumeration returned void");
-        return;
-    };
-    if let Some(proj) = projection_block(&blocks) {
+fn report_decoded(hsd: &HsdFile, blocks: &[(u8, Vec<u8>)]) {
+    if let Some(proj) = projection_block(blocks) {
         println!(
             "  projection: sub_lon {:.4} deg, CFAC {} LFAC {} COFF {} LOFF {}",
             proj.sub_lon_deg, proj.cfac, proj.lfac, proj.coff, proj.loff
@@ -327,7 +335,7 @@ fn report_decoded(name: &str, bytes: &[u8], hsd: &HsdFile) {
     } else {
         println!("  projection: absent (block 3)");
     }
-    if let Some(nav) = navigation_block(&blocks) {
+    if let Some(nav) = navigation_block(blocks) {
         println!(
             "  navigation: SSP lon {:.4} lat {:.4}, nadir lon {:.4} lat {:.4}",
             nav.ssp_lon_deg, nav.ssp_lat_deg, nav.nadir_lon_deg, nav.nadir_lat_deg
@@ -335,7 +343,7 @@ fn report_decoded(name: &str, bytes: &[u8], hsd: &HsdFile) {
     } else {
         println!("  navigation: absent (block 4)");
     }
-    if let Some(cal) = calibration_block(&blocks) {
+    if let Some(cal) = calibration_block(blocks) {
         println!(
             "  calibration: band {}, central wavelength {:.4} um, valid bits {}, gain {:.6} offset {:.4}",
             cal.band, cal.central_wavelength_um, cal.valid_bits, cal.gain, cal.offset
@@ -360,7 +368,7 @@ fn report_decoded(name: &str, bytes: &[u8], hsd: &HsdFile) {
     }
 }
 
-fn probe(name: &str, bytes: &[u8], hsd: &HsdFile) {
+fn probe(name: &str, bytes: &[u8], hsd: &HsdFile, blocks: &[(u8, Vec<u8>)]) {
     println!("{name}: {} B", bytes.len());
     println!(
         "  columns {} lines {} bits_per_pixel {}",
@@ -379,7 +387,7 @@ fn probe(name: &str, bytes: &[u8], hsd: &HsdFile) {
         "  pixel_values {} (raw counts, u16)",
         hsd.pixel_values.len()
     );
-    report_decoded(name, bytes, hsd);
+    report_decoded(hsd, blocks);
 }
 
 fn main() {
@@ -429,12 +437,20 @@ fn main() {
         }
     };
 
+    let blocks = match block_contents(&bytes) {
+        Some(b) => b,
+        None => {
+            eprintln!("{name}: block enumeration returned void");
+            std::process::exit(1);
+        }
+    };
+
     if args.iter().any(|a| a == "--probe") {
-        probe(&name, &bytes, &hsd);
+        probe(&name, &bytes, &hsd, &blocks);
         return;
     }
 
-    report_decoded(&name, &bytes, &hsd);
+    report_decoded(&hsd, &blocks);
 
     let columns = hsd.columns;
     let lines = hsd.lines;
@@ -458,6 +474,21 @@ fn main() {
     }
 
     let meta = filename_meta(&name);
+    let (calib_present, error_pixels, outside_scan_pixels, radiance, raw_counts) =
+        match calibration_block(&blocks) {
+            Some(cal) => {
+                let radiance = apply_calibration(&counts, &cal);
+                (
+                    1u8,
+                    cal.error_pixels,
+                    cal.outside_scan_pixels,
+                    radiance,
+                    Vec::new(),
+                )
+            }
+            None => (0u8, 0, 0, Vec::new(), counts),
+        };
+
     let seg = AhiSegment {
         columns,
         lines,
@@ -468,7 +499,11 @@ fn main() {
         resolution_m: meta.resolution_m,
         obs_sec: meta.obs_sec,
         obs_present: meta.obs_present,
-        counts,
+        calib_present,
+        error_pixels,
+        outside_scan_pixels,
+        counts: raw_counts,
+        radiance,
     };
 
     let bin = write_segment(&seg);
@@ -481,12 +516,21 @@ fn main() {
     }
     match parse_segment(&bin) {
         Some(parsed) => {
-            eprintln!(
-                "{name}: {} raw counts written ({}, unit counts, {} B), roundtrip parses",
-                parsed.counts.len(),
-                out,
-                bin.len()
-            );
+            if parsed.calib_present == 1 {
+                eprintln!(
+                    "{name}: {} radiance pixels written ({}, unit W m-2 sr-1 um-1, {} B), roundtrip parses",
+                    parsed.radiance.len(),
+                    out,
+                    bin.len()
+                );
+            } else {
+                eprintln!(
+                    "{name}: {} raw counts written ({}, unit counts, {} B), roundtrip parses",
+                    parsed.counts.len(),
+                    out,
+                    bin.len()
+                );
+            }
         }
         None => {
             eprintln!("{out}: roundtrip parse void — the bin stays unverified");
@@ -543,6 +587,25 @@ mod tests {
         assert_eq!(stats.min, 1.5);
         assert_eq!(stats.max, 2.5);
         assert!((stats.mean - 2.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn apply_calibration_carries_sentinel_counts_as_f32() {
+        let cal = CalibrationBlock {
+            band: 7,
+            central_wavelength_um: 3.9,
+            valid_bits: 10,
+            error_pixels: 0,
+            outside_scan_pixels: 65535,
+            gain: 0.01,
+            offset: 0.5,
+        };
+        let radiance = apply_calibration(&[100, 200, 0, 65535], &cal);
+        assert_eq!(radiance.len(), 4);
+        assert!((radiance[0] as f64 - 1.5).abs() < 1e-6);
+        assert!((radiance[1] as f64 - 2.5).abs() < 1e-6);
+        assert_eq!(radiance[2], 0.0);
+        assert_eq!(radiance[3], 65535.0);
     }
 
     #[test]
