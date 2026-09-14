@@ -1192,6 +1192,39 @@ mod tests {
         assert!(e.sats[0].values[2].is_none(), "blank S1 stays absent");
     }
 
+    #[test]
+    fn obs_epoch_line_continuation_reads_over_twelve_satellites() {
+        let mut s = String::new();
+        s.push_str(
+            "     2.11           OBSERVATION DATA    G (GPS)             RINEX VERSION / TYPE\n",
+        );
+        s.push_str(
+            "                                                            END OF HEADER       \n",
+        );
+        let epoch_head = format!(
+            "{:>3}{:>3}{:>3}{:>3}{:>3}{:>11.7}{:>3}{:>3}",
+            24i64, 1i64, 4i64, 0i64, 0i64, 0.0, 0i64, 13i64
+        );
+        s.push_str(&format!(
+            "{epoch_head}G01G02G03G04G05G06G07G08G09G10G11G12\n"
+        ));
+        s.push_str(&format!("{:<32}G13\n", ""));
+        for i in 0..13 {
+            let c1 = 21345678.0 + i as f64;
+            let l1 = -12345678.0 + i as f64;
+            s.push_str(&format!("{c1:>14.3}  {l1:>14.3}  \n"));
+        }
+        let epochs = parse_rinex_obs(&s, 2);
+        assert_eq!(epochs.len(), 1);
+        let e = &epochs[0];
+        assert_eq!(e.sats.len(), 13);
+        assert_eq!(e.sats[0].sat, "G01");
+        assert_eq!(e.sats[11].sat, "G12");
+        assert_eq!(e.sats[12].sat, "G13");
+        assert!((e.sats[12].values[0].unwrap() - 21345690.0).abs() < 1e-3);
+        assert!((e.sats[12].values[1].unwrap() - -12345666.0).abs() < 1e-3);
+    }
+
     fn rinex3_nav_file() -> String {
         let mut s = String::new();
         s.push_str(
