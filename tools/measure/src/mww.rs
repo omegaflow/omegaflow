@@ -130,7 +130,9 @@ pub fn iso_to_unix(s: &str) -> Option<f64> {
     let m: i64 = dp.next()?.parse().ok()?;
     let d: i64 = dp.next()?.parse().ok()?;
     let days = days_from_civil(y, m, d)? as f64;
-    let t = time.split(|c: char| c == '.' || c == 'Z' || c == 'z').next()?;
+    let t = time
+        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
+        .next()?;
     let mut tp = t.split(':');
     let hh: f64 = tp.next()?.parse().ok()?;
     let mm: f64 = tp.next().unwrap_or("0").parse().ok()?;
@@ -142,7 +144,11 @@ pub fn iso_ymd(s: &str) -> Option<(i32, u32, u32)> {
     let s = s.trim();
     let date = s.split_once('T').or_else(|| s.split_once(' '))?.0;
     let mut p = date.split('-');
-    Some((p.next()?.parse().ok()?, p.next()?.parse().ok()?, p.next()?.parse().ok()?))
+    Some((
+        p.next()?.parse().ok()?,
+        p.next()?.parse().ok()?,
+        p.next()?.parse().ok()?,
+    ))
 }
 
 pub fn parse_quakeml(xml: &str) -> Option<MwwRecord> {
@@ -182,9 +188,10 @@ pub fn parse_quakeml(xml: &str) -> Option<MwwRecord> {
         .collect();
     let fm = select_by_public_id(&fm_slices, preferred_fm)
         .or_else(|| {
-            fm_slices.iter().copied().find(|f| {
-                attr_value(f, "catalog:dataid").is_some_and(|d| d.contains("mww"))
-            })
+            fm_slices
+                .iter()
+                .copied()
+                .find(|f| attr_value(f, "catalog:dataid").is_some_and(|d| d.contains("mww")))
         })
         .or_else(|| fm_slices.first().copied())?;
 
