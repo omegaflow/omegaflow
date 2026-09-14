@@ -2,7 +2,7 @@
   title: BLATT — Trịnh Xuân Thuận als Fragesteller: Screening seiner fünf Fragen
   class: sheet
   date: 2026-09-05
-  sha256: 902f9ae95f9ce1ab29204ba5d71272a3f0c43f7724d04d9c5912eddbeaeba950
+  sha256: efd5aa39f143e4a57f55185e66b0e5ccfe1d7605bd76759dd5e0b8c6fa589552
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
 -->
