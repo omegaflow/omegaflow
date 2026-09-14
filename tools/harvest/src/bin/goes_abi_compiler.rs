@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File,
+    Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
