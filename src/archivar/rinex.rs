@@ -185,7 +185,11 @@ fn rinex_num(s: &str) -> Option<f64> {
     }
     let e = t.replace('D', "E").replace('d', "E");
     let v = e.parse::<f64>().ok()?;
-    if v.is_finite() { Some(v) } else { None }
+    if v.is_finite() {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn slice(s: &str, a: usize, b: usize) -> Option<&str> {
@@ -306,7 +310,11 @@ pub struct RinexNavGps {
 }
 
 fn two_digit_year(y: i64) -> i64 {
-    if y < 80 { y + 2000 } else { y + 1900 }
+    if y < 80 {
+        y + 2000
+    } else {
+        y + 1900
+    }
 }
 
 fn nav_epoch_unix(l0: &str) -> Option<f64> {
@@ -583,6 +591,56 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
     out
 }
 
+pub const SBF_SYNC: [u8; 2] = [0x24, 0x40];
+
+pub struct SbfBlock {
+    pub id: u16,
+    pub payload: Vec<u8>,
+}
+
+pub fn sbf_crc16(data: &[u8]) -> u16 {
+    let mut crc: u16 = 0x0000;
+    for &b in data {
+        crc ^= (b as u16) << 8;
+        for _ in 0..8 {
+            crc = if crc & 0x8000 != 0 {
+                (crc << 1) ^ 0x1021
+            } else {
+                crc << 1
+            };
+        }
+    }
+    crc
+}
+
+pub fn sbf_blocks(bytes: &[u8]) -> Vec<SbfBlock> {
+    let mut out = Vec::new();
+    let mut i = 0usize;
+    while i + 8 <= bytes.len() {
+        if bytes[i] != SBF_SYNC[0] || bytes[i + 1] != SBF_SYNC[1] {
+            i += 1;
+            continue;
+        }
+        let stored_crc = u16::from_le_bytes([bytes[i + 2], bytes[i + 3]]);
+        let id = u16::from_le_bytes([bytes[i + 4], bytes[i + 5]]);
+        let length = u16::from_le_bytes([bytes[i + 6], bytes[i + 7]]) as usize;
+        if length < 8 || i + length > bytes.len() {
+            i += 1;
+            continue;
+        }
+        if sbf_crc16(&bytes[i + 4..i + length]) != stored_crc {
+            i += 1;
+            continue;
+        }
+        out.push(SbfBlock {
+            id,
+            payload: bytes[i + 8..i + length].to_vec(),
+        });
+        i += length;
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -788,6 +846,51 @@ mod tests {
             s.push('\n');
         }
         s
+    }
+
+    fn sbf_frame(id: u16, payload: &[u8]) -> Vec<u8> {
+        let length = 8 + payload.len();
+        let mut frame = Vec::with_capacity(length);
+        frame.extend_from_slice(&SBF_SYNC);
+        frame.extend_from_slice(&[0u8; 2]);
+        frame.extend_from_slice(&id.to_le_bytes());
+        frame.extend_from_slice(&(length as u16).to_le_bytes());
+        frame.extend_from_slice(payload);
+        let crc = sbf_crc16(&frame[4..]);
+        frame[2..4].copy_from_slice(&crc.to_le_bytes());
+        frame
+    }
+
+    #[test]
+    fn sbf_crc16_matches_published_check_value() {
+        assert_eq!(sbf_crc16(b"123456789"), 0x31C3);
+    }
+
+    #[test]
+    fn sbf_blocks_frames_payloads() {
+        let mut stream = Vec::new();
+        stream.extend_from_slice(b"noise");
+        stream.extend_from_slice(&sbf_frame(4027, &[1, 2, 3, 4, 5, 6, 7, 8]));
+        stream.extend_from_slice(&sbf_frame(4006, &[9, 10, 11, 12]));
+        let blocks = sbf_blocks(&stream);
+        assert_eq!(blocks.len(), 2);
+        assert_eq!(blocks[0].id, 4027);
+        assert_eq!(blocks[0].payload, vec![1, 2, 3, 4, 5, 6, 7, 8]);
+        assert_eq!(blocks[1].id, 4006);
+        assert_eq!(blocks[1].payload, vec![9, 10, 11, 12]);
+    }
+
+    #[test]
+    fn sbf_blocks_drop_bad_crc() {
+        let mut frame = sbf_frame(4027, &[1, 2, 3, 4]);
+        frame[8] ^= 0xFF;
+        assert!(sbf_blocks(&frame).is_empty());
+    }
+
+    #[test]
+    fn sbf_blocks_drop_truncated_frame() {
+        let frame = sbf_frame(4027, &[1, 2, 3, 4, 5, 6, 7, 8]);
+        assert!(sbf_blocks(&frame[..6]).is_empty());
     }
 
     #[test]

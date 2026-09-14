@@ -1,10 +1,10 @@
 use omegaflow::archivar::cors::{
-    CorsRecord, PRES_POSITION, pack_station, parse_bin, satellite_of, station_of, write_bin,
+    pack_station, parse_bin, satellite_of, station_of, write_bin, CorsRecord, PRES_POSITION,
 };
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::rinex::{
-    RinexFileType, ecef_to_geodetic, parse_rinex_header, parse_rinex_nav_gps, parse_rinex_nav_gps3,
-    parse_rinex_obs,
+    ecef_to_geodetic, parse_rinex_header, parse_rinex_nav_gps, parse_rinex_nav_gps3,
+    parse_rinex_obs, RinexFileType,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
@@ -28,6 +28,12 @@ fn decode_body(bytes: Vec<u8>) -> Option<String> {
         bytes
     };
     Some(String::from_utf8_lossy(&raw).into_owned())
+}
+
+fn hatanaka_marker(text: &str) -> bool {
+    text.lines()
+        .take(40)
+        .any(|l| l.contains("CRINEX") || l.contains("COMPACT RINEX"))
 }
 
 fn read_rinex(url: Option<&str>, input: Option<&str>) -> Result<String, String> {
@@ -178,6 +184,9 @@ fn run(args: &[String]) -> Result<(), String> {
             }
         }
         RinexFileType::Unknown => {
+            if hatanaka_marker(&text) {
+                return Err("Hatanaka-compressed RINEX (.d) — decompression stays unread (named parser gap), the asset stays unwritten".into());
+            }
             return Err("RINEX file type reads unknown — the asset stays unwritten".into());
         }
     }
@@ -246,5 +255,21 @@ fn main() {
     if let Err(msg) = run(&args) {
         eprintln!("cors_rinex_compiler: {msg}");
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hatanaka_marker_names_the_compact_gap() {
+        let plain =
+            "     2.11           OBSERVATION DATA    G (GPS)             RINEX VERSION / TYPE\n";
+        assert!(!hatanaka_marker(plain));
+        let compact =
+            "     2.11           COMPACT RINEX FORMAT                    RINEX VERSION / TYPE\n\
+CRINEX VERS   3.02  COMPACT RINEX FORMAT                    CRINEX VERS   / TYPE\n";
+        assert!(hatanaka_marker(compact));
     }
 }

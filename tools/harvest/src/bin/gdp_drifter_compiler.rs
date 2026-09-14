@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::zarr::{Blosc, blosc_decompress};
-use omegaflow::archivar::{JsonVal, jpath_val, json_num, jstr, parse_json};
+use omegaflow::archivar::zarr::{blosc_decompress, Blosc};
+use omegaflow::archivar::{jpath_val, json_num, jstr, parse_json, JsonVal};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};
@@ -243,7 +243,29 @@ fn records_for(
     (out, skipped)
 }
 
-fn gather(base: &str, select: &Select) -> Result<Vec<DrifterRecord>, String> {
+struct Arrays {
+    base: String,
+    id_vals: Vec<f64>,
+    rs_vals: Vec<f64>,
+    time_arr: Zarray,
+    lon_arr: Zarray,
+    lat_arr: Zarray,
+    sst_arr: Zarray,
+}
+
+struct Trajectory {
+    id: u64,
+    count: usize,
+    records: Vec<DrifterRecord>,
+    skipped: usize,
+}
+
+enum Outcome {
+    Measured(Trajectory),
+    Absent(String),
+}
+
+fn load_arrays(base: &str) -> Result<Arrays, String> {
     let zmeta_url = format!("{base}/.zmetadata");
     let zmeta_bytes = fetch_raw_bytes(&zmeta_url, FETCH_TTL)
         .ok_or_else(|| format!("{zmeta_url}: fetch returned void"))?;
@@ -273,53 +295,108 @@ fn gather(base: &str, select: &Select) -> Result<Vec<DrifterRecord>, String> {
             rs_vals.len()
         ));
     }
+    Ok(Arrays {
+        base: base.to_string(),
+        id_vals,
+        rs_vals,
+        time_arr,
+        lon_arr,
+        lat_arr,
+        sst_arr,
+    })
+}
 
-    let t = match select {
-        Select::Index(i) => *i,
-        Select::Buoy(w) => id_vals
-            .iter()
-            .position(|&x| x as u64 == *w)
-            .ok_or_else(|| format!("buoy {w}: no trajectory carries this id"))?,
-    };
-    let n_traj = id_vals.len();
-    if t >= n_traj {
+fn trajectory_records(m: &Arrays, t: usize) -> Result<Outcome, String> {
+    if t >= m.id_vals.len() {
         return Err(format!(
-            "trajectory index {t}: beyond {n_traj} trajectories"
+            "trajectory index {t}: beyond {} trajectories",
+            m.id_vals.len()
         ));
     }
-    let id_f = id_vals[t];
+    let id_f = m.id_vals[t];
     if !(id_f > 0.0) {
-        return Err(format!("trajectory {t}: buoy id stays absent"));
+        return Ok(Outcome::Absent("buoy id stays absent".to_string()));
     }
     let id = id_f as u64;
-    let count = rs_vals[t] as usize;
+    let count = m.rs_vals[t] as usize;
     if count == 0 {
-        return Err(format!(
-            "trajectory {t}: rowsize 0 — no observations (0 honored)"
+        return Ok(Outcome::Absent(
+            "rowsize 0 — no observations (0 honored)".to_string(),
         ));
     }
-    let start: usize = rs_vals[..t].iter().map(|&x| x as usize).sum();
+    let start: usize = m.rs_vals[..t].iter().map(|&x| x as usize).sum();
 
-    let time = read_obs_slice(base, "time", &time_arr, start, count)
+    let time = read_obs_slice(&m.base, "time", &m.time_arr, start, count)
         .ok_or_else(|| format!("trajectory {t}: time slice stays unread"))?;
-    let lon = read_obs_slice(base, "lon", &lon_arr, start, count)
+    let lon = read_obs_slice(&m.base, "lon", &m.lon_arr, start, count)
         .ok_or_else(|| format!("trajectory {t}: lon slice stays unread"))?;
-    let lat = read_obs_slice(base, "lat", &lat_arr, start, count)
+    let lat = read_obs_slice(&m.base, "lat", &m.lat_arr, start, count)
         .ok_or_else(|| format!("trajectory {t}: lat slice stays unread"))?;
-    let sst = read_obs_slice(base, "sst", &sst_arr, start, count)
+    let sst = read_obs_slice(&m.base, "sst", &m.sst_arr, start, count)
         .ok_or_else(|| format!("trajectory {t}: sst slice stays unread"))?;
 
     let (records, skipped) = records_for(id, &time, &lon, &lat, &sst);
     if records.is_empty() {
-        return Err(format!(
-            "trajectory {t}: no valid record — every observation carries an absent position/time (0 honored)"
+        return Ok(Outcome::Absent(
+            "no valid record — every observation carries an absent position/time (0 honored)"
+                .to_string(),
         ));
     }
+    Ok(Outcome::Measured(Trajectory {
+        id,
+        count,
+        records,
+        skipped,
+    }))
+}
+
+fn gather(base: &str, select: &Select) -> Result<Vec<DrifterRecord>, String> {
+    let m = load_arrays(base)?;
+    let t = match select {
+        Select::Index(i) => *i,
+        Select::Buoy(w) => m
+            .id_vals
+            .iter()
+            .position(|&x| x as u64 == *w)
+            .ok_or_else(|| format!("buoy {w}: no trajectory carries this id"))?,
+    };
+    match trajectory_records(&m, t)? {
+        Outcome::Measured(traj) => {
+            eprintln!(
+                "gdp: trajectory {t} buoy {}, {} observations, {} records, {} observations skipped (absent/implausible position or clock)",
+                traj.id, traj.count, traj.records.len(), traj.skipped
+            );
+            Ok(traj.records)
+        }
+        Outcome::Absent(reason) => Err(format!("trajectory {t}: {reason}")),
+    }
+}
+
+fn gather_all(base: &str) -> Result<Vec<DrifterRecord>, String> {
+    let m = load_arrays(base)?;
+    let n_traj = m.id_vals.len();
+    let mut out = Vec::new();
+    let mut absent = 0usize;
+    let mut unread = 0usize;
+    for t in 0..n_traj {
+        match trajectory_records(&m, t) {
+            Ok(Outcome::Measured(traj)) => out.extend(traj.records),
+            Ok(Outcome::Absent(_)) => absent += 1,
+            Err(_) => unread += 1,
+        }
+    }
+    if out.is_empty() {
+        return Err(
+            "no trajectory carries a valid record — the asset stays unwritten (0 honored)".into(),
+        );
+    }
     eprintln!(
-        "gdp: trajectory {t} buoy {id}, {count} observations, {} records, {skipped} observations skipped (absent/implausible position or clock)",
-        records.len()
+        "gdp: {n_traj} trajectories, {} records manifested, {} trajectories absent, {} trajectories unread",
+        out.len(),
+        absent,
+        unread
     );
-    Ok(records)
+    Ok(out)
 }
 
 fn encode_record(rec: &mut [u8; REC_BYTES], r: &DrifterRecord) {
@@ -419,7 +496,7 @@ fn sst_label(r: &DrifterRecord) -> String {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage =
-        "usage: gdp_drifter_compiler --out <path> [--index <n> | --id <buoy-id>] [--ci-mode]";
+        "usage: gdp_drifter_compiler --out <path> [--index <n> | --id <buoy-id> | --all] [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
@@ -428,28 +505,41 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let select = match arg_value(&args, "--id") {
-        Some(s) => match s.parse::<u64>() {
-            Ok(w) => Select::Buoy(w),
+    let all = args.iter().any(|a| a == "--all");
+    let select: Option<Select> = if all {
+        None
+    } else if let Some(s) = arg_value(&args, "--id") {
+        match s.parse::<u64>() {
+            Ok(w) => Some(Select::Buoy(w)),
             Err(_) => {
                 eprintln!("--id needs a numeric buoy id");
                 std::process::exit(1);
             }
-        },
-        None => Select::Index(
+        }
+    } else {
+        Some(Select::Index(
             match arg_value(&args, "--index").and_then(|v| v.parse::<usize>().ok()) {
                 Some(v) => v,
                 None => 0,
             },
-        ),
+        ))
     };
 
-    let records = match gather(BASE, &select) {
-        Ok(r) => r,
-        Err(e) => {
-            eprintln!("gdp_drifter_compiler: {e}");
-            std::process::exit(1);
-        }
+    let records = match select {
+        None => match gather_all(BASE) {
+            Ok(r) => r,
+            Err(e) => {
+                eprintln!("gdp_drifter_compiler: {e}");
+                std::process::exit(1);
+            }
+        },
+        Some(sel) => match gather(BASE, &sel) {
+            Ok(r) => r,
+            Err(e) => {
+                eprintln!("gdp_drifter_compiler: {e}");
+                std::process::exit(1);
+            }
+        },
     };
 
     if let Err(e) = write_asset(&records, &out_path) {

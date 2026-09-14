@@ -428,11 +428,11 @@ note Free tier: stops/operators = static registries (Force Gate decline); Vehicl
 
 dead 404
 url https://api.adsabs.harvard.edu/v1/
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg; /v1/search/query lebt MIT Key (gemessen 2026-09-14: 200, numFound echt) — nur /v1/ und /v1/export/bibtex/ sind dead.
 
 dead 404
 url https://api.adsabs.harvard.edu/v1/export/bibtex/
-note HTTP 404 — Endpoint weg.
+note HTTP 404 — Endpoint weg; /v1/search/query lebt MIT Key (gemessen 2026-09-14: 200, numFound echt) — nur /v1/ und /v1/export/bibtex/ sind dead.
 
 dead 404
 url https://api.adsb.lol/v2/point/
@@ -921,6 +921,10 @@ note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10
 decline stale-feed
 url https://api.thingspeak.com/channels/705404/feeds/last.json
 note Letzter Eintrag 2020-09-13, Felder 1–5 null — Kanal gestorben.
+
+decline registry
+url https://api.thingspeak.com/channels/public.json
+note ThingSpeak öffentliche Channels (keyless, HTTP 200 JSON) — public.json ist eine Kanal-Registry (id/name/field-Labels/lat/lon) ohne Messwert-Feld; ein Einzel-Kanal (/channels/<id>/feeds.json) trägt echte IoT-Sensorwerte, aber keiner ist benannt und keiner hat einen Konsumenten. Kein Oszillator-Gate je Kanal durchlaufen (kein benannter Kanal). decline registry.
 
 decline superseded-by-integrated
 url https://api.tidesandcurrents.noaa.gov/api/prod/...`
@@ -1505,6 +1509,10 @@ note Cyber-Dienst.
 decline metadata-sos
 url https://deims.org/api/sites?limit=100
 note grind: grind_b2find.φ
+
+decline literature
+url https://dev.elsevier.com/apikey/manage
+note Scopus/Elsevier-Publikations- und Zitationskatalog — freier non-commercial API-Key (dev.elsevier.com), Antwort = Bibliographie-Metadaten (Autoren/Abstracts/Zitationszählwerte/CiteScore), kein physikalischer Messwert am Ort-Zeit-Punkt. Kein Konsument (keine Nadel frißt Zitationszahlen). decline literature (Präzedenz: OpenAlex registry, Semantic Scholar no-physical-force).
 
 decline redistribution
 url https://dev.meteostat.net/api/stations/nearby.html
@@ -4350,6 +4358,10 @@ dead 404
 url https://www.data.jma.go.jp/svd/eqev/data/bulletin/station.csv
 note HTTP 404 — Endpoint weg.
 
+decline literature
+url https://www.dimensions.ai/products/free
+note Dimensions (Digital Science) — freie Metrics-API (metricssignup), Antwort = Zitations-/Altmetrics-Zählwerte (citations, field citation ratio), kein physikalischer Messwert am Ort-Zeit-Punkt. Kein Konsument. decline literature (Präzedenz: OpenAlex registry, Scopus).
+
 decline redistribution
 url https://www.dxpredictor.com/api/v1/ionosonde/fof2
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
@@ -4826,13 +4838,13 @@ dead scheme-unsupported
 url s3://nsidc-cumulus-prod-public/ATLAS/ATL03/007/2026/05/18/ATL03_20260518020328_09753112_007_01.iso.xml
 note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
 
-dead scheme-unsupported
+dead 401
 url s3://podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.met.json
-note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
+note s3credentials 401 „required client id missing" — EDL-Token gültig bis 01.10.2026, aber legacy User-Token ohne client_id. Das S3-Scheme ist seit Commit 546d39e getragen (SigV4-Reader fetch_s3_range); kein scheme-unsupported mehr.
 
-dead scheme-unsupported
+dead 401
 url s3://podaac-swot-ops-cumulus-public/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.nc.iso.xml
-note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
+note s3credentials 401 „required client id missing" — EDL-Token gültig bis 01.10.2026, aber legacy User-Token ohne client_id. Das S3-Scheme ist seit Commit 546d39e getragen (SigV4-Reader fetch_s3_range); kein scheme-unsupported mehr.
 
 decline registry
 url https://registry.euro-vo.org/regtap/tap
