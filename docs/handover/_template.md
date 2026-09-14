@@ -15,9 +15,15 @@ macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die ei
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
 überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
 
-## <Sektion>
+Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
+Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
+nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
+„Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
+Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-- <offener Punkt>
+## <Sektion — härtester undatierter Punkt zuerst>
+
+- <offener Punkt — mit nächstem Schritt> (Schritt: <Tool/Datei/URL/Anfrage>)
 
 ## Abschluss
 
