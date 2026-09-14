@@ -1005,6 +1005,7 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
 }
 
 pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<String> {
+    crate::token::set_secrets(env.clone());
     let max = 10usize;
     match mode {
         "arxiv" => arxiv_lines(query, max),
