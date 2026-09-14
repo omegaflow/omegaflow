@@ -35,12 +35,12 @@ jobs:
           echo "jwst_spectra.bin: $status | ledger obs: $n"
           if [ "$status" = "200" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "front2: jwst_spectra.bin liegt auf dem CDN — Aufträge 3–5 entblockt" \
-              "Die JWST-Voll-Ernte ist vollständig: jwst_spectra.bin liegt auf dem CDN. Nadel V Front Ⅱ Aufträge 3–5 (Modell, Scanner, Blatt) sind entblockt — handover-2026-08-23-jwst-front-2-modell-scanner-blatt.md." \
+              "front2: jwst_spectra.bin is on the CDN — tasks 3–5 unblocked" \
+              "The JWST full harvest is complete: jwst_spectra.bin is on the CDN. Nadel V front II tasks 3–5 (model, scanner, sheet) are unblocked — handover-2026-08-23-jwst-front-2-modell-scanner-blatt.md." \
               health
           elif [ "$n" = "0" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "front2: die JWST-Ernte trägt void" \
-              "Der Watchdog findet weder jwst_spectra.bin auf dem CDN noch einen Ledger-Eintrag — die Ernte hat seit dem letzten kernel-flatten-Lauf keinen obs_id abgeschlossen. MAST_TOKEN/Netz/Build prüfen. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              "front2: the JWST harvest carries void" \
+              "The watchdog finds neither jwst_spectra.bin on the CDN nor a ledger entry — the harvest has completed no obs_id since the last kernel-flatten run. Check MAST_TOKEN/network/build. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               health
           fi
