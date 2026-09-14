@@ -8432,3 +8432,31 @@ ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic_ro_temp.bin
+format cosmic_ro
+at earth
+ttl 604800
+field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square em N-units 604800 0.0 0.0
+field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square em K 604800 0.0 0.0
+field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
+format maxi
+at sun
+ttl 604800
+field maxi_2_20kev_flux_ph_s_cm2 maxi_2_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+field maxi_2_4kev_flux_ph_s_cm2 maxi_2_4kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+field maxi_4_10kev_flux_ph_s_cm2 maxi_4_10kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+field maxi_10_20kev_flux_ph_s_cm2 maxi_10_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
+format iscb
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/uscrn_hourly.bin
+format us_crn_hourly
+at earth
+ttl 3600
+field us_crn_hourly_temp_c us_crn_hourly_temp_c exponential-decay thermal degree_C 3600 0.0 0.0
