@@ -55,6 +55,14 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   kommen zuletzt. Schritt, wenn an der Reihe: `espflash` installieren, Gerät
   anstecken, nn-Strom als `nn=<ms>` am ttyACM. BOM: `docs/specs/mantis-shrimp-bom.md`.
 
+## Mail-Fang — Deployment offen (Operator-Wort)
+
+- Der Webhook-Verlust-Fix (Retry + KV-Puffer + Cron-Drain in
+  `cloudflare/email_worker.js` + `wrangler.toml`; Dedup über `seen_ids.φ` in
+  `tools/service/src/bin/smail_recv.rs`) ist gebaut, nicht deployed. Schritt:
+  `wrangler kv namespace create MAIL_QUEUE` → Id in `wrangler.toml` eintragen →
+  `wrangler deploy`; `WEBHOOK_URL`/`WEBHOOK_TOKEN` prüfen.
+
 ## Abschluss
 
 Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
