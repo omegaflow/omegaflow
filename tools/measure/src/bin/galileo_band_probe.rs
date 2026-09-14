@@ -310,9 +310,31 @@ fn run_persist(recs: &[[f64; 8]]) {
                     .collect();
                 let wb = members(&win, floor, 0.0).into_iter().next();
                 match (wb, p_ref) {
-                    (Some((fb, rb)), Some(pr)) => println!("  {y}: n_scan {} days {} | peak {:.4} mHz (interp {:.4}) {:.1}x | ref {rname} {:.1}x | best in +-0.5 mHz {:.3} mHz {:.1}x", dts.len(), days.len(), fp * 1000.0, fpi * 1000.0, ratio, pr / floor.max(1e-300), fb * 1000.0, rb.max(0.0)),
-                    (None, Some(pr)) => println!("  {y}: n_scan {} days {} | peak {:.4} mHz (interp {:.4}) {:.1}x | ref {rname} {:.1}x | best in +-0.5 mHz none", dts.len(), days.len(), fp * 1000.0, fpi * 1000.0, ratio, pr / floor.max(1e-300)),
-                    _ => println!("  {y}: n_scan {} days {} | no grid near {rname} (0 honored)", dts.len(), days.len()),
+                    (Some((fb, rb)), Some(pr)) => println!(
+                        "  {y}: n_scan {} days {} | peak {:.4} mHz (interp {:.4}) {:.1}x | ref {rname} {:.1}x | best in +-0.5 mHz {:.3} mHz {:.1}x",
+                        dts.len(),
+                        days.len(),
+                        fp * 1000.0,
+                        fpi * 1000.0,
+                        ratio,
+                        pr / floor.max(1e-300),
+                        fb * 1000.0,
+                        rb.max(0.0)
+                    ),
+                    (None, Some(pr)) => println!(
+                        "  {y}: n_scan {} days {} | peak {:.4} mHz (interp {:.4}) {:.1}x | ref {rname} {:.1}x | best in +-0.5 mHz none",
+                        dts.len(),
+                        days.len(),
+                        fp * 1000.0,
+                        fpi * 1000.0,
+                        ratio,
+                        pr / floor.max(1e-300)
+                    ),
+                    _ => println!(
+                        "  {y}: n_scan {} days {} | no grid near {rname} (0 honored)",
+                        dts.len(),
+                        days.len()
+                    ),
                 }
             }
         }
@@ -344,7 +366,9 @@ fn main() {
         jd_date(recs[0][0]),
         jd_date(recs[recs.len() - 1][0])
     );
-    println!("method: per (station, mode): lock cut |resid|>1000 Hz, per-segment linear detrend (gap 60 s, min 120), LS 30-70 mHz @ 0.05 mHz; floor = band median; members = local maxima >= 3x floor, parabolic interp; mirror numbers from the 44-56 mHz subset");
+    println!(
+        "method: per (station, mode): lock cut |resid|>1000 Hz, per-segment linear detrend (gap 60 s, min 120), LS 30-70 mHz @ 0.05 mHz; floor = band median; members = local maxima >= 3x floor, parabolic interp; mirror numbers from the 44-56 mHz subset"
+    );
 
     let mut stations_present: Vec<i64> = recs.iter().map(|r| r[2] as i64).collect();
     stations_present.sort_unstable();
@@ -420,7 +444,14 @@ fn main() {
                 0.0
             };
             if dts.len() < MIN_SEG {
-                println!("cell st {st} mode {mode} | n_raw {} n_lock {} days {} span {:.0} d | {} detrended samples — no scan (0 honored)", cell.len(), lock, days.len(), (t1 - t0) / DAY_S, dts.len());
+                println!(
+                    "cell st {st} mode {mode} | n_raw {} n_lock {} days {} span {:.0} d | {} detrended samples — no scan (0 honored)",
+                    cell.len(),
+                    lock,
+                    days.len(),
+                    (t1 - t0) / DAY_S,
+                    dts.len()
+                );
                 continue;
             }
             let grid = ls_grid(&dts, &dvs, FLO, FHI, STEP);
@@ -472,7 +503,21 @@ fn main() {
                 Some(i) => peak_interp(&mir, i).unwrap_or(fm),
                 None => fm,
             };
-            println!("cell st {st} mode {mode} | n_raw {} n_lock {} n_scan {} days {} span {:.0} d seg {} med_len {:.0} med_span {:.1} h | P10-mirror 44-56 mHz peak {:.4} mHz (interp {:.4}) {:.1}x 44-56-median {:.1}x 30-70-floor", cell.len(), lock, dts.len(), days.len(), (t1 - t0) / DAY_S, n_seg, med_seg, seg_span / 3600.0, fm * 1000.0, fmi * 1000.0, rm, pm / floor.max(1e-300));
+            println!(
+                "cell st {st} mode {mode} | n_raw {} n_lock {} n_scan {} days {} span {:.0} d seg {} med_len {:.0} med_span {:.1} h | P10-mirror 44-56 mHz peak {:.4} mHz (interp {:.4}) {:.1}x 44-56-median {:.1}x 30-70-floor",
+                cell.len(),
+                lock,
+                dts.len(),
+                days.len(),
+                (t1 - t0) / DAY_S,
+                n_seg,
+                med_seg,
+                seg_span / 3600.0,
+                fm * 1000.0,
+                fmi * 1000.0,
+                rm,
+                pm / floor.max(1e-300)
+            );
             println!("  refs: {}", refs_txt.join(" | "));
             println!(
                 "  members(>=3x): {}",

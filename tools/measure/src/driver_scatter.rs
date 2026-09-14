@@ -178,18 +178,22 @@ mod tests {
     fn too_few_or_non_finite_pairs_are_absent() {
         assert!(scatter(&[], 1000, 1).is_none());
         assert!(scatter(&[(1.0, 2.0), (2.0, 3.0)], 1000, 1).is_none());
-        assert!(scatter(
-            &[(1.0, f64::NAN), (2.0, 3.0), (3.0, 4.0), (4.0, 5.0)],
-            1000,
-            1
-        )
-        .is_none());
-        assert!(scatter(
-            &[(f64::INFINITY, 2.0), (2.0, 3.0), (3.0, 4.0), (4.0, 5.0)],
-            1000,
-            1
-        )
-        .is_none());
+        assert!(
+            scatter(
+                &[(1.0, f64::NAN), (2.0, 3.0), (3.0, 4.0), (4.0, 5.0)],
+                1000,
+                1
+            )
+            .is_none()
+        );
+        assert!(
+            scatter(
+                &[(f64::INFINITY, 2.0), (2.0, 3.0), (3.0, 4.0), (4.0, 5.0)],
+                1000,
+                1
+            )
+            .is_none()
+        );
     }
 
     #[test]

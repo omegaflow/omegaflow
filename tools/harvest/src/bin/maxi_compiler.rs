@@ -1,8 +1,8 @@
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::cdn::upload_release;
 use omegaflow::maxi::{
-    band_freq_width, mjd_to_tdb, parse_bin, parse_dat, write_bin, MaxiCurve, MaxiSample,
-    BAND_10_20, BAND_2_20, BAND_2_4, BAND_4_10,
+    BAND_2_4, BAND_2_20, BAND_4_10, BAND_10_20, MaxiCurve, MaxiSample, band_freq_width, mjd_to_tdb,
+    parse_bin, parse_dat, write_bin,
 };
 use std::io::Write;
 

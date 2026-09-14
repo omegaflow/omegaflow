@@ -1,6 +1,7 @@
 use omegaflow::thermochem::{
-    elemental_budget_sulfur, equilibrium_composition_condensed_budget,
-    equilibrium_composition_sulfur_budget, sulfur_gas_names, COOL_T_MAX, P0_PA, SOLAR_C, SOLAR_O,
+    COOL_T_MAX, P0_PA, SOLAR_C, SOLAR_O, elemental_budget_sulfur,
+    equilibrium_composition_condensed_budget, equilibrium_composition_sulfur_budget,
+    sulfur_gas_names,
 };
 
 const SOLAR_C_O: f64 = SOLAR_C / SOLAR_O;

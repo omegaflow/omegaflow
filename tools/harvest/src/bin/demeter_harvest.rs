@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use omegaflow::json::{jpath_val, jstr, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jpath_val, jstr, parse_json};
 
 const AUTH: &str = "https://regards.cnes.fr/api/v1/rs-authentication/oauth/token";
 const ORDER: &str = "https://regards.cnes.fr/api/v1/rs-order";

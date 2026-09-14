@@ -1,9 +1,9 @@
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::session::fetch_superdarn_ascii;
 use omegaflow::archivar::units::ymd_to_days;
-use omegaflow::archivar::LeapSeconds;
 use omegaflow::cdn::upload_release;
-use omegaflow::geo::{parse_bin, write_bin, GeoRec, COMP_SDARN_V, MAGIC_SDARN};
-use omegaflow::json::{parse_json, scalar_of, JsonVal};
+use omegaflow::geo::{COMP_SDARN_V, GeoRec, MAGIC_SDARN, parse_bin, write_bin};
+use omegaflow::json::{JsonVal, parse_json, scalar_of};
 use std::process::Command;
 
 const NETLOC: &str = "superdarn.ca";

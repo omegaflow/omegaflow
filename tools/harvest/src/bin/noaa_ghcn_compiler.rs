@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw;
-use omegaflow::archivar::geo::{parse_bin, write_bin, MAGIC_GHCN};
+use omegaflow::archivar::geo::{MAGIC_GHCN, parse_bin, write_bin};
 use omegaflow::archivar::noaa_nodd::{filter_window, parse_ghcn, parse_ghcn_stations, tdb_window};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;

@@ -76,11 +76,7 @@ pub fn element_inner<'a>(xml: &'a str, name: &str) -> Option<&'a str> {
 pub fn text_of<'a>(xml: &'a str, tag: &str) -> Option<&'a str> {
     let inner = element_inner(xml, tag)?;
     let t = inner.trim();
-    if t.is_empty() {
-        None
-    } else {
-        Some(t)
-    }
+    if t.is_empty() { None } else { Some(t) }
 }
 
 pub fn child_value<'a>(parent: &'a str, tag: &str) -> Option<&'a str> {
@@ -90,11 +86,7 @@ pub fn child_value<'a>(parent: &'a str, tag: &str) -> Option<&'a str> {
 
 pub fn f64_of(s: &str) -> Option<f64> {
     let v = s.trim().parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 pub fn child_f64(parent: &str, tag: &str) -> Option<f64> {

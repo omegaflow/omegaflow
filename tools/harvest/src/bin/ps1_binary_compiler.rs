@@ -1,11 +1,11 @@
 use omegaflow::archivar::footprint::{
-    decode_rec, encode_rec, parse_header, write_header, FootprintBand, FootprintRecord, HEADER_LEN,
-    MAGIC, REC_BYTES,
+    FootprintBand, FootprintRecord, HEADER_LEN, MAGIC, REC_BYTES, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::healpix::pix2ang_nest;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet};
+use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -273,24 +273,26 @@ fn probe_zone15(
             let tx = tx.clone();
             let next = &next;
             let refused = &refused;
-            s.spawn(move || loop {
-                if refused.load(Ordering::Relaxed) > 0 {
-                    break;
-                }
-                let idx = next.fetch_add(1, Ordering::Relaxed) as usize;
-                if idx >= n_probe {
-                    break;
-                }
-                let seq = idx as u32;
-                let proj = first_proj + seq / SUBCELLS as u32;
-                let sub = seq % SUBCELLS as u32;
-                match probe_skycell(proj, sub) {
-                    Ok(cell) => {
-                        let _ = tx.send((idx, cell));
+            s.spawn(move || {
+                loop {
+                    if refused.load(Ordering::Relaxed) > 0 {
+                        break;
                     }
-                    Err(_) => {
-                        refused.fetch_add(1, Ordering::Relaxed);
-                        let _ = tx.send((idx, None));
+                    let idx = next.fetch_add(1, Ordering::Relaxed) as usize;
+                    if idx >= n_probe {
+                        break;
+                    }
+                    let seq = idx as u32;
+                    let proj = first_proj + seq / SUBCELLS as u32;
+                    let sub = seq % SUBCELLS as u32;
+                    match probe_skycell(proj, sub) {
+                        Ok(cell) => {
+                            let _ = tx.send((idx, cell));
+                        }
+                        Err(_) => {
+                            refused.fetch_add(1, Ordering::Relaxed);
+                            let _ = tx.send((idx, None));
+                        }
                     }
                 }
             });
@@ -724,11 +726,7 @@ fn run(args: &[String]) -> Result<(), String> {
     );
     eprintln!(
         "census: {} existence probes ({} zone 15 skycells, {} complete-zone samples), {} present, {} absent",
-        census.requests,
-        census.zone15_probes,
-        census.samples,
-        census.present,
-        census.absent
+        census.requests, census.zone15_probes, census.samples, census.present, census.absent
     );
     if ci_mode && !upload_asset(&out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
@@ -771,10 +769,12 @@ projcell subcell ra dec filter mjd type filename shortname badflag
         assert_eq!(cell.mask, 1u8 << 2);
         assert!((cell.ra - 2.128573126861541).abs() < 1e-9);
         assert!((cell.dec + 31.790888721856746).abs() < 1e-9);
-        assert!(parse_probe_body(
-            "projcell subcell ra dec filter mjd type filename shortname badflag\n"
-        )
-        .is_none());
+        assert!(
+            parse_probe_body(
+                "projcell subcell ra dec filter mjd type filename shortname badflag\n"
+            )
+            .is_none()
+        );
     }
 
     #[test]

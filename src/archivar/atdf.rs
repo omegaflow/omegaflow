@@ -291,11 +291,7 @@ pub fn tracking_record(rec: &[u8]) -> Tracking {
 }
 
 pub fn full_year(two: i64) -> i64 {
-    if two < 70 {
-        2000 + two
-    } else {
-        1900 + two
-    }
+    if two < 70 { 2000 + two } else { 1900 + two }
 }
 
 pub struct SkySample {
@@ -563,11 +559,7 @@ pub fn reduce_skyfreq(
     eprintln!(
         "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), dtype {dtype_hist:?}, {n_out} fsky samples (median {fmed:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median"
     );
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn write_resid_bin(records: &[[f64; 8]]) -> Vec<u8> {

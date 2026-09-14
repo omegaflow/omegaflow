@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::hdf5::{decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f64};
 use std::process::Command;
 
 const CDN_TAG: &str = "ncei.noaa.gov";

@@ -1,11 +1,11 @@
 use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs, icrs_to_body_surface, parse_ephemeris_binary,
-    BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_fixed_to_icrs, icrs_to_body_surface,
+    parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_resid_bin;
-use omegaflow::odp::{dsn_station, EARTH};
+use omegaflow::odp::{EARTH, dsn_station};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -435,8 +435,12 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
         latr = la;
         lonr = lo;
     }
-    println!("sanity frame: start tdb {start:.0} (1997-01-04); DSS43 geodetic ({lat0}, {lon0}, {alt0:.0} m)");
-    println!("sanity station offset |st-earth| = {r_st:.0} m (expect ~6378200); recovered body-fixed lat/lon {latr:.3} {lonr:.3} (DSS43 = -35.401 148.982)");
+    println!(
+        "sanity frame: start tdb {start:.0} (1997-01-04); DSS43 geodetic ({lat0}, {lon0}, {alt0:.0} m)"
+    );
+    println!(
+        "sanity station offset |st-earth| = {r_st:.0} m (expect ~6378200); recovered body-fixed lat/lon {latr:.3} {lonr:.3} (DSS43 = -35.401 148.982)"
+    );
     println!(
         "sanity probe-earth dist {r_pe:.3} AU; earth-barycenter |e| {:.3e} m",
         norm(e0)

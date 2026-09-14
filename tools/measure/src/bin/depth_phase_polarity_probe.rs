@@ -24,7 +24,9 @@ fn main() {
         );
         return;
     };
-    println!("=== depth-phase polarity — the free-surface reflection coefficient re-derived at deep geometry ===");
+    println!(
+        "=== depth-phase polarity — the free-surface reflection coefficient re-derived at deep geometry ==="
+    );
     println!(
         "surface layer of the ak135 model the code already carries: vp = {alpha:.2} km/s, vs = {beta:.2} km/s"
     );
@@ -65,7 +67,9 @@ fn main() {
     let p_direct = rayparam_of_p(PILOT_DELTA_DEG);
     let i_pilot = p_direct.and_then(surface_incidence_deg);
     let (Some(p_p), Some(i_s)) = (p_direct, i_pilot) else {
-        eprintln!("the direct-P ray parameter at {PILOT_DELTA_DEG} deg stays unread — no incidence estimate");
+        eprintln!(
+            "the direct-P ray parameter at {PILOT_DELTA_DEG} deg stays unread — no incidence estimate"
+        );
         return;
     };
     let r_pp_pilot = free_surface_pp(p_p);
@@ -102,7 +106,8 @@ fn main() {
     let rp = p_p_rayparam(PILOT_DELTA_DEG, PILOT_DEPTH_KM);
     println!(
         "note: the pP ray parameter near {PILOT_DELTA_DEG} deg is multi-valued ({} — the pP travel-time curve is non-monotonic there,",
-        rp.map(|v| format!("{v:.4} s/km")).unwrap_or("absent".into())
+        rp.map(|v| format!("{v:.4} s/km"))
+            .unwrap_or("absent".into())
     );
     println!(
         "  a triplication in the deep-source pP branch) — so a single per-station pP ray parameter is not a clean value;"
@@ -114,7 +119,9 @@ fn main() {
     println!();
     println!("=== the CMT source term — the pP sign mix read from the focal mechanism ===");
     let Some(events) = ndk::fetch_events(GCMT_NDK_URL, 3600) else {
-        println!("no GCMT NDK body — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)");
+        println!(
+            "no GCMT NDK body — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)"
+        );
         return;
     };
     let pilot = events
@@ -127,7 +134,9 @@ fn main() {
             da.total_cmp(&db)
         });
     let Some(ev) = pilot else {
-        println!("no GCMT centroid in the pilot window — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)");
+        println!(
+            "no GCMT centroid in the pilot window — the CMT source term stays absent; the pP mix stays measured and unresolved (no fabricated flip)"
+        );
         return;
     };
     let mw_txt = ev
@@ -136,7 +145,16 @@ fn main() {
         .unwrap_or("absent".to_string());
     println!(
         "GCMT centroid {} ({:04}/{:02}/{:02}): strike/dip/rake {:.0}/{:.0}/{:.0} (conjugate {:.0}/{:.0}/{:.0})",
-        ev.name, ev.year, ev.month, ev.day, ev.strike, ev.dip, ev.rake, ev.strike2, ev.dip2, ev.rake2
+        ev.name,
+        ev.year,
+        ev.month,
+        ev.day,
+        ev.strike,
+        ev.dip,
+        ev.rake,
+        ev.strike2,
+        ev.dip2,
+        ev.rake2
     );
     println!(
         "  scalar moment M0 {:.3e} dyne-cm, Mw {mw_txt}, centroid lat {:.2} lon {:.2} depth {:.1} km",
@@ -153,7 +171,9 @@ fn main() {
     ) {
         (Some(a), Some(b)) => (a, b),
         _ => {
-            println!("the take-off angle at the centroid depth stays unread — the radiation direction r̂ stays absent; the mix stays unresolved, no fabricated angle");
+            println!(
+                "the take-off angle at the centroid depth stays unread — the radiation direction r̂ stays absent; the mix stays unresolved, no fabricated angle"
+            );
             return;
         }
     };

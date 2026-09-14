@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::omni2::{
-    parse_bin, COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_SYMH, COMP_V1800,
+    COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_SYMH, COMP_V1800, parse_bin,
 };
 use omegaflow::lsk::days_from_civil;
 

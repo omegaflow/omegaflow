@@ -1,6 +1,6 @@
 use omegaflow::archivar::omni2::{
-    parse_bin, write_bin, COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_PRESSURE, COMP_T1800,
-    COMP_V1800,
+    COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_PRESSURE, COMP_T1800, COMP_V1800, parse_bin,
+    write_bin,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -134,7 +134,10 @@ fn harvest_window(
     };
     let mut rows = 0usize;
     let mut fills = 0usize;
-    let mut guard = buckets.lock().unwrap_or_else(|e| e.into_inner());
+    let mut guard = match buckets.lock() {
+        Ok(g) => g,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     for line in text.lines() {
         if line.is_empty() || !line.as_bytes()[0].is_ascii_digit() {
             continue;
@@ -171,10 +174,16 @@ fn harvest_window(
         }
     }
     drop(guard);
-    let mut yr = year_rows.lock().unwrap_or_else(|e| e.into_inner());
+    let mut yr = match year_rows.lock() {
+        Ok(g) => g,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     *yr += rows;
     drop(yr);
-    let mut yf = year_fills.lock().unwrap_or_else(|e| e.into_inner());
+    let mut yf = match year_fills.lock() {
+        Ok(g) => g,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     *yf += fills;
     drop(yf);
     eprintln!(
@@ -189,12 +198,13 @@ fn harvest_window(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| {
-        omegaflow::archivar::cache_root()
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => omegaflow::archivar::cache_root()
             .join("omni2_serie.bin")
             .to_string_lossy()
-            .into_owned()
-    });
+            .into_owned(),
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(1440.0);
@@ -214,20 +224,26 @@ fn main() {
         .and_then(parse_days)
     {
         Some(d) => d,
-        None => parse_days("1963-01-01").unwrap_or_else(|| {
-            eprintln!("--window-start undeclared and the dataset start parses void");
-            std::process::exit(1);
-        }),
+        None => match parse_days("1963-01-01") {
+            Some(d) => d,
+            None => {
+                eprintln!("--window-start undeclared and the dataset start parses void");
+                std::process::exit(1);
+            }
+        },
     };
     let end_day = match arg_value(&args, "--window-end")
         .as_deref()
         .and_then(parse_days)
     {
         Some(d) => d,
-        None => parse_days("2026-08-06").unwrap_or_else(|| {
-            eprintln!("--window-end undeclared and the dataset stop parses void");
-            std::process::exit(1);
-        }),
+        None => match parse_days("2026-08-06") {
+            Some(d) => d,
+            None => {
+                eprintln!("--window-end undeclared and the dataset stop parses void");
+                std::process::exit(1);
+            }
+        },
     };
     let (sy, _, _) = civil_from_days(start_day);
     let (ey, _, _) = civil_from_days(end_day);
@@ -256,48 +272,59 @@ fn main() {
         let year_rows = Arc::clone(&year_rows);
         let year_fills = Arc::clone(&year_fills);
         let next = Arc::clone(&next);
-        workers.push(std::thread::spawn(move || loop {
-            let year = next.fetch_add(1, Ordering::SeqCst);
-            if year > ey {
-                break;
+        workers.push(std::thread::spawn(move || {
+            loop {
+                let year = next.fetch_add(1, Ordering::SeqCst);
+                if year > ey {
+                    break;
+                }
+                let w_start = match days_from_civil(year, 1, 1) {
+                    Some(d) => d,
+                    None => continue,
+                };
+                let w_end_raw = match days_from_civil(year, 12, 31) {
+                    Some(d) => d,
+                    None => continue,
+                };
+                let w_end = w_end_raw.min(end_day);
+                if w_start > end_day {
+                    continue;
+                }
+                harvest_window(
+                    w_start,
+                    w_end,
+                    decimate_s,
+                    &buckets,
+                    &year_rows,
+                    &year_fills,
+                );
             }
-            let w_start = match days_from_civil(year, 1, 1) {
-                Some(d) => d,
-                None => continue,
-            };
-            let w_end_raw = match days_from_civil(year, 12, 31) {
-                Some(d) => d,
-                None => continue,
-            };
-            let w_end = w_end_raw.min(end_day);
-            if w_start > end_day {
-                continue;
-            }
-            harvest_window(
-                w_start,
-                w_end,
-                decimate_s,
-                &buckets,
-                &year_rows,
-                &year_fills,
-            );
         }));
     }
     for w in workers {
         let _ = w.join();
     }
-    let rows = Arc::try_unwrap(year_rows)
+    let Some(rows) = Arc::try_unwrap(year_rows)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
-    let fills = Arc::try_unwrap(year_fills)
+    else {
+        eprintln!("year_rows stays shared — the row count stays unread");
+        std::process::exit(1);
+    };
+    let Some(fills) = Arc::try_unwrap(year_fills)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
-    let buckets_guard = Arc::try_unwrap(buckets)
+    else {
+        eprintln!("year_fills stays shared — the fill count stays unread");
+        std::process::exit(1);
+    };
+    let Some(buckets_guard) = Arc::try_unwrap(buckets)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    else {
+        eprintln!("buckets stay shared — the bucket map stays unread");
+        std::process::exit(1);
+    };
     let mut raw: Vec<(f64, f64, u32)> = Vec::new();
     let mut pre_lsk_skip = 0usize;
     for ((comp, bucket), mut vals) in buckets_guard {

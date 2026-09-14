@@ -1,6 +1,6 @@
 use omegaflow::archivar::naming::source_name_from_url;
 use omegaflow::cdn::upload_release;
-use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
+use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use std::process::Command;
 
 const CDN_TAG: &str = "archive-api.open-meteo.com";

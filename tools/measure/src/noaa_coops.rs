@@ -1,4 +1,4 @@
-use omegaflow::archivar::{jstr, parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, jstr, parse_json};
 use std::collections::HashMap;
 use std::process::Command;
 

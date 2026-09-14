@@ -228,11 +228,7 @@ fn scan(name: &str, daily: &[(f64, f64)]) {
     eprintln!("{name}: top form profiles by |jump|:");
     for (date, f) in forms.iter().take(15) {
         let ret = if f.returns_measured {
-            if f.returns {
-                "returns"
-            } else {
-                "holds"
-            }
+            if f.returns { "returns" } else { "holds" }
         } else {
             "returns:n/a"
         };
@@ -303,7 +299,9 @@ fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
     if step.abs() > 0.5 * p2p && flips <= 3 {
         eprintln!("  verdict: step dominates zitter -> RAMP/STEP form (transit-shaped candidate)");
     } else {
-        eprintln!("  verdict: zitter ({flips} flips, p2p {p2p:.0}) dominates the step ({step:.0} Hz) -> ARTIFACT form (noise), not a ramp");
+        eprintln!(
+            "  verdict: zitter ({flips} flips, p2p {p2p:.0}) dominates the step ({step:.0} Hz) -> ARTIFACT form (noise), not a ramp"
+        );
     }
 }
 

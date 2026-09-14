@@ -1,9 +1,9 @@
 pub(crate) use crate::archivar::{
-    sense_membrane, system_now, Buffer, CurveSet, LeapSeconds, Radiator, SampleRecord, PARSEC_M,
+    Buffer, CurveSet, LeapSeconds, PARSEC_M, Radiator, SampleRecord, sense_membrane, system_now,
 };
 pub(crate) use crate::machines::{
-    le_bytes_f32, te_absence_word, te_read_verdict, MatrixMachine, SolarCell, SolarMachine,
-    TE_SERIES_BYTES, TE_SERIES_STRIDE,
+    MatrixMachine, SolarCell, SolarMachine, TE_SERIES_BYTES, TE_SERIES_STRIDE, le_bytes_f32,
+    te_absence_word, te_read_verdict,
 };
 
 pub mod actuators;
@@ -36,5 +36,5 @@ pub use shaders::*;
 
 pub(crate) use crate::force::kernel_id_for_force;
 pub(crate) use std::sync::atomic::{AtomicBool, Ordering};
-pub(crate) use std::sync::{mpsc, Arc, Mutex, RwLock};
+pub(crate) use std::sync::{Arc, Mutex, RwLock, mpsc};
 pub(crate) use std::thread;

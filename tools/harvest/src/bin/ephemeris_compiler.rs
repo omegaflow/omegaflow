@@ -1,4 +1,4 @@
-use omegaflow::archivar::ck::{switch_resolution, CkFile, CkFrameRef, SclkFile};
+use omegaflow::archivar::ck::{CkFile, CkFrameRef, SclkFile, switch_resolution};
 use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::{body_url, upload_asset};
@@ -14,9 +14,9 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use omegaflow::ephemeris::{
-    body_table, chebyshev_fit, chebyshev_nodes, extract_granules, iau_angles_from_matrix,
-    libration_matrix, pck_id_of, spacecraft_table, state_ssb_multi, write_binary,
-    ASTEROID_GRANULE_DAYS, CHEBYSHEV_DEGREE, GRANULE_DAYS, J2000_EPOCH, N_SAMPLES,
+    ASTEROID_GRANULE_DAYS, CHEBYSHEV_DEGREE, GRANULE_DAYS, J2000_EPOCH, N_SAMPLES, body_table,
+    chebyshev_fit, chebyshev_nodes, extract_granules, iau_angles_from_matrix, libration_matrix,
+    pck_id_of, spacecraft_table, state_ssb_multi, write_binary,
 };
 
 fn emit(line: &str) {
@@ -314,56 +314,58 @@ fn crawl(roots: &[String], depth: usize, out_path: &str, delay_ms: u64, jobs: us
         let roots_shared = Arc::clone(&roots_shared);
         let file_count = Arc::clone(&file_count);
         let dir_count = Arc::clone(&dir_count);
-        workers.push(std::thread::spawn(move || loop {
-            let next = {
-                let mut q = queue.lock().unwrap();
-                q.pop_front()
-            };
-            let (url, d) = match next {
-                Some(v) => v,
-                None => break,
-            };
-            if done_dirs.contains(&url) {
-                continue;
-            }
-            let html = match fetch_text(&url) {
-                Some(h) => h,
-                None => {
-                    if dead.lock().unwrap().insert(url.clone()) {
-                        eprintln!("index: listing returned void: {}", url);
-                    }
+        workers.push(std::thread::spawn(move || {
+            loop {
+                let next = {
+                    let mut q = queue.lock().unwrap();
+                    q.pop_front()
+                };
+                let (url, d) = match next {
+                    Some(v) => v,
+                    None => break,
+                };
+                if done_dirs.contains(&url) {
                     continue;
                 }
-            };
-            let mut files = Vec::new();
-            let mut sub = Vec::new();
-            parse_listing(&url, &html, &mut files, &mut sub);
-            sub.retain(|s| roots_shared.iter().any(|r| s.starts_with(r.as_str())));
-            {
-                let mut w = written.lock().unwrap();
-                let mut l = lines.lock().unwrap();
-                for f in &files {
-                    if w.insert(f.url.clone()) && !done_files.contains(&f.url) {
-                        l.push(format!(
-                            "kernel {} {} {} {}\n",
-                            f.url, f.family, f.size, f.mtime
-                        ));
-                        file_count.fetch_add(1, Ordering::Relaxed);
+                let html = match fetch_text(&url) {
+                    Some(h) => h,
+                    None => {
+                        if dead.lock().unwrap().insert(url.clone()) {
+                            eprintln!("index: listing returned void: {}", url);
+                        }
+                        continue;
+                    }
+                };
+                let mut files = Vec::new();
+                let mut sub = Vec::new();
+                parse_listing(&url, &html, &mut files, &mut sub);
+                sub.retain(|s| roots_shared.iter().any(|r| s.starts_with(r.as_str())));
+                {
+                    let mut w = written.lock().unwrap();
+                    let mut l = lines.lock().unwrap();
+                    for f in &files {
+                        if w.insert(f.url.clone()) && !done_files.contains(&f.url) {
+                            l.push(format!(
+                                "kernel {} {} {} {}\n",
+                                f.url, f.family, f.size, f.mtime
+                            ));
+                            file_count.fetch_add(1, Ordering::Relaxed);
+                        }
+                    }
+                    if w.insert(url.clone()) {
+                        l.push(format!("dir {}\n", url));
+                        dir_count.fetch_add(1, Ordering::Relaxed);
                     }
                 }
-                if w.insert(url.clone()) {
-                    l.push(format!("dir {}\n", url));
-                    dir_count.fetch_add(1, Ordering::Relaxed);
+                if depth == 0 || d + 1 < depth {
+                    let mut q = queue.lock().unwrap();
+                    for s in sub {
+                        q.push_back((s, d + 1));
+                    }
                 }
-            }
-            if depth == 0 || d + 1 < depth {
-                let mut q = queue.lock().unwrap();
-                for s in sub {
-                    q.push_back((s, d + 1));
+                if delay_ms > 0 {
+                    std::thread::sleep(Duration::from_millis(delay_ms));
                 }
-            }
-            if delay_ms > 0 {
-                std::thread::sleep(Duration::from_millis(delay_ms));
             }
         }));
     }

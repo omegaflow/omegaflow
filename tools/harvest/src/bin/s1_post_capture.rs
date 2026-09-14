@@ -26,11 +26,7 @@ fn sas_token(collection: &str) -> Option<String> {
     let key = "\"token\":\"";
     let i = body.find(key)? + key.len();
     let tok = body[i..].split('"').next()?.to_string();
-    if tok.is_empty() {
-        None
-    } else {
-        Some(tok)
-    }
+    if tok.is_empty() { None } else { Some(tok) }
 }
 
 fn first_post_scene() -> Option<(String, String, String)> {

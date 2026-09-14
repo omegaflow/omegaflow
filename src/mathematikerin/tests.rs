@@ -897,7 +897,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
 
 #[test]
 fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
-    use crate::archivar::s2event::{S2EventRecord, ROOT_NEUTRINO};
+    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
     let evt = |ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>| S2EventRecord {
         ra_deg: ra as f32,
         dec_deg: dec as f32,
@@ -1176,13 +1176,7 @@ fn scalar_gpu_parity_surrogate_slots_match_cpu() {
     if grid.is_empty() {
         return;
     }
-    let series_at = |k: usize| -> &[f32] {
-        if k == 0 {
-            &y
-        } else {
-            &surrs[k - 1]
-        }
-    };
+    let series_at = |k: usize| -> &[f32] { if k == 0 { &y } else { &surrs[k - 1] } };
     let mut viol = 0usize;
     let mut meas = 0usize;
     for dir in 0..2 {

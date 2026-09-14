@@ -107,7 +107,10 @@ fn main() {
     let unweighted = meds.iter().sum::<f64>() / meds.len() as f64;
     println!(
         "cepheid_parallax_weigh (DCEP): N={} | inverse-variance weighted mean parallax = {:.4} mas ± {:.4} mas (standard error) | 1/π = {:.1} pc",
-        rows.len(), mean, err, dist_pc
+        rows.len(),
+        mean,
+        err,
+        dist_pc
     );
     println!(
         "cepheid_parallax_weigh (DCEP): sample median parallax = {:.4} mas | min {:.4} | max {:.4} | unweighted mean {:.4} mas",

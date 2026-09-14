@@ -5,8 +5,8 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use omegaflow_service::jobdata::{
-    ci_runs, clean_unit, job_keys, loadavg, log_hint, mem_frac, n_cpus, proc_metrics,
-    proc_progress, ps_jobs, systemd_jobs, unix_now_secs, CiRun, ProcJob, UnitJob,
+    CiRun, ProcJob, UnitJob, ci_runs, clean_unit, job_keys, loadavg, log_hint, mem_frac, n_cpus,
+    proc_metrics, proc_progress, ps_jobs, systemd_jobs, unix_now_secs,
 };
 
 const INDEX_HTML: &str = include_str!("../assets/job_dashboard.html");
