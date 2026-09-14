@@ -164,6 +164,7 @@ fn url_host(url: &str) -> String {
 
 struct RateGate {
     next_allowed: HashMap<String, Instant>,
+    blocked_until: HashMap<String, Instant>,
     interval: Duration,
 }
 
@@ -175,6 +176,7 @@ impl RateGate {
             .unwrap_or(DEFAULT_MIN_INTERVAL_MS);
         RateGate {
             next_allowed: HashMap::new(),
+            blocked_until: HashMap::new(),
             interval: Duration::from_millis(ms),
         }
     }
@@ -190,8 +192,12 @@ impl RateGate {
             .insert(host.to_string(), Instant::now() + self.interval);
     }
 
+    fn blocked(&self, host: &str) -> bool {
+        matches!(self.blocked_until.get(host), Some(until) if *until > Instant::now())
+    }
+
     fn back_off(&mut self, host: &str, secs: u64) {
-        self.next_allowed
+        self.blocked_until
             .insert(host.to_string(), Instant::now() + Duration::from_secs(secs));
     }
 }
@@ -203,14 +209,20 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let gate = RATE_GATE.get_or_init(|| Mutex::new(RateGate::new()));
     let ladder = exits();
     let result = first_answer(&ladder, |exit| {
+        let key = format!("{}|{}", host, exit.label());
+        if let Ok(g) = gate.lock() {
+            if g.blocked(&key) {
+                return None;
+            }
+        }
         if let Ok(mut g) = gate.lock() {
-            g.wait(&host);
+            g.wait(&key);
         }
         let result = get_once(url, extra, timeout, exit);
         if let Some(f) = &result {
             if f.status == Some(429) {
                 if let Ok(mut g) = gate.lock() {
-                    g.back_off(&host, f.retry_after.unwrap_or(DEFAULT_RETRY_AFTER_SECS));
+                    g.back_off(&key, f.retry_after.unwrap_or(DEFAULT_RETRY_AFTER_SECS));
                 }
             }
         }
@@ -487,7 +499,7 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
         urlencode(query),
         max
     );
-    match get(&url, &[], "40") {
+    match get(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
         Some(f) if f.status == Some(200) => {
             let entries = parse_atom_entries(&f.body);
             if entries.is_empty() {
@@ -947,7 +959,13 @@ pub fn brave_lines(query: &str, token: &str, max: usize) -> Vec<String> {
 
 pub fn librs_lines(query: &str) -> Vec<String> {
     let url = format!("https://lib.rs/search?q={}", urlencode(query));
-    match get(&url, &[], "40") {
+    let headers = [
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+        "-H",
+        "Accept: text/html,application/xhtml+xml",
+    ];
+    match get(&url, &headers, "40") {
         Some(f) if f.status == Some(200) => {
             let mut out = Vec::new();
             for href in extract_hrefs(&f.body) {
@@ -969,7 +987,27 @@ pub fn librs_lines(query: &str) -> Vec<String> {
                 out
             }
         }
-        Some(f) => vec![format!("pending — lib.rs HTTP {}", f.status_text())],
+        Some(f) => {
+            let mut out = crates_lines(query, 20);
+            if out
+                .iter()
+                .any(|l| l.starts_with("pending") || l.starts_with("absent"))
+            {
+                vec![format!(
+                    "pending — lib.rs HTTP {} (Cloudflare challenge) and the crates.io fallback is void",
+                    f.status_text()
+                )]
+            } else {
+                out.insert(
+                    0,
+                    format!(
+                        "note lib.rs HTTP {} (Cloudflare challenge) — crates.io fallback",
+                        f.status_text()
+                    ),
+                );
+                out
+            }
+        }
         None => vec!["pending — no network".to_string()],
     }
 }
@@ -1190,14 +1228,14 @@ mod tests {
     }
 
     #[test]
-    fn rate_gate_backs_off_the_host() {
+    fn rate_gate_backs_off_one_exit_not_the_whole_host() {
         let mut gate = RateGate {
             next_allowed: HashMap::new(),
+            blocked_until: HashMap::new(),
             interval: Duration::from_millis(0),
         };
-        gate.back_off("example.com", 5);
-        let until = gate.next_allowed.get("example.com").copied();
-        assert!(until.is_some());
-        assert!(until.unwrap() > Instant::now());
+        gate.back_off("api.openalex.org|direct", 3600);
+        assert!(gate.blocked("api.openalex.org|direct"));
+        assert!(!gate.blocked("api.openalex.org|socks5h://127.0.0.1:25344"));
     }
 }
