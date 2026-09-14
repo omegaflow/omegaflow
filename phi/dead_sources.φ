@@ -428,10 +428,6 @@ dead 404
 url https://archive.cefca.es/catalogues/vo/tap/mudehar-dr2
 note MudeHar DR2 — cefca-404-Familie (Root lebt, Pfad 404 — Pfad-Umzug prüfen).
 
-dead 503
-url https://archives.esac.esa.int/hsa/whsa-tap-server/tap
-note Herschel Science Archive TAP — 503 (2026-09-11). §13: HSA-Umzug läuft (archives.esac.esa.int/hsa, HAIO /hsa/aio); der TAP-Server ist im Umbau.
-
 dead unreachable
 url https://arvo-registry.sci.am/tap
 note ARVO-TAP (https) — Proton0-Ausgang 2026-09-11: http rc=56 reset by peer (000), https rc=35 reset by peer (~19,5 s); Wayback-CDX trägt nur historische 2022/2024-Snapshots.
