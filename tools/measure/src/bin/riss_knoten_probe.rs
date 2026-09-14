@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::{
-    angular_distance_deg, body_barycenter_position, embedded_lsk, parse_ephemeris_binary,
-    parse_json, BodyEphemeris, JsonVal, J2000_EPOCH,
+    BodyEphemeris, J2000_EPOCH, JsonVal, angular_distance_deg, body_barycenter_position,
+    embedded_lsk, parse_ephemeris_binary, parse_json,
 };
-use omegaflow::dastcom::{parse_record, state_at, AsteroidRec, RECORD_STRIDE};
-use omegaflow::weberin::{add_sun, classify, separation_m, Agreement, BODY_NUMBER, WEBERIN_TOL_M};
-use omegaflow_measure::weberin::borrowed_sense::{simbad_otype_known, FINK_LSST_CLASS_ABSENT};
+use omegaflow::dastcom::{AsteroidRec, RECORD_STRIDE, parse_record, state_at};
+use omegaflow::weberin::{Agreement, BODY_NUMBER, WEBERIN_TOL_M, add_sun, classify, separation_m};
+use omegaflow_measure::weberin::borrowed_sense::{FINK_LSST_CLASS_ABSENT, simbad_otype_known};
 use omegaflow_measure::weberin::nadel_gate::{
-    borrowed_gate, GateWord, WiseRead, AGN_WEDGE_W1_W2, WISE_AGN_CITE, WISE_RADIUS_ARCSEC,
+    AGN_WEDGE_W1_W2, GateWord, WISE_AGN_CITE, WISE_RADIUS_ARCSEC, WiseRead, borrowed_gate,
 };
 
 const DEFAULT_STATION: &str = "ABK";
@@ -117,7 +117,9 @@ fn borrowed_ledger(
     };
     let tail = match gate {
         GateWord::Zwirn => " the two independent voices agree (zwirn)",
-        GateWord::Riss => " the two independent voices refuse to converge — the riss stays visible (never smoothed)",
+        GateWord::Riss => {
+            " the two independent voices refuse to converge — the riss stays visible (never smoothed)"
+        }
         _ => "",
     };
     let values = format!("{broker_val}; {window_val}{tail}");
@@ -466,9 +468,15 @@ fn usage() {
     println!(
         "  body pair (per body):    --dastcom <bin> --eph-dir <dir> [--epoch <jd>] [--tol <m>]"
     );
-    println!("  station pair:            --station <code> --lat <deg> --lon <deg> --ground <hapi.json> --swarm <hapi.json> [--radius <deg>] [--tolerance-nT <nt>]");
-    println!("  borrowed-sense pair:     --dia <id> | (--ra <deg> --dec <deg>) [--broker-class <i64>] [--simbad <otype>] [--wise agn|field|nosource]");
-    println!("  defaults: eph-dir data/ssd.jpl.nasa.gov, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, epoch = the system TDB, station {DEFAULT_STATION} (a missing input leaves that pair absent — never fabricated)");
+    println!(
+        "  station pair:            --station <code> --lat <deg> --lon <deg> --ground <hapi.json> --swarm <hapi.json> [--radius <deg>] [--tolerance-nT <nt>]"
+    );
+    println!(
+        "  borrowed-sense pair:     --dia <id> | (--ra <deg> --dec <deg>) [--broker-class <i64>] [--simbad <otype>] [--wise agn|field|nosource]"
+    );
+    println!(
+        "  defaults: eph-dir data/ssd.jpl.nasa.gov, dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin, epoch = the system TDB, station {DEFAULT_STATION} (a missing input leaves that pair absent — never fabricated)"
+    );
 }
 
 fn grammar() {
@@ -521,7 +529,14 @@ fn grammar() {
         "{}",
         station_ledger_for_match("ABK", &riss_enc, 9189.2, Some(4.8))
     );
-    println!("{}", station_ledger("ABK", LedgerState::Absent, "ground line unread (--ground cache json absent) — the station carries fewer than two independent matched lines"));
+    println!(
+        "{}",
+        station_ledger(
+            "ABK",
+            LedgerState::Absent,
+            "ground line unread (--ground cache json absent) — the station carries fewer than two independent matched lines"
+        )
+    );
     println!(
         "{}",
         borrowed_ledger("ZTF26abcdefg", Some("SN"), None, Some(11))
@@ -588,7 +603,9 @@ fn main() {
         Some(j) => format!("{j:.5}"),
         None => "unresolved".to_string(),
     };
-    println!("=== the riss-knoten ledger — one line per pair of independent threads, each incompatibility named and kept visible (the Riss stays visible, never smoothed) ===");
+    println!(
+        "=== the riss-knoten ledger — one line per pair of independent threads, each incompatibility named and kept visible (the Riss stays visible, never smoothed) ==="
+    );
     println!(
         "body pair: {opened}/{} SPK ephemeris bin(s) opened in {eph_dir} | {dastcom_records} dastcom record(s) in {dastcom_path} | weave epoch jd {jd_word} | tolerance {tol_m:.3e} m",
         BODY_NUMBER.len()
@@ -688,7 +705,9 @@ fn main() {
             };
             let ground_present = !ground_rows.is_empty();
             let swarm_present = !swarm_rows.is_empty();
-            let swarm_geometry = swarm_rows.iter().any(|r| r.lat.is_some() && r.lon.is_some());
+            let swarm_geometry = swarm_rows
+                .iter()
+                .any(|r| r.lat.is_some() && r.lon.is_some());
             if !ground_present {
                 station_ledger(
                     &station,
@@ -718,15 +737,16 @@ fn main() {
                     ),
                     Some(e) => {
                         let dev = (e.ground_f - e.swarm_f).abs();
-                        let sigma_tol =
-                            if e.ground_sigma.is_finite() && e.swarm_sigma.is_finite() {
-                                Some(SIGMA_K
+                        let sigma_tol = if e.ground_sigma.is_finite() && e.swarm_sigma.is_finite() {
+                            Some(
+                                SIGMA_K
                                     * (e.ground_sigma * e.ground_sigma
                                         + e.swarm_sigma * e.swarm_sigma)
-                                        .sqrt())
-                            } else {
-                                None
-                            };
+                                        .sqrt(),
+                            )
+                        } else {
+                            None
+                        };
                         let tol = tol_arg.or(sigma_tol);
                         station_ledger_for_match(&station, &e, dev, tol)
                     }
@@ -798,7 +818,9 @@ mod tests {
             "sep 2.700e4 m tol 1.000e6 m jd 2461544.50000",
         );
         assert!(zwirn.contains("body-ceres state zwirn"));
-        assert!(zwirn.contains("spk-ephemeris(spk-granules) + dastcom-keplerian(dastcom-elements)"));
+        assert!(
+            zwirn.contains("spk-ephemeris(spk-granules) + dastcom-keplerian(dastcom-elements)")
+        );
         let riss = body_ledger("apophis", LedgerState::Riss, "sep 2.300e9 m");
         assert!(riss.contains("state riss"));
         assert!(riss.contains("sep 2.300e9 m"));

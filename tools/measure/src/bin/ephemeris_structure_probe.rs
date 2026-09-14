@@ -1,6 +1,6 @@
 #![allow(mixed_script_confusables)]
 
-use omegaflow::archivar::{parse_ephemeris_binary, BodyEphemeris, J2000_EPOCH};
+use omegaflow::archivar::{BodyEphemeris, J2000_EPOCH, parse_ephemeris_binary};
 
 const DAY_S: f64 = 86400.0;
 

@@ -1,7 +1,7 @@
 use omegaflow::archivar::{
-    fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days, JsonVal,
+    JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days,
 };
-use omegaflow::cdn::{upload_asset, CDN_BASE, CDN_RELEASE};
+use omegaflow::cdn::{CDN_BASE, CDN_RELEASE, upload_asset};
 use omegaflow::inflate::{gunzip, unzip};
 use omegaflow::lzw::uncompress_z;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag_h};

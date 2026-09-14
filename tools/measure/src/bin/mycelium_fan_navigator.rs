@@ -1,6 +1,8 @@
 use omegaflow::archivar::spectral::civil_from_days;
-use omegaflow::json::{parse_json, JsonVal};
-use omegaflow_measure::weberin::nadel_gate::{allwise_witness, natural_excluded, sep_arcsec, WiseOutcome};
+use omegaflow::json::{JsonVal, parse_json};
+use omegaflow_measure::weberin::nadel_gate::{
+    WiseOutcome, allwise_witness, natural_excluded, sep_arcsec,
+};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -108,11 +110,7 @@ fn has_arg(args: &[String], name: &str) -> bool {
 fn arg_f64(args: &[String], name: &str) -> Option<f64> {
     let s = arg_value(args, name)?;
     let v: f64 = s.trim().parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn arg_usize(args: &[String], name: &str) -> Option<usize> {
@@ -450,11 +448,7 @@ fn voice_scores(
 
 fn synthesis_of(scores: &VoiceScores) -> Option<f64> {
     let s = scores.synthesis;
-    if s.is_finite() {
-        Some(s)
-    } else {
-        None
-    }
+    if s.is_finite() { Some(s) } else { None }
 }
 
 fn voice_mountain(nearest_dist_deg: f64, scale_deg: f64) -> f64 {
@@ -559,11 +553,7 @@ fn synthesis_geometric_mean(scores: &[f64]) -> Option<f64> {
     }
     let n = scores.len() as f64;
     let g = product.powf(1.0 / n);
-    if g.is_finite() {
-        Some(g)
-    } else {
-        None
-    }
+    if g.is_finite() { Some(g) } else { None }
 }
 
 fn galactic_lat_deg(ra_deg: f64, dec_deg: f64) -> f64 {
@@ -1128,11 +1118,7 @@ fn nearest_scanned(ra_deg: f64, dec_deg: f64, measured: &[&ConeVisit]) -> Option
 
 fn delta_ra(a_deg: f64, b_deg: f64) -> f64 {
     let d = (b_deg - a_deg).rem_euclid(360.0);
-    if d > 180.0 {
-        d - 360.0
-    } else {
-        d
-    }
+    if d > 180.0 { d - 360.0 } else { d }
 }
 
 fn sep_deg(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {

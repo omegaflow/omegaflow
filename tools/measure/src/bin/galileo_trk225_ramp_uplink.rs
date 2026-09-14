@@ -2,8 +2,8 @@ use std::collections::BTreeMap;
 use std::fs;
 
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::atdf::{extract, field_of, full_year, strip_markers, LOGICAL_RECORD, TKFORM};
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, full_year, strip_markers};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 
 const CACHES: &[&str] = &[
     "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
@@ -48,7 +48,10 @@ fn main() {
         return;
     };
     let mut out: Vec<String> = Vec::new();
-    out.push("galileo TRK-2-25 ramp records as the 3-way transmitter source (atdf2ascii route)".to_string());
+    out.push(
+        "galileo TRK-2-25 ramp records as the 3-way transmitter source (atdf2ascii route)"
+            .to_string(),
+    );
     for cache in CACHES {
         let Ok(bytes) = fs::read(cache) else {
             out.push(format!("{cache}: read void"));
@@ -147,11 +150,21 @@ fn main() {
             ));
         }
         if ramp_rec.is_empty() || tw_rec.is_empty() {
-            out.push("  no ramp or no three-way -> transmitter-source route void in this file".to_string());
+            out.push(
+                "  no ramp or no three-way -> transmitter-source route void in this file"
+                    .to_string(),
+            );
             continue;
         }
-        out.push(format!("  ramp records with XMTR_ON0 == 0 (transmitter on): {}", ramp_on.len()));
-        let ramp_src = if ramp_on.is_empty() { &ramp_rec } else { &ramp_on };
+        out.push(format!(
+            "  ramp records with XMTR_ON0 == 0 (transmitter on): {}",
+            ramp_on.len()
+        ));
+        let ramp_src = if ramp_on.is_empty() {
+            &ramp_rec
+        } else {
+            &ramp_on
+        };
         let mut cov: BTreeMap<(i64, i64), usize> = BTreeMap::new();
         let mut n_covered = 0usize;
         for (st_tw, _, tdb_tw) in &tw_rec {

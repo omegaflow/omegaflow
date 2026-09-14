@@ -1,7 +1,7 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_ONC_PSD, MAGIC_ONC};
+use omegaflow::archivar::geo::{COMP_ONC_PSD, GeoRec, MAGIC_ONC, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
-use omegaflow::matfile::{parse_mat, MatArray, MatData, MatField};
+use omegaflow::matfile::{MatArray, MatData, MatField, parse_mat};
 use std::env;
 use std::fs;
 

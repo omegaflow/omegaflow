@@ -153,5 +153,7 @@ fn main() {
         "correlation between the null and threshold -> inconclusive against the phase null"
     };
     eprintln!("verdict: r = {r_p:.4} vs threshold {thr:.4} -> {verdict}");
-    eprintln!("note: a ~1 Hz anomaly signal contributes negligibly to this correlation coefficient — a nonzero r here would mean common systematics, never the anomaly (0 honored)");
+    eprintln!(
+        "note: a ~1 Hz anomaly signal contributes negligibly to this correlation coefficient — a nonzero r here would mean common systematics, never the anomaly (0 honored)"
+    );
 }

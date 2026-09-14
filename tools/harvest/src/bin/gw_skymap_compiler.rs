@@ -1,11 +1,11 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::healpix::pix2ang_nest;
 use omegaflow::skymap::{
-    decode_rec, encode_rec, parse_header, write_header, SkymapRecord, HEADER_LEN, KIND_GRAVITY,
-    REC_BYTES,
+    HEADER_LEN, KIND_GRAVITY, REC_BYTES, SkymapRecord, decode_rec, encode_rec, parse_header,
+    write_header,
 };
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::io::{BufWriter, Write};
 
 const PI4: f64 = 4.0 * std::f64::consts::PI;
@@ -254,7 +254,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 "usage: gw_skymap_compiler --input <bayestar.multiorder.fits> --out <map> \
                  [--ci-mode] — refused"
                     .into(),
-            )
+            );
         }
     };
     let out_path = match arg_value(args, "--out") {

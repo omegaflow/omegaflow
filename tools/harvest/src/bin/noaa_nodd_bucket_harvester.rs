@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_NRS_PSD, MAGIC_NRS};
+use omegaflow::archivar::geo::{COMP_NRS_PSD, GeoRec, MAGIC_NRS, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File, Hdf5Object};
 use omegaflow::lsk::parse as parse_lsk;
@@ -376,11 +376,7 @@ fn ds_load(file: &Hdf5File, name: &str) -> Option<DsLoad> {
 }
 
 fn raw_elems(raw_len: usize, size: usize) -> usize {
-    if size == 0 {
-        0
-    } else {
-        raw_len / size
-    }
+    if size == 0 { 0 } else { raw_len / size }
 }
 
 fn wkt_point(s: &str) -> Option<(f64, f64)> {
@@ -651,11 +647,7 @@ fn xml_v(s: &str) -> Option<String> {
 
 fn col_of_ref(cr: &str) -> Option<&str> {
     let d = cr.find(|c: char| c.is_ascii_digit())?;
-    if d == 0 {
-        None
-    } else {
-        Some(&cr[..d])
-    }
+    if d == 0 { None } else { Some(&cr[..d]) }
 }
 
 fn row_of_ref(cr: &str) -> Option<usize> {
@@ -963,11 +955,7 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         Some(s) => s,
         None => {
             let t = nrs_id(path);
-            if t.is_empty() {
-                nrs_id(&title)
-            } else {
-                t
-            }
+            if t.is_empty() { nrs_id(&title) } else { t }
         }
     };
     let deployment = match arg_value(args, "--deployment") {

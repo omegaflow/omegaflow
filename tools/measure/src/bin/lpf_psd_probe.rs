@@ -14,7 +14,9 @@ fn main() {
         "model S_dg(f) = S_Brown + S_IFO·(2πf)⁴, with S_Brown^1/2 = ({:.1} ± {:.1}) fm s⁻²/√Hz, S_IFO^1/2 = ({:.1} ± {:.1}) fm/√Hz",
         S0_HALF_FM, S0_HALF_SIG_FM, SIFO_HALF_FM, SIFO_HALF_SIG_FM
     );
-    println!("(the Fig. 1 caption carries S0^1/2 = 5.57 ± 0.04 fm s⁻²/√Hz for the day-127 run; the abstract carries the later 5.2 ± 0.1 value)");
+    println!(
+        "(the Fig. 1 caption carries S0^1/2 = 5.57 ± 0.04 fm s⁻²/√Hz for the day-127 run; the abstract carries the later 5.2 ± 0.1 value)"
+    );
     println!(
         "frequency band: {:.0e} Hz .. {:.0e} Hz (LISA band), {} log-spaced bins",
         FMIN_HZ, FMAX_HZ, N_BINS
@@ -35,7 +37,9 @@ fn main() {
 
     println!();
     println!("Verdict:");
-    println!("PSD_DA and PSD_noise_floor are the published model evaluated at the LISA band — not the measured time series.");
+    println!(
+        "PSD_DA and PSD_noise_floor are the published model evaluated at the LISA band — not the measured time series."
+    );
     println!(
         "The measured Δg series lives in the ESA LPF Legacy Archive (lpf.esac.esa.int/lpfsa/, CC BY-NC 3.0 IGO), behind CAS auth with the TAP interface disabled (measured: /lpf-tap/ returns 404, config.js auth_method=cas, tap_adql_interface_active=false)."
     );

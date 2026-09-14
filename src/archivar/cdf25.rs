@@ -1,4 +1,4 @@
-use crate::cdf::{decode_record, type_size, TYPE_EPOCH16};
+use crate::cdf::{TYPE_EPOCH16, decode_record, type_size};
 
 pub const MAGIC25: [u8; 8] = [0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0xff, 0xff];
 pub const MAGIC26: [u8; 8] = [0xcd, 0xf2, 0x60, 0x02, 0x00, 0x00, 0xff, 0xff];
@@ -227,9 +227,9 @@ impl Cdf25File {
 
     pub fn num_values(&self, var: &Cdf25Var) -> usize {
         let mut values = var.num_elements as usize;
-        for (k, dim) in self.rdim_sizes.iter().enumerate() {
-            if var.dim_vary.get(k).copied().unwrap_or(0) != 0 {
-                values *= *dim as usize;
+        for (i, vary) in var.dim_vary.iter().enumerate() {
+            if *vary != 0 {
+                values *= self.rdim_sizes[i] as usize;
             }
         }
         values

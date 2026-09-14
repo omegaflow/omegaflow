@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::lsk::days_from_civil;
-use omegaflow::odp::{dsn_station, EARTH};
+use omegaflow::odp::{EARTH, dsn_station};
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -312,7 +312,10 @@ fn main() {
     let mut complete = true;
     for b in ["galileo_daily", "earth"] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{b}.bin");
-        match std::fs::read(&p).ok().and_then(|d| parse_ephemeris_binary(&d)) {
+        match std::fs::read(&p)
+            .ok()
+            .and_then(|d| parse_ephemeris_binary(&d))
+        {
             Some(e) => {
                 eph.insert(b.to_string(), e);
             }
@@ -370,23 +373,19 @@ fn main() {
         }
         n_floor += 1;
         let day = unix_day(r[0]);
-        let ma = mode_acc
-            .entry((st, mo, day))
-            .or_insert(Acc {
-                n: 0,
-                sum: 0.0,
-                sum2: 0.0,
-            });
+        let ma = mode_acc.entry((st, mo, day)).or_insert(Acc {
+            n: 0,
+            sum: 0.0,
+            sum2: 0.0,
+        });
         ma.n += 1;
         ma.sum += resid;
         ma.sum2 += resid * resid;
-        let da = day_acc
-            .entry((st, day))
-            .or_insert(Acc {
-                n: 0,
-                sum: 0.0,
-                sum2: 0.0,
-            });
+        let da = day_acc.entry((st, day)).or_insert(Acc {
+            n: 0,
+            sum: 0.0,
+            sum2: 0.0,
+        });
         da.n += 1;
         da.sum += resid;
         da.sum2 += resid * resid;
@@ -513,7 +512,10 @@ fn main() {
     out.push("ceil = max topocentric elevation over the day interval at the station (90-s grid); el_mean = mean elevation over the cell samples.".to_string());
     for &st in &STATIONS {
         let loud: Vec<&CellStat> = cells.iter().filter(|c| c.station == st && c.loud).collect();
-        let quiet: Vec<&CellStat> = cells.iter().filter(|c| c.station == st && !c.loud).collect();
+        let quiet: Vec<&CellStat> = cells
+            .iter()
+            .filter(|c| c.station == st && !c.loud)
+            .collect();
         let lc: Vec<f64> = loud.iter().map(|c| c.ceil).collect();
         let qc: Vec<f64> = quiet.iter().map(|c| c.ceil).collect();
         let le: Vec<f64> = loud.iter().map(|c| c.el_mean).collect();
@@ -521,10 +523,26 @@ fn main() {
         let seed = 0x9E37_79B9_7F4A_7C15u64 ^ (st as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
         let perm = perm_mean_diff_p(&lc, &qc, seed);
         out.push(format!("-- st{st} (merged station-day cells) --"));
-        out.push(format!("  loud  cells {}: {}", lc.len(), dist_line("ceil deg", &lc)));
-        out.push(format!("  quiet cells {}: {}", qc.len(), dist_line("ceil deg", &qc)));
-        out.push(format!("  loud  cells {}: {}", le.len(), dist_line("el_mean deg", &le)));
-        out.push(format!("  quiet cells {}: {}", qe.len(), dist_line("el_mean deg", &qe)));
+        out.push(format!(
+            "  loud  cells {}: {}",
+            lc.len(),
+            dist_line("ceil deg", &lc)
+        ));
+        out.push(format!(
+            "  quiet cells {}: {}",
+            qc.len(),
+            dist_line("ceil deg", &qc)
+        ));
+        out.push(format!(
+            "  loud  cells {}: {}",
+            le.len(),
+            dist_line("el_mean deg", &le)
+        ));
+        out.push(format!(
+            "  quiet cells {}: {}",
+            qe.len(),
+            dist_line("el_mean deg", &qe)
+        ));
         if let Some((obs, p, n1, n2)) = perm {
             out.push(format!(
                 "  permutation diff-of-means ceil (loud - quiet) {obs:+.2} deg, two-sided p {p:.4}, n {n1}/{n2}"
@@ -595,7 +613,9 @@ fn main() {
 
     out.push(String::new());
     out.push(String::new());
-    out.push("== within loud days - elevation of loud samples vs same-day quiet samples ==".to_string());
+    out.push(
+        "== within loud days - elevation of loud samples vs same-day quiet samples ==".to_string(),
+    );
     for &st in &STATIONS {
         let mut deltas: Vec<f64> = Vec::new();
         let mut n_lower = 0usize;
@@ -636,7 +656,10 @@ fn main() {
         ));
     }
 
-    out.push("== day-neighbor loud/quiet flips at matched geometry (merged station-day cells) ==".to_string());
+    out.push(
+        "== day-neighbor loud/quiet flips at matched geometry (merged station-day cells) =="
+            .to_string(),
+    );
     for &st in &STATIONS {
         let mut dc: Vec<&CellStat> = cells.iter().filter(|c| c.station == st).collect();
         dc.sort_by(|a, b| a.day.cmp(&b.day));
@@ -652,7 +675,11 @@ fn main() {
                 continue;
             }
             n_flip += 1;
-            let (l, q) = if w[0].loud { (w[0], w[1]) } else { (w[1], w[0]) };
+            let (l, q) = if w[0].loud {
+                (w[0], w[1])
+            } else {
+                (w[1], w[0])
+            };
             let d = l.ceil - q.ceil;
             dceils.push(d.abs());
             if d.abs() <= 2.0 {
@@ -669,12 +696,16 @@ fn main() {
                 pct(&sd, 0.5)
             ));
         } else {
-            out.push(format!("  st{st}: no day-neighbor loud/quiet flip (0 honored)"));
+            out.push(format!(
+                "  st{st}: no day-neighbor loud/quiet flip (0 honored)"
+            ));
         }
     }
 
     out.push(String::new());
-    out.push("== Measurement 2 — burst episode durations on loud (station, day) cells ==".to_string());
+    out.push(
+        "== Measurement 2 — burst episode durations on loud (station, day) cells ==".to_string(),
+    );
     out.push("loud sample = |resid| > threshold; episode = connected above-threshold samples with inter-sample gap <= gap_s inside a continuous run (> 600 s splits).".to_string());
     out.push("episode duration = time span last - first sample; single-sample episodes carry span 0 s (no temporal extent on the sampled lattice).".to_string());
     for (th, gap) in [(10.0f64, 30.0f64), (1.0, 60.0), (100.0, 2.0)] {

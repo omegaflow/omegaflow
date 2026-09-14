@@ -1,22 +1,23 @@
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::cdn::upload_asset;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::s2event::{
-    decode_rec as s2e_decode, encode_rec as s2e_encode, parse_header as s2e_parse_header,
-    write_header as s2e_write_header, S2EventRecord, REC_BYTES as S2E_REC, ROOT_NEUTRINO,
+    REC_BYTES as S2E_REC, ROOT_NEUTRINO, S2EventRecord, decode_rec as s2e_decode,
+    encode_rec as s2e_encode, parse_header as s2e_parse_header, write_header as s2e_write_header,
 };
 use omegaflow::skymap::{
-    decode_rec as sky_decode, encode_rec as sky_encode, parse_header as sky_parse_header,
-    write_header as sky_write_header, SkymapRecord, KIND_NEUTRINO, REC_BYTES as SKY_REC,
+    KIND_NEUTRINO, REC_BYTES as SKY_REC, SkymapRecord, decode_rec as sky_decode,
+    encode_rec as sky_encode, parse_header as sky_parse_header, write_header as sky_write_header,
 };
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::collections::BTreeMap;
 use std::io::{Read, Seek, SeekFrom};
 use std::process::Command;
 
 const HDR: usize = 13;
 const CONE_URL: &str = "https://vo.km3net.de/ant20_01/nu/cone/form";
-const CONE_BODY: &str = "hscs_pos=180%200&hscs_sr=10800&_FORMAT=CSV&MAXREC=250000&submit=Go&__nevow_form__=genForm";
+const CONE_BODY: &str =
+    "hscs_pos=180%200&hscs_sr=10800&_FORMAT=CSV&MAXREC=250000&submit=Go&__nevow_form__=genForm";
 const MJD_UNIX_EPOCH: f64 = 40587.0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -41,11 +42,7 @@ fn unquoted(cell: &str) -> &str {
 
 fn parse_f64(cell: &str) -> Option<f64> {
     let v: f64 = unquoted(cell).parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn opt_f64(v: Option<f64>) -> String {
@@ -185,15 +182,12 @@ fn parse_csv(
     String,
 > {
     let mut lines = text.lines();
-    let header_line = lines
-        .next()
-        .ok_or("the cone CSV header stays unread")?;
+    let header_line = lines.next().ok_or("the cone CSV header stays unread")?;
     let header = header_line.trim().trim_start_matches('\u{feff}');
     let delimiter = if header.contains('\t') { '\t' } else { ',' };
     let names: Vec<&str> = header.split(delimiter).map(|c| c.trim()).collect();
-    let cols = build_cols(&names).ok_or(
-        "a mandatory column (RA or Decl) is absent from the cone CSV header — refused",
-    )?;
+    let cols = build_cols(&names)
+        .ok_or("a mandatory column (RA or Decl) is absent from the cone CSV header — refused")?;
     let mut events: Vec<S2EventRecord> = Vec::new();
     let mut projections: Vec<SkymapRecord> = Vec::new();
     let mut name_count: BTreeMap<String, u64> = BTreeMap::new();
@@ -221,10 +215,7 @@ fn parse_csv(
             census.missing_sigma += 1;
         }
         *name_count.entry(parsed.id).or_insert(0) += 1;
-        match S2EventRecord::pixel_of(
-            parsed.record.ra_deg as f64,
-            parsed.record.dec_deg as f64,
-        ) {
+        match S2EventRecord::pixel_of(parsed.record.ra_deg as f64, parsed.record.dec_deg as f64) {
             Some((order, ipix)) => projections.push(SkymapRecord {
                 order,
                 kind: KIND_NEUTRINO,
@@ -301,7 +292,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let out_path = match arg_value(args, "--out") {
         Some(v) => v,
         None => {
-            return Err("--out <threads.s2e1>: the asset path is never silent — refused".into())
+            return Err("--out <threads.s2e1>: the asset path is never silent — refused".into());
         }
     };
     let out_map = match arg_value(args, "--out-map") {
@@ -309,15 +300,14 @@ fn run(args: &[String]) -> Result<(), String> {
         None => {
             return Err(
                 "--out-map <projection.sky1>: the asset path is never silent — refused".into(),
-            )
+            );
         }
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
     let lsk = embedded_lsk()
         .ok_or("the embedded leap-second table stays unread — MJD epochs stay unassigned")?;
-    let text =
-        fetch_cone().ok_or_else(|| format!("{CONE_URL}: the cone CSV stays unfetched"))?;
+    let text = fetch_cone().ok_or_else(|| format!("{CONE_URL}: the cone CSV stays unfetched"))?;
     let (events, projections, name_count, census) = parse_csv(&text, &lsk)?;
 
     if events.is_empty() {

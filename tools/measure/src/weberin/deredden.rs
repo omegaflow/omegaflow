@@ -1,7 +1,7 @@
-use omegaflow::archivar::spatial::{parse_star_record, StarRec};
+use omegaflow::archivar::spatial::{StarRec, parse_star_record};
 use omegaflow::bayestar::{
-    build_index, decode_rec, ebv_at, index_add, index_sort, leaf_record, mu_of_r_pc, parse_header,
-    Be19Row, ASSET_HEADER_LEN, BE19_BINS, BE19_DMU, BE19_MU0, REC_BYTES,
+    ASSET_HEADER_LEN, BE19_BINS, BE19_DMU, BE19_MU0, Be19Row, REC_BYTES, build_index, decode_rec,
+    ebv_at, index_add, index_sort, leaf_record, mu_of_r_pc, parse_header,
 };
 use omegaflow::healpix::icrs_to_galactic;
 use std::io::{Read, Seek, SeekFrom};

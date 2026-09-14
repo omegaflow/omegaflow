@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw;
-use omegaflow::archivar::geo::{parse_bin, write_bin, MAGIC_DCDB};
+use omegaflow::archivar::geo::{MAGIC_DCDB, parse_bin, write_bin};
 use omegaflow::archivar::noaa_nodd::parse_dcdb;
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
@@ -133,7 +133,9 @@ fn main() {
         records.extend(rows);
     }
     if records.is_empty() {
-        eprintln!("{prefix}: {files} files carried no measured sounding — the bin stays unwritten (0 honored)");
+        eprintln!(
+            "{prefix}: {files} files carried no measured sounding — the bin stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     }
     records.sort_by(|a, b| a.t.total_cmp(&b.t));

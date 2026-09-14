@@ -1,6 +1,6 @@
 use omegaflow::bayestar::{
-    decode_rec, decode_row, encode_rec, parse_header, table_of, write_header, Be19Table, MapHeader,
-    REC_BYTES,
+    Be19Table, MapHeader, REC_BYTES, decode_rec, decode_row, encode_rec, parse_header, table_of,
+    write_header,
 };
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip_stream;
@@ -52,7 +52,8 @@ fn read_table_header(path: &str) -> Result<Be19Table, String> {
             }
             Err(format!(
                 "{path}: the Bayestar19 BINTABLE header stayed unread (naxis {h1_n:?}, xtension {:?}, tfields {:?}{names})",
-                h2.value("XTENSION"), tfields,
+                h2.value("XTENSION"),
+                tfields,
             ))
         }
     }

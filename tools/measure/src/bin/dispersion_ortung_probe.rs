@@ -1,7 +1,7 @@
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, parse_ephemeris_binary, BodyEphemeris, C_LIGHT,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, embedded_lsk, parse_ephemeris_binary,
 };
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use std::collections::HashMap;
 
 const AIA_MAGIC: [u8; 4] = *b"AIA1";
@@ -365,7 +365,9 @@ fn main() {
     let year_cells = ((YEAR_UNIX[1] - YEAR_UNIX[0]) / DT) as usize;
     let n_cells = 3 * year_cells;
 
-    println!("=== Dispersion localization test: one event, three cones, the Sun as calibration reference ===");
+    println!(
+        "=== Dispersion localization test: one event, three cones, the Sun as calibration reference ==="
+    );
     println!(
         "Grid: {} x 24-s cells over {} .. {} (unix), 3 years.",
         n_cells, WINDOW_LO, WINDOW_HI
@@ -578,7 +580,9 @@ fn main() {
         return;
     };
     let Some((t_e, r_sun, r_earth, d_eph)) = light_time_emission(t_arr_tdb, &eph) else {
-        eprintln!("the Sun or Earth ephemeris carries no reading at the event epoch — the calibration origin stays unmeasured (0 honored)");
+        eprintln!(
+            "the Sun or Earth ephemeris carries no reading at the event epoch — the calibration origin stays unmeasured (0 honored)"
+        );
         return;
     };
 
@@ -613,8 +617,12 @@ fn main() {
     );
 
     println!();
-    println!("=== Three cones: measured arrival latencies -> distances via the band speed (v = c, band-flat) ===");
-    println!("cone    | lambda   | freq_hz    | rise unix       | rise tdb       | dtau_i = t_on - t_E (s) | d_i = c*dtau_i (m)     | eps_i = d_i - d_eph (s | m)");
+    println!(
+        "=== Three cones: measured arrival latencies -> distances via the band speed (v = c, band-flat) ==="
+    );
+    println!(
+        "cone    | lambda   | freq_hz    | rise unix       | rise tdb       | dtau_i = t_on - t_E (s) | d_i = c*dtau_i (m)     | eps_i = d_i - d_eph (s | m)"
+    );
     let mut d_lo: Vec<f64> = Vec::new();
     let mut d_hi: Vec<f64> = Vec::new();
     let mut d_center: Vec<f64> = Vec::new();
@@ -653,7 +661,8 @@ fn main() {
                     d_i,
                     eps_s,
                     eps_m,
-                    rise.map(|r| format!("  (peak {} s after onset)", r as i64)).unwrap_or(String::new())
+                    rise.map(|r| format!("  (peak {} s after onset)", r as i64))
+                        .unwrap_or(String::new())
                 );
             }
             None => {

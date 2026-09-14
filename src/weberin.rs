@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use crate::archivar::dastcom::{comet_state_at, CometRec};
-use crate::archivar::gaia_sso::{ang_sep_arcsec, predicted_radec, GaiaBody, TNO_NAME};
+use crate::archivar::dastcom::{CometRec, comet_state_at};
+use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec};
 use crate::archivar::mpcorb::{self, MpcorbRec};
 use crate::archivar::{
-    body_barycenter_position, state_at, AsteroidRec, BodyEphemeris, J2000_EPOCH,
+    AsteroidRec, BodyEphemeris, J2000_EPOCH, body_barycenter_position, state_at,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -432,7 +432,7 @@ impl Weberin {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::motion::{ChebyshevGranule, CHEBYSHEV_N};
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
     use std::sync::atomic::AtomicUsize;
 
     fn rec(number: u32) -> AsteroidRec {
@@ -1368,7 +1368,7 @@ impl Weberin {
 mod gaia_tests {
     use super::*;
     use crate::archivar::gaia_sso::GaiaTransit;
-    use crate::archivar::motion::{ChebyshevGranule, CHEBYSHEV_N};
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
     use std::sync::atomic::AtomicUsize;
 
     fn mpc_rec(number: u32, epoch_jd: f64, a_au: f64) -> MpcorbRec {

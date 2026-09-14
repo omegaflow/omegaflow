@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use omegaflow::archivar::bsp_reader::spk::SpkFile;
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 
 const JD_J2000: f64 = 2451545.0;
 
@@ -42,7 +42,9 @@ struct Inject {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    println!("Neptune center rift — the per-point version difference between the three ephemeris houses at the planet center.");
+    println!(
+        "Neptune center rift — the per-point version difference between the three ephemeris houses at the planet center."
+    );
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_path =
@@ -75,7 +77,9 @@ fn main() {
                 if ok {
                     Some(Inject { d, jd0, jd1 })
                 } else {
-                    println!("neptune-center-rift: --calibrate-inject wants dx_km dy_km dz_km jd0 jd1 (finite) — injection stays off");
+                    println!(
+                        "neptune-center-rift: --calibrate-inject wants dx_km dy_km dz_km jd0 jd1 (finite) — injection stays off"
+                    );
                     None
                 }
             }
@@ -96,7 +100,9 @@ fn main() {
         "neptune",
     );
     let (Some(cm), Some(im), Some(em)) = (cm, im, em) else {
-        eprintln!("neptune-center-rift: one of ephemeris_neptune_c.bin / ephemeris_inpop_neptune.bin / ephemeris_epm_neptune.bin reads void");
+        eprintln!(
+            "neptune-center-rift: one of ephemeris_neptune_c.bin / ephemeris_inpop_neptune.bin / ephemeris_epm_neptune.bin reads void"
+        );
         return;
     };
     let spk = match SpkFile::open(&spk_path) {

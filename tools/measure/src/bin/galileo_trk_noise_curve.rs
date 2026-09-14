@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
-use omegaflow::archivar::{body_barycenter_position, parse_ephemeris_binary, BodyEphemeris};
+use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::atdf::parse_resid_bin;
 use omegaflow::odf::parse_podf_bin;
 
@@ -144,7 +144,9 @@ fn main() {
     }
 
     println!("galileo TRK-2-25/2-18 empirical noise curve");
-    println!("binding: per-day RMS of the TRK-2-25 doppler residuum (Hz) and per-day first-difference RMS of the TRK-2-18 ODF observable (Hz), binned by solar elongation eps (angle at the Earth, deg) and heliocentric distance (AU)");
+    println!(
+        "binding: per-day RMS of the TRK-2-25 doppler residuum (Hz) and per-day first-difference RMS of the TRK-2-18 ODF observable (Hz), binned by solar elongation eps (angle at the Earth, deg) and heliocentric distance (AU)"
+    );
 
     let Ok(resid_bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");

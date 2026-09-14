@@ -1,8 +1,8 @@
-use omegaflow::archivar::ccor::{parse_bin, write_bin, COMP_INTENSITY};
+use omegaflow::archivar::ccor::{COMP_INTENSITY, parse_bin, write_bin};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
-use omegaflow::fits::{rice_decompress, FitsHeader, FitsTable};
-use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
+use omegaflow::fits::{FitsHeader, FitsTable, rice_decompress};
+use omegaflow::lsk::{LeapSeconds, days_from_civil, parse as parse_lsk};
 
 const NETLOC: &str = "noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com";
 

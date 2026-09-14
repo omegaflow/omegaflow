@@ -241,11 +241,13 @@ mod tests {
         let sin = FitsWcs::sin(0.0, 0.0, 1.0, 1.0, [[0.01, 0.0], [0.0, 0.01]]);
         assert!(ZenithalRegrid::new(tan.clone(), 4096).is_some());
         assert!(ZenithalRegrid::new(sin.clone(), 4096).is_some());
-        assert!(ZenithalRegrid::new(
-            FitsWcs::tan(0.0, 0.0, 1.0, 1.0, [[0.0, 0.0], [0.0, 0.0]]),
-            4096
-        )
-        .is_none());
+        assert!(
+            ZenithalRegrid::new(
+                FitsWcs::tan(0.0, 0.0, 1.0, 1.0, [[0.0, 0.0], [0.0, 0.0]]),
+                4096
+            )
+            .is_none()
+        );
         assert!(ZenithalRegrid::new(tan.clone(), 0).is_none());
         assert!(ZenithalRegrid::new(tan.clone(), 3).is_none());
     }

@@ -92,11 +92,7 @@ fn bin_arms(v: &[f32]) -> Option<f64> {
 }
 
 fn ld(x: f64) -> Option<f64> {
-    if x > 0.0 {
-        Some(x.log10())
-    } else {
-        None
-    }
+    if x > 0.0 { Some(x.log10()) } else { None }
 }
 
 fn avg_ranks(v: &[f64]) -> Vec<f64> {
@@ -647,7 +643,9 @@ fn main() {
             .map(|w| (w.st, w.mi))
             .collect::<BTreeSet<_>>()
             .len();
-        println!("\n## within-day m1v2 pooled over all qualifying days (era + station cancelled per day)");
+        println!(
+            "\n## within-day m1v2 pooled over all qualifying days (era + station cancelled per day)"
+        );
         println!(
             "  n days {n} from {nblk} station-month blocks | medDek(med) {md} | medDek(arms) {md_arms} | sign med +{posm}/-{negm} p {pm} | sign arms +{posa}/-{nega} p {pm_a}",
             n = m12all.len()

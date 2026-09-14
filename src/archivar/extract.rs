@@ -902,11 +902,7 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
             return None;
         }
         let cols: Vec<String> = stripped.split_whitespace().map(|s| s.to_string()).collect();
-        if cols.len() > 5 {
-            Some(cols)
-        } else {
-            None
-        }
+        if cols.len() > 5 { Some(cols) } else { None }
     })?;
     let data = text.lines().find_map(|line| {
         let t = line.trim();

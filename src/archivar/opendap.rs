@@ -247,7 +247,7 @@ impl DdsCursor {
                         None => {
                             return Err(DapNote::Keyword {
                                 word: "}".to_string(),
-                            })
+                            });
                         }
                     }
                 }
@@ -449,7 +449,7 @@ impl DasCursor {
                     None => {
                         return Err(DapNote::Attr {
                             name: name.to_string(),
-                        })
+                        });
                     }
                     Some("}") => {
                         self.take_word().ok_or(DapNote::Attr {
@@ -733,7 +733,7 @@ pub fn decode(dds_text: &str, das_text: &str, dods_bytes: &[u8]) -> Result<DapFi
                 None => {
                     return Err(DapNote::Shape {
                         var: decl.name.clone(),
-                    })
+                    });
                 }
             }
         }

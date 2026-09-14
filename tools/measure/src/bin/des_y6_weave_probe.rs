@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use omegaflow::archivar::des_y6::{self, DesY6Rec, DES_Y6_EPOCH_JD};
+use omegaflow::archivar::des_y6::{self, DES_Y6_EPOCH_JD, DesY6Rec};
 use omegaflow::archivar::mpcorb::{self, MpcorbRec};
 use omegaflow::archivar::{
-    body_barycenter_position, parse_ephemeris_binary, BodyEphemeris, J2000_EPOCH,
+    BodyEphemeris, J2000_EPOCH, body_barycenter_position, parse_ephemeris_binary,
 };
 
 fn load_mpcorb(path: &str) -> Vec<MpcorbRec> {

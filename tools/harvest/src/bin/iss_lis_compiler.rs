@@ -1,7 +1,7 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_ISSLIS_FLASH_RAD, MAGIC_ISSLIS};
+use omegaflow::archivar::geo::{COMP_ISSLIS_FLASH_RAD, GeoRec, MAGIC_ISSLIS, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File};
-use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, days_from_civil, parse as parse_lsk};
 use std::process::Command;
 
 const NETLOC: &str = "ghrc.nasa.gov";
@@ -171,11 +171,7 @@ fn scaled_f64(v: Option<f64>, file: &Hdf5File, dataset: &str) -> Option<f64> {
     if let Some(off) = attr_f64(file, dataset, "add_offset") {
         val += off;
     }
-    if val.is_finite() {
-        Some(val)
-    } else {
-        None
-    }
+    if val.is_finite() { Some(val) } else { None }
 }
 
 fn tai93_to_tdb(lsk: &LeapSeconds, tai93: f64) -> Option<f64> {
@@ -291,7 +287,7 @@ fn run(out_path: &str, granules: &[String], lsk: &LeapSeconds, ci: bool) -> Resu
         None => {
             return Err(format!(
                 "{out_path}: roundtrip parse void — the bin stays unverified"
-            ))
+            ));
         }
     }
     if ci && !upload_release(NETLOC, out_path) {

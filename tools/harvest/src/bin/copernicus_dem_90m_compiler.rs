@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::process::Command;
