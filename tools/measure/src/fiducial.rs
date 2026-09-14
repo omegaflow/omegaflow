@@ -466,6 +466,103 @@ pub fn montage_fiducials(bytes: &[u8]) -> Option<Vec<(Option<String>, [f64; 3])>
     if out.is_empty() { None } else { Some(out) }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct MniFiducials {
+    pub lpa: Option<[f64; 3]>,
+    pub rpa: Option<[f64; 3]>,
+    pub nz: Option<[f64; 3]>,
+    pub iz: Option<[f64; 3]>,
+}
+
+fn parse_xyz(line: &str) -> Option<[f64; 3]> {
+    let mut it = line.split_whitespace();
+    let x = it.next()?.parse::<f64>().ok()?;
+    let y = it.next()?.parse::<f64>().ok()?;
+    let z = it.next()?.parse::<f64>().ok()?;
+    let v = [x, y, z];
+    if v.iter().any(|c| !c.is_finite()) {
+        return None;
+    }
+    Some(v)
+}
+
+pub fn parse_elc(bytes: &[u8]) -> Option<Vec<(Option<String>, [f64; 3])>> {
+    let text = std::str::from_utf8(bytes).ok()?;
+    let lines: Vec<&str> = text.lines().collect();
+    let n = lines
+        .iter()
+        .find(|l| l.starts_with("NumberPositions"))
+        .and_then(|l| l.split('=').nth(1))
+        .and_then(|s| s.trim().parse::<usize>().ok())?;
+    if n == 0 {
+        return None;
+    }
+    let pos_start = lines.iter().position(|l| l.trim() == "Positions")? + 1;
+    let label_start = lines.iter().position(|l| l.trim() == "Labels")? + 1;
+    if pos_start + n > lines.len() || label_start + n > lines.len() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    for i in 0..n {
+        let xyz = parse_xyz(lines[pos_start + i])?;
+        let raw = lines[label_start + i].trim();
+        let label = if raw.is_empty() {
+            None
+        } else {
+            Some(raw.to_string())
+        };
+        out.push((label, xyz));
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
+pub fn elc_mni_fiducials(bytes: &[u8]) -> Option<MniFiducials> {
+    let pairs = parse_elc(bytes)?;
+    let find = |name: &str| {
+        pairs
+            .iter()
+            .find(|(l, _)| l.as_deref() == Some(name))
+            .map(|(_, p)| *p)
+    };
+    Some(MniFiducials {
+        lpa: find("LPA"),
+        rpa: find("RPA"),
+        nz: find("Nz"),
+        iz: find("Iz"),
+    })
+}
+
+fn montage_fiducial_point(
+    montage: &[(Option<String>, [f64; 3])],
+    needle: &str,
+) -> Option<[f64; 3]> {
+    let needle = needle.to_lowercase();
+    montage
+        .iter()
+        .find(|(l, _)| {
+            l.as_deref()
+                .map_or(false, |s| s.to_lowercase().contains(&needle))
+        })
+        .map(|(_, p)| *p)
+}
+
+pub fn montage_to_mni(
+    montage: &[(Option<String>, [f64; 3])],
+    mni: &MniFiducials,
+) -> Option<(RigidTransform, f64)> {
+    let from = [
+        montage_fiducial_point(montage, "nasion")?,
+        montage_fiducial_point(montage, "left")?,
+        montage_fiducial_point(montage, "right")?,
+    ];
+    let to = [mni.nz?, mni.lpa?, mni.rpa?];
+    rigid_coregister(&from, &to)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -902,5 +999,96 @@ mod tests {
     fn montage_fiducials_reads_absent_without_a_chaninfo() {
         let bytes = header();
         assert!(montage_fiducials(&bytes).is_none());
+    }
+
+    fn elc_fixture() -> Vec<u8> {
+        let text = concat!(
+            "# ASA electrode file\n",
+            "ReferenceLabel\tavg\n",
+            "UnitPosition\tmm\n",
+            "NumberPositions=\t4\n",
+            "Positions\n",
+            "-86.0761 -19.9897 -47.9860\n",
+            "85.7939 -20.0093 -48.0310\n",
+            "0.0083 86.8110 -39.9830\n",
+            "0.0045 -118.5650 -23.0780\n",
+            "Labels\n",
+            "LPA\n",
+            "RPA\n",
+            "Nz\n",
+            "Iz\n",
+        );
+        text.as_bytes().to_vec()
+    }
+
+    #[test]
+    fn parse_elc_reads_positions_zipped_to_labels() {
+        let pairs = parse_elc(&elc_fixture()).expect("the elc parses");
+        assert_eq!(pairs.len(), 4);
+        assert_eq!(pairs[0].0.as_deref(), Some("LPA"));
+        assert!((pairs[0].1[0] + 86.0761).abs() < 1e-4);
+        assert_eq!(pairs[2].0.as_deref(), Some("Nz"));
+        assert!((pairs[2].1[1] - 86.8110).abs() < 1e-4);
+        assert_eq!(pairs[3].0.as_deref(), Some("Iz"));
+    }
+
+    #[test]
+    fn elc_mni_fiducials_reads_the_four_landmarks_in_mm() {
+        let mni = elc_mni_fiducials(&elc_fixture()).expect("the fiducials read");
+        let lpa = mni.lpa.expect("LPA present");
+        assert!((lpa[0] + 86.0761).abs() < 1e-4);
+        assert!((lpa[1] + 19.9897).abs() < 1e-4);
+        assert!((lpa[2] + 47.9860).abs() < 1e-4);
+        let nz = mni.nz.expect("Nz present");
+        assert!((nz[1] - 86.8110).abs() < 1e-4);
+        let iz = mni.iz.expect("Iz present");
+        assert!((iz[1] + 118.5650).abs() < 1e-4);
+    }
+
+    #[test]
+    fn elc_mni_fiducials_reads_absent_on_foreign_bytes() {
+        assert!(parse_elc(b"").is_none());
+        assert!(parse_elc(b"not an elc").is_none());
+        assert!(elc_mni_fiducials(b"Labels\nLPA\nRPA\nNz\nIz\n").is_none());
+    }
+
+    #[test]
+    fn montage_to_mni_recovers_a_known_rigid_transform() {
+        let r = rotation_matrix([0.3, -0.2, 0.7], 0.4);
+        let translation = [5.0, -3.0, 2.0];
+        let from = [
+            [10.35, 0.0, -2.69],
+            [0.046, 6.71, -3.71],
+            [0.046, -6.71, -3.71],
+        ];
+        let mut to = [[0.0; 3]; 3];
+        for i in 0..3 {
+            for a in 0..3 {
+                let mut acc = 0.0;
+                for b in 0..3 {
+                    acc += r[a][b] * from[i][b];
+                }
+                to[i][a] = acc + translation[a];
+            }
+        }
+        let montage = vec![
+            (Some("Nasion".to_string()), from[0]),
+            (Some("Left periauricular point".to_string()), from[1]),
+            (Some("Right periauricular point".to_string()), from[2]),
+        ];
+        let mni = MniFiducials {
+            nz: Some(to[0]),
+            lpa: Some(to[1]),
+            rpa: Some(to[2]),
+            iz: None,
+        };
+        let (fitted, scale) = montage_to_mni(&montage, &mni).expect("the transform fits");
+        assert!((scale - 1.0).abs() < 1e-9);
+        for a in 0..3 {
+            assert!((fitted.translation[a] - translation[a]).abs() < 1e-9);
+            for b in 0..3 {
+                assert!((fitted.rotation[a][b] - r[a][b]).abs() < 1e-9);
+            }
+        }
     }
 }
