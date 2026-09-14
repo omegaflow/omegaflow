@@ -29,6 +29,13 @@ jobs:
           "Build job failed on ${{ github.sha }}" \
           health
 
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo fmt --check
+
   test:
     runs-on: ubuntu-latest
     steps:
