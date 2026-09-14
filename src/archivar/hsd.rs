@@ -7,7 +7,7 @@ pub struct HsdFile {
     pub bits_per_pixel: Option<u16>,
     pub pixel_values: Vec<u16>,
     pub calibration: Vec<CalibrationBand>,
-    pub update: Vec<CalibrationBand>,
+    pub inter_calib: Option<InterCalibration>,
 }
 
 pub struct CalibrationBand {
@@ -18,6 +18,12 @@ pub struct CalibrationBand {
     pub outside_scan_pixels: Option<u16>,
     pub gain: Option<f64>,
     pub offset: Option<f64>,
+}
+
+pub struct InterCalibration {
+    pub intercept: Option<f64>,
+    pub slope: Option<f64>,
+    pub quadratic: Option<f64>,
 }
 
 fn le_u16(b: &[u8], off: usize) -> Option<u16> {
@@ -45,6 +51,14 @@ fn parse_calibration(content: &[u8]) -> Option<CalibrationBand> {
     })
 }
 
+fn parse_inter_calibration(content: &[u8]) -> Option<InterCalibration> {
+    Some(InterCalibration {
+        intercept: le_f64(content, 0),
+        slope: le_f64(content, 8),
+        quadratic: le_f64(content, 16),
+    })
+}
+
 pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
     let decompressed;
     let bytes: &[u8] = if data.starts_with(b"BZh") {
@@ -60,7 +74,7 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
     let mut bits_per_pixel = None;
     let mut total_header_length = None;
     let mut calibration = Vec::new();
-    let mut update = Vec::new();
+    let mut inter_calib = None;
 
     let mut offset = 0usize;
     loop {
@@ -92,8 +106,8 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
                 }
             }
             6 => {
-                if let Some(cal) = parse_calibration(content) {
-                    update.push(cal);
+                if let Some(ic) = parse_inter_calibration(content) {
+                    inter_calib = Some(ic);
                 }
             }
             _ => {}
@@ -131,7 +145,7 @@ pub fn parse_hsd(data: &[u8]) -> Option<HsdFile> {
         bits_per_pixel,
         pixel_values,
         calibration,
-        update,
+        inter_calib,
     })
 }
 
@@ -366,11 +380,11 @@ mod tests {
         assert!(hsd.calibration.is_empty());
     }
 
-    fn build_fixture_with_update(
+    fn build_fixture_with_inter_calib(
         columns: u16,
         lines: u16,
         pixels: &[u16],
-        update: &[u8],
+        inter_calib: &[u8],
     ) -> Vec<u8> {
         let mut out = Vec::new();
 
@@ -378,8 +392,8 @@ mod tests {
         out.extend_from_slice(&282u16.to_le_bytes());
         let mut b1 = vec![0u8; 279];
         b1[0..2].copy_from_slice(&11u16.to_le_bytes());
-        let update_block_len = 3 + update.len();
-        let header_len = (282 + 50 + update_block_len + 259) as u32;
+        let inter_calib_block_len = 3 + inter_calib.len();
+        let header_len = (282 + 50 + inter_calib_block_len + 259) as u32;
         b1[67..71].copy_from_slice(&header_len.to_le_bytes());
         out.extend_from_slice(&b1);
 
@@ -392,8 +406,8 @@ mod tests {
         out.extend_from_slice(&b2);
 
         out.push(6u8);
-        out.extend_from_slice(&(update_block_len as u16).to_le_bytes());
-        out.extend_from_slice(update);
+        out.extend_from_slice(&(inter_calib_block_len as u16).to_le_bytes());
+        out.extend_from_slice(inter_calib);
 
         out.push(11u8);
         out.extend_from_slice(&259u16.to_le_bytes());
@@ -405,20 +419,28 @@ mod tests {
         out
     }
 
+    fn inter_calibration_content(intercept: f64, slope: f64, quadratic: f64) -> Vec<u8> {
+        let mut c = vec![0u8; 256];
+        c[0..8].copy_from_slice(&intercept.to_le_bytes());
+        c[8..16].copy_from_slice(&slope.to_le_bytes());
+        c[16..24].copy_from_slice(&quadratic.to_le_bytes());
+        c
+    }
+
     #[test]
-    fn decodes_calibration_block_6() {
+    fn decodes_inter_calibration_block_6() {
         let pixels = [1u16, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        let gain = 0.02;
-        let offset = -0.1;
-        let update = calibration_content(2, gain, offset);
-        let data = build_fixture_with_update(4, 3, &pixels, &update);
+        let intercept = -1.0e10;
+        let slope = 1.0;
+        let quadratic = 0.0;
+        let content = inter_calibration_content(intercept, slope, quadratic);
+        let data = build_fixture_with_inter_calib(4, 3, &pixels, &content);
         let hsd = parse_hsd(&data).unwrap();
         assert!(hsd.calibration.is_empty());
-        assert_eq!(hsd.update.len(), 1);
-        let u = &hsd.update[0];
-        assert_eq!(u.band, 2);
-        assert!((u.gain.unwrap() - gain).abs() < 1e-12);
-        assert!((u.offset.unwrap() - offset).abs() < 1e-12);
+        let ic = hsd.inter_calib.unwrap();
+        assert!((ic.intercept.unwrap() - intercept).abs() < 1e-9);
+        assert!((ic.slope.unwrap() - slope).abs() < 1e-12);
+        assert!((ic.quadratic.unwrap() - quadratic).abs() < 1e-12);
     }
 
     #[test]
