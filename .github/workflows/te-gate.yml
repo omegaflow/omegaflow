@@ -21,6 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the n=1000 shift sweep (the shift-null measurement)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture shift_sweep_n1000
       - name: Run the n=1000 TE calibration gates (heavy; ignored in the default cargo test)
         run: |
           cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation \
