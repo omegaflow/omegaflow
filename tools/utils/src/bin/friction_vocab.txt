@@ -1,7 +1,7 @@
 # friction_scan vocabulary — the register's friction words, one per line: word<TAB>class.
 # friction = the language of deferral, concealment, low-prio, fear-of-ignorance, uncertainty.
 # The words are German because the register's counter-slope is German; the code stays English.
-wiedervorlage	deferral
+wiedervorlage	calendar
 aufschieben	deferral
 aufgeschoben	deferral
 verschieben	deferral
@@ -24,10 +24,10 @@ nächstes atom	deferral
 nächste session	deferral
 nächster bau	deferral
 kann warten	deferral
-pausiert	deferral
-pausieren	deferral
+pausiert	paused
+pausieren	paused
 abwarten	deferral
-warten auf	deferral
+warten auf rückmeldung	external-wait
 nebenbei	concealment
 am rande	concealment
 übrigens	concealment
