@@ -5,7 +5,7 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
+use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
@@ -54,7 +54,11 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() { None } else { Some(text) }
+    if text.is_empty() {
+        None
+    } else {
+        Some(text)
+    }
 }
 
 fn resolved_bodies(bsps: &[PathBuf]) -> BTreeMap<i32, String> {
@@ -88,9 +92,7 @@ fn main() {
         eprintln!(
             "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--ci-mode]"
         );
-        eprintln!(
-            "  emits ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin in the current directory"
-        );
+        eprintln!("  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin");
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
         eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov");
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");
@@ -109,6 +111,7 @@ fn main() {
         Some(n) if !n.is_empty() => n,
         _ => DEFAULT_NETLOC.to_string(),
     };
+    let out_dir = format!("data/{netloc}");
     let mut pck_local: Vec<String> = Vec::new();
     let mut rest: Vec<String> = Vec::new();
     let mut skip_next = false;
@@ -177,6 +180,10 @@ fn main() {
     let in_scope = |name: &str| DE_BODIES.contains(&name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
+    if let Err(e) = std::fs::create_dir_all(&out_dir) {
+        eprintln!("de: create {}: {}", out_dir, e);
+        std::process::exit(1);
+    }
     for (target, name) in resolved_bodies(&bsps) {
         if !in_scope(&name) {
             eprintln!(
@@ -214,7 +221,7 @@ fn main() {
             );
             continue;
         }
-        let path = format!("ephemeris_{}_{}.bin", label, name);
+        let path = format!("{out_dir}/ephemeris_{}_{}.bin", label, name);
         if !write_binary(
             &path, &name, &granules, &rotations, &nutation, &wgccre, None,
         ) {
@@ -241,7 +248,7 @@ fn main() {
         }
     }
     eprintln!(
-        "de {}: {} body line(s) compiled into ephemeris_<edition>_<body>.bin, {} uploaded to the {} release",
+        "de {}: {} body line(s) compiled into {out_dir}/ephemeris_<edition>_<body>.bin, {} uploaded to the {} release",
         label, written, uploaded, netloc
     );
     if written == 0 {
