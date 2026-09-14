@@ -2,14 +2,14 @@ use std::env;
 use std::fs;
 use std::process::Command;
 
-fn curl(url: &str) -> Option<String> {
-    let out = Command::new("curl")
-        .arg("-sSL")
-        .arg("-m")
-        .arg("120")
-        .arg(url)
-        .output()
-        .ok()?;
+fn curl(url: &str, headers: &[(String, String)]) -> Option<String> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sSL").arg("-m").arg("120");
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
     if out.status.success() {
         Some(String::from_utf8_lossy(&out.stdout).into_owned())
     } else {
@@ -209,6 +209,26 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
+fn arg_headers(args: &[String]) -> Vec<(String, String)> {
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--header" {
+            if let Some(spec) = args.get(i + 1) {
+                if let Some((k, v)) = spec.split_once(':') {
+                    let name = k.trim();
+                    if !name.is_empty() {
+                        out.push((name.to_string(), v.trim().to_string()));
+                    }
+                }
+            }
+            i += 1;
+        }
+        i += 1;
+    }
+    out
+}
+
 fn arg_usize(args: &[String], name: &str) -> Option<usize> {
     arg_value(args, name).and_then(|v| v.parse::<usize>().ok())
 }
@@ -272,7 +292,14 @@ fn parse_page(body: &str) -> Option<Page> {
     })
 }
 
-fn page(base: &str, prefix: &str, delimiter: &str, token: &str, max_keys: usize) -> Option<Page> {
+fn page(
+    base: &str,
+    prefix: &str,
+    delimiter: &str,
+    token: &str,
+    max_keys: usize,
+    headers: &[(String, String)],
+) -> Option<Page> {
     let mut url = format!("{}?list-type=2&max-keys={}", base, max_keys);
     if !prefix.is_empty() {
         url.push_str("&prefix=");
@@ -286,7 +313,7 @@ fn page(base: &str, prefix: &str, delimiter: &str, token: &str, max_keys: usize)
         url.push_str("&continuation-token=");
         url.push_str(&percent_encode(token));
     }
-    let body = curl(&url)?;
+    let body = curl(&url, headers)?;
     parse_page(&body)
 }
 
@@ -302,6 +329,7 @@ fn walk(
     depth: usize,
     cap: usize,
     max_keys: usize,
+    headers: &[(String, String)],
     out: &mut String,
 ) -> Walk {
     let mut w = Walk {
@@ -310,7 +338,7 @@ fn walk(
     };
     let mut token = String::new();
     loop {
-        let p = match page(base, prefix, delimiter, &token, max_keys) {
+        let p = match page(base, prefix, delimiter, &token, max_keys, headers) {
             Some(p) => p,
             None => break,
         };
@@ -341,6 +369,7 @@ fn walk(
                     depth - 1,
                     cap.saturating_sub(w.objects),
                     max_keys,
+                    headers,
                     out,
                 );
                 w.objects += sub.objects;
@@ -387,8 +416,11 @@ fn run_s3(args: &[String]) {
         None => 1000,
     };
     let out = arg_value(args, "--out");
+    let headers = arg_headers(args);
     let mut buf = String::from("#key|size_bytes|last_modified|etag\n");
-    let w = walk(&base, &prefix, &delimiter, depth, cap, max_keys, &mut buf);
+    let w = walk(
+        &base, &prefix, &delimiter, depth, cap, max_keys, &headers, &mut buf,
+    );
     if let Some(p) = out.as_deref() {
         if fs::write(p, &buf).is_err() {
             eprintln!("write {} returned void", p);
@@ -460,7 +492,8 @@ fn main() {
         eprintln!("--root absent");
         std::process::exit(1);
     };
-    let Some(body) = curl(&root) else {
+    let headers = arg_headers(&args);
+    let Some(body) = curl(&root, &headers) else {
         eprintln!("xml: {} returned void", root);
         std::process::exit(1);
     };
