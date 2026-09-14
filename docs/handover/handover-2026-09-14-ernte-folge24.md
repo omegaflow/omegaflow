@@ -3,7 +3,7 @@
   session: Ernte-Folge 24
   class: handover
   date: 2026-09-14
-  sha256: 4990297fd72a163cfb454894b745e879aa9c08a936f13b5d0390b97d06e9c90b
+  sha256: eca6342e87508463626d2e6aa8fbff8829e4a4e62feeaf8805877e2f26f1e699
   status: live
 -->
 # Handover — Ernte-Folge 24 (2026-09-14)
@@ -27,9 +27,6 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   pending, kein `sources.φ`-Block (ERI-MAGIC `ERI1` noch nicht in
   `zeuge.rs::magic_identity`). (Schritt: `magic_identity` + Feld-Leser, wenn
   ein Konsument benannt ist.)
-- AQS: OpenAQ-S3-Bulk keyless (HTTP 200) + Apify-Actor
-  `nexgensignal/air-quality-monitor-records`; Compiler fehlt. (Schritt:
-  Compiler in `tools/harvest/src/bin/` nach dem nexrad-Muster.)
 - LASzip-Decoder steht; Konsument fehlt (Rats-Verdikt: keine Nadel trägt eine
   Punktwolke) → pending.
 - GK2A AMI + GOES-16 ABI: Compiler gebaut, kein Skalar-Feld-Konsument (Tor 1)
@@ -67,8 +64,15 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 ## Netz-Census (Instrument steht, Ernte offen)
 
 - `source_latency_census` + `source-census.yml` gebaut. Offen: erster
-  CI-Dispatch (`gh workflow run source-census.yml`) + Alternativen-Recherche
-  langsamer Tail (SOURCE_PORT §9: Sibling-Endpoints, Proton-Exit, Wayback).
+  CI-Dispatch (`gh workflow run source-census.yml`) — gated (Push + Consent).
+- Alternativen-Recherche getragen (Befund
+  `phi/pipeline/research/agent_output/source_census_tail_2026-09-14.φ` +
+  `phi/reports/source_latency_census_tail_probe.φ`): der Tail ist
+  Backend-/CGI-/Gateway-Latenz, nicht Geo — der Proton-Exit ist bei allen 8
+  gemessenen Hosts langsamer als die direkte Route. Einziger Gewinn:
+  DONKI-WS-Sibling `kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME` (keyless,
+  1,31 s vs 1,81 s Gateway). (Schritt: sources.φ-URL auf den Sibling stellen
+  — nach Register-Migration.)
   Council-Restpunkt (späteres Atom): curl-`-sS`-stderr könnte die aufgelöste
   URL in den CI-Log schreiben.
 
@@ -78,12 +82,32 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   gelistet in `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md`
   §1. (Schritt: je Punkt der Register-Notiz in `phi/blocked_sources.φ` folgen.)
 
-## Ernte-Nachlauf (unverändert offen)
+## Ernte-Nachlauf
 
 - Argovis FWHM ungemessen (0.0 benannt). MPC-Shard: UnnObs-Dispatch + shard-url
-  (Operator-Wort). Fink-Konus dead. Broker/GW-Positionen pending. ADS +
-  Space-Track: Route offen, Compiler fehlt. Witness-CDN + Gaia-Dispatch gated
-  (Push + Consent).
+  (Operator-Wort). Fink-Konus dead. Broker/GW-Positionen pending. Witness-CDN +
+  Gaia-Dispatch gated (Push + Consent).
+- ADS + Space-Track + Celestrak: Routen GEMESSEN (Befund
+  `phi/pipeline/research/agent_output/ads_spacetrack_celestrak_2026-09-14.φ`).
+  Die Dispositionen hängen an der laufenden Register-Migration (blocked/dead
+  werden gefaltet) — erst bei ruhigem Baum schreiben:
+  - ADS (`api.adsabs.harvard.edu`) lebt token-gated (`NASA_ADS_TOKEN` in
+    `.secrets.local`); Messung = Literatur-Katalog → `decline
+    no-physical-force`; die zwei `dead 404`-Einträge in dead_sources.φ sind
+    Fehl-URLs (GET auf Root / POST-only-Endpoint), kein Tot.
+  - Space-Track (`www.space-track.org`) lebt (`SPACETRACK_USER/PASS`
+    funktionieren); TLE = Orbit-Fit → `decline derived-orbit-fit`/
+    `superseded-by-ephemeris` (konsistent mit celestrak-TLE).
+  - Celestrak `EOP-All.csv` (`archeology_gaps_index.φ` Z.93) lebt via Proton,
+    direkt ip-blocked — Erdorientierung (Polbewegung/UT1-UTC/LOD/Nutation,
+    gravity) = echter Feld-Kandidat, nicht TLE-Disposition. (Schritt:
+    Feldblock + Compiler + CDN nach Register-Migration; 6-stellige-NORAD-
+    Lücke aufgelöst — 549 Objekte ≥ 100000.)
+- AQS: litmus REDUNDANT (OpenAQ-S3-Bulk = OpenAQs eigenes csv.gz-Archiv, kein
+  AQS-Rohdatenbestand; Skalar pm25 µg/m³ diffusion lebt via
+  `openaq_pm25_ugm3`) → `decline superseded-by-openaq` in declined_sources.φ
+  geschrieben; die blocked_sources.φ-Note-Verweis (AQS → descoped) hängt an
+  der Register-Migration.
 
 ## Abschluss
 
