@@ -4,7 +4,7 @@
   class: handover
   date: 2026-09-14
   sha256: f6e2beeef3870840306394aaf486401c8b4030b89e03140d919f7edb590a2292
-  status: live
+  status: archived
 -->
 # Handover — Ernte-Folge 23 (2026-09-14)
 

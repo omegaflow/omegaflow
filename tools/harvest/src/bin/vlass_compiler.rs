@@ -520,4 +520,102 @@ mod tests {
         let bytes = write_component_bin(&sample_component());
         assert!(read_component_bin(&bytes[..bytes.len() - 1]).is_none());
     }
+
+    fn pad_card(kw: &str, value: &str) -> [u8; 80] {
+        let mut card = [b' '; 80];
+        let k = kw.as_bytes();
+        card[..k.len().min(8)].copy_from_slice(&k[..k.len().min(8)]);
+        card[8] = b'=';
+        let v = value.as_bytes();
+        card[10..10 + v.len().min(20)].copy_from_slice(&v[..v.len().min(20)]);
+        card
+    }
+
+    fn vlass_fixture() -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut hdr: Vec<u8> = Vec::new();
+        for (k, v) in [
+            ("SIMPLE", "T"),
+            ("BITPIX", "8"),
+            ("NAXIS", "0"),
+            ("END", ""),
+        ] {
+            hdr.extend_from_slice(&pad_card(k, v));
+        }
+        while hdr.len() % 2880 != 0 {
+            hdr.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&hdr);
+
+        let mut ext: Vec<u8> = Vec::new();
+        for (k, v) in [
+            ("XTENSION", "'BINTABLE'"),
+            ("BITPIX", "8"),
+            ("NAXIS", "2"),
+            ("NAXIS1", "40"),
+            ("NAXIS2", "2"),
+            ("PCOUNT", "10"),
+            ("GCOUNT", "1"),
+            ("TFIELDS", "5"),
+            ("TTYPE1", "'RA'"),
+            ("TFORM1", "D"),
+            ("TBCOL1", "1"),
+            ("TTYPE2", "'DEC'"),
+            ("TFORM2", "D"),
+            ("TBCOL2", "9"),
+            ("TTYPE3", "'Flux'"),
+            ("TFORM3", "D"),
+            ("TBCOL3", "17"),
+            ("TTYPE4", "'E_Flux'"),
+            ("TFORM4", "D"),
+            ("TBCOL4", "25"),
+            ("TTYPE5", "'Name'"),
+            ("TFORM5", "'1PA'"),
+            ("TBCOL5", "33"),
+            ("END", ""),
+        ] {
+            ext.extend_from_slice(&pad_card(k, v));
+        }
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&120.0817f64.to_be_bytes());
+        buf.extend_from_slice(&2.3533f64.to_be_bytes());
+        buf.extend_from_slice(&25.7f64.to_be_bytes());
+        buf.extend_from_slice(&0.4f64.to_be_bytes());
+        buf.extend_from_slice(&5u32.to_be_bytes());
+        buf.extend_from_slice(&0u32.to_be_bytes());
+        buf.extend_from_slice(&314.9519f64.to_be_bytes());
+        buf.extend_from_slice(&(-0.1425f64).to_be_bytes());
+        buf.extend_from_slice(&399.2f64.to_be_bytes());
+        buf.extend_from_slice(&1.1f64.to_be_bytes());
+        buf.extend_from_slice(&5u32.to_be_bytes());
+        buf.extend_from_slice(&5u32.to_be_bytes());
+        buf.extend_from_slice(b"J0001J0002");
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn gather_extracts_from_a_bintable_that_carries_a_varlen_column() {
+        let buf = vlass_fixture();
+        let (_, off) = FitsHeader::parse(&buf, 0).expect("primary header");
+        let (table, _) = FitsTable::parse(&buf, off).expect("bintable");
+        assert_eq!(table.n_rows, 2);
+        assert_eq!(table.column("Name").map(|c| c.code), Some('P'));
+        let records = gather(&buf).expect("gather");
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].ra_deg, 120.0817);
+        assert_eq!(records[0].dec_deg, 2.3533);
+        assert_eq!(records[0].flux_mjy, 25.7);
+        assert_eq!(records[0].e_flux_mjy, 0.4);
+        assert_eq!(records[1].ra_deg, 314.9519);
+        assert_eq!(records[1].dec_deg, -0.1425);
+        assert_eq!(records[1].flux_mjy, 399.2);
+        assert_eq!(records[1].e_flux_mjy, 1.1);
+    }
 }
