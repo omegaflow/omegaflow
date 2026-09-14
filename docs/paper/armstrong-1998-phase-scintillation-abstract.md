@@ -4,7 +4,7 @@
   date: 2026-09-04
   sha256: 35495827a0e624c54d361966b59343594cc0f7f8bfcbaf98f8aa78efb65e7b20
   status: abstract-only (full text paywalled; JPL preprint handle down)
-  see-also: docs/paper/Radio Science - 2005 - Asmar - Spacecraft Doppler tracking  Noise budget and accuracy achievable in precision radio science.md
+  see-also: docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md
 -->
 
 # Armstrong 1998 — phase scintillation and precision Doppler tracking
