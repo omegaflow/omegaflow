@@ -25,6 +25,18 @@ pub fn build_rinex_channels(
     lsk: &LeapSeconds,
 ) -> Vec<(Channel, FieldConfig)> {
     let mut channels = Vec::new();
+    let decoded;
+    let text = if is_hatanaka(text) {
+        match crx2rnx(text) {
+            Some(d) => {
+                decoded = d;
+                decoded.as_str()
+            }
+            None => return channels,
+        }
+    } else {
+        text
+    };
     let Some(header) = parse_rinex_header(text) else {
         return channels;
     };
@@ -555,32 +567,396 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
             if i >= lines.len() {
                 break;
             }
-            let mut values = Vec::with_capacity(n_obs);
-            for _ in 0..lines_per_sat {
+            let mut values: Vec<Option<f64>> = vec![None; n_obs];
+            for k in 0..lines_per_sat {
                 if i >= lines.len() {
                     break;
                 }
                 let rec_line = lines[i];
-                let mut at = 0usize;
-                for _ in 0..5 {
-                    if values.len() >= n_obs {
+                for j in 0..5 {
+                    let idx = 5 * k + j;
+                    if idx >= n_obs {
                         break;
                     }
-                    if rec_line.len() < at + 14 {
-                        break;
+                    let at = 16 * j;
+                    if rec_line.len() >= at + 14 {
+                        values[idx] = rinex_num(&rec_line[at..at + 14]);
                     }
-                    values.push(rinex_num(&rec_line[at..at + 14]));
-                    at += 16;
                 }
                 i += 1;
             }
-            if !values.is_empty() {
+            if n_obs > 0 {
                 epoch.sats.push(RinexObsSat { sat, values });
             }
         }
         out.push(epoch);
     }
     out
+}
+
+const CRX_V1_NUMSAT_OFFSET: usize = 28;
+const CRX_V1_SAT_OFFSET: usize = 31;
+
+pub fn is_hatanaka(body: &str) -> bool {
+    body.lines()
+        .take(5)
+        .any(|l| l.contains("CRINEX VERS") || l.contains("COMPACT RINEX FORMAT"))
+}
+
+struct CrxTextDiff {
+    buffer: Vec<u8>,
+}
+
+impl CrxTextDiff {
+    fn new(data: &str) -> Self {
+        Self {
+            buffer: data.as_bytes().to_vec(),
+        }
+    }
+
+    fn force_init(&mut self, data: &str) {
+        self.buffer = data.as_bytes().to_vec();
+    }
+
+    fn decompress(&mut self, data: &str) -> String {
+        let bytes = data.as_bytes();
+        if bytes.len() > self.buffer.len() {
+            let from = self.buffer.len();
+            self.buffer.extend_from_slice(&bytes[from..]);
+        }
+        for (i, &byte) in bytes.iter().enumerate() {
+            if let Some(b) = self.buffer.get_mut(i) {
+                if byte != b' ' {
+                    *b = if byte == b'&' { b' ' } else { byte };
+                }
+            }
+        }
+        String::from_utf8_lossy(&self.buffer).into_owned()
+    }
+}
+
+struct CrxNumDiff {
+    level: usize,
+    m: usize,
+    buf: [i64; 6],
+}
+
+impl CrxNumDiff {
+    fn new(data: i64, level: usize) -> Self {
+        let mut buf = [0i64; 6];
+        buf[0] = data;
+        Self { level, m: 0, buf }
+    }
+
+    fn force_init(&mut self, data: i64, level: usize) {
+        self.level = level;
+        self.m = 0;
+        self.rotate(data);
+    }
+
+    fn rotate(&mut self, data: i64) {
+        self.buf.copy_within(0..5, 1);
+        self.buf[0] = data;
+    }
+
+    fn decompress(&mut self, data: i64) -> i64 {
+        if self.m < self.level {
+            self.m += 1;
+        }
+        let new = match self.m {
+            1 => data + self.buf[0],
+            2 => data + 2 * self.buf[0] - self.buf[1],
+            3 => data + 3 * self.buf[0] - 3 * self.buf[1] + self.buf[2],
+            4 => data + 4 * self.buf[0] - 6 * self.buf[1] + 4 * self.buf[2] - self.buf[3],
+            5 => {
+                data + 5 * self.buf[0] - 10 * self.buf[1] + 10 * self.buf[2] - 5 * self.buf[3]
+                    + self.buf[4]
+            }
+            6 => {
+                data + 6 * self.buf[0] - 15 * self.buf[1] + 20 * self.buf[2] - 15 * self.buf[3]
+                    + 6 * self.buf[4]
+                    - self.buf[5]
+            }
+            _ => data,
+        };
+        self.rotate(new);
+        new
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum CrxState {
+    Epoch,
+    Clock,
+    Reading,
+}
+
+struct CrxDecoder {
+    state: CrxState,
+    numobs: usize,
+    numsat: usize,
+    flag: u32,
+    sat_index: usize,
+    epoch_diff: CrxTextDiff,
+    epoch_descriptor: String,
+    clock_diff: CrxNumDiff,
+    obs_diff: HashMap<([u8; 3], usize), CrxNumDiff>,
+    clock: Option<i64>,
+}
+
+impl CrxDecoder {
+    fn new(numobs: usize) -> Self {
+        Self {
+            state: CrxState::Epoch,
+            numobs,
+            numsat: 0,
+            flag: 0,
+            sat_index: 0,
+            epoch_diff: CrxTextDiff::new(""),
+            epoch_descriptor: String::new(),
+            clock_diff: CrxNumDiff::new(0, 0),
+            obs_diff: HashMap::new(),
+            clock: None,
+        }
+    }
+
+    fn read_epoch(&mut self, line: &str) -> bool {
+        if line.len() < 17 {
+            return false;
+        }
+        let trimmed = line.get(1..).unwrap_or("").trim_end();
+        if line.starts_with('&') {
+            self.epoch_diff.force_init(trimmed);
+            self.epoch_descriptor = trimmed.to_string();
+        } else {
+            self.epoch_descriptor = self.epoch_diff.decompress(trimmed);
+        }
+        let Some(numsat) = self
+            .epoch_descriptor
+            .get(CRX_V1_NUMSAT_OFFSET..CRX_V1_NUMSAT_OFFSET + 3)
+            .and_then(|s| s.trim().parse::<usize>().ok())
+        else {
+            return false;
+        };
+        let Some(flag) = self
+            .epoch_descriptor
+            .get(25..28)
+            .and_then(|s| s.trim().parse::<u32>().ok())
+        else {
+            return false;
+        };
+        self.numsat = numsat;
+        self.flag = flag;
+        true
+    }
+
+    fn read_clock(&mut self, line: &str) {
+        self.clock = None;
+        let len = line.len();
+        if len > 2 {
+            if line.get(1..).is_some_and(|s| s.starts_with('&')) {
+                let order = line.get(..1).and_then(|s| s.parse::<usize>().ok());
+                let val = line.get(2..).and_then(|s| s.parse::<i64>().ok());
+                if let (Some(order), Some(val)) = (order, val) {
+                    if order <= 6 {
+                        self.clock_diff.force_init(val, order);
+                        self.clock = Some(val);
+                    }
+                }
+            } else if let Ok(val) = line.trim().parse::<i64>() {
+                self.clock = Some(self.clock_diff.decompress(val));
+            }
+        } else if len == 1 {
+            if let Ok(val) = line.trim().parse::<i64>() {
+                self.clock = Some(self.clock_diff.decompress(val));
+            }
+        }
+    }
+
+    fn write_epoch(&self, out: &mut String) {
+        let desc = self.epoch_descriptor.as_bytes();
+        let first_len = desc.len().min(67);
+        out.push(' ');
+        if let Ok(s) = std::str::from_utf8(&desc[..first_len]) {
+            out.push_str(s);
+        }
+        if let Some(clock) = self.clock {
+            out.push_str(&format!(" {:15.12}", clock as f64));
+        }
+        out.push('\n');
+        let extra = if self.numsat > 12 {
+            (self.numsat - 1) / 12
+        } else {
+            0
+        };
+        let mut offset = 67usize;
+        for _ in 0..extra {
+            out.push_str("                                ");
+            let end = (offset + 36).min(desc.len());
+            if let Some(chunk) = desc
+                .get(offset..end)
+                .and_then(|c| std::str::from_utf8(c).ok())
+            {
+                out.push_str(chunk);
+            }
+            out.push('\n');
+            offset += 36;
+        }
+    }
+
+    fn sat_id(&self) -> Option<[u8; 3]> {
+        let start = CRX_V1_SAT_OFFSET + self.sat_index * 3;
+        let b = self.epoch_descriptor.as_bytes().get(start..start + 3)?;
+        Some([b[0], b[1], b[2]])
+    }
+
+    fn read_obs(&mut self, line: &str) -> Vec<Option<f64>> {
+        let Some(sat) = self.sat_id() else {
+            return Vec::new();
+        };
+        let len = line.len();
+        let mut consumed = 0usize;
+        let mut values = Vec::with_capacity(self.numobs);
+        let mut ptr = 0usize;
+        while ptr < self.numobs {
+            if consumed >= len {
+                values.push(None);
+                ptr += 1;
+                continue;
+            }
+            let rest = &line[consumed..];
+            let Some(offset) = rest.find(' ') else {
+                let slice = rest.trim();
+                values.push(self.decode_token(sat, ptr, slice));
+                break;
+            };
+            if offset > 1 {
+                let slice = rest[..offset].trim();
+                values.push(self.decode_token(sat, ptr, slice));
+                consumed += offset + 1;
+            } else {
+                let slice = rest[..offset].trim();
+                if slice.is_empty() {
+                    values.push(None);
+                    consumed += 1;
+                } else {
+                    values.push(self.decode_token(sat, ptr, slice));
+                    consumed += 2;
+                }
+            }
+            ptr += 1;
+        }
+        while values.len() < self.numobs {
+            values.push(None);
+        }
+        values
+    }
+
+    fn decode_token(&mut self, sat: [u8; 3], ptr: usize, slice: &str) -> Option<f64> {
+        if slice.is_empty() {
+            return None;
+        }
+        if let Some(amp) = slice.find('&') {
+            if amp == 1 {
+                let level = slice.get(..amp).and_then(|s| s.parse::<usize>().ok());
+                let value = slice.get(amp + 1..).and_then(|s| s.parse::<i64>().ok());
+                if let (Some(level), Some(value)) = (level, value) {
+                    if level <= 6 {
+                        self.obs_diff
+                            .insert((sat, ptr), CrxNumDiff::new(value, level));
+                        return Some(value as f64 / 1000.0);
+                    }
+                }
+            }
+            return None;
+        }
+        if let Ok(value) = slice.parse::<i64>() {
+            if let Some(kernel) = self.obs_diff.get_mut(&(sat, ptr)) {
+                return Some(kernel.decompress(value) as f64 / 1000.0);
+            }
+        }
+        None
+    }
+
+    fn write_obs(&self, out: &mut String, values: &[Option<f64>]) {
+        for (i, v) in values.iter().enumerate() {
+            match v {
+                Some(x) => out.push_str(&format!("{x:14.3}  ")),
+                None => out.push_str("                "),
+            }
+            if i % 5 == 4 {
+                out.push('\n');
+            }
+        }
+        if values.len() % 5 != 0 {
+            out.push('\n');
+        }
+    }
+}
+
+pub fn crx2rnx(body: &str) -> Option<String> {
+    let header = parse_rinex_header(body)?;
+    let numobs = header.obs_types.len();
+    if numobs == 0 {
+        return None;
+    }
+    let lines: Vec<&str> = body.lines().collect();
+    let end_header = lines
+        .iter()
+        .position(|l| header_label(l) == "END OF HEADER")?;
+    let mut out = String::with_capacity(body.len() * 2);
+    for l in &lines[..=end_header] {
+        out.push_str(l);
+        out.push('\n');
+    }
+    let mut dec = CrxDecoder::new(numobs);
+    let mut i = end_header + 1;
+    while i < lines.len() {
+        match dec.state {
+            CrxState::Epoch => {
+                if !dec.read_epoch(lines[i]) {
+                    i += 1;
+                    continue;
+                }
+                i += 1;
+                if dec.flag >= 2 {
+                    dec.write_epoch(&mut out);
+                    for _ in 0..dec.numsat {
+                        if i >= lines.len() {
+                            break;
+                        }
+                        out.push_str(lines[i]);
+                        out.push('\n');
+                        i += 1;
+                    }
+                    dec.state = CrxState::Epoch;
+                } else {
+                    dec.state = CrxState::Clock;
+                }
+            }
+            CrxState::Clock => {
+                dec.read_clock(lines[i]);
+                dec.write_epoch(&mut out);
+                dec.sat_index = 0;
+                dec.state = if dec.numsat == 0 {
+                    CrxState::Epoch
+                } else {
+                    CrxState::Reading
+                };
+                i += 1;
+            }
+            CrxState::Reading => {
+                let values = dec.read_obs(lines[i]);
+                dec.write_obs(&mut out, &values);
+                i += 1;
+                dec.sat_index += 1;
+                if dec.sat_index >= dec.numsat {
+                    dec.state = CrxState::Epoch;
+                }
+            }
+        }
+    }
+    Some(out)
 }
 
 pub const SBF_SYNC: [u8; 2] = [0x24, 0x40];
@@ -900,5 +1276,133 @@ mod tests {
         assert!((n.ecc - 1.924931886610e-3).abs() < 1e-14);
         assert!((n.om0 - -2.464042733270e-1).abs() < 1e-12);
         assert!((n.i0 - 9.568097449780e-1).abs() < 1e-12);
+    }
+
+    fn crx_epoch(
+        y: i64,
+        mo: i64,
+        d: i64,
+        h: i64,
+        mi: i64,
+        se: f64,
+        flag: i64,
+        n: i64,
+        sats: &str,
+    ) -> String {
+        format!("{y:>2}{mo:>3}{d:>3}{h:>3}{mi:>3}{se:>11.7}{flag:>3}{n:>3}{sats}")
+    }
+
+    fn crx_header() -> String {
+        let mut s = String::new();
+        s.push_str(
+            "1.0                 COMPACT RINEX FORMAT                    CRINEX VERS   / TYPE\n",
+        );
+        s.push_str(
+            "     2.11           OBSERVATION DATA    M (MIXED)           RINEX VERSION / TYPE\n",
+        );
+        s.push_str(
+            "     2    C1    L1                                          # / TYPES OF OBSERV\n",
+        );
+        s.push_str(
+            "                                                            END OF HEADER       \n",
+        );
+        s
+    }
+
+    #[test]
+    fn crx_textdiff_recovers_masked_text() {
+        let mut diff = CrxTextDiff::new("ABCDEFG 12 000 33 XXACQmpLf");
+        let compressed = [
+            "         3   1 44 xxACq   F",
+            "        4 ",
+            " 11 22   x   0 4  y     p  ",
+            "              1     ",
+            "                   z",
+            " ",
+            "                           &",
+            "&                           ",
+            " ",
+        ];
+        let expected = [
+            "ABCDEFG 13 001 44 xxACqmpLF",
+            "ABCDEFG 43 001 44 xxACqmpLF",
+            "A11D22G 4x 000 44 yxACqmpLF",
+            "A11D22G 4x 000144 yxACqmpLF",
+            "A11D22G 4x 000144 yzACqmpLF",
+            "A11D22G 4x 000144 yzACqmpLF",
+            "A11D22G 4x 000144 yzACqmpLF ",
+            " 11D22G 4x 000144 yzACqmpLF ",
+            " 11D22G 4x 000144 yzACqmpLF ",
+        ];
+        for i in 0..compressed.len() {
+            assert_eq!(diff.decompress(compressed[i]), expected[i], "at {i}");
+        }
+    }
+
+    #[test]
+    fn crx_numdiff_recovers_differences() {
+        let mut diff = CrxNumDiff::new(126298057858, 3);
+        assert_eq!(diff.decompress(-15603288), 126282454570);
+        assert_eq!(diff.decompress(521089), 126267372371);
+        assert_eq!(diff.decompress(-752), 126252810509);
+        assert_eq!(diff.decompress(1575419284), 127814188268);
+        assert_eq!(diff.decompress(-3150848707), 127800656941);
+        assert_eq!(diff.decompress(1575424909), 127787641437);
+        assert_eq!(diff.decompress(-135), 127775141621);
+        diff.force_init(111982965979, 3);
+        assert_eq!(diff.decompress(-16266911), 111966699068);
+        assert_eq!(diff.decompress(609858), 111951042015);
+        assert_eq!(diff.decompress(-213), 111935994607);
+    }
+
+    #[test]
+    fn hatanaka_crx_v1_roundtrips_epochs_and_satellites() {
+        let mut s = crx_header();
+        s.push('&');
+        s.push_str(&crx_epoch(24, 1, 1, 0, 0, 0.0, 0, 1, "G01"));
+        s.push('\n');
+        s.push('\n');
+        s.push_str("1&1000000 1&2000000\n");
+        s.push('&');
+        s.push_str(&crx_epoch(24, 1, 1, 0, 0, 30.0, 0, 1, "G01"));
+        s.push('\n');
+        s.push('\n');
+        s.push_str("1000 2000\n");
+
+        assert!(is_hatanaka(&s));
+        let rnx = crx2rnx(&s).unwrap();
+        let epochs = parse_rinex_obs(&rnx, 2);
+        assert_eq!(epochs.len(), 2);
+        assert_eq!(epochs[0].sats.len(), 1);
+        assert_eq!(epochs[0].sats[0].sat, "G01");
+        assert!((epochs[0].sats[0].values[0].unwrap() - 1000.0).abs() < 1e-6);
+        assert!((epochs[0].sats[0].values[1].unwrap() - 2000.0).abs() < 1e-6);
+        assert!((epochs[1].sats[0].values[0].unwrap() - 1001.0).abs() < 1e-6);
+        assert!((epochs[1].sats[0].values[1].unwrap() - 2002.0).abs() < 1e-6);
+        let expected = civil_unix(2024, 1, 1, 0, 0, 30.0).unwrap();
+        assert!((epochs[1].epoch_unix - expected).abs() < 1e-9);
+    }
+
+    #[test]
+    fn hatanaka_event_epoch_passes_records_through() {
+        let mut s = crx_header();
+        s.push('&');
+        s.push_str(&crx_epoch(24, 1, 1, 1, 0, 0.0, 4, 1, ""));
+        s.push('\n');
+        s.push_str("101 (COGO code)                                             COMMENT\n");
+        s.push('&');
+        s.push_str(&crx_epoch(24, 1, 1, 1, 0, 0.0, 0, 1, "G01"));
+        s.push('\n');
+        s.push('\n');
+        s.push_str("1&1000000 1&2000000\n");
+
+        let rnx = crx2rnx(&s).unwrap();
+        assert!(rnx.contains("101 (COGO code)"));
+        assert!(rnx.contains("G01"));
+    }
+
+    #[test]
+    fn hatanaka_plain_rinex_is_left_alone() {
+        assert!(!is_hatanaka(&obs_file()));
     }
 }
