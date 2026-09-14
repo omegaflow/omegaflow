@@ -6612,6 +6612,35 @@ dec de2000
 field v hyperleda_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 field bmag hyperleda_b_mag inverse-square em mag 604800 0.0 0.0
 
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra RA
+dec DEC
+field Total_flux vlass_component_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra RA_Source
+dec DEC_Source
+field Total_flux_source vlass_ql_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
+format tap
+ttl 604800
+at sun
+cmap .
+ra RA_Source
+dec DEC_Source
+field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
 format tap
 ttl 604800
