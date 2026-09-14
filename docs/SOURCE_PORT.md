@@ -31,7 +31,8 @@ registrierten Ort.
 | `phi/pipeline/catalog/MANIFEST.φ` | Karte des Katalogs — role/state/lens je Datei, versioniert (Rats-Verdikt 2026-09-10). |
 | `phi/pipeline/decline_lens.φ` | Maschinen-Zwilling des Oszillator-Gates — 9 Decline-Klassen + 3 Familien als Daten (`bucket_litmus`), versioniert. |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
-| `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
+| `phi/dead_sources.φ` | Dispositionen: nur `dead` (unerreichbar — Re-Check-Pflicht). |
+| `phi/declined_sources.φ` | Dispositionen: `decline` (lebt, geurteilt) + `superseded-by-integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
 | `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
 | `docs/concepts/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
@@ -46,9 +47,15 @@ Extracts in Abhängigkeitsreihenfolge.
 
 `phi/dead_sources.φ`: Einträge sortiert nach `url`; eine Dispositionszeile,
 eine `url`-Zeile, eine `note`-Zeile; Leerzeile zwischen Einträgen; keine
-Duplikate pro URL. Enthält NUR `dead` (abgeschaltet) + `decline`
-(nicht-physikalisch/kommerziell) + `integrated` (tote URL, live via
-Fanout-Route in `sources.φ`).
+Duplikate pro URL. Enthält NUR `dead` (URL antwortet nicht — die
+Re-Check-Pflicht).
+
+`phi/declined_sources.φ`: gleiches Format. Enthält `decline`
+(nicht-physikalisch/kommerziell/kein Konsument — lebt, aber geurteilt) +
+`decline superseded-by-integrated` (lebt, anderswo integriert, früher
+`integrated`). Keine Re-Check-Pflicht: die Erreichbarkeit ist nicht die Frage,
+das Verdikt ist die Frage (die getrennte Datei hält den Re-Check bei ~403
+`dead`-URLs statt 1221).
 
 `phi/blocked_sources.φ`: gleiches Format; `key-needed` (Key frei
 registrierbar, `.secrets.local`) + `parser-def` (Gap-Verweis) — blockiert,
@@ -198,7 +205,7 @@ thermal → exponential-decay, advective → patch-levy.
 Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
 unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
 Block-Draft); `key-needed` → `blocked_sources.φ` mit Key-Marker;
-`decline` (Oszillator-Gate) → `dead_sources.φ`.
+`decline` (Oszillator-Gate) → `declined_sources.φ`.
 
 **Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
