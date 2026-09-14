@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 593f9ffab616f80b9b8908736dc39b46753d6dbc1bee209cb81c39445744c715
+  sha256: c90f480c52c241d4b2b5e84a0b03a19c3ad64068e26bab1f35fad4eae3758b5d
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -38,10 +38,15 @@ Drei Taucherrunden (grind-flash + grind-pro, Godmode, rollierende Proton-VPNs,
 Brave, Playwright) haben die Warteliste gemessen; zwei Punkte halten.
 
 - **Voyager Roh-Doppler closed-loop (ODF/TRK-2-34)** — Voyager closed-loop wurde
-  als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben; öffentlich überlebt nur
-  die open-loop ODR-Okkultation (PDS-Rings). Einzige nicht-anonyme Ablage:
-  NSSDC `PSNO-00007` (SDDPT, „archive, not distribution"). Die JPL/DSN-Anfrage
-  hält. (Schritt: Antwort von JPL/DSN; sonst NSSDC-SDDPT-Antrag `PSNO-00007`.)
+  als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben. Offene Teilroute
+  (gemessen 200): SPDF Saturn-Encounter-Daten, UNIVAC-1108-Binär, closed-loop
+  Doppler+Range — V1 `PSPA-00049` (14 TARs, Okt–Nov 1980), V2 `PSPA-00123`
+  (6 TARs, Aug–Sep 1981),
+  `spdf.gsfc.nasa.gov/pub/data/voyager/{1,2}/radio_science_rss/saturn_encounter_data/`.
+  Grenze: Saturn-Ära + UNIVAC-Format (kein ATDF/ODF/TRK-2-34-Parser); Cruise-/
+  Post-Saturn-Fenster + natives Format bleiben request-only (NSSDC `PSNO-00007`,
+  SDDPT). (Schritt: UNIVAC-1108-Parser für die Saturn-TARs; die JPL/DSN-Anfrage
+  fürs Cruise-Fenster hält weiter.)
 - **NSE/Haug Rohdaten** — die NSE-Zwischenstreufunktion I(q,t) von unterdotiertem
   YBCO (Haug et al., *New J. Phys.* 12, 105006 (2010), TRISP/MLZ). Kein Deposit:
   arXiv `e-print/1008.4298` = nur TeX + 8 Figuren; IOP-Suppdata hinter
