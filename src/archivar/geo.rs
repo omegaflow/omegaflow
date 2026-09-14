@@ -20,6 +20,8 @@ pub const MAGIC_WOD: [u8; 4] = *b"WOD1";
 pub const MAGIC_HINET: [u8; 4] = *b"HNT1";
 pub const MAGIC_COSMIC: [u8; 4] = *b"CSM1";
 pub const MAGIC_ONC: [u8; 4] = *b"ONC1";
+pub const MAGIC_NXR: [u8; 4] = *b"NXR1";
+pub const MAGIC_USCRN: [u8; 4] = *b"USC1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -114,6 +116,14 @@ pub const COMP_COSMIC_MAX: u32 = 3;
 pub const COMP_ONC_PSD: u32 = 1;
 pub const COMP_ONC_MAX: u32 = 1;
 
+pub const COMP_NXR_REF: u32 = 1;
+pub const COMP_NXR_VEL: u32 = 2;
+pub const COMP_NXR_SW: u32 = 3;
+pub const COMP_NXR_MAX: u32 = 3;
+
+pub const COMP_USCRN_TEMP: u32 = 1;
+pub const COMP_USCRN_MAX: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -153,6 +163,8 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "noaa_wod" => Some(MAGIC_WOD),
         "cosmic_ro" => Some(MAGIC_COSMIC),
         "onc_hydrophone_psd" => Some(MAGIC_ONC),
+        "nexrad_level2" => Some(MAGIC_NXR),
+        "us_crn_hourly" => Some(MAGIC_USCRN),
         _ => None,
     }
 }
@@ -178,6 +190,8 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "noaa_wod" => Some(COMP_WOD_MAX),
         "cosmic_ro" => Some(COMP_COSMIC_MAX),
         "onc_hydrophone_psd" => Some(COMP_ONC_MAX),
+        "nexrad_level2" => Some(COMP_NXR_MAX),
+        "us_crn_hourly" => Some(COMP_USCRN_MAX),
         _ => None,
     }
 }

@@ -23,7 +23,7 @@ jobs:
           if ! gh release view noaa-himawari8.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create noaa-himawari8.s3.amazonaws.com --repo omegaflow/sources \
               --title "noaa-himawari8.s3.amazonaws.com" \
-              --notes "AHI L1b HSD segment compiled to raw counts (digital number, u16). Calibration (counts -> radiance) stays pending; the record carries counts, never a fabricated radiance. Record layout: magic AHI1, columns (u16 LE), lines (u16 LE), bits_per_pixel (u16 LE), band (u8), segment (u8), satellite (u8), resolution_m (u16 LE), obs_present (u8), obs_sec (f64 LE, unix seconds), counts ([u16 LE; columns*lines])."
+              --notes "AHI L1b HSD segment compiled to radiance (W m-2 sr-1 um-1, f32) from the Block 5 gain/offset; error/outside-scan sentinel counts stay carried as their raw count marker, never a fabricated radiance. Record layout: magic AHI1, columns (u16 LE), lines (u16 LE), bits_per_pixel (u16 LE), band (u8), segment (u8), satellite (u8), resolution_m (u16 LE), obs_present (u8), obs_sec (f64 LE, unix seconds), calib_present (u8; 1 = payload is radiance, 0 = payload is raw counts), error_pixels (u16 LE), outside_scan_pixels (u16 LE), payload ([f32 LE; columns*lines] when calib_present=1, [u16 LE; columns*lines] when calib_present=0)."
           fi
       - name: Fetch one AHI L1b HSD segment
         run: |
@@ -35,7 +35,7 @@ jobs:
                  "himawari-cdn: the AHI L1b segment returned void" \
                  "curl on noaa-himawari8 did not reach the HS_H08 segment. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
-      - name: Compile the AHI raw-counts record and upload to CDN
+      - name: Compile the AHI radiance record and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin himawari_hsd_compiler -- \
             --in kernels/HS_H08_20150707_0200_B01_FLDK_R20_S0101.DAT.bz2 \

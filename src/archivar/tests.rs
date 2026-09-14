@@ -1316,11 +1316,9 @@ fn test_empty_data_anomaly() {
     let _ = take_anomalies();
     check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
     let anomalies = take_anomalies();
-    assert!(
-        anomalies
-            .iter()
-            .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e")
-    );
+    assert!(anomalies
+        .iter()
+        .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
     check_empty_data(
         src,
         r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
@@ -1712,13 +1710,11 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     assert!(amax > 0.0 && amax.is_finite());
     let mut unbound = rec;
     unbound.e = 1.5;
-    assert!(
-        Motion::Kepler {
-            rec: Arc::new(unbound)
-        }
-        .at(0.0, 0.0, &eph)
-        .is_none()
-    );
+    assert!(Motion::Kepler {
+        rec: Arc::new(unbound)
+    }
+    .at(0.0, 0.0, &eph)
+    .is_none());
 }
 
 #[test]
@@ -6900,6 +6896,57 @@ USW00094728,20250301,PRCP,-9999,,,X,\n";
 }
 
 #[test]
+fn uscrn_parsers_convert_and_skip_missing() {
+    let lsk = crate::lsk::LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1_483_228_800.0)],
+    };
+
+    let stations = "WBAN\tCOUNTRY\tSTATE\tLOCATION\tVECTOR\tNAME\tLATITUDE\tLONGITUDE\tELEVATION\tSTATUS\tCOMMISSIONING\tCLOSING\tOPERATION\tPAIRING\tNETWORK\tSTATION_ID\n\
+23583\tUS\tAK\tAleknagik\t1 NNE\tCity of Aleknagik, Aleknagik Airport\t59.28\t-158.61\t80\tCommissioned\t2020-10-13 00:00:00.0\t\tOperational\t\tUSCRN\t1801\n";
+    let anchors = super::noaa_nodd::parse_uscrn_stations(stations);
+    let anchor = anchors
+        .get("23583")
+        .expect("the Aleknagik WBAN carries an anchor");
+    assert_eq!(anchor.0, 59.28);
+    assert_eq!(anchor.1, -158.61);
+    assert!((anchor.2 - 80.0 * 0.3048).abs() < 1e-9);
+
+    let uscrn = "23583 20260101 0100 20251231 1600  2.514 -158.61   59.28   -16.3   -15.8   -15.5   -16.7     0.0     37 0     78 0      2 0 C   -16.5 0   -15.9 0   -17.5 0    74 0 -99.000 -99.000 -99.000 -99.000 -99.000 -9999.0 -9999.0 -9999.0 -9999.0 -9999.0\n\
+23583 20260101 0200 20251231 1700  2.514 -158.61   59.28 -9999.0   -16.9   -16.0   -17.6     0.0      2 0     21 0      0 0 C   -18.4 0   -17.5 0   -19.2 0    76 0 -99.000 -99.000 -99.000 -99.000 -99.000 -9999.0 -9999.0 -9999.0 -9999.0 -9999.0\n";
+    assert_eq!(
+        super::noaa_nodd::uscrn_wban(uscrn).as_deref(),
+        Some("23583")
+    );
+    let recs = super::noaa_nodd::parse_uscrn(uscrn, anchor.2, &lsk);
+    assert_eq!(recs.len(), 1);
+    assert_eq!(recs[0].comp, crate::geo::COMP_USCRN_TEMP);
+    assert!((recs[0].val - -16.3).abs() < 1e-9);
+    assert!((recs[0].bin_width - 3600.0).abs() < 1e-9);
+    assert_eq!(recs[0].lat, 59.28);
+    assert_eq!(recs[0].lon, -158.61);
+    assert!((recs[0].alt - anchor.2).abs() < 1e-9);
+
+    let magic = crate::geo::magic_of("us_crn_hourly").expect("us_crn_hourly carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("us_crn_hourly", &bytes)
+        .expect("us_crn_hourly bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(
+        super::extract::geo_series_component_name("us_crn_hourly", crate::geo::COMP_USCRN_TEMP),
+        Some("us_crn_hourly_temp_c")
+    );
+    assert_eq!(
+        crate::geo::comp_max("us_crn_hourly"),
+        Some(crate::geo::COMP_USCRN_MAX)
+    );
+    assert_eq!(
+        super::zeuge::magic_identity(magic),
+        Some(super::zeuge::FeldIdentitaet::Oszillator)
+    );
+}
+
+#[test]
 fn galileo_odr_register_field_matches_component_name() {
     let srcs = super::load_sources();
     let src = srcs
@@ -7046,4 +7093,224 @@ fn fits_bintable_roundtrips_typed_row() {
         ]
     );
     assert!(t.row(&buf, 1).is_none());
+}
+
+#[test]
+fn cosmic_ro_geo_series_roundtrip_and_component_name() {
+    let recs = vec![
+        crate::geo::GeoRec {
+            t: 753_440_003.0,
+            lat: -20.0,
+            lon: -76.0,
+            alt: 10000.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 250.0,
+            comp: crate::geo::COMP_COSMIC_REFRACT,
+            station: 0,
+        },
+        crate::geo::GeoRec {
+            t: 753_440_003.0,
+            lat: -20.0,
+            lon: -76.0,
+            alt: 10000.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 220.0,
+            comp: crate::geo::COMP_COSMIC_TEMP,
+            station: 0,
+        },
+    ];
+    let magic = crate::geo::magic_of("cosmic_ro").expect("cosmic_ro carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed =
+        super::extract::geo_series_parse_bin("cosmic_ro", &bytes).expect("cosmic_ro bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].val, 250.0);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_COSMIC_REFRACT);
+    assert_eq!(
+        super::extract::geo_series_component_name("cosmic_ro", crate::geo::COMP_COSMIC_REFRACT),
+        Some("cosmic_ro_refractivity_n_units")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("cosmic_ro", crate::geo::COMP_COSMIC_TEMP),
+        Some("cosmic_ro_temperature_k")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("cosmic_ro", crate::geo::COMP_COSMIC_PRES),
+        Some("cosmic_ro_pressure_hpa")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("cosmic_ro", 99),
+        None
+    );
+}
+
+#[test]
+fn maxi_series_roundtrip_and_component_name() {
+    let curves = vec![crate::maxi::MaxiCurve {
+        ra_deg: 1.5814,
+        dec_deg: 20.2029,
+        band: crate::maxi::BAND_2_20,
+        freq_hz: 2.6e18,
+        bin_width_hz: 4.3e18,
+        samples: vec![
+            crate::maxi::MaxiSample {
+                t_tdb: 8.0e8,
+                flux: 0.04,
+                err: 0.02,
+            },
+            crate::maxi::MaxiSample {
+                t_tdb: 8.1e8,
+                flux: -0.03,
+                err: 0.01,
+            },
+        ],
+    }];
+    let bytes = crate::maxi::write_bin(&curves).expect("maxi bin writes");
+    let parsed = super::extract::series_parse_bin("maxi", &bytes).expect("maxi series parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].0, 8.0e8);
+    assert_eq!(parsed[0].1, 0.04f32 as f64);
+    assert_eq!(parsed[0].2, crate::maxi::BAND_2_20);
+    assert_eq!(parsed[1].1, -0.03f32 as f64);
+    assert_eq!(
+        super::extract::series_component_name("maxi", crate::maxi::BAND_2_20),
+        Some("maxi_2_20kev_flux_ph_s_cm2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("maxi", crate::maxi::BAND_2_4),
+        Some("maxi_2_4kev_flux_ph_s_cm2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("maxi", crate::maxi::BAND_4_10),
+        Some("maxi_4_10kev_flux_ph_s_cm2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("maxi", crate::maxi::BAND_10_20),
+        Some("maxi_10_20kev_flux_ph_s_cm2")
+    );
+    assert_eq!(super::extract::series_component_name("maxi", 99), None);
+}
+
+#[test]
+fn iscb_bin_roundtrip_and_rejections() {
+    fn encode(events: &[(f64, f64, f64, f64, Option<f64>, Option<&str>)]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(b"ISCB");
+        out.push(1u8);
+        out.extend_from_slice(&(events.len() as u64).to_le_bytes());
+        for &(time, lat, lon, depth, mag, mag_type) in events {
+            let mut rec = [0u8; 56];
+            if mag.is_some() {
+                rec[0] |= 0x01;
+            }
+            if mag_type.is_some() {
+                rec[0] |= 0x02;
+            }
+            rec[8..16].copy_from_slice(&time.to_le_bytes());
+            rec[16..24].copy_from_slice(&lat.to_le_bytes());
+            rec[24..32].copy_from_slice(&lon.to_le_bytes());
+            rec[32..40].copy_from_slice(&depth.to_le_bytes());
+            let mag_bits: [u8; 8] = match mag {
+                Some(m) => m.to_le_bytes(),
+                None => [0u8; 8],
+            };
+            rec[40..48].copy_from_slice(&mag_bits);
+            if let Some(ty) = mag_type {
+                let b = ty.as_bytes();
+                let n = b.len().min(8);
+                rec[48..48 + n].copy_from_slice(&b[..n]);
+            }
+            out.extend_from_slice(&rec);
+        }
+        out
+    }
+    let bytes = encode(&[
+        (
+            1_704_092_765.77,
+            37.4747,
+            137.3070,
+            9.704,
+            Some(6.0),
+            Some("mb"),
+        ),
+        (1_704_092_765.0, 37.4929, 137.2624, 10.7426, None, None),
+    ]);
+    let parsed = super::extract::parse_iscb_bin(&bytes).expect("iscb parses");
+    assert_eq!(parsed.len(), 2);
+    assert!((parsed[0].lat - 37.4747).abs() < 1e-9);
+    assert_eq!(parsed[0].magnitude, Some(6.0));
+    assert_eq!(parsed[0].mag_type.as_deref(), Some("mb"));
+    assert_eq!(parsed[1].magnitude, None);
+    assert_eq!(parsed[1].mag_type, None);
+    assert!(super::extract::parse_iscb_bin(b"X").is_none());
+    assert!(super::extract::parse_iscb_bin(b"ISCB").is_none());
+    assert!(super::extract::parse_iscb_bin(&bytes[..bytes.len() - 1]).is_none());
+}
+
+#[test]
+fn nexrad_level2_roundtrip_and_component_name() {
+    fn encode(recs: &[(f64, f64, f64, f64, f64, u32)]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(b"NXR1");
+        out.extend_from_slice(&(recs.len() as u32).to_le_bytes());
+        for &(t, az, el, range, value, kind) in recs {
+            out.extend_from_slice(&t.to_le_bytes());
+            out.extend_from_slice(&az.to_le_bytes());
+            out.extend_from_slice(&el.to_le_bytes());
+            out.extend_from_slice(&range.to_le_bytes());
+            out.extend_from_slice(&value.to_le_bytes());
+            out.extend_from_slice(&kind.to_le_bytes());
+        }
+        out
+    }
+    let bytes = encode(&[
+        (
+            1_704_067_204.932,
+            90.0,
+            0.5,
+            2.125,
+            -32.0,
+            crate::geo::COMP_NXR_REF,
+        ),
+        (
+            1_704_067_204.932,
+            90.5,
+            0.5,
+            2.375,
+            10.5,
+            crate::geo::COMP_NXR_VEL,
+        ),
+    ]);
+    let parsed = super::extract::parse_nexrad_level2_bin(&bytes).expect("nexrad level2 bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].value, -32.0);
+    assert_eq!(parsed[0].kind, crate::geo::COMP_NXR_REF);
+    assert_eq!(parsed[1].range_km, 2.375);
+    assert_eq!(parsed[1].az_deg, 90.5);
+    assert_eq!(
+        super::extract::nexrad_component_name(crate::geo::COMP_NXR_REF),
+        Some("nexrad_level2_ref_dbz")
+    );
+    assert_eq!(
+        super::extract::nexrad_component_name(crate::geo::COMP_NXR_VEL),
+        Some("nexrad_level2_vel_ms")
+    );
+    assert_eq!(
+        super::extract::nexrad_component_name(crate::geo::COMP_NXR_SW),
+        Some("nexrad_level2_sw_ms")
+    );
+    assert_eq!(super::extract::nexrad_component_name(9), None);
+    assert_eq!(
+        crate::geo::magic_of("nexrad_level2"),
+        Some(crate::geo::MAGIC_NXR)
+    );
+    assert_eq!(
+        crate::geo::comp_max("nexrad_level2"),
+        Some(crate::geo::COMP_NXR_MAX)
+    );
+    assert!(super::extract::parse_nexrad_level2_bin(b"X").is_none());
+    assert!(super::extract::parse_nexrad_level2_bin(b"NXR1abc").is_none());
+    assert!(super::extract::parse_nexrad_level2_bin(&bytes[..bytes.len() - 1]).is_none());
 }
