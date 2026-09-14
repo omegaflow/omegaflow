@@ -1286,7 +1286,10 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             let alt = if alt_key.is_empty() {
                                 Some(0.0)
                             } else {
-                                jpath(v, alt_key).map(|a| a * alt_scale)
+                                match jpath(v, alt_key) {
+                                    Some(a) => Some(a * alt_scale),
+                                    None => Some(0.0),
+                                }
                             };
                             let position = match (lat, lon, alt) {
                                 (Some(la), Some(lo), Some(al)) => {
