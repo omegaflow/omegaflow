@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: b46e1237811d100572b2d977632e7814cf81783275eb48f1b81e42b733f50b10
+  sha256: 0f9de1e425e3086bfdecd74558ae371c3803ab1152a88c4fed14a838dfbd7c07
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
@@ -70,20 +70,20 @@ maschinenlesbarer Weg nach abgeschlossener Suche.
 | 8.4 | HF-Radar ThREDDS | `hfrnet-tds.ucsd.edu/` | absent (Timeout) | pending |
 | 8.5 | HF-Radar EMODnet (EU) | `erddap.emodnet-physics.eu/…/HFRADAR_NADR_Totals/index.json` | 200 (21 322 B) | live |
 | 8.6 | HF-Radar Ifremer (EU) | `erddap.osupytheas.fr/…/HFRADAR_grid_copernicus/index.json` | 200 (24 903 B) | live |
-| 8.7 | HF-Radar hfrnode | `hfrnode.eu/` | absent (Timeout) | pending |
+| 8.7 | HF-Radar hfrnode | `hfrnode.eu/` | 200 (6,4 s) | live (langsam) |
 | 8.8 | HF-Radar Kanada | `ceotr.ocean.dal.ca/erddap/info/codar_totals_2015/index.json` | 200 (8 120 B) | live |
 | 9.1 | BGC-Argo Index | `data-argo.ifremer.fr/argo_bio-profile_index.txt.gz` | 200 (14 302 471 B) | live (Vollkatalog) |
 | 9.2 | Argovis Vocabulary | `argovis-api.colorado.edu/argo/vocabulary?parameter=data` | 200 (1 195 B) | live |
 | 9.3 | Ifremer ERDDAP | `erddap.ifremer.fr/erddap/index.json` | 200 (718 B) | live (Kern-Argo) |
 | 9.4 | PolarWatch | `polarwatch.noaa.gov/erddap/index.json` | 200 (730 B) | declined (kein BGC) |
-| 10.1 | HAWC 2HWC | `data.hawc-observatory.org/…/2HWC.yaml` | absent (TLS-Gap) | pending (TLS-Kette) |
-| 10.2 | HAWC 3HWC | `data.hawc-observatory.org/…/3HWC.yaml` | absent (TLS-Gap) | pending (TLS-Kette) |
+| 10.1 | HAWC 2HWC | `data.hawc-observatory.org/…/2HWC.yaml` | 200 (Playwright; curl -k 200, 18 588 B) | live (Browser) — curl braucht das TLS-Intermediate |
+| 10.2 | HAWC 3HWC | `data.hawc-observatory.org/…/3HWC.yaml` | 200 (Playwright; curl -k 200, 51 833 B) | live (Browser) — curl braucht das TLS-Intermediate |
 | 10.3 | LHAASO 1LHAASO | `casdc.china-vo.org/…/table.csv` | 200 (16 456 B) | live |
 | 10.4 | Telescope Array Zenodo | `zenodo.org/records/8427755` | **200** (62 404 B) | pending → **Route offen** |
 | 10.5 | Super-K | `www-sk.icrr.u-tokyo.ac.jp/sk/lowe/` | 200 (747 B) | declined (position-only) |
 | 11.1 | ANTARES | `api.antares.noirlab.edu/v1/loci?page[limit]=10&page[offset]=0` | 200 (20 652 B) | live |
 | 11.2 | Fink/LSST | `api.lsst.fink-portal.org/api/v1/conesearch` | **200** (42 B) | pending → **antwortet** |
-| 11.3 | Lasair-ZTF | `lasair-ztf.lsst.ac.uk/api/query/` | 404 | blocked key (Token) |
+| 11.3 | Lasair-ZTF | `lasair-ztf.lsst.ac.uk/api/query/` | 404 (Wartung) | blocked key (Token); **Wartung 14.–16.9., at-risk 17.–18.9.** — Wiedervorlage |
 | 11.4 | ALeRCE | `api.alerce.online/alerts/v1/objects/` | **200** (5 740 B, via VPN) | pending → **antwortet** |
 | 11.5 | TNS | `wis-tns.org/…/tns_public_objects.csv.zip` | 403 | blocked (UA-Gate) |
 | 11.6 | Gaia Alerts | `gsaweb.ast.cam.ac.uk/alerts` | 200 (7 574 B) | declined (HTML-Portal) |
@@ -98,7 +98,15 @@ maschinenlesbarer Weg nach abgeschlossener Suche.
 | 11.4 ALeRCE | 000 | **200** (via VPN) |
 | 11.3 Lasair-ZTF | 401 | **404** |
 | 8.7 hfrnode.eu | 200 | **absent** (Timeout) |
-| 10.1/10.2 HAWC | 200 (curl -k) | **absent** via curl — TLS-Ketten-Gap bleibt |
+| 10.1/10.2 HAWC | 200 (curl -k) | **200 via Playwright/Browser**; curl braucht das TLS-Intermediate (der Server sendet nur das Leaf-Zert, `verify error 21`) |
+| 8.7 hfrnode.eu | 200 | **200** (6,4 s — der „absent" war ein zu kurzer Timeout) |
+| 11.3 Lasair-ZTF | 401 | **404** — geplante Wartung (Lasair-ZTF/-LSST offline 14.–16.9., at-risk 17.–18.9.) |
+
+## Harte Bandagen (Playwright + `-k` + `--cacert`)
+
+- **HAWC** (`data.hawc-observatory.org`): die TLS-Kette ist unvollständig — der Server sendet nur das Leaf-Zert (`openssl s_client` → `unable to get local issuer certificate`, verify 21). **Playwright holt das YAML (200)** und der Katalog parst (RA/Dec/Flux/Index); `curl -k` liefert 200 (18 588 B). Fix für den Archivar: das Let's-Encrypt-Intermediate ins CA-Bundle (`OMEGAFLOW_CA_BUNDLE`).
+- **Lasair**: der 404 ist die **Wartungsseite** („Due to scheduled maintenance, both Lasair-ZTF and Lasair-LSST will be fully offline from Monday morning Sept 14 through Wednesday Sept 16, and operating at-risk on Sept 17-18"). Kein toter Pfad — Wiedervorlage 2026-09-18.
+- **hfrnode.eu**: antwortet 200, nur langsam (6,4 s) — der vorige `absent` war ein Timeout.
 
 ## Gesamtbild (2026-09-14)
 
