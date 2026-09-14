@@ -1243,13 +1243,14 @@ mod cdn_cache_tests {
 
     #[test]
     fn cache_fresh_cdn_falls_back_to_mtime_for_non_cdn_urls() {
-        let path = "/tmp/opencode/omegaflow_cdn_fallback_test.bin";
-        let _ = std::fs::remove_file(&path);
+        let path = std::env::temp_dir().join("omegaflow_cdn_fallback_test.bin");
+        let path = path.to_str().unwrap();
+        let _ = std::fs::remove_file(path);
         assert!(
             !cache_fresh_cdn(path, 3600, "https://example.com/plain.bin"),
             "an absent cache is not fresh"
         );
-        std::fs::write(&path, b"bytes").unwrap();
+        std::fs::write(path, b"bytes").unwrap();
         assert!(
             cache_fresh_cdn(path, 3600, "https://example.com/plain.bin"),
             "a freshly written non-cdn cache serves within ttl"
@@ -1258,7 +1259,7 @@ mod cdn_cache_tests {
             !cache_fresh_cdn(path, 0, "https://example.com/plain.bin"),
             "a zero ttl closes the gate"
         );
-        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(path);
     }
 }
 
