@@ -3,7 +3,7 @@
   session: Ernte-Folge 25
   class: handover
   date: 2026-09-15
-  sha256: 0130ce6906a1813cf3216d59f0b85c8e215b8cb01dabf5e96f7e402f44c784a4
+  sha256: 75812b7f5afaef64c7ae4ebf8fe5854ed597716b667af768fc62c4068d12c575
   status: live
 -->
 # Handover — Ernte-Folge 25 (2026-09-15)
@@ -148,10 +148,13 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   **20 neue Kandidaten** (WiggleZ-TAP, LAMOST DR10/11 u. a.); **17
   parser-gap-Einträge** ergänzt (astro: SPHEREx/Euclid/Pan-STARRS/NRAO/CHIME/
   SVOM; Sensor-Welle: IGRA/Wyoming/Iowa-RAOB/SondeHub/EMODnet/EMSO/IOOS/
-  SmartBay/AWC-PIREP/meteo.lt/GTMBA). OFFEN: die Disposition der
-  verifiziert(49)/ausstehend(36)/void(5)-Kandidaten in die Register
-  (sources/dead/blocked/declined) + Entfernen aus dem Ledger — der Ledger
-  schrumpft auf die offene Menge.
+  SmartBay/AWC-PIREP/meteo.lt/GTMBA). **Disposition gefahren:** **46 Kandidaten
+  → `declined_sources.φ`** (15 registry, 10 redundant/superseded TAP, 4 catalog,
+  3 html, 7 superseded-by-integrated, aggregated-index/geographic/derived/…);
+  die 3 blocked-Vorschläge (Voyager-1/2 RSS, LPF DRS-FITS) sind in
+  `blocked_sources.φ` schon als Geschwister benannt → keine Dublette.
+  **Ledger 107 → 40** (13 ausstehend + 10 verifiziert pending + 17 parser-gap) —
+  die offene Menge; Ledger jetzt versioniert (`.gitignore`-Ausnahme).
 - giveup_scan-Sediment (nicht Teil des Ledger-Atoms): 4553 Fundstellen,
   Klassen declined 3277 / descoped 550 / gated 397 / honest-face 183 —
   docs-Sediment. (Schritt: `cargo run -p omegaflow-utils --bin giveup_scan
