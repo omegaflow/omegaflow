@@ -11,6 +11,18 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "ltmm" => movement_monitoring::parse_bin(bytes),
         "noaa_ccor" => ccor::parse_bin(bytes),
         "celestrak_eop" => celestrak_eop::parse_bin(bytes),
+        "gk2a_ami" => gk2a_ami::parse_bin(bytes).map(|granules| {
+            granules
+                .into_iter()
+                .map(|g| (g.t, g.rad_mean as f64, gk2a_ami::COMP_RADIANCE))
+                .collect()
+        }),
+        "goes_abi" => goes_abi::parse_bin(bytes).map(|granules| {
+            granules
+                .into_iter()
+                .map(|g| (g.t, g.rad_mean as f64, goes_abi::COMP_RADIANCE))
+                .collect()
+        }),
         "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
             let mut out = Vec::new();
             for c in curves {
@@ -90,6 +102,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             celestrak_eop::COMP_PMY => Some("eop_iers_polar_motion_y_arcsec"),
             _ => None,
         },
+        "gk2a_ami" => gk2a_ami::component_name(comp),
+        "goes_abi" => goes_abi::component_name(comp),
         "maxi" => match comp {
             crate::maxi::BAND_2_20 => Some("maxi_2_20kev_flux_ph_s_cm2"),
             crate::maxi::BAND_2_4 => Some("maxi_2_4kev_flux_ph_s_cm2"),
@@ -108,6 +122,7 @@ pub fn geo_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<crate::geo
 
 pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
+        "gdp_drifter" => gdp_drifter::component_name(comp),
         "bgr_infrasound" => match comp {
             crate::geo::COMP_BGR_AZIM => Some("bgr_infrasound_back_azimuth_deg"),
             crate::geo::COMP_BGR_VAPP => Some("bgr_infrasound_apparent_velocity_ms"),
