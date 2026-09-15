@@ -3524,3 +3524,63 @@ note SuperDARN-RAWACF via FRDR (Repository-Sammlung); die SuperDARN-Los-Geschwin
 decline variant
 url https://www.nmdb.eu/rt/realtime.txt
 note NMDB-Neutron-Monitor-Zählraten (alle ~30 Stationen, minütlich) — dieselbe Messung wie die integrierten OULU-Felder (sources.φ:1063), nur multi-Station. Nur via Proton erreichbar (gemessen 2026-09-15 HTTP 200, 58984 B; direkt absent).
+
+decline spectral-series
+url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
+note ONC Hydrophon — Schalldruck-Spektraldichte ist eine 1921-Bin-Serie (MATLAB-v5 miCOMPRESSED), kein Skalar-Feldblock; Reduktion auf einen Wert = Band-Wahl (0-Kanon, NRS-Präzedenz). Die Form (Serie, nicht Skalar) schließt das Oszillator-Gate — der Konsument ist hier nicht der Grund. Parser (mat5.rs) existiert, das Register trägt nur Skalare.
+
+decline registry/katalog
+url https://archive.eso.org/tap_obs
+note ESO tap_obs — ObsCore/phase3v2-Spalten sind Beobachtungs-Discovery-Metadaten (s_ra/s_dec, em_min/max, t_exptime), kein Skalar-Feld; die Messung liegt in den FITS hinter access_url.
+
+decline imagery
+url s3://noaa-eri-pds
+note Emergency-Response-Imagery (em) — visuelle GeoTIFF-Kacheln (JPEG-in-TIFF), keine kalibrierte Skalar-Radianz (NASA-EPIC/earth-imagery-Präzedenz). Georeferenzierung gelesen, das Bild ist kein Feld.
+
+decline terrain
+url s3://noaa-nos-coastal-lidar-pds
+note NOAA NOS Coastal Lidar — LAS/LAZ-Punktwolke misst Geländehöhe (Terrain), keine propagierende Kraft (opentopodata/GEBCO-Präzedenz; Gestalt-Zeugen-Kandidat). Das Verdikt ist terrain, nicht der Konsument.
+
+decline terrain
+url s3://usgs-lidar-public.s3.amazonaws.com
+note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
+
+decline terrain
+url s3://noaa-ocs-hydrodata-pds
+note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compiler emittiert einen OCS1-Gestaltzeuge; Bathymetrie ist terrain, kein Kraft-Feld (opentopodata/GEBCO-Präzedenz).
+
+decline registry/katalog
+url http://jvo.nao.ac.jp/skynode/do/tap/saga
+note JVO-SAGA-TAP — statischer Katalog stellarer Elementhäufigkeiten (EMP-Sterne), chemische Zusammensetzung, keine Kraft (kein Sinnesorgan für [Fe/H]).
+
+decline spectral-series
+url https://registry.opendata.aws/noaa-nodd/
+note NOAA-NODD NRS — 1195-Bin-Sound-Level-Spektrum ist eine Serie, kein Skalar; der noaa_nrs_psd-Feldblock wurde als Oszillator gestrichen (c3f33f6), das CDN-Asset bleibt Spektral-Record. Die Form (Serie) schließt das Gate.
+
+decline molecular
+url https://data.mendeley.com/datasets/75tsccprd2/1
+note GNIP — δ18O/δ2H-Niederschlags-Isotopie ist ein geochemischer Tracer (‰), kein Kraft-Feld (molecular-Präzedenz: BOLD/RCSB).
+
+decline superseded-by-integrated
+url http://tap.roe.ac.uk/vsa/sync
+note WFAU VSA — VVVDR1.vvvSource HTTP 500 (Backend down); NOIRLab Astro Data Lab spiegelt vhs_dr5 → über NOIRLab integriert.
+
+decline superseded-by-integrated
+url http://tap.roe.ac.uk/wsa/sync
+note WFAU WSA — UKIDSSDR10PLUS HTTP 500 (Backend down); NOIRLab spiegelt ukidss_dr11plus → über NOIRLab integriert.
+
+decline superseded-by-integrated
+url http://jvo.nao.ac.jp/skynode/do/tap/alma
+note JVO-ALMA-TAP — public.cube/cube_cutout ist ein Spiegel von ALMA EU; kein eigener Messwert.
+
+decline registry/katalog
+url http://jvo.nao.ac.jp/skynode/do/tap/hitomi
+note JVO-Hitomi-TAP — trägt nur ivoa.obscore (ObsCore-Metadaten), keine Datentabelle.
+
+decline no-physical-force
+url https://hub.marinecadastre.gov/pages/vesseltraffic
+note NOAA MarineCadastre AIS — aktives Selbstfahrer-Objekt (Vessel-Telemetrie: lat/lon/SOG/COG/Zeit) = Kinematik eines angetriebenen Objekts (Aktuator), kein propagierendes Feld; der Sensor misst das Objekt, nicht die Kraft (NetworkRail-Präzedenz). Re-Wiegen 2026-09-15.
+
+decline no-physical-force
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+note ADS-B (Luftfahrzeug) — Kinematik eines angetriebenen Objekts (Aktuator): die Telemetrie misst die Position, kein propagierendes Feld (Rat 2026-09-15: Sensor=accept, passiver Treiber=accept, aktives Objekt=decline).
