@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 4
-  sha256: 7a255bb3394695b5580af04dc246f045045f4c7b4bd7031a2dda39b1a1fd3fad
+  sha256: 99e0240b6b128c53e798a39c8dae69fcc46a8a849cfa9ce7e84551dfd867a488
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -138,7 +138,9 @@ contrast, depends on the (receiver, transmitter) pair (a two-way-link effect,
 within a single epoch). The named machine of the NOCC reduction remains open.
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 ATDF files are absent
-from the harvest, so any value living there is pending, not zero.
+from the harvest (an archive gap of the ATDF product, which covers 1987/1988/1994),
+but the doppler value lives in the sibling `.asc.gz` (the NAVIO series, 1973–2002,
+harvested) — not absent.
 
 ## 5. Position against the literature
 
