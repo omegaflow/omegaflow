@@ -3,7 +3,7 @@
   session: Bau-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: a9855b3bf9612c3cacf764fc993a5d2d40da10697e27851fc5a4256fac520ded
+  sha256: 869f511313915d4a04096e4b055768db4213b84d08ab2fc76e81062b81893a20
   status: live
 -->
 # Handover — Bau-Folge 35 (2026-09-15)
@@ -54,7 +54,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 - `iss_lis`: gemessen (2026-09-15) — `NETLOC` ist ein CDN-Release-Tag, keine Route; die Granulat-Route
   (`--granule`, Workflow) läuft bereits über `data.ghrc.earthdata.nasa.gov`. Der Eintrag „tote Route
   ghrc.nasa.gov" ist überholt; ein Tag-Rename bräuchte `phi/sources.φ` (fremd). (Schritt: Tag-Rename
-  zusammen mit der sources.φ-Zeile, wenn der Baum ruhig ist.)
+  zusammen mit der sources.φ-Zeile.)
 - `gdp_drifter_compiler` läuft bereits über `noaa-oar-hourly-gdp-pds.s3.amazonaws.com` (S3-Route lebt).
 
 ## Register-Digest — Bau-Linie
