@@ -19,6 +19,14 @@ hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_abs
 field gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square gravity m 5 0.0 0.0
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
+url https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
+format tar_gz_yaml
+header Authorization {EARTHDATA_EDL_TOKEN}
+ttl 2592000
+at earth
+last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 86400 0.0 0.0
+last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
+
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 ttl 10
 on earth 52.5 13.4 0

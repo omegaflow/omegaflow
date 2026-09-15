@@ -195,3 +195,23 @@ note JVO-ALMA-TAP (offen, anonym 200 VOTable) — "public".cube/cube_cutout; Spi
 descoped
 url http://jvo.nao.ac.jp/skynode/do/tap/hitomi
 note JVO-Hitomi-TAP (offen, anonym 200 VOTable) trägt NUR ivoa.obscore (ObsCore-Metadaten), keine Datentabelle; Hitomi-Daten offen bei DARTS/JAXA (darts:hitomi-data, 200) + HEASARC.
+
+blocked parser-def odf
+url https://atmos.nmsu.edu/PDS/data/jnogrv_1001/
+note Juno Radio-Science (PDS-Atmospheres, anonym HTTP 200, gemessen 2026-09-14): rohe ODF/TNF/RSR/OLF (TRK-2-34, 182-Byte-SFDU). Messung echt — zweiwege X-Band-Doppler-Range-Rate (SCID 61). Kraft-Korrektur (Bau31): der Sensor ist der Funkempfänger → `em`, nicht `gravity`. Parser-Gap: das Archivar liest kein ODF/TNF/RSR. Erste Stufe des DSN-Binärdecoders (Parser-Gap A): die kleinste NH-REX-TNF hexdumpen, Felder gegen TRK-2-34 benennen.
+
+blocked parser-def tnf
+url https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/
+note New Horizons REX TNF (PDS-SBN, anonym HTTP 200, gemessen 2026-09-14): TRK-2-34 TNF, Cruise-Doppler. Messung echt, `em` (Funkempfänger). Parser-Gap: das TNF-Binärformat (182-Byte-SFDU) ist unkonsumierbar; der DSN-Binärdecoder (Parser-Gap A) ist die erste Sprosse.
+
+blocked parser-def odr
+url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
+note Voyager open-loop ODR (PDS-Rings, anonym HTTP 200, gemessen 2026-09-14): VG1/VG2 Jupiter, VG2 Uranus/PODR, rohe 5056-Byte-ODR-Records. Messung echt, `em`. Parser-Gap: ODR-Binärformat. Die unitless-ADC-Variante (`pds-rings.seti.org/voyager_rss_raw`, kein Doppler-Produkt im Bundle) ist descoped (Befund Bau31); dieses Bundle trägt die ODR-Records.
+
+blocked parser-def rss
+url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
+note Voyager RSS (PDS-PPI, anonym HTTP 200, gemessen 2026-09-14): PPI-VG2/RSS-Basisband (.ODR, 5056-Byte). Messung echt, `em`. Parser-Gap: RSS-Basisband. Geschwister: SPDF Voyager-1 Saturn-Encounter (PSPA-00049, UNIVAC-1108, 26 Tracking-Records je Block) — ebenfalls Binärformat, offen.
+
+blocked parser-def drs-fits
+url https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
+note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, gemessen 2026-09-14): rohe DRS-FITS (72 Dateien). Messung echt — differentielle Beschleunigung; hier IST die Messung die Schwerkraft → `gravity`. Parser-Gap: DRS-FITS-Semantik; der `fits.rs`-Arm (Gap B) ist die Basis. Geschwister-Route: ESA-Legacy-Archiv `lpf.esac.esa.int/lpfsa/` (Δg-Zeitreihen).
