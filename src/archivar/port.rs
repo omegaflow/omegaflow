@@ -1758,6 +1758,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             || src.format == "csv_zip"
             || src.format == "kernel_text"
             || src.format == "opendap"
+            || src.format == "tar_gz_yaml"
         {
             continue;
         }
