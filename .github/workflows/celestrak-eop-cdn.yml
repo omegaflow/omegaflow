@@ -1,0 +1,60 @@
+name: celestrak-eop-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.check.outputs.present }}
+    steps:
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: check
+        run: |
+          if gh release view celestrak.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "celestrak_eop.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset celestrak_eop.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset celestrak_eop.bin missing — compiling and manifesting"
+          fi
+  compile:
+    needs: gate
+    if: needs.gate.outputs.present != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the celestrak.org release exists on the CDN
+        run: |
+          if ! gh release view celestrak.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create celestrak.org --repo omegaflow/sources \
+              --title "celestrak.org" \
+              --notes "CelesTrak EOP-All.csv Earth orientation parameters compiled to an oscillator series (gravity). Record stride 20 B LE: t (f64, TDB seconds), val (f64), comp (u32; 1=UT1-UTC s, 2=PMX arcsec, 3=PMY arcsec). Magic EOP1."
+          fi
+      - name: Fetch the leap-second kernel
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+      - name: Fetch EOP-All.csv
+        run: |
+          curl -sSfL --retry 2 --max-time 120 -o EOP-All.csv \
+            https://celestrak.org/SpaceData/EOP-All.csv || \
+          echo "EOP-All.csv returned void — datacenter IP block measured (harvest locally via the Proton exit)"
+      - name: Compile the EOP series and upload to CDN
+        run: |
+          test -s EOP-All.csv && \
+          cargo run -p omegaflow-harvest --release --bin celestrak_eop_compiler -- \
+            --input EOP-All.csv --emit-bin celestrak_eop.bin \
+            --lsk kernels/naif0012.tls --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "celestrak-eop-cdn: celestrak_eop.bin returned void" \
+                 "celestrak_eop compile returned void — the CSV fetch was ip-blocked (datacenter IP) or the parse carried no observed rows. Harvest locally via the Proton exit and re-run. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
