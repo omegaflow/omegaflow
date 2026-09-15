@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 8f0ebd294e655fd214e5fb955d4dcf44d3a52ba4e42b6a1c8e3e2cb72cf0408e
+  sha256: c277c41bbd792d95d241fed374cf4d5cf52540dad23a458cf07b2df4eb0ca9ba
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -25,14 +25,20 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 ## Bande-Split (20-s-Bande)
 
 - **Bande-Split (20-s-Bande) — Split gemessen: Empfänger-Wanderung.** Die
-  1-s-Klasse trägt mode 1 (alle drei Stationen) + mode 2 (nur st63) + mode 3; das
-  Band sitzt in mode 3. Der Split (PASF-1-s-mode-3 gegen PNAV-`trans` gejoint,
-  103 261 gematcht): die Frequenz ist **rx-fix** — für festes rx gleich, egal
-  welcher Sender sendet (rx14 ≈ 45, rx43 ≈ 44–45, rx63 ≈ 55,6 mHz) → die Linie
-  folgt der **Empfangskette**, nicht dem Sender. Offen daneben: (a) die Amplitude
-  hängt vom (rx,tx)-Paar ab (rx14: 16 mit tx43 vs 125 mit tx63; rx63: 670 mit tx14
-  vs 2,0 mit tx43); (b) rx63 reproduziert 55,9 statt 47,35 mHz (Teilmenge/Epoche
-  zu prüfen). Instrument: `tools/measure/src/bin/pioneer10_txrx_split_probe.rs`.
+  1-s-Klasse trägt alle drei ground_modes (mode 1 = 30 973, mode 2 = 11 631 [nur
+  st63], mode 3 = 154 150; 78,3 % three-way) — nicht three-way-only; das Band
+  sitzt in mode 3. Der Split (PASF-1-s-mode-3 gegen PNAV-`trans`, 103 261
+  gematcht): die Frequenz ist **rx-fix** → die Linie folgt der **Empfangskette**.
+  Beide Wrinkles aufgelöst: (a) die Amplitude hängt **real** vom (rx,tx)-Paar ab —
+  innerhalb einer Epoche (1988) bei vergleichbarem n bleibt der Faktor (rx14 13,9×,
+  rx43 ≈3124×, rx63 ≈59×); die LS-Amplitude ist n-unabhängig → ein Zweiweg-Effekt
+  (der Uplink setzt die Stärke), kein Epochen-/n-Artefakt. (b) rx63 = 55,9 mHz ist
+  der **1993-Epochen-Peak** (52 985 der 92 130 rx63-Samples), kein Gitter-Artefakt;
+  das Papier (st63 → 47,35 mHz 1988) ist **nicht reproduziert** — auch die
+  1988-Werte differieren (rx63 50,92, rx14 46,58, rx43 44,12); Ursache offen
+  (Datenversion: aktueller Bestand 1 071 540 Records / 196 754 1-s vs. Papier
+  73 249 sub-10-s — oder Methode). Instrument:
+  `tools/measure/src/bin/pioneer10_txrx_split_probe.rs`.
 - **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
   stehen, gemessen:
   - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
