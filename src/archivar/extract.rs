@@ -10,6 +10,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "circor" => phonocardiogram::parse_bin(bytes),
         "ltmm" => movement_monitoring::parse_bin(bytes),
         "noaa_ccor" => ccor::parse_bin(bytes),
+        "celestrak_eop" => celestrak_eop::parse_bin(bytes),
         "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
             let mut out = Vec::new();
             for c in curves {
@@ -81,6 +82,12 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "noaa_ccor" => match comp {
             ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
+            _ => None,
+        },
+        "celestrak_eop" => match comp {
+            celestrak_eop::COMP_UT1_UTC => Some("eop_iers_ut1_utc_s"),
+            celestrak_eop::COMP_PMX => Some("eop_iers_polar_motion_x_arcsec"),
+            celestrak_eop::COMP_PMY => Some("eop_iers_polar_motion_y_arcsec"),
             _ => None,
         },
         "maxi" => match comp {
