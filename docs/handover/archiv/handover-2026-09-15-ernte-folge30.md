@@ -3,7 +3,7 @@
   session: Ernte-Folge 30
   class: handover
   date: 2026-09-15
-  sha256: 648e7b507efb8e5781aef703dff11946ba73a30f02b5c2027e99fb676c39fad9
+  sha256: e746a42d19a7f379fc1998e02d026380ecaee6309be39cc67ce25fb63d1eb249
   status: live
 -->
 # Handover — Ernte-Folge 30 (2026-09-15)
@@ -125,9 +125,9 @@ trägt BiSON-Tabelle + IGETS-Reader weiter.)
 - Daten-Holdings: `abk_dbdt_1h_*`, kegel-log, GIC/corona; new_horizons/voyager1/2
   976-B-Platzhalter; ~50-G-Backup-Ziel-Layout. (Schritt: erste Messung —
   Holdings lesen, Herkunft je Stück benennen.)
-- Orphan-Verdicts: 55 undokumentierte `stale_pending`; Step-4 CI-Dedupe neu
-  scopen; 14 undokumentierte `repo_tag`. (Schritt:
-  `survey-2026-09-03-orphan-verdicts.md` — je Verdict dokumentieren/stretchen.)
+- repo_tag CDN-Bereinigung (Schritt 5): die 14 `repo_tag`-Releases tragen kein
+  Register-Heim (CDN_ZIEL_SCHEMA §1). (Schritt: Operator-Wort; je Asset
+  Byte-Vergleich CDN-Digest ↔ Repo-Raw, einzeln, nie Blindwurf.)
 - Korpus-Rest: thread-matrix-Lücken (Gravimeter, Infraschall, Hydroakustik,
   seismische Worldlines, HF-Radar, GIC, Blitz, BGC-Argo, VHE-Teleskope);
   WWLLN-netcdf/BPA-GIC; BiSON-Tabelle; tmp-opencode-Scratch/SuperDARN-FITACF/
