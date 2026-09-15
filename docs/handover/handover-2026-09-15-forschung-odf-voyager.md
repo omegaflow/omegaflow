@@ -3,7 +3,7 @@
   session: Forschung (Sonden-ODF + Voyager Saturn)
   class: handover
   date: 2026-09-15
-  sha256: 265a79135181cd7aad9e945e7134f3a6115313903d38d9c011519440b1905f06
+  sha256: 5505c27a81a1483208f418578bdd39bad79cd94feccc70554e728ba21a285ef7
   status: live
   see-also: docs/auftrag/auftrag-sonden-rohdaten-anfragen.md, docs/paper/twenty-second-band-ground-chain.md
 -->
@@ -14,7 +14,9 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet s
 viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
-überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
+darf schmutzig sein.
 
 Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
 Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen

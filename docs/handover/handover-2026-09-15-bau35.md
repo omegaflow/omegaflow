@@ -3,7 +3,7 @@
   session: Bau-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: 79d6cb1738f4797338c3c54fea78d71cd99e5f2fc8fdfb71872c8e8fada0b210
+  sha256: facbdef75742e51adc2eb2d25dccc5b1f5e6244afdd191a26185e8946e0cb04b
   status: live
 -->
 # Handover — Bau & Code (2026-09-15, Bau35)
@@ -13,7 +13,9 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet s
 viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
-überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
+darf schmutzig sein.
 
 Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
 Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
