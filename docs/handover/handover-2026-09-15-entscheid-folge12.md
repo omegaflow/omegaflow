@@ -3,7 +3,7 @@
   session: Entscheid-Folge XII
   class: handover
   date: 2026-09-15
-  sha256: 9b27ced9cb9f9536ec0bedc4cd2fabe188f65f9e4f9736022d19bdbdf9c39d99
+  sha256: b3c1c3a9875fefc90eacb7648f8084d7be3f75526e372b56d3452bc65775c00d
   status: live
 -->
 # Handover — Entscheid-Folge XII (2026-09-15)
@@ -35,8 +35,29 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   bereits unerreichbaren aus `main`s History entfernt (Baum-Inhalt unverändert;
   Force-Push `afae680 → b2bc1a2`, gemessen `git log main -- <8 Pfade>` leer).
   Alle acht PII-Commits sind damit unerreichbar, aber per SHA noch abrufbar.
-  (Schritt: Operator — Purge-Antrag mit der Commit-/Blob-Liste senden,
-  `state/mail/github-purge-request.md`, `https://support.github.com/contact`.)
+  Der Purge-Antrag ist gesendet (Ticket **#4761482**, bestätigt
+  `support@githubsupport.com` 2026-09-15). (Schritt: GitHubs Purge-Bestätigung
+  abwarten; danach den alten Roh-Link auf 404 prüfen —
+  `curl -sI https://raw.githubusercontent.com/omegaflow/omegaflow/<alt-SHA>/docs/auftrag/gavo-dc-account-anfrage.md`.)
+
+## GitHub-Token — auf zwei Tokens konsolidiert (gemessen)
+
+- Zwei Jobs → zwei Tokens, beide unter `omegaflow`: **T1 Schreiben** (classic,
+  `repo`+`workflow`; lokal `GH_TOKEN` + Actions `OMEGAFLOW_TOKEN`) und **T2
+  Lesen** (`GITHUB_SEARCH_TOKEN`, fine-grained read-only; nur `archive_search`).
+- Messung (API): der alte omegaflow-Token (`ghp_tWpB…`) lag doppelt zu `gh-cli`;
+  johannestyroller `omegaflow-cdn` war der CI-Token (public_repo);
+  `.git-credentials` trug zwei tote (401) und einen johannestyroller-OAuth-Token
+  — git nutzt sie nicht (Helper `gh auth git-credential`). Abgleich
+  `.secrets.local`↔Actions: nur `GH_TOKEN`→`OMEGAFLOW_TOKEN`; alle übrigen
+  API-Keys stehen bereits in Actions.
+- Ausgeführt: T1 rotiert (neuer classic PAT, gemessen `login=omegaflow`,
+  `push:true` auf `omegaflow/omegaflow`+`sources`); Actions `OMEGAFLOW_TOKEN`
+  darauf gesetzt (2026-09-15T19:38Z, Verifikationslauf `health-check`
+  `35014790907`); `.git-credentials` gesichert+geleert. (Schritt: Operator —
+  nach grünem Lauf löschen: omegaflow `gh-cli` + altes `omegaflow`;
+  johannestyroller `omegaflow-cdn`, `gho_…`, abgelaufene
+  `world_magnetic_model*`/`nebra*`/`Laptop Rescue`.)
 
 ## adoption — Drei-Mail-Block: Entwürfe sendfertig (lokal), Send beim Operator
 
@@ -54,8 +75,6 @@ einen der offenen Posten.
 
 - GitHub Support — User→Org / HTTP 422: Ticket ist raus, Antwort offen.
   (Schritt: Postfach auf die Support-Antwort prüfen.)
-- GitHub-Token — der 2026-09-11 im Chat exponierte Token ist zu widerrufen.
-  (Schritt: Operator, https://github.com/settings/tokens.)
 - Rubin RSP-Datenrechte — Antwort an Shaughnessy (SLAC) gesendet 2026-09-15;
   Entscheidung offen (`state/mail/auftrag-rubin-data-rights-antrag.md`).
 - NSE/Haug — Anfrage raus, Antwort offen (Keimer).
