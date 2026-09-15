@@ -169,8 +169,11 @@ Die Linse (`source_url_candidates`) liest auch `catalog/MANIFEST.φ` und
 Kandidaten (A = A, kein Skip-Filter, kein Code-Pfad).
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
-URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
-kein Daten-JSON) → Oszillator-Gate → Klassifikation → Disposition.
+URL-Templates füllen → Erreichbarkeit `archive_search --verdict <url>` (direct →
+Proton → Wayback) und Datei-Typ `--sniff <url>` (Magic-Bytes + sha256) → Struktur
+prüfen (200er-HTML ist kein Daten-JSON; Binär-/Zip-Inhalt wird mit `curl` +
+`unzip`/Reader geprüft, nie als JSON-Fetch) → Oszillator-Gate → Klassifikation →
+Disposition.
 
 Die kanonischen Register werden nie gemirrort — nur `--verify phi` spiegelt
 (CI). `phi/pipeline/` und `phi/pipeline/research/` sind fetch-only (kein Mirror, Quota).
