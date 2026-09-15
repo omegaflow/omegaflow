@@ -307,6 +307,13 @@ only, never for routine work:
 | figures / scans / OCR | `vision` | vision |
 | architecture / deliberation | `council` | pro/max |
 
+Measured (2026-09-15, `session_burn`/opencode.db): flash dispatches cost
+~$0.001–0.011, pro/max ~$0.007–0.126 — 5–40× more. Head-to-head on a real repo
+task (diagnose the red `number_audit` test): grind-flash $0.0024 / 7.8 s vs
+grind-max $0.0104 / 19.7 s — **identical diagnosis**. Rule: **flash first** —
+dispatch the cheapest profile, and escalate to pro/max only when flash returned
+a wrong or incomplete answer, never by default.
+
 
 
 ## Kybernaut-Native Methodology
