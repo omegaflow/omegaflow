@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: c277c41bbd792d95d241fed374cf4d5cf52540dad23a458cf07b2df4eb0ca9ba
+  sha256: 8711b4569ec9ea1e29209a5dcaad89f3c03b50d7bacf3c4100208cfaec7fdffa
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -39,6 +39,18 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (Datenversion: aktueller Bestand 1 071 540 Records / 196 754 1-s vs. Papier
   73 249 sub-10-s — oder Methode). Instrument:
   `tools/measure/src/bin/pioneer10_txrx_split_probe.rs`.
+- **Papier-Nichtreproduktion (A/B/C gemessen).** Die Papier-Stationswerte
+  (45,75 / 51,55 / 47,35 mHz) reproduzieren nicht. A: Papier = 6-Datei-Harvest
+  (501 876 Records, `5caf45b` 2026-09-04), aktuell = 23-Datei (1 071 540,
+  `788c89d` 2026-09-11). B: der 6-Datei-Harvest ist eine Teilmenge — seine
+  1988-Per-rx-Peaks (46,58 / 44,12 / 50,92) sind identisch mit den 23-Datei-
+  1988-Peaks → die Dateizahl ist NICHT die Ursache. C: kein Methoden-Variant
+  (Detrend/Run-Lücke/Gitter/Fenster) verschiebt zu den Papier-Werten → Methode
+  ausgeschlossen. Rest: der im Papier unspezifizierte Schritt „exhaustive
+  subtraction of known effects" — die Deduktions-Kette nachvollziehen. (Schritt:
+  Deduktion 17/29 am aktuellen Bestand reproduzieren.) Instrumente:
+  `pioneer_atdf_6file_compiler`, `pioneer10_paper_harvest_probe`,
+  `pioneer10_method_sensitivity_probe`.
 - **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
   stehen, gemessen:
   - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
