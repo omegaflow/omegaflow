@@ -3,9 +3,8 @@
 # s2-direction (distanzlos, τ=0), gestalt (Körperfläche, τ = geologische Stabilität),
 # presence (ein Wesen am Punkt, nie der einzige Zeuge). Der Record (.bin, 4-Byte-Magic)
 # ist nur der Behälter — magic_identity (src/archivar/zeuge.rs) sagt, was darin sitzt.
-# NRS1 (Spektral) bleibt declined spectral-series; der noaa_nrs_psd-Feldblock ist in sources.φ
-# gestrichen (c3f33f6, Council C1), sein Sitz ist phi/declined_sources.φ (decline spectral-series),
-# das CDN-Asset bleibt Spektral-Record.
+# NRS1 (Spektral) bleibt pending; der noaa_nrs_psd-Feldblock ist in sources.φ gestrichen
+# (c3f33f6, Council C1), sein Sitz ist phi/blocked_sources.φ — benannt offen, nicht geglättet.
 # Disposition: witness s2-direction | witness gestalt | witness presence. Sortiert nach Art, dann URL.
 
 witness s2-direction

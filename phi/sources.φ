@@ -854,7 +854,7 @@ fanout_delay 2
 field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0 0.0
 field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
 
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate={week_ago}&endDate={today}
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
 ttl 3600
 at sun
 map .
@@ -862,7 +862,7 @@ lat cmeAnalyses.0.latitude
 lon cmeAnalyses.0.longitude
 field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square em km/s 3600 0.0 0.0
 
-url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate={week_ago}&endDate={today}&classType=X
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
 ttl 3600
 at sun
 regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
@@ -3948,14 +3948,6 @@ at earth
 field ut1_utc eop_iers_ut1_utc_s inverse-square em s 86400 0.0 0.0
 field pmx eop_iers_polar_motion_x_arcsec inverse-square em arcsec 86400 0.0 0.0
 field pmy eop_iers_polar_motion_y_arcsec inverse-square em arcsec 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/celestrak.org/celestrak_eop.bin
-format celestrak_eop
-at earth
-ttl 604800
-field eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0.0
-field eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
-field eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 ttl 86400
