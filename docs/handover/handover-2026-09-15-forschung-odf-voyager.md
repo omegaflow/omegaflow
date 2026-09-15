@@ -1,13 +1,13 @@
 <!--
-  title: Handover — Forschung: ODF-Ernte + Voyager Saturn (Stand 2026-09-15)
-  session: Forschung (ODF-Ernte + Voyager Saturn)
+  title: Handover — Forschung: Sonden-ODF + Voyager Saturn (Stand 2026-09-15)
+  session: Forschung (Sonden-ODF + Voyager Saturn)
   class: handover
   date: 2026-09-15
-  sha256: bf970739c308dca392e54acfc326a28fded5cc5209a9b2678b537fab114e6894
+  sha256: 265a79135181cd7aad9e945e7134f3a6115313903d38d9c011519440b1905f06
   status: live
   see-also: docs/auftrag/auftrag-sonden-rohdaten-anfragen.md, docs/paper/twenty-second-band-ground-chain.md
 -->
-# Handover — Forschung: ODF-Ernte + Voyager Saturn (2026-09-15)
+# Handover — Forschung: Sonden-ODF + Voyager Saturn (2026-09-15)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -22,49 +22,49 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-## Voyager Saturn (UNIVAC-1108) — gelesen, die Uhr offen
+## Voyager Saturn — Uhr dekodiert, Reader/Konsument offen
 
-- **Der Saturn-Encounter ist dekodiert** (V1 `PSPA-00049`, V2 `PSPA-00123`):
-  `src/archivar/voyager_saturn.rs` (2-B-Record-Header BE, 28 Sub-Records × 288 B,
-  36-Bit-Wörter, 6 Tests grün) + `tools/harvest/src/bin/voyager_saturn_compiler.rs`
-  (std-only TAR-Extraktion, V1+V2). Sample `DD059517_F1.DAT`: 1578 Records →
-  44 169 Tracking-Records (Doppler 29 527 / Range 6 900 / Sync 7 742).
-  **Offen: die Uhr.** w3/w8 sind zeitartig (monoton, wrap), Epoche + Einheit sind
-  aus dem Sample nicht entscheidbar; **Station (DSS) nicht identifiziert**.
-  (Schritt: NSSDC-Format-Doc `NSSD1260` oder die Voyager-Saturn-RSS-SIS laden und
-  w3/w8 gegen einen bekannten Zeitstempel pinnen, die DSS-Bits in w2/w4/w17 suchen.)
-- Register/CDN: `voyager_saturn.bin` ist noch keine `url`-Zeile in `phi/sources.φ`
-  und nicht auf dem CDN. (Schritt: nach dem Uhr-Decode registrieren.)
+- Der Reader `src/archivar/voyager_saturn.rs` dekodiert die IDRSPS-Uhr (Table 4:
+  word2 = YY/DOY/HH, word3 = MM/SS, word4 = SCID/network/station/band; Record-Type
+  90/91, Ground-Mode 1-4 = Doppler); 7 Tests grün. Gemessen: 1980-295 .. 1981-261,
+  Stationen 12,14,42,43,44,61,62,63 (DSN), 822 782 Tracking-Records (125 062 872 B).
+  Die Register-Duty steht (`phi/blocked_sources.φ` pending + `phi/sources.φ`-Block).
+  **Offen: kein `voyager_saturn`-Reader** — die bin-Slots sind generisch
+  (`counter_word`/`value_word`/`secondary_word` tragen je nach kind Doppler, Range
+  oder Winkel), Magic fehlt in `zeuge.rs`. (Schritt: Reader mit kind→Observable
+  bauen, dann `voyager_saturn.bin`-CDN-Dispatch.)
+- **Offen: die Winkel-Slots** (`status_a`/`status_b`) haben keine em-Einheit
+  (`rad` steht nicht im em-Registry `units.rs`); die sources.φ-Zeile führt nur
+  Doppler/range. (Schritt: Kraft/Einheit für Winkel entscheiden.)
 
-## Sonden-ODF-Ernte — sieben Compiler gebaut, zwei offen
+## Sonden-ODF-Ernte — Blöcke stehen, CDN offen
 
-- Gebaut (TRK-2-34, `parse_odf` wiederverwendet, Muster `juno_odf_compiler`):
-  Magellan (grün: 14 665 009 Samples, 1 055 880 656 B), MGS, MRO, Mars Odyssey,
-  MESSENGER, Mars Express (MaRS), Rosetta (RSI) —
-  `tools/harvest/src/bin/{magellan,mgs,mro,odyssey,messenger,mars_express,rosetta}_odf_compiler.rs`.
-  **Register-Eintrag nicht committet**: `phi/blocked_sources.φ` ist fremd-staged
-  (Migration) — die neun Blöcke (je `pending`, URL + SCID + data_type + gemessene
-  Record-Zahl) sind aus den Compiler-Konstanten neu erzeugbar. (Schritt: bei
-  ruhigem Baum die Blöcke in `phi/blocked_sources.φ` + `phi/sources.φ` schreiben.)
-- **Dawn** — kein anonymer ODF-Pfad: PPI `/data/` 404, PDS-Geosciences `/dawn/`
-  404, SBN `pds4/dawn/` trägt GRaND/gravity/mission ohne RSS. (Schritt:
-  PDS-Katalog nach dem Dawn-RSS-ODF-Bundle durchsuchen.)
-- **Venus Express (VeRa)** — PSA `VEX-V-VRA-1-2-3-*` trägt unter
-  `DATA/LEVEL1A/CLOSED_LOOP/` nur `IFMS/`, kein DSN/ODF; `parse_odf` findet keine
-  36-B-Orbit-Records. (Schritt: PSA-Katalog `VEX-V-VRA` auf eine DSN/ODF-Route prüfen.)
+- Die neun Blöcke (7 ODF-Compiler + Voyager + Dawn) stehen in
+  `phi/blocked_sources.φ`, `voyager_saturn.bin` als `url`-Zeile in `phi/sources.φ`.
+  Magellan gemessen 14 665 009 Samples (1 055 880 656 B); die übrigen ODF-Compiler
+  tragen keine SCID/data_type/Record-Zahl-Konstanten (A = A: absent).
+- **Dawn** — Route gefunden: PDS4-SBN
+  `https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-{ceres,vesta}/data-odf/`
+  (der frühere Fehlschlag prüfte `pds4/dawn/rss/`; `pds-geosciences/dawn/` bleibt 404).
+  (Schritt: ODF-Compiler nach `*_odf_compiler`-Muster + `parse_odf`-Probe an einer .dat.)
+- **Venus Express VeRa** — gemessen: PSA `VEX-V-VRA-*` trägt unter
+  `DATA/LEVEL1A/CLOSED_LOOP/` nur `IFMS/`, kein `DSN/`/`ODF/`.
+  (Schritt: PSA-Katalog `VEX-V-RSS-*` auf eine DSN/ODF-Route prüfen.)
+- **CDN-Dispatch** der registrierten Quellen (celestrak-eop, voyager, die 7 ODF,
+  Dawn nach Compiler). (Schritt: `gh workflow run` nach Push + Consent.)
 
-## Bande-Split — Papier gelandet, Reste offen
+## Bande-Split — Divergenz methodisch, Zensus offen
 
-- Papier `docs/paper/twenty-second-band-ground-chain.md` **v5** (Council-Landing:
-  Bandgrenze 44–58-mHz-Raster, struck drift, der station-lokale Atmosphären-Zweig
-  benannt, Split-Serie + Zensus im §4) und der Sibling
-  `docs/paper/probe-front-dark-matter.md` **v8** (Deduktion 27 auf den gemessenen
-  Split reframed, struck drift).
-- Offen: die **1988-Wertdivergenz** (Split-Peaks rx14 46,58 / rx43 44,12 /
-  rx63 50,92 mHz vs. kanonischer Zensus 57,11 / 44,40 / 51,99 mHz) — Ursache
-  offen (Datenversion oder Methode); der **160-Hz-Amplituden-Zensus** (`pending`);
-  die **NOCC-Reduktionsmaschine** unbenannt. (Schritt: Amplitude-Zensus auf der
-  kanonischen Serie fahren; die NOCC-Reduktionsdoku suchen.)
+- **1988-Wertdivergenz** — gemessen: Split-Probe und Zensus-Probe lesen dieselbe
+  Datei (`pioneer10_skyfreq.bin`); nur retrace/surrogate-null lesen `_6file.bin`.
+  Die Divergenz ist damit methodisch (Split-`topk`-Selektion vs Zensus-`peak_of_cell`),
+  nicht Datenversion — die Methoden-Ursache bleibt unverifiziert.
+  (Schritt: beide Proben auf derselben 1988-Zelle diffen.)
+- **160-Hz-Amplitudenzensus** — `pending`. (Schritt:
+  `cargo run -p omegaflow-measure --bin pioneer_link_correction_probe` in CI dispatchen.)
+- **NOCC-Reduktionsmaschine** — gemessen: nur Format-Specs im Baum
+  (`dsn_trk-2-18`, `trk-2-25-atdf`, `810-202b`), die Reduktions-Vorschrift fehlt.
+  (Schritt: Reduktions-SIS / 810-005-Reduktionsmodul beschaffen.)
 
 ## TE / Statistik
 
@@ -110,11 +110,6 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Verschwunden (Repo-Historie, kein Commit) — wieder eingetragen
 
-- **Nadeln Ⅷ Dunkler Fluss · Ⅸ FRB · Ⅹ Kugelblitz · Ⅻ Urknall** — Dunkler Fluss
-  lebt in `docs/paper/dark-flow-sheet-8.md`, FRB in `frb_blatt_probe.rs`, Urknall
-  in `bigbang_echo_probe.rs`; Kugelblitz trägt kein Probe-Bin im Baum (nur
-  Archiv-Handover + `kybernetische-astrophysik.md`). (Schritt: Status je Nadel
-  messen; Kugelblitz anlegen oder als `pending` tragen.)
 - **Nadel Ⅺ Placebo-Coregistration** — `.elc`-Reader steht, `rigid_coregister`
   fehlt. (Schritt: in `tools/measure/src/fiducial.rs` bauen.)
 - **front-c-epsilon-2d** — `tools/measure/src/bin/pioneer_navio_epsilon_2d.rs`.
