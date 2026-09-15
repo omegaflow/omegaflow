@@ -356,6 +356,29 @@ pub fn parse_bin(data: &[u8]) -> Option<Vec<[f64; 14]>> {
     parse_skyfreq_bin(data, b"PASF")
 }
 
+pub const COMP_SKYFREQ: u32 = 0;
+
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_SKYFREQ => Some("pioneer_sky_frequency_hz"),
+        _ => None,
+    }
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_bin(bytes)?;
+    let out: Vec<(f64, f64, u32)> = rows
+        .into_iter()
+        .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
+        .map(|r| (r[0], r[1], COMP_SKYFREQ))
+        .collect();
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
 pub const S_BAND_RATIO: f64 = 96.0 * 240.0 / 221.0;
 pub const RATE_OFFSET: f64 = 1e6;
 pub const FSKY_MED_HALF_WIDTH: f64 = 0.6e6;
