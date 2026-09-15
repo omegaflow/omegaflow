@@ -168,6 +168,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ISSLIS_FLASH_RAD => Some("iss_lis_flash_radiance_uj_sr_m2_um"),
             _ => None,
         },
+        "lis_otd" => match comp {
+            crate::geo::COMP_LISOTD_FLASH_RAD => Some("lis_otd_flash_radiance_uj_sr"),
+            _ => None,
+        },
         "argo_bgc" => match comp {
             crate::geo::COMP_ARGO_DOXY => Some("argo_dac_bgc_doxy_umol_kg"),
             crate::geo::COMP_ARGO_NITRATE => Some("argo_dac_bgc_nitrate_umol_kg"),

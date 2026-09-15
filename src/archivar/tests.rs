@@ -6646,6 +6646,36 @@ fn iss_lis_register_field_matches_component_name() {
 }
 
 #[test]
+fn lis_otd_geo_series_roundtrip_and_component_name() {
+    let recs = vec![crate::geo::GeoRec {
+        t: -148_800_000.0,
+        lat: 29.98,
+        lon: 48.97,
+        alt: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        val: 205_838.0,
+        comp: crate::geo::COMP_LISOTD_FLASH_RAD,
+        station: 0,
+    }];
+    let magic = crate::geo::magic_of("lis_otd").expect("the lis_otd format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed =
+        super::extract::geo_series_parse_bin("lis_otd", &bytes).expect("lis_otd bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].val, 205_838.0);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_LISOTD_FLASH_RAD);
+    assert_eq!(
+        crate::geo::comp_max("lis_otd"),
+        Some(crate::geo::COMP_LISOTD_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("lis_otd", crate::geo::COMP_LISOTD_FLASH_RAD),
+        Some("lis_otd_flash_radiance_uj_sr")
+    );
+}
+
+#[test]
 fn supermag_geo_series_roundtrip_and_component_name() {
     let recs = vec![
         crate::geo::GeoRec {
