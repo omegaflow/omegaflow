@@ -52,6 +52,7 @@ pub mod gong;
 pub mod gong_series;
 pub mod gpkg;
 pub mod grib2;
+pub mod hdf4;
 pub mod hdf5;
 pub mod hmi_polar;
 pub mod hrv;
