@@ -3,7 +3,7 @@
   session: Ernte-Folge 29
   class: handover
   date: 2026-09-15
-  sha256: 4ed37460b606c204692a6067197650a737d8de9f1300ff6ba227992912506fce
+  sha256: a2752d36cf6d3ca3879710165d6d0a86abc10b1914921736d03b89a4dee57b97
   status: live
 -->
 # Handover — Ernte-Folge 29 (2026-09-15)
@@ -13,7 +13,9 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet s
 viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die
 eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit
-wird nie überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und
+`origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits,
+der Arbeitsbaum darf schmutzig sein.
 
 Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
 Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
