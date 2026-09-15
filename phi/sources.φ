@@ -1023,6 +1023,30 @@ epoch 0
 gate iso_6 0.0 500.0
 field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-gk2a-pds.s3.amazonaws.com/gk2a_ami_rad.bin
+format gk2a_ami
+on earth 0 0 0
+ttl 3600
+field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes_abi_rad.bin
+format goes_abi
+on earth 0 0 0
+ttl 3600
+field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-himawari9.s3.amazonaws.com/himawari_ahi_counts.bin
+format himawari_hsd
+on earth 0 0 0
+ttl 3600
+field rad himawari_ahi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-oar-hourly-gdp-pds.s3.amazonaws.com/gdp_drifter.bin
+format gdp_drifter
+on earth 0 0 0
+ttl 3600
+field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
 format goes_xrs
 at sun
@@ -1244,6 +1268,16 @@ lat geometry.coordinates.1
 lon geometry.coordinates.0
 alt geometry.coordinates.2
 field properties.daily_columno3 woudc_total_ozone_column_du gaussian-inverse-square diffusion DU 86400.0 0.0 0.0
+
+url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
+ttl 86400
+format csv_zip
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
 
 url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
 ttl 86400
@@ -5841,6 +5875,12 @@ on earth 0 0 0
 ttl 604800
 field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/lis_otd.bin
+format lis_otd
+on earth 0 0 0
+ttl 604800
+field rad lis_otd_flash_radiance_uj_sr inverse-square em uJ/sr 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 ttl 604800
 at sun
@@ -8534,6 +8574,12 @@ cmap .
 ra ra
 dec dec
 field flux_g noirlab_ls_dr10_g_flux inverse-square em nMgy 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
+format atdf
+at earth
+ttl 604800
+field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
