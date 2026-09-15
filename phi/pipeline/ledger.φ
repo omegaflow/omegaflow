@@ -15,93 +15,17 @@ verifiziert
 kandidat http://vo.lmd.jussieu.fr/tap
 note ivo://lmd.jussieu/tap — gewogen 2026-09-12: sync-GET http (http 200); /tap/sync QUERY → VOTable-Fehler (PostgreSQL-Backend down, connection refused localhost:5432) — absent bis recherchiert — Probe 2026-09-14: HTTP 200 (html 12642 B) → verifiziert
 
-void
-kandidat http://tap.roe.ac.uk/wsa
-note ivo://wfau.roe.ac.uk/wsa-tap — gewogen 2026-09-12: sync-GET http (http 200) — absent bis recherchiert — Probe 2026-09-14: Connect-Timeout :80 (curl 28) → void (Host in blocked_sources.φ als /sync)
-
-void
-kandidat http://tap.roe.ac.uk/vsa
-note ivo://wfau.roe.ac.uk/vsa-tap — gewogen 2026-09-12: sync-GET http (http 200) — absent bis recherchiert — Probe 2026-09-14: Connect-Timeout :80 (curl 28) → void (Host in blocked_sources.φ als /sync)
-
-void
-kandidat http://tap.roe.ac.uk/osa
-note ivo://wfau.roe.ac.uk/osa-tap — gewogen 2026-09-12: sync-GET http (http 200) — absent bis recherchiert — Probe 2026-09-14: Connect-Timeout :80 (curl 28) → void (Host in blocked_sources.φ als /sync)
-
-void
-kandidat http://tap.roe.ac.uk/ssa
-note ivo://wfau.roe.ac.uk/ssa-tap — gewogen 2026-09-12: sync-GET http (http 200) — absent bis recherchiert — Probe 2026-09-14: Connect-Timeout :80 (curl 28) → void (Host in blocked_sources.φ als /sync)
-
 verifiziert
 kandidat http://pithia.cbk.waw.pl/tap
 note ivo://src.pas/tap — gewogen 2026-09-12: sync-GET http (http 200); /tap/sync QUERY → VOTable-Fehler (connection pool is closed) — absent bis recherchiert — Probe 2026-09-14: HTTP 200 (html 13342 B) → verifiziert
-
-verifiziert
-kandidat https://api.antares.noirlab.edu/v1/loci
-note Toten-Re-Check 2026-09-14: die alte URL antares.noirlab.edu/api/v1/ (dead 404) ist eine SPA-Hülle; die echte API liefert 200 JSON (Loci-Liste, 20 614 B). Konsument: Transienten-Alerts (em), in witnesses.φ. — Probe 2026-09-14: HTTP 200 (json 20614 B) → verifiziert
 
 verifiziert
 kandidat https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
 note Toten-Re-Check 2026-09-14: EEA-AQ-Observations (POST → Parquet-URLs); die alte aqportal.discomap.eea.europa.eu/api/observations (dead 404) ist ein 301-Stub. — Probe 2026-09-14: HTTP 405 auf GET (POST-Endpoint) → verifiziert
 
 verifiziert
-kandidat https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer
-note Toten-Re-Check 2026-09-14: SERVIR SMAP L3 Bodenfeuchte (diffusion); die alte SMAP/SM_1km/MapServer-URL (dead 404) trägt nur einen Fehler-Body. — Probe 2026-09-14: HTTP 200 (html 9468 B) → verifiziert
-
-verifiziert
-kandidat https://ssd-api.jpl.nasa.gov/fireball.api
-note Toten-Re-Check 2026-09-14: offene Alternative zu AMS Meteors (amsmeteors.org/members/api/open_api, dead 404, temporär offline nach Cyberattacke) — JPL-Fireball-JSON. — Probe 2026-09-14: HTTP 200 (json 76237 B) → verifiziert
-
-verifiziert
-kandidat https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync
-note Toten-Re-Check 2026-09-14: CADC ARGUS TAP-ADQL (VOTable); die alte /argus-URL (dead tls-reset) ist die Swagger-UI. — Probe 2026-09-14: HTTP 400 (VOTable, Query fehlt) → verifiziert
-
-verifiziert
 kandidat https://archives.esac.esa.int/hsa/whsa-tap-server/tap
 note Toten-Re-Check 2026-09-14: ESAC HSA TAP (dead 503 → TAP-Home, Resources jobs). ECHTE Auferstehung — in diesem Atom durch --probe. — Probe 2026-09-14: HTTP 200 (html 1816 B) → verifiziert
-
-ausstehend
-kandidat https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
-note Toten-Re-Check 2026-09-14: Smithsonian GVP-VOTW Holocene-Eruptions (dead timeout → GeoJSON FeatureCollection). ECHTE Auferstehung — in diesem Atom durch --probe. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-ausstehend
-kandidat https://www.nmdb.eu/rt/realtime.txt
-note Toten-Re-Check 2026-09-14: NMDB Neutron-Monitor-Zählraten (timestamp;station;counts, ~30 Stationen, minütlich) — nur via Proton-VPN erreichbar (nmdb.eu lehnt direkte Verbindungen ab); die alten nest/-URLs (dead 404) sind tot. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-verifiziert
-kandidat https://isdc.gfz.de/igets-data-base
-note Weberin-Re-Run 2026-09-14: live — IGETS Stationsliste mit Position (65 Stationen). Kandidat. — Probe 2026-09-14: HTTP 200 (html 162937 B) → verifiziert
-
-verifiziert
-kandidat https://doidb.wdc-terra.org/oaip/oai
-note Weberin-Re-Run 2026-09-14: live — IGETS DOI-OAI (OAI-PMH). Kandidat. — Probe 2026-09-14: HTTP 200 (xml 462 B) → verifiziert
-
-ausstehend
-kandidat https://igets.u-strasbg.fr/tr005.php
-note Weberin-Re-Run 2026-09-14: live — IGETS Alt-EOST. Kandidat. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-verifiziert
-kandidat https://storage.googleapis.com/storage/v1/b/noaa-passive-bioacoustic/o?prefix=nrs/
-note Weberin-Re-Run 2026-09-14: live — NOAA NRS GCS-Bucket (Roh + Metriken). Kandidat. — Probe 2026-09-14: HTTP 200 (json 1147084 B) → verifiziert
-
-verifiziert
-kandidat https://borealisdata.ca/dataverse/oceannetworkscanada
-note Weberin-Re-Run 2026-09-14: live — Borealis ONC Dataverse. Kandidat. — Probe 2026-09-14: HTTP 200 (html 88681 B) → verifiziert
-
-verifiziert
-kandidat https://geofon.gfz.de/fdsnws/station/1/query?level=station&format=text&network=GE
-note Weberin-Re-Run 2026-09-14: live — GEOFON FDSN GE. Kandidat. — Probe 2026-09-14: HTTP 200 (text 14820 B) → verifiziert
-
-verifiziert
-kandidat https://data.raspberryshake.org/fdsnws/station/1/query?level=station&format=text&network=AM
-note Weberin-Re-Run 2026-09-14: live — RaspberryShake FDSN AM. Kandidat. — Probe 2026-09-14: HTTP 200 (text 3775793 B) → verifiziert
-
-verifiziert
-kandidat https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
-note Weberin-Re-Run 2026-09-14: live — WWLLN Thunder-Hour 2025 (netCDF-Gitter). Kandidat. — Probe 2026-09-14: Teil-Download 24346624 B im 12-s-Fenster → verifiziert
-
-verifiziert
-kandidat https://www.frdr-dfdr.ca/repo/collection/superdarn
-note Weberin-Re-Run 2026-09-14: live — SuperDARN RAWACF via FRDR. Kandidat. — Probe 2026-09-14: HTTP 200 (html 26840 B) → verifiziert
 
 verifiziert
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
@@ -119,131 +43,19 @@ ausstehend
 kandidat https://hfrnode.eu/
 note Weberin-Re-Run 2026-09-14: live (langsam, 6,4 s) — HF-Radar hfrnode. Kandidat. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
 
-verifiziert
-kandidat https://argovis-api.colorado.edu/argo/vocabulary?parameter=data
-note Weberin-Re-Run 2026-09-14: live — Argovis Vocabulary. Kandidat. — Probe 2026-09-14: HTTP 200 (json 1195 B) → verifiziert
-
-verifiziert
-kandidat https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
-note Weberin-Re-Run 2026-09-14: live — LHAASO 1LHAASO. Kandidat. — Probe 2026-09-14: HTTP 200 (csv/octet 16456 B) → verifiziert
-
-verifiziert
-kandidat https://lpf.esac.esa.int/lpfsa/
-note Weberin-Re-Run 2026-09-14: live — LISA Pathfinder Science Archive. Kandidat. — Probe 2026-09-14: HTTP 200 (html 3088 B) → verifiziert
-
-verifiziert
-kandidat https://pdssbn.astro.umd.edu/holdings/pds4-nh_documents:rex-v2.0/SUPPORT/dataset.shtml
-note Weberin-Re-Run 2026-09-14: live — New Horizons REX (PDS-SBN). Kandidat. — Probe 2026-09-14: HTTP 200 (html 25132 B) → verifiziert
-
-verifiziert
-kandidat https://api.datacite.org/dois
-note Weberin-Re-Run 2026-09-14: live — DataCite DOI-Registry. Kandidat. — Probe 2026-09-14: HTTP 200 (json 240756 B) → verifiziert
-
-verifiziert
-kandidat https://api.openaire.eu/search/datasets
-note Weberin-Re-Run 2026-09-14: live — OpenAIRE Datasets. Kandidat. — Probe 2026-09-14: HTTP 200 (xml 120319 B) → verifiziert
-
-verifiziert
-kandidat https://b2find.eudat.eu/api/3/action/package_search
-note Weberin-Re-Run 2026-09-14: live — B2FIND (CKAN). Kandidat. — Probe 2026-09-14: HTTP 200 (json 333691 B) → verifiziert
-
-verifiziert
-kandidat https://re3data.org/api/v1/repositories
-note Weberin-Re-Run 2026-09-14: live — re3data Registry (1 MB XML). Kandidat. — Probe 2026-09-14: HTTP 200 (xml 1023773 B, → www.re3data.org) → verifiziert
-
-verifiziert
-kandidat https://api.lsst.fink-portal.org/api/v1/conesearch
-note Weberin-Re-Run 2026-09-14: antwortet (42 B) — Fink/LSST conesearch. Kandidat. — Probe 2026-09-14: HTTP 200 (html 42 B, param nötig) → verifiziert
-
-ausstehend
-kandidat https://api.alerce.online/alerts/v1/objects/
-note Weberin-Re-Run 2026-09-14: antwortet (via VPN) — ALeRCE. Kandidat. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
 ausstehend
 kandidat https://hfrnet-tds.ucsd.edu/
 note Weberin-Re-Run 2026-09-14: pending (Timeout) — HF-Radar ThREDDS. Kandidat. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-verifiziert
-kandidat https://ned.ipac.caltech.edu/tap/sync
-note Warteliste 2026-09-14 (Taucher 1): NED eigener oeffentlicher TAP, ADQL anonym CSV (200) — macht die ned-objdir-bulk-z-Anfrage hinfällig. Kandidat. — Probe 2026-09-14: HTTP 400 (xml, Query fehlt) → verifiziert
-
-verifiziert
-kandidat https://api.lsst.fink-portal.org/api/v1/schema
-note Warteliste 2026-09-14 (Taucher 4): Fink-LSST-Portal, anonym JSON — LSST-Alerts + Lichtkurven; macht die Rubin-RSP-Data-Rights-Anfrage fuer die Zeitdomaene hinfällig. Kandidat. — Probe 2026-09-14: HTTP 200 (json 64 B) → verifiziert
-
-verifiziert
-kandidat https://registry.opendata.aws/sentinel-1/
-note Warteliste 2026-09-14 (Taucher 5): AWS Open Data Sentinel-1 (anonym S3) — macht die Copernicus-Verify-Warte hinfällig. Kandidat. — Probe 2026-09-14: HTTP 200 (html 9575 B) → verifiziert
-
-verifiziert
-kandidat https://earth-search.aws.element84.com/v1
-note Warteliste 2026-09-14: AWS STAC (S2-L2A, Landsat-C2-L2, COP-DEM) anonym (200). Kandidat. — Probe 2026-09-14: HTTP 200 (json 3369 B) → verifiziert
-
-verifiziert
-kandidat https://www.glims.org/RGI/
-note Warteliste 2026-09-14: RGI-Gletscherumrisse (global, inkl. HKKH) anonym (200) — macht die ICIMOD-Warte hinfällig. Kandidat. — Probe 2026-09-14: HTTP 200 (html 7162 B) → verifiziert
-
-verifiziert
-kandidat https://zenodo.org/api/records
-note Warteliste 2026-09-14: Zenodo REST-API anonym (200) — macht die Borealis-Verify-Warte hinfällig. Kandidat. — Probe 2026-09-14: HTTP 200 (json 181404 B) → verifiziert
-
-verifiziert
-kandidat https://dataverse.harvard.edu/api/search
-note Warteliste 2026-09-14: Harvard Dataverse REST-API anonym (200). Kandidat. — Probe 2026-09-14: HTTP 400 (json, Query fehlt) → verifiziert
 
 verifiziert
 kandidat https://cdpp-archive.cnes.fr/
 note Warteliste 2026-09-14 (Taucher 2): CDPP-Archiv (DEMETER-Plasmen) anonym (200) — naechste offene Route fuer CSES-Limadou. Kandidat. — Probe 2026-09-14: HTTP 200 (html 3651 B, → user/cdpp/modules/1778) → verifiziert
 
 verifiziert
-kandidat https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
-note Warteliste 2026-09-14 (GLM-Taucher): SPDF Voyager-1 Saturn Encounter Data PSPA-00049 — closed-loop Doppler+Range (UNIVAC-1108-Binaer, 26 Tracking-Records je Block: Doppler-Frequenz, Range, Station, Zeit-Tag; Provider J.D. Anderson/JPL), 14 TARs, anonym (200) — schliesst die closed-loop-Doppler-Warte fuer den Saturn-Encounter. Cruise/Uranus/Neptun bleiben request-only (PSCM-00004/00003), natives ATDF/TRK-2-34/ODF absent. — Probe 2026-09-14: HTTP 200 (html 3151 B) → verifiziert
-
-verifiziert
-kandidat https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
-note Warteliste 2026-09-14 (GLM-Taucher): SPDF Voyager-2 Saturn Encounter Data PSPA-00123 — closed-loop Doppler+Range (UNIVAC-1108-Binaer, 26 Tracking-Records je Block: Doppler-Frequenz, Range, Station, Zeit-Tag; Provider J.D. Anderson/JPL), 6 TARs, anonym (200) — schliesst die closed-loop-Doppler-Warte fuer den Saturn-Encounter. — Probe 2026-09-14: HTTP 200 (html 1807 B) → verifiziert
-
-verifiziert
-kandidat https://zenodo.org/api/records/17928117
-note Warteliste 2026-09-14 Runde 2 (DAHITI): Zenodo Fluss-Wasseroberflaechen-Hoehe (cc-by-4.0, anonym) — Teilroute; volle DAHITI-Serie bleibt api_key-gated. Kandidat. — Probe 2026-09-14: HTTP 200 (json 12986 B) → verifiziert
-
-verifiziert
 kandidat https://limadou.ssdc.asi.it/
 note Warteliste 2026-09-14 Runde 2 (CSES-Limadou): ASI SSDC Portal — Registrierung noetig (keine CN-Mobilnummer), kein anonymer Pfad. Kandidat. — Probe 2026-09-14: HTTP 200 (html 60804 B) → verifiziert
 
 note Warteliste 2026-09-14 Korrektur: CSES-Limadou (SSDC_USER/SSDC_PASS) und DAHITI (DAHITI_API_KEY) sind in .secrets.local gedeckt — die obigen Kandidaten limadou.ssdc.asi.it und zenodo.org/api/records/17928117 sind keine offenen Routen mehr, sondern Zugangsdaten liegen lokal. Der livefeed_gate --dahiti-Pfad liest DAHITI_API_KEY via secret_local (tools/gate/src/bin/livefeed_gate.rs:223).
-
-verifiziert
-kandidat https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=1
-note Toten-Re-Check 2026-09-14: 400 bei leerem bbox, limit=1 → 200. — Probe 2026-09-14: HTTP 200 (json 2087 B) → verifiziert
-
-verifiziert
-kandidat http://jsoc.stanford.edu/
-note Toten-Re-Check 2026-09-14: https curl(35) TLS-Schicht, http 200. — Probe 2026-09-14: HTTP 200 (html 17675 B) → verifiziert
-
-verifiziert
-kandidat https://kp.gfz-potsdam.de/app/json/
-note Toten-Re-Check 2026-09-14: Register-Query (1932–2026 Kp,Ap) 500, kurzes Fenster index=Kp 200 — lebt, Parameter-Korrektur nötig. — Probe 2026-09-14: HTTP 500 (→ kp.gfz.de/app/json/, param nötig) → verifiziert
-
-verifiziert
-kandidat https://overpass.openstreetmap.fr/api/interpreter
-note Toten-Re-Check 2026-09-14: 400 ohne Query, 200 mit data=... — lebt. — Probe 2026-09-14: HTTP 400 (ohne Query, param nötig) → verifiziert
-
-void
-kandidat https://v4.boldsystems.org/index.php/API_Public/geo?format=json
-note Toten-Re-Check 2026-09-14: geo 500 (auch mit taxon), specimen-Endpoint 200 — Host lebt. — Probe 2026-09-14: HTTP 500 → void (Endpoint; Host lebt via specimen)
-
-verifiziert
-kandidat https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox=
-note Toten-Re-Check 2026-09-14: leerer bbox 400, GetCapabilities 200 — Geoserver lebt. — Probe 2026-09-14: HTTP 400 (bbox fehlt, param nötig) → verifiziert
-
-verifiziert
-kandidat https://zenodo.org/api/records/?communities=iodp&size=100
-note Toten-Re-Check 2026-09-14: 400 (Parameter unvollständig), Endpoint lebt. — Probe 2026-09-14: HTTP 400 (param nötig) → verifiziert
-
-verifiziert
-kandidat https://lpdaac.usgs.gov/products/gedi02_av002/
-note Toten-Re-Check 2026-09-14: s3-Scheme (curl kann s3 nicht), Nachfolger-Produktseite 200. — Probe 2026-09-14: HTTP 200 (html 284767 B, → earthdata.nasa.gov) → verifiziert
 
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
@@ -252,14 +64,6 @@ note Toten-Re-Check 2026-09-14: §11 entblockt — direkt Timeout, Proton US-Exi
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
 note Toten-Re-Check 2026-09-14: §11 entblockt — direkt Timeout, Proton jp 200 echtes ArcGIS-JSON. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-ausstehend
-kandidat https://www.nmdb.eu/nest/draw_graph.php
-note Toten-Re-Check 2026-09-14: §11 entblockt — direkt connect refused, Proton jp 200 (text/html). — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
-
-verifiziert
-kandidat https://docs.lightningmaps.org/
-note Toten-Re-Check 2026-09-14: TLS-Zertifikat abgelaufen (curl 60), -k liefert HTML statt JSON — kein Kanon-Auth-Fall; Nachfolger 200. — Probe 2026-09-14: HTTP 200 (html 41514 B) → verifiziert
 
 ausstehend
 kandidat https://www.ncdc.noaa.gov/cdo-web/api/v2/
@@ -358,82 +162,10 @@ kandidat https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,
 note Parser-gap: GTMBA (PMEL TAO/TRITON/PIRATA/RAMA, live, täglich+stündlich JSON); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
 
 ausstehend
-kandidat https://musewide.aip.de/tap
-note ivo://musewide.aip.de/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://api.skymapper.nci.org.au/public/tap
-note ivo://nci.org.au/skymapper/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
 kandidat https://userquery.linea.org.br/tap
 note ivo://linea.org.br/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
 
 ausstehend
-kandidat https://atoavo.atnf.csiro.au/tap
-note ivo://au.csiro/atoavo/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://data.csiro.au/psrdavo/tap
-note ivo://au.csiro/psrda/atnf_pulsar_data_archive — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://casda.csiro.au/casda_vo_tools/tap
-note ivo://au.csiro/casda/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
 kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
 note ivo://ia2.inaf.it/hosted/laurino2011/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://cda.harvard.edu/cxctap
-note ivo://cxc.harvard.edu/cda — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://cda.cfa.harvard.edu/csctap
-note ivo://cxc.harvard.edu/csc — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://cda.cfa.harvard.edu/csc1tap
-note ivo://cxc.harvard.edu/cscr1 — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://cda.cfa.harvard.edu/csc2tap
-note ivo://cxc.harvard.edu/cscr2 — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://cda.cfa.harvard.edu/csc21tap
-note ivo://cxc.harvard.edu/cscr2.1 — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://gaia.aip.de/tap
-note ivo://gaia.aip.de/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://almascience.nao.ac.jp/tap
-note ivo://jao.alma/tap_ea — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://almascience.eso.org/tap
-note ivo://jao.alma/tap_eu — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://almascience.nrao.edu/tap
-note ivo://jao.alma/tap_na — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat http://machotap.asvo.nci.org.au/ncitap//tap
-note ivo://nci.org.au/macho/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat http://wiggleztap.asvo.nci.org.au/ncitap//tap
-note ivo://nci.org.au/wigglez/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://www.lamost.org/dr11/v2.0/voservice/tap
-note ivo://purx/lamost/dr11/v2.0/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
-
-ausstehend
-kandidat https://www.lamost.org/dr10/v2.0/voservice/tap
-note ivo://purx/lamost/dr10/v2.0/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
 
