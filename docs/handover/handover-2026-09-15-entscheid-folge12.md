@@ -3,7 +3,7 @@
   session: Entscheid-Folge XII
   class: handover
   date: 2026-09-15
-  sha256: b3c1c3a9875fefc90eacb7648f8084d7be3f75526e372b56d3452bc65775c00d
+  sha256: d9caa9168c4a613f5b979c47cd251ec49121e354f39c4fd0f83c47c4ac757d4c
   status: live
 -->
 # Handover — Entscheid-Folge XII (2026-09-15)
@@ -29,49 +29,38 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 ## GitHub-Purge der PII-Alt-Commits (härtester undatierter Punkt)
 
-- Der PII-History-Rewrite ist ausgeführt: die vier noch erreichbaren Pfade
-  (`auftrag-igets-sftp-passwort-antrag`, `auftrag-lisa-pathfinder-psd-antrag`,
-  `auftrag-flyby-doppler-rohdaten`, `gavo-dc-account-anfrage`) sind samt der vier
-  bereits unerreichbaren aus `main`s History entfernt (Baum-Inhalt unverändert;
-  Force-Push `afae680 → b2bc1a2`, gemessen `git log main -- <8 Pfade>` leer).
-  Alle acht PII-Commits sind damit unerreichbar, aber per SHA noch abrufbar.
-  Der Purge-Antrag ist gesendet (Ticket **#4761482**, bestätigt
-  `support@githubsupport.com` 2026-09-15). (Schritt: GitHubs Purge-Bestätigung
-  abwarten; danach den alten Roh-Link auf 404 prüfen —
-  `curl -sI https://raw.githubusercontent.com/omegaflow/omegaflow/<alt-SHA>/docs/auftrag/gavo-dc-account-anfrage.md`.)
+- PII-Runde 2 ausgeführt und unabhängig verifiziert: der zweite Rewrite
+  `69813f1 → b2e5ac7` entfernt die Konto-Dateien
+  (`docs/reference/{antares,fink}-konto-2026-09-05.md`,
+  `docs/handover/archiv/fink-konto-2026-09-05.md`) und redigiert Adresse/E-Mail
+  in `cloudflare/wrangler.toml`, `handover-2026-09-13-entscheid-folge4`,
+  `handover-2026-09-15-entscheid-folge11` (sha256-Seals neu); der Tag
+  `v2026-09-09` ist umgehängt `317418d → bc113f6` (Release + Binär-Assets
+  bleiben). Messung: keine PII mehr an `main`/Tag (`curl -I` → 404,
+  `git log -S` leer). Nur der alte Tag-Commit `317418d` ist bis zum GitHub-GC
+  per SHA abrufbar. (Schritt: GitHubs GC-Bestätigung abwarten; der aktualisierte
+  Purge-Antrag liegt in `state/mail/github-purge-request.md` — senden an
+  https://support.github.com/contact.)
 
 ## GitHub-Token — auf zwei Tokens konsolidiert (gemessen)
 
-- Zwei Jobs → zwei Tokens, beide unter `omegaflow`: **T1 Schreiben** (classic,
-  `repo`+`workflow`; lokal `GH_TOKEN` + Actions `OMEGAFLOW_TOKEN`) und **T2
-  Lesen** (`GITHUB_SEARCH_TOKEN`, fine-grained read-only; nur `archive_search`).
-- Messung (API): der alte omegaflow-Token (`ghp_tWpB…`) lag doppelt zu `gh-cli`;
-  johannestyroller `omegaflow-cdn` war der CI-Token (public_repo);
-  `.git-credentials` trug zwei tote (401) und einen johannestyroller-OAuth-Token
-  — git nutzt sie nicht (Helper `gh auth git-credential`). Abgleich
-  `.secrets.local`↔Actions: nur `GH_TOKEN`→`OMEGAFLOW_TOKEN`; alle übrigen
-  API-Keys stehen bereits in Actions.
-- Ausgeführt: T1 rotiert (neuer classic PAT, gemessen `login=omegaflow`,
-  `push:true` auf `omegaflow/omegaflow`+`sources`); Actions `OMEGAFLOW_TOKEN`
-  darauf gesetzt (2026-09-15T19:38Z, Verifikationslauf `health-check`
-  `35014790907`); `.git-credentials` gesichert+geleert. (Schritt: Operator —
-  nach grünem Lauf löschen: omegaflow `gh-cli` + altes `omegaflow`;
-  johannestyroller `omegaflow-cdn`, `gho_…`, abgelaufene
-  `world_magnetic_model*`/`nebra*`/`Laptop Rescue`.)
+- Zwei Jobs → zwei Tokens, beide unter `omegaflow`: **T1 Schreiben**
+  (`omegaflow-write`, classic `repo`+`workflow`; lokal `GH_TOKEN` + Actions
+  `OMEGAFLOW_TOKEN`) und **T2 Lesen** (`omegaflow-read`, fine-grained read-only;
+  nur `archive_search`). `gh auth` liegt im Keyring, git pusht ohne `GH_TOKEN`.
+- Erledigt: alte omegaflow-Tokens gelöscht, CI-Secret rotiert (19:38Z),
+  `.git-credentials` geleert. Kein Konto-übergreifender Token mehr. (Schritt:
+  keiner offen — git trägt es.)
 
 ## adoption — Drei-Mail-Block: Entwürfe sendfertig (lokal), Send beim Operator
 
 - Die drei Entwürfe (Toth/Turyshev/Markwardt, 20-s-Bande) liegen lokal in
   `state/mail/adoption-mails.md` (gitignored), gepinnt auf den neuen Sha
-  `fc0e0496` (Header-sha256 `f674e8b2…`); der eine Ask = two-/three-way-Split.
+  `50db1ed` (Header-sha256 `889ea9bc…`); der eine Ask = two-/three-way-Split.
   Reg 4 (Amplitude) bleibt `pending` mit gemessenem ~5-Hz-Anker (Station 14,
-  1988) — kein unverankerter Wert im Text. (Schritt: Adressen bestätigen + senden
-  — Operator; Consent `/consent`.)
+  1988). (Schritt: Adressen bestätigen + senden — Operator; Consent `/consent`.)
 
 ## Warten auf Rückmeldung (extern gebunden — kein Datum)
-
-Gemessen 2026-09-15 im `state/mail/mail_ledger.φ` (58 Zeilen): keine Antwort auf
-einen der offenen Posten.
 
 - GitHub Support — User→Org / HTTP 422: Ticket ist raus, Antwort offen.
   (Schritt: Postfach auf die Support-Antwort prüfen.)
@@ -83,17 +72,25 @@ einen der offenen Posten.
 
 ## Nachricht an die Bau-Linie
 
-- `number_audit`-Test rot (**vor-existent**): `known_bad_corpus_rows_are_reconciled_with_its_umfang`
-  in `tools/register/src/bin/number_audit.rs` erwartet A14/Z3/D3/K1/N3/V5
-  (total 29), aber `docs/specs/bekannt-schlecht-korpus.md` stimmt nicht mehr.
-  (Schritt: Korpus oder Erwartung abgleichen — Bau.)
-- 20-s-Bande-Papier: per-Papier-Release-Tag und Welt-Fassung-Branch sind absent
-  (gemessen `git tag` / `git branch -a`: nur `v2026-09-09`). Kein Send-Blocker
-  (der gepinnte Sha ist unveränderlich). (Schritt: Tag + Welt-Fassung-Branch — Bau.)
-- PII-Gate: Gate-Fixtures für die gemessenen PII-Muster (Mail-Domain,
-  Straßenname, SFTP-Login, Cloudflare-account_id, Token-Präfix) in
-  `src/gate/commit_gate_vocab.json` + Gate-Test; optional ein `pii_scan`-Bin
-  (`tools/register`). (Schritt: Fixtures + Test + Bin — Bau.)
+Gemessen am ci-check auf `b2e5ac7` und an den Einzel-Läufen:
+
+- `ci-check` **format** rot: flächiger `cargo fmt`-Drift in `src/archivar/*`
+  (`cargo fmt --all --check` zeigt Dutzende Dateien). (Schritt: `cargo fmt --all`,
+  aber fremde uncommittete `src/archivar`-Änderungen liegen im Baum.)
+- `ci-check` **clippy** rot. (Schritt: `cargo clippy --all-targets`.)
+- `ci-check` **test** rot (3): `archivar::omni2::tests::rejects_unknown_component`
+  (`src/archivar/omni2.rs:83`), `archivar::tests::test_matrix_vs_wgccre_agreement`
+  (`src/archivar/tests.rs:2805`), `mathematikerin::te::tests::pcmci_recovers_known_dag`
+  (`src/mathematikerin/te.rs:3723`). (Schritt: je Test messen.)
+- `esp32-firmware` rot: `error[E0433]: cannot find module or crate xtensa_lx`
+  in `esp-sync`. (Schritt: esp-hal-Version/Feature prüfen.)
+- `te-gate` (#13) rot: n=1000 FPR-Gate. (Schritt: `src/mathematikerin/te.rs`.)
+- `health-check` reverify (#17) rot: PurpleAir API **402 Payment Required** —
+  kein Code-Fehler, Billing/Account (Operator).
+- `number_audit`-Test rot (**vor-existent**): `docs/specs/bekannt-schlecht-korpus.md`
+  stimmt nicht mehr. (Schritt: Korpus oder Erwartung abgleichen.)
+- 20-s-Bande-Papier: per-Papier-Release-Tag und Welt-Fassung-Branch absent.
+  (Schritt: Tag + Welt-Fassung-Branch — Bau.)
 
 ## Termine (Wiedervorlage)
 
