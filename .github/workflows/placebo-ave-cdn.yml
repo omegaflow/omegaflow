@@ -21,7 +21,7 @@ on:
 permissions:
   contents: write
 env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   placebo-ave:
     runs-on: ubuntu-latest

@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   gll-1990-ck:
     runs-on: ubuntu-latest
