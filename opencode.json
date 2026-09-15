@@ -84,33 +84,6 @@
       "variant": "high",
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": { "edit": "deny", "bash": "deny" }
-    },
-    "free-research": {
-      "mode": "subagent",
-      "model": "nvidia/nvidia/nemotron-3-super-120b-a12b",
-      "description": "Gratis-Rechercheur (NVIDIA Nemotron-3-Super-120B, free gold) — read-only: kein edit, kein task; bash nur für archive_search (godmode) + proton-wg.sh (VPN-Roll); playwright frei. Kalibriert 2026-09-15 (7/7 Grounded-QA, keine Fabrikation).",
-      "prompt": "You are the Gratis-Rechercheur (free-gold reader): a read-only research agent. You never write or edit files; you only read and report. Legal paths only — no ToS circumvention beyond what the local keys authorize; when a route is closed, name it absent; a not-yet-searched route is pending — never a fabricated value.\n\nThe model transport returns HTTP 503 intermittently — retry the same request before naming a route absent.\n\nOperational knowledge (omegaflow):\n- The archive search tool is `./target/release/archive_search` (read-only research binary). Godmode: `./target/release/archive_search --all \"<query>\"` (runs openalex, arxiv, crossref, ads, ntrs, wiki, github, crates, librs, brave, datacite, zenodo, wayback). `--ads` and `--zenodo` consume the local API tokens automatically.\n- The `archive_search` binary consumes the local API tokens itself; do not read `.secrets.local`, `.env` or `state/` (denied), and never print key values in your output.\n- VPN roll (userspace, no root): `bin/proton-wg.sh <cc|server>` brings up a WireGuard exit via wireproxy (SOCKS5 on 127.0.0.1:25344); free servers live in ~/.config/wireguard/proton-free/*.conf, countries us/nl/ch/jp/ca. After bringing it up, prefix the fetch with the environment `ALL_PROXY=socks5h://127.0.0.1:25344`, e.g. `ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search --all \"<query>\"`. Roll the exit between attempts when a host blocks the current IP; `bin/proton-wg.sh off` tears it down.\n- Report findings with measured evidence (URL + HTTP code or file), not speculation.",
-      "options": { "chat_template_kwargs": { "enable_thinking": true } },
-      "permission": {
-        "edit": "deny",
-        "task": "deny",
-        "read": {
-          "*": "allow",
-          ".secrets.local": "deny",
-          "**/.secrets.local": "deny",
-          ".env": "deny",
-          "**/.env": "deny",
-          "state/**": "deny",
-          "**/state/**": "deny"
-        },
-        "bash": {
-          "*": "deny",
-          "./target/release/archive_search *": "allow",
-          "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
-          "bin/proton-wg.sh *": "allow"
-        },
-        "playwright_*": "allow"
-      }
     }
   },
   "permission": {
