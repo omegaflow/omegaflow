@@ -9,7 +9,12 @@ async function main() {
   const target = input;
   const kind = 'page';
 
-  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  const proxy = process.env.OMEGAFLOW_PROXY || null;
+  const browser = await chromium.launch({
+    channel: 'chrome',
+    headless: true,
+    ...(proxy ? { proxy: { server: proxy } } : {}),
+  });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   let status = null;
   try {

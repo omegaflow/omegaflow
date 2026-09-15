@@ -16,7 +16,7 @@ jobs:
   demeter-harvest-compile-upload:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
       CDPP_USER: ${{ secrets.CDPP_USER }}
       CDPP_PASS: ${{ secrets.CDPP_PASS }}
       DEMETER_URNS: phi/pipeline/demeter_urns.txt
