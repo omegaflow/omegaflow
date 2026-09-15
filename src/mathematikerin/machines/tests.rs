@@ -68,7 +68,7 @@ mod matrix_machine_tests {
 
 #[cfg(test)]
 mod rows_series_tests {
-    use crate::archivar::{ExtractResult, embedded_lsk, extract, load_sources_from};
+    use crate::archivar::{embedded_lsk, extract, load_sources_from, ExtractResult};
 
     const BUOY_BLOCK: &str = "
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
@@ -274,7 +274,7 @@ mod matrix_record_tests {
 #[cfg(test)]
 mod matrix_rebuild_tests {
     use crate::archivar::{
-        BodyEphemeris, BodyProperties, Buffer, ChebyshevGranule, body_fixed_to_icrs,
+        body_fixed_to_icrs, BodyEphemeris, BodyProperties, Buffer, ChebyshevGranule,
     };
     use crate::mathematikerin::machines::*;
     use std::collections::HashMap;
