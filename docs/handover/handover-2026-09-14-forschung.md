@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 7eccc1965c72ac63bfab09a7ba8d1cad24ee3a26bae9c1b8439a4b122443ae21
+  sha256: 12863f0584fff38f6aa60d01ab4a9651ffccfb1bb611a8ea681cf16987d3c8bd
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -104,6 +104,21 @@ Brave, Playwright) haben die Warteliste gemessen; zwei Punkte halten.
   trägt Γ(T) (quasielastische HWHM vs Temperatur), nicht I(q,t); das Paper
   publiziert I(q,t) nirgends. Die Keimer/MPI-FKF-Anfrage ist der einzige Pfad.
   (Schritt: Antwort von B. Keimer.)
+
+## Sonden-ODF-Ernte (9 Compiler + 5 Anfragen)
+
+- **9 offene closed-loop-ODF** (TRK-2-34, `parse_odf` wiederverwendet, je ein
+  ~117-Zeilen-Compiler wie `pioneer10_odf_compiler`): MGS, MRO, Mars Odyssey,
+  Magellan, Messenger, Dawn, Mars Express (MaRS), Venus Express (VeRa), Rosetta
+  (RSI) — Pfade gemessen (Taucher 2026-09-15). (Schritt: einen Compiler als
+  Beweis bauen, dann die restlichen acht; Register-Eintrag, wenn die
+  blocked_sources.φ-Migration ruhig ist.)
+- **5 request-only** (Anfrage-Vorlagen in
+  `docs/auftrag/auftrag-sonden-rohdaten-anfragen.md`): Voyager closed-loop (NSSDC
+  `PSNO-00007`), Mariner 10 (`PSCM-00009`, 7-Track), Viking 1/2 (`PSPG-00011`/
+  `00457`), Cassini closed-loop (JPL-NAV), Juno Earth-Flyby (JPL-NAV). Die 1970er
+  (Mariner/Viking) bräuchten einen neuen 7-Track-Parser — erst nach einer
+  erfolgreichen Anfrage. (Schritt: Operator reicht die Anfragen ein.)
 
 ## Abschluss
 
