@@ -160,13 +160,21 @@ impl Friction {
         let model = self.model?;
         let tokens = self.prompt_tokens? as f64;
         let fill = tokens / model.context;
-        if fill.is_finite() { Some(fill) } else { None }
+        if fill.is_finite() {
+            Some(fill)
+        } else {
+            None
+        }
     }
 
     pub fn threshold(&self) -> Option<f64> {
         let model = self.model?;
         let t = 1.0 - model.output / model.context;
-        if t.is_finite() { Some(t) } else { None }
+        if t.is_finite() {
+            Some(t)
+        } else {
+            None
+        }
     }
 
     pub fn check_fill(&mut self) -> Vec<Advice> {

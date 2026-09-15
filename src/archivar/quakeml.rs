@@ -11,7 +11,11 @@ pub struct QuakeMlEvent {
 
 fn finite_num(s: &str) -> Option<f64> {
     let v: f64 = s.trim().parse().ok()?;
-    if v.is_finite() { Some(v) } else { None }
+    if v.is_finite() {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn leaf_text<'a>(s: &'a str, tag: &str) -> Option<&'a str> {
@@ -58,7 +62,11 @@ fn iso8601_unix(s: &str) -> Option<f64> {
     let second: f64 = tp.next().unwrap_or("0").parse().ok()?;
     let days = super::ymd_to_days(year, month, day)? as f64;
     let unix = days * 86400.0 + hour * 3600.0 + minute * 60.0 + second;
-    if unix.is_finite() { Some(unix) } else { None }
+    if unix.is_finite() {
+        Some(unix)
+    } else {
+        None
+    }
 }
 
 fn parse_origin(o: &str) -> Option<(f64, f64, f64, f64)> {
