@@ -2060,6 +2060,8 @@ pub fn main_flow() {
                     | "celestrak_eop"
                     | "gk2a_ami"
                     | "goes_abi"
+                    | "atdf"
+                    | "himawari_hsd"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
