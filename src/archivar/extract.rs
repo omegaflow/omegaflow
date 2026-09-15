@@ -1225,6 +1225,94 @@ fn fits_data_bytes(header: &crate::archivar::fits::FitsHeader) -> Option<usize> 
     Some((bitpix / 8) * axes * gcount + pcount)
 }
 
+fn tar_gz_yaml_rows(text: &str) -> Option<Vec<JsonVal>> {
+    let (prolog, data) = text.split_once("# End of YAML header")?;
+    let mut names: Vec<String> = Vec::new();
+    let mut in_variables = false;
+    let mut var_indent: Option<usize> = None;
+    for line in prolog.lines() {
+        let trimmed = line.trim_start();
+        if !in_variables {
+            if trimmed.starts_with("variables:") {
+                in_variables = true;
+            }
+            continue;
+        }
+        let Some(rest) = trimmed.strip_prefix("- ") else {
+            continue;
+        };
+        let indent = line.len() - trimmed.len();
+        if *var_indent.get_or_insert(indent) != indent {
+            continue;
+        }
+        let name = rest.trim_end().trim_end_matches(':');
+        if name.is_empty() || name.contains(char::is_whitespace) {
+            continue;
+        }
+        names.push(name.to_string());
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let mut rows = Vec::new();
+    for line in data.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = trimmed.split_whitespace().collect();
+        if cols.len() < names.len() {
+            continue;
+        }
+        let mut row = HashMap::new();
+        for (name, token) in names.iter().zip(cols.iter()) {
+            match token.parse::<f64>() {
+                Ok(n) => row.insert(name.clone(), JsonVal::Num(n)),
+                Err(_) => row.insert(name.clone(), JsonVal::Str((*token).to_string())),
+            };
+        }
+        rows.push(JsonVal::Obj(row));
+    }
+    Some(rows)
+}
+
+fn tar_gz_yaml_member_key(name: &str) -> String {
+    let base = name.rsplit('/').next().unwrap_or(name);
+    let stem = base
+        .strip_suffix(".txt")
+        .or_else(|| base.strip_suffix(".rpt"))
+        .unwrap_or(base);
+    stem.split('_').next().unwrap_or(stem).to_string()
+}
+
+fn tar_gz_yaml_to_json(buf: &[u8], wanted: &[String]) -> Option<JsonVal> {
+    let tar = crate::archivar::inflate::gunzip(buf)?;
+    let members = crate::archivar::inflate::tar_members(&tar)?;
+    let mut out: HashMap<String, JsonVal> = HashMap::new();
+    for m in &members {
+        if !m.name.ends_with(".txt") {
+            continue;
+        }
+        let key = tar_gz_yaml_member_key(&m.name);
+        if !wanted.is_empty() && !wanted.iter().any(|w| w == &key) {
+            continue;
+        }
+        if out.contains_key(&key) {
+            continue;
+        }
+        let text = String::from_utf8_lossy(&tar[m.start..m.end]);
+        let Some(rows) = tar_gz_yaml_rows(&text) else {
+            continue;
+        };
+        out.insert(key, JsonVal::Arr(rows));
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Obj(out))
+    }
+}
+
 fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
     let mut off = 0usize;
     for _ in 0..8 {
@@ -1319,6 +1407,17 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         parse_json(body)
     } else if src.format == "fits" {
         std::fs::read(body).ok().as_deref().and_then(fits_to_json)
+    } else if src.format == "tar_gz_yaml" {
+        let wanted: Vec<String> = src
+            .extracts
+            .iter()
+            .flat_map(extract_fields)
+            .filter_map(|fc| fc.key.split('.').next().map(str::to_string))
+            .collect();
+        std::fs::read(body)
+            .ok()
+            .as_deref()
+            .and_then(|b| tar_gz_yaml_to_json(b, &wanted))
     } else {
         None
     };

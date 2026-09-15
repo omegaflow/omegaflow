@@ -4371,6 +4371,34 @@ fn test_anchor_bodies_have_ephemeris_sources() {
 }
 
 #[test]
+fn test_gracefo_l1b_tar_gz_yaml_source_parses() {
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let sources = super::parse_sources(&content);
+    let src = sources
+        .iter()
+        .find(|s| s.format == "tar_gz_yaml")
+        .expect("the GRACE-FO L1B tar.gz+YAML source is registered");
+    assert!(
+        src.url.ends_with(".tgz"),
+        "the registered granule is a .tgz"
+    );
+    assert!(
+        src.headers
+            .iter()
+            .any(|(k, v)| k == "Authorization" && v == "{EARTHDATA_EDL_TOKEN}"),
+        "the Earthdata bearer header carries the token marker"
+    );
+    let keys: Vec<String> = src
+        .extracts
+        .iter()
+        .flat_map(super::extract::extract_fields)
+        .map(|fc| fc.key)
+        .collect();
+    assert!(keys.iter().any(|k| k == "KBR1B.range_rate"));
+    assert!(keys.iter().any(|k| k == "KBR1B.range_accl"));
+}
+
+#[test]
 fn test_query_admits_surface_sample_within_window() {
     let now = 840511523.88;
     let jd_now = super::J2000_EPOCH + now / 86400.0;
@@ -7152,6 +7180,103 @@ fn fits_format_extracts_last_row() {
         ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
     }
     let _ = std::fs::remove_file(&path);
+}
+
+fn tar_member_fixture(name: &str, content: &[u8]) -> Vec<u8> {
+    let mut h = [0u8; 512];
+    h[..name.len()].copy_from_slice(name.as_bytes());
+    let octal = format!("{:011o}", content.len());
+    h[124..135].copy_from_slice(octal.as_bytes());
+    h[156] = b'0';
+    h[257..262].copy_from_slice(b"ustar");
+    h[148..156].fill(b' ');
+    let sum: u32 = h.iter().map(|&b| b as u32).sum();
+    let checksum = format!("{sum:06o}");
+    h[148..154].copy_from_slice(checksum.as_bytes());
+    h[154] = 0;
+    h[155] = b' ';
+    let mut out = h.to_vec();
+    out.extend_from_slice(content);
+    out.resize(out.len().div_ceil(512) * 512, 0);
+    out
+}
+
+fn gzip_stored_fixture(content: &[u8]) -> Vec<u8> {
+    let mut gz = vec![0x1f, 0x8b, 0x08, 0x00, 0, 0, 0, 0, 0x00, 0x03];
+    let len = content.len() as u16;
+    gz.push(0x01);
+    gz.extend_from_slice(&len.to_le_bytes());
+    gz.extend_from_slice(&(!len).to_le_bytes());
+    gz.extend_from_slice(content);
+    gz
+}
+
+fn tar_gz_yaml_fixture() -> Vec<u8> {
+    let kbr = "header:\n  dimensions:\n    num_records: 2\n  variables:\n    - gps_time:\n        comment: 1st column\n        units: second\n    - biased_range:\n        comment: 2nd column\n        units: m\n    - range_rate:\n        comment: 3rd column\n        units: m/s\n    - range_accl:\n        comment: 4th column\n        units: m/s2\n# End of YAML header\n580282650 1200.5 -0.25 0.001\n580282658 1200.6 -0.24 0.002\n";
+    let empty = "header:\n  dimensions:\n    num_records: 0\n  variables:\n    - gps_time:\n        comment: 1st column\n# End of YAML header\n";
+    let mut tar = Vec::new();
+    tar.extend_from_slice(&tar_member_fixture(
+        "ACT1B_2018-05-22_C_04.txt",
+        empty.as_bytes(),
+    ));
+    tar.extend_from_slice(&tar_member_fixture(
+        "KBR1B_2018-05-22_Y_04.txt",
+        kbr.as_bytes(),
+    ));
+    tar.extend_from_slice(&[0u8; 1024]);
+    gzip_stored_fixture(&tar)
+}
+
+#[test]
+fn tar_gz_yaml_format_extracts_member_last_row() {
+    let buf = tar_gz_yaml_fixture();
+    let path = std::env::temp_dir().join("omegaflow_tar_gz_test.tgz");
+    std::fs::write(&path, &buf).unwrap();
+    let fc = FieldConfig {
+        key: "KBR1B.range_rate".into(),
+        name: "gracefo_kbr_range_rate".into(),
+        kernel: 0,
+        force: 4,
+        tau: 86400.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: "m/s".into(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    };
+    let mut src = source_fixture("tar_gz_yaml", vec![Extract::Last(fc, None)]);
+    src.frame = Frame::Manifest;
+    match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert_eq!(channels[0].1.name, "gracefo_kbr_range_rate");
+            assert_eq!(channels[0].0.value, -0.24);
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+#[ignore = "reads the GRACE-FO tarball named by OMEGAFLOW_GRACE_TGZ"]
+fn real_gracefo_l1b_tarball_parses_a_member() {
+    let path =
+        std::env::var("OMEGAFLOW_GRACE_TGZ").expect("OMEGAFLOW_GRACE_TGZ names a .tgz on disk");
+    let mut fc = field_fixture("KBR1B.range_rate", 86400.0);
+    fc.name = "gracefo_kbr_range_rate_m_s".into();
+    let src = source_fixture("tar_gz_yaml", vec![Extract::Last(fc, None)]);
+    match extract(&src, &path, 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(
+                channels.len(),
+                1,
+                "the real KBR1B series carries a last row"
+            );
+            assert!(channels[0].0.value.is_finite());
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
 }
 
 #[test]
