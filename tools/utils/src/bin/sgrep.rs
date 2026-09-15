@@ -1,6 +1,8 @@
 use std::env;
-use std::fs;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
+use std::process::Command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -33,7 +35,7 @@ fn main() {
         i += 1;
     }
     let Some(pattern) = pattern else {
-        eprintln!("usage: sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir]");
+        eprintln!("usage: sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir|file]");
         std::process::exit(2);
     };
     let needle = if case_insensitive {
@@ -42,81 +44,116 @@ fn main() {
         pattern
     };
     let mut matches: u64 = 0;
-    let mut files_hit: u64 = 0;
-    walk(
-        Path::new(&root),
+    grep_root(
+        &root,
         &needle,
         case_insensitive,
         files_only,
         count_only,
         glob.as_deref(),
         &mut matches,
-        &mut files_hit,
     );
     if count_only {
         println!("{}", matches);
     }
 }
 
-fn walk(
-    dir: &Path,
+fn grep_root(
+    root: &str,
     needle: &str,
     ci: bool,
     files_only: bool,
     count_only: bool,
     glob: Option<&str>,
     matches: &mut u64,
-    files_hit: &mut u64,
 ) {
-    let entries = match fs::read_dir(dir) {
-        Ok(e) => e,
-        Err(_) => return,
-    };
-    let mut names: Vec<String> = Vec::new();
-    for entry in entries.flatten() {
-        names.push(entry.path().to_string_lossy().to_string());
+    if Path::new(root).is_file() {
+        grep_file(root, needle, ci, files_only, count_only, matches);
+        return;
     }
-    names.sort();
-    for name in names {
-        let path = Path::new(&name);
-        let file_name = path
-            .file_name()
-            .map(|f| f.to_string_lossy().to_string())
-            .unwrap_or_default();
-        if path.is_dir() {
-            if matches!(
-                file_name.as_str(),
-                ".git" | "target" | "node_modules" | ".opencode"
-            ) {
+    let Some(top) = repo_root() else {
+        return;
+    };
+    let Some(files) = repo_files(&top) else {
+        return;
+    };
+    let root_prefix = root.trim_matches('/');
+    for f in files {
+        if !root_prefix.is_empty() && root_prefix != "." && !f.starts_with(root_prefix) {
+            continue;
+        }
+        if let Some(g) = glob {
+            let Some(file_name) = Path::new(&f).file_name() else {
+                continue;
+            };
+            if !glob_match(&file_name.to_string_lossy(), g) {
                 continue;
             }
-            walk(
-                path, needle, ci, files_only, count_only, glob, matches, files_hit,
-            );
-        } else if glob.is_none() || glob_match(&file_name, glob.unwrap()) {
-            let before = *matches;
-            grep_file(path, needle, ci, files_only, count_only, matches);
-            if *matches > before {
-                *files_hit += 1;
-            }
         }
+        let full = Path::new(&top).join(&f);
+        grep_file(
+            &full.to_string_lossy(),
+            needle,
+            ci,
+            files_only,
+            count_only,
+            matches,
+        );
     }
 }
 
+fn repo_root() -> Option<String> {
+    let out = Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .output()
+        .ok()?;
+    let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if s.is_empty() {
+        None
+    } else {
+        Some(s)
+    }
+}
+
+fn repo_files(top: &str) -> Option<Vec<String>> {
+    let out = Command::new("git")
+        .args([
+            "ls-files",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "-z",
+        ])
+        .current_dir(top)
+        .output()
+        .ok()?;
+    Some(
+        out.stdout
+            .split(|&b| b == 0)
+            .filter_map(|b| std::str::from_utf8(b).ok())
+            .map(|s| s.to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+    )
+}
+
 fn grep_file(
-    path: &Path,
+    path: &str,
     needle: &str,
     ci: bool,
     files_only: bool,
     count_only: bool,
     matches: &mut u64,
 ) {
-    let text = match fs::read_to_string(path) {
-        Ok(t) => t,
-        Err(_) => return,
+    let Ok(file) = File::open(path) else {
+        return;
     };
+    let reader = BufReader::new(file);
     let mut file_matches: u64 = 0;
-    for (idx, line) in text.lines().enumerate() {
+    for (idx, line) in reader.lines().enumerate() {
+        let Ok(line) = line else {
+            continue;
+        };
         let hit = if ci {
             line.to_lowercase().contains(needle)
         } else {
@@ -128,11 +165,11 @@ fn grep_file(
         file_matches += 1;
         *matches += 1;
         if !count_only && !files_only {
-            println!("{}:{}:{}", path.display(), idx + 1, line);
+            println!("{}:{}:{}", path, idx + 1, line);
         }
     }
     if files_only && file_matches > 0 {
-        println!("{}", path.display());
+        println!("{}", path);
     }
 }
 
