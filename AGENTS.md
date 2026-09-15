@@ -288,6 +288,25 @@ No agent has `webfetch`/`websearch` (global deny) — web runs through
 `build` spawns. Never answer "always" to a bash `ask` outside the written maps —
 `approved` is instance-shared and evaluates last, so it would cross profiles.
 
+### The cost ladder — the cheapest agent that fits the job
+
+Model tiers (cost/speed): `flash` (low) < `pro` (high) < `pro/max`. Dispatch the
+cheapest profile whose tools and role fit; a `max` agent is for the hard atoms
+only, never for routine work:
+
+| Job | Agent | Tier |
+|---|---|---|
+| main session (edit + full bash) | `build` | flash |
+| planning pass (`register_lookup`/`git_safety`) | `plan` | flash |
+| codebase search / read | `explore` | flash |
+| routine research / verification | `general` | flash |
+| hard multi-stage research (register/routes/parser-gap) | `research-max` | pro/max |
+| mechanical source-port (harvest/recheck/reachability) | `grind-flash` | flash |
+| judgment source-port (Force-Gate, novel curation) | `grind-pro` | pro |
+| hardest port atoms (novel parser, TE/null, 4D contract) | `grind-max` | pro/max |
+| figures / scans / OCR | `vision` | vision |
+| architecture / deliberation | `council` | pro/max |
+
 
 
 ## Kybernaut-Native Methodology
