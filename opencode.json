@@ -44,14 +44,14 @@
         "webfetch": "deny",
         "websearch": "deny",
         "bash": {
+          "*": "deny",
           "./bin/archive_search *": "allow",
           "bin/archive_search *": "allow",
           "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow",
           "./target/release/archive_search *": "allow",
           "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
           "curl *": "allow",
-          "bin/proton-wg.sh *": "allow",
-          "*": "deny"
+          "bin/proton-wg.sh *": "allow"
         },
         "playwright_*": "allow"
       }
