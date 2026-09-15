@@ -13,6 +13,12 @@ pub const NETWORK_DSN: u64 = 2;
 
 pub const VSAT_STRIDE: usize = 19;
 
+pub const COMP_DOPPLER_HP: u32 = 1;
+pub const COMP_DOPPLER_LP: u32 = 2;
+pub const COMP_RANGE_PART2: u32 = 3;
+pub const COMP_ANGLE_A: u32 = 4;
+pub const COMP_ANGLE_B: u32 = 5;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TrackingKind {
     Doppler,
@@ -248,6 +254,33 @@ pub fn parse_vsat_bin(data: &[u8]) -> Option<Vec<[f64; VSAT_STRIDE]>> {
     Some(out)
 }
 
+fn row_epoch(r: &[f64; VSAT_STRIDE]) -> Option<f64> {
+    let year = 1900 + r[1] as i64;
+    let days = super::ymd_to_days(year, 1, 1)? as f64 + r[2] - 1.0;
+    Some(days * 86400.0 + r[3] * 3600.0 + r[4] * 60.0 + r[5])
+}
+
+pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_vsat_bin(data)?;
+    let mut out = Vec::with_capacity(rows.len() * 2);
+    for r in &rows {
+        let t = row_epoch(r)?;
+        match r[0] as i64 {
+            0 => {
+                out.push((t, r[14], COMP_DOPPLER_HP));
+                out.push((t, r[15], COMP_DOPPLER_LP));
+            }
+            1 => out.push((t, r[16], COMP_RANGE_PART2)),
+            2 => {
+                out.push((t, r[17], COMP_ANGLE_A));
+                out.push((t, r[18], COMP_ANGLE_B));
+            }
+            _ => {}
+        }
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -377,5 +410,53 @@ mod tests {
         let parsed = parse_vsat_bin(&bytes).unwrap();
         assert_eq!(parsed, recs);
         assert!(parse_vsat_bin(b"X").is_none());
+    }
+
+    #[test]
+    fn series_dispatch_splits_sub_a_doppler() {
+        let words = sub_words(&SUB_A).unwrap();
+        let r = record(&words).unwrap();
+        let bytes = write_vsat_bin(&[to_bin_row(&r)]);
+        let series = parse_series(&bytes).unwrap();
+        assert_eq!(series.len(), 2);
+        let expected_t = (super::super::ymd_to_days(1980, 1, 1).unwrap() as f64 + 296.0 - 1.0)
+            * 86400.0
+            + 8.0 * 60.0;
+        assert_eq!(series[0].0, expected_t);
+        assert_eq!(series[0].1, 0x5abee as f64);
+        assert_eq!(series[0].2, COMP_DOPPLER_HP);
+        assert_eq!(series[1].0, expected_t);
+        assert_eq!(series[1].1, 0x530c36 as f64);
+        assert_eq!(series[1].2, COMP_DOPPLER_LP);
+    }
+
+    #[test]
+    fn series_dispatch_maps_range_and_angle_kinds() {
+        let mut range_words = [0u64; WORDS_PER_SUB_RECORD];
+        range_words[1] = RECORD_TYPE_LOW_RATE;
+        range_words[2] = 80 << 24 | 296 << 8;
+        range_words[3] = 8 << 24;
+        range_words[5] = 6 << 24 | 2 << 16;
+        range_words[11] = 0x123456789;
+        let range_rec = record(&range_words).unwrap();
+
+        let mut angle_words = [0u64; WORDS_PER_SUB_RECORD];
+        angle_words[1] = RECORD_TYPE_HIGH_RATE;
+        angle_words[2] = 80 << 24 | 296 << 8;
+        angle_words[3] = 8 << 24;
+        angle_words[5] = 1 << 8;
+        angle_words[15] = 111;
+        angle_words[16] = 222;
+        let angle_rec = record(&angle_words).unwrap();
+
+        let bytes = write_vsat_bin(&[to_bin_row(&range_rec), to_bin_row(&angle_rec)]);
+        let series = parse_series(&bytes).unwrap();
+        assert_eq!(series.len(), 3);
+        assert_eq!(series[0].1, 0x123456789u64 as f64);
+        assert_eq!(series[0].2, COMP_RANGE_PART2);
+        assert_eq!(series[1].1, 111.0);
+        assert_eq!(series[1].2, COMP_ANGLE_A);
+        assert_eq!(series[2].1, 222.0);
+        assert_eq!(series[2].2, COMP_ANGLE_B);
     }
 }
