@@ -510,7 +510,7 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
 }
 
 pub mod laszip;
-pub use laszip::{LazDecoder, has_laszip_vlr};
+pub use laszip::{has_laszip_vlr, LazDecoder};
 
 pub fn ept_key_decode(key: &str) -> Option<(i32, i32, i32, i32)> {
     let mut parts = key.split('-');

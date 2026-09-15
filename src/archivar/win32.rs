@@ -59,7 +59,11 @@ fn unix_of(dt: &(i64, u32, u32, u32, u32, u32)) -> Option<f64> {
 
 fn nibble_signed(v: u8) -> i32 {
     let n = (v & 0x0F) as i32;
-    if n & 0x08 != 0 { n - 16 } else { n }
+    if n & 0x08 != 0 {
+        n - 16
+    } else {
+        n
+    }
 }
 
 fn int24(b0: u8, b1: u8, b2: u8) -> i32 {

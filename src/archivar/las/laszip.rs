@@ -1,4 +1,4 @@
-use super::{LasHeader, LasNote, LasPoint, LasVlr, decode_point};
+use super::{decode_point, LasHeader, LasNote, LasPoint, LasVlr};
 
 const BM_LENGTH_SHIFT: u32 = 13;
 const DM_LENGTH_SHIFT: u32 = 15;
