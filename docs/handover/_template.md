@@ -13,7 +13,9 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet s
 viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
-überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
+darf schmutzig sein.
 
 Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
 Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
