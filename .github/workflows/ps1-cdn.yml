@@ -8,7 +8,7 @@ permissions:
 concurrency:
   group: ps1-cdn
 env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
   ps1-coverage:
