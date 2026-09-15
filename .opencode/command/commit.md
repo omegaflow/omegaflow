@@ -13,6 +13,7 @@ Committe und pushe jetzt — nur deine eigene Arbeit, gemessen nicht beteuert.
    `git log origin/main..HEAD --name-only` kein fremder Pfad, `git status` leer
    (keine eigene Arbeit uncommittet); vor jedem `--amend` ist das gestagte Set
    dein eigenes. Die konsumierte Übergabe ist ins Archiv geschoben.
-6. Push nur, wenn der Baum ruhig ist (keine fremde Session an denselben Dateien):
-   pushe nur deine eigenen Commits; danach gilt `git rev-parse HEAD` ==
+6. Push, sobald dein eigener Commit steht und `origin/main` Vorfahr von HEAD ist
+   (Fast-Forward): ein Push sendet nur Commits, nie den Arbeitsbaum — fremde
+   uncommittete Arbeit blockiert nicht. Danach gilt `git rev-parse HEAD` ==
    `git rev-parse origin/main`.
