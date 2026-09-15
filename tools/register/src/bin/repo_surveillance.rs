@@ -39,6 +39,10 @@ fn git_verdict() -> String {
     if !remote.contains("omegaflow/omegaflow") {
         v.push("remote");
     }
+    let branch = git(&["branch", "--show-current"]);
+    if branch.trim() != "main" {
+        v.push("branch");
+    }
     if v.is_empty() {
         "check=ok".to_string()
     } else {
