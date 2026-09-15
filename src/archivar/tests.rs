@@ -7096,6 +7096,65 @@ fn fits_bintable_roundtrips_typed_row() {
 }
 
 #[test]
+fn fits_format_extracts_last_row() {
+    let buf = fits_bintable_fixture();
+    let dir = std::env::temp_dir();
+    let path = dir.join("omegaflow_fits_test.fits");
+    std::fs::write(&path, &buf).unwrap();
+    let fc = FieldConfig {
+        key: "FLUX".into(),
+        name: "flux".into(),
+        kernel: 0,
+        force: 0,
+        tau: 604800.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    };
+    let src = SourceConfig {
+        ttl: 604800,
+        url: "https://example.com/x.fits".into(),
+        frame: Frame::Manifest,
+        format: "fits".into(),
+        extracts: vec![Extract::Last(fc, None)],
+        headers: vec![],
+        post_body: None,
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        hapi_fill: HashMap::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+    };
+    match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert_eq!(channels[0].1.name, "flux");
+            assert_eq!(channels[0].0.value, 42.5);
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
 fn cosmic_ro_geo_series_roundtrip_and_component_name() {
     let recs = vec![
         crate::geo::GeoRec {

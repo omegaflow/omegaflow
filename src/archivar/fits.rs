@@ -247,6 +247,12 @@ impl FitsTable {
         Some(v * col.tscal + col.tzero)
     }
 
+    pub fn cell_str<'a>(&self, buf: &'a [u8], row: usize, col: &FitsColumn) -> Option<&'a str> {
+        let off = self.cell_offset(row, col)?;
+        let raw = buf.get(off..off + col.width)?;
+        Some(from_utf8(raw).ok()?.trim_end())
+    }
+
     pub fn cell_i64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<i64> {
         let off = self.cell_offset(row, col)?;
         let end = off + col.width;
