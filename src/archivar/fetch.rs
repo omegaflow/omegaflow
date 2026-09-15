@@ -560,6 +560,12 @@ pub fn hour_str(unix: u64) -> String {
     )
 }
 
+pub fn month_abbr(m: u32) -> &'static str {
+    [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ][(m - 1) as usize]
+}
+
 pub fn live_markers() -> Vec<(String, String)> {
     let unix = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_secs(),
@@ -577,6 +583,10 @@ pub fn live_markers() -> Vec<(String, String)> {
         ("{now}".into(), hour_str(unix)),
         ("{year}".into(), format!("{:04}", y)),
         ("{month}".into(), format!("{:02}", m)),
+        (
+            "{prev_Mon}".into(),
+            month_abbr(if m == 1 { 12 } else { m - 1 }).into(),
+        ),
         ("{day}".into(), format!("{:02}", d)),
         ("{lat}".into(), "29.5".into()),
         ("{lon}".into(), "-95.0".into()),
@@ -1306,5 +1316,48 @@ mod ca_bundle_tests {
             std::env::remove_var("OMEGAFLOW_CA_BUNDLE");
         }
         let _ = std::fs::remove_file(path);
+    }
+}
+
+#[cfg(test)]
+mod marker_tests {
+    use super::*;
+
+    #[test]
+    fn month_abbr_names_all_twelve_months() {
+        assert_eq!(month_abbr(1), "Jan");
+        assert_eq!(month_abbr(8), "Aug");
+        assert_eq!(month_abbr(12), "Dec");
+    }
+
+    #[test]
+    fn prev_mon_marker_is_the_previous_calendar_month() {
+        let markers = live_markers();
+        let cur: u32 = markers
+            .iter()
+            .find(|(k, _)| k == "{month}")
+            .map(|(_, v)| v.parse().unwrap())
+            .unwrap();
+        let prev = markers
+            .iter()
+            .find(|(k, _)| k == "{prev_Mon}")
+            .map(|(_, v)| v.as_str())
+            .unwrap();
+        assert_eq!(prev, month_abbr(if cur == 1 { 12 } else { cur - 1 }));
+    }
+
+    #[test]
+    fn dart_sources_are_registered() {
+        let srcs = crate::archivar::load_sources();
+        assert!(
+            srcs.iter()
+                .any(|s| s.url == "https://www.ndbc.noaa.gov/data/realtime2/21414.dart"),
+            "live dart source absent"
+        );
+        assert!(
+            srcs.iter()
+                .any(|s| s.url == "https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt"),
+            "archive dart source absent"
+        );
     }
 }
