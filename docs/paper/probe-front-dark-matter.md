@@ -1,9 +1,9 @@
 <!--
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
-  date: 2026-09-03
-  version: 7
-  sha256: dbe2b56aef2735e1d2f37b33313d21e99c99f838bd42ea5af7ed408f1e22c73e
+  date: 2026-09-15
+  version: 8
+  sha256: 5f96be5f5190fb6ecc238499d1ce035c46b2ed012de56e8bf983b15fea519d37
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -317,11 +317,13 @@ named injection is the station reference chain (standard steering with a ~20-s
 station-specific loop); the cross-spacecraft phase test carries no common
 continuous oscillator (Deduktion 26: P10/P11 NAVIO overlap 1988-01..1990-05,
 δ = 0.49 rad inside the circular-surrogate null 0.41/5.55 rad) — the per-station
-hypothesis stays named, unconfirmed; the two-/three-way split test is not
-measurable locally (Deduktion 27: the harvest now carries the ground mode —
-TRK-2-25 item 13 — as a 14th PASF slot, but the 1-s class that carries the strong
-lines is three-way-only: mode 2 carries 0/0/25 samples at stations 14/43/63;
-0 honored); the DSN Frequency and Timing documentation (Mark IV-85, TDA PR 42-82
+hypothesis stays named, unconfirmed; the two-/three-way split test is measured on the PASF sub-10-s class (Deduktion
+27: joining the ground mode — TRK-2-25 item 13 — against the NAVIO (rx, tx)
+pair, 103 261 matched; the mode census is 30 973 (1-way) / 11 631 (2-way,
+station 63 only) / 154 150 (3-way, 78.3 %) — the band sits in mode 3; the
+frequency is receiver-fixed, the amplitude depends on the (rx, tx) pair — a
+two-way-link effect; the earlier 1-s three-way-only reading, mode 2 = 0/0/25, is
+superseded by the full-class census); the DSN Frequency and Timing documentation (Mark IV-85, TDA PR 42-82
 [10]; the coherent reference generator phase stability, TDA PR 42-64 [11]) describes
 the reference chain as distribution + validation — maser offsets known to ±3 × 10⁻¹³
 against USNO/NBS, CRG synthesizing 0.1–55 MHz with constant phase relations — and
@@ -349,10 +351,12 @@ A = 4.95 Hz (≡ 0.647 m/s station velocity; f0 = 2.291949 GHz median sky freque
 — 2 × 10⁵ above the microseism reference (2.4 × 10⁻⁷–2.4 × 10⁻⁵ Hz for 0.1–10 µm
 ground motion at 50 mHz), so ground-motion Doppler is excluded; the peaks are
 unresolved at 0.02 mHz (Q > 2500) — coherent machine lines, not natural widths;
-and the era×station cross-table shows station-fixed frequencies with a slow real
-drift (Madrid 63: 47.35 mHz in 1988 → 46.95 mHz in 1992; Canberra 43: 51.55 mHz;
-Goldstone 14: 45.75 mHz) — the earlier era wander was the station-mix confound of
-the global peak. The lines are per-station coherent slowly drifting
+and the era×station cross-table shows station-fixed frequencies — the earlier
+per-station values (Madrid 63: 47.35, Canberra 43: 51.55, Goldstone 14:
+45.75 mHz) are a sub-peak selection of the dense complex (measured ranks 4/2/17
+on the canonical series), and the earlier "slow drift" (47.35 → 46.95 mHz) is
+not carried — its 1988 anchor does not appear; the earlier era wander was the
+station-mix confound of the global peak. The lines are per-station coherent
 receiver-chain signatures; the DSN hardware documentation (810-005, the
 MDA-resolver frequency) is the named next search; the origin stays open
 (0 honored).
@@ -408,7 +412,7 @@ Deduction 24 — The signal-strength scaling: PLL loop noise grows at weak SNR (
 
 Deduction 26 — Spacecraft coherence: if the station chain carries the line (a continuous ~20-s station oscillation), P10 and P11 carry THE SAME phase at 0.714 mHz, referenced to TDB t = 0 — the phase difference must be STABLE across two halves of the common window. Null: circularly shifted series (same spectrum, random phase) — 200 surrogates.
 
-Deduction 27 — The two-/three-way split: in three-way (Ground Mode 3) the receiving station counts the transmitting station's signal. If the receive chain carries the line, f(Mode 2) and f(Mode 3) agree per station; if the transmit/uplink chain does, the three-way shows the transmitting station's frequency. Local block de-trending of the sky frequency, LS 44–56 mHz.
+Deduction 27 — The two-/three-way split: in three-way (Ground Mode 3) the receiving station counts the transmitting station's signal. If the receive chain carries the line, f(Mode 2) and f(Mode 3) agree per station; if the transmit/uplink chain does, the three-way shows the transmitting station's frequency. Local block de-trending of the sky frequency, LS 44–56 mHz. Measured (PASF sub-10-s vs NAVIO (rx, tx), 103 261 matched): the frequency is receiver-fixed and the amplitude depends on the (rx, tx) pair — a two-way-link effect.
 
 Deduction 29 — The frequency path over the era: does the station line wander continuously or jump (receiver generation Block IV → Block V / Advanced Receiver at the start of the 1990s — the survey finding)? Sliding windows over the residuum per station.
 
