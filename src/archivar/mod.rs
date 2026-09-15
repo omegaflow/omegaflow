@@ -25,6 +25,7 @@ pub mod ccor;
 pub mod cdf;
 pub mod cdf25;
 pub mod cdn;
+pub mod celestrak_eop;
 pub mod cif;
 pub mod ck;
 pub mod copernicus;
