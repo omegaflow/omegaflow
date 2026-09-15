@@ -2,7 +2,7 @@
   title: Docs — Benennung & Versionierung
   class: concept
   date: 2026-09-10
-  sha256: 02eb4a527dd5ab81c86cf1eeeb53d036730aeab2d2e6eaf6e85693b9e7d98029
+  sha256: cbbb627f159d21ff1b68b20a918ae5d25587ac0f4121410ed7e866e18349a060
   status: live
   see-also: AGENTS.md
 -->
@@ -17,7 +17,9 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   stay named in the handover; the session that works them off takes them up.
   Same-day handovers with similar slugs may coexist (in the archive or live) —
   the name carries the day and the line, and the next session reads the one it
-  needs.
+  needs. The slug is uniform: `<line>-folge<N>`, line one of `entscheid` |
+  `bau` | `ernte` | `forschung`, N the line's running sequence — a descriptive
+  slug (e.g. `<line>-odf-voyager`) is drift.
 - `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
   `survey-<slug>.md` — a standing survey (evolving, no date in the name).
 - `docs/plans/ref-<slug>.md` — a standing reference list.
