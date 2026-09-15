@@ -3,7 +3,7 @@
   session: Ernte-Folge 28
   class: handover
   date: 2026-09-15
-  sha256: bd5aeec880cc97ec70040b4cf18b757d2ffd02f61628dcf149aafaf79897565f
+  sha256: 836b682afa77793fb6b1f35da290f19ef738d190a38675c71a6c55b4d43ca54f
   status: live
 -->
 # Handover — Ernte-Folge 28 (2026-09-15)
@@ -100,10 +100,6 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage.
 - Akteure: Flotten-Scatter+CMT, Stationsterm +5,69 s, Tonga-Luftgang, W-Phase M9,
   ETOPO1-CDN (395 MB), MiniSEED-Konsolidierung, Erdmoden, DART, Grundwasser,
   Gravimeter-SFTP, Radon. (Schritt: je Akteur Quelle + Route.)
-- Code-TE-Drift: 5 deutsche Tool-Namen umbenennen — `doppel_anomalie_compiler`,
-  `mseed_messen`, `pioneer11_negativ_fuzzy_probe`, `pioneer_text_korrelation`,
-  `s1_post_erfassen`. (Schritt: `survey-2026-09-02-code-te-drift.md`, dann
-  `git mv` + Register-Einträge.)
 - Daten-Holdings: `abk_dbdt_1h_*`, kegel-log, GIC/corona; new_horizons/voyager1/2
   976-B-Platzhalter; ~50-G-Backup-Ziel-Layout. (Schritt: erste Messung —
   Holdings lesen, Herkunft je Stück benennen.)
@@ -113,7 +109,7 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage.
 - Korpus-Rest (gegen eigenen Stand geprüft, neu): thread-matrix-Lücken
   (Gravimeter, Infraschall, Hydroakustik, seismische Worldlines, HF-Radar, GIC,
   Blitz, BGC-Argo, VHE-Teleskope); WWLLN-netcdf/BPA-GIC; BiSON-Tabelle;
-  tmp-opencode-Scratch/SuperDARN-FITACF/NOAA-NRS; codestruktur `tools/`-Check;
+  tmp-opencode-Scratch/SuperDARN-FITACF/NOAA-NRS;
   mirror-research ~2300-Quellen-Migration; GLO-30 DEM. (Schritt: je Treffer
   Quelle + Route, sonst streichen.)
 
