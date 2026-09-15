@@ -67,7 +67,7 @@ note Toten-Re-Check 2026-09-14: §11 entblockt — direkt Timeout, Proton jp 200
 
 ausstehend
 kandidat https://www.ncdc.noaa.gov/cdo-web/api/v2/
-note entblockt 2026-09-15: NOAA_CDO_TOKEN öffnet (curl token-Header → HTTP 200, GHCND-Datasets). CDO = Klimadaten (temperature/precipitation, diffusion/thermal). Ernte/Compiler + Konsument offen.
+note entblockt 2026-09-15: NOAA_CDO_TOKEN öffnet (curl token-Header → HTTP 200, GHCND-Datasets). CDO = Klimadaten (temperature/precipitation, diffusion/thermal). Ernte/Compiler + Konsument offen. Anonym token-gate re-measured 2026-09-15: /api/v2/data anonym 400 "Token parameter is required", NOAA_CDO_TOKEN 200.
 
 ausstehend
 kandidat s3://lp-prod-protected/GEDI02_A.002/
