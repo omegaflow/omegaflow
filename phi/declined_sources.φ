@@ -244,6 +244,10 @@ decline registry-premium-gzip
 url https://api.511.org/transit/stops?operator_id=SF&api_key={TRANSIT511_KEY}&format=json
 note Free tier: stops/operators = static registries (Force Gate decline); VehicleMonitoring (real-time positions) = 401 premium; response gzip-compressed (parser has no --compressed). Regional SF Bay only.
 
+decline no-physical-force
+url https://api.adsabs.harvard.edu/v1/search/query
+note ADS (NASA Astrophysics Data System) — bibliographische Literatur-Metadaten (Bibcode/Titel/Autor/Abstract/Zitat/BibTeX-Export), kein physikalisches Feld; token-gated, NASA_ADS_TOKEN lebt (gemessen 2026-09-14: HTTP 200, numFound echt). Die zwei dead_sources.φ-Einträge (api.adsabs.harvard.edu/v1/ und /v1/export/bibtex/) sind Fehl-URLs (GET auf POST-only/nicht-existenten Pfaden), kein Dienst-Tot.
+
 decline variant
 url https://api.adsb.lol/v2/point/50/10/1500
 note Feste Koordinaten-Variante der live-Quelle {lat}/{lon}/250 (Probe-Befund 2026-08-15).
@@ -3554,8 +3558,8 @@ url http://jvo.nao.ac.jp/skynode/do/tap/saga
 note JVO-SAGA-TAP — statischer Katalog stellarer Elementhäufigkeiten (EMP-Sterne), chemische Zusammensetzung, keine Kraft (kein Sinnesorgan für [Fe/H]).
 
 decline spectral-series
-url https://registry.opendata.aws/noaa-nodd/
-note NOAA-NODD NRS — 1195-Bin-Sound-Level-Spektrum ist eine Serie, kein Skalar; der noaa_nrs_psd-Feldblock wurde als Oszillator gestrichen (c3f33f6), das CDN-Asset bleibt Spektral-Record. Die Form (Serie) schließt das Gate.
+url https://storage.googleapis.com/noaa-passive-bioacoustic
+note NOAA-NODD NRS — 1195-Bin-Sound-Level-Spektrum ist eine Serie, kein Skalar; der noaa_nrs_psd-Feldblock wurde als Oszillator gestrichen (c3f33f6), das CDN-Asset bleibt Spektral-Record. Die Form (Serie) schließt das Gate. Route: das AWS-Registry (`registry.opendata.aws/noaa-nodd`) ist 404; der Bucket lebt auf GCS (`storage.googleapis.com/noaa-passive-bioacoustic`, nrs/products), der Harvester `noaa_nodd_bucket_harvester` ist GCS-nativ (`NETLOC=storage.googleapis.com`).
 
 decline molecular
 url https://data.mendeley.com/datasets/75tsccprd2/1
@@ -3563,11 +3567,11 @@ note GNIP — δ18O/δ2H-Niederschlags-Isotopie ist ein geochemischer Tracer (�
 
 decline superseded-by-integrated
 url http://tap.roe.ac.uk/vsa/sync
-note WFAU VSA — VVVDR1.vvvSource HTTP 500 (Backend down); NOIRLab Astro Data Lab spiegelt vhs_dr5 → über NOIRLab integriert.
+note WFAU VSA — VVVDR1.vvvSource HTTP 500 (Backend down); NOIRLab Astro Data Lab spiegelt vhs_dr5 → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
 
 decline superseded-by-integrated
 url http://tap.roe.ac.uk/wsa/sync
-note WFAU WSA — UKIDSSDR10PLUS HTTP 500 (Backend down); NOIRLab spiegelt ukidss_dr11plus → über NOIRLab integriert.
+note WFAU WSA — UKIDSSDR10PLUS HTTP 500 (Backend down); NOIRLab spiegelt ukidss_dr11plus → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
 
 decline superseded-by-integrated
 url http://jvo.nao.ac.jp/skynode/do/tap/alma
@@ -3584,3 +3588,7 @@ note NOAA MarineCadastre AIS — aktives Selbstfahrer-Objekt (Vessel-Telemetrie:
 decline no-physical-force
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 note ADS-B (Luftfahrzeug) — Kinematik eines angetriebenen Objekts (Aktuator): die Telemetrie misst die Position, kein propagierendes Feld (Rat 2026-09-15: Sensor=accept, passiver Treiber=accept, aktives Objekt=decline).
+
+decline derived-orbit-fit
+url https://www.space-track.org/basicspacedata/query/class/gp
+note Space-Track GP/OMM — TLE-Bahnelemente sind ein SGP4-Orbit-Fit aus Radar-/optischer Bahnverfolgung, keine Rohmessung (Range/Range-Rate/Winkel sind nicht öffentlich); superseded-by-ephemeris (Horizons, sources.φ). Die Route lebt (SPACETRACK_USER/PASS in .secrets.local; Login + class/gp-Query HTTP 200, gemessen 2026-09-14). Konsistent mit celestrak-TLE (Z.769).

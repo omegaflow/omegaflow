@@ -48,7 +48,7 @@ vorhanden.
 | `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer (Public Domain) | https://firms.modaps.eosdis.nasa.gov/api/area/ |
 | `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata (PD) | https://urs.earthdata.nasa.gov → Profil → Generate Token |
 | `USGS_WATER_KEY` | ✅ | USGS Water (PD) | https://api.waterdata.usgs.gov/ogcapi/ |
-| `CATALOGS_REPO`/`GH_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+| `CATALOGS_REPO`/`OMEGAFLOW_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
 
 ### ✅ In `.secrets.local` vorhanden (2026-08-14 — aus der ehemaligen „Noch zu besorgen"-Liste eingelöst)
 
@@ -62,7 +62,7 @@ vorhanden.
 `TRANSIT511_KEY` (verifiziert, aber decline — Premium-Echtzeit + gzip + Registry).
 
 `archive_search --github` liest seit 2026-09-15 `GITHUB_SEARCH_TOKEN` (read-only,
-fine-grained ohne Permissions); der Write-Token `GH_TOKEN` bleibt bei
+fine-grained ohne Permissions) statt `OMEGAFLOW_TOKEN`; der Write-Token bleibt bei
 der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
 
 Ein vorhandener Key **bedeutet kein Port-Verdikt**: einige besorgte Accounts führen

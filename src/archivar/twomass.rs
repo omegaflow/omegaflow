@@ -17,7 +17,11 @@ pub struct PscRow {
 
 fn coord_field(v: Option<&str>) -> Option<f64> {
     let x: f64 = v?.trim().parse().ok()?;
-    if x.is_finite() { Some(x) } else { None }
+    if x.is_finite() {
+        Some(x)
+    } else {
+        None
+    }
 }
 
 fn mag_field(v: Option<&str>) -> Option<f64> {
@@ -31,7 +35,11 @@ fn mag_field(v: Option<&str>) -> Option<f64> {
 
 fn err_field(v: Option<&str>) -> Option<f64> {
     let x = mag_field(v)?;
-    if x <= 8.0 { Some(x) } else { None }
+    if x <= 8.0 {
+        Some(x)
+    } else {
+        None
+    }
 }
 
 fn band_detected(rd_flg: &[u8], band: usize) -> bool {
