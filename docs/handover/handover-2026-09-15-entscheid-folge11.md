@@ -3,7 +3,7 @@
   session: Entscheid-Folge XI
   class: handover
   date: 2026-09-15
-  sha256: 2d2cc7ac96db5764acae156ed13fcf8c0c153d3aa80d6577adbff32f15886110
+  sha256: 3896aa08d727e1e790c4d508d43780d2623d41fbe220566bd040bc55c57f0bbf
   status: live
 -->
 # Handover — Entscheid-Folge XI (2026-09-15)
@@ -64,10 +64,10 @@ einen der vier offenen Posten.
 - 20-s-Bande-Papier: per-Papier-Release-Tag und Welt-Fassung-Branch sind absent
   (gemessen `git tag` / `git branch -a`: nur `v2026-09-09`). Kein Send-Blocker
   (der gepinnte Sha ist unveränderlich). (Schritt: Tag + Welt-Fassung-Branch — Bau.)
-- PII-Gate: Gate-Fixtures für die gemessenen Muster (`proton.me`, `[redacted-street]`,
-  `@igetsftp`, `account_id =`, `ghp_`) in `src/gate/commit_gate_vocab.json` +
-  Gate-Test; optional ein `pii_scan`-Bin (`tools/register`). (Schritt:
-  Fixtures + Test + Bin — Bau.)
+- PII-Gate: Gate-Fixtures für die gemessenen PII-Muster (Mail-Domain,
+  Straßenname, SFTP-Login, Cloudflare-account_id, Token-Präfix) in
+  `src/gate/commit_gate_vocab.json` + Gate-Test; optional ein `pii_scan`-Bin
+  (`tools/register`). (Schritt: Fixtures + Test + Bin — Bau.)
 
 ## PII/Mail — getilgt (Ratsverdikt 2026-09-15)
 
