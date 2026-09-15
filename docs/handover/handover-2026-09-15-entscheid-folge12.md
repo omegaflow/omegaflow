@@ -3,7 +3,7 @@
   session: Entscheid-Folge XII
   class: handover
   date: 2026-09-15
-  sha256: d9caa9168c4a613f5b979c47cd251ec49121e354f39c4fd0f83c47c4ac757d4c
+  sha256: f473e3c6efcd11e77153d181cc3a35f3f81c365d0c5080cd8c79438c941d67b2
   status: live
 -->
 # Handover — Entscheid-Folge XII (2026-09-15)
@@ -38,9 +38,9 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   `v2026-09-09` ist umgehängt `317418d → bc113f6` (Release + Binär-Assets
   bleiben). Messung: keine PII mehr an `main`/Tag (`curl -I` → 404,
   `git log -S` leer). Nur der alte Tag-Commit `317418d` ist bis zum GitHub-GC
-  per SHA abrufbar. (Schritt: GitHubs GC-Bestätigung abwarten; der aktualisierte
-  Purge-Antrag liegt in `state/mail/github-purge-request.md` — senden an
-  https://support.github.com/contact.)
+  per SHA abrufbar. Der aktualisierte Purge-Antrag ist gesendet — Ticket
+  **#4761801** (bestätigt `support@githubsupport.com`); der erste Antrag
+  #4761482 ist damit überholt. (Schritt: GitHubs GC-Bestätigung abwarten.)
 
 ## GitHub-Token — auf zwei Tokens konsolidiert (gemessen)
 
@@ -64,8 +64,10 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 - GitHub Support — User→Org / HTTP 422: Ticket ist raus, Antwort offen.
   (Schritt: Postfach auf die Support-Antwort prüfen.)
-- Rubin RSP-Datenrechte — Antwort an Shaughnessy (SLAC) gesendet 2026-09-15;
-  Entscheidung offen (`state/mail/auftrag-rubin-data-rights-antrag.md`).
+- Rubin RSP-Datenrechte — Antwort von Shaughnessy (SLAC) eingegangen 2026-09-15
+  (`mail_ledger.φ`, Betreff `Re: Confirming your data rights…`, Body im Ledger
+  leer); Entscheidung im Proton-Postfach zu lesen. (Schritt: Postfach öffnen,
+  `state/mail/auftrag-rubin-data-rights-antrag.md` fortschreiben.)
 - NSE/Haug — Anfrage raus, Antwort offen (Keimer).
 - CSES-Limadou — Anfrage an Sotgiu (ASI SSDC) raus, Antwort offen; der L2-Zugang
   liegt lokal in `.secrets.local` (`SSDC_USER`/`SSDC_PASS`).
