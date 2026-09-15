@@ -1,0 +1,41 @@
+name: uscrn-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  uscrn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the www.ncei.noaa.gov release exists on the CDN
+        run: |
+          if ! gh release view www.ncei.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.ncei.noaa.gov --repo omegaflow/sources \
+              --title "www.ncei.noaa.gov" \
+              --notes "USCRN hourly02 temperature compiled to a USC1 geo oscillator record (medium em). Record stride 60 B LE: t (f64, unix epoch seconds), lat (f64 deg), lon (f64 deg), alt (f64, station elevation m), freq (f64 Hz), bin_width (f64 Hz), val (f64, deg C), comp (u32; 1=air temperature). Magic USC1."
+          fi
+      - name: Fetch the leap-second kernel
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+      - name: Compile the USCRN hourly record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin uscrn_compiler -- \
+            --station AK_Aleknagik_1_NNE --year 2026 --lsk kernels/naif0012.tls \
+            --out uscrn_hourly.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "uscrn-cdn: uscrn_hourly.bin returned void" \
+                 "uscrn compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
