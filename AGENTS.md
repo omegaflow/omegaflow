@@ -266,6 +266,28 @@ The project's own tools live on `PATH` (via `~/.local/bin`, built from
 allowed to every agent — prefer them over the standard `webfetch`/`websearch`
 (now denied) and over spawning a fresh process where one of them fits.
 
+## Agent permission profiles — role = profile
+
+Every agent maps to one profile (`opencode.json`); in a bash map the catch-all
+`"*"` stands **first**, the specific rules after it (opencode evaluates by
+pattern, **last matching rule wins**; a `"deny"` string on a tool key removes the
+tool):
+
+- **P1 primary** (`build`) — edit + full bash (global).
+- **P2 read-code** (`explore`, `council`) — no edit; bash = git read
+  (`status`/`log`/`diff`/`show`/`reflog`/`rev-parse`) + `sgrep`.
+- **P3 read-research** (`general`, `research-max`) — no edit; bash =
+  `archive_search`/`curl`/`proton-wg` + the git-read set + `sgrep`/`sfetch`/`omega_sh`.
+- **P4 read-plan** (`plan`) — no edit; bash = `register_lookup` + `git_safety`
+  (the planning pass's two commands) + git-read + `sgrep`.
+- **P5 write-port** (`grind-flash`/`grind-pro`/`grind-max`) — edit + full bash (global).
+- **P6 vision** (`vision`) — no edit, no bash.
+
+No agent has `webfetch`/`websearch` (global deny) — web runs through
+`archive_search`. Every subagent has `task: deny` (no sub-subagents); only
+`build` spawns. Never answer "always" to a bash `ask` outside the written maps —
+`approved` is instance-shared and evaluates last, so it would cross profiles.
+
 
 
 ## Kybernaut-Native Methodology
