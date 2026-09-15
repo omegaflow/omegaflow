@@ -87,6 +87,7 @@ pub struct FitsColumn {
     pub tbcol: usize,
     pub tscal: f64,
     pub tzero: f64,
+    pub unit: Option<String>,
 }
 
 #[derive(Debug)]
@@ -185,6 +186,10 @@ impl FitsTable {
                 Some(v) => v,
                 None => 0.0,
             };
+            let unit = header
+                .str_unescaped(&format!("TUNIT{}", i))
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty());
             columns.push(FitsColumn {
                 name,
                 code,
@@ -193,6 +198,7 @@ impl FitsTable {
                 tbcol,
                 tscal,
                 tzero,
+                unit,
             });
         }
         if columns.is_empty() {
@@ -521,8 +527,24 @@ impl FitsImage {
             _ => return None,
         };
         let naxis = header.int("NAXIS")? as usize;
-        if naxis == 0 || naxis > 3 {
+        if naxis > 3 {
             return None;
+        }
+        if naxis == 0 {
+            return Some((
+                Self {
+                    bitpix,
+                    dims: [0, 0, 0],
+                    data_start: header_end,
+                    bscale: header.f64("BSCALE").unwrap_or(1.0),
+                    bzero: match header.f64("BZERO") {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    wcs: None,
+                },
+                header_end,
+            ));
         }
         let mut dims = [1usize; 3];
         let mut data_bytes: usize = 1;
@@ -970,9 +992,61 @@ impl FitsTable {
     }
 }
 
+const LPF_TEST_MASS_KG: f64 = 1.928;
+
+pub fn drs_differential_acceleration(buf: &[u8]) -> Option<Vec<[f64; 3]>> {
+    let mut off = 0usize;
+    loop {
+        let Some((header, _)) = FitsHeader::parse(buf, off) else {
+            return None;
+        };
+        let next = if header.value("XTENSION") == Some("'BINTABLE'") {
+            if header.str_unescaped("EXTNAME").as_deref() == Some("SCI_SCIENCE_1Hz") {
+                let (table, _) = FitsTable::parse(buf, off)?;
+                return drs_dg_from_table(buf, &table);
+            }
+            FitsTable::parse(buf, off)?.1
+        } else {
+            FitsImage::parse(buf, off)?.1
+        };
+        if next <= off || next >= buf.len() {
+            return None;
+        }
+        off = next;
+    }
+}
+
+fn drs_dg_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<[f64; 3]>> {
+    let f1 = [
+        table.column("DST11077")?,
+        table.column("DST11078")?,
+        table.column("DST11079")?,
+    ];
+    let f2 = [
+        table.column("DST11083")?,
+        table.column("DST11084")?,
+        table.column("DST11085")?,
+    ];
+    (0..table.n_rows)
+        .map(|r| {
+            Some([
+                (table.cell_f64(buf, r, f2[0])? - table.cell_f64(buf, r, f1[0])?)
+                    / LPF_TEST_MASS_KG,
+                (table.cell_f64(buf, r, f2[1])? - table.cell_f64(buf, r, f1[1])?)
+                    / LPF_TEST_MASS_KG,
+                (table.cell_f64(buf, r, f2[2])? - table.cell_f64(buf, r, f1[2])?)
+                    / LPF_TEST_MASS_KG,
+            ])
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection};
+    use super::{
+        drs_differential_acceleration, FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs,
+        WcsProjection,
+    };
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -1699,5 +1773,152 @@ mod tests {
                 assert!(value.is_finite(), "the first pixel is a real value");
             }
         }
+    }
+
+    fn synth_units(tunit1: &str, tunit2: &str) -> Vec<u8> {
+        let mut buf = Vec::new();
+        let mut header = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "12"));
+        ext.extend_from_slice(&pad_card("NAXIS2", "1"));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "2"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "E"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        ext.extend_from_slice(&pad_card("TUNIT1", tunit1));
+        ext.extend_from_slice(&pad_card("TTYPE2", "'TIME'"));
+        ext.extend_from_slice(&pad_card("TFORM2", "D"));
+        ext.extend_from_slice(&pad_card("TBCOL2", "5"));
+        ext.extend_from_slice(&pad_card("TUNIT2", tunit2));
+        ext.extend_from_slice(&pad_card("END", ""));
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        buf.extend_from_slice(&[4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0]);
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn drs_chain(cols: &[&str]) -> Vec<u8> {
+        let row_bytes = cols.len() * 8;
+        let n_rows = 2usize;
+        let mut buf = Vec::new();
+        let mut header = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("EXTEND", "T"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+
+        let mut ext = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", &row_bytes.to_string()));
+        ext.extend_from_slice(&pad_card("NAXIS2", &n_rows.to_string()));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("EXTNAME", "'SCI_SCIENCE_1Hz'"));
+        ext.extend_from_slice(&pad_card("TFIELDS", &cols.len().to_string()));
+        for (i, name) in cols.iter().enumerate() {
+            let idx = i + 1;
+            ext.extend_from_slice(&pad_card(&format!("TTYPE{idx}"), &format!("'{name}'")));
+            ext.extend_from_slice(&pad_card(&format!("TFORM{idx}"), "D"));
+            ext.extend_from_slice(&pad_card(&format!("TBCOL{idx}"), &(i * 8 + 1).to_string()));
+        }
+        ext.extend_from_slice(&pad_card("END", ""));
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+
+        for r in 0..n_rows {
+            for i in 0..cols.len() {
+                let v = ((r + 1) * (i + 1)) as f64;
+                buf.extend_from_slice(&v.to_be_bytes());
+            }
+        }
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn drs_primary_naxis0_parses_as_header_only() {
+        let buf = synth();
+        let (img, next) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.dims, [0, 0, 0]);
+        assert_eq!(next, 2880);
+        assert!(img.value_f64(&buf, [0, 0, 0]).is_none());
+    }
+
+    #[test]
+    fn measured_tunit_card_reads_unit() {
+        let buf = table_with(&[("TUNIT1", "'m s-2'")], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit.as_deref(), Some("m s-2"));
+    }
+
+    #[test]
+    fn bintable_reads_tunit_per_column() {
+        let buf = synth_units("'m s-2'", "'s'");
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit.as_deref(), Some("m s-2"));
+        assert_eq!(t.column("TIME").unwrap().unit.as_deref(), Some("s"));
+    }
+
+    #[test]
+    fn bintable_column_without_tunit_is_none() {
+        let buf = table_with(&[], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit, None);
+    }
+
+    #[test]
+    fn bintable_empty_tunit_is_none() {
+        let buf = table_with(&[("TUNIT1", "''")], &[[0, 0, 0, 1]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        assert_eq!(t.column("FLUX").unwrap().unit, None);
+    }
+
+    #[test]
+    fn drs_differential_acceleration_from_forces() {
+        let buf = drs_chain(&[
+            "DST11077", "DST11078", "DST11079", "DST11083", "DST11084", "DST11085",
+        ]);
+        let dg = drs_differential_acceleration(&buf).unwrap();
+        assert_eq!(dg.len(), 2);
+        let m = 1.928;
+        assert_eq!(dg[0], [(4.0 - 1.0) / m, (5.0 - 2.0) / m, (6.0 - 3.0) / m]);
+        assert_eq!(dg[1], [(8.0 - 2.0) / m, (10.0 - 4.0) / m, (12.0 - 6.0) / m]);
+    }
+
+    #[test]
+    fn drs_differential_acceleration_missing_column_is_none() {
+        let buf = drs_chain(&["DST11077", "DST11078", "DST11079", "DST11084", "DST11085"]);
+        assert!(drs_differential_acceleration(&buf).is_none());
     }
 }
