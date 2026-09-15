@@ -3,7 +3,7 @@
   session: Bau-Folge 39
   class: handover
   date: 2026-09-15
-  sha256: 74ae7e31e3f67a527a80786b1767dd61613271381d5e8c9748c19c7b9dc4abd8
+  sha256: 2d02d0aa2c4f3cba2a3c55617402a92f7a276de6fcfe89a046f2941d73363b27
   status: live
 -->
 # Handover — Bau-Folge 39 (2026-09-15)
@@ -39,21 +39,6 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (Operator). (Schritt: Lauf gegen `nhpc_rex_*.tnf`.)
 - ODF Juno/Magellan/MGS/MRO/Odyssey/MESSENGER/Mars Express/Rosetta + ODR Voyager: gebaut,
   Konsument offen (Operator).
-
-## Die 6 Compiler-Quellen — CDN-Manifestation offen
-
-- 5 der 6 Compiler-Assets sind manifestiert (dispatch 2026-09-15, alle `completed/success`,
-  Assets auf dem CDN geprüft): `gk2a_ami_rad.bin`, `goes_abi_rad.bin`,
-  `himawari_ahi_counts.bin`, `gdp_drifter.bin`, `pioneer10_skyfreq.bin`.
-- `lis-otd-cdn.yml` neu angelegt (Muster `iss-lis-cdn.yml`, NETLOC `ghrc.nasa.gov`,
-  EDL-Token, naif-LSK, `--ci-mode`); Compiler gegen echtes OTD-Granulat verifiziert
-  (`otdlip_1995.103_daily.tar` → 6608 flashes, 396488 B, roundtrip parst).
-  (Schritt: Workflow pushen, dann `gh workflow run lis-otd-cdn`; `lis_otd.bin` fehlt noch
-  auf dem CDN.)
-- Nach der Manifestation: die 6 Blöcke aus
-  `phi/pipeline/research/agent_output/sources14_2026-09-15.φ` in `phi/sources.φ` mergen —
-  wartet auf `lis_otd.bin` und auf die Session-Grenze der fremden uncommitteten
-  sources.φ-Änderung.
 
 ## TE-Gate — n=1000-Null leckt Autokorrelation (gemessen)
 
