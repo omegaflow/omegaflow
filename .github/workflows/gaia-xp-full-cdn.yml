@@ -1,0 +1,68 @@
+name: gaia-xp-full-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  raster:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.gen.outputs.chunks }}
+    steps:
+      - id: gen
+        run: echo "chunks=[$(seq -s, 0 255)]" >> "$GITHUB_OUTPUT"
+  harvest:
+    needs: raster
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJSON(needs.raster.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest 384 source-id bands, merge, upload xp_full_<chunk>.bin to dc.g-vo.org
+        run: |
+          # Full DR3 XP survey over the source_id band raster. source_id carries the
+          # order-12 healpix pixel in its top bits: source_id = pixel << 35 | sub,
+          # pixel in [0, 3*2^26). A band of 2048 pixels = 2^46 source_ids carries
+          # <= ~9100 rows (measured bulge max), under the ~20000 GAVO sync cap.
+          # 98304 bands total; 384 bands per chunk = 256 chunks. Each band compiles
+          # via --source-range, the chunk's bands merge into one CDN asset.
+          W=$((1 << 46))
+          BANDS=384
+          CHUNK=${{ matrix.chunk }}
+          name="xp_full_${CHUNK}.bin"
+          if gh release view dc.g-vo.org --repo omegaflow/sources --json assets \
+             --jq '.assets[]?.name' 2>/dev/null | grep -qx "$name"; then
+            echo "$name already present — chunk skipped"
+            exit 0
+          fi
+          cargo build -p omegaflow-harvest --release \
+            --bin gaia_xp_compiler --bin gaia_xp_merge
+          parts=()
+          for b in $(seq $((CHUNK * BANDS)) $((CHUNK * BANDS + BANDS - 1))); do
+            lo=$(( b * W ))
+            hi=$(( lo + W ))
+            p="band_${b}.bin"
+            ./target/release/gaia_xp_compiler --source-range "$lo" "$hi" \
+              --epoch-tdb 504921600 --out "$p" \
+              || { echo "band ${b} returned void — the chunk is retried on the next dispatch"; exit 1; }
+            parts+=("$p")
+          done
+          ./target/release/gaia_xp_merge --out "$name" "${parts[@]}"
+          if ! gh release view dc.g-vo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create dc.g-vo.org --repo omegaflow/sources \
+              --title "dc.g-vo.org" \
+              --notes "GAVO / Gaia DR3 XP spectra compiled to spectral-oscillator records (medium em). Per star: source_id (u64), ra/dec/parallax (f64), then the 41-sample flux grid as freq/bin_width/val (f64). Magic/version in src/archivar/spectral.rs."
+          fi
+          gh release upload dc.g-vo.org "$name" --clobber --repo omegaflow/sources

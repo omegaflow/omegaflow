@@ -2,7 +2,7 @@
   title: The spectral oscillator — the frequency axis of the block
   class: concept
   date: 2026-09-08
-  sha256: 1759ba39ddafdd7c73567511fe825d0062546e404336d5d0a3db4bf550120924
+  sha256: f03f323c167f986a9807c9f3eb8f9817aa6f4b4035409265754a0d30130ecd16
   status: live
 -->
 # The spectral oscillator — the frequency axis of the block
@@ -54,9 +54,10 @@ The project's own registers prove what got reduced or discarded:
   `mlqso.slitspectra`, `califadr3.spectra`, `lotsspol.spectra`,
   `dfbsspec.raw_spectra` — spectra catalogs lie in the catalog holdings
   and are unharvested.
-- **ONC-HSD-FFT** (verified 2026-08-19): 512 frequency bins × 250 Hz,
-  dB re 1 µPa² — ASCII file with implicit axis (bin i = i×250 Hz),
-  85 hydrophone stations; filed as a parser gap.
+- **ONC-HSD-FFT**: 1921 frequency bins (measured 2026-09-15 from the mat5
+  dump; `onc_hydrophone_compiler.rs` reads the axis from the file, no fixed
+  geometry), dB re 1 µPa², implicit axis, 85 hydrophone stations; filed as a
+  parser gap.
 - **GONG** (FITS gap), **miniSEED/FDSN** (behind the gate),
   **lidar waveform**, **wave spectra**, **hyperspectral** — registered
   as gaps, never freed.
@@ -69,8 +70,8 @@ spectra are openly downloadable (IRSA Planck release_3 cosmoparams,
 `COM_PowerSpect_CMB-*.txt`, l-axis + D_ℓ in µK²) — now located, not yet
 registered. ONC carries the HSD `.fft` product (deviceCategory
 HYDROPHONE, 85 stations) but token-gated and archived as 5-minute `.mat`
-spectra, not `.fft` ASCII — the "512 bins × 250 Hz" geometry is
-unconfirmed. Gaia XP `gdr3spec.spectra` is reachable at
+spectra, not `.fft` ASCII — the geometry is the mat5 dump's own axis:
+1921 frequency bins (measured 2026-09-15), read by the compiler. Gaia XP `gdr3spec.spectra` is reachable at
 `dc.g-vo.org/tap/sync` (41 samples, 400–800 nm, not "~55 bins"). These
 are register duties (locate the source or strike the claim), not
 holdings.
@@ -159,8 +160,8 @@ axis, tau = bin coherence, kernel per medium. Sources in order:
    W/m²/nm → W/m²/Hz; proves the chain end-to-end on the first day.
 2. **ONC-HSD-FFT** — route verified (dataProductDelivery chain:
    request → status → run → download; deviceCode form, not
-   locationCode+deviceCode); ASCII, 512 bins × 250 Hz, implicit
-   axis; 85 stations as a station family.
+   locationCode+deviceCode); the mat5 dump carries 1921 frequency bins
+   (measured 2026-09-15), implicit axis; 85 stations as a station family.
 3. **Gaia XP spectra** (`gdr3spec.spectra`, verified 2026-09-08 at
    `dc.g-vo.org/tap/sync`) — the big case: CDN compiler like
    dr3_stars.bin; measured 41 samples (400–800 nm, Δλ 10 nm,
