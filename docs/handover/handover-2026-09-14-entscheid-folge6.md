@@ -3,7 +3,7 @@
   session: Entscheid-Folge VI
   class: handover
   date: 2026-09-14
-  sha256: 4de3a752e6cfca9e4741ae731b133806eebfea0acd201dacd6dd05186d0ae3ec
+  sha256: 58acca098a8d9346edce8a9aea87556825783cb99be5747d93a14c9650b1ff9e
   status: live
 -->
 # Handover — Entscheid-Folge VI (2026-09-14)
@@ -28,17 +28,15 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 
 ## Warten auf Rückmeldung (extern gebunden — kein Datum)
 
-- adoption — Drei-Mail-Block (Toth/Turyshev/Markwardt) nicht gesendet; hängt an
-  Merge-Fix + Bande-Split (Schritt: Merge-Fix + Bande-Split in den Bau-/Forschungs-
-  Linien; dann die drei Mails senden).
+- adoption — Drei-Mail-Block (Toth/Turyshev/Markwardt) nicht gesendet; hängt am
+  Bande-Split (Merge-Fix erledigt, gemessen 2026-09-03). (Schritt: Bande-Split —
+  Split + Registerzeilen f*, 1-s, Amplitude — in der Forschungs-Linie; dann die
+  drei Mails senden.)
 - GitHub Support — User→Org / HTTP 422: Ticket ist raus, Antwort offen (Konto
   weiter `type: User`). (Schritt: Postfach auf die Support-Antwort prüfen)
-- `ivoa` — (a) Re-Invite offen; als `johannestyroller` prüfen. Gemessen
-  2026-09-13 als `omegaflow`: keine Einladung (`/orgs/ivoa/invitation` →
-  „Invitation not found"), keine Mitgliedschaft (404); `ivoa/uvor` existiert
-  (angelegt 2026-09-09). Der Operator-Browser ist als `omegaflow` eingeloggt —
-  für `johannestyroller` muss das GitHub-Konto gewechselt werden. (b)
-  vo-tap-Crate-Push hängt an der Mitgliedschaft.
+- Rubin RSP-Datenrechte — Antwort an Shaughnessy (SLAC) gesendet 2026-09-15
+  (unabhängiger Forscher, kein US/CL-Institut, kein In-Kind-Team, kein
+  peer-reviewter Artikel); Antwort offen.
 - NOIRLab Data Lab — abgelehnt (Nikutta); TAP anonym offen. Offen bleibt nur
   die Speisekammer-Frage (Wiedervorlage 2026-12-02, Gaia DR4).
 - NSE/Haug — Anfrage raus, Antwort offen (Teilroute Paper-Fig. 5b digitalisieren).
