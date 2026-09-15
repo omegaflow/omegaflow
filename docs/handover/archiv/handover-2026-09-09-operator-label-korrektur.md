@@ -2,7 +2,7 @@
   title: Handover — Operator-Label-Korrektur: keine Operator-Pendings gemessen
   class: handover
   date: 2026-09-09
-  sha256: 852293ca3c5feceb0ff8469abcb11815158a6cf3f834fb517269d681c1c21f53
+  sha256: ffe8af5dacb42b2150b3c37b62898496c31f2b5eb1564d010ea7c0fdb7d1ff85
   status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md,
             docs/handover/archiv/handover-2026-09-09-mechanische-reste.md

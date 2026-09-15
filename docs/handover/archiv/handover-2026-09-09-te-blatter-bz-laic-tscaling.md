@@ -2,7 +2,7 @@
   title: Handover — TE-Linie: Bz/LAIC n_surr=100 und T-Skalierung geschlossen; der Riß (n=1000) ist die nächste Adresse
   class: handover
   date: 2026-09-09
-  sha256: dc8d78c885c37355606c2367fbdcda9faecc979d32cc62ccd289d3c9da489110
+  sha256: 3bb4083816541cb7bf2e7bd64c349874fe66bc73569fe92a01edfdb22606c83b
   status: archived
   see-also: docs/befund/befund-bz-laic-nsurr100.md docs/befund/befund-tscaling.md docs/befund/befund-betriebspunkt-sweep.md
 -->

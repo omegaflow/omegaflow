@@ -1,7 +1,7 @@
 <!--
   title: Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
   class: concept
-  sha256: 0f5c07b12af9f2891fed03a5d430f414cf271a4559252f9286035a86ffc5a90c
+  sha256: 06a30cf96f806c10f91d99604c0bee50a9f28509f73d86d5bf5b15c2337118d4
 -->
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 

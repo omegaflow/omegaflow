@@ -2,7 +2,7 @@
   title: Auftrag (extern) — Weberin-Zweitlinien: dritte Linie Eisriesen, breite TNO-Linie, Sonden-Linie
   class: auftrag
   date: 2026-09-08
-  sha256: 638d5bd8503699faa23cc1d1d2fdb1588fa9940f7f36513b7c6fd42665ce94cb
+  sha256: 9247a08dc2aa990a9527f0783a9ceb0899808859ad0a038da18cc0e7412399ed
   status: archived
   see-also: docs/handover/handover-2026-09-07-weberin-sonnensystem-kette.md docs/concepts/die-weberin.md docs/TODO.md
 -->

@@ -1,7 +1,7 @@
 <!--
   title: Adapter family: Harvester vs. Compiler
   class: concept
-  sha256: d28e5a4dec3eca06042bd7a74e233aa9d5c66b6eedb0f53a080aef491c07c8d0
+  sha256: 5d238d7dec2402eeabb16d0e553085d4670e7006b47351653a173b5ca0013979
 -->
 # Adapter family: Harvester vs. Compiler
 
