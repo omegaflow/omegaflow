@@ -314,6 +314,16 @@ grind-max $0.0104 / 19.7 s — **identical diagnosis**. Rule: **flash first** �
 dispatch the cheapest profile, and escalate to pro/max only when flash returned
 a wrong or incomplete answer, never by default.
 
+### Benchmarking — every active task is a benchmark
+
+The hard atoms (novel parser, TE-/null construction, multi-stage register
+routes) are not yet measured flash-vs-pro. A session that works an active task
+dispatches the SAME task to the flash profile and to the pro/max profile
+(identical wording, no edits), compares the result (correctness/completeness),
+measures the burn (`session_burn` / opencode.db: `cost`, `tokens_input`,
+`tokens_cache_read`, duration), and records the winner as a handover line.
+flash stays the default; pro/max wins only with a measurably better answer.
+
 
 
 ## Kybernaut-Native Methodology
