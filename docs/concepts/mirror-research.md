@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW MIRROR SOURCES — completed research
   class: concept
-  sha256: 219948fa8ca841597e2930ec3215a41222991c3cf877977c884796bd0f6e63a5
+  sha256: 692d14ce4ff802cb168920e5fbe74fe707e2c700c5e1a187aacbcce5d474979d
 -->
 # OMEGAFLOW MIRROR SOURCES — completed research
 

@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 71147731a6a6a00167d7fd81e3b103b60ae7a872d6597a5414ec63eedcdf27c8
+  sha256: bf8c4e90a73b9fe191dd5605a90a1328e9515f29578f3a3da643f6de0ce96dbc
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste

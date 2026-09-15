@@ -2,7 +2,7 @@
   title: Survey — Die Weberin Faden-Matrix (thread matrix)
   class: survey
   date: 2026-09-07
-  sha256: e802e771807f5b068c64652e5165b90326865a80fb534070f7ab8bd3b04cd89a
+  sha256: 8a20ce75981d8248c798643e23afebba809b87c70e53d5291de61701cffbf606
   status: live
   see-also: docs/concepts/die-weberin.md docs/concepts/archivar-mathematikerin.md
 -->

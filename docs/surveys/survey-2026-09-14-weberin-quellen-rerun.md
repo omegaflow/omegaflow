@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 5ca10a6c90fb5676702e69f023599570b0f75e3605a4d736fed5a5a5c194cb0f
+  sha256: c1c6f6976f7e549edbb0a3ffaff6efa478cf9ea34361ac76b805e6ff72d4b73b
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
