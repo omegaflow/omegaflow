@@ -1066,6 +1066,7 @@ pub enum TeNull {
     Block,
     Shift,
     Phase,
+    RestrictedPermutation,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -1139,6 +1140,7 @@ pub fn conditional_te_surrogates_n(
             TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
             TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
+            TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
         };
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins),
@@ -1524,6 +1526,48 @@ pub fn cycle_phase_shift_surrogate(v: &[f32], cycle_len: usize, rng: &mut u64) -
             out[start..start + cycle_len].rotate_left(shift);
         }
         start += cycle_len;
+    }
+    out
+}
+
+const RESTRICTED_PERMUTATION_BINS: usize = 32;
+
+pub fn restricted_permutation_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
+    let n = v.len();
+    if n < 2 {
+        return v.to_vec();
+    }
+    let mut min = f32::INFINITY;
+    let mut max = f32::NEG_INFINITY;
+    for &x in v {
+        if x < min {
+            min = x;
+        }
+        if x > max {
+            max = x;
+        }
+    }
+    let k = RESTRICTED_PERMUTATION_BINS;
+    let range = (max - min) as f64;
+    let mut bins: Vec<Vec<usize>> = vec![Vec::new(); k];
+    for t in 1..n {
+        let b = if range <= 0.0 {
+            0usize
+        } else {
+            (((v[t - 1] - min) as f64 / range) * k as f64) as usize
+        };
+        bins[b.min(k - 1)].push(t);
+    }
+    let mut out = v.to_vec();
+    for pos in &bins {
+        let mut vals: Vec<f32> = pos.iter().map(|&t| v[t]).collect();
+        for i in (1..vals.len()).rev() {
+            let j = (next_rng(rng) * (i as f64 + 1.0)) as usize;
+            vals.swap(i, j);
+        }
+        for (i, &t) in pos.iter().enumerate() {
+            out[t] = vals[i];
+        }
     }
     out
 }
@@ -3125,6 +3169,11 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_residual_null_ksg_n_surr_100() {
         gate_fpr_autocorr(TeNull::Residual, TeEstimator::Ksg);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_restricted_null_binned_n_surr_100() {
+        gate_fpr_autocorr(TeNull::RestrictedPermutation, TeEstimator::Binned);
     }
 
     #[test]
