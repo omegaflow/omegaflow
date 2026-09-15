@@ -1,0 +1,32 @@
+name: gracefo-l1b-verify
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gracefo-l1b:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the GRACE-FO L1B granule (podaac-ops-cumulus-protected, EDL bearer)
+        run: |
+          curl -sSL --retry 3 --max-time 1800 \
+            -H "Authorization: Bearer $EARTHDATA_EDL_TOKEN" \
+            -o gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz \
+            "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz"
+          ls -l gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
+      - name: Run the real-granule streaming parse (ignored in the default cargo test)
+        run: |
+          OMEGAFLOW_GRACE_TGZ=gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz \
+            cargo test --release -p omegaflow --lib -- --ignored --nocapture \
+            real_gracefo_l1b_tarball_parses_a_member
