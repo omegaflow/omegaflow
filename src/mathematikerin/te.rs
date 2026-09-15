@@ -1067,6 +1067,7 @@ pub enum TeNull {
     Shift,
     Phase,
     RestrictedPermutation,
+    XShift,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -1133,6 +1134,13 @@ pub fn conditional_te_surrogates_n(
         block
     };
     for _ in 0..n_surr {
+        let xs_owned;
+        let xs: &[f32] = if null == TeNull::XShift {
+            xs_owned = x_shift_surrogate(x, &mut rng);
+            &xs_owned
+        } else {
+            x
+        };
         let ys = match null {
             TeNull::Residual => {
                 residual_surrogate_conditional_lagged_n(y, conds, max_lag, &mut rng)
@@ -1141,10 +1149,11 @@ pub fn conditional_te_surrogates_n(
             TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
             TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
+            TeNull::XShift => y.to_vec(),
         };
         let te = match est {
-            TeEstimator::Binned => transfer_entropy_conditional_binned_n(x, &ys, conds, lag, bins),
-            TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(x, &ys, conds, lag, k),
+            TeEstimator::Binned => transfer_entropy_conditional_binned_n(xs, &ys, conds, lag, bins),
+            TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(xs, &ys, conds, lag, k),
         };
         if let Some(te) = te {
             vals.push(te);
@@ -1527,6 +1536,17 @@ pub fn cycle_phase_shift_surrogate(v: &[f32], cycle_len: usize, rng: &mut u64) -
         }
         start += cycle_len;
     }
+    out
+}
+
+pub fn x_shift_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
+    let n = v.len();
+    if n < 2 {
+        return v.to_vec();
+    }
+    let s = (next_rng(rng) * n as f64) as usize % n;
+    let mut out = v.to_vec();
+    out.rotate_right(s);
     out
 }
 
@@ -3174,6 +3194,35 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_restricted_null_binned_n_surr_100() {
         gate_fpr_autocorr(TeNull::RestrictedPermutation, TeEstimator::Binned);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_xshift_null_binned_n_surr_100() {
+        gate_fpr_autocorr(TeNull::XShift, TeEstimator::Binned);
+    }
+
+    #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_restricted_null_binned_n_1000() {
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            TeNull::RestrictedPermutation,
+            TeEstimator::Binned,
+            2,
+            12,
+            4,
+            0,
+            100,
+        );
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_xshift_null_binned_n_1000() {
+        let cells =
+            gate_fpr_coarse_cells(1000, TeNull::XShift, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
