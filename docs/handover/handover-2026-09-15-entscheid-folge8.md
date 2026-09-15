@@ -3,7 +3,7 @@
   session: Entscheid-Folge VIII
   class: handover
   date: 2026-09-15
-  sha256: 24cb72a36e690d5dacac6fed677780b864e8a177dd8c8a9851a0264be47c8285
+  sha256: 8bc5c4a9840d61b9812ba6c6a8219d1aaf600f3bd50bdd1965c2debeed0048ec
   status: live
 -->
 # Handover — Entscheid-Folge VIII (2026-09-15)
@@ -44,6 +44,15 @@ ist ein Netz-Sweep, der lokal hängt. `free-research` und `provider.nvidia` entf
 `riva_translate` gelöscht — die Modelle tragen alle Sprachen selbst, ein eigener
 Übersetzer ist nicht nötig. `nemotron-parse-2.0` (VLM, kein Text-Chat) und
 Embedding/Rerank (404) bleiben ohne Andockung.
+
+## Code/Infra — Nachricht an die Bau-Linie
+
+- `number_audit`-Test rot (**vor-existent**, nicht diese Session):
+  `known_bad_corpus_rows_are_reconciled_with_its_umfang` in
+  `tools/register/src/bin/number_audit.rs` erwartet A14/Z3/D3/K1/N3/V5 (total 29),
+  aber `docs/specs/bekannt-schlecht-korpus.md` stimmt nicht mehr mit den Erwartungen.
+  `number_audit.rs` seit 2026-09-11 unberührt. (Schritt: Korpus oder Erwartung
+  abgleichen — Bau.)
 
 ## Warten auf Rückmeldung (extern gebunden — kein Datum)
 
