@@ -1,9 +1,9 @@
 <!--
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
-  date: 2026-09-03
-  version: 4
-  sha256: 0523feb96101b6c99e4683c88b8014c7595a8a3fb9018763ee72850471002e88
+  date: 2026-09-15
+  version: 5
+  sha256: 0aa922970108b3c65857da23d8b26e5e273037203c11bfac874ff901e0e5da2f
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -12,7 +12,7 @@
 
 ## Abstract
 
-In the Pioneer-10 Doppler data (ATDF, 1988–1993, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band 44–56 mHz carries a dense complex of coherent traces whose **dominant** frequencies are set by the receiving station: on the full subtraction chain's residual (the canonical series, §1) the 1988 dominant peaks are Goldstone 14 → 57,11 mHz, Canberra 43 → 44,40 mHz, Madrid 63 → 51,99 mHz — a signal from space would arrive at all three stations with the same frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium.
+In the Pioneer-10 Doppler data (ATDF, 1987-12→1993-04, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band around 20 s (44–58-mHz census grid) carries a dense complex of coherent traces whose **dominant** frequencies are set by the receiving station: on the full subtraction chain's residual (the canonical series, §1) the 1988 dominant peaks are Goldstone 14 → 57,11 mHz, Canberra 43 → 44,40 mHz, Madrid 63 → 51,99 mHz — a common signal, whatever oscillates in space or along the common interplanetary path, would arrive at all three stations with the same residual frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium.
 
 The complex is dense, not a set of fixed lines: the 3 000-sample windows scatter across the whole band (Station 63: 24 windows, 44,05–55,50 mHz, 2,3–10,2×), and no single coherent line carries it. The per-station values of the earlier version — 45,75 / 51,55 / 47,35 mHz — are a sub-peak selection of this complex: on the canonical series they appear at measured ranks 4 (45,75), 2 (51,50, one 0,05-mHz grid step below 51,55) and 17 (47,35, outside the top-5); the earlier global peak 50,73 mHz does not reproduce (§1, §4).
 
@@ -50,7 +50,7 @@ below the earlier 51,55), 47,35 mHz at rank 17 (Station 63, outside the top-5);
 47,35 mHz is dominant in no cell of the era × station × class × band census. A
 surrogate sub-peak null (199 phase-randomized surrogates per cell, full-circle
 phase rotation) puts the hit rate of a random frequency against the real top-5
-at 0,0208 per claim; two of the four earlier claims (45,75 mHz and the 1992
+within the 44–56-mHz null band at 0,0208 per claim; two of the four earlier claims (45,75 mHz and the 1992
 46,95 mHz) survive above the null (mean + 2σ = 0,65), the other two (51,55 /
 47,35 mHz) do not. The earlier "slow drift" sentence (~0,4 mHz in four years)
 rested on the 47,35-mHz (1988) → 46,95-mHz (1992) pair; its 1988 anchor does not
@@ -71,7 +71,8 @@ before our chain saw it. The stored reference frequency does NOT carry it
 (its own 0,1-Hz staircase structure lies beside it, e.g. Station 43:
 49,40 mHz). The count structure of the raw doppler_cnt is natively 0,001
 cycle (1 000/1 000 bins evenly distributed, 1/256-grid share 0,259 ≈
-256/1000) — the MDA resolver/256 divider is measured excluded.
+256/1000) — the MDA resolver/256 divider is measured excluded (Morabito &
+Asmar 1995, ref. 3).
 
 **The channels are separate.** The signal-strength channel (pure downlink-gain
 path) carries its own line at 48,15 mHz — at this frequency the phases of
@@ -95,10 +96,11 @@ are attitude-independent.
 CRG article (TDA PR 42-64) describe the reference chain as distribution +
 validation — no periodic control loop on the second scale. The
 PLL bandwidths of the receiver blocks (12/3/0,1 Hz) carry 13 ms/53 ms/1,6 s —
-not the 19,4–21,9 s. The syntonization series of the station standards (TDA PR
-42-72, digitized from the figures) carry drift rates of 4,6×10⁻¹⁴ to
-1,1×10⁻¹² per year — the measured line drift (≈4,4×10⁻¹⁴/a) lies below:
-the scale does not exclude the line drift.
+not the 17,2–22,7 s of the band period (44–58 mHz). The syntonization series of
+the station standards (TDA PR 42-72, digitized from the figures) carry drift
+rates of 4,6×10⁻¹⁴ to 1,1×10⁻¹² per year; the struck drift claim (§1,
+≈4,4×10⁻¹⁴/a from the 47,35 → 46,95 mHz pair) sat within this scale — the
+standard drift scale does not exclude a slowly drifting member.
 
 **The P11 route.** Pioneer 11 carries no ATDF archives; the ODF harvest
 (TRK-2-18 parser, golden-verified) delivered 27 907 samples 1986–1990 —
@@ -111,12 +113,17 @@ for the P11 route.
 
 The question "Ground or space?" is decided by a single measure: the
 **station-fixity of the frequencies**. The sky frequency is a common
-signal — whatever oscillates in space or in the medium would arrive at
-Goldstone, Canberra and Madrid with an identical frequency. The measured
-dominant frequencies are station-different (57,11 / 44,40 / 51,99 mHz, 1988)
-and remain so across the whole 1-s class. The band knows which antenna receives
-it — so it is generated in the receiving chain. All secondary findings support
-this reading (upstream, strength-constant, reference-free,
+signal — whatever oscillates in space or along the common interplanetary path
+would arrive at Goldstone, Canberra and Madrid with an identical frequency. The
+measured dominant frequencies are station-different (57,11 / 44,40 / 51,99 mHz,
+1988) and remain so across the whole 1-s class. The band knows which antenna
+receives it — so it is generated in the receiving chain. The station-local
+atmosphere is a named branch — the ionosphere is unmodeled (no GIM before
+1998), the troposphere unmeasured; it is closed by the channel separation (§1:
+the strength channel carries different members with independent phases) and by
+the transmitter-dependent amplitude (§4: an atmosphere above the receiving
+antenna does not know which station sent the uplink). All secondary findings
+support this reading (upstream, strength-constant, reference-free,
 channel-separated); none refutes it.
 
 ## 3. What is excluded (measured, no fabrication)
@@ -126,20 +133,35 @@ antenna in wind (channel phases independent); PLL loop noise
 (strength constancy); MDA resolver/256 divider (count structure natively
 0,001); stored reference (own staircase, no coverage); a common probe
 oscillation (phase null); a member sequence (self-TE null); the known
-space forces (attitude-independent members, model exclusion of the chain).
+space forces (attitude-independent members, model exclusion of the chain);
+the station-local atmosphere (channel separation; transmitter-dependent
+amplitude §4).
 
 ## 4. What remains open
 
-The two-/three-way split is measured (version 4): joining the ATDF 1-s samples
-against the NAVIO (rx, tx) pair, the band frequency is receiver-fixed — for a
-fixed receiver it is the same across different transmitters — so the line
-follows the receive chain, not the transmit chain; the band amplitude, in
-contrast, depends on the (receiver, transmitter) pair (a two-way-link effect,
-within a single epoch). The named machine of the NOCC reduction remains open.
+The two-/three-way split is measured (version 4): the PASF sampler-<10-s class
+(sampler < 10 s) three-way (ground mode 3) samples of the NOCC doppler_resid slot
+(TRK-2-25 Item 101 — the same series as §1's upstream test) are joined against
+the NAVIO (rx, tx) pair,
+103 261 matched (nearest within ±120 s); the mode census of the class is 30 973
+(1-way) / 11 631 (2-way, station 63 only) / 154 150 (3-way, 78,3 %) — the band
+sits in mode 3. The band frequency is receiver-fixed — for a fixed receiver it
+is the same across different transmitters — so the line follows the receive
+chain, not the transmit chain. The band amplitude, in contrast, depends on the
+(receiver, transmitter) pair: within epoch 1988 at comparable n the pair factors
+are rx14 13,9×, rx43 ≈3124×, rx63 ≈59×, and the LS amplitude is n-independent —
+a two-way-link effect (the uplink sets the strength), not an epoch/n artifact.
+The split's own per-rx 1988 peaks (rx14 46,58, rx43 44,12, rx63 50,92 mHz)
+differ from the canonical-residual census of §1 (57,11 / 44,40 / 51,99 mHz); the
+qualitative station- and receiver-fixity is carried by both series, the value
+divergence stays open (data version or method). The rx63 anchor of the split is
+the 1993 epoch peak at 55,9 mHz (52 985 of the 92 130 rx63 samples) — an epoch
+peak, not a grid artifact. The named machine of the NOCC reduction remains open.
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
-and Markwardt himself documents an unreadable-tape gap for June 1990–June 1991),
+and Markwardt himself documents an unreadable-tape gap for June 1990–June 1991
+(gr-qc/0208046)),
 but the doppler value is not absent: it is harvested from the TRK-2-25 ODF
 `86334o97343_sc23.odf` (into `pioneer10_odf.bin`, 1973–1998) and from the ASCII
 ODDUMP `.asc.gz` (the NAVIO series, 1973–2002).
@@ -180,3 +202,7 @@ novelty.
    10 and 11, Phys. Rev. D 65, 082004.
 9. Bertotti B., Giampieri G., 1998, Solar coronal plasma in Doppler
    measurements, Solar Phys. 178, 85.
+10. Seward, 1983, Standards Syntonization in the Deep Space Network, TDA
+    Progress Report 42-72 (October–December 1982), Jet Propulsion Laboratory.
+11. Markwardt C. B., 2002, Independent Confirmation of the Pioneer 10
+    Anomalous Acceleration, arXiv gr-qc/0208046.
