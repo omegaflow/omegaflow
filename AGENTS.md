@@ -235,6 +235,18 @@ registered for manifestation (or the operator names the pending explicitly).
 
 Rust `std` + `curl` + `serialport`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files. The complete intelligence lives under omegaflow's name — an internal tool is self-contained (own fetch, own parse, own logic) and never depends on omegaflow's own external release; an external tool is a separate project that carries none of it out.
 
+## archive_search — the divers' research tool
+
+`./bin/archive_search` is the self-contained research tool (Rust std + curl +
+own parse — never webfetch/websearch). One mode per source: `--arxiv|--ads|
+--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|
+--zenodo|--isc|--openalex|--supermag|--heasarc <query>`; `--all <query>` runs
+every source; `--playwright <url|query>` renders a page; `--leads <keyword>`
+scans un-registered candidate homes; `--verdict <url>` / `--sniff <url>`. A
+session that dispatches a diver (research-max / grind-max / grind-pro) names
+this tool in the delegation — the standard web tools are the slow, expensive
+fallback, not the first move.
+
 
 
 ## Kybernaut-Native Methodology

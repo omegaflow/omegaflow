@@ -37,6 +37,7 @@
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
       "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (`./bin/archive_search`, curl) + proton-wg.",
+      "prompt": "Für jede Recherche nutzt du zuerst `./bin/archive_search` (schnell, selbsttragend, ein fetch+parse in einem). Modi je Quelle: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>` läuft alle Quellen; `--playwright <url|query>` rendert eine Seite; `--leads <keyword>` scannt unregistrierte Kandidaten-Heimaten; `--verdict <url>` / `--sniff <url>`. webfetch/websearch sind der langsame, teure Notfall — nicht der erste Schritt.",
       "permission": {
         "edit": "deny",
         "task": "deny",
@@ -65,6 +66,7 @@
       "model": "deepseek/deepseek-v4-pro",
       "variant": "high",
       "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
+      "prompt": "Für Quellen-/Parser-Gap-/Kraft-Kanal-Recherche nutzt du zuerst `./bin/archive_search` (schnell, selbsttragend). Modi je Quelle: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>`; `--playwright <url|query>`; `--leads <keyword>`; `--verdict <url>` / `--sniff <url>`. webfetch/websearch sind der langsame, teure Notfall.",
       "permission": { "edit": "allow" }
     },
     "grind-max": {
@@ -72,6 +74,7 @@
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
       "description": "Elite-Taucher (DeepSeek V4 Pro, max) — die härtesten Atome, die tiefes Urteil UND Schreiben in einem Kontext brauchen (novel parser construction, TE-/Null-Konstruktion, 4D-Datenkontrakt). Sparsam einsetzen; Force-Gate-Klassifikation bleibt grind-pro.",
+      "prompt": "Für Quellen-/Recherche-Arbeit nutzt du zuerst `./bin/archive_search` (schnell, selbsttragend). Modi je Quelle: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>` für alle; `--playwright <url|query>`; `--leads <keyword>`; `--verdict <url>` / `--sniff <url>`. webfetch/websearch sind der langsame, teure Notfall.",
       "permission": { "edit": "allow" }
     },
     "council": {
