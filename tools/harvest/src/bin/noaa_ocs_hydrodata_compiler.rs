@@ -3,6 +3,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{parse_ocs, write_ocs, GbcoRec, MAGIC_OCS};
 use omegaflow::archivar::gpkg::{SqliteDb, SqliteValue};
 use omegaflow::archivar::json::{jpath_val, jstr, parse_json, JsonVal};
+use omegaflow::archivar::tiff::parse_tiff;
 use omegaflow::cdn::upload_release;
 use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
 
@@ -96,6 +97,19 @@ fn gpkg_asset_href(item: &JsonVal) -> Option<String> {
     };
     for (name, asset) in assets {
         if name.ends_with(".gpkg") {
+            return jstr(asset, "href");
+        }
+    }
+    None
+}
+
+fn tif_asset_href(item: &JsonVal) -> Option<String> {
+    let assets = match jpath_val(item, "assets") {
+        Some(JsonVal::Obj(map)) => map,
+        _ => return None,
+    };
+    for (name, asset) in assets {
+        if name.ends_with(".tif") {
             return jstr(asset, "href");
         }
     }
@@ -237,13 +251,93 @@ fn soundings_from_gpkg(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(recs)
 }
 
+fn soundings_from_tif(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+    let img = parse_tiff(bytes)?;
+    if img.pixels.is_empty() {
+        return None;
+    }
+    if *img.bits_per_sample.first()? != 32 {
+        return None;
+    }
+    if img.samples_per_pixel == 0 {
+        return None;
+    }
+    let geo = img.geo.as_ref()?;
+    let mut bytes_per_pixel = 0usize;
+    for &b in &img.bits_per_sample {
+        if b % 8 != 0 {
+            return None;
+        }
+        bytes_per_pixel += (b / 8) as usize;
+    }
+    if bytes_per_pixel == 0 {
+        return None;
+    }
+    let width = img.width as usize;
+    let height = img.height as usize;
+    let row_bytes = width.checked_mul(bytes_per_pixel)?;
+    let expected = row_bytes.checked_mul(height)?;
+    if img.pixels.len() < expected {
+        return None;
+    }
+    let mut recs = Vec::new();
+    for row in 0..height {
+        for col in 0..width {
+            let lon = geo.x0 + (col as f64 + 0.5) * geo.dx;
+            let lat = geo.y0 + (row as f64 + 0.5) * geo.dy;
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || lat < -90.0
+                || lat > 90.0
+                || lon < -180.0
+                || lon > 180.0
+            {
+                continue;
+            }
+            let off = (row * width + col) * bytes_per_pixel;
+            let v = img.pixels.get(off..off + 4)?;
+            let elev = f32::from_le_bytes(v.try_into().ok()?);
+            if !elev.is_finite() || elev == f32::MAX {
+                continue;
+            }
+            recs.push(GbcoRec {
+                lat,
+                lon,
+                elev: elev as f64,
+            });
+        }
+    }
+    Some(recs)
+}
+
 fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
     let item_body = fetch_raw(item_url, None, &[], 3600)?;
     let item = parse_json(&item_body)?;
-    let gpkg_href = gpkg_asset_href(&item)?;
-    let gpkg_url = resolve(item_url, &gpkg_href);
-    let bytes = fetch_raw_bytes(&gpkg_url, 3600)?;
-    soundings_from_gpkg(&bytes)
+    let mut recs = Vec::new();
+    let mut asset_seen = false;
+    if let Some(href) = gpkg_asset_href(&item) {
+        asset_seen = true;
+        let url = resolve(item_url, &href);
+        if let Some(bytes) = fetch_raw_bytes(&url, 3600) {
+            if let Some(r) = soundings_from_gpkg(&bytes) {
+                recs.extend(r);
+            }
+        }
+    }
+    if let Some(href) = tif_asset_href(&item) {
+        asset_seen = true;
+        let url = resolve(item_url, &href);
+        if let Some(bytes) = fetch_raw_bytes(&url, 3600) {
+            if let Some(r) = soundings_from_tif(&bytes) {
+                recs.extend(r);
+            }
+        }
+    }
+    if asset_seen {
+        Some(recs)
+    } else {
+        None
+    }
 }
 
 fn survey_id(href: &str) -> Option<&str> {
@@ -495,5 +589,155 @@ mod tests {
             magic_identity(MAGIC_OCS),
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
         );
+    }
+
+    #[test]
+    fn tif_asset_href_reads_tif_asset() {
+        let item =
+            parse_json(r#"{"assets":{"a.gpkg":{"href":"g"},"b.tif":{"href":"https://x/b.tif"}}}"#)
+                .unwrap();
+        assert_eq!(tif_asset_href(&item).as_deref(), Some("https://x/b.tif"));
+        let gpkg_only = parse_json(r#"{"assets":{"a.gpkg":{"href":"g"}}}"#).unwrap();
+        assert_eq!(tif_asset_href(&gpkg_only), None);
+    }
+
+    fn ifd_entry(out: &mut Vec<u8>, tag: u16, field_type: u16, count: u32, value: u32) {
+        out.extend_from_slice(&tag.to_le_bytes());
+        out.extend_from_slice(&field_type.to_le_bytes());
+        out.extend_from_slice(&count.to_le_bytes());
+        out.extend_from_slice(&value.to_le_bytes());
+    }
+
+    fn build_float32_geotiff(
+        width: u32,
+        height: u32,
+        pixels: &[u8],
+        compression: u16,
+        scale: [f64; 3],
+        tie: [f64; 6],
+    ) -> Vec<u8> {
+        let entry_count = 11u16;
+        let pixel_offset = (8 + 2 + entry_count as usize * 12 + 4) as u32;
+        let scale_offset = pixel_offset + pixels.len() as u32;
+        let tie_offset = scale_offset + 24;
+        let mut out = Vec::new();
+        out.extend_from_slice(b"II");
+        out.extend_from_slice(&42u16.to_le_bytes());
+        out.extend_from_slice(&8u32.to_le_bytes());
+        out.extend_from_slice(&entry_count.to_le_bytes());
+        ifd_entry(&mut out, 256, 4, 1, width);
+        ifd_entry(&mut out, 257, 4, 1, height);
+        ifd_entry(&mut out, 258, 3, 2, 32 | (32 << 16));
+        ifd_entry(&mut out, 259, 3, 1, compression as u32);
+        ifd_entry(&mut out, 262, 3, 1, 1);
+        ifd_entry(&mut out, 273, 4, 1, pixel_offset);
+        ifd_entry(&mut out, 277, 3, 1, 2);
+        ifd_entry(&mut out, 278, 4, 1, height);
+        ifd_entry(&mut out, 279, 4, 1, pixels.len() as u32);
+        ifd_entry(&mut out, 33550, 12, 3, scale_offset);
+        ifd_entry(&mut out, 33922, 12, 6, tie_offset);
+        out.extend_from_slice(&0u32.to_le_bytes());
+        out.extend_from_slice(pixels);
+        for v in scale {
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+        for v in tie {
+            out.extend_from_slice(&v.to_le_bytes());
+        }
+        out
+    }
+
+    fn lzw_encode(input: &[u8]) -> Vec<u8> {
+        use std::collections::HashMap;
+        let mut dict: HashMap<Vec<u8>, u16> = HashMap::new();
+        for i in 0..256u16 {
+            dict.insert(vec![i as u8], i);
+        }
+        let mut free = 258u16;
+        let mut width = 9u32;
+        let mut codes: Vec<(u16, u32)> = vec![(256, 9)];
+        let mut w: Vec<u8> = Vec::new();
+        for &k in input {
+            let mut wk = w.clone();
+            wk.push(k);
+            if dict.contains_key(&wk) {
+                w = wk;
+            } else {
+                codes.push((dict[&w], width));
+                if (free as usize) < 4096 {
+                    dict.insert(wk, free);
+                    free += 1;
+                    if free == (1u16 << width) - 1 && width < 12 {
+                        width += 1;
+                    }
+                }
+                w = vec![k];
+            }
+        }
+        codes.push((dict[&w], width));
+        codes.push((257, width));
+        let mut out = Vec::new();
+        let mut acc = 0u32;
+        let mut nbits = 0u32;
+        for (code, w) in codes {
+            acc = (acc << w) | (code as u32);
+            nbits += w;
+            while nbits >= 8 {
+                nbits -= 8;
+                out.push((acc >> nbits) as u8);
+                acc &= (1 << nbits) - 1;
+            }
+        }
+        if nbits > 0 {
+            out.push((acc << (8 - nbits)) as u8);
+        }
+        out
+    }
+
+    #[test]
+    fn soundings_from_tif_decodes_float32_elevation() {
+        let floats = [-10.0f32, 0.5, f32::MAX, 0.0, -20.0, 1.0, -30.0, 2.0];
+        let pixels: Vec<u8> = floats.iter().flat_map(|f| f.to_le_bytes()).collect();
+        let data = build_float32_geotiff(
+            2,
+            2,
+            &pixels,
+            1,
+            [0.5, 0.5, 0.0],
+            [0.0, 0.0, 0.0, 10.0, 20.0, 0.0],
+        );
+        let recs = soundings_from_tif(&data).unwrap();
+        assert_eq!(recs.len(), 3);
+        assert_eq!(recs[0].lat, 19.75);
+        assert_eq!(recs[0].lon, 10.25);
+        assert_eq!(recs[0].elev, -10.0);
+        assert_eq!(recs[1].lat, 19.25);
+        assert_eq!(recs[1].lon, 10.25);
+        assert_eq!(recs[1].elev, -20.0);
+        assert_eq!(recs[2].lat, 19.25);
+        assert_eq!(recs[2].lon, 10.75);
+        assert_eq!(recs[2].elev, -30.0);
+    }
+
+    #[test]
+    fn soundings_from_tif_decodes_lzw() {
+        let floats = [-12.5f32, 0.25, -13.5, 0.5];
+        let raw: Vec<u8> = floats.iter().flat_map(|f| f.to_le_bytes()).collect();
+        let lzw = lzw_encode(&raw);
+        let data = build_float32_geotiff(
+            2,
+            1,
+            &lzw,
+            5,
+            [1.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, -75.0, 40.0, 0.0],
+        );
+        let recs = soundings_from_tif(&data).unwrap();
+        assert_eq!(recs.len(), 2);
+        assert_eq!(recs[0].lat, 39.5);
+        assert_eq!(recs[0].lon, -74.5);
+        assert_eq!(recs[0].elev, -12.5);
+        assert_eq!(recs[1].lon, -73.5);
+        assert_eq!(recs[1].elev, -13.5);
     }
 }
