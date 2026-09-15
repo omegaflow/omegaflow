@@ -25,15 +25,25 @@ jobs:
               --title "data.cosmic.ucar.edu" \
               --notes "COSMIC-2 (FORMOSAT-7) GNSS radio-occultation NRT profiles compiled to a geo oscillator record (medium em). Record stride 60 B LE: t (f64, unix epoch seconds of the occultation), lat (f64 deg), lon (f64 deg), alt (f64, MSL_alt m), freq (f64), bin_width (f64), val (f64), comp (u32; 1=Ref refractivity, 2=Temp K, 3=Pres hPa). Magic CSM1."
           fi
-      - name: Fetch the COSMIC-2 wetPrf daily tarball
+      - name: Fetch the latest COSMIC-2 wetPrf daily tarball
         run: |
           mkdir -p kernels
-          curl -sSfL --retry 3 --max-time 3600 -o kernels/wetPf2.tar.gz \
-            https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/2026/251/wetPf2_nrt_2026_251.tar.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "cosmic-cdn: wetPf2_nrt_2026_251.tar.gz returned void" \
-                 "curl on data.cosmic.ucar.edu did not reach the wetPf2 tarball. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+          day=""
+          for back in 1 2 3 4 5 6 7; do
+            t=$(date -u -d "$back days ago" +%Y-%m-%d)
+            y=${t%%-*}
+            doy=$(date -u -d "$t" +%j)
+            url="https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/${y}/${doy}/wetPf2_nrt_${y}_${doy}.tar.gz"
+            if curl -sSfL --retry 3 --max-time 3600 -o kernels/wetPf2.tar.gz "$url"; then
+              day="$t"
+              break
+            fi
+          done
+          test -n "$day" || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "cosmic-cdn: no wetPf2 tarball in the last 7 days" \
+               "curl on data.cosmic.ucar.edu reached no wetPf2 tarball in the last 7 days. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
+          echo "wetPrf day: ${day}"
       - name: Compile the temperature profile and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin cosmic_ro_compiler -- \
