@@ -104,3 +104,7 @@ url https://wwlln.net/data/
 reg https://wwlln.net
 note WWLLN (World Wide Lightning Location Network) — VLF lightning location, em. Measured 2026-09-15: wwlln.net HTTP 200, /data/ HTTP 404 — the data route is account/agreement-gated (academic application, not commercial). Open: agreement with the operator (account), then route + consumer.
 
+blocked parser-def fugin
+url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+fugin.cube+WHERE+flux+IS+NOT+NULL
+note JVO Nobeyama FUGIN — `fugin.cube` ist eine obscore-Cube-Tabelle (`s_ra`/`s_dec`/`access_url`), keine Punktquellen-Flussspalte (gemessen 2026-09-15: `SELECT ra` → "column t0.ra does not exist"). Der Kontinuums-Fluss steckt in den FITS-Cubes hinter `access_url`; ein Cube-Fluss-Parser fehlt → parser-def (Bau-Folge 39, TAP-Reconciliation).
+
