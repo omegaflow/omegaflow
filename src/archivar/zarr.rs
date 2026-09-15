@@ -212,13 +212,15 @@ fn lz4_decompress(input: &[u8], output_len: usize) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn decode_block(
+fn decode_block<F: Fn(&[u8]) -> Option<Vec<u8>>>(
     bytes: &[u8],
     block_off: usize,
     bsize: usize,
     flags: u8,
     typesize: usize,
     leftoverblock: bool,
+    codec: u8,
+    block_decoder: &F,
 ) -> Option<Vec<u8>> {
     let dont_split = (flags & 0x10) != 0;
     let doshuffle = (flags & 0x01 != 0) && typesize > 1;
@@ -244,8 +246,10 @@ fn decode_block(
         off = end;
         if cbytes == neblock {
             tmp.extend_from_slice(split);
-        } else {
+        } else if codec == 1 {
             tmp.extend_from_slice(&lz4_decompress(split, neblock)?);
+        } else {
+            tmp.extend_from_slice(&block_decoder(split)?);
         }
     }
 
@@ -262,7 +266,10 @@ fn decode_block(
     }
 }
 
-pub fn blosc_decompress(bytes: &[u8]) -> Option<Blosc> {
+pub fn blosc_decompress_with<F: Fn(&[u8]) -> Option<Vec<u8>>>(
+    bytes: &[u8],
+    block_decoder: F,
+) -> Option<Blosc> {
     let version = *bytes.get(0)?;
     let _versionlz = *bytes.get(1)?;
     let flags = *bytes.get(2)?;
@@ -289,8 +296,8 @@ pub fn blosc_decompress(bytes: &[u8]) -> Option<Blosc> {
 
     let codec = (flags >> 5) & 0x07;
     match codec {
-        1 => {}
-        0 | 2 | 3 | 4 => return Some(Blosc::Unhandled(blosc_codec_name(codec)?)),
+        1 | 4 => {}
+        0 | 2 | 3 => return Some(Blosc::Unhandled(blosc_codec_name(codec)?)),
         _ => return None,
     }
 
@@ -314,7 +321,16 @@ pub fn blosc_decompress(bytes: &[u8]) -> Option<Blosc> {
             blocksize
         };
         let leftoverblock = is_last && leftover != 0;
-        let block = decode_block(bytes, block_off, bsize, flags, typesize, leftoverblock)?;
+        let block = decode_block(
+            bytes,
+            block_off,
+            bsize,
+            flags,
+            typesize,
+            leftoverblock,
+            codec,
+            &block_decoder,
+        )?;
         if block.len() != bsize {
             return None;
         }
@@ -322,6 +338,14 @@ pub fn blosc_decompress(bytes: &[u8]) -> Option<Blosc> {
     }
 
     Some(Blosc::Decompressed(out))
+}
+
+pub fn blosc_decompress(bytes: &[u8]) -> Option<Blosc> {
+    let codec = (*bytes.get(2)? >> 5) & 0x07;
+    if codec == 4 {
+        return Some(Blosc::Unhandled(blosc_codec_name(codec)?));
+    }
+    blosc_decompress_with(bytes, |_| None)
 }
 
 fn dtype_parse(dtype: &str) -> Option<Dtype> {
