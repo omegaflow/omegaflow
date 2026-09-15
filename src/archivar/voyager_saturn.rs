@@ -6,24 +6,42 @@ pub const SUB_RECORDS_PER_RECORD: usize = RECORD_DATA_BYTES / SUB_RECORD_BYTES;
 pub const WORDS_PER_SUB_RECORD: usize = 64;
 pub const WORD_BITS: usize = 36;
 
-pub const DOPPLER_W7: u64 = 0x1770;
-pub const RANGE_BIT: u64 = 0x000800000;
+pub const RECORD_TYPE_LOW_RATE: u64 = 90;
+pub const RECORD_TYPE_HIGH_RATE: u64 = 91;
 
-pub const VSAT_STRIDE: usize = 7;
+pub const NETWORK_DSN: u64 = 2;
+
+pub const VSAT_STRIDE: usize = 19;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TrackingKind {
     Doppler,
     Range,
-    Sync,
+    Angle,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct VoyagerSaturnTime {
+    pub year: u64,
+    pub day_of_year: u64,
+    pub hour: u64,
+    pub minute: u64,
+    pub second: u64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct VoyagerSaturnRecord {
     pub kind: TrackingKind,
-    pub id_word: u64,
-    pub time_word: u64,
-    pub flag_word: u64,
+    pub record_type: u64,
+    pub time: VoyagerSaturnTime,
+    pub spacecraft_id: u64,
+    pub network: u64,
+    pub station: u64,
+    pub downlink: u64,
+    pub ground_mode: u64,
+    pub range_type: u64,
+    pub angle_type: u64,
+    pub sample_time_cs: u64,
     pub counter_word: u64,
     pub value_word: u64,
     pub secondary_word: u64,
@@ -54,27 +72,84 @@ pub fn sub_words(bytes: &[u8]) -> Option<[u64; WORDS_PER_SUB_RECORD]> {
     Some(words)
 }
 
+pub fn record_type(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    words[1]
+}
+
+pub fn is_tracking(words: &[u64; WORDS_PER_SUB_RECORD]) -> bool {
+    matches!(
+        record_type(words),
+        RECORD_TYPE_LOW_RATE | RECORD_TYPE_HIGH_RATE
+    )
+}
+
+pub fn time_of(words: &[u64; WORDS_PER_SUB_RECORD]) -> VoyagerSaturnTime {
+    VoyagerSaturnTime {
+        year: (words[2] >> 24) & 0xfff,
+        day_of_year: (words[2] >> 8) & 0xffff,
+        hour: words[2] & 0xff,
+        minute: (words[3] >> 24) & 0xfff,
+        second: (words[3] >> 16) & 0xff,
+    }
+}
+
+pub fn spacecraft_id(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    ((words[3] & 0xffff) << 12) | ((words[4] >> 24) & 0xfff)
+}
+
+pub fn network(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    (words[4] >> 16) & 0xff
+}
+
+pub fn station(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    (words[4] >> 8) & 0xff
+}
+
+pub fn downlink(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    words[4] & 0xff
+}
+
+pub fn ground_mode(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    (words[5] >> 24) & 0xfff
+}
+
+pub fn range_type(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    (words[5] >> 16) & 0xff
+}
+
+pub fn angle_type(words: &[u64; WORDS_PER_SUB_RECORD]) -> u64 {
+    (words[5] >> 8) & 0xff
+}
+
 pub fn kind(words: &[u64; WORDS_PER_SUB_RECORD]) -> Option<TrackingKind> {
-    let w6 = words[6];
-    let w7 = words[7];
-    if w7 == DOPPLER_W7 {
+    if !is_tracking(words) {
+        return None;
+    }
+    let mode = ground_mode(words);
+    if (1..=4).contains(&mode) {
         Some(TrackingKind::Doppler)
-    } else if w7 == 0 && w6 & RANGE_BIT != 0 {
+    } else if range_type(words) != 0 {
         Some(TrackingKind::Range)
-    } else if w7 == 0 && w6 != 0 {
-        Some(TrackingKind::Sync)
+    } else if angle_type(words) != 0 {
+        Some(TrackingKind::Angle)
     } else {
         None
     }
 }
 
 pub fn record(words: &[u64; WORDS_PER_SUB_RECORD]) -> Option<VoyagerSaturnRecord> {
-    let kind = kind(words)?;
     Some(VoyagerSaturnRecord {
-        kind,
-        id_word: words[2],
-        time_word: words[3],
-        flag_word: words[4],
+        kind: kind(words)?,
+        record_type: record_type(words),
+        time: time_of(words),
+        spacecraft_id: spacecraft_id(words),
+        network: network(words),
+        station: station(words),
+        downlink: downlink(words),
+        ground_mode: ground_mode(words),
+        range_type: range_type(words),
+        angle_type: angle_type(words),
+        sample_time_cs: words[7],
         counter_word: words[8],
         value_word: words[9],
         secondary_word: words[11],
@@ -111,14 +186,26 @@ pub fn kind_code(kind: TrackingKind) -> f64 {
     match kind {
         TrackingKind::Doppler => 0.0,
         TrackingKind::Range => 1.0,
-        TrackingKind::Sync => 2.0,
+        TrackingKind::Angle => 2.0,
     }
 }
 
 pub fn to_bin_row(r: &VoyagerSaturnRecord) -> [f64; VSAT_STRIDE] {
     [
         kind_code(r.kind),
-        r.time_word as f64,
+        r.time.year as f64,
+        r.time.day_of_year as f64,
+        r.time.hour as f64,
+        r.time.minute as f64,
+        r.time.second as f64,
+        r.spacecraft_id as f64,
+        r.network as f64,
+        r.station as f64,
+        r.downlink as f64,
+        r.ground_mode as f64,
+        r.range_type as f64,
+        r.angle_type as f64,
+        r.sample_time_cs as f64,
         r.counter_word as f64,
         r.value_word as f64,
         r.secondary_word as f64,
@@ -203,21 +290,42 @@ mod tests {
     }
 
     #[test]
-    fn kind_classifies_measured_signatures() {
-        let mut doppler = [0u64; WORDS_PER_SUB_RECORD];
-        doppler[6] = 0x002826400;
-        doppler[7] = 0x1770;
-        assert_eq!(kind(&doppler), Some(TrackingKind::Doppler));
+    fn decode_reads_measured_time_and_station() {
+        let words = sub_words(&SUB_A).unwrap();
+        assert_eq!(record_type(&words), RECORD_TYPE_LOW_RATE);
+        let t = time_of(&words);
+        assert_eq!(t.year, 80);
+        assert_eq!(t.day_of_year, 296);
+        assert_eq!(t.hour, 0);
+        assert_eq!(t.minute, 8);
+        assert_eq!(t.second, 0);
+        assert_eq!(spacecraft_id(&words), 31);
+        assert_eq!(network(&words), NETWORK_DSN);
+        assert_eq!(station(&words), 43);
+        assert_eq!(downlink(&words), 1);
+        assert_eq!(ground_mode(&words), 2);
+        assert_eq!(range_type(&words), 0);
+        assert_eq!(words[7], 6000);
+    }
+
+    #[test]
+    fn kind_classifies_measured_record() {
+        let words = sub_words(&SUB_A).unwrap();
+        assert_eq!(kind(&words), Some(TrackingKind::Doppler));
 
         let mut range = [0u64; WORDS_PER_SUB_RECORD];
-        range[6] = 0x08087c400;
-        range[7] = 0;
+        range[1] = RECORD_TYPE_LOW_RATE;
+        range[5] = 6 << 24 | 2 << 16;
         assert_eq!(kind(&range), Some(TrackingKind::Range));
 
-        let mut sync = [0u64; WORDS_PER_SUB_RECORD];
-        sync[6] = 0x08007c400;
-        sync[7] = 0;
-        assert_eq!(kind(&sync), Some(TrackingKind::Sync));
+        let mut angle = [0u64; WORDS_PER_SUB_RECORD];
+        angle[1] = RECORD_TYPE_HIGH_RATE;
+        angle[5] = 1 << 8;
+        assert_eq!(kind(&angle), Some(TrackingKind::Angle));
+
+        let mut untracked = [0u64; WORDS_PER_SUB_RECORD];
+        untracked[1] = 30;
+        assert_eq!(kind(&untracked), None);
 
         let padding = [0u64; WORDS_PER_SUB_RECORD];
         assert_eq!(kind(&padding), None);
@@ -228,9 +336,15 @@ mod tests {
         let words = sub_words(&SUB_A).unwrap();
         let r = record(&words).unwrap();
         assert_eq!(r.kind, TrackingKind::Doppler);
-        assert_eq!(r.id_word, 0x050012800);
-        assert_eq!(r.time_word, 0x008000000);
-        assert_eq!(r.flag_word, 0x01f022b01);
+        assert_eq!(r.record_type, 90);
+        assert_eq!(r.time.year, 80);
+        assert_eq!(r.time.day_of_year, 296);
+        assert_eq!(r.time.minute, 8);
+        assert_eq!(r.spacecraft_id, 31);
+        assert_eq!(r.network, 2);
+        assert_eq!(r.station, 43);
+        assert_eq!(r.downlink, 1);
+        assert_eq!(r.ground_mode, 2);
         assert_eq!(r.counter_word, 0x5abee);
         assert_eq!(r.value_word, 0x530c36);
         assert_eq!(r.secondary_word, 0xfffffffff);
@@ -246,7 +360,8 @@ mod tests {
         let recs = parse(&buf).unwrap();
         assert_eq!(recs.len(), 1);
         assert_eq!(recs[0].kind, TrackingKind::Doppler);
-        assert_eq!(recs[0].time_word, 0x008000000);
+        assert_eq!(recs[0].time.day_of_year, 296);
+        assert_eq!(recs[0].station, 43);
     }
 
     #[test]
@@ -257,7 +372,7 @@ mod tests {
 
     #[test]
     fn vsat_bin_roundtrip() {
-        let recs = vec![[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]];
+        let recs = vec![[0.0; VSAT_STRIDE]];
         let bytes = write_vsat_bin(&recs);
         let parsed = parse_vsat_bin(&bytes).unwrap();
         assert_eq!(parsed, recs);
