@@ -207,7 +207,7 @@ fn center_lat_lon(proj: &ProjectionBlock, columns: u16, lines: u16) -> Option<(f
     Some(geostationary_lat_lon(x, y, proj.sub_lon_deg, altitude_m))
 }
 
-const NETLOC: &str = "noaa-himawari8.s3.amazonaws.com";
+const NETLOC: &str = "noaa-himawari9.s3.amazonaws.com";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
