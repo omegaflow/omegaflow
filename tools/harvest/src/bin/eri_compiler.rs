@@ -257,9 +257,258 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
+fn arg_values(args: &[String], name: &str) -> Vec<String> {
+    args.iter()
+        .enumerate()
+        .filter(|(_, a)| a.as_str() == name)
+        .filter_map(|(i, _)| args.get(i + 1))
+        .cloned()
+        .collect()
+}
+
+fn percent_encode(s: &str) -> String {
+    let mut out = String::new();
+    for &b in s.as_bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{b:02X}")),
+        }
+    }
+    out
+}
+
+fn xml_blocks<'a>(s: &'a str, tag: &str) -> Vec<&'a str> {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let mut out = Vec::new();
+    let mut rest = s;
+    while let Some(p) = rest.find(&open) {
+        let body = &rest[p + open.len()..];
+        match body.find(&close) {
+            Some(e) => {
+                out.push(&body[..e]);
+                rest = &body[e + close.len()..];
+            }
+            None => break,
+        }
+    }
+    out
+}
+
+fn xml_child(block: &str, tag: &str) -> String {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let Some(start) = block.find(&open) else {
+        return String::new();
+    };
+    let body = &block[start + open.len()..];
+    match body.find(&close) {
+        Some(e) => body[..e].trim().to_string(),
+        None => String::new(),
+    }
+}
+
+fn s3_base(url: &str) -> Option<String> {
+    let scheme_end = url.find("://")? + 3;
+    let rest = &url[scheme_end..];
+    let host_end = rest.find('/').unwrap_or(rest.len());
+    Some(format!("{}{}", &url[..scheme_end], &rest[..host_end]))
+}
+
+fn s3_page_tiles(body: &str) -> Vec<String> {
+    xml_blocks(body, "Contents")
+        .into_iter()
+        .map(|b| xml_child(b, "Key"))
+        .filter(|k| k.ends_with(".tif"))
+        .collect()
+}
+
+fn s3_continuation(body: &str) -> String {
+    if !xml_child(body, "IsTruncated").eq_ignore_ascii_case("true") {
+        return String::new();
+    }
+    let token = xml_child(body, "NextContinuationToken");
+    if token.is_empty() {
+        xml_child(body, "NextMarker")
+    } else {
+        token
+    }
+}
+
+fn strip_continuation(url: &str) -> String {
+    let Some(q) = url.find('?') else {
+        return url.to_string();
+    };
+    let base = &url[..q];
+    let mut params = String::new();
+    for part in url[q + 1..].split('&') {
+        if part.starts_with("continuation-token=") || part.starts_with("marker=") {
+            continue;
+        }
+        if !params.is_empty() {
+            params.push('&');
+        }
+        params.push_str(part);
+    }
+    if params.is_empty() {
+        base.to_string()
+    } else {
+        format!("{base}?{params}")
+    }
+}
+
+fn continuation_url(listing_url: &str, token: &str) -> String {
+    let base = strip_continuation(listing_url);
+    let sep = if base.contains('?') { '&' } else { '?' };
+    format!("{base}{sep}continuation-token={}", percent_encode(token))
+}
+
+fn catalog_tiles(body: &str) -> Vec<String> {
+    body.lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .map(|l| l.to_string())
+        .collect()
+}
+
+fn s3_tiles(listing_url: &str, first_body: &str) -> Vec<String> {
+    let Some(base) = s3_base(listing_url) else {
+        eprintln!("eri_compiler: {listing_url}: no scheme/host — the tile URLs stay unresolvable");
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    let mut body = first_body.to_string();
+    loop {
+        for key in s3_page_tiles(&body) {
+            out.push(format!("{base}/{key}"));
+        }
+        let token = s3_continuation(&body);
+        if token.is_empty() {
+            break;
+        }
+        let next = continuation_url(listing_url, &token);
+        match fetch_raw_bytes(&next, 600) {
+            Some(b) => body = String::from_utf8_lossy(&b).into_owned(),
+            None => {
+                eprintln!("eri_compiler: {next}: listing page returned void");
+                break;
+            }
+        }
+    }
+    out
+}
+
+fn discover_index(url: &str) -> Vec<String> {
+    match fetch_raw_bytes(url, 600) {
+        Some(b) => {
+            let text = String::from_utf8_lossy(&b);
+            if text.trim_start().starts_with('<') {
+                s3_tiles(url, &text)
+            } else {
+                catalog_tiles(&text)
+            }
+        }
+        None => {
+            eprintln!("eri_compiler: {url}: index fetch returned void");
+            Vec::new()
+        }
+    }
+}
+
+fn source_bytes(src: &str) -> Option<(Vec<u8>, String)> {
+    let leaf = src.rsplit('/').next().unwrap_or(src).to_string();
+    if let Ok(b) = std::fs::read(src) {
+        return Some((b, leaf));
+    }
+    fetch_raw_bytes(src, 600).map(|b| (b, leaf))
+}
+
+fn compile_one(bytes: &[u8], name: &str) -> Option<Vec<EriSample>> {
+    let img = match parse_tiff(bytes) {
+        Some(v) => v,
+        None => {
+            eprintln!("{name}: not a TIFF/GeoTIFF the reader parses — the tile stays unwritten");
+            return None;
+        }
+    };
+    let georef = georef_of(img.geo_keys.as_deref());
+    report_image(&img, &georef);
+    match collect(&img, &georef) {
+        Ok(samples) => Some(samples),
+        Err(e) => {
+            eprintln!("eri_compiler: {name}: {e}");
+            None
+        }
+    }
+}
+
+fn compile_many(sources: &[String], out_path: &str, ci_mode: bool) {
+    let mut samples: Vec<EriSample> = Vec::new();
+    let mut decoded = 0usize;
+    for src in sources {
+        let Some((bytes, name)) = source_bytes(src) else {
+            eprintln!("eri_compiler: {src}: fetch returned void");
+            continue;
+        };
+        let Some(tile) = compile_one(&bytes, &name) else {
+            continue;
+        };
+        eprintln!("eri: {name} -> {} samples", tile.len());
+        decoded += 1;
+        samples.extend(tile);
+    }
+    eprintln!("eri: {} of {} tiles decoded", decoded, sources.len());
+    if samples.is_empty() {
+        eprintln!("eri_compiler: no tile yielded a sample — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+    report_value_ranges(&samples);
+    finish(&samples, out_path, ci_mode);
+}
+
+fn finish(samples: &[EriSample], out_path: &str, ci_mode: bool) {
+    if let Err(e) = write_asset(samples, out_path) {
+        eprintln!("eri_compiler: {e}");
+        std::process::exit(1);
+    }
+    let written = match std::fs::read(out_path) {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!(
+                "eri_compiler: {out_path} read returned void — the roundtrip stays unverified"
+            );
+            std::process::exit(1);
+        }
+    };
+    match parse_asset(&written) {
+        Some(parsed) if parsed.len() == samples.len() => {
+            let last = parsed.last().unwrap();
+            eprintln!(
+                "eri: {} samples, {} B -> {out_path}, roundtrip parses; last lat {:.6} lon {:.6} value {:.3}",
+                parsed.len(),
+                written.len(),
+                last.lat,
+                last.lon,
+                last.value
+            );
+        }
+        _ => {
+            eprintln!("{out_path}: roundtrip parse returned void — the bin stays unverified");
+            std::process::exit(1);
+        }
+    }
+    if ci_mode && !upload_release(NETLOC, out_path) {
+        eprintln!("upload: {out_path} did not reach the CDN");
+        std::process::exit(1);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: eri_compiler --input <geotiff> | --url <url> --out <path> [--ci-mode]";
+    let usage = "usage: eri_compiler --input <geotiff> | --url <url> --out <path> [--ci-mode]\n\
+                 usage: eri_compiler --index <list-url|catalog> [--granule <url|path> ...] --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
@@ -268,6 +517,26 @@ fn main() {
             std::process::exit(1);
         }
     };
+
+    let index = arg_value(&args, "--index");
+    let granules = arg_values(&args, "--granule");
+    if index.is_some() || !granules.is_empty() {
+        let mut sources: Vec<String> = Vec::new();
+        if let Some(idx) = &index {
+            let tiles = discover_index(idx);
+            eprintln!("eri: {idx} -> {} tiles", tiles.len());
+            sources.extend(tiles);
+        }
+        sources.extend(granules);
+        if sources.is_empty() {
+            eprintln!(
+                "eri_compiler: the enumeration carried no tile — the bin stays unwritten (0 honored)"
+            );
+            std::process::exit(1);
+        }
+        compile_many(&sources, &out_path, ci_mode);
+        return;
+    }
 
     let (bytes, name) = match arg_value(&args, "--input") {
         Some(path) => {
@@ -315,42 +584,7 @@ fn main() {
         }
     };
     report_value_ranges(&samples);
-
-    if let Err(e) = write_asset(&samples, &out_path) {
-        eprintln!("eri_compiler: {e}");
-        std::process::exit(1);
-    }
-    let written = match std::fs::read(&out_path) {
-        Ok(v) => v,
-        Err(_) => {
-            eprintln!(
-                "eri_compiler: {out_path} read returned void — the roundtrip stays unverified"
-            );
-            std::process::exit(1);
-        }
-    };
-    match parse_asset(&written) {
-        Some(parsed) if parsed.len() == samples.len() => {
-            let last = parsed.last().unwrap();
-            eprintln!(
-                "eri: {} samples, {} B -> {out_path}, roundtrip parses; last lat {:.6} lon {:.6} value {:.3}",
-                parsed.len(),
-                written.len(),
-                last.lat,
-                last.lon,
-                last.value
-            );
-        }
-        _ => {
-            eprintln!("{out_path}: roundtrip parse returned void — the bin stays unverified");
-            std::process::exit(1);
-        }
-    }
-
-    if ci_mode && !upload_release(NETLOC, &out_path) {
-        eprintln!("upload: {out_path} did not reach the CDN");
-        std::process::exit(1);
-    }
+    finish(&samples, &out_path, ci_mode);
 }
 
 #[cfg(test)]
@@ -557,5 +791,77 @@ mod tests {
         assert_eq!(img.samples_per_pixel, 1);
         assert_eq!(img.pixels.len(), 64);
         assert!(img.pixels.iter().all(|&b| b == 128));
+    }
+
+    #[test]
+    fn arg_values_collects_repeated_flags() {
+        let args = vec![
+            "--granule".to_string(),
+            "a.tif".to_string(),
+            "--granule".to_string(),
+            "b.tif".to_string(),
+        ];
+        assert_eq!(
+            arg_values(&args, "--granule"),
+            vec!["a.tif".to_string(), "b.tif".to_string()]
+        );
+        assert!(arg_values(&args, "--url").is_empty());
+    }
+
+    #[test]
+    fn s3_listing_extracts_tif_keys_and_token() {
+        let body = r#"<?xml version="1.0"?><ListBucketResult><IsTruncated>true</IsTruncated><NextContinuationToken>abc+/def=</NextContinuationToken><Contents><Key>2005_Hurricane_Katrina/aug30JpegTiles_GCS_NAD83/aug30C0883430w302530n.tif</Key><Size>1</Size></Contents><Contents><Key>2005_Hurricane_Katrina/aug30JpegTiles_GCS_NAD83/readme.txt</Key></Contents><CommonPrefixes><Prefix>other/</Prefix></CommonPrefixes></ListBucketResult>"#;
+        let tiles = s3_page_tiles(body);
+        assert_eq!(tiles.len(), 1);
+        assert!(tiles[0].ends_with("aug30C0883430w302530n.tif"));
+        assert_eq!(s3_continuation(body), "abc+/def=");
+    }
+
+    #[test]
+    fn s3_listing_not_truncated_stops() {
+        let body = r#"<ListBucketResult><IsTruncated>false</IsTruncated><Contents><Key>a.tif</Key></Contents></ListBucketResult>"#;
+        assert_eq!(s3_page_tiles(body).len(), 1);
+        assert_eq!(s3_continuation(body), "");
+    }
+
+    #[test]
+    fn catalog_lines_become_tile_urls() {
+        let body = "# a comment\n\n  https://host/a.tif  \n\nhttps://host/b.tif\n";
+        assert_eq!(
+            catalog_tiles(body),
+            vec![
+                "https://host/a.tif".to_string(),
+                "https://host/b.tif".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn s3_base_reads_scheme_and_host() {
+        assert_eq!(
+            s3_base("https://noaa-eri-pds.s3.amazonaws.com/?list-type=2").as_deref(),
+            Some("https://noaa-eri-pds.s3.amazonaws.com")
+        );
+        assert_eq!(
+            s3_base(
+                "https://noaa-eri-pds.s3.amazonaws.com/2005_Hurricane_Katrina/aug30JpegTiles_GCS_NAD83/?list-type=2&prefix=p"
+            )
+            .as_deref(),
+            Some("https://noaa-eri-pds.s3.amazonaws.com")
+        );
+    }
+
+    #[test]
+    fn continuation_url_strips_and_encodes() {
+        let url = "https://host/bucket?list-type=2&prefix=p/";
+        let next = continuation_url(url, "a+/b=c");
+        assert_eq!(
+            next,
+            "https://host/bucket?list-type=2&prefix=p/&continuation-token=a%2B%2Fb%3Dc"
+        );
+        assert_eq!(
+            continuation_url(&next, "x"),
+            "https://host/bucket?list-type=2&prefix=p/&continuation-token=x"
+        );
     }
 }
