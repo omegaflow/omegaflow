@@ -1,11 +1,11 @@
 <!--
   title: Parser Magic
   class: concept
-  sha256: a799e131d648dde46cc4037022c04f3d3ccd823ad92f928b9279e8ca3a0c0b4a
+  sha256: 84e60a6f10b0d1d595f4bdb52ed8defc9350bb554240dc974739e071c7d8bf04
 -->
 # Parser Magic
 
-STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1-2, 5-8, 11-13)
+STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1, 6, 8, 12)
 
 ---
 
@@ -45,23 +45,23 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 ---
 
-## Missing — 8 parser gaps
+## Missing — 4 parser gaps
 
-**1. Auto-frame from `lat_key`/`lon_key`** — sources with `lat_key`/`lon_key` and `map` but without `lat`/`lon` are refused because `has_data_position` applies only to Map/GeojsonEvents/CelestialMap. When `lat_key` is set, set Frame=Data.
+**1. Auto-frame from `lat_key`/`lon_key`** — a `map` source with `lat`/`lon` keys but no `on`/`at` frame drops at the `flush!()` gate (`src/archivar/parse.rs:46-89` accepts only `cur_frame.is_some()`, or `kernel_text`/`reference` format). The `Frame` enum (`src/archivar/types.rs:274`) carries Surface/Barycenter/Manifest — no data-derived variant, and a `lat_key` names no body anchor. The fix lives in `parse.rs` + `types.rs`, outside this atom's two parser files.
 
-**2. Improve `extent` per force type** — an EM sample with `C_LIGHT * tau` as extent is gigantic. Gravity bodies would need `extent = body_radius`, not `c * τ`.
+**2. ~~Improve `extent` per force type~~** — DONE: `kernel_extent` (`src/archivar/membrane.rs:277`) returns `p.radius_m` for force_type 1 (gravity) and gaussian length scales for EM — no `c·τ` extent remains on the channel path.
 
 **3. ~~`kepler_map` parsing~~** — DONE 2026-08-17: key directives a/e/i/om/w/ma/epoch/qr/tp wired, MPC q→a + tp→M, solver `src/kepler.rs::elements_to_icrs_state`.
 
 **4. ~~`vectors` / Horizons text parser~~** — DONE 2026-08-17: `{jd_now}`/`{jd_start}`/`{jd_end}` (TDB) — the calendar-date-in-JD-field cause is healed. A live `vectors` block remains a curation question.
 
-**5. `cmap` Celestial Map Parsing** — RA/Dec (deg), parallax (mas → distance), proper motion (mas/yr → 6D state), radial velocity. Keys present in SourceConfig, the parser does not fill them.
+**5. ~~`cmap` Celestial Map Parsing~~** — DONE: `Extract::CelestialMap` (`src/archivar/extract.rs:2543`) fills RA/Dec (deg→rad), parallax (mas→distance `PARSEC_M·1000/plx`), proper motion (mas/yr→6D state via `MAS_YR_TO_RAD_S`), radial velocity, and z→distance (`z·C_LIGHT/HUBBLE_H0`). Tests `test_extract_cmap_*`.
 
-**6. `window` / Temporal Bounding** — no `from`/`until` directly in the config. Only `{today}` in the URL template.
+**6. `window` / Temporal Bounding** — no `from`/`until`/`window` directive in `SourceConfig` (`src/archivar/types.rs:289`); the URL template DSL (`{today}`, `{jd_now}`…) is the only temporal control. A temporal bound is a config-schema question (types.rs + parse.rs), not a parser arm.
 
-**7. Constant `lat_key`/`lon_key` Detection** — `lat_key 48.1` is recognized as a constant, not as a column name.
+**7. ~~Constant `lat_key`/`lon_key` Detection~~** — DONE 2026-09-15: `key_or_constant` in `src/archivar/extract.rs` — a numeric `lat`/`lon` key string (e.g. `48.1`) resolves as a constant, any other string as a JSON path.
 
-**8. `map` as frame indicator** — when `map` is set AND `lat_key`/`lon_key` exist, Frame=Data follows automatically.
+**8. `map` as frame indicator** — the same refusal path as 1: `map` + `lat_key`/`lon_key` without a frame drops at `flush!()` (`src/archivar/parse.rs`). Lives in `parse.rs`.
 
 **9. ~~`field_in` nested support~~** — DONE 2026-08-17: `field_in` is refused+registered in the parser; the `--gold` port migrates to `field`, nested paths (dot + array index) run via jpath.
 
@@ -69,6 +69,6 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **11. Unknown force → alternate path** — when `force_constants` returns `None`, the source is refused. A gentle alternate path would be possible, but is rejected per AGENTS.md.
 
-**12. Category/group inheritance** — no inheritance of defaults from parent groups in the φ namespace.
+**12. Category/group inheritance** — no category/group directive or parent-default inheritance exists in the φ namespace (`src/archivar/parse.rs`). Curation: group defaults must be declared per source until a group schema exists.
 
-**13. Extent zero → standing value** — samples with `extent=0` are not found by the Enclosure filter. A minimal standing extent is needed.
+**13. ~~Extent zero → standing value~~** — DONE 2026-09-15: `build_asteroid_samples` (`src/archivar/spatial.rs:169`) now carries the standing `extent = body_radius_m` (`rec.radius_km × 1000`) on both gravity samples, matching the channel path's `kernel_extent` (`radius_m` for force_type 1). `build_star_samples` keeps `extent: f64::INFINITY` — stars are EM (force_type 0), unbounded by radius. `src/archivar/tests.rs:1753-1754` asserts the standing extent (`3000.0` m for the radius-3.0 km fixture); the radius-0.0 record keeps `extent: 0.0` (radius unmeasured — the body is a point).
