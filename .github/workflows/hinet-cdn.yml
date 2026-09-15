@@ -19,7 +19,7 @@ on:
 permissions:
   contents: write
 env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   HINET_PASS: ${{ secrets.HINET_PASS }}
   RUSTFLAGS: -D warnings
 jobs:
