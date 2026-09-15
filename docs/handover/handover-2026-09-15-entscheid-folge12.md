@@ -3,7 +3,7 @@
   session: Entscheid-Folge XII
   class: handover
   date: 2026-09-15
-  sha256: 0af5a68b5c0c7011a49e76f6b40462cc6aedd15d8b46814744161c91ad6f4441
+  sha256: 9b27ced9cb9f9536ec0bedc4cd2fabe188f65f9e4f9736022d19bdbdf9c39d99
   status: live
 -->
 # Handover — Entscheid-Folge XII (2026-09-15)
@@ -27,34 +27,25 @@ Dies ist die Entscheid-Linie: hier steht nur, was diese Linie autonom trägt —
 Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 überführt (nie in ein fremdes Handover geschrieben).
 
-## PII-History-Rewrite + GitHub-Purge (härtester undatierter Punkt)
+## GitHub-Purge der PII-Alt-Commits (härtester undatierter Punkt)
 
-- Vier PII-Pfade liegen noch in `origin/main`s erreichbarer Historie (gemessen
-  `git merge-base --is-ancestor`): `docs/auftrag/auftrag-igets-sftp-passwort-antrag.md`,
-  `docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md`,
-  `docs/auftrag/auftrag-flyby-doppler-rohdaten.md`,
-  `docs/auftrag/gavo-dc-account-anfrage.md`; vier weitere
-  (`auftrag-adoption-mails`, `auftrag-rubin-data-rights-antrag`,
-  `auftrag-sonden-rohdaten-anfragen`, `archiv/antares-konto-2026-09-05`) sind
-  bereits unerreichbar. Der Purge-Antrag mit Commit-/Blob-Liste liegt lokal in
-  `state/mail/github-purge-request.md` (gitignored). (Schritt: Operator-Consent →
-  Rewrite im Clone `git clone --no-local` +
-  `git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch
-  <die vier Pfade>' --prune-empty -- --all`, Force-Push; danach Antrag senden —
-  `https://support.github.com/contact`.)
-- Der gepinnte Paper-Sha `bc7e7ac` (in den drei adoption-Entwürfen) ist ein
-  Nachfahre aller PII-Commits — jeder Rewrite ändert ihn. Nach dem Push: die
-  drei Entwürfe in `state/mail/adoption-mails.md` auf den neuen Sha umhängen.
-  (Schritt: `git log --format=%H -1 -- docs/paper/twenty-second-band-ground-chain.md`.)
+- Der PII-History-Rewrite ist ausgeführt: die vier noch erreichbaren Pfade
+  (`auftrag-igets-sftp-passwort-antrag`, `auftrag-lisa-pathfinder-psd-antrag`,
+  `auftrag-flyby-doppler-rohdaten`, `gavo-dc-account-anfrage`) sind samt der vier
+  bereits unerreichbaren aus `main`s History entfernt (Baum-Inhalt unverändert;
+  Force-Push `afae680 → b2bc1a2`, gemessen `git log main -- <8 Pfade>` leer).
+  Alle acht PII-Commits sind damit unerreichbar, aber per SHA noch abrufbar.
+  (Schritt: Operator — Purge-Antrag mit der Commit-/Blob-Liste senden,
+  `state/mail/github-purge-request.md`, `https://support.github.com/contact`.)
 
 ## adoption — Drei-Mail-Block: Entwürfe sendfertig (lokal), Send beim Operator
 
 - Die drei Entwürfe (Toth/Turyshev/Markwardt, 20-s-Bande) liegen lokal in
-  `state/mail/adoption-mails.md` (gitignored), gepinnt auf Sha `bc7e7ac`; der
-  eine Ask = two-/three-way-Split. Reg 4 (Amplitude) bleibt `pending` mit
-  gemessenem ~5-Hz-Anker (Station 14, 1988) — kein unverankerter Wert im Text.
-  (Schritt: Adressen bestätigen + senden — Operator; Consent `/consent`. Vor dem
-  Send den Rewrite/Re-Pin abwarten.)
+  `state/mail/adoption-mails.md` (gitignored), gepinnt auf den neuen Sha
+  `fc0e0496` (Header-sha256 `f674e8b2…`); der eine Ask = two-/three-way-Split.
+  Reg 4 (Amplitude) bleibt `pending` mit gemessenem ~5-Hz-Anker (Station 14,
+  1988) — kein unverankerter Wert im Text. (Schritt: Adressen bestätigen + senden
+  — Operator; Consent `/consent`.)
 
 ## Warten auf Rückmeldung (extern gebunden — kein Datum)
 
