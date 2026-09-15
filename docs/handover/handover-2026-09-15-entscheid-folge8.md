@@ -3,7 +3,7 @@
   session: Entscheid-Folge VIII
   class: handover
   date: 2026-09-15
-  sha256: c4c152f5b3022dfa51fe35f15eb6c2fb293086119cd68533cb109a41dc5ca522
+  sha256: f9ca756dee28d08ae51b299b9ab87dabe1a43d49b85f5fa4bef9963bf9aa1ac5
   status: live
 -->
 # Handover — Entscheid-Folge VIII (2026-09-15)
@@ -13,7 +13,9 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet s
 viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
 macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
 Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
-überschrieben; gepusht wird erst, wenn der Baum ruhig ist.
+überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
+darf schmutzig sein.
 
 Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
 Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
