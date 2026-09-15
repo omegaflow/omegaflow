@@ -7378,6 +7378,68 @@ fn maxi_series_roundtrip_and_component_name() {
 }
 
 #[test]
+fn atdf_series_roundtrip_and_component_name() {
+    let mut row = [0.0f64; 14];
+    row[0] = 729_777_632.0;
+    row[1] = 2292.0e6 + 1.5e6;
+    let bytes = crate::atdf::write_bin(&[row]);
+    let parsed = super::extract::series_parse_bin("atdf", &bytes).expect("atdf series parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].0, row[0]);
+    assert_eq!(parsed[0].1, row[1]);
+    assert_eq!(parsed[0].2, crate::atdf::COMP_SKYFREQ);
+    assert_eq!(
+        super::extract::series_component_name("atdf", crate::atdf::COMP_SKYFREQ),
+        Some("pioneer_sky_frequency_hz")
+    );
+    assert_eq!(super::extract::series_component_name("atdf", 99), None);
+}
+
+#[test]
+fn atdf_series_skips_absent_frequency() {
+    let mut row = [0.0f64; 14];
+    row[0] = 729_777_632.0;
+    row[1] = 0.0;
+    let bytes = crate::atdf::write_bin(&[row]);
+    assert!(super::extract::series_parse_bin("atdf", &bytes).is_none());
+}
+
+#[test]
+fn himawari_hsd_series_roundtrip_and_component_name() {
+    let seg = crate::hsd::AhiSegment {
+        columns: 2,
+        lines: 1,
+        bits_per_pixel: 11,
+        band: 7,
+        segment: 1,
+        satellite: 8,
+        resolution_m: 2000,
+        obs_sec: 729_777_632.0,
+        obs_present: 1,
+        calib_present: 1,
+        error_pixels: 0,
+        outside_scan_pixels: 0,
+        counts: Vec::new(),
+        radiance: vec![1.5, 2.5],
+    };
+    let bytes = crate::hsd::write_segment(&seg);
+    let parsed =
+        super::extract::series_parse_bin("himawari_hsd", &bytes).expect("himawari series parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].0, seg.obs_sec);
+    assert_eq!(parsed[0].1, 2.0);
+    assert_eq!(parsed[0].2, crate::hsd::COMP_RADIANCE);
+    assert_eq!(
+        super::extract::series_component_name("himawari_hsd", crate::hsd::COMP_RADIANCE),
+        Some("himawari_ahi_radiance")
+    );
+    assert_eq!(
+        super::extract::series_component_name("himawari_hsd", 99),
+        None
+    );
+}
+
+#[test]
 fn gk2a_ami_series_roundtrip_and_component_name() {
     let granule = crate::gk2a_ami::AmiGranule {
         t: 729_777_632.227_242_1,
