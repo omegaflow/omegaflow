@@ -1,6 +1,6 @@
 use omegaflow::cdn::{upload_asset, upload_release};
 use omegaflow::spectral::{
-    XP_GRID_SAMPLES, XpStar, parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array,
+    parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array, XpStar, XP_GRID_SAMPLES,
 };
 
 const SYNC_CAP_GUARD: usize = 20_000;

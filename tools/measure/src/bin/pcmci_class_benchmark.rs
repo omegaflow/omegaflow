@@ -1,4 +1,4 @@
-use omegaflow::te::{GateCell, TeEstimator, TeNull, gate_fpr_cells, pcmci_links};
+use omegaflow::te::{gate_fpr_cells, pcmci_links, GateCell, TeEstimator, TeNull};
 use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -706,6 +706,8 @@ fn main() {
             TeNull::Block => "block",
             TeNull::Shift => "shift",
             TeNull::Phase => "phase",
+            TeNull::RestrictedPermutation => "restricted-permutation",
+            TeNull::XShift => "x-shift",
         },
         BLOCK.load(Ordering::Relaxed),
         match estimator() {
