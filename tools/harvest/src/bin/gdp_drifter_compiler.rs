@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::zarr::{Blosc, blosc_decompress};
-use omegaflow::archivar::{JsonVal, jpath_val, json_num, jstr, parse_json};
+use omegaflow::archivar::zarr::{blosc_decompress_with, Blosc};
+use omegaflow::archivar::{jpath_val, json_num, jstr, parse_json, JsonVal};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};
@@ -138,7 +138,7 @@ fn zarray_of(meta: &HashMap<String, JsonVal>, name: &str) -> Option<Zarray> {
 }
 
 fn decompress(bytes: &[u8], url: &str) -> Option<Vec<u8>> {
-    match blosc_decompress(bytes) {
+    match blosc_decompress_with(bytes, |b| zstd::stream::decode_all(b).ok()) {
         Some(Blosc::Decompressed(v)) => Some(v),
         Some(Blosc::Unhandled(codec)) => {
             eprintln!("{url}: blosc codec {codec} stays unhandled");
