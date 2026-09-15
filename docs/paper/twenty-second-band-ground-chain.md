@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 4
-  sha256: 99e0240b6b128c53e798a39c8dae69fcc46a8a849cfa9ce7e84551dfd867a488
+  sha256: 23847ee40c7df49a547e80c61b3a6a748c2f7e49a86d941f0ad0dc3a6194e022
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -137,10 +137,12 @@ follows the receive chain, not the transmit chain; the band amplitude, in
 contrast, depends on the (receiver, transmitter) pair (a two-way-link effect,
 within a single epoch). The named machine of the NOCC reduction remains open.
 The per-station census of the canonical residual is the standing measurement
-(the era × station × class × band table); the 1989–1991 ATDF files are absent
-from the harvest (an archive gap of the ATDF product, which covers 1987/1988/1994),
-but the doppler value lives in the sibling `.asc.gz` (the NAVIO series, 1973–2002,
-harvested) — not absent.
+(the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
+absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
+and Markwardt himself documents an unreadable-tape gap for June 1990–June 1991),
+but the doppler value is not absent: it lives in the TRK-2-25 ODF
+`86334o97343_sc23.odf` (1986–1997) and in the ASCII ODDUMP `.asc.gz` (1973–2002,
+harvested as the NAVIO series).
 
 ## 5. Position against the literature
 
