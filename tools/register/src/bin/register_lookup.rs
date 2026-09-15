@@ -409,6 +409,57 @@ fn legacy_repo(args: &[String]) -> Option<&str> {
     None
 }
 
+fn history_term(args: &[String]) -> Option<&str> {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == "--term" {
+            return it.next().map(|s| s.as_str());
+        }
+    }
+    None
+}
+
+fn scan_rewritten(repo: Option<&str>, term: &str) {
+    let mut cmd = Command::new("git");
+    if let Some(r) = repo {
+        cmd.arg("-C").arg(r);
+    }
+    cmd.arg("log")
+        .arg("--oneline")
+        .arg(format!("-S{term}"))
+        .arg("--");
+    for sub in ARCHIV_DIRS {
+        cmd.arg(sub);
+    }
+    for (dir, _) in REGISTER_DIRS {
+        cmd.arg(dir);
+    }
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => {
+            println!("REWRITTEN\t{}\tabsent: git command not available", term);
+            return;
+        }
+    };
+    if !output.status.success() {
+        println!(
+            "REWRITTEN\t{}\tabsent: git log -S returned no listing",
+            term
+        );
+        return;
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let mut n = 0usize;
+    for line in stdout.lines() {
+        println!("REWRITTEN\t{}\t{}", term, snippet(line, 160));
+        n += 1;
+    }
+    println!(
+        "register_lookup --history --term {}: {} rewritten-history hit(s)",
+        term, n
+    );
+}
+
 fn run_history(args: &[String]) {
     let repo = legacy_repo(args);
     let mut open_out: Vec<String> = Vec::new();
@@ -431,8 +482,11 @@ fn run_history(args: &[String]) {
     for line in &absent_out {
         println!("{}", line);
     }
+    if let Some(term) = history_term(args) {
+        scan_rewritten(repo, term);
+    }
     println!(
-        "register_lookup --history: {} hits, {} absent, blind spot: lines that vanished inside a rewritten (not deleted) file are invisible to this scan",
+        "register_lookup --history: {} hits, {} absent, blind spot: lines that vanished inside a rewritten (not deleted) file need --history --term <term> (git log -S)",
         open_out.len() + released_out.len(),
         absent_out.len()
     );
@@ -485,7 +539,7 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --live            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>]   (open points in archived + deleted documents)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --live            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [--term <term>]   (open points in archived + deleted documents; --term adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
