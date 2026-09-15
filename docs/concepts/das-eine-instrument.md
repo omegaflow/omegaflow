@@ -3,7 +3,7 @@
   class: concept
   date: 2026-09-03
   version: 2
-  sha256: 6de1a87d3426b0c9085ef28aa123b2a6d392de43f51aaba205ee9c1955c16ace
+  sha256: 8726b166bb9a67fe12df9cc9e40986f5abc5e989566261c14ddc7fb599658bff
   status: live
   see-also: docs/paper/twenty-second-band-ground-chain.md, docs/paper/text-as-data-pioneer.md, docs/paper/ground-sources-20s-band.md, docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front)
 -->

@@ -3,7 +3,7 @@
   session: Ernte-Folge 13
   class: handover
   date: 2026-09-13
-  sha256: bd6afccc375bd59a0874e7721024b154fa54a2f6f13b0f04e2c17a44b5d064ac
+  sha256: 6be102ac371023fe28e7a9cb7ef5e0eefd2a8e7436c3a60cd65fc621074f18e4
   status: live
 -->
 # Handover — Ernte-Folge 13 (2026-09-13)

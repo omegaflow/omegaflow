@@ -2,7 +2,7 @@
   title: Auftrag — Grat-Reste: KDE-h-Sensitivität und räumliche Richtungs-Verifikation
   class: auftrag
   date: 2026-09-05
-  sha256: 571561472fb8da1a470746be43f3fee89d6e6ecbf560e348c41818a57be52c8c
+  sha256: ac71f31653ce1a590114daabce778aab3005dd376fa7160759b4efc122743531
   status: archived
   see-also: docs/befund/befund-grat-trishuli-konditionierung.md docs/auftrag/auftrag-grat-trishuli-konditionierung.md docs/paper/sturzflut-tibet-pfeil.md
 -->

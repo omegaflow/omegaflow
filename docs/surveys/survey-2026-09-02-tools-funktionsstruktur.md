@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-02
   status: live
-  sha256: none
+  sha256: 0521efbd46bb696c8397e378c2b8d88905ead34146c6bb1fa16c3ed7337ffb8c
 -->
 
 # Struktur-Vorschlag: `src`/`tools` nach Funktion ordnen

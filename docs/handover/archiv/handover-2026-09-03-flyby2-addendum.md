@@ -2,7 +2,7 @@
   title: Handover — flyby-2-Addendum: Auftrag gegen Bestand abgleichen, vor dem 28.09.
   class: handover
   date: 2026-09-03
-  sha256: b296d1f343e80aaef4edac02c58ea7454ce30922dcacc86e7689eafb6f07b1d2
+  sha256: 0d9387c4ced806207ca062e3b8357e52dd02c45793882879ee8644552f137420
   status: archived
   see-also: docs/auftrag/auftrag-flyby2-addendum.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/paper/sturzflut-tibet-pfeil.md docs/paper/flyby-path-2-preregistration.md
 -->

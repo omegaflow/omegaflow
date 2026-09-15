@@ -2,7 +2,7 @@
   title: Handover — die drei TE-Atome: Block-Null + n_surr=100, KSG-kNN, PCMCI-Suche (geschlossen)
   class: handover
   date: 2026-09-09
-  sha256: 934917937c02ed844ecaac58a35b2000d39e45b2e84e63abe0111ca860f5caad
+  sha256: 0bc67d31d68ce68a326beaa2a7a3c3e60b168045da92064a171e10f40b0d85ff
   status: archived
   see-also: docs/TODO.md docs/befund/befund-klassen-benchmark-pcmci.md docs/auftrag/auftrag-klassen-benchmark-pcmci.md docs/auftrag/auftrag-nobel-dag-mci.md docs/concepts/te-literatur-matrix.md
 -->
