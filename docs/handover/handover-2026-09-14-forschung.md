@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 732c54c09ba631a5bfc0d7c8274b331fb6b15ac836a0b6ad61f2c782f517ed30
+  sha256: 9fefd4d1a924c19036c2c0a6de1f5b47cb8ea7b642667acb4156f5d6cb3d6bbf
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -52,9 +52,11 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   Papier-Zählungen 70 602/73 249 sind die post-gate-Zählungen). **Surrogat-Null: 2/4 Selektion** (st14 45,75, st63 1992
   46,95; Null mean+2σ = 0,65, P≈2,5·10⁻³) — st43 51,55 und st63 1988 47,35
   überleben nicht. Die qualitative Station-Fixität steht (beide Serien).
-  1989–1991: die ATDF-Lücke ist eine Archiv-Lücke des ATDF-Produkts (deckt
-  1987/1988/1994); die Doppler-Werte leben im Geschwister `.asc.gz` (NAVIO,
-  1973–2002, geerntet) — nicht absent, nicht pending. (Schritt:
+  1989–1991: die Markwardt-ATDF (.DAT/.TDR/.TDF) ist eine echte Archiv-Lücke
+  (deckt 1987/1988/1994; Markwardt selbst dokumentiert Juni 1990–Juni 1991 als
+  unlesbares Band, arXiv gr-qc/0208046); die Doppler-Werte sind NICHT absent — sie
+  leben im TRK-2-25-ODF `86334o97343_sc23.odf` (1986–1997) + im `.asc.gz`
+  (ODDUMP, 1973–2002, geerntet). (Schritt:
   Papier **v4** — Zensus statt Pick, die alten Werte mit gemessenen Rängen,
   Drift-Satz streichen, §2 bleibt; Council-Landing.) Instrumente:
   `pioneer10_txrx_split_probe`, `pioneer10_paper_chain_retrace`,
