@@ -3,7 +3,7 @@
   session: Entscheid-Folge XI
   class: handover
   date: 2026-09-15
-  sha256: 3896aa08d727e1e790c4d508d43780d2623d41fbe220566bd040bc55c57f0bbf
+  sha256: 5e204f86a1fb0460fe487a27228015de770a075fef7f56d77eea87ee75d9d7c9
   status: live
 -->
 # Handover — Entscheid-Folge XI (2026-09-15)
@@ -31,7 +31,7 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 - Die drei Entwürfe (Toth/Turyshev/Markwardt, 20-s-Bande) liegen lokal in
   `state/mail/adoption-mails.md` (gitignored — nicht im öffentlichen Repo) und
-  tragen den gepinnten Link (Sha `32d96efe`, Papier v5) — kein Platzhalter mehr;
+  tragen den gepinnten Link (Sha `bc7e7ac`, Papier v5) — kein Platzhalter mehr;
   der eine Ask = der two-/three-way-Split. Reg 4 (Amplitude) bleibt `pending`
   mit gemessenem ~5-Hz-Anker (Station 14, 1988); kein unverankerter Wert im Text.
   (Schritt: Adressen bestätigen + senden — Operator; Consent `/consent`.)
