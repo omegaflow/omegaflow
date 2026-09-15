@@ -3,7 +3,7 @@
   session: Bau-Folge 39
   class: handover
   date: 2026-09-15
-  sha256: 6128363d06743d0d7d16e386ba9c11a537df0752175ef88de51687fd3c6e58bd
+  sha256: c7c741e8f4d928da6d4bcb4e1b45d9d811a1190ab20edca14a6f1a4126e03f50
   status: live
 -->
 # Handover — Bau-Folge 39 (2026-09-15)
@@ -25,13 +25,16 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Parser-Gap A — DRS-Verifikation + TNF/ODF-Konsument offen
 
-- DRS-FITS: `drs_fits_compiler` läuft am echten Granulat (drs_20160124_000015__20160130_235906.fits,
-  4640 Zeilen, roundtrip parst) — n=1 Datei trägt null Bytes an den LTP-Kraftspalten
-  DST11077-11085 (Roh-Bytes am berechneten Spalten-Offset 176 sind null; die zweite Datei
-  drs_20160213…fits trägt gar keine `SCI_SCIENCE_1Hz`-HDU, zählt nicht als Gegenprobe).
-  (Schritt: zuerst die Spaltenzuordnung gegen das LPF-DRS-Handbuch halten; nur wenn es sie
-  bestätigt, die 9-Tage-Datei `drs_20160102_093513__20160111_070510.fits` (302 MB) per
-  Download/`curl -r` als zweite Probe; `src/archivar/fits.rs`.)
+- DRS-FITS: Diagnose abgeschlossen (gemessen 2026-09-15). Spaltenzuordnung bestätigt:
+  DST11077-79 = LTP1-Kraftvektor [N], DST11083-85 = LTP2-Kraftvektor [N] (FITS-Header
+  TTYPE/TFORM/TUNIT, Spalten-Offset 176), Δg = (F2−F1)/1.928 kg korrekt (1.928 kg =
+  LPF-Testmasse). Die Nullen im n=1-Granulat sind operativ, kein Parser-Gap: der DCS füllt
+  die LTP-Kraftvektoren nur im Drag-free-Betrieb; Jan–Jul-2016-Granulate sind null-gefüllt.
+  Erstes nicht-null Granulat `drs_20160806_235657__20160814_114429.fits` (Modus DFLLF);
+  Compiler-Lauf darauf: 111811 Zeilen, |dg| bis 3.073e-9 m/s², roundtrip parst.
+  (Schritt: Drag-free-Granulat als Quelle registrieren — `phi/blocked_sources.φ` `drs-fits`
+  entblocken, `phi/sources.φ`-Block; `phi/sources.φ` trägt fremde uncommittete Arbeit →
+  Registrierung wartet auf deren Session-Grenze.)
 - TNF: `tnf_compiler.rs` gebaut; offen echter Lauf + Registrierung + Membran-Konsument
   (Operator). (Schritt: Lauf gegen `nhpc_rex_*.tnf`.)
 - ODF Juno/Magellan/MGS/MRO/Odyssey/MESSENGER/Mars Express/Rosetta + ODR Voyager: gebaut,
@@ -39,14 +42,18 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Die 6 Compiler-Quellen — CDN-Manifestation offen
 
-- Die 6 Compiler-Blöcke (atdf/gk2a_ami/goes_abi/himawari_hsd/gdp_drifter/lis_otd) sind
-  gebaut und im Staging-Block korrigiert (lis_otd = `field rad lis_otd_flash_radiance_uj_sr
-  … uJ/sr`; himawari-URL = `himawari_ahi_counts.bin`), aber nicht im CDN manifestiert.
-  (Schritt: die `*-cdn.yml`-Workflows dispatchen — gk2a/goes/himawari/gdp/pioneer-atdf
-  stehen; für lis_otd fehlt ein Workflow → anlegen nach `gdp-cdn.yml`-Muster,
-  `ghrc.nasa.gov`, `--ci-mode`.)
+- 5 der 6 Compiler-Assets sind manifestiert (dispatch 2026-09-15, alle `completed/success`,
+  Assets auf dem CDN geprüft): `gk2a_ami_rad.bin`, `goes_abi_rad.bin`,
+  `himawari_ahi_counts.bin`, `gdp_drifter.bin`, `pioneer10_skyfreq.bin`.
+- `lis-otd-cdn.yml` neu angelegt (Muster `iss-lis-cdn.yml`, NETLOC `ghrc.nasa.gov`,
+  EDL-Token, naif-LSK, `--ci-mode`); Compiler gegen echtes OTD-Granulat verifiziert
+  (`otdlip_1995.103_daily.tar` → 6608 flashes, 396488 B, roundtrip parst).
+  (Schritt: Workflow pushen, dann `gh workflow run lis-otd-cdn`; `lis_otd.bin` fehlt noch
+  auf dem CDN.)
 - Nach der Manifestation: die 6 Blöcke aus
-  `phi/pipeline/research/agent_output/sources14_2026-09-15.φ` in `phi/sources.φ` mergen.
+  `phi/pipeline/research/agent_output/sources14_2026-09-15.φ` in `phi/sources.φ` mergen —
+  wartet auf `lis_otd.bin` und auf die Session-Grenze der fremden uncommitteten
+  sources.φ-Änderung.
 
 ## TE-Gate — n=1000-Lauf noch in Arbeit
 
@@ -56,6 +63,15 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   FPR-Tabelle lesen; `gh issue close 13` nur bei haltendem Gate.)
 - n=150: RestrictedPermutation (FPR ≤ 5,50 %) und XShift (≤ 4,25 %, kein Anstieg) halten.
   (Schritt: `src/mathematikerin/te.rs`, `gate_fpr_autocorrelation_*`.)
+
+## Benchmark — offene Bau-Aufgabe flash vs. pro
+
+- DRS-FITS-Diagnose (identischer Wortlaut, read-only): flash (grind-flash, deepseek-v4-flash)
+  $0.0369 (in 42133, out 9982, reasoning 27014, cache_read 2810240) vs. pro (grind-pro,
+  deepseek-v4-pro) $0.0856 (in 68524, out 9625, reasoning 41691, cache_read 3080448) —
+  pro 2,3× teurer. Beide gleichwertig (Mapping bestätigt, Nullen operativ, Drag-free-Granulat
+  benannt); flash lief den Compiler zusätzlich end-to-end (111811 Zeilen, |dg| 3.073e-9 m/s²).
+  Sieger: flash → die Aufgabe bleibt bei flash.
 
 ## Register-Digest — Bau-Linie
 
