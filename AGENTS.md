@@ -265,6 +265,10 @@ The project's own tools live on `PATH` (via `~/.local/bin`, built from
 (`reports|status|search|fetch|jwst`), `smail` (mail). They are Rust std + curl,
 allowed to every agent — prefer them over the standard `webfetch`/`websearch`
 (now denied) and over spawning a fresh process where one of them fits.
+Reachability and file type run through `archive_search --verdict <url>` (direct →
+Proton → Wayback) and `--sniff <url>` (magic bytes + sha256) — not `curl -sI`;
+`curl` stays for binary/Zip content no reader mode carries. Write the step that
+way in handovers, so the next session inherits the convention.
 
 ## Agent permission profiles — role = profile
 
