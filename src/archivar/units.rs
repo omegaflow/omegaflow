@@ -195,6 +195,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "pfu/mev",
             "w/m^2/nm",
             "micromolequanta/m^2/sec",
+            "rad",
         ],
         1 => &[
             "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",

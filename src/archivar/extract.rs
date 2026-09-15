@@ -34,6 +34,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             }
             out
         }),
+        "voyager_saturn" => voyager_saturn::parse_series(bytes),
         _ => None,
     }
 }
@@ -113,6 +114,14 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             crate::maxi::BAND_2_4 => Some("maxi_2_4kev_flux_ph_s_cm2"),
             crate::maxi::BAND_4_10 => Some("maxi_4_10kev_flux_ph_s_cm2"),
             crate::maxi::BAND_10_20 => Some("maxi_10_20kev_flux_ph_s_cm2"),
+            _ => None,
+        },
+        "voyager_saturn" => match comp {
+            voyager_saturn::COMP_DOPPLER_HP => Some("voyager_saturn_doppler_count_hp"),
+            voyager_saturn::COMP_DOPPLER_LP => Some("voyager_saturn_doppler_count_lp"),
+            voyager_saturn::COMP_RANGE_PART2 => Some("voyager_saturn_range_part2"),
+            voyager_saturn::COMP_ANGLE_A => Some("voyager_saturn_angle_a"),
+            voyager_saturn::COMP_ANGLE_B => Some("voyager_saturn_angle_b"),
             _ => None,
         },
         _ => None,
