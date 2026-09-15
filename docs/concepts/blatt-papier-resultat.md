@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 43624e05b4d547ad491f2c0a7c55717a03062e84ee2e36b10f927ab2a2dd65cb
+  sha256: 438769592ef7832082ae5f7a28e581e21f13921eba68ae12ad06a8bdeb2a6fed
   status: live
   see-also: docs/paper/laic-arrow-direction.md
 -->
@@ -102,20 +102,32 @@ nicht dieser Session; ein voller Zyklus ≈ 16 h.
 ### Blatt 2 — Der kausale Treiber des geomagnetischen Sturms
 
 ```
-TE(Bz → Erdseite)    = pending
-TE(speed → Erdseite) = pending
-Lag                  = pending Minuten
-n, Schwelle          = pending
+TE(Bz → dB/dt)     = 3.10e-1  | Pfeil  (Schwelle 2.26e-1, mean+2σ)
+TE(speed → dB/dt)  = 8.20e-2  | still  (Schwelle 2.24e-1)
+Lag                = 119 min (Bz) / 60 min (speed) — Sweep 0–120 min
+n, Schwelle        = n 1301 (Bz) / 1254 (speed), 1-min-Grid
 ```
+
+Gemessen 2026-09-15 (`bz_blatt_probe`, live, 22-h-Fenster, ABK 68,36° N):
+Bz trägt den Pfeil, Speed bleibt still; die Null-Kontrolle Density→dB/dt
+= 2.85e-1 liegt ebenfalls über ihrer Schwelle (Pfeil) — die Familien-Schwelle
+(fam = max Surrogat-TE der Runde, max-T) muss das Verdikt schließen und steht
+als CI-Lauf offen; die retro OMNI2-PCMCI-Zeile (FDR) ist CI-gebunden.
 
 ### Blatt 3 — Die Richtung der Lithosphäre-Atmosphäre-Ionosphäre-Kopplung
 
 ```
-TE(Lithosphäre → Ionosphäre) = pending
-TE(Ionosphäre → Lithosphäre) = pending
-Lag                          = pending Stunden
-n (Ereignisse), Schwelle     = pending
+TE(Lithosphäre → Ionosphäre) = still — 71/1400 Fenster (5,1 %), mean excess −4.6e-2
+TE(Ionosphäre → Lithosphäre) = still — 101/1400 Fenster (7,2 %), mean excess −2.2e-2
+Lag                          = 1–2 h (PCMCI max_lag 2, Stundenzellen)
+n (Ereignisse), Schwelle     = 1400 Fenster; Schwelle mean+2σ, FDR (Benjamini-Hochberg)
 ```
+
+Gemessen 2026-09-15 (`nobel_probe_laic`, laic.bin, PCMCI + common-cause über
+1400 Ereignis-Fenster): beide Richtungen liegen am Boden, keine dominante
+Lithosphäre↔Ionosphäre-Richtung; die Solar-Kontrolle Bz→F (285/1400, 20,4 %)
+liegt über dem Boden — der gemeinsame Treiber trägt den einzigen gemessenen
+Pfeil, nicht die Lithosphäre.
 
 Nur der Lauf füllt das Blatt. Was die Maschine nicht misst,
 steht nicht auf dem Blatt — auch nicht als 0.0 (fehlt ≠ null; Bz = 0
@@ -126,12 +138,17 @@ dagegen ist eine Messung).
 - **A = A:** nur gemessene Werte. Jede Zahl trägt n, Fenster, Schwelle und
   den Lag-Sweep-Bereich, aus dem der Lag stammt.
 - **Surrogate:** jede Richtungsaussage gegen das phasenrandomisierte
-  Null-Ensemble geprüft; Mehrfachvergleichskorrektur über alle getesteten
-  Paare (registriert offen — Pflicht vor jedem Blatt).
-- **Lag:** der Lag-Sweep ist Pflicht. Lag 0 ist Default, kein Sweep —
-  registriert offen; Blatt 2 („exakt X Minuten") schließt ihn.
+  Null-Ensemble geprüft; die Mehrfachvergleichskorrektur läuft — Blatt 3 trägt
+  FDR + common-cause (PCMCI), Blatt 2 die paarweise Surrogat-Schwelle
+  (mean+2σ); die Familien-Schwelle (fam/max-T) und die retro
+  OMNI2-PCMCI-Zeile stehen als CI-Lauf offen.
+- **Lag:** der Lag-Sweep ist Pflicht. Blatt 2 trug den Sweep 0–120 min
+  (Lag 119 min Bz / 60 min speed), Blatt 3 1–2 h — der Sweep steht, „Lag 0
+  als Default" ist geschlossen.
 - **KDE-Bandbreite:** die Sensitivität des Verdikts gegen h (Faktor 2)
-  gehört auf das Blatt oder ins Register.
+  gehört auf das Blatt oder ins Register; gemessen ist sie noch nicht —
+  `laic_probe --analyze --kde-scale` trägt den Knopf, die lokale laic-Ernte
+  fehlt, also CI.
 - **0-Kanon:** Quelle ausgefallen → fehlt, kein fabrizierter Wert. Stille in
   beiden Richtungen ist ein Befund, kein leerer.
 - **Der gemeinsame Treiber:** wo die Sonne beide Serien antreiben könnte
@@ -139,7 +156,11 @@ dagegen ist eine Messung).
   Pfeil der Sache selbst muss über der Schwelle liegen, während die
   Kontrollrichtungen still bleiben.
 - **Multi-Force-TE:** die Blätter laufen auf der paarweisen TE; die bedingte
-  Multi-Force-TE (alle Kräfte im Phasenraum) ist registriert pending.
+  Multi-Force-TE (alle Kräfte im Phasenraum) ist gemessen
+  (`multi_force_te_probe`): 216 konditionale Zellen, 1 FDR-Pass
+  (seismic-body→seismic-surface, p 9.5e-7), die drei gepflanzten Pfeile
+  werden bei n=512 nicht rekonstruiert — der Surrogat-Boden schluckt die
+  schwache Kopplung.
 - **Das Blatt ist ein Commit:** Befund + Registerzeile im selben Commit.
   Stille ist ein vollwertiger Befund, kein leerer.
 
