@@ -2,7 +2,7 @@
   title: DAS EIN-BLATT-AXIOM — die drei kausalen Pfeile
   class: concept
   date: 2026-08-21
-  sha256: a0d654a66b7b658c2befeb2e2913ac9b2a0d6c94548e2226c5ea5c7ff4437118
+  sha256: 938cd5846a952565f5a4d80a84f528127fff8ff915507860047a69266e190de1
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/paper/laic-arrow-direction.md
 -->

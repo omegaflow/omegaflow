@@ -2,6 +2,10 @@ use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn main() {
+    if std::env::args().any(|a| a == "--push") {
+        print_push_order();
+        return;
+    }
     let dirty = git(&["status", "--porcelain"]);
     let untracked = dirty.lines().filter(|l| l.starts_with("??")).count();
     let modified = dirty
@@ -31,6 +35,68 @@ fn state_dir() -> std::path::PathBuf {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
+}
+
+fn print_push_order() {
+    let up = upstream();
+    let ahead = git(&["rev-list", "--count", &format!("{}..HEAD", up)]);
+    let ff = if git_ok(&["merge-base", "--is-ancestor", "origin/main", "HEAD"]) {
+        "yes"
+    } else {
+        "no"
+    };
+    println!("push_order | ahead={} ff={}", ahead.trim(), ff);
+    for line in git(&["log", "--reverse", "--oneline", &format!("{}..HEAD", up)]).lines() {
+        if !line.trim().is_empty() {
+            println!("commit {}", line.trim());
+        }
+    }
+    for (name, head) in divergent_lines() {
+        let n = git(&["rev-list", "--count", &format!("main..{}", head)]);
+        let patches = git(&["cherry", "main", &head])
+            .lines()
+            .filter(|l| l.starts_with('+'))
+            .count();
+        println!("line {} {} +{} patches={}", name, head, n.trim(), patches);
+    }
+}
+
+fn upstream() -> String {
+    if git_ok(&["rev-parse", "--verify", "--quiet", "@{u}"]) {
+        "@{u}".to_string()
+    } else {
+        "origin/main".to_string()
+    }
+}
+
+fn divergent_lines() -> Vec<(String, String)> {
+    let mut out: Vec<(String, String)> = Vec::new();
+    let refs = git(&[
+        "for-each-ref",
+        "--format=%(refname:short) %(objectname:short)",
+        "refs/heads",
+    ]);
+    for line in refs.lines() {
+        let mut it = line.split_whitespace();
+        let (Some(name), Some(head)) = (it.next(), it.next()) else {
+            continue;
+        };
+        if name == "main" || name == "origin/main" {
+            continue;
+        }
+        let n = git(&["rev-list", "--count", &format!("main..{head}")]);
+        if !n.trim().is_empty() && n.trim() != "0" {
+            out.push((name.to_string(), head.to_string()));
+        }
+    }
+    out
+}
+
+fn git_ok(args: &[&str]) -> bool {
+    match Command::new("git").args(args).output() {
+        Ok(o) => o.status.success(),
+        Err(_) => false,
+    }
 }
 
 fn git_verdict() -> String {

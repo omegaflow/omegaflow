@@ -2,7 +2,7 @@
   title: DAS EIN-BLATT-ERGEBNIS — die drei kausalen Pfeile
   class: concept
   date: 2026-08-21
-  sha256: 27a195786adc7c05d705a64a4cc0972c3f4770e929c6b99bd48ee566f76bb43b
+  sha256: 50c3fe74d942a6219293aeb88e831cbc23f7f0df5c0b8a47e4aa91f4f969ed58
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md
 -->
