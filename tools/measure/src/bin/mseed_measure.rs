@@ -18,7 +18,7 @@ fn ymd_to_days(y: i64, m: i64, d: i64) -> Option<f64> {
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("usage: mseed_messen <file.mseed> [start_epoch] [end_epoch]");
+        eprintln!("usage: mseed_measure <file.mseed> [start_epoch] [end_epoch]");
         return;
     }
     let bytes = match fs::read(&args[1]) {
