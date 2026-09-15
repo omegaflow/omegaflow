@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: 1b8d21809c6f228cec42a379a30ca82a1196922759297e13c69fd0de9f1be82b
+  sha256: e1b4131f6b89c60d816dbb10bcd375dd12b147c9528a86aeaf4c3598e4358590
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,

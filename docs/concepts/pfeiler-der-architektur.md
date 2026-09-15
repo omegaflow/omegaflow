@@ -2,7 +2,7 @@
   title: Dreizehn Pfeiler — die Architektur als System
   class: concept
   date: 2026-09-01
-  sha256: b6472d8c1da22375af8585ec56aaa2cbebd0c484e0eee24b53fd90095f501eef
+  sha256: e722f98c8ad16dee96c611e3b4ad8cad9448aa70a975f4f496283280944de337
   status: live
 -->
 

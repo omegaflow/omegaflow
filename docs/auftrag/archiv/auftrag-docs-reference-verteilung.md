@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-01
   status: archived
-  sha256: 5720f31469242e118b560a63599be51924cfff17ecfdb08185416807aeafefab
+  sha256: 0f49d70f80751705ab4ce7cef2b64e4ef3e840f07a2f2f1bbfc806b2dae2c34b
 -->
 
 # Auftrag: die verbleibenden §401-Überschüsse von main ziehen

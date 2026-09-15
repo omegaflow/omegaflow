@@ -2,7 +2,7 @@
   title: Auftrag — Sicherung der einzigen-Kopie-Risiko-Heime
   class: auftrag
   date: 2026-09-02
-  sha256: a2967138ae46498af68b1929dfe8d3cb2ffa637941a9a54de95f39bf4b60f10b
+  sha256: d2492427e570d228b6dabcef2a51fa693b00d6d69dfec256e6e5b50d9cb355cb
   status: archived
   see-also: AGENTS.md
 -->

@@ -3,7 +3,7 @@
   session: Bau-Folge
   class: handover
   date: 2026-09-14
-  sha256: 5a28b42a36a84d56eac9413d1f8e0b390458db9a3874104c5ed2446fffab09e0
+  sha256: 7a311f2d05a66a38e798ac664cb02aaa28af0bad20b522fe6c967b31da60631e
   status: live
 -->
 # Handover — Bau & Code (2026-09-14, Bau26)

@@ -2,7 +2,7 @@
   title: Auftrag — Nobel-DAG-Atom: iterative Eltern-Selektion, MCI-Phase, FDR innen (der Runge-Einbau in Rust)
   class: auftrag
   date: 2026-09-09
-  sha256: 045f19d2709b99f6a25d1304f3d8fac7b3abce65372daaa2e95de364507bdb22
+  sha256: 8bd53092336e73bc6c8b7fea70defe7a0a316108a2f0e6ee4c700d5a5bf31642
   status: archived
   see-also: docs/TODO.md docs/befund/befund-klassen-benchmark-pcmci.md docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md
 -->

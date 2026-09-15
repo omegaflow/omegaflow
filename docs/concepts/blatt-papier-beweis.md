@@ -2,7 +2,7 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: 88b46257a1309529b69b0152588be7c4d868e36059f098e3e33a6de0daac800f
+  sha256: cf1062dc3e48e5576d97c11287104d09a6717534d920904efb01154f2079dcac
   see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
