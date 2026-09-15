@@ -10,6 +10,12 @@
     "edit": "allow",
     "bash": {
       "cargo *": "allow",
+      "git reset*": "deny",
+      "git checkout*": "deny",
+      "git clean*": "deny",
+      "git rebase*": "deny",
+      "git stash*": "deny",
+      "git restore*": "deny",
       "git *": "allow",
       "omega_sh *": "allow",
       "sgrep *": "allow",
