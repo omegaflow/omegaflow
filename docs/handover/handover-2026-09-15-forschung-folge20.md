@@ -1,13 +1,13 @@
 <!--
-  title: Handover — Forschung: Sonden-ODF + Voyager Saturn (Stand 2026-09-15)
-  session: Forschung (Sonden-ODF + Voyager Saturn)
+  title: Handover — Forschung-Folge 20 (2026-09-15)
+  session: Forschung-Folge 20
   class: handover
   date: 2026-09-15
-  sha256: 5505c27a81a1483208f418578bdd39bad79cd94feccc70554e728ba21a285ef7
+  sha256: 57423675e29cfb2aba4d6f81b74c007eeb7c44eca0c84f45336251752d65083d
   status: live
   see-also: docs/auftrag/auftrag-sonden-rohdaten-anfragen.md, docs/paper/twenty-second-band-ground-chain.md
 -->
-# Handover — Forschung: Sonden-ODF + Voyager Saturn (2026-09-15)
+# Handover — Forschung-Folge 20 (2026-09-15)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
