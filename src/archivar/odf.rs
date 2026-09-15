@@ -272,6 +272,98 @@ pub fn scan_tnf_sfdus(bytes: &[u8]) -> Option<Vec<TnfSfdu>> {
     Some(out)
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct TnfDt0 {
+    pub orig_id: u8,
+    pub last_modifier_id: u8,
+    pub upl_rec_seq_num: u32,
+    pub rct_day: u16,
+    pub rct_msec: u32,
+    pub ul_dss_id: u8,
+    pub ul_band: u8,
+    pub ul_assembly_num: u8,
+    pub transmit_num: u8,
+    pub transmit_stat: u8,
+    pub transmit_mode: u8,
+    pub cmd_modul_stat: u8,
+    pub rng_modul_stat: u8,
+    pub fts_vld_flag: u8,
+    pub transmit_time_tag_delay: f64,
+    pub ul_zheight_corr: f32,
+    pub mod_day: u16,
+    pub mod_msec: u32,
+    pub version_num: u8,
+    pub sub_version_num: u8,
+    pub sub_sub_version_num: u8,
+    pub data_chdo_type: u16,
+    pub data_chdo_length: u16,
+    pub ul_hi_phs_cycles: u32,
+    pub ul_lo_phs_cycles: u32,
+    pub ul_frac_phs_cycles: u32,
+    pub ramp_freq: f64,
+    pub ramp_rate: f64,
+    pub transmit_switch_stat: u8,
+    pub ramp_type: u8,
+    pub transmit_op_pwr: f32,
+    pub sup_data_id: [u8; 8],
+    pub sup_data_rev: [u8; 8],
+    pub prdx_time_offset: f64,
+    pub prdx_freq_offset: f64,
+    pub time_tag_corr_flag: u8,
+    pub type_time_corr_flag: u8,
+    pub fabricated_sfdu_flag: u8,
+}
+
+pub fn tnf_dt0(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt0> {
+    if frame.format_code != 0 || bytes.len() < 182 {
+        return None;
+    }
+    let mut sup_data_id = [0u8; 8];
+    sup_data_id.copy_from_slice(&bytes[140..148]);
+    let mut sup_data_rev = [0u8; 8];
+    sup_data_rev.copy_from_slice(&bytes[148..156]);
+    Some(TnfDt0 {
+        orig_id: bytes[36],
+        last_modifier_id: bytes[37],
+        upl_rec_seq_num: be32(&bytes[40..44]),
+        rct_day: be16(&bytes[60..62]),
+        rct_msec: be32(&bytes[62..66]),
+        ul_dss_id: bytes[66],
+        ul_band: bytes[67],
+        ul_assembly_num: bytes[68],
+        transmit_num: bytes[69],
+        transmit_stat: bytes[70],
+        transmit_mode: bytes[71],
+        cmd_modul_stat: bytes[72],
+        rng_modul_stat: bytes[73],
+        fts_vld_flag: bytes[74],
+        transmit_time_tag_delay: f64::from_be_bytes(bytes[76..84].try_into().ok()?),
+        ul_zheight_corr: f32::from_be_bytes(bytes[84..88].try_into().ok()?),
+        mod_day: be16(&bytes[88..90]),
+        mod_msec: be32(&bytes[90..94]),
+        version_num: bytes[94],
+        sub_version_num: bytes[95],
+        sub_sub_version_num: bytes[96],
+        data_chdo_type: be16(&bytes[102..104]),
+        data_chdo_length: be16(&bytes[104..106]),
+        ul_hi_phs_cycles: be32(&bytes[106..110]),
+        ul_lo_phs_cycles: be32(&bytes[110..114]),
+        ul_frac_phs_cycles: be32(&bytes[114..118]),
+        ramp_freq: f64::from_be_bytes(bytes[118..126].try_into().ok()?),
+        ramp_rate: f64::from_be_bytes(bytes[126..134].try_into().ok()?),
+        transmit_switch_stat: bytes[134],
+        ramp_type: bytes[135],
+        transmit_op_pwr: f32::from_be_bytes(bytes[136..140].try_into().ok()?),
+        sup_data_id,
+        sup_data_rev,
+        prdx_time_offset: f64::from_be_bytes(bytes[156..164].try_into().ok()?),
+        prdx_freq_offset: f64::from_be_bytes(bytes[164..172].try_into().ok()?),
+        time_tag_corr_flag: bytes[172],
+        type_time_corr_flag: bytes[173],
+        fabricated_sfdu_flag: bytes[174],
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -444,5 +536,52 @@ mod tests {
         assert_eq!(g.year, 2012);
         assert_eq!(g.doy, 21);
         assert_eq!(g.sec, 48110.0);
+    }
+
+    #[test]
+    fn nhrex_tnf_dt0_uplink_carrier_phase_decodes() {
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        let f = &frames[0];
+        let d = tnf_dt0(f, &bytes[f.offset..]).unwrap();
+
+        assert_eq!(d.orig_id, 0x30);
+        assert_eq!(d.last_modifier_id, 0x31);
+        assert_eq!(d.upl_rec_seq_num, 0);
+        assert_eq!(d.rct_day, 20579);
+        assert_eq!(d.rct_msec, 79065722);
+        assert_eq!(d.ul_dss_id, 26);
+        assert_eq!(d.ul_band, 2);
+        assert_eq!(d.ul_assembly_num, 1);
+        assert_eq!(d.transmit_num, 1);
+        assert_eq!(d.transmit_stat, 0);
+        assert_eq!(d.transmit_mode, 0);
+        assert_eq!(d.cmd_modul_stat, 0);
+        assert_eq!(d.rng_modul_stat, 0);
+        assert_eq!(d.fts_vld_flag, 1);
+        assert_eq!(d.transmit_time_tag_delay.to_bits(), 0x3f142f61ed5ae1ce);
+        assert_eq!(d.ul_zheight_corr.to_bits(), 0x344b7abd);
+        assert_eq!(d.mod_day, 0);
+        assert_eq!(d.mod_msec, 0);
+        assert_eq!(d.version_num, 34);
+        assert_eq!(d.sub_version_num, 0);
+        assert_eq!(d.sub_sub_version_num, 2);
+        assert_eq!(d.data_chdo_type, 10);
+        assert_eq!(d.data_chdo_length, 76);
+        assert_eq!(d.ul_hi_phs_cycles, 0x0042cd06);
+        assert_eq!(d.ul_lo_phs_cycles, 0x3881085a);
+        assert_eq!(d.ul_frac_phs_cycles, 0x59b3cfd9);
+        assert_eq!(d.ramp_freq.to_bits(), 0x41faa3a0f766b3b6);
+        assert_eq!(d.ramp_rate, 0.0);
+        assert_eq!(d.transmit_switch_stat, 0);
+        assert_eq!(d.ramp_type, 0);
+        assert_eq!(d.transmit_op_pwr.to_bits(), 0x388c3848);
+        assert_eq!(d.sup_data_id, [0u8; 8]);
+        assert_eq!(d.sup_data_rev, [0u8; 8]);
+        assert_eq!(d.prdx_time_offset, 0.0);
+        assert_eq!(d.prdx_freq_offset, 0.0);
+        assert_eq!(d.time_tag_corr_flag, 0);
+        assert_eq!(d.type_time_corr_flag, 0);
+        assert_eq!(d.fabricated_sfdu_flag, 0);
     }
 }
