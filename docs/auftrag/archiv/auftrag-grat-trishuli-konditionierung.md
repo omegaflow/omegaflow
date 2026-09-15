@@ -2,7 +2,7 @@
   title: Auftrag — Grat-Folge: Trishuli Regen→Pegel konditionieren (dritter Pfeil)
   class: auftrag
   date: 2026-09-05
-  sha256: e334d2f45974c25f44f5057693cf3bff3076d024dc2d16e1e14bf2347e7678f3
+  sha256: a2daf308c9b4b57f840ffb6c52ff07ac088068e91fe95e9ca6c6c3d2e2978ca6
   status: archived
   see-also: docs/auftrag/auftrag-der-grat.md docs/blatt/blatt-der-grat.md docs/paper/sturzflut-tibet-pfeil.md docs/blatt/blatt-kreuz-screening-kollab.md
 -->

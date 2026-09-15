@@ -2,7 +2,7 @@
   title: Auftrag — Der Grat: Zufall/Notwendigkeit-Bilanz über N Systeme (Meta-Blatt)
   class: auftrag
   date: 2026-09-05
-  sha256: e699ba1b5348b84352f2ca33c06134d7ace887f898acec73037aebfd9ddb4002
+  sha256: 923bfda3e97ee0eeb55480eea85042a63ab4180f7c9ef0016000490f09ba2f8f
   status: archived
   see-also: docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md
 -->

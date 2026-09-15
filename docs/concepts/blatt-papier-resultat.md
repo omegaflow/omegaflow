@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 74daac3f21eeab5b6b5bc35047f51f76a35cbfba0d2745e6e05dab984fc85f54
+  sha256: 43624e05b4d547ad491f2c0a7c55717a03062e84ee2e36b10f927ab2a2dd65cb
   status: live
   see-also: docs/paper/laic-arrow-direction.md
 -->
