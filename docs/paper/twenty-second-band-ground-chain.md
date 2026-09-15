@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 4
-  sha256: 23847ee40c7df49a547e80c61b3a6a748c2f7e49a86d941f0ad0dc3a6194e022
+  sha256: 0523feb96101b6c99e4683c88b8014c7595a8a3fb9018763ee72850471002e88
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -140,9 +140,9 @@ The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
 and Markwardt himself documents an unreadable-tape gap for June 1990–June 1991),
-but the doppler value is not absent: it lives in the TRK-2-25 ODF
-`86334o97343_sc23.odf` (1986–1997) and in the ASCII ODDUMP `.asc.gz` (1973–2002,
-harvested as the NAVIO series).
+but the doppler value is not absent: it is harvested from the TRK-2-25 ODF
+`86334o97343_sc23.odf` (into `pioneer10_odf.bin`, 1973–1998) and from the ASCII
+ODDUMP `.asc.gz` (the NAVIO series, 1973–2002).
 
 ## 5. Position against the literature
 
