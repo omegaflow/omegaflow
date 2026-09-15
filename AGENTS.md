@@ -182,7 +182,12 @@ Name = Implementation.
 
 All source work (grind, port, curation) runs exclusively through
 `docs/SOURCE_PORT.md` — the self-carrying protocol with state machine,
-workflow procedure, reference map and path map. Work surface: `phi/pipeline/`
+workflow procedure, reference map and path map. Die Grenze declined/blocked
+ist die Frage, nicht die Quelle: `blocked` = Zugang (`key`/`account`/
+`ip-blocked`/`parser-def`), `declined` = Verdikt (unphysikalisch/Modell/
+Registry/**kommerziell**/superseded). **Der Konsument ist kein Kriterium** — die
+Presence bewegt sich frei durch den 4D-Block; „kein gebauter Konsument" ist eine
+Bau-Reihenfolge, kein Quellen-Verdikt. Work surface: `phi/pipeline/`
 (`queue/master.φ` the one master file + `queue/grind_*` drafts, `stage/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
