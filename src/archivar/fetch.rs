@@ -657,6 +657,7 @@ pub fn live_sweep(
                 | "gong_modes"
                 | "spk"
                 | "reference"
+                | "tar_gz_yaml"
         ) {
             continue;
         }
