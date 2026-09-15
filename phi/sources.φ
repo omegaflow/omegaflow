@@ -27,15 +27,6 @@ at earth
 last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 86400 0.0 0.0
 last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
 
-url https://api.adsb.lol/v2/point/{lat}/{lon}/250
-ttl 10
-on earth 52.5 13.4 0
-map ac
-lat lat
-lon lon
-field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
-field track adsb_track_deg inverse-square em deg 1 0.0 0.0
-
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
 ttl 10
 at earth
