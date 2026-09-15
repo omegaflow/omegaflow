@@ -5,7 +5,7 @@ use omegaflow::hdf5::{
 use std::io::{BufWriter, Write};
 use std::process::Command;
 
-const CDN_TAG: &str = "noaa-goes19.s3.amazonaws.com";
+const CDN_TAG: &str = "noaa-goes16.s3.amazonaws.com";
 const GSICS_DEFAULT_URL: &str =
     "https://www.star.nesdis.noaa.gov/GOESCal/images/GSICS/GSICS_Harmonization_release_May2025_current.txt";
 const MAGIC: [u8; 4] = *b"GAB1";
@@ -723,7 +723,7 @@ Channel\tA\t B \tA\t B \tA\t B\r\
         let path = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
         if !std::path::Path::new(path).exists() {
             eprintln!(
-                "skipped (fixture absent): goes16 abi — fetch from noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/"
+                "skipped (fixture absent): goes16 abi — fetch from noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/"
             );
             return;
         }

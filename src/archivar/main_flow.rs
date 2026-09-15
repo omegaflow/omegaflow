@@ -2057,7 +2057,6 @@ pub fn main_flow() {
                     | "circor"
                     | "ltmm"
                     | "noaa_ccor"
-                    | "celestrak_eop"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
