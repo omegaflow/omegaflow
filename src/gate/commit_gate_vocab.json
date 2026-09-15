@@ -23,7 +23,8 @@
   ],
   "feedback": {
     "single_path": "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth",
-    "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero"
+    "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero",
+    "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -61,6 +62,11 @@
     "must",
     "should",
     "default"
+  ],
+  "template_slang": [
+    "godmode",
+    "god mode",
+    "god-mode"
   ],
   "zero_decl": [
     "pending",
@@ -228,6 +234,7 @@
     "single_path_prose_a": "die Arbeit laeuft auf einem Strang",
     "single_path_code": "let wt = git_worktree(&name);",
     "single_path_prose_b": "die Leitstelle uebergibt",
-    "single_path_clean": "ein Pfad, eine Wahrheit"
+    "single_path_clean": "ein Pfad, eine Wahrheit",
+    "template_slang_code": "let mode = godmode_lines(query);"
   }
 }
