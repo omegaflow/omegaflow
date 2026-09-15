@@ -3,7 +3,7 @@
   session: Bau-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: 9d7590a3eb72f860af1561bd0da551d9500787525c451645732b67ac1c068ad2
+  sha256: 79d6cb1738f4797338c3c54fea78d71cd99e5f2fc8fdfb71872c8e8fada0b210
   status: live
 -->
 # Handover — Bau & Code (2026-09-15, Bau35)
@@ -21,15 +21,18 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-## TE-Gate — restricted-permutation hält bei n=150, n=1000 in CI offen
+## TE-Gate — zwei Nullen halten n=150, n=1000 in CI offen
 
 - `TeNull::RestrictedPermutation` (feinere Bins, `RESTRICTED_PERMUTATION_BINS = 32`,
-  `src/mathematikerin/te.rs`) hält das n=150-Gate: FPR ≤ 5,50 % je Zelle, Anstieg 1,75 pp
-  (D_Z=0) / 1,27 pp (D_Z=4); der frühere Rollback (FPR 13,78 %) ist überholt, `pcmci_class_benchmark.rs`
-  kompiliert wieder. Offen: der n=1000-Lauf in CI — die `#[ignore]`-Tests + `.github/workflows/te-gate.yml`
-  tragen die neue Null noch nicht. (Schritt: `gate_fpr_autocorrelation_restricted_null_binned_n_1000` +
-  `restricted_sweep_n1000` ergänzen, `gh workflow run te-gate.yml`; `gh issue close 13` erst bei einem
-  haltenden n=1000-Gate.)
+  `src/mathematikerin/te.rs`) hält das n=150-Gate: FPR ≤ 5,50 % je Zelle, Anstieg 1,75 pp (D_Z=0) /
+  1,27 pp (D_Z=4); der frühere Rollback (FPR 13,78 %) ist überholt, `pcmci_class_benchmark.rs` kompiliert.
+- `TeNull::XShift` (X-Seiten-Null, aus der Entscheid-Diagnose: der KSG-Finite-Sample-Bias hängt an der
+  Y-Vergangenheit, die jede Y-Randomisierung mitverändert; hier wird nur X zirkulär verschoben, Y/Z bleiben)
+  hält n=150 schärfer: FPR ≤ 4,25 % je Zelle, Anstieg −0,75 pp (kein Anstieg).
+- Beide n=1000-`#[ignore]`-Tests (`…_restricted_null_binned_n_1000`, `…_xshift_null_binned_n_1000`) stehen;
+  der CI-Step `gate_fpr_autocorrelation` (`.github/workflows/te-gate.yml:27`) matcht sie per Substring —
+  kein Workflow-Eingriff. Offen: `gh workflow run te-gate.yml`, FPR-Tabelle aus dem Lauf lesen, dann
+  `gh issue close 13` bei einem haltenden n=1000-Gate. (Schritt: Dispatch; Lauf-Ausgabe.)
 
 ## Parser-Gap A — DRS/TNF-Compiler gebaut, Verifikation + Konsument offen
 
