@@ -8036,6 +8036,28 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
+url https://www.ndbc.noaa.gov/data/realtime2/21414.dart
+ttl 900
+on earth 48.977 178.199 0
+rows
+epoch YY MM DD hh mm
+bin 900
+prefix ndbc_dart_21414
+gate T 1 2
+gate HEIGHT 0 9999
+field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
+ttl 31536000
+on earth 48.977 178.199 0
+rows
+epoch YY MM DD hh mm
+bin 900
+prefix ndbc_dart_21414
+gate T 1 2
+gate HEIGHT 0 9999
+field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/igetsftp.gfz.de/igets.bin
 format igets
 at earth
