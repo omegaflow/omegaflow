@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: ba0a04bfa35f3d77cdacc54936858cb3dcdd4dd5e52737dbc867f527cb2eb749
+  sha256: 8f0ebd294e655fd214e5fb955d4dcf44d3a52ba4e42b6a1c8e3e2cb72cf0408e
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -24,13 +24,15 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Bande-Split (20-s-Bande)
 
-- **Bande-Split (20-s-Bande)** — Segment-Check gemessen: three-way existiert; die
-  1-s-Klasse, die die starken Linien trägt, ist three-way-only (two-way 0/0/25 an
-  Stationen 14/43/63, Deduktion 27). Der Split ist der Parser, nicht die Mail.
-  (Schritt: CDN-Asset `https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin`
-  → `data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin` holen + Ramp-Record-Join für
-  den Uplink-Sender — der ATDF-Parser extrahiert bisher nur die Empfangsstation
-  TKFORM[9], nicht den Sender.)
+- **Bande-Split (20-s-Bande) — Split gemessen: Empfänger-Wanderung.** Die
+  1-s-Klasse trägt mode 1 (alle drei Stationen) + mode 2 (nur st63) + mode 3; das
+  Band sitzt in mode 3. Der Split (PASF-1-s-mode-3 gegen PNAV-`trans` gejoint,
+  103 261 gematcht): die Frequenz ist **rx-fix** — für festes rx gleich, egal
+  welcher Sender sendet (rx14 ≈ 45, rx43 ≈ 44–45, rx63 ≈ 55,6 mHz) → die Linie
+  folgt der **Empfangskette**, nicht dem Sender. Offen daneben: (a) die Amplitude
+  hängt vom (rx,tx)-Paar ab (rx14: 16 mit tx43 vs 125 mit tx63; rx63: 670 mit tx14
+  vs 2,0 mit tx43); (b) rx63 reproduziert 55,9 statt 47,35 mHz (Teilmenge/Epoche
+  zu prüfen). Instrument: `tools/measure/src/bin/pioneer10_txrx_split_probe.rs`.
 - **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
   stehen, gemessen:
   - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
