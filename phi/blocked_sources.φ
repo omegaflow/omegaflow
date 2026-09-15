@@ -4,192 +4,18 @@
 # pending (Identität nicht entschieden oder Ernte ungebaut — Register-Duty)
 # und descoped (gemessen: keine Nadel-Kreuzung frißt das Feld — nie gebaut, nicht gebraucht).
 #
-# Descope 2026-09-14 (Forschung, Tor-1 gemessen gegen docs/concepts/kybernetische-astrophysik.md §Die Nadeln):
-#   WFAU VSA/WSA — stat. NIR-Photometrie (1–2 μm); Nadel Ⅴ braucht 10–60 μm IR-Exzess (arXiv 2608.12458).
-#   WFAU OSA — stat. optische Photometrie (Einzel-Epoche); Nadel Ⅴ braucht Zeitreihen.
-#   WFAU SSA — opt. Mag + Eigenbewegung; Gaia DR3 trägt die pm präziser (10.1093/mnras/stac2425).
-#   ESO tap_cat — stat. VHS/VIKING-Mehrband; wie VSA/WSA.
-#   GNIP — δ18O/δ2H-Niederschlags-Isotopie; keine Nadel trägt sie.
-#   NODD-NRS — Ozean-Bioakustik-Spektrum; Nadel Ⅹ braucht Akustik am Tatort (10.1038/232187a0); der Rekord bleibt als FORM gehalten.
-#   MarineCadastre AIS — Vessel-Telemetrie; keine Nadel.
-#   VOTable/TAP: ALMA EU + CASDA RACS — Radiokontinuum, Ⅸ braucht Burst+Dispersion (10.3847/1538-4357/abcb90);
-#     SkyMapper/WGE-SDSS/MUSE-Wide — stat. Phot.; WiggleZ — z~0,5, Ⅷ braucht z≳10; CADC Wallaby — extragalakt. HI, Ⅰ braucht ALFALFA (10.1088/0004-6256/149/6/199).
-#   Pending bleiben: MACHO (keine Klassen-Spalte gefunden), LAMOST DR11 (Konsument PAST II 10.3847/1538-3881/ac0f08), NOIRLab (Wiedervorlage Gaia DR4 2026-12-02).
+# Die 35 pending/descoped wurden 2026-09-15 nach der neuen Grenze (SOURCE_PORT §3/§8/§11)
+# disponiert: accepted → sources.φ, declined → declined_sources.φ. Hier verbleiben nur die
+# parser-def-Blöcke (Format-Lücke, Messung echt) + die pending-Reste (Babamul-API, CORS).
 
 pending
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
-note Pioneer-10 ATDF Sky-Frequency (S-Band-Doppler ~2,3 GHz). Asset liegt auf dem CDN (release spdf.gsfc.nasa.gov, pioneer-atdf-cdn.yml); der atdf-Parser existiert (src/archivar/atdf.rs: reduce_skyfreq, parse_skyfreq_bin — 14-Feld-Records). Konsumenten: ausschließlich measure-Probes (pioneer_link_correction_probe, pioneer_doppler_moyer, pioneer_drift_te_probe, pioneer_atdf_residuum, pioneer_residue_diagnose, pioneer_odp), die data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin direkt als lokalen Mess-Datensatz lesen. Kein Membran-Konsument (kein ω()/main_flow-Feld-Evaluator greift die Serie) — die 14-Feld-Doppler-Serie ist kein Skalar-Feld-Oszillator (0-Kanon: eine 14-Feld-Serie trägt keinen ehrlichen field-Block). pending (Tor 1: kein gebauter Membran-Konsument).
-
-descoped
-url https://hub.marinecadastre.gov/pages/vesseltraffic
-note NOAA MarineCadastre AIS-vessel-traffic-Archiv (CC0, historisch). Messung echt: AIS-Telemetrie je Vessel (lat/lon, SOG, COG, Zeit) — advective/em, analog zum akzeptierten ADS-B-Oszillator (api.adsb.lol). Nur das historische CC0-Archiv ist offen (Live-NAIS-Feed ausgeschlossen — MarineTraffic/Kpler decline commercial, dead_sources.φ); statisches Archiv, kein Live-ω()-Feld. Kein Konsument im Haus (keine Nadel frißt marine Vessel-Tracks). Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-blocked account
 url https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-15 (curl, anonym): /api/ 200 („Greetings from BOOM!"), /api/alerts + /api/objects 401 (Auth-Wall). Signup-Fluss aus dem SPA-JS gemessen: POST /api/babamul/signup {email} → activation_code per Mail; POST /api/babamul/activate {email,activation_code} → einmaliges Passwort; dann POST /api/babamul/tokens → api_token und POST /api/babamul/kafka-credentials → Kafka-user/pass. Marker: BABAMUL_API_TOKEN, BABAMUL_KAFKA_USERNAME, BABAMUL_KAFKA_PASSWORD. Braucht Operator-Email (Aktivierungscode per Mail) → bleibt blocked account.
+note Babamul (Caltech LSST-Broker, arXiv:2511.00164). Gemessen 2026-09-15 (curl, anonym): /api/ 200 („Greetings from BOOM!"), /api/alerts + /api/objects 401 (Auth-Wall). Signup-Fluss aus dem SPA-JS gemessen: POST /api/babamul/signup {email} → activation_code per Mail; POST /api/babamul/activate {email,activation_code} → einmaliges Passwort; dann POST /api/babamul/tokens → api_token und POST /api/babamul/kafka-credentials → Kafka-user/pass. Marker: BABAMUL_API_TOKEN, BABAMUL_KAFKA_USERNAME, BABAMUL_KAFKA_PASSWORD. Braucht Operator-Email (Aktivierungscode per Mail). REGISTRIERT 2026-09-15 (code@omegaflow.space): Konto aktiviert, api_token + Kafka-Creds in `.secrets.local` (BABAMUL_API_TOKEN/KAFKA_USERNAME/KAFKA_PASSWORD/PASSWORD); der api_token gilt am `/api/babamul`-Pfad (200, gemessen). Der Daten-Endpunkt `/api/alerts` bleibt mit api_token + access_token 401 (Auth-Mechanismus offen) → pending (Tor 1/Ernte).
 reg https://babamul.caltech.edu/
 
-pending
-url https://cds.climate.copernicus.eu/datasets/insitu-observations-near-surface-temperature-us-climate-reference-network
-note US-CRN (Punkt/Profil, time_aggregation daily/hourly/monthly/sub_hourly), cdm-obs-CSV via CDS-Retrieve; die Download-Form ist geschlossen (403, Detail "Download form temporarily closed."). Re-Check 2026-09-11 (Browser, CDS-Konto angemeldet): CC-BY-Lizenz und USCRN-Datenpolitik sind angenommen, die Form bleibt provider-seitig geschlossen (`Submit form` disabled) — nur die Form-Closure fehlt; kein Parser-Gap. Party-Messung 2026-09-14: offener Direktdownload gemessen — https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/ (HTTP 200). Compiler GEBAUT (2026-09-14): `uscrn_compiler.rs` (USC1 GeoRec, T_CALC thermal, format us_crn_hourly) + sources.φ-Feldblock registriert (format us_crn_hourly, us_crn_hourly_temp_c). Offen: CDN-Manifestation. Messung 2026-09-15 (Taucher): CDN-Line registriert (sources.φ `uscrn_hourly.bin`, format us_crn_hourly); offen ist nur der CI-Dispatch (gated Push + Consent). Direktroute live (`/2026/` Jahresdateien je Station), NCEI-Portal `access/crn/` als Sibling.
-
-descoped spectral
-url https://registry.opendata.aws/noaa-nodd/ noaa-passive-bioacoustic nrs/products/
-note NOAA-NODD passive-bioacoustic NRS (Ocean Noise Reference Station Network, PMEL+AFSC/NMFS, DOI 10.25921/tr4q-xa94; 2026-09-07 gemessen, HTTP 200): daily.nc als daily.nc-Probe, Datasets /frequency (1195), /psd (1439 min × 1195 freq), /time, /effort, /quality_flag; Sound-Level-Metrics-Spektraldichte 10-2000 Hz (Good), 0-9 Hz und 2001-2500 Hz Unusable (0 honored). Medium acoustic (id 2) existiert, Messung echt — kein channel-ohne-medium-Fall. Position absent aus daily.nc (nur SITE_NAME "01", Plattform Mooring) — lat/lon nur ueber Stationstabelle → positions-pending. Das Spektrum (1195 Bins) ist ein Spektral-Record, kein Skalar (der Wire traegt eine freq/bin_width-Slot, keine 1195er-Serie) — Reduktion auf einen Wert waere Band-Wahl = Fabrikationsrisiko. Identity: magic_identity(NRS1)=Pending — kein Wesen: die Serie ist eine FORM (gehalten, keine Band-Wahl, nie in ω()); der `noaa_nrs_psd`-Feldblock in sources.φ wurde als Oszillator gestrichen (c3f33f6, Council C1) — das CDN-Asset `noaa_nrs_psd.bin` bleibt als Spektral-Record, vom Archivar gelesen; der Riss bleibt offen, sein Sitz ist dieser Eintrag. Zustand: Rekord gehalten, KEIN eigener noaa_passive_bioacoustic_compiler (Council-Verdikt 2026-09-07); der generische noaa_nodd_bucket_harvester (DEFAULT_BUCKET noaa-passive-bioacoustic) deckt den Bucket. Halteform entschieden (Rat 2026-09-07): das Spektrum bleibt als Ganzes (Serie), keine Band-Wahl, kein Skalar. Stationstabelle geerntet (2026-09-07, phi/nrs_stations.φ, PMEL-NRS-Seite NRS01–NRS13) + Positions-Anbindung im Harvester gebaut (SHAPE dann Tabellen-Fallback, 0 honored). Re-Emitt verifiziert (2026-09-07, --emit-bin --days 1 ueber alle 5 Deployments): 3.260.056 Records, roundtrip-parses, SHAPE-Position + gemessene Tiefe (alt −500/−420 m). Der Tabellen-Fallback ist DORMANT — der sound_level_metrics-Prefix traegt nur 5 Deployments (4× NRS01, 1× NRS11), alle mit SHAPE; NRS02–10/12/13 haben keine Spektren-Verankerung (nur die Netz-Tabelle traegt ihre Koordinaten). Der Fallback bleibt korrekt-gebaut (Unit-Tests), sein Verbrauch wartet auf eine SHAPE-lose Station. Die Stationstabelle ist jetzt versioniert (phi/nrs_stations.φ, Gitignore-Ausnahme) — der CI-Manifestator (noaa-nrs-psd-cdn.yml) traegt sie nach dem Checkout, der `STATIONS_TABLE`-Default zeigt darauf. Messung 2026-09-15 (Taucher): der Bucket ist von AWS S3 auf Google Cloud Storage gezogen (`registry.opendata.aws/noaa-nodd/` + `noaa-passive-bioacoustic` → NoSuchBucket 404; GCS `storage.googleapis.com/storage/v1/b/noaa-passive-bioacoustic/o?prefix=nrs/products/` → 200) — die AWS-Route und der Harvester-`DEFAULT_BUCKET` tragen nicht mehr; der GCS-Pfad muss registriert + der Harvester gegen GCS gemessen werden.
-
-pending
-url https://datalab.noirlab.edu/tap/sync
-note NOIRLab Astro Data Lab TAP (anonym, kein Konto). Messung 2026-09-11: die Data-Lab-Registrierung wurde abgelehnt (Robert Nikutta, NOIRLab: das Projekt sei „mostly an engineering one … we decided to decline your request"), aber derselbe Bescheid: „our TAP service is public and does not require an account … Our LS DR10 and DECaPS catalogs are not gated, but part of the open access." Anonym gemessen (2026-09-11, webfetch): ls_dr10.tractor TOP 1 → HTTP 200 CSV (167 Spalten, ra/dec/flux_g/r/i/z/w1..w4/mag_*), decaps_dr2.object TOP 1 → HTTP 200 CSV (ra/dec/mean_mag_g/r/i/z/y, epochmean); TAP_SCHEMA zeigt decaps_dr1/dr2. FORMAT=json → HTTP 200 VOTable-Fehler „unknown format: json" (csv/votable-only). Gap: CSV-Header-Parser (derselbe wie ESO tap_obs/tap_cat). Messung (Legacy-Survey-Photometrie em) echt. NOIRLab behält sich IP-Sperre bei exzessiver Rate vor. Speisekammer-Frage (Rat 2026-09-11 einmütig + Operator-Nachschärfung 2026-09-11): braucht die Weberin die tiefe Photometrie als Zeugin — eine S²-Richtung mit Farbe (Distanz absent) — für eine Nadel? Gemessen: Nadel Ⅴ (Technosignatur) frisst Lichtkurven + 10–60-μm-IR-Exzess, nicht die statischen Kataloge; Biosignatur frisst JWST-Spektren (Gaia-Wirtssterne); dunkle Materie hat keinen photometrischen Kanal. Kein gebauter Konsument — die Frage bleibt offen, bis eine Nadel die statische Mehrband-Farbe als Zeugen-Eigenschaft benennt. Konsument-Kandidat: Farbe-Exzess-Zeuge der Nadel-Ⅴ-Chromatizität oder ein Mikrolensing-/Photo-z-Kanal. Keine Ernte, bis der Konsument gebaut ist (Tor 1). Wiedervorlage 2026-12-02 (Gaia DR4): trägt DR4 die astrometrischen Binaries/RVS/Epoch-Photometrie selbst, ist die dunkle-Materie-/Photo-z-Linie descoped, nur die Tiefe-/Plane-Nische (DECaPS-Y, LS-DR10-z) bliebe als Konsument. Tor-1 2026-09-14 (archive_search --openalex): kein Nadel-Konsument für statische Photometrie; Gaia DR4 (10.1093/mnras/staf1409 trägt nur DR3) noch nicht erschienen → Wiedervorlage 2026-12-02 hält.
-
-pending
-url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
-note COSMIC-2 FORMOSAT-7 (NRT): GEBAUT (2026-09-13) — Verzeichnis-Index-Enumeration (netcdf.rs `html_hrefs`/`netcdf_granule_urls`, nginx-HTML + JSON-Array) und netCDF-4-Profil-Lesen über hdf5.rs (Shared-Message/Committed-Datatype); netCDF-3-Profil-Lesen lag vor (NetcdfFile). Gemessen: level3/ führt nur Ionosphären-Szintillation (bub/alc JSON), level2/2026/251/ trägt die RO-Profile als Tages-Tarballs (atmPrf 2 070 847 616 B, bfrPrf 10 982 090 B); ein echtes COSMIC-1-wetPrf-Granulat (netCDF-3 CDF\x01, MSL_alt/Temp/Pres, 15 180 B) gelesen. Die RO-Granulate liegen nicht als einzelne .nc-Dateien, sondern in .tar.gz. Offen: Tarball-Entpackung zur Einzel-Granulat-Enumeration, Ernte/Compiler + CDN-Manifestation (Register-Duty). Messwert (Brechungsindex/Bending-Angle-Profile, em) echt.
-
-descoped
-url https://data.mendeley.com/datasets/75tsccprd2/1
-note GNIP (Global Network of Isotopes in Precipitation) via Mendeley-Dataset 75tsccprd2 (1961–2023, CC0) + waterisotopesDB.org. Messung echt: δ18O/δ2H (‰, diffusion water-chemistry) des Niederschlags an Stationen mit lat/lon/Datum. Historischer Stationsdatensatz, kein Live-ω()-Feld; kein Konsument im Haus (keine Nadel frißt Niederschlags-Isotope). WISER-Route bleibt decline redistribution (SSO-gated, dead_sources.φ). Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-pending
-url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC (Ocean Networks Canada) Hydrophon-Spektraldaten (gemessen 2026-09-08): Produkt `HSD` + `.fft` (dataProductCode=HSD), deviceCategory HYDROPHONE, exakt 85 Stationen — real; Token `OCEANNETWORKS_TOKEN` liegt in `.secrets.local`. Das archivierte Spektral-Produkt ist 5-Minuten-`.mat`-Spektren (MATLAB v5, `...-HPF-spect.mat`) + PNG — `/api/archivefile/download?filename=` antwortet 200 mit echtem MATLAB-v5-Content (125220 B). Kein `.fft`-ASCII-Bestand (`.fft`-Runs lieferten 0 Dateien); die Bin-Geometrie „512 × 250 Hz, dB re 1 µPa²" ist unbestätigt. Messung 2026-09-15 (Taucher, echter Run BACAX HSD 2010-01-01): 74 983 B MATLAB-v5 miCOMPRESSED, Struct `SpectData` mit frequency 1921×1 + PSD 1921×5 — die 512-Behauptung ist widerlegt (1921 Bins). Messung (Schalldruck-Spektraldichte, acoustic) echt — MATLAB-v5-Parser GEBAUT (src/archivar/mat5.rs, parse_mat5 → Vec<MatVar>; miDOUBLE/miSINGLE/miINT*/miUINT*/miUTF8/miCOMPRESSED). Offen: Bin-Geometrie am ersten echten Run messen; danach Ernte/Compiler + CDN-Manifestation (Register-Duty). Messung 2026-09-14: kein ONC-`.mat` lokal (data/ und archivar_cache/ leer) → die Bin-Geometrie ist nur im CI-Lauf (`onc-cdn.yml`, workflow_dispatch) messbar.
-
-pending
-note VOTable-Parser-Gap widerlegt (2026-09-11) und TAP_SCHEMA-Pass getragen (2026-09-12):
-  die 22 ehemals `blocked parser-def votable` sind offene TAP-Kataloge — anonym, HTTP 200,
-  `FORMAT=votable` liefert TABLEDATA, vom Haus-Parser `votable_rows`
-  (tools/harvest/src/bin/tap_compiler.rs:278) konsumiert. Der Pass (`tap_compiler --votable --index`)
-  ist gelaufen: 18 Inventare liegen als `phi/pipeline/catalog/tap_index_<label>.φ` (versioniert,
-  `.gitignore` trägt `!phi/pipeline/catalog/tap_index*.φ`, MANIFEST.φ die 18 Zeilen); 2 Endpunkte
-  schlugen gemessen fehl. Landeregel unverändert: Eintritt in sources.φ erst mit gemessenem Feldblock
-  + Compiler + CDN-Manifestation — nie die bloße Adresse. BINARY2-Risiko je Katalog im
-  Paginierungs-Durchgang prüfen. CADC ARGUS + Chandra CDA (cxctap) waren schon inventarisiert.
-  Descope (gemessen, Redundanz oder kein Messwert-Feld):
-    Chandra CSC1/2/2.1/CSC (cda.cfa.harvard.edu) → redundant zu chandra_csc.json (VizieR IX/70/csc21mas).
-    Gaia-AIP (gaia.aip.de, 219 Tafeln) → Gaia-Mirror, redundant zum Gaia-Bestand.
-    ALMA EA (nao.ac.jp) + NA (nrao.edu) → Spiegel von ALMA EU.
-    ATOAVO (atoavo.atnf.csiro.au) → nur ivoa.obscore, kein Katalog, kein Messwert-Feld.
-    PSRDAVO (psrdavo) → psrda.pulsar_obs-Archiv; Pulsar-Werte liegen über VizieR psrcat (sources.φ).
-    LAMOST DR10 → von DR11 abgelöst.
-  Re-Messung 2026-09-12 (die zwei Pass-Fehlschläge sprechen TAP):
-    WGE-SDSS (ia2-tap.oats.inaf.it:8080/wgetap) → Endpoint spricht TAP; der IllegalArgument war die
-      nicht-standard Schema-Abfrage. Daten-Schema wgesdss, Metadaten wge_tap_schema; --table-Ernte
-      gemessen 200. Einheit absent (unit="" durchgehend) — pending, nicht fabriziert.
-    LIneA (userquery.linea.org.br) → Endpoint spricht TAP (tap_schema.schemas: des_dr2, des_y6_gold),
-      aber tap_schema.tables/columns antworten „not found" — Tabellennamen über TAP_SCHEMA nicht
-      entdeckbar, kein --table benennbar (0 honored).
-  Offen (Compiler-Tranche; Feldblock gemessen, Tor 1 — kein gebauter Konsument → pending):
-    ALMA EU (m_flux Jy) → Radio-Kontinuum; frb_compiler frißt Ereignisse (epoch/DM), kein Kontinuum.
-    CASDA RACS (total_flux mJy) → Radio-Kontinuum; kein Konsument.
-    SkyMapper / WGE-SDSS / MUSE-Wide → statische Photometrie; kein Kanal (NOIRLab-Präzedenz).
-    MACHO varstar (magave/period/amp) → VSX-Kegel frißt Type+Period, aber varstar_view ohne Klassen-Spalte.
-    LAMOST DR11 (teff/rv) → equilibrium::teq frißt Wirts-teff, aber ohne Parallaxe-/Planeten-Link.
-    WiggleZ (redshift) → z-Kanal gebaut (ned_redshift_z), aber BAO ist keine Nadel (Nadel Ⅷ: z≳10).
-    CADC youcat Wallaby (HI, freq Hz) → alfalfa_hi_flux ist lokal; Wallaby extragalaktisch, kein Voxelnetz.
-
-descoped
-url http://archive.eso.org/tap_cat
-note ESO tap_cat — CSV-Header-Gap geschlossen (tap_compiler --csv); HARPS rvcat geerntet → sources.φ 6052. Verbleibende statische Mehrband-Kataloge (VHS/VIKING-Photometrie, em) ohne gebauten Konsument (Tor 1). Messung 2026-09-15 (Pro-Taucher): Host LEBT (TAP `/tap_cat` → 200, korrekte ADQL-Antwort); der Descope ist ein CONTENT-Descope (stat. Mehrband, kein Nadel-Verbraucher), kein Host-Tod.
-
-pending
-url https://archive.eso.org/tap_obs
-note ESO tap_obs — CSV-Header-Gap geschlossen (tap_compiler --csv). Gemessen 2026-09-12 (curl, TAP_SCHEMA): ist.*-Rohdaten-Tabellen (je Instrument), ivoa.ObsCore (reduzierte Produkt-Metadaten), phase3v2 (Datei-/Provenance-Verwaltung), util. Die ObsCore-Spalten sind Beobachtungs-Discovery-Metadaten (s_ra/s_dec, em_min/em_max Wellenlängen-Grenzen, t_exptime, snr, abmaglim = Grenzhelligkeit stat.max) — kein Skalar-Feld-Oszillator; die physikalische Messung (Spektren/Bilder/Fluss) liegt in den FITS-Dateien hinter access_url, nicht in TAP-Spalten. Kein gemessener Feld-Kandidat (Spalte + Kraft + Konsument) → pending, kein Feldblock fabriziert.
-
-descoped
-url http://tap.roe.ac.uk/osa/sync
-note WFAU OSA TAP (ATLAS DR1). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500 (INTERNAL SERVER ERROR); TAP_SCHEMA 200 (799 Tabellen, tap_index_osa.φ); ATLASDR1.atlasSource → 200 (ra,dec,gAperMag3 — -9.9999949E8 = absent-Marker). Probe: void (data-present, non-JSON body). Messung (gAperMag3 mag + ra/dec, em) echt, Format konsumierbar (votable_rows / tap_compiler --csv); statische Mehrband-Photometrie ohne gebauten Konsument (NOIRLab-/SkyMapper-Präzedenz). Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-descoped
-url http://tap.roe.ac.uk/ssa/sync
-note WFAU SSA TAP (SuperCOSMOS). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (652 Tabellen, tap_index_ssa.φ); SSA.Source → 200 (ra,dec,classMagB mag, muAcosD/muD mas/yr Eigenbewegung). Probe: void (data-present, non-JSON body). Messung (classMagB mag + ra/dec + pm, em) echt, Format konsumierbar; statische Photometrie ohne gebauten Konsument. Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-descoped
-url http://tap.roe.ac.uk/vsa/sync
-note WFAU VSA TAP (VISTA/VVV). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (2990 Tabellen, tap_index_vsa.φ); Daten-Tabelle VVVDR1.vvvSource → HTTP 500 „The server principal tapuser is not able to access the database VVVDR1" (PostgreSQL-Permission — Daten-Backend down). Route 2026-09-14 (archive_search --brave): NOIRLab Astro Data Lab TAP spiegelt vhs_dr5 (VHS) — https://datalab.noirlab.edu/tap. Probe: void (fetch returned void). Messung (jAperMag3 mag + ra/dec, em) echt, Format konsumierbar; statische Photometrie ohne Konsument + Backend down. Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-descoped
-url http://tap.roe.ac.uk/wsa/sync
-note WFAU WSA TAP (UKIDSS DR10+). Gemessen 2026-09-12 (curl): FORMAT=votable/csv 200, FORMAT=json 500; TAP_SCHEMA 200 (2267 Tabellen, tap_index_wsa.φ); Daten-Tabelle UKIDSSDR10PLUS.dxsSource → HTTP 500 „The server principal tapuser is not able to access the database UKIDSSDR10PLUS" (PostgreSQL-Permission — Daten-Backend down). Route 2026-09-14 (archive_search --brave): NOIRLab Astro Data Lab TAP spiegelt ukidss_dr11plus — https://datalab.noirlab.edu/tap. Probe: void (fetch returned void). Messung (jAperMag3 mag + ra/dec, em) echt, Format konsumierbar; statische Photometrie ohne Konsument + Backend down. Descope hält (Tor 1: kein gebauter Konsument) — kein sources.φ-Block.
-
-pending
-url https://cirada.ca/catalogues
-note VLASS-Komponentenkatalog (em Radiokontinuum) als Bulk-FITS/CSV im CADC-Vault; kein JSON/TAP-json-Kanal. QL-Katalog trägt ~15 % Fluss-Unterzeichnung. Gap: FITS-Struktur-Reader. Party-Messung 2026-09-14: FITS-Reader gefunden (fitparser 0.11.0 / fits-header 0.4.3 / seiza-fits 0.2.2); alternativer TAP CADC youcat. Messung 2026-09-15 (Taucher): `cirada.VLASS_Source` TOP1 → votable 200 (6443 B) + csv 200 (984 B), anonym; `cirada.VCSS` → 403 permission-denied (die VCSS-Notiz ist widerlegt); offene Tabelle bleibt VLASS_Source.
-
-pending
+blocked parser-def rinex
 url s3://noaa-cors-pds
-note RINEX-2.11-Observation: PRN nur auf der Epoch-Zeile (parse_rinex_obs ist RINEX-3-geformt); zusätzlich Hatanaka (.YYd/.YY_), SBF und Trimble-Container ohne Reader. Messwert (GNSS em) echt. Party-Messung 2026-09-14: rinex 0.22.0 (Hatanaka/CRINEX-Modul), crx2rnx 2.7.0, gsof_protocol 0.1.23 (Trimble); SBF-Zuordnung (Septentrio) unverifiziert. Messung 2026-09-15 (Taucher): `.24S` = teqc-QC-Summary (Text), NICHT Septentrio SBF — Notiz korrigiert; `.24o.gz` = RINEX 2.11 OBSERVATION M (L1/L2/L5/C1/P1/P2/P5/S1/S2/S5, 30 s, PRN auf Epoch-Zeile bestätigt); `.24d.gz` = CRINEX 1.0 (Hatanaka).
-
-pending
-url s3://noaa-eri-pds
-note Emergency-Response-Imagery (em) als JPEG-komprimierte GeoTIFF-Kacheln. GEBAUT (2026-09-13): tiff.rs liest Header (II/MM, magic 42), IFD-Tags (256/257/258/259/262/273/277/278/279/284) und die GeoTIFF-Georeferenzierung (33550 ModelPixelScale + 33922 ModelTiepoint, 34264 ModelTransformation, 34735 GeoKeyDirectory) als GeoTransform; unkomprimierte Strips (Compression 1) dekodiert. Offen: JPEG-in-TIFF-Pixel-Dekoder (Compression 7) — die Pixel bleiben leer, die Georeferenzierung steht; Ernte/Compiler + CDN-Manifestation (Register-Duty). Gemessen an Copernicus-DEM-COG (HTTP 200, 29 797 276 B): 2400×3600 Float32, Compression 8, x0=10 y0=51 dx=0.0004167 dy=−0.0002778. Route 2026-09-14 (archive_search --crates): tiff 0.11.3 + jpeg-decoder 0.3.2 als Referenz für den std-only JPEG-in-TIFF-Dekoder (Compression 7).
-
-pending
-url s3://noaa-gk2a-pds
-note GK2A AMI L1B: Navigation GEBAUT (2026-09-13) — hdf5.rs liest projection_type GEOS / sub_longitude (2,2375 rad = 128,2°E) / nominal_satellite_height (42 164 000 m geozentrisch) und rechnet das lat/lon-Gitter aus den x/y-Scan-Winkeln (geostationary_lat_lon, WGS-84). Messfeld image_pixel_values [5500,5500] int16 parst (47 Datasets). GSICS-Kette angewendet (in-granule Slope/Intercept gemessen: 0,9979 / 0,1508); Compiler `gk2a_ami_compiler.rs` gebaut (GKA1, 56-B-Record je Granule) + Workflow `gk2a-cdn.yml`. Offen: erster CI-Manifest-Lauf. Noch kein sources.φ-Feldblock (Tor 1: per-Granule 56-B-Record, kein Skalar-Feld-Konsument). Route 2026-09-14 (archive_search --brave/--openalex): NMSC GSICS (nmsc.kma.go.kr/enhome/html/gsics/gsicsIntro.do) + GSICS-KMA-Produkte (gsics.atmos.umd.edu) + DOI 10.3390/rs13071303.
-
-pending
-url s3://noaa-goes16
-note GOES-16 ABI L1b: Compiler GEBAUT (2026-09-14) — goes_abi_compiler.rs liest Rad [3000,5000] int16 (scale_factor 0,8121064, add_offset −25,936647, _Unsigned) → Radianz W m-2 sr-1 um-1 (gemessen: Band 1 0,4700 µm, mean 8,72, max 217,7, 14 811 327 von 15 000 000 Pixeln gültig), plus DQF, esun, kappa0, band_id, band_wavelength, t (J2000 s), goes_imager_projection; emittiert einen 56-B-Record je Granule + goes-cdn.yml. GSICS-Interkalibrierung GEBAUT (2026-09-14): externer GSICS-Text (STAR NESDIS, Release Mai 2025) geladen via `--gsics`/`--ci-mode` (Default-URL), `CALIB_GSICS_PENDING` aufgelöst. GLM-L2-LCFA (Blitz, em J, netCDF) ist das Sibling-Produkt im selben Bucket — Bolides-Teilmenge bereits integriert (sources.φ glm_bolide_radiant_energy_j); ein GLM-Compiler wäre das Sibling zu goes_abi_compiler. Kein Nadel-Konsument (Tor 1) → pending. Route 2026-09-14 (archive_search --brave): STAR NESDIS GSICS-ABI-Harmonisierung, Koeffizienten-txt je Kanal (Release Mai 2025) — https://www.star.nesdis.noaa.gov/GOESCal/. Messung 2026-09-15 (Taucher): `noaa-goes16` ist EINGEFROREN seit 2025/097 (GOES-East-Übergang); live sind `noaa-goes19` (ABI-L1b-RadF bis 2026/258) + `noaa-goes18` (West) — Compiler-Ziel auf goes19/18; GLM-L2-LCFA-Sibling live auf goes19.
-
-pending
-url s3://noaa-himawari8
-note AHI-L1b-FLDK HSD .DAT.bz2 (BZh9). Benennung gemessen: AHI-L1b-FLDK/{JJJJ}/{MM}/{TT}/{HHMM}/HS_H{08|09}_{JJJJMMTT}_{HHMM}_B{BB}_FLDK_R{rr}_S{nn}{gg}.DAT.bz2 (R05/R10/R20 = 0,5/1/2 km; S{nn}{gg} = Segment nn von gg — 2015 S0101 = Volldisk 5500×5500, ab Betrieb S0110…S1010). HSD-Block-Parser GEBAUT (2026-09-13, src/archivar/hsd.rs, parse_hsd → HsdFile: Blockfolge 1–11, columns/lines, pixel_values u16 Counts). Ernte/Compiler + CDN-Manifestation GEBAUT (2026-09-14, tools/harvest/src/bin/himawari_hsd_compiler.rs → AHI1-Segment-Bin, Roh-Counts u16 + .github/workflows/himawari-cdn.yml). HSD-Block 5 (nominal) dekodiert (2026-09-14, hsd.rs CalibrationBand, an echtem Granulat HS_H08_20220101_0000_B01_FLDK_R10_S0110 verifiziert: B01 gain 0.3773583529411764, offset -7.547167058823528). Kalibrierung im Compiler angewendet (Counts → Radianz, calib_present-Flag, Block-5-Gain/Offset); Block 6 (Update) dekodiert; der Bin trägt jetzt Radianz. Offen: erster CI-Manifest-Lauf. Route 2026-09-14 (archive_search --brave): JMA HSD-User-Guide v1.2 + Calibration-Update 2019 (Block 5/6, D-Koeffizient) + satpy ahi_hsd (calib_mode nominal/update). Messwert (AHI geostationäre em-Messung) echt. Messung 2026-09-15 (Taucher): `noaa-himawari8` endet 2025/11 (frozen); live ist `noaa-himawari9` (AHI-L1b-FLDK 2024–2026) — Compiler-Ziel auf himawari9.
-
-pending
-url s3://noaa-nos-coastal-lidar-pds
-note Küsten-Lidar (em) als LAS-1.4-Punktwolke (LAZ/COPC, LASzip) + DEM-GeoTIFF. GEBAUT + GEMESSEN (2026-09-14): las.rs/laszip.rs liest Header/VLRs/COPC-Info+Hierarchie + den LASzip-Chunk-Dekoder (std-only Arithmetic-Coder + Chunk-Tabelle); verifiziert an den echten Granulaten 20210211_294000e_2682500n.copc.laz (Format 6, variable Chunk-Tabelle, 157 710 Punkte) und 19961009ATM2_143020JR.copc.laz (0 Dekode-Fehler). Der TIFF-Reader (tiff.rs) deckt nun Compression 1/5/7. Einziger Konsument: tools/utils/src/bin/las_reader.rs (Lese-Werkzeug); kein Nadel-Kanal, kein Membran-Evaluator frißt die Wolke. Der Draht trägt einen Skalar je Oszillator — ein Punkt je Oszillator wäre eine 157 710-Record-Flut je Frame, eine Zahl je Granulat wäre Band-Wahl (Fabrikationsrisiko, NRS-Präzedenz). Öffnungsbedingung (Rat 2026-09-14, einmütig): nur eine Nadel, die eine Gelände-Skalar-Serie benennt (z. B. eine Überflug-Wiederholungs-Differenz als advective-m-Serie), öffnet die Fassung. pending (Tor 1: kein gebauter Konsument).
-
-pending
-url s3://usgs-lidar-public.s3.amazonaws.com
-note USGS 3DEP EPT (ept.json + ept-data/*.laz, dataType laszip). GEBAUT + GEMESSEN (2026-09-14): ept.json-Layout gelesen (AK_BrooksCamp_2012, 529285317 Pkt) + LASzip-Dekoder verifiziert am echten Granulat AK_BrooksCamp_2012/ept-data/0-0-0-0.laz (Format 1, pointwise, Extra-Bytes, 19 873 Punkte, 0 Dekode-Fehler). Kein Konsument (Tor 1) — pending, kein sources.φ-Block.
-
-pending
-url s3://noaa-oar-hourly-gdp-pds
-note GDP-Drifter: netCDF-4/HDF5 monolithisch 15,7 GB. Range-/Chunk-Streaming GEBAUT (2026-09-13): src/archivar/range.rs fetch_range (curl -r, s3/noaa HTTP 206) + hdf5.rs chunk_index (Chunk-B-tree v1/v2 → Chunk-Koordinaten → Datei-Offset) und read_chunk (einzelner Chunk über fetch-Closure, Filter deflate/shuffle/fletcher32 angewendet, f64 dekodiert); Superblock über `curl -r 0-63` gemessen (HDF v2, Wurzel @48). Parquet GEBAUT (2026-09-13, src/archivar/parquet.rs, parse_parquet → Vec<ParquetColumn>): PAR1-Magic, Footer-Länge, Thrift-Compact FileMetaData; Page-Header (DATA_PAGE/DICTIONARY_PAGE, V2 benannt unverarbeitet); PLAIN (BOOLEAN/INT32/INT64/FLOAT/DOUBLE/BYTE_ARRAY/FIXED_LEN_BYTE_ARRAY) + RLE_DICTIONARY/PLAIN_DICTIONARY (Dictionary-Seite + varint-Hybrid-Indizes); Definition-/Repetition-Level-Übersprung; Snappy/Gzip/INT96 als unverarbeitet benannt. Gemessen an alltypes_plain.parquet (apache/parquet-testing, HTTP 200, 1851 B): 11 Spalten × 8 Zeilen dekodiert (id [4,5,6,7,2,3,0,1], float_col [0.0,1.1,…], string_col [0,1,…]). Offen: .zarr (blosc/lz4) GEBAUT (src/archivar/zarr.rs) + Ernte/Compiler der Drifter-Trajektorie + CDN-Manifestation (Register-Duty). Messwert (Drifter-Trajektorie, em) echt.
-
-pending
-url s3://noaa-ocs-hydrodata-pds
-note OCS-Hydrodaten: STAC-1.1.0-Katalog (bbox/Survey-Metadaten, kein Lotungswert); die Messung liegt in GeoTIFF (.tif) und OGC GeoPackage (.gpkg/SQLite). GEBAUT (2026-09-14): STAC-Konsument noaa_ocs_hydrodata_compiler (catalog.json → Qualified/collection.json → Item → .gpkg-Asset → soundings-Tabelle [fid, geom, X, Y, Elevation, Uncertainty, EPSG:6347 UTM18N] → GRS80-inverse-Transversal-Mercator → OCS1-Gestaltzeuge lat/lon/depth, MAGIC_OCS in geo.rs, magic_identity Gestalt); gemessen an DD10045 (3027 Lotungen, Roundtrip parse). Manifestation noaa-ocs-hydrodata-cdn.yml (workflow_dispatch, Pilot-Survey). Offen: All-Survey-Ernte (350 Qualified-Surveys), .tif-LZW-Dekoder (Compression 5, float32, 2 Bänder).
-
-pending
-url s3://noaa-wod-pds
-note WOD netCDF-4/HDF5 (Superblock v2): GEBAUT (2026-09-13) — hdf5.rs löst Shared-Message-/Committed-Datatype-Referenzen auf (H5O_shared_t v3, Typ COMMITTED) und enumeriert die WOD-Gruppe: 1903/wod_mbt_1903.nc (25 587 B, 26 Variablen) und 1903/wod_osd_1903.nc (25 628 660 B, 73 Variablen, 7 903 Casts, 1 benannter Typ `biodata` [Compound, 28 Member]) parsen durch. Ragged-Array-Lesen (Temperature + Temperature_row_size, flat + row_size) über netcdf.rs `nc4_ragged_f64`. GEBAUT (2026-09-14) — Ragged-Compiler `tools/harvest/src/bin/wod_compiler.rs` (MAGIC_WOD "WOD1", comp 1 Temperatur / 2 Salinität / 3 Sauerstoff; Zeit = "days since 1770-01-01" → TDB via lsk; Casts vor 1972 sind TDB-void und werden übersprungen — 1903/wod_osd_1903.nc liefert daher 0 Zeilen, gemessen), Workflow `wod-cdn.yml`, sources.φ-Eintrag `format noaa_wod`. Gemessen: 2000/wod_gld_2000.nc → 717 Zeilen (36 Casts), 2000/wod_drb_2000.nc → 115 032 Zeilen (19 246 Casts, Temperatur+Salinität). Offen: SOHM-Heap-Shared-Messages (im WOD-Satz unbenutzt). Messwert (Temperatur-/Salinitätsprofil, em) echt.
-
-pending
-url s3://unidata-nexrad-level2
-note NEXRAD Level II (AR2V0006.549, bzip2 BZh9 ab Offset 24); Level-II-Reader GEBAUT (2026-09-13, src/archivar/nexrad.rs, parse_nexrad → NexradVolume: Message-31-VOL, REF-Moment + Gate-Geometrie; gemessen an KTLX20240101_000004_V06, 6480 Radiale). Compiler + CDN-Workflow GEBAUT (2026-09-14, tools/harvest/src/bin/nexrad_level2_compiler.rs → nexrad_level2.bin [NXR1, 44-B-Record t/az/el/range/value/kind], .github/workflows/nexrad-cdn.yml; Quelle registriert in sources.φ als format nexrad_level2). Offen: Feld-System-Reader (format nexrad_level2 → Radial/Azimut/Range-Samples) + erster CI-Manifest-Lauf. Messwert (Radar-Reflektivität em) echt.
-
-pending
-url https://superdarn.ca/ascii-call
-note SuperDARN-FITACF-Direktroute (2026-09-13 gemessen): POST /ascii-call antwortet einen Zufalls-Token-Pfad mit 5-min-Ablauf, kein direktes GET. GEBAUT (2026-09-13) — der Session-Fetcher für die Zwei-Schritt-Form steht in src/archivar/session.rs: fetch_token_form POSTet /ascii-call mit Content-Type application/json und JSON-Body {radar,startDate,startTime,endDate,endTime,beam,ftype,fields}, die Antwort ist der nackte Token-Pfad im Body (z. B. /../website_updating_tools/ascii_files/…), der GET läuft auf https://sdc-serv.usask.ca + Pfad innerhalb der TTL; extract_token_path/join_token_path als reine Funktionen, Unit-Tests decken Token-Extraktion und URL-Join. Die Messung (Los-Geschwindigkeit, electric) ist real und bereits in sources.φ gehalten (superdarn_fitacf.bin, Release zenodo.org, format superdarn_fitacf). Offen war: Ernte/Compiler der Direktroute + CDN-Manifestation (Register-Duty). GEBAUT (2026-09-14) — der Direktroute-Compiler tools/harvest/src/bin/superdarn_compiler.rs (POST /ascii-call mit startDate YYYY-MM-DD, startTime HH:MM, beam all|0..15, ftype json; Felder v/bmazm/frang/rsep/slist/elv kommen als String-Listen, die Zellenposition wird aus hdw.dat-Site + bmazm + Elevation auf der Kugel gerechnet; emittiert GeoRec superdarn_fitacf [SDN1, COMP_SDARN_V] über session.rs), CDN-Workflow .github/workflows/superdarn-cdn.yml, Quelle registriert in sources.φ (Release superdarn.ca/superdarn_fitacf.bin). Gemessen: 2026-08-20 18:00–20:00 sas all → 18048 Zellen (lat/lon/tdb/v plausibel, Roundtrip parst). Offen: erster CI-Manifest-Lauf (Workflow-Dispatch).
-
-
-pending
-url https://ghrc.earthdata.nasa.gov/
-note GHRC-DAAC (LIS/OTD Blitz, em). ENTBLOKT 2026-09-15 (gemessen): EARTHDATA_EDL_TOKEN öffnet ghrcw-protected — OTD-Tar (otdlip_1995.103_daily.tar, 51,2 MB) HTTP 200, LIS-netCDF (TRMM_LIS_SC.04.1_1998.001.00539.nc, 5,4 MB) HTTP 200; anonym 401 (EDL-OAuth-Wall). Offen: Ernte/Compiler + CDN-Manifestation.
-
-pending
-url http://jvo.nao.ac.jp/skynode/do/tap/akari
-note JVO TAP akari — ENTBLOKT 2026-09-15 (offen, anonym 200 VOTable; der `blocked account` war eine Pfad-Fehlmessung: /skynode/ → Admin-UI 401, do/tap/<node> ohne /sync → 404). Tabellen: "catalog".asteroid_flux (12 121 rec), "catalog".slitless_mir_psc, spectrum.slitless_mir_spec, spectrum.galactic_planetary_nebulae, spectrum.diffuse_sky_patch, "public".fis_image_v1. Stat. IR-Photometrie (FIS 50–180 µm / IRC 2–26 µm) ohne Konsument (Tor 1); VOTable-only → tap_compiler --votable.
-
-pending
-url http://jvo.nao.ac.jp/skynode/do/tap/irsf
-note JVO-IRSF-TAP — ENTBLOKT 2026-09-15 (offen, anonym 200 VOTable) — irsf_magellanic_clouds_2008/2013 (JHKs-Photometrie); stat., kein Konsument (Tor 1).
-
-pending
-url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/
-note JVO-Nobeyama-TAP — ENTBLOKT 2026-09-15 (offen, anonym 200 VOTable) — fugin.cube/coming.cube/sfp.cube (Radio-Kontinuum); Nadel Ⅸ braucht Burst+Dispersion, kein Kontinuum-Konsument (ALMA-EU-/CASDA-Präzedenz). Tor 1.
-
-pending
-url http://jvo.nao.ac.jp/skynode/do/tap/saga
-note JVO-SAGA-TAP — ENTBLOKT 2026-09-15 (offen, anonym 200 VOTable) — "public".star (36 363 EMP-Sterne, Elementhäufigkeiten); stat. Katalog, kein Konsument (Tor 1). saga.sci.hokudai.ac.jp (Heimat) Timeout, aber TAP liefert offen.
-
-descoped
-url http://jvo.nao.ac.jp/skynode/do/tap/alma
-note JVO-ALMA-TAP (offen, anonym 200 VOTable) — "public".cube/cube_cutout; Spiegel von ALMA EU. Kein eigener Messwert.
-
-descoped
-url http://jvo.nao.ac.jp/skynode/do/tap/hitomi
-note JVO-Hitomi-TAP (offen, anonym 200 VOTable) trägt NUR ivoa.obscore (ObsCore-Metadaten), keine Datentabelle; Hitomi-Daten bei DARTS/JAXA + HEASARC. Messung 2026-09-15 (Pro-Taucher): DARTS `darts.jaxa.jp/astro/hitomi/` jetzt HTTP 0 (die frühere 200-Notiz nicht reproduzierbar) — HEASARC als Route prüfen.
+note RINEX-2.11-Observation: PRN nur auf der Epoch-Zeile (parse_rinex_obs ist RINEX-3-geformt); zusätzlich Hatanaka (.YYd/.YY_), SBF und Trimble-Container ohne Reader. Messwert (GNSS em) echt. Messung 2026-09-15: `.24S` = teqc-QC-Summary (Text), NICHT Septentrio SBF; `.24o.gz` = RINEX 2.11 OBSERVATION M, `.24d.gz` = CRINEX 1.0 (Hatanaka). Der RINEX-2.11/Hatanaka-Parser ist die Bau-Linie, dann accepted.
 
 blocked parser-def odf
 url https://atmos.nmsu.edu/PDS/data/jnogrv_1001/
@@ -210,3 +36,4 @@ note Voyager RSS (PDS-PPI, anonym HTTP 200, gemessen 2026-09-14): PPI-VG2/RSS-Ba
 blocked parser-def drs-fits
 url https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
 note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, gemessen 2026-09-14): rohe DRS-FITS (72 Dateien). Messung echt — differentielle Beschleunigung; hier IST die Messung die Schwerkraft → `gravity`. Parser-Gap: DRS-FITS-Semantik; der `fits.rs`-Arm (Gap B) ist die Basis. Geschwister-Route: ESA-Legacy-Archiv `lpf.esac.esa.int/lpfsa/` (Δg-Zeitreihen).
+
