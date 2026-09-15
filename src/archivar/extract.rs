@@ -1204,6 +1204,65 @@ pub enum ExtractResult {
     WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
 }
 
+const FITS_GCOUNT_DEFAULT: usize = 1;
+const FITS_PCOUNT_DEFAULT: usize = 0;
+
+fn fits_data_bytes(header: &crate::archivar::fits::FitsHeader) -> Option<usize> {
+    let bitpix = header.int("BITPIX")?.unsigned_abs() as usize;
+    let naxis = header.int("NAXIS")? as usize;
+    let mut axes = if naxis == 0 { 0usize } else { 1usize };
+    for i in 1..=naxis {
+        axes *= header.int(&format!("NAXIS{i}"))? as usize;
+    }
+    let gcount = match header.int("GCOUNT") {
+        Some(v) => v as usize,
+        None => FITS_GCOUNT_DEFAULT,
+    };
+    let pcount = match header.int("PCOUNT") {
+        Some(v) => v as usize,
+        None => FITS_PCOUNT_DEFAULT,
+    };
+    Some((bitpix / 8) * axes * gcount + pcount)
+}
+
+fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
+    let mut off = 0usize;
+    for _ in 0..8 {
+        let (header, data_start) = crate::archivar::fits::FitsHeader::parse(buf, off)?;
+        if header.value("XTENSION") == Some("'BINTABLE'") {
+            let (table, _next) = crate::archivar::fits::FitsTable::parse(buf, off)?;
+            let mut rows = Vec::with_capacity(table.n_rows);
+            for r in 0..table.n_rows {
+                let mut obj = HashMap::new();
+                for col in &table.columns {
+                    if col.name.is_empty() {
+                        continue;
+                    }
+                    let val = if col.code == 'A' {
+                        table
+                            .cell_str(buf, r, col)
+                            .map(|s| JsonVal::Str(s.to_string()))
+                    } else {
+                        table.cell_f64(buf, r, col).map(JsonVal::Num)
+                    };
+                    if let Some(v) = val {
+                        obj.insert(col.name.clone(), v);
+                    }
+                }
+                rows.push(JsonVal::Obj(obj));
+            }
+            return Some(JsonVal::Arr(rows));
+        }
+        let data_bytes = fits_data_bytes(&header)?;
+        let aligned = (data_start + data_bytes + 2879) / 2880 * 2880;
+        if aligned <= off || aligned >= buf.len() {
+            break;
+        }
+        off = aligned;
+    }
+    None
+}
+
 pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary" {
         let mut buf = Vec::new();
@@ -1258,6 +1317,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             .and_then(|r| r.strip_prefix('\n').or_else(|| r.strip_prefix("\r\n")))
             .unwrap_or(body);
         parse_json(body)
+    } else if src.format == "fits" {
+        std::fs::read(body).ok().as_deref().and_then(fits_to_json)
     } else {
         None
     };
