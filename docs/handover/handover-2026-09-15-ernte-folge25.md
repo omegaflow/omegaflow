@@ -3,7 +3,7 @@
   session: Ernte-Folge 25
   class: handover
   date: 2026-09-15
-  sha256: a24d23f9366b5c14f373b4e00d29e3aa6363cd7d5bb9824f11136c8dca14c0bf
+  sha256: 076730fc7d541c93c89ce874aa0f49f5981e2003e58d1abf44ca34a8b5d2712a
   status: live
 -->
 # Handover — Ernte-Folge 25 (2026-09-15)
@@ -134,6 +134,21 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   FRM/FEM/POC — die Granularität, die `openaq_pm25_ugm3` nicht trägt) →
   entblockt → ledger-Kandidat; die API bleibt key-gated. Babamul bleibt
   blocked account (Kafka/API credential-gated, Signup mail-gated).
+- Ledger-Re-Harvest + Zustandsnamen-Angleich (2026-09-15): Header Z. 2
+  `geparkt` → `parser-gap` (SOURCE_PORT §4 trug den Namen bereits);
+  `regtap_census import --regtap http://reg.g-vo.org/tap/sync` appendete
+  **20 neue Kandidaten** (WiggleZ-TAP, LAMOST DR10/11 u. a.); **17
+  parser-gap-Einträge** ergänzt (astro: SPHEREx/Euclid/Pan-STARRS/NRAO/CHIME/
+  SVOM; Sensor-Welle: IGRA/Wyoming/Iowa-RAOB/SondeHub/EMODnet/EMSO/IOOS/
+  SmartBay/AWC-PIREP/meteo.lt/GTMBA). OFFEN: die Disposition der
+  verifiziert(49)/ausstehend(36)/void(5)-Kandidaten in die Register
+  (sources/dead/blocked/declined) + Entfernen aus dem Ledger — der Ledger
+  schrumpft auf die offene Menge.
+- giveup_scan-Sediment (nicht Teil des Ledger-Atoms): 4553 Fundstellen,
+  Klassen declined 3277 / descoped 550 / gated 397 / honest-face 183 —
+  docs-Sediment. (Schritt: `cargo run -p omegaflow-utils --bin giveup_scan
+  --summary` je Klasse gegen die Register prüfen; ein Aufräum-Atom, kein
+  Arbeitspaket.)
 
 ## Abschluss
 
