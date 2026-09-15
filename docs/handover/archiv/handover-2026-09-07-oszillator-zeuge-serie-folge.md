@@ -2,7 +2,7 @@
   title: Oszillator/Zeuge/Serie — offene Folge-Aufgaben
   class: handover
   date: 2026-09-07
-  sha256: f5ef7e8ef95718333c53d3f021d550a0d114d144ae38a876bbf3f0f1d295bea0
+  sha256: a425461197c4d52d96db01f6c5575e51c04801881462dc7b937bc5e00059d185
   status: archived
   see-also: docs/SOURCE_PORT.md docs/concepts/die-weberin.md docs/TODO.md
 -->

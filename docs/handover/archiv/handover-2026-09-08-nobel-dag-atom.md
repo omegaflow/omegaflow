@@ -2,7 +2,7 @@
   title: Handover — Nobel-DAG: der multivariate Atom B für Bz und LAIC (geschlossen)
   class: handover
   date: 2026-09-08
-  sha256: 2439bf13215eeee114bd041ceea100f200f15c57e87d4870bca06b43d4b62604
+  sha256: 6e6d23af3b4d28f72376c4ecf5dd13d2950cfcda7ce42dba18df33a88d888d2d
   status: archived
   see-also: docs/concepts/te-literatur-matrix.md docs/TODO.md docs/handover/handover-2026-09-07-nobel-dag-bz-laic.md
 -->
