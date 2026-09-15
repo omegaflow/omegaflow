@@ -368,7 +368,7 @@ fn usage() {
         "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
     );
     eprintln!(
-        "       archive_search --all <query>   (godmode: the query through every research mode — openalex, arxiv, crossref, ads, ntrs, wiki, github, crates, librs, brave, datacite, zenodo, wayback)"
+        "       archive_search --all <query>   (the query through every keyword search mode — openalex, arxiv, crossref, ads, ntrs, wiki, github, crates, librs, brave, datacite, zenodo, wayback)"
     );
     eprintln!(
         "       archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"

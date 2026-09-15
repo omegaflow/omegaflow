@@ -46,12 +46,12 @@ fn render_lines(url: &str) -> Vec<String> {
     let Some(helper) = write_helper() else {
         return vec!["pending — the helper carries no temp home".to_string()];
     };
-    let out = match Command::new("node")
-        .arg(&helper)
-        .arg(url)
-        .env("NODE_PATH", &node_modules)
-        .output()
-    {
+    let mut cmd = Command::new("node");
+    cmd.arg(&helper).arg(url).env("NODE_PATH", &node_modules);
+    if let Some(proxy) = crate::net::socks_proxy() {
+        cmd.env("OMEGAFLOW_PROXY", proxy);
+    }
+    let out = match cmd.output() {
         Ok(o) => o,
         Err(_) => return vec!["pending — node carries no response".to_string()],
     };
@@ -234,9 +234,7 @@ mod tests {
         assert!(lines[0].starts_with("url https://example.com/\ttitle: Example Domain"));
         assert!(lines.contains(&"status 200".to_string()));
         assert!(lines.contains(&"heading: h1: Example Domain".to_string()));
-        assert!(
-            lines.contains(&"link: Learn more -> https://iana.org/domains/example".to_string())
-        );
+        assert!(lines.contains(&"link: Learn more -> https://iana.org/domains/example".to_string()));
         assert!(lines.iter().any(|l| l.starts_with("measurement ")));
     }
 
