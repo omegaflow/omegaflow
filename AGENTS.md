@@ -247,6 +247,15 @@ session that dispatches a diver (research-max / grind-max / grind-pro) names
 this tool in the delegation — the standard web tools are the slow, expensive
 fallback, not the first move.
 
+### Local search — three modes (do not confuse them)
+
+- **Content in the live tree** (find a string): `archive_search <keyword> --root
+  <dir>` — caps, match-ranking, binary handling — or the lean `sgrep`. This is
+  the grep the agents use.
+- **Path / filename** (not content): `archive_search --index [<query>]`.
+- **Raw NTFS device / deleted files** (forensics): `archive_search --mft
+  <device>` — needs a device path, not the live repo (which is not NTFS).
+
 ### The cost ladder — targeted before `--all`
 
 `--all` runs **every** source (13 network calls) — the broadest, not the
