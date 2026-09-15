@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-03
-  version: 3
-  sha256: a24b5754244375ed461470d9c33636d84af5d57023a0243aaeb8b844f68ebc66
+  version: 4
+  sha256: 7a255bb3394695b5580af04dc246f045045f4c7b4bd7031a2dda39b1a1fd3fad
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -12,37 +12,57 @@
 
 ## Abstract
 
-In the Pioneer-10 Doppler data (ATDF, 1988–1993, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band 44–56 mHz carries a dense complex of coherent traces whose frequencies are set by the receiving station: Goldstone 14 carries 45,75 mHz, Canberra 43 carries 51,55 mHz, Madrid 63 carries 47,35 mHz — a signal from space would arrive at all three stations with the same frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium. Peak 50,73 mHz (T* = 19,71 s, 9,5× the floor; the 0,05-mHz grid reads 50,714 mHz), a global complex that resolves into station-fixed lines at 45,75 / 51,55 / 47,35 mHz, slowly drifting (~0,4 mHz in four years).
+In the Pioneer-10 Doppler data (ATDF, 1988–1993, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band 44–56 mHz carries a dense complex of coherent traces whose **dominant** frequencies are set by the receiving station: on the full subtraction chain's residual (the canonical series, §1) the 1988 dominant peaks are Goldstone 14 → 57,11 mHz, Canberra 43 → 44,40 mHz, Madrid 63 → 51,99 mHz — a signal from space would arrive at all three stations with the same frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium.
+
+The complex is dense, not a set of fixed lines: the 3 000-sample windows scatter across the whole band (Station 63: 24 windows, 44,05–55,50 mHz, 2,3–10,2×), and no single coherent line carries it. The per-station values of the earlier version — 45,75 / 51,55 / 47,35 mHz — are a sub-peak selection of this complex: on the canonical series they appear at measured ranks 4 (45,75), 2 (51,50, one 0,05-mHz grid step below 51,55) and 17 (47,35, outside the top-5); the earlier global peak 50,73 mHz does not reproduce (§1, §4).
 
 **Method.** Exhaustive subtraction of known effects: the band survives the
 named, measured exclusions (§3); its identity remains open — the remnant is
-an unknown instrument contaminant of the chain, not claimed physics.
+an unknown instrument contaminant of the chain, not claimed physics. Since
+version 4 the subtraction chain is reconstructed in full — the plasma deduction
+from the OMNI2 N1800 series, the common-mode empty (the DSN tracks sequentially;
+the minimum inter-station gap is 110 s), the TEC deduction a dated boundary (the
+GIM maps begin 1998) — and the per-station claim is stated as the measured
+census of the canonical residual, not as a fixed-line pick.
 
 
 ## 1. The measurement series
 
-**The line is a complex.** The coarse Lomb-Scargle scan over the 1-s samples
+**The band is a dense complex.** The coarse Lomb-Scargle scan over the 1-s samples
 carries an unknown line at ~51,5 mHz (9,3× the floor); the fine grid
-(0,1 mHz over 44–58 mHz) resolves it: peak 50,73 mHz (T* = 19,71 s, 9,5×;
-the 0,05-mHz grid reads 50,714 mHz)
-with sub-peaks 49,0 / 50,2 / 50,7 / 51,5 / 53,4 mHz. Sliding windows
+(0,1 mHz over 44–58 mHz) resolves it with sub-peaks 49,0 / 50,2 / 50,7 / 51,5 /
+53,4 mHz. Sliding windows
 (3 000 samples) show: the window peaks scatter across the whole band with
 comparable ratios (Station 63: 24 windows, 44,05–55,50 mHz,
 2,3–10,2×) — no single coherent line carries the band (a coherent
 line would carry the same frequency in every window; measured: it does
-not).
+not). The pooled full-era census (all years, canonical series) peaks at
+49,16 mHz (strict 1-s class) / 44,65 mHz (sub-10-s class); the earlier version's
+global peak 50,73 mHz does not reproduce as a dominant.
 
-**The frequencies are station-fixed.** The breakdown per station carries:
-Station 14 → 45,75 mHz, Station 43 → 51,55 mHz, Station 63 → 47,35 mHz (1988)
-and 46,95 mHz (1992) — a slow genuine drift of ~0,4 mHz in four years
-(~1,75×10⁻¹³ relative), ~10⁴× above the frequency resolution. The splittings
-are stable across all 1-s data of the respective station.
+**The dominant frequencies are station-fixed.** On the canonical series the 1988
+dominant peaks are station-different: Station 14 → 57,11 mHz, Station 43 →
+44,40 mHz, Station 63 → 51,99 mHz (sub-10-s class, 44–58-mHz grid, 0,05 mHz; the
+strict 1-s class carries the same dominants). The per-station values of the
+earlier version are a sub-peak selection of this complex: 45,75 mHz at rank 4
+(Station 14, 4,2×), 51,50 mHz at rank 2 (Station 43, one 0,05-mHz grid step
+below the earlier 51,55), 47,35 mHz at rank 17 (Station 63, outside the top-5);
+47,35 mHz is dominant in no cell of the era × station × class × band census. A
+surrogate sub-peak null (199 phase-randomized surrogates per cell, full-circle
+phase rotation) puts the hit rate of a random frequency against the real top-5
+at 0,0208 per claim; two of the four earlier claims (45,75 mHz and the 1992
+46,95 mHz) survive above the null (mean + 2σ = 0,65), the other two (51,55 /
+47,35 mHz) do not. The earlier "slow drift" sentence (~0,4 mHz in four years)
+rested on the 47,35-mHz (1988) → 46,95-mHz (1992) pair; its 1988 anchor does not
+appear, so the drift is not carried.
 
-**The traces are fixed, not noisy.** The line amplitudes are
-strength-constant: Station 14 carries A = 160/153/161 Hz over weak→strong
+**The traces are fixed, not noisy.** The line amplitudes were measured on the
+earlier selected members: Station 14 carries A = 160/153/161 Hz over weak→strong
 (Station 63: 57/50/65 Hz) — the loop-noise scaling A ∝ 1/√SNR is not
 carried; they are fixed traces (~7×10⁻⁸ of the sky frequency, ~1,6×10⁻⁴ of
-the 1-MHz bias chain), coherent (FWHM ≤ 0,02 mHz unresolved, Q > 2500).
+the 1-MHz bias chain), coherent (FWHM ≤ 0,02 mHz unresolved, Q > 2500). On the
+canonical residual the line amplitude re-anchors to ~5 Hz (Station 14, 1988);
+the 160-Hz value is pending its own census re-measurement.
 
 **The band lives upstream.** The NOCC's own doppler_resid field
 (TRK-2-25 Item 101) carries the band itself (Station 63: 45,00 mHz, 9,2×;
@@ -84,7 +104,8 @@ the scale does not exclude the line drift.
 (TRK-2-18 parser, golden-verified) delivered 27 907 samples 1986–1990 —
 100 % 60-s compression, two-way runs at 9 stations. The 0,71-mHz member
 is not carried in the raw cells; the two-/three-way split at the
-model-subtracted residual remains the named next step.
+model-subtracted residual (measured for P10 in §4) remains the named next step
+for the P11 route.
 
 ## 2. The decisive measure
 
@@ -92,9 +113,9 @@ The question "Ground or space?" is decided by a single measure: the
 **station-fixity of the frequencies**. The sky frequency is a common
 signal — whatever oscillates in space or in the medium would arrive at
 Goldstone, Canberra and Madrid with an identical frequency. The measured
-members are station-different (45,75 / 51,55 / 47,35 mHz) and remain so
-across the whole 1-s class. The band knows which antenna receives it — so
-it is generated in the receiving chain. All secondary findings support
+dominant frequencies are station-different (57,11 / 44,40 / 51,99 mHz, 1988)
+and remain so across the whole 1-s class. The band knows which antenna receives
+it — so it is generated in the receiving chain. All secondary findings support
 this reading (upstream, strength-constant, reference-free,
 channel-separated); none refutes it.
 
@@ -109,11 +130,15 @@ space forces (attitude-independent members, model exclusion of the chain).
 
 ## 4. What remains open
 
-The two-/three-way split at the model-subtracted residual of both probes —
-the question whether the band sits in the uplink (transmit) or the
-downlink (receive) chain — and the named machine of the NOCC reduction.
-The handover `docs/handover/handover-2026-08-24-pioneer-p11-modell-subtraktion.md`
-carries the path.
+The two-/three-way split is measured (version 4): joining the ATDF 1-s samples
+against the NAVIO (rx, tx) pair, the band frequency is receiver-fixed — for a
+fixed receiver it is the same across different transmitters — so the line
+follows the receive chain, not the transmit chain; the band amplitude, in
+contrast, depends on the (receiver, transmitter) pair (a two-way-link effect,
+within a single epoch). The named machine of the NOCC reduction remains open.
+The per-station census of the canonical residual is the standing measurement
+(the era × station × class × band table); the 1989–1991 ATDF files are absent
+from the harvest, so any value living there is pending, not zero.
 
 ## 5. Position against the literature
 
@@ -122,8 +147,8 @@ Pioneer Doppler. Levy et al. (2009, Adv. Space Res.) resolve periodic terms
 at the sidereal day and its harmonic and attribute them to station-condition-
 dependent media-model errors; Anderson et al. (2002) report the diurnal and
 seasonal variation; Bertotti & Giampieri (1998) treat solar-coronal plasma as
-dispersive Doppler noise. The ~20-s complex (44–56 mHz) with station-fixed
-frequencies reported here does not appear in these treatments or the review
+dispersive Doppler noise. The ~20-s complex (44–56 mHz) with station-dependent
+dominant frequencies reported here does not appear in these treatments or the review
 literature (Turyshev & Toth 2010), whose periodicities sit at day and year
 scales. The reported band is therefore a new instance of an established
 artifact class, not a new class. Whether a 20-s-scale line lives in the
