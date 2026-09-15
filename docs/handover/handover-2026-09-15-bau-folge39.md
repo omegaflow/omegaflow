@@ -3,7 +3,7 @@
   session: Bau-Folge 39
   class: handover
   date: 2026-09-15
-  sha256: c7c741e8f4d928da6d4bcb4e1b45d9d811a1190ab20edca14a6f1a4126e03f50
+  sha256: 74ae7e31e3f67a527a80786b1767dd61613271381d5e8c9748c19c7b9dc4abd8
   status: live
 -->
 # Handover — Bau-Folge 39 (2026-09-15)
@@ -55,14 +55,16 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   wartet auf `lis_otd.bin` und auf die Session-Grenze der fremden uncommitteten
   sources.φ-Änderung.
 
-## TE-Gate — n=1000-Lauf noch in Arbeit
+## TE-Gate — n=1000-Null leckt Autokorrelation (gemessen)
 
-- Lauf `35003040901` (dispatch 2026-09-15, HEAD `21c9b3d`) trägt die n=1000-Gates
-  (`gate_fpr_autocorrelation_restricted_null_binned_n_1000` und `…_xshift_null_binned_n_1000`);
-  Status in_progress (gemessen 2026-09-15). (Schritt: `gh run view 35003040901 --log`,
-  FPR-Tabelle lesen; `gh issue close 13` nur bei haltendem Gate.)
+- Lauf `35003040901` ist `completed/failure` (gemessen 2026-09-15): **alle 9** n=1000-Gates
+  fallen (0 passed; 9 failed; 1109 filtered out, 4562 s). Der Surrogat-Null hält die
+  Autokorrelation nicht: `…_shift_null_ksg_n_1000` → FPR-Anstieg 3,57pp über a bei D_Z=4
+  (a=0: 3,06 %, a=0,5: 1,79 %, a=0,9: 6,63 %; Grenze 2pp); `…_residual_null_ksg_n_1000` →
+  FPR 13,52 % bei a=0,9 D_Z=4 (Grenze 8 %). CI-Issue automatisch angelegt.
+  (Schritt: `src/mathematikerin/te.rs` `gate_fpr_autocorr_assert` / Surrogat-Null; die
+  n=150-Gates halten — der Effekt wächst mit n. Issue 13 offen lassen, nicht schließen.)
 - n=150: RestrictedPermutation (FPR ≤ 5,50 %) und XShift (≤ 4,25 %, kein Anstieg) halten.
-  (Schritt: `src/mathematikerin/te.rs`, `gate_fpr_autocorrelation_*`.)
 
 ## Benchmark — offene Bau-Aufgabe flash vs. pro
 
