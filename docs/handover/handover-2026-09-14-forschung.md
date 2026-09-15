@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 8711b4569ec9ea1e29209a5dcaad89f3c03b50d7bacf3c4100208cfaec7fdffa
+  sha256: b671ebbc58619739e8a6ed25560c2d8d90427c4c3dfa26e1a35faad780672753
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -39,18 +39,23 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (Datenversion: aktueller Bestand 1 071 540 Records / 196 754 1-s vs. Papier
   73 249 sub-10-s — oder Methode). Instrument:
   `tools/measure/src/bin/pioneer10_txrx_split_probe.rs`.
-- **Papier-Nichtreproduktion (A/B/C gemessen).** Die Papier-Stationswerte
-  (45,75 / 51,55 / 47,35 mHz) reproduzieren nicht. A: Papier = 6-Datei-Harvest
-  (501 876 Records, `5caf45b` 2026-09-04), aktuell = 23-Datei (1 071 540,
-  `788c89d` 2026-09-11). B: der 6-Datei-Harvest ist eine Teilmenge — seine
-  1988-Per-rx-Peaks (46,58 / 44,12 / 50,92) sind identisch mit den 23-Datei-
-  1988-Peaks → die Dateizahl ist NICHT die Ursache. C: kein Methoden-Variant
-  (Detrend/Run-Lücke/Gitter/Fenster) verschiebt zu den Papier-Werten → Methode
-  ausgeschlossen. Rest: der im Papier unspezifizierte Schritt „exhaustive
-  subtraction of known effects" — die Deduktions-Kette nachvollziehen. (Schritt:
-  Deduktion 17/29 am aktuellen Bestand reproduzieren.) Instrumente:
-  `pioneer_atdf_6file_compiler`, `pioneer10_paper_harvest_probe`,
-  `pioneer10_method_sensitivity_probe`.
+- **Papier-Nichtreproduktion (volle Kette gemessen).** A/B/C: die Dateizahl (B)
+  und die Methode (C) sind ausgeschlossen; die Papier-Werte (45,75 / 51,55 /
+  47,35 mHz) reproduzieren nicht. **Volle Kette** (der frühere Taucher übersprang
+  die Media-Stufe): die Lücke war die DATEN — OMNI2 regeneriert (`omni2_compiler`
+  → `cache/omni2_serie.bin`; Plasma auf 146 417/162 548 Samples), common-mode
+  **genuin leer** (min. Stationsabstand 110 s > 60 s Toleranz; DSN sequenziell),
+  TEC **datiert leer** (GIM ab 1998). `resid_e` trägt exakt die Papier-Zahlen
+  (strict-1,0-s **70 602**, sub-10-s **73 249**). Ergebnis: **kein Papier-Wert ist
+  irgendwo dominant**; 47,35 dominant nirgends; **50,73 reproduziert nicht**
+  (global 49,16 / 44,65). **Surrogat-Null: 2/4 Selektion** (st14 45,75, st63 1992
+  46,95; Null mean+2σ = 0,65, P≈2,5·10⁻³) — st43 51,55 und st63 1988 47,35
+  überleben nicht. Die qualitative Station-Fixität steht (beide Serien). (Schritt:
+  Papier **v4** — Zensus statt Pick, die alten Werte mit gemessenen Rängen,
+  Drift-Satz streichen, §2 bleibt; Council-Landing.) Instrumente:
+  `pioneer10_txrx_split_probe`, `pioneer10_paper_chain_retrace`,
+  `pioneer10_cell_census_probe`, `pioneer10_surrogate_subpeak_null`,
+  `pioneer10_paper_harvest_probe`, `pioneer10_method_sensitivity_probe`.
 - **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
   stehen, gemessen:
   - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
