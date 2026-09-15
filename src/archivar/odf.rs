@@ -190,6 +190,88 @@ pub fn parse_odf(bytes: &[u8]) -> Option<Vec<OdOrbit>> {
     Some(out)
 }
 
+pub const TNF_LABEL_LEN: usize = 20;
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfSfdu {
+    pub offset: usize,
+    pub total_len: usize,
+    pub data_description_id: [u8; 4],
+    pub sfdu_length: u64,
+    pub aggr_chdo_type: u16,
+    pub aggr_chdo_length: u16,
+    pub primary_chdo_type: u16,
+    pub primary_chdo_length: u16,
+    pub mjr_data_class: u8,
+    pub mnr_data_class: u8,
+    pub mission_id: u8,
+    pub format_code: u8,
+    pub secondary_chdo_type: u16,
+    pub secondary_chdo_length: u16,
+    pub scft_id: u8,
+    pub rec_seq_num: u32,
+    pub year: u16,
+    pub doy: u16,
+    pub sec: f64,
+}
+
+fn be16(b: &[u8]) -> u16 {
+    u16::from_be_bytes([b[0], b[1]])
+}
+
+fn be32(b: &[u8]) -> u32 {
+    u32::from_be_bytes([b[0], b[1], b[2], b[3]])
+}
+
+fn be64(b: &[u8]) -> u64 {
+    u64::from_be_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]])
+}
+
+fn read_tnf_sfdu(bytes: &[u8], offset: usize) -> Option<TnfSfdu> {
+    if bytes.len() < 60 || &bytes[0..4] != b"NJPL" {
+        return None;
+    }
+    let sfdu_length = be64(&bytes[12..20]);
+    let total_len = TNF_LABEL_LEN + sfdu_length as usize;
+    if bytes.len() < total_len {
+        return None;
+    }
+    let mut data_description_id = [0u8; 4];
+    data_description_id.copy_from_slice(&bytes[8..12]);
+    Some(TnfSfdu {
+        offset,
+        total_len,
+        data_description_id,
+        sfdu_length,
+        aggr_chdo_type: be16(&bytes[20..22]),
+        aggr_chdo_length: be16(&bytes[22..24]),
+        primary_chdo_type: be16(&bytes[24..26]),
+        primary_chdo_length: be16(&bytes[26..28]),
+        mjr_data_class: bytes[28],
+        mnr_data_class: bytes[29],
+        mission_id: bytes[30],
+        format_code: bytes[31],
+        secondary_chdo_type: be16(&bytes[32..34]),
+        secondary_chdo_length: be16(&bytes[34..36]),
+        scft_id: bytes[39],
+        rec_seq_num: be32(&bytes[44..48]),
+        year: be16(&bytes[48..50]),
+        doy: be16(&bytes[50..52]),
+        sec: f64::from_be_bytes(bytes[52..60].try_into().ok()?),
+    })
+}
+
+pub fn scan_tnf_sfdus(bytes: &[u8]) -> Option<Vec<TnfSfdu>> {
+    let mut out = Vec::new();
+    let mut off = 0usize;
+    while off < bytes.len() {
+        let frame = read_tnf_sfdu(&bytes[off..], off)?;
+        off += frame.total_len;
+        out.push(frame);
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -308,5 +390,59 @@ mod tests {
         let parsed = parse_p11r_bin(&bytes).unwrap();
         assert_eq!(parsed, recs);
         assert!(parse_p11r_bin(b"X").is_none());
+    }
+
+    const NHREX_TNF_HEAD_2: &str = "4e4a504c324930304331323300000000000000a20001004e00020004060e18000084004230310062000000000000000007dc001540e77da000000000506304b6727a1a0201010000000001003f142f61ed5ae1ce344b7abd0000000000002200020000000000000a004c0042cd063881085a59b3cfd941faa3a0f766b3b600000000000000000000388c38480000000000000000000000000000000000000000000000000000000000000000000000000000000000004e4a504c324930304331323300000000000000a20001004e00020004060e18000084004230310062000000010000000107dc001540e77dc000000000506304b6727a1a0201010000000001003f142f61ed5ae1ce344b7abd0000000000002200020000000000000a004c0042cd07e2bb17d0c4ef343341faa3a0f766b3b600000000000000000003390b52d6000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+
+    fn unhex(s: &str) -> Vec<u8> {
+        let b = s.as_bytes();
+        let mut out = Vec::with_capacity(b.len() / 2);
+        let mut i = 0;
+        while i + 1 < b.len() {
+            let hi = (b[i] as char).to_digit(16).unwrap() as u8;
+            let lo = (b[i + 1] as char).to_digit(16).unwrap() as u8;
+            out.push((hi << 4) | lo);
+            i += 2;
+        }
+        out
+    }
+
+    #[test]
+    fn nhrex_tnf_sfdu_framing_decodes() {
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        assert_eq!(frames.len(), 2);
+
+        let f = &frames[0];
+        assert_eq!(f.offset, 0);
+        assert_eq!(f.total_len, 182);
+        assert_eq!(&f.data_description_id, b"C123");
+        assert_eq!(f.sfdu_length, 162);
+        assert_eq!(f.aggr_chdo_type, 1);
+        assert_eq!(f.aggr_chdo_length, 78);
+        assert_eq!(f.primary_chdo_type, 2);
+        assert_eq!(f.primary_chdo_length, 4);
+        assert_eq!(f.mjr_data_class, 6);
+        assert_eq!(f.mnr_data_class, 14);
+        assert_eq!(f.mission_id, 24);
+        assert_eq!(f.format_code, 0);
+        assert_eq!(f.secondary_chdo_type, 132);
+        assert_eq!(f.secondary_chdo_length, 66);
+        assert_eq!(f.scft_id, 98);
+        assert_eq!(f.rec_seq_num, 0);
+        assert_eq!(f.year, 2012);
+        assert_eq!(f.doy, 21);
+        assert_eq!(f.sec, 48109.0);
+
+        let g = &frames[1];
+        assert_eq!(g.offset, 182);
+        assert_eq!(g.total_len, 182);
+        assert_eq!(&g.data_description_id, b"C123");
+        assert_eq!(g.format_code, 0);
+        assert_eq!(g.scft_id, 98);
+        assert_eq!(g.rec_seq_num, 1);
+        assert_eq!(g.year, 2012);
+        assert_eq!(g.doy, 21);
+        assert_eq!(g.sec, 48110.0);
     }
 }
