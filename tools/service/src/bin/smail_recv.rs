@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
 
-use omegaflow::json::{JsonVal, parse_json};
+use omegaflow::json::{parse_json, JsonVal};
 
 fn main() {
     let port: u16 = env_u64("OMEGAFLOW_MAIL_PORT", 1619) as u16;
@@ -192,33 +192,60 @@ fn mime_plaintext(raw: &str) -> String {
     });
     match boundary {
         Some(b) => {
-            let mut out = String::new();
+            let mut plain = String::new();
+            let mut html = String::new();
             for part in raw.split(&format!("--{}", b)) {
-                if let Some(pl) = plaintext_of_part(part) {
-                    if !out.is_empty() {
-                        out.push('\n');
+                if let Some(pl) = text_part_of(part, "text/plain") {
+                    if !plain.is_empty() {
+                        plain.push('\n');
                     }
-                    out.push_str(&pl);
+                    plain.push_str(&pl);
+                } else if let Some(ht) = text_part_of(part, "text/html") {
+                    if !html.is_empty() {
+                        html.push('\n');
+                    }
+                    html.push_str(&ht);
                 }
             }
-            out
+            if plain.is_empty() {
+                strip_html(&html)
+            } else {
+                plain
+            }
         }
-        None => match plaintext_of_part(raw) {
+        None => match text_part_of(raw, "text/plain") {
             Some(pl) => pl,
-            None => String::new(),
+            None => match text_part_of(raw, "text/html") {
+                Some(ht) => strip_html(&ht),
+                None => String::new(),
+            },
         },
     }
 }
 
-fn plaintext_of_part(part: &str) -> Option<String> {
+fn strip_html(s: &str) -> String {
+    let mut out = String::new();
+    let mut in_tag = false;
+    for c in s.chars() {
+        match c {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => out.push(c),
+            _ => {}
+        }
+    }
+    out
+}
+
+fn text_part_of(part: &str, mime: &str) -> Option<String> {
     let part = part.trim_start_matches(['\r', '\n']);
     if let Some(sep) = part.find("\r\n\r\n") {
         let head = &part[..sep];
         let body = &part[sep + 4..];
-        let is_plain = header_value(head, "content-type")
-            .map(|ct| ct.to_lowercase().starts_with("text/plain"))
+        let is_type = header_value(head, "content-type")
+            .map(|ct| ct.to_lowercase().starts_with(mime))
             .unwrap_or(false);
-        if !is_plain {
+        if !is_type {
             return None;
         }
         let is_base64 = header_value(head, "content-transfer-encoding")
