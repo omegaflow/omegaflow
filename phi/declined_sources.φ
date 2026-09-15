@@ -3340,3 +3340,187 @@ note IODA v1 Internet-Ausfälle — Zustand menschlicher Netz-Infrastruktur, kei
 decline infrastructure
 url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
 note GRAND_Dams — globales Staudamm-Register (Position + Attribute: Staukapazität, Höhe), geographische Infrastruktur ohne Messwert-Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für einen Staudamm; Kraft absent. Gemessen 2026-09-15: Timeout 20 s (Datacenter-IP-Sperre), Proton SSL_ERROR_SYSCALL — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
+
+decline redundant
+url https://cda.cfa.harvard.edu/csctap
+note Chandra CSC TAP (ivo://cxc.harvard.edu/csc) — redundant zu chandra_csc.json (VizieR IX/70/csc21mas, sources.φ 5985). tap_index_chandra_csc.φ geerntet.
+
+decline redundant
+url https://cda.cfa.harvard.edu/csc1tap
+note Chandra CSC1 TAP (ivo://cxc.harvard.edu/cscr1) — redundant zu chandra_csc.json (VizieR IX/70/csc21mas). tap_index_chandra_csc1.φ geerntet.
+
+decline redundant
+url https://cda.cfa.harvard.edu/csc2tap
+note Chandra CSC2 TAP (ivo://cxc.harvard.edu/cscr2) — redundant zu chandra_csc.json (VizieR IX/70/csc21mas). tap_index_chandra_csc2.φ geerntet.
+
+decline redundant
+url https://cda.cfa.harvard.edu/csc21tap
+note Chandra CSC2.1 TAP (ivo://cxc.harvard.edu/cscr2.1) — redundant zu chandra_csc.json (VizieR IX/70/csc21mas). tap_index_chandra_csc21.φ geerntet.
+
+decline redundant
+url https://gaia.aip.de/tap
+note Gaia-AIP TAP (219 Tafeln) — Gaia-Mirror, redundant zum Gaia-Bestand. tap_index_gaia_aip.φ geerntet.
+
+decline redundant
+url https://almascience.nao.ac.jp/tap
+note ALMA EA TAP (ivo://jao.alma/tap_ea) — Spiegel von ALMA EU. tap_index_alma_ea.φ geerntet.
+
+decline redundant
+url https://almascience.nrao.edu/tap
+note ALMA NA TAP (ivo://jao.alma/tap_na) — Spiegel von ALMA EU. tap_index_alma_na.φ geerntet.
+
+decline no-measurement-field
+url https://atoavo.atnf.csiro.au/tap
+note ATOAVO TAP (ivo://au.csiro/atoavo/tap) — nur ivoa.obscore, kein Katalog, kein Messwert-Feld. tap_index_atoavo.φ geerntet.
+
+decline redundant
+url https://data.csiro.au/psrdavo/tap
+note PSRDAVO TAP (psrda.pulsar_obs) — Pulsar-Werte liegen über VizieR psrcat (sources.φ 4128). tap_index_psrdavo.φ geerntet.
+
+decline superseded-by-integrated
+url https://www.lamost.org/dr10/v2.0/voservice/tap
+note LAMOST DR10 TAP — von DR11 abgelöst (tap_index_lamost_dr11.φ). tap_index_lamost_dr10.φ geerntet.
+
+decline registry
+url https://api.datacite.org/dois
+note DataCite-DOI-Registry (Search-API). Registry — kein physikalisches Feld am Punkt. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://api.openaire.eu/search/datasets
+note OpenAIRE-Dataset-Registry (XML). Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://b2find.eudat.eu/api/3/action/package_search
+note B2FIND-CKAN-package_search. Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://re3data.org/api/v1/repositories
+note re3data-Repository-Registry (XML). Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://dataverse.harvard.edu/api/search
+note Harvard-Dataverse-Search-API. Registry. Gemessen 2026-09-14 HTTP 400 (Query fehlt), Endpoint lebt.
+
+decline registry
+url https://borealisdata.ca/dataverse/oceannetworkscanada
+note Borealis-ONC-Dataverse. Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://zenodo.org/api/records
+note Zenodo-REST-API. Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://zenodo.org/api/records/?communities=iodp&size=100
+note Zenodo-IODP-Community-Query. Registry. Gemessen 2026-09-14 HTTP 400 (Parameter unvollständig), Endpoint lebt.
+
+decline registry
+url https://zenodo.org/api/records/17928117
+note Zenodo-DAHITI-Record. Registry; DAHITI_API_KEY liegt in .secrets.local (kein offener anonymer Pfad). Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://registry.opendata.aws/sentinel-1/
+note AWS-Open-Data-Registry-Seite. Registry — die Daten liegen im S3-Bucket, nicht in dieser Seite. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://argovis-api.colorado.edu/argo/vocabulary?parameter=data
+note Argovis-Parameter-Vocabulary. Registry; die argo-/bgcargoplus-Messung ist schon in sources.φ:1257/1268. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://doidb.wdc-terra.org/oaip/oai
+note IGETS-DOI-OAI-PMH (XML). Registry (OAI-Metadaten-Index). Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://geofon.gfz.de/fdsnws/station/1/query?level=station&format=text&network=GE
+note GEOFON-FDSN-Stations-Inventar (network=GE). Registry — Stations-Metadaten, kein Messwert (Orfeus-Präzedenz). Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://data.raspberryshake.org/fdsnws/station/1/query?level=station&format=text&network=AM
+note RaspberryShake-FDSN-Stations-Inventar (network=AM). Registry — Stations-Metadaten, kein Messwert. Gemessen 2026-09-14 HTTP 200.
+
+decline registry
+url https://api.lsst.fink-portal.org/api/v1/schema
+note Fink-LSST-API-Schema. Registry — API-Metadaten; der conesearch ist schon Zeuge (witnesses.φ:17). Gemessen 2026-09-14 HTTP 200.
+
+decline catalog
+url https://earth-search.aws.element84.com/v1
+note AWS-STAC-Suchkatalog (v1 = Version der declined v0/search). Metadata-Suche, kein Messwert-Feld. Gemessen 2026-09-14 HTTP 200.
+
+decline catalog
+url https://www.glims.org/RGI/
+note Randolph-Glacier-Inventory-Gletscherumrisse (global, Shapefile). Geographische Infrastruktur, kein Messwert am Punkt. Gemessen 2026-09-14 HTTP 200.
+
+decline catalog
+url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox=
+note GLIMS-Punkt-Katalog (Geoserver WFS). Geographische Infrastruktur. Gemessen 2026-09-14 HTTP 400 (bbox fehlt), Geoserver lebt.
+
+decline catalog
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
+note Smithsonian-GVP-VOTW-Holocene-Eruptions-Katalog (GeoJSON) — statischer Ereignis-Katalog, kein Live-Feld. Route gemessen 2026-09-15 absent (direkt + Proton HTTP 0, Wayback 503); die Identität (Katalog) trägt das Verdikt, nicht die Erreichbarkeit.
+
+decline presence-catalog
+url https://v4.boldsystems.org/index.php/API_Public/geo?format=json
+note BOLD-Barcoding-Specimen (geo-Endpoint HTTP 500, Host lebt). Presence-Catalog (wie GBIF/iNaturalist declined). Gemessen 2026-09-14 HTTP 500.
+
+decline aggregated-index
+url https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
+note WWLLN-Thunder-Hour-Jahresgitter (netCDF) — Zählwert ohne Ereignis-Records, aggregierter Index (Council 2026-09-13). Gemessen 2026-09-14 Teil-Download 24346624 B.
+
+decline aggregated-index
+url https://kp.gfz-potsdam.de/app/json/
+note Kp/Ap-geomagnetischer-Aktivitäts-Index (1932–2026, dimensionslos, abgeleitet aus dem Magnetometer-Netz) — aggregierter, positionsloser Index. Gemessen 2026-09-14 HTTP 500 (Register-Query), kurzes index=Kp-Fenster 200.
+
+decline geographic-infrastructure
+url https://overpass.openstreetmap.fr/api/interpreter
+note OSM-Overpass-API — geographische Infrastruktur (Wege/Gebäude/Landnutzung), kein propagierendes Feld. Gemessen 2026-09-14 HTTP 400 (ohne Query), lebt.
+
+decline derived-product
+url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer
+note SERVIR-SMAP-L3-Bodenfeuchte — Modell-Inversion aus Brightness-Temperatur, die Messung des Sensors ist TB (em), nicht die invertierte Bodenfeuchte; Litmus scheitert. Gemessen 2026-09-14 HTTP 200.
+
+decline html
+url https://docs.lightningmaps.org/
+note LightningMaps-Doku (TLS-Zertifikat abgelaufen, curl 60; -k liefert HTML). Blitz-Messung ist via api.blitzortung.org integriert. Gemessen 2026-09-14 HTTP 200 (-k).
+
+decline html
+url https://lpdaac.usgs.gov/products/gedi02_av002/
+note GEDI-L2A-Produkt-Landing (→ earthdata.nasa.gov); die Datenroute ist das entblockte s3://lp-prod-protected (pending). Gemessen 2026-09-14 HTTP 200.
+
+decline html
+url https://pdssbn.astro.umd.edu/holdings/pds4-nh_documents:rex-v2.0/SUPPORT/dataset.shtml
+note NH-REX-Support-Dokumentation; die REX-TNF-Messung ist schon blocked parser-def tnf. Gemessen 2026-09-14 HTTP 200.
+
+decline metadata-registry
+url https://isdc.gfz.de/igets-data-base
+note IGETS-Stationsliste (65 Stationen) — Stations-Metadaten; die IGETS-Gravimetrie ist via igets.bin in sources.φ (igets_gravity_nm_s2). Gemessen 2026-09-14 HTTP 200.
+
+decline superseded-by-integrated
+url https://igets.u-strasbg.fr/tr005.php
+note IGETS-Alt-EOST-Portal; die IGETS-Gravimetrie ist via igets.bin in sources.φ. Gemessen 2026-09-14 direkt unbestätigt (VPN/transient).
+
+decline superseded-by-integrated
+url https://api.alerce.online/alerts/v1/objects/
+note ALeRCE-ZTF-Objekte; format alerce in sources.φ:856 (magpsf/magap-Felder). Gemessen 2026-09-14 via VPN 200.
+
+decline superseded-by-integrated
+url https://ssd-api.jpl.nasa.gov/fireball.api
+note JPL-Fireball; geosphere_fireball_radiated_energy_e10j + impact_energy_kt in sources.φ:1162. Gemessen 2026-09-14 HTTP 200.
+
+decline superseded-by-integrated
+url https://www.nmdb.eu/nest/draw_graph.php
+note NMDB-Neutron-Monitor; oulu_neutron_corr_for_eff + cosmic_neutron_flux_oulu in sources.φ:1063/1071. Gemessen 2026-09-14 via Proton 200.
+
+decline superseded-by-integrated
+url http://jsoc.stanford.edu/
+note JSOC-Portal (http 200 HTML); SDO-AIA-Daten als aia2013/2014/2015.bin in sources.φ. Gemessen 2026-09-14 HTTP 200.
+
+decline superseded-by-integrated
+url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=1
+note USGS-OGC-API daily; NWIS-iv ist via waterservices.usgs.gov in sources.φ:730 (parameterCd=00060). Gemessen 2026-09-14 HTTP 200.
+
+decline superseded-by-integrated
+url https://www.frdr-dfcr.ca/repo/collection/superdarn
+note SuperDARN-RAWACF via FRDR (Repository-Sammlung); die SuperDARN-Los-Geschwindigkeit ist via superdarn_fitacf.bin in sources.φ. Gemessen 2026-09-14 HTTP 200.
+
+decline variant
+url https://www.nmdb.eu/rt/realtime.txt
+note NMDB-Neutron-Monitor-Zählraten (alle ~30 Stationen, minütlich) — dieselbe Messung wie die integrierten OULU-Felder (sources.φ:1063), nur multi-Station. Nur via Proton erreichbar (gemessen 2026-09-15 HTTP 200, 58984 B; direkt absent).
