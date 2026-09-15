@@ -42,6 +42,7 @@ pub use archivar::gong_series;
 pub use archivar::grib2;
 pub use archivar::hdf5;
 pub use archivar::hmi_polar;
+pub use archivar::hsd;
 pub use archivar::inflate;
 pub use archivar::intermagnet;
 pub use archivar::ionex;
