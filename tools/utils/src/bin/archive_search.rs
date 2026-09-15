@@ -49,6 +49,9 @@ const SKIP_DIRS: &[&str] = &[
     "target",
     "node_modules",
     ".opencode",
+    "data",
+    "cache",
+    "state",
     "__pycache__",
     ".cache",
     ".venv",
@@ -1048,10 +1051,13 @@ fn search_file(
     max_mb: u64,
     include_binary: bool,
 ) -> Option<(usize, Vec<String>)> {
-    let bytes = fs::read(path).ok()?;
-    if bytes.len() > max_mb as usize * 1024 * 1024 {
+    let Ok(meta) = fs::metadata(path) else {
+        return None;
+    };
+    if meta.len() > max_mb * 1024 * 1024 {
         return None;
     }
+    let bytes = fs::read(path).ok()?;
     let text = match readable_text(&bytes, include_binary) {
         Some(t) => t,
         None => return None,
