@@ -3,7 +3,7 @@
   session: Bau-Folge 34
   class: handover
   date: 2026-09-15
-  sha256: 42e42d525798fb161401755281bbfc8f0d5ec031b26cbea8e8588ce6eb228c1c
+  sha256: 4f5b97b173208c4627f9d10fc07e835ceaf164a6e1e8278e7c7611650dec4a23
   status: live
 -->
 # Handover — Bau & Code (2026-09-15, Bau34)
@@ -77,6 +77,25 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `register_lookup --history --legacy /home/johannes/backup/archive/omegaflow/omegaflow-legacy`.)
 - Sichtbarer Überseh-Korpus: `--live` meldet 106 Dokumente, ~630 offene Zeilen — die gehören je in
   ihre Linie (Ernte/Forschung), nicht gesammelt hier. (Schritt: je Linie ihr Digestschritt.)
+
+## Code/Infra — Nachtrag (Register-Digest-Recherche; keine lebende Übergabe trug sie)
+
+- Code-TE-Drift: 5 deutsche Tool-Namen umbenennen — `doppel_anomalie_compiler`, `mseed_messen`,
+  `pioneer11_negativ_fuzzy_probe`, `pioneer_text_korrelation`, `s1_post_erfassen`.
+  (Schritt: `survey-2026-09-02-code-te-drift.md`; je Bin- + Dateiname in `tools/` umbenennen.)
+- Codestruktur: `tools/` je Crate `cargo check`/`cargo test` messen; Konsument je pub-fn nachweisen;
+  live/offline-Wiring; Datenkontrakt je Format-Modul. (Schritt: `survey-2026-09-06-codestruktur.md`;
+  je Crate `cargo check` + Konsument-grep.)
+- archivar-mathematikerin: legacy 40-byte bins pending recompilation; leap-second embedded-file
+  update duty. (Schritt: `docs/concepts/archivar-mathematikerin.md`; 40-byte bins rekompilieren,
+  `naif0012.tls`-Update-Duty benennen.)
+- HRV/Puls-Oszillator-Bindung (`src/archivar/hrv.rs`) — pending. (Schritt: Bindung benennen — was
+  steht, was fehlt; `src/archivar/hrv.rs` lesen.)
+- mirror-research: ~2.300-Quellen-Migration. (Schritt: `docs/concepts/mirror-research.md`;
+  Migration messen/planen.)
+- GLO-30 DEM CDN. (Schritt: erste Messung — GLO-30-Quellen-URL + Compiler benennen.)
+- 4d-membrane: Archaeologie-Liste (GM val, PCK-Reader, presence_probe-Grid, O(N·M)-Loop,
+  WebSerial-Flow). (Schritt: `docs/concepts/4d-membrane.md`; je Eintrag den Befund benennen.)
 
 ## RINEX/CORS — Eintrag richtiggestellt, Konsument offen
 
