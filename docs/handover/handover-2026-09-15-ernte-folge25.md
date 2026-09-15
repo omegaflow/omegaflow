@@ -3,7 +3,7 @@
   session: Ernte-Folge 25
   class: handover
   date: 2026-09-15
-  sha256: f082e396ad65c98435692241ace96783dcac0928e905e628299466dfd45970be
+  sha256: a24d23f9366b5c14f373b4e00d29e3aa6363cd7d5bb9824f11136c8dca14c0bf
   status: live
 -->
 # Handover — Ernte-Folge 25 (2026-09-15)
@@ -124,6 +124,16 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 - VLASS: offene Tabelle ist `cirada.VLASS_Source` (votable+csv 200, anonym);
   `cirada.VCSS` = 403. CORS `.24S` = teqc-QC (nicht SBF). NOIRLab: Gaia DR4
   noch nicht erschienen (≥ Dez 2026), Wiedervorlage 2026-12-02 hält.
+- Pro-Taucherlauf über die 10 descoped + AQS (key) + Babamul (account)
+  (2026-09-15, drei grind-pro mit godmode): alle 10 Descopes HALTEN (kein
+  Nadel-Konsument; ESO tap_cat ist ein Content-Descope, der Host lebt; WFAU
+  4× TCP-tot, NOIRLab-Spiegel `vhs_dr5`/`ukidss_dr11plus` aktiv; JVO
+  alma/hitomi nur unter `/sync`; DARTS-hitomi jetzt HTTP 0). **AQS: keylose
+  Bulk-Route GEFUNDEN** (vorgenerierte AirData-CSVs,
+  `aqs.epa.gov/aqsweb/airdata/download_files.html` → 200; sie tragen
+  FRM/FEM/POC — die Granularität, die `openaq_pm25_ugm3` nicht trägt) →
+  entblockt → ledger-Kandidat; die API bleibt key-gated. Babamul bleibt
+  blocked account (Kafka/API credential-gated, Signup mail-gated).
 
 ## Abschluss
 
