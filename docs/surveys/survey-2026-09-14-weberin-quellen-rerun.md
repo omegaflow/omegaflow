@@ -118,10 +118,10 @@ maschinenlesbarer Weg nach abgeschlossener Suche.
 
 Kein Wert ist fabriziert; jeder ungemessene Punkt bleibt `pending`.
 
-## Batch-Re-Run durch den Godmode (`--all`, 2026-09-14)
+## Batch-Re-Run durch `archive_search --all` (2026-09-14)
 
 Die zwei früheren Such-Batches (die „Wand-Party" und „ehrlich benannt") wurden als
-Rezepte rekonstruiert und je Subject durch den neuen Godmode `archive_search --all`
+Rezepte rekonstruiert und je Subject durch den neuen `archive_search --all`
 gefahren (eine Query durch alle 13 Modi: openalex, arxiv, crossref, ads, ntrs, wiki,
 github, crates, librs, brave, datacite, zenodo, wayback).
 
