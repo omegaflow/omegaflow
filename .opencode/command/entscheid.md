@@ -14,4 +14,4 @@ Lies sie, nenne die offenen Punkte, plane das Atom. Planungs-Pass: `register_loo
 
 Diese Linie trägt autonom nur Entscheidungen, Korrespondenz und Consent. Quellen-/Bau-Punkte reisen als Nachricht an ihre Linie (nie in ein fremdes Handover geschrieben). Delegiere: Rat für Architektur-Entscheidungen, research-max für harte Recherche, vision für Figuren/OCR, grind-* für Bau.
 
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
+Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird pfad-begrenzt (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`), nur der eigene Teil; fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
