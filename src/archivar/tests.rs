@@ -7378,6 +7378,107 @@ fn maxi_series_roundtrip_and_component_name() {
 }
 
 #[test]
+fn gk2a_ami_series_roundtrip_and_component_name() {
+    let granule = crate::gk2a_ami::AmiGranule {
+        t: 729_777_632.227_242_1,
+        band_id: 87,
+        calib: crate::gk2a_ami::CALIB_GSICS,
+        band_wavelength: 8.7,
+        esun: 0.0,
+        kappa0: 0.0,
+        center_lat: 0.0,
+        center_lon: 128.2,
+        rad_mean: 5.56,
+        rad_std: 0.5,
+        rad_min: 0.1,
+        rad_max: 12.0,
+        valid: 30_000_000,
+        total: 30_250_000,
+    };
+    let bytes =
+        crate::gk2a_ami::write_bin(std::slice::from_ref(&granule)).expect("gk2a bin writes");
+    let parsed = super::extract::series_parse_bin("gk2a_ami", &bytes).expect("gk2a series parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].0, granule.t);
+    assert_eq!(parsed[0].1, 5.56f32 as f64);
+    assert_eq!(parsed[0].2, crate::gk2a_ami::COMP_RADIANCE);
+    assert_eq!(
+        super::extract::series_component_name("gk2a_ami", crate::gk2a_ami::COMP_RADIANCE),
+        Some("gk2a_ami_radiance")
+    );
+    assert_eq!(super::extract::series_component_name("gk2a_ami", 99), None);
+}
+
+#[test]
+fn goes_abi_series_roundtrip_and_component_name() {
+    let granule = crate::goes_abi::AbiGranule {
+        t: 729_777_632.227_242_1,
+        band_id: 1,
+        calib: crate::goes_abi::CALIB_GSICS,
+        band_wavelength: 0.47,
+        esun: 0.0,
+        kappa0: 0.0,
+        sub_lon: -75.0,
+        persp_h: 35_786_000.0,
+        rad_mean: 5.56,
+        rad_std: 0.5,
+        rad_min: 0.1,
+        rad_max: 12.0,
+        valid: 30_000_000,
+        total: 30_250_000,
+    };
+    let bytes =
+        crate::goes_abi::write_bin(std::slice::from_ref(&granule)).expect("goes_abi bin writes");
+    let parsed =
+        super::extract::series_parse_bin("goes_abi", &bytes).expect("goes_abi series parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].0, granule.t);
+    assert_eq!(parsed[0].1, 5.56f32 as f64);
+    assert_eq!(parsed[0].2, crate::goes_abi::COMP_RADIANCE);
+    assert_eq!(
+        super::extract::series_component_name("goes_abi", crate::goes_abi::COMP_RADIANCE),
+        Some("goes_abi_radiance")
+    );
+    assert_eq!(super::extract::series_component_name("goes_abi", 99), None);
+}
+
+#[test]
+fn gdp_drifter_geo_series_roundtrip_and_component_name() {
+    let rec = crate::gdp_drifter::DrifterRecord {
+        id: 12345,
+        time: 729_777_632.227_242_1,
+        lon: -45.5,
+        lat: 30.25,
+        sst: Some(300.15),
+    };
+    let bytes =
+        crate::gdp_drifter::write_bin(std::slice::from_ref(&rec)).expect("gdp_drifter bin writes");
+    let parsed = super::extract::geo_series_parse_bin("gdp_drifter", &bytes)
+        .expect("gdp_drifter bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].lat, 30.25);
+    assert_eq!(parsed[0].lon, -45.5);
+    assert!((parsed[0].val - 300.15).abs() < 1e-3);
+    assert_eq!(parsed[0].comp, crate::gdp_drifter::COMP_SST);
+    assert_eq!(
+        crate::geo::magic_of("gdp_drifter"),
+        Some(crate::geo::MAGIC_GDP)
+    );
+    assert_eq!(
+        crate::geo::comp_max("gdp_drifter"),
+        Some(crate::gdp_drifter::COMP_SST)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("gdp_drifter", crate::gdp_drifter::COMP_SST),
+        Some("gdp_drifter_sst_k")
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("gdp_drifter", 99),
+        None
+    );
+}
+
+#[test]
 fn iscb_bin_roundtrip_and_rejections() {
     fn encode(events: &[(f64, f64, f64, f64, Option<f64>, Option<&str>)]) -> Vec<u8> {
         let mut out = Vec::new();

@@ -2058,6 +2058,8 @@ pub fn main_flow() {
                     | "ltmm"
                     | "noaa_ccor"
                     | "celestrak_eop"
+                    | "gk2a_ami"
+                    | "goes_abi"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -2428,6 +2430,7 @@ pub fn main_flow() {
                     | "noaa_ghcn_d"
                     | "noaa_gsod"
                     | "noaa_isd"
+                    | "gdp_drifter"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
