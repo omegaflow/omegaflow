@@ -250,13 +250,21 @@ fallback, not the first move.
 ### The cost ladder — targeted before `--all`
 
 `--all` runs **every** source (13 network calls) — the broadest, not the
-cheapest. The cheap path is the one source the question needs: `--ads` for
-astrophysics, `--arxiv`, `--crossref`, `--ntrs`, `--openalex`, `--github`, …
-`--playwright` launches a browser — only for JS-rendered pages. The Proton exit
-is **automatic**: `archive_search` routes through the running wireproxy SOCKS
-(`127.0.0.1:25344`) and tries the next exit on 403/429 — no manual
-`proton-wg.sh` rotation per query. First move: the targeted mode; `--all` only
-when the source is unknown.
+cheapest. The escalation is two axes, never a single line:
+
+- **Known URL** → `archive_search --verdict <url>` — it runs the reachability
+  ladder itself: stage 1 direct → stage 2 Proton exit → stage 3 Wayback
+  snapshot. No manual `proton-wg.sh` rotation; the tool rotates on 403/429.
+  `--sniff <url>` reports magic bytes + sha256.
+- **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
+  `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
+- **Unknown source** → `--brave <query>` (keyword web search).
+- **JS-rendered page** → `--playwright <url|query>` (browser) — only when the
+  plain fetch carries no content.
+- **Source entirely unknown** → `--all <query>` — the last move, 13 calls.
+
+First move: the targeted mode (or `--verdict` for a known URL); `--brave`,
+`--playwright`, `--all` only when that fails.
 
 ## Local tools — the self-contained path
 
@@ -390,6 +398,11 @@ discards is gone for all.
   previously carried a bare `git *: allow` that silently lifted the global deny).
   A sub-agent may run `git add` / `commit` / `status` / `diff` / `mv` only when
   the session names the exact scope in the delegation.
+- **Commits are path-scoped, never whole-index.** `git commit <eigene Pfade> -m
+  "…"` — a bare `git commit` commits the **whole shared index** and sweeps in
+  foreign staged work under your message. Stage only your own files, name them
+  in the commit. Measured 2026-09-15: a bare `git commit` pulled the Bau line's
+  staged `lis-otd-cdn.yml` + `bau-folge39.md` into an Entscheid commit.
 - **No `revert`/`undo` in a shared tree.** opencode's revert restores files from
   a snapshot — it is not a per-session undo: it rewrites the **shared working
   tree** and discards the uncommitted work of **every** session and sub-agent,
