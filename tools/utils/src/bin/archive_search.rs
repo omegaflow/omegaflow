@@ -239,7 +239,18 @@ fn main() {
             }
             "--binary" => binary = true,
             "--content" => content = true,
-            other => keywords.push(other.to_string()),
+            "--help" | "-h" => {
+                usage();
+                std::process::exit(0);
+            }
+            other => {
+                if other.starts_with('-') {
+                    eprintln!("archive_search: unknown option {other}");
+                    usage();
+                    std::process::exit(2);
+                }
+                keywords.push(other.to_string());
+            }
         }
         i += 1;
     }
