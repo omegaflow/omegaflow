@@ -129,7 +129,7 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   `cirada.VCSS` = 403. CORS `.24S` = teqc-QC (nicht SBF). NOIRLab: Gaia DR4
   noch nicht erschienen (≥ Dez 2026), Wiedervorlage 2026-12-02 hält.
 - Pro-Taucherlauf über die 10 descoped + AQS (key) + Babamul (account)
-  (2026-09-15, drei grind-pro mit `archive_search --all`): alle 10 Descopes HALTEN (kein
+  (2026-09-15, drei grind-pro mit godmode): alle 10 Descopes HALTEN (kein
   Nadel-Konsument; ESO tap_cat ist ein Content-Descope, der Host lebt; WFAU
   4× TCP-tot, NOIRLab-Spiegel `vhs_dr5`/`ukidss_dr11plus` aktiv; JVO
   alma/hitomi nur unter `/sync`; DARTS-hitomi jetzt HTTP 0). **AQS: keylose

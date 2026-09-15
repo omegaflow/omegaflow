@@ -139,14 +139,6 @@ dead 404
 url http://sekitan.jp/plant-map/en/v2/table_en,WRI,1056399,,,,,,,,,,,,,,722.7,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,CAPACITY-FACTOR-V1
 note HTTP 404 — Endpoint weg.
 
-dead unreachable
-url http://tap.roe.ac.uk/osa/sync
-note WFAU OSA (UKIRT/ATLAS DR1) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
-
-dead unreachable
-url http://tap.roe.ac.uk/ssa/sync
-note WFAU SSA (SuperCOSMOS) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc (SSS/VizieR-Kandidatenpfad unverifiziert, pending). Konsument-Kandidat (Rat 2026-09-15): SuperCOSMOS-pm als zweite unabhängige pm-Linie (60-Jahre-Basis) für den Weberin-Verdict; die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
-
 dead transport
 url http://worldtimeapi.org/api/timezone/Etc/UTC`
 note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt Browser 2026-09-10: Host tot, Dienst-Nachfolger https://timeapi.world/.
@@ -433,7 +425,7 @@ note HTTP 404 — Endpoint weg.
 
 dead timeout
 url https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=json
-note curl: curl: (28) Connection timed out after 12001 milliseconds — die alte Domain celestrak.com (Zertifikat abgelaufen). Der Nachfolger celestrak.org lebt (via Proton-Exit, direkt ip-blocked, gemessen 2026-09-14). TLE-Bahnelemente bleiben decline derived-orbit-fit (declined_sources.φ Z.769).
+note curl: curl: (28) Connection timed out after 12001 milliseconds
 
 dead 404
 url https://cems.ecmwf.int/api/v1/glofas/forecast?lat=
