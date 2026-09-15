@@ -95,3 +95,12 @@ blocked parser-def xml
 url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
 note ARPANSA UV (Australian Radiation Protection and Nuclear Safety Agency): erythemal-weighted UV index, 17 stations, em. Measured 2026-09-15 anonymous HTTP 200, text/xml 4712 B (uvvalues.xml; <index>, <utcdatetime>). The access is open — the gap is the format: the archivar has no XML value reader (only parse_json/xmlcount), so the extract is unbuilt; per-station lat/lon absent (positions pending). Compiler + consumer open.
 
+blocked key-needed
+url https://cddis.nasa.gov/archive/gnss/products/ionex/
+note NASA CDDIS IONEX-GIM (Global Ionospheric Map, TEC), em. Measured 2026-09-15: /archive/gnss/products/ionex/{year}/{ddd}/ HTTP 401 — EDL-OAuth; .secrets.local carries only EARTHDATA_EDL_TOKEN, the client_id is absent. The ionex reader stands (src/archivar/ionex.rs, LZW); open: EDL client_id (operator), then route + consumer.
+
+blocked account
+url https://wwlln.net/data/
+reg https://wwlln.net
+note WWLLN (World Wide Lightning Location Network) — VLF lightning location, em. Measured 2026-09-15: wwlln.net HTTP 200, /data/ HTTP 404 — the data route is account/agreement-gated (academic application, not commercial). Open: agreement with the operator (account), then route + consumer.
+
