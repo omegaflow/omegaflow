@@ -3,7 +3,7 @@
   session: Entscheid-Folge VIII
   class: handover
   date: 2026-09-15
-  sha256: 684e6a062a9e8d84cb2ecf31dbeedd18b99aae695c6c80411134ee083d6d7506
+  sha256: c4c152f5b3022dfa51fe35f15eb6c2fb293086119cd68533cb109a41dc5ca522
   status: live
 -->
 # Handover — Entscheid-Folge VIII (2026-09-15)
@@ -54,10 +54,20 @@ Ernte misst je Anfrage und trägt das Verdikt in `folge28` ein. (Schritt: Operat
   GLM (gestrichen) und den opencode-Provider (kein Key) aus; einziger
   free-gold-Kandidat ist `nvidia/nemotron-3-super-120b-a12b`. Kalibrier-Gate 7/7
   (Grounded-QA, Fabrikations-Falle mit ABSENT bestanden). Agent `free-research`
-  in der Global-Config installiert (read-only: edit/task deny, bash nur
-  archive_search + proton-wg). Offen: der Transport liefert 46 % HTTP 503 →
-  Retry nötig; dauerhafte Zuordnung erst nach einer Stabilitäts-Messung.
-  (Schritt: opencode neu starten; 503-Rate über N Calls messen.)
+  in der Global-Config installiert (read-only: edit/task deny, `read` verweigert
+  `.secrets.local`/`.env`/`state/**`, bash nur archive_search + proton-wg).
+- Route-Benchmark (2026-09-15, 6 offene Ernte-Kandidaten × 2 Reasoning-Konfigs,
+  Wahrheit = curl-Status): **0/6 Beispiel-URLs verifiziert** in beiden Konfigs.
+  Thinking an (Default): 5/6 ehrliches ABSENT, Median 7,1 s. Thinking aus
+  (`chat_template_kwargs.enable_thinking=false`): 0 ABSENT, zu jedem Kandidaten
+  eine Route, aber keine lebende Datei (Median 1,8 s) → ohne Tools fabriziert das
+  Modell plausible URLs. Keine harte Nuss geknackt; nur die goes_abi-Route war
+  korrekt (Compiler-eigene S3-Route), die Beispiel-Datei erfand einen Tag.
+  Konsequenz: `free-research` nur mit Tools (webfetch/archive_search) und Thinking
+  an; jede URL vor dem Nennen verifizieren — die reine Modellkenntnis trägt nicht.
+- Offen: der Transport liefert 46 % HTTP 503 → Retry nötig; dauerhafte Zuordnung
+  erst nach einer Stabilitäts- und Tool-Messung. (Schritt: opencode neu starten;
+  mit Tools gegen eine echte Ernte-Frage messen.)
 
 ## Warten auf Rückmeldung (extern gebunden — kein Datum)
 
