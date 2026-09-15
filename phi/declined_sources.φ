@@ -3596,3 +3596,19 @@ note Space-Track GP/OMM — TLE-Bahnelemente sind ein SGP4-Orbit-Fit aus Radar-/
 decline redistribution
 url pending
 note Vaisala GLD360 — global lightning location network (proprietary subscription): no public data endpoint. Verdict 2026-09-15: decline redistribution (commercial, no public route — the open lightning channel lives via the free networks, not via GLD360).
+
+decline superseded-by-integrated
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+akari_fis+WHERE+flux+IS+NOT+NULL
+note AKARI-FIS (50–180 µm) — am JVO-Knoten nicht ausgeliefert (gemessen 2026-09-15: `TAP_SCHEMA.tables` kennt kein `akari_fis`; nur `catalog.slitless_mir_psc` = MIR 9/18 µm). Das AKARI-Feld ist über den MIR-Block in sources.φ (`catalog.slitless_mir_psc`, `akari_mir_flux_jy`) getragen → FIS-Variante superseded (Bau-Folge 39, TAP-Reconciliation).
+
+decline superseded-by-integrated
+url http://jvo.nao.ac.jp/skynode/do/tap/irsf/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,irsf_jm+FROM+%22public%22.irsf_magellanic_clouds_2013+WHERE+irsf_jm+IS+NOT+NULL
+note IRSF Magellanic Clouds 2013 (`irsf_jm`) — dieselbe Quelle wie der getragene sources.φ-Block `irsf_magellanic_clouds_2008` (`irsf_j_mag`); die 2013-Variante ist redundant (gemessen 2026-09-15: Tabelle + Spalte existieren, Antwort nur VOTable, `FORMAT=json` ignoriert) → superseded (Bau-Folge 39).
+
+decline superseded-by-integrated
+url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag_g+FROM+ls_dr10.tractor+WHERE+mag_g+IS+NOT+NULL
+note LS DR10 (`mag_g`) — dieselbe Quelle wie der getragene sources.φ-Block `ls_dr10.tractor` (`flux_g`); die mag_g-Variante ist redundant (gemessen 2026-09-15: Spalte existiert, Antwort nur VOTable, `FORMAT=json` → "unknown format: json") → superseded (Bau-Folge 39).
+
+decline superseded-by-integrated
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux+FROM+cirada.VLASS_Source+WHERE+total_flux+IS+NOT+NULL
+note VLASS Source (`total_flux`) — derselbe Endpunkt wie der getragene sources.φ-Block `cirada.VLASS_Source` (`FORMAT=csv`, `Total_flux_source`); die json/total_flux-Variante ist redundant (gemessen 2026-09-15: CANFAR lehnt `FORMAT=json` ab, Spalten heißen `RA_Source`/`DEC_Source`/`Total_flux_source`) → superseded (Bau-Folge 39).
