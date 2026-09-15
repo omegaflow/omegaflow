@@ -37,3 +37,41 @@ blocked parser-def drs-fits
 url https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
 note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, gemessen 2026-09-14): rohe DRS-FITS (72 Dateien, drs_*.fits 1,0 M–288 M). Messung echt — differentielle Beschleunigung; hier IST die Messung die Schwerkraft → `gravity`. Gemessen (2026-09-15, drs_20160116_155329__20160123_160115.fits, 1 022 400 B): Primary NAXIS=0 (EXTEND=T) + BINTABLE EXTNAME='HOUSEKEEPING' (NAXIS1=212, TFIELDS=116); die Science-HDU `SCI_SCIENCE_1Hz` (NAXIS1=393, TFIELDS=140) liegt in größeren Dateien. Kein Feld trägt m/s² — die differentielle Beschleunigung ist aus LTP1/LTP2-Positionsvektoren (m, TTYPE64-72) bzw. LTP-Kräften (N) zu bilden. Der `fits.rs`-Arm (Gap B) liest die Kette; zwei Lücken: `FitsImage::parse` weist NAXIS=0 ab, `TUNIT` wird nicht gelesen. Geschwister-Route: ESA-Legacy-Archiv `lpf.esac.esa.int/lpfsa/` (Δg-Zeitreihen).
 
+pending
+url https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/odf/
+note Magellan Radio-Science (PDS-Geosciences, mgn-v-rss-1-tracking-v1/mg_2601/odf): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em` (der Sensor ist der Funkempfänger). Gebaut (2026-09-15) tools/harvest/src/bin/magellan_odf_compiler.rs; gemessen 14 665 009 Samples (1 055 880 656 B). Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/
+note Mars Global Surveyor Radio-Science (PDS-Geosciences, mgs-m-rss-1-moi-v1, Volumes mors_*): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mgs_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
+note Mars Reconnaissance Orbiter Radio-Science (PDS-Geosciences, mro-m-rss-1-magr-v1/mrors_0xxx/odf): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mro_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
+note Mars Odyssey Radio-Science (PDS-Geosciences, ody-m-rss-1-raw-v1, Volumes odrs_*): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/odyssey_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
+note MESSENGER Radio-Science (PDS-PPI, mess-rs-raw/data-odf, Jahres-Ordner .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/messenger_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/
+note Mars Express MaRS (ESA-PSA, MARS-EXPRESS/MRS, DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mars_express_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
+note Rosetta RSI (ESA-PSA, INTERNATIONAL-ROSETTA-MISSION/RSI, DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/rosetta_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
+reg https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
+note Voyager 1/2 Saturn-Encounter Radio-Science (SPDF, PSPA-00049 V1 / PSPA-00123 V2, UNIVAC-1108, TAR mit .DAT): rohe Tracking-Records, `em`. src/archivar/voyager_saturn.rs dekodiert die Uhr (IDRSPS User's Manual Table 4: word2 = YY/DOY/HH, word3 = MM/SS, word4 = SCID/network/station/band; Record-Type 90/91, Ground-Mode 1-4 = Doppler); gemessen 1980-295 .. 1981-261, Stationen 12,14,42,43,44,61,62,63 (DSN), 822 782 Tracking-Records (125 062 872 B). Gebaut (2026-09-15) tools/harvest/src/bin/voyager_saturn_compiler.rs (V1+V2, std-only TAR-Extraktion). Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
+pending
+url https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/
+reg https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/
+note Dawn Radio-Science (PDS-SBN PDS4, gravity/dawn-rss-raw-ceres/data-odf/{2015,2016}, dawn-rss-raw-vesta/data-odf/{2011,2012}): rohe ODF (.dat, TRK-2-18, von der NASA/JPL Multi-Mission Navigation Radio erzeugt), `em`. Route gefunden (2026-09-15) — die frühere Suche prüfte `pds4/dawn/rss/` (kein RSS), der Träger ist `pds4/dawn/gravity/`; pds-geosciences.wustl.edu/dawn/ bleibt 404. Offen: ODF-Compiler nach `*_odf_compiler`-Muster + parse_odf-Probe an einer .dat + sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+
