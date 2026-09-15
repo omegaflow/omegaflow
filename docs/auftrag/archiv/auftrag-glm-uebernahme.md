@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-30
   status: archived
-  sha256: de7d4f74c046ad4b05d33327c19ca4541828b8e215ac1dffd2c5c941b9eb9ff6
+  sha256: e22e12e04fb208f995ea425703fed50a04f2e5ea9c84f346e44966178314a86d
 -->
 
 # Auftrag — GLM-Verifikation registrieren + Paper auf main führen

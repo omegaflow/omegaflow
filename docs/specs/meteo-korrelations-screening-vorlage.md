@@ -2,7 +2,7 @@
   title: Vorlage — meteorologisches Korrelations-Screening
   class: concept
   date: 2026-08-31
-  sha256: 13629f57eedef5d75893012e37f36b3c872a045865cb0371727ac6db341e12ef
+  sha256: aa6f5f9a680e1a411536b89b938fc1bf28ce98b43edd34697a2f902c416b1eac
   status: live
   see-also: docs/specs/meteo-kanal-kuratierung.md
 -->

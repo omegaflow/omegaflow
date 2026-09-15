@@ -1,7 +1,7 @@
 <!--
   title: Stiftungen & Netzwerke — Erkundung
   class: survey
-  sha256: ad1ae95704b96496acef4d00a10f9a1015675adffef2b6cfc419877f8579ca68
+  sha256: a9b9db0114dc9a274fc8c8c8855c859bb2200931fa8c7952e8274ebd2ebeb31a
 -->
 # Stiftungen & Netzwerke — Erkundung
 

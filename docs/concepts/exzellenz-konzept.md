@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: d9dcb8c0ca7c9506fad0430c37debca16c9ae7d0020028edf683576561df8c39
+  sha256: 4ae36aa8d37961a69029729b805bbf5eada8842370e501f2b499a152fb7f36cd
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
