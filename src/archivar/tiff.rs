@@ -870,7 +870,11 @@ fn jpeg_bytes_per_pixel(bits_per_sample: &[u16], samples_per_pixel: u16) -> Opti
         }
         bpp += 1;
     }
-    if bpp == 0 { None } else { Some(bpp) }
+    if bpp == 0 {
+        None
+    } else {
+        Some(bpp)
+    }
 }
 
 fn assemble_jpeg(

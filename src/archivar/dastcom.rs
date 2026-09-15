@@ -1,4 +1,4 @@
-use crate::kepler::{AU_M, GM_SUN_M3_S2, elements_to_icrs_state};
+use crate::kepler::{elements_to_icrs_state, AU_M, GM_SUN_M3_S2};
 
 pub const RECORD_STRIDE: usize = 92;
 
@@ -195,8 +195,8 @@ pub fn hill_radius_m(rec: &AsteroidRec) -> Option<f64> {
 #[cfg(test)]
 mod tests {
     use super::{
-        AsteroidRec, COMET_RECORD_BYTES, CometRec, comet_state_at, encode_record, hill_radius_m,
-        parse_comet_record, parse_record, state_at,
+        comet_state_at, encode_record, hill_radius_m, parse_comet_record, parse_record, state_at,
+        AsteroidRec, CometRec, COMET_RECORD_BYTES,
     };
 
     fn halley() -> CometRec {

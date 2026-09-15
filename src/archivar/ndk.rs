@@ -46,7 +46,11 @@ fn ndk_num(s: &str) -> Option<f64> {
         return None;
     }
     let v = t.parse::<f64>().ok()?;
-    if v.is_finite() { Some(v) } else { None }
+    if v.is_finite() {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn is_hypocenter_line(line: &str) -> bool {
@@ -241,13 +245,15 @@ pub fn ray_direction(takeoff_deg: f64, azimuth_deg: f64, upgoing: bool) -> [f64;
 mod tests {
     use super::*;
 
-    const ONE_EVENT: &str = "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
+    const ONE_EVENT: &str =
+        "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
 M010176A B: 0 0 0 S: 0 0 0 M: 12 30 135 CMT: 1 BOXHD: 9.4\n\
 CENTROID: 13.8 0.2 -29.25 0.02 -176.96 0.01 47.8 0.6 FREE O-00000000000000\n\
 26 7.680 0.090 0.090 0.060 -7.770 0.070 1.390 0.160 4.520 0.160 -3.260 0.060\n\
 V10 8.940 75 283 1.260 2 19 -10.190 15 110 9.560 202 30 93 18 60 88";
 
-    const SAMPLE: &str = "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
+    const SAMPLE: &str =
+        "MLI 1976/01/01 01:29:39.6 -28.61 -177.64 59.0 6.2 0.0 KERMADEC ISLANDS REGION\n\
 M010176A B: 0 0 0 S: 0 0 0 M: 12 30 135 CMT: 1 BOXHD: 9.4\n\
 CENTROID: 13.8 0.2 -29.25 0.02 -176.96 0.01 47.8 0.6 FREE O-00000000000000\n\
 26 7.680 0.090 0.090 0.060 -7.770 0.070 1.390 0.160 4.520 0.160 -3.260 0.060\n\
