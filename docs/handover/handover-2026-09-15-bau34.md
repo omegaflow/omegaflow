@@ -3,7 +3,7 @@
   session: Bau-Folge 34
   class: handover
   date: 2026-09-15
-  sha256: 347566d3ab783b7f6337df603c73176fbe7953fc5f4e31e36288b24a3d82ed1f
+  sha256: 42e42d525798fb161401755281bbfc8f0d5ec031b26cbea8e8588ce6eb228c1c
   status: live
 -->
 # Handover — Bau & Code (2026-09-15, Bau34)
@@ -29,18 +29,20 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   Die restricted-permutation Null (`TeNull::RestrictedPermutation`, Y innerhalb von Bins der eigenen
   Vergangenheit permutiert) wurde GEBAUT und gemessen degeneriert: das n=150-Gate fällt schon
   (FPR 13,78 % bei a=0,9 D_Z=4, Anstieg 4 pp über a) → zurückgerollt wie das bias-korrigierte KSG.
-  Offen: die nächste Sprosse — feinere Bin-Auflösung oder volle Y-Vergangenheits-Einbettung — dann
-  das n=1000-Gate in CI messen. (Schritt: `src/mathematikerin/te.rs` Null-Konstruktion iterieren,
-  `gh workflow run te-gate.yml`; `gh issue close 13` erst bei einem Gate, das hält.)
+  Offen: die nächste Sprosse — feinere Bin-Auflösung ODER eine tragbare Null (auch die volle
+  Y-Vergangenheits-Einbettung `EmbeddedPast` wurde gemessen degeneriert: FPR 10,5–12 % bei n=150)
+  — dann das n=1000-Gate in CI messen. (Schritt: `src/mathematikerin/te.rs` Null-Konstruktion
+  iterieren, `gh workflow run te-gate.yml`; `gh issue close 13` erst bei einem Gate, das hält.)
 
 ## Parser-Gap A — DRS-FITS offen; TNF/ODF/ODR gebaut, warten auf Konsument (Tor 1)
 
 - DRS-FITS (LISA, `heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/`): gemessen (2026-09-15) — Primary
-  NAXIS=0 + BINTABLE `HOUSEKEEPING` (116 Spalten); die Science-HDU `SCI_SCIENCE_1Hz` (140 Spalten)
-  liegt in größeren Dateien; kein Feld trägt m/s² (differentielle Beschleunigung ist aus
-  LTP1/LTP2-Positionen m bzw. LTP-Kräften N zu bilden). Der `fits.rs`-Arm liest die Kette; zwei
-  Lücken: `FitsImage::parse` weist NAXIS=0 ab, `TUNIT` wird nicht gelesen. (Schritt:
-  `src/archivar/fits.rs` NAXIS=0-Primary + TUNIT, dann DRS-Semantik.)
+  NAXIS=0 + BINTABLE `HOUSEKEEPING`; die Science-HDU `SCI_SCIENCE_1Hz` (140 Spalten) trägt die
+  LTP-Kräfte (N) und LTP-Positionen (m), kein m/s². GEBAUT: `fits.rs` NAXIS=0-Primary + `TUNIT` +
+  `drs_differential_acceleration` (Δg = (F2−F1)/1,928 kg aus TTYPE 80–88), 7 Tests grün. Offen: ein
+  DRS-Compiler, der die Kette bis `EXTNAME='SCI_SCIENCE_1Hz'` läuft (der generische fits-Arm liest
+  nur die erste BINTABLE), + Verifikation am echten Granulat (`pending`). (Schritt:
+  `tools/harvest/src/bin/` DRS-Compiler nach fits-Compiler-Muster; echter FITS-Lauf per `curl -r`.)
 - TNF (NH REX) Stufe 2 GEBAUT: `tnf_dt0` in `src/archivar/odf.rs` dekodiert die Uplink-Carrier-Phase
   (verschachteltes Daten-CHDO Typ 10 Länge 76: hi/lo/frac_phs_cycles + ramp_freq 7,15 GHz X-Band).
   (Schritt: TNF-Compiler + Membran-Konsument — der Konsument bleibt beim Operator.)
@@ -62,12 +64,19 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   NOIRLab ls_dr10). (Schritt: je Kandidat den Leser in `src/archivar/` bauen, tote Routen umstellen,
   dann sources.φ-Block je Quelle mit Konsument.)
 
-## GRACE-FO L1B — CI-Workflow steht, Dispatch offen
+## Register-Digest — Bau-Linie offen (aus register-digest, archiviert)
 
-- `gunzip_tar_members`/`tar_gz_yaml_to_json` grün; der ignored Test
-  `real_gracefo_l1b_tarball_parses_a_member` ist jetzt in `.github/workflows/gracefo-l1b-verify.yml`
-  verdrahtet (Download `podaac-ops-cumulus-protected` via `curl -L` + EDL-Bearer, gemessen 206).
-  (Schritt: nach Push `gh workflow run gracefo-l1b-verify.yml`, das Ergebnis lesen.)
+- `repo_surveillance` Branch-Verdict: `session-protokoll.md` §Wächter verlangt den Branch-Namen als
+  eigene Verdict-Zeile; `repo_surveillance.rs:36-47` prüft nur den Remote. (Schritt: Branch in
+  `git_verdict()` aufnehmen.)
+- `--history`-Blindfleck: offene Zeilen, die in einer UMgeschriebenen (nicht gelöschten) Datei
+  verschwanden, sind unsichtbar. (Schritt: `git log -S`-Modus je Thema, falls gebraucht.)
+- `--live`-Namensstimme (Rat): „live" reibt an der Quellen-Registerklasse `live`.
+  (Schritt: Operator entscheidet `--open` oder bleibt.)
+- Legacy-Repo: 80 archivierte/gelöschte `docs/handover/*.md` ohne Gegenstück. (Schritt:
+  `register_lookup --history --legacy /home/johannes/backup/archive/omegaflow/omegaflow-legacy`.)
+- Sichtbarer Überseh-Korpus: `--live` meldet 106 Dokumente, ~630 offene Zeilen — die gehören je in
+  ihre Linie (Ernte/Forschung), nicht gesammelt hier. (Schritt: je Linie ihr Digestschritt.)
 
 ## RINEX/CORS — Eintrag richtiggestellt, Konsument offen
 
