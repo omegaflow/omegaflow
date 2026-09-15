@@ -1,7 +1,7 @@
 <!--
   title: The Broken Null Control
   class: concept
-   sha256: 101360e76bd2b8a1edf1c34d47d5c2ea897451c4e4d82e61c3c8c0a23a8d3b56
+   sha256: 0d982ba5a4d3a181a70b8ca95d7748d242b1dd7ee2ed9eab133c94e76675e3c1
   status: live
 -->
 # The Broken Null Control
@@ -124,16 +124,22 @@ phase threshold. The naive threshold was the artifact.
 
 ## 6. Open limits
 
-- **Multiple comparison:** 20 directed pairs tested; the 2 surviving
-  arrows are within the unprotected false-positive range. A max-T
-  correction over the pair matrix is outstanding.
-- **Lag sweep:** only τ ∈ {0, 60, 120} s was tested; the lag optimum
-  is unverified.
-- **Bandwidth sensitivity:** Silverman is a heuristic; the dependence
-  of the verdicts on h is unmeasured.
+- **Multiple comparison (measured 2026-09-15, `te_null_limits_probe`):**
+  fam over the 20 directed pairs × lags {0, 1, 2} (60 cells) = 2.18e-1;
+  the per-cell μ+2σ threshold names 5 arrows, **0 survive fam**. A
+  synthetic matrix (fam = 2.26e-1) kills the one per-cell false positive
+  and keeps all 8 true couplings.
+- **Lag sweep (measured 2026-09-15):** τ 0–360 s — the live control
+  pairs stay silent at every lag; the Hénon forward arrow sits at
+  τ ∈ {0, 1, 5} (optimum τ = 1) and dies from τ = 10 onward.
+- **Bandwidth sensitivity (measured 2026-09-15):** Silverman factor
+  0.5–3.0, threshold recomputed under the same h — the verdicts are
+  stable; one marginal arrow on Density-RTSW → EUV-304 at factor 3.0
+  (excess +4.3e-4, dies under fam).
 - **Window drift:** the naive and phase runs are not on identical data
   (the RTSW window rolls ~2 h between runs); n drifts accordingly. The
   finding is about the method, demonstrated by the control both times.
+  A fixed-window re-run on archived data stays pending.
 
 The honest scientific content of this result is a **negative**: the
 pretty cascade was an artifact of the test, and fixing the test leaves

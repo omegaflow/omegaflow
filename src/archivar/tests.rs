@@ -297,6 +297,7 @@ fn test_allowed_units_for_force() {
     assert!(!allowed_units_for_force(2).contains(&"c"));
     assert!(!allowed_units_for_force(6).contains(&"kt"));
     assert!(allowed_units_for_force(0).contains(&"count"));
+    assert!(allowed_units_for_force(0).contains(&"rad"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
@@ -7532,6 +7533,79 @@ fn goes_abi_series_roundtrip_and_component_name() {
         Some("goes_abi_radiance")
     );
     assert_eq!(super::extract::series_component_name("goes_abi", 99), None);
+}
+
+#[test]
+fn voyager_saturn_series_dispatch_and_component_names() {
+    let mut row = [0.0f64; super::voyager_saturn::VSAT_STRIDE];
+    row[0] = 0.0;
+    row[1] = 80.0;
+    row[2] = 296.0;
+    row[3] = 0.0;
+    row[4] = 8.0;
+    row[5] = 0.0;
+    row[14] = 0x5abee as f64;
+    row[15] = 0x530c36 as f64;
+    let bytes = super::voyager_saturn::write_vsat_bin(&[row]);
+    let parsed = super::extract::series_parse_bin("voyager_saturn", &bytes)
+        .expect("voyager_saturn series parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].1, 0x5abee as f64);
+    assert_eq!(parsed[0].2, super::voyager_saturn::COMP_DOPPLER_HP);
+    assert_eq!(parsed[1].1, 0x530c36 as f64);
+    assert_eq!(parsed[1].2, super::voyager_saturn::COMP_DOPPLER_LP);
+    assert_eq!(
+        super::extract::series_component_name(
+            "voyager_saturn",
+            super::voyager_saturn::COMP_DOPPLER_HP
+        ),
+        Some("voyager_saturn_doppler_count_hp")
+    );
+    assert_eq!(
+        super::extract::series_component_name(
+            "voyager_saturn",
+            super::voyager_saturn::COMP_RANGE_PART2
+        ),
+        Some("voyager_saturn_range_part2")
+    );
+    assert_eq!(
+        super::extract::series_component_name(
+            "voyager_saturn",
+            super::voyager_saturn::COMP_ANGLE_A
+        ),
+        Some("voyager_saturn_angle_a")
+    );
+    assert_eq!(
+        super::extract::series_component_name("voyager_saturn", 99),
+        None
+    );
+}
+
+#[test]
+fn voyager_saturn_register_field_names_match_components() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "voyager_saturn")
+        .expect("phi/sources.φ registers the voyager_saturn source");
+    let names: Vec<&str> = src
+        .extracts
+        .iter()
+        .filter_map(|e| match e {
+            Extract::Field(fc) => Some(fc.name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        names,
+        vec![
+            "voyager_saturn_doppler_count_hp",
+            "voyager_saturn_doppler_count_lp",
+            "voyager_saturn_range_part2",
+            "voyager_saturn_angle_a",
+            "voyager_saturn_angle_b",
+        ]
+    );
 }
 
 #[test]
