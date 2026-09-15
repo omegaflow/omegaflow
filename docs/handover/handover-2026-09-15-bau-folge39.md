@@ -3,7 +3,7 @@
   session: Bau-Folge 39
   class: handover
   date: 2026-09-15
-  sha256: 7151c999d067338c17feb7e6fc3c717202f6d8304e7130d7df73c1be2f230dde
+  sha256: 6128363d06743d0d7d16e386ba9c11a537df0752175ef88de51687fd3c6e58bd
   status: live
 -->
 # Handover — Bau-Folge 39 (2026-09-15)
@@ -26,12 +26,12 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 ## Parser-Gap A — DRS-Verifikation + TNF/ODF-Konsument offen
 
 - DRS-FITS: `drs_fits_compiler` läuft am echten Granulat (drs_20160124_000015__20160130_235906.fits,
-  4640 Zeilen, roundtrip parst), aber die LTP-Kraftspalten DST11077-11085 lesen alle 0,0
-  → |dg| = 0 (gemessen: Roh-Bytes am berechneten Spalten-Offset 176 sind null; die
-  zweite Datei drs_20160213…fits trägt gar keine `SCI_SCIENCE_1Hz`-HDU). (Schritt: eine
-  SCI-Datei mit nicht-null LTP-Kräften messen — die 9-Tage-Datei
-  `drs_20160102_093513__20160111_070510.fits` (302 MB) per Download/`curl -r`, oder die
-  Spaltenzuordnung gegen das LPF-DRS-Handbuch halten; `src/archivar/fits.rs`.)
+  4640 Zeilen, roundtrip parst) — n=1 Datei trägt null Bytes an den LTP-Kraftspalten
+  DST11077-11085 (Roh-Bytes am berechneten Spalten-Offset 176 sind null; die zweite Datei
+  drs_20160213…fits trägt gar keine `SCI_SCIENCE_1Hz`-HDU, zählt nicht als Gegenprobe).
+  (Schritt: zuerst die Spaltenzuordnung gegen das LPF-DRS-Handbuch halten; nur wenn es sie
+  bestätigt, die 9-Tage-Datei `drs_20160102_093513__20160111_070510.fits` (302 MB) per
+  Download/`curl -r` als zweite Probe; `src/archivar/fits.rs`.)
 - TNF: `tnf_compiler.rs` gebaut; offen echter Lauf + Registrierung + Membran-Konsument
   (Operator). (Schritt: Lauf gegen `nhpc_rex_*.tnf`.)
 - ODF Juno/Magellan/MGS/MRO/Odyssey/MESSENGER/Mars Express/Rosetta + ODR Voyager: gebaut,
