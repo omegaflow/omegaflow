@@ -3,7 +3,7 @@
   session: Entscheid-Folge VIII
   class: handover
   date: 2026-09-15
-  sha256: a0801b1cfff061a5375cd4d5d65bf99933285dced10ca1a9c03324280f2d00a6
+  sha256: 62d5567a1ddc4792f66b667a841a69fcb4b35264e9691e476699a404bb0ef8d6
   status: live
 -->
 # Handover — Entscheid-Folge VIII (2026-09-15)
@@ -49,8 +49,9 @@ Register-Befund je Anfrage (gemessen, Verdikt = Ernte):
 - JSOC: `jsoc.stanford.edu` AIA-Assets in `phi/sources.φ:8064+` → Registrierung evtl. entbehrlich.
 - LPF: anonyme DRS-FITS-Route in `phi/blocked_sources.φ:38` gemessen → Anfrage evtl. redundant.
 - GAVO TAP-Async: `gaia-xp-full-cdn.yml` gebaut, Sync-Kappung ~20000 → wahrscheinlich nötig.
-- BiSON, CSES-Limadou, IGETS: offene Ernte-Punkte (`handover-2026-09-15-ernte-folge28.md`) → nötig.
-- NSE/Haug: Forschung-Handover §Extern → nötig.
+- BiSON, IGETS: offene Ernte-Punkte (`handover-2026-09-15-ernte-folge28.md`) → nötig.
+- CSES-Limadou: `docs/concepts/der-kausalpfeil.md:92` und `kybernetische-astrophysik.md:143` führen CSES als `descoped` (2026-09-12, kein anonymer Zugang); `folge28` trägt aber noch „CSES-SPA-Login" → Widerspruch, Ernte entscheidet.
+- NSE/Haug: `survey-2026-09-14-warteliste-offene-alternativen.md:61` führt die Rohdaten als `descoped` (kein Deposit, null Datendateien); Forschung §Extern wartet aber noch auf Keimer → Widerspruch, Ernte entscheidet.
 - Rubin RSP, TOAR: kein `phi`-Eintrag, kein Ernte-Punkt → Notwendigkeit ungeklärt.
 
 (Schritt: Operator übergibt diese Nachricht der nächsten Ernte-Session; Ernte misst
