@@ -149,4 +149,3 @@ file solar_omega_g.φ | special | versioned | visible
 dir twomass | fixture | local | invisible
 dir ncei_goes_xrs | fixture | local | invisible
 dir ncei_ssi | fixture | local | invisible
-dir celestrak_eop | fixture | local | invisible
