@@ -47,7 +47,14 @@ Tasks, die nicht autonom hier erfolgen können, sind in das Handover ihrer Linie
 
 ## Termine (Wiedervorlage)
 
+- 2026-09-22 — AllWISE-Coverage-Verifikation (CDN-Asset `allwise_coverage.fp01`,
+  Compiler `wise_coverage_compiler` steht). (Schritt: Asset auf dem CDN prüfen;
+  wieder eingesetzt 2026-09-15 aus `archiv/handover-2026-09-09-mechanische-reste.md`.)
+- 2026-09-28 — JUICE-Flyby (Kernel 000113+). (Schritt: nach dem Flyby den
+  Feld-Zustand füllen — `papers/flyby-path-2-preregistration.md`.)
 - 2026-12-02 — NOIRLab Speisekammer-Frage (Gaia DR4).
+- 2026-12-03 — Europa Clipper (Fenster). (Schritt: Feld-Zustand füllen —
+  `papers/flyby-path-2-preregistration.md`.)
 
 ## Abschluss
 
