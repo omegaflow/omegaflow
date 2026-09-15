@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 3a043321afb2748ede30db7780f99614cab53a8410c13a27e61a9d92c3dfccdb
+  sha256: 732c54c09ba631a5bfc0d7c8274b331fb6b15ac836a0b6ad61f2c782f517ed30
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -51,7 +51,10 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (gesäubert global 49,16 / 44,65; ungesäubert 44,4 mHz, nicht detrend-robust; die
   Papier-Zählungen 70 602/73 249 sind die post-gate-Zählungen). **Surrogat-Null: 2/4 Selektion** (st14 45,75, st63 1992
   46,95; Null mean+2σ = 0,65, P≈2,5·10⁻³) — st43 51,55 und st63 1988 47,35
-  überleben nicht. Die qualitative Station-Fixität steht (beide Serien). (Schritt:
+  überleben nicht. Die qualitative Station-Fixität steht (beide Serien).
+  1989–1991: die ATDF-Lücke ist eine Archiv-Lücke des ATDF-Produkts (deckt
+  1987/1988/1994); die Doppler-Werte leben im Geschwister `.asc.gz` (NAVIO,
+  1973–2002, geerntet) — nicht absent, nicht pending. (Schritt:
   Papier **v4** — Zensus statt Pick, die alten Werte mit gemessenen Rängen,
   Drift-Satz streichen, §2 bleibt; Council-Landing.) Instrumente:
   `pioneer10_txrx_split_probe`, `pioneer10_paper_chain_retrace`,
@@ -59,16 +62,21 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `pioneer10_paper_harvest_probe`, `pioneer10_method_sensitivity_probe`.
 - **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
   stehen, gemessen:
-  - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
-    ist der Alias-Partner (mit 949,29 mHz), keine Diskrepanz; die soliden Linien
-    sind 45,75 / 51,55 / 47,35 mHz.
+  - **f\*** — der globale Peak 50,73 mHz reproduziert nicht (gesäubert global
+    49,16 / 44,65 mHz, ungesäubert 44,4 mHz, nicht detrend-robust); die
+    Stationswerte 45,75 / 51,55 / 47,35 mHz sind eine Sub-Peak-Auswahl — auf der
+    kanonischen Serie gemessene Ränge 4 / 2 / 17 (51,50 ein 0,05-mHz-Gitterschritt
+    unter 51,55) —, keine soliden Linien.
   - **1-s-Zählung** — 501 876 (volles ATDF-Set) ⊃ 73 249 (sub-10-s) ⊃ 70 602
     (strikte 1-s); 162 548 = 70 602 + 20 752 + 71 194 (Summe der drei
     Sampler-Klassen), kein Doppelzähler.
-  - **Amplitude** — ~160 Hz = Station-14-Starksignal (160/153/161 Hz), nicht
-    bandweit (Station 43: 104/102/82 Hz, Station 63: 57/50/65 Hz).
+  - **Amplitude** — auf der kanonischen Serie re-ankert die Linienamplitude auf
+    ~5 Hz (Station 14, 1988); der 160-Hz-Wert (160/153/161 Hz, Station 14) ist
+    `pending` — der eigene Zensus steht aus.
   - **Epochen-Persistenz** — 3 ATDF-Epochen (1987-12→1993-04); die 1-s-Klasse in
-    zwei Dumps (1988, 1992); Drift Madrid 63: 47,35 → 46,95 mHz (0,40 mHz, ~4 J.).
+    zwei Dumps (1988, 1992); der Drift-Satz (47,35 → 46,95 mHz, 0,40 mHz, ~4 J.)
+    ist gestrichen — sein 1988-Anker 47,35 erscheint nicht, die Drift wird nicht
+    getragen.
 
 ## Zwei externe Anfragen stehen (kein anonymer Pfad, request-only)
 
