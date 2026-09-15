@@ -1750,8 +1750,8 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     assert_eq!(radius.kernel_id, 1.0);
     assert_eq!(gm.force_type, 1.0);
     assert_eq!(radius.force_type, 1.0);
-    assert!(gm.extent == 0.0 && gm.tau.is_infinite());
-    assert!(radius.extent == 0.0 && radius.tau.is_infinite());
+    assert!(gm.extent == 3000.0 && gm.tau.is_infinite());
+    assert!(radius.extent == 3000.0 && radius.tau.is_infinite());
     let Motion::Kepler { rec: rec_gm } = &gm.motion else {
         panic!("kepler motion");
     };
