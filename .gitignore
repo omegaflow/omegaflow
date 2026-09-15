@@ -59,6 +59,8 @@ phi/*
 phi/pipeline/*
 # Der Maschinen-Zwilling des Oszillator-Gates ist ein Registrierungs-Urteil — versioniert.
 !phi/pipeline/decline_lens.φ
+# Das Zustands-Register (SOURCE_PORT §4) ist ein Registrierungs-Urteil — versioniert wie dead_sources.φ.
+!phi/pipeline/ledger.φ
 !phi/pipeline/catalog/
 phi/pipeline/catalog/*
 # Das TAP-Adressbuch der Weberin (tap_index_*.φ) ist ein Katalog-Inventar — versioniert wie MANIFEST.φ.
