@@ -2,7 +2,7 @@
   title: Survey — Weberin: Bestands-Inventar der Körper-Kette im Sonnensystem (die zweite Linie je Klasse)
   class: survey
   date: 2026-09-07
-  sha256: 0fa1fbdbde50f834b0e2c8587d1642421ac140be7e5e755b822b416cdc7b051e
+  sha256: 2f30afad19398f1e9d0adc2aed2326fc5734f6085229a00bf94e0b5379787da0
   status: live
   see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->

@@ -415,8 +415,38 @@ fn history_term(args: &[String]) -> Option<&str> {
         if a == "--term" {
             return it.next().map(|s| s.as_str());
         }
+        if a == "--legacy" {
+            it.next();
+            continue;
+        }
+        if a == "--history" || a.starts_with("--") {
+            continue;
+        }
+        return Some(a.as_str());
     }
     None
+}
+
+fn removed_lines(repo: Option<&str>, sha: &str, term: &str) -> Vec<String> {
+    let mut cmd = Command::new("git");
+    if let Some(r) = repo {
+        cmd.arg("-C").arg(r);
+    }
+    let output = match cmd.arg("show").arg(sha).arg("--").arg("docs").output() {
+        Ok(o) => o,
+        Err(_) => return Vec::new(),
+    };
+    if !output.status.success() {
+        return Vec::new();
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let mut out = Vec::new();
+    for line in stdout.lines() {
+        if line.starts_with('-') && !line.starts_with("---") && line.contains(term) {
+            out.push(line.to_string());
+        }
+    }
+    out
 }
 
 fn scan_rewritten(repo: Option<&str>, term: &str) {
@@ -426,14 +456,10 @@ fn scan_rewritten(repo: Option<&str>, term: &str) {
     }
     cmd.arg("log")
         .arg("--oneline")
+        .arg("--all")
         .arg(format!("-S{term}"))
-        .arg("--");
-    for sub in ARCHIV_DIRS {
-        cmd.arg(sub);
-    }
-    for (dir, _) in REGISTER_DIRS {
-        cmd.arg(dir);
-    }
+        .arg("--")
+        .arg("docs");
     let output = match cmd.output() {
         Ok(o) => o,
         Err(_) => {
@@ -449,13 +475,28 @@ fn scan_rewritten(repo: Option<&str>, term: &str) {
         return;
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
+    let mut shas: Vec<String> = Vec::new();
     let mut n = 0usize;
     for line in stdout.lines() {
         println!("REWRITTEN\t{}\t{}", term, snippet(line, 160));
         n += 1;
+        if let Some(sha) = line.split_whitespace().next() {
+            shas.push(sha.to_string());
+        }
+    }
+    for sha in &shas {
+        let removed = removed_lines(repo, sha, term);
+        if removed.is_empty() {
+            continue;
+        }
+        println!("REMOVED\t{}\t{}", sha, term);
+        for r in &removed {
+            println!("REMOVED\t{}\t{}", term, snippet(r, 160));
+        }
+        break;
     }
     println!(
-        "register_lookup --history --term {}: {} rewritten-history hit(s)",
+        "register_lookup --history {}: {} rewritten-history hit(s)",
         term, n
     );
 }
@@ -486,7 +527,7 @@ fn run_history(args: &[String]) {
         scan_rewritten(repo, term);
     }
     println!(
-        "register_lookup --history: {} hits, {} absent, blind spot: lines that vanished inside a rewritten (not deleted) file need --history --term <term> (git log -S)",
+        "register_lookup --history: {} hits, {} absent, blind spot: lines that vanished inside a rewritten (not deleted) file need --history <term> (git log -S)",
         open_out.len() + released_out.len(),
         absent_out.len()
     );
@@ -539,7 +580,7 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --live            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [--term <term>]   (open points in archived + deleted documents; --term adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --live            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }

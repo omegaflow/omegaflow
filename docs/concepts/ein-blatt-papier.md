@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: 78166b5b93188e4cd1418e6bf215545d3616262da6e19b6d066642e0a9078d12
+  sha256: b919ca810109a1591c8b43d49e9eb1ddb9828465471e275252a42a33e4ee76b1
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
