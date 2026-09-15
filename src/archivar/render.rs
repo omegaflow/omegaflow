@@ -169,6 +169,7 @@ pub fn render_url(
         .replace("{year}", &ty.to_string())
         .replace("{year2}", &format!("{:02}", year2))
         .replace("{month}", &tm.to_string())
+        .replace("{prev_Mon}", month_abbr(if tm == 1 { 12 } else { tm - 1 }))
         .replace("{day}", &td.to_string())
         .replace("{yday}", &format!("{:03}", yday))
         .replace("{hour}", &format!("{:02}", q_hour))
@@ -368,4 +369,38 @@ pub fn render_source_body(
         body = body.replace("{min_freq}", &f.to_string());
     }
     Some(body)
+}
+
+#[cfg(test)]
+mod prev_mon_tests {
+    use super::*;
+
+    #[test]
+    fn render_url_prev_mon_is_the_previous_calendar_month() {
+        let lsk = crate::archivar::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let url = render_url(
+            "https://example.com/{month}/{prev_Mon}",
+            0.0,
+            0.0,
+            0.0,
+            8.0e8,
+            1000.0,
+            "earth",
+            &std::collections::HashMap::new(),
+            &lsk,
+        )
+        .unwrap();
+        let parts: Vec<&str> = url
+            .trim_start_matches("https://example.com/")
+            .split('/')
+            .collect();
+        let month: u32 = parts[0].parse().unwrap();
+        assert_eq!(
+            parts[1],
+            crate::archivar::month_abbr(if month == 1 { 12 } else { month - 1 })
+        );
+    }
 }
