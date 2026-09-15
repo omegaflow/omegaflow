@@ -6641,7 +6641,7 @@ ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_ql_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
-url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL
 format tap
 ttl 604800
 at sun
@@ -8459,3 +8459,39 @@ format us_crn_hourly
 at earth
 ttl 3600
 field us_crn_hourly_temp_c us_crn_hourly_temp_c exponential-decay thermal degree_C 3600 0.0 0.0
+
+url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field ksmag vhs_ks_mag inverse-square em mag 31536000 0.0 0.0
+
+url http://jvo.nao.ac.jp/skynode/do/tap/akari/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+object_ra+AS+ra,object_dec+AS+dec,flux_density_09+AS+flux+FROM+catalog.slitless_mir_psc+WHERE+flux_density_09+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field flux akari_mir_flux_jy inverse-square em Jy 31536000 0.0 0.0
+
+url http://jvo.nao.ac.jp/skynode/do/tap/irsf/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_j+AS+jmag+FROM+irsf_magellanic_clouds_2008+WHERE+mag_j+IS+NOT+NULL+AND+mag_j%3C90
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
+
+url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field flux_g noirlab_ls_dr10_g_flux inverse-square em nMgy 31536000 0.0 0.0
