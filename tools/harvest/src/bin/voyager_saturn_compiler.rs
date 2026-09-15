@@ -66,6 +66,9 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let mut rows: Vec<[f64; voyager_saturn::VSAT_STRIDE]> = Vec::new();
+    let mut stations = std::collections::BTreeSet::new();
+    let mut first_time: Option<voyager_saturn::VoyagerSaturnTime> = None;
+    let mut last_time: Option<voyager_saturn::VoyagerSaturnTime> = None;
     for base in ROUTES {
         let tars = tars_of(base);
         eprintln!("{base}: {} tar files", tars.len());
@@ -87,16 +90,38 @@ fn main() {
             for r in &recs {
                 let code = voyager_saturn::kind_code(r.kind) as usize;
                 by_kind[code] += 1;
+                stations.insert(r.station);
+                if first_time.is_none() {
+                    first_time = Some(r.time);
+                }
+                last_time = Some(r.time);
                 rows.push(voyager_saturn::to_bin_row(r));
             }
             eprintln!(
-                "{tar}: {} tracking records (doppler {}, range {}, sync {})",
+                "{tar}: {} tracking records (doppler {}, range {}, angle {})",
                 recs.len(),
                 by_kind[0],
                 by_kind[1],
                 by_kind[2]
             );
         }
+    }
+    if let (Some(a), Some(b)) = (first_time, last_time) {
+        let st: Vec<String> = stations.iter().map(u64::to_string).collect();
+        eprintln!(
+            "span {}-{:03} {:02}:{:02}:{:02} .. {}-{:03} {:02}:{:02}:{:02}; stations {}",
+            a.year,
+            a.day_of_year,
+            a.hour,
+            a.minute,
+            a.second,
+            b.year,
+            b.day_of_year,
+            b.hour,
+            b.minute,
+            b.second,
+            st.join(",")
+        );
     }
     if rows.is_empty() {
         eprintln!("voyager_saturn: no tracking records — the series stays unwritten (0 honored)");
@@ -116,7 +141,7 @@ fn main() {
                 by_kind[r[0] as usize] += 1;
             }
             eprintln!(
-                "{out}: {} tracking records (doppler {}, range {}, sync {}), {} B — roundtrip parses",
+                "{out}: {} tracking records (doppler {}, range {}, angle {}), {} B — roundtrip parses",
                 parsed.len(),
                 by_kind[0],
                 by_kind[1],

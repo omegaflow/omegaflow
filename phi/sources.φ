@@ -8495,3 +8495,11 @@ cmap .
 ra ra
 dec dec
 field flux_g noirlab_ls_dr10_g_flux inverse-square em nMgy 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
+format voyager_saturn
+at earth
+ttl 604800
+field doppler_count_hp voyager_saturn_doppler_count_hp inverse-square em count 604800 0.0 0.0
+field doppler_count_lp voyager_saturn_doppler_count_lp inverse-square em count 604800 0.0 0.0
+field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
