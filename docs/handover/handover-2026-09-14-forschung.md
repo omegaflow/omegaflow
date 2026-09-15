@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: c90f480c52c241d4b2b5e84a0b03a19c3ad64068e26bab1f35fad4eae3758b5d
+  sha256: ba0a04bfa35f3d77cdacc54936858cb3dcdd4dd5e52737dbc867f527cb2eb749
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -31,6 +31,18 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   → `data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin` holen + Ramp-Record-Join für
   den Uplink-Sender — der ATDF-Parser extrahiert bisher nur die Empfangsstation
   TKFORM[9], nicht den Sender.)
+- **Registerzeilen — geschlossen (Prüfliste vor der Toth-Mail)** — die Zahlen
+  stehen, gemessen:
+  - **f\*** — 50,73 mHz (0,1-mHz-Gitter) = 50,714 mHz (0,05-mHz-Gitter); 50,71 mHz
+    ist der Alias-Partner (mit 949,29 mHz), keine Diskrepanz; die soliden Linien
+    sind 45,75 / 51,55 / 47,35 mHz.
+  - **1-s-Zählung** — 501 876 (volles ATDF-Set) ⊃ 73 249 (sub-10-s) ⊃ 70 602
+    (strikte 1-s); 162 548 = 70 602 + 20 752 + 71 194 (Summe der drei
+    Sampler-Klassen), kein Doppelzähler.
+  - **Amplitude** — ~160 Hz = Station-14-Starksignal (160/153/161 Hz), nicht
+    bandweit (Station 43: 104/102/82 Hz, Station 63: 57/50/65 Hz).
+  - **Epochen-Persistenz** — 3 ATDF-Epochen (1987-12→1993-04); die 1-s-Klasse in
+    zwei Dumps (1988, 1992); Drift Madrid 63: 47,35 → 46,95 mHz (0,40 mHz, ~4 J.).
 
 ## Zwei externe Anfragen stehen (kein anonymer Pfad, request-only)
 
