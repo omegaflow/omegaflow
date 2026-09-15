@@ -63,6 +63,10 @@ fn file_name_string(path: &Path) -> String {
     }
 }
 
+fn is_doc_name(name: &str) -> bool {
+    name.ends_with(".md") && !name.starts_with('_')
+}
+
 fn open_marker_matches(line: &str) -> bool {
     let lower = line.to_lowercase();
     OPEN_MARKERS.iter().any(|m| lower.contains(m))
@@ -212,7 +216,7 @@ fn run_live() {
                 continue;
             }
             let name = file_name_string(&path);
-            if !name.ends_with(".md") {
+            if !is_doc_name(&name) {
                 continue;
             }
             let text = match fs::read_to_string(&path) {
@@ -297,7 +301,7 @@ fn scan_archiv_dir(
             continue;
         }
         let name = file_name_string(&path);
-        if !name.ends_with(".md") {
+        if !is_doc_name(&name) {
             continue;
         }
         let path_str = path.to_string_lossy().to_string();
@@ -637,5 +641,12 @@ mod tests {
             Some("docs/handover/archiv/handover-2026-09-01-x.md")
         );
         assert_eq!(find_duplicate("other.md", &archiv), None);
+    }
+
+    #[test]
+    fn template_is_not_a_doc() {
+        assert!(is_doc_name("handover-2026-09-15-x.md"));
+        assert!(!is_doc_name("_template.md"));
+        assert!(!is_doc_name("README.txt"));
     }
 }
