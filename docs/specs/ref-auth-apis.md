@@ -48,11 +48,11 @@ vorhanden.
 | `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer (Public Domain) | https://firms.modaps.eosdis.nasa.gov/api/area/ |
 | `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata (PD) | https://urs.earthdata.nasa.gov → Profil → Generate Token |
 | `USGS_WATER_KEY` | ✅ | USGS Water (PD) | https://api.waterdata.usgs.gov/ogcapi/ |
-| `CATALOGS_REPO`/`OMEGAFLOW_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+| `CATALOGS_REPO`/`GH_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
 
 ### ✅ In `.secrets.local` vorhanden (2026-08-14 — aus der ehemaligen „Noch zu besorgen"-Liste eingelöst)
 
-`NASA_API_KEY`, `NASA_ADS_TOKEN`, `SPACETRACK_USER/PASS`, `SUPERMAG_USER`
+`NASA_API_KEY`, `NASA_ADS_TOKEN`, `BRAVE_API_KEY`, `SPACETRACK_USER/PASS`, `SUPERMAG_USER`
 (API nutzt nur `user=`-Param, kein Passwort nötig), `CDS_API_KEY`, `JSOC_EMAIL`,
 `NOAA_CDO_TOKEN`, `TNS_API_KEY` (integriert, Vollkatalog), `ZENODO_TOKEN`,
 `MATERIALS_KEY`, `EIA_API_KEY`, `PLANTNET_KEY`, `AIRNOW_KEY`, `GFW_USER/PASS`,
@@ -60,6 +60,10 @@ vorhanden.
 `MOVEBANK_USER/PASS/TOKEN`, `CMEMS_USER/PASS`, `GBIF_USER/PASS` (verifiziert,
 3,9 Mrd. Vorkommen), `PURPLEAIR_KEY` (verifiziert, globale PM-Sensoren),
 `TRANSIT511_KEY` (verifiziert, aber decline — Premium-Echtzeit + gzip + Registry).
+
+`archive_search --github` liest seit 2026-09-15 `GITHUB_SEARCH_TOKEN` (read-only,
+fine-grained ohne Permissions); der Write-Token `GH_TOKEN` bleibt bei
+der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
 
 Ein vorhandener Key **bedeutet kein Port-Verdikt**: einige besorgte Accounts führen
 auf Quellen, die das Register als `decline` (kein Messwert, Modell, projekt-gebunden)

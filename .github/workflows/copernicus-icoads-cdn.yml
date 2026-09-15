@@ -35,7 +35,7 @@ on:
 permissions:
   contents: write
 env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
   CDS_API_KEY: ${{ secrets.CDS_API_KEY }}
   RUSTFLAGS: -D warnings
 jobs:
