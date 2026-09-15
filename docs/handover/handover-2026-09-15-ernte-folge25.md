@@ -3,7 +3,7 @@
   session: Ernte-Folge 25
   class: handover
   date: 2026-09-15
-  sha256: 076730fc7d541c93c89ce874aa0f49f5981e2003e58d1abf44ca34a8b5d2712a
+  sha256: 0130ce6906a1813cf3216d59f0b85c8e215b8cb01dabf5e96f7e402f44c784a4
   status: live
 -->
 # Handover — Ernte-Folge 25 (2026-09-15)
@@ -134,6 +134,14 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   FRM/FEM/POC — die Granularität, die `openaq_pm25_ugm3` nicht trägt) →
   entblockt → ledger-Kandidat; die API bleibt key-gated. Babamul bleibt
   blocked account (Kafka/API credential-gated, Signup mail-gated).
+- Descope-Note-Angleich (Rat 2026-09-15): die `descoped`-Blöcke in
+  `phi/blocked_sources.φ` enden in der Note mit „→ pending (Tor 1)" (WFAU
+  OSA/SSA/VSA/WSA, MarineCadastre, GNIP) — Zustandszeile und Note widersprechen
+  sich. Angleich auf „Descope hält (Tor 1: kein gebauter Konsument) — kein
+  sources.φ-Block". Keine Linien-Aufteilung des Registers (Rat: die
+  Verantwortungslinie IST der Block-Typ; `descoped` wandert nicht nach
+  `declined_sources.φ`). (Schritt: Note-Enden der 5–6 `descoped`-Blöcke im
+  selben Register-Pass angleichen.)
 - Ledger-Re-Harvest + Zustandsnamen-Angleich (2026-09-15): Header Z. 2
   `geparkt` → `parser-gap` (SOURCE_PORT §4 trug den Namen bereits);
   `regtap_census import --regtap http://reg.g-vo.org/tap/sync` appendete
