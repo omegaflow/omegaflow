@@ -661,6 +661,16 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
         } else {
             None
         }
+fn key_or_constant(key: &str, row: &JsonVal) -> Option<f64> {
+    if let Some(v) = jpath(row, key) {
+        return Some(v);
+    }
+    match key.parse::<f64>() {
+        Ok(c) if c.is_finite() => Some(c),
+        _ => None,
+    }
+}
+
     }) {
         Some(a) => a,
         None => return vec![],
@@ -1610,8 +1620,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     };
                     {
                         for v in rows {
-                            let lat = jpath(v, &eff_lat_key);
-                            let lon = jpath(v, &eff_lon_key);
+                            let lat = key_or_constant(&eff_lat_key, v);
+                            let lon = key_or_constant(&eff_lon_key, v);
                             let alt = if alt_key.is_empty() {
                                 Some(0.0)
                             } else {

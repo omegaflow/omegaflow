@@ -190,11 +190,12 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             continue;
         };
         let gm = rec.gm_km3_s2 as f64 * 1.0e9;
+        let body_radius_m = rec.radius_km as f64 * 1000.0;
         samples.push(Sample {
             source: SampleSource::Ephemeris,
             epoch: epoch_secs,
             ttl: ttl as f64,
-            extent: 0.0,
+            extent: body_radius_m,
             tau: f64::INFINITY,
             kernel_id: 0.0,
             force_type: 1.0,
@@ -217,7 +218,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 source: SampleSource::Ephemeris,
                 epoch: epoch_secs,
                 ttl: ttl as f64,
-                extent: 0.0,
+                extent: body_radius_m,
                 tau: f64::INFINITY,
                 kernel_id: 1.0,
                 force_type: 1.0,
@@ -227,7 +228,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 anchor_amax,
                 anchor_p0,
                 motion,
-                val: rec.radius_km as f64 * 1000.0,
+                val: body_radius_m,
                 name: "dastcom.radius".to_string(),
                 z: 0.0,
                 freq: 0.0,
