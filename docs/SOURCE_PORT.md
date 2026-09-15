@@ -303,8 +303,8 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   Configs teilen `Address = 10.2.0.2/32` → es läuft **ein Exit zugleich**, der
   Helper nimmt die anderen vorher runter. Damit ist die Leiter nicht auf
   einen Tunnel festgelegt — pro Geo-Block ein anderes Land (US, NL, CH …).
-  `wg`/`wg-quick` und der `protonvpn`-CLI sind installiert (Login
-  `johannes.tyroller`); `dnsforge.de` ändert die Exit-IP nicht und trägt
+  `wg`/`wg-quick` und der `protonvpn`-CLI sind installiert (Login des
+  Operators, lokal); `dnsforge.de` ändert die Exit-IP nicht und trägt
   gegen Geo-/IP-Blocks nichts bei. **Gemessen 2026-09-13** (je Exit ein Test):
   `proton-us` (146.70.230.100), `proton-nl` (185.184.195.146) und `proton-ch`
   (149.88.27.156) öffnen alle Rubin/LSST/CADC/NED — **NL und CH sind schneller

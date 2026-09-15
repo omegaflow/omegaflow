@@ -204,6 +204,20 @@ physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.
 
+### PII und Mail-Inhalte — nie getrackt
+
+Personenbezogene Daten (private Adresse, private E-Mail, Login-Konstrukte,
+Kontakt-Kombinationen) und Mail-Inhalte (Entwürfe, gesendete Briefe, Anträge mit
+privater Korrespondenz) sind **nie getrackt**. Heimat: `state/mail/` (gitignored)
+für Entwürfe/Briefe, `.secrets.local` für Zugangsdaten und Infrastruktur-IDs
+(Cloudflare `account_id`). Getrackte Aufträge sind redigiert: Rolle/Institution
+statt Name, Platzhalter statt Adresse, Verweis (`state/mail/<datei>`) statt
+Brieftext. Öffentliche Attribution bleibt: Name im Copyright, Papier-Seal,
+zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches Werk
+= bleibt; privater Kanal = geht.** Jede neu gefundene Verletzung wird
+Gate-Fixture in `src/gate/commit_gate_vocab.json` und Gate-Test im selben Atom;
+der Befund wird gemessen (`pii_scan`), nicht nur beschrieben.
+
 ### CDN-Manifestation — eine Session-Duty (Sitzung nicht mehr nur lokal)
 
 The CI manifestator (`kernel-flatten.yml`, `--ci-mode`) is the only writer of
