@@ -3,7 +3,7 @@
   session: Ernte-Folge 24
   class: handover
   date: 2026-09-14
-  sha256: eca6342e87508463626d2e6aa8fbff8829e4a4e62feeaf8805877e2f26f1e699
+  sha256: f69037c54ce26b99ebdd20639402ea97e1f0192683adfba289b207332c10f6bb
   status: live
 -->
 # Handover — Ernte-Folge 24 (2026-09-14)
@@ -71,8 +71,7 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   Backend-/CGI-/Gateway-Latenz, nicht Geo — der Proton-Exit ist bei allen 8
   gemessenen Hosts langsamer als die direkte Route. Einziger Gewinn:
   DONKI-WS-Sibling `kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME` (keyless,
-  1,31 s vs 1,81 s Gateway). (Schritt: sources.φ-URL auf den Sibling stellen
-  — nach Register-Migration.)
+  1,31 s vs 1,81 s Gateway). (Schritt: sources.φ-URL auf den Sibling stellen.)
   Council-Restpunkt (späteres Atom): curl-`-sS`-stderr könnte die aufgelöste
   URL in den CI-Log schreiben.
 
@@ -89,8 +88,7 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   Gaia-Dispatch gated (Push + Consent).
 - ADS + Space-Track + Celestrak: Routen GEMESSEN (Befund
   `phi/pipeline/research/agent_output/ads_spacetrack_celestrak_2026-09-14.φ`).
-  Die Dispositionen hängen an der laufenden Register-Migration (blocked/dead
-  werden gefaltet) — erst bei ruhigem Baum schreiben:
+  Dispositionen stehen aus (schreibbar, kein Block mehr):
   - ADS (`api.adsabs.harvard.edu`) lebt token-gated (`NASA_ADS_TOKEN` in
     `.secrets.local`); Messung = Literatur-Katalog → `decline
     no-physical-force`; die zwei `dead 404`-Einträge in dead_sources.φ sind
@@ -101,13 +99,58 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   - Celestrak `EOP-All.csv` (`archeology_gaps_index.φ` Z.93) lebt via Proton,
     direkt ip-blocked — Erdorientierung (Polbewegung/UT1-UTC/LOD/Nutation,
     gravity) = echter Feld-Kandidat, nicht TLE-Disposition. (Schritt:
-    Feldblock + Compiler + CDN nach Register-Migration; 6-stellige-NORAD-
-    Lücke aufgelöst — 549 Objekte ≥ 100000.)
+    Feldblock + Compiler + CDN; 6-stellige-NORAD-Lücke aufgelöst — 549
+    Objekte ≥ 100000.)
 - AQS: litmus REDUNDANT (OpenAQ-S3-Bulk = OpenAQs eigenes csv.gz-Archiv, kein
   AQS-Rohdatenbestand; Skalar pm25 µg/m³ diffusion lebt via
   `openaq_pm25_ugm3`) → `decline superseded-by-openaq` in declined_sources.φ
-  geschrieben; die blocked_sources.φ-Note-Verweis (AQS → descoped) hängt an
-  der Register-Migration.
+  geschrieben; AQS-Note in blocked_sources.φ korrigiert (keine keylose
+  AQS-Rohroute, bleibt key-gated).
+- blocked key entblockt (2026-09-15): NOAA CDO + GEDI + NSIDC-ATL03 +
+  PODAAC-SWOT (2×) verlassen blocked_sources.φ (Key/EDL-Token öffnet die
+  token-/s3credentials-Route, HTTP 200) → `ausstehend kandidat` in
+  phi/pipeline/ledger.φ. Offen: Ernte/Compiler + Konsument je Quelle.
+- blocked account + ip-blocked abgearbeitet (2026-09-15, zwei Taucher):
+  - ENTBLOKT → `pending`/ledger: GHRC-DAAC (EDL-Token öffnet ghrcw-protected,
+    OTD-Tar + LIS-netCDF 200), JVO skynode-TAP akari/irsf/nobeyama/saga
+    (Pfad-Fehlmessung: der echte Endpunkt ist `/skynode/do/tap/<node>/sync`
+    → anonym 200 VOTable), ARPANSA-UV (`uvdata.arpansa.gov.au/xml/uvvalues.xml`
+    200, 17 Stationen). Offen: Ernte/Compiler + Konsument.
+  - DESCOPED: JVO alma (Spiegel von ALMA EU), JVO hitomi (nur ivoa.obscore).
+  - DECLINED: AMS-Meteors (`superseded-by-integrated`, JPL-Fireball + GLM
+    tragen die Bolide-Energie), Sentinel Hub (`redistribution`, Planet Labs
+    kommerziell), worldtimeapi (`reference`), GDELT (`no-physical-force`),
+    IODA (2×) + SEDAC GRAND_Dams (`infrastructure`).
+  - BLEIBT: Babamul (Operator-Email nötig; Signup-Fluss aus dem SPA-JS
+    gemessen, Marker BABAMUL_API_TOKEN/KAFKA_USER/PASS).
+- Gaia DR3 XP-Spektren (GAVO `dc.g-vo.org`, `gdr3spec.spectra`): Konto-Frage
+  geklärt (Markus Demleitner 2026-09-08: keine Auth nötig; der PENDING-Stand
+  war der fehlende PHASE=RUN-Post — in `tap_compiler` gebaut + end-to-end
+  verifiziert; Auftrag archiviert: `docs/auftrag/archiv/gavo-dc-account-anfrage.md`).
+  Stand: Pilot (pixel k=6144 → `xp_pilot_p6144.bin`) + parallax>20-Teilmenge
+  (34 947 Sterne, zwei gebandete Sync-Requests, `gaia-xp-cdn.yml`) registriert.
+  OFFEN: die vollständige Survey (Millionen Quellen) — ein Async-Harvest läuft
+  NICHT: anonyme UWS-Jobs sind IP-gebunden und verwaissen mit dem CI-Runner
+  (gemessen, im Workflow dokumentiert); der Pfad ist gebandetes Sync über
+  `gaia_xp_compiler --source-range <lo> <hi>`. (Schritt: Band-Raster festlegen
+  + Workflow über die Bänder fahren.)
+- Godmode-Taucherlauf über pending (25) + descoped (10) (2026-09-15, fünf
+  grind-flash-Taucher mit VPN/secrets/godmode; keine Seite verlangte
+  Registrierung). Kernbefunde + nächste Schritte:
+  - GOES-16 (`noaa-goes16`) + Himawari-8 (`noaa-himawari8`) sind EINGEFROREN
+    (2025/097 bzw. 2025/11) → Compiler-Ziel auf `noaa-goes19`/`-goes18` bzw.
+    `noaa-himawari9`. (Schritt: Ziel-Buckets in Compiler + Workflow.)
+  - NODD-NRS-Bucket von AWS S3 auf GCS gezogen (AWS 404, GCS 200) → AWS-Route
+    + Harvester-`DEFAULT_BUCKET` gebrochen. (Schritt: GCS-Pfad registrieren +
+    Harvester gegen GCS messen.)
+  - CORS `.24S` = teqc-QC, nicht Septentrio SBF (korrigiert); VLASS
+    `cirada.VCSS` = 403, offen bleibt `cirada.VLASS_Source` (votable+csv 200);
+    ONC 1921 Frequenz-Bins statt 512×250; US-CRN-CDN-Line registriert.
+  - WFAU OSA/SSA/VSA/WSA: Host jetzt TCP-tot (2026-09-12 noch 200); JVO
+    akari/irsf/nobeyama/saga nur unter `/sync` (Basis 404); NOIRLab Gaia DR4
+    noch nicht erschienen (≥ Dez 2026, Wiedervorlage hält).
+  - Bau-Gaps bestätigt: 350 OCS-Surveys, COSMIC-2-Tages-Tarballs, GDP
+    parquet-zstd, ERI JPEG-in-TIFF (5040×5040, Compression 7), ONC mat5-Dump.
 
 ## Abschluss
 
