@@ -5,7 +5,7 @@ use omegaflow::doppler::parse_pnav_bin;
 
 const DAY_S: f64 = 86400.0;
 const BAND_LO: f64 = 0.044;
-const BAND_HI: f64 = 0.056;
+const BAND_HI: f64 = 0.058;
 const STEP: f64 = 0.00002;
 const STATIONS: [i64; 3] = [14, 43, 63];
 const GAP_RUN_S: f64 = 600.0;
@@ -106,6 +106,21 @@ fn jd_date(tdb: f64) -> String {
     }
 }
 
+fn year_of(tdb: f64) -> Option<i64> {
+    let jd = 2451545.0 + tdb / DAY_S;
+    let unix_day = (jd - 2440587.5).round() as i64;
+    omegaflow::spectral::civil_from_days(unix_day).map(|(y, _, _)| y as i64)
+}
+
+fn mode_name(m: i64) -> &'static str {
+    match m {
+        1 => "1-way",
+        2 => "2-way",
+        3 => "3-way",
+        _ => "other",
+    }
+}
+
 fn detrend_runs(ts: &[f64], vs: &[f64]) -> (Vec<f64>, Vec<f64>) {
     let mut dts: Vec<f64> = Vec::new();
     let mut dvs: Vec<f64> = Vec::new();
@@ -161,6 +176,62 @@ fn ls_amp(ts: &[f64], vs: &[f64], f: f64) -> Option<f64> {
     let g = ls_grid(ts, vs, f, f, 1e-12);
     let (_, p) = g.first().copied()?;
     Some((2.0 * p / ts.len() as f64).sqrt())
+}
+
+fn own_peak(ts: &[f64], vs: &[f64]) -> Option<(f64, f64)> {
+    if ts.len() < 200 {
+        return None;
+    }
+    let (dts, dvs) = detrend_runs(ts, vs);
+    if dts.len() < 200 {
+        return None;
+    }
+    let tops = top_peaks(&dts, &dvs, BAND_LO, BAND_HI, STEP, 1);
+    let (f, p) = *tops.first()?;
+    let amp = (2.0 * p / dts.len() as f64).sqrt();
+    Some((f, amp))
+}
+
+fn amp_at(ts: &[f64], vs: &[f64], f: f64) -> Option<f64> {
+    if ts.len() < 200 {
+        return None;
+    }
+    let (dts, dvs) = detrend_runs(ts, vs);
+    if dts.len() < 200 {
+        return None;
+    }
+    ls_amp(&dts, &dvs, f)
+}
+
+fn topk(ts: &[f64], vs: &[f64], k: usize) -> Option<Vec<(f64, f64)>> {
+    if ts.len() < 200 {
+        return None;
+    }
+    let (dts, dvs) = detrend_runs(ts, vs);
+    if dts.len() < 200 {
+        return None;
+    }
+    let tops = top_peaks(&dts, &dvs, BAND_LO, BAND_HI, STEP, k);
+    let out: Vec<(f64, f64)> = tops
+        .iter()
+        .map(|(f, p)| (*f, (2.0 * p / dts.len() as f64).sqrt()))
+        .collect();
+    Some(out)
+}
+
+fn era_row(seq: &[(f64, f64)], anchor: Option<f64>) -> String {
+    let ts: Vec<f64> = seq.iter().map(|x| x.0).collect();
+    let vs: Vec<f64> = seq.iter().map(|x| x.1).collect();
+    let n = ts.len();
+    let own = match own_peak(&ts, &vs) {
+        Some((f, a)) => format!("{f:.5} (A={a:.2e})"),
+        None => "short".to_string(),
+    };
+    let anc = match anchor.and_then(|f| amp_at(&ts, &vs, f)) {
+        Some(a) => format!("{a:.2e}"),
+        None => "absent".to_string(),
+    };
+    format!("n={n} own {own} @anchor {anc}")
 }
 
 fn report_peak(label: &str, ts: &[f64], vs: &[f64]) {
@@ -240,6 +311,16 @@ fn main() {
     eprintln!("PASF (station, ground_mode, sampler_class) census:");
     for ((st, mode, cls), n) in &pasf_mode_st {
         eprintln!("  station {st} mode {mode} class {cls}s: n={n}");
+    }
+    let mut cls1: BTreeMap<i64, usize> = BTreeMap::new();
+    for r in &pasf {
+        if r[3] < 10.0 {
+            *cls1.entry(r[13] as i64).or_insert(0) += 1;
+        }
+    }
+    eprintln!("1-s class (sampler < 10 s) ground-mode composition:");
+    for (mode, n) in &cls1 {
+        eprintln!("  ground_mode {mode} ({}): n={n}", mode_name(*mode));
     }
 
     let mut pnav_dtype: BTreeMap<i64, usize> = BTreeMap::new();
@@ -406,6 +487,85 @@ fn main() {
                 top_names.join(" "),
                 anchor_amps.join(" ")
             );
+        }
+    }
+
+    let years: Vec<i64> = (1987..=1994).collect();
+    eprintln!("--- Wrinkle B: per-rx band peak per year (44-58 mHz, 1-s mode 3, all tx) ---");
+    for st in STATIONS {
+        let mut by_year: BTreeMap<i64, (Vec<f64>, Vec<f64>)> = BTreeMap::new();
+        for r in &pasf {
+            if r[6] as i64 == st && r[13] as i64 == 3 && r[3] < 10.0 && r[8].is_finite() {
+                if let Some(y) = year_of(r[0]) {
+                    let e = by_year.entry(y).or_default();
+                    e.0.push(r[0]);
+                    e.1.push(r[8]);
+                }
+            }
+        }
+        eprintln!("  rx {st}:");
+        for y in &years {
+            match by_year.get(y) {
+                Some((ts, vs)) => match topk(ts, vs, 3) {
+                    Some(peaks) => {
+                        let names: Vec<String> = peaks
+                            .iter()
+                            .map(|(f, a)| format!("{f:.5} (A={a:.2e})"))
+                            .collect();
+                        eprintln!("    {y}: n={} top-3 {}", ts.len(), names.join(" | "));
+                    }
+                    None => eprintln!("    {y}: n={} — short (0 honored)", ts.len()),
+                },
+                None => eprintln!("    {y}: no samples (0 honored)"),
+            }
+        }
+    }
+
+    let bins: [(i64, i64); 4] = [(1987, 1988), (1989, 1990), (1991, 1992), (1993, 1994)];
+    eprintln!(
+        "--- Wrinkle A: per-(rx,tx) own peak + amp@rx-anchor, per year and per 2-year bin ---"
+    );
+    for st in STATIONS {
+        let anchor = rx_top.get(&st).and_then(|v| v.first()).map(|(f, _)| *f);
+        let anchor_s = match anchor {
+            Some(f) => format!("{f:.5}"),
+            None => "absent".to_string(),
+        };
+        eprintln!("  rx {st} (anchor {anchor_s} Hz):");
+        let mut txs: Vec<i64> = per_pair
+            .keys()
+            .filter(|(rx, _)| *rx == st)
+            .map(|(_, tx)| *tx)
+            .collect();
+        txs.sort_unstable();
+        txs.dedup();
+        for tx in txs {
+            let Some(seq) = per_pair.get(&(st, tx)) else {
+                continue;
+            };
+            eprintln!("    tx {tx}:");
+            for y in &years {
+                let sel: Vec<(f64, f64)> = seq
+                    .iter()
+                    .filter(|(t, _)| year_of(*t) == Some(*y))
+                    .copied()
+                    .collect();
+                if sel.is_empty() {
+                    continue;
+                }
+                eprintln!("      {y}: {}", era_row(&sel, anchor));
+            }
+            for (lo, hi) in &bins {
+                let sel: Vec<(f64, f64)> = seq
+                    .iter()
+                    .filter(|(t, _)| matches!(year_of(*t), Some(y) if y >= *lo && y <= *hi))
+                    .copied()
+                    .collect();
+                if sel.is_empty() {
+                    continue;
+                }
+                eprintln!("      {lo}-{hi}: {}", era_row(&sel, anchor));
+            }
         }
     }
 }
