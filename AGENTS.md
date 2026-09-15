@@ -247,6 +247,25 @@ session that dispatches a diver (research-max / grind-max / grind-pro) names
 this tool in the delegation — the standard web tools are the slow, expensive
 fallback, not the first move.
 
+### The cost ladder — targeted before `--all`
+
+`--all` runs **every** source (13 network calls) — the broadest, not the
+cheapest. The cheap path is the one source the question needs: `--ads` for
+astrophysics, `--arxiv`, `--crossref`, `--ntrs`, `--openalex`, `--github`, …
+`--playwright` launches a browser — only for JS-rendered pages. The Proton exit
+is **automatic**: `archive_search` routes through the running wireproxy SOCKS
+(`127.0.0.1:25344`) and tries the next exit on 403/429 — no manual
+`proton-wg.sh` rotation per query. First move: the targeted mode; `--all` only
+when the source is unknown.
+
+## Local tools — the self-contained path
+
+The project's own tools live on `PATH` (via `~/.local/bin`, built from
+`tools/utils`): `sgrep` (grep), `sfetch` (fetch), `omega_sh`
+(`reports|status|search|fetch|jwst`), `smail` (mail). They are Rust std + curl,
+allowed to every agent — prefer them over the standard `webfetch`/`websearch`
+(now denied) and over spawning a fresh process where one of them fits.
+
 
 
 ## Kybernaut-Native Methodology
