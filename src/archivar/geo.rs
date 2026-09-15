@@ -22,6 +22,7 @@ pub const MAGIC_COSMIC: [u8; 4] = *b"CSM1";
 pub const MAGIC_ONC: [u8; 4] = *b"ONC1";
 pub const MAGIC_NXR: [u8; 4] = *b"NXR1";
 pub const MAGIC_USCRN: [u8; 4] = *b"USC1";
+pub const MAGIC_GDP: [u8; 4] = *b"GDPT";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -165,6 +166,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "onc_hydrophone_psd" => Some(MAGIC_ONC),
         "nexrad_level2" => Some(MAGIC_NXR),
         "us_crn_hourly" => Some(MAGIC_USCRN),
+        "gdp_drifter" => Some(MAGIC_GDP),
         _ => None,
     }
 }
@@ -192,6 +194,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "onc_hydrophone_psd" => Some(COMP_ONC_MAX),
         "nexrad_level2" => Some(COMP_NXR_MAX),
         "us_crn_hourly" => Some(COMP_USCRN_MAX),
+        "gdp_drifter" => Some(crate::gdp_drifter::COMP_SST),
         _ => None,
     }
 }
@@ -281,6 +284,9 @@ pub fn write_bin(magic: [u8; 4], records: &[GeoRec]) -> Vec<u8> {
 pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
     if bytes.len() < 8 || bytes[0..4] != magic {
         return None;
+    }
+    if magic == MAGIC_GDP {
+        return crate::gdp_drifter::parse_bin(bytes).map(|r| crate::gdp_drifter::to_geo(&r));
     }
     let smg = magic == MAGIC_SMG;
     let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
