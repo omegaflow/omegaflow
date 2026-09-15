@@ -5,7 +5,7 @@ pub(crate) use std::sync::{Arc, Mutex};
 pub(crate) use std::thread;
 
 pub(crate) use crate::archivar::{
-    Extract, LeapSeconds, SourceConfig, extract_series, fetch_raw, Φ,
+    extract_series, fetch_raw, Extract, LeapSeconds, SourceConfig, Φ,
 };
 
 pub mod matrix;
