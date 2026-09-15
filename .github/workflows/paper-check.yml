@@ -25,7 +25,7 @@ on:
 permissions:
   issues: write
 env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
   gate:

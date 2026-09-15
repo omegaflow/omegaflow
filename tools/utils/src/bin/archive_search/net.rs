@@ -1,5 +1,5 @@
 use crate::json::{self, Json};
-use crate::secrets::resolve_secret;
+use crate::secrets::{resolve_key, Secret};
 use std::collections::HashMap;
 use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
@@ -111,7 +111,7 @@ fn socks_bind(conf: &str) -> Option<String> {
         .filter(|addr| !addr.is_empty())
 }
 
-fn proton_socks() -> Option<String> {
+fn socks_addr() -> Option<String> {
     let runtime = match std::env::var("XDG_RUNTIME_DIR") {
         Ok(dir) => dir,
         Err(_) => "/tmp".to_string(),
@@ -126,7 +126,15 @@ fn proton_socks() -> Option<String> {
     let addr = socks_bind(&conf)?;
     let sock: SocketAddr = addr.parse().ok()?;
     TcpStream::connect_timeout(&sock, Duration::from_millis(500)).ok()?;
-    Some(format!("socks5h://{addr}"))
+    Some(addr)
+}
+
+fn proton_socks() -> Option<String> {
+    socks_addr().map(|addr| format!("socks5h://{addr}"))
+}
+
+pub(crate) fn socks_proxy() -> Option<String> {
+    socks_addr().map(|addr| format!("socks5://{addr}"))
 }
 
 fn exits() -> Vec<Exit> {
@@ -238,7 +246,8 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
                 if let Ok(mut g) = gate.lock() {
                     g.wait(&host);
                 }
-                if let Some(retried) = get_once(url, &merged, timeout, &Exit::Direct) {
+                let retried = first_answer(&ladder, |exit| get_once(url, &merged, timeout, exit));
+                if let Some(retried) = retried {
                     return Some(retried);
                 }
             }
@@ -1042,14 +1051,14 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
     }
 }
 
-const GODMODE_MODES: &[&str] = &[
+const QUERY_MODES: &[&str] = &[
     "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs", "brave",
     "datacite", "zenodo", "wayback",
 ];
 
-fn godmode_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
+fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
     let mut out = Vec::new();
-    for mode in GODMODE_MODES {
+    for mode in QUERY_MODES {
         out.push(format!("=== {} ===", mode));
         let mut lines = run_lines(mode, query, env);
         lines.truncate(5);
@@ -1058,40 +1067,71 @@ fn godmode_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
     out
 }
 
+fn token_key(top: &str, marker: Option<String>) -> String {
+    match marker {
+        Some(m) => format!("{} marker {{{m}}}", top),
+        None => top.to_string(),
+    }
+}
+
 pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<String> {
     crate::token::set_secrets(env.clone());
     let max = 10usize;
     if mode == "all" {
-        return godmode_lines(query, env);
+        return all_lines(query, env);
     }
     match mode {
         "arxiv" => arxiv_lines(query, max),
         "ads" => {
-            let token = resolve_secret(
+            let token = resolve_key(
                 env.get("NASA_ADS_TOKEN").map(String::as_str).unwrap_or(""),
                 env,
             );
-            ads_lines(query, &token, max)
+            match token {
+                Secret::Value(t) => ads_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("NASA_ADS_TOKEN", marker)
+                )],
+            }
         }
         "ntrs" => ntrs_lines(query, max),
         "wayback" => wayback_lines(query, max),
         "crossref" => crossref_lines(query, max),
         "wiki" => wiki_lines(query, max),
         "github" => {
-            let token = resolve_secret(
-                env.get("OMEGAFLOW_TOKEN").map(String::as_str).unwrap_or(""),
+            let token = resolve_key(
+                env.get("GITHUB_SEARCH_TOKEN")
+                    .map(String::as_str)
+                    .unwrap_or(""),
                 env,
             );
-            github_lines(query, &token, max)
+            match token {
+                Secret::Value(t) => github_lines(query, &t, max),
+                Secret::Absent(marker) => {
+                    let mut lines = vec![format!(
+                        "absent — {}; the github search runs anonymous",
+                        token_key("GITHUB_SEARCH_TOKEN", marker)
+                    )];
+                    lines.extend(github_lines(query, "", max));
+                    lines
+                }
+            }
         }
         "crates" => crates_lines(query, max),
         "librs" => librs_lines(query),
         "brave" => {
-            let token = resolve_secret(
+            let token = resolve_key(
                 env.get("BRAVE_API_KEY").map(String::as_str).unwrap_or(""),
                 env,
             );
-            brave_lines(query, &token, max)
+            match token {
+                Secret::Value(t) => brave_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("BRAVE_API_KEY", marker)
+                )],
+            }
         }
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
@@ -1116,18 +1156,15 @@ mod tests {
     }
 
     #[test]
-    fn godmode_mode_list_is_unique_and_covers_the_research_modes() {
-        let mut seen = std::collections::HashSet::new();
-        for mode in GODMODE_MODES {
-            assert!(seen.insert(*mode), "duplicate godmode mode: {}", mode);
-        }
-        for required in ["openalex", "arxiv", "crossref", "ads", "brave", "zenodo"] {
-            assert!(
-                GODMODE_MODES.contains(&required),
-                "godmode lacks {}",
-                required
-            );
-        }
+    fn query_mode_list_is_the_full_keyword_search_set() {
+        let mut expected = vec![
+            "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs",
+            "brave", "datacite", "zenodo", "wayback",
+        ];
+        expected.sort_unstable();
+        let mut actual = QUERY_MODES.to_vec();
+        actual.sort_unstable();
+        assert_eq!(actual, expected);
     }
 
     #[test]
