@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   OMEGAFLOW_STATE: data/state
 
 jobs:
