@@ -89,9 +89,9 @@ ausstehend
 kandidat https://uvdata.arpansa.gov.au/xml/uvvalues.xml
 note entblockt 2026-09-15: direkter HTTP 200 auf dem Nachfolger-Endpoint (der blocked-Pfad legacy/pubs/uvindex/realtime/uvrt.xml ist tot). Gemessen: 17 Stationen (Adelaide…Townsville), je <index> (erythemal-gewichteter UV-Index, em), <utcdatetime>, <status> ok. Position per Stationsname, lat/lon absent → positions-pending (Koordinaten-Tabelle steht aus). Ernte/Compiler + Konsument offen.
 
-ausstehend
+parser-gap
 kandidat https://aqs.epa.gov/aqsweb/airdata/download_files.html
-note entblockt 2026-09-15 (Pro-Taucher): die vorgenerierten EPA-AirData-Bulkdateien (daily/hourly/annual, CSV/ZIP) sind KEYLOS (HTTP 200, 386-KB-Index); die API bleibt key-gated, aber die Rohdaten liegen offen. Sie tragen FRM/FEM/Method-Code + POC (per-instrument) — die Granularität, die `openaq_pm25_ugm3` NICHT trägt (OpenAQ kollabiert auf site+parameter). Nicht redundant zu OpenAQ. (Schritt: daily-data-CSV-Harvest keylos porten; download_files.html + FileFormats.html in sources.φ registrieren.)
+note gemessen 2026-09-15: download_files.html HTTP 200 (386197 B); daily_88101_2025.zip keylos — HEAD/Range-GET HTTP 206 (Content-Range 0-99/8647326, application/zip), GET 200 (8647326 B), PK-Zip mit daily_88101_2025.csv. CSV-Kopf: Latitude(5)/Longitude(6), Konzentrations-Spalte „Arithmetic Mean"(16) = PM2.5-Tagesmittel µg/m3. Kraft/Unit/τ bestimmt (wie openaq_pm25_ugm3): diffusion µg/m3 τ 86400. Parser-gap: der map-Feld-Key „Arithmetic Mean" trägt ein Leerzeichen — die φ-Direktive splittet auf Whitespace, die Konzentrations-Spalte ist als map-field-Key unschreibbar; rows löst den Spalten-Index 16, ankert aber alle Oszillatoren am Frame-Punkt (kein per-row lat/lon). Nächster Schritt: Parser-Arm für Leerzeichen-führende map-Field-Keys (oder map-Spaltenindex), dann den daily_88101_{year}.zip-Block in sources.φ registrieren.
 
 parser-gap
 kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
@@ -163,9 +163,9 @@ note Parser-gap: GTMBA (PMEL TAO/TRITON/PIRATA/RAMA, live, täglich+stündlich J
 
 ausstehend
 kandidat https://userquery.linea.org.br/tap
-note ivo://linea.org.br/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
+note ivo://linea.org.br/tap — gewogen 2026-09-15: http 400 probe votable (FORMAT=json refused "format not supported"; FORMAT=csv lebt, TAP_SCHEMA.tables → "Table tables not found")
 
 ausstehend
 kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
-note ivo://ia2.inaf.it/hosted/laurino2011/tap — RegTAP-entdeckt, ungewogen (2026-09-15)
+note ivo://ia2.inaf.it/hosted/laurino2011/tap — gewogen 2026-09-15: http 200 probe votable (/tables → VOSITables wgesdss.dabrusco2009; /sync FORMAT=json → "unknown format: json")
 
