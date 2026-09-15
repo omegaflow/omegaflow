@@ -61,6 +61,25 @@ das Verdikt ist die Frage (die getrennte Datei hält den Re-Check bei ~403
 registrierbar, `.secrets.local`) + `parser-def` (Gap-Verweis) — blockiert,
 gewollt, nicht tot.
 
+**Die Grenze declined/blocked (Operator-Wort 2026-09-15).** Die Frage
+entscheidet, nicht die Quelle:
+
+- `blocked` = die **Zugangs**-Frage: die Messung ist echt + gewollt, der
+  Zugang ist gesperrt (`key`/`account`/`ip-blocked`) oder das Format unlesbar
+  (`parser-def`). Die Sperre hebt sich (Key gefüllt, Parser gebaut) — kein
+  Verdikt.
+- `declined` = die **Verdikt**-Frage: die Quelle lebt, aber sie trägt kein
+  physikalisches Feld (Oszillator-Gate), ist Modell/Forecast, Registry/Katalog,
+  **kommerziell** (`redistribution`), superseded/redundant oder Infrastruktur.
+  Die Erreichbarkeit ist nicht die Frage.
+
+**Der Konsument ist kein Kriterium der Grenze.** Die Presence bewegt sich frei
+durch den 4D-Block: eine physikalische Messung ist intrinsisch wertvoll, auch
+wenn heute kein ω()-Konsument sie liest. „kein gebauter Konsument" ist eine
+**Bau-Reihenfolge**, keine Quellen-Identität — es hält keine physikalische,
+zugängliche Quelle aus `sources.φ` heraus und verschiebt sie nicht nach
+`declined`.
+
 ## 4. Zustandsmaschine + ledger.φ
 
 Zustände: `ausstehend | verifiziert | kompiliert | void | parser-gap | disponiert`.
@@ -195,6 +214,15 @@ Automatisch decline: nackte Zählwerte ohne Ereignis-Records, Stationslisten/
 Register/Kataloge ohne Messwert, Modell-Forecasts/Reanalysen, Referenz-
 Konstanten, aggregierte Indizes (skalar, positionslos), Text-Warnungen,
 abgeleitete Satellitenprodukte, geographische Infrastruktur, position-only.
+
+Der **Aktuator, nicht die Herkunft** (Rat 2026-09-15): „hergestellt" ist eine
+Ontologie, keine Kraft-Kategorie — das Gate trägt den Treiber. Sensor (misst
+das Feld am Ort) → accept; **passiver Treiber** (Kinematik OHNE Aktuator = das
+treibende Feld: Drifter/Strömung, Asteroid/Gravitation, Ballon, Boje) →
+accept; **aktives Objekt** (ein Aktuator trägt die Kinematik: Flugzeug, Schiff,
+Zug, Vogel) → `decline no-physical-force` (Telemetrie eines Akteurs, kein
+propagierendes Feld). Was der Akteur *ausstrahlt* (Wirbelschleppe, Lärm, Wärme,
+Transponder), von einem Sensor am Ort gemessen, bleibt accept.
 
 τ: temporal decay des Prozesses in Sekunden; schnell wechselnd → ttl/10,
 stabil (Kataloge, Geologie) → ttl; explizites Prozesswissen schlägt beides.
@@ -376,6 +404,12 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
   Kaskaden-200 (Proton-Exit/Wayback) = entblockt → der Eintrag verlässt
   blocked_sources.φ und wird queue-Grind-Draft (grind_*.φ); die Kaskade
   ist Grind-Werkzeug, kein Archivar-Code.
+- Grenze declined/blocked (Operator-Wort 2026-09-15): **kommerziell →
+  `decline redistribution`** (nicht blocked — der Zugang ist nicht gesperrt,
+  das Verdikt ist kommerziell); **der Konsument ist kein Kriterium** — die
+  Presence bewegt sich frei durch den 4D-Block, eine physikalische,
+  zugängliche Messung gehört ins Register (der Konsument ist eine
+  Bau-Reihenfolge, kein Quellen-Verdikt).
 
 ## 12. Teleskop-Inventar (Session 2026-08-19)
 
