@@ -1,0 +1,7 @@
+#!/bin/sh
+# The research tool the divers run: keeps the release binary current, then execs it.
+set -e
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$root"
+cargo build --release -q -p omegaflow-utils --bin archive_search
+exec ./target/release/archive_search "$@"
