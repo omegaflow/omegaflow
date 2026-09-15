@@ -34,6 +34,7 @@ struct Vocab {
     german_function_words: Vec<String>,
     speculation: Vec<String>,
     forbidden: Vec<String>,
+    template_slang: Vec<String>,
     zero_decl: Vec<String>,
     unit_tokens: Vec<String>,
     diagnostic_markers: Vec<String>,
@@ -115,6 +116,7 @@ fn load_vocab() -> Vocab {
         german_function_words: str_list(&json, "german_function_words"),
         speculation: str_list(&json, "speculation"),
         forbidden: str_list(&json, "forbidden"),
+        template_slang: str_list(&json, "template_slang"),
         zero_decl: str_list(&json, "zero_decl"),
         unit_tokens: str_list(&json, "unit_tokens"),
         diagnostic_markers: str_list(&json, "diagnostic_markers"),
@@ -683,7 +685,8 @@ impl Gate {
         let canonical_root_doc = root_basename.ends_with(".md")
             && !root_basename.contains('/')
             && root_basename != "AGENTS.md"
-            && root_basename != "README.md";
+            && root_basename != "README.md"
+            && root_basename != "SECURITY.md";
         if canonical_root_doc {
             return Some(Verdict {
                 severity: Severity::Hard,
@@ -779,6 +782,17 @@ impl Gate {
                         rule: "fabrication".to_string(),
                         line: line_of(&content, idx),
                         feedback: hint.clone(),
+                        quote: clip(&content, 90),
+                    });
+                }
+            }
+            for word in &vocab().template_slang {
+                if let Some(idx) = content.to_lowercase().find(word.as_str()) {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "template-slang".to_string(),
+                        line: line_of(&content, idx),
+                        feedback: feedback("template_slang").to_string(),
                         quote: clip(&content, 90),
                     });
                 }
@@ -1560,6 +1574,7 @@ mod tests {
             r###"{"filePath":"docs/auftrag/auftrag-beispiel.md","newString":"# lose"}"###,
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
+            r##"{"filePath":"SECURITY.md","newString":"# responsible use"}"##,
             r###"{"filePath":"src/handover_template.md","newString":"## title"}"###,
         ] {
             assert!(
@@ -1592,5 +1607,14 @@ mod tests {
                 "clean fixture: {ok}"
             );
         }
+    }
+
+    #[test]
+    fn fp_tool_template_slang_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("template_slang_code"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "template-slang");
+        assert_eq!(v.severity, Severity::Hard);
     }
 }
