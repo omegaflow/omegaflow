@@ -6,6 +6,113 @@
   "model": "deepseek/deepseek-v4-flash",
   "small_model": "deepseek/deepseek-v4-flash",
   "default_agent": "build",
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "permission": { "edit": "allow" }
+    },
+    "plan": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "permission": { "edit": "deny", "bash": "deny" }
+    },
+    "general": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
+      "permission": { "edit": "deny" }
+    },
+    "explore": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "permission": { "edit": "deny" }
+    },
+    "research-max": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "variant": "max",
+      "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (archive_search, curl) + proton-wg.",
+      "permission": {
+        "edit": "deny",
+        "task": "deny",
+        "bash": {
+          "*": "deny",
+          "./target/release/archive_search *": "allow",
+          "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
+          "curl *": "allow",
+          "bin/proton-wg.sh *": "allow"
+        },
+        "playwright_*": "allow"
+      }
+    },
+    "grind-flash": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
+      "permission": { "edit": "allow" }
+    },
+    "grind-pro": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "variant": "high",
+      "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
+      "permission": { "edit": "allow" }
+    },
+    "grind-max": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "variant": "max",
+      "description": "Elite-Taucher (DeepSeek V4 Pro, max) — die härtesten Atome, die tiefes Urteil UND Schreiben in einem Kontext brauchen (novel parser construction, TE-/Null-Konstruktion, 4D-Datenkontrakt). Sparsam einsetzen; Force-Gate-Klassifikation bleibt grind-pro.",
+      "permission": { "edit": "allow" }
+    },
+    "council": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "variant": "max",
+      "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
+      "permission": { "edit": "deny" }
+    },
+    "vision": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash-vision-exp",
+      "variant": "high",
+      "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
+      "permission": { "edit": "deny", "bash": "deny" }
+    },
+    "free-research": {
+      "mode": "subagent",
+      "model": "nvidia/nvidia/nemotron-3-super-120b-a12b",
+      "description": "Gratis-Rechercheur (NVIDIA Nemotron-3-Super-120B, free gold) — read-only: kein edit, kein task; bash nur für archive_search (godmode) + proton-wg.sh (VPN-Roll); playwright frei. Kalibriert 2026-09-15 (7/7 Grounded-QA, keine Fabrikation).",
+      "prompt": "You are the Gratis-Rechercheur (free-gold reader): a read-only research agent. You never write or edit files; you only read and report. Legal paths only — no ToS circumvention beyond what the local keys authorize; when a route is closed, name it absent; a not-yet-searched route is pending — never a fabricated value.\n\nThe model transport returns HTTP 503 intermittently — retry the same request before naming a route absent.\n\nOperational knowledge (omegaflow):\n- The archive search tool is `./target/release/archive_search` (read-only research binary). Godmode: `./target/release/archive_search --all \"<query>\"` (runs openalex, arxiv, crossref, ads, ntrs, wiki, github, crates, librs, brave, datacite, zenodo, wayback). `--ads` and `--zenodo` consume the local API tokens automatically.\n- The `archive_search` binary consumes the local API tokens itself; do not read `.secrets.local`, `.env` or `state/` (denied), and never print key values in your output.\n- VPN roll (userspace, no root): `bin/proton-wg.sh <cc|server>` brings up a WireGuard exit via wireproxy (SOCKS5 on 127.0.0.1:25344); free servers live in ~/.config/wireguard/proton-free/*.conf, countries us/nl/ch/jp/ca. After bringing it up, prefix the fetch with the environment `ALL_PROXY=socks5h://127.0.0.1:25344`, e.g. `ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search --all \"<query>\"`. Roll the exit between attempts when a host blocks the current IP; `bin/proton-wg.sh off` tears it down.\n- Report findings with measured evidence (URL + HTTP code or file), not speculation.",
+      "options": { "chat_template_kwargs": { "enable_thinking": true } },
+      "permission": {
+        "edit": "deny",
+        "task": "deny",
+        "read": {
+          "*": "allow",
+          ".secrets.local": "deny",
+          "**/.secrets.local": "deny",
+          ".env": "deny",
+          "**/.env": "deny",
+          "state/**": "deny",
+          "**/state/**": "deny"
+        },
+        "bash": {
+          "*": "deny",
+          "./target/release/archive_search *": "allow",
+          "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
+          "bin/proton-wg.sh *": "allow"
+        },
+        "playwright_*": "allow"
+      }
+    }
+  },
   "permission": {
     "edit": "allow",
     "bash": {
