@@ -29,6 +29,15 @@ fn query_url(query: &str) -> String {
 }
 
 pub fn isc_lines(query: &str, max: usize) -> Vec<String> {
+    if !query.split_whitespace().any(|token| {
+        token
+            .split_once('=')
+            .map_or(false, |(key, _)| parameter(key).is_some())
+    }) {
+        return vec![
+            "usage — isc needs key=value: start/end/minmag/minlat/maxlat/minlon/maxlon".to_string(),
+        ];
+    }
     let url = query_url(query);
     match get(&url, &[], "40") {
         Some(f) if f.status == Some(200) => {
@@ -112,5 +121,12 @@ mod tests {
         assert!(url.contains("endtime=2020-01-02"));
         assert!(url.contains("minmagnitude=5"));
         assert!(!url.contains("bogus"));
+    }
+
+    #[test]
+    fn bare_query_is_usage_not_network() {
+        let out = isc_lines("Pioneer 10", 10);
+        assert_eq!(out.len(), 1);
+        assert!(out[0].starts_with("usage — isc needs key=value"));
     }
 }
