@@ -23,6 +23,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
                 .map(|g| (g.t, g.rad_mean as f64, goes_abi::COMP_RADIANCE))
                 .collect()
         }),
+        "atdf" => atdf::parse_series(bytes),
+        "himawari_hsd" => hsd::parse_series(bytes),
         "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
             let mut out = Vec::new();
             for c in curves {
@@ -104,6 +106,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "gk2a_ami" => gk2a_ami::component_name(comp),
         "goes_abi" => goes_abi::component_name(comp),
+        "atdf" => atdf::component_name(comp),
+        "himawari_hsd" => hsd::component_name(comp),
         "maxi" => match comp {
             crate::maxi::BAND_2_20 => Some("maxi_2_20kev_flux_ph_s_cm2"),
             crate::maxi::BAND_2_4 => Some("maxi_2_4kev_flux_ph_s_cm2"),
