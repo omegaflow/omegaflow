@@ -3592,3 +3592,7 @@ note ADS-B (Luftfahrzeug) — Kinematik eines angetriebenen Objekts (Aktuator): 
 decline derived-orbit-fit
 url https://www.space-track.org/basicspacedata/query/class/gp
 note Space-Track GP/OMM — TLE-Bahnelemente sind ein SGP4-Orbit-Fit aus Radar-/optischer Bahnverfolgung, keine Rohmessung (Range/Range-Rate/Winkel sind nicht öffentlich); superseded-by-ephemeris (Horizons, sources.φ). Die Route lebt (SPACETRACK_USER/PASS in .secrets.local; Login + class/gp-Query HTTP 200, gemessen 2026-09-14). Konsistent mit celestrak-TLE (Z.769).
+
+decline redistribution
+url pending
+note Vaisala GLD360 — global lightning location network (proprietary subscription): no public data endpoint. Verdict 2026-09-15: decline redistribution (commercial, no public route — the open lightning channel lives via the free networks, not via GLD360).
