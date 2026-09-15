@@ -1,10 +1,10 @@
 name = "omegaflow-email-recv"
 main = "email_worker.js"
 compatibility_date = "2026-08-25"
-account_id = "b2891b7064691de2ef3891cfaf17190b"
+account_id = ""  # CLOUDFLARE_ACCOUNT_ID (env / .secrets.local)
 
 [vars]
-FORWARD_TO = "[redacted-email]"
+FORWARD_TO = ""  # operator address (env / .secrets.local)
 
 [observability]
 enabled = true

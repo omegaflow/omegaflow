@@ -3,7 +3,7 @@
   session: Entscheid-Folge XI
   class: handover
   date: 2026-09-15
-  sha256: 9d0e8ef4a06e1aae574a0bdfbe963e97ceffa7c66f50122cfeb54f7bd89e18fa
+  sha256: 2d2cc7ac96db5764acae156ed13fcf8c0c153d3aa80d6577adbff32f15886110
   status: live
 -->
 # Handover — Entscheid-Folge XI (2026-09-15)
@@ -43,12 +43,14 @@ einen der vier offenen Posten.
 
 - GitHub Support — User→Org / HTTP 422: Ticket ist raus, Antwort offen.
   (Schritt: Postfach auf die Support-Antwort prüfen.)
-- GitHub Support — Purge des Alt-Commits: der Adoptions-Entwurf ist aus `main`
-  entfernt (HEAD `36d63e5`), der alte Commit `1ecb8e7` bleibt aber per SHA
-  abrufbar (gemessen `raw.githubusercontent.com` → 200). (Schritt: GitHub
-  Support um GC/Purge der unreachable Objects bitten.)
+- GitHub Support — Purge der Alt-Commits: die PII/Mail-Dateien sind aus `main`
+  entfernt, die Alt-SHAs bleiben aber per SHA abrufbar (gemessen
+  `raw.githubusercontent.com` → 200). (Schritt: GitHub Support um GC/Purge der
+  unreachable Objects bitten — Liste der Alt-SHAs beilegen.)
+- GitHub-Token — der 2026-09-11 im Chat exponierte Token ist zu widerrufen
+  (Rotation = Operator, https://github.com/settings/tokens).
 - Rubin RSP-Datenrechte — Antwort an Shaughnessy (SLAC) gesendet 2026-09-15;
-  Entscheidung offen (`docs/auftrag/auftrag-rubin-data-rights-antrag.md`).
+  Entscheidung offen (`state/mail/auftrag-rubin-data-rights-antrag.md`).
 - NSE/Haug — Anfrage raus, Antwort offen (Keimer).
 - CSES-Limadou — Anfrage an Sotgiu (ASI SSDC) raus, Antwort offen; der L2-Zugang
   liegt lokal in `.secrets.local` (`SSDC_USER`/`SSDC_PASS`).
@@ -62,6 +64,18 @@ einen der vier offenen Posten.
 - 20-s-Bande-Papier: per-Papier-Release-Tag und Welt-Fassung-Branch sind absent
   (gemessen `git tag` / `git branch -a`: nur `v2026-09-09`). Kein Send-Blocker
   (der gepinnte Sha ist unveränderlich). (Schritt: Tag + Welt-Fassung-Branch — Bau.)
+- PII-Gate: Gate-Fixtures für die gemessenen Muster (`proton.me`, `[redacted-street]`,
+  `@igetsftp`, `account_id =`, `ghp_`) in `src/gate/commit_gate_vocab.json` +
+  Gate-Test; optional ein `pii_scan`-Bin (`tools/register`). (Schritt:
+  Fixtures + Test + Bin — Bau.)
+
+## PII/Mail — getilgt (Ratsverdikt 2026-09-15)
+
+- Die sieben getrackten Mail-/Antrag-Dateien sind aus dem Baum entfernt und
+  liegen lokal in `state/mail/` (gitignored); `wrangler.toml` redigiert
+  (`account_id`/`FORWARD_TO` aus Env), Proton-Login aus `SOURCE_PORT.md`,
+  Token-Fragment aus dem Archiv-Handover entfernt. Policy steht in AGENTS.md
+  („PII und Mail-Inhalte — nie getrackt"). (Schritt: History-Rewrite + GitHub-Purge.)
 
 ## Termine (Wiedervorlage)
 

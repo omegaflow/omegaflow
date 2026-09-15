@@ -20,7 +20,7 @@ nur fällige Zeilen (Datum ≤ heute) kommen auf den Tisch.
 
 ## GitHub-Konto (Kern der Session 2026-09-12)
 
-- Sicherheit — der im Chat exponierte Token `ghp_KHhu…` ist zu widerrufen
+- Sicherheit — der im Chat exponierte GitHub-Token ist zu widerrufen
   (https://github.com/settings/tokens). Falls er der aktive `gh`-Token ist,
   vorher einen frischen anlegen und `gh auth login -h github.com --with-token`
   damit; sonst bricht der Push.
