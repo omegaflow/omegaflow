@@ -42,7 +42,11 @@ fn parse_number_list(s: &str) -> Option<Vec<f64>> {
             }
         }
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
 }
 
 fn parse_value(raw: &str) -> String {
@@ -61,7 +65,11 @@ fn parse_name_list(value: &str) -> Option<Vec<String>> {
         names.push(rest[..end].trim().to_string());
         rest = &rest[end + 1..];
     }
-    if names.is_empty() { None } else { Some(names) }
+    if names.is_empty() {
+        None
+    } else {
+        Some(names)
+    }
 }
 
 impl FkFile {

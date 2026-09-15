@@ -4,7 +4,7 @@ use crate::mathematikerin::{DiodeState, PresenceFrame};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Arc, Mutex, RwLock, mpsc};
+use std::sync::{mpsc, Arc, Mutex, RwLock};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
 const KINETIC_TAG: u8 = 10;
