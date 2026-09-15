@@ -3,7 +3,7 @@
   session: Entscheid-Folge II
   class: handover
   date: 2026-09-11
-  sha256: b722362804cb8d3f055021fefa689f828f54d4b8cc73e9fc2b159158e8fc1b1d
+  sha256: 68c465c59324c3938964c001585cfae108994be64268a6247f2a32ea4b515476
   status: archived
 -->
 # Handover — Entscheid-Folge II (2026-09-11)
