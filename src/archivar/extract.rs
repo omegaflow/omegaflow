@@ -1145,6 +1145,19 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
     }
 }
 
+fn tap_format(url: &str) -> Option<String> {
+    let upper = url.to_ascii_uppercase();
+    let pos = upper.find("FORMAT=")? + "FORMAT=".len();
+    let rest = &url[pos..];
+    let end = rest.find('&').unwrap_or(rest.len());
+    let value = rest[..end].trim().to_ascii_lowercase();
+    if value.is_empty() {
+        None
+    } else {
+        Some(value)
+    }
+}
+
 fn xml_unescape(s: &str) -> String {
     s.replace("&lt;", "<")
         .replace("&gt;", ">")
@@ -1538,13 +1551,20 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     } else if src.format == "free text" {
         text_to_json(body)
     } else if src.format == "tap" {
-        let trimmed = body.trim_start();
-        if trimmed.starts_with('{') || trimmed.starts_with('[') {
-            parse_json(body).and_then(|j| tap_to_json(&j))
-        } else if body.contains("<VOTABLE") {
-            votable_to_json(body)
-        } else {
-            csv_to_json(body)
+        match tap_format(&src.url).as_deref() {
+            Some(v) if v.starts_with("votable") => votable_to_json(body),
+            Some("csv") => csv_to_json(body),
+            Some(v) if v.starts_with("json") => parse_json(body).and_then(|j| tap_to_json(&j)),
+            _ => {
+                let trimmed = body.trim_start_matches('\u{feff}').trim_start();
+                if trimmed.starts_with('{') || trimmed.starts_with('[') {
+                    parse_json(body).and_then(|j| tap_to_json(&j))
+                } else if body.contains("<VOTABLE") {
+                    votable_to_json(body)
+                } else {
+                    None
+                }
+            }
         }
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         let body = body
@@ -3412,6 +3432,23 @@ mod votable_tests {
         assert_eq!(jnum(&rows[0], "flux"), Some(0.25));
         assert_eq!(jnum(&rows[1], "dec"), Some(40.9));
         assert_eq!(jnum(&rows[1], "flux"), None);
+    }
+
+    #[test]
+    fn tap_format_reads_the_url_parameter() {
+        assert_eq!(
+            tap_format("http://x/sync?REQUEST=doQuery&FORMAT=votable&QUERY=Q").as_deref(),
+            Some("votable")
+        );
+        assert_eq!(
+            tap_format("http://x/sync?FORMAT=CSV").as_deref(),
+            Some("csv")
+        );
+        assert_eq!(
+            tap_format("http://x/sync?FORMAT=votable/td").as_deref(),
+            Some("votable/td")
+        );
+        assert_eq!(tap_format("http://x/sync?REQUEST=doQuery").as_deref(), None);
     }
 
     #[test]
