@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 9fefd4d1a924c19036c2c0a6de1f5b47cb8ea7b642667acb4156f5d6cb3d6bbf
+  sha256: 7eccc1965c72ac63bfab09a7ba8d1cad24ee3a26bae9c1b8439a4b122443ae21
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -55,8 +55,9 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   1989–1991: die Markwardt-ATDF (.DAT/.TDR/.TDF) ist eine echte Archiv-Lücke
   (deckt 1987/1988/1994; Markwardt selbst dokumentiert Juni 1990–Juni 1991 als
   unlesbares Band, arXiv gr-qc/0208046); die Doppler-Werte sind NICHT absent — sie
-  leben im TRK-2-25-ODF `86334o97343_sc23.odf` (1986–1997) + im `.asc.gz`
-  (ODDUMP, 1973–2002, geerntet). (Schritt:
+  sind geerntet: TRK-2-25-ODF `86334o97343_sc23.odf` → `pioneer10_odf.bin`
+  (59 486 Samples, 1973–1998; 1989–1991: 790/572/1548) + `.asc.gz` → NAVIO
+  (1973–2002). (Schritt:
   Papier **v4** — Zensus statt Pick, die alten Werte mit gemessenen Rängen,
   Drift-Satz streichen, §2 bleibt; Council-Landing.) Instrumente:
   `pioneer10_txrx_split_probe`, `pioneer10_paper_chain_retrace`,
@@ -82,7 +83,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Zwei externe Anfragen stehen (kein anonymer Pfad, request-only)
 
-Drei Taucherrunden (grind-flash + grind-pro, Godmode, rollierende Proton-VPNs,
+Drei Taucherrunden (grind-flash + grind-pro, `archive_search --all`, rollierende Proton-VPNs,
 Brave, Playwright) haben die Warteliste gemessen; zwei Punkte halten.
 
 - **Voyager Roh-Doppler closed-loop (ODF/TRK-2-34)** — Voyager closed-loop wurde
