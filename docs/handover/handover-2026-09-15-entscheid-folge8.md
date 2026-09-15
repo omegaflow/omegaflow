@@ -3,7 +3,7 @@
   session: Entscheid-Folge VIII
   class: handover
   date: 2026-09-15
-  sha256: 62d5567a1ddc4792f66b667a841a69fcb4b35264e9691e476699a404bb0ef8d6
+  sha256: 684e6a062a9e8d84cb2ecf31dbeedd18b99aae695c6c80411134ee083d6d7506
   status: live
 -->
 # Handover — Entscheid-Folge VIII (2026-09-15)
@@ -25,37 +25,13 @@ Dies ist die Entscheid-Linie: hier steht nur, was diese Linie autonom trägt —
 Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 überführt (nie in ein fremdes Handover geschrieben).
 
-## Nachricht an die Ernte-Linie — Notwendigkeits-Abgleich der Zugangsanfragen
+## Zugangsanfragen — Notwendigkeits-Abgleich beim Operator (Chat übergeben)
 
 Die Notwendigkeit einer Zugangsanfrage entscheidet sich am Quellen-Register, nicht
-an der Korrespondenz — darum misst die Ernte-Linie je Anfrage zuerst; Entscheid
-streicht danach nur die Briefe, die Ernte als „nicht mehr nötig" misst.
-
-Versandte Mails im Ledger `state/mail/mail_ledger.φ` (57 Records, multi-line — auf
-`^mail\t` schlüsseln; `smail.rs` loggt Versand nicht selbst, die Sent-Spur entsteht
-nur durch manuelles `WG:`-Weiterleiten). 14 distinkte versandte Mails:
-- 2026-08-01 JSOC (jsoc@sun.Stanford.EDU) — CONFIRM EXPORT ADDRESS
-- 2026-08-18 TOAR (info@toar-data.org) — Registration as TOAR user
-- 2026-08-23 BiSON (sarbani.basu@yale.edu) / CSES-Limadou (alessandro.sotgiu@roma2.infn.it) / NSE/Haug (B.Keimer@fkf.mpg.de)
-- 2026-08-25 TOAR (s.schroeder@fz-juelich.de) / BiSON (A-M.Broomhall@warwick.ac.uk)
-- 2026-09-08 LPF Δg-PSD (michele.armano@esa.int, CC paul.mcnamara@esa.int) / GAVO TAP-Async (msdemlei@ari.uni-heidelberg.de)
-- 2026-09-10 IGETS SFTP (igets-support@gfz.de)
-- 2026-09-11 NOIRLab Data Lab (robert.nikutta@noirlab.edu)
-- 2026-09-12 GAVO ivoa-Umstellung (msdemlei@ari.uni-heidelberg.de)
-- 2026-09-14 Rubin RSP (sheather@slac.stanford.edu) / 2026-09-15 Rubin RSP Folge (CC code@)
-
-Register-Befund je Anfrage (gemessen, Verdikt = Ernte):
-- NOIRLab: `ls_dr10.tractor` steht anonym in `phi/sources.φ:8498` → Anfrage vermutlich entbehrlich (ohnehin abgelehnt).
-- JSOC: `jsoc.stanford.edu` AIA-Assets in `phi/sources.φ:8064+` → Registrierung evtl. entbehrlich.
-- LPF: anonyme DRS-FITS-Route in `phi/blocked_sources.φ:38` gemessen → Anfrage evtl. redundant.
-- GAVO TAP-Async: `gaia-xp-full-cdn.yml` gebaut, Sync-Kappung ~20000 → wahrscheinlich nötig.
-- BiSON, IGETS: offene Ernte-Punkte (`handover-2026-09-15-ernte-folge28.md`) → nötig.
-- CSES-Limadou: `docs/concepts/der-kausalpfeil.md:92` und `kybernetische-astrophysik.md:143` führen CSES als `descoped` (2026-09-12, kein anonymer Zugang); `folge28` trägt aber noch „CSES-SPA-Login" → Widerspruch, Ernte entscheidet.
-- NSE/Haug: `survey-2026-09-14-warteliste-offene-alternativen.md:61` führt die Rohdaten als `descoped` (kein Deposit, null Datendateien); Forschung §Extern wartet aber noch auf Keimer → Widerspruch, Ernte entscheidet.
-- Rubin RSP, TOAR: kein `phi`-Eintrag, kein Ernte-Punkt → Notwendigkeit ungeklärt.
-
-(Schritt: Operator übergibt diese Nachricht der nächsten Ernte-Session; Ernte misst
-je Anfrage und trägt das Verdikt in `folge28` ein.)
+an der Korrespondenz. Der Abgleich (14 versandte Mails aus `state/mail/mail_ledger.φ`
++ Register-Befund je Anfrage) liegt beim Operator zur Weitergabe an die Ernte-Linie;
+Ernte misst je Anfrage und trägt das Verdikt in `folge28` ein. (Schritt: Operator
+übergibt den Abgleich; Ernte misst.)
 
 ## NIM-Spezialmodelle — riva-translate angedockt, parse/embedding offen
 
