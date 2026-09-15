@@ -119,6 +119,7 @@ fn sigv4_headers(
     region: &str,
     host: &str,
     canonical_uri: &str,
+    canonical_query: &str,
     range: Option<&str>,
     amz_date: &str,
     date_stamp: &str,
@@ -139,8 +140,8 @@ fn sigv4_headers(
         signed_headers.push_str(";x-amz-security-token");
     }
     let canonical_request = format!(
-        "GET\n{}\n\n{}\n{}\n{}",
-        canonical_uri, canonical_headers, signed_headers, AWS4_EMPTY_SHA256
+        "GET\n{}\n{}\n{}\n{}\n{}",
+        canonical_uri, canonical_query, canonical_headers, signed_headers, AWS4_EMPTY_SHA256
     );
     let scope = format!("{}/{}/{}/aws4_request", date_stamp, region, S3_SERVICE);
     let string_to_sign = format!(
@@ -185,6 +186,7 @@ pub fn sigv4_get_headers(
         region,
         host,
         canonical_uri,
+        "",
         Some(range),
         amz_date,
         date_stamp,
@@ -208,6 +210,32 @@ pub fn sigv4_whole_headers(
         region,
         host,
         canonical_uri,
+        "",
+        None,
+        amz_date,
+        date_stamp,
+        session_token,
+    )
+}
+
+pub fn sigv4_list_headers(
+    access_key: &str,
+    secret_key: &str,
+    region: &str,
+    host: &str,
+    canonical_uri: &str,
+    canonical_query: &str,
+    amz_date: &str,
+    date_stamp: &str,
+    session_token: Option<&str>,
+) -> Vec<(String, String)> {
+    sigv4_headers(
+        access_key,
+        secret_key,
+        region,
+        host,
+        canonical_uri,
+        canonical_query,
         None,
         amz_date,
         date_stamp,
@@ -423,6 +451,146 @@ pub fn fetch_s3_whole(s3_url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
+pub struct S3Object {
+    pub key: String,
+    pub size: u64,
+    pub last_modified: String,
+}
+
+struct ListPage {
+    objects: Vec<S3Object>,
+    next_token: Option<String>,
+    truncated: bool,
+}
+
+fn uri_encode_query(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for &b in s.as_bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{:02X}", b)),
+        }
+    }
+    out
+}
+
+fn list_query(prefix: &str, token: Option<&str>) -> String {
+    let mut params: Vec<(&str, String)> = Vec::new();
+    if let Some(t) = token {
+        params.push(("continuation-token", t.to_string()));
+    }
+    params.push(("list-type", "2".to_string()));
+    if !prefix.is_empty() {
+        params.push(("prefix", prefix.to_string()));
+    }
+    params.sort_by(|a, b| a.0.cmp(b.0));
+    let mut q = String::new();
+    for (i, (k, v)) in params.iter().enumerate() {
+        if i > 0 {
+            q.push('&');
+        }
+        q.push_str(&uri_encode_query(k));
+        q.push('=');
+        q.push_str(&uri_encode_query(v));
+    }
+    q
+}
+
+fn xml_elem_text(doc: &str, tag: &str) -> Option<String> {
+    let open = format!("<{}>", tag);
+    let start = doc.find(&open)? + open.len();
+    let close = format!("</{}>", tag);
+    let end = doc[start..].find(&close)? + start;
+    Some(doc[start..end].to_string())
+}
+
+fn parse_list_objects(bytes: &[u8]) -> Option<ListPage> {
+    let doc = std::str::from_utf8(bytes).ok()?;
+    let mut objects = Vec::new();
+    let mut rest = doc;
+    while let Some(start) = rest.find("<Contents>") {
+        let after_open = &rest[start + "<Contents>".len()..];
+        let Some(end) = after_open.find("</Contents>") else {
+            break;
+        };
+        let block = &after_open[..end];
+        let key = xml_elem_text(block, "Key")?;
+        let size = xml_elem_text(block, "Size")?.parse::<u64>().ok()?;
+        let last_modified = xml_elem_text(block, "LastModified")?;
+        objects.push(S3Object {
+            key,
+            size,
+            last_modified,
+        });
+        rest = &after_open[end + "</Contents>".len()..];
+    }
+    let truncated = xml_elem_text(doc, "IsTruncated").as_deref() == Some("true");
+    let next_token = xml_elem_text(doc, "NextContinuationToken");
+    Some(ListPage {
+        objects,
+        next_token,
+        truncated,
+    })
+}
+
+fn s3_list_request(bucket: &str, canonical_query: &str) -> Option<(String, Vec<(String, String)>)> {
+    let canonical_uri = format!("/{}", bucket);
+    match s3_credential_route(bucket) {
+        Some(S3CredentialRoute::Bearer(url)) => {
+            let token = std::env::var("EARTHDATA_EDL_TOKEN")
+                .ok()
+                .filter(|t| !t.is_empty())?;
+            let creds = edl_bearer_credentials(url, &token)?;
+            let https_url = format!(
+                "https://{}{}?{}",
+                S3_ENDPOINT, canonical_uri, canonical_query
+            );
+            let unix = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
+            let date_stamp = date_str(unix).replace('-', "");
+            let amz_date = hour_str(unix).replace('-', "").replace(':', "");
+            let headers = sigv4_list_headers(
+                &creds.access_key,
+                &creds.secret_key,
+                S3_REGION,
+                S3_ENDPOINT,
+                &canonical_uri,
+                canonical_query,
+                &amz_date,
+                &date_stamp,
+                Some(&creds.session_token),
+            );
+            Some((https_url, headers))
+        }
+        Some(S3CredentialRoute::OAuth) => None,
+        None => {
+            let https_url = format!("https://{}.s3.amazonaws.com/?{}", bucket, canonical_query);
+            Some((https_url, Vec::new()))
+        }
+    }
+}
+
+pub fn s3_list(bucket: &str, prefix: &str, ttl: u64) -> Option<Vec<S3Object>> {
+    let mut out: Vec<S3Object> = Vec::new();
+    let mut token: Option<String> = None;
+    loop {
+        let query = list_query(prefix, token.as_deref());
+        let (url, headers) = s3_list_request(bucket, &query)?;
+        let bytes = fetch_whole(&url, ttl, &headers)?;
+        let page = parse_list_objects(&bytes)?;
+        out.extend(page.objects);
+        if !page.truncated {
+            break;
+        }
+        token = page.next_token;
+        if token.is_none() {
+            break;
+        }
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -551,5 +719,82 @@ mod tests {
         );
         assert!(s3_https_url("https://example.com/x").is_none());
         assert!(s3_https_url("s3://bucket").is_none());
+    }
+
+    #[test]
+    fn list_query_sorts_and_encodes_parameters() {
+        assert_eq!(list_query("", None), "list-type=2");
+        assert_eq!(
+            list_query("GRACE-FO_L2/", None),
+            "list-type=2&prefix=GRACE-FO_L2%2F"
+        );
+        assert_eq!(
+            list_query("a b", Some("tok/1")),
+            "continuation-token=tok%2F1&list-type=2&prefix=a%20b"
+        );
+    }
+
+    #[test]
+    fn uri_encode_query_encodes_the_reserved_set() {
+        assert_eq!(uri_encode_query("a b/c"), "a%20b%2Fc");
+        assert_eq!(uri_encode_query("x=y"), "x%3Dy");
+        assert_eq!(uri_encode_query("abc-._~"), "abc-._~");
+    }
+
+    #[test]
+    fn parse_list_objects_decodes_a_page() {
+        let doc = "<ListBucketResult>\
+<IsTruncated>true</IsTruncated>\
+<NextContinuationToken>tok2</NextContinuationToken>\
+<Contents><Key>GRACE-FO_L2/a.nc</Key><LastModified>2026-08-14T00:00:00.000Z</LastModified><Size>1048576</Size></Contents>\
+<Contents><Key>GRACE-FO_L2/b.nc</Key><LastModified>2026-08-14T01:00:00.000Z</LastModified><Size>2048</Size></Contents>\
+</ListBucketResult>";
+        let page = parse_list_objects(doc.as_bytes()).unwrap();
+        assert!(page.truncated);
+        assert_eq!(page.next_token.as_deref(), Some("tok2"));
+        assert_eq!(page.objects.len(), 2);
+        assert_eq!(page.objects[0].key, "GRACE-FO_L2/a.nc");
+        assert_eq!(page.objects[0].size, 1048576);
+        assert_eq!(page.objects[0].last_modified, "2026-08-14T00:00:00.000Z");
+        assert_eq!(page.objects[1].key, "GRACE-FO_L2/b.nc");
+        assert_eq!(page.objects[1].size, 2048);
+    }
+
+    #[test]
+    fn sigv4_list_headers_sign_the_query_string() {
+        let query = "list-type=2&prefix=GRACE-FO_L2%2F";
+        let no_query = sigv4_whole_headers(
+            "AKIAIOSFODNN7EXAMPLE",
+            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            "us-east-1",
+            "examplebucket.s3.amazonaws.com",
+            "/examplebucket",
+            "20130524T000000Z",
+            "20130524",
+            None,
+        );
+        let with_query = sigv4_list_headers(
+            "AKIAIOSFODNN7EXAMPLE",
+            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            "us-east-1",
+            "examplebucket.s3.amazonaws.com",
+            "/examplebucket",
+            query,
+            "20130524T000000Z",
+            "20130524",
+            None,
+        );
+        let auth_no_query = no_query
+            .iter()
+            .find(|(k, _)| k == "Authorization")
+            .map(|(_, v)| v.as_str())
+            .unwrap();
+        let auth_with_query = with_query
+            .iter()
+            .find(|(k, _)| k == "Authorization")
+            .map(|(_, v)| v.as_str())
+            .unwrap();
+        assert_ne!(auth_no_query, auth_with_query);
+        assert!(auth_with_query.contains("SignedHeaders=host;x-amz-content-sha256;x-amz-date"));
     }
 }
