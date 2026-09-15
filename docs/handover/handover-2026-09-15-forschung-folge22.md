@@ -3,7 +3,7 @@
   session: Forschung-Folge 22
   class: handover
   date: 2026-09-15
-  sha256: 7a8039afd2ee50ccaaf284ebd215fc1bb6333c553ddf9b2625988beb2c11789b
+  sha256: 3a4695b936da14cf8d1b5262808cf15ff97592519dff6b7df78472b5625dfe0d
   status: live
   see-also: docs/paper/broken-null-control.md
 -->
@@ -72,8 +72,9 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 - **Venus Express VeRa — PSA trägt keine DSN/ODF-Route (gemessen).** `VEX-V-VRA-*`
   unter `DATA/LEVEL1A/CLOSED_LOOP/` nur `IFMS/`; keine `VEX-V-RSS-*`-Familie in der
   PSA (live/legacy/pds3_extra). Die Rohroute ist NASA/PDS `VEX-V-RSS-1-ENT-V1.0`
-  (NMSU, `USA_NASA_SUE_VXRS_11XX`).
-  (Schritt: exaktes Verzeichnis per Fetch bestätigen, dann Reader.)
+  (NMSU) — Identifier `USA_NASA_SUE_VXRS_11XX` und Landing-Page ohne Read-Site in
+  diesem Atom (`pending`).
+  (Schritt: exaktes Verzeichnis + Landing-Page per Fetch bestätigen, dann Reader.)
 - **Voyager-Saturn CDN-Dispatch** — der Reader steht (kind→Observable in
   `voyager_saturn::parse_series`, `VSAT`-Magic in `zeuge.rs`, `em rad` für die
   Winkel-Slots); offen nur der `voyager_saturn.bin`-CDN-Dispatch.
@@ -132,17 +133,22 @@ nur `./target/release/archive_search`. Kosten aus `opencode.db`.
 - **Venus-Express-VeRa-PSA-Route** · flash: kein PSA-DSN/ODF-Pfad, `IFMS/`-only direkt
   gefetcht (ODF/ 404, DSN_DOC-PDF 200), Rohroute = NASA/PDS `VEX-V-RSS-1-ENT-V1.0` $0.00894 ·
   max: kein PSA-DSN/ODF, keine RSS-Familie in allen drei PSA-Bäumen (170+21 VRA-Dirs),
-  Dataset-Interieur nicht re-fetcht $0.02885 · **Sieger: flash**.
+  Dataset-Interieur nicht re-fetcht $0.02885 · **komplementär, nicht gleichwertig** — die
+  exhaustive PSA-Negative trägt allein der Drei-Baum-Sweep des max-Laufs, das konkrete
+  Ziel fetcht flash; der max-Lauf ist nach der eigenen Regel gerechtfertigt.
 - **NOCC-Reduktionsvorschrift** · flash: Moyer ODP-Formulierung (Descanso 2, 200) +
   Morabito/Asmar TDA 42-120 (200) + 810-005 202E; 810-005 ohne Reduktionsmodul $0.01230 ·
   max: `dsn_redr`-Familie (2021-07-31, `redr_unpack.pdf`) + 810-005 202E/203E/209G;
-  Verzeichnis gefetcht, PDFs nicht einzeln $0.02991 · **Sieger: flash**.
+  Verzeichnis gefetcht, PDFs nicht einzeln $0.02991 · **komplementär** — flash ist
+  unvollständig (`dsn_redr` fehlt), der max-Lauf ist gerechtfertigt.
 - **Dawn-PDS4-SBN-ODF-Route** · flash: beide Routen real (200), `.dat`/`.xml`-Paare,
   Sample `.dat` gefetcht $0.00253 · max: identisch, andere Samples $0.00598 ·
-  **Sieger: flash**.
+  **Sieger: flash** (gleichwertig, 2,4× günstiger).
 
 Regel: gleichwertige Antwort → Aufgabe bleibt bei flash; nur eine falsche oder
-unvollständige flash-Antwort rechtfertigt den max-Lauf.
+unvollständige flash-Antwort rechtfertigt den max-Lauf. Grenze dieser Messung:
+identischer Wortlaut, ≤20 Tool-Calls, ≤15 Zeilen — die Lese-Grenze formt flash; die
+tiefe mehrstufige Klasse, für die max gebaut ist, ist damit nicht gemessen.
 
 ## Abschluss
 
