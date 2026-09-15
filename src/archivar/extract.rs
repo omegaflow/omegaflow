@@ -1145,6 +1145,103 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
     }
 }
 
+fn xml_unescape(s: &str) -> String {
+    s.replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&apos;", "'")
+        .replace("&amp;", "&")
+}
+
+fn votable_attr(tag: &str, name: &str) -> Option<String> {
+    let key = format!("{name}=");
+    let pos = tag.find(&key)? + key.len();
+    let rest = &tag[pos..];
+    let quote = rest.chars().next()?;
+    if quote != '"' && quote != '\'' {
+        return None;
+    }
+    let end = rest[1..].find(quote)? + 1;
+    Some(rest[1..end].to_string())
+}
+
+fn votable_cell(content: &str) -> JsonVal {
+    let text = content.trim();
+    if text.is_empty() {
+        return JsonVal::Null;
+    }
+    match text.parse::<f64>() {
+        Ok(v) if v.is_finite() => JsonVal::Num(v),
+        _ => JsonVal::Str(xml_unescape(text)),
+    }
+}
+
+pub fn votable_to_json(body: &str) -> Option<JsonVal> {
+    if !body.contains("<VOTABLE") {
+        return None;
+    }
+    let data_pos = body.find("<DATA")?;
+    let (field_part, data_part) = body.split_at(data_pos);
+    let mut names: Vec<String> = Vec::new();
+    for chunk in field_part.split("<FIELD").skip(1) {
+        let tag = match chunk.find('>') {
+            Some(p) => &chunk[..p],
+            None => continue,
+        };
+        if let Some(n) = votable_attr(tag, "name").or_else(|| votable_attr(tag, "ID")) {
+            names.push(xml_unescape(&n));
+        }
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let table = match data_part.find("<TABLEDATA") {
+        Some(p) => &data_part[p..],
+        None => return None,
+    };
+    let mut rows: Vec<JsonVal> = Vec::new();
+    for tr in table.split("<TR").skip(1) {
+        let row_body = match tr.find('>') {
+            Some(p) => &tr[p + 1..],
+            None => continue,
+        };
+        let row_body = match row_body.find("</TR>") {
+            Some(p) => &row_body[..p],
+            None => row_body,
+        };
+        let mut obj = HashMap::new();
+        for (i, cell) in row_body.split("<TD").skip(1).enumerate() {
+            if i >= names.len() {
+                break;
+            }
+            let val = if cell.starts_with('/') {
+                JsonVal::Null
+            } else {
+                match cell.find('>') {
+                    Some(p) => {
+                        let after = &cell[p + 1..];
+                        let content = match after.find("</TD>") {
+                            Some(e) => &after[..e],
+                            None => after,
+                        };
+                        votable_cell(content)
+                    }
+                    None => JsonVal::Null,
+                }
+            };
+            obj.insert(names[i].clone(), val);
+        }
+        if !obj.is_empty() {
+            rows.push(JsonVal::Obj(obj));
+        }
+    }
+    if rows.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Arr(rows))
+    }
+}
+
 pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     let obj = match val {
         JsonVal::Obj(m) => m,
@@ -1441,7 +1538,14 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     } else if src.format == "free text" {
         text_to_json(body)
     } else if src.format == "tap" {
-        parse_json(body).and_then(|j| tap_to_json(&j))
+        let trimmed = body.trim_start();
+        if trimmed.starts_with('{') || trimmed.starts_with('[') {
+            parse_json(body).and_then(|j| tap_to_json(&j))
+        } else if body.contains("<VOTABLE") {
+            votable_to_json(body)
+        } else {
+            csv_to_json(body)
+        }
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         let body = body
             .strip_prefix("OK")
@@ -3280,4 +3384,56 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
         }
     }
     out
+}
+
+#[cfg(test)]
+mod votable_tests {
+    use super::*;
+
+    #[test]
+    fn votable_tabledata_reads_fields_and_rows() {
+        let body = r#"<?xml version="1.0"?>
+<VOTABLE version="1.3"><RESOURCE><TABLE>
+<FIELD name="ra" datatype="double" unit="deg"/>
+<FIELD name="dec" datatype="double" unit="deg"/>
+<FIELD name="flux" datatype="float" unit="Jy"/>
+<DATA><TABLEDATA>
+<TR><TD>10.5</TD><TD>41.0</TD><TD>0.25</TD></TR>
+<TR><TD>10.6</TD><TD>40.9</TD><TD/></TR>
+</TABLEDATA></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        let json = votable_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 2);
+        assert_eq!(jnum(&rows[0], "ra"), Some(10.5));
+        assert_eq!(jnum(&rows[0], "flux"), Some(0.25));
+        assert_eq!(jnum(&rows[1], "dec"), Some(40.9));
+        assert_eq!(jnum(&rows[1], "flux"), None);
+    }
+
+    #[test]
+    fn votable_without_tabledata_is_none() {
+        let body = r#"<VOTABLE><RESOURCE><TABLE><FIELD name="ra"/><DATA><BINARY/></DATA></TABLE></RESOURCE></VOTABLE>"#;
+        assert!(votable_to_json(body).is_none());
+    }
+
+    #[test]
+    fn votable_escaped_string_cell_reads() {
+        let body = r#"<VOTABLE><RESOURCE><TABLE><FIELD name="name"/><DATA><TABLEDATA><TR><TD>a&amp;b</TD></TR></TABLEDATA></DATA></TABLE></RESOURCE></VOTABLE>"#;
+        let json = votable_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        match &rows[0] {
+            JsonVal::Obj(m) => match m.get("name") {
+                Some(JsonVal::Str(s)) => assert_eq!(s, "a&b"),
+                other => panic!("name is not the escaped string: {other:?}"),
+            },
+            _ => panic!("not an object"),
+        }
+    }
 }
