@@ -202,11 +202,19 @@ fn read_int32(
         let value = match width {
             1 => {
                 let b = body[at];
-                if signed { b as i8 as i32 } else { b as i32 }
+                if signed {
+                    b as i8 as i32
+                } else {
+                    b as i32
+                }
             }
             2 => {
                 let b = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
-                if signed { b as i16 as i32 } else { b as i32 }
+                if signed {
+                    b as i16 as i32
+                } else {
+                    b as i32
+                }
             }
             4 => {
                 let b = u32::from_le_bytes(body[at..at + 4].try_into().ok()?);

@@ -379,7 +379,11 @@ pub fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
 }
 
 pub fn wire_extent(extent: f64) -> f64 {
-    if extent.is_finite() { extent } else { 0.0 }
+    if extent.is_finite() {
+        extent
+    } else {
+        0.0
+    }
 }
 
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
