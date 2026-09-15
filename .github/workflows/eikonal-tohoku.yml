@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Fetch the ETOPO1 grid
-        run: curl -sSfL --retry 3 --max-time 7200 -o etopo1.grd.gz https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
+        run: curl -sSfL --retry 3 --max-time 7200 -o etopo1.grd.gz https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
       - name: Verify the grid sha256
         run: echo "98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9  etopo1.grd.gz" | sha256sum -c -
       - name: Run the eikonal probe
