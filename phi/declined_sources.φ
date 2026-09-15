@@ -288,7 +288,7 @@ decline no-physical-force
 url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd
 note Kryptopreis — ökonomische Abstraktion, kein Sensor-Organ denkbar.
 
-decline 
+decline catalog
 url https://api.daac.asf.alaska.edu/services/search/param
 note grind: grind_terrapulse_a.φ
 
@@ -368,7 +368,7 @@ decline model-forecast
 url https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.10&lon=9.58
 note MET locationforecast/nowcast = NWP-Modell-Vorhersage; Beobachtung nur via frost.met.no (Key, eigener Netloc); 200 JSON Prognosen.
 
-decline 
+decline superseded-by-integrated
 url https://api.nasa.gov/DONKI
 note grind: grind_terrapulse_a.φ
 
@@ -664,7 +664,7 @@ decline presence
 url https://artenfinder.net/api/v2/sichtbeobachtungen/55423273?format=xml
 note Arten-Sichtbeobachtungen (Presence).
 
-decline 
+decline registry
 url https://atlas.marine.ie/arcgis/rest/services/OceanFeatures/MapServer/17
 note grind: grind_arcgis_deep.φ
 
@@ -820,11 +820,11 @@ decline catalog
 url https://cmr.earthdata.nasa.gov:443/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
 note curl: curl: (28) Operation timed out after 12000 milliseconds with 18895778 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline model-forecast
 url https://coast.noaa.gov/arcgis/rest/services/Hosted/OffshoreWindSpeedDirection/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline model-forecast
 url https://coast.noaa.gov/arcgis/rest/services/Hosted/SignificantWaveHeightDirection/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -900,7 +900,7 @@ decline superseded-by-box-route
 url https://data.sensor.community/airrohr/v1/filter/area=
 note Die area=-Route liefert nur bei leerem Parameter 2 B; die lebende Box-Route filter/box=...&type=SDS011 ist in sources.φ integriert — die PM-Messung ist damit erfasst, der Eintrag war historisch. Verschoben aus blocked_sources.φ 2026-08-19.
 
-decline 
+decline no-physical-force
 url https://data.worldbank.org
 note grind: grind_terrapulse_a.φ
 
@@ -912,7 +912,7 @@ decline metadata-portal
 url https://dataservices.gfz-potsdam.de
 note grind: grind_b2find.φ
 
-decline 
+decline no-physical-force
 url https://dataverse.harvard.edu/api/access/datafile/7502710
 note grind: grind_terrapulse_a.φ
 
@@ -1308,7 +1308,7 @@ decline alerts
 url https://gdacs.org/xml/rss.xml
 note Katastrophen-Warnungen (Alerts per Gate declined).
 
-decline 
+decline infrastructure
 url https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
 note grind: grind_terrapulse_a.φ
 
@@ -1332,7 +1332,7 @@ decline duplicate-intermagnet
 url https://geomag.usgs.gov/ws/data/
 note USGS-Geomagnetik (data.json Capture, HTTP 200: InterMAGNET-adjusted XYZF nT, 1-min, Station BOU): dieselbe InterMAGNET-Messung wie der registrierte imag-data.bgs.ac.uk/GIN-HAPI-Fanout (154 Stationen, inkl. BOU) — Duplikat, kein neuer Messwert.
 
-decline 
+decline position-only
 url https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Fish_Species_Distribution_FSH/FeatureServer/36
 note grind: grind_arcgis_deep.φ
 
@@ -1352,7 +1352,7 @@ decline imagery-tiles
 url https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi
 note GIBS-WMS-Bildkacheln.
 
-decline 
+decline no-physical-force
 url https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/40
 note grind: grind_arcgis_index.φ
 
@@ -1380,11 +1380,11 @@ decline aggregate
 url https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline registry
 url https://gisdata.in.gov/server/rest/services/Hosted/DAMS_DNR_WATER_IN_RO1/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://gisdata.in.gov/server/rest/services/Hosted/Indiana_Water_Balance_Network_2017/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -1436,7 +1436,7 @@ decline schedule
 url https://gtfsrt.api.translink.com.au/api/realtime/SEQ/VehiclePositions
 note GTFS-RT (protobuf) — Fahrplandaten.
 
-decline 
+decline no-physical-force
 url https://gwosc.org/detector_status/
 note grind: grind_terrapulse_a.φ
 
@@ -1444,7 +1444,7 @@ decline direction-only
 url https://hermes.lco.global/api/v0/targets/
 note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN in .secrets.local): /messages/ (362k) und /targets/ (304) → 200. Aber targets tragen nur name + right_ascension/declination (Dezimalgrad) + message-Refs — kein Feldwert (keine Signifikanz/Flux im API-Modell), keine Distanz (nichtlokalisierte Kandidaten). Position-only → §3.9 drop. Ohne erfundene Distanz/Feldwert nicht manifestierbar.
 
-decline 
+decline infrastructure
 url https://hosting.wsapi.cloud.bom.gov.au/arcgis/rest/services/flood/National_Flood_Gauge_Network/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -1540,7 +1540,7 @@ decline registry/katalog
 url https://jwst.esac.esa.int/server/tap
 note obscore/observation/plane/artifact — CAOM2-Archiv-Metadaten, kein Messwert.
 
-decline 
+decline no-physical-force
 url https://kp.gfz.de/
 note grind: grind_terrapulse_a.φ
 
@@ -1828,7 +1828,7 @@ decline registry/katalog
 url https://psa.esa.int/psa-tap/tap
 note psa.epn_core + v_*/product_ui_* — Archiv-/Produkt-Metadaten, kein Messwert.
 
-decline 
+decline aggregate
 url https://psl.noaa.gov/enso/mei/data/meiv2.data
 note grind: grind_terrapulse_a.φ
 
@@ -1940,7 +1940,7 @@ decline superseded-by-integrated
 url https://services-eu1.arcgis.com/BkJxImVcTMyS7LID/arcgis/rest/services/Catalogue_compilation_1901_June2020__web_v2_/FeatureServer/1
 note seismicity catalogue superseded by USGS fdsnws (already live in sources.φ).
 
-decline 
+decline registry
 url https://services-eu1.arcgis.com/YDJmfAKmZVpOnK2Q/arcgis/rest/services/Ring_Buoy_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -1952,19 +1952,19 @@ decline no-physical-force
 url https://services.arcgis.com/4PuGhqdWG1FwH2Yk/arcgis/rest/services/Current_lightning_view/FeatureServer/0
 note generisches (Parameter-Name,Wert)-Paar ohne peak_current-/Einheit-Feld, 0 Features zum Messzeitpunkt (gemessen 2026-09-11) — kein benannter physikalischer Messwert; lightning lebt via blitzortung (api.blitzortung.org).
 
-decline 
+decline model-forecast
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Latitudes/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Longitudes/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Poles/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Migration_of_Geomagnetic_Pole/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -1976,15 +1976,15 @@ decline kein-feld
 url https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/seismicity_catalogsNSHM2023/FeatureServer/0
 note arcgis_b5 2026-08-18: depth_km durchgehend 0, mw/mwe dimensionslos — position-only Katalog.
 
-decline 
+decline registry
 url https://services.arcgis.com/7vyJMxlH6ODgjFtB/arcgis/rest/services/Ireland_Tide_Gauges/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_EditBS/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline derived
 url https://services.arcgis.com/ak2bo87wLfUpMrt1/arcgis/rest/services/Ragweed_Pollen_FMM/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2000,91 +2000,91 @@ decline registry
 url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AQS_Monitor_Sites/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
 note EPA-Monitor-Sites-Registry.
 
-decline 
+decline model-forecast
 url https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CRWU_CREAT_Streamflow_Projections_Points/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202013-12-03,%20Fairbanks,%20AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202014-02-13,%20Fairbanks,%20AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2006-01-27_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-27_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-29_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-11-21_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-09_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-15_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-22_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-29_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-01-15_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-18_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-27_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-10_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-19_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-24_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-27_Fairbanks_AK/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations_Public/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline count
 url https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Monitoring_Results_Public2/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/HQ0xoN0EzDPBOEci/arcgis/rest/services/Buoy/FeatureServer
 note grind: grind_arcgis_index.φ
 
@@ -2092,19 +2092,19 @@ decline unit-arm
 url https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/Southwest_Seismograph_Stations_HR/FeatureServer/0
 note arcgis_b5 2026-08-18: PGA/PGV-Einheiten undeklariert, Übungs-Szenario (Kopie desselben Datensatzes bei 4 Verlegern).
 
-decline 
+decline no-physical-force
 url https://services.arcgis.com/IZtlGBUe4KTzLOl4/arcgis/rest/services/ocean_currents/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline position-only
 url https://services.arcgis.com/j3JVMGycAs95su2E/arcgis/rest/services/Volcano_Locations/FeatureServer/1
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/LxfKOYkTamDQYlsa/arcgis/rest/services/Hurricane_Tracks/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Sensor_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2112,7 +2112,7 @@ decline duplicate
 url https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Latest_Station_Observations/FeatureServer/0
 note arcgis_b5 2026-08-18: NDBC-Stationsspiegel, derselbe Messwert wie der lebende National_Data_Buoy_Center_Station_Observations-Block.
 
-decline 
+decline registry
 url https://services.arcgis.com/rcya3vExsaVBGUDp/arcgis/rest/services/service_9932f02723c841bfb091d7803834a77e/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2128,27 +2128,27 @@ decline kein-feld
 url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Live_Water_Data/FeatureServer/0
 note arcgis_b5 2026-08-18: value parameter-gemischt (flow/temperatur/gage height), keine feste Einheit; temperatur-Teilsatz lebt im Schwester-Block USGS_Stream_Temperatures.
 
-decline 
+decline alerts
 url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Volcano_Status_Public/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/x494PplYsmeeZsYB/arcgis/rest/services/Whale_buoy/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services.arcgis.com/xeMpV7tU1t4KD3Ei/arcgis/rest/services/hazard_seismic_ground_shaking_PGA_09g/FeatureServer/108
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/EPA_Radiation_Air_Monitors/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline alerts
 url https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/Volcano_Status/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Turbidity/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2172,15 +2172,15 @@ decline presence-catalog
 url https://services.usanpn.org/npn_portal/observations/getObservations.json
 note curl: curl: (28) Operation timed out after 12002 milliseconds with 1 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline static
 url https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_History_1988_2020/FeatureServer/1
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/0g8o874l5un2eDgz/arcgis/rest/services/Metropolitan_Area_Network/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline aggregate
 url https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/CA_Precipitation/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2192,59 +2192,59 @@ decline static
 url https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Salinity/FeatureServer/8
 note arcgis_b5 2026-08-18: Feldsurvey, 36 Stichproben — statisch.
 
-decline 
+decline no-physical-force
 url https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Tilt_redlinedemo/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline no-physical-force
 url https://services1.arcgis.com/DlsnLEhGfXazS5Er/arcgis/rest/services/EarthquakeData/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Below_Sea_Level/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZ_salinity_2012/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Anemometer/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline model-forecast
 url https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/FinalStreamflowClassifications_081016_CountyView/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/FNjlrOFR0aGJ71Tg/arcgis/rest/services/Meteorological_Stations/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline position-only
 url https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer/3
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/AG_(strong_motion)/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/NIkwK16KnqB4PR1J/arcgis/rest/services/Suitable_Weather_Station_Sites/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services1.arcgis.com/OAlKhiPBQkgw0MI7/arcgis/rest/services/Plain_Strain/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline no-physical-force
 url https://services1.arcgis.com/qS7AYixGtf3sv8B6/arcgis/rest/services/DARTSAll/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2252,11 +2252,11 @@ decline duplicate
 url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500_16/FeatureServer/0
 note arcgis_b5 2026-08-18: Schwester-Layer von DC_Water_Quality_Site_6500 (gleiche SiteID/Koordinaten).
 
-decline 
+decline registry
 url https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/Coastal_Resiliency_Salinity_Sites/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/SG0cDrMJLpxby4Ry/arcgis/rest/services/Parent_borehole/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2268,7 +2268,7 @@ decline no-measurement
 url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/gNnAj/FeatureServer/0/query?where=1=1&outFields=*&f=json
 note GSN Seismic Stations (ArcGIS FeatureServer, Layer 0) — 200 application/json (2026-08-19), aber nur Standort-Metadaten der Seismometer (Objekt-ID/Name/Position), keine Bebendaten — keine Messung am Punkt. Verschoben aus blocked_sources.φ 2026-08-19.
 
-decline 
+decline infrastructure
 url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/hurricane_shelters/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2276,31 +2276,31 @@ decline duplicate
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
 note arcgis_b5 2026-08-18: Schwester-Layer des lebenden Temperature-Blocks derselben Instanz.
 
-decline 
+decline position-only
 url https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Edit/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services1.arcgis.com/ZWOoUZbtaYePLlPw/arcgis/rest/services/Palm_Beach_County_Mooring_Buoy_Sites/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/1
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Current_DARTs_and_Retrospective_BPR_Deployments/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Grays_Reef_Buoy/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2312,71 +2312,71 @@ decline model-forecast
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 note curl: curl: (28) Connection timed out after 12001 milliseconds Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline aggregate
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/RSSTFall/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline derived
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/SE_Prioritization_Results_for_distribution/FeatureServer/18
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Volcano_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/cRH3tEMPESJz6DMX/arcgis/rest/services/HUB_LITORAL_TSUNAMI_AREA/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline no-physical-force
 url https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/SolarVector_PubLayers/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/COOPS_Waterlevel_Prediction_Stations_v1/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/hQZvdtFxRzJpMtdS/arcgis/rest/services/earthquake_saddlemt74m_mi_ver2/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_1977_2017/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_2012_2017/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_1977_2017/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_2012_2017/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Jasper_Water_Level_Change_2012_2017/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Buffer_of_Volcano/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Earthquake_Dashboard/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_edit/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow_vw/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2384,27 +2384,27 @@ decline static
 url https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Current_Weather_and_Wind_Station_Data/FeatureServer/0
 note arcgis_b5 2026-08-18: eingefrorene 2021-Momentaufnahme, Sensoren 0-gepolstert.
 
-decline 
+decline no-physical-force
 url https://services3.arcgis.com/16nyMR1mdhEaLG41/arcgis/rest/services/Magnetometer_view/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services3.arcgis.com/9nfxWATFamVUTTGb/arcgis/rest/services/Relative_sea_level_rise_TWAP/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services3.arcgis.com/cTnMkBRk4HWkUCRo/arcgis/rest/services/Amenaza_Tsunami/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services3.arcgis.com/eJGTyRrpIbVmu8UX/arcgis/rest/services/0118/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline derived
 url https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Solar_Radiation_HotSpots/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer
 note grind: grind_arcgis_index.φ
 
@@ -2416,27 +2416,27 @@ decline model
 url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry=-180%2C-80%2C180%2C80&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
 note PAGER = Schadensmodell (72 B — leerer Query-Treffer).
 
-decline 
+decline no-physical-force
 url https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Concentrazione_PM2_5/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/T6_PM2_5/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services3.arcgis.com/jleLTach0h2wlIJC/arcgis/rest/services/Weather_Stations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Anomalies/FeatureServer/37
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Tracklines/FeatureServer/38
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services3.arcgis.com/YhFczgmq8G7YgyNn/arcgis/rest/services/Temperature_Monitoring/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2444,11 +2444,11 @@ decline static
 url https://services4.arcgis.com/MMybESiUA82igqDG/arcgis/rest/services/Temperature_is_at_most_51_13/FeatureServer/0
 note arcgis_b5 2026-08-18: Punktproben-Survey (5 Features), gefilterte Sicht.
 
-decline 
+decline derived
 url https://services4.arcgis.com/OA3oWYqlqH5rRDWJ/arcgis/rest/services/Enriched_Coral_Bleaching_Heat_Stress___Areas/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline registry
 url https://services5.arcgis.com/0Q6HuHqqcg7Zo8zH/arcgis/rest/services/buoy_update/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2464,7 +2464,7 @@ decline static
 url https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
 note arcgis_b5 2026-08-18: Felderhebungs-Kampagne 2016-2022, kein lebender Kanal.
 
-decline 
+decline static
 url https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Amenaza_por_Tsunami_2024/FeatureServer
 note grind: grind_arcgis_index.φ
 
@@ -2472,11 +2472,11 @@ decline variant
 url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 note ArcGIS-Proxy seismischer Daten (live: USGS/INGV/seismicportal direkt).
 
-decline 
+decline static
 url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Tsunami_10m/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services5.arcgis.com/XqaKEQIgV03geG0E/arcgis/rest/services/BGSS_2018_Turbidity/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2492,19 +2492,19 @@ decline superseded
 url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
 note WMO-Bojen-Familie (services6.arcgis.com) lebt bereits in sources.φ — selbe Quelle.
 
-decline 
+decline static
 url https://services6.arcgis.com/8ktpizUKdcShI4lJ/arcgis/rest/services/400m%20from%20strain%20stations/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline no-physical-force
 url https://services6.arcgis.com/8YE7U3IbCsqyT36h/arcgis/rest/services/Mission_Darts___Rate_My_Oche_WFL1/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services6.arcgis.com/aVpcjAFBJTBCvdHA/arcgis/rest/services/SI1000_Tide_Buoy_Locations/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline static
 url https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/4
 note grind: grind_arcgis_deep.φ
 
@@ -2512,11 +2512,11 @@ decline position-only
 url https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/0
 note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline registry
 url https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/2
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Radiation_Control_Permit_Facilities/FeatureServer/3
 note grind: grind_arcgis_index.φ
 
@@ -2524,27 +2524,27 @@ decline infrastructure
 url https://services6.arcgis.com/GNx0EBxfRdt2xLnK/arcgis/rest/services/WA059_1993_RD_gdb/FeatureServer/21
 note grind: grind_arcgis_index.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline registry
 url https://services6.arcgis.com/Qptn479QktK11k72/arcgis/rest/services/Pollen_Monitoring_in_the_East_Riding_of_Yorkshire/FeatureServer/2
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline static
 url https://services6.arcgis.com/sbUjYcF5FKWKRP5Q/arcgis/rest/services/Salininy_extent_2013/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline no-physical-force
 url https://services7.arcgis.com/6o0M9YyJcHjZF5MP/arcgis/rest/services/Fire_Detection/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline static
 url https://services7.arcgis.com/NCo3mYPLFZomFtDT/arcgis/rest/services/Tsunami_Zones/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/4
 note grind: grind_arcgis_index.φ
 
-decline 
+decline position-only
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5
 note grind: grind_arcgis_index.φ
 
@@ -2556,7 +2556,7 @@ decline counts
 url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
 note Phytoplankton-Artenzählungen (chaetocero/rhizosolen/…) — Counts (§3.2), keine physikalische Einheit.
 
-decline 
+decline no-physical-force
 url https://services7.arcgis.com/zIRtsoI7e4HNAE5B/arcgis/rest/services/GMT_tilt_measures/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
@@ -2564,19 +2564,19 @@ decline kein-latlon
 url https://services8.arcgis.com/pyZO1twqdVI0YIld/arcgis/rest/services/Earthsense_Sensor_Hourly_Aggregation_Datafeed/FeatureServer/25
 note arcgis_b5 2026-08-18: Luftqualitäts-Messwerte real (no2/o3/pm/amb_temp), aber Position nur easting/northing (OSGB), kein lat/lon — nicht räumlich auffindbar.
 
-decline 
+decline model-forecast
 url https://services8.arcgis.com/qhgIImgl4UmEEyAS/arcgis/rest/services/NOAA_UV_Index/FeatureServer/0
 note grind: grind_arcgis_deep.φ
 
-decline 
+decline static
 url https://services8.arcgis.com/sFJK6YxafYvO2vAz/arcgis/rest/services/Buffer%20of%20depth%20of%20snow/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer
 note grind: grind_arcgis_index.φ
 
-decline 
+decline model-forecast
 url https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer/1
 note grind: grind_arcgis_index.φ
 
@@ -2584,19 +2584,19 @@ decline duplicate
 url https://services8.arcgis.com/wmWcFlllU5A4fpIS/arcgis/rest/services/Instrumental_Seismicity_(2000-present)/FeatureServer/0
 note arcgis_b5 2026-08-18: USGS-Instrumental-Teilsatz, überlappend mit Worldwide_Earthquake_Data.
 
-decline 
+decline infrastructure
 url https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Bike_Ped_Crashes_DARTS_2021_2025_US82_US91/FeatureServer/4
 note grind: grind_arcgis_index.φ
 
-decline 
+decline infrastructure
 url https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Lee_and_Dougherty_County_Crashes__2021_2025__along_US_82_and_US_19_WFL1/FeatureServer/4
 note grind: grind_arcgis_index.φ
 
-decline 
+decline registry
 url https://services9.arcgis.com/CzWZ8m5FuciqBibe/arcgis/rest/services/Weather_Station/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-decline 
+decline aggregate
 url https://services9.arcgis.com/dvViSL029z8IVu5n/arcgis/rest/services/Streamflow_Bitter/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2660,7 +2660,7 @@ decline registry/katalog
 url https://solar-dachs.oca.eu/tap
 note nur meteospace.epn_core (View) — Discovery.
 
-decline 
+decline registry
 url https://ssd-api.jpl.nasa.gov
 note grind: grind_terrapulse_a.φ
 
@@ -2672,7 +2672,7 @@ decline orbital-catalog
 url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min=2000-01-01&date-max=2100-01-01&body=Earth&sort=date
 note grind: grind_terrapulse_b.φ
 
-decline 
+decline registry
 url https://ssd-api.jpl.nasa.gov/sbdb.api
 note grind: grind_terrapulse_a.φ
 
@@ -2840,7 +2840,7 @@ decline derived
 url https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate=2026-01-01&enddate=2026-08-08&statisticsType=1&format=json
 note Drought-Monitor-Index (abgeleitet; 0 B Antwort). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx.
 
-decline 
+decline registry
 url https://utility.arcgis.com/usrsvcs/servers/5be1fa37cc3a42d598bff5664e92f838/rest/services/RADIATION_WATER_32633/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
@@ -2892,7 +2892,7 @@ decline superseded-by-integrated
 url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT=
 note NWIS dv already live in sources.φ (api.waterdata.usgs.gov).
 
-decline 
+decline aggregate
 url https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/
 note grind: grind_terrapulse_a.φ
 
@@ -2932,7 +2932,7 @@ decline metadata-registry
 url https://ws.pangaea.de/oai/provider
 note grind: grind_b2find.φ
 
-decline 
+decline no-physical-force
 url https://wspr.live
 note grind: grind_terrapulse_a.φ
 
@@ -3000,7 +3000,7 @@ decline derived
 url https://www.eorc.jaxa.jp/ALOS/en/palsar_fnf/api/v1/coverage?bbox=
 note PALSAR-Wald/Nichtwald (abgeleitet).
 
-decline 
+decline infrastructure
 url https://www.epa.gov/waterdata/get-nhdplus-national-hydrography-dataset-plus-data
 note grind: grind_terrapulse_a.φ
 
@@ -3056,19 +3056,19 @@ decline no-physical-force
 url https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox=
 note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-decline 
+decline no-physical-force
 url https://www.ncei.noaa.gov/data/global-hourly/
 note grind: grind_terrapulse_a.φ
 
-decline 
+decline no-physical-force
 url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/
 note grind: grind_terrapulse_a.φ
 
-decline 
+decline no-physical-force
 url https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
 note grind: grind_terrapulse_a.φ
 
-decline 
+decline no-physical-force
 url https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
 note grind: grind_terrapulse_a.φ
 
@@ -3084,7 +3084,7 @@ decline no-physical-force
 url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
 note Namensverzeichnis (Gazetteer), kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
 
-decline 
+decline model-forecast
 url https://www.ngdc.noaa.gov/geomag/data/poles/
 note grind: grind_terrapulse_a.φ
 
@@ -3100,7 +3100,7 @@ decline superseded
 url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
 note NHC-CurrentStorms ist bereits Accept-Kandidat (Batch 1) — basin-Variante.
 
-decline 
+decline registry
 url https://www.nmdb.eu/nest/
 note grind: grind_terrapulse_a.φ
 
@@ -3172,11 +3172,11 @@ decline no-physical-force
 url https://www.smard.de/app/chart_data/1223/DE/index_quarterhour.json
 note Strommarktdaten.
 
-decline 
+decline no-physical-force
 url https://www.spc.noaa.gov/climo/reports/
 note grind: grind_terrapulse_a.φ
 
-decline 
+decline no-physical-force
 url https://www.spc.noaa.gov/wcm/
 note grind: grind_terrapulse_a.φ
 
@@ -3200,7 +3200,7 @@ decline alerts
 url https://www.tsunami.gov/events/xml/PHEBAtom.xml
 note Tsunami-Bulletins.
 
-decline 
+decline imagery
 url https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro
 note grind: grind_terrapulse_a.φ
 
