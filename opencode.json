@@ -41,15 +41,17 @@
       "permission": {
         "edit": "deny",
         "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny",
         "bash": {
-          "*": "deny",
           "./bin/archive_search *": "allow",
           "bin/archive_search *": "allow",
           "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow",
           "./target/release/archive_search *": "allow",
           "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
           "curl *": "allow",
-          "bin/proton-wg.sh *": "allow"
+          "bin/proton-wg.sh *": "allow",
+          "*": "deny"
         },
         "playwright_*": "allow"
       }
@@ -67,7 +69,7 @@
       "variant": "high",
       "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
       "prompt": "Für Quellen-/Parser-Gap-/Kraft-Kanal-Recherche nutzt du zuerst `./bin/archive_search` (schnell, selbsttragend). Modi je Quelle: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>`; `--playwright <url|query>`; `--leads <keyword>`; `--verdict <url>` / `--sniff <url>`. webfetch/websearch sind der langsame, teure Notfall.",
-      "permission": { "edit": "allow" }
+      "permission": { "edit": "allow", "webfetch": "deny", "websearch": "deny" }
     },
     "grind-max": {
       "mode": "subagent",
@@ -75,7 +77,7 @@
       "variant": "max",
       "description": "Elite-Taucher (DeepSeek V4 Pro, max) — die härtesten Atome, die tiefes Urteil UND Schreiben in einem Kontext brauchen (novel parser construction, TE-/Null-Konstruktion, 4D-Datenkontrakt). Sparsam einsetzen; Force-Gate-Klassifikation bleibt grind-pro.",
       "prompt": "Für Quellen-/Recherche-Arbeit nutzt du zuerst `./bin/archive_search` (schnell, selbsttragend). Modi je Quelle: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>` für alle; `--playwright <url|query>`; `--leads <keyword>`; `--verdict <url>` / `--sniff <url>`. webfetch/websearch sind der langsame, teure Notfall.",
-      "permission": { "edit": "allow" }
+      "permission": { "edit": "allow", "webfetch": "deny", "websearch": "deny" }
     },
     "council": {
       "mode": "subagent",
@@ -114,6 +116,7 @@
       "./bin/archive_search *": "allow",
       "bin/archive_search *": "allow",
       "./target/release/*": "allow",
+      "curl *": "allow",
       "*": "ask"
     },
     "webfetch": "allow",
