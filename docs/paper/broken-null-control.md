@@ -2,7 +2,7 @@
   title: Broken null control — the phase-randomized surrogate gate
   class: paper
   date: 2026-09-12
-  sha256: 24e196334915e901bc429ffe838168332ab42783d472f44e5393dbc388670448
+  sha256: c0d006d1f18fefd0af3cfead424a50758eb828db7b10d6d1dfe6a96899736ff1
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -97,14 +97,41 @@ Every change to the estimator or to the null must pass all four:
 - `calibration_n_floor_no_statement_below_threshold` — below the n-floor (n = 30)
   report "no statement possible (n)", never a null finding.
 
-The limits the spec names remain open. **Multiple comparison:** 20 directed pairs
-were tested; the 2 surviving arrows are within the unprotected false-positive
-range, and a max-T correction over the pair matrix is pending. **Lag sweep:** only
-τ ∈ {0, 60, 120} s was tested; the lag optimum is unverified. **Bandwidth
-sensitivity:** Silverman is a heuristic; the dependence of the verdicts on h is
-unmeasured. **Window drift:** the naive and phase runs are not on identical data
-(the RTSW window rolls ~2 h between runs); n drifts accordingly. The estimator
-carries a residual false-negative bias at n = 300 (0–3/10 true couplings found,
+The limits the spec names, measured 2026-09-15 (`te_null_limits_probe`; the
+cached live window 2026-09-08 → 2026-09-15, 2:1 decimation of the 60 s grid →
+120 s cadence, n ≈ 876 per pair — the full 60 s grid is a CI job):
+
+- **Bandwidth sensitivity:** the Silverman factor swept over
+  h ∈ {0.5, 0.75, 1.0, 1.5, 2.0, 3.0}, the threshold recomputed under the same
+  h (the inline h-path at factor 1.0 reproduces the library threshold
+  identically — instrument check). TE declines monotonically with h on every
+  pair and the threshold follows; the verdict is stable. All four control
+  pairs stay silent at every factor except one marginal arrow on
+  Density-RTSW → EUV-304 at the extreme factor 3.0 (TE 9.12e-3 vs
+  thr 8.69e-3, excess +4.3e-4 — the null's tail; it dies under fam). On the
+  coupled Hénon system the true direction holds the arrow at every factor
+  and the reverse stays silent at every factor.
+- **Lag sweep:** τ 0–360 s on the same pairs. The live control pairs stay
+  silent at every lag (verdict stable; TE flat at 4–9e-2 against a slightly
+  growing threshold). The Hénon forward direction holds the arrow at
+  τ ∈ {0, 1, 5} with the optimum at τ = 1 (excess +9.5e-2) — the map's exact
+  one-step coupling — and turns silent from τ = 10 onward; the verdict flips
+  precisely at the coupling horizon. The reverse stays silent at every lag.
+- **Multiple comparison:** the family bound fam over the 20 directed pairs ×
+  lags {0, 1, 2} (60 cells, 600 surrogate values) is 2.18e-1. The per-cell
+  μ+2σ threshold names 5 arrows (X-Ray → EUV-304 at all three lags,
+  X-Ray → EUV-284 at lags 0–1, all marginal); **0 survive fam** — every
+  per-cell arrow of the live matrix sits inside the unprotected
+  false-positive range, the suspicion the paper named. The correction is
+  not over-conservative: on a synthetic matrix (10 independent AR(1) pairs,
+  4 coupled pairs, n = 300, 56 cells) fam = 2.26e-1 kills the one per-cell
+  false positive (1/40 = 2.5 % on the independent cells) and keeps all 8
+  true couplings.
+
+Still open: **Window drift** — the naive and phase runs are not on identical
+data (the RTSW window rolls ~2 h between runs); n drifts accordingly; a
+fixed-window re-run on archived data is pending. The estimator carries a
+residual false-negative bias at n = 300 (0–3/10 true couplings found,
 `te_fn_probe`) — named, and it does not drive false positives.
 
 The scientific content is a negative: the cascade was an artifact of the test,

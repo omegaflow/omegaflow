@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-15
-  version: 5
-  sha256: 0aa922970108b3c65857da23d8b26e5e273037203c11bfac874ff901e0e5da2f
+  version: 6
+  sha256: c8477ebcbb7917f321fcf5b11ebfcfaf4206c5fd0a0d722f3f6e9e79f149f2f1
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -153,8 +153,16 @@ are rx14 13,9×, rx43 ≈3124×, rx63 ≈59×, and the LS amplitude is n-indepen
 a two-way-link effect (the uplink sets the strength), not an epoch/n artifact.
 The split's own per-rx 1988 peaks (rx14 46,58, rx43 44,12, rx63 50,92 mHz)
 differ from the canonical-residual census of §1 (57,11 / 44,40 / 51,99 mHz); the
-qualitative station- and receiver-fixity is carried by both series, the value
-divergence stays open (data version or method). The rx63 anchor of the split is
+qualitative station- and receiver-fixity is carried by both series. The value
+divergence is measured, not a selection artifact: the split's `topk` rule and the
+census `peak_of_cell` rule return the same 1988 numbers on the same file
+(rx14 46,58, rx43 44,12, rx63 50,92 mHz), and the raw 6-file harvest carries the
+same values — neither the selection rule nor the file set separates them. The §1
+numbers are the census of `resid_e`, the full subtraction chain (which also masks
+samples: rx14 1988 n 10 182 → 8 450); on the same raw 1988 cell the run-linear
+detrend (≤1,0 mHz) and the 0,02/0,05-mHz grid (≤0,6 mHz) are second-order, while
+the chain supplies the rest (rx14 +10,1 mHz). The divergence is the processed
+series, not the method. The rx63 anchor of the split is
 the 1993 epoch peak at 55,9 mHz (52 985 of the 92 130 rx63 samples) — an epoch
 peak, not a grid artifact. The named machine of the NOCC reduction remains open.
 The per-station census of the canonical residual is the standing measurement
