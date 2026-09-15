@@ -3,7 +3,7 @@
   session: Forschung (ODF-Ernte + Voyager Saturn)
   class: handover
   date: 2026-09-15
-  sha256: f3dd5395712042b7e8a114a6b4e79ff42ef4801e31d214ff7a23989197526006
+  sha256: bf970739c308dca392e54acfc326a28fded5cc5209a9b2678b537fab114e6894
   status: live
   see-also: docs/auftrag/auftrag-sonden-rohdaten-anfragen.md, docs/paper/twenty-second-band-ground-chain.md
 -->
@@ -65,6 +65,64 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   offen (Datenversion oder Methode); der **160-Hz-Amplituden-Zensus** (`pending`);
   die **NOCC-Reduktionsmaschine** unbenannt. (Schritt: Amplitude-Zensus auf der
   kanonischen Serie fahren; die NOCC-Reduktionsdoku suchen.)
+
+## TE / Statistik
+
+- **broken-null-control** — max-T-Korrektur über die 20-Paar-Matrix, Lag-Sweep
+  über τ∈{0,60,120} hinaus, KDE-Bandbreite h ungemessen.
+  (Schritt: `docs/paper/broken-null-control.md` + `src/mathematikerin/te.rs`.)
+- **Blatt-Papier-Beweis/-Resultat** — multiple-comparison-Korrektur, Lag-Sweep,
+  KDE-h; Blatt 2/3 trägt alle TE/lag/n/threshold `pending`; 36 Rotor-Paare;
+  multi-force TE. (Schritt: Blatt 2/3 messen.)
+- **Korona-Leiter** — bandbreiten-robuster Pfeil + zweites Fenster;
+  per-Lag-Schwellen; multi-force TE ist implementiert, nicht berichtet.
+  (Schritt: `docs/paper/corona-heating-ladder.md`, `corona_ladder_probe`.)
+- **Solar 211A→193A** — conditional probe (stage-2).
+  (Schritt: `docs/paper/solar-seconds-matrix.md`.)
+- **Der Grat** — AIA-2014-per-cell-Schwellen; ENSO-Pfeil.
+  (Schritt: `docs/concepts/blatt-der-grat.md`.)
+- **depth-phase echo** — CMT-Strahlungsterm, 6 Kalibrier-Azimute, Δ≈30°.
+  (Schritt: `docs/paper/depth-phase-echo-fleet.md`.)
+- **GIC causal driver** — PCMCI, Minuten-Sturm-Ensemble, Tages-Lauf, KDE-h,
+  Rückkanal. (Schritt: `docs/paper/gic-causal-driver.md`.)
+
+## Positionslinien / Ephemeriden
+
+- **Zweite unabhängige Linie je Klasse** (Planeten/Monde, Sonden-Doppler, TNO,
+  Kometen, encke, juno-Namensschuld).
+  (Schritt: `docs/surveys/survey-2026-09-07-weberin-sonnensystem-kette.md`.)
+- **body_fixed_to_icrs ~117°-Bug.** (Schritt: `docs/concepts/positive-maske.md`.)
+- **CDN-Planetenbins ~116 km SSB-Offset** — neu aus de441.bsp.
+  (Schritt: `docs/surveys/survey-geometric-ground-truth.md`.)
+- **Die Weberin / Zeugnis: 9 Schritte.** (Schritt: `docs/concepts/die-weberin.md`.)
+- **eclipse-clock** — exakte Subpunkt-Sweep-Rate; Gate-Test LINES[0]=de441.
+  (Schritt: `docs/paper/eclipse-clock-worldlines.md`.)
+
+## Paper / Präregistrierung
+
+- **Flyby Path 2** — Zellen pending, Operator-Siegel; füllen nach JUICE
+  28/29.09., Clipper 03.12.
+  (Schritt: `docs/paper/flyby-path-2-preregistration.md`.)
+- **Kausalpfeil Trishuli** — Abfluss-Serie öffnen → `pfeil --lag-sweep`.
+  (Schritt: `docs/paper/sturzflut-tibet-pfeil.md`.)
+- **JWST disequilibrium** — O2/O3, vegetation red-edge, saisonale Kanäle.
+  (Schritt: `docs/paper/jwst-disequilibrium-survey.md`.)
+
+## Verschwunden (Repo-Historie, kein Commit) — wieder eingetragen
+
+- **Nadeln Ⅷ Dunkler Fluss · Ⅸ FRB · Ⅹ Kugelblitz · Ⅻ Urknall** — Dunkler Fluss
+  lebt in `docs/paper/dark-flow-sheet-8.md`, FRB in `frb_blatt_probe.rs`, Urknall
+  in `bigbang_echo_probe.rs`; Kugelblitz trägt kein Probe-Bin im Baum (nur
+  Archiv-Handover + `kybernetische-astrophysik.md`). (Schritt: Status je Nadel
+  messen; Kugelblitz anlegen oder als `pending` tragen.)
+- **Nadel Ⅺ Placebo-Coregistration** — `.elc`-Reader steht, `rigid_coregister`
+  fehlt. (Schritt: in `tools/measure/src/fiducial.rs` bauen.)
+- **front-c-epsilon-2d** — `tools/measure/src/bin/pioneer_navio_epsilon_2d.rs`.
+- **te-series-periodicity (K≈185 d)** — `tools/measure/src/bin/te_series_periodicity_probe.rs`.
+- **klassen-benchmark-pcmci** — `tools/measure/src/bin/pcmci_class_benchmark.rs`.
+- **iapetus Front B** — keine Datei im Baum. (Schritt: erste Messung — Konzept/Probe suchen.)
+- **v1298-tau-b-ocs** — `tools/measure/src/bin/v1298_tau_b_sulfur_quench_probe.rs`
+  (MAST 10.17909/kjg5-8t66).
 
 ## Extern gebunden (kein Datum)
 
