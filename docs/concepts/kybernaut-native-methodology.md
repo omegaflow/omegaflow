@@ -2,7 +2,7 @@
   title: Kybernaut-Native Methodology
   class: concept
   date: 2026-09-03
-  sha256: 9fa33a2e90d9ba76b6e26aaa7fb0e224fd6f26c29263fd6e832ed82c7f63afe2
+  sha256: a599645c77f065d9ce78dc1f92dcc469e331f7d94c67b89842abaa77a6a67e2e
   status: live
   see-also: AGENTS.md, docs/concepts/system-directive.md
 -->

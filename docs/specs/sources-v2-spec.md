@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: eb7e183788894b095b43f9f13879558d39e6ab2680d4a9d86d9da8ec9d7ec40d
+  sha256: d309fee043a2bd869e89d7e4d95787981a67de7a260e6689f9067f499bc9a7a1
 -->
 # sources.φ — Canonical Format Specification
 
