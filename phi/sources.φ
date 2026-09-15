@@ -8511,3 +8511,5 @@ ttl 604800
 field doppler_count_hp voyager_saturn_doppler_count_hp inverse-square em count 604800 0.0 0.0
 field doppler_count_lp voyager_saturn_doppler_count_lp inverse-square em count 604800 0.0 0.0
 field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
+field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
+field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
