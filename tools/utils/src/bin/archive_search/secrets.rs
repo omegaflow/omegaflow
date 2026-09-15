@@ -58,6 +58,46 @@ pub fn resolve_secret(template: &str, env: &HashMap<String, String>) -> String {
     out
 }
 
+pub fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<String> {
+    let mut rest = template;
+    while let Some(start) = rest.find('{') {
+        rest = &rest[start..];
+        let (open, close) = if rest.starts_with("{{") {
+            ("{{", "}}")
+        } else {
+            ("{", "}")
+        };
+        let Some(end) = rest[open.len()..].find(close) else {
+            return None;
+        };
+        let key = &rest[open.len()..open.len() + end];
+        let upper = key.to_uppercase();
+        match env.get(key).or_else(|| env.get(&upper)) {
+            Some(v) if !v.is_empty() => {}
+            _ => return Some(key.to_string()),
+        }
+        rest = &rest[open.len() + end + close.len()..];
+    }
+    None
+}
+
+pub enum Secret {
+    Value(String),
+    Absent(Option<String>),
+}
+
+pub fn resolve_key(template: &str, env: &HashMap<String, String>) -> Secret {
+    if let Some(marker) = unresolved_key(template, env) {
+        return Secret::Absent(Some(marker));
+    }
+    let value = resolve_secret(template, env);
+    if value.is_empty() {
+        Secret::Absent(None)
+    } else {
+        Secret::Value(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,5 +115,33 @@ mod tests {
     fn absent_marker_substitutes_void() {
         let env = HashMap::new();
         assert_eq!(resolve_secret("x{MISSING}y", &env), "xy");
+    }
+
+    #[test]
+    fn unresolved_key_names_the_missing_marker() {
+        let mut env = HashMap::new();
+        env.insert("ADS_RAW".to_string(), "abc".to_string());
+        assert_eq!(unresolved_key("Bearer {ADS_RAW}", &env), None);
+        assert_eq!(
+            unresolved_key("Bearer {MISSING}", &env),
+            Some("MISSING".to_string())
+        );
+        assert_eq!(unresolved_key("plain", &env), None);
+    }
+
+    #[test]
+    fn resolve_key_is_absent_not_a_partial_token() {
+        let env = HashMap::new();
+        assert!(matches!(
+            resolve_key("Bearer {MISSING}", &env),
+            Secret::Absent(Some(m)) if m == "MISSING"
+        ));
+        assert!(matches!(resolve_key("", &env), Secret::Absent(None)));
+        let mut env2 = HashMap::new();
+        env2.insert("ADS_RAW".to_string(), "abc".to_string());
+        assert!(matches!(
+            resolve_key("Bearer {ADS_RAW}", &env2),
+            Secret::Value(v) if v == "Bearer abc"
+        ));
     }
 }
