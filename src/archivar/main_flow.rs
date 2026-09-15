@@ -2428,6 +2428,7 @@ pub fn main_flow() {
                     | "igets"
                     | "hinet"
                     | "iss_lis"
+                    | "lis_otd"
                     | "supermag_1m"
                     | "noaa_ghcn_d"
                     | "noaa_gsod"
