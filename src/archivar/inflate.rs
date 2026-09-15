@@ -367,7 +367,11 @@ fn tar_octal(field: &[u8]) -> Option<usize> {
         value = value * 8 + (b - b'0') as usize;
         any = true;
     }
-    if any { Some(value) } else { None }
+    if any {
+        Some(value)
+    } else {
+        None
+    }
 }
 
 fn tar_text(field: &[u8]) -> String {
@@ -439,6 +443,172 @@ pub fn gunzip_stream<R: std::io::Read>(src: R, mut sink: impl FnMut(&[u8])) -> R
         total += z.decode_member()?;
     }
     Ok(total)
+}
+
+enum TarPhase {
+    Header,
+    LongData,
+    Data,
+    Pad,
+}
+
+struct TarScan {
+    phase: TarPhase,
+    header: [u8; 512],
+    header_fill: usize,
+    long_buf: Vec<u8>,
+    long_remaining: usize,
+    long_name: String,
+    member: Vec<u8>,
+    member_keep: bool,
+    member_name: String,
+    data_remaining: usize,
+    pad_remaining: usize,
+    total: u64,
+    ended: bool,
+    err: Option<String>,
+}
+
+impl TarScan {
+    fn new() -> TarScan {
+        TarScan {
+            phase: TarPhase::Header,
+            header: [0u8; 512],
+            header_fill: 0,
+            long_buf: Vec::new(),
+            long_remaining: 0,
+            long_name: String::new(),
+            member: Vec::new(),
+            member_keep: false,
+            member_name: String::new(),
+            data_remaining: 0,
+            pad_remaining: 0,
+            total: 0,
+            ended: false,
+            err: None,
+        }
+    }
+
+    fn feed<W: FnMut(&str) -> bool, S: FnMut(&str, &[u8])>(
+        &mut self,
+        chunk: &[u8],
+        want: &mut W,
+        sink: &mut S,
+    ) {
+        let mut pos = 0usize;
+        while pos < chunk.len() && !self.ended {
+            match self.phase {
+                TarPhase::Header => {
+                    let take = (512 - self.header_fill).min(chunk.len() - pos);
+                    self.header[self.header_fill..self.header_fill + take]
+                        .copy_from_slice(&chunk[pos..pos + take]);
+                    self.header_fill += take;
+                    pos += take;
+                    if self.header_fill < 512 {
+                        continue;
+                    }
+                    self.header_fill = 0;
+                    if self.header.iter().all(|&b| b == 0) {
+                        self.ended = true;
+                        break;
+                    }
+                    let size = match tar_octal(&self.header[124..136]) {
+                        Some(s) => s,
+                        None => {
+                            self.err = Some("tar header carries no octal size".into());
+                            self.ended = true;
+                            break;
+                        }
+                    };
+                    let typeflag = self.header[156];
+                    self.pad_remaining = (512 - size % 512) % 512;
+                    match typeflag {
+                        b'L' => {
+                            self.long_buf.clear();
+                            self.long_buf.reserve(size.min(65536));
+                            self.long_remaining = size;
+                            self.phase = TarPhase::LongData;
+                        }
+                        b'0' | 0 => {
+                            self.member_name = if self.long_name.is_empty() {
+                                tar_text(&self.header[..100])
+                            } else {
+                                std::mem::take(&mut self.long_name)
+                            };
+                            self.long_name.clear();
+                            self.member_keep = want(&self.member_name);
+                            self.member.clear();
+                            self.data_remaining = size;
+                            self.phase = TarPhase::Data;
+                        }
+                        _ => {
+                            self.long_name.clear();
+                            self.member_keep = false;
+                            self.data_remaining = size;
+                            self.phase = TarPhase::Data;
+                        }
+                    }
+                }
+                TarPhase::LongData => {
+                    let take = self.long_remaining.min(chunk.len() - pos);
+                    self.long_buf.extend_from_slice(&chunk[pos..pos + take]);
+                    self.long_remaining -= take;
+                    pos += take;
+                    if self.long_remaining == 0 {
+                        self.long_name = tar_text(&self.long_buf);
+                        self.long_buf.clear();
+                        self.phase = TarPhase::Pad;
+                    }
+                }
+                TarPhase::Data => {
+                    let take = self.data_remaining.min(chunk.len() - pos);
+                    if self.member_keep {
+                        self.member.extend_from_slice(&chunk[pos..pos + take]);
+                    }
+                    self.data_remaining -= take;
+                    pos += take;
+                    if self.data_remaining == 0 {
+                        if self.member_keep {
+                            sink(&self.member_name, &self.member);
+                            self.member.clear();
+                        }
+                        self.phase = TarPhase::Pad;
+                    }
+                }
+                TarPhase::Pad => {
+                    let take = self.pad_remaining.min(chunk.len() - pos);
+                    self.pad_remaining -= take;
+                    pos += take;
+                    if self.pad_remaining == 0 {
+                        self.phase = TarPhase::Header;
+                    }
+                }
+            }
+        }
+        self.total += pos as u64;
+    }
+}
+
+pub fn gunzip_tar_members<R: std::io::Read>(
+    src: R,
+    mut want: impl FnMut(&str) -> bool,
+    mut sink: impl FnMut(&str, &[u8]),
+) -> Result<u64, String> {
+    let mut scan = TarScan::new();
+    let streamed = gunzip_stream(src, |chunk| scan.feed(chunk, &mut want, &mut sink));
+    if let Some(e) = scan.err {
+        return Err(e);
+    }
+    if !scan.ended {
+        return match streamed {
+            Err(e) => Err(e),
+            Ok(_) => Err("tar stream ends before the zero-block terminator".into()),
+        };
+    }
+    match streamed {
+        Ok(total) => Ok(total),
+        Err(_) => Ok(scan.total),
+    }
 }
 
 struct ZStream<'a, R: std::io::Read> {
@@ -582,6 +752,7 @@ impl<R: std::io::Read> ZStream<'_, R> {
         }
         self.decode_deflate()?;
         self.align_byte();
+        self.flush_win();
         let mut trailer = [0u8; 8];
         match self.read_raw(&mut trailer) {
             Ok(8) => {}
@@ -592,7 +763,6 @@ impl<R: std::io::Read> ZStream<'_, R> {
             u32::from_le_bytes([trailer[4], trailer[5], trailer[6], trailer[7]]) as u64;
         let final_crc = self.crc ^ 0xFFFF_FFFF;
         let member_len = self.out_len;
-        self.flush_win();
         if stored_crc != final_crc {
             return Err(format!(
                 "gzip trailer crc32 {stored_crc:08x} differs from the stream crc32 {final_crc:08x}"
@@ -1008,6 +1178,47 @@ mod tests {
         assert_eq!(&tar[members[0].start..members[0].end], b"abc");
         assert_eq!(members[1].name, long);
         assert_eq!(&tar[members[1].start..members[1].end], b"hi");
+    }
+
+    fn stored_block(content: &[u8]) -> Vec<u8> {
+        let mut d = Vec::new();
+        d.push(0x01);
+        d.extend_from_slice(&(content.len() as u16).to_le_bytes());
+        d.extend_from_slice(&(!(content.len() as u16)).to_le_bytes());
+        d.extend_from_slice(content);
+        d
+    }
+
+    #[test]
+    fn gunzip_tar_members_streams_only_wanted_member() {
+        let long = "a/very/long/member/name/that/exceeds/the/one-hundred/byte/field/limit_of/the_tar_header_nc";
+        let mut tar = Vec::new();
+        tar.extend_from_slice(&tar_header("skip.txt", 3, b'0'));
+        tar.extend_from_slice(b"abc");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&tar_header("././@LongLink", long.len(), b'L'));
+        tar.extend_from_slice(long.as_bytes());
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&tar_header("want_nc", 2, b'0'));
+        tar.extend_from_slice(b"hi");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&[0u8; 1024]);
+
+        let gz = gzip_wrap(&stored_block(&tar), &tar);
+
+        let mut delivered: Vec<(String, Vec<u8>)> = Vec::new();
+        let n = gunzip_tar_members(
+            &gz[..],
+            |name| name == long,
+            |name, data| {
+                delivered.push((name.to_string(), data.to_vec()));
+            },
+        )
+        .expect("the tar streams");
+        assert_eq!(n as usize, tar.len());
+        assert_eq!(delivered.len(), 1);
+        assert_eq!(delivered[0].0, long);
+        assert_eq!(delivered[0].1, b"hi");
     }
 
     #[test]
