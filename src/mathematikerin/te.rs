@@ -2232,6 +2232,7 @@ pub struct GateCell {
     pub d_z: usize,
     pub fp: usize,
     pub neg: usize,
+    pub tp: usize,
 }
 
 fn gate_fpr_cells_from(
@@ -2250,6 +2251,7 @@ fn gate_fpr_cells_from(
     for &(a, d_z, trials) in cells {
         let mut fp = 0usize;
         let mut neg = 0usize;
+        let mut tp = 0usize;
         for t in 0..trials {
             let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
             let series = gate_common_driver(n, a, 0.0, d_z, &mut rng);
@@ -2266,6 +2268,11 @@ fn gate_fpr_cells_from(
                         continue;
                     }
                     for lag in 1..=max_lag {
+                        let true_edge = tgt == 1 && drv >= 2 && drv < 2 + d_z && lag == 1;
+                        if true_edge {
+                            tp += 1;
+                            continue;
+                        }
                         neg += 1;
                         if links.iter().any(|k| {
                             k.driver == drv && k.target == tgt && k.lag == lag && k.te > k.threshold
@@ -2276,7 +2283,13 @@ fn gate_fpr_cells_from(
                 }
             }
         }
-        out.push(GateCell { a, d_z, fp, neg });
+        out.push(GateCell {
+            a,
+            d_z,
+            fp,
+            neg,
+            tp,
+        });
     }
     out
 }

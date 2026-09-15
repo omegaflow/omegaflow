@@ -1285,26 +1285,29 @@ fn tar_gz_yaml_member_key(name: &str) -> String {
     stem.split('_').next().unwrap_or(stem).to_string()
 }
 
-fn tar_gz_yaml_to_json(buf: &[u8], wanted: &[String]) -> Option<JsonVal> {
-    let tar = crate::archivar::inflate::gunzip(buf)?;
-    let members = crate::archivar::inflate::tar_members(&tar)?;
+fn tar_gz_yaml_to_json(path: &str, wanted: &[String]) -> Option<JsonVal> {
+    let file = std::fs::File::open(path).ok()?;
     let mut out: HashMap<String, JsonVal> = HashMap::new();
-    for m in &members {
-        if !m.name.ends_with(".txt") {
-            continue;
+    let want = |name: &str| {
+        if !name.ends_with(".txt") {
+            return false;
         }
-        let key = tar_gz_yaml_member_key(&m.name);
-        if !wanted.is_empty() && !wanted.iter().any(|w| w == &key) {
-            continue;
-        }
+        let key = tar_gz_yaml_member_key(name);
+        wanted.is_empty() || wanted.iter().any(|w| w == &key)
+    };
+    let scanned = crate::archivar::inflate::gunzip_tar_members(file, want, |name, data| {
+        let key = tar_gz_yaml_member_key(name);
         if out.contains_key(&key) {
-            continue;
+            return;
         }
-        let text = String::from_utf8_lossy(&tar[m.start..m.end]);
+        let text = String::from_utf8_lossy(data);
         let Some(rows) = tar_gz_yaml_rows(&text) else {
-            continue;
+            return;
         };
         out.insert(key, JsonVal::Arr(rows));
+    });
+    if scanned.is_err() {
+        return None;
     }
     if out.is_empty() {
         None
@@ -1414,10 +1417,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             .flat_map(extract_fields)
             .filter_map(|fc| fc.key.split('.').next().map(str::to_string))
             .collect();
-        std::fs::read(body)
-            .ok()
-            .as_deref()
-            .and_then(|b| tar_gz_yaml_to_json(b, &wanted))
+        tar_gz_yaml_to_json(body, &wanted)
     } else {
         None
     };
