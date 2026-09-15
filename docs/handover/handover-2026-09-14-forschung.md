@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: b671ebbc58619739e8a6ed25560c2d8d90427c4c3dfa26e1a35faad780672753
+  sha256: 3a043321afb2748ede30db7780f99614cab53a8410c13a27e61a9d92c3dfccdb
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->
@@ -48,7 +48,8 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   TEC **datiert leer** (GIM ab 1998). `resid_e` trägt exakt die Papier-Zahlen
   (strict-1,0-s **70 602**, sub-10-s **73 249**). Ergebnis: **kein Papier-Wert ist
   irgendwo dominant**; 47,35 dominant nirgends; **50,73 reproduziert nicht**
-  (global 49,16 / 44,65). **Surrogat-Null: 2/4 Selektion** (st14 45,75, st63 1992
+  (gesäubert global 49,16 / 44,65; ungesäubert 44,4 mHz, nicht detrend-robust; die
+  Papier-Zählungen 70 602/73 249 sind die post-gate-Zählungen). **Surrogat-Null: 2/4 Selektion** (st14 45,75, st63 1992
   46,95; Null mean+2σ = 0,65, P≈2,5·10⁻³) — st43 51,55 und st63 1988 47,35
   überleben nicht. Die qualitative Station-Fixität steht (beide Serien). (Schritt:
   Papier **v4** — Zensus statt Pick, die alten Werte mit gemessenen Rängen,
