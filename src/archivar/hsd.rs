@@ -269,6 +269,34 @@ pub fn parse_segment(bytes: &[u8]) -> Option<AhiSegment> {
     })
 }
 
+pub const COMP_RADIANCE: u32 = 0;
+
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_RADIANCE => Some("himawari_ahi_radiance"),
+        _ => None,
+    }
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let seg = parse_segment(bytes)?;
+    if seg.calib_present != 1 || seg.obs_present != 1 || !seg.obs_sec.is_finite() {
+        return None;
+    }
+    let mut sum = 0.0f64;
+    let mut n = 0u32;
+    for &r in &seg.radiance {
+        if r.is_finite() && r > 0.0 {
+            sum += r as f64;
+            n += 1;
+        }
+    }
+    if n == 0 {
+        return None;
+    }
+    Some(vec![(seg.obs_sec, sum / n as f64, COMP_RADIANCE)])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
