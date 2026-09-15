@@ -2945,6 +2945,101 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "tar_gz_yaml" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let eph_arc = archive.body_ephemerides.clone();
+                let e = env.clone();
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let url = match render_source_url(
+                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                    ) {
+                        Some(u) => u,
+                        None => {
+                            eprintln!("tar_gz_yaml {}: url render void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                curves: None,
+                                spectral: None,
+                                fetch_ok: true,
+                            });
+                            return;
+                        }
+                    };
+                    let tmp_path = content_cache(&format!("omegaflow_tar_gz_{src_idx}.tgz"));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let headers = render_headers(&src_clone.headers, &e);
+                        let bytes = match fetch_raw_bytes_headers(&url, &headers, src_clone.ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!(
+                                    "tar_gz_yaml {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    src_idx
+                                );
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    curves: None,
+                                    spectral: None,
+                                    fetch_ok: true,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("tar_gz_yaml {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                curves: None,
+                                spectral: None,
+                                fetch_ok: true,
+                            });
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                        });
+                    } else {
+                        eprintln!("tar_gz_yaml {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                        });
+                    }
+                });
+                continue;
+            }
             let mut fields: Vec<FieldConfig> = Vec::new();
             for ext in &archive.sources[i].extracts {
                 fields.extend(extract_fields(ext));
