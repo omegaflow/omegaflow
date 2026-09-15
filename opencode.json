@@ -36,12 +36,15 @@
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
-      "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (archive_search, curl) + proton-wg.",
+      "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (`./bin/archive_search`, curl) + proton-wg.",
       "permission": {
         "edit": "deny",
         "task": "deny",
         "bash": {
           "*": "deny",
+          "./bin/archive_search *": "allow",
+          "bin/archive_search *": "allow",
+          "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow",
           "./target/release/archive_search *": "allow",
           "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow",
           "curl *": "allow",
@@ -105,6 +108,8 @@
       "sgrep *": "allow",
       "sfetch *": "allow",
       "smail *": "allow",
+      "./bin/archive_search *": "allow",
+      "bin/archive_search *": "allow",
       "./target/release/*": "allow",
       "*": "ask"
     },
