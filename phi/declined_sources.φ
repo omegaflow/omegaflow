@@ -3312,3 +3312,31 @@ note Weberin-Re-Run 2026-09-14: Belegpaper (BGR-Infraschall), keine Datenquelle.
 decline literature
 url https://www.mathworks.com/help/thingspeak/readdata.html
 note Weberin-Re-Run 2026-09-14: ThingSpeak-Doku (die Datenroute ist api.thingspeak.com, öffentliche Channels).
+
+decline superseded-by-integrated
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+note AMS-Meteors check_data.php — Login-Wall (2026-09-15: 200 HTML „temporarily offline", kein JSON); AMS-Payload = visuelle Feuerkugel-Meldungen (citizen science), keine satellitengemessene Strahlungsenergie. Die Bolide-/Feuerkugel-Strahlungsenergie (em) ist integriert: JPL-Fireball (geosphere_fireball_radiated_energy_e10j + impact_energy_kt, sources.φ) + GLM-Bolide (glm_bolide_radiant_energy_j).
+
+decline redistribution
+url https://services.sentinel-hub.com/api/v1/catalog/collections
+note Sentinel-Hub-Catalog-API (2026-09-15: 503 anonym, /oauth/token 401). Sentinel Hub gehört Planet Labs (pricing → planet.com/pricing, Paid-Tiers/monitoring credits). Verdikt 2026-08-17 hält: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E); derselbe Befund wie docs.sentinel-hub.com.
+
+decline reference
+url http://worldtimeapi.org/api/timezone/Etc/UTC
+note UTC-Zeit/Zeitzone — Referenz-Konstante, kein propagierendes Feld: ein Nicht-Mensch evolviert kein Sinnesorgan für eine UTC-Uhr; Kraft absent. Gemessen 2026-09-15: connection reset (curl 56), Proton NL SSL_ERROR_SYSCALL, kein/leerer Wayback-Snapshot — der Decline ist das Urteil (reference), nicht die Erreichbarkeit.
+
+decline no-physical-force
+url https://api.gdeltproject.org/api/v2/doc/doc
+note GDELT DOC 2.0 — globale Nachrichten-/Medien-Ereignis-Artikel (Text, Ton, Themen), kein physikalisches Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für Medien-Artikel; Kraft absent. Gemessen 2026-09-15: 429 (IP-Throttle) direkt + Proton, Host root 200, Wayback-Snapshot 2017 — der Decline ist das Urteil (no-physical-force), nicht der Rate-Limit.
+
+decline infrastructure
+url https://api.ioda.caida.org/v2/outages/asn/
+note IODA v2 Internet-Ausfälle (BGP/Reachability je ASN) — Zustand menschlicher Netz-Infrastruktur, kein physikalisches Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für BGP-Erreichbarkeit; Kraft absent. Gemessen 2026-09-15: kein HTTP über drei Routen — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
+
+decline infrastructure
+url https://ioda.caida.org/api/v1/outages
+note IODA v1 Internet-Ausfälle — Zustand menschlicher Netz-Infrastruktur, kein physikalisches Feld; Kraft absent. Gemessen 2026-09-15: Timeout 20 s lokal + Proton, kein HTTP — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
+
+decline infrastructure
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
+note GRAND_Dams — globales Staudamm-Register (Position + Attribute: Staukapazität, Höhe), geographische Infrastruktur ohne Messwert-Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für einen Staudamm; Kraft absent. Gemessen 2026-09-15: Timeout 20 s (Datacenter-IP-Sperre), Proton SSL_ERROR_SYSCALL — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
