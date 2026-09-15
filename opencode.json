@@ -119,8 +119,8 @@
       "curl *": "allow",
       "*": "ask"
     },
-    "webfetch": "allow",
-    "websearch": "allow"
+    "webfetch": "deny",
+    "websearch": "deny"
   },
   "formatter": {
     "rust": {
