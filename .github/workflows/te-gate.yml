@@ -24,12 +24,14 @@ jobs:
       - name: Run the n=1000 shift sweep (the shift-null measurement)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture shift_sweep_n1000
       - name: Run the n=1000 TE calibration gates (heavy; ignored in the default cargo test)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation
+      - name: Raise an issue when the n=1000 gate fails
+        if: failure()
         run: |
-          cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "te-gate: the n=1000 FPR gate carries a finding" \
-                 "The n=1000 TE calibration gate returned void (FPR > 8% or rise > 2pp under autocorrelation). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "te-gate: the n=1000 FPR gate carries a finding" \
+               "The n=1000 TE calibration gate returned void (FPR > 8% or rise > 2pp under autocorrelation). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
       - name: Run the n=1000 block sweep (the block-length fix measurement)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
       - name: Run the n=1000 KSG sweep (the estimator-switch measurement)

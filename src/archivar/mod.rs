@@ -104,6 +104,7 @@ pub mod tns;
 pub mod twomass;
 pub mod twomrs;
 pub mod volume;
+pub mod voyager_odr;
 pub mod win32;
 pub mod wind;
 pub mod wind_orbit;
