@@ -3,7 +3,7 @@
   session: Ernte-Folge 25
   class: handover
   date: 2026-09-15
-  sha256: 75812b7f5afaef64c7ae4ebf8fe5854ed597716b667af768fc62c4068d12c575
+  sha256: 8047e7c709aa434eaa319b3bfff8cf6a4a9ee2aff3a2bdc9b9aa44cd4c489351
   status: live
 -->
 # Handover — Ernte-Folge 25 (2026-09-15)
@@ -36,10 +36,14 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   in Compiler + Workflow.)
 - US-CRN: Compiler + `format us_crn_hourly` + CDN-Line registriert; offen ist
   nur der CI-Dispatch (gated Push + Consent).
-- Babamul: anonym weiter 401; Signup-Fluss aus dem SPA-JS gemessen
-  (`/api/babamul/signup` → activation_code per Mail → `/activate` → Passwort →
-  `/tokens` + `/kafka-credentials`); braucht Operator-Email, Marker
-  `BABAMUL_API_TOKEN`/`BABAMUL_KAFKA_USERNAME`/`_PASSWORD`.
+- Babamul: REGISTRIERT 2026-09-15 (`code@omegaflow.space`) — Konto aktiviert,
+  api_token + Kafka-Creds in `.secrets.local` (`BABAMUL_API_TOKEN`/
+  `_KAFKA_USERNAME`/`_KAFKA_PASSWORD`/`_PASSWORD`); der api_token gilt am
+  `/api/babamul`-Pfad (200). OFFEN: `/api/alerts` + `/api/objects` bleiben 401
+  (Auth-Mechanismus) — Ernte/Tor 1.
+- smail_recv: HTML-Fallback ergänzt (`text/html` → tag-strippt, wenn kein
+  `text/plain`) — HTML-only Mails (z. B. die Babamul-Aktivierung) wurden sonst
+  leer ins `mail_ledger` geschrieben. (tools/service/src/bin/smail_recv.rs)
 - WFAU VSA/WSA/OSA/SSA: Host `tap.roe.ac.uk` jetzt TCP-tot (2026-09-12 noch
   200); NOIRLab spiegelt `vhs_dr5`/`ukidss_dr11plus`; kein Konsument → pending.
 - FITS: `P`-Format dekodiert; Rice-Dekompression fehlt (nur nötig, wenn ein
@@ -132,8 +136,8 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   Bulk-Route GEFUNDEN** (vorgenerierte AirData-CSVs,
   `aqs.epa.gov/aqsweb/airdata/download_files.html` → 200; sie tragen
   FRM/FEM/POC — die Granularität, die `openaq_pm25_ugm3` nicht trägt) →
-  entblockt → ledger-Kandidat; die API bleibt key-gated. Babamul bleibt
-  blocked account (Kafka/API credential-gated, Signup mail-gated).
+  entblockt → ledger-Kandidat; die API bleibt key-gated. Babamul registriert
+  (2026-09-15, creds in `.secrets.local`); `/api/alerts`-Auth offen.
 - Descope-Note-Angleich (Rat 2026-09-15): die `descoped`-Blöcke in
   `phi/blocked_sources.φ` enden in der Note mit „→ pending (Tor 1)" (WFAU
   OSA/SSA/VSA/WSA, MarineCadastre, GNIP) — Zustandszeile und Note widersprechen
@@ -142,6 +146,9 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
   Verantwortungslinie IST der Block-Typ; `descoped` wandert nicht nach
   `declined_sources.φ`). (Schritt: Note-Enden der 5–6 `descoped`-Blöcke im
   selben Register-Pass angleichen.)
+
+- Rats-Gremium 2026-09-15 (manufactured-object-Grenze des Oszillator-Gates, volles Gremium): die Gate-Achse ist der Aktuator, nicht die Herkunft — Sensor (Messung des Feldes am Ort) = accept; passiver Treiber (Kinematik ohne Aktuator = das treibende Feld selbst: GDP-Drifter, Asteroid, Meteor, Ballon, Boje) = accept; aktives Objekt (Aktuator trägt die Kinematik: Flugzeug, Schiff, Zug, Vogel) = Telemetrie eines Akteurs, kein propagierendes Feld → decline no-physical-force. „Hergestellt" ist eine Ontologie, keine Kraft-Kategorie — das Gate trägt sie nicht (Ballon/Boje: hergestellt + passiv → accept-fähig; Vogel: natürlich + aktiv → decline-fähig). Endurteil (b): ADS-B = AIS = NetworkRail — alle drei decline; der ADS-B-Bestand (sources.φ api.adsb.lol) ist die Inkonsistenz. Was der Akteur ausstrahlt (Wirbelschleppe, Lärm, Wärme, Transponder-Signal), von einem Sensor am Ort gemessen, bleibt accept. (Schritt: ADS-B-Block sources.φ austragen → declined_sources.φ no-physical-force mit Aktuator-Benennung; MarineCadastre-Note: Kriterium „Kinematik eines angetriebenen Objekts" statt „hergestelltes Objekt".)
+- Rats-Gremium 2026-09-15 (die 10 `descoped`-Blöcke, als Feld-Serien groß gelesen): alle 10 halten — keine der zwölf Nadeln frißt eines der Felder (Tor 1 gemessen); aus dem Ozean-Vorrat (AIS+NRS+GNIP+Pegel+Bojen) wird keine dreizehnte Nadel erfunden (eine Nadel entsteht aus einer Frage, nicht aus einem Vorrat). Zwei Noten-Präzisierungen im selben Pass wie die offene Descope-Note-Angleich: (a) die NRS-Note trägt einen toten Nadel-Ⅹ-Verweis (Ⅹ selbst descoped 2026-09-12) — der Grund heißt „FORM gehalten ohne Tatort"; (b) SSA + die fünf Photometrie-Noten (OSA/SSA/VSA/WSA/tap_cat) tragen den Konsument-Kandidaten: SuperCOSMOS-pm als zweite unabhängige pm-Linie (60-Jahre-Basis) für den Weberin-Verdict, die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie). (Schritt: beide Noten-Präzisierungen in `phi/blocked_sources.φ` eintragen.)
 - Ledger-Re-Harvest + Zustandsnamen-Angleich (2026-09-15): Header Z. 2
   `geparkt` → `parser-gap` (SOURCE_PORT §4 trug den Namen bereits);
   `regtap_census import --regtap http://reg.g-vo.org/tap/sync` appendete
