@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 7
-  sha256: 270ee7cda86490913fbca7e8f2e1b0814b599890aadf65ec4d647829953d7b33
+  sha256: dbe2b56aef2735e1d2f37b33313d21e99c99f838bd42ea5af7ed408f1e22c73e
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -272,7 +272,12 @@ era-dependent (the 1-s data lives in two dumps: 1988 carries 49.0 mHz plus a loc
 45.7 mHz sub-peak at the scan edge, 1992 carries 50.7 mHz; the 20–70 mHz form adds
 a rise at 20 mHz and a 30 mHz bump) and station-dependent (Goldstone 14: 50.2,
 Canberra 43: 51.5–53.4, Madrid 63: 49.0 mHz) — a DSN-era band structure, not one
-coherent 19-s oscillator (the split peaks are ~10⁴× the frequency resolution). The
+coherent 19-s oscillator (the split peaks are ~10⁴× the frequency resolution).
+The quantitative band values here — f* = 50.73 mHz and the per-station sub-peaks —
+are reframed in `twenty-second-band-ground-chain.md` v4: the per-station values
+45.75 / 51.55 / 47.35 mHz are a sub-peak selection, the global 50.73 mHz does not
+reproduce, and the drift sentence is struck. The qualitative ground-chain reading
+stands; the exact per-station and global numbers are a census, not fixed lines. The
 witness test (Deduktion 18): the sampler rasters (1/10/60 s) determine f0 only
 modulo 1/60 Hz, so the 60-s member of the family at 0.71 mHz (= |f* − 3/60 Hz|) was
 measured, not assumed. It is carried by the NAVIO-clean Pioneer 10 overlap era
