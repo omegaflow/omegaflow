@@ -65,9 +65,7 @@ impl S2Osc {
     }
 
     fn from_worldline(position: [f64; 3]) -> Option<S2Osc> {
-        let n = (position[0] * position[0]
-            + position[1] * position[1]
-            + position[2] * position[2])
+        let n = (position[0] * position[0] + position[1] * position[1] + position[2] * position[2])
             .sqrt();
         if !(n.is_finite() && n > 0.0) {
             return None;
@@ -492,7 +490,8 @@ mod tests {
         let o = S2Osc::from_body("earth", t, &eph).expect("a covered body carries a worldline");
         assert!((o.weight - 1.0).abs() < 1e-12);
         assert_eq!(o.sigma_rad, None);
-        let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        let n =
+            (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
         assert!((n - 1.0).abs() < 1e-12);
     }
 
@@ -513,7 +512,8 @@ mod tests {
             .expect("a station on a covered body carries a worldline");
         assert!((o.weight - 1.0).abs() < 1e-12);
         assert_eq!(o.sigma_rad, None);
-        let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        let n =
+            (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
         assert!((n - 1.0).abs() < 1e-12);
     }
 

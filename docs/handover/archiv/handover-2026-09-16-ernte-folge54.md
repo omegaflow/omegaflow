@@ -3,7 +3,7 @@
   session: Ernte-Folge 54
   class: handover
   date: 2026-09-16
-  sha256: 73da8027eb47df55b91d8f7277e122b68efd1dce11a8b009adc7ccb7f47e1e91
+  sha256: 4ac06fdc7f87e9649eac035d516202f8b50a2f5ff448fee19010f526294a27a4
   status: live
 -->
 # Handover — Ernte-Folge 54 (2026-09-16)
@@ -89,12 +89,15 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `src/mathematikerin/te.rs`, `tools/measure/src/bin/*`, `tools/utils/src/bin/archive_search.rs`).
   (Schritt: rustfmt-Diff je Datei anwenden — ernte: die vier `src/`-Dateien.)
 
-## post.md — ernte-Zeilen eingefaltet, Datei geteilt
+## doi.org (ETHZ) — kein Geo-Block, Zielseite rate-limitiert
 
-- Die drei `An ernte:`-Zeilen (KCDC-Zugang, DEMETER-Re-Aggregation, doi.org-Korrektur) sind
-  in diese Übergabe eingefaltet; `post.md` trägt einen uncommitteten fremden bau-folge57-Hunk,
-  darum wurde die Datei nicht angefasst. (Schritt: die ernte-Zeilen + die `An entscheid:`-Zeile
-  beim nächsten sauberen Pass setzen.)
+- `10.3929/ethz-c-000797709` löst per **302** auf `www.research-collection.ethz.ch/handle/20.500.11850/797709`;
+  die Zielseite gibt **429 „Too Many Requests"** (Apache-Rate-Limit, **kein** Geo-Block), auch über den
+  `.ch`-Exit (`135.136.39.36`) — `proton-wg.sh ch` hilft nicht (Limit ist nicht exit-gebunden). Die
+  Metadaten liegen via DataCite vollständig vor: „Observing spatial and temporal variations in the
+  atmospheric chemistry of rocky exoplanets: Prospects for mid-infrared spectroscopy", Braam &
+  Angerhausen, EDP Sciences / A&A, 2026, Alt-DOI `10.1051/0004-6361/202557807`, CC BY 4.0. (Schritt:
+  keine Landingpage-Auflösung nötig — die DOI ist keine Datenquelle.)
 
 ## Abschluss
 
