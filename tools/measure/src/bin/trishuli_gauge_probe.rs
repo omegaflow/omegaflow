@@ -19,11 +19,7 @@ fn unix_of_datetime(dt: &str) -> Option<i64> {
     let d: i64 = parts[2].parse().ok()?;
     let h: i64 = parts[3].parse().ok()?;
     let mi: i64 = parts[4].parse().ok()?;
-    if !(1960..=2200).contains(&y)
-        || !(1..=12).contains(&mo)
-        || h > 23
-        || mi > 59
-    {
+    if !(1960..=2200).contains(&y) || !(1..=12).contains(&mo) || h > 23 || mi > 59 {
         return None;
     }
     let mdays = [
@@ -180,8 +176,12 @@ fn main() {
     };
 
     println!("=== Trishuli co-local precipitation -> stage TE lag sweep ===");
-    println!("precipitation route : Open-Meteo archive-api, rasuwa (28.25, 85.10), hourly, keyless");
-    println!("stage route         : DHM Nepal river-watch, Bhotekoshi at Rasuwagadhi (id 4913), 10-min, keyless");
+    println!(
+        "precipitation route : Open-Meteo archive-api, rasuwa (28.25, 85.10), hourly, keyless"
+    );
+    println!(
+        "stage route         : DHM Nepal river-watch, Bhotekoshi at Rasuwagadhi (id 4913), 10-min, keyless"
+    );
     println!("precip file         : {pp}");
     println!("stage file          : {sp}");
     println!();
@@ -190,23 +190,30 @@ fn main() {
     let Some((stage_rows, stage_skipped)) = stage else {
         println!("stage series: absent — no dhm_4913_stage.csv was written by livefeed_gate --dhm");
         println!("(measured 2026-09-16: the live DHM river-watch page carries no timeSeries for");
-        println!("station 4913 — telemetry stopped at the flood 2026-08-26 02:55, and the pre-flood");
+        println!(
+            "station 4913 — telemetry stopped at the flood 2026-08-26 02:55, and the pre-flood"
+        );
         println!("window has aged out of the live rolling buffer. the named source for the");
-        println!("registered n=129 window is the wayback snapshot of the page around 2026-08-27/28.)");
+        println!(
+            "registered n=129 window is the wayback snapshot of the page around 2026-08-27/28.)"
+        );
         println!();
-        println!("verdict: no sweep — the co-local stage series is absent on the fetched source (0 honored)");
+        println!(
+            "verdict: no sweep — the co-local stage series is absent on the fetched source (0 honored)"
+        );
         return;
     };
     let precip = read_precip_csv(&pp);
     let Some((precip_rows, precip_skipped)) = precip else {
-        println!("precip series: absent — the file carries no time,value header row (archive-api csv shape)");
+        println!(
+            "precip series: absent — the file carries no time,value header row (archive-api csv shape)"
+        );
         println!();
         println!("verdict: no sweep — the co-local precipitation series is absent (0 honored)");
         return;
     };
 
-    let (Some(&(stage_first, _)), Some(&(stage_last, _))) =
-        (stage_rows.first(), stage_rows.last())
+    let (Some(&(stage_first, _)), Some(&(stage_last, _))) = (stage_rows.first(), stage_rows.last())
     else {
         println!("stage series: empty — no parseable rows in {sp}");
         return;
@@ -249,7 +256,9 @@ fn main() {
         lags
     );
     println!("convention: transfer_entropy_lag(x, y) = TE(y -> x) — second argument = source;");
-    println!("columns carry the true direction (the registered §3.5 mirror error is not repeated).");
+    println!(
+        "columns carry the true direction (the registered §3.5 mirror error is not repeated)."
+    );
     println!();
     println!(
         "{:>4} | {:>18} | {:>12} | {:>18} | {:>12} | {}",
@@ -280,7 +289,11 @@ fn main() {
         );
     }
     println!();
-    println!("TE > threshold (mean+2sigma shuffled surrogates) = significant arrow; else no finding.");
+    println!(
+        "TE > threshold (mean+2sigma shuffled surrogates) = significant arrow; else no finding."
+    );
     println!("window note: the registered §3.5 run (n=129) needs the stage window 08-20 18:45 ..");
-    println!("08-26 02:55 UTC — carried only by a page snapshot from 2026-08-27/28, not by the live page.");
+    println!(
+        "08-26 02:55 UTC — carried only by a page snapshot from 2026-08-27/28, not by the live page."
+    );
 }
