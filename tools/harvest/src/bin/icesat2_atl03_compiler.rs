@@ -1,11 +1,11 @@
 use omegaflow::archivar::range::{
-    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
-    S3_REGION,
+    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
+    sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object,
+    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
 use std::env;
@@ -596,7 +596,9 @@ fn run_harvest(args: &[String]) {
         None => match arg_value(args, "--prefix") {
             Some(p) => p,
             None => {
-                eprintln!("usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused");
+                eprintln!(
+                    "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
+                );
                 std::process::exit(2);
             }
         },
@@ -707,7 +709,15 @@ mod tests {
     fn pack_unpack_roundtrip() {
         let recs = vec![
             [250_000_000.5, 71.3, -156.6, 1240.7, 0.0, 0.0, 800_000_000.0],
-            [250_000_001.5, 71.31, -156.61, 1241.1, 1.0, 2.0, 800_000_000.0],
+            [
+                250_000_001.5,
+                71.31,
+                -156.61,
+                1241.1,
+                1.0,
+                2.0,
+                800_000_000.0,
+            ],
         ];
         let bytes = pack(&recs);
         assert_eq!(bytes.len(), 8 + 2 * REC_BYTES);

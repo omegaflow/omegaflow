@@ -1,11 +1,11 @@
 use omegaflow::archivar::range::{
-    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
-    S3_REGION,
+    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
+    sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object,
+    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
 use std::env;
@@ -681,7 +681,9 @@ fn run_harvest(args: &[String]) {
         None => match arg_value(args, "--prefix") {
             Some(p) => p,
             None => {
-                eprintln!("usage: gedi_l2a_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused");
+                eprintln!(
+                    "usage: gedi_l2a_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
+                );
                 std::process::exit(2);
             }
         },
