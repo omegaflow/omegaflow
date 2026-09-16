@@ -1,4 +1,9 @@
 const { chromium } = require('playwright');
+const path = require('path');
+const os = require('os');
+
+const CHALLENGE =
+  /just a moment|nur einen moment|attention required|checking your browser|verifying you are human|enable javascript and cookies|ddos protection|sicherheitsüberprüfung|überprüfung erfolgreich|warten auf antwort|ray id/i;
 
 async function main() {
   const input = process.argv[2];
@@ -10,17 +15,52 @@ async function main() {
   const kind = 'page';
 
   const proxy = process.env.OMEGAFLOW_PROXY || null;
-  const browser = await chromium.launch({
+  const headed = process.env.OMEGAFLOW_HEADED === '1';
+  const profile =
+    process.env.OMEGAFLOW_PROFILE || path.join(os.homedir(), '.cache/omegaflow/playwright-profile');
+  const options = {
     channel: 'chrome',
-    headless: true,
+    viewport: { width: 1280, height: 900 },
     ...(proxy ? { proxy: { server: proxy } } : {}),
-  });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  };
+
+  let browser = null;
+  let context = null;
+  let page = null;
+  if (headed) {
+    context = await chromium.launchPersistentContext(profile, { ...options, headless: false });
+    page = context.pages()[0] || (await context.newPage());
+  } else {
+    browser = await chromium.launch({ channel: 'chrome', headless: true, ...(proxy ? { proxy: { server: proxy } } : {}) });
+    context = await browser.newContext({ viewport: options.viewport });
+    page = await context.newPage();
+  }
+
   let status = null;
+  let challenged = false;
+  page.on('response', (r) => {
+    if (r.request().resourceType() === 'document' && r.frame() === page.mainFrame()) {
+      status = r.status();
+    }
+  });
   try {
-    const resp = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    status = resp ? resp.status() : null;
+    await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    const deadline = Date.now() + 60000;
+    while (Date.now() < deadline) {
+      const title = await page.title().catch(() => '');
+      const body = await page
+        .evaluate(() => (document.body ? document.body.innerText.slice(0, 600) : ''))
+        .catch(() => '');
+      challenged = CHALLENGE.test(title) || CHALLENGE.test(body);
+      if (!challenged && status === 200) break;
+      await page.waitForTimeout(1000);
+    }
+    if (challenged) {
+      process.stderr.write(
+        'playwright_fetch: the interstitial did not clear (a fresh profile is detected; retry with OMEGAFLOW_HEADED=1 on a display, the profile persists under ~/.cache/omegaflow/playwright-profile)\n',
+      );
+    }
   } catch (e) {
     process.stderr.write('playwright_fetch: ' + String(e && e.message ? e.message : e) + '\n');
   }
@@ -62,7 +102,8 @@ async function main() {
     return { title, description, headings, links, results, text, url: location.href };
   });
 
-  await browser.close();
+  await context.close();
+  if (browser) await browser.close();
   const decodeBing = (href) => {
     try {
       const u = new URL(href).searchParams.get('u');
@@ -78,7 +119,7 @@ async function main() {
   if (Array.isArray(data.results)) {
     data.results = data.results.map((r) => ({ ...r, href: decodeBing(r.href) }));
   }
-  process.stdout.write(JSON.stringify({ kind, status, ...data }));
+  process.stdout.write(JSON.stringify({ kind, status, challenge: challenged, ...data }));
 }
 
 main().catch((e) => {

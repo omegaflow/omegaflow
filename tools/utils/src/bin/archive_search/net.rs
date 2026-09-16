@@ -116,7 +116,14 @@ fn socks_addr() -> Option<String> {
         Ok(dir) => dir,
         Err(_) => "/tmp".to_string(),
     };
-    let dir = std::path::Path::new(&runtime).join("proton-wg");
+    let mut dirs = vec![std::path::Path::new(&runtime).join("proton-wg")];
+    if let Ok(home) = std::env::var("HOME") {
+        dirs.push(std::path::Path::new(&home).join(".config/proton-wg"));
+    }
+    dirs.into_iter().find_map(|dir| socks_addr_in(&dir))
+}
+
+fn socks_addr_in(dir: &std::path::Path) -> Option<String> {
     let conf = std::fs::read_to_string(dir.join("active.conf")).ok()?;
     let addr = socks_bind(&conf)?;
     let sock: SocketAddr = addr.parse().ok()?;
@@ -357,24 +364,26 @@ fn first_snapshot(body: &str) -> Option<String> {
 pub fn verdict_lines(url: &str) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — three-stage ladder", url));
-    stage(
-        &mut lines,
-        1,
-        "direct",
-        url,
-        get_once(url, &[], "30", &Exit::Direct),
-    );
+    let direct = get_once(url, &[], "30", &Exit::Direct);
+    let direct_blocked = matches!(&direct, Some(f) if is_block(f.status));
+    stage(&mut lines, 1, "direct", url, direct);
     let proxies: Vec<Exit> = exits()
         .into_iter()
         .filter(|exit| !matches!(exit, Exit::Direct))
         .collect();
+    let mut proton_found = false;
     if proxies.is_empty() {
         lines.push("  stage 2 proton: absent — no proton transport is up".to_string());
     } else {
         for exit in &proxies {
             let label = exit.label();
             match get_once(url, &[], "30", exit) {
-                Some(f) => stage_result(&mut lines, 2, &label, url, f),
+                Some(f) => {
+                    if f.status == Some(200) && !f.body.trim().is_empty() {
+                        proton_found = true;
+                    }
+                    stage_result(&mut lines, 2, &label, url, f);
+                }
                 None => lines.push(format!("  stage 2 {}: pending — no response", label)),
             }
         }
@@ -399,6 +408,12 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
             )),
         },
         None => lines.push("  stage 3 wayback: pending — no response".to_string()),
+    }
+    if direct_blocked && !proton_found {
+        lines.push(format!(
+            "hint: the direct route is blocked — `bin/proton-wg.sh suggest {}` names a country exit (operator consent)",
+            url_host(url)
+        ));
     }
     lines.push(format!("measurement {}", today()));
     lines
