@@ -880,7 +880,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
-                let mut freq = 0.0;
+                let mut freq = crate::spectral::SPECTRAL_NO_BAND;
                 if let Some(s) = parts.get(9)
                     && let Ok(v) = s.parse::<f64>()
                     && v.is_finite()
@@ -888,7 +888,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 {
                     freq = v;
                 }
-                let mut bin_width = 0.0;
+                let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
                 if let Some(s) = parts.get(10)
                     && let Ok(v) = s.parse::<f64>()
                     && v.is_finite()
