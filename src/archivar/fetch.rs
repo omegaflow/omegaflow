@@ -657,6 +657,7 @@ pub fn live_sweep(
                 | "finals"
                 | "ionex"
                 | "rinex"
+                | "cors_rinex"
                 | "alerce"
                 | "catalog_tycho"
                 | "spectral"

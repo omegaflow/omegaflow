@@ -38,10 +38,21 @@ pub struct OdrHeader {
     pub sample_count: u32,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct OdrRecord {
     pub header: OdrHeader,
     pub samples: [u8; SAMPLE_BYTES],
+}
+
+pub const PACK_MAGIC: [u8; 4] = *b"VODR";
+pub const PACK_ENTRY_BYTES: usize = 96;
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PackedOdr {
+    pub name: String,
+    pub year: u16,
+    pub sha256: [u8; 32],
+    pub records: Vec<OdrRecord>,
 }
 
 fn be16(bytes: &[u8], i: usize) -> u16 {
@@ -110,6 +121,72 @@ pub fn parse_odr(bytes: &[u8]) -> Option<Vec<OdrRecord>> {
         out.push(record(&bytes[i * RECORD_BYTES..(i + 1) * RECORD_BYTES])?);
     }
     Some(out)
+}
+
+pub fn pack(raw: &[u8], name: &str, year: u16) -> Vec<u8> {
+    let record_count = raw.len() / RECORD_BYTES;
+    let data_start = 8 + PACK_ENTRY_BYTES;
+    let mut bin = vec![0u8; data_start + raw.len()];
+    bin[0..4].copy_from_slice(&PACK_MAGIC);
+    bin[4..8].copy_from_slice(&1u32.to_le_bytes());
+    let nameb = name.as_bytes();
+    let n = nameb.len().min(32);
+    bin[8..8 + n].copy_from_slice(&nameb[..n]);
+    bin[8 + 32..8 + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(raw));
+    bin[8 + 64..8 + 68].copy_from_slice(&(record_count as u32).to_le_bytes());
+    bin[8 + 68..8 + 70].copy_from_slice(&year.to_le_bytes());
+    bin[8 + 72..8 + 80].copy_from_slice(&(data_start as u64).to_le_bytes());
+    bin[8 + 80..8 + 88].copy_from_slice(&(raw.len() as u64).to_le_bytes());
+    bin[data_start..].copy_from_slice(raw);
+    bin
+}
+
+pub fn parse_packed(bytes: &[u8]) -> Option<PackedOdr> {
+    if bytes.len() < 8 + PACK_ENTRY_BYTES || bytes[0..4] != PACK_MAGIC {
+        return None;
+    }
+    let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if count == 0 || bytes.len() < 8 + count * PACK_ENTRY_BYTES {
+        return None;
+    }
+    let mut records = Vec::new();
+    let mut name = String::new();
+    let mut year = 0u16;
+    let mut sha256 = [0u8; 32];
+    for i in 0..count {
+        let entry = &bytes[8 + i * PACK_ENTRY_BYTES..8 + (i + 1) * PACK_ENTRY_BYTES];
+        let name_end = entry[0..32]
+            .iter()
+            .position(|b| *b == 0)
+            .unwrap_or(32);
+        name = String::from_utf8(entry[0..name_end].to_vec()).ok()?;
+        sha256.copy_from_slice(&entry[32..64]);
+        let record_count = u32::from_le_bytes(entry[64..68].try_into().ok()?) as usize;
+        year = u16::from_le_bytes(entry[68..70].try_into().ok()?);
+        let data_offset = u64::from_le_bytes(entry[72..80].try_into().ok()?) as usize;
+        let data_length = u64::from_le_bytes(entry[80..88].try_into().ok()?) as usize;
+        if data_offset + data_length > bytes.len() {
+            return None;
+        }
+        let raw = &bytes[data_offset..data_offset + data_length];
+        if crate::archivar::sha256::sha256_raw(raw) != sha256 {
+            return None;
+        }
+        if raw.len() != record_count * RECORD_BYTES {
+            return None;
+        }
+        let recs = parse_odr(raw)?;
+        if recs.len() != record_count {
+            return None;
+        }
+        records.extend(recs);
+    }
+    Some(PackedOdr {
+        name,
+        year,
+        sha256,
+        records,
+    })
 }
 
 #[cfg(test)]
@@ -205,5 +282,33 @@ mod tests {
         assert_eq!(h.record_length_words, 2528);
         assert_eq!(h.spacecraft, 32);
         assert_eq!(h.source_station, 43);
+    }
+
+    #[test]
+    fn pack_roundtrips_records_and_year() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&sample_record(1, 0x9006));
+        raw.extend_from_slice(&sample_record(2, 0x0006));
+        let records = parse_odr(&raw).unwrap();
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let parsed = parse_packed(&bin).unwrap();
+        assert_eq!(parsed.name, "C0XR13AA.ODR");
+        assert_eq!(parsed.year, 1981);
+        assert_eq!(parsed.records, records);
+        assert_eq!(parsed.sha256, crate::archivar::sha256::sha256_raw(&raw));
+        assert!(parse_packed(b"X").is_none());
+    }
+
+    #[test]
+    fn parse_packed_voids_on_wrong_magic_and_corruption() {
+        let raw = sample_record(1, 0x9006);
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let mut wrong_magic = bin.clone();
+        wrong_magic[0] = b'X';
+        assert!(parse_packed(&wrong_magic).is_none());
+        let mut corrupted = bin;
+        let last = corrupted.len() - 1;
+        corrupted[last] ^= 0xff;
+        assert!(parse_packed(&corrupted).is_none());
     }
 }

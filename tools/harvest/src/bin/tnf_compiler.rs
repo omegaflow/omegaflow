@@ -1,6 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::odf::{TnfDt0, TnfSfdu, scan_tnf_sfdus, tnf_dt0};
 use omegaflow::cdn::upload_release;
+use omegaflow::lsk::days_from_civil;
+use omegaflow::spectral::civil_from_days;
 
 const NETLOC: &str = "pds-smallbodies.astro.umd.edu";
 
@@ -9,6 +11,21 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
         .position(|a| a == key)
         .and_then(|i| args.get(i + 1))
         .cloned()
+}
+
+fn epoch_iso(frame: &TnfSfdu) -> Option<String> {
+    let day0 = days_from_civil(frame.year as i64, 1, 1)?;
+    let ms = (frame.sec * 1000.0).round() as i64;
+    let days = day0 + frame.doy as i64 - 1 + ms.div_euclid(86_400_000);
+    let rem = ms.rem_euclid(86_400_000);
+    let (year, month, day) = civil_from_days(days)?;
+    let hour = rem / 3_600_000;
+    let minute = (rem / 60_000) % 60;
+    let second = (rem / 1000) % 60;
+    let milli = rem % 1000;
+    Some(format!(
+        "{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}.{milli:03}Z"
+    ))
 }
 
 fn main() {
@@ -61,11 +78,21 @@ fn main() {
         std::process::exit(1);
     }
     let mut csv = String::from(
-        "year,doy,sec,upl_rec_seq_num,ul_hi_phs_cycles,ul_lo_phs_cycles,ul_frac_phs_cycles,ramp_freq\n",
+        "epoch,year,doy,sec,upl_rec_seq_num,ul_hi_phs_cycles,ul_lo_phs_cycles,ul_frac_phs_cycles,ramp_freq,ul_phase_cycles\n",
     );
     for (f, d) in &decoded {
+        let Some(epoch) = epoch_iso(f) else {
+            eprintln!(
+                "year {} doy {} does not resolve to a civil date — the series stays unwritten",
+                f.year, f.doy
+            );
+            std::process::exit(1);
+        };
+        let phase_cycles = d.ul_hi_phs_cycles as f64 * 4_294_967_296.0
+            + d.ul_lo_phs_cycles as f64
+            + d.ul_frac_phs_cycles as f64 / 4_294_967_296.0;
         csv.push_str(&format!(
-            "{},{},{:.3},{},{},{},{},{:.6e}\n",
+            "{epoch},{},{},{:.3},{},{},{},{},{:.6e},{:.6e}\n",
             f.year,
             f.doy,
             f.sec,
@@ -73,7 +100,8 @@ fn main() {
             d.ul_hi_phs_cycles,
             d.ul_lo_phs_cycles,
             d.ul_frac_phs_cycles,
-            d.ramp_freq
+            d.ramp_freq,
+            phase_cycles
         ));
     }
     if let Some(parent) = std::path::Path::new(&out).parent() {
@@ -84,7 +112,7 @@ fn main() {
         std::process::exit(1);
     }
     let rows = match std::fs::read_to_string(&out) {
-        Ok(t) => t.lines().filter(|l| !l.starts_with("year,")).count(),
+        Ok(t) => t.lines().filter(|l| !l.starts_with("epoch,")).count(),
         Err(_) => 0,
     };
     if rows != decoded.len() {
