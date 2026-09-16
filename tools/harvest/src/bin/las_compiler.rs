@@ -11,34 +11,189 @@ use std::io::{BufWriter, Write};
 const NETLOC: &str = "usgs-lidar-public.s3.amazonaws.com";
 const GPS_UNIX_OFFSET: f64 = 315_964_800.0;
 const WEB_MERCATOR_R: f64 = 6_378_137.0;
+const GRS80_A: f64 = 6_378_137.0;
+const GRS80_INV_F: f64 = 298.257_222_101;
+const UTM_K0: f64 = 0.9996;
+const UTM_FALSE_EASTING: f64 = 500_000.0;
+const UTM_FALSE_NORTHING_SOUTH: f64 = 10_000_000.0;
 
 enum CrsAxis {
     Geographic,
     WebMercator,
+    Utm { zone: u16, southern: bool },
 }
 
 impl CrsAxis {
-    fn name(&self) -> &'static str {
+    fn name(&self) -> String {
         match self {
-            CrsAxis::Geographic => "geographic (EPSG:4326, lon=x lat=y)",
-            CrsAxis::WebMercator => "WGS 84 / Pseudo-Mercator (EPSG:3857)",
+            CrsAxis::Geographic => "geographic (EPSG:4326, lon=x lat=y)".to_string(),
+            CrsAxis::WebMercator => "WGS 84 / Pseudo-Mercator (EPSG:3857)".to_string(),
+            CrsAxis::Utm { zone, southern } => format!(
+                "WGS 84 / UTM zone {zone}{} (GRS80 series inverse)",
+                if *southern { "S" } else { "N" }
+            ),
         }
     }
 }
 
 fn wkt_epsg(wkt: &str) -> Option<u16> {
-    let pos = wkt.find("ID[\"EPSG\",")?;
-    let rest = &wkt[pos + 10..];
-    let digits: String = rest.chars().take_while(|c| c.is_ascii_digit()).collect();
-    digits.parse().ok()
+    let bytes = wkt.as_bytes();
+    let mut depth = 0u32;
+    let mut in_string = false;
+    let mut i = 0usize;
+    while i < bytes.len() {
+        let b = bytes[i];
+        if in_string {
+            if b == b'"' {
+                in_string = false;
+            }
+            i += 1;
+            continue;
+        }
+        match b {
+            b'"' => {
+                in_string = true;
+                i += 1;
+            }
+            b'[' => {
+                depth += 1;
+                i += 1;
+            }
+            b']' => {
+                depth = depth.saturating_sub(1);
+                i += 1;
+            }
+            _ => {
+                if depth == 1 && i + 10 <= bytes.len() && &bytes[i..i + 3] == b"ID[" {
+                    let rest = &bytes[i + 3..];
+                    let tag = &rest[..rest.len().min(7)];
+                    if tag.starts_with(b"\"EPSG\",") {
+                        let digits = &rest[7..];
+                        let count = digits
+                            .iter()
+                            .take_while(|c| c.is_ascii_digit())
+                            .count();
+                        if count > 0 {
+                            return std::str::from_utf8(&digits[..count])
+                                .ok()
+                                .and_then(|s| s.parse().ok());
+                        }
+                    }
+                }
+                i += 1;
+            }
+        }
+    }
+    None
 }
 
 fn resolve_crs(crs: &LasCrs) -> Option<CrsAxis> {
     match crs {
         LasCrs::Epsg(4326) => Some(CrsAxis::Geographic),
         LasCrs::Epsg(3857) => Some(CrsAxis::WebMercator),
+        LasCrs::Epsg(code) if (32601..=32660).contains(code) => Some(CrsAxis::Utm {
+            zone: code - 32600,
+            southern: false,
+        }),
+        LasCrs::Epsg(code) if (32701..=32760).contains(code) => Some(CrsAxis::Utm {
+            zone: code - 32700,
+            southern: true,
+        }),
         LasCrs::Wkt(wkt) => wkt_epsg(wkt).and_then(|code| resolve_crs(&LasCrs::Epsg(code))),
         _ => None,
+    }
+}
+
+fn utm_inverse(zone: u16, southern: bool, easting: f64, northing: f64) -> Option<(f64, f64)> {
+    let f = 1.0 / GRS80_INV_F;
+    if !f.is_finite() {
+        return None;
+    }
+    let e2 = f * (2.0 - f);
+    if !e2.is_finite() {
+        return None;
+    }
+    let ep2 = e2 / (1.0 - e2);
+    if !ep2.is_finite() {
+        return None;
+    }
+    let x = easting - UTM_FALSE_EASTING;
+    let y = northing - if southern {
+        UTM_FALSE_NORTHING_SOUTH
+    } else {
+        0.0
+    };
+    let m = y / UTM_K0;
+    if !m.is_finite() {
+        return None;
+    }
+    let mu = m
+        / (GRS80_A * (1.0 - e2 / 4.0 - 3.0 * e2 * e2 / 64.0 - 5.0 * e2 * e2 * e2 / 256.0));
+    if !mu.is_finite() {
+        return None;
+    }
+    let e1 = (1.0 - (1.0 - e2).sqrt()) / (1.0 + (1.0 - e2).sqrt());
+    if !e1.is_finite() {
+        return None;
+    }
+    let phi1 = mu
+        + (3.0 * e1 / 2.0 - 27.0 * e1.powi(3) / 32.0) * (2.0 * mu).sin()
+        + (21.0 * e1.powi(2) / 16.0 - 55.0 * e1.powi(4) / 32.0) * (4.0 * mu).sin()
+        + (151.0 * e1.powi(3) / 96.0) * (6.0 * mu).sin()
+        + (1097.0 * e1.powi(4) / 512.0) * (8.0 * mu).sin();
+    if !phi1.is_finite() {
+        return None;
+    }
+    let sin_phi1 = phi1.sin();
+    let cos_phi1 = phi1.cos();
+    if !sin_phi1.is_finite() || !cos_phi1.is_finite() {
+        return None;
+    }
+    let tan_phi1 = phi1.tan();
+    if !tan_phi1.is_finite() {
+        return None;
+    }
+    let denom = 1.0 - e2 * sin_phi1 * sin_phi1;
+    let n1 = GRS80_A / denom.sqrt();
+    if !n1.is_finite() {
+        return None;
+    }
+    let r1 = GRS80_A * (1.0 - e2) / denom.powf(1.5);
+    if !r1.is_finite() {
+        return None;
+    }
+    let t1 = tan_phi1 * tan_phi1;
+    let c1 = ep2 * cos_phi1 * cos_phi1;
+    let d = x / (n1 * UTM_K0);
+    if !d.is_finite() {
+        return None;
+    }
+    let phi = phi1
+        - (n1 * tan_phi1 / r1)
+            * (d * d / 2.0
+                - (5.0 + 3.0 * t1 + 10.0 * c1 - 4.0 * c1 * c1 - 9.0 * ep2) * d.powi(4) / 24.0
+                + (61.0 + 90.0 * t1 + 298.0 * c1 + 45.0 * t1 * t1 - 252.0 * ep2
+                    - 3.0 * c1 * c1)
+                    * d.powi(6)
+                    / 720.0);
+    if !phi.is_finite() {
+        return None;
+    }
+    let lam = (zone as f64 * 6.0 - 183.0).to_radians()
+        + (d - (1.0 + 2.0 * t1 + c1) * d.powi(3) / 6.0
+            + (5.0 - 2.0 * c1 + 28.0 * t1 - 3.0 * c1 * c1 + 8.0 * ep2 + 24.0 * t1 * t1)
+                * d.powi(5)
+                / 120.0)
+            / cos_phi1;
+    if !lam.is_finite() {
+        return None;
+    }
+    let lat = phi.to_degrees();
+    let lon = lam.to_degrees();
+    if lat.is_finite() && lon.is_finite() {
+        Some((lat, lon))
+    } else {
+        None
     }
 }
 
@@ -49,6 +204,9 @@ fn crs_to_geodetic(axis: &CrsAxis, x: f64, y: f64, z: f64) -> Option<(f64, f64, 
             let lon = x / WEB_MERCATOR_R;
             let lat = 2.0 * (y / WEB_MERCATOR_R).exp().atan() - std::f64::consts::FRAC_PI_2;
             Some((lat.to_degrees(), lon.to_degrees(), z))
+        }
+        CrsAxis::Utm { zone, southern } => {
+            utm_inverse(*zone, *southern, x, y).map(|(lat, lon)| (lat, lon, z))
         }
     }
 }
@@ -225,7 +383,7 @@ fn main() {
     };
     eprintln!("crs {} — {}", crs_text(&crs), axis.name());
     eprintln!(
-        "z carried as delivered (height m); the file's VLRs carry no vertical datum — the geoid undulation to the WGS84 ellipsoid stays unmeasured (pending)"
+        "z carried as delivered (height m); no vertical datum chain is built — the geoid undulation to the WGS84 ellipsoid and tide datums (MLLW) stay unmeasured (pending)"
     );
 
     let eph_bytes = match fetch_raw_bytes(&body_url("earth"), 600) {
@@ -384,7 +542,7 @@ mod tests {
     }
 
     #[test]
-    fn wkt_epsg_reads_the_first_epsg_id() {
+    fn wkt_epsg_reads_the_root_level_epsg_id() {
         assert_eq!(
             wkt_epsg(
                 "PROJCRS[\"WGS 84 / UTM zone 11N\",BASEGEOGCRS[\"WGS 84\"],ID[\"EPSG\",32611]]"
@@ -399,7 +557,17 @@ mod tests {
     }
 
     #[test]
-    fn resolves_the_two_built_axes_only() {
+    fn wkt_epsg_ignores_ids_nested_in_the_base_geogcrs() {
+        assert_eq!(
+            wkt_epsg(
+                "PROJCRS[\"WGS 84 / UTM zone 23S\",BASEGEOGCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\"],ID[\"EPSG\",4326]],CONVERSION[\"UTM zone 23S\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],PARAMETER[\"Latitude of natural origin\",0,ID[\"EPSG\",8801]]]]"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn resolves_built_axes_and_utm_zones_only() {
         assert!(matches!(
             resolve_crs(&LasCrs::Epsg(4326)),
             Some(CrsAxis::Geographic)
@@ -408,7 +576,44 @@ mod tests {
             resolve_crs(&LasCrs::Epsg(3857)),
             Some(CrsAxis::WebMercator)
         ));
-        assert!(resolve_crs(&LasCrs::Epsg(32611)).is_none());
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(32611)),
+            Some(CrsAxis::Utm {
+                zone: 11,
+                southern: false
+            })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(32711)),
+            Some(CrsAxis::Utm {
+                zone: 11,
+                southern: true
+            })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(32601)),
+            Some(CrsAxis::Utm {
+                zone: 1,
+                southern: false
+            })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(32660)),
+            Some(CrsAxis::Utm {
+                zone: 60,
+                southern: false
+            })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(32760)),
+            Some(CrsAxis::Utm {
+                zone: 60,
+                southern: true
+            })
+        ));
+        assert!(resolve_crs(&LasCrs::Epsg(32600)).is_none());
+        assert!(resolve_crs(&LasCrs::Epsg(32661)).is_none());
+        assert!(resolve_crs(&LasCrs::Epsg(32700)).is_none());
         assert!(resolve_crs(&LasCrs::Epsg(26911)).is_none());
         assert!(matches!(
             resolve_crs(&LasCrs::Wkt(
@@ -416,12 +621,71 @@ mod tests {
             )),
             Some(CrsAxis::WebMercator)
         ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Wkt(
+                "PROJCRS[\"WGS 84 / UTM zone 11N\",BASEGEOGCRS[\"WGS 84\"],ID[\"EPSG\",32611]]"
+                    .to_string()
+            )),
+            Some(CrsAxis::Utm {
+                zone: 11,
+                southern: false
+            })
+        ));
         assert!(
             resolve_crs(&LasCrs::Wkt(
                 "PROJCRS[\"raw\",METHOD[\"Transverse Mercator\"]]".to_string()
             ))
             .is_none()
         );
+        assert!(
+            resolve_crs(&LasCrs::Wkt(
+                "PROJCRS[\"WGS 84 / UTM zone 23S\",BASEGEOGCRS[\"WGS 84\",ID[\"EPSG\",4326]]]"
+                    .to_string()
+            ))
+            .is_none()
+        );
+    }
+
+    #[test]
+    fn utm_inverse_zone18n_central_meridian_reference() {
+        let (lat, lon) = utm_inverse(18, false, 500000.0, 4649776.224884).unwrap();
+        assert!((lat - 42.0).abs() < 1e-6);
+        assert!((lon - (-75.0)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn utm_inverse_zone18n_dd10045_corner_reference() {
+        let (lat, lon) = utm_inverse(18, false, 368952.482, 4340727.52).unwrap();
+        assert!((lat - 39.205974).abs() < 1e-5);
+        assert!((lon - (-76.517841)).abs() < 1e-5);
+    }
+
+    #[test]
+    fn utm_inverse_zone32n_proj_reference() {
+        let (lat, lon) = utm_inverse(32, false, 691875.63214, 6098907.82501).unwrap();
+        assert!((lat - 55.0).abs() < 1e-5);
+        assert!((lon - 12.0).abs() < 1e-5);
+    }
+
+    #[test]
+    fn utm_inverse_southern_equator_lands_on_the_false_northing() {
+        let (lat, lon) = utm_inverse(18, true, 500000.0, 10000000.0).unwrap();
+        assert!((lat - 0.0).abs() < 1e-6);
+        assert!((lon - (-75.0)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn utm_inverse_southern_arc_mirrors_the_northern_reference() {
+        let (lat, lon) = utm_inverse(18, true, 500000.0, 10000000.0 - 4649776.224884).unwrap();
+        assert!((lat - (-42.0)).abs() < 1e-6);
+        assert!((lon - (-75.0)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn utm_inverse_rejects_non_finite_input() {
+        assert!(utm_inverse(18, false, f64::NAN, 4649776.224884).is_none());
+        assert!(utm_inverse(18, false, 500000.0, f64::INFINITY).is_none());
+        assert!(utm_inverse(18, false, f64::INFINITY, 4649776.224884).is_none());
     }
 
     #[test]
