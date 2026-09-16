@@ -1,11 +1,11 @@
 <!--
   title: Parser Magic
   class: concept
-  sha256: 84e60a6f10b0d1d595f4bdb52ed8defc9350bb554240dc974739e071c7d8bf04
+  sha256: c626c795c20c5208a380d30612c85237894acae6cd79e0298a8869d72acac498
 -->
 # Parser Magic
 
-STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1, 6, 8, 12)
+STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1, 8, 12)
 
 ---
 
@@ -57,7 +57,7 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **5. ~~`cmap` Celestial Map Parsing~~** — DONE: `Extract::CelestialMap` (`src/archivar/extract.rs:2543`) fills RA/Dec (deg→rad), parallax (mas→distance `PARSEC_M·1000/plx`), proper motion (mas/yr→6D state via `MAS_YR_TO_RAD_S`), radial velocity, and z→distance (`z·C_LIGHT/HUBBLE_H0`). Tests `test_extract_cmap_*`.
 
-**6. `window` / Temporal Bounding** — no `from`/`until`/`window` directive in `SourceConfig` (`src/archivar/types.rs:289`); the URL template DSL (`{today}`, `{jd_now}`…) is the only temporal control. A temporal bound is a config-schema question (types.rs + parse.rs), not a parser arm.
+**6. ~~`window` / Temporal Bounding~~** — DONE 2026-09-16: `window <from_unix> <until_unix>` (`SourceConfig.window` `types.rs`, arm `parse.rs`, filter `extract.rs`) drops channels whose epoch (TDB since J2000, converted via the leap-second table) lies outside the inclusive Unix-second window; `from > until`/non-numeric → refused (window stays absent). Tests `test_parse_window_directive`, `test_parse_window_from_after_until_absent`, `test_extract_window_filters_by_epoch`.
 
 **7. ~~Constant `lat_key`/`lon_key` Detection~~** — DONE 2026-09-15: `key_or_constant` in `src/archivar/extract.rs` — a numeric `lat`/`lon` key string (e.g. `48.1`) resolves as a constant, any other string as a JSON path.
 
