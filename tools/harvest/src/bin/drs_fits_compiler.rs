@@ -1,54 +1,15 @@
+use omegaflow::archivar::drs_fits::{parse_series, write_bin};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
-use omegaflow::fits::drs_differential_acceleration;
+use omegaflow::fits::drs_series;
 
 const CDN_TAG: &str = "heasarc.gsfc.nasa.gov";
-const MAGIC: [u8; 4] = *b"DRSF";
-const HEADER_BYTES: usize = 8;
-const REC_BYTES: usize = 24;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
-}
-
-fn write_bin(records: &[[f64; 3]]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(HEADER_BYTES + records.len() * REC_BYTES);
-    out.extend_from_slice(&MAGIC);
-    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
-    for r in records {
-        out.extend_from_slice(&r[0].to_le_bytes());
-        out.extend_from_slice(&r[1].to_le_bytes());
-        out.extend_from_slice(&r[2].to_le_bytes());
-    }
-    out
-}
-
-fn read_bin(data: &[u8]) -> Option<Vec<[f64; 3]>> {
-    if data.len() < HEADER_BYTES || data[0..4] != MAGIC {
-        return None;
-    }
-    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
-    if data.len() != HEADER_BYTES + count * REC_BYTES {
-        return None;
-    }
-    let mut out = Vec::with_capacity(count);
-    for i in 0..count {
-        let base = HEADER_BYTES + i * REC_BYTES;
-        let f64_at = |o: usize| -> Option<f64> {
-            Some(f64::from_le_bytes(data.get(o..o + 8)?.try_into().ok()?))
-        };
-        let gx = f64_at(base)?;
-        let gy = f64_at(base + 8)?;
-        let gz = f64_at(base + 16)?;
-        if !gx.is_finite() || !gy.is_finite() || !gz.is_finite() {
-            return None;
-        }
-        out.push([gx, gy, gz]);
-    }
-    Some(out)
 }
 
 fn main() {
@@ -83,7 +44,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let dg = match drs_differential_acceleration(&bytes) {
+    let rows = match drs_series(&bytes) {
         Some(v) => v,
         None => {
             eprintln!(
@@ -92,22 +53,26 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let mut records: Vec<[f64; 3]> = Vec::with_capacity(dg.len());
+    let mut records: Vec<[f64; 3]> = Vec::with_capacity(rows.len());
+    let mut epoch: Option<f64> = None;
     let mut skipped = 0usize;
-    for r in dg {
-        if r.iter().all(|v| v.is_finite()) {
-            records.push(r);
+    for (t, dg) in rows {
+        if t.is_finite() && dg.iter().all(|v| v.is_finite()) {
+            if epoch.is_none() {
+                epoch = Some(t);
+            }
+            records.push(dg);
         } else {
             skipped += 1;
         }
     }
-    if records.is_empty() {
+    let Some(epoch) = epoch.filter(|e| *e > 0.0) else {
         eprintln!(
             "drs_fits_compiler: no finite differential acceleration — the bin stays unwritten (0 honored)"
         );
         std::process::exit(1);
-    }
-    let bin = write_bin(&records);
+    };
+    let bin = write_bin(&records, epoch);
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -115,20 +80,21 @@ fn main() {
         eprintln!("drs_fits_compiler: write {out} void");
         std::process::exit(1);
     }
-    match read_bin(&bin) {
+    match parse_series(&bin) {
         Some(parsed) => {
             let mut gmax = 0.0f64;
-            for r in &parsed {
+            for r in &records {
                 let m = (r[0] * r[0] + r[1] * r[1] + r[2] * r[2]).sqrt();
                 if m > gmax {
                     gmax = m;
                 }
             }
             eprintln!(
-                "drs_fits: {} rows, {} skipped, |dg| bis {gmax:.3e} m/s^2, {} B -> {out} (roundtrip parses)",
-                parsed.len(),
+                "drs_fits: {} rows, {} skipped, |dg| bis {gmax:.3e} m/s^2, t0 {epoch:.3e} s unix, {} B -> {out} (roundtrip: {} series points)",
+                records.len(),
                 skipped,
-                bin.len()
+                bin.len(),
+                parsed.len()
             );
         }
         None => {
