@@ -52,6 +52,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "flac" => flac::parse_series(bytes),
         "bidsleep" => bidsleep::parse_bin(bytes),
+        "bison_velocity" => crate::bison_velocity::parse_bin(bytes)
+            .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
         _ => None,
     }
 }
@@ -224,6 +226,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             bidsleep::COMP_MX => Some("bidsleep_mx_ms2"),
             bidsleep::COMP_MY => Some("bidsleep_my_ms2"),
             bidsleep::COMP_MZ => Some("bidsleep_mz_ms2"),
+            _ => None,
+        },
+        "bison_velocity" => match comp {
+            0 => Some("bison_pmode_velocity_m_s"),
             _ => None,
         },
         _ => None,
@@ -1677,6 +1683,55 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             );
         }
         return ExtractResult::Measurements(vec![]);
+    }
+    if src.format == "sky1" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(rows) = crate::skymap::parse_header(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        let mut off = crate::skymap::HEADER_LEN;
+        for _ in 0..rows {
+            let Some(rec) = buf
+                .get(off..off + crate::skymap::REC_BYTES)
+                .and_then(crate::skymap::decode_rec)
+            else {
+                return ExtractResult::Measurements(vec![]);
+            };
+            off += crate::skymap::REC_BYTES;
+            let ra = (rec.ra_deg as f64).to_radians();
+            let dec = (rec.dec_deg as f64).to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::StateVector {
+                        p,
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    },
+                    name: fc.name.clone(),
+                    value: rec.value as f64,
+                },
+                fc.clone(),
+            ));
+        }
+        if off != buf.len() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        return ExtractResult::Measurements(channels);
     }
     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
