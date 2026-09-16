@@ -2085,6 +2085,7 @@ pub fn main_flow() {
                     | "galileo_odr"
                     | "flac"
                     | "bidsleep"
+                    | "bison_velocity"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -2902,6 +2903,59 @@ pub fn main_flow() {
                             spectral: None,
                             fetch_ok: true,
                         });
+                    }
+                });
+                continue;
+            }
+            if archive.sources[i].format == "sky1" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let tmp_path = content_cache(&format!("omegaflow_sky1_{src_idx}.sky1"));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url, src_clone.ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("sky1 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("sky1 {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                        });
+                    } else {
+                        eprintln!("sky1 {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(empty(true));
                     }
                 });
                 continue;

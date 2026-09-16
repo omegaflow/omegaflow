@@ -51,6 +51,12 @@ force em
 note AMON-IceCube-Gold/Bronze-Alert-Index (2026-09-06 gemessen HTTP 200, live — neueste Notices 26/08/27, 814 Index-Zeilen); je Notice eine .amon-Datei unter gcn.gsfc.nasa.gov/notices_amon_g_b/<RunNum>_<EventNum>.amon (je ~2,9 KB) mit RUN_NUM/EVENT_NUM, NOTICE_TYPE, SRC_RA/SRC_DEC (J2000, deg), SRC_ERROR/SRC_ERROR50 (arcmin), ENERGY [TeV], SIGNALNESS, FAR [yr^-1] — echte, positions-tragende Neutrino-Alert-Messungen. Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz neutrino, gemessen durch em (Cherenkov). Kompiliert als icecube_alerts.amn1 via amon_compiler (tools/harvest, AMN1, src/archivar/amon.rs; Weberin §9 Stufe 6, Neutrino-Zeuge), CDN live. Das IceCube-Daten-Releases-Portal (icecube.wisc.edu/data-releases/) verweigert 403 am Origin (zwei Exit-IPs gemessen, kein ip-block, keine Auth-Form) — die .amon-Notices tragen die Messung, das Portal ist keine Route. Die toten JSON-Geschwister gcn.nasa.gov/api/alerts/icecube (bronze+gold) und api/v1/events sind dead_sources.φ (dead 404).
 
 witness s2-direction
+url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
+record sky1
+force em
+note VTSCat — VERITAS-Datenkatalog (GitHub, CC0): Spektral-Flusspunkte je Publikation als ECSV/YAML (Jahr/Bibcode-Verzeichnisse 2008–2026). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma (KIND_GAMMA), gemessen durch em (Cherenkov). Der ECSV/YAML-Reader steht (src/archivar/vtscat.rs); kompiliert als vtscat_flux.sky1 (value = dnde@1 TeV, m-2.s-1.TeV-1) via vtscat_compiler (tools/harvest, SKY1), CDN-Tag github.com — Asset pending (vtscat-cdn.yml workflow_dispatch, nie gelaufen; 2026-09-16 gemessen HTTP 404).
+
+witness s2-direction
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
 record sky1
 force gravity
@@ -63,6 +69,12 @@ force em
 note Gaia-DR3-Alerts-Index (2026-09-13 gemessen HTTP 200, 10 601 266 B): je Alert RA/Dec (ICRS, deg) + eine G-Band-Magnitude mit obstime (Epochen-Photometrie, Klassifikationen). Zeugen-Art S²-Richtung (distanzlos, τ=0), gemessen durch em. Kompiliert als gaia_alerts.bin (SKD1) via gaia_alerts_compiler (tools/harvest). Der Merge des Assets in skydirections.bin (das eine Asset, das der S²-Sinn liest) steht aus — pending; SKD1-magic absent in zeuge.rs magic_identity (Zeugen-Gate pending).
 
 witness s2-direction
+url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+record sky1
+force em
+note H.E.S.S. DL3 DR1 (Public Test Data Release 2018; TAR gemessen 2026-09-16: HTTP 206/200, 51 868 345 B, ustar; Event-Listen + IRFs). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Cherenkov). Reduktion dl3::parse_events + reduce_grid; kompiliert als dl3_skymap.sky1 (value = summierte Gamma-Energie je Zelle, TeV) via dl3_skymap_compiler --telescope hess (tools/harvest, SKY1), CDN-Tag hess-experiment.eu — Asset pending (dl3-skymap-cdn.yml workflow_dispatch, nie gelaufen; 2026-09-16 gemessen HTTP 404). Zenodo-Kopie 10.5281/zenodo.1421099.
+
+witness s2-direction
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
 record skydirection
 force em
@@ -73,6 +85,12 @@ url https://opendata.auger.org/catalog/data.zip
 record pao1
 force em
 note Pierre-Auger-Open-Data-Katalog der hoechsten-energetischen kosmischen Strahlen (109 Ereignisse 2004-2020, ApJ 935,170/ApJS 264,50); data.zip (2026-09-06 gemessen HTTP 200, 3,4 MB, deflate) enthaelt 109 PAO*.json mit sdrec.ra/sdrec.dec (J2000 deg), sdrec.energy [EeV], sdrec.l/sdrec.b, info.gpstime — echte, positions-tragende CR-Ankunftsrichtungs-Messungen. Zeugen-Art S²-Richtung (distanzlos, τ=0), Teilchen-Provenienz CR (Proton), gemessen durch em (Luftschauer). Kompiliert als auger_catalog.pao1 via auger_compiler (tools/harvest, PAO1, src/archivar/auger.rs; Weberin §9 Stufe 6, CR-Zeuge), CDN live.
+
+witness s2-direction
+url https://opendata.magic.pic.es
+record sky1
+force em
+note MAGIC Open Data Repository (PIC) — Low-level-DL3 (Event-Listen + IRFs je Projekt: MAGIC_dl3_pdr1 2024, AODR 2025, RSOph 2022, JointCrab 2019, TXS0506 2018). Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Cherenkov). Reduktion dl3::parse_events (geteilt mit H.E.S.S.); kompiliert als dl3_skymap.sky1 (value = summierte Gamma-Energie je Zelle, TeV) via dl3_skymap_compiler --telescope magic (tools/harvest, SKY1), CDN-Tag opendata.magic.pic.es — Asset pending (dl3-skymap-cdn.yml workflow_dispatch, nie gelaufen; 2026-09-16 gemessen HTTP 404).
 
 witness s2-direction
 url https://vo.km3net.de/ant20_01/nu/cone/form
