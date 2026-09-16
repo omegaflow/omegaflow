@@ -1,0 +1,45 @@
+name: champ-plpt-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  champ-plpt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view isdc-data.gfz.de --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "champ_plpt.bin"; then
+            echo "asset champ_plpt.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset champ_plpt.bin missing — compiling and manifesting"
+      - name: Ensure the isdc-data.gfz.de release exists on the CDN
+        run: |
+          if ! gh release view isdc-data.gfz.de --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create isdc-data.gfz.de --repo omegaflow/sources \
+              --title "isdc-data.gfz.de" \
+              --notes "GFZ ISDC CHAMP Level-2 PLPT Langmuir electron density compiled to a geo bin (CDN tag = netloc)"
+          fi
+      - name: Compile the CHAMP PLPT era and manifest to the CDN
+        run: |
+          cargo build -p omegaflow-harvest --release --bin champ_plpt_compiler \
+            && ./target/release/champ_plpt_compiler --start 2002-02-19 --end 2009-12-31 \
+                 --out champ_plpt.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "champ-plpt-cdn: champ_plpt compile returned void" \
+                 "champ_plpt compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
