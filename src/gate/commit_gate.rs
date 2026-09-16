@@ -38,6 +38,7 @@ struct Vocab {
     zero_decl: Vec<String>,
     measure_step_markers: Vec<String>,
     measure_step_due: Vec<String>,
+    consent_acts: Vec<(String, String)>,
     unit_tokens: Vec<String>,
     diagnostic_markers: Vec<String>,
     de_determiners: Vec<String>,
@@ -122,6 +123,7 @@ fn load_vocab() -> Vocab {
         zero_decl: str_list(&json, "zero_decl"),
         measure_step_markers: str_list(&json, "measure_step_markers"),
         measure_step_due: str_list(&json, "measure_step_due"),
+        consent_acts: pair_list(&json, "consent_acts"),
         unit_tokens: str_list(&json, "unit_tokens"),
         diagnostic_markers: str_list(&json, "diagnostic_markers"),
         de_determiners: str_list(&json, "de_determiners"),
@@ -404,6 +406,7 @@ impl Gate {
             self.check_register_numbers(text),
             self.check_unbacked_claim(text),
             self.check_measure_step(text),
+            self.check_consent_act(text),
         ]
         .into_iter()
         .flatten()
@@ -522,6 +525,25 @@ impl Gate {
                     });
                 }
                 search_from = start + ml.len();
+            }
+        }
+        None
+    }
+
+    fn check_consent_act(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        for (marker, act) in &vocab().consent_acts {
+            if lower.contains(marker.as_str()) {
+                return Some(Verdict {
+                    severity: Severity::Soft,
+                    rule: "consent-act".to_string(),
+                    line: 0,
+                    feedback: format!(
+                        "the write path \"{}\" is a {} — writing at a third party needs the operator's per-act consent (mail send, account/API-key, application or data-rights request, submission, contract, payment, foreign-account deletion); {}",
+                        marker, act, feedback("consent_act")
+                    ),
+                    quote: clip(text, 80),
+                });
             }
         }
         None
@@ -696,6 +718,11 @@ impl Gate {
     }
 
     pub fn check_tool_call(&mut self, tool: &str, args_json: &str) -> Option<Verdict> {
+        if tool == "bash" {
+            let obj = parse_json(args_json)?;
+            let command = jstr(&obj, "command")?;
+            return self.check_consent_act(&command);
+        }
         if !matches!(tool, "edit" | "write" | "patch" | "multiedit") {
             return None;
         }
@@ -1535,6 +1562,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_default_tuple_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("fabrication_default_tuple"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_bad_field_line() {
         let mut g = test_gate();
         let args =
@@ -1670,5 +1706,57 @@ mod tests {
     fn fn_measure_step_with_due_passes() {
         let mut g = test_gate();
         assert!(g.check_text(&fx("measure_step_clean")).is_none());
+    }
+
+    #[test]
+    fn fp_consent_send_flagged() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("consent_send"));
+        assert!(findings.iter().any(|v| v.rule == "consent-act"));
+        assert!(findings.iter().all(|v| v.severity == Severity::Soft));
+    }
+
+    #[test]
+    fn fp_consent_http_write_flagged() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("consent_http_write"));
+        assert!(findings.iter().any(|v| v.rule == "consent-act"));
+    }
+
+    #[test]
+    fn fp_consent_submission_flagged() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("consent_submission"));
+        assert!(findings.iter().any(|v| v.rule == "consent-act"));
+    }
+
+    #[test]
+    fn fn_consent_get_passes() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("consent_get"));
+        assert!(findings.iter().all(|v| v.rule != "consent-act"));
+    }
+
+    #[test]
+    fn fn_consent_dry_run_passes() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("consent_dry_run"));
+        assert!(findings.iter().all(|v| v.rule != "consent-act"));
+    }
+
+    #[test]
+    fn fp_tool_bash_consent_write_flagged() {
+        let mut g = test_gate();
+        let args = format!(r#"{{"command":"{}"}}"#, fx("consent_http_write"));
+        let v = g.check_tool_call("bash", &args).unwrap();
+        assert_eq!(v.rule, "consent-act");
+        assert_eq!(v.severity, Severity::Soft);
+    }
+
+    #[test]
+    fn fn_tool_bash_get_passes() {
+        let mut g = test_gate();
+        let args = format!(r#"{{"command":"{}"}}"#, fx("consent_get"));
+        assert!(g.check_tool_call("bash", &args).is_none());
     }
 }
