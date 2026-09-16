@@ -127,7 +127,7 @@ fn run_mode(state: &AppState, mode: &str, q: &str) -> Vec<String> {
                 .iter()
                 .map(|p| p.display().to_string())
                 .collect();
-            crate::collect_plain(&roots, &keywords, 2, 40, 100, 0, false).lines
+            crate::collect_plain(&roots, &keywords, 2, 40, 100, 0, false, false).lines
         }
         "leads" => {
             let keywords: Vec<String> = q.split_whitespace().map(|s| s.to_string()).collect();
