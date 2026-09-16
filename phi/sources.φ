@@ -863,6 +863,17 @@ fanout_delay 2
 field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0 0.0
 field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
 
+url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+ttl 3600
+on earth 54.625992 25.107064 0
+last observations.airTemperature meteo_lt_air_temp_c exponential-decay thermal C 3600 0.0 0.0
+last observations.windSpeed meteo_lt_wind_speed_ms patch-levy advective m/s 3600 0.0 0.0
+last observations.windGust meteo_lt_wind_gust_ms patch-levy advective m/s 3600 0.0 0.0
+last observations.windDirection meteo_lt_wind_direction_deg patch-levy advective deg 3600 0.0 0.0
+last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
+last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
+
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
 ttl 3600
 on earth 0 0 0
@@ -883,6 +894,16 @@ stations_lon lng
 fanout 40
 fanout_delay 10
 last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
+
+url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
+ttl 3600
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
+field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
+field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
 ttl 3600
@@ -1062,6 +1083,17 @@ format us_crn_hourly
 at earth
 ttl 3600
 field us_crn_hourly_temp_c us_crn_hourly_temp_c exponential-decay thermal degree_C 3600 0.0 0.0
+
+url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 1
+lon 2
+alt 3 -m
+field 4 ioos_glider_water_temp_c exponential-decay thermal C 360 0.0 0.0
+field 5 ioos_glider_salinity_psu gaussian-inverse-square diffusion PSU 360 0.0 0.0
+field 6 ioos_glider_conductivity_s_m inverse-square electric S/m 360 0.0 0.0
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
@@ -1270,6 +1302,20 @@ field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
 field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
 field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
+url https://api.v2.sondehub.org/sonde/Y3313219
+ttl 86400
+on earth 0 0 0
+map .
+lat lat
+lon lon
+alt alt
+field temp radiosonde_air_temp_c exponential-decay thermal C 3600 0.0 0.0
+field vel_h radiosonde_wind_speed_ms patch-levy advective m/s 3600 0.0 0.0
+field vel_v radiosonde_vertical_velocity_ms patch-levy advective m/s 3600 0.0 0.0
+field heading radiosonde_wind_direction_deg patch-levy advective deg 3600 0.0 0.0
+field pressure radiosonde_air_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
+field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+
 url https://api.woudc.org/collections/totalozone/items?limit=1
 ttl 86400
 on earth 0 0 0
@@ -1389,6 +1435,11 @@ map table.rows
 lat 2
 lon 1
 field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=max(time)-7days
+ttl 86400
+on earth 0 0 0
+field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
 ttl 86400
@@ -4329,6 +4380,13 @@ format reference
 sha256 50eb365114ab1fe977701790b7df2951e96388096d92e3a16aea88821a110a65
 ttl 86400
 
+url https://mesonet.agron.iastate.edu/json/raob.py?station=OAX&ts={yesterday_nodashes}0000
+ttl 86400
+on earth 0 0 0
+last profiles.0.profile.tmpc radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
+last profiles.0.profile.dwpc radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
+last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 0.0
+
 url https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.bsp
 format reference
 sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
@@ -4584,6 +4642,20 @@ url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&
 format asu-tsv
 at sun
 ttl 86400
+
+url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
+ttl 86400
+format csv
+on earth 0 0 0
+rows
+lat latitude
+lon longitude
+epoch time
+field 5 radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
+field 3 radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 0.0
+field 6 radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
+field 8 radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
+field 12 radiosonde_wind_speed_m_s patch-levy advective m/s 8640.0 0.0 0.0
 
 url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
 format ndk
@@ -6170,6 +6242,17 @@ dec Decdeg_HI
 dist Dist
 dist_scale 3.085677581e22
 field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
+
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
+ttl 604800
+on earth 0 0 0
+map table.rows
+lat 5
+lon 6
+alt 4 -m
+field 1 smartbay_ctd_water_temp_c exponential-decay thermal C 604800 0.0 0.0
+field 2 smartbay_ctd_conductivity_s_m inverse-square electric S/m 604800 0.0 0.0
+field 3 smartbay_ctd_salinity_psu gaussian-inverse-square diffusion PSU 604800 0.0 0.0
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 ttl 604800

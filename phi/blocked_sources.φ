@@ -112,3 +112,7 @@ blocked parser-def csv
 url http://ia2-tap.oats.inaf.it:8080/wgetap
 note IA2 TAP (INAF/OATS) — `wgesdss.laurino2011` (157 840 Zeilen: ra/dec_/psfMag_u/g/r/i/z/photoz/extinction_*), anonym HTTP 200, CAS-Login frei; gemessen 2026-09-16: `/wgetap/sync` 303→200, `FORMAT=csv` liefert NUL-getrennte Felder (0x00 zwischen den Spalten, `FORMAT=tsv` ebenso), `FORMAT=json`/`votable` → VOTable. Der Archivar-Splitter kennt nur Komma/Whitespace → parser-def csv (NUL-Delimiter). Physik echt (`em`, psfMag); Öffnung: NUL-CSV-Arm.
 
+blocked parser-def zip/fixed-width-text
+url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+note IGRA-2 Radiosonden (NCEI, Sensor-Welle). Messung 2026-09-16: Verzeichnis HTTP 200 (807 .txt.zip), ZIP `USM00070026-data-beg2026.txt.zip` HTTP 200 (1 852 651 B, enthält genau `USM00070026-data.txt`, 7 082 929 B), Nicht-ZIP-Route `…-beg2026.txt` HTTP 404. Messung echt (Radiosonde: PRESS 103574 Pa, GPH 14 m, TEMP −25,4 °C, RH 82,0 %; thermal/diffusion/acoustic). Parser-Gap: kein IGRA-Parser — `format csv_zip` entpackt, aber `Rows` splittet bei csv_zip per Komma, IGRA-2 ist fixed-width/whitespace; `text_to_json` braucht Header >5 Token und Datenzeile ≥ Header-Token (Header 11, Datenzeile 9). Öffnung: IGRA-fixed-width-Arm (Spalten PRESS 10-15, GPH 17-21, TEMP 23-27, RH 29-33).
+
