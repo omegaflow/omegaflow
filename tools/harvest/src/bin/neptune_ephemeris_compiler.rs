@@ -54,21 +54,21 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() {
-        None
-    } else {
-        Some(text)
-    }
+    if text.is_empty() { None } else { Some(text) }
 }
 
 fn has_barycenter(spk: &SpkFile) -> bool {
-    spk.segments().iter().any(|s| s.target == NEPTUNE_BARYCENTER)
+    spk.segments()
+        .iter()
+        .any(|s| s.target == NEPTUNE_BARYCENTER)
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: neptune_ephemeris_compiler <de440s.bsp> [--pck <body.tpc>]... [--ci-mode]");
+        eprintln!(
+            "usage: neptune_ephemeris_compiler <de440s.bsp> [--pck <body.tpc>]... [--ci-mode]"
+        );
         eprintln!(
             "  emits data/{NETLOC}/ephemeris_{LABEL}_{BODY_NAME}.bin (the DE440 Neptune barycenter line)"
         );
@@ -113,10 +113,20 @@ fn main() {
     eprintln!("neptune: {} opened", bsp_path);
     let table = omegaflow::ephemeris::body_table();
     for seg in spk.segments() {
-        let name = table.get(&seg.target).map(|b| b.name.as_str()).unwrap_or("?");
+        let name = table
+            .get(&seg.target)
+            .map(|b| b.name.as_str())
+            .unwrap_or("?");
         eprintln!(
             "  segment target {} ({}) center {} frame {} type {} et [{:.3}, {:.3}] name {:?}",
-            seg.target, name, seg.center, seg.frame, seg.data_type, seg.start_et, seg.end_et, seg.name
+            seg.target,
+            name,
+            seg.center,
+            seg.frame,
+            seg.data_type,
+            seg.start_et,
+            seg.end_et,
+            seg.name
         );
     }
     if !has_barycenter(&spk) {
@@ -157,7 +167,9 @@ fn main() {
         std::process::exit(1);
     }
     let path = format!("{out_dir}/ephemeris_{LABEL}_{BODY_NAME}.bin");
-    if !write_binary(&path, BODY_NAME, &granules, &rotations, &nutation, &wgccre, None) {
+    if !write_binary(
+        &path, BODY_NAME, &granules, &rotations, &nutation, &wgccre, None,
+    ) {
         eprintln!("neptune: write {} returned void", path);
         std::process::exit(1);
     }

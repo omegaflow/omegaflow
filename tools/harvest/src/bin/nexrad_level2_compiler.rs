@@ -1,5 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::nexrad::{NexradMoment, NexradSite, NexradVolume, nexrad_site, parse_nexrad};
+use omegaflow::archivar::nexrad::{
+    NexradMoment, NexradSite, NexradVolume, nexrad_site, parse_nexrad,
+};
 use omegaflow::cdn::upload_release;
 use std::io::{BufWriter, Write};
 
