@@ -39,7 +39,7 @@ note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, ge
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
-note NASA GHRC DAAC (Global Hydrology Resource Center). Measured 2026-09-16: anonym HTTP 200 is the Egress login page; der Datenpfad teilt sich in ghrcw-public (nur .cmr.json-Metadata anonym) und ghrcw-protected (Wissenschaftsdaten 401 anonym / 200 mit EARTHDATA_EDL_TOKEN); CMR provider GHRC_DAAC anonym live (z.B. C1995564612-GHRC_DAAC, ASCII). ISS LIS + OTD schon registriert (sources.φ:6543, iss_lis.bin/lis_otd.bin, beide nutzen den EDL-Token). Kein Produkt bleibt blocked account — die Familie ist pending (Compiler/Consumer + CDN ungebaut): GOES GLM L1B (C3457558852-GHRC_DAAC), TRMM LIS (C1983762329-GHRC_DAAC).
+note NASA GHRC DAAC (Global Hydrology Resource Center). Measured 2026-09-16: anonym HTTP 200 is the Egress login page; der Datenpfad teilt sich in ghrcw-public (nur .cmr.json-Metadata anonym) und ghrcw-protected (Wissenschaftsdaten 401 anonym / 200 mit EARTHDATA_EDL_TOKEN); CMR provider GHRC_DAAC anonym live (z.B. C1995564612-GHRC_DAAC, ASCII). ISS LIS + OTD schon registriert (sources.φ:6543, iss_lis.bin/lis_otd.bin, beide nutzen den EDL-Token). Kein Produkt bleibt blocked account. GOES GLM L1B (C3457558852-GHRC_DAAC) + TRMM LIS (C1983762329-GHRC_DAAC): Compiler gebaut 2026-09-16 (`glm_l1b_compiler.rs` liest event_lat/lon/time/radiant_energy, J2000-Epoche; `trmm_lis_compiler.rs` liest lightning_flash_* wie ISS LIS) und als `glm_l1b`/`trmm_lis` in sources.φ registriert — die CDN-Manifestation (Workflow-Dispatch) ist der offene Schritt.
 
 blocked parser-def xml
 url https://uvdata.arpansa.gov.au/xml/uvvalues.xml

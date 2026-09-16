@@ -7,7 +7,7 @@ pub struct EcsvColumn {
 #[derive(Clone, Debug, PartialEq)]
 pub struct EcsvTable {
     pub columns: Vec<EcsvColumn>,
-    pub rows: Vec<Vec<f64>>,
+    pub rows: Vec<Vec<Option<f64>>>,
 }
 
 fn split_header(text: &str) -> Option<(&str, &str)> {
@@ -84,10 +84,7 @@ pub fn parse_ecsv(text: &str) -> Option<EcsvTable> {
             let Ok(v) = tok.trim_matches('"').parse::<f64>() else {
                 break;
             };
-            if !v.is_finite() {
-                break;
-            }
-            row.push(v);
+            row.push(if v.is_finite() { Some(v) } else { None });
         }
         if row.len() == columns.len() {
             rows.push(row);
@@ -164,13 +161,7 @@ pub fn yaml_val(text: &str, path: &str) -> Option<String> {
             break;
         }
         match found {
-            Some((next_indent, rest)) => {
-                if rest == "{}" || rest.is_empty() {
-                    if last {
-                        return Some(rest.to_string());
-                    }
-                    return None;
-                }
+            Some((next_indent, _)) => {
                 cur_indent = next_indent;
             }
             None => return None,
@@ -179,18 +170,32 @@ pub fn yaml_val(text: &str, path: &str) -> Option<String> {
     None
 }
 
-pub fn yaml_sexagesimal(text: &str, path: &str) -> Option<f64> {
+fn yaml_scalar(text: &str, path: &str) -> Option<String> {
     let raw = yaml_val(text, path)?;
-    let val = if raw.contains("val:") {
+    if raw.contains("val:") {
         raw.split("val:")
             .nth(1)
             .and_then(|s| s.split([',', '}']).next())
-            .map(str::trim)
-            .unwrap_or("")
+            .map(|s| s.trim().to_string())
     } else {
-        &raw
-    };
-    parse_sexagesimal(val)
+        Some(raw.trim().to_string())
+    }
+}
+
+pub fn yaml_sexagesimal(text: &str, path: &str) -> Option<f64> {
+    parse_sexagesimal(&yaml_scalar(text, path)?)
+}
+
+pub fn yaml_degrees(text: &str, path: &str) -> Option<f64> {
+    let v: f64 = yaml_scalar(text, path)?.parse().ok()?;
+    v.is_finite().then_some(v)
+}
+
+pub fn meta_source_id(text: &str) -> Option<u32> {
+    let rest = text.split("source_id").nth(1)?;
+    let rest = rest.trim_start().strip_prefix(':')?.trim_start();
+    let digits: String = rest.chars().take_while(|c| c.is_ascii_digit()).collect();
+    digits.parse().ok()
 }
 
 #[cfg(test)]
@@ -241,8 +246,8 @@ spec:
         assert_eq!(table.columns[2].name, "dnde_err");
         assert_eq!(table.columns[3].name, "significance");
         assert_eq!(table.rows.len(), 4);
-        assert!((table.rows[0][0] - 0.25).abs() < 1e-9);
-        assert!((table.rows[0][1] - 1.36e-7).abs() < 1e-15);
+        assert!((table.rows[0][0].unwrap() - 0.25).abs() < 1e-9);
+        assert!((table.rows[0][1].unwrap() - 1.36e-7).abs() < 1e-15);
     }
 
     #[test]
@@ -272,5 +277,66 @@ spec:
             yaml_val(YAML, "source_id").as_deref(),
             Some("58")
         );
+    }
+
+    const SED_UL: &str = r#"# %ECSV 0.9
+# ---
+# datatype:
+# - {name: e_ref, datatype: float32, unit: TeV}
+# - {name: dnde, datatype: float32, unit: TeV-1 cm-2 s-1}
+# - {name: dnde_errn, datatype: float32, unit: TeV-1 cm-2 s-1}
+# - {name: dnde_errp, datatype: float32, unit: TeV-1 cm-2 s-1}
+# - {name: dnde_ul, datatype: float32, unit: cm-2 s-1 TeV-1}
+# meta: !!omap
+# - {data_type: sed}
+# - {source_id: 14}
+# - {reference_id: 2009ApJ...700.1034A}
+# - {telescope: veritas}
+# - UL_CONF: 0.95
+e_ref dnde dnde_errn dnde_errp dnde_ul
+0.779   4.858e-12  2.256e-12  2.193e-12  nan
+1.232   1.346e-12  6.654e-13  7.1e-13  nan
+1.957   3.873e-13  2.178e-13  2.218e-13  nan
+3.095   1.364e-13  8.505e-14  8.7e-14 nan
+4.977   nan  nan  nan 1.094e-13
+7.895   nan  nan  nan 3.248e-14
+"#;
+
+    const REGISTRY_014: &str = r#"---
+source_id: 14
+common_name: LS I +61 303
+where: gal
+pos:
+  simbad_id: LS I +61 303
+  ra: 40.131938163
+  dec: 61.229336515
+reference_id:
+  - 2009ApJ...700.1034A
+"#;
+
+    #[test]
+    fn ecsv_keeps_rows_with_absent_cells() {
+        let table = parse_ecsv(SED_UL).unwrap();
+        assert_eq!(table.columns.len(), 5);
+        assert_eq!(table.rows.len(), 6);
+        assert_eq!(table.rows[0][1].unwrap(), 4.858e-12);
+        assert_eq!(table.rows[0][4], None);
+        assert_eq!(table.rows[4][1], None);
+        assert_eq!(table.rows[4][4].unwrap(), 1.094e-13);
+    }
+
+    #[test]
+    fn meta_source_id_reads_inline_and_block_forms() {
+        assert_eq!(meta_source_id(SED_UL), Some(14));
+        assert_eq!(meta_source_id(SED), Some(58));
+        assert_eq!(meta_source_id("e_ref dnde\n1.0 2.0\n"), None);
+    }
+
+    #[test]
+    fn yaml_degrees_reads_decimal_pos() {
+        let ra = yaml_degrees(REGISTRY_014, "pos.ra").unwrap();
+        assert!((ra - 40.131938163).abs() < 1e-9, "ra {ra}");
+        let dec = yaml_degrees(REGISTRY_014, "pos.dec").unwrap();
+        assert!((dec - 61.229336515).abs() < 1e-9, "dec {dec}");
     }
 }

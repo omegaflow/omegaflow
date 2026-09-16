@@ -50,6 +50,7 @@ fn alert_direction(lsk: &LeapSeconds, row: &JsonVal) -> Option<(SkyDirection, bo
         dec_deg: dec,
         sigma_arcsec: None,
         bands: Vec::new(),
+        flux_bands: Vec::new(),
         distance: None,
         redshift: None,
     };

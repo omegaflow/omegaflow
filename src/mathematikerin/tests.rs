@@ -643,6 +643,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
                 mag: 18.0,
             }],
         }],
+        flux_bands: Vec::new(),
         distance: None,
         redshift: None,
     };

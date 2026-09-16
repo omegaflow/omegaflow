@@ -28,7 +28,7 @@ fn is_sed_flux_map(path: &str) -> bool {
     let Some(stem) = file.strip_suffix(".ecsv") else {
         return false;
     };
-    stem.contains("-sed")
+    stem.starts_with("VER-") && stem.contains("-sed")
 }
 
 fn sed_paths(tree_json: &str) -> Vec<String> {
@@ -53,11 +53,8 @@ fn sed_paths(tree_json: &str) -> Vec<String> {
     out
 }
 
-fn yaml_sidecar_path(ecsv_path: &str) -> Option<String> {
-    let (dir, file) = ecsv_path.rsplit_once('/')?;
-    let stem = file.strip_suffix(".ecsv")?;
-    let yaml_stem = stem.replacen("-sed", "", 1);
-    Some(format!("{dir}/{yaml_stem}.yaml"))
+fn source_registry_path(source_id: u32) -> String {
+    format!("sources/tev-{source_id:06}.yaml")
 }
 
 fn dnde_scale_to_si(unit: &str) -> Option<f64> {
@@ -79,16 +76,17 @@ fn dnde_scale_to_si(unit: &str) -> Option<f64> {
     }
 }
 
-fn flux_record(ecsv: &str, yaml: &str) -> Option<SkymapRecord> {
+fn flux_record(ecsv: &str, registry_yaml: &str) -> Option<SkymapRecord> {
     let table = vtscat::parse_ecsv(ecsv)?;
     let e_idx = table.columns.iter().position(|c| c.name == "e_ref")?;
     let d_idx = table.columns.iter().position(|c| c.name == "dnde")?;
     let scale = dnde_scale_to_si(&table.columns[d_idx].unit)?;
     let mut best: Option<(f64, f64)> = None;
     for row in &table.rows {
-        let e = *row.get(e_idx)?;
-        let d = *row.get(d_idx)?;
-        if !e.is_finite() || e <= 0.0 || !d.is_finite() || d <= 0.0 {
+        let (Some(e), Some(d)) = (row.get(e_idx).copied().flatten(), row.get(d_idx).copied().flatten()) else {
+            continue;
+        };
+        if e <= 0.0 || d <= 0.0 {
             continue;
         }
         let dist = (e - 1.0).abs();
@@ -101,8 +99,8 @@ fn flux_record(ecsv: &str, yaml: &str) -> Option<SkymapRecord> {
     if !value.is_finite() || value <= 0.0 {
         return None;
     }
-    let ra = vtscat::yaml_sexagesimal(yaml, "pos.ra")?;
-    let dec = vtscat::yaml_sexagesimal(yaml, "pos.dec")?;
+    let ra = vtscat::yaml_degrees(registry_yaml, "pos.ra")?;
+    let dec = vtscat::yaml_degrees(registry_yaml, "pos.dec")?;
     if !ra.is_finite() || !(0.0..360.0).contains(&ra) {
         return None;
     }
@@ -210,30 +208,33 @@ fn main() {
     let mut records: Vec<SkymapRecord> = Vec::new();
     let mut skipped = 0usize;
     for path in &paths {
-        let Some(sidecar) = yaml_sidecar_path(path) else {
-            skipped += 1;
-            continue;
-        };
         let ecsv_url = format!("{RAW_BASE}{path}");
-        let yaml_url = format!("{RAW_BASE}{sidecar}");
         let Some(ecsv_bytes) = fetch_raw_bytes(&ecsv_url, TTL) else {
             eprintln!("{path}: ecsv fetch void ({ecsv_url})");
             skipped += 1;
             continue;
         };
-        let Some(yaml_bytes) = fetch_raw_bytes(&yaml_url, TTL) else {
-            eprintln!("{sidecar}: yaml fetch void ({yaml_url})");
+        let Ok(ecsv) = std::str::from_utf8(&ecsv_bytes) else {
             skipped += 1;
             continue;
         };
-        let (Ok(ecsv), Ok(yaml)) = (
-            std::str::from_utf8(&ecsv_bytes),
-            std::str::from_utf8(&yaml_bytes),
-        ) else {
+        let Some(source_id) = vtscat::meta_source_id(ecsv) else {
+            eprintln!("{path}: no source_id in meta — source skipped (0 honored)");
             skipped += 1;
             continue;
         };
-        match flux_record(ecsv, yaml) {
+        let reg_path = source_registry_path(source_id);
+        let reg_url = format!("{RAW_BASE}{reg_path}");
+        let Some(reg_bytes) = fetch_raw_bytes(&reg_url, TTL) else {
+            eprintln!("{path}: registry fetch void ({reg_url})");
+            skipped += 1;
+            continue;
+        };
+        let Ok(reg) = std::str::from_utf8(&reg_bytes) else {
+            skipped += 1;
+            continue;
+        };
+        match flux_record(ecsv, reg) {
             Some(r) => records.push(r),
             None => {
                 eprintln!("{path}: no measured dnde at 1 TeV — source skipped (0 honored)");
@@ -280,7 +281,9 @@ mod tests {
     {"path": "2008/2008ApJ...679..397A/VER-000058-sed.ecsv", "type": "blob"},
     {"path": "2008/2008ApJ...679..397A/VER-000058.yaml", "type": "blob"},
     {"path": "2009/2009ApJ...706L.275A/VER-000018-sed-1.ecsv", "type": "blob"},
-    {"path": "2009/2009ApJ...706L.275A/VER-000018-1.yaml", "type": "blob"}
+    {"path": "2009/2009ApJ...706L.275A/VER-000018-1.yaml", "type": "blob"},
+    {"path": "2014/2014ApJ...780..168A/HESS-000030-sed-5.ecsv", "type": "blob"},
+    {"path": "2014/2014ApJ...780..168A/XRT-000030-MJD54856-54862-sed-100.ecsv", "type": "blob"}
   ]
 }"#;
 
@@ -291,6 +294,11 @@ mod tests {
 # - {name: dnde, unit: m-2 s-1 TeV-1, datatype: float32}
 # - {name: dnde_err, unit: m-2 s-1 TeV-1, datatype: float32}
 # - {name: significance, datatype: float32}
+# meta: !!omap
+# - data_type: sed
+# - source_id: 58
+# - reference_id: 2008ApJ...679..397A
+# - telescope: veritas
 e_ref dnde dnde_err  significance
 0.25    1.36e-7 0.60e-7 2.26
 0.50    4.55e-8 1.15e-8 3.97
@@ -298,19 +306,20 @@ e_ref dnde dnde_err  significance
 2.00    1.92e-9 0.68e-9 2.82
 "#;
 
-    const YAML: &str = r#"---
+    const REGISTRY_058: &str = r#"---
 source_id: 58
-reference_id: 2008ApJ...679..397A
-telescope: veritas
+common_name: M 87
+where: egal
 pos:
-  ra: {val: 12h30m46s, err: 0h0m4s, err_sys: 0h0m6s}
-  dec: {val: 12d23m21s, err: 50s, err_sys: 0d1m30s}
-spec:
-  erange: {min: 0.2, max: 10., unit: TeV}
+  simbad_id: M 87
+  ra: 187.70593075
+  dec: 12.391123306
+reference_id:
+  - 2008ApJ...679..397A
 "#;
 
     #[test]
-    fn sed_paths_picks_only_flux_maps() {
+    fn sed_paths_picks_only_veritas_flux_maps() {
         let paths = sed_paths(TREE);
         assert_eq!(paths.len(), 2);
         assert!(paths[0].ends_with("VER-000058-sed.ecsv"));
@@ -318,16 +327,10 @@ spec:
     }
 
     #[test]
-    fn sidecar_maps_sed_to_yaml() {
-        assert_eq!(
-            yaml_sidecar_path("2008/2008ApJ...679..397A/VER-000058-sed.ecsv").as_deref(),
-            Some("2008/2008ApJ...679..397A/VER-000058.yaml")
-        );
-        assert_eq!(
-            yaml_sidecar_path("2009/2009ApJ...706L.275A/VER-000018-sed-1.ecsv").as_deref(),
-            Some("2009/2009ApJ...706L.275A/VER-000018-1.yaml")
-        );
-        assert!(yaml_sidecar_path("nonsense").is_none());
+    fn source_registry_maps_id_to_zero_padded_path() {
+        assert_eq!(source_registry_path(58), "sources/tev-000058.yaml");
+        assert_eq!(source_registry_path(14), "sources/tev-000014.yaml");
+        assert_eq!(source_registry_path(100174), "sources/tev-100174.yaml");
     }
 
     #[test]
@@ -341,22 +344,22 @@ spec:
 
     #[test]
     fn flux_record_reads_position_and_fiducial_dnde() {
-        let r = flux_record(SED, YAML).unwrap();
+        let r = flux_record(SED, REGISTRY_058).unwrap();
         assert_eq!(r.kind, KIND_GAMMA);
-        assert!((r.ra_deg as f64 - 187.6916666667).abs() < 1e-3);
-        assert!((r.dec_deg as f64 - 12.3891666667).abs() < 1e-3);
+        assert!((r.ra_deg as f64 - 187.70593075).abs() < 1e-3);
+        assert!((r.dec_deg as f64 - 12.391123306).abs() < 1e-3);
         assert!((r.value as f64 - 7.39e-9).abs() < 1e-12);
     }
 
     #[test]
     fn flux_record_skips_absent_position() {
         assert!(flux_record(SED, "source_id: 58\n").is_none());
-        assert!(flux_record("hello\nworld\n", YAML).is_none());
+        assert!(flux_record("hello\nworld\n", REGISTRY_058).is_none());
     }
 
     #[test]
     fn skymap_asset_roundtrips() {
-        let records = vec![flux_record(SED, YAML).unwrap()];
+        let records = vec![flux_record(SED, REGISTRY_058).unwrap()];
         let path = std::env::temp_dir().join("vtscat_flux_test.sky1");
         let p = path.to_str().unwrap();
         write_asset(&records, p).unwrap();
