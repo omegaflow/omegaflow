@@ -818,10 +818,7 @@ pub fn anchor(
             vrate,
         } => {
             eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
-            let v = match vrate {
-                Some(v) => *v,
-                None => return None,
-            };
+            let v = (*vrate)?;
             surface_motion(SurfaceMotionParams {
                 body_name,
                 lat: *lat,
@@ -841,10 +838,7 @@ pub fn anchor(
                 scale: *scale,
             }
         }
-        Position::Source => match frame {
-            Some(f) => frame_motion(f, None, None, channel.epoch, eph)?,
-            None => return None,
-        },
+        Position::Source => frame_motion(frame?, None, None, channel.epoch, eph)?,
     };
     let abs = motion.at(channel.epoch, channel.epoch, eph)?;
     if !abs[0].is_finite()

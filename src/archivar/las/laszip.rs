@@ -141,9 +141,7 @@ impl SymbolModel {
     fn init(&mut self) {
         self.total_count = 0;
         self.update_cycle = self.symbols;
-        for c in &mut self.symbol_count {
-            *c = 1;
-        }
+        self.symbol_count.fill(1);
         self.update();
         self.update_cycle = (self.symbols + 6) >> 1;
         self.symbols_until_update = self.update_cycle;
@@ -712,9 +710,7 @@ impl Point14Context {
             m.init();
         }
         self.ic_z.init();
-        for z in &mut self.last_z {
-            *z = first.z;
-        }
+        self.last_z.fill(first.z);
         for m in &mut self.m_classification {
             m.init();
         }
@@ -725,9 +721,7 @@ impl Point14Context {
             m.init();
         }
         self.ic_intensity.init();
-        for i in &mut self.last_intensity {
-            *i = first.intensity;
-        }
+        self.last_intensity.fill(first.intensity);
         self.ic_scan_angle.init();
         self.ic_point_source_id.init();
         self.m_gpstime_multi.init();
