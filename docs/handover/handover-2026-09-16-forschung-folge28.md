@@ -3,7 +3,7 @@
   session: Forschung-Folge 28
   class: handover
   date: 2026-09-16
-  sha256: 40046a9bb97c48725a24a0d8e7032024726e4138eb75b4f272bd9269ef94eb38
+  sha256: 46ba17219cc0091912f8b4fce6d99b157d955d4dea47d54088d78c2e400953a3
   status: live
 -->
 # Handover — Forschung-Folge 28 (2026-09-16)
@@ -23,19 +23,14 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-## TE / Statistik — Korona §4.6 offen
+## TE / Statistik
 
-- **Korona-Leiter — conditional §4.6 offen.** Der Bau-WIP ist gelandet
-  (`ee4db3aa` Refactor über `src/` + `tools/`, `21edbbef` measure-step gate);
-  HEAD ist grün. `corona-conditional-probe` ist dispatcht (run 35080380117,
-  läuft).
-  (Schritt: Artefakt lesen, §4.6/Limitations in
-  `docs/paper/corona-heating-ladder.md` füllen — die Binning-Sparsität bei 5
-  Konfundern entscheidet binned vs. ksg.)
 - **Solar 211A→193A** — conditional stage-2. (Schritt:
   `corona_conditional_probe`-Lauf, `docs/paper/solar-seconds-matrix.md`.)
-- **Der Grat** — AIA-2014-per-Zelle-Schwellen. (Schritt: per-Zelle-Schwellen aus
-  Lauf ins Blatt — `docs/blatt/blatt-der-grat.md`.)
+- **Der Grat** — AIA-2014-per-Zelle-Schwellen. `aia-ladder-probe` ist dispatcht
+  (run 35081213805, Matrix 2013/2014/2015 — 2014 neu).
+  (Schritt: Artefakt lesen, AIA-2014-per-Zelle-Schwellen ins Blatt —
+  `docs/blatt/blatt-der-grat.md`.)
 - **GIC causal driver** — PCMCI auf dem Minuten-Sturm-Ensemble, KDE-h,
   Rückkanal-Härtung. (Schritt: `docs/paper/gic-causal-driver.md`.)
 - **Blatt 2/3 — Rest offen.** fam/max-T-Bound (Blatt 2), retro OMNI2-PCMCI-Zeile
@@ -78,8 +73,10 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 - **Flyby Path 2** — Zellen pending, Operator-Siegel; füllen nach JUICE 28./29.09.,
   Clipper 03.12. (Schritt: `docs/paper/flyby-path-2-preregistration.md`.)
-- **Kausalpfeil Trishuli** — Abfluss-Serie öffnen → `pfeil --lag-sweep`.
-  (Schritt: `docs/paper/sturzflut-tibet-pfeil.md`.)
+- **Kausalpfeil Trishuli** — `trishuli_gauge_probe` gebaut, Workflow
+  `trishuli-pfeil.yml` dispatcht (run 35083696420; Open-Meteo-Niederschlag +
+  DHM-Gauge 4913 via Wayback-Snapshot).
+  (Schritt: Artefakt lesen, `docs/paper/sturzflut-tibet-pfeil.md` füllen.)
 - **JWST disequilibrium** — O2/O3-Absenz gemessen (ADS/arXiv-Sweep 2026-09-16:
   keine Detektion im durchsuchten Record, nur Machbarkeits-/Retrieval-Studien;
   §6). Offen: vegetation red-edge, saisonale Kanäle.
