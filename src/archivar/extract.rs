@@ -55,6 +55,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "bidsleep" => bidsleep::parse_bin(bytes),
         "bison_velocity" => crate::bison_velocity::parse_bin(bytes)
             .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
+        "las" => crate::las::las_series::parse_series(bytes),
         _ => None,
     }
 }
@@ -240,6 +241,14 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "bison_velocity" => match comp {
             0 => Some("bison_pmode_velocity_m_s"),
+            _ => None,
+        },
+        "las" => match comp {
+            crate::geo::COMP_LAS_X => Some("las_x_icrs_m"),
+            crate::geo::COMP_LAS_Y => Some("las_y_icrs_m"),
+            crate::geo::COMP_LAS_Z => Some("las_z_icrs_m"),
+            crate::geo::COMP_LAS_INTENSITY => Some("las_intensity_dn"),
+            crate::geo::COMP_LAS_CLASSIFICATION => Some("las_classification"),
             _ => None,
         },
         _ => None,
