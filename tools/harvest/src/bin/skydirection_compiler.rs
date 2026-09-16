@@ -1,7 +1,9 @@
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_asset;
 use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
-use omegaflow::skydirection::{SkyBandSeries, SkyDirection, SkySample, parse_bin, write_bin};
+use omegaflow::skydirection::{
+    SkyBandSeries, SkyDirection, SkyFluxSample, SkyFluxSeries, SkySample, parse_bin, write_bin,
+};
 use std::process::Command;
 
 const UA: &str = "omegaflow-skydirection-compiler/1.0";
@@ -115,6 +117,12 @@ fn mjd_to_tdb(lsk: &LeapSeconds, mjd: f64) -> Option<f64> {
     lsk.unix_to_tdb((mjd - 40587.0) * 86400.0)
 }
 
+fn fink_mjd_tai_to_tdb(lsk: &LeapSeconds, mjd_tai: f64) -> Option<f64> {
+    let unix = (mjd_tai - 40587.0) * 86400.0;
+    let tai_minus_utc = lsk.leap_at(unix)?;
+    lsk.unix_to_tdb(unix - tai_minus_utc)
+}
+
 fn empty_direction(name: String, ra: f64, dec: f64) -> SkyDirection {
     SkyDirection {
         name,
@@ -122,6 +130,7 @@ fn empty_direction(name: String, ra: f64, dec: f64) -> SkyDirection {
         dec_deg: dec,
         sigma_arcsec: None,
         bands: Vec::new(),
+        flux_bands: Vec::new(),
         distance: None,
         redshift: None,
     }
@@ -364,7 +373,7 @@ fn extract_id_tokens(body: &[u8]) -> Vec<String> {
     out
 }
 
-fn fink_cone(ra: f64, dec: f64, radius_as: f64) -> Vec<SkyDirection> {
+fn fink_cone(lsk: Option<&LeapSeconds>, ra: f64, dec: f64, radius_as: f64) -> Vec<SkyDirection> {
     if !ra_dec_plausible(ra, dec) || !radius_as.is_finite() || radius_as <= 0.0 {
         println!(
             "skydirection: Fink/LSST cone ({ra}, {dec}, {radius_as} arcsec) refused — the position or radius is not plausible; no cone runs"
@@ -372,7 +381,7 @@ fn fink_cone(ra: f64, dec: f64, radius_as: f64) -> Vec<SkyDirection> {
         return Vec::new();
     }
     let payload = format!(
-        "{{\"ra\": {ra}, \"dec\": {dec}, \"radius\": {radius_as}, \"columns\": \"r:diaObjectId,r:ra,r:dec\"}}"
+        "{{\"ra\": {ra}, \"dec\": {dec}, \"radius\": {radius_as}, \"columns\": \"r:diaObjectId,r:ra,r:dec,r:psfFlux,r:psfFluxErr,r:midpointMjdTai\"}}"
     );
     let Some((code, body)) = curl_post_json(FINK_CONE, &payload) else {
         println!(
@@ -407,6 +416,10 @@ fn fink_cone(ra: f64, dec: f64, radius_as: f64) -> Vec<SkyDirection> {
     }
     let mut out = Vec::new();
     let mut refused = 0usize;
+    let mut held_flux = 0usize;
+    let mut flux_absent = 0usize;
+    let mut flux_err_absent = 0usize;
+    let mut epoch_void = 0usize;
     for (idx, r) in rows.iter().enumerate() {
         let (Some(ra_v), Some(dec_v)) = (jnum(r, "r:ra"), jnum(r, "r:dec")) else {
             refused += 1;
@@ -416,11 +429,43 @@ fn fink_cone(ra: f64, dec: f64, radius_as: f64) -> Vec<SkyDirection> {
             refused += 1;
             continue;
         }
-        out.push(empty_direction(ids[idx].clone(), ra_v, dec_v));
+        let mut d = empty_direction(ids[idx].clone(), ra_v, dec_v);
+        let (flux, err, mjd) = (
+            jnum(r, "r:psfFlux"),
+            jnum(r, "r:psfFluxErr"),
+            jnum(r, "r:midpointMjdTai"),
+        );
+        match (flux, mjd) {
+            (Some(f), Some(m)) if f.is_finite() && m.is_finite() => {
+                match lsk.and_then(|l| fink_mjd_tai_to_tdb(l, m)) {
+                    Some(tdb) => {
+                        let flux_err_njy = match err {
+                            Some(e) if e.is_finite() => Some(e),
+                            _ => {
+                                flux_err_absent += 1;
+                                None
+                            }
+                        };
+                        d.flux_bands.push(SkyFluxSeries {
+                            band: Some("r".to_string()),
+                            samples: vec![SkyFluxSample {
+                                tdb,
+                                flux_njy: f,
+                                flux_err_njy,
+                            }],
+                        });
+                        held_flux += 1;
+                    }
+                    None => epoch_void += 1,
+                }
+            }
+            _ => flux_absent += 1,
+        }
+        out.push(d);
     }
     let n = out.len();
     println!(
-        "skydirection: Fink/LSST cone ({ra}, {dec}, {radius_as} arcsec) — HTTP {code}, {n} diaObject row(s) held as directions; the cone rows deliver no em photometry (r:ra/r:dec/r:diaObjectId only) — the magnitudes stay absent, the per-object light curves stay a named pending (0 honored); {refused} row(s) refused (no position or out of the ICRS gate)"
+        "skydirection: Fink/LSST cone ({ra}, {dec}, {radius_as} arcsec) — HTTP {code}, {n} diaObject row(s) held as directions; {held_flux} hold the r-band psfFlux (nJy, r:psfFlux/r:psfFluxErr/r:midpointMjdTai, epoch TAI folded onto the TDB clock), {flux_err_absent} of them without a delivered r:psfFluxErr (absent, never 0.0); {flux_absent} row(s) carry no r:psfFlux or no r:midpointMjdTai (absent, never 0.0); {epoch_void} row(s) carry a flux whose r:midpointMjdTai does not fold onto the TDB clock (outside the leap table, unheld); {refused} row(s) refused (no position or out of the ICRS gate)"
     );
     out
 }
@@ -560,14 +605,15 @@ fn main() {
         return;
     }
     let mut directions: Vec<SkyDirection> = Vec::new();
+    let lsk = embedded_lsk();
     if harvests_epochs {
-        if let Some(lsk) = embedded_lsk() {
+        if let Some(lsk) = &lsk {
             if let Some(jd_start) = lasair_jd {
-                let added = push_unique(&mut directions, lasair_window(&lsk, jd_start));
+                let added = push_unique(&mut directions, lasair_window(lsk, jd_start));
                 println!("skydirection: Lasair-ZTF window added {added} new direction(s)");
             }
             if antares {
-                let added = push_unique(&mut directions, antares_loci(&lsk, antares_cap));
+                let added = push_unique(&mut directions, antares_loci(lsk, antares_cap));
                 println!("skydirection: ANTARES added {added} new direction(s)");
             }
         } else {
@@ -577,7 +623,7 @@ fn main() {
         }
     }
     for (ra, dec, radius_as) in cones {
-        let added = push_unique(&mut directions, fink_cone(ra, dec, radius_as));
+        let added = push_unique(&mut directions, fink_cone(lsk.as_ref(), ra, dec, radius_as));
         println!("skydirection: Fink/LSST cone added {added} new direction(s)");
     }
     if let Some(path) = gaia_alerts {
