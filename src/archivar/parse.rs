@@ -39,6 +39,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
+    let mut cur_window: Option<(f64, f64)> = None;
     let mut active = false;
 
     macro_rules! flush {
@@ -82,6 +83,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             stations_filter: cur_stations_filter.take(),
                             fanout_delay: cur_fanout_delay,
                             sha256: cur_sha256.clone(),
+                            window: cur_window,
                         });
                     }
                 }
@@ -129,6 +131,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_fanout_delay = 0;
                 cur_frame = None;
                 cur_sha256 = None;
+                cur_window = None;
                 active = true;
             }
             "ttl" if parts.len() >= 2 => {
@@ -1314,6 +1317,39 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 } else if let Ok(v) = parts[1].parse::<u32>() {
                     cur_repeat_ra_bins = v;
+                }
+            }
+            "window" if parts.len() >= 3 => {
+                let from: f64 = match parts[1].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("window from non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                let until: f64 = match parts[2].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("window until non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                if from <= until {
+                    cur_window = Some((from, until));
+                } else {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("window from > until: {}", line),
+                    );
                 }
             }
             _ => {}
