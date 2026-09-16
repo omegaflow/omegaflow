@@ -1341,17 +1341,31 @@ pub fn main_flow() {
             }
             let fmt = archive.sources[i].format.clone();
             if fmt == "finals" || fmt == "ionex" || fmt == "rinex" {
-                let url = archive.sources[i].url.clone();
+                let src_clone = archive.sources[i].clone();
+                let Some(url) = render_source_url(
+                    &src_clone,
+                    RenderCtx {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        tdb: now,
+                        r: 0.0,
+                        eph: &archive.body_ephemerides,
+                        lsk: &lsk,
+                    },
+                    &env,
+                ) else {
+                    continue;
+                };
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
-                let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
                 let now_c = now;
                 let e = env.clone();
                 thread::spawn(move || {
-                    let fetched = if fmt == "rinex" {
+                    let fetched = if fmt == "rinex" || fmt == "ionex" {
                         let mut headers = render_headers(&src_clone.headers, &e);
                         for (k, v) in &mut headers {
                             if k.eq_ignore_ascii_case("authorization") && !v.contains(' ') {
@@ -1365,7 +1379,7 @@ pub fn main_flow() {
                     let mut bytes = match fetched {
                         Some(b) => b,
                         None => {
-                            eprintln!("finals {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                            eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1379,9 +1393,9 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    if fmt == "rinex" && bytes.starts_with(&[0x1f, 0x8b]) {
+                    if (fmt == "rinex" || fmt == "ionex") && bytes.starts_with(&[0x1f, 0x8b]) {
                         let Some(gz) = gunzip(&bytes) else {
-                            eprintln!("rinex {}: gzip stays unreadable — pending", url);
+                            eprintln!("{} {}: gzip stays unreadable — pending", fmt, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1398,7 +1412,7 @@ pub fn main_flow() {
                     }
                     let text = String::from_utf8_lossy(&bytes).into_owned();
                     let channels = match fmt.as_str() {
-                        "ionex" => build_ionex_channels(&src_clone, &text, now_c, &lsk_c),
+                        "ionex" => ionex::build_channels(&src_clone, &text, now_c, &lsk_c),
                         "rinex" => build_rinex_channels(&src_clone, &text, now_c, &lsk_c),
                         _ => build_finals_channels(&src_clone, &text, &lsk_c),
                     };
