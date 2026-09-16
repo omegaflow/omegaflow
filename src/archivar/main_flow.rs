@@ -2108,6 +2108,7 @@ pub fn main_flow() {
                     | "cors_rinex"
                     | "drs_fits"
                     | "demeter_isl"
+                    | "kcdc_kascade"
                     | "juno_odf"
                     | "magellan_odf"
                     | "mgs_odf"

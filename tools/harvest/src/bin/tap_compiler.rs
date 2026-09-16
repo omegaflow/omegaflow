@@ -1753,7 +1753,7 @@ fn row_str(j: &JsonVal) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        dedup_crossmatch, join_from, json_metadata_rows, star_record_bytes, STAR_BIN_STRIDE,
+        STAR_BIN_STRIDE, dedup_crossmatch, join_from, json_metadata_rows, star_record_bytes,
     };
 
     fn row(ra: &str, dec: &str, dist: &str) -> Vec<String> {

@@ -66,3 +66,15 @@ note Re-Check 2026-09-16 (grind-flash): ~1 Nachricht/s (1 Hz, RS41), Frame 4058�
 ausstehend
 kandidat https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.csv
 note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block steht (bass-20260907T0000.json). Nächster Schritt: CDN-Manifestation.
+
+ausstehend
+kandidat https://exofop.ipac.caltech.edu/
+note Kandidat 2026-09-16 (ernte): ExoFOP — Exoplanet Follow-up Observing Program (IPAC/Caltech), Follow-up-Archiv für Exoplaneten. Herkunft: docs/concepts/zeugnis.md:83 („OGLE (Mikrolinsen-Leg) und ExoFOP leben"). Erreichbarkeit gemessen (--verdict, drei Stufen): direct HTTP 200 (257 B), Proton-Exit HTTP 200, Wayback 503 (kein Snapshot). Der 200er-Root ist noch kein Daten-JSON. Vor jedem sources.φ-Block: Probe auf Feld/Oszillator (Messwert pro Ereignis + Frame/Position) und Endpoint-/Format-Recherche. Nächster Schritt: Datenendpoint lokalisieren, dann Probe.
+
+ausstehend
+kandidat https://data.nanograv.org/
+note Kandidat 2026-09-16 (ernte): NANOGrav — North American Nanohertz Observatory for Gravitational Waves, Pulsar-Timing-Array / GW-Hintergrund. Herkunft: docs/concepts/kybernetische-astrophysik.md:330 (Pulsar-Timing-Gravitationswellen-Hintergrund). Root https://nanograv.org/ gemessen (direct HTTP 200, 37839 B; Proton-Exit 200; Wayback 503); als direktere Datenroute trägt der Eintrag das Datenportal https://data.nanograv.org/ (direct HTTP 200, 40590 B; Proton-Exit 200; Wayback 503). Kraft-Kandidat gravity (PTA-Residuen), aber Modell-/Detektionscharakter vor dem Gate prüfen. Vor jedem sources.φ-Block: Probe auf Feld/Oszillator (Timing-Residuen als Messwert am Pulsar-Frame). Nächster Schritt: Datenportal-Inventar + Probe.
+
+ausstehend
+kandidat https://www.skao.int/
+note Kandidat 2026-09-16 (ernte): SRCNet — SKA Regional Centre Network, SKAO-Datenverteilung. Herkunft: docs/concepts/zeugnis.md:90 („SKAO lebt als SRCNet"). Erreichbarkeit gemessen (--verdict, drei Stufen): direct HTTP 200 (106605 B), Proton-Exit HTTP 200, Wayback 503 (kein Snapshot). Der Root ist die SKAO-Site; die SRCNet-Datenroute ist damit noch nicht lokalisiert. Vor jedem sources.φ-Block: SRCNet-Datenzugang suchen (Regional-Centre-Schnittstelle) und Probe auf Feld/Oszillator (Radio-Interferometrie → em). Nächster Schritt: SRCNet-Endpoint-Recherche, dann Probe.
