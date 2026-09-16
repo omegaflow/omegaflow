@@ -3,7 +3,7 @@
   session: Ernte-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: 321e226590f78ddf7f72fa8c07c943fbd6b486036e2d8c2165f5264d5ca2b06e
+  sha256: e3cc7dddc41e63c5718017be07f2158e54394b6a44b5bb1a26d501f5c78edb22
   status: live
 -->
 # Handover — Ernte-Folge 35 (2026-09-15)
@@ -148,6 +148,8 @@ stehen, `sources.φ`-Block + CDN gated nach Push + Consent.)
 - Gap 13 EPA AQS + rows-Epoch · flash: per-row lat/lon + Epoch + Guards + Spec,
   $0.1211 · pro: Gap13 $0.1258 + rows-Epoch $0.0516, kein Epoch im Gap13-Arm ·
   Sieger: flash.
+- ERI1 magic identity · flash: Gestalt + Test, $0.0099 · pro: identisch, $0.0211 ·
+  Sieger: flash (gleich, günstiger).
 
 ## Baum
 
