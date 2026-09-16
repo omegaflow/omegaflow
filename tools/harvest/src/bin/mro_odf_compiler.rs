@@ -7,6 +7,7 @@ const BASE: &str = "https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mr
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 const REQUEST_TTL_S: u64 = 1 << 9;
 const WORKERS: usize = 1 << 3;
+const PREFIX: &str = "mro_odf";
 
 fn fetch_listing(dir: &str) -> Option<Vec<u8>> {
     match http_code(dir, &[]) {
@@ -137,34 +138,90 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    let out = "data/pds-geosciences.wustl.edu/mro_odf.bin";
     std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
-    let bin = odf::write_podf_bin(&merged);
-    if std::fs::write(out, &bin).is_err() {
-        eprintln!("write {out} void");
+    let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
+    if ranges.len() == 1 {
+        let out = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
+        let bin = odf::write_podf_bin(&merged);
+        if std::fs::write(&out, &bin).is_err() {
+            eprintln!("write {out} void");
+            return;
+        }
+        match odf::parse_podf_bin(&bin) {
+            Some(parsed) => {
+                let d0 = parsed[0];
+                let d1 = parsed[parsed.len() - 1];
+                let mut stations: Vec<i64> = parsed.iter().map(|r| r[3] as i64).collect();
+                stations.sort_unstable();
+                stations.dedup();
+                let mut dts: Vec<i64> = parsed.iter().map(|r| r[5] as i64).collect();
+                dts.sort_unstable();
+                dts.dedup();
+                eprintln!(
+                    "{out}: {} orbit samples (tdb {}..{}), stations {stations:?}, data_type {dts:?}, {} B — roundtrip parses",
+                    parsed.len(),
+                    d0[0],
+                    d1[0],
+                    bin.len()
+                );
+            }
+            None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
+        }
+        if ci_mode && !upload_release("pds-geosciences.wustl.edu", &out) {
+            std::process::exit(1);
+        }
         return;
     }
-    match odf::parse_podf_bin(&bin) {
-        Some(parsed) => {
-            let d0 = parsed[0];
-            let d1 = parsed[parsed.len() - 1];
-            let mut stations: Vec<i64> = parsed.iter().map(|r| r[3] as i64).collect();
-            stations.sort_unstable();
-            stations.dedup();
-            let mut dts: Vec<i64> = parsed.iter().map(|r| r[5] as i64).collect();
-            dts.sort_unstable();
-            dts.dedup();
-            eprintln!(
-                "{out}: {} orbit samples (tdb {}..{}), stations {stations:?}, data_type {dts:?}, {} B — roundtrip parses",
-                parsed.len(),
-                d0[0],
-                d1[0],
-                bin.len()
-            );
+    let mut names: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
+    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
+        let t_lo = merged[lo][0];
+        let t_hi = merged[hi - 1][0];
+        let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
+        if names.contains(&name) {
+            name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
         }
-        None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
+        names.push(name.clone());
+        let bin = odf::write_podf_bin(&merged[lo..hi]);
+        assert!(bin.len() <= odf::PODF_SHARD_LIMIT);
+        let parsed = match odf::parse_podf_bin(&bin) {
+            Some(p) => p,
+            None => {
+                eprintln!("{name}: roundtrip parse void — the series stays unverified");
+                std::process::exit(1);
+            }
+        };
+        let d0 = parsed[0];
+        let d1 = parsed[parsed.len() - 1];
+        eprintln!(
+            "{name}: {} orbit samples (tdb {}..{}), {} B — roundtrip parses",
+            parsed.len(),
+            d0[0],
+            d1[0],
+            bin.len()
+        );
+        let path = format!("data/pds-geosciences.wustl.edu/{name}");
+        if std::fs::write(&path, &bin).is_err() {
+            eprintln!("write {path} void");
+            std::process::exit(1);
+        }
+        paths.push(path);
     }
-    if ci_mode && !upload_release("pds-geosciences.wustl.edu", out) {
-        std::process::exit(1);
+    for name in &names {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/{name}"
+        );
+        println!("format {PREFIX}");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field observable_hz {PREFIX}_observable_hz inverse-square em Hz 604800 0.0 0.0");
+        println!();
+    }
+    if ci_mode {
+        for path in &paths {
+            if !upload_release("pds-geosciences.wustl.edu", path) {
+                std::process::exit(1);
+            }
+        }
     }
 }
