@@ -12,9 +12,14 @@
 # without .env_clear(), so ALL_PROXY/HTTPS_PROXY route every fetch through the
 # exit with zero code change.
 #
-# usage: proton-wg.sh list | status | off | <server|cc>
+# usage: proton-wg.sh list | status | suggest <domain> | off | <server|cc>
 #   <server>  a config name, e.g. US-FREE#2 (the # may be typed as _)
 #   <cc>      a country code, e.g. us / nl / jp — picks the first server
+#
+# Auto-start: the systemd user unit proton-wg.service runs wireproxy from the
+# persistent $PCONF at login (Restart=always). `proton-wg.sh <cc>` writes that
+# config and enables the unit; `off` stops and disables it. Without a user
+# systemd, the script falls back to a nohup background process.
 set -u
 
 WG="${PROTON_WG_DIR:-$HOME/.config/wireguard}/proton-free"
@@ -24,10 +29,44 @@ RUNDIR="${XDG_RUNTIME_DIR:-/tmp}/proton-wg"
 PIDF="$RUNDIR/wireproxy.pid"
 CONF="$RUNDIR/active.conf"
 LOG="$RUNDIR/wireproxy.log"
+PCONFDIR="$HOME/.config/proton-wg"
+PCONF="$PCONFDIR/active.conf"
+UNITDIR="$HOME/.config/systemd/user"
+UNIT="$UNITDIR/proton-wg.service"
+UNITSRC="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/proton-wg.service"
 
 lc() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
 
+have_systemd() { systemctl --user show-environment >/dev/null 2>&1; }
+
+install_unit() {
+  mkdir -p "$UNITDIR"
+  if [ -f "$UNITSRC" ]; then
+    cp "$UNITSRC" "$UNIT"
+  else
+    printf '%s\n' \
+      '[Unit]' \
+      'Description=Proton WireGuard userspace exit (wireproxy SOCKS5)' \
+      'ConditionPathExists=%h/.config/proton-wg/active.conf' \
+      'After=network-online.target' \
+      'Wants=network-online.target' \
+      '' \
+      '[Service]' \
+      'Type=simple' \
+      'ExecStart=%h/.local/bin/wireproxy -c %h/.config/proton-wg/active.conf' \
+      'Restart=always' \
+      'RestartSec=3' \
+      '' \
+      '[Install]' \
+      'WantedBy=default.target' > "$UNIT"
+  fi
+  systemctl --user daemon-reload >/dev/null 2>&1 || true
+}
+
 stop() {
+  if have_systemd; then
+    systemctl --user disable --now proton-wg.service >/dev/null 2>&1 || true
+  fi
   if [ -f "$PIDF" ]; then
     p=$(cat "$PIDF" 2>/dev/null || true)
     [ -n "$p" ] && kill "$p" 2>/dev/null || true
@@ -56,6 +95,31 @@ case "$action" in
       printf 'proton-wg: no tunnel up\n'
     fi
     ;;
+  suggest)
+    dom="${2:-}"
+    if [ -z "$dom" ]; then
+      printf 'usage: proton-wg.sh suggest <domain|url>\n' >&2
+      exit 2
+    fi
+    dom="${dom#*://}"
+    dom="${dom%%/*}"
+    tld="${dom##*.}"
+    cc=$(lc "$tld")
+    case "$cc" in
+      uk) cc=gb ;;
+      com|org|net|edu|gov|io|ai|info|int|mil|dev|app|co|me|tv|xyz) cc="" ;;
+    esac
+    if [ -n "$cc" ]; then
+      up=$(printf '%s' "$cc" | tr '[:lower:]' '[:upper:]')
+      for f in "$WG/$up"-FREE_*.conf; do
+        if [ -e "$f" ]; then
+          printf 'geo-suspect: .%s -> proton-wg.sh %s (a %s exit; operator consent)\n' "$tld" "$cc" "$up"
+          exit 0
+        fi
+      done
+    fi
+    printf 'geo: .%s carries no matching free exit in %s\n' "$tld" "$WG"
+    ;;
   off | down | disconnect)
     stop
     printf 'proton-wg: off\n'
@@ -81,14 +145,24 @@ case "$action" in
       printf 'proton-wg: wireproxy not found at %s\n' "$BIN" >&2
       exit 2
     fi
-    mkdir -p "$RUNDIR"
+    mkdir -p "$RUNDIR" "$PCONFDIR"
     stop
     cp "$conf" "$CONF"
     printf '\n[Socks5]\nBindAddress = 127.0.0.1:%s\n' "$PORT" >> "$CONF"
-    nohup "$BIN" -c "$CONF" >"$LOG" 2>&1 &
-    echo $! > "$PIDF"
-    sleep 3
-    printf 'proton-wg: %s -> %s (socks5h://127.0.0.1:%s)\n' \
-      "$(basename "$conf" .conf)" "$(exit_ip || printf absent)" "$PORT"
+    cp "$CONF" "$PCONF"
+    if have_systemd; then
+      install_unit
+      systemctl --user enable proton-wg.service >/dev/null 2>&1 || true
+      systemctl --user restart proton-wg.service >/dev/null 2>&1 || true
+      sleep 3
+      printf 'proton-wg: %s -> %s (socks5h://127.0.0.1:%s, systemd)\n' \
+        "$(basename "$conf" .conf)" "$(exit_ip || printf absent)" "$PORT"
+    else
+      nohup "$BIN" -c "$CONF" >"$LOG" 2>&1 &
+      echo $! > "$PIDF"
+      sleep 3
+      printf 'proton-wg: %s -> %s (socks5h://127.0.0.1:%s)\n' \
+        "$(basename "$conf" .conf)" "$(exit_ip || printf absent)" "$PORT"
+    fi
     ;;
 esac
