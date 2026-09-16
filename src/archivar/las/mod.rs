@@ -444,9 +444,11 @@ pub const LASF_PROJECTION_USER_ID: &str = "LASF_Projection";
 pub const GEO_KEY_DIRECTORY_ID: u16 = 34735;
 pub const WKT_CRS_ID: u16 = 2112;
 
+const MODEL_TYPE_KEY: u16 = 1024;
 const GEODETIC_CRS_KEY: u16 = 2048;
 const PROJECTED_CS_TYPE_KEY: u16 = 3072;
 const USER_DEFINED: u16 = 32767;
+const MODEL_TYPE_GEOGRAPHIC: u16 = 2;
 
 #[derive(Clone, Debug)]
 pub enum LasCrs {
@@ -465,8 +467,14 @@ fn epsg_from_geokeys(vlrs: &[LasVlr]) -> Option<u16> {
     let vlr = vlrs
         .iter()
         .find(|v| v.user_id == LASF_PROJECTION_USER_ID && v.record_id == GEO_KEY_DIRECTORY_ID)?;
-    geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY)
-        .or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))
+    if let Some(code) = geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY) {
+        return Some(code);
+    }
+    if geokey_epsg(&vlr.payload, MODEL_TYPE_KEY) == Some(MODEL_TYPE_GEOGRAPHIC) {
+        geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY)
+    } else {
+        None
+    }
 }
 
 fn geokey_epsg(payload: &[u8], key_id: u16) -> Option<u16> {
@@ -701,6 +709,52 @@ mod tests {
         bytes.extend_from_slice(&rec);
         let p = header.point_at(&bytes, 0).unwrap();
         assert_eq!(p.gps_time, Some(1234.5));
+    }
+
+    fn geokey_vlr(keys: &[(u16, u16)]) -> LasVlr {
+        let mut payload = vec![0u8; 8 + keys.len() * 8];
+        put_u16(&mut payload, 0, 1);
+        put_u16(&mut payload, 2, 1);
+        put_u16(&mut payload, 4, 0);
+        put_u16(&mut payload, 6, keys.len() as u16);
+        for (i, (id, value)) in keys.iter().enumerate() {
+            let off = 8 + i * 8;
+            put_u16(&mut payload, off, *id);
+            put_u16(&mut payload, off + 2, 0);
+            put_u16(&mut payload, off + 4, 1);
+            put_u16(&mut payload, off + 6, *value);
+        }
+        LasVlr {
+            user_id: LASF_PROJECTION_USER_ID.to_string(),
+            record_id: GEO_KEY_DIRECTORY_ID,
+            description: String::new(),
+            payload,
+        }
+    }
+
+    #[test]
+    fn projected_geokey_without_cs_type_stays_unresolved() {
+        let vlrs = [geokey_vlr(&[(MODEL_TYPE_KEY, 1), (GEODETIC_CRS_KEY, 4326)])];
+        assert_eq!(epsg_from_geokeys(&vlrs), None);
+    }
+
+    #[test]
+    fn geographic_geokey_resolves_through_the_geodetic_key() {
+        let vlrs = [geokey_vlr(&[
+            (MODEL_TYPE_KEY, MODEL_TYPE_GEOGRAPHIC),
+            (GEODETIC_CRS_KEY, 4326),
+        ])];
+        assert_eq!(epsg_from_geokeys(&vlrs), Some(4326));
+    }
+
+    #[test]
+    fn projected_geokey_carries_its_projected_cs_type() {
+        let vlrs = [geokey_vlr(&[
+            (MODEL_TYPE_KEY, 1),
+            (GEODETIC_CRS_KEY, 4326),
+            (PROJECTED_CS_TYPE_KEY, 32611),
+        ])];
+        assert_eq!(epsg_from_geokeys(&vlrs), Some(32611));
     }
 
     #[test]

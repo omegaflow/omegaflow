@@ -1615,6 +1615,18 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_geokey_unconditional_geodetic_fallback_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/las/mod.rs",
+            &fx("geokey_unconditional_geodetic_fallback"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_bad_field_line() {
         let mut g = test_gate();
         let args =
