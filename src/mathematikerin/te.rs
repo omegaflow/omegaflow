@@ -764,78 +764,6 @@ fn solve_linear(a: &[f64], b: &[f64], k: usize) -> Option<Vec<f64>> {
     Some((0..k).map(|i| m[i * (k + 1) + k]).collect())
 }
 
-fn ols_fit_lagged(y: &[f32], c: &[f32], max_lag: usize) -> Option<Vec<f64>> {
-    let n = y.len();
-    if n < max_lag + 4 || y.len() != c.len() {
-        return None;
-    }
-    let k = 1 + max_lag + (max_lag + 1);
-    let mut a = vec![0f64; k * k];
-    let mut b = vec![0f64; k];
-    for t in max_lag..n {
-        let mut row = Vec::with_capacity(k);
-        row.push(1.0);
-        for l in 1..=max_lag {
-            row.push(y[t - l] as f64);
-        }
-        for l in 0..=max_lag {
-            row.push(c[t - l] as f64);
-        }
-        let yt = y[t] as f64;
-        for i in 0..k {
-            b[i] += row[i] * yt;
-            for j in 0..k {
-                a[i * k + j] += row[i] * row[j];
-            }
-        }
-    }
-    solve_linear(&a, &b, k)
-}
-
-fn lagged_predict(coeffs: &[f64], y: &[f32], c: &[f32], t: usize, max_lag: usize) -> f64 {
-    let mut v = coeffs[0];
-    for l in 1..=max_lag {
-        v += coeffs[l] * y[t - l] as f64;
-    }
-    for l in 0..=max_lag {
-        v += coeffs[1 + max_lag + l] * c[t - l] as f64;
-    }
-    v
-}
-
-fn residual_surrogate_conditional_lagged(
-    y: &[f32],
-    c: &[f32],
-    max_lag: usize,
-    rng: &mut u64,
-) -> Vec<f32> {
-    let n = y.len();
-    match ols_fit_lagged(y, c, max_lag) {
-        Some(coeffs) => {
-            let mut resid: Vec<f64> = (max_lag..n)
-                .map(|t| y[t] as f64 - lagged_predict(&coeffs, y, c, t, max_lag))
-                .collect();
-            for i in (1..resid.len()).rev() {
-                *rng = rng
-                    .wrapping_mul(6364136223846793005)
-                    .wrapping_add(1442695040888963407);
-                let j = ((*rng >> 33) as usize) % (i + 1);
-                resid.swap(i, j);
-            }
-            let mut out = vec![0f32; n];
-            for t in 0..n {
-                out[t] = if t < max_lag {
-                    y[t]
-                } else {
-                    (lagged_predict(&coeffs, y, c, t, max_lag) + resid[t - max_lag]) as f32
-                };
-            }
-            out
-        }
-        None => shuffle_series(y, rng),
-    }
-}
-
 pub fn conditional_te_stats_lagged(
     x: &[f32],
     y: &[f32],
@@ -848,7 +776,7 @@ pub fn conditional_te_stats_lagged(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let ys = residual_surrogate_conditional_lagged(y, c, max_lag, &mut rng);
+        let ys = arx_restricted_surrogate_conditional(y, &[c], max_lag, &mut rng);
         if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
             vals.push(te);
         }
@@ -915,40 +843,6 @@ fn lagged_predict_2(
     v
 }
 
-fn residual_surrogate_conditional_lagged_2(
-    y: &[f32],
-    c1: &[f32],
-    c2: &[f32],
-    max_lag: usize,
-    rng: &mut u64,
-) -> Vec<f32> {
-    let n = y.len();
-    match ols_fit_lagged_2(y, c1, c2, max_lag) {
-        Some(coeffs) => {
-            let mut resid: Vec<f64> = (max_lag..n)
-                .map(|t| y[t] as f64 - lagged_predict_2(&coeffs, y, c1, c2, t, max_lag))
-                .collect();
-            for i in (1..resid.len()).rev() {
-                *rng = rng
-                    .wrapping_mul(6364136223846793005)
-                    .wrapping_add(1442695040888963407);
-                let j = ((*rng >> 33) as usize) % (i + 1);
-                resid.swap(i, j);
-            }
-            let mut out = vec![0f32; n];
-            for t in 0..n {
-                out[t] = if t < max_lag {
-                    y[t]
-                } else {
-                    (lagged_predict_2(&coeffs, y, c1, c2, t, max_lag) + resid[t - max_lag]) as f32
-                };
-            }
-            out
-        }
-        None => shuffle_series(y, rng),
-    }
-}
-
 #[derive(Clone, Copy)]
 pub struct TeStats2Params {
     pub lag: usize,
@@ -973,7 +867,7 @@ pub fn conditional_te_stats_lagged_2(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let ys = residual_surrogate_conditional_lagged_2(y, c1, c2, max_lag, &mut rng);
+        let ys = arx_restricted_surrogate_2(y, c1, c2, max_lag, &mut rng);
         if let Some(te) = transfer_entropy_conditional_2(x, &ys, c1, c2, lag) {
             vals.push(te);
         }
@@ -1087,6 +981,76 @@ pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Vec<f
                     y[t]
                 } else {
                     let v = lagged_predict_n(&coeffs, &out, &[], t, p) + perm[t - p] as f64;
+                    if !v.is_finite() {
+                        return shuffle_series(y, rng);
+                    }
+                    v as f32
+                };
+            }
+            out
+        }
+        None => shuffle_series(y, rng),
+    }
+}
+
+pub fn arx_restricted_surrogate_conditional(
+    y: &[f32],
+    conds: &[&[f32]],
+    max_lag: usize,
+    rng: &mut u64,
+) -> Vec<f32> {
+    if conds.is_empty() {
+        return arx_restricted_surrogate(y, max_lag, rng);
+    }
+    let n = y.len();
+    match ols_fit_lagged_n(y, conds, max_lag) {
+        Some(coeffs) => {
+            let resid: Vec<f64> = (max_lag..n)
+                .map(|t| y[t] as f64 - lagged_predict_n(&coeffs, y, conds, t, max_lag))
+                .collect();
+            let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
+            let perm = restricted_permutation_surrogate(&resid_f32, rng);
+            let mut out = vec![0f32; n];
+            for t in 0..n {
+                out[t] = if t < max_lag {
+                    y[t]
+                } else {
+                    let v = lagged_predict_n(&coeffs, &out, conds, t, max_lag)
+                        + perm[t - max_lag] as f64;
+                    if !v.is_finite() {
+                        return shuffle_series(y, rng);
+                    }
+                    v as f32
+                };
+            }
+            out
+        }
+        None => shuffle_series(y, rng),
+    }
+}
+
+pub fn arx_restricted_surrogate_2(
+    y: &[f32],
+    c1: &[f32],
+    c2: &[f32],
+    max_lag: usize,
+    rng: &mut u64,
+) -> Vec<f32> {
+    let n = y.len();
+    match ols_fit_lagged_2(y, c1, c2, max_lag) {
+        Some(coeffs) => {
+            let resid: Vec<f64> = (max_lag..n)
+                .map(|t| y[t] as f64 - lagged_predict_2(&coeffs, y, c1, c2, t, max_lag))
+                .collect();
+            let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
+            let perm = restricted_permutation_surrogate(&resid_f32, rng);
+            let mut out = vec![0f32; n];
+            for t in 0..n {
+                out[t] = if t < max_lag {
+                    y[t]
+                } else {
+                    let v = lagged_predict_2(&coeffs, &out, c1, c2, t, max_lag)
+                        + perm[t - max_lag] as f64;
                     if !v.is_finite() {
                         return shuffle_series(y, rng);
                     }
@@ -1221,7 +1185,7 @@ pub fn conditional_te_surrogates_n(
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
             TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
             TeNull::XShift => y.to_vec(),
-            TeNull::Arx => arx_restricted_surrogate(y, max_lag, &mut rng),
+            TeNull::Arx => arx_restricted_surrogate_conditional(y, conds, max_lag, &mut rng),
         };
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(xs, &ys, conds, lag, bins),
@@ -2622,6 +2586,48 @@ mod tests {
             v.iter().map(|&a| (a - mean) * (a - mean)).sum::<f32>() / v.len() as f32
         };
         assert!((var(&x) - var(&s)).abs() < 0.05 * var(&x));
+    }
+
+    #[test]
+    fn conditional_arx_surrogate_differs_from_unconditional_2_cond_finite() {
+        let n = 300;
+        let max_lag = 3;
+        let c: Vec<f32> = (0..n)
+            .map(|t| (t as f32 * 0.21).sin() + 0.4 * (t as f32 * 0.071).cos())
+            .collect();
+        let c2: Vec<f32> = (0..n).map(|t| (t as f32 * 0.113).cos()).collect();
+        let mut y = vec![0f32; n];
+        for t in 0..n {
+            let noise = ((t as u64).wrapping_mul(2654435761) >> 24) as f32 / 255.0 - 0.5;
+            y[t] = if t < max_lag {
+                0.5 * c[t] + noise
+            } else {
+                0.7 * y[t - 1] - 0.25 * y[t - 2] + 0.5 * c[t] + 0.05 * noise
+            };
+        }
+        let mut rng_a = 42u64;
+        let mut rng_b = 42u64;
+        let cond_surr = arx_restricted_surrogate_conditional(&y, &[&c], max_lag, &mut rng_a);
+        let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b);
+        assert_eq!(cond_surr.len(), n);
+        assert_eq!(uncond_surr.len(), n);
+        let max_diff = cond_surr
+            .iter()
+            .zip(uncond_surr.iter())
+            .map(|(a, b)| (a - b).abs())
+            .fold(0.0f32, f32::max);
+        assert!(
+            max_diff > 1e-4,
+            "conditional and unconditional Arx surrogates coincide (max diff {})",
+            max_diff
+        );
+        let mut rng_c = 42u64;
+        let s2 = arx_restricted_surrogate_2(&y, &c, &c2, max_lag, &mut rng_c);
+        assert_eq!(s2.len(), n);
+        assert!(
+            s2.iter().all(|v| v.is_finite()),
+            "2-cond Arx surrogate carries non-finite values"
+        );
     }
 
     #[test]
