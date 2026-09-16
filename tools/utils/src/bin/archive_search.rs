@@ -134,6 +134,7 @@ fn main() {
     let mut case_sensitive = false;
     let mut path_match = false;
     let mut include_glob: Option<String> = None;
+    let mut headed = false;
 
     let mut i = 0;
     while i < args.len() {
@@ -177,6 +178,7 @@ fn main() {
                 }
                 mode = Mode::Playwright;
             }
+            "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
             "--arxiv" => mode = Mode::Net("arxiv"),
             "--ads" => mode = Mode::Net("ads"),
@@ -373,7 +375,7 @@ fn main() {
                     std::process::exit(2);
                 }
             };
-            let lines = playwright::run_lines(&input);
+            let lines = playwright::run_lines(&input, headed);
             print_lines(&lines);
         }
         Mode::Net(name) => {
@@ -435,7 +437,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "browser:  archive_search --playwright <url|query>   (real browser render; a bare query searches)"
+            "browser:  archive_search --playwright <url|query> [--headed]   (real browser render; --headed passes a Cloudflare JS interstitial on a display; a bare query searches)"
     );
     eprintln!(
         "reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)"

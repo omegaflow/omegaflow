@@ -291,6 +291,21 @@ measures the file type, `--playwright` measures the rendered content. A stage-3
 `503`/absent on `--verdict` is not a dead end — `--brave` finds the mirror,
 `--playwright` renders the JS page.
 
+**Geo-suspect and Cloudflare.** A blocked direct route or a Cloudflare
+interstitial is a measured state, not a reason to bypass silently. The tool
+prints `geo-suspect: .<tld> -> proton-wg.sh <cc>` (a suggestion — `bin/proton-wg.sh
+suggest <host>` names a country exit if a free config exists) or `bridge: …`
+when the interstitial did not clear. The session turns that line into a
+**question to the operator** before rotating the exit: a geoblock bypass
+touches the source's terms and, for protected works, anti-circumvention law
+(§ 95a UrhG / DMCA §1201); the access route's state is registered
+(`geo`/`key-needed`/`blocked`), never silently bypassed. The `bin/proton-wg.sh *`
+rotation is an `ask` in the permission map — the operator sees the dialog.
+Cloudflare hosts run through the browser bridge (the operator's profile, which
+passes the managed challenge) or the per-host API/mirror; `--playwright
+--headed` (a persistent profile under `~/.cache/omegaflow/playwright-profile`)
+is the browser path for a display.
+
 ## Local tools — the self-contained path
 
 The project's own tools live on `PATH` (via `~/.local/bin`, built from
