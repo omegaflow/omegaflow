@@ -2,10 +2,12 @@ use omegaflow::archivar::range::{
     edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
     S3_REGION,
 };
+use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
     decode_f32, decode_f64, Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object,
 };
+use omegaflow::lsk::days_from_civil;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -16,7 +18,7 @@ const BUCKET: &str = "lp-prod-protected";
 const PRODUCT_ROOT: &str = "GEDI02_A.002/";
 const DEFAULT_OUT: &str = "data/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin";
 const MAGIC: [u8; 4] = *b"GED1";
-const REC_FIELDS: usize = 7;
+const REC_FIELDS: usize = 8;
 const REC_BYTES: usize = REC_FIELDS * 8;
 const META_WINDOW: u64 = 1 << 25;
 const META_ESCALATION: u64 = 3 * (1 << 25);
@@ -80,6 +82,31 @@ fn amz_now() -> Option<(String, String)> {
         date_stamp.clone(),
         format!("{date_stamp}T{h:02}{mi:02}{s:02}Z"),
     ))
+}
+
+fn gedi_granule_start_unix(key: &str) -> Option<f64> {
+    let file = key.rsplit('/').next()?;
+    let digits = file.strip_prefix("GEDI02_A_")?.get(0..13)?;
+    if !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let year: i64 = digits.get(0..4)?.parse().ok()?;
+    let doy: i64 = digits.get(4..7)?.parse().ok()?;
+    let hh: i64 = digits.get(7..9)?.parse().ok()?;
+    let mm: i64 = digits.get(9..11)?.parse().ok()?;
+    let ss: i64 = digits.get(11..13)?.parse().ok()?;
+    if !(1..=366).contains(&doy) || !(0..=23).contains(&hh) || !(0..=59).contains(&mm) {
+        return None;
+    }
+    if !(0..=60).contains(&ss) {
+        return None;
+    }
+    let day0 = days_from_civil(year, 1, 1)?;
+    Some((day0 + doy - 1) as f64 * 86400.0 + (hh * 3600 + mm * 60 + ss) as f64)
+}
+
+fn granule_anchor_tdb(key: &str, lsk: &LeapSeconds) -> Option<f64> {
+    lsk.unix_to_tdb(gedi_granule_start_unix(key)?)
 }
 
 fn uri_encode_query(s: &str) -> String {
@@ -451,6 +478,7 @@ fn extract_from(
     s3_url: &str,
     creds: &S3Credentials,
     beams: usize,
+    anchor_tdb: f64,
 ) -> Vec<[f64; REC_FIELDS]> {
     let mut out = Vec::new();
     for (bi, beam) in BEAMS.iter().enumerate().take(beams) {
@@ -513,13 +541,18 @@ fn extract_from(
             {
                 continue;
             }
-            out.push([dt, lat, lon, elev, rh, bi as f64, q]);
+            out.push([dt, lat, lon, elev, rh, bi as f64, q, anchor_tdb]);
         }
     }
     out
 }
 
-fn harvest_granule(s3_url: &str, creds: &S3Credentials, beams: usize) -> Vec<[f64; REC_FIELDS]> {
+fn harvest_granule(
+    s3_url: &str,
+    creds: &S3Credentials,
+    beams: usize,
+    anchor_tdb: f64,
+) -> Vec<[f64; REC_FIELDS]> {
     let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
         eprintln!(
             "{}: range read returned void — granule stays pending",
@@ -528,7 +561,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials, beams: usize) -> Vec<[f6
         return Vec::new();
     };
     match Hdf5File::parse(&w1) {
-        Ok(file) => extract_from(&file, s3_url, creds, beams),
+        Ok(file) => extract_from(&file, s3_url, creds, beams, anchor_tdb),
         Err(note) => {
             eprintln!(
                 "{}: header window of {} B stayed unread ({:?}) — escalating once",
@@ -542,7 +575,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials, beams: usize) -> Vec<[f6
                 return Vec::new();
             };
             match Hdf5File::parse(&w2) {
-                Ok(file) => extract_from(&file, s3_url, creds, beams),
+                Ok(file) => extract_from(&file, s3_url, creds, beams, anchor_tdb),
                 Err(n2) => {
                     eprintln!(
                         "{}: metadata beyond {} B ({:?}) — granule stays pending",
@@ -666,6 +699,12 @@ fn run_harvest(args: &[String]) {
         eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
         std::process::exit(2);
     };
+    let Some(lsk) = embedded_lsk() else {
+        eprintln!(
+            "gedi-l2a: the embedded naif0012.tls leap table is absent — no granule anchor folds to the TDB clock; the harvest stays unwritten (0 honored, pending)"
+        );
+        std::process::exit(1);
+    };
     let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
     let Some((objects, truncated, _)) = list_page(BUCKET, &prefix, false, list_keys, &creds) else {
         eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
@@ -685,9 +724,16 @@ fn run_harvest(args: &[String]) {
     chosen.truncate(limit);
     let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
     for obj in &chosen {
+        let Some(anchor_tdb) = granule_anchor_tdb(&obj.key, &lsk) else {
+            eprintln!(
+                "gedi-l2a: {} carries no absolute granule anchor — the granule stays pending",
+                obj.key
+            );
+            continue;
+        };
         let s3_url = format!("s3://{BUCKET}/{}", obj.key);
         let before = recs.len();
-        let granule = harvest_granule(&s3_url, &creds, beams);
+        let granule = harvest_granule(&s3_url, &creds, beams, anchor_tdb);
         recs.extend(granule);
         eprintln!(
             "gedi-l2a: {} → {} records ({} B granule)",
@@ -745,8 +791,8 @@ mod tests {
     #[test]
     fn pack_unpack_roundtrip() {
         let recs = vec![
-            [1.0, -12.5, 33.25, 210.5, 27.3, 0.0, 1.0],
-            [2.0, 45.0, -110.0, 1200.0, 12.8, 3.0, 1.0],
+            [1.0, -12.5, 33.25, 210.5, 27.3, 0.0, 1.0, 800_000_000.0],
+            [2.0, 45.0, -110.0, 1200.0, 12.8, 3.0, 1.0, 800_000_000.0],
         ];
         let bytes = pack(&recs);
         assert_eq!(bytes.len(), 8 + 2 * REC_BYTES);
@@ -761,9 +807,25 @@ mod tests {
         assert!(unpack(b"X").is_none());
         assert!(unpack(b"GED1abc").is_none());
         assert!(unpack(b"NRS1").is_none());
-        let mut short = pack(&[[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]]);
+        let mut short = pack(&[[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]]);
         short.truncate(short.len() - 1);
         assert!(unpack(&short).is_none());
+    }
+
+    #[test]
+    fn gedi_filename_folds_to_tdb_anchor() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let key = "GEDI02_A.002/2020.01.01/GEDI02_A_2020001000000_O00001_T00001_02_001_01_V002.h5";
+        let anchor = granule_anchor_tdb(key, &lsk).expect("granule start folds to tdb");
+        let unix = days_from_civil(2020, 1, 1).unwrap() as f64 * 86400.0;
+        assert_eq!(anchor, lsk.unix_to_tdb(unix).expect("tdb"));
+    }
+
+    #[test]
+    fn gedi_anchor_absent_on_nonmatching_key() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        assert!(granule_anchor_tdb("not-a-gedi-key", &lsk).is_none());
+        assert!(granule_anchor_tdb("GEDI02_A_20X0001000000", &lsk).is_none());
     }
 
     #[test]

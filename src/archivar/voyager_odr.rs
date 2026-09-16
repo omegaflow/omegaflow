@@ -4,6 +4,8 @@ pub const DATA_WORDS: usize = RECORD_WORDS - HEADER_WORDS;
 pub const RECORD_BYTES: usize = RECORD_WORDS * 2;
 pub const HEADER_BYTES: usize = HEADER_WORDS * 2;
 pub const SAMPLE_BYTES: usize = DATA_WORDS * 2;
+pub const DATA_SAMPLES: usize = SAMPLE_BYTES;
+pub const COMP_SAMPLE: u32 = 1;
 
 pub const WORD1_TIME_TAG_VALID: u16 = 0x8000;
 pub const WORD1_FIRST_RECORD: u16 = 0x4000;
@@ -35,7 +37,9 @@ pub struct OdrHeader {
     pub time_tag: OdrTimeTag,
     pub reduction_rate_code: u8,
     pub channel_sampling_rate_code: u8,
-    pub sample_count: u32,
+    pub decimation_code: u8,
+    pub reduction_channel: u8,
+    pub sample_count: i32,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -96,7 +100,9 @@ pub fn header(bytes: &[u8]) -> Option<OdrHeader> {
         time_tag: time_tag(&bytes[10..18]),
         reduction_rate_code: (be16(bytes, 18) & 0x001F) as u8,
         channel_sampling_rate_code: (be16(bytes, 20) & 0x001F) as u8,
-        sample_count: be32(bytes, 52),
+        decimation_code: ((be16(bytes, 22) >> 12) & 0x7) as u8,
+        reduction_channel: ((be16(bytes, 22) >> 8) & 0x3) as u8,
+        sample_count: be32(bytes, 52) as i32,
     })
 }
 
@@ -189,6 +195,96 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedOdr> {
     })
 }
 
+pub fn channel_sampling_rate_hz(code: u8) -> Option<f64> {
+    match code {
+        16 => Some(50_000.0),     // 10000
+        8 => Some(62_500.0),      // 01000
+        0 => Some(75_000.0),      // 00000
+        17 => Some(100_000.0),    // 10001
+        9 => Some(125_000.0),     // 01001
+        1 => Some(150_000.0),     // 00001
+        18 => Some(200_000.0),    // 10010
+        10 => Some(250_000.0),    // 01010
+        2 => Some(300_000.0),     // 00010
+        19 => Some(400_000.0),    // 10011
+        11 => Some(500_000.0),    // 01011
+        3 => Some(600_000.0),     // 00011
+        20 => Some(800_000.0),    // 10100
+        12 => Some(1_000_000.0),  // 01100
+        4 => Some(1_200_000.0),   // 00100
+        _ => None,
+    }
+}
+
+pub fn decimation_ratio(code: u8) -> Option<u32> {
+    if code <= 7 {
+        Some(8 - u32::from(code))
+    } else {
+        None
+    }
+}
+
+pub fn time_tag_unix(year: u16, tag: &OdrTimeTag) -> Option<f64> {
+    if !(1..=366).contains(&tag.day_of_year)
+        || tag.hour > 23
+        || tag.minute > 59
+        || tag.second > 59
+        || tag.microsecond > 999_999
+    {
+        return None;
+    }
+    let days = crate::lsk::days_from_civil(year as i64, 1, 1)?;
+    let base = (days + tag.day_of_year as i64 - 1) as f64 * 86400.0
+        + tag.hour as f64 * 3600.0
+        + tag.minute as f64 * 60.0
+        + tag.second as f64
+        + tag.microsecond as f64 / 1_000_000.0;
+    Some(base.round())
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let packed = parse_packed(bytes)?;
+    let lsk = crate::archivar::membrane::embedded_lsk()?;
+    let mut out = Vec::with_capacity(packed.records.len() * DATA_SAMPLES);
+    let mut anchor: Option<(f64, f64)> = None;
+    for rec in &packed.records {
+        let h = &rec.header;
+        let Some(rate) = channel_sampling_rate_hz(h.channel_sampling_rate_code) else {
+            anchor = None;
+            continue;
+        };
+        let Some(dec) = decimation_ratio(h.decimation_code) else {
+            anchor = None;
+            continue;
+        };
+        let dt = dec as f64 / rate;
+        let t0 = if h.time_tag_valid {
+            match time_tag_unix(packed.year, &h.time_tag).and_then(|u| lsk.unix_to_tdb(u)) {
+                Some(t) => {
+                    anchor = Some((t + dt * DATA_SAMPLES as f64, dt));
+                    t
+                }
+                None => {
+                    anchor = None;
+                    continue;
+                }
+            }
+        } else {
+            match anchor {
+                Some((t, dt_a)) if dt_a == dt => {
+                    anchor = Some((t + dt * DATA_SAMPLES as f64, dt));
+                    t
+                }
+                _ => continue,
+            }
+        };
+        for (i, s) in rec.samples.iter().enumerate() {
+            out.push((t0 + i as f64 * dt, f64::from(*s), COMP_SAMPLE));
+        }
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -239,7 +335,9 @@ mod tests {
         );
         assert_eq!(h.reduction_rate_code, 0);
         assert_eq!(h.channel_sampling_rate_code, 2);
-        assert_eq!(h.sample_count, 0xFFFB_6C4E);
+        assert_eq!(h.decimation_code, 5);
+        assert_eq!(h.reduction_channel, 0);
+        assert_eq!(h.sample_count, -299954);
         assert!(header(&[0u8; HEADER_BYTES - 1]).is_none());
     }
 
@@ -310,5 +408,150 @@ mod tests {
         let last = corrupted.len() - 1;
         corrupted[last] ^= 0xff;
         assert!(parse_packed(&corrupted).is_none());
+    }
+
+    fn measured_c0xr13aa_record_one() -> [u8; HEADER_BYTES] {
+        [
+            0x90, 0x0D, 0x00, 0x01, 0x09, 0xE0, 0x20, 0x2B, 0x00, 0x1E, 0x23, 0x80, 0x40, 0x45,
+            0x9B, 0x71, 0x54, 0x25, 0x00, 0x60, 0x00, 0xA2, 0x72, 0xFE, 0xDB, 0x08, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x8A, 0x00, 0xD0, 0x05, 0x00, 0xA2, 0x72, 0x1F, 0xFF, 0xFB, 0x6C, 0x4C,
+        ]
+    }
+
+    #[test]
+    fn header_decodes_measured_c0xr13aa_record_one() {
+        let h = header(&measured_c0xr13aa_record_one()).unwrap();
+        assert!(h.time_tag_valid);
+        assert!(!h.first_record);
+        assert!(h.sample_count_valid);
+        assert_eq!(h.tape_number, 13);
+        assert_eq!(h.record_number, 1);
+        assert_eq!(h.record_length_words, 2528);
+        assert_eq!(h.spacecraft, 32);
+        assert_eq!(h.source_station, 43);
+        assert_eq!(h.dra_tape_number, 30);
+        assert_eq!(
+            h.time_tag,
+            OdrTimeTag {
+                day_of_year: 238,
+                hour: 4,
+                minute: 4,
+                second: 59,
+                microsecond: 749_908,
+            }
+        );
+        assert_eq!(h.reduction_rate_code, 0);
+        assert_eq!(h.channel_sampling_rate_code, 2);
+        assert_eq!(h.decimation_code, 7);
+        assert_eq!(h.reduction_channel, 2);
+        assert_eq!(h.sample_count, -299956);
+    }
+
+    #[test]
+    fn channel_sampling_rate_codes_map_to_hz() {
+        assert_eq!(channel_sampling_rate_hz(16), Some(50_000.0));
+        assert_eq!(channel_sampling_rate_hz(8), Some(62_500.0));
+        assert_eq!(channel_sampling_rate_hz(0), Some(75_000.0));
+        assert_eq!(channel_sampling_rate_hz(1), Some(150_000.0));
+        assert_eq!(channel_sampling_rate_hz(2), Some(300_000.0));
+        assert_eq!(channel_sampling_rate_hz(12), Some(1_000_000.0));
+        assert_eq!(channel_sampling_rate_hz(4), Some(1_200_000.0));
+        assert_eq!(channel_sampling_rate_hz(5), None);
+        assert_eq!(channel_sampling_rate_hz(31), None);
+    }
+
+    #[test]
+    fn decimation_ratio_maps_code_to_factor() {
+        assert_eq!(decimation_ratio(7), Some(1));
+        assert_eq!(decimation_ratio(6), Some(2));
+        assert_eq!(decimation_ratio(0), Some(8));
+        assert_eq!(decimation_ratio(8), None);
+    }
+
+    #[test]
+    fn time_tag_unix_rounds_to_closest_integral_second() {
+        let tag = OdrTimeTag {
+            day_of_year: 238,
+            hour: 4,
+            minute: 4,
+            second: 59,
+            microsecond: 749_908,
+        };
+        let days = crate::lsk::days_from_civil(1981, 1, 1).unwrap();
+        let expected = (days + 237) as f64 * 86400.0 + 4.0 * 3600.0 + 5.0 * 60.0;
+        assert_eq!(time_tag_unix(1981, &tag), Some(expected));
+
+        let early = OdrTimeTag {
+            microsecond: 400_000,
+            ..tag
+        };
+        let expected_early = expected - 1.0;
+        assert_eq!(time_tag_unix(1981, &early), Some(expected_early));
+
+        let invalid = OdrTimeTag {
+            day_of_year: 0,
+            ..tag
+        };
+        assert_eq!(time_tag_unix(1981, &invalid), None);
+        let bad_minute = OdrTimeTag {
+            minute: 60,
+            ..tag
+        };
+        assert_eq!(time_tag_unix(1981, &bad_minute), None);
+    }
+
+    #[test]
+    fn parse_series_emits_300khz_counts() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&measured_c0xr13aa_record_one());
+        for i in 0..DATA_SAMPLES {
+            raw.push(i as u8);
+        }
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), DATA_SAMPLES);
+        let lsk = crate::archivar::membrane::embedded_lsk().unwrap();
+        let t0 = lsk
+            .unix_to_tdb(time_tag_unix(1981, &header(&measured_c0xr13aa_record_one()).unwrap().time_tag).unwrap())
+            .unwrap();
+        assert_eq!(series[0].0, t0);
+        assert_eq!(series[0].1, 0.0);
+        assert_eq!(series[0].2, COMP_SAMPLE);
+        assert_eq!(series[1].1, 1.0);
+        assert!((series[1].0 - series[0].0 - 1.0 / 300_000.0).abs() < 1e-9);
+        assert_eq!(series[DATA_SAMPLES - 1].1, (DATA_SAMPLES - 1) as f64);
+    }
+
+    #[test]
+    fn parse_series_skips_unanchored_records() {
+        let raw = sample_record(1, 0x0006);
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert!(series.is_empty());
+        assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn parse_series_continues_from_last_valid_anchor() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&measured_c0xr13aa_record_one());
+        for i in 0..DATA_SAMPLES {
+            raw.push(i as u8);
+        }
+        let mut second = measured_c0xr13aa_record_one();
+        second[0..2].copy_from_slice(&0x0006u16.to_be_bytes());
+        second[2..4].copy_from_slice(&2u16.to_be_bytes());
+        raw.extend_from_slice(&second);
+        for i in 0..DATA_SAMPLES {
+            raw.push((i * 2) as u8);
+        }
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 2 * DATA_SAMPLES);
+        let dt = 1.0 / 300_000.0;
+        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < 1e-9);
+        assert_eq!(series[DATA_SAMPLES].1, 0.0);
+        assert_eq!(series[DATA_SAMPLES].2, COMP_SAMPLE);
     }
 }
