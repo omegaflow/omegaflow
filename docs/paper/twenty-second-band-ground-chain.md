@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-15
-  version: 6
-  sha256: c8477ebcbb7917f321fcf5b11ebfcfaf4206c5fd0a0d722f3f6e9e79f149f2f1
+  version: 7
+  sha256: d63bd27e5efc6d557d6645a1f182ba4c0ff3e80d1fcf5a716a5cad3791b64bad
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -40,12 +40,28 @@ not). The pooled full-era census (all years, canonical series) peaks at
 49,16 mHz (strict 1-s class) / 44,65 mHz (sub-10-s class); the earlier version's
 global peak 50,73 mHz does not reproduce as a dominant.
 
-**The dominant frequencies are station-fixed.** On the canonical series the 1988
+**The dominant frequencies are station-fixed, and cut-conditional.** On the
+canonical series the 1988
 dominant peaks are station-different: Station 14 → 57,11 mHz, Station 43 →
 44,40 mHz, Station 63 → 51,99 mHz (sub-10-s class, 44–58-mHz grid, 0,05 mHz; the
-strict 1-s class carries the same dominants). The per-station values of the
-earlier version are a sub-peak selection of this complex: 45,75 mHz at rank 4
-(Station 14, 4,2×), 51,50 mHz at rank 2 (Station 43, one 0,05-mHz grid step
+strict 1-s class carries the same dominants). The stage that sets the 1988
+dominants is the daily-curve segment-slope cut (Deduction 7): on the rx14-1988
+strict-1.0-s cell the peak is 45,75 mHz before the cut (resid_d) and 57,11 mHz
+after (resid_e), +11,36 mHz, carried by the one 9,84-h (9 435-sample)
+mixed-station segment that holds the cell — the 19,83-h segment alone leaves it
+at 45,75, and min-segment thresholds 20–1 000 all give 57,11. The 57,11 mHz is
+not manufactured by the cut: it is a real member of the dense complex already
+before it (rank 6 in resid0/resid_c, rank 9 in resid_d) and the cut re-ranks it
+to the dominant. Station 43 is cut-invariant (44,40 mHz pre and post), Station
+63 moves 53,50 → 51,99 mHz. The per-station dominants are therefore
+cut-conditional (a per-station slope instead of the documented per-segment one
+gives rx14 47,85 / rx43 51,42 mHz), while the station-fixity of the band is
+carried by the uncut, the per-segment and the per-station slope alike. The
+per-station values of the
+earlier version appear, on the canonical series, as sub-peaks of this complex:
+45,75 mHz at rank 4
+(Station 14, 4,2×) — the pre-cut dominant, see above —, 51,50 mHz at rank 2
+(Station 43, one 0,05-mHz grid step
 below the earlier 51,55), 47,35 mHz at rank 17 (Station 63, outside the top-5);
 47,35 mHz is dominant in no cell of the era × station × class × band census. A
 surrogate sub-peak null (199 phase-randomized surrogates per cell, full-circle
