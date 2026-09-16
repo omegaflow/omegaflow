@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'phi/**'
       - 'tools/register/**'
+      - 'tools/utils/**'
       - 'docs/**'
       - 'Cargo.toml'
 permissions:
@@ -47,6 +48,7 @@ jobs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo test --release
     - run: cargo test --release -p omegaflow-register
+    - run: cargo test --release -p omegaflow-utils
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
