@@ -142,8 +142,17 @@ Kanäle ist.
   die diese Tabelle zitiert; der pre-fix-Stand wurde in
   `04640a5` („GIC post-fix-Nachmessung") überholt. Die Kette
   Quell-Blatt → Grat ist heil, kein 1321-Fall.
-- **`pending`-Zellen:** (a) die AIA-2014-Je-Zellen-Schwellen der Korona
-  (das Blatt druckt die D-Werte und „über Null", nicht die Schwellen).
+- **`pending`-Zellen:** (a) die AIA-Je-Zellen-Schwellen der Korona (das Blatt
+  druckt die D-Werte und „über Null", nicht die Schwellen). Gemessen
+  2026-09-16: der dispatchte `aia-ladder-probe` (Lauf 35081213805) rechnete die
+  Je-Zellen-Surrogate und verwarf sie bis auf `fam`; der Probe druckte keine
+  Je-Zellen-Schwellen, und der Workflow lief ohne `--goes-dir` (304-Å-Trigger,
+  nicht die GOES-15-Matrix des Papiers §4.5). Behoben 2026-09-16:
+  `aia_ladder_probe.rs` druckt die `thr`-Zeile (mean + 2σ je Paar×Lag), der
+  Workflow holt den GOES-15-XRS-Korpus und setzt `--goes-dir`. Der korrigierte
+  Lauf wird nach dem Commit dispatcht; die Zelle bleibt `pending`, bis er die
+  Matrix des Papiers §4.5 reproduziert (Ereignis- und fam-Zahlen); trifft er
+  sie nicht, ist das ein eigener Befund.
 - **Richtungskorrektur am co-lokalen Gauge:** die in
   `sturzflut-tibet-pfeil.md` §3.5 registrierte „Niederschlag→Pegel
   0.265 (Lag 24)" ist nach Rat-Korrektur Pegel→Regen — `te_pair_probe`
