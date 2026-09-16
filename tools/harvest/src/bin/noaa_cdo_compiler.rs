@@ -1,6 +1,5 @@
 use omegaflow::archivar::{
-    JsonVal, days_to_ymd, fetch_raw_bytes_headers, jnum, jstr, load_env, parse_json,
-    render_headers,
+    days_to_ymd, fetch_raw_bytes_headers, jnum, jstr, load_env, parse_json, render_headers, JsonVal,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
@@ -55,11 +54,9 @@ fn parse_stations(text: &str) -> Option<Vec<(String, f64, f64)>> {
     let results = results_array(&json)?;
     let mut out = Vec::with_capacity(results.len());
     for st in results {
-        let (Some(id), Some(lat), Some(lon)) = (
-            jstr(st, "id"),
-            jnum(st, "latitude"),
-            jnum(st, "longitude"),
-        ) else {
+        let (Some(id), Some(lat), Some(lon)) =
+            (jstr(st, "id"), jnum(st, "latitude"), jnum(st, "longitude"))
+        else {
             continue;
         };
         if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
@@ -135,7 +132,10 @@ fn read_bin(data: &[u8]) -> Option<Vec<Obs>> {
         let lon_deg = f64_at(base + 8)?;
         let date_unix = f64_at(base + 16)?;
         let value_c = f64_at(base + 24)?;
-        if !lat_deg.is_finite() || !lon_deg.is_finite() || !date_unix.is_finite() || !value_c.is_finite()
+        if !lat_deg.is_finite()
+            || !lon_deg.is_finite()
+            || !date_unix.is_finite()
+            || !value_c.is_finite()
         {
             return None;
         }
@@ -164,7 +164,10 @@ fn main() {
         .and_then(|v| v.parse().ok())
         .unwrap_or(50);
     if stations_limit == 0 {
-        eprintln!("--stations {} carries no positive fan-out bound", stations_limit);
+        eprintln!(
+            "--stations {} carries no positive fan-out bound",
+            stations_limit
+        );
         std::process::exit(1);
     }
     let limit: usize = arg_value(&args, "--limit")

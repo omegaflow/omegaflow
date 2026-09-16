@@ -1,5 +1,5 @@
 use omegaflow::archivar::range::{
-    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, Sigv4Args, S3Credentials, S3_ENDPOINT,
+    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
     S3_REGION,
 };
 use omegaflow::cdn::upload_release;
@@ -74,7 +74,10 @@ fn amz_now() -> Option<(String, String)> {
     let h = secs / 3600;
     let mi = (secs % 3600) / 60;
     let s = secs % 60;
-    Some((date_stamp.clone(), format!("{date_stamp}T{h:02}{mi:02}{s:02}Z")))
+    Some((
+        date_stamp.clone(),
+        format!("{date_stamp}T{h:02}{mi:02}{s:02}Z"),
+    ))
 }
 
 fn uri_encode_query(s: &str) -> String {
@@ -245,17 +248,29 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
                     1 => Some(b[0] as i8 as f64),
                     2 => {
                         let a: [u8; 2] = b.try_into().ok()?;
-                        let v = if le { i16::from_le_bytes(a) } else { i16::from_be_bytes(a) };
+                        let v = if le {
+                            i16::from_le_bytes(a)
+                        } else {
+                            i16::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     4 => {
                         let a: [u8; 4] = b.try_into().ok()?;
-                        let v = if le { i32::from_le_bytes(a) } else { i32::from_be_bytes(a) };
+                        let v = if le {
+                            i32::from_le_bytes(a)
+                        } else {
+                            i32::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     8 => {
                         let a: [u8; 8] = b.try_into().ok()?;
-                        let v = if le { i64::from_le_bytes(a) } else { i64::from_be_bytes(a) };
+                        let v = if le {
+                            i64::from_le_bytes(a)
+                        } else {
+                            i64::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     _ => None,
@@ -265,17 +280,29 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
                     1 => Some(b[0] as f64),
                     2 => {
                         let a: [u8; 2] = b.try_into().ok()?;
-                        let v = if le { u16::from_le_bytes(a) } else { u16::from_be_bytes(a) };
+                        let v = if le {
+                            u16::from_le_bytes(a)
+                        } else {
+                            u16::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     4 => {
                         let a: [u8; 4] = b.try_into().ok()?;
-                        let v = if le { u32::from_le_bytes(a) } else { u32::from_be_bytes(a) };
+                        let v = if le {
+                            u32::from_le_bytes(a)
+                        } else {
+                            u32::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     8 => {
                         let a: [u8; 8] = b.try_into().ok()?;
-                        let v = if le { u64::from_le_bytes(a) } else { u64::from_be_bytes(a) };
+                        let v = if le {
+                            u64::from_le_bytes(a)
+                        } else {
+                            u64::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     _ => None,
@@ -285,12 +312,20 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
         1 => match sz {
             4 => {
                 let a: [u8; 4] = b.try_into().ok()?;
-                let v = if le { f32::from_le_bytes(a) } else { f32::from_be_bytes(a) };
+                let v = if le {
+                    f32::from_le_bytes(a)
+                } else {
+                    f32::from_be_bytes(a)
+                };
                 Some(v as f64)
             }
             8 => {
                 let a: [u8; 8] = b.try_into().ok()?;
-                Some(if le { f64::from_le_bytes(a) } else { f64::from_be_bytes(a) })
+                Some(if le {
+                    f64::from_le_bytes(a)
+                } else {
+                    f64::from_be_bytes(a)
+                })
             }
             _ => None,
         },
@@ -401,13 +436,12 @@ fn extract_from(
     out
 }
 
-fn harvest_granule(
-    s3_url: &str,
-    creds: &S3Credentials,
-    beams: usize,
-) -> Vec<[f64; REC_FIELDS]> {
+fn harvest_granule(s3_url: &str, creds: &S3Credentials, beams: usize) -> Vec<[f64; REC_FIELDS]> {
     let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
-        eprintln!("{}: range read returned void — granule stays pending", s3_url);
+        eprintln!(
+            "{}: range read returned void — granule stays pending",
+            s3_url
+        );
         return Vec::new();
     };
     match Hdf5File::parse(&w1) {
@@ -418,7 +452,10 @@ fn harvest_granule(
                 s3_url, META_WINDOW, note
             );
             let Some(w2) = fetch_s3_range(s3_url, 0, META_ESCALATION, Some(creds)) else {
-                eprintln!("{}: escalated range read returned void — granule stays pending", s3_url);
+                eprintln!(
+                    "{}: escalated range read returned void — granule stays pending",
+                    s3_url
+                );
                 return Vec::new();
             };
             match Hdf5File::parse(&w2) {
@@ -534,7 +571,9 @@ fn run_harvest(args: &[String]) {
         },
     };
     let limit = arg_usize(args, "--limit").unwrap_or(2).clamp(1, 8);
-    let beams = arg_usize(args, "--beams").unwrap_or(BEAMS.len()).clamp(1, BEAMS.len());
+    let beams = arg_usize(args, "--beams")
+        .unwrap_or(BEAMS.len())
+        .clamp(1, BEAMS.len());
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(token) = edl_token() else {
         eprintln!("EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token");
@@ -668,7 +707,10 @@ mod tests {
         let (objects, truncated, dirs) = parse_page(doc).unwrap();
         assert!(truncated);
         assert_eq!(objects.len(), 1);
-        assert_eq!(objects[0].key, "ATLAS/ATL03/2026.01.01/ATL03_20260101000000_01.h5");
+        assert_eq!(
+            objects[0].key,
+            "ATLAS/ATL03/2026.01.01/ATL03_20260101000000_01.h5"
+        );
         assert_eq!(objects[0].size, 73_400_320);
         assert_eq!(dirs, vec!["ATLAS/ATL03/2026.01.02/"]);
     }
