@@ -349,6 +349,8 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"count"));
     assert!(allowed_units_for_force(0).contains(&"rad"));
     assert!(allowed_units_for_force(0).contains(&"dbhz"));
+    assert!(allowed_units_for_force(0).contains(&"m-2.s-1.tev-1"));
+    assert!(allowed_units_for_force(0).contains(&"tev"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
