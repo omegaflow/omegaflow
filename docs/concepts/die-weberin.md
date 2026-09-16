@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-06
-  sha256: 2f845eda57d9dd6468e40ec18a050f8f203cc40ff45612ddf7c18f710a003afd
+  sha256: ca8d9f8698a048a0e934e5ad33ea6d17200cbeeb7debfda0238b288fb5a766ee
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -227,6 +227,7 @@ OFFLINE — tools/measure-Proben:
 | §4 Schuss — Verdict | `direction_distance_join` (Placed/Absent/DirectionOnly) |
 | §4 Schuss — TE-Screen | `pair_te_screen` |
 | §4 Schuss — Linien/Footprint | `nadel_gate.rs` (SIMBAD-Otype + AllWISE-W1−W2), `deredden_baseline_probe` |
+| §4 Schuss — Stations-Konvergenz | `station_convergence_probe` (INTERMAGNET gegen SWARM) |
 | §5 Vlies — Rømer-Toleranz | `tdb_coincidence_probe` |
 
 ## 9. Die Bau-Linie — alles wird gebaut, nichts wird vertagt
@@ -249,7 +250,11 @@ komplett zu bauen:
 2. Die Stations-Konvergenz: unabhängige Netz-Linien am selben Punkt
    (INTERMAGNET gegen SWARM-Überflug, Pegel gegen Altimetrie) — der
    Verdict für Stationen, auf den schon fließenden fanout-Ringen, ohne
-   neues Netz.
+   neues Netz. Gebaut als `station_convergence_probe` (Workflow
+   `station-convergence.yml`); erster gemessener Punkt: Station ABK
+   (68.358 N 18.823 E), 2026-09-15 — INTERMAGNET-Boden 53710.2 nT gegen
+   SWARM-Überflug 44908.5 nT (1.98° Versatz, 01:28:43Z), Abweichung
+   8801.7 nT über der Toleranz 836.2 nT: ein Riss, der sichtbar bleibt.
 3. Die topozentrische Kopplung: die Station sieht den Himmel von ihrer
    eigenen Weltlinie aus — Rømer-Toleranz vom Stationspunkt, Stations-
    Parallaxe zwischen Stationen als unabhängige Sichtlinien. S²-Kugel und
