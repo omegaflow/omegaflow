@@ -1,12 +1,11 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
-use omegaflow::galileo_odr::{HEADER_BYTES, header, record, split_records};
+use omegaflow::galileo_odr::{HEADER_BYTES, header, record, record_stride, stride_split};
 
 const BASE: &str = "https://pds-ppi.igpp.ucla.edu/annex/";
 const GOJ: &str = "GO-J-RSS-1-ODR-V1.0";
 const GOJS: &str = "GO-JS-RSS-1-ODR-V1.0";
-const REC: usize = 2666;
 const ENTRY: usize = 96;
 
 struct Source {
@@ -77,6 +76,12 @@ const SOURCES: &[Source] = &[
         volume: GOJS,
         sha256: "d35f50efeada76741335c784d0f9ab417be23e91f95a9bd5959f3ccbdab531be",
     },
+    Source {
+        name: "JS_90320204.ODR",
+        annex_name: "90320204.ODR",
+        volume: GOJS,
+        sha256: "33b350220e6f891900d999b8a85b1b4c79176e537855c89961a0d113bd1868a2",
+    },
 ];
 
 struct FileBytes {
@@ -123,7 +128,7 @@ fn hex_string(b: &[u8; 32]) -> String {
 }
 
 fn sample_rate(bytes: &[u8]) -> Option<u16> {
-    if bytes.len() < REC {
+    if bytes.len() < HEADER_BYTES {
         return None;
     }
     Some((bytes[158] as u16) << 8 | bytes[159] as u16)
@@ -192,7 +197,10 @@ fn parse_odr_bin(data: &[u8]) -> Option<Vec<FileBytes>> {
 }
 
 fn gate(bytes: &[u8], src: &Source) -> Result<FileBytes, String> {
-    if bytes.len() < REC {
+    let Some(stride) = record_stride(bytes) else {
+        return Err(format!("{}: record stride void", src.name));
+    };
+    if bytes.len() < stride {
         return Err(format!(
             "{}: {} bytes — shorter than one ODR record",
             src.name,
@@ -215,7 +223,7 @@ fn gate(bytes: &[u8], src: &Source) -> Result<FileBytes, String> {
     Ok(FileBytes {
         name: src.name.to_string(),
         bytes: bytes.to_vec(),
-        record_count: (bytes.len() / REC) as u32,
+        record_count: (bytes.len() / stride) as u32,
         sample_rate: sr,
         sha256: sha,
     })
@@ -226,7 +234,10 @@ fn roundtrip_holds(bin: &[u8]) -> bool {
         return false;
     };
     parsed.iter().all(|f| {
-        f.record_count as usize == f.bytes.len() / REC
+        let Some(stride) = record_stride(&f.bytes) else {
+            return false;
+        };
+        f.record_count as usize == f.bytes.len() / stride
             && sha256_hex(&f.bytes) == hex_string(&f.sha256)
     })
 }
@@ -261,6 +272,10 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        let Some(stride) = record_stride(&f.bytes) else {
+            eprintln!("{}: record stride void", f.name);
+            std::process::exit(1);
+        };
         if probe {
             if let Some(r) = record(&f.bytes) {
                 let h = r.header;
@@ -281,22 +296,23 @@ fn main() {
                     r.ad[0][3],
                 );
             }
-            let (n, t) = split_records(f.bytes.len());
-            if t > 0 {
-                let h = header(&f.bytes[n * REC..]);
-                match h {
-                    Some(h) => eprintln!(
-                        "{}: {} trailing bytes = partial record #{} (header + {} data bytes)",
-                        f.name,
-                        t,
-                        h.record_number,
-                        t - HEADER_BYTES
-                    ),
-                    None => eprintln!("{}: {} trailing bytes (header void)", f.name, t),
+            if let Some((n, t)) = stride_split(&f.bytes) {
+                if t > 0 {
+                    let h = header(&f.bytes[n * stride..]);
+                    match h {
+                        Some(h) => eprintln!(
+                            "{}: {} trailing bytes = partial record #{} (header + {} data bytes)",
+                            f.name,
+                            t,
+                            h.record_number,
+                            t - HEADER_BYTES
+                        ),
+                        None => eprintln!("{}: {} trailing bytes (header void)", f.name, t),
+                    }
                 }
             }
         }
-        let trailing = f.bytes.len() % REC;
+        let trailing = f.bytes.len() % stride;
         if trailing == 0 {
             eprintln!(
                 "{}: {} records, {} sps, {} bytes, provenance holds",
@@ -343,9 +359,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use omegaflow::galileo_odr::{RECORD_BYTES, SHORT_RECORD_BYTES};
 
     fn sample_file(name: &str, nrec: usize) -> FileBytes {
-        let mut bytes = vec![0u8; nrec * REC];
+        let mut bytes = vec![0u8; nrec * RECORD_BYTES];
+        bytes[4..6].copy_from_slice(&((RECORD_BYTES / 2) as u16).to_be_bytes());
         bytes[158] = 0x04;
         bytes[159] = 0xE2;
         let sha256 = hex32(&sha256_hex(&bytes)).unwrap();
@@ -354,6 +372,22 @@ mod tests {
             bytes,
             record_count: nrec as u32,
             sample_rate: 1250,
+            sha256,
+        }
+    }
+
+    fn sample_short_file(name: &str, nrec: usize) -> FileBytes {
+        let mut bytes = vec![0u8; nrec * SHORT_RECORD_BYTES];
+        bytes[0] = 0xD2;
+        bytes[4..6].copy_from_slice(&((SHORT_RECORD_BYTES / 2) as u16).to_be_bytes());
+        bytes[158] = 0x00;
+        bytes[159] = 0xC8;
+        let sha256 = hex32(&sha256_hex(&bytes)).unwrap();
+        FileBytes {
+            name: name.to_string(),
+            bytes,
+            record_count: nrec as u32,
+            sample_rate: 200,
             sha256,
         }
     }
@@ -383,10 +417,10 @@ mod tests {
         assert_eq!(parsed[0].name, "63131033.ODR");
         assert_eq!(parsed[0].record_count, 3);
         assert_eq!(parsed[0].sample_rate, 1250);
-        assert_eq!(parsed[0].bytes.len(), 3 * REC);
+        assert_eq!(parsed[0].bytes.len(), 3 * RECORD_BYTES);
         assert_eq!(sha256_hex(&parsed[0].bytes), hex_string(&parsed[0].sha256));
         assert_eq!(parsed[1].name, "JS_70571407.ODR");
-        assert_eq!(parsed[1].bytes.len(), 5 * REC);
+        assert_eq!(parsed[1].bytes.len(), 5 * RECORD_BYTES);
         assert!(parse_odr_bin(b"X").is_none());
     }
 
@@ -443,5 +477,22 @@ mod tests {
         let last = bin.len() - 1;
         bin[last] ^= 0xff;
         assert!(!roundtrip_holds(&bin));
+    }
+
+    #[test]
+    fn gate_and_roundtrip_hold_short_records() {
+        let bytes = sample_short_file("90320204.ODR", 3).bytes;
+        let sha = Box::leak(sha256_hex(&bytes).into_boxed_str());
+        let src = Source {
+            name: "JS_90320204.ODR",
+            annex_name: "90320204.ODR",
+            volume: GOJS,
+            sha256: sha,
+        };
+        let f = gate(&bytes, &src).unwrap();
+        assert_eq!(f.record_count, 3);
+        assert_eq!(f.sample_rate, 200);
+        let bin = write_odr_bin(&[f]);
+        assert!(roundtrip_holds(&bin));
     }
 }
