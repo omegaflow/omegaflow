@@ -3647,3 +3647,7 @@ note WWLLN (World Wide Lightning Location Network) — VLF-Blitzortung, em. Geme
 
 decline no-physical-force
 url https://zenodo.org/api/records/15316905
+
+decline derived-model
+url https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
+note GloFAS-Reanalyse (EWDS cems-glofas-historical, gemessen 2026-09-16: HTTP 200, CDS-Key) — eine Modell-Reanalyse, kein gemessener Pegel; nur die Sache selbst darf an der Stelle der Sache stehen. Der Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query am Kollabpunkt 28.271/85.515 leer = 0 honored), nicht auf der Modell-Route.

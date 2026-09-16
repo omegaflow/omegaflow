@@ -138,6 +138,15 @@ pub fn podf_shard_name_ord(prefix: &str, t_lo: f64, t_hi: f64, ord: usize) -> St
     format!("{prefix}_t{}_{}_{}.bin", t_lo as i64, t_hi as i64, ord)
 }
 
+pub fn parse_podf_shard_name(filename: &str) -> Option<(&str, f64, f64)> {
+    let stem = filename.strip_suffix(".bin")?;
+    let (name, range) = stem.rsplit_once("_t")?;
+    let mut it = range.split('_');
+    let lo: f64 = it.next()?.parse().ok()?;
+    let hi: f64 = it.next()?.parse().ok()?;
+    Some((name, lo, hi))
+}
+
 pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
     if data.len() < 8 || &data[0..4] != b"PODF" {
         return None;
@@ -568,6 +577,22 @@ mod tests {
             podf_shard_name_ord("mro_odf", 123_456_789.2, 123_456_789.2, 0),
             podf_shard_name_ord("mro_odf", 123_456_789.8, 123_456_789.8, 1)
         );
+    }
+
+    #[test]
+    fn shard_name_roundtrips_through_the_parser() {
+        let name = podf_shard_name("mars_express_odf", 700_000_000.0, 800_000_000.0);
+        assert_eq!(
+            parse_podf_shard_name(&name),
+            Some(("mars_express_odf", 700_000_000.0, 800_000_000.0))
+        );
+        let ord = podf_shard_name_ord("mro_odf", 123_456_789.2, 123_456_789.8, 1);
+        assert_eq!(
+            parse_podf_shard_name(&ord),
+            Some(("mro_odf", 123_456_789.0, 123_456_789.0))
+        );
+        assert_eq!(parse_podf_shard_name("mro_odf.bin"), None);
+        assert_eq!(parse_podf_shard_name("mro_odf_t700.bin"), None);
     }
 
     #[test]
