@@ -279,8 +279,11 @@ for source *discovery* the breadth is the answer, not a cost:
 4. **Unknown source** → `--brave <query>` first (keyword web search), then
    **`--all <query>`** — every keyword mode at once (13): arXiv, ADS, NTRS,
    Wayback, Crossref, Wiki, GitHub, crates, librs, Brave, DataCite, Zenodo,
-   OpenAlex (plus `--isc`/`--supermag`/`--heasarc` by key=value). A diver that
-   draws only `--ads`/`--arxiv` has left eleven databases unasked.
+   OpenAlex (plus `--isc`/`--supermag`/`--heasarc` by key=value). It prints the
+   top 5 per source inline **and writes the full result to a temp file** (the
+   paged sources openalex/zenodo run ~100 deep) — read that file; the inline
+   summary is not the whole answer. A diver that draws only `--ads`/`--arxiv`
+   has left eleven databases unasked.
 5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
 
 The three measures are distinct: `--verdict` measures reachability, `--sniff`
