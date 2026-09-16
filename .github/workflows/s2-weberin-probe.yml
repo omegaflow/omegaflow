@@ -1,0 +1,31 @@
+name: s2-weberin-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  s2-weberin-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Anchor the run
+        run: echo "SHA $(git rev-parse HEAD)" > s2-weberin-probe.txt
+      - name: Run the S² Weberin probe
+        run: |
+          cargo run --release -p omegaflow-measure --bin s2_weberin_probe \
+            >> s2-weberin-probe.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: s2-weberin-probe
+          path: s2-weberin-probe.txt
