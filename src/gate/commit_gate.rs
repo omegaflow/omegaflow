@@ -1603,6 +1603,18 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_wkt_first_id_find_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "tools/harvest/src/bin/las_compiler.rs",
+            &fx("wkt_first_id_find"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_bad_field_line() {
         let mut g = test_gate();
         let args =
