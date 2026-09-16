@@ -6,6 +6,10 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      max_events:
+        description: "registered deep events to measure (fleet-wide balance)"
+        default: "1"
 permissions:
   contents: write
 env:
@@ -38,7 +42,7 @@ jobs:
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            cargo run --release -p omegaflow-measure --bin depth_phase_fleet_probe -- --region 34,38,68,74 --mindepth 200 --max-events 1 --kalibrier
+            cargo run --release -p omegaflow-measure --bin depth_phase_fleet_probe -- --region 34,38,68,74 --mindepth 200 --max-events ${{ github.event.inputs.max_events }} --kalibrier
           } > cmt-ndk-fleet.txt
       - uses: actions/upload-artifact@v4
         if: always()

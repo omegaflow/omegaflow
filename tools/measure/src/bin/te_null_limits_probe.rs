@@ -449,22 +449,28 @@ fn matrix_fam(
 }
 
 fn main() {
-    println!("=== te_null_limits_probe: the three named open limits of the broken-null paper, measured ===");
+    println!(
+        "=== te_null_limits_probe: the three named open limits of the broken-null paper, measured ==="
+    );
     println!(
         "estimator: KDE TE, Gaussian kernel, Silverman h = 1.06 σ n^(-1/5) per series; null: {} phase-randomized surrogates, threshold μ+2σ.",
         N_SURR
     );
-    println!("M1: bandwidth sensitivity (Silverman factor); M2: lag sweep; M3: max-T (fam) over the pair matrix.");
-    println!("fam = max of the surrogate TE values over all pairs x lags of the round (a single TE number, never a threshold).");
+    println!(
+        "M1: bandwidth sensitivity (Silverman factor); M2: lag sweep; M3: max-T (fam) over the pair matrix."
+    );
+    println!(
+        "fam = max of the surrogate TE values over all pairs x lags of the round (a single TE number, never a threshold)."
+    );
     println!();
 
     let (xh, yh) = coupled_henon(1000, TRANSIENT, 0.2);
 
     println!("=== live channels (cached SWPC JSON, cache/{CACHE_NETLOC}) ===");
-    let wind_body = cached_body("json-rtsw-rtsw_wind_1m.json");
-    let mag_body = cached_body("json-rtsw-rtsw_mag_1m.json");
-    let xray_body = cached_body("json-goes-primary-xrays-7-day.json");
-    let euv_body = cached_body("json-goes-primary-euvs-7-day.json");
+    let wind_body = cached_body("json-rtsw-rtsw_wind_1m");
+    let mag_body = cached_body("json-rtsw-rtsw_mag_1m");
+    let xray_body = cached_body("json-goes-primary-xrays-7-day");
+    let euv_body = cached_body("json-goes-primary-euvs-7-day");
     for (name, present) in [
         ("rtsw_wind_1m", wind_body.is_some()),
         ("rtsw_mag_1m", mag_body.is_some()),
@@ -529,8 +535,13 @@ fn main() {
         .filter_map(|(_, s)| s.last().map(|&(t, _)| t))
         .fold(f64::INFINITY, f64::min);
     let dt = 60.0;
-    let t0 = (lo / dt).floor() * dt;
-    let n_cells = if lo < hi {
+    let live_grid = lo.is_finite() && hi.is_finite() && lo < hi;
+    let t0 = if live_grid {
+        (lo / dt).floor() * dt
+    } else {
+        0.0
+    };
+    let n_cells = if live_grid {
         ((hi - t0) / dt).floor() as usize
     } else {
         0
@@ -541,17 +552,20 @@ fn main() {
         .collect();
     let cell_of =
         |target: usize, driver: usize| decimate(pair_cells(&binned[target], &binned[driver]), 2);
-    let live_grid = lo < hi;
     if !live_grid {
         println!("live common window empty — live measurements fall back to synthetic");
     }
     println!("live 60 s grid: n_cells = {n_cells} (lag unit = 60 s)");
-    println!("live cells decimated 2:1 (120 s cadence) to keep the local run modest; the full 60 s grid is a CI job");
+    println!(
+        "live cells decimated 2:1 (120 s cadence) to keep the local run modest; the full 60 s grid is a CI job"
+    );
     println!();
 
     let mut cell = 0u64;
 
-    println!("=== M0 — both nulls on the identical window (one process, one binning), same seed per pair ===");
+    println!(
+        "=== M0 — both nulls on the identical window (one process, one binning), same seed per pair ==="
+    );
     println!(
         " {:<24} | {:>5} | {:>10} | {:>11} | {:>6} | {:>11} | {:>6}",
         "pair", "n", "TE", "naive thr", "naive", "phase thr", "phase"
@@ -574,7 +588,9 @@ fn main() {
     null_pair_row("Henon Y->X (rev)", &xh, &yh, 1, seed_next(&mut m0));
     println!();
 
-    println!("=== M1 — KDE bandwidth sensitivity (Silverman factor on h; threshold recomputed under the same h) ===");
+    println!(
+        "=== M1 — KDE bandwidth sensitivity (Silverman factor on h; threshold recomputed under the same h) ==="
+    );
     if live_grid {
         let (x, y) = cell_of(0, 4);
         m1_table("Density-RTSW -> X-Ray", &x, &y, 1, &mut cell);
@@ -681,7 +697,9 @@ fn main() {
         synth.push((format!("coupled {} a->b (true)", i), b.clone(), a.clone()));
         synth.push((format!("coupled {} b->a (silent)", i), a, b));
     }
-    println!("synthetic matrix: 10 independent AR(1) pairs (20 directed cells) + 4 coupled pairs (8 directed cells), n = 300, lags {{0, 1}}:");
+    println!(
+        "synthetic matrix: 10 independent AR(1) pairs (20 directed cells) + 4 coupled pairs (8 directed cells), n = 300, lags {{0, 1}}:"
+    );
     let (per_cell, fam_surv, fam, rows) = matrix_fam(&synth, &[0, 1], &mut cell);
     let indep_per_cell = rows
         .iter()
