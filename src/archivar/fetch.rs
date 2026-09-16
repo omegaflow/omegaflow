@@ -672,6 +672,7 @@ pub fn live_sweep(
                 | "spk"
                 | "reference"
                 | "tar_gz_yaml"
+                | "flac"
         ) {
             continue;
         }
