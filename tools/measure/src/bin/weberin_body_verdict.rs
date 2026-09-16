@@ -2,17 +2,18 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
-    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
+    body_barycenter_position, embedded_lsk, extract, fetch_raw_bytes, load_sources,
+    parse_ephemeris_binary, system_now, BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig,
+    J2000_EPOCH,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{
-    AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
+    parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
 };
 use omegaflow::weberin::{
-    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES,
-    PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed,
-    classify, separation_m, three_way_fold,
+    classify, separation_m, three_way_fold, Agreement, BodyOutcome, ThreeWayVerdict, TriadFold,
+    Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES,
+    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -391,6 +392,7 @@ fn main() {
         eph_epm: Arc::new(epm_map),
         recs,
         comets,
+        mpc_recs: Vec::new(),
     });
     w.weave(tdb, tol_m);
     if !w.woven {

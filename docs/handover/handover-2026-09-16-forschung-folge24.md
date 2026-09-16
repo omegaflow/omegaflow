@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Forschung-Folge 23 (2026-09-16)
-  session: Forschung-Folge 23
+  title: Handover — Forschung-Folge 24 (2026-09-16)
+  session: Forschung-Folge 24
   class: handover
   date: 2026-09-16
-  sha256: 0b671b6cb710543785a655759cbb20c9a37687fc0ce87b38ee08a0e786706322
+  sha256: a65f34c7aef411fb55fa121620c66ab468702236da016aedbd1a982486dddef0
   status: live
 -->
-# Handover — Forschung-Folge 23 (2026-09-16)
+# Handover — Forschung-Folge 24 (2026-09-16)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -25,52 +25,54 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## TE / Statistik
 
-- **Korona-Leiter — der multi-force/conditional TE-Lauf fehlt.** Der 9-Kraft-TE ist
-  in der Probe-Familie gebaut, aber im Korona-Paper nur als Limit benannt
-  (`corona-heating-ladder.md:485-489`), nicht als Ergebnis berichtet; ein zweites
-  90-Tage-Fenster ist ungemessen (`:479-481`).
-  (Schritt: `multi_force_te_probe` auf der Korona-Ladder laufen lassen, §4.6/§6 mit
-  den gemessenen Zahlen schließen — `docs/paper/corona-heating-ladder.md`.)
+- **Korona-Leiter — voller N-Konfunder-Lauf fehlt.** §4.6 berichtet die
+  1–2-Konfunder-Konditionierung (GOES/335/94) mit Zahlen; der Bullet
+  `corona-heating-ladder.md:485-490` nennt nur den vollen Multi-Force-Fall
+  (jede Rung auf alle anderen konditioniert) — der ist ungemessen, ebenso ein
+  zweites 90-Tage-Fenster (`:479-481`). `multi_force_te_probe` ist ein
+  synthetischer 9-Kraft-Benchmark, kein Korona-Konsument.
+  (Schritt: `corona_conditional_probe` auf N Konfunder erweitern
+  (`transfer_entropy_conditional_binned_n`/`conditional_te_stats_lagged_n`) und
+  in CI über `data/jsoc.stanford.edu/aia2014_fullyear.bin` +
+  `data/ncei.noaa.gov/goes15/` laufen lassen — `docs/paper/corona-heating-ladder.md`.)
 - **Solar 211A→193A** — conditional stage-2.
   (Schritt: `corona_conditional_probe`-Lauf, `docs/paper/solar-seconds-matrix.md`.)
 - **Der Grat** — AIA-2014-per-Zelle-Schwellen.
   (Schritt: per-Zelle-Schwellen aus Lauf ins Blatt — `docs/blatt/blatt-der-grat.md`.)
-- **depth-phase echo** — CMT-Strahlungsterm + 6 Kalibrier-Azimute.
-  (Schritt: CMT/NDK fetchen, Azimute registrieren — `docs/paper/depth-phase-echo-fleet.md`.)
+- **depth-phase echo — CMT-Strahlungsterm.** Die Kalibrier-Azimute sind
+  registriert (sechs Pilot-Stationen, gemessen 2026-09-16,
+  `depth_phase_azimuth_probe`); offen bleibt der volle CMT-Radiationsterm.
+  (Schritt: CMT/NDK-Fetch, per-Station-Vorzeichen gegen die Azimute —
+  `docs/paper/depth-phase-echo-fleet.md`, `cmt-ndk-fleet.yml`.)
 - **GIC causal driver** — PCMCI auf dem Minuten-Sturm-Ensemble, KDE-h, Rückkanal-Härtung.
   (Schritt: `docs/paper/gic-causal-driver.md`.)
 - **Blatt 2/3 — Rest offen.** fam/max-T-Bound (Blatt 2), retro OMNI2-PCMCI-Zeile und
   KDE-h/`laic_probe` 0–72-h brauchen einen lokalen laic-Harvest (CI-Skala).
   (Schritt: `docs/concepts/blatt-papier-resultat.md`, `multi_force_te_probe`.)
-- **broken-null-control — Rest offen.** Window-Drift ist geschlossen (naive
-  Fisher–Yates + phase-randomisiert auf identischer Datenbasis, `te_null_limits_probe`
-  Abschnitt M0: phase-Thr > naive-Thr auf jedem Paar, die Hénon-Rückrichtung ist ein
-  naiver FP, den die Phase-Null stillt); offen bleibt das volle 60-s-Gitter (CI).
+- **broken-null-control — Rest offen.** Window-Drift ist geschlossen; offen bleibt
+  das volle 60-s-Gitter (CI).
   (Schritt: `te_null_limits_probe` 60-s-Lauf in CI — `docs/paper/broken-null-control.md`.)
 
 ## Bande-Split / Sonden-ODF
 
-- **1988-Wertdivergenz — gemessen.** `topk`/`peak_of_cell` lesen dieselben Werte
-  (46,58/44,12/50,92 mHz); die Divergenz ist die verarbeitete Reihe (`resid_e`) gegen
-  das rohe Residuum. Offen: welcher Schritt der Subtraktionskette rx14 um +10,1 mHz
-  verschiebt. Eine fremde Session bearbeitet `pioneer10_paper_chain_retrace.rs` live
-  (A1-Chain-Ablation) — nicht anfassen.
+- **1988-Wertdivergenz — gemessen.** Die Divergenz ist die verarbeitete Reihe
+  (`resid_e`) gegen das rohe Residuum; offen bleibt, welcher Schritt der
+  Subtraktionskette rx14 um +10,1 mHz verschiebt. Eine fremde Session bearbeitet
+  `pioneer10_paper_chain_retrace.rs` live (A1-Chain-Ablation) — nicht anfassen.
   (Schritt: Ablation auswerten, sobald die fremde Session committet.)
 - **160-Hz-Amplitudenzensus** — pending.
   (Schritt: `cargo run -p omegaflow-measure --bin pioneer_link_correction_probe` in CI dispatchen.)
-- **NOCC-Reduktionsvorschrift — Dokumente geholt.** Moyer 2000 (`docs/reference/moyer.2000.pdf`)
-  + dsn_redr-Familie (`dsn_redr.2021-07-31.pdf`, `redr_unpack.pdf`) + 810-005-202E liegen
-  in `docs/reference/`. Offen: der Ketten-Vergleich.
-  (Schritt: Reduktionskette im retrace gegen Moyer §10 (Media/Antenna) + §13 (Observables)
-  prüfen — `docs/paper/twenty-second-band-ground-chain.md`.)
-- **Dawn — Compiler gebaut + registriert.** `tools/harvest/src/bin/dawn_odf_compiler.rs`
-  baut `data/sbnarchive.psi.edu/dawn_odf.bin` (674 `.dat`, 892 244 Doppler-Samples,
-  data_type 11/12/13, 14 DSS-Stationen); Block in `phi/sources.φ` (`format dawn_odf`).
-  Offen nur der CDN-Dispatch.
+- **NOCC-Reduktionsvorschrift — Dokumente geholt.** Moyer 2000 + dsn_redr-Familie +
+  810-005-202E in `docs/reference/`. Offen: der Ketten-Vergleich.
+  (Schritt: Reduktionskette im retrace gegen Moyer §10/§13 prüfen —
+  `docs/paper/twenty-second-band-ground-chain.md`; berührt die fremde retrace-Session.)
+- **Venus Express VeRa — Reader gebaut + Voll-Harvest gemessen.** `vex_odf_compiler.rs`
+  las alle vier Volumes (`VXRS_1101..1104`): 140 ODF, 1 052 174 Samples, data_type
+  11/12, Stationen 34/43/45, 75 756 536 B, Roundtrip parst
+  (`data/atmos.nmsu.edu/vex_odf.bin`). Offen: Register + CDN.
+  (Schritt: `phi/sources.φ`-Block + `vex-cdn.yml` + `gh workflow run` nach Push + Consent.)
+- **Dawn — Compiler gebaut + registriert.** Offen nur der CDN-Dispatch.
   (Schritt: `gh workflow run` nach Push + Consent.)
-- **Venus Express VeRa — PSA trägt keine DSN/ODF-Route (gemessen).** Rohroute NASA/PDS
-  `VEX-V-RSS-1-ENT-V1.0` (NMSU), Identifier `USA_NASA_SUE_VXRS_11XX`.
-  (Schritt: exaktes Verzeichnis + Landing-Page fetchen, dann Reader.)
 - **Voyager-Saturn CDN-Dispatch** — Reader steht, nur der `voyager_saturn.bin`-Dispatch.
   (Schritt: `gh workflow run` nach Push + Consent.)
 - **CDN-Dispatch** der registrierten Quellen (celestrak-eop, voyager, die 7 ODF, Dawn).
@@ -83,8 +85,11 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (Schritt: `docs/surveys/survey-2026-09-07-weberin-sonnensystem-kette.md`.)
 - **CDN-Planetenbins ~116 km SSB-Offset** — neu aus vollem `de441.bsp`.
   (Schritt: `docs/surveys/survey-geometric-ground-truth.md`.)
-- **Die Weberin / Zeugnis: 9 Schritte.**
-  (Schritt: Schritt 1 (MPC gegen SPK) bauen — `docs/concepts/die-weberin.md`.)
+- **Die Weberin — Schritt 1 gebaut.** `BodyLine::Mpc` + `weberin_mpc_spk_verdict`
+  weben MPCORB gegen die SPK-Punkte (am MPC-Epoch: ceres 58,5 km, vesta 24,0 km
+  placed; die distant objects rissen auch am Epoch; 99 Tage später alle riss).
+  Offen: Schritte 2–9.
+  (Schritt: Schritt 2 (Stations-Konvergenz) — `docs/concepts/die-weberin.md`.)
 
 ## Paper / Präregistrierung
 
