@@ -25,7 +25,7 @@ note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
+note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
