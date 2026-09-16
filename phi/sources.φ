@@ -6519,6 +6519,12 @@ field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-squa
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square em K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/champ_plpt.bin
+format champ_plpt
+at earth
+ttl 604800
+field champ_plpt_electron_density_cm3 champ_plpt_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 format gedi_l2a
 on earth 0 0 0

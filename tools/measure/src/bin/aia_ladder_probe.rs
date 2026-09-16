@@ -341,7 +341,7 @@ fn main() {
         let trig = bin_median(&b_flux, t0, bins);
         let events = cut_events(&trig, FLARE_THRESH as f32, &grid);
         println!(
-            "{} events (GOES b_flux > {:.0e} W/m², C1.0), window ±40 min, 24-s cells",
+            "{} events (GOES b_flux > {:.0e} W/m², C5.0), window ±40 min, 24-s cells",
             events.len(),
             FLARE_THRESH
         );
