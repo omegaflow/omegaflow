@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-15
-  version: 7
-  sha256: 3a876f8f311c22db2aa57103526471b053e73c275e1fd7aa413e443213b0b5ec
+  version: 8
+  sha256: 68a04a5b18e559317f7f32d7169027e7479a724b016e53af20c6d2d05a5d51c7
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -71,7 +71,11 @@ earlier selected members: Station 14 carries A = 160/153/161 Hz over weak→stro
 carried; they are fixed traces (~7×10⁻⁸ of the sky frequency, ~1,6×10⁻⁴ of
 the 1-MHz bias chain), coherent (FWHM ≤ 0,02 mHz unresolved, Q > 2500). On the
 canonical residual the line amplitude re-anchors to ~5 Hz (Station 14, 1988);
-the 160-Hz value is pending its own census re-measurement.
+the 160-Hz value is re-measured by its own census (workflow
+`pioneer-band-amplitude`, run 35119481936, sha `70e2030b`): Station 14, 1988
+sub-10-s strength terciles carry A = 169/152/363 Hz over weak→strong
+(max/min = 2,15) — weak and mid stand (160/153), the strong tercile rises to
+363 Hz, so the flat 160/153/161 scaling is not carried.
 
 **The band lives upstream.** The NOCC's own doppler_resid field
 (TRK-2-25 Item 101) carries the band itself (Station 63: 45,00 mHz, 9,2×;
