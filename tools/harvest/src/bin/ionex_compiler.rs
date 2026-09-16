@@ -1,6 +1,7 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use omegaflow::ionex::{parse_gim, parse_gim_bin, write_gim_bin};
+use omegaflow::lzw::uncompress_z;
 use std::process::Command;
 
 const NETLOC: &str = "cddis.nasa.gov";
@@ -56,6 +57,10 @@ fn is_gzip(bytes: &[u8]) -> bool {
     bytes.len() >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b
 }
 
+fn is_lzw(bytes: &[u8]) -> bool {
+    bytes.len() >= 3 && bytes[0] == 0x1f && bytes[1] == 0x9d
+}
+
 fn raw_of_source(url: &str) -> Option<Vec<u8>> {
     if secret("EARTHDATA_EDL_TOKEN").is_none() {
         eprintln!(
@@ -71,6 +76,11 @@ fn run(out_path: &str, raw: Vec<u8>, label: &str, ci: bool) -> Result<(), String
         match gunzip(&raw) {
             Some(b) => b,
             None => return Err(format!("{label}: gunzip returned void")),
+        }
+    } else if is_lzw(&raw) {
+        match uncompress_z(&raw) {
+            Some(b) => b,
+            None => return Err(format!("{label}: uncompress_z returned void")),
         }
     } else {
         raw
@@ -149,7 +159,7 @@ fn main() {
             },
             None => {
                 eprintln!(
-                    "ionex_compiler: --input <file.INX.gz> or --url <https://…/IGS0OPSRAP_….INX.gz> required — refused"
+                    "ionex_compiler: --input <file.INX.gz|file.INX.Z> or --url <https://…/IGS0OPSRAP_….INX.gz> required — refused"
                 );
                 std::process::exit(1);
             }
@@ -171,5 +181,28 @@ mod tests {
         assert!(!is_gzip(b"not gzip"));
         assert!(!is_gzip(&[]));
         assert!(!is_gzip(&[0x1f]));
+    }
+
+    #[test]
+    fn is_lzw_reads_the_magic() {
+        assert!(is_lzw(&[0x1f, 0x9d, 0x10]));
+        assert!(!is_lzw(&[0x1f, 0x8b, 0x08]));
+        assert!(!is_lzw(b"not lzw"));
+        assert!(!is_lzw(&[]));
+        assert!(!is_lzw(&[0x1f, 0x9d]));
+    }
+
+    #[test]
+    fn lzw_blob_selects_the_decode_branch() {
+        let hex = "1f9d1074d0940131260c1d1069dc800028104d418501073a44f8906141";
+        let blob: Vec<u8> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).expect("hex pair"))
+            .collect();
+        assert!(is_lzw(&blob));
+        assert_eq!(
+            uncompress_z(&blob).expect("fixture decodes"),
+            b"the cat in the hat the cat in the hat"
+        );
     }
 }
