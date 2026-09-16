@@ -2454,6 +2454,7 @@ url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.
 format las
 at earth
 ttl 604800
+note LAS point cloud (USGS 3DEP, AK_BrooksCamp_2012, EPSG:3857). CRS inverse built 2026-09-16: geographic (EPSG:4326), Web Mercator (3857), UTM 326xx/327xx (GRS80 inverse Transverse Mercator); WKT without an own EPSG-ID and the MLLW tide-datum chain stay refused (no measured geoid/tide model, no ID — pending). The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch), not resting ICRS points; the spatial promotion to a Position anchor is descoped by measurement (2026-09-16): the contract carries no v-free anchor and the LAS format carries no v, so a StateVector (v=0) would be fabrication — the series components las_x/y/z_icrs_m are the correct measurement.
 field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
@@ -6764,7 +6765,85 @@ field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr.bin
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s1.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s2.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s3.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s4.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s5.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s6.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s7.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s8.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s9.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s10.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s11.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s12.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s13.bin
 format voyager_odr
 at earth
 ttl 604800

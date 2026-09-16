@@ -3705,7 +3705,10 @@ mod tests {
                 found += 1;
             }
         }
-        assert!(meas > 0, "conditional FP/FN gate: no FN measurement resolved");
+        assert!(
+            meas > 0,
+            "conditional FP/FN gate: no FN measurement resolved"
+        );
         assert!(
             found as f64 / meas as f64 >= 0.5,
             "conditional FP/FN gate: FN arm found {found}/{meas} true couplings — below 50%"
@@ -3810,7 +3813,10 @@ mod tests {
                 found += 1;
             }
         }
-        assert!(meas > 0, "conditional FP/FN gate (2): no FN measurement resolved");
+        assert!(
+            meas > 0,
+            "conditional FP/FN gate (2): no FN measurement resolved"
+        );
         assert!(
             found as f64 / meas as f64 >= 0.5,
             "conditional FP/FN gate (2): FN arm found {found}/{meas} true couplings — below 50%"
