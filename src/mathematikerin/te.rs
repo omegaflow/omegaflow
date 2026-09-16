@@ -1071,6 +1071,34 @@ fn residual_surrogate_conditional_lagged_n(
     }
 }
 
+pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Vec<f32> {
+    let n = y.len();
+    let p = order;
+    match ols_fit_lagged_n(y, &[], p) {
+        Some(coeffs) => {
+            let resid: Vec<f64> = (p..n)
+                .map(|t| y[t] as f64 - lagged_predict_n(&coeffs, y, &[], t, p))
+                .collect();
+            let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
+            let perm = restricted_permutation_surrogate(&resid_f32, rng);
+            let mut out = vec![0f32; n];
+            for t in 0..n {
+                out[t] = if t < p {
+                    y[t]
+                } else {
+                    let v = lagged_predict_n(&coeffs, &out, &[], t, p) + perm[t - p] as f64;
+                    if !v.is_finite() {
+                        return shuffle_series(y, rng);
+                    }
+                    v as f32
+                };
+            }
+            out
+        }
+        None => shuffle_series(y, rng),
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum TeNull {
     Residual,
@@ -1079,6 +1107,7 @@ pub enum TeNull {
     Phase,
     RestrictedPermutation,
     XShift,
+    Arx,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -1192,6 +1221,7 @@ pub fn conditional_te_surrogates_n(
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
             TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
             TeNull::XShift => y.to_vec(),
+            TeNull::Arx => arx_restricted_surrogate(y, max_lag, &mut rng),
         };
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(xs, &ys, conds, lag, bins),
@@ -3281,12 +3311,17 @@ mod tests {
     }
 
     #[test]
+    fn gate_fpr_autocorrelation_arx_null_binned_n_surr_200() {
+        gate_fpr_autocorr(TeNull::Arx, TeEstimator::Binned);
+    }
+
+    #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
-    fn gate_fpr_autocorrelation_restricted_null_binned_n_1000() {
+    fn gate_fpr_autocorrelation_arx_null_binned_n_1000() {
         let cells = gate_fpr_coarse_cells(
             1000,
             GateParams {
-                null: TeNull::RestrictedPermutation,
+                null: TeNull::Arx,
                 est: TeEstimator::Binned,
                 max_lag: 2,
                 null_lag: 12,
@@ -3306,60 +3341,6 @@ mod tests {
             GateParams {
                 null: TeNull::XShift,
                 est: TeEstimator::Binned,
-                max_lag: 2,
-                null_lag: 12,
-                bins: 4,
-                block: 0,
-                n_surr: 200,
-            },
-        );
-        gate_fpr_autocorr_assert(&cells);
-    }
-
-    #[test]
-    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
-    fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
-        let cells = gate_fpr_coarse_cells(
-            1000,
-            GateParams {
-                null: TeNull::Block,
-                est: TeEstimator::Binned,
-                max_lag: 2,
-                null_lag: 12,
-                bins: 4,
-                block: 0,
-                n_surr: 200,
-            },
-        );
-        gate_fpr_autocorr_assert(&cells);
-    }
-
-    #[test]
-    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
-    fn gate_fpr_autocorrelation_block_null_ksg_n_1000() {
-        let cells = gate_fpr_coarse_cells(
-            1000,
-            GateParams {
-                null: TeNull::Block,
-                est: TeEstimator::Ksg,
-                max_lag: 2,
-                null_lag: 12,
-                bins: 4,
-                block: 0,
-                n_surr: 200,
-            },
-        );
-        gate_fpr_autocorr_assert(&cells);
-    }
-
-    #[test]
-    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
-    fn gate_fpr_autocorrelation_phase_null_ksg_n_1000() {
-        let cells = gate_fpr_coarse_cells(
-            1000,
-            GateParams {
-                null: TeNull::Phase,
-                est: TeEstimator::Ksg,
                 max_lag: 2,
                 null_lag: 12,
                 bins: 4,
@@ -3408,11 +3389,11 @@ mod tests {
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
-    fn gate_fpr_autocorrelation_residual_null_ksg_n_1000() {
+    fn gate_fpr_autocorrelation_arx_null_ksg_n_1000() {
         let cells = gate_fpr_coarse_cells(
             1000,
             GateParams {
-                null: TeNull::Residual,
+                null: TeNull::Arx,
                 est: TeEstimator::Ksg,
                 max_lag: 2,
                 null_lag: 12,
@@ -3455,7 +3436,11 @@ mod tests {
     #[test]
     #[ignore = "KSG sweep for the n=1000 gate — runs in te-gate.yml"]
     fn ksg_sweep_n1000() {
-        for (null_name, null) in [("block", TeNull::Block), ("phase", TeNull::Phase)] {
+        for (null_name, null) in [
+            ("block", TeNull::Block),
+            ("phase", TeNull::Phase),
+            ("arx", TeNull::Arx),
+        ] {
             let cells = gate_fpr_cells_from(
                 1000,
                 &[(0.0f32, 4usize, 7usize), (0.5f32, 4, 7), (0.9f32, 4, 7)],
@@ -3509,8 +3494,8 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "residual sweep for the n=1000 gate — runs in te-gate.yml"]
-    fn residual_sweep_n1000() {
+    #[ignore = "arx sweep for the n=1000 gate — runs in te-gate.yml"]
+    fn arx_sweep_n1000() {
         let mut ols_rng = 0xC2B2_AE3D_85EB_CA6Bu64;
         for a in [0.0f32, 0.5, 0.9] {
             let mut ols_resolved = 0usize;
@@ -3533,7 +3518,7 @@ mod tests {
                     1000,
                     &[(a, 4usize, 7usize)],
                     GateParams {
-                        null: TeNull::Residual,
+                        null: TeNull::Arx,
                         est,
                         max_lag: 2,
                         null_lag: 12,
@@ -3666,7 +3651,7 @@ mod tests {
                             bins: 4,
                             seed,
                             n_surr: 100,
-                            null: TeNull::Block,
+                            null: TeNull::Arx,
                             block: 0,
                             est: TeEstimator::Ksg,
                             k: 4,
@@ -4200,7 +4185,7 @@ mod tests {
                 bins,
                 seed: 0x9E37_79B9_7F4A_7C15,
                 n_surr: 10,
-                null: TeNull::Residual,
+                null: TeNull::Arx,
             },
         )
         .expect("lagged N-dim null resolves");
@@ -4251,7 +4236,7 @@ mod tests {
                 bins,
                 seed: 0x9E37_79B9_7F4A_7C15,
                 n_surr: 10,
-                null: TeNull::Residual,
+                null: TeNull::Arx,
             },
         )
         .expect("lagged N-dim null resolves");
@@ -4299,8 +4284,8 @@ mod tests {
                 bins: 4,
                 seed: 0x9E37_79B9_7F4A_7C15,
                 n_surr: 100,
-                null: TeNull::Block,
-                block: block_len_from_n(n),
+                null: TeNull::Arx,
+                block: 0,
                 est: TeEstimator::Ksg,
                 k: 4,
                 p_max: 2,
