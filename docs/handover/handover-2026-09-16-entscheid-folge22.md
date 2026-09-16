@@ -3,7 +3,7 @@
   session: Entscheid-Folge 22
   class: handover
   date: 2026-09-16
-  sha256: b866007f9f8e8d2182444f091e13e28d444991677b02ea871f8b409aebba65c9
+  sha256: eff8c705e1e88639d290a90f715f514af6d70d2f0c5b8c4203f41936d475239e
   status: live
 -->
 # Handover — Entscheid-Folge 22 (2026-09-16)
@@ -42,17 +42,15 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   (Schritt: Adressen bestätigen + Sende-Wort.)
 - **DEMETER/CDPP** — Order über REGARDS. Gemessen: kein Entwurf in `state/mail/`,
   keine Ledger-Zeile; der Sendestatus ist aus dem Baum **nicht messbar**
-  (Web-Portal, kein Mail-Pfad) — `unverifizierbar`. (Schritt: Operator bestätigt,
-  ob die Order gestellt ist; sonst REGARDS-Route + Dataset-URN messen, Entwurf +
-  exakter Order-Befehl — autonom.)
+  (Web-Portal, kein Mail-Pfad) — `unverifizierbar`. (Schritt: REGARDS-Route +
+  Dataset-URN messen, Entwurf bis zur Ausführungskante — autonom; dann `/consent`
+  und Order.)
 
 ## Warten auf Rückmeldung (extern)
 
-Die offenen Alternativen stehen gemessen in
-`docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` — wo eine
-offene Route existiert, ist das Warten hinfällig (BiSON/Broomhall über
-GONG/SDO/VIRGO, Rubin-RSP über das Fink-LSST-Portal, LPF, Juno gravity science,
-New-Horizons-Doppler). Offen bleiben nur die Routen ohne gemessene Alternative:
+Offene Alternativen gemessen in
+`docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md`; es bleiben
+nur die Routen ohne gemessene Alternative:
 
 - **Fünf Sonden-Anfragen** (NSSDC Voyager/Mariner 10/Viking, Cassini, Juno) —
   gesendet 2026-09-16, Antwort offen; Voyager closed-loop und Juno-Earth-Flyby
@@ -61,14 +59,8 @@ New-Horizons-Doppler). Offen bleiben nur die Routen ohne gemessene Alternative:
 
 ## Operator-gebundene Punkte
 
-- **Mail-Fang** — `wrangler kv namespace create MAIL_QUEUE` → Id eintragen →
-  `wrangler deploy` (Cloudflare-Konto). (Schritt: Operator-Wort.)
-- **ESP32-Modul** — on hold; BOM `docs/specs/mantis-shrimp-bom.md`. (Schritt:
-  Operator-Wort.)
-- **20-s-Bande-Papier** — `git tag` + Welt-Fassung-Branch, Name/Datum fehlt.
-  (Schritt: Operator-Wort.)
-- **Register-Digest `--live`-Namensstimme** — `--open` oder bleibt. (Schritt:
-  Operator-Wort.)
+- **ESP32-Modul** — der physische Träger für Puls/HRV, on hold; BOM
+  `docs/specs/mantis-shrimp-bom.md`. (Schritt: Operator-Wort.)
 
 ## Termine (Wiedervorlage)
 
