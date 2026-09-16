@@ -7110,10 +7110,7 @@ fn glm_l1b_geo_series_roundtrip_and_component_name() {
         Some(crate::geo::COMP_GLML1B_MAX)
     );
     assert_eq!(
-        super::extract::geo_series_component_name(
-            "glm_l1b",
-            crate::geo::COMP_GLML1B_FLASH_ENERGY
-        ),
+        super::extract::geo_series_component_name("glm_l1b", crate::geo::COMP_GLML1B_FLASH_ENERGY),
         Some("glm_l1b_flash_radiant_energy_j")
     );
 }
@@ -8114,8 +8111,8 @@ fn demeter_isl_series_dispatch_and_component_names() {
     blk[22] = 0x02;
     blk[23] = 0x49;
     blk[265..289].copy_from_slice(&[
-        0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82,
-        0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
+        0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82, 0x5a,
+        0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
     ]);
     let b = super::demeter::parse_block(&blk).unwrap();
     let mut bin = Vec::new();
@@ -8154,7 +8151,10 @@ fn demeter_isl_series_dispatch_and_component_names() {
         super::extract::series_component_name("demeter_isl", super::demeter::COMP_VI0),
         Some("demeter_isl_vi0_ms")
     );
-    assert_eq!(super::extract::series_component_name("demeter_isl", 99), None);
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", 99),
+        None
+    );
 }
 
 #[test]

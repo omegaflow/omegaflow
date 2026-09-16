@@ -134,11 +134,7 @@ pub fn parse_sexagesimal(s: &str) -> Option<f64> {
     };
     let total = deg + min / 60.0 + sec / 3600.0;
     let v = sign * total;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 pub fn yaml_val(text: &str, path: &str) -> Option<String> {
@@ -273,10 +269,7 @@ spec:
         assert!((ra - 187.6916666667).abs() < 1e-6);
         let dec = yaml_sexagesimal(YAML, "pos.dec").unwrap();
         assert!((dec - 12.3891666667).abs() < 1e-6);
-        assert_eq!(
-            yaml_val(YAML, "source_id").as_deref(),
-            Some("58")
-        );
+        assert_eq!(yaml_val(YAML, "source_id").as_deref(), Some("58"));
     }
 
     const SED_UL: &str = r#"# %ECSV 0.9
