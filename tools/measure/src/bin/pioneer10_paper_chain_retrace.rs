@@ -1201,6 +1201,272 @@ fn main() {
         prev_peak = c.peak;
     }
 
+    eprintln!(
+        "\n=== A1b Deduction 7 segment-length sensitivity: 1988 strict-1.0-s, band 44-58 ==="
+    );
+    {
+        let inversions = (1..n).filter(|&i| times[i] < times[i - 1]).count();
+        eprintln!("  time ordering: {inversions} inversions of {n} consecutive pairs");
+    }
+    {
+        let mut seg_lens: Vec<usize> = Vec::new();
+        let mut lo = 0usize;
+        while lo < n {
+            let mut hi = lo + 1;
+            while hi < n && times[hi] - times[hi - 1] < GAP_DAY_S {
+                hi += 1;
+            }
+            seg_lens.push(hi - lo);
+            lo = hi;
+        }
+        let mut sorted = seg_lens.clone();
+        sorted.sort_unstable();
+        let q = |f: f64| sorted[((sorted.len() as f64 - 1.0) * f) as usize];
+        eprintln!(
+            "  global segments: {} — min {} p50 {} p90 {} p99 {} max {}",
+            sorted.len(),
+            sorted[0],
+            q(0.5),
+            q(0.9),
+            q(0.99),
+            sorted[sorted.len() - 1]
+        );
+        let ge20 = sorted.iter().filter(|&&l| l >= 20).count();
+        let lt20 = sorted.len() - ge20;
+        eprintln!(
+            "  segments >= 20 samples: {ge20} (carry Deduction 7); < 20: {lt20} (slope 0, uncut)"
+        );
+    }
+    for st in [14i64, 43, 63] {
+        let mut cell_segs: Vec<(usize, f64)> = Vec::new();
+        let mut lo = 0usize;
+        while lo < n {
+            let mut hi = lo + 1;
+            while hi < n && times[hi] - times[hi - 1] < GAP_DAY_S {
+                hi += 1;
+            }
+            if stations[lo..hi].iter().any(|&s| s == st)
+                && samplers[lo..hi].iter().any(|&s| s == 1.0)
+                && year_of(times[lo]) == Some(1988)
+            {
+                cell_segs.push((hi - lo, (times[hi - 1] - times[lo]) / 3600.0));
+            }
+            lo = hi;
+        }
+        if !cell_segs.is_empty() {
+            let spans: Vec<String> = cell_segs
+                .iter()
+                .map(|(k, h)| format!("{k} samp/{h:.2} h"))
+                .collect();
+            eprintln!(
+                "  station {st} 1988 segments (any 1-s sample): {} — {}",
+                cell_segs.len(),
+                spans.join(", ")
+            );
+        }
+    }
+    for min_seg in [0usize, 20, 60, 200, 1000, 10000] {
+        let mut obs_x = obs_d.clone();
+        if min_seg > 0 {
+            let mut slope_seg = vec![0.0f64; n];
+            let mut seg_mid7 = vec![0.0f64; n];
+            let mut lo = 0usize;
+            while lo < n {
+                let mut hi = lo + 1;
+                while hi < n && times[hi] - times[hi - 1] < GAP_DAY_S {
+                    hi += 1;
+                }
+                if hi - lo >= min_seg {
+                    let mid = 0.5 * (times[lo] + times[hi - 1]);
+                    let xs: Vec<f64> = (lo..hi).map(|i| times[i] - mid).collect();
+                    let ys: Vec<f64> = (lo..hi).map(|i| resid_d[i]).collect();
+                    let (b, _) = lin_fit(&xs, &ys);
+                    for i in lo..hi {
+                        slope_seg[i] = b;
+                        seg_mid7[i] = mid;
+                    }
+                }
+                lo = hi;
+            }
+            for i in 0..n {
+                obs_x[i] -= slope_seg[i] * (times[i] - seg_mid7[i]);
+            }
+        }
+        let Some((_, _, resid_x, _, _)) =
+            fixed_effects_cells_w(&rates0, &refs, &obs_x, &times, &files, &weights)
+        else {
+            eprintln!("  min-seg {min_seg}: fit void");
+            continue;
+        };
+        let mut line = format!("  min-seg {min_seg}:");
+        for st in [14i64, 43, 63] {
+            let (ts, vs) = gather_set(
+                &times,
+                &stations,
+                &samplers,
+                &resid_x,
+                &years,
+                &[st],
+                class_1s,
+                Some(1988),
+            );
+            let c = census_cell(&ts, &vs, BAND_LO, BAND_HI);
+            match c.peak {
+                Some(p) => line.push_str(&format!("  st{st} {:.3} mHz", p * 1e3)),
+                None => line.push_str(&format!("  st{st} absent(n={})", c.n)),
+            }
+        }
+        eprintln!("{line}");
+    }
+    for per_station in [false, true] {
+        let mut obs_x = obs_d.clone();
+        let mut slope_seg = vec![0.0f64; n];
+        let mut seg_mid7 = vec![0.0f64; n];
+        let mut lo = 0usize;
+        while lo < n {
+            let mut hi = lo + 1;
+            while hi < n && times[hi] - times[hi - 1] < GAP_DAY_S {
+                hi += 1;
+            }
+            if hi - lo >= 20 {
+                let mid = 0.5 * (times[lo] + times[hi - 1]);
+                if per_station {
+                    let mut sts: Vec<i64> = stations[lo..hi].to_vec();
+                    sts.sort_unstable();
+                    sts.dedup();
+                    for st in sts {
+                        let xs: Vec<f64> = (lo..hi)
+                            .filter(|&i| stations[i] == st)
+                            .map(|i| times[i] - mid)
+                            .collect();
+                        let ys: Vec<f64> = (lo..hi)
+                            .filter(|&i| stations[i] == st)
+                            .map(|i| resid_d[i])
+                            .collect();
+                        if xs.len() < 2 {
+                            continue;
+                        }
+                        let (b, _) = lin_fit(&xs, &ys);
+                        for i in lo..hi {
+                            if stations[i] == st {
+                                slope_seg[i] = b;
+                                seg_mid7[i] = mid;
+                            }
+                        }
+                    }
+                } else {
+                    let xs: Vec<f64> = (lo..hi).map(|i| times[i] - mid).collect();
+                    let ys: Vec<f64> = (lo..hi).map(|i| resid_d[i]).collect();
+                    let (b, _) = lin_fit(&xs, &ys);
+                    for i in lo..hi {
+                        slope_seg[i] = b;
+                        seg_mid7[i] = mid;
+                    }
+                }
+            }
+            lo = hi;
+        }
+        for i in 0..n {
+            obs_x[i] -= slope_seg[i] * (times[i] - seg_mid7[i]);
+        }
+        let Some((_, _, resid_x, _, _)) =
+            fixed_effects_cells_w(&rates0, &refs, &obs_x, &times, &files, &weights)
+        else {
+            eprintln!("  per-station {per_station}: fit void");
+            continue;
+        };
+        let mut line = format!(
+            "  min-seg 20, slope per {}:",
+            if per_station {
+                "station"
+            } else {
+                "segment (mixed)"
+            }
+        );
+        for st in [14i64, 43, 63] {
+            let (ts, vs) = gather_set(
+                &times,
+                &stations,
+                &samplers,
+                &resid_x,
+                &years,
+                &[st],
+                class_1s,
+                Some(1988),
+            );
+            let c = census_cell(&ts, &vs, BAND_LO, BAND_HI);
+            match c.peak {
+                Some(p) => line.push_str(&format!("  st{st} {:.3} mHz", p * 1e3)),
+                None => line.push_str(&format!("  st{st} absent(n={})", c.n)),
+            }
+        }
+        eprintln!("{line}");
+    }
+    eprintln!("\n=== A1c pre-cut presence of the 57.11 candidate (st14 1988 strict-1.0-s) ===");
+    for (name, rs) in [
+        ("resid0", &resid0[..]),
+        ("resid_c", &resid_c[..]),
+        ("resid_d", &resid_d[..]),
+        ("resid_e", &resid_e[..]),
+    ] {
+        let (ts, vs) = gather_set(
+            &times,
+            &stations,
+            &samplers,
+            rs,
+            &years,
+            &[14],
+            class_1s,
+            Some(1988),
+        );
+        let c = census_cell(&ts, &vs, BAND_LO, BAND_HI);
+        let top_first = c.top5.first().map(|(f, _)| *f);
+        eprintln!(
+            "  {name}: n={} top-member {:?} mHz; rank(57.10 mHz) {:?}",
+            c.n,
+            top_first.map(|f| f * 1e3),
+            rank_of(&c.grid, 0.05710)
+        );
+    }
+    {
+        let mut lo = 0usize;
+        while lo < n {
+            let mut hi = lo + 1;
+            while hi < n && times[hi] - times[hi - 1] < GAP_DAY_S {
+                hi += 1;
+            }
+            if hi - lo == 9435 {
+                let mid = 0.5 * (times[lo] + times[hi - 1]);
+                let xs: Vec<f64> = (lo..hi).map(|i| times[i] - mid).collect();
+                let ys: Vec<f64> = (lo..hi).map(|i| resid_d[i]).collect();
+                let (b_all, _) = lin_fit(&xs, &ys);
+                eprintln!(
+                    "  9435-seg: span {:.2} h, mixed slope {b_all:.3e} Hz/s",
+                    (times[hi - 1] - times[lo]) / 3600.0
+                );
+                let mut sts: Vec<i64> = stations[lo..hi].to_vec();
+                sts.sort_unstable();
+                sts.dedup();
+                for st in sts {
+                    let xs: Vec<f64> = (lo..hi)
+                        .filter(|&i| stations[i] == st)
+                        .map(|i| times[i] - mid)
+                        .collect();
+                    let ys: Vec<f64> = (lo..hi)
+                        .filter(|&i| stations[i] == st)
+                        .map(|i| resid_d[i])
+                        .collect();
+                    if xs.len() < 2 {
+                        continue;
+                    }
+                    let (b, _) = lin_fit(&xs, &ys);
+                    eprintln!("    station {st}: n={} slope {b:.3e} Hz/s", xs.len());
+                }
+            }
+            lo = hi;
+        }
+    }
+
     eprintln!("\n=== M1 strict-1-s census (sampler == 1.0), band 44-58, 0.05-mHz grid ===");
     for st in [14i64, 43, 63] {
         let pf = paper_freq(st);
