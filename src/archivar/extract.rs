@@ -35,6 +35,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             out
         }),
         "voyager_saturn" => voyager_saturn::parse_series(bytes),
+        "cors_rinex" => cors::parse_series(bytes),
         _ => None,
     }
 }
@@ -122,6 +123,20 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             voyager_saturn::COMP_RANGE_PART2 => Some("voyager_saturn_range_part2"),
             voyager_saturn::COMP_ANGLE_A => Some("voyager_saturn_angle_a"),
             voyager_saturn::COMP_ANGLE_B => Some("voyager_saturn_angle_b"),
+            _ => None,
+        },
+        "cors_rinex" => match comp {
+            cors::OBS_L1 => Some("cors_rinex_l1_cycle"),
+            cors::OBS_L2 => Some("cors_rinex_l2_cycle"),
+            cors::OBS_L5 => Some("cors_rinex_l5_cycle"),
+            cors::OBS_C1 => Some("cors_rinex_c1_m"),
+            cors::OBS_P1 => Some("cors_rinex_p1_m"),
+            cors::OBS_C2 => Some("cors_rinex_c2_m"),
+            cors::OBS_P2 => Some("cors_rinex_p2_m"),
+            cors::OBS_C5 => Some("cors_rinex_c5_m"),
+            cors::OBS_S1 => Some("cors_rinex_s1_dbhz"),
+            cors::OBS_S2 => Some("cors_rinex_s2_dbhz"),
+            cors::OBS_S5 => Some("cors_rinex_s5_dbhz"),
             _ => None,
         },
         _ => None,
