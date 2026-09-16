@@ -2,7 +2,7 @@
   title: Docs — Benennung & Versionierung
   class: concept
   date: 2026-09-10
-  sha256: a585b6c5311751500c31c50ddce595ce202b86201c6f012b2b5a4ae316a9716f
+  sha256: ff371a816fff7a5a49f627b4cde649c907d9b34fc9a085974a7497c957b61c24
   status: live
   see-also: AGENTS.md
 -->
@@ -43,6 +43,15 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   pre-registration / one-sheet verdict, `class: sheet`; a paper is a
   self-contained publishable measurement, `class: paper`). A `blatt-*.md`
   loose in `docs/` root is drift — it belongs in `docs/blatt/`.
+- `docs/zustand/<kebab>.md` — shared external state (`class: zustand`): one line
+  per dependency — value | measured-at (HEAD SHA for tree values, timestamp for
+  external) | due (interval or trigger event) | step. A living register: measured
+  once, cited by the sessions; a handover names the entry, never copies it
+  (Council 2026-09-16). An expired entry is `pending` with a due, never a copy.
+- `docs/handover/post.md` — the inter-line message channel (`class: post`):
+  `An <line>: … (Schritt: …)`. A message to another line lives here, never in the
+  sender's handover; the recipient folds it into its own handover within the same
+  session and deletes the line (Council 2026-09-16).
 - `docs/concepts/<kebab>.md` — concept docs. The filename is kebab-case; the
   concept's proper name in prose stays UPPER_SNAKE (e.g. file
   `sources-v2-spec.md`, prose `SOURCES_V2_SPEC §1` — like `rfc-2616.md` ↔
@@ -62,7 +71,7 @@ sha256sum`), so two local copies are compared in one command:
 
     <!--
       title: …
-      class: handover | survey | ref | concept | paper | auftrag | sheet
+      class: handover | survey | ref | concept | paper | auftrag | sheet | zustand | post
       date: YYYY-MM-DD
       version: <n>          (milestone only)
       sha256: <hex>
