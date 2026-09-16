@@ -1,6 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
-use omegaflow::archivar::voyager_odr::{RECORD_BYTES, pack, parse_odr, parse_packed, split_records};
+use omegaflow::archivar::voyager_odr::{
+    pack, pack_many, parse_odr, parse_packed, split_records, RECORD_BYTES,
+};
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "pds-ppi.igpp.ucla.edu";
@@ -39,8 +41,121 @@ fn year_of_label(bytes: &[u8]) -> Option<u16> {
     None
 }
 
+fn index_rows(text: &str) -> Option<Vec<(String, String, u16)>> {
+    let mut rows = Vec::new();
+    for line in text.lines() {
+        let fields: Vec<String> = line
+            .split(',')
+            .map(|f| f.trim().trim_matches('"').trim().to_string())
+            .collect();
+        if fields.len() < 7 || !fields[2].ends_with(".ODR") {
+            continue;
+        }
+        let year = fields[6].split('-').next()?.parse().ok()?;
+        rows.push((fields[1].clone(), fields[2].clone(), year));
+    }
+    Some(rows)
+}
+
+fn run_index(args: &[String]) {
+    let Some(index_path) = arg_value(args, "--index") else {
+        return;
+    };
+    let Some(base) = arg_value(args, "--base") else {
+        eprintln!("--index <INDEX.TAB> requires --base <dataset-url>");
+        std::process::exit(1);
+    };
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => "data/pds-ppi.igpp.ucla.edu/voyager_odr.bin".to_string(),
+    };
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let dir = arg_value(args, "--dir");
+    let text = match std::fs::read_to_string(&index_path) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("read {index_path} returned void: {e}");
+            std::process::exit(1);
+        }
+    };
+    let Some(rows) = index_rows(&text) else {
+        eprintln!("{index_path}: index parse void — the series stays unwritten (0 honored)");
+        std::process::exit(1);
+    };
+    if rows.is_empty() {
+        eprintln!("{index_path}: no .ODR rows");
+        std::process::exit(1);
+    }
+    let base_trim = base.trim_end_matches('/');
+    let mut entries: Vec<(Vec<u8>, String, u16)> = Vec::new();
+    let mut trailing_total = 0usize;
+    for (path, name, year) in rows {
+        let dir_of = match path.rsplit_once('/') {
+            Some((d, _)) => d,
+            None => "",
+        };
+        let url = format!("{base_trim}{dir_of}/{name}");
+        let bytes = match &dir {
+            Some(d) => std::fs::read(format!("{d}/{name}")).ok(),
+            None => fetch_raw_bytes(&url, 604800),
+        };
+        let Some(bytes) = bytes else {
+            eprintln!("{name}: read void at {url}");
+            std::process::exit(1);
+        };
+        let (complete, trailing) = split_records(bytes.len());
+        if complete == 0 {
+            eprintln!(
+                "{name}: {} byte(s) — shorter than one {RECORD_BYTES}-byte ODR record; the series stays unwritten (0 honored)",
+                bytes.len()
+            );
+            std::process::exit(1);
+        }
+        trailing_total += trailing;
+        entries.push((bytes[..complete * RECORD_BYTES].to_vec(), name, year));
+    }
+    let refs: Vec<(&[u8], &str, u16)> = entries
+        .iter()
+        .map(|(b, n, y)| (b.as_slice(), n.as_str(), *y))
+        .collect();
+    let bin = pack_many(&refs);
+    let Some(parsed) = parse_packed(&bin) else {
+        eprintln!("{out}: packed read void — the series stays unverified (0 honored)");
+        std::process::exit(1);
+    };
+    if parsed.files.len() != entries.len() {
+        eprintln!("{out}: entry count void — the series stays unverified (0 honored)");
+        std::process::exit(1);
+    }
+    for (f, (b, n, y)) in parsed.files.iter().zip(&entries) {
+        if f.name != *n || f.year != *y || f.records.len() != b.len() / RECORD_BYTES {
+            eprintln!("{out}: {n} roundtrip void — the series stays unverified (0 honored)");
+            std::process::exit(1);
+        }
+    }
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(&out, &bin).is_err() {
+        eprintln!("write {out} returned void");
+        std::process::exit(1);
+    }
+    let total_bytes: usize = entries.iter().map(|(b, _, _)| b.len()).sum();
+    eprintln!(
+        "{out}: {} .ODR file(s) packed ({} bytes, {} trailing byte(s) dropped), roundtrip holds",
+        entries.len(),
+        total_bytes,
+        trailing_total
+    );
+    if ci_mode && !upload_release(NETLOC, &out) {
+        std::process::exit(1);
+    }
+    std::process::exit(0);
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    run_index(&args);
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
@@ -115,7 +230,11 @@ fn main() {
         eprintln!("{out}: packed read void — the series stays unverified (0 honored)");
         std::process::exit(1);
     };
-    if parsed.records != decoded || parsed.year != year || parsed.name != name {
+    if parsed.files.len() != 1
+        || parsed.files[0].records != decoded
+        || parsed.files[0].year != year
+        || parsed.files[0].name != name
+    {
         eprintln!("{out}: roundtrip void — the series stays unverified (0 honored)");
         std::process::exit(1);
     }
@@ -186,8 +305,29 @@ mod tests {
         let records = parse_odr(&raw).unwrap();
         let bin = pack(&raw, "C0XR13AA.ODR", 1981);
         let parsed = parse_packed(&bin).unwrap();
-        assert_eq!(parsed.records, records);
-        assert_eq!(parsed.year, 1981);
-        assert_eq!(parsed.name, "C0XR13AA.ODR");
+        assert_eq!(parsed.files.len(), 1);
+        assert_eq!(parsed.files[0].records, records);
+        assert_eq!(parsed.files[0].year, 1981);
+        assert_eq!(parsed.files[0].name, "C0XR13AA.ODR");
+    }
+
+    #[test]
+    fn index_rows_reads_measured_index_tab_format() {
+        let tab = "DATA_SET_ID            ,FILE_SPECIFICATION_NAME  ,PRODUCT_ID    ,VOLUME_ID  ,PRODUCT_CREATION_TIME  ,TARGET_NAME  ,START_TIME             ,STOP_TIME              \n\
+\"VG2-S-RSS-1-ROCC-V1.0\",\"/CALIB/VG2SPOC1.LBL    \",\"VG2SPOC1.DAT\",\"VG2_9065 \",1999-06-30T00:00:00Z   ,\"SATURN     \",1981-08-26T03:44:18Z   ,1981-08-26T07:59:57Z    \n\
+\"VG2-S-RSS-1-ROCC-V1.0\",\"/DATA/C0SR01AA.LBL     \",\"C0SR01AA.ODR\",\"VG2_9065 \",1999-06-30T00:00:00Z   ,\"SATURN     \",1981-08-26T03:45:00.000,1981-08-26T03:49:57.000\n\
+\"VG2-S-RSS-1-ROCC-V1.0\",\"/DATA/C1SR04AA.LBL     \",\"C1SR04AA.ODR\",\"VG2_9065 \",1999-06-30T00:00:00Z   ,\"SATURN     \",1981-08-26T04:30:00.000,1981-08-26T04:34:57.000\n";
+        let rows = index_rows(tab).unwrap();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].0, "/DATA/C0SR01AA.LBL");
+        assert_eq!(rows[0].1, "C0SR01AA.ODR");
+        assert_eq!(rows[0].2, 1981);
+        assert_eq!(rows[1].1, "C1SR04AA.ODR");
+        assert_eq!(rows[1].2, 1981);
+        assert!(index_rows("no rows here").unwrap().is_empty());
+        assert!(
+            index_rows("\"a\",\"/DATA/X.LBL\",\"X.ODR\",\"v\",1999-01-01Z,\"t\",\"BAD\",1999-01-01Z")
+                .is_none()
+        );
     }
 }

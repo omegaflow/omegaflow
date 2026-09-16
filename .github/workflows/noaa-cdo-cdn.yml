@@ -40,7 +40,7 @@ jobs:
           if ! gh release view www.ncdc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create www.ncdc.noaa.gov --repo omegaflow/sources \
               --title "www.ncdc.noaa.gov" \
-              --notes "NOAA CDO GHCND TMAX observations compiled to a geo oscillator record (medium em). Header 8 B: magic NCDO (4), count (u32 LE). Record stride 32 B LE: lat_deg (f64 deg), lon_deg (f64 deg), date_unix (f64, unix epoch seconds), value_c (f64, deg C)."
+              --notes "NOAA CDO GHCND TMAX observations compiled to a geo oscillator record (medium em). Header 8 B: magic NCDO (4), count (u32 LE). Record stride 32 B = 4 x f64 LE: lat_deg (deg), lon_deg (deg), date_tdb (TDB seconds since J2000), value_c (deg C)."
           fi
       - name: Compile the GHCND TMAX window and upload to CDN
         run: |

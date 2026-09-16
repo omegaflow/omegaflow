@@ -52,11 +52,16 @@ pub const PACK_MAGIC: [u8; 4] = *b"VODR";
 pub const PACK_ENTRY_BYTES: usize = 96;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct PackedOdr {
+pub struct OdrFile {
     pub name: String,
     pub year: u16,
     pub sha256: [u8; 32],
     pub records: Vec<OdrRecord>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PackedOdr {
+    pub files: Vec<OdrFile>,
 }
 
 fn be16(bytes: &[u8], i: usize) -> u16 {
@@ -130,20 +135,30 @@ pub fn parse_odr(bytes: &[u8]) -> Option<Vec<OdrRecord>> {
 }
 
 pub fn pack(raw: &[u8], name: &str, year: u16) -> Vec<u8> {
-    let record_count = raw.len() / RECORD_BYTES;
-    let data_start = 8 + PACK_ENTRY_BYTES;
-    let mut bin = vec![0u8; data_start + raw.len()];
+    pack_many(&[(raw, name, year)])
+}
+
+pub fn pack_many(files: &[(&[u8], &str, u16)]) -> Vec<u8> {
+    let data_start = 8 + files.len() * PACK_ENTRY_BYTES;
+    let data_bytes: usize = files.iter().map(|(raw, _, _)| raw.len()).sum();
+    let mut bin = vec![0u8; data_start + data_bytes];
     bin[0..4].copy_from_slice(&PACK_MAGIC);
-    bin[4..8].copy_from_slice(&1u32.to_le_bytes());
-    let nameb = name.as_bytes();
-    let n = nameb.len().min(32);
-    bin[8..8 + n].copy_from_slice(&nameb[..n]);
-    bin[8 + 32..8 + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(raw));
-    bin[8 + 64..8 + 68].copy_from_slice(&(record_count as u32).to_le_bytes());
-    bin[8 + 68..8 + 70].copy_from_slice(&year.to_le_bytes());
-    bin[8 + 72..8 + 80].copy_from_slice(&(data_start as u64).to_le_bytes());
-    bin[8 + 80..8 + 88].copy_from_slice(&(raw.len() as u64).to_le_bytes());
-    bin[data_start..].copy_from_slice(raw);
+    bin[4..8].copy_from_slice(&(files.len() as u32).to_le_bytes());
+    let mut offset = data_start;
+    for (i, (raw, name, year)) in files.iter().enumerate() {
+        let base = 8 + i * PACK_ENTRY_BYTES;
+        let nameb = name.as_bytes();
+        let n = nameb.len().min(32);
+        bin[base..base + n].copy_from_slice(&nameb[..n]);
+        bin[base + 32..base + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(raw));
+        bin[base + 64..base + 68]
+            .copy_from_slice(&((raw.len() / RECORD_BYTES) as u32).to_le_bytes());
+        bin[base + 68..base + 70].copy_from_slice(&year.to_le_bytes());
+        bin[base + 72..base + 80].copy_from_slice(&(offset as u64).to_le_bytes());
+        bin[base + 80..base + 88].copy_from_slice(&(raw.len() as u64).to_le_bytes());
+        bin[offset..offset + raw.len()].copy_from_slice(raw);
+        offset += raw.len();
+    }
     bin
 }
 
@@ -155,20 +170,15 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedOdr> {
     if count == 0 || bytes.len() < 8 + count * PACK_ENTRY_BYTES {
         return None;
     }
-    let mut records = Vec::new();
-    let mut name = String::new();
-    let mut year = 0u16;
-    let mut sha256 = [0u8; 32];
+    let mut files = Vec::with_capacity(count);
     for i in 0..count {
         let entry = &bytes[8 + i * PACK_ENTRY_BYTES..8 + (i + 1) * PACK_ENTRY_BYTES];
-        let name_end = entry[0..32]
-            .iter()
-            .position(|b| *b == 0)
-            .unwrap_or(32);
-        name = String::from_utf8(entry[0..name_end].to_vec()).ok()?;
+        let name_end = entry[0..32].iter().position(|b| *b == 0).unwrap_or(32);
+        let name = String::from_utf8(entry[0..name_end].to_vec()).ok()?;
+        let mut sha256 = [0u8; 32];
         sha256.copy_from_slice(&entry[32..64]);
         let record_count = u32::from_le_bytes(entry[64..68].try_into().ok()?) as usize;
-        year = u16::from_le_bytes(entry[68..70].try_into().ok()?);
+        let year = u16::from_le_bytes(entry[68..70].try_into().ok()?);
         let data_offset = u64::from_le_bytes(entry[72..80].try_into().ok()?) as usize;
         let data_length = u64::from_le_bytes(entry[80..88].try_into().ok()?) as usize;
         if data_offset + data_length > bytes.len() {
@@ -185,33 +195,33 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedOdr> {
         if recs.len() != record_count {
             return None;
         }
-        records.extend(recs);
+        files.push(OdrFile {
+            name,
+            year,
+            sha256,
+            records: recs,
+        });
     }
-    Some(PackedOdr {
-        name,
-        year,
-        sha256,
-        records,
-    })
+    Some(PackedOdr { files })
 }
 
 pub fn channel_sampling_rate_hz(code: u8) -> Option<f64> {
     match code {
-        16 => Some(50_000.0),     // 10000
-        8 => Some(62_500.0),      // 01000
-        0 => Some(75_000.0),      // 00000
-        17 => Some(100_000.0),    // 10001
-        9 => Some(125_000.0),     // 01001
-        1 => Some(150_000.0),     // 00001
-        18 => Some(200_000.0),    // 10010
-        10 => Some(250_000.0),    // 01010
-        2 => Some(300_000.0),     // 00010
-        19 => Some(400_000.0),    // 10011
-        11 => Some(500_000.0),    // 01011
-        3 => Some(600_000.0),     // 00011
-        20 => Some(800_000.0),    // 10100
-        12 => Some(1_000_000.0),  // 01100
-        4 => Some(1_200_000.0),   // 00100
+        16 => Some(50_000.0),    // 10000
+        8 => Some(62_500.0),     // 01000
+        0 => Some(75_000.0),     // 00000
+        17 => Some(100_000.0),   // 10001
+        9 => Some(125_000.0),    // 01001
+        1 => Some(150_000.0),    // 00001
+        18 => Some(200_000.0),   // 10010
+        10 => Some(250_000.0),   // 01010
+        2 => Some(300_000.0),    // 00010
+        19 => Some(400_000.0),   // 10011
+        11 => Some(500_000.0),   // 01011
+        3 => Some(600_000.0),    // 00011
+        20 => Some(800_000.0),   // 10100
+        12 => Some(1_000_000.0), // 01100
+        4 => Some(1_200_000.0),  // 00100
         _ => None,
     }
 }
@@ -245,41 +255,52 @@ pub fn time_tag_unix(year: u16, tag: &OdrTimeTag) -> Option<f64> {
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let packed = parse_packed(bytes)?;
     let lsk = crate::archivar::membrane::embedded_lsk()?;
-    let mut out = Vec::with_capacity(packed.records.len() * DATA_SAMPLES);
-    let mut anchor: Option<(f64, f64)> = None;
-    for rec in &packed.records {
-        let h = &rec.header;
-        let Some(rate) = channel_sampling_rate_hz(h.channel_sampling_rate_code) else {
-            anchor = None;
-            continue;
-        };
-        let Some(dec) = decimation_ratio(h.decimation_code) else {
-            anchor = None;
-            continue;
-        };
-        let dt = dec as f64 / rate;
-        let t0 = if h.time_tag_valid {
-            match time_tag_unix(packed.year, &h.time_tag).and_then(|u| lsk.unix_to_tdb(u)) {
-                Some(t) => {
-                    anchor = Some((t + dt * DATA_SAMPLES as f64, dt));
-                    t
-                }
-                None => {
+    let total_records: usize = packed.files.iter().map(|f| f.records.len()).sum();
+    let mut out = Vec::with_capacity(total_records * DATA_SAMPLES);
+    let mut anchor: Option<(f64, f64, u16)> = None;
+    for file in &packed.files {
+        for rec in &file.records {
+            let h = &rec.header;
+            let (t0, dt) = if h.time_tag_valid {
+                let Some(rate) = channel_sampling_rate_hz(h.channel_sampling_rate_code) else {
+                    anchor = None;
+                    continue;
+                };
+                let Some(dec) = decimation_ratio(h.decimation_code) else {
+                    anchor = None;
+                    continue;
+                };
+                let dt = dec as f64 / rate;
+                let Some(t) =
+                    time_tag_unix(file.year, &h.time_tag).and_then(|u| lsk.unix_to_tdb(u))
+                else {
+                    anchor = None;
+                    continue;
+                };
+                anchor = Some((
+                    t + dt * DATA_SAMPLES as f64,
+                    dt,
+                    h.record_number.wrapping_add(1),
+                ));
+                (t, dt)
+            } else {
+                let Some((t_next, dt, next_rec)) = anchor else {
+                    continue;
+                };
+                if h.record_number != next_rec {
                     anchor = None;
                     continue;
                 }
+                anchor = Some((
+                    t_next + dt * DATA_SAMPLES as f64,
+                    dt,
+                    next_rec.wrapping_add(1),
+                ));
+                (t_next, dt)
+            };
+            for (i, s) in rec.samples.iter().enumerate() {
+                out.push((t0 + i as f64 * dt, f64::from(*s), COMP_SAMPLE));
             }
-        } else {
-            match anchor {
-                Some((t, dt_a)) if dt_a == dt => {
-                    anchor = Some((t + dt * DATA_SAMPLES as f64, dt));
-                    t
-                }
-                _ => continue,
-            }
-        };
-        for (i, s) in rec.samples.iter().enumerate() {
-            out.push((t0 + i as f64 * dt, f64::from(*s), COMP_SAMPLE));
         }
     }
     Some(out)
@@ -390,10 +411,14 @@ mod tests {
         let records = parse_odr(&raw).unwrap();
         let bin = pack(&raw, "C0XR13AA.ODR", 1981);
         let parsed = parse_packed(&bin).unwrap();
-        assert_eq!(parsed.name, "C0XR13AA.ODR");
-        assert_eq!(parsed.year, 1981);
-        assert_eq!(parsed.records, records);
-        assert_eq!(parsed.sha256, crate::archivar::sha256::sha256_raw(&raw));
+        assert_eq!(parsed.files.len(), 1);
+        assert_eq!(parsed.files[0].name, "C0XR13AA.ODR");
+        assert_eq!(parsed.files[0].year, 1981);
+        assert_eq!(parsed.files[0].records, records);
+        assert_eq!(
+            parsed.files[0].sha256,
+            crate::archivar::sha256::sha256_raw(&raw)
+        );
         assert!(parse_packed(b"X").is_none());
     }
 
@@ -494,10 +519,7 @@ mod tests {
             ..tag
         };
         assert_eq!(time_tag_unix(1981, &invalid), None);
-        let bad_minute = OdrTimeTag {
-            minute: 60,
-            ..tag
-        };
+        let bad_minute = OdrTimeTag { minute: 60, ..tag };
         assert_eq!(time_tag_unix(1981, &bad_minute), None);
     }
 
@@ -513,7 +535,13 @@ mod tests {
         assert_eq!(series.len(), DATA_SAMPLES);
         let lsk = crate::archivar::membrane::embedded_lsk().unwrap();
         let t0 = lsk
-            .unix_to_tdb(time_tag_unix(1981, &header(&measured_c0xr13aa_record_one()).unwrap().time_tag).unwrap())
+            .unix_to_tdb(
+                time_tag_unix(
+                    1981,
+                    &header(&measured_c0xr13aa_record_one()).unwrap().time_tag,
+                )
+                .unwrap(),
+            )
             .unwrap();
         assert_eq!(series[0].0, t0);
         assert_eq!(series[0].1, 0.0);
@@ -553,5 +581,102 @@ mod tests {
         assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < 1e-9);
         assert_eq!(series[DATA_SAMPLES].1, 0.0);
         assert_eq!(series[DATA_SAMPLES].2, COMP_SAMPLE);
+    }
+
+    #[test]
+    fn parse_series_inherits_config_when_invalid_tag_words_zeroed() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&measured_c0xr13aa_record_one());
+        for i in 0..DATA_SAMPLES {
+            raw.push(i as u8);
+        }
+        let mut second = measured_c0xr13aa_record_one();
+        second[0..2].copy_from_slice(&0x0006u16.to_be_bytes());
+        second[2..4].copy_from_slice(&2u16.to_be_bytes());
+        second[18..24].copy_from_slice(&[0u8; 6]);
+        raw.extend_from_slice(&second);
+        for i in 0..DATA_SAMPLES {
+            raw.push((i * 2) as u8);
+        }
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 2 * DATA_SAMPLES);
+        let dt = 1.0 / 300_000.0;
+        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < 1e-9);
+        assert_eq!(series[DATA_SAMPLES].1, 0.0);
+    }
+
+    #[test]
+    fn parse_series_skips_record_number_gaps() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&measured_c0xr13aa_record_one());
+        for i in 0..DATA_SAMPLES {
+            raw.push(i as u8);
+        }
+        let mut gap = measured_c0xr13aa_record_one();
+        gap[0..2].copy_from_slice(&0x0006u16.to_be_bytes());
+        gap[2..4].copy_from_slice(&3u16.to_be_bytes());
+        raw.extend_from_slice(&gap);
+        for i in 0..DATA_SAMPLES {
+            raw.push((i * 3) as u8);
+        }
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), DATA_SAMPLES);
+    }
+
+    #[test]
+    fn parse_series_carries_per_file_year() {
+        let mut raw_a = Vec::new();
+        raw_a.extend_from_slice(&measured_c0xr13aa_record_one());
+        for i in 0..DATA_SAMPLES {
+            raw_a.push(i as u8);
+        }
+        let mut raw_b = raw_a.clone();
+        raw_b[2..4].copy_from_slice(&1u16.to_be_bytes());
+        let bin = pack_many(&[
+            (&raw_a[..], "C0XR13AA.ODR", 1981),
+            (&raw_b[..], "C0XR14AA.ODR", 1982),
+        ]);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 2 * DATA_SAMPLES);
+        let lsk = crate::archivar::membrane::embedded_lsk().unwrap();
+        let t81 = lsk
+            .unix_to_tdb(
+                time_tag_unix(
+                    1981,
+                    &header(&measured_c0xr13aa_record_one()).unwrap().time_tag,
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        let t82 = lsk
+            .unix_to_tdb(
+                time_tag_unix(
+                    1982,
+                    &header(&measured_c0xr13aa_record_one()).unwrap().time_tag,
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        assert_eq!(series[0].0, t81);
+        assert_eq!(series[DATA_SAMPLES].0, t82);
+    }
+
+    #[test]
+    fn pack_many_roundtrips_per_file_entries() {
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&sample_record(1, 0x9006));
+        raw.extend_from_slice(&sample_record(2, 0x0006));
+        let mut other = raw.clone();
+        other[0..2].copy_from_slice(&0x0006u16.to_be_bytes());
+        let bin = pack_many(&[(&raw[..], "a.ODR", 1981), (&other[..], "b.ODR", 1982)]);
+        let parsed = parse_packed(&bin).unwrap();
+        assert_eq!(parsed.files.len(), 2);
+        assert_eq!(parsed.files[0].name, "a.ODR");
+        assert_eq!(parsed.files[0].year, 1981);
+        assert_eq!(parsed.files[1].name, "b.ODR");
+        assert_eq!(parsed.files[1].year, 1982);
+        assert_eq!(parsed.files[1].records.len(), 2);
     }
 }
