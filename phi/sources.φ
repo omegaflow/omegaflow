@@ -1397,6 +1397,16 @@ on earth 46.05 -125.0 0
 lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
 lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
 
+url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 3
+epoch 0
+field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
+field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
 at sun
@@ -7248,6 +7258,15 @@ url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/s
 format slab2_depth
 at earth
 ttl 31536000
+
+url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
 ttl 31536000
