@@ -2,7 +2,7 @@
   title: The solar 24-s seconds matrix — a 72-pair fleet measurement (XRS to EUV)
   class: paper
   date: 2026-09-12
-  sha256: d73fc425af1cb4856848e3e3e72b5bd76d32671e54e6399342a27d91e3939c62
+  sha256: f14341db1d9206954403de76b4c1b1b6e4af7cbb80f195f957fcd6e7c52980c0
   status: live
   see-also: docs/blatt/blatt-solar-seconds-matrix.md
 -->
