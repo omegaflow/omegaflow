@@ -1,11 +1,13 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::nexrad::{NexradMoment, NexradVolume, parse_nexrad};
+use omegaflow::archivar::nexrad::{NexradMoment, NexradSite, NexradVolume, nexrad_site, parse_nexrad};
 use omegaflow::cdn::upload_release;
 use std::io::{BufWriter, Write};
 
 const NETLOC: &str = "unidata-nexrad-level2.s3.amazonaws.com";
 const MAGIC: [u8; 4] = *b"NXR1";
 const REC_BYTES: usize = 44;
+const SITE_BYTES: usize = 1 + 4 + 8 + 8 + 8;
+const HEADER_BYTES: usize = 8 + SITE_BYTES;
 
 const KIND_REF: u32 = 1;
 const KIND_VEL: u32 = 2;
@@ -18,6 +20,11 @@ struct NexradSample {
     range_km: f64,
     value: f64,
     kind: u32,
+}
+
+struct NexradAsset {
+    site: Option<NexradSite>,
+    samples: Vec<NexradSample>,
 }
 
 fn volume_unix(date: u32, time_ms: u32) -> f64 {
@@ -189,15 +196,25 @@ fn report_geometry(volume: &NexradVolume) {
     eprintln!("elevation scans: {} ({:?})", el_nums.len(), el_nums);
 }
 
-fn write_asset(samples: &[NexradSample], out_path: &str) -> Result<usize, String> {
+fn write_asset(asset: &NexradAsset, out_path: &str) -> Result<usize, String> {
     let file = std::fs::File::create(out_path).map_err(|e| format!("create {out_path}: {e}"))?;
     let mut out = BufWriter::new(file);
     out.write_all(&MAGIC)
         .map_err(|e| format!("write {out_path}: {e}"))?;
-    out.write_all(&(samples.len() as u32).to_le_bytes())
+    out.write_all(&(asset.samples.len() as u32).to_le_bytes())
+        .map_err(|e| format!("write {out_path}: {e}"))?;
+    let mut site = [0u8; SITE_BYTES];
+    if let Some(s) = &asset.site {
+        site[0] = 1;
+        site[1..5].copy_from_slice(&s.stid);
+        site[5..13].copy_from_slice(&s.lat_deg.to_le_bytes());
+        site[13..21].copy_from_slice(&s.lon_deg.to_le_bytes());
+        site[21..29].copy_from_slice(&s.alt_m.to_le_bytes());
+    }
+    out.write_all(&site)
         .map_err(|e| format!("write {out_path}: {e}"))?;
     let mut rec = [0u8; REC_BYTES];
-    for s in samples {
+    for s in &asset.samples {
         rec[0..8].copy_from_slice(&s.t.to_le_bytes());
         rec[8..16].copy_from_slice(&s.az_deg.to_le_bytes());
         rec[16..24].copy_from_slice(&s.el_deg.to_le_bytes());
@@ -208,7 +225,7 @@ fn write_asset(samples: &[NexradSample], out_path: &str) -> Result<usize, String
             .map_err(|e| format!("write {out_path}: {e}"))?;
     }
     out.flush().map_err(|e| format!("flush {out_path}: {e}"))?;
-    let expect = 8 + samples.len() * REC_BYTES;
+    let expect = HEADER_BYTES + asset.samples.len() * REC_BYTES;
     let actual = std::fs::metadata(out_path)
         .map_err(|e| format!("stat {out_path}: {e}"))?
         .len() as usize;
@@ -220,16 +237,35 @@ fn write_asset(samples: &[NexradSample], out_path: &str) -> Result<usize, String
     Ok(expect)
 }
 
-fn parse_asset(bytes: &[u8]) -> Option<Vec<NexradSample>> {
-    if bytes.len() < 8 || bytes[0..4] != MAGIC {
+fn parse_asset(bytes: &[u8]) -> Option<NexradAsset> {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC {
         return None;
     }
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if bytes.len() != 8 + n * REC_BYTES {
+    if bytes.len() != HEADER_BYTES + n * REC_BYTES {
         return None;
     }
+    let site = match bytes[8] {
+        0 => None,
+        1 => {
+            let stid = bytes[9..13].try_into().ok()?;
+            let lat_deg = f64::from_le_bytes(bytes[13..21].try_into().ok()?);
+            let lon_deg = f64::from_le_bytes(bytes[21..29].try_into().ok()?);
+            let alt_m = f64::from_le_bytes(bytes[29..37].try_into().ok()?);
+            if !lat_deg.is_finite() || !lon_deg.is_finite() || !alt_m.is_finite() {
+                return None;
+            }
+            Some(NexradSite {
+                stid,
+                lat_deg,
+                lon_deg,
+                alt_m,
+            })
+        }
+        _ => return None,
+    };
     let mut out = Vec::with_capacity(n);
-    let mut off = 8usize;
+    let mut off = HEADER_BYTES;
     let f64_of = |b: &[u8], r: std::ops::Range<usize>| {
         b.get(r)
             .and_then(|x| x.try_into().ok())
@@ -243,7 +279,12 @@ fn parse_asset(bytes: &[u8]) -> Option<Vec<NexradSample>> {
         let range_km = f64_of(s, 24..32)?;
         let value = f64_of(s, 32..40)?;
         let kind = u32::from_le_bytes(s[40..44].try_into().ok()?);
-        if !t.is_finite() || !az_deg.is_finite() || !el_deg.is_finite() || !value.is_finite() {
+        if !t.is_finite()
+            || !az_deg.is_finite()
+            || !el_deg.is_finite()
+            || !range_km.is_finite()
+            || !value.is_finite()
+        {
             return None;
         }
         out.push(NexradSample {
@@ -256,7 +297,7 @@ fn parse_asset(bytes: &[u8]) -> Option<Vec<NexradSample>> {
         });
         off += REC_BYTES;
     }
-    Some(out)
+    Some(NexradAsset { site, samples: out })
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -323,8 +364,10 @@ fn main() {
         }
     };
     report_value_ranges(&samples);
+    let site = volume.stid.and_then(|stid| nexrad_site(&stid));
+    let asset = NexradAsset { site, samples };
 
-    if let Err(e) = write_asset(&samples, &out_path) {
+    if let Err(e) = write_asset(&asset, &out_path) {
         eprintln!("nexrad_level2_compiler: {e}");
         std::process::exit(1);
     }
@@ -338,11 +381,21 @@ fn main() {
         }
     };
     match parse_asset(&written) {
-        Some(parsed) if parsed.len() == samples.len() => {
-            let last = parsed.last().unwrap();
+        Some(parsed) if parsed.samples.len() == asset.samples.len() => {
+            let last = parsed.samples.last().unwrap();
+            let site_line = match &parsed.site {
+                Some(s) => format!(
+                    "{} lat {:.5} lon {:.5} alt {:.1} m",
+                    String::from_utf8_lossy(&s.stid),
+                    s.lat_deg,
+                    s.lon_deg,
+                    s.alt_m
+                ),
+                None => "absent".to_string(),
+            };
             eprintln!(
-                "nexrad: {} samples, {} B -> {out_path}, roundtrip parses; last {} az {:.4} deg el {:.4} deg range {:.3} km value {:.4}",
-                parsed.len(),
+                "nexrad: {} samples, {} B -> {out_path}, site {site_line}, roundtrip parses; last {} az {:.4} deg el {:.4} deg range {:.3} km value {:.4}",
+                parsed.samples.len(),
                 written.len(),
                 kind_name(last.kind),
                 last.az_deg,
@@ -401,6 +454,12 @@ mod tests {
 
     #[test]
     fn asset_roundtrip_and_rejections() {
+        let site = NexradSite {
+            stid: *b"KTLX",
+            lat_deg: 35.33306,
+            lon_deg: -97.2775,
+            alt_m: 1213.0 * 0.3048,
+        };
         let samples = vec![
             NexradSample {
                 t: 1_704_067_204.932,
@@ -419,21 +478,53 @@ mod tests {
                 kind: KIND_VEL,
             },
         ];
+        let asset = NexradAsset {
+            site: Some(site),
+            samples,
+        };
         let out = "/tmp/opencode/nexrad_test_asset.bin";
-        let bytes = write_asset(&samples, out).unwrap();
-        assert_eq!(bytes, 8 + samples.len() * REC_BYTES);
+        let bytes = write_asset(&asset, out).unwrap();
+        assert_eq!(bytes, HEADER_BYTES + asset.samples.len() * REC_BYTES);
         let read = std::fs::read(out).unwrap();
         let parsed = parse_asset(&read).unwrap();
-        assert_eq!(parsed.len(), samples.len());
-        assert_eq!(parsed[0].value, -32.0);
-        assert_eq!(parsed[1].kind, KIND_VEL);
-        assert_eq!(parsed[1].range_km, 2.375);
+        assert_eq!(parsed.samples.len(), asset.samples.len());
+        let parsed_site = parsed.site.expect("the site roundtrips");
+        assert_eq!(parsed_site.stid, *b"KTLX");
+        assert!((parsed_site.lat_deg - 35.33306).abs() < 1e-9);
+        assert!((parsed_site.lon_deg - -97.2775).abs() < 1e-9);
+        assert!((parsed_site.alt_m - 1213.0 * 0.3048).abs() < 1e-9);
+        assert_eq!(parsed.samples[0].value, -32.0);
+        assert_eq!(parsed.samples[1].kind, KIND_VEL);
+        assert_eq!(parsed.samples[1].range_km, 2.375);
 
         assert!(parse_asset(b"X").is_none());
         assert!(parse_asset(b"NXR1abc").is_none());
         assert!(parse_asset(&read[..read.len() - 1]).is_none());
         let mut nan = read.clone();
-        nan[8..16].copy_from_slice(&f64::NAN.to_le_bytes());
+        nan[HEADER_BYTES..HEADER_BYTES + 8].copy_from_slice(&f64::NAN.to_le_bytes());
         assert!(parse_asset(&nan).is_none());
+    }
+
+    #[test]
+    fn absent_site_roundtrips_as_none_not_origin() {
+        let asset = NexradAsset {
+            site: None,
+            samples: vec![NexradSample {
+                t: 1.0,
+                az_deg: 90.0,
+                el_deg: 0.5,
+                range_km: 2.125,
+                value: -32.0,
+                kind: KIND_REF,
+            }],
+        };
+        let out = "/tmp/opencode/nexrad_test_no_site.bin";
+        let bytes = write_asset(&asset, out).unwrap();
+        assert_eq!(bytes, HEADER_BYTES + REC_BYTES);
+        let read = std::fs::read(out).unwrap();
+        let parsed = parse_asset(&read).unwrap();
+        assert!(parsed.site.is_none());
+        assert_eq!(parsed.samples.len(), 1);
+        assert_eq!(parsed.samples[0].range_km, 2.125);
     }
 }

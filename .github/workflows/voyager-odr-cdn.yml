@@ -45,3 +45,32 @@ jobs:
             --year 1981 \
             --out voyager_odr.bin \
             --ci-mode
+
+  voyager-odr-series:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the series shards already exist on the CDN
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^voyager_odr_s"; then
+            echo "voyager_odr_s* shards already present — harvest skipped"
+            exit 0
+          fi
+          echo "voyager_odr_s* shards missing — harvesting the series"
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "Voyager VG2-S RSS open-loop files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Harvest the Voyager 2 Saturn ODR series and manifest the shards to the CDN
+        run: |
+          curl -fsSL https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB -o INDEX.TAB
+          cargo run --release -p omegaflow-harvest --bin voyager_odr_compiler -- \
+            --index INDEX.TAB \
+            --base https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/ \
+            --ci-mode
