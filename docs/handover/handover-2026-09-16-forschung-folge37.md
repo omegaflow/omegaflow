@@ -3,7 +3,7 @@
   session: Forschung-Folge 37
   class: handover
   date: 2026-09-16
-  sha256: 36d2d1a14b4a296f4ddc3583f0ced06cf0eccacd0ee0a5267761065ac7332cf4
+  sha256: 4e031fd91c1c3d4855ded47420be45134e84b563514b751d68d20a5dc5170386
   status: live
 -->
 # Handover — Forschung-Folge 37 (2026-09-16)
@@ -84,9 +84,11 @@ Stations-Weltlinien baryzentrisch in denselben `oscs`-Vektor in `sky_tick`
 ## Bande-Split / Sonden-ODF
 - **160-Hz-Amplitudenzensus** — Probe gebaut (`band_amplitude_probe.rs`), kein
   CI-Workflow. (Schritt: `pioneer-band-amplitude.yml` anlegen.)
-- **NOCC-Reduktionsvorschrift** — Integration in
-  `twenty-second-band-ground-chain.md` blockiert (fremde uncommittete Hunk).
-  (Schritt: Datei-Eigentum klären.)
+- **NOCC-Reduktionsvorschrift** — die Datei ist forschung-eigen (geklärt
+  2026-09-16: der „fremde Hunk" war der eigene Abstract/Method-Stand, committet);
+  die Integration der Reduktionsvorschrift selbst bleibt offen (§176: „the named
+  machine of the NOCC reduction remains open"). (Schritt: die Vorschrift in
+  `twenty-second-band-ground-chain.md` integrieren.)
 - **7 planetare ODF** — `planetary-odf-cdn` run 35097513235 noch
   `in_progress`; odyssey exit 1, mro canceled, mars_express/rosetta laufen.
   (Schritt: `gh run view 35097513235` + `--log-failed` der zwei Fehljobs.)
