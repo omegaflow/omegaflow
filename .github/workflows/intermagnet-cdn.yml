@@ -48,14 +48,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view imag-data.bgs.ac.uk --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ${{ inputs.asset }} already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
           fi
-          echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
       - name: Compile and manifest the station dB/dt flat series
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           end_arg=""
           if [ -n "${{ inputs.end }}" ]; then end_arg="--end ${{ inputs.end }}"; fi

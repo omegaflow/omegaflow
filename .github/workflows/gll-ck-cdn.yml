@@ -17,14 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Idempotence — skip if the raw kernel already rests on the CDN
+        id: idempotence
         run: |
           if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "gll_plt_rec_1990_tav_v00.bc"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset gll_plt_rec_1990_tav_v00.bc already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset gll_plt_rec_1990_tav_v00.bc missing — mirroring"
           fi
-          echo "asset gll_plt_rec_1990_tav_v00.bc missing — mirroring"
       - name: Fetch the Galileo 1990 CK from NAIF and verify the sha256 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL --retry 3 --max-time 3000 -o gll_plt_rec_1990_tav_v00.bc \
             https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/gll_plt_rec_1990_tav_v00.bc
@@ -39,6 +43,7 @@ jobs:
             exit 1
           fi
       - name: Ensure the naif.jpl.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view naif.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create naif.jpl.nasa.gov --repo omegaflow/sources \
@@ -46,6 +51,7 @@ jobs:
               --notes "raw NAIF SPICE reference kernels mirrored for omegaflow measure tools (CDN tag = netloc)"
           fi
       - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           gh release upload naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc \
             --clobber --repo omegaflow/sources
