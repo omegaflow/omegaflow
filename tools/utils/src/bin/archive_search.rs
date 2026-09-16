@@ -1329,10 +1329,10 @@ mod tests {
         }
         let roots = vec![dir.display().to_string()];
         let keywords = vec!["needle".to_string()];
-        let all = collect_plain(&roots, &keywords, 2, 40, 100, 0, false, false);
+        let all = collect_plain(&roots, &keywords, 2, 40, 100, 0, false, false, None);
         assert_eq!(all.matched, 3);
         assert_eq!(all.hits, 3);
-        let skipped = collect_plain(&roots, &keywords, 2, 40, 100, 2, false, false);
+        let skipped = collect_plain(&roots, &keywords, 2, 40, 100, 2, false, false, None);
         let shown = skipped
             .lines
             .iter()

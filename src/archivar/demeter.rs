@@ -178,8 +178,8 @@ mod tests {
         assert_eq!(b.minute, 57);
         assert_eq!(b.second, 36);
         assert_eq!(b.orbit, 585.0);
-        assert!((b.ne - 43708.691).abs() < 0.01);
-        assert!((b.ni - 36078.199).abs() < 0.01);
+        assert!((b.ne - 43_708.69).abs() < 0.01);
+        assert!((b.ni - 36_078.2).abs() < 0.01);
         assert!((b.te - 3125.682).abs() < 0.01);
         assert!((b.vf - 1.0184).abs() < 0.001);
         assert!((b.vi0 + 0.12).abs() < 0.001);

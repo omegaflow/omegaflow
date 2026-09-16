@@ -155,20 +155,19 @@ fn parse_atom_sites(text: &str) -> Option<Vec<CrystalAtom>> {
                 None => None,
             }
             .unwrap_or(b' ');
-            if let (Some(fx), Some(fy), Some(fz), Some(occ)) = (fx, fy, fz, occupancy) {
-                if fx.is_finite()
-                    && fy.is_finite()
-                    && fz.is_finite()
-                    && occ.is_finite()
-                    && occ > 0.0
-                {
-                    atoms.push(CrystalAtom {
-                        species: species_bytes(tokens[species_col]),
-                        fract: [fx, fy, fz],
-                        occupancy: occ,
-                        wyckoff,
-                    });
-                }
+            if let (Some(fx), Some(fy), Some(fz), Some(occ)) = (fx, fy, fz, occupancy)
+                && fx.is_finite()
+                && fy.is_finite()
+                && fz.is_finite()
+                && occ.is_finite()
+                && occ > 0.0
+            {
+                atoms.push(CrystalAtom {
+                    species: species_bytes(tokens[species_col]),
+                    fract: [fx, fy, fz],
+                    occupancy: occ,
+                    wyckoff,
+                });
             }
             k += 1;
         }

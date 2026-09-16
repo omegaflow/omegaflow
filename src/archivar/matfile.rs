@@ -202,19 +202,11 @@ fn read_int32(
         let value = match width {
             1 => {
                 let b = body[at];
-                if signed {
-                    b as i8 as i32
-                } else {
-                    b as i32
-                }
+                if signed { b as i8 as i32 } else { b as i32 }
             }
             2 => {
                 let b = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
-                if signed {
-                    b as i16 as i32
-                } else {
-                    b as i32
-                }
+                if signed { b as i16 as i32 } else { b as i32 }
             }
             4 => {
                 let b = u32::from_le_bytes(body[at..at + 4].try_into().ok()?);
@@ -412,9 +404,7 @@ mod tests {
         body.extend_from_slice(&MI_INT8.to_le_bytes());
         body.extend_from_slice(&(name_len as u32).to_le_bytes());
         body.extend_from_slice(name.as_bytes());
-        for _ in name.len()..name_len {
-            body.push(0);
-        }
+        body.resize(name_len, 0);
         body.extend_from_slice(&MI_DOUBLE.to_le_bytes());
         body.extend_from_slice(&((data.len() * 8) as u32).to_le_bytes());
         for &v in data {
@@ -495,9 +485,7 @@ mod tests {
         b.extend_from_slice(&MI_INT8.to_le_bytes());
         b.extend_from_slice(&(len as u32).to_le_bytes());
         b.extend_from_slice(name.as_bytes());
-        for _ in name.len()..len {
-            b.push(0);
-        }
+        b.resize(len, 0);
         b
     }
 
@@ -534,7 +522,7 @@ mod tests {
     }
 
     fn pad_body(body: &mut Vec<u8>) {
-        while body.len() % 8 != 0 {
+        while !body.len().is_multiple_of(8) {
             body.push(0);
         }
     }
@@ -556,9 +544,7 @@ mod tests {
         body.extend_from_slice(&MI_INT8.to_le_bytes());
         body.extend_from_slice(&(table_len as u32).to_le_bytes());
         body.extend_from_slice(&table);
-        for _ in field_len..table_len {
-            body.push(0);
-        }
+        body.resize(table_len, 0);
         let n_elements = dims.iter().product::<i32>() as usize;
         for i in 0..n_elements {
             for (_, values) in fields {

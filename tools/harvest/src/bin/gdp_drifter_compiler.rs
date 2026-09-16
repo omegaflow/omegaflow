@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::zarr::{blosc_decompress_with, Blosc};
-use omegaflow::archivar::{jpath_val, json_num, jstr, parse_json, JsonVal};
+use omegaflow::archivar::zarr::{Blosc, blosc_decompress_with};
+use omegaflow::archivar::{JsonVal, jpath_val, json_num, jstr, parse_json};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};

@@ -9,7 +9,7 @@ fn parse_three(s: &str) -> Option<(f64, f64, f64)> {
         _ => (1.0, t),
     };
     let parts: Vec<&str> = rest
-        .split(|c: char| c == ' ' || c == ':' || c == '\t')
+        .split([' ', ':', '\t'])
         .filter(|p| !p.is_empty())
         .collect();
     if parts.len() != 3 {
@@ -18,7 +18,7 @@ fn parse_three(s: &str) -> Option<(f64, f64, f64)> {
     let a: f64 = parts[0].parse().ok()?;
     let b: f64 = parts[1].parse().ok()?;
     let c: f64 = parts[2].parse().ok()?;
-    if !(a >= 0.0) || !(0.0..60.0).contains(&b) || !(0.0..60.0).contains(&c) {
+    if a < 0.0 || a.is_nan() || !(0.0..60.0).contains(&b) || !(0.0..60.0).contains(&c) {
         return None;
     }
     Some((sign * a, b, c))

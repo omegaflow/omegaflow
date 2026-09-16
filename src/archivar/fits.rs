@@ -850,8 +850,8 @@ impl FitsCompressedImage {
     }
 
     pub fn tile_pixels(&self, buf: &[u8], t: [usize; 3]) -> Option<Vec<i64>> {
-        for a in 0..3 {
-            if t[a] >= self.tiles_per_axis(a) {
+        for (a, &tv) in t.iter().enumerate() {
+            if tv >= self.tiles_per_axis(a) {
                 return None;
             }
         }
@@ -882,10 +882,10 @@ impl FitsCompressedImage {
     }
 
     pub fn pixel_value(&self, raw: i64) -> Option<f64> {
-        if let Some(b) = self.blank {
-            if raw == b {
-                return None;
-            }
+        if let Some(b) = self.blank
+            && raw == b
+        {
+            return None;
         }
         Some(raw as f64 * self.zscale + self.zzero)
     }
@@ -895,8 +895,8 @@ fn decode_int_bytes(bytes: &[u8], bytepix: usize, nvals: usize) -> Option<Vec<i6
     let mut out = Vec::with_capacity(nvals);
     match bytepix {
         1 => {
-            for i in 0..nvals {
-                out.push(bytes[i] as i64);
+            for &b in bytes.iter().take(nvals) {
+                out.push(b as i64);
             }
         }
         2 => {
@@ -939,7 +939,7 @@ impl FitsTable {
                 let raw = buf.get(off..off + col.width)?;
                 let s = from_utf8(raw)
                     .ok()?
-                    .trim_end_matches(|c| c == ' ' || c == '\0')
+                    .trim_end_matches([' ', '\0'])
                     .to_string();
                 Some(FitsValue::Str(s))
             }
@@ -997,9 +997,7 @@ const LPF_TEST_MASS_KG: f64 = 1.928;
 pub fn drs_differential_acceleration(buf: &[u8]) -> Option<Vec<[f64; 3]>> {
     let mut off = 0usize;
     loop {
-        let Some((header, _)) = FitsHeader::parse(buf, off) else {
-            return None;
-        };
+        let (header, _) = FitsHeader::parse(buf, off)?;
         let next = if header.value("XTENSION") == Some("'BINTABLE'") {
             if header.str_unescaped("EXTNAME").as_deref() == Some("SCI_SCIENCE_1Hz") {
                 let (table, _) = FitsTable::parse(buf, off)?;
@@ -1044,8 +1042,8 @@ fn drs_dg_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<[f64; 3]>> {
 #[cfg(test)]
 mod tests {
     use super::{
-        drs_differential_acceleration, FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs,
-        WcsProjection,
+        FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection,
+        drs_differential_acceleration,
     };
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
@@ -1065,7 +1063,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1086,7 +1084,7 @@ mod tests {
         ext.extend_from_slice(&pad_card("TFORM2", "D"));
         ext.extend_from_slice(&pad_card("TBCOL2", "5"));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1099,7 +1097,7 @@ mod tests {
         for row in rows {
             buf.extend_from_slice(&row);
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1120,7 +1118,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1139,7 +1137,7 @@ mod tests {
         ext.extend_from_slice(&pad_card("TTYPE2", "'TIME'"));
         ext.extend_from_slice(&pad_card("TFORM2", "D"));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1151,7 +1149,7 @@ mod tests {
         for row in rows {
             buf.extend_from_slice(&row);
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1203,7 +1201,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1224,7 +1222,7 @@ mod tests {
         ext.extend_from_slice(&pad_card("TFORM2", "2J"));
         ext.extend_from_slice(&pad_card("TBCOL2", "17"));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1240,7 +1238,7 @@ mod tests {
         for row in rows {
             buf.extend_from_slice(&row);
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1282,7 +1280,7 @@ mod tests {
         header.extend_from_slice(&pad_card("NAXIS3", "2"));
         header.extend_from_slice(&pad_card("GHISTSEQ", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1290,7 +1288,7 @@ mod tests {
         for v in vals {
             buf.extend_from_slice(&v.to_be_bytes());
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         let (img, next) = FitsImage::parse(&buf, 0).unwrap();
@@ -1314,14 +1312,14 @@ mod tests {
             header.extend_from_slice(&pad_card(&format!("GHIST{:03}", i), "x"));
         }
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
         for v in [1.0f32, 2.0f32] {
             buf.extend_from_slice(&v.to_be_bytes());
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         let (img, _) = FitsImage::parse(&buf, 0).unwrap();
@@ -1337,12 +1335,12 @@ mod tests {
             header.extend_from_slice(&pad_card(k, v));
         }
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
         buf.extend_from_slice(raw);
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1571,7 +1569,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1591,14 +1589,14 @@ mod tests {
             ext.extend_from_slice(&pad_card(k, v));
         }
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
         for row in rows {
             buf.extend_from_slice(row);
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1628,7 +1626,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1646,7 +1644,7 @@ mod tests {
         ext.extend_from_slice(&pad_card("TFORM1", "'1PB'"));
         ext.extend_from_slice(&pad_card("TBCOL1", "1"));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1656,7 +1654,7 @@ mod tests {
         buf.extend_from_slice(&2u32.to_be_bytes());
         buf.extend_from_slice(&3u32.to_be_bytes());
         buf.extend_from_slice(&[1, 2, 3, 4, 5]);
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1669,7 +1667,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1687,7 +1685,7 @@ mod tests {
         ext.extend_from_slice(&pad_card("TFORM1", "'1QB'"));
         ext.extend_from_slice(&pad_card("TBCOL1", "1"));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1697,7 +1695,7 @@ mod tests {
         buf.extend_from_slice(&1i64.to_be_bytes());
         buf.extend_from_slice(&3i64.to_be_bytes());
         buf.extend_from_slice(&[9, 8, 7, 6]);
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1782,7 +1780,7 @@ mod tests {
         header.extend_from_slice(&pad_card("BITPIX", "8"));
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1805,13 +1803,13 @@ mod tests {
         ext.extend_from_slice(&pad_card("TBCOL2", "5"));
         ext.extend_from_slice(&pad_card("TUNIT2", tunit2));
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
 
         buf.extend_from_slice(&[4, 3, 2, 1, 63, 240, 0, 0, 0, 0, 0, 0]);
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf
@@ -1827,7 +1825,7 @@ mod tests {
         header.extend_from_slice(&pad_card("NAXIS", "0"));
         header.extend_from_slice(&pad_card("EXTEND", "T"));
         header.extend_from_slice(&pad_card("END", ""));
-        while header.len() % 2880 != 0 {
+        while !header.len().is_multiple_of(2880) {
             header.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&header);
@@ -1849,7 +1847,7 @@ mod tests {
             ext.extend_from_slice(&pad_card(&format!("TBCOL{idx}"), &(i * 8 + 1).to_string()));
         }
         ext.extend_from_slice(&pad_card("END", ""));
-        while ext.len() % 2880 != 0 {
+        while !ext.len().is_multiple_of(2880) {
             ext.extend_from_slice(&[b' '; 80]);
         }
         buf.extend_from_slice(&ext);
@@ -1860,7 +1858,7 @@ mod tests {
                 buf.extend_from_slice(&v.to_be_bytes());
             }
         }
-        while buf.len() % 2880 != 0 {
+        while !buf.len().is_multiple_of(2880) {
             buf.push(0);
         }
         buf

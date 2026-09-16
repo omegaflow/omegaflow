@@ -53,10 +53,10 @@ pub fn zeugen_gate(
             if !has_scalar {
                 return ZeugeVerdict::BareCoordinate;
             }
-            if let Some(declared) = declared_art {
-                if declared != art {
-                    return ZeugeVerdict::Pending;
-                }
+            if let Some(declared) = declared_art
+                && declared != art
+            {
+                return ZeugeVerdict::Pending;
             }
             ZeugeVerdict::Holds(art)
         }

@@ -228,8 +228,8 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     let n = 200usize;
     let mut x = vec![0f32; n];
     let mut y = vec![0f32; n];
-    for t in 0..n {
-        y[t] = (t as f32 * 0.5).sin();
+    for (t, slot) in y.iter_mut().enumerate() {
+        *slot = (t as f32 * 0.5).sin();
     }
     for t in 0..n - 1 {
         x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -458,8 +458,8 @@ fn force_ref_medians_routes_forces_and_honors_zero() {
     assert_eq!(meds[0].unwrap(), 4.0);
     assert_eq!(meds[1], None);
     assert_eq!(meds[2].unwrap(), 2.0);
-    for ft in 3..9 {
-        assert_eq!(meds[ft], None);
+    for m in &meds[3..9] {
+        assert!(m.is_none());
     }
 }
 
@@ -471,23 +471,25 @@ fn force_ref_medians_holds_reference_on_absence() {
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
             mpsc::sync_channel(2).1,
-            Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
-            Arc::new(AtomicBool::new(false)),
-            Arc::new(std::sync::atomic::AtomicU8::new(
-                crate::archivar::hrv::TONE_ABSENT,
-            )),
-            mpsc::channel().0,
-            mpsc::channel().0,
-            None,
-            mpsc::channel().1,
-            mpsc::channel().1,
-            Arc::new(RwLock::new(PresenceState::rest())),
-            Arc::new(RwLock::new(DiodeState {
-                force_ref: [0.0; 9],
-                expose_offset: EXPOSE_OFFSET_BASE,
-                em_color: [0.0; 4],
-            })),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+            },
         )
     };
     app.packed_field = vec![0.0; 12];
@@ -521,23 +523,25 @@ fn force_ref_snaps_on_first_sight() {
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
             mpsc::sync_channel(2).1,
-            Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
-            Arc::new(AtomicBool::new(false)),
-            Arc::new(std::sync::atomic::AtomicU8::new(
-                crate::archivar::hrv::TONE_ABSENT,
-            )),
-            mpsc::channel().0,
-            mpsc::channel().0,
-            None,
-            mpsc::channel().1,
-            mpsc::channel().1,
-            Arc::new(RwLock::new(PresenceState::rest())),
-            Arc::new(RwLock::new(DiodeState {
-                force_ref: [0.0; 9],
-                expose_offset: EXPOSE_OFFSET_BASE,
-                em_color: [0.0; 4],
-            })),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+            },
         )
     };
     app.packed_field = vec![0.0; 12];
@@ -555,23 +559,25 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
             mpsc::sync_channel(2).1,
-            Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
-            Arc::new(AtomicBool::new(false)),
-            Arc::new(std::sync::atomic::AtomicU8::new(
-                crate::archivar::hrv::TONE_ABSENT,
-            )),
-            mpsc::channel().0,
-            mpsc::channel().0,
-            None,
-            mpsc::channel().1,
-            mpsc::channel().1,
-            Arc::new(RwLock::new(PresenceState::rest())),
-            Arc::new(RwLock::new(DiodeState {
-                force_ref: [0.0; 9],
-                expose_offset: EXPOSE_OFFSET_BASE,
-                em_color: [0.0; 4],
-            })),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+            },
         )
     };
     app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
@@ -845,7 +851,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
         pb2[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
     }
     queue.write_buffer(&param_buf, 0, &pb2);
-    let groups = (pack2.probe_count + 63) / 64;
+    let groups = pack2.probe_count.div_ceil(64);
     assert!(groups >= 3, "a 130-probe window must span workgroups");
     let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
     {
@@ -897,7 +903,7 @@ fn s2_gpu_matches_the_cpu_spherical_harmonic_reference() {
 
 #[test]
 fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
-    use crate::archivar::s2event::{S2EventRecord, ROOT_NEUTRINO};
+    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
     let evt = |ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>| S2EventRecord {
         ra_deg: ra as f32,
         dec_deg: dec as f32,
@@ -913,23 +919,25 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
             mpsc::sync_channel(2).1,
-            Arc::new(Mutex::new(None)),
             Arc::new(AtomicBool::new(false)),
-            Arc::new(AtomicBool::new(false)),
-            Arc::new(std::sync::atomic::AtomicU8::new(
-                crate::archivar::hrv::TONE_ABSENT,
-            )),
-            mpsc::channel().0,
-            mpsc::channel().0,
-            None,
-            mpsc::channel().1,
-            mpsc::channel().1,
-            Arc::new(RwLock::new(PresenceState::rest())),
-            Arc::new(RwLock::new(DiodeState {
-                force_ref: [0.0; 9],
-                expose_offset: EXPOSE_OFFSET_BASE,
-                em_color: [0.0; 4],
-            })),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+            },
         )
     };
     app.t_presence = 8.4e8;
@@ -945,8 +953,8 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
     assert!((with_epoch.weight - 187.0).abs() < 1e-6);
     let expected = evt(30.0, 60.0, Some(8.4e8), Some(187.0));
     let p = expected.unit_direction();
-    for k in 0..3 {
-        assert!((with_epoch.p_hat[k] - p[k]).abs() < 1e-12);
+    for (a, b) in with_epoch.p_hat.iter().zip(p.iter()) {
+        assert!((a - b).abs() < 1e-12);
     }
     let epochless = &app.sky.oscs[1];
     assert_eq!(epochless.weight, 0.0);
@@ -978,15 +986,12 @@ fn sg_fr(gpu: &mut ScalarTeGpu, x: &[f32], y: &[f32], lag: usize) -> Option<(f64
     if grid.is_empty() {
         return None;
     }
-    let fv = grid[((0 * 11 + 0) * 13 + lag) * 2 + 1];
-    let rv = grid[((1 * 11 + 0) * 13 + lag) * 2 + 1];
+    let fv = grid[lag * 2 + 1];
+    let rv = grid[(11 * 13 + lag) * 2 + 1];
     if fv == 0.0 || rv == 0.0 {
         return None;
     }
-    Some((
-        grid[((0 * 11 + 0) * 13 + lag) * 2] as f64,
-        grid[((1 * 11 + 0) * 13 + lag) * 2] as f64,
-    ))
+    Some((grid[lag * 2] as f64, grid[(11 * 13 + lag) * 2] as f64))
 }
 
 fn sg_parity_agree(
@@ -1154,7 +1159,7 @@ fn scalar_gpu_parity_n_floor() {
     );
     let grid = gpu.run(&x, &constant, &[]);
     if !grid.is_empty() {
-        let valid = grid[0 + 1];
+        let valid = grid[1];
         assert_eq!(valid, 0.0, "scalar GPU constant series must stay absent");
     }
 }
@@ -1176,13 +1181,7 @@ fn scalar_gpu_parity_surrogate_slots_match_cpu() {
     if grid.is_empty() {
         return;
     }
-    let series_at = |k: usize| -> &[f32] {
-        if k == 0 {
-            &y
-        } else {
-            &surrs[k - 1]
-        }
-    };
+    let series_at = |k: usize| -> &[f32] { if k == 0 { &y } else { &surrs[k - 1] } };
     let mut viol = 0usize;
     let mut meas = 0usize;
     for dir in 0..2 {

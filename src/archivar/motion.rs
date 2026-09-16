@@ -123,7 +123,7 @@ pub fn body_barycenter_position(
         }
         let g = &e.granules[i];
         let tau = (jd - g.t0_jd) / g.dt_jd;
-        if tau >= -1.0 - GRANULE_TAU_EPS && tau <= 1.0 + GRANULE_TAU_EPS {
+        if (-1.0 - GRANULE_TAU_EPS..=1.0 + GRANULE_TAU_EPS).contains(&tau) {
             return Some([
                 chebyshev_evaluate(&g.cx, tau),
                 chebyshev_evaluate(&g.cy, tau),
@@ -148,7 +148,7 @@ pub fn body_barycenter_velocity(
         }
         let g = &e.granules[i];
         let tau = (jd - g.t0_jd) / g.dt_jd;
-        if tau >= -1.0 - GRANULE_TAU_EPS && tau <= 1.0 + GRANULE_TAU_EPS {
+        if (-1.0 - GRANULE_TAU_EPS..=1.0 + GRANULE_TAU_EPS).contains(&tau) {
             let scale = 1.0 / (g.dt_jd * 86400.0);
             return Some([
                 chebyshev_evaluate_deriv(&g.cx, tau) * scale,
@@ -617,10 +617,12 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 };
                 let value = f(0);
                 let sigma = f(1);
-                if value > 0.0 && value.is_finite() && sigma.is_finite() {
-                    if let Some(ref mut p) = props {
-                        p.omega_g = Some((value, sigma));
-                    }
+                if value > 0.0
+                    && value.is_finite()
+                    && sigma.is_finite()
+                    && let Some(ref mut p) = props
+                {
+                    p.omega_g = Some((value, sigma));
                 }
                 pos += gs * 8;
             }

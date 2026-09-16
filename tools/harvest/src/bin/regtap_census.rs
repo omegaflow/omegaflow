@@ -5,7 +5,7 @@ use std::io::Write;
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use omegaflow::archivar::json::{parse_json, JsonVal};
+use omegaflow::archivar::json::{JsonVal, parse_json};
 
 fn as_arr(v: &JsonVal) -> Option<&Vec<JsonVal>> {
     match v {

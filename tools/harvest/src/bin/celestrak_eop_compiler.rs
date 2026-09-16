@@ -1,4 +1,4 @@
-use omegaflow::archivar::celestrak_eop::{parse_bin, write_bin, COMP_PMX, COMP_PMY, COMP_UT1_UTC};
+use omegaflow::archivar::celestrak_eop::{COMP_PMX, COMP_PMY, COMP_UT1_UTC, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::process::Command;
