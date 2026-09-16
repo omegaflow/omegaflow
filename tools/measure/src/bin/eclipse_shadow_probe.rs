@@ -1,8 +1,7 @@
 use omegaflow::archivar::astrometry::delta_t_espenak_meeus;
 use omegaflow::archivar::{
-    body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes,
-    light_time_worldline, orientation_angles_at, parse_ephemeris_binary, BodyEphemeris,
-    LeapSeconds,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk,
+    fetch_raw_bytes, light_time_worldline, orientation_angles_at, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
 use std::collections::HashMap;
@@ -330,11 +329,7 @@ fn magnitude_at(line: &Line, t: f64, obs: [f64; 3]) -> Option<f64> {
     let rs = angular_radius(sun_r, vlen(vsub(sun, obs))?)?;
     let rm = angular_radius(moon_r, vlen(vsub(moon, obs))?)?;
     let out = (rs + rm - theta) / (2.0 * rs);
-    if out.is_finite() {
-        Some(out)
-    } else {
-        None
-    }
+    if out.is_finite() { Some(out) } else { None }
 }
 
 fn sunlit(line: &Line, t: f64, obs: [f64; 3], geo: [f64; 3]) -> bool {

@@ -162,7 +162,7 @@ pub fn parse_p11r_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
 }
 
 pub fn parse_odf(bytes: &[u8]) -> Option<Vec<OdOrbit>> {
-    if bytes.len() % 36 != 0 {
+    if !bytes.len().is_multiple_of(36) {
         return None;
     }
     let mut out = Vec::new();
@@ -179,10 +179,8 @@ pub fn parse_odf(bytes: &[u8]) -> Option<Vec<OdOrbit>> {
                 in_orbit = words[0] == PK_ORBIT_HEADER;
             }
             _ => {
-                if in_orbit {
-                    if let Some(r) = orbit_record(&words) {
-                        out.push(r);
-                    }
+                if in_orbit && let Some(r) = orbit_record(&words) {
+                    out.push(r);
                 }
             }
         }

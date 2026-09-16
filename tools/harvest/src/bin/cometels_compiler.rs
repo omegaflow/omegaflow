@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
 use omegaflow::json::{JsonVal, parse_json};
-use omegaflow::kepler::{AU_M, GM_SUN_M3_S2, elements_to_icrs_state};
+use omegaflow::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
 use omegaflow::lsk::days_from_civil;
 use std::collections::HashMap;
 use std::io::Write;
@@ -25,7 +25,7 @@ fn get_str(o: &HashMap<String, JsonVal>, key: &str) -> Option<String> {
 }
 
 struct CometRow {
-    name: String,
+    name: Option<String>,
     ra_deg: f64,
     dec_deg: f64,
     dist_au: f64,
@@ -64,7 +64,16 @@ fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
     let a_m = a * AU_M;
     let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
     let ma_deg = ((n * (epoch_jd - tp_jd) * 86400.0).rem_euclid(TAU)).to_degrees();
-    let (p, _) = elements_to_icrs_state(a, e, incl, node, peri, ma_deg, epoch_jd, epoch_jd)?;
+    let (p, _) = elements_to_icrs_state(&KeplerElements {
+        a_au: a,
+        e,
+        incl_deg: incl,
+        node_deg: node,
+        peri_deg: peri,
+        ma_deg,
+        epoch_jd,
+        t_jd: epoch_jd,
+    })?;
     let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
     if !r.is_finite() || r <= 0.0 {
         return None;
@@ -73,8 +82,7 @@ fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
     let dec_deg = (p[2] / r).asin().to_degrees();
     Some(CometRow {
         name: get_str(obj, "Designation_and_name")
-            .or_else(|| get_str(obj, "Provisional_packed_desig"))
-            .unwrap_or_else(|| "unnamed".to_string()),
+            .or_else(|| get_str(obj, "Provisional_packed_desig")),
         ra_deg,
         dec_deg,
         dist_au: r / AU_M,
@@ -170,9 +178,11 @@ fn main() {
     if let Some(name) = &probe {
         for v in &arr {
             if let JsonVal::Obj(obj) = v {
-                let n = get_str(obj, "Designation_and_name")
+                let Some(n) = get_str(obj, "Designation_and_name")
                     .or_else(|| get_str(obj, "Provisional_packed_desig"))
-                    .unwrap_or_default();
+                else {
+                    continue;
+                };
                 if n.contains(name) {
                     let e = get_num(obj, "e");
                     let q = get_num(obj, "Perihelion_dist");
@@ -218,7 +228,10 @@ fn main() {
         }
         buf.push_str(&format!(
             "{{\"name\":{},\"ra\":{},\"dec\":{},\"dist_au\":{},\"H\":{}}}",
-            json_string(&r.name),
+            match &r.name {
+                Some(n) => json_string(n),
+                None => "null".to_string(),
+            },
             r.ra_deg,
             r.dec_deg,
             r.dist_au,

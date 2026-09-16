@@ -183,10 +183,10 @@ pub fn ledger_done(workdir: &std::path::Path) -> std::collections::HashSet<Strin
     let mut done = std::collections::HashSet::new();
     if let Ok(body) = std::fs::read_to_string(workdir.join(JWST_LEDGER)) {
         for line in body.lines() {
-            if let Some((obs_id, _)) = line.split_once('\t') {
-                if !obs_id.is_empty() {
-                    done.insert(obs_id.to_string());
-                }
+            if let Some((obs_id, _)) = line.split_once('\t')
+                && !obs_id.is_empty()
+            {
+                done.insert(obs_id.to_string());
             }
         }
     }

@@ -173,7 +173,7 @@ pub fn force_ref_medians(field: &[f32], meta: &[f32]) -> [Option<f32>; 9] {
         if n[ft] == 0 {
             continue;
         }
-        let target = (n[ft] + 1) / 2;
+        let target = n[ft].div_ceil(2);
         let mut cum = 0u32;
         let mut bin = 0usize;
         while cum < target && bin < 256 {

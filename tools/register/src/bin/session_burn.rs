@@ -178,7 +178,7 @@ fn print_by(burns: &[Burn], key: &str, top: usize) {
         e.5 += b.cache_read;
     }
     let mut v: Vec<_> = map.into_iter().collect();
-    v.sort_by(|a, b| b.1 .1.total_cmp(&a.1 .1));
+    v.sort_by(|a, b| b.1.1.total_cmp(&a.1.1));
     println!("\nby {key}:");
     println!(
         "  {:>16}  {:>4}  {:>10}  {:>8}  {:>9}  {:>11}  {:>9}",

@@ -2,7 +2,7 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    TeNull, conditional_te_stats_lagged_n, transfer_entropy_binned,
+    TeNull, TeStatsParams, conditional_te_stats_lagged_n, transfer_entropy_binned,
     transfer_entropy_conditional_binned_n,
 };
 use omegaflow_measure::eeglab::{
@@ -300,12 +300,14 @@ fn run_pair(
             b,
             a,
             &[],
-            lag,
-            lag,
-            bins,
-            lag_seed,
-            n_surr,
-            TeNull::Phase,
+            TeStatsParams {
+                lag,
+                max_lag: lag,
+                bins,
+                seed: lag_seed,
+                n_surr,
+                null: TeNull::Phase,
+            },
         )
         .map(|(_, _, thr)| thr);
         let te_ba = transfer_entropy_binned(a, b, lag, bins);
@@ -314,12 +316,14 @@ fn run_pair(
             a,
             b,
             &[],
-            lag,
-            lag,
-            bins,
-            lag_seed,
-            n_surr,
-            TeNull::Phase,
+            TeStatsParams {
+                lag,
+                max_lag: lag,
+                bins,
+                seed: lag_seed,
+                n_surr,
+                null: TeNull::Phase,
+            },
         )
         .map(|(_, _, thr)| thr);
         let v_ab = match (te_ab, fam_ab) {
@@ -407,12 +411,14 @@ fn run_pair(
                 b,
                 a,
                 &[c],
-                lag,
-                lag,
-                bins,
-                lag_seed,
-                n_surr,
-                TeNull::Phase,
+                TeStatsParams {
+                    lag,
+                    max_lag: lag,
+                    bins,
+                    seed: lag_seed,
+                    n_surr,
+                    null: TeNull::Phase,
+                },
             )
             .map(|(_, _, thr)| thr);
             let te_ba = transfer_entropy_conditional_binned_n(a, b, &[c], lag, bins);
@@ -420,12 +426,14 @@ fn run_pair(
                 a,
                 b,
                 &[c],
-                lag,
-                lag,
-                bins,
-                lag_seed,
-                n_surr,
-                TeNull::Phase,
+                TeStatsParams {
+                    lag,
+                    max_lag: lag,
+                    bins,
+                    seed: lag_seed,
+                    n_surr,
+                    null: TeNull::Phase,
+                },
             )
             .map(|(_, _, thr)| thr);
             let v_ab = match (te_ab, fam_ab) {
@@ -636,12 +644,14 @@ mod tests {
             &b,
             &a,
             &[],
-            delay,
-            delay,
-            4,
-            lag_seed,
-            50,
-            TeNull::Phase,
+            TeStatsParams {
+                lag: delay,
+                max_lag: delay,
+                bins: 4,
+                seed: lag_seed,
+                n_surr: 50,
+                null: TeNull::Phase,
+            },
         )
         .expect("the null is measurable");
         assert!(
@@ -672,12 +682,14 @@ mod tests {
             &b,
             &a,
             &[&c],
-            delay,
-            delay,
-            4,
-            lag_seed,
-            50,
-            TeNull::Phase,
+            TeStatsParams {
+                lag: delay,
+                max_lag: delay,
+                bins: 4,
+                seed: lag_seed,
+                n_surr: 50,
+                null: TeNull::Phase,
+            },
         )
         .expect("the conditional null is measurable");
         assert!(

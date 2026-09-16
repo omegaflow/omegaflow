@@ -77,7 +77,7 @@ impl SpkType2 {
         let intlen = trailer[1];
         let rsize = trailer[2] as usize;
         let n_records = trailer[3] as usize;
-        if rsize < 2 || (rsize - 2) % 3 != 0 {
+        if rsize < 2 || !(rsize - 2).is_multiple_of(3) {
             return Err(SpkError::BadType2("RSIZE not 2 + 3N"));
         }
         let n_coef = (rsize - 2) / 3;
@@ -148,7 +148,7 @@ impl SpkType3 {
         let intlen = trailer[1];
         let rsize = trailer[2] as usize;
         let n_records = trailer[3] as usize;
-        if rsize < 2 || (rsize - 2) % 6 != 0 {
+        if rsize < 2 || !(rsize - 2).is_multiple_of(6) {
             return Err(SpkError::BadType2("RSIZE not 2 + 6N"));
         }
         let n_coef = (rsize - 2) / 6;
@@ -351,7 +351,7 @@ impl SpkType20 {
         if intlen <= 0.0 {
             return Err(SpkError::BadType2("INTLEN <= 0"));
         }
-        if rsize < 6 || (rsize - 3) % 3 != 0 {
+        if rsize < 6 || !(rsize - 3).is_multiple_of(3) {
             return Err(SpkError::BadType2("RSIZE not 3 + 3*(DEGP+1)"));
         }
         let degree = rsize / 3 - 2;

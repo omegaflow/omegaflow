@@ -188,9 +188,9 @@ mod tests {
         let recs = parse_odr(&bytes).unwrap();
         assert_eq!(recs.len(), 3);
         assert_eq!(recs[0].header.record_number, 1);
-        assert_eq!(recs[0].header.time_tag_valid, true);
+        assert!(recs[0].header.time_tag_valid);
         assert_eq!(recs[1].header.record_number, 2);
-        assert_eq!(recs[1].header.time_tag_valid, false);
+        assert!(!recs[1].header.time_tag_valid);
         assert_eq!(recs[2].header.record_number, 3);
         assert!(parse_odr(b"X").unwrap().is_empty());
     }

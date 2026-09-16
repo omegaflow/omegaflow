@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, geostationary_lat_lon, Endian, Hdf5Attribute, Hdf5Datatype, Hdf5File,
-    Hdf5Object,
+    Endian, Hdf5Attribute, Hdf5Datatype, Hdf5File, Hdf5Object, decode_f32, decode_f64,
+    geostationary_lat_lon,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
@@ -244,11 +244,7 @@ fn root_attr_number(file: &Hdf5File, name: &str) -> Option<f64> {
 
 fn scalar_f64(file: &Hdf5File, name: &str) -> Option<f64> {
     let v = file.read_f64_dataset(name).ok()?.first().copied()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn band_wavelength_um(file: &Hdf5File) -> Option<f64> {

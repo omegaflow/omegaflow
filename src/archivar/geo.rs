@@ -382,10 +382,10 @@ pub fn verify_bin(magic: [u8; 4], bytes: &[u8]) -> Option<usize> {
         if !t.is_finite() || !val.is_finite() {
             return None;
         }
-        if let Some(p) = prev_t {
-            if t < p {
-                return None;
-            }
+        if let Some(p) = prev_t
+            && t < p
+        {
+            return None;
         }
         prev_t = Some(t);
     }

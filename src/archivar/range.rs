@@ -113,18 +113,32 @@ fn sigv4_signing_key(secret_key: &str, date_stamp: &str, region: &str) -> [u8; 3
     hmac_sha256(&k_service, b"aws4_request")
 }
 
-fn sigv4_headers(
-    access_key: &str,
-    secret_key: &str,
-    region: &str,
-    host: &str,
-    canonical_uri: &str,
-    canonical_query: &str,
-    range: Option<&str>,
-    amz_date: &str,
-    date_stamp: &str,
-    session_token: Option<&str>,
-) -> Vec<(String, String)> {
+pub struct Sigv4Args<'a> {
+    pub access_key: &'a str,
+    pub secret_key: &'a str,
+    pub region: &'a str,
+    pub host: &'a str,
+    pub canonical_uri: &'a str,
+    pub canonical_query: &'a str,
+    pub range: Option<&'a str>,
+    pub amz_date: &'a str,
+    pub date_stamp: &'a str,
+    pub session_token: Option<&'a str>,
+}
+
+pub fn sigv4_headers(args: &Sigv4Args<'_>) -> Vec<(String, String)> {
+    let Sigv4Args {
+        access_key,
+        secret_key,
+        region,
+        host,
+        canonical_uri,
+        canonical_query,
+        range,
+        amz_date,
+        date_stamp,
+        session_token,
+    } = *args;
     let mut canonical_headers = String::new();
     canonical_headers.push_str(&format!("host:{}\n", host));
     let mut signed_headers = String::from("host");
@@ -167,80 +181,6 @@ fn sigv4_headers(
     }
     out.push(("Authorization".to_string(), authorization));
     out
-}
-
-pub fn sigv4_get_headers(
-    access_key: &str,
-    secret_key: &str,
-    region: &str,
-    host: &str,
-    canonical_uri: &str,
-    range: &str,
-    amz_date: &str,
-    date_stamp: &str,
-    session_token: Option<&str>,
-) -> Vec<(String, String)> {
-    sigv4_headers(
-        access_key,
-        secret_key,
-        region,
-        host,
-        canonical_uri,
-        "",
-        Some(range),
-        amz_date,
-        date_stamp,
-        session_token,
-    )
-}
-
-pub fn sigv4_whole_headers(
-    access_key: &str,
-    secret_key: &str,
-    region: &str,
-    host: &str,
-    canonical_uri: &str,
-    amz_date: &str,
-    date_stamp: &str,
-    session_token: Option<&str>,
-) -> Vec<(String, String)> {
-    sigv4_headers(
-        access_key,
-        secret_key,
-        region,
-        host,
-        canonical_uri,
-        "",
-        None,
-        amz_date,
-        date_stamp,
-        session_token,
-    )
-}
-
-pub fn sigv4_list_headers(
-    access_key: &str,
-    secret_key: &str,
-    region: &str,
-    host: &str,
-    canonical_uri: &str,
-    canonical_query: &str,
-    amz_date: &str,
-    date_stamp: &str,
-    session_token: Option<&str>,
-) -> Vec<(String, String)> {
-    sigv4_headers(
-        access_key,
-        secret_key,
-        region,
-        host,
-        canonical_uri,
-        canonical_query,
-        None,
-        amz_date,
-        date_stamp,
-        session_token,
-    )
 }
 
 pub fn uri_encode_path(path: &str) -> String {
@@ -359,18 +299,19 @@ pub fn fetch_s3_range(
         Some(c) => {
             let unix = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
             let date_stamp = date_str(unix).replace('-', "");
-            let amz_date = hour_str(unix).replace('-', "").replace(':', "");
-            sigv4_get_headers(
-                &c.access_key,
-                &c.secret_key,
-                S3_REGION,
-                S3_ENDPOINT,
-                &canonical_uri,
-                &range,
-                &amz_date,
-                &date_stamp,
-                Some(&c.session_token),
-            )
+            let amz_date = hour_str(unix).replace(['-', ':'], "");
+            sigv4_headers(&Sigv4Args {
+                access_key: &c.access_key,
+                secret_key: &c.secret_key,
+                region: S3_REGION,
+                host: S3_ENDPOINT,
+                canonical_uri: &canonical_uri,
+                canonical_query: "",
+                range: Some(&range),
+                amz_date: &amz_date,
+                date_stamp: &date_stamp,
+                session_token: Some(&c.session_token),
+            })
         }
         None => Vec::new(),
     };
@@ -433,17 +374,19 @@ pub fn fetch_s3_whole(s3_url: &str, ttl: u64) -> Option<Vec<u8>> {
             let https_url = format!("https://{}{}", S3_ENDPOINT, canonical_uri);
             let unix = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
             let date_stamp = date_str(unix).replace('-', "");
-            let amz_date = hour_str(unix).replace('-', "").replace(':', "");
-            let headers = sigv4_whole_headers(
-                &creds.access_key,
-                &creds.secret_key,
-                S3_REGION,
-                S3_ENDPOINT,
-                &canonical_uri,
-                &amz_date,
-                &date_stamp,
-                Some(&creds.session_token),
-            );
+            let amz_date = hour_str(unix).replace(['-', ':'], "");
+            let headers = sigv4_headers(&Sigv4Args {
+                access_key: &creds.access_key,
+                secret_key: &creds.secret_key,
+                region: S3_REGION,
+                host: S3_ENDPOINT,
+                canonical_uri: &canonical_uri,
+                canonical_query: "",
+                range: None,
+                amz_date: &amz_date,
+                date_stamp: &date_stamp,
+                session_token: Some(&creds.session_token),
+            });
             fetch_whole(&https_url, ttl, &headers)
         }
         Some(S3CredentialRoute::OAuth) => None,
@@ -549,18 +492,19 @@ fn s3_list_request(bucket: &str, canonical_query: &str) -> Option<(String, Vec<(
             );
             let unix = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
             let date_stamp = date_str(unix).replace('-', "");
-            let amz_date = hour_str(unix).replace('-', "").replace(':', "");
-            let headers = sigv4_list_headers(
-                &creds.access_key,
-                &creds.secret_key,
-                S3_REGION,
-                S3_ENDPOINT,
-                &canonical_uri,
+            let amz_date = hour_str(unix).replace(['-', ':'], "");
+            let headers = sigv4_headers(&Sigv4Args {
+                access_key: &creds.access_key,
+                secret_key: &creds.secret_key,
+                region: S3_REGION,
+                host: S3_ENDPOINT,
+                canonical_uri: &canonical_uri,
                 canonical_query,
-                &amz_date,
-                &date_stamp,
-                Some(&creds.session_token),
-            );
+                range: None,
+                amz_date: &amz_date,
+                date_stamp: &date_stamp,
+                session_token: Some(&creds.session_token),
+            });
             Some((https_url, headers))
         }
         Some(S3CredentialRoute::OAuth) => None,
@@ -628,17 +572,18 @@ mod tests {
 
     #[test]
     fn sigv4_reproduces_the_aws_get_object_example() {
-        let headers = sigv4_get_headers(
-            "AKIAIOSFODNN7EXAMPLE",
-            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-            "us-east-1",
-            "examplebucket.s3.amazonaws.com",
-            "/test.txt",
-            "bytes=0-9",
-            "20130524T000000Z",
-            "20130524",
-            None,
-        );
+        let headers = sigv4_headers(&Sigv4Args {
+            access_key: "AKIAIOSFODNN7EXAMPLE",
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            region: "us-east-1",
+            host: "examplebucket.s3.amazonaws.com",
+            canonical_uri: "/test.txt",
+            canonical_query: "",
+            range: Some("bytes=0-9"),
+            amz_date: "20130524T000000Z",
+            date_stamp: "20130524",
+            session_token: None,
+        });
         let auth = headers
             .iter()
             .find(|(k, _)| k == "Authorization")
@@ -652,16 +597,18 @@ mod tests {
 
     #[test]
     fn sigv4_whole_headers_omit_the_range_header() {
-        let headers = sigv4_whole_headers(
-            "AKIAIOSFODNN7EXAMPLE",
-            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-            "us-east-1",
-            "examplebucket.s3.amazonaws.com",
-            "/test.txt",
-            "20130524T000000Z",
-            "20130524",
-            None,
-        );
+        let headers = sigv4_headers(&Sigv4Args {
+            access_key: "AKIAIOSFODNN7EXAMPLE",
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            region: "us-east-1",
+            host: "examplebucket.s3.amazonaws.com",
+            canonical_uri: "/test.txt",
+            canonical_query: "",
+            range: None,
+            amz_date: "20130524T000000Z",
+            date_stamp: "20130524",
+            session_token: None,
+        });
         assert!(headers.iter().all(|(k, _)| k != "range"));
         let auth = headers
             .iter()
@@ -763,27 +710,30 @@ mod tests {
     #[test]
     fn sigv4_list_headers_sign_the_query_string() {
         let query = "list-type=2&prefix=GRACE-FO_L2%2F";
-        let no_query = sigv4_whole_headers(
-            "AKIAIOSFODNN7EXAMPLE",
-            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-            "us-east-1",
-            "examplebucket.s3.amazonaws.com",
-            "/examplebucket",
-            "20130524T000000Z",
-            "20130524",
-            None,
-        );
-        let with_query = sigv4_list_headers(
-            "AKIAIOSFODNN7EXAMPLE",
-            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-            "us-east-1",
-            "examplebucket.s3.amazonaws.com",
-            "/examplebucket",
-            query,
-            "20130524T000000Z",
-            "20130524",
-            None,
-        );
+        let no_query = sigv4_headers(&Sigv4Args {
+            access_key: "AKIAIOSFODNN7EXAMPLE",
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            region: "us-east-1",
+            host: "examplebucket.s3.amazonaws.com",
+            canonical_uri: "/examplebucket",
+            canonical_query: "",
+            range: None,
+            amz_date: "20130524T000000Z",
+            date_stamp: "20130524",
+            session_token: None,
+        });
+        let with_query = sigv4_headers(&Sigv4Args {
+            access_key: "AKIAIOSFODNN7EXAMPLE",
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            region: "us-east-1",
+            host: "examplebucket.s3.amazonaws.com",
+            canonical_uri: "/examplebucket",
+            canonical_query: query,
+            range: None,
+            amz_date: "20130524T000000Z",
+            date_stamp: "20130524",
+            session_token: None,
+        });
         let auth_no_query = no_query
             .iter()
             .find(|(k, _)| k == "Authorization")

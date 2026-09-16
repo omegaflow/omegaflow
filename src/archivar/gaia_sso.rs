@@ -67,7 +67,7 @@ pub fn write_bin(bodies: &[GaiaBody]) -> Option<Vec<u8>> {
             if !t.tdb.is_finite() || !t.ra_deg.is_finite() || !t.dec_deg.is_finite() {
                 return None;
             }
-            if !t.sigma_arcsec.is_finite() || !(t.sigma_arcsec > 0.0) {
+            if !t.sigma_arcsec.is_finite() || t.sigma_arcsec <= 0.0 {
                 return None;
             }
             out.extend_from_slice(&t.tdb.to_le_bytes());
@@ -106,7 +106,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<GaiaBody>> {
                 || !ra_deg.is_finite()
                 || !dec_deg.is_finite()
                 || !sigma_arcsec.is_finite()
-                || !(sigma_arcsec > 0.0)
+                || sigma_arcsec <= 0.0
             {
                 return None;
             }
@@ -147,11 +147,7 @@ fn cell_f64(cells: &[&str], k: usize) -> Option<f64> {
         return None;
     }
     let v: f64 = cell.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 pub struct GaiaCsvCounts {
@@ -248,7 +244,7 @@ pub fn parse_observation_csv(
             position_void += 1;
             continue;
         };
-        if !(ra_deg >= 0.0 && ra_deg < 360.0) || !(dec_deg >= -90.0 && dec_deg <= 90.0) {
+        if !(0.0..360.0).contains(&ra_deg) || !(-90.0..=90.0).contains(&dec_deg) {
             position_void += 1;
             continue;
         }
@@ -297,7 +293,7 @@ pub fn parse_observation_csv(
     for b in &mut collected {
         b.transits.sort_by(|a, c| a.tdb.total_cmp(&c.tdb));
     }
-    collected.sort_by(|a, b| a.number_mp.cmp(&b.number_mp));
+    collected.sort_by_key(|a| a.number_mp);
     Some((
         collected,
         GaiaCsvCounts {

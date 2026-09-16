@@ -1,4 +1,4 @@
-use crate::archivar::skydirection::{parse_bin, SkyDirection};
+use crate::archivar::skydirection::{SkyDirection, parse_bin};
 
 pub const S2_LMAX: u32 = 64;
 
@@ -197,6 +197,12 @@ pub struct SkyState {
     pub forward_field: f32,
     pub permeability: f32,
     pub loaded: bool,
+}
+
+impl Default for SkyState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl SkyState {
@@ -431,8 +437,8 @@ pub fn event_window(events: &[S2EventRecord], t: f64, tau_s: f64) -> Vec<S2Osc> 
 
 #[cfg(test)]
 mod s2event_tests {
-    use super::{event_presence, event_window, field_at, S2Osc, S2_LMAX, S2_TAU_DEFAULT_S};
-    use crate::archivar::s2event::{S2EventRecord, ROOT_NEUTRINO};
+    use super::{S2_LMAX, S2_TAU_DEFAULT_S, S2Osc, event_presence, event_window, field_at};
+    use crate::archivar::s2event::{ROOT_NEUTRINO, S2EventRecord};
 
     fn evt(ra: f64, dec: f64, epoch: Option<f64>, energy: Option<f64>) -> S2EventRecord {
         S2EventRecord {
@@ -453,8 +459,8 @@ mod s2event_tests {
         let o = S2Osc::from_event(&e, 8.4e8, S2_TAU_DEFAULT_S);
         assert!((o.weight - 187.0).abs() < 1e-6);
         let p = e.unit_direction();
-        for k in 0..3 {
-            assert!((o.p_hat[k] - p[k]).abs() < 1e-12);
+        for (a, b) in o.p_hat.iter().zip(p.iter()) {
+            assert!((a - b).abs() < 1e-12);
         }
         let field = field_at(o.p_hat, &[o], S2_LMAX);
         assert!(field.is_finite());

@@ -1,4 +1,4 @@
-use super::{decode_point, LasHeader, LasNote, LasPoint, LasVlr};
+use super::{LasHeader, LasNote, LasPoint, LasVlr, decode_point};
 
 const BM_LENGTH_SHIFT: u32 = 13;
 const DM_LENGTH_SHIFT: u32 = 15;
@@ -570,7 +570,7 @@ struct Point14State {
 }
 
 impl Point14State {
-    fn to_raw(&self, out: &mut [u8]) {
+    fn to_raw(self, out: &mut [u8]) {
         out[0..4].copy_from_slice(&self.x.to_le_bytes());
         out[4..8].copy_from_slice(&self.y.to_le_bytes());
         out[8..12].copy_from_slice(&self.z.to_le_bytes());
@@ -1679,10 +1679,10 @@ impl ByteReader {
     }
 
     fn read(&mut self, dec: &mut AcDecoder, out: &mut [u8]) -> Result<(), LasNote> {
-        for i in 0..self.number {
+        for (i, o) in out.iter_mut().enumerate().take(self.number) {
             let v = self.last_item[i] as i32 + dec.decode_symbol(&mut self.m_byte[i])? as i32;
-            out[i] = u8_fold(v);
-            self.last_item[i] = out[i];
+            *o = u8_fold(v);
+            self.last_item[i] = *o;
         }
         Ok(())
     }
@@ -1759,11 +1759,13 @@ fn take_layer(
     Ok(Some(dec))
 }
 
+type ChunkTable = (Vec<u64>, Option<Vec<u64>>, u32);
+
 fn read_chunk_table(
     header: &LasHeader,
     bytes: &[u8],
     layout: &LaszipLayout,
-) -> Result<(Vec<u64>, Option<Vec<u64>>, u32), LasNote> {
+) -> Result<ChunkTable, LasNote> {
     let point_start = header.offset_to_points as usize;
     if point_start + 8 > bytes.len() {
         return Err(LasNote::LazChunkTable { off: point_start });
@@ -2553,8 +2555,7 @@ fn decode_chunk_layered(
                 let number = size;
                 let mut reader = Byte14Reader::new(number);
                 let mut decs = Vec::with_capacity(number);
-                for j in 0..number {
-                    let n = sizes[j];
+                for &n in sizes.iter().take(number) {
                     if n > 0 {
                         let data = cur.read_bytes(n)?;
                         let d = AcDecoder::init(data, layer_base + offset)?;
@@ -2629,10 +2630,10 @@ fn decode_chunk_layered(
 }
 
 enum PointwiseItem {
-    Point10(Point10Reader),
+    Point10(Box<Point10Reader>),
     GpsTime11(GpsTime11Reader),
     Rgb12(Rgb12Reader),
-    Wavepacket13(Wavepacket13Reader),
+    Wavepacket13(Box<Wavepacket13Reader>),
     Byte(ByteReader),
 }
 
@@ -2702,7 +2703,7 @@ fn decode_chunk_pointwise(
                 a.copy_from_slice(&raw_first[off..off + 20]);
                 let mut r = Point10Reader::new();
                 r.init(&a);
-                PointwiseItem::Point10(r)
+                PointwiseItem::Point10(Box::new(r))
             }
             ITEM_GPSTIME11 => {
                 if size != 8 {
@@ -2738,7 +2739,7 @@ fn decode_chunk_pointwise(
                 a.copy_from_slice(&raw_first[off..off + 29]);
                 let mut r = Wavepacket13Reader::new();
                 r.init(&a);
-                PointwiseItem::Wavepacket13(r)
+                PointwiseItem::Wavepacket13(Box::new(r))
             }
             ITEM_BYTE => {
                 if size == 0 {

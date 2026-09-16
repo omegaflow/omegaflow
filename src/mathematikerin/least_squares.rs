@@ -19,8 +19,11 @@ pub fn solve_normal_equations(
         a.swap(i, pivot);
         for j in i + 1..n {
             let factor = a[j][i] / a[i][i];
-            for k in i..n {
-                a[j][k] -= factor * a[i][k];
+            let (head, tail) = a.split_at_mut(j);
+            let ai = &head[i];
+            let aj = &mut tail[0];
+            for (ajk, aik) in aj[i..].iter_mut().zip(&ai[i..]) {
+                *ajk -= factor * aik;
             }
         }
     }

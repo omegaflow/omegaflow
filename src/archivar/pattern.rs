@@ -83,13 +83,11 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         bi += 1;
                     }
                     if max == usize::MAX {
-                        while b.get(bi).map_or(false, |&c| check(c)) {
+                        while b.get(bi).is_some_and(|&c| check(c)) {
                             bi += 1;
                         }
-                    } else if min == 0 && max == 1 {
-                        if b.get(bi).map_or(false, |&c| check(c)) {
-                            bi += 1;
-                        }
+                    } else if min == 0 && max == 1 && b.get(bi).is_some_and(|&c| check(c)) {
+                        bi += 1;
                     }
                 }
                 b'.' => {
@@ -124,7 +122,7 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                             if end > b.len() {
                                 continue;
                             }
-                            if b[bi..end].iter().any(|&c| c == b'\n') {
+                            if b[bi..end].contains(&b'\n') {
                                 continue;
                             }
                             if let Some(res) = match_re(pi, p, end, b, cap) {
@@ -169,12 +167,11 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                     }
                     let save = bi;
                     if let Some(new_bi) = match_re(0, &p[pi + 1..end], bi, b, cap) {
-                        if cap.is_none() {
-                            if let Ok(s) = std::str::from_utf8(&b[save..new_bi]) {
-                                if let Ok(v) = s.parse::<f64>() {
-                                    *cap = Some(v);
-                                }
-                            }
+                        if cap.is_none()
+                            && let Ok(s) = std::str::from_utf8(&b[save..new_bi])
+                            && let Ok(v) = s.parse::<f64>()
+                        {
+                            *cap = Some(v);
                         }
                         bi = new_bi;
                         pi = end + 1;
@@ -193,7 +190,7 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         if p[pi] == b'\\' {
                             cls.push(p[pi + 1]);
                             pi += 2;
-                        } else if p.get(pi + 1).map_or(false, |&c| c == b'-')
+                        } else if p.get(pi + 1).is_some_and(|&c| c == b'-')
                             && p.get(pi + 2).is_some()
                         {
                             let lo = p[pi];
@@ -228,24 +225,25 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         (1, 1)
                     };
                     if min > 0 {
-                        let in_cls = bc().map_or(false, |c| cls.contains(&c));
+                        let in_cls = bc().is_some_and(|c| cls.contains(&c));
                         if neg == in_cls {
                             return None;
                         }
                         bi += 1;
                     }
                     if max == usize::MAX {
-                        while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
+                        while b.get(bi).is_some_and(|c| cls.contains(c) != neg) {
                             bi += 1;
                         }
-                    } else if min == 0 && max == 1 {
-                        if b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
-                            bi += 1;
-                        }
+                    } else if min == 0
+                        && max == 1
+                        && b.get(bi).is_some_and(|c| cls.contains(c) != neg)
+                    {
+                        bi += 1;
                     }
                 }
                 c => {
-                    if bc().map_or(false, |bc| bc == c) {
+                    if bc() == Some(c) {
                         bi += 1;
                         pi += 1;
                     } else {
