@@ -3,6 +3,8 @@ pub const HEADER_BYTES: usize = 166;
 pub const AD_GROUP_BYTES: usize = 4;
 pub const AD_REPETITIONS: usize = 625;
 pub const DATA_BYTES: usize = AD_REPETITIONS * AD_GROUP_BYTES;
+pub const SHORT_RECORD_BYTES: usize = 566;
+pub const SHORT_AD_REPETITIONS: usize = 100;
 pub const COMP_AD1: u32 = 1;
 pub const COMP_AD2: u32 = 2;
 pub const COMP_AD3: u32 = 3;
@@ -74,6 +76,34 @@ pub fn record_stride(bytes: &[u8]) -> Option<usize> {
         return None;
     }
     Some(words * 2)
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OdrLayout {
+    Short8Bit,
+    Long8Bit,
+    TwelveBit,
+    Other,
+}
+
+pub fn layout(bytes: &[u8]) -> Option<OdrLayout> {
+    let h = header(bytes)?;
+    let stride = record_stride(bytes)?;
+    let quad_bytes = if h.eight_bit { AD_GROUP_BYTES } else { 6 };
+    let data = stride - HEADER_BYTES;
+    if data % quad_bytes != 0 {
+        return None;
+    }
+    let quads = data / quad_bytes;
+    Some(if !h.eight_bit {
+        OdrLayout::TwelveBit
+    } else if quads == SHORT_AD_REPETITIONS {
+        OdrLayout::Short8Bit
+    } else if quads == AD_REPETITIONS {
+        OdrLayout::Long8Bit
+    } else {
+        OdrLayout::Other
+    })
 }
 
 pub fn record(bytes: &[u8]) -> Option<OdrRecord> {
@@ -316,6 +346,37 @@ mod tests {
         ]
     }
 
+    fn measured_90320204_record_one_header() -> [u8; HEADER_BYTES] {
+        [
+            0xd2, 0x00, 0x00, 0x01, 0x01, 0x1b, 0x0e, 0x00, 0x4d, 0x0a, 0xc6, 0x20, 0x00, 0x71,
+            0xb9, 0x48, 0x4c, 0x56, 0x37, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x75, 0x43,
+            0x14, 0x52, 0x98, 0x44, 0x06, 0x08, 0x00, 0x71, 0xbd, 0x30, 0x07, 0x43, 0x14, 0x52,
+            0x98, 0x44, 0x06, 0x08, 0x00, 0x71, 0xbd, 0x3a, 0x11, 0x00, 0x00, 0x01, 0x58, 0xd3,
+            0x72, 0x53, 0x40, 0x00, 0x58, 0xd3, 0x72, 0x52, 0x30, 0x00, 0x11, 0x10, 0x00, 0x71,
+            0xbd, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+            0xff, 0x6a, 0x11, 0x11, 0x11, 0x11, 0x77, 0x12, 0x77, 0x77, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x71, 0x97, 0x38, 0x00, 0x07, 0x04, 0xe2, 0x00, 0x07, 0x00, 0x07, 0x20, 0x20,
+            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x71, 0x97, 0x38, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xc8, 0xa5, 0x5a, 0x00, 0x00, 0x24, 0x1b,
+        ]
+    }
+
+    fn sample_short_record(record_number: u16) -> Vec<u8> {
+        let mut bytes = vec![0u8; SHORT_RECORD_BYTES];
+        bytes[..HEADER_BYTES].copy_from_slice(&measured_90320204_record_one_header());
+        bytes[2..4].copy_from_slice(&record_number.to_be_bytes());
+        for i in 0..SHORT_AD_REPETITIONS {
+            let base = HEADER_BYTES + i * AD_GROUP_BYTES;
+            bytes[base] = i as u8;
+            bytes[base + 1] = (i * 2) as u8;
+            bytes[base + 2] = (i * 3) as u8;
+            bytes[base + 3] = (i * 4) as u8;
+        }
+        bytes
+    }
+
     #[test]
     fn header_decodes_measured_63131033_record_one() {
         let h = header(&measured_63131033_record_one()).unwrap();
@@ -500,5 +561,69 @@ mod tests {
         assert!(parse_series(&bin).unwrap().is_empty());
 
         assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn header_decodes_measured_90320204_record_one() {
+        let h = header(&measured_90320204_record_one_header()).unwrap();
+        assert_eq!(h.record_number, 1);
+        assert_eq!(h.record_words, 283);
+        assert_eq!(h.spacecraft, 77);
+        assert_eq!(h.spc, 10);
+        assert_eq!(h.year, 99);
+        assert_eq!(h.doy, 32);
+        assert_eq!(h.time_tag_ms, 7_453_000);
+        assert_eq!(h.sample_rate, 200);
+        assert!(h.eight_bit);
+    }
+
+    #[test]
+    fn layout_names_the_measured_layouts() {
+        assert_eq!(layout(&sample_short_record(1)), Some(OdrLayout::Short8Bit));
+        assert_eq!(layout(&sample_record(1)), Some(OdrLayout::Long8Bit));
+        assert_eq!(layout(&sample_record_twelve(1)), Some(OdrLayout::TwelveBit));
+        assert!(layout(&[0u8; 100]).is_none());
+    }
+
+    #[test]
+    fn record_decodes_short_8bit_quads() {
+        let bytes = sample_short_record(1);
+        let r = record(&bytes).unwrap();
+        assert_eq!(r.header.record_number, 1);
+        assert_eq!(r.header.sample_rate, 200);
+        assert_eq!(r.ad.len(), SHORT_AD_REPETITIONS);
+        assert_eq!(r.ad[0], [0u16, 0, 0, 0]);
+        assert_eq!(r.ad[1], [1u16, 2, 3, 4]);
+        assert_eq!(r.ad[SHORT_AD_REPETITIONS - 1], [99u16, 198, 41, 140]);
+        assert!(record(&bytes[..SHORT_RECORD_BYTES - 1]).is_none());
+    }
+
+    #[test]
+    fn parse_odr_strides_short_records() {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&sample_short_record(1));
+        bytes.extend_from_slice(&sample_short_record(2));
+        bytes.extend_from_slice(&[0u8; 200]);
+        assert_eq!(stride_split(&bytes), Some((2, 200)));
+        let recs = parse_odr(&bytes).unwrap();
+        assert_eq!(recs.len(), 2);
+        assert_eq!(recs[0].header.record_number, 1);
+        assert_eq!(recs[1].header.record_number, 2);
+    }
+
+    #[test]
+    fn parse_series_emits_short_quads_at_200hz() {
+        let bin = godr_pack(&[sample_short_record(1)]);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), SHORT_AD_REPETITIONS * AD_GROUP_BYTES);
+        let dt = 1.0 / 200.0;
+        assert!((series[4].0 - series[0].0 - dt).abs() < 1e-12);
+        assert_eq!(series[0].1, 0.0);
+        assert_eq!(series[0].2, COMP_AD1);
+        assert_eq!(series[1].1, 0.0);
+        assert_eq!(series[1].2, COMP_AD2);
+        assert_eq!(series[2].2, COMP_AD3);
+        assert_eq!(series[3].2, COMP_AD4);
+        assert_eq!(series[4].1, 1.0);
     }
 }
