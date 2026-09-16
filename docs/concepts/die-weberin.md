@@ -1,8 +1,8 @@
 <!--
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
-  date: 2026-09-06
-  sha256: ca8d9f8698a048a0e934e5ad33ea6d17200cbeeb7debfda0238b288fb5a766ee
+  date: 2026-09-16
+  sha256: ac6cb00acdb416897a001850383e4e472da0ac5d2283525b16f9aaea29996960
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -224,13 +224,16 @@ OFFLINE — tools/measure-Proben:
 
 | DIE WEBERIN | gebaut als |
 |---|---|
+| §3 Kette — topozentrische Kopplung | `topocentric_coupling_probe` (Rømer-Fold vom Stationspunkt, Stations-Parallaxe, 7 Tests) |
 | §4 Schuss — Verdict | `direction_distance_join` (Placed/Absent/DirectionOnly) |
+| §4 Schuss — Körper-Verdict | `weberin_mpc_spk_verdict`, `weberin_body_verdict`, `gaia_sso_weave_probe` |
 | §4 Schuss — TE-Screen | `pair_te_screen` |
 | §4 Schuss — Linien/Footprint | `nadel_gate.rs` (SIMBAD-Otype + AllWISE-W1−W2), `deredden_baseline_probe` |
 | §4 Schuss — Stations-Konvergenz | `station_convergence_probe` (INTERMAGNET gegen SWARM) |
+| §4 Schuss — Riss-Knoten | `riss_knoten_probe` (Ledger zwirn/riss/absent, Körper/Station/geliehen, 16 Tests) |
 | §5 Vlies — Rømer-Toleranz | `tdb_coincidence_probe` |
 
-## 9. Die Bau-Linie — alles wird gebaut, nichts wird vertagt
+## 9. Die Bau-Linie — der gemessene Stand
 
 Kein Deferral, kein Parken. Was ungebaut ist, wird registriert — `pending`,
 nicht `absent`. Was gemessen nie gebaut wurde und nicht gebraucht wird, ist
@@ -240,47 +243,58 @@ gepudertes Deferred (2026-09-08, cone mode). Der Parkplatz der ersten
 Übergabe ist abgewickelt und als Zustand geschlossen: die Flotten-Idee
 trägt die Kette als die 72-Sonden-Flotte im Myzel-Split; BepiColombo-Zeile
 und Maske-Front N–ⅠⅧ tragen keine Commit-Spur (git log --all, gemessen) —
-Grabsteine ohne Messung werden nicht gesetzt. Was folgt, ist die Bau-Linie,
-jede Stufe benannt, jede
-komplett zu bauen:
+Grabsteine ohne Messung werden nicht gesetzt. Der Stand der neun Stufen,
+gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
 
-1. Die zweite Körper-Linie: MPC-Bahnen als Live-Leg (oder ein kleines
-   Tages-Derivat) gegen die Ephemeris-Punkte — der Verdict für Körper
-   (Placed/Absent/DirectionOnly statt der einen Linie).
-2. Die Stations-Konvergenz: unabhängige Netz-Linien am selben Punkt
-   (INTERMAGNET gegen SWARM-Überflug, Pegel gegen Altimetrie) — der
-   Verdict für Stationen, auf den schon fließenden fanout-Ringen, ohne
-   neues Netz. Gebaut als `station_convergence_probe` (Workflow
-   `station-convergence.yml`); erster gemessener Punkt: Station ABK
-   (68.358 N 18.823 E), 2026-09-15 — INTERMAGNET-Boden 53710.2 nT gegen
-   SWARM-Überflug 44908.5 nT (1.98° Versatz, 01:28:43Z), Abweichung
-   8801.7 nT über der Toleranz 836.2 nT: ein Riss, der sichtbar bleibt.
-3. Die topozentrische Kopplung: die Station sieht den Himmel von ihrer
-   eigenen Weltlinie aus — Rømer-Toleranz vom Stationspunkt, Stations-
-   Parallaxe zwischen Stationen als unabhängige Sichtlinien. S²-Kugel und
-   Körper-/Stations-Vlies werden über die Körper-Weltlinien **ein** Bild.
+1. Die zweite Körper-Linie: **gebaut** — `weberin_mpc_spk_verdict`,
+   `weberin_body_verdict` (Kern `src/weberin.rs`,
+   `BodyOutcome::Riss { knot: [BodyLine; 2] }`), `gaia_sso_weave_probe` —
+   der Verdict für Körper (Placed/Absent/DirectionOnly statt der einen
+   Linie), MPC-Bahnen gegen die Ephemeris-Punkte.
+2. Die Stations-Konvergenz: **gebaut + gemessen** — `station_convergence_probe`
+   (Workflow `station-convergence.yml`), der Verdict für Stationen auf den
+   schon fließenden fanout-Ringen, ohne neues Netz; erster gemessener Punkt:
+   Station ABK (68.358 N 18.823 E), 2026-09-15 — INTERMAGNET-Boden
+   53710.2 nT gegen SWARM-Überflug 44908.5 nT (1.98° Versatz, 01:28:43Z),
+   Abweichung 8801.7 nT über der Toleranz 836.2 nT: ein Riss, der sichtbar
+   bleibt.
+3. Die topozentrische Kopplung: **gebaut** — `topocentric_coupling_probe`
+   (Rømer-Fold vom Stationspunkt, Stations-Parallaxe zwischen Stationen als
+   unabhängige Sichtlinien, 7 Tests); die Live-S²-Integration („ein Bild")
+   bleibt `pending`.
 4. Die vollständige Abbildung der ~20k Tafeln in den position-indizierten
-   Bestand — die Dichte des Vlieses, Kompilier-Pflicht,
-   nicht durch Punkt-Abfragen ersetzbar.
-5. Die Survey-Footprints der großen Durchmusterungen als eigene Assets.
-6. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne.
-7. Der CDN-Manifestations-Weg des Vlies-Assets.
-8. Der Riss-Knoten: die Unverträglichkeits-Messung — wo unabhängige Linien
-   nicht konvergieren, benennt die Maschine den Riss und seinen Knoten in
-   der Abstammungs-Kette. Gemessen wird der Riss zuerst an den eigenen
-   Linien (MPC gegen SPK, Schritt 1; SWARM gegen INTERMAGNET, Schritt 2).
-   Die Hubble-Spannung (Planck ≈ 67 gegen die Entfernungsleiter ≈ 73, ~5σ)
-   ist die Illustration des Risses — benennbar heute, messbar erst, wenn
-    beide Linien im Bestand einziehen.
-9. Der geliehene Sinn: der Broker-Klassifikator (Fink-ML, ALeRCE-Stamp) tritt
-   als Zeuge für Gestalt in die natural-class-Gate — registriert wird sein
-   Urteil (Klasse + Wahrscheinlichkeit), nie der einzige Zeuge; widerspricht
-   er den unabhängigen Fenstern, ist das ein Riss.
+   Bestand: **gebaut** — `vlies_density_compiler` + `vlies_density_probe`
+   (die Dichte des Vlieses, Kompilier-Pflicht, nicht durch Punkt-Abfragen
+   ersetzbar).
+5. Die Survey-Footprints der großen Durchmusterungen: **descoped nach
+   Messung** — keine anonyme Exposure-Maske; der CDS-MOCServer ist
+   Katalog-Coverage, kein Vlies-Asset (gemessen 2026-09-07,
+   Weberin-Übergabe).
+6. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne: **gebaut**
+   — `src/archivar/{amon,auger,skymap,s2event}.rs`, Compiler
+   `icecat_compiler`, `antares_vo_compiler`, `gw_skymap_compiler`.
+7. Der CDN-Manifestations-Weg des Vlies-Assets: **partial** — das
+   `upload_asset`-Wiring und die `*-cdn.yml` stehen; das Vlies-Asset selbst
+   ist noch nicht manifestiert (`pending`).
+8. Der Riss-Knoten: **gebaut** — `riss_knoten_probe` (Ledger zwirn/riss/
+   absent, Körper/Station/geliehen, 16 Tests), Kern `src/weberin.rs`; der
+   CI-Lauf fehlte und wird in diesem Atom ergänzt (Workflow
+   `riss-knoten.yml`). Die Hubble-Spannung (Planck ≈ 67 gegen die
+   Entfernungsleiter ≈ 73, ~5σ) bleibt die Illustration des Risses —
+   benennbar heute, messbar erst, wenn beide Linien im Bestand einziehen.
+9. Der geliehene Sinn: **gebaut** — `tools/measure/src/weberin/borrowed_sense.rs`
+   + `nadel_gate.rs`, live in `lsst_anomaly_probe.rs`; der
+   Broker-Klassifikator tritt als Zeuge für Gestalt in die
+   natural-class-Gate — registriert wird sein Urteil (Klasse +
+   Wahrscheinlichkeit), nie der einzige Zeuge.
 
-Zwischen den Stufen gibt es keine Wartezone. Wo eine Stufe noch nicht
-gebaut ist, ist ihr Wert `pending` — der Wert existiert, die Ernte fehlt,
-registriert, nicht fabriziert. `absent` bleibt nur, wo die Quelle den Wert
-nicht trägt.
+Offen bleiben drei Register-Pflichten, nichts vertagt: (i) Schritt 3 — die
+Live-S²-Integration („ein Bild"), `pending`; (ii) Schritt 7 — die
+Manifestation des Vlies-Assets, `pending`; (iii) Schritt 8 — der CI-Lauf,
+in diesem Atom ergänzt. Zwischen den Stufen gibt es keine Wartezone. Wo eine
+Stufe noch nicht gebaut ist, ist ihr Wert `pending` — der Wert existiert,
+die Ernte fehlt, registriert, nicht fabriziert. `absent` bleibt nur, wo die
+Quelle den Wert nicht trägt.
 
 ## 10. Was die Weberin trägt
 
