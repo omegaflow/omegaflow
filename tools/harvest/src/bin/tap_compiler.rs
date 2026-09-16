@@ -1752,7 +1752,9 @@ fn row_str(j: &JsonVal) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{dedup_crossmatch, join_from, json_metadata_rows};
+    use super::{
+        dedup_crossmatch, join_from, json_metadata_rows, star_record_bytes, STAR_BIN_STRIDE,
+    };
 
     fn row(ra: &str, dec: &str, dist: &str) -> Vec<String> {
         vec![ra.to_string(), dec.to_string(), dist.to_string()]
@@ -1871,5 +1873,53 @@ mod tests {
         assert_eq!(rows[0][col_i], "sedm");
         assert_eq!(rows[1][ra_i], "");
         assert_eq!(rows[1][col_i], "sedm");
+    }
+
+    fn star_cols(keys: &[&str]) -> Vec<(String, usize)> {
+        keys.iter()
+            .enumerate()
+            .map(|(i, k)| (k.to_string(), i))
+            .collect()
+    }
+
+    #[test]
+    fn star_record_carries_rv_in_44_bytes() {
+        let cols = star_cols(&[
+            "ra", "dec", "dist_pc", "mag", "pmra", "pmdec", "bpmag", "rpmag", "rv",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+            "30.0".into(),
+        ];
+        let rec = star_record_bytes(&cells, &cols).expect("44-byte star record");
+        assert_eq!(rec.len(), STAR_BIN_STRIDE);
+        assert_eq!(rec.len(), 44);
+        let rv = f32::from_le_bytes(rec[40..44].try_into().expect("rv slot"));
+        assert!((rv - 30000.0).abs() < 1e-3);
+    }
+
+    #[test]
+    fn star_record_absent_rv_is_none_not_zero() {
+        let cols = star_cols(&[
+            "ra", "dec", "dist_pc", "mag", "pmra", "pmdec", "bpmag", "rpmag",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+        ];
+        assert!(star_record_bytes(&cells, &cols).is_none());
     }
 }
