@@ -57,20 +57,8 @@ blocked parser-def zip/fixed-width-text
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 note IGRA-2 Radiosonden (NCEI, Sensor-Welle). Messung 2026-09-16: Verzeichnis HTTP 200 (807 .txt.zip), ZIP `USM00070026-data-beg2026.txt.zip` HTTP 200 (1 852 651 B, enthält genau `USM00070026-data.txt`, 7 082 929 B), Nicht-ZIP-Route `…-beg2026.txt` HTTP 404. Messung echt (Radiosonde: PRESS 103574 Pa, GPH 14 m, TEMP −25,4 °C, RH 82,0 %; thermal/diffusion/acoustic). Parser-Gap: kein IGRA-Parser — `format csv_zip` entpackt, aber `Rows` splittet bei csv_zip per Komma, IGRA-2 ist fixed-width/whitespace; `text_to_json` braucht Header >5 Token und Datenzeile ≥ Header-Token (Header 11, Datenzeile 9). Öffnung: IGRA-fixed-width-Arm (Spalten PRESS 10-15, GPH 17-21, TEMP 23-27, RH 29-33).
 
-pending
-url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
-note VTSCat — VERITAS-Datenkatalog (GitHub, HTTP 200, CC0, 55 MB): Spektral-Flusspunkte, Lichtkurven, Spektral-Fits je Publikation als YAML/ECSV (Jahr/Bibcode-Verzeichnisse 2008–2026) + Sky-Maps als FITS. Messung echt (em, Gamma-Fluss am Quellort ra/dec). Der ECSV/YAML-Reader ist gebaut (2026-09-16, `src/archivar/vtscat.rs`: `parse_ecsv` + `parse_sexagesimal` + `yaml_sexagesimal`, gemessen an VER-000058-sed.ecsv: `e_ref TeV`/`dnde m-2 s-1 TeV-1`, pos.ra `12h30m46s` → 187,69°). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/vtscat_compiler.rs` + `.github/workflows/vtscat-cdn.yml`; SKY1-Fluss-Karte, dnde@1 TeV, `cargo check --bin` 0/0). Offen: der sky1-Format-Arm in `main_flow.rs`/`extract.rs` (kein sky1-Handler) + `sources.φ`-Registrierung + Workflow-Lauf nach Push+Consent. Alternative Route: HEASARC verimaster (W3Browse).
-
-pending
-url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
-note H.E.S.S. DL3 DR1 (Public Test Data Release 2018; TAR gemessen 2026-09-16: HTTP 206/200, application/octet-stream, 51 868 345 B, ustar; enthält `data/hess_dl3_dr1_obs_id_*.fits.gz` + `hdu-index.fits.gz`). Inhalt: FITS-Event-Listen (DL3/GADF, EVENTS-BINTABLE RA/DEC/ENERGY) + IRFs. Messung echt (em, Gamma-Strahlung). Die Event-Listen-Reduktion ist gebaut (2026-09-16, `src/archivar/dl3.rs`: `parse_events` + `reduce_grid`, gemessen an hess_dl3_dr1_obs_id_033798.fits, 777 600 B). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/dl3_skymap_compiler.rs` + `.github/workflows/dl3-skymap-cdn.yml`, TAR/gzip/FITS inhaltsgetrieben; `cargo check --bin` 0/0). Offen: sky1-Format-Arm + `sources.φ`-Registrierung + Workflow-Lauf. Zenodo-Kopie: 10.5281/zenodo.1421099.
-
 blocked account
 url https://kcdc.iap.kit.edu
 reg https://kcdc.iap.kit.edu/accounts/login
 note KCDC — KASCADE Cosmic-ray Data Centre (Portal HTTP 200, 20 592 B, gemessen 2026-09-16) mit drei DataShops: formularbasierte Abfrage + Selektion rekonstruierter Luftschauer-Parameter (433 M Events) — kein URL-Endpoint; Login unter `/accounts/login`, „Data Format" unter `/information/dataFormat` (anonym GET 0 B). Messung echt (em, Schauer-Cherenkov-/Scintillator-Licht); der Zugang ist kontogegatet (Registrierung) und das Event-Tabellen-Format steht erst nach einem Konto + Job fest → blocked account (kein parser-def mehr: das Format ist ungemessen, nicht unlesbar).
-
-pending
-url https://opendata.magic.pic.es
-note MAGIC Open Data Repository (PIC, HTTP 200, 6730 B) — Low-level-DL3-Daten: Event-Listen + IRFs je Projekt (/download?pid=N: MAGIC_dl3_pdr1 2024, AODR 2025, RSOph 2022, JointCrab 2019, TXS0506 2018). FITS-DL3, Messung echt (em, Cherenkov); die Event-Listen-Reduktion ist gebaut (`src/archivar/dl3.rs`, geteilt mit H.E.S.S.). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/dl3_skymap_compiler.rs` + `.github/workflows/dl3-skymap-cdn.yml`; `cargo check --bin` 0/0). Offen: sky1-Format-Arm + `sources.φ`-Registrierung + Workflow-Lauf.
 
