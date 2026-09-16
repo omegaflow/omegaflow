@@ -1,6 +1,6 @@
 use crate::hdf5::{Hdf5File, Hdf5Note};
 
-const MAGIC: [u8; 3] = [b'C', b'D', b'F'];
+const MAGIC: [u8; 3] = *b"CDF";
 const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
 const STREAMING: u32 = 0xFFFF_FFFF;
 const TAG_DIMENSION: u32 = 0x0A;
@@ -456,7 +456,9 @@ impl NetcdfFile {
         }
         let raw = self.full_slab(file, idx)?;
         Some(
-            raw.chunks_exact(2)
+            raw.as_chunks::<2>()
+                .0
+                .iter()
                 .map(|c| i16::from_be_bytes([c[0], c[1]]))
                 .collect(),
         )
@@ -469,7 +471,9 @@ impl NetcdfFile {
         }
         let raw = self.full_slab(file, idx)?;
         Some(
-            raw.chunks_exact(4)
+            raw.as_chunks::<4>()
+                .0
+                .iter()
                 .map(|c| i32::from_be_bytes([c[0], c[1], c[2], c[3]]))
                 .collect(),
         )
@@ -482,7 +486,9 @@ impl NetcdfFile {
         }
         let raw = self.full_slab(file, idx)?;
         Some(
-            raw.chunks_exact(4)
+            raw.as_chunks::<4>()
+                .0
+                .iter()
                 .map(|c| f32::from_bits(be_u32(c)))
                 .collect(),
         )
@@ -495,7 +501,9 @@ impl NetcdfFile {
         }
         let raw = self.full_slab(file, idx)?;
         Some(
-            raw.chunks_exact(8)
+            raw.as_chunks::<8>()
+                .0
+                .iter()
                 .map(|c| f64::from_bits(be_u64(c)))
                 .collect(),
         )
