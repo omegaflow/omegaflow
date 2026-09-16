@@ -1137,7 +1137,16 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "openalex" => crate::openalex::openalex_lines(query, max),
-        "supermag" => crate::supermag::supermag_lines(query, max),
+        "supermag" => {
+            let user = match resolve_key(
+                env.get("SUPERMAG_USER").map(String::as_str).unwrap_or(""),
+                env,
+            ) {
+                Secret::Value(u) if !u.is_empty() => Some(u),
+                _ => None,
+            };
+            crate::supermag::supermag_lines(query, max, user.as_deref())
+        }
         "heasarc" => crate::heasarc::heasarc_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),

@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: f98b142200a8a6dec53e3ef1c862383a50fbc6cc6755e6aceebb159d2a0f8a8d
+  sha256: 4a1a02fd623eb5bb33b19f8bb5e4e986025bee6475700104ba8ccbd9131f9b0b
   status: live
   see-also: AGENTS.md
 -->
@@ -57,12 +57,29 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `--arxiv` | 0,48 s | | `--crates` | 0,56 s |
 | `--wiki` | 0,46 s | | `--datacite` | 0,58 s |
 | `--librs` | 0,73 s | | `--github` | 0,76 s |
-| `--brave` | 1,04 s | | `--heasarc` | 1,37 s |
+| `--brave` | 1,04 s | | `--heasarc` | 1,4–2,1 s |
 | `--ntrs` | 1,38 s | | `--isc` | 1,70 s |
 | `--ads` | 2,05 s | | `--wayback` | 2,72 s |
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
-| `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 0,007 s (Schlüssel-Format beachten) |
+| `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--all` | Σ der 13 Modi | | — letzte Stufe, nie der erste Zug | |
+
+## Interfaces — exakt (damit niemand rät)
+
+- `sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir|file]` — **kein `-n`**; die
+  Standardausgabe ist `pfad:zeile:text`; ohne `-i` case-sensitiv; `-l` nur
+  Dateipfade, `-c` nur der Zähler. Der Dateisatz kommt aus `git ls-files`.
+- `archive_search <kws>... [--root <dir>]... [--lines n] [--files n] [--max-mb n]
+  [--skip n] [--binary] [--count] [--case]` — default case-insensitiv; `--count`
+  druckt `n files, m hits for: …`.
+- `archive_search --index [<query>] [--path] [--kind any|file|dir] [--sort name|size|mtime]`.
+- `archive_search --supermag "station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>"`
+  (Daten) oder `"start=<YYYYMMDDHHMM> extent=<sekunden>"` (Stations-Inventory);
+  Logon = `SUPERMAG_USER` aus `.secrets.local` (ohne Konto: Inventory geht, Daten
+  nicht). Ein leeres `OK` ist `absent`, kein Fehler.
+- `archive_search --heasarc "table=<w3browse-tabelle> rows=<n>"` — echte
+  W3Browse-Tabellen, z. B. `table=sao`; `master` existiert nicht (W3Browse sagt
+  es wörtlich).
 
 ## Gemessen — übrige lokale Werkzeuge
 
@@ -117,8 +134,5 @@ die genannten kleinen Queries. Das Skript braucht kein `grep` — nur `time` und
 
 ## Offen
 
-- Die neuen Flags (`--count/--case/--path`) liegen im Quelltext; sie kommen ins
-  Release-Binär, sobald der Baum wieder baut (Bau-Linie fixiert
-  `src/archivar/wind_orbit.rs`/`extract.rs`). CI verifiziert dann
-  (`cargo build -p omegaflow-utils --bin archive_search`).
-- `session_burn` auf PATH nach dem nächsten erfolgreichen Build.
+- `session_burn` auf PATH nach dem nächsten erfolgreichen Build des
+  `omegaflow-register`-Release-Binärs.
