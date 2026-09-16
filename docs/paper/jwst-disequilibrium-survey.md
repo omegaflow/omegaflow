@@ -2,7 +2,7 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: 993cac827a1f66bea8a4ed5a0e7d76f03f4b9c08c4b82240b9efb43fa30776d3
+  sha256: 33fd7978705887748e16e231b4a9d9bdf9365f56ef5a8bd53cfb48f38150737d
   status: live
   see-also: 
 -->
@@ -110,5 +110,19 @@ transmission detection in the searched record — only detectability and retriev
 studies (TRAPPIST-1 e O3 under stellar-UV uncertainty, LHS 1140 b, the white-dwarf
 opportunity, VIRA retrievals). The branch's absence is now measured: the searched
 record carries no detection and no spectrum; the channel stays pending until a
-detection and its spectrum enter the registry. The XUV photochemistry
+detection and its spectrum enter the registry. A second sweep for the red-edge
+and seasonal branches (ADS, arXiv, Crossref, OpenAlex, Zenodo, DataCite, Brave,
+2026-09-16) returns no JWST transmission or reflection spectrum carrying a
+detected vegetation red edge, and no measured seasonal O2/O3/CH4 variability
+from a JWST exoplanet spectrum. The record carries detectability and retrieval
+studies only: the Bayesian red-edge detectability of "In Search of the Edge"
+(10.3847/1538-4357/acaf59, 2023), "Retrieving the Red Edge … with Heterogeneous
+Clouds" (10.3847/1538-4357/ae563d, 2026), the diurnal-variability detectability
+study (10.3847/1538-4357/abd6ff, 2021), and the mid-infrared prospects for
+spatial and temporal chemistry variations (10.1051/0004-6361/202557807, 2026,
+arXiv 2512.16619; ETH deposit 10.3929/ethz-c-000797709, Bern BORIS
+10.48620/96177). The seasonality measurements that exist are of Earth as an
+exoplanet (10.3847/1538-4357/acbe3c, DSCOVR/MODIS), not of a JWST exoplanet
+spectrum. The two branches' absence is now measured like the O2/O3 branch: no
+detection and no spectrum; the channels stay pending. The XUV photochemistry
 re-explanation of the SO2/CO2 hits stays pending as a non-equilibrium model.
