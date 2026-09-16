@@ -169,7 +169,10 @@ in the paper rather than in code.
   flux (b_flux > 1e-6 W/m², C1.0) or, without a goes directory, via the 304-Å
   full disk itself (median × factor), and measures per adjacent pair the
   directed TE over a lag sweep against the phase null; a consistently positive
-  D at lag ≈ 4 cells (≈ 96 s) means energy flow UP the ladder.
+  D at lag ≈ 4 cells (≈ 96 s) means energy flow UP the ladder. Alongside the
+  full-round family bound fam, it prints the per-cell surrogate threshold
+  (mean + 2σ of the ten surrogate D) for every pair × lag — the `thr` row of
+  the ladder output (2026-09-16).
 - **corona_event_probe** — The 90-day event probe, the stacked sub-minute
   multi-force TE of the corona heating: reads 2-s X-ray (gxrs: a_flux hot,
   b_flux cool) and 10-s Lyman-α (geuv-ir10s), lays each day on a 10-s grid,
