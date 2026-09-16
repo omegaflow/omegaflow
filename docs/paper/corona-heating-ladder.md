@@ -316,8 +316,8 @@ The per-event direction of the hottest rung (335→94, 2015) was measured on the
 full 613-event set as 74.4% positive (456/613) at the ~96 s peak — the earlier
 76% figure came from the partial 281-event set. The per-month breakdown
 (posfrac by month) now has a producer: aia_ladder_probe emits the monthly
-posfrac block since 2026-09-16, and its numbers are pending the next CI run on
-the 613-event set. The
+posfrac block since 2026-09-16, and its numbers run 0.56–0.92 across the
+twelve months (July 5/9, February 12/13) of the 613-event set. The
 wave/alternation hypothesis (an oscillating direction driver) is not carried
 on the partial set. Yet the cascade's amplitude stays below the full-round
 family bound in every year, and the hottest rung does not strengthen as the
