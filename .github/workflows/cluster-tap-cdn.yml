@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if all cluster assets already exist on the CDN
+        id: idempotence
         run: |
           missing=0
           for asset in mcxc_clusters.json psz2_clusters.json abell_clusters.json; do
@@ -31,10 +32,14 @@ jobs:
             fi
           done
           if [ "$missing" -eq 0 ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "all cluster assets present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "cluster assets missing — compiling and manifesting"
           fi
       - name: Ensure the tapvizier.cds.unistra.fr release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create tapvizier.cds.unistra.fr --repo omegaflow/sources \
@@ -42,6 +47,7 @@ jobs:
               --notes "cluster catalogs compiled to omegaflow JSON assets (CDN tag = netloc)"
           fi
       - name: Compile MCXC cluster catalog and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
@@ -56,6 +62,7 @@ jobs:
                  "mcxc_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
       - name: Compile PSZ2 cluster catalog and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
@@ -70,6 +77,7 @@ jobs:
                  "psz2_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
       - name: Compile Abell (ACO northern + southern) and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
