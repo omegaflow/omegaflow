@@ -13,7 +13,7 @@ static MAX_LAG: AtomicUsize = AtomicUsize::new(2);
 static BINS: AtomicUsize = AtomicUsize::new(4);
 static NULL_LAG: AtomicUsize = AtomicUsize::new(12);
 static N_SURR: AtomicUsize = AtomicUsize::new(100);
-static NULL_MODEL: AtomicU8 = AtomicU8::new(1);
+static NULL_MODEL: AtomicU8 = AtomicU8::new(0);
 static BLOCK: AtomicUsize = AtomicUsize::new(0);
 static ESTIMATOR: AtomicU8 = AtomicU8::new(1);
 static SECTION: AtomicUsize = AtomicUsize::new(0);
@@ -32,10 +32,11 @@ fn section(n: usize) -> bool {
 
 fn null_model() -> TeNull {
     match NULL_MODEL.load(Ordering::Relaxed) {
-        0 => TeNull::Residual,
+        1 => TeNull::Block,
         2 => TeNull::Shift,
         3 => TeNull::Phase,
-        _ => TeNull::Block,
+        4 => TeNull::Residual,
+        _ => TeNull::Arx,
     }
 }
 
@@ -519,12 +520,18 @@ fn main() {
         .cloned();
     match null_arg.as_deref() {
         None => {}
-        Some("residual") => NULL_MODEL.store(0, Ordering::Relaxed),
+        Some("arx") => NULL_MODEL.store(0, Ordering::Relaxed),
         Some("block") => NULL_MODEL.store(1, Ordering::Relaxed),
         Some("shift") => NULL_MODEL.store(2, Ordering::Relaxed),
         Some("phase") => NULL_MODEL.store(3, Ordering::Relaxed),
+        Some("residual") => {
+            eprintln!(
+                "residual is retired (FPR 19.51 %/ksg @ a=0.9, n=1000, CI 35092997862) — it runs only when named; the probe runs arx when --null is absent"
+            );
+            NULL_MODEL.store(4, Ordering::Relaxed)
+        }
         Some(other) => {
-            eprintln!("--null carries {other} — the probe builds residual, block, shift, phase");
+            eprintln!("--null carries {other} — the probe builds arx when --null is absent, block, shift, phase, residual (retired)");
             std::process::exit(1);
         }
     }
@@ -655,7 +662,7 @@ fn main() {
         match v.parse::<usize>() {
             Ok(n) if n >= 1 => NULL_LAG.store(n, Ordering::Relaxed),
             Ok(n) => {
-                eprintln!("--null-lag carries {n} — the residual null needs at least 1");
+                eprintln!("--null-lag carries {n} — the null lag budget needs at least 1");
                 std::process::exit(1);
             }
             Err(_) => {
@@ -714,6 +721,7 @@ fn main() {
             TeNull::Phase => "phase",
             TeNull::RestrictedPermutation => "restricted-permutation",
             TeNull::XShift => "x-shift",
+            TeNull::Arx => "arx",
         },
         BLOCK.load(Ordering::Relaxed),
         match estimator() {
