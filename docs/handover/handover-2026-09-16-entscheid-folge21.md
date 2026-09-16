@@ -3,7 +3,7 @@
   session: Entscheid-Folge 21
   class: handover
   date: 2026-09-16
-  sha256: adc2fd59f59ad4e8b4f80820a638a7b3c2fa79599ed82eac223c3a976ccd4ce0
+  sha256: 0035200322ba178c6eb355d19b422a6e113ef2b3966db67914861c1cc586dec7
   status: live
 -->
 # Handover — Entscheid-Folge 21 (2026-09-16)
@@ -50,7 +50,8 @@ Forschung-Folge 31 (post, 2026-09-16) bündelt die Operator-gebundenen Quellen; 
 **Aufgelöst (browser-gemessen, kein Operator):**
 - **CDDIS IONEX**: der vorhandene `EARTHDATA_EDL_TOKEN` öffnet das Verzeichnis
   (`https://cddis.nasa.gov/archive/gnss/products/ionex/2026/` → HTTP 200, 96 KB) —
-  der `blocked key-needed`-Eintrag ist stale.
+  der `blocked key-needed`-Eintrag ist stale. Der Token läuft **2026-09-30 09:58 EDT**
+  ab (Konto `omegaflow.space`, im Browser gemessen) → Wiedervorlage.
 - **GES-DISC**: kein selbst angelegter App-Key — der OAuth-Flow nutzt GES-DISCs eigene
   `client_id` (`e2WVk8Pw6weeLUKZYOxvTQ`); die EULA-Autorisierung ist erledigt, die
   Credentials kamen zurück (1 h TTL). Bau implementiert den Authorization-Code-Flow
@@ -139,6 +140,8 @@ Forschung-Folge 31 (post, 2026-09-16) bündelt die Operator-gebundenen Quellen; 
 - 2026-09-22 — AllWISE-Coverage-Verifikation (CDN-Asset `allwise_coverage.fp01`).
 - 2026-09-28 — JUICE-Flyby (Kernel 000113+); Feld-Zustand füllen
   (`papers/flyby-path-2-preregistration.md`).
+- 2026-09-30 — EDL-Token-Erneuerung (`EARTHDATA_EDL_TOKEN` läuft 2026-09-30 09:58 EDT
+  ab; Konto `omegaflow.space` → „Generate Token", bis 2 aktiv).
 - 2026-09-18 — Lasair (Wiedervorlage).
 - 2026-12-02 — NOIRLab Speisekammer-Frage (Gaia DR4).
 - 2026-12-03 — Europa Clipper (Fenster); Feld-Zustand füllen.
