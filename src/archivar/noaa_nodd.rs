@@ -87,7 +87,7 @@ fn rec(
         lat,
         lon,
         alt,
-        freq: 0.0,
+        freq: crate::spectral::SPECTRAL_NO_BAND,
         bin_width,
         val,
         comp,
