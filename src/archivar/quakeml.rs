@@ -7,6 +7,7 @@ pub struct QuakeMlEvent {
     pub depth_km: f64,
     pub magnitude: Option<f64>,
     pub mag_type: Option<String>,
+    pub scalar_moment_nm: Option<f64>,
 }
 
 fn finite_num(s: &str) -> Option<f64> {
@@ -171,6 +172,11 @@ pub fn parse_quakeml(body: &str) -> Vec<QuakeMlEvent> {
         }
         let (magnitude, mag_type) = magnitude_data.unwrap_or((None, None));
 
+        let scalar_moment_nm = leaf_text(ev, "scalarMoment")
+            .and_then(|b| leaf_text(b, "value"))
+            .and_then(finite_num)
+            .filter(|v| v.is_finite() && *v > 0.0);
+
         events.push(QuakeMlEvent {
             id,
             time,
@@ -179,6 +185,7 @@ pub fn parse_quakeml(body: &str) -> Vec<QuakeMlEvent> {
             depth_km,
             magnitude,
             mag_type,
+            scalar_moment_nm,
         });
     }
     events
@@ -211,6 +218,11 @@ mod tests {
         <mag><value>7.5</value></mag>
         <type>MW</type>
       </magnitude>
+      <focalMechanism publicID="smi:ISC/mww">
+        <momentTensor publicID="smi:ISC/mww#mt">
+          <scalarMoment><value>5.39E+20</value></scalarMoment>
+        </momentTensor>
+      </focalMechanism>
     </event>
     <event publicID="smi:ISC/evid=636373819">
       <origin publicID="smi:ISC/origid=638932984">
@@ -235,6 +247,13 @@ mod tests {
         assert!((e.depth_km - 10.7426).abs() < 1e-9);
         assert_eq!(e.magnitude, Some(7.5));
         assert_eq!(e.mag_type.as_deref(), Some("MW"));
+        assert_eq!(e.scalar_moment_nm, Some(5.39e20));
+    }
+
+    #[test]
+    fn absent_scalar_moment_stays_absent() {
+        let events = parse_quakeml(BULLETIN);
+        assert_eq!(events[1].scalar_moment_nm, None);
     }
 
     #[test]
