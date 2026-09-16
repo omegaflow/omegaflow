@@ -10,6 +10,8 @@ pub const MAGIC_SLB2: [u8; 4] = *b"SLB2";
 pub const MAGIC_OCS: [u8; 4] = *b"OCS1";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_LISOTD: [u8; 4] = *b"LOT1";
+pub const MAGIC_TRMMLIS: [u8; 4] = *b"TRL1";
+pub const MAGIC_GLML1B: [u8; 4] = *b"GLM1";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
 pub const MAGIC_GSOD: [u8; 4] = *b"GSD1";
@@ -54,6 +56,12 @@ pub const COMP_ISSLIS_MAX: u32 = 1;
 
 pub const COMP_LISOTD_FLASH_RAD: u32 = 1;
 pub const COMP_LISOTD_MAX: u32 = 1;
+
+pub const COMP_TRMMLIS_FLASH_RAD: u32 = 1;
+pub const COMP_TRMMLIS_MAX: u32 = 1;
+
+pub const COMP_GLML1B_FLASH_ENERGY: u32 = 1;
+pub const COMP_GLML1B_MAX: u32 = 1;
 
 pub const COMP_ARGO_DOXY: u32 = 1;
 pub const COMP_ARGO_NITRATE: u32 = 2;
@@ -162,6 +170,8 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "hinet" => Some(MAGIC_HINET),
         "iss_lis" => Some(MAGIC_ISSLIS),
         "lis_otd" => Some(MAGIC_LISOTD),
+        "trmm_lis" => Some(MAGIC_TRMMLIS),
+        "glm_l1b" => Some(MAGIC_GLML1B),
         "supermag_1m" => Some(MAGIC_SMG),
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
         "noaa_gsod" => Some(MAGIC_GSOD),
@@ -192,6 +202,8 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "hinet" => Some(COMP_HINET_MAX),
         "iss_lis" => Some(COMP_ISSLIS_MAX),
         "lis_otd" => Some(COMP_LISOTD_MAX),
+        "trmm_lis" => Some(COMP_TRMMLIS_MAX),
+        "glm_l1b" => Some(COMP_GLML1B_MAX),
         "supermag_1m" => Some(COMP_SMG_MAX),
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
         "noaa_gsod" => Some(COMP_GSOD_MAX),

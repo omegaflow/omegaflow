@@ -6588,6 +6588,18 @@ on earth 0 0 0
 ttl 604800
 field rad lis_otd_flash_radiance_uj_sr inverse-square em uJ/sr 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/trmm_lis.bin
+format trmm_lis
+on earth 0 0 0
+ttl 604800
+field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
+format glm_l1b
+on earth 0 0 0
+ttl 604800
+field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/hinetwww11.bosai.go.jp/hinet.bin
 format hinet
 on earth 0 0 0
