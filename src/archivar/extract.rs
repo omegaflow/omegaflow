@@ -36,6 +36,18 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         }),
         "voyager_saturn" => voyager_saturn::parse_series(bytes),
         "cors_rinex" => cors::parse_series(bytes),
+        "drs_fits" => drs_fits::parse_series(bytes),
+        "juno_odf" => odf::parse_series(bytes),
+        "magellan_odf" => odf::parse_series(bytes),
+        "mgs_odf" => odf::parse_series(bytes),
+        "mro_odf" => odf::parse_series(bytes),
+        "odyssey_odf" => odf::parse_series(bytes),
+        "messenger_odf" => odf::parse_series(bytes),
+        "mars_express_odf" => odf::parse_series(bytes),
+        "rosetta_odf" => odf::parse_series(bytes),
+        "vex_odf" => odf::parse_series(bytes),
+        "galileo_odf" => odf::parse_series(bytes),
+        "dawn_odf" => odf::parse_series(bytes),
         _ => None,
     }
 }
@@ -137,6 +149,56 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             cors::OBS_S1 => Some("cors_rinex_s1_dbhz"),
             cors::OBS_S2 => Some("cors_rinex_s2_dbhz"),
             cors::OBS_S5 => Some("cors_rinex_s5_dbhz"),
+            _ => None,
+        },
+        "drs_fits" => match comp {
+            drs_fits::COMP_GX => Some("lpf_drs_dg_x_ms2"),
+            drs_fits::COMP_GY => Some("lpf_drs_dg_y_ms2"),
+            drs_fits::COMP_GZ => Some("lpf_drs_dg_z_ms2"),
+            _ => None,
+        },
+        "juno_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("juno_odf_observable_hz"),
+            _ => None,
+        },
+        "magellan_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("magellan_odf_observable_hz"),
+            _ => None,
+        },
+        "mgs_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("mgs_odf_observable_hz"),
+            _ => None,
+        },
+        "mro_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("mro_odf_observable_hz"),
+            _ => None,
+        },
+        "odyssey_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("odyssey_odf_observable_hz"),
+            _ => None,
+        },
+        "messenger_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("messenger_odf_observable_hz"),
+            _ => None,
+        },
+        "mars_express_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("mars_express_odf_observable_hz"),
+            _ => None,
+        },
+        "rosetta_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("rosetta_odf_observable_hz"),
+            _ => None,
+        },
+        "vex_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("vex_odf_observable_hz"),
+            _ => None,
+        },
+        "galileo_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("galileo_odf_observable_hz"),
+            _ => None,
+        },
+        "dawn_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("dawn_odf_observable_hz"),
             _ => None,
         },
         _ => None,

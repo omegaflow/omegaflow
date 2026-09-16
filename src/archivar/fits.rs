@@ -985,15 +985,16 @@ impl FitsTable {
 }
 
 const LPF_TEST_MASS_KG: f64 = 1.928;
+const LPF_UTC_EPOCH_UNIX: f64 = 946684800.0;
 
-pub fn drs_differential_acceleration(buf: &[u8]) -> Option<Vec<[f64; 3]>> {
+pub fn drs_series(buf: &[u8]) -> Option<Vec<(f64, [f64; 3])>> {
     let mut off = 0usize;
     loop {
         let (header, _) = FitsHeader::parse(buf, off)?;
         let next = if header.value("XTENSION") == Some("'BINTABLE'") {
             if header.str_unescaped("EXTNAME").as_deref() == Some("SCI_SCIENCE_1Hz") {
                 let (table, _) = FitsTable::parse(buf, off)?;
-                return drs_dg_from_table(buf, &table);
+                return drs_rows_from_table(buf, &table);
             }
             FitsTable::parse(buf, off)?.1
         } else {
@@ -1006,7 +1007,9 @@ pub fn drs_differential_acceleration(buf: &[u8]) -> Option<Vec<[f64; 3]>> {
     }
 }
 
-fn drs_dg_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<[f64; 3]>> {
+fn drs_rows_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<(f64, [f64; 3])>> {
+    let sec = table.column("ESA00001")?;
+    let us = table.column("ESA00002")?;
     let f1 = [
         table.column("DST11077")?,
         table.column("DST11078")?,
@@ -1019,14 +1022,19 @@ fn drs_dg_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<[f64; 3]>> {
     ];
     (0..table.n_rows)
         .map(|r| {
-            Some([
-                (table.cell_f64(buf, r, f2[0])? - table.cell_f64(buf, r, f1[0])?)
-                    / LPF_TEST_MASS_KG,
-                (table.cell_f64(buf, r, f2[1])? - table.cell_f64(buf, r, f1[1])?)
-                    / LPF_TEST_MASS_KG,
-                (table.cell_f64(buf, r, f2[2])? - table.cell_f64(buf, r, f1[2])?)
-                    / LPF_TEST_MASS_KG,
-            ])
+            let secs = table.cell_f64(buf, r, sec)?;
+            let micros = table.cell_f64(buf, r, us)?;
+            Some((
+                secs + micros * 1e-6 + LPF_UTC_EPOCH_UNIX,
+                [
+                    (table.cell_f64(buf, r, f2[0])? - table.cell_f64(buf, r, f1[0])?)
+                        / LPF_TEST_MASS_KG,
+                    (table.cell_f64(buf, r, f2[1])? - table.cell_f64(buf, r, f1[1])?)
+                        / LPF_TEST_MASS_KG,
+                    (table.cell_f64(buf, r, f2[2])? - table.cell_f64(buf, r, f1[2])?)
+                        / LPF_TEST_MASS_KG,
+                ],
+            ))
         })
         .collect()
 }
@@ -1034,8 +1042,7 @@ fn drs_dg_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<[f64; 3]>> {
 #[cfg(test)]
 mod tests {
     use super::{
-        FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection,
-        drs_differential_acceleration,
+        FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection, drs_series,
     };
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
@@ -1895,20 +1902,45 @@ mod tests {
     }
 
     #[test]
-    fn drs_differential_acceleration_from_forces() {
+    fn drs_series_reads_utc_time_and_differential_acceleration() {
         let buf = drs_chain(&[
-            "DST11077", "DST11078", "DST11079", "DST11083", "DST11084", "DST11085",
+            "ESA00001",
+            "ESA00002",
+            "DST11077",
+            "DST11078",
+            "DST11079",
+            "DST11083",
+            "DST11084",
+            "DST11085",
         ]);
-        let dg = drs_differential_acceleration(&buf).unwrap();
-        assert_eq!(dg.len(), 2);
+        let rows = drs_series(&buf).unwrap();
+        assert_eq!(rows.len(), 2);
         let m = 1.928;
-        assert_eq!(dg[0], [(4.0 - 1.0) / m, (5.0 - 2.0) / m, (6.0 - 3.0) / m]);
-        assert_eq!(dg[1], [(8.0 - 2.0) / m, (10.0 - 4.0) / m, (12.0 - 6.0) / m]);
+        assert_eq!(rows[0].0, 1.0 + 2.0e-6 + 946684800.0);
+        assert_eq!(rows[0].1, [3.0 / m, 3.0 / m, 3.0 / m]);
+        assert_eq!(rows[1].0, 2.0 + 4.0e-6 + 946684800.0);
+        assert_eq!(rows[1].1, [6.0 / m, 6.0 / m, 6.0 / m]);
     }
 
     #[test]
-    fn drs_differential_acceleration_missing_column_is_none() {
-        let buf = drs_chain(&["DST11077", "DST11078", "DST11079", "DST11084", "DST11085"]);
-        assert!(drs_differential_acceleration(&buf).is_none());
+    fn drs_series_missing_force_column_is_none() {
+        let buf = drs_chain(&[
+            "ESA00001",
+            "ESA00002",
+            "DST11077",
+            "DST11078",
+            "DST11079",
+            "DST11084",
+            "DST11085",
+        ]);
+        assert!(drs_series(&buf).is_none());
+    }
+
+    #[test]
+    fn drs_series_missing_time_column_is_none() {
+        let buf = drs_chain(&[
+            "DST11077", "DST11078", "DST11079", "DST11083", "DST11084", "DST11085",
+        ]);
+        assert!(drs_series(&buf).is_none());
     }
 }
