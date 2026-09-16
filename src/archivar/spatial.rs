@@ -272,6 +272,7 @@ pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
         || plx.is_nan()
         || !mag.is_finite()
         || !rv.is_finite()
+        || !color.is_finite()
     {
         return None;
     }
@@ -284,7 +285,7 @@ pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
         flux,
         mag,
         tau: 0.0,
-        color_index: if color.is_finite() { color } else { 0.0 },
+        color_index: color,
         rv_m_s: rv,
     })
 }

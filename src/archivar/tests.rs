@@ -1727,6 +1727,26 @@ fn test_star_samples_build_tau() {
 }
 
 #[test]
+fn test_star_record_rejects_non_finite_color() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&f32::NAN.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    assert!(parse_star_record(&bin).is_none());
+    bin[36..40].copy_from_slice(&f32::INFINITY.to_le_bytes());
+    assert!(parse_star_record(&bin).is_none());
+    bin[36..40].copy_from_slice(&1.2f32.to_le_bytes());
+    let rec = parse_star_record(&bin).unwrap();
+    assert!((rec.color_index - 1.2).abs() < 1e-6);
+}
+
+#[test]
 fn test_star_samples_diode() {
     let mut bin = Vec::new();
     bin.extend_from_slice(&0f64.to_le_bytes());
@@ -8022,6 +8042,80 @@ fn odf_register_field_names_match_components() {
             .collect();
         let expected = format!("{format}_observable_hz");
         assert_eq!(names, vec![expected.as_str()], "{format} field name drift");
+    }
+}
+
+#[test]
+fn odr_series_dispatch_and_component_names() {
+    let mut raw = vec![0u8; super::voyager_odr::RECORD_BYTES];
+    raw[..super::voyager_odr::HEADER_BYTES].copy_from_slice(&[
+        0x90, 0x0D, 0x00, 0x01, 0x09, 0xE0, 0x20, 0x2B, 0x00, 0x1E, 0x23, 0x80, 0x40, 0x45,
+        0x9B, 0x71, 0x54, 0x25, 0x00, 0x60, 0x00, 0xA2, 0x72, 0xFE, 0xDB, 0x08, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x8A, 0x00, 0xD0, 0x05, 0x00, 0xA2, 0x72, 0x1F, 0xFF, 0xFB, 0x6C, 0x4C,
+    ]);
+    for (i, b) in raw[super::voyager_odr::HEADER_BYTES..].iter_mut().enumerate() {
+        *b = i as u8;
+    }
+    let bin = super::voyager_odr::pack(&raw, "C0XR13AA.ODR", 1981);
+    let parsed = super::extract::series_parse_bin("voyager_odr", &bin)
+        .expect("voyager_odr series parses");
+    assert_eq!(parsed.len(), super::voyager_odr::DATA_SAMPLES);
+    assert_eq!(parsed[0].2, super::voyager_odr::COMP_SAMPLE);
+    assert_eq!(
+        super::extract::series_component_name("voyager_odr", super::voyager_odr::COMP_SAMPLE),
+        Some("voyager_odr_sample_count")
+    );
+    assert_eq!(
+        super::extract::series_component_name("galileo_odr", super::galileo_odr::COMP_AD1),
+        Some("galileo_odr_ad1_count")
+    );
+    assert_eq!(
+        super::extract::series_component_name("galileo_odr", super::galileo_odr::COMP_AD2),
+        Some("galileo_odr_ad2_count")
+    );
+    assert_eq!(
+        super::extract::series_component_name("galileo_odr", super::galileo_odr::COMP_AD3),
+        Some("galileo_odr_ad3_count")
+    );
+    assert_eq!(
+        super::extract::series_component_name("galileo_odr", super::galileo_odr::COMP_AD4),
+        Some("galileo_odr_ad4_count")
+    );
+    assert_eq!(super::extract::series_component_name("voyager_odr", 99), None);
+    assert_eq!(super::extract::series_component_name("galileo_odr", 99), None);
+    assert!(super::extract::series_parse_bin("galileo_odr", b"X").is_none());
+}
+
+#[test]
+fn odr_register_field_names_match_components() {
+    let srcs = super::load_sources();
+    let expected: &[(&str, &[&str])] = &[
+        ("voyager_odr", &["voyager_odr_sample_count"]),
+        (
+            "galileo_odr",
+            &[
+                "galileo_odr_ad1_count",
+                "galileo_odr_ad2_count",
+                "galileo_odr_ad3_count",
+                "galileo_odr_ad4_count",
+            ],
+        ),
+    ];
+    for (format, names) in expected {
+        let src = match srcs.iter().find(|s| s.format == *format) {
+            Some(s) => s,
+            None => panic!("phi/sources.φ registers the {format} source"),
+        };
+        let field_names: Vec<&str> = src
+            .extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.name.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(field_names, *names, "{format} field name drift");
     }
 }
 

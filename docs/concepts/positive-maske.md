@@ -48,8 +48,8 @@ irrelevant. Keine Deutung, nur Messung. Kein Anspruch, nur der Riss.
 
 ## Die Treiber-Kandidaten (billig zuerst)
 
-- **Gestalt** — GLO-30-DEM (Compiler steht, CDN-Dispatch pending) und
-  gebco-Bathymetrie: die Oberflächenform als Zeuge.
+- **Gestalt** — GLO-30-DEM (Compiler steht, CDN-Asset gemessen fertig
+  2026-09-14, HTTP 200) und gebco-Bathymetrie: die Oberflächenform als Zeuge.
 - **Magnetfeld** — INTERMAGNET/Swarm/GOCE/CryoSat (in `sources.φ` registriert):
   Stellvertreter-Kandidat für die Mantel-/Kerntemperatur (heißes Gestein leitet
   langsamer). Ein Kandidat, keine Behauptung.
