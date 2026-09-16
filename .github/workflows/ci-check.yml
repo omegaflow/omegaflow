@@ -1,5 +1,6 @@
 name: ci-check
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'src/**'
