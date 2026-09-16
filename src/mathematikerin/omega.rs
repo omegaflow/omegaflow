@@ -906,6 +906,41 @@ impl OmegaLoop {
         let t = self.t_presence;
         let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
         oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
+        let mut silent_worldlines = 0usize;
+        if let Some(field) = self.latest_field.clone() {
+            for name in field.eph.keys() {
+                match S2Osc::from_body(name, t, &field.eph) {
+                    Some(o) => oscs.push(o),
+                    None => silent_worldlines += 1,
+                }
+            }
+            for meta in self.matrix.metas.values() {
+                let crate::machines::MetaAnchor::Surface {
+                    body_name,
+                    lat,
+                    lon,
+                    alt,
+                } = &meta.anchor
+                else {
+                    continue;
+                };
+                match S2Osc::from_station(body_name, *lat, *lon, *alt, t, &field.eph) {
+                    Some(o) => oscs.push(o),
+                    None => silent_worldlines += 1,
+                }
+            }
+        }
+        if silent_worldlines > 0 {
+            self.sky_say(&format!(
+                "{silent_worldlines} worldline(s) without coverage rest (0 honored)"
+            ));
+        }
+        if oscs.len() > S2_OSC_CAP as usize {
+            self.sky_say(&format!(
+                "{} oscillator(s) exceed the S² cap {S2_OSC_CAP} — their points rest, the shell and forward field still carry their weight",
+                oscs.len() - S2_OSC_CAP as usize
+            ));
+        }
         let shell: f64 = oscs.iter().map(|o| o.weight).sum();
         self.sky.shell_prev = self.sky.shell;
         self.sky.shell = shell;
@@ -924,7 +959,7 @@ impl OmegaLoop {
         self.sky.forward_field = forward_field as f32;
         self.sky.points.clear();
         if self.sky.oscs.is_empty() {
-            self.sky_say("the S² layer rests — no direction series and no event epoch carries presence (0 honored)");
+            self.sky_say("the S² layer rests — no direction series, no event epoch, and no worldline carries presence (0 honored)");
             return;
         }
         let pack = pack_oscs(&self.sky.oscs, S2_OSC_CAP);
