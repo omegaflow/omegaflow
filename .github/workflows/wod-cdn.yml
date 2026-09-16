@@ -37,15 +37,19 @@ jobs:
               --notes "World Ocean Database cast/level rows compiled to a WOD1 geo asset. Record stride: t (f64 LE, TDB), lat (f64 LE, deg), lon (f64 LE, deg), alt (f64 LE, m, negative below the sea surface), freq (f64 LE, 0.0 pad), bin_width (f64 LE, 0.0 pad), val (f64 LE), comp (u32 LE: 1 temperature, 2 salinity, 3 oxygen)."
           fi
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           asset="noaa_wod_${{ inputs.year }}_${{ inputs.instrument }}.bin"
           if gh release view noaa-wod-pds.s3.amazonaws.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$asset"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset $asset already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset $asset missing — compiling and manifesting"
           fi
-          echo "asset $asset missing — compiling and manifesting"
       - name: Fetch the WOD year granule and the leap-second table
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
@@ -57,6 +61,7 @@ jobs:
                  "curl on noaa-wod-pds did not reach the ${{ inputs.year }} granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health
       - name: Compile the WOD cast/level records and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin wod_compiler -- \
             --input kernels/wod.nc \

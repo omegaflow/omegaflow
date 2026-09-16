@@ -20,14 +20,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view cddis.nasa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ionex_tec_gim.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ionex_tec_gim.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ionex_tec_gim.bin missing — compiling and manifesting"
           fi
-          echo "asset ionex_tec_gim.bin missing — compiling and manifesting"
       - name: Ensure the cddis.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view cddis.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create cddis.nasa.gov --repo omegaflow/sources \
@@ -35,6 +39,7 @@ jobs:
               --notes "CDDIS IGS IONEX GIM vertical TEC maps compiled to a daily GIM series (em, TECU). Bin: 4 B magic GIM1, u32 map count, then per map 48 B header (epoch unix f64, lat_first f64, lat_step f64, nlat u32, lon_first f64, lon_step f64, nlon u32) + nlat*nlon f64 TECU cells."
           fi
       - name: Download the latest IONEX GIM day file
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           mkdir -p kernels
           day=""
@@ -54,6 +59,7 @@ jobs:
                health
           echo "ionex day: ${day}"
       - name: Compile the IONEX GIM TEC series and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin ionex_compiler -- \
             --input kernels/ionex.INX.gz \
