@@ -9,6 +9,7 @@ fn main() {
     let mut subject: Option<String> = None;
     let mut body: Option<String> = None;
     let mut html: Option<String> = None;
+    let mut dry_run = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -42,26 +43,58 @@ fn main() {
                     html = Some(args[i].clone());
                 }
             }
+            "--dry-run" => {
+                dry_run = true;
+            }
             _ => {}
         }
         i += 1;
     }
     let Some(to) = to else {
         eprintln!(
-            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>]"
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--dry-run]"
         );
         std::process::exit(2);
     };
-    let from = from.unwrap_or_else(|| String::from("code@omegaflow.space"));
-    let subject = subject.unwrap_or_default();
+    let from = match from {
+        Some(f) => f,
+        None => String::from("code@omegaflow.space"),
+    };
+    let Some(subject) = subject else {
+        eprintln!(
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--dry-run]"
+        );
+        std::process::exit(2);
+    };
     let text = match body.as_deref() {
         Some("-") | None => read_stdin(),
-        Some(path) => fs::read_to_string(path).unwrap_or_default(),
+        Some(path) => match fs::read_to_string(path) {
+            Ok(t) => t,
+            Err(e) => {
+                eprintln!("smail: body {} unreadable: {}", path, e);
+                std::process::exit(2);
+            }
+        },
     };
     let html_body = match html.as_deref() {
-        Some(path) => Some(fs::read_to_string(path).unwrap_or_default()),
+        Some(path) => match fs::read_to_string(path) {
+            Ok(t) => Some(t),
+            Err(e) => {
+                eprintln!("smail: html {} unreadable: {}", path, e);
+                std::process::exit(2);
+            }
+        },
         None => None,
     };
+    let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref());
+    if dry_run {
+        println!("to: {}", to);
+        println!("from: {}", from);
+        println!("subject: {}", subject);
+        println!("text bytes: {}", text.len());
+        println!("payload: {}", payload);
+        return;
+    }
     let token = match secret_key("RESEND_API_KEY") {
         Some(t) => t,
         None => {
@@ -69,7 +102,6 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref());
     let resp = send(&token, &payload);
     println!("{}", resp);
 }
