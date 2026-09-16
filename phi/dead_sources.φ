@@ -156,7 +156,7 @@ note curl: curl: (6) Could not resolve host: api.earthnetworks.com Browser 2026-
 
 dead unreachable
 url https://api.fink-portal.org/api/v1/objects
-note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar. Successor host api.lsst.fink-portal.org (2026-09-06 curl-verified HTTP 200, anonymous) is registered in blocked_sources.φ as parser-def of the pending class "Richtungs-Transient ohne Distanz" — the old host stays dead, Fink itself is not absent.
+note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar. Successor host api.lsst.fink-portal.org lebt (2026-09-16 gemessen HTTP 200, anonym) und steht als s2-direction-Zeuge in witnesses.φ — nicht in blocked_sources.φ; der alte Host bleibt tot, Fink selbst ist nicht absent.
 
 dead 404
 url https://api.ifremer.fr/argoweb/float/list?days=30&format=json
