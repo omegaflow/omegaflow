@@ -276,8 +276,7 @@ fn main() {
         if a_s.is_empty() || b_s.is_empty() || e_s.is_empty() {
             continue;
         }
-        let (Some(a_first), Some(b_first), Some(e_first)) =
-            (a_s.first(), b_s.first(), e_s.first())
+        let (Some(a_first), Some(b_first), Some(e_first)) = (a_s.first(), b_s.first(), e_s.first())
         else {
             continue;
         };
