@@ -622,6 +622,44 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                 },
             ]
         }
+        Extract::QuakeMlEvents {
+            outputs,
+            tau,
+            absorption,
+            advection,
+        } => {
+            if outputs.len() < 2 {
+                return Vec::new();
+            }
+            vec![
+                FieldConfig {
+                    key: outputs[0].clone(),
+                    name: outputs[0].clone(),
+                    kernel: 1,
+                    force: 3,
+                    tau: *tau,
+                    absorption: *absorption,
+                    advection: *advection,
+                    unit: "N m".to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    fold: None,
+                },
+                FieldConfig {
+                    key: outputs[1].clone(),
+                    name: outputs[1].clone(),
+                    kernel: 3,
+                    force: 4,
+                    tau: *tau,
+                    absorption: *absorption,
+                    advection: *advection,
+                    unit: "Mw".to_string(),
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    fold: None,
+                },
+            ]
+        }
         _ => Vec::new(),
     }
 }
@@ -3125,6 +3163,82 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+            Extract::QuakeMlEvents {
+                outputs,
+                tau,
+                absorption,
+                advection,
+            } => {
+                if outputs.len() >= 2 {
+                    for ev in crate::archivar::quakeml::parse_quakeml(body) {
+                        let Some(epoch) = lsk.unix_to_tdb(ev.time) else {
+                            continue;
+                        };
+                        let position = Position::Surface {
+                            body_name: frame_body_name(&src.frame),
+                            lat: ev.lat,
+                            lon: ev.lon,
+                            alt: 0.0,
+                        };
+                        if let Some(m0) = ev.scalar_moment_nm {
+                            channels.push((
+                                Channel {
+                                    z: ev.depth_km,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch,
+                                    position: position.clone(),
+                                    name: outputs[0].clone(),
+                                    value: m0,
+                                },
+                                FieldConfig {
+                                    key: outputs[0].clone(),
+                                    name: outputs[0].clone(),
+                                    kernel: 1,
+                                    force: 3,
+                                    tau: *tau,
+                                    absorption: *absorption,
+                                    advection: *advection,
+                                    unit: "N m".to_string(),
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    fold: None,
+                                },
+                            ));
+                        }
+                        let mww = match ev.mag_type.as_deref() {
+                            Some(t) if is_moment_magnitude(t) => ev.magnitude,
+                            _ => None,
+                        };
+                        if let Some(mww) = mww {
+                            channels.push((
+                                Channel {
+                                    z: ev.depth_km,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch,
+                                    position,
+                                    name: outputs[1].clone(),
+                                    value: mww,
+                                },
+                                FieldConfig {
+                                    key: outputs[1].clone(),
+                                    name: outputs[1].clone(),
+                                    kernel: 3,
+                                    force: 4,
+                                    tau: *tau,
+                                    absorption: *absorption,
+                                    advection: *advection,
+                                    unit: "Mw".to_string(),
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    fold: None,
+                                },
+                            ));
                         }
                     }
                 }

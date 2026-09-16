@@ -491,6 +491,26 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     mag_type_key: String::new(),
                 });
             }
+            "quakeml" if parts.len() >= 6 => {
+                let tau: f64 = match parts[3].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => continue,
+                };
+                let absorption: f64 = match parts[4].parse() {
+                    Ok(v) => v,
+                    _ => continue,
+                };
+                let advection: f64 = match parts[5].parse() {
+                    Ok(v) => v,
+                    _ => continue,
+                };
+                cur_extracts.push(Extract::QuakeMlEvents {
+                    outputs: vec![parts[1].to_string(), parts[2].to_string()],
+                    tau,
+                    absorption,
+                    advection,
+                });
+            }
             "path" if parts.len() >= 9 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
