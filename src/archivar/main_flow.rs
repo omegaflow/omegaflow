@@ -2065,6 +2065,7 @@ pub fn main_flow() {
                     | "goes_abi"
                     | "atdf"
                     | "himawari_hsd"
+                    | "cors_rinex"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

@@ -6,6 +6,22 @@ pub const PRES_POSITION: u32 = 1 << 0;
 pub const PRES_FREQ: u32 = 1 << 1;
 pub const PRES_BIN_WIDTH: u32 = 1 << 2;
 
+pub const fn obs_pack(obs: [u8; 2]) -> u32 {
+    (obs[0] as u32) << 8 | obs[1] as u32
+}
+
+pub const OBS_L1: u32 = obs_pack(*b"L1");
+pub const OBS_L2: u32 = obs_pack(*b"L2");
+pub const OBS_L5: u32 = obs_pack(*b"L5");
+pub const OBS_C1: u32 = obs_pack(*b"C1");
+pub const OBS_P1: u32 = obs_pack(*b"P1");
+pub const OBS_C2: u32 = obs_pack(*b"C2");
+pub const OBS_P2: u32 = obs_pack(*b"P2");
+pub const OBS_C5: u32 = obs_pack(*b"C5");
+pub const OBS_S1: u32 = obs_pack(*b"S1");
+pub const OBS_S2: u32 = obs_pack(*b"S2");
+pub const OBS_S5: u32 = obs_pack(*b"S5");
+
 pub struct CorsRecord {
     pub epoch: f64,
     pub lat: f64,
@@ -130,6 +146,27 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<CorsRecord>> {
     Some(out)
 }
 
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if n > (bytes.len() - 8) / REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let rec: &[u8; REC_BYTES] = bytes.get(off..off + REC_BYTES)?.try_into().ok()?;
+        off += REC_BYTES;
+        let Some(r) = decode_rec(rec) else {
+            continue;
+        };
+        out.push((r.epoch, r.value, obs_pack(r.obs)));
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -182,5 +219,37 @@ mod tests {
     fn rejects_foreign_bytes() {
         assert!(parse_bin(b"X").is_none());
         assert!(parse_bin(b"CRX1abc").is_none());
+    }
+
+    #[test]
+    fn parse_series_emits_epoch_value_comp() {
+        let mut l1 = sample();
+        l1.obs = *b"L1";
+        l1.value = 100.0;
+        let mut s5 = sample();
+        s5.obs = *b"S5";
+        s5.value = 45.5;
+        let bytes = write_bin(&[l1, s5]);
+        let series = parse_series(&bytes).unwrap();
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0], (758_937_600.0, 100.0, OBS_L1));
+        assert_eq!(series[1], (758_937_600.0, 45.5, OBS_S5));
+    }
+
+    #[test]
+    fn parse_series_skips_nonfinite_value() {
+        let mut absent = sample();
+        absent.value = f64::NAN;
+        let good = sample();
+        let bytes = write_bin(&[absent, good]);
+        let series = parse_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert_eq!(series[0].2, OBS_C1);
+    }
+
+    #[test]
+    fn parse_series_rejects_foreign_bytes() {
+        assert!(parse_series(b"X").is_none());
+        assert!(parse_series(b"CRX1abc").is_none());
     }
 }
