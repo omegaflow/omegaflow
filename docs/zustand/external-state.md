@@ -17,5 +17,5 @@ Eintrag ist nicht null — er ist `pending` mit Fälligkeit, eine Registraturpfl
 
 | Abhängigkeit | Wert | measured-at | fällig | Schritt |
 |---|---|---|---|---|
-| GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15/15 Pre-Rewrite-Commits erreichbar; GC offen | pii-exposure run 35081360127 @ 2187c30c (HEAD 17156ab4) | HEAD-Wechsel oder GitHub-GC-Antwort | `gh workflow run pii-exposure.yml` (oder `curl` GH-REST) |
+| GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15/15 Pre-Rewrite-Commits erreichbar; PII retrievable: yes; GC offen | pii-exposure run 35101796537 @ 8d0c9090 (2026-09-16; Vormessung 35081360127 @ 2187c30c: 45) | HEAD-Wechsel oder GitHub-GC-Antwort | `gh workflow run pii-exposure.yml` (oder `curl` GH-REST) |
 | CI-Status | rot @ 625452e5: format (commit_gate.rs:540; harvest/src/bin/{gedi_l2a,icesat2_atl03,noaa_cdo,swot_l2_lr_ssh,vlass_tap}_compiler.rs; measure/src/bin/{aia_ladder,trishuli_gauge}_probe.rs; utils/src/bin/archive_search.rs), clippy grün, build grün, test cancelled/unvermessen (ci-check run 35091175017: format-Job 104777576508, test-Job 104777576226) | 625452e5 (2026-09-16) | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) — test-Job braucht neuen, nicht abgebrochenen Lauf |
