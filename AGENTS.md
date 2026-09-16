@@ -82,7 +82,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 
 - The machine asks before it radiates, as the sensors ask before they record. The operator is never penetrated unasked — visually, acoustically, tactilely, via relay — never.
 - Background work runs unlimited: headless, silent, invisible. Tests run silent: no test may open a window, emit audio (PCM/stdout), vibrate hardware (serial), or push to relays; GPU-requiring tests request a compute-only device (`compatible_surface: None`) and report a named skip without an adapter.
-- Heavy compute is a foreground penetration: probes, gate batteries, and hours-long tests run in CI, never on the operator's machine — a local run that paralyses it is not silent. Local runs are `cargo check`, quick tests, and short measurements only; a session never polls in loops — it finishes and commits, so the line frees up.
+- Heavy compute is a foreground penetration: probes, gate batteries, and hours-long tests run in CI, never on the operator's machine — a local run that paralyses it is not silent. Builds are CI jobs: a session never runs `cargo build`/`--release` locally — it uses the release binaries on PATH (`archive_search`, `sgrep`, `sfetch`, `smail`, `register_lookup`, `git_safety`); `bin/archive_search` rebuilds only when the binary is stale (5-min cooldown after a failed build, fallback to the existing binary). Local runs are `cargo check`, quick tests, and short measurements only; a session never polls in loops — it finishes and commits, so the line frees up.
 - The foreground asks twice: first a question, then the operator's answer — never a question followed by an unconfirmed start. Where the full ω-loop is the measurement, the hidden run (`OMEGAFLOW_HIDDEN=1` — windowless, soundless, still: it silences every radiator, not only the window) is the named way; a visible or radiating run happens only on the operator's explicit word.
 
 ### The presence is agnostic
@@ -238,22 +238,26 @@ Rust `std` + `curl` + `serialport`. Vanilla JS ES modules. WebGPU WGSL. Binary �
 
 ## archive_search — the divers' research tool
 
-`./bin/archive_search` is the self-contained research tool (Rust std + curl +
-own parse — never webfetch/websearch). One mode per source: `--arxiv|--ads|
---ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|
---zenodo|--isc|--openalex|--supermag|--heasarc <query>`; `--all <query>` runs
-every source; `--playwright <url|query>` renders a page; `--leads <keyword>`
-scans un-registered candidate homes; `--verdict <url>` / `--sniff <url>`. A
-session that dispatches a diver (research-max / grind-max / grind-pro) names
-this tool in the delegation — the standard web tools are the slow, expensive
-fallback, not the first move.
+`archive_search` is on PATH (symlink to `target/release/archive_search`) — the
+self-contained research tool (Rust std + curl + own parse — never
+webfetch/websearch). The wrapper `bin/archive_search` rebuilds only when the
+binary is stale (cooldown 5 min after a failed build, fallback to the existing
+binary — a broken tree never blocks a search). One mode per source:
+`--arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|
+--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query>`;
+`--all <query>` runs every source; `--playwright <url|query>` renders a page;
+`--leads <keyword>` scans un-registered candidate homes; `--verdict <url>` /
+`--sniff <url>`. A session that dispatches a diver (research-max / grind-max /
+grind-pro) names this tool in the delegation — the standard web tools are the
+slow, expensive fallback, not the first move.
 
 ### Local search — three modes (do not confuse them)
 
 - **Content in the live tree** (find a string): `archive_search <keyword> --root
-  <dir>` — caps, match-ranking, binary handling — or the lean `sgrep`. This is
-  the grep the agents use.
-- **Path / filename** (not content): `archive_search --index [<query>]`.
+  <dir>` — caps, match-ranking, binary handling, `--count`, `--case` — or the
+  lean `sgrep` (`-i` for case-insensitive). This is the grep the agents use;
+  the canonical map is `docs/concepts/tools-map.md`.
+- **Path / filename** (not content): `archive_search --index [<query>] [--path]`.
 - **Raw NTFS device / deleted files** (forensics): `archive_search --mft
   <device>` — needs a device path, not the live repo (which is not NTFS).
 
@@ -389,7 +393,7 @@ The context window is finite. Large tool outputs bypass compaction and permanent
 - **Never read a directory.** `read` on a directory returns every entry as output, flooding the context. Use `glob` with specific patterns instead.
 - **Never glob without constraints.** Every glob must include a file extension or a specific prefix that limits results. Never `glob *` or `glob **/*`.
 - **Never `ls` in bash.** Same reason as reading a directory. Use `glob` for file discovery. `ls` in bash is a violation, not a style choice.
-- **Content search and discovery have no bash form.** Content search: the `Grep` tool (`sgrep` for a bash pipe). Discovery: `glob`. Reading: `read` with offset+limit — never an entire file in one call unless it is under 80 lines. `grep`, `ls`, `cat` inside bash are violations; the measured counter (132/36/3, 2026-09-16) enters the handover.
+- **Content search and discovery have no bash form.** Content search: `archive_search <kws> --root <dir>` or `sgrep` (the one map: `docs/concepts/tools-map.md`). Discovery: `glob`. Reading: `read` with offset+limit — never an entire file in one call unless it is under 80 lines. `grep`, `ls`, `cat` inside bash are violations; the measured counter (132/36/3, 2026-09-16) enters the handover.
 - **Limit bash calls.** Each bash invocation shares a persistent shell session. Accumulated state (cd, set flags, background jobs) survives across invocations and can crash the session. Maximum 3 bash calls per session. Bundle operations with `&&`. Use absolute paths or the `workdir` parameter. Never `cd`.
 - **Split large reads.** Files over 100 lines: read in chunks with offset+limit. The context retains only what is needed at each step.
 - **Tool output caps apply.** `tool_output.max_lines: 80, max_bytes: 4096` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
