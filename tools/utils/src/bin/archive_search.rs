@@ -380,27 +380,35 @@ fn main() {
 }
 
 fn usage() {
-    eprintln!(
-        "usage: archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case]"
-    );
-    eprintln!(
-        "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] [--path] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
-    );
-    eprintln!(
-        "       archive_search --verdict <url> | --sniff <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches; --sniff reports magic bytes + sha256; --isc takes key=value: start/end/minmag/minlat/maxlat/minlon/maxlon; --supermag takes key=value: station/start/end; --heasarc takes key=value: table/rows)"
-    );
-    eprintln!(
-        "       archive_search --playwright <url|query>   (real browser render: title, headings, links, text; a bare query searches)"
-    );
-    eprintln!(
-        "       archive_search --all <query>   (the query through every keyword search mode — openalex, arxiv, crossref, ads, ntrs, wiki, github, crates, librs, brave, datacite, zenodo, wayback)"
-    );
-    eprintln!(
-        "       archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"
-    );
-    eprintln!(
-        "       --leads scans the un-curated candidate homes only and subtracts hosts already registered in phi/sources.\u{3c6}, phi/blocked_sources.\u{3c6}, phi/dead_sources.\u{3c6}"
-    );
+    eprintln!("archive_search — the divers' research tool (content, paths, NTFS, network modes)");
+    eprintln!();
+    eprintln!("content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case]");
+    eprintln!("  --root <dir>  search root, repeatable (default $HOME)");
+    eprintln!("  --lines <n>   hit lines shown per file (default 2)");
+    eprintln!("  --files <n>   files shown, ranked (default 40)");
+    eprintln!("  --max-mb <n>  skip files larger than n MiB (default 100)");
+    eprintln!("  --skip <n>    skip the first n ranked files");
+    eprintln!("  --binary      include binary files (default skipped)");
+    eprintln!("  --count       print 'n files, m hits for: …' only");
+    eprintln!("  --case        case-sensitive (default case-insensitive)");
+    eprintln!();
+    eprintln!("paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)");
+    eprintln!("history:  archive_search --git <query>");
+    eprintln!("leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)");
+    eprintln!("forensic: archive_search --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (NTFS file table; the live repo is not NTFS)");
+    eprintln!();
+    eprintln!("network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query> [--cacert <pem>]");
+    eprintln!("  --ntrs      a bare citation id resolves via the citation path, any other query searches");
+    eprintln!("  --sniff     reports magic bytes + sha256");
+    eprintln!("  --isc       key=value: start/end/minmag/minlat/maxlat/minlon/maxlon");
+    eprintln!("  --supermag  key=value: station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>   (data; logon = SUPERMAG_USER)");
+    eprintln!("              or start=<YYYYMMDDHHMM> extent=<seconds>   (station inventory)");
+    eprintln!("  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)");
+    eprintln!("  --all       the query through every keyword search mode (13 calls — the last move, never the first)");
+    eprintln!();
+    eprintln!("browser:  archive_search --playwright <url|query>   (real browser render; a bare query searches)");
+    eprintln!("reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)");
+    eprintln!("serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)");
 }
 
 fn print_lines(lines: &[String]) {
