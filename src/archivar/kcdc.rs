@@ -159,6 +159,79 @@ pub fn read_table(text: &str) -> Option<Table> {
     })
 }
 
+pub struct RowMapping {
+    pub tables: Vec<String>,
+    pub rows: Vec<Vec<i64>>,
+}
+
+pub fn parse_row_mapping(text: &str) -> Option<RowMapping> {
+    let mut lines = text.lines().filter(|l| !l.trim().is_empty());
+    let tables: Vec<String> = lines
+        .next()?
+        .split_whitespace()
+        .map(str::to_string)
+        .collect();
+    if tables.is_empty() {
+        return None;
+    }
+    let mut rows = Vec::new();
+    for line in lines {
+        let vals: Vec<i64> = line
+            .split_whitespace()
+            .map(str::parse)
+            .collect::<Result<_, _>>()
+            .ok()?;
+        if vals.len() != tables.len() {
+            return None;
+        }
+        rows.push(vals);
+    }
+    Some(RowMapping { tables, rows })
+}
+
+pub fn own_gt_times(table: &Table) -> Vec<Option<f64>> {
+    let Some(i) = col_of(table, "Gt") else {
+        return Vec::new();
+    };
+    table
+        .rows
+        .iter()
+        .map(|row| row.get(i).copied().flatten().filter(|t| *t > 0.0))
+        .collect()
+}
+
+pub fn mapped_times(
+    mapping: &RowMapping,
+    general_times: &[Option<f64>],
+    table_name: &str,
+) -> Vec<Option<f64>> {
+    let Some(col) = mapping.tables.iter().position(|t| t == table_name) else {
+        return Vec::new();
+    };
+    let Some(gcol) = mapping.tables.iter().position(|t| t == "general") else {
+        return Vec::new();
+    };
+    let mut out: Vec<Option<f64>> = Vec::new();
+    for row in &mapping.rows {
+        let r = row[col];
+        if r < 0 {
+            continue;
+        }
+        let g = row[gcol];
+        let t = if g >= 0 {
+            general_times.get(g as usize).copied().flatten()
+        } else {
+            None
+        };
+        let idx = r as usize;
+        if idx >= out.len() {
+            out.resize(idx + 1, None);
+        }
+        out[idx] = t;
+    }
+    out
+}
+
 pub fn col_of(table: &Table, token: &str) -> Option<usize> {
     table.columns.iter().position(|c| c == token)
 }
@@ -314,5 +387,44 @@ mod tests {
         assert_eq!(join_key(&both, &both.rows[0]), Some((877, 1001)));
         let half = read_table("Ev E\n1001 1.4e14\n").unwrap();
         assert_eq!(join_key(&half, &half.rows[0]), None);
+    }
+
+    #[test]
+    fn row_mapping_joins_component_rows_to_general_time() {
+        let mapping = parse_row_mapping(
+            "calorimeter\tgrande\tgeneral\tarray\tlopes\n\
+             -1\t-1\t0\t0\t-1\n\
+             -1\t0\t1\t-1\t-1\n\
+             -1\t1\t2\t-1\t-1\n\
+             -1\t-1\t3\t1\t-1\n",
+        )
+        .unwrap();
+        assert_eq!(
+            mapping.tables,
+            vec!["calorimeter", "grande", "general", "array", "lopes"]
+        );
+        let general = read_table(
+            "Datetime\tEv\tGt\tP\tR\tT\n\
+             2005-06-01T00:00:00\t608195\t100\t1.01130e+03\t5376\t7.7\n\
+             2005-06-01T00:00:01\t608198\t200\t1.01130e+03\t5376\t7.7\n\
+             2005-06-01T00:00:04\t608210\t300\t1.01130e+03\t5376\t7.7\n\
+             2005-06-01T00:00:05\t608212\t400\t1.01130e+03\t5376\t7.7\n",
+        )
+        .unwrap();
+        let gt = own_gt_times(&general);
+        assert_eq!(gt, vec![Some(100.0), Some(200.0), Some(300.0), Some(400.0)]);
+        assert_eq!(
+            mapped_times(&mapping, &gt, "general"),
+            vec![Some(100.0), Some(200.0), Some(300.0), Some(400.0)]
+        );
+        assert_eq!(
+            mapped_times(&mapping, &gt, "array"),
+            vec![Some(100.0), Some(400.0)]
+        );
+        assert_eq!(
+            mapped_times(&mapping, &gt, "grande"),
+            vec![Some(200.0), Some(300.0)]
+        );
+        assert_eq!(mapped_times(&mapping, &gt, "absent"), Vec::<Option<f64>>::new());
     }
 }
