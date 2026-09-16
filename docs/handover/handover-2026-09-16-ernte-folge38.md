@@ -3,7 +3,7 @@
   session: Ernte-Folge 38
   class: handover
   date: 2026-09-16
-  sha256: e3259cc64cf1e1cc7ec7c809b22a28534227b76aa63b60a089d77ddf0457123b
+  sha256: 9682b6b7a4aa7ad3a07af9095435b32a1f3a3cb0d59e4c0b2877b921d7b206ff
   status: live
 -->
 # Handover — Ernte-Folge 38 (2026-09-16)
@@ -37,6 +37,9 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `src/archivar/{session,fetch,extract,mod}.rs` — diese tragen fremde
   uncommittete Arbeit (globales fmt/clippy, 143 Dateien); ein Code-Eingriff
   kollidiert mit dem geteilten Baum. Der Arm wartet, bis der Baum frei ist.
+  (Taucher: grind-max, sobald `git status src/archivar` sauber ist — die
+  143 fmt-Dateien sind noch im geteilten Index staged. Das vorgebaute
+  `target/release/omegaflow` läuft `--probe`/`--port` lokal ohne Build.)
 
 ## Ledger — offene Routen (gemessen 2026-09-16)
 
@@ -53,11 +56,29 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   letzter Zeitschritt 2026-07-30T23:30:00Z (30-min-NRT), 48 Tage stale → kein
   `sources.φ`-Block (ein Block träfe einen eingefrorenen Zeitschritt).
   (Schritt: Kadenz erneut messen.)
-- Sensor-Welle-`parser-gap`-Reste im `ledger.φ` (IGRA-2, Wyoming, Iowa-RAOB,
-  SondeHub, EMSO, IOOS-Glider, SmartBay, PIREP, meteo.lt, GTMBA): live, aber
-  „Port-Arbeit ausstehend" — der Zustand `parser-gap` ist dort eine
-  Fehlkennzeichnung (kein benannter Gap). (Schritt: als `ausstehend` portieren —
-  `--probe`, dann `sources.φ`.)
+## Taucher-Aufträge — Sensor-Welle-Ports (nächste Session)
+
+Der Zustand `parser-gap` dieser `ledger.φ`-Einträge ist eine Fehlkennzeichnung:
+die Note sagt „Port-Arbeit ausstehend", keinen benannten Gap. Alle Endpunkte
+leben. Das vorgebaute Kern-Binär `target/release/omegaflow --probe <blöcke.φ>`
+läuft lokal ohne Build — die Probe ist also ausführbar. Jeder Port: curl-Messung
+→ Block bauen → `--probe` → `sources.φ` / `declined_sources.φ` / `blocked_sources.φ`.
+
+- Mechanische Ports (Taucher: grind-flash) — `IGRA-2`
+  (`ncei.noaa.gov/.../data-y2d/{station}-data-beg{year}.txt.zip`, Radiosonde
+  T/RH/P), `Wyoming` (`weather.uwyo.edu/wsgi/sounding?...TEXT:CSV`), `Iowa-RAOB`
+  (`mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDHHmm}`),
+  `GTMBA` (`data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station`).
+- Force-Gate nötig (Taucher: grind-pro) — `SondeHub`
+  (`api.v2.sondehub.org/sonde/{serial}`, Ballon-Telemetrie), `PIREP`
+  (`aviationweather.gov/api/data/pirep?...`, aktives Objekt?), `meteo.lt`
+  (`api.meteo.lt/v1/stations/vilniaus-ams/observations/latest`), und die drei
+  ERDDAP-`info/index.json` (`erddap.emso.eu`, `gliders.ioos.us`,
+  `erddap.marine.ie`) — Index ≠ Messung, Dataset erst wählen.
+- `mercator.env.nm.gov`: AQI-Wert-Tabelle per ArcGIS-Join (Taucher: grind-flash —
+  `/0/queryRelatedRecords` bzw. FeatureServer-Tabellen am Layer 0).
+- `erddap.emodnet-physics.eu HFRADAR_NADR_Totals`: Kadenz erneut messen, ob ein
+  Geschwister-Dataset live ist (Taucher: grind-flash).
 
 ## Tor 1 — Compiler stehen, Konsumenten fehlen
 
