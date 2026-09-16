@@ -327,8 +327,10 @@ pub fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> O
     }
 }
 
+type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
+
 pub fn presence_gate(
-    presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)],
+    presences: &[PresenceSample],
     pos: (f64, f64, f64),
     reach: f64,
     body_radius: f64,
@@ -438,10 +440,10 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                     | Extract::ProfileMap {
                         arr_path, fields, ..
                     } => {
-                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
-                            if !arr.is_empty() {
-                                arr_has_rows = true;
-                            }
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path)
+                            && !arr.is_empty()
+                        {
+                            arr_has_rows = true;
                         }
                         for fc in fields {
                             if jpath_val(&j, &fc.key).is_some() {
@@ -615,9 +617,7 @@ pub fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<S
     let mut rest = template;
     while let Some(start) = rest.find('{') {
         rest = &rest[start + 1..];
-        let Some(end) = rest.find('}') else {
-            return None;
-        };
+        let end = rest.find('}')?;
         let key = &rest[..end];
         let upper = key.to_uppercase();
         match env.get(key).or_else(|| env.get(&upper)) {
@@ -871,48 +871,25 @@ pub fn fetch_one(
             None => source_name_from_url(u),
         }
     };
-    if !url.starts_with("https://github.com/omegaflow/sources") {
-        if let Some(netloc) = extract_netloc(url) {
-            let name = asset_name(url);
-            if !name.is_empty() {
-                let cache_path = cache_path_for(netloc, &name);
-                if now.map_or(false, |n| cache_fresh_at(&cache_path, ttl, n)) {
-                    if let Some(cached) = std::fs::read_to_string(&cache_path).ok() {
-                        return Some(cached);
-                    }
-                }
-                let cdn_url = format!("{}/{}/{}.json", crate::cdn::CDN_BASE, netloc, name);
-                if cdn_fresh(&cdn_url, ttl) {
-                    if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
-                        if let Some(parent) = std::path::Path::new(&cache_path).parent() {
-                            let _ = std::fs::create_dir_all(parent);
-                        }
-                        match std::fs::write(&cache_path, cdn_body.as_bytes()) {
-                            Ok(()) => {
-                                if let Some(n) = now {
-                                    write_epoch_stamp(&cache_path, n);
-                                }
-                            }
-                            Err(_) => {
-                                eprintln!("cache {}: write void — refetch next cycle", cache_path)
-                            }
-                        }
-                        return Some(cdn_body);
-                    }
-                }
+    if !url.starts_with("https://github.com/omegaflow/sources")
+        && let Some(netloc) = extract_netloc(url)
+    {
+        let name = asset_name(url);
+        if !name.is_empty() {
+            let cache_path = cache_path_for(netloc, &name);
+            if now.is_some_and(|n| cache_fresh_at(&cache_path, ttl, n))
+                && let Ok(cached) = std::fs::read_to_string(&cache_path)
+            {
+                return Some(cached);
             }
-        }
-    }
-    let live = fetch_raw(url, body, headers, ttl);
-    if let Some(ref r) = live {
-        if let Some(netloc) = extract_netloc(url) {
-            let name = asset_name(url);
-            if !name.is_empty() {
-                let cache_path = cache_path_for(netloc, &name);
+            let cdn_url = format!("{}/{}/{}.json", crate::cdn::CDN_BASE, netloc, name);
+            if cdn_fresh(&cdn_url, ttl)
+                && let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl)
+            {
                 if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                     let _ = std::fs::create_dir_all(parent);
                 }
-                match std::fs::write(&cache_path, r.as_bytes()) {
+                match std::fs::write(&cache_path, cdn_body.as_bytes()) {
                     Ok(()) => {
                         if let Some(n) = now {
                             write_epoch_stamp(&cache_path, n);
@@ -921,6 +898,29 @@ pub fn fetch_one(
                     Err(_) => {
                         eprintln!("cache {}: write void — refetch next cycle", cache_path)
                     }
+                }
+                return Some(cdn_body);
+            }
+        }
+    }
+    let live = fetch_raw(url, body, headers, ttl);
+    if let Some(ref r) = live
+        && let Some(netloc) = extract_netloc(url)
+    {
+        let name = asset_name(url);
+        if !name.is_empty() {
+            let cache_path = cache_path_for(netloc, &name);
+            if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
+            match std::fs::write(&cache_path, r.as_bytes()) {
+                Ok(()) => {
+                    if let Some(n) = now {
+                        write_epoch_stamp(&cache_path, n);
+                    }
+                }
+                Err(_) => {
+                    eprintln!("cache {}: write void — refetch next cycle", cache_path)
                 }
             }
         }
@@ -1066,7 +1066,7 @@ pub fn machine_now_tdb() -> Option<f64> {
 }
 
 pub fn is_leap(y: u32) -> bool {
-    (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
+    (y.is_multiple_of(4) && !y.is_multiple_of(100)) || y.is_multiple_of(400)
 }
 
 pub fn load_env() -> HashMap<String, String> {
@@ -1081,9 +1081,7 @@ pub fn load_env() -> HashMap<String, String> {
                 if let Some(eq) = line.find('=') {
                     let key = line[..eq].trim().to_string();
                     let val = line[eq + 1..].trim().to_string();
-                    if !env.contains_key(&key) {
-                        env.insert(key, val);
-                    }
+                    env.entry(key).or_insert(val);
                 }
             }
         }

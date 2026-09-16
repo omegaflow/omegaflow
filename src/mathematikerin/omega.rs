@@ -200,41 +200,28 @@ pub struct OmegaLoop {
 }
 
 impl OmegaLoop {
-    #[allow(clippy::too_many_arguments)]
     pub fn new(
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<SenseReq>,
         res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-        time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
-        consent: Arc<AtomicBool>,
-        tone_code: Arc<AtomicU8>,
-        acoustic_tx: mpsc::Sender<PresenceFrame>,
-        seismic_tx: mpsc::Sender<PresenceFrame>,
-        relay_tx: Option<mpsc::Sender<PresenceFrame>>,
-        solar_rx: mpsc::Receiver<SolarCell>,
-        machine_rx: mpsc::Receiver<(
-            crate::archivar::Frame,
-            Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-        )>,
-        presence: Arc<RwLock<PresenceState>>,
-        diode: Arc<RwLock<DiodeState>>,
+        ctx: LoopCtx,
     ) -> Self {
         let rest = PresenceState::rest();
         OmegaLoop {
             rx,
             req_tx,
             res_rx,
-            time,
+            time: ctx.time,
             shutdown,
-            consent,
-            tone_code,
-            acoustic_tx,
-            seismic_tx,
-            relay_tx,
+            consent: ctx.consent,
+            tone_code: ctx.tone_code,
+            acoustic_tx: ctx.acoustic_tx,
+            seismic_tx: ctx.seismic_tx,
+            relay_tx: ctx.relay_tx,
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
-            presence,
-            diode,
+            presence: ctx.presence,
+            diode: ctx.diode,
             device: None,
             queue: None,
             probe_pipe: None,
@@ -300,8 +287,8 @@ impl OmegaLoop {
             ring_filled: 0,
             ring_gen: 0,
             pe_ring: Vec::with_capacity(16),
-            solar: SolarMachine::new(solar_rx),
-            matrix: MatrixMachine::new(machine_rx),
+            solar: SolarMachine::new(ctx.solar_rx),
+            matrix: MatrixMachine::new(ctx.machine_rx),
             te_topology: None,
             field_permeability: 0.0,
             tone_scale: 1.0,
@@ -351,11 +338,11 @@ impl OmegaLoop {
             self.t_thrust = pres.t_thrust;
             self.band = pres.band;
         }
-        if self.t_presence == 0.0 {
-            if let Some(t) = system_now(&self.time) {
-                self.t_presence = t;
-                self.t0 = t;
-            }
+        if self.t_presence == 0.0
+            && let Some(t) = system_now(&self.time)
+        {
+            self.t_presence = t;
+            self.t0 = t;
         }
     }
 
@@ -942,10 +929,11 @@ impl OmegaLoop {
         }
         let pack = pack_oscs(&self.sky.oscs, S2_OSC_CAP);
         let mut gpu_fields: Option<Vec<f32>> = None;
-        if let (Some(device), Some(queue)) = (&self.device, &self.queue) {
-            if pack.count > 0 && self.s2_eval_gpu(device, queue, &pack) {
-                gpu_fields = self.s2_read_gpu(&pack.probe_count);
-            }
+        if let (Some(device), Some(queue)) = (&self.device, &self.queue)
+            && pack.count > 0
+            && self.s2_eval_gpu(device, queue, &pack)
+        {
+            gpu_fields = self.s2_read_gpu(&pack.probe_count);
         }
         let cap = self.sky.oscs.len().min(S2_OSC_CAP as usize);
         for (i, o) in self.sky.oscs.iter().take(cap).enumerate() {
@@ -999,7 +987,7 @@ impl OmegaLoop {
             pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
         }
         queue.write_buffer(param_buf, 0, &pb);
-        let groups = (pack.probe_count + 63) / 64;
+        let groups = pack.probe_count.div_ceil(64);
         let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
         {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
@@ -1448,7 +1436,7 @@ impl OmegaLoop {
         self.probe();
         if self
             .last_hud
-            .map_or(true, |i| i.elapsed().as_secs_f64() >= 1.0)
+            .is_none_or(|i| i.elapsed().as_secs_f64() >= 1.0)
         {
             self.last_hud = Some(std::time::Instant::now());
             self.probe_readback();
@@ -1633,41 +1621,30 @@ impl OmegaLoop {
     }
 }
 
+pub struct LoopCtx {
+    pub time: Arc<Mutex<Option<LeapSeconds>>>,
+    pub consent: Arc<AtomicBool>,
+    pub tone_code: Arc<AtomicU8>,
+    pub acoustic_tx: mpsc::Sender<PresenceFrame>,
+    pub seismic_tx: mpsc::Sender<PresenceFrame>,
+    pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
+    pub solar_rx: mpsc::Receiver<SolarCell>,
+    pub machine_rx: mpsc::Receiver<(
+        crate::archivar::Frame,
+        Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
+    )>,
+    pub presence: Arc<RwLock<PresenceState>>,
+    pub diode: Arc<RwLock<DiodeState>>,
+}
+
 pub fn run_loop(
     rx: mpsc::Receiver<Arc<Buffer>>,
     req_tx: mpsc::SyncSender<SenseReq>,
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-    time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
-    consent: Arc<AtomicBool>,
-    tone_code: Arc<AtomicU8>,
-    acoustic_tx: mpsc::Sender<PresenceFrame>,
-    seismic_tx: mpsc::Sender<PresenceFrame>,
-    relay_tx: Option<mpsc::Sender<PresenceFrame>>,
-    solar_rx: mpsc::Receiver<SolarCell>,
-    machine_rx: mpsc::Receiver<(
-        crate::archivar::Frame,
-        Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-    )>,
-    presence: Arc<RwLock<PresenceState>>,
-    diode: Arc<RwLock<DiodeState>>,
+    ctx: LoopCtx,
 ) {
-    let mut loop_ = OmegaLoop::new(
-        rx,
-        req_tx,
-        res_rx,
-        time,
-        shutdown.clone(),
-        consent,
-        tone_code,
-        acoustic_tx,
-        seismic_tx,
-        relay_tx,
-        solar_rx,
-        machine_rx,
-        presence,
-        diode,
-    );
+    let mut loop_ = OmegaLoop::new(rx, req_tx, res_rx, shutdown.clone(), ctx);
     loop_.init_gpu();
     while !shutdown.load(Ordering::SeqCst) {
         let t0 = std::time::Instant::now();
@@ -1686,21 +1663,7 @@ pub struct LoopRadiator {
 }
 
 impl LoopRadiator {
-    pub fn new(
-        time: Arc<Mutex<Option<LeapSeconds>>>,
-        consent: Arc<AtomicBool>,
-        tone_code: Arc<AtomicU8>,
-        acoustic_tx: mpsc::Sender<PresenceFrame>,
-        seismic_tx: mpsc::Sender<PresenceFrame>,
-        relay_tx: Option<mpsc::Sender<PresenceFrame>>,
-        solar_rx: mpsc::Receiver<SolarCell>,
-        machine_rx: mpsc::Receiver<(
-            crate::archivar::Frame,
-            Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-        )>,
-        presence: Arc<RwLock<PresenceState>>,
-        diode: Arc<RwLock<DiodeState>>,
-    ) -> Self {
+    pub fn new(ctx: LoopCtx) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
         let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
         let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64, u64)>(2);
@@ -1709,10 +1672,7 @@ impl LoopRadiator {
         thread::spawn(move || {
             let mut generation: u64 = 0;
             let mut last_bytes: Vec<u8> = Vec::new();
-            loop {
-                let Ok(mut req) = req_rx.recv() else {
-                    break;
-                };
+            while let Ok(mut req) = req_rx.recv() {
                 while let Ok(newer) = req_rx.try_recv() {
                     req = newer;
                 }
@@ -1741,15 +1701,17 @@ impl LoopRadiator {
                 }
                 sense_membrane(
                     &field,
-                    center,
-                    t,
-                    pad,
-                    cache_interval,
-                    &floor,
-                    softening,
-                    forward,
+                    MembraneCtx {
+                        center,
+                        t2: t,
+                        pad,
+                        delta_t_cache: cache_interval,
+                        floor: &floor,
+                        softening,
+                        forward,
+                        eph: &eph,
+                    },
                     &mut records,
-                    &eph,
                 );
                 if let Some(cset) = &field.curves {
                     emit_curves(cset, center, t, pad, &mut records);
@@ -1781,22 +1743,7 @@ impl LoopRadiator {
             }
         });
         let handle = thread::spawn(move || {
-            run_loop(
-                rx,
-                req_tx,
-                res_rx,
-                time,
-                shutdown_clone,
-                consent,
-                tone_code,
-                acoustic_tx,
-                seismic_tx,
-                relay_tx,
-                solar_rx,
-                machine_rx,
-                presence,
-                diode,
-            );
+            run_loop(rx, req_tx, res_rx, shutdown_clone, ctx);
         });
         Self {
             tx,

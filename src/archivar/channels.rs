@@ -39,11 +39,10 @@ pub fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntr
             None => continue,
         };
         if src.stations_flatten.is_empty() {
-            if filter_ok(v) {
-                match jpath_val(v, &src.stations_id) {
-                    Some(id_ref) => push_entry(id_ref, lat, lon),
-                    None => {}
-                }
+            if filter_ok(v)
+                && let Some(id_ref) = jpath_val(v, &src.stations_id)
+            {
+                push_entry(id_ref, lat, lon)
             }
         } else if let Some(JsonVal::Arr(elems)) = jpath_val(v, &src.stations_flatten) {
             for e in elems {
@@ -86,24 +85,50 @@ pub fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
     out
 }
 
+pub struct FanoutCtx<'a> {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub presence: Option<(f64, f64, f64)>,
+    pub now: f64,
+    pub r: f64,
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+    pub env: &'a HashMap<String, String>,
+    pub lsk: &'a LeapSeconds,
+}
+
 pub fn fanout_fetch(
     src: &SourceConfig,
     stations_url_tmpl: &str,
-    x: f64,
-    y: f64,
-    z: f64,
-    presence: Option<(f64, f64, f64)>,
-    now: f64,
-    r: f64,
-    eph: &HashMap<String, BodyEphemeris>,
-    env: &HashMap<String, String>,
-    lsk: &LeapSeconds,
+    ctx: FanoutCtx<'_>,
 ) -> Vec<(Channel, FieldConfig)> {
+    let FanoutCtx {
+        x,
+        y,
+        z,
+        presence,
+        now,
+        r,
+        eph,
+        env,
+        lsk,
+    } = ctx;
     let mut channels = Vec::new();
     let body_name = frame_body_name(&src.frame);
     let (ux, uy, uz) = presence.unwrap_or((x, y, z));
-    let stations_url = match render_url(stations_url_tmpl, ux, uy, uz, now, r, &body_name, eph, lsk)
-    {
+    let stations_url = match render_url(
+        stations_url_tmpl,
+        &body_name,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    ) {
         Some(u) => resolve_secret(&u, env),
         None => return channels,
     };
@@ -120,7 +145,7 @@ pub fn fanout_fetch(
         Some((px, py, pz)) => icrs_to_body_surface(px, py, pz, now, &body_name, eph),
         None => None,
     }
-    .or_else(|| {
+    .or({
         if let Frame::Surface { lat, lon, .. } = src.frame {
             Some((lat, lon))
         } else {
@@ -135,11 +160,34 @@ pub fn fanout_fetch(
         });
     }
     let cap = src.fanout_cap as usize;
-    let base_url = match render_url(&src.url, ux, uy, uz, now, r, &body_name, eph, lsk) {
+    let base_url = match render_url(
+        &src.url,
+        &body_name,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    ) {
         Some(u) => u,
         None => return channels,
     };
-    let body = render_source_body(src, ux, uy, uz, now, r, eph, lsk);
+    let body = render_source_body(
+        src,
+        RenderCtx {
+            x: ux,
+            y: uy,
+            z: uz,
+            tdb: now,
+            r,
+            eph,
+            lsk,
+        },
+    );
     let window = 3usize;
     let chunks: Vec<&StationEntry> = stations.iter().take(cap).collect();
     for (wi, chunk) in chunks.chunks(window).enumerate() {
@@ -274,9 +322,9 @@ pub fn build_netcdf_channels(
             if !lat.is_finite()
                 || !lon.is_finite()
                 || !juld.is_finite()
-                || lat_fill.map_or(false, |f| lat == f)
-                || lon_fill.map_or(false, |f| lon == f)
-                || juld_fill.map_or(false, |f| juld == f)
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
             {
                 continue;
             }
@@ -300,8 +348,8 @@ pub fn build_netcdf_channels(
                     let val = vals[p * n_levels + k];
                     if !val.is_finite()
                         || !pres.is_finite()
-                        || fill.map_or(false, |f| (val as f64) == f)
-                        || pres_fill.map_or(false, |f| (pres as f64) == f)
+                        || (fill == Some(val as f64))
+                        || (pres_fill == Some(pres as f64))
                     {
                         continue;
                     }
@@ -395,9 +443,9 @@ pub fn build_opendap_channels(
             if !lat.is_finite()
                 || !lon.is_finite()
                 || !juld.is_finite()
-                || lat_fill.map_or(false, |f| lat == f)
-                || lon_fill.map_or(false, |f| lon == f)
-                || juld_fill.map_or(false, |f| juld == f)
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
             {
                 continue;
             }
@@ -421,8 +469,8 @@ pub fn build_opendap_channels(
                     let val = vals[p * n_levels + k];
                     if !val.is_finite()
                         || !pres.is_finite()
-                        || fill.map_or(false, |f| val == f)
-                        || pres_fill.map_or(false, |f| pres == f)
+                        || (fill == Some(val))
+                        || (pres_fill == Some(pres))
                     {
                         continue;
                     }
@@ -508,6 +556,8 @@ pub fn build_finals_channels(
     channels
 }
 
+type TecBest = Option<(f64, f64, Vec<(f64, f64, f64)>)>;
+
 pub fn build_ionex_channels(
     src: &SourceConfig,
     text: &str,
@@ -517,10 +567,10 @@ pub fn build_ionex_channels(
     let mut channels = Vec::new();
     let mut tec_field: Option<&FieldConfig> = None;
     for ext in &src.extracts {
-        if let Extract::Field(fc) = ext {
-            if fc.key == "tec" {
-                tec_field = Some(fc);
-            }
+        if let Extract::Field(fc) = ext
+            && fc.key == "tec"
+        {
+            tec_field = Some(fc);
         }
     }
     let Some(fc) = tec_field else {
@@ -543,7 +593,7 @@ pub fn build_ionex_channels(
         return channels;
     };
     let mut lines = text.lines().peekable();
-    let mut best: Option<(f64, f64, Vec<(f64, f64, f64)>)> = None;
+    let mut best: TecBest = None;
     while let Some(l) = lines.next() {
         if !l.trim_end().ends_with("START OF TEC MAP") {
             continue;
@@ -581,8 +631,7 @@ pub fn build_ionex_channels(
         }
         let nlon = ((lon2 - lon1) / dlon).round() as i64 + 1;
         let mut pts: Vec<(f64, f64, f64)> = Vec::new();
-        loop {
-            let Some(cur) = lines.next() else { break };
+        while let Some(cur) = lines.next() {
             if cur.trim_end().ends_with("END OF TEC MAP") {
                 break;
             }
@@ -591,8 +640,7 @@ pub fn build_ionex_channels(
             };
             let mut remaining = nlon as usize;
             let mut row: Option<&str> = Some(cur);
-            loop {
-                let Some(r) = row else { break };
+            while let Some(r) = row {
                 let take = remaining.min(16);
                 for k in 0..take {
                     let idx = nlon as usize - remaining + k;
@@ -613,7 +661,7 @@ pub fn build_ionex_channels(
                 row = lines.next();
             }
         }
-        if best.as_ref().map_or(true, |(be, _, _)| epoch > *be) {
+        if best.as_ref().is_none_or(|(be, _, _)| epoch > *be) {
             best = Some((epoch, h * 1000.0, pts));
         }
     }
@@ -752,13 +800,7 @@ pub fn anchor(
             lon,
             alt,
         } => {
-            if eph
-                .get(body_name.as_str())
-                .and_then(|e| e.props.as_ref())
-                .is_none()
-            {
-                return None;
-            }
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
             Motion::Surface {
                 body_name: body_name.clone(),
                 lat: *lat,
@@ -775,57 +817,36 @@ pub fn anchor(
             track,
             vrate,
         } => {
-            if eph
-                .get(body_name.as_str())
-                .and_then(|e| e.props.as_ref())
-                .is_none()
-            {
-                return None;
-            }
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
             let v = match vrate {
                 Some(v) => *v,
                 None => return None,
             };
-            match surface_motion(
+            surface_motion(SurfaceMotionParams {
                 body_name,
-                *lat,
-                *lon,
-                *alt,
-                *speed,
-                *track,
-                v,
-                channel.epoch,
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+                speed: *speed,
+                track: *track,
+                vrate: v,
+                t: channel.epoch,
                 eph,
-            ) {
-                Some(m) => m,
-                None => return None,
-            }
+            })?
         }
         Position::Barycenter { body_name, scale } => {
-            if eph
-                .get(body_name.as_str())
-                .and_then(|e| e.props.as_ref())
-                .is_none()
-            {
-                return None;
-            }
+            eph.get(body_name.as_str()).and_then(|e| e.props.as_ref())?;
             Motion::Barycenter {
                 body_name: body_name.clone(),
                 scale: *scale,
             }
         }
         Position::Source => match frame {
-            Some(f) => match frame_motion(f, None, None, channel.epoch, eph) {
-                Some(m) => m,
-                None => return None,
-            },
+            Some(f) => frame_motion(f, None, None, channel.epoch, eph)?,
             None => return None,
         },
     };
-    let abs = match motion.at(channel.epoch, channel.epoch, eph) {
-        Some(p) => p,
-        None => return None,
-    };
+    let abs = motion.at(channel.epoch, channel.epoch, eph)?;
     if !abs[0].is_finite()
         || !abs[1].is_finite()
         || !abs[2].is_finite()
@@ -839,15 +860,15 @@ pub fn anchor(
             let dt_raw = (channel.epoch - st.prev_epoch).abs();
             if dt_raw > 0.0 && source_ttl > 0.0 {
                 let dt = dt_raw;
-                if let Some(pm) = &st.prev_motion {
-                    if let Some(pred) = pm.at(channel.epoch, st.prev_epoch, eph) {
-                        let resid = ((pred[0] - abs[0]).powi(2)
-                            + (pred[1] - abs[1]).powi(2)
-                            + (pred[2] - abs[2]).powi(2))
-                        .sqrt();
-                        let alpha = 1.0 - (-dt / source_ttl).exp();
-                        st.resid_ema += (resid / dt - st.resid_ema) * alpha;
-                    }
+                if let Some(pm) = &st.prev_motion
+                    && let Some(pred) = pm.at(channel.epoch, st.prev_epoch, eph)
+                {
+                    let resid = ((pred[0] - abs[0]).powi(2)
+                        + (pred[1] - abs[1]).powi(2)
+                        + (pred[2] - abs[2]).powi(2))
+                    .sqrt();
+                    let alpha = 1.0 - (-dt / source_ttl).exp();
+                    st.resid_ema += (resid / dt - st.resid_ema) * alpha;
                 }
             }
         }
@@ -857,11 +878,7 @@ pub fn anchor(
         st.prev_motion = Some(motion.clone());
         st.has_prev = true;
     }
-    let (anchor_vmax, anchor_amax, anchor_p0) =
-        match law_bounds(&motion, channel.epoch, resid_ema, eph) {
-            Some(b) => b,
-            None => return None,
-        };
+    let (anchor_vmax, anchor_amax, anchor_p0) = law_bounds(&motion, channel.epoch, resid_ema, eph)?;
     if !anchor_p0[0].is_finite()
         || !anchor_p0[1].is_finite()
         || !anchor_p0[2].is_finite()

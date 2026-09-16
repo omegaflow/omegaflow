@@ -345,14 +345,14 @@ mod tests {
     #[test]
     fn vheader_decodes() {
         let body = vh_bytes();
-        let data_offset = 4 + 6 + 12;
+        let data_offset: i32 = 4 + 6 + 12;
         let mut file = Vec::new();
         file.extend_from_slice(&MAGIC);
         file.extend_from_slice(&1u16.to_be_bytes());
         file.extend_from_slice(&0i32.to_be_bytes());
         file.extend_from_slice(&DFTAG_VH.to_be_bytes());
         file.extend_from_slice(&1u16.to_be_bytes());
-        file.extend_from_slice(&(data_offset as i32).to_be_bytes());
+        file.extend_from_slice(&data_offset.to_be_bytes());
         file.extend_from_slice(&(body.len() as i32).to_be_bytes());
         file.extend_from_slice(&body);
         let hdf = Hdf4::parse(&file).expect("the synthetic file parses");
@@ -386,9 +386,9 @@ mod tests {
             file.extend_from_slice(&offset.to_be_bytes());
             file.extend_from_slice(&length.to_be_bytes());
         };
-        dd(DFTAG_VS | SPECIAL, 1, special_off as i32, 16);
-        dd(DFTAG_LINKED, 100, table_off as i32, 4);
-        dd(DFTAG_LINKED, 101, block_off as i32, 5);
+        dd(DFTAG_VS | SPECIAL, 1, special_off, 16);
+        dd(DFTAG_LINKED, 100, table_off, 4);
+        dd(DFTAG_LINKED, 101, block_off, 5);
         file.extend_from_slice(&[0u8, 0]);
         file.extend_from_slice(&5i32.to_be_bytes());
         file.extend_from_slice(&5i32.to_be_bytes());

@@ -200,12 +200,12 @@ pub fn gate_weigh_indexed(text: &str, library: &[TagWeight], idx: &WeighIndex) -
         if tw.weight > 0 && tw.force.is_none() {
             has_position = true;
         }
-        if let Some(fname) = &tw.force {
-            if let Some(fid) = force_id_of(fname) {
-                match force_hits.iter_mut().find(|(f, _)| *f == fid) {
-                    Some(hit) => hit.1 += tw.weight,
-                    None => force_hits.push((fid, tw.weight)),
-                }
+        if let Some(fname) = &tw.force
+            && let Some(fid) = force_id_of(fname)
+        {
+            match force_hits.iter_mut().find(|(f, _)| *f == fid) {
+                Some(hit) => hit.1 += tw.weight,
+                None => force_hits.push((fid, tw.weight)),
             }
         }
     }

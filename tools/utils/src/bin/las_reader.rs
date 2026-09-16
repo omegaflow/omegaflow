@@ -236,7 +236,7 @@ fn read_ept(path: &str) {
             );
             for f in &layout.schema {
                 println!(
-                    "  {} {} size {} scale {} offset {}",
+                    "  {} {} size {} scale {} offset {:?}",
                     f.name, f.field_type, f.size, f.scale, f.offset
                 );
             }

@@ -5,10 +5,10 @@ pub const COMP_MX: u32 = 2;
 pub const COMP_MY: u32 = 3;
 pub const COMP_MZ: u32 = 4;
 
-pub fn median(vals: &mut Vec<f64>) -> f64 {
+pub fn median(vals: &mut [f64]) -> f64 {
     vals.sort_by(|a, b| a.total_cmp(b));
     let n = vals.len();
-    if n % 2 == 0 {
+    if n.is_multiple_of(2) {
         (vals[n / 2 - 1] + vals[n / 2]) * 0.5
     } else {
         vals[n / 2]
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn median_handles_odd_and_even() {
-        assert_eq!(median(&mut vec![3.0, 1.0, 2.0]), 2.0);
-        assert_eq!(median(&mut vec![4.0, 1.0, 2.0, 3.0]), 2.5);
+        assert_eq!(median(&mut [3.0, 1.0, 2.0]), 2.0);
+        assert_eq!(median(&mut [4.0, 1.0, 2.0, 3.0]), 2.5);
     }
 }

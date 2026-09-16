@@ -1,11 +1,11 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::geo::{parse_ocs, write_ocs, GbcoRec, MAGIC_OCS};
+use omegaflow::archivar::geo::{GbcoRec, MAGIC_OCS, parse_ocs, write_ocs};
 use omegaflow::archivar::gpkg::{SqliteDb, SqliteValue};
-use omegaflow::archivar::json::{jpath_val, jstr, parse_json, JsonVal};
+use omegaflow::archivar::json::{JsonVal, jpath_val, jstr, parse_json};
 use omegaflow::archivar::tiff::parse_tiff;
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{magic_identity, FeldIdentitaet, ZeugeArt};
+use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 
 const NETLOC: &str = "noaa-ocs-hydrodata-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-ocs-hydrodata-pds.s3.amazonaws.com";
@@ -128,11 +128,7 @@ fn first_ident(segment: &str) -> Option<String> {
         .chars()
         .take_while(|c| c.is_alphanumeric() || *c == '_')
         .collect();
-    if word.is_empty() {
-        None
-    } else {
-        Some(word)
-    }
+    if word.is_empty() { None } else { Some(word) }
 }
 
 fn columns_from_create_sql(sql: &str) -> Option<Vec<String>> {
@@ -333,11 +329,7 @@ fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
             }
         }
     }
-    if asset_seen {
-        Some(recs)
-    } else {
-        None
-    }
+    if asset_seen { Some(recs) } else { None }
 }
 
 fn survey_id(href: &str) -> Option<&str> {

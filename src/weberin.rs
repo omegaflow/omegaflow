@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use crate::archivar::dastcom::{comet_state_at, CometRec};
-use crate::archivar::gaia_sso::{ang_sep_arcsec, predicted_radec, GaiaBody, TNO_NAME};
+use crate::archivar::dastcom::{CometRec, comet_state_at};
+use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec};
 use crate::archivar::mpcorb::{self, MpcorbRec};
 use crate::archivar::{
-    body_barycenter_position, state_at, AsteroidRec, BodyEphemeris, J2000_EPOCH,
+    AsteroidRec, BodyEphemeris, J2000_EPOCH, body_barycenter_position, state_at,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -233,7 +233,7 @@ fn primary_desig(rec: &CometRec) -> String {
     }
 }
 
-fn best_comet_by_desig<'a>(comets: &'a [CometRec]) -> HashMap<String, &'a CometRec> {
+fn best_comet_by_desig(comets: &[CometRec]) -> HashMap<String, &CometRec> {
     let mut by_desig: HashMap<String, &CometRec> = HashMap::new();
     for c in comets {
         let key = primary_desig(c);
@@ -297,6 +297,12 @@ pub fn separation_m(a: [f64; 3], b: [f64; 3]) -> f64 {
 
 pub fn add_sun(helio: [f64; 3], sun: [f64; 3]) -> [f64; 3] {
     [helio[0] + sun[0], helio[1] + sun[1], helio[2] + sun[2]]
+}
+
+impl Default for Weberin {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Weberin {
@@ -422,20 +428,18 @@ impl Weberin {
                     },
                 }
             };
-            if epm_woven {
-                if let (Some(spk_p), Some(inp_p), Some(epm_p)) = (spk, inpop, epm) {
-                    let spk_inpop = classify(separation_m(spk_p, inp_p), PLANET_WEBERIN_TOL_M);
-                    let spk_epm = classify(separation_m(spk_p, epm_p), PLANET_WEBERIN_TOL_M);
-                    let inpop_epm = classify(separation_m(inp_p, epm_p), PLANET_WEBERIN_TOL_M);
-                    let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
-                    self.triads.push(ThreeWayVerdict {
-                        name: t.name.clone(),
-                        spk_inpop,
-                        spk_epm,
-                        inpop_epm,
-                        fold,
-                    });
-                }
+            if epm_woven && let (Some(spk_p), Some(inp_p), Some(epm_p)) = (spk, inpop, epm) {
+                let spk_inpop = classify(separation_m(spk_p, inp_p), PLANET_WEBERIN_TOL_M);
+                let spk_epm = classify(separation_m(spk_p, epm_p), PLANET_WEBERIN_TOL_M);
+                let inpop_epm = classify(separation_m(inp_p, epm_p), PLANET_WEBERIN_TOL_M);
+                let fold = three_way_fold(&spk_inpop, &spk_epm, &inpop_epm);
+                self.triads.push(ThreeWayVerdict {
+                    name: t.name.clone(),
+                    spk_inpop,
+                    spk_epm,
+                    inpop_epm,
+                    fold,
+                });
             }
             self.verdicts.push(BodyVerdict {
                 name: t.name.clone(),
@@ -473,7 +477,7 @@ impl Weberin {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::motion::{ChebyshevGranule, CHEBYSHEV_N};
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
     use std::sync::atomic::AtomicUsize;
 
     fn rec(number: u32) -> AsteroidRec {
@@ -1563,7 +1567,7 @@ impl Weberin {
 mod gaia_tests {
     use super::*;
     use crate::archivar::gaia_sso::GaiaTransit;
-    use crate::archivar::motion::{ChebyshevGranule, CHEBYSHEV_N};
+    use crate::archivar::motion::{CHEBYSHEV_N, ChebyshevGranule};
     use std::sync::atomic::AtomicUsize;
 
     fn mpc_rec(number: u32, epoch_jd: f64, a_au: f64) -> MpcorbRec {

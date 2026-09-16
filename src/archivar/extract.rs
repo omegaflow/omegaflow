@@ -485,7 +485,7 @@ pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
     };
     match map.get(fk) {
         Some(JsonVal::Str(s)) => s == fv,
-        Some(JsonVal::Num(n)) => fv.parse::<f64>().map_or(false, |f| f == *n),
+        Some(JsonVal::Num(n)) => fv.parse::<f64>() == Ok(*n),
         _ => false,
     }
 }
@@ -666,10 +666,10 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
 
 pub fn extract_header(s: &str, n: &str) -> Option<String> {
     for l in s.lines() {
-        if let Some(c) = l.find(':') {
-            if l[..c].trim().eq_ignore_ascii_case(n) {
-                return Some(l[c + 1..].trim().to_string());
-            }
+        if let Some(c) = l.find(':')
+            && l[..c].trim().eq_ignore_ascii_case(n)
+        {
+            return Some(l[c + 1..].trim().to_string());
         }
     }
     None
@@ -936,10 +936,10 @@ pub fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
 pub fn jdeep_find_num(json: &JsonVal, key: &str) -> Option<f64> {
     match json {
         JsonVal::Obj(map) => {
-            if let Some(v) = map.get(key) {
-                if let Some(n) = scalar_of(v) {
-                    return Some(n);
-                }
+            if let Some(v) = map.get(key)
+                && let Some(n) = scalar_of(v)
+            {
+                return Some(n);
             }
             for v in map.values() {
                 if let Some(n) = jdeep_find_num(v, key) {
@@ -992,10 +992,10 @@ pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
                 continue;
             }
             let cols = split_data_line(trimmed);
-            if let Some(v) = cols.get(idx) {
-                if let Ok(f) = v.trim_matches('"').parse::<f64>() {
-                    return Some(f);
-                }
+            if let Some(v) = cols.get(idx)
+                && let Ok(f) = v.trim_matches('"').parse::<f64>()
+            {
+                return Some(f);
             }
         }
         return None;
@@ -1034,10 +1034,10 @@ pub fn text_last_col(data: &str, col: &str) -> Option<f64> {
             continue;
         }
         let cols = split_data_line(trimmed);
-        if let Some(v) = cols.get(idx) {
-            if let Ok(f) = v.trim_matches('"').parse::<f64>() {
-                return Some(f);
-            }
+        if let Some(v) = cols.get(idx)
+            && let Ok(f) = v.trim_matches('"').parse::<f64>()
+        {
+            return Some(f);
         }
     }
     None
@@ -1154,11 +1154,7 @@ pub fn text_to_json(text: &str) -> Option<JsonVal> {
             return None;
         }
         let cols: Vec<String> = stripped.split_whitespace().map(|s| s.to_string()).collect();
-        if cols.len() > 5 {
-            Some(cols)
-        } else {
-            None
-        }
+        if cols.len() > 5 { Some(cols) } else { None }
     })?;
     let data = text.lines().find_map(|line| {
         let t = line.trim();
@@ -1198,11 +1194,7 @@ fn tap_format(url: &str) -> Option<String> {
     let rest = &url[pos..];
     let end = rest.find('&').unwrap_or(rest.len());
     let value = rest[..end].trim().to_ascii_lowercase();
-    if value.is_empty() {
-        None
-    } else {
-        Some(value)
-    }
+    if value.is_empty() { None } else { Some(value) }
 }
 
 fn xml_unescape(s: &str) -> String {
@@ -1317,10 +1309,10 @@ pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     };
     let mut names: Vec<String> = Vec::new();
     for m in metadata {
-        if let JsonVal::Obj(mo) = m {
-            if let Some(JsonVal::Str(name)) = mo.get("name") {
-                names.push(name.clone());
-            }
+        if let JsonVal::Obj(mo) = m
+            && let Some(JsonVal::Str(name)) = mo.get("name")
+        {
+            names.push(name.clone());
         }
     }
     if names.is_empty() {
@@ -1349,15 +1341,15 @@ pub fn tdb_to_jd(tdb_secs: f64) -> f64 {
 
 pub fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     if let Some(JsonVal::Num(_)) = val.first() {
-        if val.len() >= 2 {
-            if let (Some(lon), Some(lat)) = (scalar_of(&val[0]), scalar_of(&val[1])) {
-                let z = if val.len() >= 3 {
-                    scalar_of(&val[2])
-                } else {
-                    None
-                };
-                return vec![(lon, lat, z)];
-            }
+        if val.len() >= 2
+            && let (Some(lon), Some(lat)) = (scalar_of(&val[0]), scalar_of(&val[1]))
+        {
+            let z = if val.len() >= 3 {
+                scalar_of(&val[2])
+            } else {
+                None
+            };
+            return vec![(lon, lat, z)];
         }
         return Vec::new();
     }
@@ -1398,7 +1390,7 @@ pub fn split_data_line(line: &str) -> Vec<&str> {
 
 pub enum ExtractResult {
     Measurements(Vec<(Channel, FieldConfig)>),
-    WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
+    WithEphemeris(Vec<(Channel, FieldConfig)>, Box<BodyEphemeris>),
 }
 
 const FITS_GCOUNT_DEFAULT: usize = 1;
@@ -1542,7 +1534,7 @@ fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
             return Some(JsonVal::Arr(rows));
         }
         let data_bytes = fits_data_bytes(&header)?;
-        let aligned = (data_start + data_bytes + 2879) / 2880 * 2880;
+        let aligned = (data_start + data_bytes).div_ceil(2880) * 2880;
         if aligned <= off || aligned >= buf.len() {
             break;
         }
@@ -1559,7 +1551,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             f.read_to_end(&mut buf).ok();
         }
         if let Some(eph) = parse_ephemeris_binary(&buf) {
-            return ExtractResult::WithEphemeris(vec![], eph);
+            return ExtractResult::WithEphemeris(vec![], Box::new(eph));
         }
         return ExtractResult::Measurements(vec![]);
     }
@@ -1573,13 +1565,13 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             let rec = std::sync::Arc::new(crate::wind_orbit::orbit_rec(&records));
             return ExtractResult::WithEphemeris(
                 vec![],
-                BodyEphemeris {
+                Box::new(BodyEphemeris {
                     granules: Vec::new(),
                     rotation_matrices: Vec::new(),
                     props: None,
                     orbit: Some(rec),
                     granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
-                },
+                }),
             );
         }
         return ExtractResult::Measurements(vec![]);
@@ -1661,17 +1653,17 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     for ext in effective_extracts {
         match ext {
             Extract::Field(fc) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jnum(j, &fc.key) {
-                        extracted.insert(fc.name.clone(), v);
-                    }
+                if let Some(ref j) = parsed_json
+                    && let Some(v) = jnum(j, &fc.key)
+                {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::First(fc, filter) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jfirst_where(j, &fc.key, filter.as_ref()) {
-                        extracted.insert(fc.name.clone(), v);
-                    }
+                if let Some(ref j) = parsed_json
+                    && let Some(v) = jfirst_where(j, &fc.key, filter.as_ref())
+                {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::Last(fc, filter) => {
@@ -1679,8 +1671,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     if let Some(v) = jlast_where(j, &fc.key, filter.as_ref()) {
                         extracted.insert(fc.name.clone(), v);
                     }
-                } else if fc.key == "line" {
-                    if let Some(v) = body
+                } else if fc.key == "line"
+                    && let Some(v) = body
                         .lines()
                         .rev()
                         .filter(|l| {
@@ -1692,9 +1684,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 .last()
                                 .and_then(|c| c.trim_matches('"').parse::<f64>().ok())
                         })
-                    {
-                        extracted.insert(fc.name.clone(), v);
-                    }
+                {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::Count(fc) => {
@@ -1725,54 +1716,50 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 }
             }
             Extract::Path(fc) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jpath(j, &fc.key) {
-                        extracted.insert(fc.name.clone(), v);
-                    }
+                if let Some(ref j) = parsed_json
+                    && let Some(v) = jpath(j, &fc.key)
+                {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::Deep(fc) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(v) = jdeep_find_num(j, &fc.key) {
-                        extracted.insert(fc.name.clone(), v);
-                    }
+                if let Some(ref j) = parsed_json
+                    && let Some(v) = jdeep_find_num(j, &fc.key)
+                {
+                    extracted.insert(fc.name.clone(), v);
                 }
             }
             Extract::LastLine(n) => {
                 if let Some(v) = body
                     .lines()
-                    .filter(|l| {
+                    .rfind(|l| {
                         let t = l.trim();
                         !t.is_empty() && !t.starts_with('#')
                     })
-                    .last()
                     .and_then(|line| {
                         split_data_line(line)
                             .into_iter()
                             .filter_map(|t| t.parse::<f64>().ok())
-                            .last()
+                            .next_back()
                     })
                 {
                     extracted.insert(n.clone(), v);
                 }
             }
             Extract::ObjLast(fc) => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(obj) = jpath_val(j, &fc.key) {
-                        if let JsonVal::Obj(m) = obj {
-                            if let Some(last_key) = m.keys().max_by(|a, b| {
-                                if let (Ok(ka), Ok(kb)) = (a.parse::<i64>(), b.parse::<i64>()) {
-                                    ka.cmp(&kb)
-                                } else {
-                                    a.cmp(b)
-                                }
-                            }) {
-                                if let Some(val) = m.get(last_key).and_then(scalar_of) {
-                                    extracted.insert(fc.name.clone(), val);
-                                }
-                            }
+                if let Some(ref j) = parsed_json
+                    && let Some(obj) = jpath_val(j, &fc.key)
+                    && let JsonVal::Obj(m) = obj
+                    && let Some(last_key) = m.keys().max_by(|a, b| {
+                        if let (Ok(ka), Ok(kb)) = (a.parse::<i64>(), b.parse::<i64>()) {
+                            ka.cmp(&kb)
+                        } else {
+                            a.cmp(b)
                         }
-                    }
+                    })
+                    && let Some(val) = m.get(last_key).and_then(scalar_of)
+                {
+                    extracted.insert(fc.name.clone(), val);
                 }
             }
             Extract::Regex(fc) => {
@@ -1785,19 +1772,17 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 extracted.insert(n.clone(), count);
             }
             Extract::LastObj(fk, fv, ek, n) => {
-                if let Some(ref j) = parsed_json {
-                    if let JsonVal::Arr(arr) = j {
-                        for v in arr.iter().rev() {
-                            if let JsonVal::Obj(o) = v {
-                                if let Some(JsonVal::Str(s)) = o.get(fk) {
-                                    if s == fv {
-                                        if let Some(val) = jnum(v, ek) {
-                                            extracted.insert(n.clone(), val);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
+                if let Some(ref j) = parsed_json
+                    && let JsonVal::Arr(arr) = j
+                {
+                    for v in arr.iter().rev() {
+                        if let JsonVal::Obj(o) = v
+                            && let Some(JsonVal::Str(s)) = o.get(fk)
+                            && s == fv
+                            && let Some(val) = jnum(v, ek)
+                        {
+                            extracted.insert(n.clone(), val);
+                            break;
                         }
                     }
                 }
@@ -1845,24 +1830,20 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             let position = match (lat, lon, alt) {
                                 (Some(la), Some(lo), Some(al)) => {
                                     let mut lat_val = la;
-                                    if let Some(sign_key) = lat_sign {
-                                        if let Some(vv) = jpath_val(v, sign_key) {
-                                            if let JsonVal::Str(s) = vv {
-                                                if s.contains('S') || s.contains('s') {
-                                                    lat_val = -la;
-                                                }
-                                            }
-                                        }
+                                    if let Some(sign_key) = lat_sign
+                                        && let Some(vv) = jpath_val(v, sign_key)
+                                        && let JsonVal::Str(s) = vv
+                                        && (s.contains('S') || s.contains('s'))
+                                    {
+                                        lat_val = -la;
                                     }
                                     let mut lon_val = lo;
-                                    if let Some(sign_key) = lon_sign {
-                                        if let Some(vv) = jpath_val(v, sign_key) {
-                                            if let JsonVal::Str(s) = vv {
-                                                if s.contains('W') || s.contains('w') {
-                                                    lon_val = -lo;
-                                                }
-                                            }
-                                        }
+                                    if let Some(sign_key) = lon_sign
+                                        && let Some(vv) = jpath_val(v, sign_key)
+                                        && let JsonVal::Str(s) = vv
+                                        && (s.contains('W') || s.contains('w'))
+                                    {
+                                        lon_val = -lo;
                                     }
                                     let speed = if vel_key.is_empty() {
                                         None
@@ -1942,21 +1923,21 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     continue;
                                 }
                                 let mut raw = jpath(v, &fc.key);
-                                if !mag_type_key.is_empty() && fc.unit.eq_ignore_ascii_case("mw") {
-                                    if let Some(t) = jstr(v, &mag_type_key) {
-                                        if !is_moment_magnitude(&t) {
-                                            continue;
-                                        }
-                                    }
+                                if !mag_type_key.is_empty()
+                                    && fc.unit.eq_ignore_ascii_case("mw")
+                                    && let Some(t) = jstr(v, mag_type_key)
+                                    && !is_moment_magnitude(&t)
+                                {
+                                    continue;
                                 }
                                 let mut transformed = false;
                                 if let Some((op, key_b)) = &fc.fold {
                                     raw = fold_value(raw, jpath(v, key_b), *op);
-                                } else if let Some(ref mag_key) = src.flux_from_mag {
-                                    if fc.key == *mag_key {
-                                        raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                        transformed = true;
-                                    }
+                                } else if let Some(ref mag_key) = src.flux_from_mag
+                                    && fc.key == *mag_key
+                                {
+                                    raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                    transformed = true;
                                 }
                                 let val = match raw {
                                     Some(vv) => vv,
@@ -2005,12 +1986,12 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         _ => Vec::new(),
                     };
                     for v in rows {
-                        let lat = jpath(v, &lat_key);
-                        let lon = jpath(v, &lon_key);
+                        let lat = jpath(v, lat_key);
+                        let lon = jpath(v, lon_key);
                         if let (Some(la), Some(lo)) = (lat, lon) {
                             let epoch = if epoch_key.is_empty() {
                                 now
-                            } else if let Some(ev) = jpath_val(v, &epoch_key) {
+                            } else if let Some(ev) = jpath_val(v, epoch_key) {
                                 match ev {
                                     JsonVal::Str(s) => {
                                         if let Some(t) = parse_iso_tdb(s, lsk) {
@@ -2109,87 +2090,87 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 epoch_key,
                 fields,
             } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for v in arr.iter() {
-                            let coords = if geom_path.is_empty() {
-                                match jpath_val(v, "coordinates") {
-                                    Some(JsonVal::Arr(c)) => c,
-                                    _ => match v {
-                                        JsonVal::Arr(c) => c,
-                                        _ => continue,
-                                    },
-                                }
-                            } else {
-                                let geom = match jpath_val(v, geom_path) {
-                                    Some(g) => g,
-                                    None => continue,
-                                };
-                                match jpath_val(geom, "coordinates") {
-                                    Some(JsonVal::Arr(c)) => c,
-                                    _ => match geom {
-                                        JsonVal::Arr(c) => c,
-                                        _ => continue,
-                                    },
-                                }
-                            };
-                            let vertices = flatten_geojson_coords(coords);
-                            if vertices.is_empty() {
-                                continue;
+                if let Some(ref j) = parsed_json
+                    && let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path)
+                {
+                    for v in arr.iter() {
+                        let coords = if geom_path.is_empty() {
+                            match jpath_val(v, "coordinates") {
+                                Some(JsonVal::Arr(c)) => c,
+                                _ => match v {
+                                    JsonVal::Arr(c) => c,
+                                    _ => continue,
+                                },
                             }
-                            let row_epoch = if !epoch_key.is_empty() {
-                                match jpath(v, epoch_key) {
-                                    Some(ev) => ev,
-                                    None => continue,
-                                }
-                            } else {
-                                continue;
+                        } else {
+                            let geom = match jpath_val(v, geom_path) {
+                                Some(g) => g,
+                                None => continue,
                             };
-                            for (lon, lat, z) in vertices {
-                                let position = Position::Surface {
-                                    body_name: frame_body_name(&src.frame),
-                                    lat,
-                                    lon,
-                                    alt: match z {
-                                        Some(a) => a,
-                                        None => continue,
-                                    },
-                                };
-                                for fc in fields {
-                                    let mut raw = jpath(v, &fc.key);
-                                    let mut transformed = false;
-                                    if let Some((op, key_b)) = &fc.fold {
-                                        raw = fold_value(raw, jpath(v, key_b), *op);
-                                    } else if let Some(ref mag_key) = src.flux_from_mag {
-                                        if fc.key == *mag_key {
-                                            raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                            transformed = true;
-                                        }
-                                    }
-                                    let val = match raw {
-                                        Some(vv) => vv,
-                                        None => continue,
-                                    };
-                                    if !val.is_finite() {
-                                        continue;
-                                    }
-                                    let mut eff_fc = (*fc).clone();
-                                    if transformed {
-                                        eff_fc.unit.clear();
-                                    }
-                                    channels.push((
-                                        Channel {
-                                            z: 0.0,
-                                            freq: 0.0,
-                                            bin_width: 0.0,
-                                            epoch: row_epoch,
-                                            position: position.clone(),
-                                            name: fc.name.clone(),
-                                            value: val,
-                                        },
-                                        eff_fc,
-                                    ));
+                            match jpath_val(geom, "coordinates") {
+                                Some(JsonVal::Arr(c)) => c,
+                                _ => match geom {
+                                    JsonVal::Arr(c) => c,
+                                    _ => continue,
+                                },
+                            }
+                        };
+                        let vertices = flatten_geojson_coords(coords);
+                        if vertices.is_empty() {
+                            continue;
+                        }
+                        let row_epoch = if !epoch_key.is_empty() {
+                            match jpath(v, epoch_key) {
+                                Some(ev) => ev,
+                                None => continue,
+                            }
+                        } else {
+                            continue;
+                        };
+                        for (lon, lat, z) in vertices {
+                            let position = Position::Surface {
+                                body_name: frame_body_name(&src.frame),
+                                lat,
+                                lon,
+                                alt: match z {
+                                    Some(a) => a,
+                                    None => continue,
+                                },
+                            };
+                            for fc in fields {
+                                let mut raw = jpath(v, &fc.key);
+                                let mut transformed = false;
+                                if let Some((op, key_b)) = &fc.fold {
+                                    raw = fold_value(raw, jpath(v, key_b), *op);
+                                } else if let Some(ref mag_key) = src.flux_from_mag
+                                    && fc.key == *mag_key
+                                {
+                                    raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                    transformed = true;
                                 }
+                                let val = match raw {
+                                    Some(vv) => vv,
+                                    None => continue,
+                                };
+                                if !val.is_finite() {
+                                    continue;
+                                }
+                                let mut eff_fc = (*fc).clone();
+                                if transformed {
+                                    eff_fc.unit.clear();
+                                }
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        epoch: row_epoch,
+                                        position: position.clone(),
+                                        name: fc.name.clone(),
+                                        value: val,
+                                    },
+                                    eff_fc,
+                                ));
                             }
                         }
                     }
@@ -2202,103 +2183,103 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 alt_key,
                 val_key,
             } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for v in arr.iter() {
-                            let polys = match jpath_val(v, "polygons") {
-                                Some(JsonVal::Arr(p)) => p,
-                                _ => continue,
-                            };
-                            let mut vertices: Vec<(f64, f64)> = Vec::new();
-                            for ring_list in polys {
-                                if let JsonVal::Arr(rings) = ring_list {
-                                    for ring_str_val in rings {
-                                        if let JsonVal::Str(s) = ring_str_val {
-                                            let nums: Vec<f64> = s
-                                                .split_whitespace()
-                                                .filter_map(|n| n.parse().ok())
-                                                .collect();
-                                            for pair in nums.chunks(2) {
-                                                if pair.len() == 2 {
-                                                    vertices.push((pair[1], pair[0]));
-                                                }
+                if let Some(ref j) = parsed_json
+                    && let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path)
+                {
+                    for v in arr.iter() {
+                        let polys = match jpath_val(v, "polygons") {
+                            Some(JsonVal::Arr(p)) => p,
+                            _ => continue,
+                        };
+                        let mut vertices: Vec<(f64, f64)> = Vec::new();
+                        for ring_list in polys {
+                            if let JsonVal::Arr(rings) = ring_list {
+                                for ring_str_val in rings {
+                                    if let JsonVal::Str(s) = ring_str_val {
+                                        let nums: Vec<f64> = s
+                                            .split_whitespace()
+                                            .filter_map(|n| n.parse().ok())
+                                            .collect();
+                                        for pair in nums.chunks(2) {
+                                            if pair.len() == 2 {
+                                                vertices.push((pair[1], pair[0]));
                                             }
                                         }
                                     }
                                 }
                             }
-                            if vertices.is_empty() {
-                                continue;
-                            }
-                            let epoch = if epoch_key.is_empty() {
-                                continue;
-                            } else if let Some(ev) = jpath_val(v, epoch_key) {
-                                match ev {
-                                    JsonVal::Str(s) => {
-                                        if let Some(t) = parse_iso_tdb(s, lsk) {
-                                            t
-                                        } else {
-                                            continue;
-                                        }
+                        }
+                        if vertices.is_empty() {
+                            continue;
+                        }
+                        let epoch = if epoch_key.is_empty() {
+                            continue;
+                        } else if let Some(ev) = jpath_val(v, epoch_key) {
+                            match ev {
+                                JsonVal::Str(s) => {
+                                    if let Some(t) = parse_iso_tdb(s, lsk) {
+                                        t
+                                    } else {
+                                        continue;
                                     }
-                                    JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
-                                        Some(t) => t,
-                                        None => continue,
-                                    },
-                                    _ => continue,
                                 }
-                            } else {
-                                continue;
-                            };
-                            let alt = match alt_key {
-                                k if k.is_empty() => continue,
-                                _ => match jpath(v, alt_key) {
-                                    Some(a) => a,
+                                JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
+                                    Some(t) => t,
                                     None => continue,
                                 },
+                                _ => continue,
+                            }
+                        } else {
+                            continue;
+                        };
+                        let alt = match alt_key {
+                            k if k.is_empty() => continue,
+                            _ => match jpath(v, alt_key) {
+                                Some(a) => a,
+                                None => continue,
+                            },
+                        };
+                        for fc in fields {
+                            if !val_key.is_empty() && fc.name != *val_key {
+                                continue;
+                            }
+                            let mut raw = jpath(v, &fc.key);
+                            let mut transformed = false;
+                            if let Some(ref mag_key) = src.flux_from_mag
+                                && fc.key == *mag_key
+                            {
+                                raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                transformed = true;
+                            }
+                            let val = match raw {
+                                Some(vv) => vv,
+                                None => continue,
                             };
-                            for fc in fields {
-                                if !val_key.is_empty() && fc.name != *val_key {
-                                    continue;
-                                }
-                                let mut raw = jpath(v, &fc.key);
-                                let mut transformed = false;
-                                if let Some(ref mag_key) = src.flux_from_mag {
-                                    if fc.key == *mag_key {
-                                        raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                        transformed = true;
-                                    }
-                                }
-                                let val = match raw {
-                                    Some(vv) => vv,
-                                    None => continue,
-                                };
-                                if !val.is_finite() {
-                                    continue;
-                                }
-                                let mut eff_fc = (*fc).clone();
-                                if transformed {
-                                    eff_fc.unit.clear();
-                                }
-                                for (lon, lat) in vertices.iter() {
-                                    channels.push((
-                                        Channel {
-                                            z: 0.0,
-                                            freq: 0.0,
-                                            bin_width: 0.0,
-                                            epoch,
-                                            position: Position::Surface {
-                                                body_name: frame_body_name(&src.frame),
-                                                lat: *lat,
-                                                lon: *lon,
-                                                alt,
-                                            },
-                                            name: fc.name.clone(),
-                                            value: val,
+                            if !val.is_finite() {
+                                continue;
+                            }
+                            let mut eff_fc = (*fc).clone();
+                            if transformed {
+                                eff_fc.unit.clear();
+                            }
+                            for (lon, lat) in vertices.iter() {
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        epoch,
+                                        position: Position::Surface {
+                                            body_name: frame_body_name(&src.frame),
+                                            lat: *lat,
+                                            lon: *lon,
+                                            alt,
                                         },
-                                        eff_fc.clone(),
-                                    ));
-                                }
+                                        name: fc.name.clone(),
+                                        value: val,
+                                    },
+                                    eff_fc.clone(),
+                                ));
                             }
                         }
                     }
@@ -2311,75 +2292,75 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 epoch_key,
                 val_key,
             } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for v in arr.iter() {
-                            let geom = match jpath_val(v, "geometry") {
-                                Some(g) => g,
+                if let Some(ref j) = parsed_json
+                    && let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path)
+                {
+                    for v in arr.iter() {
+                        let geom = match jpath_val(v, "geometry") {
+                            Some(g) => g,
+                            None => continue,
+                        };
+                        let coords = match jpath_val(geom, "coordinates") {
+                            Some(JsonVal::Arr(c)) => c,
+                            _ => continue,
+                        };
+                        let vertices = flatten_geojson_coords(coords);
+                        if vertices.is_empty() || *radius <= 0.0 {
+                            continue;
+                        }
+                        let row_epoch = if !epoch_key.is_empty() {
+                            match jpath(v, epoch_key) {
+                                Some(ev) => ev,
                                 None => continue,
-                            };
-                            let coords = match jpath_val(geom, "coordinates") {
-                                Some(JsonVal::Arr(c)) => c,
-                                _ => continue,
-                            };
-                            let vertices = flatten_geojson_coords(coords);
-                            if vertices.is_empty() || *radius <= 0.0 {
+                            }
+                        } else {
+                            continue;
+                        };
+                        for fc in fields {
+                            if !val_key.is_empty() && fc.name != *val_key {
                                 continue;
                             }
-                            let row_epoch = if !epoch_key.is_empty() {
-                                match jpath(v, epoch_key) {
-                                    Some(ev) => ev,
-                                    None => continue,
-                                }
-                            } else {
-                                continue;
+                            let mut raw = jpath(v, &fc.key);
+                            let mut transformed = false;
+                            if let Some(ref mag_key) = src.flux_from_mag
+                                && fc.key == *mag_key
+                            {
+                                raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                transformed = true;
+                            }
+                            let val = match raw {
+                                Some(vv) => vv,
+                                None => continue,
                             };
-                            for fc in fields {
-                                if !val_key.is_empty() && fc.name != *val_key {
-                                    continue;
-                                }
-                                let mut raw = jpath(v, &fc.key);
-                                let mut transformed = false;
-                                if let Some(ref mag_key) = src.flux_from_mag {
-                                    if fc.key == *mag_key {
-                                        raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                        transformed = true;
-                                    }
-                                }
-                                let val = match raw {
-                                    Some(vv) => vv,
-                                    None => continue,
-                                };
-                                if !val.is_finite() {
-                                    continue;
-                                }
-                                let mut eff_fc = (*fc).clone();
-                                if transformed {
-                                    eff_fc.unit.clear();
-                                }
-                                for (ra_deg, dec_deg, _z) in &vertices {
-                                    let ra = ra_deg.to_radians();
-                                    let dec = dec_deg.to_radians();
-                                    let (sa, ca) = ra.sin_cos();
-                                    let (sd, cd) = dec.sin_cos();
-                                    let p = [cd * ca * radius, cd * sa * radius, sd * radius];
-                                    channels.push((
-                                        Channel {
-                                            z: 0.0,
-                                            freq: 0.0,
-                                            bin_width: 0.0,
-                                            epoch: row_epoch,
-                                            position: Position::StateVector {
-                                                p,
-                                                v: [0.0, 0.0, 0.0],
-                                                track: false,
-                                            },
-                                            name: fc.name.clone(),
-                                            value: val,
+                            if !val.is_finite() {
+                                continue;
+                            }
+                            let mut eff_fc = (*fc).clone();
+                            if transformed {
+                                eff_fc.unit.clear();
+                            }
+                            for (ra_deg, dec_deg, _z) in &vertices {
+                                let ra = ra_deg.to_radians();
+                                let dec = dec_deg.to_radians();
+                                let (sa, ca) = ra.sin_cos();
+                                let (sd, cd) = dec.sin_cos();
+                                let p = [cd * ca * radius, cd * sa * radius, sd * radius];
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        epoch: row_epoch,
+                                        position: Position::StateVector {
+                                            p,
+                                            v: [0.0, 0.0, 0.0],
+                                            track: false,
                                         },
-                                        eff_fc.clone(),
-                                    ));
-                                }
+                                        name: fc.name.clone(),
+                                        value: val,
+                                    },
+                                    eff_fc.clone(),
+                                ));
                             }
                         }
                     }
@@ -2496,7 +2477,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 let tau_col = if tau_key.is_empty() {
                     None
                 } else {
-                    resolve_col(&tau_key)
+                    resolve_col(tau_key)
                 };
                 let epoch_iso: Option<usize> = if epoch_cols.len() == 1 {
                     let idx = resolve_col(&epoch_cols[0]);
@@ -2637,10 +2618,10 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             Some(v) => v,
                             None => continue,
                         };
-                        if let Some((_, lo, hi)) = gates.iter().find(|(k, _, _)| *k == fc.key) {
-                            if !(val >= *lo && val < *hi) {
-                                continue;
-                            }
+                        if let Some((_, lo, hi)) = gates.iter().find(|(k, _, _)| *k == fc.key)
+                            && !(val >= *lo && val < *hi)
+                        {
+                            continue;
                         }
                         if !val.is_finite() {
                             continue;
@@ -2697,7 +2678,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             match tau_col {
                                 None => None,
                                 Some(idx) => {
-                                    match line.trim().split_whitespace().nth(idx).and_then(|s| {
+                                    match line.split_whitespace().nth(idx).and_then(|s| {
                                         s.trim().trim_matches('"').parse::<f64>().ok()
                                     }) {
                                         Some(t) if t > 0.0 => Some(t),
@@ -2741,95 +2722,104 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 tp_key,
                 fields,
             } => {
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        let jd_now = tdb_to_jd(now);
-                        for v in arr.iter() {
-                            let (Some(e_val), Some(i_val), Some(om_val), Some(w_val)) = (
-                                jpath(v, e_key),
-                                jpath(v, i_key),
-                                jpath(v, om_key),
-                                jpath(v, w_key),
-                            ) else {
-                                continue;
-                            };
-                            if !(0.0..1.0).contains(&e_val) {
-                                continue;
+                if let Some(ref j) = parsed_json
+                    && let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path)
+                {
+                    let jd_now = tdb_to_jd(now);
+                    for v in arr.iter() {
+                        let (Some(e_val), Some(i_val), Some(om_val), Some(w_val)) = (
+                            jpath(v, e_key),
+                            jpath(v, i_key),
+                            jpath(v, om_key),
+                            jpath(v, w_key),
+                        ) else {
+                            continue;
+                        };
+                        if !(0.0..1.0).contains(&e_val) {
+                            continue;
+                        }
+                        let (Some(epoch_val),) = (jpath(v, epoch_key),) else {
+                            continue;
+                        };
+                        let a_au = if !a_key.is_empty() {
+                            match jpath(v, a_key) {
+                                Some(a) if a > 0.0 => a,
+                                _ => continue,
                             }
-                            let (Some(epoch_val),) = (jpath(v, epoch_key),) else {
+                        } else if !q_key.is_empty() {
+                            match jpath(v, q_key) {
+                                Some(q) if q > 0.0 => q / (1.0 - e_val),
+                                _ => continue,
+                            }
+                        } else {
+                            continue;
+                        };
+                        let ma_deg = if !ma_key.is_empty() {
+                            match jpath(v, ma_key) {
+                                Some(m) => m,
+                                None => continue,
+                            }
+                        } else if !tp_key.is_empty() {
+                            let Some(tp) = jpath(v, tp_key) else {
                                 continue;
                             };
-                            let a_au = if !a_key.is_empty() {
-                                match jpath(v, a_key) {
-                                    Some(a) if a > 0.0 => a,
-                                    _ => continue,
-                                }
-                            } else if !q_key.is_empty() {
-                                match jpath(v, q_key) {
-                                    Some(q) if q > 0.0 => q / (1.0 - e_val),
-                                    _ => continue,
-                                }
-                            } else {
-                                continue;
-                            };
-                            let ma_deg = if !ma_key.is_empty() {
-                                match jpath(v, ma_key) {
-                                    Some(m) => m,
-                                    None => continue,
-                                }
-                            } else if !tp_key.is_empty() {
-                                let Some(tp) = jpath(v, tp_key) else {
-                                    continue;
-                                };
-                                let n_deg_day = GAUSS_K / (a_au * a_au * a_au).sqrt()
-                                    * (180.0 / std::f64::consts::PI);
-                                n_deg_day * (epoch_val - tp)
-                            } else {
-                                continue;
-                            };
-                            let (p, vel) = match crate::kepler::elements_to_icrs_state(
-                                a_au, e_val, i_val, om_val, w_val, ma_deg, epoch_val, jd_now,
-                            ) {
-                                Some(st) => st,
+                            let n_deg_day = GAUSS_K / (a_au * a_au * a_au).sqrt()
+                                * (180.0 / std::f64::consts::PI);
+                            n_deg_day * (epoch_val - tp)
+                        } else {
+                            continue;
+                        };
+                        let (p, vel) = match crate::kepler::elements_to_icrs_state(
+                            &crate::kepler::KeplerElements {
+                                a_au,
+                                e: e_val,
+                                incl_deg: i_val,
+                                node_deg: om_val,
+                                peri_deg: w_val,
+                                ma_deg,
+                                epoch_jd: epoch_val,
+                                t_jd: jd_now,
+                            },
+                        ) {
+                            Some(st) => st,
+                            None => continue,
+                        };
+                        for fc in fields {
+                            let mut raw = jpath(v, &fc.key);
+                            let mut transformed = false;
+                            if let Some(ref mag_key) = src.flux_from_mag
+                                && fc.key == *mag_key
+                            {
+                                raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                transformed = true;
+                            }
+                            let val = match raw {
+                                Some(vv) => vv,
                                 None => continue,
                             };
-                            for fc in fields {
-                                let mut raw = jpath(v, &fc.key);
-                                let mut transformed = false;
-                                if let Some(ref mag_key) = src.flux_from_mag {
-                                    if fc.key == *mag_key {
-                                        raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                        transformed = true;
-                                    }
-                                }
-                                let val = match raw {
-                                    Some(vv) => vv,
-                                    None => continue,
-                                };
-                                if !val.is_finite() {
-                                    continue;
-                                }
-                                let mut eff_fc = (*fc).clone();
-                                if transformed {
-                                    eff_fc.unit.clear();
-                                }
-                                channels.push((
-                                    Channel {
-                                        z: 0.0,
-                                        freq: 0.0,
-                                        bin_width: 0.0,
-                                        epoch: now,
-                                        position: Position::StateVector {
-                                            p,
-                                            v: vel,
-                                            track: false,
-                                        },
-                                        name: fc.name.clone(),
-                                        value: val,
-                                    },
-                                    eff_fc,
-                                ));
+                            if !val.is_finite() {
+                                continue;
                             }
+                            let mut eff_fc = (*fc).clone();
+                            if transformed {
+                                eff_fc.unit.clear();
+                            }
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch: now,
+                                    position: Position::StateVector {
+                                        p,
+                                        v: vel,
+                                        track: false,
+                                    },
+                                    name: fc.name.clone(),
+                                    value: val,
+                                },
+                                eff_fc,
+                            ));
                         }
                     }
                 }
@@ -2855,193 +2845,190 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 } else {
                     now
                 };
-                if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for v in arr.iter() {
-                            let (Some(ra_deg), Some(dec_deg)) =
-                                (jpath(v, ra_key), jpath(v, dec_key))
-                            else {
-                                continue;
-                            };
-                            let d = if !plx_key.is_empty() {
-                                match jpath(v, plx_key) {
-                                    Some(plx) if plx.is_finite() && plx > 0.0 => {
-                                        PARSEC_M * 1000.0 / plx
-                                    }
-                                    _ => {
-                                        if !z_key.is_empty() {
-                                            match jpath(v, z_key) {
-                                                Some(z) if z.is_finite() && z > 0.0 => {
-                                                    z * C_LIGHT / HUBBLE_H0
-                                                }
-                                                _ => {
-                                                    if !dist_key.is_empty() {
-                                                        match jpath(v, dist_key) {
-                                                            Some(dd)
-                                                                if dd.is_finite() && dd > 0.0 =>
-                                                            {
-                                                                dd * dist_scale
-                                                            }
-                                                            _ => continue,
+                if let Some(ref j) = parsed_json
+                    && let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path)
+                {
+                    for v in arr.iter() {
+                        let (Some(ra_deg), Some(dec_deg)) = (jpath(v, ra_key), jpath(v, dec_key))
+                        else {
+                            continue;
+                        };
+                        let d = if !plx_key.is_empty() {
+                            match jpath(v, plx_key) {
+                                Some(plx) if plx.is_finite() && plx > 0.0 => {
+                                    PARSEC_M * 1000.0 / plx
+                                }
+                                _ => {
+                                    if !z_key.is_empty() {
+                                        match jpath(v, z_key) {
+                                            Some(z) if z.is_finite() && z > 0.0 => {
+                                                z * C_LIGHT / HUBBLE_H0
+                                            }
+                                            _ => {
+                                                if !dist_key.is_empty() {
+                                                    match jpath(v, dist_key) {
+                                                        Some(dd) if dd.is_finite() && dd > 0.0 => {
+                                                            dd * dist_scale
                                                         }
-                                                    } else {
-                                                        continue;
+                                                        _ => continue,
                                                     }
+                                                } else {
+                                                    continue;
                                                 }
                                             }
-                                        } else if !dist_key.is_empty() {
-                                            match jpath(v, dist_key) {
-                                                Some(dd) if dd.is_finite() && dd > 0.0 => {
-                                                    dd * dist_scale
-                                                }
-                                                _ => continue,
-                                            }
-                                        } else {
-                                            continue;
                                         }
+                                    } else if !dist_key.is_empty() {
+                                        match jpath(v, dist_key) {
+                                            Some(dd) if dd.is_finite() && dd > 0.0 => {
+                                                dd * dist_scale
+                                            }
+                                            _ => continue,
+                                        }
+                                    } else {
+                                        continue;
                                     }
                                 }
-                            } else if !dist_key.is_empty() {
-                                match jpath(v, dist_key) {
-                                    Some(dd) if dd.is_finite() && dd > 0.0 => dd * dist_scale,
-                                    _ => {
-                                        if !z_key.is_empty() {
-                                            match jpath(v, z_key) {
-                                                Some(z) if z.is_finite() && z > 0.0 => {
-                                                    z * C_LIGHT / HUBBLE_H0
-                                                }
-                                                _ => continue,
+                            }
+                        } else if !dist_key.is_empty() {
+                            match jpath(v, dist_key) {
+                                Some(dd) if dd.is_finite() && dd > 0.0 => dd * dist_scale,
+                                _ => {
+                                    if !z_key.is_empty() {
+                                        match jpath(v, z_key) {
+                                            Some(z) if z.is_finite() && z > 0.0 => {
+                                                z * C_LIGHT / HUBBLE_H0
                                             }
-                                        } else {
-                                            continue;
+                                            _ => continue,
                                         }
+                                    } else {
+                                        continue;
                                     }
                                 }
-                            } else if !z_key.is_empty() {
-                                match jpath(v, z_key) {
-                                    Some(z) if z.is_finite() && z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                    _ => continue,
-                                }
+                            }
+                        } else if !z_key.is_empty() {
+                            match jpath(v, z_key) {
+                                Some(z) if z.is_finite() && z > 0.0 => z * C_LIGHT / HUBBLE_H0,
+                                _ => continue,
+                            }
+                        } else {
+                            continue;
+                        };
+                        let zval = if z_key.is_empty() {
+                            0.0
+                        } else {
+                            match jpath(v, z_key) {
+                                Some(z) if z.is_finite() && z > 0.0 => z,
+                                _ => continue,
+                            }
+                        };
+                        let ra = ra_deg.to_radians();
+                        let dec = dec_deg.to_radians();
+                        let (sa, ca) = ra.sin_cos();
+                        let (sd, cd) = dec.sin_cos();
+                        let p_hat = [cd * ca, cd * sa, sd];
+                        let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
+                        let mu_a = if pmra_key.is_empty() {
+                            None
+                        } else {
+                            jpath(v, pmra_key)
+                                .filter(|x| x.is_finite())
+                                .map(|v| v * MAS_YR_TO_RAD_S)
+                        };
+                        let mu_d = if pmdec_key.is_empty() {
+                            None
+                        } else {
+                            jpath(v, pmdec_key)
+                                .filter(|x| x.is_finite())
+                                .map(|v| v * MAS_YR_TO_RAD_S)
+                        };
+                        let vr = if rv_key.is_empty() {
+                            None
+                        } else {
+                            jpath(v, rv_key)
+                                .filter(|x| x.is_finite())
+                                .map(|v| v * rv_scale)
+                        };
+                        let a_hat = [-sa, ca, 0.0];
+                        let d_hat = [-sd * ca, -sd * sa, cd];
+                        let vel = [
+                            d * (mu_a.map_or(0.0, |m| m * a_hat[0])
+                                + mu_d.map_or(0.0, |m| m * d_hat[0]))
+                                + vr.map_or(0.0, |v| v * p_hat[0]),
+                            d * (mu_a.map_or(0.0, |m| m * a_hat[1])
+                                + mu_d.map_or(0.0, |m| m * d_hat[1]))
+                                + vr.map_or(0.0, |v| v * p_hat[1]),
+                            d * (mu_a.map_or(0.0, |m| m * a_hat[2])
+                                + mu_d.map_or(0.0, |m| m * d_hat[2]))
+                                + vr.map_or(0.0, |v| v * p_hat[2]),
+                        ];
+                        let sample_epoch = if !epoch_key.is_empty() {
+                            if let Some(v) = jpath(v, epoch_key) {
+                                v
                             } else {
                                 continue;
-                            };
-                            let zval = if z_key.is_empty() {
-                                0.0
-                            } else {
-                                match jpath(v, z_key) {
-                                    Some(z) if z.is_finite() && z > 0.0 => z,
-                                    _ => continue,
-                                }
-                            };
-                            let ra = ra_deg.to_radians();
-                            let dec = dec_deg.to_radians();
-                            let (sa, ca) = ra.sin_cos();
-                            let (sd, cd) = dec.sin_cos();
-                            let p_hat = [cd * ca, cd * sa, sd];
-                            let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
-                            let mu_a = if pmra_key.is_empty() {
-                                None
-                            } else {
-                                jpath(v, pmra_key)
-                                    .filter(|x| x.is_finite())
-                                    .map(|v| v * MAS_YR_TO_RAD_S)
-                            };
-                            let mu_d = if pmdec_key.is_empty() {
-                                None
-                            } else {
-                                jpath(v, pmdec_key)
-                                    .filter(|x| x.is_finite())
-                                    .map(|v| v * MAS_YR_TO_RAD_S)
-                            };
-                            let vr = if rv_key.is_empty() {
-                                None
-                            } else {
-                                jpath(v, rv_key)
-                                    .filter(|x| x.is_finite())
-                                    .map(|v| v * rv_scale)
-                            };
-                            let a_hat = [-sa, ca, 0.0];
-                            let d_hat = [-sd * ca, -sd * sa, cd];
-                            let vel = [
-                                d * (mu_a.map_or(0.0, |m| m * a_hat[0])
-                                    + mu_d.map_or(0.0, |m| m * d_hat[0]))
-                                    + vr.map_or(0.0, |v| v * p_hat[0]),
-                                d * (mu_a.map_or(0.0, |m| m * a_hat[1])
-                                    + mu_d.map_or(0.0, |m| m * d_hat[1]))
-                                    + vr.map_or(0.0, |v| v * p_hat[1]),
-                                d * (mu_a.map_or(0.0, |m| m * a_hat[2])
-                                    + mu_d.map_or(0.0, |m| m * d_hat[2]))
-                                    + vr.map_or(0.0, |v| v * p_hat[2]),
-                            ];
-                            let sample_epoch = if !epoch_key.is_empty() {
-                                if let Some(v) = jpath(v, epoch_key) {
-                                    v
-                                } else {
-                                    continue;
-                                }
-                            } else {
-                                default_epoch
-                            };
-                            let row_tau: Option<f64> = if tau_key.is_empty() {
-                                None
-                            } else {
-                                match jpath(v, tau_key) {
-                                    Some(t) if t > 0.0 => Some(t),
-                                    Some(_) => continue,
-                                    None => None,
-                                }
-                            };
-                            for fc in fields {
-                                let mut raw: Option<f64> = jpath(v, &fc.key);
-                                let mut transformed = false;
-                                if let Some((op, key_b)) = &fc.fold {
-                                    raw = fold_value(raw, jpath(v, key_b), *op);
-                                } else if let Some(ref mag_field) = src.abs_mag_from {
-                                    if fc.name == *mag_field {
-                                        raw = raw.map(|v| {
-                                            let dist_pc = d / PARSEC_M;
-                                            let abs_m = v - 5.0 * (dist_pc / 10.0).log10();
-                                            10.0f64.powf(-0.4 * abs_m)
-                                        });
-                                        transformed = true;
-                                    }
-                                } else if let Some(ref mag_key) = src.flux_from_mag {
-                                    if fc.key == *mag_key {
-                                        raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
-                                        transformed = true;
-                                    }
-                                }
-                                let val = match raw {
-                                    Some(vv) => vv,
-                                    None => continue,
-                                };
-                                if !val.is_finite() {
-                                    continue;
-                                }
-                                let mut eff_fc = (*fc).clone();
-                                if transformed {
-                                    eff_fc.unit.clear();
-                                }
-                                if let Some(t) = row_tau {
-                                    eff_fc.tau = t;
-                                }
-                                channels.push((
-                                    Channel {
-                                        z: zval,
-                                        freq: 0.0,
-                                        bin_width: 0.0,
-                                        epoch: sample_epoch,
-                                        position: Position::StateVector {
-                                            p,
-                                            v: vel,
-                                            track: false,
-                                        },
-                                        name: fc.name.clone(),
-                                        value: val,
-                                    },
-                                    eff_fc,
-                                ));
                             }
+                        } else {
+                            default_epoch
+                        };
+                        let row_tau: Option<f64> = if tau_key.is_empty() {
+                            None
+                        } else {
+                            match jpath(v, tau_key) {
+                                Some(t) if t > 0.0 => Some(t),
+                                Some(_) => continue,
+                                None => None,
+                            }
+                        };
+                        for fc in fields {
+                            let mut raw: Option<f64> = jpath(v, &fc.key);
+                            let mut transformed = false;
+                            if let Some((op, key_b)) = &fc.fold {
+                                raw = fold_value(raw, jpath(v, key_b), *op);
+                            } else if let Some(ref mag_field) = src.abs_mag_from {
+                                if fc.name == *mag_field {
+                                    raw = raw.map(|v| {
+                                        let dist_pc = d / PARSEC_M;
+                                        let abs_m = v - 5.0 * (dist_pc / 10.0).log10();
+                                        10.0f64.powf(-0.4 * abs_m)
+                                    });
+                                    transformed = true;
+                                }
+                            } else if let Some(ref mag_key) = src.flux_from_mag
+                                && fc.key == *mag_key
+                            {
+                                raw = raw.map(|r| 10.0f64.powf(-0.4 * r));
+                                transformed = true;
+                            }
+                            let val = match raw {
+                                Some(vv) => vv,
+                                None => continue,
+                            };
+                            if !val.is_finite() {
+                                continue;
+                            }
+                            let mut eff_fc = (*fc).clone();
+                            if transformed {
+                                eff_fc.unit.clear();
+                            }
+                            if let Some(t) = row_tau {
+                                eff_fc.tau = t;
+                            }
+                            channels.push((
+                                Channel {
+                                    z: zval,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch: sample_epoch,
+                                    position: Position::StateVector {
+                                        p,
+                                        v: vel,
+                                        track: false,
+                                    },
+                                    name: fc.name.clone(),
+                                    value: val,
+                                },
+                                eff_fc,
+                            ));
                         }
                     }
                 }
@@ -3055,113 +3042,107 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 advection,
                 mag_type_key,
             } => {
-                if outputs.len() >= 2 {
-                    if let Some(ref j) = parsed_json {
-                        if let JsonVal::Obj(root) = j {
-                            if let Some(JsonVal::Arr(features)) = root.get("features") {
-                                for feat in features {
-                                    if let JsonVal::Obj(f) = feat {
-                                        let mut elo = 0.0;
-                                        let mut ela = 0.0;
-                                        let mut ed = 0.0;
-                                        let mut mag: Option<f64> = None;
-                                        let mut valid = false;
-                                        if let Some(JsonVal::Obj(geom)) = f.get("geometry") {
-                                            if let Some(JsonVal::Arr(c)) = geom.get("coordinates") {
-                                                if c.len() >= 3 {
-                                                    if let JsonVal::Num(n) = c[0] {
-                                                        elo = n;
-                                                    }
-                                                    if let JsonVal::Num(n) = c[1] {
-                                                        ela = n;
-                                                    }
-                                                    if let JsonVal::Num(n) = c[2] {
-                                                        ed = n;
-                                                    }
-                                                    valid = true;
-                                                }
-                                            }
-                                        }
-                                        if valid {
-                                            if let Some(props) = f.get("properties") {
-                                                if let Some(m) = jnum(props, mag_key) {
-                                                    if m.is_finite() {
-                                                        mag = Some(m);
-                                                    }
-                                                }
-                                                if !mag_type_key.is_empty() {
-                                                    if let Some(t) = jstr(props, &mag_type_key) {
-                                                        if !is_moment_magnitude(&t) {
-                                                            continue;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if let Some(mag) = mag {
-                                            if mag >= *min_mag {
-                                                channels.push((
-                                                    Channel {
-                                                        z: 0.0,
-                                                        freq: 0.0,
-                                                        bin_width: 0.0,
-                                                        epoch: now,
-                                                        position: Position::Surface {
-                                                            body_name: frame_body_name(&src.frame),
-                                                            lat: ela,
-                                                            lon: elo,
-                                                            alt: -ed * 1000.0,
-                                                        },
-                                                        name: outputs[0].clone(),
-                                                        value: mag,
-                                                    },
-                                                    FieldConfig {
-                                                        key: outputs[0].clone(),
-                                                        name: outputs[0].clone(),
-                                                        kernel: 0,
-                                                        force: 3,
-                                                        tau: *tau,
-                                                        absorption: *absorption,
-                                                        advection: *advection,
-                                                        unit: "Mw".to_string(),
-                                                        freq: 0.0,
-                                                        bin_width: 0.0,
-                                                        fold: None,
-                                                    },
-                                                ));
-                                                channels.push((
-                                                    Channel {
-                                                        z: 0.0,
-                                                        freq: 0.0,
-                                                        bin_width: 0.0,
-                                                        epoch: now,
-                                                        position: Position::Surface {
-                                                            body_name: frame_body_name(&src.frame),
-                                                            lat: ela,
-                                                            lon: elo,
-                                                            alt: -ed * 1000.0,
-                                                        },
-                                                        name: outputs[1].clone(),
-                                                        value: ed * 1000.0,
-                                                    },
-                                                    FieldConfig {
-                                                        key: outputs[1].clone(),
-                                                        name: outputs[1].clone(),
-                                                        kernel: 0,
-                                                        force: 3,
-                                                        tau: *tau,
-                                                        absorption: *absorption,
-                                                        advection: *advection,
-                                                        unit: String::new(),
-                                                        freq: 0.0,
-                                                        bin_width: 0.0,
-                                                        fold: None,
-                                                    },
-                                                ));
-                                            }
-                                        }
-                                    }
+                if outputs.len() >= 2
+                    && let Some(ref j) = parsed_json
+                    && let JsonVal::Obj(root) = j
+                    && let Some(JsonVal::Arr(features)) = root.get("features")
+                {
+                    for feat in features {
+                        if let JsonVal::Obj(f) = feat {
+                            let mut elo = 0.0;
+                            let mut ela = 0.0;
+                            let mut ed = 0.0;
+                            let mut mag: Option<f64> = None;
+                            let mut valid = false;
+                            if let Some(JsonVal::Obj(geom)) = f.get("geometry")
+                                && let Some(JsonVal::Arr(c)) = geom.get("coordinates")
+                                && c.len() >= 3
+                            {
+                                if let JsonVal::Num(n) = c[0] {
+                                    elo = n;
                                 }
+                                if let JsonVal::Num(n) = c[1] {
+                                    ela = n;
+                                }
+                                if let JsonVal::Num(n) = c[2] {
+                                    ed = n;
+                                }
+                                valid = true;
+                            }
+                            if valid && let Some(props) = f.get("properties") {
+                                if let Some(m) = jnum(props, mag_key)
+                                    && m.is_finite()
+                                {
+                                    mag = Some(m);
+                                }
+                                if !mag_type_key.is_empty()
+                                    && let Some(t) = jstr(props, mag_type_key)
+                                    && !is_moment_magnitude(&t)
+                                {
+                                    continue;
+                                }
+                            }
+                            if let Some(mag) = mag
+                                && mag >= *min_mag
+                            {
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        epoch: now,
+                                        position: Position::Surface {
+                                            body_name: frame_body_name(&src.frame),
+                                            lat: ela,
+                                            lon: elo,
+                                            alt: -ed * 1000.0,
+                                        },
+                                        name: outputs[0].clone(),
+                                        value: mag,
+                                    },
+                                    FieldConfig {
+                                        key: outputs[0].clone(),
+                                        name: outputs[0].clone(),
+                                        kernel: 0,
+                                        force: 3,
+                                        tau: *tau,
+                                        absorption: *absorption,
+                                        advection: *advection,
+                                        unit: "Mw".to_string(),
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        fold: None,
+                                    },
+                                ));
+                                channels.push((
+                                    Channel {
+                                        z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        epoch: now,
+                                        position: Position::Surface {
+                                            body_name: frame_body_name(&src.frame),
+                                            lat: ela,
+                                            lon: elo,
+                                            alt: -ed * 1000.0,
+                                        },
+                                        name: outputs[1].clone(),
+                                        value: ed * 1000.0,
+                                    },
+                                    FieldConfig {
+                                        key: outputs[1].clone(),
+                                        name: outputs[1].clone(),
+                                        kernel: 0,
+                                        force: 3,
+                                        tau: *tau,
+                                        absorption: *absorption,
+                                        advection: *advection,
+                                        unit: String::new(),
+                                        freq: 0.0,
+                                        bin_width: 0.0,
+                                        fold: None,
+                                    },
+                                ));
                             }
                         }
                     }
@@ -3244,85 +3225,75 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 }
             }
             Extract::Hapi(pairs) => {
-                if let Some(ref j) = parsed_json {
-                    if let JsonVal::Obj(root) = j {
-                        if let Some(JsonVal::Arr(data)) = root.get("data") {
-                            let mut col: HashMap<String, usize> = HashMap::new();
-                            let mut fill_of: HashMap<String, f64> = HashMap::new();
-                            let mut has_params = false;
-                            if let Some(JsonVal::Arr(params)) = root.get("parameters") {
-                                for (i, p) in params.iter().enumerate() {
-                                    if let JsonVal::Obj(po) = p {
-                                        if let Some(JsonVal::Str(nn)) = po.get("name") {
-                                            col.insert(nn.clone(), i);
-                                            has_params = true;
-                                            if let Some(fv) = po.get("fill").and_then(scalar_of) {
-                                                fill_of.insert(nn.clone(), fv);
-                                            }
-                                        }
-                                    }
+                if let Some(ref j) = parsed_json
+                    && let JsonVal::Obj(root) = j
+                    && let Some(JsonVal::Arr(data)) = root.get("data")
+                {
+                    let mut col: HashMap<String, usize> = HashMap::new();
+                    let mut fill_of: HashMap<String, f64> = HashMap::new();
+                    let mut has_params = false;
+                    if let Some(JsonVal::Arr(params)) = root.get("parameters") {
+                        for (i, p) in params.iter().enumerate() {
+                            if let JsonVal::Obj(po) = p
+                                && let Some(JsonVal::Str(nn)) = po.get("name")
+                            {
+                                col.insert(nn.clone(), i);
+                                has_params = true;
+                                if let Some(fv) = po.get("fill").and_then(scalar_of) {
+                                    fill_of.insert(nn.clone(), fv);
                                 }
                             }
-                            for (k, v) in &src.hapi_fill {
-                                fill_of.entry(k.clone()).or_insert(*v);
+                        }
+                    }
+                    for (k, v) in &src.hapi_fill {
+                        fill_of.entry(k.clone()).or_insert(*v);
+                    }
+                    if !has_params {
+                        if pairs.len() == 1 && !pairs[0].0.contains('.') {
+                            if let Some(JsonVal::Arr(row)) = data.last()
+                                && let Some(val) = row.last().and_then(scalar_of)
+                                && fill_of.get(pairs[0].0.as_str()).is_none_or(|&f| val != f)
+                            {
+                                extracted.insert(pairs[0].1.clone(), val);
                             }
-                            if !has_params {
-                                if pairs.len() == 1 && !pairs[0].0.contains('.') {
-                                    if let Some(JsonVal::Arr(row)) = data.last() {
-                                        if let Some(val) = row.last().and_then(scalar_of) {
-                                            if fill_of
-                                                .get(pairs[0].0.as_str())
-                                                .map_or(true, |&f| val != f)
-                                            {
-                                                extracted.insert(pairs[0].1.clone(), val);
-                                            }
-                                        }
-                                    }
-                                    continue;
-                                }
-                                let mut next_col = 0usize;
-                                for (param, _) in pairs.iter() {
-                                    let base = param.split('.').next().unwrap_or(param);
-                                    if !col.contains_key(base) {
-                                        next_col += 1;
-                                        col.insert(base.to_string(), next_col);
-                                    }
-                                }
+                            continue;
+                        }
+                        let mut next_col = 0usize;
+                        for (param, _) in pairs.iter() {
+                            let base = param.split('.').next().unwrap_or(param);
+                            if !col.contains_key(base) {
+                                next_col += 1;
+                                col.insert(base.to_string(), next_col);
                             }
-                            if let Some(last_row) = data.last() {
-                                if let JsonVal::Arr(row) = last_row {
-                                    for (param, name) in pairs {
-                                        let (base, comp) = match param.rfind('.') {
-                                            Some(dot)
-                                                if param[dot + 1..]
-                                                    .chars()
-                                                    .all(|c| c.is_ascii_digit()) =>
-                                            {
-                                                (
-                                                    &param[..dot],
-                                                    param[dot + 1..].parse::<usize>().ok(),
-                                                )
-                                            }
-                                            _ => (param.as_str(), None),
-                                        };
-                                        if let Some(&idx) = col.get(base) {
-                                            let v = match comp {
-                                                Some(i) => row.get(idx).and_then(|cell| {
-                                                    if let JsonVal::Arr(a) = cell {
-                                                        a.get(i).and_then(scalar_of)
-                                                    } else {
-                                                        None
-                                                    }
-                                                }),
-                                                None => row.get(idx).and_then(scalar_of),
-                                            };
-                                            if let Some(val) = v {
-                                                if fill_of.get(base).map_or(true, |&f| val != f) {
-                                                    extracted.insert(name.clone(), val);
-                                                }
-                                            }
+                        }
+                    }
+                    if let Some(last_row) = data.last()
+                        && let JsonVal::Arr(row) = last_row
+                    {
+                        for (param, name) in pairs {
+                            let (base, comp) = match param.rfind('.') {
+                                Some(dot)
+                                    if param[dot + 1..].chars().all(|c| c.is_ascii_digit()) =>
+                                {
+                                    (&param[..dot], param[dot + 1..].parse::<usize>().ok())
+                                }
+                                _ => (param.as_str(), None),
+                            };
+                            if let Some(&idx) = col.get(base) {
+                                let v = match comp {
+                                    Some(i) => row.get(idx).and_then(|cell| {
+                                        if let JsonVal::Arr(a) = cell {
+                                            a.get(i).and_then(scalar_of)
+                                        } else {
+                                            None
                                         }
-                                    }
+                                    }),
+                                    None => row.get(idx).and_then(scalar_of),
+                                };
+                                if let Some(val) = v
+                                    && fill_of.get(base).is_none_or(|&f| val != f)
+                                {
+                                    extracted.insert(name.clone(), val);
                                 }
                             }
                         }
@@ -3355,11 +3326,11 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             if let Some(fc) = fc {
                 let mut raw = Some(*val);
                 let mut transformed = false;
-                if let Some(ref mag_key) = src.flux_from_mag {
-                    if fc.key == *mag_key {
-                        raw = raw.map(|v| 10.0f64.powf(-0.4 * v));
-                        transformed = true;
-                    }
+                if let Some(ref mag_key) = src.flux_from_mag
+                    && fc.key == *mag_key
+                {
+                    raw = raw.map(|v| 10.0f64.powf(-0.4 * v));
+                    transformed = true;
                 }
                 let val = match raw {
                     Some(v) => v,
@@ -3458,10 +3429,10 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
                     continue;
                 };
                 for el in elements {
-                    if let Some((fk, fv)) = filter {
-                        if !row_matches(el, fk, fv) {
-                            continue;
-                        }
+                    if let Some((fk, fv)) = filter
+                        && !row_matches(el, fk, fv)
+                    {
+                        continue;
                     }
                     let raw = match el {
                         JsonVal::Obj(map) => map.get(&fc.key).and_then(scalar_of),
@@ -3491,10 +3462,10 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
                     continue;
                 };
                 for el in elements {
-                    if let Some((fk, fv)) = filter {
-                        if !row_matches(el, fk, fv) {
-                            continue;
-                        }
+                    if let Some((fk, fv)) = filter
+                        && !row_matches(el, fk, fv)
+                    {
+                        continue;
                     }
                     let raw = match el {
                         JsonVal::Obj(map) => map.get(&fc.key).and_then(scalar_of),
@@ -3548,12 +3519,12 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
                 let mut fill_of: HashMap<String, f64> = HashMap::new();
                 if let Some(JsonVal::Arr(params)) = root.get("parameters") {
                     for (i, p) in params.iter().enumerate() {
-                        if let JsonVal::Obj(po) = p {
-                            if let Some(JsonVal::Str(nn)) = po.get("name") {
-                                col.insert(nn.clone(), i);
-                                if let Some(fv) = po.get("fill").and_then(scalar_of) {
-                                    fill_of.insert(nn.clone(), fv);
-                                }
+                        if let JsonVal::Obj(po) = p
+                            && let Some(JsonVal::Str(nn)) = po.get("name")
+                        {
+                            col.insert(nn.clone(), i);
+                            if let Some(fv) = po.get("fill").and_then(scalar_of) {
+                                fill_of.insert(nn.clone(), fv);
                             }
                         }
                     }
@@ -3601,7 +3572,7 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
                         let Some(raw) = v else {
                             continue;
                         };
-                        if fill_of.get(base).map_or(false, |&f| raw == f) {
+                        if fill_of.get(base).is_some_and(|&f| raw == f) {
                             continue;
                         }
                         let Some(fc) = src.extracts.iter().find_map(|e| match e {

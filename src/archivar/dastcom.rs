@@ -1,4 +1,4 @@
-use crate::kepler::{elements_to_icrs_state, AU_M, GM_SUN_M3_S2};
+use crate::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
 
 pub const RECORD_STRIDE: usize = 92;
 
@@ -115,16 +115,16 @@ pub fn parse_comet_record(buf: &[u8]) -> Option<CometRec> {
 }
 
 pub fn comet_state_at(rec: &CometRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
-    elements_to_icrs_state(
-        rec.a_au,
-        rec.ec,
-        rec.in_deg,
-        rec.om_deg,
-        rec.w_deg,
-        rec.ma_deg,
-        rec.epoch_jd,
+    elements_to_icrs_state(&KeplerElements {
+        a_au: rec.a_au,
+        e: rec.ec,
+        incl_deg: rec.in_deg,
+        node_deg: rec.om_deg,
+        peri_deg: rec.w_deg,
+        ma_deg: rec.ma_deg,
+        epoch_jd: rec.epoch_jd,
         t_jd,
-    )
+    })
 }
 
 pub fn parse_db_record(buf: &[u8]) -> Option<AsteroidRec> {
@@ -172,21 +172,27 @@ pub fn encode_record(rec: &AsteroidRec, out: &mut Vec<u8>) {
 }
 
 pub fn state_at(rec: &AsteroidRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
-    elements_to_icrs_state(
-        rec.a_au,
-        rec.e,
-        rec.incl_deg,
-        rec.node_deg,
-        rec.peri_deg,
-        rec.ma_deg,
-        rec.epoch_jd,
+    elements_to_icrs_state(&KeplerElements {
+        a_au: rec.a_au,
+        e: rec.e,
+        incl_deg: rec.incl_deg,
+        node_deg: rec.node_deg,
+        peri_deg: rec.peri_deg,
+        ma_deg: rec.ma_deg,
+        epoch_jd: rec.epoch_jd,
         t_jd,
-    )
+    })
 }
 
 pub fn hill_radius_m(rec: &AsteroidRec) -> Option<f64> {
     let gm = rec.gm_km3_s2 as f64 * 1.0e9;
-    if !(gm > 0.0) || !(rec.a_au > 0.0) || !(rec.e < 1.0) {
+    if gm <= 0.0
+        || gm.is_nan()
+        || rec.a_au <= 0.0
+        || rec.a_au.is_nan()
+        || rec.e >= 1.0
+        || rec.e.is_nan()
+    {
         return None;
     }
     Some(rec.a_au * AU_M * (1.0 - rec.e) * (gm / (3.0 * GM_SUN_M3_S2)).cbrt())
@@ -195,8 +201,8 @@ pub fn hill_radius_m(rec: &AsteroidRec) -> Option<f64> {
 #[cfg(test)]
 mod tests {
     use super::{
-        comet_state_at, encode_record, hill_radius_m, parse_comet_record, parse_record, state_at,
-        AsteroidRec, CometRec, COMET_RECORD_BYTES,
+        AsteroidRec, COMET_RECORD_BYTES, CometRec, comet_state_at, encode_record, hill_radius_m,
+        parse_comet_record, parse_record, state_at,
     };
 
     fn halley() -> CometRec {
