@@ -5,7 +5,7 @@ pub fn load_sources() -> Vec<SourceConfig> {
         Ok(c) => c,
         Err(_) => return Vec::new(),
     };
-    parse_sources(&content)
+    refuse_shard_overlaps(parse_sources(&content))
 }
 
 pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
@@ -1460,4 +1460,150 @@ pub fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
         }
     }
     sources
+}
+
+fn shard_range_of(src: &SourceConfig) -> Option<(f64, f64)> {
+    let filename = src.url.rsplit('/').next()?;
+    let (name, lo, hi) = odf::parse_podf_shard_name(filename)?;
+    if name != src.format.as_str() {
+        return None;
+    }
+    Some((lo, hi))
+}
+
+pub fn refuse_shard_overlaps(sources: Vec<SourceConfig>) -> Vec<SourceConfig> {
+    let mut accepted: HashMap<String, Vec<(f64, f64)>> = HashMap::new();
+    let mut kept = Vec::with_capacity(sources.len());
+    for src in sources {
+        match shard_range_of(&src) {
+            None => kept.push(src),
+            Some((lo, hi)) => {
+                if !(lo < hi) {
+                    eprintln!(
+                        "source refused: shard TDB range [{}, {}) is not half-open at {}",
+                        lo, hi, src.url
+                    );
+                    continue;
+                }
+                let ranges = accepted.entry(src.format.clone()).or_default();
+                let overlaps = ranges.iter().any(|&(alo, ahi)| lo < ahi && alo < hi);
+                if overlaps {
+                    eprintln!(
+                        "source refused: shard TDB range [{}, {}) overlaps an accepted range at {} — never merged",
+                        lo, hi, src.url
+                    );
+                    continue;
+                }
+                ranges.push((lo, hi));
+                kept.push(src);
+            }
+        }
+    }
+    kept
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn shard(url: &str, format: &str) -> SourceConfig {
+        SourceConfig {
+            ttl: 604800,
+            url: url.into(),
+            frame: Frame::Manifest,
+            format: format.into(),
+            extracts: Vec::new(),
+            headers: Vec::new(),
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            hapi_fill: HashMap::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+            sha256: None,
+            window: None,
+        }
+    }
+
+    const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
+    const URL_B: &str = "https://cdn.example/x/odyssey_odf_t800000000_900000000.bin";
+    const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
+
+    #[test]
+    fn shard_overlap_is_refused() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard("https://cdn.example/x/odyssey_odf_t750000000_850000000.bin", "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 1);
+        assert_eq!(kept[0].url, URL_A);
+    }
+
+    #[test]
+    fn shard_disjoint_is_accepted() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(URL_C, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn shard_touching_boundaries_are_accepted() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard(URL_B, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn shard_identical_ranges_are_refused() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard("https://cdn.example/x/odyssey_odf_t700000000_800000000_1.bin", "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 1);
+    }
+
+    #[test]
+    fn shard_not_half_open_is_refused() {
+        let kept = refuse_shard_overlaps(vec![shard(
+            "https://cdn.example/x/odyssey_odf_t800000000_800000000.bin",
+            "odyssey_odf",
+        )]);
+        assert_eq!(kept.len(), 0);
+    }
+
+    #[test]
+    fn shard_of_a_different_name_is_not_compared() {
+        let kept = refuse_shard_overlaps(vec![
+            shard(URL_A, "odyssey_odf"),
+            shard("https://cdn.example/x/mro_odf_t700000000_800000000.bin", "mro_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn a_non_shard_url_does_not_trigger_the_gate() {
+        let kept = refuse_shard_overlaps(vec![
+            shard("https://cdn.example/x/mro_odf.bin", "mro_odf"),
+            shard(URL_A, "odyssey_odf"),
+        ]);
+        assert_eq!(kept.len(), 2);
+    }
 }

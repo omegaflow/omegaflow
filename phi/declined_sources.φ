@@ -3648,3 +3648,7 @@ note WWLLN (World Wide Lightning Location Network) — VLF-Blitzortung, em. Geme
 decline no-physical-force
 url https://zenodo.org/api/records/15316905
 note LSCO S(Q,ω) (Decrausaz et al. 2025, 10.5281/zenodo.15316905, cc-by-4.0, IN5/ILL, λi = 3.3/5 Å, 10 Dateien aligned_lasco_up_{λi}_{T}K.sqw à ~1.4 GB, HTTP 200/206, md5 3.3_40K 15b34caa5b0c283c52b31844012856e8): Horace-sqw-v4-Binär (u32-LE-Längenpräfix + Magic „horace", Version 4, 320-B-Header — kein HDF5), 4D-Spektral-Intensität (Querschnitt pro (h,k,l,|Q|,ω)-Zelle) einer Laborprobe — kein propagierendes Feld, kein Kraft-Kanal der 9 Medien, Force-Gate-Litmus negativ (wie RIXS; die spectral_irradiance-Präzedenz ist Fluss am Ort). Der Befund bleibt die Note: Spinlücke 4 meV @ 2 K (3.3-Å-Satz), inkommensurable magnetische Anregungen. Kein Ersatz für NSE/Haug I(q,t) (YBCO/TRISP) — die Keimer-Anfrage hält.
+
+decline derived-model
+url https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
+note GloFAS-Reanalyse (EWDS cems-glofas-historical, gemessen 2026-09-16: HTTP 200, CDS-Key) — eine Modell-Reanalyse, kein gemessener Pegel; nur die Sache selbst darf an der Stelle der Sache stehen. Der Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query am Kollabpunkt 28.271/85.515 leer = 0 honored), nicht auf der Modell-Route.
