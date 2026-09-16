@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 pub struct Fetch {
     pub status: Option<i32>,
@@ -1053,13 +1053,31 @@ const QUERY_MODES: &[&str] = &[
 
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
     let mut out = Vec::new();
+    let mut full = Vec::new();
     for mode in QUERY_MODES {
-        out.push(format!("=== {} ===", mode));
-        let mut lines = run_lines(mode, query, env);
-        lines.truncate(5);
-        out.extend(lines);
+        let lines = run_lines(mode, query, env);
+        let n = lines.len();
+        full.push(format!("=== {} ({}) ===", mode, n));
+        full.extend(lines.iter().cloned());
+        out.push(format!("=== {} ({}) ===", mode, n));
+        out.extend(lines.into_iter().take(5));
+    }
+    if let Some(path) = write_full(query, &full) {
+        out.push(format!("full: {} lines -> {}", full.len(), path));
     }
     out
+}
+
+fn write_full(query: &str, lines: &[String]) -> Option<String> {
+    let stamp = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
+    let slug: String = query
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
+        .take(40)
+        .collect();
+    let path = std::env::temp_dir().join(format!("omegaflow_all_{stamp}_{slug}.txt"));
+    std::fs::write(&path, lines.join("\n")).ok()?;
+    Some(path.to_string_lossy().into_owned())
 }
 
 fn token_key(top: &str, marker: Option<String>) -> String {
