@@ -42,11 +42,7 @@ fn parse_number_list(s: &str) -> Option<Vec<f64>> {
             }
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn parse_value(raw: &str) -> String {
@@ -65,11 +61,7 @@ fn parse_name_list(value: &str) -> Option<Vec<String>> {
         names.push(rest[..end].trim().to_string());
         rest = &rest[end + 1..];
     }
-    if names.is_empty() {
-        None
-    } else {
-        Some(names)
-    }
+    if names.is_empty() { None } else { Some(names) }
 }
 
 impl FkFile {
@@ -210,27 +202,27 @@ impl FkFile {
                     "SPEC" => tk.spec = Some(value),
                     "RELATIVE" => tk.relative = Some(value),
                     "ANGLES" => {
-                        if let Some(v) = parse_number_list(&value) {
-                            if v.len() == 3 {
-                                tk.angles = Some([v[0], v[1], v[2]]);
-                            }
+                        if let Some(v) = parse_number_list(&value)
+                            && v.len() == 3
+                        {
+                            tk.angles = Some([v[0], v[1], v[2]]);
                         }
                     }
                     "AXES" => {
-                        if let Some(v) = parse_number_list(&value) {
-                            if v.len() == 3 {
-                                tk.axes = Some([v[0] as i32, v[1] as i32, v[2] as i32]);
-                            }
+                        if let Some(v) = parse_number_list(&value)
+                            && v.len() == 3
+                        {
+                            tk.axes = Some([v[0] as i32, v[1] as i32, v[2] as i32]);
                         }
                     }
                     "UNITS" => tk.units = Some(value),
                     "MATRIX" => {
-                        if let Some(v) = parse_number_list(&value) {
-                            if v.len() == 9 {
-                                let mut m = [0.0f64; 9];
-                                m.copy_from_slice(&v);
-                                tk.matrix = Some(m);
-                            }
+                        if let Some(v) = parse_number_list(&value)
+                            && v.len() == 9
+                        {
+                            let mut m = [0.0f64; 9];
+                            m.copy_from_slice(&v);
+                            tk.matrix = Some(m);
                         }
                     }
                     _ => {}

@@ -255,7 +255,7 @@ impl NetcdfFile {
 
     pub fn record_var(&self, var: &NetcdfVar) -> bool {
         match var.dim_ids.first() {
-            Some(&id) => self.dims.get(id).map_or(false, |d| d.len == 0),
+            Some(&id) => self.dims.get(id).is_some_and(|d| d.len == 0),
             None => false,
         }
     }
@@ -533,12 +533,12 @@ impl NetcdfFile {
         match attr.nc_type {
             NetcdfType::Byte => r.first().map(|&b| b as i8 as f64),
             NetcdfType::Char => None,
-            NetcdfType::Short => Some(i16::from_be_bytes([*r.get(0)?, *r.get(1)?]) as f64),
+            NetcdfType::Short => Some(i16::from_be_bytes([*r.first()?, *r.get(1)?]) as f64),
             NetcdfType::Int => {
-                Some(i32::from_be_bytes([*r.get(0)?, *r.get(1)?, *r.get(2)?, *r.get(3)?]) as f64)
+                Some(i32::from_be_bytes([*r.first()?, *r.get(1)?, *r.get(2)?, *r.get(3)?]) as f64)
             }
-            NetcdfType::Float => Some(f32::from_bits(be_u32(&r.get(0..4)?)) as f64),
-            NetcdfType::Double => Some(f64::from_bits(be_u64(&r.get(0..8)?))),
+            NetcdfType::Float => Some(f32::from_bits(be_u32(r.get(0..4)?)) as f64),
+            NetcdfType::Double => Some(f64::from_bits(be_u64(r.get(0..8)?))),
         }
     }
 }
@@ -759,7 +759,7 @@ mod tests {
     fn name(s: &str) -> Vec<u8> {
         let mut b = u32b(s.len() as u32);
         b.extend_from_slice(s.as_bytes());
-        while b.len() % 4 != 0 {
+        while !b.len().is_multiple_of(4) {
             b.push(0);
         }
         b
@@ -873,7 +873,7 @@ mod tests {
         b.extend(name("_FillValue"));
         b.extend(u32b(6));
         b.extend(u32b(1));
-        b.extend(f64b(9.9692099683868690e36));
+        b.extend(f64b(9.969_209_968_386_869e36));
         b.extend(u32b(6));
         b.extend(u32b(8));
         let slot = b.len();
@@ -884,8 +884,8 @@ mod tests {
         let f = NetcdfFile::parse(&b).unwrap();
         let a = &f.vars[0].attrs[0];
         assert_eq!(a.name, "_FillValue");
-        assert_eq!(a.raw, f64b(9.9692099683868690e36));
-        assert_eq!(f.attr_num(a), Some(9.9692099683868690e36));
+        assert_eq!(a.raw, f64b(9.969_209_968_386_869e36));
+        assert_eq!(f.attr_num(a), Some(9.969_209_968_386_869e36));
         assert_eq!(f.values_f64(&b, "v").unwrap(), vec![5.0]);
     }
 

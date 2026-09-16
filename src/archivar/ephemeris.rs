@@ -106,17 +106,15 @@ pub fn chebyshev_fit(
     }
     let nodes = chebyshev_nodes(m);
     let mut a = vec![vec![0.0; degree + 1]; m];
-    for i in 0..m {
-        let polys = chebyshev_polys(degree + 1, nodes[i]);
-        for j in 0..=degree {
-            a[i][j] = polys[j];
-        }
+    for (i, node) in nodes.iter().enumerate().take(m) {
+        let polys = chebyshev_polys(degree + 1, *node);
+        a[i].copy_from_slice(&polys);
     }
     let mut ata = vec![vec![0.0; degree + 1]; degree + 1];
-    for i in 0..m {
+    for ai in a.iter().take(m) {
         for j in 0..=degree {
             for k in 0..=degree {
-                ata[j][k] += a[i][j] * a[i][k];
+                ata[j][k] += ai[j] * ai[k];
             }
         }
     }
@@ -130,10 +128,7 @@ pub fn chebyshev_fit(
             atz[j] += a[i][j] * samples[i].2;
         }
     }
-    let (cx, cy, cz) = match solve_normal_equations(&ata, &atx, &aty, &atz) {
-        Some(c) => c,
-        None => return None,
-    };
+    let (cx, cy, cz) = solve_normal_equations(&ata, &atx, &aty, &atz)?;
     Some((cx, cy, cz))
 }
 
@@ -166,10 +161,9 @@ fn resolve_to_ssb(
                 && matches!(seg.data_type, 2 | 3 | 9 | 13 | 20)
                 && et >= seg.start_et
                 && et <= seg.end_et
+                && !candidates.contains(&seg.center)
             {
-                if !candidates.contains(&seg.center) {
-                    candidates.push(seg.center);
-                }
+                candidates.push(seg.center);
             }
         }
     }
@@ -282,12 +276,12 @@ pub fn full_orientation(
                 None => m_pa,
             };
             let (mut ra2, mut dec2, mut w2) = iau_angles_from_matrix(m_me);
-            if let Some((_, lin_dec, _)) = linear_orientation(wgccre, jd) {
-                if (dec2 - lin_dec).abs() > 90.0 {
-                    ra2 += 180.0;
-                    dec2 = -dec2;
-                    w2 += 180.0;
-                }
+            if let Some((_, lin_dec, _)) = linear_orientation(wgccre, jd)
+                && (dec2 - lin_dec).abs() > 90.0
+            {
+                ra2 += 180.0;
+                dec2 = -dec2;
+                w2 += 180.0;
             }
             return Some((ra2, dec2, w2));
         }
@@ -332,6 +326,10 @@ pub fn nutation_delta_fit(
     chebyshev_fit(&samples, NUT_DEGREE)
 }
 
+type GranuleVec = Vec<f64>;
+type Granule = (f64, f64, GranuleVec, GranuleVec, GranuleVec);
+type RotationRec = (f64, [f64; 9]);
+
 pub fn extract_granules(
     spk: &SpkFile,
     all_kernels: &[SpkFile],
@@ -340,11 +338,7 @@ pub fn extract_granules(
     bpc_files: &[BpcFile],
     fk: &FkFile,
     granule_days: f64,
-) -> (
-    Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
-    Vec<(f64, [f64; 9])>,
-    Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
-) {
+) -> (Vec<Granule>, Vec<RotationRec>, Vec<Granule>) {
     let mut granules = Vec::new();
     let mut rotations = Vec::new();
     let mut nutation = Vec::new();
@@ -416,9 +410,9 @@ pub fn extract_granules(
 pub fn write_binary(
     path: &str,
     body_name: &str,
-    granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
-    rotations: &[(f64, [f64; 9])],
-    nutation: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
+    granules: &[Granule],
+    rotations: &[RotationRec],
+    nutation: &[Granule],
     wgccre: &PckBody,
     omega_g: Option<(f64, f64)>,
 ) -> bool {
@@ -565,7 +559,7 @@ pub fn write_binary(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::bsp_reader::daf::{DafFile, DOUBLE_BYTES, RECORD_BYTES};
+    use crate::archivar::bsp_reader::daf::{DOUBLE_BYTES, DafFile, RECORD_BYTES};
     use crate::archivar::bsp_reader::spk::SpkFile;
 
     const DATA_START_ADDR: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;

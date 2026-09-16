@@ -53,7 +53,7 @@ pub fn write_bin(records: &[[f64; 4]]) -> Vec<u8> {
 }
 
 pub fn read_bin(data: &[u8]) -> Option<Vec<[f64; 4]>> {
-    if data.len() < 8 || &data[0..4] != &MAGIC {
+    if data.len() < 8 || data[0..4] != MAGIC {
         return None;
     }
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;

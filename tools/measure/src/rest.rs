@@ -394,7 +394,9 @@ fn cholesky_solve(l: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::te::{TeNull, conditional_te_stats_lagged_n, transfer_entropy_binned};
+    use omegaflow::te::{
+        TeNull, TeStatsParams, conditional_te_stats_lagged_n, transfer_entropy_binned,
+    };
 
     fn next_rng(rng: &mut u64) -> f64 {
         *rng = rng
@@ -682,9 +684,20 @@ mod tests {
         let a: Vec<f32> = reconstructed[0].iter().map(|v| *v as f32).collect();
         let b: Vec<f32> = reconstructed[1].iter().map(|v| *v as f32).collect();
         let te = transfer_entropy_binned(&b, &a, delay, 4).expect("the source TE is measurable");
-        let (_, _, fam) =
-            conditional_te_stats_lagged_n(&b, &a, &[], delay, delay, 4, seed, 50, TeNull::Phase)
-                .expect("the fresh source null is measurable");
+        let (_, _, fam) = conditional_te_stats_lagged_n(
+            &b,
+            &a,
+            &[],
+            TeStatsParams {
+                lag: delay,
+                max_lag: delay,
+                bins: 4,
+                seed,
+                n_surr: 50,
+                null: TeNull::Phase,
+            },
+        )
+        .expect("the fresh source null is measurable");
         assert!(
             te > fam,
             "the driven source breaks its own fam-Schwelle: TE {te} vs fam {fam}"

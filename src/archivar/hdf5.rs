@@ -617,7 +617,7 @@ fn parse_datatype(buf: &[u8], off: usize) -> Result<(Hdf5Datatype, usize), Hdf5N
         }
         6 => {
             let nmembs = (flags1 as usize) << 8 | flags0 as usize;
-            let offset_nbytes = ((64 - (size as u64).leading_zeros() as usize) + 7) / 8;
+            let offset_nbytes = (64 - (size as u64).leading_zeros() as usize).div_ceil(8);
             let mut total = 0usize;
             for _ in 0..nmembs {
                 let name_len = {
@@ -787,7 +787,7 @@ fn parse_filters(buf: &[u8], off: usize) -> Result<Vec<Hdf5Filter>, Hdf5Note> {
             cd.push(le_u32(buf, p));
             p += 4;
         }
-        if version == 1 && nc % 2 != 0 {
+        if version == 1 && !nc.is_multiple_of(2) {
             p += 4;
         }
         out.push(Hdf5Filter {
@@ -895,7 +895,7 @@ fn parse_fractal_heap(buf: &[u8], addr: u64) -> Result<FractalHeap, Hdf5Note> {
     let max_index = le_u16(buf, off + 128);
     let root_block = le_u64(buf, off + 132);
     let curr_root_rows = le_u16(buf, off + 140);
-    let heap_off_size = ((max_index as usize) + 7) / 8;
+    let heap_off_size = (max_index as usize).div_ceil(8);
     let heap_len_size = {
         let v = max_direct.min(max_managed as u64);
         let mut n = 0usize;
@@ -972,10 +972,11 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
                                 }
                                 let child = le_u64(buf, p);
                                 p += 8;
-                                if child != UNDEF {
-                                    if obj_off >= child_off && obj_off < child_off + size {
-                                        stack.push((child, child_off, size));
-                                    }
+                                if child != UNDEF
+                                    && obj_off >= child_off
+                                    && obj_off < child_off + size
+                                {
+                                    stack.push((child, child_off, size));
                                 }
                                 child_off += size;
                             }
@@ -1460,7 +1461,7 @@ fn apply_filters(
             FILTER_DEFLATE => {
                 let body = if data.len() >= 2
                     && data[0] & 0x0f == 8
-                    && (((data[0] as u16) << 8 | data[1] as u16) % 31 == 0)
+                    && ((data[0] as u16) << 8 | data[1] as u16).is_multiple_of(31)
                 {
                     let skip = if data[1] & 0x20 != 0 { 6 } else { 2 };
                     &data[skip..]
@@ -1500,7 +1501,7 @@ fn apply_filters(
                     c0 = (c0 + word) % 0xffff;
                     c1 = (c1 + c0) % 0xffff;
                 }
-                if body.len() % 2 != 0 {
+                if !body.len().is_multiple_of(2) {
                     let word = (body[body.len() - 1] as u32) << 8;
                     c0 = (c0 + word) % 0xffff;
                     c1 = (c1 + c0) % 0xffff;
@@ -1514,10 +1515,7 @@ fn apply_filters(
             }
             FILTER_SCALEOFFSET => {
                 let scale_type = f.cd_values.first().copied().unwrap_or(2);
-                let sf = match f.cd_values.get(1).copied() {
-                    Some(v) => v,
-                    None => 0,
-                };
+                let sf = f.cd_values.get(1).copied();
                 if data.len() < 21 {
                     return Err(Hdf5Note::Filter { id: f.id, off: 0 });
                 }
@@ -1536,12 +1534,12 @@ fn apply_filters(
                 };
                 let fill: Vec<u8> = if fill_defined {
                     let mut v = vec![0u8; elem_size];
-                    for i in 0..elem_size {
+                    for (i, slot) in v.iter_mut().enumerate() {
                         let word = match f.cd_values.get(8 + i / 4) {
                             Some(&w) => w,
                             None => 0,
                         };
-                        v[i] = word.to_le_bytes()[i % 4];
+                        *slot = word.to_le_bytes()[i % 4];
                     }
                     v
                 } else {
@@ -1555,6 +1553,10 @@ fn apply_filters(
                         bit_pos += 1;
                     }
                     if scale_type == 1 {
+                        let sf = match sf {
+                            Some(v) => v,
+                            None => return Err(Hdf5Note::Filter { id: f.id, off: 0 }),
+                        };
                         let v = (raw as f64 + minval as f64) / 10f64.powi(sf as i32);
                         match elem_size {
                             4 => out.extend_from_slice(&(v as f32).to_le_bytes()),
@@ -2724,7 +2726,7 @@ mod tests {
         assert_eq!(ds.dims, vec![8, 4300]);
         let data = file.read_dataset("SSI").unwrap();
         let v = decode_f32(&data, 0, Endian::Le).unwrap();
-        assert!((v - 8.8243651e-06).abs() < 1e-12);
+        assert!((v - 8.824_365e-6).abs() < 1e-12);
         let tsi = file.read_dataset("TSI").unwrap();
         let last = decode_f32(&tsi, 7 * 4, Endian::Le).unwrap();
         assert!((last - 1361.5614).abs() < 0.001);
@@ -3081,10 +3083,11 @@ mod tests {
             let file = Hdf5File::parse(&bytes).unwrap();
             let root = file.root().unwrap();
             assert!(root.links.len() >= 50, "root links {}", root.links.len());
-            assert!(root
-                .links
-                .iter()
-                .any(|l| l.name == "goes_imager_projection"));
+            assert!(
+                root.links
+                    .iter()
+                    .any(|l| l.name == "goes_imager_projection")
+            );
             assert!(root.links.iter().any(|l| l.name == "x"));
             assert!(root.links.iter().any(|l| l.name == "y"));
             let proj = file.geostationary_projection().unwrap();

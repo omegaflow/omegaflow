@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::archivar::{
-    body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth, BodyEphemeris,
+    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
 };
 
 pub const C: f64 = crate::archivar::types::C_LIGHT;

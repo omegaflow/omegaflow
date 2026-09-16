@@ -1,10 +1,10 @@
-use omegaflow::hdf5::{decode_f32, decode_f64, Endian, Hdf5File};
+use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{
+    TeEstimator, TeNull, TeStats2Params, TeStatsParams, TeSurrogateParams,
     conditional_te_stats_lagged, conditional_te_stats_lagged_2, conditional_te_stats_lagged_n,
     conditional_te_surrogates_n, transfer_entropy_conditional_2,
     transfer_entropy_conditional_binned_n, transfer_entropy_conditional_h,
-    transfer_entropy_ksg_conditional_n, TeEstimator, TeNull, TeStats2Params, TeStatsParams,
-    TeSurrogateParams,
+    transfer_entropy_ksg_conditional_n,
 };
 
 const MAGIC: [u8; 4] = *b"AIA1";

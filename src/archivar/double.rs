@@ -110,7 +110,7 @@ impl ConeCatalog {
                 for &b in bucket {
                     let k = b as usize;
                     let s = angular_sep(ra, dec, self.ra[k], self.dec[k]);
-                    if s <= radius && best.map_or(true, |(bs, _)| s < bs) {
+                    if s <= radius && best.is_none_or(|(bs, _)| s < bs) {
                         best = Some((s, k));
                     }
                 }
@@ -132,17 +132,30 @@ pub struct AnomalyRow {
     pub ex_name: [u8; 32],
 }
 
-pub fn crossmatch(
-    ir_ra: &[f64],
-    ir_dec: &[f64],
-    ir_excess: &[f64],
-    gaia: &ConeCatalog,
-    radio: &ConeCatalog,
-    tns: &ConeCatalog,
-    excl: &ConeCatalog,
-    radius: f64,
-    only_excess: bool,
-) -> Vec<AnomalyRow> {
+pub struct CrossmatchArgs<'a> {
+    pub ir_ra: &'a [f64],
+    pub ir_dec: &'a [f64],
+    pub ir_excess: &'a [f64],
+    pub gaia: &'a ConeCatalog,
+    pub radio: &'a ConeCatalog,
+    pub tns: &'a ConeCatalog,
+    pub excl: &'a ConeCatalog,
+    pub radius: f64,
+    pub only_excess: bool,
+}
+
+pub fn crossmatch(args: &CrossmatchArgs<'_>) -> Vec<AnomalyRow> {
+    let CrossmatchArgs {
+        ir_ra,
+        ir_dec,
+        ir_excess,
+        gaia,
+        radio,
+        tns,
+        excl,
+        radius,
+        only_excess,
+    } = *args;
     let mut rows = Vec::new();
     for i in 0..ir_ra.len() {
         let is_excess = ir_excess[i].is_finite() && ir_excess[i] < IR_EXCESS_THRESHOLD_MAG;
@@ -206,17 +219,17 @@ mod tests {
         let radio = ConeCatalog::with_values(vec![313.2605 + 0.05], vec![38.5991], vec![1.0e-26]);
         let tns = ConeCatalog::with_values(vec![313.2605], vec![38.5991], vec![0.027172]);
         let excl = ConeCatalog::with_names(vec![], vec![], vec![]);
-        let rows = crossmatch(
-            &[313.2605],
-            &[38.5991],
-            &[-0.624],
-            &gaia,
-            &radio,
-            &tns,
-            &excl,
-            0.01,
-            true,
-        );
+        let rows = crossmatch(&CrossmatchArgs {
+            ir_ra: &[313.2605],
+            ir_dec: &[38.5991],
+            ir_excess: &[-0.624],
+            gaia: &gaia,
+            radio: &radio,
+            tns: &tns,
+            excl: &excl,
+            radius: 0.01,
+            only_excess: true,
+        });
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].gaia_color, 2.135);
         assert_eq!(rows[0].tns_z, 0.027172);
@@ -232,17 +245,17 @@ mod tests {
         let radio = ConeCatalog::with_values(vec![], vec![], vec![]);
         let tns = ConeCatalog::with_values(vec![], vec![], vec![]);
         let excl = ConeCatalog::with_names(vec![313.261], vec![38.5995], vec![exname]);
-        let rows = crossmatch(
-            &[313.2605],
-            &[38.5991],
-            &[-0.624],
-            &gaia,
-            &radio,
-            &tns,
-            &excl,
-            0.01,
-            true,
-        );
+        let rows = crossmatch(&CrossmatchArgs {
+            ir_ra: &[313.2605],
+            ir_dec: &[38.5991],
+            ir_excess: &[-0.624],
+            gaia: &gaia,
+            radio: &radio,
+            tns: &tns,
+            excl: &excl,
+            radius: 0.01,
+            only_excess: true,
+        });
         assert_eq!(rows.len(), 1);
         assert!(rows[0].excluded);
         assert_eq!(&rows[0].ex_name[..8], b"ASASSN-V");
@@ -255,17 +268,17 @@ mod tests {
         let radio = ConeCatalog::with_values(vec![], vec![], vec![]);
         let tns = ConeCatalog::with_values(vec![], vec![], vec![]);
         let excl = ConeCatalog::with_names(vec![], vec![], vec![]);
-        let rows = crossmatch(
-            &[313.2605, 10.0],
-            &[38.5991, 20.0],
-            &[-0.624, 0.2],
-            &gaia,
-            &radio,
-            &tns,
-            &excl,
-            0.01,
-            false,
-        );
+        let rows = crossmatch(&CrossmatchArgs {
+            ir_ra: &[313.2605, 10.0],
+            ir_dec: &[38.5991, 20.0],
+            ir_excess: &[-0.624, 0.2],
+            gaia: &gaia,
+            radio: &radio,
+            tns: &tns,
+            excl: &excl,
+            radius: 0.01,
+            only_excess: false,
+        });
         assert_eq!(rows.len(), 2, "full sky-sweep keeps all positions");
     }
 }

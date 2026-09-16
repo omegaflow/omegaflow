@@ -165,10 +165,10 @@ pub fn parse_nexrad(data: &[u8]) -> Option<NexradVolume> {
         if msg_type == 31 {
             let data_start = offset + 28;
             let data_len = 2 * size_hw as usize - 16;
-            if data_start + data_len <= buf.len() {
-                if let Some(radial) = parse_msg31(&buf[data_start..data_start + data_len]) {
-                    radials.push(radial);
-                }
+            if data_start + data_len <= buf.len()
+                && let Some(radial) = parse_msg31(&buf[data_start..data_start + data_len])
+            {
+                radials.push(radial);
             }
         }
 

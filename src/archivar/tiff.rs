@@ -127,29 +127,30 @@ fn geotransform(
     tiepoint: Option<Vec<f64>>,
     transformation: Option<Vec<f64>>,
 ) -> Option<GeoTransform> {
-    if let Some(m) = transformation {
-        if m.len() >= 8 {
-            return Some(GeoTransform {
-                x0: m[3],
-                y0: m[7],
-                dx: m[0],
-                dy: m[5],
-            });
-        }
+    if let Some(m) = transformation
+        && m.len() >= 8
+    {
+        return Some(GeoTransform {
+            x0: m[3],
+            y0: m[7],
+            dx: m[0],
+            dy: m[5],
+        });
     }
-    if let (Some(scale), Some(tie)) = (pixel_scale, tiepoint) {
-        if scale.len() >= 2 && tie.len() >= 6 {
-            let sx = scale[0];
-            let sy = scale[1];
-            let i0 = tie[0];
-            let j0 = tie[1];
-            return Some(GeoTransform {
-                x0: tie[3] - i0 * sx,
-                y0: tie[4] + j0 * sy,
-                dx: sx,
-                dy: -sy,
-            });
-        }
+    if let (Some(scale), Some(tie)) = (pixel_scale, tiepoint)
+        && scale.len() >= 2
+        && tie.len() >= 6
+    {
+        let sx = scale[0];
+        let sy = scale[1];
+        let i0 = tie[0];
+        let j0 = tie[1];
+        return Some(GeoTransform {
+            x0: tie[3] - i0 * sx,
+            y0: tie[4] + j0 * sy,
+            dx: sx,
+            dy: -sy,
+        });
     }
     None
 }
@@ -161,18 +162,22 @@ fn raw_strip(strip: &[u8], need: usize) -> Option<Vec<u8>> {
     Some(strip[..need].to_vec())
 }
 
-fn decode_strips(
-    data: &[u8],
+struct StripDecodeParams<'a> {
     width: u32,
     height: u32,
-    bits_per_sample: &[u16],
+    bits_per_sample: &'a [u16],
     rows_per_strip: u32,
-    strip_offsets: &[u32],
-    strip_byte_counts: &[u32],
+    strip_offsets: &'a [u32],
+    strip_byte_counts: &'a [u32],
+}
+
+fn decode_strips(
+    data: &[u8],
+    p: StripDecodeParams<'_>,
     strip_decode: fn(&[u8], usize) -> Option<Vec<u8>>,
 ) -> Option<Vec<u8>> {
     let mut bytes_per_pixel = 0usize;
-    for &b in bits_per_sample {
+    for &b in p.bits_per_sample {
         if b % 8 != 0 {
             return None;
         }
@@ -181,20 +186,20 @@ fn decode_strips(
     if bytes_per_pixel == 0 {
         return None;
     }
-    let row_bytes = (width as usize).checked_mul(bytes_per_pixel)?;
-    let total = row_bytes.checked_mul(height as usize)?;
+    let row_bytes = (p.width as usize).checked_mul(bytes_per_pixel)?;
+    let total = row_bytes.checked_mul(p.height as usize)?;
     let mut out = Vec::with_capacity(total);
     let mut row = 0usize;
-    for (i, &off) in strip_offsets.iter().enumerate() {
-        if row >= height as usize {
+    for (i, &off) in p.strip_offsets.iter().enumerate() {
+        if row >= p.height as usize {
             break;
         }
-        let count = *strip_byte_counts.get(i)? as usize;
+        let count = *p.strip_byte_counts.get(i)? as usize;
         let start = off as usize;
         let end = start.checked_add(count)?;
         let strip = data.get(start..end)?;
-        let remaining = height as usize - row;
-        let rows = (rows_per_strip as usize).min(remaining);
+        let remaining = p.height as usize - row;
+        let rows = (p.rows_per_strip as usize).min(remaining);
         let need = rows.checked_mul(row_bytes)?;
         let decoded = strip_decode(strip, need)?;
         if decoded.len() != need {
@@ -277,14 +282,14 @@ fn decode_lzw_strip(data: &[u8], expected: usize) -> Option<Vec<u8>> {
             return None;
         };
         out.extend_from_slice(&entry);
-        if let Some(p) = prev {
-            if (free as usize) < LZW_TABLE_MAX {
-                prefix[free as usize] = p;
-                suffix[free as usize] = entry[0];
-                free += 1;
-                if free == (1u16 << width) - 1 && width < 12 {
-                    width += 1;
-                }
+        if let Some(p) = prev
+            && (free as usize) < LZW_TABLE_MAX
+        {
+            prefix[free as usize] = p;
+            suffix[free as usize] = entry[0];
+            free += 1;
+            if free == (1u16 << width) - 1 && width < 12 {
+                width += 1;
             }
         }
         prev = Some(code);
@@ -456,14 +461,18 @@ fn receive_extend(bits: &mut BitReader, s: u32) -> Option<i32> {
 
 fn idct1d(p: &mut [f64]) {
     let mut tmp = [0.0f64; 8];
-    for x in 0..8 {
+    for (x, slot) in tmp.iter_mut().enumerate() {
         let mut sum = 0.0;
-        for u in 0..8 {
-            let cu = if u == 0 { 0.707_106_781_186_547_6 } else { 1.0 };
+        for (u, &pu) in p.iter().enumerate() {
+            let cu = if u == 0 {
+                std::f64::consts::FRAC_1_SQRT_2
+            } else {
+                1.0
+            };
             let angle = (2.0 * x as f64 + 1.0) * u as f64 * std::f64::consts::PI / 16.0;
-            sum += cu * p[u] * angle.cos();
+            sum += cu * pu * angle.cos();
         }
-        tmp[x] = sum * 0.5;
+        *slot = sum * 0.5;
     }
     p.copy_from_slice(&tmp);
 }
@@ -747,7 +756,7 @@ fn decode_scan(dec: &JpegDecoder, data: &[u8], start: usize) -> Option<JpegImage
         for mcu_x in 0..mcus_x {
             if dec.restart_interval > 0
                 && mcu_count > 0
-                && mcu_count % dec.restart_interval as usize == 0
+                && mcu_count.is_multiple_of(dec.restart_interval as usize)
             {
                 bits.align_byte();
                 if bits.read_raw()? != 0xFF {
@@ -834,10 +843,8 @@ fn decode_jpeg(data: &[u8]) -> Option<JpegImage> {
                     0xDB => dec.parse_dqt(seg)?,
                     0xC4 => dec.parse_dht(seg)?,
                     0xC0 | 0xC1 => dec.parse_sof(seg)?,
-                    0xDD => {
-                        if seg.len() >= 2 {
-                            dec.restart_interval = be16(seg, 0)?;
-                        }
+                    0xDD if seg.len() >= 2 => {
+                        dec.restart_interval = be16(seg, 0)?;
                     }
                     _ => {}
                 }
@@ -870,49 +877,46 @@ fn jpeg_bytes_per_pixel(bits_per_sample: &[u16], samples_per_pixel: u16) -> Opti
         }
         bpp += 1;
     }
-    if bpp == 0 {
-        None
-    } else {
-        Some(bpp)
-    }
+    if bpp == 0 { None } else { Some(bpp) }
 }
 
-fn assemble_jpeg(
-    data: &[u8],
+struct JpegAssembleParams<'a> {
     width: u32,
     height: u32,
     bpp: usize,
-    jpeg_tables: Option<&[u8]>,
-    offsets: &[u32],
-    counts: &[u32],
+    jpeg_tables: Option<&'a [u8]>,
+    offsets: &'a [u32],
+    counts: &'a [u32],
     tiled: bool,
     block_w: u32,
     block_h: u32,
-) -> Option<Vec<u8>> {
-    let w = width as usize;
-    let h = height as usize;
-    let mut out = vec![0u8; w * h * bpp];
-    let blocks_across = if tiled {
-        w.div_ceil(block_w as usize)
+}
+
+fn assemble_jpeg(data: &[u8], p: JpegAssembleParams<'_>) -> Option<Vec<u8>> {
+    let w = p.width as usize;
+    let h = p.height as usize;
+    let mut out = vec![0u8; w * h * p.bpp];
+    let blocks_across = if p.tiled {
+        w.div_ceil(p.block_w as usize)
     } else {
         1
     };
     let mut row = 0usize;
-    for i in 0..offsets.len() {
+    for i in 0..p.offsets.len() {
         if row >= h {
             break;
         }
-        let off = *offsets.get(i)? as usize;
-        let cnt = *counts.get(i)? as usize;
+        let off = *p.offsets.get(i)? as usize;
+        let cnt = *p.counts.get(i)? as usize;
         let block = data.get(off..off.checked_add(cnt)?)?;
-        let img = decode_jpeg_with_tables(block, jpeg_tables)?;
-        if img.components != bpp {
+        let img = decode_jpeg_with_tables(block, p.jpeg_tables)?;
+        if img.components != p.bpp {
             return None;
         }
-        let (bx, by) = if tiled {
+        let (bx, by) = if p.tiled {
             let tx = i % blocks_across;
             let ty = i / blocks_across;
-            (tx * block_w as usize, ty * block_h as usize)
+            (tx * p.block_w as usize, ty * p.block_h as usize)
         } else {
             (0, row)
         };
@@ -924,11 +928,11 @@ fn assemble_jpeg(
         let copy_w = iw.min(w - bx);
         let copy_h = ih.min(h - by);
         for r in 0..copy_h {
-            let src = r * iw * bpp;
-            let dst = (by + r) * w * bpp + bx * bpp;
-            out[dst..dst + copy_w * bpp].copy_from_slice(&img.pixels[src..src + copy_w * bpp]);
+            let src = r * iw * p.bpp;
+            let dst = (by + r) * w * p.bpp + bx * p.bpp;
+            out[dst..dst + copy_w * p.bpp].copy_from_slice(&img.pixels[src..src + copy_w * p.bpp]);
         }
-        if !tiled {
+        if !p.tiled {
             row += ih;
         }
     }
@@ -1012,7 +1016,7 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
     let height = height?;
     let bits_per_sample = match bits_per_sample {
         Some(v) => v,
-        None => Vec::new(),
+        None => vec![1],
     };
     let samples_per_pixel = samples_per_pixel.unwrap_or(1);
     let compression = compression.unwrap_or(1);
@@ -1031,72 +1035,79 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
             None => &[],
         };
         let decoded = if compression == 7 {
-            let bpp = match jpeg_bytes_per_pixel(&bits_per_sample, samples_per_pixel) {
-                Some(b) => b,
-                None => 0,
-            };
-            if bpp == 0 {
-                None
-            } else if let (Some(tw), Some(tl), Some(to), Some(tc)) = (
-                tile_width,
-                tile_length,
-                tile_offsets.as_deref(),
-                tile_byte_counts.as_deref(),
-            ) {
-                assemble_jpeg(
-                    data,
-                    width,
-                    height,
-                    bpp,
-                    jpeg_tables.as_deref(),
-                    to,
-                    tc,
-                    true,
-                    tw,
-                    tl,
-                )
-            } else {
-                assemble_jpeg(
-                    data,
-                    width,
-                    height,
-                    bpp,
-                    jpeg_tables.as_deref(),
-                    offsets,
-                    counts,
-                    false,
-                    width,
-                    rows_per_strip,
-                )
+            match jpeg_bytes_per_pixel(&bits_per_sample, samples_per_pixel) {
+                Some(bpp) => {
+                    if let (Some(tw), Some(tl), Some(to), Some(tc)) = (
+                        tile_width,
+                        tile_length,
+                        tile_offsets.as_deref(),
+                        tile_byte_counts.as_deref(),
+                    ) {
+                        assemble_jpeg(
+                            data,
+                            JpegAssembleParams {
+                                width,
+                                height,
+                                bpp,
+                                jpeg_tables: jpeg_tables.as_deref(),
+                                offsets: to,
+                                counts: tc,
+                                tiled: true,
+                                block_w: tw,
+                                block_h: tl,
+                            },
+                        )
+                    } else {
+                        assemble_jpeg(
+                            data,
+                            JpegAssembleParams {
+                                width,
+                                height,
+                                bpp,
+                                jpeg_tables: jpeg_tables.as_deref(),
+                                offsets,
+                                counts,
+                                tiled: false,
+                                block_w: width,
+                                block_h: rows_per_strip,
+                            },
+                        )
+                    }
+                }
+                None => None,
             }
         } else {
             match compression {
                 1 => decode_strips(
                     data,
-                    width,
-                    height,
-                    &bits_per_sample,
-                    rows_per_strip,
-                    offsets,
-                    counts,
+                    StripDecodeParams {
+                        width,
+                        height,
+                        bits_per_sample: &bits_per_sample,
+                        rows_per_strip,
+                        strip_offsets: offsets,
+                        strip_byte_counts: counts,
+                    },
                     raw_strip,
                 ),
                 5 => decode_strips(
                     data,
-                    width,
-                    height,
-                    &bits_per_sample,
-                    rows_per_strip,
-                    offsets,
-                    counts,
+                    StripDecodeParams {
+                        width,
+                        height,
+                        bits_per_sample: &bits_per_sample,
+                        rows_per_strip,
+                        strip_offsets: offsets,
+                        strip_byte_counts: counts,
+                    },
                     decode_lzw_strip,
                 ),
                 _ => None,
             }
         };
         match decoded {
-            Some(v) => v,
-            None => Vec::new(),
+            Some(p) => p,
+            None => return None,
         }
     } else {
         Vec::new()
@@ -1204,11 +1215,9 @@ mod tests {
     }
 
     #[test]
-    fn jpeg_compression_yields_no_pixels() {
+    fn jpeg_without_pixel_data_parses_void() {
         let data = build_tiff(2, 2, 7, &[], None, None);
-        let img = parse_tiff(&data).unwrap();
-        assert_eq!(img.compression, 7);
-        assert!(img.pixels.is_empty());
+        assert!(parse_tiff(&data).is_none());
     }
 
     #[test]
@@ -1565,8 +1574,8 @@ mod tests {
         }
         let band0: Vec<f32> = floats.iter().step_by(2).copied().collect();
         let band1: Vec<f32> = floats.iter().skip(1).step_by(2).copied().collect();
-        assert_eq!(min_valid(&band0), -15.8500003814697, "Elevation floor");
-        assert_eq!(min_valid(&band1), 1.103639960289, "Uncertainty floor");
+        assert_eq!(min_valid(&band0), -15.85, "Elevation floor");
+        assert_eq!(min_valid(&band1), 1.103_64, "Uncertainty floor");
         assert!(
             floats.contains(&f32::MAX),
             "the GDAL_NODATA 3.4028235e38 sentinel decodes"

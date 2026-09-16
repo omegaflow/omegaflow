@@ -26,10 +26,10 @@ pub fn write_bin(records: &[DrifterRecord]) -> Option<Vec<u8>> {
         {
             return None;
         }
-        if let Some(sst) = r.sst {
-            if !sst.is_finite() || sst <= 0.0 {
-                return None;
-            }
+        if let Some(sst) = r.sst
+            && (!sst.is_finite() || sst <= 0.0)
+        {
+            return None;
         }
         let mut rec = [0u8; REC_BYTES];
         rec[0..8].copy_from_slice(&r.id.to_le_bytes());

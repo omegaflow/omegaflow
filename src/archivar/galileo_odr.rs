@@ -53,11 +53,9 @@ pub fn record(bytes: &[u8]) -> Option<OdrRecord> {
     }
     let header = header(bytes)?;
     let mut ad = [[0u8; AD_GROUP_BYTES]; AD_REPETITIONS];
-    for i in 0..AD_REPETITIONS {
+    for (i, group) in ad.iter_mut().enumerate() {
         let base = HEADER_BYTES + i * AD_GROUP_BYTES;
-        for k in 0..AD_GROUP_BYTES {
-            ad[i][k] = bytes[base + k];
-        }
+        group.copy_from_slice(&bytes[base..base + AD_GROUP_BYTES]);
     }
     Some(OdrRecord { header, ad })
 }
