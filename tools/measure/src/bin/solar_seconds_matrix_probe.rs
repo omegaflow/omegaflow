@@ -508,7 +508,7 @@ fn main() {
         J2000_UNIX_OFFSET, TT_UNIX
     );
     println!(
-        "Flare events: XRSB b_flux as 24-s medians over the C1.0 threshold {:.0e} W/m2, refractory {} cells (30 min).",
+        "Flare events: XRSB b_flux as 24-s medians over the C5.0 threshold {:.0e} W/m2, refractory {} cells (30 min).",
         FLARE_THRESH, REFRACTORY
     );
     println!(

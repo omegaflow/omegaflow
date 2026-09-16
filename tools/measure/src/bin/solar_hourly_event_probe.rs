@@ -487,7 +487,7 @@ fn main() {
         J2000_UNIX_OFFSET, TT_UNIX
     );
     println!(
-        "Flare events: GOES soft X-ray b_flux (2-s xr_*.nc per day, hourly-max cells) over the C1.0 threshold {:.0e} W/m², refractory {} h.",
+        "Flare events: GOES soft X-ray b_flux (2-s xr_*.nc per day, hourly-max cells) over the C5.0 threshold {:.0e} W/m², refractory {} h.",
         FLARE_THRESH, REFRACTORY_HOURS
     );
     println!(
