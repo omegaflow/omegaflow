@@ -2,7 +2,7 @@
   title: Zustand — geteilter externer Zustand
   class: zustand
   date: 2026-09-16
-  sha256: 347d30ee6005b64014f5e03b0c756910c5fe558da56a768c7ed8bcec32dc5e1a
+  sha256: c1a94d141fc1f7604e5462734ef70a44d5e15ae168e9deb88499d146fba571e7
   status: live
   see-also: AGENTS.md
 -->
@@ -17,6 +17,6 @@ Eintrag ist nicht null — er ist `pending` mit Fälligkeit, eine Registraturpfl
 
 | Abhängigkeit | Wert | measured-at | fällig | Schritt |
 |---|---|---|---|---|
-| Postfach (extern) | letzter Eingang 00:40 (Rubin-Freigabe); offen: GitHub-GC #4761801, Privacy-Antwort, Rubin-Review, NSE/Haug, CSES-Limadou | 2026-09-16 10:56 | neuer Ledger-Eingang oder 2⁶ min | `state/mail/mail_ledger.φ` (`smail_recv` + `cloudflared`) |
-| GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15/15 Pre-Rewrite-Commits erreichbar; GC offen | 9fb70eb4 | HEAD-Wechsel oder GitHub-GC-Antwort | `cargo run -p omegaflow-register --bin pii_exposure` |
-| CI-Status | rot: clippy/format failure, build success, test in_progress (ci-check in_progress) | 9fb70eb4 | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) |
+| Postfach (extern) | letzter Eingang 2026-09-15 22:30Z (Rubin RSP: in Einzelprüfung); offen: GitHub-GC #4761801, Privacy-Antwort, Rubin-Review, NSE/Haug, CSES-Limadou | 2026-09-16T09:23Z | neuer Ledger-Eingang oder 2⁶ min | `state/mail/mail_ledger.φ` (`smail` + `cloudflared`) |
+| GitHub PII-Exposition | 44 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15/15 Pre-Rewrite-Commits erreichbar; GC offen | b66a9c94 | HEAD-Wechsel oder GitHub-GC-Antwort | `gh workflow run pii-exposure.yml` (oder `curl` GH-REST) |
+| CI-Status | rot: clippy failure, format failure, build success, test in_progress (ci-check #411) | b66a9c94 | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) |
