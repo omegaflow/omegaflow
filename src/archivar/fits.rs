@@ -1041,9 +1041,7 @@ fn drs_rows_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<(f64, [f64; 
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection, drs_series,
-    };
+    use super::{FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection, drs_series};
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -1904,13 +1902,7 @@ mod tests {
     #[test]
     fn drs_series_reads_utc_time_and_differential_acceleration() {
         let buf = drs_chain(&[
-            "ESA00001",
-            "ESA00002",
-            "DST11077",
-            "DST11078",
-            "DST11079",
-            "DST11083",
-            "DST11084",
+            "ESA00001", "ESA00002", "DST11077", "DST11078", "DST11079", "DST11083", "DST11084",
             "DST11085",
         ]);
         let rows = drs_series(&buf).unwrap();
@@ -1925,13 +1917,7 @@ mod tests {
     #[test]
     fn drs_series_missing_force_column_is_none() {
         let buf = drs_chain(&[
-            "ESA00001",
-            "ESA00002",
-            "DST11077",
-            "DST11078",
-            "DST11079",
-            "DST11084",
-            "DST11085",
+            "ESA00001", "ESA00002", "DST11077", "DST11078", "DST11079", "DST11084", "DST11085",
         ]);
         assert!(drs_series(&buf).is_none());
     }
