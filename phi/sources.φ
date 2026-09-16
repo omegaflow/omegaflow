@@ -2448,7 +2448,16 @@ ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
-note standort gemessen 2026-09-16: der Site-Anker ist gebaut und committet (ff69e51f) — 29-B-Block mit present-Flag + stid/lat/lon/alt (nexrad_level2_compiler.rs, nexrad_site src/archivar/nexrad.rs); das manifestierte nexrad_level2.bin trägt noch den alten 8-B-Kopf → stale, Re-Manifestation dispatcht (nexrad-cdn run 35144618354). Nach grünem Lauf die Zeile entfernen.
+
+url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
+format las
+at earth
+ttl 604800
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
 format apdb
