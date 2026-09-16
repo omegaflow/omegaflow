@@ -1,0 +1,62 @@
+name: vlass-tap-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  vlass-tap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ws-uv.canfar.net release exists on the CDN
+        run: |
+          if ! gh release view ws-uv.canfar.net --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ws-uv.canfar.net --repo omegaflow/sources \
+              --title "ws-uv.canfar.net" \
+              --notes "VLASS single-epoch source and component catalogues from the CADC Youcat TAP compiled to source binaries (em radio continuum, S-band 3.0 GHz). Header 16 B: magic (4), count (u32 LE), freq_hz (f64 LE, 3.0e9). Source magic VLST, record stride 40 B LE: ra_deg (f64), dec_deg (f64), total_mjy (f64), e_total_mjy (f64), peak_mjy (f64). Component magic VLCT, record stride 48 B LE: same five fields plus e_peak_mjy (f64)."
+          fi
+      - name: Fetch the VLASS source and component CSVs from the Youcat TAP
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/vlass_source.csv \
+            "https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL" \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-tap-cdn: cirada.VLASS_Source returned void" \
+                 "curl on the Youcat TAP did not reach the VLASS_Source CSV. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+          curl -sSfL --retry 3 --max-time 600 -o kernels/vlass_component.csv \
+            "https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL" \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-tap-cdn: cirada.VLASS_Component returned void" \
+                 "curl on the Youcat TAP did not reach the VLASS_Component CSV. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the VLASS source records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin vlass_tap_compiler -- \
+            --kind source --input kernels/vlass_source.csv \
+            --out data/ws-uv.canfar.net/vlass_tap_source.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-tap-cdn: vlass_tap_source.bin returned void" \
+                 "vlass_tap_compiler (source) returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compile the VLASS component records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin vlass_tap_compiler -- \
+            --kind component --input kernels/vlass_component.csv \
+            --out data/ws-uv.canfar.net/vlass_tap_component.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vlass-tap-cdn: vlass_tap_component.bin returned void" \
+                 "vlass_tap_compiler (component) returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
