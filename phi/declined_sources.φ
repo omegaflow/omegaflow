@@ -3620,3 +3620,19 @@ note VLASS Source (`total_flux`) — derselbe Endpunkt wie der getragene sources
 decline presence-catalog
 url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
 note EMODnet Physics Plattform-Metadaten (gemessen 2026-09-16: 1792 Mooring-Zeilen, Spalten PLATFORMCODE/call_name/latitude/longitude/lastdateobservation) — Stationsidentität + Position + Beobachtungs-Zeitstempel, kein Messwert am Punkt → Oszillator-Gate decline (Stationsliste ohne Messwert).
+
+decline catalog-register
+url https://english.ihep.cas.cn/lhaaso/pdl/
+note LHAASO „Data and code availability" (gemessen 2026-09-16: HTTP 200, 279 B) — statische News-/Listenseite (Stand 2021), trägt Papier-Supplements (LHAASOSED.txt, Map-pixel-list.txt, CORSIKA-Inputcards), kein Daten-Endpoint → decline. Der lhaaso_compiler (tools/harvest/src/bin/lhaaso_compiler.rs, CSV Ra/Dec/N0 → Skymap, --ci-mode casdc.china-vo.org) ist unregistriert und verwaist; der eigentliche Katalog (90 Quellen, Cao+ 2024) liegt bei VizieR J/ApJS/271/25 — Port über TAPVizieR (integriert), nicht über diese Seite.
+
+decline count
+url https://zenodo.org/records/8401262
+note Super-Kamiokande Atmospheric-Neutrino-Oscillation-Datenrelease 2023 (10.5281/zenodo.8401262, 52,6 MB, CC-BY). Inhalt (via Wayback 2023-11-10): bins/ als ROOT-Dateien (Data/MC-Event-Zählwerte je Analyse-Bin) + chi2/ (χ²-Listings über den Oszillations-Parameterraum) — nackte Zählwerte und χ², kein Feld am Punkt → decline count. Zenodo-Netz-Block gemessen 2026-09-16 (HTTP 0/Timeout direkt + Proton-Exit; frühere Messung HTTP 504); Record lebt (Wayback).
+
+decline event-record
+url https://zenodo.org/records/8427755
+note Telescope Array — „Data of an extremely energetic cosmic ray observed by a surface detector array" (Amaterasu-Ereignis, 10.5281/zenodo.8427755, Fujii+ 2023, zitiert in Science). Einzel-Ereignis-Detektordaten eines Schauers — ein Record, kein kontinuierliches Feld am Punkt → decline. Zenodo-Netz-Block gemessen 2026-09-16 (HTTP 0/Timeout direkt + Proton-Exit; frühere Messung HTTP 504).
+
+decline paper
+url https://doi.org/10.1007/978-94-015-8790-7_41
+note Wohlmuth, Plettemeier, Edenhofer, Bird, Asmar 1997 — „Analysis of Galileo Doppler Measurements during the Solar Occultations in 1994 and 1995" (The Three Galileos, ASSL 220, S. 421–428; JPL TR 97-0783). Ein Papier, kein Roh-Datensatz — kein Feld am Punkt → decline paper. Live: Springer-Kapitel (Abstract HTTP 200, Volltext Paywall); OA via Wayback (Forschung-Folge 31: 701 507 B, sha256 eebff967…); die alte JPL-TRS-Bitstream-Route redirectet heute auf dataverse.jpl.nasa.gov (gemessen 2026-09-16, kein Dokument).
