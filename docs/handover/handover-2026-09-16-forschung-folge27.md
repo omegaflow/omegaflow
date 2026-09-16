@@ -3,7 +3,7 @@
   session: Forschung-Folge 27
   class: handover
   date: 2026-09-16
-  sha256: f3cb9aba78b1f030918268b1e1e3d54cb16a3c04dadf03e902fabed909a4143f
+  sha256: 2db3888511c59727d199526d81022926dced76025bb25b82a376e24ae3b36b87
   status: live
 -->
 # Handover — Forschung-Folge 27 (2026-09-16)
@@ -53,26 +53,26 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 - **broken-null-control — 60-s-Gitter.** Workflow `te-null-limits.yml` gebaut
   (kein CDN-Release; die vier SWPC-JSON werden per curl in den archivar cache
   geholt).
-  (Schritt: nach Push `gh workflow run te-null-limits.yml`, dann das Gitter in
+  (Schritt: dispatcht run 35076275812 — Artefakt lesen, dann das Gitter in
   `docs/paper/broken-null-control.md` füllen.)
 
 ## Bande-Split / Sonden-ODF
 
 - **Dawn — Workflow gebaut.** `.github/workflows/dawn-cdn.yml` (Compiler
   `dawn_odf_compiler --ci-mode` → `sbnarchive.psi.edu/dawn_odf.bin`).
-  (Schritt: nach Push `gh workflow run dawn-cdn.yml`.)
+  (Schritt: dispatcht run 35076261911 — Ergebnis prüfen.)
 - **Voyager-Saturn — Workflow gebaut.** `.github/workflows/voyager-saturn-cdn.yml`
   (`voyager_saturn_compiler --ci-mode` → `spdf.gsfc.nasa.gov/voyager_saturn.bin`).
-  (Schritt: nach Push `gh workflow run voyager-saturn-cdn.yml`.)
+  (Schritt: dispatcht run 35076265454 — Ergebnis prüfen.)
 - **7 planetare ODF — Workflow gebaut.** `.github/workflows/planetary-odf-cdn.yml`
   (matrix magellan/mgs/mro/odyssey/messenger/mars_express/rosetta, je `--ci-mode`).
-  (Schritt: nach Push `gh workflow run planetary-odf-cdn.yml`.)
+  (Schritt: dispatcht run 35076268649 — Ergebnis prüfen.)
 - **CDN-Dispatch celestrak-eop** — dispatcht (run 35075745915).
   (Schritt: Ergebnis prüfen.)
 - **160-Hz-Amplitudenzensus.** Workflow `pioneer-link-correction.yml` gebaut
   (CDN: pioneer10_skyfreq, ephemeris_earth, ephemeris_pioneer10_daily,
   omni2_serie).
-  (Schritt: nach Push `gh workflow run pioneer-link-correction.yml`.)
+  (Schritt: dispatcht run 35076271979 — Ergebnis prüfen.)
 - **NOCC-Reduktionsvorschrift — Dokumente geholt.** Moyer 2000 + dsn_redr-Familie +
   810-005-202E in `docs/reference/`. Offen: der Ketten-Vergleich.
   (Schritt: Reduktionskette im retrace gegen Moyer §10/§13 prüfen —
@@ -84,7 +84,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   weben MPCORB gegen die SPK-Punkte. Schritt 2 (Stations-Konvergenz) hat einen
   Workflow `.github/workflows/station-convergence.yml`
   (`station_convergence_probe --live`); offen bleiben Schritte 3–9.
-  (Schritt: nach Push `gh workflow run station-convergence.yml`, dann
+  (Schritt: dispatcht run 35076279503 — Ergebnis lesen, dann
   `docs/concepts/die-weberin.md`.)
 - **Zweite unabhängige Linie je Klasse** (Planeten/Monde, Sonden-Doppler, TNO,
   Kometen, encke, juno-Namensschuld).
