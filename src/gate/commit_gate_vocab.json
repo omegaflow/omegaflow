@@ -16,6 +16,7 @@
     ["_ => 0,", "\"_ => 0\" writes an unmeasured zero — the value is absent, not zero"],
     ["_ => 0.0", "\"_ => 0.0\" writes an unmeasured zero — the value is absent, not zero"],
     ["_ => (0.0, 0.0)", "\"_ => (0.0, 0.0)\" writes a fabricated coordinate — the anchor is absent, not the Gulf of Guinea"],
+    ["_ => (0.0, 0.0, 0.0)", "\"_ => (0.0, 0.0, 0.0)\" writes a fabricated anchor — the site is absent, not the origin"],
     [".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"],
     ["is_finite() { color } else { 0.0 }", "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"],
     ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"]
@@ -282,6 +283,7 @@
     "consent_get": "curl https://api.example.org/v1/series",
     "fabrication_default_tuple": "let a = match f { Some(x) => x, _ => (0.0, 0.0) };",
     "fabrication_else_zero": "color_index: if color.is_finite() { color } else { 0.0 },",
+    "fabrication_absent_anchor": "let site = match stid { Some(s) => s, _ => (0.0, 0.0, 0.0) };",
     "arx_null_raw_series": "TeNull::Arx => y.to_vec(),"
   }
 }
