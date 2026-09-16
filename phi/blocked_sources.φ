@@ -15,65 +15,23 @@ reg https://babamul.caltech.edu/
 
 pending
 url s3://noaa-cors-pds
-note CORS-Beobachtungsquelle (NOAA-CORS, GNSS em). Der RINEX-2.11- + Hatanaka-Parser ist GEBAUT und grün (src/archivar/rinex.rs: parse_rinex_obs/is_hatanaka/crx2rnx; cors_compiler/cors_rinex_compiler; cors-cdn.yml steht). Messung 2026-09-15: `.24o.gz` = RINEX 2.11 OBSERVATION M, `.24d.gz` = CRINEX 1.0 (Hatanaka), `.24S` = teqc-QC-Summary (Text, NICHT Septentrio SBF). Kein Membran-Konsument benannt (Tor 1) → pending (Register-Duty: sources.φ-Block + Konsument).
-
-blocked parser-def odf
-url https://atmos.nmsu.edu/PDS/data/jnogrv_1001/
-note Juno Radio-Science (PDS-Atmospheres, anonym HTTP 200, gemessen 2026-09-14): rohe ODF (TRK-2-18/2-34, 36-B-Records, PK 101/107/109; kein SFDU-Rahmen). Messung echt — zweiwege X-Band-Doppler-Range-Rate (SCID 61). Kraft-Korrektur (Bau31): der Sensor ist der Funkempfänger → `em`, nicht `gravity`. Gebaut (2026-09-15): `parse_odf` trägt die Juno-Rohdatei (GRV_JUGR_2017033_0959X25MC001V01.ODF, 60 records gemessen, data_type 12 two-way, ref_hz 7,154 GHz); `juno_odf_compiler` gebaut (tools/harvest/src/bin/). Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
+note CORS-Beobachtungsquelle (NOAA-CORS, GNSS em). Der RINEX-2.11- + Hatanaka-Parser ist GEBAUT und grün (src/archivar/rinex.rs: parse_rinex_obs/is_hatanaka/crx2rnx; cors_compiler/cors_rinex_compiler; cors-cdn.yml steht). Messung 2026-09-15: `.24o.gz` = RINEX 2.11 OBSERVATION M, `.24d.gz` = CRINEX 1.0 (Hatanaka), `.24S` = teqc-QC-Summary (Text, NICHT Septentrio SBF). Das Asset ist je Stations-Tag (cors-cdn.yml-Inputs station/year/doy/asset → je Lauf ein `.bin`); ein sources.φ-Block trägt EIN Asset-URL, die Serie über Stations-Tage ist kein Einzel-URL → pending (Register-Duty: Serien-Aggregation über Stations-Tage bzw. die Wahl eines Stations-Assets).
 
 blocked parser-def tnf
 url https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/
-note New Horizons REX TNF (PDS-SBN, anonym HTTP 200, gemessen 2026-09-14): TRK-2-34 TNF, Cruise-Doppler. Messung echt, `em` (Funkempfänger). Parser-Gap A, Stufe 2 GEBAUT (2026-09-15): SFDU-Rahmenscanner `scan_tnf_sfdus` + Sekundär-CHDO-Nutzlast `tnf_dt0` (Struktur `TnfDt0`, Unit-Tests gegen gemessene Head-Bytes von lunocc2012.tnf). Gemessen (curl -r 0-1023, xxd): lunocc2012.tnf (35 770 168 B) = Folge von 5 SFDU-Blöcken — DT0 Uplink-Carrier-Phase 182-Byte-SFDU (66 794), dann 378 B (28 286), 144 B (205), 220 B (28 272), 236 B (28 272). Jeder SFDU = 20-Byte-Label + sfdu_length-Daten (Byte 12–19, 8-Byte-MSB) = 162 → 182 gesamt. Das TNF trägt KEINE 9-Wort-/36-Byte-Orbit-Records — `orbit_record` dekodiert das ODF. Dekodiert: das 66-B-Sekundär-CHDO (Typ 132) ist der gemeinsame Uplink-Header; die Observable liegt im verschachtelten Daten-CHDO (Typ 10, Länge 76, ab Byte 102): ul_hi/lo/frac_phs_cycles + ramp_freq (gemessen 7,150899062 GHz, X-Band-Uplink) + ramp_rate + transmit_op_pwr. Offen: TNF-Compiler + CDN + Membran-Konsument (Tor 1).
+note New Horizons REX TNF (PDS-SBN, anonym HTTP 200, gemessen 2026-09-14): TRK-2-34 TNF, Cruise-Doppler. Messung echt, `em` (Funkempfänger). Parser-Gap A, Stufe 2 GEBAUT (2026-09-15): SFDU-Rahmenscanner `scan_tnf_sfdus` + Sekundär-CHDO-Nutzlast `tnf_dt0` (Struktur `TnfDt0`, Unit-Tests gegen gemessene Head-Bytes von lunocc2012.tnf). Gemessen (curl -r 0-1023, xxd): lunocc2012.tnf (35 770 168 B) = Folge von 5 SFDU-Blöcken — DT0 Uplink-Carrier-Phase 182-Byte-SFDU (66 794), dann 378 B (28 286), 144 B (205), 220 B (28 272), 236 B (28 272). Jeder SFDU = 20-Byte-Label + sfdu_length-Daten (Byte 12–19, 8-Byte-MSB) = 162 → 182 gesamt. Das TNF trägt KEINE 9-Wort-/36-Byte-Orbit-Records — `orbit_record` dekodiert das ODF. Dekodiert: das 66-B-Sekundär-CHDO (Typ 132) ist der gemeinsame Uplink-Header; die Observable liegt im verschachtelten Daten-CHDO (Typ 10, Länge 76, ab Byte 102): ul_hi/lo/frac_phs_cycles + ramp_freq (gemessen 7,150899062 GHz, X-Band-Uplink) + ramp_rate + transmit_op_pwr. Der TNF-Compiler ist GEBAUT (tools/harvest/src/bin/tnf_compiler.rs, `tnf_compiler`): dekodiert SFDU+DT0 → CSV `year,doy,sec,upl_rec_seq_num,ul_hi_phs_cycles,ul_lo_phs_cycles,ul_frac_phs_cycles,ramp_freq`, Release-Netloc `pds-smallbodies.astro.umd.edu` (`--ci-mode`). Offen: die exakte .tnf-Datei-URL (lunocc2012.tnf voller Pfad unter dem holdings-Root — gemessen ist nur der Dateiname) und die CSV-Register-Form (sources.φ-Block: `format csv` + `rows` + `epoch`; der Archivar-`epoch`-Key erwartet EIN ISO/unix-Feld, nicht drei Spalten year+doy+sec — die Zusammensetzung ist der offene Schritt) + der CDN-Workflow.
 
 blocked parser-def odr
 url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
-note Voyager open-loop ODR (PDS-Rings, anonym 200 gemessen 2026-09-14, jetzt 504/Cloudflare; das PPI-Mirror `pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/` trägt dieselben Records): VG1/VG2 Jupiter, VG2 Uranus/PODR, rohe 5056-Byte-ODR-Records. Messung echt, `em`. Gebaut (2026-09-15): `src/archivar/voyager_odr.rs` liest den 5056-B-Record (RSC-11-6: 28-Wort-Header = 56 B, 2500 Wort = 5000 8-Bit-Samples, BCD-Zeit-Tag; 4 Tests gegen gemessene Head-Bytes grün). Die unitless-ADC-Variante ist descoped (Befund Bau31). Offen: Membran-Konsument (Tor 1).
+note Voyager open-loop ODR (PDS-Rings, anonym 200 gemessen 2026-09-14, jetzt 504/Cloudflare; das PPI-Mirror `pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/` trägt dieselben Records): VG1/VG2 Jupiter, VG2 Uranus/PODR, rohe 5056-Byte-ODR-Records. Messung echt, `em`. Gebaut (2026-09-15): `src/archivar/voyager_odr.rs` liest den 5056-B-Record (RSC-11-6: 28-Wort-Header = 56 B, 2500 Wort = 5000 8-Bit-Samples, BCD-Zeit-Tag; 4 Tests gegen gemessene Head-Bytes grün). Die unitless-ADC-Variante ist descoped (Befund Bau31). Offen: der ODR-Compiler (das `.bin`-Asset zu manifestieren) — der Reader steht, der Compiler fehlt.
 
 blocked parser-def rss
 url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
-note Voyager RSS (PDS-PPI, anonym HTTP 200, gemessen 2026-09-14): PPI-VG2/RSS-Basisband (`.ODR`, 5056-Byte, RECORD_BYTES=5056, FILE_RECORDS=6000; 968 .ODR/.LBL-Paare im Apache-Index). Messung echt, `em`. Der 5056-B-Record ist identisch zum ODR-Format und wird von `src/archivar/voyager_odr.rs` gelesen — der RSS-Eintrag teilt sich den Reader mit dem ODR-Eintrag. Geschwister: SPDF Voyager-1 Saturn-Encounter (PSPA-00049, UNIVAC-1108, 26 Tracking-Records je Block) — ebenfalls Binärformat, offen.
+note Voyager RSS (PDS-PPI, anonym HTTP 200, gemessen 2026-09-14): PPI-VG2/RSS-Basisband (`.ODR`, 5056-Byte, RECORD_BYTES=5056, FILE_RECORDS=6000; 968 .ODR/.LBL-Paare im Apache-Index). Messung echt, `em`. Der 5056-B-Record ist identisch zum ODR-Format und wird von `src/archivar/voyager_odr.rs` gelesen — der RSS-Eintrag teilt sich den Reader mit dem ODR-Eintrag; der offene Bau ist der ODR-Compiler (das `.bin`-Asset zu manifestieren), geteilt mit dem ODR-Eintrag. Geschwister: SPDF Voyager-1 Saturn-Encounter (PSPA-00049, UNIVAC-1108, 26 Tracking-Records je Block) — ebenfalls Binärformat, offen.
 
 blocked parser-def drs-fits
 url https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
 note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, gemessen 2026-09-14): rohe DRS-FITS (72 Dateien, drs_*.fits 1,0 M–288 M). Messung echt — differentielle Beschleunigung; hier IST die Messung die Schwerkraft → `gravity`. Gemessen (2026-09-15, drs_20160116_155329__20160123_160115.fits, 1 022 400 B): Primary NAXIS=0 (EXTEND=T) + BINTABLE EXTNAME='HOUSEKEEPING' (NAXIS1=212, TFIELDS=116); die Science-HDU `SCI_SCIENCE_1Hz` (NAXIS1=393, TFIELDS=140) liegt in größeren Dateien. Kein Feld trägt m/s² — die differentielle Beschleunigung ist aus LTP1/LTP2-Positionsvektoren (m, TTYPE64-72) bzw. LTP-Kräften (N) zu bilden. Der `fits.rs`-Arm (Gap B) liest die Kette; zwei Lücken: `FitsImage::parse` weist NAXIS=0 ab, `TUNIT` wird nicht gelesen. Geschwister-Route: ESA-Legacy-Archiv `lpf.esac.esa.int/lpfsa/` (Δg-Zeitreihen).
-
-pending
-url https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/odf/
-note Magellan Radio-Science (PDS-Geosciences, mgn-v-rss-1-tracking-v1/mg_2601/odf): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em` (der Sensor ist der Funkempfänger). Gebaut (2026-09-15) tools/harvest/src/bin/magellan_odf_compiler.rs; gemessen 14 665 009 Samples (1 055 880 656 B). Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/
-note Mars Global Surveyor Radio-Science (PDS-Geosciences, mgs-m-rss-1-moi-v1, Volumes mors_*): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mgs_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
-note Mars Reconnaissance Orbiter Radio-Science (PDS-Geosciences, mro-m-rss-1-magr-v1/mrors_0xxx/odf): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mro_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
-note Mars Odyssey Radio-Science (PDS-Geosciences, ody-m-rss-1-raw-v1, Volumes odrs_*): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/odyssey_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
-note MESSENGER Radio-Science (PDS-PPI, mess-rs-raw/data-odf, Jahres-Ordner .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/messenger_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/
-note Mars Express MaRS (ESA-PSA, MARS-EXPRESS/MRS, DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/mars_express_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
-note Rosetta RSI (ESA-PSA, INTERNATIONAL-ROSETTA-MISSION/RSI, DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF .dat): rohe ODF (TRK-2-34, 36-B-Records, PK-Rahmen, parse_odf), `em`. Gebaut (2026-09-15) tools/harvest/src/bin/rosetta_odf_compiler.rs; gemessene Record-Zahl offen. Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
-reg https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
-note Voyager 1/2 Saturn-Encounter Radio-Science (SPDF, PSPA-00049 V1 / PSPA-00123 V2, UNIVAC-1108, TAR mit .DAT): rohe Tracking-Records, `em`. src/archivar/voyager_saturn.rs dekodiert die Uhr (IDRSPS User's Manual Table 4: word2 = YY/DOY/HH, word3 = MM/SS, word4 = SCID/network/station/band; Record-Type 90/91, Ground-Mode 1-4 = Doppler); gemessen 1980-295 .. 1981-261, Stationen 12,14,42,43,44,61,62,63 (DSN), 822 782 Tracking-Records (125 062 872 B). Gebaut (2026-09-15) tools/harvest/src/bin/voyager_saturn_compiler.rs (V1+V2, std-only TAR-Extraktion). Offen: sources.φ-Block + CDN + Membran-Konsument (Tor 1).
-
-pending
-url https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/
-reg https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/
-note Dawn Radio-Science (PDS-SBN PDS4, gravity/dawn-rss-raw-ceres/data-odf/{2015,2016}, dawn-rss-raw-vesta/data-odf/{2011,2012}): rohe ODF (.dat, TRK-2-18, von der NASA/JPL Multi-Mission Navigation Radio erzeugt), `em`. Route gefunden (2026-09-15) — die frühere Suche prüfte `pds4/dawn/rss/` (kein RSS), der Träger ist `pds4/dawn/gravity/`; pds-geosciences.wustl.edu/dawn/ bleibt 404. Offen: ODF-Compiler nach `*_odf_compiler`-Muster + parse_odf-Probe an einer .dat + sources.φ-Block + CDN + Membran-Konsument (Tor 1).
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
