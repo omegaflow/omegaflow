@@ -2,7 +2,7 @@
   title: Zustand — geteilter externer Zustand
   class: zustand
   date: 2026-09-16
-  sha256: a5a9fcadb51288f7530cc423b19e59095a91691a09180045468520f8467b321e
+  sha256: 347d30ee6005b64014f5e03b0c756910c5fe558da56a768c7ed8bcec32dc5e1a
   status: live
   see-also: AGENTS.md
 -->
@@ -17,5 +17,5 @@ Eintrag ist nicht null — er ist `pending` mit Fälligkeit, eine Registraturpfl
 
 | Abhängigkeit | Wert | measured-at | fällig | Schritt |
 |---|---|---|---|---|
-| GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15 Pre-Rewrite-Refs; GC offen | ce367dd0 | HEAD-Wechsel oder GitHub-GC-Antwort | `cargo run -p omegaflow-register --bin pii_exposure` |
-| CI-Status | rot: test/build/clippy/format failure, gate in_progress, allwise-coverage success | c179220d | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) |
+| GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15/15 Pre-Rewrite-Commits erreichbar; GC offen | 9fb70eb4 | HEAD-Wechsel oder GitHub-GC-Antwort | `cargo run -p omegaflow-register --bin pii_exposure` |
+| CI-Status | rot: clippy/format failure, build success, test in_progress (ci-check in_progress) | 9fb70eb4 | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) |
