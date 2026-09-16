@@ -1,5 +1,5 @@
 use crate::json::{self, Json};
-use crate::secrets::{resolve_key, Secret};
+use crate::secrets::{Secret, resolve_key};
 use std::collections::HashMap;
 use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
