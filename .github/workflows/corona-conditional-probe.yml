@@ -1,0 +1,59 @@
+name: corona-conditional-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  multi-force:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    strategy:
+      fail-fast: false
+      matrix:
+        estimator: [binned, ksg]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the AIA-2014 + GOES corpus from the CDN
+        run: |
+          mkdir -p data/jsoc.stanford.edu data/ncei.noaa.gov/goes15
+          for attempt in 1 2 3; do
+            gh release download jsoc.stanford.edu --repo omegaflow/sources \
+              --pattern 'aia2014_fullyear.bin' --clobber --dir data/jsoc.stanford.edu \
+              && gh release download ncei.noaa.gov --repo omegaflow/sources \
+              --pattern 'goes15_xrs_2s_2014.tar' --clobber \
+              && tar -xf goes15_xrs_2s_2014.tar -C data/ncei.noaa.gov/goes15 \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/jsoc.stanford.edu/aia2014_fullyear.bin
+          test -n "$(find data/ncei.noaa.gov/goes15 -name 'xr_*.nc' | head -1)" || {
+            echo "goes15 carries no xr corpus after the retry (0 honored)"
+            exit 1
+          }
+      - name: Anchor the corpus
+        run: |
+          echo "SHA $(git rev-parse HEAD)" > "corona-conditional-${{ matrix.estimator }}.txt"
+          echo -n "CORPUS " >> "corona-conditional-${{ matrix.estimator }}.txt"
+          find data/jsoc.stanford.edu data/ncei.noaa.gov -type f -name '*.bin' -o -type f -name '*.nc' \
+            | sort | xargs sha256sum | sha256sum | cut -d' ' -f1 >> "corona-conditional-${{ matrix.estimator }}.txt"
+      - name: Run the full multi-force conditional (every rung conditioned on all other rungs)
+        run: |
+          cargo run --release -p omegaflow-measure --bin corona_conditional_probe -- \
+            --year data/jsoc.stanford.edu/aia2014_fullyear.bin data/ncei.noaa.gov/goes15 \
+            --max-lag 8 --confound all --estimator "${{ matrix.estimator }}" \
+            >> "corona-conditional-${{ matrix.estimator }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: corona-conditional-${{ matrix.estimator }}
+          path: corona-conditional-${{ matrix.estimator }}.txt
