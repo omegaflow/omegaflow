@@ -2461,6 +2461,17 @@ field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
 field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-nos-coastal-lidar-pds.s3.amazonaws.com/las_oahu_bathy_1999.bin
+format las
+at earth
+ttl 604800
+note LAS point cloud (NOAA NOS Coastal Lidar PDS, AWS Open Data bucket noaa-nos-coastal-lidar-pds, project 1457 1999 USACE NCMP Bathymetric Lidar: Hawaii, granule 19990301_oahu_bathy_geoclassed.copc.laz, 9553371 B, STAC license CC-BY-1.0). Measured 2026-09-16: bucket root HTTP 200 (386818 B), STAC catalog HTTP 200, granule HTTP 200; CRS EPSG:26904 (NAD83 / UTM zone 4N, GRS80) with vertical MLLW height. The COPC/LASzip decoder reads the granule (regression fixture noaa_copc_f6_variable.laz), but las_compiler.rs resolve_crs resolves only EPSG 4326/3857/326xx/327xx — the NAD83/UTM 269xx inverse and the MLLW-to-ellipsoid chain are unbuilt, so the compiler refuses the CRS honestly and this line stays pending until that build. The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch); the spatial promotion to a Position anchor is descoped by measurement as at the USGS source (no v-free anchor, LAS carries no v).
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
 format apdb
 at sun
@@ -6254,8 +6265,9 @@ note MultiMoon 1.0 (eingefrorene Software zur TNBFits-Auswertung, MIT, 914800 B,
 
 url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
 format reference
+sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
 ttl 86400
-note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd) — Zenodo record 10620251; 13,25 GiB > 2-GiB-CDN-Limit, daher 1-GiB-Shards + Manifest via .github/workflows/tnbfits-cdn.yml; sha256 pending (die erste tnbfits-cdn.yml-Faltung misst ihn). CDN-Tag zenodo.org.
+note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd) — Zenodo record 10620251; 13,25 GiB > 2-GiB-CDN-Limit, daher 1-GiB-Shards + Manifest via .github/workflows/tnbfits-cdn.yml; sha256 aus dem tnbfits.manifest (Lauf 35148401053, 14 Shards). CDN-Tag zenodo.org.
 
 url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
 format tap
@@ -6543,6 +6555,7 @@ field eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-squa
 
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
 format argo_bgc
+sha256 7b6e18a062eb32ce2bd4022eb23421f056d84762e189cb9caae664786a369215
 on earth 0 0 0
 ttl 604800
 field argo_dac_bgc_doxy_umol_kg argo_dac_bgc_doxy_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0

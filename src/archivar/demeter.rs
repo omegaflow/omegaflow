@@ -161,11 +161,7 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
             }
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn compile_file(path: &str) -> std::io::Result<(Vec<DemeterBlock>, Vec<u8>)> {
