@@ -4,7 +4,7 @@ use omegaflow::archivar::{
     BodyEphemeris, ExtractResult, Frame, J2000_EPOCH, SourceConfig, body_barycenter_position,
     embedded_lsk, extract, fetch_raw_bytes, load_sources,
 };
-use omegaflow::mathematikerin::{S2Osc, S2_LMAX, S2_OSC_CAP};
+use omegaflow::mathematikerin::{S2_LMAX, S2_OSC_CAP, S2Osc};
 
 const DAY_S: f64 = 86400.0;
 const AU_M: f64 = 1.495978707e11;
@@ -240,7 +240,10 @@ fn main() {
         .get("earth")
         .and_then(|_| body_barycenter_position("earth", tdb, &eph))
         .map(norm3);
-    let earth_r = eph.get("earth").and_then(|e| e.props.as_ref()).map(|p| p.radius_m);
+    let earth_r = eph
+        .get("earth")
+        .and_then(|e| e.props.as_ref())
+        .map(|p| p.radius_m);
     println!();
     println!(
         "2. earth stacking (theta_max = asin(R_E/d_E), R_E from BodyProperties, stations from phi/sources.φ)"
