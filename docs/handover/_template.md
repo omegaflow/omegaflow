@@ -22,6 +22,13 @@ Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
 nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
+Der Planungs-Pass nennt **einen schweren und fünf leichte** offene Punkte (der
+schwere ist der erste offene Abschnitt, die leichten sind mechanisch
+schließbar); die Session arbeitet beide ab.
+
+Das Handover wird **vor allem anderen gegen den Baum gehalten**
+(`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
+eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## <Sektion — härtester undatierter Punkt zuerst>
 
