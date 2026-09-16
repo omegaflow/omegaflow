@@ -2,7 +2,7 @@
   title: The H₀ lines register — roots instead of witnesses
   class: paper
   date: 2026-09-12
-  sha256: 8b2ce1e17f4329360b47a7073e1163515685c18086a177d67512a8c56043e6e8
+  sha256: 48d29a82f231cb5955e20f9fecd6a5ed03e6ec42d646683f44c874a12fa224f1
   status: live
   see-also: docs/blatt/blatt-h0-linien-register.md
 -->
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-The register weighs ~40 published H₀ measurements into ten root families plus a compilation ridge, counting shared roots rather than witnesses. Two trees stand on separate ground: the distance-ladder root (geometric anchors: NGC 4258 maser, LMC DEB, Gaia parallaxes) and the CMB root (the sound horizon r_d/θ*). They share no root; the common root is absent. Planck 2018 gives 67.36 ± 0.54 km/s/Mpc; the ladder gives 73.04 ± 1.04 (SH0ES), about 5σ apart. The asymmetry: the ladder's Cepheid class is weighed in-house through a Gaia TAP query of gaiadr3.vari_cepheid, type_best_classification = 'DCEP', N = 1606, inverse-variance weighted parallax mean 0.2619 ± 0.0004 mas; the CMB likelihood is cited, not recomputed. No third thread carries ≲1–2% precision, so no arbiter is possible yet. The ladder side is weighed end-to-end in-house: H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance); the own 75-source crossmatch stands — all 74 table rows carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas).
+The register weighs ~40 published H₀ measurements into ten root families plus a compilation ridge, counting shared roots rather than witnesses. Two trees stand on separate ground: the distance-ladder root (geometric anchors: NGC 4258 maser, LMC DEB, Gaia parallaxes) and the CMB root (the sound horizon r_d/θ*). They share no root; the common root is absent. Planck 2018 gives 67.36 ± 0.54 km/s/Mpc; the ladder gives 73.04 ± 1.04 (SH0ES), about 5σ apart. The asymmetry: the ladder's Cepheid class is weighed in-house through a Gaia TAP query of gaiadr3.vari_cepheid, type_best_classification = 'DCEP', N = 1606, inverse-variance weighted parallax mean 0.2619 ± 0.0004 mas; the CMB likelihood is weighed in-house from the R3.00 baseline chain (100θ_* = 1.041099 ± 0.000307, r_d = 147.091 ± 0.265 Mpc, H₀ = 67.358 ± 0.539 km/s/Mpc). No third thread carries ≲1–2% precision, so no arbiter is possible yet. The ladder side is weighed end-to-end in-house: H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance); the own 75-source crossmatch stands — all 74 table rows carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas).
 
 ## The measurement
 
@@ -21,7 +21,7 @@ The ten root families:
 1. **Distance ladder · Cepheid** — the own in-house ladder (73.56 ± 1.40, this work), SH0ES (73.04 ± 1.04), the 2021 MW calibration (73.0 ± 1.4), the HST Key Project (72 ± 8), the JWST-era validation (73.4 ± 2.1 Cepheid; 72.6 ± 2.0 combined), the HST full set (73.2 ± 0.9), "The Perfect Host" (73.49 ± 0.93; +TRGB 73.18 ± 0.88).
 2. **Distance ladder · TRGB** — Freedman et al. 2021 (69.8 ± 0.6 stat ± 1.6 sys), CCHP 2020 (69.6 ± 0.8 stat ± 1.7 sys), CCHP 2025 (70.39 ± 1.22 stat ± 1.33 sys ± 0.70 σ_SN; JWST-only 68.81 ± 1.79 stat ± 1.32 sys; JAGB 67.80 ± 2.17 stat ± 1.64 sys), Hoyt et al. 2023 (zero point only, H₀ absent), TRGB-SBF III (73.8 ± 0.7 stat ± 2.3 sys).
 3. **Distance ladder · Mira** — Huang et al. 2020 (73.3 ± 4.0), Bhardwaj et al. 2025 (73.06 ± 2.67), Sanders 2023 (73.7 ± 4.4).
-4. **CMB** — Planck 2018 (67.36 ± 0.54), ACT DR4 alone (67.9 ± 1.5), WMAP9 alone (70.0 ± 2.2).
+4. **CMB** — Planck 2018 (67.36 ± 0.54; in-house weighed from the R3.00 lensed baseline chain: 100θ_* = 1.041099 ± 0.000307, r_d = 147.091 ± 0.265 Mpc, H₀ = 67.358 ± 0.539 km/s/Mpc), ACT DR4 alone (67.9 ± 1.5), WMAP9 alone (70.0 ± 2.2).
 5. **BAO + CMB** — the sound horizon r_d inherited from the CMB: Planck 2018 + BAO (67.66 ± 0.42), eBOSS CMB+BAO (67.60 ± 0.43), DESI 2024 VI (67.97 ± 0.38), DESI DR2 (68.17 ± 0.28).
 6. **BAO + BBN** — the r_d route outside the CMB: eBOSS BAO+BBN (67.33 ± 0.98), DESI 2024 VI BAO+BBN (68.52 ± 0.62), DESI DR2 BAO+BBN (68.51 ± 0.58).
 7. **Gravitational sirens** — GW170817 (70.0 +12.0/−8.0), dark sirens O4a (75.4 +12.8/−9.1), GWTC-5.0 (71.7 +9.4/−7.5).
@@ -39,7 +39,7 @@ The register weighs data from NASA missions: the Hubble Space Telescope (HST Key
 
 ## The finding
 
-**The asymmetry.** The two roots do not stand alike. On the ladder side the register carries the end-to-end in-house weighing (`h0_ladder_weigh`: Cepheid PL in parallax space → SN-Ia calibration → own H₀): H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance; diagonal checkpoint 73.53 ± 1.14), M_W1 = −5.914 ± 0.017 (published −5.915 ± 0.022), zp = −13 ± 5 μas (published −14 ± 6), M_B = −19.2469 ± 0.0299 (77 calibrators), a_B = 0.7159 ± 0.0018 (flat ΛCDM Ωm = 0.3). The reproduction gate PASSES — every parameter within 1σ of the published value. The CMB side is cited: the Planck likelihood (θ*, r_d, the CMB power spectrum) is a research machine, not a session; no row of that family is recomputed, and the class is named rather than hidden.
+**The asymmetry.** The two roots do not stand alike. On the ladder side the register carries the end-to-end in-house weighing (`h0_ladder_weigh`: Cepheid PL in parallax space → SN-Ia calibration → own H₀): H₀ = 73.56 ± 1.40 km/s/Mpc (full STAT+SYS covariance; diagonal checkpoint 73.53 ± 1.14), M_W1 = −5.914 ± 0.017 (published −5.915 ± 0.022), zp = −13 ± 5 μas (published −14 ± 6), M_B = −19.2469 ± 0.0299 (77 calibrators), a_B = 0.7159 ± 0.0018 (flat ΛCDM Ωm = 0.3). The reproduction gate PASSES — every parameter within 1σ of the published value. The CMB side is weighed from the baseline chain: the R3.00 `base-plikHM-TTTEEE-lowl-lowE_lensing` product (25 225 samples, IRSA mirror, sha256 `52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f`) reproduces every cited number in-house — 100θ_* = 1.041099 ± 0.000307, r_d = 147.0908 ± 0.2653 Mpc, H₀ = 67.3576 ± 0.5388 km/s/Mpc, against the published 1.0411 ± 0.0003, 147.09 ± 0.26, 67.36 ± 0.54; the lensing-free baseline `base-plikHM-TTTEEE-lowl-lowE` (24 497 samples) weighs H₀ = 67.28 ± 0.61, r_d = 147.05 ± 0.30 — the same root one rung lower, the cited row is the lensed baseline. The Planck 2013 R1.10 power spectrum and likelihood tarball (PLA) are fetched and measured (LOW-ELL 48 rows, HIGH-ELL 74 rows, a 74×74 COV-MAT; the 2013 release) and carry no 2018 row — measured, not assumed. The likelihood's own re-evaluation (clik/CosmoMC) remains outside the session; the chain statistics are weighed.
 
 **The separation-level map.** Where the threads part:
 
@@ -58,7 +58,7 @@ The register weighs data from NASA missions: the Hubble Space Telescope (HST Key
 - **A named measurement without registration.** The living TAP leg materializes no asset (pure measurement, stdout); precedent `cepheid_parallax_weigh`. The frame-less `format reference` seat in `phi/sources.φ` carries byte streams, not a live TAP leg; the leg stays a named measurement.
 - **0 honored.** Absence is a realized property: the PTA parallax row, the "BAO alone" row, and the chronometer rows carry `absent`, named. What the harvest did not reach is `pending`, not zero.
 - **The NASA binding.** HST (NASA/ESA) and JWST (NASA/ESA/CSA) data are weighed through the published HST Key Project, SH0ES, and CCHP/Freedman 2025 rows; the NASA Astrophysics Data System is the bibliographic archive named for the record route.
-- **Named pending points.** (1) the CMB likelihood remains cited; (2) a third thread with ≲1–2% precision (the arbiter); (3) the live TAP leg is a named measurement without an asset.
+- **Named pending points.** (1) the CMB likelihood's own re-evaluation (clik/CosmoMC) — the chain statistics are weighed, the likelihood code's internal run is not; (2) a third thread with ≲1–2% precision (the arbiter); (3) the live TAP leg is a named measurement without an asset.
 
 ## References
 
