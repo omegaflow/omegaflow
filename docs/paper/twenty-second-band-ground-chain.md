@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-15
-  version: 8
-  sha256: 68a04a5b18e559317f7f32d7169027e7479a724b016e53af20c6d2d05a5d51c7
+  version: 9
+  sha256: 11968aa2effd61bc00b3d5543a86d7f1ffdd22d2d74a49f6019516cf04a76fb3
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -177,7 +177,17 @@ detrend (≤1,0 mHz) and the 0,02/0,05-mHz grid (≤0,6 mHz) are second-order, w
 the chain supplies the rest (rx14 +10,1 mHz). The divergence is the processed
 series, not the method. The rx63 anchor of the split is
 the 1993 epoch peak at 55,9 mHz (52 985 of the 92 130 rx63 samples) — an epoch
-peak, not a grid artifact. The named machine of the NOCC reduction remains open.
+peak, not a grid artifact. The named machine of the NOCC reduction is the
+Regres formulation of the JPL Orbit Determination Program (Moyer 2000, ref. 12).
+Read stage by stage against it, the retrace chain matches the light-time
+solution (§8); the charged-particle correction (§10.2.2) is Deduction 2 and stays
+empty (GIM maps begin 1998, after the ATDF era); the solar-corona correction
+(§10.4) is Deduction 3, its model differing (the OMNI2 N1800 1/r² column against
+the corona range model); the time-scale and station-clock algorithms (§2, §7),
+the individual-leg troposphere correction (§10.2.1) and the antenna correction
+(§10.5) are absent from the chain. The station-fixity of the band is a measured
+property of the receive chain; which named stage of the reduction carries the
+44–58-mHz complex is the open measurement.
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
@@ -227,3 +237,6 @@ novelty.
     Progress Report 42-72 (October–December 1982), Jet Propulsion Laboratory.
 11. Markwardt C. B., 2002, Independent Confirmation of the Pioneer 10
     Anomalous Acceleration, arXiv gr-qc/0208046.
+12. Moyer T. D., 2000, Formulation for Observed and Computed Values of Deep
+    Space Network Data Types for Navigation, DESCANSO Monograph 2, JPL
+    Publication 00-7, Jet Propulsion Laboratory, Pasadena.
