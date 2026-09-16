@@ -3,7 +3,7 @@
   session: Forschung-Folge 30
   class: handover
   date: 2026-09-16
-  sha256: 481ff6f4b1c54fef8c66f7a6f7b1686342a40b2c3cddc1943866607836d75659
+  sha256: d9ea3285bd6056fb7257544364fe42e553cd78808d18e52208870bed5eedc74d
   status: live
 -->
 # Handover — Forschung-Folge 30 (2026-09-16)
@@ -115,6 +115,34 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   Auftrag-Dokument schreiben — Entscheid-Linie.)
 - Toth/Turyshev/Markwardt-Mails — die Prüfliste steht; senden in der
   Entscheid-Linie geführt.
+
+## Fehlende Quellen — Inventur (nächster Griff)
+
+Der katalogisierte Bestand fehlender Quellen wurde 2026-09-16 gemessen und in
+sechs Klassen geordnet: `phi/blocked_sources.φ` trägt 32 Einträge (26 `pending`,
+4 `blocked`, 2 Register-Verweise), klassiert 19 Paywall und 18 request-only
+(`survey-2026-09-14-kapitulationen-pendings-inventur.md`,
+`survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`). Je Eintrag steht das
+Verdikt aus: erneut suchen (Mirror/Bronze-OA/Alternativ-Host) / descopen /
+Bau-Zeile.
+
+- **request-only (Sonden-Rohdaten):** Voyager closed-loop Cruise, Juno
+  Earth-EDR / pre-EFB, New-Horizons Quiet-Zone, Mariner 10, Cassini closed-loop,
+  LISA Pathfinder (ESA CAS-Auth).
+- **Paywall (Volltext):** Woo & Armstrong 1979 (`10.1029/JA084iA12p07288`),
+  Armstrong 1998 (`10.1029/98RS02317`), Wohlmuth 1997, Haw 1997 — Hinson 1997
+  ist offen (Bronze-OA, 2026-09-14 gemessen).
+- **blocked key/account:** EPA AQS Data Mart, Babamul (Caltech), Lasair, TNS,
+  CTBTO vDEC, ONC, LIS/OTD + GHRC, SuperDARN.
+- **blocked parser-def:** NOAA NOS Coastal Lidar, USGS 3DEP EPT (LASzip-Dekoder).
+- **not-published:** WWLLN-Realtime, Super-K, Telescope Array, JUNO-Neutrino,
+  LHAASO, KASCADE-Grande, LISA-PF.
+- **Thread-Matrix-Lücken:** VHE-Teleskope einzeln (HAWC 2HWC/H.E.S.S./MAGIC/
+  VERITAS/CTA), Hydrophon (NRS-Bucket live, aber ungebaut), seismische
+  Stationsnetze, SuperDARN, HF-Radar-Ozeanströmung, BGC-Argo.
+
+(Schritt: Inventur durchgehen, je Eintrag das Verdikt setzen —
+`survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`.)
 
 ## Benchmark
 
