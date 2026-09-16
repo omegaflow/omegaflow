@@ -37,6 +37,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "voyager_saturn" => voyager_saturn::parse_series(bytes),
         "cors_rinex" => cors::parse_series(bytes),
         "drs_fits" => drs_fits::parse_series(bytes),
+        "demeter_isl" => demeter::parse_series(bytes),
         "juno_odf" => odf::parse_series(bytes),
         "magellan_odf" => odf::parse_series(bytes),
         "mgs_odf" => odf::parse_series(bytes),
@@ -163,6 +164,15 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             drs_fits::COMP_GZ => Some("lpf_drs_dg_z_ms2"),
             _ => None,
         },
+        "demeter_isl" => match comp {
+            demeter::COMP_ORBIT => Some("demeter_isl_orbit_count"),
+            demeter::COMP_NE => Some("demeter_isl_ne_cm3"),
+            demeter::COMP_NI => Some("demeter_isl_ni_cm3"),
+            demeter::COMP_TE => Some("demeter_isl_te_k"),
+            demeter::COMP_VF => Some("demeter_isl_vf_v"),
+            demeter::COMP_VI0 => Some("demeter_isl_vi0_ms"),
+            _ => None,
+        },
         "juno_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("juno_odf_observable_hz"),
             _ => None,
@@ -287,6 +297,14 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "lis_otd" => match comp {
             crate::geo::COMP_LISOTD_FLASH_RAD => Some("lis_otd_flash_radiance_uj_sr"),
+            _ => None,
+        },
+        "trmm_lis" => match comp {
+            crate::geo::COMP_TRMMLIS_FLASH_RAD => Some("trmm_lis_flash_radiance_uj_sr_m2_um"),
+            _ => None,
+        },
+        "glm_l1b" => match comp {
+            crate::geo::COMP_GLML1B_FLASH_ENERGY => Some("glm_l1b_flash_radiant_energy_j"),
             _ => None,
         },
         "argo_bgc" => match comp {

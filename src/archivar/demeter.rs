@@ -4,6 +4,13 @@ pub const BLOCK_BYTES: usize = 289;
 pub const RECORD_BYTES: usize = 64;
 pub const MAGIC: &[u8; 4] = b"DMTR";
 
+pub const COMP_ORBIT: u32 = 1;
+pub const COMP_NE: u32 = 2;
+pub const COMP_NI: u32 = 3;
+pub const COMP_TE: u32 = 4;
+pub const COMP_VF: u32 = 5;
+pub const COMP_VI0: u32 = 6;
+
 #[derive(Debug, Clone, Copy)]
 pub struct DemeterBlock {
     pub year: u16,
@@ -129,6 +136,38 @@ pub fn parse_bin(data: &[u8]) -> Vec<[f64; 8]> {
     out
 }
 
+pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let recs = parse_bin(data);
+    if recs.is_empty() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(recs.len() * 6);
+    for rec in recs {
+        let t = rec[1];
+        if !t.is_finite() || t <= 0.0 {
+            continue;
+        }
+        for (k, comp) in [
+            (2usize, COMP_ORBIT),
+            (3usize, COMP_NE),
+            (4usize, COMP_NI),
+            (5usize, COMP_TE),
+            (6usize, COMP_VF),
+            (7usize, COMP_VI0),
+        ] {
+            let v = rec[k];
+            if v.is_finite() {
+                out.push((t, v, comp));
+            }
+        }
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
 pub fn compile_file(path: &str) -> std::io::Result<(Vec<DemeterBlock>, Vec<u8>)> {
     let data = fs::read(path)?;
     let blocks = parse_blocks(&data);
@@ -216,6 +255,75 @@ mod tests {
         assert_eq!(recs.len(), 1);
         assert_eq!(recs[0][1] as i64, 1092239856);
         assert_eq!(recs[0][2], 585.0);
+    }
+
+    #[test]
+    fn parse_series_exposes_real_isl_record_components() {
+        let mut blk = vec![0u8; BLOCK_BYTES];
+        blk[26..34].copy_from_slice(b"TOULOUSE");
+        blk[204..214].copy_from_slice(b"ISL SURVEY");
+        blk[8] = 0x07;
+        blk[9] = 0xd4;
+        blk[10] = 0x00;
+        blk[11] = 0x08;
+        blk[12] = 0x00;
+        blk[13] = 0x0b;
+        blk[14] = 0x00;
+        blk[15] = 0x0f;
+        blk[16] = 0x00;
+        blk[17] = 0x39;
+        blk[18] = 0x00;
+        blk[19] = 0x24;
+        blk[22] = 0x02;
+        blk[23] = 0x49;
+        blk[265..289].copy_from_slice(&[
+            0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82,
+            0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
+        ]);
+        let b = parse_block(&blk).unwrap();
+        let mut bin = Vec::new();
+        write_bin(&[b], &mut bin);
+        let series = parse_series(&bin).expect("series parses");
+        let t = 1092239856.0;
+        assert_eq!(series.len(), 6);
+        assert_eq!(series[0], (t, 585.0, COMP_ORBIT));
+        assert_eq!(series[1], (t, b.ne as f64, COMP_NE));
+        assert_eq!(series[2], (t, b.ni as f64, COMP_NI));
+        assert_eq!(series[3], (t, b.te as f64, COMP_TE));
+        assert_eq!(series[4], (t, b.vf as f64, COMP_VF));
+        assert_eq!(series[5], (t, b.vi0 as f64, COMP_VI0));
+    }
+
+    #[test]
+    fn parse_series_skips_absent_time_records() {
+        let mut blk = vec![0u8; BLOCK_BYTES];
+        blk[26..34].copy_from_slice(b"TOULOUSE");
+        blk[204..214].copy_from_slice(b"ISL SURVEY");
+        blk[8] = 0x07;
+        blk[9] = 0xd4;
+        blk[10] = 0x00;
+        blk[11] = 0x08;
+        blk[12] = 0x00;
+        blk[13] = 0x0b;
+        blk[14] = 0x00;
+        blk[15] = 0x0f;
+        blk[16] = 0x00;
+        blk[17] = 0x39;
+        blk[18] = 0x00;
+        blk[19] = 0x24;
+        blk[22] = 0x02;
+        blk[23] = 0x49;
+        blk[265..289].copy_from_slice(&[
+            0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82,
+            0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
+        ]);
+        let b = parse_block(&blk).unwrap();
+        let mut bin = Vec::new();
+        write_bin(&[b], &mut bin);
+        let absent = [0u8; RECORD_BYTES];
+        bin.extend_from_slice(&absent);
+        let series = parse_series(&bin).expect("series parses");
+        assert_eq!(series.len(), 6);
     }
 
     #[test]
