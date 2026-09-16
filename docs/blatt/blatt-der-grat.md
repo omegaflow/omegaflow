@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: 5c3a50ff9e0ca1f773f4552f72d10d4e104f921fccbeaf6d3c3951f50790c4e1
+  sha256: 057db7fddadbc7e563e06d83e6a47d80ee41c28af823b78975541002d9196b03
   status: live
   see-also: docs/auftrag/archiv/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -150,9 +150,11 @@ Kanäle ist.
   nicht die GOES-15-Matrix des Papiers §4.5). Behoben 2026-09-16:
   `aia_ladder_probe.rs` druckt die `thr`-Zeile (mean + 2σ je Paar×Lag), der
   Workflow holt den GOES-15-XRS-Korpus und setzt `--goes-dir`. Der korrigierte
-  Lauf wird nach dem Commit dispatcht; die Zelle bleibt `pending`, bis er die
-  Matrix des Papiers §4.5 reproduziert (Ereignis- und fam-Zahlen); trifft er
-  sie nicht, ist das ein eigener Befund.
+  Lauf 35097506781 lief durch (drei Jobs, 2013/14/15) und traf die Matrix des
+  Papiers §4.5 nicht: 2013 reproduziert (524 Ereignisse, fam 1.7131e-1 gegen
+  1.71e-1), 2014 und 2015 nicht (1350 gegen 1019 Ereignisse, fam 1.9058e-1
+  gegen 1.96e-1; 613 gegen 281 Ereignisse, fam 1.7789e-1 gegen 1.75e-1) — die
+  Zelle schließt mit diesem gemessenen Mismatch.
 - **Richtungskorrektur am co-lokalen Gauge:** die in
   `sturzflut-tibet-pfeil.md` §3.5 registrierte „Niederschlag→Pegel
   0.265 (Lag 24)" ist nach Rat-Korrektur Pegel→Regen — `te_pair_probe`
