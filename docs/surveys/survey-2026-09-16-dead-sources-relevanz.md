@@ -1,90 +1,89 @@
 <!--
-  title: Survey — dead_sources.φ Relevanz-Erstpass (2026-09-16)
+  title: Survey — dead_sources.φ Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: b509990570167ec036a41e575e6b78347c27bbcf5ce539ff1e3b6580d92163c1
+  sha256: ac672e3e39436c4fd337031ead63df51745d7384e334258f9c8318b4c92d9654
   status: live
-  see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ
+  see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ phi/declined_sources.φ
 -->
-# Survey — `dead_sources.φ` Relevanz-Erstpass (2026-09-16)
+# Survey — `dead_sources.φ` Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
 
 ## Zweck
 
-Der Domaincheck vom 2026-09-16 (`getent hosts`, 275 eindeutige Domains aus 362
-Einträgen) fand **52 DNS-tote Domains**; alle tragen in ihrer `note` bereits eine
-Dienst-Identität + Nachfolger (Browser-Check 2026-09-10), also gelebt. Sechs
-Einträge, die **nie gelebt** haben, wurden entfernt: die vokal-ausgedünnten
-`p.ntrlst.rg` (= `api.inaturalist.org`) und `p.pn-mt.cm` (= `api.open-meteo.com`)
-— beide Dienste leben —, `lightning.gld` (keine Identität) und
-`masie_ice.apps.nsidc.org` (Unterstrich-Host; echter Host `masie_web`, behalten).
-
-Dieses Survey trägt den **ersten Relevanz-Pass** (flash): Kandidaten, die nie ein
-Force-Kanal sein können — die Grundlage für ein Force-Gate-Verdikt der
-Ernte-Linie. Es ist ein Erst-Pass ohne Re-Fetch; die Klassifikation stützt sich
-auf Domain + `note` (Dienst-Identität).
+Der Domaincheck 2026-09-16 (275 Domains, 52 DNS-tot; 6 nie-gelebte Einträge
+entfernt) führte zum Relevanz-Erstpass (91 sicher + 35 unsicher „nie
+Force-Kanal"). Dieses Update trägt das **Force-Gate-Verdikt** der Ernte-Linie
+(SOURCE_PORT §8/§3/§11) und die daraus folgende **Prune**: 118 Einträge aus
+`phi/dead_sources.φ` entfernt, 9 behalten.
 
 ## Kriterium
 
-Force-relevant = das System trägt Gravitation, em, seismisch, ionosphärisch,
-magnetosphärisch, solar, atmosphärisch, hydrologisch, ozeanographisch, geodätisch,
-Radio-Science, planetarisch, astrophysikalische Transienten oder LAIC/Bio-Kopplung
-(`docs/SOURCE_PORT.md` §3, `phi/sources.φ`).
+Oszillator-Gate (SOURCE_PORT §8): könnte ein nicht-menschlicher Organismus ein
+Sinnesorgan für diese Messung evolvieren? Automatisch decline: nackte Zählwerte,
+Register/Kataloge ohne Messwert, Modell-Forecasts/Reanalysen, Referenz-Konstanten,
+aggregierte Indizes, Text-Warnungen, abgeleitete Satellitenprodukte, geographische
+Infrastruktur, position-only. Aktuator-Regel: aktives Objekt (Fahrzeug/Schiff/
+Flugzeug) → `decline no-physical-force` (Telemetrie eines Akteurs, kein
+propagierendes Feld).
 
-## Sichere Kandidaten (91)
+## Verdikt — sichere Kandidaten (91, alle declined + geprunt)
 
-**Transport / Mobilität / Aviation (11)** — kein Feld:
-`api.digitransit.fi` (×2), `api.entur.io` (×2), `gateway.apiportal.ns.nl`,
-`www.mvg.de`, `www.trafiklab.se`, `aisstream.io`, `api.adsb.lol`,
-`soa.smext.faa.gov` (×2).
+| Kategorie | n | Verdikt |
+|---|---|---|
+| Transport/Mobilität/Aviation | 11 | `decline no-physical-force` (Telemetrie aktiver Objekte, Fahrpläne) |
+| Spaceflight-Logistik/Orbit-Track | 4 | `decline no-physical-force`; `celestrak.com` → `decline superseded-by-integrated` (TLE schon declined_sources.φ derived-orbit-fit, Nachfolger celestrak.org) |
+| Biodiversität/Ökologie/Life-Science | 20 | `decline presence-catalog` (Occurrence wie GBIF); `api.marinespecies.org`/`www.addgene.org`/`openneuro.org`/`www.ebi.ac.uk` → `decline registry/katalog`; `www.treetalker.xyz` → `decline no-physical-force` (Bio-Rate-Skalare) |
+| Agritech/Agrar/Ernährungsstatistik | 8 | `decline no-physical-force` (Statistik/Indizes; NDVI = abgeleitet) |
+| IT/Infrastruktur/Statistik | 48 | `decline no-physical-force` (Netz/Strom/Zeit/Statistik); `decline registry/katalog` (ADS, PRIS, NUCLEUS, OpenInfra, sekitan, ReliefWeb, Humdata, usa.gov); `climada.ethz.ch` → `decline model-forecast`; `api.open-notify.org` → `decline no-physical-force` (position-only) |
 
-**Spaceflight-Logistik / Orbit-Track (4)** — Logistik/abgeleitete Bahn, kein Feld:
-`api.spacexdata.com` (×2), `www.n2yo.com`, `celestrak.com`.
+## Verdikt — unsichere Kandidaten (35)
 
-**Biodiversität / Ökologie / Life-Science (20)**:
-`api.inaturalist.org`, `api.boldsystems.org` (×2), `portal.boldsystems.org`,
-`api.ebird.org`, `api.ebeard.org`, `api.eurobis.org`, `api.marinespecies.org`,
-`api.fisheries.noaa.gov`, `mangrove-atlas.sei.org` (×2), `www.eurobats.org`,
-`www.invasivesnet.org` (×2), `www.xeno-canto.org`, `xeno-canto.org`,
-`www.addgene.org`, `www.treetalker.xyz`, `openneuro.org`, `www.ebi.ac.uk`.
+**Declined + geprunt (26):**
+- `decline no-physical-force` (Land-Cover/abgeleitete Produkte/Infrastruktur):
+  esa-worldcover (×4), globalland.vgt.vito.be, jeodpp.jrc DRAXIS (×2),
+  modisrest.ornl.gov (NDVI), land.copernicus.eu, landsat.usgs.gov (Produkt-Katalog),
+  emergency.copernicus.eu, unosat.org (×2), theoceancleanup.com (×2),
+  surveys.coast.noaa.gov, bhuvan-panchayat/bhuvan.nrsc.gov.in (×2),
+  catalogue.clms.copernicus.eu, mrdata.usgs.gov, data.nasa.gov, zenodo.org,
+  pangaea.de, api.open-elevation.com (statisches DEM), www.transnetbw.de (Netzfrequenz).
+- `odlinfo.bfs.de` → `decline superseded-by-integrated` (ODL-Messung lebt unter
+  imis.bfs.de, sources.φ:773).
 
-**Agritech / Agrar / Ernährungsstatistik (8)**:
-`fenixservices.fao.org` (×2), `faostat4.fao.org` (×2),
-`world.openagritechdata.org`, `data.apps.fao.org` (×2), `www.fao.org`.
+**Force-Kanal — behalten (Re-Check-Pflicht, 3):**
+- `remon.jrc.ec.europa.eu` — JRC REM Radioaktivitäts-Monitoring (em).
+- `www.irsn.fr` (×2) — IRSN Strahlen-Monitoring (em).
 
-**IT / Infrastruktur / Statistik / generische Web-Dienste (48)**:
-`api.ioda.caida.org`, `api.ioda.ioda.caida.org`, `ris.ripe.net` (×2),
-`poweroutage.us`, `mempool.space`, `openquantumsafe.org` (×2),
-`overpass-api.de`, `overpass.kumi.systems`, `nwis.waterdata.usgs.gov`,
-`localhost:5000`, `time.nist.gov`, `worldtimeapi.org`, `api.reliefweb.int`,
-`data.humdata.org`, `wikimedia.org` (×2), `api.usa.gov`, `apidev.uis.unesco.org`,
-`sdmx.oecd.org`, `washdata.org` (×2), `www.govtrack.us`, `www.who.int`,
-`ebolaintel.com`, `openeo.org`, `example.com`, `api.open-notify.org`,
-`api.farmsense.net` (×2), `astromap.app`, `resonanceone.app`,
-`quantumrandomnumbergenerator.net` (×2), `api.adsabs.harvard.edu` (×2),
-`cartocdn-gusc.global.ssl.fastly.net`, `sekitan.jp` (×2),
-`api.ember-climate.org`, `openinfra.io` (×2), `pris.iaea.org` (×2),
-`nucleus.iaea.org` (×2), `climada.ethz.ch`.
+**Pending — behalten (4):**
+- `dods.wh.gov` — Pfad „acoustic" deutet Unterwasser-Akustik an, Netloc
+  unverifiziert. Schritt: Nachfolger des OPeNDAP-Acoustic-Endpoints suchen
+  (`archive_search --verdict` + `--brave`).
+- `osdr.nasa.gov` — OSDR trägt ISS-Dosimetrie (em); der tote `/bio/api` ist eine
+  Repository-Route. Schritt: direkten Dosimetrie-Feed im OSDR-Katalog messen,
+  sonst `decline registry/katalog`.
+- `pskreporter.info` + `reversebeacon.net` — Amateurfunk-Propagation: Empfangsreport-
+  Registry (SNR von Menschensignalen) als Ionosphären-Proxy, kein Feld am Punkt.
+  Schritt: gegen sources.φ-Ionosphären-Abdeckung (TEC/Ionosonde) wiegen; gedeckt →
+  `decline registry/katalog`.
 
-## Unsicher (35) — zweiter Pass
+**Bereits disponiert — behalten (2):**
+- `arvo-registry.sci.am` (×2) — bereits `dead unreachable` (SOURCE_PORT §16.4),
+  Proton-Eskalation offen.
 
-`api.open-elevation.com`, `mrdata.usgs.gov`, `data.nasa.gov`, `zenodo.org`,
-`bhuvan-panchayat.nrsc.gov.in`, `bhuvan.nrsc.gov.in`,
-`catalogue.clms.copernicus.eu`, `esa-worldcover.s3…` (×2),
-`s3…wasabisys.com/esa-worldcover` (×2), `globalland.vgt.vito.be`,
-`jeodpp.jrc.ec.europa.eu` DRAXIS (×2), `land.copernicus.eu`, `landsat.usgs.gov`,
-`modisrest.ornl.gov`, `dods.wh.gov`, `emergency.copernicus.eu`, `odlinfo.bfs.de`,
-`osdr.nasa.gov`, `pskreporter.info`, `remon.jrc.ec.europa.eu`,
-`surveys.coast.noaa.gov`, `theoceancleanup.com` (×2), `unosat.org` (×2),
-`www.irsn.fr` (×2), `pangaea.de`, `reversebeacon.net`, `transnetbw.de`,
-`arvo-registry.sci.am` (×2).
+## Zwei lebende Dienste — keine neuen Quellen
 
-Grenze: Land-Cover, Strahlungs-Monitoring, Amateurfunk-Propagation, generische
-Repositories und VO-Registries sind die schwache Kante — deshalb unsicher, nicht
-gestrichen.
+Der Erstpass nannte `api.inaturalist.org` und `api.open-meteo.com` als
+Quellen-Kandidaten. Das Force-Gate misst:
 
-## Nächster Schritt
+- `api.inaturalist.org` → **bereits declined** (declined_sources.φ:27–29,
+  `decline presence-catalog`, „wie GBIF"). Der tote `/v1/docs/`-Eintrag war ein
+  Duplikat → geprunt.
+- `api.open-meteo.com` → **bereits registriert** (sources.φ: forecast :192,
+  archive-api :211 ff., air-quality :6194 unter air-quality-api.open-meteo.com).
+  Der tote `/v1/air-quality`-Pfad auf dem Haupt-Host ist der alte Weg → geprunt.
 
-Force-Gate-Verdikt der Ernte-Linie nach `docs/SOURCE_PORT.md`: sichere Kandidaten
-prüfen, `declined`/Streichen je Eintrag, unsichere in einem zweiten Pass messen.
-Die zwei lebenden Dienste (`api.inaturalist.org`, `api.open-meteo.com`) sind
-Kandidaten für eine Quellen-Registrierung, keine Toten.
+Keine neuen `sources.φ`-Zeilen.
+
+## Ergebnis
+
+118 Einträge geprunt (91 sicher + 26 unsicher-declined + open-meteo-Stale-Pfad);
+9 behalten (3 Force-Kanal, 4 pending, 2 bereits disponiert).

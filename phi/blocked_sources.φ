@@ -59,11 +59,11 @@ note IGRA-2 Radiosonden (NCEI, Sensor-Welle). Messung 2026-09-16: Verzeichnis HT
 
 pending
 url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
-note VTSCat — VERITAS-Datenkatalog (GitHub, HTTP 200, CC0, 55 MB): Spektral-Flusspunkte, Lichtkurven, Spektral-Fits je Publikation als YAML/ECSV (Jahr/Bibcode-Verzeichnisse 2008–2026) + Sky-Maps als FITS. Messung echt (em, Gamma-Fluss am Quellort ra/dec). Der ECSV/YAML-Reader ist gebaut (2026-09-16, `src/archivar/vtscat.rs`: `parse_ecsv` + `parse_sexagesimal` + `yaml_sexagesimal`, gemessen an VER-000058-sed.ecsv: `e_ref TeV`/`dnde m-2 s-1 TeV-1`, pos.ra `12h30m46s` → 187,69°). Offen: der Compiler (ECSV/YAML → Fluss-Karte) + CDN-Workflow. Alternative Route: HEASARC verimaster (W3Browse).
+note VTSCat — VERITAS-Datenkatalog (GitHub, HTTP 200, CC0, 55 MB): Spektral-Flusspunkte, Lichtkurven, Spektral-Fits je Publikation als YAML/ECSV (Jahr/Bibcode-Verzeichnisse 2008–2026) + Sky-Maps als FITS. Messung echt (em, Gamma-Fluss am Quellort ra/dec). Der ECSV/YAML-Reader ist gebaut (2026-09-16, `src/archivar/vtscat.rs`: `parse_ecsv` + `parse_sexagesimal` + `yaml_sexagesimal`, gemessen an VER-000058-sed.ecsv: `e_ref TeV`/`dnde m-2 s-1 TeV-1`, pos.ra `12h30m46s` → 187,69°). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/vtscat_compiler.rs` + `.github/workflows/vtscat-cdn.yml`; SKY1-Fluss-Karte, dnde@1 TeV, `cargo check --bin` 0/0). Offen: der sky1-Format-Arm in `main_flow.rs`/`extract.rs` (kein sky1-Handler) + `sources.φ`-Registrierung + Workflow-Lauf nach Push+Consent. Alternative Route: HEASARC verimaster (W3Browse).
 
 pending
 url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
-note H.E.S.S. DL3 DR1 (Public Test Data Release 2018; TAR gemessen 2026-09-16: HTTP 206/200, application/octet-stream, 51 868 345 B, ustar; enthält `data/hess_dl3_dr1_obs_id_*.fits.gz` + `hdu-index.fits.gz`). Inhalt: FITS-Event-Listen (DL3/GADF, EVENTS-BINTABLE RA/DEC/ENERGY) + IRFs. Messung echt (em, Gamma-Strahlung). Die Event-Listen-Reduktion ist gebaut (2026-09-16, `src/archivar/dl3.rs`: `parse_events` + `reduce_grid`, gemessen an hess_dl3_dr1_obs_id_033798.fits, 777 600 B). Offen: der Compiler (TAR → EVENTS → Sky-Map) + CDN-Workflow. Zenodo-Kopie: 10.5281/zenodo.1421099.
+note H.E.S.S. DL3 DR1 (Public Test Data Release 2018; TAR gemessen 2026-09-16: HTTP 206/200, application/octet-stream, 51 868 345 B, ustar; enthält `data/hess_dl3_dr1_obs_id_*.fits.gz` + `hdu-index.fits.gz`). Inhalt: FITS-Event-Listen (DL3/GADF, EVENTS-BINTABLE RA/DEC/ENERGY) + IRFs. Messung echt (em, Gamma-Strahlung). Die Event-Listen-Reduktion ist gebaut (2026-09-16, `src/archivar/dl3.rs`: `parse_events` + `reduce_grid`, gemessen an hess_dl3_dr1_obs_id_033798.fits, 777 600 B). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/dl3_skymap_compiler.rs` + `.github/workflows/dl3-skymap-cdn.yml`, TAR/gzip/FITS inhaltsgetrieben; `cargo check --bin` 0/0). Offen: sky1-Format-Arm + `sources.φ`-Registrierung + Workflow-Lauf. Zenodo-Kopie: 10.5281/zenodo.1421099.
 
 blocked account
 url https://kcdc.iap.kit.edu
@@ -72,5 +72,5 @@ note KCDC — KASCADE Cosmic-ray Data Centre (Portal HTTP 200, 20 592 B, gemesse
 
 pending
 url https://opendata.magic.pic.es
-note MAGIC Open Data Repository (PIC, HTTP 200, 6730 B) — Low-level-DL3-Daten: Event-Listen + IRFs je Projekt (/download?pid=N: MAGIC_dl3_pdr1 2024, AODR 2025, RSOph 2022, JointCrab 2019, TXS0506 2018). FITS-DL3, Messung echt (em, Cherenkov); die Event-Listen-Reduktion ist gebaut (`src/archivar/dl3.rs`, geteilt mit H.E.S.S.). Offen: der Compiler (DL3-FITS → Sky-Map) + CDN-Workflow.
+note MAGIC Open Data Repository (PIC, HTTP 200, 6730 B) — Low-level-DL3-Daten: Event-Listen + IRFs je Projekt (/download?pid=N: MAGIC_dl3_pdr1 2024, AODR 2025, RSOph 2022, JointCrab 2019, TXS0506 2018). FITS-DL3, Messung echt (em, Cherenkov); die Event-Listen-Reduktion ist gebaut (`src/archivar/dl3.rs`, geteilt mit H.E.S.S.). Compiler gebaut (2026-09-16, `tools/harvest/src/bin/dl3_skymap_compiler.rs` + `.github/workflows/dl3-skymap-cdn.yml`; `cargo check --bin` 0/0). Offen: sky1-Format-Arm + `sources.φ`-Registrierung + Workflow-Lauf.
 

@@ -1,0 +1,65 @@
+name: ionex-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ionex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view cddis.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ionex_tec_gim.bin"; then
+            echo "asset ionex_tec_gim.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset ionex_tec_gim.bin missing — compiling and manifesting"
+      - name: Ensure the cddis.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view cddis.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cddis.nasa.gov --repo omegaflow/sources \
+              --title "cddis.nasa.gov" \
+              --notes "CDDIS IGS IONEX GIM vertical TEC maps compiled to a daily GIM series (em, TECU). Bin: 4 B magic GIM1, u32 map count, then per map 48 B header (epoch unix f64, lat_first f64, lat_step f64, nlat u32, lon_first f64, lon_step f64, nlon u32) + nlat*nlon f64 TECU cells."
+          fi
+      - name: Download the latest IONEX GIM day file
+        run: |
+          mkdir -p kernels
+          day=""
+          for back in 1 2 3 4 5 6 7; do
+            t=$(date -u -d "$back days ago" +%Y-%m-%d)
+            y=${t%%-*}
+            doy=$(date -u -d "$t" +%j)
+            url="https://cddis.nasa.gov/archive/gnss/products/ionex/${y}/${doy}/IGS0OPSRAP_${y}${doy}0000_01D_02H_GIM.INX.gz"
+            if curl -sSfL --retry 3 --max-time 240 -H "Authorization: Bearer $EARTHDATA_EDL_TOKEN" -o kernels/ionex.INX.gz "$url"; then
+              day="$t"
+              break
+            fi
+          done
+          test -n "$day" || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "ionex-cdn: no IONEX GIM day file in the last 7 days" \
+               "CDDIS reached no IGS0OPSRAP IONEX GIM day file in the last 7 days. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
+          echo "ionex day: ${day}"
+      - name: Compile the IONEX GIM TEC series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ionex_compiler -- \
+            --input kernels/ionex.INX.gz \
+            --out ionex_tec_gim.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "ionex-cdn: ionex_tec_gim.bin returned void" \
+                 "ionex_compiler returned void for the CDDIS IONEX source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
