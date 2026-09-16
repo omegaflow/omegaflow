@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: ac6cb00acdb416897a001850383e4e472da0ac5d2283525b16f9aaea29996960
+  sha256: 6ecc78b6ec4789bb1d3a7e0bb645cb6d732433ac3d27cff50f1740b8f92bbd84
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -259,9 +259,12 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    Abweichung 8801.7 nT über der Toleranz 836.2 nT: ein Riss, der sichtbar
    bleibt.
 3. Die topozentrische Kopplung: **gebaut** — `topocentric_coupling_probe`
-   (Rømer-Fold vom Stationspunkt, Stations-Parallaxe zwischen Stationen als
-   unabhängige Sichtlinien, 7 Tests); die Live-S²-Integration („ein Bild")
-   bleibt `pending`.
+   (Römer-Fold vom Stationspunkt, Stations-Parallaxe zwischen Stationen als
+   unabhängige Sichtlinien, 7 Tests). Die Live-S²-Integration („ein Bild"):
+   **gebaut** — `S2Osc::from_body`/`from_station` falten Körper- und
+   Stations-Weltlinien baryzentrisch (vom SSB-Ursprung, nicht topozentrisch)
+   in denselben `oscs`-Vektor in `sky_tick` (`omega.rs`); Gewicht 1.0 bei
+   Coverage (sonst kein Oszillator), σ `None` (0 honored), 4 Tests in `s2.rs`.
 4. Die vollständige Abbildung der ~20k Tafeln in den position-indizierten
    Bestand: **gebaut** — `vlies_density_compiler` + `vlies_density_probe`
    (die Dichte des Vlieses, Kompilier-Pflicht, nicht durch Punkt-Abfragen
@@ -288,9 +291,8 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    natural-class-Gate — registriert wird sein Urteil (Klasse +
    Wahrscheinlichkeit), nie der einzige Zeuge.
 
-Offen bleiben drei Register-Pflichten, nichts vertagt: (i) Schritt 3 — die
-Live-S²-Integration („ein Bild"), `pending`; (ii) Schritt 7 — die
-Manifestation des Vlies-Assets, `pending`; (iii) Schritt 8 — der CI-Lauf,
+Offen bleiben zwei Register-Pflichten, nichts vertagt: (i) Schritt 7 — die
+Manifestation des Vlies-Assets, `pending`; (ii) Schritt 8 — der CI-Lauf,
 in diesem Atom ergänzt. Zwischen den Stufen gibt es keine Wartezone. Wo eine
 Stufe noch nicht gebaut ist, ist ihr Wert `pending` — der Wert existiert,
 die Ernte fehlt, registriert, nicht fabriziert. `absent` bleibt nur, wo die
