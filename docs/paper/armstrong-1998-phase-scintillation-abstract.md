@@ -2,7 +2,7 @@
   title: Armstrong 1998 — phase scintillation and precision Doppler tracking
   class: paper
   date: 2026-09-04
-  sha256: 35495827a0e624c54d361966b59343594cc0f7f8bfcbaf98f8aa78efb65e7b20
+  sha256: 47558f89f5dd38f74781f04ae9fa5ad7dd0ebe3e9e2b28c467646c9586d398fb
   status: abstract-only (full text paywalled; JPL preprint handle down)
   see-also: docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md
 -->
@@ -13,7 +13,7 @@
 - Radio Science, Vol. 33 (issue 6), pp. 1727–1738, November 1998 (NTRS preprint record dated 1997-11-01; JPL preprint handle hdl:2014/22988).
 - DOI: `10.1029/98RS02317` (resolves; Wiley AGU paywalled).
 - Bibcode: `1998RaSc...33.1727A`.
-- Full text: NOT obtained (paywalled; Unpaywall `is_oa: false`; JPL Open Repository / handle server down at retrieval time; ADS scan WAF-walled — all verified as absence, not fabricated).
+- Full text: NOT obtained (paywalled; Unpaywall `is_oa: false`; JPL Open Repository / handle server down at retrieval time; ADS scan WAF-walled — all verified as absence, not fabricated). Routes re-measured 2026-09-16: Wiley direct + Proton 403, Wayback 503; ADS `1998RaSc...33.1727A` 403; NTRS absent; JPL RSSG publications page unreachable; Semantic Scholar + OpenAlex `is_oa:false`. Crossref confirms this DOI carries the title above (no metadata mismatch) — the abstract-only state stands.
 - Source of record: Crossref deposit (`api.crossref.org/works/10.1029/98RS02317`), verbatim.
 
 ## Abstract (verbatim)

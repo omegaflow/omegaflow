@@ -2,7 +2,7 @@
   title: Woo & Armstrong 1979 — solar-wind electron density spectrum
   class: paper
   date: 2026-09-04
-  sha256: 2d234be78b290423144d071f0ef41cf88b110068a4fbe6c5375737f58b3ec21a
+  sha256: 2850062b721df98dde31bd4ce864a69c0d0188e7a6770ede0ee66d168d8353a0
   status: abstract-only (full text paywalled)
   see-also: docs/paper/armstrong-woo-estabrook-1979-interplanetary-scintillation.txt
 -->
@@ -13,7 +13,7 @@
 - Journal of Geophysical Research, Vol. 84 (A12), pp. 7288–7296, December 1979.
 - DOI: `10.1029/JA084iA12p07288` (resolves; Wiley AGU paywalled).
 - Bibcode: `1979JGR....84.7288W`.
-- Full text: NOT obtained (paywalled; Unpaywall `is_oa: false`; ADS scan WAF-walled; NTRS = JPL reprint record, metadata-only).
+- Full text: NOT obtained (paywalled; Unpaywall `is_oa: false`; ADS scan WAF-walled; NTRS = JPL reprint record, metadata-only). Routes re-measured 2026-09-16: Wiley direct + Proton 403, Wayback 503/no snapshot; ADS scan 403/405; NTRS citation `19800037012` `downloadsAvailable:false` (METADATA_ONLY); OSTI `5684261` abstract-only; Semantic Scholar + OpenAlex `is_oa:false`. No OA mirror, author copy or preprint measured — the abstract-only state stands.
 - Source of record: Crossref deposit (`api.crossref.org/works/10.1029/JA084iA12p07288`), verbatim.
 
 ## Abstract (verbatim)
