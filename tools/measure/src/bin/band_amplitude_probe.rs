@@ -242,7 +242,13 @@ fn fmt_amp(a: Option<f64>) -> String {
     }
 }
 
-fn cell_report(station: i64, class_name: &str, year: Option<i64>, ts: &[f64], vs: &[f64]) -> String {
+fn cell_report(
+    station: i64,
+    class_name: &str,
+    year: Option<i64>,
+    ts: &[f64],
+    vs: &[f64],
+) -> String {
     let n_raw = ts.len();
     let (dts, dvs) = detrend_runs(ts, vs);
     if dts.len() < MIN_N {
@@ -443,7 +449,9 @@ fn main() {
     }
 
     println!("=== 160-Hz band-amplitude census (44-58 mHz) — the run's missing measurement ===");
-    println!("series : {path} (PASF; ATDF doppler_resid field r[8], TRK-2-25 Item 101 — the NOCC-corrected residual)");
+    println!(
+        "series : {path} (PASF; ATDF doppler_resid field r[8], TRK-2-25 Item 101 — the NOCC-corrected residual)"
+    );
     println!(
         "method : per contiguous run (gap {GAP_RUN_S:.0} s, >= {MIN_RUN} samples) linear detrend; LS {:.0}-{:.0} mHz @ {:.2} mHz; floor = band median power; A = sqrt(2 P / n) Hz",
         BAND_LO * 1e3,
