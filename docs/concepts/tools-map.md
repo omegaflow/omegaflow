@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: 329026f09a247be7f98b64429bcc5687801d9446831c73cd80142b8a20fd52de
+  sha256: a2aa96e5adeeb68c4e45a6c42e3b0f16bae36de9d471bc22ca850d0735b47ba9
   status: live
   see-also: AGENTS.md
 -->
@@ -133,6 +133,29 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | P4 | plan | `register_lookup` + `git_safety` + git-read + `sgrep` | 0,05 + 1,2 + 0,07 s |
 | P5 | grind-* | edit + full bash | wie P1 |
 | P6 | vision | nichts (kein edit, kein bash) | — |
+
+## Agenten-Benchmark (2026-09-16, identischer Task: dieselben vier Befehle, alle 8 Profile)
+
+Werkzeug-Zeiten, identisch über alle Profile: `--root --count` 0,025–0,039 s;
+`sgrep -i` 0,042–0,063 s; `--index` 0,020–0,043 s; `--crossref` 2,08–3,12 s
+(Netz, ~50–100× die lokalen Läufe).
+
+| Agent | Modell | Cost | cache_read | Dauer |
+|---|---|---|---|---|
+| grind-flash | flash | $0.0008 | 49k | 8 s |
+| explore | flash | $0.0010 | 45k | 10 s |
+| general | flash | $0.0017 | 109k | 12 s |
+| plan | flash | $0.0017 | 166k | 17 s |
+| grind-max | pro | $0.0041 | 45k | 25 s |
+| grind-pro | pro | $0.0049 | 42k | 12 s |
+| research-max | pro | $0.0072 | 68k | 48 s |
+| council | pro | $0.0090 | 72k | 58 s |
+
+Pro/max kostet 2,4–11× flash bei identischem Ergebnis — flash-first bestätigt.
+`vision` (P6, kein bash) ist mit Kommando-Tools nicht benchmarkbar. Verkettete
+Befehle (`cmd; echo; cmd`) werden in den Read-Profilen verweigert (jedes Segment
+muss ein Allow-Muster treffen) — je Befehl ein eigener Aufruf, oder eine reine
+`&&`-Kette erlaubter Befehle.
 
 ## Benchmark (wiederholbar)
 
