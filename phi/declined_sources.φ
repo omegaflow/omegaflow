@@ -3636,3 +3636,7 @@ note Telescope Array — „Data of an extremely energetic cosmic ray observed b
 decline paper
 url https://doi.org/10.1007/978-94-015-8790-7_41
 note Wohlmuth, Plettemeier, Edenhofer, Bird, Asmar 1997 — „Analysis of Galileo Doppler Measurements during the Solar Occultations in 1994 and 1995" (The Three Galileos, ASSL 220, S. 421–428; JPL TR 97-0783). Ein Papier, kein Roh-Datensatz — kein Feld am Punkt → decline paper. Live: Springer-Kapitel (Abstract HTTP 200, Volltext Paywall); OA via Wayback (Forschung-Folge 31: 701 507 B, sha256 eebff967…); die alte JPL-TRS-Bitstream-Route redirectet heute auf dataverse.jpl.nasa.gov (gemessen 2026-09-16, kein Dokument).
+
+decline redistribution
+url https://wwlln.net/data/
+note WWLLN (World Wide Lightning Location Network) — VLF-Blitzortung, em. Gemessen 2026-09-16: wwlln.net HTTP 200, /data/ account-/agreement-gated; UW-copyright, „nominal cost" = kostenpflichtig — keine kostenpflichtigen Dienste, CDN-Redistribution ausgeschlossen. Die alte CGI-Route bleibt als dead-Eintrag in dead_sources.φ.
