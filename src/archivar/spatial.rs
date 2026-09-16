@@ -2,6 +2,8 @@ use super::*;
 
 pub type CellKey = (i64, i64, i64);
 
+const PHASE_PAD: f64 = 0.0;
+
 pub struct SpatialHash {
     pub cell_size: f64,
     pub anchor_vmax: f64,
@@ -169,7 +171,7 @@ pub fn build_buffer(
 pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut samples: Vec<Sample> = Vec::new();
-    for chunk in bytes.chunks_exact(RECORD_STRIDE) {
+    for chunk in bytes.as_chunks::<RECORD_STRIDE>().0 {
         let rec = match parse_record(chunk) {
             Some(r) => r,
             None => continue,
@@ -477,10 +479,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             sample.color_index,
             sample.freq,
             sample.bin_width,
-            match sample.phase {
-                Some(p) => p,
-                None => 0.0,
-            },
+            sample.phase.unwrap_or(PHASE_PAD),
             match sample.phase {
                 Some(_) => 1.0,
                 None => 0.0,
@@ -592,10 +591,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.color_index,
                 sample.freq,
                 sample.bin_width,
-                match sample.phase {
-                    Some(p) => p,
-                    None => 0.0,
-                },
+                sample.phase.unwrap_or(PHASE_PAD),
                 match sample.phase {
                     Some(_) => 1.0,
                     None => 0.0,

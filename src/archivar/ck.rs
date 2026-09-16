@@ -135,7 +135,8 @@ impl SclkFile {
             for chunk in buf[..end]
                 .split_whitespace()
                 .collect::<Vec<&str>>()
-                .chunks_exact(3)
+                .as_chunks::<3>()
+                .0
             {
                 let clock = chunk[0].parse::<f64>();
                 let time = parse_time(chunk[1]);
