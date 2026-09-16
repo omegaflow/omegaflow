@@ -1090,6 +1090,13 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bison_pmode.bin
+format bison_velocity
+at sun
+ttl 604800
+field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
+note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler tools/harvest/src/bin/bison_compiler.rs + .github/workflows/bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series arm wired (extract.rs series_parse_bin/series_component_name + main_flow.rs series list), field name aligned to the component name (main_flow.rs:2168).
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
 format rpw_efield
 at solar_orbiter
