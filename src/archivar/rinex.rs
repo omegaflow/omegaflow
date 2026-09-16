@@ -84,8 +84,8 @@ pub fn build_rinex_channels(
                             channels.push((
                                 Channel {
                                     z: 0.0,
-                                    freq: 0.0,
-                                    bin_width: 0.0,
+                                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                                     epoch,
                                     position: position.clone(),
                                     name: fc.name.clone(),
@@ -152,8 +152,8 @@ pub fn build_rinex_channels(
                     channels.push((
                         Channel {
                             z: 0.0,
-                            freq: 0.0,
-                            bin_width: 0.0,
+                            freq: crate::spectral::SPECTRAL_NO_BAND,
+                            bin_width: crate::spectral::SPECTRAL_NO_BAND,
                             epoch,
                             position: Position::Source,
                             name: fc.name.clone(),
