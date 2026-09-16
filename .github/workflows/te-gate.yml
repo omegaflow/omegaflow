@@ -36,5 +36,5 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
       - name: Run the n=1000 KSG sweep (the estimator-switch measurement)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_sweep_n1000
-      - name: Run the n=1000 residual sweep (the residual-null measurement + OLS counter)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture residual_sweep_n1000
+      - name: Run the n=1000 arx sweep (the arx-null measurement + OLS counter)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture arx_sweep_n1000
