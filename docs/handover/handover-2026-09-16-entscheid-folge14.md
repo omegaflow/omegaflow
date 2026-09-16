@@ -3,7 +3,7 @@
   session: Entscheid-Folge XIV
   class: handover
   date: 2026-09-16
-  sha256: 53369ef27a3d2ae990234eb4c4813cba43d354a8bbaacaf7c15a0f1c88dfb8ef
+  sha256: 61719064627a9b2a0358b81cfc77b44478fbfba40ec0dd4f7d62bbe1bc004a29
   status: live
 -->
 # Handover — Entscheid-Folge XIV (2026-09-16)
@@ -37,16 +37,17 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   (`317418d, 0d76458f, 88dda694, ea696f62, 035a9191, afa96459, d9d6e800, b0bebc1c,
   d2ab19b1`), `docs/handover/archiv/fink-konto-2026-09-05.md` aus sechs, die
   `docs/auftrag/*`-Entwürfe aus je ein bis fünf Refs. Tag `v2026-09-09` → `bc113f6`.
+  Nach dem Privacy-Versand erneut gemessen: unverändert 45.
 - Zwei getrennte GitHub-Prozesse: (a) Support-Ticket #4761801 (bestätigt
   `support@githubsupport.com`; #4761482 überholt) für cached views / SHA-Abrufbarkeit —
   hat den GC noch nicht bewirkt; (b) **Data-Subject-Löschung** — das Formular
   `github.com/contact/privacy` verlangt eine angemeldete Session (leitet auf
   `help.github.com/request/landing`); die dokumentierte Route ist die E-Mail an
-  `privacy@github.com` (GitHub Privacy Statement, Data-Subject-Rights). Entwurf steht
-  in `state/mail/privacy-deletion-request.md` (lokal, gitignored), Scope = alle zehn
-  PII-tragenden Dateien (Gremium einmütig). (Schritt: Entwurf von
-  `johannes.tyroller@proton.me` an `privacy@github.com` senden — Operator; dann erneut
-  messen.)
+  `privacy@github.com` (GitHub Privacy Statement, Data-Subject-Rights). Gesendet
+  2026-09-16 von `code@omegaflow.space` (Resend-Id
+  `16c1b8c6-d24a-458a-a49d-7c1362b6aa8e`), Body = alle zehn PII-tragenden Dateien
+  (Gremium einmütig), Entwurf in `state/mail/privacy-deletion-request.md` (lokal,
+  gitignored). (Schritt: Postfach auf die Privacy-Antwort prüfen; bei Antwort oder GC erneut messen.)
 - (Schritt: Postfach auf GC-/Privacy-Bestätigung prüfen; bleibt sie aus, GitHub auf
   #4761801 nachfassen — Operator.)
 
