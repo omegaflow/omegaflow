@@ -46,6 +46,9 @@ const OPEN_MARKERS: &[&str] = &[
 
 const RELEASED_MARKERS: &[&str] = &["descoped"];
 
+const ZUSTAND_PATH: &str = "docs/zustand/external-state.md";
+const POST_PATH: &str = "docs/handover/post.md";
+
 fn snippet(line: &str, max: usize) -> String {
     let trimmed = line.trim();
     if trimmed.chars().count() <= max {
@@ -75,6 +78,202 @@ fn open_marker_matches(line: &str) -> bool {
 fn released_marker_matches(line: &str) -> bool {
     let lower = line.to_lowercase();
     RELEASED_MARKERS.iter().any(|m| lower.contains(m))
+}
+
+enum ZustandStatus {
+    Due,
+    NotDue,
+    Pending,
+}
+
+fn is_post_line(line: &str) -> bool {
+    let t = line.trim_start();
+    t.starts_with("An ") && t.contains(':')
+}
+
+fn split_table_row(line: &str) -> Option<Vec<String>> {
+    let t = line.trim();
+    if !t.starts_with('|') || !t.ends_with('|') || t.len() < 2 {
+        return None;
+    }
+    let inner = &t[1..t.len() - 1];
+    Some(inner.split('|').map(|c| c.trim().to_string()).collect())
+}
+
+fn is_table_separator(cells: &[String]) -> bool {
+    !cells.is_empty()
+        && cells
+            .iter()
+            .all(|c| !c.is_empty() && c.chars().all(|ch| ch == '-' || ch == ':'))
+}
+
+fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = if y >= 0 { y } else { y - 399 } / 400;
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    era * 146097 + doe - 719468
+}
+
+fn parse_measured_at(value: &str) -> Option<i64> {
+    let mut fields = value.split_whitespace();
+    let date = fields.next()?;
+    let mut parts = date.split('-');
+    let y: i64 = parts.next()?.parse().ok()?;
+    let m: i64 = parts.next()?.parse().ok()?;
+    let d: i64 = parts.next()?.parse().ok()?;
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None;
+    }
+    let mut minutes = days_from_civil(y, m, d) * 1440;
+    if let Some(clock) = fields.next() {
+        let mut hm = clock.split(':');
+        let h: i64 = hm.next()?.parse().ok()?;
+        let mi: i64 = hm.next()?.parse().ok()?;
+        minutes += h * 60 + mi;
+    }
+    Some(minutes)
+}
+
+fn interval_minutes(faellig_lower: &str) -> Option<i64> {
+    let f = faellig_lower.replace("2\u{2076}", "64");
+    let bytes = f.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if !bytes[i].is_ascii_digit() {
+            i += 1;
+            continue;
+        }
+        let start = i;
+        while i < bytes.len() && bytes[i].is_ascii_digit() {
+            i += 1;
+        }
+        let value: i64 = match f[start..i].parse() {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        if f[i..].trim_start().starts_with("min") {
+            return Some(value);
+        }
+    }
+    None
+}
+
+fn now_minutes() -> Option<i64> {
+    let elapsed = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?;
+    Some((elapsed.as_secs() / 60) as i64)
+}
+
+fn current_head_short() -> Option<String> {
+    let output = Command::new("git")
+        .args(["rev-parse", "--short", "HEAD"])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let sha = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if sha.is_empty() {
+        None
+    } else {
+        Some(sha)
+    }
+}
+
+fn zustand_status(
+    measured_at: &str,
+    faellig: &str,
+    head: Option<&str>,
+    now_min: Option<i64>,
+) -> ZustandStatus {
+    let f = faellig.to_lowercase();
+    if f.contains("head") {
+        let measured = measured_at.trim();
+        return match head {
+            Some(h) if !measured.is_empty() => {
+                if h.starts_with(measured) || measured.starts_with(h) {
+                    ZustandStatus::NotDue
+                } else {
+                    ZustandStatus::Due
+                }
+            }
+            _ => ZustandStatus::Pending,
+        };
+    }
+    if let Some(interval) = interval_minutes(&f) {
+        return match (parse_measured_at(measured_at), now_min) {
+            (Some(m), Some(now)) if now - m >= interval => ZustandStatus::Due,
+            (Some(_), Some(_)) => ZustandStatus::NotDue,
+            _ => ZustandStatus::Pending,
+        };
+    }
+    ZustandStatus::Pending
+}
+
+fn scan_zustand(
+    path: &Path,
+    head: Option<&str>,
+    now_min: Option<i64>,
+    out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    let mut n = 0;
+    for (idx, line) in text.lines().enumerate() {
+        let cells = match split_table_row(line) {
+            Some(c) => c,
+            None => continue,
+        };
+        if cells.len() < 4 || is_table_separator(&cells) {
+            continue;
+        }
+        if cells[0].to_lowercase().contains("abh\u{e4}ngigkeit") {
+            continue;
+        }
+        let status = match zustand_status(&cells[2], &cells[3], head, now_min) {
+            ZustandStatus::Due => "DUE",
+            ZustandStatus::NotDue => continue,
+            ZustandStatus::Pending => "PENDING",
+        };
+        let schritt = cells.get(4).map(|s| s.as_str()).unwrap_or("");
+        out.push(format!(
+            "ZUSTAND\t{}:{}\t{}\t{} | {}",
+            path.display(),
+            idx + 1,
+            status,
+            snippet(&cells[0], 60),
+            snippet(schritt, 120)
+        ));
+        n += 1;
+    }
+    n
+}
+
+fn scan_post(path: &Path, out: &mut Vec<String>) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    let mut n = 0;
+    for (idx, line) in text.lines().enumerate() {
+        if !is_post_line(line) {
+            continue;
+        }
+        out.push(format!(
+            "POST\t{}:{}\t{}",
+            path.display(),
+            idx + 1,
+            snippet(line, 160)
+        ));
+        n += 1;
+    }
+    n
 }
 
 fn has_header(text: &str) -> bool {
@@ -254,6 +453,18 @@ fn run_live() {
         }
     }
 
+    let head = current_head_short();
+    let now_min = now_minutes();
+    let mut zustand_out: Vec<String> = Vec::new();
+    let mut post_out: Vec<String> = Vec::new();
+    let zustand = scan_zustand(
+        Path::new(ZUSTAND_PATH),
+        head.as_deref(),
+        now_min,
+        &mut zustand_out,
+    );
+    let post = scan_post(Path::new(POST_PATH), &mut post_out);
+
     for line in &docs {
         println!("{}", line);
     }
@@ -261,6 +472,12 @@ fn run_live() {
         println!("{}", line);
     }
     for line in &opens {
+        println!("{}", line);
+    }
+    for line in &zustand_out {
+        println!("{}", line);
+    }
+    for line in &post_out {
         println!("{}", line);
     }
     for line in &released {
@@ -274,12 +491,14 @@ fn run_live() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --live: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable [{}]",
+        "register_lookup --live: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open [{}]",
         docs.len(),
         opens.len(),
         released.len(),
         dups.len(),
         unverifiable.len(),
+        zustand,
+        post,
         summary.join(", ")
     );
 }
@@ -743,5 +962,89 @@ mod tests {
         assert!(is_doc_name("handover-2026-09-15-x.md"));
         assert!(!is_doc_name("_template.md"));
         assert!(!is_doc_name("README.txt"));
+    }
+
+    #[test]
+    fn post_line_is_an_address_with_a_step() {
+        assert!(is_post_line("An bau: tree red (step: fix)"));
+        assert!(is_post_line("  An line: X"));
+        assert!(!is_post_line("A note to a line stands here"));
+        assert!(!is_post_line("## Post"));
+    }
+
+    #[test]
+    fn table_row_splits_into_cells() {
+        let cells = split_table_row("| a | b | c | d | e |").unwrap();
+        assert_eq!(cells, vec!["a", "b", "c", "d", "e"]);
+        assert!(split_table_row("plain prose").is_none());
+        assert!(is_table_separator(&cells) == false);
+        let sep = split_table_row("|---|---|---|").unwrap();
+        assert!(is_table_separator(&sep));
+    }
+
+    #[test]
+    fn interval_minutes_reads_superscript_six() {
+        assert_eq!(interval_minutes("new entry or 2\u{2076} min"), Some(64));
+        assert_eq!(interval_minutes("all 30 min"), Some(30));
+        assert_eq!(interval_minutes("on head change"), None);
+    }
+
+    #[test]
+    fn measured_at_parses_date_and_clock() {
+        let a = parse_measured_at("2026-09-16 07:42").unwrap();
+        let b = parse_measured_at("2026-09-17").unwrap();
+        assert_eq!(b - a, 1440 - (7 * 60 + 42));
+        assert_eq!(parse_measured_at("ce367dd0"), None);
+    }
+
+    #[test]
+    fn zustand_head_trigger_is_due_when_sha_moved() {
+        assert!(matches!(
+            zustand_status("ce367dd0", "HEAD change", Some("54bb9b9a"), None),
+            ZustandStatus::Due
+        ));
+        assert!(matches!(
+            zustand_status("54bb9b9a", "HEAD change", Some("54bb9b9a"), None),
+            ZustandStatus::NotDue
+        ));
+        assert!(matches!(
+            zustand_status("ce367dd0", "HEAD change", None, None),
+            ZustandStatus::Pending
+        ));
+    }
+
+    #[test]
+    fn zustand_time_trigger_is_due_after_interval() {
+        let measured = parse_measured_at("2026-09-16 07:42").unwrap();
+        assert!(matches!(
+            zustand_status(
+                "2026-09-16 07:42",
+                "2\u{2076} min",
+                None,
+                Some(measured + 64)
+            ),
+            ZustandStatus::Due
+        ));
+        assert!(matches!(
+            zustand_status(
+                "2026-09-16 07:42",
+                "2\u{2076} min",
+                None,
+                Some(measured + 63)
+            ),
+            ZustandStatus::NotDue
+        ));
+        assert!(matches!(
+            zustand_status("2026-09-16 07:42", "2\u{2076} min", None, None),
+            ZustandStatus::Pending
+        ));
+    }
+
+    #[test]
+    fn zustand_unknown_trigger_is_pending_not_zero() {
+        assert!(matches!(
+            zustand_status("2026-09-16", "new ledger entry", Some("54bb9b9a"), Some(0)),
+            ZustandStatus::Pending
+        ));
     }
 }
