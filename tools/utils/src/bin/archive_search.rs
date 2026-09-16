@@ -459,7 +459,7 @@ fn collect_plain(
         );
     }
     state.results.sort_by(|a, b| b.1.cmp(&a.1));
-    let mut hits: u64 = state.results.iter().map(|r| r.1 as u64).sum();
+    let hits: u64 = state.results.iter().map(|r| r.1 as u64).sum();
     let mut lines = Vec::new();
     for (path, _count, hits_lines) in state.results.iter().skip(skip).take(max_files) {
         lines.push(path.display().to_string());
