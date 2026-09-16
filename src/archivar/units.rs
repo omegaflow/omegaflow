@@ -155,8 +155,7 @@ pub fn normalize_unit(unit: &str) -> String {
         .to_lowercase()
         .replace('\u{b2}', "2")
         .replace('\u{b3}', "3")
-        .replace('\u{b5}', "u")
-        .replace('\u{3bc}', "u")
+        .replace(['\u{b5}', '\u{3bc}'], "u")
 }
 
 pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
@@ -258,11 +257,7 @@ pub fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
         (365.25 * (y + 4716) as f64) as i64 + (30.6001 * (m + 1) as f64) as i64 + day as i64 + b
             - 1524;
     let days = jdn - 2440588;
-    if days < 0 {
-        None
-    } else {
-        Some(days as u64)
-    }
+    if days < 0 { None } else { Some(days as u64) }
 }
 
 pub fn is_unit_name(name: &str) -> bool {

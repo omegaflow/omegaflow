@@ -12,11 +12,7 @@ pub struct QuakeMlEvent {
 
 fn finite_num(s: &str) -> Option<f64> {
     let v: f64 = s.trim().parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn leaf_text<'a>(s: &'a str, tag: &str) -> Option<&'a str> {
@@ -56,18 +52,14 @@ fn iso8601_unix(s: &str) -> Option<f64> {
     let year: i64 = dp.next()?.parse().ok()?;
     let month: u32 = dp.next()?.parse().ok()?;
     let day: u32 = dp.next()?.parse().ok()?;
-    let time = time.trim_end_matches(|c| c == 'Z' || c == 'z');
+    let time = time.trim_end_matches(['Z', 'z']);
     let mut tp = time.split(':');
     let hour: f64 = tp.next()?.parse().ok()?;
     let minute: f64 = tp.next().unwrap_or("0").parse().ok()?;
     let second: f64 = tp.next().unwrap_or("0").parse().ok()?;
     let days = super::ymd_to_days(year, month, day)? as f64;
     let unix = days * 86400.0 + hour * 3600.0 + minute * 60.0 + second;
-    if unix.is_finite() {
-        Some(unix)
-    } else {
-        None
-    }
+    if unix.is_finite() { Some(unix) } else { None }
 }
 
 fn parse_origin(o: &str) -> Option<(f64, f64, f64, f64)> {
@@ -125,14 +117,13 @@ pub fn parse_quakeml(body: &str) -> Vec<QuakeMlEvent> {
             origins.push((attr_value(o, "publicID"), o));
         }
         let mut ordered: Vec<&(Option<String>, &str)> = origins.iter().collect();
-        if let Some(pref) = &preferred_origin {
-            if let Some(pos) = ordered
+        if let Some(pref) = &preferred_origin
+            && let Some(pos) = ordered
                 .iter()
                 .position(|(oid, _)| oid.as_deref() == Some(pref.as_str()))
-            {
-                let item = ordered.remove(pos);
-                ordered.insert(0, item);
-            }
+        {
+            let item = ordered.remove(pos);
+            ordered.insert(0, item);
         }
         let mut origin_data = None;
         for (_, o) in ordered {
@@ -154,14 +145,13 @@ pub fn parse_quakeml(body: &str) -> Vec<QuakeMlEvent> {
             magnitudes.push((attr_value(m, "publicID"), m));
         }
         let mut mordered: Vec<&(Option<String>, &str)> = magnitudes.iter().collect();
-        if let Some(pref) = &preferred_magnitude {
-            if let Some(pos) = mordered
+        if let Some(pref) = &preferred_magnitude
+            && let Some(pos) = mordered
                 .iter()
                 .position(|(mid, _)| mid.as_deref() == Some(pref.as_str()))
-            {
-                let item = mordered.remove(pos);
-                mordered.insert(0, item);
-            }
+        {
+            let item = mordered.remove(pos);
+            mordered.insert(0, item);
         }
         let mut magnitude_data: Option<(Option<f64>, Option<String>)> = None;
         for (_, m) in mordered {

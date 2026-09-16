@@ -205,7 +205,7 @@ mod tests {
     }
 
     fn push_pad(out: &mut Vec<u8>) {
-        while out.len() % 8 != 0 {
+        while !out.len().is_multiple_of(8) {
             out.push(0);
         }
     }
@@ -222,9 +222,7 @@ mod tests {
         let name_len = align8(name.len());
         push_tag(&mut body, MI_INT8, name_len);
         body.extend_from_slice(name.as_bytes());
-        for _ in name.len()..name_len {
-            body.push(0);
-        }
+        body.resize(name_len, 0);
         push_tag(&mut body, MI_DOUBLE, data.len() * 8);
         for &v in data {
             body.extend_from_slice(&v.to_le_bytes());

@@ -416,8 +416,15 @@ fn gauss_solve(a: &mut [Vec<f64>], b: &mut [f64]) {
                 continue;
             }
             let f = a[r][col] / d;
-            for c in col..n {
-                a[r][c] -= f * a[col][c];
+            let (row_r, row_col) = if r < col {
+                let (lo, hi) = a.split_at_mut(col);
+                (&mut lo[r], &hi[0])
+            } else {
+                let (lo, hi) = a.split_at_mut(r);
+                (&mut hi[0], &lo[col])
+            };
+            for (ar_c, ac_c) in row_r[col..].iter_mut().zip(row_col[col..].iter()) {
+                *ar_c -= f * ac_c;
             }
             b[r] -= f * b[col];
         }
@@ -441,8 +448,8 @@ fn residual5(lam: &[f64; 5], specs: &[NasaSpecies], t: f64, ln_p: f64, b: [f64; 
     let mut e_sum = 0.0f64;
     for s in specs.iter() {
         let mut phi = -gibbs_over_rt(s, t) - ln_p;
-        for j in 0..4 {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(4) {
+            phi += f as f64 * l;
         }
         let e = phi.exp();
         if !e.is_finite() {
@@ -450,8 +457,8 @@ fn residual5(lam: &[f64; 5], specs: &[NasaSpecies], t: f64, ln_p: f64, b: [f64; 
         }
         e_sum += e;
         let ni = big_n * e;
-        for j in 0..4 {
-            r[j] += s.formula[j] as f64 * ni;
+        for (j, rj) in r.iter_mut().enumerate().take(4) {
+            *rj += s.formula[j] as f64 * ni;
         }
     }
     r[4] = e_sum - 1.0;
@@ -466,8 +473,8 @@ fn newton_step(specs: &[NasaSpecies], t: f64, ln_p: f64, b: [f64; 4], lam: &mut 
         let mut n = [0.0f64; 16];
         for (i, s) in specs.iter().enumerate() {
             let mut phi = -gibbs_over_rt(s, t) - ln_p;
-            for j in 0..4 {
-                phi += s.formula[j] as f64 * lam[j];
+            for (&f, &l) in s.formula.iter().zip(lam.iter()).take(4) {
+                phi += f as f64 * l;
             }
             e[i] = phi.exp();
             n[i] = big_n * e[i];
@@ -487,21 +494,21 @@ fn newton_step(specs: &[NasaSpecies], t: f64, ln_p: f64, b: [f64; 4], lam: &mut 
             return true;
         }
         let mut jac = vec![vec![0.0f64; 5]; 5];
-        for j in 0..4 {
-            for k in 0..4 {
+        for (j, row) in jac.iter_mut().enumerate().take(4) {
+            for (k, jk) in row.iter_mut().enumerate().take(4) {
                 for (i, s) in specs.iter().enumerate() {
-                    jac[j][k] += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
+                    *jk += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
                 }
             }
         }
-        for j in 0..4 {
+        for (j, row) in jac.iter_mut().enumerate().take(4) {
             for (i, s) in specs.iter().enumerate() {
-                jac[j][4] += s.formula[j] as f64 * n[i];
+                row[4] += s.formula[j] as f64 * n[i];
             }
         }
-        for k in 0..4 {
+        for (k, jk) in jac[4].iter_mut().enumerate().take(4) {
             for (i, s) in specs.iter().enumerate() {
-                jac[4][k] += s.formula[k] as f64 * e[i];
+                *jk += s.formula[k] as f64 * e[i];
             }
         }
         let mut dl = [-r[0], -r[1], -r[2], -r[3], -r[4]];
@@ -530,7 +537,7 @@ fn newton_step(specs: &[NasaSpecies], t: f64, ln_p: f64, b: [f64; 4], lam: &mut 
 }
 
 pub fn equilibrium_composition(t_k: f64, p_pa: f64, b: [f64; 4]) -> Option<Vec<f64>> {
-    if !t_k.is_finite() || t_k < 500.0 || t_k > 3000.0 || !p_pa.is_finite() || p_pa <= 0.0 {
+    if !t_k.is_finite() || !(500.0..=3000.0).contains(&t_k) || !p_pa.is_finite() || p_pa <= 0.0 {
         return None;
     }
     if b.iter().any(|x| !x.is_finite() || *x <= 0.0) {
@@ -563,8 +570,8 @@ pub fn equilibrium_composition(t_k: f64, p_pa: f64, b: [f64; 4]) -> Option<Vec<f
     let mut n = vec![0.0f64; specs.len()];
     for (i, s) in specs.iter().enumerate() {
         let mut phi = -gibbs_over_rt(s, t_k) - ln_p;
-        for j in 0..4 {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(4) {
+            phi += f as f64 * l;
         }
         n[i] = big_n * phi.exp();
     }
@@ -669,27 +676,17 @@ fn shomate_spec(name: &'static str, formula: [i32; NELEM_S], segs: Vec<ShomateSe
     }
 }
 
-fn s_seg(
-    t_min: f64,
-    t_max: f64,
-    a: f64,
-    b: f64,
-    c: f64,
-    d: f64,
-    e: f64,
-    f: f64,
-    g: f64,
-) -> ShomateSeg {
+fn s_seg(p: [f64; 9]) -> ShomateSeg {
     ShomateSeg {
-        t_min,
-        t_max,
-        a,
-        b,
-        c,
-        d,
-        e,
-        f,
-        g,
+        t_min: p[0],
+        t_max: p[1],
+        a: p[2],
+        b: p[3],
+        c: p[4],
+        d: p[5],
+        e: p[6],
+        f: p[7],
+        g: p[8],
     }
 }
 
@@ -699,106 +696,106 @@ fn sulfur_shomate_species() -> Vec<GasSpec> {
             "S",
             [0, 0, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     882.117, 1400.0, 27.45968, -13.32784, 10.06574, -2.662381, -0.055851, 269.1149,
                     204.2955,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1400.0, 6000.0, 16.55345, 2.400266, -0.255760, 0.005821, 3.564793, 278.4356,
                     194.5447,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "S2",
             [0, 0, 0, 0, 2],
-            vec![s_seg(
+            vec![s_seg([
                 298.0, 6000.0, 33.51313, 5.065360, -1.059670, 0.089905, -0.211911, 117.6855,
                 266.0919,
-            )],
+            ])],
         ),
         shomate_spec(
             "SH",
             [1, 0, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1200.0, 38.04306, -27.46792, 34.06462, -11.79875, -0.009743, 128.8961,
                     248.3945,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1200.0, 6000.0, 32.99507, 2.841514, -0.507766, 0.038247, -2.909667, 124.4870,
                     230.0066,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "H2S",
             [2, 0, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1400.0, 26.88412, 18.67809, 3.434203, -3.378702, 0.135882, -28.91211,
                     233.3747,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1400.0, 6000.0, 51.22136, 4.147486, -0.643566, 0.041621, -10.46385, -55.87606,
                     243.6900,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "SO",
             [0, 0, 1, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1400.0, 22.56414, 29.93305, -22.87987, 6.408968, 0.047560, -2.702237,
                     241.5511,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1400.0, 6000.0, 23.50387, 10.82133, -2.260566, 0.168555, 5.052557, 5.425853,
                     254.7734,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "SO2",
             [0, 0, 2, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1200.0, 21.43049, 74.35094, -57.75217, 16.35534, 0.086731, -305.7688,
                     254.8872,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1200.0, 6000.0, 57.48188, 1.009328, -0.076290, 0.005174, -4.045401, -324.4140,
                     302.7798,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "CS",
             [0, 1, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 600.0, 21.76387, 24.99890, -8.095581, -4.563949, 0.126372, 273.2328,
                     230.5497,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     600.0, 6000.0, 34.47721, 2.966255, -0.950722, 0.113718, -0.997482, 267.0275,
                     247.0731,
-                ),
+                ]),
             ],
         ),
         shomate_spec(
             "OCS",
             [0, 1, 1, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1200.0, 34.53892, 43.05378, -26.61773, 6.338844, -0.327515, -151.5001,
                     259.8118,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1200.0, 6000.0, 60.32240, 1.738332, -0.209982, 0.014110, -5.128873, -168.6307,
                     287.6454,
-                ),
+                ]),
             ],
         ),
     ]
@@ -843,8 +840,8 @@ fn gas_residual(lam: &[f64], specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64]) ->
             continue;
         };
         let mut phi = -g - ln_p;
-        for j in 0..nelem {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+            phi += f as f64 * l;
         }
         let e = phi.exp();
         if !e.is_finite() {
@@ -852,8 +849,8 @@ fn gas_residual(lam: &[f64], specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64]) ->
         }
         e_sum += e;
         let ni = big_n * e;
-        for j in 0..nelem {
-            r[j] += s.formula[j] as f64 * ni;
+        for (j, rj) in r.iter_mut().enumerate().take(nelem) {
+            *rj += s.formula[j] as f64 * ni;
         }
     }
     r[nelem] = e_sum - 1.0;
@@ -873,8 +870,8 @@ fn gas_newton_step(specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64], lam: &mut [f
                 continue;
             };
             let mut phi = -g - ln_p;
-            for j in 0..nelem {
-                phi += s.formula[j] as f64 * lam[j];
+            for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+                phi += f as f64 * l;
             }
             e[i] = phi.exp();
             n[i] = big_n * e[i];
@@ -895,21 +892,21 @@ fn gas_newton_step(specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64], lam: &mut [f
         }
         let dim = nelem + 1;
         let mut jac = vec![vec![0.0f64; dim]; dim];
-        for j in 0..nelem {
-            for k in 0..nelem {
+        for (j, row) in jac.iter_mut().enumerate().take(nelem) {
+            for (k, jk) in row.iter_mut().enumerate().take(nelem) {
                 for (i, s) in specs.iter().enumerate() {
-                    jac[j][k] += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
+                    *jk += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
                 }
             }
         }
-        for j in 0..nelem {
+        for (j, row) in jac.iter_mut().enumerate().take(nelem) {
             for (i, s) in specs.iter().enumerate() {
-                jac[j][nelem] += s.formula[j] as f64 * n[i];
+                row[nelem] += s.formula[j] as f64 * n[i];
             }
         }
-        for k in 0..nelem {
+        for (k, jk) in jac[nelem].iter_mut().enumerate().take(nelem) {
             for (i, s) in specs.iter().enumerate() {
-                jac[nelem][k] += s.formula[k] as f64 * e[i];
+                *jk += s.formula[k] as f64 * e[i];
             }
         }
         let mut dl = vec![0.0f64; dim];
@@ -941,7 +938,7 @@ fn gas_newton_step(specs: &[GasSpec], t: f64, ln_p: f64, b: &[f64], lam: &mut [f
 }
 
 fn solve_gas(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
-    if !t_k.is_finite() || t_k < 500.0 || t_k > 3000.0 || !p_pa.is_finite() || p_pa <= 0.0 {
+    if !t_k.is_finite() || !(500.0..=3000.0).contains(&t_k) || !p_pa.is_finite() || p_pa <= 0.0 {
         return None;
     }
     if b.iter().any(|x| !x.is_finite() || *x <= 0.0) {
@@ -949,9 +946,7 @@ fn solve_gas(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f6
     }
     let nelem = b.len();
     let ln_p = (p_pa / P0_PA).ln();
-    let Some(atomic_species) = gas_atomic_species_indices(specs, nelem) else {
-        return None;
-    };
+    let atomic_species = gas_atomic_species_indices(specs, nelem)?;
     let mut lam = vec![0.0f64; nelem + 1];
     for (j, &ai) in atomic_species.iter().enumerate() {
         let g = gas_g_over_rt(&specs[ai], 6000.0)?;
@@ -979,8 +974,8 @@ fn solve_gas(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option<Vec<f6
             continue;
         };
         let mut phi = -g - ln_p;
-        for j in 0..nelem {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+            phi += f as f64 * l;
         }
         n[i] = big_n * phi.exp();
     }
@@ -1049,147 +1044,147 @@ fn halogen_shomate_species() -> Vec<HalogenSpec> {
         hshomate_spec(
             "F2",
             [0, 0, 0, 0, 0, 2, 0],
-            vec![s_seg(
+            vec![s_seg([
                 298.0, 6000.0, 31.44510, 8.413831, -2.778850, 0.218104, -0.211175, -10.43260,
                 237.2770,
-            )],
+            ])],
         ),
         hshomate_spec(
             "F",
             [0, 0, 0, 0, 0, 1, 0],
-            vec![s_seg(
+            vec![s_seg([
                 298.0, 6000.0, 21.97336, -0.958182, 0.251916, -0.021107, 0.103471, 73.22586,
                 186.2286,
-            )],
+            ])],
         ),
         hshomate_spec(
             "HF",
             [1, 0, 0, 0, 0, 1, 0],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1000.0, 30.11693, -3.246612, 2.868116, 0.457914, -0.024861, -281.4912,
                     210.9226,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1000.0, 6000.0, 24.57033, 6.893391, -1.243874, 0.082583, -0.234060, -279.7653,
                     202.8525,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "Cl2",
             [0, 0, 0, 0, 0, 0, 2],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1000.0, 33.05060, 12.22940, -12.06510, 4.385330, -0.159494, -10.83480,
                     259.0290,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1000.0, 3000.0, 42.67730, -5.009570, 1.904621, -0.165641, -2.098480, -17.28980,
                     269.8400,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     3000.0, 6000.0, -42.55350, 41.68570, -7.126830, 0.387839, 101.1440, 132.7640,
                     264.7860,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "Cl",
             [0, 0, 0, 0, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 600.0, 13.38298, 42.33999, -64.74656, 32.99532, 0.063319, 116.1491,
                     171.7038,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     600.0, 6000.0, 23.26597, -1.555939, 0.346910, -0.025961, 0.153212, 114.6604,
                     193.8882,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "HCl",
             [1, 0, 0, 0, 0, 0, 1],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1200.0, 32.12392, -13.45805, 19.86852, -6.853936, -0.049672, -101.6206,
                     228.6866,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1200.0, 6000.0, 31.91923, 3.203184, -0.541539, 0.035925, -3.438525, -108.0150,
                     218.2768,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "CF4",
             [0, 1, 0, 0, 0, 4, 0],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1000.0, 15.96778, 210.3318, -189.4657, 62.20227, -0.217317, -946.4877,
                     224.6766,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1000.0, 6000.0, 106.2221, 1.076122, -0.223192, 0.015753, -8.340679, -987.7755,
                     355.9764,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "CFCl3",
             [0, 1, 0, 0, 0, 1, 3],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 600.0, 34.06650, 230.4309, -289.4558, 135.5248, -0.232263, -307.5847,
                     292.6202,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     600.0, 6000.0, 106.2694, 1.245277, -0.292652, 0.022658, -3.710084, -331.8887,
                     419.8728,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "CF2Cl2",
             [0, 1, 0, 0, 0, 2, 2],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1100.0, 48.01014, 139.1808, -124.3326, 39.75147, -0.633834, -513.2304,
                     319.1028,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1100.0, 6000.0, 107.3635, 0.404844, -0.082033, 0.005689, -5.707394, -539.7486,
                     406.4660,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "SF6",
             [0, 0, 0, 0, 1, 6, 0],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1000.0, 58.90319, 255.5399, -252.2747, 88.76063, -1.608971, -1252.744,
                     287.9914,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1000.0, 6000.0, 157.1393, 0.484022, -0.100724, 0.007127, -8.279635, -1291.990,
                     443.2111,
-                ),
+                ]),
             ],
         ),
         hshomate_spec(
             "NF3",
             [0, 0, 0, 1, 0, 3, 0],
             vec![
-                s_seg(
+                s_seg([
                     298.0, 1000.0, 26.45610, 142.2606, -137.6134, 47.68505, -0.404491, -146.5375,
                     253.7876,
-                ),
-                s_seg(
+                ]),
+                s_seg([
                     1000.0, 6000.0, 82.54781, 0.345728, -0.071941, 0.005089, -4.482487, -169.6763,
                     340.7860,
-                ),
+                ]),
             ],
         ),
     ]
@@ -1263,8 +1258,8 @@ fn halogen_residual(
             continue;
         };
         let mut phi = -g - ln_p;
-        for j in 0..nelem {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+            phi += f as f64 * l;
         }
         let e = phi.exp();
         if !e.is_finite() {
@@ -1272,8 +1267,8 @@ fn halogen_residual(
         }
         e_sum += e;
         let ni = big_n * e;
-        for j in 0..nelem {
-            r[j] += s.formula[j] as f64 * ni;
+        for (j, rj) in r.iter_mut().enumerate().take(nelem) {
+            *rj += s.formula[j] as f64 * ni;
         }
     }
     r[nelem] = e_sum - 1.0;
@@ -1300,8 +1295,8 @@ fn halogen_newton_step(
                 continue;
             };
             let mut phi = -g - ln_p;
-            for j in 0..nelem {
-                phi += s.formula[j] as f64 * lam[j];
+            for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+                phi += f as f64 * l;
             }
             e[i] = phi.exp();
             n[i] = big_n * e[i];
@@ -1321,21 +1316,21 @@ fn halogen_newton_step(
             return true;
         }
         let mut jac = vec![vec![0.0f64; dim]; dim];
-        for j in 0..nelem {
-            for k in 0..nelem {
+        for (j, row) in jac.iter_mut().enumerate().take(nelem) {
+            for (k, jk) in row.iter_mut().enumerate().take(nelem) {
                 for (i, s) in specs.iter().enumerate() {
-                    jac[j][k] += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
+                    *jk += s.formula[j] as f64 * s.formula[k] as f64 * n[i];
                 }
             }
         }
-        for j in 0..nelem {
+        for (j, row) in jac.iter_mut().enumerate().take(nelem) {
             for (i, s) in specs.iter().enumerate() {
-                jac[j][nelem] += s.formula[j] as f64 * n[i];
+                row[nelem] += s.formula[j] as f64 * n[i];
             }
         }
-        for k in 0..nelem {
+        for (k, jk) in jac[nelem].iter_mut().enumerate().take(nelem) {
             for (i, s) in specs.iter().enumerate() {
-                jac[nelem][k] += s.formula[k] as f64 * e[i];
+                *jk += s.formula[k] as f64 * e[i];
             }
         }
         let mut dl = vec![0.0f64; dim];
@@ -1400,8 +1395,8 @@ fn halogen_ramp(specs: &[HalogenSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option
             continue;
         };
         let mut phi = -g - ln_p;
-        for j in 0..nelem {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+            phi += f as f64 * l;
         }
         n[i] = big_n * phi.exp();
     }
@@ -1416,7 +1411,7 @@ fn halogen_ramp(specs: &[HalogenSpec], b: &[f64], t_k: f64, p_pa: f64) -> Option
 }
 
 pub fn equilibrium_composition_halogen(t_k: f64, p_pa: f64) -> Option<Vec<f64>> {
-    if !t_k.is_finite() || t_k < 500.0 || t_k > 3000.0 || !p_pa.is_finite() || p_pa <= 0.0 {
+    if !t_k.is_finite() || !(500.0..=3000.0).contains(&t_k) || !p_pa.is_finite() || p_pa <= 0.0 {
         return None;
     }
     let specs = halogen_specs();
@@ -1450,9 +1445,9 @@ fn water_liquid() -> CondensateSpec {
         name: "H2O(l)",
         vapor: "H2O",
         formula: [2, 0, 1, 0, 0],
-        segs: vec![s_seg(
+        segs: vec![s_seg([
             298.15, 500.0, -203.6060, 1523.290, -3196.413, 2474.455, 3.855326, -256.5478, -488.7163,
-        )],
+        ])],
     }
 }
 
@@ -1468,7 +1463,7 @@ pub fn equilibrium_composition_condensed_scaled(
     p_pa: f64,
     feh: f64,
 ) -> Option<CoolEquilibrium> {
-    if !t_k.is_finite() || t_k < COOL_T_MIN || t_k > COOL_T_MAX {
+    if !t_k.is_finite() || !(COOL_T_MIN..=COOL_T_MAX).contains(&t_k) {
         return None;
     }
     if !p_pa.is_finite() || p_pa <= 0.0 {
@@ -1639,8 +1634,8 @@ fn ramp_gas_equilibrium(specs: &[GasSpec], b: &[f64], t_k: f64, p_pa: f64) -> Op
             continue;
         };
         let mut phi = -g - ln_p;
-        for j in 0..nelem {
-            phi += s.formula[j] as f64 * lam[j];
+        for (&f, &l) in s.formula.iter().zip(lam.iter()).take(nelem) {
+            phi += f as f64 * l;
         }
         n[i] = big_n * phi.exp();
     }
@@ -1693,7 +1688,7 @@ pub fn equilibrium_composition_condensed_budget(
     p_pa: f64,
     b: [f64; NELEM_S],
 ) -> Option<CoolEquilibrium> {
-    if !t_k.is_finite() || t_k < COOL_T_MIN || t_k > COOL_T_MAX {
+    if !t_k.is_finite() || !(COOL_T_MIN..=COOL_T_MAX).contains(&t_k) {
         return None;
     }
     if !p_pa.is_finite() || p_pa <= 0.0 {
@@ -1732,8 +1727,8 @@ mod tests {
         let specs = species();
         let mut a = [0.0f64; 4];
         for (i, s) in specs.iter().enumerate() {
-            for j in 0..4 {
-                a[j] += s.formula[j] as f64 * x[i];
+            for (j, aj) in a.iter_mut().enumerate() {
+                *aj += s.formula[j] as f64 * x[i];
             }
         }
         let r = |v: f64| v / a[0];
@@ -1941,8 +1936,8 @@ mod tests {
         let specs = sulfur_gas_specs();
         let mut atoms = [0.0f64; NELEM_S];
         for (i, s) in specs.iter().enumerate() {
-            for j in 0..NELEM_S {
-                atoms[j] += s.formula[j] as f64 * x[i];
+            for (j, aj) in atoms.iter_mut().enumerate() {
+                *aj += s.formula[j] as f64 * x[i];
             }
         }
         let solar5 = sulfur_solar();
@@ -2048,12 +2043,12 @@ mod tests {
     fn condensed_gas_path_matches_the_archival_solvers_above_500k() {
         let cool = equilibrium_composition_condensed(500.0, P0_PA).unwrap();
         let sulfur = equilibrium_composition_sulfur(500.0, P0_PA).unwrap();
-        for i in 0..24 {
+        for (i, (&cf, &sf)) in cool.frac.iter().zip(sulfur.iter()).enumerate() {
             assert!(
-                (cool.frac[i] - sulfur[i]).abs() < 1e-12,
+                (cf - sf).abs() < 1e-12,
                 "slot {i}: cool {:.6e} vs sulfur {:.6e}",
-                cool.frac[i],
-                sulfur[i]
+                cf,
+                sf
             );
         }
         assert_eq!(cool.h2o_condensed_moles, 0.0);
@@ -2255,8 +2250,8 @@ mod tests {
         let specs = halogen_specs();
         let mut atoms = [0.0f64; NELEM_HALOGEN];
         for (i, s) in specs.iter().enumerate() {
-            for j in 0..NELEM_HALOGEN {
-                atoms[j] += s.formula[j] as f64 * x[i];
+            for (j, aj) in atoms.iter_mut().enumerate() {
+                *aj += s.formula[j] as f64 * x[i];
             }
         }
         let solar7 = halogen_solar();
@@ -2355,11 +2350,11 @@ mod tests {
     #[test]
     fn measured_budget_solar_rows_equal_the_solar_budget() {
         let b = elemental_budget_sulfur(0.0, 0.0, Some(0.0), 0.0).unwrap();
-        for j in 0..NELEM_S {
+        for (j, &bj) in b.iter().enumerate() {
             assert!(
-                b[j] == sulfur_solar()[j],
+                bj == sulfur_solar()[j],
                 "element {j}: {:.6e} vs solar {:.6e}",
-                b[j],
+                bj,
                 sulfur_solar()[j]
             );
         }
@@ -2382,11 +2377,11 @@ mod tests {
         assert!(elemental_budget_sulfur(0.0, f64::INFINITY, Some(0.0), 0.0).is_none());
         assert!(elemental_budget_sulfur(0.0, 0.0, None, f64::INFINITY).is_none());
         let b = elemental_budget_sulfur(0.0, 0.0, Some(f64::NAN), 0.0).unwrap();
-        for j in 0..NELEM_S {
+        for (j, &bj) in b.iter().enumerate() {
             assert!(
-                b[j] == sulfur_solar()[j],
+                bj == sulfur_solar()[j],
                 "element {j}: {:.6e} vs solar {:.6e}",
-                b[j],
+                bj,
                 sulfur_solar()[j]
             );
         }
@@ -2437,8 +2432,8 @@ mod tests {
         );
         let mut atoms = [0.0f64; NELEM_S];
         for (i, s) in specs.iter().enumerate() {
-            for j in 0..NELEM_S {
-                atoms[j] += s.formula[j] as f64 * o_rich[i];
+            for (j, aj) in atoms.iter_mut().enumerate() {
+                *aj += s.formula[j] as f64 * o_rich[i];
             }
         }
         for j in 1..NELEM_S {

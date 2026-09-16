@@ -21,7 +21,7 @@ pub fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
         None => (after, ""),
     };
     let host = netloc.strip_prefix("www.").unwrap_or(netloc);
-    let path = rest.split(|c| c == '?' || c == '#').next().unwrap_or("");
+    let path = rest.split(['?', '#']).next().unwrap_or("");
     let mut segs: Vec<String> = Vec::new();
     for s in path.split('/') {
         if s.is_empty() {
@@ -109,7 +109,7 @@ pub fn reference_name_from_url(url: &str) -> String {
         None => without_query,
     };
     match after_scheme.split_once('/') {
-        Some((_, path)) => match path.split('/').filter(|s| !s.is_empty()).last() {
+        Some((_, path)) => match path.split('/').rfind(|s| !s.is_empty()) {
             Some(seg) => seg.to_string(),
             None => "reference".to_string(),
         },

@@ -367,11 +367,7 @@ fn tar_octal(field: &[u8]) -> Option<usize> {
         value = value * 8 + (b - b'0') as usize;
         any = true;
     }
-    if any {
-        Some(value)
-    } else {
-        None
-    }
+    if any { Some(value) } else { None }
 }
 
 fn tar_text(field: &[u8]) -> String {
@@ -745,10 +741,8 @@ impl<R: std::io::Read> ZStream<'_, R> {
                 }
             }
         }
-        if flags & 0x02 != 0 {
-            if self.read_raw(&mut rest[..2])? != 2 {
-                return Err("gzip FHCRC field is shorter than 2 bytes".into());
-            }
+        if flags & 0x02 != 0 && self.read_raw(&mut rest[..2])? != 2 {
+            return Err("gzip FHCRC field is shorter than 2 bytes".into());
         }
         self.decode_deflate()?;
         self.align_byte();
@@ -768,7 +762,7 @@ impl<R: std::io::Read> ZStream<'_, R> {
                 "gzip trailer crc32 {stored_crc:08x} differs from the stream crc32 {final_crc:08x}"
             ));
         }
-        if (stored_len as u64) != (member_len & 0xFFFF_FFFF) {
+        if stored_len != (member_len & 0xFFFF_FFFF) {
             return Err(format!(
                 "gzip trailer isize {stored_len} differs from the stream length {member_len}"
             ));

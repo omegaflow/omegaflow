@@ -1,13 +1,12 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File,
+    Endian, GeostationaryProjection, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64,
 };
 use std::io::{BufWriter, Write};
 use std::process::Command;
 
 const CDN_TAG: &str = "noaa-goes19.s3.amazonaws.com";
-const GSICS_DEFAULT_URL: &str =
-    "https://www.star.nesdis.noaa.gov/GOESCal/images/GSICS/GSICS_Harmonization_release_May2025_current.txt";
+const GSICS_DEFAULT_URL: &str = "https://www.star.nesdis.noaa.gov/GOESCal/images/GSICS/GSICS_Harmonization_release_May2025_current.txt";
 const MAGIC: [u8; 4] = *b"GAB1";
 const VERSION: u8 = 1;
 const HDR_LEN: usize = 12;

@@ -301,11 +301,7 @@ pub fn nutation_matrix(jd_tt: f64, forward: bool) -> [f64; 9] {
     let (dpsi, deps) = nutation_iau80(jd_tt);
     let eps = mean_obliquity_iau80(jd_tt);
     let m = mat3_mul(&rot_x(eps + deps), &mat3_mul(&rot_z(dpsi), &rot_x(-eps)));
-    if forward {
-        m
-    } else {
-        mat3_transpose(&m)
-    }
+    if forward { m } else { mat3_transpose(&m) }
 }
 
 pub fn aberration_apply(u: [f64; 3], v: [f64; 3], forward: bool) -> Option<[f64; 3]> {
@@ -432,8 +428,8 @@ mod tests {
     #[test]
     fn nutation_iau80_reproduces_the_sofa_2006_vector() {
         let (dpsi, deps) = nutation_iau80(2453736.5);
-        assert!(near(dpsi, -0.9643658353226563966e-5, 1e-15));
-        assert!(near(deps, 0.4060051006879713322e-4, 1e-15));
+        assert!(near(dpsi, -9.643_658_353_226_563e-6, 1e-15));
+        assert!(near(deps, 4.060_051_006_879_713e-5, 1e-15));
     }
 
     #[test]

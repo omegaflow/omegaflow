@@ -177,11 +177,7 @@ fn current_head_short() -> Option<String> {
         return None;
     }
     let sha = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if sha.is_empty() {
-        None
-    } else {
-        Some(sha)
-    }
+    if sha.is_empty() { None } else { Some(sha) }
 }
 
 fn zustand_status(

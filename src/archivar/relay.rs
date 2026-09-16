@@ -4,7 +4,7 @@ use crate::mathematikerin::{DiodeState, PresenceFrame};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{mpsc, Arc, Mutex, RwLock};
+use std::sync::{Arc, Mutex, RwLock, mpsc};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
 const KINETIC_TAG: u8 = 10;
@@ -773,15 +773,17 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 }
                 sense_membrane(
                     &field,
-                    center,
-                    t0,
-                    extent,
-                    delta_t_cache,
-                    &floor,
-                    softening,
-                    [0.0, 0.0, 0.0],
+                    MembraneCtx {
+                        center,
+                        t2: t0,
+                        pad: extent,
+                        delta_t_cache,
+                        floor: &floor,
+                        softening,
+                        forward: [0.0, 0.0, 0.0],
+                        eph: &eph_map,
+                    },
                     &mut records,
-                    &eph_map,
                 );
                 response_epoch = t0;
             } else {

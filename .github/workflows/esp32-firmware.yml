@@ -34,11 +34,12 @@ jobs:
         cargo install espup --locked
         espup install
     - name: Build the esp-hal firmware for xtensa-esp32s3-none-elf
+      working-directory: firmware/radiatorium
       env:
         RUSTUP_TOOLCHAIN: esp
       run: |
         . $HOME/export-esp.sh
-        cargo build --release --manifest-path firmware/radiatorium/Cargo.toml
+        cargo build --release
     - name: Wrap the ELF into a Wokwi-ready merged image
       run: |
         cargo install espflash --locked
