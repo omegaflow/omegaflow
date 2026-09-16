@@ -214,7 +214,7 @@ pub fn heasarc_lines(query: &str, max: usize) -> Vec<String> {
     );
     match get(&url, &[], "40") {
         Some(f) if f.status == Some(200) => {
-            let lines = parse_heasarc_fits(f.body.as_bytes(), max);
+            let lines = parse_heasarc_fits(&f.raw, max);
             if lines.is_empty() {
                 vec!["pending — heasarc: the body carries no FITS table".to_string()]
             } else {
