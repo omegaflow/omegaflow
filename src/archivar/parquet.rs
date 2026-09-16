@@ -731,7 +731,7 @@ fn uvarint_at(data: &[u8], pos: usize) -> Result<(u64, usize), ParquetNote> {
 
 fn rle_bitpacked(data: &[u8], bit_width: u8, target: usize) -> Result<Vec<u32>, ParquetNote> {
     let mut out = Vec::with_capacity(target);
-    let bytes_per_val = (bit_width as usize + 7) / 8;
+    let bytes_per_val = (bit_width as usize).div_ceil(8);
     let mut pos = 0usize;
     while out.len() < target {
         let (header, used) = uvarint_at(data, pos)?;
@@ -780,7 +780,7 @@ fn decode_plain(
     let mut out = Vec::with_capacity(count);
     match type_tag {
         0 => {
-            let body = slice_at(data, 0, (count + 7) / 8)?;
+            let body = slice_at(data, 0, count.div_ceil(8))?;
             for i in 0..count {
                 out.push(ParquetValue::Bool((body[i / 8] >> (i % 8)) & 1 == 1));
             }

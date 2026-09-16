@@ -226,10 +226,10 @@ pub fn parse_series(text: &str, file_id: u32) -> Vec<(f64, u32, f64)> {
             if k as u32 >= CHAN_MASK {
                 break;
             }
-            if let Ok(v) = f.trim().parse::<f64>() {
-                if v.is_finite() {
-                    out.push((t, file_id << FILE_SHIFT | k as u32, v));
-                }
+            if let Ok(v) = f.trim().parse::<f64>()
+                && v.is_finite()
+            {
+                out.push((t, file_id << FILE_SHIFT | k as u32, v));
             }
         }
     }
@@ -352,14 +352,14 @@ mod tests {
             None,
             "raw 6-bit word stays undecoded"
         );
-        assert!(channel_name(99 << FILE_SHIFT | 0).is_none());
+        assert!(channel_name(99 << FILE_SHIFT).is_none());
     }
 
     #[test]
     fn bin_roundtrip() {
         let records = vec![
-            (-220_000_000.0, 205.022, 12 << FILE_SHIFT | 0),
-            (10.0, 160.504, 3 << FILE_SHIFT | 0),
+            (-220_000_000.0, 205.022, 12 << FILE_SHIFT),
+            (10.0, 160.504, 3 << FILE_SHIFT),
             (10.0, -27.148, 8 << FILE_SHIFT | 4),
         ];
         let bytes = write_bin(&records);

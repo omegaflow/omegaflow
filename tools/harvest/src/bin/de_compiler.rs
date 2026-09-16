@@ -5,7 +5,7 @@ use std::process::Command;
 use omegaflow::archivar::motion::parse_ephemeris_binary;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::upload_release;
-use omegaflow::ephemeris::{extract_granules, pck_id_of, write_binary, GRANULE_DAYS};
+use omegaflow::ephemeris::{GRANULE_DAYS, extract_granules, pck_id_of, write_binary};
 use omegaflow::fk::FkFile;
 use omegaflow::pck::{self, PckBody};
 
@@ -54,11 +54,7 @@ fn body_pck_text(local: &[String]) -> Option<String> {
             }
         }
     }
-    if text.is_empty() {
-        None
-    } else {
-        Some(text)
-    }
+    if text.is_empty() { None } else { Some(text) }
 }
 
 fn resolved_bodies(bsps: &[PathBuf]) -> BTreeMap<i32, String> {
@@ -92,7 +88,9 @@ fn main() {
         eprintln!(
             "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--ci-mode]"
         );
-        eprintln!("  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin");
+        eprintln!(
+            "  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin"
+        );
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
         eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov");
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");

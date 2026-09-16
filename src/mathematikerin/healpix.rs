@@ -6,11 +6,15 @@ const JPLL: [i64; 12] = [1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7];
 const GAL2EQ: [[f64; 3]; 3] = [
     [-0.0548755604162154, 0.4941094278755837, -0.8676661490190047],
     [
-        -0.8734370902348850,
+        -0.873_437_090_234_885,
         -0.4448296299600112,
         -0.1980763734312015,
     ],
-    [-0.4838350155487132, 0.7469822444972189, 0.4559837761750669],
+    [
+        -0.4838350155487132,
+        0.746_982_244_497_219,
+        0.4559837761750669,
+    ],
 ];
 
 pub fn nside_from_npix(npix: i64) -> Option<i64> {
@@ -50,7 +54,7 @@ pub fn pix2ang_nest(nside: i64, pix: i64) -> Option<(f64, f64)> {
     if pix < 0 || pix >= npix {
         return None;
     }
-    let order = nside.trailing_zeros() as u32;
+    let order = nside.trailing_zeros();
     let npface = nside * nside;
     let face = (pix >> (2 * order)) as usize;
     let ipf = (pix & (npface - 1)) as u64;
@@ -125,7 +129,7 @@ fn xyf2nest(ix: i64, iy: i64, face: i64, order: u32) -> i64 {
 pub fn ang2pix_nest(nside: i64, theta: f64, phi: f64) -> Option<i64> {
     let z = theta.cos();
     let za = z.abs();
-    let order = nside.trailing_zeros() as u32;
+    let order = nside.trailing_zeros();
     let n = nside as f64;
     let tt = (phi * (2.0 / PI)).rem_euclid(4.0);
     let pix = if za <= 2.0 / 3.0 {

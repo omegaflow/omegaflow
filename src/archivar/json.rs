@@ -216,19 +216,16 @@ impl<'a> JsonParser<'a> {
                                     {
                                         if let Ok(hex_lo) = std::str::from_utf8(
                                             &self.chars[self.pos + 2..self.pos + 6],
-                                        ) {
-                                            if let Ok(lo) = u32::from_str_radix(hex_lo, 16) {
-                                                if (0xDC00..=0xDFFF).contains(&lo) {
-                                                    self.pos += 6;
-                                                    let combined = 0x10000
-                                                        + ((cp - 0xD800) << 10)
-                                                        + (lo - 0xDC00);
-                                                    if let Some(ch) = char::from_u32(combined) {
-                                                        s.push(ch);
-                                                    }
-                                                    continue;
-                                                }
+                                        ) && let Ok(lo) = u32::from_str_radix(hex_lo, 16)
+                                            && (0xDC00..=0xDFFF).contains(&lo)
+                                        {
+                                            self.pos += 6;
+                                            let combined =
+                                                0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
+                                            if let Some(ch) = char::from_u32(combined) {
+                                                s.push(ch);
                                             }
+                                            continue;
                                         }
                                     } else if let Some(ch) = char::from_u32(cp) {
                                         s.push(ch);

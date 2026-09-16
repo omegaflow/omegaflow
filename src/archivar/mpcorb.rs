@@ -3,6 +3,7 @@ pub const RECORD_STRIDE: usize = 85;
 
 pub const FLAG_H_PRESENT: u8 = 1;
 pub const FLAG_G_PRESENT: u8 = 2;
+pub const FLAG_NUMBER_PRESENT: u8 = 4;
 
 #[derive(Clone, Copy, Debug)]
 pub struct MpcorbRec {
@@ -83,16 +84,16 @@ pub fn parse_record(buf: &[u8]) -> Option<MpcorbRec> {
 }
 
 pub fn state_at(rec: &MpcorbRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
-    crate::kepler::elements_to_icrs_state(
-        rec.a_au,
-        rec.e,
-        rec.incl_deg,
-        rec.node_deg,
-        rec.peri_deg,
-        rec.ma_deg,
-        rec.epoch_jd,
+    crate::kepler::elements_to_icrs_state(&crate::kepler::KeplerElements {
+        a_au: rec.a_au,
+        e: rec.e,
+        incl_deg: rec.incl_deg,
+        node_deg: rec.node_deg,
+        peri_deg: rec.peri_deg,
+        ma_deg: rec.ma_deg,
+        epoch_jd: rec.epoch_jd,
         t_jd,
-    )
+    })
 }
 
 fn number_of(text: &str) -> Option<u32> {
@@ -123,7 +124,7 @@ pub fn rec_from_object(obj: &crate::json::JsonVal) -> Option<MpcorbRec> {
     if !epoch_jd.is_finite() || !a_au.is_finite() || a_au <= 0.0 {
         return None;
     }
-    if !e.is_finite() || e < 0.0 || e >= 1.0 {
+    if !e.is_finite() || !(0.0..1.0).contains(&e) {
         return None;
     }
     if !incl_deg.is_finite()
@@ -139,27 +140,28 @@ pub fn rec_from_object(obj: &crate::json::JsonVal) -> Option<MpcorbRec> {
         return None;
     }
     desig_bytes[..bytes.len()].copy_from_slice(bytes);
-    let number = match crate::json::jstr(obj, "Number")
+    let mut flags = 0u8;
+    let mut number = 0u32;
+    if let Some(n) = crate::json::jstr(obj, "Number")
         .as_deref()
         .and_then(number_of)
     {
-        Some(n) => n,
-        None => 0,
-    };
-    let mut flags = 0u8;
+        number = n;
+        flags |= FLAG_NUMBER_PRESENT;
+    }
     let mut h_mag = 0.0f32;
     let mut g_mag = 0.0f32;
-    if let Some(h) = crate::json::jnum(obj, "H") {
-        if h.is_finite() {
-            h_mag = h as f32;
-            flags |= FLAG_H_PRESENT;
-        }
+    if let Some(h) = crate::json::jnum(obj, "H")
+        && h.is_finite()
+    {
+        h_mag = h as f32;
+        flags |= FLAG_H_PRESENT;
     }
-    if let Some(g) = crate::json::jnum(obj, "G") {
-        if g.is_finite() {
-            g_mag = g as f32;
-            flags |= FLAG_G_PRESENT;
-        }
+    if let Some(g) = crate::json::jnum(obj, "G")
+        && g.is_finite()
+    {
+        g_mag = g as f32;
+        flags |= FLAG_G_PRESENT;
     }
     Some(MpcorbRec {
         number,
@@ -244,7 +246,10 @@ mod tests {
         let rec = rec_from_object(&obj).unwrap();
         assert_eq!(rec.number, 1);
         assert_eq!(desig_of(&rec), "A801 AA");
-        assert_eq!(rec.flags, FLAG_H_PRESENT | FLAG_G_PRESENT);
+        assert_eq!(
+            rec.flags,
+            FLAG_H_PRESENT | FLAG_G_PRESENT | FLAG_NUMBER_PRESENT
+        );
         assert!(!is_distant_object(&obj));
     }
 
@@ -300,7 +305,10 @@ mod tests {
         let rec = rec_from_object(&obj).unwrap();
         assert_eq!(rec.number, 90377);
         assert_eq!(desig_of(&rec), "2003 VB12");
-        assert_eq!(rec.flags, FLAG_H_PRESENT | FLAG_G_PRESENT);
+        assert_eq!(
+            rec.flags,
+            FLAG_H_PRESENT | FLAG_G_PRESENT | FLAG_NUMBER_PRESENT
+        );
     }
 
     #[test]

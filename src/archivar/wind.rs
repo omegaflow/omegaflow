@@ -29,7 +29,9 @@ pub fn write_bin(records: &[(f64, f64, f64, f64, u32)]) -> Vec<u8> {
     buf
 }
 
-pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, f64, f64, u32)>> {
+type WindRec = (f64, f64, f64, f64, u32);
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<WindRec>> {
     if bytes.len() < 8 || bytes[0..4] != MAGIC {
         return None;
     }

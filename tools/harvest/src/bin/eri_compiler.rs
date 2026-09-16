@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::tiff::{parse_tiff, GeoTransform, TiffImage};
+use omegaflow::archivar::tiff::{GeoTransform, TiffImage, parse_tiff};
 use omegaflow::cdn::upload_release;
 use std::io::{BufWriter, Write};
 

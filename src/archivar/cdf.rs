@@ -429,14 +429,12 @@ impl CdfFile {
                 }
                 compression_type = Some(ctype);
             }
-            if pad {
-                if let (Some(ts), true) = (type_size(data_type), data_type != TYPE_EPOCH16) {
-                    for i in 0..num_elements as usize {
-                        pad_value.push(
-                            decode_value(rec, coff + i * ts, data_type, little)
-                                .ok_or(CdfNote::EndAtByte { off })?,
-                        );
-                    }
+            if pad && let (Some(ts), true) = (type_size(data_type), data_type != TYPE_EPOCH16) {
+                for i in 0..num_elements as usize {
+                    pad_value.push(
+                        decode_value(rec, coff + i * ts, data_type, little)
+                            .ok_or(CdfNote::EndAtByte { off })?,
+                    );
                 }
             }
             vars.push(CdfVar {
@@ -609,7 +607,7 @@ mod tests {
                 TYPE_REAL8,
                 false
             ),
-            Some(3.14)
+            Some(f64::from_bits(0x4009_1eb8_51eb_851f))
         );
         assert_eq!(
             decode_value(&[0, 0, 0, 0, 0, 0, 0, 10], 0, TYPE_TT2000, false),
@@ -629,7 +627,7 @@ mod tests {
             Err(_) => return,
         };
         let file = CdfFile::parse(&bytes).unwrap();
-        assert_eq!(file.little_endian, false);
+        assert!(!file.little_endian);
         assert!(file.vars.iter().any(|v| v.name == "Epoch"));
         assert!(file.vars.iter().any(|v| v.name == "EDC_SRF"));
         let edc = file.var("EDC_SRF").unwrap();
@@ -678,7 +676,7 @@ mod tests {
             Err(_) => return,
         };
         let file = CdfFile::parse(&bytes).unwrap();
-        assert_eq!(file.little_endian, false);
+        assert!(!file.little_endian);
         assert!(file.vars.iter().any(|v| v.name == "E_VOLTAGE_RAD2"));
         let epoch = file.var("Epoch").unwrap();
         let epoch_records = file.var_records(&bytes, epoch).unwrap();
@@ -702,7 +700,7 @@ mod tests {
         };
         let file = CdfFile::parse(&bytes).unwrap();
         assert_eq!(file.version.0, 3);
-        assert_eq!(file.little_endian, false);
+        assert!(!file.little_endian);
         let rad1 = file.var("E_VOLTAGE_RAD1").unwrap();
         let records = file.var_records(&bytes, rad1).unwrap();
         assert_eq!(records.len(), 1440);

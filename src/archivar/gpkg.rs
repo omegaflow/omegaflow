@@ -106,10 +106,10 @@ impl SqliteDb {
         }
         let mut rows = Vec::new();
         for page in pages {
-            if let Some(slice) = self.page(page) {
-                if let Some(cells) = leaf_rows(slice, base_of(page)) {
-                    rows.extend(cells);
-                }
+            if let Some(slice) = self.page(page)
+                && let Some(cells) = leaf_rows(slice, base_of(page))
+            {
+                rows.extend(cells);
             }
         }
         rows
@@ -134,10 +134,10 @@ impl SqliteDb {
             if name_col != name {
                 continue;
             }
-            if let SqliteValue::Int(root) = row[3] {
-                if root > 0 {
-                    return Some(root as u32);
-                }
+            if let SqliteValue::Int(root) = row[3]
+                && root > 0
+            {
+                return Some(root as u32);
             }
         }
         None
@@ -180,11 +180,7 @@ pub fn read_sqlite(path: &str) -> Option<SqliteDb> {
 }
 
 fn base_of(num: u32) -> usize {
-    if num == 1 {
-        100
-    } else {
-        0
-    }
+    if num == 1 { 100 } else { 0 }
 }
 
 fn leaf_rows(page: &[u8], base: usize) -> Option<Vec<Vec<SqliteValue>>> {

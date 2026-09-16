@@ -45,7 +45,7 @@ impl BpcSegment {
         let intlen = trailer[1];
         let rsize = trailer[2] as usize;
         let n_records = trailer[3] as usize;
-        if rsize < 2 || (rsize - 2) % 3 != 0 {
+        if rsize < 2 || !(rsize - 2).is_multiple_of(3) {
             return Err("PCK type 2 RSIZE not 2 + 3N".to_string());
         }
         let n_coef = (rsize - 2) / 3;
@@ -136,10 +136,11 @@ impl BpcFile {
 
     pub fn orient(&self, body: i32, frame: i32, et: f64) -> Option<(f64, f64, f64)> {
         for seg in &self.segments {
-            if seg.body == body && seg.frame == frame {
-                if let Some(v) = seg.evaluate(et) {
-                    return Some(v);
-                }
+            if seg.body == body
+                && seg.frame == frame
+                && let Some(v) = seg.evaluate(et)
+            {
+                return Some(v);
             }
         }
         None
