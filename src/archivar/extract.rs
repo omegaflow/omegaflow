@@ -50,6 +50,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "dawn_odf" => odf::parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
+        "flac" => flac::parse_series(bytes),
         "bidsleep" => bidsleep::parse_bin(bytes),
         _ => None,
     }
@@ -213,6 +214,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             galileo_odr::COMP_AD2 => Some("galileo_odr_ad2_count"),
             galileo_odr::COMP_AD3 => Some("galileo_odr_ad3_count"),
             galileo_odr::COMP_AD4 => Some("galileo_odr_ad4_count"),
+            _ => None,
+        },
+        "flac" => match comp {
+            flac::COMP_PCM => Some("nrs_hydrophone_pcm"),
             _ => None,
         },
         "bidsleep" => match comp {
