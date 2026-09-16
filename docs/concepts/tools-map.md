@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: 8fdc4d077d76aa55fa6834a33716345e3bbf61039bd4a1f1c64247c898b8c58b
+  sha256: 06cb02fb3d067e79c04a9c582d222dff59937894ac435f76d788629071c07f53
   status: live
   see-also: AGENTS.md
 -->
@@ -19,13 +19,20 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 - Inhalt im lebenden Baum: `archive_search <kws> --root <dir>` (auf PATH) oder
   `sgrep [-i] <pattern> [dir]` — `sgrep` ist case-sensitiv ohne `-i`.
 - Pfade/Dateinamen: `archive_search --index [<query>] [--path] [--kind] [--sort]`.
-- `grep`, `ls`, `cat` **in bash** sind Verstöße (gemessener Zähler 132/36/3,
-  2026-09-16 — der Zähler gehört ins Handover). Das `Grep`-Tool von OpenCode ist
-  erlaubt; bash-`grep` ist es nicht. Die Leitbefehle (`grep`/`ls`/`cat` am
-  Kommandoanfang) sind in `opencode.json` **strukturell verweigert**
-  (`"grep *": "deny"`); eine Pipe (`cmd | grep`) fällt weiter unter die Regel und
-  den Zähler. Gemessene Nutzung (opencode.db, alle Sessions): `grep` 130, `ls` 29,
-  `cat` 11 gegen `archive_search` 94, `sfetch` 47, `sgrep` 20 — deshalb die Sperre.
+- `grep`, `ls`, `cat` **in bash** sind Verstöße (der Zähler gehört ins Handover).
+  Das `Grep`-Tool von OpenCode ist erlaubt; bash-`grep` ist es nicht. Die
+  Leitbefehle (`grep`/`ls`/`cat` am Kommandoanfang) sind in `opencode.json`
+  **strukturell verweigert** (`"grep *": "deny"`); eine Pipe (`cmd | grep`) fällt
+  weiter unter die Regel und den Zähler.
+- Neu gemessen 2026-09-16 11:00 (opencode.db, Fenster 2026-09-13 09:49 →
+  2026-09-16 11:00, gezählt je bash-Kommando): 206 bash-Aufrufe; `grep` 8 (alle 8
+  strukturell verweigert — 0 ausgeführt), `ls` 6, `cat` 3; dagegen `curl` 44,
+  `sgrep` 37, `archive_search` 20, `sfetch` 10; Playwright-Tool 14, bash-Playwright
+  2. Reibung: 18 verweigerte Aufrufe (17 bash, 1 read) — jeder `grep`/`ls`-Griff
+  kostete einen Turn, bevor die Sperre griff.
+- `curl` 44 > `archive_search` 20 ist kein Verstoß: die 44 tragen REST-APIs
+  (TAP/ERDDAP/GitHub), für die `archive_search` keinen Modus hat. Für Quellen und
+  JS-Seiten bleibt `archive_search <quelle>` / `--playwright` der erste Zug.
 - Das `--help` des Werkzeugs selbst ist die kanonische Schnittstelle — alle
   Aufrufe und Flags stehen dort (`sgrep --help`, `archive_search --help`,
   `git_safety`, `omega_sh help`, `smail`, `register_lookup`). Die
