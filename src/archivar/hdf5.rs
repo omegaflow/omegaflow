@@ -2203,6 +2203,14 @@ impl<'a> Hdf5File<'a> {
         Ok(out)
     }
 
+    pub fn attr_f64(&self, name: &str, attr: &str) -> Option<f64> {
+        self.attribute(name, attr).and_then(attr_number)
+    }
+
+    pub fn dims(&self, name: &str) -> Option<Vec<u64>> {
+        self.dataset(name).ok().map(|(_, ds, _)| ds.dims.clone())
+    }
+
     fn chunk_records_of(
         &self,
         obj: &Hdf5Object,
