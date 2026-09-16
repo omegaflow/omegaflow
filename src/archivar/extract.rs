@@ -350,6 +350,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_COSMIC_PRES => Some("cosmic_ro_pressure_hpa"),
             _ => None,
         },
+        "champ_plpt" => match comp {
+            crate::geo::COMP_CHAMP_DENS => Some("champ_plpt_electron_density_cm3"),
+            _ => None,
+        },
         _ => None,
     }
 }
@@ -1730,6 +1734,42 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         if off != buf.len() {
             return ExtractResult::Measurements(vec![]);
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "vlde" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(field) = crate::vlies::parse_asset(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::with_capacity(field.counts.len());
+        for (pix, &count) in field.counts.iter().enumerate() {
+            let Some(p) = crate::vlies::pixel_direction(field.nside, pix as i64) else {
+                return ExtractResult::Measurements(vec![]);
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::StateVector {
+                        p,
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    },
+                    name: fc.name.clone(),
+                    value: count as f64,
+                },
+                fc.clone(),
+            ));
         }
         return ExtractResult::Measurements(channels);
     }

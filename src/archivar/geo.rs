@@ -24,6 +24,7 @@ pub const MAGIC_ONC: [u8; 4] = *b"ONC1";
 pub const MAGIC_NXR: [u8; 4] = *b"NXR1";
 pub const MAGIC_USCRN: [u8; 4] = *b"USC1";
 pub const MAGIC_GDP: [u8; 4] = *b"GDPT";
+pub const MAGIC_CHAMP: [u8; 4] = *b"CHP1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -129,6 +130,8 @@ pub const COMP_NXR_MAX: u32 = 3;
 pub const COMP_USCRN_TEMP: u32 = 1;
 pub const COMP_USCRN_MAX: u32 = 1;
 
+pub const COMP_CHAMP_DENS: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -172,6 +175,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "nexrad_level2" => Some(MAGIC_NXR),
         "us_crn_hourly" => Some(MAGIC_USCRN),
         "gdp_drifter" => Some(MAGIC_GDP),
+        "champ_plpt" => Some(MAGIC_CHAMP),
         _ => None,
     }
 }
@@ -201,6 +205,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "nexrad_level2" => Some(COMP_NXR_MAX),
         "us_crn_hourly" => Some(COMP_USCRN_MAX),
         "gdp_drifter" => Some(crate::gdp_drifter::COMP_SST),
+        "champ_plpt" => Some(COMP_CHAMP_DENS),
         _ => None,
     }
 }
