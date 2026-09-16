@@ -908,19 +908,31 @@ impl OmegaLoop {
         oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
         let mut silent_worldlines = 0usize;
         if let Some(field) = self.latest_field.clone() {
-            for name in field.eph.keys() {
+            let mut body_names: Vec<&String> = field.eph.keys().collect();
+            body_names.sort();
+            for name in body_names {
                 match S2Osc::from_body(name, t, &field.eph) {
                     Some(o) => oscs.push(o),
                     None => silent_worldlines += 1,
                 }
             }
-            for meta in self.matrix.metas.values() {
+            let mut stations: Vec<(&String, &crate::machines::MetaAnchor)> = self
+                .matrix
+                .metas
+                .iter()
+                .filter_map(|(name, meta)| match &meta.anchor {
+                    anchor @ crate::machines::MetaAnchor::Surface { .. } => Some((name, anchor)),
+                    crate::machines::MetaAnchor::Barycenter { .. } => None,
+                })
+                .collect();
+            stations.sort_by(|a, b| a.0.cmp(b.0));
+            for (_, anchor) in stations {
                 let crate::machines::MetaAnchor::Surface {
                     body_name,
                     lat,
                     lon,
                     alt,
-                } = &meta.anchor
+                } = anchor
                 else {
                     continue;
                 };
