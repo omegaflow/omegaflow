@@ -9,31 +9,23 @@
 
 ausstehend
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Re-Messung 2026-09-16 (flash+pro übereinstimmend): sync-QUERY HTTP 500 (PostgreSQL-Backend down, localhost:5432), Root nur HTML; Schema-Discovery unmöglich. Re-Check-Pflicht, kein dead.
+note ivo://fai.kz/tap — Re-Messung 2026-09-16 (flash+pro übereinstimmend): sync-QUERY HTTP 500 (PostgreSQL-Backend down, localhost:5432), Root nur HTML; Schema-Discovery unmöglich. Erneut gemessen 2026-09-16: localhost:5432 refused, Dienst antwortet, Backend down. Re-Check-Pflicht, kein dead.
 
 ausstehend
 kandidat http://vo.lmd.jussieu.fr/tap
-note ivo://lmd.jussieu/tap — dritte Messung 2026-09-16 (grind-flash): Root HTTP 200 (12642 B), sync-QUERY 200 VOTable-Error (PostgreSQL-Backend, gleicher Ausfall wie dachs.fai.kz), Wayback 503. TAP-Front lebt, Backend down; Re-Check.
+note ivo://lmd.jussieu/tap — dritte Messung 2026-09-16 (grind-flash): Root HTTP 200 (12642 B), sync-QUERY 200 VOTable-Error (PostgreSQL-Backend, gleicher Ausfall wie dachs.fai.kz), Wayback 503. TAP-Front lebt, Backend down; Re-Check. Re-Messung 2026-09-16 https: Timeout; http-Route bleibt maßgeblich.
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — dritte Messung 2026-09-16 (grind-flash): sync-QUERY 200 (2×) VOTable-Error „connection pool is closed"; COUNT(*) nicht beantwortet. TAP-Front lebt, Pool down; Re-Check.
+note ivo://src.pas/tap — dritte Messung 2026-09-16 (grind-flash): sync-QUERY 200 (2×) VOTable-Error „connection pool is closed"; COUNT(*) nicht beantwortet. TAP-Front lebt, Pool down; Re-Check. Re-Messung 2026-09-16 https: abgelaufenes Zertifikat; http-Route bleibt maßgeblich.
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; EWCT −0,172 m/s, NSCT −0,087 m/s (45.66184 N, 13.587437 E), time_coverage_end 2026-07-30T23:30:00Z. Geschwister-Check (tabledap/allDatasets, datasetID=~"HFRADAR.*", 21 HFRADAR_*_Totals): frischester maxTime 2026-07-31T00:00:00Z — kein lebendes Geschwister, die ganze Familie steht seit ~2026-07-30/31. Kein sources.φ-Block. Nächster Schritt: maxTime der Familie erneut messen.
+note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; EWCT −0,172 m/s, NSCT −0,087 m/s (45.66184 N, 13.587437 E), time_coverage_end 2026-07-30T23:30:00Z. Geschwister-Check (tabledap/allDatasets, datasetID=~"HFRADAR.*", 21 HFRADAR_*_Totals): frischester maxTime 2026-07-31T00:00:00Z — kein lebendes Geschwister, die ganze Familie steht seit ~2026-07-30/31. Kein sources.φ-Block. Re-Messung 2026-09-16 bestätigt: letzter Zeitschritt 2026-07-30T23:30:00Z unverändert, kein lebendes Geschwister; die Familie steht. Nächster Schritt: maxTime erneut messen.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
-
-ausstehend
-kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
-note Re-Messung 2026-09-16 (grind-flash): direkt Timeout, Proton US-Exit 200 ArcGIS-JSON. Service-Directory: Layer 0 = Stationen, Table 1 = SDE_ADMIN.aqi_t60_recent (VALUE_O3/NO2PPM/SO2PPB/PM25/PM10_TEOM, DATE_TIME), relationships []. Join verifiziert (MON_STATIONSERIALCODE ↔ STA_SERIALCODE; serial 1: O3 0,032901 ppm, 2023-11-07T10:00:00Z). outStatistics max(DATE_TIME)=min=1699351200000, N=19 → EIN eingefrorener Snapshot, kein laufendes Update. Nächster Schritt: max(DATE_TIME) erneut messen; bleibt 2023 → dead.
-
-ausstehend
-kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
-note Re-Messung 2026-09-16 (grind-flash): Layer 0 trägt nur Stationsgeometrie + Metadaten (STA_SERIALCODE/STATION_NAME/LOCATION/REGION/OWNER/PURPOSE), keinen AQI-Wert; die Werttabelle ist Table 1 (siehe Geschwister-Eintrag). Werttabelle ohne Geometrie, Service ohne Relationship → kein Einzel-URL-Block. Nächster Schritt: max(DATE_TIME) der Table 1 erneut messen.
 
 parser-gap
 kandidat https://aqs.epa.gov/aqsweb/airdata/download_files.html
@@ -64,6 +56,13 @@ kandidat https://gcn.nasa.gov/missions/svom
 note Parser-gap: kein Listen-Feed — GCN-v0.1-API tot (404 Remix-SPA), Circulars nur per SPA-Suche + /circulars/{id}.json ohne ra/dec (§15.9, 2026-08-19).
 
 ausstehend
-kandidat https://erddap.emso.eu/erddap/info/index.json
-note Re-Messung 2026-09-16 (grind-pro): Index lebt (HTTP 200, 392 KB). Index ≠ Messung — Dataset gewählt: OBSEA_moored_buoy_meteo_L1c (verankerte Meteo-Boje, AIRT/CAPH/WDIR/WSPD), Kraft accept (passiver Treiber). ABER orderByMax(time) = 2026-05-12T08:30:00Z → seit ~4 Monaten eingefroren, kein laufendes Update → kein sources.φ-Block. Nächster Schritt: ein lebendes EMSO-Dataset am Index wählen (maxTime je Dataset prüfen).
+kandidat https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.csv
+note Re-Messung 2026-09-16 (grind-pro): lebendes Dataset gefunden — OBSEA_seabed_station_TS_L1c, maxTime 2026-09-14T08:00:00Z (30-min-Mittel), Kraft accept (passiver Treiber). Das zuvor bekannte OBSEA_moored_buoy_meteo_L1c bleibt eingefroren 2026-05-12. Nächster Schritt: sources.φ-Block + CDN-Manifestation (Register-/CDN-Schritt).
 
+ausstehend
+kandidat https://api.v2.sondehub.org/sonde/Y3313219
+note Re-Check 2026-09-16 (grind-flash): ~1 Nachricht/s (1 Hz, RS41), Frame 4058→12205 in 2026-09-16 07:00–09:16; sources.φ-Block steht. Nächster Schritt: CDN-Manifestation.
+
+ausstehend
+kandidat https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.csv
+note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block steht (bass-20260907T0000.json). Nächster Schritt: CDN-Manifestation.
