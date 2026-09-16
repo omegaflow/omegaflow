@@ -1,0 +1,70 @@
+name: trishuli-pfeil
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  co-lokal-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the co-local precipitation series (Open-Meteo archive-api, keyless)
+        run: |
+          for attempt in 1 2 3; do
+            curl -sSfL --retry 3 --max-time 120 \
+              -o precip_rasuwa_hourly.csv \
+              "https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.10&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation&timezone=UTC&format=csv" \
+              && break
+            echo "precipitation fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s precip_rasuwa_hourly.csv
+      - name: Fetch the DHM river-watch page (wayback snapshots 2026-08-28/27, else live page)
+        run: |
+          if curl -sSfL --retry 3 --max-time 300 \
+               -o dhm_riverwatch.html \
+               "https://web.archive.org/web/20260827im_/https://www.dhm.gov.np/hydrology/river-watch"; then
+            echo "stage page: wayback snapshot 20260827 (pre-flood window in the rolling buffer)" > stage-route.txt
+          elif curl -sSfL --retry 3 --max-time 300 \
+               -o dhm_riverwatch.html \
+               "https://web.archive.org/web/20260828im_/https://www.dhm.gov.np/hydrology/river-watch"; then
+            echo "stage page: wayback snapshot 20260828 (pre-flood window in the rolling buffer)" > stage-route.txt
+          elif curl -sSfL --retry 3 --max-time 300 \
+               -o dhm_riverwatch.html \
+               "https://web.archive.org/web/20260829im_/https://www.dhm.gov.np/hydrology/river-watch"; then
+            echo "stage page: wayback snapshot 20260829 (pre-flood window in the rolling buffer)" > stage-route.txt
+          else
+            curl -sSfL --retry 3 --max-time 300 \
+              -o dhm_riverwatch.html \
+              "https://www.dhm.gov.np/hydrology/river-watch"
+            echo "stage page: live river-watch (no 20260827/28/29 wayback snapshot delivered)" > stage-route.txt
+          fi
+          test -s dhm_riverwatch.html
+      - name: Anchor the corpus
+        run: |
+          echo "SHA $(git rev-parse HEAD)" > trishuli-pfeil.txt
+          cat stage-route.txt >> trishuli-pfeil.txt
+      - name: Parse the DHM gauge stage series (station 4913) into dhm_4913_stage.csv
+        run: |
+          cargo run --release -p omegaflow-gate --bin livefeed_gate -- --dhm 4913 --dhm-page dhm_riverwatch.html \
+            >> trishuli-pfeil.txt 2>&1
+      - name: Run the co-local precipitation -> stage TE lag sweep
+        run: |
+          cargo run --release -p omegaflow-measure --bin trishuli_gauge_probe \
+            -- --stage dhm_4913_stage.csv --precip-csv precip_rasuwa_hourly.csv \
+            --lags 1,3,6,12,24 \
+            >> trishuli-pfeil.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trishuli-pfeil
+          path: trishuli-pfeil.txt
