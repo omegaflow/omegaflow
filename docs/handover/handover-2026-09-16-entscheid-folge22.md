@@ -3,7 +3,7 @@
   session: Entscheid-Folge 22
   class: handover
   date: 2026-09-16
-  sha256: e6297365d3c90a612240e2e792613f1123527b1d176e7df04f048523975fe2fa
+  sha256: b866007f9f8e8d2182444f091e13e28d444991677b02ea871f8b409aebba65c9
   status: live
 -->
 # Handover — Entscheid-Folge 22 (2026-09-16)
@@ -38,17 +38,26 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Consent-Akte (per-Akt, Operatorwort)
 
-- **BiSON-Team** — `state/mail/bison-team-anfrage.md` → `bison@contacts.bham.ac.uk`.
-  (Schritt: `/consent`, dann `smail … --send`.)
 - **adoption-Block** — `state/mail/adoption-mails.md` → Toth/Turyshev/Markwardt.
   (Schritt: Adressen bestätigen + Sende-Wort.)
-- **DEMETER/CDPP** — Order über REGARDS. (Schritt: `/consent`, dann Order.)
+- **DEMETER/CDPP** — Order über REGARDS. Gemessen: kein Entwurf in `state/mail/`,
+  keine Ledger-Zeile; der Sendestatus ist aus dem Baum **nicht messbar**
+  (Web-Portal, kein Mail-Pfad) — `unverifizierbar`. (Schritt: Operator bestätigt,
+  ob die Order gestellt ist; sonst REGARDS-Route + Dataset-URN messen, Entwurf +
+  exakter Order-Befehl — autonom.)
 
 ## Warten auf Rückmeldung (extern)
 
-- Fünf Sonden-Anfragen (NSSDC Voyager/Mariner 10/Viking, Cassini, Juno) —
-  gesendet 2026-09-16, Antwort offen.
-- Rubin RSP (Shaughnessy), NSE/Haug (Keimer) — Antwort offen.
+Die offenen Alternativen stehen gemessen in
+`docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` — wo eine
+offene Route existiert, ist das Warten hinfällig (BiSON/Broomhall über
+GONG/SDO/VIRGO, Rubin-RSP über das Fink-LSST-Portal, LPF, Juno gravity science,
+New-Horizons-Doppler). Offen bleiben nur die Routen ohne gemessene Alternative:
+
+- **Fünf Sonden-Anfragen** (NSSDC Voyager/Mariner 10/Viking, Cassini, Juno) —
+  gesendet 2026-09-16, Antwort offen; Voyager closed-loop und Juno-Earth-Flyby
+  bleiben request-only.
+- **NSE/Haug** (Keimer/MPI-FKF) — Anfrage hält (Rohdaten nicht öffentlich).
 
 ## Operator-gebundene Punkte
 
