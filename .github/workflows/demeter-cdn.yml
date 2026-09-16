@@ -45,5 +45,5 @@ jobs:
           target/release/demeter_harvest \
             --workdir phi/pipeline/demeter_work \
             --ledger phi/pipeline/demeter_ledger.txt \
-            --budget 17000 \
+            --budget 14000 \
             --ci-mode
