@@ -9160,3 +9160,11 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/dart_tnf.bin
+format dart_tnf
+sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
+at earth
+ttl 604800
+field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `dart_tnf`; Compiler `tools/harvest/src/bin/dart_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
