@@ -350,7 +350,7 @@ fn main() {
         let before = all_events.len();
         all_events.extend(ev);
         println!(
-            "year {}: {} events (GOES b_flux > {:.0e} W/m², C1.0), window ±40 min, 24-s cells",
+            "year {}: {} events (GOES b_flux > {:.0e} W/m², C5.0), window ±40 min, 24-s cells",
             yi,
             all_events.len() - before,
             FLARE_THRESH

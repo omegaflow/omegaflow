@@ -87,6 +87,7 @@ pub use archivar::tdat;
 pub use archivar::thermochem;
 pub use archivar::twomass;
 pub use archivar::twomrs;
+pub use archivar::vlies;
 pub use archivar::volume;
 pub use archivar::wind;
 pub use archivar::wind_orbit;
