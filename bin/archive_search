@@ -10,7 +10,7 @@ needs_build=0
 if [ ! -x "$bin" ]; then
     needs_build=1
 elif find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
-        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
+        \( -name '*.rs' -o -name '*.cjs' \) -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
     needs_build=1
 fi
 if [ "$needs_build" = 1 ] && { [ ! -f "$stamp" ] || find "$stamp" -mmin +5 | grep -q .; }; then
