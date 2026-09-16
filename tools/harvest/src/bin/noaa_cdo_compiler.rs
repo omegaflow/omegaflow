@@ -1,5 +1,6 @@
 use omegaflow::archivar::{
-    days_to_ymd, fetch_raw_bytes_headers, jnum, jstr, load_env, parse_json, render_headers, JsonVal,
+    days_to_ymd, embedded_lsk, fetch_raw_bytes_headers, jnum, jstr, load_env, parse_json,
+    render_headers, JsonVal, LeapSeconds,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
@@ -18,7 +19,7 @@ const REC_BYTES: usize = 32;
 struct Obs {
     lat_deg: f64,
     lon_deg: f64,
-    date_unix: f64,
+    date_tdb: f64,
     value_c: f64,
 }
 
@@ -70,7 +71,7 @@ fn parse_stations(text: &str) -> Option<Vec<(String, f64, f64)>> {
     Some(out)
 }
 
-fn parse_observations(text: &str, lat: f64, lon: f64) -> Vec<Obs> {
+fn parse_observations(text: &str, lat: f64, lon: f64, lsk: &LeapSeconds) -> Vec<Obs> {
     let Some(json) = parse_json(text) else {
         return Vec::new();
     };
@@ -85,6 +86,9 @@ fn parse_observations(text: &str, lat: f64, lon: f64) -> Vec<Obs> {
         let Some(unix) = date_unix(&date) else {
             continue;
         };
+        let Some(tdb) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
         let Some(v) = jnum(r, "value") else {
             continue;
         };
@@ -94,7 +98,7 @@ fn parse_observations(text: &str, lat: f64, lon: f64) -> Vec<Obs> {
         out.push(Obs {
             lat_deg: lat,
             lon_deg: lon,
-            date_unix: unix,
+            date_tdb: tdb,
             value_c: v,
         });
     }
@@ -108,7 +112,7 @@ fn write_bin(records: &[Obs]) -> Vec<u8> {
     for r in records {
         out.extend_from_slice(&r.lat_deg.to_le_bytes());
         out.extend_from_slice(&r.lon_deg.to_le_bytes());
-        out.extend_from_slice(&r.date_unix.to_le_bytes());
+        out.extend_from_slice(&r.date_tdb.to_le_bytes());
         out.extend_from_slice(&r.value_c.to_le_bytes());
     }
     out
@@ -130,11 +134,11 @@ fn read_bin(data: &[u8]) -> Option<Vec<Obs>> {
         };
         let lat_deg = f64_at(base)?;
         let lon_deg = f64_at(base + 8)?;
-        let date_unix = f64_at(base + 16)?;
+        let date_tdb = f64_at(base + 16)?;
         let value_c = f64_at(base + 24)?;
         if !lat_deg.is_finite()
             || !lon_deg.is_finite()
-            || !date_unix.is_finite()
+            || !date_tdb.is_finite()
             || !value_c.is_finite()
         {
             return None;
@@ -142,7 +146,7 @@ fn read_bin(data: &[u8]) -> Option<Vec<Obs>> {
         out.push(Obs {
             lat_deg,
             lon_deg,
-            date_unix,
+            date_tdb,
             value_c,
         });
     }
@@ -201,6 +205,12 @@ fn main() {
         &[("token".to_string(), "{NOAA_CDO_TOKEN}".to_string())],
         &env,
     );
+    let Some(lsk) = embedded_lsk() else {
+        eprintln!(
+            "noaa_cdo_compiler: the embedded naif0012.tls leap table is absent — no date folds to the TDB clock; the harvest stays unwritten (0 honored, pending)"
+        );
+        std::process::exit(1);
+    };
 
     let mut stations_url = format!(
         "{STATIONS_URL}?datasetid=GHCND&datatypeid={DATATYPE}&sortfield=maxdate&sortorder=desc&limit={stations_limit}"
@@ -234,7 +244,7 @@ fn main() {
             void_stations += 1;
             continue;
         };
-        let obs = parse_observations(&String::from_utf8_lossy(&db), *lat, *lon);
+        let obs = parse_observations(&String::from_utf8_lossy(&db), *lat, *lon, &lsk);
         records.extend(obs);
     }
     if void_stations > 0 {
@@ -249,8 +259,8 @@ fn main() {
         std::process::exit(1);
     }
     records.sort_by(|a, b| {
-        a.date_unix
-            .total_cmp(&b.date_unix)
+        a.date_tdb
+            .total_cmp(&b.date_tdb)
             .then(a.lat_deg.total_cmp(&b.lat_deg))
             .then(a.lon_deg.total_cmp(&b.lon_deg))
     });
@@ -290,13 +300,13 @@ mod tests {
             Obs {
                 lat_deg: 40.7794,
                 lon_deg: -73.9692,
-                date_unix: 1757369600.0,
+                date_tdb: 810_641_669.184,
                 value_c: 27.8,
             },
             Obs {
                 lat_deg: 40.7794,
                 lon_deg: -73.9692,
-                date_unix: 1757456000.0,
+                date_tdb: 810_728_069.184,
                 value_c: -2.1,
             },
         ]
@@ -343,11 +353,34 @@ mod tests {
 
     #[test]
     fn observations_parse_value_and_date() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
         let text = r#"{"results":[{"date":"2026-09-09T00:00:00","datatype":"TMAX","station":"GHCND:USW00094728","value":27.8},{"date":"2026-09-10T00:00:00","datatype":"TMAX","station":"GHCND:USW00094728","value":-3.4}]}"#;
-        let obs = parse_observations(text, 40.0, -73.0);
+        let obs = parse_observations(text, 40.0, -73.0, &lsk);
         assert_eq!(obs.len(), 2);
         assert_eq!(obs[0].value_c, 27.8);
         assert_eq!(obs[1].value_c, -3.4);
         assert_eq!(obs[0].lat_deg, 40.0);
+    }
+
+    #[test]
+    fn observations_fold_date_to_tdb() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let text = r#"{"results":[{"date":"2026-09-09T00:00:00","datatype":"TMAX","station":"GHCND:USW00094728","value":27.8}]}"#;
+        let obs = parse_observations(text, 40.0, -73.0, &lsk);
+        assert_eq!(obs.len(), 1);
+        let unix = days_from_civil(2026, 9, 9).unwrap() as f64 * 86400.0;
+        let expected = lsk.unix_to_tdb(unix).expect("2026 tdb");
+        assert_eq!(obs[0].date_tdb, expected);
+    }
+
+    #[test]
+    fn observations_skip_pre_1972_dates() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let text = r#"{"results":[{"date":"1969-07-20T00:00:00","datatype":"TMAX","station":"GHCND:USW00094728","value":27.8}]}"#;
+        let obs = parse_observations(text, 40.0, -73.0, &lsk);
+        assert!(
+            obs.is_empty(),
+            "a pre-1972 date carries no leap-table entry — absent, never 0.0"
+        );
     }
 }
