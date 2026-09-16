@@ -9,6 +9,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 pub struct Fetch {
     pub status: Option<i32>,
     pub body: String,
+    pub raw: Vec<u8>,
     pub retry_after: Option<u64>,
 }
 
@@ -29,6 +30,23 @@ pub fn set_ca_bundle(path: &str) {
 
 const DEFAULT_MIN_INTERVAL_MS: u64 = 1100;
 const DEFAULT_RETRY_AFTER_SECS: u64 = 2;
+
+fn split_curl_stdout(stdout: &[u8]) -> Option<(&[u8], i32, Option<u64>)> {
+    let last = stdout.iter().rposition(|b| *b == b'\n')?;
+    let prev = stdout[..last].iter().rposition(|b| *b == b'\n')?;
+    let body = &stdout[..prev];
+    let code = std::str::from_utf8(&stdout[prev + 1..last])
+        .ok()?
+        .trim()
+        .parse::<i32>()
+        .ok()?;
+    let retry = std::str::from_utf8(&stdout[last + 1..])
+        .ok()?
+        .trim()
+        .parse::<u64>()
+        .ok();
+    Some((body, code, retry))
+}
 
 fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Option<Fetch> {
     let mut args: Vec<String> = vec![
@@ -51,13 +69,12 @@ fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) ->
     args.push("\n%{http_code}\n%header{retry-after}".to_string());
     args.push(url.to_string());
     let out = Command::new("curl").args(&args).output().ok()?;
-    let raw = String::from_utf8_lossy(&out.stdout).to_string();
-    let (rest, retry) = raw.rsplit_once('\n')?;
-    let (body, code) = rest.rsplit_once('\n')?;
+    let (body, code, retry) = split_curl_stdout(&out.stdout)?;
     Some(Fetch {
-        status: code.trim().parse::<i32>().ok(),
-        body: body.to_string(),
-        retry_after: retry.trim().parse::<u64>().ok(),
+        status: Some(code),
+        body: String::from_utf8_lossy(body).to_string(),
+        raw: body.to_vec(),
+        retry_after: retry,
     })
 }
 
@@ -305,12 +322,12 @@ fn stage(lines: &mut Vec<String>, n: u8, name: &str, url: &str, r: Option<Fetch>
 }
 
 fn stage_result(lines: &mut Vec<String>, n: u8, name: &str, url: &str, f: Fetch) {
-    if f.status == Some(200) && !f.body.trim().is_empty() {
+    if f.status == Some(200) && !f.raw.is_empty() {
         lines.push(format!(
             "  stage {} {}: HTTP 200 ({} bytes) — found",
             n,
             name,
-            f.body.len()
+            f.raw.len()
         ));
         lines.push(format!("url {}", url));
     } else {
@@ -319,7 +336,7 @@ fn stage_result(lines: &mut Vec<String>, n: u8, name: &str, url: &str, f: Fetch)
             n,
             name,
             f.status_text(),
-            f.body.len()
+            f.raw.len()
         ));
     }
 }
@@ -379,7 +396,7 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
             let label = exit.label();
             match get_once(url, &[], "30", exit) {
                 Some(f) => {
-                    if f.status == Some(200) && !f.body.trim().is_empty() {
+                    if f.status == Some(200) && !f.raw.is_empty() {
                         proton_found = true;
                     }
                     stage_result(&mut lines, 2, &label, url, f);
@@ -1045,18 +1062,20 @@ fn magic_label(magic: crate::magic::Magic) -> &'static str {
     }
 }
 
+fn sniff_lines_from(f: &Fetch, url: &str) -> Vec<String> {
+    let bytes = f.raw.as_slice();
+    vec![
+        format!("url {}", url),
+        format!("status {}", f.status_text()),
+        format!("bytes {}", bytes.len()),
+        format!("magic {}", magic_label(crate::magic::magic_identity(bytes))),
+        format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes)),
+    ]
+}
+
 pub fn sniff_lines(url: &str) -> Vec<String> {
     match get(url, &[], "40") {
-        Some(f) => {
-            let bytes = f.body.as_bytes();
-            vec![
-                format!("url {}", url),
-                format!("status {}", f.status_text()),
-                format!("bytes {}", bytes.len()),
-                format!("magic {}", magic_label(crate::magic::magic_identity(bytes))),
-                format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes)),
-            ]
-        }
+        Some(f) => sniff_lines_from(&f, url),
         None => vec!["pending — no network".to_string()],
     }
 }
@@ -1264,6 +1283,7 @@ mod tests {
         Some(Fetch {
             status,
             body: String::new(),
+            raw: Vec::new(),
             retry_after: None,
         })
     }
@@ -1345,5 +1365,47 @@ mod tests {
         gate.back_off("api.openalex.org|direct", 3600);
         assert!(gate.blocked("api.openalex.org|direct"));
         assert!(!gate.blocked("api.openalex.org|socks5h://127.0.0.1:25344"));
+    }
+
+    #[test]
+    fn split_curl_stdout_keeps_raw_body_bytes() {
+        let body = [0xFFu8, 0xFE, 0x00, b'a'];
+        let mut stdout = body.to_vec();
+        stdout.extend_from_slice(b"\n200\n");
+        let (raw, code, retry) = split_curl_stdout(&stdout).unwrap();
+        assert_eq!(raw, body.as_slice());
+        assert_eq!(raw.len(), 4);
+        assert_eq!(code, 200);
+        assert_eq!(retry, None);
+    }
+
+    fn lossy_fetch() -> Fetch {
+        let raw = vec![0xFFu8, 0xFE, 0x00, b'a'];
+        Fetch {
+            status: Some(200),
+            body: String::from_utf8_lossy(&raw).to_string(),
+            raw,
+            retry_after: None,
+        }
+    }
+
+    #[test]
+    fn sniff_lines_hash_and_size_read_the_raw_bytes() {
+        let f = lossy_fetch();
+        let lines = sniff_lines_from(&f, "https://example.com/blob");
+        let raw_sha = omegaflow::sha256::sha256_hex(&f.raw);
+        let body_sha = omegaflow::sha256::sha256_hex(f.body.as_bytes());
+        assert_eq!(lines[2], "bytes 4");
+        assert_eq!(lines[4], format!("sha256 {}", raw_sha));
+        assert_ne!(lines[4], format!("sha256 {}", body_sha));
+    }
+
+    #[test]
+    fn stage_result_reports_the_raw_byte_count() {
+        let f = lossy_fetch();
+        assert_ne!(f.raw.len(), f.body.len());
+        let mut lines = Vec::new();
+        stage_result(&mut lines, 1, "direct", "https://example.com/blob", f);
+        assert_eq!(lines[0], "  stage 1 direct: HTTP 200 (4 bytes) — found");
     }
 }
