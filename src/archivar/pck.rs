@@ -139,7 +139,7 @@ pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, Pck
 }
 
 fn chunk_triples(values: &[f64]) -> Vec<[f64; 3]> {
-    values.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).collect()
+    values.as_chunks::<3>().0.to_vec()
 }
 
 fn scan_entries(text: &str) -> HashMap<(i32, String), Vec<f64>> {
