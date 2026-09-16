@@ -9,8 +9,7 @@ use std::io::{BufWriter, Write};
 
 const TREE_URL: &str =
     "https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1";
-const RAW_BASE: &str =
-    "https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/";
+const RAW_BASE: &str = "https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/";
 const CDN_TAG: &str = "github.com";
 const DEFAULT_OUT: &str = "data/github.com/vtscat_flux.sky1";
 const TTL: u64 = 604800;

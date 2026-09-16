@@ -374,13 +374,11 @@ fn main() {
 mod tests {
     use super::*;
 
-    const SRC_CSV: &str =
-        "RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source\n\
+    const SRC_CSV: &str = "RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source\n\
 4.2932750569E-4,19.04440022422189,3.90431875046,0.4866574168899999,3.5087945195100003\n\
 8.989744425700002E-4,-4.04502551242393,45.73029894447001,0.53351766346,41.90222122304\n";
 
-    const CMP_CSV: &str =
-        "RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux\n\
+    const CMP_CSV: &str = "RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux\n\
 1.7675657877000002E-4,80.01266744553764,0.8186520025599999,0.31886555872000005,0.75266829367,0.16584417167999999\n\
 2.2178515263E-4,44.16959551709726,5.166948378880001,1.27345866877,1.06869314872,0.220937236\n";
 

@@ -39,7 +39,7 @@ note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range-GET 206, ge
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
-note NASA GHRC DAAC (Global Hydrology Resource Center). Measured 2026-09-15: anonym HTTP 200 is the Egress login page; /ghrcw/data/ anonym 404; CMR provider GHRC_DAAC live (e.g. C1995564612-GHRC_DAAC, ASCII). ISS LIS already registered (sources.φ:5838, iss_lis.bin + iss_lis_compiler). Consumer for further GHRC products open → pending.
+note NASA GHRC DAAC (Global Hydrology Resource Center). Measured 2026-09-16: anonym HTTP 200 is the Egress login page; der Datenpfad teilt sich in ghrcw-public (nur .cmr.json-Metadata anonym) und ghrcw-protected (Wissenschaftsdaten 401 anonym / 200 mit EARTHDATA_EDL_TOKEN); CMR provider GHRC_DAAC anonym live (z.B. C1995564612-GHRC_DAAC, ASCII). ISS LIS + OTD schon registriert (sources.φ:6543, iss_lis.bin/lis_otd.bin, beide nutzen den EDL-Token). Kein Produkt bleibt blocked account — die Familie ist pending (Compiler/Consumer + CDN ungebaut): GOES GLM L1B (C3457558852-GHRC_DAAC), TRMM LIS (C1983762329-GHRC_DAAC).
 
 blocked parser-def xml
 url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
