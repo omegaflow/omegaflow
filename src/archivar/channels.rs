@@ -255,6 +255,10 @@ pub fn build_netcdf_channels(
     } else {
         bytes.to_vec()
     };
+    const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
+    if bytes.starts_with(&HDF5_MAGIC) {
+        return build_netcdf4_channels(src, &bytes, lsk);
+    }
     let nc = match NetcdfFile::parse(&bytes) {
         Ok(f) => f,
         Err(note) => {
@@ -368,6 +372,119 @@ pub fn build_netcdf_channels(
                             position,
                             name: fc.name.clone(),
                             value: val as f64,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
+pub fn build_netcdf4_channels(
+    src: &SourceConfig,
+    bytes: &[u8],
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let file = match crate::archivar::hdf5::Hdf5File::parse(bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf4 {}: {:?}", src.url, note);
+            return Vec::new();
+        }
+    };
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = file.read_f64_dataset(lat_key).ok() else {
+            continue;
+        };
+        let Some(lon_v) = file.read_f64_dataset(lon_key).ok() else {
+            continue;
+        };
+        let Some(juld_v) = file.read_f64_dataset(epoch_key).ok() else {
+            continue;
+        };
+        let Some(pres_v) = file.read_f64_dataset(pressure_var).ok() else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match file.dims(pressure_var) {
+            Some(shape) => match shape.get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = file.attr_f64(pressure_var, "_FillValue");
+        let lat_fill = file.attr_f64(lat_key, "_FillValue");
+        let lon_fill = file.attr_f64(lon_key, "_FillValue");
+        let juld_fill = file.attr_f64(epoch_key, "_FillValue");
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || (lat_fill == Some(lat))
+                || (lon_fill == Some(lon))
+                || (juld_fill == Some(juld))
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = file.read_f64_dataset(&fc.key).ok() else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = file.attr_f64(&fc.key, "_FillValue");
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || (fill == Some(val))
+                        || (pres_fill == Some(pres))
+                    {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat,
+                        lon,
+                        alt: -pres * pressure_scale,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            name: fc.name.clone(),
+                            value: val,
                         },
                         fc.clone(),
                     ));

@@ -3,7 +3,8 @@ use omegaflow::cdn::upload_release;
 use omegaflow::odf;
 
 const BASE: &str = "https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/";
-const ODF_DIR: &str = "DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/";
+const ODF_DIR: &str = "DATA/LEVEL1A/CLOSED_LOOP/IFMS/";
+const ODF_SUBDIRS: &[&str] = &["AG1", "AG2", "DP1", "DP2"];
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 
 fn hrefs(text: &str) -> Vec<String> {
@@ -53,20 +54,24 @@ fn bundles() -> Vec<String> {
 }
 
 fn files_of(bundle: &str) -> Vec<String> {
-    let dir = format!("{BASE}{bundle}/{ODF_DIR}");
-    let Some(bytes) = fetch_raw_bytes(&dir, 604800) else {
-        eprintln!("{bundle}: odf listing fetch void ({dir})");
-        return Vec::new();
-    };
-    let Ok(text) = std::str::from_utf8(&bytes) else {
-        eprintln!("{bundle}: odf listing not utf8");
-        return Vec::new();
-    };
-    let mut out: Vec<String> = hrefs(text)
-        .into_iter()
-        .filter(|h| h.to_ascii_lowercase().ends_with(".dat"))
-        .map(|h| name_of(&h))
-        .collect();
+    let mut out: Vec<String> = Vec::new();
+    for sub in ODF_SUBDIRS {
+        let dir = format!("{BASE}{bundle}/{ODF_DIR}{sub}/");
+        let Some(bytes) = fetch_raw_bytes(&dir, 604800) else {
+            eprintln!("{bundle}/{sub}: odf listing fetch void ({dir})");
+            continue;
+        };
+        let Ok(text) = std::str::from_utf8(&bytes) else {
+            eprintln!("{bundle}/{sub}: odf listing not utf8");
+            continue;
+        };
+        let mut rels: Vec<String> = hrefs(text)
+            .into_iter()
+            .filter(|h| h.to_ascii_lowercase().ends_with(".raw"))
+            .map(|h| format!("{sub}/{}", name_of(&h)))
+            .collect();
+        out.append(&mut rels);
+    }
     out.sort();
     out.dedup();
     out
