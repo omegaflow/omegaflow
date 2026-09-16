@@ -1,0 +1,47 @@
+name: auto-dispatch
+
+concurrency:
+  group: auto-dispatch
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+permissions:
+  actions: write
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Dispatch every workflow added or changed in this push
+        env:
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          before='${{ github.event.before }}'
+          if [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            before='${{ github.sha }}^'
+          fi
+          changed=$(git diff --name-only "$before" '${{ github.sha }}' -- '.github/workflows/*.yml' || true)
+          fail=0
+          for path in $changed; do
+            wf=${path#.github/workflows/}
+            case "$wf" in
+              auto-dispatch.yml)
+                echo "skip $wf (the dispatcher itself)"
+                continue
+                ;;
+            esac
+            if [ ! -f "$path" ]; then
+              echo "removed $wf — nothing to dispatch"
+              continue
+            fi
+            echo "dispatch $wf"
+            gh workflow run "$wf" --repo '${{ github.repository }}' || { echo "DISPATCH FAILED $wf"; fail=1; }
+          done
+          exit "$fail"
