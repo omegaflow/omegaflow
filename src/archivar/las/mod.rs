@@ -568,6 +568,7 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
     })
 }
 
+pub mod las_series;
 pub mod laszip;
 pub use laszip::{LazDecoder, has_laszip_vlr};
 
