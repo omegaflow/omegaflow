@@ -20,7 +20,8 @@
     [".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"],
     ["is_finite() { color } else { 0.0 }", "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"],
     ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"],
-    ["find(\"ID[\"EPSG\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"]
+    ["find(\"ID[\"EPSG\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
+    [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -286,6 +287,7 @@
     "fabrication_else_zero": "color_index: if color.is_finite() { color } else { 0.0 },",
     "fabrication_absent_anchor": "let site = match stid { Some(s) => s, _ => (0.0, 0.0, 0.0) };",
     "arx_null_raw_series": "TeNull::Arx => y.to_vec(),",
-    "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;"
+    "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;",
+    "geokey_unconditional_geodetic_fallback": "geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY).or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))"
   }
 }
