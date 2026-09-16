@@ -19,13 +19,17 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_resid.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset galileo_resid.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset galileo_resid.bin missing — compiling and manifesting"
           fi
-          echo "asset galileo_resid.bin missing — compiling and manifesting"
       - name: Compile and manifest the Galileo TRK-2-25 ATDF residuum to the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin galileo_atdf_compiler -- --ci-mode
