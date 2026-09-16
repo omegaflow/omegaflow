@@ -146,7 +146,7 @@ fn quants(jar: &Path, det_name: &str) -> Option<String> {
     curl_get(
         jar,
         &format!("{BASE}/datashop/quants/?det_prefix=&det_name={det_name}"),
-        &[],
+        &["-H", "X-Requested-With: XMLHttpRequest"],
     )
 }
 
@@ -156,7 +156,7 @@ fn descr(jar: &Path, det_name: &str, quant_name: Option<&str>) -> Option<String>
         url.push_str("&quant_name=");
         url.push_str(q);
     }
-    curl_get(jar, &url, &[])
+    curl_get(jar, &url, &["-H", "X-Requested-With: XMLHttpRequest"])
 }
 
 fn post_command(jar: &Path, csrf: &str, prefix: &str, body: &str) -> String {
