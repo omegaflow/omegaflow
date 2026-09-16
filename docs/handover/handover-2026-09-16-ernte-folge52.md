@@ -3,7 +3,7 @@
   session: Ernte-Folge 52
   class: handover
   date: 2026-09-16
-  sha256: e7d4d349b17942e046ff8b8cac9ebe82cef42f0feb31e640f16911e47528846c
+  sha256: c3fd897ec6ee5c1ace1f55d29cb90a4e8870175d777966d2dabd42990f8eb43b
   status: live
 -->
 # Handover — Ernte-Folge 52 (2026-09-16)
@@ -65,17 +65,22 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   (Schritt: als Kandidaten in `phi/pipeline/queue/master.φ` prüfen/eintragen, erst
   nach geprobtem Feld/Oszillator nach `phi/sources.φ`.)
 
-## GHRC GLM L1B + TRMM LIS — Compiler gebaut, CDN-Workflows fehlen
+## GHRC GLM L1B + TRMM LIS — Compiler + Workflows gebaut, Dispatch offen
 
-- Route gemessen (2026-09-16): keine token-freie NOAA-AWS-Datenroute (die
-  NOAA-Buckets tragen nur GLM-L2-LCFA, kein L1B; TRMM LIS hat keine NOAA-Route);
-  die Wissenschaftsdaten sind EDL-gated via `s3://ghrcw-protected/<entry_id>/`,
-  der `EARTHDATA_EDL_TOKEN` öffnet sie. Der netCDF-4/HDF5-Parser existiert
+- Route selbst gemessen (2026-09-16, nicht Agenten-Hörensagen): keine token-freie
+  NOAA-AWS-Datenroute (die NOAA-Buckets tragen nur GLM-L2-LCFA, kein L1B; TRMM LIS
+  hat keine NOAA-Route); die Wissenschaftsdaten sind EDL-gated via
+  `s3://ghrcw-protected/<entry_id>/`. Direkt gegen die Granule geprüft: ohne Token
+  HTTP **401**, mit `EARTHDATA_EDL_TOKEN` (682 Zeichen) HTTP **206**,
+  `application/x-netcdf` — für TRMM LIS (`TRMM_LIS_SC.04.1_1998.001.00539.nc`) und
+  GLM L1B (`OR_I_GLM-L1b-Event_G16_…nc`). Der netCDF-4/HDF5-Parser existiert
   (`src/archivar/hdf5.rs`). Compiler `tools/harvest/src/bin/glm_l1b_compiler.rs` +
-  `trmm_lis_compiler.rs`, `src/archivar/geo.rs`, `extract.rs`, `main_flow.rs` +
-  die `sources.φ`-Zeilen (format `trmm_lis`/`glm_l1b`) stehen, `cargo check` 0/0.
-  (Schritt: `glm-l1b-cdn.yml` + `trmm-lis-cdn.yml` nach `iss-lis-cdn.yml`-Muster
-  bauen + dispatchen.)
+  `trmm_lis_compiler.rs`, `src/archivar/geo.rs`, `extract.rs`, `main_flow.rs`, die
+  `sources.φ`-Zeilen (format `trmm_lis`/`glm_l1b`) und die Workflows
+  `.github/workflows/trmm-lis-cdn.yml` + `glm-l1b-cdn.yml` (Muster `iss-lis-cdn.yml`,
+  `--ci-mode`, Secret `EARTHDATA_EDL_TOKEN`) stehen, `cargo check` 0/0. (Schritt:
+  nach Push `gh workflow run trmm-lis-cdn.yml glm-l1b-cdn.yml`; dann Asset +
+  sha256 gegen `sources.φ` messen.)
 
 ## Zenodo — Quaoar gemessen, TNBFits pending
 
