@@ -190,7 +190,11 @@ form is open in its own line; miniSEED/FDSN is a Weberin-line gap. The
 compiler also serves the RIXS charge/spin harvests (`rixs_charge.bin`,
 158727 oscillators; Kuprat spin, 456 em) — the scattering photon is an
 honest lab anchor, val is relative intensity on the loss axis (Council
-2026-09-03, no field channel).
+2026-09-03, no field channel). NSE-I(q,t) stands beside it by the same
+measure (2026-09-16): it is the exact Fourier pair of S(q,ω), and the
+basis change creates no force. The earlier register split "NSE = phase
+source / RIXS = no field channel" is struck — both are lab anchors
+without a field channel.
 
 ### Atom C — band-selective rendering
 
