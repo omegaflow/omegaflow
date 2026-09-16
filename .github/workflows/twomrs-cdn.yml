@@ -19,14 +19,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "twomrs.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset twomrs.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset twomrs.bin missing — compiling and manifesting"
           fi
-          echo "asset twomrs.bin missing — compiling and manifesting"
       - name: Ensure the tapvizier.cds.unistra.fr release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create tapvizier.cds.unistra.fr --repo omegaflow/sources \
@@ -34,6 +38,7 @@ jobs:
               --notes "2MRS galaxy redshift grid compiled to omegaflow binary assets (CDN tag = netloc)"
           fi
       - name: Compile the 2MRS sky grid and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --bin twomrs_compiler -- \
             --out-bin twomrs.bin \

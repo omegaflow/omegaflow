@@ -19,14 +19,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "TX2019slab_percent.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset TX2019slab_percent.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset TX2019slab_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset TX2019slab_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile TX2019slab_percent.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc -o TX2019slab_percent.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -40,14 +44,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUMP_kmps.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset GYPSUMP_kmps.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset GYPSUMP_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset GYPSUMP_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile GYPSUMP_kmps.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMP_kmps.r0.0-n4c.nc -o GYPSUMP_kmps.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -61,14 +69,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUMS_kmps.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset GYPSUMS_kmps.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset GYPSUMS_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset GYPSUMS_kmps.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile GYPSUMS_kmps.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMS_kmps.r0.0-n4c.nc -o GYPSUMS_kmps.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -82,14 +94,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "GYPSUM_percent.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset GYPSUM_percent.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset GYPSUM_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset GYPSUM_percent.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile GYPSUM_percent.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUM_percent.r0.0-n4c.nc -o GYPSUM_percent.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -103,14 +119,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "BBNAP19-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset BBNAP19-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset BBNAP19-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset BBNAP19-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile BBNAP19-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/BBNAP19-MASK-3D.r0.0-n4c.nc -o BBNAP19-MASK-3D.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -124,14 +144,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/CAP22-MASK-5deg-3D.r0.0-n4c.nc -o CAP22-MASK-5deg-3D.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -145,14 +169,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view media.githubusercontent.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "S40RTS.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset S40RTS.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset S40RTS.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset S40RTS.volume.bin missing — compiling and manifesting"
       - name: Compile S40RTS.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc -o S40RTS.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -166,14 +194,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view media.githubusercontent.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "LLNL_G3D_JPS.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset LLNL_G3D_JPS.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset LLNL_G3D_JPS.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset LLNL_G3D_JPS.volume.bin missing — compiling and manifesting"
       - name: Compile LLNL_G3D_JPS.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc -o LLNL_G3D_JPS.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -187,14 +219,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "AFRP20-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset AFRP20-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset AFRP20-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset AFRP20-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile AFRP20-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc -o AFRP20-MASK-3D.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
@@ -208,14 +244,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.earthscope.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "AFRP22-MASK-3D.r0.0-n4c.volume.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset AFRP22-MASK-3D.r0.0-n4c.volume.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset AFRP22-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
           fi
-          echo "asset AFRP22-MASK-3D.r0.0-n4c.volume.bin missing — compiling and manifesting"
       - name: Compile AFRP22-MASK-3D.r0.0-n4c.volume.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP22-MASK-3D.r0.0-n4c.nc -o AFRP22-MASK-3D.r0.0-n4c.nc
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
