@@ -111,6 +111,16 @@ pub fn arc_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     haversine_km(lat1, lon1, lat2, lon2) / 111.195
 }
 
+pub fn azimuth_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
+    let phi1 = lat1.to_radians();
+    let phi2 = lat2.to_radians();
+    let dlon = (lon2 - lon1).to_radians();
+    let y = dlon.sin() * phi2.cos();
+    let x = phi1.cos() * phi2.sin() - phi1.sin() * phi2.cos() * dlon.cos();
+    let deg = y.atan2(x).to_degrees();
+    (deg + 360.0) % 360.0
+}
+
 pub fn catalog_events(body: &str) -> Vec<Event> {
     let Some(j) = parse_json(body) else {
         return Vec::new();
@@ -1624,5 +1634,33 @@ mod tests {
             Some(5.6),
             "a measured station term is removed from the observed pP lag"
         );
+    }
+
+    #[test]
+    fn azimuth_reads_the_cardinal_initial_bearings() {
+        let cases = [
+            (0.0, 0.0, 10.0, 0.0, 0.0),
+            (0.0, 0.0, 0.0, 10.0, 90.0),
+            (0.0, 0.0, -10.0, 0.0, 180.0),
+            (0.0, 0.0, 0.0, -10.0, 270.0),
+        ];
+        for (lat1, lon1, lat2, lon2, want) in cases {
+            let got = azimuth_deg(lat1, lon1, lat2, lon2);
+            assert!(
+                (got - want).abs() < 1e-9,
+                "initial bearing ({lat1},{lon1})->({lat2},{lon2}) = {got} deg, want {want}"
+            );
+        }
+    }
+
+    #[test]
+    fn azimuth_stays_in_the_full_circle_west_of_the_meridian() {
+        for (lat2, lon2) in [(5.0, -5.0), (-5.0, -5.0), (0.0, -1.0)] {
+            let got = azimuth_deg(0.0, 0.0, lat2, lon2);
+            assert!(
+                (0.0..360.0).contains(&got),
+                "a westward bearing ({lat2},{lon2}) = {got} deg must sit in [0,360)"
+            );
+        }
     }
 }
