@@ -1142,10 +1142,11 @@ note GraceDB-Superevent S250207bg Skymap (witness phi/witnesses.φ record sky1, 
 
 url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
 format sky1
+sha256 ca6ea9aae5a1af10b31c115df44fff5b2816cc5e3b9a8bf5d849a5073adb7d23
 at sun
 ttl 31536000
 field vtscat_flux vtscat_flux inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
-note VTSCat-VERITAS-Flussskymap (witness phi/witnesses.φ record sky1, kind gamma, value = dnde@1 TeV); CDN-Asset pending (2026-09-16 gemessen 404, vtscat-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/vtscat_compiler.rs.
+note VTSCat-VERITAS-Flussskymap (witness phi/witnesses.φ record sky1, kind gamma, value = dnde@1 TeV); CDN asset measured 2026-09-16 HTTP 200 (3853 B, run 35144789674); compiler tools/harvest/src/bin/vtscat_compiler.rs.
 
 url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
 format sky1
@@ -6604,12 +6605,14 @@ field rad lis_otd_flash_radiance_uj_sr inverse-square em uJ/sr 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/trmm_lis.bin
 format trmm_lis
+sha256 4df26cafde3c392fc99831797c9392e1f155e821716cd63db467847e9e654534
 on earth 0 0 0
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
 format glm_l1b
+sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
