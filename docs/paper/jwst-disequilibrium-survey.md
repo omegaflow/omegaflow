@@ -2,7 +2,7 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: f011e1cf8fa06867442356e8a476895fe5e4053ad6f9ceb81872d416e11be1c0
+  sha256: 993cac827a1f66bea8a4ed5a0e7d76f03f4b9c08c4b82240b9efb43fa30776d3
   status: live
   see-also: 
 -->
@@ -104,5 +104,11 @@ The disequilibrium channel is the only bio-signature channel built. The O2 and
 O3 abundance channel (which spectral features, which data), the vegetation
 red-edge channel, and the seasonal/time-series channel are named pending
 branches: no data are carried for them, and their absence is unmeasured, not
-zero. The XUV photochemistry re-explanation of the SO2/CO2 hits stays pending
-as a non-equilibrium model.
+zero. A first sweep for the O2/O3 branch (ADS and arXiv, 2026-09-16, "JWST O2 O3
+transmission spectroscopy exoplanet atmosphere") returns no measured JWST O2/O3
+transmission detection in the searched record — only detectability and retrieval
+studies (TRAPPIST-1 e O3 under stellar-UV uncertainty, LHS 1140 b, the white-dwarf
+opportunity, VIRA retrievals). The branch's absence is now measured: the searched
+record carries no detection and no spectrum; the channel stays pending until a
+detection and its spectrum enter the registry. The XUV photochemistry
+re-explanation of the SO2/CO2 hits stays pending as a non-equilibrium model.
