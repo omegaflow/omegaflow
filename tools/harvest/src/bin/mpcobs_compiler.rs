@@ -17,6 +17,10 @@ fn base62_digit(c: u8) -> Option<u32> {
     }
 }
 
+fn designation_key(designation: &[u8]) -> u32 {
+    u32::from_be_bytes([designation[0], designation[1], designation[2], designation[3]])
+}
+
 fn decode_packed_number(field: &str) -> Option<u32> {
     let b = field.as_bytes();
     if field.trim().is_empty() {
@@ -134,12 +138,21 @@ impl LineScanner {
     }
 }
 
-fn record_line(line_bytes: &[u8]) -> Option<(u32, Vec<u8>)> {
+#[derive(Clone, Copy)]
+enum ShardKey {
+    Number,
+    Designation,
+}
+
+fn record_line(line_bytes: &[u8], key: ShardKey) -> Option<(u32, Vec<u8>)> {
     let text = String::from_utf8_lossy(line_bytes);
     let text = text.trim_end_matches('\r');
     let rec = record_bytes(text)?;
-    let number = u32::from_le_bytes(rec[29..33].try_into().unwrap());
-    Some((number, rec))
+    let shard_key = match key {
+        ShardKey::Number => u32::from_le_bytes(rec[29..33].try_into().unwrap()),
+        ShardKey::Designation => designation_key(&rec[43..50]),
+    };
+    Some((shard_key, rec))
 }
 
 fn stream_lines<F: FnMut(&[u8])>(input: &str, mut f: F) {
@@ -166,7 +179,7 @@ fn stream_lines<F: FnMut(&[u8])>(input: &str, mut f: F) {
 fn compile_into<W: Write>(input: &str, out: &mut W) -> (usize, usize) {
     let mut written = 0usize;
     let mut skipped = 0usize;
-    stream_lines(input, |line_bytes| match record_line(line_bytes) {
+    stream_lines(input, |line_bytes| match record_line(line_bytes, ShardKey::Number) {
         Some((_, rec)) => {
             out.write_all(&rec).expect("write record");
             written += 1;
@@ -182,8 +195,8 @@ fn shard_name(prefix: &str, lo: u32, hi: u32) -> String {
     format!("{}-{}-{}.bin", prefix, lo, hi)
 }
 
-fn should_split(number: u32, last: u32, bytes: usize, rec_len: usize, budget: usize) -> bool {
-    number != last && bytes + rec_len > budget
+fn should_split(key: u32, last: u32, bytes: usize, rec_len: usize, budget: usize) -> bool {
+    key != last && bytes + rec_len > budget
 }
 
 struct ShardAccum {
@@ -239,13 +252,13 @@ impl ShardSet {
         }
     }
 
-    fn push(&mut self, number: u32, rec: &[u8]) {
+    fn push(&mut self, key: u32, rec: &[u8]) {
         let split = match self.cur.as_ref() {
-            Some(cur) => should_split(number, cur.last, cur.bytes, rec.len(), self.budget),
+            Some(cur) => should_split(key, cur.last, cur.bytes, rec.len(), self.budget),
             None => false,
         };
         if split {
-            let hi = number;
+            let hi = key;
             if let Some(cur) = self.cur.take() {
                 if let Some(name) = cur.seal(&self.prefix, hi) {
                     self.done.push(name);
@@ -254,7 +267,7 @@ impl ShardSet {
         }
         if self.cur.is_none() {
             let id = self.done.len();
-            match ShardAccum::open(&self.prefix, number, id) {
+            match ShardAccum::open(&self.prefix, key, id) {
                 Some(acc) => self.cur = Some(acc),
                 None => {
                     self.skipped += 1;
@@ -265,7 +278,7 @@ impl ShardSet {
         let cur = self.cur.as_mut().unwrap();
         cur.out.write_all(rec).expect("write shard record");
         cur.bytes += rec.len();
-        cur.last = number;
+        cur.last = key;
         self.written += 1;
     }
 
@@ -279,9 +292,9 @@ impl ShardSet {
     }
 }
 
-fn compile_sharded(input: &str, set: &mut ShardSet) {
-    stream_lines(input, |line_bytes| match record_line(line_bytes) {
-        Some((number, rec)) => set.push(number, &rec),
+fn compile_sharded(input: &str, set: &mut ShardSet, key: ShardKey) {
+    stream_lines(input, |line_bytes| match record_line(line_bytes, key) {
+        Some((shard_key, rec)) => set.push(shard_key, &rec),
         None => set.skipped += 1,
     });
 }
@@ -290,13 +303,14 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 {
         eprintln!(
-            "usage: mpcobs_compiler --input <observations.txt.gz> [--input ...] --out <mpcobs.bin> [--ci-mode]\n       mpcobs_compiler --input <obs.txt.gz> [--input ...] --shard <prefix> [--ci-mode]"
+            "usage: mpcobs_compiler --input <observations.txt.gz> [--input ...] --out <mpcobs.bin> [--ci-mode]\n       mpcobs_compiler --input <obs.txt.gz> [--input ...] --shard <prefix> [--shard-key number|designation] [--ci-mode]"
         );
         std::process::exit(1);
     }
     let mut inputs: Vec<String> = Vec::new();
     let mut out: Option<String> = None;
     let mut shard: Option<String> = None;
+    let mut shard_key = ShardKey::Number;
     let mut ci_mode = false;
     let mut i = 1;
     while i < args.len() {
@@ -313,6 +327,13 @@ fn main() {
                 shard = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--shard-key" => {
+                shard_key = match args.get(i + 1).map(String::as_str) {
+                    Some("designation") => ShardKey::Designation,
+                    _ => ShardKey::Number,
+                };
+                i += 1;
+            }
             "--ci-mode" => ci_mode = true,
             _ => {}
         }
@@ -325,7 +346,7 @@ fn main() {
     if let Some(prefix) = shard {
         let mut set = ShardSet::new(prefix);
         for input in &inputs {
-            compile_sharded(input, &mut set);
+            compile_sharded(input, &mut set, shard_key);
         }
         set.finish();
         let bytes = set.written * MPCOBS_RECORD_STRIDE;
@@ -508,5 +529,37 @@ mod tests {
             shard_name("mpcobs-numobs", 0, 10000),
             "mpcobs-numobs-0-10000.bin"
         );
+    }
+
+    #[test]
+    fn designation_key_is_big_endian_prefix() {
+        assert_eq!(designation_key(b"I73O00A"), 0x4937334F);
+        assert_eq!(designation_key(b"K09A00A"), 0x4B303941);
+        assert_eq!(designation_key(b"PLS6344"), 0x504C5336);
+    }
+
+    #[test]
+    fn unnumbered_line_keys_by_designation() {
+        let line = "     I73O00A* A1873 07 30.31661 23 14 41.96 -01 41 52.7          12   V AN082767";
+        let rec = record_bytes(line).unwrap();
+        assert_eq!(
+            u32::from_le_bytes(rec[29..33].try_into().unwrap()),
+            UNNUMBERED
+        );
+        assert_eq!(&rec[43..50], b"I73O00A");
+        assert_eq!(
+            record_line(line.as_bytes(), ShardKey::Designation).unwrap().0,
+            0x4937334F
+        );
+        assert_eq!(
+            record_line(line.as_bytes(), ShardKey::Number).unwrap().0,
+            0
+        );
+    }
+
+    #[test]
+    fn designation_keys_split_distinct_objects() {
+        assert!(should_split(0x4B303941, 0x4937334F, 100, 50, 120));
+        assert!(!should_split(0x4B303941, 0x4B303941, 100, 50, 120));
     }
 }
