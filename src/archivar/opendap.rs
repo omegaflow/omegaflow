@@ -589,7 +589,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 4).ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::Int16(
-                    raw.chunks_exact(4)
+                    raw.as_chunks::<4>()
+                        .0
+                        .iter()
                         .map(|c| i32::from_be_bytes([c[0], c[1], c[2], c[3]]) as i16)
                         .collect(),
                 ))
@@ -603,7 +605,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 4).ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::UInt16(
-                    raw.chunks_exact(4)
+                    raw.as_chunks::<4>()
+                        .0
+                        .iter()
                         .map(|c| u32::from_be_bytes([c[0], c[1], c[2], c[3]]) as u16)
                         .collect(),
                 ))
@@ -617,7 +621,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 4).ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::Int32(
-                    raw.chunks_exact(4)
+                    raw.as_chunks::<4>()
+                        .0
+                        .iter()
                         .map(|c| i32::from_be_bytes([c[0], c[1], c[2], c[3]]))
                         .collect(),
                 ))
@@ -630,7 +636,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
             if is_array {
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 4).ok_or(DapNote::EndAtByte { off: cur.pos })?;
-                Ok(DapData::UInt32(raw.chunks_exact(4).map(be_u32).collect()))
+                Ok(DapData::UInt32(
+                    raw.as_chunks::<4>().0.iter().map(|c| be_u32(c)).collect(),
+                ))
             } else {
                 let b = cur.u32().ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::UInt32(vec![b]))
@@ -641,7 +649,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 4).ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::Float32(
-                    raw.chunks_exact(4)
+                    raw.as_chunks::<4>()
+                        .0
+                        .iter()
                         .map(|c| f32::from_bits(be_u32(c)))
                         .collect(),
                 ))
@@ -655,7 +665,9 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
                 let n = cardinal_count(cur, total, &v.name)? as usize;
                 let raw = cur.take(n * 8).ok_or(DapNote::EndAtByte { off: cur.pos })?;
                 Ok(DapData::Float64(
-                    raw.chunks_exact(8)
+                    raw.as_chunks::<8>()
+                        .0
+                        .iter()
                         .map(|c| f64::from_bits(be_u64(c)))
                         .collect(),
                 ))
