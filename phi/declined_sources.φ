@@ -1232,6 +1232,10 @@ decline model-forecast
 url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B
 note IMI_IRISH_SHELF_SWAN_WAVE is SWAN numerical wave-model output (forecast horizon); Oszillator-Gate model-forecast.
 
+decline no-physical-force
+url https://erddap.osupytheas.fr/erddap/info/HFRADAR_grid_copernicus/index.json
+note HFRADAR_grid_copernicus (ERDDAP): Gitter time=24/lat=107/lon=91, time actual_range nur 9 Tage Juni 2022; EWCT/NSCT an den geprüften Zellen [0],[1],[5],[12],[20],[23] durchweg null (gemessen 2026-09-16) — der Datensatz trägt keine Messung.
+
 decline model
 url https://esgf-node.llnl.gov/esg-search/search?query=cmip6
 note CMIP-Klima-Modell-Ausgabe (14.8M Datasets), Modell-Simulation; 302->metagrid 200.
