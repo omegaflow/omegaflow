@@ -1,4 +1,4 @@
-use omegaflow::archivar::double::{ConeCatalog, crossmatch};
+use omegaflow::archivar::double::{ConeCatalog, CrossmatchArgs, crossmatch};
 use omegaflow::archivar::exclude::parse_bin as parse_excl;
 use omegaflow::archivar::ir::parse_bin as parse_ir;
 use omegaflow::archivar::radio::parse_bin as parse_radio;
@@ -89,17 +89,17 @@ fn run(
     let excl = ConeCatalog::with_names(excl_ra, excl_dec, excl_name);
     eprintln!("exclusion rows loaded: {}", excl.len());
 
-    let rows = crossmatch(
-        &ir.iter().map(|s| s.ra_deg).collect::<Vec<_>>(),
-        &ir.iter().map(|s| s.dec_deg).collect::<Vec<_>>(),
-        &ir.iter().map(|s| s.excess).collect::<Vec<_>>(),
-        &gaia,
-        &radio,
-        &tns,
-        &excl,
-        MATCH_RADIUS_DEG,
+    let rows = crossmatch(&CrossmatchArgs {
+        ir_ra: &ir.iter().map(|s| s.ra_deg).collect::<Vec<_>>(),
+        ir_dec: &ir.iter().map(|s| s.dec_deg).collect::<Vec<_>>(),
+        ir_excess: &ir.iter().map(|s| s.excess).collect::<Vec<_>>(),
+        gaia: &gaia,
+        radio: &radio,
+        tns: &tns,
+        excl: &excl,
+        radius: MATCH_RADIUS_DEG,
         only_excess,
-    );
+    });
 
     let excluded = rows.iter().filter(|r| r.excluded).count();
     let remaining = rows.len() - excluded;

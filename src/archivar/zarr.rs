@@ -1,4 +1,4 @@
-use crate::json::{jpath_val, json_num, jstr, parse_json, JsonVal};
+use crate::json::{JsonVal, jpath_val, json_num, jstr, parse_json};
 
 pub struct ZarrArray {
     pub shape: Vec<usize>,
@@ -57,7 +57,7 @@ pub fn chunk_grid(shape: &[usize], chunks: &[usize]) -> Vec<usize> {
     shape
         .iter()
         .zip(chunks.iter())
-        .map(|(&s, &c)| (s + c - 1) / c)
+        .map(|(&s, &c)| s.div_ceil(c))
         .collect()
 }
 
@@ -127,7 +127,7 @@ fn bshuf_untrans_bit_elem_scal(src: &[u8], dst: &mut [u8], size: usize, elem_siz
 
 fn bitunshuffle(typesize: usize, blocksize: usize, src: &[u8], dst: &mut [u8]) {
     let size = blocksize / typesize;
-    if size % 8 == 0 {
+    if size.is_multiple_of(8) {
         bshuf_untrans_bit_elem_scal(src, dst, size, typesize);
         let offset = size * typesize;
         let remaining = blocksize - offset;
@@ -199,12 +199,9 @@ fn lz4_decompress(input: &[u8], output_len: usize) -> Option<Vec<u8>> {
             }
         }
         match_len += 4;
-        let mut src = out.len().checked_sub(offset)?;
-        for _ in 0..match_len {
-            let b = *out.get(src)?;
-            out.push(b);
-            src += 1;
-        }
+        let src = out.len().checked_sub(offset)?;
+        let span = out.get(src..src + match_len)?.to_vec();
+        out.extend_from_slice(&span);
     }
     if out.len() != output_len {
         return None;
@@ -212,29 +209,34 @@ fn lz4_decompress(input: &[u8], output_len: usize) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn decode_block<F: Fn(&[u8]) -> Option<Vec<u8>>>(
-    bytes: &[u8],
+struct BlockDecodeParams {
     block_off: usize,
     bsize: usize,
     flags: u8,
     typesize: usize,
     leftoverblock: bool,
     codec: u8,
+}
+
+fn decode_block<F: Fn(&[u8]) -> Option<Vec<u8>>>(
+    bytes: &[u8],
+    p: BlockDecodeParams,
     block_decoder: &F,
 ) -> Option<Vec<u8>> {
-    let dont_split = (flags & 0x10) != 0;
-    let doshuffle = (flags & 0x01 != 0) && typesize > 1;
-    let dobitshuffle = (flags & 0x04 != 0) && bsize >= typesize;
+    let dont_split = (p.flags & 0x10) != 0;
+    let doshuffle = (p.flags & 0x01 != 0) && p.typesize > 1;
+    let dobitshuffle = (p.flags & 0x04 != 0) && p.bsize >= p.typesize;
 
-    let nsplits = if !dont_split && typesize <= 16 && (bsize / typesize) >= 128 && !leftoverblock {
-        typesize
-    } else {
-        1
-    };
-    let neblock = bsize / nsplits;
+    let nsplits =
+        if !dont_split && p.typesize <= 16 && (p.bsize / p.typesize) >= 128 && !p.leftoverblock {
+            p.typesize
+        } else {
+            1
+        };
+    let neblock = p.bsize / nsplits;
 
-    let mut tmp = Vec::with_capacity(bsize);
-    let mut off = block_off;
+    let mut tmp = Vec::with_capacity(p.bsize);
+    let mut off = p.block_off;
     for _ in 0..nsplits {
         let cbytes = u32_at(bytes, off)? as usize;
         off += 4;
@@ -246,7 +248,7 @@ fn decode_block<F: Fn(&[u8]) -> Option<Vec<u8>>>(
         off = end;
         if cbytes == neblock {
             tmp.extend_from_slice(split);
-        } else if codec == 1 {
+        } else if p.codec == 1 {
             tmp.extend_from_slice(&lz4_decompress(split, neblock)?);
         } else {
             tmp.extend_from_slice(&block_decoder(split)?);
@@ -254,12 +256,12 @@ fn decode_block<F: Fn(&[u8]) -> Option<Vec<u8>>>(
     }
 
     if doshuffle {
-        let mut dst = vec![0u8; bsize];
-        unshuffle(typesize, bsize, &tmp, &mut dst);
+        let mut dst = vec![0u8; p.bsize];
+        unshuffle(p.typesize, p.bsize, &tmp, &mut dst);
         Some(dst)
     } else if dobitshuffle {
-        let mut dst = vec![0u8; bsize];
-        bitunshuffle(typesize, bsize, &tmp, &mut dst);
+        let mut dst = vec![0u8; p.bsize];
+        bitunshuffle(p.typesize, p.bsize, &tmp, &mut dst);
         Some(dst)
     } else {
         Some(tmp)
@@ -270,7 +272,7 @@ pub fn blosc_decompress_with<F: Fn(&[u8]) -> Option<Vec<u8>>>(
     bytes: &[u8],
     block_decoder: F,
 ) -> Option<Blosc> {
-    let version = *bytes.get(0)?;
+    let version = *bytes.first()?;
     let _versionlz = *bytes.get(1)?;
     let flags = *bytes.get(2)?;
     let typesize = *bytes.get(3)? as usize;
@@ -304,7 +306,7 @@ pub fn blosc_decompress_with<F: Fn(&[u8]) -> Option<Vec<u8>>>(
     let nblocks = if blocksize == 0 {
         return None;
     } else {
-        (nbytes + blocksize - 1) / blocksize
+        nbytes.div_ceil(blocksize)
     };
     if nblocks == 0 {
         return Some(Blosc::Decompressed(Vec::new()));
@@ -323,12 +325,14 @@ pub fn blosc_decompress_with<F: Fn(&[u8]) -> Option<Vec<u8>>>(
         let leftoverblock = is_last && leftover != 0;
         let block = decode_block(
             bytes,
-            block_off,
-            bsize,
-            flags,
-            typesize,
-            leftoverblock,
-            codec,
+            BlockDecodeParams {
+                block_off,
+                bsize,
+                flags,
+                typesize,
+                leftoverblock,
+                codec,
+            },
             &block_decoder,
         )?;
         if block.len() != bsize {

@@ -3,7 +3,7 @@ use omegaflow::archivar::omni2::{
     COMP_AE, COMP_BX, COMP_BY, COMP_BZ, COMP_DST, COMP_N1800, COMP_SYMH, COMP_V1800, parse_bin,
 };
 use omegaflow::lsk::days_from_civil;
-use omegaflow::te::{TeEstimator, TeNull, benjamini_hochberg, pcmci_links};
+use omegaflow::te::{PcmciParams, TeEstimator, TeNull, benjamini_hochberg, pcmci_links};
 
 const OMNI2_1H_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
@@ -216,17 +216,19 @@ fn main() {
     let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
     let Some(links) = pcmci_links(
         &refs,
-        max_lag,
-        null_lag,
-        bins,
-        0x9E37_79B9_7F4A_7C15,
-        100,
-        TeNull::Residual,
-        0,
-        TeEstimator::Binned,
-        4,
-        2,
-        0.05,
+        PcmciParams {
+            max_lag,
+            null_lag,
+            bins,
+            seed: 0x9E37_79B9_7F4A_7C15,
+            n_surr: 100,
+            null: TeNull::Residual,
+            block: 0,
+            est: TeEstimator::Binned,
+            k: 4,
+            p_max: 2,
+            alpha: 0.05,
+        },
     ) else {
         eprintln!("pcmci_links returns void — no verdict");
         return;

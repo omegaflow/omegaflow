@@ -88,10 +88,7 @@ pub fn port_block(block: &str) -> String {
                 }
             }
             "map" | "cmap" | "rows" => {
-                let arg = match parts.get(1).copied() {
-                    Some(a) => a,
-                    None => ".",
-                };
+                let arg = parts.get(1).copied().unwrap_or(".");
                 map_line = Some(format!("{} {}", parts[0], arg));
             }
             "lat_key" if parts.len() >= 2 => lat_key = Some(parts[1].to_string()),
@@ -156,10 +153,7 @@ pub fn port_block(block: &str) -> String {
     }
     if let Some(m) = &map_line {
         if celestial {
-            let arg = match m.splitn(2, ' ').nth(1) {
-                Some(a) => a,
-                None => ".",
-            };
+            let arg = m.split_once(' ').map(|x| x.1).unwrap_or(".");
             out.push_str("cmap ");
             out.push_str(arg);
             out.push('\n');
@@ -307,37 +301,50 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
     0
 }
 
-pub fn probe_one(
-    src: &SourceConfig,
-    now: f64,
-    lsk_ref: &LeapSeconds,
-    void_eph: &HashMap<String, BodyEphemeris>,
-    env: &HashMap<String, String>,
-    fetchone: bool,
-    precise: bool,
-    lat: f64,
-    lon: f64,
-) -> (bool, String) {
-    let url = match render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", void_eph, lsk_ref) {
+pub struct ProbeParams<'a> {
+    pub now: f64,
+    pub lsk_ref: &'a LeapSeconds,
+    pub void_eph: &'a HashMap<String, BodyEphemeris>,
+    pub env: &'a HashMap<String, String>,
+    pub fetchone: bool,
+    pub precise: bool,
+    pub lat: f64,
+    pub lon: f64,
+}
+
+pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) {
+    let url = match render_url(
+        &src.url,
+        "",
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: params.now,
+            r: 0.0,
+            eph: params.void_eph,
+            lsk: params.lsk_ref,
+        },
+    ) {
         Some(u) => u,
         None => return (false, "# declined: time absent\n".to_string()),
     }
-    .replace("{lat}", &format!("{:.6}", lat))
-    .replace("{lon}", &format!("{:.6}", lon));
+    .replace("{lat}", &format!("{:.6}", params.lat))
+    .replace("{lon}", &format!("{:.6}", params.lon));
     let mut url = url;
     for (k, v) in live_markers() {
         url = url.replace(&k, &v);
     }
-    let url = resolve_secret(&url, env);
+    let url = resolve_secret(&url, params.env);
     let url = url.replace("ZZ", "Z").replace("  ", " ");
-    let headers = render_headers(&src.headers, env);
-    let raw = if fetchone {
-        fetch_one(&url, None, &headers, src.ttl, Some(now))
+    let headers = render_headers(&src.headers, params.env);
+    let raw = if params.fetchone {
+        fetch_one(&url, None, &headers, src.ttl, Some(params.now))
     } else {
         fetch_raw_probe(&url, None, &headers)
     };
     let parsed = raw.as_ref().and_then(|r| parse_json(r));
-    let auto_ttl = raw.as_ref().and_then(|r| derive_ttl(&url, r, env));
+    let auto_ttl = raw.as_ref().and_then(|r| derive_ttl(&url, r, params.env));
     let mut block = String::new();
     block.push_str(&format!("url {}\n", src.url));
     let ttl = match auto_ttl {
@@ -367,7 +374,7 @@ pub fn probe_one(
         let mut coords = String::new();
         let mut map_path: Option<String> = None;
         let mut budget = 48usize;
-        if !hapi_draft_fields(&url, &p, env, &mut fields) {
+        if !hapi_draft_fields(&url, &p, params.env, &mut fields) {
             walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path, &mut budget);
         }
         if map_path.is_none() && !coords.is_empty() {
@@ -377,15 +384,15 @@ pub fn probe_one(
         if !precision_lines.is_empty() {
             block.push_str(&precision_lines);
         }
-        if let Some(ref mp) = map_path {
-            if !coords.is_empty() {
-                let container = if coords.contains("ra ") || coords.contains("dec ") {
-                    "cmap"
-                } else {
-                    "map"
-                };
-                block.push_str(&format!("{} {}\n", container, mp));
-            }
+        if let Some(ref mp) = map_path
+            && !coords.is_empty()
+        {
+            let container = if coords.contains("ra ") || coords.contains("dec ") {
+                "cmap"
+            } else {
+                "map"
+            };
+            block.push_str(&format!("{} {}\n", container, mp));
         }
         if !coords.is_empty() {
             block.push_str(&coords);
@@ -401,24 +408,20 @@ pub fn probe_one(
     } else {
         block.push_str("# fetch returned void\n");
     }
-    if precise && raw.is_some() {
+    if params.precise && raw.is_some() {
         block.push_str(&bruteforce_precision(&url, &src.url, ttl));
     }
     let verdict = match &raw {
         Some(r) => {
-            let declared_ok = match extract(src, r, now, lsk_ref) {
+            let declared_ok = match extract(src, r, params.now, params.lsk_ref) {
                 ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
-                    if v.is_empty() {
-                        None
-                    } else {
-                        Some(v.len())
-                    }
+                    if v.is_empty() { None } else { Some(v.len()) }
                 }
             };
             match declared_ok {
                 Some(n) => Ok(n),
                 None => match parse_sources(&block).first() {
-                    Some(candidate) => match extract(candidate, r, now, lsk_ref) {
+                    Some(candidate) => match extract(candidate, r, params.now, params.lsk_ref) {
                         ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
                             if v.is_empty() {
                                 Err(diagnose_no_samples(candidate, r))
@@ -538,22 +541,19 @@ pub fn probe_mode(
             lsk = crate::lsk::parse(&text);
         }
     }
-    if lsk.is_none() {
-        if let Some(text) = fetch_one(
+    if lsk.is_none()
+        && let Some(text) = fetch_one(
             "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
             None,
             &[],
             NAIF_LSK_TTL_SECS,
             machine_now_tdb(),
-        ) {
-            lsk = crate::lsk::parse(&text);
-        }
+        )
+    {
+        lsk = crate::lsk::parse(&text);
     }
     let time_pair: Option<(f64, LeapSeconds)> = match lsk {
-        Some(l) => match l.system_now_tdb() {
-            Some(t) => Some((t, l)),
-            None => None,
-        },
+        Some(l) => l.system_now_tdb().map(|t| (t, l)),
         None => None,
     };
     let void_eph: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -572,30 +572,34 @@ pub fn probe_mode(
             let workers = 8.min(non_kernel.len());
             std::thread::scope(|scope| {
                 for _ in 0..workers {
-                    scope.spawn(|| loop {
-                        let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                        if i >= non_kernel.len() {
-                            break;
+                    scope.spawn(|| {
+                        loop {
+                            let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            if i >= non_kernel.len() {
+                                break;
+                            }
+                            let (ok, text) = probe_one(
+                                non_kernel[i],
+                                ProbeParams {
+                                    now,
+                                    lsk_ref,
+                                    void_eph: &void_eph,
+                                    env,
+                                    fetchone,
+                                    precise,
+                                    lat,
+                                    lon,
+                                },
+                            );
+                            if ok {
+                                accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                                out_lock.lock().unwrap().push_str(&text);
+                            } else {
+                                declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                                dead_lock.lock().unwrap().push_str(&text);
+                            }
+                            std::thread::sleep(std::time::Duration::from_millis(300));
                         }
-                        let (ok, text) = probe_one(
-                            non_kernel[i],
-                            now,
-                            lsk_ref,
-                            &void_eph,
-                            env,
-                            fetchone,
-                            precise,
-                            lat,
-                            lon,
-                        );
-                        if ok {
-                            accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                            out_lock.lock().unwrap().push_str(&text);
-                        } else {
-                            declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                            dead_lock.lock().unwrap().push_str(&text);
-                        }
-                        std::thread::sleep(std::time::Duration::from_millis(300));
                     });
                 }
             });
@@ -720,10 +724,10 @@ pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64)
             test_url = test_url.replace(marker, &replacement);
         }
         let body = fetch_raw(&test_url, None, &[], ttl);
-        if let (Some(b), Some(base)) = (&body, &baseline) {
-            if b != base {
-                effective_dp = dp;
-            }
+        if let (Some(b), Some(base)) = (&body, &baseline)
+            && b != base
+        {
+            effective_dp = dp;
         }
     }
     format!("# template_precision {}dp\n", effective_dp)
@@ -780,12 +784,11 @@ fn scan_iso_samples(body: &str) -> Vec<f64> {
             && (b[i + 10] == b'T' || b[i + 10] == b' ')
             && b[i + 13] == b':'
             && b[i + 16] == b':'
+            && let Some(secs) = iso_sample_seconds(&body[i..])
         {
-            if let Some(secs) = iso_sample_seconds(&body[i..]) {
-                out.push(secs);
-                i += 19;
-                continue;
-            }
+            out.push(secs);
+            i += 19;
+            continue;
         }
         i += 1;
     }
@@ -855,10 +858,10 @@ fn find_cadence_seconds(val: &JsonVal) -> Option<u64> {
     match val {
         JsonVal::Obj(map) => {
             for (k, v) in map {
-                if k.eq_ignore_ascii_case("cadence") {
-                    if let Some(secs) = cadence_value_seconds(v) {
-                        return Some(secs);
-                    }
+                if k.eq_ignore_ascii_case("cadence")
+                    && let Some(secs) = cadence_value_seconds(v)
+                {
+                    return Some(secs);
                 }
             }
             map.values().find_map(find_cadence_seconds)
@@ -941,11 +944,7 @@ fn hapi_meta_params(parsed: &JsonVal) -> Option<Vec<HapiMetaParam>> {
             unit,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn hapi_meta_for(
@@ -1005,10 +1004,10 @@ pub fn register_hapi_units_of(sources: &[SourceConfig]) -> HashMap<(String, Stri
         }
         for (short, long) in short_to_long {
             for ext in &src.extracts {
-                if let Extract::Field(fc) = ext {
-                    if fc.key == long {
-                        out.insert((id.clone(), short.clone()), fc.unit.clone());
-                    }
+                if let Extract::Field(fc) = ext
+                    && fc.key == long
+                {
+                    out.insert((id.clone(), short.clone()), fc.unit.clone());
                 }
             }
         }
@@ -1155,7 +1154,7 @@ pub fn hapi_draft_fields(
         }
         match finite {
             Some(v) => {
-                if first.map_or(false, |f| !f.is_finite()) {
+                if first.is_some_and(|f| !f.is_finite()) {
                     fields.push_str(&format!(
                         "# {} = {} — first row server fill, first finite sample shown\n",
                         col.name, v
@@ -1179,10 +1178,10 @@ pub fn hapi_draft_fields(
 pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
     if let JsonVal::Obj(map) = val {
         for (k, v) in map {
-            if is_time_key(k) {
-                if let Some(n) = json_num(v) {
-                    return Some(n);
-                }
+            if is_time_key(k)
+                && let Some(n) = json_num(v)
+            {
+                return Some(n);
             }
         }
     }
@@ -1273,17 +1272,13 @@ pub fn probe_csv(raw: &str) -> Option<String> {
         }
         out.push_str(&format!("# {}\n", col));
         let (force, unit, tau) = probe_classify(col);
-        if force != "DROP" {
-            if let Some(line) = draft_field_line(col, &force, &unit, tau) {
-                out.push_str(&line);
-            }
+        if force != "DROP"
+            && let Some(line) = draft_field_line(col, force, unit, tau)
+        {
+            out.push_str(&line);
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn probe_classify(key: &str) -> (&str, &str, f64) {
@@ -1400,7 +1395,7 @@ pub fn walk_json_probe(
                         None => coords.push_str(&line),
                         Some(old) => {
                             let old_key = old.split_whitespace().nth(1);
-                            let old_exact = old_key.map_or(false, |ok_key| {
+                            let old_exact = old_key.is_some_and(|ok_key| {
                                 let tail = match ok_key.rfind('.') {
                                     Some(p) => &ok_key[p + 1..],
                                     None => ok_key,
@@ -1424,10 +1419,10 @@ pub fn walk_json_probe(
                     }
                     if k == "depth" {
                         let (force, unit, tau) = probe_classify("depth");
-                        if force != "DROP" {
-                            if let Some(line) = draft_field_line(&path, &force, &unit, tau) {
-                                out.push_str(&line);
-                            }
+                        if force != "DROP"
+                            && let Some(line) = draft_field_line(&path, force, unit, tau)
+                        {
+                            out.push_str(&line);
                         }
                     }
                 } else {
@@ -1515,14 +1510,14 @@ pub fn walk_json_probe(
                 ));
             } else if force != "DROP" {
                 let unit_lc = unit.to_lowercase();
-                let in_registry = match force_id_of(&force) {
+                let in_registry = match force_id_of(force) {
                     Some(fid) => allowed_units_for_force(fid).contains(&unit_lc.as_str()),
                     None => false,
                 };
                 if !in_registry {
                     out.push_str(&format!("# unit {} not in force registry — review\n", unit));
                 }
-                if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                if let Some(line) = draft_field_line(prefix, force, unit, tau) {
                     out.push_str(&line);
                 }
             }
@@ -1549,14 +1544,14 @@ pub fn walk_json_probe(
                     ));
                 } else if force != "DROP" {
                     let unit_lc = unit.to_lowercase();
-                    let in_registry = match force_id_of(&force) {
+                    let in_registry = match force_id_of(force) {
                         Some(fid) => allowed_units_for_force(fid).contains(&unit_lc.as_str()),
                         None => false,
                     };
                     if !in_registry {
                         out.push_str(&format!("# unit {} not in force registry — review\n", unit));
                     }
-                    if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                    if let Some(line) = draft_field_line(prefix, force, unit, tau) {
                         out.push_str(&line);
                     }
                 }
@@ -1618,18 +1613,14 @@ pub fn measure_precision(val: &JsonVal) -> String {
             }
         }
         JsonVal::Obj(map) => {
-            if let Some(features) = map.get("features") {
-                if let JsonVal::Arr(features_arr) = features {
-                    if features_arr.len() >= 2 {
-                        let a = &features_arr[0];
-                        let b = &features_arr[1];
-                        let mut out = String::new();
-                        find_coord_precisions(a, b, "", &mut out);
-                        if !out.is_empty() {
-                            format!("# precision {}\n", out.trim())
-                        } else {
-                            String::new()
-                        }
+            if let Some(JsonVal::Arr(features_arr)) = map.get("features") {
+                if features_arr.len() >= 2 {
+                    let a = &features_arr[0];
+                    let b = &features_arr[1];
+                    let mut out = String::new();
+                    find_coord_precisions(a, b, "", &mut out);
+                    if !out.is_empty() {
+                        format!("# precision {}\n", out.trim())
                     } else {
                         String::new()
                     }
@@ -1702,10 +1693,10 @@ pub fn find_coord_precisions(a: &JsonVal, b: &JsonVal, prefix: &str, out: &mut S
 }
 
 pub fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
-    if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
-        if channels.is_empty() {
-            report_anomaly("Empty Data", &src.url, "extract returned no measurements");
-        }
+    if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk)
+        && channels.is_empty()
+    {
+        report_anomaly("Empty Data", &src.url, "extract returned no measurements");
     }
 }
 
@@ -1732,16 +1723,16 @@ pub fn ci_mode(dir: &str) -> i32 {
             lsk = crate::lsk::parse(&text);
         }
     }
-    if lsk.is_none() {
-        if let Some(text) = fetch_one(
+    if lsk.is_none()
+        && let Some(text) = fetch_one(
             "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
             None,
             &[],
             NAIF_LSK_TTL_SECS,
             machine_now_tdb(),
-        ) {
-            lsk = crate::lsk::parse(&text);
-        }
+        )
+    {
+        lsk = crate::lsk::parse(&text);
     }
     let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
     let total = sources.len();
@@ -1876,11 +1867,11 @@ pub fn ci_mode(dir: &str) -> i32 {
             (Some(nl), nm) if !nm.is_empty() => Some(cache_path_for(nl, nm)),
             _ => None,
         };
-        if let Some(cp) = &cache_path {
-            if cache_fresh(cp, src.ttl) {
-                fresh += 1;
-                continue;
-            }
+        if let Some(cp) = &cache_path
+            && cache_fresh(cp, src.ttl)
+        {
+            fresh += 1;
+            continue;
         }
         let raw = match fetch_raw(&src.url, None, &headers, src.ttl) {
             Some(r) => r,
@@ -1903,18 +1894,16 @@ pub fn ci_mode(dir: &str) -> i32 {
                 }
                 let _ = std::fs::write(cp, &raw);
             }
-            if mirror_enabled {
-                if let Some(netloc) = extract_netloc(&src.url) {
-                    let name = match manifest.get(&src.url).cloned() {
-                        Some(n) => n,
-                        None => source_name_from_url(&src.url),
-                    };
-                    let tmp_path = cache_path_for(netloc, &name);
-                    if std::fs::write(&tmp_path, &raw).is_ok()
-                        && crate::cdn::upload_release(netloc, &tmp_path)
-                    {
-                        mirrored += 1;
-                    }
+            if mirror_enabled && let Some(netloc) = extract_netloc(&src.url) {
+                let name = match manifest.get(&src.url).cloned() {
+                    Some(n) => n,
+                    None => source_name_from_url(&src.url),
+                };
+                let tmp_path = cache_path_for(netloc, &name);
+                if std::fs::write(&tmp_path, &raw).is_ok()
+                    && crate::cdn::upload_release(netloc, &tmp_path)
+                {
+                    mirrored += 1;
                 }
             }
         } else {
@@ -2175,10 +2164,9 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
         .map(|l| {
             let t = l.trim();
             let u = if t.starts_with("live ") || t.starts_with("candidate ") {
-                match t.split_whitespace().find(|w| w.starts_with("http")) {
-                    Some(w) => w,
-                    None => "",
-                }
+                t.split_whitespace()
+                    .find(|w| w.starts_with("http"))
+                    .unwrap_or("")
             } else {
                 t
             };
@@ -2194,19 +2182,21 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
-            scope.spawn(|| loop {
-                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                if i >= total {
-                    break;
-                }
-                let url = resolve_secret(&urls[i], env);
-                let raw = if fetchone {
-                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
-                } else {
-                    fetch_raw_probe(&url, None, &[])
-                };
-                if let Some(body) = raw {
-                    if let Some(parsed) = parse_json(&body) {
+            scope.spawn(|| {
+                loop {
+                    let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if i >= total {
+                        break;
+                    }
+                    let url = resolve_secret(&urls[i], env);
+                    let raw = if fetchone {
+                        fetch_one(&url, None, &[], 3600, machine_now_tdb())
+                    } else {
+                        fetch_raw_probe(&url, None, &[])
+                    };
+                    if let Some(body) = raw
+                        && let Some(parsed) = parse_json(&body)
+                    {
                         let tap_flat = tap_to_json(&parsed);
                         let effective = match tap_flat.as_ref() {
                             Some(flat) => flat,
@@ -2228,14 +2218,14 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                         }
                         let ttl = derive_ttl(&url, &body, env);
                         let (frame, reason) = derive_frame(effective, &coords);
-                        if !frame.is_empty() {
-                            if let Some(rk) = route_key(&urls[i]) {
-                                learned_lock
-                                    .lock()
-                                    .unwrap()
-                                    .entry(rk)
-                                    .or_insert_with(|| frame.trim_end().to_string());
-                            }
+                        if !frame.is_empty()
+                            && let Some(rk) = route_key(&urls[i])
+                        {
+                            learned_lock
+                                .lock()
+                                .unwrap()
+                                .entry(rk)
+                                .or_insert_with(|| frame.trim_end().to_string());
                         }
                         let mut block = format!("url {}\n", urls[i]);
                         if let Some(t) = ttl {
@@ -2245,16 +2235,15 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                             block.push_str("format tap\n");
                         }
                         block.push_str(&frame);
-                        if let Some(ref mp) = map_path {
-                            if !coords.is_empty() {
-                                let container = if coords.contains("ra ") || coords.contains("dec ")
-                                {
-                                    "cmap"
-                                } else {
-                                    "map"
-                                };
-                                block.push_str(&format!("{} {}\n", container, mp));
-                            }
+                        if let Some(ref mp) = map_path
+                            && !coords.is_empty()
+                        {
+                            let container = if coords.contains("ra ") || coords.contains("dec ") {
+                                "cmap"
+                            } else {
+                                "map"
+                            };
+                            block.push_str(&format!("{} {}\n", container, mp));
                         }
                         if !coords.is_empty() {
                             block.push_str(&coords);
@@ -2268,8 +2257,8 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
                         out_lock.lock().unwrap().push_str(&out);
                         drafted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                     }
+                    std::thread::sleep(std::time::Duration::from_millis(300));
                 }
-                std::thread::sleep(std::time::Duration::from_millis(300));
             });
         }
     });
@@ -2315,11 +2304,11 @@ pub fn draft_context_mode(path: &str) -> i32 {
                     for l in c.lines() {
                         let t = l.trim();
                         if let Some(pos) = t.find("http") {
-                            let u = match t[pos..].split_whitespace().next() {
-                                Some(w) => w,
-                                None => "",
-                            }
-                            .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
+                            let u = t[pos..]
+                                .split_whitespace()
+                                .next()
+                                .unwrap_or("")
+                                .trim_end_matches([',', '|', ';']);
                             if u.starts_with("http") {
                                 context_map
                                     .entry(u.to_string())
@@ -2417,60 +2406,55 @@ pub fn gate_learn_mode() -> i32 {
     if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
         for line in content.lines() {
             let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                if let Some(nl) = extract_netloc(rest.trim()) {
-                    if seen.insert(format!("+{}", nl)) {
-                        delta.push((4, "-".to_string(), nl.to_string()));
-                    }
-                }
+            if let Some(rest) = t.strip_prefix("url ")
+                && let Some(nl) = extract_netloc(rest.trim())
+                && seen.insert(format!("+{}", nl))
+            {
+                delta.push((4, "-".to_string(), nl.to_string()));
             }
         }
     }
     if let Ok(content) = std::fs::read_to_string("phi/dead_sources.φ") {
         for line in content.lines() {
             let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                if let Some(nl) = extract_netloc(rest.trim()) {
-                    if seen.insert(format!("-{}", nl)) {
-                        delta.push((-4, "-".to_string(), nl.to_string()));
-                    }
-                }
+            if let Some(rest) = t.strip_prefix("url ")
+                && let Some(nl) = extract_netloc(rest.trim())
+                && seen.insert(format!("-{}", nl))
+            {
+                delta.push((-4, "-".to_string(), nl.to_string()));
             }
         }
     }
     if let Ok(content) = std::fs::read_to_string("phi/declined_sources.φ") {
         for line in content.lines() {
             let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                if let Some(nl) = extract_netloc(rest.trim()) {
-                    if seen.insert(format!("-{}", nl)) {
-                        delta.push((-4, "-".to_string(), nl.to_string()));
-                    }
-                }
+            if let Some(rest) = t.strip_prefix("url ")
+                && let Some(nl) = extract_netloc(rest.trim())
+                && seen.insert(format!("-{}", nl))
+            {
+                delta.push((-4, "-".to_string(), nl.to_string()));
             }
         }
     }
     if let Ok(content) = std::fs::read_to_string("phi/blocked_sources.φ") {
         for line in content.lines() {
             let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                if let Some(nl) = extract_netloc(rest.trim()) {
-                    if seen.insert(format!("b{}", nl)) {
-                        delta.push((-2, "b".to_string(), nl.to_string()));
-                    }
-                }
+            if let Some(rest) = t.strip_prefix("url ")
+                && let Some(nl) = extract_netloc(rest.trim())
+                && seen.insert(format!("b{}", nl))
+            {
+                delta.push((-2, "b".to_string(), nl.to_string()));
             }
         }
     }
     if let Ok(content) = std::fs::read_to_string("phi/witnesses.φ") {
         for line in content.lines() {
             let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ") {
-                if let Some(nl) = extract_netloc(rest.trim()) {
-                    if seen.insert(format!("w{}", nl)) {
-                        delta.push((2, "w".to_string(), nl.to_string()));
-                    }
-                }
+            if let Some(rest) = t.strip_prefix("url ")
+                && let Some(nl) = extract_netloc(rest.trim())
+                && seen.insert(format!("w{}", nl))
+            {
+                delta.push((2, "w".to_string(), nl.to_string()));
             }
         }
     }
@@ -2551,10 +2535,7 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
             } else {
                 t
             };
-            let word = match u.split_whitespace().next() {
-                Some(w) => w,
-                None => "",
-            };
+            let word = u.split_whitespace().next().unwrap_or("");
             word.to_string()
         })
         .filter(|u| u.starts_with("http"))
@@ -2568,41 +2549,43 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     let workers = 8.min(total);
     std::thread::scope(|scope| {
         for _ in 0..workers {
-            scope.spawn(|| loop {
-                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                if i >= total {
-                    break;
-                }
-                let url = resolve_secret(&urls[i], env);
-                let raw = if fetchone {
-                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
-                } else {
-                    fetch_raw_probe(&url, None, &[])
-                };
-                match raw {
-                    Some(body) => {
-                        let kind = if parse_json(&body).is_some() {
-                            "json"
-                        } else if body.trim_start().starts_with('<') {
-                            "html"
-                        } else {
-                            "text"
-                        };
-                        live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                        live_lock
-                            .lock()
-                            .unwrap()
-                            .push_str(&format!("live {} | {}\n", kind, urls[i]));
+            scope.spawn(|| {
+                loop {
+                    let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if i >= total {
+                        break;
                     }
-                    None => {
-                        void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                        void_lock
-                            .lock()
-                            .unwrap()
-                            .push_str(&format!("void {}\n", urls[i]));
+                    let url = resolve_secret(&urls[i], env);
+                    let raw = if fetchone {
+                        fetch_one(&url, None, &[], 3600, machine_now_tdb())
+                    } else {
+                        fetch_raw_probe(&url, None, &[])
+                    };
+                    match raw {
+                        Some(body) => {
+                            let kind = if parse_json(&body).is_some() {
+                                "json"
+                            } else if body.trim_start().starts_with('<') {
+                                "html"
+                            } else {
+                                "text"
+                            };
+                            live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            live_lock
+                                .lock()
+                                .unwrap()
+                                .push_str(&format!("live {} | {}\n", kind, urls[i]));
+                        }
+                        None => {
+                            void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            void_lock
+                                .lock()
+                                .unwrap()
+                                .push_str(&format!("void {}\n", urls[i]));
+                        }
                     }
+                    std::thread::sleep(std::time::Duration::from_millis(300));
                 }
-                std::thread::sleep(std::time::Duration::from_millis(300));
             });
         }
     });

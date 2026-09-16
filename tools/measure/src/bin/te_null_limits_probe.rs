@@ -1,6 +1,6 @@
 use omegaflow::archivar::{
-    cache_path_for, convert_to_si, extract_series, is_time_key, load_sources, parse_json,
-    scalar_of, ymd_to_days, Extract, JsonVal, SourceConfig,
+    Extract, JsonVal, SourceConfig, cache_path_for, convert_to_si, extract_series, is_time_key,
+    load_sources, parse_json, scalar_of, ymd_to_days,
 };
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::te::{

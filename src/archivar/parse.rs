@@ -351,7 +351,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let filter = match parse_where(&parts) {
                     Ok(f) => f,
-                    Err(()) => continue,
+                    Err(_) => continue,
                 };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
@@ -375,7 +375,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let filter = match parse_where(&parts) {
                     Ok(f) => f,
-                    Err(()) => continue,
+                    Err(_) => continue,
                 };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
@@ -469,8 +469,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Err(_) => continue,
                 };
                 let mut outputs = Vec::new();
-                for i in 3..parts.len().min(5) {
-                    outputs.push(parts[i].to_string());
+                for p in &parts[3..parts.len().min(5)] {
+                    outputs.push(p.to_string());
                 }
                 let tau: f64 = match parts.get(5).and_then(|s| s.parse().ok()) {
                     Some(v) if v > 0.0 => v,
@@ -676,10 +676,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             }
             "hapi_fill" if parts.len() >= 2 => {
                 for s in &parts[1..] {
-                    if let Some((k, v)) = s.split_once('=') {
-                        if let Ok(fv) = v.parse::<f64>() {
-                            cur_hapi_fill.insert(k.to_string(), fv);
-                        }
+                    if let Some((k, v)) = s.split_once('=')
+                        && let Ok(fv) = v.parse::<f64>()
+                    {
+                        cur_hapi_fill.insert(k.to_string(), fv);
                     }
                 }
             }
@@ -877,20 +877,20 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Err(_) => continue,
                 };
                 let mut freq = 0.0;
-                if let Some(s) = parts.get(9) {
-                    if let Ok(v) = s.parse::<f64>() {
-                        if v.is_finite() && v > 0.0 {
-                            freq = v;
-                        }
-                    }
+                if let Some(s) = parts.get(9)
+                    && let Ok(v) = s.parse::<f64>()
+                    && v.is_finite()
+                    && v > 0.0
+                {
+                    freq = v;
                 }
                 let mut bin_width = 0.0;
-                if let Some(s) = parts.get(10) {
-                    if let Ok(v) = s.parse::<f64>() {
-                        if v.is_finite() && v > 0.0 {
-                            bin_width = v;
-                        }
-                    }
+                if let Some(s) = parts.get(10)
+                    && let Ok(v) = s.parse::<f64>()
+                    && v.is_finite()
+                    && v > 0.0
+                {
+                    bin_width = v;
                 }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
@@ -962,10 +962,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "epoch_scale" if parts.len() >= 2 => {
-                if let Ok(s) = parts[1].parse::<f64>() {
-                    if let Some(Extract::Map { epoch_scale, .. }) = cur_extracts.last_mut() {
-                        *epoch_scale = s;
-                    }
+                if let Ok(s) = parts[1].parse::<f64>()
+                    && let Some(Extract::Map { epoch_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *epoch_scale = s;
                 }
             }
             "alt" if parts.len() >= 2 => {
@@ -1016,10 +1016,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }) = cur_extracts.last_mut()
                 {
                     *pressure_var = parts[1].to_string();
-                    if parts.len() >= 3 {
-                        if let Ok(s) = parts[2].parse::<f64>() {
-                            *pressure_scale = s;
-                        }
+                    if parts.len() >= 3
+                        && let Ok(s) = parts[2].parse::<f64>()
+                    {
+                        *pressure_scale = s;
                     }
                 }
             }
@@ -1237,11 +1237,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "dist_scale" if parts.len() >= 2 => {
-                if let Ok(v) = parts[1].parse::<f64>() {
-                    if let Some(Extract::CelestialMap { dist_scale, .. }) = cur_extracts.last_mut()
-                    {
-                        *dist_scale = v;
-                    }
+                if let Ok(v) = parts[1].parse::<f64>()
+                    && let Some(Extract::CelestialMap { dist_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *dist_scale = v;
                 }
             }
             "tname" if parts.len() >= 2 => {}
@@ -1385,41 +1384,19 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     let y: i64 = dp.next()?.parse().ok()?;
     let m: u32 = dp.next()?.parse().ok()?;
     let d: u32 = dp.next()?.parse().ok()?;
-    let t = match time
-        .split(|c: char| c == '.' || c == 'Z' || c == 'z')
-        .next()
-    {
-        Some(t) => t,
-        None => return None,
-    };
+    let t = time.split(['.', 'Z', 'z']).next()?;
     let mut tp = t.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
-    let mm: u32 = match tp.next() {
-        Some(s) => s,
-        None => "0",
-    }
-    .parse()
-    .ok()?;
-    let ss: u32 = match tp.next() {
-        Some(s) => s,
-        None => "0",
-    }
-    .parse()
-    .ok()?;
+    let mm: u32 = tp.next().unwrap_or("0").parse().ok()?;
+    let ss: u32 = tp.next().unwrap_or("0").parse().ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
     lsk.unix_to_tdb(unix as f64)
 }
 
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
-    let kernel = match kernel_id_of(parts[3]) {
-        Some(k) => k,
-        None => return None,
-    };
-    let force = match force_id_of(parts[4]) {
-        Some(f) => f,
-        None => return None,
-    };
+    let kernel = kernel_id_of(parts[3])?;
+    let force = force_id_of(parts[4])?;
     let tau: f64 = match parts[6].parse() {
         Ok(v) if v > 0.0 => v,
         _ => return None,
@@ -1435,7 +1412,9 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     Some((kernel, force, tau, absorption, advection))
 }
 
-pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, ()> {
+pub struct WhereRefused;
+
+pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, WhereRefused> {
     if parts.len() < 10 || parts[9] != "where" {
         return Ok(None);
     }
@@ -1444,7 +1423,7 @@ pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, ()> {
             "where refused at {}: the filter clause carries exactly `where <key> <value>`",
             parts.get(1).copied().unwrap_or("?")
         );
-        return Err(());
+        return Err(WhereRefused);
     }
     Ok(Some((parts[10].to_string(), parts[11].to_string())))
 }
@@ -1469,10 +1448,10 @@ pub fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
                 }
                 let path_str = p.to_string_lossy().to_string();
                 sources.extend(load_all_sources(&path_str));
-            } else if p.extension().is_some_and(|x| x == "φ") {
-                if let Ok(content) = std::fs::read_to_string(&p) {
-                    sources.extend(load_sources_from(&content));
-                }
+            } else if p.extension().is_some_and(|x| x == "φ")
+                && let Ok(content) = std::fs::read_to_string(&p)
+            {
+                sources.extend(load_sources_from(&content));
             }
         }
     }
