@@ -107,6 +107,12 @@ on earth 0 0 0
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
 
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
+ttl 60
+on earth 0 0 0
+format quakeml
+quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 format fdsn_waveform
 on earth 0 0 0

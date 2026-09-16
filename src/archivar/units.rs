@@ -9,7 +9,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
     }
     match unit.trim().to_lowercase().as_str() {
         "" | "m" | "s" | "k" | "kg" | "pa" | "w" | "w/m2" | "w/m²" | "t" | "hz" | "v" | "a"
-        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "v/m" | "s/m" | "ntu" | "1" | "count" => {
+        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "n m" | "v/m" | "s/m" | "ntu" | "1" | "count" => {
             Some(value)
         }
         "wm2_1au" => Some(value * 1.495978707e11 * 1.495978707e11),

@@ -4227,6 +4227,143 @@ fn test_extract_fields_reads_geojson_events() {
 }
 
 #[test]
+fn test_extract_fields_reads_quakeml_events() {
+    let ext = Extract::QuakeMlEvents {
+        outputs: vec!["usgs_mt_m0_nm".into(), "usgs_mt_mww".into()],
+        tau: 6.0,
+        absorption: 0.0,
+        advection: 0.0,
+    };
+    let fields = super::extract_fields(&ext);
+    assert_eq!(fields.len(), 2);
+    assert_eq!(fields[0].name, "usgs_mt_m0_nm");
+    assert_eq!(fields[0].kernel, 1);
+    assert_eq!(fields[0].force, 3);
+    assert_eq!(fields[0].unit, "N m");
+    assert_eq!(fields[1].name, "usgs_mt_mww");
+    assert_eq!(fields[1].kernel, 3);
+    assert_eq!(fields[1].force, 4);
+    assert_eq!(fields[1].unit, "Mw");
+    let reach = super::dispatch_reach(&fields, 60.0).expect("the quakeml fields gate");
+    assert_eq!(reach, SEISMIC_BODY_SPEED * 60.0 * 64.0);
+    let single = Extract::QuakeMlEvents {
+        outputs: vec!["usgs_mt_m0_nm".into()],
+        tau: 6.0,
+        absorption: 0.0,
+        advection: 0.0,
+    };
+    assert!(
+        super::extract_fields(&single).is_empty(),
+        "a quakeml extract with one output emits nothing"
+    );
+}
+
+const QUAKEML_BLOCK: &str = "url https://example.org/mt\nttl 60\non earth 0 0 0\nformat quakeml\nquakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0\n";
+
+const QUAKEML_TENSOR_BODY: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2">
+ <eventParameters>
+  <event publicID="quakeml:test/event">
+   <origin publicID="quakeml:test/origin">
+    <time><value>2023-02-06T01:17:34.342Z</value></time>
+    <latitude><value>37.2256</value></latitude>
+    <longitude><value>37.0143</value></longitude>
+    <depth><value>10000</value></depth>
+   </origin>
+   <magnitude publicID="quakeml:test/mag"><mag><value>7.8</value></mag><type>mww</type></magnitude>
+   <focalMechanism publicID="quakeml:test/mww">
+    <momentTensor publicID="quakeml:test/mww#mt">
+     <scalarMoment><value>5.39E+20</value></scalarMoment>
+    </momentTensor>
+   </focalMechanism>
+  </event>
+ </eventParameters>
+</q:quakeml>"#;
+
+fn quakeml_fixture_lsk() -> super::LeapSeconds {
+    super::LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    }
+}
+
+#[test]
+fn test_quakeml_events_emit_m0_and_mww_at_epicenter_epoch() {
+    let srcs = parse_sources(QUAKEML_BLOCK);
+    assert_eq!(srcs.len(), 1);
+    let lsk = quakeml_fixture_lsk();
+    let now = 1.7e9;
+    match super::extract(&srcs[0], QUAKEML_TENSOR_BODY, now, &lsk) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 2);
+            let (m0, fc0) = &v[0];
+            assert_eq!(m0.name, "usgs_mt_m0_nm");
+            assert_eq!(m0.value, 5.39e20);
+            assert_eq!(fc0.unit, "N m");
+            assert_eq!(fc0.kernel, 1);
+            assert_eq!(fc0.force, 3);
+            assert!((m0.z - 10.0).abs() < 1e-9);
+            let expected = lsk.unix_to_tdb(1675646254.342).unwrap();
+            assert!((m0.epoch - expected).abs() < 1e-6);
+            match &m0.position {
+                super::Position::Surface {
+                    body_name,
+                    lat,
+                    lon,
+                    alt,
+                } => {
+                    assert_eq!(body_name, "earth");
+                    assert!((lat - 37.2256).abs() < 1e-9);
+                    assert!((lon - 37.0143).abs() < 1e-9);
+                    assert_eq!(*alt, 0.0);
+                }
+                other => panic!("position variant: {:?} unexpected", other),
+            }
+            let (mww, fc1) = &v[1];
+            assert_eq!(mww.name, "usgs_mt_mww");
+            assert!((mww.value - 7.8).abs() < 1e-9);
+            assert_eq!(fc1.unit, "Mw");
+            assert_eq!(fc1.kernel, 3);
+            assert_eq!(fc1.force, 4);
+            assert!((mww.epoch - expected).abs() < 1e-6);
+        }
+        _ => panic!("extract variant unexpected"),
+    }
+}
+
+#[test]
+fn test_quakeml_absent_scalar_moment_emits_no_m0() {
+    let srcs = parse_sources(QUAKEML_BLOCK);
+    assert_eq!(srcs.len(), 1);
+    let body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2">
+ <eventParameters>
+  <event publicID="quakeml:test/event">
+   <origin publicID="quakeml:test/origin">
+    <time><value>2023-02-06T01:17:34.342Z</value></time>
+    <latitude><value>37.2256</value></latitude>
+    <longitude><value>37.0143</value></longitude>
+    <depth><value>10000</value></depth>
+   </origin>
+   <magnitude publicID="quakeml:test/mag"><mag><value>7.8</value></mag><type>mww</type></magnitude>
+  </event>
+ </eventParameters>
+</q:quakeml>"#;
+    let lsk = quakeml_fixture_lsk();
+    match super::extract(&srcs[0], body, 1.7e9, &lsk) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 1);
+            assert_eq!(v[0].0.name, "usgs_mt_mww");
+            assert!(
+                v.iter().all(|(c, _)| c.name != "usgs_mt_m0_nm"),
+                "an absent scalarMoment emits no M0 channel"
+            );
+        }
+        _ => panic!("extract variant unexpected"),
+    }
+}
+
+#[test]
 fn test_fetch_dispatch_gate_advective_uses_field_advection() {
     let fc = FieldConfig {
         key: "wind".into(),
