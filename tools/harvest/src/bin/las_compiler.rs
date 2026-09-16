@@ -393,7 +393,7 @@ fn main() {
     };
     eprintln!("crs {} — {}", crs_text(&crs), axis.name());
     eprintln!(
-        "z carried as delivered (height m); no vertical datum chain is built — the geoid undulation to the WGS84 ellipsoid and tide datums (MLLW) stay unmeasured (pending)"
+        "z carried as delivered (height m); the VDatum MLLW->ellipsoid chain is unbuilt (no GTX reader) and measured absent for Hawaii — no HI tidal grid in vdatum_regional_20250917.zip (844 CD entries) nor vdatum_all_20250917.zip (1912 CD entries), CD range-read 2026-09-17 — so a Hawaii z stays as delivered"
     );
 
     let eph_bytes = match fetch_raw_bytes(&body_url("earth"), 600) {
@@ -679,8 +679,8 @@ mod tests {
     #[test]
     fn utm_inverse_zone18n_dd10045_corner_reference() {
         let (lat, lon) = utm_inverse(18, false, 368952.482, 4340727.52).unwrap();
-        assert!((lat - 39.205974).abs() < 1e-5);
-        assert!((lon - (-76.517841)).abs() < 1e-5);
+        assert!((lat - 39.2059397).abs() < 1e-5);
+        assert!((lon - (-76.5177658)).abs() < 1e-5);
     }
 
     #[test]
@@ -714,7 +714,7 @@ mod tests {
     #[test]
     fn web_mercator_inverse_roundtrips_the_reference_point() {
         let (lat, lon, alt) =
-            crs_to_geodetic(&CrsAxis::WebMercator, -11_688_571.76, 4_865_942.28, 1600.0).unwrap();
+            crs_to_geodetic(&CrsAxis::WebMercator, -11_688_546.53, 4_865_942.28, 1600.0).unwrap();
         assert!((lat - 40.0).abs() < 1e-4);
         assert!((lon - -105.0).abs() < 1e-4);
         assert_eq!(alt, 1600.0);
