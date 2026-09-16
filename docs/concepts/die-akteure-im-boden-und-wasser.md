@@ -57,8 +57,12 @@ auf die Erde.
    3–5 Ereignisse aus einer Ecke, stetig=Struktur, springt=Pick); das
    +5,69-s-Residuum bleibt `offen`, kein Default.
 3. **Die Erde als Sender** (Kreuzbereichs-Kalibrierung) — Tonga 2022 zuerst:
-   Wasser-Schenkel steht, Luft-Schenkel braucht sub-stündlichen Druck/
-   Infraschall (BGR). Der Zeuge außerhalb des Bodens nagelt den Nullpunkt.
+   das eine Ohr steht (NOAA CO-OPS Kwajalein 1820000, 8.732 N 167.736 E,
+   `air_pressure` + `water_level` 6-min, keyless, gemessen 2026-09-17);
+   Luft-Lamb (+2.4 hPa, 07:42 UTC) und Wasser-Trog (−0.578 m, 09:58 UTC)
+   im selben Raster, die Kopplungszahl wird im Probe gewogen
+   (`tonga_lamb_crosscheck_probe.rs`). Der Zeuge außerhalb des Bodens nagelt
+   den Nullpunkt.
 4. **W-Phase-M9** — entschieden, nicht gebaut.
 5. **Stromboli** — Vulkan-Lehrer.
 6. **CDN-Manifestation** des ETOPO1-Gitters (395 MB).
@@ -101,5 +105,5 @@ Ionosphäre — nicht der Vorläufer.
 ## Die Reihenfolge (billig zuerst)
 
 Stationsterm-Wiederholung → echtes pP/sP an tieferem Ereignis → Tonga
-(Wasser steht, Luft wartet auf den sub-stündlichen Druckweg) → DART (offener
+(Kwajalein-Ohr steht: Druck + Pegel ko-lokalisiert) → DART (offener
 Ozean) → TEC (teure Ernte, Budget vorneweg).
