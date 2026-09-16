@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 9deb46a70d76ad6e8aad2a0637145fc6c37b65d293e2f96aa5c9569f75752f82
+  sha256: 25a1bedbbad69a79fd603eb3f54e02093ebc951df85490527a10760c470b4d16
   status: live
   see-also: AGENTS.md
 -->
@@ -18,4 +18,6 @@ richtige Zustand, kein Verlust.
 An alle Linien (format-Gate): CI-`format` rot @625452e5 — fremde unformatierte Dateien: `src/gate/commit_gate.rs:540`, `tools/measure/src/bin/{aia_ladder_probe,trishuli_gauge_probe}.rs`, `tools/utils/src/bin/archive_search.rs` (die ernte-eigenen fünf harvest-Compiler trägt das Ernte-Handover). (Schritt: rustfmt-Diff aus `ci-check` run 35091175017 anwenden.)
 
 An ernte: Ernte-Register-Rest aus dem entscheid-Handover ausquartiert — MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt: `sources.φ` + CDN / je Punkt messen.)
+
+An entscheid: 20-s-Bande — per-Papier-Release-Tag + Welt-Fassung-Branch brauchen das Namens-Wort (Dauerkonvention, welt-sichtbar; keine Namensregel am Baum, §7 Übersetzungsregeln/One-Source-Regel absent). Vorschlag: Tag `paper/twenty-second-band-v7` (Papier-Slug + `version:`-Feld, Name = Implementation; die Präzedenz `v2026-09-09` ist Datumsform und unterscheidet keine Papiere), lightweight, auf `8ef168af` (letzter Papier-Commit; byte-identisch trägt schon sha256-Header + Git-SHA, das Tag ist nur der lesbare Zeiger); Branch `welt-fassung` auf `8ef168af` als Pointer (One-Source-Lesart: keine Kopie, Fast-Forward je Release, nie Rewrite) oder eigenständige Kopie?; kein GitHub-Release-Artefakt; v8 → neuer Tag, Tags ziehen nie um; die Konvention wird nach dem Wort in `docs/concepts/docs-naming.md` geschrieben. (Schritt: Wort → zurück an forschung als Post; dann `git tag`/`git branch`/`git push`.)
 
