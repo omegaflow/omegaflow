@@ -11,7 +11,7 @@ on:
         description: DataShop request id (created by --submit; session-bound download)
         required: true
         type: string
-        default: "1173"
+        default: "1175"
       asset:
         description: output asset name on the CDN (netloc kcdc.iap.kit.edu)
         required: true
@@ -51,10 +51,19 @@ jobs:
       - name: Download the session-bound request zip from the DataShop
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          curl -sSfL --retry 3 --max-time 300 \
-            -b tmp/kcdc_cookies.txt -c tmp/kcdc_cookies.txt \
-            "https://kcdc.iap.kit.edu/datashop/download/${{ inputs.request }}/request.zip" \
-            -o request.zip
+          for attempt in $(seq 1 30); do
+            if curl -sSfL --retry 3 --max-time 300 \
+              -b tmp/kcdc_cookies.txt -c tmp/kcdc_cookies.txt \
+              "https://kcdc.iap.kit.edu/datashop/download/${{ inputs.request }}/request.zip/" \
+              -o request.zip; then
+              echo "request.zip: $(wc -c < request.zip) B"
+              exit 0
+            fi
+            echo "request ${{ inputs.request }} not ready (attempt $attempt) — waiting 30s"
+            sleep 30
+          done
+          echo "request ${{ inputs.request }} did not materialize"
+          exit 1
       - name: Compile the ASCII tables and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
