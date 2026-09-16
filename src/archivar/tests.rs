@@ -1174,6 +1174,31 @@ ttl 86400\n";
 }
 
 #[test]
+fn test_parse_map_lat_lon_without_frame_seats_manifest_source() {
+    let phi = "url https://example.org/surface.json\n\
+ttl 900\n\
+map data\n\
+lat lat\n\
+lon lon\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert!(matches!(sources[0].frame, Frame::Manifest));
+    assert_eq!(sources[0].url, "https://example.org/surface.json");
+    let Some(Extract::Map {
+        arr_path,
+        lat_key,
+        lon_key,
+        ..
+    }) = sources[0].extracts.first()
+    else {
+        panic!("the seated source carries a Map extract");
+    };
+    assert_eq!(arr_path, "data");
+    assert_eq!(lat_key, "lat");
+    assert_eq!(lon_key, "lon");
+}
+
+#[test]
 fn test_parse_reference_without_sha256_still_seats() {
     let phi = "url https://example.com/dataset.csv\n\
 format reference\n\
