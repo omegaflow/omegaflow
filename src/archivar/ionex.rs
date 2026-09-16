@@ -1,3 +1,4 @@
+use super::*;
 use crate::lsk::days_from_civil;
 
 pub struct TecGrid {
@@ -42,7 +43,12 @@ fn epoch_unix_of(epoch_line: &str) -> Option<f64> {
     Some(days as f64 * 86400.0 + h as f64 * 3600.0 + mi as f64 * 60.0 + se as f64)
 }
 
-pub fn parse_gim(body: &str, default_exponent: f64) -> Vec<TecGrid> {
+pub struct TecMap {
+    pub grid: TecGrid,
+    pub alt_km: f64,
+}
+
+pub fn parse_gim_maps(body: &str, default_exponent: f64) -> Vec<TecMap> {
     let exponent = header_exponent(body).unwrap_or(default_exponent);
     let scale = 10f64.powf(exponent);
     let lines: Vec<&str> = body.lines().collect();
@@ -67,6 +73,7 @@ pub fn parse_gim(body: &str, default_exponent: f64) -> Vec<TecGrid> {
         let mut lon_first = f64::NAN;
         let mut lon_step = f64::NAN;
         let mut nlon = 0usize;
+        let mut alt_km = f64::NAN;
         let mut cells: Vec<f64> = Vec::new();
         loop {
             if i >= lines.len() {
@@ -99,6 +106,11 @@ pub fn parse_gim(body: &str, default_exponent: f64) -> Vec<TecGrid> {
                 break;
             }
             let nlon_cur = nlon_cur as usize;
+            if alt_km.is_nan()
+                && let Some(h) = cur.get(26..32).and_then(|s| s.trim().parse::<f64>().ok())
+            {
+                alt_km = h;
+            }
             i += 1;
             let mut row: Vec<f64> = Vec::new();
             let mut remaining = nlon_cur;
@@ -150,19 +162,96 @@ pub fn parse_gim(body: &str, default_exponent: f64) -> Vec<TecGrid> {
             }
         }
         if nlat >= 2 && nlon >= 2 && cells.len() == nlat * nlon {
-            out.push(TecGrid {
-                epoch_unix,
-                lat_first,
-                lat_step,
-                nlat,
-                lon_first,
-                lon_step,
-                nlon,
-                cells,
+            out.push(TecMap {
+                grid: TecGrid {
+                    epoch_unix,
+                    lat_first,
+                    lat_step,
+                    nlat,
+                    lon_first,
+                    lon_step,
+                    nlon,
+                    cells,
+                },
+                alt_km,
             });
         }
     }
     out
+}
+
+pub fn parse_gim(body: &str, default_exponent: f64) -> Vec<TecGrid> {
+    parse_gim_maps(body, default_exponent)
+        .into_iter()
+        .map(|m| m.grid)
+        .collect()
+}
+
+pub fn build_channels(
+    src: &SourceConfig,
+    text: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let Some(fc) = src.extracts.iter().find_map(|e| match e {
+        Extract::Field(fc) if fc.key == "tec" => Some(fc),
+        _ => None,
+    }) else {
+        return Vec::new();
+    };
+    let Some(exponent) = header_exponent(text) else {
+        return Vec::new();
+    };
+    let no_value = 9999.0 * 10f64.powf(exponent);
+    let maps = parse_gim_maps(text, exponent);
+    let mut best: Option<(&TecMap, f64)> = None;
+    for m in &maps {
+        if !m.alt_km.is_finite() {
+            continue;
+        }
+        let Some(epoch) = lsk.unix_to_tdb(m.grid.epoch_unix) else {
+            continue;
+        };
+        if epoch > now {
+            continue;
+        }
+        if best.is_none_or(|(b, _)| m.grid.epoch_unix > b.grid.epoch_unix) {
+            best = Some((m, epoch));
+        }
+    }
+    let Some((map, epoch)) = best else {
+        return Vec::new();
+    };
+    let body = frame_body_name(&src.frame);
+    let alt = map.alt_km * 1000.0;
+    let mut channels = Vec::with_capacity(map.grid.cells.len());
+    for (idx, tec) in map.grid.cells.iter().enumerate() {
+        if !tec.is_finite() || *tec < 0.0 || *tec == no_value {
+            continue;
+        }
+        let row = idx / map.grid.nlon;
+        let col = idx % map.grid.nlon;
+        let lat = map.grid.lat_first + row as f64 * map.grid.lat_step;
+        let lon = map.grid.lon_first + col as f64 * map.grid.lon_step;
+        channels.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                epoch,
+                position: Position::Surface {
+                    body_name: body.clone(),
+                    lat,
+                    lon,
+                    alt,
+                },
+                name: fc.name.clone(),
+                value: *tec,
+            },
+            fc.clone(),
+        ));
+    }
+    channels
 }
 
 pub fn tec_at(g: &TecGrid, lat: f64, lon: f64) -> Option<f64> {
@@ -340,6 +429,14 @@ mod tests {
         let day0 = days_from_civil(2024, 1, 1).unwrap() as f64 * 86400.0;
         assert!((grids[0].epoch_unix - (day0 + 3600.0)).abs() < 1e-9);
         assert!((grids[1].epoch_unix - (day0 + 7200.0)).abs() < 1e-9);
+    }
+
+    #[test]
+    fn parse_gim_maps_carries_the_shell_altitude() {
+        let maps = parse_gim_maps(&synthetic_gim(1), -1.0);
+        assert_eq!(maps.len(), 1);
+        assert_eq!(maps[0].alt_km, 450.0);
+        assert_eq!(maps[0].grid.nlat, 71);
     }
 
     #[test]
