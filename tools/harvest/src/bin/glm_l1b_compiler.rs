@@ -238,7 +238,13 @@ fn event_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> Vec<GeoRec> {
             "event_lon",
         );
         let energy = scaled_f64(
-            elem_f64(&energy_v.raw, j, energy_v.class, energy_v.size, energy_v.endian),
+            elem_f64(
+                &energy_v.raw,
+                j,
+                energy_v.class,
+                energy_v.size,
+                energy_v.endian,
+            ),
             file,
             "event_radiant_energy",
         );
@@ -327,9 +333,7 @@ fn main() {
     let lsk_path = match arg_value(&args, "--lsk") {
         Some(p) => p,
         None => {
-            eprintln!(
-                "glm_l1b_compiler: --lsk <naif0012.tls> absent — the TDB clock stays unread"
-            );
+            eprintln!("glm_l1b_compiler: --lsk <naif0012.tls> absent — the TDB clock stays unread");
             std::process::exit(1);
         }
     };

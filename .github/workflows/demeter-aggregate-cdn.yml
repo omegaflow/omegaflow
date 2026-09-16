@@ -1,0 +1,39 @@
+name: demeter-aggregate-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  demeter-aggregate-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Restore the harvested .DAT workdir (same cache the harvest job writes)
+        uses: actions/cache@v4
+        with:
+          path: phi/pipeline/demeter_work
+          key: demeter-harvest-${{ runner.os }}
+          restore-keys: demeter-harvest-${{ runner.os }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build demeter_compiler
+        run: cargo build -p omegaflow-harvest --release --bin demeter_compiler
+
+      - name: Aggregate .DAT workdir and upload monthly shards to CDN
+        run: |
+          target/release/demeter_compiler \
+            --aggregate phi/pipeline/demeter_work \
+            --ci-mode

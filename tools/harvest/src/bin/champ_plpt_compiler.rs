@@ -185,7 +185,9 @@ fn main() {
                 (yv, 1, 1, yv, 12, 31)
             }
             (Some(_), None, _) | (None, Some(_), _) => {
-                eprintln!("champ_plpt_compiler: --start and --end belong together — one alone is refused");
+                eprintln!(
+                    "champ_plpt_compiler: --start and --end belong together — one alone is refused"
+                );
                 std::process::exit(1);
             }
             _ => {
