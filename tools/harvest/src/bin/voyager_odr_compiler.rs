@@ -1,8 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::voyager_odr::{
-    pack, pack_many, parse_odr, parse_packed, shard_name, shard_ranges, split_records,
-    RECORD_BYTES, SHARD_BUDGET, SHARD_LIMIT,
+    RECORD_BYTES, SHARD_BUDGET, SHARD_LIMIT, pack, pack_many, parse_odr, parse_packed, shard_name,
+    shard_ranges, split_records,
 };
 use omegaflow::cdn::upload_release;
 
@@ -375,8 +375,10 @@ mod tests {
         assert_eq!(rows[1].2, 1981);
         assert!(index_rows("no rows here").unwrap().is_empty());
         assert!(
-            index_rows("\"a\",\"/DATA/X.LBL\",\"X.ODR\",\"v\",1999-01-01Z,\"t\",\"BAD\",1999-01-01Z")
-                .is_none()
+            index_rows(
+                "\"a\",\"/DATA/X.LBL\",\"X.ODR\",\"v\",1999-01-01Z,\"t\",\"BAD\",1999-01-01Z"
+            )
+            .is_none()
         );
     }
 }
