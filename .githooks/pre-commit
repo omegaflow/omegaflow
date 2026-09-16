@@ -1,0 +1,13 @@
+#!/bin/sh
+# The commit gate runs from a prebuilt binary — the build is a CI job, never
+# part of the commit. A red working tree therefore never blocks a commit; a
+# missing gate binary is named, never silent.
+set -u
+root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+for b in "$root/target/release/commit_check" "$root/target/debug/commit_check"; do
+    if [ -x "$b" ]; then
+        exec "$b"
+    fi
+done
+echo "commit_check: no gate binary (target/{release,debug}/commit_check) — the gate is skipped; the build is a CI job" >&2
+exit 0
