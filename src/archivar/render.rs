@@ -13,9 +13,23 @@ pub struct RenderCtx<'a> {
 
 pub fn ci_probe_render(
     template: &str,
-    anchor: (f64, f64),
+    anchor: Option<(f64, f64)>,
     env: &HashMap<String, String>,
 ) -> Option<String> {
+    const COORD_MARKERS: [&str; 8] = [
+        "{lat}",
+        "{lon}",
+        "{lat_int}",
+        "{lon_int}",
+        "{lat_min}",
+        "{lat_max}",
+        "{lon_min}",
+        "{lon_max}",
+    ];
+    let needs_anchor = COORD_MARKERS.iter().any(|m| template.contains(m));
+    if needs_anchor && anchor.is_none() {
+        return None;
+    }
     let secs = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs())
@@ -36,7 +50,7 @@ pub fn ci_probe_render(
     };
     let half = 0.5f64;
     let jd_now = 2440587.5 + secs as f64 / 86400.0;
-    let url = template
+    let mut url = template
         .replace("{today}", &format!("{}-{:02}-{:02}", ty, tm, td))
         .replace("{yesterday}", &format!("{}-{:02}-{:02}", yy, ym, yd))
         .replace("{week_ago}", &format!("{}-{:02}-{:02}", wy, wm, wd))
@@ -45,15 +59,18 @@ pub fn ci_probe_render(
         .replace("{year}", &ty.to_string())
         .replace("{jd_now}", &format!("{:.6}", jd_now))
         .replace("{jd_start}", &format!("{:.6}", jd_now - 1.0))
-        .replace("{jd_end}", &format!("{:.6}", jd_now))
-        .replace("{lat}", &format!("{:.6}", anchor.0))
-        .replace("{lon}", &format!("{:.6}", anchor.1))
-        .replace("{lat_int}", &format!("{:.0}", anchor.0))
-        .replace("{lon_int}", &format!("{:.0}", anchor.1))
-        .replace("{lat_min}", &format!("{:.6}", anchor.0 - half))
-        .replace("{lat_max}", &format!("{:.6}", anchor.0 + half))
-        .replace("{lon_min}", &format!("{:.6}", anchor.1 - half))
-        .replace("{lon_max}", &format!("{:.6}", anchor.1 + half));
+        .replace("{jd_end}", &format!("{:.6}", jd_now));
+    if let Some((lat, lon)) = anchor {
+        url = url
+            .replace("{lat}", &format!("{:.6}", lat))
+            .replace("{lon}", &format!("{:.6}", lon))
+            .replace("{lat_int}", &format!("{:.0}", lat))
+            .replace("{lon_int}", &format!("{:.0}", lon))
+            .replace("{lat_min}", &format!("{:.6}", lat - half))
+            .replace("{lat_max}", &format!("{:.6}", lat + half))
+            .replace("{lon_min}", &format!("{:.6}", lon - half))
+            .replace("{lon_max}", &format!("{:.6}", lon + half));
+    }
     Some(resolve_secret(&url, env))
 }
 
