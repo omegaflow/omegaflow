@@ -29,5 +29,6 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Abschluss
 
-Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
-Abschluss-Check mit Commit und Push (`/commit`).
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
+Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
+Consent (Delegation, zweiter Prompt), nie das Commit-Wort.
