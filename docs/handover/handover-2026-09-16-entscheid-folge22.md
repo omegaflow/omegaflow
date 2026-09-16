@@ -3,7 +3,7 @@
   session: Entscheid-Folge 22
   class: handover
   date: 2026-09-16
-  sha256: dca47f34c27a5615ae06bf12632f48268443f9f4adb07cd4295d52d6755706b5
+  sha256: 3f3af5835187f228c2bbdb628de0f8dcaa1e58235e72d505a93de15fa5d80a1d
   status: live
 -->
 # Handover — Entscheid-Folge 22 (2026-09-16)
@@ -70,6 +70,17 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 - MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest
   (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt:
   `sources.φ` + CDN / je Punkt messen.)
+
+## Operator-gebundene Punkte (Bau-Folge 46/47, Post 2026-09-16)
+
+- **Mail-Fang** — `wrangler kv namespace create MAIL_QUEUE` → Id eintragen →
+  `wrangler deploy` (Cloudflare-Konto). (Schritt: Operator-Wort.)
+- **ESP32-Modul** — on hold; BOM `docs/specs/mantis-shrimp-bom.md`. (Schritt:
+  Operator-Wort.)
+- **20-s-Bande-Papier** — `git tag` + Welt-Fassung-Branch, Name/Datum fehlt.
+  (Schritt: Operator-Wort.)
+- **Register-Digest `--live`-Namensstimme** — `--open` oder bleibt. (Schritt:
+  Operator-Wort.)
 
 ## smail_recv — leerer Body bei verschachteltem MIME
 
